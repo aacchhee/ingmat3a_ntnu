@@ -1,0 +1,3103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.35">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Del 2 – Derivasjon i flere dimensjoner – Matematikk 3A</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-787e033c7b6f65c9dfccb6078e5d2d34.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/editor/editor.main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  
+<style type="text/css">
+/* Container für das gesamte Layout */
+/* Gesamt-Container */
+.quarto-container {
+  display: flex; /* Flexbox für horizontale Anordnung */
+  max-width: 2100px;
+  margin: 0 auto; /* Zentrierung des Containers */
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Linke Sidebar */
+#quarto-sidebar.sidebar {
+  order: 1; /* Linke Sidebar soll als erstes erscheinen */
+  flex: 0 0 250px; /* Feste Breite */
+  box-sizing: border-box;
+}
+
+/* Hauptinhalt */
+#quarto-document-content.content {
+  order: 2; /* Hauptinhalt kommt nach der linken Sidebar */
+  flex: 1; /* Hauptinhalt nimmt den restlichen Platz ein */
+  box-sizing: border-box;
+}
+
+/* Rechte Sidebar (Margin Sidebar) */
+#quarto-margin-sidebar.sidebar {
+  order: 3; /* Rechte Sidebar soll als letztes erscheinen */
+  flex: 0 0 250px; /* Feste Breite */
+  box-sizing: border-box;
+}
+
+.monaco-editor pre {
+  background-color: unset !important; 
+}
+
+.qpyodide-editor-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.qpyodide-editor-toolbar-left-buttons, .qpyodide-editor-toolbar-right-buttons {
+  display: flex;
+}
+
+.qpyodide-non-interactive-loading-container.qpyodide-cell-needs-evaluation, .qpyodide-non-interactive-loading-container.qpyodide-cell-evaluated {
+  justify-content: center;
+  display: flex;
+  background-color: rgba(250, 250, 250, 0.65);
+  border: 1px solid rgba(233, 236, 239, 0.65);
+  border-radius: 0.5rem;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.qpyodide-r-project-logo {
+  color: #2767B0; /* R Project's blue color */
+}
+
+.qpyodide-icon-status-spinner {
+  color: #7894c4;
+}
+
+.qpyodide-icon-run-code {
+  color: #0d9c29
+}
+
+.qpyodide-output-code-stdout {
+  color: #111;
+}
+
+.qpyodide-output-code-stderr {
+  color: #db4133;
+}
+
+.qpyodide-editor {
+  border: 1px solid #EEEEEE;
+}
+
+
+
+
+.qpyodide-button {
+  background-color: #EEEEEE;
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1;
+  text-decoration: none;
+  text-align: center;
+  color: #000;
+  border-color: #dee2e6;
+  border: 1px solid rgba(0,0,0,0);
+  padding: 0.375rem 0.75rem;
+  font-size: .9rem;
+  border-radius: 0.25rem;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.qpyodide-button:hover {
+  color: #000;
+  background-color: #d9dce0;
+  border-color: #c8ccd0;
+}
+
+.qpyodide-button:disabled,.qpyodide-button.disabled,fieldset:disabled .qpyodide-button {
+  pointer-events: none;
+  opacity: .65
+}
+
+.qpyodide-button-reset {
+  color: #696969; /*#4682b4;*/
+}
+
+.qpyodide-button-copy {
+  color: #696969;
+}
+
+.qpyodide-button-feedback {
+  color: #696969;
+}
+
+
+/* Custom styling for RevealJS Presentations*/
+
+/* Reset the style of the interactive area */
+.reveal div.qpyodide-interactive-area {
+  display: block;
+  box-shadow: none;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+} 
+
+/* Provide space to entries */
+.reveal div.qpyodide-output-code-area pre div {
+  margin: 1px 2px 1px 10px;
+}
+
+/* Collapse the inside code tags to avoid extra space between line outputs */
+.reveal pre div code.qpyodide-output-code-stdout, .reveal pre div code.qpyodide-output-code-stderr {
+  padding: 0;
+  display: contents;
+}
+
+.reveal pre div code.qpyodide-output-code-stdout {
+  color: #111;
+}
+
+.reveal pre div code.qpyodide-output-code-stderr {
+  color: #db4133;
+}
+
+
+/* Create a border around console and output (does not effect graphs) */
+.reveal div.qpyodide-console-area {
+  border: 1px solid #EEEEEE;
+  box-shadow: 2px 2px 10px #EEEEEE;
+}
+
+/*Set the color of the feedback-area div */
+.qpyodide-output-feedback-area {
+  background-color:darksalmon;
+  color: black;
+}
+
+/*Set the padding of the feedback-area div */
+.qpyodide-output-feedback-area.has-content {
+  padding: 10px;
+}
+
+/*Set the border of the output-code-area div */
+.qpyodide-output-code-area.has-content {
+  border: 2px solid black;
+  padding: 10px;
+}
+
+/* Cap output height and allow text to scroll */
+/* TODO: Is there a better way to fit contents/max it parallel to the monaco editor size? */
+.reveal div.qpyodide-output-code-area pre {
+  max-height: 400px;
+  overflow: scroll;
+}
+
+.qpyodide-output-graph-area.has-content {
+  display: block; 
+  visibility: visible;
+  border: 2px solid black;
+  padding: 10px;
+}
+</style>
+<script type="module">
+// Document level settings ----
+
+// Determine if we need to install python packages
+globalThis.qpyodideInstallPythonPackagesList = [''];
+
+// Check to see if we have an empty array, if we do set to skip the installation.
+globalThis.qpyodideSetupPythonPackages = !(qpyodideInstallPythonPackagesList.indexOf("") !== -1);
+
+// Display a startup message?
+globalThis.qpyodideShowStartupMessage = true;
+
+// Describe the webR settings that should be used
+globalThis.qpyodideCustomizedPyodideOptions = {
+  "indexURL": "https://cdn.jsdelivr.net/pyodide/v0.29.0/full/",
+  "env": {
+    "HOME": "/home/pyodide",
+  }, 
+  stdout: (text) => {qpyodideAddToOutputArray(text, "out");},
+  stderr: (text) => {qpyodideAddToOutputArray(text, "error");}
+}
+
+// Store cell data
+globalThis.qpyodideCellDetails = [{"code":"# === Matplotlib (Pyodide) canonical pattern ===\n# import matplotlib.pyplot as plt\n# plt.close(\"all\")\n# fig, ax = plt.subplots(subplot_kw={'projection': '3d'})\n# ax.plot(...)\n# plt.show()\n# =============================================\nimport matplotlib.pyplot as plt\nimport numpy as np # Pakke brukt til numeriske beregninger\n\nplt.close(\"all\")\n\n# Bestem størelsen til plottet og at det skal være i 3D\nfig, ax = plt.subplots(subplot_kw={'projection': '3d'})\n\n# Lag et \"rutenett\" med 100x100 punkter i rektangelet [-3, 3] x [-3, 3]\nx, y = np.meshgrid(np.linspace(-3, 3, 100), np.linspace(-3, 3, 100))\n\n# Finn funksjonsverdiene for disse verdiene\nz = np.sin(x * y)\n\n# Plot overflaten\nax.plot_surface(x, y, z)\n\nplt.show()","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# === Matplotlib (Pyodide) canonical pattern ===\n# import matplotlib.pyplot as plt\n# plt.close(\"all\")\n# fig, ax = plt.subplots()\n# ax.plot(...)\n# plt.show()\n# =============================================\nimport matplotlib.pyplot as plt\nimport numpy as np # Pakke brukt til numeriske beregninger\n\nplt.close(\"all\")\n\n# Lag 100 punkter mellom -3 og 3\nt = np.linspace(-3,3,100)\n\n# Lag funksjonsverdiene for f(x+tn)\nz2 = np.sin(-2 - 3*t/np.sqrt(2) - t**2/2)\n\n# Plot funksjonen\nplt.plot(t, z2)\n\nplt.show()","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import matplotlib.pyplot as plt\nplt.close(\"all\")\n\n# Plotter f fra eksempelet over\n\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n\nfig, ax = plt.subplots()\nax = fig.add_subplot(111, projection='3d')\n\n# Lager gitter in polarkoordinater\nr = np.linspace(0.1, 1.25, 50)\np = np.linspace(0, 2*np.pi, 50)\nR, P = np.meshgrid(r, p)\n\n# Beregner f\nZ = -1/R\n\n# Uttrykker gitteret i vanlige (kartesiske koordinater).\nX, Y = R*np.cos(P), R*np.sin(P)\n\n# Plott overflaten.\nax.plot_surface(X, Y, Z, cmap=plt.cm.YlGnBu_r)\n\nplt.show()","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nplt.close(\"all\")\n\n# Plotter nabla f for eksempelet over (strømlinjer)\n\n# forskyver gitteret med 0.25 for å unngå problemet i origo, hvor nabla f ikke er definert\nx = 0.25+np.linspace(-5, 5, 21)\ny = 0.25+np.linspace(-5, 5, 21)\n\nX, Y = np.meshgrid(x, y)\n\n# U og V er henholdsvis x- og y- komponentene til nabla f(X,Y)\nU = X / ((X**2 + Y**2)**(3/2))\nV = Y / ((X**2 + Y**2)**(3/2))\n\n# plot\nfig, ax = plt.subplots()\n\nax.quiver(X, Y, U, V)\n\nplt.show()\n\nplt.show()","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+
+/* Set variable for backend 
+for Groq Server: "groq"
+for flask Server: "flask"*/
+globalThis.backend = "groq";
+
+/* Set if there should be a button for feedback
+with feedback button: true
+without feedback button: false */
+globalThis.feedback = false;
+</script>
+<script type="module">
+// Declare startupMessageqpyodide globally
+globalThis.qpyodideStartupMessage = document.createElement("p");
+
+// Function to set the button text
+globalThis.qpyodideSetInteractiveButtonState = function(buttonText, enableCodeButton = true) {
+  document.querySelectorAll(".qpyodide-button-run").forEach((btn) => {
+    btn.innerHTML = buttonText;
+    btn.disabled = !enableCodeButton;
+  });
+  document.querySelectorAll(".qpyodide-button-feedback").forEach((btn) => {
+    btn.disabled = !enableCodeButton;
+  });
+}
+
+// Function to update the status message in non-interactive cells
+globalThis.qpyodideUpdateStatusMessage = function(message) {
+  document.querySelectorAll(".qpyodide-status-text.qpyodide-cell-needs-evaluation").forEach((elem) => {
+    elem.innerText = message;
+  });
+}
+
+// Function to update the status message
+globalThis.qpyodideUpdateStatusHeader = function(message) {
+  qpyodideStartupMessage.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin qpyodide-icon-status-spinner"></i>
+    <span>${message}</span>`;
+}
+
+// Function that attaches the document status message
+function qpyodideDisplayStartupMessage(showStartupMessage) {
+  if (!showStartupMessage) {
+    return;
+  }
+
+  // Get references to header elements
+  const headerHTML = document.getElementById("title-block-header");
+  const headerRevealJS = document.getElementById("title-slide");
+
+  // Create the outermost div element for metadata
+  const quartoTitleMeta = document.createElement("div");
+  quartoTitleMeta.classList.add("quarto-title-meta");
+
+  // Create the first inner div element
+  const firstInnerDiv = document.createElement("div");
+  firstInnerDiv.setAttribute("id", "qpyodide-status-message-area");
+
+  // Create the second inner div element for "Pyodide Status" heading and contents
+  const secondInnerDiv = document.createElement("div");
+  secondInnerDiv.setAttribute("id", "qpyodide-status-message-title");
+  secondInnerDiv.classList.add("quarto-title-meta-heading");
+  secondInnerDiv.innerText = "";
+
+  // Create another inner div for contents
+  const secondInnerDivContents = document.createElement("div");
+  secondInnerDivContents.setAttribute("id", "qpyodide-status-message-body");
+  secondInnerDivContents.classList.add("quarto-title-meta-contents");
+
+  // here were API divs
+      
+  // Describe the Pyodide state
+  qpyodideStartupMessage.innerText = "Please wait. Python interpreter is loading. Status: 🟡 Loading...";
+  qpyodideStartupMessage.setAttribute("id", "qpyodide-status-message-text");
+  // Add `aria-live` to auto-announce the startup status to screen readers
+  qpyodideStartupMessage.setAttribute("aria-live", "assertive");
+
+  // Append the startup message to the contents
+  secondInnerDivContents.appendChild(qpyodideStartupMessage);
+
+  // Combine the inner divs and contents
+  firstInnerDiv.appendChild(secondInnerDiv);
+  firstInnerDiv.appendChild(secondInnerDivContents);
+  //firstInnerDiv.appendChild(thirdInnerDiv);
+  //firstInnerDiv.appendChild(fourthInnerDiv);
+  quartoTitleMeta.appendChild(firstInnerDiv);
+
+  // Determine where to insert the quartoTitleMeta element
+  if (headerHTML || headerRevealJS) {
+    // Append to the existing "title-block-header" element or "title-slide" div
+    (headerHTML || headerRevealJS).appendChild(quartoTitleMeta);
+  } else {
+    // If neither headerHTML nor headerRevealJS is found, insert after "Pyodide-monaco-editor-init" script
+    const monacoScript = document.getElementById("qpyodide-monaco-editor-init");
+    const header = document.createElement("header");
+    header.setAttribute("id", "title-block-header");
+    header.appendChild(quartoTitleMeta);
+    monacoScript.after(header);
+  }
+}
+
+qpyodideDisplayStartupMessage(qpyodideShowStartupMessage);
+</script>
+<script type="module">
+// Create a logging setup
+globalThis.qpyodideMessageArray = []
+
+// Add messages to array
+globalThis.qpyodideAddToOutputArray = function(message, type) {
+  qpyodideMessageArray.push({ message, type });
+}
+
+// Function to reset the output array
+globalThis.qpyodideResetOutputArray = function() {
+  qpyodideMessageArray = [];
+}
+
+globalThis.qpyodideRetrieveOutput = function() {
+  return qpyodideMessageArray.map(entry => entry.message).join('\n');
+}
+
+// Start a timer
+const initializePyodideTimerStart = performance.now();
+
+// Encase with a dynamic import statement
+globalThis.qpyodideInstance = await import(
+  qpyodideCustomizedPyodideOptions.indexURL + "pyodide.mjs").then(
+   async({ loadPyodide }) => {
+
+    console.log("Start loading Pyodide");
+    
+    // Populate Pyodide options with defaults or new values based on `pyodide`` meta
+    let mainPyodide = await loadPyodide(
+      qpyodideCustomizedPyodideOptions
+    );
+    
+    // Setup a namespace for global scoping
+    // await loadedPyodide.runPythonAsync("globalScope = {}"); 
+
+    // Add matplotlib
+    await mainPyodide.loadPackage("matplotlib");
+
+    // Set the backend for matplotlib to be interactive.
+    await mainPyodide.runPythonAsync(`
+    import matplotlib
+    from matplotlib import pyplot as plt
+    `);
+
+    // Unlock interactive buttons
+    qpyodideSetInteractiveButtonState(
+      `<i class="fa-solid fa-play qpyodide-icon-run-code"></i> <span>Run Code</span>`, 
+      true
+    ); 
+
+    if (qpyodideShowStartupMessage) {
+      qpyodideStartupMessage.innerText = "Python interpreter: 🟢 Ready!"
+    }
+
+    // Assign Pyodide into the global environment
+    globalThis.mainPyodide = mainPyodide;
+
+    console.log("Completed loading Pyodide");
+    return mainPyodide;
+  }
+);
+
+// Stop timer
+const initializePyodideTimerEnd = performance.now();
+
+// Create a function to retrieve the promise object.
+globalThis._qpyodideGetInstance = function() {
+    return qpyodideInstance;
+}
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      Matematikk 3A
+      </li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Matematikk 3A</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IDE</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Flyttall og lineær algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Del 1 – Funksjoner av flere variabler</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Optimering</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Del 1 – Funksjoner av flere variabler</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/loader.js"></script>
+<script type="module" id="qpyodide-monaco-editor-init">
+
+  // Configure the Monaco Editor's loader
+  require.config({
+    paths: {
+      'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs'
+    }
+  });
+</script>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Del 2 – Derivasjon i flere dimensjoner</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">2.1 Derivasjon i flere dimensjoner</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">2.2 Partiellderiverte</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">2.3 Gradient og retningsderiverte</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">2.4 Kjerneregelen</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">2.5 Andrederiverte</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="derivasjon" class="level1">
+<h1>Derivasjon</h1>
+<p>Vi begynner kalkulus for funksjoner av flere variabler med derivasjon.</p>
+<ol type="1">
+<li>Retningsderiverte (innføring)</li>
+<li>De partiell deriverte</li>
+<li>Retningsderiverte II og gradient</li>
+<li>Kjerneregel [ikke pensum]</li>
+<li>Den andre deriverte</li>
+</ol>
+<p><strong>Læringsmål:</strong></p>
+<ul>
+<li>Beregne de partiell deriverte og forstå deres betydning</li>
+<li>Beregne retningsderiverte og gradient</li>
+<li>Beregne den andre deriverte</li>
+</ul>
+<section id="retningsderiverte" class="level3">
+<h3 class="anchored" data-anchor-id="retningsderiverte">Retningsderiverte</h3>
+<p>La oss begynne med en funksjon <span class="math inline">\(f:\mathbb{R}^2\rightarrow\mathbb{R}.\)</span></p>
+<p>Vi er vant til å tenke på den deriverte som en vekstrate/stigningstall. Hva vil det i så fall være i to dimensjoner? Står vi på en fjellside, er det klart at hvor bratt terrenget er avhengig av hvilken retning vi går i. Det samme gjelder for andre funksjoner. Så vi må oppgi en retning for å snakke om den deriverte i flere dimensjoner. Om vi skriver dette formelt får vi:</p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial \vec{n}}(\vec{x}) = \left.\frac{d}{dt}f(\vec{x} + t\vec{n})\right|_{t=0} =  \lim_{t\rightarrow 0} \frac{f(\vec{x}+t\vec{n}) - f(\vec{x})}{t}.
+\]</span></p>
+<p>Vi sier at <span class="math inline">\(\frac{\partial f}{\partial \vec{n}}(\vec{x})\)</span> er <em>den retningsderiverte</em> til <span class="math inline">\(f\)</span> i punktet <span class="math inline">\(\vec{x}\)</span> i retningen<span class="math inline">\(\vec{n}\)</span>.</p>
+<p>Det er vanlig å bruke enhetsvektorer når vi snakker om en retning. Alle vektorer (bortsett fra nullvektor) har derimot en retning, og vi finner denne ved å dele vektoren på lengden.</p>
+<p>Det er også vanlig å skrive <span class="math inline">\(\operatorname{D}_{\vec{n}}(f)\)</span> for den retningsderiverte. Det er dette som er skrivemåten du stort sett vil se i forelesningene og i oppgavene.</p>
+</section>
+<section id="eksempel" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel">Eksempel</h3>
+<p>La oss se hvordan det fungerer for funksjonen <span class="math inline">\(f(x,y)=\sin(xy)\)</span>.</p>
+<p>La <span class="math inline">\(\vec{n}\)</span> være retningen <span class="math inline">\(\vec{n} = \frac{1}{\sqrt{2}}(1,-1)\)</span> og la <span class="math inline">\(\vec{x}\)</span> være punktet <span class="math inline">\(\vec{x} = (2,-1)\)</span>. Da er <span class="math display">\[
+\vec{x} + t\vec{n} = \begin{pmatrix}
+2 + \frac{1}{\sqrt{2}}t \\
+-1  -\frac{1}{\sqrt{2}}t
+\end{pmatrix},
+\]</span></p>
+<p>og</p>
+<p><span class="math display">\[
+f(\vec{x}+t\vec{n}) = \sin\left(\left(2 + \frac{1}{\sqrt{2}}t \right)\left(-1  -\frac{1}{\sqrt{2}}t\right)\right) = \sin\left(-2-\frac{3}{\sqrt{2}}t-t^2/2\right).
+\]</span></p>
+<p>Siden <span class="math inline">\(f(\vec{x}+t\vec{n})\)</span> er en vanlig envariabelfunksjon som vi kjenner fra matematikk 1, så kan vi beregne den deriverte til <span class="math inline">\(f(\vec{x}+t\vec{n})\)</span> med hensyn på <span class="math inline">\(t\)</span> og ved å bruke kjerneregelen. Vi får da</p>
+<p><span class="math display">\[
+\frac{df}{dt} = (-t-3/\sqrt{2})\cos\left(-2-\frac{3}{\sqrt{2}}t-t^2/2\right).
+\]</span></p>
+<p>Setter vi inn for <span class="math inline">\(t=0\)</span> får vi at den retningsderiverte er</p>
+<p><span class="math display">\[
+\left.\frac{d}{dt}f(\vec{x} + t\vec{n})\right|_{t=0} = -\frac{3}{\sqrt{2}}\cos\left(-2\right)=-\frac{3}{\sqrt{2}}\cos\left(2\right)\approx 0.8828.
+\]</span></p>
+<p>Vi viser funksjonene <span class="math inline">\(f(x,y)\)</span> og <span class="math inline">\(f(\vec{x}+t\vec{n})\)</span> i koden under:</p>
+<div id="qpyodide-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Som vi ser fra grafen, så er stigningstallet i punktet <span class="math inline">\(t=0\)</span> omtrent lik $ .f( + t)|_{t=0} . $</p>
+<p>Om vi nå ønsker finne den retningsderiverte i en annen retning eller i et annet punkt, så må vi gå igjennom hele denne prossesen på nytt. Heldigvis finnes det en lettere måte å regne ut den retningsderiverte på enn metoden vi viste over. Dette kommer vi til å lære om i seksjon 2_3.</p>
+</section>
+<section id="oppgave" class="level3">
+<h3 class="anchored" data-anchor-id="oppgave">Oppgave:</h3>
+<ol type="1">
+<li>Finn den retningsderiverte til funksjonen <span class="math inline">\(f\)</span> i punktet <span class="math inline">\(\vec{x}=(0,1)\)</span> i retningen <span class="math inline">\(\vec{n}=(1,0)\)</span>.</li>
+<li>Modifiser koden over til å plotte funksjonen langs denne retningen. Stemmer svarene dine overens?</li>
+<li>I vårt eksempel har vi tatt <span class="math inline">\(\vec{n}\)</span> til å være en <em>enhetsvektor</em>, dvs <span class="math inline">\(||\vec{n}||=1\)</span>. Hva skjer hvis vi velger en vektor med en annen størrelse? For eksempel om <span class="math inline">\(\vec{n}=(3,0)\)</span>?</li>
+</ol>
+</section>
+</section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<section id="de-partiellderiverte" class="level1">
+<h1>De partiellderiverte</h1>
+<p>Det viser seg at det er lettest å jobbe med retningsderiverte langs koordinataksene. Disse heter de <em>partiellderiverte</em>. Vi forkuserer på beregninger og tolkninger av de partiellederiverte. I arket <em>2_3 - Gradient og retningsderverte</em>, skal vi bruke de partiellderiverte til å finne andre generelle retningsderiverte på en enkel måte.</p>
+<section id="definisjon-og-grafisk-tolkning" class="level3">
+<h3 class="anchored" data-anchor-id="definisjon-og-grafisk-tolkning">Definisjon og grafisk tolkning</h3>
+<p>La <span class="math inline">\(f:\mathbb{R}^2\to \mathbb{R}\)</span> være en funksjon.</p>
+<p>Den partiellderiverte <span class="math inline">\(\frac{\partial f}{\partial x} (x, y)\)</span> defineres som den deriverte av <span class="math inline">\(f (x, y)\)</span> når <span class="math inline">\(y\)</span> betraktes som konstant. Ekvivalent kan vi definere det som den retningsderiverte i punktet <span class="math inline">\((x,y)\)</span> i retningen <span class="math inline">\(\vec{e_1}=(1,0)\)</span>.</p>
+<p>Likedan er <span class="math inline">\(\frac{\partial f}{\partial y}(x, y)\)</span> den deriverte når <span class="math inline">\(x\)</span> betraktes som konstant. Den ekvivalente definisjonen i dette tilfellet er da at <span class="math inline">\(\frac{\partial f}{\partial y}(x, y)\)</span> kan betraktes som den retningsderiverte i punktet <span class="math inline">\((x,y)\)</span> i retningen <span class="math inline">\(\vec{e_2}=(0,1)\)</span>.</p>
+<p>Den geometriske tolkningen av <span class="math inline">\(\frac{\partial f}{\partial x} (x, y)\)</span> er at dette er stigningstallet i et tverrsnitt som går langs <span class="math inline">\(x\)</span>-aksen. Samme gjelder for <span class="math inline">\(\frac{\partial f}{\partial y} (x, y)\)</span>, bare da langs <span class="math inline">\(y\)</span>-aksen. La oss gjøre det hele mer konkret ved å se på noen eksempler.</p>
+</section>
+<section id="eksempler" class="level3">
+<h3 class="anchored" data-anchor-id="eksempler">Eksempler</h3>
+</section>
+<section id="eksempel-1" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-1">Eksempel 1</h3>
+<p>Vi ønsker å finne de partiellderiverte til funksjonen <span class="math inline">\(f:\mathbb{R}^2\to \mathbb{R}\)</span> definert som <span class="math inline">\(f (x, y) = x y\)</span>. Som nevnt over, kan vi beregne de partiellderiverte akkurat som den ordinære deriverte, da vi holder de variablene som ikke skal deriveres konstant.</p>
+<p>Dermed er de partiellderiverte gitt ved <span class="math display">\[\frac{\partial f}{\partial x} (x, y)=\frac{\partial (xy)}{\partial x}=y\frac{\partial x}{\partial x}   = y\]</span> og <span class="math display">\[\frac{\partial f}{\partial y} (x, y)=\frac{\partial (xy)}{\partial y}=x\frac{\partial y}{\partial y}   = x.\]</span></p>
+</section>
+<section id="eksempel-2" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-2">Eksempel 2</h3>
+<p>La oss denne gangen ta for oss de partiellderiverte til funksjonen <span class="math inline">\(g (x, y) = x^3 y^2\)</span>.</p>
+<p>Da er de partiellderiverte gitt ved <span class="math display">\[\frac{\partial g}{\partial x} (x, y)=\frac{\partial (x^3 y^2)}{\partial x} =y^2\frac{\partial x^3 }{\partial x}  = 3 x^2 y^2\]</span> og <span class="math display">\[\frac{\partial g}{\partial y} (x, y)=\frac{\partial (x^3 y^2)}{\partial y} =x^3\frac{\partial y^2 }{\partial y}  = 2 x^3 y.\]</span></p>
+</section>
+<section id="eksempel-3" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-3">Eksempel 3</h3>
+<p>Siste eksempel vi kommer til å gå igjenom er <span class="math inline">\(h(x,y) = \sin(xy).\)</span> Vi beregner ved å bruke kjerneregelen at <span class="math display">\[\frac{\partial h}{\partial x}(x,y) =\frac{\partial \sin(xy)}{\partial x}= y\cos(xy).\]</span> En lignende beregning gir oss at <span class="math display">\[\frac{\partial h}{\partial y}(x,y)=\frac{\partial \sin(xy)}{\partial y} = x\cos(xy).\]</span></p>
+</section>
+</section>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<section id="den-deriverte-som-en-lineær-avbildning" class="level1">
+<h1>Den deriverte som en lineær avbildning</h1>
+<p><em>En del av denne teksten ligger på et litt høyere nivå enn det vi forventer i dette kurset. Hvis du synes det blir for vanskelig så henviser vi til forelesningsnotatene</em></p>
+<p>Anta at vi har en funksjon <span class="math inline">\(f:\mathbb{R}^m\rightarrow\mathbb{R}\)</span>. Som vi lærte i 2_1, er den retningsderiverte</p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial \vec{n}}(\vec{x})
+\]</span></p>
+<p>både avhengig av <span class="math inline">\(\vec{x}\)</span>, som beskriver hvor vi er i rommet, og <span class="math inline">\(\vec{n}\)</span>, som beskriver retning vi tar den deriverte i. Så vi kan tenkte på den retningsderiverte som en funksjon av både <span class="math inline">\(\vec{x}\)</span> og <span class="math inline">\(\vec{n}\)</span>.</p>
+<p>Det viser seg at om vi holder <span class="math inline">\(\vec{x}\)</span> fast og ser på retningseriverte som en funksjon av retning <span class="math inline">\(\vec{n}\)</span> så får vi en lineærtransformasjon. Om vi beskriver lineærtransformasjonen på matriseform så får vi det vi kommer til å kalle <em>gradienten</em> i punktet <span class="math inline">\(\vec{x}\)</span>. I dette jupyternotatet skal vi vise hvordan:</p>
+<ol type="1">
+<li>vi kan utrykke den retningsderiverte via de partiellderiverte.</li>
+<li>tolke den deriverte som en funksjon gitt som <span class="math inline">\(\nabla f (\vec{x}):\mathbb{R}^m\to \mathbb{R}^m\)</span>.</li>
+</ol>
+<section id="den-deriverte-som-funksjon-av-retningen-vecn" class="level3">
+<h3 class="anchored" data-anchor-id="den-deriverte-som-funksjon-av-retningen-vecn">1. Den deriverte som funksjon av retningen <span class="math inline">\(\vec{n}\)</span></h3>
+<p>La oss forklare det første punktet mer detaljert. La oss si at vi har en funksjon <span class="math inline">\(f:\mathbb{R}^m\to\mathbb{R}\)</span>. Som vi sa i introduksjonen, er <span class="math inline">\(\frac{Df}{D\vec{x}}\)</span> gitt som</p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial \vec{n}}= \frac{Df}{D\vec{x}}(\vec{n})
+\]</span> en lineær transformasjon i <span class="math inline">\(\vec{n}\)</span>. Det er også vanlig å bruke notasjonen <span class="math inline">\(Df\)</span>. Transformasjonen <span class="math inline">\(Df\)</span> kaller vi den <em>deriverte</em> av funksjonen <span class="math inline">\(f\)</span>. Dessverre finnes det mange andre alternative notasjoner for den deriverte, men den vi har valgt er den vanligste.</p>
+<p>Som vi vet fra “matematikk 1”, kan vi skrive alle lineærtransformasjoner på matriseform. La oss gjøre dette når <span class="math inline">\(m=2\)</span>. Da er enhetsvektorene gitt som <span class="math inline">\(\vec{e}_x = (1,0)\)</span> og <span class="math inline">\(\vec{e}_y = (0,1)\)</span>. Som vi vet fra 2_3, er definisjonen av de partiellderiverte</p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial \vec{e}_x} = \frac{\partial f}{\partial x}, \quad
+\frac{\partial f}{\partial \vec{e}_y} = \frac{\partial f}{\partial y}.
+\]</span></p>
+<p>Husk at enhver lineær transformasjon <span class="math inline">\(T:\mathbb{R}^2\rightarrow\mathbb{R}\)</span> tar matriseformen <span class="math display">\[
+T = \big[
+T(\vec{e}_x), T(\vec{e}_y)
+\big].
+\]</span></p>
+<p>I praksis betyr det at det er nok å vite de partiellderiverte <span class="math inline">\(\frac{\partial f}{\partial x}\)</span> og <span class="math inline">\(\frac{\partial f}{\partial y}\)</span> for å finne den deriverte i hvilket som helst retning <span class="math inline">\(\vec{n}\)</span>. Vi får nemlig</p>
+<p><span class="math display">\[
+\frac{Df}{D\vec{x}} = \left( \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}\right).
+\]</span></p>
+<p>Det fungerer for funksjoner for <span class="math inline">\(f:\mathbb{R}^m\to \mathbb{R}\)</span>. Om vi går igjennom samme prosedyre på nytt får vi at</p>
+<p><span class="math display">\[
+\frac{Df}{D\vec{x}} = \left( \frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2},
+\ldots, \frac{\partial f}{\partial x_m}\right).
+\]</span></p>
+</section>
+<section id="utregning-av-retningsderiverte-med-de-partielle-deriverte" class="level3">
+<h3 class="anchored" data-anchor-id="utregning-av-retningsderiverte-med-de-partielle-deriverte">Utregning av retningsderiverte med de partielle deriverte</h3>
+<p>Analysen over er nøkkelen til å beregne alle retningsderiverte ved de partielle deriverte. Vi har nemlig at for at en funksjon <span class="math inline">\(f:\mathbb{R}^2\to \mathbb{R}\)</span> er den retningsderiverte</p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial \vec{n}}=\frac{Df}{D\vec{x}}(\vec{n}) =  \left( \frac{\partial
+   f}{\partial x}, \frac{\partial f}{\partial y} \right)\cdot \vec{n}.
+\]</span> Om vi ønsker å finne den retningsderiverte i et bestemt punkt <span class="math inline">\(\vec{x}_0\)</span>, får vi nå <span class="math display">\[
+\frac{\partial f}{\partial \vec{n}}(\vec{x}_0) =  \left( \frac{\partial
+   f}{\partial x}(\vec{x}_0), \frac{\partial f}{\partial y}(\vec{x}_0) \right)\cdot \vec{n}.
+\]</span> Vi har også den mer generelle formelen for en funksjon <span class="math inline">\(f:\mathbb{R}^m\to \mathbb{R}\)</span> hvor den retningsderiverte kan skrives som <span class="math display">\[
+\frac{\partial f}{\partial \vec{n}} =  \left( \frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2},
+\ldots, \frac{\partial f}{\partial x_m}\right) \cdot \vec{n}.
+\]</span> På samme måte får vi nå at den retningsderiverte i et bestemt punkt <span class="math inline">\(\vec{x}_0\)</span> er <span class="math display">\[
+\frac{\partial f}{\partial \vec{n}}(\vec{x}_0) =  \left(\frac{\partial f}{\partial x_1}(\vec{x}_0), \frac{\partial f}{\partial x_2}(\vec{x}_0),
+\ldots, \frac{\partial f}{\partial x_m}(\vec{x}_0) \right)\cdot \vec{n}.
+\]</span></p>
+</section>
+<section id="eksempel-1-1" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-1-1">Eksempel 1</h3>
+<p>La oss bruke denne metoden til å finne den retningsderiverte til <span class="math inline">\(f(x,y) = x^2 y\)</span> i retningen <span class="math inline">\(\vec{n} = \frac{1}{\sqrt{5}}(1,-2)\)</span> og punktet <span class="math inline">\(\vec{x}=(-1,1)\)</span>.</p>
+<p>Om vi først finner de partiellderiverte får vi at <span class="math display">\[
+\frac{\partial f}{\partial x} = 2xy,\quad \text{og} \quad
+\frac{\partial f}{\partial y} = x^2.
+\]</span> Dermed er <span class="math display">\[
+\left(\frac{\partial f}{\partial x}(-1,1),
+\frac{\partial f}{\partial y}(-1,1)\right) =(-2, 1) .
+\]</span></p>
+<p>Bruker formelen over får vi at den retningsderiverte er <span class="math display">\[
+\frac{\partial f}{\partial \vec{n}}(-1, 1) =
+(-2, 1)\cdot \frac{1}{\sqrt{5}}(1,-2)
+= \frac{1}{\sqrt{5}}(-2\cdot 1 + 1\cdot (-2)) = \frac{-4}{\sqrt{5}}.
+\]</span></p>
+</section>
+<section id="den-deriverte-som-en-funksjon-av-posisjon-vecx-gradient" class="level3">
+<h3 class="anchored" data-anchor-id="den-deriverte-som-en-funksjon-av-posisjon-vecx-gradient">2. Den deriverte som en funksjon av posisjon <span class="math inline">\(\vec{x}\)</span>: gradient</h3>
+<p>Vi har sett at den deriverte <span class="math inline">\(\frac{Df}{D\vec{x}}(\vec{x})\)</span> av en skalar funksjon <span class="math inline">\(f(\vec{x}):\mathbb{R}^m \rightarrow \mathbb{R}\)</span> på et bestemt punkt <span class="math inline">\(\vec{x}\)</span> er en radvektor.</p>
+<p>Avbildning <span class="math inline">\(\vec{x}\mapsto \frac{Df}{d\vec{x}}(\vec{x})\)</span> er da en vektor funksjon <span class="math inline">\(\mathbb{R}^m\rightarrow\mathbb{R}^m\)</span>. Den kalles for <strong>gradient</strong> og skrives ofte</p>
+<p><span class="math display">\[
+\nabla f(\vec{x}) = \begin{pmatrix}
+\frac{\partial f}{\partial x_1} \\
+\frac{\partial f}{\partial x_2} \\
+\vdots \\
+\frac{\partial f}{\partial x_m}
+\end{pmatrix}
+\]</span></p>
+<p><strong>Obs! Det er vanlig i denne sammenheng å skrive den som en kolonnevektor, altså <span class="math inline">\(\nabla f(\vec{x}) = (\frac{Df}{d\vec{x}})^T\)</span>. Vi har da</strong></p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial \vec{n}} = \frac{Df}{d\vec{x}}(\vec{n}) = \vec{n}^T \nabla f = \vec{n}\cdot \nabla f
+\]</span></p>
+<p><strong>siden <span class="math inline">\((AB)^T = B^T A^T\)</span> for alle matrise <span class="math inline">\(A,B\)</span>. Denne konflikt i notasjon kan være forvirrende, men jeg finner ingen utvei. Vi velger vår måte å gjøre det siden det gjør kjerneregelen lettere å forstå.</strong></p>
+</section>
+<section id="eksempel-2-1" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-2-1">Eksempel 2</h3>
+<p>La oss tilbake til <span class="math inline">\(f(x,y)=x^2 y\)</span> fra eksempel 1. Vi beregnet de partielle deriverte</p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial x} = 2xy, \quad
+\frac{\partial f}{\partial y} = x^2
+\]</span></p>
+<p>Vi får gradienten ved å sette dem opp i en vektor:</p>
+<p><span class="math display">\[
+\nabla f(x,y) = \begin{pmatrix}
+2xy \\
+x^2
+\end{pmatrix}
+\]</span></p>
+</section>
+<section id="eksempel-3-1" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-3-1">Eksempel 3</h3>
+<p>La <span class="math inline">\(f(x) = -\frac{1}{\sqrt{x^2 + y^2}} = -(x^2 + y^2)^{-\frac{1}{2}}\)</span>. Da er</p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial x} = 2x \cdot -\frac{-1}{2}(x^2 + y^2)^{-\frac{3}{2}}
+\]</span> <span class="math display">\[
+\frac{\partial f}{\partial y} = 2y \cdot -\frac{-1}{2}(x^2 + y^2)^{-\frac{3}{2}}
+\]</span></p>
+<p>Slik at <span class="math display">\[
+\nabla f(\vec{x}) = \begin{pmatrix}
+\frac{x}{(x^2 + y^2)^{\frac{3}{2}}} \\
+\frac{y}{(x^2 + y^2)^{\frac{3}{2}}}
+\end{pmatrix}
+=
+\frac{\vec{x}}{||\vec{x}||^3}
+\]</span></p>
+</section>
+<section id="tolkning" class="level3">
+<h3 class="anchored" data-anchor-id="tolkning">Tolkning</h3>
+<p>Hva er isåfall vektoren <span class="math inline">\(\nabla f(\vec{x})\)</span>?</p>
+<p>Svaret er at den peker i retningen hvor funksjonen øker fortest. En mer jordnær tolkning er at hvis funksjonen <span class="math inline">\(f(x,y)\)</span> viser høyden over bakken i punktet <span class="math inline">\(\vec{x}\)</span>, så viser <span class="math inline">\(\nabla f(\vec{x})\)</span> retningen som er brattest. En (ekstremt dyktig!) klatrer vil da alltid følge gradienten i sin ferd oppover.</p>
+<p>Tilbake til funksjonen over. Det viser at <span class="math inline">\(f(x)\)</span> er en (uendelig) dyp symmetrisk “brønn” (se under). For å komme fortest mulig ut, følger vi <span class="math inline">\(\nabla f(\vec{x})\)</span>, som peker i retning <span class="math inline">\(\vec{x}\)</span>, dvs bort fra origoen. Vi klatrer da i en rett linje (se eksempel 4 under bildene).</p>
+<p>Ekstra forklaring: i polarkoordinater hvor <span class="math inline">\(r\)</span> er avstand fra origo og <span class="math inline">\(\theta\)</span> vinkelen, er <span class="math inline">\(f(r,\theta) = -\frac{1}{r}\)</span>. Forøvrig har vi <span class="math display">\[
+\nabla f(r,\theta) = \frac{1}{r^2} \vec{e}_r,
+\]</span> hvor <span class="math inline">\(\vec{e}_r\)</span> er basis vektoren som peker bort fra origoen. Det er et ekstremt viktig eksempel i fysikk da det forklarer en invers kvadratlov, kjent fra blant annet tyngdekraft (Newtons lov) og elektrolære (Coulombs lov). Her er <span class="math inline">\(f\)</span> <em>potentialet</em> og <span class="math inline">\(\nabla f\)</span> kraftfeltet.</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qpyodide-insertion-location-4"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="eksempel-4-klatring-gradient-ascentdescent" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-4-klatring-gradient-ascentdescent">Eksempel 4: Klatring (Gradient ascent/descent)</h3>
+<p>Pilene over viser gradienten til funksjonen fra Eksempel 3, altså <span class="math display">\[
+\nabla f(\vec{x}) = \begin{pmatrix}
+\frac{x}{(x^2 + y^2)^{\frac{3}{2}}} \\
+\frac{y}{(x^2 + y^2)^{\frac{3}{2}}}
+\end{pmatrix}
+=
+\frac{\vec{x}}{||\vec{x}||^3}
+\]</span></p>
+<p>Den peker alltid i retning bort fra origo. Lengden på pilene er altså <span class="math inline">\(\frac{1}{r^2}\)</span>, hvor <span class="math inline">\(r\)</span> er avstand til origo. Det blir veldig stort når vi nærmere oss origoen, siden brønnen blir brattere og brattere.</p>
+<p>La oss anta at klatreren står i punktet <span class="math inline">\(\vec{x}=(3,4)^T\)</span>.</p>
+<p>Da blir <span class="math inline">\(||(3,4)||=\sqrt{3^2+4^2}=5\)</span>, slik at</p>
+<p><span class="math display">\[
+\nabla f(3,4) = \frac{(3,4)^T}{5^3} = \frac{1}{125}
+\begin{pmatrix}
+3 \\
+4
+\end{pmatrix}
+\]</span></p>
+<p>En vanlig metode i optimering innebærer å klatre opp/ned en viss avstand i samme retning som gradienten, mer presist å dra fra <span class="math inline">\(\vec{x}\)</span> til</p>
+<p><span class="math display">\[
+\vec{x} + h\nabla f(\vec{x}).
+\]</span></p>
+<p>Hvis vi gjør det med <span class="math inline">\(h=5\)</span> i dette tilfelle havner vi på</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+3 \\
+4
+\end{pmatrix}
++ 5 \cdot
+\frac{1}{125}
+\begin{pmatrix}
+3 \\
+4
+\end{pmatrix}
+= \begin{pmatrix}
+3.12 \\
+4.16
+\end{pmatrix}.
+\]</span></p>
+<p>Vi kan gjenta steget så mange ganger vi vil. I dette tilfelle bytter vi ikke retning, men for mer kompliserte funksjoner vil retningen typisk endrer seg fra steg til steg.</p>
+</section>
+</section>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<section id="kjerneregelen-1" class="level1">
+<h1>Kjerneregelen</h1>
+<p>Obs! Dette er ikke pensum (kommer ikke på eksamen).</p>
+<p>Formålet her er å vise at kjerneregelen <span class="math display">\[
+\frac{df}{dx} = \frac{df}{dg}\frac{dg}{dx}
+\]</span> holder også i flere dimensjoner. I denne sammenheng vil vi tenke på den deriverte <span class="math inline">\(\frac{Df}{Dx}\)</span> som en lineær avbildning, slik som den forrige notaten. Kort fortalt vil kjerneregelen da ta nøyaktig samme form som over. Vi viser to tilfeller:</p>
+<ol type="1">
+<li>Den derivert langs en parametrisk kurve (også kalt den totale deriverte)</li>
+<li>Variablebytte og den deriverte</li>
+</ol>
+<section id="derivasjon-mhp-en-parameter-total-deriverte" class="level3">
+<h3 class="anchored" data-anchor-id="derivasjon-mhp-en-parameter-total-deriverte">Derivasjon mhp en parameter (total deriverte)</h3>
+<p>Hvis vi har en funksjon <span class="math display">\[
+\vec{x} = \begin{pmatrix}
+x(t) \\
+y(t)
+\end{pmatrix}
+\]</span></p>
+<p>Og vil finne ut <span class="math inline">\(\frac{df}{dt}\)</span>, når <span class="math inline">\(f(t) = f\big(x(t),y(t) \big)\)</span>, blir kjerneregelen multiplikasjon:</p>
+<p><span class="math display">\[
+\frac{df}{dt} = \frac{Df}{D\vec{x}} \frac{d\vec{x}}{dt} =
+\begin{pmatrix}
+\frac{\partial f}{\partial x} &amp; \frac{\partial f}{\partial y}
+\end{pmatrix}
+\begin{pmatrix}
+\frac{dx}{dt} \\
+\frac{dy}{dt}
+\end{pmatrix}
+= \frac{\partial f}{\partial x} \frac{dx}{dt} + \frac{\partial f}{\partial y}\frac{dy}{dt}
+\]</span></p>
+</section>
+<section id="eksempel-1-2" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-1-2">Eksempel 1</h3>
+<p>La <span class="math inline">\(x(t) = \cos(t), y(t)=\sin(t)\)</span>, og <span class="math inline">\(f(x,y)=2x^2 + y\)</span>.</p>
+<p>Da har vi <span class="math display">\[
+\frac{\partial f}{\partial x} = 4x = 4\cos(t), \quad \frac{\partial f}{\partial y} = 1.
+\]</span></p>
+<p>I tilleg har vi <span class="math display">\[
+\frac{dx}{dt} = -\sin(t), \quad \frac{dy}{dt} = \cos(t).
+\]</span></p>
+<p>Da blir <span class="math display">\[
+\frac{df}{dt} = \frac{\partial f}{\partial x} \frac{dx}{dt} + \frac{\partial f}{\partial y}\frac{dy}{dt}
+= 4\cos(t)\cdot (-\sin(t)) + 1\cdot\cos(t) = \cos(t)\big(1-4\sin(t)\big).
+\]</span></p>
+</section>
+<section id="variabelbytte" class="level3">
+<h3 class="anchored" data-anchor-id="variabelbytte">Variabelbytte</h3>
+<p>Det kan også gjøres med matrisemultiplikasjon, men her vil en variabelbytte <span class="math inline">\(g:\mathbb{R}^2\rightarrow\mathbb{R}^2\)</span> være en funksjon av type vi fokusere på i matte 3. Dens deriverte blir en matrise:</p>
+<p><span class="math display">\[
+\frac{D\vec{g}}{D\vec{x}} = \begin{pmatrix}
+\frac{\partial g_1}{\partial x} &amp; \frac{g_1}{\partial y} \\
+\frac{\partial g_2}{\partial x} &amp; \frac{g_2}{\partial y}
+\end{pmatrix}
+\]</span></p>
+<p>Da får vi</p>
+<p><span class="math display">\[
+\frac{D\vec{f}}{D\vec{x}} =
+\frac{D\vec{f}}{D\vec{g}}\frac{D\vec{g}}{D\vec{x}}
+=
+\begin{pmatrix}
+\frac{\partial f}{\partial g_1} &amp;
+\frac{\partial f}{\partial g_2}
+\end{pmatrix}
+\begin{pmatrix}
+\frac{\partial g_1}{\partial x} &amp; \frac{g_1}{\partial y} \\
+\frac{\partial g_2}{\partial x} &amp; \frac{g_2}{\partial y}
+\end{pmatrix}
+\]</span></p>
+<p>Matrisen over er ofte kalt <strong>Jacobimatrisen</strong>.</p>
+</section>
+<section id="polarkoordinater" class="level3">
+<h3 class="anchored" data-anchor-id="polarkoordinater">Polarkoordinater</h3>
+<p>Transformasjonen fra kartesiske til polarkoordinater tar formen</p>
+<p><span class="math display">\[x = r\cos\theta, \quad y=r\sin\theta\]</span></p>
+<p>Vi har altså <span class="math display">\[
+\frac{\partial x}{\partial r} = \cos\theta, \quad \frac{\partial x}{\partial \theta} = -r\sin\theta
+\]</span> <span class="math display">\[
+\frac{\partial y}{\partial r} = \sin\theta, \quad \frac{\partial x}{\partial \theta} = r\cos\theta
+\]</span> Vi har da <span class="math display">\[
+J = \begin{pmatrix}
+\cos\theta &amp; -r\sin\theta \\
+\sin\theta &amp; r\cos\theta
+\end{pmatrix}
+\]</span></p>
+</section>
+<section id="eksempel-2-2" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-2-2">Eksempel 2</h3>
+<p>La oss se på <span class="math inline">\(f(r,\theta)=\cos(\theta)\)</span>. Vi har <span class="math display">\[
+\frac{\partial f}{\partial r} = 0, \quad \frac{\partial f}{\partial \theta} = -\sin\theta,
+\]</span> slik at <span class="math display">\[
+\frac{Df}{D\vec{x}} = \begin{pmatrix}
+0 &amp; -\sin\theta
+\end{pmatrix}
+\begin{pmatrix}
+\cos\theta &amp; -r\sin\theta \\
+\sin\theta &amp; r\cos\theta
+\end{pmatrix}
+=
+\begin{pmatrix}
+-\sin^2(\theta) &amp; r\sin\theta\cos\theta
+\end{pmatrix}
+\]</span></p>
+</section>
+</section>
+</div>
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<section id="den-andrederiverte" class="level1">
+<h1>Den andrederiverte</h1>
+<p>Hva skjer når vi derivere en funksjon <span class="math inline">\(f:\mathbb{R}^2\rightarrow\mathbb{R}\)</span> to ganger?</p>
+<p>Siden <span class="math inline">\(\frac{\partial f}{\partial \vec{n}} (x, y)\)</span> er en funksjon <span class="math inline">\(\mathbb{R }^2\rightarrow\mathbb{R }\)</span>, kan vi derivere den med hensyn på en annen retning <span class="math inline">\(\vec{m}\)</span>. Vi får da den andrederiverte <span class="math inline">\(\frac{\partial^2f}{\partial \vec{n} \partial \vec{m}}\)</span>. Akkurat som før er det nok å kun beregne de partiellderiverte</p>
+<p><span class="math display">\[
+H =
+\left(\begin{array}{cc}
+     \frac{\partial^2 f}{\partial x^2} &amp; \frac{\partial^2 f}{\partial x
+     \partial y}\\
+     \frac{\partial^2 f}{\partial y \partial x} &amp; \frac{\partial^2 f}{\partial
+     y^2}
+   \end{array}\right)
+\]</span></p>
+<p>Vi har ikke samlet de i en matrise <span class="math inline">\(H\)</span> (som heter <em>Hessematrisen</em>) uten grunn! Generelt er den andrederiverte lik</p>
+<p><span class="math display">\[
+\frac{\partial^2 f}{\partial \vec{n} \partial \vec{m}} =
+   \left(\begin{array}{cc}
+     n_x &amp; n_y
+   \end{array}\right) \left(\begin{array}{cc}
+     \frac{\partial^2 f}{\partial x^2} &amp; \frac{\partial^2 f}{\partial x
+     \partial y}\\
+     \frac{\partial^2 f}{\partial y \partial x} &amp; \frac{\partial^2 f}{\partial
+     y^2}
+   \end{array}\right) \left(\begin{array}{c}
+     m_x\\
+     m_y
+   \end{array}\right)
+\]</span></p>
+<p>Det viser seg at (<em>stort sett, se eksempel 2 under</em>) <span class="math inline">\(\frac{\partial^2f}{\partial y \partial x}\)</span>=<span class="math inline">\(\frac{\partial^2 f}{\partial x \partial y}\)</span>. Det betyr at Hessematrisen er symmetrisk, og at rekkefølgen av retningene ikke har noe å si, altså</p>
+<p><span class="math display">\[
+\frac{\partial^2 f}{\partial \vec{n} \partial \vec{m}} = \frac{\partial^2
+   f}{\partial \vec{m} \partial \vec{n}}
+\]</span></p>
+<section id="eksempel-1-3" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-1-3">Eksempel 1</h3>
+<p>La <span class="math inline">\(f(x,y) = \exp(-x)\sin{y} + 2x + y^2\)</span>.</p>
+<p>Da er <span class="math display">\[
+\frac{\partial f}{\partial x} = -\exp(-x)\sin{y} + 2, \quad
+\frac{\partial f}{\partial y} = \exp(-x)\cos{y} + 2y
+\]</span></p>
+<p>Slik at <span class="math display">\[
+\frac{\partial^2 f}{\partial x^2} = \frac{\partial}{\partial x} \frac{\partial f}{\partial x}
+= \frac{\partial}{\partial x} \big( -\exp(-x)\sin{y} + 2 \big) = \exp(-x)\sin{y}
+\]</span> <span class="math display">\[
+\frac{\partial^2 f}{\partial y \partial x} = \frac{\partial}{\partial y} \frac{\partial f}{\partial x}
+= \frac{\partial}{\partial y} \big( -\exp(-x)\sin{y} + 2 \big) = -\exp(-x)\cos{y}
+\]</span> <span class="math display">\[
+\frac{\partial^2 f}{\partial x\partial y} = \frac{\partial}{\partial x} \frac{\partial f}{\partial y}
+= \frac{\partial}{\partial x} \big( \exp(-x)\cos{y} + 2y \big) = -\exp(-x)\cos{y}
+\]</span> <span class="math display">\[
+\frac{\partial^2 f}{\partial y^2} = \frac{\partial}{\partial y} \frac{\partial f}{\partial y}
+= \frac{\partial}{\partial y} \big( \exp(-x)\cos{y} + 2y \big) = -\exp(-x)\sin{y} + 2
+\]</span></p>
+<p>Linjene 2 og 3 over er som forventet helt like, så vi trengte egentlig bare å beregne ut en av dem. Vi får altså Hessematrisen</p>
+<p><span class="math display">\[
+H(x,y) =
+\begin{pmatrix}
+\exp(-x)\sin{y} &amp; -\exp(-x)\cos{y} \\
+-\exp(-x)\cos{y} &amp; -\exp(-x)\sin{y} + 2
+\end{pmatrix}
+\]</span></p>
+<p>Vi ønsker å finne den andrederiverte <span class="math inline">\(\frac{\partial^2 f}{\partial \vec{m}\partial \vec{n}}\)</span> i origo (<span class="math inline">\(x=0,y=0\)</span>) og i retningene <span class="math inline">\(\vec{m} = \frac{1}{\sqrt{2}}(1,-1)\)</span> og <span class="math inline">\(\vec{n} = \frac{1}{\sqrt{2}}(1,1)\)</span>. Vi beregner først</p>
+<p><span class="math display">\[
+H(0,0) =
+\begin{pmatrix}
+\exp(-0)\sin{0} &amp; -\exp(-0)\cos{0} \\
+-\exp(-0)\cos{0} &amp; -\exp(-0)\sin{0} + 2
+\end{pmatrix}
+=
+\begin{pmatrix}
+0 &amp; -1 \\
+-1 &amp; 2
+\end{pmatrix}
+\]</span></p>
+<p>Derfor er <span class="math display">\[
+\frac{\partial^2 f}{\partial \vec{m}\partial \vec{n}} =
+\frac{1}{\sqrt{2}}(1,-1)
+\begin{pmatrix}
+0 &amp; -1 \\
+-1 &amp; 2
+\end{pmatrix}
+\frac{1}{\sqrt{2}}
+\begin{pmatrix}
+1 \\
+1
+\end{pmatrix}
+= \frac{1}{2}(
+1\cdot 0 \cdot 1 + 1\cdot -1\cdot 1 + -1\cdot -1\cdot 1 + -1\cdot 2\cdot 1)
+= -1
+\]</span></p>
+</section>
+<section id="med-flere-variabler" class="level3">
+<h3 class="anchored" data-anchor-id="med-flere-variabler">Med flere variabler</h3>
+<p>Det fungerer på samme måte for funksjoner med flere enn to variable. For eksempel, for funksjoner med tre variabler får vi Hessematrisen</p>
+<p><span class="math display">\[
+H =
+\left(\begin{array}{ccc}
+     \frac{\partial^2 f}{\partial x^2} &amp; \frac{\partial^2 f}{\partial x
+     \partial y} &amp; \frac{\partial^2 f}{\partial x\partial z}\\
+     \frac{\partial^2 f}{\partial y \partial x} &amp; \frac{\partial^2 f}{\partial
+     y^2} &amp; \frac{\partial^2 f}{\partial y\partial z} \\
+      \frac{\partial^2 f}{\partial z \partial x} &amp; \frac{\partial^2 f}{\partial z \partial y} &amp; \frac{\partial^2 f}{\partial z^2}
+   \end{array}\right)
+\]</span></p>
+<p>Matrisen er symmetrisk, og vi har <span class="math inline">\(\frac{\partial^2 f}{\partial x_i \partial x_j}=\frac{\partial^2 f}{\partial x_j \partial x_i}\)</span> for alle <span class="math inline">\(i,j\)</span>.</p>
+</section>
+<section id="eksempel-2-3" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-2-3">Eksempel 2</h3>
+<p>La oss se på <span class="math inline">\(f(x,y,z)=x^2 yz\)</span>.</p>
+<p>Da er</p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial x} = 2xyz, \quad
+\frac{\partial f}{\partial y} = x^2 z, \quad
+\frac{\partial f}{\partial z} = x^2 y
+\]</span></p>
+<p>Da har vi</p>
+<p><span class="math display">\[
+\frac{\partial^2 f}{\partial x^2} = \frac{\partial}{\partial x} 2xyz = 2yz, \quad
+\frac{\partial^2 f}{\partial x\partial y} = \frac{\partial}{\partial x} x^2 z = 2xz, \quad
+\frac{\partial^2 f}{\partial x\partial z} = \frac{\partial}{\partial x} x^2 y = 2xy
+\]</span></p>
+<p>Neste er</p>
+<p><span class="math display">\[
+\frac{\partial^2 f}{\partial y\partial x} = \frac{\partial}{\partial y} 2xyz = 2xz, \quad
+\frac{\partial^2 f}{\partial y^2} = \frac{\partial}{\partial y} x^2 z = 0, \quad
+\frac{\partial^2 f}{\partial y\partial z} = \frac{\partial}{\partial y} x^2 y = x^2
+\]</span></p>
+<p>Og siste</p>
+<p><span class="math display">\[
+\frac{\partial^2 f}{\partial z\partial x} = \frac{\partial}{\partial z} 2xyz = 2xy, \quad
+\frac{\partial^2 f}{\partial z\partial y} = \frac{\partial}{\partial z} x^2 z = x^2, \quad
+\frac{\partial^2 f}{\partial z\partial z} = \frac{\partial}{\partial z} x^2 y = 0
+\]</span></p>
+<p>Den andrederiverte (Hessematrisen) er da</p>
+<p><span class="math display">\[
+H =
+\begin{pmatrix}
+2yz &amp; 2xz &amp; 2xy \\
+2xz &amp; 0 &amp; x^2 \\
+2xy &amp; x^2 &amp; 0
+\end{pmatrix}
+\]</span></p>
+</section>
+<section id="noen-kommentarer-utenfor-pensum." class="level3">
+<h3 class="anchored" data-anchor-id="noen-kommentarer-utenfor-pensum.">Noen kommentarer utenfor pensum.</h3>
+<p>Det er mulig å finne på eksempler hvor <span class="math inline">\(\frac{\partial^2 f}{\partial y \partial x}\neq\frac{\partial^2 f}{\partial x \partial y}\)</span>. Det kan skje hvis de partielle deriverte ikke er kontinuerlige i nærheten av et punkt. Dette er egentlig ikke eksamenspensum, men eksemplene under kan bidra til økt forståelse.</p>
+</section>
+<section id="eksempel-3-2" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-3-2">Eksempel 3</h3>
+<p>Kanskje det letteste eksemplet på en slik funksjon er <span class="math display">\[
+f(x,y) =
+\begin{cases}
+0 &amp; y \neq 0 \\
+1 &amp; y=0
+\end{cases}
+\]</span></p>
+<p>Siden <span class="math inline">\(f(x,y)\)</span> er uavhengig av <span class="math inline">\(x\)</span> er <span class="math inline">\(\frac{\partial f}{\partial x} = 0\)</span>. Dermed er <span class="math inline">\(\frac{\partial^2 f}{\partial y \partial x} = 0\)</span>. Men <span class="math inline">\(\frac{\partial f}{\partial y}\)</span> er ikke definert i origo, så <span class="math inline">\(\frac{\partial^2 f}{\partial y \partial x}\)</span> finnes ikke.</p>
+</section>
+<section id="eksempel-4" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-4">Eksempel 4</h3>
+<p>En muligens mer opplysende (men litt vanskeligere) eksempel er</p>
+<p><span class="math display">\[
+f(x,y) =
+\begin{cases}
+0 &amp; (x,y) = (0,0) \\
+\frac{xy(x^2-y^2)}{x^2 + y^2} &amp; (x,y)\neq(0,0)
+\end{cases}
+\]</span></p>
+<p>Om vi ser bort fra origo, har vi at de partiellderiverte er <span class="math display">\[
+\frac{\partial f}{\partial x} = \frac{x^4 y + 4y^2 x^3 - y^5}{(x^2 + y^2)^2}
+\]</span> <span class="math display">\[
+\frac{\partial f}{\partial y} = \frac{x^5 - 4x^3 y^2 - xy^4}{(x^2 + y^2)^2}.
+\]</span></p>
+<p>For å forstå hva som skjer i origo trenger vi et par grenseverdier. Det viser seg nemlig at</p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial x}(0,y) = -y, \quad
+\frac{\partial f}{\partial y}(x,0) = x
+\]</span></p>
+<p>Dermed har vi <span class="math display">\[
+\frac{\partial^2 f}{\partial x\partial y}(0,0) = -1, \quad
+\frac{\partial^2 f}{\partial y\partial x}(0,0) = 1
+\]</span> som ikke er like hverandre.</p>
+</section>
+</section>
+</div>
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<script type="module">
+/**
+ * Factory function to create different types of cells based on options.
+ * @param {Object} cellData - JSON object containing code, id, and options.
+ * @returns {BaseCell} Instance of the appropriate cell class.
+ */
+globalThis.qpyodideCreateCell = function(cellData) {
+    switch (cellData.options.context) {
+        case 'interactive':
+            return new InteractiveCell(cellData);
+        case 'output':
+            return new OutputCell(cellData);
+        case 'setup':
+            return new SetupCell(cellData);
+        default:
+            return new InteractiveCell(cellData);
+            // throw new Error('Invalid cell type specified in options.');
+    }
+}  
+
+/**
+ * CellContainer class for managing a collection of cells.
+ * @class
+ */
+class CellContainer {
+    /**
+     * Constructor for CellContainer.
+     * Initializes an empty array to store cells.
+     * @constructor
+     */
+    constructor() {
+        this.cells = [];
+    }
+
+    /**
+     * Add a cell to the container.
+     * @param {BaseCell} cell - Instance of a cell (BaseCell or its subclasses).
+     */
+    addCell(cell) {
+        this.cells.push(cell);
+    }
+
+    /**
+     * Execute all cells in the container.
+     */
+    async executeAllCells() {
+        for (const cell of this.cells) {
+            await cell.executeCode();
+        }
+    }
+
+    /**
+     * Execute all cells in the container.
+     */
+    async autoRunExecuteAllCells() {
+        for (const cell of this.cells) {
+            await cell.autoRunExecuteCode();
+        }
+    }
+}
+  
+
+/**
+ * BaseCell class for handling code execution using Pyodide.
+ * @class
+ */
+class BaseCell {
+    /**
+     * Constructor for BaseCell.
+     * @constructor
+     * @param {Object} cellData - JSON object containing code, id, and options.
+     */
+    constructor(cellData) {
+        this.code = cellData.code;
+        this.id = cellData.id;
+        this.options = cellData.options;
+        this.insertionLocation = document.getElementById(`qpyodide-insertion-location-${this.id}`);
+        this.executionLock = false;
+    }
+
+    cellOptions() {
+        // Subclass this? 
+        console.log(this.options);
+        return this.options;
+    }
+
+    /**
+     * Execute the Python code using Pyodide.
+     * @returns {*} Result of the code execution.
+     */
+    async executeCode() {
+        // Execute code using Pyodide
+        const result = getPyodide().runPython(this.code);
+        return result;
+    }
+};
+
+/**
+ * InteractiveCell class for creating editable code editor with Monaco Editor.
+ * @class
+ * @extends BaseCell
+ */
+class InteractiveCell extends BaseCell {
+
+    /**
+     * Constructor for InteractiveCell.
+     * @constructor
+     * @param {Object} cellData - JSON object containing code, id, and options.
+     */
+    constructor(cellData) {
+        super(cellData);
+        this.editor = null;
+        this.setupElement();
+        this.setupMonacoEditor();
+    }
+
+    /**
+     * Set up the interactive cell elements
+     */
+    setupElement() {
+        
+        // Create main div element
+        var mainDiv = document.createElement('div');
+        mainDiv.id = `qpyodide-interactive-area-${this.id}`;
+        mainDiv.className = `qpyodide-interactive-area`;
+        if (this.options.classes) {
+            mainDiv.className += " " + this.options.classes
+        }
+
+        // Add a unique cell identifier that users can customize
+        if (this.options.label) {
+            mainDiv.setAttribute('data-id', this.options.label);
+        }
+
+        // Create toolbar div
+        var toolbarDiv = document.createElement('div');
+        toolbarDiv.className = 'qpyodide-editor-toolbar';
+        toolbarDiv.id = `qpyodide-editor-toolbar-${this.id}`;
+
+        // Create a div to hold the left buttons
+        var leftButtonsDiv = document.createElement('div');
+        leftButtonsDiv.className = 'qpyodide-editor-toolbar-left-buttons';
+
+         // Create a div for middle label
+         var middleToolBarDiv = document.createElement('div');
+         middleToolBarDiv.className = 'qpyodide-editor-toolbar-middle';
+
+        // Create a div to hold the right buttons
+        var rightButtonsDiv = document.createElement('div');
+        rightButtonsDiv.className = 'qpyodide-editor-toolbar-right-buttons';
+
+        // Create Run Code button
+        var runCodeButton = document.createElement('button');
+        runCodeButton.className = 'btn btn-default qpyodide-button qpyodide-button-run';
+        runCodeButton.disabled = true;
+        runCodeButton.type = 'button';
+        runCodeButton.id = `qpyodide-button-run-${this.id}`;
+        runCodeButton.textContent = '🟡 Loading Pyodide...';
+        runCodeButton.title = `Run code (Shift + Enter)`;
+
+        // Append buttons to the leftButtonsDiv
+        leftButtonsDiv.appendChild(runCodeButton);
+
+        // Create Read Only Label
+        var readOnlyLabel = document.createElement('label');
+        readOnlyLabel.className = 'qpyodide-label qpyodide-readonly-label';
+        readOnlyLabel.type = 'label';
+        readOnlyLabel.id = `qpyodide-readonly-label-${this.id}`;
+        readOnlyLabel.textContent = "ReadOnly";
+        readOnlyLabel.title = `Read Only`;
+
+        // Append label to middleToolBar
+        middleToolBarDiv.appendChild(readOnlyLabel);
+
+        // Create Reset button
+        var resetButton = document.createElement('button');
+        resetButton.className = 'btn btn-light btn-xs qpyodide-button qpyodide-button-reset';
+        resetButton.type = 'button';
+        resetButton.id = `qpyodide-button-reset-${this.id}`;
+        resetButton.title = 'Start over';
+        resetButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i>';
+
+        // Create Copy button
+        var copyButton = document.createElement('button');
+        copyButton.className = 'btn btn-light btn-xs qpyodide-button qpyodide-button-copy';
+        copyButton.type = 'button';
+        copyButton.id = `qpyodide-button-copy-${this.id}`;
+        copyButton.title = 'Copy code';
+        copyButton.innerHTML = '<i class="fa-regular fa-copy"></i>';
+
+        if (globalThis.feedback == true){
+            // Create Feedback button
+            var feedbackButton = document.createElement('button');
+            feedbackButton.className = 'btn  btn-default qpyodide-button qpyodide-button-feedback';
+            feedbackButton.disabled = true;
+            feedbackButton.type = 'button';
+            feedbackButton.id = `qpyodide-button-feedback-${this.id}`;
+            feedbackButton.title = 'Give feedback';
+            feedbackButton.textContent = "Feedback";
+        }
+
+        // Create AddCodeBlockButton button
+        var addCodeBlockButton = document.createElement('button');
+        addCodeBlockButton.className = 'btn  btn-default qpyodide-button qpyodide-button-codeblock';
+        addCodeBlockButton.type = 'button';
+        addCodeBlockButton.id = `qpyodide-button-codeblock-${this.id}`;
+        addCodeBlockButton.title = 'Add Codeblock';
+        if (this.options['read-only']== "false"){
+            addCodeBlockButton.textContent = "AddNewCodeBlock";
+        }else{
+            addCodeBlockButton.textContent = "AddCodeBlock";
+        }
+        
+
+        // Append buttons to the rightButtonsDiv
+        rightButtonsDiv.appendChild(resetButton);
+        rightButtonsDiv.appendChild(copyButton);
+        if (globalThis.feedback == true && this.options['read-only'] == "false") {
+            rightButtonsDiv.appendChild(feedbackButton);
+        }
+        rightButtonsDiv.appendChild(addCodeBlockButton);
+
+        // Create console area div
+        var consoleAreaDiv = document.createElement('div');
+        consoleAreaDiv.id = `qpyodide-console-area-${this.id}`;
+        consoleAreaDiv.className = 'qpyodide-console-area';
+
+        // Create editor div
+        var editorDiv = document.createElement('div');
+        editorDiv.id = `qpyodide-editor-${this.id}`;
+        editorDiv.className = 'qpyodide-editor';
+
+        // Create output code area div
+        var outputCodeAreaDiv = document.createElement('div');
+        outputCodeAreaDiv.id = `qpyodide-output-code-area-${this.id}`;
+        outputCodeAreaDiv.className = 'qpyodide-output-code-area';
+        outputCodeAreaDiv.setAttribute('aria-live', 'assertive');
+
+        // Create pre element inside output code area
+        var preElement = document.createElement('pre');
+        preElement.style.visibility = 'hidden';
+        outputCodeAreaDiv.appendChild(preElement);
+
+        if (globalThis.feedback == true){
+            // Create output feedback area div
+            var outputFeedbackAreaDiv = document.createElement('div');
+            outputFeedbackAreaDiv.id = `qpyodide-output-feedback-area-${this.id}`;
+            outputFeedbackAreaDiv.className = 'qpyodide-output-feedback-area';
+            outputFeedbackAreaDiv.setAttribute('aria-live', 'assertive');
+        }
+
+        // Create output graph area div
+        var outputGraphAreaDiv = document.createElement('div');
+        outputGraphAreaDiv.id = `qpyodide-output-graph-area-${this.id}`;
+        outputGraphAreaDiv.className = 'qpyodide-output-graph-area';
+
+        // Create the collapsible `details` and `summary` element
+        const details = document.createElement('details');
+        const summary = document.createElement('summary');
+        details.open = true; // Open by default
+        summary.textContent = "Show Python Code"; // Text for the summary element
+
+        // Add the toolbar and console to `details`
+        details.appendChild(summary);
+        details.appendChild(toolbarDiv); // Add the toolbar
+
+        // Add the console area (editorDiv and outputCodeAreaDiv) to `details`
+        consoleAreaDiv.appendChild(editorDiv);
+        consoleAreaDiv.appendChild(outputCodeAreaDiv);
+        if (globalThis.feedback == true && this.options['read-only'] === "false") {
+            consoleAreaDiv.appendChild(outputFeedbackAreaDiv);
+        }
+
+        details.appendChild(consoleAreaDiv); // Add the console
+        details.appendChild(outputGraphAreaDiv); // Add the output graph area
+
+        // Append the `details` element to the main div
+        mainDiv.appendChild(details);
+
+
+        // Append buttons to the toolbar
+        toolbarDiv.appendChild(leftButtonsDiv);
+        toolbarDiv.appendChild(middleToolBarDiv);
+        toolbarDiv.appendChild(rightButtonsDiv);
+
+        // Insert the dynamically generated object at the document location.
+        this.insertionLocation.appendChild(mainDiv);
+    }
+    
+
+
+    setupNewElement() {
+
+        // Create main div element
+        this.id = this.id+".2";
+         
+        // Create details element
+        var detailsElement = document.createElement('details');
+        detailsElement.id = `qpyodide-details-${this.id}`;
+        detailsElement.open = true; 
+
+        // Create summary element
+        var summaryElement = document.createElement('summary');
+        summaryElement.textContent = "Show Python Code"; // Text for the summary
+        summaryElement.className = "qpyodide-summary"; // Optional class for styling
+
+        // Append summary to details
+        detailsElement.appendChild(summaryElement);
+
+        var mainDiv = document.createElement('div');
+        mainDiv.id = `qpyodide-interactive-area-${this.id}`;
+        mainDiv.className = `qpyodide-interactive-area`;
+        if (this.options.classes) {
+            mainDiv.className += " " + this.options.classes
+        }
+
+        // Add a unique cell identifier that users can customize
+        if (this.options.label) {
+            mainDiv.setAttribute('data-id', this.options.label);
+        }
+
+        // Create toolbar div
+        var toolbarDiv = document.createElement('div');
+        toolbarDiv.className = 'qpyodide-editor-toolbar';
+        toolbarDiv.id = `qpyodide-editor-toolbar-${this.id}`;
+
+        // Create a div to hold the left buttons
+        var leftButtonsDiv = document.createElement('div');
+        leftButtonsDiv.className = 'qpyodide-editor-toolbar-left-buttons';
+
+         // Create a div for middle label
+         var middleToolBarDiv = document.createElement('div');
+         middleToolBarDiv.className = 'qpyodide-editor-toolbar-middle';
+
+        // Create a div to hold the right buttons
+        var rightButtonsDiv = document.createElement('div');
+        rightButtonsDiv.className = 'qpyodide-editor-toolbar-right-buttons';
+
+        // Create Run Code button
+        var runCodeButton = document.createElement('button');
+        runCodeButton.className = 'btn btn-default qpyodide-button qpyodide-button-run';
+        runCodeButton.disabled = true;
+        runCodeButton.type = 'button';
+        runCodeButton.id = `qpyodide-button-run-${this.id}`;
+        runCodeButton.textContent = '🟡 Loading Pyodide...';
+        runCodeButton.title = `Run code (Shift + Enter)`;
+
+        // Append buttons to the leftButtonsDiv
+        leftButtonsDiv.appendChild(runCodeButton);
+
+        // Create Read Only Label
+        var readOnlyLabel = document.createElement('label');
+        readOnlyLabel.className = 'qpyodide-label qpyodide-readonly-label';
+        readOnlyLabel.type = 'label';
+        readOnlyLabel.id = `qpyodide-readonly-label-${this.id}`;
+        readOnlyLabel.textContent = "ReadOnly";
+        readOnlyLabel.title = `Read Only`;
+
+        // Append label to middleToolBar
+        middleToolBarDiv.appendChild(readOnlyLabel);
+
+        // Create Reset button
+        var resetButton = document.createElement('button');
+        resetButton.className = 'btn btn-light btn-xs qpyodide-button qpyodide-button-reset';
+        resetButton.type = 'button';
+        resetButton.id = `qpyodide-button-reset-${this.id}`;
+        resetButton.title = 'Start over';
+        resetButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i>';
+
+        // Create Copy button
+        var copyButton = document.createElement('button');
+        copyButton.className = 'btn btn-light btn-xs qpyodide-button qpyodide-button-copy';
+        copyButton.type = 'button';
+        copyButton.id = `qpyodide-button-copy-${this.id}`;
+        copyButton.title = 'Copy code';
+        copyButton.innerHTML = '<i class="fa-regular fa-copy"></i>';
+
+        if (globalThis.feedback == true){
+            // Create Feedback button
+            var feedbackButton = document.createElement('button');
+            feedbackButton.className = 'btn  btn-default qpyodide-button qpyodide-button-feedback';
+            feedbackButton.disabled = true;
+            feedbackButton.type = 'button';
+            feedbackButton.id = `qpyodide-button-feedback-${this.id}`;
+            feedbackButton.title = 'Give feedback';
+            feedbackButton.textContent = "Feedback";
+        }
+
+        // Append buttons to the rightButtonsDiv
+        rightButtonsDiv.appendChild(resetButton);
+        rightButtonsDiv.appendChild(copyButton);
+        if (globalThis.feedback == true){
+            rightButtonsDiv.appendChild(feedbackButton);
+        }
+
+        // Create console area div
+        var consoleAreaDiv = document.createElement('div');
+        consoleAreaDiv.id = `qpyodide-console-area-${this.id}`;
+        consoleAreaDiv.className = 'qpyodide-console-area';
+
+        // Create editor div
+        var editorDiv = document.createElement('div');
+        editorDiv.id = `qpyodide-editor-${this.id}`;
+        editorDiv.className = 'qpyodide-editor';
+
+        // Create output code area div
+        var outputCodeAreaDiv2 = document.createElement('div');
+        outputCodeAreaDiv2.id = `qpyodide-output-code-area-${this.id}`;
+        outputCodeAreaDiv2.className = 'qpyodide-output-code-area';
+        outputCodeAreaDiv2.setAttribute('aria-live', 'assertive');
+
+        // Create pre element inside output code area
+        var preElement = document.createElement('pre');
+        preElement.style.visibility = 'hidden';
+        outputCodeAreaDiv2.appendChild(preElement);
+
+        if (globalThis.feedback == true){
+            // Create output feedback area div
+            var outputFeedbackAreaDiv2 = document.createElement('div');
+            outputFeedbackAreaDiv2.id = `qpyodide-output-feedback-area-${this.id}`;
+            outputFeedbackAreaDiv2.className = 'qpyodide-output-feedback-area';
+            outputFeedbackAreaDiv2.setAttribute('aria-live', 'assertive');
+        }
+
+        // Create output graph area div
+        var outputGraphAreaDiv2 = document.createElement('div');
+        outputGraphAreaDiv2.id = `qpyodide-output-graph-area-${this.id}`;
+        outputGraphAreaDiv2.className = 'qpyodide-output-graph-area';
+
+        // Append buttons to the toolbar
+        toolbarDiv.appendChild(leftButtonsDiv);
+        toolbarDiv.appendChild(middleToolBarDiv);
+        toolbarDiv.appendChild(rightButtonsDiv);
+        
+
+        // Append all elements to the main div
+        mainDiv.appendChild(toolbarDiv);
+        consoleAreaDiv.appendChild(editorDiv);
+        consoleAreaDiv.appendChild(outputCodeAreaDiv2);
+        if (globalThis.feedback == true){
+            consoleAreaDiv.appendChild(outputFeedbackAreaDiv2);
+        }
+        mainDiv.appendChild(consoleAreaDiv);
+        mainDiv.appendChild(outputGraphAreaDiv2);
+
+        // Append main div to details
+        detailsElement.appendChild(mainDiv);
+
+        // Insert the details element at the document location.
+        this.insertionLocation.appendChild(detailsElement);
+
+        // Unlock interactive buttons
+        qpyodideSetInteractiveButtonState(
+        `<i class="fa-solid fa-play qpyodide-icon-run-code"></i> <span>Run Code</span>`, 
+        true
+        ); 
+    }; 
+
+      
+
+    /**
+     * Set up Monaco Editor for code editing.
+     */
+    setupMonacoEditor() {
+        // Retrieve the previously created document elements
+        this.runButton = document.getElementById(`qpyodide-button-run-${this.id}`);
+        this.resetButton = document.getElementById(`qpyodide-button-reset-${this.id}`);
+        this.copyButton = document.getElementById(`qpyodide-button-copy-${this.id}`);
+        this.feedbackButton = document.getElementById(`qpyodide-button-feedback-${this.id}`);
+        this.addCodeBlockButton = document.getElementById(`qpyodide-button-codeblock-${this.id}`);
+        this.readOnlyLabel = document.getElementById(`qpyodide-readonly-label-${this.id}`);
+        this.editorDiv = document.getElementById(`qpyodide-editor-${this.id}`);
+        this.outputCodeDiv = document.getElementById(`qpyodide-output-code-area-${this.id}`);
+        this.outputFeedbackDiv = document.getElementById(`qpyodide-output-feedback-area-${this.id}`);
+        this.outputGraphDiv = document.getElementById(`qpyodide-output-graph-area-${this.id}`);
+        
+        // Store reference to the object
+        var thiz = this;
+
+        if (thiz.options['read-only'] == "true") {
+            thiz.editorDiv.parentElement.previousElementSibling.style.backgroundColor = "#cecece";
+            thiz.readOnlyLabel.textContent = "Read-Only";
+        } else {
+            thiz.editorDiv.parentElement.previousElementSibling.style.backgroundColor = "#bdecb6";
+            thiz.readOnlyLabel.textContent = "Editable";
+        }
+
+        // Load the Monaco Editor and create an instance
+        require(['vs/editor/editor.main'], function () {
+            thiz.editor = monaco.editor.create(
+                thiz.editorDiv, {
+                    value: thiz.code,
+                    language: 'python',
+                    theme: 'vs-light',
+                    automaticLayout: true,           // Works wonderfully with RevealJS
+                    scrollBeyondLastLine: false,
+                    minimap: {
+                        enabled: false
+                    },
+                    fontSize: '17.5pt',              // Bootstrap is 1 rem
+                    renderLineHighlight: "none",     // Disable current line highlighting
+                    hideCursorInOverviewRuler: true,  // Remove cursor indictor in right hand side scroll bar
+                    readOnly: thiz.options['read-only'] ?? false
+                }
+            );
+        
+            // Store the official counter ID to be used in keyboard shortcuts
+            thiz.editor.__qpyodideCounter = thiz.id;
+        
+            // Store the official div container ID
+            thiz.editor.__qpyodideEditorId = `qpyodide-editor-${thiz.id}`;
+        
+            // Store the initial code value and options
+            thiz.editor.__qpyodideinitialCode = thiz.code;
+            thiz.editor.__qpyodideOptions = thiz.options;
+        
+            // Set at the model level the preferred end of line (EOL) character to LF.
+            // This prevent `\r\n` from being given to the Pyodide engine if the user is on Windows.
+            // See details in: https://github.com/coatless/quarto-Pyodide/issues/94
+            // Associated error text: 
+            // Error: <text>:1:7 unexpected input
+        
+            // Retrieve the underlying model
+            const model = thiz.editor.getModel();
+            // Set EOL for the model
+            model.setEOL(monaco.editor.EndOfLineSequence.LF);
+        
+            // Dynamically modify the height of the editor window if new lines are added.
+            let ignoreEvent = false;
+            const updateHeight = () => {
+            const contentHeight = thiz.editor.getContentHeight();
+            // We're avoiding a width change
+            //editorDiv.style.width = `${width}px`;
+            thiz.editorDiv.style.height = `${contentHeight}px`;
+                try {
+                    ignoreEvent = true;
+            
+                    // The key to resizing is this call
+                    thiz.editor.layout();
+                } finally {
+                    ignoreEvent = false;
+                }
+            };
+        
+            // Helper function to check if selected text is empty
+            function isEmptyCodeText(selectedCodeText) {
+                return (selectedCodeText === null || selectedCodeText === undefined || selectedCodeText === "");
+            }
+        
+            // Registry of keyboard shortcuts that should be re-added to each editor window
+            // when focus changes.
+            const addPyodideKeyboardShortCutCommands = () => {
+            // Add a keydown event listener for Shift+Enter to run all code in cell
+            thiz.editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
+                // Retrieve all text inside the editor
+                thiz.runCode(thiz.editor.getValue());
+                thiz.outputCodeDiv.classList.add('has-content');
+            });
+        
+            // Add a keydown event listener for CMD/Ctrl+Enter to run selected code
+            thiz.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                    // Get the selected text from the editor
+                    const selectedText = thiz.editor.getModel().getValueInRange(thiz.editor.getSelection());
+                    // Check if no code is selected
+                    if (isEmptyCodeText(selectedText)) {
+                        // Obtain the current cursor position
+                        let currentPosition = thiz.editor.getPosition();
+                        // Retrieve the current line content
+                        let currentLine = thiz.editor.getModel().getLineContent(currentPosition.lineNumber);
+                
+                        // Propose a new position to move the cursor to
+                        let newPosition = new monaco.Position(currentPosition.lineNumber + 1, 1);
+                
+                        // Check if the new position is beyond the last line of the editor
+                        if (newPosition.lineNumber > thiz.editor.getModel().getLineCount()) {
+                            // Add a new line at the end of the editor
+                            thiz.editor.executeEdits("addNewLine", [{
+                            range: new monaco.Range(newPosition.lineNumber, 1, newPosition.lineNumber, 1),
+                            text: "\n", 
+                            forceMoveMarkers: true,
+                            }]);
+                        }
+                        
+                        // Run the entire line of code.
+                        thiz.runCode(currentLine);
+                
+                        // Move cursor to new position
+                        thiz.editor.setPosition(newPosition);
+                    } else {
+                        // Code to run when Ctrl+Enter is pressed with selected code
+                        thiz.runCode(selectedText);
+                    }
+                    thiz.outputCodeDiv.classList.add('has-content');
+                });
+            }
+        
+            // Register an on focus event handler for when a code cell is selected to update
+            // what keyboard shortcut commands should work.
+            // This is a workaround to fix a regression that happened with multiple
+            // editor windows since Monaco 0.32.0 
+            // https://github.com/microsoft/monaco-editor/issues/2947
+            thiz.editor.onDidFocusEditorText(addPyodideKeyboardShortCutCommands);
+        
+            // Register an on change event for when new code is added to the editor window
+            thiz.editor.onDidContentSizeChange(updateHeight);
+        
+            // Manually re-update height to account for the content we inserted into the call
+            updateHeight();
+                
+        });
+
+        
+        // Add a click event listener to the run button
+        thiz.runButton.onclick = function () {
+            thiz.runCode(
+                thiz.editor.getValue()
+            );
+            thiz.outputCodeDiv.classList.add('has-content');
+        };
+        
+        // Add a click event listener to the copy button
+        thiz.copyButton.onclick = function () {
+            // Retrieve current code data
+            const data = thiz.editor.getValue();
+            
+            // Write code data onto the clipboard.
+            navigator.clipboard.writeText(data || "");
+        };
+        
+        // Add a click event listener to the reset button
+        thiz.resetButton.onclick = function () {
+            thiz.editor.setValue(thiz.editor.__qpyodideinitialCode);
+            if(thiz.outputFeedbackDiv.classList.contains('has-content')){
+                thiz.outputFeedbackDiv.innerHTML = "";
+            }
+            if(thiz.outputCodeDiv.classList.contains('has-content')){
+                thiz.outputCodeDiv.innerHTML = "";
+            }
+            if(thiz.outputGraphDiv.classList.contains('has-content')){
+                thiz.outputGraphDiv.innerHTML = "";
+            }
+        };
+
+        if (thiz.options['read-only'] == "false") {
+            
+            document.addEventListener('DOMContentLoaded', function () {
+                if(globalThis.backend == "groq"){
+                    // Check if an API key is stored in sessionStorage
+                    const storedApiKey = sessionStorage.getItem('apiKey');
+                    if (storedApiKey) {
+                        document.getElementById('apiKeyInput').value = storedApiKey;
+                    }
+                }
+
+            // Add a click event listener to the feedback button
+            thiz.feedbackButton.onclick = async function () {
+                const system_prompt = "You are an AI Assistant, specialized in coding issues. You give concise answers, without asking further questions.";
+                const prompt1 = "Review the following Python code for errors and provide feedback. The code output, including any syntax errors, will be provided for detailed analysis. This is the source code of the user:\n"; 
+                const prompt2 = "Your feedback should highlight both the strengths of the code and any potential errors, providing explanations where necessary. While you may offer tips for improvement, avoid providing exact code solutions. Focus on guiding the user towards better practices and understanding. Structure the feedback like this: Syntax errors: \n Strengths of the code: \n Potential improvements:\n ";    
+                // Retrieve current code data  
+                const data = thiz.editor.getValue();
+                
+
+                let runtime_message;
+                try {
+                    // Check if we have an execution lock
+                    if (thiz.executeLock) return; 
+                    
+                    thiz.disableInteractiveCells();
+
+                    // Force wait procedure
+                    await mainPyodide;
+
+                    // Clear the output stock
+                    qpyodideResetOutputArray();
+
+                    // Obtain results from the base class
+                    try {
+                        // Always check to see if the user adds new packages
+                        await mainPyodide.loadPackagesFromImports(data);
+
+                        // Process result
+                        const output = await mainPyodide.runPythonAsync(data);
+
+                        // Add output
+                        qpyodideAddToOutputArray(output, "stdout");
+                    } catch (err) {
+                        // Add error message
+                        qpyodideAddToOutputArray(err, "stderr");
+                        // TODO: There has to be a way to remove the Pyodide portion of the errors... 
+                    }
+
+                runtime_message = qpyodideRetrieveOutput(); 
+                // Re-enable execution
+                thiz.enableInteractiveCells();
+                } catch (error) {
+                    runtime_message = `Error: ${error.message}`;
+                }
+                const runtime_prompt = "\nHere is the output of the python interpreter:\n";
+
+            
+
+                if(globalThis.backend == "groq"){
+                    const url = document.getElementById('baseUrlInput').value; 
+                    const apiKey = document.getElementById('apiKeyInput').value;
+                    const modelsUrl = `${url}/models`; 
+                    const feedbackUrl = `${url}/chat/completions`;
+                    if (!apiKey) {
+                        alert('Please enter your API Key.');
+                        return;
+                    }
+                    // Send the request to the API
+                    fetch(modelsUrl, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${apiKey}`,
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(modelsData => {
+                        console.log("Model list:", modelsData);
+
+                         // Extrahiere die Modell-IDs aus dem `data`-Array
+                        const modelIds = modelsData.data.map(model => model.id);
+                        let selectedModel = "mixtral-8x7b-32768";
+                        if (!modelIds.includes(selectedModel)) {
+                            selectedModel = modelIds[0];
+                        }
+                        console.log("Selected model:", selectedModel);
+                    
+                    
+                        // Prepare the request data
+                        const requestData = {
+                            messages:  
+                            [{role: "system", content: system_prompt},
+                            {role: "user", content: runtime_prompt + runtime_message + prompt1 + data + prompt2 }],
+                            model: selectedModel
+                        };
+                        
+
+                        
+
+                        fetch(feedbackUrl, {
+                            method: "POST",
+                            headers: {
+                                "Authorization": `Bearer ${apiKey}`,
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(requestData)
+                        })
+                        .then(feedbackresponse => feedbackresponse.json())
+                        .then(data => {
+                            // Clear the existing feedback in the outputFeedbackDiv
+                            thiz.outputFeedbackDiv.innerHTML = "";
+                            // Get the feedback from the API response
+                            const feedback = data.choices[0].message.content;
+
+                            // Function to replace \n with <br>
+                            function replaceNewlinesWithBr(text) {
+                                return text.replace(/\n/g, '<br>');
+                            }
+
+                            // Create the inner div element for the feedback header 
+                            const feedbackHeaderDiv = document.createElement("div");
+                            feedbackHeaderDiv.setAttribute("id", "feedback-label");
+                            feedbackHeaderDiv.innerHTML = "AI-Feedback:";
+                            thiz.outputFeedbackDiv.appendChild(feedbackHeaderDiv);
+                            thiz.outputFeedbackDiv.firstChild.style.textDecoration = "underline";
+                            thiz.outputFeedbackDiv.firstChild.style.marginBottom = "20px";
+                            thiz.outputFeedbackDiv.firstChild.style.fontSize = "large";
+
+                            // Create a new element to display the feedback
+                            const feedbackElement = document.createElement('div');
+                            feedbackElement.innerHTML = replaceNewlinesWithBr(feedback);
+
+                            // Append the feedback element below the code field
+                            thiz.outputFeedbackDiv.appendChild(feedbackElement);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error requesting the API: ' + error);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching models:', error);
+                        alert('Error when retrieving the model list: ' + error);
+                    });
+                }
+
+
+                if(globalThis.backend == "flask"){
+                    // Prepare the request data
+                    const requestData = {
+                        messages:  
+                        [{role: "system", content: system_prompt},
+                        {role: "user", content: runtime_prompt + runtime_message + prompt1 + data + prompt2 }]
+                    };
+                    // URL of the Flask server
+                    const url = "http://127.0.0.1:5000/api/feedback"; 
+
+                    // Send the request to the server
+                    fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(requestData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.choices && data.choices.length > 0) {
+                            // Clear the existing feedback in the outputFeedbackDiv
+                            thiz.outputFeedbackDiv.innerHTML = "";
+                            // Get the feedback from the API response
+                            const feedback = data.choices[0].message.content;
+
+                             // Log the entire model list and the selected model
+                            console.log("Model list: ", data.model_list); 
+                            console.log("Selected model: ", data.selected_model);
+
+                            // Function to replace \n with <br>
+                            function replaceNewlinesWithBr(text) {
+                                return text.replace(/\n/g, '<br>');
+                            }
+
+                            // Create the inner div element for the feedback header 
+                            const feedbackHeaderDiv = document.createElement("div");
+                            feedbackHeaderDiv.setAttribute("id", "feedback-label");
+                            feedbackHeaderDiv.innerHTML = "AI-Feedback:";
+                            thiz.outputFeedbackDiv.appendChild(feedbackHeaderDiv);
+                            thiz.outputFeedbackDiv.firstChild.style.textDecoration = "underline";
+                            thiz.outputFeedbackDiv.firstChild.style.marginBottom = "20px";
+                            thiz.outputFeedbackDiv.firstChild.style.fontSize = "large";
+
+                            // Create a new element to display the feedback
+                            const feedbackElement = document.createElement('div');
+                            feedbackElement.innerHTML = replaceNewlinesWithBr(feedback);
+
+                            // Append the feedback element below the code field
+                            thiz.outputFeedbackDiv.appendChild(feedbackElement);
+                        }else {
+                            console.error("Error: 'choices' field is missing or empty in the API response.");
+                            alert("Error when retrieving feedback: 'choices' field not available or empty.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error when requesting the API:  ' + error);
+                    });
+                }
+
+                thiz.outputFeedbackDiv.classList.add('has-content');
+                };
+            })};
+            
+
+            // Add an event listener to call the function when the button is clicked
+            thiz.addCodeBlockButton.onclick = function () {
+                thiz.setupNewElement();
+                thiz.setupNewMonacoEditor();
+                thiz.addCodeBlockButton.disabled = true;
+            };  
+        }
+    
+
+    setupNewMonacoEditor() {
+        // Retrieve the previously created document elements
+        this.runButton = document.getElementById(`qpyodide-button-run-${this.id}`);
+        this.resetButton = document.getElementById(`qpyodide-button-reset-${this.id}`);
+        this.copyButton = document.getElementById(`qpyodide-button-copy-${this.id}`);
+        this.feedbackButton = document.getElementById(`qpyodide-button-feedback-${this.id}`);
+        this.readOnlyLabel = document.getElementById(`qpyodide-readonly-label-${this.id}`);
+        this.editorDiv = document.getElementById(`qpyodide-editor-${this.id}`);
+        this.outputCodeDiv2 = document.getElementById(`qpyodide-output-code-area-${this.id}`);
+        this.outputFeedbackDiv2 = document.getElementById(`qpyodide-output-feedback-area-${this.id}`);
+        this.outputGraphDiv2 = document.getElementById(`qpyodide-output-graph-area-${this.id}`);
+        
+        // Store reference to the object
+        var thiz = this;
+
+        thiz.editorDiv.parentElement.previousElementSibling.style.backgroundColor = "#bdecb6";
+        thiz.readOnlyLabel.textContent = "Editable";
+
+        // Load the Monaco Editor and create an instance
+        require(['vs/editor/editor.main'], function () {
+            thiz.newEditor = monaco.editor.create(
+                thiz.editorDiv, {
+                    value: "",
+                    language: 'python',
+                    theme: 'vs-light',
+                    automaticLayout: true,           // Works wonderfully with RevealJS
+                    scrollBeyondLastLine: false,
+                    minimap: {
+                        enabled: false
+                    },
+                    fontSize: '17.5pt',              // Bootstrap is 1 rem
+                    renderLineHighlight: "none",     // Disable current line highlighting
+                    hideCursorInOverviewRuler: true,  // Remove cursor indictor in right hand side scroll bar
+                    readOnly: false
+                }
+            );
+        
+            // Store the official counter ID to be used in keyboard shortcuts
+            thiz.newEditor.__qpyodideCounter = thiz.id;
+        
+            // Store the official div container ID
+            thiz.newEditor.__qpyodideEditorId = `qpyodide-editor-${thiz.id}`;
+        
+            // Store the initial code value and options
+            thiz.newEditor.__qpyodideinitialCode = "";
+            thiz.newEditor.__qpyodideOptions = thiz.options;
+        
+            // Set at the model level the preferred end of line (EOL) character to LF.
+            // This prevent `\r\n` from being given to the Pyodide engine if the user is on Windows.
+            // See details in: https://github.com/coatless/quarto-Pyodide/issues/94
+            // Associated error text: 
+            // Error: <text>:1:7 unexpected input
+        
+            // Retrieve the underlying model
+            const model = thiz.newEditor.getModel();
+            // Set EOL for the model
+            model.setEOL(monaco.editor.EndOfLineSequence.LF);
+        
+            // Dynamically modify the height of the editor window if new lines are added.
+            let ignoreEvent = false;
+            const updateHeight = () => {
+            const contentHeight = thiz.newEditor.getContentHeight();
+            // We're avoiding a width change
+            //editorDiv.style.width = `${width}px`;
+            thiz.editorDiv.style.height = `${contentHeight}px`;
+                try {
+                    ignoreEvent = true;
+            
+                    // The key to resizing is this call
+                    thiz.newEditor.layout();
+                } finally {
+                    ignoreEvent = false;
+                }
+            };
+        
+            // Helper function to check if selected text is empty
+            function isEmptyCodeText(selectedCodeText) {
+                return (selectedCodeText === null || selectedCodeText === undefined || selectedCodeText === "");
+            }
+        
+            // Registry of keyboard shortcuts that should be re-added to each editor window
+            // when focus changes.
+            const addPyodideKeyboardShortCutCommands = () => {
+            // Add a keydown event listener for Shift+Enter to run all code in cell
+            thiz.newEditor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
+                // Retrieve all text inside the editor
+                thiz.runCodeNE(thiz.newEditor.getValue());
+                thiz.outputCodeDiv2.classList.add('has-content');
+            });
+        
+            // Add a keydown event listener for CMD/Ctrl+Enter to run selected code
+            thiz.newEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                    // Get the selected text from the editor
+                    const selectedText = thiz.newEditor.getModel().getValueInRange(thiz.newEditor.getSelection());
+                    // Check if no code is selected
+                    if (isEmptyCodeText(selectedText)) {
+                        // Obtain the current cursor position
+                        let currentPosition = thiz.newEditor.getPosition();
+                        // Retrieve the current line content
+                        let currentLine = thiz.newEditor.getModel().getLineContent(currentPosition.lineNumber);
+                
+                        // Propose a new position to move the cursor to
+                        let newPosition = new monaco.Position(currentPosition.lineNumber + 1, 1);
+                
+                        // Check if the new position is beyond the last line of the editor
+                        if (newPosition.lineNumber > thiz.newEditor.getModel().getLineCount()) {
+                            // Add a new line at the end of the editor
+                            thiz.newEditor.executeEdits("addNewLine", [{
+                            range: new monaco.Range(newPosition.lineNumber, 1, newPosition.lineNumber, 1),
+                            text: "\n", 
+                            forceMoveMarkers: true,
+                            }]);
+                        }
+                        
+                        // Run the entire line of code.
+                        thiz.runCodeNE(currentLine);
+                
+                        // Move cursor to new position
+                        thiz.newEditor.setPosition(newPosition);
+                    } else {
+                        // Code to run when Ctrl+Enter is pressed with selected code
+                        thiz.runCodeNE(selectedText);
+                    }
+                    thiz.outputCodeDiv2.classList.add('has-content');
+                });
+            }
+        
+            // Register an on focus event handler for when a code cell is selected to update
+            // what keyboard shortcut commands should work.
+            // This is a workaround to fix a regression that happened with multiple
+            // editor windows since Monaco 0.32.0 
+            // https://github.com/microsoft/monaco-editor/issues/2947
+            thiz.newEditor.onDidFocusEditorText(addPyodideKeyboardShortCutCommands);
+        
+            // Register an on change event for when new code is added to the editor window
+            thiz.newEditor.onDidContentSizeChange(updateHeight);
+        
+            // Manually re-update height to account for the content we inserted into the call
+            updateHeight();
+                
+        });
+
+        
+        // Add a click event listener to the run button
+        thiz.runButton.onclick = function () {
+            thiz.runCodeNE(
+                thiz.newEditor.getValue()
+            );
+            thiz.outputCodeDiv2.classList.add('has-content');
+        };
+        
+        // Add a click event listener to the copy button
+        thiz.copyButton.onclick = function () {
+            // Retrieve current code data
+            const data = thiz.newEditor.getValue();
+            
+            // Write code data onto the clipboard.
+            navigator.clipboard.writeText(data || "");
+        };
+        
+        // Add a click event listener to the reset button
+        thiz.resetButton.onclick = function () {
+            thiz.newEditor.setValue(thiz.newEditor.__qpyodideinitialCode);
+            if(thiz.outputFeedbackDiv2.classList.contains('has-content')){
+                thiz.outputFeedbackDiv2.innerHTML = "";
+            }
+            if(thiz.outputCodeDiv2.classList.contains('has-content')){
+                thiz.outputCodeDiv2.innerHTML = "";
+            }
+            if(thiz.outputGraphDiv2.classList.contains('has-content')){
+                thiz.outputGraphDiv2.innerHTML = "";
+            }
+        };
+
+        
+
+        
+
+        thiz.feedbackButton.onclick = async function () {
+            const system_prompt = "You are an AI Assistant, specialized in coding issues. You give concise answers, without asking further questions.";
+            const prompt1 = "Review the following Python code for errors and provide feedback. The code output, including any syntax errors, will be provided for detailed analysis. This is the source code of the user:\n"; 
+            const prompt2 = "Your feedback should highlight both the strengths of the code and any potential errors, providing explanations where necessary. While you may offer tips for improvement, avoid providing exact code solutions. Focus on guiding the user towards better practices and understanding. Structure the feedback like this: Syntax errors: \n Strengths of the code: \n Potential improvements:\n ";    
+            // Retrieve current code data  
+            const data = thiz.newEditor.getValue();
+            
+
+            let runtime_message;
+            try {
+                // Check if we have an execution lock
+                if (thiz.executeLock) return; 
+                
+                thiz.disableInteractiveCells();
+
+                // Force wait procedure
+                await mainPyodide;
+
+                // Clear the output stock
+                qpyodideResetOutputArray();
+
+                // Obtain results from the base class
+                try {
+                    // Always check to see if the user adds new packages
+                    await mainPyodide.loadPackagesFromImports(data);
+
+                    // Process result
+                    const output = await mainPyodide.runPythonAsync(data);
+
+                    // Add output
+                    qpyodideAddToOutputArray(output, "stdout");
+                } catch (err) {
+                    // Add error message
+                    qpyodideAddToOutputArray(err, "stderr");
+                    // TODO: There has to be a way to remove the Pyodide portion of the errors... 
+                }
+
+            runtime_message = qpyodideRetrieveOutput(); 
+            // Re-enable execution
+            thiz.enableInteractiveCells();
+            } catch (error) {
+                runtime_message = `Error: ${error.message}`;
+            }
+            const runtime_prompt = "\nHere is the output of the python interpreter:\n";
+
+        
+
+            if(globalThis.backend == "groq"){
+                const url = document.getElementById('baseUrlInput').value; 
+                const apiKey = document.getElementById('apiKeyInput').value;
+                const modelsUrl = `${url}/models`; 
+                const feedbackUrl = `${url}/chat/completions`;
+                if (!apiKey) {
+                    alert('Please enter your API Key.');
+                    return;
+                }
+                // Send the request to the API
+                fetch(modelsUrl, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(modelsData => {
+                    console.log("Model list:", modelsData);
+
+                    const modelIds = modelsData.data.map(model => model.id);
+                    let selectedModel = "mixtral-8x7b-32768";
+                    if (!modelIds.includes(selectedModel)) {
+                        selectedModel = modelIds[0];
+                    }
+                    console.log("Selected model:", selectedModel);
+                
+                
+                    // Prepare the request data
+                    const requestData = {
+                        messages:  
+                        [{role: "system", content: system_prompt},
+                        {role: "user", content: runtime_prompt + runtime_message + prompt1 + data + prompt2 }],
+                        model: selectedModel
+                    };
+                    
+
+                    
+
+                    fetch(feedbackUrl, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${apiKey}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(requestData)
+                    })
+                    .then(feedbackresponse => feedbackresponse.json())
+                    .then(data => {
+                        // Clear the existing feedback in the outputFeedbackDiv
+                        thiz.outputFeedbackDiv2.innerHTML = "";
+                        // Get the feedback from the API response
+                        const feedback = data.choices[0].message.content;
+
+                        // Function to replace \n with <br>
+                        function replaceNewlinesWithBr(text) {
+                            return text.replace(/\n/g, '<br>');
+                        }
+
+                        // Create the inner div element for the feedback header 
+                        const feedbackHeaderDiv = document.createElement("div");
+                        feedbackHeaderDiv.setAttribute("id", "feedback-label");
+                        feedbackHeaderDiv.innerHTML = "AI-Feedback:";
+                        thiz.outputFeedbackDiv2.appendChild(feedbackHeaderDiv);
+                        thiz.outputFeedbackDiv2.firstChild.style.textDecoration = "underline";
+                        thiz.outputFeedbackDiv2.firstChild.style.marginBottom = "20px";
+                        thiz.outputFeedbackDiv2.firstChild.style.fontSize = "large";
+
+                        // Create a new element to display the feedback
+                        const feedbackElement = document.createElement('div');
+                        feedbackElement.innerHTML = replaceNewlinesWithBr(feedback);
+
+                        // Append the feedback element below the code field
+                        thiz.outputFeedbackDiv2.appendChild(feedbackElement);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error when requesting the API: ' + error);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching models:', error);
+                    alert('Error when retrieving the model list: ' + error);
+                });
+            }
+            
+            if(globalThis.backend == "flask"){
+                // Prepare the request data
+                const requestData = {
+                    messages:  
+                    [{role: "system", content: system_prompt},
+                    {role: "user", content: runtime_prompt + runtime_message + prompt1 + data + prompt2 }]
+                };
+                // URL of the Flask server
+                const url = "http://127.0.0.1:5000/api/feedback"; 
+
+                // Send the request to the server
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.choices && data.choices.length > 0) {
+                        // Clear the existing feedback in the outputFeedbackDiv
+                        thiz.outputFeedbackDiv2.innerHTML = "";
+                        // Get the feedback from the API response
+                        const feedback = data.choices[0].message.content;
+
+                         // Log the entire model list and the selected model
+                        console.log("Model list: ", data.model_list); 
+                        console.log("Selected model: ", data.selected_model);
+
+                        // Function to replace \n with <br>
+                        function replaceNewlinesWithBr(text) {
+                            return text.replace(/\n/g, '<br>');
+                        }
+
+                        // Create the inner div element for the feedback header 
+                        const feedbackHeaderDiv = document.createElement("div");
+                        feedbackHeaderDiv.setAttribute("id", "feedback-label");
+                        feedbackHeaderDiv.innerHTML = "AI-Feedback:";
+                        thiz.outputFeedbackDiv2.appendChild(feedbackHeaderDiv);
+                        thiz.outputFeedbackDiv2.firstChild.style.textDecoration = "underline";
+                        thiz.outputFeedbackDiv2.firstChild.style.marginBottom = "20px";
+                        thiz.outputFeedbackDiv2.firstChild.style.fontSize = "large";
+
+                        // Create a new element to display the feedback
+                        const feedbackElement = document.createElement('div');
+                        feedbackElement.innerHTML = replaceNewlinesWithBr(feedback);
+
+                        // Append the feedback element below the code field
+                        thiz.outputFeedbackDiv2.appendChild(feedbackElement);
+                    }else {
+                        console.error("Error: 'choices' field is missing or empty in the API response.");
+                        alert("Error when retrieving feedback: 'choices' field not available or empty.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error when requesting the API:  ' + error);
+                });
+            }
+            
+            thiz.outputFeedbackDiv2.classList.add('has-content');
+        };
+    }; 
+
+    disableInteractiveCells() {
+        // Enable locking of execution for the cell
+        this.executionLock = true;
+
+        // Disallowing execution of other code cells
+        document.querySelectorAll(".qpyodide-button-run").forEach((btn) => {
+            btn.disabled = true;
+        });
+    }
+
+    enableInteractiveCells() {
+        // Remove locking of execution for the cell
+        this.executionLock = false;
+
+        // All execution of other code cells
+        document.querySelectorAll(".qpyodide-button-run").forEach((btn) => {
+            btn.disabled = false;
+        });
+    }
+
+    /**
+     * Execute the Python code inside the editor.
+     */
+    async runCode(code) {
+        
+        // Check if we have an execution lock
+        if (this.executeLock) return; 
+        
+        this.disableInteractiveCells();
+
+        // Force wait procedure
+        await mainPyodide;
+
+        // Clear the output stock
+        qpyodideResetOutputArray();
+
+        // Generate a new canvas element, avoid attaching until the end
+        let graphFigure = document.createElement("figure");
+        document.pyodideMplTarget = graphFigure;
+
+        console.log("Running code!");
+        // Obtain results from the base class
+        try {
+            // Always check to see if the user adds new packages
+            await mainPyodide.loadPackagesFromImports(code);
+
+            // Process result
+            const output = await mainPyodide.runPythonAsync(code);
+
+            // Add output
+            qpyodideAddToOutputArray(output, "stdout");
+        } catch (err) {
+            // Add error message
+            qpyodideAddToOutputArray(err, "stderr");
+            // TODO: There has to be a way to remove the Pyodide portion of the errors... 
+        }
+
+        const result = qpyodideRetrieveOutput();
+
+        // Nullify the output area of content
+        this.outputCodeDiv.innerHTML = "";
+        this.outputGraphDiv.innerHTML = "";        
+
+        // Design an output object for messages
+        const pre = document.createElement("pre");
+        if (/\S/.test(result)) {
+            // Display results as HTML elements to retain output styling
+            const div = document.createElement("div");
+            div.innerHTML = result;
+            pre.appendChild(div);
+            this.outputCodeDiv.classList.add('has-content');
+        } else {
+            // If nothing is present, hide the element.
+            pre.style.visibility = "hidden";
+             // If no output, hide the code output div
+            this.outputCodeDiv.classList.remove('has-content');
+        }
+
+        // Add output under interactive div
+        this.outputCodeDiv.appendChild(pre);
+
+        // Place the graphics onto the page
+        if (graphFigure.children.length>0) {
+
+            if (this.options['fig-cap']) {
+                // Create figcaption element
+                const figcaptionElement = document.createElement('figcaption');
+                figcaptionElement.innerText = this.options['fig-cap'];
+                // Append figcaption to figure
+                graphFigure.appendChild(figcaptionElement);    
+            }
+
+            this.outputGraphDiv.appendChild(graphFigure);
+            this.outputGraphDiv.classList.add('has-content');
+        }
+        else {
+            this.outputGraphDiv.classList.remove('has-content');
+        }
+
+        // Re-enable execution
+        this.enableInteractiveCells();
+    }
+
+    /**
+     * Execute the Python code inside the editor.
+     */
+    async runCodeNE(code) {
+        
+        // Check if we have an execution lock
+        if (this.executeLock) return; 
+        
+        this.disableInteractiveCells();
+
+        // Force wait procedure
+        await mainPyodide;
+
+        // Clear the output stock
+        qpyodideResetOutputArray();
+
+        // Generate a new canvas element, avoid attaching until the end
+        let graphFigure = document.createElement("figure");
+        document.pyodideMplTarget = graphFigure;
+
+        console.log("Running code!");
+        // Obtain results from the base class
+        try {
+            // Always check to see if the user adds new packages
+            await mainPyodide.loadPackagesFromImports(code);
+
+            // Process result
+            const output = await mainPyodide.runPythonAsync(code);
+
+            // Add output
+            qpyodideAddToOutputArray(output, "stdout");
+        } catch (err) {
+            // Add error message
+            qpyodideAddToOutputArray(err, "stderr");
+            // TODO: There has to be a way to remove the Pyodide portion of the errors... 
+        }
+
+        const result = qpyodideRetrieveOutput();
+
+        // Nullify the output area of content
+        this.outputCodeDiv2.innerHTML = "";
+        this.outputGraphDiv2.innerHTML = "";        
+
+        // Design an output object for messages
+        const pre = document.createElement("pre");
+        if (/\S/.test(result)) {
+            // Display results as HTML elements to retain output styling
+            const div = document.createElement("div");
+            div.innerHTML = result;
+            pre.appendChild(div);
+            this.outputCodeDiv2.classList.add('has-content');
+        } else {
+            // If nothing is present, hide the element.
+            pre.style.visibility = "hidden";
+            // If no output, hide the code output div
+            this.outputCodeDiv2.classList.remove('has-content');
+        }
+
+        // Add output under interactive div
+        this.outputCodeDiv2.appendChild(pre);
+
+        // Place the graphics onto the page
+        if (graphFigure.children.length>0) {
+
+            if (this.options['fig-cap']) {
+                // Create figcaption element
+                const figcaptionElement = document.createElement('figcaption');
+                figcaptionElement.innerText = this.options['fig-cap'];
+                // Append figcaption to figure
+                graphFigure.appendChild(figcaptionElement);    
+            }
+
+            this.outputGraphDiv2.appendChild(graphFigure);
+            this.outputGraphDiv2.classList.add('has-content');
+        } else {
+            this.outputGraphDiv2.classList.remove('has-content');
+        }
+
+        // Re-enable execution
+        this.enableInteractiveCells();
+    }
+
+    
+};
+
+/**
+ * OutputCell class for customizing and displaying output.
+ * @class
+ * @extends BaseCell
+ */
+class OutputCell extends BaseCell {
+    /**
+     * Constructor for OutputCell.
+     * @constructor
+     * @param {Object} cellData - JSON object containing code, id, and options.
+     */
+    constructor(cellData) {
+      super(cellData);
+    }
+  
+    /**
+     * Display customized output on the page.
+     * @param {*} output - Result to be displayed.
+     */
+    displayOutput(output) {
+        const results = this.executeCode();
+        return results;
+    }
+  }
+
+/**
+ * SetupCell class for suppressed output.
+ * @class
+ * @extends BaseCell
+ */
+class SetupCell extends BaseCell {
+    /**
+     * Constructor for SetupCell.
+     * @constructor
+     * @param {Object} cellData - JSON object containing code, id, and options.
+     */
+    constructor(cellData) {
+        super(cellData);
+    }
+
+    /**
+     * Execute the Python code without displaying the results.
+     */
+    runSetupCode() {
+        // Execute code without displaying output
+        this.executeCode();
+    }
+};
+
+// Global matplotlib backend setup (once)
+await pyodide.runPythonAsync(`
+import matplotlib
+matplotlib.use("module://matplotlib_pyodide.html5_canvas_backend")
+`);
+
+
+// Global matplotlib defaults (uniform canvases, no toolbar)
+await pyodide.runPythonAsync(`
+import matplotlib
+matplotlib.rcParams["figure.figsize"] = (6, 4)
+matplotlib.rcParams["toolbar"] = "None"
+`);
+
+</script>
+<script type="module">
+// Handle cell initialization initialization
+qpyodideCellDetails.map(
+    (entry) => {
+      // Handle the creation of the element
+      qpyodideCreateCell(entry);
+    }
+  );
+</script>
+
+
+
+
+</body></html>
