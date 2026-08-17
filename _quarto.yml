@@ -9,13 +9,17 @@ website:
   sidebar:
     style: "docked"
     contents:
-      - text: "Flyttall og lineær algebra"
+      - text: "IDE"
         file: pages/page1.qmd
+
+      - section: "Flyttall og lineær algebra"
+        contents:
+          - pages/page2.qmd
 
       - section: "Optimering"
         contents:
           - pages/page2.qmd
-          
+
 format:
   html:
     theme: cosmo
