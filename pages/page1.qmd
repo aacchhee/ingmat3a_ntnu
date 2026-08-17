@@ -1,0 +1,61 @@
+---
+title: "Mini-IDE (Python i nettleseren)"
+---
+
+## Velkommen
+
+Denne siden er en **mini-IDE** for Python som kjører direkte i nettleseren ved hjelp av **Pyodide**.
+Her kan du skrive, endre og kjøre kode uten å installere noe lokalt.
+
+---
+
+## Slik bruker du kodevinduet
+
+- **Run Code**: kjører koden i vinduet
+- **AddCodeBlock**: legger til et nytt Python-vindu
+- **Restart**: nullstiller Python-miljøet
+
+Du kan fritt endre koden og eksperimentere.  Last ned hele sida på nytt dersom noe ser tungt eller ødelagt ut.
+
+---
+
+## Eksempel: enkel Python-kode
+
+```{pyodide-python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.close("all")
+
+x = np.linspace(0, 2*np.pi, 200)
+y = np.sin(x)
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.plot(x, y)
+ax.set_title("y = sin(x)")
+
+plt.show()
+```
+
+---
+
+## Tips
+
+- Du kan kopiere kode mellom blokker
+- Feilmeldinger vises direkte under koden
+- Figurer kan lastes ned fra nettleseren
+- Din kode blir ikke lagra. Du må kopiere koden et annet sted (VSCode/Editor/o.l.) og så lagre.
+- **Pyodide** har et litt anspent forhold til matplotlib. Skal du plotte noe selv, kan du oppleve å få feilmeldinger fra matplotlib. Disse handler i al hovedsak om setup av lerrettet. Ta et fungerende eksempel fra en av modulene og modifiser det slik at det plotter det du trenger. 
+
+## Issues? Bugs? Forbedringsforslag?
+
+### Ordentlig metode
+Åpne ei sak på github <https://github.com/aacchhee/ingmat2_ntnu>. Lag en god beskrivelse av saka.
+
+### Den beste metoden
+Gå til github <https://github.com/aacchhee/ingmat2_ntnu>, clone repository (via fork), fix a bug, send pull request. 
+
+### Siste utvei
+Det er aldri for seint å åpne en konto på github. Har du sterke innvendinger mot github, send en epost til <andrey.chesnokov@ntnu.no> og beskriv saka i eposten.
+

@@ -1,0 +1,5 @@
+---
+title: "11 - Varmeligning, 2D (rom)"
+---
+
+{{< include ../_includes/module_pde/m13_1.md >}}

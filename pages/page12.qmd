@@ -1,0 +1,5 @@
+---
+title: "10 - Poissonligning, 2D"
+---
+
+{{< include ../_includes/module_pde/m12_1.md >}}

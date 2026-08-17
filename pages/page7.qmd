@@ -1,0 +1,5 @@
+---
+title: "02 - Numeriske metoder"
+---
+
+{{< include ../_includes/module_pde/m7_1.md >}}

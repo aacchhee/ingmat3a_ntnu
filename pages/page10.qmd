@@ -1,0 +1,5 @@
+---
+title: "08 - Poissonligning"
+---
+
+{{< include ../_includes/module_pde/m10_1.md >}}

@@ -1,0 +1,16 @@
+---
+title: "Del 4 – Taylors teorem"
+---
+
+::: {.panel-tabset}
+
+## 4.1 Taylors teorem
+{{< include ../_includes/module4/m4_1.md >}}
+
+## 4.2 Restledd
+{{< include ../_includes/module4/m4_2.md >}}
+
+## 4.3 Taylors teorem – flere variabler
+{{< include ../_includes/module4/m4_3.md >}}
+
+:::

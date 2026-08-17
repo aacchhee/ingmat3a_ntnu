@@ -1,0 +1,14 @@
+name: Re-ingest notes on push
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  reingest:
+    runs-on: self-hosted
+    steps:
+      - name: Re-ingest
+        run: touch /var/lib/rag/reingest.trigger
+
+        

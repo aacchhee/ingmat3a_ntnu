@@ -1,0 +1,19 @@
+---
+title: "Del 3 – Kritiske punkt og optimering"
+---
+
+::: {.panel-tabset}
+
+## 3.1 Kritiske punkt
+{{< include ../_includes/module3/m3_1.md >}}
+
+## 3.2 Kritiske punkt (fortsettelse)
+{{< include ../_includes/module3/m3_2.md >}}
+
+## 3.3 Optimering
+{{< include ../_includes/module3/m3_3.md >}}
+
+## 3.4 Med tre variabler
+{{< include ../_includes/module3/m3_4.md >}}
+
+:::

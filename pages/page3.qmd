@@ -1,0 +1,22 @@
+---
+title: "Del 2 – Derivasjon i flere dimensjoner"
+---
+
+::: {.panel-tabset}
+
+## 2.1 Derivasjon i flere dimensjoner
+{{< include ../_includes/module2/m2_1.md >}}
+
+## 2.2 Partiellderiverte
+{{< include ../_includes/module2/m2_2.md >}}
+
+## 2.3 Gradient og retningsderiverte
+{{< include ../_includes/module2/m2_3.md >}}
+
+## 2.4 Kjerneregelen
+{{< include ../_includes/module2/m2_4.md >}}
+
+## 2.5 Andrederiverte
+{{< include ../_includes/module2/m2_5.md >}}
+
+:::

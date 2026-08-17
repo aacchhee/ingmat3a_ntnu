@@ -1,0 +1,36 @@
+project:
+  type: website
+
+filters:
+  - pyodide
+
+website:
+  title: "Matematikk"
+  sidebar:
+    style: "docked"
+    contents:
+      - text: "IDE"
+        file: pages/page1.qmd
+
+      - section: "Fellesmodul"
+        contents:
+          - pages/page2.qmd
+          - pages/page3.qmd
+          - pages/page4.qmd
+          - pages/page5.qmd
+
+      - section: "PDE"
+        contents:
+          - pages/page6.qmd
+          - pages/page7.qmd
+          - pages/page8.qmd
+          - pages/page9.qmd
+          - pages/page10.qmd
+          - pages/page11.qmd
+          - pages/page12.qmd
+          - pages/page13.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
