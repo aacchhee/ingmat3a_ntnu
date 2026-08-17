@@ -1,7 +1,5 @@
 name: Render and Publish Quarto
 
-engine: markdown
-
 permissions:
   contents: write
 
