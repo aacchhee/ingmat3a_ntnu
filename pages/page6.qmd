@@ -1,5 +1,0 @@
----
-title: "01 - Innføring"
----
-
-{{< include ../_includes/module_pde/m6_1.md >}}
