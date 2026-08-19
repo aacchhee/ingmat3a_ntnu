@@ -2,10 +2,6 @@
 title: "Del 3 – exercise test quarto plugins"
 ---
 
----
-title: "Exercise plugin test"
----
-
 ## Math exercise
 
 ```{math-exercise}
