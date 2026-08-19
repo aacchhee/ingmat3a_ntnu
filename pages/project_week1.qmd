@@ -1,0 +1,5 @@
+---
+title: "Uke 1 – Floating-point attack"
+---
+
+{{< include ../_includes/projects/week1_floating_point_attack.md >}}
