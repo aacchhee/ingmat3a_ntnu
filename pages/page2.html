@@ -924,7 +924,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "en";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"exact = 1/3\napprox = 0.333\n\nabs_error = abs(exact - approx)\nrel_error = abs_error / abs(exact)\n\nprint(\"Eksakt verdi:     \", exact)\nprint(\"Tilnærming:       \", approx)\nprint(\"Absolutt feil:    \", abs_error)\nprint(\"Relativ feil:     \", rel_error)\nprint(\"Relativ feil i %: \", 100 * rel_error)","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"error-basic","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import matplotlib.pyplot as plt\n\nexact = [0.01, 1.0, 100.0]\nabs_error = 0.001\nrelative = [abs_error / x for x in exact]\n\nfor x, r in zip(exact, relative):\n    print(f\"x = {x:7g}: absolutt feil = {abs_error:g}, relativ feil = {100*r:.4g} %\")\n\nplt.bar([str(x) for x in exact], [100*r for r in relative])\nplt.yscale(\"log\")\nplt.xlabel(\"Eksakt verdi x\")\nplt.ylabel(\"Relativ feil (%)\")\nplt.title(\"Samme absolutte feil, svært ulik relativ betydning\")\nplt.show()","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"error-scale","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"tests = [\n    (\"0.1 + 0.1 + 0.1\", 0.1 + 0.1 + 0.1),\n    (\"0.1 + 0.2\",       0.1 + 0.2),\n    (\"0.1 + 0.2 == 0.3\", 0.1 + 0.2 == 0.3),\n    (\"1e16 + 1.0\",      1e16 + 1.0),\n    (\"(1e16 + 1.0) - 1e16\", (1e16 + 1.0) - 1e16),\n]\n\nfor expression, value in tests:\n    print(f\"{expression:25s} -> {value!r}\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"float-surprises","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def normalized_binary_integer(n):\n    if n <= 0:\n        raise ValueError(\"Bruk et positivt heltall.\")\n\n    bits = bin(n)[2:]\n    exponent = len(bits) - 1\n\n    if len(bits) == 1:\n        normalized = \"1.0\"\n    else:\n        normalized = bits[0] + \".\" + bits[1:]\n\n    return bits, normalized, exponent\n\nfor n in [9, 23, 44]:\n    bits, mantissa, exponent = normalized_binary_integer(n)\n    print(f\"{n} = ({bits})₂ = ({mantissa})₂ × 2^{exponent}\")","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"normalize-binary","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"n = 37\n\nbits, mantissa, exponent = normalized_binary_integer(n)\nprint(f\"{n} = ({bits})₂\")\nprint(f\"Normalisert: ({mantissa})₂ × 2^{exponent}\")","id":5,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"normalize-try","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import struct\n\ndef ieee754_double(x):\n    raw = struct.unpack(\">Q\", struct.pack(\">d\", float(x)))[0]\n    bits = f\"{raw:064b}\"\n\n    sign = bits[0]\n    exponent_bits = bits[1:12]\n    fraction_bits = bits[12:]\n\n    E = int(exponent_bits, 2)\n    e = E - 1023 if 0 < E < 2047 else None\n\n    return bits, sign, exponent_bits, fraction_bits, E, e\n\nfor x in [1.0, 9.0, 23.0, 0.1]:\n    bits, s, eb, mb, E, e = ieee754_double(x)\n    print(f\"\\nx = {x!r}\")\n    print(\"S | exponent    | mantisse\")\n    print(f\"{s} | {eb} | {mb}\")\n    print(\"lagret E =\", E, \"  virkelig e =\", e)","id":6,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"ieee-bits","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"from fractions import Fraction\n\nx = 0.1\nnum, den = x.as_integer_ratio()\nstored = Fraction(num, den)\nexact = Fraction(1, 10)\n\nprint(\"Python viser:          \", x)\nprint(\"Lagret eksakt som:     \", f\"{num}/{den}\")\nprint(\"Eksakt 1/10:           \", exact)\nprint(\"Feil som eksakt brøk:  \", stored - exact)\nprint(\"Feil som desimaltall:  \", float(stored - exact))\nprint(\"Heksadesimal flyttform:\", x.hex())","id":7,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"float-ratio","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\nimport matplotlib.pyplot as plt\n\nx = 0.1\nleft = math.nextafter(x, -math.inf)\nright = math.nextafter(x, math.inf)\n\nprint(\"venstre nabo :\", format(left, \".18g\"))\nprint(\"lagret x     :\", format(x, \".18g\"))\nprint(\"høyre nabo   :\", format(right, \".18g\"))\nprint(\"avstand ned  :\", x - left)\nprint(\"avstand opp  :\", right - x)\n\nvalues = [left, x, right]\nplt.scatter(values, [0, 0, 0], s=80)\nfor v, label in zip(values, [\"forrige\", \"0.1 lagret\", \"neste\"]):\n    plt.annotate(label, (v, 0), xytext=(0, 12), textcoords=\"offset points\",\n                 ha=\"center\")\nplt.yticks([])\nplt.xlabel(\"Tre naboflyttall rundt 0.1\")\nplt.show()","id":8,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"float-neighbours","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import sys\nimport math\n\neps = sys.float_info.epsilon\nnext_one = math.nextafter(1.0, math.inf)\n\nprint(\"maskinepsilon       =\", eps)\nprint(\"2**-52              =\", 2**-52)\nprint(\"neste float etter 1 =\", repr(next_one))\nprint(\"neste - 1           =\", next_one - 1.0)\nprint(\"1 + 2**-52 > 1      =\", 1.0 + 2**-52 > 1.0)\nprint(\"1 + 2**-53 == 1     =\", 1.0 + 2**-53 == 1.0)","id":9,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"machine-epsilon","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\nimport matplotlib.pyplot as plt\n\npowers = list(range(-20, 61, 4))\nx = [2.0**k for k in powers]\nspacing = [math.ulp(v) for v in x]\n\nfor k, u in zip(powers[::5], spacing[::5]):\n    print(f\"rundt 2^{k:3d}: avstand mellom nabotall ≈ {u:g}\")\n\nplt.loglog(x, spacing, marker=\"o\")\nplt.xlabel(\"størrelse på tallet\")\nplt.ylabel(\"avstand til neste representerbare nivå (ulp)\")\nplt.title(\"Flyttall blir grovere når størrelsen øker\")\nplt.show()","id":10,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"ulp-plot","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"x = float(2**53)\n\nprint(\"x      =\", x)\nprint(\"x + 1  =\", x + 1)\nprint(\"x + 2  =\", x + 2)\nprint(\"x+1==x ?\", x + 1 == x)\nprint(\"x+2>x  ?\", x + 2 > x)","id":11,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"large-integer-float","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"a = 1e16\nb = -1e16\nc = 1.0\n\nleft = (a + b) + c\nright = a + (b + c)\n\nprint(\"(a+b)+c =\", left)\nprint(\"a+(b+c) =\", right)\nprint(\"Like?    =\", left == right)","id":12,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"non-associative","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nvalues = [0.1] * 10\n\nprint(\"sum(values)       =\", repr(sum(values)))\nprint(\"math.fsum(values) =\", repr(math.fsum(values)))\nprint(\"eksakt mål        =\", 1.0)","id":13,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"summation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\ndef naive(x):\n    return math.sqrt(1 + x) - 1\n\ndef stable(x):\n    return x / (math.sqrt(1 + x) + 1)\n\nprint(f\"{'x':>12} {'direkte':>18} {'stabil form':>18}\")\nfor k in [4, 8, 12, 14, 16, 18]:\n    x = 10.0**(-k)\n    print(f\"{x:12.1e} {naive(x):18.10e} {stable(x):18.10e}\")","id":14,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"cancellation-table","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\nimport matplotlib.pyplot as plt\n\nxs = [10.0**(-k) for k in range(1, 19)]\ndirect = [abs(naive(x)) for x in xs]\nrewritten = [abs(stable(x)) for x in xs]\n\nplt.loglog(xs, direct, \"o-\", label=r\"$\\sqrt{1+x}-1$\")\nplt.loglog(xs, rewritten, \"s-\", label=r\"$x/(\\sqrt{1+x}+1)$\")\nplt.gca().invert_xaxis()\nplt.xlabel(\"x\")\nplt.ylabel(\"beregnet verdi\")\nplt.title(\"Matematisk likt, numerisk svært forskjellig\")\nplt.legend()\nplt.show()","id":15,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"cancellation-plot","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"import math\n\ndef trig_direct(x):\n    return (1 - math.cos(x)) / math.sin(x)**2\n\ndef trig_stable(x):\n    return 1 / (1 + math.cos(x))\n\nfor x in [1e-2, 1e-4, 1e-6, 1e-8]:\n    try:\n        a = trig_direct(x)\n    except ZeroDivisionError:\n        a = float(\"nan\")\n    b = trig_stable(x)\n    print(f\"x={x:8.1e}  direkte={a!r:>20}  stabil={b!r}\")","id":16,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"trig-cancellation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\ninf = float(\"inf\")\nnan = float(\"nan\")\n\nprint(\"inf =\", inf)\nprint(\"-inf =\", -inf)\nprint(\"nan =\", nan)\nprint()\nprint(\"1e308 * 10 ->\", 1e308 * 10)\nprint(\"inf - inf  ->\", inf - inf)\nprint(\"nan == nan ->\", nan == nan)\nprint()\nprint(\"isinf(inf) ->\", math.isinf(inf))\nprint(\"isnan(nan) ->\", math.isnan(nan))","id":17,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"special-floats","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import sys\nimport math\n\nsmallest_normal = sys.float_info.min\ntowards_zero = math.nextafter(smallest_normal, 0.0)\n\nprint(\"minste positive normaliserte float:\", smallest_normal)\nprint(\"neste tall mot null:               \", towards_zero)\nprint(\"er det fortsatt positivt?           \", towards_zero > 0)","id":18,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"tiny-floats","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\ndef float_report(x):\n    x = float(x)\n    num, den = x.as_integer_ratio()\n\n    print(\"verdi       :\", repr(x))\n    print(\"hex         :\", x.hex())\n    print(\"eksakt brøk :\", f\"{num}/{den}\")\n    print(\"ulp         :\", math.ulp(x))\n    print(\"forrige     :\", math.nextafter(x, -math.inf))\n    print(\"neste       :\", math.nextafter(x, math.inf))\n\nfloat_report(0.1)","id":19,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"float-report","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"exact = 1/3\napprox = 0.333\n\nabs_error = abs(exact - approx)\nrel_error = abs_error / abs(exact)\n\nprint(\"Eksakt verdi:     \", exact)\nprint(\"Tilnærming:       \", approx)\nprint(\"Absolutt feil:    \", abs_error)\nprint(\"Relativ feil:     \", rel_error)\nprint(\"Relativ feil i %: \", 100 * rel_error)","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"error-basic","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import matplotlib.pyplot as plt\n\nexact = [0.01, 1.0, 100.0]\nabs_error = 0.001\nrelative = [abs_error / x for x in exact]\n\nfor x, r in zip(exact, relative):\n    print(f\"x = {x:7g}: absolutt feil = {abs_error:g}, relativ feil = {100*r:.4g} %\")\n\nplt.bar([str(x) for x in exact], [100*r for r in relative])\nplt.yscale(\"log\")\nplt.xlabel(\"Eksakt verdi x\")\nplt.ylabel(\"Relativ feil (%)\")\nplt.title(\"Samme absolutte feil, svært ulik relativ betydning\")\nplt.show()","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"error-scale","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"# Vi lager en liste med små eksperimenter.\n# Hvert element består av:\n#   1) teksten vi vil vise\n#   2) resultatet Python faktisk beregner\ntests = [\n    (\"0.1 + 0.1 + 0.1\", 0.1 + 0.1 + 0.1),\n    (\"0.1 + 0.2\",       0.1 + 0.2),\n    (\"0.1 + 0.2 == 0.3\", 0.1 + 0.2 == 0.3),\n    (\"1e16 + 1.0\",      1e16 + 1.0),\n    (\"(1e16 + 1.0) - 1e16\", (1e16 + 1.0) - 1e16),\n]\n\n# Gå gjennom eksperimentene ett for ett.\n# !r gjør at Python viser den interne representasjonen tydeligere.\nfor expression, value in tests:\n    print(f\"{expression:25s} -> {value!r}\")","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Funksjonen tar inn et positivt heltall n\n# og returnerer vanlig binær form, normalisert form og eksponenten e.\ndef normalized_binary_integer(n):\n    # Vi bruker funksjonen bare på positive heltall.\n    if n <= 0:\n        raise ValueError(\"Bruk et positivt heltall.\")\n\n    # bin(n) gir for eksempel '0b10111'.\n    # [2:] fjerner prefikset '0b'.\n    bits = bin(n)[2:]\n\n    # Har vi k binære sifre, flyttes punktet k-1 plasser.\n    exponent = len(bits) - 1\n\n    # Sett punktum etter første bit.\n    if len(bits) == 1:\n        normalized = \"1.0\"\n    else:\n        normalized = bits[0] + \".\" + bits[1:]\n\n    return bits, normalized, exponent\n\n# Prøv funksjonen på tre tall.\nfor n in [9, 23, 44]:\n    bits, mantissa, exponent = normalized_binary_integer(n)\n    print(f\"{n} = ({bits})₂ = ({mantissa})₂ × 2^{exponent}\")","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Endre dette tallet og kjør cellen på nytt.\nn = 37\n\n# Vi bruker funksjonen fra forrige celle.\nbits, mantissa, exponent = normalized_binary_integer(n)\n\nprint(f\"{n} = ({bits})₂\")\nprint(f\"Normalisert: ({mantissa})₂ × 2^{exponent}\")","id":5,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# struct kan lese de rå byte-verdiene som Python bruker for et `float`.\n# Her ser vi bitmønsteret til Pythons vanlige 64-bits flyttall (double precision).\nimport struct\n\n\ndef ieee754_double(x):\n    # Sørg for at x behandles som et Python-flyttall.\n    x = float(x)\n\n    # Pakk x som et 64-bits double.\n    raw_bytes = struct.pack(\">d\", x)\n\n    # Les de samme 8 byte som ett 64-bits heltall.\n    raw_integer = struct.unpack(\">Q\", raw_bytes)[0]\n\n    # Skriv heltallet som nøyaktig 64 binære tegn.\n    bits = f\"{raw_integer:064b}\"\n\n    # IEEE 754 double deler bitene slik:\n    sign = bits[0]              # 1 bit fortegn\n    exponent_bits = bits[1:12]  # 11 bit eksponent\n    fraction_bits = bits[12:]   # 52 bit mantisse\n\n    # Gjør eksponentbitene om til vanlig heltall.\n    E = int(exponent_bits, 2)\n\n    # For normaliserte tall trekkes bias 1023 fra.\n    if 0 < E < 2047:\n        e = E - 1023\n    else:\n        e = None\n\n    return bits, sign, exponent_bits, fraction_bits, E, e\n\n\n# Undersøk noen tall.\nfor x in [1.0, 9.0, 23.0, 0.1]:\n    bits, s, eb, mb, E, e = ieee754_double(x)\n\n    print(f\"\\nx = {x!r}\")\n    print(\"S | exponent    | mantisse\")\n    print(f\"{s} | {eb} | {mb}\")\n    print(\"lagret E =\", E, \"  virkelig e =\", e)","id":6,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Fraction lar oss arbeide med eksakte brøker.\nfrom fractions import Fraction\n\nx = 0.1\n\n# Finn eksakt hvilken brøk den lagrede Python-`float`-verdien tilsvarer.\nnum, den = x.as_integer_ratio()\nstored = Fraction(num, den)\n\n# Dette er den matematiske verdien 1/10 uten avrunding.\nexact = Fraction(1, 10)\n\nprint(\"Python viser:          \", x)\nprint(\"Lagret eksakt som:     \", f\"{num}/{den}\")\nprint(\"Eksakt 1/10:           \", exact)\nprint(\"Feil som eksakt brøk:  \", stored - exact)\n\n# Gjør feilen om til vanlig flyttall for enklere lesing.\nprint(\"Feil som desimaltall:  \", float(stored - exact))\n\n# Vis Pythons heksadesimale flyttallsnotasjon.\nprint(\"Heksadesimal binary64-form:\", x.hex())","id":7,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Vi bruker math for å finne naboflyttall,\n# Fraction for å representere 1/10 eksakt,\n# og matplotlib for å lage en enkel illustrasjon.\nimport math\nfrom fractions import Fraction\nimport matplotlib.pyplot as plt\n\nx = 0.1\n\n# Finn nærmeste representerbare double på hver side\n# av Python-verdien x.\nleft = math.nextafter(x, -math.inf)\nright = math.nextafter(x, math.inf)\n\nprint(\"venstre nabo :\", format(left, \".18g\"))\nprint(\"lagret x     :\", format(x, \".18g\"))\nprint(\"høyre nabo   :\", format(right, \".18g\"))\nprint(\"avstand ned  :\", x - left)\nprint(\"avstand opp  :\", right - x)\n\n# Fraction.from_float(x) gir den eksakte rasjonale verdien\n# som bitmønsteret til x representerer.\nstored = Fraction.from_float(x)\n\n# Den matematiske verdien 1/10, uten avrunding.\nexact = Fraction(1, 10)\n\n# Bruk avstanden til venstre nabo som én lokal enhet.\nstep = stored - Fraction.from_float(left)\n\n# Hvor ligger eksakt 1/10 i forhold til den lagrede verdien?\n# For x = 0.1 blir posisjonen -0.4:\n# eksakt 1/10 ligger 40 % av veien mot venstre nabo.\nexact_position = float((exact - stored) / step)\n\nprint(\"eksakt 1/10 ligger\", exact_position,\n      \"lokale steg fra lagret 0.1\")\n\n# De tre representerbare double-verdiene tegnes med\n# like stor avstand slik at strukturen blir synlig.\npositions = [-1, 0, 1]\nlabels = [\"venstre nabo\", \"lagret 0.1\", \"høyre nabo\"]\n\nplt.scatter(positions, [0, 0, 0], s=90)\n\nfor pos, label in zip(positions, labels):\n    plt.annotate(\n        label,\n        (pos, 0),\n        xytext=(0, 15),\n        textcoords=\"offset points\",\n        ha=\"center\",\n    )\n\n# Marker den eksakte matematiske verdien 1/10.\nplt.scatter([exact_position], [0], marker=\"x\", s=120)\nplt.annotate(\n    \"eksakt 1/10\",\n    (exact_position, 0),\n    xytext=(0, -26),\n    textcoords=\"offset points\",\n    ha=\"center\",\n)\n\nplt.xlim(-1.35, 1.35)\nplt.ylim(-0.18, 0.18)\nplt.yticks([])\nplt.xticks([-1, 0, 1], [\"−1\", \"0\", \"+1\"])\nplt.xlabel(\"lokale steg mellom representerbare double-verdier\")\nplt.title(\"Eksakt 0.1 ligger mellom to representerbare tall\")\nplt.show()","id":8,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Vi legger stadig mindre tall til 1.0.\n# Spørsmålet er: når slutter Python å se noen forskjell?\n\nfor k in range(45, 58):\n    delta = 2.0**(-k)\n    changed = (1.0 + delta) > 1.0\n\n    print(\n        f\"2^-{k:<2} = {delta:.3e}   \"\n        f\"1 + delta > 1 ? {changed}\"\n    )","id":9,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# sys.float_info inneholder egenskaper til Python `float`.\n# Python `float` bruker normalt IEEE 754 double precision.\nimport sys\nimport math\n\n# Pythons verdi for maskinepsilon.\neps = sys.float_info.epsilon\n\n# Finn neste representerbare double etter 1.0.\nnext_one = math.nextafter(1.0, math.inf)\n\nprint(\"Pythons maskinepsilon =\", eps)\nprint(\"2**-52                =\", 2**-52)\nprint(\"neste double etter 1  =\", repr(next_one))\nprint(\"neste - 1             =\", next_one - 1.0)\n\nprint()\nprint(\"1 + eps > 1           =\", 1.0 + eps > 1.0)\nprint(\"1 + eps/2 == 1        =\", 1.0 + eps/2 == 1.0)","id":10,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\nimport matplotlib.pyplot as plt\n\n# Velg tall av formen 2^k over et stort område.\npowers = list(range(-20, 61, 4))\nvalues = [2.0**k for k in powers]\n\n# math.ulp(x) gir avstanden mellom representerbare nivåer\n# på størrelsesskalaen rundt x.\nspacing = [math.ulp(x) for x in values]\n\n# Skriv ut noen eksempler.\nfor k, step in zip(powers[::5], spacing[::5]):\n    print(f\"rundt 2^{k:3d}: avstand ≈ {step:g}\")\n\nprint()\n\n# Et spesielt viktig område er rundt 2^53.\nx = float(2**53)\n\nprint(\"x      =\", x)\nprint(\"x + 1  =\", x + 1)\nprint(\"x + 2  =\", x + 2)\nprint(\"x+1==x ?\", x + 1 == x)\nprint(\"x+2>x  ?\", x + 2 > x)\n\n# Tegn hvordan avstanden mellom representerbare verdier vokser.\nplt.loglog(values, spacing, marker=\"o\")\nplt.xlabel(\"størrelse på tallet\")\nplt.ylabel(\"lokal avstand mellom representerbare double-verdier\")\nplt.title(\"Presisjonen er relativ: avstanden vokser med størrelsen\")\nplt.show()","id":11,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# To svært store tall med motsatt fortegn og ett lite tall.\na = 1e16\nb = -1e16\nc = 1.0\n\n# Første regnerekkefølge.\nleft = (a + b) + c\n\n# Andre regnerekkefølge.\nright = a + (b + c)\n\nprint(\"(a+b)+c =\", left)\nprint(\"a+(b+c) =\", right)\nprint(\"Like?    =\", left == right)","id":12,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Vi starter på 0.\ntotal = 0.0\n\n# Legg til 0.1 tusen ganger.\n# Etter hver addisjon lagres et nytt avrundet double-resultat.\nfor _ in range(1000):\n    total = total + 0.1\n\n# Matematisk forventer vi 1000 * 0.1 = 100.\nexact = 100.0\n\nprint(\"gjentatt addisjon =\", repr(total))\nprint(\"eksakt mål        =\", exact)\nprint(\"absolutt feil     =\", abs(total - exact))\n\n# math.fsum er laget for å summere flyttall mer nøyaktig.\nvalues = [0.1] * 1000\nbetter = math.fsum(values)\n\nprint()\nprint(\"math.fsum          =\", repr(better))\nprint(\"absolutt feil     =\", abs(better - exact))","id":13,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Hvor raskt bygger feilen seg opp?\n\nfor n in [10, 100, 1000, 10_000, 100_000]:\n    total = 0.0\n\n    # Legg til 0.1 n ganger.\n    for _ in range(n):\n        total += 0.1\n\n    # Eksakt matematisk mål.\n    exact = n / 10\n\n    # Absolutt feil mellom beregnet og eksakt verdi.\n    error = abs(total - exact)\n\n    print(\n        f\"n = {n:6d}   \"\n        f\"resultat = {total:.15g}   \"\n        f\"absolutt feil = {error:.3e}\"\n    )","id":14,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Direkte form: her trekker vi fra to tall\n# som blir nesten like når x er liten.\ndef naive(x):\n    return math.sqrt(1 + x) - 1\n\n# Omskrevet form: samme matematikk,\n# men uten subtraksjon av nesten like tall.\ndef stable(x):\n    return x / (math.sqrt(1 + x) + 1)\n\nprint(f\"{'x':>12} {'direkte':>18} {'stabil form':>18}\")\n\n# Undersøk stadig mindre x.\nfor k in [4, 8, 12, 14, 16, 18]:\n    x = 10.0**(-k)\n    print(f\"{x:12.1e} {naive(x):18.10e} {stable(x):18.10e}\")","id":15,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import matplotlib.pyplot as plt\n\n# Lag x = 10^-1, 10^-2, ..., 10^-18.\nxs = [10.0**(-k) for k in range(1, 19)]\n\n# Beregn begge matematiske former.\ndirect = [abs(naive(x)) for x in xs]\nrewritten = [abs(stable(x)) for x in xs]\n\n# Tegn begge på logaritmiske akser.\nplt.loglog(xs, direct, \"o-\", label=r\"$\\sqrt{1+x}-1$\")\nplt.loglog(xs, rewritten, \"s-\", label=r\"$x/(\\sqrt{1+x}+1)$\")\n\n# Vi vil at små x skal ligge mot høyre.\nplt.gca().invert_xaxis()\n\nplt.xlabel(\"x\")\nplt.ylabel(\"beregnet verdi\")\nplt.title(\"Matematisk likt, numerisk svært forskjellig\")\nplt.legend()\nplt.show()","id":16,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Direkte matematisk form.\ndef trig_direct(x):\n    return (1 - math.cos(x)) / math.sin(x)**2\n\n# Omskrevet og numerisk mer stabil form.\ndef trig_stable(x):\n    return 1 / (1 + math.cos(x))\n\n# Prøv stadig mindre verdier av x.\nfor x in [1e-2, 1e-4, 1e-6, 1e-8]:\n    try:\n        a = trig_direct(x)\n    except ZeroDivisionError:\n        # NaN markerer at den direkte beregningen brøt sammen.\n        a = float(\"nan\")\n\n    b = trig_stable(x)\n    print(f\"x={x:8.1e}  direkte={a!r:>20}  stabil={b!r}\")","id":17,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Lag +uendelig og NaN direkte.\ninf = float(\"inf\")\nnan = float(\"nan\")\n\nprint(\"inf =\", inf)\nprint(\"-inf =\", -inf)\nprint(\"nan =\", nan)\nprint()\n\n# Et svært stort resultat kan bli uendelig.\nprint(\"1e308 * 10 ->\", 1e308 * 10)\n\n# Uendelig minus uendelig har ingen bestemt tallverdi.\nprint(\"inf - inf  ->\", inf - inf)\n\n# NaN er spesielt: det er ikke likt seg selv.\nprint(\"nan == nan ->\", nan == nan)\nprint()\n\n# Bruk egne funksjoner for å teste disse verdiene.\nprint(\"isinf(inf) ->\", math.isinf(inf))\nprint(\"isnan(nan) ->\", math.isnan(nan))","id":18,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import sys\nimport math\n\n# Minste positive normaliserte Python-flyttall.\nsmallest_normal = sys.float_info.min\n\n# Gå ett representerbart trinn mot null.\ntowards_zero = math.nextafter(smallest_normal, 0.0)\n\nprint(\"minste positive normaliserte double:\", smallest_normal)\nprint(\"neste tall mot null:               \", towards_zero)\nprint(\"er det fortsatt positivt?           \", towards_zero > 0)","id":19,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef float_report(x):\n    # Gjør input om til en Python `float` (normalt IEEE 754 binary64).\n    x = float(x)\n\n    # Finn den eksakte brøken som flyttallet representerer.\n    num, den = x.as_integer_ratio()\n\n    print(\"verdi       :\", repr(x))\n\n    # Heksadesimal normalisert form.\n    print(\"hex         :\", x.hex())\n\n    # Eksakt rasjonal verdi av det lagrede bitmønsteret.\n    print(\"eksakt brøk :\", f\"{num}/{den}\")\n\n    # Lokal avstand mellom representerbare nivåer.\n    print(\"ulp         :\", math.ulp(x))\n\n    # Nærmeste representerbare nabo i begge retninger.\n    print(\"forrige     :\", math.nextafter(x, -math.inf))\n    print(\"neste       :\", math.nextafter(x, math.inf))\n\n\n# Endre tallet og kjør på nytt.\nfloat_report(0.1)","id":20,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -5479,7 +5479,7 @@ b=(101100)_2=(44)_{10}
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">Hvorfor flyttall?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">Normalisert form</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">IEEE 754 double</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-4" role="tab" aria-controls="tabset-6-4" aria-selected="false" href="">Avrunding</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-5" role="tab" aria-controls="tabset-6-5" aria-selected="false" href="">Maskinepsilon</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-6" role="tab" aria-controls="tabset-6-6" aria-selected="false" href="">Regning med flyttall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-7" role="tab" aria-controls="tabset-6-7" aria-selected="false" href="">Tap av signifikans</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-8" role="tab" aria-controls="tabset-6-8" aria-selected="false" href="">Spesielle verdier</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-9-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-9" role="tab" aria-controls="tabset-6-9" aria-selected="false" href="">Hva bør du huske?</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
-<p>Start med å la Python regne:</p>
+<p>Start med å la Python regne. Kjør cellen og se på resultatene:</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Det ser rart ut, men datamaskinen gjør akkurat det formatet tillater.</p>
@@ -5499,33 +5499,113 @@ b=(101100)_2=(44)_{10}
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Et <code>float</code> er ikke «et reelt tall inne i maskinen». Det er ett av et stort, men <strong>endelig antall representerbare tall</strong>.</p>
+<p>Et maskinrepresentert <strong>flyttall</strong> er ikke «et vilkårlig reelt tall inne i maskinen». Det er ett av et stort, men <strong>endelig antall representerbare tall</strong>.</p>
 </div>
 </div>
-<p>Standarden som brukes på nesten alle moderne datamaskiner heter <strong>IEEE 754</strong>. Vi fokuserer på <strong>double precision</strong> (64 bit), som Python vanligvis bruker for <code>float</code>.</p>
+<p>Standarden som brukes på nesten alle moderne datamaskiner heter <strong>IEEE 754</strong>.</p>
+<section id="float-double-og-flyttall" class="level3">
+<h3 class="anchored" data-anchor-id="float-double-og-flyttall"><code>float</code>, <code>double</code> og flyttall</h3>
+<p>Her er tre ord som lett blandes:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>ord</th>
+<th>hva betyr det?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>flyttall</strong></td>
+<td>fellesnavn for tall lagret med fortegn, signifikante sifre og eksponent</td>
+</tr>
+<tr class="even">
+<td><strong>single precision</strong></td>
+<td>IEEE 754-format med 32 bit; kalles ofte <code>float</code> i språk som C</td>
+</tr>
+<tr class="odd">
+<td><strong>double precision</strong></td>
+<td>IEEE 754-format med 64 bit; kalles ofte <code>double</code> i språk som C</td>
+</tr>
+<tr class="even">
+<td>Python <code>float</code></td>
+<td>Pythons vanlige flyttallstype; på vanlige Python-systemer bruker den <strong>double precision (64 bit)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>I denne teksten bruker vi derfor:</p>
+<ul>
+<li><strong>flyttall</strong> når vi snakker generelt,</li>
+<li><strong>double precision</strong> eller <strong>IEEE 754 binary64</strong> når vi snakker om selve 64-bitsformatet,</li>
+<li>Python <strong><code>float</code></strong> når vi konkret snakker om en verdi eller type i Python.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Viktig
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Navnet <code>float</code> betyr altså <strong>ikke nødvendigvis 32 bit</strong>. I C er <code>float</code> vanligvis single precision, mens Python <code>float</code> normalt bruker double precision.</p>
+</div>
+</div>
+<p>Fra nå av undersøker vi hovedsakelig <strong>IEEE 754 double precision (binary64)</strong>, fordi det er formatet Python <code>float</code> normalt bruker.</p>
 <hr>
+</section>
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <p>Før vi kan forstå bitene i IEEE 754, må vi kunne skrive et binært tall på <strong>normalisert form</strong>:</p>
 <p><span class="math display">\[
 \pm 1.b_1b_2b_3\ldots\times2^e.
 \]</span></p>
-<p>Tenk på dette som binær vitenskapelig notasjon.</p>
+<p>Dette er den binære versjonen av vitenskapelig notasjon.</p>
+<section id="lite-eksempel-9" class="level3">
+<h3 class="anchored" data-anchor-id="lite-eksempel-9">Lite eksempel: <span class="math inline">\(9\)</span></h3>
+<p>Vi har</p>
+<p><span class="math display">\[
+9=(1001)_2.
+\]</span></p>
+<p>Flytt binærpunktet tre plasser mot venstre:</p>
+<p><span class="math display">\[
+1001_2=1.001_2\times2^3.
+\]</span></p>
+<p>Dermed er den normaliserte formen</p>
+<p><span class="math display">\[
+9=(1.001)_2\times2^3.
+\]</span></p>
+</section>
+<section id="lite-eksempel-23" class="level3">
+<h3 class="anchored" data-anchor-id="lite-eksempel-23">Lite eksempel: <span class="math inline">\(23\)</span></h3>
+<p>Vi har</p>
+<p><span class="math display">\[
+23=(10111)_2.
+\]</span></p>
+<p>Flytt binærpunktet fire plasser:</p>
+<p><span class="math display">\[
+10111_2=1.0111_2\times2^4.
+\]</span></p>
+<p>Altså</p>
+<p><span class="math display">\[
+23=(1.0111)_2\times2^4.
+\]</span></p>
+</section>
 <section id="oppskrift" class="level3">
 <h3 class="anchored" data-anchor-id="oppskrift">Oppskrift</h3>
 <ol type="1">
 <li>Skriv tallet binært.</li>
-<li>Flytt binærpunktet til det står nøyaktig én <code>1</code> til venstre for punktet.</li>
+<li>Sett binærpunktet etter den første <code>1</code>-eren.</li>
 <li>Tell hvor mange plasser punktet ble flyttet.</li>
-<li>Dette tallet blir eksponenten <span class="math inline">\(e\)</span>.</li>
+<li>Antall plasser blir eksponenten <span class="math inline">\(e\)</span>.</li>
 </ol>
-<p>La Python gjøre prosedyren for positive heltall:</p>
+<p>La Python gjøre samme prosedyre for noen positive heltall:</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Dermed får vi for eksempel</p>
-<p><span class="math display">\[
-23=(10111)_2=(1.0111)_2\times2^4.
-\]</span></p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5546,7 +5626,7 @@ b=(101100)_2=(44)_{10}
 </section>
 </div>
 <div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
-<p>Et <code>double</code> bruker <strong>64 bit</strong>:</p>
+<p>IEEE 754 <strong>double precision (binary64)</strong> bruker <strong>64 bit</strong>:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -5567,9 +5647,9 @@ b=(101100)_2=(44)_{10}
 <td>størrelsesorden</td>
 </tr>
 <tr class="odd">
-<td>mantisse <span class="math inline">\(M\)</span></td>
+<td>mantissefelt <span class="math inline">\(M\)</span></td>
 <td style="text-align: right;">52</td>
-<td>signifikante binære sifre</td>
+<td>sifrene etter binærpunktet i signifikanden</td>
 </tr>
 </tbody>
 </table>
@@ -5581,16 +5661,55 @@ b=(101100)_2=(44)_{10}
 <p><span class="math display">\[
 E=e+1023.
 \]</span></p>
-<p>La oss se på de faktiske bitene som Python bruker:</p>
+<section id="lite-eksempel-tallet-9" class="level3">
+<h3 class="anchored" data-anchor-id="lite-eksempel-tallet-9">Lite eksempel: tallet <span class="math inline">\(9\)</span></h3>
+<p>Fra forrige tab har vi</p>
+<p><span class="math display">\[
+9=(1.001)_2\times2^3.
+\]</span></p>
+<p>Dermed:</p>
+<ol type="1">
+<li>Tallet er positivt, så <span class="math inline">\(S=0\)</span>.</li>
+<li>Eksponenten er <span class="math inline">\(e=3\)</span>.</li>
+<li>Den lagrede eksponenten blir</li>
+</ol>
+<p><span class="math display">\[
+E=3+1023=1026.
+\]</span></p>
+<ol start="4" type="1">
+<li><span class="math inline">\(1026\)</span> skrevet med 11 binære bit er</li>
+</ol>
+<p><span class="math display">\[
+1026=(10000000010)_2.
+\]</span></p>
+<ol start="5" type="1">
+<li>Mantissen kommer fra sifrene etter den første <code>1</code>-eren:</li>
+</ol>
+<p><span class="math display">\[
+1.\color{#0b6efd}{001}000\ldots
+\]</span></p>
+<p>Den første <code>1</code>-eren lagres ikke.</p>
+<p>Skjematisk:</p>
+<p><span class="math display">\[
+\underbrace{0}_{S}\quad
+\underbrace{10000000010}_{E}\quad
+\underbrace{001000\ldots000}_{M}.
+\]</span></p>
+</section>
+<section id="lite-eksempel-tallet-1" class="level3">
+<h3 class="anchored" data-anchor-id="lite-eksempel-tallet-1">Lite eksempel: tallet <span class="math inline">\(1\)</span></h3>
+<p><span class="math display">\[
+1=1.000\ldots\times2^0.
+\]</span></p>
+<p>Dermed er</p>
+<p><span class="math display">\[
+S=0,\qquad e=0,\qquad E=1023,
+\]</span></p>
+<p>og alle mantissebitene er <span class="math inline">\(0\)</span>.</p>
+<p>Nå kan vi la Python hente de <strong>faktiske 64 bitene</strong> fra et <code>float</code>:</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Følg spesielt <code>9.0</code>:</p>
-<ol type="1">
-<li><span class="math inline">\(9=(1001)_2=(1.001)_2\,2^3\)</span>.</li>
-<li>Fortegnet er positivt, altså <span class="math inline">\(S=0\)</span>.</li>
-<li><span class="math inline">\(e=3\)</span>, så <span class="math inline">\(E=3+1023=1026\)</span>.</li>
-<li>Mantissen begynner med <code>001...</code>; den første <code>1</code>-eren i <code>1.001</code> lagres ikke.</li>
-</ol>
+<p>Følg spesielt <code>9.0</code>. Resultatet fra Python skal stemme med regningen over.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5601,10 +5720,11 @@ E=e+1023.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Mantissefeltet har 52 lagrede bit, men den implisitte første <code>1</code>-eren gir <strong>53 binære signifikante bit</strong> for normaliserte tall.</p>
+<p>Mantissefeltet har 52 lagrede bit. Sammen med den implisitte ledende <code>1</code>-eren gir dette <strong>53 binære signifikante bit</strong> i signifikanden for normaliserte tall.</p>
 </div>
 </div>
 <hr>
+</section>
 </div>
 <div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
 <p>Tallet <span class="math inline">\(0.1\)</span> trenger uendelig mange binære sifre. IEEE 754 må derfor velge et flyttall i nærheten.</p>
@@ -5621,33 +5741,82 @@ E=e+1023.
 <p>Vi kan også spørre Python om naboene til <code>0.1</code>:</p>
 <div id="qpyodide-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Det er disse diskrete nabotallene avrundingen velger mellom.</p>
+<p>Det er disse diskrete naboflyttallene avrundingen velger mellom.</p>
 <hr>
 </div>
 <div id="tabset-6-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-5-tab">
-<p>Hvor tett ligger flyttallene rundt <span class="math inline">\(1\)</span>?</p>
+<p>Hvor liten endring kan vi gjøre på tallet <span class="math inline">\(1\)</span> før datamaskinen ikke lenger klarer å se forskjellen?</p>
+<section id="python-eksperiment" class="level3">
+<h3 class="anchored" data-anchor-id="python-eksperiment">Python-eksperiment</h3>
+<p>Prøv først uten å vite svaret:</p>
 <div id="qpyodide-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>For double precision er</p>
+<p>Du bør se en tydelig overgang:</p>
+<ul>
+<li>for noen verdier blir <span class="math inline">\(1+\delta\)</span> større enn <span class="math inline">\(1\)</span>,</li>
+<li>når <span class="math inline">\(\delta\)</span> blir liten nok, avrundes <span class="math inline">\(1+\delta\)</span> tilbake til akkurat <code>1.0</code>.</li>
+</ul>
+<p>Dette viser at representerbare double-verdier <strong>ikke ligger kontinuerlig</strong> på tallinjen. Rundt <span class="math inline">\(1\)</span> finnes det et minste positivt steg til neste større representerbare verdi.</p>
+</section>
+<section id="definisjon" class="level3">
+<h3 class="anchored" data-anchor-id="definisjon">Definisjon</h3>
+<p>For IEEE 754 <strong>double precision (binary64)</strong> er <strong>maskinepsilon</strong></p>
 <p><span class="math display">\[
-\varepsilon_{\mathrm{mach}}=2^{-52}\approx2.22\cdot10^{-16}.
+\varepsilon_{\mathrm{mach}}
+=
+2^{-52}
+\approx
+2.22\cdot10^{-16}.
 \]</span></p>
-<p>Det er avstanden mellom <span class="math inline">\(1\)</span> og det neste representerbare tallet større enn <span class="math inline">\(1\)</span>.</p>
-<p>Men avstanden er <strong>ikke den samme overalt</strong>. Se hva som skjer når tallene blir større:</p>
+<p>Det er avstanden fra <span class="math inline">\(1\)</span> til det minste representerbare double-tallet som er større enn <span class="math inline">\(1\)</span>:</p>
+<p><span class="math display">\[
+1+\varepsilon_{\mathrm{mach}}.
+\]</span></p>
+<p>Med andre ord:</p>
+<p><span class="math display">\[
+1+\varepsilon_{\mathrm{mach}}&gt;1.
+\]</span></p>
+<p>Men allerede ved halvparten,</p>
+<p><span class="math display">\[
+1+\frac{\varepsilon_{\mathrm{mach}}}{2},
+\]</span></p>
+<p>avrunder IEEE 754 tilbake til <span class="math inline">\(1\)</span> i dette tilfellet.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hva forteller maskinepsilon?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Maskinepsilon beskriver presisjonen <strong>rundt tallet 1</strong>.</p>
+<p>Det betyr ikke at avstanden mellom flyttall alltid er <span class="math inline">\(2^{-52}\)</span>. Avstanden vokser når størrelsen på tallene vokser.</p>
+</div>
+</div>
+<p>Vi kan kontrollere definisjonen direkte i Python:</p>
 <div id="qpyodide-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Et dramatisk eksempel:</p>
+</section>
+<section id="avstanden-mellom-flyttall-endrer-seg" class="level3">
+<h3 class="anchored" data-anchor-id="avstanden-mellom-flyttall-endrer-seg">Avstanden mellom flyttall endrer seg</h3>
+<p>Maskinepsilon gjelder rundt <span class="math inline">\(1\)</span>. Nå undersøker vi hvordan avstanden mellom representerbare double-verdier endrer seg når tallene blir større:</p>
 <div id="qpyodide-insertion-location-11"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Ved denne størrelsen er <span class="math inline">\(1\)</span> mindre enn avstanden mellom naboflyttall.</p>
+<p>Rundt <span class="math inline">\(1\)</span> er avstanden omtrent <span class="math inline">\(2.22\cdot10^{-16}\)</span>. Rundt <span class="math inline">\(2^{53}\)</span> er avstanden blitt <span class="math inline">\(2\)</span>.</p>
+<p>Det er derfor</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fl">2.0</span><span class="op">**</span><span class="dv">53</span> <span class="op">+</span> <span class="dv">1</span> <span class="op">==</span> <span class="fl">2.0</span><span class="op">**</span><span class="dv">53</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>kan være sant i double precision, selv om det selvfølgelig er usant i eksakt matematikk.</p>
 <hr>
+</section>
 </div>
 <div id="tabset-6-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-6-tab">
 <p>I eksakt matematikk gjelder</p>
 <p><span class="math display">\[
 (a+b)+c=a+(b+c).
 \]</span></p>
-<p>Med flyttall kan mellomresultatene avrundes, og da kan regnerekkefølgen endre svaret:</p>
+<p>Med endelig presisjon i double precision kan mellomresultatene avrundes, og da kan regnerekkefølgen endre svaret:</p>
 <div id="qpyodide-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Hva skjedde?</p>
@@ -5656,10 +5825,16 @@ E=e+1023.
 <li>I <code>a+(b+c)</code> er <code>1.0</code> for lite til å påvirke <code>-1e16</code>.</li>
 <li>Dermed blir <code>b+c</code> avrundet tilbake til <code>-1e16</code>.</li>
 </ol>
-<p>Også mange små avrundingsfeil kan hope seg opp:</p>
+<p>Også mange små avrundingsfeil kan hope seg opp.</p>
+<p>Vi legger først til <code>0.1</code> mange ganger på den enkleste mulige måten:</p>
 <div id="qpyodide-insertion-location-13"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p><code>math.fsum</code> bruker en mer nøyaktig summeringsalgoritme.</p>
+<p>Hver enkelt avrundingsfeil er svært liten. Men når vi utfører mange operasjoner etter hverandre, kan feilene <strong>akkumuleres</strong>.</p>
+<p><code>math.fsum</code> bruker en mer robust summeringsalgoritme og reduserer denne typen feil.</p>
+<p>Vi kan også se hvordan feilen utvikler seg når antall addisjoner øker:</p>
+<div id="qpyodide-insertion-location-14"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Her ser vi at den absolutte feilen ikke nødvendigvis vokser jevnt, men den kan bygge seg opp når mange avrundede mellomresultater brukes videre.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5671,8 +5846,8 @@ E=e+1023.
 </div>
 <div class="callout-body-container callout-body">
 <p>Unngå ofte <code>a == b</code> når <code>a</code> og <code>b</code> er resultater av beregninger. Test heller om de er nær hverandre:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>math.isclose(a, b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>math.isclose(a, b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <hr>
@@ -5691,11 +5866,11 @@ E=e+1023.
 \]</span></p>
 <p>De to uttrykkene er matematisk identiske. Numerisk kan de være svært forskjellige.</p>
 <p>Kjør tabellen:</p>
-<div id="qpyodide-insertion-location-14"></div>
+<div id="qpyodide-insertion-location-15"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>For svært små <span class="math inline">\(x\)</span> blir <code>1 + x</code> avrundet så kraftig at den direkte formen til slutt gir <code>0.0</code>.</p>
 <p>Se utviklingen som figur:</p>
-<div id="qpyodide-insertion-location-15"></div>
+<div id="qpyodide-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -5720,14 +5895,14 @@ E=e+1023.
 \]</span></p>
 <p>som unngår subtraksjonen <span class="math inline">\(1-\cos x\)</span>.</p>
 <p>Prøv begge:</p>
-<div id="qpyodide-insertion-location-16"></div>
+<div id="qpyodide-insertion-location-17"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <hr>
 </div>
 <div id="tabset-6-8" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-8-tab">
 <p>IEEE 754 har også verdier utenfor de vanlige endelige reelle tallene.</p>
 <p>La Python vise dem:</p>
-<div id="qpyodide-insertion-location-17"></div>
+<div id="qpyodide-insertion-location-18"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <ul>
 <li><code>inf</code> og <code>-inf</code> representerer positiv og negativ uendelig.</li>
@@ -5735,25 +5910,25 @@ E=e+1023.
 <li><code>NaN</code> er ikke lik seg selv; bruk <code>math.isnan(...)</code> for å teste den.</li>
 </ul>
 <p>IEEE 754 har også <strong>subnormale tall</strong> nær null. De gjør overgangen til null gradvis, men med redusert presisjon.</p>
-<div id="qpyodide-insertion-location-18"></div>
+<div id="qpyodide-insertion-location-19"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>For dette kurset er det viktigst å vite <strong>at</strong> subnormale tall finnes; vi trenger ikke lære bitmønsteret deres i detalj.</p>
 <hr>
 </div>
 <div id="tabset-6-9" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-9-tab">
 <p>Bruk denne lille funksjonen til å undersøke et hvilket som helst flyttall:</p>
-<div id="qpyodide-insertion-location-19"></div>
+<div id="qpyodide-insertion-location-20"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Når du arbeider numerisk, husk:</p>
 <ol type="1">
-<li>Et <code>float</code> er ett av et endelig antall representerbare tall.</li>
+<li>Et maskinrepresentert flyttall er ett av et endelig antall representerbare tall.</li>
 <li>Mange enkle desimaltall kan ikke representeres eksakt.</li>
 <li>Hver regneoperasjon kan gi avrunding.</li>
 <li>Små tall kan forsvinne ved siden av svært store tall.</li>
 <li>Subtraksjon av nesten like tall kan gi tap av signifikans.</li>
 <li>Matematisk ekvivalente uttrykk kan ha svært ulik numerisk kvalitet.</li>
 <li>Regnerekkefølgen kan påvirke svaret.</li>
-<li>Sammenlign ofte flyttall med en toleranse.</li>
+<li>Sammenlign ofte beregnede Python-<code>float</code>-verdier med en toleranse.</li>
 </ol>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
