@@ -13,7 +13,7 @@ title: "Del 1 – Horner, flyttall og binære tall"
 ## 1.2 Binære tall
 {{< include ../_includes/module1/m1_2.md >}}
 
-## 1.3 Eksempler
+## 1.3 Flyttall
 {{< include ../_includes/module1/m1_3.md >}}
 
 :::
