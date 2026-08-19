@@ -9,32 +9,43 @@ concurrency:
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - refactor-pyodide-interaktiv
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
 
-      - uses: quarto-dev/quarto-actions/setup@v2
+    steps:
+      - name: Check out course repository
+        uses: actions/checkout@v6
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: Install Python dependencies
-        run: python -m pip install jupyter nbformat
+        run: python -m pip install jupyter nbformat pyyaml
 
-      # If you use Python or R, add one of these:
-      # - uses: actions/setup-python@v5
-      # - uses: r-lib/actions/setup-r@v2
+      - name: Configure access to private Erasmus-CTM repositories
+        env:
+          ERASMUS_CTM_TOKEN: ${{ secrets.ERASMUS_CTM_TOKEN }}
+        run: |
+          git config --global url."https://x-access-token:${ERASMUS_CTM_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install private Quarto extensions
+        run: python scripts/setup.py
 
       - name: Render Quarto project
         run: quarto render
 
       - name: Publish to GitHub Pages
+        if: github.ref == 'refs/heads/main'
         uses: quarto-dev/quarto-actions/publish@v2
         with:
           target: gh-pages
