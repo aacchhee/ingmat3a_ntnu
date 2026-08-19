@@ -22,10 +22,6 @@ website:
         contents:
           - pages/project_week1.qmd
 
-      - section: "Exercise test"
-        contents:
-          - pages/page3.qmd
-
 format:
   html:
     theme: cosmo
