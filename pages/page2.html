@@ -924,7 +924,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "en";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"exact = 1/3\napprox = 0.333\n\nabs_error = abs(exact - approx)\nrel_error = abs_error / abs(exact)\n\nprint(\"Eksakt verdi:     \", exact)\nprint(\"Tilnærming:       \", approx)\nprint(\"Absolutt feil:    \", abs_error)\nprint(\"Relativ feil:     \", rel_error)\nprint(\"Relativ feil i %: \", 100 * rel_error)","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"error-basic","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import matplotlib.pyplot as plt\n\nexact = [0.01, 1.0, 100.0]\nabs_error = 0.001\nrelative = [abs_error / x for x in exact]\n\nfor x, r in zip(exact, relative):\n    print(f\"x = {x:7g}: absolutt feil = {abs_error:g}, relativ feil = {100*r:.4g} %\")\n\nplt.bar([str(x) for x in exact], [100*r for r in relative])\nplt.yscale(\"log\")\nplt.xlabel(\"Eksakt verdi x\")\nplt.ylabel(\"Relativ feil (%)\")\nplt.title(\"Samme absolutte feil, svært ulik relativ betydning\")\nplt.show()","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"error-scale","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"# Vi lager en liste med små eksperimenter.\n# Hvert element består av:\n#   1) teksten vi vil vise\n#   2) resultatet Python faktisk beregner\ntests = [\n    (\"0.1 + 0.1 + 0.1\", 0.1 + 0.1 + 0.1),\n    (\"0.1 + 0.2\",       0.1 + 0.2),\n    (\"0.1 + 0.2 == 0.3\", 0.1 + 0.2 == 0.3),\n    (\"1e16 + 1.0\",      1e16 + 1.0),\n    (\"(1e16 + 1.0) - 1e16\", (1e16 + 1.0) - 1e16),\n]\n\n# Gå gjennom eksperimentene ett for ett.\n# !r gjør at Python viser den interne representasjonen tydeligere.\nfor expression, value in tests:\n    print(f\"{expression:25s} -> {value!r}\")","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Funksjonen tar inn et positivt heltall n\n# og returnerer vanlig binær form, normalisert form og eksponenten e.\ndef normalized_binary_integer(n):\n    # Vi bruker funksjonen bare på positive heltall.\n    if n <= 0:\n        raise ValueError(\"Bruk et positivt heltall.\")\n\n    # bin(n) gir for eksempel '0b10111'.\n    # [2:] fjerner prefikset '0b'.\n    bits = bin(n)[2:]\n\n    # Har vi k binære sifre, flyttes punktet k-1 plasser.\n    exponent = len(bits) - 1\n\n    # Sett punktum etter første bit.\n    if len(bits) == 1:\n        normalized = \"1.0\"\n    else:\n        normalized = bits[0] + \".\" + bits[1:]\n\n    return bits, normalized, exponent\n\n# Prøv funksjonen på tre tall.\nfor n in [9, 23, 44]:\n    bits, mantissa, exponent = normalized_binary_integer(n)\n    print(f\"{n} = ({bits})₂ = ({mantissa})₂ × 2^{exponent}\")","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Endre dette tallet og kjør cellen på nytt.\nn = 37\n\n# Vi bruker funksjonen fra forrige celle.\nbits, mantissa, exponent = normalized_binary_integer(n)\n\nprint(f\"{n} = ({bits})₂\")\nprint(f\"Normalisert: ({mantissa})₂ × 2^{exponent}\")","id":5,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# struct kan lese de rå byte-verdiene som Python bruker for et `float`.\n# Her ser vi bitmønsteret til Pythons vanlige 64-bits flyttall (double precision).\nimport struct\n\n\ndef ieee754_double(x):\n    # Sørg for at x behandles som et Python-flyttall.\n    x = float(x)\n\n    # Pakk x som et 64-bits double.\n    raw_bytes = struct.pack(\">d\", x)\n\n    # Les de samme 8 byte som ett 64-bits heltall.\n    raw_integer = struct.unpack(\">Q\", raw_bytes)[0]\n\n    # Skriv heltallet som nøyaktig 64 binære tegn.\n    bits = f\"{raw_integer:064b}\"\n\n    # IEEE 754 double deler bitene slik:\n    sign = bits[0]              # 1 bit fortegn\n    exponent_bits = bits[1:12]  # 11 bit eksponent\n    fraction_bits = bits[12:]   # 52 bit mantisse\n\n    # Gjør eksponentbitene om til vanlig heltall.\n    E = int(exponent_bits, 2)\n\n    # For normaliserte tall trekkes bias 1023 fra.\n    if 0 < E < 2047:\n        e = E - 1023\n    else:\n        e = None\n\n    return bits, sign, exponent_bits, fraction_bits, E, e\n\n\n# Undersøk noen tall.\nfor x in [1.0, 9.0, 23.0, 0.1]:\n    bits, s, eb, mb, E, e = ieee754_double(x)\n\n    print(f\"\\nx = {x!r}\")\n    print(\"S | exponent    | mantisse\")\n    print(f\"{s} | {eb} | {mb}\")\n    print(\"lagret E =\", E, \"  virkelig e =\", e)","id":6,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Fraction lar oss arbeide med eksakte brøker.\nfrom fractions import Fraction\n\nx = 0.1\n\n# Finn eksakt hvilken brøk den lagrede Python-`float`-verdien tilsvarer.\nnum, den = x.as_integer_ratio()\nstored = Fraction(num, den)\n\n# Dette er den matematiske verdien 1/10 uten avrunding.\nexact = Fraction(1, 10)\n\nprint(\"Python viser:          \", x)\nprint(\"Lagret eksakt som:     \", f\"{num}/{den}\")\nprint(\"Eksakt 1/10:           \", exact)\nprint(\"Feil som eksakt brøk:  \", stored - exact)\n\n# Gjør feilen om til vanlig flyttall for enklere lesing.\nprint(\"Feil som desimaltall:  \", float(stored - exact))\n\n# Vis Pythons heksadesimale flyttallsnotasjon.\nprint(\"Heksadesimal binary64-form:\", x.hex())","id":7,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Vi bruker math for å finne naboflyttall,\n# Fraction for å representere 1/10 eksakt,\n# og matplotlib for å lage en enkel illustrasjon.\nimport math\nfrom fractions import Fraction\nimport matplotlib.pyplot as plt\n\nx = 0.1\n\n# Finn nærmeste representerbare double på hver side\n# av Python-verdien x.\nleft = math.nextafter(x, -math.inf)\nright = math.nextafter(x, math.inf)\n\nprint(\"venstre nabo :\", format(left, \".18g\"))\nprint(\"lagret x     :\", format(x, \".18g\"))\nprint(\"høyre nabo   :\", format(right, \".18g\"))\nprint(\"avstand ned  :\", x - left)\nprint(\"avstand opp  :\", right - x)\n\n# Fraction.from_float(x) gir den eksakte rasjonale verdien\n# som bitmønsteret til x representerer.\nstored = Fraction.from_float(x)\n\n# Den matematiske verdien 1/10, uten avrunding.\nexact = Fraction(1, 10)\n\n# Bruk avstanden til venstre nabo som én lokal enhet.\nstep = stored - Fraction.from_float(left)\n\n# Hvor ligger eksakt 1/10 i forhold til den lagrede verdien?\n# For x = 0.1 blir posisjonen -0.4:\n# eksakt 1/10 ligger 40 % av veien mot venstre nabo.\nexact_position = float((exact - stored) / step)\n\nprint(\"eksakt 1/10 ligger\", exact_position,\n      \"lokale steg fra lagret 0.1\")\n\n# De tre representerbare double-verdiene tegnes med\n# like stor avstand slik at strukturen blir synlig.\npositions = [-1, 0, 1]\nlabels = [\"venstre nabo\", \"lagret 0.1\", \"høyre nabo\"]\n\nplt.scatter(positions, [0, 0, 0], s=90)\n\nfor pos, label in zip(positions, labels):\n    plt.annotate(\n        label,\n        (pos, 0),\n        xytext=(0, 15),\n        textcoords=\"offset points\",\n        ha=\"center\",\n    )\n\n# Marker den eksakte matematiske verdien 1/10.\nplt.scatter([exact_position], [0], marker=\"x\", s=120)\nplt.annotate(\n    \"eksakt 1/10\",\n    (exact_position, 0),\n    xytext=(0, -26),\n    textcoords=\"offset points\",\n    ha=\"center\",\n)\n\nplt.xlim(-1.35, 1.35)\nplt.ylim(-0.18, 0.18)\nplt.yticks([])\nplt.xticks([-1, 0, 1], [\"−1\", \"0\", \"+1\"])\nplt.xlabel(\"lokale steg mellom representerbare double-verdier\")\nplt.title(\"Eksakt 0.1 ligger mellom to representerbare tall\")\nplt.show()","id":8,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Vi legger stadig mindre tall til 1.0.\n# Spørsmålet er: når slutter Python å se noen forskjell?\n\nfor k in range(45, 58):\n    delta = 2.0**(-k)\n    changed = (1.0 + delta) > 1.0\n\n    print(\n        f\"2^-{k:<2} = {delta:.3e}   \"\n        f\"1 + delta > 1 ? {changed}\"\n    )","id":9,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# sys.float_info inneholder egenskaper til Python `float`.\n# Python `float` bruker normalt IEEE 754 double precision.\nimport sys\nimport math\n\n# Pythons verdi for maskinepsilon.\neps = sys.float_info.epsilon\n\n# Finn neste representerbare double etter 1.0.\nnext_one = math.nextafter(1.0, math.inf)\n\nprint(\"Pythons maskinepsilon =\", eps)\nprint(\"2**-52                =\", 2**-52)\nprint(\"neste double etter 1  =\", repr(next_one))\nprint(\"neste - 1             =\", next_one - 1.0)\n\nprint()\nprint(\"1 + eps > 1           =\", 1.0 + eps > 1.0)\nprint(\"1 + eps/2 == 1        =\", 1.0 + eps/2 == 1.0)","id":10,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\nimport matplotlib.pyplot as plt\n\n# Velg tall av formen 2^k over et stort område.\npowers = list(range(-20, 61, 4))\nvalues = [2.0**k for k in powers]\n\n# math.ulp(x) gir avstanden mellom representerbare nivåer\n# på størrelsesskalaen rundt x.\nspacing = [math.ulp(x) for x in values]\n\n# Skriv ut noen eksempler.\nfor k, step in zip(powers[::5], spacing[::5]):\n    print(f\"rundt 2^{k:3d}: avstand ≈ {step:g}\")\n\nprint()\n\n# Et spesielt viktig område er rundt 2^53.\nx = float(2**53)\n\nprint(\"x      =\", x)\nprint(\"x + 1  =\", x + 1)\nprint(\"x + 2  =\", x + 2)\nprint(\"x+1==x ?\", x + 1 == x)\nprint(\"x+2>x  ?\", x + 2 > x)\n\n# Tegn hvordan avstanden mellom representerbare verdier vokser.\nplt.loglog(values, spacing, marker=\"o\")\nplt.xlabel(\"størrelse på tallet\")\nplt.ylabel(\"lokal avstand mellom representerbare double-verdier\")\nplt.title(\"Presisjonen er relativ: avstanden vokser med størrelsen\")\nplt.show()","id":11,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# To svært store tall med motsatt fortegn og ett lite tall.\na = 1e16\nb = -1e16\nc = 1.0\n\n# Første regnerekkefølge.\nleft = (a + b) + c\n\n# Andre regnerekkefølge.\nright = a + (b + c)\n\nprint(\"(a+b)+c =\", left)\nprint(\"a+(b+c) =\", right)\nprint(\"Like?    =\", left == right)","id":12,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Vi starter på 0.\ntotal = 0.0\n\n# Legg til 0.1 tusen ganger.\n# Etter hver addisjon lagres et nytt avrundet double-resultat.\nfor _ in range(1000):\n    total = total + 0.1\n\n# Matematisk forventer vi 1000 * 0.1 = 100.\nexact = 100.0\n\nprint(\"gjentatt addisjon =\", repr(total))\nprint(\"eksakt mål        =\", exact)\nprint(\"absolutt feil     =\", abs(total - exact))\n\n# math.fsum er laget for å summere flyttall mer nøyaktig.\nvalues = [0.1] * 1000\nbetter = math.fsum(values)\n\nprint()\nprint(\"math.fsum          =\", repr(better))\nprint(\"absolutt feil     =\", abs(better - exact))","id":13,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Hvor raskt bygger feilen seg opp?\n\nfor n in [10, 100, 1000, 10_000, 100_000]:\n    total = 0.0\n\n    # Legg til 0.1 n ganger.\n    for _ in range(n):\n        total += 0.1\n\n    # Eksakt matematisk mål.\n    exact = n / 10\n\n    # Absolutt feil mellom beregnet og eksakt verdi.\n    error = abs(total - exact)\n\n    print(\n        f\"n = {n:6d}   \"\n        f\"resultat = {total:.15g}   \"\n        f\"absolutt feil = {error:.3e}\"\n    )","id":14,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Direkte form: her trekker vi fra to tall\n# som blir nesten like når x er liten.\ndef naive(x):\n    return math.sqrt(1 + x) - 1\n\n# Omskrevet form: samme matematikk,\n# men uten subtraksjon av nesten like tall.\ndef stable(x):\n    return x / (math.sqrt(1 + x) + 1)\n\nprint(f\"{'x':>12} {'direkte':>18} {'stabil form':>18}\")\n\n# Undersøk stadig mindre x.\nfor k in [4, 8, 12, 14, 16, 18]:\n    x = 10.0**(-k)\n    print(f\"{x:12.1e} {naive(x):18.10e} {stable(x):18.10e}\")","id":15,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import matplotlib.pyplot as plt\n\n# Lag x = 10^-1, 10^-2, ..., 10^-18.\nxs = [10.0**(-k) for k in range(1, 19)]\n\n# Beregn begge matematiske former.\ndirect = [abs(naive(x)) for x in xs]\nrewritten = [abs(stable(x)) for x in xs]\n\n# Tegn begge på logaritmiske akser.\nplt.loglog(xs, direct, \"o-\", label=r\"$\\sqrt{1+x}-1$\")\nplt.loglog(xs, rewritten, \"s-\", label=r\"$x/(\\sqrt{1+x}+1)$\")\n\n# Vi vil at små x skal ligge mot høyre.\nplt.gca().invert_xaxis()\n\nplt.xlabel(\"x\")\nplt.ylabel(\"beregnet verdi\")\nplt.title(\"Matematisk likt, numerisk svært forskjellig\")\nplt.legend()\nplt.show()","id":16,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Direkte matematisk form.\ndef trig_direct(x):\n    return (1 - math.cos(x)) / math.sin(x)**2\n\n# Omskrevet og numerisk mer stabil form.\ndef trig_stable(x):\n    return 1 / (1 + math.cos(x))\n\n# Prøv stadig mindre verdier av x.\nfor x in [1e-2, 1e-4, 1e-6, 1e-8]:\n    try:\n        a = trig_direct(x)\n    except ZeroDivisionError:\n        # NaN markerer at den direkte beregningen brøt sammen.\n        a = float(\"nan\")\n\n    b = trig_stable(x)\n    print(f\"x={x:8.1e}  direkte={a!r:>20}  stabil={b!r}\")","id":17,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Lag +uendelig og NaN direkte.\ninf = float(\"inf\")\nnan = float(\"nan\")\n\nprint(\"inf =\", inf)\nprint(\"-inf =\", -inf)\nprint(\"nan =\", nan)\nprint()\n\n# Et svært stort resultat kan bli uendelig.\nprint(\"1e308 * 10 ->\", 1e308 * 10)\n\n# Uendelig minus uendelig har ingen bestemt tallverdi.\nprint(\"inf - inf  ->\", inf - inf)\n\n# NaN er spesielt: det er ikke likt seg selv.\nprint(\"nan == nan ->\", nan == nan)\nprint()\n\n# Bruk egne funksjoner for å teste disse verdiene.\nprint(\"isinf(inf) ->\", math.isinf(inf))\nprint(\"isnan(nan) ->\", math.isnan(nan))","id":18,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import sys\nimport math\n\n# Minste positive normaliserte Python-flyttall.\nsmallest_normal = sys.float_info.min\n\n# Gå ett representerbart trinn mot null.\ntowards_zero = math.nextafter(smallest_normal, 0.0)\n\nprint(\"minste positive normaliserte double:\", smallest_normal)\nprint(\"neste tall mot null:               \", towards_zero)\nprint(\"er det fortsatt positivt?           \", towards_zero > 0)","id":19,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef float_report(x):\n    # Gjør input om til en Python `float` (normalt IEEE 754 binary64).\n    x = float(x)\n\n    # Finn den eksakte brøken som flyttallet representerer.\n    num, den = x.as_integer_ratio()\n\n    print(\"verdi       :\", repr(x))\n\n    # Heksadesimal normalisert form.\n    print(\"hex         :\", x.hex())\n\n    # Eksakt rasjonal verdi av det lagrede bitmønsteret.\n    print(\"eksakt brøk :\", f\"{num}/{den}\")\n\n    # Lokal avstand mellom representerbare nivåer.\n    print(\"ulp         :\", math.ulp(x))\n\n    # Nærmeste representerbare nabo i begge retninger.\n    print(\"forrige     :\", math.nextafter(x, -math.inf))\n    print(\"neste       :\", math.nextafter(x, math.inf))\n\n\n# Endre tallet og kjør på nytt.\nfloat_report(0.1)","id":20,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"exact = 1/3\napprox = 0.333\n\nabs_error = abs(exact - approx)\nrel_error = abs_error / abs(exact)\n\nprint(\"Eksakt verdi:     \", exact)\nprint(\"Tilnærming:       \", approx)\nprint(\"Absolutt feil:    \", abs_error)\nprint(\"Relativ feil:     \", rel_error)\nprint(\"Relativ feil i %: \", 100 * rel_error)","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"error-basic","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import matplotlib.pyplot as plt\n\nexact = [0.01, 1.0, 100.0]\nabs_error = 0.001\nrelative = [abs_error / x for x in exact]\n\nfor x, r in zip(exact, relative):\n    print(f\"x = {x:7g}: absolutt feil = {abs_error:g}, relativ feil = {100*r:.4g} %\")\n\nplt.bar([str(x) for x in exact], [100*r for r in relative])\nplt.yscale(\"log\")\nplt.xlabel(\"Eksakt verdi x\")\nplt.ylabel(\"Relativ feil (%)\")\nplt.title(\"Samme absolutte feil, svært ulik relativ betydning\")\nplt.show()","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"error-scale","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"# Vi lager en liste med små eksperimenter.\n# Hvert element består av:\n#   1) teksten vi vil vise\n#   2) resultatet Python faktisk beregner\ntests = [\n    (\"0.1 + 0.1 + 0.1\", 0.1 + 0.1 + 0.1),\n    (\"0.1 + 0.2\",       0.1 + 0.2),\n    (\"0.1 + 0.2 == 0.3\", 0.1 + 0.2 == 0.3),\n    (\"1e16 + 1.0\",      1e16 + 1.0),\n    (\"(1e16 + 1.0) - 1e16\", (1e16 + 1.0) - 1e16),\n]\n\n# Gå gjennom eksperimentene ett for ett.\n# !r gjør at Python viser den interne representasjonen tydeligere.\nfor expression, value in tests:\n    print(f\"{expression:25s} -> {value!r}\")","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Funksjonen tar inn et positivt heltall n\n# og returnerer vanlig binær form, normalisert form og eksponenten e.\ndef normalized_binary_integer(n):\n    # Vi bruker funksjonen bare på positive heltall.\n    if n <= 0:\n        raise ValueError(\"Bruk et positivt heltall.\")\n\n    # bin(n) gir for eksempel '0b10111'.\n    # [2:] fjerner prefikset '0b'.\n    bits = bin(n)[2:]\n\n    # Har vi k binære sifre, flyttes punktet k-1 plasser.\n    exponent = len(bits) - 1\n\n    # Sett punktum etter første bit.\n    if len(bits) == 1:\n        normalized = \"1.0\"\n    else:\n        normalized = bits[0] + \".\" + bits[1:]\n\n    return bits, normalized, exponent\n\n# Prøv funksjonen på tre tall.\nfor n in [9, 23, 44]:\n    bits, mantissa, exponent = normalized_binary_integer(n)\n    print(f\"{n} = ({bits})₂ = ({mantissa})₂ × 2^{exponent}\")","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Endre dette tallet og kjør cellen på nytt.\nn = 37\n\n# Vi bruker funksjonen fra forrige celle.\nbits, mantissa, exponent = normalized_binary_integer(n)\n\nprint(f\"{n} = ({bits})₂\")\nprint(f\"Normalisert: ({mantissa})₂ × 2^{exponent}\")","id":5,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# struct kan lese de rå byte-verdiene som Python bruker for et `float`.\n# Her ser vi bitmønsteret til Pythons vanlige 64-bits flyttall (double precision).\nimport struct\n\n\ndef ieee754_double(x):\n    # Sørg for at x behandles som et Python-flyttall.\n    x = float(x)\n\n    # Pakk x som et 64-bits double.\n    raw_bytes = struct.pack(\">d\", x)\n\n    # Les de samme 8 byte som ett 64-bits heltall.\n    raw_integer = struct.unpack(\">Q\", raw_bytes)[0]\n\n    # Skriv heltallet som nøyaktig 64 binære tegn.\n    bits = f\"{raw_integer:064b}\"\n\n    # IEEE 754 double deler bitene slik:\n    sign = bits[0]              # 1 bit fortegn\n    exponent_bits = bits[1:12]  # 11 bit eksponent\n    fraction_bits = bits[12:]   # 52 bit mantisse\n\n    # Gjør eksponentbitene om til vanlig heltall.\n    E = int(exponent_bits, 2)\n\n    # For normaliserte tall trekkes bias 1023 fra.\n    if 0 < E < 2047:\n        e = E - 1023\n    else:\n        e = None\n\n    return bits, sign, exponent_bits, fraction_bits, E, e\n\n\n# Undersøk noen tall.\nfor x in [1.0, 9.0, 23.0, 0.1]:\n    bits, s, eb, mb, E, e = ieee754_double(x)\n\n    print(f\"\\nx = {x!r}\")\n    print(\"S | exponent    | mantisse\")\n    print(f\"{s} | {eb} | {mb}\")\n    print(\"lagret E =\", E, \"  virkelig e =\", e)","id":6,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Fraction lar oss arbeide med eksakte brøker.\nfrom fractions import Fraction\n\nx = 0.1\n\n# Finn eksakt hvilken brøk den lagrede Python-`float`-verdien tilsvarer.\nnum, den = x.as_integer_ratio()\nstored = Fraction(num, den)\n\n# Dette er den matematiske verdien 1/10 uten avrunding.\nexact = Fraction(1, 10)\n\nprint(\"Python viser:          \", x)\nprint(\"Lagret eksakt som:     \", f\"{num}/{den}\")\nprint(\"Eksakt 1/10:           \", exact)\nprint(\"Feil som eksakt brøk:  \", stored - exact)\n\n# Gjør feilen om til vanlig flyttall for enklere lesing.\nprint(\"Feil som desimaltall:  \", float(stored - exact))\n\n# Vis Pythons heksadesimale flyttallsnotasjon.\nprint(\"Heksadesimal binary64-form:\", x.hex())","id":7,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Vi bruker math for å finne naboflyttall,\n# Fraction for å representere 1/10 eksakt,\n# og matplotlib for å lage en enkel illustrasjon.\nimport math\nfrom fractions import Fraction\nimport matplotlib.pyplot as plt\n\nx = 0.1\n\n# Finn nærmeste representerbare double på hver side\n# av Python-verdien x.\nleft = math.nextafter(x, -math.inf)\nright = math.nextafter(x, math.inf)\n\nprint(\"venstre nabo :\", format(left, \".18g\"))\nprint(\"lagret x     :\", format(x, \".18g\"))\nprint(\"høyre nabo   :\", format(right, \".18g\"))\nprint(\"avstand ned  :\", x - left)\nprint(\"avstand opp  :\", right - x)\n\n# Fraction.from_float(x) gir den eksakte rasjonale verdien\n# som bitmønsteret til x representerer.\nstored = Fraction.from_float(x)\n\n# Den matematiske verdien 1/10, uten avrunding.\nexact = Fraction(1, 10)\n\n# Bruk avstanden til venstre nabo som én lokal enhet.\nstep = stored - Fraction.from_float(left)\n\n# Hvor ligger eksakt 1/10 i forhold til den lagrede verdien?\n# For x = 0.1 blir posisjonen -0.4:\n# eksakt 1/10 ligger 40 % av veien mot venstre nabo.\nexact_position = float((exact - stored) / step)\n\nprint(\"eksakt 1/10 ligger\", exact_position,\n      \"lokale steg fra lagret 0.1\")\n\n# De tre representerbare double-verdiene tegnes med\n# like stor avstand slik at strukturen blir synlig.\npositions = [-1, 0, 1]\nlabels = [\"venstre nabo\", \"lagret 0.1\", \"høyre nabo\"]\n\nplt.scatter(positions, [0, 0, 0], s=90)\n\nfor pos, label in zip(positions, labels):\n    plt.annotate(\n        label,\n        (pos, 0),\n        xytext=(0, 15),\n        textcoords=\"offset points\",\n        ha=\"center\",\n    )\n\n# Marker den eksakte matematiske verdien 1/10.\nplt.scatter([exact_position], [0], marker=\"x\", s=120)\nplt.annotate(\n    \"eksakt 1/10\",\n    (exact_position, 0),\n    xytext=(0, -26),\n    textcoords=\"offset points\",\n    ha=\"center\",\n)\n\nplt.xlim(-1.35, 1.35)\nplt.ylim(-0.18, 0.18)\nplt.yticks([])\nplt.xticks([-1, 0, 1], [\"−1\", \"0\", \"+1\"])\nplt.xlabel(\"lokale steg mellom representerbare double-verdier\")\nplt.title(\"Eksakt 0.1 ligger mellom to representerbare tall\")\nplt.show()","id":8,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Vi legger stadig mindre tall til 1.0.\n# Spørsmålet er: når slutter Python å se noen forskjell?\n\nfor k in range(45, 58):\n    delta = 2.0**(-k)\n    changed = (1.0 + delta) > 1.0\n\n    print(\n        f\"2^-{k:<2} = {delta:.3e}   \"\n        f\"1 + delta > 1 ? {changed}\"\n    )","id":9,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# sys.float_info inneholder egenskaper til Python `float`.\n# Python `float` bruker normalt IEEE 754 double precision.\nimport sys\nimport math\n\n# Pythons verdi for maskinepsilon.\neps = sys.float_info.epsilon\n\n# Finn neste representerbare double etter 1.0.\nnext_one = math.nextafter(1.0, math.inf)\n\nprint(\"Pythons maskinepsilon =\", eps)\nprint(\"2**-52                =\", 2**-52)\nprint(\"neste double etter 1  =\", repr(next_one))\nprint(\"neste - 1             =\", next_one - 1.0)\n\nprint()\nprint(\"1 + eps > 1           =\", 1.0 + eps > 1.0)\nprint(\"1 + eps/2 == 1        =\", 1.0 + eps/2 == 1.0)","id":10,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\nimport matplotlib.pyplot as plt\n\n# Velg tall av formen 2^k over et stort område.\npowers = list(range(-20, 61, 4))\nvalues = [2.0**k for k in powers]\n\n# math.ulp(x) gir avstanden mellom representerbare nivåer\n# på størrelsesskalaen rundt x.\nspacing = [math.ulp(x) for x in values]\n\n# Skriv ut noen eksempler.\nfor k, step in zip(powers[::5], spacing[::5]):\n    print(f\"rundt 2^{k:3d}: avstand ≈ {step:g}\")\n\nprint()\n\n# Et spesielt viktig område er rundt 2^53.\nx = float(2**53)\n\nprint(\"x      =\", x)\nprint(\"x + 1  =\", x + 1)\nprint(\"x + 2  =\", x + 2)\nprint(\"x+1==x ?\", x + 1 == x)\nprint(\"x+2>x  ?\", x + 2 > x)\n\n# Tegn hvordan avstanden mellom representerbare verdier vokser.\nplt.loglog(values, spacing, marker=\"o\")\nplt.xlabel(\"størrelse på tallet\")\nplt.ylabel(\"lokal avstand mellom representerbare double-verdier\")\nplt.title(\"Presisjonen er relativ: avstanden vokser med størrelsen\")\nplt.show()","id":11,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# To svært store tall med motsatt fortegn og ett lite tall.\na = 1e16\nb = -1e16\nc = 1.0\n\n# Første regnerekkefølge.\nleft = (a + b) + c\n\n# Andre regnerekkefølge.\nright = a + (b + c)\n\nprint(\"(a+b)+c =\", left)\nprint(\"a+(b+c) =\", right)\nprint(\"Like?    =\", left == right)","id":12,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Vi starter på 0.\ntotal = 0.0\n\n# Legg til 0.1 tusen ganger.\n# Etter hver addisjon lagres et nytt avrundet double-resultat.\nfor _ in range(1000):\n    total = total + 0.1\n\n# Matematisk forventer vi 1000 * 0.1 = 100.\nexact = 100.0\n\nprint(\"gjentatt addisjon =\", repr(total))\nprint(\"eksakt mål        =\", exact)\nprint(\"absolutt feil     =\", abs(total - exact))\n\n# math.fsum er laget for å summere flyttall mer nøyaktig.\nvalues = [0.1] * 1000\nbetter = math.fsum(values)\n\nprint()\nprint(\"math.fsum          =\", repr(better))\nprint(\"absolutt feil     =\", abs(better - exact))","id":13,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Hvor raskt bygger feilen seg opp?\n\nfor n in [10, 100, 1000, 10_000, 100_000]:\n    total = 0.0\n\n    # Legg til 0.1 n ganger.\n    for _ in range(n):\n        total += 0.1\n\n    # Eksakt matematisk mål.\n    exact = n / 10\n\n    # Absolutt feil mellom beregnet og eksakt verdi.\n    error = abs(total - exact)\n\n    print(\n        f\"n = {n:6d}   \"\n        f\"resultat = {total:.15g}   \"\n        f\"absolutt feil = {error:.3e}\"\n    )","id":14,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Direkte form: her trekker vi fra to tall\n# som blir nesten like når x er liten.\ndef naive(x):\n    return math.sqrt(1 + x) - 1\n\n# Omskrevet form: samme matematikk,\n# men uten subtraksjon av nesten like tall.\ndef stable(x):\n    return x / (math.sqrt(1 + x) + 1)\n\nprint(f\"{'x':>12} {'direkte':>18} {'stabil form':>18}\")\n\n# Undersøk stadig mindre x.\nfor k in [4, 8, 12, 14, 16, 18]:\n    x = 10.0**(-k)\n    print(f\"{x:12.1e} {naive(x):18.10e} {stable(x):18.10e}\")","id":15,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import matplotlib.pyplot as plt\n\n# Lag x = 10^-1, 10^-2, ..., 10^-18.\nxs = [10.0**(-k) for k in range(1, 19)]\n\n# Beregn begge matematiske former.\ndirect = [abs(naive(x)) for x in xs]\nrewritten = [abs(stable(x)) for x in xs]\n\n# Tegn begge på logaritmiske akser.\nplt.loglog(xs, direct, \"o-\", label=r\"$\\sqrt{1+x}-1$\")\nplt.loglog(xs, rewritten, \"s-\", label=r\"$x/(\\sqrt{1+x}+1)$\")\n\n# Vi vil at små x skal ligge mot høyre.\nplt.gca().invert_xaxis()\n\nplt.xlabel(\"x\")\nplt.ylabel(\"beregnet verdi\")\nplt.title(\"Matematisk likt, numerisk svært forskjellig\")\nplt.legend()\nplt.show()","id":16,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Direkte matematisk form.\ndef trig_direct(x):\n    return (1 - math.cos(x)) / math.sin(x)**2\n\n# Omskrevet og numerisk mer stabil form.\ndef trig_stable(x):\n    return 1 / (1 + math.cos(x))\n\n# Prøv stadig mindre verdier av x.\nfor x in [1e-2, 1e-4, 1e-6, 1e-8]:\n    try:\n        a = trig_direct(x)\n    except ZeroDivisionError:\n        # NaN markerer at den direkte beregningen brøt sammen.\n        a = float(\"nan\")\n\n    b = trig_stable(x)\n    print(f\"x={x:8.1e}  direkte={a!r:>20}  stabil={b!r}\")","id":17,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Lag +uendelig og NaN direkte.\ninf = float(\"inf\")\nnan = float(\"nan\")\n\nprint(\"inf =\", inf)\nprint(\"-inf =\", -inf)\nprint(\"nan =\", nan)\nprint()\n\n# Et svært stort resultat kan bli uendelig.\nprint(\"1e308 * 10 ->\", 1e308 * 10)\n\n# Uendelig minus uendelig har ingen bestemt tallverdi.\nprint(\"inf - inf  ->\", inf - inf)\n\n# NaN er spesielt: det er ikke likt seg selv.\nprint(\"nan == nan ->\", nan == nan)\nprint()\n\n# Bruk egne funksjoner for å teste disse verdiene.\nprint(\"isinf(inf) ->\", math.isinf(inf))\nprint(\"isnan(nan) ->\", math.isnan(nan))","id":18,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import sys\nimport math\n\n# Minste positive normaliserte Python-flyttall.\nsmallest_normal = sys.float_info.min\n\n# Gå ett representerbart trinn mot null.\ntowards_zero = math.nextafter(smallest_normal, 0.0)\n\nprint(\"minste positive normaliserte double:\", smallest_normal)\nprint(\"neste tall mot null:               \", towards_zero)\nprint(\"er det fortsatt positivt?           \", towards_zero > 0)","id":19,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef float_report(x):\n    # Gjør input om til en Python `float` (normalt IEEE 754 binary64).\n    x = float(x)\n\n    # Finn den eksakte brøken som flyttallet representerer.\n    num, den = x.as_integer_ratio()\n\n    print(\"verdi       :\", repr(x))\n\n    # Heksadesimal normalisert form.\n    print(\"hex         :\", x.hex())\n\n    # Eksakt rasjonal verdi av det lagrede bitmønsteret.\n    print(\"eksakt brøk :\", f\"{num}/{den}\")\n\n    # Lokal avstand mellom representerbare nivåer.\n    print(\"ulp         :\", math.ulp(x))\n\n    # Nærmeste representerbare nabo i begge retninger.\n    print(\"forrige     :\", math.nextafter(x, -math.inf))\n    print(\"neste       :\", math.nextafter(x, math.inf))\n\n\n# Endre tallet og kjør på nytt.\nfloat_report(0.1)","id":20,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Kopier funksjonen positive_mini_values() fra oppgaven over hit.\n#\n# def positive_mini_values():\n#     ...\n#\n# Fjern kommentartegnet når funksjonen er på plass:\n# values = positive_mini_values()\n\nimport matplotlib.pyplot as plt\n\n# Resten av koden lager bare figuren.\nplt.scatter(values, [0] * len(values), s=16)\nplt.yticks([])\nplt.xlabel(\"verdi\")\nplt.title(\"Alle positive normaliserte tall i mini-maskinen\")\nplt.show()","id":21,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Kopier funksjonene dine fra tidligere oppgaver hit:\n#\n# positive_mini_values()\n# all_mini_values()\n# mini_float()\n#\n# Lim dem inn over denne linjen før du kjører cellen.\n\n\ndef mini_add(a, b):\n    a = mini_float(a)\n    b = mini_float(b)\n    return mini_float(a + b)\n\n\n# Start med noen egne forsøk.\n# Bytt gjerne ut hele listen.\nforsok = [\n    (1.0, 0.1),\n    (4.0, 0.1),\n    (8.0, 0.1),\n]\n\nfor a, b in forsok:\n    print(f\"{a} ⊕ {b} = {mini_add(a, b)}\")","id":22,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4961,23 +4961,6 @@ window.Quarto = {
 </li>
       </ul>
   </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Exercise test</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../pages/page3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Del 3 – exercise test quarto plugins</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
     </ul>
     </div>
 </nav>
@@ -5019,9 +5002,9 @@ window.Quarto = {
 
 
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">1.0 Numeriske beregninger</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">1.1 Hvordan regne ut verdien av et polynom</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false" href="">1.2 Binære tall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-4" role="tab" aria-controls="tabset-7-4" aria-selected="false" href="">1.3 Flyttall: binære tall på datamaskiner</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true" href="">1.0 Numeriske beregninger</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false" href="">1.1 Hvordan regne ut verdien av et polynom</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-3" role="tab" aria-controls="tabset-8-3" aria-selected="false" href="">1.2 Binære tall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-4" role="tab" aria-controls="tabset-8-4" aria-selected="false" href="">1.3 Flyttall: binære tall på datamaskiner</a></li></ul>
 <div class="tab-content">
-<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Hvorfor numeriske beregninger?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Absolutt og relativ feil</a></li></ul>
 <div class="tab-content">
@@ -5093,7 +5076,7 @@ E_{\mathrm{rel}}=\frac{|x-\hat{x}|}{|x|}.
 </div>
 </div>
 </div>
-<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Evaluering av polynomer</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">En litt bedre metode</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Horners metode</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false" href="">Oppgaver</a></li></ul>
 <div class="tab-content">
@@ -5241,7 +5224,7 @@ p(x)=a_0+a_1x+\cdots+a_nx^n.
 </div>
 </div>
 </div>
-<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
+<div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">Binære tall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">Fra totallssystemet til titallssystemet</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false" href="">Fra titallssystemet til totallssystemet</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false" href="">Oppgaver</a></li></ul>
 <div class="tab-content">
@@ -5491,11 +5474,11 @@ b=(101100)_2=(44)_{10}
 </div>
 </div>
 </div>
-<div id="tabset-7-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
+<div id="tabset-8-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-4-tab">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">Hvorfor flyttall?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">Normalisert form</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">IEEE 754 double</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-4" role="tab" aria-controls="tabset-6-4" aria-selected="false" href="">Avrunding</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-5" role="tab" aria-controls="tabset-6-5" aria-selected="false" href="">Maskinepsilon</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-6" role="tab" aria-controls="tabset-6-6" aria-selected="false" href="">Regning med flyttall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-7" role="tab" aria-controls="tabset-6-7" aria-selected="false" href="">Tap av signifikans</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-8" role="tab" aria-controls="tabset-6-8" aria-selected="false" href="">Spesielle verdier</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-9-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-9" role="tab" aria-controls="tabset-6-9" aria-selected="false" href="">Hva bør du huske?</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">Hvorfor flyttall?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">Normalisert form</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false" href="">IEEE 754 double</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-4" role="tab" aria-controls="tabset-7-4" aria-selected="false" href="">Avrunding</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-5" role="tab" aria-controls="tabset-7-5" aria-selected="false" href="">Maskinepsilon</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-6" role="tab" aria-controls="tabset-7-6" aria-selected="false" href="">Regning med flyttall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-7" role="tab" aria-controls="tabset-7-7" aria-selected="false" href="">Tap av signifikans</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-8" role="tab" aria-controls="tabset-7-8" aria-selected="false" href="">Spesielle verdier</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-9-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-9" role="tab" aria-controls="tabset-7-9" aria-selected="false" href="">Hva bør du huske?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-10-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-10" role="tab" aria-controls="tabset-7-10" aria-selected="false" href="">Oppgaver</a></li></ul>
 <div class="tab-content">
-<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <p>Start med å la Python regne. Kjør cellen og se på resultatene:</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
@@ -5576,7 +5559,7 @@ b=(101100)_2=(44)_{10}
 <hr>
 </section>
 </div>
-<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <p>Før vi kan forstå bitene i IEEE 754, må vi kunne skrive et binært tall på <strong>normalisert form</strong>:</p>
 <p><span class="math display">\[
 \pm 1.b_1b_2b_3\ldots\times2^e.
@@ -5642,7 +5625,7 @@ b=(101100)_2=(44)_{10}
 <hr>
 </section>
 </div>
-<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <p>IEEE 754 <strong>double precision (binary64)</strong> bruker <strong>64 bit</strong>:</p>
 <table class="caption-top table">
 <thead>
@@ -5743,7 +5726,7 @@ S=0,\qquad e=0,\qquad E=1023,
 <hr>
 </section>
 </div>
-<div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
+<div id="tabset-7-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
 <p>Tallet <span class="math inline">\(0.1\)</span> trenger uendelig mange binære sifre. IEEE 754 må derfor velge et flyttall i nærheten.</p>
 <p>Python kan vise den <strong>eksakte brøken</strong> som faktisk er lagret:</p>
 <div id="qpyodide-insertion-location-7"></div>
@@ -5761,7 +5744,7 @@ S=0,\qquad e=0,\qquad E=1023,
 <p>Det er disse diskrete naboflyttallene avrundingen velger mellom.</p>
 <hr>
 </div>
-<div id="tabset-6-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-5-tab">
+<div id="tabset-7-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-5-tab">
 <p>Hvor liten endring kan vi gjøre på tallet <span class="math inline">\(1\)</span> før datamaskinen ikke lenger klarer å se forskjellen?</p>
 <section id="python-eksperiment" class="level3">
 <h3 class="anchored" data-anchor-id="python-eksperiment">Python-eksperiment</h3>
@@ -5828,7 +5811,7 @@ S=0,\qquad e=0,\qquad E=1023,
 <hr>
 </section>
 </div>
-<div id="tabset-6-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-6-tab">
+<div id="tabset-7-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-6-tab">
 <p>I eksakt matematikk gjelder</p>
 <p><span class="math display">\[
 (a+b)+c=a+(b+c).
@@ -5869,7 +5852,7 @@ S=0,\qquad e=0,\qquad E=1023,
 </div>
 <hr>
 </div>
-<div id="tabset-6-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-7-tab">
+<div id="tabset-7-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-7-tab">
 <p>Subtraksjon av to <strong>nesten like tall</strong> kan fjerne mange signifikante sifre.</p>
 <p>Se på</p>
 <p><span class="math display">\[
@@ -5916,7 +5899,7 @@ S=0,\qquad e=0,\qquad E=1023,
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <hr>
 </div>
-<div id="tabset-6-8" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-8-tab">
+<div id="tabset-7-8" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-8-tab">
 <p>IEEE 754 har også verdier utenfor de vanlige endelige reelle tallene.</p>
 <p>La Python vise dem:</p>
 <div id="qpyodide-insertion-location-18"></div>
@@ -5932,7 +5915,7 @@ S=0,\qquad e=0,\qquad E=1023,
 <p>For dette kurset er det viktigst å vite <strong>at</strong> subnormale tall finnes; vi trenger ikke lære bitmønsteret deres i detalj.</p>
 <hr>
 </div>
-<div id="tabset-6-9" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-9-tab">
+<div id="tabset-7-9" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-9-tab">
 <p>Bruk denne lille funksjonen til å undersøke et hvilket som helst flyttall:</p>
 <div id="qpyodide-insertion-location-20"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
@@ -5958,6 +5941,325 @@ S=0,\qquad e=0,\qquad E=1023,
 </div>
 <div class="callout-body-container callout-body">
 <p>Det er ikke nok at en formel er matematisk riktig. Vi må også spørre om den gir en <strong>stabil beregning med endelig presisjon</strong>.</p>
+</div>
+</div>
+</div>
+<div id="tabset-7-10" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-10-tab">
+<p>Her bygger vi en <strong>mini-versjon av en flyttallsmaskin</strong>. Poenget er at formatet er så lite at vi faktisk kan se <em>alle</em> tallene maskinen kjenner.</p>
+<p>Vi bruker et forenklet format med</p>
+<p><span class="math display">\[
+\boxed{S}\quad\boxed{EEE}\quad\boxed{MMMM}
+\]</span></p>
+<p>der</p>
+<ul>
+<li><span class="math inline">\(S\)</span> er én fortegnsbit,</li>
+<li><span class="math inline">\(E\)</span> er 3 eksponentbiter,</li>
+<li><span class="math inline">\(M\)</span> er 4 mantissebiter,</li>
+<li>bias er <span class="math inline">\(3\)</span>.</li>
+</ul>
+<p>Vi bruker bare normaliserte tall med</p>
+<p><span class="math display">\[
+E=1,2,\ldots,6.
+\]</span></p>
+<p>Bitmønstrene <span class="math inline">\(E=0\)</span> og <span class="math inline">\(E=7\)</span> lar vi ligge. Vi ignorerer altså subnormale tall, <code>inf</code> og <code>NaN</code> i denne mini-maskinen.</p>
+<p>Et tall tolkes som</p>
+<p><span class="math display">\[
+(-1)^S\left(1+\frac{M}{16}\right)2^{E-3},
+\]</span></p>
+<p>der <span class="math inline">\(M\)</span> er heltallsverdien til de fire mantissebitene.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Hvorfor gjøre dette?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>IEEE 754 double har så mange bit at det er vanskelig å «se» hele tallsystemet. Mini-maskinen følger samme hovedidé, men har bare nok tall til at vi kan liste dem opp, tegne dem og bryte regnereglene med små, forståelige eksempler.</p>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">1. Møt mini-maskinen</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">2. Alle tallene maskinen kjenner</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">3. Avrunding i mini-maskinen</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-4" role="tab" aria-controls="tabset-6-4" aria-selected="false" href="">4. Bryt mini-maskinen</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<p>Vi starter med å lese bitmønstre.</p>
+<p>For eksempel</p>
+<p><span class="math display">\[
+0\;|\;100\;|\;0110
+\]</span></p>
+<p>gir</p>
+<p><span class="math display">\[
+S=0,\qquad E=(100)_2=4,\qquad e=4-3=1,
+\]</span></p>
+<p>og</p>
+<p><span class="math display">\[
+M=(0110)_2=6.
+\]</span></p>
+<p>Dermed</p>
+<p><span class="math display">\[
+x=(1+6/16)2^1=2.75.
+\]</span></p>
+<section id="oppgave-1a-dekod-bitmønsteret" class="level4">
+<h4 class="anchored" data-anchor-id="oppgave-1a-dekod-bitmønsteret">Oppgave 1A – dekod bitmønsteret</h4>
+<p>Regn ut verdien av tallet.</p>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="mini-decode" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-pool="[&quot;$$0\\;|\\;100\\;|\\;0110$$\n\nVerdien er: _[11/4]&quot;,&quot;$$0\\;|\\;101\\;|\\;0110$$\n\nVerdien er: _[11/2]&quot;,&quot;$$1\\;|\\;100\\;|\\;0000$$\n\nVerdien er: _[-2]&quot;,&quot;$$0\\;|\\;011\\;|\\;1000$$\n\nVerdien er: _[3/2]&quot;,&quot;$$0\\;|\\;010\\;|\\;0100$$\n\nVerdien er: _[5/8]&quot;]" data-fields="[]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Dekod et mini-flyttall</div>
+
+<div class="math-exercise-body" style="display:none;">
+<button type="button" class="math-pool-reload" title="Load a new random task">↻</button>
+<div class="math-exercise-question"></div>
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p>Nå går vi motsatt vei. Hvis et tall allerede er representerbart, kan vi skrive det som</p>
+<p><span class="math display">\[
+\pm(1.MMMM)_2\,2^e,
+\]</span></p>
+<p>finne <span class="math inline">\(E=e+3\)</span>, og deretter skrive <span class="math inline">\(S\)</span>, <span class="math inline">\(E\)</span> og <span class="math inline">\(M\)</span> som bit.</p>
+</section>
+<section id="oppgave-1b-kod-et-tall" class="level4">
+<h4 class="anchored" data-anchor-id="oppgave-1b-kod-et-tall">Oppgave 1B – kod et tall</h4>
+<p>Fyll inn fortegn, eksponentfelt og mantissefelt.</p>
+<div class="math-exercise-cell" id="math-exercise-5" data-label="mini-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-pool="[&quot;$$x=3$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[100] &nbsp;&nbsp; $M=$ _[1000]&quot;,&quot;$$x=5.5$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[101] &nbsp;&nbsp; $M=$ _[0110]&quot;,&quot;$$x=-0.75$$\n\n$S=$ _[1] &nbsp;&nbsp; $E=$ _[010] &nbsp;&nbsp; $M=$ _[1000]&quot;,&quot;$$x=0.3125$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[001] &nbsp;&nbsp; $M=$ _[0100]&quot;,&quot;$$x=12$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[110] &nbsp;&nbsp; $M=$ _[1000]&quot;]" data-fields="[]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Kod et tall i mini-formatet</div>
+
+<div class="math-exercise-body" style="display:none;">
+<button type="button" class="math-pool-reload" title="Load a new random task">↻</button>
+<div class="math-exercise-question"></div>
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<hr>
+</section>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<p>Mini-maskinen har bare</p>
+<p><span class="math display">\[
+6\cdot16=96
+\]</span></p>
+<p>positive normaliserte tall. Det er lite nok til at vi kan lage <strong>hele tallinjen</strong>.</p>
+<section id="oppgave-2a-generer-alle-positive-tall" class="level4">
+<h4 class="anchored" data-anchor-id="oppgave-2a-generer-alle-positive-tall">Oppgave 2A – generer alle positive tall</h4>
+<p>Skriv funksjonen slik at den returnerer alle de 96 positive normaliserte tallene, sortert fra minst til størst.</p>
+<div class="py-exercise-cell" id="py-exercise-4">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Generer hele det positive mini-tallsystemet","forbiddenImports":[],"forbiddenKeywords":[],"id":4,"label":"mini-positive-values","showTestHints":true,"starter":"BIAS = 3\nMANTISSA_BITS = 4\n\ndef positive_mini_values():\n    values = []\n\n    # E kan være 1, 2, ..., 6.\n    # M kan være 0, 1, ..., 15.\n    #\n    # Verdien er\n    # (1 + M/16) * 2**(E - BIAS)\n    #\n    # Skriv koden din her.\n\n    return values","tests":"vals = positive_mini_values()\n\nassert isinstance(vals, list), \"Funksjonen skal returnere en liste.\"\nassert len(vals) == 96, \"Det skal være 6*16 = 96 positive normaliserte tall.\"\nassert vals == sorted(vals), \"Listen skal være sortert fra minst til størst.\"\nassert len(set(vals)) == 96, \"Alle 96 verdiene skal være forskjellige.\"\nassert vals[0] == 0.25, \"Det minste positive normaliserte tallet skal være 0.25.\"\nassert vals[-1] == 15.5, \"Det største positive normaliserte tallet skal være 15.5.\"\nassert 1.0 in vals, \"1.0 skal være representerbart.\"\nassert 2.0 in vals, \"2.0 skal være representerbart.\"\ni = vals.index(1.0)\nassert vals[i + 1] - vals[i] == 1/16, \"Avstanden rett over 1 skal være 1/16.\""});
+</script>
+<p>Når vi tegner <strong>alle</strong> de positive tallene, blir noe som var vanskelig å se i binary64 helt tydelig.</p>
+<p>Her lager vi ikke tallene på nytt. Bruk funksjonen du nettopp skrev som verktøy.</p>
+<div id="qpyodide-insertion-location-21"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Poenget er at <strong>din egen liste</strong> nå blir datagrunnlaget for figuren. Se spesielt på avstanden mellom punktene nær <span class="math inline">\(0.25\)</span>, <span class="math inline">\(1\)</span>, <span class="math inline">\(4\)</span> og <span class="math inline">\(8\)</span>.</p>
+<p><strong>Spørsmål:</strong> Ligger tallene jevnt fordelt? Hva skjer med avstanden når eksponenten øker?</p>
+<hr>
+</section>
+</div>
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<p>Et vanlig reelt tall trenger ikke være blant de 96 positive eller 96 negative verdiene maskinen kjenner.</p>
+<p>Da må vi velge det <strong>nærmeste representerbare tallet</strong>.</p>
+<p>For eksempel ligger <span class="math inline">\(1.1\)</span> mellom</p>
+<p><span class="math display">\[
+1.0625
+\quad\text{og}\quad
+1.125.
+\]</span></p>
+<p>Det nærmeste er <span class="math inline">\(1.125\)</span>, så mini-maskinen vil lagre</p>
+<p><span class="math display">\[
+1.1\longmapsto1.125.
+\]</span></p>
+<section id="oppgave-3a-rund-til-nærmeste-mini-flyttall" class="level4">
+<h4 class="anchored" data-anchor-id="oppgave-3a-rund-til-nærmeste-mini-flyttall">Oppgave 3A – rund til nærmeste mini-flyttall</h4>
+<div class="math-exercise-cell" id="math-exercise-6" data-label="mini-round" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-pool="[&quot;$$x=1.1$$\n\nMini-maskinen lagrer: _[9/8]&quot;,&quot;$$x=0.7$$\n\nMini-maskinen lagrer: _[11/16]&quot;,&quot;$$x=3.14$$\n\nMini-maskinen lagrer: _[25/8]&quot;,&quot;$$x=6.3$$\n\nMini-maskinen lagrer: _[25/4]&quot;,&quot;$$x=0.3$$\n\nMini-maskinen lagrer: _[19/64]&quot;]" data-fields="[]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Rund til nærmeste mini-flyttall</div>
+
+<div class="math-exercise-body" style="display:none;">
+<button type="button" class="math-pool-reload" title="Load a new random task">↻</button>
+<div class="math-exercise-question"></div>
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p>Nå lar vi Python gjøre denne avrundingen.</p>
+</section>
+<section id="oppgave-3b-bygg-videre-på-verktøykassen" class="level4">
+<h4 class="anchored" data-anchor-id="oppgave-3b-bygg-videre-på-verktøykassen">Oppgave 3B – bygg videre på verktøykassen</h4>
+<p>Nå trenger vi både positive og negative mini-flyttall.</p>
+<p><strong>Kopier din egen <code>positive_mini_values()</code> fra forrige tab inn i kodevinduet.</strong> Deretter lager du <code>all_mini_values()</code> og <code>mini_float()</code>.</p>
+<p>Når du først har laget et verktøy, skal vi bruke det videre — ikke få løsningen servert på nytt.</p>
+<div class="py-exercise-cell" id="py-exercise-5">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Bygg hele mini-tallsystemet og rund til nærmeste verdi","forbiddenImports":[],"forbiddenKeywords":[],"id":5,"label":"mini-float-rounding","showTestHints":true,"starter":"# 1. Kopier DIN positive_mini_values() fra forrige oppgave hit.\n#\n# def positive_mini_values():\n#     ...\n\n\ndef all_mini_values():\n    # Bruk positive_mini_values() som byggestein.\n    #\n    # Lag alle negative mini-flyttall, 0.0 og\n    # alle positive mini-flyttall.\n    # Returner én sortert liste.\n\n    pass\n\n\ndef mini_float(x):\n    # Finn verdien i all_mini_values() som har minst avstand til x.\n    #\n    # Du kan bruke en løkke og holde rede på\n    # den beste kandidaten du har funnet så langt.\n\n    pass","tests":"vals = all_mini_values()\n\nassert isinstance(vals, list), \"all_mini_values() skal returnere en liste.\"\nassert len(vals) == 193, \"Vi forventer 96 negative + 0 + 96 positive verdier.\"\nassert vals == sorted(vals), \"Hele listen skal være sortert.\"\nassert vals[96] == 0.0, \"0.0 skal ligge midt i den sorterte listen.\"\nassert vals[0] == -15.5 and vals[-1] == 15.5, \\\n    \"Ytterpunktene skal være -15.5 og 15.5.\"\n\nassert mini_float(1.1) == 1.125, \"1.1 skal rundes til 1.125.\"\nassert mini_float(0.7) == 0.6875, \"0.7 skal rundes til 0.6875.\"\nassert mini_float(3.14) == 3.125, \"3.14 skal rundes til 3.125.\"\nassert mini_float(6.3) == 6.25, \"6.3 skal rundes til 6.25.\"\nassert mini_float(0.3) == 0.296875, \"0.3 skal rundes til 0.296875.\"\nassert mini_float(-1.1) == -1.125, \"Negative tall skal rundes symmetrisk.\"\nassert mini_float(0.0) == 0.0, \"0 skal forbli 0.\"\nassert mini_float(15.4) == 15.5, \"15.4 ligger nærmest 15.5.\""});
+</script>
+<p>Når denne oppgaven virker, har du laget en liten verktøykasse:</p>
+<pre class="text"><code>positive_mini_values()
+        ↓
+all_mini_values()
+        ↓
+mini_float(x)</code></pre>
+<p>Ta vare på funksjonene. I neste tab skal mini-maskinen begynne å regne.</p>
+</section>
+<section id="oppgave-3c-mini-maskinens-maskinepsilon" class="level4">
+<h4 class="anchored" data-anchor-id="oppgave-3c-mini-maskinens-maskinepsilon">Oppgave 3C – mini-maskinens maskinepsilon</h4>
+<p>For et binært format med <span class="math inline">\(p\)</span> lagrede mantissebiter er neste representerbare tall over <span class="math inline">\(1\)</span></p>
+<p><span class="math display">\[
+1+2^{-p}.
+\]</span></p>
+<p>Finn maskinepsilon.</p>
+<div class="math-exercise-cell" id="math-exercise-7" data-label="mini-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-pool="[&quot;Formatet lagrer $p=2$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/4]&quot;,&quot;Formatet lagrer $p=3$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/8]&quot;,&quot;Mini-maskinen vår lagrer $p=4$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/16]&quot;,&quot;Formatet lagrer $p=5$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/32]&quot;,&quot;Formatet lagrer $p=6$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/64]&quot;]" data-fields="[]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Maskinepsilon for små binære formater</div>
+
+<div class="math-exercise-body" style="display:none;">
+<button type="button" class="math-pool-reload" title="Load a new random task">↻</button>
+<div class="math-exercise-question"></div>
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p>Sammenlign dette med binary64:</p>
+<p><span class="math display">\[
+p=52
+\quad\Longrightarrow\quad
+\varepsilon_{\mathrm{mach}}=2^{-52}.
+\]</span></p>
+<p>Det er samme idé. Den virkelige maskinen har bare langt flere mantissebiter.</p>
+<hr>
+</section>
+</div>
+<div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
+<p>Nå har du selv bygget representasjonen og avrundingen. Da kan vi endelig la mini-maskinen <strong>regne</strong>.</p>
+<p>Mini-addisjon gjør tre ting:</p>
+<ol type="1">
+<li>begge inputverdiene rundes til mini-formatet,</li>
+<li>de legges sammen,</li>
+<li>resultatet rundes tilbake til mini-formatet.</li>
+</ol>
+<p>Det eneste nye verktøyet vi gir deg er selve addisjonen:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mini_add(a, b):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> mini_float(a)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> mini_float(b)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mini_float(a <span class="op">+</span> b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Legg merke til at <code>mini_add</code> bruker <strong>din</strong> <code>mini_float</code>.</p>
+<div id="qpyodide-insertion-location-22"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Kan du finne et positivt <span class="math inline">\(b\)</span> slik at</p>
+<p><span class="math display">\[
+a\oplus b=a?
+\]</span></p>
+<p>Her trenger vi ikke tall som <span class="math inline">\(10^{16}\)</span>. Mini-formatet er så grovt at fenomenet blir synlig med små tall.</p>
+<p>Når du finner et eksempel, forklar det ved å se på avstanden mellom representerbare mini-flyttall rundt <span class="math inline">\(a\)</span>.</p>
+<section id="oppgave-4a-finn-ikke-assosiativitet-automatisk" class="level4">
+<h4 class="anchored" data-anchor-id="oppgave-4a-finn-ikke-assosiativitet-automatisk">Oppgave 4A – finn ikke-assosiativitet automatisk</h4>
+<p>Skriv en funksjon som leter gjennom alle tripler fra en gitt liste og returnerer én trippel</p>
+<p><span class="math display">\[
+(a,b,c)
+\]</span></p>
+<p>der</p>
+<p><span class="math display">\[
+(a\oplus b)\oplus c
+\neq
+a\oplus(b\oplus c).
+\]</span></p>
+<div class="py-exercise-cell" id="py-exercise-6">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Finn et brudd på assosiativitet","forbiddenImports":[],"forbiddenKeywords":[],"id":6,"label":"mini-find-nonassociative","showTestHints":true,"starter":"# Kopier dine ferdige funksjoner fra tidligere oppgaver hit:\n#\n# positive_mini_values()\n# all_mini_values()\n# mini_float()\n#\n# Vi gjentar ikke løsningene her.\n\n\ndef mini_add(a, b):\n    # Denne funksjonen er gitt.\n    return mini_float(mini_float(a) + mini_float(b))\n\n\ndef find_nonassociative(candidates):\n    # Prøv alle a, b og c fra candidates.\n    #\n    # Returner den første triplen du finner der\n    #\n    # mini_add(mini_add(a,b), c)\n    #\n    # er forskjellig fra\n    #\n    # mini_add(a, mini_add(b,c)).\n    #\n    # Hvis ingen slik trippel finnes, returner None.\n\n    pass","tests":"def check_counterexample(candidates):\n    result = find_nonassociative(candidates)\n\n    assert result is not None, \"Det finnes et moteksempel i denne listen.\"\n    assert isinstance(result, tuple), \"Returner en tuple (a, b, c).\"\n    assert len(result) == 3, \"Tuplen skal ha tre elementer.\"\n\n    a, b, c = result\n\n    assert a in candidates and b in candidates and c in candidates, \\\n        \"Alle tre tallene må komme fra candidates.\"\n\n    left = mini_add(mini_add(a, b), c)\n    right = mini_add(a, mini_add(b, c))\n\n    assert left != right, \"Triplen må faktisk bryte assosiativitet.\"\n\n\ncheck_counterexample([-4.0, 0.25, 8.0])\ncheck_counterexample([-2.0, 0.25, 8.0])\ncheck_counterexample([-1.0, 0.25, 8.0])\ncheck_counterexample([-0.5, 0.25, 8.0])\ncheck_counterexample([0.25, 0.25, 8.0])"});
+</script>
+<p>Når du har funnet en trippel, regn gjennom <strong>begge parenteseringene for hånd</strong> med mini-formatet.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Verktøykassen er en del av oppgaven
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Gjennom oppgavene bygger du</p>
+<p><span class="math display">\[
+\texttt{positive\_mini\_values}
+\longrightarrow
+\texttt{all\_mini\_values}
+\longrightarrow
+\texttt{mini\_float}
+\longrightarrow
+\texttt{mini\_add}.
+\]</span></p>
+<p>Senere oppgaver bruker tidligere resultater. Derfor må du av og til kopiere en funksjon du allerede har skrevet. Det er med vilje: vi bygger videre på arbeidet ditt uten å vise fasiten i neste kodevindu.</p>
+</div>
+</div>
+<p>Det er den viktigste delen av oppgaven: Python finner moteksemplet, men du skal kunne forklare <em>hvor</em> de to beregningsveiene blir forskjellige.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Koblingen tilbake til IEEE 754
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Mini-maskinen er ikke IEEE 754. Vi har med vilje fjernet spesialtilfeller og redusert antall bit kraftig.</p>
+<p>Men de viktigste mekanismene er de samme:</p>
+<ul>
+<li>bare endelig mange tall kan representeres,</li>
+<li>avstanden mellom tallene avhenger av eksponenten,</li>
+<li>resultater må avrundes tilbake til et representerbart tall,</li>
+<li>små bidrag kan forsvinne,</li>
+<li>regnerekkefølge kan påvirke resultatet.</li>
+</ul>
+<p>Det er derfor den lille maskinen er nyttig: vi kan se hele mekanismen uten å drukne i 64 bit.</p>
+</div>
+</div>
+</section>
+</div>
 </div>
 </div>
 </div>
