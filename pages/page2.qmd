@@ -4,7 +4,10 @@ title: "Del 1 – Horner, flyttall og binære tall"
 
 ::: {.panel-tabset}
 
-## 1.1 Horner 
+## 1.0 Numeriske beregninger
+{{< include ../_includes/module1/m1_0.md >}}
+
+## 1.1 Horner
 {{< include ../_includes/module1/m1_1.md >}}
 
 ## 1.2 Binære tall
