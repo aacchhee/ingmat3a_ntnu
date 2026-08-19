@@ -32,9 +32,18 @@ jobs:
       - name: Install Python dependencies
         run: python -m pip install jupyter nbformat pyyaml
 
+      - name: Create GitHub App token
+        id: erasmus-app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.ERASMUS_CTM_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ERASMUS_CTM_APP_PRIVATE_KEY }}
+          owner: Erasmus-CTM
+          permission-contents: read
+
       - name: Configure access to private Erasmus-CTM repositories
         env:
-          ERASMUS_CTM_TOKEN: ${{ secrets.ERASMUS_CTM_TOKEN }}
+          ERASMUS_CTM_TOKEN: ${{ steps.erasmus-app-token.outputs.token }}
         run: |
           git config --global url."https://x-access-token:${ERASMUS_CTM_TOKEN}@github.com/".insteadOf "https://github.com/"
 
