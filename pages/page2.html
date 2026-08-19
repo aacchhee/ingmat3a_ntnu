@@ -211,13 +211,41 @@ window.Quarto = {
 
 
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">1.1 Horner</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">1.2 Binære tall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">1.3 Eksempler</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">1.0 Numeriske beregninger</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">1.1 Horner</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false" href="">1.2 Binære tall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-4" role="tab" aria-controls="tabset-7-4" aria-selected="false" href="">1.3 Eksempler</a></li></ul>
 <div class="tab-content">
-<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Evaluering av polynomer</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">En litt bedre metode</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Horners metode</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Hvorfor numeriske beregninger?</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p><strong>Numerisk matematikk</strong> handler om å regne ut løsninger til matematiske problemer på en datamaskin, og disse løsningere er ofte <strong>tilnærmede</strong>.</p>
+<p>I realistiske modeller finnes det vanligvis ingen enkel eksakt løsning. Selv når en eksakt formel finnes, kan den være for komplisert til å være praktisk nyttig.</p>
+<p>En datamaskin regner dessuten med <strong>endelig presisjon</strong>. Det finns begrenset plass for å lagre ethvert tall, og da lagres de med et begrenset antall siffer. Mange reelle tall må derfor avrundes. Et beregnet svar kan dermed avvike litt fra den eksakte matematiske verdien.</p>
+<p>En god numerisk metode må balansere</p>
+<ul>
+<li><strong>nøyaktighet</strong> – hvor nær er svaret den ønskede verdien?</li>
+<li><strong>stabilitet</strong> – hvordan påvirkes svaret av små feil og avrundinger?</li>
+<li><strong>regnetid</strong> – hvor mye arbeid krever beregningen?</li>
+</ul>
+<p>Regnetid bestemmes ikke bare av hvor rask datamaskinen er. <strong>Algoritmen</strong> er minst like viktig. Færre regneoperasjoner kan gi stor tidsbesparelse når samme beregning utføres mange ganger.</p>
+<p>Det første eksemplet er evaluering av polynomer. Her ser vi at samme matematiske uttrykk kan beregnes på flere måter med svært ulik kostnad. Dette leder naturlig til <strong>Horners metode</strong>.</p>
+<p>Datamaskinen lagrer tall i <strong>binært tallsystem</strong>, og den spesifikke representasjonen av binære tall i de fleste dagens datamaskiner kaller vi for flyttall.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Evaluering av polynomer</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">En litt bedre metode</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Horners metode</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>Et <strong>polynom av grad <span class="math inline">\(n\)</span></strong> har formen</p>
+<p><span class="math display">\[
+p(x)=a_0+a_1x+a_2x^2+\cdots+a_nx^n,
+\qquad a_n\neq0.
+\]</span></p>
+<p>Å <strong>evaluere</strong> et polynom betyr å beregne <span class="math inline">\(p(x)\)</span> for en bestemt verdi av <span class="math inline">\(x\)</span>.</p>
+<p>Matematisk kan flere fremgangsmåter gi samme svar. Beregningsmessig kan de kreve svært ulikt arbeid. Når evalueringen gjentas mange ganger, blir antall multiplikasjoner og addisjoner viktig.</p>
 <p>La oss se på hvordan vi kan evaluere et polynom på en effektiv måte. Vi bruker polynomet</p>
 <p><span class="math display">\[
 p(x)=3x^4-2x^3+3x^2+5x-2
@@ -244,7 +272,7 @@ p\left(\frac{3}{2}\right)
 <p>regneoperasjoner.</p>
 </section>
 </div>
-<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <p>En forbedring er å regne ut potensene av <span class="math inline">\(x\)</span> først, og gjenbruke dem når neste potens skal beregnes. For <span class="math inline">\(x=\frac{3}{2}\)</span> får vi for eksempel</p>
 <p><span class="math display">\[
 \left(\frac{3}{2}\right)^2=\frac94,\qquad
@@ -264,7 +292,7 @@ p\left(\frac32\right)
 <p>Dette krever 7 multiplikasjoner og 4 addisjoner, altså 11 regneoperasjoner.</p>
 <p>Generelt krever denne metoden <span class="math inline">\(3n-1\)</span> regneoperasjoner.</p>
 </div>
-<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
 <p>Den mest effektive av metodene vi har sett på er <strong>Horners metode</strong>, også kalt <strong>nestet multiplikasjon</strong>.</p>
 <p>Vi skriver først</p>
 <p><span class="math display">\[
@@ -304,10 +332,11 @@ a_2+x\left(
 a_3+\cdots+x(a_{n-1}+a_nx)
 \right)\right)\right).
 \]</span></p>
+<p>Horners metode er et første eksempel på et viktig prinsipp i numerikk: <strong>samme matematiske problem kan løses med algoritmer som har svært ulik kostnad</strong>.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Eksempel</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Et par poeng</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Eksempel</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Et par poeng</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <p>Skriv</p>
 <p><span class="math display">\[
 q(x)=2x^3+3x+1
@@ -323,7 +352,7 @@ q(x)=1+x(3+0x+2x^2)
 =1+x(3+x(0+2x)).
 \]</span></p>
 </div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <ol type="1">
 <li>Enkle og grunnleggende ting må gjøres effektivt fordi vi ofte gjør dem mange ganger.</li>
 <li>Den mest åpenbare metoden er ofte ikke den mest effektive.</li>
@@ -335,30 +364,42 @@ q(x)=1+x(3+0x+2x^2)
 </div>
 </div>
 </div>
-<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">Binære tall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Fra totallssystemet til titallssystemet</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false" href="">Fra titallssystemet til totallssystemet</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">Binære tall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">Fra totallssystemet til titallssystemet</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false" href="">Fra titallssystemet til totallssystemet</a></li></ul>
 <div class="tab-content">
-<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
-<p>I titallssystemet bruker vi sifrene <span class="math inline">\(0\)</span> til <span class="math inline">\(9\)</span>. Et tall kan forstås ved hjelp av potenser av <span class="math inline">\(10\)</span>. For eksempel</p>
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<p>Datamaskiner lagrer tall på en annen måte enn vi vanligvis skriver dem.</p>
+<p>Til daglig bruker vi sifrene <span class="math inline">\(0,1,\ldots,9\)</span>. Dette kalles <strong>titallssystemet</strong>. En datamaskin bruker i stedet bare to siffer: <span class="math inline">\(0\)</span> og <span class="math inline">\(1\)</span>. Dette kalles <strong>totallssystemet</strong>, eller det <strong>binære tallsystemet</strong>.</p>
+<p>Forskjellen er egentlig mindre enn den ser ut til. I titallssystemet bestemmes verdien til et siffer av potenser av <span class="math inline">\(10\)</span>. For eksempel</p>
 <p><span class="math display">\[
 2507
 =
-2\cdot1000+5\cdot100+0\cdot10+7\cdot1
+2\cdot1000+5\cdot100+0\cdot10+7\cdot1,
 \]</span></p>
-<p>eller</p>
+<p>altså</p>
 <p><span class="math display">\[
 2507
 =
 2\cdot10^3+5\cdot10^2+0\cdot10^1+7\cdot10^0.
 \]</span></p>
-<p>For binære tall bruker vi <span class="math inline">\(2\)</span> som base i stedet for <span class="math inline">\(10\)</span>. Et binært tall skrives for eksempel som</p>
+<p>I det binære tallsystemet gjør vi akkurat det samme, men bruker potenser av <span class="math inline">\(2\)</span> i stedet for potenser av <span class="math inline">\(10\)</span>.</p>
+<p>For eksempel er tallet <span class="math inline">\(b\)</span></p>
 <p><span class="math display">\[
-(101100)_2,
+\begin{aligned}
+b=(101100)_2
+&amp;=1\cdot2^5+0\cdot2^4+1\cdot2^3+1\cdot2^2+0\cdot2^1+0\cdot2^0\\
+&amp;=32+8+4\\
+&amp;=44.
+\end{aligned}
 \]</span></p>
-<p>der subskriptet <span class="math inline">\(2\)</span> viser at tallet er skrevet i totallssystemet.</p>
+<p>et tall som er skrevet i totallssystemet. Subskriptet <span class="math inline">\(2\)</span> forteller oss hvilket <strong>base</strong> for et tallsystem vi bruker, dvs hvor mange ulike sifre det blir i systemet. Basen er akkurat tallet vi bruker potenser av. Altså</p>
+<p><span class="math display">\[
+b=(101100)_2=(44)_{10}
+\]</span></p>
+<p>Tallene inne i datamaskinen lagres i tallsystemet med base <span class="math inline">\(2\)</span>, eller kortere sagt binært.</p>
 </div>
-<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <p>Hvert siffer i et binært tall multipliseres med en potens av <span class="math inline">\(2\)</span>. For eksempel</p>
 <p><span class="math display">\[
 (101100)_2
@@ -390,15 +431,15 @@ q(x)=1+x(3+0x+2x^2)
 +\cdots.
 \]</span></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Eksempel 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Eksempel 2</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">Eksempel 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Eksempel 2</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <p>Tallet <span class="math inline">\(5\)</span> kan skrives som</p>
 <p><span class="math display">\[
 5=(101)_2.
 \]</span></p>
 </div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <p>Brøken <span class="math inline">\(\frac34\)</span> kan skrives som</p>
 <p><span class="math display">\[
 \frac34=(0,11)_2.
@@ -417,7 +458,7 @@ q(x)=1+x(3+0x+2x^2)
 </div>
 </div>
 </div>
-<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
 <p>La oss konvertere <span class="math inline">\(53,7\)</span> til totallssystemet. Vi skriver først</p>
 <p><span class="math display">\[
 53,7=53+0,7
@@ -481,7 +522,7 @@ q(x)=1+x(3+0x+2x^2)
 </div>
 </div>
 </div>
-<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<div id="tabset-7-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
 <p>Her følger noen programrelevante eksempler av funksjoner.</p>
 <p>Det er sikkert mye her som oppleves som helt ukjent. Det er greit! Du vil lære mer om dette ute på studieprogrammene. Men som du kan se, så blit flervariabelfunksjoner brukt svært mye.</p>
 <p>Det er ofte slik at viktige fysiske størrelser som kraft, moment, tetthet og temperatur varierer over en konstruksjon, og er derfor funksjoner av posisjon. Kraft og moment er vektorer, og vi kan se på et kraftfelt som <span class="math inline">\(F: \mathbb{R}^3\rightarrow\mathbb{R}^3\)</span> som en funksjon av posisjon. Det samme er tilfellet for moment. Siden tetthet er skalar kan vi representere tettheten <span class="math inline">\(\rho\)</span> til en posisjon i rommet som en funksjon <span class="math inline">\(\rho:\mathbb{R}^3\rightarrow\mathbb{R}\)</span>. Det samme gjelder for eksempel temperatur.</p>
@@ -489,37 +530,37 @@ q(x)=1+x(3+0x+2x^2)
 <p>Hva med spenning? Den er generelt avhengig av både posisjon <span class="math inline">\(\vec{x}\)</span> og et tverrsnitt (det er nok å oppgi bare en normalvektor <span class="math inline">\(\vec{n}\)</span>), og er en vektor selv. Den er også en funksjon <span class="math inline">\(\tau(\vec{x},\vec{n}):\mathbb{R}^3 \times \mathbb{R}^3 \rightarrow \mathbb{R}^3\)</span>, men det er ikke hele historien. Hvis vi tar en vilkårlig <span class="math inline">\(\vec{x}\)</span> og holder den konstant er funksjonen <span class="math inline">\(\tau(\vec{x},\vec{n}):\mathbb{R}^3\rightarrow\mathbb{R}\)</span> en lineær transformasjon, og kan dermed skrives som en matrise! Enda bedre viser det seg (se Bell, Konstruksjonsmekanikk, II.9) at matrisen er symmetrisk! Dermed er det trolig best å tenke på spenning som en funksjon <span class="math inline">\(\mathbb{R}^3\rightarrow Y\)</span>, hvor <span class="math inline">\(Y\)</span> er rommet av <span class="math inline">\(3\times 3\)</span> symmetriske matriser.</p>
 <p>Tøyning er en annen funksjon av samme type (se Bell, Konstruksjonsmekanikk, II.10).</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">Elektrofag</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">Informatikk</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false" href="">Kjemi og materialteknologi</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false" href="">Logistikk</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-5" role="tab" aria-controls="tabset-5-5" aria-selected="false" href="">Geomatikk</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-6" role="tab" aria-controls="tabset-5-6" aria-selected="false" href="">Termodynamikk</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-7" role="tab" aria-controls="tabset-5-7" aria-selected="false" href="">Fysikk</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">Elektrofag</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">Informatikk</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">Kjemi og materialteknologi</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-4" role="tab" aria-controls="tabset-6-4" aria-selected="false" href="">Logistikk</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-5" role="tab" aria-controls="tabset-6-5" aria-selected="false" href="">Geomatikk</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-6" role="tab" aria-controls="tabset-6-6" aria-selected="false" href="">Termodynamikk</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-7" role="tab" aria-controls="tabset-6-7" aria-selected="false" href="">Fysikk</a></li></ul>
 <div class="tab-content">
-<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p>Grunnleggende elektrolære bruker vektorfelt, dvs. funksjoner på formen <span class="math inline">\(\mathbb{R}^3\rightarrow\mathbb{R}^3\)</span>. Eksempler er elektriske og magnetiske felt. Vi har også strømtetthet, elektrisk forskyvning/polarisering og magnetisering, som også er vektorfelt. Ladingstetthet og elektrisk potensial er eksempler på skalare funksjoner <span class="math inline">\(\mathbb{R}^3\rightarrow\mathbb{R}\)</span>.</p>
 <p>I mange tilfeller er funksjonene over også avhengig av tid, dvs. de er på formen <span class="math inline">\(\mathbb{R}^3 \times \mathbb{R}\rightarrow \mathbb{R}^3\)</span>, (eller <span class="math inline">\(\mathbb{R}^4\rightarrow \mathbb{R}^3\)</span>).</p>
 <p>For elektriske kretser så er vi mest opptatt av forhold mellom forskjellige størrelser (variabler), f.eks. Ohms lov, hvor <span class="math inline">\(V=IR\)</span> beskriver en funksjon <span class="math inline">\(V:\mathbb{R}^2 \rightarrow \mathbb{R}\)</span>. I analyse av vekselstrøm er det vanlig å utvide til komplekse tall, slik at vi har funksjoner <span class="math inline">\(V:\mathbb{C}^2 \rightarrow \mathbb{C}\)</span>.</p>
 <p>Det kan også hende at vi trenger flere variable, som for eksempel temperatur. Hvis motstand er avhengig av temperatur, så får vi <span class="math inline">\(V=R(T)I\)</span>, slik at <span class="math inline">\(V:\mathbb{R}^3\rightarrow\mathbb{R}\)</span>.</p>
 </div>
-<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <p>Funksjoner er overalt i informatikken. Vi kommer til å se flere eksempler i diskret matematikk, men også i bildebehandling og datavitenskap/maskinlæring er det mange interessante eksempler.</p>
 <p>Vi nevner at et bilde kan sees som en funksjon <span class="math inline">\(b:\mathbb{R}^2 \mapsto \mathbb{R}^3\)</span>, hvor vi oppgi en fargeverdi (i f.eks. tredimensjonalt RGB-rom) til hvert punkt <span class="math inline">\((x,y)\)</span> i bildet. I praksis vil vi bare lagre verdier på endelig mange punkter <span class="math inline">\((x_i, y_i)\)</span>, dvs. vi bruker en <em>diskretisering</em> av funksjonen.</p>
 </div>
-<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
 <p>Materialteknologi bruker mange av de samme funksjonene som mekanikk (spenning, tøyning osv.) og termodynamikk (temperatur, entropi, varmekapasitet osv.).</p>
 <p>I tillegg er <em>konsentrasjonen</em> av et stoff viktig. Det er typisk et reelt tall. Hvis konsentrasjonen varierer med posisjon, så vil vi ha en funksjon <span class="math inline">\(\mathbb{R}^3 \rightarrow \mathbb{R}\)</span>.</p>
 <p>Et mer komplisert eksempel av en egenskapet til et material er <em>refleksjonsfaktor</em> (https://snl.no/refleksjonsfaktor). I en enkel tilnærming er det bare et skalartall, men mer generelt kan det være avhengig av både inn- og utvinklene, og muligens også bølgelengden (https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function).</p>
 </div>
-<div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
+<div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
 <p>Vi har skalare funksjoner <span class="math inline">\(f(t)\)</span> når vi sporer lagerføring av en vare på en fabrikk gjennom tiden.</p>
 <p>Men hva skjer hvis vi vil spore varer over alle steder i systemet, inkludert på veier hvor posisjonen endrer seg kontinuerlig? Da ender vi opp med funksjoner av type <span class="math inline">\(X \times \mathbb{R} \rightarrow \mathbb{R}\)</span>. Om <span class="math inline">\(X\)</span> er en enkel veg kommer vi til å ende opp med en funksjon <span class="math inline">\(\mathbb{R} \times \mathbb{R} \rightarrow \mathbb{R}\)</span>.</p>
 </div>
-<div id="tabset-5-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-5-tab">
+<div id="tabset-6-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-5-tab">
 <p>Geoiden er et klassisk eksempel på en funksjon <span class="math inline">\(U: \mathbb{R}^2 \rightarrow \mathbb{R}\)</span>. Variablene til denne funksjonen er breddegrader og lengdegrader.</p>
 <p>Funksjonen <span class="math inline">\(U\)</span> kommer fra en mer generell funksjon <span class="math inline">\(\mathbb{R}^3 \rightarrow\mathbb{R}\)</span> som er tyngdekraftspotensialet gitt som en funksjon av posisjon i rom. Geoiden er en nivåflate til denne funksjonen.</p>
 </div>
-<div id="tabset-5-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-6-tab">
+<div id="tabset-6-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-6-tab">
 <p>Termodynamikk er en viktig anvendelse av temaene i dette notatet. Mange opplever termodynamikk som vanskelig, ofte på grunn av manglende forståelse av funksjoner av flere variable.</p>
 <p>Tilstanden i et enkelt kompressibelt system er beskrevet av to uavhengig variable, typisk bruker vi to av disse tre: temperatur (<span class="math inline">\(T\)</span>), trykk (<span class="math inline">\(\rho\)</span>) og volum (<span class="math inline">\(V\)</span>). Da kan alle andre termodynamiske størrelser, som varme, entropi, entalpi osv. være gitt som funksjoner <span class="math inline">\(\mathbb{R}^2 \rightarrow \mathbb{R}\)</span>.</p>
 <p>Visualisering har en lang historie i dette tilfelle. I læreboka “Engineering thermodynamics” ser man en overflate i rommet med trykket til vann som en funksjon av volum og temperatur. Den skotske fysikeren James Clerk Maxwell konstruerte til og med en fysisk modell av noen lignende i gips, se <a href="https://en.wikipedia.org/wiki/Maxwell's_thermodynamic_surface">wikipedia</a> for mer informasjon.</p>
 </div>
-<div id="tabset-5-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-7-tab">
+<div id="tabset-6-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-7-tab">
 <p>Eksemplene fra mekanikk og elektrofag er begge relevant i fysikk.</p>
 <p>I tillegg har vi fluidmekanikk, som har noen fellestrekk med begge. Her er (det tidsavhengige) hastighetsfeltet <span class="math inline">\(u:\mathbb{R}^3\times\mathbb{R}\rightarrow\mathbb{R}^3\)</span>, samt trykket <span class="math inline">\(p:\mathbb{R}^3\times\mathbb{R}\rightarrow\mathbb{R}\)</span> viktig. Om systemet er konstant i tid blir de istedet henholdsvis <span class="math inline">\(u:\mathbb{R}^3\rightarrow\mathbb{R}^3\)</span> og <span class="math inline">\(p:\mathbb{R}^3\rightarrow\mathbb{R}\)</span>.</p>
 <p>For å finne posisjonen til en partikkel i strømmen, så må man løse differensialligningen</p>
