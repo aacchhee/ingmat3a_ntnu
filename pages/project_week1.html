@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Mini-IDE (Python i nettleseren) – Matematikk 3A</title>
+<title>Uke 1 – Floating-point attack – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -889,7 +889,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "en";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.close(\"all\")\n\nx = np.linspace(0, 2*np.pi, 200)\ny = np.sin(x)\n\nfig = plt.figure()\nax = fig.add_subplot(111)\nax.plot(x, y)\nax.set_title(\"y = sin(x)\")\n\nplt.show()","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"def ordinary_sum(values):\n    # Start med summen 0.\n    total = 0.0\n\n    # Legg til ett tall om gangen, fra venstre mot høyre.\n    for value in values:\n        total = total + value\n\n    return total","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Bytt ut tallene med ditt eget første angrep.\nvalues = [1.0, 2.0, 3.0]\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def make_attack(n, scale):\n    # n bestemmer hvor stort eksperimentet skal være.\n    # scale kan brukes til å styre størrelsesforskjellen mellom tallene.\n    #\n    # TODO: lag og returner din egen liste.\n\n    values = []\n\n    return values","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor n in [10, 100, 1000]:\n    values = make_attack(n, 1e16)\n\n    ordinary = ordinary_sum(values)\n    reference = math.fsum(values)\n    error = abs(ordinary - reference)\n\n    print(\n        f\"n={n:5d}   \"\n        f\"ordinary={ordinary:.12g}   \"\n        f\"reference={reference:.12g}   \"\n        f\"error={error:.3e}\"\n    )","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef target_attack():\n    # TODO: konstruer tallene dine her.\n    values = [1.0]\n    return values\n\n\nvalues = target_attack()\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"antall tall  =\", len(values))\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"feil         =\", abs(ordinary - reference))","id":5,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef bounded_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = bounded_attack()\n\n# Kontroller regelen.\nprint(\"største |x| =\", max(abs(x) for x in values) if values else 0.0)\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":6,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef positive_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = positive_attack()\n\nprint(\"alle positive =\", all(x > 0 for x in values))\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":7,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def defense_order(values):\n    # Lag en kopi slik at originaldataene ikke endres.\n    reordered = list(values)\n\n    # TODO: bestem en bedre rekkefølge.\n\n    return reordered","id":8,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nvalues = target_attack()\nreference = math.fsum(values)\n\nbefore = ordinary_sum(values)\ndefended_values = defense_order(values)\nafter = ordinary_sum(defended_values)\n\nprint(\"referanse       =\", reference)\nprint(\"før forsvar     =\", before)\nprint(\"feil før        =\", abs(before - reference))\nprint()\nprint(\"etter forsvar   =\", after)\nprint(\"feil etter      =\", abs(after - reference))","id":9,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nattacks = {\n    \"target\": target_attack(),\n    \"bounded\": bounded_attack(),\n    \"positive\": positive_attack(),\n}\n\nprint(\n    f\"{'datasett':12s} \"\n    f\"{'naiv feil':>14s} \"\n    f\"{'forsvart feil':>16s}\"\n)\nprint(\"-\" * 46)\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n\n    naive = ordinary_sum(values)\n    defended = ordinary_sum(defense_order(values))\n\n    naive_error = abs(naive - reference)\n    defended_error = abs(defended - reference)\n\n    print(\n        f\"{name:12s} \"\n        f\"{naive_error:14.6e} \"\n        f\"{defended_error:16.6e}\"\n    )","id":10,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def better_sum(values):\n    # TODO: design din egen summeringsalgoritme.\n    # Ikke bruk sum(), numpy.sum() eller math.fsum().\n\n    total = 0.0\n    for value in values:\n        total += value\n\n    return total","id":11,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n    result = better_sum(values)\n\n    print(\n        f\"{name:12s}   \"\n        f\"resultat={result:.12g}   \"\n        f\"feil={abs(result-reference):.3e}\"\n    )","id":12,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4096,6 +4096,35 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
 
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -4109,7 +4138,7 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page1.html">IDE</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week1.html">Uke 1 – Floating-point attack</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -4136,7 +4165,7 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/page1.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/page1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">IDE</span></a>
   </div>
 </li>
@@ -4168,7 +4197,7 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Uke 1 – Floating-point attack</span></a>
   </div>
 </li>
@@ -4211,9 +4240,9 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
 </script>
 <script>window.__mathExerciseConfig = {"lang":"en"};</script>
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week1.html">Uke 1 – Floating-point attack</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Mini-IDE (Python i nettleseren)</h1>
+<h1 class="title">Uke 1 – Floating-point attack</h1>
 </div>
 
 
@@ -4230,49 +4259,311 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
 </header>
 
 
-<section id="velkommen" class="level2">
-<h2 class="anchored" data-anchor-id="velkommen">Velkommen</h2>
-<p>Denne siden er en <strong>mini-IDE</strong> for Python som kjører direkte i nettleseren ved hjelp av <strong>Pyodide</strong>. Her kan du skrive, endre og kjøre kode uten å installere noe lokalt.</p>
-<hr>
-</section>
-<section id="slik-bruker-du-kodevinduet" class="level2">
-<h2 class="anchored" data-anchor-id="slik-bruker-du-kodevinduet">Slik bruker du kodevinduet</h2>
+<section id="floating-point-attack" class="level1">
+<h1>Floating-point attack</h1>
+<p>Dette prosjektet er laget for omtrent <strong>2–3 timer selvstendig arbeid</strong>.</p>
+<p>Du har allerede sett at en datamaskin ikke kan lagre alle reelle tall nøyaktig. Her skal vi ikke bruke tiden på å se de samme eksemplene én gang til. I stedet skal vi gjøre noe mer aktivt:</p>
+<blockquote class="blockquote">
+<p><strong>Vi skal prøve å lure en helt vanlig summeringsalgoritme.</strong></p>
+</blockquote>
+<p>Først lager du eksempler der algoritmen regner dårlig. Deretter prøver du å forstå <strong>hvorfor</strong> den feiler. Til slutt snur vi problemet: kan du lage en bedre algoritme som tåler angrepene dine?</p>
+<p>Det er altså litt som å teste en bro. Først belaster vi den på måter som kan avsløre svakheter. Når vi vet hvor den er svak, kan vi prøve å bygge den bedre.</p>
+<p>Du trenger ikke finne «det perfekte angrepet» med én gang. Start enkelt. Kjør kode. Endre ett tall. Kjør igjen. Se hva som skjer.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Hvordan jobbe med siden
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Alle kodevinduene er redigerbare.</p>
+<ol type="1">
+<li>Kjør koden slik den står.</li>
+<li>Endre noe.</li>
+<li>Kjør på nytt.</li>
+<li>Sammenlign resultatene.</li>
+<li>Prøv å forklare det du ser.</li>
+</ol>
+<p>Det er helt greit at de første forsøkene dine <strong>ikke virker</strong>. I dette prosjektet er mislykkede forsøk en del av undersøkelsen.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Spilleregler
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li><strong>Run Code</strong>: kjører koden i vinduet</li>
-<li><strong>+CodeBlock</strong>: legger til et nytt Python-vindu</li>
-<li><strong>Restart</strong>: nullstiller Python-miljøet</li>
+<li>Bruk vanlige, endelige Python-<code>float</code>-verdier.</li>
+<li>Ikke bruk <code>nan</code> eller <code>inf</code> i angrepene.</li>
+<li>Når vi trenger en god referanseverdi, bruker vi <code>math.fsum</code>.</li>
+<li>Ikke bruk <code>math.fsum</code> inne i selve angreps- eller forsvarsalgoritmen.</li>
+<li>Det viktigste er ikke bare å få stor feil, men å kunne <strong>forklare hvorfor</strong> den oppstår.</li>
 </ul>
-<p>Du kan fritt endre koden og eksperimentere. Last ned hele sida på nytt dersom noe ser tungt eller ødelagt ut.</p>
-<hr>
-</section>
-<section id="eksempel-enkel-python-kode" class="level2">
-<h2 class="anchored" data-anchor-id="eksempel-enkel-python-kode">Eksempel: enkel Python-kode</h2>
+<p>Du trenger ikke forstå hvordan <code>math.fsum</code> er programmert. Her bruker vi den som en målestokk.</p>
+</div>
+</div>
+<section id="første-angrep-kan-du-få-et-tall-til-å-forsvinne" class="level2">
+<h2 class="anchored" data-anchor-id="første-angrep-kan-du-få-et-tall-til-å-forsvinne">1. Første angrep: kan du få et tall til å forsvinne?</h2>
+<p>Tenk deg at du skal summere en liste med tall. Den mest naturlige måten er å starte på null og legge til ett tall om gangen.</p>
+<p>Det er akkurat dette funksjonen under gjør:</p>
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>I eksakt matematikk er dette helt uproblematisk. Men på en datamaskin blir hvert mellomresultat lagret som et nytt flyttall. Hvis to tall har svært forskjellig størrelse, kan et lite bidrag bli for lite til å påvirke det store tallet.</p>
+<p><strong>Det er denne svakheten du skal prøve å utnytte.</strong></p>
+<section id="oppgave-1-lag-ditt-første-angrep" class="level3">
+<h3 class="anchored" data-anchor-id="oppgave-1-lag-ditt-første-angrep">Oppgave 1 – lag ditt første angrep</h3>
+<p>Lag en liste <code>values</code> slik at <code>ordinary_sum(values)</code> gir et tydelig dårligere resultat enn <code>math.fsum(values)</code>.</p>
+<p>Du trenger ikke mange tall. Tre eller fire kan være nok til et første forsøk.</p>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Hvis begge svarene er like, har du ikke ødelagt algoritmen ennå. Bra — endre tallene og prøv igjen.</p>
+<p><strong>Hint hvis du sitter fast:</strong> Hva skjer hvis ett tall er enormt stort og et annet er veldig lite? Hva skjer hvis et stort tall senere trekkes fra igjen?</p>
+<p>Når du har et eksempel som virker, stopp et øyeblikk og følg summen <strong>regnetrinn for regnetrinn</strong>.</p>
+<p><strong>Skriv ned:</strong> Hvilke tall brukte du? I hvilket regnetrinn gikk informasjon tapt?</p>
 <hr>
 </section>
-<section id="tips" class="level2">
-<h2 class="anchored" data-anchor-id="tips">Tips</h2>
+</section>
+<section id="fra-ett-triks-til-en-angrepsmaskin" class="level2">
+<h2 class="anchored" data-anchor-id="fra-ett-triks-til-en-angrepsmaskin">2. Fra ett triks til en angrepsmaskin</h2>
+<p>Ett spesielt eksempel viser at noe <em>kan</em> gå galt. Men vi vil forstå mer enn det.</p>
+<p>Neste mål er derfor å lage en funksjon som kan produsere <strong>mange varianter av samme type problem</strong>.</p>
+<p>Hvorfor? Fordi det er lettere å forstå en mekanisme når vi kan skru på den. Hvis feilen blir større når <code>n</code> øker, forteller det oss noe. Hvis feilen plutselig forsvinner når <code>scale</code> endres, forteller det oss også noe.</p>
+<p>Du skal lage en liten «angrepsgenerator»:</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Her bestemmer du selv hva <code>n</code> og <code>scale</code> skal bety i angrepet ditt. For eksempel kan <code>n</code> styre hvor mange små tall du bruker, mens <code>scale</code> styrer hvor stort det største tallet er.</p>
+<p>Test så generatoren flere ganger:</p>
+<div id="qpyodide-insertion-location-4"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Lek med knappene du har laget
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Prøv å endre</p>
 <ul>
-<li>Du kan kopiere kode mellom blokker</li>
-<li>Feilmeldinger vises direkte under koden</li>
-<li>Figurer kan lastes ned fra nettleseren</li>
-<li>Din kode blir ikke lagra. Du må kopiere koden et annet sted (VSCode/Editor/o.l.) og så lagre.</li>
+<li><strong>antall tall</strong>,</li>
+<li><strong>størrelsen på tallene</strong>,</li>
+<li><strong>fortegn</strong>,</li>
+<li><strong>rekkefølgen</strong>.</li>
 </ul>
+<p>Ikke endre alt samtidig. Endre én ting og se hva den gjør med feilen.</p>
+</div>
+</div>
+<p><strong>Mål:</strong> Finn minst tre parameterkombinasjoner som gir tydelig forskjellige feil.</p>
+<p>Du trenger ikke skrive en lang forklaring. To–tre setninger er nok: <em>Hva gjorde angrepet sterkere? Hva gjorde det svakere?</em></p>
+<hr>
 </section>
-<section id="issues-bugs-forbedringsforslag" class="level2">
-<h2 class="anchored" data-anchor-id="issues-bugs-forbedringsforslag">Issues? Bugs? Forbedringsforslag?</h2>
-<section id="ordentlig-metode" class="level3">
-<h3 class="anchored" data-anchor-id="ordentlig-metode">Ordentlig metode</h3>
-<p>Åpne ei sak på github <a href="https://github.com/aacchhee/ingmat3a_ntnu" class="uri">https://github.com/aacchhee/ingmat3a_ntnu</a>. Lag en god beskrivelse av saka.</p>
+<section id="nå-får-angrepet-et-mål" class="level2">
+<h2 class="anchored" data-anchor-id="nå-får-angrepet-et-mål">3. Nå får angrepet et mål</h2>
+<p>Så langt har du fått lov til å lage en hvilken som helst sum. Det gjør det ganske lett å produsere rare resultater.</p>
+<p>Nå strammer vi inn oppgaven.</p>
+<p>Den <strong>riktige summen skal være omtrent 1</strong>.</p>
+<p>Det betyr at vi på forhånd vet hva svaret burde være. Din oppgave er å lage data som får den naive algoritmen til å fortelle oss noe annet.</p>
+<p>Tenk på dette som et mer kontrollert eksperiment:</p>
+<blockquote class="blockquote">
+<p>Det riktige svaret er 1. Hvor dårlig kan du få <code>ordinary_sum</code> til å oppføre seg?</p>
+</blockquote>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Referansen må ligge nær <span class="math inline">\(1\)</span>:</p>
+<p><span class="math display">\[
+|S_{\mathrm{ref}}-1|&lt;10^{-10}.
+\]</span></p>
+<p>Bruk maksimalt 10 000 tall.</p>
+<p>Start gjerne med å bygge videre på ideen fra oppgave 1. Deretter kan du prøve å forsterke effekten.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Når du har fått det til
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Ikke stopp ved første feil.</p>
+<p>Kan du få <code>ordinary_sum</code> til å gi</p>
+<ul>
+<li><code>0.0</code>?</li>
+<li>feil fortegn?</li>
+<li>et resultat langt fra 1?</li>
+<li>en større feil uten å bruke flere tall?</li>
+</ul>
+<p>Du trenger ikke klare alt. Velg én retning og se hvor langt du kommer.</p>
+</div>
+</div>
+<hr>
 </section>
-<section id="den-beste-metoden" class="level3">
-<h3 class="anchored" data-anchor-id="den-beste-metoden">Den beste metoden</h3>
-<p>Gå til github <a href="https://github.com/aacchhee/ingmat3a_ntnu" class="uri">https://github.com/aacchhee/ingmat3a_ntnu</a>, clone repository (via fork), fix a bug, send pull request.</p>
+<section id="angrep-med-hendene-bundet" class="level2">
+<h2 class="anchored" data-anchor-id="angrep-med-hendene-bundet">4. Angrep med hendene bundet</h2>
+<p>Det er lett å lage ekstreme eksempler hvis vi får bruke hva som helst. Derfor skal vi nå fjerne noen av de enkleste triksene.</p>
+<p>Poenget er ikke å gjøre oppgaven vanskelig for vanskelighetens skyld. Vi vil finne ut <strong>hvilken del av angrepet som faktisk skaper problemet</strong>.</p>
+<section id="oppgave-4a-ingen-enorme-tall" class="level3">
+<h3 class="anchored" data-anchor-id="oppgave-4a-ingen-enorme-tall">Oppgave 4A – ingen enorme tall</h3>
+<p>Lag et angrep der alle tall tilfredsstiller</p>
+<p><span class="math display">\[
+|x_i|\le 10^6.
+\]</span></p>
+<p>Nå kan du ikke bare bruke et astronomisk stort tall for å sluke alle små bidrag.</p>
+<div id="qpyodide-insertion-location-6"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Hvis feilen blir mindre enn før, er det forventet. Spørsmålet er om du fortsatt klarer å lage en <strong>målbar og forklarbar</strong> feil.</p>
 </section>
-<section id="siste-utvei" class="level3">
-<h3 class="anchored" data-anchor-id="siste-utvei">Siste utvei</h3>
-<p>Det er aldri for seint å åpne en konto på github. Har du sterke innvendinger mot github, send en epost til <a href="mailto:andrey.chesnokov@ntnu.no" class="email">andrey.chesnokov@ntnu.no</a> og beskriv saka i eposten.</p>
+<section id="oppgave-4b-bare-positive-tall" class="level3">
+<h3 class="anchored" data-anchor-id="oppgave-4b-bare-positive-tall">Oppgave 4B – bare positive tall</h3>
+<p>Nå tar vi bort et annet kraftig våpen: kansellering.</p>
+<p>Lag et angrep der</p>
+<p><span class="math display">\[
+x_i&gt;0
+\]</span></p>
+<p>for alle tallene.</p>
+<div id="qpyodide-insertion-location-7"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Her kan ikke et stort positivt og et stort negativt tall oppheve hverandre. Hvis informasjon fortsatt går tapt, må det skje på en annen måte.</p>
+<p><strong>Tenk:</strong> Er mekanismen i 4B egentlig den samme som i ditt første angrep, eller har du funnet en ny type svakhet?</p>
+<hr>
+</section>
+</section>
+<section id="bytt-side-fra-angriper-til-forsvarer" class="level2">
+<h2 class="anchored" data-anchor-id="bytt-side-fra-angriper-til-forsvarer">5. Bytt side: fra angriper til forsvarer</h2>
+<p>Nå kjenner du algoritmen ganske godt. Du har aktivt prøvd å finne situasjoner der den gjør en dårlig jobb.</p>
+<p>Det er nyttig kunnskap.</p>
+<p>I stedet for å spørre</p>
+<blockquote class="blockquote">
+<p>«Hvorfor er flyttall så irriterende?»</p>
+</blockquote>
+<p>kan vi nå spørre</p>
+<blockquote class="blockquote">
+<p><strong>«Kan vi organisere beregningen på en smartere måte?»</strong></p>
+</blockquote>
+<p>Vi beholder de samme tallene og den samme matematiske summen. Det eneste du får lov til å endre først, er <strong>rekkefølgen</strong>.</p>
+<div id="qpyodide-insertion-location-8"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Test forsvaret mot et av dine egne angrep:</p>
+<div id="qpyodide-insertion-location-9"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Prøv minst <strong>tre ideer</strong> før du bestemmer deg.</p>
+<p>For eksempel kan du undersøke:</p>
+<ul>
+<li>små tall først,</li>
+<li>store tall først,</li>
+<li>sortering etter absoluttverdi,</li>
+<li>positive og negative tall hver for seg.</li>
+</ul>
+<p>Dette er hypoteser, ikke fasit. En strategi som høres smart ut, kan være god på ett datasett og dårlig på et annet.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hva er egentlig målet?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Vi prøver ikke å finne en magisk rekkefølge som alltid er perfekt.</p>
+<p>Vi prøver å forstå hvordan <strong>algoritmen</strong> påvirker resultatet, selv om den matematiske summen er uendret.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="tournament-tåler-forsvaret-flere-angrep" class="level2">
+<h2 class="anchored" data-anchor-id="tournament-tåler-forsvaret-flere-angrep">6. Tournament: tåler forsvaret flere angrep?</h2>
+<p>Hvis du bare tester forsvaret mot datasettet du brukte da du laget det, er det lett å lure deg selv.</p>
+<p>Derfor trenger vi en liten turnering.</p>
+<p>Vi lar samme forsvar møte flere forskjellige angrep:</p>
+<ol type="1">
+<li>ditt beste frie angrep,</li>
+<li>angrepet med begrenset størrelse,</li>
+<li>angrepet med bare positive tall.</li>
+</ol>
+<div id="qpyodide-insertion-location-10"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Se på tabellen som et lite eksperimentresultat.</p>
+<ul>
+<li>Ble alle datasettene bedre?</li>
+<li>Ble ett mye bedre og et annet litt dårligere?</li>
+<li>Finnes det et angrep som forsvaret ditt nesten ikke hjelper mot?</li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Hvis forsvaret taper
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Det er ikke nødvendigvis et mislykket prosjekt.</p>
+<p>Et forsvar som hjelper i én situasjon og skader i en annen er et <strong>interessant numerisk resultat</strong>. Finn ut hva som er forskjellig mellom datasettene.</p>
+</div>
+</div>
+<p>Når du er fornøyd, prøv gjerne å lage et nytt datasett som er spesielt designet for å <strong>slå ditt eget forsvar</strong>. Da er du både angriper og forsvarer samtidig.</p>
+<hr>
+</section>
+<section id="bonus-kan-selve-algoritmen-bli-bedre" class="level2">
+<h2 class="anchored" data-anchor-id="bonus-kan-selve-algoritmen-bli-bedre">7. Bonus – kan selve algoritmen bli bedre?</h2>
+<p>Til nå har <code>ordinary_sum</code> alltid gjort det samme: én lang kjede av addisjoner. Vi har bare flyttet rundt på inputen.</p>
+<p>Men vi kan gå lenger.</p>
+<p>I stedet for</p>
+<p><span class="math display">\[
+(((x_1+x_2)+x_3)+\cdots)+x_n
+\]</span></p>
+<p>kan vi for eksempel kombinere tall i mindre grupper og deretter kombinere gruppene.</p>
+<p>Du trenger ikke løse denne delen for å fullføre prosjektet. Men hvis du har tid, er dette et naturlig neste steg.</p>
+<div id="qpyodide-insertion-location-11"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Test den mot datasettene fra turneringen:</p>
+<div id="qpyodide-insertion-location-12"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Hvis du lager en algoritme som gjør det bedre enn <code>ordinary_sum</code> på flere av angrepene dine, har du i praksis gjort det numerisk analyse handler mye om: du har gått fra en matematisk oppgave til å tenke på <strong>hvordan den bør beregnes</strong>.</p>
+<hr>
+</section>
+<section id="hva-har-du-egentlig-funnet-ut" class="level2">
+<h2 class="anchored" data-anchor-id="hva-har-du-egentlig-funnet-ut">8. Hva har du egentlig funnet ut?</h2>
+<p>Du trenger ikke levere en lang rapport. Men før du avslutter, bør du kunne forklare historien i eksperimentet ditt med egne ord.</p>
+<p>Bruk disse spørsmålene som sjekkliste:</p>
+<ol type="1">
+<li>Hva var det sterkeste angrepet ditt?</li>
+<li>Hvor i beregningen gikk informasjon tapt?</li>
+<li>Hvilken rolle spilte størrelsesforskjeller mellom tallene?</li>
+<li>Hva skjedde da du forbød store tall?</li>
+<li>Hva skjedde da du bare fikk bruke positive tall?</li>
+<li>Hvilken forsvarsstrategi fungerte best?</li>
+<li>Fantes det et datasett der forsvaret ditt gjorde resultatet dårligere?</li>
+<li>Hvorfor kan to algoritmer som matematisk beregner samme sum gi forskjellige svar på en datamaskin?</li>
+</ol>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Hovedideen
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En matematisk formel forteller <strong>hva</strong> vi ønsker å beregne.</p>
+<p>En algoritme bestemmer <strong>hvordan</strong> datamaskinen faktisk gjør beregningen.</p>
+<p>Når tallene lagres med endelig presisjon, kan dette skillet være avgjørende.</p>
+<p>Det er nettopp derfor vi bryr oss om numeriske metoder.</p>
+</div>
+</div>
 
 
 </section>
