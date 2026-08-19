@@ -85,25 +85,25 @@
     ]
   },
   {
-    "objectID": "pages/page3.html#title-exercise-plugin-test",
-    "href": "pages/page3.html#title-exercise-plugin-test",
+    "objectID": "pages/page3.html",
+    "href": "pages/page3.html",
     "title": "Del 3 – exercise test quarto plugins",
-    "section": "title: “Exercise plugin test”",
-    "text": "title: “Exercise plugin test”",
+    "section": "",
+    "text": "Enkel algebra\n\n\nHva er $2+3$? \n\n  ✓ Check\n  ⓘ Input help\n  \n    💬 Feedback\n    ⚙",
     "crumbs": [
       "Exercise test",
-      "Exercise plugin test"
+      "Del 3 – exercise test quarto plugins"
     ]
   },
   {
     "objectID": "pages/page3.html#math-exercise",
     "href": "pages/page3.html#math-exercise",
     "title": "Del 3 – exercise test quarto plugins",
-    "section": "Math exercise",
-    "text": "Math exercise\n\nEnkel algebra\n\n\nHva er $2+3$? \n\n  ✓ Check\n  ⓘ Input help\n  \n    💬 Feedback\n    ⚙",
+    "section": "",
+    "text": "Enkel algebra\n\n\nHva er $2+3$? \n\n  ✓ Check\n  ⓘ Input help\n  \n    💬 Feedback\n    ⚙",
     "crumbs": [
       "Exercise test",
-      "Exercise plugin test"
+      "Del 3 – exercise test quarto plugins"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "text": "Python exercise\n\n  \n    Please enable JavaScript to load the interactive exercise.",
     "crumbs": [
       "Exercise test",
-      "Exercise plugin test"
+      "Del 3 – exercise test quarto plugins"
     ]
   },
   {
