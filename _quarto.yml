@@ -18,6 +18,10 @@ website:
         contents:
           - pages/page2.qmd
 
+      - section: "Projects"
+        contents:
+          - pages/project_week1.qmd
+
       - section: "Exercise test"
         contents:
           - pages/page3.qmd
