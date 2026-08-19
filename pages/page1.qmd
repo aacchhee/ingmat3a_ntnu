@@ -12,7 +12,7 @@ Her kan du skrive, endre og kjøre kode uten å installere noe lokalt.
 ## Slik bruker du kodevinduet
 
 - **Run Code**: kjører koden i vinduet
-- **AddCodeBlock**: legger til et nytt Python-vindu
+- **+CodeBlock**: legger til et nytt Python-vindu
 - **Restart**: nullstiller Python-miljøet
 
 Du kan fritt endre koden og eksperimentere.  Last ned hele sida på nytt dersom noe ser tungt eller ødelagt ut.
@@ -46,15 +46,14 @@ plt.show()
 - Feilmeldinger vises direkte under koden
 - Figurer kan lastes ned fra nettleseren
 - Din kode blir ikke lagra. Du må kopiere koden et annet sted (VSCode/Editor/o.l.) og så lagre.
-- **Pyodide** har et litt anspent forhold til matplotlib. Skal du plotte noe selv, kan du oppleve å få feilmeldinger fra matplotlib. Disse handler i al hovedsak om setup av lerrettet. Ta et fungerende eksempel fra en av modulene og modifiser det slik at det plotter det du trenger. 
 
 ## Issues? Bugs? Forbedringsforslag?
 
 ### Ordentlig metode
-Åpne ei sak på github <https://github.com/aacchhee/ingmat2_ntnu>. Lag en god beskrivelse av saka.
+Åpne ei sak på github <https://github.com/aacchhee/ingmat3a_ntnu>. Lag en god beskrivelse av saka.
 
 ### Den beste metoden
-Gå til github <https://github.com/aacchhee/ingmat2_ntnu>, clone repository (via fork), fix a bug, send pull request. 
+Gå til github <https://github.com/aacchhee/ingmat3a_ntnu>, clone repository (via fork), fix a bug, send pull request. 
 
 ### Siste utvei
 Det er aldri for seint å åpne en konto på github. Har du sterke innvendinger mot github, send en epost til <andrey.chesnokov@ntnu.no> og beskriv saka i eposten.

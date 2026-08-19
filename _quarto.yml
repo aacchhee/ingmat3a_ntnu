@@ -3,6 +3,8 @@ project:
 
 filters:
   - pyodide-interaktiv
+  - math-exercise
+  - py-exercise
 
 website:
   title: "Matematikk 3A"
@@ -16,9 +18,9 @@ website:
         contents:
           - pages/page2.qmd
 
-      - section: "Optimering"
+      - section: "Exercise test"
         contents:
-          - pages/page2.qmd
+          - pages/page3.qmd
 
 format:
   html:

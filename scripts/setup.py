@@ -3,7 +3,10 @@ from __future__ import annotations
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
+
+import yaml
 
 
 CONFIG_FILE = "quarto-extensions.yml"
@@ -23,15 +26,6 @@ def require_command(name: str) -> None:
 
 
 def load_plugins(config_path: Path) -> list[dict[str, str]]:
-    try:
-        import yaml
-    except ImportError:
-        sys.exit(
-            "\nERROR: PyYAML is required for setup.\n\n"
-            "Install it with:\n"
-            "  python -m pip install pyyaml\n"
-        )
-
     if not config_path.exists():
         sys.exit(
             f"\nERROR: configuration file not found:\n"
@@ -63,18 +57,21 @@ def load_plugins(config_path: Path) -> list[dict[str, str]]:
 
         name = plugin.get("name")
         repo = plugin.get("repo")
+        path = plugin.get("path")
 
-        if not name or not repo:
+        if not name or not repo or not path:
             sys.exit(
-                f"\nERROR: plugin entry #{i} must contain both:\n"
+                f"\nERROR: plugin entry #{i} must contain:\n"
                 "  name:\n"
                 "  repo:\n"
+                "  path:\n"
             )
 
         normalized.append(
             {
                 "name": str(name),
                 "repo": str(repo),
+                "path": str(path),
             }
         )
 
@@ -137,30 +134,71 @@ def install_plugin(
 ) -> None:
     name = plugin["name"]
 
-    installed_extension = (
-        project_root
-        / "_extensions"
-        / name
-    )
+    source_extension = plugin_repo / plugin["path"]
+    installed_extension = project_root / "_extensions" / name
+
+    if not source_extension.exists():
+        sys.exit(
+            f"\nERROR: extension path not found for '{name}':\n"
+            f"  {source_extension}\n"
+        )
+
+    extension_yml = source_extension / "_extension.yml"
+
+    if not extension_yml.exists():
+        sys.exit(
+            f"\nERROR: '{source_extension}' does not look like "
+            "a Quarto extension.\n\n"
+            "Expected:\n"
+            f"  {extension_yml}\n"
+        )
 
     if installed_extension.exists():
         print(f"\nRemoving previous installed extension: {name}")
         shutil.rmtree(installed_extension)
 
     print(f"\nInstalling Quarto extension: {name}")
+    print(f"  source: {source_extension}")
 
-    try:
-        run(
-            "quarto",
-            "add",
-            str(plugin_repo),
-            "--no-prompt",
-            cwd=project_root,
+    # Quarto expects an extension distribution root containing:
+    #
+    #   _extensions/
+    #       extension-name/
+    #
+    # We therefore stage only the requested extension in a temporary
+    # distribution directory. This prevents other extensions contained
+    # in the same private repository from being installed accidentally.
+    with tempfile.TemporaryDirectory(prefix="quarto-extension-") as tmp:
+        staging_root = Path(tmp)
+
+        staging_extension = (
+            staging_root
+            / "_extensions"
+            / name
         )
-    except subprocess.CalledProcessError:
-        sys.exit(
-            f"\nERROR: Quarto could not install extension '{name}'.\n"
+
+        staging_extension.parent.mkdir(
+            parents=True,
+            exist_ok=True,
         )
+
+        shutil.copytree(
+            source_extension,
+            staging_extension,
+        )
+
+        try:
+            run(
+                "quarto",
+                "add",
+                str(staging_root),
+                "--no-prompt",
+                cwd=project_root,
+            )
+        except subprocess.CalledProcessError:
+            sys.exit(
+                f"\nERROR: Quarto could not install extension '{name}'.\n"
+            )
 
     if not installed_extension.exists():
         sys.exit(
@@ -181,7 +219,7 @@ def main() -> None:
     require_command("git")
     require_command("quarto")
 
-    print(f"\nReading extension configuration:")
+    print("\nReading extension configuration:")
     print(f"  {config_path}")
 
     plugins = load_plugins(config_path)
@@ -195,7 +233,10 @@ def main() -> None:
     print(f"\nConfigured plugins: {len(plugins)}")
 
     for plugin in plugins:
-        print(f"  - {plugin['name']}")
+        print(
+            f"  - {plugin['name']} "
+            f"({plugin['path']})"
+        )
 
     for plugin in plugins:
         plugin_repo = clone_or_update_plugin(
@@ -224,4 +265,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    
