@@ -2,7 +2,7 @@ project:
   type: website
 
 filters:
-  - pyodide
+  - pyodide-interaktiv
 
 website:
   title: "Matematikk 3A"

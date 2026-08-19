@@ -20,3 +20,10 @@ __pycache__/
 /.quarto/
 
 **/*.quarto_ipynb
+
+# Private Quarto plugin configuration and sources
+/.private-extensions.yml
+/.private-extensions/
+
+# Installed private extensions
+/_extensions/pyodide-interaktiv/

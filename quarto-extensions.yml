@@ -1,0 +1,4 @@
+plugins:
+  - name: pyodide-interaktiv
+    repo: https://github.com/Erasmus-CTM/pyodide-interaktiv.git
+    
