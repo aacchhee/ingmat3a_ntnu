@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Uke 1 – Floating-point attack – Matematikk 3A</title>
+<title>Uke 2 – fikspunktiterasjon – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -889,7 +889,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "en";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"def ordinary_sum(values):\n    # Start med summen 0.\n    total = 0.0\n\n    # Legg til ett tall om gangen, fra venstre mot høyre.\n    for value in values:\n        total = total + value\n\n    return total","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Bytt ut tallene med ditt eget første angrep.\nvalues = [1.0, 2.0, 3.0]\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def make_attack(n, scale):\n    # n bestemmer hvor stort eksperimentet skal være.\n    # scale kan brukes til å styre størrelsesforskjellen mellom tallene.\n    #\n    # TODO: lag og returner din egen liste.\n\n    values = []\n\n    return values","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor n in [10, 100, 1000]:\n    values = make_attack(n, 1e16)\n\n    ordinary = ordinary_sum(values)\n    reference = math.fsum(values)\n    error = abs(ordinary - reference)\n\n    print(\n        f\"n={n:5d}   \"\n        f\"ordinary={ordinary:.12g}   \"\n        f\"reference={reference:.12g}   \"\n        f\"error={error:.3e}\"\n    )","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef target_attack():\n    # TODO: konstruer tallene dine her.\n    values = [1.0]\n    return values\n\n\nvalues = target_attack()\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"antall tall  =\", len(values))\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"feil         =\", abs(ordinary - reference))","id":5,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef bounded_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = bounded_attack()\n\n# Kontroller regelen.\nprint(\"største |x| =\", max(abs(x) for x in values) if values else 0.0)\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":6,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef positive_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = positive_attack()\n\nprint(\"alle positive =\", all(x > 0 for x in values))\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":7,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def defense_order(values):\n    # Lag en kopi slik at originaldataene ikke endres.\n    reordered = list(values)\n\n    # TODO: bestem en bedre rekkefølge.\n\n    return reordered","id":8,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nvalues = target_attack()\nreference = math.fsum(values)\n\nbefore = ordinary_sum(values)\ndefended_values = defense_order(values)\nafter = ordinary_sum(defended_values)\n\nprint(\"referanse       =\", reference)\nprint(\"før forsvar     =\", before)\nprint(\"feil før        =\", abs(before - reference))\nprint()\nprint(\"etter forsvar   =\", after)\nprint(\"feil etter      =\", abs(after - reference))","id":9,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nattacks = {\n    \"target\": target_attack(),\n    \"bounded\": bounded_attack(),\n    \"positive\": positive_attack(),\n}\n\nprint(\n    f\"{'datasett':12s} \"\n    f\"{'naiv feil':>14s} \"\n    f\"{'forsvart feil':>16s}\"\n)\nprint(\"-\" * 46)\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n\n    naive = ordinary_sum(values)\n    defended = ordinary_sum(defense_order(values))\n\n    naive_error = abs(naive - reference)\n    defended_error = abs(defended - reference)\n\n    print(\n        f\"{name:12s} \"\n        f\"{naive_error:14.6e} \"\n        f\"{defended_error:16.6e}\"\n    )","id":10,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def better_sum(values):\n    # TODO: design din egen summeringsalgoritme.\n    # Ikke bruk sum(), numpy.sum() eller math.fsum().\n\n    total = 0.0\n    for value in values:\n        total += value\n\n    return total","id":11,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n    result = better_sum(values)\n\n    print(\n        f\"{name:12s}   \"\n        f\"resultat={result:.12g}   \"\n        f\"feil={abs(result-reference):.3e}\"\n    )","id":12,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\ndef f(x):\n    return x**3 + x - 1\n\nx_grid = np.linspace(0, 1, 400)\n\nplt.close(\"all\")\nfig, ax = plt.subplots()\nax.plot(x_grid, f(x_grid), label=\"$f(x)=x^3+x-1$\")\nax.axhline(0, color=\"black\", linewidth=1)\nax.set_xlabel(\"$x$\")\nax.set_ylabel(\"$f(x)$\")\nax.set_title(\"Hvor ligger løsningen?\")\nax.grid(True)\nax.legend()\nplt.show()\n\nprint(\"f(0) =\", f(0))\nprint(\"f(1) =\", f(1))","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def g1(x):\n    return 1 - x**3\n\ndef g2(x):\n    # Reell kubikkrot, også for negative argumenter\n    return np.cbrt(1 - x)\n\ndef g3(x):\n    return (2*x**3 + 1)/(3*x**2 + 1)\n\ndef iterate(g, x0, number_of_steps):\n    \"\"\"Returner x_0, x_1, ..., x_n.\"\"\"\n    values = [float(x0)]\n    for _ in range(number_of_steps):\n        values.append(g(values[-1]))\n    return np.array(values)","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"solution = 0.6823278038280193\n\nplt.close(\"all\")\nfig, ax = plt.subplots()\nfor g, label in [(g1, \"$g_1$\"), (g2, \"$g_2$\"), (g3, \"$g_3$\")]:\n    values = iterate(g, 0.5, 30)\n    print(label, values[:8], \"...\", values[-1])\n    ax.plot(values, marker=\".\", label=label)\n\nax.axhline(solution, color=\"black\", linestyle=\"--\", label=\"løsningen\")\nax.set_xlabel(\"Iterasjon $n$\")\nax.set_ylabel(\"Tilnærming $x_n$\")\nax.set_title(\"Én ligning, tre algoritmer\")\nax.grid(True)\nax.legend()\nplt.show()","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def cobweb_plot(g, x0, number_of_steps=20,\n                x_min=0, x_max=1, title=\"Spindelvevplott\"):\n    x_grid = np.linspace(x_min, x_max, 800)\n    y_grid = np.array([g(x) for x in x_grid])\n    values = iterate(g, x0, number_of_steps)\n\n    plt.close(\"all\")\n    fig, ax = plt.subplots(figsize=(7, 7))\n    ax.plot(x_grid, y_grid, label=\"$y=g(x)$\")\n    ax.plot(x_grid, x_grid, \"k--\", label=\"$y=x$\")\n\n    current = values[0]\n    for next_value in values[1:]:\n        ax.plot([current, current], [current, next_value], color=\"tab:red\")\n        ax.plot([current, next_value], [next_value, next_value], color=\"tab:red\")\n        current = next_value\n\n    ax.set(xlim=(x_min, x_max), ylim=(x_min, x_max),\n           xlabel=\"$x$\", ylabel=\"$y$\", title=title)\n    ax.set_aspect(\"equal\", adjustable=\"box\")\n    ax.grid(True)\n    ax.legend()\n    plt.show()\n    return values","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"values = cobweb_plot(g1, 0.5, 20, 0, 1, \"$g_1(x)=1-x^3$\")","id":5,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"values = cobweb_plot(g2, 0.5, 20, 0, 1, \"$g_2(x)=\\\\sqrt[3]{1-x}$\")","id":6,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"values = cobweb_plot(g3, 0.5, 8, 0, 1, \"$g_3$\")","id":7,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def final_value(g, x0, number_of_steps=100):\n    x = float(x0)\n    for _ in range(number_of_steps):\n        x = g(x)\n        if not np.isfinite(x):\n            return np.nan\n    return x\n\nstarting_values = np.linspace(-1, 1.5, 400)\nfinal_values = []\nfor x0 in starting_values:\n    try:\n        final_values.append(final_value(g2, x0))\n    except Exception:\n        final_values.append(np.nan)\n\nplt.close(\"all\")\nfig, ax = plt.subplots()\nax.plot(starting_values, final_values, \".\", markersize=3)\nax.axhline(solution, color=\"black\", linestyle=\"--\", label=\"fikspunktet\")\nax.set_xlabel(\"Startverdi $x_0$\")\nax.set_ylabel(\"Verdi etter 100 iterasjoner\")\nax.set_title(\"Eksperiment med startverdier\")\nax.grid(True)\nax.legend()\nplt.show()","id":8,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"r_reference = 0.6823278038280193\n\nplt.close(\"all\")\nfig, ax = plt.subplots()\nfor g, label in [(g2, \"$g_2$: langsommere\"), (g3, \"$g_3$: raskere\")]:\n    values = iterate(g, 0.5, 20)\n    errors = np.abs(values - r_reference)\n    positive = errors > 0\n    ax.semilogy(np.arange(len(errors))[positive], errors[positive],\n                marker=\".\", label=label)\n\nax.set_xlabel(\"Iterasjon $n$\")\nax.set_ylabel(\"Absolutt feil $|x_n-r|$\")\nax.set_title(\"Sammenligning av konvergensfart\")\nax.grid(True)\nax.legend()\nplt.show()","id":9,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"values = iterate(g2, 0.5, 20)\nerrors = np.abs(values - r_reference)\n\nprint(\" n       feil          andel feil igjen\")\nfor n in range(1, len(errors)):\n    if errors[n - 1] > 0:\n        print(f\"{n:2d}   {errors[n]:.3e}       {errors[n]/errors[n-1]:.4f}\")","id":10,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def f_scaled(x):\n    return 1e-8*(x - 3)\n\nx = 100\nprint(\"Residual:      \", abs(f_scaled(x)))\nprint(\"Absolutt feil:\", abs(x - 3))","id":11,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"atol = 1e-8\nrtol = 1e-6\n\nfor x in [0.0, 1.0, 1e6]:\n    tolerance = atol + rtol*abs(x)\n    print(f\"x = {x:9g}: samlet toleranse = {tolerance:g}\")","id":12,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"eps = np.finfo(float).eps\nprint(\"Maskinepsilon:\", eps)\nprint(\"1 + eps == 1:  \", 1.0 + eps == 1.0)\nprint(\"1 + eps/2 == 1:\", 1.0 + eps/2 == 1.0)\nprint(\"Neste float:    \", np.nextafter(1.0, 2.0))","id":13,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\ndef fixed_point(g, x0, f=None, atol=1e-10, rtol=1e-10, maxiter=100):\n    \"\"\"Fikspunktiterasjon x_(n+1)=g(x_n), med diagnostikk.\"\"\"\n    x = float(x0)\n    history = [x]\n    steps = []\n    fp_residuals = [abs(g(x) - x)]\n    f_residuals = None if f is None else [abs(f(x))]\n\n    for iteration in range(1, maxiter + 1):\n        x_new = g(x)\n\n        if not math.isfinite(x_new):\n            return {\"x\": x_new, \"converged\": False,\n                    \"reason\": \"ikke-endelig verdi\", \"iterations\": iteration,\n                    \"history\": np.array(history), \"steps\": np.array(steps),\n                    \"fp_residuals\": np.array(fp_residuals),\n                    \"f_residuals\": f_residuals}\n\n        step = abs(x_new - x)\n        history.append(x_new)\n        steps.append(step)\n        fp_residuals.append(abs(g(x_new) - x_new))\n        if f is not None:\n            f_residuals.append(abs(f(x_new)))\n\n        tolerance = atol + rtol*abs(x_new)\n        if step <= tolerance:\n            return {\"x\": x_new, \"converged\": True,\n                    \"reason\": \"lite skritt\", \"iterations\": iteration,\n                    \"history\": np.array(history), \"steps\": np.array(steps),\n                    \"fp_residuals\": np.array(fp_residuals),\n                    \"f_residuals\": (None if f_residuals is None\n                                    else np.array(f_residuals))}\n        x = x_new\n\n    return {\"x\": x, \"converged\": False,\n            \"reason\": \"maksimalt antall iterasjoner\", \"iterations\": maxiter,\n            \"history\": np.array(history), \"steps\": np.array(steps),\n            \"fp_residuals\": np.array(fp_residuals),\n            \"f_residuals\": (None if f_residuals is None\n                            else np.array(f_residuals))}","id":14,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def f(x):\n    return x**3 + x - 1\n\nresult = fixed_point(g2, 0.5, f=f, atol=1e-12, rtol=1e-12, maxiter=200)\nprint(\"Tilnærming: \", result[\"x\"])\nprint(\"Konvergerte:\", result[\"converged\"])\nprint(\"Stoppårsak: \", result[\"reason\"])\nprint(\"Iterasjoner:\", result[\"iterations\"])\nprint(\"Residual:    \", result[\"f_residuals\"][-1])","id":15,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"plt.close(\"all\")\nfig, ax = plt.subplots()\nax.semilogy(result[\"steps\"], marker=\".\", label=\"skrittlengde\")\nax.semilogy(result[\"f_residuals\"][1:], marker=\".\", label=\"residual\")\nax.set_xlabel(\"Iterasjon\")\nax.set_ylabel(\"Størrelse\")\nax.set_title(\"Hva er det som blir lite?\")\nax.grid(True)\nax.legend()\nplt.show()","id":16,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"a = 2\ndef g_bad(x):\n    return a/x\n\nprint(iterate(g_bad, 1, 10))","id":17,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def make_sqrt_iteration(a):\n    def g(x):\n        return 0.5*(x + a/x)\n    return g\n\ndef make_sqrt_equation(a):\n    def f(x):\n        return x*x - a\n    return f\n\ng_sqrt = make_sqrt_iteration(2)\nf_sqrt = make_sqrt_equation(2)\nresult_sqrt = fixed_point(g_sqrt, 1, f=f_sqrt,\n                          atol=1e-15, rtol=1e-15)\n\nfor n, x in enumerate(result_sqrt[\"history\"]):\n    print(f\"n={n:2d}: x={x:.16f}, |x²-2|={abs(x*x-2):.3e}\")","id":18,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"values = cobweb_plot(g_sqrt, 1, 7, 0.5, 2,\n                     \"Fikspunktiterasjon for kvadratroten av 2\")","id":19,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4138,7 +4138,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week1.html">Uke 1 – Floating-point attack</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page4.html">Uke 2 – fikspunktiterasjon</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -4177,7 +4177,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/page4.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page4.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Uke 2 – fikspunktiterasjon</span></a>
   </div>
 </li>
@@ -4192,7 +4192,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 1 – Floating-point attack</span></a>
   </div>
 </li>
@@ -4218,9 +4218,9 @@ window.Quarto = {
 </script>
 <script>window.__mathExerciseConfig = {"lang":"en"};</script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week1.html">Uke 1 – Floating-point attack</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Uke 1 – Floating-point attack</h1>
+<h1 class="title">Uke 2 – fikspunktiterasjon</h1>
 </div>
 
 
@@ -4237,294 +4237,461 @@ window.Quarto = {
 </header>
 
 
-<section id="floating-point-attack" class="level1">
-<h1>Floating-point attack</h1>
-<p>Dette prosjektet er laget for omtrent <strong>2–3 timer selvstendig arbeid</strong>.</p>
-<p>Du har allerede sett at en datamaskin ikke kan lagre alle reelle tall nøyaktig. Her skal vi ikke bruke tiden på å se de samme eksemplene én gang til. I stedet skal vi gjøre noe mer aktivt:</p>
-<blockquote class="blockquote">
-<p><strong>Vi skal prøve å lure en helt vanlig summeringsalgoritme.</strong></p>
-</blockquote>
-<p>Først lager du eksempler der algoritmen regner dårlig. Deretter prøver du å forstå <strong>hvorfor</strong> den feiler. Til slutt snur vi problemet: kan du lage en bedre algoritme som tåler angrepene dine?</p>
-<p>Det er altså litt som å teste en bro. Først belaster vi den på måter som kan avsløre svakheter. Når vi vet hvor den er svak, kan vi prøve å bygge den bedre.</p>
-<p>Du trenger ikke finne «det perfekte angrepet» med én gang. Start enkelt. Kjør kode. Endre ett tall. Kjør igjen. Se hva som skjer.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Hvordan jobbe med siden
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Alle kodevinduene er redigerbare.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">2.0 Ett problem, tre algoritmer</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">2.1 Fikspunkt og konvergens</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false" href="">2.2 Spindelvevplott og attraktive fikspunkt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-4" role="tab" aria-controls="tabset-7-4" aria-selected="false" href="">2.3 Lokalt, globalt og raskt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-5" role="tab" aria-controls="tabset-7-5" aria-selected="false" href="">2.4 Feil, residual og toleranse</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-6" role="tab" aria-controls="tabset-7-6" aria-selected="false" href="">2.5 En robust metode og et raskt eksempel</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Hvorfor iterative metoder?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Et testproblem</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Fra ligning til oppdateringsregel</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">Undersøk før du leser videre</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">Læringsmål</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>Mange problemer i informatikk og ingeniørfag ender med en ligning</p>
+<p><span class="math display">\[
+f(x)=0.
+\]</span></p>
+<p>Det kan for eksempel være en verdi som gir likevekt i en simulering, et tidspunkt der to bevegelser møtes, eller en parameter som får en modell til å passe med observerte data.</p>
+<p>Noen ganger finnes en praktisk formel for løsningen. Ofte gjør den ikke det. Da trenger vi en prosedyre som en datamaskin kan gjenta:</p>
 <ol type="1">
-<li>Kjør koden slik den står.</li>
-<li>Endre noe.</li>
-<li>Kjør på nytt.</li>
-<li>Sammenlign resultatene.</li>
-<li>Prøv å forklare det du ser.</li>
+<li>Start med et anslag <span class="math inline">\(x_0\)</span>.</li>
+<li>Bruk anslaget til å lage et nytt anslag <span class="math inline">\(x_1\)</span>.</li>
+<li>Bruk <span class="math inline">\(x_1\)</span> til å lage <span class="math inline">\(x_2\)</span>.</li>
+<li>Fortsett og undersøk om anslagene nærmer seg en løsning.</li>
 </ol>
-<p>Det er helt greit at de første forsøkene dine <strong>ikke virker</strong>. I dette prosjektet er mislykkede forsøk en del av undersøkelsen.</p>
+<p>Dette er en svært vanlig idé i numerikk: Vi erstatter spørsmålet «kan vi skrive ned løsningen direkte?» med spørsmålet «kan vi lage en oppdateringsregel som beveger oss mot løsningen?»</p>
 </div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Som et kontrollert eksperiment bruker vi</p>
+<p><span class="math display">\[x^3+x-1=0.\]</span></p>
+<p>La</p>
+<p><span class="math display">\[f(x)=x^3+x-1.\]</span></p>
+<p>Før vi lager en metode, undersøker vi problemet med Python.</p>
+<div id="qpyodide-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Grafen og fortegnene viser at en løsning ligger mellom <span class="math inline">\(0\)</span> og <span class="math inline">\(1\)</span>. Siden</p>
+<p><span class="math display">\[
+f'(x)=3x^2+1&gt;0,
+\]</span></p>
+<p>er funksjonen strengt voksende og kan derfor ikke ha mer enn én løsning. Vi har altså ett tydelig mål for eksperimentet.</p>
+<p>En svært nøyaktig referanseverdi er</p>
+<p><span class="math display">\[r\approx0.6823278038.\]</span></p>
+<p>Referanseverdien skal ikke brukes av algoritmen. Vi bruker den senere til å måle feil og undersøke hvor raskt ulike metoder nærmer seg løsningen.</p>
 </div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>En mulig strategi er å omskrive ligningen til</p>
+<p><span class="math display">\[
+x=g(x)
+\]</span></p>
+<p>og deretter gjenta høyresiden:</p>
+<p><span class="math display">\[
+x_{n+1}=g(x_n).
+\]</span></p>
+<p>Dette er et bevisst designvalg, ikke et tilfeldig algebraisk triks. For testproblemet kan vi konstruere flere mulige oppdateringsregler:</p>
+<p><span class="math display">\[x=1-x^3,\qquad x=\sqrt[3]{1-x},\qquad x=\frac{2x^3+1}{3x^2+1}.\]</span></p>
+<p>Definer høyresidene som <span class="math inline">\(g_1\)</span>, <span class="math inline">\(g_2\)</span> og <span class="math inline">\(g_3\)</span>. Alle er konstruert slik at løsningen oppfyller</p>
+<p><span class="math display">\[
+r=g_i(r).
+\]</span></p>
+<p>Dermed har alle tre samme mål. Nå undersøker vi om de også er like gode veier til målet.</p>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<ul>
+<li>Hvilke følger nærmer seg løsningen?</li>
+<li>Hvilken ser raskest ut?</li>
+<li>Hvilken pendler?</li>
+<li>Er pendling alltid det samme som at metoden mislykkes?</li>
+<li>Endres konklusjonen hvis du endrer startverdien?</li>
+</ul>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Spilleregler
+<span class="screen-reader-only">Important</span>Hovedidé
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>Å omskrive en ligning er ikke bare algebra. Valget av <span class="math inline">\(x=g(x)\)</span> bestemmer den numeriske algoritmen. Ekvivalente formler kan gi helt forskjellig oppførsel.</p>
+</div>
+</div>
+</div>
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<p>Etter denne uka skal du kunne</p>
 <ul>
-<li>Bruk vanlige, endelige Python-<code>float</code>-verdier.</li>
-<li>Ikke bruk <code>nan</code> eller <code>inf</code> i angrepene.</li>
-<li>Når vi trenger en god referanseverdi, bruker vi <code>math.fsum</code>.</li>
-<li>Ikke bruk <code>math.fsum</code> inne i selve angreps- eller forsvarsalgoritmen.</li>
-<li>Det viktigste er ikke bare å få stor feil, men å kunne <strong>forklare hvorfor</strong> den oppstår.</li>
+<li>forklare fikspunkt og fikspunktiterasjon,</li>
+<li>beskrive konvergens, divergens, pendling og sykler,</li>
+<li>bruke iterasjonshistorikk og spindelvevplott som undersøkelsesverktøy,</li>
+<li>forklare attraktive og frastøtende fikspunkt,</li>
+<li>skille mellom lokal og global konvergens,</li>
+<li>sammenligne konvergensfart,</li>
+<li>skille mellom sann feil, relativ feil, residual og skrittlengde,</li>
+<li>implementere en metode med stoppkriterium og diagnostikk.</li>
 </ul>
-<p>Du trenger ikke forstå hvordan <code>math.fsum</code> er programmert. Her bruker vi den som en målestokk.</p>
 </div>
 </div>
-<section id="første-angrep-kan-du-få-et-tall-til-å-forsvinne" class="level2">
-<h2 class="anchored" data-anchor-id="første-angrep-kan-du-få-et-tall-til-å-forsvinne">1. Første angrep: kan du få et tall til å forsvinne?</h2>
-<p>Tenk deg at du skal summere en liste med tall. Den mest naturlige måten er å starte på null og legge til ett tall om gangen.</p>
-<p>Det er akkurat dette funksjonen under gjør:</p>
-<div id="qpyodide-insertion-location-1"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>I eksakt matematikk er dette helt uproblematisk. Men på en datamaskin blir hvert mellomresultat lagret som et nytt flyttall. Hvis to tall har svært forskjellig størrelse, kan et lite bidrag bli for lite til å påvirke det store tallet.</p>
-<p><strong>Det er denne svakheten du skal prøve å utnytte.</strong></p>
-<section id="oppgave-1-lag-ditt-første-angrep" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-1-lag-ditt-første-angrep">Oppgave 1 – lag ditt første angrep</h3>
-<p>Lag en liste <code>values</code> slik at <code>ordinary_sum(values)</code> gir et tydelig dårligere resultat enn <code>math.fsum(values)</code>.</p>
-<p>Du trenger ikke mange tall. Tre eller fire kan være nok til et første forsøk.</p>
-<div id="qpyodide-insertion-location-2"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Hvis begge svarene er like, har du ikke ødelagt algoritmen ennå. Bra — endre tallene og prøv igjen.</p>
-<p><strong>Hint hvis du sitter fast:</strong> Hva skjer hvis ett tall er enormt stort og et annet er veldig lite? Hva skjer hvis et stort tall senere trekkes fra igjen?</p>
-<p>Når du har et eksempel som virker, stopp et øyeblikk og følg summen <strong>regnetrinn for regnetrinn</strong>.</p>
-<p><strong>Skriv ned:</strong> Hvilke tall brukte du? I hvilket regnetrinn gikk informasjon tapt?</p>
-<hr>
-</section>
-</section>
-<section id="fra-ett-triks-til-en-angrepsmaskin" class="level2">
-<h2 class="anchored" data-anchor-id="fra-ett-triks-til-en-angrepsmaskin">2. Fra ett triks til en angrepsmaskin</h2>
-<p>Ett spesielt eksempel viser at noe <em>kan</em> gå galt. Men vi vil forstå mer enn det.</p>
-<p>Neste mål er derfor å lage en funksjon som kan produsere <strong>mange varianter av samme type problem</strong>.</p>
-<p>Hvorfor? Fordi det er lettere å forstå en mekanisme når vi kan skru på den. Hvis feilen blir større når <code>n</code> øker, forteller det oss noe. Hvis feilen plutselig forsvinner når <code>scale</code> endres, forteller det oss også noe.</p>
-<p>Du skal lage en liten «angrepsgenerator»:</p>
-<div id="qpyodide-insertion-location-3"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Her bestemmer du selv hva <code>n</code> og <code>scale</code> skal bety i angrepet ditt. For eksempel kan <code>n</code> styre hvor mange små tall du bruker, mens <code>scale</code> styrer hvor stort det største tallet er.</p>
-<p>Test så generatoren flere ganger:</p>
-<div id="qpyodide-insertion-location-4"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Lek med knappene du har laget
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p>Prøv å endre</p>
-<ul>
-<li><strong>antall tall</strong>,</li>
-<li><strong>størrelsen på tallene</strong>,</li>
-<li><strong>fortegn</strong>,</li>
-<li><strong>rekkefølgen</strong>.</li>
-</ul>
-<p>Ikke endre alt samtidig. Endre én ting og se hva den gjør med feilen.</p>
-</div>
-</div>
-<p><strong>Mål:</strong> Finn minst tre parameterkombinasjoner som gir tydelig forskjellige feil.</p>
-<p>Du trenger ikke skrive en lang forklaring. To–tre setninger er nok: <em>Hva gjorde angrepet sterkere? Hva gjorde det svakere?</em></p>
-<hr>
-</section>
-<section id="nå-får-angrepet-et-mål" class="level2">
-<h2 class="anchored" data-anchor-id="nå-får-angrepet-et-mål">3. Nå får angrepet et mål</h2>
-<p>Så langt har du fått lov til å lage en hvilken som helst sum. Det gjør det ganske lett å produsere rare resultater.</p>
-<p>Nå strammer vi inn oppgaven.</p>
-<p>Den <strong>riktige summen skal være omtrent 1</strong>.</p>
-<p>Det betyr at vi på forhånd vet hva svaret burde være. Din oppgave er å lage data som får den naive algoritmen til å fortelle oss noe annet.</p>
-<p>Tenk på dette som et mer kontrollert eksperiment:</p>
-<blockquote class="blockquote">
-<p>Det riktige svaret er 1. Hvor dårlig kan du få <code>ordinary_sum</code> til å oppføre seg?</p>
-</blockquote>
-<div id="qpyodide-insertion-location-5"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Referansen må ligge nær <span class="math inline">\(1\)</span>:</p>
-<p><span class="math display">\[
-|S_{\mathrm{ref}}-1|&lt;10^{-10}.
-\]</span></p>
-<p>Bruk maksimalt 10 000 tall.</p>
-<p>Start gjerne med å bygge videre på ideen fra oppgave 1. Deretter kan du prøve å forsterke effekten.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Når du har fått det til
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Ikke stopp ved første feil.</p>
-<p>Kan du få <code>ordinary_sum</code> til å gi</p>
-<ul>
-<li><code>0.0</code>?</li>
-<li>feil fortegn?</li>
-<li>et resultat langt fra 1?</li>
-<li>en større feil uten å bruke flere tall?</li>
-</ul>
-<p>Du trenger ikke klare alt. Velg én retning og se hvor langt du kommer.</p>
-</div>
-</div>
-<hr>
-</section>
-<section id="angrep-med-hendene-bundet" class="level2">
-<h2 class="anchored" data-anchor-id="angrep-med-hendene-bundet">4. Angrep med hendene bundet</h2>
-<p>Det er lett å lage ekstreme eksempler hvis vi får bruke hva som helst. Derfor skal vi nå fjerne noen av de enkleste triksene.</p>
-<p>Poenget er ikke å gjøre oppgaven vanskelig for vanskelighetens skyld. Vi vil finne ut <strong>hvilken del av angrepet som faktisk skaper problemet</strong>.</p>
-<section id="oppgave-4a-ingen-enorme-tall" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-4a-ingen-enorme-tall">Oppgave 4A – ingen enorme tall</h3>
-<p>Lag et angrep der alle tall tilfredsstiller</p>
-<p><span class="math display">\[
-|x_i|\le 10^6.
-\]</span></p>
-<p>Nå kan du ikke bare bruke et astronomisk stort tall for å sluke alle små bidrag.</p>
-<div id="qpyodide-insertion-location-6"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Hvis feilen blir mindre enn før, er det forventet. Spørsmålet er om du fortsatt klarer å lage en <strong>målbar og forklarbar</strong> feil.</p>
-</section>
-<section id="oppgave-4b-bare-positive-tall" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-4b-bare-positive-tall">Oppgave 4B – bare positive tall</h3>
-<p>Nå tar vi bort et annet kraftig våpen: kansellering.</p>
-<p>Lag et angrep der</p>
-<p><span class="math display">\[
-x_i&gt;0
-\]</span></p>
-<p>for alle tallene.</p>
-<div id="qpyodide-insertion-location-7"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Her kan ikke et stort positivt og et stort negativt tall oppheve hverandre. Hvis informasjon fortsatt går tapt, må det skje på en annen måte.</p>
-<p><strong>Tenk:</strong> Er mekanismen i 4B egentlig den samme som i ditt første angrep, eller har du funnet en ny type svakhet?</p>
-<hr>
-</section>
-</section>
-<section id="bytt-side-fra-angriper-til-forsvarer" class="level2">
-<h2 class="anchored" data-anchor-id="bytt-side-fra-angriper-til-forsvarer">5. Bytt side: fra angriper til forsvarer</h2>
-<p>Nå kjenner du algoritmen ganske godt. Du har aktivt prøvd å finne situasjoner der den gjør en dårlig jobb.</p>
-<p>Det er nyttig kunnskap.</p>
-<p>I stedet for å spørre</p>
-<blockquote class="blockquote">
-<p>«Hvorfor er flyttall så irriterende?»</p>
-</blockquote>
-<p>kan vi nå spørre</p>
-<blockquote class="blockquote">
-<p><strong>«Kan vi organisere beregningen på en smartere måte?»</strong></p>
-</blockquote>
-<p>Vi beholder de samme tallene og den samme matematiske summen. Det eneste du får lov til å endre først, er <strong>rekkefølgen</strong>.</p>
-<div id="qpyodide-insertion-location-8"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Test forsvaret mot et av dine egne angrep:</p>
-<div id="qpyodide-insertion-location-9"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Prøv minst <strong>tre ideer</strong> før du bestemmer deg.</p>
-<p>For eksempel kan du undersøke:</p>
-<ul>
-<li>små tall først,</li>
-<li>store tall først,</li>
-<li>sortering etter absoluttverdi,</li>
-<li>positive og negative tall hver for seg.</li>
-</ul>
-<p>Dette er hypoteser, ikke fasit. En strategi som høres smart ut, kan være god på ett datasett og dårlig på et annet.</p>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Fikspunkt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Fikspunktiterasjon</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Hva betyr konvergens?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false" href="">Matematikk og datamaskin</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Hva er egentlig målet?
+<span class="screen-reader-only">Note</span>Definisjon
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Vi prøver ikke å finne en magisk rekkefølge som alltid er perfekt.</p>
-<p>Vi prøver å forstå hvordan <strong>algoritmen</strong> påvirker resultatet, selv om den matematiske summen er uendret.</p>
+<p>Et tall <span class="math inline">\(r\)</span> er et <strong>fikspunkt</strong> for <span class="math inline">\(g\)</span> når anvendelse av <span class="math inline">\(g\)</span> ikke endrer tallet:</p>
+<p><span class="math display">\[g(r)=r.\]</span></p>
 </div>
 </div>
-<hr>
-</section>
-<section id="tournament-tåler-forsvaret-flere-angrep" class="level2">
-<h2 class="anchored" data-anchor-id="tournament-tåler-forsvaret-flere-angrep">6. Tournament: tåler forsvaret flere angrep?</h2>
-<p>Hvis du bare tester forsvaret mot datasettet du brukte da du laget det, er det lett å lure deg selv.</p>
-<p>Derfor trenger vi en liten turnering.</p>
-<p>Vi lar samme forsvar møte flere forskjellige angrep:</p>
+<p>For eksempel har <span class="math inline">\(g(x)=x^2\)</span> fikspunktene <span class="math inline">\(0\)</span> og <span class="math inline">\(1\)</span>. Hvis iterasjonen treffer et fikspunkt eksakt, blir den der.</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p>Gitt <span class="math inline">\(g\)</span> og en startverdi <span class="math inline">\(x_0\)</span> definerer vi</p>
+<p><span class="math display">\[x_{n+1}=g(x_n),\qquad n=0,1,2,\ldots\]</span></p>
+<p>I vanlig språk: Gjett en verdi, sett den inn i <span class="math inline">\(g\)</span>, bruk resultatet som neste verdi, og gjenta.</p>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<p>Vi sier at iterasjonen <strong>konvergerer mot</strong> <span class="math inline">\(r\)</span> når verdiene nærmer seg <span class="math inline">\(r\)</span> og etter hvert stabiliserer seg rundt <span class="math inline">\(r\)</span>. Vi skriver <span class="math inline">\(x_n\to r\)</span>. Dette handler om utviklingen til hele følgen, ikke om at ett ledd tilfeldigvis ligger nær <span class="math inline">\(r\)</span>.</p>
+<ul>
+<li><span class="math inline">\(1,1/2,1/4,1/8,\ldots\)</span> konvergerer mot <span class="math inline">\(0\)</span>.</li>
+<li><span class="math inline">\(1,-1/2,1/4,-1/8,\ldots\)</span> pendler, men konvergerer mot <span class="math inline">\(0\)</span>.</li>
+<li><span class="math inline">\(1,-1,1,-1,\ldots\)</span> er fanget i en 2-syklus og konvergerer ikke.</li>
+<li><span class="math inline">\(1,2,4,8,\ldots\)</span> vokser uten grense.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Ord vi bruker
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Konvergere:</strong> nærme seg én verdi.</li>
+<li><strong>Divergere:</strong> ikke nærme seg én verdi.</li>
+<li><strong>Pendle:</strong> bevege seg fram og tilbake.</li>
+<li><strong>Syklus:</strong> gjenta et endelig mønster.</li>
+</ul>
+<p>Pendling er ikke automatisk feil. Den kan konvergere dersom utslagene blir mindre.</p>
+</div>
+</div>
+<p>Hvis <span class="math inline">\(g\)</span> er kontinuerlig og iterasjonen konvergerer mot <span class="math inline">\(r\)</span>, må grensen oppfylle <span class="math inline">\(g(r)=r\)</span>. Men at et fikspunkt finnes, garanterer ikke at iterasjonen finner det.</p>
+</div>
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<p>Matematisk kan en følge fortsette å nærme seg <span class="math inline">\(r\)</span> uten å bli eksakt lik <span class="math inline">\(r\)</span>. Et program må stoppe etter endelig mange steg. Dessuten bruker Python <code>float</code> vanligvis IEEE 754 binary64 fra del 1.3. Bare et endelig antall tall kan lagres, og to ulike matematiske tilnærminger kan avrundes til samme flyttall.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Spindelvevplott</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Python som forskningsverktøy</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Attraktivt og frastøtende</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>Et fikspunkt er et skjæringspunkt mellom <span class="math inline">\(y=g(x)\)</span> og <span class="math inline">\(y=x\)</span>. Et <strong>spindelvevplott</strong> viser hvert steg i iterasjonen:</p>
 <ol type="1">
-<li>ditt beste frie angrep,</li>
-<li>angrepet med begrenset størrelse,</li>
-<li>angrepet med bare positive tall.</li>
+<li>Gå loddrett til <span class="math inline">\(y=g(x)\)</span>; høyden er <span class="math inline">\(x_{n+1}=g(x_n)\)</span>.</li>
+<li>Gå vannrett til <span class="math inline">\(y=x\)</span>; den nye <span class="math inline">\(x\)</span>-koordinaten er <span class="math inline">\(x_{n+1}\)</span>.</li>
+<li>Gjenta.</li>
 </ol>
+<div id="qpyodide-insertion-location-4"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qpyodide-insertion-location-6"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qpyodide-insertion-location-7"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p>Endre funksjon, startverdi, intervall og antall steg. Går banen inn eller ut? Krysser den fram og tilbake? Kan du finne en syklus? Kan langsom konvergens se ut som feil hvis du bruker for få steg?</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Et eksperiment kan avdekke mønstre, foreslå hypoteser og finne moteksempler. Det undersøker ikke alle mulige startverdier og er ikke et bevis.</p>
+</div>
+</div>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<p>Et fikspunkt er <strong>attraktivt</strong> dersom startverdier tilstrekkelig nær det beveger seg mot det. Det er <strong>frastøtende</strong> dersom nærliggende startverdier beveger seg bort.</p>
+<p>Hvis <span class="math inline">\(x_n=r+e_n\)</span>, er <span class="math inline">\(e_n\)</span> feilen. Nær et glatt fikspunkt får vi omtrent</p>
+<p><span class="math display">\[e_{n+1}\approx g'(r)e_n,\]</span></p>
+<p>og dermed</p>
+<p><span class="math display">\[|e_{n+1}|\approx |g'(r)|\,|e_n|.\]</span></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Lokal helningsregel
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><span class="math inline">\(|g'(r)|&lt;1\)</span>: attraktivt fikspunkt.</li>
+<li><span class="math inline">\(|g'(r)|&gt;1\)</span>: frastøtende fikspunkt.</li>
+<li><span class="math inline">\(|g'(r)|=1\)</span>: regelen avgjør ikke.</li>
+</ul>
+<p>Regelen gjelder lokalt, altså for startverdier nær <span class="math inline">\(r\)</span>.</p>
+</div>
+</div>
+<p>Fortegnet forklarer også formen: positiv helning gir ofte tilnærming fra én side; negativ helning gir ofte kryssing fram og tilbake.</p>
+<p>For eksemplet får vi analytisk</p>
+<p><span class="math display">\[|g_1'(r)|\approx1.40,\qquad |g_2'(r)|\approx0.72,\qquad g_3'(r)=0.\]</span></p>
+<p>Dette stemmer med eksperimentene: frastøting, langsom tiltrekning og svært rask tiltrekning.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-7-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">Lokal og global konvergens</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Hva betyr «raskest»?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false" href="">Undersøk farten</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<p>En metode har <strong>lokal konvergens</strong> mot <span class="math inline">\(r\)</span> dersom den virker når startverdien er tilstrekkelig nær <span class="math inline">\(r\)</span>. Regelen <span class="math inline">\(|g'(r)|&lt;1\)</span> sier at et slikt område finnes, men ikke automatisk hvor stort det er.</p>
+<p>En metode har <strong>global konvergens på et område</strong> dersom den konvergerer for alle tillatte startverdier i området, for eksempel alle <span class="math inline">\(x_0\in[0,1]\)</span> eller alle positive <span class="math inline">\(x_0\)</span>. «Global» må alltid kobles til et oppgitt område.</p>
+<p>Mengden av startverdier som konvergerer mot et bestemt fikspunkt, kalles fikspunktets <strong>tiltrekningsområde</strong>. Vi kan undersøke det eksperimentelt.</p>
+<div id="qpyodide-insertion-location-8"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Dette er evidens, ikke et bevis. Langsom konvergens kan feilklassifiseres dersom vi stopper undersøkelsen for tidlig.</p>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<p>Den enkleste sammenligningen er antall iterasjoner før svaret er godt nok. Men én iterasjon kan koste svært ulikt. Her sammenligner vi hovedsakelig antall iterasjoner og hvor raskt feilen avtar.</p>
+<p>Hvis</p>
+<p><span class="math display">\[|e_{n+1}|\approx S|e_n|,\qquad 0&lt;S&lt;1,\]</span></p>
+<p>har metoden omtrent <strong>lineær konvergens</strong>, og <span class="math inline">\(S\)</span> er en <strong>konvergensfaktor</strong>.</p>
+<ul>
+<li><span class="math inline">\(S\approx0.9\)</span>: omtrent <span class="math inline">\(90\%\)</span> av feilen er igjen.</li>
+<li><span class="math inline">\(S\approx0.5\)</span>: feilen halveres omtrent.</li>
+<li><span class="math inline">\(S\approx0.1\)</span>: omtrent ett desimalsiffer vinnes.</li>
+</ul>
+<p>Mindre <span class="math inline">\(S\)</span> betyr raskere lineær konvergens. For fikspunktiterasjon nær et attraktivt fikspunkt er <span class="math inline">\(S\approx|g'(r)|\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>«Lineær» betyr ikke at <span class="math inline">\(x_n\)</span> danner en rett linje mot <span class="math inline">\(n\)</span>. Det betyr at hver iterasjon fjerner omtrent samme andel av feilen.</p>
+</div>
+</div>
+<p>Et raskere mønster er</p>
+<p><span class="math display">\[|e_{n+1}|\approx C|e_n|^2.\]</span></p>
+<p>Dette kalles <strong>kvadratisk konvergens</strong>. Når vi er nær nok løsningen, dobles omtrent antallet riktige sifre per iterasjon.</p>
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<p>I et kontrollert eksperiment kjenner vi en nøyaktig referanseløsning og kan plotte sann feil.</p>
+<div id="qpyodide-insertion-location-9"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qpyodide-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Se på tabellen som et lite eksperimentresultat.</p>
-<ul>
-<li>Ble alle datasettene bedre?</li>
-<li>Ble ett mye bedre og et annet litt dårligere?</li>
-<li>Finnes det et angrep som forsvaret ditt nesten ikke hjelper mot?</li>
-</ul>
+<p>Den siste kolonnen viser hvor stor andel av forrige feil som er igjen.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-7-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-5-tab">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">Hvorfor flere feilmål?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">Absolutt og relativ feil</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false" href="">Residual</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false" href="">Skrittlengde</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-5" role="tab" aria-controls="tabset-5-5" aria-selected="false" href="">Toleranse: hva betyr «godt nok»?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-6" role="tab" aria-controls="tabset-5-6" aria-selected="false" href="">Kobling til binary64 fra del 1.3</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<p>I del 1.0 definerte vi absolutt og relativ feil. Nå bruker vi begrepene til å vurdere en iterasjon og bestemme når et program skal stoppe.</p>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<p>La <span class="math inline">\(r\)</span> være eksakt løsning og <span class="math inline">\(x\)</span> en tilnærming. Den <strong>absolutte feilen</strong> er</p>
+<p><span class="math display">\[E_{\mathrm{abs}}=|x-r|.\]</span></p>
+<p>Den måler avstanden i samme enhet som svaret. Den <strong>relative feilen</strong> er, når <span class="math inline">\(r\neq0\)</span>,</p>
+<p><span class="math display">\[E_{\mathrm{rel}}=\frac{|x-r|}{|r|}.\]</span></p>
+<p>Den måler feilen i forhold til svarets størrelse. Samme absolutte feil kan være ubetydelig for et stort tall og alvorlig for et lite tall. Relativ feil fungerer ikke på denne måten når <span class="math inline">\(r=0\)</span>.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Hvis forsvaret taper
+<span class="screen-reader-only">Warning</span>Problemet med sann feil
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Det er ikke nødvendigvis et mislykket prosjekt.</p>
-<p>Et forsvar som hjelper i én situasjon og skader i en annen er et <strong>interessant numerisk resultat</strong>. Finn ut hva som er forskjellig mellom datasettene.</p>
+<p>I en virkelig beregning kjenner vi vanligvis ikke <span class="math inline">\(r\)</span>. Dermed kan vi heller ikke beregne <span class="math inline">\(|x-r|\)</span>. Hvis vi kjente løsningen, trengte vi ofte ikke metoden.</p>
 </div>
 </div>
-<p>Når du er fornøyd, prøv gjerne å lage et nytt datasett som er spesielt designet for å <strong>slå ditt eget forsvar</strong>. Da er du både angriper og forsvarer samtidig.</p>
-<hr>
-</section>
-<section id="bonus-kan-selve-algoritmen-bli-bedre" class="level2">
-<h2 class="anchored" data-anchor-id="bonus-kan-selve-algoritmen-bli-bedre">7. Bonus – kan selve algoritmen bli bedre?</h2>
-<p>Til nå har <code>ordinary_sum</code> alltid gjort det samme: én lang kjede av addisjoner. Vi har bare flyttet rundt på inputen.</p>
-<p>Men vi kan gå lenger.</p>
-<p>I stedet for</p>
-<p><span class="math display">\[
-(((x_1+x_2)+x_3)+\cdots)+x_n
-\]</span></p>
-<p>kan vi for eksempel kombinere tall i mindre grupper og deretter kombinere gruppene.</p>
-<p>Du trenger ikke løse denne delen for å fullføre prosjektet. Men hvis du har tid, er dette et naturlig neste steg.</p>
+<p>Sann feil kan brukes ved testing mot en kjent eller svært nøyaktig referanseløsning.</p>
+</div>
+<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
+<p>For ligningen <span class="math inline">\(f(x)=0\)</span> er <strong>residualen</strong> <span class="math inline">\(f(x)\)</span>, og vi ser vanligvis på <span class="math inline">\(|f(x)|\)</span>. Den svarer på: Hvor godt oppfyller tilnærmingen ligningen?</p>
+<p>For <span class="math inline">\(x=g(x)\)</span> er fikspunktresidualen <span class="math inline">\(g(x)-x\)</span>. Residualen kan beregnes uten å kjenne <span class="math inline">\(r\)</span>, men er ikke det samme som sann feil.</p>
+<p>La for eksempel <span class="math inline">\(f(x)=10^{-8}(x-3)\)</span>. Ved <span class="math inline">\(x=100\)</span> er residualen <span class="math inline">\(9.7\cdot10^{-7}\)</span>, men feilen er <span class="math inline">\(97\)</span>.</p>
 <div id="qpyodide-insertion-location-11"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Test den mot datasettene fra turneringen:</p>
+<p>Geometrisk er residualen en loddrett avstand, mens sann feil er en vannrett avstand. En flat graf kan gjøre en liten residual forenlig med stor feil.</p>
+</div>
+<div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
+<p>Endringen <span class="math inline">\(|x_{n+1}-x_n|\)</span> kalles <strong>skrittlengde</strong>. Den svarer på: Hvor mye flyttet algoritmen seg sist?</p>
+<p>For fikspunktiterasjon er</p>
+<p><span class="math display">\[|x_{n+1}-x_n|=|g(x_n)-x_n|.\]</span></p>
+<p>Skrittlengden er derfor også fikspunktresidualen i <span class="math inline">\(x_n\)</span>, men tolkningene er ulike. Et lite skritt kan bety nærhet til løsningen, langsom konvergens eller at flyttallsavrunding hindrer videre bevegelse.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Størrelse</th>
+<th>Formel</th>
+<th>Spørsmål</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Absolutt feil</td>
+<td><span class="math inline">\(|x-r|\)</span></td>
+<td>Hvor langt er vi fra løsningen?</td>
+</tr>
+<tr class="even">
+<td>Relativ feil</td>
+<td><span class="math inline">\(|x-r|/|r|\)</span></td>
+<td>Hvor stor er feilen relativt til svaret?</td>
+</tr>
+<tr class="odd">
+<td>Residual</td>
+<td><span class="math inline">\(|f(x)|\)</span></td>
+<td>Hvor godt er ligningen oppfylt?</td>
+</tr>
+<tr class="even">
+<td>Fikspunktresidual</td>
+<td><span class="math inline">\(|g(x)-x|\)</span></td>
+<td>Hvor godt er fikspunktligningen oppfylt?</td>
+</tr>
+<tr class="odd">
+<td>Skrittlengde</td>
+<td><span class="math inline">\(|x_{n+1}-x_n|\)</span></td>
+<td>Hvor mye flytter algoritmen seg?</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="tabset-5-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-5-tab">
+<p>En <strong>toleranse</strong> er ikke en feil. Den er grensen vi velger for hvor stor feil, residual eller endring vi er villige til å godta.</p>
+<p>En absolutt toleranse <code>atol</code> setter en grense i samme skala som tallet:</p>
+<p><span class="math display">\[|x_{n+1}-x_n|\leq\mathrm{atol}.\]</span></p>
+<p>En relativ toleranse <code>rtol</code> skalerer grensen med størrelsen på svaret:</p>
+<p><span class="math display">\[|x_{n+1}-x_n|\leq\mathrm{rtol}|x_{n+1}|.\]</span></p>
+<p>Relativ toleranse fungerer dårlig nær null; absolutt toleranse alene tar ikke hensyn til svært store svar. Derfor kombineres de ofte:</p>
+<p><span class="math display">\[|x_{n+1}-x_n|\leq\mathrm{atol}+\mathrm{rtol}|x_{n+1}|.\]</span></p>
 <div id="qpyodide-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Hvis du lager en algoritme som gjør det bedre enn <code>ordinary_sum</code> på flere av angrepene dine, har du i praksis gjort det numerisk analyse handler mye om: du har gått fra en matematisk oppgave til å tenke på <strong>hvordan den bør beregnes</strong>.</p>
-<hr>
-</section>
-<section id="hva-har-du-egentlig-funnet-ut" class="level2">
-<h2 class="anchored" data-anchor-id="hva-har-du-egentlig-funnet-ut">8. Hva har du egentlig funnet ut?</h2>
-<p>Du trenger ikke levere en lang rapport. Men før du avslutter, bør du kunne forklare historien i eksperimentet ditt med egne ord.</p>
-<p>Bruk disse spørsmålene som sjekkliste:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><code>atol</code> bestemmer hvilke absolutte endringer vi bryr oss om, særlig nær null.</li>
+<li><code>rtol</code> tilpasser kravet til størrelsen på svaret.</li>
+<li>Toleransen er et brukerkrav, ikke en garanti for like liten sann feil.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="tabset-5-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-6-tab">
+<p>Python <code>float</code> bruker vanligvis IEEE 754 binary64. Rundt <span class="math inline">\(1\)</span> er avstanden til neste representerbare tall omtrent</p>
+<p><span class="math display">\[2^{-52}\approx2.22\cdot10^{-16}.\]</span></p>
+<div id="qpyodide-insertion-location-13"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Ikke en absolutt grense på <span class="math inline">\(10^{-16}\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Binary64 har omtrent 15–16 signifikante desimalsifre. Rundt <span class="math inline">\(1\)</span> gir dette oppløsning omtrent <span class="math inline">\(10^{-16}\)</span>. Den absolutte avstanden mellom nabotall vokser for store tall og minker for små tall. Derfor passer relativ toleranse naturlig med flyttallsrepresentasjonen.</p>
+</div>
+</div>
+<p>En altfor streng toleranse kan gi unødvendige iterasjoner, aldri bli oppfylt eller stoppe først når to iterasjoner avrundes til samme flyttall. Den kan ikke skape flere pålitelige sifre enn binary64 kan representere.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-7-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-6-tab">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">Implementasjon og diagnostikk</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">Et raskt historisk eksempel: kvadratrøtter</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">Oppsummering</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<p>En nyttig numerisk funksjon bør returnere mer enn ett tall: stoppårsak, iterasjonstall, historikk, skrittlengder og residualer.</p>
+<div id="qpyodide-insertion-location-14"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qpyodide-insertion-location-15"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qpyodide-insertion-location-16"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Undersøk hva som skjer med <code>maxiter=10</code>, med <code>g1</code>, og med <code>rtol=1e-20</code>. Uten <code>maxiter</code> kan en divergent eller syklisk metode kjøre for alltid. <code>nan</code> og <code>inf</code> skal behandles som feil, ikke som konvergens.</p>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<p>For å beregne <span class="math inline">\(\sqrt a\)</span> kan vi løse <span class="math inline">\(x^2-a=0\)</span>. Omskrivningen <span class="math inline">\(x=a/x\)</span> gir</p>
+<p><span class="math display">\[x_{n+1}=\frac{a}{x_n}.\]</span></p>
+<div id="qpyodide-insertion-location-17"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Følgen går i syklusen <span class="math inline">\(1,2,1,2,\ldots\)</span>. Ta i stedet gjennomsnittet av <span class="math inline">\(x\)</span> og <span class="math inline">\(a/x\)</span>:</p>
+<p><span class="math display">\[x_{n+1}=\frac12\left(x_n+\frac{a}{x_n}\right).\]</span></p>
+<div id="qpyodide-insertion-location-18"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>I <span class="math inline">\(r=\sqrt a\)</span> er <span class="math inline">\(g'(r)=0\)</span>, og metoden konvergerer kvadratisk nær løsningen.</p>
+<div id="qpyodide-insertion-location-19"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Til slutt blir forbedringen mindre enn avstanden til neste representerbare binary64-tall. Da kan neste verdi avrundes til samme flyttall, skrittlengden bli null og flere iterasjoner gi nøyaktig samme lagrede verdi.</p>
+</div>
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
 <ol type="1">
-<li>Hva var det sterkeste angrepet ditt?</li>
-<li>Hvor i beregningen gikk informasjon tapt?</li>
-<li>Hvilken rolle spilte størrelsesforskjeller mellom tallene?</li>
-<li>Hva skjedde da du forbød store tall?</li>
-<li>Hva skjedde da du bare fikk bruke positive tall?</li>
-<li>Hvilken forsvarsstrategi fungerte best?</li>
-<li>Fantes det et datasett der forsvaret ditt gjorde resultatet dårligere?</li>
-<li>Hvorfor kan to algoritmer som matematisk beregner samme sum gi forskjellige svar på en datamaskin?</li>
+<li>Et fikspunkt oppfyller <span class="math inline">\(g(r)=r\)</span>.</li>
+<li>Konvergens betyr at tilnærmingene nærmer seg og stabiliserer seg rundt én verdi.</li>
+<li>Pendling kan konvergere, divergere eller danne en syklus.</li>
+<li>Attraktive fikspunkt trekker nærliggende verdier til seg; frastøtende skyver dem bort.</li>
+<li><span class="math inline">\(|g'(r)|&lt;1\)</span> gir en lokal forventning om konvergens.</li>
+<li>Lokal konvergens gjelder nære startverdier; global konvergens gjelder alle startverdier i et oppgitt område.</li>
+<li>Lineær konvergens fjerner omtrent en fast andel av feilen; kvadratisk konvergens blir stadig raskere.</li>
+<li>Absolutt feil måler avstand; relativ feil måler feil i forhold til svarets størrelse.</li>
+<li>Sann feil er vanligvis ukjent. Residual og skrittlengde kan beregnes, men svarer på andre spørsmål.</li>
+<li><code>atol</code> er en absolutt akseptgrense; <code>rtol</code> skalerer kravet med størrelsen på svaret.</li>
+<li>En toleranse er et stoppkrav, ikke en garanti for like liten sann feil.</li>
+<li>Binary64 har omtrent 15–16 signifikante desimalsifre; en strengere toleranse kan ikke skape mer representerbar informasjon.</li>
+<li>En nyttig numerisk funksjon returnerer diagnostikk, ikke bare ett tall.</li>
 </ol>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -4532,20 +4699,21 @@ x_i&gt;0
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Hovedideen
+<span class="screen-reader-only">Important</span>Hovedlærdom
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>En matematisk formel forteller <strong>hva</strong> vi ønsker å beregne.</p>
-<p>En algoritme bestemmer <strong>hvordan</strong> datamaskinen faktisk gjør beregningen.</p>
-<p>Når tallene lagres med endelig presisjon, kan dette skillet være avgjørende.</p>
-<p>Det er nettopp derfor vi bryr oss om numeriske metoder.</p>
+<p>En numerisk algoritme er en formel sammen med en startverdi, et konvergensområde, et mål på framgang, et stoppkriterium og en måte å oppdage feil på. Python lar oss undersøke valgene; analyse forklarer observasjonene.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
