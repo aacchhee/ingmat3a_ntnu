@@ -889,7 +889,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "en";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"\nimport numpy as np\nimport matplotlib.pyplot as plt","id":1,"options":{"autorun":"","classes":"","comment":"","context":"setup","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.close(\"all\")\n\nx = np.linspace(0, 2*np.pi, 200)\ny = np.sin(x)\n\nfig = plt.figure()\nax = fig.add_subplot(111)\nax.plot(x, y)\nax.set_title(\"y = sin(x)\")\n\nplt.show()","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"\nimport numpy as np\nimport matplotlib.pyplot as plt","id":1,"options":{"autorun":"","classes":"","comment":"","context":"setup","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.close(\"all\")\n\nx = np.linspace(0, 2*np.pi, 200)\ny = np.sin(x)\n\nfig = plt.figure()\nax = fig.add_subplot(111)\nax.plot(x, y)\nax.set_xlabel(\"x\")\nax.set_ylabel(\"sin(x)\")\nax.set_title(\"En enkel sinuskurve\")\nax.grid(True)\n\nplt.show()","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4221,64 +4221,106 @@ to use immediately after the page has loaded or the Python environment restarts.
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">IDE</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">README</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<section id="velkommen" class="level3">
-<h3 class="anchored" data-anchor-id="velkommen">Velkommen</h3>
-<p>Denne siden er en <strong>mini-IDE</strong> for Python som kjører direkte i nettleseren ved hjelp av <strong>Pyodide</strong>. Her kan du skrive, endre og kjøre kode uten å installere noe lokalt.</p>
+<section id="python-direkte-i-nettleseren" class="level3">
+<h3 class="anchored" data-anchor-id="python-direkte-i-nettleseren">Python direkte i nettleseren</h3>
+<p>Mini-IDE-en kjører Python lokalt i nettleseren ved hjelp av <a href="https://pyodide.org/">Pyodide</a>. Du trenger derfor ikke installere Python for å prøve eksemplene. Første oppstart kan ta litt tid mens Python og nødvendige pakker lastes inn.</p>
 </section>
-<section id="slik-bruker-du-kodevinduet" class="level3">
-<h3 class="anchored" data-anchor-id="slik-bruker-du-kodevinduet">Slik bruker du kodevinduet</h3>
-<ul>
-<li><strong>Run Code</strong> kjører koden i vinduet.</li>
-<li><strong>+ Code block</strong> legger til et nytt Python-vindu.</li>
-<li><strong>Restart</strong> nullstiller Python-miljøet på denne siden.</li>
-<li>Du kan kopiere kode mellom vinduene og endre eksemplene fritt.</li>
-</ul>
-<p>Last inn hele siden på nytt dersom noe ser ut til å ha stoppet eller blitt ødelagt.</p>
-</section>
-<section id="eksempel-enkel-python-kode" class="level3">
-<h3 class="anchored" data-anchor-id="eksempel-enkel-python-kode">Eksempel: enkel Python-kode</h3>
+<section id="kom-raskt-i-gang" class="level3">
+<h3 class="anchored" data-anchor-id="kom-raskt-i-gang">Kom raskt i gang</h3>
+<ol type="1">
+<li>Skriv eller endre kode i et kodevindu.</li>
+<li>Velg <strong>Run Code</strong> for å kjøre vinduet.</li>
+<li>Les utskrift, feilmeldinger og figurer under kodevinduet.</li>
+<li>Velg <strong>+ Code block</strong> når du vil ha et tomt arbeidsvindu.</li>
+<li>Bruk <strong>Restart</strong> hvis du vil nullstille Python-miljøet på siden.</li>
+</ol>
+<p>Prøv gjerne dette eksemplet:</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
-<section id="tips" class="level3">
-<h3 class="anchored" data-anchor-id="tips">Tips</h3>
+<section id="slik-fungerer-arbeidsmiljøet" class="level3">
+<h3 class="anchored" data-anchor-id="slik-fungerer-arbeidsmiljøet">Slik fungerer arbeidsmiljøet</h3>
+<p>Alle kodevinduer på <strong>samme side</strong> deler variabler, funksjoner og importer. Kjør derfor celler i naturlig rekkefølge når en celle bygger på en tidligere celle. (En <strong>side</strong> i konteksten av denne ressursen er en HTML-side. Hver pensumuke ligger på egen side med alle sine faner og underfaner.)</p>
+<p>Python-miljøet deles ikke mellom ulike sider, og det opprettes på nytt når du laster inn siden eller velger <strong>Restart</strong>. Hver ukeside har en skjult oppstartscelle som laster inn nødvendige biblioteker og felles definisjoner. Hvis du senere kjører en synlig, endret versjon av en funksjon, brukes den endrede versjonen resten av økten.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Ta vare på arbeidet ditt">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Ta vare på arbeidet ditt
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Koden lagres ikke automatisk. Kopier kode du vil beholde til en lokal fil, VS Code eller et annet egnet sted før du lukker eller laster inn siden på nytt.</p>
+</div>
+</div>
+</section>
+<section id="når-noe-ikke-virker" class="level3">
+<h3 class="anchored" data-anchor-id="når-noe-ikke-virker">Når noe ikke virker</h3>
 <ul>
-<li>Feilmeldinger og utskrift vises under kodevinduet.</li>
-<li>Figurer kan lastes ned fra nettleseren.</li>
-<li>Koden lagres ikke automatisk. Kopier kode du vil beholde til VS Code eller et annet egnet sted.</li>
+<li>Les den siste linjen i feilmeldingen først; den beskriver ofte hovedproblemet.</li>
+<li>Kontroller at cellene som definerer variabler og funksjoner, er kjørt.</li>
+<li>Kjør cellen på nytt etter at du har rettet koden.</li>
+<li>Få evt KI-hjelp ved å trykke på Feedback-knappen.</li>
+<li>Velg <strong>Restart</strong> og kjør nødvendige celler på nytt hvis miljøet har fått en uklar tilstand.</li>
+<li>Last inn hele nettsiden på nytt hvis knappene eller Python-miljøet har stoppet.</li>
 </ul>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<section id="interaktiv-python-i-nettleseren" class="level3">
-<h3 class="anchored" data-anchor-id="interaktiv-python-i-nettleseren">Interaktiv Python i nettleseren</h3>
-<p>Kodevinduene på disse sidene kjører vanlig Python direkte i nettleseren ved hjelp av <a href="https://pyodide.org/">Pyodide</a>. Pyodide er en Python-distribusjon bygget for WebAssembly. Det betyr at koden kjøres lokalt i nettleseren, uten at du trenger å installere Python eller sende koden til en ekstern Python-server.</p>
-<p>De fleste vanlige Python-funksjoner virker som forventet. Sidene laster også inn bibliotekene som brukes i undervisningen, blant annet NumPy og Matplotlib. Første oppstart kan ta litt tid fordi nettleseren må laste Python-miljøet og nødvendige pakker.</p>
+<section id="ki-feedback" class="level3">
+<h3 class="anchored" data-anchor-id="ki-feedback">KI-feedback</h3>
+<section id="hvordan-få-ki-tilbakemeldingen" class="level4">
+<h4 class="anchored" data-anchor-id="hvordan-få-ki-tilbakemeldingen">Hvordan få KI-tilbakemeldingen?</h4>
+<p>Kode- og matematikkoppgaver kan ha en <strong>Feedback</strong>-knapp. Når du trykker på denne knappen, så sendes ditt input til en LLM som skal først trekke fram det som allerede er riktig, før den peker mot det neste du bør undersøke.</p>
+<p>I matematikkoppgavene blir hjelpen gradvis tydeligere:</p>
+<ol type="1">
+<li><strong>Lite hint:</strong> et spørsmål eller et tips som hjelper deg å finne neste steg.</li>
+<li><strong>Større hint:</strong> forklaring av det relevante begrepet eller sammenhengen.</li>
+<li><strong>Framgangsmåte:</strong> en strukturert metode, men uten at oppgaven regnes helt ut for deg.</li>
+<li><strong>Gjennomarbeidet løsning:</strong> en full utregning når flere forsøk ikke har ført fram.</li>
+</ol>
+<p>Forsøksnummeret gjelder tilbakemeldingen for den aktuelle oppgaven. Tilbakemeldingen erstatter ikke egen kontroll: språkmodeller kan misforstå oppgavetekst, notasjon eller tall. Sammenlign derfor rådene med definisjonene og eksemplene på siden, særlig hvis noe virker selvmotsigende.</p>
 </section>
-<section id="python-miljøet" class="level3">
-<h3 class="anchored" data-anchor-id="python-miljøet">Python-miljøet</h3>
-<p>Alle kodevinduer på <strong>samme side</strong> deler ett felles Python-miljø. Hvis du for eksempel definerer en variabel eller funksjon i ett vindu, kan den brukes fra andre vinduer på den samme siden.</p>
-<p>Miljøet deles derimot <strong>ikke mellom ulike sider</strong>. En variabel som er definert på Uke 1-siden, finnes derfor ikke automatisk på Uke 2-siden eller på IDE-siden.</p>
-<p>Python-miljøet opprettes på nytt når du laster inn eller oppdaterer siden. Egne variabler, funksjoner og endringer forsvinner da. Det samme skjer når du velger <strong>Restart</strong>.</p>
-<p>Hver undervisningsside har en skjult oppstartscelle som automatisk laster inn nødvendige biblioteker, hjelpefunksjoner og andre felles definisjoner. Du kan derfor oppdatere siden og begynne direkte i den delen du vil arbeide med. De samme implementasjonene vises fortsatt i vanlige kodevinduer der de inngår i undervisningen. Hvis du kjører eller endrer en synlig implementasjon, vil den nye gjelde framfor setup-versjonen for resten av økten.</p>
-</section>
-<section id="tilbakemelding-på-kodetreningsoppgavene" class="level3">
-<h3 class="anchored" data-anchor-id="tilbakemelding-på-kodetreningsoppgavene">Tilbakemelding på kode/treningsoppgavene</h3>
-<p>Kodevinduene og øvingsoppgavene har en <strong>Feedback</strong>-knapp som kan gi automatisk tilbakemelding på koden din ved hjelp av språkmodeller som kjøres lokalt på NTNUs IDUN-infrastruktur. For å bruke denne funksjonen trenger du en personlig API-nøkkel.</p>
-<p>Les <a href="https://www.hpc.ntnu.no/idun/documentation/ai-coding-assistant-and-large-language-models-llms-on-idun/">LLM API service and gpt.ntnu.no – IDUN documentation</a> for informasjon om tjenesten og hvordan du ber om en API-nøkkel.</p>
+<section id="koble-til-ntnus-modell-tjeneste" class="level4">
+<h4 class="anchored" data-anchor-id="koble-til-ntnus-modell-tjeneste">Koble til NTNUs modell-tjeneste</h4>
+<p>Tilbakemeldingen bruker språkmodeller på NTNUs HPC-infrastruktur (IDUN) og krever en personlig API-nøkkel. Se <a href="https://www.hpc.ntnu.no/idun/documentation/ai-coding-assistant-and-large-language-models-llms-on-idun/">LLM API service and gpt.ntnu.no – IDUN documentation</a> for tilgang og oppdaterte tjenesteinnstillinger.</p>
 <p>Når du har fått nøkkelen:</p>
 <ol type="1">
-<li>Trykk på <strong>tannhjulikonet</strong> øverst på siden.</li>
-<li>Åpne innstillingene for tilbakemelding.</li>
-<li>Fyll inn tjenestens base-URL og modell slik de er oppgitt i IDUN-dokumentasjonen.</li>
-<li>Lim API-nøkkelen inn i feltet <strong>API key</strong> og lagre.</li>
+<li>Trykk på <strong>tannhjulikonet</strong> ved tilbakemeldingsknappen.</li>
+<li>Fyll inn base-URL og modell slik IDUN-dokumentasjonen angir.</li>
+<li>Lim inn nøkkelen i <strong>API key</strong> og lagre.</li>
+<li>Send inn et svar med <strong>Check</strong>, og velg deretter <strong>Feedback</strong>.</li>
 </ol>
-<p>API-nøkkelen skal ikke skrives inn i Python-koden, deles med andre eller lagres i Git. Innstillingene behandles lokalt i nettleseren. På en delt datamaskin bør du fjerne nøkkelen når du er ferdig.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="Beskytt API-nøkkelen">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Beskytt API-nøkkelen
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Ikke skriv nøkkelen i Python-kode, del den med andre eller legg den i Git. Fjern den når du er ferdig hvis du bruker en delt datamaskin.</p>
+</div>
+</div>
+</section>
+<section id="få-mest-mulig-ut-av-tilbakemeldingen" class="level4">
+<h4 class="anchored" data-anchor-id="få-mest-mulig-ut-av-tilbakemeldingen">Få mest mulig ut av tilbakemeldingen</h4>
+<ul>
+<li>Send inn et svar som du har fått selv; da kan modellen kommentere det du faktisk har gjort.</li>
+<li>Bruk hintet til å endre svaret før du ber om neste nivå.</li>
+<li>Kontroller at du svarer i formatet oppgaven ber om, for eksempel brøk, desimaltall eller bitstreng.</li>
+<li>Rapporter til faglærer dersom tilbakemeldingen bruker feil forutsetninger eller avslører løsningen for tidlig.</li>
+</ul>
+</section>
 </section>
 <section id="problemer-og-forbedringsforslag" class="level3">
 <h3 class="anchored" data-anchor-id="problemer-og-forbedringsforslag">Problemer og forbedringsforslag</h3>
-<p>Den foretrukne metoden er å <a href="https://github.com/aacchhee/ingmat3a_ntnu/issues">åpne en sak på GitHub</a> med en tydelig beskrivelse av problemet. Du kan også rette problemet i en fork og sende en pull request.</p>
-<p>Hvis du ikke kan bruke GitHub, kan du sende en e-post til <a href="mailto:andrey.chesnokov@ntnu.no" class="email">andrey.chesnokov@ntnu.no</a>.</p>
+<p>Åpne helst en <a href="https://github.com/aacchhee/ingmat3a_ntnu/issues">sak på GitHub</a> med sidenavn, oppgave, hva du gjorde, og hva du forventet skulle skje. Skjermbilde og nettlesernavn er nyttig ved visningsproblemer. Du kan også rette problemet i en fork og sende en pull request.</p>
+<p>Hvis du ikke kan bruke GitHub, kan du sende e-post til <a href="mailto:andrey.chesnokov@ntnu.no" class="email">andrey.chesnokov@ntnu.no</a>.</p>
 </section>
 </div>
 </div>
