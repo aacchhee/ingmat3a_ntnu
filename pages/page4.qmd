@@ -1,0 +1,25 @@
+---
+title: "Uke 2 – fikspunktiterasjon"
+---
+
+::: {.panel-tabset}
+
+## 2.0 Ett problem, tre algoritmer
+{{< include ../_includes/module2/m2_0.md >}}
+
+## 2.1 Fikspunkt og konvergens
+{{< include ../_includes/module2/m2_1.md >}}
+
+## 2.2 Spindelvevplott og attraktive fikspunkt
+{{< include ../_includes/module2/m2_2.md >}}
+
+## 2.3 Lokalt, globalt og raskt
+{{< include ../_includes/module2/m2_3.md >}}
+
+## 2.4 Feil, residual og toleranse
+{{< include ../_includes/module2/m2_4.md >}}
+
+## 2.5 En robust metode og et raskt eksempel
+{{< include ../_includes/module2/m2_5.md >}}
+
+:::
