@@ -2,7 +2,7 @@
 
 ### Programmering: Horners metode
 
-Implementer Horners metode for et generelt polynom
+Implementer Horners metode for et generelt polynom 
 
 $$
 p(x)=a_0+a_1x+\cdots+a_nx^n.
