@@ -2,24 +2,27 @@
 title: "Mini-IDE (Python i nettleseren)"
 ---
 
-## Velkommen
+{{< include ../_includes/ide/setup.md >}}
+
+::: {.panel-tabset}
+
+## IDE
+
+### Velkommen
 
 Denne siden er en **mini-IDE** for Python som kjører direkte i nettleseren ved hjelp av **Pyodide**.
 Her kan du skrive, endre og kjøre kode uten å installere noe lokalt.
 
----
+### Slik bruker du kodevinduet
 
-## Slik bruker du kodevinduet
+- **Run Code** kjører koden i vinduet.
+- **+ Code block** legger til et nytt Python-vindu.
+- **Restart** nullstiller Python-miljøet på denne siden.
+- Du kan kopiere kode mellom vinduene og endre eksemplene fritt.
 
-- **Run Code**: kjører koden i vinduet
-- **+CodeBlock**: legger til et nytt Python-vindu
-- **Restart**: nullstiller Python-miljøet
+Last inn hele siden på nytt dersom noe ser ut til å ha stoppet eller blitt ødelagt.
 
-Du kan fritt endre koden og eksperimentere.  Last ned hele sida på nytt dersom noe ser tungt eller ødelagt ut.
-
----
-
-## Eksempel: enkel Python-kode
+### Eksempel: enkel Python-kode
 
 ```{pyodide-python}
 import numpy as np
@@ -38,23 +41,49 @@ ax.set_title("y = sin(x)")
 plt.show()
 ```
 
----
+### Tips
 
-## Tips
+- Feilmeldinger og utskrift vises under kodevinduet.
+- Figurer kan lastes ned fra nettleseren.
+- Koden lagres ikke automatisk. Kopier kode du vil beholde til VS Code eller et annet egnet sted.
 
-- Du kan kopiere kode mellom blokker
-- Feilmeldinger vises direkte under koden
-- Figurer kan lastes ned fra nettleseren
-- Din kode blir ikke lagra. Du må kopiere koden et annet sted (VSCode/Editor/o.l.) og så lagre.
+## README
 
-## Issues? Bugs? Forbedringsforslag?
+### Interaktiv Python i nettleseren
 
-### Ordentlig metode
-Åpne ei sak på github <https://github.com/aacchhee/ingmat3a_ntnu>. Lag en god beskrivelse av saka.
+Kodevinduene på disse sidene kjører vanlig Python direkte i nettleseren ved hjelp av [Pyodide](https://pyodide.org/). Pyodide er en Python-distribusjon bygget for WebAssembly. Det betyr at koden kjøres lokalt i nettleseren, uten at du trenger å installere Python eller sende koden til en ekstern Python-server.
 
-### Den beste metoden
-Gå til github <https://github.com/aacchhee/ingmat3a_ntnu>, clone repository (via fork), fix a bug, send pull request. 
+De fleste vanlige Python-funksjoner virker som forventet. Sidene laster også inn bibliotekene som brukes i undervisningen, blant annet NumPy og Matplotlib. Første oppstart kan ta litt tid fordi nettleseren må laste Python-miljøet og nødvendige pakker.
 
-### Siste utvei
-Det er aldri for seint å åpne en konto på github. Har du sterke innvendinger mot github, send en epost til <andrey.chesnokov@ntnu.no> og beskriv saka i eposten.
+### Python-miljøet
 
+Alle kodevinduer på **samme side** deler ett felles Python-miljø. Hvis du for eksempel definerer en variabel eller funksjon i ett vindu, kan den brukes fra andre vinduer på den samme siden.
+
+Miljøet deles derimot **ikke mellom ulike sider**. En variabel som er definert på Uke 1-siden, finnes derfor ikke automatisk på Uke 2-siden eller på IDE-siden.
+
+Python-miljøet opprettes på nytt når du laster inn eller oppdaterer siden. Egne variabler, funksjoner og endringer forsvinner da. Det samme skjer når du velger **Restart**.
+
+Hver undervisningsside har en skjult oppstartscelle som automatisk laster inn nødvendige biblioteker, hjelpefunksjoner og andre felles definisjoner. Du kan derfor oppdatere siden og begynne direkte i den delen du vil arbeide med. De samme implementasjonene vises fortsatt i vanlige kodevinduer der de inngår i undervisningen. Hvis du kjører eller endrer en synlig implementasjon, vil den nye gjelde framfor setup-versjonen for resten av økten.
+
+### Tilbakemelding på kode/treningsoppgavene
+
+Kodevinduene og øvingsoppgavene har en **Feedback**-knapp som kan gi automatisk tilbakemelding på koden din ved hjelp av språkmodeller som kjøres lokalt på NTNUs IDUN-infrastruktur. For å bruke denne funksjonen trenger du en personlig API-nøkkel.
+
+Les [LLM API service and gpt.ntnu.no – IDUN documentation](https://www.hpc.ntnu.no/idun/documentation/ai-coding-assistant-and-large-language-models-llms-on-idun/) for informasjon om tjenesten og hvordan du ber om en API-nøkkel.
+
+Når du har fått nøkkelen:
+
+1. Trykk på **tannhjulikonet** øverst på siden.
+2. Åpne innstillingene for tilbakemelding.
+3. Fyll inn tjenestens base-URL og modell slik de er oppgitt i IDUN-dokumentasjonen.
+4. Lim API-nøkkelen inn i feltet **API key** og lagre.
+
+API-nøkkelen skal ikke skrives inn i Python-koden, deles med andre eller lagres i Git. Innstillingene behandles lokalt i nettleseren. På en delt datamaskin bør du fjerne nøkkelen når du er ferdig.
+
+### Problemer og forbedringsforslag
+
+Den foretrukne metoden er å [åpne en sak på GitHub](https://github.com/aacchhee/ingmat3a_ntnu/issues) med en tydelig beskrivelse av problemet. Du kan også rette problemet i en fork og sende en pull request.
+
+Hvis du ikke kan bruke GitHub, kan du sende en e-post til <andrey.chesnokov@ntnu.no>.
+
+:::

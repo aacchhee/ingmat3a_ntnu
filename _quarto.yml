@@ -11,7 +11,7 @@ website:
   sidebar:
     style: "docked"
     contents:
-      - text: "IDE"
+      - text: "IDE / Readme"
         file: pages/page1.qmd
 
       - text: "Uke 1 – regnetid, binære tall og tall på datamaskiner"

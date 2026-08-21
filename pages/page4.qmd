@@ -2,6 +2,8 @@
 title: "Uke 2 – fikspunktiterasjon"
 ---
 
+{{< include ../_includes/module2/setup.md >}}
+
 ::: {.panel-tabset}
 
 ## 2.0 Ett problem, tre algoritmer

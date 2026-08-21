@@ -2,6 +2,8 @@
 title: "Uke 1 – regnetid, binære tall og tall på datamaskiner"
 ---
 
+{{< include ../_includes/module1/setup.md >}}
+
 ::: {.panel-tabset}
 
 ## 1.0 Numeriske beregninger
