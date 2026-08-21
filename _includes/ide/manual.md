@@ -82,6 +82,7 @@ Når du har fått nøkkelen:
 1. Trykk på **tannhjulikonet** ved tilbakemeldingsknappen.
 2. Fyll inn base-URL og modell slik IDUN-dokumentasjonen angir.
 3. Lim inn nøkkelen i **API key** og lagre.
+4. Velg modellen. (Prøv først uten reasoning, feks Kimi2.6-instant.) Lagre.
 4. Send inn et svar med **Check**, og velg deretter **Feedback**.
 
 ::: {.callout-important title="Beskytt API-nøkkelen"}
