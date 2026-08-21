@@ -889,7 +889,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "en";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.close(\"all\")\n\nx = np.linspace(0, 2*np.pi, 200)\ny = np.sin(x)\n\nfig = plt.figure()\nax = fig.add_subplot(111)\nax.plot(x, y)\nax.set_title(\"y = sin(x)\")\n\nplt.show()","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"\nimport numpy as np\nimport matplotlib.pyplot as plt","id":1,"options":{"autorun":"","classes":"","comment":"","context":"setup","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.close(\"all\")\n\nx = np.linspace(0, 2*np.pi, 200)\ny = np.sin(x)\n\nfig = plt.figure()\nax = fig.add_subplot(111)\nax.plot(x, y)\nax.set_title(\"y = sin(x)\")\n\nplt.show()","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4109,7 +4109,7 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page1.html">IDE</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page1.html">IDE / Readme</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -4137,7 +4137,7 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/page1.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">IDE</span></a>
+ <span class="menu-text">IDE / Readme</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -4208,53 +4208,83 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
 </header>
 
 
-<section id="velkommen" class="level2">
-<h2 class="anchored" data-anchor-id="velkommen">Velkommen</h2>
-<p>Denne siden er en <strong>mini-IDE</strong> for Python som kjører direkte i nettleseren ved hjelp av <strong>Pyodide</strong>. Her kan du skrive, endre og kjøre kode uten å installere noe lokalt.</p>
-<hr>
-</section>
-<section id="slik-bruker-du-kodevinduet" class="level2">
-<h2 class="anchored" data-anchor-id="slik-bruker-du-kodevinduet">Slik bruker du kodevinduet</h2>
-<ul>
-<li><strong>Run Code</strong>: kjører koden i vinduet</li>
-<li><strong>+CodeBlock</strong>: legger til et nytt Python-vindu</li>
-<li><strong>Restart</strong>: nullstiller Python-miljøet</li>
-</ul>
-<p>Du kan fritt endre koden og eksperimentere. Last ned hele sida på nytt dersom noe ser tungt eller ødelagt ut.</p>
-<hr>
-</section>
-<section id="eksempel-enkel-python-kode" class="level2">
-<h2 class="anchored" data-anchor-id="eksempel-enkel-python-kode">Eksempel: enkel Python-kode</h2>
+<!--
+Shared IDE-page prerequisites.
+
+The visible example intentionally repeats these imports so students can see a
+complete runnable example. This hidden cell makes newly added code blocks ready
+to use immediately after the page has loaded or the Python environment restarts.
+-->
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<hr>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">IDE</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">README</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="velkommen" class="level3">
+<h3 class="anchored" data-anchor-id="velkommen">Velkommen</h3>
+<p>Denne siden er en <strong>mini-IDE</strong> for Python som kjører direkte i nettleseren ved hjelp av <strong>Pyodide</strong>. Her kan du skrive, endre og kjøre kode uten å installere noe lokalt.</p>
 </section>
-<section id="tips" class="level2">
-<h2 class="anchored" data-anchor-id="tips">Tips</h2>
+<section id="slik-bruker-du-kodevinduet" class="level3">
+<h3 class="anchored" data-anchor-id="slik-bruker-du-kodevinduet">Slik bruker du kodevinduet</h3>
 <ul>
-<li>Du kan kopiere kode mellom blokker</li>
-<li>Feilmeldinger vises direkte under koden</li>
-<li>Figurer kan lastes ned fra nettleseren</li>
-<li>Din kode blir ikke lagra. Du må kopiere koden et annet sted (VSCode/Editor/o.l.) og så lagre.</li>
+<li><strong>Run Code</strong> kjører koden i vinduet.</li>
+<li><strong>+ Code block</strong> legger til et nytt Python-vindu.</li>
+<li><strong>Restart</strong> nullstiller Python-miljøet på denne siden.</li>
+<li>Du kan kopiere kode mellom vinduene og endre eksemplene fritt.</li>
+</ul>
+<p>Last inn hele siden på nytt dersom noe ser ut til å ha stoppet eller blitt ødelagt.</p>
+</section>
+<section id="eksempel-enkel-python-kode" class="level3">
+<h3 class="anchored" data-anchor-id="eksempel-enkel-python-kode">Eksempel: enkel Python-kode</h3>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="tips" class="level3">
+<h3 class="anchored" data-anchor-id="tips">Tips</h3>
+<ul>
+<li>Feilmeldinger og utskrift vises under kodevinduet.</li>
+<li>Figurer kan lastes ned fra nettleseren.</li>
+<li>Koden lagres ikke automatisk. Kopier kode du vil beholde til VS Code eller et annet egnet sted.</li>
 </ul>
 </section>
-<section id="issues-bugs-forbedringsforslag" class="level2">
-<h2 class="anchored" data-anchor-id="issues-bugs-forbedringsforslag">Issues? Bugs? Forbedringsforslag?</h2>
-<section id="ordentlig-metode" class="level3">
-<h3 class="anchored" data-anchor-id="ordentlig-metode">Ordentlig metode</h3>
-<p>Åpne ei sak på github <a href="https://github.com/aacchhee/ingmat3a_ntnu" class="uri">https://github.com/aacchhee/ingmat3a_ntnu</a>. Lag en god beskrivelse av saka.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<section id="interaktiv-python-i-nettleseren" class="level3">
+<h3 class="anchored" data-anchor-id="interaktiv-python-i-nettleseren">Interaktiv Python i nettleseren</h3>
+<p>Kodevinduene på disse sidene kjører vanlig Python direkte i nettleseren ved hjelp av <a href="https://pyodide.org/">Pyodide</a>. Pyodide er en Python-distribusjon bygget for WebAssembly. Det betyr at koden kjøres lokalt i nettleseren, uten at du trenger å installere Python eller sende koden til en ekstern Python-server.</p>
+<p>De fleste vanlige Python-funksjoner virker som forventet. Sidene laster også inn bibliotekene som brukes i undervisningen, blant annet NumPy og Matplotlib. Første oppstart kan ta litt tid fordi nettleseren må laste Python-miljøet og nødvendige pakker.</p>
 </section>
-<section id="den-beste-metoden" class="level3">
-<h3 class="anchored" data-anchor-id="den-beste-metoden">Den beste metoden</h3>
-<p>Gå til github <a href="https://github.com/aacchhee/ingmat3a_ntnu" class="uri">https://github.com/aacchhee/ingmat3a_ntnu</a>, clone repository (via fork), fix a bug, send pull request.</p>
+<section id="python-miljøet" class="level3">
+<h3 class="anchored" data-anchor-id="python-miljøet">Python-miljøet</h3>
+<p>Alle kodevinduer på <strong>samme side</strong> deler ett felles Python-miljø. Hvis du for eksempel definerer en variabel eller funksjon i ett vindu, kan den brukes fra andre vinduer på den samme siden.</p>
+<p>Miljøet deles derimot <strong>ikke mellom ulike sider</strong>. En variabel som er definert på Uke 1-siden, finnes derfor ikke automatisk på Uke 2-siden eller på IDE-siden.</p>
+<p>Python-miljøet opprettes på nytt når du laster inn eller oppdaterer siden. Egne variabler, funksjoner og endringer forsvinner da. Det samme skjer når du velger <strong>Restart</strong>.</p>
+<p>Hver undervisningsside har en skjult oppstartscelle som automatisk laster inn nødvendige biblioteker, hjelpefunksjoner og andre felles definisjoner. Du kan derfor oppdatere siden og begynne direkte i den delen du vil arbeide med. De samme implementasjonene vises fortsatt i vanlige kodevinduer der de inngår i undervisningen. Hvis du kjører eller endrer en synlig implementasjon, vil den nye gjelde framfor setup-versjonen for resten av økten.</p>
 </section>
-<section id="siste-utvei" class="level3">
-<h3 class="anchored" data-anchor-id="siste-utvei">Siste utvei</h3>
-<p>Det er aldri for seint å åpne en konto på github. Har du sterke innvendinger mot github, send en epost til <a href="mailto:andrey.chesnokov@ntnu.no" class="email">andrey.chesnokov@ntnu.no</a> og beskriv saka i eposten.</p>
+<section id="tilbakemelding-på-kodetreningsoppgavene" class="level3">
+<h3 class="anchored" data-anchor-id="tilbakemelding-på-kodetreningsoppgavene">Tilbakemelding på kode/treningsoppgavene</h3>
+<p>Kodevinduene og øvingsoppgavene har en <strong>Feedback</strong>-knapp som kan gi automatisk tilbakemelding på koden din ved hjelp av språkmodeller som kjøres lokalt på NTNUs IDUN-infrastruktur. For å bruke denne funksjonen trenger du en personlig API-nøkkel.</p>
+<p>Les <a href="https://www.hpc.ntnu.no/idun/documentation/ai-coding-assistant-and-large-language-models-llms-on-idun/">LLM API service and gpt.ntnu.no – IDUN documentation</a> for informasjon om tjenesten og hvordan du ber om en API-nøkkel.</p>
+<p>Når du har fått nøkkelen:</p>
+<ol type="1">
+<li>Trykk på <strong>tannhjulikonet</strong> øverst på siden.</li>
+<li>Åpne innstillingene for tilbakemelding.</li>
+<li>Fyll inn tjenestens base-URL og modell slik de er oppgitt i IDUN-dokumentasjonen.</li>
+<li>Lim API-nøkkelen inn i feltet <strong>API key</strong> og lagre.</li>
+</ol>
+<p>API-nøkkelen skal ikke skrives inn i Python-koden, deles med andre eller lagres i Git. Innstillingene behandles lokalt i nettleseren. På en delt datamaskin bør du fjerne nøkkelen når du er ferdig.</p>
+</section>
+<section id="problemer-og-forbedringsforslag" class="level3">
+<h3 class="anchored" data-anchor-id="problemer-og-forbedringsforslag">Problemer og forbedringsforslag</h3>
+<p>Den foretrukne metoden er å <a href="https://github.com/aacchhee/ingmat3a_ntnu/issues">åpne en sak på GitHub</a> med en tydelig beskrivelse av problemet. Du kan også rette problemet i en fork og sende en pull request.</p>
+<p>Hvis du ikke kan bruke GitHub, kan du sende en e-post til <a href="mailto:andrey.chesnokov@ntnu.no" class="email">andrey.chesnokov@ntnu.no</a>.</p>
+</section>
+</div>
+</div>
+</div>
 
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
