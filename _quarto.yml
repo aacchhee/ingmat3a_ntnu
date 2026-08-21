@@ -14,9 +14,11 @@ website:
       - text: "IDE"
         file: pages/page1.qmd
 
-      - section: "Flyttall og lineær algebra"
-        contents:
-          - pages/page2.qmd
+      - text: "Uke 1 – regnetid, binære tall og tall på datamaskiner"
+        file: pages/page2.qmd
+
+      - text: "Uke 2 – fikspunktiterasjon"
+        file: pages/page4.qmd
 
       - section: "Projects"
         contents:

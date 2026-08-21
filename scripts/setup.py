@@ -88,7 +88,7 @@ def clone_or_update_plugin(
     plugin_repo = private_root / name
 
     if not plugin_repo.exists():
-        print(f"\nDownloading private plugin: {name}")
+        print(f"\nDownloading plugin: {name}")
 
         try:
             run(
@@ -101,7 +101,7 @@ def clone_or_update_plugin(
             )
         except subprocess.CalledProcessError:
             sys.exit(
-                f"\nERROR: could not clone private plugin '{name}'.\n\n"
+                f"\nERROR: could not clone plugin '{name}'.\n\n"
                 f"Repository:\n"
                 f"  {repo}\n\n"
                 "Make sure your GitHub account has access and that "
@@ -109,21 +109,32 @@ def clone_or_update_plugin(
             )
 
     else:
-        print(f"\nUpdating private plugin: {name}")
+        print(f"\nUpdating plugin to newest version: {name}")
 
         try:
             run(
                 "git",
                 "-C",
                 str(plugin_repo),
-                "pull",
-                "--ff-only",
+                "fetch",
+                "--depth",
+                "1",
+                "origin",
+                "HEAD",
+            )
+            run(
+                "git",
+                "-C",
+                str(plugin_repo),
+                "reset",
+                "--hard",
+                "FETCH_HEAD",
             )
         except subprocess.CalledProcessError:
             sys.exit(
-                f"\nERROR: could not update private plugin '{name}'.\n"
+                f"\nERROR: could not update plugin '{name}'.\n"
             )
-
+            
     return plugin_repo
 
 
@@ -225,7 +236,7 @@ def main() -> None:
     plugins = load_plugins(config_path)
 
     if not plugins:
-        print("\nNo private extensions configured.")
+        print("\nNo extensions configured.")
         return
 
     private_root.mkdir(exist_ok=True)
