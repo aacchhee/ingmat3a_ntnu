@@ -49,38 +49,38 @@ Regn om til titallssystemet. Du kan svare med brøk eller desimaltall.
 #| pool: true
 #| mode: equivalent
 
-$$(101,101)_2$$
+$$(101.101)_2$$
 
 Svar: _[45/8]
 
 ---
 
-$$(10,011)_2$$
+$$(10.011)_2$$
 
 Svar: _[19/8]
 
 ---
 
-$$(111,01)_2$$
+$$(111.01)_2$$
 
 Svar: _[29/4]
 
 ---
 
-$$(1,001)_2$$
+$$(1.001)_2$$
 
 Svar: _[9/8]
 
 ---
 
-$$(100,111)_2$$
+$$(100.111)_2$$
 
 Svar: _[39/8]
 ```
 
 ### Brøkdel fra titallssystemet til binært
 
-Regn om tallet til binært. Skriv **bare sifrene etter binærkommaet**.
+Regn om tallet til binært. Skriv **bare sifrene etter binærpunktet**.
 
 ```{math-exercise}
 #| label: decimal-fraction-to-binary
@@ -88,31 +88,31 @@ Regn om tallet til binært. Skriv **bare sifrene etter binærkommaet**.
 #| pool: true
 #| mode: string
 
-$$(0,5)_{10}=(0,\ldots)_2$$
+$$(0.5)_{10}=(0.\ldots)_2$$
 
 Binære sifre: _[1]
 
 ---
 
-$$(0,75)_{10}=(0,\ldots)_2$$
+$$(0.75)_{10}=(0.\ldots)_2$$
 
 Binære sifre: _[11]
 
 ---
 
-$$(0,625)_{10}=(0,\ldots)_2$$
+$$(0.625)_{10}=(0.\ldots)_2$$
 
 Binære sifre: _[101]
 
 ---
 
-$$(0,1875)_{10}=(0,\ldots)_2$$
+$$(0.1875)_{10}=(0.\ldots)_2$$
 
 Binære sifre: _[0011]
 
 ---
 
-$$(0,8125)_{10}=(0,\ldots)_2$$
+$$(0.8125)_{10}=(0.\ldots)_2$$
 
 Binære sifre: _[1101]
 ```
