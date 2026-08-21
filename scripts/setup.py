@@ -58,6 +58,7 @@ def load_plugins(config_path: Path) -> list[dict[str, str]]:
         name = plugin.get("name")
         repo = plugin.get("repo")
         path = plugin.get("path")
+        ref = plugin.get("ref", "HEAD")
 
         if not name or not repo or not path:
             sys.exit(
@@ -71,6 +72,7 @@ def load_plugins(config_path: Path) -> list[dict[str, str]]:
             {
                 "name": str(name),
                 "repo": str(repo),
+                "ref": str(ref),
                 "path": str(path),
             }
         )
@@ -84,6 +86,7 @@ def clone_or_update_plugin(
 ) -> Path:
     name = plugin["name"]
     repo = plugin["repo"]
+    ref = plugin["ref"]
 
     plugin_repo = private_root / name
 
@@ -91,14 +94,30 @@ def clone_or_update_plugin(
         print(f"\nDownloading plugin: {name}")
 
         try:
-            run(
+            clone_args = [
                 "git",
                 "clone",
                 "--depth",
                 "1",
-                repo,
-                str(plugin_repo),
+            ]
+
+            if ref != "HEAD":
+                clone_args.extend(
+                    [
+                        "--branch",
+                        ref,
+                        "--single-branch",
+                    ]
+                )
+
+            clone_args.extend(
+                [
+                    repo,
+                    str(plugin_repo),
+                ]
             )
+
+            run(*clone_args)
         except subprocess.CalledProcessError:
             sys.exit(
                 f"\nERROR: could not clone plugin '{name}'.\n\n"
@@ -120,14 +139,15 @@ def clone_or_update_plugin(
                 "--depth",
                 "1",
                 "origin",
-                "HEAD",
+                ref,
             )
             run(
                 "git",
                 "-C",
                 str(plugin_repo),
-                "reset",
-                "--hard",
+                "checkout",
+                "--detach",
+                "--force",
                 "FETCH_HEAD",
             )
         except subprocess.CalledProcessError:
@@ -246,7 +266,7 @@ def main() -> None:
     for plugin in plugins:
         print(
             f"  - {plugin['name']} "
-            f"({plugin['path']})"
+            f"({plugin['path']}, ref: {plugin['ref']})"
         )
 
     for plugin in plugins:

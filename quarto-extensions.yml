@@ -5,6 +5,7 @@ plugins:
 
   - name: math-exercise
     repo: https://github.com/Erasmus-CTM/math-exercise.git
+    ref: feature/ai-feedback-context-v2
     path: _extensions/math-exercise
 
   - name: py-exercise
