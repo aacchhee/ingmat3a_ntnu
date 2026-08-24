@@ -1,0 +1,9 @@
+---
+title: "Eksamensoppgaver"
+---
+
+{{< include ../_includes/exam/h25_10.md >}}
+
+{{< include ../_includes/exam/k26_8.md >}}
+
+{{< include ../_includes/exam/k2_8.md >}}

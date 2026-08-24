@@ -25,6 +25,11 @@ website:
         contents:
           - pages/project_week1.qmd
 
+      - section: "Eksamensoppgaver"
+        contents:
+          - text: "Flyttall og numerisk stabilitet"
+            file: pages/page5.qmd
+
 format:
   html:
     theme: cosmo
