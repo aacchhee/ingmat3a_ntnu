@@ -27,5 +27,5 @@ c# Private Quarto plugin configuration and sources
 # Installed private extensions
 /_extensions/pyodide-interaktiv/
 /_extensions/math-exercise/
+/_extensions/jsxgraph/
 /_extensions/py-exercise/
-

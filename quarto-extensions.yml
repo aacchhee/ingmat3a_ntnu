@@ -5,8 +5,13 @@ plugins:
 
   - name: math-exercise
     repo: https://github.com/Erasmus-CTM/math-exercise.git
-    ref: feature/ai-feedback-context-v2
+    ref: feature/custom-checkers-partial-credit
     path: _extensions/math-exercise
+
+  - name: jsxgraph
+    repo: https://github.com/Erasmus-CTM/math-exercise.git
+    ref: feature/custom-checkers-partial-credit
+    path: _extensions/jsxgraph
 
   - name: py-exercise
     repo: https://github.com/Erasmus-CTM/py-exercise.git
