@@ -268,6 +268,11 @@ fieldset:disabled .qpyodide-button {
   color: var(--bs-danger, #db4133);
 }
 
+.qpyodide-feedback-error-gear {
+  display: block;
+  margin-top: 0.5rem;
+}
+
 /* ---------------------------------------------------------------------- */
 /* Settings panel (set up AI feedback)                                    */
 
@@ -749,6 +754,33 @@ body.quarto-dark .qpyodide-cell-input-hint {
   border-color: color-mix(in srgb, var(--bs-warning, #ffc107) 30%, var(--bs-secondary-bg, #343a40));
 }
 
+/* Nudge shown under a manually-expanded cell, offering to reveal every
+   other still-folded cell in one go (see qpyodide-cell-classes.js). */
+.qpyodide-fold-nudge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.35rem 0 0.75rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: var(--bs-body-color, #333);
+  background: var(--bs-info-bg-subtle, #cff4fc);
+  border: 1px solid var(--bs-info-border-subtle, #9eeaf9);
+  border-radius: 4px;
+}
+
+.qpyodide-fold-nudge span {
+  flex: 1 1 auto;
+}
+
+body.quarto-dark .qpyodide-fold-nudge {
+  color: var(--bs-body-color, #e9ecef);
+  background: color-mix(in srgb, var(--bs-info, #0dcaf0) 12%, var(--bs-secondary-bg, #343a40));
+  border-color: color-mix(in srgb, var(--bs-info, #0dcaf0) 30%, var(--bs-secondary-bg, #343a40));
+}
+
 body.quarto-dark .qpyodide-terminal-input {
   border-color: var(--bs-border-color, #495057);
 }
@@ -889,7 +921,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "en";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"def ordinary_sum(values):\n    # Start med summen 0.\n    total = 0.0\n\n    # Legg til ett tall om gangen, fra venstre mot høyre.\n    for value in values:\n        total = total + value\n\n    return total","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Bytt ut tallene med ditt eget første angrep.\nvalues = [1.0, 2.0, 3.0]\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def make_attack(n, scale):\n    # n bestemmer hvor stort eksperimentet skal være.\n    # scale kan brukes til å styre størrelsesforskjellen mellom tallene.\n    #\n    # TODO: lag og returner din egen liste.\n\n    values = []\n\n    return values","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor n in [10, 100, 1000]:\n    values = make_attack(n, 1e16)\n\n    ordinary = ordinary_sum(values)\n    reference = math.fsum(values)\n    error = abs(ordinary - reference)\n\n    print(\n        f\"n={n:5d}   \"\n        f\"ordinary={ordinary:.12g}   \"\n        f\"reference={reference:.12g}   \"\n        f\"error={error:.3e}\"\n    )","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef target_attack():\n    # TODO: konstruer tallene dine her.\n    values = [1.0]\n    return values\n\n\nvalues = target_attack()\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"antall tall  =\", len(values))\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"feil         =\", abs(ordinary - reference))","id":5,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef bounded_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = bounded_attack()\n\n# Kontroller regelen.\nprint(\"største |x| =\", max(abs(x) for x in values) if values else 0.0)\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":6,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef positive_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = positive_attack()\n\nprint(\"alle positive =\", all(x > 0 for x in values))\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":7,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def defense_order(values):\n    # Lag en kopi slik at originaldataene ikke endres.\n    reordered = list(values)\n\n    # TODO: bestem en bedre rekkefølge.\n\n    return reordered","id":8,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nvalues = target_attack()\nreference = math.fsum(values)\n\nbefore = ordinary_sum(values)\ndefended_values = defense_order(values)\nafter = ordinary_sum(defended_values)\n\nprint(\"referanse       =\", reference)\nprint(\"før forsvar     =\", before)\nprint(\"feil før        =\", abs(before - reference))\nprint()\nprint(\"etter forsvar   =\", after)\nprint(\"feil etter      =\", abs(after - reference))","id":9,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nattacks = {\n    \"target\": target_attack(),\n    \"bounded\": bounded_attack(),\n    \"positive\": positive_attack(),\n}\n\nprint(\n    f\"{'datasett':12s} \"\n    f\"{'naiv feil':>14s} \"\n    f\"{'forsvart feil':>16s}\"\n)\nprint(\"-\" * 46)\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n\n    naive = ordinary_sum(values)\n    defended = ordinary_sum(defense_order(values))\n\n    naive_error = abs(naive - reference)\n    defended_error = abs(defended - reference)\n\n    print(\n        f\"{name:12s} \"\n        f\"{naive_error:14.6e} \"\n        f\"{defended_error:16.6e}\"\n    )","id":10,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"def better_sum(values):\n    # TODO: design din egen summeringsalgoritme.\n    # Ikke bruk sum(), numpy.sum() eller math.fsum().\n\n    total = 0.0\n    for value in values:\n        total += value\n\n    return total","id":11,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n    result = better_sum(values)\n\n    print(\n        f\"{name:12s}   \"\n        f\"resultat={result:.12g}   \"\n        f\"feil={abs(result-reference):.3e}\"\n    )","id":12,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"def ordinary_sum(values):\n    # Start med summen 0.\n    total = 0.0\n\n    # Legg til ett tall om gangen, fra venstre mot høyre.\n    for value in values:\n        total = total + value\n\n    return total","id":1,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Bytt ut tallene med ditt eget første angrep.\nvalues = [1.0, 2.0, 3.0]\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def make_attack(n, scale):\n    # n bestemmer hvor stort eksperimentet skal være.\n    # scale kan brukes til å styre størrelsesforskjellen mellom tallene.\n    #\n    # TODO: lag og returner din egen liste.\n\n    values = []\n\n    return values","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor n in [10, 100, 1000]:\n    values = make_attack(n, 1e16)\n\n    ordinary = ordinary_sum(values)\n    reference = math.fsum(values)\n    error = abs(ordinary - reference)\n\n    print(\n        f\"n={n:5d}   \"\n        f\"ordinary={ordinary:.12g}   \"\n        f\"reference={reference:.12g}   \"\n        f\"error={error:.3e}\"\n    )","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef target_attack():\n    # TODO: konstruer tallene dine her.\n    values = [1.0]\n    return values\n\n\nvalues = target_attack()\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"antall tall  =\", len(values))\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"feil         =\", abs(ordinary - reference))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef bounded_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = bounded_attack()\n\n# Kontroller regelen.\nprint(\"største |x| =\", max(abs(x) for x in values) if values else 0.0)\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef positive_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = positive_attack()\n\nprint(\"alle positive =\", all(x > 0 for x in values))\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def defense_order(values):\n    # Lag en kopi slik at originaldataene ikke endres.\n    reordered = list(values)\n\n    # TODO: bestem en bedre rekkefølge.\n\n    return reordered","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nvalues = target_attack()\nreference = math.fsum(values)\n\nbefore = ordinary_sum(values)\ndefended_values = defense_order(values)\nafter = ordinary_sum(defended_values)\n\nprint(\"referanse       =\", reference)\nprint(\"før forsvar     =\", before)\nprint(\"feil før        =\", abs(before - reference))\nprint()\nprint(\"etter forsvar   =\", after)\nprint(\"feil etter      =\", abs(after - reference))","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nattacks = {\n    \"target\": target_attack(),\n    \"bounded\": bounded_attack(),\n    \"positive\": positive_attack(),\n}\n\nprint(\n    f\"{'datasett':12s} \"\n    f\"{'naiv feil':>14s} \"\n    f\"{'forsvart feil':>16s}\"\n)\nprint(\"-\" * 46)\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n\n    naive = ordinary_sum(values)\n    defended = ordinary_sum(defense_order(values))\n\n    naive_error = abs(naive - reference)\n    defended_error = abs(defended - reference)\n\n    print(\n        f\"{name:12s} \"\n        f\"{naive_error:14.6e} \"\n        f\"{defended_error:16.6e}\"\n    )","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def better_sum(values):\n    # TODO: design din egen summeringsalgoritme.\n    # Ikke bruk sum(), numpy.sum() eller math.fsum().\n\n    total = 0.0\n    for value in values:\n        total += value\n\n    return total","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n    result = better_sum(values)\n\n    print(\n        f\"{name:12s}   \"\n        f\"resultat={result:.12g}   \"\n        f\"feil={abs(result-reference):.3e}\"\n    )","id":12,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -937,6 +969,9 @@ globalThis.qpyodideLocales = {
     feedbackTitle:       "AI feedback on the current code",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Feedback',
     showPythonCode:      "Show Python code",
+    foldNudgeQuestion:   "Show all code cells?",
+    foldNudgeShowAll:    "Show all",
+    foldNudgeDismiss:    "No, thanks",
     addCodeBlockTitle:   "Append an additional code block",
     addCodeBlockLabel:   '<i class="fa-solid fa-plus"></i> Code block',
     runAtStartup:        "Runs at startup …",
@@ -1100,7 +1135,8 @@ globalThis.qpyodideLocales = {
     errNoContent:        "The API response contains no feedback text (field choices[0].message.content is missing).",
     errTokenRejected:    "The API rejected the request repeatedly (token parameter).",
     errConfigMissing:
-      "Please click the ⚙ icon above first and enter a base URL and a model " +
+      "Please set up your AI feedback first – using the button right here, " +
+      "or the ⚙ icon above – and enter a base URL and a model " +
       "(or choose the \"copy prompt\" mode).",
 
     // --- Settings panel ---------------------------------------------------------
@@ -1170,6 +1206,9 @@ globalThis.qpyodideLocales = {
     feedbackTitle:       "KI-Feedback zum aktuellen Code",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Feedback',
     showPythonCode:      "Python-Code anzeigen",
+    foldNudgeQuestion:   "Alle Code-Zellen anzeigen?",
+    foldNudgeShowAll:    "Alle anzeigen",
+    foldNudgeDismiss:    "Nein, danke",
     addCodeBlockTitle:   "Zusätzlichen Codeblock anhängen",
     addCodeBlockLabel:   '<i class="fa-solid fa-plus"></i> Codeblock',
     runAtStartup:        "Wird beim Start ausgeführt …",
@@ -1334,8 +1373,9 @@ globalThis.qpyodideLocales = {
     errNoContent:        "Die API-Antwort enthält keinen Feedback-Text (Feld choices[0].message.content fehlt).",
     errTokenRejected:    "Die API hat die Anfrage wiederholt abgelehnt (Token-Parameter).",
     errConfigMissing:
-      "Bitte zuerst das ⚙-Symbol oben anklicken und Base URL sowie Modell angeben " +
-      "(oder den Modus „Prompt kopieren“ wählen).",
+      "Bitte richte zuerst dein KI-Feedback ein – über den Button hier oder " +
+      "das ⚙-Symbol oben – und gib Base URL sowie Modell an " +
+      "(oder wähle den Modus „Prompt kopieren“).",
 
     // --- Settings panel ---------------------------------------------------------
     gearTitle:           "KI-Feedback einrichten",
@@ -1404,6 +1444,9 @@ globalThis.qpyodideLocales = {
     feedbackTitle:       "AI-feedback på den aktuella koden",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Feedback',
     showPythonCode:      "Visa Python-koden",
+    foldNudgeQuestion:   "Visa alla kodceller?",
+    foldNudgeShowAll:    "Visa alla",
+    foldNudgeDismiss:    "Nej tack",
     addCodeBlockTitle:   "Lägg till ytterligare ett kodblock",
     addCodeBlockLabel:   '<i class="fa-solid fa-plus"></i> Kodblock',
     runAtStartup:        "Körs vid start …",
@@ -1568,7 +1611,8 @@ globalThis.qpyodideLocales = {
     errNoContent:        "API-svaret innehåller ingen feedbacktext (fältet choices[0].message.content saknas).",
     errTokenRejected:    "API:et avvisade förfrågan upprepade gånger (token-parameter).",
     errConfigMissing:
-      "Klicka först på ⚙-symbolen ovan och ange Base URL samt modell " +
+      "Ställ först in din AI-feedback – med knappen här eller ⚙-symbolen " +
+      "ovan – och ange Base URL samt modell " +
       "(eller välj läget ”Kopiera prompten”).",
 
     // --- Settings panel ---------------------------------------------------------
@@ -1638,6 +1682,9 @@ globalThis.qpyodideLocales = {
     feedbackTitle:       "KI-tilbakemelding på den gjeldende koden",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Tilbakemelding',
     showPythonCode:      "Vis Python-koden",
+    foldNudgeQuestion:   "Vis alle kodeceller?",
+    foldNudgeShowAll:    "Vis alle",
+    foldNudgeDismiss:    "Nei takk",
     addCodeBlockTitle:   "Legg til enda en kodeblokk",
     addCodeBlockLabel:   '<i class="fa-solid fa-plus"></i> Kodeblokk',
     runAtStartup:        "Kjøres ved oppstart …",
@@ -1802,7 +1849,8 @@ globalThis.qpyodideLocales = {
     errNoContent:        "API-svaret inneholder ingen tilbakemeldingstekst (feltet choices[0].message.content mangler).",
     errTokenRejected:    "API-et avviste forespørselen gjentatte ganger (token-parameter).",
     errConfigMissing:
-      "Klikk først på ⚙-symbolet ovenfor og oppgi Base URL og modell " +
+      "Sett først opp AI-tilbakemeldingen din – med knappen her eller " +
+      "⚙-symbolet ovenfor – og oppgi Base URL og modell " +
       "(eller velg modusen «Kopier prompten»).",
 
     // --- Settings panel ---------------------------------------------------------
@@ -1872,6 +1920,9 @@ globalThis.qpyodideLocales = {
     feedbackTitle:       "AI-feedback på den aktuelle kode",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Feedback',
     showPythonCode:      "Vis Python-koden",
+    foldNudgeQuestion:   "Vis alle kodeceller?",
+    foldNudgeShowAll:    "Vis alle",
+    foldNudgeDismiss:    "Nej tak",
     addCodeBlockTitle:   "Tilføj endnu en kodeblok",
     addCodeBlockLabel:   '<i class="fa-solid fa-plus"></i> Kodeblok',
     runAtStartup:        "Køres ved opstart …",
@@ -2036,7 +2087,8 @@ globalThis.qpyodideLocales = {
     errNoContent:        "API-svaret indeholder ingen feedbacktekst (feltet choices[0].message.content mangler).",
     errTokenRejected:    "API-et afviste anmodningen gentagne gange (token-parameter).",
     errConfigMissing:
-      "Klik først på ⚙-symbolet ovenfor, og angiv Base URL samt model " +
+      "Opsæt først din AI-feedback – med knappen her eller ⚙-symbolet " +
+      "ovenfor – og angiv Base URL samt model " +
       "(eller vælg tilstanden »Kopiér prompten«).",
 
     // --- Settings panel ---------------------------------------------------------
@@ -2503,8 +2555,18 @@ function qfRenderMarkdownLite(text) {
   return html;
 }
 
-function qfRenderFeedback(targetDiv, feedbackText, hintLevel) {
+// The settings panel can be living inside `targetDiv` (qfOpenSettingsNear
+// moved it there earlier); wiping innerHTML would silently detach it. Move
+// it back home first so it's never lost, just relocated.
+function qfClearTargetDiv(targetDiv) {
+  if (qfUi.panel && qfUi.homeParent && targetDiv.contains(qfUi.panel)) {
+    qfUi.homeParent.appendChild(qfUi.panel);
+  }
   targetDiv.innerHTML = "";
+}
+
+function qfRenderFeedback(targetDiv, feedbackText, hintLevel) {
+  qfClearTargetDiv(targetDiv);
 
   const header = document.createElement("div");
   header.className = "qpyodide-feedback-header";
@@ -2520,8 +2582,11 @@ function qfRenderFeedback(targetDiv, feedbackText, hintLevel) {
   targetDiv.classList.add("has-content");
 }
 
-function qfRenderError(targetDiv, message) {
-  targetDiv.innerHTML = "";
+// `showSettingsLink`: adds a button that relocates the settings panel
+// right into `targetDiv` instead of making the reader hunt for the gear
+// icon at the top of the page - used for the "not configured yet" error.
+function qfRenderError(targetDiv, message, { showSettingsLink = false } = {}) {
+  qfClearTargetDiv(targetDiv);
 
   const box = document.createElement("div");
   box.className = "qpyodide-feedback-error";
@@ -2531,6 +2596,19 @@ function qfRenderError(targetDiv, message) {
   text.textContent = message;
   box.appendChild(header);
   box.appendChild(text);
+
+  if (showSettingsLink) {
+    const gearBtn = document.createElement("button");
+    gearBtn.type = "button";
+    gearBtn.className = "btn btn-light btn-sm qpyodide-button qpyodide-feedback-error-gear";
+    gearBtn.innerHTML = '<i class="fa-solid fa-gear"></i> ' + QP_L.gearTitle;
+    // Moves the settings panel right into this cell's feedback area
+    // (appended after `box` below) instead of sending the reader to the
+    // top of the page.
+    gearBtn.onclick = () => qfOpenSettingsNear(targetDiv);
+    box.appendChild(gearBtn);
+  }
+
   targetDiv.appendChild(box);
 
   targetDiv.classList.add("has-content");
@@ -2538,7 +2616,7 @@ function qfRenderError(targetDiv, message) {
 
 // Box with a copyable prompt ("Copy prompt" mode, including the system prompt)
 function qfRenderCopyPrompt(targetDiv, promptText) {
-  targetDiv.innerHTML = "";
+  qfClearTargetDiv(targetDiv);
 
   const header = document.createElement("div");
   header.className = "qpyodide-feedback-header";
@@ -2819,7 +2897,17 @@ function qfBuildSettingsUI() {
     panel.style.display = collapsed ? "none" : "block";
   }
 
-  toggleBtn.onclick = () => setCollapsed(panel.style.display !== "none");
+  // The panel can be relocated next to a cell's "not configured" error (see
+  // qfOpenSettingsNear below); the header gear reclaims it back here rather
+  // than blindly toggling whatever display state it was left in there.
+  toggleBtn.onclick = () => {
+    if (panel.parentElement !== qfUi.homeParent) {
+      qfUi.homeParent.appendChild(panel);
+      setCollapsed(false);
+    } else {
+      setCollapsed(panel.style.display !== "none");
+    }
+  };
   infoBtn.onclick = () => {
     helpDiv.style.display = (helpDiv.style.display === "none") ? "block" : "none";
   };
@@ -2861,14 +2949,24 @@ function qfBuildSettingsUI() {
       : document.body.prepend(wrap);
   }
 
-  // Attach the settings panel below the status row
+  // Attach the settings panel below the status row. Its parent here is
+  // also the panel's "home": qfOpenSettingsNear() can relocate the panel
+  // next to a cell's error, and the header gear (above) moves it back here.
   const panelsArea = document.getElementById("qpyodide-status-panels");
-  if (panelsArea) {
-    panelsArea.appendChild(panel);
-  } else {
-    const statusArea = document.getElementById("qpyodide-status-message-area");
-    (statusArea ?? document.body).appendChild(panel);
-  }
+  const statusArea = document.getElementById("qpyodide-status-message-area");
+  qfUi.homeParent = panelsArea ?? statusArea ?? document.body;
+  qfUi.homeParent.appendChild(panel);
+}
+
+// Moves the (single, shared) settings panel right next to `container` and
+// opens it there - called from the "not configured yet" error box so the
+// reader can fix it on the spot instead of hunting for the gear icon at
+// the top of the page. The header gear (qfBuildSettingsUI above) moves the
+// panel back to its home position when clicked.
+function qfOpenSettingsNear(container) {
+  if (!qfUi.panel || !container) return;
+  container.appendChild(qfUi.panel);
+  if (qfUi.setCollapsed) qfUi.setCollapsed(false);
 }
 
 // ---------------------------------------------------------------------------
@@ -2910,8 +3008,9 @@ async function qfGiveFeedback(unit) {
 
     // Direct API: check configuration (key is optional, e.g. for Ollama)
     if (!cfg.baseUrl || !cfg.model) {
-      qfRenderError(targetDiv, QP_L.errConfigMissing);
-      if (qfUi.setCollapsed) qfUi.setCollapsed(false);
+      // The error's own ⚙ button (qfOpenSettingsNear) moves the settings
+      // panel right here on demand - nothing to pre-open before that.
+      qfRenderError(targetDiv, QP_L.errConfigMissing, { showSettingsLink: true });
       return;
     }
 
@@ -2943,7 +3042,10 @@ globalThis.qpyodideFeedback = {
   attach(unit) {
     if (!this.enabled || !unit.feedbackButton) return;
     unit.feedbackButton.onclick = () => qfGiveFeedback(unit);
-  }
+  },
+
+  /** Opens and scrolls to the settings panel. */
+  openSettings: qfOpenSettingsNear
 };
 
 // Build the settings panel (modules are deferred, so the DOM is ready)
@@ -3222,7 +3324,16 @@ async function runCell(code, wantPickle) {
     await pyodide.loadPackagesFromImports(code);
     resultValue = await pyodide.runPythonAsync(code);
   } catch (err) {
-    runEntries.push({ message: String(err), type: "stderr" });
+    // An uncaught Python exception never goes through the stdout/stderr
+    // callbacks above (those only see explicit prints); runPythonAsync
+    // instead rejects with the formatted traceback as its message. Stream
+    // it live too - interactive cells only render stdout/stderr via the
+    // live stream (see runCode() in qpyodide-cell-classes.js), not from
+    // this function's return value, so without this an uncaught exception
+    // would silently show nothing at all in the terminal.
+    const message = String(err);
+    runEntries.push({ message: message, type: "stderr" });
+    self.postMessage({ type: "streamStderr", text: message });
   }
 
   let html = null;
@@ -5684,6 +5795,74 @@ class BaseCell {
   async runStartup() { /* default: nothing to do */ }
 }
 
+// ---------------------------------------------------------------------------
+// Fold nudge: shown once, under a cell the reader just expanded by hand,
+// offering to reveal every other still-folded cell in one click.
+// ---------------------------------------------------------------------------
+
+// Sets a fold <details>'s open state programmatically, marking it via the
+// data attribute ONLY when the state actually changes. A same-state
+// assignment (e.g. `.open = false` on a <details> that's already closed,
+// the common case for a cell that starts folded) never fires a `toggle`
+// event at all - flagging it anyway would leave the flag stuck forever,
+// silently swallowing that cell's next *real* user click instead of the
+// (nonexistent) programmatic event it was meant for. Used everywhere a
+// fold state is set from code: initial cell construction, "Show/Hide All
+// Code", and this nudge's own "show all" button.
+function qpyodideSetFoldOpen(details, open) {
+  if (details.open === open) return;
+  details.dataset.qpyodideProgrammatic = "1";
+  details.open = open;
+}
+globalThis.qpyodideSetFoldOpen = qpyodideSetFoldOpen;
+
+let qpyodideFoldNudgeShown = false;
+
+function qpyodideShowFoldNudge(cellDetails) {
+  if (qpyodideFoldNudgeShown) return;
+  // Only worth offering the shortcut when there's a real batch left to
+  // reveal. If a single other cell is still folded, clicking it directly
+  // is no more effort than clicking the nudge's own button, so it would
+  // just be a nag for no benefit.
+  const otherFoldedCount = Array.from(document.querySelectorAll(".qpyodide-code-fold"))
+    .filter((details) => details !== cellDetails && !details.open).length;
+  if (otherFoldedCount < 2) return;
+
+  qpyodideFoldNudgeShown = true;
+
+  const banner = document.createElement("div");
+  banner.className = "qpyodide-fold-nudge";
+
+  const text = document.createElement("span");
+  text.textContent = QP_L.foldNudgeQuestion;
+  banner.appendChild(text);
+
+  const showAllBtn = document.createElement("button");
+  showAllBtn.type = "button";
+  showAllBtn.className = "btn btn-light btn-sm qpyodide-button";
+  showAllBtn.textContent = QP_L.foldNudgeShowAll;
+  showAllBtn.onclick = () => {
+    document.querySelectorAll(".qpyodide-code-fold").forEach((details) => {
+      qpyodideSetFoldOpen(details, true);
+    });
+    banner.remove();
+  };
+  banner.appendChild(showAllBtn);
+
+  const dismissBtn = document.createElement("button");
+  dismissBtn.type = "button";
+  dismissBtn.className = "btn btn-light btn-sm qpyodide-button";
+  dismissBtn.textContent = QP_L.foldNudgeDismiss;
+  dismissBtn.onclick = () => banner.remove();
+  banner.appendChild(dismissBtn);
+
+  // Appended *inside* the <details> (not as a sibling after it): a closed
+  // <details> natively hides its children, so folding this cell back up
+  // hides the banner along with it instead of leaving it stranded on the
+  // page for a reader who never clicks either button.
+  cellDetails.appendChild(banner);
+}
+
 /**
  * InteractiveCell – collapsible cell with one (or, via "+ Code block",
  * two) EditorUnit(s).
@@ -5706,9 +5885,25 @@ class InteractiveCell extends BaseCell {
       mainDiv.setAttribute("data-id", this.options.label);
     }
 
-    // Collapsible frame around the whole cell
+    // Collapsible frame around the whole cell. Initial open/closed state
+    // follows Quarto's `code-fold` (document/project default or this
+    // cell's own `#| code-fold:` override), resolved ahead of time by the
+    // Lua filter into this.options["code-fold"] ("hide" or "show").
     const details = document.createElement("details");
-    details.open = true;
+    details.className = "qpyodide-code-fold";
+    qpyodideSetFoldOpen(details, this.options["code-fold"] !== "hide");
+    // Distinguishes a reader manually opening this cell from any
+    // programmatic change (initial state above, "Show/Hide All Code",
+    // or the nudge's own "show all" button) via the flag those set.
+    details.addEventListener("toggle", () => {
+      if (details.dataset.qpyodideProgrammatic) {
+        delete details.dataset.qpyodideProgrammatic;
+        return;
+      }
+      if (details.open) {
+        qpyodideShowFoldNudge(details);
+      }
+    });
     const summary = document.createElement("summary");
     summary.textContent = QP_L.showPythonCode;
     details.appendChild(summary);
@@ -5906,6 +6101,21 @@ globalThis.qpyodideCellContainer = new CellContainer();
 qpyodideCellDetails.forEach((entry) => {
   qpyodideCellContainer.addCell(qpyodideCreateCell(entry));
 });
+
+// Hook up Quarto's global "Code" tools (Show All Code / Hide All Code,
+// rendered when `code-tools: true`). Quarto's own handler (in
+// quarto-html-after-body.ejs) only toggles `.cell > details > .sourceCode`,
+// which never matches our Monaco-based cells, so this adds an equivalent
+// listener for every `.qpyodide-code-fold` <details> created above.
+function qpyodideToggleAllFolds(open) {
+  document.querySelectorAll(".qpyodide-code-fold").forEach((details) => {
+    qpyodideSetFoldOpen(details, open);
+  });
+}
+document.getElementById("quarto-show-all-code")
+  ?.addEventListener("click", () => qpyodideToggleAllFolds(true));
+document.getElementById("quarto-hide-all-code")
+  ?.addEventListener("click", () => qpyodideToggleAllFolds(false));
 
 qpyodideReady
   .then(() => qpyodideCellContainer.runStartupCells())
