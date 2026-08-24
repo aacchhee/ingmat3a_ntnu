@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Del 3 – exercise test quarto plugins – Matematikk 3A</title>
+<title>Eksamensoppgaver – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -513,339 +513,36 @@ select.math-modal-input {
 }
 
 </style>
-<style type="text/css">
-/* ============================================================
-   py-exercise – Quarto extension
-   Interactive Python exercise cells with hidden unit tests.
-   ============================================================ */
 
-/* Exercise container */
-.py-exercise-cell {
-  border: 1px solid var(--bs-border-color, #dee2e6);
-  border-left: 4px solid #0d6efd;
-  border-radius: 6px;
-  padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
-  background: var(--bs-tertiary-bg, #f8f9fa);
-  color: var(--bs-body-color, #212529);
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
 }
-
-/* Monaco editor wrapper (Monaco itself switches vs/vs-dark via JS) */
-.py-exercise-editor {
-  border: 1px solid var(--bs-border-color, #ced4da);
-  border-radius: 4px;
-  overflow: hidden;
-  min-height: 80px;
-  margin-bottom: 0.75rem;
-  background: var(--bs-body-bg, #ffffff);
-}
-
-/* Button bar */
-.py-exercise-buttons {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.py-exercise-check,
-.py-exercise-reset {
-  font-size: 0.875rem;
-}
-
-/* Running indicator */
-.py-exercise-running {
-  color: var(--bs-secondary-color, #6c757d);
-  font-style: italic;
-  padding: 0.4rem 0;
-}
-
-/* Error box (student code has a runtime / syntax error) */
-.py-exercise-error {
-  background: #fff3f3;
-  border: 1px solid #f5c2c7;
-  border-radius: 4px;
-  padding: 0.75rem;
-  color: #842029;
-}
-
-.py-exercise-error pre {
-  font-size: 0.8rem;
-  margin: 0.5rem 0 0;
-  white-space: pre-wrap;
-  word-break: break-word;
-  background: transparent;
-  border: none;
-  padding: 0;
-  color: inherit;
-}
-
-/* Captured stdout from student code */
-.py-exercise-stdout {
-  background: var(--bs-body-bg, #ffffff);
-  color: var(--bs-body-color, #212529);
-  border: 1px solid var(--bs-border-color, #dee2e6);
-  border-radius: 4px;
-  padding: 0.4rem 0.75rem;
-  margin-bottom: 0.6rem;
-  font-size: 0.875rem;
-}
-
-.py-exercise-stdout-label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--bs-secondary-color, #6c757d);
-  margin-bottom: 0.2rem;
-}
-
-.py-exercise-stdout pre {
-  margin: 0;
-  background: transparent;
-  border: none;
-  padding: 0;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* Test summary */
-.py-exercise-summary {
-  padding: 0.25rem 0;
-}
-
-.py-exercise-all-passed {
-  color: #0f5132;
-  background: #d1e7dd;
-  border: 1px solid #badbcc;
-  border-radius: 4px;
-  padding: 0.5rem 0.75rem;
-  font-weight: 600;
-}
-
-.py-exercise-some-failed {
-  color: #842029;
-  background: #f8d7da;
-  border: 1px solid #f5c2c7;
-  border-radius: 4px;
-  padding: 0.5rem 0.75rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-/* Per-test list (shown when there are multiple tests) */
-.py-exercise-test-list {
-  list-style: none;
-  padding: 0.25rem 0 0;
-  margin: 0;
-}
-
-.py-exercise-test-list li {
-  padding: 0.15rem 0.5rem;
-  font-size: 0.875rem;
-}
-
-.py-test-pass { color: #0f5132; }
-.py-test-fail { color: #842029; }
-
-/* Forbidden construct violations */
-.py-exercise-violations {
-  background: #fff3cd;
-  border: 1px solid #ffecb5;
-  border-left: 4px solid #ffc107;
-  border-radius: 4px;
-  padding: 0.75rem;
-  color: #664d03;
-}
-
-.py-exercise-violation-list {
-  margin: 0.4rem 0 0;
-  padding-left: 1.25rem;
-  font-size: 0.875rem;
-}
-
-.py-exercise-violation-list li {
-  padding: 0.1rem 0;
-}
-
-/* Single-test hint / assertion message */
-.py-exercise-hint {
-  color: #664d03;
-  background: #fff3cd;
-  border: 1px solid #ffecb5;
-  border-radius: 4px;
-  padding: 0.5rem 0.75rem;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-}
-
-/* ============================================================
-   Submission header & footer
-   ============================================================ */
-
-.py-submission-header {
-  border: 1px solid var(--bs-border-color, #c3cfe2);
-  border-left: 4px solid #198754;
-  border-radius: 6px;
-  background: var(--bs-tertiary-bg, #f0faf4);
-  color: var(--bs-body-color, #212529);
-  padding: 0.85rem 1.25rem;
-  margin-bottom: 2rem;
-}
-
-.py-submission-header-inner {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.py-submission-title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.py-submission-fields {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  flex: 1;
-}
-
-.py-submission-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 160px;
-}
-
-.py-submission-field label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #555;
-}
-
-.py-submission-field input {
-  font-size: 0.9rem;
-  padding: 0.3rem 0.6rem;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-.py-submission-field input:focus {
-  border-color: #198754;
-  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.2);
-}
-
-/* Footer */
-.py-submission-footer {
-  border: 1px solid var(--bs-border-color, #c3cfe2);
-  border-left: 4px solid #198754;
-  border-radius: 6px;
-  background: var(--bs-tertiary-bg, #f0faf4);
-  color: var(--bs-body-color, #212529);
-  padding: 1rem 1.25rem;
-  margin-top: 2rem;
-}
-
-.py-submission-export-btn {
-  font-size: 0.9rem;
-}
-
-.py-submission-msg {
-  margin-top: 0.5rem;
-}
-
-.py-submission-error {
-  color: #842029;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-.py-submission-output-wrap {
-  margin-top: 0.75rem;
-}
-
-.py-submission-output-labelrow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.25rem;
-}
-
-.py-submission-output-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #555;
-}
-
-.py-submission-copy-btn {
-  font-size: 0.78rem;
-  padding: 0.15rem 0.5rem;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.py-submission-copy-ok {
-  background-color: #d1e7dd !important;
-  color: #0f5132 !important;
-  border-color: #badbcc !important;
-}
-
-/* Download section (inside submission footer or standalone) */
-.py-download-footer {
-  border: 1px solid var(--bs-border-color, #dee2e6);
-  border-left: 4px solid #6c757d;
-  border-radius: 6px;
-  background: var(--bs-tertiary-bg, #f8f9fa);
-  color: var(--bs-body-color, #212529);
-  padding: 0.85rem 1.25rem;
-  margin-top: 2rem;
-}
-
-.py-download-section {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.py-download-btn {
-  font-size: 0.875rem;
-  white-space: nowrap;
-}
-
-.py-download-hint {
-  font-size: 0.8rem;
-  color: #6c757d;
-}
-
-.py-footer-sep {
-  margin: 0.75rem 0;
-  border-color: #ced4da;
-}
-
-.py-submission-output {
-  width: 100%;
-  font-family: monospace;
-  font-size: 0.78rem;
-  padding: 0.5rem 0.6rem;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  background: #fff;
-  resize: vertical;
-  color: #333;
-  cursor: pointer;
-}
-
-
-</style>
-
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -859,9 +556,7 @@ select.math-modal-input {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Matematikk 3A
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page5.html">Eksamensoppgaver</a></li><li class="breadcrumb-item"><a href="../pages/page5.html">Flyttall og numerisk stabilitet</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -932,7 +627,7 @@ select.math-modal-input {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/page5.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page5.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Flyttall og numerisk stabilitet</span></a>
   </div>
 </li>
@@ -947,11 +642,10 @@ select.math-modal-input {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <script>window.__mathExerciseConfig = {"lang":"en"};</script>
-<script>window.__pyExerciseConfig = {"lang":"en","submission":false,"submissionKey":"py-exercise"};</script>
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page5.html">Eksamensoppgaver</a></li><li class="breadcrumb-item"><a href="../pages/page5.html">Flyttall og numerisk stabilitet</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Del 3 – exercise test quarto plugins</h1>
+<h1 class="title">Eksamensoppgaver</h1>
 </div>
 
 
@@ -968,13 +662,66 @@ select.math-modal-input {
 </header>
 
 
-<section id="math-exercise" class="level2">
-<h2 class="anchored" data-anchor-id="math-exercise">Math exercise</h2>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="math-test-1" data-mode="equivalent" data-reject="" data-vars="x" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="auto" data-context-refs="" data-context="&quot;Math exercise&quot;" data-fields="[&quot;math-exercise-1-f1&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Enkel algebra</div>
+<section id="høst-2025-oppgave-10-halvpresisjon" class="level2">
+<h2 class="anchored" data-anchor-id="høst-2025-oppgave-10-halvpresisjon">Høst 2025 – oppgave 10: Halvpresisjon</h2>
+<p>Oppgaven bygger på eksamensoppgave 10 fra IMAx3011 høsten 2025.</p>
+<div id="h25-half-format" class="math-exercise-context">
+<section id="halvpresisjonsformatet" class="level3">
+<h3 class="anchored" data-anchor-id="halvpresisjonsformatet">Halvpresisjonsformatet</h3>
+<p>Et binært flyttall skrives som</p>
+<p><span class="math display">\[
+t=\pm m\,2^e,
+\]</span></p>
+<p>der <span class="math inline">\(1\le m&lt;2\)</span>. Halvpresisjonsformatet har 16 bit:</p>
+<ul>
+<li>1 fortegnsbit,</li>
+<li>5 eksponentbiter med bias 15,</li>
+<li>10 brøkbiter i mantissen.</li>
+</ul>
+<p>For et normalisert tall er verdien</p>
+<p><span class="math display">\[
+(-1)^s(1.f)_2\,2^{E-15},
+\]</span></p>
+<p>der <span class="math inline">\(E\)</span> er heltallsverdien til eksponentfeltet og den ledende eneren i mantissen er skjult. Runding skjer til nærmeste representerbare tall, med ties-to-even når et tall ligger nøyaktig midt mellom to alternativer.</p>
+</section>
+</div>
+<section id="a-maskinepsilon" class="level3">
+<h3 class="anchored" data-anchor-id="a-maskinepsilon">a) Maskinepsilon</h3>
+<p>Maskinepsilon er det minste positive tallet <span class="math inline">\(\varepsilon\)</span> slik at <span class="math inline">\(1+\varepsilon\)</span> er forskjellig fra 1 i formatet.</p>
+<div class="math-exercise-cell" id="math-exercise-1" data-label="exam-h25-10-machine-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn maskinepsilon</div>
 
 <div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Hva er $2+3$? <input type="text" id="math-exercise-1-f1" data-answer="5" data-vars="x" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
+<div class="math-exercise-question">Svarformat: Skriv et eksakt matematisk uttrykk, for eksempel `2**(-k)` for en<br>
+heltallig eksponent $k$.<br>
+<br>
+$$\varepsilon =$$ <input type="text" id="math-exercise-1-f1" data-answer="2**(-10)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p>Kontroller også bitmønstrene rundt 1.</p>
+<div class="math-exercise-cell" id="math-exercise-2" data-label="exam-h25-10-epsilon-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;eksponent for 1&quot;,&quot;mantisse for 1&quot;,&quot;eksponent for neste tall&quot;,&quot;mantisse for neste tall&quot;]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet. Kontroller også bitmønstrene rundt 1.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;,&quot;math-exercise-2-f4&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene for 1 og neste tall</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Svarformat: Hvert eksponentfelt skal være en binær streng med nøyaktig 5 bit.<br>
+Hvert mantissefelt skal være en binær streng med nøyaktig 10 bit. Bruk bare<br>
+nuller og enere, uten mellomrom eller skilletegn.<br>
+<br>
+For tallet 1: eksponentfelt: <input type="text" id="math-exercise-2-f1" data-answer="01111" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> og mantissefelt: <input type="text" id="math-exercise-2-f2" data-answer="0000000000" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">.<br>
+<br>
+For det nærmeste tallet over 1: eksponentfelt: <input type="text" id="math-exercise-2-f3" data-answer="01111" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> og mantissefelt:<br>
+<input type="text" id="math-exercise-2-f4" data-answer="0000000001" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">.</div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
@@ -989,18 +736,338 @@ select.math-modal-input {
 </div>
 </div>
 </section>
-<section id="python-exercise" class="level2">
-<h2 class="anchored" data-anchor-id="python-exercise">Python exercise</h2>
-<div class="py-exercise-cell" id="py-exercise-1">
-  <noscript>
-    Please enable JavaScript to load the interactive exercise.
-  </noscript>
+<section id="b-representasjon-av-12345" class="level3">
+<h3 class="anchored" data-anchor-id="b-representasjon-av-12345">b) Representasjon av 12345</h3>
+<p>Tallet er gitt i binær form som</p>
+<p><span class="math display">\[
+12345=(11000000111001)_2.
+\]</span></p>
+<div class="math-exercise-cell" id="math-exercise-3" data-label="exam-h25-10-encode-12345" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;b) Representasjon av 12345 Tallet er gitt i binær form som 12345=(11000000111001)_2.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Kod 12345 i halvpresisjon</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 5 bit og<br>
+mantissefeltet nøyaktig 10 bit. Bruk bare nuller og enere, uten mellomrom eller<br>
+skilletegn.<br>
+<br>
+$s=$ <input type="text" id="math-exercise-3-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; $E=$ <input type="text" id="math-exercise-3-f2" data-answer="11100" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; $f=$ <input type="text" id="math-exercise-3-f3" data-answer="1000000111" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
 </div>
-<script>
-(window.__pyExercises = window.__pyExercises || []).push({"caption":"Implementer addisjon","forbiddenImports":[],"forbiddenKeywords":[],"id":1,"label":"python-test-1","showTestHints":true,"starter":"def add(a, b):\n    pass","tests":"assert add(1, 2) == 3, \"add(1, 2) skal gi 3\"\nassert add(-1, 1) == 0, \"add(-1, 1) skal gi 0\""});
-</script>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+</section>
+<section id="c-avrunding-nær-1" class="level3">
+<h3 class="anchored" data-anchor-id="c-avrunding-nær-1">c) Avrunding nær 1</h3>
+<p>Vi ønsker å lagre</p>
+<p><span class="math display">\[
+x=1+2^{-12}+2^{-15}.
+\]</span></p>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="exam-h25-10-round-near-one" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;lagret verdi&quot;]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallene og den lagrede verdien</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Svarformat: Skriv hvert svar som et heltall eller et eksakt uttrykk. Bruk<br>
+`2**(-k)` for $2^{-k}$.<br>
+<br>
+Det nedre representerbare nabotallet er <input type="text" id="math-exercise-4-f1" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.<br>
+<br>
+Det øvre representerbare nabotallet er <input type="text" id="math-exercise-4-f2" data-answer="1 + 2**(-10)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">.<br>
+<br>
+Etter avrunding lagres verdien <input type="text" id="math-exercise-4-f3" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<div class="math-exercise-cell" id="math-exercise-5" data-label="exam-h25-10-round-near-one-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene til nabotallene</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Begge tallene har fortegn 0 og eksponentfelt 01111.<br>
+<br>
+Svarformat: Hvert svar skal være en binær streng med nøyaktig 10 bit. Bruk bare<br>
+nuller og enere, uten mellomrom eller skilletegn.<br>
+<br>
+Nedre: <input type="text" id="math-exercise-5-f1" data-answer="0000000000" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp;&nbsp; Øvre: <input type="text" id="math-exercise-5-f2" data-answer="0000000001" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Valgt etter avrunding: <input type="text" id="math-exercise-5-f3" data-answer="0000000000" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+</section>
+</section>
+<section id="vår-2026-konte-oppgave-8-minifloat" class="level2">
+<h2 class="anchored" data-anchor-id="vår-2026-konte-oppgave-8-minifloat">Vår 2026, konte – oppgave 8: MiniFloat</h2>
+<p>Oppgaven bygger på eksamensoppgave 8 fra IMAx3011 konteeksamen våren 2026.</p>
+<div id="k26-minifloat-format" class="math-exercise-context">
+<section id="minifloat133" class="level3">
+<h3 class="anchored" data-anchor-id="minifloat133">MiniFloat(1,3,3)</h3>
+<p>Formatet har sju bit: én fortegnsbit <span class="math inline">\(s\)</span>, tre eksponentbiter <span class="math inline">\(e\)</span> og tre brøkbiter <span class="math inline">\(f\)</span>. Bias er <span class="math inline">\(B=3\)</span>. Alle tall i denne oppgaven er normaliserte og tolkes som</p>
+<p><span class="math display">\[
+x=(-1)^s(1.f)_2\,2^{e-B}.
+\]</span></p>
+<p>Eksponentkodene <code>000</code> og <code>111</code> brukes ikke. Ved avrunding velges nærmeste representerbare tall. Ligger verdien nøyaktig midt mellom to tall, bruker vi ties-to-even: alternativet med siste mantissebit 0 velges.</p>
+</section>
+</div>
+<section id="a-dekoding" class="level3">
+<h3 class="anchored" data-anchor-id="a-dekoding">a) Dekoding</h3>
+<div class="math-exercise-cell" id="math-exercise-6" data-label="exam-k26-8-decode" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;a) Dekoding&quot;" data-fields="[&quot;math-exercise-6-f1&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Dekod et MiniFloat-tall</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Svarformat: Oppgi én eksakt tallverdi som heltall, brøk eller desimaltall med<br>
+punktum som desimalskilletegn.<br>
+<br>
+Hva er desimalverdien av bitmønsteret<br>
+<br>
+$$<br>
+\texttt{0 100 010}?<br>
+$$<br>
+<br>
+Verdien er <input type="text" id="math-exercise-6-f1" data-answer="5/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+</section>
+<section id="b-koding-og-avrunding" class="level3">
+<h3 class="anchored" data-anchor-id="b-koding-og-avrunding">b) Koding og avrunding</h3>
+<p>Tallet <span class="math inline">\(5.25\)</span> ligger nøyaktig midt mellom to representerbare MiniFloat-tall.</p>
+<div class="math-exercise-cell" id="math-exercise-7" data-label="exam-k26-8-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;b) Koding og avrunding Tallet 5.25 ligger nøyaktig midt mellom to representerbare MiniFloat-tall.&quot;" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;,&quot;math-exercise-7-f3&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Kod 5.25 med ties-to-even</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 3 bit og<br>
+mantissefeltet nøyaktig 3 bit. Bruk bare nuller og enere, uten mellomrom eller<br>
+skilletegn.<br>
+<br>
+$s=$ <input type="text" id="math-exercise-7-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; $e=$ <input type="text" id="math-exercise-7-f2" data-answer="101" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; $f=$ <input type="text" id="math-exercise-7-f3" data-answer="010" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+</section>
+<section id="c-nærmeste-tall-til-0.3" class="level3">
+<h3 class="anchored" data-anchor-id="c-nærmeste-tall-til-0.3">c) Nærmeste tall til 0.3</h3>
+<div class="math-exercise-cell" id="math-exercise-8" data-label="exam-k26-8-round-point-three" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;avrundet verdi&quot;]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Rund 0.3 til MiniFloat</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Svarformat: Oppgi hvert tall som en eksakt brøk eller som et desimaltall med<br>
+punktum som desimalskilletegn.<br>
+<br>
+Det nedre representerbare nabotallet er <input type="text" id="math-exercise-8-f1" data-answer="9/32" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.<br>
+<br>
+Det øvre representerbare nabotallet er <input type="text" id="math-exercise-8-f2" data-answer="5/16" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.<br>
+<br>
+Ved avrunding til nærmeste lagres <input type="text" id="math-exercise-8-f3" data-answer="5/16" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<div class="math-exercise-cell" id="math-exercise-9" data-label="exam-k26-8-round-point-three-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Bitmønstre rundt 0.3</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Alle tre svarene har fortegn 0 og eksponentfelt 001.<br>
+<br>
+Svarformat: Hvert svar skal være en binær streng med nøyaktig 3 bit. Bruk bare<br>
+nuller og enere, uten mellomrom eller skilletegn.<br>
+<br>
+Nedre: <input type="text" id="math-exercise-9-f1" data-answer="001" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; Øvre: <input type="text" id="math-exercise-9-f2" data-answer="010" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; Valgt: <input type="text" id="math-exercise-9-f3" data-answer="010" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+</section>
+<section id="d-avstand-mellom-nabotall" class="level3">
+<h3 class="anchored" data-anchor-id="d-avstand-mellom-nabotall">d) Avstand mellom nabotall</h3>
+<div class="math-exercise-cell" id="math-exercise-10" data-label="exam-k26-8-spacing" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;d) Avstand mellom nabotall&quot;" data-fields="[&quot;math-exercise-10-f1&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallsavstanden</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Hold eksponentfeltet fast på $e=\texttt{100}$. Avstanden mellom to tall som<br>
+bare skiller seg med 1 i mantissefeltet er<br>
+<br>
+Svarformat: Oppgi én eksakt brøk eller et desimaltall med punktum som<br>
+desimalskilletegn.<br>
+<br>
+$$\Delta =$$ <input type="text" id="math-exercise-10-f1" data-answer="1/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+</section>
+</section>
+<section id="vår-2026-konte-2-oppgave-8-kansellering" class="level2">
+<h2 class="anchored" data-anchor-id="vår-2026-konte-2-oppgave-8-kansellering">Vår 2026, konte 2 – oppgave 8: Kansellering</h2>
+<p>Oppgaven bygger på eksamensoppgave 8 fra den andre konteeksamenen i IMAx3011 våren 2026.</p>
+<div id="k2-decimal-format" class="math-exercise-context">
+<section id="desimalt-flyttallsformat" class="level3">
+<h3 class="anchored" data-anchor-id="desimalt-flyttallsformat">Desimalt flyttallsformat</h3>
+<p>Vi bruker et desimalt flyttallsformat med fire signifikante sifre og avrunding til nærmeste representerbare tall. Regneoperasjoner utføres på de lagrede verdiene, og resultatet avrundes tilbake til formatet.</p>
+<p>Når to nesten like tall subtraheres, kan de ledende sifrene forsvinne. Små avrundingsfeil i operandene kan da bli store sammenlignet med den lille differansen. Dette kalles kansellering.</p>
+</section>
+</div>
+<section id="a-maskinell-differanse" class="level3">
+<h3 class="anchored" data-anchor-id="a-maskinell-differanse">a) Maskinell differanse</h3>
+<p>La <span class="math inline">\(x=12.345\)</span> og <span class="math inline">\(y=12.344\)</span>.</p>
+<div class="math-exercise-cell" id="math-exercise-11" data-label="exam-k2-8-machine-difference" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;lagret x&quot;,&quot;lagret y&quot;,&quot;maskinell differanse&quot;,&quot;eksakt differanse&quot;]" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-11-f1&quot;,&quot;math-exercise-11-f2&quot;,&quot;math-exercise-11-f3&quot;,&quot;math-exercise-11-f4&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Lagre og subtraher med fire signifikante sifre</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Svarformat: Oppgi bare tallverdien i hvert felt. Bruk punktum som<br>
+desimalskilletegn, ikke komma.<br>
+<br>
+$$\operatorname{fl}(x)=$$ <input type="text" id="math-exercise-11-f1" data-answer="12.35" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
+<br>
+$$\operatorname{fl}(y)=$$ <input type="text" id="math-exercise-11-f2" data-answer="12.34" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
+<br>
+$$\operatorname{fl}(\operatorname{fl}(x)-\operatorname{fl}(y))=$$ <input type="text" id="math-exercise-11-f3" data-answer="0.01" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
+<br>
+Den eksakte differansen er $x-y=$ <input type="text" id="math-exercise-11-f4" data-answer="0.001" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<div class="math-exercise-cell" id="math-exercise-12" data-label="exam-k2-8-error-factor" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-12-f1&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Sammenlign differansene</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Svarformat: Oppgi ett positivt heltall.<br>
+<br>
+Den maskinelle differansen er <input type="text" id="math-exercise-12-f1" data-answer="10" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> ganger den eksakte differansen.</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+</section>
+<div id="k2-stable-rationalization" class="math-exercise-context">
+<section id="stabil-omskriving" class="level3">
+<h3 class="anchored" data-anchor-id="stabil-omskriving">Stabil omskriving</h3>
+<p>For små <span class="math inline">\(t&gt;0\)</span> er <span class="math inline">\(\sqrt{1+t}\)</span> nær 1. Direkte beregning av <span class="math inline">\(\sqrt{1+t}-1\)</span> subtraherer derfor to nesten like tall og kan miste mange signifikante sifre. Ved å multiplisere teller og nevner med den konjugerte <span class="math inline">\(\sqrt{1+t}+1\)</span> kan subtraksjonen fjernes.</p>
+</section>
+</div>
+<section id="bc-kansellering-og-rasjonalisering" class="level3">
+<h3 class="anchored" data-anchor-id="bc-kansellering-og-rasjonalisering">b–c) Kansellering og rasjonalisering</h3>
+<div class="math-exercise-cell" id="math-exercise-13" data-label="exam-k2-8-rationalize" data-mode="equivalent" data-reject="sqrt(1+t)-1" data-vars="t" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="k2-decimal-format, k2-stable-rationalization" data-context="&quot;b–c) Kansellering og rasjonalisering&quot;" data-fields="[&quot;math-exercise-13-f1&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Skriv om uttrykket</div>
+
+<div class="math-exercise-body" style="display:none;">
+<div class="math-exercise-question">Skriv $\sqrt{1+t}-1$ på en matematisk ekvivalent form som unngår subtraksjon<br>
+av to nesten like tall.<br>
+<br>
+Svarformat: Bruk variabelen `t` og skriv kvadratroten som `sqrt(...)`. Bruk<br>
+vanlige regneoperatorer som `+`, `-`, `*` og `/`. Det opprinnelige uttrykket<br>
+godtas ikke.<br>
+<br>
+$$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(sqrt(1+t)+1)" data-vars="t" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Input help</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Feedback</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Change AI configuration">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -3234,781 +3301,6 @@ select.math-modal-input {
     ensurePyodide().catch(function (e) {
       console.warn('math-exercise: Pyodide preload failed (will retry on the first check):', e);
     });
-  });
-
-})();
-
-</script>
-<script type="text/javascript">
-(function () {
-  'use strict';
-
-  // ---------------------------------------------------------------------------
-  // Locales – add new languages here
-  // ---------------------------------------------------------------------------
-
-  var LOCALES = {
-    en: {
-      btnCheck:             '<i class="fa-solid fa-check"></i> Check',
-      btnCheckTitle:        'Run checks (Shift+Enter)',
-      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Reset',
-      btnResetTitle:        'Restore starter code',
-      running:              '⏳ Checking…',
-      errorHeader:          '❌ Error in code:',
-      unexpectedError:      '❌ Unexpected error:',
-      stdoutLabel:          'Output:',
-      allPassed: function (n) {
-        return '✅ All ' + n + ' test' + (n === 1 ? '' : 's') + ' passed!';
-      },
-      someFailed: function (p, t) {
-        return '❌ ' + p + ' of ' + t + ' test' + (t === 1 ? '' : 's') + ' passed';
-      },
-      violationsHeader:     '🚫 Not allowed:',
-      // Submission UI
-      submissionTitle:      '📋 Submission',
-      studentIdLabel:       'Student ID',
-      studentIdPlaceholder: 'e.g. s123456',
-      quizIdLabel:          'Quiz ID',
-      quizIdPlaceholder:    'e.g. quiz-01',
-      exportBtn:            '<i class="fa-solid fa-file-export"></i> Export results',
-      outputLabel:          'Copy encoded string and submit:',
-      copyBtn:              '<i class="fa-regular fa-copy"></i> Copy',
-      copyOk:               '<i class="fa-solid fa-check"></i> Copied!',
-      validationError:      'Please fill in Student ID and Quiz ID.',
-      encodingError:        'Error during encoding: ',
-      // Download
-      downloadBtn:          '<i class="fa-solid fa-download"></i> Download as JSON',
-      downloadBtnTitle:     'Save current code and test results for all exercises',
-      downloadHint:         'Saves your code and test results for personal documentation.',
-      downloadFilename:     'exercises-',
-      // Python message templates – use {} as placeholder for str.format()
-      msgForbiddenImport:   "Forbidden import: '{}'",
-      msgForbiddenFunction: "Forbidden function: '{}'",
-      msgForbiddenMethod:   "Forbidden method: '.{}'",
-      msgForbiddenKeyword:  "Forbidden keyword: '{}'",
-      msgAssertionFailed:   'Assertion failed',
-      msgTestError:         'Error: {}',
-      msgSyntaxError:       'Syntax error in tests: {}',
-    },
-    de: {
-      btnCheck:             '<i class="fa-solid fa-check"></i> Überprüfen',
-      btnCheckTitle:        'Code prüfen (Shift+Enter)',
-      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Zurücksetzen',
-      btnResetTitle:        'Starter-Code wiederherstellen',
-      running:              '⏳ Überprüfe…',
-      errorHeader:          '❌ Fehler im Code:',
-      unexpectedError:      '❌ Unerwarteter Fehler:',
-      stdoutLabel:          'Ausgabe:',
-      allPassed: function (n) {
-        return '✅ Alle ' + n + ' Test' + (n === 1 ? '' : 's') + ' bestanden!';
-      },
-      someFailed: function (p, t) {
-        return '❌ ' + p + ' von ' + t + ' Test' + (t === 1 ? '' : 's') + ' bestanden';
-      },
-      violationsHeader:     '🚫 Nicht erlaubt:',
-      // Submission UI
-      submissionTitle:      '📋 Abgabe',
-      studentIdLabel:       'Student-ID',
-      studentIdPlaceholder: 'z.B. s123456',
-      quizIdLabel:          'Quiz-ID',
-      quizIdPlaceholder:    'z.B. quiz-01',
-      exportBtn:            '<i class="fa-solid fa-file-export"></i> Ergebnis exportieren',
-      outputLabel:          'Kodierten String kopieren und abgeben:',
-      copyBtn:              '<i class="fa-regular fa-copy"></i> Kopieren',
-      copyOk:               '<i class="fa-solid fa-check"></i> Kopiert!',
-      validationError:      'Bitte Student-ID und Quiz-ID ausfüllen.',
-      encodingError:        'Fehler beim Kodieren: ',
-      // Download
-      downloadBtn:          '<i class="fa-solid fa-download"></i> Als JSON herunterladen',
-      downloadBtnTitle:     'Aktuellen Code und Testergebnisse aller Aufgaben speichern',
-      downloadHint:         'Speichert Code-Eingaben und Testergebnisse zur eigenen Dokumentation.',
-      downloadFilename:     'aufgaben-',
-      // Python message templates
-      msgForbiddenImport:   "Verbotener Import: '{}'",
-      msgForbiddenFunction: "Verbotene Funktion: '{}'",
-      msgForbiddenMethod:   "Verbotene Methode: '.{}'",
-      msgForbiddenKeyword:  "Verbotenes Schlüsselwort: '{}'",
-      msgAssertionFailed:   'Assertion fehlgeschlagen',
-      msgTestError:         'Fehler: {}',
-      msgSyntaxError:       'Syntaxfehler in Tests: {}',
-    },
-  };
-
-  // ---------------------------------------------------------------------------
-  // Utilities
-  // ---------------------------------------------------------------------------
-
-  // Laedt ein Skript genau einmal. Ist der Tag schon da, aber noch nicht
-  // fertig geladen, wird auf dessen load-Event gewartet - NICHT sofort
-  // aufgeloest. Sonst greift eine zweite Extension auf globals zu, die es
-  // noch gar nicht gibt.
-  function loadScript(src) {
-    return new Promise(function (resolve, reject) {
-      var existing = document.querySelector('script[src="' + src + '"]');
-      if (existing) {
-        if (existing.dataset.qLoaded === '1') { resolve(); return; }
-        existing.addEventListener('load', function () { resolve(); });
-        existing.addEventListener('error', function () {
-          reject(new Error('Failed to load: ' + src));
-        });
-        return;
-      }
-      var s = document.createElement('script');
-      s.src = src;
-      s.onload = function () { s.dataset.qLoaded = '1'; resolve(); };
-      s.onerror = function () { reject(new Error('Failed to load: ' + src)); };
-      document.head.appendChild(s);
-    });
-  }
-
-  async function ensurePyodide() {
-    // coatless-quarto/pyodide is loading — wait for its promise instead of loading a second instance
-    if (typeof qpyodideInstance !== 'undefined') {
-      window.mainPyodide = await qpyodideInstance;
-      return;
-    }
-    // coatless already finished
-    if (typeof mainPyodide !== 'undefined') return;
-    // Standalone. Gemeinsames Promise, damit math-exercise und py-exercise auf
-    // derselben Seite nicht zwei Pyodide-Instanzen starten oder sich beim
-    // Laden ins Gehege kommen.
-    var cdnBase = 'https://cdn.jsdelivr.net/pyodide/v0.27.2/full/';
-    if (!globalThis.__qExercisePyodide) {
-      globalThis.__qExercisePyodide = (async function () {
-        await loadScript(cdnBase + 'pyodide.js');
-        return await loadPyodide({ indexURL: cdnBase });
-      })();
-    }
-    window.mainPyodide = await globalThis.__qExercisePyodide;
-  }
-
-  // Monaco is normally already loaded by the pyodide extension. If not (standalone
-  // use), we load the AMD loader from CDN and let it fetch the editor itself.
-  async function ensureMonaco() {
-    var cdnBase = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs';
-    if (typeof require === 'undefined') {
-      await loadScript(cdnBase + '/loader.js');
-    }
-    require.config({ paths: { vs: cdnBase } });
-    await new Promise(function (resolve) {
-      require(['vs/editor/editor.main'], resolve);
-    });
-  }
-
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  // ---------------------------------------------------------------------------
-  // Submission state + locale
-  // ---------------------------------------------------------------------------
-
-  var submissionConfig = window.__pyExerciseConfig || { submission: false, submissionKey: 'py-exercise', lang: 'en' };
-  var L = LOCALES[submissionConfig.lang] || LOCALES['en'];
-
-  // Map of exercise label → { label, passed, total, tests: [bool, ...] }
-  var exerciseResults = {};
-
-  // Map of exercise label → Monaco editor instance
-  var exerciseEditors = {};
-
-  // ---------------------------------------------------------------------------
-  // Python: AST-based violation checker
-  // ---------------------------------------------------------------------------
-  var CHECKER_PY = [
-    'import ast as _ast, json as _json',
-    '',
-    '_fi = list(_exercise_forbidden_imports)',
-    '_fk = list(_exercise_forbidden_keywords)',
-    '',
-    '_KW_NODES = {',
-    '    "for":      _ast.For,',
-    '    "while":    _ast.While,',
-    '    "with":     _ast.With,',
-    '    "lambda":   _ast.Lambda,',
-    '    "class":    _ast.ClassDef,',
-    '    "global":   _ast.Global,',
-    '    "nonlocal": _ast.Nonlocal,',
-    '    "try":      _ast.Try,',
-    '    "raise":    _ast.Raise,',
-    '    "del":      _ast.Delete,',
-    '    "assert":   _ast.Assert,',
-    '    "yield":    _ast.Yield,',
-    '}',
-    '',
-    '_violations = []',
-    '_seen = set()',
-    '',
-    'def _add(msg):',
-    '    if msg not in _seen:',
-    '        _seen.add(msg)',
-    '        _violations.append(msg)',
-    '',
-    'try:',
-    '    _tree = _ast.parse(_exercise_student_code)',
-    '    for _node in _ast.walk(_tree):',
-    '        if isinstance(_node, _ast.Import):',
-    '            for _a in _node.names:',
-    '                _top = _a.name.split(".")[0]',
-    '                if _top in _fi:',
-    '                    _add(_msg_forbidden_import.format(_top))',
-    '        elif isinstance(_node, _ast.ImportFrom):',
-    '            if _node.module:',
-    '                _top = _node.module.split(".")[0]',
-    '                if _top in _fi:',
-    '                    _add(_msg_forbidden_import.format(_top))',
-    '        elif isinstance(_node, _ast.Call):',
-    '            if isinstance(_node.func, _ast.Name):',
-    '                if _node.func.id in _fk:',
-    '                    _add(_msg_forbidden_function.format(_node.func.id))',
-    '            elif isinstance(_node.func, _ast.Attribute):',
-    '                if _node.func.attr in _fk:',
-    '                    _add(_msg_forbidden_method.format(_node.func.attr))',
-    '        else:',
-    '            for _kw, _nt in _KW_NODES.items():',
-    '                if _kw in _fk and isinstance(_node, _nt):',
-    '                    _add(_msg_forbidden_keyword.format(_kw))',
-    'except SyntaxError:',
-    '    pass',
-    '',
-    '_json.dumps(_violations)',
-  ].join('\n');
-
-  // ---------------------------------------------------------------------------
-  // Python: main runner
-  // ---------------------------------------------------------------------------
-  var RUNNER_PY = [
-    'import ast, json, io, sys, traceback',
-    '',
-    '_ns = {}',
-    '_results = {"student_error": None, "stdout": "", "tests": []}',
-    '',
-    '_buf = io.StringIO()',
-    '_old_stdout = sys.stdout',
-    'sys.stdout = _buf',
-    'try:',
-    '    exec(compile(_exercise_student_code, "<student>", "exec"), _ns)',
-    '    _results["stdout"] = _buf.getvalue()',
-    'except Exception:',
-    '    _results["student_error"] = traceback.format_exc()',
-    '    _results["stdout"] = _buf.getvalue()',
-    'finally:',
-    '    sys.stdout = _old_stdout',
-    '',
-    'if _results["student_error"] is None:',
-    '    try:',
-    '        _tree = ast.parse(_exercise_test_code)',
-    '        for _stmt in _tree.body:',
-    '            _single = compile(',
-    '                ast.Module(body=[_stmt], type_ignores=[]),',
-    '                "<test>", "exec"',
-    '            )',
-    '            try:',
-    '                exec(_single, _ns)',
-    '                _results["tests"].append({"passed": True})',
-    '            except AssertionError as e:',
-    '                _results["tests"].append({',
-    '                    "passed": False,',
-    '                    "message": str(e) if str(e) else _msg_assertion_failed',
-    '                })',
-    '            except Exception as e:',
-    '                _results["tests"].append({"passed": False, "message": _msg_test_error.format(e)})',
-    '    except SyntaxError as e:',
-    '        _results["student_error"] = _msg_syntax_error.format(e)',
-    '',
-    'json.dumps(_results)',
-  ].join('\n');
-
-  // ---------------------------------------------------------------------------
-  // Python: submission encoder
-  // ---------------------------------------------------------------------------
-  // Encoding: JSON → UTF-8 bytes → XOR with cycling key → Base64.
-  var ENCODER_PY = [
-    'import json as _json, base64 as _b64',
-    '',
-    '_key  = _submission_key.encode("utf-8")',
-    '_raw  = _json.dumps(_submission_payload, ensure_ascii=False).encode("utf-8")',
-    '_xord = bytes(b ^ _key[i % len(_key)] for i, b in enumerate(_raw))',
-    '_b64.b64encode(_xord).decode("ascii")',
-  ].join('\n');
-
-  // ---------------------------------------------------------------------------
-  // Result rendering
-  // ---------------------------------------------------------------------------
-
-  function renderViolations(area, violations) {
-    var items = violations.map(function (v) {
-      return '<li>' + escapeHtml(v) + '</li>';
-    }).join('');
-    area.innerHTML =
-      '<div class="py-exercise-violations">' +
-      '<strong>' + L.violationsHeader + '</strong>' +
-      '<ul class="py-exercise-violation-list">' + items + '</ul>' +
-      '</div>';
-  }
-
-  function renderResult(area, data, label, showHints) {
-    var html = '';
-
-    if (data.student_error) {
-      area.innerHTML =
-        '<div class="py-exercise-error">' +
-        '<strong>' + L.errorHeader + '</strong>' +
-        '<pre>' + escapeHtml(data.student_error) + '</pre>' +
-        '</div>';
-      return;
-    }
-
-    if (data.stdout && data.stdout.trim()) {
-      html +=
-        '<div class="py-exercise-stdout">' +
-        '<span class="py-exercise-stdout-label">' + L.stdoutLabel + '</span>' +
-        '<pre>' + escapeHtml(data.stdout) + '</pre>' +
-        '</div>';
-    }
-
-    var tests   = data.tests || [];
-    var passed  = tests.filter(function (t) { return t.passed; }).length;
-    var total   = tests.length;
-    var allPass = total > 0 && passed === total;
-
-    // Store result for submission export
-    if (label && total > 0) {
-      exerciseResults[label] = {
-        label:  label,
-        passed: passed,
-        total:  total,
-        tests:  tests.map(function (t) { return t.passed; }),
-      };
-    }
-
-    html += '<div class="py-exercise-summary">';
-    if (allPass) {
-      html += '<div class="py-exercise-all-passed">' + L.allPassed(total) + '</div>';
-    } else {
-      html += '<div class="py-exercise-some-failed">' + L.someFailed(passed, total) + '</div>';
-    }
-
-    if (total > 1) {
-      html += '<ul class="py-exercise-test-list">';
-      tests.forEach(function (t, i) {
-        if (t.passed) {
-          html += '<li class="py-test-pass">✓ Test ' + (i + 1) + '</li>';
-        } else {
-          html +=
-            '<li class="py-test-fail">✗ Test ' + (i + 1) +
-            (showHints !== false && t.message ? ': ' + escapeHtml(t.message) : '') +
-            '</li>';
-        }
-      });
-      html += '</ul>';
-    } else if (!allPass && showHints !== false && tests[0] && tests[0].message) {
-      html += '<div class="py-exercise-hint">' + escapeHtml(tests[0].message) + '</div>';
-    }
-
-    html += '</div>';
-    area.innerHTML = html;
-  }
-
-  // ---------------------------------------------------------------------------
-  // Exercise cell setup
-  // ---------------------------------------------------------------------------
-
-  function setupExercise(exerciseData) {
-    var container = document.getElementById('py-exercise-' + exerciseData.id);
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    var starterCode       = exerciseData.starter           || '';
-    var testsCode         = exerciseData.tests             || '';
-    var forbiddenImports  = exerciseData.forbiddenImports  || [];
-    var forbiddenKeywords = exerciseData.forbiddenKeywords || [];
-    var label             = exerciseData.label;
-    var showHints         = exerciseData.showTestHints !== false;
-    // caption is metadata only (used in downloadAll JSON), not rendered visually
-
-    // localStorage key scoped to this page + label
-    var storageKey = 'pyex|' + window.location.pathname + '|' + label;
-    var savedCode = null;
-    try { savedCode = localStorage.getItem(storageKey); } catch (e) {}
-
-    // Monaco editor container
-    var editorContainer = document.createElement('div');
-    editorContainer.className = 'py-exercise-editor';
-    container.appendChild(editorContainer);
-
-    // Button bar
-    var buttonBar = document.createElement('div');
-    buttonBar.className = 'py-exercise-buttons';
-
-    var checkBtn = document.createElement('button');
-    checkBtn.className = 'btn btn-primary py-exercise-check';
-    checkBtn.innerHTML = L.btnCheck;
-    checkBtn.type = 'button';
-    checkBtn.title = L.btnCheckTitle;
-
-    var resetBtn = document.createElement('button');
-    resetBtn.className = 'btn btn-light py-exercise-reset';
-    resetBtn.innerHTML = L.btnReset;
-    resetBtn.type = 'button';
-    resetBtn.title = L.btnResetTitle;
-
-    buttonBar.appendChild(checkBtn);
-    buttonBar.appendChild(resetBtn);
-    container.appendChild(buttonBar);
-
-    var resultArea = document.createElement('div');
-    resultArea.className = 'py-exercise-result';
-    container.appendChild(resultArea);
-
-    var editor;
-    require(['vs/editor/editor.main'], function () {
-      editor = monaco.editor.create(editorContainer, {
-        value: savedCode !== null ? savedCode : starterCode,
-        language: 'python',
-        theme: 'vs-light',
-        automaticLayout: true,
-        scrollBeyondLastLine: false,
-        minimap: { enabled: false },
-        fontSize: 14,
-        renderLineHighlight: 'none',
-        hideCursorInOverviewRuler: true,
-      });
-
-      // Store reference so downloadAll() can read the current code later
-      exerciseEditors[label] = editor;
-
-      var updateHeight = function () {
-        var h = Math.max(80, editor.getContentHeight());
-        editorContainer.style.height = h + 'px';
-        editor.layout();
-      };
-      editor.onDidContentSizeChange(updateHeight);
-      updateHeight();
-
-      // Persist code across reloads
-      var saveTimer;
-      editor.onDidChangeModelContent(function () {
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(function () {
-          try { localStorage.setItem(storageKey, editor.getValue()); } catch (e) {}
-        }, 500);
-      });
-
-      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, runCheck);
-    });
-
-    async function runCheck() {
-      if (!editor) return;
-
-      resultArea.innerHTML = '<div class="py-exercise-running">' + L.running + '</div>';
-      checkBtn.disabled = true;
-      resetBtn.disabled = true;
-
-      var studentCode = editor.getValue();
-
-      try {
-        mainPyodide.globals.set('_exercise_student_code',  studentCode);
-        mainPyodide.globals.set('_exercise_test_code',     testsCode);
-        mainPyodide.globals.set('_exercise_forbidden_imports',  mainPyodide.toPy(forbiddenImports));
-        mainPyodide.globals.set('_exercise_forbidden_keywords', mainPyodide.toPy(forbiddenKeywords));
-
-        if (forbiddenImports.length > 0 || forbiddenKeywords.length > 0) {
-          var violationsRaw = await mainPyodide.runPythonAsync(CHECKER_PY);
-          var violations = JSON.parse(violationsRaw);
-          if (violations.length > 0) {
-            renderViolations(resultArea, violations);
-            return;
-          }
-        }
-
-        await mainPyodide.loadPackagesFromImports(studentCode);
-        var raw  = await mainPyodide.runPythonAsync(RUNNER_PY);
-        var data = JSON.parse(raw);
-        renderResult(resultArea, data, label, showHints);
-
-      } catch (err) {
-        resultArea.innerHTML =
-          '<div class="py-exercise-error">' +
-          '<strong>' + L.unexpectedError + '</strong>' +
-          '<pre>' + escapeHtml(String(err)) + '</pre>' +
-          '</div>';
-      } finally {
-        checkBtn.disabled = false;
-        resetBtn.disabled = false;
-      }
-    }
-
-    checkBtn.onclick = runCheck;
-    resetBtn.onclick = function () {
-      if (editor) editor.setValue(starterCode);
-      try { localStorage.removeItem(storageKey); } catch (e) {}
-      resultArea.innerHTML = '';
-    };
-  }
-
-  // ---------------------------------------------------------------------------
-  // Submission UI
-  // ---------------------------------------------------------------------------
-
-  function buildSubmissionHeader() {
-    var wrap = document.createElement('div');
-    wrap.className = 'py-submission-header';
-    wrap.innerHTML =
-      '<div class="py-submission-header-inner">' +
-        '<h5 class="py-submission-title">' + L.submissionTitle + '</h5>' +
-        '<div class="py-submission-fields">' +
-          '<div class="py-submission-field">' +
-            '<label for="py-submission-student-id">' + L.studentIdLabel + '</label>' +
-            '<input type="text" id="py-submission-student-id" ' +
-                   'placeholder="' + escapeHtml(L.studentIdPlaceholder) + '" autocomplete="off">' +
-          '</div>' +
-          '<div class="py-submission-field">' +
-            '<label for="py-submission-quiz-id">' + L.quizIdLabel + '</label>' +
-            '<input type="text" id="py-submission-quiz-id" ' +
-                   'placeholder="' + escapeHtml(L.quizIdPlaceholder) + '" autocomplete="off">' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-    return wrap;
-  }
-
-  function buildSubmissionFooter() {
-    var wrap = document.createElement('div');
-    wrap.className = 'py-submission-footer';
-
-    var btn = document.createElement('button');
-    btn.className = 'btn btn-success py-submission-export-btn';
-    btn.innerHTML = L.exportBtn;
-    btn.type = 'button';
-    btn.onclick = exportResults;
-
-    var msg = document.createElement('div');
-    msg.className = 'py-submission-msg';
-    msg.id = 'py-submission-msg';
-
-    var outWrap = document.createElement('div');
-    outWrap.className = 'py-submission-output-wrap';
-    outWrap.id = 'py-submission-output-wrap';
-    outWrap.style.display = 'none';
-
-    var outLabelRow = document.createElement('div');
-    outLabelRow.className = 'py-submission-output-labelrow';
-
-    var outLabel = document.createElement('span');
-    outLabel.className = 'py-submission-output-label';
-    outLabel.textContent = L.outputLabel;
-
-    var copyBtn = document.createElement('button');
-    copyBtn.className = 'btn btn-light btn-sm py-submission-copy-btn';
-    copyBtn.id = 'py-submission-copy-btn';
-    copyBtn.type = 'button';
-    copyBtn.innerHTML = L.copyBtn;
-    copyBtn.onclick = function () {
-      var text = (document.getElementById('py-submission-output') || {}).value || '';
-      if (!text) return;
-      navigator.clipboard.writeText(text).then(function () {
-        copyBtn.innerHTML = L.copyOk;
-        copyBtn.classList.add('py-submission-copy-ok');
-        setTimeout(function () {
-          copyBtn.innerHTML = L.copyBtn;
-          copyBtn.classList.remove('py-submission-copy-ok');
-        }, 2000);
-      });
-    };
-
-    outLabelRow.appendChild(outLabel);
-    outLabelRow.appendChild(copyBtn);
-
-    var textarea = document.createElement('textarea');
-    textarea.className = 'py-submission-output';
-    textarea.id = 'py-submission-output';
-    textarea.readOnly = true;
-    textarea.rows = 4;
-    textarea.onclick = function () { this.select(); };
-
-    outWrap.appendChild(outLabelRow);
-    outWrap.appendChild(textarea);
-
-    wrap.appendChild(btn);
-    wrap.appendChild(msg);
-    wrap.appendChild(outWrap);
-    return wrap;
-  }
-
-  async function exportResults() {
-    var studentId = (document.getElementById('py-submission-student-id') || {}).value;
-    var quizId    = (document.getElementById('py-submission-quiz-id')    || {}).value;
-
-    studentId = (studentId || '').trim();
-    quizId    = (quizId    || '').trim();
-
-    var msgEl     = document.getElementById('py-submission-msg');
-    var outWrap   = document.getElementById('py-submission-output-wrap');
-    var outArea   = document.getElementById('py-submission-output');
-
-    if (!studentId || !quizId) {
-      if (msgEl) {
-        msgEl.innerHTML =
-          '<div class="py-submission-error">' + escapeHtml(L.validationError) + '</div>';
-      }
-      if (outWrap) outWrap.style.display = 'none';
-      return;
-    }
-    if (msgEl) msgEl.innerHTML = '';
-
-    // Collect results for every registered exercise (unattempted → 0/total)
-    var allResults = (window.__pyExercises || []).map(function (ex) {
-      return exerciseResults[ex.label] || {
-        label:  ex.label,
-        passed: 0,
-        total:  0,        // 0 = not attempted
-        tests:  [],
-      };
-    });
-
-    var payload = {
-      v:       1,
-      sid:     studentId,
-      qid:     quizId,
-      ts:      new Date().toISOString(),
-      results: allResults,
-    };
-
-    try {
-      mainPyodide.globals.set('_submission_payload', mainPyodide.toPy(payload));
-      mainPyodide.globals.set('_submission_key',     submissionConfig.submissionKey || 'py-exercise');
-
-      var encoded = await mainPyodide.runPythonAsync(ENCODER_PY);
-
-      if (outArea)  outArea.value = encoded;
-      if (outWrap)  outWrap.style.display = '';
-      if (msgEl)    msgEl.innerHTML = '';
-
-    } catch (err) {
-      if (msgEl) {
-        msgEl.innerHTML =
-          '<div class="py-submission-error">' +
-          escapeHtml(L.encodingError) + escapeHtml(String(err)) +
-          '</div>';
-      }
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // Download (personal documentation)
-  // ---------------------------------------------------------------------------
-
-  function downloadAll() {
-    var exercises = (window.__pyExercises || []).map(function (ex) {
-      var editor = exerciseEditors[ex.label];
-      var result = exerciseResults[ex.label] || null;
-      return {
-        label:   ex.label,
-        caption: ex.caption || null,
-        code:    editor ? editor.getValue() : ex.starter,
-        result:  result,
-      };
-    });
-
-    var data = {
-      exported_at: new Date().toISOString(),
-      exercises:   exercises,
-    };
-
-    var json = JSON.stringify(data, null, 2);
-    var blob = new Blob([json], { type: 'application/json' });
-    var url  = URL.createObjectURL(blob);
-    var a    = document.createElement('a');
-    a.href     = url;
-    a.download = L.downloadFilename + new Date().toISOString().slice(0, 10) + '.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  function buildDownloadSection() {
-    var wrap = document.createElement('div');
-    wrap.className = 'py-download-section';
-
-    var btn = document.createElement('button');
-    btn.className = 'btn btn-outline-secondary py-download-btn';
-    btn.innerHTML = L.downloadBtn;
-    btn.type = 'button';
-    btn.title = L.downloadBtnTitle;
-    btn.onclick = downloadAll;
-
-    var hint = document.createElement('span');
-    hint.className = 'py-download-hint';
-    hint.textContent = L.downloadHint;
-
-    wrap.appendChild(btn);
-    wrap.appendChild(hint);
-    return wrap;
-  }
-
-  function initDownload() {
-    var cells = document.querySelectorAll('.py-exercise-cell');
-    if (cells.length === 0) return;
-
-    // If a submission footer exists, append the download section to it (with separator).
-    // Otherwise create a standalone footer after the last exercise cell.
-    var subFooter = document.querySelector('.py-submission-footer');
-    if (subFooter) {
-      var sep = document.createElement('hr');
-      sep.className = 'py-footer-sep';
-      subFooter.appendChild(sep);
-      subFooter.appendChild(buildDownloadSection());
-    } else {
-      var footer = document.createElement('div');
-      footer.className = 'py-download-footer';
-      footer.appendChild(buildDownloadSection());
-      var lastCell = cells[cells.length - 1];
-      lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
-    }
-  }
-
-  function initSubmission() {
-    if (!submissionConfig.submission) return;
-
-    var cells = document.querySelectorAll('.py-exercise-cell');
-    if (cells.length === 0) return;
-
-    // Header before the first exercise cell
-    var header = buildSubmissionHeader();
-    cells[0].parentNode.insertBefore(header, cells[0]);
-
-    // Footer after the last exercise cell
-    var lastCell = cells[cells.length - 1];
-    var footer = buildSubmissionFooter();
-    lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
-  }
-
-  // ---------------------------------------------------------------------------
-  // Init
-  // ---------------------------------------------------------------------------
-  document.addEventListener('DOMContentLoaded', async function () {
-    await ensurePyodide();
-    await ensureMonaco();
-
-    mainPyodide.globals.set('_msg_forbidden_import',   L.msgForbiddenImport);
-    mainPyodide.globals.set('_msg_forbidden_function', L.msgForbiddenFunction);
-    mainPyodide.globals.set('_msg_forbidden_method',   L.msgForbiddenMethod);
-    mainPyodide.globals.set('_msg_forbidden_keyword',  L.msgForbiddenKeyword);
-    mainPyodide.globals.set('_msg_assertion_failed',   L.msgAssertionFailed);
-    mainPyodide.globals.set('_msg_test_error',         L.msgTestError);
-    mainPyodide.globals.set('_msg_syntax_error',       L.msgSyntaxError);
-
-    var exercises = window.__pyExercises || [];
-    exercises.forEach(setupExercise);
-    initSubmission();
-    initDownload();
   });
 
 })();
