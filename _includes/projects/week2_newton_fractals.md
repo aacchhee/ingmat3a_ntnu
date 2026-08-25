@@ -763,81 +763,182 @@ Forklar med konkrete tall hvordan en strengere toleranse og en større
 følgen divergerer? Betyr $|f(z_n)|<10^{-12}$ nødvendigvis at
 $|z_n-r|<10^{-12}$?
 
-## 8. Sluttfellen: Newton går i ring
+## 8. Sluttoppdraget: Når blir grensen ferdig?
 
-Så langt har vanskelige startverdier stort sett betydd at metoden bruker mange
-steg eller er følsom for små endringer. Nå får du en felles testfunksjon som
-viser en annen mulighet. Koden kan være riktig, alle tallene kan være endelige,
-og likevel kommer metoden aldri nærmere et nullpunkt.
+Tenk deg at du skal lage et digitalt kart over tiltrekningsområdene. På den
+første skjermen ser grensene nesten ut som vanlige kurver. Du øker
+oppløsningen for å gjøre kartet skarpere, men da dukker det opp nye bukter,
+øyer og smale striper. Zoomer du inn, skjer det samme igjen.
 
-Bruk
+Nå skal du undersøke om høyere oppløsning bare tegner den samme kanten bedre,
+eller om den faktisk avdekker mer grense. Dette er prosjektets mest åpne del:
+koden teller for deg, men du må velge et forsøk som gir en rimelig
+sammenligning og avgjøre hva tallene kan fortelle.
 
-$$
-p(z)=z^3-2z+2,
-\qquad p'(z)=3z^2-2,
-$$
+### Før du måler
 
-og start med $z_0=0$.
+Vi kaller en piksel en **grensepiksel** dersom minst én nabo over, under, til
+venstre eller til høyre konvergerer mot et annet nullpunkt. Dette er en regel
+for et digitalt bilde, ikke en eksakt matematisk definisjon av fraktalgrensen.
+
+Hold plottevindu, `tol` og `maxiter` faste. Bare oppløsningen skal endres.
+Skriv først ned hvilken av disse hypotesene du tror passer best:
+
+- **Vanlig kurve:** Når oppløsningen dobles, blir antall grensepiksler omtrent
+  dobbelt så stort.
+- **Romfyllende grense:** Når oppløsningen dobles, blir antallet omtrent fire
+  ganger så stort.
+- **Mellomting:** Veksten ligger systematisk mellom disse ytterpunktene.
+
+### Bygg et digitalt grensekart
+
+Funksjonen under markerer begge sider av en fargeovergang. Les koden og
+forklar kort hvorfor vi sammenligner både vannrette og loddrette naboer.
 
 ```{pyodide-python}
-# Denne utfordringen bruker samme newton_trace som resten av prosjektet.
-cycle_coefficients = np.array([1, 0, -2, 2], dtype=complex)
-cycle_derivative = np.polyder(cycle_coefficients)
-cycle_roots = np.roots(cycle_coefficients)
+def boundary_mask(data):
+    """Marker piksler som ligger ved en overgang mellom to basin-farger.
+
+    Vi teller bare overganger mellom konvergerte punkter. Ugyldige punkter og
+    punkter som nådde maxiter får derfor ikke lage en kunstig basin-grense.
+    """
+    basin = data["basin"]
+    boundary = np.zeros(basin.shape, dtype=bool)
+
+    # Vannrette naboer: kolonne j og j+1.
+    valid_horizontal = (basin[:, :-1] >= 0) & (basin[:, 1:] >= 0)
+    changes_horizontal = valid_horizontal & (basin[:, :-1] != basin[:, 1:])
+    boundary[:, :-1] |= changes_horizontal
+    boundary[:, 1:] |= changes_horizontal
+
+    # Loddrette naboer: rad i og i+1.
+    valid_vertical = (basin[:-1, :] >= 0) & (basin[1:, :] >= 0)
+    changes_vertical = valid_vertical & (basin[:-1, :] != basin[1:, :])
+    boundary[:-1, :] |= changes_vertical
+    boundary[1:, :] |= changes_vertical
+    return boundary
 
 
-def p(z):
-    """Testpolynomet som kan fange vanlig Newton-iterasjon i en syklus."""
-    return np.polyval(cycle_coefficients, z)
+def plot_boundary_mask(data, title="Digitalt grensekart"):
+    """Vis hvilke piksler telleregelen vår kaller grensepiksler."""
+    xmin, xmax, ymin, ymax = data["bounds"]
+    mask = boundary_mask(data)
+
+    plt.close("all")
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.imshow(mask, origin="lower", extent=(xmin, xmax, ymin, ymax),
+              cmap="binary", interpolation="nearest")
+    ax.set_xlabel("Re(z₀)")
+    ax.set_ylabel("Im(z₀)")
+    ax.set_title(title)
+    ax.set_aspect("equal")
+    plt.show()
+```
+
+### Mål hva som skjer når oppløsningen dobles
+
+`boundary_experiment` gjenbruker Newton-koden på samme vindu. Start med
+oppløsningene 100, 200 og 400. Bruk 800 bare dersom nettleseren håndterer det
+greit.
+
+```{pyodide-python}
+def boundary_experiment(test_bounds, resolutions=(100, 200, 400),
+                        tol=1e-8, maxiter=50):
+    """Tell grensepiksler for flere oppløsninger i nøyaktig samme vindu."""
+    results = {}
+    print(" oppløsning   grensepiksler   andel av bildet")
+
+    for resolution in resolutions:
+        data = newton_grid(
+            f, df, roots, test_bounds,
+            nx=resolution, ny=resolution, tol=tol, maxiter=maxiter
+        )
+        count = int(np.count_nonzero(boundary_mask(data)))
+        results[resolution] = {"data": data, "count": count}
+        print(f" {resolution:10d}   {count:14d}   "
+              f"{count/data['basin'].size:15.5f}")
+
+    print("\nVekst når oppløsningen økes:")
+    sizes = list(resolutions)
+    for old, new in zip(sizes[:-1], sizes[1:]):
+        growth = results[new]["count"] / results[old]["count"]
+        dimension = np.log(growth) / np.log(new/old)
+        print(f" {old:4d} → {new:4d}: faktor {growth:.3f}, "
+              f"D-estimat {dimension:.3f}")
+
+    return results
 
 
-def dp(z):
-    """Den deriverte til testpolynomet."""
-    return np.polyval(cycle_derivative, z)
+resolution_results = boundary_experiment(bounds)
+```
 
+Tallet $D$ er et grovt skaleringsestimat. En dobling med vekstfaktor 2 gir
+$D\approx1$, mens vekstfaktor 4 gir $D\approx2$. Vi bruker ikke noen få
+rutenett til å fastslå en eksakt fraktaldimensjon. Estimatet er et verktøy for
+å sammenligne hypotesene.
 
-cycle_result = newton_trace(
-    p, dp, cycle_roots, z0=0, tol=1e-8, maxiter=10
+Vis grensekartet med høyeste oppløsning:
+
+```{pyodide-python}
+#| canvas: false
+highest_resolution = max(resolution_results)
+plot_boundary_mask(
+    resolution_results[highest_resolution]["data"],
+    f"Grensepiksler ved {highest_resolution} × {highest_resolution}"
 )
-print_trace(cycle_result)
 ```
 
-Se på tabellen før du går videre. Regn deretter ut $z_1$ og $z_2$ for hånd.
-Forklar hvorfor de to utregningene også bestemmer $z_3,z_4,\ldots$.
+### Dra på ekspedisjon langs grensen
 
-Programmet vårt kjenner foreløpig bare residualkravet og `maxiter`. Under er
-en nesten ferdig test for en syklus med periode 2. Bytt ut `np.nan` med
-avstanden mellom siste iterat og iteratet to steg tidligere.
+Målingen over blander rolige og svært kompliserte deler av grensen. Velg nå
+ett område du synes er interessant. Start gjerne med forslaget fra del 6, men
+flytt sentrum dersom zoom-bildet bare inneholder én farge.
 
 ```{pyodide-python}
-def detect_two_cycle(result, cycle_tol=1e-12):
-    """Se om de siste iteratene tyder på en syklus med periode 2."""
-    values = [row["z"] for row in result["history"]]
-    if len(values) < 3:
-        return False
-
-    # DIN KODE HER: sammenlign siste verdi med verdien to steg tidligere.
-    cycle_distance = np.nan
-    return cycle_distance < cycle_tol
+#| canvas: false
+def square_bounds(center, width):
+    """Lag et kvadratisk plottevindu rundt et komplekst sentrum."""
+    half = width/2
+    return (center.real-half, center.real+half,
+            center.imag-half, center.imag+half)
 
 
-print("Fant en 2-syklus:", detect_two_cycle(cycle_result))
+# Endre disse to verdiene og kjør cellen på nytt for hvert zoomnivå.
+zoom_center = boundary_point
+zoom_width = min(bounds[1]-bounds[0], bounds[3]-bounds[2]) / 5
+local_bounds = square_bounds(zoom_center, zoom_width)
+
+local_data = newton_grid(
+    f, df, roots, local_bounds,
+    nx=400, ny=400, tol=1e-8, maxiter=100
+)
+plot_basins(local_data, f"Grenseekspedisjon, bredde={zoom_width:.3g}")
 ```
 
-Når testen virker, prøv også startverdiene $10^{-3}$, $10^{-6}$ og $10^{-9}$.
-Bruk `maxiter=100`, og rapporter om forsøket konvergerer, når `maxiter`, eller
-ser ut til å gå inn i en syklus.
+Lag minst tre zoomnivåer. Gjør bredden omtrent ti ganger mindre hver gang,
+men juster sentrum slik at en grense fortsatt er synlig. Noter sentrum,
+bredde, synlige basin-farger og største iterasjonstall for hvert nivå.
 
-**Svar kort:**
+Til slutt kjører du `boundary_experiment(local_bounds)` i det siste vinduet.
+Da kan du sammenligne skaleringsestimatet fra hele standardvinduet med et
+område du selv har valgt fordi det ser komplisert ut.
 
-1. Hvorfor er $0\rightarrow1\rightarrow0$ en syklus og ikke konvergens?
-2. Hvilke residualer får du i de to punktene? Hvorfor godtas ingen av dem?
-3. Hvorfor stopper ikke kontrollen av $p'(z_n)$ iterasjonen?
-4. Hvorfor hjelper det ikke bare å øke `maxiter`?
-5. Hva er den konkrete egenskapen ved Newton-regelen som sender 0 til 1 og 1 tilbake til 0?
-6. Kan en numerisk syklustest bevise at en matematisk følge er eksakt periodisk,
-   eller gir den bare evidens innenfor `cycle_tol`?
-7. Hvordan bør en praktisk Newton-implementasjon rapportere denne stoppårsaken?
+### Kartleggerens rapport
+
+Svar samlet, ikke som løsrevne énlinjessvar:
+
+1. Hvilken hypotese skrev du ned før forsøket, og støttet målingene den?
+2. Hvordan vokste antall grensepiksler når oppløsningen ble doblet?
+3. Stabiliserte $D$-estimatene seg, eller endret de seg med oppløsningen?
+4. Hva nytt dukket opp da du zoomet inn? Så du nøyaktige kopier eller bare
+   nye mønstre med lignende kompleksitet?
+5. Var det lokale området mer eller mindre komplisert enn hele vinduet etter
+   måleregelen vår?
+6. Hvordan kan `tol`, `maxiter`, valg av naboer og pikseloppløsning påvirke
+   antall registrerte grensepiksler?
+7. Hvilken evidens har du for at grensen er fraktallignende?
+8. Hvorfor er ikke tre oppløsninger og tre zoomnivåer et matematisk bevis på
+   at detaljene fortsetter på alle skalaer?
 
 ## 9. Konklusjon
 
@@ -848,7 +949,7 @@ Skriv en samlet konklusjon på omtrent 200–300 ord. Den skal svare på:
 - Finner metoden alltid nullpunktet som ligger nærmest startverdien?
 - Hvilken rolle ser de kritiske punktene ut til å spille?
 - Hva viste perturbasjonsforsøket nær en grense?
-- Hva lærte syklusfellen om dårlige startverdier og stoppregler?
+- Hva viste oppløsnings- og zoomforsøket om kompleksiteten til grensen?
 - Hvordan påvirker residualtoleransen og `maxiter` klassifiseringen?
 - Hvilke påstander bygger på numeriske eksperimenter, og hva kan eksperimentene ikke bevise?
 - Når mener du det er forsvarlig å rapportere at metoden har konvergert?
@@ -864,7 +965,7 @@ Lever én Quarto-side eller notebook med:
 5. undersøkelse av ett kritisk punkt,
 6. perturbasjonsforsøk nær en grense,
 7. kontroll av toleranse og `maxiter`,
-8. analyse og syklustest for $p(z)=z^3-2z+2$,
+8. grensekart, oppløsningstabell, zoomserie og kartleggerens rapport,
 9. konkrete parameterverdier og konklusjonen.
 
 ::: {.callout-warning}
