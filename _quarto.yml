@@ -24,6 +24,7 @@ website:
       - section: "Projects"
         contents:
           - pages/project_week1.qmd
+          - pages/project_week2.qmd
 
       - section: "Eksamensoppgaver"
         contents:

@@ -1,0 +1,5 @@
+---
+title: "Uke 2 – Newtonfraktaler"
+---
+
+{{< include ../_includes/projects/week2_newton_fractals.md >}}
