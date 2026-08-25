@@ -763,55 +763,55 @@ Forklar med konkrete tall hvordan en strengere toleranse og en større
 følgen divergerer? Betyr $|f(z_n)|<10^{-12}$ nødvendigvis at
 $|z_n-r|<10^{-12}$?
 
-## 8. Sluttoppdraget: Når blir grensen ferdig?
+## 8. Sluttoppdraget: Følg en grense inn i fraktalen
 
-Tenk deg at du skal lage et digitalt kart over tiltrekningsområdene. På den
-første skjermen ser grensene nesten ut som vanlige kurver. Du øker
-oppløsningen for å gjøre kartet skarpere, men da dukker det opp nye bukter,
-øyer og smale striper. Zoomer du inn, skjer det samme igjen.
+Tiltrekningskartet har store, rolige fargeområder der resultatet er lett å
+forutsi. Mellom dem ligger smale og urolige grenser. På avstand kan en slik
+grense se ut som en vanlig kurve. Men når vi beregner et nytt kart over et
+mindre område, dukker det ofte opp nye bukter, øyer og striper som ikke var
+synlige før.
 
-Nå skal du undersøke om høyere oppløsning bare tegner den samme kanten bedre,
-eller om den faktisk avdekker mer grense. Dette er prosjektets mest åpne del:
-koden teller for deg, men du må velge et forsøk som gir en rimelig
-sammenligning og avgjøre hva tallene kan fortelle.
+Dette er nesten selve ideen bak en fraktal: nye detaljer fortsetter å bli
+synlige når vi undersøker figuren på mindre skalaer. Det betyr ikke at hvert
+zoom-bilde må være en nøyaktig minikopi av det forrige. Det viktige her er at
+grensen ikke raskt blir til en enkel, glatt linje.
 
-### Før du måler
+For Newtons metode har zoomingen også en konkret numerisk betydning. Hvert
+punkt i bildet er en startverdi $z_0$. Når vinduet blir ti ganger smalere, men
+fortsatt tegnes med $400\times400$ piksler, undersøker vi startverdier som
+ligger ti ganger tettere. En fraktalzoom er derfor et forsøk på hvor følsomt
+Newton-resultatet er for stadig mindre endringer i startverdien.
 
-Vi kaller en piksel en **grensepiksel** dersom minst én nabo over, under, til
-venstre eller til høyre konvergerer mot et annet nullpunkt. Dette er en regel
-for et digitalt bilde, ikke en eksakt matematisk definisjon av fraktalgrensen.
+### Oppdrag 1: Hva er egentlig en grensepiksel?
 
-Hold plottevindu, `tol` og `maxiter` faste. Bare oppløsningen skal endres.
-Skriv først ned hvilken av disse hypotesene du tror passer best:
+Før vi zoomer, trenger vi en enkel måleregel. Vi kaller en piksel en
+**grensepiksel** dersom minst én nabo over, under, til venstre eller til høyre
+konvergerer mot et annet nullpunkt. En **indre piksel** har samme basin-farge
+som alle disse naboene.
 
-- **Vanlig kurve:** Når oppløsningen dobles, blir antall grensepiksler omtrent
-  dobbelt så stort.
-- **Romfyllende grense:** Når oppløsningen dobles, blir antallet omtrent fire
-  ganger så stort.
-- **Mellomting:** Veksten ligger systematisk mellom disse ytterpunktene.
-
-### Bygg et digitalt grensekart
-
-Funksjonen under markerer begge sider av en fargeovergang. Les koden og
-forklar kort hvorfor vi sammenligner både vannrette og loddrette naboer.
+Dette er ikke en eksakt definisjon av den matematiske grensen. Det er en
+praktisk regel for et endelig bilde. Regelen lar oss koble figuren til
+spørsmålet vårt: En grensepiksel representerer en startverdi der en endring på
+omtrent én pikselbredde kan endre hvilket nullpunkt Newton finner.
 
 ```{pyodide-python}
 def boundary_mask(data):
-    """Marker piksler som ligger ved en overgang mellom to basin-farger.
+    """Marker piksler ved en overgang mellom to konvergensområder.
 
-    Vi teller bare overganger mellom konvergerte punkter. Ugyldige punkter og
-    punkter som nådde maxiter får derfor ikke lage en kunstig basin-grense.
+    Vi teller bare overganger mellom punkter som faktisk konvergerte. Punkter
+    som nådde maxiter eller ga en ugyldig beregning får ikke lage en kunstig
+    basin-grense.
     """
     basin = data["basin"]
     boundary = np.zeros(basin.shape, dtype=bool)
 
-    # Vannrette naboer: kolonne j og j+1.
+    # Sammenlign naboer mot venstre og høyre.
     valid_horizontal = (basin[:, :-1] >= 0) & (basin[:, 1:] >= 0)
     changes_horizontal = valid_horizontal & (basin[:, :-1] != basin[:, 1:])
     boundary[:, :-1] |= changes_horizontal
     boundary[:, 1:] |= changes_horizontal
 
-    # Loddrette naboer: rad i og i+1.
+    # Gjør samme sammenligning opp og ned.
     valid_vertical = (basin[:-1, :] >= 0) & (basin[1:, :] >= 0)
     changes_vertical = valid_vertical & (basin[:-1, :] != basin[1:, :])
     boundary[:-1, :] |= changes_vertical
@@ -819,126 +819,156 @@ def boundary_mask(data):
     return boundary
 
 
-def plot_boundary_mask(data, title="Digitalt grensekart"):
-    """Vis hvilke piksler telleregelen vår kaller grensepiksler."""
+def boundary_summary(data):
+    """Sammenlign Newton-arbeidet på grensen og inne i basinene."""
+    boundary = boundary_mask(data)
+    converged = data["basin"] >= 0
+    interior = converged & ~boundary
+    iterations = data["iterations"]
+
+    return {
+        "boundary_fraction": np.count_nonzero(boundary)
+                             / np.count_nonzero(converged),
+        "mean_boundary_iterations": np.mean(iterations[boundary]),
+        "mean_interior_iterations": np.mean(iterations[interior]),
+        "max_boundary_iterations": np.max(iterations[boundary]),
+        "visible_basins": len(np.unique(data["basin"][converged])),
+    }
+
+
+def print_boundary_summary(data):
+    """Skriv de samme målene for hvert zoomnivå."""
+    summary = boundary_summary(data)
     xmin, xmax, ymin, ymax = data["bounds"]
-    mask = boundary_mask(data)
+    pixel_width = (xmax-xmin)/(data["basin"].shape[1]-1)
 
-    plt.close("all")
-    fig, ax = plt.subplots(figsize=(6, 6))
-    ax.imshow(mask, origin="lower", extent=(xmin, xmax, ymin, ymax),
-              cmap="binary", interpolation="nearest")
-    ax.set_xlabel("Re(z₀)")
-    ax.set_ylabel("Im(z₀)")
-    ax.set_title(title)
-    ax.set_aspect("equal")
-    plt.show()
+    print("Bredde på vinduet:       ", f"{xmax-xmin:.4e}")
+    print("Bredde per piksel:       ", f"{pixel_width:.4e}")
+    print("Synlige basin:           ", summary["visible_basins"])
+    print("Andel grensepiksler:     ", f"{summary['boundary_fraction']:.4f}")
+    print("Gj.snitt steg, grense:   ",
+          f"{summary['mean_boundary_iterations']:.2f}")
+    print("Gj.snitt steg, indre:    ",
+          f"{summary['mean_interior_iterations']:.2f}")
+    print("Største steg, grense:    ", summary["max_boundary_iterations"])
 ```
 
-### Mål hva som skjer når oppløsningen dobles
-
-`boundary_experiment` gjenbruker Newton-koden på samme vindu. Start med
-oppløsningene 100, 200 og 400. Bruk 800 bare dersom nettleseren håndterer det
-greit.
+Kjør oppsummeringen på hovedkartet. Bruk tallene som nullpunkt for
+zoom-ekspedisjonen—ikke som en konklusjon ennå.
 
 ```{pyodide-python}
-def boundary_experiment(test_bounds, resolutions=(100, 200, 400),
-                        tol=1e-8, maxiter=50):
-    """Tell grensepiksler for flere oppløsninger i nøyaktig samme vindu."""
-    results = {}
-    print(" oppløsning   grensepiksler   andel av bildet")
-
-    for resolution in resolutions:
-        data = newton_grid(
-            f, df, roots, test_bounds,
-            nx=resolution, ny=resolution, tol=tol, maxiter=maxiter
-        )
-        count = int(np.count_nonzero(boundary_mask(data)))
-        results[resolution] = {"data": data, "count": count}
-        print(f" {resolution:10d}   {count:14d}   "
-              f"{count/data['basin'].size:15.5f}")
-
-    print("\nVekst når oppløsningen økes:")
-    sizes = list(resolutions)
-    for old, new in zip(sizes[:-1], sizes[1:]):
-        growth = results[new]["count"] / results[old]["count"]
-        dimension = np.log(growth) / np.log(new/old)
-        print(f" {old:4d} → {new:4d}: faktor {growth:.3f}, "
-              f"D-estimat {dimension:.3f}")
-
-    return results
-
-
-resolution_results = boundary_experiment(bounds)
+print_boundary_summary(basin_data)
 ```
 
-Tallet $D$ er et grovt skaleringsestimat. En dobling med vekstfaktor 2 gir
-$D\approx1$, mens vekstfaktor 4 gir $D\approx2$. Vi bruker ikke noen få
-rutenett til å fastslå en eksakt fraktaldimensjon. Estimatet er et verktøy for
-å sammenligne hypotesene.
+**Tenk før du zoomer:** Tror du grensen etter hvert blir glatt dersom du bare
+zoomer langt nok inn? Tror du forskjellen i iterasjonstall mellom grense og
+indre områder blir større, mindre eller omtrent den samme? Skriv ned
+hypotesene dine før neste oppdrag.
 
-Vis grensekartet med høyeste oppløsning:
+### Oppdrag 2: Første zoom er en ny beregning
 
-```{pyodide-python}
-#| canvas: false
-highest_resolution = max(resolution_results)
-plot_boundary_mask(
-    resolution_results[highest_resolution]["data"],
-    f"Grensepiksler ved {highest_resolution} × {highest_resolution}"
-)
-```
+En vanlig digital zoom ville bare gjort de eksisterende pikslene større. Det
+skal vi ikke gjøre. For hvert nivå lager `newton_grid` et nytt
+$400\times400$-rutenett med nye startverdier i et mindre vindu. Derfor kan
+det nye bildet inneholde strukturer som det gamle rutenettet ikke hadde nok
+punkter til å se.
 
-### Dra på ekspedisjon langs grensen
-
-Målingen over blander rolige og svært kompliserte deler av grensen. Velg nå
-ett område du synes er interessant. Start gjerne med forslaget fra del 6, men
-flytt sentrum dersom zoom-bildet bare inneholder én farge.
+Start ved `boundary_point` fra del 6. Hvis første bilde ikke viser en
+interessant grense, velger du et nytt sentrum fra hovedfiguren.
 
 ```{pyodide-python}
 #| canvas: false
 def square_bounds(center, width):
-    """Lag et kvadratisk plottevindu rundt et komplekst sentrum."""
+    """Lag et kvadratisk vindu rundt startverdien vi vil følge."""
     half = width/2
     return (center.real-half, center.real+half,
             center.imag-half, center.imag+half)
 
 
-# Endre disse to verdiene og kjør cellen på nytt for hvert zoomnivå.
+def run_zoom(center, width, resolution=400, tol=1e-8, maxiter=100):
+    """Beregn og vis ett nytt nivå i fraktalzoomen.
+
+    Behold resolution, tol og maxiter når du sammenligner nivåene. Endre
+    center og width for å følge grensen videre.
+    """
+    zoom_bounds = square_bounds(center, width)
+    data = newton_grid(
+        f, df, roots, zoom_bounds,
+        nx=resolution, ny=resolution, tol=tol, maxiter=maxiter
+    )
+    plot_basins(data, f"Fraktalzoom: bredde={width:.3e}")
+    print_boundary_summary(data)
+    return data
+
+
+# Dette er nivå 1. Endre sentrum hvis grensen forsvinner ut av bildet.
 zoom_center = boundary_point
 zoom_width = min(bounds[1]-bounds[0], bounds[3]-bounds[2]) / 5
-local_bounds = square_bounds(zoom_center, zoom_width)
-
-local_data = newton_grid(
-    f, df, roots, local_bounds,
-    nx=400, ny=400, tol=1e-8, maxiter=100
-)
-plot_basins(local_data, f"Grenseekspedisjon, bredde={zoom_width:.3g}")
+zoom_data = run_zoom(zoom_center, zoom_width)
 ```
 
-Lag minst tre zoomnivåer. Gjør bredden omtrent ti ganger mindre hver gang,
-men juster sentrum slik at en grense fortsatt er synlig. Noter sentrum,
-bredde, synlige basin-farger og største iterasjonstall for hvert nivå.
+### Oppdrag 3: Følg grensen gjennom minst tre nivåer
 
-Til slutt kjører du `boundary_experiment(local_bounds)` i det siste vinduet.
-Da kan du sammenligne skaleringsestimatet fra hele standardvinduet med et
-område du selv har valgt fordi det ser komplisert ut.
+Gjør `zoom_width` omtrent ti ganger mindre for hvert nivå. Før neste kjøring
+velger du et nytt sentrum på en synlig grense i det siste bildet. Du kan bruke
 
-### Kartleggerens rapport
+```python
+zoom_center = suggest_boundary_point(zoom_data)
+zoom_width = zoom_width / 10
+zoom_data = run_zoom(zoom_center, zoom_width)
+```
 
-Svar samlet, ikke som løsrevne énlinjessvar:
+som utgangspunkt. Kontroller alltid figuren selv. Den automatiske funksjonen
+velger bare en fargeovergang i rutenettet; den vet ikke hvilken struktur du
+synes er interessant.
 
-1. Hvilken hypotese skrev du ned før forsøket, og støttet målingene den?
-2. Hvordan vokste antall grensepiksler når oppløsningen ble doblet?
-3. Stabiliserte $D$-estimatene seg, eller endret de seg med oppløsningen?
-4. Hva nytt dukket opp da du zoomet inn? Så du nøyaktige kopier eller bare
-   nye mønstre med lignende kompleksitet?
-5. Var det lokale området mer eller mindre komplisert enn hele vinduet etter
-   måleregelen vår?
-6. Hvordan kan `tol`, `maxiter`, valg av naboer og pikseloppløsning påvirke
-   antall registrerte grensepiksler?
-7. Hvilken evidens har du for at grensen er fraktallignende?
-8. Hvorfor er ikke tre oppløsninger og tre zoomnivåer et matematisk bevis på
-   at detaljene fortsetter på alle skalaer?
+Lag minst tre nye zoomnivåer. Bruk samme oppløsning, `tol` og `maxiter` på
+alle nivåene. Da blir én piksel en stadig mindre endring i startverdien, mens
+stoppreglene er de samme.
+
+For hvert nivå lagrer du:
+
+- figuren med tiltrekningsområder og iterasjonstall,
+- sentrum og vindusbredde,
+- bredden som én piksel representerer,
+- antall synlige basin-farger,
+- andel grensepiksler,
+- gjennomsnittlig iterasjonstall på grensen og i indre områder.
+
+### Oppdrag 4: Hva har dette med Newtons metode å gjøre?
+
+Fraktalbildet er ikke pynt ved siden av den numeriske metoden. Hver ny detalj
+forteller at startverdier som er svært nær hverandre kan følge forskjellige
+Newton-baner og finne forskjellige nullpunkter. Iterasjonskartet forteller i
+tillegg om disse områdene er numerisk krevende.
+
+Velg på det siste zoomnivået:
+
+- to nabostartverdier med forskjellig basin-farge,
+- én startverdi et stykke inne i et ensfarget område.
+
+Kjør `newton_trace` for alle tre. Sammenlign de første iteratene, største
+skrittlengde, antall iterasjoner og siste residual. Målet er å knytte de små
+fargestrukturene tilbake til faktiske iterative følger.
+
+### Fraktalrapporten
+
+Skriv en samlet rapport. Figurene og tabellen er data; svarene under er
+analysen.
+
+1. Hva forventet du før du zoomet, og hva viste bildene?
+2. Hvilke nye detaljer dukket opp på hvert nivå? Ble grensen noen gang en
+   enkel, glatt linje?
+3. Så du nøyaktige kopier av tidligere mønstre, eller nye mønstre med lignende
+   kompleksitet? Hvorfor kan begge deler omtales som fraktallignende?
+4. Hvor liten endring i $z_0$ representerte én piksel på siste nivå?
+5. Fortsatte nabopiksler å finne forskjellige nullpunkter på denne skalaen?
+6. Hvordan skilte iterasjonstallene på grensen seg fra indre områder?
+7. Hva viste de tre `newton_trace`-forsøkene om hvorfor fargene blir ulike?
+8. Hvordan kan `tol`, `maxiter` og flyttallsregning påvirke de minste
+   strukturene du ser?
+9. Hvorfor er flere vellykkede zoomnivåer god numerisk evidens for en
+   fraktallignende grense, men ikke et bevis på detaljer på alle skalaer?
 
 ## 9. Konklusjon
 
@@ -949,7 +979,7 @@ Skriv en samlet konklusjon på omtrent 200–300 ord. Den skal svare på:
 - Finner metoden alltid nullpunktet som ligger nærmest startverdien?
 - Hvilken rolle ser de kritiske punktene ut til å spille?
 - Hva viste perturbasjonsforsøket nær en grense?
-- Hva viste oppløsnings- og zoomforsøket om kompleksiteten til grensen?
+- Hva viste fraktalzoomen om følsomhet for stadig mindre endringer i startverdien?
 - Hvordan påvirker residualtoleransen og `maxiter` klassifiseringen?
 - Hvilke påstander bygger på numeriske eksperimenter, og hva kan eksperimentene ikke bevise?
 - Når mener du det er forsvarlig å rapportere at metoden har konvergert?
@@ -965,7 +995,7 @@ Lever én Quarto-side eller notebook med:
 5. undersøkelse av ett kritisk punkt,
 6. perturbasjonsforsøk nær en grense,
 7. kontroll av toleranse og `maxiter`,
-8. grensekart, oppløsningstabell, zoomserie og kartleggerens rapport,
+8. minst tre zoomnivåer, grensesammenligning og fraktalrapport,
 9. konkrete parameterverdier og konklusjonen.
 
 ::: {.callout-warning}
