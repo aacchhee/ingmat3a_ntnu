@@ -2,7 +2,12 @@
 
 Dette prosjektet er laget for omtrent **3–4 timer selvstendig arbeid**. Copilot og andre kodeassistenter er tillatt.
 
-Newtons metode kan brukes til å løse ligningen
+Når en ligning har flere løsninger, er det ikke nok å spørre om en metode
+konvergerer. Vi må også spørre *hvilken* løsning den finner, hvor raskt den
+kommer dit, og hvor mye svaret avhenger av startverdien. Newtons metode gjør
+disse spørsmålene synlige på en særlig tydelig måte.
+
+Metoden løser ligningen
 
 $$
 f(z)=0
@@ -20,36 +25,24 @@ $$
 g(z)=z-\frac{f(z)}{f'(z)}.
 $$
 
-Her arbeider vi med komplekse tall $z=x+iy$. En startverdi kan konvergere mot ulike nullpunkter, og små endringer i startverdien kan endre hvilket nullpunkt metoden finner. Mengden av startverdier som konvergerer mot et bestemt nullpunkt, kalles nullpunktets **tiltrekningsområde**.
+Her arbeider vi med komplekse tall $z=x+iy$. Ved å fargelegge hver startverdi
+etter nullpunktet den finner, får vi et kart over metodens oppførsel. Noen
+områder gir raske og forutsigbare iterasjoner. Langs grensene kan to nesten
+like startverdier få helt forskjellige forløp. Mengden av startverdier som
+konvergerer mot et bestemt nullpunkt, kalles nullpunktets
+**tiltrekningsområde**.
 
-> **Problemstilling:** Hvordan avhenger Newton-metodens resultat, residual og antall iterasjoner av startverdien i det komplekse planet?
+> **Problemstilling:** Hva kjennetegner gode og dårlige startverdier for
+> Newtons metode, og hvordan kan vi undersøke dette numerisk?
 
 ::: {.callout-tip}
 ## Hvordan jobbe med prosjektet
 
 Koden for funksjonstildeling, Newton-iterasjon, rutenett, klassifisering og plotting er gitt. Arbeidet ditt er å planlegge numeriske eksperimenter, velge parametere, kontrollere resultatene og forklare det du observerer.
 
-Endre én størrelse om gangen. Noter alltid startverdi eller plottevindu, residualtoleranse og `maxiter` sammen med resultatet.
-:::
-
-::: {.callout-important}
-## Tre størrelser som ikke må blandes
-
-For den opprinnelige ligningen $f(z)=0$ bruker vi ligningsresidualen
-
-$$
-|f(z_n)|.
-$$
-
-Fikspunktresidualen og Newton-skrittet er
-
-$$
-|z_n-g(z_n)|
-=\left|\frac{f(z_n)}{f'(z_n)}\right|
-=|z_{n+1}-z_n|.
-$$
-
-Uttrykket $|z-f(z)|$ er ikke residualen til ligningen $f(z)=0$.
+Endre én størrelse om gangen. Noter alltid startverdi eller plottevindu,
+toleranse og `maxiter` sammen med resultatet. Målet er ikke bare å lage et
+fraktalbilde, men å bruke bildet til å velge og begrunne numeriske forsøk.
 :::
 
 ## 1. Du får tildelt en funksjon
@@ -83,16 +76,26 @@ def function_id(first_name, number_of_functions):
 FUNCTIONS = [
     {"label": "A", "coefficients": [1, 0, 0, -1],
      "formula": "z³ − 1", "plot_window": (-2, 2, -2, 2)},
-    {"label": "B", "coefficients": [1, 0, 0, 1],
-     "formula": "z³ + 1", "plot_window": (-2, 2, -2, 2)},
-    {"label": "C", "coefficients": [1, 0, -1, 0],
-     "formula": "z³ − z", "plot_window": (-2, 2, -2, 2)},
-    {"label": "D", "coefficients": [1, 0, -2, 2],
-     "formula": "z³ − 2z + 2", "plot_window": (-2.5, 2.5, -2.5, 2.5)},
-    {"label": "E", "coefficients": [1, 0, -2, -2],
-     "formula": "z³ − 2z − 2", "plot_window": (-2.5, 2.5, -2.5, 2.5)},
-    {"label": "F", "coefficients": [1, 0, 2, -2],
-     "formula": "z³ + 2z − 2", "plot_window": (-2.5, 2.5, -2.5, 2.5)},
+    {"label": "B", "coefficients": [1, -2j, -1, 2j],
+     "formula": "(z − 1)(z + 1)(z − 2i)",
+     "plot_window": (-2.5, 2.5, -2, 3)},
+    {"label": "C", "coefficients": [1, 0, -2, -4],
+     "formula": "(z − 2)(z + 1 − i)(z + 1 + i)",
+     "plot_window": (-3, 3, -3, 3)},
+    {"label": "D", "coefficients": [1, 0, 0, 0, -1],
+     "formula": "z⁴ − 1", "plot_window": (-2, 2, -2, 2)},
+    {"label": "E", "coefficients": [1, 0, -3.75, 0, -1],
+     "formula": "(z − 2)(z + 2)(z − 0.5i)(z + 0.5i)",
+     "plot_window": (-3, 3, -2.5, 2.5)},
+    {"label": "F", "coefficients": [1, 0, 0, 1, 1],
+     "formula": "z⁴ + z + 1", "plot_window": (-2.5, 2.5, -2.5, 2.5)},
+    {"label": "G", "coefficients": [1, 0, 0, 0, 0, -1],
+     "formula": "z⁵ − 1", "plot_window": (-2, 2, -2, 2)},
+    {"label": "H", "coefficients": [1, -1.5, -0.5, -0.5, -1.5, 1],
+     "formula": "(z − 2)(z + 1)(z − 0.5)(z − i)(z + i)",
+     "plot_window": (-2.5, 2.5, -2.5, 2.5)},
+    {"label": "I", "coefficients": [1, 0, 0, 0, -1, 1],
+     "formula": "z⁵ − z + 1", "plot_window": (-2.5, 2.5, -2.5, 2.5)},
 ]
 
 
@@ -100,6 +103,7 @@ def prepare_function(entry):
     coefficients = np.asarray(entry["coefficients"], dtype=complex)
     derivative_coefficients = np.polyder(coefficients)
     roots = np.roots(coefficients)
+    critical_points = np.roots(derivative_coefficients)
 
     def f(z):
         return np.polyval(coefficients, z)
@@ -107,7 +111,7 @@ def prepare_function(entry):
     def df(z):
         return np.polyval(derivative_coefficients, z)
 
-    return f, df, roots
+    return f, df, roots, critical_points
 
 
 # Bytt teksten med ditt eget fornavn.
@@ -115,7 +119,7 @@ first_name = "Ada"
 
 my_id = function_id(first_name, len(FUNCTIONS))
 my_function = FUNCTIONS[my_id]
-f, df, roots = prepare_function(my_function)
+f, df, roots, critical_points = prepare_function(my_function)
 
 print("Funksjons-ID:", my_function["label"])
 print("Funksjon:    ", my_function["formula"])
@@ -123,20 +127,48 @@ print("Koeffisienter:", my_function["coefficients"])
 print("Nullpunkter:")
 for root in roots:
     print(" ", root)
+print("Kritiske punkter (f'(z)=0):")
+for point in critical_points:
+    print(" ", point)
 print("Standardvindu:", my_function["plot_window"])
 ```
 
-**Skriv ned** funksjons-ID, funksjon, nullpunkter og standardvindu. Bruk den tildelte funksjonen i resten av prosjektet.
+Alle funksjonene i puljen har grad 3, 4 eller 5 og bare enkle nullpunkter.
+**Skriv ned** funksjons-ID, funksjon, nullpunkter og standardvindu. Bruk den
+tildelte funksjonen i resten av prosjektet.
 
 ## 2. Newtons metode for én startverdi
 
-Før vi undersøker tusenvis av startverdier, følger vi noen få iterasjoner trinn for trinn. Funksjonen under stopper når ligningsresidualen tilfredsstiller
+Før vi lager et kart med tusenvis av startverdier, følger vi noen få
+iterasjoner trinn for trinn. Da kan vi se hva «rask» og «langsom» konvergens
+betyr i praksis.
+
+Programmet trenger en regel for å avgjøre når svaret er godt nok. Siden vi
+prøver å løse $f(z)=0$, måler vi hvor nær funksjonsverdien er null. Størrelsen
+
+$$
+|f(z_n)|
+$$
+
+kalles **residualen**. Her stopper vi når
 
 $$
 |f(z_n)|<\texttt{tol},
 $$
 
-eller når `maxiter` er nådd. Den stopper også dersom $f'(z_n)$ blir for liten til at Newton-skrittet kan beregnes pålitelig, eller dersom beregningen gir `nan` eller `inf`.
+eller når `maxiter` er nådd. En liten residual betyr at den beregnede verdien
+nesten oppfyller ligningen. Den er ikke det samme som avstanden til det
+eksakte nullpunktet.
+
+Vi registrerer også skrittlengden
+
+$$
+|z_{n+1}-z_n|=\left|\frac{f(z_n)}{f'(z_n)}\right|.
+$$
+
+Den forteller hvor mye iteratet flytter seg. Den er nyttig når vi skal forstå
+store hopp, men i dette prosjektet er det residualen som avgjør konvergens.
+Uttrykket $|z-f(z)|$ er ikke residualen til ligningen $f(z)=0$.
 
 ```{pyodide-python}
 def is_finite_complex(z):
@@ -259,7 +291,14 @@ plot_trace(result)
 
 ## 3. Tiltrekningsområder
 
-Neste funksjon kjører Newtons metode samtidig for et helt rutenett. Hvert punkt klassifiseres som et nullpunktnummer, `-1` for ikke konvergert innen `maxiter`, eller `-2` for ugyldig beregning.
+Forsøkene med enkeltpunkter viser at startverdien betyr noe, men de sier lite
+om hvor vanlig rask eller langsom konvergens er. Derfor gjentar vi samme
+forsøk på et helt rutenett i det komplekse planet. Resultatet blir både et
+kart og et datasett vi kan stille spørsmål til.
+
+Neste funksjon kjører Newtons metode samtidig for hele rutenettet. Hvert punkt
+klassifiseres som et nullpunktnummer, `-1` for ikke konvergert innen
+`maxiter`, eller `-2` for ugyldig beregning.
 
 ```{pyodide-python}
 def newton_grid(f, df, roots, bounds, nx=400, ny=400,
@@ -325,7 +364,8 @@ ROOT_COLORS = np.array([
 ])
 
 
-def plot_basins(data, title="Newtons metode: tiltrekningsområder"):
+def plot_basins(data, title="Newtons metode: tiltrekningsområder",
+                critical_points=None):
     basin = data["basin"]
     iterations = data["iterations"]
     maxiter = data["maxiter"]
@@ -345,6 +385,10 @@ def plot_basins(data, title="Newtons metode: tiltrekningsområder"):
               interpolation="nearest")
     ax.scatter(roots.real, roots.imag, c="white", edgecolors="black",
                s=70, marker="o", label="Nullpunkter")
+    if critical_points is not None:
+        ax.scatter(critical_points.real, critical_points.imag,
+                   c="black", edgecolors="white", s=70, marker="X",
+                   linewidths=2, label="Kritiske punkter")
     ax.set_xlabel("Re(z₀)")
     ax.set_ylabel("Im(z₀)")
     ax.set_title(title)
@@ -419,6 +463,45 @@ plot_iteration_histogram(basin_data)
 
 Fargen viser hvilket nullpunkt iterasjonen fant. Lysstyrken viser antall iterasjoner: lyse punkter konvergerte med færre iterasjoner enn mørke punkter. Mørkegrå punkter nådde `maxiter`, mens svarte punkter ga en ugyldig beregning.
 
+For resten av prosjektet bruker vi følgende målbare beskrivelser:
+
+- En **rask** startverdi oppfyller residualkravet innen 6 iterasjoner.
+- En **langsom** startverdi konvergerer, men trenger mer enn 15 iterasjoner.
+- En **mislykket** startverdi når `maxiter` eller gir en ugyldig beregning.
+
+Grensene 6 og 15 er arbeidsdefinisjoner for dette forsøket, ikke generelle
+grenser for Newtons metode. I diskusjonen bruker vi langsomme og mislykkede
+startverdier som konkrete eksempler på «dårlige» startverdier. Finn ett
+eksempel i hver kategori som finnes i ditt datasett. Oppgi $z_0$, funnet
+nullpunkt, iterasjonstall og siste residual.
+
+Koden under foreslår startverdier fra kategoriene. Du kan bruke dem eller
+velge punkter som er lettere å se i figuren.
+
+```{pyodide-python}
+def first_start_in(data, mask):
+    indices = np.argwhere(mask)
+    if len(indices) == 0:
+        return None
+    row, col = indices[len(indices)//2]
+    xmin, xmax, ymin, ymax = data["bounds"]
+    ny, nx = data["basin"].shape
+    x = np.linspace(xmin, xmax, nx)
+    y = np.linspace(ymin, ymax, ny)
+    return x[col] + 1j*y[row]
+
+
+converged = basin_data["basin"] >= 0
+categories = {
+    "rask": converged & (basin_data["iterations"] <= 6),
+    "langsom": converged & (basin_data["iterations"] > 15),
+    "mislykket": basin_data["basin"] < 0,
+}
+
+for name, mask in categories.items():
+    print(f"Forslag, {name}:", first_start_in(basin_data, mask))
+```
+
 **Svar kort:**
 
 1. Hvilke områder konvergerer mot hvert nullpunkt?
@@ -427,107 +510,192 @@ Fargen viser hvilket nullpunkt iterasjonen fant. Lysstyrken viser antall iterasj
 4. Ser figuren symmetrisk ut? Sammenlign med plasseringen av nullpunktene.
 5. Kan et endelig rutenett bevise at alle startverdier i vinduet konvergerer?
 
-## 4. Hva gjør toleransen?
+## 4. Finner metoden alltid nærmeste nullpunkt?
 
-Bruk samme rutenett og `maxiter=50`, men sammenlign
-
-$$
-\texttt{tol}=10^{-4},\quad 10^{-8},\quad 10^{-12}.
-$$
+En naturlig gjetning er at Newtons metode finner nullpunktet som ligger
+nærmest startverdien. Nå kan vi teste denne gjetningen på hele rutenettet.
+Koden under sammenligner nærmeste nullpunkt til $z_0$ med nullpunktet
+iterasjonen faktisk fant.
 
 ```{pyodide-python}
-tolerance_results = {}
+def compare_with_nearest(data):
+    basin = data["basin"]
+    roots = data["roots"]
+    xmin, xmax, ymin, ymax = data["bounds"]
+    ny, nx = basin.shape
+    x = np.linspace(xmin, xmax, nx)
+    y = np.linspace(ymin, ymax, ny)
+    z0 = x[None, :] + 1j*y[:, None]
 
-for tolerance in [1e-4, 1e-8, 1e-12]:
-    data = newton_grid(f, df, roots, bounds, nx=300, ny=300,
-                       tol=tolerance, maxiter=50)
-    tolerance_results[tolerance] = data
-    summary = summarize_grid(data)
-    print(f"\ntol = {tolerance:.0e}")
-    print_summary(summary)
+    nearest = np.argmin(np.abs(z0[..., None] - roots), axis=2)
+    converged = basin >= 0
+    different = converged & (basin != nearest)
+    fraction = np.count_nonzero(different) / np.count_nonzero(converged)
+    return {"nearest": nearest, "different": different,
+            "fraction": fraction, "z0": z0}
+
+
+nearest_test = compare_with_nearest(basin_data)
+print("Andel konvergerte startverdier som ikke fant nærmeste nullpunkt:",
+      f"{nearest_test['fraction']:.4f}")
+
+indices = np.argwhere(nearest_test["different"])
+print("Noen moteksempler:")
+for row, col in indices[:5]:
+    z0 = nearest_test["z0"][row, col]
+    nearest_index = nearest_test["nearest"][row, col]
+    found_index = basin_data["basin"][row, col]
+    print(f"z₀={z0:.5g}: nærmest {roots[nearest_index]:.5g}, "
+          f"men fant {roots[found_index]:.5g}")
 ```
 
-Lag en tabell med toleranse, andel konvergerte punkter, gjennomsnittlig antall iterasjoner, største godkjente residual og antall punkter som nådde `maxiter`.
+Velg ett av moteksemplene og vis iterasjonshistorikken med `print_trace`.
 
-Velg deretter to toleranser og vis tiltrekningsområdene ved siden av hverandre eller som to separate figurer.
+**Svar kort:**
+
+1. Hvor stor andel av de konvergerte startverdiene fant ikke nærmeste nullpunkt?
+2. Hva skjer med avstanden til de ulike nullpunktene gjennom ditt valgte forløp?
+3. Hvor i tiltrekningsplottet ligger de fleste moteksemplene?
+4. Hva kan du nå si om påstanden «Newton finner nærmeste nullpunkt»?
+
+## 5. Hvorfor kan noen startverdier gi store hopp?
+
+I Newton-formelen deler vi på $f'(z_n)$. Når $f'(z_n)$ er nær null, kan ett
+Newton-skritt derfor bli svært stort selv om funksjonsverdien ikke er stor.
+Punkter som oppfyller $f'(z)=0$, kalles her **kritiske punkter**. De er ikke
+nødvendigvis dårlige startverdier alene, men de gir oss steder det er naturlig
+å undersøke nærmere.
 
 ```{pyodide-python}
 #| canvas: false
-# Endre toleransen for å vise en annen beregning.
-tolerance_to_plot = 1e-12
-plot_basins(tolerance_results[tolerance_to_plot],
-            f"Tiltrekningsområder med tol={tolerance_to_plot:.0e}")
+plot_basins(basin_data,
+            "Nullpunkter, kritiske punkter og tiltrekningsområder",
+            critical_points=critical_points)
+
+print("Kritiske punkter:")
+for point in critical_points:
+    print(" ", point, "  |f(z)| =", abs(f(point)))
+```
+
+Velg ett kritisk punkt $c$. Kjør `newton_trace` for $c$, $c+10^{-3}$ og
+$c+10^{-2}i$. Oppgi stoppårsak, største skrittlengde, funnet nullpunkt og
+antall iterasjoner. Du kan endre perturbasjonene dersom alle tre forsøkene
+blir nesten like.
+
+```{pyodide-python}
+c = critical_points[0]  # Velg eventuelt et annet kritisk punkt.
+critical_starts = [c, c + 1e-3, c + 1e-2j]
+
+for z0 in critical_starts:
+    result = newton_trace(f, df, roots, z0, tol=1e-8, maxiter=100)
+    steps = [row["step"] for row in result["history"]
+             if np.isfinite(row["step"])]
+    largest_step = max(steps) if steps else np.nan
+    found = roots[result["root"]] if result["converged"] else "ikke funnet"
+    print(f"z₀={z0:.8g}: stopp={result['reason']}, "
+          f"største skritt={largest_step:.3e}, "
+          f"iterasjoner={result['iterations']}, nullpunkt={found}")
 ```
 
 **Svar kort:**
 
-1. Hvordan påvirker en strengere toleranse antall iterasjoner?
-2. Endrer noen startverdier klassifisering?
-3. Er forskjellene størst inne i områdene eller nær grensene?
-4. Betyr residualkravet $|f(z_n)|<10^{-12}$ nødvendigvis at $|z_n-r|<10^{-12}$?
-5. Hvilken toleranse ville du brukt i hovedfiguren? Begrunn med måleresultater.
+1. Hva skjer når startverdien er nøyaktig et kritisk punkt?
+2. Hvordan oppfører de to nærliggende startverdiene seg?
+3. Ligger områder med mange iterasjoner nær noen av de kritiske punktene?
+4. Er liten $|f'(z_0)|$ alene nok til å forutsi hele iterasjonsforløpet?
 
-## 5. Hva gjør `maxiter`?
+## 6. Hvor følsom er metoden nær en grense?
 
-Hold `tol=1e-8` fast, og sammenlign `maxiter=10`, `30` og `100`.
+Tiltrekningsplottet antyder at en svært liten endring i startverdien kan endre
+resultatet. For å gjøre dette til et kontrollert forsøk trenger vi et konkret
+grensepunkt og en oppgitt perturbasjon. Funksjonen under foreslår et punkt
+mellom to nabopiksler med forskjellig farge. Du kan bruke forslaget eller
+velge et tydeligere punkt i din egen figur.
 
 ```{pyodide-python}
-maxiter_results = {}
+def suggest_boundary_point(data):
+    basin = data["basin"]
+    left = basin[:, :-1]
+    right = basin[:, 1:]
+    candidates = np.argwhere((left >= 0) & (right >= 0) & (left != right))
+    if len(candidates) == 0:
+        raise ValueError("Fant ingen grense mellom to tiltrekningsområder")
 
-print(" maxiter   konvergert   nådde grensen   ugyldig   gj.snitt steg")
-for maximum in [10, 30, 100]:
-    data = newton_grid(f, df, roots, bounds, nx=300, ny=300,
-                       tol=1e-8, maxiter=maximum)
-    maxiter_results[maximum] = data
+    ny, nx = basin.shape
+    margin_y = max(1, ny//20)
+    margin_x = max(1, nx//20)
+    interior = candidates[(candidates[:, 0] >= margin_y)
+                          & (candidates[:, 0] < ny-margin_y)
+                          & (candidates[:, 1] >= margin_x)
+                          & (candidates[:, 1] < nx-margin_x)]
+    if len(interior) > 0:
+        candidates = interior
+
+    center = np.array([ny/2, nx/2])
+    row, col = candidates[np.argmin(np.sum((candidates-center)**2, axis=1))]
+    xmin, xmax, ymin, ymax = data["bounds"]
+    x = np.linspace(xmin, xmax, nx)
+    y = np.linspace(ymin, ymax, ny)
+    return (x[col] + x[col+1])/2 + 1j*y[row]
+
+
+boundary_point = suggest_boundary_point(basin_data)
+delta = 1e-3
+nearby_starts = [boundary_point,
+                 boundary_point + delta,
+                 boundary_point + 1j*delta]
+
+print("Foreslått grensepunkt:", boundary_point)
+for z0 in nearby_starts:
+    result = newton_trace(f, df, roots, z0, tol=1e-8, maxiter=100)
+    found = roots[result["root"]] if result["converged"] else "ikke funnet"
+    print(f"z₀={z0:.8g}: {result['iterations']} iterasjoner, "
+          f"nullpunkt={found}, stopp={result['reason']}")
+```
+
+Hvis alle tre startverdiene gir samme resultat, flytt grensepunktet eller gjør
+`delta` mindre. Vis iterasjonshistorikken for to nærliggende startverdier som
+finner forskjellige nullpunkter.
+
+**Svar kort:**
+
+1. Hvor stor var avstanden mellom de to valgte startverdiene?
+2. Når begynte iterasjonsforløpene å bli tydelig forskjellige?
+3. Fant de ulike nullpunkter, eller var forskjellen bare antall iterasjoner?
+4. Er samme følsomhet synlig langt inne i et ensfarget område?
+
+## 7. Kontroller stoppreglene
+
+Fargene i kartet avhenger også av reglene i programmet. Før du konkluderer,
+kontroller at hovedresultatet ikke bare skyldes ett tilfeldig valg av
+toleranse eller `maxiter`. Bruk et mindre rutenett for å spare tid.
+
+```{pyodide-python}
+print("      tol  maxiter  konvergert  nådde grensen  gj.snitt steg")
+for tolerance, maximum in [(1e-4, 50), (1e-8, 50),
+                           (1e-12, 50), (1e-8, 15), (1e-8, 100)]:
+    data = newton_grid(f, df, roots, bounds, nx=250, ny=250,
+                       tol=tolerance, maxiter=maximum)
     summary = summarize_grid(data)
-    print(f" {maximum:7d}   {summary['converged']:10d}   "
-          f"{summary['not_converged']:13d}   {summary['invalid']:7d}   "
-          f"{summary['mean_iterations']:12.2f}")
+    print(f"{tolerance:9.0e}  {maximum:7d}  {summary['converged']:10d}  "
+          f"{summary['not_converged']:13d}  "
+          f"{summary['mean_iterations']:13.2f}")
 ```
 
-**Svar kort:**
+Forklar med konkrete tall hvordan en strengere toleranse og en større
+`maxiter` påvirker klassifiseringen. Betyr «nådde `maxiter`» at den matematiske
+følgen divergerer? Betyr $|f(z_n)|<10^{-12}$ nødvendigvis at
+$|z_n-r|<10^{-12}$?
 
-1. Hvor mange punkter som feiler ved `maxiter=10`, konvergerer når grensen økes?
-2. Betyr «nådde `maxiter`» at den matematiske følgen divergerer?
-3. Hvor i tiltrekningsplottet ligger punktene som trenger mer enn 30 iterasjoner?
-4. Hvilken `maxiter` gir en rimelig balanse mellom regnetid og feilklassifisering for ditt rutenett?
-
-## 6. Zoom inn på en grense
-
-Velg et rektangel der to eller tre farger ligger tett sammen. Bruk først et moderat rutenett. Zoom deretter inn én gang til ved å gjøre intervallet mindre.
-
-```{pyodide-python}
-#| canvas: false
-# Eksempelvindu. Bytt grensene slik at de passer din figur.
-zoom_bounds = (-0.5, 0.5, -0.5, 0.5)
-
-zoom_data = newton_grid(
-    f, df, roots,
-    bounds=zoom_bounds,
-    nx=500, ny=500,
-    tol=1e-8,
-    maxiter=100,
-)
-
-plot_basins(zoom_data, "Forstørrelse av en grense")
-print_summary(summarize_grid(zoom_data))
-```
-
-For hvert zoomnivå skal du oppgi plottevindu, rutenettstørrelse, toleranse og `maxiter`.
-
-**Svar kort:**
-
-1. Blir grensen enklere eller mer detaljert når du zoomer inn?
-2. Finn to startverdier som ligger nær hverandre, men konvergerer mot forskjellige nullpunkter.
-3. Sammenlign iterasjonshistorikken for de to startverdiene.
-4. Hva forteller eksperimentet om følsomhet for startverdien?
-
-## 7. Konklusjon
+## 8. Konklusjon
 
 Skriv en samlet konklusjon på omtrent 200–300 ord. Den skal svare på:
 
 - Hvordan påvirker startverdien hvilket nullpunkt Newtons metode finner?
 - Hvor er konvergensen rask, og hvor kreves mange iterasjoner?
+- Finner metoden alltid nullpunktet som ligger nærmest startverdien?
+- Hvilken rolle ser de kritiske punktene ut til å spille?
+- Hva viste perturbasjonsforsøket nær en grense?
 - Hvordan påvirker residualtoleransen og `maxiter` klassifiseringen?
 - Hvilke påstander bygger på numeriske eksperimenter, og hva kan eksperimentene ikke bevise?
 - Når mener du det er forsvarlig å rapportere at metoden har konvergert?
@@ -537,13 +705,13 @@ Skriv en samlet konklusjon på omtrent 200–300 ord. Den skal svare på:
 Lever én Quarto-side eller notebook med:
 
 1. tildelt funksjon og nullpunkter,
-2. to analyserte iterasjonshistorikker,
+2. analyserte iterasjonshistorikker for raske, langsomme og følsomme startverdier,
 3. hovedfigur med tiltrekningsområder og histogram,
-4. tabell for tre toleranser,
-5. tabell for tre verdier av `maxiter`,
-6. minst to zoomnivåer ved en grense,
-7. konkrete parameterverdier for alle figurer,
-8. konklusjonen.
+4. test av om nærmeste nullpunkt blir funnet,
+5. undersøkelse av ett kritisk punkt,
+6. perturbasjonsforsøk nær en grense,
+7. kontroll av toleranse og `maxiter`,
+8. konkrete parameterverdier og konklusjonen.
 
 ::: {.callout-warning}
 ## Om bruk av kodeassistenter
