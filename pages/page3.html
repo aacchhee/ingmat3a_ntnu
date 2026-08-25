@@ -291,7 +291,8 @@ ul.task-list li input[type="checkbox"] {
 .math-fb-wrong,
 .math-fb-empty,
 .math-fb-err,
-.math-fb-checking {
+.math-fb-checking,
+.math-fb-score {
   padding: .4em .8em;
   border-radius: .3em;
   margin-bottom: .3em;
@@ -302,7 +303,7 @@ ul.task-list li input[type="checkbox"] {
 .math-fb-ok       { background: #d1e7dd; color: #0a3622; }
 .math-fb-partial,
 .math-fb-score    { background: #fff3cd; color: #664d03; }
-.math-fb-score    { padding: .4em .8em; border-radius: .3em; margin-bottom: .3em; font-size: .92em; font-weight: 600; }
+.math-fb-score    { font-weight: 600; }
 .math-fb-wrong    { background: #f8d7da; color: #58151c; }
 .math-fb-empty    { background: #fff3cd; color: #664d03; }
 .math-fb-err      { background: #fff3cd; color: #664d03; }
@@ -1996,8 +1997,8 @@ select.math-modal-input {
       '            exact = matched == len(c_items) == len(s_items)',
       '            if exact:',
       '                return {"status": "correct", "score": 1.0}',
-      '            denom = len(c_items) + len(s_items)',
-      '            score = (2.0 * matched / denom) if (_math_partial_credit and denom) else 0.0',
+      '            extra = len(s_items) - matched',
+      '            score = (max(0.0, matched - extra) / len(c_items)) if (_math_partial_credit and c_items) else 0.0',
       '            return {"status": "partial" if score > 0 else "wrong", "score": score}',
       '',
       '        _ms = parse_expr(_math_student, local_dict=_local, transformations=_math_tf)',
@@ -2055,7 +2056,7 @@ select.math-modal-input {
       '        raise TypeError("Custom checker must return bool, number, or dict")',
       '    if not 0.0 <= score <= 1.0:',
       '        raise ValueError("Custom checker score must be between 0 and 1")',
-      '    status = "correct" if score == 1.0 else ("wrong" if score == 0.0 else "partial")',
+      '    status = "correct" if score >= 1.0 - 1e-9 else ("wrong" if score <= 1e-9 else "partial")',
       '    return {"status": status, "score": score, "feedback": feedback}',
       '',
       'def _math_check_custom():',
@@ -2236,6 +2237,16 @@ select.math-modal-input {
       return { empty: true, response: { kind: 'expressions', raw: values }, ai: null };
     }
     return { response: { kind: 'expressions', raw: values }, ai: null };
+  }
+
+  // Shared by runCheck and doFeedback so the empty/score-0 fallback and the
+  // collect-then-check sequence for mode: custom exist in exactly one place.
+  async function collectAndCheckCustom(fieldIds, opts, includeAI) {
+    var transport = await collectCustomResponse(fieldIds, opts, includeAI);
+    var result = transport.empty
+      ? { status: 'empty', score: 0 }
+      : await checkCustom(transport.response, opts);
+    return { transport: transport, result: result };
   }
 
   function externalAISummary(ai) {
@@ -3001,10 +3012,7 @@ select.math-modal-input {
         var parts = [];
         var fieldElements = fieldIds.map(function (id) { return document.getElementById(id); });
         if (mode === 'custom') {
-          var customTransport = await collectCustomResponse(fieldIds, checkOpts, false);
-          var custom = customTransport.empty
-            ? { status: 'empty', score: 0.0 }
-            : await checkCustom(customTransport.response, checkOpts);
+          var custom = (await collectAndCheckCustom(fieldIds, checkOpts, false)).result;
           fieldElements.forEach(function (el) {
             if (!el) return;
             el.classList.remove('math-input-ok', 'math-input-partial', 'math-input-wrong', 'math-input-err');
@@ -3127,16 +3135,9 @@ select.math-modal-input {
             var overallAssessment = '';
             var externalAI = null;
             if (mode === 'custom') {
-              var customResult;
-              try {
-                var customTransport = await collectCustomResponse(fieldIds, checkOpts, true);
-                externalAI = customTransport.ai;
-                customResult = customTransport.empty
-                  ? { status: 'empty', score: 0 }
-                  : await checkCustom(customTransport.response, checkOpts);
-              } catch (e) {
-                customResult = { status: 'error', score: 0, message: String(e) };
-              }
+              var customOutcome = await collectAndCheckCustom(fieldIds, checkOpts, true);
+              externalAI = customOutcome.transport.ai;
+              var customResult = customOutcome.result;
               responses.forEach(function (field) {
                 field.status = field.value === '' ? 'empty' : 'submitted';
               });
