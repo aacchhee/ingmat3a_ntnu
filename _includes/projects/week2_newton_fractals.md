@@ -147,7 +147,9 @@ for point in critical_points:
 print("Standardvindu:", my_function["plot_window"])
 ```
 
-Alle funksjonene i puljen har grad 3, 4 eller 5 og bare enkle nullpunkter.
+Alle funksjonene i puljen har grad 3, 4 eller 5 og bare **enkle nullpunkter**.
+Det betyr at hvert nullpunkt $r$ oppfyller både $f(r)=0$ og $f'(r)\ne0$;
+ingen nullpunkter er gjentatt.
 **Skriv ned** funksjons-ID, funksjon, nullpunkter og standardvindu. Bruk den
 tildelte funksjonen i resten av prosjektet.
 
@@ -683,7 +685,8 @@ for z0 in critical_starts:
 
 Tiltrekningsplottet antyder at en svært liten endring i startverdien kan endre
 resultatet. For å gjøre dette til et kontrollert forsøk trenger vi et konkret
-grensepunkt og en oppgitt perturbasjon. Funksjonen under foreslår et punkt
+grensepunkt og en oppgitt **perturbasjon**, altså en liten, kontrollert endring
+av startverdien. Funksjonen under foreslår et punkt
 mellom to nabopiksler med forskjellig farge. Du kan bruke forslaget eller
 velge et tydeligere punkt i din egen figur.
 
@@ -763,7 +766,7 @@ Forklar med konkrete tall hvordan en strengere toleranse og en større
 følgen divergerer? Betyr $|f(z_n)|<10^{-12}$ nødvendigvis at
 $|z_n-r|<10^{-12}$?
 
-## 8. Sluttoppdraget: Følg en grense inn i fraktalen
+## 8. Hovedproblemstilling: Følg en grense inn i fraktalen
 
 Tiltrekningskartet har store, rolige fargeområder der resultatet er lett å
 forutsi. Mellom dem ligger smale og urolige grenser. På avstand kan en slik
@@ -782,7 +785,31 @@ fortsatt tegnes med $400\times400$ piksler, undersøker vi startverdier som
 ligger ti ganger tettere. En fraktalzoom er derfor et forsøk på hvor følsomt
 Newton-resultatet er for stadig mindre endringer i startverdien.
 
-### Oppdrag 1: Hva er egentlig en grensepiksel?
+### Begrepene vi trenger
+
+Et numerisk bilde er bygget opp av små fargede ruter. I dette prosjektet
+kaller vi én slik rute en **piksel**. Hver piksel representerer resultatet fra
+én startverdi i rutenettet: basin-fargen viser hvilket nullpunkt startverdien
+fant, mens iterasjonskartet viser hvor mange Newton-steg som ble brukt.
+
+**Oppløsningen** `nx × ny` er antall startverdier vi beregner i vannrett og
+loddrett retning. I et vindu fra `xmin` til `xmax` er avstanden mellom to
+vannrette nabostartverdier
+
+$$
+\Delta x=\frac{\texttt{xmax}-\texttt{xmin}}{\texttt{nx}-1}.
+$$
+
+Tilsvarende får vi $\Delta y$ i loddrett retning. Når vinduet er kvadratisk
+og `nx = ny`, omtaler vi $\Delta x$ som **pikselbredden**. Strengt tatt er
+dette avstanden mellom startverdiene som to nabopiksler representerer.
+
+**Plottevinduet** er rektangelet av komplekse startverdier som beregnes. Å
+**zoome** betyr her å velge et mindre plottevindu og beregne et helt nytt
+rutenett med samme oppløsning. Det er altså ikke bare en grafisk forstørrelse
+av det gamle bildet.
+
+### Delproblem 1: Hvordan kjenner vi igjen en grense?
 
 Før vi zoomer, trenger vi en enkel måleregel. Vi kaller en piksel en
 **grensepiksel** dersom minst én nabo over, under, til venstre eller til høyre
@@ -863,9 +890,9 @@ print_boundary_summary(basin_data)
 **Tenk før du zoomer:** Tror du grensen etter hvert blir glatt dersom du bare
 zoomer langt nok inn? Tror du forskjellen i iterasjonstall mellom grense og
 indre områder blir større, mindre eller omtrent den samme? Skriv ned
-hypotesene dine før neste oppdrag.
+hypotesene dine før neste delproblem.
 
-### Oppdrag 2: Første zoom er en ny beregning
+### Delproblem 2: Hva betyr det å zoome numerisk?
 
 En vanlig digital zoom ville bare gjort de eksisterende pikslene større. Det
 skal vi ikke gjøre. For hvert nivå lager `newton_grid` et nytt
@@ -907,7 +934,7 @@ zoom_width = min(bounds[1]-bounds[0], bounds[3]-bounds[2]) / 5
 zoom_data = run_zoom(zoom_center, zoom_width)
 ```
 
-### Oppdrag 3: Følg grensen gjennom minst tre nivåer
+### Delproblem 3: Fortsetter nye detaljer å dukke opp?
 
 Gjør `zoom_width` omtrent ti ganger mindre for hvert nivå. Før neste kjøring
 velger du et nytt sentrum på en synlig grense i det siste bildet. Du kan bruke
@@ -935,7 +962,7 @@ For hvert nivå lagrer du:
 - andel grensepiksler,
 - gjennomsnittlig iterasjonstall på grensen og i indre områder.
 
-### Oppdrag 4: Hva har dette med Newtons metode å gjøre?
+### Delproblem 4: Hva forteller fraktalzoomen om Newtons metode?
 
 Fraktalbildet er ikke pynt ved siden av den numeriske metoden. Hver ny detalj
 forteller at startverdier som er svært nær hverandre kan følge forskjellige
@@ -969,6 +996,81 @@ analysen.
    strukturene du ser?
 9. Hvorfor er flere vellykkede zoomnivåer god numerisk evidens for en
    fraktallignende grense, men ikke et bevis på detaljer på alle skalaer?
+
+### Ekstra nøtt: Kan grensen ha en dimensjon mellom 1 og 2?
+
+Denne delen er frivillig. Den introduserer én idé som ikke er nødvendig for
+resten av prosjektet.
+
+En glatt kurve omtales som endimensjonal, mens et fylt område er
+todimensjonalt. En komplisert fraktalgrense kan oppføre seg som noe mellom
+disse. For å undersøke det dekker vi **ett fast plottevindu** med stadig
+mindre piksler og teller hvor mange piksler som treffer basin-grensen.
+
+Det er viktig at vinduet ikke flyttes eller krympes i dette forsøket. Hvis vi
+sammenlignet tre forskjellige zoomvinduer, ville vi samtidig ha endret både
+skalaen og delen av grensen vi målte.
+
+La $N(\varepsilon)$ være antall registrerte grensepiksler når pikselbredden er
+$\varepsilon$. Dersom
+
+$$
+N(\varepsilon)\approx C\varepsilon^{-D},
+$$
+
+kan to oppløsninger gi det grove estimatet
+
+$$
+D\approx
+\frac{\log(N_2/N_1)}{\log(\varepsilon_1/\varepsilon_2)}.
+$$
+
+For en glatt grense forventer vi omtrent $D=1$. Dersom grensen fylte et helt
+område, ville vi fått omtrent $D=2$.
+
+```{pyodide-python}
+def boundary_dimension_experiment(test_bounds,
+                                  resolutions=(100, 200, 400),
+                                  tol=1e-8, maxiter=100):
+    """Lag et grovt dimensjonsestimat i ett uendret plottevindu.
+
+    Dette er en endelig pikselmåling, ikke en beregning av en eksakt
+    matematisk fraktaldimensjon.
+    """
+    xmin, xmax, ymin, ymax = test_bounds
+    measurements = []
+
+    print(" oppløsning   pikselbredde   grensepiksler")
+    for resolution in resolutions:
+        data = newton_grid(
+            f, df, roots, test_bounds,
+            nx=resolution, ny=resolution, tol=tol, maxiter=maxiter
+        )
+        epsilon = (xmax-xmin)/(resolution-1)
+        count = int(np.count_nonzero(boundary_mask(data)))
+        measurements.append((resolution, epsilon, count))
+        print(f" {resolution:10d}   {epsilon:12.4e}   {count:14d}")
+
+    print("\nEstimat mellom to oppløsninger:")
+    for first, second in zip(measurements[:-1], measurements[1:]):
+        n1, epsilon1, count1 = first
+        n2, epsilon2, count2 = second
+        dimension = (np.log(count2/count1)
+                     / np.log(epsilon1/epsilon2))
+        print(f" {n1:4d} → {n2:4d}: D ≈ {dimension:.3f}")
+
+    return measurements
+
+
+# Kjør nøtten i ETT av zoomvinduene dine etter at zoomserien er ferdig.
+# dimension_data = boundary_dimension_experiment(zoom_data["bounds"])
+```
+
+Vurder om estimatene nærmer seg hverandre når oppløsningen økes. Et tall
+mellom 1 og 2 er interessant evidens, men ikke et bevis: resultatet avhenger
+av vinduet, oppløsningene, grensepikselregelen, `tol` og `maxiter`. Forklar
+også hvorfor det ville vært misvisende å bruke tre forskjellige zoomvinduer i
+samme dimensjonsberegning.
 
 ## 9. Konklusjon
 
