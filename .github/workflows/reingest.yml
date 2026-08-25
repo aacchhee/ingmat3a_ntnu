@@ -1,29 +1,12 @@
-name: Reingest
+name: Re-ingest notes on push
 
 on:
-  workflow_dispatch:
+  push:
+    branches: ["main"]
 
 jobs:
   reingest:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
-      - name: Reingest temporarily disabled
-        run: |
-          echo "Reingest is currently disabled."
-          echo "This workflow is kept as a manual placeholder."
-          
-#name: Re-ingest notes on push
-
-#on:
-#  push:
-#    branches: ["main"]
-
-#jobs:
-#  reingest:
-#    runs-on: self-hosted
-#    steps:
-#      - name: Re-ingest
-#        run: touch /var/lib/rag/reingest.trigger
-
-        
+      - name: Re-ingest
+        run: touch /var/lib/rag/reingest.trigger
