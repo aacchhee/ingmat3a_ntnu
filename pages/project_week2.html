@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Uke 1 – Floating-point attack – Matematikk 3A</title>
+<title>Uke 2 – Newtonfraktaler – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -921,7 +921,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "en";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"def ordinary_sum(values):\n    # Start med summen 0.\n    total = 0.0\n\n    # Legg til ett tall om gangen, fra venstre mot høyre.\n    for value in values:\n        total = total + value\n\n    return total","id":1,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Bytt ut tallene med ditt eget første angrep.\nvalues = [1.0, 2.0, 3.0]\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def make_attack(n, scale):\n    # n bestemmer hvor stort eksperimentet skal være.\n    # scale kan brukes til å styre størrelsesforskjellen mellom tallene.\n    #\n    # TODO: lag og returner din egen liste.\n\n    values = []\n\n    return values","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor n in [10, 100, 1000]:\n    values = make_attack(n, 1e16)\n\n    ordinary = ordinary_sum(values)\n    reference = math.fsum(values)\n    error = abs(ordinary - reference)\n\n    print(\n        f\"n={n:5d}   \"\n        f\"ordinary={ordinary:.12g}   \"\n        f\"reference={reference:.12g}   \"\n        f\"error={error:.3e}\"\n    )","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef target_attack():\n    # TODO: konstruer tallene dine her.\n    values = [1.0]\n    return values\n\n\nvalues = target_attack()\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"antall tall  =\", len(values))\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"feil         =\", abs(ordinary - reference))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef bounded_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = bounded_attack()\n\n# Kontroller regelen.\nprint(\"største |x| =\", max(abs(x) for x in values) if values else 0.0)\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef positive_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = positive_attack()\n\nprint(\"alle positive =\", all(x > 0 for x in values))\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def defense_order(values):\n    # Lag en kopi slik at originaldataene ikke endres.\n    reordered = list(values)\n\n    # TODO: bestem en bedre rekkefølge.\n\n    return reordered","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nvalues = target_attack()\nreference = math.fsum(values)\n\nbefore = ordinary_sum(values)\ndefended_values = defense_order(values)\nafter = ordinary_sum(defended_values)\n\nprint(\"referanse       =\", reference)\nprint(\"før forsvar     =\", before)\nprint(\"feil før        =\", abs(before - reference))\nprint()\nprint(\"etter forsvar   =\", after)\nprint(\"feil etter      =\", abs(after - reference))","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nattacks = {\n    \"target\": target_attack(),\n    \"bounded\": bounded_attack(),\n    \"positive\": positive_attack(),\n}\n\nprint(\n    f\"{'datasett':12s} \"\n    f\"{'naiv feil':>14s} \"\n    f\"{'forsvart feil':>16s}\"\n)\nprint(\"-\" * 46)\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n\n    naive = ordinary_sum(values)\n    defended = ordinary_sum(defense_order(values))\n\n    naive_error = abs(naive - reference)\n    defended_error = abs(defended - reference)\n\n    print(\n        f\"{name:12s} \"\n        f\"{naive_error:14.6e} \"\n        f\"{defended_error:16.6e}\"\n    )","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def better_sum(values):\n    # TODO: design din egen summeringsalgoritme.\n    # Ikke bruk sum(), numpy.sum() eller math.fsum().\n\n    total = 0.0\n    for value in values:\n        total += value\n\n    return total","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n    result = better_sum(values)\n\n    print(\n        f\"{name:12s}   \"\n        f\"resultat={result:.12g}   \"\n        f\"feil={abs(result-reference):.3e}\"\n    )","id":12,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"import hashlib\nimport unicodedata\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef normalize_name(name):\n    name = unicodedata.normalize(\"NFKD\", name.strip().casefold())\n    name = \"\".join(char for char in name\n                   if not unicodedata.combining(char))\n    return \" \".join(name.split())\n\n\ndef function_id(first_name, number_of_functions):\n    normalized = normalize_name(first_name)\n    text = f\"IMAX3011-newton-2026:{normalized}\"\n    digest = hashlib.sha256(text.encode(\"utf-8\")).digest()\n    return int.from_bytes(digest[:8], byteorder=\"big\") % number_of_functions\n\n\nFUNCTIONS = [\n    {\"label\": \"A\", \"coefficients\": [1, 0, 0, -1],\n     \"formula\": \"z³ − 1\", \"plot_window\": (-2, 2, -2, 2)},\n    {\"label\": \"B\", \"coefficients\": [1, 0, 0, 1],\n     \"formula\": \"z³ + 1\", \"plot_window\": (-2, 2, -2, 2)},\n    {\"label\": \"C\", \"coefficients\": [1, 0, -1, 0],\n     \"formula\": \"z³ − z\", \"plot_window\": (-2, 2, -2, 2)},\n    {\"label\": \"D\", \"coefficients\": [1, 0, -2, 2],\n     \"formula\": \"z³ − 2z + 2\", \"plot_window\": (-2.5, 2.5, -2.5, 2.5)},\n    {\"label\": \"E\", \"coefficients\": [1, 0, -2, -2],\n     \"formula\": \"z³ − 2z − 2\", \"plot_window\": (-2.5, 2.5, -2.5, 2.5)},\n    {\"label\": \"F\", \"coefficients\": [1, 0, 2, -2],\n     \"formula\": \"z³ + 2z − 2\", \"plot_window\": (-2.5, 2.5, -2.5, 2.5)},\n]\n\n\ndef prepare_function(entry):\n    coefficients = np.asarray(entry[\"coefficients\"], dtype=complex)\n    derivative_coefficients = np.polyder(coefficients)\n    roots = np.roots(coefficients)\n\n    def f(z):\n        return np.polyval(coefficients, z)\n\n    def df(z):\n        return np.polyval(derivative_coefficients, z)\n\n    return f, df, roots\n\n\n# Bytt teksten med ditt eget fornavn.\nfirst_name = \"Ada\"\n\nmy_id = function_id(first_name, len(FUNCTIONS))\nmy_function = FUNCTIONS[my_id]\nf, df, roots = prepare_function(my_function)\n\nprint(\"Funksjons-ID:\", my_function[\"label\"])\nprint(\"Funksjon:    \", my_function[\"formula\"])\nprint(\"Koeffisienter:\", my_function[\"coefficients\"])\nprint(\"Nullpunkter:\")\nfor root in roots:\n    print(\" \", root)\nprint(\"Standardvindu:\", my_function[\"plot_window\"])","id":1,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def is_finite_complex(z):\n    return np.isfinite(np.real(z)) and np.isfinite(np.imag(z))\n\n\ndef nearest_root(z, roots):\n    return int(np.argmin(np.abs(roots - z)))\n\n\ndef newton_trace(f, df, roots, z0, tol=1e-8, maxiter=50,\n                 derivative_tol=1e-14):\n    z = complex(z0)\n    history = [{\"n\": 0, \"z\": z,\n                \"residual\": float(abs(f(z))), \"step\": np.nan}]\n\n    if history[-1][\"residual\"] < tol:\n        return {\"z\": z, \"converged\": True, \"root\": nearest_root(z, roots),\n                \"reason\": \"liten residual\", \"iterations\": 0,\n                \"history\": history}\n\n    for n in range(1, maxiter + 1):\n        derivative = df(z)\n        if not is_finite_complex(derivative) or abs(derivative) <= derivative_tol:\n            return {\"z\": z, \"converged\": False, \"root\": None,\n                    \"reason\": \"for liten derivert\", \"iterations\": n-1,\n                    \"history\": history}\n\n        with np.errstate(over=\"ignore\", divide=\"ignore\", invalid=\"ignore\"):\n            z_new = z - f(z)/derivative\n\n        if not is_finite_complex(z_new):\n            return {\"z\": z_new, \"converged\": False, \"root\": None,\n                    \"reason\": \"ikke-endelig verdi\", \"iterations\": n,\n                    \"history\": history}\n\n        step = float(abs(z_new-z))\n        residual = float(abs(f(z_new)))\n        history.append({\"n\": n, \"z\": z_new,\n                        \"residual\": residual, \"step\": step})\n        z = z_new\n\n        if residual < tol:\n            return {\"z\": z, \"converged\": True,\n                    \"root\": nearest_root(z, roots),\n                    \"reason\": \"liten residual\", \"iterations\": n,\n                    \"history\": history}\n\n    return {\"z\": z, \"converged\": False, \"root\": None,\n            \"reason\": \"maksimalt antall iterasjoner\",\n            \"iterations\": maxiter, \"history\": history}\n\n\ndef print_trace(result):\n    print(\" n                 z_n             |f(z_n)|       skrittlengde\")\n    for row in result[\"history\"]:\n        step = \"     -\" if np.isnan(row[\"step\"]) else f\"{row['step']:.3e}\"\n        print(f\"{row['n']:2d}  {row['z']:>22.14g}   \"\n              f\"{row['residual']:.3e}      {step}\")\n    print(\"\\nStoppårsak:\", result[\"reason\"])\n    print(\"Iterasjoner:\", result[\"iterations\"])\n    if result[\"converged\"]:\n        print(\"Nærmeste nullpunkt:\", roots[result[\"root\"]])\n\n\ndef plot_trace(result):\n    rows = result[\"history\"]\n    n = np.array([row[\"n\"] for row in rows])\n    residuals = np.array([row[\"residual\"] for row in rows])\n    steps = np.array([row[\"step\"] for row in rows])\n\n    plt.close(\"all\")\n    fig, ax = plt.subplots()\n    ax.semilogy(n, residuals, \"o-\", label=\"Residual |f(zₙ)|\")\n    if len(steps) > 1:\n        ax.semilogy(n[1:], steps[1:], \"o-\", label=\"Skritt |zₙ − zₙ₋₁|\")\n    ax.set_xlabel(\"Iterasjon n\")\n    ax.set_ylabel(\"Størrelse\")\n    ax.set_title(\"Residual og skrittlengde\")\n    ax.grid(True)\n    ax.legend()\n    plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"starting_values = [1.5, -1+1j, 0.1, 1j]\n\nfor z0 in starting_values:\n    result = newton_trace(f, df, roots, z0, tol=1e-8, maxiter=50)\n    print(\"\\nStartverdi:\", z0)\n    print(\"  konvergert:\", result[\"converged\"])\n    print(\"  iterasjoner:\", result[\"iterations\"])\n    print(\"  stoppårsak:\", result[\"reason\"])\n    print(\"  siste residual:\", result[\"history\"][-1][\"residual\"])\n    if result[\"converged\"]:\n        print(\"  nullpunkt:\", roots[result[\"root\"]])","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bytt startverdien med en verdi du vil undersøke nærmere.\nz0 = -1 + 1j\n\nresult = newton_trace(f, df, roots, z0, tol=1e-8, maxiter=50)\nprint_trace(result)\nplot_trace(result)","id":4,"options":{"autorun":"","canvas":"false","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def newton_grid(f, df, roots, bounds, nx=400, ny=400,\n                tol=1e-8, maxiter=50, derivative_tol=1e-14):\n    xmin, xmax, ymin, ymax = bounds\n    x = np.linspace(xmin, xmax, nx)\n    y = np.linspace(ymin, ymax, ny)\n    z = x[None, :] + 1j*y[:, None]\n\n    basin = np.full(z.shape, -1, dtype=int)\n    iterations = np.zeros(z.shape, dtype=int)\n    active = np.ones(z.shape, dtype=bool)\n\n    for n in range(1, maxiter + 1):\n        with np.errstate(over=\"ignore\", divide=\"ignore\", invalid=\"ignore\"):\n            derivative = df(z)\n            safe = (active & np.isfinite(z.real) & np.isfinite(z.imag)\n                    & np.isfinite(derivative.real)\n                    & np.isfinite(derivative.imag)\n                    & (np.abs(derivative) > derivative_tol))\n\n            invalid = active & ~safe\n            basin[invalid] = -2\n            iterations[invalid] = n-1\n            active[invalid] = False\n\n            z[safe] = z[safe] - f(z[safe])/derivative[safe]\n            finite = np.isfinite(z.real) & np.isfinite(z.imag)\n            invalid_after = active & ~finite\n            basin[invalid_after] = -2\n            iterations[invalid_after] = n\n            active[invalid_after] = False\n\n            residual = np.full(z.shape, np.inf)\n            residual[active] = np.abs(f(z[active]))\n            converged = active & (residual < tol)\n\n        if np.any(converged):\n            converged_values = z[converged]\n            distances = np.abs(converged_values[:, None] - roots[None, :])\n            basin[converged] = np.argmin(distances, axis=1)\n            iterations[converged] = n\n            active[converged] = False\n\n        if not np.any(active):\n            break\n\n    iterations[active] = maxiter\n    final_residual = np.full(z.shape, np.inf)\n    finite = np.isfinite(z.real) & np.isfinite(z.imag)\n    with np.errstate(over=\"ignore\", invalid=\"ignore\"):\n        final_residual[finite] = np.abs(f(z[finite]))\n\n    return {\"basin\": basin, \"iterations\": iterations,\n            \"residual\": final_residual, \"z\": z,\n            \"bounds\": bounds, \"tol\": tol, \"maxiter\": maxiter,\n            \"roots\": roots}\n\n\nROOT_COLORS = np.array([\n    [0.90, 0.20, 0.20], [0.20, 0.65, 0.95], [0.25, 0.80, 0.35],\n    [0.90, 0.65, 0.15], [0.65, 0.35, 0.90], [0.20, 0.80, 0.80],\n])\n\n\ndef plot_basins(data, title=\"Newtons metode: tiltrekningsområder\"):\n    basin = data[\"basin\"]\n    iterations = data[\"iterations\"]\n    maxiter = data[\"maxiter\"]\n    roots = data[\"roots\"]\n    xmin, xmax, ymin, ymax = data[\"bounds\"]\n\n    image = np.full(basin.shape + (3,), 0.12)\n    image[basin == -2] = 0.0\n    for k in range(len(roots)):\n        mask = basin == k\n        brightness = 0.35 + 0.65*(1-iterations[mask]/maxiter)\n        image[mask] = ROOT_COLORS[k % len(ROOT_COLORS)]*brightness[:, None]\n\n    plt.close(\"all\")\n    fig, ax = plt.subplots(figsize=(7, 7))\n    ax.imshow(image, origin=\"lower\", extent=(xmin, xmax, ymin, ymax),\n              interpolation=\"nearest\")\n    ax.scatter(roots.real, roots.imag, c=\"white\", edgecolors=\"black\",\n               s=70, marker=\"o\", label=\"Nullpunkter\")\n    ax.set_xlabel(\"Re(z₀)\")\n    ax.set_ylabel(\"Im(z₀)\")\n    ax.set_title(title)\n    ax.set_aspect(\"equal\")\n    ax.legend()\n    plt.show()\n\n\ndef summarize_grid(data):\n    basin = data[\"basin\"]\n    iterations = data[\"iterations\"]\n    residual = data[\"residual\"]\n    converged = basin >= 0\n    total = basin.size\n\n    summary = {\n        \"total\": total,\n        \"converged\": int(np.count_nonzero(converged)),\n        \"not_converged\": int(np.count_nonzero(basin == -1)),\n        \"invalid\": int(np.count_nonzero(basin == -2)),\n        \"fraction_converged\": float(np.mean(converged)),\n        \"mean_iterations\": (float(np.mean(iterations[converged]))\n                            if np.any(converged) else np.nan),\n        \"max_accepted_residual\": (float(np.max(residual[converged]))\n                                  if np.any(converged) else np.nan),\n    }\n    return summary\n\n\ndef print_summary(summary):\n    print(\"Antall startverdier:     \", summary[\"total\"])\n    print(\"Konvergert:              \", summary[\"converged\"])\n    print(\"Nådde maxiter:           \", summary[\"not_converged\"])\n    print(\"Ugyldig beregning:       \", summary[\"invalid\"])\n    print(\"Andel konvergert:        \", f\"{summary['fraction_converged']:.4f}\")\n    print(\"Gjennomsnitt iterasjoner:\", f\"{summary['mean_iterations']:.2f}\")\n    print(\"Største godkjente residual:\",\n          f\"{summary['max_accepted_residual']:.3e}\")\n\n\ndef plot_iteration_histogram(data):\n    converged_iterations = data[\"iterations\"][data[\"basin\"] >= 0]\n    plt.close(\"all\")\n    fig, ax = plt.subplots()\n    ax.hist(converged_iterations,\n            bins=np.arange(0.5, data[\"maxiter\"]+1.5, 1))\n    ax.set_xlabel(\"Antall iterasjoner\")\n    ax.set_ylabel(\"Antall startverdier\")\n    ax.set_title(\"Iterasjoner før residualkravet er oppfylt\")\n    ax.grid(True)\n    plt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"bounds = my_function[\"plot_window\"]\n\nbasin_data = newton_grid(\n    f, df, roots,\n    bounds=bounds,\n    nx=400, ny=400,\n    tol=1e-8,\n    maxiter=50,\n)\n\nplot_basins(basin_data, f\"Funksjon {my_function['label']}: {my_function['formula']}\")\nprint_summary(summarize_grid(basin_data))\nplot_iteration_histogram(basin_data)","id":6,"options":{"autorun":"","canvas":"false","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"tolerance_results = {}\n\nfor tolerance in [1e-4, 1e-8, 1e-12]:\n    data = newton_grid(f, df, roots, bounds, nx=300, ny=300,\n                       tol=tolerance, maxiter=50)\n    tolerance_results[tolerance] = data\n    summary = summarize_grid(data)\n    print(f\"\\ntol = {tolerance:.0e}\")\n    print_summary(summary)","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Endre toleransen for å vise en annen beregning.\ntolerance_to_plot = 1e-12\nplot_basins(tolerance_results[tolerance_to_plot],\n            f\"Tiltrekningsområder med tol={tolerance_to_plot:.0e}\")","id":8,"options":{"autorun":"","canvas":"false","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"maxiter_results = {}\n\nprint(\" maxiter   konvergert   nådde grensen   ugyldig   gj.snitt steg\")\nfor maximum in [10, 30, 100]:\n    data = newton_grid(f, df, roots, bounds, nx=300, ny=300,\n                       tol=1e-8, maxiter=maximum)\n    maxiter_results[maximum] = data\n    summary = summarize_grid(data)\n    print(f\" {maximum:7d}   {summary['converged']:10d}   \"\n          f\"{summary['not_converged']:13d}   {summary['invalid']:7d}   \"\n          f\"{summary['mean_iterations']:12.2f}\")","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Eksempelvindu. Bytt grensene slik at de passer din figur.\nzoom_bounds = (-0.5, 0.5, -0.5, 0.5)\n\nzoom_data = newton_grid(\n    f, df, roots,\n    bounds=zoom_bounds,\n    nx=500, ny=500,\n    tol=1e-8,\n    maxiter=100,\n)\n\nplot_basins(zoom_data, \"Forstørrelse av en grense\")\nprint_summary(summarize_grid(zoom_data))","id":10,"options":{"autorun":"","canvas":"false","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4249,7 +4249,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week1.html">Uke 1 – Floating-point attack</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week2.html">Uke 2 – Newtonfraktaler</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -4303,13 +4303,13 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 1 – Floating-point attack</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week2.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week2.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Uke 2 – Newtonfraktaler</span></a>
   </div>
 </li>
@@ -4352,9 +4352,9 @@ window.Quarto = {
 </script>
 <script>window.__mathExerciseConfig = {"lang":"en"};</script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week1.html">Uke 1 – Floating-point attack</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week2.html">Uke 2 – Newtonfraktaler</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Uke 1 – Floating-point attack</h1>
+<h1 class="title">Uke 2 – Newtonfraktaler</h1>
 </div>
 
 
@@ -4371,35 +4371,37 @@ window.Quarto = {
 </header>
 
 
-<section id="floating-point-attack" class="level1">
-<h1>Floating-point attack</h1>
-<p>Dette prosjektet er laget for omtrent <strong>2–3 timer selvstendig arbeid</strong>.</p>
-<p>Du har allerede sett at en datamaskin ikke kan lagre alle reelle tall nøyaktig. Her skal vi ikke bruke tiden på å se de samme eksemplene én gang til. I stedet skal vi gjøre noe mer aktivt:</p>
+<section id="newtonfraktaler-hvilken-løsning-finner-iterasjonen" class="level1">
+<h1>Newtonfraktaler: Hvilken løsning finner iterasjonen?</h1>
+<p>Dette prosjektet er laget for omtrent <strong>3–4 timer selvstendig arbeid</strong>. Copilot og andre kodeassistenter er tillatt.</p>
+<p>Newtons metode kan brukes til å løse ligningen</p>
+<p><span class="math display">\[
+f(z)=0
+\]</span></p>
+<p>ved å gjenta</p>
+<p><span class="math display">\[
+z_{n+1}=z_n-\frac{f(z_n)}{f'(z_n)}.
+\]</span></p>
+<p>Dette er en fikspunktiterasjon med oppdateringsregel</p>
+<p><span class="math display">\[
+g(z)=z-\frac{f(z)}{f'(z)}.
+\]</span></p>
+<p>Her arbeider vi med komplekse tall <span class="math inline">\(z=x+iy\)</span>. En startverdi kan konvergere mot ulike nullpunkter, og små endringer i startverdien kan endre hvilket nullpunkt metoden finner. Mengden av startverdier som konvergerer mot et bestemt nullpunkt, kalles nullpunktets <strong>tiltrekningsområde</strong>.</p>
 <blockquote class="blockquote">
-<p><strong>Vi skal prøve å lure en helt vanlig summeringsalgoritme.</strong></p>
+<p><strong>Problemstilling:</strong> Hvordan avhenger Newton-metodens resultat, residual og antall iterasjoner av startverdien i det komplekse planet?</p>
 </blockquote>
-<p>Først lager du eksempler der algoritmen regner dårlig. Deretter prøver du å forstå <strong>hvorfor</strong> den feiler. Til slutt snur vi problemet: kan du lage en bedre algoritme som tåler angrepene dine?</p>
-<p>Det er altså litt som å teste en bro. Først belaster vi den på måter som kan avsløre svakheter. Når vi vet hvor den er svak, kan vi prøve å bygge den bedre.</p>
-<p>Du trenger ikke finne «det perfekte angrepet» med én gang. Start enkelt. Kjør kode. Endre ett tall. Kjør igjen. Se hva som skjer.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Hvordan jobbe med siden
+<span class="screen-reader-only">Tip</span>Hvordan jobbe med prosjektet
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Alle kodevinduene er redigerbare.</p>
-<ol type="1">
-<li>Kjør koden slik den står.</li>
-<li>Endre noe.</li>
-<li>Kjør på nytt.</li>
-<li>Sammenlign resultatene.</li>
-<li>Prøv å forklare det du ser.</li>
-</ol>
-<p>Det er helt greit at de første forsøkene dine <strong>ikke virker</strong>. I dette prosjektet er mislykkede forsøk en del av undersøkelsen.</p>
+<p>Koden for funksjonstildeling, Newton-iterasjon, rutenett, klassifisering og plotting er gitt. Arbeidet ditt er å planlegge numeriske eksperimenter, velge parametere, kontrollere resultatene og forklare det du observerer.</p>
+<p>Endre én størrelse om gangen. Noter alltid startverdi eller plottevindu, residualtoleranse og <code>maxiter</code> sammen med resultatet.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -4408,272 +4410,157 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Spilleregler
+<span class="screen-reader-only">Important</span>Tre størrelser som ikke må blandes
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<ul>
-<li>Bruk vanlige, endelige Python-<code>float</code>-verdier.</li>
-<li>Ikke bruk <code>nan</code> eller <code>inf</code> i angrepene.</li>
-<li>Når vi trenger en god referanseverdi, bruker vi <code>math.fsum</code>.</li>
-<li>Ikke bruk <code>math.fsum</code> inne i selve angreps- eller forsvarsalgoritmen.</li>
-<li>Det viktigste er ikke bare å få stor feil, men å kunne <strong>forklare hvorfor</strong> den oppstår.</li>
-</ul>
-<p>Du trenger ikke forstå hvordan <code>math.fsum</code> er programmert. Her bruker vi den som en målestokk.</p>
+<p>For den opprinnelige ligningen <span class="math inline">\(f(z)=0\)</span> bruker vi ligningsresidualen</p>
+<p><span class="math display">\[
+|f(z_n)|.
+\]</span></p>
+<p>Fikspunktresidualen og Newton-skrittet er</p>
+<p><span class="math display">\[
+|z_n-g(z_n)|
+=\left|\frac{f(z_n)}{f'(z_n)}\right|
+=|z_{n+1}-z_n|.
+\]</span></p>
+<p>Uttrykket <span class="math inline">\(|z-f(z)|\)</span> er ikke residualen til ligningen <span class="math inline">\(f(z)=0\)</span>.</p>
 </div>
 </div>
-<section id="første-angrep-kan-du-få-et-tall-til-å-forsvinne" class="level2">
-<h2 class="anchored" data-anchor-id="første-angrep-kan-du-få-et-tall-til-å-forsvinne">1. Første angrep: kan du få et tall til å forsvinne?</h2>
-<p>Tenk deg at du skal summere en liste med tall. Den mest naturlige måten er å starte på null og legge til ett tall om gangen.</p>
-<p>Det er akkurat dette funksjonen under gjør:</p>
+<section id="du-får-tildelt-en-funksjon" class="level2">
+<h2 class="anchored" data-anchor-id="du-får-tildelt-en-funksjon">1. Du får tildelt en funksjon</h2>
+<p>Skriv fornavnet ditt i cellen under. Navnet normaliseres og hashes med SHA-256. Samme normaliserte fornavn gir alltid samme funksjon i dette prosjektet. Studenter med samme fornavn kan derfor få samme funksjon.</p>
+<p>Tildelingen skjer lokalt i nettleseren. Navnet sendes ikke noe sted.</p>
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>I eksakt matematikk er dette helt uproblematisk. Men på en datamaskin blir hvert mellomresultat lagret som et nytt flyttall. Hvis to tall har svært forskjellig størrelse, kan et lite bidrag bli for lite til å påvirke det store tallet.</p>
-<p><strong>Det er denne svakheten du skal prøve å utnytte.</strong></p>
-<section id="oppgave-1-lag-ditt-første-angrep" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-1-lag-ditt-første-angrep">Oppgave 1 – lag ditt første angrep</h3>
-<p>Lag en liste <code>values</code> slik at <code>ordinary_sum(values)</code> gir et tydelig dårligere resultat enn <code>math.fsum(values)</code>.</p>
-<p>Du trenger ikke mange tall. Tre eller fire kan være nok til et første forsøk.</p>
+<p><strong>Skriv ned</strong> funksjons-ID, funksjon, nullpunkter og standardvindu. Bruk den tildelte funksjonen i resten av prosjektet.</p>
+</section>
+<section id="newtons-metode-for-én-startverdi" class="level2">
+<h2 class="anchored" data-anchor-id="newtons-metode-for-én-startverdi">2. Newtons metode for én startverdi</h2>
+<p>Før vi undersøker tusenvis av startverdier, følger vi noen få iterasjoner trinn for trinn. Funksjonen under stopper når ligningsresidualen tilfredsstiller</p>
+<p><span class="math display">\[
+|f(z_n)|&lt;\texttt{tol},
+\]</span></p>
+<p>eller når <code>maxiter</code> er nådd. Den stopper også dersom <span class="math inline">\(f'(z_n)\)</span> blir for liten til at Newton-skrittet kan beregnes pålitelig, eller dersom beregningen gir <code>nan</code> eller <code>inf</code>.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Hvis begge svarene er like, har du ikke ødelagt algoritmen ennå. Bra — endre tallene og prøv igjen.</p>
-<p><strong>Hint hvis du sitter fast:</strong> Hva skjer hvis ett tall er enormt stort og et annet er veldig lite? Hva skjer hvis et stort tall senere trekkes fra igjen?</p>
-<p>Når du har et eksempel som virker, stopp et øyeblikk og følg summen <strong>regnetrinn for regnetrinn</strong>.</p>
-<p><strong>Skriv ned:</strong> Hvilke tall brukte du? I hvilket regnetrinn gikk informasjon tapt?</p>
-<hr>
-</section>
-</section>
-<section id="fra-ett-triks-til-en-angrepsmaskin" class="level2">
-<h2 class="anchored" data-anchor-id="fra-ett-triks-til-en-angrepsmaskin">2. Fra ett triks til en angrepsmaskin</h2>
-<p>Ett spesielt eksempel viser at noe <em>kan</em> gå galt. Men vi vil forstå mer enn det.</p>
-<p>Neste mål er derfor å lage en funksjon som kan produsere <strong>mange varianter av samme type problem</strong>.</p>
-<p>Hvorfor? Fordi det er lettere å forstå en mekanisme når vi kan skru på den. Hvis feilen blir større når <code>n</code> øker, forteller det oss noe. Hvis feilen plutselig forsvinner når <code>scale</code> endres, forteller det oss også noe.</p>
-<p>Du skal lage en liten «angrepsgenerator»:</p>
+<p>Kjør først koden med de foreslåtte startverdiene. Legg deretter til minst to egne startverdier.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Her bestemmer du selv hva <code>n</code> og <code>scale</code> skal bety i angrepet ditt. For eksempel kan <code>n</code> styre hvor mange små tall du bruker, mens <code>scale</code> styrer hvor stort det største tallet er.</p>
-<p>Test så generatoren flere ganger:</p>
+<p>Velg én startverdi som konvergerer raskt, og én som konvergerer langsomt eller ikke konvergerer. Vis hele historikken og plottet for begge.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Lek med knappene du har laget
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Prøv å endre</p>
-<ul>
-<li><strong>antall tall</strong>,</li>
-<li><strong>størrelsen på tallene</strong>,</li>
-<li><strong>fortegn</strong>,</li>
-<li><strong>rekkefølgen</strong>.</li>
-</ul>
-<p>Ikke endre alt samtidig. Endre én ting og se hva den gjør med feilen.</p>
-</div>
-</div>
-<p><strong>Mål:</strong> Finn minst tre parameterkombinasjoner som gir tydelig forskjellige feil.</p>
-<p>Du trenger ikke skrive en lang forklaring. To–tre setninger er nok: <em>Hva gjorde angrepet sterkere? Hva gjorde det svakere?</em></p>
-<hr>
+<p><strong>Svar kort:</strong></p>
+<ol type="1">
+<li>Konvergerer alle startverdiene mot samme nullpunkt?</li>
+<li>Avtar residualen i hvert eneste steg?</li>
+<li>Avtar residual og skrittlengde i samme takt?</li>
+<li>Hvorfor trenger programmet både en residualtoleranse og <code>maxiter</code>?</li>
+<li>Hva skjer dersom et iterat kommer nær et punkt der <span class="math inline">\(f'(z)=0\)</span>?</li>
+</ol>
 </section>
-<section id="nå-får-angrepet-et-mål" class="level2">
-<h2 class="anchored" data-anchor-id="nå-får-angrepet-et-mål">3. Nå får angrepet et mål</h2>
-<p>Så langt har du fått lov til å lage en hvilken som helst sum. Det gjør det ganske lett å produsere rare resultater.</p>
-<p>Nå strammer vi inn oppgaven.</p>
-<p>Den <strong>riktige summen skal være omtrent 1</strong>.</p>
-<p>Det betyr at vi på forhånd vet hva svaret burde være. Din oppgave er å lage data som får den naive algoritmen til å fortelle oss noe annet.</p>
-<p>Tenk på dette som et mer kontrollert eksperiment:</p>
-<blockquote class="blockquote">
-<p>Det riktige svaret er 1. Hvor dårlig kan du få <code>ordinary_sum</code> til å oppføre seg?</p>
-</blockquote>
+<section id="tiltrekningsområder" class="level2">
+<h2 class="anchored" data-anchor-id="tiltrekningsområder">3. Tiltrekningsområder</h2>
+<p>Neste funksjon kjører Newtons metode samtidig for et helt rutenett. Hvert punkt klassifiseres som et nullpunktnummer, <code>-1</code> for ikke konvergert innen <code>maxiter</code>, eller <code>-2</code> for ugyldig beregning.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Referansen må ligge nær <span class="math inline">\(1\)</span>:</p>
-<p><span class="math display">\[
-|S_{\mathrm{ref}}-1|&lt;10^{-10}.
-\]</span></p>
-<p>Bruk maksimalt 10 000 tall.</p>
-<p>Start gjerne med å bygge videre på ideen fra oppgave 1. Deretter kan du prøve å forsterke effekten.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Når du har fått det til
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Ikke stopp ved første feil.</p>
-<p>Kan du få <code>ordinary_sum</code> til å gi</p>
-<ul>
-<li><code>0.0</code>?</li>
-<li>feil fortegn?</li>
-<li>et resultat langt fra 1?</li>
-<li>en større feil uten å bruke flere tall?</li>
-</ul>
-<p>Du trenger ikke klare alt. Velg én retning og se hvor langt du kommer.</p>
-</div>
-</div>
-<hr>
-</section>
-<section id="angrep-med-hendene-bundet" class="level2">
-<h2 class="anchored" data-anchor-id="angrep-med-hendene-bundet">4. Angrep med hendene bundet</h2>
-<p>Det er lett å lage ekstreme eksempler hvis vi får bruke hva som helst. Derfor skal vi nå fjerne noen av de enkleste triksene.</p>
-<p>Poenget er ikke å gjøre oppgaven vanskelig for vanskelighetens skyld. Vi vil finne ut <strong>hvilken del av angrepet som faktisk skaper problemet</strong>.</p>
-<section id="oppgave-4a-ingen-enorme-tall" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-4a-ingen-enorme-tall">Oppgave 4A – ingen enorme tall</h3>
-<p>Lag et angrep der alle tall tilfredsstiller</p>
-<p><span class="math display">\[
-|x_i|\le 10^6.
-\]</span></p>
-<p>Nå kan du ikke bare bruke et astronomisk stort tall for å sluke alle små bidrag.</p>
+<p>Kjør standardeksperimentet. Dersom nettleseren arbeider langsomt, kan du først bruke <code>nx=250, ny=250</code> og øke oppløsningen til slutt.</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Hvis feilen blir mindre enn før, er det forventet. Spørsmålet er om du fortsatt klarer å lage en <strong>målbar og forklarbar</strong> feil.</p>
+<p>Fargen viser hvilket nullpunkt iterasjonen fant. Lysstyrken viser antall iterasjoner: lyse punkter konvergerte med færre iterasjoner enn mørke punkter. Mørkegrå punkter nådde <code>maxiter</code>, mens svarte punkter ga en ugyldig beregning.</p>
+<p><strong>Svar kort:</strong></p>
+<ol type="1">
+<li>Hvilke områder konvergerer mot hvert nullpunkt?</li>
+<li>Hvor ligger startverdiene som krever flest iterasjoner?</li>
+<li>Hvordan skiller punkter nær en grense seg fra punkter langt inne i et tiltrekningsområde?</li>
+<li>Ser figuren symmetrisk ut? Sammenlign med plasseringen av nullpunktene.</li>
+<li>Kan et endelig rutenett bevise at alle startverdier i vinduet konvergerer?</li>
+</ol>
 </section>
-<section id="oppgave-4b-bare-positive-tall" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-4b-bare-positive-tall">Oppgave 4B – bare positive tall</h3>
-<p>Nå tar vi bort et annet kraftig våpen: kansellering.</p>
-<p>Lag et angrep der</p>
+<section id="hva-gjør-toleransen" class="level2">
+<h2 class="anchored" data-anchor-id="hva-gjør-toleransen">4. Hva gjør toleransen?</h2>
+<p>Bruk samme rutenett og <code>maxiter=50</code>, men sammenlign</p>
 <p><span class="math display">\[
-x_i&gt;0
+\texttt{tol}=10^{-4},\quad 10^{-8},\quad 10^{-12}.
 \]</span></p>
-<p>for alle tallene.</p>
 <div id="qpyodide-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Her kan ikke et stort positivt og et stort negativt tall oppheve hverandre. Hvis informasjon fortsatt går tapt, må det skje på en annen måte.</p>
-<p><strong>Tenk:</strong> Er mekanismen i 4B egentlig den samme som i ditt første angrep, eller har du funnet en ny type svakhet?</p>
-<hr>
-</section>
-</section>
-<section id="bytt-side-fra-angriper-til-forsvarer" class="level2">
-<h2 class="anchored" data-anchor-id="bytt-side-fra-angriper-til-forsvarer">5. Bytt side: fra angriper til forsvarer</h2>
-<p>Nå kjenner du algoritmen ganske godt. Du har aktivt prøvd å finne situasjoner der den gjør en dårlig jobb.</p>
-<p>Det er nyttig kunnskap.</p>
-<p>I stedet for å spørre</p>
-<blockquote class="blockquote">
-<p>«Hvorfor er flyttall så irriterende?»</p>
-</blockquote>
-<p>kan vi nå spørre</p>
-<blockquote class="blockquote">
-<p><strong>«Kan vi organisere beregningen på en smartere måte?»</strong></p>
-</blockquote>
-<p>Vi beholder de samme tallene og den samme matematiske summen. Det eneste du får lov til å endre først, er <strong>rekkefølgen</strong>.</p>
+<p>Lag en tabell med toleranse, andel konvergerte punkter, gjennomsnittlig antall iterasjoner, største godkjente residual og antall punkter som nådde <code>maxiter</code>.</p>
+<p>Velg deretter to toleranser og vis tiltrekningsområdene ved siden av hverandre eller som to separate figurer.</p>
 <div id="qpyodide-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Test forsvaret mot et av dine egne angrep:</p>
+<p><strong>Svar kort:</strong></p>
+<ol type="1">
+<li>Hvordan påvirker en strengere toleranse antall iterasjoner?</li>
+<li>Endrer noen startverdier klassifisering?</li>
+<li>Er forskjellene størst inne i områdene eller nær grensene?</li>
+<li>Betyr residualkravet <span class="math inline">\(|f(z_n)|&lt;10^{-12}\)</span> nødvendigvis at <span class="math inline">\(|z_n-r|&lt;10^{-12}\)</span>?</li>
+<li>Hvilken toleranse ville du brukt i hovedfiguren? Begrunn med måleresultater.</li>
+</ol>
+</section>
+<section id="hva-gjør-maxiter" class="level2">
+<h2 class="anchored" data-anchor-id="hva-gjør-maxiter">5. Hva gjør <code>maxiter</code>?</h2>
+<p>Hold <code>tol=1e-8</code> fast, og sammenlign <code>maxiter=10</code>, <code>30</code> og <code>100</code>.</p>
 <div id="qpyodide-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Prøv minst <strong>tre ideer</strong> før du bestemmer deg.</p>
-<p>For eksempel kan du undersøke:</p>
-<ul>
-<li>små tall først,</li>
-<li>store tall først,</li>
-<li>sortering etter absoluttverdi,</li>
-<li>positive og negative tall hver for seg.</li>
-</ul>
-<p>Dette er hypoteser, ikke fasit. En strategi som høres smart ut, kan være god på ett datasett og dårlig på et annet.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Hva er egentlig målet?
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Vi prøver ikke å finne en magisk rekkefølge som alltid er perfekt.</p>
-<p>Vi prøver å forstå hvordan <strong>algoritmen</strong> påvirker resultatet, selv om den matematiske summen er uendret.</p>
-</div>
-</div>
-<hr>
-</section>
-<section id="tournament-tåler-forsvaret-flere-angrep" class="level2">
-<h2 class="anchored" data-anchor-id="tournament-tåler-forsvaret-flere-angrep">6. Tournament: tåler forsvaret flere angrep?</h2>
-<p>Hvis du bare tester forsvaret mot datasettet du brukte da du laget det, er det lett å lure deg selv.</p>
-<p>Derfor trenger vi en liten turnering.</p>
-<p>Vi lar samme forsvar møte flere forskjellige angrep:</p>
+<p><strong>Svar kort:</strong></p>
 <ol type="1">
-<li>ditt beste frie angrep,</li>
-<li>angrepet med begrenset størrelse,</li>
-<li>angrepet med bare positive tall.</li>
+<li>Hvor mange punkter som feiler ved <code>maxiter=10</code>, konvergerer når grensen økes?</li>
+<li>Betyr «nådde <code>maxiter</code>» at den matematiske følgen divergerer?</li>
+<li>Hvor i tiltrekningsplottet ligger punktene som trenger mer enn 30 iterasjoner?</li>
+<li>Hvilken <code>maxiter</code> gir en rimelig balanse mellom regnetid og feilklassifisering for ditt rutenett?</li>
 </ol>
+</section>
+<section id="zoom-inn-på-en-grense" class="level2">
+<h2 class="anchored" data-anchor-id="zoom-inn-på-en-grense">6. Zoom inn på en grense</h2>
+<p>Velg et rektangel der to eller tre farger ligger tett sammen. Bruk først et moderat rutenett. Zoom deretter inn én gang til ved å gjøre intervallet mindre.</p>
 <div id="qpyodide-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Se på tabellen som et lite eksperimentresultat.</p>
+<p>For hvert zoomnivå skal du oppgi plottevindu, rutenettstørrelse, toleranse og <code>maxiter</code>.</p>
+<p><strong>Svar kort:</strong></p>
+<ol type="1">
+<li>Blir grensen enklere eller mer detaljert når du zoomer inn?</li>
+<li>Finn to startverdier som ligger nær hverandre, men konvergerer mot forskjellige nullpunkter.</li>
+<li>Sammenlign iterasjonshistorikken for de to startverdiene.</li>
+<li>Hva forteller eksperimentet om følsomhet for startverdien?</li>
+</ol>
+</section>
+<section id="konklusjon" class="level2">
+<h2 class="anchored" data-anchor-id="konklusjon">7. Konklusjon</h2>
+<p>Skriv en samlet konklusjon på omtrent 200–300 ord. Den skal svare på:</p>
 <ul>
-<li>Ble alle datasettene bedre?</li>
-<li>Ble ett mye bedre og et annet litt dårligere?</li>
-<li>Finnes det et angrep som forsvaret ditt nesten ikke hjelper mot?</li>
+<li>Hvordan påvirker startverdien hvilket nullpunkt Newtons metode finner?</li>
+<li>Hvor er konvergensen rask, og hvor kreves mange iterasjoner?</li>
+<li>Hvordan påvirker residualtoleransen og <code>maxiter</code> klassifiseringen?</li>
+<li>Hvilke påstander bygger på numeriske eksperimenter, og hva kan eksperimentene ikke bevise?</li>
+<li>Når mener du det er forsvarlig å rapportere at metoden har konvergert?</li>
 </ul>
+</section>
+<section id="leveranse" class="level2">
+<h2 class="anchored" data-anchor-id="leveranse">Leveranse</h2>
+<p>Lever én Quarto-side eller notebook med:</p>
+<ol type="1">
+<li>tildelt funksjon og nullpunkter,</li>
+<li>to analyserte iterasjonshistorikker,</li>
+<li>hovedfigur med tiltrekningsområder og histogram,</li>
+<li>tabell for tre toleranser,</li>
+<li>tabell for tre verdier av <code>maxiter</code>,</li>
+<li>minst to zoomnivåer ved en grense,</li>
+<li>konkrete parameterverdier for alle figurer,</li>
+<li>konklusjonen.</li>
+</ol>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Hvis forsvaret taper
+<span class="screen-reader-only">Warning</span>Om bruk av kodeassistenter
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Det er ikke nødvendigvis et mislykket prosjekt.</p>
-<p>Et forsvar som hjelper i én situasjon og skader i en annen er et <strong>interessant numerisk resultat</strong>. Finn ut hva som er forskjellig mellom datasettene.</p>
-</div>
-</div>
-<p>Når du er fornøyd, prøv gjerne å lage et nytt datasett som er spesielt designet for å <strong>slå ditt eget forsvar</strong>. Da er du både angriper og forsvarer samtidig.</p>
-<hr>
-</section>
-<section id="bonus-kan-selve-algoritmen-bli-bedre" class="level2">
-<h2 class="anchored" data-anchor-id="bonus-kan-selve-algoritmen-bli-bedre">7. Bonus – kan selve algoritmen bli bedre?</h2>
-<p>Til nå har <code>ordinary_sum</code> alltid gjort det samme: én lang kjede av addisjoner. Vi har bare flyttet rundt på inputen.</p>
-<p>Men vi kan gå lenger.</p>
-<p>I stedet for</p>
-<p><span class="math display">\[
-(((x_1+x_2)+x_3)+\cdots)+x_n
-\]</span></p>
-<p>kan vi for eksempel kombinere tall i mindre grupper og deretter kombinere gruppene.</p>
-<p>Du trenger ikke løse denne delen for å fullføre prosjektet. Men hvis du har tid, er dette et naturlig neste steg.</p>
-<div id="qpyodide-insertion-location-11"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Test den mot datasettene fra turneringen:</p>
-<div id="qpyodide-insertion-location-12"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Hvis du lager en algoritme som gjør det bedre enn <code>ordinary_sum</code> på flere av angrepene dine, har du i praksis gjort det numerisk analyse handler mye om: du har gått fra en matematisk oppgave til å tenke på <strong>hvordan den bør beregnes</strong>.</p>
-<hr>
-</section>
-<section id="hva-har-du-egentlig-funnet-ut" class="level2">
-<h2 class="anchored" data-anchor-id="hva-har-du-egentlig-funnet-ut">8. Hva har du egentlig funnet ut?</h2>
-<p>Du trenger ikke levere en lang rapport. Men før du avslutter, bør du kunne forklare historien i eksperimentet ditt med egne ord.</p>
-<p>Bruk disse spørsmålene som sjekkliste:</p>
-<ol type="1">
-<li>Hva var det sterkeste angrepet ditt?</li>
-<li>Hvor i beregningen gikk informasjon tapt?</li>
-<li>Hvilken rolle spilte størrelsesforskjeller mellom tallene?</li>
-<li>Hva skjedde da du forbød store tall?</li>
-<li>Hva skjedde da du bare fikk bruke positive tall?</li>
-<li>Hvilken forsvarsstrategi fungerte best?</li>
-<li>Fantes det et datasett der forsvaret ditt gjorde resultatet dårligere?</li>
-<li>Hvorfor kan to algoritmer som matematisk beregner samme sum gi forskjellige svar på en datamaskin?</li>
-</ol>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Hovedideen
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>En matematisk formel forteller <strong>hva</strong> vi ønsker å beregne.</p>
-<p>En algoritme bestemmer <strong>hvordan</strong> datamaskinen faktisk gjør beregningen.</p>
-<p>Når tallene lagres med endelig presisjon, kan dette skillet være avgjørende.</p>
-<p>Det er nettopp derfor vi bryr oss om numeriske metoder.</p>
+<p>Copilot og andre kodeassistenter er tillatt. Du er likevel ansvarlig for at stoppkriteriet har en matematisk betydning, at ugyldige og ikke-konvergente beregninger behandles separat, at figurene viser det du sier de viser, og at konklusjonene støttes av egne resultater.</p>
+<p>Kode som produserer en figur, er ikke i seg selv en analyse.</p>
 </div>
 </div>
 
