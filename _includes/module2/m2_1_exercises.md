@@ -1,4 +1,4 @@
-### Oppgave: beregn et senere iterat
+### Oppgave: utfør tre iterasjoner
 
 ::: {#fixed-point-numerical-iteration-context .math-exercise-context}
 
@@ -14,16 +14,16 @@ $$
 g(x)=\sqrt[3]{1-x}
 $$
 
-brukes den reelle kubikkroten. Hvert nytt iterat må beregnes fra det forrige. Mellomresultatene bør beholdes med høy presisjon; avrund først det etterspurte sluttresultatet.
+brukes den reelle kubikkroten. Hvert nytt iterat må beregnes fra det forrige. Behold flere desimaler i mellomregningene, og avrund bare sluttresultatet til tre desimaler.
 
 :::
 
 ```{math-exercise}
-#| label: fixed-point-five-iterations
-#| caption: Fem fikspunktiterasjoner
+#| label: fixed-point-three-iterations
+#| caption: Tre fikspunktiterasjoner
 #| mode: numeric
-#| tolerance: 1e-6
-#| field-labels: numerisk verdi av x_5
+#| tolerance: 5e-4
+#| field-labels: x_3 avrundet til tre desimaler
 #| context: fixed-point-numerical-iteration-context
 
 Bruk iterasjonen
@@ -32,7 +32,7 @@ $$
 x_{n+1}=\sqrt[3]{1-x_n},\qquad x_0=0.5.
 $$
 
-Utfør fem iterasjoner. Oppgi den numeriske verdien av $x_5$ med minst seks riktige desimaler.
+Utfør tre iterasjoner. Oppgi $x_3$ avrundet til tre desimaler.
 
-$$x_5\approx$$ _[0.7138008141442069]
+$$x_3\approx$$ _[0.742]
 ```
