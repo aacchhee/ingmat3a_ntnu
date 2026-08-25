@@ -1002,75 +1002,122 @@ analysen.
 Denne delen er frivillig. Den introduserer én idé som ikke er nødvendig for
 resten av prosjektet.
 
-En glatt kurve omtales som endimensjonal, mens et fylt område er
-todimensjonalt. En komplisert fraktalgrense kan oppføre seg som noe mellom
-disse. For å undersøke det dekker vi **ett fast plottevindu** med stadig
-mindre piksler og teller hvor mange piksler som treffer basin-grensen.
+Fraktalzoomen viste nye detaljer, men kan vi sette ett enkelt tall på hvor
+komplisert grensen ser ut? Vi begynner uten en formel.
 
-Det er viktig at vinduet ikke flyttes eller krympes i dette forsøket. Hvis vi
-sammenlignet tre forskjellige zoomvinduer, ville vi samtidig ha endret både
-skalaen og delen av grensen vi målte.
-
-La $N(\varepsilon)$ være antall registrerte grensepiksler når pikselbredden er
-$\varepsilon$. Dersom
+Se for deg at grensen var en vanlig, glatt strek gjennom bildet. Hvis vi går
+fra 100 til 200 piksler i hver retning, blir pikslene omtrent halvparten så
+brede. Da trenger vi omtrent dobbelt så mange små piksler for å følge den samme
+streken:
 
 $$
-N(\varepsilon)\approx C\varepsilon^{-D},
+100\longrightarrow200
+\qquad\text{gir omtrent}\qquad
+N\longrightarrow2N.
 $$
 
-kan to oppløsninger gi det grove estimatet
+En strek vokser altså med omtrent faktor 2 når oppløsningen dobles.
+
+Tenk deretter på et område som er helt fylt med grense. Når vi dobler
+oppløsningen, får vi dobbelt så mange piksler vannrett *og* dobbelt så mange
+loddrett. Antallet blir da omtrent fire ganger så stort:
 
 $$
-D\approx
-\frac{\log(N_2/N_1)}{\log(\varepsilon_1/\varepsilon_2)}.
+N\longrightarrow4N.
 $$
 
-For en glatt grense forventer vi omtrent $D=1$. Dersom grensen fylte et helt
-område, ville vi fått omtrent $D=2$.
+En fraktalgrense kan vokse raskere enn en vanlig strek, men langsommere enn et
+helt fylt område. Derfor ser vi først på den enkle **vekstfaktoren**
+
+$$
+q=\frac{\text{nytt antall grensepiksler}}
+        {\text{gammelt antall grensepiksler}}.
+$$
+
+- $q\approx2$ ligner veksten til en vanlig linje.
+- $q\approx4$ ligner veksten til et fylt område.
+- En verdi mellom 2 og 4 tyder på noe mellom disse ytterpunktene.
+
+Hvis vi ønsker å skrive dette som et dimensjonstall, spør vi: Hvilken potens
+$D$ må vi opphøye 2 i for å få vekstfaktoren?
+
+$$
+2^D=q.
+$$
+
+Dermed gir $q=2$ dimensjonen $D=1$, mens $q=4$ gir $D=2$. For andre
+vekstfaktorer regner Python ut
+
+$$
+D=\log_2(q).
+$$
+
+Dette er hele ideen bak dimensjonsanslaget i nøtten.
+
+Vi må bruke **ett fast plottevindu**. Vi gjør pikslene mindre ved å øke
+oppløsningen fra 100 til 200 og deretter 400, men vi flytter ikke vinduet. Hvis
+vinduet også flyttes eller krympes, vet vi ikke om endringen skyldes mindre
+piksler eller at vi har valgt en annen del av grensen.
 
 ```{pyodide-python}
-def boundary_dimension_experiment(test_bounds,
-                                  resolutions=(100, 200, 400),
-                                  tol=1e-8, maxiter=100):
-    """Lag et grovt dimensjonsestimat i ett uendret plottevindu.
+def boundary_growth_experiment(test_bounds,
+                               resolutions=(100, 200, 400),
+                               tol=1e-8, maxiter=100):
+    """Se hvor raskt antall grensepiksler vokser i ett fast vindu.
 
-    Dette er en endelig pikselmåling, ikke en beregning av en eksakt
-    matematisk fraktaldimensjon.
+    Oppløsningen skal dobles i hvert steg. Da kan vi sammenligne veksten med
+    faktor 2 for en linje og faktor 4 for et fylt område.
     """
     xmin, xmax, ymin, ymax = test_bounds
     measurements = []
 
     print(" oppløsning   pikselbredde   grensepiksler")
     for resolution in resolutions:
+        # Samme vindu og samme Newton-parametere; bare rutenettet blir finere.
         data = newton_grid(
             f, df, roots, test_bounds,
             nx=resolution, ny=resolution, tol=tol, maxiter=maxiter
         )
-        epsilon = (xmax-xmin)/(resolution-1)
-        count = int(np.count_nonzero(boundary_mask(data)))
-        measurements.append((resolution, epsilon, count))
-        print(f" {resolution:10d}   {epsilon:12.4e}   {count:14d}")
 
-    print("\nEstimat mellom to oppløsninger:")
+        # Avstanden mellom startverdiene som to nabopiksler representerer.
+        pixel_width = (xmax-xmin)/(resolution-1)
+
+        # boundary_mask bruker den samme naboregelen som i fraktalzoomen.
+        count = int(np.count_nonzero(boundary_mask(data)))
+        measurements.append((resolution, pixel_width, count))
+        print(f" {resolution:10d}   {pixel_width:12.4e}   {count:14d}")
+
+    print("\nHva skjer når oppløsningen dobles?")
     for first, second in zip(measurements[:-1], measurements[1:]):
-        n1, epsilon1, count1 = first
-        n2, epsilon2, count2 = second
-        dimension = (np.log(count2/count1)
-                     / np.log(epsilon1/epsilon2))
-        print(f" {n1:4d} → {n2:4d}: D ≈ {dimension:.3f}")
+        old_resolution, old_width, old_count = first
+        new_resolution, new_width, new_count = second
+
+        if new_resolution != 2*old_resolution:
+            raise ValueError("Oppløsningen må dobles i denne nøtten")
+
+        # q forteller hvor mange ganger flere grensepiksler vi fant.
+        growth = new_count/old_count
+
+        # 2**D = q. Derfor er D lik logaritmen med grunntall 2 av q.
+        dimension = np.log2(growth)
+        print(f" {old_resolution:4d} → {new_resolution:4d}: "
+              f"vekstfaktor {growth:.3f}, D ≈ {dimension:.3f}")
 
     return measurements
 
 
 # Kjør nøtten i ETT av zoomvinduene dine etter at zoomserien er ferdig.
-# dimension_data = boundary_dimension_experiment(zoom_data["bounds"])
+# growth_data = boundary_growth_experiment(zoom_data["bounds"])
 ```
 
-Vurder om estimatene nærmer seg hverandre når oppløsningen økes. Et tall
-mellom 1 og 2 er interessant evidens, men ikke et bevis: resultatet avhenger
-av vinduet, oppløsningene, grensepikselregelen, `tol` og `maxiter`. Forklar
-også hvorfor det ville vært misvisende å bruke tre forskjellige zoomvinduer i
-samme dimensjonsberegning.
+Les først vekstfaktoren uten å se på $D$: Ligger den nærmest 2, nærmest 4 eller
+mellom? Bruk deretter $D$ som en kort oppsummering av den samme målingen.
+
+Vurder om de to $D$-anslagene nærmer seg hverandre. Et tall mellom 1 og 2 er
+interessant evidens, men ikke et bevis eller en eksakt dimensjon. Resultatet
+avhenger av vinduet, oppløsningene, grensepikselregelen, `tol` og `maxiter`.
+Forklar også med egne ord hvorfor vi ikke kan bruke tre forskjellige
+zoomvinduer i samme måling.
 
 ## 9. Konklusjon
 
