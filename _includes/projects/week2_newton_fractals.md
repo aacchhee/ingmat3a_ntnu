@@ -40,6 +40,12 @@ konvergerer mot et bestemt nullpunkt, kalles nullpunktets
 
 Koden for funksjonstildeling, Newton-iterasjon, rutenett, klassifisering og plotting er gitt. Arbeidet ditt er å planlegge numeriske eksperimenter, velge parametere, kontrollere resultatene og forklare det du observerer.
 
+Dette er også en øvelse i å sette seg inn i eksisterende kode for en
+modellmetode. Du skal ikke bygge alt fra bunnen av. Les kommentarene, kjør
+koden, finn parameterne som styrer forsøket, og gjør små endringer du kan
+kontrollere. Slik arbeider man ofte med vitenskapelig kode: forstå nok til å
+stille et spørsmål, endre én ting, og undersøke hva som faktisk skjedde.
+
 Endre én størrelse om gangen. Noter alltid startverdi eller plottevindu,
 toleranse og `maxiter` sammen med resultatet. Målet er ikke bare å lage et
 fraktalbilde, men å bruke bildet til å velge og begrunne numeriske forsøk.
@@ -61,6 +67,7 @@ from matplotlib.patches import Patch
 
 
 def normalize_name(name):
+    """Gjør små navnevariasjoner irrelevante for funksjonstildelingen."""
     name = unicodedata.normalize("NFKD", name.strip().casefold())
     name = "".join(char for char in name
                    if not unicodedata.combining(char))
@@ -68,6 +75,7 @@ def normalize_name(name):
 
 
 def function_id(first_name, number_of_functions):
+    """Gjør fornavnet om til en stabil indeks i funksjonspuljen."""
     normalized = normalize_name(first_name)
     text = f"IMAX3011-newton-2026:{normalized}"
     digest = hashlib.sha256(text.encode("utf-8")).digest()
@@ -101,6 +109,11 @@ FUNCTIONS = [
 
 
 def prepare_function(entry):
+    """Lag f, f', nullpunkter og kritiske punkter fra én tabellrad.
+
+    Denne funksjonen gjør oppsettet for oss. I forsøkene nedenfor arbeider vi
+    med f og df, og trenger vanligvis ikke å endre selve funksjonen her.
+    """
     coefficients = np.asarray(entry["coefficients"], dtype=complex)
     derivative_coefficients = np.polyder(coefficients)
     roots = np.roots(coefficients)
@@ -173,15 +186,23 @@ Uttrykket $|z-f(z)|$ er ikke residualen til ligningen $f(z)=0$.
 
 ```{pyodide-python}
 def is_finite_complex(z):
+    """Sjekk at både real- og imaginærdelen kan brukes videre."""
     return np.isfinite(np.real(z)) and np.isfinite(np.imag(z))
 
 
 def nearest_root(z, roots):
+    """Returner nummeret til nullpunktet som ligger nærmest z."""
     return int(np.argmin(np.abs(roots - z)))
 
 
 def newton_trace(f, df, roots, z0, tol=1e-8, maxiter=50,
                  derivative_tol=1e-14):
+    """Følg én startverdi slik at vi kan se hva Newton faktisk gjør.
+
+    I forsøkene endrer du først og fremst z0, tol og maxiter. Resultatet er en
+    ordbok med stoppårsak, funnet nullpunkt og hele iterasjonshistorikken.
+    derivative_tol beskytter oss mot å dele på et tall som er svært nær null.
+    """
     z = complex(z0)
     history = [{"n": 0, "z": z,
                 "residual": float(abs(f(z))), "step": np.nan}]
@@ -224,6 +245,7 @@ def newton_trace(f, df, roots, z0, tol=1e-8, maxiter=50,
 
 
 def print_trace(result):
+    """Skriv historikken fra newton_trace som en lesbar tabell."""
     print(" n                 z_n             |f(z_n)|       skrittlengde")
     for row in result["history"]:
         step = "     -" if np.isnan(row["step"]) else f"{row['step']:.3e}"
@@ -236,6 +258,7 @@ def print_trace(result):
 
 
 def plot_trace(result):
+    """Sammenlign residual og skrittlengde gjennom én iterasjon."""
     rows = result["history"]
     n = np.array([row["n"] for row in rows])
     residuals = np.array([row["residual"] for row in rows])
@@ -304,6 +327,12 @@ klassifiseres som et nullpunktnummer, `-1` for ikke konvergert innen
 ```{pyodide-python}
 def newton_grid(f, df, roots, bounds, nx=400, ny=400,
                 tol=1e-8, maxiter=50, derivative_tol=1e-14):
+    """Kjør det samme Newton-forsøket for alle pikslene i et rektangel.
+
+    bounds velger delen av det komplekse planet vi ser. nx og ny bestemmer
+    bildeoppløsningen, ikke nøyaktigheten til én Newton-iterasjon. Returverdien
+    inneholder både funnet nullpunkt, iterasjonstall og sluttresidual.
+    """
     xmin, xmax, ymin, ymax = bounds
     x = np.linspace(xmin, xmax, nx)
     y = np.linspace(ymin, ymax, ny)
@@ -311,6 +340,7 @@ def newton_grid(f, df, roots, bounds, nx=400, ny=400,
 
     basin = np.full(z.shape, -1, dtype=int)
     iterations = np.zeros(z.shape, dtype=int)
+    # active forteller hvilke piksler som fortsatt trenger et nytt Newton-skritt.
     active = np.ones(z.shape, dtype=bool)
 
     for n in range(1, maxiter + 1):
@@ -321,6 +351,7 @@ def newton_grid(f, df, roots, bounds, nx=400, ny=400,
                     & np.isfinite(derivative.imag)
                     & (np.abs(derivative) > derivative_tol))
 
+            # Skill ugyldige beregninger fra dem som bare trenger flere steg.
             invalid = active & ~safe
             basin[invalid] = -2
             iterations[invalid] = n-1
@@ -338,6 +369,7 @@ def newton_grid(f, df, roots, bounds, nx=400, ny=400,
             converged = active & (residual < tol)
 
         if np.any(converged):
+            # Først nå bestemmer vi hvilket nullpunkt pikslene endte ved.
             converged_values = z[converged]
             distances = np.abs(converged_values[:, None] - roots[None, :])
             basin[converged] = np.argmin(distances, axis=1)
@@ -367,12 +399,19 @@ ROOT_COLORS = np.array([
 
 def plot_basins(data, title="Newtons metode: tiltrekningsområder",
                 critical_points=None, iteration_cap=20):
+    """Vis resultat og arbeidsmengde i hvert sitt panel.
+
+    Venstre panel svarer på hvilket nullpunkt som ble funnet. Høyre panel
+    viser antall iterasjoner. iteration_cap bestemmer hvor fargeskalaen
+    stopper; større verdier vises fortsatt, men får samme endefarge.
+    """
     basin = data["basin"]
     iterations = data["iterations"]
     maxiter = data["maxiter"]
     roots = data["roots"]
     xmin, xmax, ymin, ymax = data["bounds"]
 
+    # Basin-fargen skal bare kode nullpunkt, ikke iterasjonstall.
     basin_image = np.full(basin.shape + (3,), 0.25)
     basin_image[basin == -2] = 0.0
     legend_handles = []
@@ -408,6 +447,7 @@ def plot_basins(data, title="Newtons metode: tiltrekningsområder",
     ax_basin.legend(handles=legend_handles, loc="best")
 
     converged = basin >= 0
+    # Avkort skalaen slik at noen få trege piksler ikke vasker ut hele kartet.
     capped_iterations = np.ma.masked_where(
         ~converged, np.minimum(iterations, iteration_cap)
     )
@@ -434,6 +474,7 @@ def plot_basins(data, title="Newtons metode: tiltrekningsområder",
 
 
 def summarize_grid(data):
+    """Trekk ut noen få tall som gjør ulike rutenett sammenlignbare."""
     basin = data["basin"]
     iterations = data["iterations"]
     residual = data["residual"]
@@ -455,6 +496,7 @@ def summarize_grid(data):
 
 
 def print_summary(summary):
+    """Skriv sammendraget uten at vi må huske alle nøkkelnavnene."""
     print("Antall startverdier:     ", summary["total"])
     print("Konvergert:              ", summary["converged"])
     print("Nådde maxiter:           ", summary["not_converged"])
@@ -511,6 +553,7 @@ velge punkter som er lettere å se i figuren.
 
 ```{pyodide-python}
 def first_start_in(data, mask):
+    """Finn én startverdi i en kategori, hvis kategorien finnes."""
     indices = np.argwhere(mask)
     if len(indices) == 0:
         return None
@@ -550,6 +593,7 @@ iterasjonen faktisk fant.
 
 ```{pyodide-python}
 def compare_with_nearest(data):
+    """Test nærmeste-nullpunkt-gjetningen på hele rutenettet."""
     basin = data["basin"]
     roots = data["roots"]
     xmin, xmax, ymin, ymax = data["bounds"]
@@ -645,6 +689,7 @@ velge et tydeligere punkt i din egen figur.
 
 ```{pyodide-python}
 def suggest_boundary_point(data):
+    """Finn et sentralt sted der to nabopiksler har forskjellig farge."""
     basin = data["basin"]
     left = basin[:, :-1]
     right = basin[:, 1:]
@@ -718,7 +763,83 @@ Forklar med konkrete tall hvordan en strengere toleranse og en større
 følgen divergerer? Betyr $|f(z_n)|<10^{-12}$ nødvendigvis at
 $|z_n-r|<10^{-12}$?
 
-## 8. Konklusjon
+## 8. Sluttfellen: Newton går i ring
+
+Så langt har vanskelige startverdier stort sett betydd at metoden bruker mange
+steg eller er følsom for små endringer. Nå får du en felles testfunksjon som
+viser en annen mulighet. Koden kan være riktig, alle tallene kan være endelige,
+og likevel kommer metoden aldri nærmere et nullpunkt.
+
+Bruk
+
+$$
+p(z)=z^3-2z+2,
+\qquad p'(z)=3z^2-2,
+$$
+
+og start med $z_0=0$.
+
+```{pyodide-python}
+# Denne utfordringen bruker samme newton_trace som resten av prosjektet.
+cycle_coefficients = np.array([1, 0, -2, 2], dtype=complex)
+cycle_derivative = np.polyder(cycle_coefficients)
+cycle_roots = np.roots(cycle_coefficients)
+
+
+def p(z):
+    """Testpolynomet som kan fange vanlig Newton-iterasjon i en syklus."""
+    return np.polyval(cycle_coefficients, z)
+
+
+def dp(z):
+    """Den deriverte til testpolynomet."""
+    return np.polyval(cycle_derivative, z)
+
+
+cycle_result = newton_trace(
+    p, dp, cycle_roots, z0=0, tol=1e-8, maxiter=10
+)
+print_trace(cycle_result)
+```
+
+Se på tabellen før du går videre. Regn deretter ut $z_1$ og $z_2$ for hånd.
+Forklar hvorfor de to utregningene også bestemmer $z_3,z_4,\ldots$.
+
+Programmet vårt kjenner foreløpig bare residualkravet og `maxiter`. Under er
+en nesten ferdig test for en syklus med periode 2. Bytt ut `np.nan` med
+avstanden mellom siste iterat og iteratet to steg tidligere.
+
+```{pyodide-python}
+def detect_two_cycle(result, cycle_tol=1e-12):
+    """Se om de siste iteratene tyder på en syklus med periode 2."""
+    values = [row["z"] for row in result["history"]]
+    if len(values) < 3:
+        return False
+
+    # DIN KODE HER: sammenlign siste verdi med verdien to steg tidligere.
+    cycle_distance = np.nan
+    return cycle_distance < cycle_tol
+
+
+print("Fant en 2-syklus:", detect_two_cycle(cycle_result))
+```
+
+Når testen virker, prøv også startverdiene $10^{-3}$, $10^{-6}$ og $10^{-9}$.
+Bruk `maxiter=100`, og rapporter om forsøket konvergerer, når `maxiter`, eller
+ser ut til å gå inn i en syklus.
+
+**Svar kort:**
+
+1. Hvorfor er $0\rightarrow1\rightarrow0$ en syklus og ikke konvergens?
+2. Hvilke residualer får du i de to punktene? Hvorfor godtas ingen av dem?
+3. Hvorfor stopper ikke kontrollen av $p'(z_n)$ iterasjonen?
+4. Hvorfor hjelper det ikke bare å øke `maxiter`?
+5. Hva er den konkrete egenskapen ved Newton-regelen som sender 0 til 1 og 1 tilbake til 0?
+6. Kan en numerisk syklustest bevise at en matematisk følge er eksakt periodisk,
+   eller gir den bare evidens innenfor `cycle_tol`?
+7. Hvordan bør en praktisk Newton-implementasjon rapportere denne stoppårsaken?
+
+## 9. Konklusjon
 
 Skriv en samlet konklusjon på omtrent 200–300 ord. Den skal svare på:
 
@@ -727,6 +848,7 @@ Skriv en samlet konklusjon på omtrent 200–300 ord. Den skal svare på:
 - Finner metoden alltid nullpunktet som ligger nærmest startverdien?
 - Hvilken rolle ser de kritiske punktene ut til å spille?
 - Hva viste perturbasjonsforsøket nær en grense?
+- Hva lærte syklusfellen om dårlige startverdier og stoppregler?
 - Hvordan påvirker residualtoleransen og `maxiter` klassifiseringen?
 - Hvilke påstander bygger på numeriske eksperimenter, og hva kan eksperimentene ikke bevise?
 - Når mener du det er forsvarlig å rapportere at metoden har konvergert?
@@ -742,7 +864,8 @@ Lever én Quarto-side eller notebook med:
 5. undersøkelse av ett kritisk punkt,
 6. perturbasjonsforsøk nær en grense,
 7. kontroll av toleranse og `maxiter`,
-8. konkrete parameterverdier og konklusjonen.
+8. analyse og syklustest for $p(z)=z^3-2z+2$,
+9. konkrete parameterverdier og konklusjonen.
 
 ::: {.callout-warning}
 ## Om bruk av kodeassistenter
