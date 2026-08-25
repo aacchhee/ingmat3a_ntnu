@@ -57,6 +57,7 @@ import unicodedata
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 
 
 def normalize_name(name):
@@ -365,35 +366,70 @@ ROOT_COLORS = np.array([
 
 
 def plot_basins(data, title="Newtons metode: tiltrekningsområder",
-                critical_points=None):
+                critical_points=None, iteration_cap=20):
     basin = data["basin"]
     iterations = data["iterations"]
     maxiter = data["maxiter"]
     roots = data["roots"]
     xmin, xmax, ymin, ymax = data["bounds"]
 
-    image = np.full(basin.shape + (3,), 0.12)
-    image[basin == -2] = 0.0
+    basin_image = np.full(basin.shape + (3,), 0.25)
+    basin_image[basin == -2] = 0.0
+    legend_handles = []
     for k in range(len(roots)):
         mask = basin == k
-        brightness = 0.35 + 0.65*(1-iterations[mask]/maxiter)
-        image[mask] = ROOT_COLORS[k % len(ROOT_COLORS)]*brightness[:, None]
+        color = ROOT_COLORS[k % len(ROOT_COLORS)]
+        basin_image[mask] = color
+        legend_handles.append(Patch(facecolor=color, label=f"Mot r{k+1}"))
 
     plt.close("all")
-    fig, ax = plt.subplots(figsize=(7, 7))
-    ax.imshow(image, origin="lower", extent=(xmin, xmax, ymin, ymax),
-              interpolation="nearest")
-    ax.scatter(roots.real, roots.imag, c="white", edgecolors="black",
-               s=70, marker="o", label="Nullpunkter")
+    fig, (ax_basin, ax_iterations) = plt.subplots(
+        1, 2, figsize=(13, 6), constrained_layout=True
+    )
+
+    ax_basin.imshow(basin_image, origin="lower",
+                    extent=(xmin, xmax, ymin, ymax),
+                    interpolation="nearest")
+    ax_basin.scatter(roots.real, roots.imag, c="white", edgecolors="black",
+                     s=70, marker="o")
+    for k, root in enumerate(roots):
+        ax_basin.annotate(f"r{k+1}", (root.real, root.imag),
+                          xytext=(7, 7), textcoords="offset points",
+                          color="black", weight="bold")
     if critical_points is not None:
-        ax.scatter(critical_points.real, critical_points.imag,
-                   c="black", edgecolors="white", s=70, marker="X",
-                   linewidths=2, label="Kritiske punkter")
-    ax.set_xlabel("Re(z₀)")
-    ax.set_ylabel("Im(z₀)")
-    ax.set_title(title)
-    ax.set_aspect("equal")
-    ax.legend()
+        critical_handle = ax_basin.scatter(
+            critical_points.real, critical_points.imag,
+            c="black", edgecolors="white", s=70, marker="X",
+            linewidths=1.5, label="Kritiske punkter"
+        )
+        legend_handles.append(critical_handle)
+
+    ax_basin.set_title("Funnet nullpunkt")
+    ax_basin.legend(handles=legend_handles, loc="best")
+
+    converged = basin >= 0
+    capped_iterations = np.ma.masked_where(
+        ~converged, np.minimum(iterations, iteration_cap)
+    )
+    iteration_image = ax_iterations.imshow(
+        capped_iterations, origin="lower", extent=(xmin, xmax, ymin, ymax),
+        interpolation="nearest", cmap="viridis",
+        vmin=1, vmax=iteration_cap
+    )
+    ax_iterations.scatter(roots.real, roots.imag, c="white",
+                          edgecolors="black", s=45, marker="o")
+    colorbar = fig.colorbar(iteration_image, ax=ax_iterations, shrink=0.82)
+    colorbar.set_label(
+        f"Antall iterasjoner ({iteration_cap} = {iteration_cap} eller flere)"
+    )
+    ax_iterations.set_title("Iterasjoner før residualkravet er oppfylt")
+
+    for ax in (ax_basin, ax_iterations):
+        ax.set_xlabel("Re(z₀)")
+        ax.set_ylabel("Im(z₀)")
+        ax.set_aspect("equal")
+
+    fig.suptitle(title)
     plt.show()
 
 
@@ -429,17 +465,6 @@ def print_summary(summary):
           f"{summary['max_accepted_residual']:.3e}")
 
 
-def plot_iteration_histogram(data):
-    converged_iterations = data["iterations"][data["basin"] >= 0]
-    plt.close("all")
-    fig, ax = plt.subplots()
-    ax.hist(converged_iterations,
-            bins=np.arange(0.5, data["maxiter"]+1.5, 1))
-    ax.set_xlabel("Antall iterasjoner")
-    ax.set_ylabel("Antall startverdier")
-    ax.set_title("Iterasjoner før residualkravet er oppfylt")
-    ax.grid(True)
-    plt.show()
 ```
 
 Kjør standardeksperimentet. Dersom nettleseren arbeider langsomt, kan du først bruke `nx=250, ny=250` og øke oppløsningen til slutt.
@@ -458,10 +483,16 @@ basin_data = newton_grid(
 
 plot_basins(basin_data, f"Funksjon {my_function['label']}: {my_function['formula']}")
 print_summary(summarize_grid(basin_data))
-plot_iteration_histogram(basin_data)
 ```
 
-Fargen viser hvilket nullpunkt iterasjonen fant. Lysstyrken viser antall iterasjoner: lyse punkter konvergerte med færre iterasjoner enn mørke punkter. Mørkegrå punkter nådde `maxiter`, mens svarte punkter ga en ugyldig beregning.
+Figuren til venstre bruker én fast farge for hvert nullpunkt. Den svarer derfor
+bare på *hvilket* nullpunkt metoden fant. Figuren til høyre viser antall
+iterasjoner før residualkravet ble oppfylt. Les iterasjonstallet fra
+fargeskalaen. Verdier på 20 eller mer får samme endefarge, slik at noen få
+svært langsomme punkter ikke skjuler forskjellene i resten av kartet.
+
+Mørkegrå punkter i venstre figur nådde `maxiter`, mens svarte punkter ga en
+ugyldig beregning. Slike punkter er maskert i iterasjonskartet.
 
 For resten av prosjektet bruker vi følgende målbare beskrivelser:
 
@@ -706,7 +737,7 @@ Lever én Quarto-side eller notebook med:
 
 1. tildelt funksjon og nullpunkter,
 2. analyserte iterasjonshistorikker for raske, langsomme og følsomme startverdier,
-3. hovedfigur med tiltrekningsområder og histogram,
+3. hovedfigur med tiltrekningsområder og iterasjonskart,
 4. test av om nærmeste nullpunkt blir funnet,
 5. undersøkelse av ett kritisk punkt,
 6. perturbasjonsforsøk nær en grense,
