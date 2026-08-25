@@ -1,4 +1,4 @@
-### Oppgave: design en raskere iterasjon
+#### Design en raskere iterasjon
 
 ::: {#relaxed-fixed-point-design-context .math-exercise-context}
 
@@ -40,6 +40,8 @@ g_\lambda(x)=x-\lambda(x^2-2).
 $$
 
 Bruk det positive fikspunktet. Finn først $r$. Beregn deretter den lokale faktoren når $\lambda=1/4$, og finn til slutt den positive parameterverdien som gjør $g_\lambda'(r)=0$.
+
+Svarformat: Skriv eksakte uttrykk. Bruk `sqrt(2)` for $\sqrt{2}$ og `/` for brøk, for eksempel `sqrt(2)/4`. Desimaltall er ikke nødvendig.
 
 $$r=$$ _[sqrt(2)]
 

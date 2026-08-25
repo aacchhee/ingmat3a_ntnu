@@ -76,42 +76,31 @@ def fixed_point(g, x0, f=None, atol=1e-10, rtol=1e-10, maxiter=100):
     x = float(x0)
     history = [x]
     steps = []
-    fp_residuals = [abs(g(x) - x)]
-    f_residuals = None if f is None else [abs(f(x))]
+    residual = lambda value: abs(f(value)) if f is not None else abs(g(value)-value)
+    residuals = [residual(x)]
+
+    def result(value, converged, reason, iterations):
+        return {"x": value, "converged": converged, "reason": reason,
+                "iterations": iterations, "history": np.array(history),
+                "steps": np.array(steps), "residuals": np.array(residuals)}
 
     for iteration in range(1, maxiter + 1):
         x_new = g(x)
 
         if not math.isfinite(x_new):
-            return {"x": x_new, "converged": False,
-                    "reason": "ikke-endelig verdi", "iterations": iteration,
-                    "history": np.array(history), "steps": np.array(steps),
-                    "fp_residuals": np.array(fp_residuals),
-                    "f_residuals": f_residuals}
+            return result(x_new, False, "ikke-endelig verdi", iteration)
 
         step = abs(x_new - x)
         history.append(x_new)
         steps.append(step)
-        fp_residuals.append(abs(g(x_new) - x_new))
-        if f is not None:
-            f_residuals.append(abs(f(x_new)))
+        residuals.append(residual(x_new))
 
         tolerance = atol + rtol*abs(x_new)
         if step <= tolerance:
-            return {"x": x_new, "converged": True,
-                    "reason": "lite skritt", "iterations": iteration,
-                    "history": np.array(history), "steps": np.array(steps),
-                    "fp_residuals": np.array(fp_residuals),
-                    "f_residuals": (None if f_residuals is None
-                                    else np.array(f_residuals))}
+            return result(x_new, True, "lite skritt", iteration)
         x = x_new
 
-    return {"x": x, "converged": False,
-            "reason": "maksimalt antall iterasjoner", "iterations": maxiter,
-            "history": np.array(history), "steps": np.array(steps),
-            "fp_residuals": np.array(fp_residuals),
-            "f_residuals": (None if f_residuals is None
-                            else np.array(f_residuals))}
+    return result(x, False, "maksimalt antall iterasjoner", maxiter)
 
 
 def make_sqrt_iteration(a):

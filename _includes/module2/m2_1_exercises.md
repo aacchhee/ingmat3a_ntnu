@@ -1,4 +1,4 @@
-### Oppgave: utfør tre iterasjoner
+#### Utfør tre iterasjoner
 
 ::: {#fixed-point-numerical-iteration-context .math-exercise-context}
 
@@ -33,6 +33,8 @@ x_{n+1}=\sqrt[3]{1-x_n},\qquad x_0=0.5.
 $$
 
 Utfør tre iterasjoner. Oppgi $x_3$ avrundet til tre desimaler.
+
+Svarformat: Skriv ett desimaltall med punktum som desimalskilletegn, for eksempel `0.625`.
 
 $$x_3\approx$$ _[0.742]
 ```
