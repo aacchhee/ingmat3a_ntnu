@@ -1,20 +1,22 @@
-#### Utfør tre iterasjoner
+#### Følg de tre første stegene
 
 ::: {#fixed-point-numerical-iteration-context .math-exercise-context}
 
-I en fikspunktiterasjon beregnes verdiene i rekkefølge med
+Her skal du følge den samme oppdateringsregelen steg for steg. I en fikspunktiterasjon beregnes hvert nytt ledd fra leddet rett før:
 
 $$
 x_{n+1}=g(x_n).
 $$
 
-Startverdien er $x_0$ og teller ikke som en utført iterasjon. For
+Startverdien $x_0$ er utgangspunktet og teller ikke som en utført iterasjon. Første steg gir $x_1=g(x_0)$, andre steg gir $x_2=g(x_1)$, og tredje steg gir $x_3=g(x_2)$.
+
+I denne oppgaven er
 
 $$
 g(x)=\sqrt[3]{1-x}
 $$
 
-brukes den reelle kubikkroten. Hvert nytt iterat må beregnes fra det forrige. Behold flere desimaler i mellomregningene, og avrund bare sluttresultatet til tre desimaler.
+Når uttrykket under rottegnet er negativt, skal den reelle kubikkroten brukes. Behold flere desimaler i mellomregningene, slik at tidlig avrunding ikke forplanter seg gjennom de neste stegene. Avrund bare $x_3$ til tre desimaler.
 
 :::
 
