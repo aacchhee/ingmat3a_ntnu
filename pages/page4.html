@@ -5090,7 +5090,7 @@ x_{n+1}=g(x_n),\qquad n=0,1,2,\ldots
 <p>Følgene nedenfor viser fire typiske forløp:</p>
 <ul>
 <li><span class="math inline">\(1,1/2,1/4,1/8,\ldots\)</span> nærmer seg <span class="math inline">\(0\)</span> fra én side. Avstanden til <span class="math inline">\(0\)</span> halveres for hvert ledd.</li>
-<li><span class="math inline">\(1,-1/2,1/4,-1/8,\ldots\)</span> ligger vekselvis på hver side av <span class="math inline">\(0\)</span>, men avstanden blir stadig mindre. Følgen konvergerer derfor mot <span class="math inline">\(0\)</span> selv om den pendler.</li>
+<li><span class="math inline">\(1,-1/2,1/4,-1/8,\ldots\)</span> ligger vekselvis på hver side av <span class="math inline">\(0\)</span>, men avstanden blir stadig mindre. Følgen konvergerer derfor mot <span class="math inline">\(0\)</span> selv om den alternerer.</li>
 <li><span class="math inline">\(1,-1,1,-1,\ldots\)</span> gjentar de samme to verdiene. Avstanden til én bestemt verdi går ikke mot null, så følgen konvergerer ikke.</li>
 <li><span class="math inline">\(1,2,4,8,\ldots\)</span> beveger seg stadig lenger bort og vokser uten grense.</li>
 </ul>
@@ -5107,24 +5107,29 @@ x_{n+1}=g(x_n),\qquad n=0,1,2,\ldots
 <ul>
 <li>En følge <strong>konvergerer</strong> når den nærmer seg én bestemt verdi.</li>
 <li>En følge <strong>divergerer</strong> når den ikke nærmer seg én bestemt verdi.</li>
-<li>En følge <strong>pendler</strong> når leddene ligger vekselvis på hver side av en verdi.</li>
+<li>En følge <strong>alternerer</strong> når leddene ligger vekselvis på hver side av en verdi.</li>
 <li>En følge går i en <strong>syklus</strong> når den gjentar et endelig mønster av verdier.</li>
 </ul>
-<p>Pendling beskriver retningen på bevegelsen, ikke om metoden lykkes. En pendelende følge konvergerer dersom avstanden til grensen går mot null. En syklus med forskjellige verdier gjør ikke det.</p>
+<p>Alternering beskriver retningen på bevegelsen, ikke om metoden lykkes. En alternerende følge konvergerer dersom avstanden til grensen går mot null. En syklus med forskjellige verdier gjør ikke det.</p>
 </div>
 </div>
-<p>Hvis en fikspunktiterasjon konvergerer mot <span class="math inline">\(r\)</span> og <span class="math inline">\(g\)</span> er kontinuerlig ved <span class="math inline">\(r\)</span>, kan vi ta grensen på begge sider av <span class="math inline">\(x_{n+1}=g(x_n)\)</span>:</p>
+<p>Anta nå at iteratene <span class="math inline">\(x_n\)</span> nærmer seg et tall <span class="math inline">\(r\)</span>. Da nærmer også de neste iteratene <span class="math inline">\(x_{n+1}\)</span> seg <span class="math inline">\(r\)</span>; vi har bare flyttet oss ett steg fram i den samme følgen. Samtidig er hvert neste iterat gitt av <span class="math inline">\(x_{n+1}=g(x_n)\)</span>.</p>
+<p>Når <span class="math inline">\(g\)</span> er kontinuerlig ved <span class="math inline">\(r\)</span>, vil verdiene <span class="math inline">\(g(x_n)\)</span> nærme seg <span class="math inline">\(g(r)\)</span> når <span class="math inline">\(x_n\)</span> nærmer seg <span class="math inline">\(r\)</span>. Men <span class="math inline">\(g(x_n)\)</span> og <span class="math inline">\(x_{n+1}\)</span> er de samme tallene, og vi har nettopp sagt at disse nærmer seg <span class="math inline">\(r\)</span>. De kan ikke nærme seg to forskjellige tall. Derfor må</p>
 <p><span class="math display">\[
 r=g(r).
 \]</span></p>
-<p>Grensen må altså være et fikspunkt. Dette forklarer hvorfor vi leter etter fikspunkter, men det lover ikke at enhver startverdi eller enhver omskriving vil føre oss dit.</p>
+<p>Dermed er <span class="math inline">\(r\)</span> et fikspunkt. Argumentet forklarer hvorfor en konvergent fikspunktiterasjon gir en løsning av <span class="math inline">\(x=g(x)\)</span>. Det lover fortsatt ikke at enhver startverdi eller enhver omskriving vil få følgen til å konvergere.</p>
 </div>
 <div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <p>Formelen <span class="math inline">\(x_{n+1}=g(x_n)\)</span> blir et program ved å lagre den gjeldende verdien, bruke <span class="math inline">\(g\)</span> én gang og gjenta. Koden nedenfor beregner et bestemt antall steg og beholder hele historikken, slik at vi kan undersøke forløpet etterpå.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Listen begynner med <span class="math inline">\(x_0\)</span>. Hver runde i løkken bruker det siste leddet til å beregne ett nytt ledd, så seks steg gir verdiene <span class="math inline">\(x_0,x_1,\ldots,x_6\)</span>. Historikken lar oss se om verdiene nærmer seg en grense, pendler, gjentar seg eller beveger seg bort.</p>
-<p>Hvis verdiene ser ut til å nærme seg et tall <span class="math inline">\(r\)</span>, kontrollerer vi kandidaten ved å sammenligne <span class="math inline">\(g(r)\)</span> med <span class="math inline">\(r\)</span>. Forskjellen <span class="math inline">\(g(r)-r\)</span> kalles fikspunktresidualen. En liten residual betyr at fikspunktligningen nesten er oppfylt, men den er ikke alene et bevis på at iterasjonen har konvergert eller at den sanne feilen er liten. Dette skillet blir presisert i del 2.4.</p>
+<p>Listen begynner med <span class="math inline">\(x_0\)</span>. Hver runde i løkken bruker det siste leddet til å beregne ett nytt ledd, så seks steg gir verdiene <span class="math inline">\(x_0,x_1,\ldots,x_6\)</span>. Historikken lar oss se om verdiene nærmer seg en grense, alternerer, gjentar seg eller beveger seg bort.</p>
+<p>Hvis den siste beregnede verdien <span class="math inline">\(x\)</span> ser ut til å være nær et fikspunkt, kontrollerer vi den med <strong>fikspunktresidualens størrelse</strong></p>
+<p><span class="math display">\[
+|g(x)-x|.
+\]</span></p>
+<p>For den opprinnelige ligningen <span class="math inline">\(f(x)=0\)</span> er den tilsvarende residualstørrelsen <span class="math inline">\(|f(x)|\)</span>. Absoluttverdien gjør begge til ikke-negative mål på hvor godt ligningen er oppfylt. En liten residual er likevel ikke alene et bevis på at iterasjonen har konvergert eller at den sanne feilen er liten. Dette skillet blir presisert i del 2.4.</p>
 <p>En datamaskin kan ikke beregne uendelig mange ledd. En praktisk metode trenger derfor en regel for når den skal stoppe, og et maksimalt antall iterasjoner som sikkerhetsgrense. Senere i kapitlet bygger vi inn disse kontrollene og lar programmet oppgi om det stoppet fordi endringen var liten, eller fordi det brukte opp alle tillatte iterasjoner.</p>
 </div>
 <div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
