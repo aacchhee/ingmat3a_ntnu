@@ -4946,7 +4946,7 @@ the identical definition in the shared Python session.
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Iterative metoder</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Modellproblem</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Oppdateringsregler</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">Oppgave</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Iterative metoder</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Modellproblem</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Oppdateringsregler</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">Læringsmål</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <p>Mange problemer i informatikk og ingeniørfag ender med en ligning</p>
@@ -5008,8 +5008,7 @@ r=g_i(r).
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</div>
-<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<p>Bruk plottet til å svare på spørsmålene:</p>
 <ul>
 <li>Hvilke av de tre følgene kommer nærmere den stiplede linjen?</li>
 <li>Hvilken følge får minst absolutt feil etter åtte iterasjoner?</li>
@@ -5017,7 +5016,7 @@ r=g_i(r).
 <li>Blir avstanden til løsningen mindre når verdiene veksler side?</li>
 <li>Hva endrer seg når du prøver en annen startverdi i <span class="math inline">\([0,1]\)</span>?</li>
 </ul>
-<p>Oppgaven besvares ved å endre startverdien i kodecellen og sammenligne grafene. Du skal ikke skrive inn et svar i et automatisk svarfelt.</p>
+<p>Endre deretter startverdien i kodecellen og sammenlign grafene. Du skal ikke skrive inn et svar i et automatisk svarfelt.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5031,20 +5030,19 @@ r=g_i(r).
 <p>Å omskrive en ligning er ikke bare algebra. Valget av <span class="math inline">\(x=g(x)\)</span> bestemmer den numeriske algoritmen. Ekvivalente formler kan gi helt forskjellig oppførsel.</p>
 </div>
 </div>
-<section id="læringsmål" class="level4">
-<h4 class="anchored" data-anchor-id="læringsmål">Læringsmål</h4>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
 <p>Etter denne uka skal du kunne</p>
 <ul>
-<li>forklare fikspunkt og fikspunktiterasjon,</li>
-<li>beskrive konvergens, divergens, pendling og sykler,</li>
-<li>bruke iterasjonshistorikk og spindelvevplott som undersøkelsesverktøy,</li>
-<li>forklare attraktive og frastøtende fikspunkt,</li>
-<li>skille mellom lokal og global konvergens,</li>
-<li>sammenligne konvergensfart,</li>
-<li>skille mellom sann feil, relativ feil, residual og skrittlengde,</li>
-<li>implementere en metode med stoppkriterium og diagnostikk.</li>
+<li>forklare hva et fikspunkt er, og hvordan en fikspunktiterasjon lager en følge av tilnærminger,</li>
+<li>bruke iterasjonsverdier til å avgjøre om en metode nærmer seg en løsning, beveger seg bort, veksler mellom sider eller går i en syklus,</li>
+<li>lese et spindelvevplott og bruke det til å forklare hvordan iterasjonen beveger seg,</li>
+<li>bruke helningen <span class="math inline">\(g'(r)\)</span> til å avgjøre om et fikspunkt trekker til seg nærliggende iterater eller skyver dem bort,</li>
+<li>forklare forskjellen på konvergens nær et fikspunkt og konvergens fra et større område av startverdier,</li>
+<li>sammenligne hvor raskt metoder nærmer seg løsningen ved hjelp av feilreduksjon og antall iterasjoner,</li>
+<li>beregne og tolke absolutt feil, relativ feil, residual og skrittlengde,</li>
+<li>programmere en fikspunktiterasjon som stopper på en kontrollert måte og oppgir hvorfor den stoppet.</li>
 </ul>
-</section>
 </div>
 </div>
 </div>
