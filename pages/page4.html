@@ -5341,24 +5341,49 @@ $\lambda=$ <input type="text" id="math-exercise-2-f3" data-answer="sqrt(2)/4" da
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">Lokal og global</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Konvergensfart</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false" href="">Korrekte desimaler</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-4" role="tab" aria-controls="tabset-4-4" aria-selected="false" href="">Oppgave</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
-<p>Helningsregelen beskriver bare hva som skjer nær fikspunktet. For å si noe presist om hvilke startverdier som fører til <span class="math inline">\(r\)</span>, skiller vi mellom lokal og global konvergens. En metode har <strong>lokal konvergens</strong> mot <span class="math inline">\(r\)</span> dersom den konvergerer når startverdien er tilstrekkelig nær <span class="math inline">\(r\)</span>. Regelen <span class="math inline">\(|g'(r)|&lt;1\)</span> sier at et slikt område finnes, men ikke automatisk hvor stort det er.</p>
+<p>Helningsregelen fra 2.2 beskriver hva som skjer etter at et iterat allerede har kommet nær fikspunktet. Den svarer ikke på om en startverdi langt unna noen gang kommer inn i dette nærområdet. Derfor må vi skille mellom lokal og global konvergens.</p>
+<p>En metode har <strong>lokal konvergens</strong> mot <span class="math inline">\(r\)</span> dersom alle startverdier som ligger tilstrekkelig nær <span class="math inline">\(r\)</span>, fører til en følge som konvergerer mot <span class="math inline">\(r\)</span>. Regelen <span class="math inline">\(|g'(r)|&lt;1\)</span> forteller at fikspunktet trekker til seg iterater i et nærområde, men regelen oppgir ikke hvor grensene for dette området går.</p>
 <p>En metode har <strong>global konvergens på et område</strong> dersom den konvergerer for alle tillatte startverdier i området, for eksempel alle <span class="math inline">\(x_0\in[0,1]\)</span> eller alle positive <span class="math inline">\(x_0\)</span>. «Global» må alltid kobles til et oppgitt område.</p>
-<p>Mengden av startverdier som konvergerer mot et bestemt fikspunkt, kalles fikspunktets <strong>tiltrekningsområde</strong>. Vi kan undersøke det eksperimentelt.</p>
+<p>Mengden av startverdier som faktisk konvergerer mot et bestemt fikspunkt, kalles fikspunktets <strong>tiltrekningsområde</strong>. Formen og størrelsen på dette området avhenger både av <span class="math inline">\(g\)</span> og av hvilket fikspunkt vi ser på. Vi kan få et første bilde av området ved å prøve mange startverdier numerisk.</p>
+<p>I eksperimentet nedenfor velger vi 400 startverdier mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1.5\)</span>. For hver startverdi utfører vi nøyaktig 100 iterasjoner med <span class="math inline">\(g_2\)</span> og tegner ett punkt:</p>
+<p><span class="math display">\[
+(x_0,x_{100}).
+\]</span></p>
+<p>Den vannrette koordinaten viser altså hvor iterasjonen startet, mens den loddrette koordinaten viser hvor den befant seg etter 100 steg. Den stiplede linjen markerer fikspunktet <span class="math inline">\(r\)</span>.</p>
 <div id="qpyodide-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Figuren viser verdien etter akkurat 100 iterasjoner for 400 startverdier. Den er numerisk evidens, ikke et bevis for alle startverdier. En startverdi kan også feilklassifiseres dersom 100 iterasjoner ikke er nok til å oppfylle det valgte feilmålet.</p>
+<p>Den midterste, vannrette delen av figuren ligger oppå den stiplede linjen. Det betyr at startverdier mellom omtrent <span class="math inline">\(0\)</span> og <span class="math inline">\(1\)</span> har gitt <span class="math inline">\(x_{100}\approx r\)</span>. Eksperimentet tyder derfor på at intervallet <span class="math inline">\((0,1)\)</span> ligger i tiltrekningsområdet til fikspunktet.</p>
+<p>De to ytre delene ligger nær <span class="math inline">\(-0.536\)</span> og <span class="math inline">\(1.154\)</span>, ikke nær fikspunktet. Disse to verdiene hører sammen: <span class="math inline">\(g_2(-0.536)\approx1.154\)</span> og <span class="math inline">\(g_2(1.154)\approx-0.536\)</span>. Iterasjonen nærmer seg dermed en 2-syklus og alternerer mellom verdiene. Fordi figuren viser et partall antall steg, vises den negative delen av syklusen for startverdier til venstre og den positive delen for startverdier til høyre. Med 101 steg ville de to ytre nivåene ha byttet plass. Endepunktene <span class="math inline">\(0\)</span> og <span class="math inline">\(1\)</span> danner dessuten 2-syklusen <span class="math inline">\(0\mapsto1\mapsto0\)</span>; intervallet vi observerer konvergens fra, er derfor det åpne intervallet <span class="math inline">\((0,1)\)</span>.</p>
+<p>Plottet skiller dermed mellom to typer langtidsoppførsel: konvergens mot fikspunktet i midten og konvergens mot en 2-syklus utenfor. Det viser også hvorfor «verdien etter 100 steg» ikke automatisk er en løsning.</p>
+<p>Dette er fortsatt et numerisk eksperiment, ikke et bevis. Vi har bare prøvd 400 startverdier og stoppet etter 100 steg. En langsomt konvergerende startverdi kan feilklassifiseres, og smale områder mellom de testede punktene kan bli oversett. Et bevis for global konvergens må kontrollere alle startverdier i det oppgitte området.</p>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
-<p>Ordet «rask» er ufullstendig uten et mål. Vi kan sammenligne antall iterasjoner til <span class="math inline">\(|x_n-r|\)</span> er under en oppgitt grense, reduksjonen i feil per iterasjon eller faktisk regnetid. Én iterasjon kan koste ulikt i forskjellige metoder. Her bruker vi absolutt feil <span class="math inline">\(|x_n-r|\)</span> og feilreduksjon per iterasjon.</p>
-<p>Hvis</p>
+<p>I 2.2 fant vi den lokale feilmodellen for fikspunktiterasjon</p>
+<p><span class="math display">\[
+|e_{n+1}|\approx |g'(r)|\,|e_n|,
+\qquad e_n=x_n-r.
+\]</span></p>
+<p>Den sier at én iterasjon multipliserer feilen med omtrent den samme faktoren når <span class="math inline">\(x_n\)</span> er nær <span class="math inline">\(r\)</span>. Vi generaliserer dette ved å kalle faktoren <span class="math inline">\(S\)</span>:</p>
 <p><span class="math display">\[|e_{n+1}|\approx S|e_n|,\qquad 0&lt;S&lt;1,\]</span></p>
-<p>har metoden omtrent <strong>lineær konvergens</strong>, og <span class="math inline">\(S\)</span> er en <strong>konvergensfaktor</strong>.</p>
+<p>Når denne modellen gjelder, har metoden omtrent <strong>lineær konvergens</strong>, og <span class="math inline">\(S\)</span> kalles en <strong>konvergensfaktor</strong>. For fikspunktiterasjon er <span class="math inline">\(S\approx|g'(r)|\)</span>. For andre iterative metoder kan vi finne <span class="math inline">\(S\)</span> fra forholdet <span class="math inline">\(|e_{n+1}|/|e_n|\)</span> uten at metoden er skrevet som akkurat samme <span class="math inline">\(g\)</span>.</p>
+<p>Gjentar vi modellen over <span class="math inline">\(k\)</span> steg, får vi</p>
+<p><span class="math display">\[
+|e_{n+k}|\approx S^k|e_n|.
+\]</span></p>
+<p>Dermed forteller <span class="math inline">\(S\)</span> hvor stor andel av feilen som blir igjen per iterasjon:</p>
 <ul>
 <li><span class="math inline">\(S\approx0.9\)</span>: omtrent <span class="math inline">\(90\%\)</span> av feilen er igjen.</li>
 <li><span class="math inline">\(S\approx0.5\)</span>: feilen halveres omtrent.</li>
 <li><span class="math inline">\(S\approx0.1\)</span>: omtrent ett desimalsiffer vinnes.</li>
 </ul>
-<p>Mindre <span class="math inline">\(S\)</span> betyr raskere lineær konvergens. For fikspunktiterasjon nær et attraktivt fikspunkt er <span class="math inline">\(S\approx|g'(r)|\)</span>.</p>
+<p>Mindre <span class="math inline">\(S\)</span> betyr at feilen reduseres mer i hvert steg og dermed raskere lineær konvergens.</p>
+<p>Det finnes flere meningsfulle måter å sammenligne «fart» på:</p>
+<ul>
+<li><strong>Antall iterasjoner til ønsket nøyaktighet:</strong> Hvor mange steg trengs før <span class="math inline">\(|x_n-r|\)</span> er mindre enn en valgt grense?</li>
+<li><strong>Feilreduksjon per iterasjon:</strong> Hvor stor andel av feilen blir igjen fra ett steg til det neste?</li>
+<li><strong>Faktisk regnetid eller arbeidsmengde:</strong> Hvor lang tid tar beregningen, eller hvor mange operasjoner krever den?</li>
+</ul>
+<p>Disse målene kan rangere metoder forskjellig. En metode kan bruke få iterasjoner, men ha dyre iterasjoner. I resten av denne delen undersøker vi bare den matematiske feilreduksjonen per iterasjon. Vi måler absolutt feil <span class="math inline">\(|e_n|=|x_n-r|\)</span> og sammenligner forholdet <span class="math inline">\(|e_{n+1}|/|e_n|\)</span>. Vi måler ikke faktisk regnetid her.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5377,22 +5402,57 @@ Note
 <p>Dette kalles <strong>kvadratisk konvergens</strong>. For små feil gjør kvadreringen at feilen kan avta langt mer per iterasjon enn ved en fast lineær faktor. Antall korrekte sifre dobles asymptotisk når modellen gjelder og konstanten <span class="math inline">\(C\)</span> ikke motvirker reduksjonen.</p>
 </div>
 <div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
-<p>For modellproblemet kjenner vi referanseverdien fra 2.0 med absolutt referansefeil under <span class="math inline">\(6\cdot10^{-17}\)</span>. Vi kan derfor plotte den målte absolutte feilen <span class="math inline">\(|x_n-r_{\mathrm{reference}}|\)</span> så lenge den ligger over denne grensen.</p>
+<p>Konvergensfaktoren beskriver hvor raskt feilen krymper, men i praksis spør vi ofte hvor mange desimaler vi kan stole på. Dette må knyttes til avrunding, ikke til hvor mange sifre som tilfeldigvis ser like ut.</p>
+<p>Når vi avrunder til <span class="math inline">\(p\)</span> desimaler, er avstanden mellom to naboverdier på denne skalaen <span class="math inline">\(10^{-p}\)</span>. En halv slik avstand er <span class="math inline">\(\frac12 10^{-p}\)</span>, og den brukes som en standard grense for nøyaktighet. Vi definerer derfor at <span class="math inline">\(x_n\)</span> har minst <span class="math inline">\(p\)</span> <strong>korrekte desimaler</strong> når</p>
+<p><span class="math display">\[
+|x_n-r|&lt;\frac12\,10^{-p}.
+\]</span></p>
+<p>Dette er en presis feildefinisjon, ikke en instruks om å telle like sifre i to desimalutviklinger. Hvis den eksakte verdien ligger svært nær et avrundingsskille, kan to tall som oppfyller feilgrensen likevel avrundes ulikt. Kriteriet måler avstanden på skalaen til den <span class="math inline">\(p\)</span>-te desimalplassen.</p>
+<p>Tre eksempler viser hvordan kriteriet brukes:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 36%">
+<col style="width: 36%">
+<col style="width: 27%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Absolutt feil</th>
+<th style="text-align: right;">Største oppfylte grense</th>
+<th>Konklusjon</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(3.2\cdot10^{-2}\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(3.2\cdot10^{-2}&lt;\frac12 10^{-1}=5\cdot10^{-2}\)</span>, men ikke <span class="math inline">\(&lt;5\cdot10^{-3}\)</span></td>
+<td>minst 1 korrekt desimal</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(4.0\cdot10^{-4}\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(4.0\cdot10^{-4}&lt;\frac12 10^{-3}=5\cdot10^{-4}\)</span>, men ikke <span class="math inline">\(&lt;5\cdot10^{-5}\)</span></td>
+<td>minst 3 korrekte desimaler</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(2.0\cdot10^{-7}\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(2.0\cdot10^{-7}&lt;\frac12 10^{-6}=5\cdot10^{-7}\)</span>, men ikke <span class="math inline">\(&lt;5\cdot10^{-8}\)</span></td>
+<td>minst 6 korrekte desimaler</td>
+</tr>
+</tbody>
+</table>
+<p>I hvert eksempel prøver vi altså grensen for <span class="math inline">\(p\)</span> og deretter den strengere grensen for <span class="math inline">\(p+1\)</span>. Det største <span class="math inline">\(p\)</span> som består, er antallet korrekte desimaler etter dette kriteriet.</p>
+<p>For modellproblemet kjenner vi referanseverdien fra 2.0 med absolutt referansefeil under <span class="math inline">\(6\cdot10^{-17}\)</span>. Vi kan derfor bruke <span class="math inline">\(r_{\mathrm{reference}}\)</span> i stedet for den ukjente eksakte roten og plotte den målte feilen <span class="math inline">\(|x_n-r_{\mathrm{reference}}|\)</span>, så lenge feilen vi tolker ligger tydelig over referansefeilen.</p>
 <div id="qpyodide-insertion-location-11"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qpyodide-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Den siste kolonnen viser hvor stor andel av forrige feil som er igjen.</p>
-<p>Vi sier at <span class="math inline">\(x_n\)</span> har minst <span class="math inline">\(p\)</span> <strong>korrekte desimaler</strong> når</p>
-<p><span class="math display">\[
-|x_n-r|&lt;\frac12\,10^{-p}.
-\]</span></p>
-<p>Da vil avrunding av <span class="math inline">\(x_n\)</span> og <span class="math inline">\(r\)</span> normalt gi samme tall med <span class="math inline">\(p\)</span> desimaler. Denne definisjonen gjør «antall korrekte desimaler» til et konkret feilmål.</p>
+<p>Den siste kolonnen viser den målte faktoren <span class="math inline">\(|e_n|/|e_{n-1}|\)</span>: hvor stor andel av forrige feil som er igjen etter ett nytt steg. Når verdiene stabiliserer seg nær en konstant, kan den leses som den lineære konvergensfaktoren <span class="math inline">\(S\)</span>.</p>
 </div>
 <div id="tabset-4-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-4-tab">
 <section id="les-antall-korrekte-desimaler-fra-feilplottet" class="level4">
 <h4 class="anchored" data-anchor-id="les-antall-korrekte-desimaler-fra-feilplottet">Les antall korrekte desimaler fra feilplottet</h4>
-<p>Plottet viser absolutt feil for de to oppdateringsreglene <span class="math inline">\(g_2\)</span> og <span class="math inline">\(g_3\)</span> fra modellproblemet. De stiplede linjene markerer grensene <span class="math inline">\(\frac12 10^{-p}\)</span> for <span class="math inline">\(p=0,1,\ldots,12\)</span>. Et punkt under linjen for <span class="math inline">\(p\)</span> har minst <span class="math inline">\(p\)</span> korrekte desimaler.</p>
+<p>I en beregning må vi kunne oversette et feilplott til et konkret utsagn om nøyaktighet. Her skal du bruke kriteriet fra forrige fane til å lese hvor mange desimaler hvert iterat garanterer.</p>
+<p>Plottet viser absolutt feil for de to oppdateringsreglene <span class="math inline">\(g_2\)</span> og <span class="math inline">\(g_3\)</span> fra modellproblemet. De vannrette linjene markerer grensene <span class="math inline">\(\frac12 10^{-p}\)</span> for <span class="math inline">\(p=0,1,\ldots,12\)</span>. Et punkt under linjen for <span class="math inline">\(p\)</span> har minst <span class="math inline">\(p\)</span> korrekte desimaler. Jo flere grenselinjer punktet ligger under, desto flere desimaler er korrekte.</p>
 <div id="qpyodide-insertion-location-13"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="correct-decimals-context" class="math-exercise-context">
@@ -5402,7 +5462,7 @@ Note
 \]</span></p>
 <p>Finn det største heltallet <span class="math inline">\(p\)</span> som oppfyller ulikheten. Dersom feilen ikke er mindre enn <span class="math inline">\(0.5\)</span>, er svaret <span class="math inline">\(0\)</span>. Bruk den absolutte feilen som vises i plottet; ikke tell like sifre direkte i desimalutviklingen.</p>
 </div>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="count-correct-decimals-from-plot" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;g2 ved n=1&quot;,&quot;g2 ved n=2&quot;,&quot;g2 ved n=3&quot;,&quot;g2 ved n=4&quot;,&quot;g3 ved n=1&quot;,&quot;g3 ved n=2&quot;,&quot;g3 ved n=3&quot;,&quot;g3 ved n=4&quot;]" data-context-mode="explicit" data-context-refs="correct-decimals-context" data-context="&quot;Les antall korrekte desimaler fra feilplottet Plottet viser absolutt feil for de to oppdateringsreglene g_2 og g_3 fra modellproblemet. De stiplede linjene markerer grensene \\frac12 10^{-p} for p=0,1,\\ldots,12. Et punkt under linjen for p har minst p korrekte desimaler. En tilnærming x_n har minst p korrekte desimaler når |x_n-r|<\\frac12 10^{-p}. Finn det største heltallet p som oppfyller ulikheten. Dersom feilen ikke er mindre enn 0.5, er svaret 0. Bruk den absolutte feilen som vises i plottet; ikke tell like sifre direkte i desimalutviklingen.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;,&quot;math-exercise-3-f4&quot;,&quot;math-exercise-3-f5&quot;,&quot;math-exercise-3-f6&quot;,&quot;math-exercise-3-f7&quot;,&quot;math-exercise-3-f8&quot;]">
+<div class="math-exercise-cell" id="math-exercise-3" data-label="count-correct-decimals-from-plot" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;g2 ved n=1&quot;,&quot;g2 ved n=2&quot;,&quot;g2 ved n=3&quot;,&quot;g2 ved n=4&quot;,&quot;g3 ved n=1&quot;,&quot;g3 ved n=2&quot;,&quot;g3 ved n=3&quot;,&quot;g3 ved n=4&quot;]" data-context-mode="explicit" data-context-refs="correct-decimals-context" data-context="&quot;Les antall korrekte desimaler fra feilplottet I en beregning må vi kunne oversette et feilplott til et konkret utsagn om nøyaktighet. Her skal du bruke kriteriet fra forrige fane til å lese hvor mange desimaler hvert iterat garanterer. Plottet viser absolutt feil for de to oppdateringsreglene g_2 og g_3 fra modellproblemet. De vannrette linjene markerer grensene \\frac12 10^{-p} for p=0,1,\\ldots,12. Et punkt under linjen for p har minst p korrekte desimaler. Jo flere grenselinjer punktet ligger under, desto flere desimaler er korrekte. En tilnærming x_n har minst p korrekte desimaler når |x_n-r|<\\frac12 10^{-p}. Finn det største heltallet p som oppfyller ulikheten. Dersom feilen ikke er mindre enn 0.5, er svaret 0. Bruk den absolutte feilen som vises i plottet; ikke tell like sifre direkte i desimalutviklingen.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;,&quot;math-exercise-3-f4&quot;,&quot;math-exercise-3-f5&quot;,&quot;math-exercise-3-f6&quot;,&quot;math-exercise-3-f7&quot;,&quot;math-exercise-3-f8&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Korrekte desimaler for to iterasjoner</div>
 
 <div class="math-exercise-body" style="display:none;">
