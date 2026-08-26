@@ -1,6 +1,8 @@
 #### Les antall korrekte desimaler fra feilplottet
 
-Plottet viser absolutt feil for de to oppdateringsreglene $g_2$ og $g_3$ fra modellproblemet. De stiplede linjene markerer grensene $\frac12 10^{-p}$ for $p=0,1,\ldots,12$. Et punkt under linjen for $p$ har minst $p$ korrekte desimaler.
+I en beregning må vi kunne oversette et feilplott til et konkret utsagn om nøyaktighet. Her skal du bruke kriteriet fra forrige fane til å lese hvor mange desimaler hvert iterat garanterer.
+
+Plottet viser absolutt feil for de to oppdateringsreglene $g_2$ og $g_3$ fra modellproblemet. De vannrette linjene markerer grensene $\frac12 10^{-p}$ for $p=0,1,\ldots,12$. Et punkt under linjen for $p$ har minst $p$ korrekte desimaler. Jo flere grenselinjer punktet ligger under, desto flere desimaler er korrekte.
 
 ```{pyodide-python}
 #| canvas: false
