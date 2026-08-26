@@ -10,7 +10,18 @@ $$
 g_\lambda(x)=x-\lambda f(x),
 $$
 
-der $\lambda>0$ bestemmer hvor stor korreksjon vi tar i hvert steg. Et nullpunkt $r$ for $f$ er et fikspunkt for alle disse reglene, fordi $f(r)=0$ gir $g_\lambda(r)=r$. Parameteren flytter altså ikke løsningen, men den endrer helningen og dermed den lokale konvergensfaktoren
+der $\lambda>0$ bestemmer hvor stor korreksjon vi tar i hvert steg. Før vi undersøker farten, kontrollerer vi at omskrivingen beholder løsningene. Hvis $r$ er et nullpunkt for $f$, er $f(r)=0$, og innsetting gir
+
+$$
+g_\lambda(r)
+=r-\lambda f(r)
+=r-\lambda\cdot0
+=r.
+$$
+
+Dermed er hvert nullpunkt for $f$ et fikspunkt for $g_\lambda$, uansett hvilken positiv $\lambda$ vi velger. Også motsatt vei gjelder: Hvis $g_\lambda(r)=r$, får vi $r-\lambda f(r)=r$, og siden $\lambda>0$, må $f(r)=0$. Nullpunktene og fikspunktene er altså de samme.
+
+Parameteren flytter derfor ikke løsningen, men den endrer helningen og dermed den lokale konvergensfaktoren
 
 $$
 |g_\lambda'(r)|.
@@ -45,7 +56,7 @@ Bruk det positive fikspunktet. Finn først $r$. Beregn deretter den lokale fakto
 
 Svarformat: Skriv eksakte uttrykk. Bruk `sqrt(2)` for $\sqrt{2}$ og `/` for brøk, for eksempel `sqrt(2)/4`. Desimaltall er ikke nødvendig.
 
-$r=$ _[sqrt(2)]  
-$\left|g_{1/4}'(r)\right|=$ _[1-sqrt(2)/2]  
+$r=$ _[sqrt(2)]<br>
+$\left|g_{1/4}'(r)\right|=$ _[1-sqrt(2)/2]<br>
 $\lambda=$ _[sqrt(2)/4]
 ```
