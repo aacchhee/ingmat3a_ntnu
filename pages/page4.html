@@ -5177,15 +5177,22 @@ $$x_3\approx$$ <input type="text" id="math-exercise-1-f1" data-answer="0.742" da
 </div>
 <div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Spindelvevplott</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Undersøk metoden</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Helningsregelen</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false" href="">Oppgave</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Spindelvevplott</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Helningsregelen</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Oppgave</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
-<p>En liste med iterater viser tallene, men ikke hvordan formen på <span class="math inline">\(g\)</span> styrer bevegelsen. Et <strong>spindelvevplott</strong> gjør hvert steg synlig og lar oss sammenligne banen med skjæringspunktene mellom <span class="math inline">\(y=g(x)\)</span> og <span class="math inline">\(y=x\)</span>. Disse skjæringspunktene er fikspunktene.</p>
+<p>En liste viser hvilke iterater vi får, men ikke hvorfor de beveger seg slik de gjør. Et <strong>spindelvevplott</strong> tegner iterasjonen som en sti mellom to grafer:</p>
+<ul>
+<li>Kurven <span class="math inline">\(y=g(x)\)</span> utfører beregningen. Ved <span class="math inline">\(x=x_n\)</span> har kurven høyden <span class="math inline">\(g(x_n)=x_{n+1}\)</span>.</li>
+<li>Diagonalen <span class="math inline">\(y=x\)</span> gjør resultatet klart til neste runde. På diagonalen er <span class="math inline">\(x\)</span>- og <span class="math inline">\(y\)</span>-koordinaten like.</li>
+</ul>
+<p>Et fikspunkt ligger der kurven og diagonalen krysser hverandre. I et slikt punkt er <span class="math inline">\(g(r)=r\)</span>, så neste iterat er likt det forrige.</p>
+<p>Vi starter på diagonalen i punktet <span class="math inline">\((x_0,x_0)\)</span>. Derfra går vi</p>
 <ol type="1">
-<li>Gå loddrett til <span class="math inline">\(y=g(x)\)</span>; høyden er <span class="math inline">\(x_{n+1}=g(x_n)\)</span>.</li>
-<li>Gå vannrett til <span class="math inline">\(y=x\)</span>; den nye <span class="math inline">\(x\)</span>-koordinaten er <span class="math inline">\(x_{n+1}\)</span>.</li>
-<li>Gjenta.</li>
+<li>loddrett til kurven <span class="math inline">\(y=g(x)\)</span> for å lese av den nye verdien <span class="math inline">\(x_1=g(x_0)\)</span>,</li>
+<li>vannrett til diagonalen, slik at den samme verdien blir den nye <span class="math inline">\(x\)</span>-koordinaten,</li>
+<li>loddrett til kurven igjen for å beregne <span class="math inline">\(x_2=g(x_1)\)</span>.</li>
 </ol>
+<p>Når disse to bevegelsene gjentas, dannes en trapp eller spiral som kan ligne et spindelvev. Hvis stien trekker seg inn mot et skjæringspunkt, nærmer iteratene seg et fikspunkt. Hvis trinnene vokser eller gjentar et mønster borte fra skjæringspunktet, konvergerer ikke denne banen mot fikspunktet.</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qpyodide-insertion-location-7"></div>
@@ -5194,9 +5201,10 @@ $$x_3\approx$$ <input type="text" id="math-exercise-1-f1" data-answer="0.742" da
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qpyodide-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<p>Endre én størrelse om gangen: funksjonen, startverdien, intervallet eller antall steg. Blir avstanden til fikspunktet mindre eller større? Ligger iteratene vekselvis på hver side? Gjentas de samme to eller flere verdiene? Prøv også flere steg før du konkluderer med at følgen ikke konvergerer.</p>
+<section id="undersøk-metoden-i-plottet" class="level4">
+<h4 class="anchored" data-anchor-id="undersøk-metoden-i-plottet">Undersøk metoden i plottet</h4>
+<p>De tre plottene bruker samme startverdi, men ulike oppdateringsregler. Følg den røde stien fra utsiden og inn: Blir trinnene kortere eller lengre? Krysser stien fikspunktet for hvert steg, eller nærmer den seg fra én side? Gjentar den de samme to eller flere verdiene?</p>
+<p>Deretter kan du endre én størrelse om gangen i kodecellene: funksjonen, startverdien, det viste intervallet eller antall steg. Prøv flere steg før du konkluderer med at følgen ikke konvergerer; langsom bevegelse kan se ut som stillstand i et kort plott.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5210,12 +5218,21 @@ Tip
 <p>Et plott kan avdekke mønstre, foreslå hypoteser og finne moteksempler. Det undersøker bare de valgte startverdiene og antall iterasjoner og er derfor ikke et bevis.</p>
 </div>
 </div>
+</section>
 </div>
-<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
-<p>Plottet antyder om nærliggende iterater trekkes mot eller skyves bort fra et fikspunkt. For å forklare dette uten å teste mange startverdier ser vi på den lokale helningen. Et fikspunkt er <strong>attraktivt</strong> dersom startverdier tilstrekkelig nær det beveger seg mot det. Det er <strong>frastøtende</strong> dersom nærliggende startverdier beveger seg bort.</p>
-<p>Hvis <span class="math inline">\(x_n=r+e_n\)</span>, er <span class="math inline">\(e_n\)</span> feilen. Nær et glatt fikspunkt får vi omtrent</p>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p>Spindelvevplottet viser hva som skjer for noen valgte startverdier. Helningen til <span class="math inline">\(g\)</span> ved fikspunktet forklarer hva som skjer med alle iterater som starter tilstrekkelig nær. Et fikspunkt er <strong>attraktivt</strong> når nærliggende iterater trekkes mot det, og <strong>frastøtende</strong> når de skyves bort.</p>
+<p>La <span class="math inline">\(r\)</span> være fikspunktet, og skriv feilen i iterat nummer <span class="math inline">\(n\)</span> som</p>
+<p><span class="math display">\[
+e_n=x_n-r,
+\]</span></p>
+<p>slik at <span class="math inline">\(x_n=r+e_n\)</span>. Feilen i neste iterat er forskjellen mellom <span class="math inline">\(x_{n+1}\)</span> og <span class="math inline">\(r\)</span>. Siden <span class="math inline">\(x_{n+1}=g(x_n)\)</span> og <span class="math inline">\(r=g(r)\)</span>, får vi den eksakte sammenhengen</p>
+<p><span class="math display">\[
+e_{n+1}=x_{n+1}-r=g(x_n)-g(r).
+\]</span></p>
+<p>Nær fikspunktet ser en glatt graf nesten ut som en rett linje. En liten vannrett endring <span class="math inline">\(x_n-r=e_n\)</span> gir da omtrent helningen <span class="math inline">\(g'(r)\)</span> ganger denne endringen i høyden:</p>
 <p><span class="math display">\[e_{n+1}\approx g'(r)e_n,\]</span></p>
-<p>og dermed</p>
+<p>Tar vi absoluttverdier, får vi en enkel regel for størrelsen på neste feil:</p>
 <p><span class="math display">\[|e_{n+1}|\approx |g'(r)|\,|e_n|.\]</span></p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -5232,23 +5249,24 @@ Tip
 <li><span class="math inline">\(|g'(r)|&gt;1\)</span>: frastøtende fikspunkt.</li>
 <li><span class="math inline">\(|g'(r)|=1\)</span>: regelen avgjør ikke.</li>
 </ul>
-<p>Regelen gjelder lokalt, altså for startverdier nær <span class="math inline">\(r\)</span>.</p>
+<p>Regelen gjelder lokalt, altså når <span class="math inline">\(x_n\)</span> allerede er nær <span class="math inline">\(r\)</span>. Den sier ikke hva som skjer for en vilkårlig startverdi langt unna.</p>
 </div>
 </div>
-<p>Fortegnet forklarer også formen: positiv helning gir ofte tilnærming fra én side; negativ helning gir ofte kryssing fram og tilbake.</p>
+<p>Størrelsen <span class="math inline">\(|g'(r)|\)</span> forteller om feilen krymper eller vokser. Fortegnet forteller hvilken side neste iterat havner på: En positiv helning bevarer vanligvis fortegnet til feilen, mens en negativ helning skifter fortegn og gir bevegelse fram og tilbake over fikspunktet.</p>
 <p>For eksemplet får vi analytisk</p>
 <p><span class="math display">\[|g_1'(r)|\approx1.40,\qquad |g_2'(r)|\approx0.72,\qquad g_3'(r)=0.\]</span></p>
-<p>For <span class="math inline">\(g_1\)</span> blir en liten feil lokalt multiplisert med omtrent <span class="math inline">\(1.40\)</span> og vokser derfor. For <span class="math inline">\(g_2\)</span> blir omtrent <span class="math inline">\(72\%\)</span> av feilen igjen per iterasjon. For <span class="math inline">\(g_3\)</span> er den lineære faktoren null; feilen avtar med høyere orden nær fikspunktet.</p>
+<p>For <span class="math inline">\(g_1\)</span> blir en liten feil lokalt multiplisert med omtrent <span class="math inline">\(1.40\)</span> og vokser derfor. For <span class="math inline">\(g_2\)</span> blir omtrent <span class="math inline">\(72\%\)</span> av feilen igjen per iterasjon. For <span class="math inline">\(g_3\)</span> er den lineære faktoren null: Den delen av feilen som er proporsjonal med <span class="math inline">\(e_n\)</span> forsvinner, og nær fikspunktet bestemmes feilen av mindre ledd av høyere orden.</p>
 </div>
-<div id="tabset-3-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-4-tab">
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
 <section id="design-en-raskere-iterasjon" class="level4">
 <h4 class="anchored" data-anchor-id="design-en-raskere-iterasjon">Design en raskere iterasjon</h4>
 <div id="relaxed-fixed-point-design-context" class="math-exercise-context">
+<p>Samme ligning kan gi mange fikspunktiterasjoner, og parameteren i oppdateringsregelen kan gjøre forskjellen mellom langsom og rask konvergens. Her skal du velge parameteren med helningsregelen, uten å måtte prøve mange verdier numerisk.</p>
 <p>En ligning <span class="math inline">\(f(x)=0\)</span> kan gjøres om til familien av fikspunktiterasjoner</p>
 <p><span class="math display">\[
 g_\lambda(x)=x-\lambda f(x),
 \]</span></p>
-<p>der <span class="math inline">\(\lambda&gt;0\)</span> er en parameter. Et nullpunkt <span class="math inline">\(r\)</span> for <span class="math inline">\(f\)</span> er også et fikspunkt for <span class="math inline">\(g_\lambda\)</span>. Den lokale konvergensfaktoren ved et glatt fikspunkt er</p>
+<p>der <span class="math inline">\(\lambda&gt;0\)</span> bestemmer hvor stor korreksjon vi tar i hvert steg. Et nullpunkt <span class="math inline">\(r\)</span> for <span class="math inline">\(f\)</span> er et fikspunkt for alle disse reglene, fordi <span class="math inline">\(f(r)=0\)</span> gir <span class="math inline">\(g_\lambda(r)=r\)</span>. Parameteren flytter altså ikke løsningen, men den endrer helningen og dermed den lokale konvergensfaktoren</p>
 <p><span class="math display">\[
 |g_\lambda'(r)|.
 \]</span></p>
@@ -5256,9 +5274,9 @@ g_\lambda(x)=x-\lambda f(x),
 <p><span class="math display">\[
 g_\lambda'(x)=1-2\lambda x.
 \]</span></p>
-<p>En parameter som gjør <span class="math inline">\(g_\lambda'(r)=0\)</span>, gir lokal faktor null. I denne oppgaven brukes det positive nullpunktet av <span class="math inline">\(f\)</span>.</p>
+<p>En parameter som gjør <span class="math inline">\(g_\lambda'(r)=0\)</span>, fjerner den lineære delen av feilutviklingen og gir lokal faktor null. I denne oppgaven bruker vi det positive nullpunktet av <span class="math inline">\(f\)</span>.</p>
 </div>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="design-relaxed-fixed-point" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;positivt fikspunkt r&quot;,&quot;lokal faktor når lambda er 1/4&quot;,&quot;optimal lambda&quot;]" data-context-mode="explicit" data-context-refs="relaxed-fixed-point-design-context" data-context="&quot;Design en raskere iterasjon En ligning f(x)=0 kan gjøres om til familien av fikspunktiterasjoner g_\\lambda(x)=x-\\lambda f(x), der \\lambda>0 er en parameter. Et nullpunkt r for f er også et fikspunkt for g_\\lambda. Den lokale konvergensfaktoren ved et glatt fikspunkt er |g_\\lambda'(r)|. For f(x)=x^2-2 er g_\\lambda'(x)=1-2\\lambda x. En parameter som gjør g_\\lambda'(r)=0, gir lokal faktor null. I denne oppgaven brukes det positive nullpunktet av f.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-2" data-label="design-relaxed-fixed-point" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;positivt fikspunkt r&quot;,&quot;lokal faktor når lambda er 1/4&quot;,&quot;optimal lambda&quot;]" data-context-mode="explicit" data-context-refs="relaxed-fixed-point-design-context" data-context="&quot;Design en raskere iterasjon Samme ligning kan gi mange fikspunktiterasjoner, og parameteren i oppdateringsregelen kan gjøre forskjellen mellom langsom og rask konvergens. Her skal du velge parameteren med helningsregelen, uten å måtte prøve mange verdier numerisk.En ligning f(x)=0 kan gjøres om til familien av fikspunktiterasjoner g_\\lambda(x)=x-\\lambda f(x), der \\lambda>0 bestemmer hvor stor korreksjon vi tar i hvert steg. Et nullpunkt r for f er et fikspunkt for alle disse reglene, fordi f(r)=0 gir g_\\lambda(r)=r. Parameteren flytter altså ikke løsningen, men den endrer helningen og dermed den lokale konvergensfaktoren |g_\\lambda'(r)|. For f(x)=x^2-2 er g_\\lambda'(x)=1-2\\lambda x. En parameter som gjør g_\\lambda'(r)=0, fjerner den lineære delen av feilutviklingen og gir lokal faktor null. I denne oppgaven bruker vi det positive nullpunktet av f.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Velg parameter for rask lokal konvergens</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -5274,11 +5292,9 @@ Bruk det positive fikspunktet. Finn først $r$. Beregn deretter den lokale fakto
 <br>
 Svarformat: Skriv eksakte uttrykk. Bruk `sqrt(2)` for $\sqrt{2}$ og `/` for brøk, for eksempel `sqrt(2)/4`. Desimaltall er ikke nødvendig.<br>
 <br>
-$$r=$$ <input type="text" id="math-exercise-2-f1" data-answer="sqrt(2)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
-<br>
-$$\left|g_{1/4}'(r)\right|=$$ <input type="text" id="math-exercise-2-f2" data-answer="1-sqrt(2)/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
-<br>
-$$\lambda=$$ <input type="text" id="math-exercise-2-f3" data-answer="sqrt(2)/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
+$r=$ <input type="text" id="math-exercise-2-f1" data-answer="sqrt(2)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">  <br>
+$\left|g_{1/4}'(r)\right|=$ <input type="text" id="math-exercise-2-f2" data-answer="1-sqrt(2)/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">  <br>
+$\lambda=$ <input type="text" id="math-exercise-2-f3" data-answer="sqrt(2)/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Check</button>
