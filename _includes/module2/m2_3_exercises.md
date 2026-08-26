@@ -212,3 +212,153 @@ JXG.QuartoAssessment.register({
 
 Klikk på punktet på kurven som viser at iteratet har sju korrekte desimaler.
 ```
+
+#### Finn det første kvadratiske iteratet som passerer sju desimaler
+
+Den grønne iterasjonen $x_{n+1}=x_n^2$ med $x_0=0.3$ konvergerer kvadratisk mot fikspunktet $r=0$. Her finnes det ikke nødvendigvis et iterat med *akkurat* sju korrekte desimaler: Kvadratisk konvergens kan hoppe over flere nivåer i ett steg.
+
+Grafen viser den samme grønne kurven som i semilogy-plottet. Klikk på det **første** punktet som har minst sju korrekte desimaler. Sammenlign feilen med grensen $\frac12 10^{-7}=5\cdot10^{-8}$. Det valgte punktet markeres med rødt.
+
+```{.jsxgraph assessment_id="quadratic-seven-decimals-board" width="760" height="440"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [-0.5, 0, 5.7, -19],
+  axis: true,
+  showCopyright: false,
+  showNavigation: false,
+  pan: { enabled: false },
+  zoom: { enabled: false }
+});
+
+var iterations = [0, 1, 2, 3, 4, 5];
+var errors = [];
+var value = 0.3;
+for (var i = 0; i < iterations.length; i++) {
+  errors.push(Math.abs(value));
+  value = value*value;
+}
+var logErrors = errors.map(function (error) {
+  return Math.log10(error);
+});
+
+board.create('curve', [iterations, logErrors], {
+  strokeColor: '#2ca02c',
+  strokeWidth: 3,
+  fixed: true,
+  highlight: false
+});
+
+for (var j = 0; j < iterations.length; j++) {
+  board.create('point', [iterations[j], logErrors[j]], {
+    name: '',
+    size: 3,
+    face: 'o',
+    fillColor: '#2ca02c',
+    strokeColor: '#2ca02c',
+    fixed: true,
+    highlight: false
+  });
+}
+
+var threshold = Math.log10(0.5*Math.pow(10, -7));
+board.create('line', [[0, threshold], [1, threshold]], {
+  straightFirst: true,
+  straightLast: true,
+  strokeColor: '#666666',
+  strokeWidth: 2,
+  dash: 2,
+  fixed: true,
+  highlight: false
+});
+board.create('text', [0.15, threshold + 0.55, 'grense for minst 7 desimaler'], {
+  fixed: true,
+  fontSize: 13
+});
+board.create('text', [2.3, -0.6, 'iterasjon n'], {
+  fixed: true,
+  fontSize: 14
+});
+board.create('text', [-0.38, -17.2, 'log10(|e_n|)'], {
+  fixed: true,
+  fontSize: 14,
+  rotate: 90
+});
+
+var selectedIndex = null;
+var selectedPoint = board.create('point', [0, logErrors[0]], {
+  name: '',
+  size: 6,
+  face: 'o',
+  fillColor: '#d62728',
+  strokeColor: '#d62728',
+  visible: false,
+  fixed: true,
+  highlight: false
+});
+
+board.on('down', function (event) {
+  var corner = board.getCoordsTopLeftCorner(event);
+  var position = JXG.getPosition(event, 0);
+  var coordinates = new JXG.Coords(
+    JXG.COORDS_BY_SCREEN,
+    [position[0] - corner[0], position[1] - corner[1]],
+    board
+  );
+  var x = coordinates.usrCoords[1];
+  var y = coordinates.usrCoords[2];
+  var bestIndex = 0;
+  var bestDistance = Infinity;
+
+  for (var k = 0; k < iterations.length; k++) {
+    var dx = x - iterations[k];
+    var dy = (y - logErrors[k])/3;
+    var distance = dx*dx + dy*dy;
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestIndex = k;
+    }
+  }
+
+  selectedIndex = bestIndex;
+  selectedPoint.setPosition(
+    JXG.COORDS_BY_USER,
+    [iterations[bestIndex], logErrors[bestIndex]]
+  );
+  selectedPoint.setAttribute({ visible: true });
+  board.update();
+});
+
+JXG.QuartoAssessment.register({
+  board: board,
+  response: function () {
+    return {
+      index: selectedIndex,
+      error: selectedIndex === null ? null : errors[selectedIndex]
+    };
+  },
+  ai: {
+    render: true,
+    summary: function (data) {
+      return { selected_iteration: data.index, selected_error: data.error };
+    }
+  }
+});
+```
+
+```{math-exercise}
+#| label: click-quadratic-seven-decimals
+#| caption: Finn når den kvadratiske kurven passerer sju desimaler
+#| mode: custom
+#| response: jsxgraph:quadratic-seven-decimals-board
+#| embed-response: true
+#| context: none
+#| checker: |
+#|   def check(response, symbols):
+#|       index = response.get("index")
+#|       if index is None:
+#|           return {"score": 0, "feedback": "Klikk på ett av punktene før du kontrollerer svaret."}
+#|       if int(index) == 4:
+#|           return {"score": 1, "feedback": "Riktig. Ved n = 4 er feilen omtrent 4.3·10^(-9), så iteratet har 8 korrekte desimaler og er det første som har minst 7."}
+#|       return {"score": 0, "feedback": "Ikke helt. Finn det første punktet under linjen |e_n| = 5·10^(-8)."}
+
+Klikk på det første grønne punktet som har minst sju korrekte desimaler.
+```
