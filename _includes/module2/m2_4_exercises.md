@@ -55,7 +55,7 @@ ax.semilogy(steps, errors64, "o-", color="tab:orange",
             label="binary64")
 ax.set_xticks(steps)
 ax.set_xlabel("Iterasjon $n$")
-ax.set_ylabel("Absolutt feil $|x_n-\sqrt{2}|$")
+ax.set_ylabel(r"Absolutt feil $|x_n-\sqrt{2}|$")
 ax.set_title("Samme iterasjon i binary32 og binary64")
 ax.grid(True, which="both", alpha=0.35)
 ax.legend()
