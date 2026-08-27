@@ -64,7 +64,7 @@ plt.show()
 
 Begge kurvene faller raskt i starten fordi Newtons metode konvergerer kvadratisk nær løsningen. Etter noen steg blir hver kurve vannrett. Dette **feilplatået** betyr at tallformatet ikke kan lagre en bedre tilnærming med denne iterasjonen. Flere steg gjentar bare samme lagrede verdi.
 
-Legg merke til forskjellen mellom skrittlengde og sann feil: Når to påfølgende lagrede verdier er like, er skrittlengden $|x_{n+1}-x_n|=0$. Feilen mot den mer presise referansen er likevel ikke null. Et stopp på grunn av null skrittlengde betyr derfor «ingen videre endring i dette tallformatet», ikke «eksakt løsning».
+Legg merke til forskjellen mellom skrittlengde og feil mot referanseverdien: Når to påfølgende lagrede verdier er like, er skrittlengden $|x_{n+1}-x_n|=0$. Feilen mot den mer presise referansen er likevel ikke null. Et stopp på grunn av null skrittlengde betyr derfor «ingen videre endring i dette tallformatet», ikke «eksakt løsning».
 
 ::: {#binary-format-plateau-context .math-exercise-context}
 
