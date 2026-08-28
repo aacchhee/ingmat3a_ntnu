@@ -474,7 +474,109 @@ Vi kan altså finne hva transformasjonen gjør med hver byggestein én gang og d
 
 Vi skal nå finne et systematisk språk for «byggesteiner». Vi begynner fortsatt med bilder, ikke med en abstrakt definisjon.
 
-Tenk på et tomt $2\times2$-bilde. Vi ønsker fire skyveknapper som kan lage et hvilket som helst slikt bilde. En naturlig idé er å la hver skyveknapp styre én piksel. De fire første bildene nedenfor har verdi 1 i hver sin piksel og 0 i de andre. I neste figur blir hvert basisbilde ganget med ønsket pikselverdi. Til slutt legges de fire delbildene sammen piksel for piksel.
+Tenk på et tomt $2\times2$-bilde. Vi ønsker fire skyveknapper som kan lage et hvilket som helst slikt bilde. En naturlig idé er å la hver skyveknapp styre én piksel.
+
+Dra i skyveknappene i appleten. Hver knapp endrer styrken til ett lite byggesteinsbilde. De fire delbildene nederst legges sammen piksel for piksel, og resultatet vises til høyre. Prøv spesielt å lage et helt svart bilde, et ensfarget grått bilde og et bilde med fire forskjellige gråtoner.
+
+```{.jsxgraph width="760" height="430"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [0, 8.6, 15.2, 0],
+  axis: false,
+  showCopyright: false,
+  showNavigation: false,
+  pan: { enabled: false },
+  zoom: { enabled: false }
+});
+
+var basisColors=['#277da1','#d98900','#4f8f49','#8b5aa7'];
+var initial=[0.2,0.7,0.4,0.9];
+var sliders=[];
+
+board.create('text',[0.75,8.25,'Fire uavhengige kontroller'],{
+  fontSize:16,cssStyle:'font-weight:600',fixed:true
+});
+
+for (var i=0; i<4; i++) {
+  var sy=7.55-0.72*i;
+  board.create('text',[0.75,sy,'Piksel '+(i+1)],{
+    anchorY:'middle',fontSize:12,color:basisColors[i],
+    cssStyle:'font-weight:600',fixed:true
+  });
+  sliders.push(board.create('slider',[[2.05,sy],[5.25,sy],[0,initial[i],1]],{
+    name:'',snapWidth:0.05,precision:2,
+    strokeColor:basisColors[i],fillColor:basisColors[i],
+    highline:{strokeColor:basisColors[i]},
+    baseline:{strokeColor:'#b8b8b8'},
+    point1:{visible:false},point2:{visible:false}
+  }));
+}
+
+function basisSquare(x0,y0,size,opacityFunction,borderColor) {
+  return board.create('polygon',
+    [[x0,y0],[x0+size,y0],[x0+size,y0+size],[x0,y0+size]],{
+      fillColor:'#111111',fillOpacity:opacityFunction,
+      vertices:{visible:false},
+      borders:{strokeColor:borderColor,strokeWidth:1.4,
+               fixed:true,highlight:false},
+      fixed:true,highlight:false
+    });
+}
+
+function drawComponent(originX,originY,component) {
+  var size=0.68;
+  for (var p=0; p<4; p++) {
+    var col=p%2, row=Math.floor(p/2);
+    (function(pixel,index,x,y){
+      basisSquare(x,y,size,function(){
+        return pixel===index ? sliders[index].Value() : 0;
+      },basisColors[index]);
+    })(p,component,originX+col*size,originY+(1-row)*size);
+  }
+}
+
+var componentX=[0.75,3.25,5.75,8.25];
+var imageY=1.55;
+for (var j=0; j<4; j++) {
+  drawComponent(componentX[j],imageY,j);
+  (function(index){
+    board.create('text',[componentX[index]+0.68,imageY+1.75,function(){
+      return sliders[index].Value().toFixed(2)+' · E'+(index+1);
+    }],{
+      anchorX:'middle',fontSize:12,color:basisColors[index],
+      cssStyle:'font-weight:600',fixed:true
+    });
+  })(j);
+  if (j<3) {
+    board.create('text',[componentX[j]+1.82,imageY+0.68,'+'],{
+      anchorX:'middle',anchorY:'middle',fontSize:22,fixed:true
+    });
+  }
+}
+
+board.create('arrow',[[10.05,imageY+0.68],[11.15,imageY+0.68]],{
+  strokeColor:'#444444',strokeWidth:2.2,fixed:true,highlight:false
+});
+
+// I summen styres hver piksel av sin egen skyveknapp.
+var sumX=11.55, size=0.92;
+for (var q=0; q<4; q++) {
+  var qc=q%2, qr=Math.floor(q/2);
+  (function(pixel,x,y){
+    basisSquare(x,y,size,function(){return sliders[pixel].Value();},'#333333');
+  })(q,sumX+qc*size,imageY+(1-qr)*size);
+}
+board.create('text',[sumX+size,imageY+2.25,'SUMMEN'],{
+  anchorX:'middle',fontSize:15,cssStyle:'font-weight:600',fixed:true
+});
+board.create('text',[sumX+size,imageY-0.38,
+  'Fire tall kan velges uavhengig'],{
+  anchorX:'middle',fontSize:12,fixed:true
+});
+```
+
+Appleten antyder to viktige egenskaper før vi bruker matematisk terminologi. Alle $2\times2$-bilder med pikselverdier mellom 0 og 1 kan lages ved å velge de fire kontrollene. Samtidig har hvert ferdig bilde bare én innstilling av kontrollene: Pikselverdiene bestemmer skyveknappene.
+
+Nå gjentar vi det samme eksperimentet i NumPy. De fire første bildene har verdi 1 i hver sin piksel og 0 i de andre. Deretter blir hvert bilde ganget med ønsket pikselverdi, og de fire delbildene legges sammen.
 
 ```{pyodide-python}
 #| label: week3-pixel-basis
