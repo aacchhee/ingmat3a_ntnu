@@ -175,9 +175,55 @@ Y1, Y2 = average_pool(X1), average_pool(X2)
 show_images([X1, X2, Y1, Y2],
     ["Input $X_1$", "Input $X_2$", "Output fra $X_1$", "Output fra $X_2$"],
     cols=4, vmin=0, vmax=1)
-print("Forskjell mellom inputene: ", np.linalg.norm(X1-X2))
-print("Forskjell mellom outputene:", np.linalg.norm(Y1-Y2))
 ```
+
+Bildene til venstre er tydelig forskjellige, mens de to outputbildene ser like ut. For å undersøke dette uten å stole bare på øynene trekker vi bildene fra hverandre, piksel for piksel.
+
+### Ett tall for størrelsen på en forskjell
+
+Hvis to bilder er like, består forskjellsbildet bare av nuller. **Nullbildet** er bildet der alle pikselverdiene er 0 — bildespråkets versjon av nullvektoren eller nullmatrisen. Med en vanlig gråskala ser det svart ut. I figuren nedenfor bruker vi derimot en rød–blå skala for å vise både positive og negative forskjeller; på denne skalaen vises 0 som hvitt.
+
+```{pyodide-python}
+#| label: week3-difference-and-zero-images
+#| autorun: true
+
+D_input=X1-X2
+D_output=Y1-Y2
+zero_input=np.zeros_like(D_input)
+zero_output=np.zeros_like(D_output)
+
+show_images(
+    [D_input,zero_input,D_output,zero_output],
+    ["$X_1-X_2$","Nullbildet (4 x 4)",
+     "$Y_1-Y_2$","Nullbildet (2 x 2)"],
+    cols=4,cmap="coolwarm",vmin=-0.4,vmax=0.4
+)
+```
+
+Det første forskjellsbildet inneholder mange utslag fra null. Det tredje er allerede nullbildet. En figur er nyttig, men senere trenger vi også ett tall som oppsummerer hele forskjellen. Vi kan ikke bare summere pikselverdiene, fordi positive og negative forskjeller da kan oppheve hverandre.
+
+Vi kvadrerer derfor alle verdiene i forskjellsbildet, summerer dem og tar kvadratroten. For et bilde $D$ blir dette
+
+$$
+\lVert D\rVert=\sqrt{\sum_{i,j}D_{ij}^2}.
+$$
+
+Tallet $\lVert D\rVert$ kalles **normen** til $D$. Her kan vi lese det som den numeriske avstanden fra $D$ til nullbildet. Dermed måler $\lVert X_1-X_2\rVert$ den samlede pikselforskjellen mellom de to inputbildene. Dette er en numerisk avstand mellom pikselverdier, ikke nødvendigvis et mål på hvor forskjellige bilder oppleves av et menneske.
+
+NumPy beregner denne normen med `np.linalg.norm`. Den samme regelen virker for en vektor: Da summerer vi kvadratene av komponentene i stedet for pikslene.
+
+```{pyodide-python}
+#| label: week3-first-norm
+#| autorun: true
+
+input_norm_by_formula=np.sqrt(np.sum(D_input**2))
+
+print("Inputforskjell, regnet fra formelen:",input_norm_by_formula)
+print("Inputforskjell med np.linalg.norm:   ",np.linalg.norm(D_input))
+print("Outputforskjell med np.linalg.norm:  ",np.linalg.norm(D_output))
+```
+
+De to første tallene er begge 1.6: formelen og NumPy gjør den samme beregningen. Outputforskjellen har norm 0, og er derfor nøyaktig nullbildet. Senere vil avrundingsfeil ofte gi svært små normer i stedet for nøyaktig 0; da leser vi resultatet som «numerisk nær null».
 
 ::: {.callout-important}
 ## Første observasjon
@@ -648,7 +694,13 @@ show_images([E1,E2,E5,recipe_1,recipe_2,recipe_1-recipe_2],
 - En **basis** er et sett byggesteiner som både spenner ut hele samlingen og er lineært uavhengig: nok byggesteiner, men ingen overflødige.
 :::
 
-Samlingen av alle $2\times2$-bilder med reelle pikselverdier skrives $\mathbb R^{2\times2}$. Det betyr bare «fire reelle tall ordnet som to rader og to kolonner». $E_1,E_2,E_3,E_4$ danner en basis for denne samlingen. **Dimensjonen** er antallet byggesteiner i en basis, altså
+Et vanlig gråtonebilde har pikselverdier mellom 0 og 1: 0 er svart og 1 er hvitt. Slike $2\times2$-bilder ligger i $[0,1]^{2\times2}$. Men når vi trekker fra bilder eller skalerer mønstre, kan mellomresultatene bli negative eller større enn 1. Derfor bruker vi den større samlingen
+
+$$\mathbb R^{2\times2},$$
+
+som betyr «fire reelle tall ordnet som to rader og to kolonner». Elementene i denne samlingen kan regnes med som bilder, forskjellsbilder eller mønstre, selv om ikke alle kan vises direkte som vanlige gråtonebilder. Det er $\mathbb R^{2\times2}$ som er et vektorrom; $[0,1]^{2\times2}$ er bare delen som består av gyldige gråtonebilder.
+
+$E_1,E_2,E_3,E_4$ danner en basis for $\mathbb R^{2\times2}$. **Dimensjonen** er antallet byggesteiner i en basis, altså
 
 $$\dim(\mathbb R^{2\times2})=4.$$
 
@@ -979,7 +1031,7 @@ show_images(null_basis,null_titles,cols=4,cmap="coolwarm",
             vmin=-1,vmax=1,figsize=(6.8,5.2))
 ```
 
-Hvert bilde endrer bare to eller fire piksler innenfor én blokk. Positive og negative bidrag opphever hverandre, så gjennomsnittet i den blokken forblir null. De tre andre blokkene er allerede null. Dermed må hele $2\times2$-outputbildet bli null for hvert av de tolv inputbildene.
+Hvert bilde endrer bare to eller fire piksler innenfor én blokk. Positive og negative bidrag opphever hverandre, så gjennomsnittet i den blokken forblir null. De tre andre blokkene er allerede null. Dermed må outputen bli nullbildet for hvert av de tolv inputbildene.
 
 Neste celle kontrollerer dette numerisk. Deretter velger den tolv tilfeldige koeffisienter, skalerer hvert kontrastbilde og legger alle sammen. Det sammensatte inputbildet ser uregelmessig ut, men hver blokk har fortsatt sum null.
 
@@ -998,6 +1050,8 @@ limit=np.max(np.abs(Z))
 show_images([Z,pooled_Z],["Tilfeldig kombinasjon av 12 mønstre","Output"],
             cols=2,cmap="coolwarm",vmin=-limit,vmax=limit,figsize=(3.6,1.8))
 ```
+
+For hvert mønster er $Az$ et $2\times2$-outputbilde. Utskriften $\lVert Az\rVert$ måler avstanden fra denne outputen til nullbildet. Verdier på størrelse med avrundingsfeilen betyr at mønsteret forsvinner numerisk i transformasjonen.
 
 Hvis $Az_1=0$ og $Az_2=0$, gir linearitet
 
@@ -1238,7 +1292,7 @@ Startcellene gjør plotting og bokføring, men gir ikke ferdige svar. Et forsøk
 
 ### A. Lag et nytt mønster med output null
 
-Endre `Z`. Hver $2\times2$-blokk skal ha gjennomsnitt null, men bruk ikke sjakkmønsteret uendret. Før du kjører cellen, regn ut minst ett blokkgjennomsnitt for hånd. Figuren viser om mønsteret forsvinner, mens normen under figuren måler hvor nær outputen er null.
+Endre `Z`. Hver $2\times2$-blokk skal ha gjennomsnitt null, men bruk ikke sjakkmønsteret uendret. Før du kjører cellen, regn ut minst ett blokkgjennomsnitt for hånd. Figuren viser om mønsteret forsvinner, mens normen under figuren måler outputens avstand fra nullbildet.
 
 ```{pyodide-python}
 Z=np.array([
