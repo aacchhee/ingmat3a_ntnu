@@ -416,7 +416,9 @@ Da kan de minste bidragene lagres mindre nøyaktig eller utelates. En mulig komp
 3. Behold de viktigste bidragene.
 4. Rekonstruer et bilde som ligner originalen.
 
-Eksperimentet under er bare en første kontroll av regnereglene som gjør en slik oppdeling mulig. Vi utvikler ikke en ferdig kompresjonsalgoritme her; senere basisvalg og SVD bygger videre på den samme tankegangen.
+I **uke 7** skal vi bruke singulærverdifaktorisering (SVD) til å konstruere en faktisk algoritme for bildekompresjon. Da arbeider vi med større bilder og beholder de delene som beskriver mest av strukturen i bildet.
+
+I uke 3 er målet mindre, men grunnleggende: Vi analyserer små $2\times2$- og $4\times4$-bilder der alle byggesteiner, koeffisienter og transformasjoner kan sees direkte. De små bildeblokkene fungerer som en oversiktlig modell for ideene som senere skaleres opp i SVD-algoritmen.
 :::
 
 ```{pyodide-python}
