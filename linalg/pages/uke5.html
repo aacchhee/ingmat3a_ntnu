@@ -74,6 +74,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -240,12 +269,16 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="først-et-eksperiment" class="level2">
-<h2 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h2>
-<p>Vi multipliserer en vektor med den samme matrisen mange ganger og normaliserer etter hvert steg. Hvorfor stabiliserer retningen seg, og når skjer det ikke?</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Aktivitetsplan</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="først-et-eksperiment" class="level3">
+<h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
+<p>Vi begynner med en tilfeldig vektor, multipliserer gjentatte ganger med den samme matrisen og normaliserer etter hvert steg. Studentene plotter både komponentene, vinkelen mellom to påfølgende iterater og Rayleigh-kvotienten. Deretter endrer vi matrisen slik at de to største egenverdiene ligger nær hverandre, eller har samme absoluttverdi, og ser hvordan mønsteret endres. Egenvektorer introduseres som forklaringen på observerte stabile retninger.</p>
 </section>
-<section id="begreper-vi-trenger" class="level2">
-<h2 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h2>
+<section id="begreper-vi-trenger" class="level3">
+<h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
 <ul>
 <li>egenverdier og egenvektorer</li>
 <li>invariante retninger og underrom</li>
@@ -254,8 +287,8 @@ ul.task-list li input[type="checkbox"] {
 <li>symmetriske matriser og ortogonale egenvektorer</li>
 </ul>
 </section>
-<section id="algoritmer-og-numeriske-undersøkelser" class="level2">
-<h2 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h2>
+<section id="algoritmer-og-numeriske-undersøkelser" class="level3">
+<h3 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h3>
 <ul>
 <li>potensmetoden</li>
 <li>Rayleigh-kvotient og egenverdiresidual</li>
@@ -263,12 +296,26 @@ ul.task-list li input[type="checkbox"] {
 <li>PageRank som egenvektorproblem</li>
 </ul>
 </section>
-<section id="etter-denne-uken" class="level2">
-<h2 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h2>
+<section id="etter-denne-uken" class="level3">
+<h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
 <p>Studentene skal kunne tolke egenvektorer dynamisk, implementere potensmetoden og bruke residual og konvergenshistorikk til å vurdere resultatet.</p>
-
-
 </section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ol type="1">
+<li><strong>En retning vokser fram:</strong> Kjør normalisert gjentatt matrisemultiplikasjon fra flere tilfeldige startvektorer.</li>
+<li><strong>Mål stabiliseringen:</strong> Plott vinkelendring, Rayleigh-kvotient og residualen <span class="math inline">\(\lVert Ax_k-\lambda_kx_k\rVert\)</span>.</li>
+<li><strong>Forklar mønsteret:</strong> Introduser egenverdier, egenvektorer, invariante retninger og dominant egenverdi.</li>
+<li><strong>Hva bestemmer farten?</strong> Sammenlign matriser med stort og lite spektralgap og knytt observasjonen til konvergensplottet.</li>
+<li><strong>Når virker det ikke?</strong> Undersøk uheldig startvektor, negativ dominant egenverdi og to dominante egenverdier med samme absoluttverdi.</li>
+<li><strong>PageRank-laboratorium:</strong> Bygg en overgangsmatrise fra en liten graf, oppdag problemer med hengende noder og reparer modellen med damping.</li>
+<li><strong>Kort leveranse:</strong> En implementasjon av potensmetoden med stoppkriterium og en diagnose av ett problemtilfelle.</li>
+</ol>
+</div>
+</div>
+</div>
+
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

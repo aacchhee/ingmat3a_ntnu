@@ -74,6 +74,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -240,12 +269,16 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="først-et-eksperiment" class="level2">
-<h2 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h2>
-<p>Vi deler opp et bilde eller en datamatrise i singulære retninger og rekonstruerer med stadig færre komponenter. Hvor mye av informasjonen kan vi fjerne før resultatet endrer karakter?</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Aktivitetsplan</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="først-et-eksperiment" class="level3">
+<h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
+<p>Vi leser et gråtonebilde som en matrise, beregner SVD og rekonstruerer bildet med én, fem, ti og flere singulære komponenter. Studentene ser både bildet og kurven av singulærverdier og må foreslå hvor en rimelig trunkering ligger. Deretter bruker vi de samme faktorene til å identifisere kolonnerom, nullrom, numerisk rang og følsomme retninger. SVD blir dermed en samlet forklaring på de foregående ukene.</p>
 </section>
-<section id="begreper-vi-trenger" class="level2">
-<h2 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h2>
+<section id="begreper-vi-trenger" class="level3">
+<h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
 <ul>
 <li>venstre og høyre singulærvektorer</li>
 <li>singulærverdier</li>
@@ -255,8 +288,8 @@ ul.task-list li input[type="checkbox"] {
 <li>lavrangsapproksimasjon</li>
 </ul>
 </section>
-<section id="algoritmer-og-numeriske-undersøkelser" class="level2">
-<h2 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h2>
+<section id="algoritmer-og-numeriske-undersøkelser" class="level3">
+<h3 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h3>
 <ul>
 <li><code>numpy.linalg.svd</code></li>
 <li>trunkert SVD og kompresjon</li>
@@ -265,12 +298,27 @@ ul.task-list li input[type="checkbox"] {
 <li>enkel regularisering ved filtrering av små singulærverdier</li>
 </ul>
 </section>
-<section id="etter-denne-uken" class="level2">
-<h2 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h2>
+<section id="etter-denne-uken" class="level3">
+<h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
 <p>Studentene skal kunne bruke SVD til å samle trådene fra rom, ortogonalitet, minste kvadrater, rang og kondisjonering.</p>
-
-
 </section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ol type="1">
+<li><strong>Komprimer et bilde:</strong> Beregn SVD og vis rekonstruksjoner med forskjellig rang sammen med lagringsbehovet.</li>
+<li><strong>Les spekteret:</strong> Plott singulærverdiene både lineært og logaritmisk, og velg en trunkering ut fra dataene.</li>
+<li><strong>Tolk faktorene:</strong> Følg en vektor gjennom <span class="math inline">\(V^T\)</span>, <span class="math inline">\(\Sigma\)</span> og <span class="math inline">\(U\)</span> og beskriv rotasjon, skalering og ny orientering.</li>
+<li><strong>Finn rommene igjen:</strong> Bruk singulærvektorene til å konstruere basiser for kolonnerom og nullrom og kontroller dem numerisk.</li>
+<li><strong>Nær rangtap:</strong> Perturber en matrise med en liten singulærverdi og mål hvordan løsningen av <span class="math inline">\(Ax=b\)</span> endres.</li>
+<li><strong>Pseudoinvers og filtrering:</strong> Sammenlign <code>lstsq</code>, <code>pinv</code> og trunkert SVD på et følsomt minste-kvadraters problem.</li>
+<li><strong>Syntese:</strong> Knytt SVD eksplisitt til rang, ortogonal projeksjon, minste kvadrater, kondisjonering og regularisering.</li>
+<li><strong>Kort leveranse:</strong> En kompresjons- eller denoisingrapport med valgt rang, feilmål og faglig begrunnelse.</li>
+</ol>
+</div>
+</div>
+</div>
+
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

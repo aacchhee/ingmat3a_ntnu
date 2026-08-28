@@ -269,12 +269,16 @@ window.Quarto = {
 </header>
 
 
-<section id="først-et-eksperiment" class="level2">
-<h2 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h2>
-<p>Vi tilpasser en modell til støyfylte data. Systemet <span class="math inline">\(Ax=b\)</span> har ingen eksakt løsning, men NumPy finner likevel et best mulig svar. Hvorfor er residualen ortogonal på kolonnerommet?</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Aktivitetsplan</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="først-et-eksperiment" class="level3">
+<h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
+<p>Vi lager støyfylte måledata som nesten følger en rett linje. Studentene forsøker først å løse alle ligningene eksakt og oppdager at systemet er inkonsistent. <code>numpy.linalg.lstsq</code> gir likevel et svar. Ved å beregne residualen <span class="math inline">\(r=b-Ax_*\)</span> og produktet <span class="math inline">\(A^Tr\)</span> oppdager de den ortogonale betingelsen før projeksjon og minste kvadrater blir formulert geometrisk.</p>
 </section>
-<section id="begreper-vi-trenger" class="level2">
-<h2 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h2>
+<section id="begreper-vi-trenger" class="level3">
+<h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
 <ul>
 <li>indreprodukt, norm og vinkel</li>
 <li>ortogonalitet og ortogonalt komplement</li>
@@ -283,8 +287,8 @@ window.Quarto = {
 <li>ortogonale og ortonormale basiser</li>
 </ul>
 </section>
-<section id="algoritmer-og-numeriske-undersøkelser" class="level2">
-<h2 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h2>
+<section id="algoritmer-og-numeriske-undersøkelser" class="level3">
+<h3 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h3>
 <ul>
 <li>klassisk og modifisert Gram–Schmidt</li>
 <li>QR-faktorisering</li>
@@ -292,12 +296,26 @@ window.Quarto = {
 <li>sammenligning av normalligningene, QR og <code>numpy.linalg.lstsq</code></li>
 </ul>
 </section>
-<section id="etter-denne-uken" class="level2">
-<h2 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h2>
+<section id="etter-denne-uken" class="level3">
+<h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
 <p>Studentene skal kunne formulere et tilpasningsproblem som et minste-kvadraters problem, tolke residualen geometrisk og forklare hvorfor QR vanligvis er bedre enn normalligningene.</p>
-
-
 </section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ol type="1">
+<li><strong>Et system uten løsning:</strong> Bygg designmatrisen for en linjetilpasning og vis numerisk at ingen parametervektor gir null residual.</li>
+<li><strong>Hva betyr «best»?</strong> Sammenlign flere parametervektorer og residualnormer med løsningen fra <code>numpy.linalg.lstsq</code>.</li>
+<li><strong>Den overraskende testen:</strong> Beregn <span class="math inline">\(A^Tr\)</span> og bruk resultatet til å motivere ortogonal projeksjon på kolonnerommet.</li>
+<li><strong>Lag en ortonormal basis:</strong> Implementer klassisk Gram–Schmidt og kontroller <span class="math inline">\(Q^TQ\approx I\)</span>.</li>
+<li><strong>Bryt algoritmen:</strong> Bruk nesten parallelle kolonner og sammenlign klassisk og modifisert Gram–Schmidt.</li>
+<li><strong>Tre løsningsmetoder:</strong> Sammenlign normalligninger, egen QR-implementasjon og <code>numpy.linalg.lstsq</code> på en dårlig kondisjonert Vandermonde-matrise.</li>
+<li><strong>Kort leveranse:</strong> Et konvergens- eller feildiagram og en begrunnet anbefaling av metode.</li>
+</ol>
+</div>
+</div>
+</div>
+
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -269,12 +269,66 @@ window.Quarto = {
 </header>
 
 
-<section id="først-et-eksperiment" class="level2">
-<h2 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h2>
-<p>Vi lager matriser der forskjellige vektorer gir samme resultat. Hva kan vi observere numerisk, og hvordan avgjør NumPy om en retning er blitt borte?</p>
+<section id="femukersplan-for-numerisk-lineær-algebra" class="level2">
+<h2 class="anchored" data-anchor-id="femukersplan-for-numerisk-lineær-algebra">Femukersplan for numerisk lineær algebra</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Uke</th>
+<th>Eksperimentelt startpunkt</th>
+<th>Begreper vi bygger opp igjen</th>
+<th>Viktigste algoritmer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td>Vi finner forskjellige vektorer <span class="math inline">\(x_1\)</span> og <span class="math inline">\(x_2\)</span> som gir samme resultat <span class="math inline">\(Ax_1=Ax_2\)</span>, og undersøker hvilke deler av inputen matrisen ikke kan se.</td>
+<td>spenn, basis, kolonnerom, nullrom og rang</td>
+<td>eliminasjon og numerisk rangundersøkelse</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td>Et overbestemt system har ingen eksakt løsning, men <code>numpy.linalg.lstsq</code> finner likevel en «beste» løsning. Vi undersøker hva som gjør den best.</td>
+<td>ortogonalitet, projeksjon og minste kvadrater</td>
+<td>Gram–Schmidt og QR-faktorisering</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td>Gjentatt matrisemultiplikasjon og normalisering gjør at en tilfeldig startvektor ofte stabiliserer seg i én retning.</td>
+<td>egenverdier, egenvektorer og invariante retninger</td>
+<td>potensmetoden og PageRank</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td><code>numpy.linalg.solve</code> virker for et lite system, men tids- og minnebruken vokser raskt. Vi prøver derfor å forbedre en tilnærming med bare matrise-vektor-produkter.</td>
+<td>SPD-matriser, kvadratisk energi, residual og feil</td>
+<td>Cholesky, Gauss–Seidel, konjugerte gradienter og prekondisjonering</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td>Et bilde eller en datamatrise kan rekonstrueres overraskende godt etter at mange retninger er fjernet. Vi undersøker hvilke retninger som bærer informasjonen.</td>
+<td>singulærverdier, kondisjonering og lavrangsapproksimasjon</td>
+<td>SVD, pseudoinvers og trunkert SVD</td>
+</tr>
+</tbody>
+</table>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Aktivitetsplan</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="først-et-eksperiment" class="level3">
+<h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
+<p>Vi starter med en liten matrise med tre inputkomponenter og to outputkomponenter. Studentene får først lete etter to forskjellige vektorer som gir samme output. Deretter studerer vi differansen <span class="math inline">\(z=x_1-x_2\)</span> og oppdager at <span class="math inline">\(Az=0\)</span>. Vi endrer én kolonne slik at den er nesten, men ikke helt, avhengig av de andre, og sammenligner hva NumPy rapporterer i <code>float64</code> og <code>float32</code>. Målet er at behovet for kolonnerom, nullrom, basis, rang og toleranse skal oppstå fra observasjonene.</p>
 </section>
-<section id="begreper-vi-trenger" class="level2">
-<h2 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h2>
+<section id="begreper-vi-trenger" class="level3">
+<h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
 <ul>
 <li>lineærkombinasjon, spenn og basis</li>
 <li>lineær uavhengighet</li>
@@ -283,8 +337,8 @@ window.Quarto = {
 <li>ingen, én eller flere løsninger av <span class="math inline">\(Ax=b\)</span></li>
 </ul>
 </section>
-<section id="algoritmer-og-numeriske-undersøkelser" class="level2">
-<h2 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h2>
+<section id="algoritmer-og-numeriske-undersøkelser" class="level3">
+<h3 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h3>
 <ul>
 <li>radreduksjon og numerisk rang</li>
 <li>nøyaktig og nesten lineær avhengighet</li>
@@ -292,9 +346,24 @@ window.Quarto = {
 <li>geometrisk visualisering av lineære avbildninger</li>
 </ul>
 </section>
-<section id="etter-denne-uken" class="level2">
-<h2 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h2>
+<section id="etter-denne-uken" class="level3">
+<h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
 <p>Studentene skal kunne tolke kolonnerom, nullrom og rang numerisk, og forklare hvorfor et lineært system har ingen, én eller flere løsninger.</p>
+</section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ol type="1">
+<li><strong>Samme output, forskjellig input:</strong> Studentene eksperimenterer med en gitt <span class="math inline">\(2\times3\)</span>-matrise og leter etter <span class="math inline">\(x_1\neq x_2\)</span> med <span class="math inline">\(Ax_1=Ax_2\)</span>.</li>
+<li><strong>Finn den usynlige retningen:</strong> Beregn <span class="math inline">\(z=x_1-x_2\)</span>, kontroller residualen <span class="math inline">\(\lVert Az\rVert\)</span>, og beskriv alle vektorer <span class="math inline">\(x_1+tz\)</span> som gir samme output.</li>
+<li><strong>Hvilke output er mulige?</strong> Generer mange tilfeldige <span class="math inline">\(x\)</span>, plott <span class="math inline">\(Ax\)</span>, og sammenlign punktskyen med matrisens kolonner.</li>
+<li><strong>Fra observasjon til språk:</strong> Innfør spenn, lineær uavhengighet, basis, kolonnerom, nullrom, rang og rang-nullitet.</li>
+<li><strong>Bryt eksperimentet:</strong> Erstatt en kolonne med en nesten lineærkombinasjon av de andre. Varier perturbasjonen og toleransen i <code>numpy.linalg.matrix_rank</code>.</li>
+<li><strong>Systemklassifisering:</strong> Undersøk tre høyresider som gir henholdsvis ingen, én eller flere løsninger. Kontroller svarene med residualer.</li>
+<li><strong>Kort leveranse:</strong> Én figur, én numerisk tabell og en forklaring av hva matrisen bevarer og mister.</li>
+</ol>
+</div>
+</div>
+</div>
 
 
 </section>

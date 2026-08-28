@@ -269,12 +269,16 @@ window.Quarto = {
 </header>
 
 
-<section id="først-et-eksperiment" class="level2">
-<h2 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h2>
-<p>Vi øker størrelsen på et strukturert lineært system. <code>numpy.linalg.solve</code> gir et svar, men arbeidet og minnebruken vokser. Kan vi forbedre en tilnærming ved bare å bruke matrise-vektor-produktet?</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Aktivitetsplan</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="først-et-eksperiment" class="level3">
+<h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
+<p>Vi bygger et diskret én-dimensjonalt Poisson-problem og løser først små systemer med <code>numpy.linalg.solve</code>. Når dimensjonen økes, måler studentene tid og minnebehov og ser at den direkte tilnærmingen ikke skalerer godt. Deretter starter vi med <span class="math inline">\(x_0=0\)</span> og forsøker å redusere residualen ved hjelp av matrise-vektor-produkter. Energiperspektivet introduseres for å forklare hvorfor SPD-strukturen gjør effektive iterasjoner mulige.</p>
 </section>
-<section id="begreper-vi-trenger" class="level2">
-<h2 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h2>
+<section id="begreper-vi-trenger" class="level3">
+<h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
 <ul>
 <li>symmetrisk positivt definitte matriser</li>
 <li>kvadratisk energi og minimering</li>
@@ -283,8 +287,8 @@ window.Quarto = {
 <li>kondisjonering og skalering</li>
 </ul>
 </section>
-<section id="algoritmer-og-numeriske-undersøkelser" class="level2">
-<h2 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h2>
+<section id="algoritmer-og-numeriske-undersøkelser" class="level3">
+<h3 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h3>
 <ul>
 <li>Cholesky-faktorisering</li>
 <li>Gauss–Seidel som koordinatvis korreksjon</li>
@@ -293,12 +297,27 @@ window.Quarto = {
 <li>enkel diagonal prekondisjonering</li>
 </ul>
 </section>
-<section id="etter-denne-uken" class="level2">
-<h2 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h2>
+<section id="etter-denne-uken" class="level3">
+<h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
 <p>Studentene skal kunne kjenne igjen positivt definitte problemer, knytte løsning av <span class="math inline">\(Ax=b\)</span> til minimering og implementere en grunnleggende variant av konjugerte gradienter.</p>
-
-
 </section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ol type="1">
+<li><strong>Et voksende problem:</strong> Bygg Poisson-matrisen for flere dimensjoner og mål kjøretiden til <code>numpy.linalg.solve</code>.</li>
+<li><strong>Se strukturen:</strong> Undersøk symmetri, egenverdier og <span class="math inline">\(x^TAx\)</span> for tilfeldige <span class="math inline">\(x\)</span>, og formuler SPD-egenskapene fra observasjonene.</li>
+<li><strong>Løsning som minimum:</strong> Plott nivåkurver av <span class="math inline">\(\phi(x)=\tfrac12x^TAx-b^Tx\)</span> i to dimensjoner og koble gradienten til residualen.</li>
+<li><strong>To enkle iterasjoner:</strong> Implementer Gauss–Seidel og bratteste nedstigning. Plott residual, faktisk feil og energi.</li>
+<li><strong>Konjugerte gradienter:</strong> Bygg algoritmen trinnvis og sammenlign antall matrise-vektor-produkter med bratteste nedstigning.</li>
+<li><strong>Kondisjonering betyr noe:</strong> Kjør samme metoder på to like store systemer med ulike kondisjonstall.</li>
+<li><strong>Prekondisjonering:</strong> Skaler med diagonalen og undersøk hvordan konvergenshistorikken endres.</li>
+<li><strong>Kort leveranse:</strong> Sammenligning av minst tre metoder med en forklaring av når residual og faktisk feil forteller forskjellige historier.</li>
+</ol>
+</div>
+</div>
+</div>
+
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

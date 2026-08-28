@@ -18,51 +18,7 @@
     "href": "pages/uke6.html",
     "title": "Uke 6 – hvordan løser vi store lineære systemer?",
     "section": "",
-    "text": "Vi øker størrelsen på et strukturert lineært system. numpy.linalg.solve gir et svar, men arbeidet og minnebruken vokser. Kan vi forbedre en tilnærming ved bare å bruke matrise-vektor-produktet?",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 6 – iterative metoder for lineære systemer"
-    ]
-  },
-  {
-    "objectID": "pages/uke6.html#først-et-eksperiment",
-    "href": "pages/uke6.html#først-et-eksperiment",
-    "title": "Uke 6 – hvordan løser vi store lineære systemer?",
-    "section": "",
-    "text": "Vi øker størrelsen på et strukturert lineært system. numpy.linalg.solve gir et svar, men arbeidet og minnebruken vokser. Kan vi forbedre en tilnærming ved bare å bruke matrise-vektor-produktet?",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 6 – iterative metoder for lineære systemer"
-    ]
-  },
-  {
-    "objectID": "pages/uke6.html#begreper-vi-trenger",
-    "href": "pages/uke6.html#begreper-vi-trenger",
-    "title": "Uke 6 – hvordan løser vi store lineære systemer?",
-    "section": "Begreper vi trenger",
-    "text": "Begreper vi trenger\n\nsymmetrisk positivt definitte matriser\nkvadratisk energi og minimering\nresidual og løsningsfeil\nkonjugerte retninger\nkondisjonering og skalering",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 6 – iterative metoder for lineære systemer"
-    ]
-  },
-  {
-    "objectID": "pages/uke6.html#algoritmer-og-numeriske-undersøkelser",
-    "href": "pages/uke6.html#algoritmer-og-numeriske-undersøkelser",
-    "title": "Uke 6 – hvordan løser vi store lineære systemer?",
-    "section": "Algoritmer og numeriske undersøkelser",
-    "text": "Algoritmer og numeriske undersøkelser\n\nCholesky-faktorisering\nGauss–Seidel som koordinatvis korreksjon\nbratteste nedstigning\nkonjugerte gradienter\nenkel diagonal prekondisjonering",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 6 – iterative metoder for lineære systemer"
-    ]
-  },
-  {
-    "objectID": "pages/uke6.html#etter-denne-uken",
-    "href": "pages/uke6.html#etter-denne-uken",
-    "title": "Uke 6 – hvordan løser vi store lineære systemer?",
-    "section": "Etter denne uken",
-    "text": "Etter denne uken\nStudentene skal kunne kjenne igjen positivt definitte problemer, knytte løsning av \\(Ax=b\\) til minimering og implementere en grunnleggende variant av konjugerte gradienter.",
+    "text": "OversiktAktivitetsplan\n\n\n\nFørst et eksperiment\nVi bygger et diskret én-dimensjonalt Poisson-problem og løser først små systemer med numpy.linalg.solve. Når dimensjonen økes, måler studentene tid og minnebehov og ser at den direkte tilnærmingen ikke skalerer godt. Deretter starter vi med \\(x_0=0\\) og forsøker å redusere residualen ved hjelp av matrise-vektor-produkter. Energiperspektivet introduseres for å forklare hvorfor SPD-strukturen gjør effektive iterasjoner mulige.\n\n\nBegreper vi trenger\n\nsymmetrisk positivt definitte matriser\nkvadratisk energi og minimering\nresidual og løsningsfeil\nkonjugerte retninger\nkondisjonering og skalering\n\n\n\nAlgoritmer og numeriske undersøkelser\n\nCholesky-faktorisering\nGauss–Seidel som koordinatvis korreksjon\nbratteste nedstigning\nkonjugerte gradienter\nenkel diagonal prekondisjonering\n\n\n\nEtter denne uken\nStudentene skal kunne kjenne igjen positivt definitte problemer, knytte løsning av \\(Ax=b\\) til minimering og implementere en grunnleggende variant av konjugerte gradienter.\n\n\n\n\nEt voksende problem: Bygg Poisson-matrisen for flere dimensjoner og mål kjøretiden til numpy.linalg.solve.\nSe strukturen: Undersøk symmetri, egenverdier og \\(x^TAx\\) for tilfeldige \\(x\\), og formuler SPD-egenskapene fra observasjonene.\nLøsning som minimum: Plott nivåkurver av \\(\\phi(x)=\\tfrac12x^TAx-b^Tx\\) i to dimensjoner og koble gradienten til residualen.\nTo enkle iterasjoner: Implementer Gauss–Seidel og bratteste nedstigning. Plott residual, faktisk feil og energi.\nKonjugerte gradienter: Bygg algoritmen trinnvis og sammenlign antall matrise-vektor-produkter med bratteste nedstigning.\nKondisjonering betyr noe: Kjør samme metoder på to like store systemer med ulike kondisjonstall.\nPrekondisjonering: Skaler med diagonalen og undersøk hvordan konvergenshistorikken endres.\nKort leveranse: Sammenligning av minst tre metoder med en forklaring av når residual og faktisk feil forteller forskjellige historier.",
     "crumbs": [
       "Numerisk lineær algebra",
       "Uke 6 – iterative metoder for lineære systemer"
@@ -73,51 +29,18 @@
     "href": "pages/uke3.html",
     "title": "Uke 3 – hva slags informasjon mister en matrise?",
     "section": "",
-    "text": "Vi lager matriser der forskjellige vektorer gir samme resultat. Hva kan vi observere numerisk, og hvordan avgjør NumPy om en retning er blitt borte?",
+    "text": "Uke\nEksperimentelt startpunkt\nBegreper vi bygger opp igjen\nViktigste algoritmer\n\n\n\n\n3\nVi finner forskjellige vektorer \\(x_1\\) og \\(x_2\\) som gir samme resultat \\(Ax_1=Ax_2\\), og undersøker hvilke deler av inputen matrisen ikke kan se.\nspenn, basis, kolonnerom, nullrom og rang\neliminasjon og numerisk rangundersøkelse\n\n\n4\nEt overbestemt system har ingen eksakt løsning, men numpy.linalg.lstsq finner likevel en «beste» løsning. Vi undersøker hva som gjør den best.\nortogonalitet, projeksjon og minste kvadrater\nGram–Schmidt og QR-faktorisering\n\n\n5\nGjentatt matrisemultiplikasjon og normalisering gjør at en tilfeldig startvektor ofte stabiliserer seg i én retning.\negenverdier, egenvektorer og invariante retninger\npotensmetoden og PageRank\n\n\n6\nnumpy.linalg.solve virker for et lite system, men tids- og minnebruken vokser raskt. Vi prøver derfor å forbedre en tilnærming med bare matrise-vektor-produkter.\nSPD-matriser, kvadratisk energi, residual og feil\nCholesky, Gauss–Seidel, konjugerte gradienter og prekondisjonering\n\n\n7\nEt bilde eller en datamatrise kan rekonstrueres overraskende godt etter at mange retninger er fjernet. Vi undersøker hvilke retninger som bærer informasjonen.\nsingulærverdier, kondisjonering og lavrangsapproksimasjon\nSVD, pseudoinvers og trunkert SVD\n\n\n\n\nOversiktAktivitetsplan\n\n\n\n\nVi starter med en liten matrise med tre inputkomponenter og to outputkomponenter. Studentene får først lete etter to forskjellige vektorer som gir samme output. Deretter studerer vi differansen \\(z=x_1-x_2\\) og oppdager at \\(Az=0\\). Vi endrer én kolonne slik at den er nesten, men ikke helt, avhengig av de andre, og sammenligner hva NumPy rapporterer i float64 og float32. Målet er at behovet for kolonnerom, nullrom, basis, rang og toleranse skal oppstå fra observasjonene.\n\n\n\n\nlineærkombinasjon, spenn og basis\nlineær uavhengighet\nkolonnerom og nullrom\nrang og dimensjon\ningen, én eller flere løsninger av \\(Ax=b\\)\n\n\n\n\n\nradreduksjon og numerisk rang\nnøyaktig og nesten lineær avhengighet\ntoleranser, float32 og float64\ngeometrisk visualisering av lineære avbildninger\n\n\n\n\nStudentene skal kunne tolke kolonnerom, nullrom og rang numerisk, og forklare hvorfor et lineært system har ingen, én eller flere løsninger.\n\n\n\n\nSamme output, forskjellig input: Studentene eksperimenterer med en gitt \\(2\\times3\\)-matrise og leter etter \\(x_1\\neq x_2\\) med \\(Ax_1=Ax_2\\).\nFinn den usynlige retningen: Beregn \\(z=x_1-x_2\\), kontroller residualen \\(\\lVert Az\\rVert\\), og beskriv alle vektorer \\(x_1+tz\\) som gir samme output.\nHvilke output er mulige? Generer mange tilfeldige \\(x\\), plott \\(Ax\\), og sammenlign punktskyen med matrisens kolonner.\nFra observasjon til språk: Innfør spenn, lineær uavhengighet, basis, kolonnerom, nullrom, rang og rang-nullitet.\nBryt eksperimentet: Erstatt en kolonne med en nesten lineærkombinasjon av de andre. Varier perturbasjonen og toleransen i numpy.linalg.matrix_rank.\nSystemklassifisering: Undersøk tre høyresider som gir henholdsvis ingen, én eller flere løsninger. Kontroller svarene med residualer.\nKort leveranse: Én figur, én numerisk tabell og en forklaring av hva matrisen bevarer og mister.",
     "crumbs": [
       "Numerisk lineær algebra",
       "Uke 3 – vektorrom, kolonnerom og nullrom"
     ]
   },
   {
-    "objectID": "pages/uke3.html#først-et-eksperiment",
-    "href": "pages/uke3.html#først-et-eksperiment",
+    "objectID": "pages/uke3.html#femukersplan-for-numerisk-lineær-algebra",
+    "href": "pages/uke3.html#femukersplan-for-numerisk-lineær-algebra",
     "title": "Uke 3 – hva slags informasjon mister en matrise?",
     "section": "",
-    "text": "Vi lager matriser der forskjellige vektorer gir samme resultat. Hva kan vi observere numerisk, og hvordan avgjør NumPy om en retning er blitt borte?",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 3 – vektorrom, kolonnerom og nullrom"
-    ]
-  },
-  {
-    "objectID": "pages/uke3.html#begreper-vi-trenger",
-    "href": "pages/uke3.html#begreper-vi-trenger",
-    "title": "Uke 3 – hva slags informasjon mister en matrise?",
-    "section": "Begreper vi trenger",
-    "text": "Begreper vi trenger\n\nlineærkombinasjon, spenn og basis\nlineær uavhengighet\nkolonnerom og nullrom\nrang og dimensjon\ningen, én eller flere løsninger av \\(Ax=b\\)",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 3 – vektorrom, kolonnerom og nullrom"
-    ]
-  },
-  {
-    "objectID": "pages/uke3.html#algoritmer-og-numeriske-undersøkelser",
-    "href": "pages/uke3.html#algoritmer-og-numeriske-undersøkelser",
-    "title": "Uke 3 – hva slags informasjon mister en matrise?",
-    "section": "Algoritmer og numeriske undersøkelser",
-    "text": "Algoritmer og numeriske undersøkelser\n\nradreduksjon og numerisk rang\nnøyaktig og nesten lineær avhengighet\ntoleranser, float32 og float64\ngeometrisk visualisering av lineære avbildninger",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 3 – vektorrom, kolonnerom og nullrom"
-    ]
-  },
-  {
-    "objectID": "pages/uke3.html#etter-denne-uken",
-    "href": "pages/uke3.html#etter-denne-uken",
-    "title": "Uke 3 – hva slags informasjon mister en matrise?",
-    "section": "Etter denne uken",
-    "text": "Etter denne uken\nStudentene skal kunne tolke kolonnerom, nullrom og rang numerisk, og forklare hvorfor et lineært system har ingen, én eller flere løsninger.",
+    "text": "Uke\nEksperimentelt startpunkt\nBegreper vi bygger opp igjen\nViktigste algoritmer\n\n\n\n\n3\nVi finner forskjellige vektorer \\(x_1\\) og \\(x_2\\) som gir samme resultat \\(Ax_1=Ax_2\\), og undersøker hvilke deler av inputen matrisen ikke kan se.\nspenn, basis, kolonnerom, nullrom og rang\neliminasjon og numerisk rangundersøkelse\n\n\n4\nEt overbestemt system har ingen eksakt løsning, men numpy.linalg.lstsq finner likevel en «beste» løsning. Vi undersøker hva som gjør den best.\nortogonalitet, projeksjon og minste kvadrater\nGram–Schmidt og QR-faktorisering\n\n\n5\nGjentatt matrisemultiplikasjon og normalisering gjør at en tilfeldig startvektor ofte stabiliserer seg i én retning.\negenverdier, egenvektorer og invariante retninger\npotensmetoden og PageRank\n\n\n6\nnumpy.linalg.solve virker for et lite system, men tids- og minnebruken vokser raskt. Vi prøver derfor å forbedre en tilnærming med bare matrise-vektor-produkter.\nSPD-matriser, kvadratisk energi, residual og feil\nCholesky, Gauss–Seidel, konjugerte gradienter og prekondisjonering\n\n\n7\nEt bilde eller en datamatrise kan rekonstrueres overraskende godt etter at mange retninger er fjernet. Vi undersøker hvilke retninger som bærer informasjonen.\nsingulærverdier, kondisjonering og lavrangsapproksimasjon\nSVD, pseudoinvers og trunkert SVD\n\n\n\n\nOversiktAktivitetsplan\n\n\n\n\nVi starter med en liten matrise med tre inputkomponenter og to outputkomponenter. Studentene får først lete etter to forskjellige vektorer som gir samme output. Deretter studerer vi differansen \\(z=x_1-x_2\\) og oppdager at \\(Az=0\\). Vi endrer én kolonne slik at den er nesten, men ikke helt, avhengig av de andre, og sammenligner hva NumPy rapporterer i float64 og float32. Målet er at behovet for kolonnerom, nullrom, basis, rang og toleranse skal oppstå fra observasjonene.\n\n\n\n\nlineærkombinasjon, spenn og basis\nlineær uavhengighet\nkolonnerom og nullrom\nrang og dimensjon\ningen, én eller flere løsninger av \\(Ax=b\\)\n\n\n\n\n\nradreduksjon og numerisk rang\nnøyaktig og nesten lineær avhengighet\ntoleranser, float32 og float64\ngeometrisk visualisering av lineære avbildninger\n\n\n\n\nStudentene skal kunne tolke kolonnerom, nullrom og rang numerisk, og forklare hvorfor et lineært system har ingen, én eller flere løsninger.\n\n\n\n\nSamme output, forskjellig input: Studentene eksperimenterer med en gitt \\(2\\times3\\)-matrise og leter etter \\(x_1\\neq x_2\\) med \\(Ax_1=Ax_2\\).\nFinn den usynlige retningen: Beregn \\(z=x_1-x_2\\), kontroller residualen \\(\\lVert Az\\rVert\\), og beskriv alle vektorer \\(x_1+tz\\) som gir samme output.\nHvilke output er mulige? Generer mange tilfeldige \\(x\\), plott \\(Ax\\), og sammenlign punktskyen med matrisens kolonner.\nFra observasjon til språk: Innfør spenn, lineær uavhengighet, basis, kolonnerom, nullrom, rang og rang-nullitet.\nBryt eksperimentet: Erstatt en kolonne med en nesten lineærkombinasjon av de andre. Varier perturbasjonen og toleransen i numpy.linalg.matrix_rank.\nSystemklassifisering: Undersøk tre høyresider som gir henholdsvis ingen, én eller flere løsninger. Kontroller svarene med residualer.\nKort leveranse: Én figur, én numerisk tabell og en forklaring av hva matrisen bevarer og mister.",
     "crumbs": [
       "Numerisk lineær algebra",
       "Uke 3 – vektorrom, kolonnerom og nullrom"
@@ -249,51 +172,7 @@
     "href": "pages/uke4.html",
     "title": "Uke 4 – det beste svaret når et eksakt svar ikke finnes",
     "section": "",
-    "text": "Vi tilpasser en modell til støyfylte data. Systemet \\(Ax=b\\) har ingen eksakt løsning, men NumPy finner likevel et best mulig svar. Hvorfor er residualen ortogonal på kolonnerommet?",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 4 – ortogonalitet, projeksjon og minste kvadrater"
-    ]
-  },
-  {
-    "objectID": "pages/uke4.html#først-et-eksperiment",
-    "href": "pages/uke4.html#først-et-eksperiment",
-    "title": "Uke 4 – det beste svaret når et eksakt svar ikke finnes",
-    "section": "",
-    "text": "Vi tilpasser en modell til støyfylte data. Systemet \\(Ax=b\\) har ingen eksakt løsning, men NumPy finner likevel et best mulig svar. Hvorfor er residualen ortogonal på kolonnerommet?",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 4 – ortogonalitet, projeksjon og minste kvadrater"
-    ]
-  },
-  {
-    "objectID": "pages/uke4.html#begreper-vi-trenger",
-    "href": "pages/uke4.html#begreper-vi-trenger",
-    "title": "Uke 4 – det beste svaret når et eksakt svar ikke finnes",
-    "section": "Begreper vi trenger",
-    "text": "Begreper vi trenger\n\nindreprodukt, norm og vinkel\nortogonalitet og ortogonalt komplement\nprojeksjon på et underrom\nminste kvadraters metode\nortogonale og ortonormale basiser",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 4 – ortogonalitet, projeksjon og minste kvadrater"
-    ]
-  },
-  {
-    "objectID": "pages/uke4.html#algoritmer-og-numeriske-undersøkelser",
-    "href": "pages/uke4.html#algoritmer-og-numeriske-undersøkelser",
-    "title": "Uke 4 – det beste svaret når et eksakt svar ikke finnes",
-    "section": "Algoritmer og numeriske undersøkelser",
-    "text": "Algoritmer og numeriske undersøkelser\n\nklassisk og modifisert Gram–Schmidt\nQR-faktorisering\nminste kvadrater med QR\nsammenligning av normalligningene, QR og numpy.linalg.lstsq",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 4 – ortogonalitet, projeksjon og minste kvadrater"
-    ]
-  },
-  {
-    "objectID": "pages/uke4.html#etter-denne-uken",
-    "href": "pages/uke4.html#etter-denne-uken",
-    "title": "Uke 4 – det beste svaret når et eksakt svar ikke finnes",
-    "section": "Etter denne uken",
-    "text": "Etter denne uken\nStudentene skal kunne formulere et tilpasningsproblem som et minste-kvadraters problem, tolke residualen geometrisk og forklare hvorfor QR vanligvis er bedre enn normalligningene.",
+    "text": "OversiktAktivitetsplan\n\n\n\nFørst et eksperiment\nVi lager støyfylte måledata som nesten følger en rett linje. Studentene forsøker først å løse alle ligningene eksakt og oppdager at systemet er inkonsistent. numpy.linalg.lstsq gir likevel et svar. Ved å beregne residualen \\(r=b-Ax_*\\) og produktet \\(A^Tr\\) oppdager de den ortogonale betingelsen før projeksjon og minste kvadrater blir formulert geometrisk.\n\n\nBegreper vi trenger\n\nindreprodukt, norm og vinkel\nortogonalitet og ortogonalt komplement\nprojeksjon på et underrom\nminste kvadraters metode\nortogonale og ortonormale basiser\n\n\n\nAlgoritmer og numeriske undersøkelser\n\nklassisk og modifisert Gram–Schmidt\nQR-faktorisering\nminste kvadrater med QR\nsammenligning av normalligningene, QR og numpy.linalg.lstsq\n\n\n\nEtter denne uken\nStudentene skal kunne formulere et tilpasningsproblem som et minste-kvadraters problem, tolke residualen geometrisk og forklare hvorfor QR vanligvis er bedre enn normalligningene.\n\n\n\n\nEt system uten løsning: Bygg designmatrisen for en linjetilpasning og vis numerisk at ingen parametervektor gir null residual.\nHva betyr «best»? Sammenlign flere parametervektorer og residualnormer med løsningen fra numpy.linalg.lstsq.\nDen overraskende testen: Beregn \\(A^Tr\\) og bruk resultatet til å motivere ortogonal projeksjon på kolonnerommet.\nLag en ortonormal basis: Implementer klassisk Gram–Schmidt og kontroller \\(Q^TQ\\approx I\\).\nBryt algoritmen: Bruk nesten parallelle kolonner og sammenlign klassisk og modifisert Gram–Schmidt.\nTre løsningsmetoder: Sammenlign normalligninger, egen QR-implementasjon og numpy.linalg.lstsq på en dårlig kondisjonert Vandermonde-matrise.\nKort leveranse: Et konvergens- eller feildiagram og en begrunnet anbefaling av metode.",
     "crumbs": [
       "Numerisk lineær algebra",
       "Uke 4 – ortogonalitet, projeksjon og minste kvadrater"
@@ -368,51 +247,7 @@
     "href": "pages/uke7.html",
     "title": "Uke 7 – hvilke retninger i en matrise er viktige?",
     "section": "",
-    "text": "Vi deler opp et bilde eller en datamatrise i singulære retninger og rekonstruerer med stadig færre komponenter. Hvor mye av informasjonen kan vi fjerne før resultatet endrer karakter?",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 7 – singulærverdidekomposisjon"
-    ]
-  },
-  {
-    "objectID": "pages/uke7.html#først-et-eksperiment",
-    "href": "pages/uke7.html#først-et-eksperiment",
-    "title": "Uke 7 – hvilke retninger i en matrise er viktige?",
-    "section": "",
-    "text": "Vi deler opp et bilde eller en datamatrise i singulære retninger og rekonstruerer med stadig færre komponenter. Hvor mye av informasjonen kan vi fjerne før resultatet endrer karakter?",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 7 – singulærverdidekomposisjon"
-    ]
-  },
-  {
-    "objectID": "pages/uke7.html#begreper-vi-trenger",
-    "href": "pages/uke7.html#begreper-vi-trenger",
-    "title": "Uke 7 – hvilke retninger i en matrise er viktige?",
-    "section": "Begreper vi trenger",
-    "text": "Begreper vi trenger\n\nvenstre og høyre singulærvektorer\nsingulærverdier\nnumerisk rang og nullrom\nkondisjonstall\npseudoinvers og minimumsnormløsning\nlavrangsapproksimasjon",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 7 – singulærverdidekomposisjon"
-    ]
-  },
-  {
-    "objectID": "pages/uke7.html#algoritmer-og-numeriske-undersøkelser",
-    "href": "pages/uke7.html#algoritmer-og-numeriske-undersøkelser",
-    "title": "Uke 7 – hvilke retninger i en matrise er viktige?",
-    "section": "Algoritmer og numeriske undersøkelser",
-    "text": "Algoritmer og numeriske undersøkelser\n\nnumpy.linalg.svd\ntrunkert SVD og kompresjon\nminste kvadrater og pseudoinvers\nfølsomhet nær rangtap\nenkel regularisering ved filtrering av små singulærverdier",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 7 – singulærverdidekomposisjon"
-    ]
-  },
-  {
-    "objectID": "pages/uke7.html#etter-denne-uken",
-    "href": "pages/uke7.html#etter-denne-uken",
-    "title": "Uke 7 – hvilke retninger i en matrise er viktige?",
-    "section": "Etter denne uken",
-    "text": "Etter denne uken\nStudentene skal kunne bruke SVD til å samle trådene fra rom, ortogonalitet, minste kvadrater, rang og kondisjonering.",
+    "text": "OversiktAktivitetsplan\n\n\n\nFørst et eksperiment\nVi leser et gråtonebilde som en matrise, beregner SVD og rekonstruerer bildet med én, fem, ti og flere singulære komponenter. Studentene ser både bildet og kurven av singulærverdier og må foreslå hvor en rimelig trunkering ligger. Deretter bruker vi de samme faktorene til å identifisere kolonnerom, nullrom, numerisk rang og følsomme retninger. SVD blir dermed en samlet forklaring på de foregående ukene.\n\n\nBegreper vi trenger\n\nvenstre og høyre singulærvektorer\nsingulærverdier\nnumerisk rang og nullrom\nkondisjonstall\npseudoinvers og minimumsnormløsning\nlavrangsapproksimasjon\n\n\n\nAlgoritmer og numeriske undersøkelser\n\nnumpy.linalg.svd\ntrunkert SVD og kompresjon\nminste kvadrater og pseudoinvers\nfølsomhet nær rangtap\nenkel regularisering ved filtrering av små singulærverdier\n\n\n\nEtter denne uken\nStudentene skal kunne bruke SVD til å samle trådene fra rom, ortogonalitet, minste kvadrater, rang og kondisjonering.\n\n\n\n\nKomprimer et bilde: Beregn SVD og vis rekonstruksjoner med forskjellig rang sammen med lagringsbehovet.\nLes spekteret: Plott singulærverdiene både lineært og logaritmisk, og velg en trunkering ut fra dataene.\nTolk faktorene: Følg en vektor gjennom \\(V^T\\), \\(\\Sigma\\) og \\(U\\) og beskriv rotasjon, skalering og ny orientering.\nFinn rommene igjen: Bruk singulærvektorene til å konstruere basiser for kolonnerom og nullrom og kontroller dem numerisk.\nNær rangtap: Perturber en matrise med en liten singulærverdi og mål hvordan løsningen av \\(Ax=b\\) endres.\nPseudoinvers og filtrering: Sammenlign lstsq, pinv og trunkert SVD på et følsomt minste-kvadraters problem.\nSyntese: Knytt SVD eksplisitt til rang, ortogonal projeksjon, minste kvadrater, kondisjonering og regularisering.\nKort leveranse: En kompresjons- eller denoisingrapport med valgt rang, feilmål og faglig begrunnelse.",
     "crumbs": [
       "Numerisk lineær algebra",
       "Uke 7 – singulærverdidekomposisjon"
@@ -553,51 +388,7 @@
     "href": "pages/uke5.html",
     "title": "Uke 5 – hva overlever gjentatt matrisemultiplikasjon?",
     "section": "",
-    "text": "Vi multipliserer en vektor med den samme matrisen mange ganger og normaliserer etter hvert steg. Hvorfor stabiliserer retningen seg, og når skjer det ikke?",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 5 – egenverdier og gjentatt matrisemultiplikasjon"
-    ]
-  },
-  {
-    "objectID": "pages/uke5.html#først-et-eksperiment",
-    "href": "pages/uke5.html#først-et-eksperiment",
-    "title": "Uke 5 – hva overlever gjentatt matrisemultiplikasjon?",
-    "section": "",
-    "text": "Vi multipliserer en vektor med den samme matrisen mange ganger og normaliserer etter hvert steg. Hvorfor stabiliserer retningen seg, og når skjer det ikke?",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 5 – egenverdier og gjentatt matrisemultiplikasjon"
-    ]
-  },
-  {
-    "objectID": "pages/uke5.html#begreper-vi-trenger",
-    "href": "pages/uke5.html#begreper-vi-trenger",
-    "title": "Uke 5 – hva overlever gjentatt matrisemultiplikasjon?",
-    "section": "Begreper vi trenger",
-    "text": "Begreper vi trenger\n\negenverdier og egenvektorer\ninvariante retninger og underrom\ndominant egenverdi\nspektralgap og konvergensfart\nsymmetriske matriser og ortogonale egenvektorer",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 5 – egenverdier og gjentatt matrisemultiplikasjon"
-    ]
-  },
-  {
-    "objectID": "pages/uke5.html#algoritmer-og-numeriske-undersøkelser",
-    "href": "pages/uke5.html#algoritmer-og-numeriske-undersøkelser",
-    "title": "Uke 5 – hva overlever gjentatt matrisemultiplikasjon?",
-    "section": "Algoritmer og numeriske undersøkelser",
-    "text": "Algoritmer og numeriske undersøkelser\n\npotensmetoden\nRayleigh-kvotient og egenverdiresidual\nkonvergensplott og stoppkriterier\nPageRank som egenvektorproblem",
-    "crumbs": [
-      "Numerisk lineær algebra",
-      "Uke 5 – egenverdier og gjentatt matrisemultiplikasjon"
-    ]
-  },
-  {
-    "objectID": "pages/uke5.html#etter-denne-uken",
-    "href": "pages/uke5.html#etter-denne-uken",
-    "title": "Uke 5 – hva overlever gjentatt matrisemultiplikasjon?",
-    "section": "Etter denne uken",
-    "text": "Etter denne uken\nStudentene skal kunne tolke egenvektorer dynamisk, implementere potensmetoden og bruke residual og konvergenshistorikk til å vurdere resultatet.",
+    "text": "OversiktAktivitetsplan\n\n\n\nFørst et eksperiment\nVi begynner med en tilfeldig vektor, multipliserer gjentatte ganger med den samme matrisen og normaliserer etter hvert steg. Studentene plotter både komponentene, vinkelen mellom to påfølgende iterater og Rayleigh-kvotienten. Deretter endrer vi matrisen slik at de to største egenverdiene ligger nær hverandre, eller har samme absoluttverdi, og ser hvordan mønsteret endres. Egenvektorer introduseres som forklaringen på observerte stabile retninger.\n\n\nBegreper vi trenger\n\negenverdier og egenvektorer\ninvariante retninger og underrom\ndominant egenverdi\nspektralgap og konvergensfart\nsymmetriske matriser og ortogonale egenvektorer\n\n\n\nAlgoritmer og numeriske undersøkelser\n\npotensmetoden\nRayleigh-kvotient og egenverdiresidual\nkonvergensplott og stoppkriterier\nPageRank som egenvektorproblem\n\n\n\nEtter denne uken\nStudentene skal kunne tolke egenvektorer dynamisk, implementere potensmetoden og bruke residual og konvergenshistorikk til å vurdere resultatet.\n\n\n\n\nEn retning vokser fram: Kjør normalisert gjentatt matrisemultiplikasjon fra flere tilfeldige startvektorer.\nMål stabiliseringen: Plott vinkelendring, Rayleigh-kvotient og residualen \\(\\lVert Ax_k-\\lambda_kx_k\\rVert\\).\nForklar mønsteret: Introduser egenverdier, egenvektorer, invariante retninger og dominant egenverdi.\nHva bestemmer farten? Sammenlign matriser med stort og lite spektralgap og knytt observasjonen til konvergensplottet.\nNår virker det ikke? Undersøk uheldig startvektor, negativ dominant egenverdi og to dominante egenverdier med samme absoluttverdi.\nPageRank-laboratorium: Bygg en overgangsmatrise fra en liten graf, oppdag problemer med hengende noder og reparer modellen med damping.\nKort leveranse: En implementasjon av potensmetoden med stoppkriterium og en diagnose av ett problemtilfelle.",
     "crumbs": [
       "Numerisk lineær algebra",
       "Uke 5 – egenverdier og gjentatt matrisemultiplikasjon"
