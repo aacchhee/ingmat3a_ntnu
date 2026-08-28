@@ -8,14 +8,105 @@ $$T(\text{input})=\text{output}.$$
 
 Navnet sier foreløpig ikke noe mystisk. En Python-funksjon er også en regel fra input til output. Det viktige er å spørre konkret: Hvilken informasjon bruker regelen, hvilken informasjon kommer ut, og kan noe gå tapt underveis?
 
-Denne uka bruker vi én enkel bildetransformasjon som gjennomgående eksempel. Den tar et $4\times4$-bilde med 16 pikselverdier og lager et $2\times2$-bilde med fire verdier. Det store bildet deles i fire områder:
+Denne uka bruker vi én enkel bildetransformasjon som gjennomgående eksempel. Den gjør et bilde med 16 piksler om til et mindre bilde med fire piksler. Figuren viser hele oppskriften uten matriser eller formler.
 
-- **øvre venstre blokk**, som blir øvre venstre outputpiksel;
-- **øvre høyre blokk**, som blir øvre høyre outputpiksel;
-- **nedre venstre blokk**, som blir nedre venstre outputpiksel;
-- **nedre høyre blokk**, som blir nedre høyre outputpiksel.
+```{.jsxgraph width="760" height="430"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [0, 7.1, 12.2, 0.1],
+  axis: false,
+  showCopyright: false,
+  showNavigation: false,
+  pan: { enabled: false },
+  zoom: { enabled: false }
+});
 
-Hver blokk har fire piksler. Transformasjonen erstatter de fire tallene med det aritmetiske gjennomsnittet deres. Vi begynner med to bilder som ser helt forskjellige ut: et ensfarget bilde og et tydelig sjakkmønster.
+var colors = ['#8ecae6', '#ffcf70', '#a8d5a2', '#d7b5e8'];
+var dark = ['#277da1', '#d98900', '#4f8f49', '#8b5aa7'];
+
+function rectangle(x0, y0, x1, y1, color, opacity, border) {
+  return board.create('polygon', [[x0,y0],[x1,y0],[x1,y1],[x0,y1]], {
+    fillColor: color,
+    fillOpacity: opacity,
+    vertices: { visible: false },
+    borders: { strokeColor: border || '#555555', strokeWidth: 1.5,
+               fixed: true, highlight: false },
+    fixed: true,
+    highlight: false
+  });
+}
+
+// Stort bilde: fire fargekodede områder, hvert med fire synlige piksler.
+for (var row = 0; row < 4; row++) {
+  for (var col = 0; col < 4; col++) {
+    var group = (row < 2 ? 0 : 2) + (col < 2 ? 0 : 1);
+    var x0 = 0.8 + col;
+    var y1 = 6.0 - row;
+    rectangle(x0, y1-1, x0+1, y1, colors[group], 0.72, '#ffffff');
+  }
+}
+rectangle(0.8,2.0,4.8,6.0,'none',0,'#333333');
+board.create('segment', [[2.8,2.0],[2.8,6.0]], {
+  strokeColor:'#333333', strokeWidth:3, fixed:true, highlight:false
+});
+board.create('segment', [[0.8,4.0],[4.8,4.0]], {
+  strokeColor:'#333333', strokeWidth:3, fixed:true, highlight:false
+});
+
+board.create('text', [2.8,6.55,'STORT BILDE'], {
+  anchorX:'middle', fontSize:16, cssStyle:'font-weight:600', fixed:true
+});
+board.create('text', [2.8,1.55,'Fire fargede områder · fire piksler i hvert'], {
+  anchorX:'middle', fontSize:13, fixed:true
+});
+
+// Lite outputbilde: ett felt for hvert område.
+var output = [
+  [8.0,4.7,9.3,6.0], [9.3,4.7,10.6,6.0],
+  [8.0,3.4,9.3,4.7], [9.3,3.4,10.6,4.7]
+];
+for (var i = 0; i < 4; i++) {
+  rectangle(output[i][0],output[i][1],output[i][2],output[i][3],
+            colors[i],0.85,'#ffffff');
+  board.create('text', [(output[i][0]+output[i][2])/2,
+                        (output[i][1]+output[i][3])/2,'ett tall'], {
+    anchorX:'middle', anchorY:'middle', fontSize:12, fixed:true
+  });
+}
+rectangle(8.0,3.4,10.6,6.0,'none',0,'#333333');
+board.create('segment', [[9.3,3.4],[9.3,6.0]], {
+  strokeColor:'#333333', strokeWidth:3, fixed:true, highlight:false
+});
+board.create('segment', [[8.0,4.7],[10.6,4.7]], {
+  strokeColor:'#333333', strokeWidth:3, fixed:true, highlight:false
+});
+board.create('text', [9.3,6.55,'MINDRE BILDE'], {
+  anchorX:'middle', fontSize:16, cssStyle:'font-weight:600', fixed:true
+});
+
+// Fire piler viser hvilket område som blir hvilken outputpiksel.
+var starts = [[2.25,5.35],[4.25,5.35],[2.25,2.65],[4.25,2.65]];
+var ends = [[8.0,5.35],[9.95,5.35],[8.0,4.05],[9.95,4.05]];
+var bends = [6.25,6.05,1.05,1.25];
+for (var j = 0; j < 4; j++) {
+  var sx=starts[j][0], sy=starts[j][1], ex=ends[j][0], ey=ends[j][1];
+  board.create('curve', [
+    [sx, sx+1.15, ex-1.15, ex],
+    [sy, bends[j], bends[j], ey]
+  ], {
+    strokeColor: dark[j], strokeWidth: 3, lastArrow: true,
+    fixed: true, highlight: false
+  });
+}
+
+board.create('text', [6.35,3.58,'samle'], {
+  anchorX:'middle', fontSize:14, cssStyle:'font-weight:600', fixed:true
+});
+board.create('text', [6.35,3.22,'fire piksler'], {
+  anchorX:'middle', fontSize:13, fixed:true
+});
+```
+
+Fargene og pilene viser hva som hører sammen. De fire pikslene i det blå området samles til den blå outputpikselen, og tilsvarende for de tre andre områdene. I vårt eksempel betyr «samle» at vi tar gjennomsnittet av de fire pikselverdiene. Dermed går vi fra 16 tall til fire tall. Vi begynner med to bilder som ser helt forskjellige ut: et ensfarget bilde og et tydelig sjakkmønster.
 
 ```{pyodide-python}
 #| label: week3-setup
