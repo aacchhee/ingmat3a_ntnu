@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Matematikk for ingeniørfag 3A – Matematikk 3A</title>
+<title>Uke 12 – optimering med bibetingelser og minste kvadrater – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -29,23 +29,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-03a0d00fd5ba774dd8e50f606f192499.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-03a0d00fd5ba774dd8e50f606f192499.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -75,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-sidebar docked fullcontent quarto-light">
@@ -87,9 +87,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Matematikk 3A
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke12.html">Uke 12 – optimering med bibetingelser og minste kvadrater</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -104,7 +102,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Matematikk 3A</a> 
+      <a href="../">Matematikk 3A</a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -116,13 +114,13 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/page1.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">IDE / Readme</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/emneinnhold.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/emneinnhold.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Emneinnhold</span></a>
   </div>
 </li>
@@ -137,13 +135,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/page2.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 1 – regnetid, binære tall og tall på datamaskiner</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/page4.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page4.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 2 – fikspunktiterasjon</span></a>
   </div>
 </li>
@@ -160,31 +158,31 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke3.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 3 – vektorrom, kolonnerom og nullrom</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke4.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke4.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 4 – ortogonalitet, projeksjon og minste kvadrater</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke5.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 5 – egenverdier og gjentatt matrisemultiplikasjon</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke6.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke6.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 6 – iterative metoder for lineære systemer</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke7.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke7.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 7 – singulærverdidekomposisjon</span></a>
   </div>
 </li>
@@ -201,31 +199,31 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke8.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke8.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 8 – introduksjon til optimering</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke9.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke10.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke10.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 10 – Newtons metode</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke11.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke11.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 11 – lineær programmering</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke12.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke12.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Uke 12 – optimering med bibetingelser og minste kvadrater</span></a>
   </div>
 </li>
@@ -242,13 +240,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/project_week1.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 1 – Floating-point attack</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/project_week2.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 2 – Newtonfraktaler</span></a>
   </div>
 </li>
@@ -265,7 +263,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/page5.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Flyttall og numerisk stabilitet</span></a>
   </div>
 </li>
@@ -281,9 +279,9 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 <script>window.__mathExerciseConfig = {"lang":"en"};</script>
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke12.html">Uke 12 – optimering med bibetingelser og minste kvadrater</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Matematikk for ingeniørfag 3A</h1>
+<h1 class="title">Uke 12 – optimering med bibetingelser og minste kvadrater</h1>
 </div>
 
 
@@ -300,7 +298,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Velg ei side fra venstre kolonne.</p>
+<p>Under construction.</p>
 
 
 
