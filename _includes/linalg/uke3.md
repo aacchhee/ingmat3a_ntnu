@@ -395,7 +395,7 @@ Et bilde kan for eksempel beskrives som en kombinasjon av et jevnt lysnivå, en 
 
 Det viktige spørsmålet er derfor:
 
-> Kan vi transformere hver byggestein for seg og deretter sette sammen resultatene, eller må hele bildet behandles på nytt?
+> Vi kan først legge sammen de store bildene og så beregne blokkgjennomsnittene. Eller vi kan beregne blokkgjennomsnittene for hvert bilde først og deretter legge sammen de små bildene. Får vi samme resultat?
 
 Vi bruker to vilkårlige bilder som et første eksperiment. Hver piksel i `X1` multipliseres med $0.6$, hver piksel i `X3` med $0.4$, og resultatene legges sammen piksel for piksel. Det nye bildet er
 
