@@ -1013,7 +1013,118 @@ De tolv viste byggesteinene påvirker enten forskjellige blokker eller forskjell
 
 Vi har undersøkt hvilke endringer i inputbildet som ikke synes i outputen. Nå snur vi spørsmålet: **Hvilke $2\times2$-bilder kan transformasjonen faktisk produsere?**
 
-Vi begynner med det enkleste mulige inputbildet: én piksel er 1, og alle andre er 0. Kall dette «slå på én piksel». Kolonne $j$ i matrisen er akkurat outputen vi får når inputpiksel $j$ er slått på. Vi gjør forsøket for alle 16 piksler og tegner hver outputvektor som et lite $2\times2$-bilde.
+Vi begynner med det enkleste mulige inputbildet: én piksel er 1, og alle andre er 0. Kall dette **å slå på én piksel**. Klikk på en inputpiksel i figuren. Outputbildet til høyre viser hva transformasjonen gjør med akkurat denne inputen.
+
+```{.jsxgraph width="760" height="430"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [0, 8.2, 14.8, 0],
+  axis: false,
+  showCopyright: false,
+  showNavigation: false,
+  pan: { enabled: false },
+  zoom: { enabled: false }
+});
+
+var groupColors = ['#8ecae6','#ffcf70','#a8d5a2','#d7b5e8'];
+var groupDark = ['#277da1','#d98900','#4f8f49','#8b5aa7'];
+var groupNames = ['øvre venstre','øvre høyre','nedre venstre','nedre høyre'];
+var selectedPixel = 0;
+
+function pixelGroup(index) {
+  var row=Math.floor(index/4), col=index%4;
+  return (row<2 ? 0 : 2)+(col<2 ? 0 : 1);
+}
+
+function box(x0,y0,size,fill,opacity,border,width) {
+  return board.create('polygon',
+    [[x0,y0],[x0+size,y0],[x0+size,y0+size],[x0,y0+size]],{
+      fillColor:fill,fillOpacity:opacity,
+      vertices:{visible:false},
+      borders:{strokeColor:border,strokeWidth:width,
+               fixed:true,highlight:false},
+      fixed:true,highlight:false
+    });
+}
+
+board.create('text',[3.0,7.75,'INPUT: klikk på én piksel'],{
+  anchorX:'middle',fontSize:16,cssStyle:'font-weight:600',fixed:true
+});
+board.create('text',[11.15,7.75,'OUTPUT'],{
+  anchorX:'middle',fontSize:16,cssStyle:'font-weight:600',fixed:true
+});
+
+var inputCells=[];
+for (let i=0; i<16; i++) {
+  let row=Math.floor(i/4), col=i%4, group=pixelGroup(i);
+  let x0=1.0+col, y0=2.65+(3-row);
+  let cell=box(x0,y0,1.0,groupColors[group],function(){
+    return selectedPixel===i ? 0.95 : 0.48;
+  },function(){return selectedPixel===i ? groupDark[group] : '#ffffff';},
+  function(){return selectedPixel===i ? 4 : 1.5;});
+  cell.on('down',function(){selectedPixel=i; board.update();});
+  inputCells.push(cell);
+  board.create('text',[x0+0.5,y0+0.5,String(i+1)],{
+    anchorX:'middle',anchorY:'middle',fontSize:13,
+    cssStyle:'font-weight:600; pointer-events:none',fixed:true
+  });
+}
+box(1.0,2.65,4.0,'none',0,'#333333',2);
+board.create('segment',[[3.0,2.65],[3.0,6.65]],{
+  strokeColor:'#333333',strokeWidth:3,fixed:true,highlight:false
+});
+board.create('segment',[[1.0,4.65],[5.0,4.65]],{
+  strokeColor:'#333333',strokeWidth:3,fixed:true,highlight:false
+});
+
+var outputXY=[[10.0,5.15],[11.15,5.15],[10.0,4.0],[11.15,4.0]];
+for (let g=0; g<4; g++) {
+  let x0=outputXY[g][0], y0=outputXY[g][1];
+  box(x0,y0,1.15,groupColors[g],function(){
+    return pixelGroup(selectedPixel)===g ? 0.95 : 0.20;
+  },'#ffffff',1.5);
+  board.create('text',[x0+0.575,y0+0.575,function(){
+    return pixelGroup(selectedPixel)===g ? '1/4' : '0';
+  }],{
+    anchorX:'middle',anchorY:'middle',fontSize:15,
+    cssStyle:'font-weight:600',fixed:true
+  });
+}
+box(10.0,4.0,2.3,'none',0,'#333333',2);
+board.create('segment',[[11.15,4.0],[11.15,6.3]],{
+  strokeColor:'#333333',strokeWidth:3,fixed:true,highlight:false
+});
+board.create('segment',[[10.0,5.15],[12.3,5.15]],{
+  strokeColor:'#333333',strokeWidth:3,fixed:true,highlight:false
+});
+
+var groupStarts=[[2.0,5.65],[4.0,5.65],[2.0,3.65],[4.0,3.65]];
+var groupEnds=[[10.0,5.72],[11.15,5.72],[10.0,4.57],[11.15,4.57]];
+for (let g=0; g<4; g++) {
+  board.create('arrow',[groupStarts[g],groupEnds[g]],{
+    strokeColor:groupDark[g],strokeWidth:function(){
+      return pixelGroup(selectedPixel)===g ? 4 : 1.5;
+    },strokeOpacity:function(){
+      return pixelGroup(selectedPixel)===g ? 1 : 0.18;
+    },fixed:true,highlight:false
+  });
+}
+
+board.create('text',[7.55,1.75,function(){
+  var g=pixelGroup(selectedPixel);
+  return 'Piksel '+(selectedPixel+1)+' hører til '+groupNames[g]+' gruppe.';
+}],{
+  anchorX:'middle',fontSize:14,cssStyle:'font-weight:600',fixed:true
+});
+board.create('text',[7.55,1.15,'Én piksel med verdi 1 gir gjennomsnitt 1/4 i sitt outputfelt.'],{
+  anchorX:'middle',fontSize:12,fixed:true
+});
+```
+
+De fire fargene deler inputbildet i fire blokker. Alle piksler med samme farge peker mot samme felt i outputbildet. Når bare én piksel har verdien 1, er gjennomsnittet i blokken $1/4$; de andre tre outputfeltene får 0. Prøv flere piksler med samme farge. Pikselnummeret endrer seg, men outputen gjør ikke det.
+
+Her kommer forbindelsen til matrisen: **Kolonne $j$ i $A$ er outputen vi får når bare inputpiksel $j$ er slått på.** Fire piksler som gir samme output, gir derfor fire identiske kolonner. Figuren viser på denne måten fire grupper av like kolonner, én gruppe for hver farge.
+
+Koden nedenfor utfører alle de 16 forsøkene på én gang og tegner hver matriskolonne som et lite $2\times2$-bilde.
 
 ```{pyodide-python}
 #| label: week3-columns-as-images
@@ -1024,11 +1135,9 @@ show_images(column_images,[f"Kolonne {j+1}" for j in range(16)],
             cols=4,vmin=0,vmax=0.25,figsize=(6.8,5.8))
 ```
 
-Nummereringen følger 16-vektoren fra 3.1: piksel 1–4 er første bilderad, 5–8 er andre bilderad, og så videre. Pikslene 1, 2, 5 og 6 ligger derfor i øvre venstre blokk. Når én av dem har verdi 1, blir blokkens gjennomsnitt $1/4$, mens de tre andre outputverdiene er null. De fire tilhørende kolonnebildene er identiske.
+De 16 små bildene bekrefter det vi så i appleten: Kolonnene kommer i fire grupper. Innenfor hver gruppe er outputbildene identiske. Mellom gruppene flytter den eneste lyse outputpikselen seg til en ny plass.
 
-Pikslene 3, 4, 7 og 8 påvirker bare øvre høyre outputpiksel. Pikslene 9, 10, 13 og 14 påvirker nedre venstre, og de fire siste i nedre høyre blokk påvirker nedre høyre. De 16 kolonnene faller dermed i fire grupper. Figuren viser konkret at mange inputpiksler har samme virkning på outputen.
-
-Dette forteller at vi har fire ulike måter å påvirke outputen på. Men kan disse fire måtene lage *ethvert* $2\times2$-bilde? Vi velger fire tilfeldige målbilder. For hvert målbilde lager koden et $4\times4$-bilde der alle pikslene i en blokk har ønsket outputverdi. Deretter kontrollerer vi hva gjennomsnittstransformasjonen gir.
+Dermed har vi funnet fire forskjellige måter å påvirke outputen på. Det neste spørsmålet er om disse fire mulighetene er nok til å lage *ethvert* $2\times2$-bilde. Vi velger fire tilfeldige målbilder. For hvert målbilde lager koden et $4\times4$-inputbilde ved å fylle hver fargede blokk med verdien vi ønsker i det tilsvarende outputfeltet. Deretter lar vi transformasjonen beregne outputen og sammenligner.
 
 ```{pyodide-python}
 #| label: week3-build-arbitrary-output
