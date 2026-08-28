@@ -315,7 +315,7 @@ $$
 \underbrace{\mathbb R^4}_{\text{outputrom: små bilder}}.
 $$
 
-Alle inputvektorer har 16 komponenter, mens alle outputvektorer har fire. Senere skal vi finne to samlinger som derfor ligger på hver sin side av pilen: Nullrommet består av inputvektorer og ligger i $\mathbb R^{16}$. Kolonnerommet består av outputvektorer og ligger i $\mathbb R^4$.
+På venstre side av pilen står inputen $x$ med 16 pikselverdier. På høyre side står outputen $y$ med fire blokkgjennomsnitt. Matrisen $A$ er oppskriften som lager disse fire tallene fra de seksten. Input og output har derfor forskjellige roller og forskjellig lengde; vi holder dem på hver sin side av pilen.
 
 ```{pyodide-python}
 #| label: week3-pooling-as-matrix
