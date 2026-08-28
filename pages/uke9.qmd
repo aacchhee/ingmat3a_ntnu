@@ -1,0 +1,5 @@
+---
+title: "Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden"
+---
+
+{{< include ../_includes/optimization/uke9.md >}}

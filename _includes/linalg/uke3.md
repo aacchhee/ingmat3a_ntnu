@@ -1,13 +1,3 @@
-## Femukersplan for numerisk lineær algebra
-
-| Uke | Spørsmålet vi starter med | Matematisk innhold og kobling til anvendelser |
-|---|---|---|
-| **3** | **Kan forskjellige inputvektorer gi samme output?** Vi undersøker en transformasjon der $Ax_1=Ax_2$, selv om $x_1\neq x_2$. Outputen er da ikke tilstrekkelig til å avgjøre hvilken input som ble brukt. Forskjellen $x_1-x_2$ transformeres til null. | Kolonnerommet beskriver alle outputvektorer transformasjonen kan produsere. Nullrommet består av inputretningene som transformeres til null. Ved bildereduksjon kan ulike bilder derfor gi samme reduserte bilde. |
-| **4** | **Hva gjør vi når en ønsket output ikke kan produseres nøyaktig?** For støyfylte data ligger $b$ vanligvis ikke blant outputvektorene $Ax$ som modellen kan produsere. Vi søker derfor den oppnåelige outputen som ligger nærmest $b$. | Ortogonal projeksjon leder til minste kvadraters metode, Gram–Schmidt og QR-faktorisering. Minste kvadrater er en grunnleggende metode for å tilpasse lineære modeller til data. |
-| **5** | **Hva skjer når vi gjentar den samme transformasjonen?** Vi beregner $x_{k+1}=Ax_k$ flere ganger og normaliserer underveis. Under bestemte betingelser vil én retning etter hvert dominere. | Egenvektorer er retninger som transformasjonen bevarer, bortsett fra skalering og eventuelt fortegn. Dette leder til potensmetoden og PageRank. Beslektede spektrale metoder brukes til å analysere grafer og finne mønstre i data. |
-| **6** | **Hvordan finner vi inputen som gir en bestemt output når systemet er stort?** Vi ønsker å løse $Ax=b$, men en generell tett løsningsmetode kan bruke unødvendig mye tid og minne. | Cholesky, Gauss–Seidel, konjugerte gradienter og prekondisjonering viser hvordan matrisestruktur kan utnyttes. Store lineære systemer oppstår blant annet i optimering og maskinlæring. |
-| **7** | **Hvilke inputretninger påvirker outputen mest?** Vi deler transformasjonen opp i ortogonale inputretninger og måler hvor sterkt hver retning forsterkes eller dempes. | SVD samler ideene om kolonnerom, nullrom, rang og følsomhet. Lavrangsapproksimasjoner brukes til dimensjonsreduksjon, kompresjon, støyfiltrering og tilnærming av store vektmatriser i KI-modeller. |
-
 ::: {.panel-tabset}
 
 ## 3.0 To bilder, samme output

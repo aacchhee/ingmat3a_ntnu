@@ -15,11 +15,15 @@ website:
       - text: "IDE / Readme"
         file: pages/page1.qmd
 
-      - text: "Uke 1 – regnetid, binære tall og tall på datamaskiner"
-        file: pages/page2.qmd
+      - text: "Emneinnhold"
+        file: pages/emneinnhold.qmd
 
-      - text: "Uke 2 – fikspunktiterasjon"
-        file: pages/page4.qmd
+      - section: "Tall og algoritmer"
+        contents:
+          - text: "Uke 1 – regnetid, binære tall og tall på datamaskiner"
+            file: pages/page2.qmd
+          - text: "Uke 2 – fikspunktiterasjon"
+            file: pages/page4.qmd
 
       - section: "Numerisk lineær algebra"
         contents:
@@ -33,6 +37,19 @@ website:
             file: pages/uke6.qmd
           - text: "Uke 7 – singulærverdidekomposisjon"
             file: pages/uke7.qmd
+
+      - section: "Optimering"
+        contents:
+          - text: "Uke 8 – introduksjon til optimering"
+            file: pages/uke8.qmd
+          - text: "Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden"
+            file: pages/uke9.qmd
+          - text: "Uke 10 – Newtons metode"
+            file: pages/uke10.qmd
+          - text: "Uke 11 – lineær programmering"
+            file: pages/uke11.qmd
+          - text: "Uke 12 – optimering med bibetingelser og minste kvadrater"
+            file: pages/uke12.qmd
 
       - section: "Projects"
         contents:
