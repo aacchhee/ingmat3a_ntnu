@@ -4,7 +4,9 @@
 
 ### Først et eksperiment
 
-Vi begynner med en tilfeldig vektor, multipliserer gjentatte ganger med den samme matrisen og normaliserer etter hvert steg. Studentene plotter både komponentene, vinkelen mellom to påfølgende iterater og Rayleigh-kvotienten. Deretter endrer vi matrisen slik at de to største egenverdiene ligger nær hverandre, eller har samme absoluttverdi, og ser hvordan mønsteret endres. Egenvektorer introduseres som forklaringen på observerte stabile retninger.
+Vi begynner med en diagonaliserbar matrise som har en enkel dominant egenverdi $\lambda_1$, det vil si $|\lambda_1|>|\lambda_2|\ge\cdots$. For en startvektor med en ikke-null komponent i egenretningen til $\lambda_1$ vil de normaliserte iteratene i potensmetoden nærme seg denne egenretningen. Fortegnet kan alternere dersom $\lambda_1<0$, så det er retningen—ikke nødvendigvis selve vektoren—som stabiliserer seg.
+
+Studentene plotter komponenter, vinkelen mellom retningene, Rayleigh-kvotienten og egenresidualen $\lVert Ax_k-\rho_kx_k\rVert_2$. Vi endrer deretter spektralgapet, velger en startvektor uten komponent i den dominante egenretningen og prøver to egenverdier med samme største absoluttverdi. Slik blir forutsetningene for potensmetoden synlige i stedet for skjult i formuleringen «gjentatt multiplikasjon stabiliserer seg».
 
 ### Begreper vi trenger
 
@@ -23,7 +25,7 @@ Vi begynner med en tilfeldig vektor, multipliserer gjentatte ganger med den samm
 
 ### Etter denne uken
 
-Studentene skal kunne tolke egenvektorer dynamisk, implementere potensmetoden og bruke residual og konvergenshistorikk til å vurdere resultatet.
+Studentene skal kunne tolke egenvektorer som invariante retninger, implementere potensmetoden og angi sentrale konvergensbetingelser. En liten egenresidual viser at paret er en god approksimativ egenløsning, men identifiserer ikke alene hvilken egenverdi som er funnet eller hvor nær egenvektoren er når problemet er følsomt.
 
 ## Aktivitetsplan
 
@@ -32,7 +34,7 @@ Studentene skal kunne tolke egenvektorer dynamisk, implementere potensmetoden og
 3. **Forklar mønsteret:** Introduser egenverdier, egenvektorer, invariante retninger og dominant egenverdi.
 4. **Hva bestemmer farten?** Sammenlign matriser med stort og lite spektralgap og knytt observasjonen til konvergensplottet.
 5. **Når virker det ikke?** Undersøk uheldig startvektor, negativ dominant egenverdi og to dominante egenverdier med samme absoluttverdi.
-6. **PageRank-laboratorium:** Bygg en overgangsmatrise fra en liten graf, oppdag problemer med hengende noder og reparer modellen med damping.
+6. **PageRank-laboratorium:** Bygg en kolonnestokastisk overgangsmatrise fra en liten graf. Behandle hengende noder eksplisitt. Med en positiv teleporteringsvektor og dempingsfaktor $0<\alpha<1$ blir Google-matrisen positiv og har en entydig positiv stasjonær sannsynlighetsvektor.
 7. **Kort leveranse:** En implementasjon av potensmetoden med stoppkriterium og en diagnose av ett problemtilfelle.
 
 :::

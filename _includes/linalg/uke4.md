@@ -4,7 +4,15 @@
 
 ### Først et eksperiment
 
-Vi lager støyfylte måledata som nesten følger en rett linje. Studentene forsøker først å løse alle ligningene eksakt og oppdager at systemet er inkonsistent. `numpy.linalg.lstsq` gir likevel et svar. Ved å beregne residualen $r=b-Ax_*$ og produktet $A^Tr$ oppdager de den ortogonale betingelsen før projeksjon og minste kvadrater blir formulert geometrisk.
+Vi lager flere støyfylte målepunkter enn modellen har parametre, og velger dataene slik at $b\notin C(A)$. At systemet er overbestemt gjør det ikke i seg selv inkonsistent; det er plasseringen av $b$ utenfor kolonnerommet som gjør at $Ax=b$ mangler en eksakt løsning.
+
+`numpy.linalg.lstsq` finner en minimizer $x_*$ for $\lVert Ax-b\rVert_2$. Med residualen definert som $r=b-Ax_*$ får vi normalbetingelsen
+
+$$
+A^Tr=0,
+$$
+
+altså $r\perp C(A)$. Den tilpassede vektoren $Ax_*$ er den ortogonale projeksjonen av $b$ på kolonnerommet. Selve den projiserte vektoren er entydig, mens parametervektoren $x_*$ bare er entydig når kolonnene i $A$ er lineært uavhengige. `lstsq` returnerer en minimumsnormløsning dersom minimizeren ikke er entydig.
 
 ### Begreper vi trenger
 
@@ -23,7 +31,7 @@ Vi lager støyfylte måledata som nesten følger en rett linje. Studentene fors�
 
 ### Etter denne uken
 
-Studentene skal kunne formulere et tilpasningsproblem som et minste-kvadraters problem, tolke residualen geometrisk og forklare hvorfor QR vanligvis er bedre enn normalligningene.
+Studentene skal kunne formulere et tilpasningsproblem som et minste-kvadraters problem og tolke $Ax_*$ og residualen som en ortogonal oppdeling av $b$. De skal også kunne forklare at normalligningene har kondisjonstall omtrent $\kappa_2(A)^2$ når $A$ har full kolonnerang, mens en stabil QR-metode unngår denne kvadreringen.
 
 ## Aktivitetsplan
 
