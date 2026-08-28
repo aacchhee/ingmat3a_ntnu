@@ -275,7 +275,12 @@ window.Quarto = {
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <section id="først-et-eksperiment" class="level3">
 <h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
-<p>Vi lager støyfylte måledata som nesten følger en rett linje. Studentene forsøker først å løse alle ligningene eksakt og oppdager at systemet er inkonsistent. <code>numpy.linalg.lstsq</code> gir likevel et svar. Ved å beregne residualen <span class="math inline">\(r=b-Ax_*\)</span> og produktet <span class="math inline">\(A^Tr\)</span> oppdager de den ortogonale betingelsen før projeksjon og minste kvadrater blir formulert geometrisk.</p>
+<p>Vi lager flere støyfylte målepunkter enn modellen har parametre, og velger dataene slik at <span class="math inline">\(b\notin C(A)\)</span>. At systemet er overbestemt gjør det ikke i seg selv inkonsistent; det er plasseringen av <span class="math inline">\(b\)</span> utenfor kolonnerommet som gjør at <span class="math inline">\(Ax=b\)</span> mangler en eksakt løsning.</p>
+<p><code>numpy.linalg.lstsq</code> finner en minimizer <span class="math inline">\(x_*\)</span> for <span class="math inline">\(\lVert Ax-b\rVert_2\)</span>. Med residualen definert som <span class="math inline">\(r=b-Ax_*\)</span> får vi normalbetingelsen</p>
+<p><span class="math display">\[
+A^Tr=0,
+\]</span></p>
+<p>altså <span class="math inline">\(r\perp C(A)\)</span>. Den tilpassede vektoren <span class="math inline">\(Ax_*\)</span> er den ortogonale projeksjonen av <span class="math inline">\(b\)</span> på kolonnerommet. Selve den projiserte vektoren er entydig, mens parametervektoren <span class="math inline">\(x_*\)</span> bare er entydig når kolonnene i <span class="math inline">\(A\)</span> er lineært uavhengige. <code>lstsq</code> returnerer en minimumsnormløsning dersom minimizeren ikke er entydig.</p>
 </section>
 <section id="begreper-vi-trenger" class="level3">
 <h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
@@ -298,7 +303,7 @@ window.Quarto = {
 </section>
 <section id="etter-denne-uken" class="level3">
 <h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
-<p>Studentene skal kunne formulere et tilpasningsproblem som et minste-kvadraters problem, tolke residualen geometrisk og forklare hvorfor QR vanligvis er bedre enn normalligningene.</p>
+<p>Studentene skal kunne formulere et tilpasningsproblem som et minste-kvadraters problem og tolke <span class="math inline">\(Ax_*\)</span> og residualen som en ortogonal oppdeling av <span class="math inline">\(b\)</span>. De skal også kunne forklare at normalligningene har kondisjonstall omtrent <span class="math inline">\(\kappa_2(A)^2\)</span> når <span class="math inline">\(A\)</span> har full kolonnerang, mens en stabil QR-metode unngår denne kvadreringen.</p>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">

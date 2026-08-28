@@ -275,7 +275,8 @@ window.Quarto = {
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <section id="først-et-eksperiment" class="level3">
 <h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
-<p>Vi leser et gråtonebilde som en matrise, beregner SVD og rekonstruerer bildet med én, fem, ti og flere singulære komponenter. Studentene ser både bildet og kurven av singulærverdier og må foreslå hvor en rimelig trunkering ligger. Deretter bruker vi de samme faktorene til å identifisere kolonnerom, nullrom, numerisk rang og følsomme retninger. SVD blir dermed en samlet forklaring på de foregående ukene.</p>
+<p>Vi leser et gråtonebilde som en matrise, beregner SVD og rekonstruerer bildet med én, fem, ti og flere singulære komponenter. God kompresjon er ikke garantert: den lykkes når singulærverdiene avtar raskt. Studentene ser derfor både rekonstruksjonene og kurven av singulærverdier før de foreslår en trunkeringsrang.</p>
+<p>For <span class="math inline">\(A=U\Sigma V^T\)</span> er de høyre singulærvektorene inputretninger. En retning <span class="math inline">\(v_i\)</span> avbildes til <span class="math inline">\(\sigma_i u_i\)</span>; retninger med <span class="math inline">\(\sigma_i=0\)</span> utgjør nullrommet. De venstre singulærvektorene med <span class="math inline">\(\sigma_i&gt;0\)</span> spenner kolonnerommet. Den trunkerte SVD-en med rang <span class="math inline">\(k\)</span> er, etter Eckart–Young–Mirsky-teoremet, en beste rang-<span class="math inline">\(k\)</span>-approksimasjon i både 2-normen og Frobenius-normen. Dermed samler SVD rom, ortogonalitet, rang, minste kvadrater og følsomhet i én faktorisering.</p>
 </section>
 <section id="begreper-vi-trenger" class="level3">
 <h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
@@ -300,7 +301,7 @@ window.Quarto = {
 </section>
 <section id="etter-denne-uken" class="level3">
 <h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
-<p>Studentene skal kunne bruke SVD til å samle trådene fra rom, ortogonalitet, minste kvadrater, rang og kondisjonering.</p>
+<p>Studentene skal kunne bruke SVD til å beskrive nullrom og kolonnerom, skille eksakt fra numerisk rang og forklare hvorfor små ikke-null singulærverdier gjør inversjon og minste-kvadraters problemer følsomme. For full kolonnerang er <span class="math inline">\(\kappa_2(A)=\sigma_{\max}/\sigma_{\min}\)</span>; for en rangdefekt matrise er det vanlige 2-norm-kondisjonstallet uendelig.</p>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
@@ -310,7 +311,7 @@ window.Quarto = {
 <li><strong>Tolk faktorene:</strong> Følg en vektor gjennom <span class="math inline">\(V^T\)</span>, <span class="math inline">\(\Sigma\)</span> og <span class="math inline">\(U\)</span> og beskriv rotasjon, skalering og ny orientering.</li>
 <li><strong>Finn rommene igjen:</strong> Bruk singulærvektorene til å konstruere basiser for kolonnerom og nullrom og kontroller dem numerisk.</li>
 <li><strong>Nær rangtap:</strong> Perturber en matrise med en liten singulærverdi og mål hvordan løsningen av <span class="math inline">\(Ax=b\)</span> endres.</li>
-<li><strong>Pseudoinvers og filtrering:</strong> Sammenlign <code>lstsq</code>, <code>pinv</code> og trunkert SVD på et følsomt minste-kvadraters problem.</li>
+<li><strong>Pseudoinvers og filtrering:</strong> Sammenlign <code>lstsq</code>, <code>pinv</code> og trunkert SVD på et følsomt minste-kvadraters problem. Gjør toleransen eksplisitt: pseudoinversen behandler singulærverdier under en valgt grense som null, mens trunkering innfører en regulariserende modellbeslutning.</li>
 <li><strong>Syntese:</strong> Knytt SVD eksplisitt til rang, ortogonal projeksjon, minste kvadrater, kondisjonering og regularisering.</li>
 <li><strong>Kort leveranse:</strong> En kompresjons- eller denoisingrapport med valgt rang, feilmål og faglig begrunnelse.</li>
 </ol>

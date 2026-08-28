@@ -289,32 +289,32 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">3</td>
-<td>Vi finner forskjellige vektorer <span class="math inline">\(x_1\)</span> og <span class="math inline">\(x_2\)</span> som gir samme resultat <span class="math inline">\(Ax_1=Ax_2\)</span>, og undersøker hvilke deler av inputen matrisen ikke kan se.</td>
-<td>spenn, basis, kolonnerom, nullrom og rang</td>
-<td>eliminasjon og numerisk rangundersøkelse</td>
+<td>For en matrise med ikke-trivielt nullrom finner vi <span class="math inline">\(x_1\ne x_2\)</span> med <span class="math inline">\(Ax_1=Ax_2\)</span>. Differansen ligger i nullrommet og viser nøyaktig hvilken inputinformasjon avbildningen mister.</td>
+<td>lineærkombinasjoner, spenn, basis, kolonnerom, nullrom, rang og rang-nullitet</td>
+<td>eliminasjon, løsning av lineære systemer og undersøkelse av numerisk rang</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">4</td>
-<td>Et overbestemt system har ingen eksakt løsning, men <code>numpy.linalg.lstsq</code> finner likevel en «beste» løsning. Vi undersøker hva som gjør den best.</td>
-<td>ortogonalitet, projeksjon og minste kvadrater</td>
+<td>Vi velger støyfylte data slik at <span class="math inline">\(Ax=b\)</span> er inkonsistent. <code>numpy.linalg.lstsq</code> finner da en vektor som minimerer <span class="math inline">\(\lVert Ax-b\rVert_2\)</span>; vi undersøker den ortogonale geometrien bak minimumet.</td>
+<td>indreprodukt, ortogonalitet, projeksjon og minste kvadrater</td>
 <td>Gram–Schmidt og QR-faktorisering</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">5</td>
-<td>Gjentatt matrisemultiplikasjon og normalisering gjør at en tilfeldig startvektor ofte stabiliserer seg i én retning.</td>
-<td>egenverdier, egenvektorer og invariante retninger</td>
+<td>Normalisert potensiterasjon stabiliserer seg mot en egenretning når matrisen har én dominant egenverdi og startvektoren har komponent i den tilhørende egenretningen. Vi undersøker også når dette feiler.</td>
+<td>egenverdier, egenvektorer, invariante underrom og spektralgap</td>
 <td>potensmetoden og PageRank</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">6</td>
-<td><code>numpy.linalg.solve</code> virker for et lite system, men tids- og minnebruken vokser raskt. Vi prøver derfor å forbedre en tilnærming med bare matrise-vektor-produkter.</td>
-<td>SPD-matriser, kvadratisk energi, residual og feil</td>
+<td>En tett, generell <code>numpy.linalg.solve</code> utnytter ikke nødvendigvis strukturen i et stort system. Vi sammenligner strukturerte direkte metoder med iterasjoner som hovedsakelig bruker matrise-vektor-produkter.</td>
+<td>SPD-matriser, kvadratisk energi, residual, feil og kondisjonering</td>
 <td>Cholesky, Gauss–Seidel, konjugerte gradienter og prekondisjonering</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">7</td>
-<td>Et bilde eller en datamatrise kan rekonstrueres overraskende godt etter at mange retninger er fjernet. Vi undersøker hvilke retninger som bærer informasjonen.</td>
-<td>singulærverdier, kondisjonering og lavrangsapproksimasjon</td>
+<td>Noen data har raskt avtagende singulærverdier og kan da approksimeres godt med lav rang. Vi undersøker hvilke inputretninger som forsterkes, dempes eller forsvinner.</td>
+<td>singulærverdier, kolonnerom, nullrom, kondisjonering og lavrangsapproksimasjon</td>
 <td>SVD, pseudoinvers og trunkert SVD</td>
 </tr>
 </tbody>
@@ -325,7 +325,12 @@ window.Quarto = {
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <section id="først-et-eksperiment" class="level3">
 <h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
-<p>Vi starter med en liten matrise med tre inputkomponenter og to outputkomponenter. Studentene får først lete etter to forskjellige vektorer som gir samme output. Deretter studerer vi differansen <span class="math inline">\(z=x_1-x_2\)</span> og oppdager at <span class="math inline">\(Az=0\)</span>. Vi endrer én kolonne slik at den er nesten, men ikke helt, avhengig av de andre, og sammenligner hva NumPy rapporterer i <code>float64</code> og <code>float32</code>. Målet er at behovet for kolonnerom, nullrom, basis, rang og toleranse skal oppstå fra observasjonene.</p>
+<p>Vi starter med en <span class="math inline">\(2\times3\)</span>-matrise <span class="math inline">\(A\)</span> med rang 2. Siden avbildningen går fra <span class="math inline">\(\mathbb R^3\)</span> til <span class="math inline">\(\mathbb R^2\)</span>, sier rang-nullitet at nullrommet har dimensjon 1. Studentene leter først etter <span class="math inline">\(x_1\ne x_2\)</span> med samme output. Av <span class="math inline">\(Ax_1=Ax_2\)</span> følger</p>
+<p><span class="math display">\[
+A(x_1-x_2)=0,
+\]</span></p>
+<p>så forskjellen mellom de to inputvektorene ligger i nullrommet. Omvendt gir enhver <span class="math inline">\(z\in N(A)\)</span> samme output fra <span class="math inline">\(x\)</span> og <span class="math inline">\(x+z\)</span>. Dermed blir nullrommet en presis beskrivelse av informasjonen som <span class="math inline">\(A\)</span> mister, mens kolonnerommet beskriver alle outputvektorer som faktisk kan produseres.</p>
+<p>Etter dette erstatter vi en kolonne med en kolonne som er nesten, men ikke eksakt, avhengig av de andre. Matrisen har fortsatt eksakt rang 2, men numerisk rang avhenger av målestokk, presisjon og valgt toleranse. Sammenligningen mellom <code>float64</code> og <code>float32</code> skal derfor ikke brukes til å «finne den sanne rangen», men til å skille eksakt rang fra en toleranseavhengig numerisk rang.</p>
 </section>
 <section id="begreper-vi-trenger" class="level3">
 <h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
@@ -334,7 +339,7 @@ window.Quarto = {
 <li>lineær uavhengighet</li>
 <li>kolonnerom og nullrom</li>
 <li>rang og dimensjon</li>
-<li>ingen, én eller flere løsninger av <span class="math inline">\(Ax=b\)</span></li>
+<li>konsistens og løsningsmengden til <span class="math inline">\(Ax=b\)</span></li>
 </ul>
 </section>
 <section id="algoritmer-og-numeriske-undersøkelser" class="level3">
@@ -348,17 +353,17 @@ window.Quarto = {
 </section>
 <section id="etter-denne-uken" class="level3">
 <h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
-<p>Studentene skal kunne tolke kolonnerom, nullrom og rang numerisk, og forklare hvorfor et lineært system har ingen, én eller flere løsninger.</p>
+<p>Studentene skal kunne bruke kolonnerommet til å avgjøre om <span class="math inline">\(Ax=b\)</span> er konsistent, og nullrommet til å beskrive entydighet. Dersom systemet er konsistent, er løsningen entydig akkurat når <span class="math inline">\(N(A)=\{0\}\)</span>; ellers finnes det uendelig mange løsninger <span class="math inline">\(x_p+z\)</span>, der <span class="math inline">\(z\in N(A)\)</span>.</p>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <ol type="1">
 <li><strong>Samme output, forskjellig input:</strong> Studentene eksperimenterer med en gitt <span class="math inline">\(2\times3\)</span>-matrise og leter etter <span class="math inline">\(x_1\neq x_2\)</span> med <span class="math inline">\(Ax_1=Ax_2\)</span>.</li>
-<li><strong>Finn den usynlige retningen:</strong> Beregn <span class="math inline">\(z=x_1-x_2\)</span>, kontroller residualen <span class="math inline">\(\lVert Az\rVert\)</span>, og beskriv alle vektorer <span class="math inline">\(x_1+tz\)</span> som gir samme output.</li>
+<li><strong>Finn den usynlige retningen:</strong> Beregn <span class="math inline">\(z=x_1-x_2\)</span> og kontroller <span class="math inline">\(\lVert Az\rVert\)</span>. Når det er kontrollert at <span class="math inline">\(z\)</span> spenner det endimensjonale nullrommet, beskrives alle vektorer med samme output som <span class="math inline">\(x_1+tz\)</span>, <span class="math inline">\(t\in\mathbb R\)</span>.</li>
 <li><strong>Hvilke output er mulige?</strong> Generer mange tilfeldige <span class="math inline">\(x\)</span>, plott <span class="math inline">\(Ax\)</span>, og sammenlign punktskyen med matrisens kolonner.</li>
 <li><strong>Fra observasjon til språk:</strong> Innfør spenn, lineær uavhengighet, basis, kolonnerom, nullrom, rang og rang-nullitet.</li>
 <li><strong>Bryt eksperimentet:</strong> Erstatt en kolonne med en nesten lineærkombinasjon av de andre. Varier perturbasjonen og toleransen i <code>numpy.linalg.matrix_rank</code>.</li>
-<li><strong>Systemklassifisering:</strong> Undersøk tre høyresider som gir henholdsvis ingen, én eller flere løsninger. Kontroller svarene med residualer.</li>
+<li><strong>Systemklassifisering:</strong> For den faste <span class="math inline">\(2\times3\)</span>-matrisen undersøkes høyresider som gir ingen eller uendelig mange løsninger; en unik løsning er umulig fordi nullrommet ikke er trivielt. Bytt deretter til en matrise med trivielt nullrom for å lage et konsistent system med unik løsning.</li>
 <li><strong>Kort leveranse:</strong> Én figur, én numerisk tabell og en forklaring av hva matrisen bevarer og mister.</li>
 </ol>
 </div>
