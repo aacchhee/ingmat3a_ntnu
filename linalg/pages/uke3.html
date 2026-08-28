@@ -273,49 +273,42 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="femukersplan-for-numerisk-lineær-algebra">Femukersplan for numerisk lineær algebra</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 30%">
-<col style="width: 23%">
-<col style="width: 23%">
-<col style="width: 23%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: right;">Uke</th>
-<th>Eksperimentelt startpunkt</th>
-<th>Begreper vi bygger opp igjen</th>
-<th>Viktigste algoritmer</th>
+<th>Uke</th>
+<th>Spørsmålet vi starter med</th>
+<th>Matematisk innhold og kobling til anvendelser</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">3</td>
-<td>For en matrise med ikke-trivielt nullrom finner vi <span class="math inline">\(x_1\ne x_2\)</span> med <span class="math inline">\(Ax_1=Ax_2\)</span>. Differansen ligger i nullrommet og viser nøyaktig hvilken inputinformasjon avbildningen mister.</td>
-<td>lineærkombinasjoner, spenn, basis, kolonnerom, nullrom, rang og rang-nullitet</td>
-<td>eliminasjon, løsning av lineære systemer og undersøkelse av numerisk rang</td>
+<td><strong>3</strong></td>
+<td><strong>Kan forskjellige inputvektorer gi samme output?</strong> Vi undersøker en transformasjon der <span class="math inline">\(Ax_1=Ax_2\)</span>, selv om <span class="math inline">\(x_1\neq x_2\)</span>. Outputen er da ikke tilstrekkelig til å avgjøre hvilken input som ble brukt. Forskjellen <span class="math inline">\(x_1-x_2\)</span> transformeres til null.</td>
+<td>Kolonnerommet beskriver alle outputvektorer transformasjonen kan produsere. Nullrommet består av inputretningene som transformeres til null. I et KI-lag kan ulike inputvektorer derfor gi samme output, særlig når laget reduserer dimensjonen.</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">4</td>
-<td>Vi velger støyfylte data slik at <span class="math inline">\(Ax=b\)</span> er inkonsistent. <code>numpy.linalg.lstsq</code> finner da en vektor som minimerer <span class="math inline">\(\lVert Ax-b\rVert_2\)</span>; vi undersøker den ortogonale geometrien bak minimumet.</td>
-<td>indreprodukt, ortogonalitet, projeksjon og minste kvadrater</td>
-<td>Gram–Schmidt og QR-faktorisering</td>
+<td><strong>4</strong></td>
+<td><strong>Hva gjør vi når en ønsket output ikke kan produseres nøyaktig?</strong> For støyfylte data ligger <span class="math inline">\(b\)</span> vanligvis ikke blant outputvektorene <span class="math inline">\(Ax\)</span> som modellen kan produsere. Vi søker derfor den oppnåelige outputen som ligger nærmest <span class="math inline">\(b\)</span>.</td>
+<td>Ortogonal projeksjon leder til minste kvadraters metode, Gram–Schmidt og QR-faktorisering. Minste kvadrater er en grunnleggende metode for å tilpasse lineære modeller til data.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">5</td>
-<td>Normalisert potensiterasjon stabiliserer seg mot en egenretning når matrisen har én dominant egenverdi og startvektoren har komponent i den tilhørende egenretningen. Vi undersøker også når dette feiler.</td>
-<td>egenverdier, egenvektorer, invariante underrom og spektralgap</td>
-<td>potensmetoden og PageRank</td>
+<td><strong>5</strong></td>
+<td><strong>Hva skjer når vi gjentar den samme transformasjonen?</strong> Vi beregner <span class="math inline">\(x_{k+1}=Ax_k\)</span> flere ganger og normaliserer underveis. Under bestemte betingelser vil én retning etter hvert dominere.</td>
+<td>Egenvektorer er retninger som transformasjonen bevarer, bortsett fra skalering og eventuelt fortegn. Dette leder til potensmetoden og PageRank. Beslektede spektrale metoder brukes til å analysere grafer og finne mønstre i data.</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">6</td>
-<td>En tett, generell <code>numpy.linalg.solve</code> utnytter ikke nødvendigvis strukturen i et stort system. Vi sammenligner strukturerte direkte metoder med iterasjoner som hovedsakelig bruker matrise-vektor-produkter.</td>
-<td>SPD-matriser, kvadratisk energi, residual, feil og kondisjonering</td>
-<td>Cholesky, Gauss–Seidel, konjugerte gradienter og prekondisjonering</td>
+<td><strong>6</strong></td>
+<td><strong>Hvordan finner vi inputen som gir en bestemt output når systemet er stort?</strong> Vi ønsker å løse <span class="math inline">\(Ax=b\)</span>, men en generell tett løsningsmetode kan bruke unødvendig mye tid og minne.</td>
+<td>Cholesky, Gauss–Seidel, konjugerte gradienter og prekondisjonering viser hvordan matrisestruktur kan utnyttes. Store lineære systemer oppstår blant annet i optimering og maskinlæring.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">7</td>
-<td>Noen data har raskt avtagende singulærverdier og kan da approksimeres godt med lav rang. Vi undersøker hvilke inputretninger som forsterkes, dempes eller forsvinner.</td>
-<td>singulærverdier, kolonnerom, nullrom, kondisjonering og lavrangsapproksimasjon</td>
-<td>SVD, pseudoinvers og trunkert SVD</td>
+<td><strong>7</strong></td>
+<td><strong>Hvilke inputretninger påvirker outputen mest?</strong> Vi deler transformasjonen opp i ortogonale inputretninger og måler hvor sterkt hver retning forsterkes eller dempes.</td>
+<td>SVD samler ideene om kolonnerom, nullrom, rang og følsomhet. Lavrangsapproksimasjoner brukes til dimensjonsreduksjon, kompresjon, støyfiltrering og tilnærming av store vektmatriser i KI-modeller.</td>
 </tr>
 </tbody>
 </table>
