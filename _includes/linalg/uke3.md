@@ -267,22 +267,117 @@ print("Bildeform:", X1.shape, "  vektorform:", x1.shape)
 print("A har form", A_pool.shape)
 print("A @ x1 =", y1)
 print("A @ x2 =", y2)
-
-plt.figure(figsize=(7, 2.2))
-plt.imshow(A_pool, cmap="Blues", vmin=0, vmax=0.25,
-           interpolation="nearest", aspect="auto")
-for row in range(4):
-    for col in range(16):
-        if A_pool[row,col] != 0:
-            plt.text(col,row,"¼",ha="center",va="center",fontsize=7)
-plt.xlabel("Pikselnummer i inputen")
-plt.ylabel("Output: ØV, ØH, NV, NH")
-plt.yticks(range(4),["ØV","ØH","NV","NH"])
-plt.title("Hver rad velger fire inputpiksler og tar gjennomsnittet")
-plt.colorbar(label="Vekt"); plt.tight_layout(); plt.show()
 ```
 
-De blå feltene viser hvilke inputpiksler som bidrar til hver outputverdi. Første rad har fire vekter lik $1/4$ ved pikslene i øvre venstre blokk; produktet av denne raden og $x$ blir derfor gjennomsnittet i den blokken. De tre neste radene gjør det samme for øvre høyre, nedre venstre og nedre høyre blokk. Nullene er hvite og betyr at den aktuelle inputpikselen ikke brukes i den målingen.
+Inputvektoren er lagt vannrett under matrisen i neste figur. Det er ikke vanlig bokoppsett, men gjør koblingen lettere å se: Verdien $x_j$ står rett under kolonne $j$ i matrisen. Samme farge brukes på et bildeområde, de tilhørende inputverdiene, matrisraden som samler dem, og outputpikselen de ender i.
+
+```{.jsxgraph width="760" height="390"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [0, 8.4, 20.5, 0],
+  axis: false,
+  showCopyright: false,
+  showNavigation: false,
+  pan: { enabled: false },
+  zoom: { enabled: false }
+});
+
+var rowColors = ['#8ecae6','#ffcf70','#a8d5a2','#d7b5e8'];
+var rowDark = ['#277da1','#d98900','#4f8f49','#8b5aa7'];
+var rowNames = ['øvre venstre','øvre høyre','nedre venstre','nedre høyre'];
+var active = [
+  [0,1,4,5], [2,3,6,7], [8,9,12,13], [10,11,14,15]
+];
+var values = [0.1,0.9,0.1,0.9, 0.9,0.1,0.9,0.1,
+              0.1,0.9,0.1,0.9, 0.9,0.1,0.9,0.1];
+var xStart=2.0, cellW=0.68, rowH=0.78, matrixTop=7.1;
+
+function cell(x0,y0,w,h,fill,border,width) {
+  return board.create('polygon', [[x0,y0],[x0+w,y0],[x0+w,y0+h],[x0,y0+h]], {
+    fillColor:fill, fillOpacity:1,
+    vertices:{visible:false},
+    borders:{strokeColor:border,strokeWidth:width || 1,
+             fixed:true,highlight:false},
+    fixed:true,highlight:false
+  });
+}
+
+board.create('text', [xStart+8*cellW,matrixTop+0.65,'MATRISE  A'], {
+  anchorX:'middle',fontSize:16,cssStyle:'font-weight:600',fixed:true
+});
+
+// Alle 64 oppføringer tegnes som egne ruter.
+for (var r=0; r<4; r++) {
+  var y0=matrixTop-(r+1)*rowH;
+  board.create('text',[1.75,y0+rowH/2,rowNames[r]],{
+    anchorX:'right',anchorY:'middle',fontSize:11,
+    color:rowDark[r],cssStyle:'font-weight:600',fixed:true
+  });
+  for (var c=0; c<16; c++) {
+    var isActive=active[r].indexOf(c)>=0;
+    cell(xStart+c*cellW,y0,cellW,rowH,
+         isActive ? rowColors[r] : '#ffffff','#555555',1);
+    board.create('text',[xStart+(c+0.5)*cellW,y0+rowH/2,
+                         isActive ? '¼' : '0'],{
+      anchorX:'middle',anchorY:'middle',fontSize:isActive ? 12 : 9,
+      color:isActive ? '#1f2933' : '#a7a7a7',fixed:true
+    });
+  }
+}
+
+// Inputvektoren ligger under de samme 16 kolonnene.
+var vectorY=2.05;
+board.create('text',[xStart+8*cellW,vectorY+1.15,
+  'INPUTVEKTOR  x  —  hver verdi står under sin matriskolonne'],{
+  anchorX:'middle',fontSize:14,cssStyle:'font-weight:600',fixed:true
+});
+for (var k=0; k<16; k++) {
+  var group = k<8 ? (k%4<2 ? 0 : 1) : (k%4<2 ? 2 : 3);
+  cell(xStart+k*cellW,vectorY,cellW,0.72,rowColors[group],'#555555',1);
+  board.create('text',[xStart+(k+0.5)*cellW,vectorY+0.43,
+                       values[k].toFixed(1)],{
+    anchorX:'middle',anchorY:'middle',fontSize:10,fixed:true
+  });
+  board.create('text',[xStart+(k+0.5)*cellW,vectorY-0.18,
+                       'x'+(k+1)],{
+    anchorX:'middle',anchorY:'middle',fontSize:8,color:'#555555',fixed:true
+  });
+}
+
+// Output som et 2 x 2-bilde.
+var outX=16.6, outTop=6.7, outW=1.15;
+board.create('text',[outX+outW,outTop+0.65,'OUTPUT  y'],{
+  anchorX:'middle',fontSize:16,cssStyle:'font-weight:600',fixed:true
+});
+var outPos=[];
+for (var q=0; q<4; q++) {
+  var outCol=q%2, outRow=Math.floor(q/2);
+  var ox=outX+outCol*outW, oy=outTop-(outRow+1)*outW;
+  cell(ox,oy,outW,outW,rowColors[q],'#333333',1.5);
+  board.create('text',[ox+outW/2,oy+outW/2,'0.5'],{
+    anchorX:'middle',anchorY:'middle',fontSize:13,fixed:true
+  });
+  outPos.push([ox,oy+outW/2]);
+}
+
+// Hver matrisrad beregner én outputpiksel.
+for (var a=0; a<4; a++) {
+  var sy=matrixTop-(a+0.5)*rowH;
+  board.create('arrow',[[xStart+16*cellW+0.1,sy],outPos[a]],{
+    strokeColor:rowDark[a],strokeWidth:2.5,
+    fixed:true,highlight:false
+  });
+}
+board.create('text',[14.65,3.9,'én rad'],{
+  anchorX:'middle',fontSize:12,cssStyle:'font-weight:600',fixed:true
+});
+board.create('text',[14.65,3.55,'→ ett tall'],{
+  anchorX:'middle',fontSize:12,fixed:true
+});
+```
+
+Les én farge om gangen. Den blå matrisraden har fire ruter med $1/4$. Rett under disse kolonnene står de fire blå inputverdiene fra øvre venstre bildeområde. Når rad og vektor multipliseres, blir disse fire verdiene ganget med $1/4$ og lagt sammen. Pilen fører resultatet til den blå outputpikselen. De hvite nullrutene betyr at de øvrige inputverdiene ikke bidrar til akkurat denne outputen.
+
+De gule, grønne og lilla radene gjør det samme for de tre andre bildeområdene. Matrise-vektorproduktet kan derfor leses som fire parallelle oppskrifter: **én rad inn, ett tall ut**. Figuren bruker sjakkbildet fra 3.0, så alle fire gjennomsnittene blir $0.5$.
 
 ### Et eksperiment med skalering og addisjon
 
