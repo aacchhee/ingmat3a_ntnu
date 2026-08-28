@@ -1272,6 +1272,15 @@ Matrisen beskriver en lineær transformasjon fra fire inputverdier til tre outpu
 2. Hvilke inputretninger gir output null?
 3. Kan en gitt vektor $b$ produseres som $Ax$?
 
+Vi bruker de samme fargene gjennom hele regningen:
+
+| Farge | I eliminasjonen | Senere i regningen |
+|---|---|---|
+| 🟦 Blå | første pivot, kolonne 1 | basisvektor $a_1$ og pivotvariabel $x_1$ |
+| 🟧 Oransje | andre pivot, kolonne 2 | basisvektor $a_2$ og pivotvariabel $x_2$ |
+| 🟩 Grønn | kolonne uten pivot | fri variabel $x_3=s$ og første nullromsretning |
+| 🟪 Lilla | kolonne uten pivot | fri variabel $x_4=t$ og andre nullromsretning |
+
 ```{pyodide-python}
 #| label: week3-pure-matrix-setup
 #| autorun: true
@@ -1308,15 +1317,15 @@ $$
 \end{bmatrix}
 \longrightarrow
 \begin{bmatrix}
-1&2&0&1\\
-0&1&1&1\\
+\color{#277da1}{\boxed{1}}&2&0&1\\
+0&\color{#d98900}{\boxed{1}}&1&1\\
 0&0&0&0
 \end{bmatrix}.
 $$
 
 Den siste raden inneholder ingen ny ligning. To rader er igjen, og de ledende oppføringene — **pivotene** — ligger i kolonne 1 og 2. Dermed er rangen 2.
 
-Koden under utfører vanlig framovereliminasjon. Den bruker delvis pivotering: I hver kolonne velges den største tilgjengelige pivoten i absoluttverdi. Det er tryggere numerisk enn automatisk å bruke den øverste oppføringen.
+Koden under utfører vanlig framovereliminasjon. Den går fra venstre mot høyre og bruker den første tilgjengelige ikke-null-oppføringen som pivot. Dette er tilstrekkelig for eksemplene våre og følger papirregningen tett.
 
 ```{pyodide-python}
 #| label: week3-row-echelon-function
@@ -1333,8 +1342,14 @@ def row_echelon(A,tol=1e-12,show_steps=False):
         if pivot_row==rows:
             break
 
-        candidate=pivot_row+np.argmax(np.abs(R[pivot_row:,col]))
-        if abs(R[candidate,col])<=tol:
+        # Finn den første brukbare pivoten, ikke den største.
+        candidate=None
+        for row in range(pivot_row,rows):
+            if abs(R[row,col])>tol:
+                candidate=row
+                break
+
+        if candidate is None:
             continue
 
         if candidate!=pivot_row:
@@ -1362,16 +1377,16 @@ print("Rang fra eliminasjon:",len(pivot_columns))
 print("Kontroll med NumPy:",np.linalg.matrix_rank(A))
 ```
 
-`matrix_rank` er nyttig som kontroll, men eliminasjonen viser *hvorfor* rangen er 2. Senere skal vi se at en numerisk rang alltid avhenger av hva som regnes som «tilstrekkelig nær null».
+`matrix_rank` er nyttig som kontroll, men eliminasjonen viser *hvorfor* rangen er 2. Mer robuste eliminasjonsalgoritmer kan omstokke rader og eventuelt kolonner for å unngå dårlige pivoter. Det tar vi ikke nå. Senere skal vi se at numerisk rang alltid avhenger av hva som regnes som «tilstrekkelig nær null».
 
 ### Basis for kolonnerommet
 
 Pivotene forteller hvilke opprinnelige kolonner som tilfører en ny outputretning. Vi henter derfor kolonne 1 og 2 fra den opprinnelige matrisen:
 
 $$
-a_1=\begin{bmatrix}1\\0\\1\end{bmatrix},
+\color{#277da1}{a_1=\begin{bmatrix}1\\0\\1\end{bmatrix}},
 \qquad
-a_2=\begin{bmatrix}2\\1\\3\end{bmatrix}.
+\color{#d98900}{a_2=\begin{bmatrix}2\\1\\3\end{bmatrix}}.
 $$
 
 ::: {.callout-warning}
@@ -1416,9 +1431,9 @@ x_2+x_3+x_4&=0.
 \end{aligned}
 $$
 
-Pivotvariablene er $x_1$ og $x_2$. Variablene $x_3$ og $x_4$ er frie. Sett
+Pivotvariablene er $\color{#277da1}{x_1}$ og $\color{#d98900}{x_2}$. Variablene $\color{#4f8f49}{x_3}$ og $\color{#8b5aa7}{x_4}$ er frie. Sett
 
-$$x_3=s,\qquad x_4=t.$$
+$$\color{#4f8f49}{x_3=s},\qquad \color{#8b5aa7}{x_4=t}.$$
 
 ::: {.callout-tip}
 ## Fortsett på papir
@@ -1430,8 +1445,8 @@ Resultatet er
 
 $$
 x=
-s\begin{bmatrix}2\\-1\\1\\0\end{bmatrix}
-+t\begin{bmatrix}1\\-1\\0\\1\end{bmatrix}.
+\color{#4f8f49}{s\begin{bmatrix}2\\-1\\1\\0\end{bmatrix}}
++\color{#8b5aa7}{t\begin{bmatrix}1\\-1\\0\\1\end{bmatrix}}.
 $$
 
 Dermed er de to viste vektorene en basis for nullrommet. Koden kontrollerer både at de gir output null, og at en tilfeldig lineærkombinasjon fortsatt gjør det.
@@ -1461,9 +1476,9 @@ Matrisen har fire kolonner, altså fire inputvariabler. Eliminasjonen ga to pivo
 $$
 \underbrace{4}_{\text{inputdimensjon}}
 =
-\underbrace{2}_{\text{rang}}
+\color{#277da1}{\underbrace{2}_{\text{rang}}}
 +
-\underbrace{2}_{\text{nullitet}}.
+\color{#4f8f49}{\underbrace{2}_{\text{nullitet}}}.
 $$
 
 Rangen teller de uavhengige kombinasjonene som kan synes i outputen. Nulliteten teller de uavhengige inputendringene som gir output null.
@@ -1481,7 +1496,7 @@ print(f"{A.shape[1]} = {rank_A} + {nullity_A}")
 Siden $a_1$ og $a_2$ er en basis for kolonnerommet, har en mulig output formen
 
 $$
-c_1a_1+c_2a_2
+\color{#277da1}{c_1a_1}+\color{#d98900}{c_2a_2}
 =
 \begin{bmatrix}
 c_1+2c_2\\c_2\\c_1+3c_2
