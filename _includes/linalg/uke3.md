@@ -1485,14 +1485,15 @@ $$
 }_{\text{nullitet}=2}.
 $$
 
-Rangen teller de uavhengige kombinasjonene som kan synes i outputen. Nulliteten teller de uavhengige inputendringene som gir output null.
+Rangen kommer fra de to pivotene. Nulliteten kommer **uavhengig** fra nullromsberegningen: Vi fant en basis med to vektorer. Først nå bruker vi disse to resultatene til å kontrollere rang–nullitet.
 
 ```{pyodide-python}
 #| label: week3-rank-nullity-check
 
 rank_A=len(pivot_columns)
-nullity_A=A.shape[1]-rank_A
+nullity_A=Z.shape[1]
 print(f"{A.shape[1]} = {rank_A} + {nullity_A}")
+print("Stemmer rang–nullitet?",A.shape[1]==rank_A+nullity_A)
 ```
 
 ### Kan en bestemt output produseres?
