@@ -2,7 +2,20 @@
 
 ## 3.0 To bilder, samme output
 
-Vi begynner med to bilder som ser helt forskjellige ut. Det første er ensfarget. Det andre har et tydelig sjakkmønster. Vi reduserer hvert bilde fra $4\times4$ til $2\times2$ piksler ved å erstatte hver $2\times2$-blokk med gjennomsnittet i blokken.
+En **transformasjon** er her en regel som tar en input og lager en output. Inputen kan være et bilde, en lydfil eller en tabell med målinger; outputen kan være et nytt bilde eller noen få tall som oppsummerer inputen. Vi skriver ofte
+
+$$T(\text{input})=\text{output}.$$
+
+Navnet sier foreløpig ikke noe mystisk. En Python-funksjon er også en regel fra input til output. Det viktige er å spørre konkret: Hvilken informasjon bruker regelen, hvilken informasjon kommer ut, og kan noe gå tapt underveis?
+
+Denne uka bruker vi én enkel bildetransformasjon som gjennomgående eksempel. Den tar et $4\times4$-bilde med 16 pikselverdier og lager et $2\times2$-bilde med fire verdier. Det store bildet deles i fire områder:
+
+- **øvre venstre blokk**, som blir øvre venstre outputpiksel;
+- **øvre høyre blokk**, som blir øvre høyre outputpiksel;
+- **nedre venstre blokk**, som blir nedre venstre outputpiksel;
+- **nedre høyre blokk**, som blir nedre høyre outputpiksel.
+
+Hver blokk har fire piksler. Transformasjonen erstatter de fire tallene med det aritmetiske gjennomsnittet deres. Vi begynner med to bilder som ser helt forskjellige ut: et ensfarget bilde og et tydelig sjakkmønster.
 
 ```{pyodide-python}
 #| label: week3-setup
@@ -92,13 +105,21 @@ for block_row in range(2):
                  2*block_col:2*block_col+2]
         blocks.append(block)
 
+block_names=["Øvre venstre","Øvre høyre","Nedre venstre","Nedre høyre"]
 show_images(blocks,
-    [f"Blokk {i+1}\nmiddel={np.mean(block):.1f}"
-     for i,block in enumerate(blocks)],
+    [f"{name}\nGjennomsnitt = {np.mean(block):.1f}"
+     for name,block in zip(block_names,blocks)],
     cols=4,vmin=0,vmax=1,figsize=(6.8,1.8))
 ```
 
-Dette er ikke en avrundingsfeil. Gjennomsnittene er matematisk like. Det er selve transformasjonen som ikke registrerer forskjellen mellom et jevnt felt og variasjoner med samme sum.
+Figuren viser de fire delene som ble klippet ut av `X2`, i samme leseretning som outputbildet: først øvre rad fra venstre mot høyre, deretter nedre rad. Ordet «gjennomsnitt» over hvert delbilde er tallet som plasseres i den tilsvarende outputpikselen. Alle fire tallene er $0.5$, og outputen blir derfor et ensfarget $2\times2$-bilde.
+
+Dette er ikke en avrundingsfeil. Gjennomsnittene er matematisk like. Det er selve transformasjonen som ikke registrerer forskjellen mellom et jevnt felt og variasjoner med samme sum. Transformasjonen er altså mange-til-én: flere forskjellige inputbilder kan havne på samme output.
+
+Senere skal vi undersøke to viktige egenskaper ved transformasjoner:
+
+1. **Hva skjer når inputbilder skaleres og legges sammen?** Dette leder til lineære transformasjoner.
+2. **Hvilke endringer i inputen blir usynlige i outputen?** Dette leder til nullrom, rang og dimensjon.
 
 Fra outputen alene kan vi derfor ikke avgjøre hvilket bilde som var input. Før vi gir dette et matematisk navn, kan du prøve å endre `X2` uten å endre gjennomsnittet i noen blokk. Hvilke endringer ser ut til å være tillatt?
 
@@ -111,7 +132,7 @@ Et bilde vises som en todimensjonal rute, men pikselverdiene kan også legges et
 #| autorun: true
 
 x2=X2.reshape(-1)
-fig,axes=plt.subplots(1,2,figsize=(7.0,2.25),
+fig,axes=plt.subplots(1,2,figsize=(7.0,1.8),
                       gridspec_kw={"width_ratios":[1,3.2]})
 
 axes[0].imshow(X2,cmap="gray",vmin=0,vmax=1,interpolation="nearest")
@@ -124,7 +145,7 @@ axes[0].set_title("$4\\times4$-bilde",fontsize=9)
 axes[0].set_xticks([]); axes[0].set_yticks([])
 
 axes[1].imshow(x2.reshape(1,-1),cmap="gray",vmin=0,vmax=1,
-               interpolation="nearest",aspect="auto")
+               interpolation="nearest",aspect="equal")
 for j,value in enumerate(x2):
     axes[1].text(j,0,f"$x_{{{j+1}}}$\n{value:.1f}",
                  ha="center",va="center",fontsize=6,
@@ -133,14 +154,17 @@ for boundary in [3.5,7.5,11.5]:
     axes[1].axvline(boundary,color="tab:red",linewidth=2)
 axes[1].set_title("Radene lagt etter hverandre: en 16-vektor",fontsize=9)
 axes[1].set_xticks([]); axes[1].set_yticks([])
+fig.text(0.315,0.49,"→",ha="center",va="center",fontsize=16)
 plt.tight_layout(); plt.show()
 ```
 
-Det er ikke innholdet som endres, bare måten det organiseres på. Et $4\times4$-bilde beskrives dermed med 16 koordinater og kan behandles som en vektor i $\mathbb R^{16}$. Blokkgjennomsnittet kan nå skrives
+Venstre del av figuren viser pikselnumrene på de opprinnelige plassene. Høyre del viser nøyaktig de samme tallene i én rad. De røde strekene markerer hvor en rad fra bildet slutter og den neste begynner. Vektoren er derfor ikke et nytt bilde og ingen informasjon er borte; vi har bare valgt en nummerering som gjør at vanlig matrise-vektor-multiplikasjon kan brukes.
+
+Et $4\times4$-bilde beskrives dermed med 16 koordinater og kan behandles som en vektor $x\in\mathbb R^{16}$. Bildetransformasjonen fra 3.0 kan nå skrives
 
 $$y=Ax,$$
 
-der $A$ har fire rader og seksten kolonner.
+der $A$ har fire rader og seksten kolonner. Hver rad i $A$ lager én av de fire outputverdiene. Hver kolonne svarer til én av de 16 inputpikslene.
 
 ```{pyodide-python}
 #| label: week3-pooling-as-matrix
@@ -156,13 +180,29 @@ print("A @ x2 =", y2)
 plt.figure(figsize=(7, 2.2))
 plt.imshow(A_pool, cmap="Blues", vmin=0, vmax=0.25,
            interpolation="nearest", aspect="auto")
+for row in range(4):
+    for col in range(16):
+        if A_pool[row,col] != 0:
+            plt.text(col,row,"¼",ha="center",va="center",fontsize=7)
 plt.xlabel("Pikselnummer i inputen")
-plt.ylabel("Pikselnummer i outputen")
-plt.title("Matrisen som beregner fire blokkgjennomsnitt")
+plt.ylabel("Output: ØV, ØH, NV, NH")
+plt.yticks(range(4),["ØV","ØH","NV","NH"])
+plt.title("Hver rad velger fire inputpiksler og tar gjennomsnittet")
 plt.colorbar(label="Vekt"); plt.tight_layout(); plt.show()
 ```
 
-Vi undersøker nå hva som skjer når to bilder blandes. Venstresiden i figuren blander bildene først og reduserer etterpå. Høyresiden reduserer hvert bilde først og blander de to små bildene etterpå.
+De blå feltene viser hvilke inputpiksler som bidrar til hver outputverdi. Første rad har fire vekter lik $1/4$ ved pikslene i øvre venstre blokk; produktet av denne raden og $x$ blir derfor gjennomsnittet i den blokken. De tre neste radene gjør det samme for øvre høyre, nedre venstre og nedre høyre blokk. Nullene er hvite og betyr at den aktuelle inputpikselen ikke brukes i den målingen.
+
+### Et eksperiment med skalering og addisjon
+
+Vi vil vite om transformasjonen reagerer forutsigbart når bilder kombineres. «Blande» betyr her en helt bestemt regneoperasjon: Vi multipliserer hver piksel i `X1` med $0.6$, hver piksel i `X3` med $0.4$, og legger sammen piksel for piksel. Det nye bildet er
+
+$$0.6X_1+0.4X_3.$$
+
+Vi sammenligner to regnerekkefølger:
+
+- **Øvre rute:** lag det vektede gjennomsnittet av de store bildene først, og reduser dette bildet etterpå.
+- **Nedre rute:** reduser hvert stort bilde først, og lag så samme vektede gjennomsnitt av de små outputbildene.
 
 ```{pyodide-python}
 #| label: week3-check-linearity
@@ -174,22 +214,46 @@ mixed_input=alpha*X1+beta*X3
 left=(A_pool@mixed_input.reshape(-1)).reshape(2,2)
 right=alpha*average_pool(X1)+beta*average_pool(X3)
 
-show_images([X1,X3,mixed_input,left,right,left-right],
-    ["$X_1$","$X_3$","$0.6X_1+0.4X_3$",
-     "Bland, så reduser","Reduser, så bland","Forskjell"],
-    cols=3,vmin=0,vmax=1,figsize=(5.4,3.6))
+fig,axes=plt.subplots(2,4,figsize=(7.0,3.6))
+top=[X1,X3,mixed_input,left]
+bottom=[average_pool(X1),average_pool(X3),right,left-right]
+top_titles=["Input $X_1$","Input $X_3$",
+            "$0.6X_1+0.4X_3$","Redusert blanding"]
+bottom_titles=["Redusert $X_1$","Redusert $X_3$",
+               "$0.6A(X_1)+0.4A(X_3)$","Forskjell mellom svarene"]
+for ax,image,title in zip(axes[0],top,top_titles):
+    ax.imshow(image,cmap="gray",vmin=0,vmax=1,interpolation="nearest")
+    ax.set_title(title,fontsize=8); ax.set_xticks([]); ax.set_yticks([])
+for ax,image,title in zip(axes[1],bottom,bottom_titles):
+    ax.imshow(image,cmap="gray",vmin=0,vmax=1,interpolation="nearest")
+    ax.set_title(title,fontsize=8); ax.set_xticks([]); ax.set_yticks([])
+for row in range(2):
+    for col,symbol in enumerate(["+","→","→"]):
+        axes[row,col].text(1.08,0.5,symbol,transform=axes[row,col].transAxes,
+                           ha="center",va="center",fontsize=14)
+plt.tight_layout(); plt.show()
 print("Numerisk forskjell:",np.linalg.norm(left-right))
 ```
 
-De to små bildene er like. Dette er den sentrale regneregelen for en **lineær transformasjon**:
+I øverste rad er de to første bildene inputene, det tredje er den pikselvise kombinasjonen, og det fjerde er outputen etter reduksjon. I nederste rad er de to første bildene allerede redusert; det tredje er kombinasjonen av disse outputene. Det siste bildet viser øvre svar minus nedre svar. Det er svart fordi alle fire forskjellene er null.
+
+De to regnerekkefølgene gir altså samme småbilde. Dette er den sentrale regneregelen for en **lineær transformasjon**:
 
 $$A(\alpha x+\beta z)=\alpha Ax+\beta Az.$$
 
-Uformelt betyr det at det ikke spiller noen rolle om vi kombinerer inputene før eller etter transformasjonen. Matematisk er forskjellen null; et eventuelt lite numerisk avvik kommer fra flyttallsregning.
+Her står $x$ og $z$ for to vilkårlige inputvektorer, mens $\alpha$ og $\beta$ er vilkårlige tall. Regelen rommer to egenskaper samtidig: skalering kan flyttes gjennom transformasjonen, og addisjon kan flyttes gjennom transformasjonen.
+
+Dette er sentralt fordi vi senere kan forstå en komplisert input ved å dele den i enkle byggesteiner. Hvis $x=c_1b_1+\cdots+c_kb_k$, trenger vi ikke analysere hele $x$ på nytt:
+
+$$Ax=c_1Ab_1+\cdots+c_kAb_k.$$
+
+Vi kan altså finne hva transformasjonen gjør med hver byggestein én gang og deretter kombinere resultatene. Basis, nullrom og kolonnerom bygger alle på denne ideen. Ikke alle transformasjoner er lineære: å klippe alle negative pikselverdier til null eller å sortere pikslene vil for eksempel vanligvis bryte regneregelen.
 
 ## 3.2 Basisbilder og dimensjon
 
-Vi går ned til $2\times2$-bilder. Mengden av alle slike bilder kalles $\mathbb R^{2\times2}$. De fire bildene under har én lys piksel hver.
+Vi skal nå finne et systematisk språk for «byggesteiner». Vi begynner fortsatt med bilder, ikke med en abstrakt definisjon.
+
+Tenk på et tomt $2\times2$-bilde. Vi ønsker fire skyveknapper som kan lage et hvilket som helst slikt bilde. En naturlig idé er å la hver skyveknapp styre én piksel. De fire første bildene nedenfor har verdi 1 i hver sin piksel og 0 i de andre. I neste figur blir hvert basisbilde ganget med ønsket pikselverdi. Til slutt legges de fire delbildene sammen piksel for piksel.
 
 ```{pyodide-python}
 #| label: week3-pixel-basis
@@ -213,7 +277,9 @@ show_images(components+[X],
 
 $$X=0.2E_1+0.7E_2+0.4E_3+0.9E_4.$$
 
-De fire tallene foran byggesteinene er nøyaktig de fire pikselverdiene i $X$. Før vi gir byggesteinene et matematisk navn, undersøker vi om alle fire virkelig trengs.
+For eksempel bidrar $0.7E_2$ bare med verdien $0.7$ i øvre høyre piksel. Siden ingen av de andre tre delbildene påvirker denne pikselen, blir øvre høyre piksel i summen også $0.7$. Slik kan hver av de fire pikslene stilles inn uavhengig.
+
+De fire tallene foran byggesteinene kalles **koordinater i denne beskrivelsen**. Her er de nøyaktig de fire pikselverdiene i $X$. Før vi gir hele byggesteinsystemet et matematisk navn, undersøker vi to mulige problemer: for få byggesteiner og overflødige byggesteiner.
 
 ### Eksperiment: Ta bort én byggestein
 
@@ -249,7 +315,7 @@ show_images([E1,E2,E5,recipe_1,recipe_2,recipe_1-recipe_2],
     cols=3,vmin=0,vmax=1,figsize=(5.4,3.6))
 ```
 
-De to oppskriftene bruker forskjellige koeffisienter, men gir samme bilde. Det betyr at beskrivelsen ikke lenger er entydig.
+Øverste rad viser at $E_5$ allerede er summen av de to første byggesteinene. Nederste rad viser konsekvensen: Oppskrift 1 bruker ett eksemplar av $E_1$ og $E_2$, mens oppskrift 2 bruker ett eksemplar av $E_5$. Forskjellsbildet er null overalt. De to oppskriftene bruker altså forskjellige koeffisienter, men gir samme bilde, så beskrivelsen er ikke lenger entydig.
 
 ::: {.callout-tip}
 ## Fra eksperiment til begreper
@@ -259,7 +325,7 @@ De to oppskriftene bruker forskjellige koeffisienter, men gir samme bilde. Det b
 - En **basis** er et sett byggesteiner som både spenner ut hele samlingen og er lineært uavhengig: nok byggesteiner, men ingen overflødige.
 :::
 
-$E_1,E_2,E_3,E_4$ danner derfor en basis for $\mathbb R^{2\times2}$. **Dimensjonen** er antallet byggesteiner i en basis, altså
+Samlingen av alle $2\times2$-bilder med reelle pikselverdier skrives $\mathbb R^{2\times2}$. Det betyr bare «fire reelle tall ordnet som to rader og to kolonner». $E_1,E_2,E_3,E_4$ danner en basis for denne samlingen. **Dimensjonen** er antallet byggesteiner i en basis, altså
 
 $$\dim(\mathbb R^{2\times2})=4.$$
 
@@ -267,7 +333,7 @@ Dimensjon teller antallet uavhengige tall som trengs for å beskrive et vilkårl
 
 ## 3.3 En basis som beskriver mønstre
 
-En basis er ikke unik. Vi kan velge byggesteiner som beskriver egenskaper ved bildet i stedet for enkeltpiksler.
+Pikselbyggesteinene er enkle, men koordinatene sier bare hvor lyse de fire pikslene er. Vi prøver nå fire andre byggesteiner. I figurene betyr rødt positive verdier og blått negative verdier; hvitt ligger nær null. Negative tall er ikke «negativt lys», men beskriver at et mønster trekkes fra når bilder kombineres.
 
 ```{pyodide-python}
 #| label: week3-pattern-basis
@@ -284,7 +350,9 @@ show_images(pattern_basis,pattern_names,cols=4,
             cmap="coolwarm",vmin=-1,vmax=1)
 ```
 
-Det første mønsteret endrer alle piksler i samme retning og beskriver samlet lysnivå. De tre andre gjør noen piksler lysere og andre mørkere, uten å endre totalsummen. Men kan disse fire mønstrene virkelig bygge et vilkårlig bilde?
+`Lysnivå` har samme fortegn overalt og gjør hele bildet lysere eller mørkere. `Venstre–høyre` øker venstre kolonne samtidig som høyre kolonne minker. `Topp–bunn` sammenligner øvre og nedre rad. `Sjakkmønster` skiller de to diagonalene. De tre siste har to $+1$ og to $-1$, så summen deres er null.
+
+Disse mønstrene virker meningsfulle, men det er ikke nok til å kalle dem en basis. Vi må undersøke de samme to spørsmålene som i 3.2: Kan de bygge alle målbilder, og er oppskriften entydig?
 
 Vi gjør hvert mønster om til en 4-vektor og bruker vektorene som kolonner i `P`. For hvert målbilde løser vi ligningen `P @ c = target`: Finnes det koeffisienter som rekonstruerer bildet?
 
@@ -311,7 +379,9 @@ show_images(interleaved,titles,cols=4,cmap="coolwarm",
 print("Rekonstruksjonsfeil:",errors)
 ```
 
-Alle de tilfeldig valgte bildene blir rekonstruert, med feil nær flyttallsnivå. Det er numerisk evidens, ikke et bevis alene. Her er `P` en inverterbar $4\times4$-matrise, og derfor har hvert målbilde nøyaktig én løsning. Mønstrene spenner ut hele $\mathbb R^{2\times2}$ og er uavhengige; de danner en ny basis.
+I hvert par er bildet merket «Mål» laget tilfeldig. «Bygd mål» er rekonstruksjonen fra de fire mønstrene. Parene ser like ut, og normen av forskjellen er omkring $10^{-16}$ eller null. Det er numerisk evidens, ikke et bevis alene.
+
+Matrisen `P` har ett mønster i hver kolonne. Ligningen `P @ c = target` spør hvilke fire mønsterstyrker `c` som gir det ønskede bildet. `P` er inverterbar, så hvert målbilde har nøyaktig én løsning. Mønstrene både spenner ut hele $\mathbb R^{2\times2}$ og er uavhengige; de danner dermed en ny basis.
 
 Vi ser nærmere på koordinatene til bildet $X$ fra forrige fane.
 
@@ -332,7 +402,9 @@ print("Mønsterkoordinater:",c)
 print("Rekonstruksjonsfeil:",np.linalg.norm(reconstructed-X))
 ```
 
-Pikselbasisen beskriver bildet med fire lokale lysverdier. Mønsterbasisen beskriver det samme bildet som samlet lysnivå pluss tre typer kontrast. Bildet er uendret, men koordinatene har fått en annen betydning.
+De fire første delbildene i figuren er koeffisienten ganget med det navngitte mønsteret. Det siste bildet er summen deres. Noen delbilder inneholder negative verdier, men summen rekonstruerer det opprinnelige bildet med vanlige pikselverdier.
+
+Pikselbasisen beskriver bildet med fire lokale lysverdier. Mønsterbasisen beskriver det samme bildet som samlet lysnivå pluss tre typer kontrast. Bildet er uendret, men koordinatene har fått en annen betydning. Dette er et **basisskifte**: samme objekt, ny oppskrift.
 
 ::: {.callout-note}
 ## Hvorfor bytte basis?
@@ -342,7 +414,7 @@ En basis er ikke bare et sett som tilfredsstiller en definisjon. Et godt valg av
 
 ## 3.4 Hva beholder gjennomsnittet?
 
-Vi bruker nå gjennomsnittet på de fire mønsterbildene.
+Nå lar vi den enkleste transformasjonen vi har — gjennomsnittet av fire tall — virke på de fire mønsterbyggesteinene. Inputen i hver kolonne er et $2\times2$-mønster. Den lille outputen under viser det ene tallet transformasjonen produserer. Fordi gjennomsnittet er lineært, vil resultatet for disse fire byggesteinene senere fortelle oss resultatet for enhver kombinasjon av dem.
 
 ```{pyodide-python}
 #| label: week3-average-patterns
@@ -356,7 +428,9 @@ for name,pattern in zip(pattern_names,pattern_basis):
     print(f"{name:16s} -> gjennomsnitt {np.mean(pattern): .1f}")
 ```
 
-Resultatene deler byggesteinene i to grupper. Lysnivåbildet gir en ikke-null måling. De tre kontrastbildene har like mye positivt som negativt bidrag, så summen og gjennomsnittet blir null. En vilkårlig kombinasjon av kontrastbildene får også gjennomsnitt null, fordi transformasjonen er lineær.
+Les figuren loddrett: De fire store bildene er inputene, og de fire små rutene er de tilhørende outputene. Lysnivåbildet har fire enere, så gjennomsnittet er 1. Hvert kontrastbilde har to enere og to minusenere; summen er 0 og gjennomsnittet er derfor 0.
+
+Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig kombinasjon av kontrastbildene får også gjennomsnitt null, fordi lineariteten fra 3.1 lar oss kombinere de tre nullresultatene.
 
 ::: {.callout-important}
 ## Uformell observasjon
@@ -391,7 +465,9 @@ show_images(interleaved,titles,cols=4,cmap="coolwarm",
 print("Rekonstruksjonsfeil:",errors)
 ```
 
-De fire forsøkene støtter påstanden: Bilder med sum null kan beskrives med tre uavhengige kontrastkoeffisienter. Nå har vi et konkret behov for et navn på hele denne samlingen.
+I hvert par er første bilde konstruert med fire tilfeldige tall som summerer til null. Det andre er bygd med bare `H`, `V` og `D`. De to bildene i hvert par er like, og rekonstruksjonsfeilen er null eller nær maskinpresisjon.
+
+De fire forsøkene støtter påstanden: Bilder med sum null kan beskrives med tre uavhengige kontrastkoeffisienter. Hvorfor tre? Når de første tre pikselverdiene er valgt, må den siste være minus summen av dem. Vi har derfor tre frie valg og én verdi som er bestemt av de andre. Nå har vi et konkret behov for et navn på hele denne samlingen.
 
 For en matrise $A$ kalles alle inputvektorer som gir output null for **nullrommet**:
 
@@ -401,9 +477,9 @@ For gjennomsnittet av én $2\times2$-blokk er
 
 $$N(A)=\operatorname{span}\{H,V,D\}.$$
 
-Her er nullrommet nettopp alle $2\times2$-bilder med sum, og dermed gjennomsnitt, lik null. De tre uavhengige byggesteinene $H,V,D$ spenner ut denne samlingen, så de danner en basis og nullrommet har dimensjon 3.
+Her er nullrommet nettopp alle $2\times2$-bilder med sum, og dermed gjennomsnitt, lik null. De tre uavhengige byggesteinene $H,V,D$ spenner ut denne samlingen, så de danner en basis og nullrommet har dimensjon 3. Nullrommet er altså ikke bare selve nullbildet; det kan inneholde mange ikke-null inputbilder som transformasjonen ikke registrerer.
 
-Dette forklarer åpningsproblemet. To inputer gir samme output akkurat når forskjellen mellom dem ligger i nullrommet:
+Dette forklarer åpningsproblemet steg for steg. Hvis $Ax_1=Ax_2$, kan vi trekke den ene outputen fra den andre. Linearitet gir $A(x_1-x_2)=0$. Forskjellsbildet $x_1-x_2$ ligger derfor i nullrommet. Omvendt kan vi legge enhver nullromsendring til et bilde uten å endre outputen:
 
 $$Ax_1=Ax_2\quad\Longleftrightarrow\quad A(x_1-x_2)=0.$$
 
@@ -416,15 +492,19 @@ direction=0.35*D
 t_values=[-1.,-0.5,0.,0.5,1.]
 family=[base+t*direction for t in t_values]
 show_images(family,
-    [f"$t={t:g}$\nmiddel={np.mean(image):.2f}" for t,image in zip(t_values,family)],
+    [f"$t={t:g}$\ngjennomsnitt={np.mean(image):.2f}" for t,image in zip(t_values,family)],
     cols=5,vmin=0,vmax=1,figsize=(7.0,1.7))
 ```
+
+Det midterste bildet har $t=0$ og er ensfarget. Negative og positive verdier av $t$ legger til sjakkmønsteret med motsatt fortegn. Titlene viser at gjennomsnittet forblir $0.50$ i alle fem bilder, selv om kontrasten blir sterkere mot begge ender.
 
 Når $t$ endres, flytter vi oss gjennom forskjellige bilder langs kontrastretningen $D$. Pikslene endres, men gjennomsnittet står stille. Nullrommet beskriver derfor alle forskjeller mellom inputer som denne målingen ikke kan oppdage.
 
 ## 3.5 Tolv endringer som ikke synes i outputen
 
-Det opprinnelige bildet består av fire blokker. I hver blokk kan vi plassere tre uavhengige kontrastmønstre med gjennomsnitt null.
+Vi går tilbake fra én $2\times2$-blokk til hele $4\times4$-bildet. Transformasjonen beregner fire gjennomsnitt, ett i hvert hjørneområde. Derfor kan hver blokk inneholde sine egne usynlige kontraster.
+
+Funksjonen `place_in_block` plasserer ett av mønstrene `H`, `V` eller `D` i en valgt blokk og fyller resten av bildet med null. Figuren organiseres blokk for blokk: fire plasseringer, med tre kontrasttyper i hver plassering. Det gir $4\cdot3=12$ bilder.
 
 ```{pyodide-python}
 #| label: week3-full-null-basis
@@ -447,6 +527,10 @@ show_images(null_basis,null_titles,cols=4,cmap="coolwarm",
             vmin=-1,vmax=1,figsize=(6.8,5.2))
 ```
 
+Hvert bilde endrer bare to eller fire piksler innenfor én blokk. Positive og negative bidrag opphever hverandre, så gjennomsnittet i den blokken forblir null. De tre andre blokkene er allerede null. Dermed må hele $2\times2$-outputbildet bli null for hvert av de tolv inputbildene.
+
+Neste celle kontrollerer dette numerisk. Deretter velger den tolv tilfeldige koeffisienter, skalerer hvert kontrastbilde og legger alle sammen. Det sammensatte inputbildet ser uregelmessig ut, men hver blokk har fortsatt sum null.
+
 ```{pyodide-python}
 #| label: week3-random-null-image
 #| autorun: true
@@ -467,17 +551,17 @@ Hvis $Az_1=0$ og $Az_2=0$, gir linearitet
 
 $$A(\alpha z_1+\beta z_2)=0.$$
 
-Koden gjør to observasjoner. Hver av de tolv lokale kontrastene gir output null. En tilfeldig lineærkombinasjon av alle tolv gir fremdeles output null. Grunnen er linearitet, ikke at vi var heldige med koeffisientene.
+Det første bildet i den siste figuren er kombinasjonen av de tolv mønstrene. Det andre er outputen etter blokkgjennomsnitt. Den er null i alle fire posisjoner. Koden gjør dermed to observasjoner: Hver lokal kontrast gir output null, og en tilfeldig lineærkombinasjon av dem gir fremdeles output null. Grunnen er linearitet, ikke at vi var heldige med koeffisientene.
 
 Nullrommet er altså en samling der vi kan addere bilder og multiplisere dem med tall uten å forlate samlingen. En slik lineær samling inni et større rom kalles et **underrom**. Vi trenger ingen nye regneregler; ordet beskriver bare at lineærkombinasjoner blir værende i samlingen.
 
-De tolv viste byggesteinene påvirker forskjellige blokker eller forskjellige kontraster i samme blokk. De er uavhengige, og enhver kombinasjon med null blokkgjennomsnitt kan bygges av dem. Dermed danner de en basis for nullrommet, som har dimensjon 12.
+De tolv viste byggesteinene påvirker enten forskjellige blokker eller forskjellige kontraster i samme blokk. Ingen av dem kan fjernes uten at vi mister en mulig lokal endring. Samtidig kan ethvert bilde med null gjennomsnitt i hver blokk bygges av dem, blokk for blokk. De danner derfor en basis for nullrommet, som har dimensjon 12.
 
 ## 3.6 Mulige outputer og rang
 
 Vi har undersøkt hvilke endringer i inputbildet som ikke synes i outputen. Nå snur vi spørsmålet: **Hvilke $2\times2$-bilder kan transformasjonen faktisk produsere?**
 
-Vi begynner med det enkleste mulige inputbildet: én piksel er 1, og alle andre er 0. Når vi gjør dette for hver av de 16 pikslene, får vi samtidig se hva hver kolonne i matrisen gjør. Nedenfor er hver av de 16 outputvektorene tegnet som et lite $2\times2$-bilde.
+Vi begynner med det enkleste mulige inputbildet: én piksel er 1, og alle andre er 0. Kall dette «slå på én piksel». Kolonne $j$ i matrisen er akkurat outputen vi får når inputpiksel $j$ er slått på. Vi gjør forsøket for alle 16 piksler og tegner hver outputvektor som et lite $2\times2$-bilde.
 
 ```{pyodide-python}
 #| label: week3-columns-as-images
@@ -488,7 +572,9 @@ show_images(column_images,[f"Kolonne {j+1}" for j in range(16)],
             cols=4,vmin=0,vmax=0.25,figsize=(6.8,5.8))
 ```
 
-Pikslene 1, 2, 5 og 6 ligger i samme blokk. Derfor gir de nøyaktig samme output: en verdi på $1/4$ øverst til venstre og null ellers. De neste fire pikslene påvirker bare øvre høyre outputpiksel, og tilsvarende for de to nederste blokkene. De 16 kolonnene faller dermed i fire grupper med samme bilde.
+Nummereringen følger 16-vektoren fra 3.1: piksel 1–4 er første bilderad, 5–8 er andre bilderad, og så videre. Pikslene 1, 2, 5 og 6 ligger derfor i øvre venstre blokk. Når én av dem har verdi 1, blir blokkens gjennomsnitt $1/4$, mens de tre andre outputverdiene er null. De fire tilhørende kolonnebildene er identiske.
+
+Pikslene 3, 4, 7 og 8 påvirker bare øvre høyre outputpiksel. Pikslene 9, 10, 13 og 14 påvirker nedre venstre, og de fire siste i nedre høyre blokk påvirker nedre høyre. De 16 kolonnene faller dermed i fire grupper. Figuren viser konkret at mange inputpiksler har samme virkning på outputen.
 
 Dette forteller at vi har fire ulike måter å påvirke outputen på. Men kan disse fire måtene lage *ethvert* $2\times2$-bilde? Vi velger fire tilfeldige målbilder. For hvert målbilde lager koden et $4\times4$-bilde der alle pikslene i en blokk har ønsket outputverdi. Deretter kontrollerer vi hva gjennomsnittstransformasjonen gir.
 
@@ -514,7 +600,9 @@ print("Største feil:",max(np.linalg.norm(out-Yi)
                           for out,Yi in zip(outputs,targets)))
 ```
 
-Målbildene ble valgt tilfeldig, men den samme oppskriften virker for alle $2\times2$-bilder: legg hver ønsket outputverdi inn i den tilsvarende $2\times2$-blokken. Feilen er null, bortsett fra eventuell avrunding. Transformasjonen kan altså produsere alle vektorer i $\mathbb R^4$.
+Les hver rad i figuren fra venstre mot høyre. Først vises et konstruert $4\times4$-inputbilde. I midten står outputen vi ba om. Til høyre står outputen transformasjonen faktisk beregnet. De to små bildene er identiske i alle fire forsøk.
+
+Målbildene ble valgt tilfeldig, men den samme oppskriften virker for alle $2\times2$-bilder: kopier hver ønsket outputverdi inn i alle fire pikslene i den tilsvarende inputblokken. Gjennomsnittet av fire like tall er tallet selv. Feilen er derfor nøyaktig null, bortsett fra eventuell avrunding. Transformasjonen kan altså produsere alle vektorer i $\mathbb R^4$.
 
 Samlingen av alle outputvektorer en matrise kan produsere, kalles **kolonnerommet**:
 
@@ -524,7 +612,9 @@ Navnet kan nå leses direkte fra eksperimentet. Hvis $a_j$ er kolonne $j$ i $A$,
 
 $$Ax=x_1a_1+\cdots+x_{16}a_{16}.$$
 
-Alle outputer bygges dermed som lineærkombinasjoner av kolonnebildene. I vårt eksempel holder det å beholde én kolonne fra hver av de fire gruppene, for eksempel kolonne 1, 3, 9 og 11.
+Formelen sier at inputverdien $x_j$ skalerer kolonnebildet $a_j$, og at de 16 skalerte bidragene legges sammen. Alle outputer bygges dermed som lineærkombinasjoner av kolonnebildene. Dette er den samme byggesteinsideen som for basisbilder, men nå er byggesteinene bestemt av transformasjonsmatrisen.
+
+I vårt eksempel holder det å beholde én kolonne fra hver av de fire gruppene, for eksempel kolonne 1, 3, 9 og 11. Disse fire kan varieres uavhengig og bygger alle mulige outputbilder. De andre tolv kolonnene gjentar virkninger vi allerede har.
 
 Vi gjør ett eksperiment til før vi gir denne tellingen et navn. Vi legger til en femte måling: gjennomsnittet av alle de 16 inputpikslene. Den nye outputverdien ser ut som mer informasjon, men den kan beregnes fra de fire blokkgjennomsnittene.
 
@@ -542,7 +632,7 @@ print("Rang med fire outputer:",np.linalg.matrix_rank(A_pool))
 print("Rang med fem outputer:",np.linalg.matrix_rank(A_five))
 ```
 
-Matrisen har nå fem rader, men den femte målingen gir ingen ny, uavhengig retning i outputen. Den er bestemt av de fire andre. Antallet uavhengige outputretninger kalles matrisens **rang**:
+Utskriften viser at den femte outputverdien er nøyaktig gjennomsnittet av de fire første. Matrisen har nå fem rader, men den femte målingen gir ingen ny justeringsmulighet og ingen ny informasjon om inputen. Den er bestemt av de fire andre. Antallet uavhengige outputretninger kalles matrisens **rang**:
 
 **Rangen** er dimensjonen til kolonnerommet:
 
@@ -558,7 +648,7 @@ print("Outputverdier:",A_pool.shape[0])
 print("Numerisk rang:",np.linalg.matrix_rank(A_pool))
 ```
 
-Vi startet med 16 uavhengige pikselverdier. Eksperimentene har delt disse variasjonsmulighetene i to typer: fire kombinasjoner bestemmer outputen, mens tolv kontrastmønstre kan endres uten at outputen merker det. Ingen inputretninger mangler i regnskapet:
+Vi startet med 16 uavhengige pikselverdier. Eksperimentene har delt disse variasjonsmulighetene i to typer. Fire kombinasjoner — blokkgjennomsnittene — bestemmer det som kan sees i outputen. Tolv kontrastmønstre kan endres uten at outputen merker det. Dette er ikke et tilfeldig sammentreff: De synlige og usynlige variasjonene gjør sammen rede for alle 16 inputmulighetene:
 
 $$16=4+12.$$
 
