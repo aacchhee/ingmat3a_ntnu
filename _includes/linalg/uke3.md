@@ -269,7 +269,7 @@ print("A @ x1 =", y1)
 print("A @ x2 =", y2)
 ```
 
-Inputvektoren er lagt vannrett under matrisen i neste figur. Det er ikke vanlig bokoppsett, men gjør koblingen lettere å se: Verdien $x_j$ står rett under kolonne $j$ i matrisen. Samme farge brukes på et bildeområde, de tilhørende inputverdiene, matrisraden som samler dem, og outputpikselen de ender i.
+Neste figur viser produktet i vanlig oppsett: en $4\times16$-matrise ganger en vertikal 16-vektor gir en vertikal 4-vektor. Samme farge brukes på et bildeområde, de tilhørende inputverdiene, matrisraden som samler dem og outputverdien de ender i.
 
 ```{.jsxgraph width="760" height="390"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -289,7 +289,7 @@ var active = [
 ];
 var values = [0.1,0.9,0.1,0.9, 0.9,0.1,0.9,0.1,
               0.1,0.9,0.1,0.9, 0.9,0.1,0.9,0.1];
-var xStart=2.0, cellW=0.68, rowH=0.78, matrixTop=7.1;
+var xStart=1.9, cellW=0.56, rowH=0.76, matrixTop=6.25;
 
 function cell(x0,y0,w,h,fill,border,width) {
   return board.create('polygon', [[x0,y0],[x0+w,y0],[x0+w,y0+h],[x0,y0+h]], {
@@ -324,71 +324,100 @@ for (var r=0; r<4; r++) {
   }
 }
 
-// Inputvektoren ligger under de samme 16 kolonnene.
-var vectorY=2.05;
-board.create('text',[xStart+8*cellW,vectorY+1.15,
-  'INPUTVEKTOR  x  —  hver verdi står under sin matriskolonne'],{
-  anchorX:'middle',fontSize:14,cssStyle:'font-weight:600',fixed:true
+// Inputen vises som en vanlig kolonnevektor.
+var vectorX=12.15, vectorTop=7.35, vectorH=0.37, vectorW=0.72;
+board.create('text',[vectorX+vectorW/2,vectorTop+0.55,'x'],{
+  anchorX:'middle',fontSize:17,cssStyle:'font-weight:600',fixed:true
 });
 for (var k=0; k<16; k++) {
   var group = k<8 ? (k%4<2 ? 0 : 1) : (k%4<2 ? 2 : 3);
-  cell(xStart+k*cellW,vectorY,cellW,0.72,rowColors[group],'#555555',1);
-  board.create('text',[xStart+(k+0.5)*cellW,vectorY+0.43,
+  var vy=vectorTop-(k+1)*vectorH;
+  cell(vectorX,vy,vectorW,vectorH,rowColors[group],'#555555',1);
+  board.create('text',[vectorX+vectorW/2,vy+vectorH/2,
                        values[k].toFixed(1)],{
-    anchorX:'middle',anchorY:'middle',fontSize:10,fixed:true
+    anchorX:'middle',anchorY:'middle',fontSize:8.5,fixed:true
   });
-  board.create('text',[xStart+(k+0.5)*cellW,vectorY-0.18,
-                       'x'+(k+1)],{
-    anchorX:'middle',anchorY:'middle',fontSize:8,color:'#555555',fixed:true
+  board.create('text',[vectorX+vectorW+0.12,vy+vectorH/2,'x'+(k+1)],{
+    anchorX:'left',anchorY:'middle',fontSize:7,color:'#666666',fixed:true
   });
 }
+board.create('text',[11.45,4.65,'×'],{
+  anchorX:'middle',anchorY:'middle',fontSize:24,fixed:true
+});
 
-// Output som et 2 x 2-bilde.
-var outX=16.6, outTop=6.7, outW=1.15;
-board.create('text',[outX+outW,outTop+0.65,'OUTPUT  y'],{
+// Produktet er først en vanlig kolonnevektor.
+var yX=14.65, yTop=5.95, yW=0.78, yH=0.76;
+board.create('text',[yX+yW/2,yTop+0.55,'y = Ax'],{
   anchorX:'middle',fontSize:16,cssStyle:'font-weight:600',fixed:true
 });
-var outPos=[];
 for (var q=0; q<4; q++) {
-  var outCol=q%2, outRow=Math.floor(q/2);
-  var ox=outX+outCol*outW, oy=outTop-(outRow+1)*outW;
-  cell(ox,oy,outW,outW,rowColors[q],'#333333',1.5);
-  board.create('text',[ox+outW/2,oy+outW/2,'0.5'],{
+  var yy=yTop-(q+1)*yH;
+  cell(yX,yy,yW,yH,rowColors[q],'#333333',1.5);
+  board.create('text',[yX+yW/2,yy+yH/2,'0.5'],{
     anchorX:'middle',anchorY:'middle',fontSize:13,fixed:true
   });
-  outPos.push([ox,oy+outW/2]);
 }
+board.create('text',[13.75,4.45,'='],{
+  anchorX:'middle',anchorY:'middle',fontSize:24,fixed:true
+});
 
-// Hver matrisrad beregner én outputpiksel.
-for (var a=0; a<4; a++) {
-  var sy=matrixTop-(a+0.5)*rowH;
-  board.create('arrow',[[xStart+16*cellW+0.1,sy],outPos[a]],{
-    strokeColor:rowDark[a],strokeWidth:2.5,
-    fixed:true,highlight:false
+// De fire outputverdiene kan ordnes som et lite bilde.
+var imageX=17.15, imageTop=5.75, imageW=0.92;
+board.create('arrow',[[15.75,4.45],[16.75,4.45]],{
+  strokeColor:'#555555',strokeWidth:2,fixed:true,highlight:false
+});
+board.create('text',[18.07,imageTop+0.55,'vist som bilde'],{
+  anchorX:'middle',fontSize:14,cssStyle:'font-weight:600',fixed:true
+});
+for (var p=0; p<4; p++) {
+  var pc=p%2, pr=Math.floor(p/2);
+  var px=imageX+pc*imageW, py=imageTop-(pr+1)*imageW;
+  cell(px,py,imageW,imageW,rowColors[p],'#333333',1.5);
+  board.create('text',[px+imageW/2,py+imageW/2,'0.5'],{
+    anchorX:'middle',anchorY:'middle',fontSize:12,fixed:true
   });
 }
-board.create('text',[14.65,3.9,'én rad'],{
-  anchorX:'middle',fontSize:12,cssStyle:'font-weight:600',fixed:true
-});
-board.create('text',[14.65,3.55,'→ ett tall'],{
-  anchorX:'middle',fontSize:12,fixed:true
-});
 ```
 
-Les én farge om gangen. Den blå matrisraden har fire ruter med $1/4$. Rett under disse kolonnene står de fire blå inputverdiene fra øvre venstre bildeområde. Når rad og vektor multipliseres, blir disse fire verdiene ganget med $1/4$ og lagt sammen. Pilen fører resultatet til den blå outputpikselen. De hvite nullrutene betyr at de øvrige inputverdiene ikke bidrar til akkurat denne outputen.
+Les én farge om gangen. Den blå matrisraden har fire ruter med $1/4$. De fire blå tallene i inputvektoren kommer fra øvre venstre bildeområde. Når rad og vektor multipliseres, blir disse fire verdiene ganget med $1/4$ og lagt sammen. Resultatet blir den blå verdien øverst i outputvektoren. De hvite nullrutene betyr at de øvrige inputverdiene ikke bidrar til akkurat denne outputen.
 
-De gule, grønne og lilla radene gjør det samme for de tre andre bildeområdene. Matrise-vektorproduktet kan derfor leses som fire parallelle oppskrifter: **én rad inn, ett tall ut**. Figuren bruker sjakkbildet fra 3.0, så alle fire gjennomsnittene blir $0.5$.
+De gule, grønne og lilla radene gjør det samme for de tre andre bildeområdene. Matrise-vektorproduktet kan derfor leses som fire parallelle oppskrifter: **én matrisrad gir én verdi i outputvektoren**. Til slutt ordnes de fire outputverdiene som et $2\times2$-bilde. Figuren bruker sjakkbildet fra 3.0, så alle fire gjennomsnittene blir $0.5$.
 
 ### Et eksperiment med skalering og addisjon
 
-Vi vil vite om transformasjonen reagerer forutsigbart når bilder kombineres. «Blande» betyr her en helt bestemt regneoperasjon: Vi multipliserer hver piksel i `X1` med $0.6$, hver piksel i `X3` med $0.4$, og legger sammen piksel for piksel. Det nye bildet er
+Målet er ikke først og fremst å lage en overgang mellom to fotografier. Vi vil undersøke om et komplisert bilde kan deles opp i enklere byggesteiner som kan behandles hver for seg.
+
+Et bilde kan for eksempel beskrives som en kombinasjon av et jevnt lysnivå, en venstre–høyre-kontrast, en topp–bunn-kontrast, kanter, lokale mønstre og små detaljer. Å multiplisere en byggestein med et tall endrer hvor sterkt den bidrar. Addisjon setter bidragene sammen piksel for piksel til et ferdig bilde.
+
+Det viktige spørsmålet er derfor:
+
+> Kan vi transformere hver byggestein for seg og deretter sette sammen resultatene, eller må hele bildet behandles på nytt?
+
+Vi bruker to vilkårlige bilder som et første eksperiment. Hver piksel i `X1` multipliseres med $0.6$, hver piksel i `X3` med $0.4$, og resultatene legges sammen piksel for piksel. Det nye bildet er
 
 $$0.6X_1+0.4X_3.$$
 
 Vi sammenligner to regnerekkefølger:
 
-- **Øvre rute:** lag det vektede gjennomsnittet av de store bildene først, og reduser dette bildet etterpå.
-- **Nedre rute:** reduser hvert stort bilde først, og lag så samme vektede gjennomsnitt av de små outputbildene.
+- **Øvre rute:** Skaler og legg sammen de store inputbildene først. Transformer deretter resultatet.
+- **Nedre rute:** Transformer hvert bilde først. Skaler og legg så sammen de små outputbildene.
+
+Hvis begge framgangsmåtene alltid gir samme resultat, kan vi forstå transformasjonen ved å teste den på enkle byggesteiner. Når vi vet hva transformasjonen gjør med hver byggestein, vet vi også hva den gjør med enhver kombinasjon av dem.
+
+::: {.callout-note}
+## Fra byggesteiner til bildekompresjon
+
+Valget av byggesteiner kan få praktisk betydning. Vanlige bilder inneholder ofte store jevne områder, langsomme overganger, kanter og gjentatte mønstre. Hvis byggesteinene passer til denne strukturen, kan bildet kanskje beskrives godt med noen få store koeffisienter og mange små.
+
+Da kan de minste bidragene lagres mindre nøyaktig eller utelates. En mulig kompresjonsalgoritme får dermed denne formen:
+
+1. Del bildet opp i egnede mønsterbyggesteiner.
+2. Finn styrken til hver byggestein.
+3. Behold de viktigste bidragene.
+4. Rekonstruer et bilde som ligner originalen.
+
+Eksperimentet under er bare en første kontroll av regnereglene som gjør en slik oppdeling mulig. Vi utvikler ikke en ferdig kompresjonsalgoritme her; senere basisvalg og SVD bygger videre på den samme tankegangen.
+:::
 
 ```{pyodide-python}
 #| label: week3-check-linearity
