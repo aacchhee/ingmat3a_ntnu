@@ -658,6 +658,135 @@ Dimensjon teller antallet uavhengige tall som trengs for å beskrive et vilkårl
 
 Pikselbyggesteinene er enkle, men koordinatene sier bare hvor lyse de fire pikslene er. Vi prøver nå fire andre byggesteiner. I figurene betyr rødt positive verdier og blått negative verdier; hvitt ligger nær null. Negative tall er ikke «negativt lys», men beskriver at et mønster trekkes fra når bilder kombineres.
 
+Appleten har samme oppbygning som i 3.2, men skyveknappene styrer nå fire mønstre. Knappene går fra $-1$ til $1$: En positiv koeffisient legger til mønsteret, mens en negativ koeffisient legger til mønsteret med motsatte fortegn. Tallet i hver piksel viser det faktiske bidraget; fargen viser fortegnet og omtrent hvor stort bidraget er.
+
+```{.jsxgraph width="760" height="430"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [0, 8.6, 15.2, 0],
+  axis: false,
+  showCopyright: false,
+  showNavigation: false,
+  pan: { enabled: false },
+  zoom: { enabled: false }
+});
+
+var patternNames=['Lysnivå','Venstre–høyre','Topp–bunn','Sjakkmønster'];
+var patternColors=['#555555','#277da1','#4f8f49','#8b5aa7'];
+var patternValues=[
+  [ 1, 1, 1, 1],
+  [ 1,-1, 1,-1],
+  [ 1, 1,-1,-1],
+  [ 1,-1,-1, 1]
+];
+var patternInitial=[0.55,-0.25,-0.10,0.00];
+var patternSliders=[];
+
+board.create('text',[0.75,8.25,'Fire mønsterkontroller'],{
+  fontSize:16,cssStyle:'font-weight:600',fixed:true
+});
+
+for (var i=0; i<4; i++) {
+  var sy=7.55-0.72*i;
+  board.create('text',[0.75,sy,patternNames[i]],{
+    anchorY:'middle',fontSize:11,color:patternColors[i],
+    cssStyle:'font-weight:600',fixed:true
+  });
+  patternSliders.push(board.create('slider',
+    [[2.25,sy],[5.35,sy],[-1,patternInitial[i],1]],{
+      name:'',snapWidth:0.05,precision:2,
+      strokeColor:patternColors[i],fillColor:patternColors[i],
+      highline:{strokeColor:patternColors[i]},
+      baseline:{strokeColor:'#b8b8b8'},
+      point1:{visible:false},point2:{visible:false}
+    }));
+}
+
+function patternColor(value) {
+  return value>=0 ? '#d6604d' : '#2166ac';
+}
+function patternOpacity(value) {
+  return Math.min(0.88,0.88*Math.abs(value));
+}
+function patternSquare(x0,y0,size,valueFunction,borderColor) {
+  var polygon=board.create('polygon',
+    [[x0,y0],[x0+size,y0],[x0+size,y0+size],[x0,y0+size]],{
+      fillColor:function(){return patternColor(valueFunction());},
+      fillOpacity:function(){return patternOpacity(valueFunction());},
+      vertices:{visible:false},
+      borders:{strokeColor:borderColor,strokeWidth:1.4,
+               fixed:true,highlight:false},
+      fixed:true,highlight:false
+    });
+  board.create('text',[x0+size/2,y0+size/2,function(){
+    return valueFunction().toFixed(2);
+  }],{
+    anchorX:'middle',anchorY:'middle',fontSize:9,fixed:true
+  });
+  return polygon;
+}
+
+function componentValue(component,pixel) {
+  return function(){
+    return patternSliders[component].Value()*patternValues[component][pixel];
+  };
+}
+function sumValue(pixel) {
+  return function(){
+    var total=0;
+    for (var m=0; m<4; m++) {
+      total+=patternSliders[m].Value()*patternValues[m][pixel];
+    }
+    return total;
+  };
+}
+
+var componentX=[0.75,3.25,5.75,8.25];
+var imageY=1.55, smallSize=0.68;
+for (var j=0; j<4; j++) {
+  for (var p=0; p<4; p++) {
+    var pc=p%2, pr=Math.floor(p/2);
+    patternSquare(componentX[j]+pc*smallSize,
+                  imageY+(1-pr)*smallSize,smallSize,
+                  componentValue(j,p),patternColors[j]);
+  }
+  (function(index){
+    board.create('text',[componentX[index]+smallSize,imageY+1.78,function(){
+      return patternSliders[index].Value().toFixed(2)+' · '+patternNames[index];
+    }],{
+      anchorX:'middle',fontSize:10,color:patternColors[index],
+      cssStyle:'font-weight:600',fixed:true
+    });
+  })(j);
+  if (j<3) {
+    board.create('text',[componentX[j]+1.82,imageY+0.68,'+'],{
+      anchorX:'middle',anchorY:'middle',fontSize:22,fixed:true
+    });
+  }
+}
+
+board.create('arrow',[[10.05,imageY+0.68],[11.15,imageY+0.68]],{
+  strokeColor:'#444444',strokeWidth:2.2,fixed:true,highlight:false
+});
+
+var sumX=11.55, sumSize=0.92;
+for (var q=0; q<4; q++) {
+  var qc=q%2, qr=Math.floor(q/2);
+  patternSquare(sumX+qc*sumSize,imageY+(1-qr)*sumSize,
+                sumSize,sumValue(q),'#333333');
+}
+board.create('text',[sumX+sumSize,imageY+2.25,'SAMME TYPE BILDE'],{
+  anchorX:'middle',fontSize:14,cssStyle:'font-weight:600',fixed:true
+});
+board.create('text',[sumX+sumSize,imageY-0.38,
+  'Nye kontroller · ny beskrivelse'],{
+  anchorX:'middle',fontSize:12,fixed:true
+});
+```
+
+Startinnstillingen lager det samme bildet som i 3.2, men tallene på skyveknappene er nå annerledes: lysnivå $0.55$, venstre–høyre-kontrast $-0.25$, topp–bunn-kontrast $-0.10$ og ingen sjakkmønsterkontrast. Prøv å endre én kontroll om gangen og beskriv den synlige endringen i summen.
+
+Nå konstruerer vi de samme fire mønstrene i NumPy.
+
 ```{pyodide-python}
 #| label: week3-pattern-basis
 #| autorun: true
