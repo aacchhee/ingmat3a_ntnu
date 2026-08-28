@@ -307,6 +307,16 @@ $$y=Ax,$$
 
 der $A$ har fire rader og seksten kolonner. Hver rad i $A$ lager én av de fire outputverdiene. Hver kolonne svarer til én av de 16 inputpikslene.
 
+Det er nyttig å holde de to sidene fra hverandre:
+
+$$
+\underbrace{\mathbb R^{16}}_{\text{inputrom: store bilder}}
+\xrightarrow{\quad A\quad}
+\underbrace{\mathbb R^4}_{\text{outputrom: små bilder}}.
+$$
+
+Alle inputvektorer har 16 komponenter, mens alle outputvektorer har fire. Senere skal vi finne to samlinger som derfor ligger på hver sin side av pilen: Nullrommet består av inputvektorer og ligger i $\mathbb R^{16}$. Kolonnerommet består av outputvektorer og ligger i $\mathbb R^4$.
+
 ```{pyodide-python}
 #| label: week3-pooling-as-matrix
 #| autorun: true
@@ -973,11 +983,11 @@ I hvert par er første bilde konstruert med fire tilfeldige tall som summerer ti
 
 De fire forsøkene støtter påstanden: Bilder med sum null kan beskrives med tre uavhengige kontrastkoeffisienter. Hvorfor tre? Når de første tre pikselverdiene er valgt, må den siste være minus summen av dem. Vi har derfor tre frie valg og én verdi som er bestemt av de andre. Nå har vi et konkret behov for et navn på hele denne samlingen.
 
-For en matrise $A$ kalles alle inputvektorer som gir output null for **nullrommet**:
+For en transformasjon $A:\mathbb R^n\to\mathbb R^m$ kalles alle inputvektorer som gir output null for **nullrommet**:
 
-$$N(A)=\{z:Az=0\}.$$
+$$N(A)=\{z\in\mathbb R^n:Az=0\}\subseteq\mathbb R^n.$$
 
-For gjennomsnittet av én $2\times2$-blokk er
+Nullrommet ligger altså i **inputrommet**. Vektorene der har like mange komponenter som en input, ikke som en output. For gjennomsnittet av én $2\times2$-blokk er inputen et bilde med fire tall, mens outputen bare er ett tall. Derfor ligger nullrommet i $\mathbb R^4$, og
 
 $$N(A)=\operatorname{span}\{H,V,D\}.$$
 
@@ -1221,7 +1231,9 @@ Målbildene ble valgt tilfeldig, men den samme oppskriften virker for alle $2\ti
 
 Samlingen av alle outputvektorer en matrise kan produsere, kalles **kolonnerommet**:
 
-$$C(A)=\{Ax:x\in\mathbb R^{16}\}.$$
+$$C(A)=\{Ax:x\in\mathbb R^{16}\}\subseteq\mathbb R^4.$$
+
+Kolonnerommet ligger altså i **outputrommet**. Vektorene i nullrommet har 16 komponenter; vektorene i kolonnerommet har fire. De to rommene kan derfor ha forskjellige dimensjoner og består i dette eksemplet ikke engang av like lange vektorer.
 
 Navnet kan nå leses direkte fra eksperimentet. Hvis $a_j$ er kolonne $j$ i $A$, er
 
@@ -1263,7 +1275,137 @@ print("Outputverdier:",A_pool.shape[0])
 print("Numerisk rang:",np.linalg.matrix_rank(A_pool))
 ```
 
-Vi startet med 16 uavhengige pikselverdier. Eksperimentene har delt disse variasjonsmulighetene i to typer. Fire kombinasjoner — blokkgjennomsnittene — bestemmer det som kan sees i outputen. Tolv kontrastmønstre kan endres uten at outputen merker det. Dette er ikke et tilfeldig sammentreff: De synlige og usynlige variasjonene gjør sammen rede for alle 16 inputmulighetene:
+### Seksten knapper, men bare fire når fram
+
+Vi startet med 16 uavhengige pikselverdier. Nå beskriver vi det samme inputbildet med mer passende skyveknapper. Fire fargede knapper styrer blokkgjennomsnittene. Tolv grå knapper styrer kontraster inne i blokkene uten å endre gjennomsnittene.
+
+Prøv begge typer i figuren. De fargede knappene endrer outputen. De grå kan flyttes, men outputen står stille.
+
+```{.jsxgraph width="760" height="440"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [0, 9.1, 15.2, 0],
+  axis: false,
+  showCopyright: false,
+  showNavigation: false,
+  pan: { enabled: false },
+  zoom: { enabled: false }
+});
+
+var controlColors=['#277da1','#d98900','#4f8f49','#8b5aa7'];
+var controlFills=['#8ecae6','#ffcf70','#a8d5a2','#d7b5e8'];
+var controlNames=['øvre venstre','øvre høyre','nedre venstre','nedre høyre'];
+var initialMeans=[0.25,0.60,0.40,0.75];
+var meanControls=[];
+var contrastControls=[];
+
+board.create('text',[3.0,8.72,'INPUT: 16 uavhengige knapper'],{
+  anchorX:'middle',fontSize:16,cssStyle:'font-weight:600',fixed:true
+});
+board.create('text',[2.85,8.15,'4 blokkgjennomsnitt — disse påvirker outputen'],{
+  anchorX:'middle',fontSize:12,cssStyle:'font-weight:600',fixed:true
+});
+
+for (let i=0;i<4;i++) {
+  let y=7.50-0.66*i;
+  board.create('text',[0.45,y,controlNames[i]],{
+    anchorY:'middle',fontSize:10,color:controlColors[i],
+    cssStyle:'font-weight:600',fixed:true
+  });
+  meanControls.push(board.create('slider',
+    [[2.25,y],[5.15,y],[0,initialMeans[i],1]],{
+      name:'',snapWidth:0.05,precision:2,
+      strokeColor:controlColors[i],fillColor:controlColors[i],
+      highline:{strokeColor:controlColors[i]},
+      baseline:{strokeColor:'#b8b8b8'},
+      point1:{visible:false},point2:{visible:false}
+    }));
+}
+
+board.create('text',[2.85,4.60,'12 kontraster — prøv dem, outputen endres ikke'],{
+  anchorX:'middle',fontSize:12,color:'#666666',
+  cssStyle:'font-weight:600',fixed:true
+});
+
+for (let k=0;k<12;k++) {
+  let col=Math.floor(k/4), row=k%4;
+  let x0=0.65+1.72*col, y=3.92-0.63*row;
+  board.create('text',[x0,y,'c'+(k+1)],{
+    anchorY:'middle',fontSize:9,color:'#777777',fixed:true
+  });
+  contrastControls.push(board.create('slider',
+    [[x0+0.34,y],[x0+1.38,y],[-1,0,1]],{
+      name:'',snapWidth:0.1,precision:1,
+      strokeColor:'#777777',fillColor:'#777777',
+      highline:{strokeColor:'#777777'},
+      baseline:{strokeColor:'#c8c8c8'},
+      point1:{visible:false},point2:{visible:false},
+      glider:{size:2,strokeColor:'#666666',fillColor:'#aaaaaa'}
+    }));
+}
+
+board.create('arrow',[[5.75,6.55],[8.65,6.55]],{
+  strokeColor:'#333333',strokeWidth:3,fixed:true,highlight:false
+});
+board.create('text',[7.20,6.92,'transformasjonen bruker dem'],{
+  anchorX:'middle',fontSize:11,fixed:true
+});
+
+board.create('segment',[[5.75,3.05],[7.20,3.05]],{
+  strokeColor:'#888888',strokeWidth:2,dash:2,fixed:true,highlight:false
+});
+board.create('text',[7.45,3.05,'×'],{
+  anchorX:'middle',anchorY:'middle',fontSize:25,color:'#777777',fixed:true
+});
+board.create('text',[7.20,2.55,'sendes til null'],{
+  anchorX:'middle',fontSize:11,color:'#666666',fixed:true
+});
+
+function outputBox(x0,y0,index) {
+  board.create('polygon',
+    [[x0,y0],[x0+1.35,y0],[x0+1.35,y0+1.35],[x0,y0+1.35]],{
+      fillColor:controlFills[index],fillOpacity:0.88,
+      vertices:{visible:false},
+      borders:{strokeColor:'#ffffff',strokeWidth:2,
+               fixed:true,highlight:false},
+      fixed:true,highlight:false
+    });
+  board.create('text',[x0+0.675,y0+0.675,function(){
+    return meanControls[index].Value().toFixed(2);
+  }],{
+    anchorX:'middle',anchorY:'middle',fontSize:14,
+    cssStyle:'font-weight:600',fixed:true
+  });
+}
+
+board.create('text',[11.35,7.75,'OUTPUT: 4 knapper'],{
+  anchorX:'middle',fontSize:16,cssStyle:'font-weight:600',fixed:true
+});
+outputBox(10.0,5.75,0);
+outputBox(11.35,5.75,1);
+outputBox(10.0,4.40,2);
+outputBox(11.35,4.40,3);
+board.create('polygon',[[10.0,4.40],[12.70,4.40],[12.70,7.10],[10.0,7.10]],{
+  fillOpacity:0,vertices:{visible:false},
+  borders:{strokeColor:'#333333',strokeWidth:2,fixed:true,highlight:false},
+  fixed:true,highlight:false
+});
+
+board.create('text',[11.35,3.35,'De fire outputverdiene kan stilles uavhengig.'],{
+  anchorX:'middle',fontSize:12,fixed:true
+});
+board.create('text',[7.60,0.75,'Én uavhengig knapp = én retning'],{
+  anchorX:'middle',fontSize:13,cssStyle:'font-weight:600',fixed:true
+});
+```
+
+Dette er ikke 16 nye størrelser; det er en ny beskrivelse av de samme 16 inputmulighetene. Å bevege én knapp mens de andre står stille, kaller vi å bevege oss i én **retning**.
+
+- De tolv grå knappene gir tolv uavhengige inputretninger som sendes til nullbildet. De danner en basis for nullrommet.
+- Hver farget knapp gir en endring i én outputpiksel. De fire uavhengige outputretningene danner en basis for kolonnerommet.
+
+Flere forskjellige pikselendringer kan gi samme endring i outputen. Derfor teller rangen ikke konkrete inputendringer. Den teller hvor mange outputverdier som kan stilles uavhengig. I dette eksemplet er det fire.
+
+De synlige og usynlige knappene gjør sammen rede for alle 16 inputmulighetene:
 
 $$16=4+12.$$
 
@@ -1274,9 +1416,9 @@ $$n=\operatorname{rank}(A)+\dim N(A).$$
 ::: {.callout-note}
 ## Tolkning
 
-- Rangen teller uavhengige outputretninger.
-- Nulliteten teller uavhengige inputretninger som transformeres til null.
-- Til sammen gjør de rede for alle inputdimensjonene.
+- **Nulliteten 12** teller de uavhengige inputretningene som sendes til null.
+- **Rangen 4** teller de uavhengige outputretningene inputen kan produsere.
+- Rangen og nulliteten teller forskjellige typer retninger i forskjellige rom, men til sammen gjør tallene rede for alle 16 inputdimensjonene.
 :::
 
 ## 3.7 Egne eksperimenter
@@ -1431,7 +1573,15 @@ A=
 \end{bmatrix}.
 $$
 
-Matrisen beskriver en lineær transformasjon fra fire inputverdier til tre outputverdier. Vi vil svare på tre spørsmål:
+Matrisen har fire kolonner og tre rader, og beskriver derfor transformasjonen
+
+$$
+A:\underbrace{\mathbb R^4}_{\text{inputrom}}
+\longrightarrow
+\underbrace{\mathbb R^3}_{\text{outputrom}}.
+$$
+
+Nullrommet består av 4-vektorer og ligger i inputrommet: $N(A)\subseteq\mathbb R^4$. Kolonnerommet består av 3-vektorer og ligger i outputrommet: $C(A)\subseteq\mathbb R^3$. Vi vil svare på tre spørsmål:
 
 1. Hvor mange uavhengige outputretninger har transformasjonen?
 2. Hvilke inputretninger gir output null?
@@ -1633,6 +1783,8 @@ z=s*z1+t*z2
 print("Tilfeldige koeffisienter:",s,t)
 print("||A z|| =",np.linalg.norm(A@z))
 ```
+
+I dette eksemplet har både kolonnerommet og nullrommet dimensjon 2. Det betyr ikke at de er samme rom: Kolonneromsbasisen består av 3-vektorer i outputrommet, mens nullromsbasisen består av 4-vektorer i inputrommet. At dimensjonene tilfeldigvis er like her, skyldes at $4=2+2$.
 
 ### Rang–nullitet som regnskap
 
