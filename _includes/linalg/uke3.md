@@ -1255,6 +1255,8 @@ Velg aktivitet C, D eller E. Lever:
 
 Så langt har bildene gjort begrepene synlige. Nå legger vi bort bildebakgrunnen og regner direkte med en matrise. Målet er å kunne gå fra en matrise til rang, basis for kolonnerommet og basis for nullrommet — først med papir og blyant, deretter med kode som kontroll.
 
+Selve matriseberegningene var pensum i Matematikk 1: radoperasjoner, ligningssystemer og Gauss-eliminasjon. Det er en stund siden, så vi forventer ikke at framgangsmåten sitter friskt. Denne siden repeterer regningen steg for steg og kobler den til ordene vi bruker nå — pivot, rang, kolonnerom og nullrom.
+
 Vi bruker samme matrise gjennom hele eksemplet:
 
 $$
@@ -1498,17 +1500,17 @@ print("Stemmer rang–nullitet?",A.shape[1]==rank_A+nullity_A)
 
 ### Kan en bestemt output produseres?
 
-Siden $a_1$ og $a_2$ er en basis for kolonnerommet, har en mulig output formen
+Siden $a_1$ og $a_2$ er en basis for kolonnerommet, kan alle mulige outputvektorer bygges av disse to. La $\alpha$ og $\beta$ være to fritt valgte tall. De bestemmer hvor mye av henholdsvis $a_1$ og $a_2$ vi bruker:
 
 $$
-\color{#277da1}{c_1a_1}+\color{#d98900}{c_2a_2}
+\color{#277da1}{\alpha a_1}+\color{#d98900}{\beta a_2}
 =
 \begin{bmatrix}
-c_1+2c_2\\c_2\\c_1+3c_2
+\alpha+2\beta\\\beta\\\alpha+3\beta
 \end{bmatrix}.
 $$
 
-Legg merke til at tredje komponent alltid er summen av de to første. Sammenlign
+Uansett hvilke tall vi velger for $\alpha$ og $\beta$, er tredje komponent summen av de to første. Vi tester derfor to ønskede outputvektorer:
 
 $$
 b=\begin{bmatrix}2\\-1\\1\end{bmatrix},
