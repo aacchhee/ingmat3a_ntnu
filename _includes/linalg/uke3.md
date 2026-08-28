@@ -1476,9 +1476,13 @@ Matrisen har fire kolonner, altså fire inputvariabler. Eliminasjonen ga to pivo
 $$
 \underbrace{4}_{\text{inputdimensjon}}
 =
-\color{#277da1}{\underbrace{2}_{\text{rang}}}
+\underbrace{
+\color{#277da1}{1}+\color{#d98900}{1}
+}_{\text{rang}=2}
 +
-\color{#4f8f49}{\underbrace{2}_{\text{nullitet}}}.
+\underbrace{
+\color{#4f8f49}{1}+\color{#8b5aa7}{1}
+}_{\text{nullitet}=2}.
 $$
 
 Rangen teller de uavhengige kombinasjonene som kan synes i outputen. Nulliteten teller de uavhengige inputendringene som gir output null.
