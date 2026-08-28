@@ -960,26 +960,29 @@ Vi kontrollerer også den motsatte retningen: Kan tilfeldige bilder med gjennoms
 
 C=np.column_stack([H.reshape(-1),V.reshape(-1),D.reshape(-1)])
 rng=np.random.default_rng(12)
-zero_mean_images=[]; rebuilt_images=[]; errors=[]
+target_images=[]; reconstructed_images=[]; errors=[]
 for _ in range(4):
     first_three=rng.uniform(-1,1,size=3)
     values=np.r_[first_three,-np.sum(first_three)]
     target=values.reshape(2,2)
     weights=np.linalg.solve(C[:3,:],values[:3])
-    rebuilt=(C@weights).reshape(2,2)
-    zero_mean_images.append(target); rebuilt_images.append(rebuilt)
-    errors.append(np.linalg.norm(target-rebuilt))
+    reconstructed=(C@weights).reshape(2,2)
+    target_images.append(target)
+    reconstructed_images.append(reconstructed)
+    errors.append(np.linalg.norm(target-reconstructed))
 
 interleaved=[]; titles=[]
-for i,(target,rebuilt) in enumerate(zip(zero_mean_images,rebuilt_images),start=1):
-    interleaved.extend([target,rebuilt])
-    titles.extend([f"Nullmiddel {i}",f"Bygd {i}"])
+for i,(target,reconstructed) in enumerate(
+        zip(target_images,reconstructed_images),start=1):
+    interleaved.extend([target,reconstructed])
+    titles.extend([f"Målbilde {i}\n(sum = 0)",
+                   f"Rekonstruksjon {i}\n(fra H, V, D)"])
 show_images(interleaved,titles,cols=4,cmap="coolwarm",
             vmin=-2,vmax=2,figsize=(6.8,3.5))
 print("Rekonstruksjonsfeil:",errors)
 ```
 
-I hvert par er første bilde konstruert med fire tilfeldige tall som summerer til null. Det andre er bygd med bare `H`, `V` og `D`. De to bildene i hvert par er like, og rekonstruksjonsfeilen er null eller nær maskinpresisjon.
+I hvert par er målbildet konstruert med fire tilfeldige tall som summerer til null. Bildet ved siden av er rekonstruert fra `H`, `V` og `D`. De to bildene i hvert par er like, og rekonstruksjonsfeilen er null eller nær maskinpresisjon.
 
 De fire forsøkene støtter påstanden: Bilder med sum null kan beskrives med tre uavhengige kontrastkoeffisienter. Hvorfor tre? Når de første tre pikselverdiene er valgt, må den siste være minus summen av dem. Vi har derfor tre frie valg og én verdi som er bestemt av de andre. Nå har vi et konkret behov for et navn på hele denne samlingen.
 
