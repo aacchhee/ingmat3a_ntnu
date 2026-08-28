@@ -1251,4 +1251,375 @@ Velg aktivitet C, D eller E. Lever:
 3. en numerisk kontroll med residual eller rang;
 4. en kort forklaring av hvilke variasjoner som bevares, og hvilke som ikke kan bestemmes fra outputen.
 
+## 3.8 Fra matrise til rom, basis og rang
+
+Så langt har bildene gjort begrepene synlige. Nå legger vi bort bildebakgrunnen og regner direkte med en matrise. Målet er å kunne gå fra en matrise til rang, basis for kolonnerommet og basis for nullrommet — først med papir og blyant, deretter med kode som kontroll.
+
+Vi bruker samme matrise gjennom hele eksemplet:
+
+$$
+A=
+\begin{bmatrix}
+1&2&0&1\\
+0&1&1&1\\
+1&3&1&2
+\end{bmatrix}.
+$$
+
+Matrisen beskriver en lineær transformasjon fra fire inputverdier til tre outputverdier. Vi vil svare på tre spørsmål:
+
+1. Hvor mange uavhengige outputretninger har transformasjonen?
+2. Hvilke inputretninger gir output null?
+3. Kan en gitt vektor $b$ produseres som $Ax$?
+
+```{pyodide-python}
+#| label: week3-pure-matrix-setup
+#| autorun: true
+
+A=np.array([
+    [1.,2.,0.,1.],
+    [0.,1.,1.,1.],
+    [1.,3.,1.,2.]
+])
+print(A)
+```
+
+### Eliminasjon og rang
+
+::: {.callout-tip}
+## Først på papir
+
+Trekk første rad fra tredje rad. Sammenlign deretter den nye tredje raden med andre rad, og eliminer én gang til. Marker den første ikke-null-oppføringen i hver ikke-null-rad.
+:::
+
+Regningen blir
+
+$$
+\begin{bmatrix}
+1&2&0&1\\
+0&1&1&1\\
+1&3&1&2
+\end{bmatrix}
+\longrightarrow
+\begin{bmatrix}
+1&2&0&1\\
+0&1&1&1\\
+0&1&1&1
+\end{bmatrix}
+\longrightarrow
+\begin{bmatrix}
+1&2&0&1\\
+0&1&1&1\\
+0&0&0&0
+\end{bmatrix}.
+$$
+
+Den siste raden inneholder ingen ny ligning. To rader er igjen, og de ledende oppføringene — **pivotene** — ligger i kolonne 1 og 2. Dermed er rangen 2.
+
+Koden under utfører vanlig framovereliminasjon. Den bruker delvis pivotering: I hver kolonne velges den største tilgjengelige pivoten i absoluttverdi. Det er tryggere numerisk enn automatisk å bruke den øverste oppføringen.
+
+```{pyodide-python}
+#| label: week3-row-echelon-function
+#| autorun: true
+
+def row_echelon(A,tol=1e-12,show_steps=False):
+    """Returner trappeform og indeksene til pivotkolonnene."""
+    R=np.array(A,dtype=float,copy=True)
+    rows,cols=R.shape
+    pivot_row=0
+    pivot_columns=[]
+
+    for col in range(cols):
+        if pivot_row==rows:
+            break
+
+        candidate=pivot_row+np.argmax(np.abs(R[pivot_row:,col]))
+        if abs(R[candidate,col])<=tol:
+            continue
+
+        if candidate!=pivot_row:
+            R[[pivot_row,candidate]]=R[[candidate,pivot_row]]
+            if show_steps:
+                print(f"Bytt rad {pivot_row+1} og {candidate+1}:\n",R)
+
+        for row in range(pivot_row+1,rows):
+            factor=R[row,col]/R[pivot_row,col]
+            if abs(factor)>tol:
+                R[row]-=factor*R[pivot_row]
+
+        R[np.abs(R)<=tol]=0.0
+        pivot_columns.append(col)
+        pivot_row+=1
+        if show_steps:
+            print(f"Etter pivot i kolonne {col+1}:\n",R)
+
+    return R,pivot_columns
+
+R,pivot_columns=row_echelon(A,show_steps=True)
+print("Trappeform:\n",R)
+print("Pivotkolonner, nummerert fra 1:",[j+1 for j in pivot_columns])
+print("Rang fra eliminasjon:",len(pivot_columns))
+print("Kontroll med NumPy:",np.linalg.matrix_rank(A))
+```
+
+`matrix_rank` er nyttig som kontroll, men eliminasjonen viser *hvorfor* rangen er 2. Senere skal vi se at en numerisk rang alltid avhenger av hva som regnes som «tilstrekkelig nær null».
+
+### Basis for kolonnerommet
+
+Pivotene forteller hvilke opprinnelige kolonner som tilfører en ny outputretning. Vi henter derfor kolonne 1 og 2 fra den opprinnelige matrisen:
+
+$$
+a_1=\begin{bmatrix}1\\0\\1\end{bmatrix},
+\qquad
+a_2=\begin{bmatrix}2\\1\\3\end{bmatrix}.
+$$
+
+::: {.callout-warning}
+## En vanlig feil
+
+Pivotposisjonene finnes ved å radredusere, men basisvektorene hentes fra den **opprinnelige** matrisen. Radoperasjoner endrer kolonnene.
+:::
+
+De to andre kolonnene kan bygges av disse:
+
+$$
+a_3=a_2-2a_1,
+\qquad
+a_4=a_2-a_1.
+$$
+
+Kontroller begge relasjonene før du kjører cellen.
+
+```{pyodide-python}
+#| label: week3-column-space-basis
+#| autorun: true
+
+column_basis=A[:,pivot_columns]
+a1,a2,a3,a4=[A[:,j] for j in range(4)]
+
+print("Basisvektorer som kolonner:\n",column_basis)
+print("Feil i a3 = a2 - 2*a1:",np.linalg.norm(a3-(a2-2*a1)))
+print("Feil i a4 = a2 - a1:  ",np.linalg.norm(a4-(a2-a1)))
+print("Rang av basisvektorene:",np.linalg.matrix_rank(column_basis))
+```
+
+Kolonne 1 og 2 er uavhengige og bygger alle kolonnene i $A$. De danner derfor en basis for kolonnerommet, som har dimensjon 2.
+
+### Basis for nullrommet
+
+Nullrommet finnes ved å løse det homogene systemet $Ax=0$. Trappeformen gir
+
+$$
+\begin{aligned}
+x_1+2x_2+x_4&=0,\\
+x_2+x_3+x_4&=0.
+\end{aligned}
+$$
+
+Pivotvariablene er $x_1$ og $x_2$. Variablene $x_3$ og $x_4$ er frie. Sett
+
+$$x_3=s,\qquad x_4=t.$$
+
+::: {.callout-tip}
+## Fortsett på papir
+
+Løs den andre ligningen for $x_2$, og bruk resultatet i den første ligningen. Samle deretter alle ledd som inneholder $s$, og alle ledd som inneholder $t$.
+:::
+
+Resultatet er
+
+$$
+x=
+s\begin{bmatrix}2\\-1\\1\\0\end{bmatrix}
++t\begin{bmatrix}1\\-1\\0\\1\end{bmatrix}.
+$$
+
+Dermed er de to viste vektorene en basis for nullrommet. Koden kontrollerer både at de gir output null, og at en tilfeldig lineærkombinasjon fortsatt gjør det.
+
+```{pyodide-python}
+#| label: week3-null-space-basis-matrix
+#| autorun: true
+
+z1=np.array([2.,-1.,1.,0.])
+z2=np.array([1.,-1.,0.,1.])
+Z=np.column_stack([z1,z2])
+
+print("A ganger nullromsbasisen:\n",A@Z)
+print("Rang av basisvektorene:",np.linalg.matrix_rank(Z))
+
+rng=np.random.default_rng(31)
+s,t=rng.normal(size=2)
+z=s*z1+t*z2
+print("Tilfeldige koeffisienter:",s,t)
+print("||A z|| =",np.linalg.norm(A@z))
+```
+
+### Rang–nullitet som regnskap
+
+Matrisen har fire kolonner, altså fire inputvariabler. Eliminasjonen ga to pivotvariabler og to frie variabler:
+
+$$
+\underbrace{4}_{\text{inputdimensjon}}
+=
+\underbrace{2}_{\text{rang}}
++
+\underbrace{2}_{\text{nullitet}}.
+$$
+
+Rangen teller de uavhengige kombinasjonene som kan synes i outputen. Nulliteten teller de uavhengige inputendringene som gir output null.
+
+```{pyodide-python}
+#| label: week3-rank-nullity-check
+
+rank_A=len(pivot_columns)
+nullity_A=A.shape[1]-rank_A
+print(f"{A.shape[1]} = {rank_A} + {nullity_A}")
+```
+
+### Kan en bestemt output produseres?
+
+Siden $a_1$ og $a_2$ er en basis for kolonnerommet, har en mulig output formen
+
+$$
+c_1a_1+c_2a_2
+=
+\begin{bmatrix}
+c_1+2c_2\\c_2\\c_1+3c_2
+\end{bmatrix}.
+$$
+
+Legg merke til at tredje komponent alltid er summen av de to første. Sammenlign
+
+$$
+b=\begin{bmatrix}2\\-1\\1\end{bmatrix},
+\qquad
+d=\begin{bmatrix}2\\-1\\4\end{bmatrix}.
+$$
+
+Vektoren $b$ oppfyller $b_3=b_1+b_2$, mens $d$ ikke gjør det. Den utvidede matrisen $[A\mid b]$ får derfor samme rang som $A$, men $[A\mid d]$ får én ekstra pivot.
+
+```{pyodide-python}
+#| label: week3-reachable-outputs
+#| autorun: true
+
+b=np.array([2.,-1.,1.])
+d=np.array([2.,-1.,4.])
+
+def augmented_rank(A,rhs):
+    return np.linalg.matrix_rank(np.column_stack([A,rhs]))
+
+print("rang(A)       =",np.linalg.matrix_rank(A))
+print("rang([A | b]) =",augmented_rank(A,b))
+print("rang([A | d]) =",augmented_rank(A,d))
+```
+
+Dermed gjelder kriteriet
+
+$$
+Ax=b\text{ har løsning}
+\quad\Longleftrightarrow\quad
+\operatorname{rank}(A)=\operatorname{rank}([A\mid b]).
+$$
+
+Hva gjør vi når en ønsket output som $d$ ikke kan produseres nøyaktig? Det spørsmålet leder direkte til projeksjon og minste kvadraters metode i uke 4.
+
+### Forskjellige inputer, samme output
+
+Velg en input $x_0$ og beregn $y=Ax_0$. Hvis $z$ ligger i nullrommet, gir $x_0+z$ samme output:
+
+$$A(x_0+z)=Ax_0+Az=Ax_0.$$
+
+Her er en hel familie av forskjellige inputvektorer med samme output.
+
+```{pyodide-python}
+#| label: week3-same-output-pure-matrix
+#| autorun: true
+
+x0=np.array([1.,2.,0.,-1.])
+y=A@x0
+
+for alpha in [-2.,-1.,0.,1.,2.]:
+    x=x0+alpha*z1
+    print(f"alpha={alpha:4.1f}  x={x}  A@x={A@x}")
+
+print("Felles output:",y)
+```
+
+Dette er den rene matriseversjonen av åpningsproblemet: Nullrommet beskriver alle endringer i inputen som ikke endrer outputen.
+
+### Eksakt og numerisk rang
+
+Til slutt endrer vi den avhengige tredje raden med et svært lite tall. For enhver $\varepsilon\ne0$ er den perturberte matrisen eksakt sett av rang 3. Numerisk må vi likevel avgjøre om den nye pivoten er stor nok til å skille fra avrundingsfeil.
+
+```{pyodide-python}
+#| label: week3-nearly-dependent-row
+#| autorun: true
+
+direction=np.array([1.,-1.,1.,-1.])
+for eps in [1e-4,1e-8,1e-12,1e-16]:
+    A_eps=A.copy()
+    A_eps[2]+=eps*direction
+    R_eps,pivots_eps=row_echelon(A_eps,tol=1e-10)
+    print(f"eps={eps:.0e}",
+          "rang med tol=1e-10:",len(pivots_eps),
+          "NumPy-rang:",np.linalg.matrix_rank(A_eps))
+```
+
+Dette er ikke en motsigelse. **Eksakt rang** gjelder en idealisert matrise med eksakte tall. **Numerisk rang** beskriver hvor mange uavhengige retninger vi kan skille pålitelig med den valgte presisjonen og toleransen.
+
+### Egne papir- og kodeoppgaver
+
+Arbeid med én matrise om gangen:
+
+$$
+B=\begin{bmatrix}
+1&0&1\\
+0&1&1\\
+1&1&2
+\end{bmatrix},
+\qquad
+C=\begin{bmatrix}
+1&2&3\\
+2&4&6
+\end{bmatrix}.
+$$
+
+**På papir:**
+
+1. Radreduser matrisen og marker pivotene.
+2. Finn rang og pivotkolonner.
+3. Finn en basis for kolonnerommet fra de opprinnelige kolonnene.
+4. Finn en basis for nullrommet ved å innføre frie variabler.
+5. Kontroller rang–nullitet.
+
+**Med kode:**
+
+1. Kontroller trappeformen og pivotkolonnene med `row_echelon`.
+2. Kontroller nullromsvektorene ved å beregne `M @ Z`.
+3. Lag to forskjellige inputer med samme output.
+4. Finn én output som kan produseres, og én som ikke kan produseres.
+
+```{pyodide-python}
+#| label: week3-pure-matrix-exercises
+
+B=np.array([[1.,0.,1.],
+            [0.,1.,1.],
+            [1.,1.,2.]])
+C=np.array([[1.,2.,3.],
+            [2.,4.,6.]])
+
+M=B  # Bytt til C når du er ferdig med B.
+R_M,pivots_M=row_echelon(M)
+print("Trappeform:\n",R_M)
+print("Pivotkolonner:",[j+1 for j in pivots_M])
+
+# TODO: Sett inn nullromsvektorene du fant på papir som kolonner i Z_M.
+Z_M=np.zeros((M.shape[1],0))
+print("Kontroll M @ Z_M:\n",M@Z_M)
+
+# TODO: Velg x0 og en nullromsvektor z, og sammenlign M@x0 med M@(x0+z).
+
+# TODO: Lag rhs_yes og rhs_no. Sammenlign rang(M) med rang([M | rhs]).
+```
+
 :::
