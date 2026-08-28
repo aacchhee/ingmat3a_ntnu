@@ -21,6 +21,19 @@ website:
       - text: "Uke 2 – fikspunktiterasjon"
         file: pages/page4.qmd
 
+      - section: "Numerisk lineær algebra"
+        contents:
+          - text: "Uke 3 – vektorrom, kolonnerom og nullrom"
+            file: pages/uke3.qmd
+          - text: "Uke 4 – ortogonalitet, projeksjon og minste kvadrater"
+            file: pages/uke4.qmd
+          - text: "Uke 5 – egenverdier og gjentatt matrisemultiplikasjon"
+            file: pages/uke5.qmd
+          - text: "Uke 6 – iterative metoder for lineære systemer"
+            file: pages/uke6.qmd
+          - text: "Uke 7 – singulærverdidekomposisjon"
+            file: pages/uke7.qmd
+
       - section: "Projects"
         contents:
           - pages/project_week1.qmd

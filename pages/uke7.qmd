@@ -1,0 +1,5 @@
+---
+title: "Uke 7 – hvilke retninger i en matrise er viktige?"
+---
+
+{{< include ../_includes/linalg/uke7.md >}}
