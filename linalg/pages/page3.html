@@ -490,6 +490,13 @@ select.math-modal-input {
   margin-bottom: .35em;
 }
 
+.math-modal-model-selection-info {
+  min-height: 1.25em;
+  margin-top: .3em;
+  color: var(--bs-secondary-color, #495057);
+  font-size: .92em;
+}
+
 .math-modal-modellist label {
   font-weight: 400;
   display: block;
@@ -1628,6 +1635,7 @@ select.math-modal-input {
       modelFree:       'free',
       modelPaid:       'paid!',
       modelRecommended:'recommended',
+      modelOther:      'other models',
       modelSlow:       'reasoning may be slow',
       modelListSelect: 'Choose a model – it will be copied to the model field.',
       modelListNoPricing: '⚠️ This provider does not supply pricing information. Check the provider’s website to see whether the model is free.',
@@ -1772,6 +1780,7 @@ select.math-modal-input {
       modelFree:       'gratis',
       modelPaid:       'kostenpflichtig!',
       modelRecommended:'empfohlen',
+      modelOther:      'weitere Modelle',
       modelSlow:       'Reasoning kann langsam sein',
       modelListSelect: 'Wähle ein Modell – es wird ins Modell-Feld übernommen.',
       modelListNoPricing: '⚠️ Dieser Anbieter liefert keine Preisinfo. Prüfe auf der Anbieterseite, ob das Modell kostenlos ist.',
@@ -1912,6 +1921,7 @@ select.math-modal-input {
     modelFree: 'gratis',
     modelPaid: 'betalt!',
     modelRecommended: 'anbefalt',
+    modelOther: 'andre modeller',
     modelSlow: 'resonnering kan være treg',
     modelListSelect: 'Velg en modell – den kopieres til modellfeltet.',
     modelListNoPricing: '⚠️ Leverandøren oppgir ikke prisinformasjon. Sjekk leverandørens nettsted.',
@@ -2738,10 +2748,29 @@ select.math-modal-input {
     var modelPicker = document.createElement('select');
     modelPicker.className = 'math-modal-input';
 
+    var modelSelectionInfo = document.createElement('div');
+    modelSelectionInfo.className = 'math-modal-model-selection-info';
+
     modelListDiv.appendChild(modelListInfo);
     modelListDiv.appendChild(freeOnlyLabel);
     modelListDiv.appendChild(modelPicker);
+    modelListDiv.appendChild(modelSelectionInfo);
     body.appendChild(modelListDiv);
+
+    function updateModelSelectionInfo() {
+      var selected = _meFetchedModels.find(function (m) { return m.id === modelPicker.value; });
+      if (!selected) {
+        modelSelectionInfo.textContent = '';
+        return;
+      }
+      var policy = modelPolicy(selected.id);
+      var details = [];
+      if (policy.recommended) details.push(L.modelRecommended);
+      else if (policy.slow) details.push(L.modelSlow);
+      if (selected.free === true) details.push(L.modelFree);
+      else if (selected.free === false) details.push(L.modelPaid);
+      modelSelectionInfo.textContent = details.join(' · ');
+    }
 
     function renderModelList() {
       var hasPricing = _meFetchedModels.some(function (m) { return m.free !== null; });
@@ -2757,22 +2786,31 @@ select.math-modal-input {
       });
       modelPicker.innerHTML = '';
       modelPicker.add(new Option(L.modelChoose(models.length), ''));
-      models.forEach(function (m) {
-        var policy = modelPolicy(m.id);
-        var suffix = m.free === true ? ' – ' + L.modelFree
-                   : m.free === false ? ' – ' + L.modelPaid
-                   : '';
-        if (policy.recommended) suffix += ' – ' + L.modelRecommended;
-        else if (policy.slow) suffix += ' – ' + L.modelSlow;
-        modelPicker.add(new Option(m.id + suffix, m.id));
+      [
+        { label: L.modelRecommended, test: function (p) { return p.recommended; } },
+        { label: L.modelOther, test: function (p) { return !p.recommended && !p.slow; } },
+        { label: L.modelSlow, test: function (p) { return p.slow; } }
+      ].forEach(function (group) {
+        var groupModels = models.filter(function (m) { return group.test(modelPolicy(m.id)); });
+        if (groupModels.length === 0) return;
+        var optgroup = document.createElement('optgroup');
+        optgroup.label = group.label;
+        groupModels.forEach(function (m) {
+          optgroup.appendChild(new Option(m.id, m.id));
+        });
+        modelPicker.appendChild(optgroup);
       });
+      if (models.some(function (m) { return m.id === modelInput.value; }))
+        modelPicker.value = modelInput.value;
       modelListInfo.textContent = hasPricing ? L.modelListSelect : L.modelListNoPricing;
+      updateModelSelectionInfo();
       modelListDiv.style.display = 'block';
     }
 
     freeOnlyCb.onchange = renderModelList;
     modelPicker.onchange = function () {
       if (modelPicker.value) modelInput.value = modelPicker.value;
+      updateModelSelectionInfo();
     };
 
     async function doFetchModels(isAuto) {
