@@ -8237,6 +8237,8 @@ qpyodideReady
       freeModelsOnly:  ' show free models only',
       modelFree:       'free',
       modelPaid:       'paid!',
+      modelRecommended:'recommended',
+      modelSlow:       'reasoning may be slow',
       modelListSelect: 'Choose a model – it will be copied to the model field.',
       modelListNoPricing: '⚠️ This provider does not supply pricing information. Check the provider’s website to see whether the model is free.',
       errNeedBaseUrl:  'Please enter a base URL first (or choose a template).',
@@ -8259,6 +8261,7 @@ qpyodideReady
       errModelEmpty: 'The model returned no visible feedback. Please request feedback again.',
       errModelReasoningLeak: 'The model exposed internal reasoning instead of clean feedback. Please request feedback again or choose another model.',
       errModelLanguage: 'The model answered in the wrong language twice. Please request feedback again or choose another model.',
+      errModelTimeout: 'The model took too long to answer. Try an instant or non-reasoning model.',
 
       helpBox:
         '<b>Set up AI access – works with any OpenAI-compatible API.</b><br>' +
@@ -8378,6 +8381,8 @@ qpyodideReady
       freeModelsOnly:  ' nur kostenlose Modelle anzeigen',
       modelFree:       'gratis',
       modelPaid:       'kostenpflichtig!',
+      modelRecommended:'empfohlen',
+      modelSlow:       'Reasoning kann langsam sein',
       modelListSelect: 'Wähle ein Modell – es wird ins Modell-Feld übernommen.',
       modelListNoPricing: '⚠️ Dieser Anbieter liefert keine Preisinfo. Prüfe auf der Anbieterseite, ob das Modell kostenlos ist.',
       errNeedBaseUrl:  'Bitte zuerst eine Base URL eingeben (oder eine Vorlage wählen).',
@@ -8400,6 +8405,7 @@ qpyodideReady
       errModelEmpty: 'Das Modell hat kein sichtbares Feedback zurückgegeben. Bitte fordern Sie das Feedback erneut an.',
       errModelReasoningLeak: 'Das Modell hat interne Gedankengänge statt sauberen Feedbacks ausgegeben. Bitte fordern Sie das Feedback erneut an oder wählen Sie ein anderes Modell.',
       errModelLanguage: 'Das Modell hat zweimal in der falschen Sprache geantwortet. Bitte fordern Sie das Feedback erneut an oder wählen Sie ein anderes Modell.',
+      errModelTimeout: 'Das Modell hat zu lange gebraucht. Wähle ein Instant- oder Nicht-Reasoning-Modell.',
 
       helpBox:
         '<b>KI-Zugang einrichten – funktioniert mit jeder OpenAI-kompatiblen API.</b><br>' +
@@ -8515,6 +8521,8 @@ qpyodideReady
     freeModelsOnly: ' vis bare gratis modeller',
     modelFree: 'gratis',
     modelPaid: 'betalt!',
+    modelRecommended: 'anbefalt',
+    modelSlow: 'resonnering kan være treg',
     modelListSelect: 'Velg en modell – den kopieres til modellfeltet.',
     modelListNoPricing: '⚠️ Leverandøren oppgir ikke prisinformasjon. Sjekk leverandørens nettsted.',
     errNeedBaseUrl: 'Skriv inn en basis-URL først, eller velg en mal.',
@@ -8537,6 +8545,7 @@ qpyodideReady
     errModelEmpty: 'Modellen returnerte ingen synlig tilbakemelding. Be om tilbakemelding på nytt.',
     errModelReasoningLeak: 'Modellen viste intern resonnering i stedet for en ren tilbakemelding. Prøv igjen eller velg en annen modell.',
     errModelLanguage: 'Modellen svarte på feil språk to ganger. Prøv igjen eller velg en annen modell.',
+    errModelTimeout: 'Modellen brukte for lang tid. Prøv en instant-modell eller en modell uten resonnering.',
     helpBox:
       '<b>Sett opp KI-tilgang – fungerer med alle OpenAI-kompatible API-er.</b><br>' +
       'Du trenger en <b>basis-URL</b>, en <b>API-nøkkel</b> og en <b>modell</b>.<br><br>' +
@@ -9145,11 +9154,65 @@ qpyodideReady
 
   var LLM_CFG_KEY = 'math-exercise-llm-config';
   var LLM_CNT_NS  = 'math-fb-cnt';
+  var LLM_CAP_NS  = 'math-exercise-model-capability-v1';
+  var LLM_CAP_TTL = 30 * 24 * 60 * 60 * 1000;
+  var LLM_TIMEOUT_MS = 60000;
 
   function loadCfg()    { try { return JSON.parse(localStorage.getItem(LLM_CFG_KEY) || 'null'); } catch(e) { return null; } }
   function saveCfg(cfg) { try { localStorage.setItem(LLM_CFG_KEY, JSON.stringify(cfg)); } catch(e) {} }
   function getCnt(lbl)  { try { return parseInt(localStorage.getItem(LLM_CNT_NS + '|' + location.pathname + '|' + lbl) || '0'); } catch(e) { return 0; } }
   function incCnt(lbl)  { var n = getCnt(lbl) + 1; try { localStorage.setItem(LLM_CNT_NS + '|' + location.pathname + '|' + lbl, String(n)); } catch(e) {} return n; }
+
+  function capabilityKey(baseUrl, model) {
+    return String(baseUrl || '').replace(/\/+$/, '').toLowerCase() + '|' +
+      String(model || '').trim().toLowerCase();
+  }
+
+  function loadCapability(baseUrl, model) {
+    try {
+      var all = JSON.parse(localStorage.getItem(LLM_CAP_NS) || '{}');
+      var entry = all[capabilityKey(baseUrl, model)];
+      if (!entry || Date.now() - Number(entry.updatedAt || 0) > LLM_CAP_TTL) return null;
+      return entry.state === 'supported' || entry.state === 'unsupported' ? entry.state : null;
+    } catch (e) { return null; }
+  }
+
+  function saveCapability(baseUrl, model, state) {
+    try {
+      var all = JSON.parse(localStorage.getItem(LLM_CAP_NS) || '{}');
+      all[capabilityKey(baseUrl, model)] = { state: state, updatedAt: Date.now() };
+      localStorage.setItem(LLM_CAP_NS, JSON.stringify(all));
+    } catch (e) {}
+  }
+
+  // /models is not standardised beyond the model id.  Keep classification
+  // advisory and add request fields only for positively identified families.
+  function modelPolicy(model) {
+    var id = String(model || '').trim().toLowerCase();
+    var optionalBody = {};
+    var systemPrefix = '';
+
+    if (id.indexOf('gpt-oss') !== -1) {
+      systemPrefix = 'Reasoning: low\n\n';
+      optionalBody.include_reasoning = false;
+    }
+    if (/kimi-k2\.(?:5|6)(?:$|[-_.:/])/i.test(id) || /glm-5\.2(?:$|[-_.:/])/i.test(id)) {
+      optionalBody.thinking = { type: 'disabled' };
+    }
+
+    var incompatible = /(?:^|[/_.-])(?:embedding|embeddings|e5|bge|gte)(?:$|[/_.-])/i.test(id);
+    var slow = /(?:reasoning|thinking|magistral|gpt-oss|glm-5\.2|kimi-k2\.(?:5|6)(?!-instant)|minimax[^/]*m3)/i.test(id);
+    var recommended = !incompatible && !slow && /(?:instant|instruct|mistral-medium|borealis)/i.test(id);
+    return {
+      id: id,
+      incompatible: incompatible,
+      slow: slow,
+      recommended: recommended,
+      systemPrefix: systemPrefix,
+      optionalBody: optionalBody,
+      hasOptionalBody: Object.keys(optionalBody).length > 0,
+    };
+  }
 
   // ---------------------------------------------------------------------------
   // Provider presets
@@ -9297,14 +9360,20 @@ qpyodideReady
       if (hasPricing && freeOnlyCb.checked)
         models = models.filter(function (m) { return m.free === true; });
       models = models.slice().sort(function (a, b) {
-        return (b.free === true) - (a.free === true) || a.id.localeCompare(b.id);
+        var pa = modelPolicy(a.id), pb = modelPolicy(b.id);
+        var rankA = pa.recommended ? 0 : (pa.slow ? 2 : 1);
+        var rankB = pb.recommended ? 0 : (pb.slow ? 2 : 1);
+        return rankA - rankB || (b.free === true) - (a.free === true) || a.id.localeCompare(b.id);
       });
       modelPicker.innerHTML = '';
       modelPicker.add(new Option(L.modelChoose(models.length), ''));
       models.forEach(function (m) {
+        var policy = modelPolicy(m.id);
         var suffix = m.free === true ? ' – ' + L.modelFree
                    : m.free === false ? ' – ' + L.modelPaid
                    : '';
+        if (policy.recommended) suffix += ' – ' + L.modelRecommended;
+        else if (policy.slow) suffix += ' – ' + L.modelSlow;
         modelPicker.add(new Option(m.id + suffix, m.id));
       });
       modelListInfo.textContent = hasPricing ? L.modelListSelect : L.modelListNoPricing;
@@ -9339,12 +9408,24 @@ qpyodideReady
         var list = Array.isArray(data.data) ? data.data
                  : Array.isArray(data.models) ? data.models : [];
         _meFetchedModels = list
-          .map(function (m) { return { id: m.id || m.name, free: meFreeModel(m) }; })
-          .filter(function (m) { return typeof m.id === 'string' && m.id; });
+          .map(function (m) {
+            return typeof m === 'string'
+              ? { id: m, free: null }
+              : { id: m && (m.id || m.name), free: meFreeModel(m || {}) };
+          })
+          .filter(function (m) {
+            return typeof m.id === 'string' && m.id && !modelPolicy(m.id).incompatible;
+          });
         if (_meFetchedModels.length === 0) throw new Error(L.errNoModels);
         var freeOnes = _meFetchedModels.filter(function (m) { return m.free === true; });
         var pool = freeOnes.length > 0 ? freeOnes : _meFetchedModels;
-        modelInput.value = pool[Math.floor(Math.random() * pool.length)].id;
+        pool = pool.slice().sort(function (a, b) {
+          var pa = modelPolicy(a.id), pb = modelPolicy(b.id);
+          var rankA = pa.recommended ? 0 : (pa.slow ? 2 : 1);
+          var rankB = pb.recommended ? 0 : (pb.slow ? 2 : 1);
+          return rankA - rankB || a.id.localeCompare(b.id);
+        });
+        modelInput.value = pool[0].id;
         modelHintEl.style.display = 'none';
         modelHintEl.innerHTML = '';
         renderModelList();
@@ -9654,19 +9735,12 @@ qpyodideReady
 
   async function callLLM(question, answer, assessment, contexts, n, cfg, aiVisual) {
     async function requestOnce(extraSystemPrompt) {
-      var modelId = String(cfg.model || '').toLowerCase();
-      var isGptOss = modelId.indexOf('gpt-oss') !== -1;
-      var isKimiK26 = modelId.indexOf('kimi-k2.6') !== -1;
-      var isKimiK25 = modelId.indexOf('kimi-k2.5') !== -1;
+      var policy = modelPolicy(cfg.model);
 
       var system = sysPrompt(n, contexts.length > 0) +
         (extraSystemPrompt ? ' ' + extraSystemPrompt : '');
       if (aiVisual && aiVisual.image) system += ' ' + L.promptVisual;
-
-      // GPT-OSS supports low/medium/high reasoning effort through the system
-      // message. Low effort is sufficient for short formative hints and leaves
-      // more of the completion budget available for the student-facing answer.
-      if (isGptOss) system = 'Reasoning: low\n\n' + system;
+      system = policy.systemPrefix + system;
 
       var promptText = buildUserPrompt(question, answer, assessment, contexts);
       var userContent = promptText;
@@ -9677,44 +9751,66 @@ qpyodideReady
         ];
       }
 
-      var requestBody = {
-        model: cfg.model,
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user',   content: userContent },
-        ],
+      function makeBody(useVisual, useOptionalBody) {
+        var body = {
+          model: cfg.model,
+          messages: [
+            { role: 'system', content: system },
+            { role: 'user', content: useVisual ? userContent : promptText },
+          ],
 
-        // Reasoning tokens and visible feedback share this budget. A 2,000-token
-        // limit can expire before GPT-OSS or Kimi reaches its final answer.
-        // Kimi K2.5/K2.6 use 32k as their documented default ceiling.
-        max_tokens: 8192,
-      };
-
-      // vLLM's GPT-OSS Chat Completions endpoint can omit chain-of-thought from
-      // the returned payload while still providing the final answer.
-      if (isGptOss) requestBody.include_reasoning = false;
-
-      // Kimi K2.5/K2.6 support an explicit instant mode. These feedback calls
-      // need a concise pedagogical hint, not long-form internal reasoning.
-      if (isKimiK25 || isKimiK26) {
-        requestBody.thinking = { type: 'disabled' };
+          // Some reasoning endpoints count hidden and visible output together.
+          // Keep enough headroom even though the visible hint is at most 120 words.
+          max_tokens: 8192,
+        };
+        if (useOptionalBody) {
+          Object.keys(policy.optionalBody).forEach(function (key) {
+            body[key] = policy.optionalBody[key];
+          });
+        }
+        return body;
       }
 
       async function send(body) {
-        return fetch(cfg.baseUrl.replace(/\/+$/, '') + '/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type':  'application/json',
-            'Authorization': 'Bearer ' + cfg.apiKey,
-          },
-          body: JSON.stringify(body),
-        });
+        var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        var timer = controller ? setTimeout(function () { controller.abort(); }, LLM_TIMEOUT_MS) : null;
+        try {
+          return await fetch(cfg.baseUrl.replace(/\/+$/, '') + '/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type':  'application/json',
+              'Authorization': 'Bearer ' + cfg.apiKey,
+            },
+            body: JSON.stringify(body),
+            signal: controller ? controller.signal : undefined,
+          });
+        } catch (err) {
+          if (err && err.name === 'AbortError') throw new Error(L.errModelTimeout);
+          throw err;
+        } finally {
+          if (timer) clearTimeout(timer);
+        }
       }
 
-      var resp = await send(requestBody);
-      if (!resp.ok && Array.isArray(userContent) && [400, 415, 422].indexOf(resp.status) !== -1) {
-        requestBody.messages[1].content = promptText;
-        resp = await send(requestBody);
+      var retryStatuses = [400, 415, 422];
+      var useVisual = Array.isArray(userContent);
+      var useOptionalBody = policy.hasOptionalBody &&
+        loadCapability(cfg.baseUrl, cfg.model) !== 'unsupported';
+      var resp = await send(makeBody(useVisual, useOptionalBody));
+
+      // Image support and optional reasoning controls fail with the same broad
+      // class of compatibility errors.  Remove them separately so a provider
+      // that accepts one but not the other is learned correctly.
+      if (!resp.ok && useVisual && retryStatuses.indexOf(resp.status) !== -1) {
+        useVisual = false;
+        resp = await send(makeBody(false, useOptionalBody));
+      }
+      if (!resp.ok && useOptionalBody && retryStatuses.indexOf(resp.status) !== -1) {
+        useOptionalBody = false;
+        saveCapability(cfg.baseUrl, cfg.model, 'unsupported');
+        resp = await send(makeBody(false, false));
+      } else if (resp.ok && useOptionalBody) {
+        saveCapability(cfg.baseUrl, cfg.model, 'supported');
       }
       if (!resp.ok) { var t = await resp.text(); throw new Error('API ' + resp.status + ': ' + t.slice(0, 200)); }
       var data = await resp.json();
@@ -10106,6 +10202,8 @@ qpyodideReady
       sysPrompt: sysPrompt,
       buildUserPrompt: buildUserPrompt,
       callLLM: callLLM,
+      modelPolicy: modelPolicy,
+      loadCapability: loadCapability,
     };
   }
 
