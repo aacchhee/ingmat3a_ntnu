@@ -1,6 +1,8 @@
 project:
   type: website
 
+lang: nb
+
 filters:
   - pyodide-interaktiv
   - jsxgraph
