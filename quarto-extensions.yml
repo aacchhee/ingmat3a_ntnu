@@ -6,7 +6,7 @@ plugins:
 
   - name: math-exercise
     repo: https://github.com/Erasmus-CTM/math-exercise.git
-    ref: main
+    ref: issue-3-nb-feedback
     path: _extensions/math-exercise
 
   - name: jsxgraph
