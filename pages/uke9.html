@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Emneinnhold – Matematikk 3A</title>
+<title>Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -74,35 +74,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -116,7 +87,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/emneinnhold.html">Emneinnhold</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke9.html">Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -149,7 +120,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/emneinnhold.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/emneinnhold.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Emneinnhold</span></a>
   </div>
 </li>
@@ -234,7 +205,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden</span></a>
   </div>
 </li>
@@ -308,9 +279,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke9.html">Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Emneinnhold</h1>
+<h1 class="title">Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden</h1>
 </div>
 
 
@@ -327,81 +298,9 @@ window.Quarto = {
 </header>
 
 
-<section id="tall-og-algoritmer" class="level2">
-<h2 class="anchored" data-anchor-id="tall-og-algoritmer">Tall og algoritmer</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Uke</th>
-<th>Spørsmålet vi starter med</th>
-<th>Matematisk innhold og kobling til anvendelser</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>1</strong></td>
-<td><strong>Hvorfor kan to matematisk riktige beregningsmåter koste svært forskjellig – og hvorfor gir datamaskinen noen ganger overraskende svar?</strong> Vi sammenligner algoritmer for polynomevaluering og undersøker hvordan tall faktisk representeres i maskinen.</td>
-<td>Regneoperasjoner og Horners metode, binære tall, IEEE 754-flyttall, avrunding og numerisk stabilitet. Dette forklarer både beregningskostnad og hvorfor vanlige regneregler ikke alltid oppfører seg som forventet i flyttallsaritmetikk.</td>
-</tr>
-<tr class="even">
-<td><strong>2</strong></td>
-<td><strong>Hvorfor nærmer noen gjentatte beregninger seg en løsning, mens andre går i syklus eller løper bort?</strong> Vi skriver samme ligning som forskjellige fikspunktiterasjoner og sammenligner utviklingen numerisk og grafisk.</td>
-<td>Fikspunkt, lokal og global konvergens, konvergensfart, feil, residual, skrittlengde og toleranse. Vi bygger en robust iterasjonsalgoritme med historikk, stoppkriterium og diagnostikk.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="numerisk-lineær-algebra" class="level2">
-<h2 class="anchored" data-anchor-id="numerisk-lineær-algebra">Numerisk lineær algebra</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Uke</th>
-<th>Spørsmålet vi starter med</th>
-<th>Matematisk innhold og kobling til anvendelser</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>3</strong></td>
-<td><strong>Kan forskjellige inputvektorer gi samme output?</strong> Vi undersøker en transformasjon der <span class="math inline">\(Ax_1=Ax_2\)</span>, selv om <span class="math inline">\(x_1\neq x_2\)</span>. Outputen er da ikke tilstrekkelig til å avgjøre hvilken input som ble brukt. Forskjellen <span class="math inline">\(x_1-x_2\)</span> transformeres til null.</td>
-<td>Kolonnerommet beskriver alle outputvektorer transformasjonen kan produsere. Nullrommet består av inputretningene som transformeres til null. Ved bildereduksjon kan ulike bilder derfor gi samme reduserte bilde.</td>
-</tr>
-<tr class="even">
-<td><strong>4</strong></td>
-<td><strong>Hva gjør vi når en ønsket output ikke kan produseres nøyaktig?</strong> For støyfylte data ligger <span class="math inline">\(b\)</span> vanligvis ikke blant outputvektorene <span class="math inline">\(Ax\)</span> som modellen kan produsere. Vi søker derfor den oppnåelige outputen som ligger nærmest <span class="math inline">\(b\)</span>.</td>
-<td>Ortogonal projeksjon leder til minste kvadraters metode, Gram–Schmidt og QR-faktorisering. Minste kvadrater er en grunnleggende metode for å tilpasse lineære modeller til data.</td>
-</tr>
-<tr class="odd">
-<td><strong>5</strong></td>
-<td><strong>Hva skjer når vi gjentar den samme transformasjonen?</strong> Vi beregner <span class="math inline">\(x_{k+1}=Ax_k\)</span> flere ganger og normaliserer underveis. Under bestemte betingelser vil én retning etter hvert dominere.</td>
-<td>Egenvektorer er retninger som transformasjonen bevarer, bortsett fra skalering og eventuelt fortegn. Dette leder til potensmetoden og PageRank. Beslektede spektrale metoder brukes til å analysere grafer og finne mønstre i data.</td>
-</tr>
-<tr class="even">
-<td><strong>6</strong></td>
-<td><strong>Hvordan finner vi inputen som gir en bestemt output når systemet er stort?</strong> Vi ønsker å løse <span class="math inline">\(Ax=b\)</span>, men en generell tett løsningsmetode kan bruke unødvendig mye tid og minne.</td>
-<td>Cholesky, Gauss–Seidel, konjugerte gradienter og prekondisjonering viser hvordan matrisestruktur kan utnyttes. Store lineære systemer oppstår blant annet i optimering og maskinlæring.</td>
-</tr>
-<tr class="odd">
-<td><strong>7</strong></td>
-<td><strong>Hvilke inputretninger påvirker outputen mest?</strong> Vi deler transformasjonen opp i ortogonale inputretninger og måler hvor sterkt hver retning forsterkes eller dempes.</td>
-<td>SVD samler ideene om kolonnerom, nullrom, rang og følsomhet. Lavrangsapproksimasjoner brukes til dimensjonsreduksjon, kompresjon, støyfiltrering og tilnærming av store vektmatriser.</td>
-</tr>
-</tbody>
-</table>
+<p>Under construction.</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -477,7 +376,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

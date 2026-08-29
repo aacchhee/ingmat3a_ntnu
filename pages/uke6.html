@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Uke 8 – introduksjon til optimering – Matematikk 3A</title>
+<title>Uke 6 – hvordan løser vi store lineære systemer? – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -74,6 +74,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -87,7 +116,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke8.html">Uke 8 – introduksjon til optimering</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke6.html">Uke 6 – iterative metoder for lineære systemer</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -176,7 +205,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/uke6.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke6.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Uke 6 – iterative metoder for lineære systemer</span></a>
   </div>
 </li>
@@ -199,7 +228,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/uke8.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/uke8.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 8 – introduksjon til optimering</span></a>
   </div>
 </li>
@@ -279,9 +308,9 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke8.html">Uke 8 – introduksjon til optimering</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke6.html">Uke 6 – iterative metoder for lineære systemer</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Uke 8 – introduksjon til optimering</h1>
+<h1 class="title">Uke 6 – hvordan løser vi store lineære systemer?</h1>
 </div>
 
 
@@ -298,7 +327,58 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Under construction.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Aktivitetsplan</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="først-et-eksperiment" class="level3">
+<h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
+<p>Vi bygger et diskret én-dimensjonalt Poisson-problem og løser først systemet som en tett matrise med <code>numpy.linalg.solve</code>. Når dimensjonen økes, måler studentene tid og minnebruk. Konklusjonen skal ikke være at alle direkte metoder skalerer dårlig: denne matrisen er tridiagonal, og en strukturutnyttende direkte algoritme kan løse systemet i <span class="math inline">\(O(n)\)</span> operasjoner og <span class="math inline">\(O(n)\)</span> minne. Poenget er at algoritme og datalagring må passe til strukturen.</p>
+<p>Deretter ser vi på situasjoner der bare matrise-vektor-produktet er tilgjengelig eller der en iterativ metode er hensiktsmessig. For en symmetrisk positivt definitt matrise <span class="math inline">\(A\)</span> har</p>
+<p><span class="math display">\[
+\phi(x)=\frac12x^TAx-b^Tx
+\]</span></p>
+<p>et entydig globalt minimum i løsningen av <span class="math inline">\(Ax=b\)</span>. Med residual <span class="math inline">\(r=b-Ax\)</span> er <span class="math inline">\(\nabla\phi(x)=Ax-b=-r\)</span>. Dette gir en presis forbindelse mellom lineær løsning, residual og minimering.</p>
+</section>
+<section id="begreper-vi-trenger" class="level3">
+<h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
+<ul>
+<li>symmetrisk positivt definitte matriser</li>
+<li>kvadratisk energi og minimering</li>
+<li>residual og løsningsfeil</li>
+<li>konjugerte retninger</li>
+<li>kondisjonering og skalering</li>
+</ul>
+</section>
+<section id="algoritmer-og-numeriske-undersøkelser" class="level3">
+<h3 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h3>
+<ul>
+<li>Cholesky-faktorisering</li>
+<li>Gauss–Seidel som koordinatvis korreksjon</li>
+<li>bratteste nedstigning</li>
+<li>konjugerte gradienter</li>
+<li>enkel diagonal prekondisjonering</li>
+</ul>
+</section>
+<section id="etter-denne-uken" class="level3">
+<h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
+<p>Studentene skal kunne kontrollere symmetri og bruke Cholesky-faktorisering som en praktisk test for positiv definitet. De skal knytte løsning av <span class="math inline">\(Ax=b\)</span> til minimering av <span class="math inline">\(\phi\)</span>, implementere konjugerte gradienter for SPD-matriser og vite at CG i eksakt aritmetikk terminerer etter høyst <span class="math inline">\(n\)</span> steg. I flyttallsaritmetikk bestemmes den praktiske konvergensen blant annet av spekteret og kondisjoneringen.</p>
+</section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ol type="1">
+<li><strong>Et voksende problem:</strong> Bygg Poisson-matrisen for flere dimensjoner og mål kjøretiden til <code>numpy.linalg.solve</code>.</li>
+<li><strong>Se strukturen:</strong> Undersøk symmetri, egenverdier og <span class="math inline">\(x^TAx\)</span> for tilfeldige <span class="math inline">\(x\)</span>. Slike prøver kan gi evidens, men beviser ikke positiv definitet; koble dem til Cholesky og den matematiske definisjonen <span class="math inline">\(x^TAx&gt;0\)</span> for alle <span class="math inline">\(x\ne0\)</span>.</li>
+<li><strong>Løsning som minimum:</strong> Plott nivåkurver av <span class="math inline">\(\phi(x)=\tfrac12x^TAx-b^Tx\)</span> i to dimensjoner og kontroller at gradienten er den negative residualen.</li>
+<li><strong>To enkle iterasjoner:</strong> Implementer Gauss–Seidel og bratteste nedstigning. Plott residual, faktisk feil og energi.</li>
+<li><strong>Konjugerte gradienter:</strong> Bygg algoritmen trinnvis og sammenlign antall matrise-vektor-produkter med bratteste nedstigning.</li>
+<li><strong>Kondisjonering betyr noe:</strong> Kjør samme metoder på to like store systemer med ulike kondisjonstall.</li>
+<li><strong>Prekondisjonering:</strong> Bruk Jacobi-prekondisjonering <span class="math inline">\(M=\operatorname{diag}(A)\)</span> i en SPD-kompatibel formulering, og undersøk hvordan spekter og konvergenshistorikk endres. Prekondisjonering garanterer ikke forbedring; virkningen må måles.</li>
+<li><strong>Kort leveranse:</strong> Sammenligning av minst tre metoder med en forklaring av når residual og faktisk feil forteller forskjellige historier.</li>
+</ol>
+</div>
+</div>
+</div>
 
 
 
@@ -376,7 +456,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

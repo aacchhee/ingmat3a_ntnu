@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Matematikk for ingeniørfag 3A – Matematikk 3A</title>
+<title>Uke 7 – hvilke retninger i en matrise er viktige? – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -29,23 +29,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-03a0d00fd5ba774dd8e50f606f192499.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-03a0d00fd5ba774dd8e50f606f192499.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -74,8 +74,37 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-sidebar docked fullcontent quarto-light">
@@ -87,9 +116,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Matematikk 3A
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke7.html">Uke 7 – singulærverdidekomposisjon</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -104,7 +131,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Matematikk 3A</a> 
+      <a href="../">Matematikk 3A</a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -116,13 +143,13 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/page1.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">IDE / Readme</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/emneinnhold.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/emneinnhold.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Emneinnhold</span></a>
   </div>
 </li>
@@ -137,13 +164,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/page2.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 1 – regnetid, binære tall og tall på datamaskiner</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/page4.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page4.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 2 – fikspunktiterasjon</span></a>
   </div>
 </li>
@@ -160,31 +187,31 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke3.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 3 – vektorrom, kolonnerom og nullrom</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke4.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke4.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 4 – ortogonalitet, projeksjon og minste kvadrater</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke5.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 5 – egenverdier og gjentatt matrisemultiplikasjon</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke6.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke6.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 6 – iterative metoder for lineære systemer</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke7.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke7.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Uke 7 – singulærverdidekomposisjon</span></a>
   </div>
 </li>
@@ -201,31 +228,31 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke8.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke8.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 8 – introduksjon til optimering</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke9.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke10.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke10.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 10 – Newtons metode</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke11.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke11.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 11 – lineær programmering</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/uke12.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke12.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 12 – optimering med bibetingelser og minste kvadrater</span></a>
   </div>
 </li>
@@ -242,13 +269,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/project_week1.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 1 – Floating-point attack</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/project_week2.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 2 – Newtonfraktaler</span></a>
   </div>
 </li>
@@ -265,7 +292,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/page5.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/page5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Flyttall og numerisk stabilitet</span></a>
   </div>
 </li>
@@ -281,9 +308,9 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke7.html">Uke 7 – singulærverdidekomposisjon</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Matematikk for ingeniørfag 3A</h1>
+<h1 class="title">Uke 7 – hvilke retninger i en matrise er viktige?</h1>
 </div>
 
 
@@ -300,7 +327,55 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Velg ei side fra venstre kolonne.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Aktivitetsplan</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="først-et-eksperiment" class="level3">
+<h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
+<p>Vi leser et gråtonebilde som en matrise, beregner SVD og rekonstruerer bildet med én, fem, ti og flere singulære komponenter. God kompresjon er ikke garantert: den lykkes når singulærverdiene avtar raskt. Studentene ser derfor både rekonstruksjonene og kurven av singulærverdier før de foreslår en trunkeringsrang.</p>
+<p>For <span class="math inline">\(A=U\Sigma V^T\)</span> er de høyre singulærvektorene inputretninger. En retning <span class="math inline">\(v_i\)</span> avbildes til <span class="math inline">\(\sigma_i u_i\)</span>; retninger med <span class="math inline">\(\sigma_i=0\)</span> utgjør nullrommet. De venstre singulærvektorene med <span class="math inline">\(\sigma_i&gt;0\)</span> spenner kolonnerommet. Den trunkerte SVD-en med rang <span class="math inline">\(k\)</span> er, etter Eckart–Young–Mirsky-teoremet, en beste rang-<span class="math inline">\(k\)</span>-approksimasjon i både 2-normen og Frobenius-normen. Dermed samler SVD rom, ortogonalitet, rang, minste kvadrater og følsomhet i én faktorisering.</p>
+</section>
+<section id="begreper-vi-trenger" class="level3">
+<h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
+<ul>
+<li>venstre og høyre singulærvektorer</li>
+<li>singulærverdier</li>
+<li>numerisk rang og nullrom</li>
+<li>kondisjonstall</li>
+<li>pseudoinvers og minimumsnormløsning</li>
+<li>lavrangsapproksimasjon</li>
+</ul>
+</section>
+<section id="algoritmer-og-numeriske-undersøkelser" class="level3">
+<h3 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h3>
+<ul>
+<li><code>numpy.linalg.svd</code></li>
+<li>trunkert SVD og kompresjon</li>
+<li>minste kvadrater og pseudoinvers</li>
+<li>følsomhet nær rangtap</li>
+<li>enkel regularisering ved filtrering av små singulærverdier</li>
+</ul>
+</section>
+<section id="etter-denne-uken" class="level3">
+<h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
+<p>Studentene skal kunne bruke SVD til å beskrive nullrom og kolonnerom, skille eksakt fra numerisk rang og forklare hvorfor små ikke-null singulærverdier gjør inversjon og minste-kvadraters problemer følsomme. For full kolonnerang er <span class="math inline">\(\kappa_2(A)=\sigma_{\max}/\sigma_{\min}\)</span>; for en rangdefekt matrise er det vanlige 2-norm-kondisjonstallet uendelig.</p>
+</section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ol type="1">
+<li><strong>Komprimer et bilde:</strong> Beregn SVD og vis rekonstruksjoner med forskjellig rang sammen med lagringsbehovet.</li>
+<li><strong>Les spekteret:</strong> Plott singulærverdiene både lineært og logaritmisk, og velg en trunkering ut fra dataene.</li>
+<li><strong>Tolk faktorene:</strong> Følg en vektor gjennom <span class="math inline">\(V^T\)</span>, <span class="math inline">\(\Sigma\)</span> og <span class="math inline">\(U\)</span> og beskriv rotasjon, skalering og ny orientering.</li>
+<li><strong>Finn rommene igjen:</strong> Bruk singulærvektorene til å konstruere basiser for kolonnerom og nullrom og kontroller dem numerisk.</li>
+<li><strong>Nær rangtap:</strong> Perturber en matrise med en liten singulærverdi og mål hvordan løsningen av <span class="math inline">\(Ax=b\)</span> endres.</li>
+<li><strong>Pseudoinvers og filtrering:</strong> Sammenlign <code>lstsq</code>, <code>pinv</code> og trunkert SVD på et følsomt minste-kvadraters problem. Gjør toleransen eksplisitt: pseudoinversen behandler singulærverdier under en valgt grense som null, mens trunkering innfører en regulariserende modellbeslutning.</li>
+<li><strong>Syntese:</strong> Knytt SVD eksplisitt til rang, ortogonal projeksjon, minste kvadrater, kondisjonering og regularisering.</li>
+<li><strong>Kort leveranse:</strong> En kompresjons- eller denoisingrapport med valgt rang, feilmål og faglig begrunnelse.</li>
+</ol>
+</div>
+</div>
+</div>
 
 
 
@@ -378,7 +453,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

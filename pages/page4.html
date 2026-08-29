@@ -4296,6 +4296,126 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
   min-height: 4em;
 }
 
+/* ---- Vector and matrix input (vec[...] / mat[...]) ---- */
+.math-vec,
+.math-mat {
+  display: inline-grid;
+  gap: .3em;
+  padding: .38em 1em;
+  margin: .15em .2em;
+  position: relative;
+  vertical-align: middle;
+  max-width: 100%;
+}
+
+.math-mat { grid-template-columns: repeat(var(--cols), minmax(2.8em, auto)); }
+.math-vec { grid-template-columns: minmax(2.8em, auto); }
+.math-vec.math-vec-row { grid-template-columns: repeat(var(--n), minmax(2.8em, auto)); }
+
+.math-vec::before,
+.math-vec::after,
+.math-mat::before,
+.math-mat::after {
+  content: '';
+  position: absolute;
+  top: .12em;
+  bottom: .12em;
+  width: .5em;
+  border: 2px solid currentColor;
+  pointer-events: none;
+}
+
+.math-vec::before,
+.math-mat::before { left: 0; border-right: none; }
+.math-vec::after,
+.math-mat::after { right: 0; border-left: none; }
+
+.math-mat-cell {
+  box-sizing: border-box;
+  width: 3.4em;
+  min-width: 0;
+  padding: .3em;
+  text-align: center;
+}
+
+.math-dynamic-matrix-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  max-width: 100%;
+}
+
+.math-dynamic-mat {
+  min-width: 2.6em;
+  min-height: 2.6em;
+  overflow-x: auto;
+}
+
+.math-dynamic-matrix-empty {
+  grid-column: 1;
+  align-self: center;
+  color: var(--bs-secondary-color, #6c757d);
+  font-size: .82em;
+  white-space: nowrap;
+}
+
+.math-dynamic-matrix-controls {
+  display: grid;
+  gap: .32em;
+  margin-top: .3em;
+  min-width: 9.5em;
+}
+
+.math-dynamic-axis {
+  display: grid;
+  grid-template-columns: minmax(4.5em, 1fr) 2em 2em 2em;
+  align-items: center;
+  gap: .2em;
+}
+
+.math-dynamic-axis-label {
+  color: var(--bs-secondary-color, #495057);
+  font-size: .76em;
+  text-align: left;
+}
+
+.math-dynamic-axis output {
+  font-variant-numeric: tabular-nums;
+  font-size: .8em;
+  text-align: center;
+}
+
+.math-dynamic-matrix-controls button {
+  border: 1px solid var(--bs-border-color, #adb5bd);
+  border-radius: .3em;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
+  min-width: 2em;
+  min-height: 2em;
+  padding: .05em .3em;
+  font-size: .8em;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.math-dynamic-matrix-controls button:hover:not(:disabled),
+.math-dynamic-matrix-controls button:focus-visible {
+  border-color: var(--bs-primary, #0d6efd);
+}
+
+.math-dynamic-matrix-controls button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 576px) {
+  .math-exercise-question { overflow-x: auto; }
+  .math-vec,
+  .math-mat { gap: .22em; padding-inline: .8em; }
+  .math-mat-cell { width: 2.9em; padding-inline: .2em; }
+}
+
 /* State feedback on the input itself.
    Background AND text color are fixed together (not theme variables) so the
    text stays readable regardless of the page's light/dark theme. */
@@ -4303,6 +4423,11 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
   border-color: #198754 !important;
   background:   #f0fff4 !important;
   color:        #14532d !important;
+}
+.math-input-dependent {
+  border-color: #c58a00 !important;
+  background:   #fff4bf !important;
+  color:        #5f4300 !important;
 }
 .math-input-partial {
   border-color: #d39e00 !important;
@@ -4698,7 +4823,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page4.html">Uke 2 – fikspunktiterasjon</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page2.html">Tall og algoritmer</a></li><li class="breadcrumb-item"><a href="../pages/page4.html">Uke 2 – fikspunktiterasjon</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -4731,25 +4856,124 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Uke 1 – regnetid, binære tall og tall på datamaskiner</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../pages/page4.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Uke 2 – fikspunktiterasjon</span></a>
+  <a href="../pages/emneinnhold.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Emneinnhold</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Projects</span></a>
+ <span class="menu-text">Tall og algoritmer</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Slå på delen">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 1 – regnetid, binære tall og tall på datamaskiner</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page4.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Uke 2 – fikspunktiterasjon</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Numerisk lineær algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 3 – vektorrom, kolonnerom og nullrom</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 4 – ortogonalitet, projeksjon og minste kvadrater</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 5 – egenverdier og gjentatt matrisemultiplikasjon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 6 – iterative metoder for lineære systemer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 7 – singulærverdidekomposisjon</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Optimering</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 8 – introduksjon til optimering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 10 – Newtons metode</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 11 – lineær programmering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 12 – optimering med bibetingelser og minste kvadrater</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Projects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
@@ -4766,13 +4990,13 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
  <span class="menu-text">Eksamensoppgaver</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Slå på delen">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/page5.html" class="sidebar-item-text sidebar-link">
@@ -4801,7 +5025,7 @@ window.Quarto = {
 </script>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page2.html">Tall og algoritmer</a></li><li class="breadcrumb-item"><a href="../pages/page4.html">Uke 2 – fikspunktiterasjon</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Uke 2 – fikspunktiterasjon</h1>
 </div>
@@ -5055,21 +5279,21 @@ g(x)=\sqrt[3]{1-x}
 \]</span></p>
 <p>Når uttrykket under rottegnet er negativt, skal den reelle kubikkroten brukes. Behold flere desimaler i mellomregningene, slik at tidlig avrunding ikke forplanter seg gjennom de neste stegene. Avrund bare <span class="math inline">\(x_3\)</span> til tre desimaler.</p>
 </div>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="fixed-point-three-iterations" data-mode="numeric" data-reject="" data-vars="" data-tolerance="5e-4" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;x_3 avrundet til tre desimaler&quot;]" data-context-mode="explicit" data-context-refs="fixed-point-numerical-iteration-context" data-context="&quot;Følg de tre første stegene Her skal du følge den samme oppdateringsregelen steg for steg. I en fikspunktiterasjon beregnes hvert nytt ledd fra leddet rett før: x_{n+1}=g(x_n). Startverdien x_0 er utgangspunktet og teller ikke som en utført iterasjon. Første steg gir x_1=g(x_0), andre steg gir x_2=g(x_1), og tredje steg gir x_3=g(x_2).I denne oppgaven er g(x)=\\sqrt[3]{1-x} Når uttrykket under rottegnet er negativt, skal den reelle kubikkroten brukes. Behold flere desimaler i mellomregningene, slik at tidlig avrunding ikke forplanter seg gjennom de neste stegene. Avrund bare x_3 til tre desimaler.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;]">
+<div class="math-exercise-cell" id="math-exercise-1" data-label="fixed-point-three-iterations" data-mode="numeric" data-reject="" data-vars="" data-tolerance="5e-4" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;x_3 avrundet til tre desimaler&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="fixed-point-numerical-iteration-context" data-context="&quot;Følg de tre første stegene Her skal du følge den samme oppdateringsregelen steg for steg. I en fikspunktiterasjon beregnes hvert nytt ledd fra leddet rett før: x_{n+1}=g(x_n). Startverdien x_0 er utgangspunktet og teller ikke som en utført iterasjon. Første steg gir x_1=g(x_0), andre steg gir x_2=g(x_1), og tredje steg gir x_3=g(x_2).I denne oppgaven er g(x)=\\sqrt[3]{1-x} Når uttrykket under rottegnet er negativt, skal den reelle kubikkroten brukes. Behold flere desimaler i mellomregningene, slik at tidlig avrunding ikke forplanter seg gjennom de neste stegene. Avrund bare x_3 til tre desimaler.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Tre fikspunktiterasjoner</div>
 
 <div class="math-exercise-body" style="display:none;">
 <div class="math-exercise-question">Bruk iterasjonen<br>
 <br>
-$$<br>
+\[<br>
 x_{n+1}=\sqrt[3]{1-x_n},\qquad x_0=0.5.<br>
-$$<br>
+\]<br>
 <br>
-Utfør tre iterasjoner. Oppgi $x_3$ avrundet til tre desimaler.<br>
+Utfør tre iterasjoner. Oppgi \(x_3\) avrundet til tre desimaler.<br>
 <br>
 Svarformat: Skriv ett desimaltall med punktum som desimalskilletegn, for eksempel `0.625`.<br>
 <br>
-$$x_3\approx$$ <input type="text" id="math-exercise-1-f1" data-answer="0.742" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
+\[x_3\approx\] <input type="text" id="math-exercise-1-f1" data-answer="0.742" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5236,25 +5460,25 @@ g_\lambda'(x)=1-2\lambda x.
 \]</span></p>
 <p>En parameter som gjør <span class="math inline">\(g_\lambda'(r)=0\)</span>, fjerner den lineære delen av feilutviklingen og gir lokal faktor null. I denne oppgaven bruker vi det positive nullpunktet av <span class="math inline">\(f\)</span>.</p>
 </div>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="design-relaxed-fixed-point" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;positivt fikspunkt r&quot;,&quot;lokal faktor når lambda er 1/4&quot;,&quot;optimal lambda&quot;]" data-context-mode="explicit" data-context-refs="relaxed-fixed-point-design-context" data-context="&quot;Design en raskere iterasjon Samme ligning kan gi mange fikspunktiterasjoner, og parameteren i oppdateringsregelen kan gjøre forskjellen mellom langsom og rask konvergens. Her skal du velge parameteren med helningsregelen, uten å måtte prøve mange verdier numerisk.En ligning f(x)=0 kan gjøres om til familien av fikspunktiterasjoner g_\\lambda(x)=x-\\lambda f(x), der \\lambda>0 bestemmer hvor stor korreksjon vi tar i hvert steg. Før vi undersøker farten, kontrollerer vi at omskrivingen beholder løsningene. Hvis r er et nullpunkt for f, er f(r)=0, og innsetting gir g_\\lambda(r) =r-\\lambda f(r) =r-\\lambda\\cdot0 =r. Dermed er hvert nullpunkt for f et fikspunkt for g_\\lambda, uansett hvilken positiv \\lambda vi velger. Også motsatt vei gjelder: Hvis g_\\lambda(r)=r, får vi r-\\lambda f(r)=r, og siden \\lambda>0, må f(r)=0. Nullpunktene og fikspunktene er altså de samme.Parameteren flytter derfor ikke løsningen, men den endrer helningen og dermed den lokale konvergensfaktoren |g_\\lambda'(r)|. For f(x)=x^2-2 er g_\\lambda'(x)=1-2\\lambda x. En parameter som gjør g_\\lambda'(r)=0, fjerner den lineære delen av feilutviklingen og gir lokal faktor null. I denne oppgaven bruker vi det positive nullpunktet av f.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-2" data-label="design-relaxed-fixed-point" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;positivt fikspunkt r&quot;,&quot;lokal faktor når lambda er 1/4&quot;,&quot;optimal lambda&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="relaxed-fixed-point-design-context" data-context="&quot;Design en raskere iterasjon Samme ligning kan gi mange fikspunktiterasjoner, og parameteren i oppdateringsregelen kan gjøre forskjellen mellom langsom og rask konvergens. Her skal du velge parameteren med helningsregelen, uten å måtte prøve mange verdier numerisk.En ligning f(x)=0 kan gjøres om til familien av fikspunktiterasjoner g_\\lambda(x)=x-\\lambda f(x), der \\lambda>0 bestemmer hvor stor korreksjon vi tar i hvert steg. Før vi undersøker farten, kontrollerer vi at omskrivingen beholder løsningene. Hvis r er et nullpunkt for f, er f(r)=0, og innsetting gir g_\\lambda(r) =r-\\lambda f(r) =r-\\lambda\\cdot0 =r. Dermed er hvert nullpunkt for f et fikspunkt for g_\\lambda, uansett hvilken positiv \\lambda vi velger. Også motsatt vei gjelder: Hvis g_\\lambda(r)=r, får vi r-\\lambda f(r)=r, og siden \\lambda>0, må f(r)=0. Nullpunktene og fikspunktene er altså de samme.Parameteren flytter derfor ikke løsningen, men den endrer helningen og dermed den lokale konvergensfaktoren |g_\\lambda'(r)|. For f(x)=x^2-2 er g_\\lambda'(x)=1-2\\lambda x. En parameter som gjør g_\\lambda'(r)=0, fjerner den lineære delen av feilutviklingen og gir lokal faktor null. I denne oppgaven bruker vi det positive nullpunktet av f.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Velg parameter for rask lokal konvergens</div>
 
 <div class="math-exercise-body" style="display:none;">
 <div class="math-exercise-question">La<br>
 <br>
-$$<br>
+\[<br>
 f(x)=x^2-2,<br>
 \qquad<br>
 g_\lambda(x)=x-\lambda(x^2-2).<br>
-$$<br>
+\]<br>
 <br>
-Bruk det positive fikspunktet. Finn først $r$. Beregn deretter den lokale faktoren når $\lambda=1/4$, og finn til slutt den positive parameterverdien som gjør $g_\lambda'(r)=0$.<br>
+Bruk det positive fikspunktet. Finn først \(r\). Beregn deretter den lokale faktoren når \(\lambda=1/4\), og finn til slutt den positive parameterverdien som gjør \(g_\lambda'(r)=0\).<br>
 <br>
-Svarformat: Skriv eksakte uttrykk. Bruk `sqrt(2)` for $\sqrt{2}$ og `/` for brøk, for eksempel `sqrt(2)/4`. Desimaltall er ikke nødvendig.<br>
+Svarformat: Skriv eksakte uttrykk. Bruk `sqrt(2)` for \(\sqrt{2}\) og `/` for brøk, for eksempel `sqrt(2)/4`. Desimaltall er ikke nødvendig.<br>
 <br>
-$r=$ <input type="text" id="math-exercise-2-f1" data-answer="sqrt(2)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br><br>
-$\left|g_{1/4}'(r)\right|=$ <input type="text" id="math-exercise-2-f2" data-answer="1-sqrt(2)/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br><br>
-$\lambda=$ <input type="text" id="math-exercise-2-f3" data-answer="sqrt(2)/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
+\(r=\) <input type="text" id="math-exercise-2-f1" data-answer="sqrt(2)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br><br>
+\(\left|g_{1/4}'(r)\right|=\) <input type="text" id="math-exercise-2-f2" data-answer="1-sqrt(2)/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br><br>
+\(\lambda=\) <input type="text" id="math-exercise-2-f3" data-answer="sqrt(2)/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5365,7 +5589,7 @@ x_C&amp;=r+2.0\cdot10^{-7},
 \]</span></p>
 <p>B ligger litt under den eksakte løsningen og får derfor negativ feil, mens A og C ligger over. Når vi skal vurdere nøyaktigheten, er retningen uviktig. Vi bruker avstandene <span class="math inline">\(|e_A|\)</span>, <span class="math inline">\(|e_B|\)</span> og <span class="math inline">\(|e_C|\)</span>.</p>
 <p>Som i vanlige feilplott bruker vi en logaritmisk <span class="math inline">\(y\)</span>-akse: store feil ligger øverst, og mindre feil ligger lenger ned. Hver vannrette kravlinje viser <span class="math inline">\(|e|=\frac12 10^{-p}\)</span>. Et punkt under linjen for <span class="math inline">\(p=3\)</span> har liten nok feil til at vi kan stole på minst tre desimaler. Vi leser svaret ved å finne den nederste kravlinjen punktet har passert.</p>
-<iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPHNjcmlwdCBpZD0iTWF0aEpheC1zY3JpcHQiIGFzeW5jIHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9tYXRoamF4QDQvdGV4LW1tbC1zdmcuanMiPjwvc2NyaXB0Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoY29yZS5qcyI+PC9zY3JpcHQ+CjxzdHlsZT5AaW1wb3J0IHVybCgiaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoLmNzcyIpOzwvc3R5bGU+CjxzdHlsZT5odG1sLGJvZHl7bWFyZ2luOjA7cGFkZGluZzowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7fS5qeGdib3h7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czowcHg7fTwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgaWQ9IkpYR2ZkYmQ4YWJmXzU1NDBfNDlmMF82MWQzXzA4YjNhZmQxIiBjbGFzcz0ianhnYm94IiBzdHlsZT0id2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtkaXNwbGF5OmJsb2NrO29iamVjdC1maXQ6ZmlsbDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Ij48L2Rpdj4KPHNjcmlwdD4oZnVuY3Rpb24gKCkgewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBwcm90b2NvbCA9ICdqc3hncmFwaC1xdWFydG8tYXNzZXNzbWVudCc7CiAgY29uc3QgdmVyc2lvbiA9IDE7CiAgY29uc3QgYXNzZXNzbWVudElkID0gIkpYR2ZkYmQ4YWJmXzU1NDBfNDlmMF82MWQzXzA4YjNhZmQxIjsKICBsZXQgcmVnaXN0cmF0aW9uID0gbnVsbDsKCiAgYXN5bmMgZnVuY3Rpb24gc3ZnVG9QbmcoZGF0YVVyaSwgYm9hcmQpIHsKICAgIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7CiAgICAgIGNvbnN0IGltYWdlID0gbmV3IEltYWdlKCk7CiAgICAgIGltYWdlLm9ubG9hZCA9ICgpID0+IHsKICAgICAgICBjb25zdCBjYW52YXMgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdjYW52YXMnKTsKICAgICAgICBjYW52YXMud2lkdGggPSBNYXRoLm1heCgxLCBNYXRoLnJvdW5kKGJvYXJkLmNhbnZhc1dpZHRoIHx8IGltYWdlLndpZHRoIHx8IDgwMCkpOwogICAgICAgIGNhbnZhcy5oZWlnaHQgPSBNYXRoLm1heCgxLCBNYXRoLnJvdW5kKGJvYXJkLmNhbnZhc0hlaWdodCB8fCBpbWFnZS5oZWlnaHQgfHwgNjAwKSk7CiAgICAgICAgY29uc3QgY29udGV4dCA9IGNhbnZhcy5nZXRDb250ZXh0KCcyZCcpOwogICAgICAgIGNvbnRleHQuZmlsbFN0eWxlID0gJyNmZmZmZmYnOwogICAgICAgIGNvbnRleHQuZmlsbFJlY3QoMCwgMCwgY2FudmFzLndpZHRoLCBjYW52YXMuaGVpZ2h0KTsKICAgICAgICBjb250ZXh0LmRyYXdJbWFnZShpbWFnZSwgMCwgMCwgY2FudmFzLndpZHRoLCBjYW52YXMuaGVpZ2h0KTsKICAgICAgICByZXNvbHZlKGNhbnZhcy50b0RhdGFVUkwoJ2ltYWdlL3BuZycpKTsKICAgICAgfTsKICAgICAgaW1hZ2Uub25lcnJvciA9ICgpID0+IHJlamVjdChuZXcgRXJyb3IoJ0NvdWxkIG5vdCByZW5kZXIgdGhlIEpTWEdyYXBoIGJvYXJkJykpOwogICAgICBpbWFnZS5zcmMgPSBkYXRhVXJpOwogICAgfSk7CiAgfQoKICBmdW5jdGlvbiByZXNvbHZlQm9hcmQoc3BlYykgewogICAgaWYgKHNwZWMgJiYgdHlwZW9mIHNwZWMuYm9hcmQgPT09ICdmdW5jdGlvbicpIHJldHVybiBzcGVjLmJvYXJkKCk7CiAgICBpZiAoc3BlYyAmJiBzcGVjLmJvYXJkKSByZXR1cm4gc3BlYy5ib2FyZDsKICAgIGNvbnN0IGJvYXJkcyA9IE9iamVjdC52YWx1ZXMoSlhHLmJvYXJkcyB8fCB7fSk7CiAgICByZXR1cm4gYm9hcmRzLmxlbmd0aCA/IGJvYXJkc1swXSA6IG51bGw7CiAgfQoKICBKWEcuUXVhcnRvQXNzZXNzbWVudCA9IHsKICAgIHJlZ2lzdGVyKHNwZWMpIHsKICAgICAgcmVnaXN0cmF0aW9uID0gdHlwZW9mIHNwZWMgPT09ICdmdW5jdGlvbicgPyB7IHJlc3BvbnNlOiBzcGVjIH0gOiBzcGVjOwogICAgICBpZiAoIXJlZ2lzdHJhdGlvbiB8fCB0eXBlb2YgcmVnaXN0cmF0aW9uLnJlc3BvbnNlICE9PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgdGhyb3cgbmV3IFR5cGVFcnJvcignQXNzZXNzbWVudCByZWdpc3RyYXRpb24gcmVxdWlyZXMgYSByZXNwb25zZSBmdW5jdGlvbicpOwogICAgICB9CiAgICB9CiAgfTsKCiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ21lc3NhZ2UnLCBhc3luYyAoZXZlbnQpID0+IHsKICAgIGNvbnN0IG1lc3NhZ2UgPSBldmVudC5kYXRhOwogICAgaWYgKGV2ZW50LnNvdXJjZSAhPT0gd2luZG93LnBhcmVudCB8fCAhbWVzc2FnZSB8fCBtZXNzYWdlLnByb3RvY29sICE9PSBwcm90b2NvbCB8fAogICAgICAgIG1lc3NhZ2UudmVyc2lvbiAhPT0gdmVyc2lvbiB8fCBtZXNzYWdlLnR5cGUgIT09ICdyZXF1ZXN0JyB8fAogICAgICAgIG1lc3NhZ2UuYXNzZXNzbWVudElkICE9PSBhc3Nlc3NtZW50SWQpIHJldHVybjsKCiAgICBjb25zdCByZXBseSA9IHsKICAgICAgcHJvdG9jb2wsCiAgICAgIHZlcnNpb24sCiAgICAgIHR5cGU6ICdyZXNwb25zZScsCiAgICAgIGFzc2Vzc21lbnRJZCwKICAgICAgcmVxdWVzdElkOiBtZXNzYWdlLnJlcXVlc3RJZAogICAgfTsKICAgIHRyeSB7CiAgICAgIGlmICghcmVnaXN0cmF0aW9uKSB0aHJvdyBuZXcgRXJyb3IoJ05vIEpTWEdyYXBoIGFzc2Vzc21lbnQgcmVzcG9uc2UgaXMgcmVnaXN0ZXJlZCcpOwogICAgICBjb25zdCByYXcgPSBhd2FpdCByZWdpc3RyYXRpb24ucmVzcG9uc2UoKTsKICAgICAgcmVwbHkucGF5bG9hZCA9IEpTT04ucGFyc2UoSlNPTi5zdHJpbmdpZnkocmF3KSk7CiAgICAgIGlmIChtZXNzYWdlLmluY2x1ZGVBSSAmJiByZWdpc3RyYXRpb24uYWkpIHsKICAgICAgICBjb25zdCBhaVNwZWMgPSByZWdpc3RyYXRpb24uYWk7CiAgICAgICAgY29uc3Qgc3VtbWFyeSA9IHR5cGVvZiBhaVNwZWMuc3VtbWFyeSA9PT0gJ2Z1bmN0aW9uJwogICAgICAgICAgPyBhd2FpdCBhaVNwZWMuc3VtbWFyeShyZXBseS5wYXlsb2FkKQogICAgICAgICAgOiBhaVNwZWMuc3VtbWFyeTsKICAgICAgICByZXBseS5haSA9IHt9OwogICAgICAgIGlmIChzdW1tYXJ5ICE9PSB1bmRlZmluZWQpIHJlcGx5LmFpLnN1bW1hcnkgPSBzdW1tYXJ5OwogICAgICAgIGlmIChhaVNwZWMucmVuZGVyKSB7CiAgICAgICAgICBjb25zdCBib2FyZCA9IHJlc29sdmVCb2FyZChyZWdpc3RyYXRpb24pOwogICAgICAgICAgaWYgKCFib2FyZCB8fCAhYm9hcmQucmVuZGVyZXIgfHwgdHlwZW9mIGJvYXJkLnJlbmRlcmVyLmR1bXBUb0RhdGFVUkkgIT09ICdmdW5jdGlvbicpIHsKICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKCdObyByZW5kZXJhYmxlIEpTWEdyYXBoIGJvYXJkIGlzIGF2YWlsYWJsZScpOwogICAgICAgICAgfQogICAgICAgICAgcmVwbHkuYWkuaW1hZ2UgPSBhd2FpdCBzdmdUb1BuZyhib2FyZC5yZW5kZXJlci5kdW1wVG9EYXRhVVJJKGZhbHNlKSwgYm9hcmQpOwogICAgICAgIH0KICAgICAgfQogICAgfSBjYXRjaCAoZXJyb3IpIHsKICAgICAgcmVwbHkuZXJyb3IgPSBlcnJvciAmJiBlcnJvci5tZXNzYWdlID8gZXJyb3IubWVzc2FnZSA6IFN0cmluZyhlcnJvcik7CiAgICB9CiAgICB3aW5kb3cucGFyZW50LnBvc3RNZXNzYWdlKHJlcGx5LCAnKicpOwogIH0pOwp9KSgpOwo8L3NjcmlwdD4KPHNjcmlwdD52YXIgYm9hcmQgPSBKWEcuSlNYR3JhcGguaW5pdEJvYXJkKCJKWEdmZGJkOGFiZl81NTQwXzQ5ZjBfNjFkM18wOGIzYWZkMSIsIHsKICBib3VuZGluZ2JveDogWzAsIC0wLjE1LCA2LjgsIC04LjE1XSwKICBheGlzOiBmYWxzZSwKICBzaG93Q29weXJpZ2h0OiBmYWxzZSwKICBzaG93TmF2aWdhdGlvbjogZmFsc2UsCiAgcGFuOiB7IGVuYWJsZWQ6IGZhbHNlIH0sCiAgem9vbTogeyBlbmFibGVkOiBmYWxzZSB9Cn0pOwoKdmFyIGxvZ1R3byA9IE1hdGgubG9nMTAoMik7CmZvciAodmFyIHAgPSAxOyBwIDw9IDc7IHArKykgewogIHZhciB0aHJlc2hvbGQgPSAtcCAtIGxvZ1R3bzsKICBib2FyZC5jcmVhdGUoJ3NlZ21lbnQnLCBbWzAuNzUsIHRocmVzaG9sZF0sIFs2LjQ1LCB0aHJlc2hvbGRdXSwgewogICAgc3Ryb2tlQ29sb3I6ICcjYTdhN2E3JywKICAgIHN0cm9rZVdpZHRoOiAxLAogICAgZGFzaDogMiwKICAgIGZpeGVkOiB0cnVlLAogICAgaGlnaGxpZ2h0OiBmYWxzZQogIH0pOwogIGJvYXJkLmNyZWF0ZSgndGV4dCcsIFswLjEyLCB0aHJlc2hvbGQsICdwPScgKyBwXSwgewogICAgZml4ZWQ6IHRydWUsCiAgICBmb250U2l6ZTogMTIsCiAgICBhbmNob3JZOiAnbWlkZGxlJwogIH0pOwp9Cgpib2FyZC5jcmVhdGUoJ2Fycm93JywgW1swLjY1LCAtNy44NV0sIFswLjY1LCAtMC41NV1dLCB7CiAgc3Ryb2tlQ29sb3I6ICcjMzMzMzMzJywKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwpib2FyZC5jcmVhdGUoJ3RleHQnLCBbMC44NSwgLTAuMzgsICdBYnNvbHV0dCBmZWlsIHxlfCAobG9nYXJpdG1pc2sgc2thbGEpJ10sIHsKICBmaXhlZDogdHJ1ZSwKICBmb250U2l6ZTogMTMKfSk7Cgp2YXIgZXhhbXBsZXMgPSBbCiAgeyBlcnJvcjogMy4yZS0yLCB4OiAxLjcsIGNvbG9yOiAnIzFmNzdiNCcsIG5hbWU6ICdBJywgbGFiZWw6ICczLjLCtzEw4oG7wrInIH0sCiAgeyBlcnJvcjogNC4wZS00LCB4OiAzLjUsIGNvbG9yOiAnI2ZmN2YwZScsIG5hbWU6ICdCJywgbGFiZWw6ICc0LjDCtzEw4oG74oG0JyB9LAogIHsgZXJyb3I6IDIuMGUtNywgeDogNS4zLCBjb2xvcjogJyMyY2EwMmMnLCBuYW1lOiAnQycsIGxhYmVsOiAnMi4wwrcxMOKBu+KBtycgfQpdOwoKZm9yICh2YXIgaSA9IDA7IGkgPCBleGFtcGxlcy5sZW5ndGg7IGkrKykgewogIHZhciBpdGVtID0gZXhhbXBsZXNbaV07CiAgdmFyIGxvZ0Vycm9yID0gTWF0aC5sb2cxMChpdGVtLmVycm9yKTsKICBib2FyZC5jcmVhdGUoJ3BvaW50JywgW2l0ZW0ueCwgbG9nRXJyb3JdLCB7CiAgICBuYW1lOiAnJywKICAgIHNpemU6IDUsCiAgICBmaWxsQ29sb3I6IGl0ZW0uY29sb3IsCiAgICBzdHJva2VDb2xvcjogaXRlbS5jb2xvciwKICAgIGZpeGVkOiB0cnVlLAogICAgaGlnaGxpZ2h0OiBmYWxzZQogIH0pOwogIGJvYXJkLmNyZWF0ZSgndGV4dCcsIFtpdGVtLnggKyAwLjE2LCBsb2dFcnJvciArIDAuMDgsIGl0ZW0ubGFiZWxdLCB7CiAgICBmaXhlZDogdHJ1ZSwKICAgIGZvbnRTaXplOiAxNCwKICAgIGFuY2hvclk6ICdib3R0b20nCiAgfSk7CiAgYm9hcmQuY3JlYXRlKCd0ZXh0JywgW2l0ZW0ueCwgLTcuODIsICdCZXJlZ25pbmcgJyArIGl0ZW0ubmFtZV0sIHsKICAgIGZpeGVkOiB0cnVlLAogICAgZm9udFNpemU6IDEzLAogICAgYW5jaG9yWDogJ21pZGRsZScKICB9KTsKfTwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4=" class="" name="iframeJXGfdbd8abf_5540_49f0_61d3_08b3afd1" style="width:760px; height:400px; position:relative; margin:0; padding:0; display:block; z-index:1;border:1px solid black; border-radius:10px;;" id="JXGfdbd8abf_5540_49f0_61d3_08b3afd1" sandbox="allow-scripts"></iframe>
+<iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPHNjcmlwdCBpZD0iTWF0aEpheC1zY3JpcHQiIGFzeW5jIHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9tYXRoamF4QDQvdGV4LW1tbC1zdmcuanMiPjwvc2NyaXB0Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoY29yZS5qcyI+PC9zY3JpcHQ+CjxzdHlsZT5AaW1wb3J0IHVybCgiaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoLmNzcyIpOzwvc3R5bGU+CjxzdHlsZT5odG1sLGJvZHl7bWFyZ2luOjA7cGFkZGluZzowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7fS5qeGdib3h7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czowcHg7fTwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgaWQ9IkpYRzFjZmZiZDZhXzk2ZjNfZDNmNF9lZGU2X2RlNGUwYzM5IiBjbGFzcz0ianhnYm94IiBzdHlsZT0id2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtkaXNwbGF5OmJsb2NrO29iamVjdC1maXQ6ZmlsbDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Ij48L2Rpdj4KPHNjcmlwdD4oZnVuY3Rpb24gKCkgewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBwcm90b2NvbCA9ICdqc3hncmFwaC1xdWFydG8tYXNzZXNzbWVudCc7CiAgY29uc3QgdmVyc2lvbiA9IDE7CiAgY29uc3QgYXNzZXNzbWVudElkID0gIkpYRzFjZmZiZDZhXzk2ZjNfZDNmNF9lZGU2X2RlNGUwYzM5IjsKICBsZXQgcmVnaXN0cmF0aW9uID0gbnVsbDsKCiAgYXN5bmMgZnVuY3Rpb24gc3ZnVG9QbmcoZGF0YVVyaSwgYm9hcmQpIHsKICAgIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7CiAgICAgIGNvbnN0IGltYWdlID0gbmV3IEltYWdlKCk7CiAgICAgIGltYWdlLm9ubG9hZCA9ICgpID0+IHsKICAgICAgICBjb25zdCBjYW52YXMgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdjYW52YXMnKTsKICAgICAgICBjYW52YXMud2lkdGggPSBNYXRoLm1heCgxLCBNYXRoLnJvdW5kKGJvYXJkLmNhbnZhc1dpZHRoIHx8IGltYWdlLndpZHRoIHx8IDgwMCkpOwogICAgICAgIGNhbnZhcy5oZWlnaHQgPSBNYXRoLm1heCgxLCBNYXRoLnJvdW5kKGJvYXJkLmNhbnZhc0hlaWdodCB8fCBpbWFnZS5oZWlnaHQgfHwgNjAwKSk7CiAgICAgICAgY29uc3QgY29udGV4dCA9IGNhbnZhcy5nZXRDb250ZXh0KCcyZCcpOwogICAgICAgIGNvbnRleHQuZmlsbFN0eWxlID0gJyNmZmZmZmYnOwogICAgICAgIGNvbnRleHQuZmlsbFJlY3QoMCwgMCwgY2FudmFzLndpZHRoLCBjYW52YXMuaGVpZ2h0KTsKICAgICAgICBjb250ZXh0LmRyYXdJbWFnZShpbWFnZSwgMCwgMCwgY2FudmFzLndpZHRoLCBjYW52YXMuaGVpZ2h0KTsKICAgICAgICByZXNvbHZlKGNhbnZhcy50b0RhdGFVUkwoJ2ltYWdlL3BuZycpKTsKICAgICAgfTsKICAgICAgaW1hZ2Uub25lcnJvciA9ICgpID0+IHJlamVjdChuZXcgRXJyb3IoJ0NvdWxkIG5vdCByZW5kZXIgdGhlIEpTWEdyYXBoIGJvYXJkJykpOwogICAgICBpbWFnZS5zcmMgPSBkYXRhVXJpOwogICAgfSk7CiAgfQoKICBmdW5jdGlvbiByZXNvbHZlQm9hcmQoc3BlYykgewogICAgaWYgKHNwZWMgJiYgdHlwZW9mIHNwZWMuYm9hcmQgPT09ICdmdW5jdGlvbicpIHJldHVybiBzcGVjLmJvYXJkKCk7CiAgICBpZiAoc3BlYyAmJiBzcGVjLmJvYXJkKSByZXR1cm4gc3BlYy5ib2FyZDsKICAgIGNvbnN0IGJvYXJkcyA9IE9iamVjdC52YWx1ZXMoSlhHLmJvYXJkcyB8fCB7fSk7CiAgICByZXR1cm4gYm9hcmRzLmxlbmd0aCA/IGJvYXJkc1swXSA6IG51bGw7CiAgfQoKICBKWEcuUXVhcnRvQXNzZXNzbWVudCA9IHsKICAgIHJlZ2lzdGVyKHNwZWMpIHsKICAgICAgcmVnaXN0cmF0aW9uID0gdHlwZW9mIHNwZWMgPT09ICdmdW5jdGlvbicgPyB7IHJlc3BvbnNlOiBzcGVjIH0gOiBzcGVjOwogICAgICBpZiAoIXJlZ2lzdHJhdGlvbiB8fCB0eXBlb2YgcmVnaXN0cmF0aW9uLnJlc3BvbnNlICE9PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgdGhyb3cgbmV3IFR5cGVFcnJvcignQXNzZXNzbWVudCByZWdpc3RyYXRpb24gcmVxdWlyZXMgYSByZXNwb25zZSBmdW5jdGlvbicpOwogICAgICB9CiAgICB9CiAgfTsKCiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ21lc3NhZ2UnLCBhc3luYyAoZXZlbnQpID0+IHsKICAgIGNvbnN0IG1lc3NhZ2UgPSBldmVudC5kYXRhOwogICAgaWYgKGV2ZW50LnNvdXJjZSAhPT0gd2luZG93LnBhcmVudCB8fCAhbWVzc2FnZSB8fCBtZXNzYWdlLnByb3RvY29sICE9PSBwcm90b2NvbCB8fAogICAgICAgIG1lc3NhZ2UudmVyc2lvbiAhPT0gdmVyc2lvbiB8fCBtZXNzYWdlLnR5cGUgIT09ICdyZXF1ZXN0JyB8fAogICAgICAgIG1lc3NhZ2UuYXNzZXNzbWVudElkICE9PSBhc3Nlc3NtZW50SWQpIHJldHVybjsKCiAgICBjb25zdCByZXBseSA9IHsKICAgICAgcHJvdG9jb2wsCiAgICAgIHZlcnNpb24sCiAgICAgIHR5cGU6ICdyZXNwb25zZScsCiAgICAgIGFzc2Vzc21lbnRJZCwKICAgICAgcmVxdWVzdElkOiBtZXNzYWdlLnJlcXVlc3RJZAogICAgfTsKICAgIHRyeSB7CiAgICAgIGlmICghcmVnaXN0cmF0aW9uKSB0aHJvdyBuZXcgRXJyb3IoJ05vIEpTWEdyYXBoIGFzc2Vzc21lbnQgcmVzcG9uc2UgaXMgcmVnaXN0ZXJlZCcpOwogICAgICBjb25zdCByYXcgPSBhd2FpdCByZWdpc3RyYXRpb24ucmVzcG9uc2UoKTsKICAgICAgcmVwbHkucGF5bG9hZCA9IEpTT04ucGFyc2UoSlNPTi5zdHJpbmdpZnkocmF3KSk7CiAgICAgIGlmIChtZXNzYWdlLmluY2x1ZGVBSSAmJiByZWdpc3RyYXRpb24uYWkpIHsKICAgICAgICBjb25zdCBhaVNwZWMgPSByZWdpc3RyYXRpb24uYWk7CiAgICAgICAgY29uc3Qgc3VtbWFyeSA9IHR5cGVvZiBhaVNwZWMuc3VtbWFyeSA9PT0gJ2Z1bmN0aW9uJwogICAgICAgICAgPyBhd2FpdCBhaVNwZWMuc3VtbWFyeShyZXBseS5wYXlsb2FkKQogICAgICAgICAgOiBhaVNwZWMuc3VtbWFyeTsKICAgICAgICByZXBseS5haSA9IHt9OwogICAgICAgIGlmIChzdW1tYXJ5ICE9PSB1bmRlZmluZWQpIHJlcGx5LmFpLnN1bW1hcnkgPSBzdW1tYXJ5OwogICAgICAgIGlmIChhaVNwZWMucmVuZGVyKSB7CiAgICAgICAgICBjb25zdCBib2FyZCA9IHJlc29sdmVCb2FyZChyZWdpc3RyYXRpb24pOwogICAgICAgICAgaWYgKCFib2FyZCB8fCAhYm9hcmQucmVuZGVyZXIgfHwgdHlwZW9mIGJvYXJkLnJlbmRlcmVyLmR1bXBUb0RhdGFVUkkgIT09ICdmdW5jdGlvbicpIHsKICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKCdObyByZW5kZXJhYmxlIEpTWEdyYXBoIGJvYXJkIGlzIGF2YWlsYWJsZScpOwogICAgICAgICAgfQogICAgICAgICAgcmVwbHkuYWkuaW1hZ2UgPSBhd2FpdCBzdmdUb1BuZyhib2FyZC5yZW5kZXJlci5kdW1wVG9EYXRhVVJJKGZhbHNlKSwgYm9hcmQpOwogICAgICAgIH0KICAgICAgfQogICAgfSBjYXRjaCAoZXJyb3IpIHsKICAgICAgcmVwbHkuZXJyb3IgPSBlcnJvciAmJiBlcnJvci5tZXNzYWdlID8gZXJyb3IubWVzc2FnZSA6IFN0cmluZyhlcnJvcik7CiAgICB9CiAgICB3aW5kb3cucGFyZW50LnBvc3RNZXNzYWdlKHJlcGx5LCAnKicpOwogIH0pOwp9KSgpOwo8L3NjcmlwdD4KPHNjcmlwdD52YXIgYm9hcmQgPSBKWEcuSlNYR3JhcGguaW5pdEJvYXJkKCJKWEcxY2ZmYmQ2YV85NmYzX2QzZjRfZWRlNl9kZTRlMGMzOSIsIHsKICBib3VuZGluZ2JveDogWzAsIC0wLjE1LCA2LjgsIC04LjE1XSwKICBheGlzOiBmYWxzZSwKICBzaG93Q29weXJpZ2h0OiBmYWxzZSwKICBzaG93TmF2aWdhdGlvbjogZmFsc2UsCiAgcGFuOiB7IGVuYWJsZWQ6IGZhbHNlIH0sCiAgem9vbTogeyBlbmFibGVkOiBmYWxzZSB9Cn0pOwoKdmFyIGxvZ1R3byA9IE1hdGgubG9nMTAoMik7CmZvciAodmFyIHAgPSAxOyBwIDw9IDc7IHArKykgewogIHZhciB0aHJlc2hvbGQgPSAtcCAtIGxvZ1R3bzsKICBib2FyZC5jcmVhdGUoJ3NlZ21lbnQnLCBbWzAuNzUsIHRocmVzaG9sZF0sIFs2LjQ1LCB0aHJlc2hvbGRdXSwgewogICAgc3Ryb2tlQ29sb3I6ICcjYTdhN2E3JywKICAgIHN0cm9rZVdpZHRoOiAxLAogICAgZGFzaDogMiwKICAgIGZpeGVkOiB0cnVlLAogICAgaGlnaGxpZ2h0OiBmYWxzZQogIH0pOwogIGJvYXJkLmNyZWF0ZSgndGV4dCcsIFswLjEyLCB0aHJlc2hvbGQsICdwPScgKyBwXSwgewogICAgZml4ZWQ6IHRydWUsCiAgICBmb250U2l6ZTogMTIsCiAgICBhbmNob3JZOiAnbWlkZGxlJwogIH0pOwp9Cgpib2FyZC5jcmVhdGUoJ2Fycm93JywgW1swLjY1LCAtNy44NV0sIFswLjY1LCAtMC41NV1dLCB7CiAgc3Ryb2tlQ29sb3I6ICcjMzMzMzMzJywKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwpib2FyZC5jcmVhdGUoJ3RleHQnLCBbMC44NSwgLTAuMzgsICdBYnNvbHV0dCBmZWlsIHxlfCAobG9nYXJpdG1pc2sgc2thbGEpJ10sIHsKICBmaXhlZDogdHJ1ZSwKICBmb250U2l6ZTogMTMKfSk7Cgp2YXIgZXhhbXBsZXMgPSBbCiAgeyBlcnJvcjogMy4yZS0yLCB4OiAxLjcsIGNvbG9yOiAnIzFmNzdiNCcsIG5hbWU6ICdBJywgbGFiZWw6ICczLjLCtzEw4oG7wrInIH0sCiAgeyBlcnJvcjogNC4wZS00LCB4OiAzLjUsIGNvbG9yOiAnI2ZmN2YwZScsIG5hbWU6ICdCJywgbGFiZWw6ICc0LjDCtzEw4oG74oG0JyB9LAogIHsgZXJyb3I6IDIuMGUtNywgeDogNS4zLCBjb2xvcjogJyMyY2EwMmMnLCBuYW1lOiAnQycsIGxhYmVsOiAnMi4wwrcxMOKBu+KBtycgfQpdOwoKZm9yICh2YXIgaSA9IDA7IGkgPCBleGFtcGxlcy5sZW5ndGg7IGkrKykgewogIHZhciBpdGVtID0gZXhhbXBsZXNbaV07CiAgdmFyIGxvZ0Vycm9yID0gTWF0aC5sb2cxMChpdGVtLmVycm9yKTsKICBib2FyZC5jcmVhdGUoJ3BvaW50JywgW2l0ZW0ueCwgbG9nRXJyb3JdLCB7CiAgICBuYW1lOiAnJywKICAgIHNpemU6IDUsCiAgICBmaWxsQ29sb3I6IGl0ZW0uY29sb3IsCiAgICBzdHJva2VDb2xvcjogaXRlbS5jb2xvciwKICAgIGZpeGVkOiB0cnVlLAogICAgaGlnaGxpZ2h0OiBmYWxzZQogIH0pOwogIGJvYXJkLmNyZWF0ZSgndGV4dCcsIFtpdGVtLnggKyAwLjE2LCBsb2dFcnJvciArIDAuMDgsIGl0ZW0ubGFiZWxdLCB7CiAgICBmaXhlZDogdHJ1ZSwKICAgIGZvbnRTaXplOiAxNCwKICAgIGFuY2hvclk6ICdib3R0b20nCiAgfSk7CiAgYm9hcmQuY3JlYXRlKCd0ZXh0JywgW2l0ZW0ueCwgLTcuODIsICdCZXJlZ25pbmcgJyArIGl0ZW0ubmFtZV0sIHsKICAgIGZpeGVkOiB0cnVlLAogICAgZm9udFNpemU6IDEzLAogICAgYW5jaG9yWDogJ21pZGRsZScKICB9KTsKfTwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4=" class="" name="iframeJXG1cffbd6a_96f3_d3f4_ede6_de4e0c39" style="width:760px; height:400px; position:relative; margin:0; padding:0; display:block; z-index:1;border:1px solid black; border-radius:10px;;" id="JXG1cffbd6a_96f3_d3f4_ede6_de4e0c39" sandbox="allow-scripts"></iframe>
 <p>Følg hvert punkt nedover fra toppen. Det blå punktet har passert kravet til én korrekt desimal, men ikke kravet til to. Det oransje har passert tre-desimallinjen, men ikke fire-desimallinjen. Det grønne har passert seks-desimallinjen, men ikke sju-desimallinjen. Vi kan derfor stole på henholdsvis 1, 3 og 6 desimaler i de tre resultatene.</p>
 <p>Denne figuren stopper ved <span class="math inline">\(10^{-8}\)</span> fordi alle tre eksempelfeilene ligger i dette området. I et konvergensplott for binary64 fortsetter vi vanligvis aksen ned mot omtrent <span class="math inline">\(10^{-16}\)</span> for tall av størrelse 1. Der flater feilkurven ofte ut fordi maskinen ikke kan lagre tettere tall på denne skalaen.</p>
 <p>For modellproblemet kjenner vi referanseverdien fra 2.0 med absolutt referansefeil under <span class="math inline">\(6\cdot10^{-17}\)</span>. Vi kan derfor bruke <span class="math inline">\(r_{\mathrm{reference}}\)</span> i stedet for den ukjente eksakte roten og plotte den målte feilen <span class="math inline">\(|x_n-r_{\mathrm{reference}}|\)</span>, så lenge feilen vi tolker ligger tydelig over referansefeilen.</p>
@@ -5430,7 +5654,7 @@ p_5-p_4,
 \]</span></p>
 <p>altså antallet korrekte desimaler etter steg 5 minus antallet etter steg 4. Les først omtrentlige feil fra plottet, og bruk tierpotensene på den logaritmiske aksen til å velge riktig grense.</p>
 </div>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="read-semilogy-correct-decimals" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;blå etter steg 5&quot;,&quot;oransje etter steg 5&quot;,&quot;grønn etter steg 5&quot;,&quot;nye blå fra 4 til 5&quot;,&quot;nye oransje fra 4 til 5&quot;,&quot;nye grønne fra 4 til 5&quot;]" data-context-mode="explicit" data-context-refs="semilogy-decimals-context" data-context="&quot;…erdiene presset sammen nær null. Et semilogaritmisk plott, ofte kalt et semilogy-plott i Python, løser dette ved å bruke en vanlig, lineær akse for iterasjonsnummeret n, ogen logaritmisk akse for den absolutte feilen |e_n|. På den logaritmiske aksen betyr like store loddrette avstander like store faktorer, ikke like store differanser. Ett hovedtrinn ned fra 10^{-3} til 10^{-4} betyr at feilen er delt på 10. En rett, synkende linje betyr derfor at feilen reduseres med omtrent samme faktor i hvert steg. En kurve som blir stadig brattere, kan tyde på raskere konvergens, for eksempel kvadratisk konvergens. Vi sammenligner tre fikspunktiterasjoner som alle har fikspunktet r=0: KurveOppdateringsregelStartverdiForventet oppførsel nær 0Blåx_{n+1}=0.8x_nx_0=0.1langsom lineær konvergensOransjex_{n+1}=0.1x_nx_0=0.1rask lineær konvergensGrønnx_{n+1}=x_n^2x_0=0.3kvadratisk konvergens For de lineære reglene blir feilen multiplisert med henholdsvis 0.8 og 0.1 i hvert steg. For den grønne kurven er e_{n+1}=e_n^2, så antallet korrekte desimaler vokser mye raskere når feilen først er liten. Bruk kriteriet |e_n|<\\frac12 10^{-p} og finn det største heltallet p som oppfyller ulikheten. Dette er antallet korrekte desimaler ved iterasjon n.«Nye desimaler fra steg 4 til 5» betyr p_5-p_4, altså antallet korrekte desimaler etter steg 5 minus antallet etter steg 4. Les først omtrentlige feil fra plottet, og bruk tierpotensene på den logaritmiske aksen til å velge riktig grense.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;,&quot;math-exercise-3-f4&quot;,&quot;math-exercise-3-f5&quot;,&quot;math-exercise-3-f6&quot;]">
+<div class="math-exercise-cell" id="math-exercise-3" data-label="read-semilogy-correct-decimals" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;blå etter steg 5&quot;,&quot;oransje etter steg 5&quot;,&quot;grønn etter steg 5&quot;,&quot;nye blå fra 4 til 5&quot;,&quot;nye oransje fra 4 til 5&quot;,&quot;nye grønne fra 4 til 5&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="semilogy-decimals-context" data-context="&quot;…erdiene presset sammen nær null. Et semilogaritmisk plott, ofte kalt et semilogy-plott i Python, løser dette ved å bruke en vanlig, lineær akse for iterasjonsnummeret n, ogen logaritmisk akse for den absolutte feilen |e_n|. På den logaritmiske aksen betyr like store loddrette avstander like store faktorer, ikke like store differanser. Ett hovedtrinn ned fra 10^{-3} til 10^{-4} betyr at feilen er delt på 10. En rett, synkende linje betyr derfor at feilen reduseres med omtrent samme faktor i hvert steg. En kurve som blir stadig brattere, kan tyde på raskere konvergens, for eksempel kvadratisk konvergens. Vi sammenligner tre fikspunktiterasjoner som alle har fikspunktet r=0: KurveOppdateringsregelStartverdiForventet oppførsel nær 0Blåx_{n+1}=0.8x_nx_0=0.1langsom lineær konvergensOransjex_{n+1}=0.1x_nx_0=0.1rask lineær konvergensGrønnx_{n+1}=x_n^2x_0=0.3kvadratisk konvergens For de lineære reglene blir feilen multiplisert med henholdsvis 0.8 og 0.1 i hvert steg. For den grønne kurven er e_{n+1}=e_n^2, så antallet korrekte desimaler vokser mye raskere når feilen først er liten. Bruk kriteriet |e_n|<\\frac12 10^{-p} og finn det største heltallet p som oppfyller ulikheten. Dette er antallet korrekte desimaler ved iterasjon n.«Nye desimaler fra steg 4 til 5» betyr p_5-p_4, altså antallet korrekte desimaler etter steg 5 minus antallet etter steg 4. Les først omtrentlige feil fra plottet, og bruk tierpotensene på den logaritmiske aksen til å velge riktig grense.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;,&quot;math-exercise-3-f4&quot;,&quot;math-exercise-3-f5&quot;,&quot;math-exercise-3-f6&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Les korrekte desimaler fra semilogy-plottet</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -5465,8 +5689,8 @@ Grønn kurve: <input type="text" id="math-exercise-3-f6" data-answer="8" data-va
 <h4 class="anchored" data-anchor-id="klikk-på-iteratet-med-sju-korrekte-desimaler">Klikk på iteratet med sju korrekte desimaler</h4>
 <p>Den interaktive grafen nedenfor viser den raske lineære iterasjonen <span class="math inline">\(x_{n+1}=0.1x_n\)</span> med <span class="math inline">\(x_0=0.1\)</span>. Det er den samme oransje kurven som i semilogy-plottet, forlenget med noen steg.</p>
 <p>Den loddrette koordinaten er <span class="math inline">\(\log_{10}(|e_n|)\)</span>. For eksempel betyr høyden <span class="math inline">\(-4\)</span> at feilen er <span class="math inline">\(10^{-4}\)</span>. Klikk på datapunktet som har <strong>sju korrekte desimaler</strong> etter kriteriet <span class="math inline">\(|e_n|&lt;\frac12 10^{-7}\)</span>. Det valgte punktet markeres med rødt.</p>
-<iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPHNjcmlwdCBpZD0iTWF0aEpheC1zY3JpcHQiIGFzeW5jIHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9tYXRoamF4QDQvdGV4LW1tbC1zdmcuanMiPjwvc2NyaXB0Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoY29yZS5qcyI+PC9zY3JpcHQ+CjxzdHlsZT5AaW1wb3J0IHVybCgiaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoLmNzcyIpOzwvc3R5bGU+CjxzdHlsZT5odG1sLGJvZHl7bWFyZ2luOjA7cGFkZGluZzowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7fS5qeGdib3h7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czowcHg7fTwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgaWQ9IkpYRzdiNWQyOTA2X2ZiNWJfODc3MV8wMzFjXzg1OTVkYmJjIiBjbGFzcz0ianhnYm94IiBzdHlsZT0id2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtkaXNwbGF5OmJsb2NrO29iamVjdC1maXQ6ZmlsbDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Ij48L2Rpdj4KPHNjcmlwdD4oZnVuY3Rpb24gKCkgewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBwcm90b2NvbCA9ICdqc3hncmFwaC1xdWFydG8tYXNzZXNzbWVudCc7CiAgY29uc3QgdmVyc2lvbiA9IDE7CiAgY29uc3QgYXNzZXNzbWVudElkID0gInNldmVuLWNvcnJlY3QtZGVjaW1hbHMtYm9hcmQiOwogIGxldCByZWdpc3RyYXRpb24gPSBudWxsOwoKICBhc3luYyBmdW5jdGlvbiBzdmdUb1BuZyhkYXRhVXJpLCBib2FyZCkgewogICAgcmV0dXJuIG5ldyBQcm9taXNlKChyZXNvbHZlLCByZWplY3QpID0+IHsKICAgICAgY29uc3QgaW1hZ2UgPSBuZXcgSW1hZ2UoKTsKICAgICAgaW1hZ2Uub25sb2FkID0gKCkgPT4gewogICAgICAgIGNvbnN0IGNhbnZhcyA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2NhbnZhcycpOwogICAgICAgIGNhbnZhcy53aWR0aCA9IE1hdGgubWF4KDEsIE1hdGgucm91bmQoYm9hcmQuY2FudmFzV2lkdGggfHwgaW1hZ2Uud2lkdGggfHwgODAwKSk7CiAgICAgICAgY2FudmFzLmhlaWdodCA9IE1hdGgubWF4KDEsIE1hdGgucm91bmQoYm9hcmQuY2FudmFzSGVpZ2h0IHx8IGltYWdlLmhlaWdodCB8fCA2MDApKTsKICAgICAgICBjb25zdCBjb250ZXh0ID0gY2FudmFzLmdldENvbnRleHQoJzJkJyk7CiAgICAgICAgY29udGV4dC5maWxsU3R5bGUgPSAnI2ZmZmZmZic7CiAgICAgICAgY29udGV4dC5maWxsUmVjdCgwLCAwLCBjYW52YXMud2lkdGgsIGNhbnZhcy5oZWlnaHQpOwogICAgICAgIGNvbnRleHQuZHJhd0ltYWdlKGltYWdlLCAwLCAwLCBjYW52YXMud2lkdGgsIGNhbnZhcy5oZWlnaHQpOwogICAgICAgIHJlc29sdmUoY2FudmFzLnRvRGF0YVVSTCgnaW1hZ2UvcG5nJykpOwogICAgICB9OwogICAgICBpbWFnZS5vbmVycm9yID0gKCkgPT4gcmVqZWN0KG5ldyBFcnJvcignQ291bGQgbm90IHJlbmRlciB0aGUgSlNYR3JhcGggYm9hcmQnKSk7CiAgICAgIGltYWdlLnNyYyA9IGRhdGFVcmk7CiAgICB9KTsKICB9CgogIGZ1bmN0aW9uIHJlc29sdmVCb2FyZChzcGVjKSB7CiAgICBpZiAoc3BlYyAmJiB0eXBlb2Ygc3BlYy5ib2FyZCA9PT0gJ2Z1bmN0aW9uJykgcmV0dXJuIHNwZWMuYm9hcmQoKTsKICAgIGlmIChzcGVjICYmIHNwZWMuYm9hcmQpIHJldHVybiBzcGVjLmJvYXJkOwogICAgY29uc3QgYm9hcmRzID0gT2JqZWN0LnZhbHVlcyhKWEcuYm9hcmRzIHx8IHt9KTsKICAgIHJldHVybiBib2FyZHMubGVuZ3RoID8gYm9hcmRzWzBdIDogbnVsbDsKICB9CgogIEpYRy5RdWFydG9Bc3Nlc3NtZW50ID0gewogICAgcmVnaXN0ZXIoc3BlYykgewogICAgICByZWdpc3RyYXRpb24gPSB0eXBlb2Ygc3BlYyA9PT0gJ2Z1bmN0aW9uJyA/IHsgcmVzcG9uc2U6IHNwZWMgfSA6IHNwZWM7CiAgICAgIGlmICghcmVnaXN0cmF0aW9uIHx8IHR5cGVvZiByZWdpc3RyYXRpb24ucmVzcG9uc2UgIT09ICdmdW5jdGlvbicpIHsKICAgICAgICB0aHJvdyBuZXcgVHlwZUVycm9yKCdBc3Nlc3NtZW50IHJlZ2lzdHJhdGlvbiByZXF1aXJlcyBhIHJlc3BvbnNlIGZ1bmN0aW9uJyk7CiAgICAgIH0KICAgIH0KICB9OwoKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcignbWVzc2FnZScsIGFzeW5jIChldmVudCkgPT4gewogICAgY29uc3QgbWVzc2FnZSA9IGV2ZW50LmRhdGE7CiAgICBpZiAoZXZlbnQuc291cmNlICE9PSB3aW5kb3cucGFyZW50IHx8ICFtZXNzYWdlIHx8IG1lc3NhZ2UucHJvdG9jb2wgIT09IHByb3RvY29sIHx8CiAgICAgICAgbWVzc2FnZS52ZXJzaW9uICE9PSB2ZXJzaW9uIHx8IG1lc3NhZ2UudHlwZSAhPT0gJ3JlcXVlc3QnIHx8CiAgICAgICAgbWVzc2FnZS5hc3Nlc3NtZW50SWQgIT09IGFzc2Vzc21lbnRJZCkgcmV0dXJuOwoKICAgIGNvbnN0IHJlcGx5ID0gewogICAgICBwcm90b2NvbCwKICAgICAgdmVyc2lvbiwKICAgICAgdHlwZTogJ3Jlc3BvbnNlJywKICAgICAgYXNzZXNzbWVudElkLAogICAgICByZXF1ZXN0SWQ6IG1lc3NhZ2UucmVxdWVzdElkCiAgICB9OwogICAgdHJ5IHsKICAgICAgaWYgKCFyZWdpc3RyYXRpb24pIHRocm93IG5ldyBFcnJvcignTm8gSlNYR3JhcGggYXNzZXNzbWVudCByZXNwb25zZSBpcyByZWdpc3RlcmVkJyk7CiAgICAgIGNvbnN0IHJhdyA9IGF3YWl0IHJlZ2lzdHJhdGlvbi5yZXNwb25zZSgpOwogICAgICByZXBseS5wYXlsb2FkID0gSlNPTi5wYXJzZShKU09OLnN0cmluZ2lmeShyYXcpKTsKICAgICAgaWYgKG1lc3NhZ2UuaW5jbHVkZUFJICYmIHJlZ2lzdHJhdGlvbi5haSkgewogICAgICAgIGNvbnN0IGFpU3BlYyA9IHJlZ2lzdHJhdGlvbi5haTsKICAgICAgICBjb25zdCBzdW1tYXJ5ID0gdHlwZW9mIGFpU3BlYy5zdW1tYXJ5ID09PSAnZnVuY3Rpb24nCiAgICAgICAgICA/IGF3YWl0IGFpU3BlYy5zdW1tYXJ5KHJlcGx5LnBheWxvYWQpCiAgICAgICAgICA6IGFpU3BlYy5zdW1tYXJ5OwogICAgICAgIHJlcGx5LmFpID0ge307CiAgICAgICAgaWYgKHN1bW1hcnkgIT09IHVuZGVmaW5lZCkgcmVwbHkuYWkuc3VtbWFyeSA9IHN1bW1hcnk7CiAgICAgICAgaWYgKGFpU3BlYy5yZW5kZXIpIHsKICAgICAgICAgIGNvbnN0IGJvYXJkID0gcmVzb2x2ZUJvYXJkKHJlZ2lzdHJhdGlvbik7CiAgICAgICAgICBpZiAoIWJvYXJkIHx8ICFib2FyZC5yZW5kZXJlciB8fCB0eXBlb2YgYm9hcmQucmVuZGVyZXIuZHVtcFRvRGF0YVVSSSAhPT0gJ2Z1bmN0aW9uJykgewogICAgICAgICAgICB0aHJvdyBuZXcgRXJyb3IoJ05vIHJlbmRlcmFibGUgSlNYR3JhcGggYm9hcmQgaXMgYXZhaWxhYmxlJyk7CiAgICAgICAgICB9CiAgICAgICAgICByZXBseS5haS5pbWFnZSA9IGF3YWl0IHN2Z1RvUG5nKGJvYXJkLnJlbmRlcmVyLmR1bXBUb0RhdGFVUkkoZmFsc2UpLCBib2FyZCk7CiAgICAgICAgfQogICAgICB9CiAgICB9IGNhdGNoIChlcnJvcikgewogICAgICByZXBseS5lcnJvciA9IGVycm9yICYmIGVycm9yLm1lc3NhZ2UgPyBlcnJvci5tZXNzYWdlIDogU3RyaW5nKGVycm9yKTsKICAgIH0KICAgIHdpbmRvdy5wYXJlbnQucG9zdE1lc3NhZ2UocmVwbHksICcqJyk7CiAgfSk7Cn0pKCk7Cjwvc2NyaXB0Pgo8c2NyaXB0PnZhciBib2FyZCA9IEpYRy5KU1hHcmFwaC5pbml0Qm9hcmQoIkpYRzdiNWQyOTA2X2ZiNWJfODc3MV8wMzFjXzg1OTVkYmJjIiwgewogIGJvdW5kaW5nYm94OiBbLTAuNywgMCwgOC44LCAtMTBdLAogIGF4aXM6IHRydWUsCiAgc2hvd0NvcHlyaWdodDogZmFsc2UsCiAgc2hvd05hdmlnYXRpb246IGZhbHNlLAogIHBhbjogeyBlbmFibGVkOiBmYWxzZSB9LAogIHpvb206IHsgZW5hYmxlZDogZmFsc2UgfQp9KTsKCnZhciBpdGVyYXRpb25zID0gWzAsIDEsIDIsIDMsIDQsIDUsIDYsIDcsIDhdOwp2YXIgbG9nRXJyb3JzID0gWy0xLCAtMiwgLTMsIC00LCAtNSwgLTYsIC03LCAtOCwgLTldOwoKYm9hcmQuY3JlYXRlKCdjdXJ2ZScsIFtpdGVyYXRpb25zLCBsb2dFcnJvcnNdLCB7CiAgc3Ryb2tlQ29sb3I6ICcjZmY3ZjBlJywKICBzdHJva2VXaWR0aDogMywKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwoKZm9yICh2YXIgaSA9IDA7IGkgPCBpdGVyYXRpb25zLmxlbmd0aDsgaSsrKSB7CiAgYm9hcmQuY3JlYXRlKCdwb2ludCcsIFtpdGVyYXRpb25zW2ldLCBsb2dFcnJvcnNbaV1dLCB7CiAgICBuYW1lOiAnJywKICAgIHNpemU6IDMsCiAgICBmYWNlOiAnbycsCiAgICBmaWxsQ29sb3I6ICcjZmY3ZjBlJywKICAgIHN0cm9rZUNvbG9yOiAnI2ZmN2YwZScsCiAgICBmaXhlZDogdHJ1ZSwKICAgIGhpZ2hsaWdodDogZmFsc2UKICB9KTsKfQoKYm9hcmQuY3JlYXRlKCd0ZXh0JywgWzQuMSwgLTAuNDUsICdpdGVyYXNqb24gbiddLCB7CiAgZml4ZWQ6IHRydWUsCiAgZm9udFNpemU6IDE0Cn0pOwpib2FyZC5jcmVhdGUoJ3RleHQnLCBbLTAuNTUsIC05LjQ1LCAnbG9nMTAofGVfbnwpJ10sIHsKICBmaXhlZDogdHJ1ZSwKICBmb250U2l6ZTogMTQsCiAgcm90YXRlOiA5MAp9KTsKCnZhciBzZWxlY3RlZEluZGV4ID0gbnVsbDsKdmFyIHNlbGVjdGVkUG9pbnQgPSBib2FyZC5jcmVhdGUoJ3BvaW50JywgWzAsIC0xXSwgewogIG5hbWU6ICcnLAogIHNpemU6IDYsCiAgZmFjZTogJ28nLAogIGZpbGxDb2xvcjogJyNkNjI3MjgnLAogIHN0cm9rZUNvbG9yOiAnI2Q2MjcyOCcsCiAgdmlzaWJsZTogZmFsc2UsCiAgZml4ZWQ6IHRydWUsCiAgaGlnaGxpZ2h0OiBmYWxzZQp9KTsKCmJvYXJkLm9uKCdkb3duJywgZnVuY3Rpb24gKGV2ZW50KSB7CiAgdmFyIGNvcm5lciA9IGJvYXJkLmdldENvb3Jkc1RvcExlZnRDb3JuZXIoZXZlbnQpOwogIHZhciBwb3NpdGlvbiA9IEpYRy5nZXRQb3NpdGlvbihldmVudCwgMCk7CiAgdmFyIGNvb3JkaW5hdGVzID0gbmV3IEpYRy5Db29yZHMoCiAgICBKWEcuQ09PUkRTX0JZX1NDUkVFTiwKICAgIFtwb3NpdGlvblswXSAtIGNvcm5lclswXSwgcG9zaXRpb25bMV0gLSBjb3JuZXJbMV1dLAogICAgYm9hcmQKICApOwogIHZhciB4ID0gY29vcmRpbmF0ZXMudXNyQ29vcmRzWzFdOwogIHZhciB5ID0gY29vcmRpbmF0ZXMudXNyQ29vcmRzWzJdOwogIHZhciBiZXN0SW5kZXggPSAwOwogIHZhciBiZXN0RGlzdGFuY2UgPSBJbmZpbml0eTsKCiAgZm9yICh2YXIgaiA9IDA7IGogPCBpdGVyYXRpb25zLmxlbmd0aDsgaisrKSB7CiAgICB2YXIgZGlzdGFuY2UgPSBNYXRoLnBvdyh4IC0gaXRlcmF0aW9uc1tqXSwgMikgKwogICAgICAgICAgICAgICAgICAgTWF0aC5wb3coeSAtIGxvZ0Vycm9yc1tqXSwgMik7CiAgICBpZiAoZGlzdGFuY2UgPCBiZXN0RGlzdGFuY2UpIHsKICAgICAgYmVzdERpc3RhbmNlID0gZGlzdGFuY2U7CiAgICAgIGJlc3RJbmRleCA9IGo7CiAgICB9CiAgfQoKICBzZWxlY3RlZEluZGV4ID0gYmVzdEluZGV4OwogIHNlbGVjdGVkUG9pbnQuc2V0UG9zaXRpb24oCiAgICBKWEcuQ09PUkRTX0JZX1VTRVIsCiAgICBbaXRlcmF0aW9uc1tiZXN0SW5kZXhdLCBsb2dFcnJvcnNbYmVzdEluZGV4XV0KICApOwogIHNlbGVjdGVkUG9pbnQuc2V0QXR0cmlidXRlKHsgdmlzaWJsZTogdHJ1ZSB9KTsKICBib2FyZC51cGRhdGUoKTsKfSk7CgpKWEcuUXVhcnRvQXNzZXNzbWVudC5yZWdpc3Rlcih7CiAgYm9hcmQ6IGJvYXJkLAogIHJlc3BvbnNlOiBmdW5jdGlvbiAoKSB7CiAgICByZXR1cm4geyBpbmRleDogc2VsZWN0ZWRJbmRleCB9OwogIH0sCiAgYWk6IHsKICAgIHJlbmRlcjogdHJ1ZSwKICAgIHN1bW1hcnk6IGZ1bmN0aW9uIChkYXRhKSB7CiAgICAgIHJldHVybiB7IHNlbGVjdGVkX2l0ZXJhdGlvbjogZGF0YS5pbmRleCB9OwogICAgfQogIH0KfSk7PC9zY3JpcHQ+CjwvYm9keT4KPC9odG1sPg==" class="" name="iframeJXG7b5d2906_fb5b_8771_031c_8595dbbc" style="width:760px; height:440px; position:relative; margin:0; padding:0; display:block; z-index:1;border:1px solid black; border-radius:10px;;" id="seven-correct-decimals-board" sandbox="allow-scripts"></iframe>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="click-seven-correct-decimals" data-mode="custom" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;def check(response, symbols):\n    index = response.get(\&quot;index\&quot;)\n    if index is None:\n        return {\&quot;score\&quot;: 0, \&quot;feedback\&quot;: \&quot;Klikk på ett av punktene før du kontrollerer svaret.\&quot;}\n    if int(index) == 7:\n        return {\&quot;score\&quot;: 1, \&quot;feedback\&quot;: \&quot;Riktig. Ved n = 7 er feilen 10^(-8), som gir sju korrekte desimaler.\&quot;}\n    return {\&quot;score\&quot;: 0, \&quot;feedback\&quot;: \&quot;Ikke helt. Les av feilen i punktet og sammenlign den med 0.5·10^(-7) og 0.5·10^(-8).\&quot;}&quot;" data-response="jsxgraph:seven-correct-decimals-board" data-embed-response="true" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="none" data-context-refs="none" data-context="&quot;Klikk på iteratet med sju korrekte desimaler Den interaktive grafen nedenfor viser den raske lineære iterasjonen x_{n+1}=0.1x_n med x_0=0.1. Det er den samme oransje kurven som i semilogy-plottet, forlenget med noen steg. Den loddrette koordinaten er \\log_{10}(|e_n|). For eksempel betyr høyden -4 at feilen er 10^{-4}. Klikk på datapunktet som har sju korrekte desimaler etter kriteriet |e_n|<\\frac12 10^{-7}. Det valgte punktet markeres med rødt.&quot;" data-fields="[]">
+<iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPHNjcmlwdCBpZD0iTWF0aEpheC1zY3JpcHQiIGFzeW5jIHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9tYXRoamF4QDQvdGV4LW1tbC1zdmcuanMiPjwvc2NyaXB0Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoY29yZS5qcyI+PC9zY3JpcHQ+CjxzdHlsZT5AaW1wb3J0IHVybCgiaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoLmNzcyIpOzwvc3R5bGU+CjxzdHlsZT5odG1sLGJvZHl7bWFyZ2luOjA7cGFkZGluZzowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7fS5qeGdib3h7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czowcHg7fTwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgaWQ9IkpYRzQzNjM4ODM4XzYwMDBfOTAzOF8wNGI4XzhlMzcyNmQ1IiBjbGFzcz0ianhnYm94IiBzdHlsZT0id2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtkaXNwbGF5OmJsb2NrO29iamVjdC1maXQ6ZmlsbDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Ij48L2Rpdj4KPHNjcmlwdD4oZnVuY3Rpb24gKCkgewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBwcm90b2NvbCA9ICdqc3hncmFwaC1xdWFydG8tYXNzZXNzbWVudCc7CiAgY29uc3QgdmVyc2lvbiA9IDE7CiAgY29uc3QgYXNzZXNzbWVudElkID0gInNldmVuLWNvcnJlY3QtZGVjaW1hbHMtYm9hcmQiOwogIGxldCByZWdpc3RyYXRpb24gPSBudWxsOwoKICBhc3luYyBmdW5jdGlvbiBzdmdUb1BuZyhkYXRhVXJpLCBib2FyZCkgewogICAgcmV0dXJuIG5ldyBQcm9taXNlKChyZXNvbHZlLCByZWplY3QpID0+IHsKICAgICAgY29uc3QgaW1hZ2UgPSBuZXcgSW1hZ2UoKTsKICAgICAgaW1hZ2Uub25sb2FkID0gKCkgPT4gewogICAgICAgIGNvbnN0IGNhbnZhcyA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2NhbnZhcycpOwogICAgICAgIGNhbnZhcy53aWR0aCA9IE1hdGgubWF4KDEsIE1hdGgucm91bmQoYm9hcmQuY2FudmFzV2lkdGggfHwgaW1hZ2Uud2lkdGggfHwgODAwKSk7CiAgICAgICAgY2FudmFzLmhlaWdodCA9IE1hdGgubWF4KDEsIE1hdGgucm91bmQoYm9hcmQuY2FudmFzSGVpZ2h0IHx8IGltYWdlLmhlaWdodCB8fCA2MDApKTsKICAgICAgICBjb25zdCBjb250ZXh0ID0gY2FudmFzLmdldENvbnRleHQoJzJkJyk7CiAgICAgICAgY29udGV4dC5maWxsU3R5bGUgPSAnI2ZmZmZmZic7CiAgICAgICAgY29udGV4dC5maWxsUmVjdCgwLCAwLCBjYW52YXMud2lkdGgsIGNhbnZhcy5oZWlnaHQpOwogICAgICAgIGNvbnRleHQuZHJhd0ltYWdlKGltYWdlLCAwLCAwLCBjYW52YXMud2lkdGgsIGNhbnZhcy5oZWlnaHQpOwogICAgICAgIHJlc29sdmUoY2FudmFzLnRvRGF0YVVSTCgnaW1hZ2UvcG5nJykpOwogICAgICB9OwogICAgICBpbWFnZS5vbmVycm9yID0gKCkgPT4gcmVqZWN0KG5ldyBFcnJvcignQ291bGQgbm90IHJlbmRlciB0aGUgSlNYR3JhcGggYm9hcmQnKSk7CiAgICAgIGltYWdlLnNyYyA9IGRhdGFVcmk7CiAgICB9KTsKICB9CgogIGZ1bmN0aW9uIHJlc29sdmVCb2FyZChzcGVjKSB7CiAgICBpZiAoc3BlYyAmJiB0eXBlb2Ygc3BlYy5ib2FyZCA9PT0gJ2Z1bmN0aW9uJykgcmV0dXJuIHNwZWMuYm9hcmQoKTsKICAgIGlmIChzcGVjICYmIHNwZWMuYm9hcmQpIHJldHVybiBzcGVjLmJvYXJkOwogICAgY29uc3QgYm9hcmRzID0gT2JqZWN0LnZhbHVlcyhKWEcuYm9hcmRzIHx8IHt9KTsKICAgIHJldHVybiBib2FyZHMubGVuZ3RoID8gYm9hcmRzWzBdIDogbnVsbDsKICB9CgogIEpYRy5RdWFydG9Bc3Nlc3NtZW50ID0gewogICAgcmVnaXN0ZXIoc3BlYykgewogICAgICByZWdpc3RyYXRpb24gPSB0eXBlb2Ygc3BlYyA9PT0gJ2Z1bmN0aW9uJyA/IHsgcmVzcG9uc2U6IHNwZWMgfSA6IHNwZWM7CiAgICAgIGlmICghcmVnaXN0cmF0aW9uIHx8IHR5cGVvZiByZWdpc3RyYXRpb24ucmVzcG9uc2UgIT09ICdmdW5jdGlvbicpIHsKICAgICAgICB0aHJvdyBuZXcgVHlwZUVycm9yKCdBc3Nlc3NtZW50IHJlZ2lzdHJhdGlvbiByZXF1aXJlcyBhIHJlc3BvbnNlIGZ1bmN0aW9uJyk7CiAgICAgIH0KICAgIH0KICB9OwoKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcignbWVzc2FnZScsIGFzeW5jIChldmVudCkgPT4gewogICAgY29uc3QgbWVzc2FnZSA9IGV2ZW50LmRhdGE7CiAgICBpZiAoZXZlbnQuc291cmNlICE9PSB3aW5kb3cucGFyZW50IHx8ICFtZXNzYWdlIHx8IG1lc3NhZ2UucHJvdG9jb2wgIT09IHByb3RvY29sIHx8CiAgICAgICAgbWVzc2FnZS52ZXJzaW9uICE9PSB2ZXJzaW9uIHx8IG1lc3NhZ2UudHlwZSAhPT0gJ3JlcXVlc3QnIHx8CiAgICAgICAgbWVzc2FnZS5hc3Nlc3NtZW50SWQgIT09IGFzc2Vzc21lbnRJZCkgcmV0dXJuOwoKICAgIGNvbnN0IHJlcGx5ID0gewogICAgICBwcm90b2NvbCwKICAgICAgdmVyc2lvbiwKICAgICAgdHlwZTogJ3Jlc3BvbnNlJywKICAgICAgYXNzZXNzbWVudElkLAogICAgICByZXF1ZXN0SWQ6IG1lc3NhZ2UucmVxdWVzdElkCiAgICB9OwogICAgdHJ5IHsKICAgICAgaWYgKCFyZWdpc3RyYXRpb24pIHRocm93IG5ldyBFcnJvcignTm8gSlNYR3JhcGggYXNzZXNzbWVudCByZXNwb25zZSBpcyByZWdpc3RlcmVkJyk7CiAgICAgIGNvbnN0IHJhdyA9IGF3YWl0IHJlZ2lzdHJhdGlvbi5yZXNwb25zZSgpOwogICAgICByZXBseS5wYXlsb2FkID0gSlNPTi5wYXJzZShKU09OLnN0cmluZ2lmeShyYXcpKTsKICAgICAgaWYgKG1lc3NhZ2UuaW5jbHVkZUFJICYmIHJlZ2lzdHJhdGlvbi5haSkgewogICAgICAgIGNvbnN0IGFpU3BlYyA9IHJlZ2lzdHJhdGlvbi5haTsKICAgICAgICBjb25zdCBzdW1tYXJ5ID0gdHlwZW9mIGFpU3BlYy5zdW1tYXJ5ID09PSAnZnVuY3Rpb24nCiAgICAgICAgICA/IGF3YWl0IGFpU3BlYy5zdW1tYXJ5KHJlcGx5LnBheWxvYWQpCiAgICAgICAgICA6IGFpU3BlYy5zdW1tYXJ5OwogICAgICAgIHJlcGx5LmFpID0ge307CiAgICAgICAgaWYgKHN1bW1hcnkgIT09IHVuZGVmaW5lZCkgcmVwbHkuYWkuc3VtbWFyeSA9IHN1bW1hcnk7CiAgICAgICAgaWYgKGFpU3BlYy5yZW5kZXIpIHsKICAgICAgICAgIGNvbnN0IGJvYXJkID0gcmVzb2x2ZUJvYXJkKHJlZ2lzdHJhdGlvbik7CiAgICAgICAgICBpZiAoIWJvYXJkIHx8ICFib2FyZC5yZW5kZXJlciB8fCB0eXBlb2YgYm9hcmQucmVuZGVyZXIuZHVtcFRvRGF0YVVSSSAhPT0gJ2Z1bmN0aW9uJykgewogICAgICAgICAgICB0aHJvdyBuZXcgRXJyb3IoJ05vIHJlbmRlcmFibGUgSlNYR3JhcGggYm9hcmQgaXMgYXZhaWxhYmxlJyk7CiAgICAgICAgICB9CiAgICAgICAgICByZXBseS5haS5pbWFnZSA9IGF3YWl0IHN2Z1RvUG5nKGJvYXJkLnJlbmRlcmVyLmR1bXBUb0RhdGFVUkkoZmFsc2UpLCBib2FyZCk7CiAgICAgICAgfQogICAgICB9CiAgICB9IGNhdGNoIChlcnJvcikgewogICAgICByZXBseS5lcnJvciA9IGVycm9yICYmIGVycm9yLm1lc3NhZ2UgPyBlcnJvci5tZXNzYWdlIDogU3RyaW5nKGVycm9yKTsKICAgIH0KICAgIHdpbmRvdy5wYXJlbnQucG9zdE1lc3NhZ2UocmVwbHksICcqJyk7CiAgfSk7Cn0pKCk7Cjwvc2NyaXB0Pgo8c2NyaXB0PnZhciBib2FyZCA9IEpYRy5KU1hHcmFwaC5pbml0Qm9hcmQoIkpYRzQzNjM4ODM4XzYwMDBfOTAzOF8wNGI4XzhlMzcyNmQ1IiwgewogIGJvdW5kaW5nYm94OiBbLTAuNywgMCwgOC44LCAtMTBdLAogIGF4aXM6IHRydWUsCiAgc2hvd0NvcHlyaWdodDogZmFsc2UsCiAgc2hvd05hdmlnYXRpb246IGZhbHNlLAogIHBhbjogeyBlbmFibGVkOiBmYWxzZSB9LAogIHpvb206IHsgZW5hYmxlZDogZmFsc2UgfQp9KTsKCnZhciBpdGVyYXRpb25zID0gWzAsIDEsIDIsIDMsIDQsIDUsIDYsIDcsIDhdOwp2YXIgbG9nRXJyb3JzID0gWy0xLCAtMiwgLTMsIC00LCAtNSwgLTYsIC03LCAtOCwgLTldOwoKYm9hcmQuY3JlYXRlKCdjdXJ2ZScsIFtpdGVyYXRpb25zLCBsb2dFcnJvcnNdLCB7CiAgc3Ryb2tlQ29sb3I6ICcjZmY3ZjBlJywKICBzdHJva2VXaWR0aDogMywKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwoKZm9yICh2YXIgaSA9IDA7IGkgPCBpdGVyYXRpb25zLmxlbmd0aDsgaSsrKSB7CiAgYm9hcmQuY3JlYXRlKCdwb2ludCcsIFtpdGVyYXRpb25zW2ldLCBsb2dFcnJvcnNbaV1dLCB7CiAgICBuYW1lOiAnJywKICAgIHNpemU6IDMsCiAgICBmYWNlOiAnbycsCiAgICBmaWxsQ29sb3I6ICcjZmY3ZjBlJywKICAgIHN0cm9rZUNvbG9yOiAnI2ZmN2YwZScsCiAgICBmaXhlZDogdHJ1ZSwKICAgIGhpZ2hsaWdodDogZmFsc2UKICB9KTsKfQoKYm9hcmQuY3JlYXRlKCd0ZXh0JywgWzQuMSwgLTAuNDUsICdpdGVyYXNqb24gbiddLCB7CiAgZml4ZWQ6IHRydWUsCiAgZm9udFNpemU6IDE0Cn0pOwpib2FyZC5jcmVhdGUoJ3RleHQnLCBbLTAuNTUsIC05LjQ1LCAnbG9nMTAofGVfbnwpJ10sIHsKICBmaXhlZDogdHJ1ZSwKICBmb250U2l6ZTogMTQsCiAgcm90YXRlOiA5MAp9KTsKCnZhciBzZWxlY3RlZEluZGV4ID0gbnVsbDsKdmFyIHNlbGVjdGVkUG9pbnQgPSBib2FyZC5jcmVhdGUoJ3BvaW50JywgWzAsIC0xXSwgewogIG5hbWU6ICcnLAogIHNpemU6IDYsCiAgZmFjZTogJ28nLAogIGZpbGxDb2xvcjogJyNkNjI3MjgnLAogIHN0cm9rZUNvbG9yOiAnI2Q2MjcyOCcsCiAgdmlzaWJsZTogZmFsc2UsCiAgZml4ZWQ6IHRydWUsCiAgaGlnaGxpZ2h0OiBmYWxzZQp9KTsKCmJvYXJkLm9uKCdkb3duJywgZnVuY3Rpb24gKGV2ZW50KSB7CiAgdmFyIGNvcm5lciA9IGJvYXJkLmdldENvb3Jkc1RvcExlZnRDb3JuZXIoZXZlbnQpOwogIHZhciBwb3NpdGlvbiA9IEpYRy5nZXRQb3NpdGlvbihldmVudCwgMCk7CiAgdmFyIGNvb3JkaW5hdGVzID0gbmV3IEpYRy5Db29yZHMoCiAgICBKWEcuQ09PUkRTX0JZX1NDUkVFTiwKICAgIFtwb3NpdGlvblswXSAtIGNvcm5lclswXSwgcG9zaXRpb25bMV0gLSBjb3JuZXJbMV1dLAogICAgYm9hcmQKICApOwogIHZhciB4ID0gY29vcmRpbmF0ZXMudXNyQ29vcmRzWzFdOwogIHZhciB5ID0gY29vcmRpbmF0ZXMudXNyQ29vcmRzWzJdOwogIHZhciBiZXN0SW5kZXggPSAwOwogIHZhciBiZXN0RGlzdGFuY2UgPSBJbmZpbml0eTsKCiAgZm9yICh2YXIgaiA9IDA7IGogPCBpdGVyYXRpb25zLmxlbmd0aDsgaisrKSB7CiAgICB2YXIgZGlzdGFuY2UgPSBNYXRoLnBvdyh4IC0gaXRlcmF0aW9uc1tqXSwgMikgKwogICAgICAgICAgICAgICAgICAgTWF0aC5wb3coeSAtIGxvZ0Vycm9yc1tqXSwgMik7CiAgICBpZiAoZGlzdGFuY2UgPCBiZXN0RGlzdGFuY2UpIHsKICAgICAgYmVzdERpc3RhbmNlID0gZGlzdGFuY2U7CiAgICAgIGJlc3RJbmRleCA9IGo7CiAgICB9CiAgfQoKICBzZWxlY3RlZEluZGV4ID0gYmVzdEluZGV4OwogIHNlbGVjdGVkUG9pbnQuc2V0UG9zaXRpb24oCiAgICBKWEcuQ09PUkRTX0JZX1VTRVIsCiAgICBbaXRlcmF0aW9uc1tiZXN0SW5kZXhdLCBsb2dFcnJvcnNbYmVzdEluZGV4XV0KICApOwogIHNlbGVjdGVkUG9pbnQuc2V0QXR0cmlidXRlKHsgdmlzaWJsZTogdHJ1ZSB9KTsKICBib2FyZC51cGRhdGUoKTsKfSk7CgpKWEcuUXVhcnRvQXNzZXNzbWVudC5yZWdpc3Rlcih7CiAgYm9hcmQ6IGJvYXJkLAogIHJlc3BvbnNlOiBmdW5jdGlvbiAoKSB7CiAgICByZXR1cm4geyBpbmRleDogc2VsZWN0ZWRJbmRleCB9OwogIH0sCiAgYWk6IHsKICAgIHJlbmRlcjogdHJ1ZSwKICAgIHN1bW1hcnk6IGZ1bmN0aW9uIChkYXRhKSB7CiAgICAgIHJldHVybiB7IHNlbGVjdGVkX2l0ZXJhdGlvbjogZGF0YS5pbmRleCB9OwogICAgfQogIH0KfSk7PC9zY3JpcHQ+CjwvYm9keT4KPC9odG1sPg==" class="" name="iframeJXG43638838_6000_9038_04b8_8e3726d5" style="width:760px; height:440px; position:relative; margin:0; padding:0; display:block; z-index:1;border:1px solid black; border-radius:10px;;" id="seven-correct-decimals-board" sandbox="allow-scripts"></iframe>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="click-seven-correct-decimals" data-mode="custom" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;def check(response, symbols):\n    index = response.get(\&quot;index\&quot;)\n    if index is None:\n        return {\&quot;score\&quot;: 0, \&quot;feedback\&quot;: \&quot;Klikk på ett av punktene før du kontrollerer svaret.\&quot;}\n    if int(index) == 7:\n        return {\&quot;score\&quot;: 1, \&quot;feedback\&quot;: \&quot;Riktig. Ved n = 7 er feilen 10^(-8), som gir sju korrekte desimaler.\&quot;}\n    return {\&quot;score\&quot;: 0, \&quot;feedback\&quot;: \&quot;Ikke helt. Les av feilen i punktet og sammenlign den med 0.5·10^(-7) og 0.5·10^(-8).\&quot;}&quot;" data-response="jsxgraph:seven-correct-decimals-board" data-embed-response="true" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="none" data-context-refs="none" data-context="&quot;Klikk på iteratet med sju korrekte desimaler Den interaktive grafen nedenfor viser den raske lineære iterasjonen x_{n+1}=0.1x_n med x_0=0.1. Det er den samme oransje kurven som i semilogy-plottet, forlenget med noen steg. Den loddrette koordinaten er \\log_{10}(|e_n|). For eksempel betyr høyden -4 at feilen er 10^{-4}. Klikk på datapunktet som har sju korrekte desimaler etter kriteriet |e_n|<\\frac12 10^{-7}. Det valgte punktet markeres med rødt.&quot;" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn punktet med sju korrekte desimaler</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -5489,8 +5713,8 @@ Grønn kurve: <input type="text" id="math-exercise-3-f6" data-answer="8" data-va
 <h4 class="anchored" data-anchor-id="finn-det-første-kvadratiske-iteratet-som-passerer-sju-desimaler">Finn det første kvadratiske iteratet som passerer sju desimaler</h4>
 <p>Den grønne iterasjonen <span class="math inline">\(x_{n+1}=x_n^2\)</span> med <span class="math inline">\(x_0=0.3\)</span> konvergerer kvadratisk mot fikspunktet <span class="math inline">\(r=0\)</span>. Her finnes det ikke nødvendigvis et iterat med <em>akkurat</em> sju korrekte desimaler: Kvadratisk konvergens kan hoppe over flere nivåer i ett steg.</p>
 <p>Grafen viser den samme grønne kurven som i semilogy-plottet. Klikk på det <strong>første</strong> punktet som har minst sju korrekte desimaler. Sammenlign feilen med grensen <span class="math inline">\(\frac12 10^{-7}=5\cdot10^{-8}\)</span>. Det valgte punktet markeres med rødt.</p>
-<iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPHNjcmlwdCBpZD0iTWF0aEpheC1zY3JpcHQiIGFzeW5jIHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9tYXRoamF4QDQvdGV4LW1tbC1zdmcuanMiPjwvc2NyaXB0Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoY29yZS5qcyI+PC9zY3JpcHQ+CjxzdHlsZT5AaW1wb3J0IHVybCgiaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoLmNzcyIpOzwvc3R5bGU+CjxzdHlsZT5odG1sLGJvZHl7bWFyZ2luOjA7cGFkZGluZzowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7fS5qeGdib3h7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czowcHg7fTwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgaWQ9IkpYRzY3NTE5Mjc5X2FjYTBfZjQ3MF9mYTc0XzI3ODA2NWVjIiBjbGFzcz0ianhnYm94IiBzdHlsZT0id2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtkaXNwbGF5OmJsb2NrO29iamVjdC1maXQ6ZmlsbDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Ij48L2Rpdj4KPHNjcmlwdD4oZnVuY3Rpb24gKCkgewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBwcm90b2NvbCA9ICdqc3hncmFwaC1xdWFydG8tYXNzZXNzbWVudCc7CiAgY29uc3QgdmVyc2lvbiA9IDE7CiAgY29uc3QgYXNzZXNzbWVudElkID0gInF1YWRyYXRpYy1zZXZlbi1kZWNpbWFscy1ib2FyZCI7CiAgbGV0IHJlZ2lzdHJhdGlvbiA9IG51bGw7CgogIGFzeW5jIGZ1bmN0aW9uIHN2Z1RvUG5nKGRhdGFVcmksIGJvYXJkKSB7CiAgICByZXR1cm4gbmV3IFByb21pc2UoKHJlc29sdmUsIHJlamVjdCkgPT4gewogICAgICBjb25zdCBpbWFnZSA9IG5ldyBJbWFnZSgpOwogICAgICBpbWFnZS5vbmxvYWQgPSAoKSA9PiB7CiAgICAgICAgY29uc3QgY2FudmFzID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnY2FudmFzJyk7CiAgICAgICAgY2FudmFzLndpZHRoID0gTWF0aC5tYXgoMSwgTWF0aC5yb3VuZChib2FyZC5jYW52YXNXaWR0aCB8fCBpbWFnZS53aWR0aCB8fCA4MDApKTsKICAgICAgICBjYW52YXMuaGVpZ2h0ID0gTWF0aC5tYXgoMSwgTWF0aC5yb3VuZChib2FyZC5jYW52YXNIZWlnaHQgfHwgaW1hZ2UuaGVpZ2h0IHx8IDYwMCkpOwogICAgICAgIGNvbnN0IGNvbnRleHQgPSBjYW52YXMuZ2V0Q29udGV4dCgnMmQnKTsKICAgICAgICBjb250ZXh0LmZpbGxTdHlsZSA9ICcjZmZmZmZmJzsKICAgICAgICBjb250ZXh0LmZpbGxSZWN0KDAsIDAsIGNhbnZhcy53aWR0aCwgY2FudmFzLmhlaWdodCk7CiAgICAgICAgY29udGV4dC5kcmF3SW1hZ2UoaW1hZ2UsIDAsIDAsIGNhbnZhcy53aWR0aCwgY2FudmFzLmhlaWdodCk7CiAgICAgICAgcmVzb2x2ZShjYW52YXMudG9EYXRhVVJMKCdpbWFnZS9wbmcnKSk7CiAgICAgIH07CiAgICAgIGltYWdlLm9uZXJyb3IgPSAoKSA9PiByZWplY3QobmV3IEVycm9yKCdDb3VsZCBub3QgcmVuZGVyIHRoZSBKU1hHcmFwaCBib2FyZCcpKTsKICAgICAgaW1hZ2Uuc3JjID0gZGF0YVVyaTsKICAgIH0pOwogIH0KCiAgZnVuY3Rpb24gcmVzb2x2ZUJvYXJkKHNwZWMpIHsKICAgIGlmIChzcGVjICYmIHR5cGVvZiBzcGVjLmJvYXJkID09PSAnZnVuY3Rpb24nKSByZXR1cm4gc3BlYy5ib2FyZCgpOwogICAgaWYgKHNwZWMgJiYgc3BlYy5ib2FyZCkgcmV0dXJuIHNwZWMuYm9hcmQ7CiAgICBjb25zdCBib2FyZHMgPSBPYmplY3QudmFsdWVzKEpYRy5ib2FyZHMgfHwge30pOwogICAgcmV0dXJuIGJvYXJkcy5sZW5ndGggPyBib2FyZHNbMF0gOiBudWxsOwogIH0KCiAgSlhHLlF1YXJ0b0Fzc2Vzc21lbnQgPSB7CiAgICByZWdpc3RlcihzcGVjKSB7CiAgICAgIHJlZ2lzdHJhdGlvbiA9IHR5cGVvZiBzcGVjID09PSAnZnVuY3Rpb24nID8geyByZXNwb25zZTogc3BlYyB9IDogc3BlYzsKICAgICAgaWYgKCFyZWdpc3RyYXRpb24gfHwgdHlwZW9mIHJlZ2lzdHJhdGlvbi5yZXNwb25zZSAhPT0gJ2Z1bmN0aW9uJykgewogICAgICAgIHRocm93IG5ldyBUeXBlRXJyb3IoJ0Fzc2Vzc21lbnQgcmVnaXN0cmF0aW9uIHJlcXVpcmVzIGEgcmVzcG9uc2UgZnVuY3Rpb24nKTsKICAgICAgfQogICAgfQogIH07CgogIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdtZXNzYWdlJywgYXN5bmMgKGV2ZW50KSA9PiB7CiAgICBjb25zdCBtZXNzYWdlID0gZXZlbnQuZGF0YTsKICAgIGlmIChldmVudC5zb3VyY2UgIT09IHdpbmRvdy5wYXJlbnQgfHwgIW1lc3NhZ2UgfHwgbWVzc2FnZS5wcm90b2NvbCAhPT0gcHJvdG9jb2wgfHwKICAgICAgICBtZXNzYWdlLnZlcnNpb24gIT09IHZlcnNpb24gfHwgbWVzc2FnZS50eXBlICE9PSAncmVxdWVzdCcgfHwKICAgICAgICBtZXNzYWdlLmFzc2Vzc21lbnRJZCAhPT0gYXNzZXNzbWVudElkKSByZXR1cm47CgogICAgY29uc3QgcmVwbHkgPSB7CiAgICAgIHByb3RvY29sLAogICAgICB2ZXJzaW9uLAogICAgICB0eXBlOiAncmVzcG9uc2UnLAogICAgICBhc3Nlc3NtZW50SWQsCiAgICAgIHJlcXVlc3RJZDogbWVzc2FnZS5yZXF1ZXN0SWQKICAgIH07CiAgICB0cnkgewogICAgICBpZiAoIXJlZ2lzdHJhdGlvbikgdGhyb3cgbmV3IEVycm9yKCdObyBKU1hHcmFwaCBhc3Nlc3NtZW50IHJlc3BvbnNlIGlzIHJlZ2lzdGVyZWQnKTsKICAgICAgY29uc3QgcmF3ID0gYXdhaXQgcmVnaXN0cmF0aW9uLnJlc3BvbnNlKCk7CiAgICAgIHJlcGx5LnBheWxvYWQgPSBKU09OLnBhcnNlKEpTT04uc3RyaW5naWZ5KHJhdykpOwogICAgICBpZiAobWVzc2FnZS5pbmNsdWRlQUkgJiYgcmVnaXN0cmF0aW9uLmFpKSB7CiAgICAgICAgY29uc3QgYWlTcGVjID0gcmVnaXN0cmF0aW9uLmFpOwogICAgICAgIGNvbnN0IHN1bW1hcnkgPSB0eXBlb2YgYWlTcGVjLnN1bW1hcnkgPT09ICdmdW5jdGlvbicKICAgICAgICAgID8gYXdhaXQgYWlTcGVjLnN1bW1hcnkocmVwbHkucGF5bG9hZCkKICAgICAgICAgIDogYWlTcGVjLnN1bW1hcnk7CiAgICAgICAgcmVwbHkuYWkgPSB7fTsKICAgICAgICBpZiAoc3VtbWFyeSAhPT0gdW5kZWZpbmVkKSByZXBseS5haS5zdW1tYXJ5ID0gc3VtbWFyeTsKICAgICAgICBpZiAoYWlTcGVjLnJlbmRlcikgewogICAgICAgICAgY29uc3QgYm9hcmQgPSByZXNvbHZlQm9hcmQocmVnaXN0cmF0aW9uKTsKICAgICAgICAgIGlmICghYm9hcmQgfHwgIWJvYXJkLnJlbmRlcmVyIHx8IHR5cGVvZiBib2FyZC5yZW5kZXJlci5kdW1wVG9EYXRhVVJJICE9PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgICAgIHRocm93IG5ldyBFcnJvcignTm8gcmVuZGVyYWJsZSBKU1hHcmFwaCBib2FyZCBpcyBhdmFpbGFibGUnKTsKICAgICAgICAgIH0KICAgICAgICAgIHJlcGx5LmFpLmltYWdlID0gYXdhaXQgc3ZnVG9QbmcoYm9hcmQucmVuZGVyZXIuZHVtcFRvRGF0YVVSSShmYWxzZSksIGJvYXJkKTsKICAgICAgICB9CiAgICAgIH0KICAgIH0gY2F0Y2ggKGVycm9yKSB7CiAgICAgIHJlcGx5LmVycm9yID0gZXJyb3IgJiYgZXJyb3IubWVzc2FnZSA/IGVycm9yLm1lc3NhZ2UgOiBTdHJpbmcoZXJyb3IpOwogICAgfQogICAgd2luZG93LnBhcmVudC5wb3N0TWVzc2FnZShyZXBseSwgJyonKTsKICB9KTsKfSkoKTsKPC9zY3JpcHQ+CjxzY3JpcHQ+dmFyIGJvYXJkID0gSlhHLkpTWEdyYXBoLmluaXRCb2FyZCgiSlhHNjc1MTkyNzlfYWNhMF9mNDcwX2ZhNzRfMjc4MDY1ZWMiLCB7CiAgYm91bmRpbmdib3g6IFstMC41LCAwLCA1LjcsIC0xOV0sCiAgYXhpczogdHJ1ZSwKICBzaG93Q29weXJpZ2h0OiBmYWxzZSwKICBzaG93TmF2aWdhdGlvbjogZmFsc2UsCiAgcGFuOiB7IGVuYWJsZWQ6IGZhbHNlIH0sCiAgem9vbTogeyBlbmFibGVkOiBmYWxzZSB9Cn0pOwoKdmFyIGl0ZXJhdGlvbnMgPSBbMCwgMSwgMiwgMywgNCwgNV07CnZhciBlcnJvcnMgPSBbXTsKdmFyIHZhbHVlID0gMC4zOwpmb3IgKHZhciBpID0gMDsgaSA8IGl0ZXJhdGlvbnMubGVuZ3RoOyBpKyspIHsKICBlcnJvcnMucHVzaChNYXRoLmFicyh2YWx1ZSkpOwogIHZhbHVlID0gdmFsdWUqdmFsdWU7Cn0KdmFyIGxvZ0Vycm9ycyA9IGVycm9ycy5tYXAoZnVuY3Rpb24gKGVycm9yKSB7CiAgcmV0dXJuIE1hdGgubG9nMTAoZXJyb3IpOwp9KTsKCmJvYXJkLmNyZWF0ZSgnY3VydmUnLCBbaXRlcmF0aW9ucywgbG9nRXJyb3JzXSwgewogIHN0cm9rZUNvbG9yOiAnIzJjYTAyYycsCiAgc3Ryb2tlV2lkdGg6IDMsCiAgZml4ZWQ6IHRydWUsCiAgaGlnaGxpZ2h0OiBmYWxzZQp9KTsKCmZvciAodmFyIGogPSAwOyBqIDwgaXRlcmF0aW9ucy5sZW5ndGg7IGorKykgewogIGJvYXJkLmNyZWF0ZSgncG9pbnQnLCBbaXRlcmF0aW9uc1tqXSwgbG9nRXJyb3JzW2pdXSwgewogICAgbmFtZTogJycsCiAgICBzaXplOiAzLAogICAgZmFjZTogJ28nLAogICAgZmlsbENvbG9yOiAnIzJjYTAyYycsCiAgICBzdHJva2VDb2xvcjogJyMyY2EwMmMnLAogICAgZml4ZWQ6IHRydWUsCiAgICBoaWdobGlnaHQ6IGZhbHNlCiAgfSk7Cn0KCnZhciB0aHJlc2hvbGQgPSBNYXRoLmxvZzEwKDAuNSpNYXRoLnBvdygxMCwgLTcpKTsKYm9hcmQuY3JlYXRlKCdsaW5lJywgW1swLCB0aHJlc2hvbGRdLCBbMSwgdGhyZXNob2xkXV0sIHsKICBzdHJhaWdodEZpcnN0OiB0cnVlLAogIHN0cmFpZ2h0TGFzdDogdHJ1ZSwKICBzdHJva2VDb2xvcjogJyM2NjY2NjYnLAogIHN0cm9rZVdpZHRoOiAyLAogIGRhc2g6IDIsCiAgZml4ZWQ6IHRydWUsCiAgaGlnaGxpZ2h0OiBmYWxzZQp9KTsKYm9hcmQuY3JlYXRlKCd0ZXh0JywgWzAuMTUsIHRocmVzaG9sZCArIDAuNTUsICdncmVuc2UgZm9yIG1pbnN0IDcgZGVzaW1hbGVyJ10sIHsKICBmaXhlZDogdHJ1ZSwKICBmb250U2l6ZTogMTMKfSk7CmJvYXJkLmNyZWF0ZSgndGV4dCcsIFsyLjMsIC0wLjYsICdpdGVyYXNqb24gbiddLCB7CiAgZml4ZWQ6IHRydWUsCiAgZm9udFNpemU6IDE0Cn0pOwpib2FyZC5jcmVhdGUoJ3RleHQnLCBbLTAuMzgsIC0xNy4yLCAnbG9nMTAofGVfbnwpJ10sIHsKICBmaXhlZDogdHJ1ZSwKICBmb250U2l6ZTogMTQsCiAgcm90YXRlOiA5MAp9KTsKCnZhciBzZWxlY3RlZEluZGV4ID0gbnVsbDsKdmFyIHNlbGVjdGVkUG9pbnQgPSBib2FyZC5jcmVhdGUoJ3BvaW50JywgWzAsIGxvZ0Vycm9yc1swXV0sIHsKICBuYW1lOiAnJywKICBzaXplOiA2LAogIGZhY2U6ICdvJywKICBmaWxsQ29sb3I6ICcjZDYyNzI4JywKICBzdHJva2VDb2xvcjogJyNkNjI3MjgnLAogIHZpc2libGU6IGZhbHNlLAogIGZpeGVkOiB0cnVlLAogIGhpZ2hsaWdodDogZmFsc2UKfSk7Cgpib2FyZC5vbignZG93bicsIGZ1bmN0aW9uIChldmVudCkgewogIHZhciBjb3JuZXIgPSBib2FyZC5nZXRDb29yZHNUb3BMZWZ0Q29ybmVyKGV2ZW50KTsKICB2YXIgcG9zaXRpb24gPSBKWEcuZ2V0UG9zaXRpb24oZXZlbnQsIDApOwogIHZhciBjb29yZGluYXRlcyA9IG5ldyBKWEcuQ29vcmRzKAogICAgSlhHLkNPT1JEU19CWV9TQ1JFRU4sCiAgICBbcG9zaXRpb25bMF0gLSBjb3JuZXJbMF0sIHBvc2l0aW9uWzFdIC0gY29ybmVyWzFdXSwKICAgIGJvYXJkCiAgKTsKICB2YXIgeCA9IGNvb3JkaW5hdGVzLnVzckNvb3Jkc1sxXTsKICB2YXIgeSA9IGNvb3JkaW5hdGVzLnVzckNvb3Jkc1syXTsKICB2YXIgYmVzdEluZGV4ID0gMDsKICB2YXIgYmVzdERpc3RhbmNlID0gSW5maW5pdHk7CgogIGZvciAodmFyIGsgPSAwOyBrIDwgaXRlcmF0aW9ucy5sZW5ndGg7IGsrKykgewogICAgdmFyIGR4ID0geCAtIGl0ZXJhdGlvbnNba107CiAgICB2YXIgZHkgPSAoeSAtIGxvZ0Vycm9yc1trXSkvMzsKICAgIHZhciBkaXN0YW5jZSA9IGR4KmR4ICsgZHkqZHk7CiAgICBpZiAoZGlzdGFuY2UgPCBiZXN0RGlzdGFuY2UpIHsKICAgICAgYmVzdERpc3RhbmNlID0gZGlzdGFuY2U7CiAgICAgIGJlc3RJbmRleCA9IGs7CiAgICB9CiAgfQoKICBzZWxlY3RlZEluZGV4ID0gYmVzdEluZGV4OwogIHNlbGVjdGVkUG9pbnQuc2V0UG9zaXRpb24oCiAgICBKWEcuQ09PUkRTX0JZX1VTRVIsCiAgICBbaXRlcmF0aW9uc1tiZXN0SW5kZXhdLCBsb2dFcnJvcnNbYmVzdEluZGV4XV0KICApOwogIHNlbGVjdGVkUG9pbnQuc2V0QXR0cmlidXRlKHsgdmlzaWJsZTogdHJ1ZSB9KTsKICBib2FyZC51cGRhdGUoKTsKfSk7CgpKWEcuUXVhcnRvQXNzZXNzbWVudC5yZWdpc3Rlcih7CiAgYm9hcmQ6IGJvYXJkLAogIHJlc3BvbnNlOiBmdW5jdGlvbiAoKSB7CiAgICByZXR1cm4gewogICAgICBpbmRleDogc2VsZWN0ZWRJbmRleCwKICAgICAgZXJyb3I6IHNlbGVjdGVkSW5kZXggPT09IG51bGwgPyBudWxsIDogZXJyb3JzW3NlbGVjdGVkSW5kZXhdCiAgICB9OwogIH0sCiAgYWk6IHsKICAgIHJlbmRlcjogdHJ1ZSwKICAgIHN1bW1hcnk6IGZ1bmN0aW9uIChkYXRhKSB7CiAgICAgIHJldHVybiB7IHNlbGVjdGVkX2l0ZXJhdGlvbjogZGF0YS5pbmRleCwgc2VsZWN0ZWRfZXJyb3I6IGRhdGEuZXJyb3IgfTsKICAgIH0KICB9Cn0pOzwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4=" class="" name="iframeJXG67519279_aca0_f470_fa74_278065ec" style="width:760px; height:440px; position:relative; margin:0; padding:0; display:block; z-index:1;border:1px solid black; border-radius:10px;;" id="quadratic-seven-decimals-board" sandbox="allow-scripts"></iframe>
-<div class="math-exercise-cell" id="math-exercise-5" data-label="click-quadratic-seven-decimals" data-mode="custom" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;def check(response, symbols):\n    index = response.get(\&quot;index\&quot;)\n    if index is None:\n        return {\&quot;score\&quot;: 0, \&quot;feedback\&quot;: \&quot;Klikk på ett av punktene før du kontrollerer svaret.\&quot;}\n    if int(index) == 4:\n        return {\&quot;score\&quot;: 1, \&quot;feedback\&quot;: \&quot;Riktig. Ved n = 4 er feilen omtrent 4.3·10^(-9), så iteratet har 8 korrekte desimaler og er det første som har minst 7.\&quot;}\n    return {\&quot;score\&quot;: 0, \&quot;feedback\&quot;: \&quot;Ikke helt. Finn det første punktet under linjen |e_n| = 5·10^(-8).\&quot;}&quot;" data-response="jsxgraph:quadratic-seven-decimals-board" data-embed-response="true" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="none" data-context-refs="none" data-context="&quot;Finn det første kvadratiske iteratet som passerer sju desimaler Den grønne iterasjonen x_{n+1}=x_n^2 med x_0=0.3 konvergerer kvadratisk mot fikspunktet r=0. Her finnes det ikke nødvendigvis et iterat med akkurat sju korrekte desimaler: Kvadratisk konvergens kan hoppe over flere nivåer i ett steg. Grafen viser den samme grønne kurven som i semilogy-plottet. Klikk på det første punktet som har minst sju korrekte desimaler. Sammenlign feilen med grensen \\frac12 10^{-7}=5\\cdot10^{-8}. Det valgte punktet markeres med rødt.&quot;" data-fields="[]">
+<iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPHNjcmlwdCBpZD0iTWF0aEpheC1zY3JpcHQiIGFzeW5jIHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9tYXRoamF4QDQvdGV4LW1tbC1zdmcuanMiPjwvc2NyaXB0Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoY29yZS5qcyI+PC9zY3JpcHQ+CjxzdHlsZT5AaW1wb3J0IHVybCgiaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoLmNzcyIpOzwvc3R5bGU+CjxzdHlsZT5odG1sLGJvZHl7bWFyZ2luOjA7cGFkZGluZzowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7fS5qeGdib3h7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czowcHg7fTwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgaWQ9IkpYRzExNDZlZDViX2RhNDdfZWY0Yl8yZmI3XzE3ZTA0MGE3IiBjbGFzcz0ianhnYm94IiBzdHlsZT0id2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtkaXNwbGF5OmJsb2NrO29iamVjdC1maXQ6ZmlsbDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Ij48L2Rpdj4KPHNjcmlwdD4oZnVuY3Rpb24gKCkgewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBwcm90b2NvbCA9ICdqc3hncmFwaC1xdWFydG8tYXNzZXNzbWVudCc7CiAgY29uc3QgdmVyc2lvbiA9IDE7CiAgY29uc3QgYXNzZXNzbWVudElkID0gInF1YWRyYXRpYy1zZXZlbi1kZWNpbWFscy1ib2FyZCI7CiAgbGV0IHJlZ2lzdHJhdGlvbiA9IG51bGw7CgogIGFzeW5jIGZ1bmN0aW9uIHN2Z1RvUG5nKGRhdGFVcmksIGJvYXJkKSB7CiAgICByZXR1cm4gbmV3IFByb21pc2UoKHJlc29sdmUsIHJlamVjdCkgPT4gewogICAgICBjb25zdCBpbWFnZSA9IG5ldyBJbWFnZSgpOwogICAgICBpbWFnZS5vbmxvYWQgPSAoKSA9PiB7CiAgICAgICAgY29uc3QgY2FudmFzID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnY2FudmFzJyk7CiAgICAgICAgY2FudmFzLndpZHRoID0gTWF0aC5tYXgoMSwgTWF0aC5yb3VuZChib2FyZC5jYW52YXNXaWR0aCB8fCBpbWFnZS53aWR0aCB8fCA4MDApKTsKICAgICAgICBjYW52YXMuaGVpZ2h0ID0gTWF0aC5tYXgoMSwgTWF0aC5yb3VuZChib2FyZC5jYW52YXNIZWlnaHQgfHwgaW1hZ2UuaGVpZ2h0IHx8IDYwMCkpOwogICAgICAgIGNvbnN0IGNvbnRleHQgPSBjYW52YXMuZ2V0Q29udGV4dCgnMmQnKTsKICAgICAgICBjb250ZXh0LmZpbGxTdHlsZSA9ICcjZmZmZmZmJzsKICAgICAgICBjb250ZXh0LmZpbGxSZWN0KDAsIDAsIGNhbnZhcy53aWR0aCwgY2FudmFzLmhlaWdodCk7CiAgICAgICAgY29udGV4dC5kcmF3SW1hZ2UoaW1hZ2UsIDAsIDAsIGNhbnZhcy53aWR0aCwgY2FudmFzLmhlaWdodCk7CiAgICAgICAgcmVzb2x2ZShjYW52YXMudG9EYXRhVVJMKCdpbWFnZS9wbmcnKSk7CiAgICAgIH07CiAgICAgIGltYWdlLm9uZXJyb3IgPSAoKSA9PiByZWplY3QobmV3IEVycm9yKCdDb3VsZCBub3QgcmVuZGVyIHRoZSBKU1hHcmFwaCBib2FyZCcpKTsKICAgICAgaW1hZ2Uuc3JjID0gZGF0YVVyaTsKICAgIH0pOwogIH0KCiAgZnVuY3Rpb24gcmVzb2x2ZUJvYXJkKHNwZWMpIHsKICAgIGlmIChzcGVjICYmIHR5cGVvZiBzcGVjLmJvYXJkID09PSAnZnVuY3Rpb24nKSByZXR1cm4gc3BlYy5ib2FyZCgpOwogICAgaWYgKHNwZWMgJiYgc3BlYy5ib2FyZCkgcmV0dXJuIHNwZWMuYm9hcmQ7CiAgICBjb25zdCBib2FyZHMgPSBPYmplY3QudmFsdWVzKEpYRy5ib2FyZHMgfHwge30pOwogICAgcmV0dXJuIGJvYXJkcy5sZW5ndGggPyBib2FyZHNbMF0gOiBudWxsOwogIH0KCiAgSlhHLlF1YXJ0b0Fzc2Vzc21lbnQgPSB7CiAgICByZWdpc3RlcihzcGVjKSB7CiAgICAgIHJlZ2lzdHJhdGlvbiA9IHR5cGVvZiBzcGVjID09PSAnZnVuY3Rpb24nID8geyByZXNwb25zZTogc3BlYyB9IDogc3BlYzsKICAgICAgaWYgKCFyZWdpc3RyYXRpb24gfHwgdHlwZW9mIHJlZ2lzdHJhdGlvbi5yZXNwb25zZSAhPT0gJ2Z1bmN0aW9uJykgewogICAgICAgIHRocm93IG5ldyBUeXBlRXJyb3IoJ0Fzc2Vzc21lbnQgcmVnaXN0cmF0aW9uIHJlcXVpcmVzIGEgcmVzcG9uc2UgZnVuY3Rpb24nKTsKICAgICAgfQogICAgfQogIH07CgogIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdtZXNzYWdlJywgYXN5bmMgKGV2ZW50KSA9PiB7CiAgICBjb25zdCBtZXNzYWdlID0gZXZlbnQuZGF0YTsKICAgIGlmIChldmVudC5zb3VyY2UgIT09IHdpbmRvdy5wYXJlbnQgfHwgIW1lc3NhZ2UgfHwgbWVzc2FnZS5wcm90b2NvbCAhPT0gcHJvdG9jb2wgfHwKICAgICAgICBtZXNzYWdlLnZlcnNpb24gIT09IHZlcnNpb24gfHwgbWVzc2FnZS50eXBlICE9PSAncmVxdWVzdCcgfHwKICAgICAgICBtZXNzYWdlLmFzc2Vzc21lbnRJZCAhPT0gYXNzZXNzbWVudElkKSByZXR1cm47CgogICAgY29uc3QgcmVwbHkgPSB7CiAgICAgIHByb3RvY29sLAogICAgICB2ZXJzaW9uLAogICAgICB0eXBlOiAncmVzcG9uc2UnLAogICAgICBhc3Nlc3NtZW50SWQsCiAgICAgIHJlcXVlc3RJZDogbWVzc2FnZS5yZXF1ZXN0SWQKICAgIH07CiAgICB0cnkgewogICAgICBpZiAoIXJlZ2lzdHJhdGlvbikgdGhyb3cgbmV3IEVycm9yKCdObyBKU1hHcmFwaCBhc3Nlc3NtZW50IHJlc3BvbnNlIGlzIHJlZ2lzdGVyZWQnKTsKICAgICAgY29uc3QgcmF3ID0gYXdhaXQgcmVnaXN0cmF0aW9uLnJlc3BvbnNlKCk7CiAgICAgIHJlcGx5LnBheWxvYWQgPSBKU09OLnBhcnNlKEpTT04uc3RyaW5naWZ5KHJhdykpOwogICAgICBpZiAobWVzc2FnZS5pbmNsdWRlQUkgJiYgcmVnaXN0cmF0aW9uLmFpKSB7CiAgICAgICAgY29uc3QgYWlTcGVjID0gcmVnaXN0cmF0aW9uLmFpOwogICAgICAgIGNvbnN0IHN1bW1hcnkgPSB0eXBlb2YgYWlTcGVjLnN1bW1hcnkgPT09ICdmdW5jdGlvbicKICAgICAgICAgID8gYXdhaXQgYWlTcGVjLnN1bW1hcnkocmVwbHkucGF5bG9hZCkKICAgICAgICAgIDogYWlTcGVjLnN1bW1hcnk7CiAgICAgICAgcmVwbHkuYWkgPSB7fTsKICAgICAgICBpZiAoc3VtbWFyeSAhPT0gdW5kZWZpbmVkKSByZXBseS5haS5zdW1tYXJ5ID0gc3VtbWFyeTsKICAgICAgICBpZiAoYWlTcGVjLnJlbmRlcikgewogICAgICAgICAgY29uc3QgYm9hcmQgPSByZXNvbHZlQm9hcmQocmVnaXN0cmF0aW9uKTsKICAgICAgICAgIGlmICghYm9hcmQgfHwgIWJvYXJkLnJlbmRlcmVyIHx8IHR5cGVvZiBib2FyZC5yZW5kZXJlci5kdW1wVG9EYXRhVVJJICE9PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgICAgIHRocm93IG5ldyBFcnJvcignTm8gcmVuZGVyYWJsZSBKU1hHcmFwaCBib2FyZCBpcyBhdmFpbGFibGUnKTsKICAgICAgICAgIH0KICAgICAgICAgIHJlcGx5LmFpLmltYWdlID0gYXdhaXQgc3ZnVG9QbmcoYm9hcmQucmVuZGVyZXIuZHVtcFRvRGF0YVVSSShmYWxzZSksIGJvYXJkKTsKICAgICAgICB9CiAgICAgIH0KICAgIH0gY2F0Y2ggKGVycm9yKSB7CiAgICAgIHJlcGx5LmVycm9yID0gZXJyb3IgJiYgZXJyb3IubWVzc2FnZSA/IGVycm9yLm1lc3NhZ2UgOiBTdHJpbmcoZXJyb3IpOwogICAgfQogICAgd2luZG93LnBhcmVudC5wb3N0TWVzc2FnZShyZXBseSwgJyonKTsKICB9KTsKfSkoKTsKPC9zY3JpcHQ+CjxzY3JpcHQ+dmFyIGJvYXJkID0gSlhHLkpTWEdyYXBoLmluaXRCb2FyZCgiSlhHMTE0NmVkNWJfZGE0N19lZjRiXzJmYjdfMTdlMDQwYTciLCB7CiAgYm91bmRpbmdib3g6IFstMC41LCAwLCA1LjcsIC0xOV0sCiAgYXhpczogdHJ1ZSwKICBzaG93Q29weXJpZ2h0OiBmYWxzZSwKICBzaG93TmF2aWdhdGlvbjogZmFsc2UsCiAgcGFuOiB7IGVuYWJsZWQ6IGZhbHNlIH0sCiAgem9vbTogeyBlbmFibGVkOiBmYWxzZSB9Cn0pOwoKdmFyIGl0ZXJhdGlvbnMgPSBbMCwgMSwgMiwgMywgNCwgNV07CnZhciBlcnJvcnMgPSBbXTsKdmFyIHZhbHVlID0gMC4zOwpmb3IgKHZhciBpID0gMDsgaSA8IGl0ZXJhdGlvbnMubGVuZ3RoOyBpKyspIHsKICBlcnJvcnMucHVzaChNYXRoLmFicyh2YWx1ZSkpOwogIHZhbHVlID0gdmFsdWUqdmFsdWU7Cn0KdmFyIGxvZ0Vycm9ycyA9IGVycm9ycy5tYXAoZnVuY3Rpb24gKGVycm9yKSB7CiAgcmV0dXJuIE1hdGgubG9nMTAoZXJyb3IpOwp9KTsKCmJvYXJkLmNyZWF0ZSgnY3VydmUnLCBbaXRlcmF0aW9ucywgbG9nRXJyb3JzXSwgewogIHN0cm9rZUNvbG9yOiAnIzJjYTAyYycsCiAgc3Ryb2tlV2lkdGg6IDMsCiAgZml4ZWQ6IHRydWUsCiAgaGlnaGxpZ2h0OiBmYWxzZQp9KTsKCmZvciAodmFyIGogPSAwOyBqIDwgaXRlcmF0aW9ucy5sZW5ndGg7IGorKykgewogIGJvYXJkLmNyZWF0ZSgncG9pbnQnLCBbaXRlcmF0aW9uc1tqXSwgbG9nRXJyb3JzW2pdXSwgewogICAgbmFtZTogJycsCiAgICBzaXplOiAzLAogICAgZmFjZTogJ28nLAogICAgZmlsbENvbG9yOiAnIzJjYTAyYycsCiAgICBzdHJva2VDb2xvcjogJyMyY2EwMmMnLAogICAgZml4ZWQ6IHRydWUsCiAgICBoaWdobGlnaHQ6IGZhbHNlCiAgfSk7Cn0KCnZhciB0aHJlc2hvbGQgPSBNYXRoLmxvZzEwKDAuNSpNYXRoLnBvdygxMCwgLTcpKTsKYm9hcmQuY3JlYXRlKCdsaW5lJywgW1swLCB0aHJlc2hvbGRdLCBbMSwgdGhyZXNob2xkXV0sIHsKICBzdHJhaWdodEZpcnN0OiB0cnVlLAogIHN0cmFpZ2h0TGFzdDogdHJ1ZSwKICBzdHJva2VDb2xvcjogJyM2NjY2NjYnLAogIHN0cm9rZVdpZHRoOiAyLAogIGRhc2g6IDIsCiAgZml4ZWQ6IHRydWUsCiAgaGlnaGxpZ2h0OiBmYWxzZQp9KTsKYm9hcmQuY3JlYXRlKCd0ZXh0JywgWzAuMTUsIHRocmVzaG9sZCArIDAuNTUsICdncmVuc2UgZm9yIG1pbnN0IDcgZGVzaW1hbGVyJ10sIHsKICBmaXhlZDogdHJ1ZSwKICBmb250U2l6ZTogMTMKfSk7CmJvYXJkLmNyZWF0ZSgndGV4dCcsIFsyLjMsIC0wLjYsICdpdGVyYXNqb24gbiddLCB7CiAgZml4ZWQ6IHRydWUsCiAgZm9udFNpemU6IDE0Cn0pOwpib2FyZC5jcmVhdGUoJ3RleHQnLCBbLTAuMzgsIC0xNy4yLCAnbG9nMTAofGVfbnwpJ10sIHsKICBmaXhlZDogdHJ1ZSwKICBmb250U2l6ZTogMTQsCiAgcm90YXRlOiA5MAp9KTsKCnZhciBzZWxlY3RlZEluZGV4ID0gbnVsbDsKdmFyIHNlbGVjdGVkUG9pbnQgPSBib2FyZC5jcmVhdGUoJ3BvaW50JywgWzAsIGxvZ0Vycm9yc1swXV0sIHsKICBuYW1lOiAnJywKICBzaXplOiA2LAogIGZhY2U6ICdvJywKICBmaWxsQ29sb3I6ICcjZDYyNzI4JywKICBzdHJva2VDb2xvcjogJyNkNjI3MjgnLAogIHZpc2libGU6IGZhbHNlLAogIGZpeGVkOiB0cnVlLAogIGhpZ2hsaWdodDogZmFsc2UKfSk7Cgpib2FyZC5vbignZG93bicsIGZ1bmN0aW9uIChldmVudCkgewogIHZhciBjb3JuZXIgPSBib2FyZC5nZXRDb29yZHNUb3BMZWZ0Q29ybmVyKGV2ZW50KTsKICB2YXIgcG9zaXRpb24gPSBKWEcuZ2V0UG9zaXRpb24oZXZlbnQsIDApOwogIHZhciBjb29yZGluYXRlcyA9IG5ldyBKWEcuQ29vcmRzKAogICAgSlhHLkNPT1JEU19CWV9TQ1JFRU4sCiAgICBbcG9zaXRpb25bMF0gLSBjb3JuZXJbMF0sIHBvc2l0aW9uWzFdIC0gY29ybmVyWzFdXSwKICAgIGJvYXJkCiAgKTsKICB2YXIgeCA9IGNvb3JkaW5hdGVzLnVzckNvb3Jkc1sxXTsKICB2YXIgeSA9IGNvb3JkaW5hdGVzLnVzckNvb3Jkc1syXTsKICB2YXIgYmVzdEluZGV4ID0gMDsKICB2YXIgYmVzdERpc3RhbmNlID0gSW5maW5pdHk7CgogIGZvciAodmFyIGsgPSAwOyBrIDwgaXRlcmF0aW9ucy5sZW5ndGg7IGsrKykgewogICAgdmFyIGR4ID0geCAtIGl0ZXJhdGlvbnNba107CiAgICB2YXIgZHkgPSAoeSAtIGxvZ0Vycm9yc1trXSkvMzsKICAgIHZhciBkaXN0YW5jZSA9IGR4KmR4ICsgZHkqZHk7CiAgICBpZiAoZGlzdGFuY2UgPCBiZXN0RGlzdGFuY2UpIHsKICAgICAgYmVzdERpc3RhbmNlID0gZGlzdGFuY2U7CiAgICAgIGJlc3RJbmRleCA9IGs7CiAgICB9CiAgfQoKICBzZWxlY3RlZEluZGV4ID0gYmVzdEluZGV4OwogIHNlbGVjdGVkUG9pbnQuc2V0UG9zaXRpb24oCiAgICBKWEcuQ09PUkRTX0JZX1VTRVIsCiAgICBbaXRlcmF0aW9uc1tiZXN0SW5kZXhdLCBsb2dFcnJvcnNbYmVzdEluZGV4XV0KICApOwogIHNlbGVjdGVkUG9pbnQuc2V0QXR0cmlidXRlKHsgdmlzaWJsZTogdHJ1ZSB9KTsKICBib2FyZC51cGRhdGUoKTsKfSk7CgpKWEcuUXVhcnRvQXNzZXNzbWVudC5yZWdpc3Rlcih7CiAgYm9hcmQ6IGJvYXJkLAogIHJlc3BvbnNlOiBmdW5jdGlvbiAoKSB7CiAgICByZXR1cm4gewogICAgICBpbmRleDogc2VsZWN0ZWRJbmRleCwKICAgICAgZXJyb3I6IHNlbGVjdGVkSW5kZXggPT09IG51bGwgPyBudWxsIDogZXJyb3JzW3NlbGVjdGVkSW5kZXhdCiAgICB9OwogIH0sCiAgYWk6IHsKICAgIHJlbmRlcjogdHJ1ZSwKICAgIHN1bW1hcnk6IGZ1bmN0aW9uIChkYXRhKSB7CiAgICAgIHJldHVybiB7IHNlbGVjdGVkX2l0ZXJhdGlvbjogZGF0YS5pbmRleCwgc2VsZWN0ZWRfZXJyb3I6IGRhdGEuZXJyb3IgfTsKICAgIH0KICB9Cn0pOzwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4=" class="" name="iframeJXG1146ed5b_da47_ef4b_2fb7_17e040a7" style="width:760px; height:440px; position:relative; margin:0; padding:0; display:block; z-index:1;border:1px solid black; border-radius:10px;;" id="quadratic-seven-decimals-board" sandbox="allow-scripts"></iframe>
+<div class="math-exercise-cell" id="math-exercise-5" data-label="click-quadratic-seven-decimals" data-mode="custom" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;def check(response, symbols):\n    index = response.get(\&quot;index\&quot;)\n    if index is None:\n        return {\&quot;score\&quot;: 0, \&quot;feedback\&quot;: \&quot;Klikk på ett av punktene før du kontrollerer svaret.\&quot;}\n    if int(index) == 4:\n        return {\&quot;score\&quot;: 1, \&quot;feedback\&quot;: \&quot;Riktig. Ved n = 4 er feilen omtrent 4.3·10^(-9), så iteratet har 8 korrekte desimaler og er det første som har minst 7.\&quot;}\n    return {\&quot;score\&quot;: 0, \&quot;feedback\&quot;: \&quot;Ikke helt. Finn det første punktet under linjen |e_n| = 5·10^(-8).\&quot;}&quot;" data-response="jsxgraph:quadratic-seven-decimals-board" data-embed-response="true" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="none" data-context-refs="none" data-context="&quot;Finn det første kvadratiske iteratet som passerer sju desimaler Den grønne iterasjonen x_{n+1}=x_n^2 med x_0=0.3 konvergerer kvadratisk mot fikspunktet r=0. Her finnes det ikke nødvendigvis et iterat med akkurat sju korrekte desimaler: Kvadratisk konvergens kan hoppe over flere nivåer i ett steg. Grafen viser den samme grønne kurven som i semilogy-plottet. Klikk på det første punktet som har minst sju korrekte desimaler. Sammenlign feilen med grensen \\frac12 10^{-7}=5\\cdot10^{-8}. Det valgte punktet markeres med rødt.&quot;" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn når den kvadratiske kurven passerer sju desimaler</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -5567,7 +5791,7 @@ R(x)=f(x),
 f(x)=0.02(x-3),
 \]</span></p>
 <p>som har roten <span class="math inline">\(r=3\)</span>. Dra det blå punktet langs <span class="math inline">\(x\)</span>-aksen. Det oransje linjestykket viser absolutt feil, mens det lilla viser residualstørrelsen. Ved <span class="math inline">\(x=8\)</span> er den absolutte feilen <span class="math inline">\(|8-3|=5\)</span>, men residualen er bare <span class="math inline">\(|f(8)|=0.1\)</span>.</p>
-<iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPHNjcmlwdCBpZD0iTWF0aEpheC1zY3JpcHQiIGFzeW5jIHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9tYXRoamF4QDQvdGV4LW1tbC1zdmcuanMiPjwvc2NyaXB0Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoY29yZS5qcyI+PC9zY3JpcHQ+CjxzdHlsZT5AaW1wb3J0IHVybCgiaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoLmNzcyIpOzwvc3R5bGU+CjxzdHlsZT5odG1sLGJvZHl7bWFyZ2luOjA7cGFkZGluZzowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7fS5qeGdib3h7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czowcHg7fTwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgaWQ9IkpYR2Q5MDIzYjRmX2ZlMGFfNDE4Zl82ZmNjXzMzMTc5MDRjIiBjbGFzcz0ianhnYm94IiBzdHlsZT0id2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtkaXNwbGF5OmJsb2NrO29iamVjdC1maXQ6ZmlsbDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Ij48L2Rpdj4KPHNjcmlwdD4oZnVuY3Rpb24gKCkgewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBwcm90b2NvbCA9ICdqc3hncmFwaC1xdWFydG8tYXNzZXNzbWVudCc7CiAgY29uc3QgdmVyc2lvbiA9IDE7CiAgY29uc3QgYXNzZXNzbWVudElkID0gIkpYR2Q5MDIzYjRmX2ZlMGFfNDE4Zl82ZmNjXzMzMTc5MDRjIjsKICBsZXQgcmVnaXN0cmF0aW9uID0gbnVsbDsKCiAgYXN5bmMgZnVuY3Rpb24gc3ZnVG9QbmcoZGF0YVVyaSwgYm9hcmQpIHsKICAgIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7CiAgICAgIGNvbnN0IGltYWdlID0gbmV3IEltYWdlKCk7CiAgICAgIGltYWdlLm9ubG9hZCA9ICgpID0+IHsKICAgICAgICBjb25zdCBjYW52YXMgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdjYW52YXMnKTsKICAgICAgICBjYW52YXMud2lkdGggPSBNYXRoLm1heCgxLCBNYXRoLnJvdW5kKGJvYXJkLmNhbnZhc1dpZHRoIHx8IGltYWdlLndpZHRoIHx8IDgwMCkpOwogICAgICAgIGNhbnZhcy5oZWlnaHQgPSBNYXRoLm1heCgxLCBNYXRoLnJvdW5kKGJvYXJkLmNhbnZhc0hlaWdodCB8fCBpbWFnZS5oZWlnaHQgfHwgNjAwKSk7CiAgICAgICAgY29uc3QgY29udGV4dCA9IGNhbnZhcy5nZXRDb250ZXh0KCcyZCcpOwogICAgICAgIGNvbnRleHQuZmlsbFN0eWxlID0gJyNmZmZmZmYnOwogICAgICAgIGNvbnRleHQuZmlsbFJlY3QoMCwgMCwgY2FudmFzLndpZHRoLCBjYW52YXMuaGVpZ2h0KTsKICAgICAgICBjb250ZXh0LmRyYXdJbWFnZShpbWFnZSwgMCwgMCwgY2FudmFzLndpZHRoLCBjYW52YXMuaGVpZ2h0KTsKICAgICAgICByZXNvbHZlKGNhbnZhcy50b0RhdGFVUkwoJ2ltYWdlL3BuZycpKTsKICAgICAgfTsKICAgICAgaW1hZ2Uub25lcnJvciA9ICgpID0+IHJlamVjdChuZXcgRXJyb3IoJ0NvdWxkIG5vdCByZW5kZXIgdGhlIEpTWEdyYXBoIGJvYXJkJykpOwogICAgICBpbWFnZS5zcmMgPSBkYXRhVXJpOwogICAgfSk7CiAgfQoKICBmdW5jdGlvbiByZXNvbHZlQm9hcmQoc3BlYykgewogICAgaWYgKHNwZWMgJiYgdHlwZW9mIHNwZWMuYm9hcmQgPT09ICdmdW5jdGlvbicpIHJldHVybiBzcGVjLmJvYXJkKCk7CiAgICBpZiAoc3BlYyAmJiBzcGVjLmJvYXJkKSByZXR1cm4gc3BlYy5ib2FyZDsKICAgIGNvbnN0IGJvYXJkcyA9IE9iamVjdC52YWx1ZXMoSlhHLmJvYXJkcyB8fCB7fSk7CiAgICByZXR1cm4gYm9hcmRzLmxlbmd0aCA/IGJvYXJkc1swXSA6IG51bGw7CiAgfQoKICBKWEcuUXVhcnRvQXNzZXNzbWVudCA9IHsKICAgIHJlZ2lzdGVyKHNwZWMpIHsKICAgICAgcmVnaXN0cmF0aW9uID0gdHlwZW9mIHNwZWMgPT09ICdmdW5jdGlvbicgPyB7IHJlc3BvbnNlOiBzcGVjIH0gOiBzcGVjOwogICAgICBpZiAoIXJlZ2lzdHJhdGlvbiB8fCB0eXBlb2YgcmVnaXN0cmF0aW9uLnJlc3BvbnNlICE9PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgdGhyb3cgbmV3IFR5cGVFcnJvcignQXNzZXNzbWVudCByZWdpc3RyYXRpb24gcmVxdWlyZXMgYSByZXNwb25zZSBmdW5jdGlvbicpOwogICAgICB9CiAgICB9CiAgfTsKCiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ21lc3NhZ2UnLCBhc3luYyAoZXZlbnQpID0+IHsKICAgIGNvbnN0IG1lc3NhZ2UgPSBldmVudC5kYXRhOwogICAgaWYgKGV2ZW50LnNvdXJjZSAhPT0gd2luZG93LnBhcmVudCB8fCAhbWVzc2FnZSB8fCBtZXNzYWdlLnByb3RvY29sICE9PSBwcm90b2NvbCB8fAogICAgICAgIG1lc3NhZ2UudmVyc2lvbiAhPT0gdmVyc2lvbiB8fCBtZXNzYWdlLnR5cGUgIT09ICdyZXF1ZXN0JyB8fAogICAgICAgIG1lc3NhZ2UuYXNzZXNzbWVudElkICE9PSBhc3Nlc3NtZW50SWQpIHJldHVybjsKCiAgICBjb25zdCByZXBseSA9IHsKICAgICAgcHJvdG9jb2wsCiAgICAgIHZlcnNpb24sCiAgICAgIHR5cGU6ICdyZXNwb25zZScsCiAgICAgIGFzc2Vzc21lbnRJZCwKICAgICAgcmVxdWVzdElkOiBtZXNzYWdlLnJlcXVlc3RJZAogICAgfTsKICAgIHRyeSB7CiAgICAgIGlmICghcmVnaXN0cmF0aW9uKSB0aHJvdyBuZXcgRXJyb3IoJ05vIEpTWEdyYXBoIGFzc2Vzc21lbnQgcmVzcG9uc2UgaXMgcmVnaXN0ZXJlZCcpOwogICAgICBjb25zdCByYXcgPSBhd2FpdCByZWdpc3RyYXRpb24ucmVzcG9uc2UoKTsKICAgICAgcmVwbHkucGF5bG9hZCA9IEpTT04ucGFyc2UoSlNPTi5zdHJpbmdpZnkocmF3KSk7CiAgICAgIGlmIChtZXNzYWdlLmluY2x1ZGVBSSAmJiByZWdpc3RyYXRpb24uYWkpIHsKICAgICAgICBjb25zdCBhaVNwZWMgPSByZWdpc3RyYXRpb24uYWk7CiAgICAgICAgY29uc3Qgc3VtbWFyeSA9IHR5cGVvZiBhaVNwZWMuc3VtbWFyeSA9PT0gJ2Z1bmN0aW9uJwogICAgICAgICAgPyBhd2FpdCBhaVNwZWMuc3VtbWFyeShyZXBseS5wYXlsb2FkKQogICAgICAgICAgOiBhaVNwZWMuc3VtbWFyeTsKICAgICAgICByZXBseS5haSA9IHt9OwogICAgICAgIGlmIChzdW1tYXJ5ICE9PSB1bmRlZmluZWQpIHJlcGx5LmFpLnN1bW1hcnkgPSBzdW1tYXJ5OwogICAgICAgIGlmIChhaVNwZWMucmVuZGVyKSB7CiAgICAgICAgICBjb25zdCBib2FyZCA9IHJlc29sdmVCb2FyZChyZWdpc3RyYXRpb24pOwogICAgICAgICAgaWYgKCFib2FyZCB8fCAhYm9hcmQucmVuZGVyZXIgfHwgdHlwZW9mIGJvYXJkLnJlbmRlcmVyLmR1bXBUb0RhdGFVUkkgIT09ICdmdW5jdGlvbicpIHsKICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKCdObyByZW5kZXJhYmxlIEpTWEdyYXBoIGJvYXJkIGlzIGF2YWlsYWJsZScpOwogICAgICAgICAgfQogICAgICAgICAgcmVwbHkuYWkuaW1hZ2UgPSBhd2FpdCBzdmdUb1BuZyhib2FyZC5yZW5kZXJlci5kdW1wVG9EYXRhVVJJKGZhbHNlKSwgYm9hcmQpOwogICAgICAgIH0KICAgICAgfQogICAgfSBjYXRjaCAoZXJyb3IpIHsKICAgICAgcmVwbHkuZXJyb3IgPSBlcnJvciAmJiBlcnJvci5tZXNzYWdlID8gZXJyb3IubWVzc2FnZSA6IFN0cmluZyhlcnJvcik7CiAgICB9CiAgICB3aW5kb3cucGFyZW50LnBvc3RNZXNzYWdlKHJlcGx5LCAnKicpOwogIH0pOwp9KSgpOwo8L3NjcmlwdD4KPHNjcmlwdD52YXIgYm9hcmQgPSBKWEcuSlNYR3JhcGguaW5pdEJvYXJkKCJKWEdkOTAyM2I0Zl9mZTBhXzQxOGZfNmZjY18zMzE3OTA0YyIsIHsKICBib3VuZGluZ2JveDogWy0wLjMsIDAuMTUsIDkuMiwgLTAuMDhdLAogIGF4aXM6IGZhbHNlLAogIHNob3dDb3B5cmlnaHQ6IGZhbHNlLAogIHNob3dOYXZpZ2F0aW9uOiBmYWxzZSwKICBwYW46IHsgZW5hYmxlZDogZmFsc2UgfSwKICB6b29tOiB7IGVuYWJsZWQ6IGZhbHNlIH0KfSk7Cgp2YXIgeEF4aXMgPSBib2FyZC5jcmVhdGUoJ2F4aXMnLCBbWzAsIDBdLCBbMSwgMF1dLCB7CiAgbmFtZTogJ3gnLAogIHdpdGhMYWJlbDogdHJ1ZSwKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwp2YXIgeUF4aXMgPSBib2FyZC5jcmVhdGUoJ2F4aXMnLCBbWzAsIDBdLCBbMCwgMV1dLCB7CiAgbmFtZTogJ2YoeCknLAogIHdpdGhMYWJlbDogdHJ1ZSwKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwp2YXIgZ3JhcGggPSBib2FyZC5jcmVhdGUoJ2Z1bmN0aW9uZ3JhcGgnLCBbZnVuY3Rpb24gKHgpIHsKICByZXR1cm4gMC4wMiooeCAtIDMpOwp9LCAwLCA5XSwgewogIHN0cm9rZUNvbG9yOiAnIzIyMjIyMicsCiAgc3Ryb2tlV2lkdGg6IDIsCiAgZml4ZWQ6IHRydWUsCiAgaGlnaGxpZ2h0OiBmYWxzZQp9KTsKCnZhciByb290ID0gYm9hcmQuY3JlYXRlKCdwb2ludCcsIFszLCAwXSwgewogIG5hbWU6ICdyID0gMycsCiAgc2l6ZTogNCwKICBmaWxsQ29sb3I6ICcjMmNhMDJjJywKICBzdHJva2VDb2xvcjogJyMyY2EwMmMnLAogIGZpeGVkOiB0cnVlLAogIGhpZ2hsaWdodDogZmFsc2UKfSk7CnZhciBhcHByb3hpbWF0aW9uID0gYm9hcmQuY3JlYXRlKCdnbGlkZXInLCBbOCwgMCwgeEF4aXNdLCB7CiAgbmFtZTogJ3gnLAogIHNpemU6IDUsCiAgZmlsbENvbG9yOiAnIzFmNzdiNCcsCiAgc3Ryb2tlQ29sb3I6ICcjMWY3N2I0JywKICBzbmFwU2l6ZVg6IDAuMQp9KTsKdmFyIGdyYXBoUG9pbnQgPSBib2FyZC5jcmVhdGUoJ3BvaW50JywgWwogIGZ1bmN0aW9uICgpIHsgcmV0dXJuIGFwcHJveGltYXRpb24uWCgpOyB9LAogIGZ1bmN0aW9uICgpIHsgcmV0dXJuIDAuMDIqKGFwcHJveGltYXRpb24uWCgpIC0gMyk7IH0KXSwgewogIG5hbWU6ICcoeCwgZih4KSknLAogIHNpemU6IDQsCiAgZmlsbENvbG9yOiAnIzk0NjdiZCcsCiAgc3Ryb2tlQ29sb3I6ICcjOTQ2N2JkJywKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwoKYm9hcmQuY3JlYXRlKCdzZWdtZW50JywgW3Jvb3QsIGFwcHJveGltYXRpb25dLCB7CiAgc3Ryb2tlQ29sb3I6ICcjZmY3ZjBlJywKICBzdHJva2VXaWR0aDogNSwKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwpib2FyZC5jcmVhdGUoJ3NlZ21lbnQnLCBbYXBwcm94aW1hdGlvbiwgZ3JhcGhQb2ludF0sIHsKICBzdHJva2VDb2xvcjogJyM5NDY3YmQnLAogIHN0cm9rZVdpZHRoOiA1LAogIGZpeGVkOiB0cnVlLAogIGhpZ2hsaWdodDogZmFsc2UKfSk7Cgpib2FyZC5jcmVhdGUoJ3RleHQnLCBbMC4yNSwgMC4xMzIsIGZ1bmN0aW9uICgpIHsKICByZXR1cm4gJ0Fic29sdXR0IGZlaWwgfHgtcnwgPSAnICsgTWF0aC5hYnMoYXBwcm94aW1hdGlvbi5YKCkgLSAzKS50b0ZpeGVkKDIpOwp9XSwgewogIGZpeGVkOiB0cnVlLAogIGZvbnRTaXplOiAxNCwKICBjb2xvcjogJyNmZjdmMGUnCn0pOwpib2FyZC5jcmVhdGUoJ3RleHQnLCBbMC4yNSwgMC4xMTIsIGZ1bmN0aW9uICgpIHsKICByZXR1cm4gJ1Jlc2lkdWFsIHxmKHgpfCA9ICcgKyBNYXRoLmFicygwLjAyKihhcHByb3hpbWF0aW9uLlgoKSAtIDMpKS50b0ZpeGVkKDMpOwp9XSwgewogIGZpeGVkOiB0cnVlLAogIGZvbnRTaXplOiAxNCwKICBjb2xvcjogJyM5NDY3YmQnCn0pOzwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4=" class="" name="iframeJXGd9023b4f_fe0a_418f_6fcc_3317904c" style="width:760px; height:430px; position:relative; margin:0; padding:0; display:block; z-index:1;border:1px solid black; border-radius:10px;;" id="JXGd9023b4f_fe0a_418f_6fcc_3317904c" sandbox="allow-scripts"></iframe>
+<iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPHNjcmlwdCBpZD0iTWF0aEpheC1zY3JpcHQiIGFzeW5jIHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9tYXRoamF4QDQvdGV4LW1tbC1zdmcuanMiPjwvc2NyaXB0Pgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoY29yZS5qcyI+PC9zY3JpcHQ+CjxzdHlsZT5AaW1wb3J0IHVybCgiaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9qc3hncmFwaC9kaXN0cmliL2pzeGdyYXBoLmNzcyIpOzwvc3R5bGU+CjxzdHlsZT5odG1sLGJvZHl7bWFyZ2luOjA7cGFkZGluZzowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7fS5qeGdib3h7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czowcHg7fTwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgaWQ9IkpYRzFmOGJjMThlXzdkMzhfMjkwMF80ZGRmXzliOWU4YWY4IiBjbGFzcz0ianhnYm94IiBzdHlsZT0id2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtkaXNwbGF5OmJsb2NrO29iamVjdC1maXQ6ZmlsbDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Ij48L2Rpdj4KPHNjcmlwdD4oZnVuY3Rpb24gKCkgewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBwcm90b2NvbCA9ICdqc3hncmFwaC1xdWFydG8tYXNzZXNzbWVudCc7CiAgY29uc3QgdmVyc2lvbiA9IDE7CiAgY29uc3QgYXNzZXNzbWVudElkID0gIkpYRzFmOGJjMThlXzdkMzhfMjkwMF80ZGRmXzliOWU4YWY4IjsKICBsZXQgcmVnaXN0cmF0aW9uID0gbnVsbDsKCiAgYXN5bmMgZnVuY3Rpb24gc3ZnVG9QbmcoZGF0YVVyaSwgYm9hcmQpIHsKICAgIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7CiAgICAgIGNvbnN0IGltYWdlID0gbmV3IEltYWdlKCk7CiAgICAgIGltYWdlLm9ubG9hZCA9ICgpID0+IHsKICAgICAgICBjb25zdCBjYW52YXMgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdjYW52YXMnKTsKICAgICAgICBjYW52YXMud2lkdGggPSBNYXRoLm1heCgxLCBNYXRoLnJvdW5kKGJvYXJkLmNhbnZhc1dpZHRoIHx8IGltYWdlLndpZHRoIHx8IDgwMCkpOwogICAgICAgIGNhbnZhcy5oZWlnaHQgPSBNYXRoLm1heCgxLCBNYXRoLnJvdW5kKGJvYXJkLmNhbnZhc0hlaWdodCB8fCBpbWFnZS5oZWlnaHQgfHwgNjAwKSk7CiAgICAgICAgY29uc3QgY29udGV4dCA9IGNhbnZhcy5nZXRDb250ZXh0KCcyZCcpOwogICAgICAgIGNvbnRleHQuZmlsbFN0eWxlID0gJyNmZmZmZmYnOwogICAgICAgIGNvbnRleHQuZmlsbFJlY3QoMCwgMCwgY2FudmFzLndpZHRoLCBjYW52YXMuaGVpZ2h0KTsKICAgICAgICBjb250ZXh0LmRyYXdJbWFnZShpbWFnZSwgMCwgMCwgY2FudmFzLndpZHRoLCBjYW52YXMuaGVpZ2h0KTsKICAgICAgICByZXNvbHZlKGNhbnZhcy50b0RhdGFVUkwoJ2ltYWdlL3BuZycpKTsKICAgICAgfTsKICAgICAgaW1hZ2Uub25lcnJvciA9ICgpID0+IHJlamVjdChuZXcgRXJyb3IoJ0NvdWxkIG5vdCByZW5kZXIgdGhlIEpTWEdyYXBoIGJvYXJkJykpOwogICAgICBpbWFnZS5zcmMgPSBkYXRhVXJpOwogICAgfSk7CiAgfQoKICBmdW5jdGlvbiByZXNvbHZlQm9hcmQoc3BlYykgewogICAgaWYgKHNwZWMgJiYgdHlwZW9mIHNwZWMuYm9hcmQgPT09ICdmdW5jdGlvbicpIHJldHVybiBzcGVjLmJvYXJkKCk7CiAgICBpZiAoc3BlYyAmJiBzcGVjLmJvYXJkKSByZXR1cm4gc3BlYy5ib2FyZDsKICAgIGNvbnN0IGJvYXJkcyA9IE9iamVjdC52YWx1ZXMoSlhHLmJvYXJkcyB8fCB7fSk7CiAgICByZXR1cm4gYm9hcmRzLmxlbmd0aCA/IGJvYXJkc1swXSA6IG51bGw7CiAgfQoKICBKWEcuUXVhcnRvQXNzZXNzbWVudCA9IHsKICAgIHJlZ2lzdGVyKHNwZWMpIHsKICAgICAgcmVnaXN0cmF0aW9uID0gdHlwZW9mIHNwZWMgPT09ICdmdW5jdGlvbicgPyB7IHJlc3BvbnNlOiBzcGVjIH0gOiBzcGVjOwogICAgICBpZiAoIXJlZ2lzdHJhdGlvbiB8fCB0eXBlb2YgcmVnaXN0cmF0aW9uLnJlc3BvbnNlICE9PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgdGhyb3cgbmV3IFR5cGVFcnJvcignQXNzZXNzbWVudCByZWdpc3RyYXRpb24gcmVxdWlyZXMgYSByZXNwb25zZSBmdW5jdGlvbicpOwogICAgICB9CiAgICB9CiAgfTsKCiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ21lc3NhZ2UnLCBhc3luYyAoZXZlbnQpID0+IHsKICAgIGNvbnN0IG1lc3NhZ2UgPSBldmVudC5kYXRhOwogICAgaWYgKGV2ZW50LnNvdXJjZSAhPT0gd2luZG93LnBhcmVudCB8fCAhbWVzc2FnZSB8fCBtZXNzYWdlLnByb3RvY29sICE9PSBwcm90b2NvbCB8fAogICAgICAgIG1lc3NhZ2UudmVyc2lvbiAhPT0gdmVyc2lvbiB8fCBtZXNzYWdlLnR5cGUgIT09ICdyZXF1ZXN0JyB8fAogICAgICAgIG1lc3NhZ2UuYXNzZXNzbWVudElkICE9PSBhc3Nlc3NtZW50SWQpIHJldHVybjsKCiAgICBjb25zdCByZXBseSA9IHsKICAgICAgcHJvdG9jb2wsCiAgICAgIHZlcnNpb24sCiAgICAgIHR5cGU6ICdyZXNwb25zZScsCiAgICAgIGFzc2Vzc21lbnRJZCwKICAgICAgcmVxdWVzdElkOiBtZXNzYWdlLnJlcXVlc3RJZAogICAgfTsKICAgIHRyeSB7CiAgICAgIGlmICghcmVnaXN0cmF0aW9uKSB0aHJvdyBuZXcgRXJyb3IoJ05vIEpTWEdyYXBoIGFzc2Vzc21lbnQgcmVzcG9uc2UgaXMgcmVnaXN0ZXJlZCcpOwogICAgICBjb25zdCByYXcgPSBhd2FpdCByZWdpc3RyYXRpb24ucmVzcG9uc2UoKTsKICAgICAgcmVwbHkucGF5bG9hZCA9IEpTT04ucGFyc2UoSlNPTi5zdHJpbmdpZnkocmF3KSk7CiAgICAgIGlmIChtZXNzYWdlLmluY2x1ZGVBSSAmJiByZWdpc3RyYXRpb24uYWkpIHsKICAgICAgICBjb25zdCBhaVNwZWMgPSByZWdpc3RyYXRpb24uYWk7CiAgICAgICAgY29uc3Qgc3VtbWFyeSA9IHR5cGVvZiBhaVNwZWMuc3VtbWFyeSA9PT0gJ2Z1bmN0aW9uJwogICAgICAgICAgPyBhd2FpdCBhaVNwZWMuc3VtbWFyeShyZXBseS5wYXlsb2FkKQogICAgICAgICAgOiBhaVNwZWMuc3VtbWFyeTsKICAgICAgICByZXBseS5haSA9IHt9OwogICAgICAgIGlmIChzdW1tYXJ5ICE9PSB1bmRlZmluZWQpIHJlcGx5LmFpLnN1bW1hcnkgPSBzdW1tYXJ5OwogICAgICAgIGlmIChhaVNwZWMucmVuZGVyKSB7CiAgICAgICAgICBjb25zdCBib2FyZCA9IHJlc29sdmVCb2FyZChyZWdpc3RyYXRpb24pOwogICAgICAgICAgaWYgKCFib2FyZCB8fCAhYm9hcmQucmVuZGVyZXIgfHwgdHlwZW9mIGJvYXJkLnJlbmRlcmVyLmR1bXBUb0RhdGFVUkkgIT09ICdmdW5jdGlvbicpIHsKICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKCdObyByZW5kZXJhYmxlIEpTWEdyYXBoIGJvYXJkIGlzIGF2YWlsYWJsZScpOwogICAgICAgICAgfQogICAgICAgICAgcmVwbHkuYWkuaW1hZ2UgPSBhd2FpdCBzdmdUb1BuZyhib2FyZC5yZW5kZXJlci5kdW1wVG9EYXRhVVJJKGZhbHNlKSwgYm9hcmQpOwogICAgICAgIH0KICAgICAgfQogICAgfSBjYXRjaCAoZXJyb3IpIHsKICAgICAgcmVwbHkuZXJyb3IgPSBlcnJvciAmJiBlcnJvci5tZXNzYWdlID8gZXJyb3IubWVzc2FnZSA6IFN0cmluZyhlcnJvcik7CiAgICB9CiAgICB3aW5kb3cucGFyZW50LnBvc3RNZXNzYWdlKHJlcGx5LCAnKicpOwogIH0pOwp9KSgpOwo8L3NjcmlwdD4KPHNjcmlwdD52YXIgYm9hcmQgPSBKWEcuSlNYR3JhcGguaW5pdEJvYXJkKCJKWEcxZjhiYzE4ZV83ZDM4XzI5MDBfNGRkZl85YjllOGFmOCIsIHsKICBib3VuZGluZ2JveDogWy0wLjMsIDAuMTUsIDkuMiwgLTAuMDhdLAogIGF4aXM6IGZhbHNlLAogIHNob3dDb3B5cmlnaHQ6IGZhbHNlLAogIHNob3dOYXZpZ2F0aW9uOiBmYWxzZSwKICBwYW46IHsgZW5hYmxlZDogZmFsc2UgfSwKICB6b29tOiB7IGVuYWJsZWQ6IGZhbHNlIH0KfSk7Cgp2YXIgeEF4aXMgPSBib2FyZC5jcmVhdGUoJ2F4aXMnLCBbWzAsIDBdLCBbMSwgMF1dLCB7CiAgbmFtZTogJ3gnLAogIHdpdGhMYWJlbDogdHJ1ZSwKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwp2YXIgeUF4aXMgPSBib2FyZC5jcmVhdGUoJ2F4aXMnLCBbWzAsIDBdLCBbMCwgMV1dLCB7CiAgbmFtZTogJ2YoeCknLAogIHdpdGhMYWJlbDogdHJ1ZSwKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwp2YXIgZ3JhcGggPSBib2FyZC5jcmVhdGUoJ2Z1bmN0aW9uZ3JhcGgnLCBbZnVuY3Rpb24gKHgpIHsKICByZXR1cm4gMC4wMiooeCAtIDMpOwp9LCAwLCA5XSwgewogIHN0cm9rZUNvbG9yOiAnIzIyMjIyMicsCiAgc3Ryb2tlV2lkdGg6IDIsCiAgZml4ZWQ6IHRydWUsCiAgaGlnaGxpZ2h0OiBmYWxzZQp9KTsKCnZhciByb290ID0gYm9hcmQuY3JlYXRlKCdwb2ludCcsIFszLCAwXSwgewogIG5hbWU6ICdyID0gMycsCiAgc2l6ZTogNCwKICBmaWxsQ29sb3I6ICcjMmNhMDJjJywKICBzdHJva2VDb2xvcjogJyMyY2EwMmMnLAogIGZpeGVkOiB0cnVlLAogIGhpZ2hsaWdodDogZmFsc2UKfSk7CnZhciBhcHByb3hpbWF0aW9uID0gYm9hcmQuY3JlYXRlKCdnbGlkZXInLCBbOCwgMCwgeEF4aXNdLCB7CiAgbmFtZTogJ3gnLAogIHNpemU6IDUsCiAgZmlsbENvbG9yOiAnIzFmNzdiNCcsCiAgc3Ryb2tlQ29sb3I6ICcjMWY3N2I0JywKICBzbmFwU2l6ZVg6IDAuMQp9KTsKdmFyIGdyYXBoUG9pbnQgPSBib2FyZC5jcmVhdGUoJ3BvaW50JywgWwogIGZ1bmN0aW9uICgpIHsgcmV0dXJuIGFwcHJveGltYXRpb24uWCgpOyB9LAogIGZ1bmN0aW9uICgpIHsgcmV0dXJuIDAuMDIqKGFwcHJveGltYXRpb24uWCgpIC0gMyk7IH0KXSwgewogIG5hbWU6ICcoeCwgZih4KSknLAogIHNpemU6IDQsCiAgZmlsbENvbG9yOiAnIzk0NjdiZCcsCiAgc3Ryb2tlQ29sb3I6ICcjOTQ2N2JkJywKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwoKYm9hcmQuY3JlYXRlKCdzZWdtZW50JywgW3Jvb3QsIGFwcHJveGltYXRpb25dLCB7CiAgc3Ryb2tlQ29sb3I6ICcjZmY3ZjBlJywKICBzdHJva2VXaWR0aDogNSwKICBmaXhlZDogdHJ1ZSwKICBoaWdobGlnaHQ6IGZhbHNlCn0pOwpib2FyZC5jcmVhdGUoJ3NlZ21lbnQnLCBbYXBwcm94aW1hdGlvbiwgZ3JhcGhQb2ludF0sIHsKICBzdHJva2VDb2xvcjogJyM5NDY3YmQnLAogIHN0cm9rZVdpZHRoOiA1LAogIGZpeGVkOiB0cnVlLAogIGhpZ2hsaWdodDogZmFsc2UKfSk7Cgpib2FyZC5jcmVhdGUoJ3RleHQnLCBbMC4yNSwgMC4xMzIsIGZ1bmN0aW9uICgpIHsKICByZXR1cm4gJ0Fic29sdXR0IGZlaWwgfHgtcnwgPSAnICsgTWF0aC5hYnMoYXBwcm94aW1hdGlvbi5YKCkgLSAzKS50b0ZpeGVkKDIpOwp9XSwgewogIGZpeGVkOiB0cnVlLAogIGZvbnRTaXplOiAxNCwKICBjb2xvcjogJyNmZjdmMGUnCn0pOwpib2FyZC5jcmVhdGUoJ3RleHQnLCBbMC4yNSwgMC4xMTIsIGZ1bmN0aW9uICgpIHsKICByZXR1cm4gJ1Jlc2lkdWFsIHxmKHgpfCA9ICcgKyBNYXRoLmFicygwLjAyKihhcHByb3hpbWF0aW9uLlgoKSAtIDMpKS50b0ZpeGVkKDMpOwp9XSwgewogIGZpeGVkOiB0cnVlLAogIGZvbnRTaXplOiAxNCwKICBjb2xvcjogJyM5NDY3YmQnCn0pOzwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4=" class="" name="iframeJXG1f8bc18e_7d38_2900_4ddf_9b9e8af8" style="width:760px; height:430px; position:relative; margin:0; padding:0; display:block; z-index:1;border:1px solid black; border-radius:10px;;" id="JXG1f8bc18e_7d38_2900_4ddf_9b9e8af8" sandbox="allow-scripts"></iframe>
 <p>Ved <span class="math inline">\(x=8\)</span> kan vi også lese figuren som forover- og bakoveranalyse:</p>
 <ul>
 <li><strong>Forover:</strong> Det beregnede svaret ligger 5 enheter fra den egentlige roten.</li>
@@ -5698,7 +5922,7 @@ x_{n+1}=\frac12\left(x_n+\frac{2}{x_n}\right),
 <li><p><strong>Første nullskritt</strong> er iterasjonen <span class="math inline">\(n\)</span> der den nye lagrede verdien for første gang er lik den forrige, altså <span class="math inline">\(x_n=x_{n-1}\)</span>.</p></li>
 </ol>
 </div>
-<div class="math-exercise-cell" id="math-exercise-6" data-label="compare-binary32-binary64" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;binary32 platåstart&quot;,&quot;binary64 platåstart&quot;,&quot;binary32 korrekte desimaler&quot;,&quot;binary64 korrekte desimaler&quot;,&quot;binary32 første nullskritt&quot;,&quot;binary64 første nullskritt&quot;]" data-context-mode="explicit" data-context-refs="binary-format-plateau-context" data-context="&quot;… Vi bruker Newton-iterasjonen for \\sqrt{2}, x_{n+1}=\\frac12\\left(x_n+\\frac{2}{x_n}\\right), \\qquad x_0=1, og utfører nøyaktig de samme regneoperasjonene i to tallformater: binary32, representert med numpy.float32, har omtrent 7 signifikante desimalsifre,binary64, representert med vanlig Python float, har omtrent 15–16 signifikante desimalsifre. Referanseverdien beregnes med 80 desimalsifres presisjon og brukes bare til å måle feil. Hver iterasjon i de to metodene blir derimot lagret i sitt angitte tallformat. Begge kurvene faller raskt i starten fordi Newtons metode konvergerer kvadratisk nær løsningen. Etter noen steg blir hver kurve vannrett. Dette feilplatået betyr at tallformatet ikke kan lagre en bedre tilnærming med denne iterasjonen. Flere steg gjentar bare samme lagrede verdi. Legg merke til forskjellen mellom skrittlengde og feil mot referanseverdien: Når to påfølgende lagrede verdier er like, er skrittlengden |x_{n+1}-x_n|=0. Feilen mot den mer presise referansen er likevel ikke null. Et stopp på grunn av null skrittlengde betyr derfor «ingen videre endring i dette tallformatet», ikke «eksakt løsning». Les følgende fra semilogy-plottet:Starten på platået er den første iterasjonen der feilen har nådd nivået den beholder i alle senere steg.På platået finner du antall korrekte desimaler med kriteriet |x_n-r|<\\frac12 10^{-p}. Første nullskritt er iterasjonen n der den nye lagrede verdien for første gang er lik den forrige, altså x_n=x_{n-1}.&quot;" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;,&quot;math-exercise-6-f3&quot;,&quot;math-exercise-6-f4&quot;,&quot;math-exercise-6-f5&quot;,&quot;math-exercise-6-f6&quot;]">
+<div class="math-exercise-cell" id="math-exercise-6" data-label="compare-binary32-binary64" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;binary32 platåstart&quot;,&quot;binary64 platåstart&quot;,&quot;binary32 korrekte desimaler&quot;,&quot;binary64 korrekte desimaler&quot;,&quot;binary32 første nullskritt&quot;,&quot;binary64 første nullskritt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="binary-format-plateau-context" data-context="&quot;… Vi bruker Newton-iterasjonen for \\sqrt{2}, x_{n+1}=\\frac12\\left(x_n+\\frac{2}{x_n}\\right), \\qquad x_0=1, og utfører nøyaktig de samme regneoperasjonene i to tallformater: binary32, representert med numpy.float32, har omtrent 7 signifikante desimalsifre,binary64, representert med vanlig Python float, har omtrent 15–16 signifikante desimalsifre. Referanseverdien beregnes med 80 desimalsifres presisjon og brukes bare til å måle feil. Hver iterasjon i de to metodene blir derimot lagret i sitt angitte tallformat. Begge kurvene faller raskt i starten fordi Newtons metode konvergerer kvadratisk nær løsningen. Etter noen steg blir hver kurve vannrett. Dette feilplatået betyr at tallformatet ikke kan lagre en bedre tilnærming med denne iterasjonen. Flere steg gjentar bare samme lagrede verdi. Legg merke til forskjellen mellom skrittlengde og feil mot referanseverdien: Når to påfølgende lagrede verdier er like, er skrittlengden |x_{n+1}-x_n|=0. Feilen mot den mer presise referansen er likevel ikke null. Et stopp på grunn av null skrittlengde betyr derfor «ingen videre endring i dette tallformatet», ikke «eksakt løsning». Les følgende fra semilogy-plottet:Starten på platået er den første iterasjonen der feilen har nådd nivået den beholder i alle senere steg.På platået finner du antall korrekte desimaler med kriteriet |x_n-r|<\\frac12 10^{-p}. Første nullskritt er iterasjonen n der den nye lagrede verdien for første gang er lik den forrige, altså x_n=x_{n-1}.&quot;" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;,&quot;math-exercise-6-f3&quot;,&quot;math-exercise-6-f4&quot;,&quot;math-exercise-6-f5&quot;,&quot;math-exercise-6-f6&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Sammenlign nøyaktighetsgrensene</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -5828,7 +6052,7 @@ f(x)=x^2-2=0.
 <div id="diagnose-three-runs-context" class="math-exercise-context">
 <p>Bruk kodene <strong>A = 1</strong>, <strong>B = 2</strong> og <strong>C = 3</strong>.</p>
 </div>
-<div class="math-exercise-cell" id="math-exercise-7" data-label="diagnose-three-iterations" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;godkjent kjøring&quot;,&quot;kjøring med 2-syklus&quot;,&quot;kjøring med falskt vellykket stopp&quot;]" data-context-mode="explicit" data-context-refs="diagnose-three-runs-context" data-context="&quot;…esultatet skal brukes videre i et kontrollsystem. Før det skjer, må en ingeniør kontrollere at programmet faktisk har funnet en løsning. Systemkravet er |f(x)|<10^{-8}. Programmet har prøvd tre oppdateringsregler med samme startverdi x_0=1 og de samme innstillingene atol=1e-10, rtol=1e-10 og maxiter=10: \\begin{aligned} \\text{A:}\\quad x_{n+1}&amp;=\\frac12\\left(x_n+\\frac{2}{x_n}\\right),\\\\ \\text{B:}\\quad x_{n+1}&amp;=\\frac{2}{x_n},\\\\ \\text{C:}\\quad x_{n+1}&amp;=x_n-10^{-12}(x_n^2-2). \\end{aligned} Alle tre reglene har \\sqrt2 som fikspunkt, men de beveger seg svært forskjellig på vei dit. Regel C tar med vilje svært små skritt. Det gjør den nyttig for å undersøke om «lite skritt» alene er et trygt stoppkriterium. Koden under kjører de tre reglene med fixed_point fra fanen «Implementasjon». For hver kjøring viser plottet skrittlengden |x_n-x_{n-1}|, som måler hvor mye den lagrede verdien endret seg,residualen |f(x_n)|=|x_n^2-2|, som måler hvor godt den siste verdien oppfyller ligningen. En kjøring kan bare godkjennes dersom residualen er under systemkravet. En stoppmelding er ikke nok i seg selv. Les plottet som en kontrollrapport: Se først på stoppårsaken over hvert panel.Kontroller deretter om residualen ender under den stiplede kravlinjen.Se til slutt på utviklingen. Verdier som gjentar seg på to nivåer, tyder på en 2-syklus. Et lite skritt sammen med stor residual tyder på at programmet har stoppet før det nådde løsningen. Bruk kodene A = 1, B = 2 og C = 3.&quot;" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;,&quot;math-exercise-7-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-7" data-label="diagnose-three-iterations" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;godkjent kjøring&quot;,&quot;kjøring med 2-syklus&quot;,&quot;kjøring med falskt vellykket stopp&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="diagnose-three-runs-context" data-context="&quot;…esultatet skal brukes videre i et kontrollsystem. Før det skjer, må en ingeniør kontrollere at programmet faktisk har funnet en løsning. Systemkravet er |f(x)|<10^{-8}. Programmet har prøvd tre oppdateringsregler med samme startverdi x_0=1 og de samme innstillingene atol=1e-10, rtol=1e-10 og maxiter=10: \\begin{aligned} \\text{A:}\\quad x_{n+1}&amp;=\\frac12\\left(x_n+\\frac{2}{x_n}\\right),\\\\ \\text{B:}\\quad x_{n+1}&amp;=\\frac{2}{x_n},\\\\ \\text{C:}\\quad x_{n+1}&amp;=x_n-10^{-12}(x_n^2-2). \\end{aligned} Alle tre reglene har \\sqrt2 som fikspunkt, men de beveger seg svært forskjellig på vei dit. Regel C tar med vilje svært små skritt. Det gjør den nyttig for å undersøke om «lite skritt» alene er et trygt stoppkriterium. Koden under kjører de tre reglene med fixed_point fra fanen «Implementasjon». For hver kjøring viser plottet skrittlengden |x_n-x_{n-1}|, som måler hvor mye den lagrede verdien endret seg,residualen |f(x_n)|=|x_n^2-2|, som måler hvor godt den siste verdien oppfyller ligningen. En kjøring kan bare godkjennes dersom residualen er under systemkravet. En stoppmelding er ikke nok i seg selv. Les plottet som en kontrollrapport: Se først på stoppårsaken over hvert panel.Kontroller deretter om residualen ender under den stiplede kravlinjen.Se til slutt på utviklingen. Verdier som gjentar seg på to nivåer, tyder på en 2-syklus. Et lite skritt sammen med stor residual tyder på at programmet har stoppet før det nådde løsningen. Bruk kodene A = 1, B = 2 og C = 3.&quot;" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;,&quot;math-exercise-7-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn riktig diagnose</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -5856,7 +6080,7 @@ f(x)=x^2-2=0.
 <li>maksimalt antall iterasjoner</li>
 <li>ikke-endelig verdi</li>
 </ol>
-<div class="math-exercise-cell" id="math-exercise-8" data-label="identify-stop-reasons" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;stoppårsak A&quot;,&quot;stoppårsak B&quot;,&quot;stoppårsak C&quot;]" data-context-mode="auto" data-context-refs="" data-context="&quot;…<10^{-8}. Programmet har prøvd tre oppdateringsregler med samme startverdi x_0=1 og de samme innstillingene atol=1e-10, rtol=1e-10 og maxiter=10: \\begin{aligned} \\text{A:}\\quad x_{n+1}&amp;=\\frac12\\left(x_n+\\frac{2}{x_n}\\right),\\\\ \\text{B:}\\quad x_{n+1}&amp;=\\frac{2}{x_n},\\\\ \\text{C:}\\quad x_{n+1}&amp;=x_n-10^{-12}(x_n^2-2). \\end{aligned} Alle tre reglene har \\sqrt2 som fikspunkt, men de beveger seg svært forskjellig på vei dit. Regel C tar med vilje svært små skritt. Det gjør den nyttig for å undersøke om «lite skritt» alene er et trygt stoppkriterium. Koden under kjører de tre reglene med fixed_point fra fanen «Implementasjon». For hver kjøring viser plottet skrittlengden |x_n-x_{n-1}|, som måler hvor mye den lagrede verdien endret seg,residualen |f(x_n)|=|x_n^2-2|, som måler hvor godt den siste verdien oppfyller ligningen. En kjøring kan bare godkjennes dersom residualen er under systemkravet. En stoppmelding er ikke nok i seg selv. Les plottet som en kontrollrapport: Se først på stoppårsaken over hvert panel.Kontroller deretter om residualen ender under den stiplede kravlinjen.Se til slutt på utviklingen. Verdier som gjentar seg på to nivåer, tyder på en 2-syklus. Et lite skritt sammen med stor residual tyder på at programmet har stoppet før det nådde løsningen. Bruk kodene A = 1, B = 2 og C = 3. Stoppårsaken sier hva programmet observerte, ikke nødvendigvis at svaret er riktig. Bruk disse kodene: lite skrittmaksimalt antall iterasjonerikke-endelig verdi&quot;" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-8" data-label="identify-stop-reasons" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;stoppårsak A&quot;,&quot;stoppårsak B&quot;,&quot;stoppårsak C&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;…<10^{-8}. Programmet har prøvd tre oppdateringsregler med samme startverdi x_0=1 og de samme innstillingene atol=1e-10, rtol=1e-10 og maxiter=10: \\begin{aligned} \\text{A:}\\quad x_{n+1}&amp;=\\frac12\\left(x_n+\\frac{2}{x_n}\\right),\\\\ \\text{B:}\\quad x_{n+1}&amp;=\\frac{2}{x_n},\\\\ \\text{C:}\\quad x_{n+1}&amp;=x_n-10^{-12}(x_n^2-2). \\end{aligned} Alle tre reglene har \\sqrt2 som fikspunkt, men de beveger seg svært forskjellig på vei dit. Regel C tar med vilje svært små skritt. Det gjør den nyttig for å undersøke om «lite skritt» alene er et trygt stoppkriterium. Koden under kjører de tre reglene med fixed_point fra fanen «Implementasjon». For hver kjøring viser plottet skrittlengden |x_n-x_{n-1}|, som måler hvor mye den lagrede verdien endret seg,residualen |f(x_n)|=|x_n^2-2|, som måler hvor godt den siste verdien oppfyller ligningen. En kjøring kan bare godkjennes dersom residualen er under systemkravet. En stoppmelding er ikke nok i seg selv. Les plottet som en kontrollrapport: Se først på stoppårsaken over hvert panel.Kontroller deretter om residualen ender under den stiplede kravlinjen.Se til slutt på utviklingen. Verdier som gjentar seg på to nivåer, tyder på en 2-syklus. Et lite skritt sammen med stor residual tyder på at programmet har stoppet før det nådde løsningen. Bruk kodene A = 1, B = 2 og C = 3. Stoppårsaken sier hva programmet observerte, ikke nødvendigvis at svaret er riktig. Bruk disse kodene: lite skrittmaksimalt antall iterasjonerikke-endelig verdi&quot;" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Les stoppårsakene</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -5884,7 +6108,7 @@ f(x)=x^2-2=0.
 <li>bytt oppdateringsregel,</li>
 <li>krev både liten skrittlengde og liten residual før resultatet godkjennes.</li>
 </ol>
-<div class="math-exercise-cell" id="math-exercise-9" data-label="choose-diagnostic-action" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;tiltak A&quot;,&quot;tiltak B&quot;,&quot;tiltak C&quot;]" data-context-mode="auto" data-context-refs="" data-context="&quot;…&amp;=\\frac12\\left(x_n+\\frac{2}{x_n}\\right),\\\\ \\text{B:}\\quad x_{n+1}&amp;=\\frac{2}{x_n},\\\\ \\text{C:}\\quad x_{n+1}&amp;=x_n-10^{-12}(x_n^2-2). \\end{aligned} Alle tre reglene har \\sqrt2 som fikspunkt, men de beveger seg svært forskjellig på vei dit. Regel C tar med vilje svært små skritt. Det gjør den nyttig for å undersøke om «lite skritt» alene er et trygt stoppkriterium. Koden under kjører de tre reglene med fixed_point fra fanen «Implementasjon». For hver kjøring viser plottet skrittlengden |x_n-x_{n-1}|, som måler hvor mye den lagrede verdien endret seg,residualen |f(x_n)|=|x_n^2-2|, som måler hvor godt den siste verdien oppfyller ligningen. En kjøring kan bare godkjennes dersom residualen er under systemkravet. En stoppmelding er ikke nok i seg selv. Les plottet som en kontrollrapport: Se først på stoppårsaken over hvert panel.Kontroller deretter om residualen ender under den stiplede kravlinjen.Se til slutt på utviklingen. Verdier som gjentar seg på to nivåer, tyder på en 2-syklus. Et lite skritt sammen med stor residual tyder på at programmet har stoppet før det nådde løsningen. Bruk kodene A = 1, B = 2 og C = 3. Stoppårsaken sier hva programmet observerte, ikke nødvendigvis at svaret er riktig. Bruk disse kodene: lite skrittmaksimalt antall iterasjonerikke-endelig verdi Nå skal du velge hva en ingeniør bør gjøre med hver kjøring: godkjenn resultatet,bytt oppdateringsregel,krev både liten skrittlengde og liten residual før resultatet godkjennes.&quot;" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-9" data-label="choose-diagnostic-action" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;tiltak A&quot;,&quot;tiltak B&quot;,&quot;tiltak C&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;…&amp;=\\frac12\\left(x_n+\\frac{2}{x_n}\\right),\\\\ \\text{B:}\\quad x_{n+1}&amp;=\\frac{2}{x_n},\\\\ \\text{C:}\\quad x_{n+1}&amp;=x_n-10^{-12}(x_n^2-2). \\end{aligned} Alle tre reglene har \\sqrt2 som fikspunkt, men de beveger seg svært forskjellig på vei dit. Regel C tar med vilje svært små skritt. Det gjør den nyttig for å undersøke om «lite skritt» alene er et trygt stoppkriterium. Koden under kjører de tre reglene med fixed_point fra fanen «Implementasjon». For hver kjøring viser plottet skrittlengden |x_n-x_{n-1}|, som måler hvor mye den lagrede verdien endret seg,residualen |f(x_n)|=|x_n^2-2|, som måler hvor godt den siste verdien oppfyller ligningen. En kjøring kan bare godkjennes dersom residualen er under systemkravet. En stoppmelding er ikke nok i seg selv. Les plottet som en kontrollrapport: Se først på stoppårsaken over hvert panel.Kontroller deretter om residualen ender under den stiplede kravlinjen.Se til slutt på utviklingen. Verdier som gjentar seg på to nivåer, tyder på en 2-syklus. Et lite skritt sammen med stor residual tyder på at programmet har stoppet før det nådde løsningen. Bruk kodene A = 1, B = 2 og C = 3. Stoppårsaken sier hva programmet observerte, ikke nødvendigvis at svaret er riktig. Bruk disse kodene: lite skrittmaksimalt antall iterasjonerikke-endelig verdi Nå skal du velge hva en ingeniør bør gjøre med hver kjøring: godkjenn resultatet,bytt oppdateringsregel,krev både liten skrittlengde og liten residual før resultatet godkjennes.&quot;" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Velg riktig tiltak</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -7443,9 +7667,20 @@ qpyodideReady
 
       // Check results
       fieldPrefix:  function (n) { return 'Field&nbsp;' + n + ': '; },
+      vecComponent: function (n) { return 'Component ' + n; },
+      matCell: function (row, column) { return 'Row ' + row + ', column ' + column; },
+      dynamicMatCell: function (name, row, column) { return name + ', row ' + row + ', column ' + column; },
+      matrixAddRow: 'Add row',
+      matrixRemoveRow: 'Remove row',
+      matrixAddColumn: 'Add column',
+      matrixRemoveColumn: 'Remove column',
+      matrixRows: 'Rows',
+      matrixColumns: 'Columns',
+      emptyMatrix: 'Empty matrix',
       resEmpty:     'Please enter an answer.',
       resCorrect:   'Correct!',
       resPartial:   function (pct) { return 'Partially correct (' + pct + '%).'; },
+      resPartialNoScore: 'Partially correct.',
       resScore:     function (pct) { return 'Overall score: ' + pct + '%.'; },
       resWrong:     'Not correct – try again.',
       resRejected:  'Mathematically correct, but not simplified yet. Keep transforming the expression.',
@@ -7589,9 +7824,20 @@ qpyodideReady
 
       // Check results
       fieldPrefix:  function (n) { return 'Feld&nbsp;' + n + ': '; },
+      vecComponent: function (n) { return 'Komponente ' + n; },
+      matCell: function (row, column) { return 'Zeile ' + row + ', Spalte ' + column; },
+      dynamicMatCell: function (name, row, column) { return name + ', Zeile ' + row + ', Spalte ' + column; },
+      matrixAddRow: 'Zeile hinzufügen',
+      matrixRemoveRow: 'Zeile entfernen',
+      matrixAddColumn: 'Spalte hinzufügen',
+      matrixRemoveColumn: 'Spalte entfernen',
+      matrixRows: 'Zeilen',
+      matrixColumns: 'Spalten',
+      emptyMatrix: 'Leere Matrix',
       resEmpty:     'Bitte eine Antwort eingeben.',
       resCorrect:   'Richtig!',
       resPartial:   function (pct) { return 'Teilweise richtig (' + pct + '&nbsp;%).'; },
+      resPartialNoScore: 'Teilweise richtig.',
       resScore:     function (pct) { return 'Gesamtpunktzahl: ' + pct + '&nbsp;%.'; },
       resWrong:     'Nicht korrekt – versuche es noch einmal.',
       resRejected:  'Mathematisch korrekt, aber noch nicht vereinfacht. Forme den Ausdruck weiter um.',
@@ -7735,9 +7981,20 @@ qpyodideReady
     errGeneric: 'Inntastingen kunne ikke behandles – bruk inntastingshjelpen for å finne riktig skrivemåte.',
 
     fieldPrefix: function (n) { return 'Felt&nbsp;' + n + ': '; },
+    vecComponent: function (n) { return 'Komponent ' + n; },
+    matCell: function (row, column) { return 'Rad ' + row + ', kolonne ' + column; },
+    dynamicMatCell: function (name, row, column) { return name + ', rad ' + row + ', kolonne ' + column; },
+    matrixAddRow: 'Legg til rad',
+    matrixRemoveRow: 'Fjern rad',
+    matrixAddColumn: 'Legg til kolonne',
+    matrixRemoveColumn: 'Fjern kolonne',
+    matrixRows: 'Rader',
+    matrixColumns: 'Kolonner',
+    emptyMatrix: 'Tom matrise',
     resEmpty: 'Skriv inn et svar.',
     resCorrect: 'Riktig!',
     resPartial: function (pct) { return 'Delvis riktig (' + pct + '%).'; },
+    resPartialNoScore: 'Delvis riktig.',
     resScore: function (pct) { return 'Samlet poengsum: ' + pct + ' %.'; },
     resWrong: 'Ikke riktig – prøv igjen.',
     resRejected: 'Matematisk riktig, men ikke forenklet ennå. Fortsett å omforme uttrykket.',
@@ -8177,6 +8434,90 @@ qpyodideReady
       '    _local.setdefault("inf", oo)',
       '    return _local',
       '',
+      'def assess_basis(matrix, *, axis, target_dimension, belongs, name, space_name="space"):',
+      '    """Assess a row- or column-basis submission without privileging vector order.',
+      '',
+      '    ``belongs(vector)`` decides only whether a nonzero vector belongs to the',
+      '    target space.  This helper owns rank, dependence, scoring, assessment',
+      '    colors, and standard feedback so individual checkers do not duplicate them.',
+      '    """',
+      '    if axis not in ("rows", "columns"):',
+      '        raise ValueError("Basis assessment axis must be rows or columns")',
+      '    target_dimension = int(target_dimension)',
+      '    if target_dimension < 0:',
+      '        raise ValueError("Basis target dimension cannot be negative")',
+      '    if not callable(belongs):',
+      '        raise TypeError("Basis membership test must be callable")',
+      '',
+      '    count = matrix.rows if axis == "rows" else matrix.cols',
+      '    singular = "row" if axis == "rows" else "column"',
+      '    vectors = [matrix[i, :] for i in range(count)] if axis == "rows" else [matrix[:, i] for i in range(count)]',
+      '',
+      '    if target_dimension == 0:',
+      '        statuses = ["incorrect"] * count',
+      '        return {',
+      '            "score": 1.0 if count == 0 else 0.0,',
+      '            "show_score": False,',
+      '            "feedback": "" if count == 0 else f"The {space_name} is trivial, so its basis is empty. Remove every {singular}.",',
+      '            "assessment": {name: {axis: statuses}},',
+      '        }',
+      '',
+      '    locally_valid = []',
+      '    valid_vectors = []',
+      '    for vector in vectors:',
+      '        zero = vector == zeros(*vector.shape)',
+      '        valid = (not zero) and bool(belongs(vector))',
+      '        locally_valid.append(valid)',
+      '        if valid:',
+      '            valid_vectors.append(vector)',
+      '',
+      '    if valid_vectors:',
+      '        family = Matrix.vstack(*valid_vectors) if axis == "rows" else Matrix.hstack(*valid_vectors)',
+      '        rank = int(family.rank())',
+      '    else:',
+      '        rank = 0',
+      '    valid_count = len(valid_vectors)',
+      '    dependent = rank < valid_count',
+      '    statuses = [',
+      '        ("dependent" if dependent else "correct") if valid else "incorrect"',
+      '        for valid in locally_valid',
+      '    ]',
+      '',
+      '    if count == 0:',
+      '        score = 0.0',
+      '    else:',
+      '        coverage = min(rank, target_dimension) / target_dimension',
+      '        validity = valid_count / count',
+      '        independence = rank / valid_count if valid_count else 0.0',
+      '        score = float(coverage * validity * independence)',
+      '',
+      '    invalid_count = count - valid_count',
+      '    plural = singular + "s"',
+      '    if score >= 1.0 - 1e-9:',
+      '        feedback = ""',
+      '    elif count == 0:',
+      '        feedback = f"Add one or more basis {plural} for the {space_name}."',
+      '    elif invalid_count and dependent:',
+      '        feedback = (f"The red {plural} are zero or outside the {space_name}. "',
+      '                    f"The yellow {plural} belong to the {space_name}, but together they are linearly dependent. "',
+      '                    f"Remove or replace the red {plural}, choose an independent subset of the yellow {plural}, "',
+      '                    f"and check that the result spans the whole {space_name}.")',
+      '    elif invalid_count:',
+      '        feedback = f"Remove or replace the red {plural}; each is zero or outside the {space_name}."',
+      '        if rank < target_dimension:',
+      '            feedback += f" Then add independent {plural} until the family spans the whole {space_name}."',
+      '    elif dependent and rank == target_dimension:',
+      '        feedback = (f"Every yellow {singular} belongs to the {space_name}, but the family is linearly dependent. "',
+      '                    f"Remove one or more yellow {plural} until an independent basis remains.")',
+      '    elif dependent:',
+      '        feedback = (f"Every yellow {singular} belongs to the {space_name}, but the family is linearly dependent. "',
+      '                    f"Choose an independent subset, then add independent {plural} until it spans the whole {space_name}.")',
+      '    else:',
+      '        feedback = (f"The green {plural} are valid and independent. "',
+      '                    f"Add more independent {plural} until they span the whole {space_name}.")',
+      '',
+      '    return {"score": score, "show_score": False, "feedback": feedback, "assessment": {name: {axis: statuses}}}',
+      '',
       'def _math_check():',
       '    try:',
       '        mode = _math_mode',
@@ -8249,12 +8590,18 @@ qpyodideReady
       '',
       'def _normalize_custom_result(result):',
       '    feedback = ""',
+      '    assessment = {}',
+      '    show_score = True',
       '    if isinstance(result, bool):',
       '        score = 1.0 if result else 0.0',
       '    elif isinstance(result, (int, float)):',
       '        score = float(result)',
       '    elif isinstance(result, dict):',
       '        feedback = str(result.get("feedback", ""))',
+      '        assessment = result.get("assessment", {})',
+      '        show_score = bool(result.get("show_score", True))',
+      '        if not isinstance(assessment, dict):',
+      '            raise TypeError("Custom checker assessment must be a dictionary")',
       '        if "score" in result:',
       '            score = float(result["score"])',
       '        elif "correct" in result:',
@@ -8266,7 +8613,7 @@ qpyodideReady
       '    if not 0.0 <= score <= 1.0:',
       '        raise ValueError("Custom checker score must be between 0 and 1")',
       '    status = "correct" if score >= 1.0 - 1e-9 else ("wrong" if score <= 1e-9 else "partial")',
-      '    return {"status": status, "score": score, "feedback": feedback}',
+      '    return {"status": status, "score": score, "show_score": show_score, "feedback": feedback, "assessment": assessment}',
       '',
       'def _math_check_custom():',
       '    try:',
@@ -8277,6 +8624,18 @@ qpyodideReady
       '        if isinstance(response, dict) and response.get("kind") == "expressions":',
       '            raw_values = response.get("raw", [])',
       '            response["expressions"] = [parse_expr(v, local_dict=_local, transformations=_math_tf) for v in raw_values]',
+      '            for name, item in response.get("inputs", {}).items():',
+      '                if not isinstance(item, dict) or item.get("type") != "matrix":',
+      '                    continue',
+      '                rows, cols = int(item.get("rows", -1)), int(item.get("cols", -1))',
+      '                if rows < 0 or cols < 0:',
+      '                    raise ValueError(f"Invalid matrix dimensions for {name}")',
+      '                matrix_raw = item.get("raw", [])',
+      '                if len(matrix_raw) != rows * cols:',
+      '                    raise ValueError(f"Matrix {name} has inconsistent dimensions")',
+      '                matrix_expressions = [parse_expr(v, local_dict=_local, transformations=_math_tf) for v in matrix_raw]',
+      '                item["expressions"] = matrix_expressions',
+      '                item["matrix"] = Matrix(rows, cols, matrix_expressions)',
       '        checker_symbols = {k: v for k, v in _local.items() if isinstance(v, Symbol)}',
       '        namespace = dict(globals())',
       '        exec(_math_checker, namespace)',
@@ -8340,25 +8699,412 @@ qpyodideReady
   }
 
   // ---------------------------------------------------------------------------
-  // Task-text renderer  (used by pool mode: parses _[answer] markers in JS)
+  // Task-text renderer. Pool exercises are rendered in the browser, so this
+  // mirrors the scalar/vector/matrix parser in math-exercise.lua.
   // ---------------------------------------------------------------------------
 
-  function renderTaskText(text, exerciseId, vars) {
-    var count = 0, fieldIds = [];
-    var html = text.replace(/(_+)\[([^\]]*)\]/g, function (_, underscores, answer) {
+  function splitTop(text, separator) {
+    var parts = [], depth = 0, current = '';
+    for (var i = 0; i < text.length; i++) {
+      var ch = text.charAt(i);
+      if (ch === '(' || ch === '[' || ch === '{') depth++;
+      else if (ch === ')' || ch === ']' || ch === '}') depth--;
+      if (ch === separator && depth === 0) { parts.push(current.trim()); current = ''; }
+      else current += ch;
+    }
+    parts.push(current.trim());
+    return parts;
+  }
+
+  function scalarFieldHtml(fid, answer, vars, underscoreCount) {
+    var base = ' id="' + fid + '"'
+             + ' data-answer="' + escHtml(answer) + '"'
+             + ' data-vars="'   + escHtml(vars)   + '"'
+             + ' autocomplete="off" autocorrect="off" spellcheck="false"';
+    if (underscoreCount >= 3) return '<textarea' + base + ' class="math-input math-input-large" rows="2"></textarea>';
+    if (underscoreCount === 2) return '<input type="text"' + base + ' class="math-input math-input-medium">';
+    return '<input type="text"' + base + ' class="math-input math-input-small">';
+  }
+
+  function matrixCellHtml(fid, answer, vars) {
+    return '<input type="text" id="' + fid + '"'
+         + ' data-answer="' + escHtml(answer) + '"'
+         + ' data-vars="'   + escHtml(vars)   + '"'
+         + ' autocomplete="off" autocorrect="off" spellcheck="false"'
+         + ' class="math-input math-mat-cell">';
+  }
+
+  function buildVector(exerciseId, count, content, vars, vecdir) {
+    var components = splitTop(content, ',');
+    var ids = [], labels = [], cells = [];
+    components.forEach(function (answer, index) {
       count++;
-      var fid  = exerciseId + '-f' + count;
-      fieldIds.push(fid);
-      var n    = underscores.length;
-      var base = ' id="' + fid + '"'
-               + ' data-answer="' + escHtml(answer) + '"'
-               + ' data-vars="'   + escHtml(vars)   + '"'
-               + ' autocomplete="off" autocorrect="off" spellcheck="false"';
-      if (n >= 3) return '<textarea' + base + ' class="math-input math-input-large" rows="2"></textarea>';
-      if (n >= 2) return '<input type="text"' + base + ' class="math-input math-input-medium">';
-      return '<input type="text"' + base + ' class="math-input math-input-small">';
+      var fid = exerciseId + '-f' + count;
+      ids.push(fid);
+      labels.push('v' + (index + 1));
+      cells.push(matrixCellHtml(fid, answer, vars));
     });
-    return { html: html.replace(/\n/g, '<br>\n'), fieldIds: fieldIds };
+    var rowClass = vecdir === 'row' ? ' math-vec-row' : '';
+    return {
+      html: '<span class="math-vec' + rowClass + '" style="--n:' + components.length + '">' + cells.join('') + '</span>',
+      ids: ids, labels: labels, count: count
+    };
+  }
+
+  function buildMatrix(exerciseId, count, content, vars) {
+    var rows = splitTop(content, ';').map(function (row) { return splitTop(row, ','); });
+    var columnCount = rows.length ? rows[0].length : 0;
+    if (!columnCount || rows.some(function (row) { return row.length !== columnCount; })) {
+      throw new Error('math-exercise: mat[...] rows must have the same number of columns');
+    }
+    var ids = [], labels = [], cells = [];
+    rows.forEach(function (row, rowIndex) {
+      row.forEach(function (answer, columnIndex) {
+        count++;
+        var fid = exerciseId + '-f' + count;
+        ids.push(fid);
+        labels.push('m' + (rowIndex + 1) + ',' + (columnIndex + 1));
+        cells.push(matrixCellHtml(fid, answer, vars));
+      });
+    });
+    return {
+      html: '<span class="math-mat" style="--cols:' + columnCount + '">' + cells.join('') + '</span>',
+      ids: ids, labels: labels, count: count
+    };
+  }
+
+  var MAX_DYNAMIC_DIMENSION = 12;
+
+  function parseDynamicMatrixSpec(content) {
+    var raw = {};
+    splitTop(content, ',').forEach(function (part) {
+      var match = /^\s*([\w-]+)\s*=\s*(.*?)\s*$/.exec(part);
+      if (!match || !match[2]) throw new Error('math-exercise: mat{...} entries must use key=value');
+      if (Object.prototype.hasOwnProperty.call(raw, match[1]))
+        throw new Error('math-exercise: duplicate mat{...} option ' + match[1]);
+      raw[match[1]] = match[2];
+    });
+    var allowed = {
+      name: true, rows: true, cols: true,
+      'initial-rows': true, 'initial-cols': true,
+      'min-rows': true, 'max-rows': true,
+      'min-cols': true, 'max-cols': true,
+    };
+    Object.keys(raw).forEach(function (key) {
+      if (!allowed[key]) throw new Error('math-exercise: unknown mat{...} option ' + key);
+    });
+    var name = raw.name || '';
+    if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(name))
+      throw new Error('math-exercise: mat{...} requires name beginning with a letter');
+
+    function integerOption(key, fallback) {
+      if (raw[key] === undefined) return fallback;
+      var value = Number(raw[key]);
+      if (!Number.isInteger(value) || value < 0 || value > MAX_DYNAMIC_DIMENSION)
+        throw new Error('math-exercise: ' + key + ' must be an integer from 0 to ' + MAX_DYNAMIC_DIMENSION);
+      return value;
+    }
+    function axis(axisName) {
+      if (raw[axisName] === undefined) throw new Error('math-exercise: mat{...} requires ' + axisName);
+      if (raw[axisName] !== 'auto') {
+        var fixed = integerOption(axisName, null);
+        return { auto: false, initial: fixed, min: fixed, max: fixed };
+      }
+      var min = integerOption('min-' + axisName, 0);
+      var max = integerOption('max-' + axisName, 8);
+      if (min > max) throw new Error('math-exercise: min-' + axisName + ' cannot exceed max-' + axisName);
+      var initial = integerOption('initial-' + axisName, Math.min(max, Math.max(1, min)));
+      if (initial < min || initial > max)
+        throw new Error('math-exercise: initial-' + axisName + ' must lie between min-' + axisName + ' and max-' + axisName);
+      return { auto: true, initial: initial, min: min, max: max };
+    }
+    return { name: name, rows: axis('rows'), cols: axis('cols') };
+  }
+
+  function dynamicMatrixCellHtml(exerciseId, spec, row, column, vars) {
+    var fid = exerciseId + '-dm-' + spec.name + '-' + row + '-' + column;
+    var label = 'dm:' + spec.name + ':' + row + ',' + column;
+    return {
+      id: fid,
+      label: label,
+      html: '<input type="text" id="' + fid + '" data-answer=""'
+          + ' data-vars="' + escHtml(vars) + '"'
+          + ' data-dynamic-matrix-name="' + escHtml(spec.name) + '"'
+          + ' data-matrix-row="' + row + '" data-matrix-column="' + column + '"'
+          + ' data-structural-label="' + escHtml(label) + '"'
+          + ' autocomplete="off" autocorrect="off" spellcheck="false"'
+          + ' class="math-input math-mat-cell">',
+    };
+  }
+
+  function buildDynamicMatrix(exerciseId, content, vars, mode) {
+    if (mode !== 'custom') throw new Error('math-exercise: mat{...} currently requires mode: custom');
+    var spec = parseDynamicMatrixSpec(content);
+    var configuredRows = spec.rows.initial, configuredCols = spec.cols.initial;
+    var rows = configuredRows, cols = configuredCols;
+    if (rows === 0 || cols === 0) { rows = 0; cols = 0; }
+    var ids = [], labels = [], cells = [];
+    for (var row = 1; row <= rows; row++) {
+      for (var column = 1; column <= cols; column++) {
+        var cell = dynamicMatrixCellHtml(exerciseId, spec, row, column, vars);
+        ids.push(cell.id); labels.push(cell.label); cells.push(cell.html);
+      }
+    }
+    var matrix = '<span class="math-mat math-dynamic-mat" style="--cols:' + Math.max(cols, 1) + '"'
+      + ' data-matrix-name="' + escHtml(spec.name) + '" data-rows="' + rows + '" data-cols="' + cols + '"'
+      + ' data-auto-rows="' + spec.rows.auto + '" data-auto-cols="' + spec.cols.auto + '"'
+      + ' data-min-rows="' + spec.rows.min + '" data-max-rows="' + spec.rows.max + '"'
+      + ' data-min-cols="' + spec.cols.min + '" data-max-cols="' + spec.cols.max + '"'
+      + ' data-last-rows="' + configuredRows + '" data-last-cols="' + configuredCols + '">'
+      + cells.join('') + '</span>';
+    var controls = '<span class="math-dynamic-matrix-controls" aria-label="Matrix size controls">'
+      + '<span class="math-dynamic-axis" data-dynamic-axis="row"><span class="math-dynamic-axis-label"></span>'
+      + '<button type="button" data-dynamic-action="remove-row">−</button><output></output>'
+      + '<button type="button" data-dynamic-action="add-row">+</button></span>'
+      + '<span class="math-dynamic-axis" data-dynamic-axis="col"><span class="math-dynamic-axis-label"></span>'
+      + '<button type="button" data-dynamic-action="remove-col">−</button><output></output>'
+      + '<button type="button" data-dynamic-action="add-col">+</button></span>'
+      + '</span>';
+    return {
+      html: '<span class="math-dynamic-matrix-wrap" data-matrix-name="' + escHtml(spec.name) + '">' + matrix + controls + '</span>',
+      ids: ids,
+      labels: labels,
+      count: 0,
+    };
+  }
+
+  function matchBalanced(text, position, open, close) {
+    if (text.charAt(position) !== open) return null;
+    var depth = 0;
+    for (var i = position; i < text.length; i++) {
+      if (text.charAt(i) === open) depth++;
+      else if (text.charAt(i) === close && --depth === 0) return text.slice(position, i + 1);
+    }
+    return null;
+  }
+
+  // Raw exercise bodies bypass Pandoc's Markdown math handling. Normalize
+  // paired dollar delimiters before inserting HTML so a page-level MathJax
+  // pass cannot claim a bare \\begin{...} environment and strand the dollars.
+  function normalizeTaskMathDelimiters(text) {
+    var output = '', position = 0;
+    function unescapedAt(needle, start) {
+      var found = text.indexOf(needle, start);
+      while (found >= 0) {
+        var slashes = 0;
+        for (var i = found - 1; i >= 0 && text.charAt(i) === '\\'; i--) slashes++;
+        if (slashes % 2 === 0) return found;
+        found = text.indexOf(needle, found + needle.length);
+      }
+      return -1;
+    }
+    while (position < text.length) {
+      if (text.charAt(position) !== '$' || (position > 0 && text.charAt(position - 1) === '\\')) {
+        output += text.charAt(position++);
+        continue;
+      }
+      var display = text.slice(position, position + 2) === '$$';
+      var delimiter = display ? '$$' : '$';
+      var close = unescapedAt(delimiter, position + delimiter.length);
+      if (close < 0) { output += text.charAt(position++); continue; }
+      output += (display ? '\\[' : '\\(') + text.slice(position + delimiter.length, close) +
+        (display ? '\\]' : '\\)');
+      position = close + delimiter.length;
+    }
+    return output;
+  }
+
+  function renderTaskText(text, exerciseId, vars, vecdir, mode) {
+    text = normalizeTaskMathDelimiters(text);
+    mode = mode || 'equivalent';
+    var count = 0, fieldIds = [], structuralLabels = [], output = [], position = 0;
+    var dynamicNames = {};
+    while (position < text.length) {
+      var scalar = /^_+\[/.exec(text.slice(position));
+      var boundary = !scalar && (position === 0 || !/[\w]/.test(text.charAt(position - 1)));
+      var vector = !scalar && boundary && text.slice(position, position + 4) === 'vec[';
+      var matrix = !scalar && !vector && boundary && text.slice(position, position + 4) === 'mat[';
+      var dynamicMatrix = !scalar && !vector && !matrix && boundary && text.slice(position, position + 4) === 'mat{';
+      var headLength = scalar ? scalar[0].length : (vector || matrix || dynamicMatrix ? 4 : 0);
+      var bracket = headLength && !dynamicMatrix ? matchBalanced(text, position + headLength - 1, '[', ']') : null;
+      var brace = dynamicMatrix ? matchBalanced(text, position + headLength - 1, '{', '}') : null;
+      var balanced = bracket || brace;
+
+      if (!balanced) { output.push(text.charAt(position++)); continue; }
+
+      var content = balanced.slice(1, -1), rendered;
+      if (scalar) {
+        count++;
+        var fid = exerciseId + '-f' + count;
+        output.push(scalarFieldHtml(fid, content, vars, scalar[0].length - 1));
+        fieldIds.push(fid);
+        structuralLabels.push('');
+      } else if (vector || matrix) {
+        rendered = vector
+          ? buildVector(exerciseId, count, content, vars, vecdir)
+          : buildMatrix(exerciseId, count, content, vars);
+        output.push(rendered.html);
+        fieldIds = fieldIds.concat(rendered.ids);
+        structuralLabels = structuralLabels.concat(rendered.labels);
+        count = rendered.count;
+      } else {
+        var spec = parseDynamicMatrixSpec(content);
+        if (dynamicNames[spec.name]) throw new Error('math-exercise: duplicate dynamic matrix name ' + spec.name);
+        dynamicNames[spec.name] = true;
+        rendered = buildDynamicMatrix(exerciseId, content, vars, mode);
+        output.push(rendered.html);
+        fieldIds = fieldIds.concat(rendered.ids);
+        structuralLabels = structuralLabels.concat(rendered.labels);
+      }
+      position += headLength - 1 + balanced.length;
+    }
+    return {
+      html: output.join('').replace(/\n/g, '<br>\n'),
+      fieldIds: fieldIds,
+      structuralLabels: structuralLabels
+    };
+  }
+
+  function localizeStructuralLabel(token) {
+    if (!token) return '';
+    if (/^v\d+$/.test(token)) return L.vecComponent(token.slice(1));
+    var dynamicMatrix = /^dm:([A-Za-z][A-Za-z0-9_-]*):(\d+),(\d+)$/.exec(token);
+    if (dynamicMatrix) return L.dynamicMatCell(dynamicMatrix[1], dynamicMatrix[2], dynamicMatrix[3]);
+    var matrix = /^m(\d+),(\d+)$/.exec(token);
+    return matrix ? L.matCell(matrix[1], matrix[2]) : '';
+  }
+
+  function dynamicSpecFromElement(matrix) {
+    return {
+      name: matrix.dataset.matrixName,
+      rows: {
+        auto: matrix.dataset.autoRows === 'true',
+        initial: Number(matrix.dataset.lastRows),
+        min: Number(matrix.dataset.minRows),
+        max: Number(matrix.dataset.maxRows),
+      },
+      cols: {
+        auto: matrix.dataset.autoCols === 'true',
+        initial: Number(matrix.dataset.lastCols),
+        min: Number(matrix.dataset.minCols),
+        max: Number(matrix.dataset.maxCols),
+      },
+    };
+  }
+
+  function renderDynamicMatrixElement(matrix, exerciseId, vars, rows, cols) {
+    var oldValues = {};
+    matrix.querySelectorAll('input[data-matrix-row][data-matrix-column]').forEach(function (input) {
+      oldValues[input.dataset.matrixRow + ',' + input.dataset.matrixColumn] = input.value;
+    });
+    var spec = dynamicSpecFromElement(matrix);
+    if (rows === 0 || cols === 0) { rows = 0; cols = 0; }
+    else {
+      matrix.dataset.lastRows = String(rows);
+      matrix.dataset.lastCols = String(cols);
+    }
+    var cells = [];
+    for (var row = 1; row <= rows; row++) {
+      for (var column = 1; column <= cols; column++) {
+        var cell = dynamicMatrixCellHtml(exerciseId, spec, row, column, vars);
+        cells.push(cell.html);
+      }
+    }
+    matrix.dataset.rows = String(rows);
+    matrix.dataset.cols = String(cols);
+    matrix.style.setProperty('--cols', String(Math.max(cols, 1)));
+    matrix.innerHTML = cells.length
+      ? cells.join('')
+      : '<span class="math-dynamic-matrix-empty" aria-live="polite">' + escHtml(L.emptyMatrix) + '</span>';
+    matrix.querySelectorAll('input[data-matrix-row][data-matrix-column]').forEach(function (input) {
+      var key = input.dataset.matrixRow + ',' + input.dataset.matrixColumn;
+      if (Object.prototype.hasOwnProperty.call(oldValues, key)) input.value = oldValues[key];
+    });
+  }
+
+  function collectDynamicMatrixInputs(root) {
+    var inputs = {};
+    root.querySelectorAll('.math-dynamic-mat').forEach(function (matrix) {
+      var name = matrix.dataset.matrixName;
+      var rows = Number(matrix.dataset.rows), cols = Number(matrix.dataset.cols);
+      var raw = [];
+      for (var row = 1; row <= rows; row++) {
+        for (var column = 1; column <= cols; column++) {
+          var selector = 'input[data-matrix-row="' + row + '"][data-matrix-column="' + column + '"]';
+          var input = matrix.querySelector(selector);
+          raw.push(input ? input.value.trim() : '');
+        }
+      }
+      inputs[name] = { type: 'matrix', rows: rows, cols: cols, raw: raw };
+    });
+    return inputs;
+  }
+
+  function resizedDynamicMatrixShape(matrix, spec, action) {
+    var rows = Number(matrix.dataset.rows), cols = Number(matrix.dataset.cols);
+    var empty = rows === 0 || cols === 0;
+    if (empty && action === 'add-row') {
+      rows = Math.max(1, spec.rows.min);
+      cols = spec.cols.auto ? Math.max(1, Number(matrix.dataset.lastCols) || spec.cols.initial) : spec.cols.initial;
+    } else if (empty && action === 'add-col') {
+      cols = Math.max(1, spec.cols.min);
+      rows = spec.rows.auto ? Math.max(1, Number(matrix.dataset.lastRows) || spec.rows.initial) : spec.rows.initial;
+    } else if (action === 'add-row' && rows < spec.rows.max) rows++;
+    if (action === 'remove-row' && rows > spec.rows.min) rows--;
+    if (!empty && action === 'add-col' && cols < spec.cols.max) cols++;
+    if (action === 'remove-col' && cols > spec.cols.min) cols--;
+    return { rows: rows, cols: cols };
+  }
+
+  function initializeDynamicMatrices(root, exerciseId, vars, onChange) {
+    var names = {};
+    root.querySelectorAll('.math-dynamic-matrix-wrap').forEach(function (wrap) {
+      var matrix = wrap.querySelector('.math-dynamic-mat');
+      if (!matrix) return;
+      var spec = dynamicSpecFromElement(matrix);
+      if (names[spec.name]) throw new Error('math-exercise: duplicate dynamic matrix name ' + spec.name);
+      names[spec.name] = true;
+      var controls = wrap.querySelector('.math-dynamic-matrix-controls');
+      if (!controls) return;
+
+      var labels = {
+        'add-row': L.matrixAddRow,
+        'remove-row': L.matrixRemoveRow,
+        'add-col': L.matrixAddColumn,
+        'remove-col': L.matrixRemoveColumn,
+      };
+      function syncControls() {
+        var rows = Number(matrix.dataset.rows), cols = Number(matrix.dataset.cols);
+        controls.querySelectorAll('.math-dynamic-axis').forEach(function (axisControl) {
+          var isRow = axisControl.dataset.dynamicAxis === 'row';
+          var axis = isRow ? spec.rows : spec.cols;
+          axisControl.style.display = axis.auto ? '' : 'none';
+          axisControl.querySelector('.math-dynamic-axis-label').textContent = isRow ? L.matrixRows : L.matrixColumns;
+          axisControl.querySelector('output').textContent = String(isRow ? rows : cols);
+        });
+        controls.querySelectorAll('button[data-dynamic-action]').forEach(function (button) {
+          var action = button.dataset.dynamicAction;
+          var rowAction = action.indexOf('row') !== -1;
+          var axis = rowAction ? spec.rows : spec.cols;
+          button.setAttribute('aria-label', labels[action] + ' ' + spec.name);
+          var value = rowAction ? rows : cols;
+          button.disabled = action.indexOf('add') === 0 ? value >= axis.max : value <= axis.min;
+        });
+      }
+      function resize(action) {
+        var shape = resizedDynamicMatrixShape(matrix, spec, action);
+        renderDynamicMatrixElement(matrix, exerciseId, vars, shape.rows, shape.cols);
+        syncControls();
+        if (onChange) onChange();
+      }
+      controls.querySelectorAll('button[data-dynamic-action]').forEach(function (button) {
+        button.addEventListener('click', function () { resize(button.dataset.dynamicAction); });
+      });
+      if (Number(matrix.dataset.rows) === 0 || Number(matrix.dataset.cols) === 0) {
+        renderDynamicMatrixElement(matrix, exerciseId, vars, Number(matrix.dataset.rows), Number(matrix.dataset.cols));
+      }
+      syncControls();
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -8436,22 +9182,24 @@ qpyodideReady
     });
   }
 
-  async function collectCustomResponse(fieldIds, opts, includeAI) {
+  async function collectCustomResponse(fieldIds, opts, includeAI, structuredInputs) {
     if (opts.responseSource) return requestExternalResponse(opts.responseSource, includeAI);
     var values = fieldIds.map(function (id) {
       var el = document.getElementById(id);
       return el ? el.value.trim() : '';
     });
-    if (!values.length || values.some(function (value) { return value === ''; })) {
-      return { empty: true, response: { kind: 'expressions', raw: values }, ai: null };
+    var hasStructuredInput = structuredInputs && Object.keys(structuredInputs).length > 0;
+    var response = { kind: 'expressions', raw: values, inputs: structuredInputs || {} };
+    if ((!values.length && !hasStructuredInput) || values.some(function (value) { return value === ''; })) {
+      return { empty: true, response: response, ai: null };
     }
-    return { response: { kind: 'expressions', raw: values }, ai: null };
+    return { response: response, ai: null };
   }
 
   // Shared by runCheck and doFeedback so the empty/score-0 fallback and the
   // collect-then-check sequence for mode: custom exist in exactly one place.
-  async function collectAndCheckCustom(fieldIds, opts, includeAI) {
-    var transport = await collectCustomResponse(fieldIds, opts, includeAI);
+  async function collectAndCheckCustom(fieldIds, opts, includeAI, structuredInputs) {
+    var transport = await collectCustomResponse(fieldIds, opts, includeAI, structuredInputs);
     var result = transport.empty
       ? { status: 'empty', score: 0 }
       : await checkCustom(transport.response, opts);
@@ -8462,6 +9210,82 @@ qpyodideReady
     if (!ai || ai.summary === undefined || ai.summary === null) return '';
     var text = typeof ai.summary === 'string' ? ai.summary : JSON.stringify(ai.summary);
     return String(text || '').slice(0, 4000);
+  }
+
+  function normalizedAssessmentStatus(value) {
+    if (value === true) return 'correct';
+    if (value === false) return 'incorrect';
+    if (typeof value === 'number') return value >= 1 - 1e-9 ? 'correct' : (value <= 1e-9 ? 'incorrect' : 'partial');
+    var status = String(value || '').toLowerCase();
+    if (status === 'wrong') return 'incorrect';
+    return /^(correct|dependent|partial|incorrect|empty|invalid)$/.test(status) ? status : '';
+  }
+
+  function structuredGroupStatus(assessment, name, axis, index) {
+    var matrix = assessment && assessment[name];
+    var values = matrix && matrix[axis];
+    return Array.isArray(values) ? normalizedAssessmentStatus(values[index - 1]) : '';
+  }
+
+  function applyCustomAssessment(questionDiv, result) {
+    var assessment = result.assessment || {};
+    questionDiv.querySelectorAll('input.math-input').forEach(function (input) {
+      input.classList.remove('math-input-ok', 'math-input-dependent', 'math-input-partial', 'math-input-wrong', 'math-input-err');
+      var status = '';
+      if (input.dataset.dynamicMatrixName) {
+        status = structuredGroupStatus(
+          assessment, input.dataset.dynamicMatrixName, 'columns', Number(input.dataset.matrixColumn)
+        ) || structuredGroupStatus(
+          assessment, input.dataset.dynamicMatrixName, 'rows', Number(input.dataset.matrixRow)
+        );
+      }
+      status = status || result.status;
+      if (status === 'correct') input.classList.add('math-input-ok');
+      else if (status === 'dependent') input.classList.add('math-input-dependent');
+      else if (status === 'partial') input.classList.add('math-input-partial');
+      else if (status === 'error' || status === 'invalid') input.classList.add('math-input-err');
+      else if (status !== 'empty') input.classList.add('math-input-wrong');
+    });
+  }
+
+  function structuredAssessmentXml(structuredAssessment) {
+    return Object.keys(structuredAssessment || {}).map(function (name) {
+      var assessment = structuredAssessment[name];
+      var groups = [];
+      ['rows', 'columns'].forEach(function (axis) {
+        var values = assessment && assessment[axis];
+        if (!Array.isArray(values)) return;
+        values.forEach(function (value, index) {
+          var status = normalizedAssessmentStatus(value);
+          if (status) groups.push('<' + axis.slice(0, -1) + ' index="' + (index + 1) +
+            '" status="' + status + '"/>');
+        });
+      });
+      return groups.length ? '<matrix name="' + promptXmlEsc(name) + '">' + groups.join('') + '</matrix>' : '';
+    }).filter(Boolean).join('\n');
+  }
+
+  function expressionAnswersXml(responses, structuredInputs) {
+    var parts = responses.filter(function (field) {
+      return !(field.element && field.element.dataset.dynamicMatrixName);
+    }).map(function (field) {
+      return '<field label="' + promptXmlEsc(field.label) + '">' +
+        promptXmlEsc(field.value) + '</field>';
+    });
+    Object.keys(structuredInputs || {}).forEach(function (name) {
+      var matrix = structuredInputs[name];
+      var entries = [];
+      for (var row = 0; row < matrix.rows; row++) {
+        var values = matrix.raw.slice(row * matrix.cols, (row + 1) * matrix.cols);
+        entries.push('<row index="' + (row + 1) + '">' +
+          values.map(function (value, column) {
+            return '<entry column="' + (column + 1) + '">' + promptXmlEsc(value) + '</entry>';
+          }).join('') + '</row>');
+      }
+      parts.push('<matrix name="' + promptXmlEsc(name) + '" rows="' + matrix.rows +
+        '" columns="' + matrix.cols + '">' + entries.join('') + '</matrix>');
+    });
+    return parts.join('\n');
   }
 
   // ---------------------------------------------------------------------------
@@ -9246,8 +10070,11 @@ qpyodideReady
     var mode   = cell.dataset.mode   || 'equivalent';
     var reject = cell.dataset.reject || '';
     var label  = cell.dataset.label  || cell.id;
+    var vecdir = cell.dataset.vecdir || 'col';
     var configuredFieldLabels = [];
     try { configuredFieldLabels = JSON.parse(cell.dataset.fieldLabels || '[]'); } catch (e) {}
+    var structuralFieldLabels = [];
+    try { structuralFieldLabels = JSON.parse(cell.dataset.structuralFieldLabels || '[]'); } catch (e) {}
     var checker = '';
     try { checker = JSON.parse(cell.dataset.checker || '""'); } catch (e) {}
     var formCredit = Number(cell.dataset.formCredit || '0.5');
@@ -9288,10 +10115,12 @@ qpyodideReady
         idx = Math.floor(Math.random() * poolTasks.length);
         try { sessionStorage.setItem(poolKey, String(idx)); } catch(e) {}
       }
-      var r = renderTaskText(poolTasks[idx], cell.id, vars);
+      var r = renderTaskText(poolTasks[idx], cell.id, vars, vecdir, mode);
       var qDiv = cell.querySelector('.math-exercise-question');
       qDiv.innerHTML = r.html;
       cell.dataset.fields = JSON.stringify(r.fieldIds);
+      cell.dataset.structuralFieldLabels = JSON.stringify(r.structuralLabels);
+      structuralFieldLabels = r.structuralLabels;
       renderMathInQuestion(qDiv);
     } else {
       renderMathInQuestion(cell.querySelector('.math-exercise-question'));
@@ -9320,10 +10149,52 @@ qpyodideReady
     var legendPanel = cell.querySelector('.math-legend-panel');
     var fbDiv       = cell.querySelector('.math-feedback-area');
     var legendBuilt = false;
+    var questionDiv = cell.querySelector('.math-exercise-question');
+    var structuralLabelById = {};
+
+    function rememberCurrentLabels() {
+      fieldIds.forEach(function (id, index) {
+        structuralLabelById[id] = structuralFieldLabels[index] || '';
+      });
+    }
+
+    function refreshFields() {
+      var ids = [], labels = [];
+      questionDiv.querySelectorAll('input.math-input, textarea.math-input').forEach(function (input) {
+        ids.push(input.id);
+        labels.push(input.dataset.structuralLabel || structuralLabelById[input.id] || '');
+      });
+      fieldIds = ids;
+      structuralFieldLabels = labels;
+      rememberCurrentLabels();
+      cell.dataset.fields = JSON.stringify(fieldIds);
+      cell.dataset.structuralFieldLabels = JSON.stringify(structuralFieldLabels);
+    }
+
+    function clearAssessmentAfterResize() {
+      questionDiv.querySelectorAll('.math-input').forEach(function (input) {
+        input.classList.remove('math-input-ok', 'math-input-dependent', 'math-input-partial', 'math-input-wrong', 'math-input-err');
+      });
+      fbDiv.innerHTML = '';
+    }
+
+    function setupDynamicMatrices() {
+      initializeDynamicMatrices(questionDiv, cell.id, vars, function () {
+        refreshFields();
+        attachKeyListeners();
+        clearAssessmentAfterResize();
+      });
+      refreshFields();
+    }
+
+    rememberCurrentLabels();
+    setupDynamicMatrices();
 
     function fieldLabel(index) {
       var supplied = configuredFieldLabels[index];
       if (typeof supplied === 'string' && supplied.trim()) return supplied.trim();
+      var structural = localizeStructuralLabel(structuralFieldLabels[index]);
+      if (structural) return structural;
       return fieldIds.length === 1 ? L.feedbackFieldSingle : L.feedbackFieldNumbered(index + 1);
     }
 
@@ -9352,6 +10223,7 @@ qpyodideReady
 
     // ---- Check ----
     async function runCheck() {
+      refreshFields();
       checkBtn.disabled = true;
       if (feedbackBtn) feedbackBtn.disabled = true;
       fbDiv.innerHTML = '<div class="math-fb-checking">' + L.checking + '</div>';
@@ -9360,21 +10232,17 @@ qpyodideReady
         var parts = [];
         var fieldElements = fieldIds.map(function (id) { return document.getElementById(id); });
         if (mode === 'custom') {
-          var custom = (await collectAndCheckCustom(fieldIds, checkOpts, false)).result;
-          fieldElements.forEach(function (el) {
-            if (!el) return;
-            el.classList.remove('math-input-ok', 'math-input-partial', 'math-input-wrong', 'math-input-err');
-            if (custom.status === 'correct') el.classList.add('math-input-ok');
-            else if (custom.status === 'partial') el.classList.add('math-input-partial');
-            else if (custom.status === 'error') el.classList.add('math-input-err');
-            else if (custom.status !== 'empty') el.classList.add('math-input-wrong');
-          });
+          var custom = (await collectAndCheckCustom(
+            fieldIds, checkOpts, false, collectDynamicMatrixInputs(questionDiv)
+          )).result;
+          applyCustomAssessment(questionDiv, custom);
           var customMessage = custom.feedback ? ' ' + escHtml(custom.feedback) : '';
           var customPct = Math.round((Number(custom.score) || 0) * 100);
           if (custom.status === 'correct')
             parts.push('<div class="math-fb-ok">&#10003;&nbsp;' + L.resCorrect + customMessage + '</div>');
           else if (custom.status === 'partial')
-            parts.push('<div class="math-fb-partial">' + L.resPartial(customPct) + customMessage + '</div>');
+            parts.push('<div class="math-fb-partial">' +
+              (custom.show_score === false ? L.resPartialNoScore : L.resPartial(customPct)) + customMessage + '</div>');
           else if (custom.status === 'wrong')
             parts.push('<div class="math-fb-wrong">&#10007;&nbsp;' + L.resWrong + customMessage + '</div>');
           else if (custom.status === 'empty')
@@ -9391,7 +10259,7 @@ qpyodideReady
           if (!el) continue;
           var prefix = fieldIds.length > 1 ? escHtml(fieldLabel(i)) + ': ' : '';
           var res    = await checkField(el, mode, checkOpts);
-          el.classList.remove('math-input-ok', 'math-input-partial', 'math-input-wrong', 'math-input-err');
+          el.classList.remove('math-input-ok', 'math-input-dependent', 'math-input-partial', 'math-input-wrong', 'math-input-err');
           if (typeof res.score === 'number') { totalScore += res.score; scoredFields++; }
           if      (res.status === 'empty')    { parts.push('<div class="math-fb-empty">'  + prefix + L.resEmpty + '</div>'); }
           else if (res.status === 'correct')  { el.classList.add('math-input-ok');    parts.push('<div class="math-fb-ok">&#10003;&nbsp;'  + prefix + L.resCorrect + '</div>'); }
@@ -9417,8 +10285,10 @@ qpyodideReady
     function attachKeyListeners() {
       fieldIds.forEach(function (id) {
         var el = document.getElementById(id);
-        if (el && el.tagName === 'INPUT')
+        if (el && el.tagName === 'INPUT' && el.dataset.mathEnterListener !== 'true') {
+          el.dataset.mathEnterListener = 'true';
           el.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); runCheck(); } });
+        }
       });
     }
 
@@ -9436,11 +10306,16 @@ qpyodideReady
         }
         try { sessionStorage.setItem(poolKey, String(next)); } catch(e) {}
 
-        var r = renderTaskText(poolTasks[next], cell.id, vars);
+        var r = renderTaskText(poolTasks[next], cell.id, vars, vecdir, mode);
         var qDivR = cell.querySelector('.math-exercise-question');
         qDivR.innerHTML = r.html;
         cell.dataset.fields = JSON.stringify(r.fieldIds);
+        cell.dataset.structuralFieldLabels = JSON.stringify(r.structuralLabels);
         fieldIds = r.fieldIds;
+        structuralFieldLabels = r.structuralLabels;
+        structuralLabelById = {};
+        rememberCurrentLabels();
+        setupDynamicMatrices();
         warnExtraFieldLabels();
         renderMathInQuestion(qDivR);
 
@@ -9452,21 +10327,34 @@ qpyodideReady
     // ---- AI Feedback ----
     if (feedbackBtn) {
       feedbackBtn.addEventListener('click', function () {
+        refreshFields();
+        var structuredInputs = collectDynamicMatrixInputs(questionDiv);
         var responses = fieldIds.map(function (id, index) {
           var el = document.getElementById(id);
           return { index: index + 1, label: fieldLabel(index), value: el ? el.value.trim() : '', element: el };
         });
-        if (!checkOpts.responseSource && !responses.some(function (field) { return field.value !== ''; })) {
+        var zeroSizedMatrixSubmitted = Object.keys(structuredInputs).some(function (name) {
+          return structuredInputs[name].rows === 0 || structuredInputs[name].cols === 0;
+        });
+        if (!checkOpts.responseSource && !zeroSizedMatrixSubmitted &&
+            !responses.some(function (field) { return field.value !== ''; })) {
           fbDiv.innerHTML = '<div class="math-fb-empty">' + L.needAnswerFirst + '</div>';
           return;
         }
         var qDiv   = cell.querySelector('.math-exercise-question');
         var capEl  = cell.querySelector('.math-exercise-caption');
         var clone  = qDiv.cloneNode(true);
+        clone.querySelectorAll('.math-dynamic-matrix-wrap').forEach(function (wrap) {
+          var marker = document.createElement('span');
+          marker.textContent = '[Matrix ' + (wrap.dataset.matrixName || '') + ']';
+          wrap.parentNode.replaceChild(marker, wrap);
+        });
+        clone.querySelectorAll('.math-dynamic-matrix-controls').forEach(function (controls) { controls.remove(); });
         var clonedFields = clone.querySelectorAll('input, textarea');
-        clonedFields.forEach(function (el, index) {
+        clonedFields.forEach(function (el) {
           var s = document.createElement('span');
-          s.textContent = '[' + fieldLabel(index) + ']';
+          var originalIndex = fieldIds.indexOf(el.id);
+          s.textContent = '[' + fieldLabel(originalIndex >= 0 ? originalIndex : 0) + ']';
           el.parentNode.replaceChild(s, el);
         });
         var question = (capEl ? capEl.textContent + '\n' : '') + clone.textContent.replace(/\s+/g, ' ').trim();
@@ -9481,11 +10369,13 @@ qpyodideReady
           try {
             await ensureSympy();
             var overallAssessment = '';
+            var structuredAssessment = {};
             var externalAI = null;
             if (mode === 'custom') {
-              var customOutcome = await collectAndCheckCustom(fieldIds, checkOpts, true);
+              var customOutcome = await collectAndCheckCustom(fieldIds, checkOpts, true, structuredInputs);
               externalAI = customOutcome.transport.ai;
               var customResult = customOutcome.result;
+              structuredAssessment = customResult.assessment || {};
               responses.forEach(function (field) {
                 field.status = field.value === '' ? 'empty' : 'submitted';
               });
@@ -9518,15 +10408,17 @@ qpyodideReady
             var summary = externalAISummary(externalAI);
             var answers = checkOpts.responseSource
               ? '<jsxgraph_response>' + promptXmlEsc(summary || 'Interactive graphical response submitted.') + '</jsxgraph_response>'
-              : responses.map(function (field) {
-                  return '<field label="' + promptXmlEsc(field.label) + '">' +
-                    promptXmlEsc(field.value) + '</field>';
-                }).join('\n');
-            var assessment = responses.map(function (field) {
+              : expressionAnswersXml(responses, structuredInputs);
+            var assessment = responses.filter(function (field) {
+              return !(field.element && field.element.dataset.dynamicMatrixName);
+            }).map(function (field) {
               var scoreAttr = typeof field.score === 'number' ? ' score="' + promptXmlEsc(field.score) + '"' : '';
               return '<field label="' + promptXmlEsc(field.label) + '"' + scoreAttr + '>' +
                 field.status + '</field>';
-            }).join('\n') + (overallAssessment ? '\n' + overallAssessment : '');
+            }).join('\n');
+            var matrixAssessment = structuredAssessmentXml(structuredAssessment);
+            if (matrixAssessment) assessment += (assessment ? '\n' : '') + matrixAssessment;
+            if (overallAssessment) assessment += (assessment ? '\n' : '') + overallAssessment;
             var reply = await callLLM(question, answers, assessment, contexts, n, cfg, externalAI);
             incCnt(label);
             fbDiv.innerHTML =
@@ -9584,6 +10476,16 @@ qpyodideReady
       displayErrorMessage: displayErrorMessage,
       modelPolicy: modelPolicy,
       loadCapability: loadCapability,
+      splitTop: splitTop,
+      parseDynamicMatrixSpec: parseDynamicMatrixSpec,
+      dynamicSpecFromElement: dynamicSpecFromElement,
+      resizedDynamicMatrixShape: resizedDynamicMatrixShape,
+      renderTaskText: renderTaskText,
+      normalizeTaskMathDelimiters: normalizeTaskMathDelimiters,
+      localizeStructuralLabel: localizeStructuralLabel,
+      expressionAnswersXml: expressionAnswersXml,
+      structuredAssessmentXml: structuredAssessmentXml,
+      structuredGroupStatus: structuredGroupStatus,
     };
   }
 

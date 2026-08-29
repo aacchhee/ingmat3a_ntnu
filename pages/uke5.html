@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Uke 7 – hvilke retninger i en matrise er viktige? – Matematikk 3A</title>
+<title>Uke 5 – hva overlever gjentatt matrisemultiplikasjon? – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -116,7 +116,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke7.html">Uke 7 – singulærverdidekomposisjon</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke5.html">Uke 5 – egenverdier og gjentatt matrisemultiplikasjon</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -199,7 +199,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/uke5.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke5.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Uke 5 – egenverdier og gjentatt matrisemultiplikasjon</span></a>
   </div>
 </li>
@@ -211,7 +211,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/uke7.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/uke7.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 7 – singulærverdidekomposisjon</span></a>
   </div>
 </li>
@@ -308,9 +308,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke7.html">Uke 7 – singulærverdidekomposisjon</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke5.html">Uke 5 – egenverdier og gjentatt matrisemultiplikasjon</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Uke 7 – hvilke retninger i en matrise er viktige?</h1>
+<h1 class="title">Uke 5 – hva overlever gjentatt matrisemultiplikasjon?</h1>
 </div>
 
 
@@ -333,45 +333,42 @@ window.Quarto = {
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <section id="først-et-eksperiment" class="level3">
 <h3 class="anchored" data-anchor-id="først-et-eksperiment">Først et eksperiment</h3>
-<p>Vi leser et gråtonebilde som en matrise, beregner SVD og rekonstruerer bildet med én, fem, ti og flere singulære komponenter. God kompresjon er ikke garantert: den lykkes når singulærverdiene avtar raskt. Studentene ser derfor både rekonstruksjonene og kurven av singulærverdier før de foreslår en trunkeringsrang.</p>
-<p>For <span class="math inline">\(A=U\Sigma V^T\)</span> er de høyre singulærvektorene inputretninger. En retning <span class="math inline">\(v_i\)</span> avbildes til <span class="math inline">\(\sigma_i u_i\)</span>; retninger med <span class="math inline">\(\sigma_i=0\)</span> utgjør nullrommet. De venstre singulærvektorene med <span class="math inline">\(\sigma_i&gt;0\)</span> spenner kolonnerommet. Den trunkerte SVD-en med rang <span class="math inline">\(k\)</span> er, etter Eckart–Young–Mirsky-teoremet, en beste rang-<span class="math inline">\(k\)</span>-approksimasjon i både 2-normen og Frobenius-normen. Dermed samler SVD rom, ortogonalitet, rang, minste kvadrater og følsomhet i én faktorisering.</p>
+<p>Vi begynner med en diagonaliserbar matrise som har en enkel dominant egenverdi <span class="math inline">\(\lambda_1\)</span>, det vil si <span class="math inline">\(|\lambda_1|&gt;|\lambda_2|\ge\cdots\)</span>. For en startvektor med en ikke-null komponent i egenretningen til <span class="math inline">\(\lambda_1\)</span> vil de normaliserte iteratene i potensmetoden nærme seg denne egenretningen. Fortegnet kan alternere dersom <span class="math inline">\(\lambda_1&lt;0\)</span>, så det er retningen—ikke nødvendigvis selve vektoren—som stabiliserer seg.</p>
+<p>Studentene plotter komponenter, vinkelen mellom retningene, Rayleigh-kvotienten og egenresidualen <span class="math inline">\(\lVert Ax_k-\rho_kx_k\rVert_2\)</span>. Vi endrer deretter spektralgapet, velger en startvektor uten komponent i den dominante egenretningen og prøver to egenverdier med samme største absoluttverdi. Slik blir forutsetningene for potensmetoden synlige i stedet for skjult i formuleringen «gjentatt multiplikasjon stabiliserer seg».</p>
 </section>
 <section id="begreper-vi-trenger" class="level3">
 <h3 class="anchored" data-anchor-id="begreper-vi-trenger">Begreper vi trenger</h3>
 <ul>
-<li>venstre og høyre singulærvektorer</li>
-<li>singulærverdier</li>
-<li>numerisk rang og nullrom</li>
-<li>kondisjonstall</li>
-<li>pseudoinvers og minimumsnormløsning</li>
-<li>lavrangsapproksimasjon</li>
+<li>egenverdier og egenvektorer</li>
+<li>invariante retninger og underrom</li>
+<li>dominant egenverdi</li>
+<li>spektralgap og konvergensfart</li>
+<li>symmetriske matriser og ortogonale egenvektorer</li>
 </ul>
 </section>
 <section id="algoritmer-og-numeriske-undersøkelser" class="level3">
 <h3 class="anchored" data-anchor-id="algoritmer-og-numeriske-undersøkelser">Algoritmer og numeriske undersøkelser</h3>
 <ul>
-<li><code>numpy.linalg.svd</code></li>
-<li>trunkert SVD og kompresjon</li>
-<li>minste kvadrater og pseudoinvers</li>
-<li>følsomhet nær rangtap</li>
-<li>enkel regularisering ved filtrering av små singulærverdier</li>
+<li>potensmetoden</li>
+<li>Rayleigh-kvotient og egenverdiresidual</li>
+<li>konvergensplott og stoppkriterier</li>
+<li>PageRank som egenvektorproblem</li>
 </ul>
 </section>
 <section id="etter-denne-uken" class="level3">
 <h3 class="anchored" data-anchor-id="etter-denne-uken">Etter denne uken</h3>
-<p>Studentene skal kunne bruke SVD til å beskrive nullrom og kolonnerom, skille eksakt fra numerisk rang og forklare hvorfor små ikke-null singulærverdier gjør inversjon og minste-kvadraters problemer følsomme. For full kolonnerang er <span class="math inline">\(\kappa_2(A)=\sigma_{\max}/\sigma_{\min}\)</span>; for en rangdefekt matrise er det vanlige 2-norm-kondisjonstallet uendelig.</p>
+<p>Studentene skal kunne tolke egenvektorer som invariante retninger, implementere potensmetoden og angi sentrale konvergensbetingelser. En liten egenresidual viser at paret er en god approksimativ egenløsning, men identifiserer ikke alene hvilken egenverdi som er funnet eller hvor nær egenvektoren er når problemet er følsomt.</p>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <ol type="1">
-<li><strong>Komprimer et bilde:</strong> Beregn SVD og vis rekonstruksjoner med forskjellig rang sammen med lagringsbehovet.</li>
-<li><strong>Les spekteret:</strong> Plott singulærverdiene både lineært og logaritmisk, og velg en trunkering ut fra dataene.</li>
-<li><strong>Tolk faktorene:</strong> Følg en vektor gjennom <span class="math inline">\(V^T\)</span>, <span class="math inline">\(\Sigma\)</span> og <span class="math inline">\(U\)</span> og beskriv rotasjon, skalering og ny orientering.</li>
-<li><strong>Finn rommene igjen:</strong> Bruk singulærvektorene til å konstruere basiser for kolonnerom og nullrom og kontroller dem numerisk.</li>
-<li><strong>Nær rangtap:</strong> Perturber en matrise med en liten singulærverdi og mål hvordan løsningen av <span class="math inline">\(Ax=b\)</span> endres.</li>
-<li><strong>Pseudoinvers og filtrering:</strong> Sammenlign <code>lstsq</code>, <code>pinv</code> og trunkert SVD på et følsomt minste-kvadraters problem. Gjør toleransen eksplisitt: pseudoinversen behandler singulærverdier under en valgt grense som null, mens trunkering innfører en regulariserende modellbeslutning.</li>
-<li><strong>Syntese:</strong> Knytt SVD eksplisitt til rang, ortogonal projeksjon, minste kvadrater, kondisjonering og regularisering.</li>
-<li><strong>Kort leveranse:</strong> En kompresjons- eller denoisingrapport med valgt rang, feilmål og faglig begrunnelse.</li>
+<li><strong>En retning vokser fram:</strong> Kjør normalisert gjentatt matrisemultiplikasjon fra flere tilfeldige startvektorer.</li>
+<li><strong>Mål stabiliseringen:</strong> Plott vinkelendring, Rayleigh-kvotient og residualen <span class="math inline">\(\lVert Ax_k-\lambda_kx_k\rVert\)</span>.</li>
+<li><strong>Forklar mønsteret:</strong> Introduser egenverdier, egenvektorer, invariante retninger og dominant egenverdi.</li>
+<li><strong>Hva bestemmer farten?</strong> Sammenlign matriser med stort og lite spektralgap og knytt observasjonen til konvergensplottet.</li>
+<li><strong>Når virker det ikke?</strong> Undersøk uheldig startvektor, negativ dominant egenverdi og to dominante egenverdier med samme absoluttverdi.</li>
+<li><strong>PageRank-laboratorium:</strong> Bygg en kolonnestokastisk overgangsmatrise fra en liten graf. Behandle hengende noder eksplisitt. Med en positiv teleporteringsvektor og dempingsfaktor <span class="math inline">\(0&lt;\alpha&lt;1\)</span> blir Google-matrisen positiv og har en entydig positiv stasjonær sannsynlighetsvektor.</li>
+<li><strong>Kort leveranse:</strong> En implementasjon av potensmetoden med stoppkriterium og en diagnose av ett problemtilfelle.</li>
 </ol>
 </div>
 </div>
@@ -453,7 +450,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
