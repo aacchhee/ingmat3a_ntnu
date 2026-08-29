@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.10.18">
@@ -60,17 +60,17 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "Ingen resultater",
+    "search-matching-documents-text": "Samsvarende dokumenter",
+    "search-copy-link-title": "Kopier link for å søke",
+    "search-hide-matches-text": "Skjul ytterlige resultater",
+    "search-more-match-text": "annet resultat i dette dokumentet",
+    "search-more-matches-text": "andre resultater i dette dokumentet",
+    "search-clear-button-title": "Tøm",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Avbryt",
+    "search-submit-button-title": "Send inn",
+    "search-label": "Søk"
   }
 }</script>
 <script src="../coi-serviceworker.js"></script>
@@ -969,7 +969,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 //
 // Set by the Lua filter from `pyodide: lang:` or Quartos own `lang:`.
 // qpyodide-locales.js picks the matching translation table from this value.
-globalThis.qpyodideLang = "en";
+globalThis.qpyodideLang = "nb";
 
 // Store cell data
 globalThis.qpyodideCellDetails = [{"code":"def ordinary_sum(values):\n    # Start med summen 0.\n    total = 0.0\n\n    # Legg til ett tall om gangen, fra venstre mot høyre.\n    for value in values:\n        total = total + value\n\n    return total","id":1,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n# Bytt ut tallene med ditt eget første angrep.\nvalues = [1.0, 2.0, 3.0]\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def make_attack(n, scale):\n    # n bestemmer hvor stort eksperimentet skal være.\n    # scale kan brukes til å styre størrelsesforskjellen mellom tallene.\n    #\n    # TODO: lag og returner din egen liste.\n\n    values = []\n\n    return values","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor n in [10, 100, 1000]:\n    values = make_attack(n, 1e16)\n\n    ordinary = ordinary_sum(values)\n    reference = math.fsum(values)\n    error = abs(ordinary - reference)\n\n    print(\n        f\"n={n:5d}   \"\n        f\"ordinary={ordinary:.12g}   \"\n        f\"reference={reference:.12g}   \"\n        f\"error={error:.3e}\"\n    )","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef target_attack():\n    # TODO: konstruer tallene dine her.\n    values = [1.0]\n    return values\n\n\nvalues = target_attack()\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"antall tall  =\", len(values))\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"feil         =\", abs(ordinary - reference))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef bounded_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = bounded_attack()\n\n# Kontroller regelen.\nprint(\"største |x| =\", max(abs(x) for x in values) if values else 0.0)\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\n\ndef positive_attack():\n    # TODO\n    values = []\n    return values\n\n\nvalues = positive_attack()\n\nprint(\"alle positive =\", all(x > 0 for x in values))\n\nordinary = ordinary_sum(values)\nreference = math.fsum(values)\n\nprint(\"ordinary_sum =\", ordinary)\nprint(\"referanse    =\", reference)\nprint(\"absolutt feil=\", abs(ordinary - reference))","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def defense_order(values):\n    # Lag en kopi slik at originaldataene ikke endres.\n    reordered = list(values)\n\n    # TODO: bestem en bedre rekkefølge.\n\n    return reordered","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nvalues = target_attack()\nreference = math.fsum(values)\n\nbefore = ordinary_sum(values)\ndefended_values = defense_order(values)\nafter = ordinary_sum(defended_values)\n\nprint(\"referanse       =\", reference)\nprint(\"før forsvar     =\", before)\nprint(\"feil før        =\", abs(before - reference))\nprint()\nprint(\"etter forsvar   =\", after)\nprint(\"feil etter      =\", abs(after - reference))","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nattacks = {\n    \"target\": target_attack(),\n    \"bounded\": bounded_attack(),\n    \"positive\": positive_attack(),\n}\n\nprint(\n    f\"{'datasett':12s} \"\n    f\"{'naiv feil':>14s} \"\n    f\"{'forsvart feil':>16s}\"\n)\nprint(\"-\" * 46)\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n\n    naive = ordinary_sum(values)\n    defended = ordinary_sum(defense_order(values))\n\n    naive_error = abs(naive - reference)\n    defended_error = abs(defended - reference)\n\n    print(\n        f\"{name:12s} \"\n        f\"{naive_error:14.6e} \"\n        f\"{defended_error:16.6e}\"\n    )","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def better_sum(values):\n    # TODO: design din egen summeringsalgoritme.\n    # Ikke bruk sum(), numpy.sum() eller math.fsum().\n\n    total = 0.0\n    for value in values:\n        total += value\n\n    return total","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import math\n\nfor name, values in attacks.items():\n    reference = math.fsum(values)\n    result = better_sum(values)\n\n    print(\n        f\"{name:12s}   \"\n        f\"resultat={result:.12g}   \"\n        f\"feil={abs(result-reference):.3e}\"\n    )","id":12,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
@@ -4186,13 +4186,13 @@ window.Quarto = {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week1.html">Uke 1 – Floating-point attack</a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -4209,7 +4209,7 @@ window.Quarto = {
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
+        <div id="quarto-search" class="" title="Søk"></div>
         </div>
         </div>
     <div class="sidebar-menu-container"> 
@@ -4236,7 +4236,7 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Projects</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Slå på delen">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -4259,7 +4259,7 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Eksamensoppgaver</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Slå på delen">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -4290,7 +4290,7 @@ window.Quarto = {
     }
   });
 </script>
-<script>window.__mathExerciseConfig = {"lang":"en"};</script>
+<script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week1.html">Uke 1 – Floating-point attack</a></li></ol></nav>
 <div class="quarto-title">
@@ -4327,7 +4327,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Hvordan jobbe med siden
+<span class="screen-reader-only">Tips</span>Hvordan jobbe med siden
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -4348,7 +4348,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Spilleregler
+<span class="screen-reader-only">Viktig</span>Spilleregler
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -4367,7 +4367,7 @@ window.Quarto = {
 <p>Tenk deg at du skal summere en liste med tall. Den mest naturlige måten er å starte på null og legge til ett tall om gangen.</p>
 <p>Det er akkurat dette funksjonen under gjør:</p>
 <div id="qpyodide-insertion-location-1"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>I eksakt matematikk er dette helt uproblematisk. Men på en datamaskin blir hvert mellomresultat lagret som et nytt flyttall. Hvis to tall har svært forskjellig størrelse, kan et lite bidrag bli for lite til å påvirke det store tallet.</p>
 <p><strong>Det er denne svakheten du skal prøve å utnytte.</strong></p>
 <section id="oppgave-1-lag-ditt-første-angrep" class="level3">
@@ -4375,7 +4375,7 @@ window.Quarto = {
 <p>Lag en liste <code>values</code> slik at <code>ordinary_sum(values)</code> gir et tydelig dårligere resultat enn <code>math.fsum(values)</code>.</p>
 <p>Du trenger ikke mange tall. Tre eller fire kan være nok til et første forsøk.</p>
 <div id="qpyodide-insertion-location-2"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Hvis begge svarene er like, har du ikke ødelagt algoritmen ennå. Bra — endre tallene og prøv igjen.</p>
 <p><strong>Hint hvis du sitter fast:</strong> Hva skjer hvis ett tall er enormt stort og et annet er veldig lite? Hva skjer hvis et stort tall senere trekkes fra igjen?</p>
 <p>Når du har et eksempel som virker, stopp et øyeblikk og følg summen <strong>regnetrinn for regnetrinn</strong>.</p>
@@ -4390,18 +4390,18 @@ window.Quarto = {
 <p>Hvorfor? Fordi det er lettere å forstå en mekanisme når vi kan skru på den. Hvis feilen blir større når <code>n</code> øker, forteller det oss noe. Hvis feilen plutselig forsvinner når <code>scale</code> endres, forteller det oss også noe.</p>
 <p>Du skal lage en liten «angrepsgenerator»:</p>
 <div id="qpyodide-insertion-location-3"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Her bestemmer du selv hva <code>n</code> og <code>scale</code> skal bety i angrepet ditt. For eksempel kan <code>n</code> styre hvor mange små tall du bruker, mens <code>scale</code> styrer hvor stort det største tallet er.</p>
 <p>Test så generatoren flere ganger:</p>
 <div id="qpyodide-insertion-location-4"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Lek med knappene du har laget
+<span class="screen-reader-only">Tips</span>Lek med knappene du har laget
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -4430,7 +4430,7 @@ window.Quarto = {
 <p>Det riktige svaret er 1. Hvor dårlig kan du få <code>ordinary_sum</code> til å oppføre seg?</p>
 </blockquote>
 <div id="qpyodide-insertion-location-5"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Referansen må ligge nær <span class="math inline">\(1\)</span>:</p>
 <p><span class="math display">\[
 |S_{\mathrm{ref}}-1|&lt;10^{-10}.
@@ -4443,7 +4443,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Når du har fått det til
+<span class="screen-reader-only">Tips</span>Når du har fått det til
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -4472,7 +4472,7 @@ window.Quarto = {
 \]</span></p>
 <p>Nå kan du ikke bare bruke et astronomisk stort tall for å sluke alle små bidrag.</p>
 <div id="qpyodide-insertion-location-6"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Hvis feilen blir mindre enn før, er det forventet. Spørsmålet er om du fortsatt klarer å lage en <strong>målbar og forklarbar</strong> feil.</p>
 </section>
 <section id="oppgave-4b-bare-positive-tall" class="level3">
@@ -4484,7 +4484,7 @@ x_i&gt;0
 \]</span></p>
 <p>for alle tallene.</p>
 <div id="qpyodide-insertion-location-7"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Her kan ikke et stort positivt og et stort negativt tall oppheve hverandre. Hvis informasjon fortsatt går tapt, må det skje på en annen måte.</p>
 <p><strong>Tenk:</strong> Er mekanismen i 4B egentlig den samme som i ditt første angrep, eller har du funnet en ny type svakhet?</p>
 <hr>
@@ -4504,10 +4504,10 @@ x_i&gt;0
 </blockquote>
 <p>Vi beholder de samme tallene og den samme matematiske summen. Det eneste du får lov til å endre først, er <strong>rekkefølgen</strong>.</p>
 <div id="qpyodide-insertion-location-8"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Test forsvaret mot et av dine egne angrep:</p>
 <div id="qpyodide-insertion-location-9"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Prøv minst <strong>tre ideer</strong> før du bestemmer deg.</p>
 <p>For eksempel kan du undersøke:</p>
 <ul>
@@ -4544,7 +4544,7 @@ x_i&gt;0
 <li>angrepet med bare positive tall.</li>
 </ol>
 <div id="qpyodide-insertion-location-10"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Se på tabellen som et lite eksperimentresultat.</p>
 <ul>
 <li>Ble alle datasettene bedre?</li>
@@ -4557,7 +4557,7 @@ x_i&gt;0
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Hvis forsvaret taper
+<span class="screen-reader-only">Advarsel</span>Hvis forsvaret taper
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -4579,10 +4579,10 @@ x_i&gt;0
 <p>kan vi for eksempel kombinere tall i mindre grupper og deretter kombinere gruppene.</p>
 <p>Du trenger ikke løse denne delen for å fullføre prosjektet. Men hvis du har tid, er dette et naturlig neste steg.</p>
 <div id="qpyodide-insertion-location-11"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Test den mot datasettene fra turneringen:</p>
 <div id="qpyodide-insertion-location-12"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Hvis du lager en algoritme som gjør det bedre enn <code>ordinary_sum</code> på flere av angrepene dine, har du i praksis gjort det numerisk analyse handler mye om: du har gått fra en matematisk oppgave til å tenke på <strong>hvordan den bør beregnes</strong>.</p>
 <hr>
 </section>
@@ -4606,7 +4606,7 @@ x_i&gt;0
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Hovedideen
+<span class="screen-reader-only">Viktig</span>Hovedideen
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -4647,12 +4647,12 @@ x_i&gt;0
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Kopiert!");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Kopiert!");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
