@@ -1,0 +1,5 @@
+---
+title: "Uke 12 – optimering med bibetingelser og minste kvadrater"
+---
+
+{{< include ../_includes/optimization/uke12.md >}}

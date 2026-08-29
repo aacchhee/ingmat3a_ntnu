@@ -1,0 +1,5 @@
+---
+title: "Uke 5 – hva overlever gjentatt matrisemultiplikasjon?"
+---
+
+{{< include ../_includes/linalg/uke5.md >}}

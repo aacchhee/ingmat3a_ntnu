@@ -1,0 +1,5 @@
+---
+title: "Uke 4 – det beste svaret når et eksakt svar ikke finnes"
+---
+
+{{< include ../_includes/linalg/uke4.md >}}

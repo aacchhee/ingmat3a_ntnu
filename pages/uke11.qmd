@@ -1,0 +1,5 @@
+---
+title: "Uke 11 – lineær programmering"
+---
+
+{{< include ../_includes/optimization/uke11.md >}}

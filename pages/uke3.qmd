@@ -1,0 +1,5 @@
+---
+title: "Uke 3 – hva slags informasjon mister en matrise?"
+---
+
+{{< include ../_includes/linalg/uke3.md >}}
