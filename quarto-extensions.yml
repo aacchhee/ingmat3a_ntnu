@@ -1,6 +1,7 @@
 plugins:
   - name: pyodide-interaktiv
     repo: https://github.com/Erasmus-CTM/pyodide-interaktiv.git
+    ref: issue-1-webagg
     path: _extensions/pyodide-interaktiv
 
   - name: math-exercise
