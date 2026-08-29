@@ -31,10 +31,6 @@ website:
         contents:
           - text: "Uke 3 – vektorrom, kolonnerom og nullrom"
             file: pages/uke3.qmd
-          - text: "3.9 Oppgaver"
-            file: pages/uke3-oppgaver.qmd
-          - text: "3.10 Andre byggesteiner"
-            file: pages/uke3-andre-byggesteiner.qmd
           - text: "Uke 4 – ortogonalitet, projeksjon og minste kvadrater"
             file: pages/uke4.qmd
           - text: "Uke 5 – egenverdier og gjentatt matrisemultiplikasjon"

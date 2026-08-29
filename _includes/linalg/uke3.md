@@ -1907,4 +1907,754 @@ for eps in [1e-4,1e-8,1e-12,1e-16]:
 
 Dette er ikke en motsigelse. **Eksakt rang** gjelder en idealisert matrise med eksakte tall. **Numerisk rang** beskriver hvor mange uavhengige retninger vi kan skille pålitelig med den valgte presisjonen og toleransen.
 
+## 3.9 Oppgaver
+
+Her trener du på hele kjeden fra radreduksjon til basis og rang. Start med
+papiroppgavene; bruk kodeoppgaven nederst til å kontrollere regningen og
+eksperimentere videre.
+
+
+Arbeid med én matrise om gangen:
+
+$$
+B=\begin{bmatrix}
+1&0&1\\
+0&1&1\\
+1&1&2
+\end{bmatrix},
+\qquad
+C=\begin{bmatrix}
+1&2&3\\
+2&4&6
+\end{bmatrix}.
+$$
+
+### På papir
+
+Oppgavene under vurderes eksakt med SymPy. Du velger selv hvor mange
+pivotindekser og basisvektorer du vil levere. Bruk knappene under matrisen for å
+legge til eller fjerne kolonner. Antallet er en del av svaret.
+
+::: {#week3-paper-assessment-context .math-exercise-context}
+
+For en matrise med $n$ kolonner gjelder
+$n=\operatorname{rank}(M)+\operatorname{nullity}(M)$. Pivotkolonnene bestemmes
+fra en trappeform, men en basis for kolonnerommet hentes fra de tilsvarende
+kolonnene i den opprinnelige matrisen. En basis for nullrommet må bestå av
+lineært uavhengige vektorer $z$ som oppfyller $Mz=0$.
+
+I basisoppgavene farges en gyldig og uavhengig familie grønn. Hvis gyldige
+vektorer er lineært avhengige, blir hele familien gul; rekkefølgen skal ikke
+avgjøre hvilken vektor som får skylden. En nullvektor eller en vektor utenfor
+det etterspurte rommet blir rød. En grønn familie kan fortsatt mangle vektorer
+før den spenner ut hele rommet.
+
+:::
+
+#### Oppgaver for $B$
+
+```{math-exercise}
+#| label: week3-paper-b-echelon
+#| caption: Trappeform og pivoter for B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: r₁₁, r₁₂, r₁₃, r₂₁, r₂₂, r₂₃, r₃₁, r₃₂, r₃₃
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       values = response["expressions"]
+#|       R = Matrix(3, 3, values)
+#|       P = response["inputs"]["PBstep"]["matrix"]
+#|       submitted_pivots = list(P)
+#|       expected_rref = Matrix([[1, 0, 1], [0, 1, 1], [0, 0, 0]])
+#|       def leading_columns(matrix):
+#|           leads = []
+#|           zero_row_seen = False
+#|           for row in range(matrix.rows):
+#|               lead = None
+#|               for col in range(matrix.cols):
+#|                   if simplify(matrix[row, col]) != 0:
+#|                       lead = col
+#|                       break
+#|               if lead is None:
+#|                   zero_row_seen = True
+#|               elif zero_row_seen or (leads and lead <= leads[-1]):
+#|                   return None
+#|               else:
+#|                   leads.append(lead)
+#|           return leads
+#|       leads = leading_columns(R)
+#|       echelon_ok = leads is not None
+#|       rowspace_ok = R.rref()[0] == expected_rref
+#|       expected_pivots = [Integer(j + 1) for j in leads] if echelon_ok else []
+#|       pivot_status = [
+#|           i < len(expected_pivots) and value == expected_pivots[i]
+#|           for i, value in enumerate(submitted_pivots)
+#|       ]
+#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
+#|       score = (int(echelon_ok) + int(rowspace_ok) + pivot_score) / 3
+#|       return {
+#|           "score": score,
+#|           "show_score": False,
+#|           "feedback": "" if score == 1 else "Kontroller trappeformen, og juster antallet pivotindekser slik at listen svarer til de ledende elementene fra venstre mot høyre.",
+#|           "assessment": {"PBstep": {"columns": pivot_status}},
+#|       }
+
+Radreduser $B$. Oppgi en gyldig trappeform $R$ og numrene til pivotkolonnene i
+stigende rekkefølge:
+
+$R=$ mat[1,0,1;0,1,1;0,0,0]
+
+Skriv pivotkolonnenes numre i stigende rekkefølge, én indeks per kolonne:
+
+$P_B=$ mat{name=PBstep, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-b-rank
+#| caption: Rang og pivotkolonner for B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Rang
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       rank_value = response["expressions"][0]
+#|       P = response["inputs"]["PBrank"]["matrix"]
+#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
+#|       expected_pivots = [Integer(j + 1) for j in B.rref()[1]]
+#|       submitted_pivots = list(P)
+#|       pivot_status = [
+#|           i < len(expected_pivots) and value == expected_pivots[i]
+#|           for i, value in enumerate(submitted_pivots)
+#|       ]
+#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
+#|       score = (int(rank_value == B.rank()) + pivot_score) / 2
+#|       return {
+#|           "score": score,
+#|           "show_score": False,
+#|           "feedback": "" if score == 1 else "Rangen er antall pivoter. Kontroller både rangverdien, antallet pivotindekser og rekkefølgen deres.",
+#|           "assessment": {"PBrank": {"columns": pivot_status}},
+#|       }
+
+Finn rangen og pivotkolonnene til $B$:
+
+$\operatorname{rank}(B)=$ _[2]
+
+Pivotkolonner, én indeks per kolonne:
+
+$P_B=$ mat{name=PBrank, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-b-column-basis
+#| caption: Basis for kolonnerommet til B
+#| mode: custom
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       Q = response["inputs"]["QB"]["matrix"]
+#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
+#|       original_columns = [B[:, j] for j in range(B.cols)]
+#|       result = assess_basis(
+#|           Q,
+#|           axis="columns",
+#|           target_dimension=B.rank(),
+#|           belongs=lambda vector: Q.rows == B.rows and any(vector == column for column in original_columns),
+#|           name="QB",
+#|           space_name="kolonnerommet til B",
+#|       )
+#|       statuses = result["assessment"]["QB"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller er ikke en kolonne fra den opprinnelige matrisen B."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule kolonnene kommer fra B, men familien er lineært avhengig. Fjern eller bytt kolonner."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne kolonnene er tillatte og uavhengige, men de danner ennå ikke en basis for hele kolonnerommet."
+#|           else:
+#|               result["feedback"] = "Legg til kolonner fra den opprinnelige matrisen B."
+#|       return result
+
+Sett pivotkolonnene fra den opprinnelige matrisen $B$ inn som kolonner i en
+basismatrise. Du må selv velge hvor mange kolonner som trengs:
+
+$Q_B=$ mat{name=QB, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-b-null-basis
+#| caption: Basis for nullrommet til B
+#| mode: custom
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       Z = response["inputs"]["ZB"]["matrix"]
+#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
+#|       result = assess_basis(
+#|           Z,
+#|           axis="columns",
+#|           target_dimension=B.cols - B.rank(),
+#|           belongs=lambda vector: Z.rows == B.cols and B * vector == zeros(B.rows, 1),
+#|           name="ZB",
+#|           space_name="nullrommet til B",
+#|       )
+#|       statuses = result["assessment"]["ZB"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller oppfyller ikke Bz=0."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."
+#|           else:
+#|               result["feedback"] = "Legg til basisvektorer for nullrommet."
+#|       return result
+
+Oppgi en basis for nullrommet til $B$, med én basisvektor per kolonne. Enhver
+basis godtas, og du må selv velge antallet kolonner:
+
+$Z_B=$ mat{name=ZB, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-b-rank-nullity
+#| caption: Rang–nullitet for B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Inputdimensjon, Rang, Nullitet
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       n, rank_value, nullity = response["expressions"]
+#|       checks = [n == 3, rank_value == 2, nullity == 1, n == rank_value + nullity]
+#|       return {"score": sum(int(value) for value in checks) / 4, "feedback": "Tell kolonnene, pivotene og de frie variablene, og kontroller deretter n = rang + nullitet."}
+
+Fyll inn rang–nullitetsregnskapet for $B$:
+
+inputdimensjon _[3] $=$ rang _[2] $+$ nullitet _[1]
+```
+
+#### Oppgaver for $C$
+
+```{math-exercise}
+#| label: week3-paper-c-echelon
+#| caption: Trappeform og pivoter for C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: r₁₁, r₁₂, r₁₃, r₂₁, r₂₂, r₂₃
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       values = response["expressions"]
+#|       R = Matrix(2, 3, values)
+#|       P = response["inputs"]["PCstep"]["matrix"]
+#|       submitted_pivots = list(P)
+#|       expected_rref = Matrix([[1, 2, 3], [0, 0, 0]])
+#|       def leading_columns(matrix):
+#|           leads = []
+#|           zero_row_seen = False
+#|           for row in range(matrix.rows):
+#|               lead = None
+#|               for col in range(matrix.cols):
+#|                   if simplify(matrix[row, col]) != 0:
+#|                       lead = col
+#|                       break
+#|               if lead is None:
+#|                   zero_row_seen = True
+#|               elif zero_row_seen or (leads and lead <= leads[-1]):
+#|                   return None
+#|               else:
+#|                   leads.append(lead)
+#|           return leads
+#|       leads = leading_columns(R)
+#|       echelon_ok = leads is not None
+#|       rowspace_ok = R.rref()[0] == expected_rref
+#|       expected_pivots = [Integer(j + 1) for j in leads] if echelon_ok else []
+#|       pivot_status = [
+#|           i < len(expected_pivots) and value == expected_pivots[i]
+#|           for i, value in enumerate(submitted_pivots)
+#|       ]
+#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
+#|       score = (int(echelon_ok) + int(rowspace_ok) + pivot_score) / 3
+#|       return {
+#|           "score": score,
+#|           "show_score": False,
+#|           "feedback": "" if score == 1 else "Kontroller trappeformen, og juster antallet pivotindekser slik at listen svarer til de ledende elementene fra venstre mot høyre.",
+#|           "assessment": {"PCstep": {"columns": pivot_status}},
+#|       }
+
+Radreduser $C$. Oppgi en gyldig trappeform $R$:
+
+$R=$ mat[1,2,3;0,0,0]
+
+Skriv pivotkolonnenes numre i stigende rekkefølge, én indeks per kolonne:
+
+$P_C=$ mat{name=PCstep, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-c-rank
+#| caption: Rang og pivotkolonner for C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Rang
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       rank_value = response["expressions"][0]
+#|       P = response["inputs"]["PCrank"]["matrix"]
+#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
+#|       expected_pivots = [Integer(j + 1) for j in C.rref()[1]]
+#|       submitted_pivots = list(P)
+#|       pivot_status = [
+#|           i < len(expected_pivots) and value == expected_pivots[i]
+#|           for i, value in enumerate(submitted_pivots)
+#|       ]
+#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
+#|       score = (int(rank_value == C.rank()) + pivot_score) / 2
+#|       return {
+#|           "score": score,
+#|           "show_score": False,
+#|           "feedback": "" if score == 1 else "Rangen er antall pivoter. Kontroller både rangverdien, antallet pivotindekser og rekkefølgen deres.",
+#|           "assessment": {"PCrank": {"columns": pivot_status}},
+#|       }
+
+Finn rangen og pivotkolonnene til $C$:
+
+$\operatorname{rank}(C)=$ _[1]
+
+Pivotkolonner, én indeks per kolonne:
+
+$P_C=$ mat{name=PCrank, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-c-column-basis
+#| caption: Basis for kolonnerommet til C
+#| mode: custom
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       Q = response["inputs"]["QC"]["matrix"]
+#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
+#|       original_columns = [C[:, j] for j in range(C.cols)]
+#|       result = assess_basis(
+#|           Q,
+#|           axis="columns",
+#|           target_dimension=C.rank(),
+#|           belongs=lambda vector: Q.rows == C.rows and any(vector == column for column in original_columns),
+#|           name="QC",
+#|           space_name="kolonnerommet til C",
+#|       )
+#|       statuses = result["assessment"]["QC"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller er ikke en kolonne fra den opprinnelige matrisen C."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule kolonnene kommer fra C, men familien er lineært avhengig. Fjern eller bytt kolonner."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne kolonnene er tillatte og uavhengige, men de danner ennå ikke en basis for hele kolonnerommet."
+#|           else:
+#|               result["feedback"] = "Legg til kolonner fra den opprinnelige matrisen C."
+#|       return result
+
+Sett pivotkolonnene fra den opprinnelige matrisen $C$ inn som kolonner i en
+basismatrise. Du må selv velge hvor mange kolonner som trengs:
+
+$Q_C=$ mat{name=QC, rows=2, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-c-null-basis
+#| caption: Basis for nullrommet til C
+#| mode: custom
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       Z = response["inputs"]["ZC"]["matrix"]
+#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
+#|       result = assess_basis(
+#|           Z,
+#|           axis="columns",
+#|           target_dimension=C.cols - C.rank(),
+#|           belongs=lambda vector: Z.rows == C.cols and C * vector == zeros(C.rows, 1),
+#|           name="ZC",
+#|           space_name="nullrommet til C",
+#|       )
+#|       statuses = result["assessment"]["ZC"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller oppfyller ikke Cz=0."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."
+#|           else:
+#|               result["feedback"] = "Legg til basisvektorer for nullrommet."
+#|       return result
+
+Oppgi en basis for nullrommet til $C$, med én basisvektor per kolonne. Enhver
+basis godtas, og du må selv velge antallet kolonner:
+
+$Z_C=$ mat{name=ZC, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-c-rank-nullity
+#| caption: Rang–nullitet for C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Inputdimensjon, Rang, Nullitet
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       n, rank_value, nullity = response["expressions"]
+#|       checks = [n == 3, rank_value == 1, nullity == 2, n == rank_value + nullity]
+#|       return {"score": sum(int(value) for value in checks) / 4, "feedback": "Tell kolonnene, pivotene og de frie variablene, og kontroller deretter n = rang + nullitet."}
+
+Fyll inn rang–nullitetsregnskapet for $C$:
+
+inputdimensjon _[3] $=$ rang _[1] $+$ nullitet _[2]
+```
+
+### Med kode
+
+1. Kontroller trappeformen og pivotkolonnene med `row_echelon`.
+2. Kontroller nullromsvektorene ved å beregne `M @ Z`.
+3. Lag to forskjellige inputer med samme output.
+4. Finn én output som kan produseres, og én som ikke kan produseres.
+
+```{pyodide-python}
+#| label: week3-pure-matrix-exercises
+
+import numpy as np
+
+def row_echelon(A,tol=1e-12):
+    """Returner trappeform og indeksene til pivotkolonnene."""
+    R=np.array(A,dtype=float,copy=True)
+    rows,cols=R.shape
+    pivot_row=0
+    pivot_columns=[]
+
+    for col in range(cols):
+        if pivot_row==rows:
+            break
+        candidate=next(
+            (row for row in range(pivot_row,rows) if abs(R[row,col])>tol),
+            None,
+        )
+        if candidate is None:
+            continue
+        if candidate!=pivot_row:
+            R[[pivot_row,candidate]]=R[[candidate,pivot_row]]
+        for row in range(pivot_row+1,rows):
+            R[row]-=(R[row,col]/R[pivot_row,col])*R[pivot_row]
+        R[np.abs(R)<=tol]=0.0
+        pivot_columns.append(col)
+        pivot_row+=1
+
+    return R,pivot_columns
+
+B=np.array([[1.,0.,1.],
+            [0.,1.,1.],
+            [1.,1.,2.]])
+C=np.array([[1.,2.,3.],
+            [2.,4.,6.]])
+
+M=B  # Bytt til C når du er ferdig med B.
+R_M,pivots_M=row_echelon(M)
+print("Trappeform:\n",R_M)
+print("Pivotkolonner:",[j+1 for j in pivots_M])
+
+# TODO: Sett inn nullromsvektorene du fant på papir som kolonner i Z_M.
+Z_M=np.zeros((M.shape[1],0))
+print("Kontroll M @ Z_M:\n",M@Z_M)
+
+# TODO: Velg x0 og en nullromsvektor z, og sammenlign M@x0 med M@(x0+z).
+
+# TODO: Lag rhs_yes og rhs_no. Sammenlign rang(M) med rang([M | rhs]).
+```
+
+## 3.10 Polynomrom, basis og koordinater
+
+Et vektorrom trenger ikke å bestå av piler eller tallkolonner. Det avgjørende
+er at objektene kan legges sammen og ganges med tall, og at disse operasjonene
+følger de vanlige regnereglene. Polynomer er et viktig eksempel.
+
+### Polynomer som vektorer
+
+Vi begynner med polynomer av grad høyst 2:
+
+$$
+\mathcal P_2=\{a+bx+cx^2:a,b,c\in\mathbb R\}.
+$$
+
+Dette er et vektorrom. Vektorene er nå polynomer, og vi regner ved å samle
+ledd med samme potens av $x$. For eksempel, hvis
+
+$$p(x)=1+2x,\qquad q(x)=3-x+x^2,$$
+
+så er
+
+$$
+p+q=4+x+x^2,
+\qquad
+2p-q=-1+5x-x^2.
+$$
+
+```{math-exercise}
+#| label: week3-polynomial-arithmetic
+#| caption: Regn med polynomer
+#| vars: x
+#| partial-credit: true
+#| field-labels: p + q, 2p − q
+
+La $p(x)=1+2x$ og $q(x)=3-x+x^2$. Regn ut og samle ledd med samme potens:
+
+$(p+q)(x)=$ __[4+x+x^2]
+
+$(2p-q)(x)=$ __[-1+5*x-x^2]
+```
+
+### Fra polynom til tallkolonne
+
+Hvert polynom i $\mathcal P_2$ kan bygges på nøyaktig én måte av de tre
+polynomene
+
+$$1,\qquad x,\qquad x^2.$$
+
+For eksempel er
+
+$$4-2x+3x^2=4\cdot1+(-2)\cdot x+3\cdot x^2.$$
+
+Tallene foran byggesteinene samles i en koordinatvektor:
+
+$$
+4-2x+3x^2
+\quad\longleftrightarrow\quad
+\begin{bmatrix}4\\-2\\3\end{bmatrix}.
+$$
+
+Den ordnede samlingen $(1,x,x^2)$ kalles en **basis** for $\mathcal P_2$.
+Fordi dette er det enkleste og vanligste valget, kalles den ofte
+**standardbasisen**. Ordet «standard» betyr ikke at dette er den eneste
+mulige basisen.
+
+Rekkefølgen bestemmer hvor tallene skal stå: konstantleddet øverst, deretter
+koeffisienten til $x$, så koeffisienten til $x^2$. Hvis en potens mangler, er
+koeffisienten null.
+
+```{math-exercise}
+#| label: week3-polynomial-coefficients
+#| caption: Les av koeffisientene
+#| partial-credit: true
+
+Skriv koordinatvektoren til $p(x)=4-2x+3x^2$ i basisen $(1,x,x^2)$:
+
+$[p]_{(1,x,x^2)}=$ vec[4,-2,3]
+```
+
+Vi kan også gå motsatt vei. Koordinatvektoren forteller hvilke tall som skal
+stå foran $1$, $x$ og $x^2$.
+
+```{math-exercise}
+#| label: week3-polynomial-from-coordinates
+#| caption: Bygg polynomet fra koordinatene
+#| vars: x
+
+Et polynom har koordinatvektoren
+$[r]_{(1,x,x^2)}=\begin{bmatrix}-1\\2\\3\end{bmatrix}$.
+Skriv polynomet:
+
+$r(x)=$ __[-1+2*x+3*x^2]
+```
+
+### Hva gjør en samling til en basis?
+
+En basis må oppfylle to krav:
+
+1. **Ingen hull:** Alle polynomene i rommet kan bygges som en
+   lineærkombinasjon av basispolynomene.
+2. **Ingen overflødige byggesteiner:** Ingen av basispolynomene kan bygges av
+   de andre. Dette kalles lineær uavhengighet.
+
+Samlingen $(1,x,x^2)$ er derfor en basis for $\mathcal P_2$. Samlingen
+$(1,x,1+x)$ er ikke en basis for $\mathcal P_2$: Den mangler en byggestein
+for $x^2$, og dessuten er $1+x$ summen av de to første polynomene.
+
+En basis behøver ikke bestå av bare enkeltpotenser. Også
+
+$$\mathcal B=(1+x,\ x,\ x^2)$$
+
+er en basis for $\mathcal P_2$. For eksempel kan samme polynom skrives
+
+$$2-x+3x^2=2(1+x)-3x+3x^2,$$
+
+så koordinatene i denne basisen er $(2,-3,3)^T$.
+
+```{math-exercise}
+#| label: week3-polynomial-simple-change-basis
+#| caption: Koordinater i en annen basis
+#| partial-credit: true
+
+La $\mathcal B=(1+x,x,x^2)$. Finn koordinatvektoren til
+$s(x)=5+2x-x^2$ i denne basisen:
+
+$[s]_{\mathcal B}=$ vec[5,-3,-1]
+```
+
+:::: {#week3-polynomial-basis-context .math-exercise-context}
+
+Et polynom i $\mathcal P_3$ skrives som
+$a_0+a_1x+a_2x^2+a_3x^3$. I en koeffisientmatrise representerer hver kolonne
+ett polynom. Radene inneholder koeffisientene til henholdsvis
+$1,x,x^2,x^3$.
+
+En basis består av polynomer som er lineært uavhengige og som spenner ut hele
+det etterspurte rommet. Basisvektorene kan stå i hvilken som helst rekkefølge.
+Røde kolonner er null eller ligger utenfor rommet. Hvis de gyldige kolonnene
+er lineært avhengige, farges hele familien gul. En grønn familie er gyldig og
+uavhengig, men kan fortsatt være for liten til å spenne ut hele rommet.
+
+::::
+
+### En basis for alle polynomer i P₃
+
+I rommet
+
+$$
+\mathcal P_3=\{a_0+a_1x+a_2x^2+a_3x^3:a_i\in\mathbb R\}
+$$
+
+kan vi bruke andre basispolynomer enn $1,x,x^2,x^3$. I svarmatrisen under er
+hver kolonne ett polynom. Du bestemmer selv hvor mange kolonner som trengs.
+
+```{math-exercise}
+#| label: week3-polynomial-p3-basis
+#| caption: En valgfri basis for P₃
+#| mode: custom
+#| context: week3-polynomial-basis-context
+#| checker: |
+#|   def check(response, symbols):
+#|       A = response["inputs"]["P3basis"]["matrix"]
+#|       result = assess_basis(
+#|           A,
+#|           axis="columns",
+#|           target_dimension=4,
+#|           belongs=lambda vector: vector.rows == 4,
+#|           name="P3basis",
+#|           space_name="P3",
+#|       )
+#|       statuses = result["assessment"]["P3basis"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null og kan ikke være en basisvektor."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule polynomene er lineært avhengige. Behold en uavhengig del og juster familien videre."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne polynomene er uavhengige, men de spenner ennå ikke ut hele P3."
+#|           else:
+#|               result["feedback"] = "Legg inn polynomer som kolonner i koeffisientmatrisen."
+#|       return result
+
+Finn en basis for $\mathcal P_3$. Oppgi ett polynom per kolonne. Radene er
+koeffisientene til henholdsvis $1,x,x^2,x^3$:
+
+$A=$ mat{name=P3basis, rows=4, cols=auto, initial-cols=2, min-cols=0, max-cols=5}
+```
+
+### En basis for et underrom
+
+Vi kan også begynne med noen polynomer og undersøke alle
+lineærkombinasjonene de kan lage. La
+
+$$
+\begin{aligned}
+p_1&=1+x, & p_2&=x+x^2,\\
+p_3&=1+x^2+x^3, & p_4&=2-x-x^2+x^3.
+\end{aligned}
+$$
+
+Mengden
+
+$$U=\operatorname{Span}(p_1,p_2,p_3,p_4)$$
+
+består av alle lineærkombinasjoner av disse fire polynomene. Dette er et
+underrom av $\mathcal P_3$. En basis for $U$ kan bestå av noen av polynomene
+over, eller av andre polynomer som spenner ut nøyaktig det samme rommet.
+
+```{math-exercise}
+#| label: week3-polynomial-subspace-basis
+#| caption: Basis for et polynomunderrom
+#| mode: custom
+#| context: week3-polynomial-basis-context
+#| checker: |
+#|   def check(response, symbols):
+#|       A = response["inputs"]["Ubasis"]["matrix"]
+#|       T = Matrix([
+#|           [1, 0, 1],
+#|           [1, 1, 0],
+#|           [0, 1, 1],
+#|           [0, 0, 1],
+#|       ])
+#|       target_rank = T.rank()
+#|       result = assess_basis(
+#|           A,
+#|           axis="columns",
+#|           target_dimension=target_rank,
+#|           belongs=lambda vector: vector.rows == 4 and T.row_join(vector).rank() == target_rank,
+#|           name="Ubasis",
+#|           space_name="U",
+#|       )
+#|       statuses = result["assessment"]["Ubasis"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller representerer et polynom utenfor U."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule polynomene ligger i U, men familien er lineært avhengig. Behold en uavhengig del og juster familien videre."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne polynomene ligger i U og er uavhengige, men de spenner ennå ikke ut hele U."
+#|           else:
+#|               result["feedback"] = "Legg inn basispolynomer som kolonner i koeffisientmatrisen."
+#|       return result
+
+Finn en basis for $U$. Oppgi ett polynom per kolonne, med koeffisientene til
+$1,x,x^2,x^3$ ovenfra og ned:
+
+$B_U=$ mat{name=Ubasis, rows=4, cols=auto, initial-cols=2, min-cols=0, max-cols=5}
+```
+
+### Koordinater i en mer sammensatt basis
+
+Når basisen skifter, skifter koordinatene, selv om polynomet er det samme. I
+$\mathcal P_2$ bruker vi nå basisen $\mathcal C=(p_1,p_2,p_3)$, der
+
+$$
+p_1=x^2-2,\qquad
+p_2=-x^2+x+2,\qquad
+p_3=3x^2+x-5.
+$$
+
+Å finne $[q]_{\mathcal C}$ betyr å finne tall $c_1,c_2,c_3$ slik at
+
+$$q=c_1p_1+c_2p_2+c_3p_3.$$
+
+Sammenligner vi koeffisientene til $1$, $x$ og $x^2$ på begge sider, får vi
+et vanlig lineært ligningssystem for $c_1,c_2,c_3$.
+
+```{math-exercise}
+#| label: week3-polynomial-coordinates
+#| caption: Koordinater i en polynombasis
+#| partial-credit: true
+
+Finn koordinatvektoren til $q(x)=4x^2+x-7$ i basisen $\mathcal C$:
+
+$[q]_{\mathcal C}=$ mat[1;0;1]
+```
+
+Polynomrom krever altså ingen ny type lineær algebra. Vi bruker de samme
+begrepene som for tallkolonner: lineærkombinasjon, spenn, lineær uavhengighet,
+basis og koordinater.
+
 :::

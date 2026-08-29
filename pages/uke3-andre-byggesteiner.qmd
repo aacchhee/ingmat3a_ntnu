@@ -1,5 +1,0 @@
----
-title: "3.10 Andre byggesteiner"
----
-
-{{< include ../_includes/linalg/uke3-andre-byggesteiner.md >}}
