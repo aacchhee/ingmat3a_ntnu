@@ -1550,14 +1550,15 @@ for exponent in [2,6,10,14,18]:
 
 På papiret er målingene uavhengige for enhver $\varepsilon\neq0$: den lille ekstravekten kan ikke lages ved bare å skalere den første raden. I maskinen kan ekstravekten bli avrundet bort, eller bli vurdert som for liten til å være pålitelig. `matrix_rank` bruker derfor en toleranse og rapporterer en **numerisk rang**. Beskriv når de to tallformatene slutter å skille målingene, og knytt resultatet til feil- og toleransebegrepene fra uke 2.
 
-### F. Kort leveranse
+### F. Forslag til arbeidsflyt
 
-Velg aktivitet C, D eller E. Lever:
+Velg aktivitet C, D eller E, og arbeid gjerne i denne rekkefølgen:
 
-1. koden som konstruerer transformasjonen eller basisen;
-2. minst én figur med input, byggesteiner eller output;
-3. en numerisk kontroll med residual eller rang;
-4. en kort forklaring av hvilke variasjoner som bevares, og hvilke som ikke kan bestemmes fra outputen.
+1. Konstruer transformasjonen eller basisen i kode.
+2. Lag minst én figur med input, byggesteiner eller output.
+3. Kontroller resultatet numerisk med en residual eller en rang.
+4. Forklar hvilke variasjoner som bevares, og hvilke som ikke kan bestemmes
+   fra outputen.
 
 ## 3.8 Fra matrise til rom, basis og rang
 
@@ -2384,7 +2385,9 @@ følger de vanlige regnereglene. Polynomer er et viktig eksempel.
 
 ### Polynomer som vektorer
 
-Vi begynner med polynomer av grad høyst 2:
+Vi begynner med polynomer av grad høyst 2. For et polynom som ikke er null,
+er **graden** den høyeste potensen av $x$ som har en koeffisient forskjellig
+fra null. Polynomet $3-x+x^2$ har for eksempel grad 2.
 
 $$
 \mathcal P_2=\{a+bx+cx^2:a,b,c\in\mathbb R\}.
@@ -2402,6 +2405,10 @@ p+q=4+x+x^2,
 \qquad
 2p-q=-1+5x-x^2.
 $$
+
+Et uttrykk som $2p-q$ kalles en **lineærkombinasjon** av $p$ og $q$: Vi
+ganger hvert polynom med et tall og legger resultatene sammen. Dette er samme
+type regning som når vi lager en lineærkombinasjon av tallkolonner.
 
 ```{math-exercise}
 #| label: week3-polynomial-arithmetic
@@ -2471,6 +2478,10 @@ $r(x)=$ __[-1+2*x+3*x^2]
 ```
 
 ### Hva gjør en samling til en basis?
+
+At noen polynomer **spenner ut** et rom, betyr uformelt at hvert polynom i
+rommet kan bygges ved å skalere og legge sammen de valgte polynomene. Med
+andre ord kan hvert polynom skrives som en lineærkombinasjon av dem.
 
 En basis må oppfylle to krav:
 
@@ -2564,10 +2575,15 @@ koeffisientene til henholdsvis $1,x,x^2,x^3$:
 $A=$ mat{name=P3basis, rows=4, cols=auto, initial-cols=2, min-cols=0, max-cols=5}
 ```
 
-### En basis for et underrom
+### Polynomer som bare bygger en del av P₃
 
 Vi kan også begynne med noen polynomer og undersøke alle
-lineærkombinasjonene de kan lage. La
+lineærkombinasjonene de kan lage. En slik samling kan være mindre enn hele
+$\mathcal P_3$, men fortsatt tåle addisjon og multiplikasjon med tall uten at
+vi forlater samlingen. Da kalles den et **underrom**. Underrommet inneholder
+også nullpolynomet.
+
+La
 
 $$
 \begin{aligned}
@@ -2576,11 +2592,11 @@ p_3&=1+x^2+x^3, & p_4&=2-x-x^2+x^3.
 \end{aligned}
 $$
 
-Mengden
+Notasjonen $\operatorname{Span}$ betyr «alle lineærkombinasjoner». Mengden
 
 $$U=\operatorname{Span}(p_1,p_2,p_3,p_4)$$
 
-består av alle lineærkombinasjoner av disse fire polynomene. Dette er et
+er derfor alle polynomer som kan bygges av $p_1,p_2,p_3,p_4$. Dette er et
 underrom av $\mathcal P_3$. En basis for $U$ kan bestå av noen av polynomene
 over, eller av andre polynomer som spenner ut nøyaktig det samme rommet.
 
