@@ -1,0 +1,5 @@
+---
+title: "3.9 Oppgaver"
+---
+
+{{< include ../_includes/linalg/uke3-oppgaver.md >}}
