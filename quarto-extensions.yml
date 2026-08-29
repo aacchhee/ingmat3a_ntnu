@@ -6,7 +6,7 @@ plugins:
 
   - name: math-exercise
     repo: https://github.com/Erasmus-CTM/math-exercise.git
-    ref: feature/model-capability-adapter
+    ref: main
     path: _extensions/math-exercise
 
   - name: jsxgraph
