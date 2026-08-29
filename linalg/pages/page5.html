@@ -188,6 +188,55 @@ ul.task-list li input[type="checkbox"] {
   min-height: 4em;
 }
 
+/* ---- Vector and matrix input (vec[...] / mat[...]) ---- */
+.math-vec,
+.math-mat {
+  display: inline-grid;
+  gap: .3em;
+  padding: .38em 1em;
+  margin: .15em .2em;
+  position: relative;
+  vertical-align: middle;
+  max-width: 100%;
+}
+
+.math-mat { grid-template-columns: repeat(var(--cols), minmax(2.8em, auto)); }
+.math-vec { grid-template-columns: minmax(2.8em, auto); }
+.math-vec.math-vec-row { grid-template-columns: repeat(var(--n), minmax(2.8em, auto)); }
+
+.math-vec::before,
+.math-vec::after,
+.math-mat::before,
+.math-mat::after {
+  content: '';
+  position: absolute;
+  top: .12em;
+  bottom: .12em;
+  width: .5em;
+  border: 2px solid currentColor;
+  pointer-events: none;
+}
+
+.math-vec::before,
+.math-mat::before { left: 0; border-right: none; }
+.math-vec::after,
+.math-mat::after { right: 0; border-left: none; }
+
+.math-mat-cell {
+  box-sizing: border-box;
+  width: 3.4em;
+  min-width: 0;
+  padding: .3em;
+  text-align: center;
+}
+
+@media (max-width: 576px) {
+  .math-exercise-question { overflow-x: auto; }
+  .math-vec,
+  .math-mat { gap: .22em; padding-inline: .8em; }
+  .math-mat-cell { width: 2.9em; padding-inline: .2em; }
+}
+
 /* State feedback on the input itself.
    Background AND text color are fixed together (not theme variables) so the
    text stays readable regardless of the page's light/dark theme. */
@@ -827,7 +876,7 @@ t=\pm m\,2^e,
 <section id="a-maskinepsilon" class="level3">
 <h3 class="anchored" data-anchor-id="a-maskinepsilon">a) Maskinepsilon</h3>
 <p>Maskinepsilon er det minste positive tallet <span class="math inline">\(\varepsilon\)</span> slik at <span class="math inline">\(1+\varepsilon\)</span> er forskjellig fra 1 i formatet.</p>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="exam-h25-10-machine-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;]">
+<div class="math-exercise-cell" id="math-exercise-1" data-label="exam-h25-10-machine-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn maskinepsilon</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -849,7 +898,7 @@ $$\varepsilon =$$ <input type="text" id="math-exercise-1-f1" data-answer="2**(-1
 </div>
 </div>
 <p>Kontroller også bitmønstrene rundt 1.</p>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="exam-h25-10-epsilon-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;eksponent for 1&quot;,&quot;mantisse for 1&quot;,&quot;eksponent for neste tall&quot;,&quot;mantisse for neste tall&quot;]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet. Kontroller også bitmønstrene rundt 1.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;,&quot;math-exercise-2-f4&quot;]">
+<div class="math-exercise-cell" id="math-exercise-2" data-label="exam-h25-10-epsilon-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;eksponent for 1&quot;,&quot;mantisse for 1&quot;,&quot;eksponent for neste tall&quot;,&quot;mantisse for neste tall&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet. Kontroller også bitmønstrene rundt 1.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;,&quot;math-exercise-2-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene for 1 og neste tall</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -881,7 +930,7 @@ For det nærmeste tallet over 1: eksponentfelt: <input type="text" id="math-exer
 <p><span class="math display">\[
 12345=(11000000111001)_2.
 \]</span></p>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="exam-h25-10-encode-12345" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;b) Representasjon av 12345 Tallet er gitt i binær form som 12345=(11000000111001)_2.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-3" data-label="exam-h25-10-encode-12345" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;b) Representasjon av 12345 Tallet er gitt i binær form som 12345=(11000000111001)_2.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Kod 12345 i halvpresisjon</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -910,7 +959,7 @@ $s=$ <input type="text" id="math-exercise-3-f1" data-answer="0" data-vars="" aut
 <p><span class="math display">\[
 x=1+2^{-12}+2^{-15}.
 \]</span></p>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="exam-h25-10-round-near-one" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;lagret verdi&quot;]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-4" data-label="exam-h25-10-round-near-one" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;lagret verdi&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallene og den lagrede verdien</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -935,7 +984,7 @@ Etter avrunding lagres verdien <input type="text" id="math-exercise-4-f3" data-a
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<div class="math-exercise-cell" id="math-exercise-5" data-label="exam-h25-10-round-near-one-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-5" data-label="exam-h25-10-round-near-one-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene til nabotallene</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -977,7 +1026,7 @@ x=(-1)^s(1.f)_2\,2^{e-B}.
 </div>
 <section id="a-dekoding" class="level3">
 <h3 class="anchored" data-anchor-id="a-dekoding">a) Dekoding</h3>
-<div class="math-exercise-cell" id="math-exercise-6" data-label="exam-k26-8-decode" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;a) Dekoding&quot;" data-fields="[&quot;math-exercise-6-f1&quot;]">
+<div class="math-exercise-cell" id="math-exercise-6" data-label="exam-k26-8-decode" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;a) Dekoding&quot;" data-fields="[&quot;math-exercise-6-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Dekod et MiniFloat-tall</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -1008,7 +1057,7 @@ Verdien er <input type="text" id="math-exercise-6-f1" data-answer="5/2" data-var
 <section id="b-koding-og-avrunding" class="level3">
 <h3 class="anchored" data-anchor-id="b-koding-og-avrunding">b) Koding og avrunding</h3>
 <p>Tallet <span class="math inline">\(5.25\)</span> ligger nøyaktig midt mellom to representerbare MiniFloat-tall.</p>
-<div class="math-exercise-cell" id="math-exercise-7" data-label="exam-k26-8-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;b) Koding og avrunding Tallet 5.25 ligger nøyaktig midt mellom to representerbare MiniFloat-tall.&quot;" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;,&quot;math-exercise-7-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-7" data-label="exam-k26-8-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;b) Koding og avrunding Tallet 5.25 ligger nøyaktig midt mellom to representerbare MiniFloat-tall.&quot;" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;,&quot;math-exercise-7-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Kod 5.25 med ties-to-even</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -1033,7 +1082,7 @@ $s=$ <input type="text" id="math-exercise-7-f1" data-answer="0" data-vars="" aut
 </section>
 <section id="c-nærmeste-tall-til-0.3" class="level3">
 <h3 class="anchored" data-anchor-id="c-nærmeste-tall-til-0.3">c) Nærmeste tall til 0.3</h3>
-<div class="math-exercise-cell" id="math-exercise-8" data-label="exam-k26-8-round-point-three" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;avrundet verdi&quot;]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-8" data-label="exam-k26-8-round-point-three" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;avrundet verdi&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Rund 0.3 til MiniFloat</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -1058,7 +1107,7 @@ Ved avrunding til nærmeste lagres <input type="text" id="math-exercise-8-f3" da
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<div class="math-exercise-cell" id="math-exercise-9" data-label="exam-k26-8-round-point-three-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;]">
+<div class="math-exercise-cell" id="math-exercise-9" data-label="exam-k26-8-round-point-three-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Bitmønstre rundt 0.3</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -1084,7 +1133,7 @@ Nedre: <input type="text" id="math-exercise-9-f1" data-answer="001" data-vars=""
 </section>
 <section id="d-avstand-mellom-nabotall" class="level3">
 <h3 class="anchored" data-anchor-id="d-avstand-mellom-nabotall">d) Avstand mellom nabotall</h3>
-<div class="math-exercise-cell" id="math-exercise-10" data-label="exam-k26-8-spacing" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;d) Avstand mellom nabotall&quot;" data-fields="[&quot;math-exercise-10-f1&quot;]">
+<div class="math-exercise-cell" id="math-exercise-10" data-label="exam-k26-8-spacing" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;d) Avstand mellom nabotall&quot;" data-fields="[&quot;math-exercise-10-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallsavstanden</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -1123,7 +1172,7 @@ $$\Delta =$$ <input type="text" id="math-exercise-10-f1" data-answer="1/4" data-
 <section id="a-maskinell-differanse" class="level3">
 <h3 class="anchored" data-anchor-id="a-maskinell-differanse">a) Maskinell differanse</h3>
 <p>La <span class="math inline">\(x=12.345\)</span> og <span class="math inline">\(y=12.344\)</span>.</p>
-<div class="math-exercise-cell" id="math-exercise-11" data-label="exam-k2-8-machine-difference" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;lagret x&quot;,&quot;lagret y&quot;,&quot;maskinell differanse&quot;,&quot;eksakt differanse&quot;]" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-11-f1&quot;,&quot;math-exercise-11-f2&quot;,&quot;math-exercise-11-f3&quot;,&quot;math-exercise-11-f4&quot;]">
+<div class="math-exercise-cell" id="math-exercise-11" data-label="exam-k2-8-machine-difference" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;lagret x&quot;,&quot;lagret y&quot;,&quot;maskinell differanse&quot;,&quot;eksakt differanse&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-11-f1&quot;,&quot;math-exercise-11-f2&quot;,&quot;math-exercise-11-f3&quot;,&quot;math-exercise-11-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Lagre og subtraher med fire signifikante sifre</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -1150,7 +1199,7 @@ Den eksakte differansen er $x-y=$ <input type="text" id="math-exercise-11-f4" da
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<div class="math-exercise-cell" id="math-exercise-12" data-label="exam-k2-8-error-factor" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-12-f1&quot;]">
+<div class="math-exercise-cell" id="math-exercise-12" data-label="exam-k2-8-error-factor" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-12-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Sammenlign differansene</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -1179,7 +1228,7 @@ Den maskinelle differansen er <input type="text" id="math-exercise-12-f1" data-a
 </div>
 <section id="bc-kansellering-og-rasjonalisering" class="level3">
 <h3 class="anchored" data-anchor-id="bc-kansellering-og-rasjonalisering">b–c) Kansellering og rasjonalisering</h3>
-<div class="math-exercise-cell" id="math-exercise-13" data-label="exam-k2-8-rationalize" data-mode="equivalent" data-reject="sqrt(1+t)-1" data-vars="t" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="k2-decimal-format, k2-stable-rationalization" data-context="&quot;b–c) Kansellering og rasjonalisering&quot;" data-fields="[&quot;math-exercise-13-f1&quot;]">
+<div class="math-exercise-cell" id="math-exercise-13" data-label="exam-k2-8-rationalize" data-mode="equivalent" data-reject="sqrt(1+t)-1" data-vars="t" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format, k2-stable-rationalization" data-context="&quot;b–c) Kansellering og rasjonalisering&quot;" data-fields="[&quot;math-exercise-13-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Skriv om uttrykket</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -1664,6 +1713,8 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
 
       // Check results
       fieldPrefix:  function (n) { return 'Field&nbsp;' + n + ': '; },
+      vecComponent: function (n) { return 'Component ' + n; },
+      matCell: function (row, column) { return 'Row ' + row + ', column ' + column; },
       resEmpty:     'Please enter an answer.',
       resCorrect:   'Correct!',
       resPartial:   function (pct) { return 'Partially correct (' + pct + '%).'; },
@@ -1810,6 +1861,8 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
 
       // Check results
       fieldPrefix:  function (n) { return 'Feld&nbsp;' + n + ': '; },
+      vecComponent: function (n) { return 'Komponente ' + n; },
+      matCell: function (row, column) { return 'Zeile ' + row + ', Spalte ' + column; },
       resEmpty:     'Bitte eine Antwort eingeben.',
       resCorrect:   'Richtig!',
       resPartial:   function (pct) { return 'Teilweise richtig (' + pct + '&nbsp;%).'; },
@@ -1956,6 +2009,8 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
     errGeneric: 'Inntastingen kunne ikke behandles – bruk inntastingshjelpen for å finne riktig skrivemåte.',
 
     fieldPrefix: function (n) { return 'Felt&nbsp;' + n + ': '; },
+    vecComponent: function (n) { return 'Komponent ' + n; },
+    matCell: function (row, column) { return 'Rad ' + row + ', kolonne ' + column; },
     resEmpty: 'Skriv inn et svar.',
     resCorrect: 'Riktig!',
     resPartial: function (pct) { return 'Delvis riktig (' + pct + '%).'; },
@@ -2561,25 +2616,132 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
   }
 
   // ---------------------------------------------------------------------------
-  // Task-text renderer  (used by pool mode: parses _[answer] markers in JS)
+  // Task-text renderer. Pool exercises are rendered in the browser, so this
+  // mirrors the scalar/vector/matrix parser in math-exercise.lua.
   // ---------------------------------------------------------------------------
 
-  function renderTaskText(text, exerciseId, vars) {
-    var count = 0, fieldIds = [];
-    var html = text.replace(/(_+)\[([^\]]*)\]/g, function (_, underscores, answer) {
+  function splitTop(text, separator) {
+    var parts = [], depth = 0, current = '';
+    for (var i = 0; i < text.length; i++) {
+      var ch = text.charAt(i);
+      if (ch === '(' || ch === '[' || ch === '{') depth++;
+      else if (ch === ')' || ch === ']' || ch === '}') depth--;
+      if (ch === separator && depth === 0) { parts.push(current.trim()); current = ''; }
+      else current += ch;
+    }
+    parts.push(current.trim());
+    return parts;
+  }
+
+  function scalarFieldHtml(fid, answer, vars, underscoreCount) {
+    var base = ' id="' + fid + '"'
+             + ' data-answer="' + escHtml(answer) + '"'
+             + ' data-vars="'   + escHtml(vars)   + '"'
+             + ' autocomplete="off" autocorrect="off" spellcheck="false"';
+    if (underscoreCount >= 3) return '<textarea' + base + ' class="math-input math-input-large" rows="2"></textarea>';
+    if (underscoreCount === 2) return '<input type="text"' + base + ' class="math-input math-input-medium">';
+    return '<input type="text"' + base + ' class="math-input math-input-small">';
+  }
+
+  function matrixCellHtml(fid, answer, vars) {
+    return '<input type="text" id="' + fid + '"'
+         + ' data-answer="' + escHtml(answer) + '"'
+         + ' data-vars="'   + escHtml(vars)   + '"'
+         + ' autocomplete="off" autocorrect="off" spellcheck="false"'
+         + ' class="math-input math-mat-cell">';
+  }
+
+  function buildVector(exerciseId, count, content, vars, vecdir) {
+    var components = splitTop(content, ',');
+    var ids = [], labels = [], cells = [];
+    components.forEach(function (answer, index) {
       count++;
-      var fid  = exerciseId + '-f' + count;
-      fieldIds.push(fid);
-      var n    = underscores.length;
-      var base = ' id="' + fid + '"'
-               + ' data-answer="' + escHtml(answer) + '"'
-               + ' data-vars="'   + escHtml(vars)   + '"'
-               + ' autocomplete="off" autocorrect="off" spellcheck="false"';
-      if (n >= 3) return '<textarea' + base + ' class="math-input math-input-large" rows="2"></textarea>';
-      if (n >= 2) return '<input type="text"' + base + ' class="math-input math-input-medium">';
-      return '<input type="text"' + base + ' class="math-input math-input-small">';
+      var fid = exerciseId + '-f' + count;
+      ids.push(fid);
+      labels.push('v' + (index + 1));
+      cells.push(matrixCellHtml(fid, answer, vars));
     });
-    return { html: html.replace(/\n/g, '<br>\n'), fieldIds: fieldIds };
+    var rowClass = vecdir === 'row' ? ' math-vec-row' : '';
+    return {
+      html: '<span class="math-vec' + rowClass + '" style="--n:' + components.length + '">' + cells.join('') + '</span>',
+      ids: ids, labels: labels, count: count
+    };
+  }
+
+  function buildMatrix(exerciseId, count, content, vars) {
+    var rows = splitTop(content, ';').map(function (row) { return splitTop(row, ','); });
+    var columnCount = rows.length ? rows[0].length : 0;
+    if (!columnCount || rows.some(function (row) { return row.length !== columnCount; })) {
+      throw new Error('math-exercise: mat[...] rows must have the same number of columns');
+    }
+    var ids = [], labels = [], cells = [];
+    rows.forEach(function (row, rowIndex) {
+      row.forEach(function (answer, columnIndex) {
+        count++;
+        var fid = exerciseId + '-f' + count;
+        ids.push(fid);
+        labels.push('m' + (rowIndex + 1) + ',' + (columnIndex + 1));
+        cells.push(matrixCellHtml(fid, answer, vars));
+      });
+    });
+    return {
+      html: '<span class="math-mat" style="--cols:' + columnCount + '">' + cells.join('') + '</span>',
+      ids: ids, labels: labels, count: count
+    };
+  }
+
+  function matchBalancedBracket(text, position) {
+    if (text.charAt(position) !== '[') return null;
+    var depth = 0;
+    for (var i = position; i < text.length; i++) {
+      if (text.charAt(i) === '[') depth++;
+      else if (text.charAt(i) === ']' && --depth === 0) return text.slice(position, i + 1);
+    }
+    return null;
+  }
+
+  function renderTaskText(text, exerciseId, vars, vecdir) {
+    var count = 0, fieldIds = [], structuralLabels = [], output = [], position = 0;
+    while (position < text.length) {
+      var scalar = /^_+\[/.exec(text.slice(position));
+      var boundary = !scalar && (position === 0 || !/[\w]/.test(text.charAt(position - 1)));
+      var vector = !scalar && boundary && text.slice(position, position + 4) === 'vec[';
+      var matrix = !scalar && !vector && boundary && text.slice(position, position + 4) === 'mat[';
+      var headLength = scalar ? scalar[0].length : (vector || matrix ? 4 : 0);
+      var bracket = headLength ? matchBalancedBracket(text, position + headLength - 1) : null;
+
+      if (!bracket) { output.push(text.charAt(position++)); continue; }
+
+      var content = bracket.slice(1, -1), rendered;
+      if (scalar) {
+        count++;
+        var fid = exerciseId + '-f' + count;
+        output.push(scalarFieldHtml(fid, content, vars, scalar[0].length - 1));
+        fieldIds.push(fid);
+        structuralLabels.push('');
+      } else {
+        rendered = vector
+          ? buildVector(exerciseId, count, content, vars, vecdir)
+          : buildMatrix(exerciseId, count, content, vars);
+        output.push(rendered.html);
+        fieldIds = fieldIds.concat(rendered.ids);
+        structuralLabels = structuralLabels.concat(rendered.labels);
+        count = rendered.count;
+      }
+      position += headLength - 1 + bracket.length;
+    }
+    return {
+      html: output.join('').replace(/\n/g, '<br>\n'),
+      fieldIds: fieldIds,
+      structuralLabels: structuralLabels
+    };
+  }
+
+  function localizeStructuralLabel(token) {
+    if (!token) return '';
+    if (/^v\d+$/.test(token)) return L.vecComponent(token.slice(1));
+    var matrix = /^m(\d+),(\d+)$/.exec(token);
+    return matrix ? L.matCell(matrix[1], matrix[2]) : '';
   }
 
   // ---------------------------------------------------------------------------
@@ -3467,8 +3629,11 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
     var mode   = cell.dataset.mode   || 'equivalent';
     var reject = cell.dataset.reject || '';
     var label  = cell.dataset.label  || cell.id;
+    var vecdir = cell.dataset.vecdir || 'col';
     var configuredFieldLabels = [];
     try { configuredFieldLabels = JSON.parse(cell.dataset.fieldLabels || '[]'); } catch (e) {}
+    var structuralFieldLabels = [];
+    try { structuralFieldLabels = JSON.parse(cell.dataset.structuralFieldLabels || '[]'); } catch (e) {}
     var checker = '';
     try { checker = JSON.parse(cell.dataset.checker || '""'); } catch (e) {}
     var formCredit = Number(cell.dataset.formCredit || '0.5');
@@ -3509,10 +3674,12 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
         idx = Math.floor(Math.random() * poolTasks.length);
         try { sessionStorage.setItem(poolKey, String(idx)); } catch(e) {}
       }
-      var r = renderTaskText(poolTasks[idx], cell.id, vars);
+      var r = renderTaskText(poolTasks[idx], cell.id, vars, vecdir);
       var qDiv = cell.querySelector('.math-exercise-question');
       qDiv.innerHTML = r.html;
       cell.dataset.fields = JSON.stringify(r.fieldIds);
+      cell.dataset.structuralFieldLabels = JSON.stringify(r.structuralLabels);
+      structuralFieldLabels = r.structuralLabels;
       renderMathInQuestion(qDiv);
     } else {
       renderMathInQuestion(cell.querySelector('.math-exercise-question'));
@@ -3545,6 +3712,8 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
     function fieldLabel(index) {
       var supplied = configuredFieldLabels[index];
       if (typeof supplied === 'string' && supplied.trim()) return supplied.trim();
+      var structural = localizeStructuralLabel(structuralFieldLabels[index]);
+      if (structural) return structural;
       return fieldIds.length === 1 ? L.feedbackFieldSingle : L.feedbackFieldNumbered(index + 1);
     }
 
@@ -3657,11 +3826,13 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
         }
         try { sessionStorage.setItem(poolKey, String(next)); } catch(e) {}
 
-        var r = renderTaskText(poolTasks[next], cell.id, vars);
+        var r = renderTaskText(poolTasks[next], cell.id, vars, vecdir);
         var qDivR = cell.querySelector('.math-exercise-question');
         qDivR.innerHTML = r.html;
         cell.dataset.fields = JSON.stringify(r.fieldIds);
+        cell.dataset.structuralFieldLabels = JSON.stringify(r.structuralLabels);
         fieldIds = r.fieldIds;
+        structuralFieldLabels = r.structuralLabels;
         warnExtraFieldLabels();
         renderMathInQuestion(qDivR);
 
@@ -3805,6 +3976,9 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
       displayErrorMessage: displayErrorMessage,
       modelPolicy: modelPolicy,
       loadCapability: loadCapability,
+      splitTop: splitTop,
+      renderTaskText: renderTaskText,
+      localizeStructuralLabel: localizeStructuralLabel,
     };
   }
 

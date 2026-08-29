@@ -4296,6 +4296,55 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
   min-height: 4em;
 }
 
+/* ---- Vector and matrix input (vec[...] / mat[...]) ---- */
+.math-vec,
+.math-mat {
+  display: inline-grid;
+  gap: .3em;
+  padding: .38em 1em;
+  margin: .15em .2em;
+  position: relative;
+  vertical-align: middle;
+  max-width: 100%;
+}
+
+.math-mat { grid-template-columns: repeat(var(--cols), minmax(2.8em, auto)); }
+.math-vec { grid-template-columns: minmax(2.8em, auto); }
+.math-vec.math-vec-row { grid-template-columns: repeat(var(--n), minmax(2.8em, auto)); }
+
+.math-vec::before,
+.math-vec::after,
+.math-mat::before,
+.math-mat::after {
+  content: '';
+  position: absolute;
+  top: .12em;
+  bottom: .12em;
+  width: .5em;
+  border: 2px solid currentColor;
+  pointer-events: none;
+}
+
+.math-vec::before,
+.math-mat::before { left: 0; border-right: none; }
+.math-vec::after,
+.math-mat::after { right: 0; border-left: none; }
+
+.math-mat-cell {
+  box-sizing: border-box;
+  width: 3.4em;
+  min-width: 0;
+  padding: .3em;
+  text-align: center;
+}
+
+@media (max-width: 576px) {
+  .math-exercise-question { overflow-x: auto; }
+  .math-vec,
+  .math-mat { gap: .22em; padding-inline: .8em; }
+  .math-mat-cell { width: 2.9em; padding-inline: .2em; }
+}
+
 /* State feedback on the input itself.
    Background AND text color are fixed together (not theme variables) so the
    text stays readable regardless of the page's light/dark theme. */
@@ -5644,7 +5693,7 @@ b=(101100)_2=(44)_{10}
 <section id="binært-heltall-til-titallssystemet" class="level3">
 <h3 class="anchored" data-anchor-id="binært-heltall-til-titallssystemet">Binært heltall til titallssystemet</h3>
 <p>Regn om det binære tallet til titallssystemet.</p>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="binary-to-decimal" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="auto" data-context-refs="" data-context="&quot;Binært heltall til titallssystemet Regn om det binære tallet til titallssystemet.&quot;" data-pool="[&quot;$$(101101)_2$$\n\nSvar: _[45]&quot;,&quot;$$(110010)_2$$\n\nSvar: _[50]&quot;,&quot;$$(100111)_2$$\n\nSvar: _[39]&quot;,&quot;$$(111001)_2$$\n\nSvar: _[57]&quot;,&quot;$$(1010110)_2$$\n\nSvar: _[86]&quot;]" data-fields="[]">
+<div class="math-exercise-cell" id="math-exercise-1" data-label="binary-to-decimal" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Binært heltall til titallssystemet Regn om det binære tallet til titallssystemet.&quot;" data-pool="[&quot;$$(101101)_2$$\n\nSvar: _[45]&quot;,&quot;$$(110010)_2$$\n\nSvar: _[50]&quot;,&quot;$$(100111)_2$$\n\nSvar: _[39]&quot;,&quot;$$(111001)_2$$\n\nSvar: _[57]&quot;,&quot;$$(1010110)_2$$\n\nSvar: _[86]&quot;]" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Fra binært tall til titallssystemet</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -5667,7 +5716,7 @@ b=(101100)_2=(44)_{10}
 <section id="binært-tall-med-brøkdel" class="level3">
 <h3 class="anchored" data-anchor-id="binært-tall-med-brøkdel">Binært tall med brøkdel</h3>
 <p>Regn om til titallssystemet. Du kan svare med brøk eller desimaltall.</p>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="binary-fraction-to-decimal" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="auto" data-context-refs="" data-context="&quot;Binært tall med brøkdel Regn om til titallssystemet. Du kan svare med brøk eller desimaltall.&quot;" data-pool="[&quot;$$(101.101)_2$$\n\nSvar: _[45/8]&quot;,&quot;$$(10.011)_2$$\n\nSvar: _[19/8]&quot;,&quot;$$(111.01)_2$$\n\nSvar: _[29/4]&quot;,&quot;$$(1.001)_2$$\n\nSvar: _[9/8]&quot;,&quot;$$(100.111)_2$$\n\nSvar: _[39/8]&quot;]" data-fields="[]">
+<div class="math-exercise-cell" id="math-exercise-2" data-label="binary-fraction-to-decimal" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Binært tall med brøkdel Regn om til titallssystemet. Du kan svare med brøk eller desimaltall.&quot;" data-pool="[&quot;$$(101.101)_2$$\n\nSvar: _[45/8]&quot;,&quot;$$(10.011)_2$$\n\nSvar: _[19/8]&quot;,&quot;$$(111.01)_2$$\n\nSvar: _[29/4]&quot;,&quot;$$(1.001)_2$$\n\nSvar: _[9/8]&quot;,&quot;$$(100.111)_2$$\n\nSvar: _[39/8]&quot;]" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Binær brøk til titallssystemet</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -5690,7 +5739,7 @@ b=(101100)_2=(44)_{10}
 <section id="brøkdel-fra-titallssystemet-til-binært" class="level3">
 <h3 class="anchored" data-anchor-id="brøkdel-fra-titallssystemet-til-binært">Brøkdel fra titallssystemet til binært</h3>
 <p>Regn om tallet til binært. Skriv <strong>bare sifrene etter binærpunktet</strong>.</p>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="decimal-fraction-to-binary" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="auto" data-context-refs="" data-context="&quot;Brøkdel fra titallssystemet til binært Regn om tallet til binært. Skriv bare sifrene etter binærpunktet.&quot;" data-pool="[&quot;$$(0.5)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[1]&quot;,&quot;$$(0.75)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[11]&quot;,&quot;$$(0.625)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[101]&quot;,&quot;$$(0.1875)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[0011]&quot;,&quot;$$(0.8125)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[1101]&quot;]" data-fields="[]">
+<div class="math-exercise-cell" id="math-exercise-3" data-label="decimal-fraction-to-binary" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Brøkdel fra titallssystemet til binært Regn om tallet til binært. Skriv bare sifrene etter binærpunktet.&quot;" data-pool="[&quot;$$(0.5)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[1]&quot;,&quot;$$(0.75)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[11]&quot;,&quot;$$(0.625)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[101]&quot;,&quot;$$(0.1875)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[0011]&quot;,&quot;$$(0.8125)_{10}=(0.\\ldots)_2$$\n\nBinære sifre: _[1101]&quot;]" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Fra titallsbrøk til binær brøk</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -6411,7 +6460,7 @@ x=(1+6/16)2^1=2.75.
 <section id="oppgave-1a-dekod-bitmønsteret" class="level4">
 <h4 class="anchored" data-anchor-id="oppgave-1a-dekod-bitmønsteret">Oppgave 1A – dekod bitmønsteret</h4>
 <p>Regn ut verdien av tallet.</p>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="mini-decode" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="mini-machine-format, mini-machine-decode-method" data-context="&quot;Oppgave 1A – dekod bitmønsteret Regn ut verdien av tallet.&quot;" data-pool="[&quot;$$0\\;|\\;100\\;|\\;0110$$\n\nVerdien er: _[11/4]&quot;,&quot;$$0\\;|\\;101\\;|\\;0110$$\n\nVerdien er: _[11/2]&quot;,&quot;$$1\\;|\\;100\\;|\\;0000$$\n\nVerdien er: _[-2]&quot;,&quot;$$0\\;|\\;011\\;|\\;1000$$\n\nVerdien er: _[3/2]&quot;,&quot;$$0\\;|\\;010\\;|\\;0100$$\n\nVerdien er: _[5/8]&quot;]" data-fields="[]">
+<div class="math-exercise-cell" id="math-exercise-4" data-label="mini-decode" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="mini-machine-format, mini-machine-decode-method" data-context="&quot;Oppgave 1A – dekod bitmønsteret Regn ut verdien av tallet.&quot;" data-pool="[&quot;$$0\\;|\\;100\\;|\\;0110$$\n\nVerdien er: _[11/4]&quot;,&quot;$$0\\;|\\;101\\;|\\;0110$$\n\nVerdien er: _[11/2]&quot;,&quot;$$1\\;|\\;100\\;|\\;0000$$\n\nVerdien er: _[-2]&quot;,&quot;$$0\\;|\\;011\\;|\\;1000$$\n\nVerdien er: _[3/2]&quot;,&quot;$$0\\;|\\;010\\;|\\;0100$$\n\nVerdien er: _[5/8]&quot;]" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Dekod et mini-flyttall</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -6441,7 +6490,7 @@ x=(1+6/16)2^1=2.75.
 <section id="oppgave-1b-kod-et-tall" class="level4">
 <h4 class="anchored" data-anchor-id="oppgave-1b-kod-et-tall">Oppgave 1B – kod et tall</h4>
 <p>Fyll inn fortegn, eksponentfelt og mantissefelt. Skriv inn <span class="math inline">\(S\)</span>, <span class="math inline">\(E\)</span> og <span class="math inline">\(M\)</span> som bitstreng, dvs sekvensen av <span class="math inline">\(0\)</span> og <span class="math inline">\(1\)</span>.</p>
-<div class="math-exercise-cell" id="math-exercise-5" data-label="mini-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;S&quot;,&quot;E&quot;,&quot;M&quot;]" data-context-mode="explicit" data-context-refs="mini-machine-format, mini-machine-encode-method" data-context="&quot;Oppgave 1B – kod et tall Fyll inn fortegn, eksponentfelt og mantissefelt. Skriv inn S, E og M som bitstreng, dvs sekvensen av 0 og 1.&quot;" data-pool="[&quot;$$x=3$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[100] &nbsp;&nbsp; $M=$ _[1000]&quot;,&quot;$$x=5.5$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[101] &nbsp;&nbsp; $M=$ _[0110]&quot;,&quot;$$x=-0.75$$\n\n$S=$ _[1] &nbsp;&nbsp; $E=$ _[010] &nbsp;&nbsp; $M=$ _[1000]&quot;,&quot;$$x=0.3125$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[001] &nbsp;&nbsp; $M=$ _[0100]&quot;,&quot;$$x=12$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[110] &nbsp;&nbsp; $M=$ _[1000]&quot;]" data-fields="[]">
+<div class="math-exercise-cell" id="math-exercise-5" data-label="mini-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;S&quot;,&quot;E&quot;,&quot;M&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="mini-machine-format, mini-machine-encode-method" data-context="&quot;Oppgave 1B – kod et tall Fyll inn fortegn, eksponentfelt og mantissefelt. Skriv inn S, E og M som bitstreng, dvs sekvensen av 0 og 1.&quot;" data-pool="[&quot;$$x=3$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[100] &nbsp;&nbsp; $M=$ _[1000]&quot;,&quot;$$x=5.5$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[101] &nbsp;&nbsp; $M=$ _[0110]&quot;,&quot;$$x=-0.75$$\n\n$S=$ _[1] &nbsp;&nbsp; $E=$ _[010] &nbsp;&nbsp; $M=$ _[1000]&quot;,&quot;$$x=0.3125$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[001] &nbsp;&nbsp; $M=$ _[0100]&quot;,&quot;$$x=12$$\n\n$S=$ _[0] &nbsp;&nbsp; $E=$ _[110] &nbsp;&nbsp; $M=$ _[1000]&quot;]" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Kod et tall i mini-formatet</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -6507,7 +6556,7 @@ x=(1+6/16)2^1=2.75.
 </div>
 <section id="oppgave-3a-rund-til-nærmeste-mini-flyttall" class="level4">
 <h4 class="anchored" data-anchor-id="oppgave-3a-rund-til-nærmeste-mini-flyttall">Oppgave 3A – rund til nærmeste mini-flyttall</h4>
-<div class="math-exercise-cell" id="math-exercise-6" data-label="mini-round" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="mini-machine-format, mini-machine-rounding" data-context="&quot;Oppgave 3A – rund til nærmeste mini-flyttall&quot;" data-pool="[&quot;$$x=1.1$$\n\nMini-maskinen lagrer: _[9/8]&quot;,&quot;$$x=0.7$$\n\nMini-maskinen lagrer: _[11/16]&quot;,&quot;$$x=3.14$$\n\nMini-maskinen lagrer: _[25/8]&quot;,&quot;$$x=6.3$$\n\nMini-maskinen lagrer: _[25/4]&quot;,&quot;$$x=0.3$$\n\nMini-maskinen lagrer: _[19/64]&quot;]" data-fields="[]">
+<div class="math-exercise-cell" id="math-exercise-6" data-label="mini-round" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="mini-machine-format, mini-machine-rounding" data-context="&quot;Oppgave 3A – rund til nærmeste mini-flyttall&quot;" data-pool="[&quot;$$x=1.1$$\n\nMini-maskinen lagrer: _[9/8]&quot;,&quot;$$x=0.7$$\n\nMini-maskinen lagrer: _[11/16]&quot;,&quot;$$x=3.14$$\n\nMini-maskinen lagrer: _[25/8]&quot;,&quot;$$x=6.3$$\n\nMini-maskinen lagrer: _[25/4]&quot;,&quot;$$x=0.3$$\n\nMini-maskinen lagrer: _[19/64]&quot;]" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Rund til nærmeste mini-flyttall</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -6559,7 +6608,7 @@ mini_float(x)</code></pre>
 <p>Finn maskinepsilon.</p>
 <p>Maskinepsilon er dermed avstanden fra <span class="math inline">\(1\)</span> til det neste større representerbare tallet, altså <span class="math inline">\(\varepsilon_{\mathrm{mach}}=2^{-p}\)</span> for disse formatene.</p>
 </div>
-<div class="math-exercise-cell" id="math-exercise-7" data-label="mini-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-context-mode="explicit" data-context-refs="mini-machine-epsilon-rule" data-context="&quot;Oppgave 3C – mini-maskinens maskinepsilon For et binært format med p lagrede mantissebiter er neste representerbare tall over 1 1+2^{-p}. Finn maskinepsilon.Maskinepsilon er dermed avstanden fra 1 til det neste større representerbare tallet, altså \\varepsilon_{\\mathrm{mach}}=2^{-p} for disse formatene.&quot;" data-pool="[&quot;Formatet lagrer $p=2$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/4]&quot;,&quot;Formatet lagrer $p=3$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/8]&quot;,&quot;Mini-maskinen vår lagrer $p=4$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/16]&quot;,&quot;Formatet lagrer $p=5$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/32]&quot;,&quot;Formatet lagrer $p=6$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/64]&quot;]" data-fields="[]">
+<div class="math-exercise-cell" id="math-exercise-7" data-label="mini-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="mini-machine-epsilon-rule" data-context="&quot;Oppgave 3C – mini-maskinens maskinepsilon For et binært format med p lagrede mantissebiter er neste representerbare tall over 1 1+2^{-p}. Finn maskinepsilon.Maskinepsilon er dermed avstanden fra 1 til det neste større representerbare tallet, altså \\varepsilon_{\\mathrm{mach}}=2^{-p} for disse formatene.&quot;" data-pool="[&quot;Formatet lagrer $p=2$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/4]&quot;,&quot;Formatet lagrer $p=3$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/8]&quot;,&quot;Mini-maskinen vår lagrer $p=4$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/16]&quot;,&quot;Formatet lagrer $p=5$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/32]&quot;,&quot;Formatet lagrer $p=6$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/64]&quot;]" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Maskinepsilon for små binære formater</div>
 
 <div class="math-exercise-body" style="display:none;">
@@ -8207,6 +8256,8 @@ qpyodideReady
 
       // Check results
       fieldPrefix:  function (n) { return 'Field&nbsp;' + n + ': '; },
+      vecComponent: function (n) { return 'Component ' + n; },
+      matCell: function (row, column) { return 'Row ' + row + ', column ' + column; },
       resEmpty:     'Please enter an answer.',
       resCorrect:   'Correct!',
       resPartial:   function (pct) { return 'Partially correct (' + pct + '%).'; },
@@ -8353,6 +8404,8 @@ qpyodideReady
 
       // Check results
       fieldPrefix:  function (n) { return 'Feld&nbsp;' + n + ': '; },
+      vecComponent: function (n) { return 'Komponente ' + n; },
+      matCell: function (row, column) { return 'Zeile ' + row + ', Spalte ' + column; },
       resEmpty:     'Bitte eine Antwort eingeben.',
       resCorrect:   'Richtig!',
       resPartial:   function (pct) { return 'Teilweise richtig (' + pct + '&nbsp;%).'; },
@@ -8499,6 +8552,8 @@ qpyodideReady
     errGeneric: 'Inntastingen kunne ikke behandles – bruk inntastingshjelpen for å finne riktig skrivemåte.',
 
     fieldPrefix: function (n) { return 'Felt&nbsp;' + n + ': '; },
+    vecComponent: function (n) { return 'Komponent ' + n; },
+    matCell: function (row, column) { return 'Rad ' + row + ', kolonne ' + column; },
     resEmpty: 'Skriv inn et svar.',
     resCorrect: 'Riktig!',
     resPartial: function (pct) { return 'Delvis riktig (' + pct + '%).'; },
@@ -9104,25 +9159,132 @@ qpyodideReady
   }
 
   // ---------------------------------------------------------------------------
-  // Task-text renderer  (used by pool mode: parses _[answer] markers in JS)
+  // Task-text renderer. Pool exercises are rendered in the browser, so this
+  // mirrors the scalar/vector/matrix parser in math-exercise.lua.
   // ---------------------------------------------------------------------------
 
-  function renderTaskText(text, exerciseId, vars) {
-    var count = 0, fieldIds = [];
-    var html = text.replace(/(_+)\[([^\]]*)\]/g, function (_, underscores, answer) {
+  function splitTop(text, separator) {
+    var parts = [], depth = 0, current = '';
+    for (var i = 0; i < text.length; i++) {
+      var ch = text.charAt(i);
+      if (ch === '(' || ch === '[' || ch === '{') depth++;
+      else if (ch === ')' || ch === ']' || ch === '}') depth--;
+      if (ch === separator && depth === 0) { parts.push(current.trim()); current = ''; }
+      else current += ch;
+    }
+    parts.push(current.trim());
+    return parts;
+  }
+
+  function scalarFieldHtml(fid, answer, vars, underscoreCount) {
+    var base = ' id="' + fid + '"'
+             + ' data-answer="' + escHtml(answer) + '"'
+             + ' data-vars="'   + escHtml(vars)   + '"'
+             + ' autocomplete="off" autocorrect="off" spellcheck="false"';
+    if (underscoreCount >= 3) return '<textarea' + base + ' class="math-input math-input-large" rows="2"></textarea>';
+    if (underscoreCount === 2) return '<input type="text"' + base + ' class="math-input math-input-medium">';
+    return '<input type="text"' + base + ' class="math-input math-input-small">';
+  }
+
+  function matrixCellHtml(fid, answer, vars) {
+    return '<input type="text" id="' + fid + '"'
+         + ' data-answer="' + escHtml(answer) + '"'
+         + ' data-vars="'   + escHtml(vars)   + '"'
+         + ' autocomplete="off" autocorrect="off" spellcheck="false"'
+         + ' class="math-input math-mat-cell">';
+  }
+
+  function buildVector(exerciseId, count, content, vars, vecdir) {
+    var components = splitTop(content, ',');
+    var ids = [], labels = [], cells = [];
+    components.forEach(function (answer, index) {
       count++;
-      var fid  = exerciseId + '-f' + count;
-      fieldIds.push(fid);
-      var n    = underscores.length;
-      var base = ' id="' + fid + '"'
-               + ' data-answer="' + escHtml(answer) + '"'
-               + ' data-vars="'   + escHtml(vars)   + '"'
-               + ' autocomplete="off" autocorrect="off" spellcheck="false"';
-      if (n >= 3) return '<textarea' + base + ' class="math-input math-input-large" rows="2"></textarea>';
-      if (n >= 2) return '<input type="text"' + base + ' class="math-input math-input-medium">';
-      return '<input type="text"' + base + ' class="math-input math-input-small">';
+      var fid = exerciseId + '-f' + count;
+      ids.push(fid);
+      labels.push('v' + (index + 1));
+      cells.push(matrixCellHtml(fid, answer, vars));
     });
-    return { html: html.replace(/\n/g, '<br>\n'), fieldIds: fieldIds };
+    var rowClass = vecdir === 'row' ? ' math-vec-row' : '';
+    return {
+      html: '<span class="math-vec' + rowClass + '" style="--n:' + components.length + '">' + cells.join('') + '</span>',
+      ids: ids, labels: labels, count: count
+    };
+  }
+
+  function buildMatrix(exerciseId, count, content, vars) {
+    var rows = splitTop(content, ';').map(function (row) { return splitTop(row, ','); });
+    var columnCount = rows.length ? rows[0].length : 0;
+    if (!columnCount || rows.some(function (row) { return row.length !== columnCount; })) {
+      throw new Error('math-exercise: mat[...] rows must have the same number of columns');
+    }
+    var ids = [], labels = [], cells = [];
+    rows.forEach(function (row, rowIndex) {
+      row.forEach(function (answer, columnIndex) {
+        count++;
+        var fid = exerciseId + '-f' + count;
+        ids.push(fid);
+        labels.push('m' + (rowIndex + 1) + ',' + (columnIndex + 1));
+        cells.push(matrixCellHtml(fid, answer, vars));
+      });
+    });
+    return {
+      html: '<span class="math-mat" style="--cols:' + columnCount + '">' + cells.join('') + '</span>',
+      ids: ids, labels: labels, count: count
+    };
+  }
+
+  function matchBalancedBracket(text, position) {
+    if (text.charAt(position) !== '[') return null;
+    var depth = 0;
+    for (var i = position; i < text.length; i++) {
+      if (text.charAt(i) === '[') depth++;
+      else if (text.charAt(i) === ']' && --depth === 0) return text.slice(position, i + 1);
+    }
+    return null;
+  }
+
+  function renderTaskText(text, exerciseId, vars, vecdir) {
+    var count = 0, fieldIds = [], structuralLabels = [], output = [], position = 0;
+    while (position < text.length) {
+      var scalar = /^_+\[/.exec(text.slice(position));
+      var boundary = !scalar && (position === 0 || !/[\w]/.test(text.charAt(position - 1)));
+      var vector = !scalar && boundary && text.slice(position, position + 4) === 'vec[';
+      var matrix = !scalar && !vector && boundary && text.slice(position, position + 4) === 'mat[';
+      var headLength = scalar ? scalar[0].length : (vector || matrix ? 4 : 0);
+      var bracket = headLength ? matchBalancedBracket(text, position + headLength - 1) : null;
+
+      if (!bracket) { output.push(text.charAt(position++)); continue; }
+
+      var content = bracket.slice(1, -1), rendered;
+      if (scalar) {
+        count++;
+        var fid = exerciseId + '-f' + count;
+        output.push(scalarFieldHtml(fid, content, vars, scalar[0].length - 1));
+        fieldIds.push(fid);
+        structuralLabels.push('');
+      } else {
+        rendered = vector
+          ? buildVector(exerciseId, count, content, vars, vecdir)
+          : buildMatrix(exerciseId, count, content, vars);
+        output.push(rendered.html);
+        fieldIds = fieldIds.concat(rendered.ids);
+        structuralLabels = structuralLabels.concat(rendered.labels);
+        count = rendered.count;
+      }
+      position += headLength - 1 + bracket.length;
+    }
+    return {
+      html: output.join('').replace(/\n/g, '<br>\n'),
+      fieldIds: fieldIds,
+      structuralLabels: structuralLabels
+    };
+  }
+
+  function localizeStructuralLabel(token) {
+    if (!token) return '';
+    if (/^v\d+$/.test(token)) return L.vecComponent(token.slice(1));
+    var matrix = /^m(\d+),(\d+)$/.exec(token);
+    return matrix ? L.matCell(matrix[1], matrix[2]) : '';
   }
 
   // ---------------------------------------------------------------------------
@@ -10010,8 +10172,11 @@ qpyodideReady
     var mode   = cell.dataset.mode   || 'equivalent';
     var reject = cell.dataset.reject || '';
     var label  = cell.dataset.label  || cell.id;
+    var vecdir = cell.dataset.vecdir || 'col';
     var configuredFieldLabels = [];
     try { configuredFieldLabels = JSON.parse(cell.dataset.fieldLabels || '[]'); } catch (e) {}
+    var structuralFieldLabels = [];
+    try { structuralFieldLabels = JSON.parse(cell.dataset.structuralFieldLabels || '[]'); } catch (e) {}
     var checker = '';
     try { checker = JSON.parse(cell.dataset.checker || '""'); } catch (e) {}
     var formCredit = Number(cell.dataset.formCredit || '0.5');
@@ -10052,10 +10217,12 @@ qpyodideReady
         idx = Math.floor(Math.random() * poolTasks.length);
         try { sessionStorage.setItem(poolKey, String(idx)); } catch(e) {}
       }
-      var r = renderTaskText(poolTasks[idx], cell.id, vars);
+      var r = renderTaskText(poolTasks[idx], cell.id, vars, vecdir);
       var qDiv = cell.querySelector('.math-exercise-question');
       qDiv.innerHTML = r.html;
       cell.dataset.fields = JSON.stringify(r.fieldIds);
+      cell.dataset.structuralFieldLabels = JSON.stringify(r.structuralLabels);
+      structuralFieldLabels = r.structuralLabels;
       renderMathInQuestion(qDiv);
     } else {
       renderMathInQuestion(cell.querySelector('.math-exercise-question'));
@@ -10088,6 +10255,8 @@ qpyodideReady
     function fieldLabel(index) {
       var supplied = configuredFieldLabels[index];
       if (typeof supplied === 'string' && supplied.trim()) return supplied.trim();
+      var structural = localizeStructuralLabel(structuralFieldLabels[index]);
+      if (structural) return structural;
       return fieldIds.length === 1 ? L.feedbackFieldSingle : L.feedbackFieldNumbered(index + 1);
     }
 
@@ -10200,11 +10369,13 @@ qpyodideReady
         }
         try { sessionStorage.setItem(poolKey, String(next)); } catch(e) {}
 
-        var r = renderTaskText(poolTasks[next], cell.id, vars);
+        var r = renderTaskText(poolTasks[next], cell.id, vars, vecdir);
         var qDivR = cell.querySelector('.math-exercise-question');
         qDivR.innerHTML = r.html;
         cell.dataset.fields = JSON.stringify(r.fieldIds);
+        cell.dataset.structuralFieldLabels = JSON.stringify(r.structuralLabels);
         fieldIds = r.fieldIds;
+        structuralFieldLabels = r.structuralLabels;
         warnExtraFieldLabels();
         renderMathInQuestion(qDivR);
 
@@ -10348,6 +10519,9 @@ qpyodideReady
       displayErrorMessage: displayErrorMessage,
       modelPolicy: modelPolicy,
       loadCapability: loadCapability,
+      splitTop: splitTop,
+      renderTaskText: renderTaskText,
+      localizeStructuralLabel: localizeStructuralLabel,
     };
   }
 
