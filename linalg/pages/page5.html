@@ -2068,6 +2068,22 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  function displayErrorMessage(err) {
+    var msg = err && typeof err.message === 'string' ? err.message : String(err || '');
+    var prefixes = ['Error:', L.errorPrefix];
+    var changed = true;
+    while (changed) {
+      changed = false;
+      prefixes.forEach(function (prefix) {
+        if (prefix && msg.slice(0, prefix.length).toLowerCase() === prefix.toLowerCase()) {
+          msg = msg.slice(prefix.length).trim();
+          changed = true;
+        }
+      });
+    }
+    return msg;
+  }
+
   // Sanitizes LLM output: escapes HTML first (prevents XSS), then re-adds a
   // deliberately small Markdown subset as safe HTML. Block parsing avoids raw
   // list markers and gives paragraphs/display math predictable spacing.
@@ -3750,7 +3766,7 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
             }
           } catch (err) {
             fbDiv.innerHTML =
-              '<div class="math-fb-err">&#9888;&nbsp;' + L.errorPrefix + ' ' + escHtml(String(err))
+              '<div class="math-fb-err">&#9888;&nbsp;' + L.errorPrefix + ' ' + escHtml(displayErrorMessage(err))
               + '&nbsp;&nbsp;<button type="button" class="btn btn-sm btn-light math-fb-reconfig">&#9881;&nbsp;' + L.reconfigBtn + '</button>'
               + '</div>';
             var fbRecfg = fbDiv.querySelector('.math-fb-reconfig');
@@ -3786,6 +3802,7 @@ $$\sqrt{1+t}-1 =$$ <input type="text" id="math-exercise-13-f1" data-answer="t/(s
       buildUserPrompt: buildUserPrompt,
       callLLM: callLLM,
       simpleMarkdown: simpleMarkdown,
+      displayErrorMessage: displayErrorMessage,
       modelPolicy: modelPolicy,
       loadCapability: loadCapability,
     };
