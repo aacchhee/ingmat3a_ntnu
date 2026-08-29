@@ -1,5 +1,6 @@
 name: Bygg og publiser lineær algebra
 
+# Publiserer forhåndsvisningen fra linalg-branch under /linalg.
 on:
   push:
     branches:
