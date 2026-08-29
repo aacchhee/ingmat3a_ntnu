@@ -1926,11 +1926,251 @@ $$
 
 **På papir:**
 
-1. Radreduser matrisen og marker pivotene.
-2. Finn rang og pivotkolonner.
-3. Finn en basis for kolonnerommet fra de opprinnelige kolonnene.
-4. Finn en basis for nullrommet ved å innføre frie variabler.
-5. Kontroller rang–nullitet.
+Oppgavene under vurderes eksakt med SymPy. I basisoppgavene for nullrommet
+godtas enhver basis med riktig spenn, ikke bare basisen som fås ved akkurat de
+samme parameterne som i eksemplet.
+
+::: {#week3-paper-assessment-context .math-exercise-context}
+
+For en matrise med $n$ kolonner gjelder
+$n=\operatorname{rank}(M)+\operatorname{nullity}(M)$. Pivotkolonnene bestemmes
+fra en trappeform, men en basis for kolonnerommet hentes fra de tilsvarende
+kolonnene i den opprinnelige matrisen. En basis for nullrommet må bestå av
+lineært uavhengige vektorer $z$ som oppfyller $Mz=0$.
+
+For $B$ er redusert trappeform
+$\begin{bmatrix}1&0&1\\0&1&1\\0&0&0\end{bmatrix}$, pivotkolonnene er 1 og 2,
+rangen er 2, og nulliteten er 1. De to første opprinnelige kolonnene danner en
+basis for kolonnerommet, og $(-1,-1,1)^T$ danner en basis for nullrommet.
+
+For $C$ er redusert trappeform
+$\begin{bmatrix}1&2&3\\0&0&0\end{bmatrix}$, pivotkolonnen er 1, rangen er 1,
+og nulliteten er 2. Den første opprinnelige kolonnen danner en basis for
+kolonnerommet. Vektorene $(-2,1,0)^T$ og $(-3,0,1)^T$ er én mulig basis for
+nullrommet.
+
+:::
+
+#### Oppgaver for $B$
+
+```{math-exercise}
+#| label: week3-paper-b-echelon
+#| caption: Trappeform og pivoter for B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: r₁₁, r₁₂, r₁₃, r₂₁, r₂₂, r₂₃, r₃₁, r₃₂, r₃₃, Første pivotkolonne, Andre pivotkolonne
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       values = response["expressions"]
+#|       R = Matrix(3, 3, values[:9])
+#|       submitted_pivots = list(values[9:])
+#|       expected_rref = Matrix([[1, 0, 1], [0, 1, 1], [0, 0, 0]])
+#|       def leading_columns(matrix):
+#|           leads = []
+#|           zero_row_seen = False
+#|           for row in range(matrix.rows):
+#|               lead = None
+#|               for col in range(matrix.cols):
+#|                   if simplify(matrix[row, col]) != 0:
+#|                       lead = col
+#|                       break
+#|               if lead is None:
+#|                   zero_row_seen = True
+#|               elif zero_row_seen or (leads and lead <= leads[-1]):
+#|                   return None
+#|               else:
+#|                   leads.append(lead)
+#|           return leads
+#|       leads = leading_columns(R)
+#|       echelon_ok = leads is not None
+#|       rowspace_ok = R.rref()[0] == expected_rref
+#|       pivots_ok = echelon_ok and submitted_pivots == [Integer(j + 1) for j in leads]
+#|       score = (int(echelon_ok) + int(rowspace_ok) + int(pivots_ok)) / 3
+#|       return {"score": score, "feedback": "Kontroller at nullraden står nederst, at hver pivot flyttes mot høyre, og at trappeformen har samme radrom som B."}
+
+Radreduser $B$. Oppgi en gyldig trappeform $R$ og numrene til pivotkolonnene i
+stigende rekkefølge:
+
+$R=$ mat[1,0,1;0,1,1;0,0,0], &nbsp; pivotkolonner $=$ vec[1,2]
+```
+
+```{math-exercise}
+#| label: week3-paper-b-rank
+#| caption: Rang og pivotkolonner for B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Rang, Første pivotkolonne, Andre pivotkolonne
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       rank_value, p1, p2 = response["expressions"]
+#|       rank_ok = rank_value == 2
+#|       pivots_ok = [p1, p2] == [1, 2]
+#|       return {"score": (int(rank_ok) + int(pivots_ok)) / 2, "feedback": "Rangen er antall pivoter; oppgi kolonnene med pivot fra venstre mot høyre."}
+
+Finn rangen og pivotkolonnene til $B$:
+
+$\operatorname{rank}(B)=$ _[2], &nbsp; pivotkolonner $=$ vec[1,2]
+```
+
+```{math-exercise}
+#| label: week3-paper-b-column-basis
+#| caption: Basis for kolonnerommet til B
+#| context: week3-paper-assessment-context
+
+Sett pivotkolonnene fra den opprinnelige matrisen $B$ inn som kolonner i en
+basismatrise:
+
+$Q_B=$ mat[1,0;0,1;1,1]
+```
+
+```{math-exercise}
+#| label: week3-paper-b-null-basis
+#| caption: Basis for nullrommet til B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Første komponent, Andre komponent, Tredje komponent
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       z = Matrix(response["expressions"])
+#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
+#|       null_ok = B * z == zeros(3, 1)
+#|       independent = z.rank() == 1
+#|       return {"score": (int(null_ok) + int(independent)) / 2, "feedback": "En nullromsvektor må gi Bz=0 og være ulik null. Alle ikke-null skalarmultipler av en gyldig basisvektor godtas."}
+
+Oppgi en basisvektor for nullrommet til $B$:
+
+$z_B=$ vec[-1,-1,1]
+```
+
+```{math-exercise}
+#| label: week3-paper-b-rank-nullity
+#| caption: Rang–nullitet for B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Inputdimensjon, Rang, Nullitet
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       n, rank_value, nullity = response["expressions"]
+#|       checks = [n == 3, rank_value == 2, nullity == 1, n == rank_value + nullity]
+#|       return {"score": sum(int(value) for value in checks) / 4, "feedback": "Tell kolonnene, pivotene og de frie variablene, og kontroller deretter n = rang + nullitet."}
+
+Fyll inn rang–nullitetsregnskapet for $B$:
+
+inputdimensjon _[3] $=$ rang _[2] $+$ nullitet _[1]
+```
+
+#### Oppgaver for $C$
+
+```{math-exercise}
+#| label: week3-paper-c-echelon
+#| caption: Trappeform og pivot for C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: r₁₁, r₁₂, r₁₃, r₂₁, r₂₂, r₂₃, Pivotkolonne
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       values = response["expressions"]
+#|       R = Matrix(2, 3, values[:6])
+#|       submitted_pivot = values[6]
+#|       expected_rref = Matrix([[1, 2, 3], [0, 0, 0]])
+#|       def leading_columns(matrix):
+#|           leads = []
+#|           zero_row_seen = False
+#|           for row in range(matrix.rows):
+#|               lead = None
+#|               for col in range(matrix.cols):
+#|                   if simplify(matrix[row, col]) != 0:
+#|                       lead = col
+#|                       break
+#|               if lead is None:
+#|                   zero_row_seen = True
+#|               elif zero_row_seen or (leads and lead <= leads[-1]):
+#|                   return None
+#|               else:
+#|                   leads.append(lead)
+#|           return leads
+#|       leads = leading_columns(R)
+#|       echelon_ok = leads is not None
+#|       rowspace_ok = R.rref()[0] == expected_rref
+#|       pivot_ok = echelon_ok and len(leads) == 1 and submitted_pivot == leads[0] + 1
+#|       score = (int(echelon_ok) + int(rowspace_ok) + int(pivot_ok)) / 3
+#|       return {"score": score, "feedback": "Kontroller at nullraden står nederst, og at den oppgitte pivotkolonnen stemmer med første ikke-null-oppføring."}
+
+Radreduser $C$. Oppgi en gyldig trappeform $R$ og nummeret til pivotkolonnen:
+
+$R=$ mat[1,2,3;0,0,0], &nbsp; pivotkolonne $=$ _[1]
+```
+
+```{math-exercise}
+#| label: week3-paper-c-rank
+#| caption: Rang og pivotkolonne for C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Rang, Pivotkolonne
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       rank_value, pivot = response["expressions"]
+#|       return {"score": (int(rank_value == 1) + int(pivot == 1)) / 2, "feedback": "Rangen er antall pivoter; pivotkolonnen finnes fra første ledende oppføring i trappeformen."}
+
+Finn rangen og pivotkolonnen til $C$:
+
+$\operatorname{rank}(C)=$ _[1], &nbsp; pivotkolonne $=$ _[1]
+```
+
+```{math-exercise}
+#| label: week3-paper-c-column-basis
+#| caption: Basis for kolonnerommet til C
+#| context: week3-paper-assessment-context
+
+Sett pivotkolonnen fra den opprinnelige matrisen $C$ inn som kolonne i en
+basismatrise:
+
+$Q_C=$ mat[1;2]
+```
+
+```{math-exercise}
+#| label: week3-paper-c-null-basis
+#| caption: Basis for nullrommet til C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: z₁₁, z₁₂, z₂₁, z₂₂, z₃₁, z₃₂
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       Z = Matrix(3, 2, response["expressions"])
+#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
+#|       null_ok = C * Z == zeros(2, 2)
+#|       independent = Z.rank() == 2
+#|       return {"score": (int(null_ok) + int(independent)) / 2, "feedback": "Kontroller både CZ=0 og at de to innsendte kolonnene er lineært uavhengige. Enhver basis for nullrommet godtas."}
+
+Oppgi to basisvektorer for nullrommet til $C$ som kolonner i $Z_C$:
+
+$Z_C=$ mat[-2,-3;1,0;0,1]
+```
+
+```{math-exercise}
+#| label: week3-paper-c-rank-nullity
+#| caption: Rang–nullitet for C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Inputdimensjon, Rang, Nullitet
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       n, rank_value, nullity = response["expressions"]
+#|       checks = [n == 3, rank_value == 1, nullity == 2, n == rank_value + nullity]
+#|       return {"score": sum(int(value) for value in checks) / 4, "feedback": "Tell kolonnene, pivotene og de frie variablene, og kontroller deretter n = rang + nullitet."}
+
+Fyll inn rang–nullitetsregnskapet for $C$:
+
+inputdimensjon _[3] $=$ rang _[1] $+$ nullitet _[2]
+```
 
 **Med kode:**
 
