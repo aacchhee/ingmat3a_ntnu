@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Eksamensoppgaver – Matematikk 3A</title>
+<title>3.10 Andre byggesteiner – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -715,7 +715,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page5.html">Eksamensoppgaver</a></li><li class="breadcrumb-item"><a href="../pages/page5.html">Flyttall og numerisk stabilitet</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke3-andre-byggesteiner.html">3.10 Andre byggesteiner</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -798,7 +798,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/uke3-andre-byggesteiner.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/uke3-andre-byggesteiner.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">3.10 Andre byggesteiner</span></a>
   </div>
 </li>
@@ -903,7 +903,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/page5.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/page5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Flyttall og numerisk stabilitet</span></a>
   </div>
 </li>
@@ -919,9 +919,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/page5.html">Eksamensoppgaver</a></li><li class="breadcrumb-item"><a href="../pages/page5.html">Flyttall og numerisk stabilitet</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke3-andre-byggesteiner.html">3.10 Andre byggesteiner</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Eksamensoppgaver</h1>
+<h1 class="title">3.10 Andre byggesteiner</h1>
 </div>
 
 
@@ -938,40 +938,28 @@ window.Quarto = {
 </header>
 
 
-<section id="høst-2025-oppgave-10-halvpresisjon" class="level2">
-<h2 class="anchored" data-anchor-id="høst-2025-oppgave-10-halvpresisjon">Høst 2025 – oppgave 10: Halvpresisjon</h2>
-<p>Oppgaven bygger på eksamensoppgave 10 fra IMAx3011 høsten 2025.</p>
-<div id="h25-half-format" class="math-exercise-context">
-<section id="halvpresisjonsformatet" class="level3">
-<h3 class="anchored" data-anchor-id="halvpresisjonsformatet">Halvpresisjonsformatet</h3>
-<p>Et binært flyttall skrives som</p>
+<p>Matriser og piler er ikke de eneste byggesteinene i lineær algebra. Et polynom kan også være en vektor. Det høres uvant ut, men regningen er den samme: Vi legger sammen byggesteiner og ganger dem med tall.</p>
+<section id="fra-polynom-til-koordinater" class="level2">
+<h2 class="anchored" data-anchor-id="fra-polynom-til-koordinater">Fra polynom til koordinater</h2>
+<p>I rommet</p>
 <p><span class="math display">\[
-t=\pm m\,2^e,
+\mathcal P_3=\{a_0+a_1x+a_2x^2+a_3x^3 : a_i\in\mathbb R\}
 \]</span></p>
-<p>der <span class="math inline">\(1\le m&lt;2\)</span>. Halvpresisjonsformatet har 16 bit:</p>
-<ul>
-<li>1 fortegnsbit,</li>
-<li>5 eksponentbiter med bias 15,</li>
-<li>10 brøkbiter i mantissen.</li>
-</ul>
-<p>For et normalisert tall er verdien</p>
+<p>er alle polynomer av grad høyst 3 tillatt. Koeffisientene er koordinatene til polynomet i standardbasisen <span class="math inline">\((1,x,x^2,x^3)\)</span>:</p>
 <p><span class="math display">\[
-(-1)^s(1.f)_2\,2^{E-15},
+a_0+a_1x+a_2x^2+a_3x^3
+\quad\longleftrightarrow\quad
+\begin{bmatrix}a_0\\a_1\\a_2\\a_3\end{bmatrix}.
 \]</span></p>
-<p>der <span class="math inline">\(E\)</span> er heltallsverdien til eksponentfeltet og den ledende eneren i mantissen er skjult. Runding skjer til nærmeste representerbare tall, med ties-to-even når et tall ligger nøyaktig midt mellom to alternativer.</p>
-</section>
-</div>
-<section id="a-maskinepsilon" class="level3">
-<h3 class="anchored" data-anchor-id="a-maskinepsilon">a) Maskinepsilon</h3>
-<p>Maskinepsilon er det minste positive tallet <span class="math inline">\(\varepsilon\)</span> slik at <span class="math inline">\(1+\varepsilon\)</span> er forskjellig fra 1 i formatet.</p>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="exam-h25-10-machine-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn maskinepsilon</div>
+<p>Rekkefølgen er viktig: konstantleddet står øverst, deretter kommer koeffisientene til <span class="math inline">\(x\)</span>, <span class="math inline">\(x^2\)</span> og <span class="math inline">\(x^3\)</span>. Mangler en potens, er koeffisienten null. For eksempel svarer <span class="math inline">\(2-3x+x^2\)</span> til <span class="math inline">\((2,-3,1)^T\)</span> i <span class="math inline">\(\mathcal P_2\)</span>.</p>
+<div class="math-exercise-cell" id="math-exercise-1" data-label="week3-polynomial-coefficients" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Fra polynom til koordinater I rommet \\mathcal P_3=\\{a_0+a_1x+a_2x^2+a_3x^3 : a_i\\in\\mathbb R\\} er alle polynomer av grad høyst 3 tillatt. Koeffisientene er koordinatene til polynomet i standardbasisen (1,x,x^2,x^3): a_0+a_1x+a_2x^2+a_3x^3 \\quad\\longleftrightarrow\\quad \\begin{bmatrix}a_0\\\\a_1\\\\a_2\\\\a_3\\end{bmatrix}. Rekkefølgen er viktig: konstantleddet står øverst, deretter kommer koeffisientene til x, x^2 og x^3. Mangler en potens, er koeffisienten null. For eksempel svarer 2-3x+x^2 til (2,-3,1)^T i \\mathcal P_2.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v3&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Les av koeffisientene</div>
 
 <div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Svarformat: Skriv et eksakt matematisk uttrykk, for eksempel `2**(-k)` for en<br>
-heltallig eksponent \(k\).<br>
+<div class="math-exercise-question">Skriv koordinatvektoren til \(p(x)=4-2x+3x^2\) i standardbasisen<br>
+\((1,x,x^2)\):<br>
 <br>
-\[\varepsilon =\] <input type="text" id="math-exercise-1-f1" data-answer="2**(-10)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
+\([p]_{(1,x,x^2)}=\) <span class="math-vec" style="--n:3"><input type="text" id="math-exercise-1-f1" data-answer="4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f2" data-answer="-2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f3" data-answer="3" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -985,19 +973,22 @@ heltallig eksponent \(k\).<br>
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<p>Kontroller også bitmønstrene rundt 1.</p>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="exam-h25-10-epsilon-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;eksponent for 1&quot;,&quot;mantisse for 1&quot;,&quot;eksponent for neste tall&quot;,&quot;mantisse for neste tall&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet. Kontroller også bitmønstrene rundt 1.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;,&quot;math-exercise-2-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene for 1 og neste tall</div>
+<div id="week3-polynomial-basis-context" class="math-exercise-context">
+<p>Hver kolonne i en koeffisientmatrise representerer ett polynom. Radene står i rekkefølgen konstantledd, <span class="math inline">\(x\)</span>, <span class="math inline">\(x^2\)</span> og <span class="math inline">\(x^3\)</span>. En basis består av polynomer som er lineært uavhengige og som spenner ut hele det etterspurte rommet.</p>
+<p>I basisoppgavene kan polynomene komme i hvilken som helst rekkefølge. Røde kolonner er null eller ligger utenfor rommet. Hvis de gyldige kolonnene er lineært avhengige, farges hele familien gul. En grønn familie er gyldig og uavhengig, men kan fortsatt være for liten til å spenne ut hele rommet.</p>
+</div>
+</section>
+<section id="velg-andre-polynomklosser" class="level2">
+<h2 class="anchored" data-anchor-id="velg-andre-polynomklosser">Velg andre polynomklosser</h2>
+<p>Standardbasisen er praktisk, men den er ikke den eneste muligheten. Andre polynomer kan være like gode byggesteiner for <span class="math inline">\(\mathcal P_3\)</span>, så lenge ingen av dem kan lages av de andre. I matrisen under er hver kolonne ett polynom, og du velger selv hvor mange kolonner svaret skal ha.</p>
+<div class="math-exercise-cell" id="math-exercise-2" data-label="week3-polynomial-p3-basis" data-mode="custom" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;def check(response, symbols):\n    A = response[\&quot;inputs\&quot;][\&quot;P3basis\&quot;][\&quot;matrix\&quot;]\n    result = assess_basis(\n        A,\n        axis=\&quot;columns\&quot;,\n        target_dimension=4,\n        belongs=lambda vector: vector.rows == 4,\n        name=\&quot;P3basis\&quot;,\n        space_name=\&quot;P3\&quot;,\n    )\n    statuses = result[\&quot;assessment\&quot;][\&quot;P3basis\&quot;][\&quot;columns\&quot;]\n    if result[\&quot;score\&quot;] < 1:\n        if \&quot;incorrect\&quot; in statuses:\n            result[\&quot;feedback\&quot;] = \&quot;En rød kolonne er null og kan ikke være en basisvektor.\&quot;\n        elif \&quot;dependent\&quot; in statuses:\n            result[\&quot;feedback\&quot;] = \&quot;De gule polynomene er lineært avhengige. Behold en uavhengig del og juster familien videre.\&quot;\n        elif statuses:\n            result[\&quot;feedback\&quot;] = \&quot;De grønne polynomene er uavhengige, men de spenner ennå ikke ut hele P3.\&quot;\n        else:\n            result[\&quot;feedback\&quot;] = \&quot;Legg inn polynomer som kolonner i koeffisientmatrisen.\&quot;\n    return result&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week3-polynomial-basis-context" data-context="&quot;Velg andre polynomklosser Standardbasisen er praktisk, men den er ikke den eneste muligheten. Andre polynomer kan være like gode byggesteiner for \\mathcal P_3, så lenge ingen av dem kan lages av de andre. I matrisen under er hver kolonne ett polynom, og du velger selv hvor mange kolonner svaret skal ha.&quot;" data-fields="[&quot;math-exercise-2-dm-P3basis-1-1&quot;,&quot;math-exercise-2-dm-P3basis-1-2&quot;,&quot;math-exercise-2-dm-P3basis-2-1&quot;,&quot;math-exercise-2-dm-P3basis-2-2&quot;,&quot;math-exercise-2-dm-P3basis-3-1&quot;,&quot;math-exercise-2-dm-P3basis-3-2&quot;,&quot;math-exercise-2-dm-P3basis-4-1&quot;,&quot;math-exercise-2-dm-P3basis-4-2&quot;]" data-structural-field-labels="[&quot;dm:P3basis:1,1&quot;,&quot;dm:P3basis:1,2&quot;,&quot;dm:P3basis:2,1&quot;,&quot;dm:P3basis:2,2&quot;,&quot;dm:P3basis:3,1&quot;,&quot;dm:P3basis:3,2&quot;,&quot;dm:P3basis:4,1&quot;,&quot;dm:P3basis:4,2&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>En valgfri basis for P₃</div>
 
 <div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Svarformat: Hvert eksponentfelt skal være en binær streng med nøyaktig 5 bit.<br>
-Hvert mantissefelt skal være en binær streng med nøyaktig 10 bit. Bruk bare<br>
-nuller og enere, uten mellomrom eller skilletegn.<br>
+<div class="math-exercise-question">Finn en basis for \(\mathcal P_3\). Oppgi ett polynom per kolonne. Radene er<br>
+koeffisientene til henholdsvis \(1,x,x^2,x^3\):<br>
 <br>
-For tallet 1: eksponentfelt: <input type="text" id="math-exercise-2-f1" data-answer="01111" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> og mantissefelt: <input type="text" id="math-exercise-2-f2" data-answer="0000000000" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">.<br>
-<br>
-For det nærmeste tallet over 1: eksponentfelt: <input type="text" id="math-exercise-2-f3" data-answer="01111" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> og mantissefelt:<br>
-<input type="text" id="math-exercise-2-f4" data-answer="0000000001" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">.</div>
+\(A=\) <span class="math-dynamic-matrix-wrap" data-matrix-name="P3basis"><span class="math-mat math-dynamic-mat" style="--cols:2" data-matrix-name="P3basis" data-rows="4" data-cols="2" data-auto-rows="false" data-auto-cols="true" data-min-rows="4" data-max-rows="4" data-min-cols="0" data-max-cols="5" data-last-rows="4" data-last-cols="2"><input type="text" id="math-exercise-2-dm-P3basis-1-1" data-answer="" data-vars="" data-dynamic-matrix-name="P3basis" data-matrix-row="1" data-matrix-column="1" data-structural-label="dm:P3basis:1,1" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-dm-P3basis-1-2" data-answer="" data-vars="" data-dynamic-matrix-name="P3basis" data-matrix-row="1" data-matrix-column="2" data-structural-label="dm:P3basis:1,2" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-dm-P3basis-2-1" data-answer="" data-vars="" data-dynamic-matrix-name="P3basis" data-matrix-row="2" data-matrix-column="1" data-structural-label="dm:P3basis:2,1" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-dm-P3basis-2-2" data-answer="" data-vars="" data-dynamic-matrix-name="P3basis" data-matrix-row="2" data-matrix-column="2" data-structural-label="dm:P3basis:2,2" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-dm-P3basis-3-1" data-answer="" data-vars="" data-dynamic-matrix-name="P3basis" data-matrix-row="3" data-matrix-column="1" data-structural-label="dm:P3basis:3,1" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-dm-P3basis-3-2" data-answer="" data-vars="" data-dynamic-matrix-name="P3basis" data-matrix-row="3" data-matrix-column="2" data-structural-label="dm:P3basis:3,2" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-dm-P3basis-4-1" data-answer="" data-vars="" data-dynamic-matrix-name="P3basis" data-matrix-row="4" data-matrix-column="1" data-structural-label="dm:P3basis:4,1" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-dm-P3basis-4-2" data-answer="" data-vars="" data-dynamic-matrix-name="P3basis" data-matrix-row="4" data-matrix-column="2" data-structural-label="dm:P3basis:4,2" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><span class="math-dynamic-matrix-controls" aria-label="Matrix size controls"><span class="math-dynamic-axis" data-dynamic-axis="row"><span class="math-dynamic-axis-label"></span><button type="button" data-dynamic-action="remove-row">−</button><output></output><button type="button" data-dynamic-action="add-row">+</button></span><span class="math-dynamic-axis" data-dynamic-axis="col"><span class="math-dynamic-axis-label"></span><button type="button" data-dynamic-action="remove-col">−</button><output></output><button type="button" data-dynamic-action="add-col">+</button></span></span></span></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -1012,21 +1003,24 @@ For det nærmeste tallet over 1: eksponentfelt: <input type="text" id="math-exer
 </div>
 </div>
 </section>
-<section id="b-representasjon-av-12345" class="level3">
-<h3 class="anchored" data-anchor-id="b-representasjon-av-12345">b) Representasjon av 12345</h3>
-<p>Tallet er gitt i binær form som</p>
+<section id="et-underrom-av-polynomer" class="level2">
+<h2 class="anchored" data-anchor-id="et-underrom-av-polynomer">Et underrom av polynomer</h2>
+<p>Vi kan også begynne med noen polynomer og spørre hvilke uavhengige retninger de bygger. La</p>
 <p><span class="math display">\[
-12345=(11000000111001)_2.
+\begin{aligned}
+p_1&amp;=1+x, &amp; p_2&amp;=x+x^2,\\
+p_3&amp;=1+x^2+x^3, &amp; p_4&amp;=2-x-x^2+x^3.
+\end{aligned}
 \]</span></p>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="exam-h25-10-encode-12345" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;b) Representasjon av 12345 Tallet er gitt i binær form som 12345=(11000000111001)_2.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Kod 12345 i halvpresisjon</div>
+<p>Alle lineærkombinasjoner av disse danner et underrom <span class="math inline">\(U=\operatorname{Span}(p_1,p_2,p_3,p_4)\)</span> i <span class="math inline">\(\mathcal P_3\)</span>. En basis for <span class="math inline">\(U\)</span> kan bestå av noen av polynomene over, eller av helt andre polynomer som bygger nøyaktig det samme rommet.</p>
+<div class="math-exercise-cell" id="math-exercise-3" data-label="week3-polynomial-subspace-basis" data-mode="custom" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;def check(response, symbols):\n    A = response[\&quot;inputs\&quot;][\&quot;Ubasis\&quot;][\&quot;matrix\&quot;]\n    T = Matrix([\n        [1, 0, 1],\n        [1, 1, 0],\n        [0, 1, 1],\n        [0, 0, 1],\n    ])\n    target_rank = T.rank()\n    result = assess_basis(\n        A,\n        axis=\&quot;columns\&quot;,\n        target_dimension=target_rank,\n        belongs=lambda vector: vector.rows == 4 and T.row_join(vector).rank() == target_rank,\n        name=\&quot;Ubasis\&quot;,\n        space_name=\&quot;U\&quot;,\n    )\n    statuses = result[\&quot;assessment\&quot;][\&quot;Ubasis\&quot;][\&quot;columns\&quot;]\n    if result[\&quot;score\&quot;] < 1:\n        if \&quot;incorrect\&quot; in statuses:\n            result[\&quot;feedback\&quot;] = \&quot;En rød kolonne er null eller representerer et polynom utenfor U.\&quot;\n        elif \&quot;dependent\&quot; in statuses:\n            result[\&quot;feedback\&quot;] = \&quot;De gule polynomene ligger i U, men familien er lineært avhengig. Behold en uavhengig del og juster familien videre.\&quot;\n        elif statuses:\n            result[\&quot;feedback\&quot;] = \&quot;De grønne polynomene ligger i U og er uavhengige, men de spenner ennå ikke ut hele U.\&quot;\n        else:\n            result[\&quot;feedback\&quot;] = \&quot;Legg inn basispolynomer som kolonner i koeffisientmatrisen.\&quot;\n    return result&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week3-polynomial-basis-context" data-context="&quot;Et underrom av polynomer Vi kan også begynne med noen polynomer og spørre hvilke uavhengige retninger de bygger. La \\begin{aligned} p_1&amp;=1+x, &amp; p_2&amp;=x+x^2,\\\\ p_3&amp;=1+x^2+x^3, &amp; p_4&amp;=2-x-x^2+x^3. \\end{aligned} Alle lineærkombinasjoner av disse danner et underrom U=\\operatorname{Span}(p_1,p_2,p_3,p_4) i \\mathcal P_3. En basis for U kan bestå av noen av polynomene over, eller av helt andre polynomer som bygger nøyaktig det samme rommet.&quot;" data-fields="[&quot;math-exercise-3-dm-Ubasis-1-1&quot;,&quot;math-exercise-3-dm-Ubasis-1-2&quot;,&quot;math-exercise-3-dm-Ubasis-2-1&quot;,&quot;math-exercise-3-dm-Ubasis-2-2&quot;,&quot;math-exercise-3-dm-Ubasis-3-1&quot;,&quot;math-exercise-3-dm-Ubasis-3-2&quot;,&quot;math-exercise-3-dm-Ubasis-4-1&quot;,&quot;math-exercise-3-dm-Ubasis-4-2&quot;]" data-structural-field-labels="[&quot;dm:Ubasis:1,1&quot;,&quot;dm:Ubasis:1,2&quot;,&quot;dm:Ubasis:2,1&quot;,&quot;dm:Ubasis:2,2&quot;,&quot;dm:Ubasis:3,1&quot;,&quot;dm:Ubasis:3,2&quot;,&quot;dm:Ubasis:4,1&quot;,&quot;dm:Ubasis:4,2&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Basis for et polynomunderrom</div>
 
 <div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 5 bit og<br>
-mantissefeltet nøyaktig 10 bit. Bruk bare nuller og enere, uten mellomrom eller<br>
-skilletegn.<br>
+<div class="math-exercise-question">Finn en basis for \(U\). Oppgi ett polynom per kolonne, med koeffisientene til<br>
+\(1,x,x^2,x^3\) ovenfra og ned:<br>
 <br>
-\(s=\) <input type="text" id="math-exercise-3-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; \(E=\) <input type="text" id="math-exercise-3-f2" data-answer="11100" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; \(f=\) <input type="text" id="math-exercise-3-f3" data-answer="1000000111" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+\(B_U=\) <span class="math-dynamic-matrix-wrap" data-matrix-name="Ubasis"><span class="math-mat math-dynamic-mat" style="--cols:2" data-matrix-name="Ubasis" data-rows="4" data-cols="2" data-auto-rows="false" data-auto-cols="true" data-min-rows="4" data-max-rows="4" data-min-cols="0" data-max-cols="5" data-last-rows="4" data-last-cols="2"><input type="text" id="math-exercise-3-dm-Ubasis-1-1" data-answer="" data-vars="" data-dynamic-matrix-name="Ubasis" data-matrix-row="1" data-matrix-column="1" data-structural-label="dm:Ubasis:1,1" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-dm-Ubasis-1-2" data-answer="" data-vars="" data-dynamic-matrix-name="Ubasis" data-matrix-row="1" data-matrix-column="2" data-structural-label="dm:Ubasis:1,2" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-dm-Ubasis-2-1" data-answer="" data-vars="" data-dynamic-matrix-name="Ubasis" data-matrix-row="2" data-matrix-column="1" data-structural-label="dm:Ubasis:2,1" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-dm-Ubasis-2-2" data-answer="" data-vars="" data-dynamic-matrix-name="Ubasis" data-matrix-row="2" data-matrix-column="2" data-structural-label="dm:Ubasis:2,2" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-dm-Ubasis-3-1" data-answer="" data-vars="" data-dynamic-matrix-name="Ubasis" data-matrix-row="3" data-matrix-column="1" data-structural-label="dm:Ubasis:3,1" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-dm-Ubasis-3-2" data-answer="" data-vars="" data-dynamic-matrix-name="Ubasis" data-matrix-row="3" data-matrix-column="2" data-structural-label="dm:Ubasis:3,2" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-dm-Ubasis-4-1" data-answer="" data-vars="" data-dynamic-matrix-name="Ubasis" data-matrix-row="4" data-matrix-column="1" data-structural-label="dm:Ubasis:4,1" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-dm-Ubasis-4-2" data-answer="" data-vars="" data-dynamic-matrix-name="Ubasis" data-matrix-row="4" data-matrix-column="2" data-structural-label="dm:Ubasis:4,2" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><span class="math-dynamic-matrix-controls" aria-label="Matrix size controls"><span class="math-dynamic-axis" data-dynamic-axis="row"><span class="math-dynamic-axis-label"></span><button type="button" data-dynamic-action="remove-row">−</button><output></output><button type="button" data-dynamic-action="add-row">+</button></span><span class="math-dynamic-axis" data-dynamic-axis="col"><span class="math-dynamic-axis-label"></span><button type="button" data-dynamic-action="remove-col">−</button><output></output><button type="button" data-dynamic-action="add-col">+</button></span></span></span></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -1041,24 +1035,24 @@ skilletegn.<br>
 </div>
 </div>
 </section>
-<section id="c-avrunding-nær-1" class="level3">
-<h3 class="anchored" data-anchor-id="c-avrunding-nær-1">c) Avrunding nær 1</h3>
-<p>Vi ønsker å lagre</p>
+<section id="koordinater-i-en-ny-basis" class="level2">
+<h2 class="anchored" data-anchor-id="koordinater-i-en-ny-basis">Koordinater i en ny basis</h2>
+<p>Når basisen skifter, skifter koordinatene, selv om polynomet er det samme. I <span class="math inline">\(\mathcal P_2\)</span> bruker vi nå basisen <span class="math inline">\(\mathcal B=(p_1,p_2,p_3)\)</span>, der</p>
 <p><span class="math display">\[
-x=1+2^{-12}+2^{-15}.
+p_1=x^2-2,\qquad
+p_2=-x^2+x+2,\qquad
+p_3=3x^2+x-5.
 \]</span></p>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="exam-h25-10-round-near-one" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;lagret verdi&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallene og den lagrede verdien</div>
+<p>Å finne <span class="math inline">\([q]_{\mathcal B}\)</span> betyr å finne tall <span class="math inline">\(c_1,c_2,c_3\)</span> slik at</p>
+<p><span class="math display">\[q=c_1p_1+c_2p_2+c_3p_3.\]</span></p>
+<p>Sammenlign koeffisientene til <span class="math inline">\(1\)</span>, <span class="math inline">\(x\)</span> og <span class="math inline">\(x^2\)</span> på begge sider. Da får du et vanlig lineært ligningssystem for <span class="math inline">\(c_1,c_2,c_3\)</span>.</p>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="week3-polynomial-coordinates" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Koordinater i en ny basis Når basisen skifter, skifter koordinatene, selv om polynomet er det samme. I \\mathcal P_2 bruker vi nå basisen \\mathcal B=(p_1,p_2,p_3), der p_1=x^2-2,\\qquad p_2=-x^2+x+2,\\qquad p_3=3x^2+x-5. Å finne [q]_{\\mathcal B} betyr å finne tall c_1,c_2,c_3 slik at q=c_1p_1+c_2p_2+c_3p_3. Sammenlign koeffisientene til 1, x og x^2 på begge sider. Da får du et vanlig lineært ligningssystem for c_1,c_2,c_3.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;m1,1&quot;,&quot;m2,1&quot;,&quot;m3,1&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Koordinater i en polynombasis</div>
 
 <div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Svarformat: Skriv hvert svar som et heltall eller et eksakt uttrykk. Bruk<br>
-`2**(-k)` for \(2^{-k}\).<br>
+<div class="math-exercise-question">Finn koordinatvektoren til \(q(x)=4x^2+x-7\) i basisen \(\mathcal B\):<br>
 <br>
-Det nedre representerbare nabotallet er <input type="text" id="math-exercise-4-f1" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.<br>
-<br>
-Det øvre representerbare nabotallet er <input type="text" id="math-exercise-4-f2" data-answer="1 + 2**(-10)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">.<br>
-<br>
-Etter avrunding lagres verdien <input type="text" id="math-exercise-4-f3" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
+\([q]_{\mathcal B}=\) <span class="math-mat" style="--cols:1"><input type="text" id="math-exercise-4-f1" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-4-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-4-f3" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -1072,278 +1066,9 @@ Etter avrunding lagres verdien <input type="text" id="math-exercise-4-f3" data-a
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<div class="math-exercise-cell" id="math-exercise-5" data-label="exam-h25-10-round-near-one-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene til nabotallene</div>
-
-<div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Begge tallene har fortegn 0 og eksponentfelt 01111.<br>
-<br>
-Svarformat: Hvert svar skal være en binær streng med nøyaktig 10 bit. Bruk bare<br>
-nuller og enere, uten mellomrom eller skilletegn.<br>
-<br>
-Nedre: <input type="text" id="math-exercise-5-f1" data-answer="0000000000" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp;&nbsp; Øvre: <input type="text" id="math-exercise-5-f2" data-answer="0000000001" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
-<br>
-Valgt etter avrunding: <input type="text" id="math-exercise-5-f3" data-answer="0000000000" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
-
-<div class="math-exercise-controls">
-  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
-  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
-  <div class="btn-group">
-    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
-    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
-  </div>
-</div>
-<div class="math-legend-panel" style="display:none;"></div>
-<div class="math-feedback-area"></div>
-</div>
-</div>
-</section>
-</section>
-<section id="vår-2026-konte-oppgave-8-minifloat" class="level2">
-<h2 class="anchored" data-anchor-id="vår-2026-konte-oppgave-8-minifloat">Vår 2026, konte – oppgave 8: MiniFloat</h2>
-<p>Oppgaven bygger på eksamensoppgave 8 fra IMAx3011 konteeksamen våren 2026.</p>
-<div id="k26-minifloat-format" class="math-exercise-context">
-<section id="minifloat133" class="level3">
-<h3 class="anchored" data-anchor-id="minifloat133">MiniFloat(1,3,3)</h3>
-<p>Formatet har sju bit: én fortegnsbit <span class="math inline">\(s\)</span>, tre eksponentbiter <span class="math inline">\(e\)</span> og tre brøkbiter <span class="math inline">\(f\)</span>. Bias er <span class="math inline">\(B=3\)</span>. Alle tall i denne oppgaven er normaliserte og tolkes som</p>
-<p><span class="math display">\[
-x=(-1)^s(1.f)_2\,2^{e-B}.
-\]</span></p>
-<p>Eksponentkodene <code>000</code> og <code>111</code> brukes ikke. Ved avrunding velges nærmeste representerbare tall. Ligger verdien nøyaktig midt mellom to tall, bruker vi ties-to-even: alternativet med siste mantissebit 0 velges.</p>
-</section>
-</div>
-<section id="a-dekoding" class="level3">
-<h3 class="anchored" data-anchor-id="a-dekoding">a) Dekoding</h3>
-<div class="math-exercise-cell" id="math-exercise-6" data-label="exam-k26-8-decode" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;a) Dekoding&quot;" data-fields="[&quot;math-exercise-6-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Dekod et MiniFloat-tall</div>
-
-<div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Svarformat: Oppgi én eksakt tallverdi som heltall, brøk eller desimaltall med<br>
-punktum som desimalskilletegn.<br>
-<br>
-Hva er desimalverdien av bitmønsteret<br>
-<br>
-\[<br>
-\texttt{0 100 010}?<br>
-\]<br>
-<br>
-Verdien er <input type="text" id="math-exercise-6-f1" data-answer="5/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
-
-<div class="math-exercise-controls">
-  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
-  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
-  <div class="btn-group">
-    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
-    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
-  </div>
-</div>
-<div class="math-legend-panel" style="display:none;"></div>
-<div class="math-feedback-area"></div>
-</div>
-</div>
-</section>
-<section id="b-koding-og-avrunding" class="level3">
-<h3 class="anchored" data-anchor-id="b-koding-og-avrunding">b) Koding og avrunding</h3>
-<p>Tallet <span class="math inline">\(5.25\)</span> ligger nøyaktig midt mellom to representerbare MiniFloat-tall.</p>
-<div class="math-exercise-cell" id="math-exercise-7" data-label="exam-k26-8-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;b) Koding og avrunding Tallet 5.25 ligger nøyaktig midt mellom to representerbare MiniFloat-tall.&quot;" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;,&quot;math-exercise-7-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Kod 5.25 med ties-to-even</div>
-
-<div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 3 bit og<br>
-mantissefeltet nøyaktig 3 bit. Bruk bare nuller og enere, uten mellomrom eller<br>
-skilletegn.<br>
-<br>
-\(s=\) <input type="text" id="math-exercise-7-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; \(e=\) <input type="text" id="math-exercise-7-f2" data-answer="101" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; \(f=\) <input type="text" id="math-exercise-7-f3" data-answer="010" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
-
-<div class="math-exercise-controls">
-  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
-  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
-  <div class="btn-group">
-    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
-    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
-  </div>
-</div>
-<div class="math-legend-panel" style="display:none;"></div>
-<div class="math-feedback-area"></div>
-</div>
-</div>
-</section>
-<section id="c-nærmeste-tall-til-0.3" class="level3">
-<h3 class="anchored" data-anchor-id="c-nærmeste-tall-til-0.3">c) Nærmeste tall til 0.3</h3>
-<div class="math-exercise-cell" id="math-exercise-8" data-label="exam-k26-8-round-point-three" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;avrundet verdi&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Rund 0.3 til MiniFloat</div>
-
-<div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Svarformat: Oppgi hvert tall som en eksakt brøk eller som et desimaltall med<br>
-punktum som desimalskilletegn.<br>
-<br>
-Det nedre representerbare nabotallet er <input type="text" id="math-exercise-8-f1" data-answer="9/32" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.<br>
-<br>
-Det øvre representerbare nabotallet er <input type="text" id="math-exercise-8-f2" data-answer="5/16" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.<br>
-<br>
-Ved avrunding til nærmeste lagres <input type="text" id="math-exercise-8-f3" data-answer="5/16" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
-
-<div class="math-exercise-controls">
-  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
-  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
-  <div class="btn-group">
-    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
-    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
-  </div>
-</div>
-<div class="math-legend-panel" style="display:none;"></div>
-<div class="math-feedback-area"></div>
-</div>
-</div>
-<div class="math-exercise-cell" id="math-exercise-9" data-label="exam-k26-8-round-point-three-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Bitmønstre rundt 0.3</div>
-
-<div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Alle tre svarene har fortegn 0 og eksponentfelt 001.<br>
-<br>
-Svarformat: Hvert svar skal være en binær streng med nøyaktig 3 bit. Bruk bare<br>
-nuller og enere, uten mellomrom eller skilletegn.<br>
-<br>
-Nedre: <input type="text" id="math-exercise-9-f1" data-answer="001" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; Øvre: <input type="text" id="math-exercise-9-f2" data-answer="010" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp;&nbsp; Valgt: <input type="text" id="math-exercise-9-f3" data-answer="010" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
-
-<div class="math-exercise-controls">
-  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
-  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
-  <div class="btn-group">
-    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
-    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
-  </div>
-</div>
-<div class="math-legend-panel" style="display:none;"></div>
-<div class="math-feedback-area"></div>
-</div>
-</div>
-</section>
-<section id="d-avstand-mellom-nabotall" class="level3">
-<h3 class="anchored" data-anchor-id="d-avstand-mellom-nabotall">d) Avstand mellom nabotall</h3>
-<div class="math-exercise-cell" id="math-exercise-10" data-label="exam-k26-8-spacing" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;d) Avstand mellom nabotall&quot;" data-fields="[&quot;math-exercise-10-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallsavstanden</div>
-
-<div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Hold eksponentfeltet fast på \(e=\texttt{100}\). Avstanden mellom to tall som<br>
-bare skiller seg med 1 i mantissefeltet er<br>
-<br>
-Svarformat: Oppgi én eksakt brøk eller et desimaltall med punktum som<br>
-desimalskilletegn.<br>
-<br>
-\[\Delta =\] <input type="text" id="math-exercise-10-f1" data-answer="1/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
-
-<div class="math-exercise-controls">
-  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
-  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
-  <div class="btn-group">
-    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
-    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
-  </div>
-</div>
-<div class="math-legend-panel" style="display:none;"></div>
-<div class="math-feedback-area"></div>
-</div>
-</div>
-</section>
-</section>
-<section id="vår-2026-konte-2-oppgave-8-kansellering" class="level2">
-<h2 class="anchored" data-anchor-id="vår-2026-konte-2-oppgave-8-kansellering">Vår 2026, konte 2 – oppgave 8: Kansellering</h2>
-<p>Oppgaven bygger på eksamensoppgave 8 fra den andre konteeksamenen i IMAx3011 våren 2026.</p>
-<div id="k2-decimal-format" class="math-exercise-context">
-<section id="desimalt-flyttallsformat" class="level3">
-<h3 class="anchored" data-anchor-id="desimalt-flyttallsformat">Desimalt flyttallsformat</h3>
-<p>Vi bruker et desimalt flyttallsformat med fire signifikante sifre og avrunding til nærmeste representerbare tall. Regneoperasjoner utføres på de lagrede verdiene, og resultatet avrundes tilbake til formatet.</p>
-<p>Når to nesten like tall subtraheres, kan de ledende sifrene forsvinne. Små avrundingsfeil i operandene kan da bli store sammenlignet med den lille differansen. Dette kalles kansellering.</p>
-</section>
-</div>
-<section id="a-maskinell-differanse" class="level3">
-<h3 class="anchored" data-anchor-id="a-maskinell-differanse">a) Maskinell differanse</h3>
-<p>La <span class="math inline">\(x=12.345\)</span> og <span class="math inline">\(y=12.344\)</span>.</p>
-<div class="math-exercise-cell" id="math-exercise-11" data-label="exam-k2-8-machine-difference" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;lagret x&quot;,&quot;lagret y&quot;,&quot;maskinell differanse&quot;,&quot;eksakt differanse&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-11-f1&quot;,&quot;math-exercise-11-f2&quot;,&quot;math-exercise-11-f3&quot;,&quot;math-exercise-11-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Lagre og subtraher med fire signifikante sifre</div>
-
-<div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Svarformat: Oppgi bare tallverdien i hvert felt. Bruk punktum som<br>
-desimalskilletegn, ikke komma.<br>
-<br>
-\[\operatorname{fl}(x)=\] <input type="text" id="math-exercise-11-f1" data-answer="12.35" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
-<br>
-\[\operatorname{fl}(y)=\] <input type="text" id="math-exercise-11-f2" data-answer="12.34" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
-<br>
-\[\operatorname{fl}(\operatorname{fl}(x)-\operatorname{fl}(y))=\] <input type="text" id="math-exercise-11-f3" data-answer="0.01" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
-<br>
-Den eksakte differansen er \(x-y=\) <input type="text" id="math-exercise-11-f4" data-answer="0.001" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.</div>
-
-<div class="math-exercise-controls">
-  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
-  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
-  <div class="btn-group">
-    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
-    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
-  </div>
-</div>
-<div class="math-legend-panel" style="display:none;"></div>
-<div class="math-feedback-area"></div>
-</div>
-</div>
-<div class="math-exercise-cell" id="math-exercise-12" data-label="exam-k2-8-error-factor" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-12-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Sammenlign differansene</div>
-
-<div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Svarformat: Oppgi ett positivt heltall.<br>
-<br>
-Den maskinelle differansen er <input type="text" id="math-exercise-12-f1" data-answer="10" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> ganger den eksakte differansen.</div>
-
-<div class="math-exercise-controls">
-  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
-  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
-  <div class="btn-group">
-    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
-    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
-  </div>
-</div>
-<div class="math-legend-panel" style="display:none;"></div>
-<div class="math-feedback-area"></div>
-</div>
-</div>
-</section>
-<div id="k2-stable-rationalization" class="math-exercise-context">
-<section id="stabil-omskriving" class="level3">
-<h3 class="anchored" data-anchor-id="stabil-omskriving">Stabil omskriving</h3>
-<p>For små <span class="math inline">\(t&gt;0\)</span> er <span class="math inline">\(\sqrt{1+t}\)</span> nær 1. Direkte beregning av <span class="math inline">\(\sqrt{1+t}-1\)</span> subtraherer derfor to nesten like tall og kan miste mange signifikante sifre. Ved å multiplisere teller og nevner med den konjugerte <span class="math inline">\(\sqrt{1+t}+1\)</span> kan subtraksjonen fjernes.</p>
-</section>
-</div>
-<section id="bc-kansellering-og-rasjonalisering" class="level3">
-<h3 class="anchored" data-anchor-id="bc-kansellering-og-rasjonalisering">b–c) Kansellering og rasjonalisering</h3>
-<div class="math-exercise-cell" id="math-exercise-13" data-label="exam-k2-8-rationalize" data-mode="equivalent" data-reject="sqrt(1+t)-1" data-vars="t" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format, k2-stable-rationalization" data-context="&quot;b–c) Kansellering og rasjonalisering&quot;" data-fields="[&quot;math-exercise-13-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0"><span class="math-chevron" aria-hidden="true"></span>Skriv om uttrykket</div>
-
-<div class="math-exercise-body" style="display:none;">
-<div class="math-exercise-question">Skriv \(\sqrt{1+t}-1\) på en matematisk ekvivalent form som unngår subtraksjon<br>
-av to nesten like tall.<br>
-<br>
-Svarformat: Bruk variabelen `t` og skriv kvadratroten som `sqrt(...)`. Bruk<br>
-vanlige regneoperatorer som `+`, `-`, `*` og `/`. Det opprinnelige uttrykket<br>
-godtas ikke.<br>
-<br>
-\[\sqrt{1+t}-1 =\] <input type="text" id="math-exercise-13-f1" data-answer="t/(sqrt(1+t)+1)" data-vars="t" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
-
-<div class="math-exercise-controls">
-  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
-  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
-  <div class="btn-group">
-    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
-    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
-  </div>
-</div>
-<div class="math-legend-panel" style="display:none;"></div>
-<div class="math-feedback-area"></div>
-</div>
-</div>
+<p>Det er hele poenget med «andre typer byggesteiner»: Vi regner fortsatt med koordinater, lineærkombinasjoner, spenn og basis. Det eneste nye er at hver koordinatkolonne nå beskriver et polynom i stedet for en pil i planet.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
