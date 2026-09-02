@@ -43,25 +43,60 @@ from numpy.polynomial import chebyshev as cheb
 ```
 
 :::: {.callout-note}
-## Hvorfor bruker vi `numpy.polynomial`?
+## Kort manual: polynomer i NumPy
 
-Dette prosjektet bruker to koordinatsystemer for det samme polynomrommet.
-Modulen `numpy.polynomial` lar oss være tydelige på hvilket koordinatsystem vi
-arbeider i:
+På papir skriver vi for eksempel
 
-- `poly.polyval(x, a)` tolker `a` som koeffisientene til
-  $1,x,x^2,\ldots$;
-- `cheb.chebval(x, c)` tolker `c` som koeffisientene til
-  $T_0,T_1,T_2,\ldots$;
-- `poly.polyfromroots` bygger monomialkoeffisienter fra nullpunkter;
-- `cheb.cheb2poly` konverterer Chebyshev-koordinater til
-  monomialkoordinater.
+$$p(x)=1-2x+0.5x^2+x^3.$$
 
-I begge koordinatsystemene står koeffisienten til basisfunksjon nummer $k$ på
-plass `k`. Dette er motsatt rekkefølge av den eldre funksjonen `np.polyval`,
-som vi derfor ikke bruker her. Funksjonene gjør ikke den matematiske
-tolkningen for oss: Vi må fortsatt vite hvilken basis en koordinatvektor
-tilhører.
+I Python lagrer vi koeffisientene i samme rekkefølge som leddene over: først
+konstantleddet, så koeffisienten foran $x$, deretter koeffisienten foran
+$x^2$, og så videre.
+
+```python
+a = np.array([1.0, -2.0, 0.5, 1.0])
+```
+
+`np.array` lager her bare en talliste som NumPy kan regne med.
+
+Her betyr altså `a[0]` konstantleddet $1$, `a[1]` betyr $-2$, og `a[3]`
+betyr koeffisienten $1$ foran $x^3$. For å regne ut $p(0.4)$ skriver vi
+
+```python
+poly.polyval(0.4, a)
+```
+
+For å regne ut polynomverdien i flere punkter på én gang sender vi inn en
+liste eller en NumPy-array:
+
+```python
+x = np.array([-1.0, 0.0, 0.4, 1.0])
+y = poly.polyval(x, a)
+```
+
+Da inneholder `y` de fire tallene $p(-1)$, $p(0)$, $p(0.4)$ og $p(1)$ i
+samme rekkefølge. Dette er alt `poly.polyval` gjør: Det setter de oppgitte
+$x$-verdiene inn i polynomet.
+
+Senere skriver vi det samme polynomet ved hjelp av
+$T_0,T_1,T_2,\ldots$ i stedet for $1,x,x^2,\ldots$. Hvis
+
+$$p(x)=c_0T_0(x)+c_1T_1(x)+c_2T_2(x),$$
+
+lagrer vi tallene som `c = np.array([c_0, c_1, c_2])` og bruker
+`cheb.chebval(x, c)`. Forskjellen mellom `poly.polyval` og `cheb.chebval` er
+derfor hvilken liste av polynomer koeffisientene hører til.
+
+Vi bruker også to hjelpefunksjoner senere:
+
+- `poly.polyfromroots([r1, r2])` regner ut koeffisientene til
+  $(x-r_1)(x-r_2)$;
+- `cheb.cheb2poly(c)` skriver et polynom fra $T$-formen om til den vanlige
+  formen $a_0+a_1x+a_2x^2+\cdots$.
+
+Bruk funksjonene med prefiksene `poly.` og `cheb.` i dette prosjektet. Ikke
+bruk `np.polyval`: Den forventer koeffisientene i motsatt rekkefølge og gjør
+det unødvendig lett å få et svar som ser rimelig ut, men er feil.
 ::::
 
 :::: {.callout-tip}
@@ -129,9 +164,20 @@ $n=5,10,15$. Nullstill telleren mellom hvert forsøk. Forklar hvorfor den
 direkte rekursjonen gjentar stadig flere delberegninger.
 ::::
 
-Den direkte rekursjonen gjør mange av de samme beregningene flere ganger. I
-resten av prosjektet bruker vi derfor en tabell som lagrer alle verdiene fra
-$T_0$ til $T_n$:
+Den direkte rekursjonen gjør mange av de samme beregningene flere ganger. Vi
+vil dessuten snart trenge mange $T$-polynomer i mange forskjellige
+$x$-verdier. Derfor lager vi én tabell som samler alt.
+
+Hvis `x` inneholder fem punkter og vi ber om polynomene fra $T_0$ til $T_4$,
+får tabellen fem rader og fem kolonner:
+
+- rad 0 inneholder $T_0(x_0),T_1(x_0),\ldots,T_4(x_0)$;
+- rad 1 inneholder de samme fem polynomene regnet ut i $x_1$;
+- kolonne 2 inneholder $T_2$ regnet ut i alle de fem punktene.
+
+Når en verdi først er regnet ut, blir den liggende i tabellen og kan brukes
+til å lage neste kolonne. Dermed slipper programmet å starte rekursjonen på
+nytt hver gang.
 
 ```{pyodide-python}
 import numpy as np
@@ -156,12 +202,23 @@ x_test = np.array([-1.0, -0.25, 0.0, 0.4, 1.0])
 print(chebyshev_table(x_test, 4))
 ```
 
-Tabellformen er nyttig av to grunner: Vi unngår gjentatt rekursjon, og vi får
-alle basisfunksjonene evaluert i alle punktene i én struktur. Senere blir
-nettopp denne tabellen avlesningsmatrisen i Chebyshev-basis. Kontroller hvilken
-akse som svarer til punkter og hvilken som svarer til basisfunksjoner.
+Les den utskrevne tabellen rad for rad. Kontroller for eksempel at første rad
+stemmer med $T_k(-1)$ for $k=0,\ldots,4$, og at kolonne 1 er de fem
+$x$-verdiene fordi $T_1(x)=x$. Senere bruker vi den samme tabellen når vi vil
+regne ut flere lineærkombinasjoner av $T_0,\ldots,T_n$ i de samme punktene.
 
 ### Fra rekursjon til grafer
+
+Før vi bruker Chebyshev-polynomene som regneverktøy, trenger vi et bilde av
+hvordan de oppfører seg på intervallet $[-1,1]$. Er de store eller små? Hvor
+mange ganger svinger de? Oppfører partalls- og oddetallspolynomene seg ulikt?
+Dette blir viktig senere når vi skal forstå hvorfor denne beskrivelsen av et
+polynom kan være numerisk gunstig.
+
+En graf består av mange beregnede punkter. Koden lager derfor 1200 jevnt
+fordelte $x$-verdier og bruker `chebyshev_table` til å regne ut
+$T_0,\ldots,T_8$ i alle sammen. Resultatet `T_plot` har 1200 rader og 9
+kolonner. I løkken tegner `T_plot[:, n]` hele kolonnen som hører til $T_n$.
 
 ```{pyodide-python}
 import numpy as np
@@ -194,16 +251,34 @@ Undersøk figurene før du leser videre:
 
 ### Er dette en basis?
 
-For å undersøke $T_0,\ldots,T_4$ som mulige basispolynomer trenger vi deres
-koordinater i $(1,x,x^2,x^3,x^4)$. Start med koeffisientene du fant for hånd.
-Fyll deretter kolonnene i `Q`:
+Den vanlige måten å skrive polynomer i $\mathcal P_4$ på er
+
+$$p(x)=a_0+a_1x+a_2x^2+a_3x^3+a_4x^4.$$
+
+Polynomene $(1,x,x^2,x^3,x^4)$ kalles her **monomialbasis** eller
+**potensbasis**. Tallkolonnen $(a_0,a_1,a_2,a_3,a_4)^T$ er koordinatene til
+$p$ i denne basisen. For eksempel har $3-2x^2$ koordinatkolonnen
+
+$$\begin{bmatrix}3&0&-2&0&0\end{bmatrix}^T.$$
+
+Vi vil avgjøre om hvert polynom i $\mathcal P_4$ også kan skrives på nøyaktig
+én måte som
+
+$$p(x)=c_0T_0(x)+c_1T_1(x)+\cdots+c_4T_4(x).$$
+
+For å bruke rangtesten fra lineær algebra skriver vi først hvert $T_k$ i den
+kjente monomialbasisen. Disse fem koordinatkolonnene settes ved siden av
+hverandre i matrisen `Q`. Hvis `Q` har rang 5, er kolonnene lineært uavhengige.
+Da er de fem polynomene lineært uavhengige i et rom med dimensjon 5, og de
+danner derfor en basis. Start med koeffisientene du fant for hånd, og fyll
+kolonnene i `Q`.
 
 ```{pyodide-python}
 # Hver kolonne skal inneholde monomialkoeffisientene til ett T_k.
 # Rekkefølgen på radene er 1, x, x^2, x^3, x^4.
 Q = np.full((5, 5), np.nan)
-# Vi bruker kolonner fordi en matrise representerer hvor basisvektorene
-# sendes: kolonne k er koordinatvektoren til T_k i monomialbasis.
+# Kolonne k er koeffisientlisten til T_k. Rangtesten undersøker om de fem
+# listene, og dermed de fem polynomene, er lineært uavhengige.
 Q[:, 0] = [1, 0, 0, 0, 0]  # T_0
 Q[:, 1] = [0, 1, 0, 0, 0]  # T_1
 
@@ -242,7 +317,12 @@ $$
 
 sender altså et polynom til fire polynomverdier. Avbildningen er lineær:
 Hvis vi dobler polynomet, dobles alle avlesningene, og avlesning av en sum
-gir summen av avlesningene.
+gir summen av avlesningene:
+
+$$E(2p)=2E(p),\qquad E(p+q)=E(p)+E(q).$$
+
+Det er nettopp denne lineariteten som gjør at hele avlesningsprosessen kan
+beskrives med en matrise.
 
 ### Matrisen avhenger av basisen
 
@@ -258,22 +338,41 @@ Dermed er første rad i avlesningsmatrisen
 $[1,x_0,x_0^2,x_0^3]$. Utled de tre andre radene før du fullfører funksjonen
 under.
 
-To ferdigregnede minieksempler viser mønsteret. For basisen $(1,x)$ og
-punktene $-1,2$ får vi
+Her er et lite eksempel med et førstegradspolynom
+$p(x)=a_0+a_1x$. Avlesning i punktene $x_0=-1$ og $x_1=2$ gir
 
 $$
-\begin{bmatrix}1&-1\\1&2\end{bmatrix}.
+p(x_0)=a_0-a_1,
+\qquad
+p(x_1)=a_0+2a_1.
 $$
 
-For basisen $(1,x,x^2)$ og punktene $0,1,2$ får vi
+Begge ligningene kan samles i ett matriseprodukt:
 
 $$
-\begin{bmatrix}1&0&0\\1&1&1\\1&2&4\end{bmatrix}.
+\begin{bmatrix}p(-1)\\p(2)\end{bmatrix}
+=
+\begin{bmatrix}1&-1\\1&2\end{bmatrix}
+\begin{bmatrix}a_0\\a_1\end{bmatrix}.
 $$
 
-Hver rad hører altså til ett avlesningspunkt, mens hver kolonne hører til én
-basisfunksjon. Matriseproduktet med en koordinatvektor danner én avlesning per
-rad.
+Et andre eksempel bruker $p(x)=a_0+a_1x+a_2x^2$ og punktene $0,1,2$:
+
+$$
+\begin{bmatrix}p(0)\\p(1)\\p(2)\end{bmatrix}
+=
+\begin{bmatrix}1&0&0\\1&1&1\\1&2&4\end{bmatrix}
+\begin{bmatrix}a_0\\a_1\\a_2\end{bmatrix}.
+$$
+
+Se spesielt på siste rad: Den kommer fra
+$p(2)=a_0+2a_1+2^2a_2$. Hver rad lages ved å sette ett punkt inn i
+$1,x,x^2,\ldots$. Når matrisen multipliseres med koeffisientkolonnen, får vi
+én polynomverdi per rad. I Python betyr `A @ a` matriseproduktet $Aa$.
+
+Koden under lager denne matrisen for så mange punkter og potenser som vi ber
+om. Uttrykket med `None` er NumPys kompakte måte å kombinere hvert punkt med
+hver potens. Bruk de to små matrisene over som fasit når du fullfører linjen.
 
 ```{pyodide-python}
 def monomial_matrix(points, n):
@@ -304,19 +403,46 @@ print("\nRanger:", np.linalg.matrix_rank(M_small),
       np.linalg.matrix_rank(C_small))
 ```
 
-Svar før du løser et system:
+Stopp ved de to utskrevne matrisene før du løser et system. Bruk følgende
+spørsmål til å knytte tallene til lineær algebra:
 
-1. Hva er definisjonsrommet og verdirommet til $E$?
-2. Hvorfor er `M_small` og `C_small` forskjellige når de beskriver samme
-   transformasjon?
-3. Hva forteller full rang om avlesningene?
-4. Betyr forskjellig koordinatvektor at vi har fått et annet polynom?
+1. Avbildningen $E$ tar inn et polynom av grad høyst 3 og gir ut fire tall.
+   Skriv derfor definisjonsrommet og verdirommet med symboler. Beskriv også
+   med ord hva ett element i hvert av rommene ser ut som.
+2. La $a$ være koeffisientkolonnen når $p$ skrives med
+   $1,x,x^2,x^3$. Forklar hvorfor `M_small @ a` er det samme som $E(p)$.
+   Pek på én bestemt rad og vis regnestykket.
+3. La $c$ være koeffisientkolonnen når det samme $p$ skrives med
+   $T_0,T_1,T_2,T_3$. Da er `C_small @ c` også $E(p)$. Hvorfor kan
+   `M_small` og `C_small` være forskjellige selv om de ender med de samme
+   fire polynomverdiene?
+4. Begge matrisene har rang 4. Hva sier dette om muligheten for at to
+   forskjellige polynomer i $\mathcal P_3$ har de samme fire avlesningene i
+   disse fire forskjellige punktene? Knytt svaret til nullrom og entydighet.
+5. Koeffisientkolonnene $a$ og $c$ vil vanligvis være forskjellige. Betyr det
+   at polynomene er forskjellige, eller bare at det samme polynomet er skrevet
+   med forskjellige byggeklosser? Hvordan kan du kontrollere svaret?
 
 ### Finn det samme polynomet i to basiser
 
-Vi lager avlesningsverdier fra
+Nå prøver vi tankegangen i praksis. Vi starter med et kjent polynom,
 
 $$p(x)=1-2x+\frac12x^2+x^3.$$
+
+Koden regner først ut de fire avlesningene. Deretter later vi som om
+koeffisientene er glemt og beholder bare avlesningene. Vi løser så to
+lineære systemer:
+
+$$M_{\text{small}}a=E(p),
+\qquad
+C_{\text{small}}c=E(p).$$
+
+Det første systemet finner monomialkoeffisientene $a$, mens det andre finner
+Chebyshev-koeffisientene $c$. Til slutt evaluerer vi begge svarene på et tett
+rutenett. Hvis de representerer samme polynom, skal grafverdiene stemme selv
+om koeffisientlistene ikke gjør det. Kommandoen `np.linalg.solve(A, b)` betyr
+bare «finn tallkolonnen $u$ som løser $Au=b$». Den kjenner ikke til polynomer;
+tolkningen kommer fra hvordan vi bygde matrisen `A`.
 
 ```{pyodide-python}
 monomial_true = np.array([1.0, -2.0, 0.5, 1.0])
@@ -350,6 +476,13 @@ monomialformen.
 
 ### Når mister avlesningene informasjon?
 
+Med fire forskjellige avlesningspunkter kunne vi finne et polynom i
+$\mathcal P_3$ entydig. Nå undersøker vi hvorfor «fire tall» ikke alene er
+nok: Punktene må også gi fire forskjellige opplysninger. Vi gjør to separate
+endringer. Først beholder vi bare tre avlesninger. Deretter bruker vi fire
+rader, men gjentar ett punkt. I begge tilfeller forventer vi at rangen blir
+mindre enn 4.
+
 Kjør de to endringene under én om gangen:
 
 ```{pyodide-python}
@@ -367,7 +500,8 @@ print("Form og rang med gjentatt punkt:",
       M_repeated.shape, np.linalg.matrix_rank(M_repeated))
 ```
 
-Finn et ikke-null polynom $z\in\mathcal P_3$ som tilfredsstiller
+En lavere rang betyr at noe ved polynomet er usynlig i avlesningene. Finn et
+ikke-null polynom $z\in\mathcal P_3$ som tilfredsstiller
 
 $$z(-1)=z(-1/3)=z(1/3)=0.$$
 
@@ -416,16 +550,36 @@ plt.legend()
 plt.show()
 ```
 
-Forklar resultatet med nullrommet til $E$. Hvor mange uavhengige usynlige
-retninger forventer du når vi leser av et polynom i $\mathcal P_n$ i bare $m$
-forskjellige punkter, der $m<n+1$? Begrunn svaret med rang–nullitet, og oppgi
-forutsetningene du bruker.
+Gå gjennom argumentet i disse trinnene:
+
+1. Regn ut $E(z)$ når $E$ bare leser av i de tre punktene. Hvorfor er
+   resultatet nullkolonnen selv om $z$ ikke er nullpolynomet? Dette viser at
+   $z$ ligger i nullrommet til $E$.
+2. Bruk linearitet til å regne ut $E(p+\alpha z)$. Forklar hvorfor alle valg
+   av tallet $\alpha$ gir de samme tre avlesningene som $p$.
+3. Generaliser til $\mathcal P_n$, som har dimensjon $n+1$. Anta at vi bruker
+   $m$ **forskjellige** punkter, at $m<n+1$, og at hvert punkt gir en
+   uavhengig betingelse. Hva blir da rangen til avlesningsmatrisen?
+4. Bruk rang–nullitet,
+   $\dim(\ker E)+\operatorname{rang}(E)=n+1$, til å finne dimensjonen til
+   nullrommet. Dette tallet er antallet uavhengige måter et polynom kan endres
+   på uten at de $m$ avlesningene merker det.
+5. Forklar til slutt hvorfor antakelsen om forskjellige punkter er viktig.
+   Hva så du i forsøket der ett punkt ble gjentatt?
 
 ## 3. Del 2 – samme avlesningspunkter, forskjellig basis
 
-Ved grad 3 virker begge basisene uproblematiske. Nå øker vi graden, men holder
-avlesningspunktene helt faste mens vi bytter basis. Da kan en eventuell
-forskjell ikke skyldes at vi leste av polynomet andre steder.
+Ved grad 3 fant begge matrisene fram til det riktige polynomet. Det kan derfor
+se ut som basisvalget bare endrer hvordan koeffisientene skrives. I eksakt
+matematikk er det riktig. På en datamaskin må imidlertid alle mellomresultater
+lagres med et begrenset antall sifre. Nå spør vi om én skrivemåte kan føre til
+større avrundingsproblemer enn den andre når graden øker.
+
+For å gjøre sammenligningen rettferdig bruker vi nøyaktig det samme
+referansepolynomet, de samme avlesningspunktene og de samme avlesningsverdiene
+i begge systemene. Det eneste som byttes, er kolonnene i matrisen: enten
+$1,x,\ldots,x^n$ eller $T_0,T_1,\ldots,T_n$. Hvis resultatene blir ulike, har
+vi dermed isolert virkningen av basisvalget.
 
 Vi bruker foreløpig punktene
 
@@ -434,8 +588,14 @@ x_k=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
 \qquad k=0,\ldots,n.
 $$
 
-Hvorfor disse punktene er interessante, undersøker vi først i del 3. Her er
-de bare ett fast valg som begge basisene må bruke.
+Hvorfor disse punktene er interessante, undersøker vi først i del 3. Akkurat
+nå trenger du bare å merke deg at funksjonen lager $n+1$ forskjellige tall i
+$[-1,1]$, og at begge basisene får de samme tallene.
+
+De tre korte hjelpefunksjonene under gjør forsøket mulig å gjenta:
+`chebyshev_points` lager punktene, `reference_coordinates` lager et fast
+polynom med små Chebyshev-koeffisienter, og `max_grid_error` måler den største
+observerte forskjellen på et tett rutenett.
 
 ```{pyodide-python}
 def chebyshev_points(n):
@@ -459,11 +619,25 @@ def max_grid_error(values, reference):
     return float(np.max(np.abs(values-reference)))
 ```
 
-Før du kjører grad 30, gjør et overslag: Ligger alle de valgte
-Chebyshev-koordinatene mellom $-1$ og $1$? Betyr det automatisk at
-monomialkoordinatene til samme polynom også er små?
+Se på formelen i `reference_coordinates` før du kjører grad 30. Alle tallene
+$c_k=(-1)^k/(k+1)^2$ ligger mellom $-1$ og $1$. Skriv ned om du tror dette
+også tvinger koeffisientene foran $1,x,x^2,\ldots,x^{30}$ til å være små.
+Dette er hypotesen som forsøket skal teste.
 
 ### Ett komplett forsøk
+
+Funksjonen følger denne historien:
+
+1. Lag et polynom ved å velge Chebyshev-koeffisienter.
+2. Regn ut polynomets verdi i $n+1$ punkter. Deretter behandles disse
+   avlesningene som de eneste kjente dataene.
+3. Finn koeffisienter som passer til dataene, først i monomialbasis og så i
+   Chebyshev-basis.
+4. Regn ut de to gjenfunne polynomene i mange punkter mellom avlesningene og
+   sammenlign dem med polynomet vi startet med.
+
+Det tette rutenettet brukes bare til etterkontroll. Det gir ikke de lineære
+systemene ekstra informasjon.
 
 ```{pyodide-python}
 def compare_bases(n, grid_size=2001):
@@ -515,16 +689,24 @@ print("Maksfeil med Chebyshev-basis:", basis_data["chebyshev_error"])
 
 Finn selv rutenettspunktet der hver av de to feilene er størst. Bruk
 `np.argmax` på absoluttverdien av feilen, og rapporter både $x$-verdien og
-feilen. Dette er et nytt mål du skal beregne; det er ikke ferdigkodet over.
+feilen. `np.argmax` gir plassnummeret til det største tallet, ikke selve
+tallet. Bruk derfor det samme plassnummeret til å hente både punktet fra
+`basis_data["grid"]` og feilen fra feillisten. Dette er et nytt mål du skal
+beregne; det er ikke ferdigkodet over.
 
-Ikke gå direkte videre. Kontroller først:
+Ikke gå direkte videre. Les tallene i denne rekkefølgen:
 
-1. Er avlesningsverdiene identiske i de to beregningene?
-2. Hvor mange størrelsesordener skiller de største koordinatene?
-3. Hvor på intervallet er feilen i det gjenfunne polynomet størst?
-4. Har vi byttet polynomrom, avbildning eller avlesningspunkter?
-5. Hvilket av svarene dine er eksakt matematikk, og hvilket handler om
-   flyttallsregning?
+1. Bekreft i koden at `measurements` lages én gang og brukes på høyre side i
+   begge systemene. Hva forteller det om dataene de to metodene får?
+2. Sammenlign den største koeffisienten i de to listene. Hvor mange
+   tierpotenser skiller dem? Husk at koeffisientene hører til forskjellige
+   polynomer i basislistene og derfor ikke skal sammenlignes ledd for ledd.
+3. Sammenlign feilene på rutenettet. Hvor ligger maksimumsfeilen du fant med
+   `np.argmax`?
+4. Forklar hva som ble holdt fast: polynomrom, referansepolynom,
+   avlesningspunkter og avlesningsverdier. Hva var den eneste endringen?
+5. I eksakt matematikk er begge basisskrivemåtene likeverdige. Hvilken del av
+   forskjellen i utskriften skyldes derfor flyttallsregning?
 
 ### Valgfri utvidelse: følg forskjellen når graden øker
 
@@ -580,8 +762,16 @@ er store, og hvor kanselleringen oppstår.
 
 ### En kontrollert forstyrrelse av avlesningene
 
-Til slutt endrer vi hver avlesningsverdi med omtrent $10^{-10}$, men beholder
-punktene. Bruk samme forstyrrelse for begge basisene.
+Virkelige avlesninger er sjelden eksakte. Vi legger derfor til en svært liten
+feil, omtrent $10^{-10}$, i hver polynomverdi. Først løser vi systemet med de
+opprinnelige dataene, deretter med de litt endrede dataene. Vi gjør dette i
+begge basiser med nøyaktig den samme feillisten.
+
+Vi sammenligner `a_after-a_before` fordi begge vektorene bruker
+monomialbasis. Tilsvarende sammenligner vi `c_after-c_before` fordi begge
+bruker Chebyshev-basis. Derimot ville `a_after-c_after` ikke hatt en enkel
+betydning: Plass nummer 2 står foran $x^2$ i den ene listen og foran $T_2$ i
+den andre.
 
 ```{pyodide-python}
 n = 30
@@ -609,14 +799,16 @@ print("Endring i monomialkoordinater:", np.linalg.norm(a_after-a_before))
 print("Endring i Chebyshev-koordinater:", np.linalg.norm(c_after-c_before))
 ```
 
-Hvorfor er det rimelig å sammenligne endringene *innen* hver koordinattype,
-men misvisende å si at én bestemt monomialkoeffisient og én bestemt
-Chebyshev-koeffisient betyr det samme?
+Bruk denne forklaringen til å tolke de tre utskrevne tallene. Hvor stor var
+endringen i selve dataene? Hvor stor ble endringen i hver koeffisientliste?
+Hvilken representasjon forsterket den lille dataendringen mest?
 
 ## 4. Del 3 – samme basis, forskjellige avlesningspunkter
 
-Nå holder vi Chebyshev-basis fast. Det eneste vi endrer, er hvor vi leser av
-polynomverdiene. Dermed undersøker vi et annet spørsmål enn i del 2.
+I del 2 holdt vi punktene fast og byttet basis. Nå gjør vi det motsatte:
+Chebyshev-basis brukes i begge systemene, men avlesningspunktene flyttes.
+Spørsmålet er om $n+1$ avlesninger alltid er like informative, eller om
+plasseringen av dem betyr noe for hva polynomet kan gjøre mellom punktene.
 
 De to punktfamiliene er
 
@@ -634,6 +826,13 @@ $$
 for $k=0,\ldots,n$.
 
 ### Se på plasseringen før du regner
+
+Før vi løser et eneste system, tegner vi bare punktene på en tallinje. De
+jevne punktene har samme avstand overalt. Cosinuspunktene ligger tettere ved
+endene av intervallet og glisnere nær midten. Figuren skal hjelpe deg å lage
+en hypotese: Hvis et polynom er tvunget til å passe data i mange punkter nær
+endene, blir det da lettere eller vanskeligere for polynomet å få store
+utslag der mellom avlesningene?
 
 ```{pyodide-python}
 n = 30
@@ -670,6 +869,20 @@ $$\delta y_k=10^{-10}(-1)^k.$$
 Det er viktig at både størrelsen og fortegnsmønsteret er identisk i de to
 forsøkene. Dermed kan ikke forskjellen forklares med at det ene forsøket fikk
 en større eller mer gunstig feil.
+
+Funksjonen lager først nøyaktige avlesninger fra referansepolynomet. Deretter
+legger den til feilen og finner det ene polynomet av grad høyst $n$ som passer
+til de forstyrrede verdiene. Til slutt sammenlignes dette polynomet med
+referansen på 5001 punkter. Forholdet
+
+$$
+\frac{\text{største feil på det tette rutenettet}}
+{\text{største feil i de oppgitte avlesningene}}
+$$
+
+kalles her **forsterkning**. En forsterkning på $10^6$ betyr at en feil på
+$10^{-10}$ ved avlesningspunktene har blitt til en feil på omtrent $10^{-4}$
+et sted mellom dem.
 
 ```{pyodide-python}
 def point_placement_experiment(n, points, noise_size=1e-10,
@@ -718,18 +931,24 @@ for name, data in [("Jevne punkter", equal_data),
           f"forsterkning={amplification:.3e}")
 ```
 
-Hvor mange størrelsesordener skiller kurvefeilene? Kontroller at forskjellen
-ikke skyldes ulik forstyrrelse eller ulik basis.
+Sammenlign først `feil i avlesning` i de to utskriftene: De skal være like.
+Sammenlign så `kurvefeil` og `forsterkning`. Hvor mange tierpotenser skiller
+forsøkene? Forklar hvorfor forskjellen ikke kan skyldes ulik basis eller ulik
+størrelse på forstyrrelsen.
 
 ### Det nesten usynlige polynomet
 
-Forskjellen mellom det gjenfunne og det opprinnelige polynomet er selv et
-polynom:
+For å forstå forsterkningen ser vi ikke bare på to hele polynomer. Vi trekker
+dem fra hverandre. Forskjellen mellom det gjenfunne og det opprinnelige
+polynomet er selv et polynom:
 
 $$r(x)=p_{\mathrm{forstyrret}}(x)-p_{\mathrm{opprinnelig}}(x).$$
 
-Ved avlesningspunktene er $r(x_k)$ bare den lille forstyrrelsen vi la til.
-Mellom punktene vet vi ennå ikke hvor stort polynomet kan bli.
+Ved hvert avlesningspunkt er $r(x_k)$ akkurat den lille forstyrrelsen vi la
+til. Hvis vi bare så på disse $n+1$ tallene, ville $r$ virke nesten som
+nullpolynomet. Men avlesningspunktene forteller ikke direkte hva som skjer
+mellom dem. Figuren tegner derfor både de små svarte verdiene $r(x_k)$ og hele
+kurven $r(x)$ på det tette rutenettet.
 
 ```{pyodide-python}
 plt.close("all")
@@ -754,21 +973,22 @@ plt.tight_layout()
 plt.show()
 ```
 
-Analyser figuren nøye:
+Les først de svarte punktene og deretter kurvene:
 
-1. Hvor er $|r(x)|$ størst i hvert forsøk?
-2. Hvor små er verdiene ved selve avlesningspunktene?
-3. Hvordan kan et polynom være nesten usynlig i avlesningene og samtidig stort
-   mellom dem?
-4. Hva minner dette om fra nullrommet i del 1?
-5. Hvorfor er det ikke korrekt å kalle $r$ en eksakt nullromsvektor?
-6. Hvordan henger feiltoppene sammen med fordelingen av avlesningspunktene?
+1. Hvor små er $r(x_k)$ ved de oppgitte avlesningspunktene? Sammenlign med
+   maksimum av $|r(x)|$ på hele rutenettet.
+2. Hvor i intervallet blir $|r(x)|$ størst for jevne punkter? Se tilbake på
+   punktfiguren: Er det få eller mange avlesningspunkter i dette området?
+3. Gjør den samme sammenligningen for cosinuspunktene. Hvordan har de ekstra
+   punktene nær endene påvirket feiltoppene?
+4. I del 1 fant vi et eksakt nullromspolynom $z$ med $E(z)=0$. Her er
+   $E(r)$ ikke null; det består av tall med størrelse $10^{-10}$. Forklar
+   både likheten og forskjellen mellom $z$ og $r$.
 
-Et ikke-null polynom som avbildningen $E$ sender til en svært liten
-avlesningsvektor, kan tolkes som en **numerisk nullromsretning**. Dette er en
-uformell beskrivelse, ikke et nytt eksakt nullrom: Avlesningsvektoren er
-liten, men ikke null.
-Formuler med egne ord hva som skiller de to situasjonene.
+Vi kan uformelt kalle $r$ en **numerisk nullromsretning**: Et ikke-null
+polynom blir sendt til en svært liten, men ikke helt null, avlesningskolonne.
+Dette er ikke et nytt eksakt nullrom. Uttrykket beskriver at avlesningene
+nesten ikke ser en endring som likevel kan være stor mellom punktene.
 
 ### Valgfri utvidelse: når blir forskjellen synlig?
 
@@ -801,7 +1021,9 @@ intervallet. Identiteten
 
 $$T_n(x)=\cos(n\arccos x),\qquad -1\le x\le1,$$
 
-gir oss en uavhengig måte å kontrollere dette på.
+gir oss en uavhengig måte å kontrollere dette på. Dermed kjenner vi størrelsen
+på det riktige svaret før vi bruker NumPy: $T_{50}(0.99)$ må ligge i
+$[-1,1]$.
 
 Vi skal nå evaluere $T_{50}(0.99)$ på tre matematisk likeverdige måter:
 
@@ -809,7 +1031,17 @@ Vi skal nå evaluere $T_{50}(0.99)$ på tre matematisk likeverdige måter:
 2. bruk Chebyshev-representasjonen direkte;
 3. bruk cosinusidentiteten som referanse.
 
-Skriv ned hvilken metode du forventer vil være mest pålitelig før du kjører.
+Den første metoden skriver $T_{50}$ som
+$a_0+a_1x+\cdots+a_{50}x^{50}$ før den setter inn $x=0.99$. Den andre bruker
+Chebyshev-rekursjonen direkte, uten å lage denne lange potensformen. Den
+tredje regner ut cosinusuttrykket og fungerer som en kontroll som ikke bruker
+noen av koeffisientlistene.
+
+Skriv ned hvilken metode du forventer vil være mest pålitelig før du kjører,
+og hvorfor. Følg deretter variablene i koden: `cheb_coordinates` beskriver
+nøyaktig ett $T$-polynom, `monomial_coordinates` beskriver det samme polynomet
+med potenser av $x$, og de tre variablene som begynner med `value_` er de tre
+svarene.
 
 ```{pyodide-python}
 n = 50
@@ -835,10 +1067,19 @@ print("Feil, monomial:       ", abs(value_monomial-value_reference))
 print("Feil, Chebyshev:      ", abs(value_chebyshev-value_reference))
 ```
 
-Hvis et svar ligger langt utenfor intervallet $[-1,1]$, er det ikke en liten
-avrundingsforskjell. Undersøk mekanismen før du konkluderer.
+Hvis et svar ligger langt utenfor intervallet $[-1,1]$, vet du fra
+cosinusidentiteten at det ikke kan være riktig. Se da på den største
+monomialkoeffisienten. Når mange svært store ledd til slutt skal gi et svar
+mellom $-1$ og $1$, må positive og negative bidrag nesten kansellere
+hverandre. Små avrundinger i de store mellomresultatene kan da overleve etter
+kanselleringen og bli store sammenlignet med det riktige svaret.
 
 ### Følg sammenbruddet mot grad 50
+
+For å se om problemet dukker opp plutselig eller bygger seg opp, gjentar vi de
+tre evalueringene for grad 10, 20, 30, 40 og 50. Tabellen viser ved siden av
+hverandre hvor stor den største monomialkoeffisienten er og hvor mye de to
+beregningsmåtene avviker fra cosinuskontrollen.
 
 ```{pyodide-python}
 print(f"{'grad':>5} {'største koeff.':>18} "
@@ -857,20 +1098,31 @@ for n_test in [10, 20, 30, 40, 50]:
           f"{abs(chebyshev_value-reference):18.4e}")
 ```
 
-Svar grundig:
+Bygg forklaringen i denne rekkefølgen:
 
-1. Hvordan kan et polynom som er begrenset av 1, ha
-   monomialkoeffisienter nær $10^{18}$?
-2. Hvorfor må store monomialledd kansellere hverandre?
-3. Hva skjer med kanselleringen når mellomresultatene avrundes?
-4. Er feilen her forårsaket av avlesningspunktene?
-5. Hvilke deler av forklaringen kommer fra uke 1, og hvilke kommer fra uke 3?
-6. Hvorfor følger numerisk pålitelighet ikke automatisk av algebraisk
-   likeverdighet?
+1. Skill mellom størrelsen på et polynom på intervallet og størrelsen på
+   koeffisientene i en bestemt basis. Hvorfor er ikke disse det samme?
+2. Bruk utskriften til å beskrive hvordan de største
+   monomialkoeffisientene vokser. Hvorfor må store positive og negative ledd
+   kansellere hvis sluttverdien skal ligge i $[-1,1]$?
+3. Knytt avrunding av de store mellomresultatene til flyttallsregningen fra
+   uke 1. Hva blir igjen når den nesten perfekte kanselleringen ikke lenger er
+   perfekt?
+4. Knytt valget mellom monomialbasis og Chebyshev-basis til uke 3. De to
+   uttrykkene er algebraisk like, så hvorfor kan beregningene likevel få ulik
+   kvalitet?
+5. Det brukes ingen avlesningsmatrise eller interpolasjon i dette forsøket.
+   Forklar derfor hvorfor feilen her ikke skyldes plasseringen av
+   avlesningspunkter.
 
 ## 6. Åpen utfordring – lag din egen blindsone
 
-Nå får du bruke ideene fra prosjektet mer fritt. Plasser avlesningspunktene
+Nå får du bruke ideene fra prosjektet mer fritt. Du skal gjenta historien fra
+del 3, men velge graden, punktene og fortegnene selv. Start med et
+referansepolynom, legg en svært liten feil til avlesningene, finn polynomet som
+passer de endrede dataene, og mål hvor stort avviket blir mellom punktene.
+
+Plasser avlesningspunktene
 slik at en svært liten feil i avlesningene gir en stor feil mellom punktene,
 og slik at du kan forklare mekanismen. Målet er ikke et kunstig rekordtall.
 Følg disse reglene:
@@ -884,7 +1136,14 @@ Følg disse reglene:
 
 Du kan endre graden, punktene og fortegnsmønsteret i forstyrrelsen. Du kan
 ikke gjøre avlesningsfeilen større eller bryte kravet til minste
-punktavstand.
+punktavstand. Før koden kjøres, skriv hvilken endring du prøver og hvorfor du
+tror den kan skjule feilpolynomet for avlesningene.
+
+Variablene med prefikset `my_` er delene du skal følge og senere endre:
+`my_points` er avlesningspunktene, `my_noise` er de små feilene,
+`my_recovered` er polynomet som passer de endrede dataene, og `my_error` er
+forskjellen fra referansepolynomet på det tette rutenettet. `assert`-linjene
+stopper forsøket hvis reglene ikke er fulgt.
 
 ```{pyodide-python}
 # Startforslag: Bytt ut både punktene og fortegnsmønsteret i feilen.
