@@ -57,6 +57,7 @@ website:
         contents:
           - pages/project_week1.qmd
           - pages/project_week2.qmd
+          - pages/project_week3.qmd
 
       - section: "Eksamensoppgaver"
         contents:
