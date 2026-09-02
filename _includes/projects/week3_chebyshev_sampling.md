@@ -42,6 +42,28 @@ from numpy.polynomial import polynomial as poly
 from numpy.polynomial import chebyshev as cheb
 ```
 
+:::: {.callout-note}
+## Hvorfor bruker vi `numpy.polynomial`?
+
+Dette prosjektet bruker to koordinatsystemer for det samme polynomrommet.
+Modulen `numpy.polynomial` lar oss være tydelige på hvilket koordinatsystem vi
+arbeider i:
+
+- `poly.polyval(x, a)` tolker `a` som koeffisientene til
+  $1,x,x^2,\ldots$;
+- `cheb.chebval(x, c)` tolker `c` som koeffisientene til
+  $T_0,T_1,T_2,\ldots$;
+- `poly.polyfromroots` bygger monomialkoeffisienter fra nullpunkter;
+- `cheb.cheb2poly` konverterer Chebyshev-koordinater til
+  monomialkoordinater.
+
+I begge koordinatsystemene står koeffisienten til basisfunksjon nummer $k$ på
+plass `k`. Dette er motsatt rekkefølge av den eldre funksjonen `np.polyval`,
+som vi derfor ikke bruker her. Funksjonene gjør ikke den matematiske
+tolkningen for oss: Vi må fortsatt vite hvilken basis en koordinatvektor
+tilhører.
+::::
+
 :::: {.callout-tip}
 ## Forslag til arbeidsmåte
 
@@ -97,9 +119,15 @@ for n in range(5):
 ```
 
 Kontroller de håndregnede uttrykkene ved å evaluere dem og
-`chebyshev_recursive` i minst tre verdier av $x$. Legg deretter inn en teller
-i funksjonen og sammenlign antall funksjonskall for $n=5,10,15$. Nullstill
-telleren mellom hvert forsøk.
+`chebyshev_recursive` i minst tre verdier av $x$.
+
+:::: {.callout-note collapse="true"}
+## Valgfri utfordring: hvor mye arbeid gjør rekursjonen?
+
+Legg inn en teller i funksjonen og sammenlign antall funksjonskall for
+$n=5,10,15$. Nullstill telleren mellom hvert forsøk. Forklar hvorfor den
+direkte rekursjonen gjentar stadig flere delberegninger.
+::::
 
 Den direkte rekursjonen gjør mange av de samme beregningene flere ganger. I
 resten av prosjektet bruker vi derfor en tabell som lagrer alle verdiene fra
@@ -111,12 +139,14 @@ import numpy as np
 def chebyshev_table(x, n):
     """Returner en tabell med T_0(x), ..., T_n(x) som kolonner."""
     x = np.asarray(x, dtype=float)
-    # Den siste aksen reserveres for polynomnummeret k.
+    # En rad hører til én x-verdi. Den siste aksen reserveres for
+    # polynomnummeret k: kolonne k inneholder T_k(x).
     table = np.empty(x.shape + (n+1,), dtype=float)
     table[..., 0] = 1.0
     if n >= 1:
         table[..., 1] = x
-    # Hver ny kolonne bruker de to foregående kolonnene i tabellen.
+    # Tabellen tar vare på tidligere resultater. Derfor kan hver ny kolonne
+    # bygges fra de to foregående uten å beregne dem på nytt.
     for k in range(1, n):
         table[..., k+1] = 2*x*table[..., k] - table[..., k-1]
     return table
@@ -126,9 +156,10 @@ x_test = np.array([-1.0, -0.25, 0.0, 0.4, 1.0])
 print(chebyshev_table(x_test, 4))
 ```
 
-Forklar hvorfor den iterative funksjonen trenger omtrent $n$ regnetrinn,
-mens den direkte rekursjonen gjentar stadig flere delberegninger. Du trenger
-ikke gjøre en formell kjøretidsanalyse.
+Tabellformen er nyttig av to grunner: Vi unngår gjentatt rekursjon, og vi får
+alle basisfunksjonene evaluert i alle punktene i én struktur. Senere blir
+nettopp denne tabellen avlesningsmatrisen i Chebyshev-basis. Kontroller hvilken
+akse som svarer til punkter og hvilken som svarer til basisfunksjoner.
 
 ### Fra rekursjon til grafer
 
@@ -137,6 +168,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 x_plot = np.linspace(-1.0, 1.0, 1200)
+# Tabellen gjør at vi beregner alle ni kurvene i ett kall. T_plot[:, n]
+# betyr: alle x-rader, men bare kolonnen som hører til T_n.
 T_plot = chebyshev_table(x_plot, 8)
 
 plt.close("all")
@@ -155,12 +188,9 @@ plt.show()
 
 Undersøk figurene før du leser videre:
 
-1. Hvor store og små blir polynomene på $[-1,1]$?
-2. Hva skjer i endepunktene $-1$ og $1$?
-3. Hvordan endres antall nullpunkter og svingninger med $n$?
-4. Hvilke polynomer er symmetriske om $y$-aksen? Hva gjør de andre ved
-   fortegnsskifte av $x$?
-5. Hvilke av observasjonene dine kan du begrunne fra rekursjonen?
+1. Hvor store og små blir polynomene på $[-1,1]$, og hva skjer i endepunktene?
+2. Hvordan endres nullpunkter, svingninger og symmetri med $n$?
+3. Velg én av observasjonene og begrunn den fra rekursjonen.
 
 ### Er dette en basis?
 
@@ -172,6 +202,8 @@ Fyll deretter kolonnene i `Q`:
 # Hver kolonne skal inneholde monomialkoeffisientene til ett T_k.
 # Rekkefølgen på radene er 1, x, x^2, x^3, x^4.
 Q = np.full((5, 5), np.nan)
+# Vi bruker kolonner fordi en matrise representerer hvor basisvektorene
+# sendes: kolonne k er koordinatvektoren til T_k i monomialbasis.
 Q[:, 0] = [1, 0, 0, 0, 0]  # T_0
 Q[:, 1] = [0, 1, 0, 0, 0]  # T_1
 
@@ -226,17 +258,39 @@ Dermed er første rad i avlesningsmatrisen
 $[1,x_0,x_0^2,x_0^3]$. Utled de tre andre radene før du fullfører funksjonen
 under.
 
+To ferdigregnede minieksempler viser mønsteret. For basisen $(1,x)$ og
+punktene $-1,2$ får vi
+
+$$
+\begin{bmatrix}1&-1\\1&2\end{bmatrix}.
+$$
+
+For basisen $(1,x,x^2)$ og punktene $0,1,2$ får vi
+
+$$
+\begin{bmatrix}1&0&0\\1&1&1\\1&2&4\end{bmatrix}.
+$$
+
+Hver rad hører altså til ett avlesningspunkt, mens hver kolonne hører til én
+basisfunksjon. Matriseproduktet med en koordinatvektor danner én avlesning per
+rad.
+
 ```{pyodide-python}
 def monomial_matrix(points, n):
     """Avlesningsmatrise for basisen (1, x, ..., x^n)."""
     points = np.asarray(points, dtype=float)
     powers = np.arange(n+1)
-    # Kolonne j inneholder x^j evaluert i alle punktene.
-    return points[:, None] ** powers[None, :]
+    # points[:, None] lager en punktkolonne, og powers[None, :] lager en
+    # potensrad. NumPy kombinerer dem til alle x_i**j samtidig.
+    # TODO: Erstatt neste linje med uttrykket points[:, None] opphøyd i
+    # powers[None, :]. Kontroller resultatet mot minieksemplene over.
+    raise NotImplementedError("Fullfør monomial_matrix før du går videre")
 
 
 def chebyshev_matrix(points, n):
     """Avlesningsmatrise for basisen (T_0, ..., T_n)."""
+    # chebyshev_table har allerede riktig design: rad i = punkt x_i og
+    # kolonne k = T_k evaluert i alle punktene.
     return chebyshev_table(points, n)
 
 
@@ -265,14 +319,13 @@ Vi lager avlesningsverdier fra
 $$p(x)=1-2x+\frac12x^2+x^3.$$
 
 ```{pyodide-python}
-from numpy.polynomial import polynomial as poly
-from numpy.polynomial import chebyshev as cheb
-
-
 monomial_true = np.array([1.0, -2.0, 0.5, 1.0])
 # Dette er de eneste dataene de to lineære systemene får.
 measurements_small = poly.polyval(points_small, monomial_true)
 
+# Begge systemene har formen «avlesningsmatrise @ koordinater = data».
+# solve returnerer koordinatene; hvilken basis de tilhører bestemmes av
+# matrisen på venstre side.
 monomial_recovered = np.linalg.solve(M_small, measurements_small)
 chebyshev_recovered = np.linalg.solve(C_small, measurements_small)
 
@@ -325,7 +378,16 @@ Bruk deretter koden under til å kontrollere svaret og lage to forskjellige
 polynomer med identiske tre avlesninger:
 
 ```{pyodide-python}
-invisible_coefficients = poly.polyfromroots(points_three)
+# TODO: Utvid produktet du fant, og skriv inn de fire koeffisientene i
+# rekkefølgen 1, x, x^2, x^3. NaN-verdiene skal erstattes.
+invisible_coefficients = np.full(4, np.nan)
+if np.isnan(invisible_coefficients).any():
+    raise ValueError("Fyll inn koeffisientene til z før du går videre")
+
+# Biblioteket brukes her bare som en uavhengig kontroll av håndregningen.
+coefficients_check = poly.polyfromroots(points_three)
+print("Største avvik fra polyfromroots:",
+      np.max(np.abs(invisible_coefficients-coefficients_check)))
 
 # Velg selv en synlig skaleringsfaktor.
 alpha = 2.0
@@ -378,17 +440,22 @@ de bare ett fast valg som begge basisene må bruke.
 ```{pyodide-python}
 def chebyshev_points(n):
     """Returner n+1 cosinusfordelte punkter i intervallet [-1,1]."""
+    # P_n har dimensjon n+1, så vi bruker n+1 forskjellige avlesninger.
     k = np.arange(n+1)
     return np.cos((2*k+1)*np.pi/(2*(n+1)))
 
 
 def reference_coordinates(n):
     """Moderate, deterministiske koordinater i Chebyshev-basis."""
+    # En fast formel gir samme referansepolynom hver gang forsøket gjentas.
+    # Avtagende koeffisienter hindrer at vi bygger inn store tall med vilje.
     k = np.arange(n+1)
     return (-1.0)**k/(k+1.0)**2
 
 
 def max_grid_error(values, reference):
+    # Maksimum på et tett rutenett er en numerisk måling, ikke et bevis på
+    # maksimum over alle reelle x i intervallet.
     return float(np.max(np.abs(values-reference)))
 ```
 
@@ -409,6 +476,8 @@ def compare_bases(n, grid_size=2001):
     M = monomial_matrix(points, n)
     C = chebyshev_matrix(points, n)
 
+    # solve finner koordinatene som gir de oppgitte avlesningene. De to
+    # svarvektorene kan ikke sammenlignes ledd for ledd fordi basisene er ulike.
     recovered_monomial = np.linalg.solve(M, measurements)
     recovered_chebyshev = np.linalg.solve(C, measurements)
 
@@ -444,6 +513,10 @@ print("Maksfeil med monomialbasis:", basis_data["monomial_error"])
 print("Maksfeil med Chebyshev-basis:", basis_data["chebyshev_error"])
 ```
 
+Finn selv rutenettspunktet der hver av de to feilene er størst. Bruk
+`np.argmax` på absoluttverdien av feilen, og rapporter både $x$-verdien og
+feilen. Dette er et nytt mål du skal beregne; det er ikke ferdigkodet over.
+
 Ikke gå direkte videre. Kontroller først:
 
 1. Er avlesningsverdiene identiske i de to beregningene?
@@ -453,7 +526,7 @@ Ikke gå direkte videre. Kontroller først:
 5. Hvilket av svarene dine er eksakt matematikk, og hvilket handler om
    flyttallsregning?
 
-### Følg forskjellen når graden øker
+### Valgfri utvidelse: følg forskjellen når graden øker
 
 ```{pyodide-python}
 degrees = [3, 10, 20, 25, 30]
@@ -517,7 +590,8 @@ true_chebyshev = reference_coordinates(n)
 measurements = cheb.chebval(points, true_chebyshev)
 
 rng = np.random.default_rng(2026)
-# Fast startverdi gjør at alle får nøyaktig samme forstyrrelse.
+# Fast startverdi gjør forsøket reproduserbart: alle får nøyaktig samme
+# forstyrrelse når cellen kjøres på nytt.
 measurement_noise = 1e-10*rng.standard_normal(n+1)
 
 M = monomial_matrix(points, n)
@@ -528,6 +602,8 @@ a_after = np.linalg.solve(M, measurements+measurement_noise)
 c_before = np.linalg.solve(C, measurements)
 c_after = np.linalg.solve(C, measurements+measurement_noise)
 
+# Normen samler endringene i hele koordinatvektoren til ett tall. Vi
+# sammenligner før og etter innen samme basis, ikke koeffisienter på tvers.
 print("Største endring i avlesning:", np.max(np.abs(measurement_noise)))
 print("Endring i monomialkoordinater:", np.linalg.norm(a_after-a_before))
 print("Endring i Chebyshev-koordinater:", np.linalg.norm(c_after-c_before))
@@ -564,6 +640,8 @@ n = 30
 equal_points = np.linspace(-1.0, 1.0, n+1)
 cheb_points = chebyshev_points(n)
 
+# Punktene tegnes på hver sin tallinje før løsing. Figuren kontrollerer den
+# variabelen vi skal endre: punktplasseringen.
 plt.close("all")
 fig, axes = plt.subplots(2, 1, figsize=(8, 2.5), sharex=True)
 axes[0].scatter(equal_points, np.zeros_like(equal_points), marker="|", s=180)
@@ -606,7 +684,8 @@ def point_placement_experiment(n, points, noise_size=1e-10,
     C = chebyshev_matrix(points, n)
     recovered = np.linalg.solve(C, measurements+noise)
 
-    # Sammenlign med referansepolynomet også mellom avlesningspunktene.
+    # Sammenlign med referansepolynomet også mellom avlesningspunktene. Det
+    # tette rutenettet påvirker ikke løsningen; det fungerer som måleinstrument.
     grid = np.linspace(-1.0, 1.0, grid_size)
     reference = cheb.chebval(grid, true_coordinates)
     perturbed = cheb.chebval(grid, recovered)
@@ -691,7 +770,7 @@ uformell beskrivelse, ikke et nytt eksakt nullrom: Avlesningsvektoren er
 liten, men ikke null.
 Formuler med egne ord hva som skiller de to situasjonene.
 
-### Når blir forskjellen synlig?
+### Valgfri utvidelse: når blir forskjellen synlig?
 
 ```{pyodide-python}
 degrees = [5, 10, 15, 20, 25, 30, 35]
@@ -711,9 +790,9 @@ for n_test in degrees:
     print(f"{n_test:5d} {amp_equal:22.4e} {amp_cosine:25.4e}")
 ```
 
-Velg minst to ekstra grader selv. Beskriv når forskjellen først blir tydelig,
-og om veksten ser jevn ut. Tallene viser hva som skjer i forsøkene dine, men
-de beviser ikke hva som skjer for alle grader.
+Hvis du gjør utvidelsen, velg minst to ekstra grader selv. Beskriv når
+forskjellen først blir tydelig, og om veksten ser jevn ut. Tallene viser hva
+som skjer i forsøkene dine, men de beviser ikke hva som skjer for alle grader.
 
 ## 5. Finale – et polynom mellom −1 og 1
 
@@ -739,6 +818,8 @@ x0 = 0.99
 cheb_coordinates = np.zeros(n+1)
 # Denne koordinatvektoren betyr 0*T_0 + ... + 1*T_50.
 cheb_coordinates[n] = 1.0
+# Konverteringen endrer koordinatene, ikke polynomet. Etterpå evalueres det
+# samme matematiske objekt med to forskjellige representasjoner.
 monomial_coordinates = cheb.cheb2poly(cheb_coordinates)
 
 value_monomial = poly.polyval(x0, monomial_coordinates)
@@ -790,18 +871,20 @@ Svar grundig:
 ## 6. Åpen utfordring – lag din egen blindsone
 
 Nå får du bruke ideene fra prosjektet mer fritt. Plasser avlesningspunktene
-slik at en svært liten feil i avlesningene gir størst mulig feil mellom
-punktene. Følg disse reglene:
+slik at en svært liten feil i avlesningene gir en stor feil mellom punktene,
+og slik at du kan forklare mekanismen. Målet er ikke et kunstig rekordtall.
+Følg disse reglene:
 
 - polynomgraden skal være høyst 35;
 - alle $n+1$ avlesningspunkter skal være forskjellige og ligge i $[-1,1]$;
+- avstanden mellom to nabopunkter skal være minst $10^{-3}$;
 - hver avlesningsfeil skal ha absoluttverdi høyst $10^{-10}$;
 - polynomet skal finnes i Chebyshev-basis;
 - forsterkningen skal beregnes på et tett rutenett med minst 5001 punkter.
 
 Du kan endre graden, punktene og fortegnsmønsteret i forstyrrelsen. Du kan
-ikke gjøre avlesningsfeilen større eller legge to punkter nøyaktig oppå
-hverandre.
+ikke gjøre avlesningsfeilen større eller bryte kravet til minste
+punktavstand.
 
 ```{pyodide-python}
 # Startforslag: Bytt ut både punktene og fortegnsmønsteret i feilen.
@@ -812,6 +895,8 @@ my_noise = 1e-10*(-1.0)**np.arange(n_design+1)
 true_coordinates = reference_coordinates(n_design)
 my_measurements = cheb.chebval(my_points, true_coordinates)
 my_matrix = chebyshev_matrix(my_points, n_design)
+# Vi løser interpolasjonsproblemet i Chebyshev-koordinater, slik at det er
+# punktplasseringen og ikke et samtidig basisskifte vi undersøker.
 my_recovered = np.linalg.solve(my_matrix, my_measurements+my_noise)
 
 my_grid = np.linspace(-1.0, 1.0, 5001)
@@ -822,12 +907,25 @@ my_error = my_curve-my_reference
 assert len(np.unique(my_points)) == n_design+1
 assert np.all(np.abs(my_points) <= 1.0)
 assert np.max(np.abs(my_noise)) <= 1.000001e-10
+minimum_spacing = np.min(np.diff(np.sort(my_points)))
+assert minimum_spacing >= 1e-3
+
+# Et stort utslag er bare interessant hvis systemet faktisk løser de oppgitte
+# avlesningene. Derfor rapporterer vi både rang og residual.
+my_rank = np.linalg.matrix_rank(my_matrix)
+my_residual = np.linalg.norm(
+    my_matrix @ my_recovered - (my_measurements+my_noise), ord=np.inf
+)
+assert my_rank == n_design+1
 
 # Sammenlign den største feilen mellom punktene med den største feilen
 # vi faktisk la inn i avlesningene.
 my_amplification = (np.max(np.abs(my_error))
                     / np.max(np.abs(my_noise)))
 print("Forsterkning:", my_amplification)
+print("Minste punktavstand:", minimum_spacing)
+print("Rang:", my_rank)
+print("Største residual i avlesningene:", my_residual)
 
 plt.close("all")
 plt.plot(my_grid, my_error, label="feilpolynomet")
@@ -841,13 +939,13 @@ plt.legend()
 plt.show()
 ```
 
-Prøv minst tre ideer, og endre én egenskap om gangen. Det beste forsøket er
+Prøv minst to ideer, og endre én egenskap om gangen. Det beste forsøket er
 ikke nødvendigvis det med størst tall. Du må også kunne forklare hvorfor
 plasseringen av punktene skjuler feilpolynomet.
 
 ## 7. Samlet analyse
 
-Skriv en sammenhengende analyse på omtrent **500–700 ord**. Figurer og
+Skriv en sammenhengende analyse på omtrent **400–600 ord**. Figurer og
 tabeller underbygger analysen, men de erstatter ikke forklaringen.
 
 Analysen skal skille tydelig mellom:
@@ -877,10 +975,10 @@ Lever én Quarto-side eller notebook med:
 2. oppvarmingsfigurene og observasjonene dine;
 3. basis- og rangargumentet for $T_0,\ldots,T_4$;
 4. begge avlesningsmatrisene i lav grad og nullromseksperimentet;
-5. tabell og feilfigur for basiseksperimentet;
-6. tabell, punktfigur og feilpolynom for forsøket med avlesningspunkter;
+5. resultater og feilfigur for basiseksperimentet ved grad 30;
+6. resultater, punktfigur og feilpolynom for forsøket med avlesningspunkter;
 7. $T_{50}$-resultatene og forklaringen på sammenbruddet;
-8. minst tre forsøk i den åpne utfordringen;
+8. minst to forsøk i den åpne utfordringen;
 9. den samlede analysen.
 
 Oppgi alltid grad, punkter, størrelsen på forstyrrelsen og rutenettstørrelse sammen
