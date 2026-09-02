@@ -1,9 +1,9 @@
 :::: {.callout-note}
 ## Slik bruker du siden
 
-Siden har to leseløp. **Hovedløpet** bruker lineær algebra du har møtt i et
-tidligere emne, men anvender den på bilder og polynomer. Følg 3.1 til 3.6 i
-vanlig rekkefølge.
+Siden har to leseløp. **Hovedløpet** består av en faglig gjennomgang i
+3.1–3.5 og en praktisk del i 3.6. Gå gjennom 3.1–3.5 i vanlig rekkefølge, og
+arbeid deretter med eksperimentene i 3.6 for å bruke begrepene selv.
 
 **Støtteløpet** er et oppslagsverk dersom Gauss-eliminasjon, pivoter,
 kolonnerom eller nullrom ikke sitter friskt. Matriserepetisjonen står i 3.7,
@@ -1623,155 +1623,7 @@ $$n=\operatorname{rank}(A)+\dim N(A).$$
 - Rangen og nulliteten teller forskjellige typer retninger i forskjellige rom, men til sammen gjør tallene rede for alle 16 inputdimensjonene.
 :::
 
-## 3.5 Utforsk bildetransformasjoner selv {#uke3-del4}
-
-Hjelpefunksjonene, transformasjonen og mønsterbildene fra de foregående delene er tilgjengelige under. Her skal du endre kode og lete etter mønstre selv.
-
-Gjør aktivitet **A og D**, og velg deretter **enten B eller C**. Aktivitet E er
-en valgfri numerisk fordypning. For hvert valgt eksperiment arbeider du i
-denne rekkefølgen:
-
-1. Gjett først hva figuren eller outputen vil vise.
-2. Kjør eksperimentet og beskriv det du faktisk ser.
-3. Kontroller observasjonen med et tall, for eksempel en residual eller en rang.
-4. Forklar til slutt observasjonen med begrepene fra uka.
-
-Startcellene gjør plotting og bokføring, men gir ikke ferdige svar. Et forsøk som ikke virker ved første kjøring kan være nyttig: undersøk forskjellen mellom det du forventet og det koden faktisk produserte.
-
-### Obligatorisk A: Lag et nytt mønster med output null
-
-Endre `Z`. Hver $2\times2$-blokk skal ha gjennomsnitt null, men bruk ikke sjakkmønsteret uendret. Før du kjører cellen, regn ut minst ett blokkgjennomsnitt for hånd. Figuren viser om mønsteret forsvinner, mens normen under figuren måler outputens avstand fra nullbildet.
-
-```{pyodide-python}
-# Dette er startforslaget, ikke et fasitsvar. Endre minst to av tallene,
-# men pass på at hver 2 x 2-blokk fortsatt har sum null.
-Z=np.array([
-    [ 1.,-1., 0., 0.],
-    [ 0., 0., 0., 0.],
-    [ 0., 0., 1.,-1.],
-    [ 0., 0., 0., 0.]
-])
-show_images([Z,average_pool(Z)],["Mitt mønster","Output"],
-            cols=2,cmap="coolwarm",vmin=-1,vmax=1)
-print("||A z|| =",np.linalg.norm(A_pool@Z.reshape(-1)))
-```
-
-Legg deretter en liten versjon av mønsteret til et vanlig bilde. Velg størrelsen slik at pikselverdiene fortsatt ligger mellom 0 og 1. Vis originalbildet, det endrede bildet og begge outputene. Forklar både hvorfor inputbildene er forskjellige og hvorfor transformasjonen ikke kan skille dem.
-
-### Valgoppgave B: Hva kan tre byggesteiner lage?
-
-Velg tre mønsterbilder og generer åtte tilfeldige lineærkombinasjoner. Se etter en egenskap som går igjen i alle bildene: finnes det for eksempel en symmetri, en fast sum eller en type kontrast som aldri opptrer? Bytt deretter ut én byggestein og se hvilken ny variasjon som blir mulig.
-
-```{pyodide-python}
-rng=np.random.default_rng(10)
-# Studentvalg: Bytt byggesteiner her. Tre byggesteiner kan høyst gi tre
-# uavhengige retninger i rommet av alle 2 x 2-bilder.
-my_building_blocks=[M,H,V]
-my_images=[]
-for _ in range(8):
-    # Nye koeffisienter, men de samme tre byggesteinene, i hvert forsøk.
-    c=rng.uniform(-1,1,size=3)
-    my_images.append(sum(value*block for value,block
-                         in zip(c,my_building_blocks)))
-show_images(my_images,[""]*8,cols=4,cmap="coolwarm",vmin=-2,vmax=2)
-```
-
-Forsøk å lage et konkret $2\times2$-målbilde som de tre byggesteinene ikke kan treffe. Dette er den eksperimentelle siden av dimensjon: tre uavhengige justeringsmuligheter kan ikke styre fire uavhengige pikselverdier.
-
-### Valgoppgave C: Lag en annen basis
-
-Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om ligningssystemet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
-
-```{pyodide-python}
-# Studentvalg: Endre B1, ..., B4 før resten av cellen kjøres.
-B1,B2,B3,B4=E1.copy(),E2.copy(),E3.copy(),E4.copy()
-my_basis=[B1,B2,B3,B4]
-# Q har én foreslått basisvektor i hver kolonne.
-Q=np.column_stack([B.reshape(-1) for B in my_basis])
-show_images(my_basis,["$B_1$","$B_2$","$B_3$","$B_4$"],
-            cols=4,cmap="coolwarm",vmin=-1,vmax=1)
-print("Rang:",np.linalg.matrix_rank(Q))
-
-target=rng.uniform(-1,1,size=(2,2))
-if np.linalg.matrix_rank(Q)==4:
-    # Reverse engineering: finn koordinatene til et tilfeldig målbilde.
-    coordinates=np.linalg.solve(Q,target.reshape(-1))
-    reconstruction=(Q@coordinates).reshape(2,2)
-    show_images([target,reconstruction],["Målbilde","Rekonstruksjon"],
-                cols=2,cmap="coolwarm",vmin=-1,vmax=1)
-else:
-    print("Byggesteinene er avhengige. Endre dem og prøv igjen.")
-```
-
-### Obligatorisk D: Design en ny bildereduksjon
-
-Lag en lineær transformasjon fra 16 inputpiksler til høyst 6 outputverdier. Hver rad i `A_new` er én måling av bildet. Tegn først hvilke piksler målingen skal bruke, og sett så inn de tilsvarende vektene i raden. Mulige ideer er radgjennomsnitt, kolonnegjennomsnitt, diagonalsummer eller utvalgte piksler.
-
-```{pyodide-python}
-# Fire rader betyr fire målinger. Endre også antallet rader dersom
-# transformasjonen din skal ha et annet antall outputverdier.
-A_new=np.zeros((4,16))
-
-# TODO: Sett inn vekter. Rad i beskriver nøyaktig hvordan output i beregnes.
-
-test_image=rng.random((4,4))
-# reshape(-1) gjør testbildet til inputvektoren som A_new forventer.
-test_output=A_new@test_image.reshape(-1)
-show_images([test_image],["Testbilde"],cols=1,vmin=0,vmax=1)
-print("Output:",test_output)
-print("Rang:",np.linalg.matrix_rank(A_new))
-print("Nullitet:",16-np.linalg.matrix_rank(A_new))
-```
-
-Test flere bilder med tydelig struktur, ikke bare det tilfeldige bildet. Finn deretter et ikke-null bilde som transformasjonen sender til null. Vis dette bildet og outputen ved siden av hverandre. Forklar hva hver rad i matrisen måler, og hvilke bildeendringer som derfor ikke registreres.
-
-### Valgfri fordypning E: Nesten samme måling
-
-To målinger kan være matematisk forskjellige, men så like at maskinen får problemer med å skille dem. Vi begynner med å tegne vektene i de to målingene. Den første summerer alle piksler likt. Den andre gir bare den siste pikselen en ørliten ekstra vekt.
-
-```{pyodide-python}
-#| label: week3-nearly-same-measurements-picture
-#| autorun: true
-
-def nearly_redundant_measurements(eps,dtype=float):
-    """To nesten like målinger lagret med valgt tallpresisjon."""
-    first=np.ones(16)
-    # Bare vekten til siste piksel skiller rad 2 fra rad 1.
-    second=first.copy(); second[-1]+=eps
-    return np.vstack([first,second]).astype(dtype)
-
-eps_picture=0.05
-A_picture=nearly_redundant_measurements(eps_picture)
-show_images([A_picture[0].reshape(4,4),
-             A_picture[1].reshape(4,4),
-             (A_picture[1]-A_picture[0]).reshape(4,4)],
-            ["Måling 1","Måling 2","Forskjellen"],
-            cols=3,cmap="coolwarm",vmin=-0.05,vmax=1.05,
-            figsize=(5.4,1.8))
-```
-
-Forskjellsbildet har bare én ikke-null piksel. Gjør nå denne forskjellen mindre ved å endre `eps`, og sammenlign hva som skjer når tallene lagres som `float64` og `float32`.
-
-```{pyodide-python}
-#| label: week3-nearly-same-measurements-rank
-
-# Gjør forskjellen 10 000 ganger mindre for hver runde og sammenlign hvor
-# lenge de to tallformatene klarer å skille radene.
-for exponent in [2,6,10,14,18]:
-    eps=10.0**(-exponent)
-    A64=nearly_redundant_measurements(eps,np.float64)
-    A32=nearly_redundant_measurements(eps,np.float32)
-    print(f"eps={eps:.0e}",
-          "rang float64 =",np.linalg.matrix_rank(A64),
-          "rang float32 =",np.linalg.matrix_rank(A32))
-```
-
-På papiret er målingene uavhengige for enhver $\varepsilon\neq0$: den lille ekstravekten kan ikke lages ved bare å skalere den første raden. I maskinen kan ekstravekten bli avrundet bort, eller bli vurdert som for liten til å være pålitelig. `matrix_rank` bruker derfor en toleranse og rapporterer en **numerisk rang**. Beskriv når de to tallformatene slutter å skille målingene, og knytt resultatet til feil- og toleransebegrepene fra uke 2.
-
-Trenger du en kort repetisjon av forskjellen på eksakt og numerisk rang, kan
-du åpne underdelen om numerisk rang i 3.7.
-
-## 3.6 Overfør ideene til polynomer {#uke3-del5}
+## 3.5 Overfør ideene til polynomer {#uke3-del5}
 
 Så langt har vektorene vært bilder eller tallkolonner. Nå bruker vi de kjente
 begrepene på polynomer. Dette er overgangen til ukeprosjektet.
@@ -2086,6 +1938,161 @@ Hvilke koeffisienter kan ha produsert disse verdiene? Bildeeksemplene har
 allerede gitt oss de sentrale spørsmålene: Hvilken basis bruker vi, hvilken
 informasjon mister målingen, og kan små endringer være nesten usynlige?
 
+
+## 3.6 Praktisk hovedløp: Utforsk bildetransformasjoner selv {#uke3-del4}
+
+Nå går vi tilbake til bildetransformasjonen fra 3.1–3.4. Denne gangen skal du
+ikke bare følge ferdige eksempler, men selv konstruere, teste og forklare
+transformasjoner. Dette er den praktiske delen av hovedløpet, ikke valgfritt
+støttestoff.
+
+Hjelpefunksjonene, transformasjonen og mønsterbildene fra de foregående
+delene er tilgjengelige under. Her skal du endre kode og lete etter mønstre
+selv.
+
+Gjør aktivitet **A og D**, og velg deretter **enten B eller C**. Aktivitet E er
+en valgfri numerisk fordypning. For hvert valgt eksperiment arbeider du i
+denne rekkefølgen:
+
+1. Gjett først hva figuren eller outputen vil vise.
+2. Kjør eksperimentet og beskriv det du faktisk ser.
+3. Kontroller observasjonen med et tall, for eksempel en residual eller en rang.
+4. Forklar til slutt observasjonen med begrepene fra uka.
+
+Startcellene gjør plotting og bokføring, men gir ikke ferdige svar. Et forsøk som ikke virker ved første kjøring kan være nyttig: undersøk forskjellen mellom det du forventet og det koden faktisk produserte.
+
+### Obligatorisk A: Lag et nytt mønster med output null
+
+Endre `Z`. Hver $2\times2$-blokk skal ha gjennomsnitt null, men bruk ikke sjakkmønsteret uendret. Før du kjører cellen, regn ut minst ett blokkgjennomsnitt for hånd. Figuren viser om mønsteret forsvinner, mens normen under figuren måler outputens avstand fra nullbildet.
+
+```{pyodide-python}
+# Dette er startforslaget, ikke et fasitsvar. Endre minst to av tallene,
+# men pass på at hver 2 x 2-blokk fortsatt har sum null.
+Z=np.array([
+    [ 1.,-1., 0., 0.],
+    [ 0., 0., 0., 0.],
+    [ 0., 0., 1.,-1.],
+    [ 0., 0., 0., 0.]
+])
+show_images([Z,average_pool(Z)],["Mitt mønster","Output"],
+            cols=2,cmap="coolwarm",vmin=-1,vmax=1)
+print("||A z|| =",np.linalg.norm(A_pool@Z.reshape(-1)))
+```
+
+Legg deretter en liten versjon av mønsteret til et vanlig bilde. Velg størrelsen slik at pikselverdiene fortsatt ligger mellom 0 og 1. Vis originalbildet, det endrede bildet og begge outputene. Forklar både hvorfor inputbildene er forskjellige og hvorfor transformasjonen ikke kan skille dem.
+
+### Valgoppgave B: Hva kan tre byggesteiner lage?
+
+Velg tre mønsterbilder og generer åtte tilfeldige lineærkombinasjoner. Se etter en egenskap som går igjen i alle bildene: finnes det for eksempel en symmetri, en fast sum eller en type kontrast som aldri opptrer? Bytt deretter ut én byggestein og se hvilken ny variasjon som blir mulig.
+
+```{pyodide-python}
+rng=np.random.default_rng(10)
+# Studentvalg: Bytt byggesteiner her. Tre byggesteiner kan høyst gi tre
+# uavhengige retninger i rommet av alle 2 x 2-bilder.
+my_building_blocks=[M,H,V]
+my_images=[]
+for _ in range(8):
+    # Nye koeffisienter, men de samme tre byggesteinene, i hvert forsøk.
+    c=rng.uniform(-1,1,size=3)
+    my_images.append(sum(value*block for value,block
+                         in zip(c,my_building_blocks)))
+show_images(my_images,[""]*8,cols=4,cmap="coolwarm",vmin=-2,vmax=2)
+```
+
+Forsøk å lage et konkret $2\times2$-målbilde som de tre byggesteinene ikke kan treffe. Dette er den eksperimentelle siden av dimensjon: tre uavhengige justeringsmuligheter kan ikke styre fire uavhengige pikselverdier.
+
+### Valgoppgave C: Lag en annen basis
+
+Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om ligningssystemet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
+
+```{pyodide-python}
+# Studentvalg: Endre B1, ..., B4 før resten av cellen kjøres.
+B1,B2,B3,B4=E1.copy(),E2.copy(),E3.copy(),E4.copy()
+my_basis=[B1,B2,B3,B4]
+# Q har én foreslått basisvektor i hver kolonne.
+Q=np.column_stack([B.reshape(-1) for B in my_basis])
+show_images(my_basis,["$B_1$","$B_2$","$B_3$","$B_4$"],
+            cols=4,cmap="coolwarm",vmin=-1,vmax=1)
+print("Rang:",np.linalg.matrix_rank(Q))
+
+target=rng.uniform(-1,1,size=(2,2))
+if np.linalg.matrix_rank(Q)==4:
+    # Reverse engineering: finn koordinatene til et tilfeldig målbilde.
+    coordinates=np.linalg.solve(Q,target.reshape(-1))
+    reconstruction=(Q@coordinates).reshape(2,2)
+    show_images([target,reconstruction],["Målbilde","Rekonstruksjon"],
+                cols=2,cmap="coolwarm",vmin=-1,vmax=1)
+else:
+    print("Byggesteinene er avhengige. Endre dem og prøv igjen.")
+```
+
+### Obligatorisk D: Design en ny bildereduksjon
+
+Lag en lineær transformasjon fra 16 inputpiksler til høyst 6 outputverdier. Hver rad i `A_new` er én måling av bildet. Tegn først hvilke piksler målingen skal bruke, og sett så inn de tilsvarende vektene i raden. Mulige ideer er radgjennomsnitt, kolonnegjennomsnitt, diagonalsummer eller utvalgte piksler.
+
+```{pyodide-python}
+# Fire rader betyr fire målinger. Endre også antallet rader dersom
+# transformasjonen din skal ha et annet antall outputverdier.
+A_new=np.zeros((4,16))
+
+# TODO: Sett inn vekter. Rad i beskriver nøyaktig hvordan output i beregnes.
+
+test_image=rng.random((4,4))
+# reshape(-1) gjør testbildet til inputvektoren som A_new forventer.
+test_output=A_new@test_image.reshape(-1)
+show_images([test_image],["Testbilde"],cols=1,vmin=0,vmax=1)
+print("Output:",test_output)
+print("Rang:",np.linalg.matrix_rank(A_new))
+print("Nullitet:",16-np.linalg.matrix_rank(A_new))
+```
+
+Test flere bilder med tydelig struktur, ikke bare det tilfeldige bildet. Finn deretter et ikke-null bilde som transformasjonen sender til null. Vis dette bildet og outputen ved siden av hverandre. Forklar hva hver rad i matrisen måler, og hvilke bildeendringer som derfor ikke registreres.
+
+### Valgfri fordypning E: Nesten samme måling
+
+To målinger kan være matematisk forskjellige, men så like at maskinen får problemer med å skille dem. Vi begynner med å tegne vektene i de to målingene. Den første summerer alle piksler likt. Den andre gir bare den siste pikselen en ørliten ekstra vekt.
+
+```{pyodide-python}
+#| label: week3-nearly-same-measurements-picture
+#| autorun: true
+
+def nearly_redundant_measurements(eps,dtype=float):
+    """To nesten like målinger lagret med valgt tallpresisjon."""
+    first=np.ones(16)
+    # Bare vekten til siste piksel skiller rad 2 fra rad 1.
+    second=first.copy(); second[-1]+=eps
+    return np.vstack([first,second]).astype(dtype)
+
+eps_picture=0.05
+A_picture=nearly_redundant_measurements(eps_picture)
+show_images([A_picture[0].reshape(4,4),
+             A_picture[1].reshape(4,4),
+             (A_picture[1]-A_picture[0]).reshape(4,4)],
+            ["Måling 1","Måling 2","Forskjellen"],
+            cols=3,cmap="coolwarm",vmin=-0.05,vmax=1.05,
+            figsize=(5.4,1.8))
+```
+
+Forskjellsbildet har bare én ikke-null piksel. Gjør nå denne forskjellen mindre ved å endre `eps`, og sammenlign hva som skjer når tallene lagres som `float64` og `float32`.
+
+```{pyodide-python}
+#| label: week3-nearly-same-measurements-rank
+
+# Gjør forskjellen 10 000 ganger mindre for hver runde og sammenlign hvor
+# lenge de to tallformatene klarer å skille radene.
+for exponent in [2,6,10,14,18]:
+    eps=10.0**(-exponent)
+    A64=nearly_redundant_measurements(eps,np.float64)
+    A32=nearly_redundant_measurements(eps,np.float32)
+    print(f"eps={eps:.0e}",
+          "rang float64 =",np.linalg.matrix_rank(A64),
+          "rang float32 =",np.linalg.matrix_rank(A32))
+```
+
+På papiret er målingene uavhengige for enhver $\varepsilon\neq0$: den lille ekstravekten kan ikke lages ved bare å skalere den første raden. I maskinen kan ekstravekten bli avrundet bort, eller bli vurdert som for liten til å være pålitelig. `matrix_rank` bruker derfor en toleranse og rapporterer en **numerisk rang**. Beskriv når de to tallformatene slutter å skille målingene, og knytt resultatet til feil- og toleransebegrepene fra uke 2.
+
+Trenger du en kort repetisjon av forskjellen på eksakt og numerisk rang, kan
+du åpne underdelen om numerisk rang i 3.7.
 
 ## 3.7 Støtteløp: Matriseregning ved behov {#uke3-stotte-matriser}
 
