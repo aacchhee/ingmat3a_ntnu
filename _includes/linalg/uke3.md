@@ -2,10 +2,8 @@
 ## Slik bruker du siden
 
 Siden har to leseløp. **Hovedløpet** bruker lineær algebra du har møtt i et
-tidligere emne, men anvender den på bilder og polynomer. Følg
-[3.0](#uke3-start), [3.1](#uke3-del1), [3.2](#uke3-del2),
-[3.3](#uke3-3-3), [3.4](#uke3-del3), [3.5](#uke3-3-5),
-[3.6](#uke3-3-6), [3.7](#uke3-del4) og [3.8](#uke3-del5) i denne rekkefølgen.
+tidligere emne, men anvender den på bilder og polynomer. Følg 3.1 til 3.8 i
+vanlig rekkefølge.
 
 **Støtteløpet** er et oppslagsverk dersom Gauss-eliminasjon, pivoter,
 kolonnerom eller nullrom ikke sitter friskt. Du kan når som helst gå til
