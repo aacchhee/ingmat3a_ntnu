@@ -2,14 +2,13 @@
 ## Slik bruker du siden
 
 Siden har to leseløp. **Hovedløpet** bruker lineær algebra du har møtt i et
-tidligere emne, men anvender den på bilder og polynomer. Følg 3.1 til 3.8 i
+tidligere emne, men anvender den på bilder og polynomer. Følg 3.1 til 3.6 i
 vanlig rekkefølge.
 
 **Støtteløpet** er et oppslagsverk dersom Gauss-eliminasjon, pivoter,
-kolonnerom eller nullrom ikke sitter friskt. Du kan når som helst gå til
-[matriserepetisjonen i 3.9](#uke3-stotte-matriser) eller
-[papir- og kontrolloppgavene i 3.10](#uke3-stotte-oppgaver), og deretter vende
-tilbake til hovedløpet. Du trenger ikke gjennomføre hele støtteløpet dersom
+kolonnerom eller nullrom ikke sitter friskt. Matriserepetisjonen står i 3.7,
+og papir- og kontrolloppgavene står i 3.8. Du kan deretter vende tilbake til
+hovedløpet. Du trenger ikke gjennomføre hele støtteløpet dersom
 forkunnskapene sitter.
 ::::
 
@@ -97,7 +96,7 @@ outputen? Hvilken matematisk påstand skal utskriften eller figuren kontrollere?
 
 ::: {.panel-tabset}
 
-## 3.0 To bilder, samme output {#uke3-start}
+## 3.1 To bilder, samme output {#uke3-start}
 
 En **transformasjon** er her en regel som tar en input og lager en output. Inputen kan være et bilde, en lydfil eller en tabell med målinger; outputen kan være et nytt bilde eller noen få tall som oppsummerer inputen. Vi skriver ofte
 
@@ -208,7 +207,7 @@ board.create('text', [6.35,3.22,'fire piksler'], {
 Fargene og pilene viser hva som hører sammen. De fire pikslene i det blå området samles til den blå outputpikselen, og tilsvarende for de tre andre områdene. I vårt eksempel betyr «samle» at vi tar gjennomsnittet av de fire pikselverdiene. Dermed går vi fra 16 tall til fire tall. Vi begynner med to bilder som ser helt forskjellige ut: et ensfarget bilde og et tydelig sjakkmønster.
 
 Den neste cellen er ferdig maskineri for å vise bilder og beregne de fire
-gjennomsnittene. Du trenger ikke forstå `reshape`-uttrykket ennå; i 3.1 ser
+gjennomsnittene. Du trenger ikke forstå `reshape`-uttrykket ennå; i 3.2 ser
 vi nøye på hvordan et bilde legges over i en vektor. Akkurat nå er spørsmålet
 bare hva transformasjonen beholder, og hva den mister.
 
@@ -382,7 +381,7 @@ Senere skal vi undersøke to viktige egenskaper ved transformasjoner:
 
 Fra outputen alene kan vi derfor ikke avgjøre hvilket bilde som var input. Før vi gir dette et matematisk navn, kan du prøve å endre `X2` uten å endre gjennomsnittet i noen blokk. Hvilke endringer ser ut til å være tillatt?
 
-## 3.1 Fra bilde til vektor og matrise {#uke3-del1}
+## 3.2 Fra bilde til vektor og matrise {#uke3-del1}
 
 Et bilde vises som en todimensjonal rute, men pikselverdiene kan også legges etter hverandre i en liste. NumPy-funksjonen `reshape(-1)` leser først øverste rad fra venstre mot høyre, deretter neste rad, og fortsetter til alle 16 pikslene er plassert i én vektor.
 
@@ -421,9 +420,9 @@ plt.tight_layout(); plt.show()
 
 Venstre del av figuren viser pikselnumrene på de opprinnelige plassene. Høyre del viser nøyaktig de samme tallene i én rad. De røde strekene markerer hvor en rad fra bildet slutter og den neste begynner. Vektoren er derfor ikke et nytt bilde og ingen informasjon er borte; vi har bare valgt en nummerering som gjør at vanlig matrise-vektor-multiplikasjon kan brukes.
 
-Husk transformasjonen fra 3.0: Den tok et stort bilde som input og ga et mindre bilde som output. Nå beskriver vi de to bildene som vektorer, men selve input–output-regelen er fortsatt den samme.
+Husk transformasjonen fra 3.1: Den tok et stort bilde som input og ga et mindre bilde som output. Nå beskriver vi de to bildene som vektorer, men selve input–output-regelen er fortsatt den samme.
 
-Et $4\times4$-bilde beskrives dermed med 16 koordinater og kan behandles som en vektor $x\in\mathbb R^{16}$. Bildetransformasjonen fra 3.0 kan nå skrives
+Et $4\times4$-bilde beskrives dermed med 16 koordinater og kan behandles som en vektor $x\in\mathbb R^{16}$. Bildetransformasjonen fra 3.1 kan nå skrives
 
 $$y=Ax,$$
 
@@ -566,7 +565,7 @@ for (var p=0; p<4; p++) {
 
 Les én farge om gangen. Den blå matrisraden har fire ruter med $1/4$. De fire blå tallene i inputvektoren kommer fra øvre venstre bildeområde. Når rad og vektor multipliseres, blir disse fire verdiene ganget med $1/4$ og lagt sammen. Resultatet blir den blå verdien øverst i outputvektoren. De hvite nullrutene betyr at de øvrige inputverdiene ikke bidrar til akkurat denne outputen.
 
-De gule, grønne og lilla radene gjør det samme for de tre andre bildeområdene. Matrise-vektorproduktet kan derfor leses som fire parallelle oppskrifter: **én matrisrad gir én verdi i outputvektoren**. Til slutt ordnes de fire outputverdiene som et $2\times2$-bilde. Figuren bruker sjakkbildet fra 3.0, så alle fire gjennomsnittene blir $0.5$.
+De gule, grønne og lilla radene gjør det samme for de tre andre bildeområdene. Matrise-vektorproduktet kan derfor leses som fire parallelle oppskrifter: **én matrisrad gir én verdi i outputvektoren**. Til slutt ordnes de fire outputverdiene som et $2\times2$-bilde. Figuren bruker sjakkbildet fra 3.1, så alle fire gjennomsnittene blir $0.5$.
 
 ### Et eksperiment med skalering og addisjon
 
@@ -654,7 +653,7 @@ $$Ax=c_1Ab_1+\cdots+c_kAb_k.$$
 
 Vi kan altså finne hva transformasjonen gjør med hver byggestein én gang og deretter kombinere resultatene. Basis, nullrom og kolonnerom bygger alle på denne ideen. Ikke alle transformasjoner er lineære: å klippe alle negative pikselverdier til null eller å sortere pikslene vil for eksempel vanligvis bryte regneregelen.
 
-## 3.2 Beskriv bilder med forskjellige basiser {#uke3-del2}
+## 3.3 Beskriv bilder med forskjellige basiser {#uke3-del2}
 
 Vi skal nå finne et systematisk språk for «byggesteiner». Vi begynner fortsatt med bilder, ikke med en abstrakt definisjon.
 
@@ -850,7 +849,7 @@ $$\dim(\mathbb R^{2\times2})=4.$$
 
 Dimensjon teller antallet uavhengige tall som trengs for å beskrive et vilkårlig bilde i samlingen. Den handler ikke om at bildet ser todimensjonalt ut på skjermen. Et $4\times4$-bilde har tilsvarende 16 fritt valgbare pikselverdier og ligger i et rom med dimensjon 16.
 
-### 3.3 Bytt fra pikselbasis til mønsterbasis {#uke3-3-3}
+### Bytt fra pikselbasis til mønsterbasis
 
 Pikselbyggesteinene er enkle, men koordinatene sier bare hvor lyse de fire pikslene er. Vi prøver nå fire andre byggesteiner. I figurene betyr rødt positive verdier og blått negative verdier; hvitt ligger nær null. Negative tall er ikke «negativt lys», men beskriver at et mønster trekkes fra når bilder kombineres.
 
@@ -1099,7 +1098,7 @@ for name,pattern in zip(pattern_names,pattern_basis):
 
 Les figuren loddrett: De fire store bildene er inputene, og de fire små rutene er de tilhørende outputene. Lysnivåbildet har fire enere, så gjennomsnittet er 1. Hvert kontrastbilde har to enere og to minusenere; summen er 0 og gjennomsnittet er derfor 0.
 
-Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig kombinasjon av kontrastbildene får også gjennomsnitt null, fordi lineariteten fra 3.1 lar oss kombinere de tre nullresultatene.
+Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig kombinasjon av kontrastbildene får også gjennomsnitt null, fordi lineariteten fra 3.2 lar oss kombinere de tre nullresultatene.
 
 ::: {.callout-important}
 ### Uformell observasjon
@@ -1177,7 +1176,7 @@ Det midterste bildet har $t=0$ og er ensfarget. Negative og positive verdier av 
 
 Når $t$ endres, flytter vi oss gjennom forskjellige bilder langs kontrastretningen $D$. Pikslene endres, men gjennomsnittet står stille. Nullrommet beskriver derfor alle forskjeller mellom inputer som denne målingen ikke kan oppdage.
 
-### 3.5 Finn de tolv usynlige bilderetningene {#uke3-3-5}
+### Finn de tolv usynlige bilderetningene
 
 Vi går tilbake fra én $2\times2$-blokk til hele $4\times4$-bildet. Transformasjonen beregner fire gjennomsnitt, ett i hvert hjørneområde. Derfor kan hver blokk inneholde sine egne usynlige kontraster.
 
@@ -1240,7 +1239,7 @@ Nullrommet er altså en samling der vi kan addere bilder og multiplisere dem med
 
 De tolv viste byggesteinene påvirker enten forskjellige blokker eller forskjellige kontraster i samme blokk. Ingen av dem kan fjernes uten at vi mister en mulig lokal endring. Samtidig kan ethvert bilde med null gjennomsnitt i hver blokk bygges av dem, blokk for blokk. De danner derfor en basis for nullrommet, som har dimensjon 12.
 
-### 3.6 Finn hvilke outputbilder transformasjonen kan lage {#uke3-3-6}
+### Finn hvilke outputbilder transformasjonen kan lage
 
 Vi har undersøkt hvilke endringer i inputbildet som ikke synes i outputen. Nå snur vi spørsmålet: **Hvilke $2\times2$-bilder kan transformasjonen faktisk produsere?**
 
@@ -1624,7 +1623,7 @@ $$n=\operatorname{rank}(A)+\dim N(A).$$
 - Rangen og nulliteten teller forskjellige typer retninger i forskjellige rom, men til sammen gjør tallene rede for alle 16 inputdimensjonene.
 :::
 
-## 3.7 Utforsk bildetransformasjoner selv {#uke3-del4}
+## 3.5 Utforsk bildetransformasjoner selv {#uke3-del4}
 
 Hjelpefunksjonene, transformasjonen og mønsterbildene fra de foregående delene er tilgjengelige under. Her skal du endre kode og lete etter mønstre selv.
 
@@ -1770,9 +1769,9 @@ for exponent in [2,6,10,14,18]:
 På papiret er målingene uavhengige for enhver $\varepsilon\neq0$: den lille ekstravekten kan ikke lages ved bare å skalere den første raden. I maskinen kan ekstravekten bli avrundet bort, eller bli vurdert som for liten til å være pålitelig. `matrix_rank` bruker derfor en toleranse og rapporterer en **numerisk rang**. Beskriv når de to tallformatene slutter å skille målingene, og knytt resultatet til feil- og toleransebegrepene fra uke 2.
 
 Trenger du en kort repetisjon av forskjellen på eksakt og numerisk rang, kan
-du åpne [3.9 om numerisk rang](#uke3-numerisk-rang).
+du åpne underdelen om numerisk rang i 3.7.
 
-## 3.8 Overfør ideene til polynomer {#uke3-del5}
+## 3.6 Overfør ideene til polynomer {#uke3-del5}
 
 Så langt har vektorene vært bilder eller tallkolonner. Nå bruker vi de kjente
 begrepene på polynomer. Dette er overgangen til ukeprosjektet.
@@ -2088,7 +2087,7 @@ allerede gitt oss de sentrale spørsmålene: Hvilken basis bruker vi, hvilken
 informasjon mister målingen, og kan små endringer være nesten usynlige?
 
 
-## 3.9 Støtteløp: Matriseregning ved behov {#uke3-stotte-matriser}
+## 3.7 Støtteløp: Matriseregning ved behov {#uke3-stotte-matriser}
 
 Denne delen repeterer lineær algebra fra tidligere emner. Den er med slik at
 du ikke trenger å finne fram gamle notater. Hvis du allerede kan radredusere
@@ -2103,9 +2102,8 @@ Bruk spørsmålene som en rask selvtest:
 4. Kan du finne en basis for nullrommet og kontrollere rang–nullitet?
 5. Kan du avgjøre om $Ax=b$ har en løsning?
 
-Hvis svaret er ja på alle fem, kan du hoppe til
-[papir- og kontrolloppgavene i 3.10](#uke3-stotte-oppgaver) dersom du ønsker ekstra
-trening, eller avslutte siden her.
+Hvis svaret er ja på alle fem, kan du gå til papir- og kontrolloppgavene i
+3.8 dersom du ønsker ekstra trening, eller avslutte siden her.
 
 Bildene i hovedløpet gjorde begrepene synlige. I støtteløpet legger vi bort
 bildebakgrunnen og regner direkte med én matrise. Målet er å repetere hvordan
@@ -2152,7 +2150,7 @@ Vi bruker de samme fargene gjennom hele regningen:
 #| label: week3-pure-matrix-setup
 #| autorun: true
 
-# Denne matrisen er felles eksempel i hele 3.9. Rad 3 er summen av de to
+# Denne matrisen er felles eksempel i hele 3.7. Rad 3 er summen av de to
 # første radene, noe eliminasjonen snart skal avdekke.
 A=np.array([
     [1.,2.,0.,1.],
@@ -2498,7 +2496,7 @@ Dette er ikke en motsigelse. **Eksakt rang** gjelder en idealisert matrise med e
 
 ::::
 
-## 3.10 Støtteløp: Papir- og kontrolloppgaver {#uke3-stotte-oppgaver}
+## 3.8 Støtteløp: Papir- og kontrolloppgaver {#uke3-stotte-oppgaver}
 
 Dette er repetisjonsoppgaver, ikke en obligatorisk fortsettelse av
 hovedløpet. Bruk matrisen $B$ som selvtest. Hvis regningen går greit, kan du
@@ -2916,7 +2914,7 @@ inputdimensjon _[3] $=$ rang _[1] $+$ nullitet _[2]
 Bruk denne delen først etter at du har arbeidet med den valgte matrisen på
 papir. Cellen under inneholder en kort, selvstendig kopi av
 `row_echelon`, slik at kontrolloppgaven virker selv om du ikke har åpnet og
-kjørt kodecellen i matriserepetisjonen i 3.9.
+kjørt kodecellen i matriserepetisjonen i 3.7.
 
 1. Kontroller trappeformen og pivotkolonnene med `row_echelon`.
 2. Kontroller nullromsvektorene ved å beregne `M @ Z`.
@@ -2928,7 +2926,7 @@ kjørt kodecellen i matriserepetisjonen i 3.9.
 
 import numpy as np
 
-# Selvstendig hjelpekode: Cellen skal kunne kjøres uten kodecellene i 3.9.
+# Selvstendig hjelpekode: Cellen skal kunne kjøres uten kodecellene i 3.7.
 def row_echelon(A,tol=1e-12):
     """Returner trappeform og indeksene til pivotkolonnene."""
     R=np.array(A,dtype=float,copy=True)
