@@ -1,6 +1,44 @@
+:::: {.callout-note}
+## Slik bruker du siden
+
+Siden har to leseløp. **Hovedløpet** bruker lineær algebra du har møtt i et
+tidligere emne, men anvender den på bilder og polynomer. Følg
+[Start](#uke3-start), [Del 1](#uke3-del1), [Del 2](#uke3-del2),
+[Del 3](#uke3-del3), [Del 4](#uke3-del4) og [Del 5](#uke3-del5) i denne
+rekkefølgen.
+
+**Støtteløpet** er et oppslagsverk dersom Gauss-eliminasjon, pivoter,
+kolonnerom eller nullrom ikke sitter friskt. Du kan når som helst gå til
+[matriserepetisjonen](#uke3-stotte-matriser) eller
+[papir- og kontrolloppgavene](#uke3-stotte-oppgaver), og deretter vende
+tilbake til hovedløpet. Du trenger ikke gjennomføre hele støtteløpet dersom
+forkunnskapene sitter.
+::::
+
+:::: {.callout-tip collapse="true"}
+## Kort kodehåndbok
+
+Koden er et verktøy for å undersøke lineær algebra, ikke et eget
+programmeringspensum. Disse kommandoene brukes flere ganger:
+
+- `X.reshape(-1)` legger alle tallene i bildet etter hverandre i én vektor.
+  Ingen tall endres eller forsvinner.
+- `A @ x` betyr matrise-vektorproduktet $Ax$.
+- `np.column_stack([u, v])` lager en matrise med `u` og `v` som kolonner.
+- `np.linalg.solve(A, b)` finner en vektor `x` som oppfyller `A @ x = b`,
+  når systemet har én entydig løsning.
+- `np.linalg.norm(u)` måler størrelsen på en vektor eller forskjellen mellom
+  to resultater.
+- `np.linalg.matrix_rank(A)` beregner den numeriske rangen til `A`.
+
+Kode merket som **ferdig maskineri** kan brukes uten at du forstår alle
+indeksene og løkkene. Konsentrer deg først om hva funksjonen tar inn, hva den
+returnerer, og hvilken matematisk påstand forsøket undersøker.
+::::
+
 ::: {.panel-tabset}
 
-## 3.0 To bilder, samme output
+## Start: To bilder, samme output {#uke3-start}
 
 En **transformasjon** er her en regel som tar en input og lager en output. Inputen kan være et bilde, en lydfil eller en tabell med målinger; outputen kan være et nytt bilde eller noen få tall som oppsummerer inputen. Vi skriver ofte
 
@@ -110,6 +148,11 @@ board.create('text', [6.35,3.22,'fire piksler'], {
 
 Fargene og pilene viser hva som hører sammen. De fire pikslene i det blå området samles til den blå outputpikselen, og tilsvarende for de tre andre områdene. I vårt eksempel betyr «samle» at vi tar gjennomsnittet av de fire pikselverdiene. Dermed går vi fra 16 tall til fire tall. Vi begynner med to bilder som ser helt forskjellige ut: et ensfarget bilde og et tydelig sjakkmønster.
 
+Den neste cellen er ferdig maskineri for å vise bilder og beregne de fire
+gjennomsnittene. Du trenger ikke forstå `reshape`-uttrykket ennå; i Del 1 ser
+vi nøye på hvordan et bilde legges over i en vektor. Akkurat nå er spørsmålet
+bare hva transformasjonen beholder, og hva den mister.
+
 ```{pyodide-python}
 #| label: week3-setup
 #| autorun: true
@@ -121,6 +164,9 @@ import matplotlib.pyplot as plt
 def show_images(images, titles=None, cols=4, cmap="gray",
                 vmin=None, vmax=None, figsize=None):
     """Vis flere 2D-arrays med samme fargeskala."""
+    # Lukk eldre figurer før vi lager en ny. Det hindrer at en lang
+    # arbeidsøkt samler mange usynlige figurer i minnet.
+    plt.close("all")
     images = list(images)
     titles = [""]*len(images) if titles is None else list(titles)
     rows = int(np.ceil(len(images)/cols))
@@ -226,7 +272,7 @@ print("Outputforskjell med np.linalg.norm:  ",np.linalg.norm(D_output))
 De to første tallene er begge 1.6: formelen og NumPy gjør den samme beregningen. Outputforskjellen har norm 0, og er derfor nøyaktig nullbildet. Senere vil avrundingsfeil ofte gi svært små normer i stedet for nøyaktig 0; da leser vi resultatet som «numerisk nær null».
 
 ::: {.callout-important}
-## Første observasjon
+### Første observasjon
 
 Bildene er forskjellige, men transformasjonen gir samme output. Den bevarer gjennomsnittet i hver blokk, men ikke hvordan pikselverdiene er fordelt inne i blokken.
 :::
@@ -262,7 +308,7 @@ Senere skal vi undersøke to viktige egenskaper ved transformasjoner:
 
 Fra outputen alene kan vi derfor ikke avgjøre hvilket bilde som var input. Før vi gir dette et matematisk navn, kan du prøve å endre `X2` uten å endre gjennomsnittet i noen blokk. Hvilke endringer ser ut til å være tillatt?
 
-## 3.1 Bildet som vektor
+## Del 1: Fra bilde til vektor og matrise {#uke3-del1}
 
 Et bilde vises som en todimensjonal rute, men pikselverdiene kan også legges etter hverandre i en liste. NumPy-funksjonen `reshape(-1)` leser først øverste rad fra venstre mot høyre, deretter neste rad, og fortsetter til alle 16 pikslene er plassert i én vektor.
 
@@ -299,9 +345,9 @@ plt.tight_layout(); plt.show()
 
 Venstre del av figuren viser pikselnumrene på de opprinnelige plassene. Høyre del viser nøyaktig de samme tallene i én rad. De røde strekene markerer hvor en rad fra bildet slutter og den neste begynner. Vektoren er derfor ikke et nytt bilde og ingen informasjon er borte; vi har bare valgt en nummerering som gjør at vanlig matrise-vektor-multiplikasjon kan brukes.
 
-Husk transformasjonen fra 3.0: Den tok et stort bilde som input og ga et mindre bilde som output. Nå beskriver vi de to bildene som vektorer, men selve input–output-regelen er fortsatt den samme.
+Husk transformasjonen fra Start-delen: Den tok et stort bilde som input og ga et mindre bilde som output. Nå beskriver vi de to bildene som vektorer, men selve input–output-regelen er fortsatt den samme.
 
-Et $4\times4$-bilde beskrives dermed med 16 koordinater og kan behandles som en vektor $x\in\mathbb R^{16}$. Bildetransformasjonen fra 3.0 kan nå skrives
+Et $4\times4$-bilde beskrives dermed med 16 koordinater og kan behandles som en vektor $x\in\mathbb R^{16}$. Bildetransformasjonen fra Start-delen kan nå skrives
 
 $$y=Ax,$$
 
@@ -441,7 +487,7 @@ for (var p=0; p<4; p++) {
 
 Les én farge om gangen. Den blå matrisraden har fire ruter med $1/4$. De fire blå tallene i inputvektoren kommer fra øvre venstre bildeområde. Når rad og vektor multipliseres, blir disse fire verdiene ganget med $1/4$ og lagt sammen. Resultatet blir den blå verdien øverst i outputvektoren. De hvite nullrutene betyr at de øvrige inputverdiene ikke bidrar til akkurat denne outputen.
 
-De gule, grønne og lilla radene gjør det samme for de tre andre bildeområdene. Matrise-vektorproduktet kan derfor leses som fire parallelle oppskrifter: **én matrisrad gir én verdi i outputvektoren**. Til slutt ordnes de fire outputverdiene som et $2\times2$-bilde. Figuren bruker sjakkbildet fra 3.0, så alle fire gjennomsnittene blir $0.5$.
+De gule, grønne og lilla radene gjør det samme for de tre andre bildeområdene. Matrise-vektorproduktet kan derfor leses som fire parallelle oppskrifter: **én matrisrad gir én verdi i outputvektoren**. Til slutt ordnes de fire outputverdiene som et $2\times2$-bilde. Figuren bruker sjakkbildet fra Start-delen, så alle fire gjennomsnittene blir $0.5$.
 
 ### Et eksperiment med skalering og addisjon
 
@@ -465,7 +511,7 @@ Vi sammenligner to regnerekkefølger:
 Hvis begge framgangsmåtene alltid gir samme resultat, kan vi forstå transformasjonen ved å teste den på enkle byggesteiner. Når vi vet hva transformasjonen gjør med hver byggestein, vet vi også hva den gjør med enhver kombinasjon av dem.
 
 ::: {.callout-note}
-## Fra byggesteiner til bildekompresjon
+### Fra byggesteiner til bildekompresjon
 
 Valget av byggesteiner kan få praktisk betydning. Vanlige bilder inneholder ofte store jevne områder, langsomme overganger, kanter og gjentatte mønstre. Hvis byggesteinene passer til denne strukturen, kan bildet kanskje beskrives godt med noen få store koeffisienter og mange små.
 
@@ -526,7 +572,7 @@ $$Ax=c_1Ab_1+\cdots+c_kAb_k.$$
 
 Vi kan altså finne hva transformasjonen gjør med hver byggestein én gang og deretter kombinere resultatene. Basis, nullrom og kolonnerom bygger alle på denne ideen. Ikke alle transformasjoner er lineære: å klippe alle negative pikselverdier til null eller å sortere pikslene vil for eksempel vanligvis bryte regneregelen.
 
-## 3.2 Basisbilder og dimensjon
+## Del 2: Beskriv bilder med forskjellige basiser {#uke3-del2}
 
 Vi skal nå finne et systematisk språk for «byggesteiner». Vi begynner fortsatt med bilder, ikke med en abstrakt definisjon.
 
@@ -697,7 +743,7 @@ show_images([E1,E2,E5,recipe_1,recipe_2,recipe_1-recipe_2],
 Øverste rad viser at $E_5$ allerede er summen av de to første byggesteinene. Nederste rad viser konsekvensen: Oppskrift 1 bruker ett eksemplar av $E_1$ og $E_2$, mens oppskrift 2 bruker ett eksemplar av $E_5$. Forskjellsbildet er null overalt. De to oppskriftene bruker altså forskjellige koeffisienter, men gir samme bilde, så beskrivelsen er ikke lenger entydig.
 
 ::: {.callout-tip}
-## Fra eksperiment til begreper
+### Fra eksperiment til begreper
 
 - Byggesteinene **spenner ut** en samling bilder når alle bilder i samlingen kan bygges som lineærkombinasjoner av dem.
 - Byggesteinene er **lineært uavhengige** når ingen av dem kan bygges av de andre. Da har hvert bilde høyst én oppskrift.
@@ -716,11 +762,11 @@ $$\dim(\mathbb R^{2\times2})=4.$$
 
 Dimensjon teller antallet uavhengige tall som trengs for å beskrive et vilkårlig bilde i samlingen. Den handler ikke om at bildet ser todimensjonalt ut på skjermen. Et $4\times4$-bilde har tilsvarende 16 fritt valgbare pikselverdier og ligger i et rom med dimensjon 16.
 
-## 3.3 En basis som beskriver mønstre
+### Bytt fra pikselbasis til mønsterbasis
 
 Pikselbyggesteinene er enkle, men koordinatene sier bare hvor lyse de fire pikslene er. Vi prøver nå fire andre byggesteiner. I figurene betyr rødt positive verdier og blått negative verdier; hvitt ligger nær null. Negative tall er ikke «negativt lys», men beskriver at et mønster trekkes fra når bilder kombineres.
 
-Appleten har samme oppbygning som i 3.2, men skyveknappene styrer nå fire mønstre. Knappene går fra $-1$ til $1$: En positiv koeffisient legger til mønsteret, mens en negativ koeffisient legger til mønsteret med motsatte fortegn. Tallet i hver piksel viser det faktiske bidraget; fargen viser fortegnet og omtrent hvor stort bidraget er.
+Appleten har samme oppbygning som pikselbasis-appleten tidligere i denne delen, men skyveknappene styrer nå fire mønstre. Knappene går fra $-1$ til $1$: En positiv koeffisient legger til mønsteret, mens en negativ koeffisient legger til mønsteret med motsatte fortegn. Tallet i hver piksel viser det faktiske bidraget; fargen viser fortegnet og omtrent hvor stort bidraget er.
 
 ```{.jsxgraph width="760" height="430"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -845,7 +891,7 @@ board.create('text',[sumX+sumSize,imageY-0.38,
 });
 ```
 
-Startinnstillingen lager det samme bildet som i 3.2, men tallene på skyveknappene er nå annerledes: lysnivå $0.55$, venstre–høyre-kontrast $-0.25$, topp–bunn-kontrast $-0.10$ og ingen sjakkmønsterkontrast. Prøv å endre én kontroll om gangen og beskriv den synlige endringen i summen.
+Startinnstillingen lager det samme bildet som med pikselbasisen, men tallene på skyveknappene er nå annerledes: lysnivå $0.55$, venstre–høyre-kontrast $-0.25$, topp–bunn-kontrast $-0.10$ og ingen sjakkmønsterkontrast. Prøv å endre én kontroll om gangen og beskriv den synlige endringen i summen.
 
 Nå konstruerer vi de samme fire mønstrene i NumPy.
 
@@ -866,7 +912,7 @@ show_images(pattern_basis,pattern_names,cols=4,
 
 `Lysnivå` har samme fortegn overalt og gjør hele bildet lysere eller mørkere. `Venstre–høyre` øker venstre kolonne samtidig som høyre kolonne minker. `Topp–bunn` sammenligner øvre og nedre rad. `Sjakkmønster` skiller de to diagonalene. De tre siste har to $+1$ og to $-1$, så summen deres er null.
 
-Disse mønstrene virker meningsfulle, men det er ikke nok til å kalle dem en basis. Vi må undersøke de samme to spørsmålene som i 3.2: Kan de bygge alle målbilder, og er oppskriften entydig?
+Disse mønstrene virker meningsfulle, men det er ikke nok til å kalle dem en basis. Vi må undersøke de samme to spørsmålene som for pikselbasisen: Kan de bygge alle målbilder, og er oppskriften entydig?
 
 Vi gjør hvert mønster om til en 4-vektor og bruker vektorene som kolonner i `P`. For hvert målbilde løser vi ligningen `P @ c = target`: Finnes det koeffisienter som rekonstruerer bildet?
 
@@ -875,6 +921,9 @@ Vi gjør hvert mønster om til en 4-vektor og bruker vektorene som kolonner i `P
 #| autorun: true
 
 P=np.column_stack([pattern.reshape(-1) for pattern in pattern_basis])
+print("P^T P:\n",P.T@P)
+print("Rang av P:",np.linalg.matrix_rank(P))
+
 rng=np.random.default_rng(8)
 targets=[rng.uniform(-1,1,size=(2,2)) for _ in range(4)]
 reconstructions=[]; errors=[]
@@ -893,11 +942,18 @@ show_images(interleaved,titles,cols=4,cmap="coolwarm",
 print("Rekonstruksjonsfeil:",errors)
 ```
 
-I hvert par er bildet merket «Mål» laget tilfeldig. «Bygd mål» er rekonstruksjonen fra de fire mønstrene. Parene ser like ut, og normen av forskjellen er omkring $10^{-16}$ eller null. Det er numerisk evidens, ikke et bevis alene.
+Utskriften av $P^TP$ har verdien 4 på diagonalen og 0 ellers. Nullene betyr
+at ulike mønsterkolonner er ortogonale. Hvis $Pc=0$, kan vi multiplisere med
+$P^T$ og få $4c=0$, altså $c=0$. Kolonnene er derfor lineært uavhengige.
+Siden vi har fire uavhengige vektorer i det firedimensjonale rommet
+$\mathbb R^{2\times2}$, danner de en basis. Rangutskriften kontrollerer den
+samme konklusjonen numerisk.
 
-Matrisen `P` har ett mønster i hver kolonne. Ligningen `P @ c = target` spør hvilke fire mønsterstyrker `c` som gir det ønskede bildet. `P` er inverterbar, så hvert målbilde har nøyaktig én løsning. Mønstrene både spenner ut hele $\mathbb R^{2\times2}$ og er uavhengige; de danner dermed en ny basis.
+I hvert par er bildet merket «Mål» laget tilfeldig. «Bygd mål» er rekonstruksjonen fra de fire mønstrene. Parene ser like ut, og normen av forskjellen er omkring $10^{-16}$ eller null. Forsøkene illustrerer basisresultatet på konkrete bilder; argumentet med $P^TP$ forklarer hvorfor det gjelder alle bilder.
 
-Vi ser nærmere på koordinatene til bildet $X$ fra forrige fane.
+Matrisen `P` har ett mønster i hver kolonne. Ligningen `P @ c = target` spør hvilke fire mønsterstyrker `c` som gir det ønskede bildet. Fordi kolonnene danner en basis, har hvert målbilde nøyaktig én løsning.
+
+Vi ser nærmere på koordinatene til bildet $X$ fra pikselbasis-eksemplet tidligere i denne delen.
 
 ```{pyodide-python}
 #| label: week3-change-basis
@@ -921,14 +977,14 @@ De fire første delbildene i figuren er koeffisienten ganget med det navngitte m
 Pikselbasisen beskriver bildet med fire lokale lysverdier. Mønsterbasisen beskriver det samme bildet som samlet lysnivå pluss tre typer kontrast. Bildet er uendret, men koordinatene har fått en annen betydning. Dette er et **basisskifte**: samme objekt, ny oppskrift.
 
 ::: {.callout-note}
-## Hvorfor bytte basis?
+### Hvorfor bytte basis?
 
 En basis er ikke bare et sett som tilfredsstiller en definisjon. Et godt valg av basis kan skille egenskaper vi vil bevare fra egenskaper en transformasjon fjerner. Det er nettopp det som skjer i neste eksperiment.
 :::
 
-## 3.4 Hva beholder gjennomsnittet?
+## Del 3: Hva transformasjonen ser og ikke ser {#uke3-del3}
 
-Nå lar vi den enkleste transformasjonen vi har — gjennomsnittet av fire tall — virke på de fire mønsterbyggesteinene. Inputen i hver kolonne er et $2\times2$-mønster. Den lille outputen under viser det ene tallet transformasjonen produserer. Fordi gjennomsnittet er lineært, vil resultatet for disse fire byggesteinene senere fortelle oss resultatet for enhver kombinasjon av dem.
+Nå lar vi den enkleste transformasjonen vi har — gjennomsnittet av fire tall — virke på de fire mønsterbyggesteinene. Vi kaller transformasjonen for én blokk $G:\mathbb R^4\to\mathbb R$. Den skal ikke forveksles med `A_pool`, som behandler fire blokker og sender et helt $4\times4$-bilde til fire tall. Inputen i hver kolonne er et $2\times2$-mønster. Den lille outputen under viser det ene tallet $G$ produserer. Fordi gjennomsnittet er lineært, vil resultatet for disse fire byggesteinene senere fortelle oss resultatet for enhver kombinasjon av dem.
 
 ```{pyodide-python}
 #| label: week3-average-patterns
@@ -944,10 +1000,10 @@ for name,pattern in zip(pattern_names,pattern_basis):
 
 Les figuren loddrett: De fire store bildene er inputene, og de fire små rutene er de tilhørende outputene. Lysnivåbildet har fire enere, så gjennomsnittet er 1. Hvert kontrastbilde har to enere og to minusenere; summen er 0 og gjennomsnittet er derfor 0.
 
-Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig kombinasjon av kontrastbildene får også gjennomsnitt null, fordi lineariteten fra 3.1 lar oss kombinere de tre nullresultatene.
+Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig kombinasjon av kontrastbildene får også gjennomsnitt null, fordi lineariteten fra Del 1 lar oss kombinere de tre nullresultatene.
 
 ::: {.callout-important}
-## Uformell observasjon
+### Uformell observasjon
 
 Kontrastmønstrene er endringer vi kan legge til et bilde uten å endre gjennomsnittet. Transformasjonen kan ikke skille mellom bilder som bare er forskjellige med en kombinasjon av slike kontraster.
 :::
@@ -958,15 +1014,15 @@ Vi kontrollerer også den motsatte retningen: Kan tilfeldige bilder med gjennoms
 #| label: week3-build-zero-mean-images
 #| autorun: true
 
-C=np.column_stack([H.reshape(-1),V.reshape(-1),D.reshape(-1)])
+contrast_matrix=np.column_stack([H.reshape(-1),V.reshape(-1),D.reshape(-1)])
 rng=np.random.default_rng(12)
 target_images=[]; reconstructed_images=[]; errors=[]
 for _ in range(4):
     first_three=rng.uniform(-1,1,size=3)
     values=np.r_[first_three,-np.sum(first_three)]
     target=values.reshape(2,2)
-    weights=np.linalg.solve(C[:3,:],values[:3])
-    reconstructed=(C@weights).reshape(2,2)
+    weights=np.linalg.solve(contrast_matrix[:3,:],values[:3])
+    reconstructed=(contrast_matrix@weights).reshape(2,2)
     target_images.append(target)
     reconstructed_images.append(reconstructed)
     errors.append(np.linalg.norm(target-reconstructed))
@@ -982,23 +1038,23 @@ show_images(interleaved,titles,cols=4,cmap="coolwarm",
 print("Rekonstruksjonsfeil:",errors)
 ```
 
-I hvert par er målbildet konstruert med fire tilfeldige tall som summerer til null. Bildet ved siden av er rekonstruert fra `H`, `V` og `D`. De to bildene i hvert par er like, og rekonstruksjonsfeilen er null eller nær maskinpresisjon.
+I hvert par er målbildet konstruert med fire tilfeldige tall som summerer til null. Bildet ved siden av er rekonstruert fra `H`, `V` og `D`. De første tre pikselverdiene gir tre ligninger for de tre ukjente mønsterkoeffisientene. Den fjerde ligningen følger automatisk fordi både målbildet og alle tre mønstrene har sum null. Derfor løser koden systemet med de tre første radene i `contrast_matrix`, men kontrollerer rekonstruksjonen i alle fire pikslene. De to bildene i hvert par er like, og rekonstruksjonsfeilen er null eller nær maskinpresisjon.
 
 De fire forsøkene støtter påstanden: Bilder med sum null kan beskrives med tre uavhengige kontrastkoeffisienter. Hvorfor tre? Når de første tre pikselverdiene er valgt, må den siste være minus summen av dem. Vi har derfor tre frie valg og én verdi som er bestemt av de andre. Nå har vi et konkret behov for et navn på hele denne samlingen.
 
-For en transformasjon $A:\mathbb R^n\to\mathbb R^m$ kalles alle inputvektorer som gir output null for **nullrommet**:
+Fra tidligere lineær algebra kjenner vi nullrommet som løsningene av et homogent system. For en transformasjon $A:\mathbb R^n\to\mathbb R^m$ er
 
 $$N(A)=\{z\in\mathbb R^n:Az=0\}\subseteq\mathbb R^n.$$
 
 Nullrommet ligger altså i **inputrommet**. Vektorene der har like mange komponenter som en input, ikke som en output. For gjennomsnittet av én $2\times2$-blokk er inputen et bilde med fire tall, mens outputen bare er ett tall. Derfor ligger nullrommet i $\mathbb R^4$, og
 
-$$N(A)=\operatorname{span}\{H,V,D\}.$$
+$$N(G)=\operatorname{span}\{H,V,D\}.$$
 
 Her er nullrommet nettopp alle $2\times2$-bilder med sum, og dermed gjennomsnitt, lik null. De tre uavhengige byggesteinene $H,V,D$ spenner ut denne samlingen, så de danner en basis og nullrommet har dimensjon 3. Nullrommet er altså ikke bare selve nullbildet; det kan inneholde mange ikke-null inputbilder som transformasjonen ikke registrerer.
 
-Dette forklarer åpningsproblemet steg for steg. Hvis $Ax_1=Ax_2$, kan vi trekke den ene outputen fra den andre. Linearitet gir $A(x_1-x_2)=0$. Forskjellsbildet $x_1-x_2$ ligger derfor i nullrommet. Omvendt kan vi legge enhver nullromsendring til et bilde uten å endre outputen:
+Dette forklarer åpningsproblemet for én blokk. Hvis $Gx_1=Gx_2$, kan vi trekke den ene outputen fra den andre. Linearitet gir $G(x_1-x_2)=0$. Forskjellsbildet $x_1-x_2$ ligger derfor i nullrommet til $G$. Omvendt kan vi legge enhver nullromsendring til et bilde uten å endre outputen:
 
-$$Ax_1=Ax_2\quad\Longleftrightarrow\quad A(x_1-x_2)=0.$$
+$$Gx_1=Gx_2\quad\Longleftrightarrow\quad G(x_1-x_2)=0.$$
 
 ```{pyodide-python}
 #| label: week3-family-same-average
@@ -1017,7 +1073,7 @@ Det midterste bildet har $t=0$ og er ensfarget. Negative og positive verdier av 
 
 Når $t$ endres, flytter vi oss gjennom forskjellige bilder langs kontrastretningen $D$. Pikslene endres, men gjennomsnittet står stille. Nullrommet beskriver derfor alle forskjeller mellom inputer som denne målingen ikke kan oppdage.
 
-## 3.5 Tolv endringer som ikke synes i outputen
+### Finn de tolv usynlige bilderetningene
 
 Vi går tilbake fra én $2\times2$-blokk til hele $4\times4$-bildet. Transformasjonen beregner fire gjennomsnitt, ett i hvert hjørneområde. Derfor kan hver blokk inneholde sine egne usynlige kontraster.
 
@@ -1076,7 +1132,7 @@ Nullrommet er altså en samling der vi kan addere bilder og multiplisere dem med
 
 De tolv viste byggesteinene påvirker enten forskjellige blokker eller forskjellige kontraster i samme blokk. Ingen av dem kan fjernes uten at vi mister en mulig lokal endring. Samtidig kan ethvert bilde med null gjennomsnitt i hver blokk bygges av dem, blokk for blokk. De danner derfor en basis for nullrommet, som har dimensjon 12.
 
-## 3.6 Mulige outputer og rang
+### Finn hvilke outputbilder transformasjonen kan lage
 
 Vi har undersøkt hvilke endringer i inputbildet som ikke synes i outputen. Nå snur vi spørsmålet: **Hvilke $2\times2$-bilder kan transformasjonen faktisk produsere?**
 
@@ -1232,21 +1288,44 @@ Les hver rad i figuren fra venstre mot høyre. Først vises et konstruert $4\tim
 
 Målbildene ble valgt tilfeldig, men den samme oppskriften virker for alle $2\times2$-bilder: kopier hver ønsket outputverdi inn i alle fire pikslene i den tilsvarende inputblokken. Gjennomsnittet av fire like tall er tallet selv. Feilen er derfor nøyaktig null, bortsett fra eventuell avrunding. Transformasjonen kan altså produsere alle vektorer i $\mathbb R^4$.
 
-Samlingen av alle outputvektorer en matrise kan produsere, kalles **kolonnerommet**:
+Fra tidligere kjenner vi samlingen av alle outputvektorer en matrise kan produsere som **kolonnerommet**. For hele bildereduksjonen skriver vi
 
-$$C(A)=\{Ax:x\in\mathbb R^{16}\}\subseteq\mathbb R^4.$$
+$$\operatorname{Col}(A_{\mathrm{pool}})
+=\{A_{\mathrm{pool}}x:x\in\mathbb R^{16}\}\subseteq\mathbb R^4.$$
 
 Kolonnerommet ligger altså i **outputrommet**. Vektorene i nullrommet har 16 komponenter; vektorene i kolonnerommet har fire. De to rommene kan derfor ha forskjellige dimensjoner og består i dette eksemplet ikke engang av like lange vektorer.
 
-Navnet kan nå leses direkte fra eksperimentet. Hvis $a_j$ er kolonne $j$ i $A$, er
+Navnet kan nå leses direkte fra eksperimentet. Hvis $a_j$ er kolonne $j$ i $A_{\mathrm{pool}}$, er
 
-$$Ax=x_1a_1+\cdots+x_{16}a_{16}.$$
+$$A_{\mathrm{pool}}x=x_1a_1+\cdots+x_{16}a_{16}.$$
 
 Formelen sier at inputverdien $x_j$ skalerer kolonnebildet $a_j$, og at de 16 skalerte bidragene legges sammen. Alle outputer bygges dermed som lineærkombinasjoner av kolonnebildene. Dette er den samme byggesteinsideen som for basisbilder, men nå er byggesteinene bestemt av transformasjonsmatrisen.
 
 I vårt eksempel holder det å beholde én kolonne fra hver av de fire gruppene, for eksempel kolonne 1, 3, 9 og 11. Disse fire kan varieres uavhengig og bygger alle mulige outputbilder. De andre tolv kolonnene gjentar virkninger vi allerede har.
 
-Vi gjør ett eksperiment til før vi gir denne tellingen et navn. Vi legger til en femte måling: gjennomsnittet av alle de 16 inputpikslene. Den nye outputverdien ser ut som mer informasjon, men den kan beregnes fra de fire blokkgjennomsnittene.
+**Rangen** er dimensjonen til kolonnerommet:
+
+$$\operatorname{rank}(A_{\mathrm{pool}})
+=\dim\operatorname{Col}(A_{\mathrm{pool}}).$$
+
+Uformelt teller rangen hvor mange outputverdier som kan varieres
+uavhengig. De fire blokkgjennomsnittene kan velges fritt, så rangen er 4.
+
+```{pyodide-python}
+#| label: week3-rank-check
+
+print("Inputverdier:",A_pool.shape[1])
+print("Outputverdier:",A_pool.shape[0])
+print("Numerisk rang:",np.linalg.matrix_rank(A_pool))
+```
+
+:::: {.callout-note collapse="true"}
+### Valgfri utvidelse: En overflødig femte måling
+
+Her kan du kontrollere at flere outputtall ikke nødvendigvis betyr mer
+informasjon. Vi legger til gjennomsnittet av alle de 16 inputpikslene som en
+femte måling. Den nye outputverdien ser først ut som ny informasjon, men den
+kan beregnes fra de fire blokkgjennomsnittene.
 
 ```{pyodide-python}
 #| label: week3-redundant-output
@@ -1262,23 +1341,15 @@ print("Rang med fire outputer:",np.linalg.matrix_rank(A_pool))
 print("Rang med fem outputer:",np.linalg.matrix_rank(A_five))
 ```
 
-Utskriften viser at den femte outputverdien er nøyaktig gjennomsnittet av de fire første. Matrisen har nå fem rader, men den femte målingen gir ingen ny justeringsmulighet og ingen ny informasjon om inputen. Den er bestemt av de fire andre. Antallet uavhengige outputretninger kalles matrisens **rang**:
+Utskriften viser at den femte outputverdien er nøyaktig gjennomsnittet av de
+fire første. Matrisen har nå fem rader, men den femte målingen gir ingen ny
+justeringsmulighet og ingen ny informasjon om inputen. Den er bestemt av de
+fire andre, så rangen er fortsatt 4.
 
-**Rangen** er dimensjonen til kolonnerommet:
+::::
 
-$$\operatorname{rank}(A)=\dim C(A).$$
-
-Uformelt teller rangen hvor mange outputverdier som kan varieres uavhengig. De fire blokkgjennomsnittene kan velges fritt, så rangen er 4. Å legge til en femte verdi som allerede er bestemt av de andre, endrer ikke rangen.
-
-```{pyodide-python}
-#| label: week3-rank-check
-
-print("Inputverdier:",A_pool.shape[1])
-print("Outputverdier:",A_pool.shape[0])
-print("Numerisk rang:",np.linalg.matrix_rank(A_pool))
-```
-
-### Seksten knapper, men bare fire når fram
+:::: {.callout-note collapse="true"}
+### Valgfri visualisering: Seksten knapper, men bare fire når fram
 
 Vi startet med 16 uavhengige pikselverdier. Nå beskriver vi det samme inputbildet med mer passende skyveknapper. Fire fargede knapper styrer blokkgjennomsnittene. Tolv grå knapper styrer kontraster inne i blokkene uten å endre gjennomsnittene.
 
@@ -1401,10 +1472,21 @@ board.create('text',[7.60,0.75,'Én uavhengig knapp = én retning'],{
 });
 ```
 
-Dette er ikke 16 nye størrelser; det er en ny beskrivelse av de samme 16 inputmulighetene. Å bevege én knapp mens de andre står stille, kaller vi å bevege oss i én **retning**.
+Dette er ikke 16 nye størrelser; det er en ny beskrivelse av de samme 16
+inputmulighetene. Å bevege én knapp mens de andre står stille, kaller vi å
+bevege oss i én **retning**.
 
-- De tolv grå knappene gir tolv uavhengige inputretninger som sendes til nullbildet. De danner en basis for nullrommet.
-- Hver farget knapp gir en endring i én outputpiksel. De fire uavhengige outputretningene danner en basis for kolonnerommet.
+::::
+
+Vi kan nå oppsummere de 16 inputmulighetene, også uten å bruke den valgfrie
+visualiseringen:
+
+- De tolv kontrastmønstrene vi fant tidligere, gir tolv uavhengige
+  inputretninger som sendes til nullbildet. De danner en basis for
+  nullrommet. I den valgfrie visualiseringen er dette de grå knappene.
+- De fire blokkgjennomsnittene kan endres uavhengig og gir fire uavhengige
+  outputretninger. De danner en basis for kolonnerommet. I visualiseringen
+  er dette de fargede knappene.
 
 Flere forskjellige pikselendringer kan gi samme endring i outputen. Derfor teller rangen ikke konkrete inputendringer. Den teller hvor mange outputverdier som kan stilles uavhengig. I dette eksemplet er det fire.
 
@@ -1417,16 +1499,20 @@ For en matrise med $n$ kolonner sier **rang-nullitet** at
 $$n=\operatorname{rank}(A)+\dim N(A).$$
 
 ::: {.callout-note}
-## Tolkning
+### Tolkning
 
 - **Nulliteten 12** teller de uavhengige inputretningene som sendes til null.
 - **Rangen 4** teller de uavhengige outputretningene inputen kan produsere.
 - Rangen og nulliteten teller forskjellige typer retninger i forskjellige rom, men til sammen gjør tallene rede for alle 16 inputdimensjonene.
 :::
 
-## 3.7 Egne eksperimenter
+## Del 4: Utforsk bildetransformasjoner selv {#uke3-del4}
 
-Hjelpefunksjonene, transformasjonen og mønsterbildene fra de foregående delene er tilgjengelige under. Her skal du endre kode og lete etter mønstre selv. Arbeid i samme rekkefølge som i forelesningen:
+Hjelpefunksjonene, transformasjonen og mønsterbildene fra de foregående delene er tilgjengelige under. Her skal du endre kode og lete etter mønstre selv.
+
+Gjør aktivitet **A og D**, og velg deretter **enten B eller C**. Aktivitet E er
+en valgfri numerisk fordypning. For hvert valgt eksperiment arbeider du i
+denne rekkefølgen:
 
 1. Gjett først hva figuren eller outputen vil vise.
 2. Kjør eksperimentet og beskriv det du faktisk ser.
@@ -1435,7 +1521,7 @@ Hjelpefunksjonene, transformasjonen og mønsterbildene fra de foregående delene
 
 Startcellene gjør plotting og bokføring, men gir ikke ferdige svar. Et forsøk som ikke virker ved første kjøring kan være nyttig: undersøk forskjellen mellom det du forventet og det koden faktisk produserte.
 
-### A. Lag et nytt mønster med output null
+### Obligatorisk A: Lag et nytt mønster med output null
 
 Endre `Z`. Hver $2\times2$-blokk skal ha gjennomsnitt null, men bruk ikke sjakkmønsteret uendret. Før du kjører cellen, regn ut minst ett blokkgjennomsnitt for hånd. Figuren viser om mønsteret forsvinner, mens normen under figuren måler outputens avstand fra nullbildet.
 
@@ -1453,7 +1539,7 @@ print("||A z|| =",np.linalg.norm(A_pool@Z.reshape(-1)))
 
 Legg deretter en liten versjon av mønsteret til et vanlig bilde. Velg størrelsen slik at pikselverdiene fortsatt ligger mellom 0 og 1. Vis originalbildet, det endrede bildet og begge outputene. Forklar både hvorfor inputbildene er forskjellige og hvorfor transformasjonen ikke kan skille dem.
 
-### B. Hva kan tre byggesteiner lage?
+### Valgoppgave B: Hva kan tre byggesteiner lage?
 
 Velg tre mønsterbilder og generer åtte tilfeldige lineærkombinasjoner. Se etter en egenskap som går igjen i alle bildene: finnes det for eksempel en symmetri, en fast sum eller en type kontrast som aldri opptrer? Bytt deretter ut én byggestein og se hvilken ny variasjon som blir mulig.
 
@@ -1470,7 +1556,7 @@ show_images(my_images,[""]*8,cols=4,cmap="coolwarm",vmin=-2,vmax=2)
 
 Forsøk å lage et konkret $2\times2$-målbilde som de tre byggesteinene ikke kan treffe. Dette er den eksperimentelle siden av dimensjon: tre uavhengige justeringsmuligheter kan ikke styre fire uavhengige pikselverdier.
 
-### C. Lag en annen basis
+### Valgoppgave C: Lag en annen basis
 
 Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om ligningssystemet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
 
@@ -1492,7 +1578,7 @@ else:
     print("Byggesteinene er avhengige. Endre dem og prøv igjen.")
 ```
 
-### D. Design en ny bildereduksjon
+### Obligatorisk D: Design en ny bildereduksjon
 
 Lag en lineær transformasjon fra 16 inputpiksler til høyst 6 outputverdier. Hver rad i `A_new` er én måling av bildet. Tegn først hvilke piksler målingen skal bruke, og sett så inn de tilsvarende vektene i raden. Mulige ideer er radgjennomsnitt, kolonnegjennomsnitt, diagonalsummer eller utvalgte piksler.
 
@@ -1511,7 +1597,7 @@ print("Nullitet:",16-np.linalg.matrix_rank(A_new))
 
 Test flere bilder med tydelig struktur, ikke bare det tilfeldige bildet. Finn deretter et ikke-null bilde som transformasjonen sender til null. Vis dette bildet og outputen ved siden av hverandre. Forklar hva hver rad i matrisen måler, og hvilke bildeendringer som derfor ikke registreres.
 
-### E. Nesten samme måling
+### Valgfri fordypning E: Nesten samme måling
 
 To målinger kan være matematisk forskjellige, men så like at maskinen får problemer med å skille dem. Vi begynner med å tegne vektene i de to målingene. Den første summerer alle piksler likt. Den andre gir bare den siste pikselen en ørliten ekstra vekt.
 
@@ -1550,834 +1636,22 @@ for exponent in [2,6,10,14,18]:
 
 På papiret er målingene uavhengige for enhver $\varepsilon\neq0$: den lille ekstravekten kan ikke lages ved bare å skalere den første raden. I maskinen kan ekstravekten bli avrundet bort, eller bli vurdert som for liten til å være pålitelig. `matrix_rank` bruker derfor en toleranse og rapporterer en **numerisk rang**. Beskriv når de to tallformatene slutter å skille målingene, og knytt resultatet til feil- og toleransebegrepene fra uke 2.
 
-### F. Forslag til arbeidsflyt
-
-Velg aktivitet C, D eller E, og arbeid gjerne i denne rekkefølgen:
-
-1. Konstruer transformasjonen eller basisen i kode.
-2. Lag minst én figur med input, byggesteiner eller output.
-3. Kontroller resultatet numerisk med en residual eller en rang.
-4. Forklar hvilke variasjoner som bevares, og hvilke som ikke kan bestemmes
-   fra outputen.
-
-## 3.8 Fra matrise til rom, basis og rang
-
-Så langt har bildene gjort begrepene synlige. Nå legger vi bort bildebakgrunnen og regner direkte med en matrise. Målet er å kunne gå fra en matrise til rang, basis for kolonnerommet og basis for nullrommet — først med papir og blyant, deretter med kode som kontroll.
-
-Selve matriseberegningene var pensum i Matematikk 1: radoperasjoner, ligningssystemer og Gauss-eliminasjon. Det er en stund siden, så vi forventer ikke at framgangsmåten sitter friskt. Denne siden repeterer regningen steg for steg og kobler den til ordene vi bruker nå — pivot, rang, kolonnerom og nullrom.
-
-Vi bruker samme matrise gjennom hele eksemplet:
-
-$$
-A=
-\begin{bmatrix}
-1&2&0&1\\
-0&1&1&1\\
-1&3&1&2
-\end{bmatrix}.
-$$
-
-Matrisen har fire kolonner og tre rader, og beskriver derfor transformasjonen
-
-$$
-A:\underbrace{\mathbb R^4}_{\text{inputrom}}
-\longrightarrow
-\underbrace{\mathbb R^3}_{\text{outputrom}}.
-$$
-
-Nullrommet består av 4-vektorer og ligger i inputrommet: $N(A)\subseteq\mathbb R^4$. Kolonnerommet består av 3-vektorer og ligger i outputrommet: $C(A)\subseteq\mathbb R^3$. Vi vil svare på tre spørsmål:
-
-1. Hvor mange uavhengige outputretninger har transformasjonen?
-2. Hvilke inputretninger gir output null?
-3. Kan en gitt vektor $b$ produseres som $Ax$?
-
-Vi bruker de samme fargene gjennom hele regningen:
-
-| Farge | I eliminasjonen | Senere i regningen |
-|---|---|---|
-| 🟦 Blå | første pivot, kolonne 1 | basisvektor $a_1$ og pivotvariabel $x_1$ |
-| 🟧 Oransje | andre pivot, kolonne 2 | basisvektor $a_2$ og pivotvariabel $x_2$ |
-| 🟩 Grønn | kolonne uten pivot | fri variabel $x_3=s$ og første nullromsretning |
-| 🟪 Lilla | kolonne uten pivot | fri variabel $x_4=t$ og andre nullromsretning |
-
-```{pyodide-python}
-#| label: week3-pure-matrix-setup
-#| autorun: true
-
-A=np.array([
-    [1.,2.,0.,1.],
-    [0.,1.,1.,1.],
-    [1.,3.,1.,2.]
-])
-print(A)
-```
-
-### Eliminasjon og rang
-
-::: {.callout-tip}
-## Først på papir
-
-Trekk første rad fra tredje rad. Sammenlign deretter den nye tredje raden med andre rad, og eliminer én gang til. Marker den første ikke-null-oppføringen i hver ikke-null-rad.
-:::
-
-Regningen blir
-
-$$
-\begin{bmatrix}
-1&2&0&1\\
-0&1&1&1\\
-1&3&1&2
-\end{bmatrix}
-\longrightarrow
-\begin{bmatrix}
-1&2&0&1\\
-0&1&1&1\\
-0&1&1&1
-\end{bmatrix}
-\longrightarrow
-\begin{bmatrix}
-\color{#277da1}{\boxed{1}}&2&0&1\\
-0&\color{#d98900}{\boxed{1}}&1&1\\
-0&0&0&0
-\end{bmatrix}.
-$$
-
-Den siste raden inneholder ingen ny ligning. To rader er igjen, og de ledende oppføringene — **pivotene** — ligger i kolonne 1 og 2. Dermed er rangen 2.
-
-Koden under utfører vanlig framovereliminasjon. Den går fra venstre mot høyre og bruker den første tilgjengelige ikke-null-oppføringen som pivot. Dette er tilstrekkelig for eksemplene våre og følger papirregningen tett.
-
-```{pyodide-python}
-#| label: week3-row-echelon-function
-#| autorun: true
-
-def row_echelon(A,tol=1e-12,show_steps=False):
-    """Returner trappeform og indeksene til pivotkolonnene."""
-    R=np.array(A,dtype=float,copy=True)
-    rows,cols=R.shape
-    pivot_row=0
-    pivot_columns=[]
-
-    for col in range(cols):
-        if pivot_row==rows:
-            break
-
-        # Finn den første brukbare pivoten, ikke den største.
-        candidate=None
-        for row in range(pivot_row,rows):
-            if abs(R[row,col])>tol:
-                candidate=row
-                break
-
-        if candidate is None:
-            continue
-
-        if candidate!=pivot_row:
-            R[[pivot_row,candidate]]=R[[candidate,pivot_row]]
-            if show_steps:
-                print(f"Bytt rad {pivot_row+1} og {candidate+1}:\n",R)
-
-        for row in range(pivot_row+1,rows):
-            factor=R[row,col]/R[pivot_row,col]
-            if abs(factor)>tol:
-                R[row]-=factor*R[pivot_row]
-
-        R[np.abs(R)<=tol]=0.0
-        pivot_columns.append(col)
-        pivot_row+=1
-        if show_steps:
-            print(f"Etter pivot i kolonne {col+1}:\n",R)
-
-    return R,pivot_columns
-
-R,pivot_columns=row_echelon(A,show_steps=True)
-print("Trappeform:\n",R)
-print("Pivotkolonner, nummerert fra 1:",[j+1 for j in pivot_columns])
-print("Rang fra eliminasjon:",len(pivot_columns))
-print("Kontroll med NumPy:",np.linalg.matrix_rank(A))
-```
-
-`matrix_rank` er nyttig som kontroll, men eliminasjonen viser *hvorfor* rangen er 2. Mer robuste eliminasjonsalgoritmer kan omstokke rader og eventuelt kolonner for å unngå dårlige pivoter. Det tar vi ikke nå. Senere skal vi se at numerisk rang alltid avhenger av hva som regnes som «tilstrekkelig nær null».
-
-### Basis for kolonnerommet
-
-Pivotene forteller hvilke opprinnelige kolonner som tilfører en ny outputretning. Vi henter derfor kolonne 1 og 2 fra den opprinnelige matrisen:
-
-$$
-\color{#277da1}{a_1=\begin{bmatrix}1\\0\\1\end{bmatrix}},
-\qquad
-\color{#d98900}{a_2=\begin{bmatrix}2\\1\\3\end{bmatrix}}.
-$$
-
-::: {.callout-warning}
-## En vanlig feil
-
-Pivotposisjonene finnes ved å radredusere, men basisvektorene hentes fra den **opprinnelige** matrisen. Radoperasjoner endrer kolonnene.
-:::
-
-De to andre kolonnene kan bygges av disse:
-
-$$
-a_3=a_2-2a_1,
-\qquad
-a_4=a_2-a_1.
-$$
-
-Kontroller begge relasjonene før du kjører cellen.
-
-```{pyodide-python}
-#| label: week3-column-space-basis
-#| autorun: true
-
-column_basis=A[:,pivot_columns]
-a1,a2,a3,a4=[A[:,j] for j in range(4)]
-
-print("Basisvektorer som kolonner:\n",column_basis)
-print("Feil i a3 = a2 - 2*a1:",np.linalg.norm(a3-(a2-2*a1)))
-print("Feil i a4 = a2 - a1:  ",np.linalg.norm(a4-(a2-a1)))
-print("Rang av basisvektorene:",np.linalg.matrix_rank(column_basis))
-```
-
-Kolonne 1 og 2 er uavhengige og bygger alle kolonnene i $A$. De danner derfor en basis for kolonnerommet, som har dimensjon 2.
-
-### Basis for nullrommet
-
-Nullrommet finnes ved å løse det homogene systemet $Ax=0$. Trappeformen gir
-
-$$
-\begin{aligned}
-x_1+2x_2+x_4&=0,\\
-x_2+x_3+x_4&=0.
-\end{aligned}
-$$
-
-Pivotvariablene er $\color{#277da1}{x_1}$ og $\color{#d98900}{x_2}$. Variablene $\color{#4f8f49}{x_3}$ og $\color{#8b5aa7}{x_4}$ er frie. Sett
-
-$$\color{#4f8f49}{x_3=s},\qquad \color{#8b5aa7}{x_4=t}.$$
-
-::: {.callout-tip}
-## Fortsett på papir
-
-Løs den andre ligningen for $x_2$, og bruk resultatet i den første ligningen. Samle deretter alle ledd som inneholder $s$, og alle ledd som inneholder $t$.
-:::
-
-Resultatet er
-
-$$
-x=
-\color{#4f8f49}{s\begin{bmatrix}2\\-1\\1\\0\end{bmatrix}}
-+\color{#8b5aa7}{t\begin{bmatrix}1\\-1\\0\\1\end{bmatrix}}.
-$$
-
-Dermed er de to viste vektorene en basis for nullrommet. Koden kontrollerer både at de gir output null, og at en tilfeldig lineærkombinasjon fortsatt gjør det.
-
-```{pyodide-python}
-#| label: week3-null-space-basis-matrix
-#| autorun: true
-
-z1=np.array([2.,-1.,1.,0.])
-z2=np.array([1.,-1.,0.,1.])
-Z=np.column_stack([z1,z2])
-
-print("A ganger nullromsbasisen:\n",A@Z)
-print("Rang av basisvektorene:",np.linalg.matrix_rank(Z))
-
-rng=np.random.default_rng(31)
-s,t=rng.normal(size=2)
-z=s*z1+t*z2
-print("Tilfeldige koeffisienter:",s,t)
-print("||A z|| =",np.linalg.norm(A@z))
-```
-
-I dette eksemplet har både kolonnerommet og nullrommet dimensjon 2. Det betyr ikke at de er samme rom: Kolonneromsbasisen består av 3-vektorer i outputrommet, mens nullromsbasisen består av 4-vektorer i inputrommet. At dimensjonene tilfeldigvis er like her, skyldes at $4=2+2$.
-
-### Rang–nullitet som regnskap
-
-Matrisen har fire kolonner, altså fire inputvariabler. Eliminasjonen ga to pivotvariabler og to frie variabler:
-
-$$
-\underbrace{4}_{\text{inputdimensjon}}
-=
-\underbrace{
-\color{#277da1}{1}+\color{#d98900}{1}
-}_{\text{rang}=2}
-+
-\underbrace{
-\color{#4f8f49}{1}+\color{#8b5aa7}{1}
-}_{\text{nullitet}=2}.
-$$
-
-Rangen kommer fra de to pivotene. Nulliteten kommer **uavhengig** fra nullromsberegningen: Vi fant en basis med to vektorer. Først nå bruker vi disse to resultatene til å kontrollere rang–nullitet.
-
-```{pyodide-python}
-#| label: week3-rank-nullity-check
-
-rank_A=len(pivot_columns)
-nullity_A=Z.shape[1]
-print(f"{A.shape[1]} = {rank_A} + {nullity_A}")
-print("Stemmer rang–nullitet?",A.shape[1]==rank_A+nullity_A)
-```
-
-### Kan en bestemt output produseres?
-
-Siden $a_1$ og $a_2$ er en basis for kolonnerommet, kan alle mulige outputvektorer bygges av disse to. La $\alpha$ og $\beta$ være to fritt valgte tall. De bestemmer hvor mye av henholdsvis $a_1$ og $a_2$ vi bruker:
-
-$$
-\color{#277da1}{\alpha a_1}+\color{#d98900}{\beta a_2}
-=
-\begin{bmatrix}
-\alpha+2\beta\\\beta\\\alpha+3\beta
-\end{bmatrix}.
-$$
-
-Uansett hvilke tall vi velger for $\alpha$ og $\beta$, er tredje komponent summen av de to første. Vi tester derfor to ønskede outputvektorer:
-
-$$
-b=\begin{bmatrix}2\\-1\\1\end{bmatrix},
-\qquad
-d=\begin{bmatrix}2\\-1\\4\end{bmatrix}.
-$$
-
-Vektoren $b$ oppfyller $b_3=b_1+b_2$, mens $d$ ikke gjør det. Den utvidede matrisen $[A\mid b]$ får derfor samme rang som $A$, men $[A\mid d]$ får én ekstra pivot.
-
-```{pyodide-python}
-#| label: week3-reachable-outputs
-#| autorun: true
-
-b=np.array([2.,-1.,1.])
-d=np.array([2.,-1.,4.])
-
-def augmented_rank(A,rhs):
-    return np.linalg.matrix_rank(np.column_stack([A,rhs]))
-
-print("rang(A)       =",np.linalg.matrix_rank(A))
-print("rang([A | b]) =",augmented_rank(A,b))
-print("rang([A | d]) =",augmented_rank(A,d))
-```
-
-Dermed gjelder kriteriet
-
-$$
-Ax=b\text{ har løsning}
-\quad\Longleftrightarrow\quad
-\operatorname{rank}(A)=\operatorname{rank}([A\mid b]).
-$$
-
-Hva gjør vi når en ønsket output som $d$ ikke kan produseres nøyaktig? Det spørsmålet leder direkte til projeksjon og minste kvadraters metode i uke 4.
-
-### Forskjellige inputer, samme output
-
-Velg en input $x_0$ og beregn $y=Ax_0$. Hvis $z$ ligger i nullrommet, gir $x_0+z$ samme output:
-
-$$A(x_0+z)=Ax_0+Az=Ax_0.$$
-
-Her er en hel familie av forskjellige inputvektorer med samme output.
-
-```{pyodide-python}
-#| label: week3-same-output-pure-matrix
-#| autorun: true
-
-x0=np.array([1.,2.,0.,-1.])
-y=A@x0
-
-for alpha in [-2.,-1.,0.,1.,2.]:
-    x=x0+alpha*z1
-    print(f"alpha={alpha:4.1f}  x={x}  A@x={A@x}")
-
-print("Felles output:",y)
-```
-
-Dette er den rene matriseversjonen av åpningsproblemet: Nullrommet beskriver alle endringer i inputen som ikke endrer outputen.
-
-### Eksakt og numerisk rang
-
-Til slutt endrer vi den avhengige tredje raden med et svært lite tall. For enhver $\varepsilon\ne0$ er den perturberte matrisen eksakt sett av rang 3. Numerisk må vi likevel avgjøre om den nye pivoten er stor nok til å skille fra avrundingsfeil.
-
-```{pyodide-python}
-#| label: week3-nearly-dependent-row
-#| autorun: true
-
-direction=np.array([1.,-1.,1.,-1.])
-for eps in [1e-4,1e-8,1e-12,1e-16]:
-    A_eps=A.copy()
-    A_eps[2]+=eps*direction
-    R_eps,pivots_eps=row_echelon(A_eps,tol=1e-10)
-    print(f"eps={eps:.0e}",
-          "rang med tol=1e-10:",len(pivots_eps),
-          "NumPy-rang:",np.linalg.matrix_rank(A_eps))
-```
-
-Dette er ikke en motsigelse. **Eksakt rang** gjelder en idealisert matrise med eksakte tall. **Numerisk rang** beskriver hvor mange uavhengige retninger vi kan skille pålitelig med den valgte presisjonen og toleransen.
-
-## 3.9 Oppgaver
-
-Her trener du på hele kjeden fra radreduksjon til basis og rang. Start med
-papiroppgavene; bruk kodeoppgaven nederst til å kontrollere regningen og
-eksperimentere videre.
-
-
-Arbeid med én matrise om gangen:
-
-$$
-B=\begin{bmatrix}
-1&0&1\\
-0&1&1\\
-1&1&2
-\end{bmatrix},
-\qquad
-C=\begin{bmatrix}
-1&2&3\\
-2&4&6
-\end{bmatrix}.
-$$
-
-### På papir
-
-Oppgavene under vurderes eksakt med SymPy. Du velger selv hvor mange
-pivotindekser og basisvektorer du vil levere. Bruk knappene under matrisen for å
-legge til eller fjerne kolonner. Antallet er en del av svaret.
-
-::: {#week3-paper-assessment-context .math-exercise-context}
-
-For en matrise med $n$ kolonner gjelder
-$n=\operatorname{rank}(M)+\operatorname{nullity}(M)$. Pivotkolonnene bestemmes
-fra en trappeform, men en basis for kolonnerommet hentes fra de tilsvarende
-kolonnene i den opprinnelige matrisen. En basis for nullrommet må bestå av
-lineært uavhengige vektorer $z$ som oppfyller $Mz=0$.
-
-I basisoppgavene farges en gyldig og uavhengig familie grønn. Hvis gyldige
-vektorer er lineært avhengige, blir hele familien gul; rekkefølgen skal ikke
-avgjøre hvilken vektor som får skylden. En nullvektor eller en vektor utenfor
-det etterspurte rommet blir rød. En grønn familie kan fortsatt mangle vektorer
-før den spenner ut hele rommet.
-
-:::
-
-#### Oppgaver for $B$
-
-```{math-exercise}
-#| label: week3-paper-b-echelon
-#| caption: Trappeform og pivoter for B
-#| mode: custom
-#| partial-credit: true
-#| field-labels: r₁₁, r₁₂, r₁₃, r₂₁, r₂₂, r₂₃, r₃₁, r₃₂, r₃₃
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       values = response["expressions"]
-#|       R = Matrix(3, 3, values)
-#|       P = response["inputs"]["PBstep"]["matrix"]
-#|       submitted_pivots = list(P)
-#|       expected_rref = Matrix([[1, 0, 1], [0, 1, 1], [0, 0, 0]])
-#|       def leading_columns(matrix):
-#|           leads = []
-#|           zero_row_seen = False
-#|           for row in range(matrix.rows):
-#|               lead = None
-#|               for col in range(matrix.cols):
-#|                   if simplify(matrix[row, col]) != 0:
-#|                       lead = col
-#|                       break
-#|               if lead is None:
-#|                   zero_row_seen = True
-#|               elif zero_row_seen or (leads and lead <= leads[-1]):
-#|                   return None
-#|               else:
-#|                   leads.append(lead)
-#|           return leads
-#|       leads = leading_columns(R)
-#|       echelon_ok = leads is not None
-#|       rowspace_ok = R.rref()[0] == expected_rref
-#|       expected_pivots = [Integer(j + 1) for j in leads] if echelon_ok else []
-#|       pivot_status = [
-#|           i < len(expected_pivots) and value == expected_pivots[i]
-#|           for i, value in enumerate(submitted_pivots)
-#|       ]
-#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
-#|       score = (int(echelon_ok) + int(rowspace_ok) + pivot_score) / 3
-#|       return {
-#|           "score": score,
-#|           "show_score": False,
-#|           "feedback": "" if score == 1 else "Kontroller trappeformen, og juster antallet pivotindekser slik at listen svarer til de ledende elementene fra venstre mot høyre.",
-#|           "assessment": {"PBstep": {"columns": pivot_status}},
-#|       }
-
-Radreduser $B$. Oppgi en gyldig trappeform $R$ og numrene til pivotkolonnene i
-stigende rekkefølge:
-
-$R=$ mat[1,0,1;0,1,1;0,0,0]
-
-Skriv pivotkolonnenes numre i stigende rekkefølge, én indeks per kolonne:
-
-$P_B=$ mat{name=PBstep, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
-```
-
-```{math-exercise}
-#| label: week3-paper-b-rank
-#| caption: Rang og pivotkolonner for B
-#| mode: custom
-#| partial-credit: true
-#| field-labels: Rang
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       rank_value = response["expressions"][0]
-#|       P = response["inputs"]["PBrank"]["matrix"]
-#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
-#|       expected_pivots = [Integer(j + 1) for j in B.rref()[1]]
-#|       submitted_pivots = list(P)
-#|       pivot_status = [
-#|           i < len(expected_pivots) and value == expected_pivots[i]
-#|           for i, value in enumerate(submitted_pivots)
-#|       ]
-#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
-#|       score = (int(rank_value == B.rank()) + pivot_score) / 2
-#|       return {
-#|           "score": score,
-#|           "show_score": False,
-#|           "feedback": "" if score == 1 else "Rangen er antall pivoter. Kontroller både rangverdien, antallet pivotindekser og rekkefølgen deres.",
-#|           "assessment": {"PBrank": {"columns": pivot_status}},
-#|       }
-
-Finn rangen og pivotkolonnene til $B$:
-
-$\operatorname{rank}(B)=$ _[2]
-
-Pivotkolonner, én indeks per kolonne:
-
-$P_B=$ mat{name=PBrank, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
-```
-
-```{math-exercise}
-#| label: week3-paper-b-column-basis
-#| caption: Basis for kolonnerommet til B
-#| mode: custom
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       Q = response["inputs"]["QB"]["matrix"]
-#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
-#|       original_columns = [B[:, j] for j in range(B.cols)]
-#|       result = assess_basis(
-#|           Q,
-#|           axis="columns",
-#|           target_dimension=B.rank(),
-#|           belongs=lambda vector: Q.rows == B.rows and any(vector == column for column in original_columns),
-#|           name="QB",
-#|           space_name="kolonnerommet til B",
-#|       )
-#|       statuses = result["assessment"]["QB"]["columns"]
-#|       if result["score"] < 1:
-#|           if "incorrect" in statuses:
-#|               result["feedback"] = "En rød kolonne er null eller er ikke en kolonne fra den opprinnelige matrisen B."
-#|           elif "dependent" in statuses:
-#|               result["feedback"] = "De gule kolonnene kommer fra B, men familien er lineært avhengig. Fjern eller bytt kolonner."
-#|           elif statuses:
-#|               result["feedback"] = "De grønne kolonnene er tillatte og uavhengige, men de danner ennå ikke en basis for hele kolonnerommet."
-#|           else:
-#|               result["feedback"] = "Legg til kolonner fra den opprinnelige matrisen B."
-#|       return result
-
-Sett pivotkolonnene fra den opprinnelige matrisen $B$ inn som kolonner i en
-basismatrise. Du må selv velge hvor mange kolonner som trengs:
-
-$Q_B=$ mat{name=QB, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
-```
-
-```{math-exercise}
-#| label: week3-paper-b-null-basis
-#| caption: Basis for nullrommet til B
-#| mode: custom
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       Z = response["inputs"]["ZB"]["matrix"]
-#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
-#|       result = assess_basis(
-#|           Z,
-#|           axis="columns",
-#|           target_dimension=B.cols - B.rank(),
-#|           belongs=lambda vector: Z.rows == B.cols and B * vector == zeros(B.rows, 1),
-#|           name="ZB",
-#|           space_name="nullrommet til B",
-#|       )
-#|       statuses = result["assessment"]["ZB"]["columns"]
-#|       if result["score"] < 1:
-#|           if "incorrect" in statuses:
-#|               result["feedback"] = "En rød kolonne er null eller oppfyller ikke Bz=0."
-#|           elif "dependent" in statuses:
-#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."
-#|           elif statuses:
-#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."
-#|           else:
-#|               result["feedback"] = "Legg til basisvektorer for nullrommet."
-#|       return result
-
-Oppgi en basis for nullrommet til $B$, med én basisvektor per kolonne. Enhver
-basis godtas, og du må selv velge antallet kolonner:
-
-$Z_B=$ mat{name=ZB, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
-```
-
-```{math-exercise}
-#| label: week3-paper-b-rank-nullity
-#| caption: Rang–nullitet for B
-#| mode: custom
-#| partial-credit: true
-#| field-labels: Inputdimensjon, Rang, Nullitet
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       n, rank_value, nullity = response["expressions"]
-#|       checks = [n == 3, rank_value == 2, nullity == 1, n == rank_value + nullity]
-#|       return {"score": sum(int(value) for value in checks) / 4, "feedback": "Tell kolonnene, pivotene og de frie variablene, og kontroller deretter n = rang + nullitet."}
-
-Fyll inn rang–nullitetsregnskapet for $B$:
-
-inputdimensjon _[3] $=$ rang _[2] $+$ nullitet _[1]
-```
-
-#### Oppgaver for $C$
-
-```{math-exercise}
-#| label: week3-paper-c-echelon
-#| caption: Trappeform og pivoter for C
-#| mode: custom
-#| partial-credit: true
-#| field-labels: r₁₁, r₁₂, r₁₃, r₂₁, r₂₂, r₂₃
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       values = response["expressions"]
-#|       R = Matrix(2, 3, values)
-#|       P = response["inputs"]["PCstep"]["matrix"]
-#|       submitted_pivots = list(P)
-#|       expected_rref = Matrix([[1, 2, 3], [0, 0, 0]])
-#|       def leading_columns(matrix):
-#|           leads = []
-#|           zero_row_seen = False
-#|           for row in range(matrix.rows):
-#|               lead = None
-#|               for col in range(matrix.cols):
-#|                   if simplify(matrix[row, col]) != 0:
-#|                       lead = col
-#|                       break
-#|               if lead is None:
-#|                   zero_row_seen = True
-#|               elif zero_row_seen or (leads and lead <= leads[-1]):
-#|                   return None
-#|               else:
-#|                   leads.append(lead)
-#|           return leads
-#|       leads = leading_columns(R)
-#|       echelon_ok = leads is not None
-#|       rowspace_ok = R.rref()[0] == expected_rref
-#|       expected_pivots = [Integer(j + 1) for j in leads] if echelon_ok else []
-#|       pivot_status = [
-#|           i < len(expected_pivots) and value == expected_pivots[i]
-#|           for i, value in enumerate(submitted_pivots)
-#|       ]
-#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
-#|       score = (int(echelon_ok) + int(rowspace_ok) + pivot_score) / 3
-#|       return {
-#|           "score": score,
-#|           "show_score": False,
-#|           "feedback": "" if score == 1 else "Kontroller trappeformen, og juster antallet pivotindekser slik at listen svarer til de ledende elementene fra venstre mot høyre.",
-#|           "assessment": {"PCstep": {"columns": pivot_status}},
-#|       }
-
-Radreduser $C$. Oppgi en gyldig trappeform $R$:
-
-$R=$ mat[1,2,3;0,0,0]
-
-Skriv pivotkolonnenes numre i stigende rekkefølge, én indeks per kolonne:
-
-$P_C=$ mat{name=PCstep, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
-```
-
-```{math-exercise}
-#| label: week3-paper-c-rank
-#| caption: Rang og pivotkolonner for C
-#| mode: custom
-#| partial-credit: true
-#| field-labels: Rang
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       rank_value = response["expressions"][0]
-#|       P = response["inputs"]["PCrank"]["matrix"]
-#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
-#|       expected_pivots = [Integer(j + 1) for j in C.rref()[1]]
-#|       submitted_pivots = list(P)
-#|       pivot_status = [
-#|           i < len(expected_pivots) and value == expected_pivots[i]
-#|           for i, value in enumerate(submitted_pivots)
-#|       ]
-#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
-#|       score = (int(rank_value == C.rank()) + pivot_score) / 2
-#|       return {
-#|           "score": score,
-#|           "show_score": False,
-#|           "feedback": "" if score == 1 else "Rangen er antall pivoter. Kontroller både rangverdien, antallet pivotindekser og rekkefølgen deres.",
-#|           "assessment": {"PCrank": {"columns": pivot_status}},
-#|       }
-
-Finn rangen og pivotkolonnene til $C$:
-
-$\operatorname{rank}(C)=$ _[1]
-
-Pivotkolonner, én indeks per kolonne:
-
-$P_C=$ mat{name=PCrank, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
-```
-
-```{math-exercise}
-#| label: week3-paper-c-column-basis
-#| caption: Basis for kolonnerommet til C
-#| mode: custom
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       Q = response["inputs"]["QC"]["matrix"]
-#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
-#|       original_columns = [C[:, j] for j in range(C.cols)]
-#|       result = assess_basis(
-#|           Q,
-#|           axis="columns",
-#|           target_dimension=C.rank(),
-#|           belongs=lambda vector: Q.rows == C.rows and any(vector == column for column in original_columns),
-#|           name="QC",
-#|           space_name="kolonnerommet til C",
-#|       )
-#|       statuses = result["assessment"]["QC"]["columns"]
-#|       if result["score"] < 1:
-#|           if "incorrect" in statuses:
-#|               result["feedback"] = "En rød kolonne er null eller er ikke en kolonne fra den opprinnelige matrisen C."
-#|           elif "dependent" in statuses:
-#|               result["feedback"] = "De gule kolonnene kommer fra C, men familien er lineært avhengig. Fjern eller bytt kolonner."
-#|           elif statuses:
-#|               result["feedback"] = "De grønne kolonnene er tillatte og uavhengige, men de danner ennå ikke en basis for hele kolonnerommet."
-#|           else:
-#|               result["feedback"] = "Legg til kolonner fra den opprinnelige matrisen C."
-#|       return result
-
-Sett pivotkolonnene fra den opprinnelige matrisen $C$ inn som kolonner i en
-basismatrise. Du må selv velge hvor mange kolonner som trengs:
-
-$Q_C=$ mat{name=QC, rows=2, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
-```
-
-```{math-exercise}
-#| label: week3-paper-c-null-basis
-#| caption: Basis for nullrommet til C
-#| mode: custom
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       Z = response["inputs"]["ZC"]["matrix"]
-#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
-#|       result = assess_basis(
-#|           Z,
-#|           axis="columns",
-#|           target_dimension=C.cols - C.rank(),
-#|           belongs=lambda vector: Z.rows == C.cols and C * vector == zeros(C.rows, 1),
-#|           name="ZC",
-#|           space_name="nullrommet til C",
-#|       )
-#|       statuses = result["assessment"]["ZC"]["columns"]
-#|       if result["score"] < 1:
-#|           if "incorrect" in statuses:
-#|               result["feedback"] = "En rød kolonne er null eller oppfyller ikke Cz=0."
-#|           elif "dependent" in statuses:
-#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."
-#|           elif statuses:
-#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."
-#|           else:
-#|               result["feedback"] = "Legg til basisvektorer for nullrommet."
-#|       return result
-
-Oppgi en basis for nullrommet til $C$, med én basisvektor per kolonne. Enhver
-basis godtas, og du må selv velge antallet kolonner:
-
-$Z_C=$ mat{name=ZC, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
-```
-
-```{math-exercise}
-#| label: week3-paper-c-rank-nullity
-#| caption: Rang–nullitet for C
-#| mode: custom
-#| partial-credit: true
-#| field-labels: Inputdimensjon, Rang, Nullitet
-#| context: week3-paper-assessment-context
-#| checker: |
-#|   def check(response, symbols):
-#|       n, rank_value, nullity = response["expressions"]
-#|       checks = [n == 3, rank_value == 1, nullity == 2, n == rank_value + nullity]
-#|       return {"score": sum(int(value) for value in checks) / 4, "feedback": "Tell kolonnene, pivotene og de frie variablene, og kontroller deretter n = rang + nullitet."}
-
-Fyll inn rang–nullitetsregnskapet for $C$:
-
-inputdimensjon _[3] $=$ rang _[1] $+$ nullitet _[2]
-```
-
-### Med kode
-
-1. Kontroller trappeformen og pivotkolonnene med `row_echelon`.
-2. Kontroller nullromsvektorene ved å beregne `M @ Z`.
-3. Lag to forskjellige inputer med samme output.
-4. Finn én output som kan produseres, og én som ikke kan produseres.
-
-```{pyodide-python}
-#| label: week3-pure-matrix-exercises
-
-import numpy as np
-
-def row_echelon(A,tol=1e-12):
-    """Returner trappeform og indeksene til pivotkolonnene."""
-    R=np.array(A,dtype=float,copy=True)
-    rows,cols=R.shape
-    pivot_row=0
-    pivot_columns=[]
-
-    for col in range(cols):
-        if pivot_row==rows:
-            break
-        candidate=next(
-            (row for row in range(pivot_row,rows) if abs(R[row,col])>tol),
-            None,
-        )
-        if candidate is None:
-            continue
-        if candidate!=pivot_row:
-            R[[pivot_row,candidate]]=R[[candidate,pivot_row]]
-        for row in range(pivot_row+1,rows):
-            R[row]-=(R[row,col]/R[pivot_row,col])*R[pivot_row]
-        R[np.abs(R)<=tol]=0.0
-        pivot_columns.append(col)
-        pivot_row+=1
-
-    return R,pivot_columns
-
-B=np.array([[1.,0.,1.],
-            [0.,1.,1.],
-            [1.,1.,2.]])
-C=np.array([[1.,2.,3.],
-            [2.,4.,6.]])
-
-M=B  # Bytt til C når du er ferdig med B.
-R_M,pivots_M=row_echelon(M)
-print("Trappeform:\n",R_M)
-print("Pivotkolonner:",[j+1 for j in pivots_M])
-
-# TODO: Sett inn nullromsvektorene du fant på papir som kolonner i Z_M.
-Z_M=np.zeros((M.shape[1],0))
-print("Kontroll M @ Z_M:\n",M@Z_M)
-
-# TODO: Velg x0 og en nullromsvektor z, og sammenlign M@x0 med M@(x0+z).
-
-# TODO: Lag rhs_yes og rhs_no. Sammenlign rang(M) med rang([M | rhs]).
-```
-
-## 3.10 Polynomrom, basis og koordinater
+Trenger du en kort repetisjon av forskjellen på eksakt og numerisk rang, kan
+du åpne [støttedelen om numerisk rang](#uke3-numerisk-rang).
+
+## Del 5: Overfør ideene til polynomer {#uke3-del5}
+
+Så langt har vektorene vært bilder eller tallkolonner. Nå bruker vi de kjente
+begrepene på polynomer. Dette er overgangen til ukeprosjektet.
+
+| I bildeeksemplet | For polynomer |
+|---|---|
+| Pikselverdier | Polynomkoeffisienter |
+| Basisbilder | Basispolynomer |
+| Samme bilde i to basiser | Samme polynom i to basiser |
+| Matrisemåling $Ax$ | Avlesning av polynomverdier $E(p)$ |
+| En usynlig bildeendring | Et polynom som er null i avlesningspunktene |
+| Rekonstruksjon fra output | Reverse engineering fra polynomverdier |
 
 Et vektorrom trenger ikke å bestå av piler eller tallkolonner. Det avgjørende
 er at objektene kan legges sammen og ganges med tall, og at disse operasjonene
@@ -2445,8 +1719,9 @@ $$
 
 Den ordnede samlingen $(1,x,x^2)$ kalles en **basis** for $\mathcal P_2$.
 Fordi dette er det enkleste og vanligste valget, kalles den ofte
-**standardbasisen**. Ordet «standard» betyr ikke at dette er den eneste
-mulige basisen.
+**standardbasisen**, **monomialbasisen** eller **potensbasisen**. De tre
+navnene viser her til den samme ordnede listen. Ordet «standard» betyr ikke
+at dette er den eneste mulige basisen.
 
 Rekkefølgen bestemmer hvor tallene skal stå: konstantleddet øverst, deretter
 koeffisienten til $x$, så koeffisienten til $x^2$. Hvis en potens mangler, er
@@ -2672,5 +1947,878 @@ $[q]_{\mathcal C}=$ mat[1;0;1]
 Polynomrom krever altså ingen ny type lineær algebra. Vi bruker de samme
 begrepene som for tallkolonner: lineærkombinasjon, spenn, lineær uavhengighet,
 basis og koordinater.
+
+I prosjektet **Polynomer i blindsonen** går vi videre fra koeffisienter til
+målinger. Vi får verdiene $p(x_0),\ldots,p(x_n)$ og gjør reverse engineering:
+Hvilke koeffisienter kan ha produsert disse verdiene? Bildeeksemplene har
+allerede gitt oss de sentrale spørsmålene: Hvilken basis bruker vi, hvilken
+informasjon mister målingen, og kan små endringer være nesten usynlige?
+
+
+## Støtteløp: Matriseregning ved behov {#uke3-stotte-matriser}
+
+Denne delen repeterer lineær algebra fra tidligere emner. Den er med slik at
+du ikke trenger å finne fram gamle notater. Hvis du allerede kan radredusere
+en matrise, finne pivotkolonner og beregne en basis for nullrommet, trenger du
+ikke lese hele delen. Åpne bare underdelen du vil slå opp.
+
+Bruk spørsmålene som en rask selvtest:
+
+1. Kan du radredusere en matrise og finne pivotkolonnene?
+2. Vet du hvorfor en kolonneromsbasis hentes fra den opprinnelige matrisen?
+3. Kan du skrive løsningene av $Ax=0$ ved hjelp av frie variabler?
+4. Kan du finne en basis for nullrommet og kontrollere rang–nullitet?
+5. Kan du avgjøre om $Ax=b$ har en løsning?
+
+Hvis svaret er ja på alle fem, kan du hoppe til
+[papir- og kontrolloppgavene](#uke3-stotte-oppgaver) dersom du ønsker ekstra
+trening, eller avslutte siden her.
+
+Bildene i hovedløpet gjorde begrepene synlige. I støtteløpet legger vi bort
+bildebakgrunnen og regner direkte med én matrise. Målet er å repetere hvordan
+vi finner rang, basis for kolonnerommet og basis for nullrommet — først med
+papir og blyant, deretter med kode som kontroll.
+
+Selve matriseberegningene var pensum i Matematikk 1: radoperasjoner, ligningssystemer og Gauss-eliminasjon. Det er en stund siden, så vi forventer ikke at framgangsmåten sitter friskt. Denne siden repeterer regningen steg for steg og kobler den til ordene vi bruker nå — pivot, rang, kolonnerom og nullrom.
+
+Vi bruker samme matrise gjennom hele eksemplet:
+
+$$
+A=
+\begin{bmatrix}
+1&2&0&1\\
+0&1&1&1\\
+1&3&1&2
+\end{bmatrix}.
+$$
+
+Matrisen har fire kolonner og tre rader, og beskriver derfor transformasjonen
+
+$$
+A:\underbrace{\mathbb R^4}_{\text{inputrom}}
+\longrightarrow
+\underbrace{\mathbb R^3}_{\text{outputrom}}.
+$$
+
+Nullrommet består av 4-vektorer og ligger i inputrommet: $N(A)\subseteq\mathbb R^4$. Kolonnerommet består av 3-vektorer og ligger i outputrommet: $\operatorname{Col}(A)\subseteq\mathbb R^3$. Vi vil svare på tre spørsmål:
+
+1. Hvor mange uavhengige outputretninger har transformasjonen?
+2. Hvilke inputretninger gir output null?
+3. Kan en gitt vektor $b$ produseres som $Ax$?
+
+Vi bruker de samme fargene gjennom hele regningen:
+
+| Farge | I eliminasjonen | Senere i regningen |
+|---|---|---|
+| 🟦 Blå | første pivot, kolonne 1 | basisvektor $a_1$ og pivotvariabel $x_1$ |
+| 🟧 Oransje | andre pivot, kolonne 2 | basisvektor $a_2$ og pivotvariabel $x_2$ |
+| 🟩 Grønn | kolonne uten pivot | fri variabel $x_3=s$ og første nullromsretning |
+| 🟪 Lilla | kolonne uten pivot | fri variabel $x_4=t$ og andre nullromsretning |
+
+```{pyodide-python}
+#| label: week3-pure-matrix-setup
+#| autorun: true
+
+A=np.array([
+    [1.,2.,0.,1.],
+    [0.,1.,1.,1.],
+    [1.,3.,1.,2.]
+])
+print(A)
+```
+
+:::: {.callout-note collapse="true"}
+### Eliminasjon og rang
+
+::: {.callout-tip}
+#### Først på papir
+
+Trekk første rad fra tredje rad. Sammenlign deretter den nye tredje raden med andre rad, og eliminer én gang til. Marker den første ikke-null-oppføringen i hver ikke-null-rad.
+:::
+
+Regningen blir
+
+$$
+\begin{bmatrix}
+1&2&0&1\\
+0&1&1&1\\
+1&3&1&2
+\end{bmatrix}
+\longrightarrow
+\begin{bmatrix}
+1&2&0&1\\
+0&1&1&1\\
+0&1&1&1
+\end{bmatrix}
+\longrightarrow
+\begin{bmatrix}
+\color{#277da1}{\boxed{1}}&2&0&1\\
+0&\color{#d98900}{\boxed{1}}&1&1\\
+0&0&0&0
+\end{bmatrix}.
+$$
+
+Den siste raden inneholder ingen ny ligning. To rader er igjen, og de ledende oppføringene — **pivotene** — ligger i kolonne 1 og 2. Dermed er rangen 2.
+
+Koden under utfører vanlig framovereliminasjon. Den går fra venstre mot høyre og bruker den første tilgjengelige ikke-null-oppføringen som pivot. Dette er tilstrekkelig for eksemplene våre og følger papirregningen tett.
+
+```{pyodide-python}
+#| label: week3-row-echelon-function
+#| autorun: true
+
+def row_echelon(A,tol=1e-12,show_steps=False):
+    """Returner trappeform og indeksene til pivotkolonnene."""
+    R=np.array(A,dtype=float,copy=True)
+    rows,cols=R.shape
+    pivot_row=0
+    pivot_columns=[]
+
+    for col in range(cols):
+        if pivot_row==rows:
+            break
+
+        # Finn den første brukbare pivoten, ikke den største.
+        candidate=None
+        for row in range(pivot_row,rows):
+            if abs(R[row,col])>tol:
+                candidate=row
+                break
+
+        if candidate is None:
+            continue
+
+        if candidate!=pivot_row:
+            R[[pivot_row,candidate]]=R[[candidate,pivot_row]]
+            if show_steps:
+                print(f"Bytt rad {pivot_row+1} og {candidate+1}:\n",R)
+
+        for row in range(pivot_row+1,rows):
+            factor=R[row,col]/R[pivot_row,col]
+            if abs(factor)>tol:
+                R[row]-=factor*R[pivot_row]
+
+        R[np.abs(R)<=tol]=0.0
+        pivot_columns.append(col)
+        pivot_row+=1
+        if show_steps:
+            print(f"Etter pivot i kolonne {col+1}:\n",R)
+
+    return R,pivot_columns
+
+R,pivot_columns=row_echelon(A,show_steps=True)
+print("Trappeform:\n",R)
+print("Pivotkolonner, nummerert fra 1:",[j+1 for j in pivot_columns])
+print("Rang fra eliminasjon:",len(pivot_columns))
+print("Kontroll med NumPy:",np.linalg.matrix_rank(A))
+```
+
+`matrix_rank` er nyttig som kontroll, men eliminasjonen viser *hvorfor* rangen er 2. Mer robuste eliminasjonsalgoritmer kan omstokke rader og eventuelt kolonner for å unngå dårlige pivoter. Det tar vi ikke nå. Senere skal vi se at numerisk rang alltid avhenger av hva som regnes som «tilstrekkelig nær null».
+
+::::
+
+:::: {.callout-note collapse="true"}
+### Basis for kolonnerommet
+
+Pivotene forteller hvilke opprinnelige kolonner som tilfører en ny outputretning. Vi henter derfor kolonne 1 og 2 fra den opprinnelige matrisen:
+
+$$
+\color{#277da1}{a_1=\begin{bmatrix}1\\0\\1\end{bmatrix}},
+\qquad
+\color{#d98900}{a_2=\begin{bmatrix}2\\1\\3\end{bmatrix}}.
+$$
+
+::: {.callout-warning}
+#### En vanlig feil
+
+Pivotposisjonene finnes ved å radredusere, men basisvektorene hentes fra den **opprinnelige** matrisen. Radoperasjoner endrer kolonnene.
+:::
+
+De to andre kolonnene kan bygges av disse:
+
+$$
+a_3=a_2-2a_1,
+\qquad
+a_4=a_2-a_1.
+$$
+
+Kontroller begge relasjonene før du kjører cellen.
+
+```{pyodide-python}
+#| label: week3-column-space-basis
+#| autorun: true
+
+column_basis=A[:,pivot_columns]
+a1,a2,a3,a4=[A[:,j] for j in range(4)]
+
+print("Basisvektorer som kolonner:\n",column_basis)
+print("Feil i a3 = a2 - 2*a1:",np.linalg.norm(a3-(a2-2*a1)))
+print("Feil i a4 = a2 - a1:  ",np.linalg.norm(a4-(a2-a1)))
+print("Rang av basisvektorene:",np.linalg.matrix_rank(column_basis))
+```
+
+Kolonne 1 og 2 er uavhengige og bygger alle kolonnene i $A$. De danner derfor en basis for kolonnerommet, som har dimensjon 2.
+
+::::
+
+:::: {.callout-note collapse="true"}
+### Basis for nullrommet
+
+Nullrommet finnes ved å løse det homogene systemet $Ax=0$. Trappeformen gir
+
+$$
+\begin{aligned}
+x_1+2x_2+x_4&=0,\\
+x_2+x_3+x_4&=0.
+\end{aligned}
+$$
+
+Pivotvariablene er $\color{#277da1}{x_1}$ og $\color{#d98900}{x_2}$. Variablene $\color{#4f8f49}{x_3}$ og $\color{#8b5aa7}{x_4}$ er frie. Sett
+
+$$\color{#4f8f49}{x_3=s},\qquad \color{#8b5aa7}{x_4=t}.$$
+
+::: {.callout-tip}
+#### Fortsett på papir
+
+Løs den andre ligningen for $x_2$, og bruk resultatet i den første ligningen. Samle deretter alle ledd som inneholder $s$, og alle ledd som inneholder $t$.
+:::
+
+Resultatet er
+
+$$
+x=
+\color{#4f8f49}{s\begin{bmatrix}2\\-1\\1\\0\end{bmatrix}}
++\color{#8b5aa7}{t\begin{bmatrix}1\\-1\\0\\1\end{bmatrix}}.
+$$
+
+Dermed er de to viste vektorene en basis for nullrommet. Koden kontrollerer både at de gir output null, og at en tilfeldig lineærkombinasjon fortsatt gjør det.
+
+```{pyodide-python}
+#| label: week3-null-space-basis-matrix
+#| autorun: true
+
+z1=np.array([2.,-1.,1.,0.])
+z2=np.array([1.,-1.,0.,1.])
+Z=np.column_stack([z1,z2])
+
+print("A ganger nullromsbasisen:\n",A@Z)
+print("Rang av basisvektorene:",np.linalg.matrix_rank(Z))
+
+rng=np.random.default_rng(31)
+s,t=rng.normal(size=2)
+z=s*z1+t*z2
+print("Tilfeldige koeffisienter:",s,t)
+print("||A z|| =",np.linalg.norm(A@z))
+```
+
+I dette eksemplet har både kolonnerommet og nullrommet dimensjon 2. Det betyr ikke at de er samme rom: Kolonneromsbasisen består av 3-vektorer i outputrommet, mens nullromsbasisen består av 4-vektorer i inputrommet. At dimensjonene tilfeldigvis er like her, skyldes at $4=2+2$.
+
+::::
+
+:::: {.callout-note collapse="true"}
+### Rang–nullitet som regnskap
+
+Matrisen har fire kolonner, altså fire inputvariabler. Eliminasjonen ga to pivotvariabler og to frie variabler:
+
+$$
+\underbrace{4}_{\text{inputdimensjon}}
+=
+\underbrace{
+\color{#277da1}{1}+\color{#d98900}{1}
+}_{\text{rang}=2}
++
+\underbrace{
+\color{#4f8f49}{1}+\color{#8b5aa7}{1}
+}_{\text{nullitet}=2}.
+$$
+
+Rangen kommer fra de to pivotene. Nulliteten kommer **uavhengig** fra nullromsberegningen: Vi fant en basis med to vektorer. Først nå bruker vi disse to resultatene til å kontrollere rang–nullitet.
+
+```{pyodide-python}
+#| label: week3-rank-nullity-check
+
+rank_A=len(pivot_columns)
+nullity_A=Z.shape[1]
+print(f"{A.shape[1]} = {rank_A} + {nullity_A}")
+print("Stemmer rang–nullitet?",A.shape[1]==rank_A+nullity_A)
+```
+
+::::
+
+:::: {.callout-note collapse="true"}
+### Kan en bestemt output produseres?
+
+Siden $a_1$ og $a_2$ er en basis for kolonnerommet, kan alle mulige outputvektorer bygges av disse to. La $\alpha$ og $\beta$ være to fritt valgte tall. De bestemmer hvor mye av henholdsvis $a_1$ og $a_2$ vi bruker:
+
+$$
+\color{#277da1}{\alpha a_1}+\color{#d98900}{\beta a_2}
+=
+\begin{bmatrix}
+\alpha+2\beta\\\beta\\\alpha+3\beta
+\end{bmatrix}.
+$$
+
+Uansett hvilke tall vi velger for $\alpha$ og $\beta$, er tredje komponent summen av de to første. Vi tester derfor to ønskede outputvektorer:
+
+$$
+b=\begin{bmatrix}2\\-1\\1\end{bmatrix},
+\qquad
+d=\begin{bmatrix}2\\-1\\4\end{bmatrix}.
+$$
+
+Vektoren $b$ oppfyller $b_3=b_1+b_2$, mens $d$ ikke gjør det. Den utvidede matrisen $[A\mid b]$ får derfor samme rang som $A$, men $[A\mid d]$ får én ekstra pivot.
+
+```{pyodide-python}
+#| label: week3-reachable-outputs
+#| autorun: true
+
+b=np.array([2.,-1.,1.])
+d=np.array([2.,-1.,4.])
+
+def augmented_rank(A,rhs):
+    return np.linalg.matrix_rank(np.column_stack([A,rhs]))
+
+print("rang(A)       =",np.linalg.matrix_rank(A))
+print("rang([A | b]) =",augmented_rank(A,b))
+print("rang([A | d]) =",augmented_rank(A,d))
+```
+
+Dermed gjelder kriteriet
+
+$$
+Ax=b\text{ har løsning}
+\quad\Longleftrightarrow\quad
+\operatorname{rank}(A)=\operatorname{rank}([A\mid b]).
+$$
+
+Hva gjør vi når en ønsket output som $d$ ikke kan produseres nøyaktig? Det spørsmålet leder direkte til projeksjon og minste kvadraters metode i uke 4.
+
+::::
+
+:::: {.callout-note collapse="true"}
+### Forskjellige inputer, samme output
+
+Velg en input $x_0$ og beregn $y=Ax_0$. Hvis $z$ ligger i nullrommet, gir $x_0+z$ samme output:
+
+$$A(x_0+z)=Ax_0+Az=Ax_0.$$
+
+Her er en hel familie av forskjellige inputvektorer med samme output.
+
+```{pyodide-python}
+#| label: week3-same-output-pure-matrix
+#| autorun: true
+
+x0=np.array([1.,2.,0.,-1.])
+y=A@x0
+
+for alpha in [-2.,-1.,0.,1.,2.]:
+    x=x0+alpha*z1
+    print(f"alpha={alpha:4.1f}  x={x}  A@x={A@x}")
+
+print("Felles output:",y)
+```
+
+Dette er den rene matriseversjonen av åpningsproblemet: Nullrommet beskriver alle endringer i inputen som ikke endrer outputen.
+
+::::
+
+:::: {.callout-note collapse="true"}
+### Eksakt og numerisk rang {#uke3-numerisk-rang}
+
+Til slutt endrer vi den avhengige tredje raden med et svært lite tall. For enhver $\varepsilon\ne0$ er den perturberte matrisen eksakt sett av rang 3. Numerisk må vi likevel avgjøre om den nye pivoten er stor nok til å skille fra avrundingsfeil.
+
+```{pyodide-python}
+#| label: week3-nearly-dependent-row
+#| autorun: true
+
+direction=np.array([1.,-1.,1.,-1.])
+for eps in [1e-4,1e-8,1e-12,1e-16]:
+    A_eps=A.copy()
+    A_eps[2]+=eps*direction
+    R_eps,pivots_eps=row_echelon(A_eps,tol=1e-10)
+    print(f"eps={eps:.0e}",
+          "rang med tol=1e-10:",len(pivots_eps),
+          "NumPy-rang:",np.linalg.matrix_rank(A_eps))
+```
+
+Dette er ikke en motsigelse. **Eksakt rang** gjelder en idealisert matrise med eksakte tall. **Numerisk rang** beskriver hvor mange uavhengige retninger vi kan skille pålitelig med den valgte presisjonen og toleransen.
+
+::::
+
+## Støtteløp: Papir- og kontrolloppgaver {#uke3-stotte-oppgaver}
+
+Dette er repetisjonsoppgaver, ikke en obligatorisk fortsettelse av
+hovedløpet. Bruk matrisen $B$ som selvtest. Hvis regningen går greit, kan du
+gå direkte til kodekontrollen eller avslutte. Bruk matrisen $C$ som ekstra
+trening dersom du trenger mer øvelse med avhengige rader, nullrom og
+rang–nullitet.
+
+Start alltid på papir. Bruk kodeoppgaven nederst etterpå til å kontrollere
+regningen og eksperimentere videre. Arbeid med én matrise om gangen:
+
+$$
+B=\begin{bmatrix}
+1&0&1\\
+0&1&1\\
+1&1&2
+\end{bmatrix},
+\qquad
+C=\begin{bmatrix}
+1&2&3\\
+2&4&6
+\end{bmatrix}.
+$$
+
+### På papir
+
+Oppgavene under vurderes eksakt med SymPy. Du velger selv hvor mange
+pivotindekser og basisvektorer du vil levere. Bruk knappene under matrisen for å
+legge til eller fjerne kolonner. Antallet er en del av svaret.
+
+::: {#week3-paper-assessment-context .math-exercise-context}
+
+For en matrise med $n$ kolonner gjelder
+$n=\operatorname{rank}(M)+\operatorname{nullity}(M)$. Pivotkolonnene bestemmes
+fra en trappeform, men en basis for kolonnerommet hentes fra de tilsvarende
+kolonnene i den opprinnelige matrisen. En basis for nullrommet må bestå av
+lineært uavhengige vektorer $z$ som oppfyller $Mz=0$.
+
+I basisoppgavene farges en gyldig og uavhengig familie grønn. Hvis gyldige
+vektorer er lineært avhengige, blir hele familien gul; rekkefølgen skal ikke
+avgjøre hvilken vektor som får skylden. En nullvektor eller en vektor utenfor
+det etterspurte rommet blir rød. En grønn familie kan fortsatt mangle vektorer
+før den spenner ut hele rommet.
+
+:::
+
+#### Selvtest med $B$
+
+```{math-exercise}
+#| label: week3-paper-b-echelon
+#| caption: Trappeform og pivoter for B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: r₁₁, r₁₂, r₁₃, r₂₁, r₂₂, r₂₃, r₃₁, r₃₂, r₃₃
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       values = response["expressions"]
+#|       R = Matrix(3, 3, values)
+#|       P = response["inputs"]["PBstep"]["matrix"]
+#|       submitted_pivots = list(P)
+#|       expected_rref = Matrix([[1, 0, 1], [0, 1, 1], [0, 0, 0]])
+#|       def leading_columns(matrix):
+#|           leads = []
+#|           zero_row_seen = False
+#|           for row in range(matrix.rows):
+#|               lead = None
+#|               for col in range(matrix.cols):
+#|                   if simplify(matrix[row, col]) != 0:
+#|                       lead = col
+#|                       break
+#|               if lead is None:
+#|                   zero_row_seen = True
+#|               elif zero_row_seen or (leads and lead <= leads[-1]):
+#|                   return None
+#|               else:
+#|                   leads.append(lead)
+#|           return leads
+#|       leads = leading_columns(R)
+#|       echelon_ok = leads is not None
+#|       rowspace_ok = R.rref()[0] == expected_rref
+#|       expected_pivots = [Integer(j + 1) for j in leads] if echelon_ok else []
+#|       pivot_status = [
+#|           i < len(expected_pivots) and value == expected_pivots[i]
+#|           for i, value in enumerate(submitted_pivots)
+#|       ]
+#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
+#|       score = (int(echelon_ok) + int(rowspace_ok) + pivot_score) / 3
+#|       return {
+#|           "score": score,
+#|           "show_score": False,
+#|           "feedback": "" if score == 1 else "Kontroller trappeformen, og juster antallet pivotindekser slik at listen svarer til de ledende elementene fra venstre mot høyre.",
+#|           "assessment": {"PBstep": {"columns": pivot_status}},
+#|       }
+
+Radreduser $B$. Oppgi en gyldig trappeform $R$ og numrene til pivotkolonnene i
+stigende rekkefølge:
+
+$R=$ mat[1,0,1;0,1,1;0,0,0]
+
+Skriv pivotkolonnenes numre i stigende rekkefølge, én indeks per kolonne:
+
+$P_B=$ mat{name=PBstep, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-b-rank
+#| caption: Rang og pivotkolonner for B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Rang
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       rank_value = response["expressions"][0]
+#|       P = response["inputs"]["PBrank"]["matrix"]
+#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
+#|       expected_pivots = [Integer(j + 1) for j in B.rref()[1]]
+#|       submitted_pivots = list(P)
+#|       pivot_status = [
+#|           i < len(expected_pivots) and value == expected_pivots[i]
+#|           for i, value in enumerate(submitted_pivots)
+#|       ]
+#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
+#|       score = (int(rank_value == B.rank()) + pivot_score) / 2
+#|       return {
+#|           "score": score,
+#|           "show_score": False,
+#|           "feedback": "" if score == 1 else "Rangen er antall pivoter. Kontroller både rangverdien, antallet pivotindekser og rekkefølgen deres.",
+#|           "assessment": {"PBrank": {"columns": pivot_status}},
+#|       }
+
+Finn rangen og pivotkolonnene til $B$:
+
+$\operatorname{rank}(B)=$ _[2]
+
+Pivotkolonner, én indeks per kolonne:
+
+$P_B=$ mat{name=PBrank, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-b-column-basis
+#| caption: Basis for kolonnerommet til B
+#| mode: custom
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       Q = response["inputs"]["QB"]["matrix"]
+#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
+#|       original_columns = [B[:, j] for j in range(B.cols)]
+#|       result = assess_basis(
+#|           Q,
+#|           axis="columns",
+#|           target_dimension=B.rank(),
+#|           belongs=lambda vector: Q.rows == B.rows and any(vector == column for column in original_columns),
+#|           name="QB",
+#|           space_name="kolonnerommet til B",
+#|       )
+#|       statuses = result["assessment"]["QB"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller er ikke en kolonne fra den opprinnelige matrisen B."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule kolonnene kommer fra B, men familien er lineært avhengig. Fjern eller bytt kolonner."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne kolonnene er tillatte og uavhengige, men de danner ennå ikke en basis for hele kolonnerommet."
+#|           else:
+#|               result["feedback"] = "Legg til kolonner fra den opprinnelige matrisen B."
+#|       return result
+
+Sett pivotkolonnene fra den opprinnelige matrisen $B$ inn som kolonner i en
+basismatrise. Du må selv velge hvor mange kolonner som trengs:
+
+$Q_B=$ mat{name=QB, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-b-null-basis
+#| caption: Basis for nullrommet til B
+#| mode: custom
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       Z = response["inputs"]["ZB"]["matrix"]
+#|       B = Matrix([[1, 0, 1], [0, 1, 1], [1, 1, 2]])
+#|       result = assess_basis(
+#|           Z,
+#|           axis="columns",
+#|           target_dimension=B.cols - B.rank(),
+#|           belongs=lambda vector: Z.rows == B.cols and B * vector == zeros(B.rows, 1),
+#|           name="ZB",
+#|           space_name="nullrommet til B",
+#|       )
+#|       statuses = result["assessment"]["ZB"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller oppfyller ikke Bz=0."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."
+#|           else:
+#|               result["feedback"] = "Legg til basisvektorer for nullrommet."
+#|       return result
+
+Oppgi en basis for nullrommet til $B$, med én basisvektor per kolonne. Enhver
+basis godtas, og du må selv velge antallet kolonner:
+
+$Z_B=$ mat{name=ZB, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-b-rank-nullity
+#| caption: Rang–nullitet for B
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Inputdimensjon, Rang, Nullitet
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       n, rank_value, nullity = response["expressions"]
+#|       checks = [n == 3, rank_value == 2, nullity == 1, n == rank_value + nullity]
+#|       return {"score": sum(int(value) for value in checks) / 4, "feedback": "Tell kolonnene, pivotene og de frie variablene, og kontroller deretter n = rang + nullitet."}
+
+Fyll inn rang–nullitetsregnskapet for $B$:
+
+inputdimensjon _[3] $=$ rang _[2] $+$ nullitet _[1]
+```
+
+#### Ekstra trening med $C$
+
+```{math-exercise}
+#| label: week3-paper-c-echelon
+#| caption: Trappeform og pivoter for C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: r₁₁, r₁₂, r₁₃, r₂₁, r₂₂, r₂₃
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       values = response["expressions"]
+#|       R = Matrix(2, 3, values)
+#|       P = response["inputs"]["PCstep"]["matrix"]
+#|       submitted_pivots = list(P)
+#|       expected_rref = Matrix([[1, 2, 3], [0, 0, 0]])
+#|       def leading_columns(matrix):
+#|           leads = []
+#|           zero_row_seen = False
+#|           for row in range(matrix.rows):
+#|               lead = None
+#|               for col in range(matrix.cols):
+#|                   if simplify(matrix[row, col]) != 0:
+#|                       lead = col
+#|                       break
+#|               if lead is None:
+#|                   zero_row_seen = True
+#|               elif zero_row_seen or (leads and lead <= leads[-1]):
+#|                   return None
+#|               else:
+#|                   leads.append(lead)
+#|           return leads
+#|       leads = leading_columns(R)
+#|       echelon_ok = leads is not None
+#|       rowspace_ok = R.rref()[0] == expected_rref
+#|       expected_pivots = [Integer(j + 1) for j in leads] if echelon_ok else []
+#|       pivot_status = [
+#|           i < len(expected_pivots) and value == expected_pivots[i]
+#|           for i, value in enumerate(submitted_pivots)
+#|       ]
+#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
+#|       score = (int(echelon_ok) + int(rowspace_ok) + pivot_score) / 3
+#|       return {
+#|           "score": score,
+#|           "show_score": False,
+#|           "feedback": "" if score == 1 else "Kontroller trappeformen, og juster antallet pivotindekser slik at listen svarer til de ledende elementene fra venstre mot høyre.",
+#|           "assessment": {"PCstep": {"columns": pivot_status}},
+#|       }
+
+Radreduser $C$. Oppgi en gyldig trappeform $R$:
+
+$R=$ mat[1,2,3;0,0,0]
+
+Skriv pivotkolonnenes numre i stigende rekkefølge, én indeks per kolonne:
+
+$P_C=$ mat{name=PCstep, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-c-rank
+#| caption: Rang og pivotkolonner for C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Rang
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       rank_value = response["expressions"][0]
+#|       P = response["inputs"]["PCrank"]["matrix"]
+#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
+#|       expected_pivots = [Integer(j + 1) for j in C.rref()[1]]
+#|       submitted_pivots = list(P)
+#|       pivot_status = [
+#|           i < len(expected_pivots) and value == expected_pivots[i]
+#|           for i, value in enumerate(submitted_pivots)
+#|       ]
+#|       pivot_score = sum(pivot_status) / max(len(expected_pivots), len(submitted_pivots), 1)
+#|       score = (int(rank_value == C.rank()) + pivot_score) / 2
+#|       return {
+#|           "score": score,
+#|           "show_score": False,
+#|           "feedback": "" if score == 1 else "Rangen er antall pivoter. Kontroller både rangverdien, antallet pivotindekser og rekkefølgen deres.",
+#|           "assessment": {"PCrank": {"columns": pivot_status}},
+#|       }
+
+Finn rangen og pivotkolonnene til $C$:
+
+$\operatorname{rank}(C)=$ _[1]
+
+Pivotkolonner, én indeks per kolonne:
+
+$P_C=$ mat{name=PCrank, rows=1, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-c-column-basis
+#| caption: Basis for kolonnerommet til C
+#| mode: custom
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       Q = response["inputs"]["QC"]["matrix"]
+#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
+#|       original_columns = [C[:, j] for j in range(C.cols)]
+#|       result = assess_basis(
+#|           Q,
+#|           axis="columns",
+#|           target_dimension=C.rank(),
+#|           belongs=lambda vector: Q.rows == C.rows and any(vector == column for column in original_columns),
+#|           name="QC",
+#|           space_name="kolonnerommet til C",
+#|       )
+#|       statuses = result["assessment"]["QC"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller er ikke en kolonne fra den opprinnelige matrisen C."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule kolonnene kommer fra C, men familien er lineært avhengig. Fjern eller bytt kolonner."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne kolonnene er tillatte og uavhengige, men de danner ennå ikke en basis for hele kolonnerommet."
+#|           else:
+#|               result["feedback"] = "Legg til kolonner fra den opprinnelige matrisen C."
+#|       return result
+
+Sett pivotkolonnene fra den opprinnelige matrisen $C$ inn som kolonner i en
+basismatrise. Du må selv velge hvor mange kolonner som trengs:
+
+$Q_C=$ mat{name=QC, rows=2, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-c-null-basis
+#| caption: Basis for nullrommet til C
+#| mode: custom
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       Z = response["inputs"]["ZC"]["matrix"]
+#|       C = Matrix([[1, 2, 3], [2, 4, 6]])
+#|       result = assess_basis(
+#|           Z,
+#|           axis="columns",
+#|           target_dimension=C.cols - C.rank(),
+#|           belongs=lambda vector: Z.rows == C.cols and C * vector == zeros(C.rows, 1),
+#|           name="ZC",
+#|           space_name="nullrommet til C",
+#|       )
+#|       statuses = result["assessment"]["ZC"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller oppfyller ikke Cz=0."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."
+#|           else:
+#|               result["feedback"] = "Legg til basisvektorer for nullrommet."
+#|       return result
+
+Oppgi en basis for nullrommet til $C$, med én basisvektor per kolonne. Enhver
+basis godtas, og du må selv velge antallet kolonner:
+
+$Z_C=$ mat{name=ZC, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
+```
+
+```{math-exercise}
+#| label: week3-paper-c-rank-nullity
+#| caption: Rang–nullitet for C
+#| mode: custom
+#| partial-credit: true
+#| field-labels: Inputdimensjon, Rang, Nullitet
+#| context: week3-paper-assessment-context
+#| checker: |
+#|   def check(response, symbols):
+#|       n, rank_value, nullity = response["expressions"]
+#|       checks = [n == 3, rank_value == 1, nullity == 2, n == rank_value + nullity]
+#|       return {"score": sum(int(value) for value in checks) / 4, "feedback": "Tell kolonnene, pivotene og de frie variablene, og kontroller deretter n = rang + nullitet."}
+
+Fyll inn rang–nullitetsregnskapet for $C$:
+
+inputdimensjon _[3] $=$ rang _[1] $+$ nullitet _[2]
+```
+
+### Med kode
+
+Bruk denne delen først etter at du har arbeidet med den valgte matrisen på
+papir. Cellen under inneholder en kort, selvstendig kopi av
+`row_echelon`, slik at kontrolloppgaven virker selv om du ikke har åpnet og
+kjørt kodecellen i støttedelen om matriseregning.
+
+1. Kontroller trappeformen og pivotkolonnene med `row_echelon`.
+2. Kontroller nullromsvektorene ved å beregne `M @ Z`.
+3. Lag to forskjellige inputer med samme output.
+4. Finn én output som kan produseres, og én som ikke kan produseres.
+
+```{pyodide-python}
+#| label: week3-pure-matrix-exercises
+
+import numpy as np
+
+def row_echelon(A,tol=1e-12):
+    """Returner trappeform og indeksene til pivotkolonnene."""
+    R=np.array(A,dtype=float,copy=True)
+    rows,cols=R.shape
+    pivot_row=0
+    pivot_columns=[]
+
+    for col in range(cols):
+        if pivot_row==rows:
+            break
+        candidate=next(
+            (row for row in range(pivot_row,rows) if abs(R[row,col])>tol),
+            None,
+        )
+        if candidate is None:
+            continue
+        if candidate!=pivot_row:
+            R[[pivot_row,candidate]]=R[[candidate,pivot_row]]
+        for row in range(pivot_row+1,rows):
+            R[row]-=(R[row,col]/R[pivot_row,col])*R[pivot_row]
+        R[np.abs(R)<=tol]=0.0
+        pivot_columns.append(col)
+        pivot_row+=1
+
+    return R,pivot_columns
+
+B=np.array([[1.,0.,1.],
+            [0.,1.,1.],
+            [1.,1.,2.]])
+C=np.array([[1.,2.,3.],
+            [2.,4.,6.]])
+
+M=B  # Bytt til C når du er ferdig med B.
+R_M,pivots_M=row_echelon(M)
+print("Trappeform:\n",R_M)
+print("Pivotkolonner:",[j+1 for j in pivots_M])
+
+# TODO: Sett inn nullromsvektorene du fant på papir som kolonner i Z_M.
+Z_M=np.zeros((M.shape[1],0))
+print("Kontroll M @ Z_M:\n",M@Z_M)
+
+# TODO: Velg x0 og en nullromsvektor z, og sammenlign M@x0 med M@(x0+z).
+
+# TODO: Lag rhs_yes og rhs_no. Sammenlign rang(M) med rang([M | rhs]).
+```
+
 
 :::
