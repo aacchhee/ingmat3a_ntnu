@@ -16,24 +16,85 @@ forkunnskapene sitter.
 ::::
 
 :::: {.callout-tip collapse="true"}
-## Kort kodehåndbok
+## NumPy-cheatsheet for denne uka
 
 Koden er et verktøy for å undersøke lineær algebra, ikke et eget
-programmeringspensum. Disse kommandoene brukes flere ganger:
+programmeringspensum. Åpne denne boksen når du møter en ukjent kodelinje.
+Du trenger ikke lære alt utenat.
 
-- `X.reshape(-1)` legger alle tallene i bildet etter hverandre i én vektor.
-  Ingen tall endres eller forsvinner.
-- `A @ x` betyr matrise-vektorproduktet $Ax$.
-- `np.column_stack([u, v])` lager en matrise med `u` og `v` som kolonner.
-- `np.linalg.solve(A, b)` finner en vektor `x` som oppfyller `A @ x = b`,
-  når systemet har én entydig løsning.
-- `np.linalg.norm(u)` måler størrelsen på en vektor eller forskjellen mellom
-  to resultater.
-- `np.linalg.matrix_rank(A)` beregner den numeriske rangen til `A`.
+### Lag og les arrays
+
+```python
+x = np.array([2.0, -1.0, 3.0])
+X = np.array([[1.0, 2.0],
+              [3.0, 4.0]])
+```
+
+`x` er en vektor med tre tall. `X` er en $2\times2$-tabell. Python teller fra
+0, så `x[0]` er første tall, `X[0, 1]` er tallet i første rad og andre
+kolonne, og `X.shape` er `(2, 2)`.
+
+### Bytt mellom bilde og vektor
+
+```python
+x = X.reshape(-1)       # [1., 2., 3., 4.]
+X_again = x.reshape(2, 2)
+```
+
+`reshape` flytter ikke eller endrer noen verdier. Den viser bare de samme
+tallene med en annen form. `-1` betyr «la NumPy finne riktig lengde».
+
+### Bygg matriser av vektorer
+
+```python
+A = np.column_stack([u, v])   # u og v blir kolonner
+B = np.vstack([r1, r2])       # r1 og r2 blir rader
+```
+
+Bruk `column_stack` når vektorene er byggesteiner eller basisvektorer. Bruk
+`vstack` når hver vektor beskriver én måling eller én ligning.
+
+### Regn med matriser
+
+```python
+y = A @ x
+c = np.linalg.solve(P, target)
+```
+
+`A @ x` er matrise-vektorproduktet $Ax$. `solve(P, target)` gjør reverse
+engineering: Den finner koeffisientene `c` som oppfyller
+`P @ c = target`. Den brukes her bare når den kvadratiske matrisen har én
+entydig løsning.
+
+### Kontroller et matematisk svar
+
+```python
+error = np.linalg.norm(A @ x - b)
+rank = np.linalg.matrix_rank(A)
+```
+
+`norm` måler størrelsen på forskjellen. Et resultat som `1e-15` leses
+vanligvis som numerisk null. `matrix_rank` teller hvor mange uavhengige
+retninger NumPy kan skille med maskinpresisjonen; den erstatter ikke
+begrunnelsen med pivoter eller lineær uavhengighet.
+
+### Lag nyttige tallfølger og testdata
+
+```python
+indices = np.arange(4)                 # 0, 1, 2, 3
+points = np.linspace(-1.0, 1.0, 5)    # fem jevnt fordelte punkter
+rng = np.random.default_rng(8)
+test = rng.random((2, 2))              # et tilfeldig 2x2-bilde
+```
+
+Et fast tall i `default_rng(8)` gjør at alle får de samme testdataene. Da kan
+vi gjenta forsøket og sammenligne svar. `np.repeat` brukes senere til å
+kopiere en verdi flere ganger; `np.zeros((m, n))` lager en $m\times n$-matrise
+som studenten kan fylle ut.
 
 Kode merket som **ferdig maskineri** kan brukes uten at du forstår alle
-indeksene og løkkene. Konsentrer deg først om hva funksjonen tar inn, hva den
-returnerer, og hvilken matematisk påstand forsøket undersøker.
+indeksene og løkkene. Les først kommentarene og spør: Hva er inputen? Hva er
+outputen? Hvilken matematisk påstand skal utskriften eller figuren kontrollere?
 ::::
 
 ::: {.panel-tabset}
@@ -158,6 +219,8 @@ bare hva transformasjonen beholder, og hva den mister.
 #| autorun: true
 #| context: setup
 
+# Felles verktøy for hele siden. Denne cellen kjøres automatisk.
+# Studentoppgavene bruker funksjonene, men krever ikke at du kan skrive dem.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -185,6 +248,8 @@ def show_images(images, titles=None, cols=4, cmap="gray",
 
 def average_pool(X):
     """Fire gjennomsnitt, ett fra hver 2 x 2-blokk."""
+    # asarray gjør inputen til en talltabell; formkontrollen gir en tydelig
+    # feilmelding hvis funksjonen brukes på feil bildestørrelse.
     X = np.asarray(X, dtype=float)
     if X.shape != (4, 4):
         raise ValueError("Bildet må ha størrelse 4 x 4.")
@@ -192,6 +257,8 @@ def average_pool(X):
 
 def pooling_matrix():
     """A slik at A @ X.reshape(-1) gir de fire gjennomsnittene."""
+    # Designidé: én rad per outputverdi og én kolonne per inputpiksel.
+    # Vekten 0.25 betyr at fire piksler skal summeres og deles på fire.
     A = np.zeros((4, 16))
     k = 0
     for br in range(2):
@@ -209,6 +276,8 @@ A_pool = pooling_matrix()
 #| label: week3-same-output
 #| autorun: true
 
+# To bevisst svært forskjellige inputbilder: ett konstant og ett rutete.
+# Eksperimentet spør om blokk-gjennomsnittene likevel kan bli de samme.
 X1 = np.full((4, 4), 0.5)
 X2 = np.array([
     [0.1, 0.9, 0.1, 0.9],
@@ -218,6 +287,7 @@ X2 = np.array([
 ])
 Y1, Y2 = average_pool(X1), average_pool(X2)
 
+# Vi viser input og output i samme figur for å kunne sammenligne direkte.
 show_images([X1, X2, Y1, Y2],
     ["Input $X_1$", "Input $X_2$", "Output fra $X_1$", "Output fra $X_2$"],
     cols=4, vmin=0, vmax=1)
@@ -233,6 +303,8 @@ Hvis to bilder er like, består forskjellsbildet bare av nuller. **Nullbildet** 
 #| label: week3-difference-and-zero-images
 #| autorun: true
 
+# Trekk fra før og etter transformasjonen. Hvis D_output er nullbildet,
+# har transformasjonen mistet hele forskjellen mellom inputbildene.
 D_input=X1-X2
 D_output=Y1-Y2
 zero_input=np.zeros_like(D_input)
@@ -262,6 +334,8 @@ NumPy beregner denne normen med `np.linalg.norm`. Den samme regelen virker for e
 #| label: week3-first-norm
 #| autorun: true
 
+# Første linje er definisjonen på normen skrevet direkte i NumPy.
+# Deretter bruker vi den ferdige norm-funksjonen som kontroll.
 input_norm_by_formula=np.sqrt(np.sum(D_input**2))
 
 print("Inputforskjell, regnet fra formelen:",input_norm_by_formula)
@@ -283,6 +357,8 @@ Transformasjonen arbeider blokk for blokk. I øvre venstre blokk i `X2` er pikse
 #| label: week3-four-blocks
 #| autorun: true
 
+# Løkkene skjærer ut de fire 2 x 2-blokkene. Uttrykket a:b betyr
+# «ta med indeks a, men stopp før b».
 blocks=[]
 for block_row in range(2):
     for block_col in range(2):
@@ -316,6 +392,8 @@ Et bilde vises som en todimensjonal rute, men pikselverdiene kan også legges et
 #| label: week3-flatten-picture
 #| autorun: true
 
+# reshape(-1) leser radene etter hverandre. Resten av cellen er ferdig
+# plottemaskineri som viser at ingen tall endres eller forsvinner.
 x2=X2.reshape(-1)
 fig,axes=plt.subplots(1,2,figsize=(7.0,1.8),
                       gridspec_kw={"width_ratios":[1,3.2]})
@@ -367,7 +445,10 @@ På venstre side av pilen står inputen $x$ med 16 pikselverdier. På høyre sid
 #| label: week3-pooling-as-matrix
 #| autorun: true
 
+# Samme bilder skrives som vektorer, slik at vi kan bruke vanlig Ax.
 x1, x2 = X1.reshape(-1), X2.reshape(-1)
+# @ er matrise-vektorproduktet. Resultatet har fire komponenter fordi
+# A_pool har fire rader.
 y1, y2 = A_pool @ x1, A_pool @ x2
 print("Bildeform:", X1.shape, "  vektorform:", x1.shape)
 print("A har form", A_pool.shape)
@@ -530,10 +611,13 @@ I uke 3 er målet mindre, men grunnleggende: Vi analyserer små $2\times2$- og $
 ```{pyodide-python}
 #| label: week3-check-linearity
 
+# Fast frø gir samme testbilde ved hver kjøring.
 rng=np.random.default_rng(3)
 X3=rng.random((4,4))
 alpha,beta=0.6,0.4
 mixed_input=alpha*X1+beta*X3
+# left: bland først, transformer etterpå.
+# right: transformer først, bland outputene etterpå.
 left=(A_pool@mixed_input.reshape(-1)).reshape(2,2)
 right=alpha*average_pool(X1)+beta*average_pool(X3)
 
@@ -684,6 +768,8 @@ Nå gjentar vi det samme eksperimentet i NumPy. De fire første bildene har verd
 #| label: week3-pixel-basis
 #| autorun: true
 
+# Hvert E-bilde har én eneste ener. Derfor styrer hver koeffisient nøyaktig
+# én piksel når de skalerte byggesteinene summeres.
 E1=np.array([[1.,0.],[0.,0.]])
 E2=np.array([[0.,1.],[0.,0.]])
 E3=np.array([[0.,0.],[1.,0.]])
@@ -714,6 +800,8 @@ Vi forsøker å lage det samme målbildet uten $E_4$. De tre første pikslene ka
 #| label: week3-missing-and-redundant
 #| autorun: true
 
+# Vi fjerner E4 med vilje. Forskjellsbildet viser hvilken del av målbildet
+# de tre gjenværende byggesteinene ikke kan lage.
 X_without_E4=coefficients[0]*E1+coefficients[1]*E2+coefficients[2]*E3
 difference=X-X_without_E4
 show_images([X,X_without_E4,difference,E4],
@@ -731,6 +819,8 @@ Nå legger vi til $E_5=E_1+E_2$. Figuren viser at $E_5$ ikke gir en ny type bild
 #| label: week3-redundant-building-block
 #| autorun: true
 
+# E5 er konstruert av to gamle byggesteiner og tilfører derfor ingen ny
+# retning. De to oppskriftene under skal gi samme bilde.
 E5=E1+E2
 recipe_1=1*E1+1*E2+0*E5
 recipe_2=0*E1+0*E2+1*E5
@@ -899,6 +989,8 @@ Nå konstruerer vi de samme fire mønstrene i NumPy.
 #| label: week3-pattern-basis
 #| autorun: true
 
+# De fire arrayene er ikke tilfeldige: M styrer felles lysnivå, mens H, V
+# og D har sum null og beskriver tre forskjellige kontraster.
 M=np.array([[ 1., 1.],[ 1., 1.]])
 H=np.array([[ 1.,-1.],[ 1.,-1.]])
 V=np.array([[ 1., 1.],[-1.,-1.]])
@@ -920,7 +1012,11 @@ Vi gjør hvert mønster om til en 4-vektor og bruker vektorene som kolonner i `P
 #| label: week3-test-pattern-building-blocks
 #| autorun: true
 
+# reshape(-1) gjør hvert 2 x 2-mønster til en 4-vektor.
+# column_stack setter de fire byggesteinene som kolonner i P.
 P=np.column_stack([pattern.reshape(-1) for pattern in pattern_basis])
+# P.T er den transponerte matrisen. P.T @ P undersøker vinklene mellom
+# kolonnene; null utenfor diagonalen betyr at de er ortogonale.
 print("P^T P:\n",P.T@P)
 print("Rang av P:",np.linalg.matrix_rank(P))
 
@@ -928,6 +1024,7 @@ rng=np.random.default_rng(8)
 targets=[rng.uniform(-1,1,size=(2,2)) for _ in range(4)]
 reconstructions=[]; errors=[]
 for target in targets:
+    # Reverse engineering: finn mønsterkoeffisientene som lager target.
     c_test=np.linalg.solve(P,target.reshape(-1))
     reconstruction=(P@c_test).reshape(2,2)
     reconstructions.append(reconstruction)
@@ -959,7 +1056,9 @@ Vi ser nærmere på koordinatene til bildet $X$ fra pikselbasis-eksemplet tidlig
 #| label: week3-change-basis
 #| autorun: true
 
+# X er kjent; c er den ukjente oppskriften i mønsterbasisen.
 c=np.linalg.solve(P,X.reshape(-1))
+# Hver koordinat skalerer sin byggestein. Summen skal bli X igjen.
 pattern_components=[value*pattern for value,pattern in zip(c,pattern_basis)]
 reconstructed=(P@c).reshape(2,2)
 scale=max(np.max(np.abs(part)) for part in pattern_components)
@@ -990,6 +1089,8 @@ Nå lar vi den enkleste transformasjonen vi har — gjennomsnittet av fire tall 
 #| label: week3-average-patterns
 #| autorun: true
 
+# Vi sender én basisretning om gangen gjennom gjennomsnittstransformasjonen.
+# Da ser vi hvilke koordinater transformasjonen beholder.
 outputs=[np.array([[np.mean(pattern)]]) for pattern in pattern_basis]
 show_images(pattern_basis+outputs,
     pattern_names+[f"Output: {value.item():.1f}" for value in outputs],
@@ -1014,13 +1115,16 @@ Vi kontrollerer også den motsatte retningen: Kan tilfeldige bilder med gjennoms
 #| label: week3-build-zero-mean-images
 #| autorun: true
 
+# Kolonnene i contrast_matrix er de tre kontrastbyggesteinene H, V og D.
 contrast_matrix=np.column_stack([H.reshape(-1),V.reshape(-1),D.reshape(-1)])
 rng=np.random.default_rng(12)
 target_images=[]; reconstructed_images=[]; errors=[]
 for _ in range(4):
     first_three=rng.uniform(-1,1,size=3)
+    # Velg siste piksel slik at summen av alle fire blir null.
     values=np.r_[first_three,-np.sum(first_three)]
     target=values.reshape(2,2)
+    # Tre uavhengige ligninger er nok til å finne tre koeffisienter.
     weights=np.linalg.solve(contrast_matrix[:3,:],values[:3])
     reconstructed=(contrast_matrix@weights).reshape(2,2)
     target_images.append(target)
@@ -1060,6 +1164,8 @@ $$Gx_1=Gx_2\quad\Longleftrightarrow\quad G(x_1-x_2)=0.$$
 #| label: week3-family-same-average
 #| autorun: true
 
+# base er startbildet, direction er en nullromsretning, og t bestemmer
+# hvor langt vi går i denne retningen. Gjennomsnittet skal være uendret.
 base=np.full((2,2),0.5)
 direction=0.35*D
 t_values=[-1.,-0.5,0.,0.5,1.]
@@ -1084,12 +1190,14 @@ Funksjonen `place_in_block` plasserer ett av mønstrene `H`, `V` eller `D` i en 
 #| autorun: true
 
 def place_in_block(pattern,block_row,block_col):
+    """Legg ett 2 x 2-kontrastmønster i valgt blokk av et nullbilde."""
     Z=np.zeros((4,4))
     r,c=2*block_row,2*block_col
     Z[r:r+2,c:c+2]=pattern
     return Z
 
 null_basis=[]; null_titles=[]
+# Tre kontraster i hver av fire blokker gir 3 * 4 = 12 kandidater.
 for br in range(2):
     for bc in range(2):
         for pattern,name in zip([H,V,D],["H","V","D"]):
@@ -1108,11 +1216,13 @@ Neste celle kontrollerer dette numerisk. Deretter velger den tolv tilfeldige koe
 #| label: week3-random-null-image
 #| autorun: true
 
+# Først kontrolleres hver kandidat separat med ||A z||.
 for i,Zi in enumerate(null_basis,start=1):
     print(f"Mønster {i:2d}: ||A z|| = {np.linalg.norm(A_pool@Zi.reshape(-1)):.1e}")
 
 rng=np.random.default_rng(7)
 random_coefficients=rng.normal(size=12)
+# En lineærkombinasjon av nullromsvektorer skal fortsatt ligge i nullrommet.
 Z=sum(c*Zi for c,Zi in zip(random_coefficients,null_basis))
 pooled_Z=average_pool(Z)
 limit=np.max(np.abs(Z))
@@ -1253,6 +1363,8 @@ Koden nedenfor utfører alle de 16 forsøkene på én gang og tegner hver matris
 #| label: week3-columns-as-images
 #| autorun: true
 
+# Kolonne j er outputen A_pool lager når bare inputpiksel j er lik 1.
+# reshape gjør hver 4-komponentkolonne synlig som et 2 x 2-outputbilde.
 column_images=[A_pool[:,j].reshape(2,2) for j in range(16)]
 show_images(column_images,[f"Kolonne {j+1}" for j in range(16)],
             cols=4,vmin=0,vmax=0.25,figsize=(6.8,5.8))
@@ -1268,10 +1380,14 @@ Dermed har vi funnet fire forskjellige måter å påvirke outputen på. Det nest
 
 def expand_block_values(Y):
     """Gjør hver verdi i et 2x2-bilde til en konstant 2x2-blokk."""
+    # Gjenta først hver rad og deretter hver kolonne. Dette konstruerer en
+    # input som garantert får blokkgjennomsnittene i Y.
     return np.repeat(np.repeat(Y,2,axis=0),2,axis=1)
 
 rng=np.random.default_rng(24)
 targets=[rng.random((2,2)) for _ in range(4)]
+# Reverse engineering er her enkelt: kopier hver ønsket outputverdi tilbake
+# til de fire inputpikslene som måles sammen.
 inputs=[expand_block_values(Y) for Y in targets]
 outputs=[average_pool(Xi) for Xi in inputs]
 
@@ -1314,6 +1430,8 @@ uavhengig. De fire blokkgjennomsnittene kan velges fritt, så rangen er 4.
 ```{pyodide-python}
 #| label: week3-rank-check
 
+# shape[1] teller inputkoordinater, shape[0] teller outputkoordinater.
+# Rangen kan være mindre enn begge dersom noen retninger er overflødige.
 print("Inputverdier:",A_pool.shape[1])
 print("Outputverdier:",A_pool.shape[0])
 print("Numerisk rang:",np.linalg.matrix_rank(A_pool))
@@ -1331,6 +1449,8 @@ kan beregnes fra de fire blokkgjennomsnittene.
 #| label: week3-redundant-output
 #| autorun: true
 
+# vstack legger til én ny måling som femte rad. Den nye raden er
+# gjennomsnittet av de fire gamle radene og kan derfor ikke øke rangen.
 A_five=np.vstack([A_pool,np.ones(16)/16])
 X_test=rng.random((4,4))
 y=A_five@X_test.reshape(-1)
@@ -1526,6 +1646,8 @@ Startcellene gjør plotting og bokføring, men gir ikke ferdige svar. Et forsøk
 Endre `Z`. Hver $2\times2$-blokk skal ha gjennomsnitt null, men bruk ikke sjakkmønsteret uendret. Før du kjører cellen, regn ut minst ett blokkgjennomsnitt for hånd. Figuren viser om mønsteret forsvinner, mens normen under figuren måler outputens avstand fra nullbildet.
 
 ```{pyodide-python}
+# Dette er startforslaget, ikke et fasitsvar. Endre minst to av tallene,
+# men pass på at hver 2 x 2-blokk fortsatt har sum null.
 Z=np.array([
     [ 1.,-1., 0., 0.],
     [ 0., 0., 0., 0.],
@@ -1545,9 +1667,12 @@ Velg tre mønsterbilder og generer åtte tilfeldige lineærkombinasjoner. Se ett
 
 ```{pyodide-python}
 rng=np.random.default_rng(10)
-my_building_blocks=[M,H,V]  # Bytt gjerne ut disse.
+# Studentvalg: Bytt byggesteiner her. Tre byggesteiner kan høyst gi tre
+# uavhengige retninger i rommet av alle 2 x 2-bilder.
+my_building_blocks=[M,H,V]
 my_images=[]
 for _ in range(8):
+    # Nye koeffisienter, men de samme tre byggesteinene, i hvert forsøk.
     c=rng.uniform(-1,1,size=3)
     my_images.append(sum(value*block for value,block
                          in zip(c,my_building_blocks)))
@@ -1561,8 +1686,10 @@ Forsøk å lage et konkret $2\times2$-målbilde som de tre byggesteinene ikke ka
 Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om ligningssystemet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
 
 ```{pyodide-python}
+# Studentvalg: Endre B1, ..., B4 før resten av cellen kjøres.
 B1,B2,B3,B4=E1.copy(),E2.copy(),E3.copy(),E4.copy()
 my_basis=[B1,B2,B3,B4]
+# Q har én foreslått basisvektor i hver kolonne.
 Q=np.column_stack([B.reshape(-1) for B in my_basis])
 show_images(my_basis,["$B_1$","$B_2$","$B_3$","$B_4$"],
             cols=4,cmap="coolwarm",vmin=-1,vmax=1)
@@ -1570,6 +1697,7 @@ print("Rang:",np.linalg.matrix_rank(Q))
 
 target=rng.uniform(-1,1,size=(2,2))
 if np.linalg.matrix_rank(Q)==4:
+    # Reverse engineering: finn koordinatene til et tilfeldig målbilde.
     coordinates=np.linalg.solve(Q,target.reshape(-1))
     reconstruction=(Q@coordinates).reshape(2,2)
     show_images([target,reconstruction],["Målbilde","Rekonstruksjon"],
@@ -1583,11 +1711,14 @@ else:
 Lag en lineær transformasjon fra 16 inputpiksler til høyst 6 outputverdier. Hver rad i `A_new` er én måling av bildet. Tegn først hvilke piksler målingen skal bruke, og sett så inn de tilsvarende vektene i raden. Mulige ideer er radgjennomsnitt, kolonnegjennomsnitt, diagonalsummer eller utvalgte piksler.
 
 ```{pyodide-python}
+# Fire rader betyr fire målinger. Endre også antallet rader dersom
+# transformasjonen din skal ha et annet antall outputverdier.
 A_new=np.zeros((4,16))
 
-# TODO: Sett inn vekter som beskriver transformasjonen.
+# TODO: Sett inn vekter. Rad i beskriver nøyaktig hvordan output i beregnes.
 
 test_image=rng.random((4,4))
+# reshape(-1) gjør testbildet til inputvektoren som A_new forventer.
 test_output=A_new@test_image.reshape(-1)
 show_images([test_image],["Testbilde"],cols=1,vmin=0,vmax=1)
 print("Output:",test_output)
@@ -1606,7 +1737,9 @@ To målinger kan være matematisk forskjellige, men så like at maskinen får pr
 #| autorun: true
 
 def nearly_redundant_measurements(eps,dtype=float):
+    """To nesten like målinger lagret med valgt tallpresisjon."""
     first=np.ones(16)
+    # Bare vekten til siste piksel skiller rad 2 fra rad 1.
     second=first.copy(); second[-1]+=eps
     return np.vstack([first,second]).astype(dtype)
 
@@ -1625,6 +1758,8 @@ Forskjellsbildet har bare én ikke-null piksel. Gjør nå denne forskjellen mind
 ```{pyodide-python}
 #| label: week3-nearly-same-measurements-rank
 
+# Gjør forskjellen 10 000 ganger mindre for hver runde og sammenlign hvor
+# lenge de to tallformatene klarer å skille radene.
 for exponent in [2,6,10,14,18]:
     eps=10.0**(-exponent)
     A64=nearly_redundant_measurements(eps,np.float64)
@@ -2019,6 +2154,8 @@ Vi bruker de samme fargene gjennom hele regningen:
 #| label: week3-pure-matrix-setup
 #| autorun: true
 
+# Denne matrisen er felles eksempel i hele 3.9. Rad 3 er summen av de to
+# første radene, noe eliminasjonen snart skal avdekke.
 A=np.array([
     [1.,2.,0.,1.],
     [0.,1.,1.,1.],
@@ -2068,12 +2205,14 @@ Koden under utfører vanlig framovereliminasjon. Den går fra venstre mot høyre
 
 def row_echelon(A,tol=1e-12,show_steps=False):
     """Returner trappeform og indeksene til pivotkolonnene."""
+    # copy=True er viktig: Vi vil radredusere R uten å endre originalen A.
     R=np.array(A,dtype=float,copy=True)
     rows,cols=R.shape
     pivot_row=0
     pivot_columns=[]
 
     for col in range(cols):
+        # Gå fra venstre mot høyre og finn én pivot om gangen.
         if pivot_row==rows:
             break
 
@@ -2093,10 +2232,13 @@ def row_echelon(A,tol=1e-12,show_steps=False):
                 print(f"Bytt rad {pivot_row+1} og {candidate+1}:\n",R)
 
         for row in range(pivot_row+1,rows):
+            # Trekk et multiplum av pivotraden fra raden under, akkurat som
+            # ved Gauss-eliminasjon på papir.
             factor=R[row,col]/R[pivot_row,col]
             if abs(factor)>tol:
                 R[row]-=factor*R[pivot_row]
 
+        # Små avrundingsrester behandles som null, styrt av tol.
         R[np.abs(R)<=tol]=0.0
         pivot_columns.append(col)
         pivot_row+=1
@@ -2147,6 +2289,8 @@ Kontroller begge relasjonene før du kjører cellen.
 #| label: week3-column-space-basis
 #| autorun: true
 
+# Pivotindeksene ble funnet fra trappeformen, men selve basisvektorene må
+# hentes som kolonner fra den opprinnelige matrisen A.
 column_basis=A[:,pivot_columns]
 a1,a2,a3,a4=[A[:,j] for j in range(4)]
 
@@ -2196,6 +2340,8 @@ Dermed er de to viste vektorene en basis for nullrommet. Koden kontrollerer båd
 #| label: week3-null-space-basis-matrix
 #| autorun: true
 
+# z1 og z2 kommer fra håndregningen. Z samler dem som kolonner slik at
+# A @ Z kontrollerer begge nullromsligningene samtidig.
 z1=np.array([2.,-1.,1.,0.])
 z2=np.array([1.,-1.,0.,1.])
 Z=np.column_stack([z1,z2])
@@ -2205,6 +2351,7 @@ print("Rang av basisvektorene:",np.linalg.matrix_rank(Z))
 
 rng=np.random.default_rng(31)
 s,t=rng.normal(size=2)
+# Hvis z1 og z2 ligger i nullrommet, gjør enhver kombinasjon det samme.
 z=s*z1+t*z2
 print("Tilfeldige koeffisienter:",s,t)
 print("||A z|| =",np.linalg.norm(A@z))
@@ -2236,6 +2383,8 @@ Rangen kommer fra de to pivotene. Nulliteten kommer **uavhengig** fra nullromsbe
 ```{pyodide-python}
 #| label: week3-rank-nullity-check
 
+# Antall pivotkolonner gir rang; antall kolonner i nullromsbasisen gir
+# nullitet. A.shape[1] er inputdimensjonen n.
 rank_A=len(pivot_columns)
 nullity_A=Z.shape[1]
 print(f"{A.shape[1]} = {rank_A} + {nullity_A}")
@@ -2275,6 +2424,8 @@ b=np.array([2.,-1.,1.])
 d=np.array([2.,-1.,4.])
 
 def augmented_rank(A,rhs):
+    """Rang av den utvidede matrisen [A | rhs]."""
+    # rhs legges til som siste kolonne, ikke som ny rad.
     return np.linalg.matrix_rank(np.column_stack([A,rhs]))
 
 print("rang(A)       =",np.linalg.matrix_rank(A))
@@ -2307,9 +2458,12 @@ Her er en hel familie av forskjellige inputvektorer med samme output.
 #| label: week3-same-output-pure-matrix
 #| autorun: true
 
+# Start med én input x0 og dens output y.
 x0=np.array([1.,2.,0.,-1.])
 y=A@x0
 
+# z1 ligger i nullrommet. Derfor skal x0 + alpha*z1 gi samme output for
+# enhver verdi av alpha.
 for alpha in [-2.,-1.,0.,1.,2.]:
     x=x0+alpha*z1
     print(f"alpha={alpha:4.1f}  x={x}  A@x={A@x}")
@@ -2330,8 +2484,10 @@ Til slutt endrer vi den avhengige tredje raden med et svært lite tall. For enhv
 #| label: week3-nearly-dependent-row
 #| autorun: true
 
+# direction bestemmer hvordan vi forstyrrer den avhengige tredje raden.
 direction=np.array([1.,-1.,1.,-1.])
 for eps in [1e-4,1e-8,1e-12,1e-16]:
+    # copy hindrer at forstyrrelsen samler seg opp fra én runde til neste.
     A_eps=A.copy()
     A_eps[2]+=eps*direction
     R_eps,pivots_eps=row_echelon(A_eps,tol=1e-10)
@@ -2774,6 +2930,7 @@ kjørt kodecellen i matriserepetisjonen i 3.9.
 
 import numpy as np
 
+# Selvstendig hjelpekode: Cellen skal kunne kjøres uten kodecellene i 3.9.
 def row_echelon(A,tol=1e-12):
     """Returner trappeform og indeksene til pivotkolonnene."""
     R=np.array(A,dtype=float,copy=True)
@@ -2806,18 +2963,21 @@ B=np.array([[1.,0.,1.],
 C=np.array([[1.,2.,3.],
             [2.,4.,6.]])
 
-M=B  # Bytt til C når du er ferdig med B.
+# Studentvalg: Arbeid ferdig med B på papir og i kode før du bytter til C.
+M=B
 R_M,pivots_M=row_echelon(M)
 print("Trappeform:\n",R_M)
 print("Pivotkolonner:",[j+1 for j in pivots_M])
 
-# TODO: Sett inn nullromsvektorene du fant på papir som kolonner i Z_M.
+# TODO: Sett inn nullromsvektorene fra papirregningen som kolonner i Z_M.
+# Kontrollen under skal da bli en nullmatrise.
 Z_M=np.zeros((M.shape[1],0))
 print("Kontroll M @ Z_M:\n",M@Z_M)
 
-# TODO: Velg x0 og en nullromsvektor z, og sammenlign M@x0 med M@(x0+z).
+# TODO: Velg x0 og én kolonne z fra Z_M. Sammenlign M@x0 med M@(x0+z).
 
-# TODO: Lag rhs_yes og rhs_no. Sammenlign rang(M) med rang([M | rhs]).
+# TODO: Lag rhs_yes som M@x for en selvvalgt x. Lag deretter rhs_no som du
+# mener ligger utenfor kolonnerommet. Sammenlign rang(M) med rang([M | rhs]).
 ```
 
 
