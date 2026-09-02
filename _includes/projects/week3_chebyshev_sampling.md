@@ -19,6 +19,11 @@ p(x_0)\\p(x_1)\\\vdots\\p(x_n)
 \end{bmatrix}.
 $$
 
+Å gå fra et kjent polynom til disse verdiene er vanlig evaluering. Flere
+steder i prosjektet går vi motsatt vei: Vi får bare verdiene og prøver å finne
+koeffisientene til polynomet som laget dem. Vi kaller denne baklengsprosessen
+**reverse engineering** av polynomet.
+
 Prosjektets hovedspørsmål er:
 
 > **Hvordan kan matematisk likeverdige beskrivelser av det samme
@@ -266,12 +271,42 @@ Vi vil avgjøre om hvert polynom i $\mathcal P_4$ også kan skrives på nøyakti
 
 $$p(x)=c_0T_0(x)+c_1T_1(x)+\cdots+c_4T_4(x).$$
 
-For å bruke rangtesten fra lineær algebra skriver vi først hvert $T_k$ i den
-kjente monomialbasisen. Disse fem koordinatkolonnene settes ved siden av
-hverandre i matrisen `Q`. Hvis `Q` har rang 5, er kolonnene lineært uavhengige.
-Da er de fem polynomene lineært uavhengige i et rom med dimensjon 5, og de
-danner derfor en basis. Start med koeffisientene du fant for hånd, og fyll
-kolonnene i `Q`.
+Hvordan kan vi kontrollere om $T_0,\ldots,T_4$ er lineært uavhengige? Vi må
+undersøke om det finnes tall $b_0,\ldots,b_4$, ikke alle lik null, slik at
+
+$$
+b_0T_0(x)+b_1T_1(x)+\cdots+b_4T_4(x)=0.
+$$
+
+Høyresiden betyr **nullpolynomet**: Alle koeffisientene foran
+$1,x,x^2,x^3,x^4$ er null. Vi skriver derfor hvert $T_k$ i den kjente
+monomialbasisen og setter de fem koeffisientlistene som kolonner i matrisen
+`Q`. Da er koeffisientkolonnen til summen over akkurat
+
+$$
+Q
+\begin{bmatrix}b_0\\b_1\\b_2\\b_3\\b_4\end{bmatrix}.
+$$
+
+Polynomsummen er nullpolynomet hvis og bare hvis
+
+$$
+Qb=0.
+$$
+
+Nå kan vi bruke **rangtesten**. Det er navnet vi bruker på følgende
+standardtest fra lineær algebra: En matrise med fem kolonner har fem lineært
+uavhengige kolonner akkurat når rangen er 5. Da har ligningen $Qb=0$ bare
+løsningen $b=0$.
+
+Dette forklarer også hvorfor uavhengige kolonner betyr uavhengige polynomer:
+Hver kolonne er bare koeffisientlisten til ett bestemt $T_k$. Hvis ingen
+ikke-triviell kombinasjon av listene gir nullkolonnen, kan heller ingen
+ikke-triviell kombinasjon av polynomene gi nullpolynomet.
+
+Til slutt vet vi at $\mathcal P_4$ har dimensjon 5. Fem lineært uavhengige
+polynomer i et femdimensjonalt rom fyller hele rommet. Derfor danner de en
+basis. Start nå med koeffisientene du fant for hånd, og fyll kolonnene i `Q`.
 
 ```{pyodide-python}
 # Hver kolonne skal inneholde monomialkoeffisientene til ett T_k.
@@ -338,6 +373,34 @@ Dermed er første rad i avlesningsmatrisen
 $[1,x_0,x_0^2,x_0^3]$. Utled de tre andre radene før du fullfører funksjonen
 under.
 
+For de fire punktene i dette prosjektet kan hele håndregningen skrives slik:
+
+$$
+\begin{aligned}
+p(-1) &= a_0-a_1+a_2-a_3,\\
+p(-1/3) &= a_0-\frac13a_1+\frac19a_2-\frac1{27}a_3,\\
+p(1/3) &= a_0+\frac13a_1+\frac19a_2+\frac1{27}a_3,\\
+p(1) &= a_0+a_1+a_2+a_3.
+\end{aligned}
+$$
+
+Koeffisientene foran $a_0,a_1,a_2,a_3$ blir radene i matrisen:
+
+$$
+\begin{bmatrix}
+p(-1)\\p(-1/3)\\p(1/3)\\p(1)
+\end{bmatrix}
+=
+\underbrace{
+\begin{bmatrix}
+1&-1&1&-1\\
+1&-1/3&1/9&-1/27\\
+1&1/3&1/9&1/27\\
+1&1&1&1
+\end{bmatrix}}_{M_{\text{small}}}
+\begin{bmatrix}a_0\\a_1\\a_2\\a_3\end{bmatrix}.
+$$
+
 Her er et lite eksempel med et førstegradspolynom
 $p(x)=a_0+a_1x$. Avlesning i punktene $x_0=-1$ og $x_1=2$ gir
 
@@ -373,6 +436,22 @@ $1,x,x^2,\ldots$. Når matrisen multipliseres med koeffisientkolonnen, får vi
 Koden under lager denne matrisen for så mange punkter og potenser som vi ber
 om. Uttrykket med `None` er NumPys kompakte måte å kombinere hvert punkt med
 hver potens. Bruk de to små matrisene over som fasit når du fullfører linjen.
+
+Chebyshev-matrisen bygges på samme måte, men nå skriver vi
+
+$$p(x)=c_0T_0(x)+c_1T_1(x)+c_2T_2(x)+c_3T_3(x).$$
+
+Ved $x=-1$ får vi $T_0(-1)=1$, $T_1(-1)=-1$, $T_2(-1)=1$ og
+$T_3(-1)=-1$. Første rad blir derfor $[1,-1,1,-1]$. Ved $x=-1/3$ gir
+uttrykkene du regnet ut tidligere
+
+$$
+T_0(-1/3)=1,\quad T_1(-1/3)=-\frac13,\quad
+T_2(-1/3)=-\frac79,\quad T_3(-1/3)=\frac{23}{27}.
+$$
+
+Andre rad blir dermed $[1,-1/3,-7/9,23/27]$. Regn ut de to siste radene på
+samme måte, og kontroller dem mot utskriften fra `chebyshev_matrix`.
 
 ```{pyodide-python}
 def monomial_matrix(points, n):
@@ -430,15 +509,34 @@ Nå prøver vi tankegangen i praksis. Vi starter med et kjent polynom,
 $$p(x)=1-2x+\frac12x^2+x^3.$$
 
 Koden regner først ut de fire avlesningene. Deretter later vi som om
-koeffisientene er glemt og beholder bare avlesningene. Vi løser så to
-lineære systemer:
+koeffisientene er glemt og beholder bare avlesningene. Vi skal altså arbeide
+baklengs: Fra noen målte polynomverdier prøver vi å finne ut hvilket polynom
+som kan ha laget dem. Vi kaller dette **reverse engineering** av polynomet.
+
+Vi løser to lineære systemer:
 
 $$M_{\text{small}}a=E(p),
 \qquad
 C_{\text{small}}c=E(p).$$
 
-Det første systemet finner monomialkoeffisientene $a$, mens det andre finner
-Chebyshev-koeffisientene $c$. Til slutt evaluerer vi begge svarene på et tett
+Hvorfor finner det første systemet monomialkoeffisientene? Kolonne $j$ i
+$M_{\text{small}}$ inneholder verdiene til $x^j$ i de fire punktene. Når
+matrisen multipliseres med $a$, får vi derfor verdiene til
+
+$$a_0+a_1x+a_2x^2+a_3x^3$$
+
+i de fire punktene. Ligningen $M_{\text{small}}a=E(p)$ ber om akkurat de
+tallene $a_0,\ldots,a_3$ som får disse verdiene til å passe med dataene.
+
+På samme måte inneholder kolonne $j$ i $C_{\text{small}}$ verdiene til $T_j$
+i punktene. Produktet $C_{\text{small}}c$ gir derfor avlesningene av
+
+$$c_0T_0+c_1T_1+c_2T_2+c_3T_3.$$
+
+Ligningen $C_{\text{small}}c=E(p)$ finner dermed Chebyshev-koeffisientene.
+Det er matrisens kolonner som bestemmer hva de ukjente tallene betyr.
+
+Til slutt evaluerer vi begge reverse-engineering-svarene på et tett
 rutenett. Hvis de representerer samme polynom, skal grafverdiene stemme selv
 om koeffisientlistene ikke gjør det. Kommandoen `np.linalg.solve(A, b)` betyr
 bare «finn tallkolonnen $u$ som løser $Au=b$». Den kjenner ikke til polynomer;
@@ -631,10 +729,10 @@ Funksjonen følger denne historien:
 1. Lag et polynom ved å velge Chebyshev-koeffisienter.
 2. Regn ut polynomets verdi i $n+1$ punkter. Deretter behandles disse
    avlesningene som de eneste kjente dataene.
-3. Finn koeffisienter som passer til dataene, først i monomialbasis og så i
-   Chebyshev-basis.
-4. Regn ut de to gjenfunne polynomene i mange punkter mellom avlesningene og
-   sammenlign dem med polynomet vi startet med.
+3. Gjør reverse engineering: Finn koeffisienter som passer til dataene, først
+   i monomialbasis og så i Chebyshev-basis.
+4. Regn ut de to reverse-engineering-resultatene i mange punkter mellom
+   avlesningene og sammenlign dem med polynomet vi startet med.
 
 Det tette rutenettet brukes bare til etterkontroll. Det gir ikke de lineære
 systemene ekstra informasjon.
@@ -650,8 +748,9 @@ def compare_bases(n, grid_size=2001):
     M = monomial_matrix(points, n)
     C = chebyshev_matrix(points, n)
 
-    # solve finner koordinatene som gir de oppgitte avlesningene. De to
-    # svarvektorene kan ikke sammenlignes ledd for ledd fordi basisene er ulike.
+    # Reverse engineering i to basiser: solve finner koeffisientene som gir
+    # de oppgitte avlesningene. Svarvektorene kan ikke sammenlignes ledd for
+    # ledd fordi basisene er ulike.
     recovered_monomial = np.linalg.solve(M, measurements)
     recovered_chebyshev = np.linalg.solve(C, measurements)
 
@@ -765,7 +864,8 @@ er store, og hvor kanselleringen oppstår.
 Virkelige avlesninger er sjelden eksakte. Vi legger derfor til en svært liten
 feil, omtrent $10^{-10}$, i hver polynomverdi. Først løser vi systemet med de
 opprinnelige dataene, deretter med de litt endrede dataene. Vi gjør dette i
-begge basiser med nøyaktig den samme feillisten.
+begge basiser med nøyaktig den samme feillisten. Spørsmålet er hvor mye en
+liten målefeil påvirker reverse engineering av koeffisientene.
 
 Vi sammenligner `a_after-a_before` fordi begge vektorene bruker
 monomialbasis. Tilsvarende sammenligner vi `c_after-c_before` fordi begge
@@ -871,9 +971,9 @@ forsøkene. Dermed kan ikke forskjellen forklares med at det ene forsøket fikk
 en større eller mer gunstig feil.
 
 Funksjonen lager først nøyaktige avlesninger fra referansepolynomet. Deretter
-legger den til feilen og finner det ene polynomet av grad høyst $n$ som passer
-til de forstyrrede verdiene. Til slutt sammenlignes dette polynomet med
-referansen på 5001 punkter. Forholdet
+legger den til feilen og gjør reverse engineering: Den finner det ene
+polynomet av grad høyst $n$ som passer til de forstyrrede verdiene. Til slutt
+sammenlignes dette polynomet med referansen på 5001 punkter. Forholdet
 
 $$
 \frac{\text{største feil på det tette rutenettet}}
@@ -893,7 +993,8 @@ def point_placement_experiment(n, points, noise_size=1e-10,
     # Det samme fortegnsmønsteret brukes uansett hvor punktene ligger.
     noise = noise_size*(-1.0)**np.arange(n+1)
 
-    # Finn polynomet som passer til de litt forstyrrede avlesningene.
+    # Reverse engineering: Finn koeffisientene til polynomet som passer til
+    # de litt forstyrrede avlesningene.
     C = chebyshev_matrix(points, n)
     recovered = np.linalg.solve(C, measurements+noise)
 
@@ -939,8 +1040,8 @@ størrelse på forstyrrelsen.
 ### Det nesten usynlige polynomet
 
 For å forstå forsterkningen ser vi ikke bare på to hele polynomer. Vi trekker
-dem fra hverandre. Forskjellen mellom det gjenfunne og det opprinnelige
-polynomet er selv et polynom:
+dem fra hverandre. Forskjellen mellom reverse-engineering-resultatet og det
+opprinnelige polynomet er selv et polynom:
 
 $$r(x)=p_{\mathrm{forstyrret}}(x)-p_{\mathrm{opprinnelig}}(x).$$
 
@@ -1119,8 +1220,9 @@ Bygg forklaringen i denne rekkefølgen:
 
 Nå får du bruke ideene fra prosjektet mer fritt. Du skal gjenta historien fra
 del 3, men velge graden, punktene og fortegnene selv. Start med et
-referansepolynom, legg en svært liten feil til avlesningene, finn polynomet som
-passer de endrede dataene, og mål hvor stort avviket blir mellom punktene.
+referansepolynom, legg en svært liten feil til avlesningene, gjør reverse
+engineering av polynomet som passer de endrede dataene, og mål hvor stort
+avviket blir mellom punktene.
 
 Plasser avlesningspunktene
 slik at en svært liten feil i avlesningene gir en stor feil mellom punktene,
@@ -1154,8 +1256,9 @@ my_noise = 1e-10*(-1.0)**np.arange(n_design+1)
 true_coordinates = reference_coordinates(n_design)
 my_measurements = cheb.chebval(my_points, true_coordinates)
 my_matrix = chebyshev_matrix(my_points, n_design)
-# Vi løser interpolasjonsproblemet i Chebyshev-koordinater, slik at det er
-# punktplasseringen og ikke et samtidig basisskifte vi undersøker.
+# Reverse engineering i Chebyshev-basis: Vi finner koeffisientene som passer
+# de endrede avlesningene. Dermed undersøker vi punktplasseringen uten å bytte
+# basis samtidig.
 my_recovered = np.linalg.solve(my_matrix, my_measurements+my_noise)
 
 my_grid = np.linspace(-1.0, 1.0, 5001)
