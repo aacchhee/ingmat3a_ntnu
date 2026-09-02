@@ -119,7 +119,7 @@ Store fargerike figurer er ikke et mål i seg selv. Figuren skal brukes som data
 for en matematisk forklaring.
 ::::
 
-## 1. Chebyshev-polynomene
+## Innledning: Bli kjent med Chebyshev-polynomene
 
 Chebyshev-polynomene bygges med rekursjonen
 
@@ -131,7 +131,7 @@ $$
 De første polynomene er altså ikke oppgitt ferdig. Bruk rekursjonen til å
 regne ut $T_2$, $T_3$ og $T_4$ for hånd. Samle ledd med samme potens av $x$.
 
-### Fra matematisk rekursjon til Python
+### Oversett rekursjonen fra papir til Python
 
 Funksjonen under er en direkte oversettelse av definisjonen. Før du kjører,
 følg kallene som trengs for å beregne $T_4(0.3)$, og forklar hvilken linje som
@@ -212,7 +212,7 @@ stemmer med $T_k(-1)$ for $k=0,\ldots,4$, og at kolonne 1 er de fem
 $x$-verdiene fordi $T_1(x)=x$. Senere bruker vi den samme tabellen når vi vil
 regne ut flere lineærkombinasjoner av $T_0,\ldots,T_n$ i de samme punktene.
 
-### Fra rekursjon til grafer
+### Se hvordan polynomene oppfører seg
 
 Før vi bruker Chebyshev-polynomene som regneverktøy, trenger vi et bilde av
 hvordan de oppfører seg på intervallet $[-1,1]$. Er de store eller små? Hvor
@@ -254,7 +254,7 @@ Undersøk figurene før du leser videre:
 2. Hvordan endres nullpunkter, svingninger og symmetri med $n$?
 3. Velg én av observasjonene og begrunn den fra rekursjonen.
 
-### Er dette en basis?
+### Undersøk om Chebyshev-polynomene danner en basis
 
 Den vanlige måten å skrive polynomer i $\mathcal P_4$ på er
 
@@ -334,7 +334,7 @@ Hva forteller formen til `Q` om samme spørsmål for
 $(T_0,\ldots,T_n)$ ved høyere grad? Formuler en begrunnet regel. Pek på
 mønsteret i matrisen; du trenger ikke bevise regelen for alle $n$.
 
-## 2. Del 1 – avlesning som en lineær transformasjon
+## Del 1: Reverse engineering fra polynomverdier
 
 Vi går tilbake til lav grad før vi gjør store numeriske eksperimenter. La
 $p\in\mathcal P_3$, og les av verdien til $p$ i punktene
@@ -359,7 +359,7 @@ $$E(2p)=2E(p),\qquad E(p+q)=E(p)+E(q).$$
 Det er nettopp denne lineariteten som gjør at hele avlesningsprosessen kan
 beskrives med en matrise.
 
-### Matrisen avhenger av basisen
+### Bygg avlesningsmatrisene for hånd
 
 Hvis
 
@@ -502,7 +502,7 @@ spørsmål til å knytte tallene til lineær algebra:
    at polynomene er forskjellige, eller bare at det samme polynomet er skrevet
    med forskjellige byggeklosser? Hvordan kan du kontrollere svaret?
 
-### Finn det samme polynomet i to basiser
+### Skriv det samme polynomet i to basiser
 
 Nå prøver vi tankegangen i praksis. Vi starter med et kjent polynom,
 
@@ -572,7 +572,7 @@ Kontroller at de to koordinatvektorene virkelig bygger samme polynom. Skriv
 polynomet som en lineærkombinasjon av $T_0,T_1,T_2,T_3$ og sammenlign med
 monomialformen.
 
-### Når mister avlesningene informasjon?
+### Finn det avlesningene ikke kan se
 
 Med fire forskjellige avlesningspunkter kunne vi finne et polynom i
 $\mathcal P_3$ entydig. Nå undersøker vi hvorfor «fire tall» ikke alene er
@@ -665,7 +665,7 @@ Gå gjennom argumentet i disse trinnene:
 5. Forklar til slutt hvorfor antakelsen om forskjellige punkter er viktig.
    Hva så du i forsøket der ett punkt ble gjentatt?
 
-## 3. Del 2 – samme avlesningspunkter, forskjellig basis
+## Del 2: Hold punktene fast og bytt basis
 
 Ved grad 3 fant begge matrisene fram til det riktige polynomet. Det kan derfor
 se ut som basisvalget bare endrer hvordan koeffisientene skrives. I eksakt
@@ -722,7 +722,7 @@ $c_k=(-1)^k/(k+1)^2$ ligger mellom $-1$ og $1$. Skriv ned om du tror dette
 også tvinger koeffisientene foran $1,x,x^2,\ldots,x^{30}$ til å være små.
 Dette er hypotesen som forsøket skal teste.
 
-### Ett komplett forsøk
+### Gjør reverse engineering i begge basiser
 
 Funksjonen følger denne historien:
 
@@ -807,7 +807,7 @@ Ikke gå direkte videre. Les tallene i denne rekkefølgen:
 5. I eksakt matematikk er begge basisskrivemåtene likeverdige. Hvilken del av
    forskjellen i utskriften skyldes derfor flyttallsregning?
 
-### Valgfri utvidelse: følg forskjellen når graden øker
+### Valgfri utvidelse: se hva som skjer når graden øker
 
 ```{pyodide-python}
 degrees = [3, 10, 20, 25, 30]
@@ -859,7 +859,7 @@ Skriv en foreløpig forklaring. Bruk minst disse observasjonene:
 Ikke skriv at «datamaskinen er unøyaktig» uten å identifisere hvilke tall som
 er store, og hvor kanselleringen oppstår.
 
-### En kontrollert forstyrrelse av avlesningene
+### Legg den samme lille feilen til begge systemene
 
 Virkelige avlesninger er sjelden eksakte. Vi legger derfor til en svært liten
 feil, omtrent $10^{-10}$, i hver polynomverdi. Først løser vi systemet med de
@@ -903,7 +903,7 @@ Bruk denne forklaringen til å tolke de tre utskrevne tallene. Hvor stor var
 endringen i selve dataene? Hvor stor ble endringen i hver koeffisientliste?
 Hvilken representasjon forsterket den lille dataendringen mest?
 
-## 4. Del 3 – samme basis, forskjellige avlesningspunkter
+## Del 3: Hold basisen fast og flytt punktene
 
 I del 2 holdt vi punktene fast og byttet basis. Nå gjør vi det motsatte:
 Chebyshev-basis brukes i begge systemene, men avlesningspunktene flyttes.
@@ -925,7 +925,7 @@ $$
 
 for $k=0,\ldots,n$.
 
-### Se på plasseringen før du regner
+### Sammenlign punktplasseringene før du regner
 
 Før vi løser et eneste system, tegner vi bare punktene på en tallinje. De
 jevne punktene har samme avstand overalt. Cosinuspunktene ligger tettere ved
@@ -960,7 +960,7 @@ Hvor er punktavstanden størst og minst i hvert oppsett? Hvilket oppsett ville
 du valgt dersom du var spesielt redd for at polynomet skulle gjøre noe
 uventet nær $-1$ eller $1$? Skriv hypotesen før forsøket med forstyrrelser.
 
-### Den samme lille feilen i begge forsøk
+### Bruk den samme lille feilen med begge punktsettene
 
 Vi forstyrrer avlesningene med det faste mønsteret
 
@@ -1037,7 +1037,7 @@ Sammenlign så `kurvefeil` og `forsterkning`. Hvor mange tierpotenser skiller
 forsøkene? Forklar hvorfor forskjellen ikke kan skyldes ulik basis eller ulik
 størrelse på forstyrrelsen.
 
-### Det nesten usynlige polynomet
+### Gjør det nesten usynlige feilpolynomet synlig
 
 For å forstå forsterkningen ser vi ikke bare på to hele polynomer. Vi trekker
 dem fra hverandre. Forskjellen mellom reverse-engineering-resultatet og det
@@ -1091,7 +1091,7 @@ polynom blir sendt til en svært liten, men ikke helt null, avlesningskolonne.
 Dette er ikke et nytt eksakt nullrom. Uttrykket beskriver at avlesningene
 nesten ikke ser en endring som likevel kan være stor mellom punktene.
 
-### Valgfri utvidelse: når blir forskjellen synlig?
+### Valgfri utvidelse: finn graden der forskjellen blir synlig
 
 ```{pyodide-python}
 degrees = [5, 10, 15, 20, 25, 30, 35]
@@ -1115,7 +1115,7 @@ Hvis du gjør utvidelsen, velg minst to ekstra grader selv. Beskriv når
 forskjellen først blir tydelig, og om veksten ser jevn ut. Tallene viser hva
 som skjer i forsøkene dine, men de beviser ikke hva som skjer for alle grader.
 
-## 5. Finale – et polynom mellom −1 og 1
+## Finale: Beregn det samme polynomet på tre måter
 
 Plottene i starten antydet at $T_n$ holder seg mellom $-1$ og $1$ på
 intervallet. Identiteten
@@ -1175,7 +1175,7 @@ mellom $-1$ og $1$, må positive og negative bidrag nesten kansellere
 hverandre. Små avrundinger i de store mellomresultatene kan da overleve etter
 kanselleringen og bli store sammenlignet med det riktige svaret.
 
-### Følg sammenbruddet mot grad 50
+### Se hvordan feilen vokser fram mot grad 50
 
 For å se om problemet dukker opp plutselig eller bygger seg opp, gjentar vi de
 tre evalueringene for grad 10, 20, 30, 40 og 50. Tabellen viser ved siden av
@@ -1216,7 +1216,7 @@ Bygg forklaringen i denne rekkefølgen:
    Forklar derfor hvorfor feilen her ikke skyldes plasseringen av
    avlesningspunkter.
 
-## 6. Åpen utfordring – lag din egen blindsone
+## Åpen utfordring: Lag din egen blindsone
 
 Nå får du bruke ideene fra prosjektet mer fritt. Du skal gjenta historien fra
 del 3, men velge graden, punktene og fortegnene selv. Start med et
@@ -1305,7 +1305,7 @@ Prøv minst to ideer, og endre én egenskap om gangen. Det beste forsøket er
 ikke nødvendigvis det med størst tall. Du må også kunne forklare hvorfor
 plasseringen av punktene skjuler feilpolynomet.
 
-## 7. Samlet analyse
+## Samlet analyse: Forklar hva forsøkene viste
 
 Skriv en sammenhengende analyse på omtrent **400–600 ord**. Figurer og
 tabeller underbygger analysen, men de erstatter ikke forklaringen.
@@ -1329,7 +1329,7 @@ Besvar også følgende hovedspørsmål:
   forsøk?
 - Hva lærte $T_{50}$-forsøket som ikke allerede var synlig ved grad 3?
 
-## Leveranse
+## Dette skal leveres
 
 Lever én Quarto-side eller notebook med:
 
@@ -1347,7 +1347,7 @@ Oppgi alltid grad, punkter, størrelsen på forstyrrelsen og rutenettstørrelse 
 med et resultat. Ellers kan forsøket ikke gjentas.
 
 :::: {.callout-warning}
-## Om kodeassistenter og numeriske påstander
+## Krav til kodeassistenter og numeriske påstander
 
 Kodeassistenter kan hjelpe med Python-syntaks og plotting, men de kan også
 blande sammen effekten av basisvalg og plasseringen av avlesningspunktene. Du må kunne forklare
