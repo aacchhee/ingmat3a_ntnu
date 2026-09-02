@@ -4523,16 +4523,16 @@ p(x_0)\\p(x_1)\\\vdots\\p(x_n)
 <p>Store fargerike figurer er ikke et mål i seg selv. Figuren skal brukes som data for en matematisk forklaring.</p>
 </div>
 </div>
-<section id="chebyshev-polynomene" class="level2">
-<h2 class="anchored" data-anchor-id="chebyshev-polynomene">1. Chebyshev-polynomene</h2>
+<section id="innledning-bli-kjent-med-chebyshev-polynomene" class="level2">
+<h2 class="anchored" data-anchor-id="innledning-bli-kjent-med-chebyshev-polynomene">Innledning: Bli kjent med Chebyshev-polynomene</h2>
 <p>Chebyshev-polynomene bygges med rekursjonen</p>
 <p><span class="math display">\[
 T_0(x)=1,\qquad T_1(x)=x,\qquad
 T_{n+1}(x)=2xT_n(x)-T_{n-1}(x).
 \]</span></p>
 <p>De første polynomene er altså ikke oppgitt ferdig. Bruk rekursjonen til å regne ut <span class="math inline">\(T_2\)</span>, <span class="math inline">\(T_3\)</span> og <span class="math inline">\(T_4\)</span> for hånd. Samle ledd med samme potens av <span class="math inline">\(x\)</span>.</p>
-<section id="fra-matematisk-rekursjon-til-python" class="level3">
-<h3 class="anchored" data-anchor-id="fra-matematisk-rekursjon-til-python">Fra matematisk rekursjon til Python</h3>
+<section id="oversett-rekursjonen-fra-papir-til-python" class="level3">
+<h3 class="anchored" data-anchor-id="oversett-rekursjonen-fra-papir-til-python">Oversett rekursjonen fra papir til Python</h3>
 <p>Funksjonen under er en direkte oversettelse av definisjonen. Før du kjører, følg kallene som trengs for å beregne <span class="math inline">\(T_4(0.3)\)</span>, og forklar hvilken linje som svarer til hvert av de tre tilfellene i den matematiske definisjonen.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -4565,8 +4565,8 @@ T_{n+1}(x)=2xT_n(x)-T_{n-1}(x).
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Les den utskrevne tabellen rad for rad. Kontroller for eksempel at første rad stemmer med <span class="math inline">\(T_k(-1)\)</span> for <span class="math inline">\(k=0,\ldots,4\)</span>, og at kolonne 1 er de fem <span class="math inline">\(x\)</span>-verdiene fordi <span class="math inline">\(T_1(x)=x\)</span>. Senere bruker vi den samme tabellen når vi vil regne ut flere lineærkombinasjoner av <span class="math inline">\(T_0,\ldots,T_n\)</span> i de samme punktene.</p>
 </section>
-<section id="fra-rekursjon-til-grafer" class="level3">
-<h3 class="anchored" data-anchor-id="fra-rekursjon-til-grafer">Fra rekursjon til grafer</h3>
+<section id="se-hvordan-polynomene-oppfører-seg" class="level3">
+<h3 class="anchored" data-anchor-id="se-hvordan-polynomene-oppfører-seg">Se hvordan polynomene oppfører seg</h3>
 <p>Før vi bruker Chebyshev-polynomene som regneverktøy, trenger vi et bilde av hvordan de oppfører seg på intervallet <span class="math inline">\([-1,1]\)</span>. Er de store eller små? Hvor mange ganger svinger de? Oppfører partalls- og oddetallspolynomene seg ulikt? Dette blir viktig senere når vi skal forstå hvorfor denne beskrivelsen av et polynom kan være numerisk gunstig.</p>
 <p>En graf består av mange beregnede punkter. Koden lager derfor 1200 jevnt fordelte <span class="math inline">\(x\)</span>-verdier og bruker <code>chebyshev_table</code> til å regne ut <span class="math inline">\(T_0,\ldots,T_8\)</span> i alle sammen. Resultatet <code>T_plot</code> har 1200 rader og 9 kolonner. I løkken tegner <code>T_plot[:, n]</code> hele kolonnen som hører til <span class="math inline">\(T_n\)</span>.</p>
 <div id="qpyodide-insertion-location-4"></div>
@@ -4578,8 +4578,8 @@ T_{n+1}(x)=2xT_n(x)-T_{n-1}(x).
 <li>Velg én av observasjonene og begrunn den fra rekursjonen.</li>
 </ol>
 </section>
-<section id="er-dette-en-basis" class="level3">
-<h3 class="anchored" data-anchor-id="er-dette-en-basis">Er dette en basis?</h3>
+<section id="undersøk-om-chebyshev-polynomene-danner-en-basis" class="level3">
+<h3 class="anchored" data-anchor-id="undersøk-om-chebyshev-polynomene-danner-en-basis">Undersøk om Chebyshev-polynomene danner en basis</h3>
 <p>Den vanlige måten å skrive polynomer i <span class="math inline">\(\mathcal P_4\)</span> på er</p>
 <p><span class="math display">\[p(x)=a_0+a_1x+a_2x^2+a_3x^3+a_4x^4.\]</span></p>
 <p>Polynomene <span class="math inline">\((1,x,x^2,x^3,x^4)\)</span> kalles her <strong>monomialbasis</strong> eller <strong>potensbasis</strong>. Tallkolonnen <span class="math inline">\((a_0,a_1,a_2,a_3,a_4)^T\)</span> er koordinatene til <span class="math inline">\(p\)</span> i denne basisen. For eksempel har <span class="math inline">\(3-2x^2\)</span> koordinatkolonnen</p>
@@ -4608,8 +4608,8 @@ Qb=0.
 <p>Hva forteller formen til <code>Q</code> om samme spørsmål for <span class="math inline">\((T_0,\ldots,T_n)\)</span> ved høyere grad? Formuler en begrunnet regel. Pek på mønsteret i matrisen; du trenger ikke bevise regelen for alle <span class="math inline">\(n\)</span>.</p>
 </section>
 </section>
-<section id="del-1-avlesning-som-en-lineær-transformasjon" class="level2">
-<h2 class="anchored" data-anchor-id="del-1-avlesning-som-en-lineær-transformasjon">2. Del 1 – avlesning som en lineær transformasjon</h2>
+<section id="del-1-reverse-engineering-fra-polynomverdier" class="level2">
+<h2 class="anchored" data-anchor-id="del-1-reverse-engineering-fra-polynomverdier">Del 1: Reverse engineering fra polynomverdier</h2>
 <p>Vi går tilbake til lav grad før vi gjør store numeriske eksperimenter. La <span class="math inline">\(p\in\mathcal P_3\)</span>, og les av verdien til <span class="math inline">\(p\)</span> i punktene</p>
 <p><span class="math display">\[x_0=-1,\qquad x_1=-\frac13,\qquad x_2=\frac13,\qquad x_3=1.\]</span></p>
 <p>Transformasjonen</p>
@@ -4622,8 +4622,8 @@ p(x_0)\\p(x_1)\\p(x_2)\\p(x_3)
 <p>sender altså et polynom til fire polynomverdier. Avbildningen er lineær: Hvis vi dobler polynomet, dobles alle avlesningene, og avlesning av en sum gir summen av avlesningene:</p>
 <p><span class="math display">\[E(2p)=2E(p),\qquad E(p+q)=E(p)+E(q).\]</span></p>
 <p>Det er nettopp denne lineariteten som gjør at hele avlesningsprosessen kan beskrives med en matrise.</p>
-<section id="matrisen-avhenger-av-basisen" class="level3">
-<h3 class="anchored" data-anchor-id="matrisen-avhenger-av-basisen">Matrisen avhenger av basisen</h3>
+<section id="bygg-avlesningsmatrisene-for-hånd" class="level3">
+<h3 class="anchored" data-anchor-id="bygg-avlesningsmatrisene-for-hånd">Bygg avlesningsmatrisene for hånd</h3>
 <p>Hvis</p>
 <p><span class="math display">\[p(x)=a_0+a_1x+a_2x^2+a_3x^3,\]</span></p>
 <p>er den første avlesningen</p>
@@ -4694,8 +4694,8 @@ T_2(-1/3)=-\frac79,\quad T_3(-1/3)=\frac{23}{27}.
 <li>Koeffisientkolonnene <span class="math inline">\(a\)</span> og <span class="math inline">\(c\)</span> vil vanligvis være forskjellige. Betyr det at polynomene er forskjellige, eller bare at det samme polynomet er skrevet med forskjellige byggeklosser? Hvordan kan du kontrollere svaret?</li>
 </ol>
 </section>
-<section id="finn-det-samme-polynomet-i-to-basiser" class="level3">
-<h3 class="anchored" data-anchor-id="finn-det-samme-polynomet-i-to-basiser">Finn det samme polynomet i to basiser</h3>
+<section id="skriv-det-samme-polynomet-i-to-basiser" class="level3">
+<h3 class="anchored" data-anchor-id="skriv-det-samme-polynomet-i-to-basiser">Skriv det samme polynomet i to basiser</h3>
 <p>Nå prøver vi tankegangen i praksis. Vi starter med et kjent polynom,</p>
 <p><span class="math display">\[p(x)=1-2x+\frac12x^2+x^3.\]</span></p>
 <p>Koden regner først ut de fire avlesningene. Deretter later vi som om koeffisientene er glemt og beholder bare avlesningene. Vi skal altså arbeide baklengs: Fra noen målte polynomverdier prøver vi å finne ut hvilket polynom som kan ha laget dem. Vi kaller dette <strong>reverse engineering</strong> av polynomet.</p>
@@ -4714,8 +4714,8 @@ C_{\text{small}}c=E(p).\]</span></p>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Kontroller at de to koordinatvektorene virkelig bygger samme polynom. Skriv polynomet som en lineærkombinasjon av <span class="math inline">\(T_0,T_1,T_2,T_3\)</span> og sammenlign med monomialformen.</p>
 </section>
-<section id="når-mister-avlesningene-informasjon" class="level3">
-<h3 class="anchored" data-anchor-id="når-mister-avlesningene-informasjon">Når mister avlesningene informasjon?</h3>
+<section id="finn-det-avlesningene-ikke-kan-se" class="level3">
+<h3 class="anchored" data-anchor-id="finn-det-avlesningene-ikke-kan-se">Finn det avlesningene ikke kan se</h3>
 <p>Med fire forskjellige avlesningspunkter kunne vi finne et polynom i <span class="math inline">\(\mathcal P_3\)</span> entydig. Nå undersøker vi hvorfor «fire tall» ikke alene er nok: Punktene må også gi fire forskjellige opplysninger. Vi gjør to separate endringer. Først beholder vi bare tre avlesninger. Deretter bruker vi fire rader, men gjentar ett punkt. I begge tilfeller forventer vi at rangen blir mindre enn 4.</p>
 <p>Kjør de to endringene under én om gangen:</p>
 <div id="qpyodide-insertion-location-8"></div>
@@ -4736,8 +4736,8 @@ C_{\text{small}}c=E(p).\]</span></p>
 </ol>
 </section>
 </section>
-<section id="del-2-samme-avlesningspunkter-forskjellig-basis" class="level2">
-<h2 class="anchored" data-anchor-id="del-2-samme-avlesningspunkter-forskjellig-basis">3. Del 2 – samme avlesningspunkter, forskjellig basis</h2>
+<section id="del-2-hold-punktene-fast-og-bytt-basis" class="level2">
+<h2 class="anchored" data-anchor-id="del-2-hold-punktene-fast-og-bytt-basis">Del 2: Hold punktene fast og bytt basis</h2>
 <p>Ved grad 3 fant begge matrisene fram til det riktige polynomet. Det kan derfor se ut som basisvalget bare endrer hvordan koeffisientene skrives. I eksakt matematikk er det riktig. På en datamaskin må imidlertid alle mellomresultater lagres med et begrenset antall sifre. Nå spør vi om én skrivemåte kan føre til større avrundingsproblemer enn den andre når graden øker.</p>
 <p>For å gjøre sammenligningen rettferdig bruker vi nøyaktig det samme referansepolynomet, de samme avlesningspunktene og de samme avlesningsverdiene i begge systemene. Det eneste som byttes, er kolonnene i matrisen: enten <span class="math inline">\(1,x,\ldots,x^n\)</span> eller <span class="math inline">\(T_0,T_1,\ldots,T_n\)</span>. Hvis resultatene blir ulike, har vi dermed isolert virkningen av basisvalget.</p>
 <p>Vi bruker foreløpig punktene</p>
@@ -4750,8 +4750,8 @@ x_k=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
 <div id="qpyodide-insertion-location-10"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Se på formelen i <code>reference_coordinates</code> før du kjører grad 30. Alle tallene <span class="math inline">\(c_k=(-1)^k/(k+1)^2\)</span> ligger mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1\)</span>. Skriv ned om du tror dette også tvinger koeffisientene foran <span class="math inline">\(1,x,x^2,\ldots,x^{30}\)</span> til å være små. Dette er hypotesen som forsøket skal teste.</p>
-<section id="ett-komplett-forsøk" class="level3">
-<h3 class="anchored" data-anchor-id="ett-komplett-forsøk">Ett komplett forsøk</h3>
+<section id="gjør-reverse-engineering-i-begge-basiser" class="level3">
+<h3 class="anchored" data-anchor-id="gjør-reverse-engineering-i-begge-basiser">Gjør reverse engineering i begge basiser</h3>
 <p>Funksjonen følger denne historien:</p>
 <ol type="1">
 <li>Lag et polynom ved å velge Chebyshev-koeffisienter.</li>
@@ -4772,8 +4772,8 @@ x_k=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
 <li>I eksakt matematikk er begge basisskrivemåtene likeverdige. Hvilken del av forskjellen i utskriften skyldes derfor flyttallsregning?</li>
 </ol>
 </section>
-<section id="valgfri-utvidelse-følg-forskjellen-når-graden-øker" class="level3">
-<h3 class="anchored" data-anchor-id="valgfri-utvidelse-følg-forskjellen-når-graden-øker">Valgfri utvidelse: følg forskjellen når graden øker</h3>
+<section id="valgfri-utvidelse-se-hva-som-skjer-når-graden-øker" class="level3">
+<h3 class="anchored" data-anchor-id="valgfri-utvidelse-se-hva-som-skjer-når-graden-øker">Valgfri utvidelse: se hva som skjer når graden øker</h3>
 <div id="qpyodide-insertion-location-12"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Lag en logaritmisk feilfigur for grad 30:</p>
@@ -4788,8 +4788,8 @@ x_k=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
 </ul>
 <p>Ikke skriv at «datamaskinen er unøyaktig» uten å identifisere hvilke tall som er store, og hvor kanselleringen oppstår.</p>
 </section>
-<section id="en-kontrollert-forstyrrelse-av-avlesningene" class="level3">
-<h3 class="anchored" data-anchor-id="en-kontrollert-forstyrrelse-av-avlesningene">En kontrollert forstyrrelse av avlesningene</h3>
+<section id="legg-den-samme-lille-feilen-til-begge-systemene" class="level3">
+<h3 class="anchored" data-anchor-id="legg-den-samme-lille-feilen-til-begge-systemene">Legg den samme lille feilen til begge systemene</h3>
 <p>Virkelige avlesninger er sjelden eksakte. Vi legger derfor til en svært liten feil, omtrent <span class="math inline">\(10^{-10}\)</span>, i hver polynomverdi. Først løser vi systemet med de opprinnelige dataene, deretter med de litt endrede dataene. Vi gjør dette i begge basiser med nøyaktig den samme feillisten. Spørsmålet er hvor mye en liten målefeil påvirker reverse engineering av koeffisientene.</p>
 <p>Vi sammenligner <code>a_after-a_before</code> fordi begge vektorene bruker monomialbasis. Tilsvarende sammenligner vi <code>c_after-c_before</code> fordi begge bruker Chebyshev-basis. Derimot ville <code>a_after-c_after</code> ikke hatt en enkel betydning: Plass nummer 2 står foran <span class="math inline">\(x^2\)</span> i den ene listen og foran <span class="math inline">\(T_2\)</span> i den andre.</p>
 <div id="qpyodide-insertion-location-14"></div>
@@ -4797,8 +4797,8 @@ x_k=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
 <p>Bruk denne forklaringen til å tolke de tre utskrevne tallene. Hvor stor var endringen i selve dataene? Hvor stor ble endringen i hver koeffisientliste? Hvilken representasjon forsterket den lille dataendringen mest?</p>
 </section>
 </section>
-<section id="del-3-samme-basis-forskjellige-avlesningspunkter" class="level2">
-<h2 class="anchored" data-anchor-id="del-3-samme-basis-forskjellige-avlesningspunkter">4. Del 3 – samme basis, forskjellige avlesningspunkter</h2>
+<section id="del-3-hold-basisen-fast-og-flytt-punktene" class="level2">
+<h2 class="anchored" data-anchor-id="del-3-hold-basisen-fast-og-flytt-punktene">Del 3: Hold basisen fast og flytt punktene</h2>
 <p>I del 2 holdt vi punktene fast og byttet basis. Nå gjør vi det motsatte: Chebyshev-basis brukes i begge systemene, men avlesningspunktene flyttes. Spørsmålet er om <span class="math inline">\(n+1\)</span> avlesninger alltid er like informative, eller om plasseringen av dem betyr noe for hva polynomet kan gjøre mellom punktene.</p>
 <p>De to punktfamiliene er</p>
 <p><span class="math display">\[
@@ -4810,15 +4810,15 @@ x_k^{\mathrm{Cheb}}
 =\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
 \]</span></p>
 <p>for <span class="math inline">\(k=0,\ldots,n\)</span>.</p>
-<section id="se-på-plasseringen-før-du-regner" class="level3">
-<h3 class="anchored" data-anchor-id="se-på-plasseringen-før-du-regner">Se på plasseringen før du regner</h3>
+<section id="sammenlign-punktplasseringene-før-du-regner" class="level3">
+<h3 class="anchored" data-anchor-id="sammenlign-punktplasseringene-før-du-regner">Sammenlign punktplasseringene før du regner</h3>
 <p>Før vi løser et eneste system, tegner vi bare punktene på en tallinje. De jevne punktene har samme avstand overalt. Cosinuspunktene ligger tettere ved endene av intervallet og glisnere nær midten. Figuren skal hjelpe deg å lage en hypotese: Hvis et polynom er tvunget til å passe data i mange punkter nær endene, blir det da lettere eller vanskeligere for polynomet å få store utslag der mellom avlesningene?</p>
 <div id="qpyodide-insertion-location-15"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Hvor er punktavstanden størst og minst i hvert oppsett? Hvilket oppsett ville du valgt dersom du var spesielt redd for at polynomet skulle gjøre noe uventet nær <span class="math inline">\(-1\)</span> eller <span class="math inline">\(1\)</span>? Skriv hypotesen før forsøket med forstyrrelser.</p>
 </section>
-<section id="den-samme-lille-feilen-i-begge-forsøk" class="level3">
-<h3 class="anchored" data-anchor-id="den-samme-lille-feilen-i-begge-forsøk">Den samme lille feilen i begge forsøk</h3>
+<section id="bruk-den-samme-lille-feilen-med-begge-punktsettene" class="level3">
+<h3 class="anchored" data-anchor-id="bruk-den-samme-lille-feilen-med-begge-punktsettene">Bruk den samme lille feilen med begge punktsettene</h3>
 <p>Vi forstyrrer avlesningene med det faste mønsteret</p>
 <p><span class="math display">\[\delta y_k=10^{-10}(-1)^k.\]</span></p>
 <p>Det er viktig at både størrelsen og fortegnsmønsteret er identisk i de to forsøkene. Dermed kan ikke forskjellen forklares med at det ene forsøket fikk en større eller mer gunstig feil.</p>
@@ -4832,8 +4832,8 @@ x_k^{\mathrm{Cheb}}
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Sammenlign først <code>feil i avlesning</code> i de to utskriftene: De skal være like. Sammenlign så <code>kurvefeil</code> og <code>forsterkning</code>. Hvor mange tierpotenser skiller forsøkene? Forklar hvorfor forskjellen ikke kan skyldes ulik basis eller ulik størrelse på forstyrrelsen.</p>
 </section>
-<section id="det-nesten-usynlige-polynomet" class="level3">
-<h3 class="anchored" data-anchor-id="det-nesten-usynlige-polynomet">Det nesten usynlige polynomet</h3>
+<section id="gjør-det-nesten-usynlige-feilpolynomet-synlig" class="level3">
+<h3 class="anchored" data-anchor-id="gjør-det-nesten-usynlige-feilpolynomet-synlig">Gjør det nesten usynlige feilpolynomet synlig</h3>
 <p>For å forstå forsterkningen ser vi ikke bare på to hele polynomer. Vi trekker dem fra hverandre. Forskjellen mellom reverse-engineering-resultatet og det opprinnelige polynomet er selv et polynom:</p>
 <p><span class="math display">\[r(x)=p_{\mathrm{forstyrret}}(x)-p_{\mathrm{opprinnelig}}(x).\]</span></p>
 <p>Ved hvert avlesningspunkt er <span class="math inline">\(r(x_k)\)</span> akkurat den lille forstyrrelsen vi la til. Hvis vi bare så på disse <span class="math inline">\(n+1\)</span> tallene, ville <span class="math inline">\(r\)</span> virke nesten som nullpolynomet. Men avlesningspunktene forteller ikke direkte hva som skjer mellom dem. Figuren tegner derfor både de små svarte verdiene <span class="math inline">\(r(x_k)\)</span> og hele kurven <span class="math inline">\(r(x)\)</span> på det tette rutenettet.</p>
@@ -4848,15 +4848,15 @@ x_k^{\mathrm{Cheb}}
 </ol>
 <p>Vi kan uformelt kalle <span class="math inline">\(r\)</span> en <strong>numerisk nullromsretning</strong>: Et ikke-null polynom blir sendt til en svært liten, men ikke helt null, avlesningskolonne. Dette er ikke et nytt eksakt nullrom. Uttrykket beskriver at avlesningene nesten ikke ser en endring som likevel kan være stor mellom punktene.</p>
 </section>
-<section id="valgfri-utvidelse-når-blir-forskjellen-synlig" class="level3">
-<h3 class="anchored" data-anchor-id="valgfri-utvidelse-når-blir-forskjellen-synlig">Valgfri utvidelse: når blir forskjellen synlig?</h3>
+<section id="valgfri-utvidelse-finn-graden-der-forskjellen-blir-synlig" class="level3">
+<h3 class="anchored" data-anchor-id="valgfri-utvidelse-finn-graden-der-forskjellen-blir-synlig">Valgfri utvidelse: finn graden der forskjellen blir synlig</h3>
 <div id="qpyodide-insertion-location-18"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Hvis du gjør utvidelsen, velg minst to ekstra grader selv. Beskriv når forskjellen først blir tydelig, og om veksten ser jevn ut. Tallene viser hva som skjer i forsøkene dine, men de beviser ikke hva som skjer for alle grader.</p>
 </section>
 </section>
-<section id="finale-et-polynom-mellom-1-og-1" class="level2">
-<h2 class="anchored" data-anchor-id="finale-et-polynom-mellom-1-og-1">5. Finale – et polynom mellom −1 og 1</h2>
+<section id="finale-beregn-det-samme-polynomet-på-tre-måter" class="level2">
+<h2 class="anchored" data-anchor-id="finale-beregn-det-samme-polynomet-på-tre-måter">Finale: Beregn det samme polynomet på tre måter</h2>
 <p>Plottene i starten antydet at <span class="math inline">\(T_n\)</span> holder seg mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1\)</span> på intervallet. Identiteten</p>
 <p><span class="math display">\[T_n(x)=\cos(n\arccos x),\qquad -1\le x\le1,\]</span></p>
 <p>gir oss en uavhengig måte å kontrollere dette på. Dermed kjenner vi størrelsen på det riktige svaret før vi bruker NumPy: <span class="math inline">\(T_{50}(0.99)\)</span> må ligge i <span class="math inline">\([-1,1]\)</span>.</p>
@@ -4871,8 +4871,8 @@ x_k^{\mathrm{Cheb}}
 <div id="qpyodide-insertion-location-19"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Hvis et svar ligger langt utenfor intervallet <span class="math inline">\([-1,1]\)</span>, vet du fra cosinusidentiteten at det ikke kan være riktig. Se da på den største monomialkoeffisienten. Når mange svært store ledd til slutt skal gi et svar mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1\)</span>, må positive og negative bidrag nesten kansellere hverandre. Små avrundinger i de store mellomresultatene kan da overleve etter kanselleringen og bli store sammenlignet med det riktige svaret.</p>
-<section id="følg-sammenbruddet-mot-grad-50" class="level3">
-<h3 class="anchored" data-anchor-id="følg-sammenbruddet-mot-grad-50">Følg sammenbruddet mot grad 50</h3>
+<section id="se-hvordan-feilen-vokser-fram-mot-grad-50" class="level3">
+<h3 class="anchored" data-anchor-id="se-hvordan-feilen-vokser-fram-mot-grad-50">Se hvordan feilen vokser fram mot grad 50</h3>
 <p>For å se om problemet dukker opp plutselig eller bygger seg opp, gjentar vi de tre evalueringene for grad 10, 20, 30, 40 og 50. Tabellen viser ved siden av hverandre hvor stor den største monomialkoeffisienten er og hvor mye de to beregningsmåtene avviker fra cosinuskontrollen.</p>
 <div id="qpyodide-insertion-location-20"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -4887,7 +4887,7 @@ x_k^{\mathrm{Cheb}}
 </section>
 </section>
 <section id="åpen-utfordring-lag-din-egen-blindsone" class="level2">
-<h2 class="anchored" data-anchor-id="åpen-utfordring-lag-din-egen-blindsone">6. Åpen utfordring – lag din egen blindsone</h2>
+<h2 class="anchored" data-anchor-id="åpen-utfordring-lag-din-egen-blindsone">Åpen utfordring: Lag din egen blindsone</h2>
 <p>Nå får du bruke ideene fra prosjektet mer fritt. Du skal gjenta historien fra del 3, men velge graden, punktene og fortegnene selv. Start med et referansepolynom, legg en svært liten feil til avlesningene, gjør reverse engineering av polynomet som passer de endrede dataene, og mål hvor stort avviket blir mellom punktene.</p>
 <p>Plasser avlesningspunktene slik at en svært liten feil i avlesningene gir en stor feil mellom punktene, og slik at du kan forklare mekanismen. Målet er ikke et kunstig rekordtall. Følg disse reglene:</p>
 <ul>
@@ -4904,8 +4904,8 @@ x_k^{\mathrm{Cheb}}
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Prøv minst to ideer, og endre én egenskap om gangen. Det beste forsøket er ikke nødvendigvis det med størst tall. Du må også kunne forklare hvorfor plasseringen av punktene skjuler feilpolynomet.</p>
 </section>
-<section id="samlet-analyse" class="level2">
-<h2 class="anchored" data-anchor-id="samlet-analyse">7. Samlet analyse</h2>
+<section id="samlet-analyse-forklar-hva-forsøkene-viste" class="level2">
+<h2 class="anchored" data-anchor-id="samlet-analyse-forklar-hva-forsøkene-viste">Samlet analyse: Forklar hva forsøkene viste</h2>
 <p>Skriv en sammenhengende analyse på omtrent <strong>400–600 ord</strong>. Figurer og tabeller underbygger analysen, men de erstatter ikke forklaringen.</p>
 <p>Analysen skal skille tydelig mellom:</p>
 <ol type="1">
@@ -4926,8 +4926,8 @@ x_k^{\mathrm{Cheb}}
 <li>Hva lærte <span class="math inline">\(T_{50}\)</span>-forsøket som ikke allerede var synlig ved grad 3?</li>
 </ul>
 </section>
-<section id="leveranse" class="level2">
-<h2 class="anchored" data-anchor-id="leveranse">Leveranse</h2>
+<section id="dette-skal-leveres" class="level2">
+<h2 class="anchored" data-anchor-id="dette-skal-leveres">Dette skal leveres</h2>
 <p>Lever én Quarto-side eller notebook med:</p>
 <ol type="1">
 <li>håndregnede <span class="math inline">\(T_2,T_3,T_4\)</span> og kontroll av rekursjonen;</li>
@@ -4947,7 +4947,7 @@ x_k^{\mathrm{Cheb}}
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Advarsel</span>Om kodeassistenter og numeriske påstander
+<span class="screen-reader-only">Advarsel</span>Krav til kodeassistenter og numeriske påstander
 </div>
 </div>
 <div class="callout-body-container callout-body">
