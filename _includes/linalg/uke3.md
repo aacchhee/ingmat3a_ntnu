@@ -1329,14 +1329,26 @@ Nå lar vi den enkleste transformasjonen vi har — gjennomsnittet av fire tall 
 # Vi sender én basisretning om gangen gjennom gjennomsnittstransformasjonen.
 # Da ser vi hvilke koordinater transformasjonen beholder.
 outputs=[np.array([[np.mean(pattern)]]) for pattern in pattern_basis]
-show_images(pattern_basis+outputs,
-    pattern_names+[f"Output: {value.item():.1f}" for value in outputs],
-    cols=4,cmap="coolwarm",vmin=-1,vmax=1,figsize=(6.8,3.4))
+show_image_table(
+    [pattern_basis,outputs],
+    ["Input\n($2\\times2$)","Output\n($1\\times1$)"],
+    pattern_names,
+    cell_labels=[
+        ["$M$","$H$","$V$","$D$"],
+        [f"$G={value.item():.1f}$" for value in outputs]
+    ],
+    cmap="coolwarm",vmin=-1,vmax=1,figsize=(7.0,3.6)
+)
 for name,pattern in zip(pattern_names,pattern_basis):
     print(f"{name:16s} -> gjennomsnitt {np.mean(pattern): .1f}")
 ```
 
-Les figuren loddrett: De fire store bildene er inputene, og de fire små rutene er de tilhørende outputene. Lysnivåbildet har fire enere, så gjennomsnittet er 1. Hvert kontrastbilde har to enere og to minusenere; summen er 0 og gjennomsnittet er derfor 0.
+Hver kolonne i tabellen er ett forsøk. Øverst står et $2\times2$-mønster;
+rett under står den tilhørende $1\times1$-outputen. Alle piksler har samme
+fysiske størrelse, så outputruten har halvparten av sidelengden til
+inputbildet. Lysnivåbildet har fire enere, så gjennomsnittet er 1. Hvert
+kontrastbilde har to enere og to minusenere; summen er 0 og gjennomsnittet er
+derfor 0.
 
 Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig kombinasjon av kontrastbildene får også gjennomsnitt null, fordi lineariteten fra 3.2 lar oss kombinere de tre nullresultatene.
 
@@ -1463,8 +1475,13 @@ random_coefficients=rng.normal(size=12)
 Z=sum(c*Zi for c,Zi in zip(random_coefficients,null_basis))
 pooled_Z=average_pool(Z)
 limit=np.max(np.abs(Z))
-show_images([Z,pooled_Z],["Tilfeldig kombinasjon av 12 mønstre","Output"],
-            cols=2,cmap="coolwarm",vmin=-limit,vmax=limit,figsize=(3.6,1.8))
+show_image_table(
+    [[Z,pooled_Z]],
+    ["Kontroll"],
+    ["Input $Z$ ($4\\times4$)",
+     "Output $A_{\\mathrm{pool}}z$ ($2\\times2$)"],
+    cmap="coolwarm",vmin=-limit,vmax=limit,figsize=(4.8,2.7)
+)
 ```
 
 For hvert mønster er $Az$ et $2\times2$-outputbilde. Utskriften $\lVert Az\rVert$ måler avstanden fra denne outputen til nullbildet. Verdier på størrelse med avrundingsfeilen betyr at mønsteret forsvinner numerisk i transformasjonen.
@@ -1473,7 +1490,11 @@ Hvis $Az_1=0$ og $Az_2=0$, gir linearitet
 
 $$A(\alpha z_1+\beta z_2)=0.$$
 
-Det første bildet i den siste figuren er kombinasjonen av de tolv mønstrene. Det andre er outputen etter blokkgjennomsnitt. Den er null i alle fire posisjoner. Koden gjør dermed to observasjoner: Hver lokal kontrast gir output null, og en tilfeldig lineærkombinasjon av dem gir fremdeles output null. Grunnen er linearitet, ikke at vi var heldige med koeffisientene.
+Venstre felt i tabellen viser kombinasjonen av de tolv mønstrene. Høyre felt
+viser den proporsjonalt mindre outputen etter blokkgjennomsnitt. Den er null i
+alle fire posisjoner. Koden gjør dermed to observasjoner: Hver lokal kontrast
+gir output null, og en tilfeldig lineærkombinasjon av dem gir fremdeles output
+null. Grunnen er linearitet, ikke at vi var heldige med koeffisientene.
 
 Nullrommet er altså en samling der vi kan addere bilder og multiplisere dem med tall uten å forlate samlingen. En slik lineær samling inni et større rom kalles et **underrom**. Vi trenger ingen nye regneregler; ordet beskriver bare at lineærkombinasjoner blir værende i samlingen.
 
@@ -1628,16 +1649,25 @@ targets=[rng.random((2,2)) for _ in range(4)]
 inputs=[expand_block_values(Y) for Y in targets]
 outputs=[average_pool(Xi) for Xi in inputs]
 
-panels=[]; titles=[]
-for Xi,Yi,out in zip(inputs,targets,outputs):
-    panels.extend([Xi,Yi,out])
-    titles.extend(["Konstruert input","Ønsket output","Faktisk output"])
-show_images(panels,titles,cols=3,vmin=0,vmax=1,figsize=(6.8,5.0))
+experiment_rows=[[Xi,Yi,out] for Xi,Yi,out in zip(inputs,targets,outputs)]
+show_image_table(
+    experiment_rows,
+    [f"Forsøk {i}" for i in range(1,len(experiment_rows)+1)],
+    ["Konstruert input\n($4\\times4$)",
+     "Ønsket output\n($2\\times2$)",
+     "Faktisk output\n($2\\times2$)"],
+    vmin=0,vmax=1,figsize=(6.8,8.0)
+)
 print("Største feil:",max(np.linalg.norm(out-Yi)
                           for out,Yi in zip(outputs,targets)))
 ```
 
-Les hver rad i figuren fra venstre mot høyre. Først vises et konstruert $4\times4$-inputbilde. I midten står outputen vi ba om. Til høyre står outputen transformasjonen faktisk beregnet. De to små bildene er identiske i alle fire forsøk.
+Les hver forsøksrad fra venstre mot høyre. Først vises et konstruert
+$4\times4$-inputbilde. I midten står $2\times2$-outputen vi ba om, og til
+høyre står $2\times2$-outputen transformasjonen faktisk beregnet. Samme
+fysiske pikselstørrelse brukes i alle tre kolonner, så de to outputbildene har
+halvparten av sidelengden til inputbildet. De to små bildene er identiske i
+alle fire forsøk.
 
 Målbildene ble valgt tilfeldig, men den samme oppskriften virker for alle $2\times2$-bilder: kopier hver ønsket outputverdi inn i alle fire pikslene i den tilsvarende inputblokken. Gjennomsnittet av fire like tall er tallet selv. Feilen er derfor nøyaktig null, bortsett fra eventuell avrunding. Transformasjonen kan altså produsere alle vektorer i $\mathbb R^4$.
 
