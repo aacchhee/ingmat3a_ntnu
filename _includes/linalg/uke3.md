@@ -1173,7 +1173,74 @@ show_images(pattern_basis,pattern_names,cols=4,
 
 Disse mønstrene virker meningsfulle, men det er ikke nok til å kalle dem en basis. Vi må undersøke de samme to spørsmålene som for pikselbasisen: Kan de bygge alle målbilder, og er oppskriften entydig?
 
-Vi gjør hvert mønster om til en 4-vektor og bruker vektorene som kolonner i `P`. For hvert målbilde løser vi ligningen `P @ c = target`: Finnes det koeffisienter som rekonstruerer bildet?
+Når koeffisientene er kjent, går regningen framover: Vi skalerer de fire
+mønstrene og legger dem sammen for å lage et bilde. Hvis
+
+$$
+c=\begin{bmatrix}c_M&c_H&c_V&c_D\end{bmatrix}^{T},
+$$
+
+er $c_M$ styrken til lysnivåmønsteret, $c_H$ styrken til
+venstre–høyre-mønsteret, og tilsvarende for de to siste mønstrene.
+
+Nå snur vi problemet. Målbildet er kjent, men koeffisientene som laget det er
+ukjente. Å gå baklengs fra et kjent resultat til den ukjente oppskriften
+kalles **reverse engineering**.
+
+For å skrive baklengsproblemet som ett lineært system gjør vi hvert
+$2\times2$-mønster om til en 4-vektor og setter vektorene som kolonner i
+matrisen
+
+$$
+P=\begin{bmatrix}
+\operatorname{vec}(M)&\operatorname{vec}(H)&
+\operatorname{vec}(V)&\operatorname{vec}(D)
+\end{bmatrix}.
+$$
+
+Her betyr $\operatorname{vec}$ at radene i bildet legges etter hverandre, slik
+`reshape(-1)` gjorde i 3.2. Målbildet legges på samme måte i 4-vektoren
+$t=\operatorname{vec}(\text{target})$. Reverse-engineering-problemet blir da
+
+$$
+\underbrace{P}_{\text{kjente mønstre}}
+\underbrace{c}_{\text{ukjente styrker}}
+=
+\underbrace{t}_{\text{kjente målpiksler}}.
+$$
+
+I NumPy-notasjon kan ligningen leses som
+`P @ c = target.reshape(-1)`. Selve løsningen beregnes med
+`np.linalg.solve(P, target.reshape(-1))`. Størrelsene og rollene er:
+
+| Størrelse | Betydning |
+|---|---|
+| $P$: $4\times4$ | Én kjent mønstervektor i hver kolonne |
+| $c$: $4\times1$ | De fire ukjente mønsterstyrkene vi vil finne |
+| $t$: $4\times1$ | De fire kjente pikselverdiene i målbildet |
+| $Pc$: $4\times1$ | Pikselverdiene i bildet som koeffisientene rekonstruerer |
+
+Ligningen stiller to spørsmål. **Finnes det en løsning?** I så fall kan
+mønstrene rekonstruere målbildet. **Finnes det bare én løsning?** I så fall er
+oppskriften entydig. En basis skal gi nøyaktig én løsning for hvert målbilde.
+
+::: {.callout-tip}
+### Samme reverse engineering i ukeprosjektet
+
+I prosjektet **Polynomer i blindsonen** møter du den samme regnestrukturen med
+andre objekter. Der er de kjente dataene målte polynomverdier
+$p(x_0),\ldots,p(x_n)$. Hver matriskolonne inneholder verdiene til én valgt
+polynombasisfunksjon i disse punktene, og den ukjente vektoren inneholder
+polynomkoeffisientene. Her rekonstruerer vi et bilde fra målpiksler; i
+prosjektet rekonstruerer vi et polynom fra avlesninger. I begge tilfeller er
+reverse engineering å løse et lineært system for koeffisientene og deretter
+kontrollere at de faktisk gjenskaper de kjente dataene.
+:::
+
+Koden nedenfor gjør dette for fire tilfeldige målbilder. `np.linalg.solve`
+finner først $c$. Deretter regner vi framover igjen med `P @ c` og sammenligner
+rekonstruksjonen med målbildet. Denne siste kontrollen er viktig: En beregnet
+koeffisientvektor er bare et gyldig svar dersom den faktisk bygger målet.
 
 ```{pyodide-python}
 #| label: week3-test-pattern-building-blocks
@@ -1215,7 +1282,10 @@ samme konklusjonen numerisk.
 
 I hvert par er bildet merket «Mål» laget tilfeldig. «Bygd mål» er rekonstruksjonen fra de fire mønstrene. Parene ser like ut, og normen av forskjellen er omkring $10^{-16}$ eller null. Forsøkene illustrerer basisresultatet på konkrete bilder; argumentet med $P^TP$ forklarer hvorfor det gjelder alle bilder.
 
-Matrisen `P` har ett mønster i hver kolonne. Ligningen `P @ c = target` spør hvilke fire mønsterstyrker `c` som gir det ønskede bildet. Fordi kolonnene danner en basis, har hvert målbilde nøyaktig én løsning.
+Reverse engineering lykkes her for alle fire målbildene, og argumentet med
+$P^TP$ viser hvorfor løsningen alltid er entydig. Mønsterkolonnene danner
+derfor et koordinatsystem: Hvert bilde bestemmer nøyaktig én vektor $c$, og
+hver slik vektor bestemmer nøyaktig ett bilde $Pc$.
 
 Vi ser nærmere på koordinatene til bildet $X$ fra pikselbasis-eksemplet tidligere i denne delen.
 
