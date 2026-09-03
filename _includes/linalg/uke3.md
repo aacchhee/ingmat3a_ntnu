@@ -102,7 +102,7 @@ En **transformasjon** er her en regel som tar en input og lager en output. Input
 
 $$T(\text{input})=\text{output}.$$
 
-Dette er også definisjonen av en **funksjon**: Hver tillatt input får nøyaktig én output. I matematikk er for eksempel $f(t)=t^2$ en funksjon som sender $3$ til $9$. I Python gjør `abs(-3)` inputen `-3` om til outputen `3`. På samme måte tar Python-funksjonen `average_pool(X)` inn et bilde og returnerer et mindre bilde.
+Dette er også definisjonen av en **funksjon**: Hver tillatt input får nøyaktig én output. I matematikk er for eksempel $f(t)=t^2$ en funksjon som sender $3$ til $9$. I Python gjør `abs(-3)` inputen `-3` om til outputen `3`. På samme måte tar Python-funksjonen `average_pool(X)` inn et bilde og returnerer et mindre bilde. Her er $X$ navnet på inputbildet, og vi kaller outputbildet $Y$; med symboler skriver vi $Y=T(X)$.
 
 Navnet transformasjon sier foreløpig ikke noe mer mystisk enn dette. Det framhever bare at input og output gjerne er vektorer eller bilder, ikke nødvendigvis enkelttall. Det viktige er å spørre konkret: Hvilken informasjon bruker regelen, hvilken informasjon kommer ut, og kan noe gå tapt underveis?
 
@@ -206,6 +206,17 @@ board.create('text', [6.35,3.22,'fire piksler'], {
 
 Fargene og pilene viser hva som hører sammen. De fire pikslene i det blå området samles til den blå outputpikselen, og tilsvarende for de tre andre områdene. I vårt eksempel betyr «samle» at vi tar gjennomsnittet av de fire pikselverdiene. Dermed går vi fra 16 tall til fire tall. Vi begynner med to bilder som ser helt forskjellige ut: et ensfarget bilde og et tydelig sjakkmønster.
 
+Vi kaller de to store inputbildene $X_1$ og $X_2$. Begge er
+$4\times4$-bilder. Transformasjonen $T$ lager ett mindre bilde fra hvert av
+dem:
+
+$$
+Y_1=T(X_1), \qquad Y_2=T(X_2).
+$$
+
+Bokstaven $X$ viser altså alltid til et inputbilde med 16 piksler i dette
+eksempelet, mens $Y$ viser til det tilhørende outputbildet med fire piksler.
+
 Den neste cellen er ferdig maskineri for å vise bilder og beregne de fire
 gjennomsnittene. Du trenger ikke forstå `reshape`-uttrykket ennå; i 3.2 ser
 vi nøye på hvordan et bilde legges over i en vektor. Akkurat nå er spørsmålet
@@ -241,6 +252,39 @@ def show_images(images, titles=None, cols=4, cmap="gray",
         ax.set_xticks([]); ax.set_yticks([])
     for ax in axes[len(images):]:
         ax.axis("off")
+    plt.tight_layout(); plt.show()
+
+def show_image_table(rows, row_labels, column_labels, cmap="gray",
+                     vmin=None, vmax=None, canvas_shape=(4, 4),
+                     figsize=(5.4, 5.0)):
+    """Vis 4 x 4-input og 2 x 2-output med samme pikselstørrelse."""
+    plt.close("all")
+    fig, axes = plt.subplots(len(rows), len(column_labels),
+                             figsize=figsize, squeeze=False)
+    canvas_rows, canvas_cols = canvas_shape
+    for row_index, (images, row_label) in enumerate(zip(rows, row_labels)):
+        for col_index, (image, column_label) in enumerate(
+                zip(images, column_labels)):
+            ax = axes[row_index, col_index]
+            image = np.asarray(image)
+            image_rows, image_cols = image.shape
+            # Sentrer bildet på et felles 4 x 4-lerret. Da får hver piksel
+            # samme størrelse, og et 2 x 2-bilde blir halvparten så bredt
+            # og halvparten så høyt som et 4 x 4-bilde.
+            left = (canvas_cols-image_cols)/2
+            top = (canvas_rows-image_rows)/2
+            ax.imshow(image, cmap=cmap, vmin=vmin, vmax=vmax,
+                      interpolation="nearest",
+                      extent=(left, left+image_cols,
+                              top+image_rows, top))
+            ax.set_xlim(0, canvas_cols); ax.set_ylim(canvas_rows, 0)
+            ax.set_aspect("equal"); ax.set_xticks([]); ax.set_yticks([])
+            ax.set_frame_on(False)
+            if row_index == 0:
+                ax.set_title(column_label, fontsize=9)
+            if col_index == 0:
+                ax.set_ylabel(row_label, rotation=0, ha="right", va="center",
+                              labelpad=18, fontsize=9)
     plt.tight_layout(); plt.show()
 
 def average_pool(X):
@@ -284,13 +328,30 @@ X2 = np.array([
 ])
 Y1, Y2 = average_pool(X1), average_pool(X2)
 
-# Vi viser input og output i samme figur for å kunne sammenligne direkte.
-show_images([X1, X2, Y1, Y2],
-    ["Input $X_1$", "Input $X_2$", "Output fra $X_1$", "Output fra $X_2$"],
-    cols=4, vmin=0, vmax=1)
+# Hver rad følger ett bilde gjennom transformasjonen. Samme pikselstørrelse
+# gjør at 2 x 2-outputen vises med halvparten av sidelengden til inputen.
+show_image_table(
+    [[X1, Y1], [X2, Y2]],
+    ["$i=1$", "$i=2$"],
+    ["Input $X_i$\n($4\\times4$)",
+     "Output $Y_i=T(X_i)$\n($2\\times2$)"],
+    vmin=0, vmax=1
+)
 ```
 
-Bildene til venstre er tydelig forskjellige, mens de to outputbildene ser like ut. For å undersøke dette uten å stole bare på øynene trekker vi bildene fra hverandre, piksel for piksel.
+Inputbildene i venstre kolonne er tydelig forskjellige, mens outputbildene i
+høyre kolonne er like. For å undersøke dette uten å stole bare på øynene
+beregner vi to forskjellsmatriser:
+
+$$
+D_{\text{input}}=X_1-X_2,
+\qquad
+D_{\text{output}}=Y_1-Y_2.
+$$
+
+Subtraksjonen utføres på pikselverdiene: Hvert tall i den første matrisen er
+forskjellen mellom to piksler på samme plass i $X_1$ og $X_2$, og tilsvarende
+for $Y_1$ og $Y_2$.
 
 ### Ett tall for størrelsen på en forskjell
 
@@ -300,22 +361,28 @@ Hvis to bilder er like, består forskjellsbildet bare av nuller. **Nullbildet** 
 #| label: week3-difference-and-zero-images
 #| autorun: true
 
-# Trekk fra før og etter transformasjonen. Hvis D_output er nullbildet,
-# har transformasjonen mistet hele forskjellen mellom inputbildene.
+# Beregn forskjellen mellom samsvarende pikselverdier før og etter
+# transformasjonen. Hvis D_output er nullbildet, har transformasjonen
+# mistet hele forskjellen mellom inputbildene.
 D_input=X1-X2
 D_output=Y1-Y2
 zero_input=np.zeros_like(D_input)
 zero_output=np.zeros_like(D_output)
 
-show_images(
-    [D_input,zero_input,D_output,zero_output],
-    ["$X_1-X_2$","Nullbildet (4 x 4)",
-     "$Y_1-Y_2$","Nullbildet (2 x 2)"],
-    cols=4,cmap="coolwarm",vmin=-0.4,vmax=0.4
+show_image_table(
+    [[D_input,D_output],[zero_input,zero_output]],
+    ["Forskjell","Nullbilde"],
+    ["Inputrom ($4\\times4$)","Outputrom ($2\\times2$)"],
+    cmap="coolwarm",vmin=-0.4,vmax=0.4
 )
 ```
 
-Det første forskjellsbildet inneholder mange utslag fra null. Det tredje er allerede nullbildet. En figur er nyttig, men senere trenger vi også ett tall som oppsummerer hele forskjellen. Vi kan ikke bare summere pikselverdiene, fordi positive og negative forskjeller da kan oppheve hverandre.
+Forskjellsmatrisen øverst til venstre inneholder mange verdier som ikke er
+null. Forskjellsmatrisen øverst til høyre er derimot nullbildet: Selv om
+inputene er forskjellige, er outputene like. En figur er nyttig, men senere
+trenger vi også ett tall som oppsummerer hele forskjellen. Vi kan ikke bare
+summere pikselverdiene, fordi positive og negative forskjeller da kan oppheve
+hverandre.
 
 Vi kvadrerer derfor alle verdiene i forskjellsbildet, summerer dem og tar kvadratroten. For et bilde $D$ blir dette
 
