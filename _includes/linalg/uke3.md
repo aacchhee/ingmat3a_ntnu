@@ -255,28 +255,38 @@ def show_images(images, titles=None, cols=4, cmap="gray",
     plt.tight_layout(); plt.show()
 
 def show_image_table(rows, row_labels, column_labels, cmap="gray",
-                     vmin=None, vmax=None, canvas_shape=(4, 4),
-                     figsize=(5.4, 5.0)):
-    """Vis 4 x 4-input og 2 x 2-output med samme pikselstørrelse."""
+                     vmin=None, vmax=None, cell_labels=None,
+                     cell_styles=None, operators=None, figsize=(5.4, 5.0)):
+    """Vis en bildetabell med samme fysiske størrelse per piksel."""
     plt.close("all")
+    rows = [[np.asarray(image) for image in images] for images in rows]
+    column_widths = [max(images[col].shape[1] for images in rows)
+                     for col in range(len(column_labels))]
+    row_heights = [max(image.shape[0] for image in images)
+                   for images in rows]
     fig, axes = plt.subplots(len(rows), len(column_labels),
-                             figsize=figsize, squeeze=False)
-    canvas_rows, canvas_cols = canvas_shape
+                             figsize=figsize, squeeze=False,
+                             gridspec_kw={"width_ratios":column_widths,
+                                          "height_ratios":row_heights})
     for row_index, (images, row_label) in enumerate(zip(rows, row_labels)):
         for col_index, (image, column_label) in enumerate(
                 zip(images, column_labels)):
             ax = axes[row_index, col_index]
-            image = np.asarray(image)
+            canvas_rows = row_heights[row_index]
+            canvas_cols = column_widths[col_index]
             image_rows, image_cols = image.shape
-            # Sentrer bildet på et felles 4 x 4-lerret. Da får hver piksel
-            # samme størrelse, og et 2 x 2-bilde blir halvparten så bredt
-            # og halvparten så høyt som et 4 x 4-bilde.
+            # Kolonnebredder og radhøyder følger den største matrisen i
+            # hver kolonne og rad. Mindre bilder sentreres i feltet. Dermed
+            # har alle piksler samme fysiske størrelse, samtidig som tomrom
+            # og avstand mellom bildene holdes nede.
             left = (canvas_cols-image_cols)/2
             top = (canvas_rows-image_rows)/2
-            ax.imshow(image, cmap=cmap, vmin=vmin, vmax=vmax,
-                      interpolation="nearest",
-                      extent=(left, left+image_cols,
-                              top+image_rows, top))
+            image_style = {"cmap":cmap, "vmin":vmin, "vmax":vmax}
+            if cell_styles is not None:
+                image_style.update(cell_styles[row_index][col_index])
+            ax.imshow(image, interpolation="nearest",
+                      extent=(left, left+image_cols, top+image_rows, top),
+                      **image_style)
             ax.set_xlim(0, canvas_cols); ax.set_ylim(canvas_rows, 0)
             ax.set_aspect("equal"); ax.set_xticks([]); ax.set_yticks([])
             ax.set_frame_on(False)
@@ -285,7 +295,20 @@ def show_image_table(rows, row_labels, column_labels, cmap="gray",
             if col_index == 0:
                 ax.set_ylabel(row_label, rotation=0, ha="right", va="center",
                               labelpad=18, fontsize=9)
-    plt.tight_layout(); plt.show()
+            if cell_labels is not None:
+                ax.set_xlabel(cell_labels[row_index][col_index], fontsize=8,
+                              labelpad=4)
+    plt.tight_layout(w_pad=2.2, h_pad=2.0)
+    if operators is not None:
+        fig.canvas.draw()
+        for row_index, row_operators in enumerate(operators):
+            for col_index, symbol in enumerate(row_operators):
+                left_box = axes[row_index, col_index].get_position()
+                right_box = axes[row_index, col_index+1].get_position()
+                fig.text((left_box.x1+right_box.x0)/2,
+                         (left_box.y0+left_box.y1)/2,
+                         symbol, ha="center", va="center", fontsize=13)
+    plt.show()
 
 def average_pool(X):
     """Fire gjennomsnitt, ett fra hver 2 x 2-blokk."""
@@ -355,7 +378,22 @@ for $Y_1$ og $Y_2$.
 
 ### Ett tall for størrelsen på en forskjell
 
-Hvis to bilder er like, består forskjellsbildet bare av nuller. **Nullbildet** er bildet der alle pikselverdiene er 0 — bildespråkets versjon av nullvektoren eller nullmatrisen. Med en vanlig gråskala ser det svart ut. I figuren nedenfor bruker vi derimot en rød–blå skala for å vise både positive og negative forskjeller; på denne skalaen vises 0 som hvitt.
+Forskjellsmatrisene forteller både **hvor** bildene er forskjellige, og i
+hvilken retning pikselverdiene har endret seg. Hvis to bilder er like, er
+forskjellen 0 på hver eneste pikselplass. Da får vi **nullbildet**, altså en
+matrise der alle pikselverdiene er 0.
+
+Tabellen nedenfor skal leses rad for rad og kolonne for kolonne:
+
+- Øverste rad viser de beregnede forskjellene. Venstre kolonne sammenligner
+  de to $4\times4$-inputene, mens høyre kolonne sammenligner de to
+  $2\times2$-outputene.
+- Nederste rad viser nullbilder med tilsvarende størrelse. De fungerer som
+  visuelle referanser: En forskjell som ser lik ut som nullbildet under, har
+  ingen utslag.
+- Rødt betyr positiv forskjell, blått betyr negativ forskjell og hvitt betyr
+  0. Størrelsen på hver rute følger antallet piksler, så et $2\times2$-bilde
+  har halvparten av sidelengden til et $4\times4$-bilde.
 
 ```{pyodide-python}
 #| label: week3-difference-and-zero-images
@@ -377,12 +415,18 @@ show_image_table(
 )
 ```
 
-Forskjellsmatrisen øverst til venstre inneholder mange verdier som ikke er
-null. Forskjellsmatrisen øverst til høyre er derimot nullbildet: Selv om
-inputene er forskjellige, er outputene like. En figur er nyttig, men senere
-trenger vi også ett tall som oppsummerer hele forskjellen. Vi kan ikke bare
-summere pikselverdiene, fordi positive og negative forskjeller da kan oppheve
-hverandre.
+I feltet øverst til venstre veksler verdiene mellom $+0.4$ og $-0.4$. De røde
+rutene oppstår der $X_1$ har verdien $0.5$ og $X_2$ har $0.1$; de blå oppstår
+der $X_1$ har $0.5$ og $X_2$ har $0.9$. Inputbildene er derfor forskjellige
+på alle 16 pikselplasser. Feltet øverst til høyre er helt hvitt og ser ut som
+nullbildet under: $Y_1-Y_2$ er 0 på alle fire plasser, så outputbildene er
+like.
+
+Figuren gir detaljene, men senere trenger vi også ett tall som kan svare på
+spørsmålet «hvor stor er forskjellen totalt?». Vi kan ikke bare summere
+verdiene i forskjellsmatrisen. Her ville åtte forekomster av $+0.4$ og åtte
+forekomster av $-0.4$ oppheve hverandre og gi summen 0, selv om bildene er
+forskjellige overalt.
 
 Vi kvadrerer derfor alle verdiene i forskjellsbildet, summerer dem og tar kvadratroten. For et bilde $D$ blir dette
 
@@ -390,7 +434,13 @@ $$
 \lVert D\rVert=\sqrt{\sum_{i,j}D_{ij}^2}.
 $$
 
-Tallet $\lVert D\rVert$ kalles **normen** til $D$. Her kan vi lese det som den numeriske avstanden fra $D$ til nullbildet. Dermed måler $\lVert X_1-X_2\rVert$ den samlede pikselforskjellen mellom de to inputbildene. Dette er en numerisk avstand mellom pikselverdier, ikke nødvendigvis et mål på hvor forskjellige bilder oppleves av et menneske.
+Kvadreringen gjør alle bidragene ikke-negative, slik at positive og negative
+forskjeller ikke kan kansellere hverandre. Tallet $\lVert D\rVert$ kalles
+**normen** til $D$. Her kan vi lese det som den numeriske avstanden fra $D$
+til nullbildet. Normen er 0 nøyaktig når alle pikselforskjellene er 0.
+Dermed måler $\lVert X_1-X_2\rVert$ den samlede pikselforskjellen mellom de to
+inputbildene. Dette er en numerisk avstand mellom pikselverdier, ikke
+nødvendigvis et mål på hvor forskjellige bilder oppleves av et menneske.
 
 NumPy beregner denne normen med `np.linalg.norm`. Den samme regelen virker for en vektor: Da summerer vi kvadratene av komponentene i stedet for pikslene.
 
@@ -407,7 +457,12 @@ print("Inputforskjell med np.linalg.norm:   ",np.linalg.norm(D_input))
 print("Outputforskjell med np.linalg.norm:  ",np.linalg.norm(D_output))
 ```
 
-De to første tallene er begge 1.6: formelen og NumPy gjør den samme beregningen. Outputforskjellen har norm 0, og er derfor nøyaktig nullbildet. Senere vil avrundingsfeil ofte gi svært små normer i stedet for nøyaktig 0; da leser vi resultatet som «numerisk nær null».
+De 16 inputforskjellene har alle absoluttverdi $0.4$. Derfor blir normen
+$\sqrt{16\cdot0.4^2}=1.6$. De to første utskriftene viser det samme tallet:
+først beregnet direkte fra formelen og deretter med NumPy. Outputforskjellen
+har norm 0 og er derfor nøyaktig nullbildet. Senere vil avrundingsfeil ofte
+gi svært små normer i stedet for nøyaktig 0; da leser vi resultatet som
+«numerisk nær null».
 
 ::: {.callout-important}
 ### Første observasjon
@@ -636,24 +691,52 @@ De gule, grønne og lilla radene gjør det samme for de tre andre bildeområdene
 
 ### Et eksperiment med skalering og addisjon
 
-Målet er ikke først og fremst å lage en overgang mellom to fotografier. Vi vil undersøke om et komplisert bilde kan deles opp i enklere byggesteiner som kan behandles hver for seg.
+Tenk deg at et grafikkprogram bygger et stort bilde av flere lag. Ett lag kan
+være en jevn bakgrunn, et annet en tekstur, og andre kan inneholde kanter eller
+små detaljer. Koeffisienten foran hvert lag bestemmer hvor sterkt laget skal
+bidra. Addisjon setter de skalerte lagene sammen, piksel for piksel, til ett
+ferdig bilde.
 
-Et bilde kan for eksempel beskrives som en kombinasjon av et jevnt lysnivå, en venstre–høyre-kontrast, en topp–bunn-kontrast, kanter, lokale mønstre og små detaljer. Å multiplisere en byggestein med et tall endrer hvor sterkt den bidrar. Addisjon setter bidragene sammen piksel for piksel til et ferdig bilde.
+Nå skal programmet også lage et lite forhåndsvisningsbilde. Da finnes det to
+naturlige arbeidsmåter:
 
-Det viktige spørsmålet er derfor:
+1. Sett sammen lagene i full størrelse, og bruk deretter transformasjonen $T$
+   til å lage det lille bildet.
+2. Bruk $T$ på hvert lag først, og sett deretter sammen de små resultatene.
 
-> Vi kan først legge sammen de store bildene og så beregne blokkgjennomsnittene. Eller vi kan beregne blokkgjennomsnittene for hvert bilde først og deretter legge sammen de små bildene. Får vi samme resultat?
+Her er $T$ den samme transformasjonen som tidligere på siden, altså den som
+beregner blokkgjennomsnitt. Når bildene skrives som vektorer, beskrives den
+samme regelen av matrisen $A$ i uttrykket $y=Ax$.
 
-Vi bruker to vilkårlige bilder som et første eksperiment. Hver piksel i `X1` multipliseres med $0.6$, hver piksel i `X3` med $0.4$, og resultatene legges sammen piksel for piksel. Det nye bildet er
+Det er ikke opplagt at disse arbeidsmåtene gir samme svar for enhver
+transformasjon. Hvis de gjør det, kan hvert lag behandles for seg uten at
+sluttresultatet endres. Det er nettopp denne egenskapen eksperimentet skal
+undersøke.
 
-$$0.6X_1+0.4X_3.$$
+Vi bruker det jevne bildet $X_1$ som et enkelt bakgrunnslag og lager et nytt,
+vilkårlig bilde $X_3$ som et teksturlag. Bidragene er $0.6X_1$ og $0.4X_3$,
+så det sammensatte $4\times4$-bildet er
 
-Vi sammenligner to regnerekkefølger:
+$$
+M=0.6X_1+0.4X_3.
+$$
 
-- **Øvre rute:** Skaler og legg sammen de store inputbildene først. Transformer deretter resultatet.
-- **Nedre rute:** Transformer hvert bilde først. Skaler og legg så sammen de små outputbildene.
+De to rutene gir resultatene
 
-Hvis begge framgangsmåtene alltid gir samme resultat, kan vi forstå transformasjonen ved å teste den på enkle byggesteiner. Når vi vet hva transformasjonen gjør med hver byggestein, vet vi også hva den gjør med enhver kombinasjon av dem.
+$$
+R_1=T(M)=T(0.6X_1+0.4X_3)
+$$
+
+og
+
+$$
+R_2=0.6T(X_1)+0.4T(X_3).
+$$
+
+Aktiviteten sammenligner $R_1$ og $R_2$ både som bilder og med
+forskjellen $R_1-R_2$. Hvis forskjellen er nullbildet, traff de to rutene
+samme output i dette forsøket. Etterpå bruker vi selve oppskriften for
+blokkgjennomsnitt til å avgjøre om likheten gjelder generelt.
 
 ::: {.callout-note}
 ### Fra byggesteiner til bildekompresjon
@@ -679,36 +762,56 @@ I uke 3 er målet mindre, men grunnleggende: Vi analyserer små $2\times2$- og $
 rng=np.random.default_rng(3)
 X3=rng.random((4,4))
 alpha,beta=0.6,0.4
-mixed_input=alpha*X1+beta*X3
-# left: bland først, transformer etterpå.
-# right: transformer først, bland outputene etterpå.
-left=(A_pool@mixed_input.reshape(-1)).reshape(2,2)
-right=alpha*average_pool(X1)+beta*average_pool(X3)
+scaled_X1=alpha*X1
+scaled_X3=beta*X3
+mixed_input=scaled_X1+scaled_X3
 
-fig,axes=plt.subplots(2,4,figsize=(7.0,3.6))
-top=[X1,X3,mixed_input,left]
-bottom=[average_pool(X1),average_pool(X3),right,left-right]
-top_titles=["Input $X_1$","Input $X_3$",
-            "$0.6X_1+0.4X_3$","Redusert blanding"]
-bottom_titles=["Redusert $X_1$","Redusert $X_3$",
-               "$0.6A(X_1)+0.4A(X_3)$","Forskjell mellom svarene"]
-for ax,image,title in zip(axes[0],top,top_titles):
-    ax.imshow(image,cmap="gray",vmin=0,vmax=1,interpolation="nearest")
-    ax.set_title(title,fontsize=8); ax.set_xticks([]); ax.set_yticks([])
-for ax,image,title in zip(axes[1],bottom,bottom_titles):
-    ax.imshow(image,cmap="gray",vmin=0,vmax=1,interpolation="nearest")
-    ax.set_title(title,fontsize=8); ax.set_xticks([]); ax.set_yticks([])
-for row in range(2):
-    for col,symbol in enumerate(["+","→","→"]):
-        axes[row,col].text(1.08,0.5,symbol,transform=axes[row,col].transAxes,
-                           ha="center",va="center",fontsize=14)
-plt.tight_layout(); plt.show()
-print("Numerisk forskjell:",np.linalg.norm(left-right))
+# Rute 1: bland de store bildene først, transformer etterpå.
+R1=average_pool(mixed_input)
+# Rute 2: transformer først, bland de små outputbildene etterpå.
+scaled_Y1=alpha*average_pool(X1)
+scaled_Y3=beta*average_pool(X3)
+R2=scaled_Y1+scaled_Y3
+difference=R1-R2
+
+show_image_table(
+    [[scaled_X1,scaled_X3,mixed_input,R1],
+     [scaled_Y1,scaled_Y3,R2,difference]],
+    ["Rute 1\nbland først","Rute 2\ntransformer først"],
+    ["Bidrag fra $X_1$","Bidrag fra $X_3$","Sum","Resultat / kontroll"],
+    cell_labels=[
+        ["$0.6X_1$","$0.4X_3$","$M$","$R_1=T(M)$"],
+        ["$0.6T(X_1)$","$0.4T(X_3)$","$R_2$","$R_1-R_2$"]
+    ],
+    cell_styles=[
+        [{},{},{},{}],
+        [{},{},{},{"cmap":"coolwarm","vmin":-1e-12,"vmax":1e-12}]
+    ],
+    operators=[["+","=","$T$ →"],
+               ["+","=",""]],
+    vmin=0,vmax=1,figsize=(10.0,4.6)
+)
+print("Normen til R1-R2:",np.linalg.norm(difference))
 ```
 
-I øverste rad er de to første bildene inputene, det tredje er den pikselvise kombinasjonen, og det fjerde er outputen etter reduksjon. I nederste rad er de to første bildene allerede redusert; det tredje er kombinasjonen av disse outputene. Det siste bildet viser øvre svar minus nedre svar. Det er svart fordi alle fire forskjellene er null.
+Les tabellen fra venstre mot høyre. I øverste rad har de tre første bildene
+størrelse $4\times4$: De to skalerte lagene legges sammen til $M$, som så
+transformeres til det mindre resultatet $R_1$. I nederste rad er
+transformasjonen allerede brukt på hvert lag. Derfor er alle bildene
+$2\times2$, og de to første legges sammen til $R_2$. Bildene er plassert med
+samme fysiske størrelse per piksel; et $2\times2$-bilde har derfor
+halvparten av sidelengden til et $4\times4$-bilde.
 
-De to regnerekkefølgene gir altså samme småbilde. Dette er den sentrale regneregelen for en **lineær transformasjon**:
+Feltet nederst til høyre viser $R_1-R_2$ med samme rød–blå skala som i 3.1.
+Det er hvitt fordi alle fire forskjellene er 0. Normen som skrives ut under
+figuren er også 0. De to regnerekkefølgene gir dermed samme småbilde i dette
+eksperimentet.
+
+Ett eksperiment er ikke et bevis for alle bilder. Her kan vi imidlertid se
+hvorfor likheten gjelder generelt: Hver outputpiksel er summen av fire
+inputverdier, alle ganget med $1/4$. Både skaleringen og addisjonen kan derfor
+flyttes inn eller ut av denne summen. Det gir den sentrale regneregelen for en
+**lineær transformasjon**:
 
 $$A(\alpha x+\beta z)=\alpha Ax+\beta Az.$$
 
