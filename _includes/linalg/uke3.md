@@ -1204,9 +1204,30 @@ board.create('text',[sumX+sumSize,imageY-0.38,
   'Nye kontroller · ny beskrivelse'],{
   anchorX:'middle',fontSize:12,fixed:true
 });
+
+// Gjennomsnittet tas av de fire pikselverdiene i det ferdige sum-bildet.
+function patternAverage() {
+  return (sumValue(0)()+sumValue(1)()+sumValue(2)()+sumValue(3)())/4;
+}
+board.create('arrow',[[13.55,imageY+0.92],[14.05,imageY+0.92]],{
+  strokeColor:'#444444',strokeWidth:2,fixed:true,highlight:false
+});
+patternSquare(14.15,imageY+0.52,0.80,patternAverage,'#333333');
+board.create('text',[14.55,imageY+1.75,'GJENNOMSNITT'],{
+  anchorX:'middle',fontSize:11,cssStyle:'font-weight:600',fixed:true
+});
+board.create('text',[14.55,imageY-0.38,'$1\\times1$-output'],{
+  anchorX:'middle',fontSize:10,fixed:true
+});
 ```
 
 Startinnstillingen lager det samme bildet som med pikselbasisen, men tallene på skyveknappene er nå annerledes: lysnivå $0.55$, venstre–høyre-kontrast $-0.25$, topp–bunn-kontrast $-0.10$ og ingen sjakkmønsterkontrast. Prøv å endre én kontroll om gangen og beskriv den synlige endringen i summen.
+
+Ruten lengst til høyre viser det aritmetiske gjennomsnittet av de fire
+pikselverdiene i sum-bildet. Endre først bare kontrastkontrollene: Bildet
+endres, men gjennomsnittet gjør ikke det. Endre deretter lysnivåkontrollen:
+Både alle fire pikselverdiene og gjennomsnittet endres med samme beløp. Dette
+eksperimentet blir forklart med nullrom i 3.4.
 
 Nå konstruerer vi de samme fire mønstrene i NumPy.
 
@@ -1231,56 +1252,98 @@ show_images(pattern_basis,pattern_names,cols=4,
 
 Disse mønstrene virker meningsfulle, men det er ikke nok til å kalle dem en basis. Vi må undersøke de samme to spørsmålene som for pikselbasisen: Kan de bygge alle målbilder, og er oppskriften entydig?
 
-Når koeffisientene er kjent, går regningen framover: Vi skalerer de fire
-mønstrene og legger dem sammen for å lage et bilde. Hvis
+### Fra en oppskrift til ligningen $Pc=t$
+
+Først tar vi en mindre versjon med bare to byggesteiner. La
+
+$$b_1=\begin{bmatrix}1\\1\end{bmatrix},\qquad
+b_2=\begin{bmatrix}1\\-1\end{bmatrix}.$$
+
+Hvis styrkene er $c_1$ og $c_2$, blir den ferdige vektoren
+
+$$c_1b_1+c_2b_2
+=\begin{bmatrix}1&1\\1&-1\end{bmatrix}
+\begin{bmatrix}c_1\\c_2\end{bmatrix}.$$
+
+Matrisen oppstår altså ved å sette **én byggestein i hver kolonne**. Vil vi
+lage målet $t=[2,0]^T$, får vi
 
 $$
-c=\begin{bmatrix}c_M&c_H&c_V&c_D\end{bmatrix}^{T},
+\underbrace{\begin{bmatrix}1&1\\1&-1\end{bmatrix}}_{P_2}
+\underbrace{\begin{bmatrix}c_1\\c_2\end{bmatrix}}_{c}
+=
+\underbrace{\begin{bmatrix}2\\0\end{bmatrix}}_{t}.
 $$
 
-er $c_M$ styrken til lysnivåmønsteret, $c_H$ styrken til
-venstre–høyre-mønsteret, og tilsvarende for de to siste mønstrene.
+Radene sier $c_1+c_2=2$ og $c_1-c_2=0$, så $c_1=c_2=1$.
+Kontrollen er framoverregningen
+$1b_1+1b_2=[2,0]^T$. Dette lille eksemplet viser hele mekanismen:
+$P$ inneholder kjente byggesteiner, $t$ er det kjente målet, og $c$ er den
+ukjente oppskriften.
 
-Nå snur vi problemet. Målbildet er kjent, men koeffisientene som laget det er
-ukjente. Å gå baklengs fra et kjent resultat til den ukjente oppskriften
-kalles **reverse engineering**.
-
-For å skrive baklengsproblemet som ett lineært system gjør vi hvert
-$2\times2$-mønster om til en 4-vektor og setter vektorene som kolonner i
-matrisen
+For de fire $2\times2$-mønstrene gjør vi nøyaktig det samme. Først legger vi
+radene i hvert mønster etter hverandre:
 
 $$
-P=\begin{bmatrix}
-\operatorname{vec}(M)&\operatorname{vec}(H)&
-\operatorname{vec}(V)&\operatorname{vec}(D)
+\begin{aligned}
+\operatorname{vec}(M)&=[1,1,1,1]^T,\\
+\operatorname{vec}(H)&=[1,-1,1,-1]^T,\\
+\operatorname{vec}(V)&=[1,1,-1,-1]^T,\\
+\operatorname{vec}(D)&=[1,-1,-1,1]^T.
+\end{aligned}
+$$
+
+Disse fire kjente vektorene blir kolonnene i
+
+$$
+P=
+\begin{bmatrix}
+1& 1& 1& 1\\
+1&-1& 1&-1\\
+1& 1&-1&-1\\
+1&-1&-1& 1
 \end{bmatrix}.
 $$
 
-Her betyr $\operatorname{vec}$ at radene i bildet legges etter hverandre, slik
-`reshape(-1)` gjorde i 3.2. Målbildet legges på samme måte i 4-vektoren
-$t=\operatorname{vec}(\text{target})$. Reverse-engineering-problemet blir da
+Koeffisientvektoren
+$c=[c_M,c_H,c_V,c_D]^T$ inneholder styrken til de fire mønstrene. Produktet
+$Pc$ er ikke et nytt abstrakt objekt: Det er de fire pikselverdiene i
+$c_MM+c_HH+c_VV+c_DD$, skrevet radvis som en vektor.
+
+Nå bruker vi det konkrete målbildet fra pikselbasis-eksemplet:
+
+$$X=\begin{bmatrix}0.2&0.7\\0.4&0.9\end{bmatrix},\qquad
+t=\operatorname{vec}(X)=\begin{bmatrix}0.2\\0.7\\0.4\\0.9\end{bmatrix}.$$
+
+Reverse engineering betyr at $t$ er kjent, mens mønsterstyrkene i $c$ er
+ukjente. Vi løser
 
 $$
-\underbrace{P}_{\text{kjente mønstre}}
-\underbrace{c}_{\text{ukjente styrker}}
+\underbrace{P}_{\substack{\text{kjente mønstre}\\4\times4}}
+\underbrace{c}_{\substack{\text{ukjente styrker}\\4\times1}}
 =
-\underbrace{t}_{\text{kjente målpiksler}}.
+\underbrace{t}_{\substack{\text{kjente målpiksler}\\4\times1}}.
 $$
 
-I NumPy-notasjon kan ligningen leses som
-`P @ c = target.reshape(-1)`. Selve løsningen beregnes med
-`np.linalg.solve(P, target.reshape(-1))`. Størrelsene og rollene er:
+For dette målet er løsningen
 
-| Størrelse | Betydning |
-|---|---|
-| $P$: $4\times4$ | Én kjent mønstervektor i hver kolonne |
-| $c$: $4\times1$ | De fire ukjente mønsterstyrkene vi vil finne |
-| $t$: $4\times1$ | De fire kjente pikselverdiene i målbildet |
-| $Pc$: $4\times1$ | Pikselverdiene i bildet som koeffisientene rekonstruerer |
+$$c=\begin{bmatrix}0.55\\-0.25\\-0.10\\0\end{bmatrix}.$$
 
-Ligningen stiller to spørsmål. **Finnes det en løsning?** I så fall kan
-mønstrene rekonstruere målbildet. **Finnes det bare én løsning?** I så fall er
-oppskriften entydig. En basis skal gi nøyaktig én løsning for hvert målbilde.
+Tallene er de samme som startverdiene i appleten. Framoverkontrollen $Pc=t$
+sier at disse fire styrkene faktisk rekonstruerer pikslene
+$0.2,0.7,0.4,0.9$ i riktig rekkefølge.
+
+Det er viktig å skille de to retningene:
+
+| Retning | Kjent | Ukjent | Regneoperasjon |
+|---|---|---|---|
+| Bygg bildet | $P$ og $c$ | $t$ | beregn `P @ c` |
+| Reverse engineering | $P$ og $t$ | $c$ | løs `P @ c = t` |
+
+En løsning finnes for hvert målbilde akkurat når kolonnene i $P$ spenner ut
+hele bilderommet. Løsningen er entydig akkurat når kolonnene er lineært
+uavhengige. Derfor gir en basis nøyaktig én koeffisientvektor $c$ for hvert
+mål $t$.
 
 ::: {.callout-tip}
 ### Samme reverse engineering i ukeprosjektet
@@ -1295,10 +1358,10 @@ reverse engineering å løse et lineært system for koeffisientene og deretter
 kontrollere at de faktisk gjenskaper de kjente dataene.
 :::
 
-Koden nedenfor gjør dette for fire tilfeldige målbilder. `np.linalg.solve`
-finner først $c$. Deretter regner vi framover igjen med `P @ c` og sammenligner
-rekonstruksjonen med målbildet. Denne siste kontrollen er viktig: En beregnet
-koeffisientvektor er bare et gyldig svar dersom den faktisk bygger målet.
+Koden nedenfor gjentar det konkrete regnestykket. `column_stack` bygger $P$
+av de fire mønsterkolonnene, `solve` finner $c$, og `P @ c` regner framover
+igjen. Den siste kontrollen er viktig: En beregnet koeffisientvektor er bare
+et gyldig svar dersom den faktisk bygger målet.
 
 ```{pyodide-python}
 #| label: week3-test-pattern-building-blocks
@@ -1309,23 +1372,15 @@ koeffisientvektor er bare et gyldig svar dersom den faktisk bygger målet.
 P=np.column_stack([pattern.reshape(-1) for pattern in pattern_basis])
 print("Rang av P:",np.linalg.matrix_rank(P))
 
-rng=np.random.default_rng(8)
-targets=[rng.uniform(-1,1,size=(2,2)) for _ in range(4)]
-reconstructions=[]; errors=[]
-for target in targets:
-    # Reverse engineering: finn mønsterkoeffisientene som lager target.
-    c_test=np.linalg.solve(P,target.reshape(-1))
-    reconstruction=(P@c_test).reshape(2,2)
-    reconstructions.append(reconstruction)
-    errors.append(np.linalg.norm(reconstruction-target))
+# Reverse engineering av det konkrete bildet X.
+t=X.reshape(-1)
+c_test=np.linalg.solve(P,t)
+reconstructed_vector=P@c_test
 
-interleaved=[]; titles=[]
-for i,(target,reconstruction) in enumerate(zip(targets,reconstructions),start=1):
-    interleaved.extend([target,reconstruction])
-    titles.extend([f"Mål {i}",f"Bygd mål {i}"])
-show_images(interleaved,titles,cols=4,cmap="coolwarm",
-            vmin=-1,vmax=1,figsize=(6.8,3.5))
-print("Rekonstruksjonsfeil:",errors)
+print("Målvektor t:       ",t)
+print("Funnet oppskrift c:",c_test)
+print("Kontroll P @ c:    ",reconstructed_vector)
+print("Rekonstruksjonsfeil:",np.linalg.norm(reconstructed_vector-t))
 ```
 
 Rangutskriften er 4. Det betyr at alle fire kolonnene er pivotkolonner etter
@@ -1335,16 +1390,14 @@ $\mathbb R^{2\times2}$ har dimensjon 4, danner fire uavhengige mønstre en
 basis. Det samme kan kontrolleres ved å radredusere $P$; `matrix_rank` gir
 bare den numeriske kontrollen.
 
-I hvert par er bildet merket «Mål» laget tilfeldig. «Bygd mål» er
-rekonstruksjonen fra de fire mønstrene. Parene ser like ut, og normen av
-forskjellen er omkring $10^{-16}$ eller null. Forsøkene illustrerer
-basisresultatet på konkrete bilder; rangargumentet forklarer hvorfor det
-gjelder alle bilder.
+Utskriften viser først den kjente målvektoren, deretter den funne oppskriften
+$[0.55,-0.25,-0.10,0]^T$, og til slutt de fire rekonstruerte pikselverdiene.
+Rekonstruksjonsfeilen er null eller på størrelse med avrundingsfeil.
 
-Reverse engineering lykkes her for alle fire målbildene, og rang 4 viser
-hvorfor løsningen alltid er entydig. Mønsterkolonnene danner
-derfor et koordinatsystem: Hvert bilde bestemmer nøyaktig én vektor $c$, og
-hver slik vektor bestemmer nøyaktig ett bilde $Pc$.
+Rang 4 viser at reverse engineering ikke bare lykkes for dette eksemplet.
+Mønsterkolonnene danner et koordinatsystem: Hvert $2\times2$-bilde bestemmer
+nøyaktig én vektor $c$, og hver slik vektor bestemmer nøyaktig ett bilde
+$Pc$.
 
 Vi ser nærmere på koordinatene til bildet $X$ fra pikselbasis-eksemplet tidligere i denne delen.
 
