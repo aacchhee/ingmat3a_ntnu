@@ -550,6 +550,30 @@ $$y=Ax,$$
 
 der $A$ har fire rader og seksten kolonner. Hver rad i $A$ lager én av de fire outputverdiene. Hver kolonne svarer til én av de 16 inputpikslene.
 
+### Slik konstruerer vi matrisen fra en regel
+
+Matrisen skal ikke gjettes. Vi bygger den direkte fra transformasjonen:
+
+1. Nummerer inputverdiene i samme rekkefølge som i vektoren $x$.
+2. Skriv én formel for hver outputverdi.
+3. Koeffisientene i outputformel nummer $i$ blir rad nummer $i$ i $A$.
+
+For øvre venstre blokk er
+
+$$y_1=\frac14x_1+\frac14x_2+\frac14x_5+\frac14x_6.$$
+
+Derfor er første rad i $A$
+
+$$\begin{bmatrix}
+\frac14&\frac14&0&0&\frac14&\frac14&0&0&0&0&0&0&0&0&0&0
+\end{bmatrix}.$$
+
+Andre rad bygges fra øvre høyre blokk, tredje rad fra nedre venstre og
+fjerde rad fra nedre høyre. Dermed betyr en rad alltid **én måling**, mens
+kolonne $j$ samler virkningen inputverdi $x_j$ har på alle målingene. Dette
+er den generelle konstruksjonen for enhver lineær transformasjon som er gitt
+ved formler eller målinger.
+
 Det er nyttig å holde de to sidene fra hverandre:
 
 $$
@@ -1249,9 +1273,6 @@ koeffisientvektor er bare et gyldig svar dersom den faktisk bygger målet.
 # reshape(-1) gjør hvert 2 x 2-mønster til en 4-vektor.
 # column_stack setter de fire byggesteinene som kolonner i P.
 P=np.column_stack([pattern.reshape(-1) for pattern in pattern_basis])
-# P.T er den transponerte matrisen. P.T @ P undersøker vinklene mellom
-# kolonnene; null utenfor diagonalen betyr at de er ortogonale.
-print("P^T P:\n",P.T@P)
 print("Rang av P:",np.linalg.matrix_rank(P))
 
 rng=np.random.default_rng(8)
@@ -1273,17 +1294,21 @@ show_images(interleaved,titles,cols=4,cmap="coolwarm",
 print("Rekonstruksjonsfeil:",errors)
 ```
 
-Utskriften av $P^TP$ har verdien 4 på diagonalen og 0 ellers. Nullene betyr
-at ulike mønsterkolonner er ortogonale. Hvis $Pc=0$, kan vi multiplisere med
-$P^T$ og få $4c=0$, altså $c=0$. Kolonnene er derfor lineært uavhengige.
-Siden vi har fire uavhengige vektorer i det firedimensjonale rommet
-$\mathbb R^{2\times2}$, danner de en basis. Rangutskriften kontrollerer den
-samme konklusjonen numerisk.
+Rangutskriften er 4. Det betyr at alle fire kolonnene er pivotkolonner etter
+Gauss-eliminasjon, så ingen mønsterkolonne kan bygges av de andre. De fire
+mønstrene er dermed lineært uavhengige. Siden rommet
+$\mathbb R^{2\times2}$ har dimensjon 4, danner fire uavhengige mønstre en
+basis. Det samme kan kontrolleres ved å radredusere $P$; `matrix_rank` gir
+bare den numeriske kontrollen.
 
-I hvert par er bildet merket «Mål» laget tilfeldig. «Bygd mål» er rekonstruksjonen fra de fire mønstrene. Parene ser like ut, og normen av forskjellen er omkring $10^{-16}$ eller null. Forsøkene illustrerer basisresultatet på konkrete bilder; argumentet med $P^TP$ forklarer hvorfor det gjelder alle bilder.
+I hvert par er bildet merket «Mål» laget tilfeldig. «Bygd mål» er
+rekonstruksjonen fra de fire mønstrene. Parene ser like ut, og normen av
+forskjellen er omkring $10^{-16}$ eller null. Forsøkene illustrerer
+basisresultatet på konkrete bilder; rangargumentet forklarer hvorfor det
+gjelder alle bilder.
 
-Reverse engineering lykkes her for alle fire målbildene, og argumentet med
-$P^TP$ viser hvorfor løsningen alltid er entydig. Mønsterkolonnene danner
+Reverse engineering lykkes her for alle fire målbildene, og rang 4 viser
+hvorfor løsningen alltid er entydig. Mønsterkolonnene danner
 derfor et koordinatsystem: Hvert bilde bestemmer nøyaktig én vektor $c$, og
 hver slik vektor bestemmer nøyaktig ett bilde $Pc$.
 
@@ -1320,7 +1345,31 @@ En basis er ikke bare et sett som tilfredsstiller en definisjon. Et godt valg av
 
 ## 3.4 Hva transformasjonen ser og ikke ser {#uke3-del3}
 
-Nå lar vi den enkleste transformasjonen vi har — gjennomsnittet av fire tall — virke på de fire mønsterbyggesteinene. Vi kaller transformasjonen for én blokk $G:\mathbb R^4\to\mathbb R$. Den skal ikke forveksles med `A_pool`, som behandler fire blokker og sender et helt $4\times4$-bilde til fire tall. Inputen i hver kolonne er et $2\times2$-mønster. Den lille outputen under viser det ene tallet $G$ produserer. Fordi gjennomsnittet er lineært, vil resultatet for disse fire byggesteinene senere fortelle oss resultatet for enhver kombinasjon av dem.
+I 3.1 så vi informasjonstapet, i 3.2 bygde vi en matrise for regelen, og i
+3.3 lærte vi å beskrive bilder med byggesteiner. Nå bruker vi de tre ideene
+til å besvare to spørsmål:
+
+1. Hvilke inputendringer gir output null? Svaret er nullrommet.
+2. Hvor mange outputverdier kan styres uavhengig? Svaret er rangen.
+
+Vi løser først problemet for **én** $2\times2$-blokk og bruker deretter
+nøyaktig samme argument fire ganger for hele $4\times4$-bildet. Dette er
+broen fra den lille transformasjonen $4\to1$ til den store transformasjonen
+$16\to4$.
+
+### Én blokk: transformasjonen $4\to1$
+
+Legg pikselverdiene i én blokk i vektoren
+$u=[u_1,u_2,u_3,u_4]^T$. Gjennomsnittet er
+
+$$G(u)=\frac14(u_1+u_2+u_3+u_4)
+=\underbrace{\begin{bmatrix}\frac14&\frac14&\frac14&\frac14\end{bmatrix}}_{B}u.$$
+
+Den lille transformasjonsmatrisen er altså raden $B$. Oppskriften fra 3.2
+gir dette direkte: én output betyr én rad; koeffisienten til hver av de fire
+inputverdiene er $1/4$. Nå lar vi $G$ virke på de fire
+mønsterbyggesteinene fra 3.3. Fordi $G$ er lineær, forteller resultatene også
+hva som skjer med enhver kombinasjon av dem.
 
 ```{pyodide-python}
 #| label: week3-average-patterns
@@ -1353,47 +1402,18 @@ derfor 0.
 Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig kombinasjon av kontrastbildene får også gjennomsnitt null, fordi lineariteten fra 3.2 lar oss kombinere de tre nullresultatene.
 
 ::: {.callout-important}
-### Uformell observasjon
+### Den lille transformasjonens nullrom og rang
 
-Kontrastmønstrene er endringer vi kan legge til et bilde uten å endre gjennomsnittet. Transformasjonen kan ikke skille mellom bilder som bare er forskjellige med en kombinasjon av slike kontraster.
+Kontrastmønstrene er endringer vi kan legge til et bilde uten å endre
+gjennomsnittet. De tre mønstrene $H,V,D$ er lineært uavhengige, og alle har
+sum null. De danner derfor tre uavhengige retninger i nullrommet. Når tre av
+fire pikselverdier er valgt i et bilde med sum null, er den siste bestemt.
+Nullrommet har dermed dimensjon 3. Den ene gjennomsnittsverdien kan velges
+fritt, så $B$ har rang 1. For den lille transformasjonen får vi regnskapet
+
+$$4=\operatorname{rank}(B)+\dim N(B)=1+3.$$
+
 :::
-
-Vi kontrollerer også den motsatte retningen: Kan tilfeldige bilder med gjennomsnitt null bygges av de tre kontrastmønstrene?
-
-```{pyodide-python}
-#| label: week3-build-zero-mean-images
-#| autorun: true
-
-# Kolonnene i contrast_matrix er de tre kontrastbyggesteinene H, V og D.
-contrast_matrix=np.column_stack([H.reshape(-1),V.reshape(-1),D.reshape(-1)])
-rng=np.random.default_rng(12)
-target_images=[]; reconstructed_images=[]; errors=[]
-for _ in range(4):
-    first_three=rng.uniform(-1,1,size=3)
-    # Velg siste piksel slik at summen av alle fire blir null.
-    values=np.r_[first_three,-np.sum(first_three)]
-    target=values.reshape(2,2)
-    # Tre uavhengige ligninger er nok til å finne tre koeffisienter.
-    weights=np.linalg.solve(contrast_matrix[:3,:],values[:3])
-    reconstructed=(contrast_matrix@weights).reshape(2,2)
-    target_images.append(target)
-    reconstructed_images.append(reconstructed)
-    errors.append(np.linalg.norm(target-reconstructed))
-
-interleaved=[]; titles=[]
-for i,(target,reconstructed) in enumerate(
-        zip(target_images,reconstructed_images),start=1):
-    interleaved.extend([target,reconstructed])
-    titles.extend([f"Målbilde {i}\n(sum = 0)",
-                   f"Rekonstruksjon {i}\n(fra H, V, D)"])
-show_images(interleaved,titles,cols=4,cmap="coolwarm",
-            vmin=-2,vmax=2,figsize=(6.8,3.5))
-print("Rekonstruksjonsfeil:",errors)
-```
-
-I hvert par er målbildet konstruert med fire tilfeldige tall som summerer til null. Bildet ved siden av er rekonstruert fra `H`, `V` og `D`. De første tre pikselverdiene gir tre ligninger for de tre ukjente mønsterkoeffisientene. Den fjerde ligningen følger automatisk fordi både målbildet og alle tre mønstrene har sum null. Derfor løser koden systemet med de tre første radene i `contrast_matrix`, men kontrollerer rekonstruksjonen i alle fire pikslene. De to bildene i hvert par er like, og rekonstruksjonsfeilen er null eller nær maskinpresisjon.
-
-De fire forsøkene støtter påstanden: Bilder med sum null kan beskrives med tre uavhengige kontrastkoeffisienter. Hvorfor tre? Når de første tre pikselverdiene er valgt, må den siste være minus summen av dem. Vi har derfor tre frie valg og én verdi som er bestemt av de andre. Nå har vi et konkret behov for et navn på hele denne samlingen.
 
 Fra tidligere lineær algebra kjenner vi nullrommet som løsningene av et homogent system. For en transformasjon $A:\mathbb R^n\to\mathbb R^m$ er
 
@@ -1428,11 +1448,28 @@ Det midterste bildet har $t=0$ og er ensfarget. Negative og positive verdier av 
 
 Når $t$ endres, flytter vi oss gjennom forskjellige bilder langs kontrastretningen $D$. Pikslene endres, men gjennomsnittet står stille. Nullrommet beskriver derfor alle forskjeller mellom inputer som denne målingen ikke kan oppdage.
 
-### Finn de tolv usynlige bilderetningene
+### Fire blokker: transformasjonen $16\to4$
 
-Vi går tilbake fra én $2\times2$-blokk til hele $4\times4$-bildet. Transformasjonen beregner fire gjennomsnitt, ett i hvert hjørneområde. Derfor kan hver blokk inneholde sine egne usynlige kontraster.
+Vi går tilbake fra én $2\times2$-blokk til hele $4\times4$-bildet.
+Transformasjonen gjør ikke noe nytt: Den bruker den samme raden $B$ på fire
+forskjellige blokker. Når pikslene nummereres radvis som i 3.2, plasseres de
+fire kopiene av vektene i de kolonnene som hører til hver blokk. Slik får vi
+den store matrisen $A_{\mathrm{pool}}\in\mathbb R^{4\times16}$.
 
-Funksjonen `place_in_block` plasserer ett av mønstrene `H`, `V` eller `D` i en valgt blokk og fyller resten av bildet med null. Figuren organiseres blokk for blokk: fire plasseringer, med tre kontrasttyper i hver plassering. Det gir $4\cdot3=12$ bilder.
+Den presise overføringen er:
+
+| Én blokk | Hele bildet |
+|---|---|
+| 4 inputpiksler | 4 blokker med 4 piksler, altså 16 inputpiksler |
+| 1 gjennomsnitt | 1 gjennomsnitt per blokk, altså 4 outputverdier |
+| matrisen $B$ har størrelse $1\times4$ | matrisen $A_{\mathrm{pool}}$ har størrelse $4\times16$ |
+| nullitet 3 | tre lokale nullromsretninger i hver blokk: $4\cdot3=12$ |
+| rang 1 | én fritt valgbar output per blokk: $4\cdot1=4$ |
+
+Dermed kan hver blokk inneholde sine egne usynlige kontraster. Funksjonen
+`place_in_block` nedenfor plasserer $H$, $V$ eller $D$ i én blokk og fyller
+resten av bildet med null. Fire plasseringer med tre kontrasttyper gir
+$4\cdot3=12$ bilder.
 
 ```{pyodide-python}
 #| label: week3-full-null-basis
@@ -1500,11 +1537,24 @@ Nullrommet er altså en samling der vi kan addere bilder og multiplisere dem med
 
 De tolv viste byggesteinene påvirker enten forskjellige blokker eller forskjellige kontraster i samme blokk. Ingen av dem kan fjernes uten at vi mister en mulig lokal endring. Samtidig kan ethvert bilde med null gjennomsnitt i hver blokk bygges av dem, blokk for blokk. De danner derfor en basis for nullrommet, som har dimensjon 12.
 
-### Finn hvilke outputbilder transformasjonen kan lage
+### Matrisekolonnene og rangen
 
-Vi har undersøkt hvilke endringer i inputbildet som ikke synes i outputen. Nå snur vi spørsmålet: **Hvilke $2\times2$-bilder kan transformasjonen faktisk produsere?**
+Vi har funnet nullrommet ved å spørre hva som forsvinner. Nå finner vi rangen
+ved å spørre hva som kan produseres. Her bruker vi den andre generelle måten
+å konstruere en transformasjonsmatrise på:
 
-Vi begynner med det enkleste mulige inputbildet: én piksel er 1, og alle andre er 0. Kall dette **å slå på én piksel**. Klikk på en inputpiksel i figuren. Outputbildet til høyre viser hva transformasjonen gjør med akkurat denne inputen.
+> Kolonne $j$ er outputen når input er $e_j$, altså når inputverdi $j$ er 1
+> og alle andre inputverdier er 0.
+
+For en regel som er oppgitt med outputformler, er radmetoden fra 3.2 raskest.
+For en ukjent regel vi kan teste — et typisk reverse-engineering-problem —
+kan vi sende inn $e_1,e_2,\ldots,e_n$ og samle de observerte outputene som
+kolonner. De to metodene bygger den samme matrisen.
+
+Vi begynner derfor med det enkleste mulige inputbildet: én piksel er 1, og
+alle andre er 0. Kall dette **å slå på én piksel**. Klikk på en inputpiksel
+i figuren. Outputbildet til høyre viser hva transformasjonen gjør med akkurat
+denne inputen. **Hvilke $2\times2$-bilder kan transformasjonen produsere?**
 
 ```{.jsxgraph width="760" height="430"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
