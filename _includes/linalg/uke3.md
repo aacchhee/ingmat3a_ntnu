@@ -888,10 +888,17 @@ for (var i=0; i<4; i++) {
   }));
 }
 
-function basisSquare(x0,y0,size,opacityFunction,borderColor) {
+function gray(value) {
+  // Samme gråskalakonvensjon som matplotlib: 0 er svart, 1 er hvitt.
+  var clipped=Math.max(0,Math.min(1,value));
+  var level=Math.round(255*clipped);
+  return 'rgb('+level+','+level+','+level+')';
+}
+
+function basisSquare(x0,y0,size,valueFunction,borderColor) {
   return board.create('polygon',
     [[x0,y0],[x0+size,y0],[x0+size,y0+size],[x0,y0+size]],{
-      fillColor:'#111111',fillOpacity:opacityFunction,
+      fillColor:function(){return gray(valueFunction());},fillOpacity:1,
       vertices:{visible:false},
       borders:{strokeColor:borderColor,strokeWidth:1.4,
                fixed:true,highlight:false},
@@ -949,9 +956,36 @@ board.create('text',[sumX+size,imageY-0.38,
   'Fire tall kan velges uavhengig'],{
   anchorX:'middle',fontSize:12,fixed:true
 });
+
+// Gjennomsnittet av de fire pikselverdiene vises som en 1 x 1-output.
+function averageValue() {
+  return (sliders[0].Value()+sliders[1].Value()+
+          sliders[2].Value()+sliders[3].Value())/4;
+}
+board.create('arrow',[[13.55,imageY+0.92],[14.05,imageY+0.92]],{
+  strokeColor:'#444444',strokeWidth:2,fixed:true,highlight:false
+});
+basisSquare(14.15,imageY+0.52,0.80,averageValue,'#333333');
+board.create('text',[14.55,imageY+1.75,'GJENNOMSNITT'],{
+  anchorX:'middle',fontSize:11,cssStyle:'font-weight:600',fixed:true
+});
+board.create('text',[14.55,imageY+0.92,function(){
+  return averageValue().toFixed(2);
+}],{
+  anchorX:'middle',anchorY:'middle',fontSize:10,fixed:true
+});
+board.create('text',[14.55,imageY-0.38,'$1\\times1$-output'],{
+  anchorX:'middle',fontSize:10,fixed:true
+});
 ```
 
 Appleten antyder to viktige egenskaper før vi bruker matematisk terminologi. Alle $2\times2$-bilder med pikselverdier mellom 0 og 1 kan lages ved å velge de fire kontrollene. Samtidig har hvert ferdig bilde bare én innstilling av kontrollene: Pikselverdiene bestemmer skyveknappene.
+
+Ruten lengst til høyre bruker samme gråskala som Python-figurene: 0 er svart
+og 1 er hvitt. Den viser det aritmetiske gjennomsnittet av de fire pikslene i
+summen. Endre én skyveknapp og legg merke til at én pikselendring på
+$\Delta$ endrer gjennomsnittet med $\Delta/4$. Denne $2\times2\to1\times1$-
+regelen blir den lille transformasjonen i 3.4.
 
 Nå gjentar vi det samme eksperimentet i NumPy. De fire første bildene har verdi 1 i hver sin piksel og 0 i de andre. Deretter blir hvert bilde ganget med ønsket pikselverdi, og de fire delbildene legges sammen.
 
@@ -1359,13 +1393,15 @@ $16\to4$.
 
 ### Én blokk: transformasjonen $4\to1$
 
-Legg pikselverdiene i én blokk i vektoren
+Legg de fire pikselverdiene i én $2\times2$-blokk i vektoren
 $u=[u_1,u_2,u_3,u_4]^T$. Gjennomsnittet er
 
 $$G(u)=\frac14(u_1+u_2+u_3+u_4)
 =\underbrace{\begin{bmatrix}\frac14&\frac14&\frac14&\frac14\end{bmatrix}}_{B}u.$$
 
-Den lille transformasjonsmatrisen er altså raden $B$. Oppskriften fra 3.2
+Her betyr «gjennomsnitt» alltid det aritmetiske gjennomsnittet av **disse
+fire pikselverdiene i denne ene blokken**. Den lille transformasjonsmatrisen
+er altså raden $B$. Oppskriften fra 3.2
 gir dette direkte: én output betyr én rad; koeffisienten til hver av de fire
 inputverdiene er $1/4$. Nå lar vi $G$ virke på de fire
 mønsterbyggesteinene fra 3.3. Fordi $G$ er lineær, forteller resultatene også
@@ -1392,24 +1428,31 @@ for name,pattern in zip(pattern_names,pattern_basis):
     print(f"{name:16s} -> gjennomsnitt {np.mean(pattern): .1f}")
 ```
 
-Hver kolonne i tabellen er ett forsøk. Øverst står et $2\times2$-mønster;
+Hver kolonne i tabellen er ett forsøk. Øverst står en blokk med fire
+pikselverdier;
 rett under står den tilhørende $1\times1$-outputen. Alle piksler har samme
 fysiske størrelse, så outputruten har halvparten av sidelengden til
-inputbildet. Lysnivåbildet har fire enere, så gjennomsnittet er 1. Hvert
-kontrastbilde har to enere og to minusenere; summen er 0 og gjennomsnittet er
-derfor 0.
+inputblokken. Lysnivåbildet har fire enere, så gjennomsnittet av de fire
+pikselverdiene er 1. Hvert kontrastbilde har to enere og to minusenere;
+summen av de fire pikselverdiene er 0, og blokkens gjennomsnitt er derfor 0.
 
-Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig kombinasjon av kontrastbildene får også gjennomsnitt null, fordi lineariteten fra 3.2 lar oss kombinere de tre nullresultatene.
+Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer
+lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig
+kombinasjon av kontrastbildene har også aritmetisk gjennomsnitt 0 over sine
+fire pikselverdier, fordi lineariteten fra 3.2 lar oss kombinere de tre
+nullresultatene.
 
 ::: {.callout-important}
 ### Den lille transformasjonens nullrom og rang
 
-Kontrastmønstrene er endringer vi kan legge til et bilde uten å endre
-gjennomsnittet. De tre mønstrene $H,V,D$ er lineært uavhengige, og alle har
+Kontrastmønstrene er endringer vi kan legge til en $2\times2$-blokk uten å
+endre gjennomsnittet av blokkens fire pikselverdier. De tre mønstrene
+$H,V,D$ er lineært uavhengige, og alle har
 sum null. De danner derfor tre uavhengige retninger i nullrommet. Når tre av
 fire pikselverdier er valgt i et bilde med sum null, er den siste bestemt.
 Nullrommet har dermed dimensjon 3. Den ene gjennomsnittsverdien kan velges
-fritt, så $B$ har rang 1. For den lille transformasjonen får vi regnskapet
+fritt, så $B$ har rang 1. Her er den ene outputverdien nettopp gjennomsnittet
+av de fire pikslene. For den lille transformasjonen får vi regnskapet
 
 $$4=\operatorname{rank}(B)+\dim N(B)=1+3.$$
 
@@ -1423,11 +1466,21 @@ Nullrommet ligger altså i **inputrommet**. Vektorene der har like mange kompone
 
 $$N(G)=\operatorname{span}\{H,V,D\}.$$
 
-Her er nullrommet nettopp alle $2\times2$-bilder med sum, og dermed gjennomsnitt, lik null. De tre uavhengige byggesteinene $H,V,D$ spenner ut denne samlingen, så de danner en basis og nullrommet har dimensjon 3. Nullrommet er altså ikke bare selve nullbildet; det kan inneholde mange ikke-null inputbilder som transformasjonen ikke registrerer.
+Her er nullrommet nettopp alle $2\times2$-blokker der summen av de fire
+pikselverdiene, og dermed deres aritmetiske gjennomsnitt, er null. De tre
+uavhengige byggesteinene $H,V,D$ spenner ut denne samlingen, så de danner en
+basis og nullrommet har dimensjon 3. Nullrommet er altså ikke bare selve
+nullbildet; det kan inneholde mange ikke-null inputblokker som denne ene
+blokkmålingen ikke registrerer.
 
-Dette forklarer åpningsproblemet for én blokk. Hvis $Gx_1=Gx_2$, kan vi trekke den ene outputen fra den andre. Linearitet gir $G(x_1-x_2)=0$. Forskjellsbildet $x_1-x_2$ ligger derfor i nullrommet til $G$. Omvendt kan vi legge enhver nullromsendring til et bilde uten å endre outputen:
+Dette forklarer åpningsproblemet for én blokk. Hvis $G(u_1)=G(u_2)$, har to
+blokker samme aritmetiske gjennomsnitt av sine fire pikselverdier. Vi kan
+trekke den ene outputen fra den andre, og linearitet gir
+$G(u_1-u_2)=0$. Forskjellsblokken $u_1-u_2$ ligger derfor i nullrommet til
+$G$. Omvendt kan vi legge enhver nullromsendring til en blokk uten å endre
+den ene outputverdien:
 
-$$Gx_1=Gx_2\quad\Longleftrightarrow\quad G(x_1-x_2)=0.$$
+$$G(u_1)=G(u_2)\quad\Longleftrightarrow\quad G(u_1-u_2)=0.$$
 
 ```{pyodide-python}
 #| label: week3-family-same-average
@@ -1444,15 +1497,23 @@ show_images(family,
     cols=5,vmin=0,vmax=1,figsize=(7.0,1.7))
 ```
 
-Det midterste bildet har $t=0$ og er ensfarget. Negative og positive verdier av $t$ legger til sjakkmønsteret med motsatt fortegn. Titlene viser at gjennomsnittet forblir $0.50$ i alle fem bilder, selv om kontrasten blir sterkere mot begge ender.
+Det midterste bildet har $t=0$ og er ensfarget. Negative og positive verdier
+av $t$ legger til sjakkmønsteret med motsatt fortegn. Titlene viser at
+gjennomsnittet av de fire pikselverdiene forblir $0.50$ i alle fem blokker,
+selv om kontrasten blir sterkere mot begge ender.
 
-Når $t$ endres, flytter vi oss gjennom forskjellige bilder langs kontrastretningen $D$. Pikslene endres, men gjennomsnittet står stille. Nullrommet beskriver derfor alle forskjeller mellom inputer som denne målingen ikke kan oppdage.
+Når $t$ endres, flytter vi oss gjennom forskjellige blokker langs
+kontrastretningen $D$. Pikslene endres, men det aritmetiske gjennomsnittet av
+de fire pikselverdiene står stille. Nullrommet beskriver derfor alle
+forskjeller mellom inputblokker som denne målingen ikke kan oppdage.
 
 ### Fire blokker: transformasjonen $16\to4$
 
 Vi går tilbake fra én $2\times2$-blokk til hele $4\times4$-bildet.
 Transformasjonen gjør ikke noe nytt: Den bruker den samme raden $B$ på fire
-forskjellige blokker. Når pikslene nummereres radvis som i 3.2, plasseres de
+forskjellige blokker og lager ett blokkgjennomsnitt fra hver. Den tar altså
+ikke gjennomsnittet av alle 16 piksler samlet. Når pikslene nummereres radvis
+som i 3.2, plasseres de
 fire kopiene av vektene i de kolonnene som hører til hver blokk. Slik får vi
 den store matrisen $A_{\mathrm{pool}}\in\mathbb R^{4\times16}$.
 
@@ -1494,7 +1555,11 @@ show_images(null_basis,null_titles,cols=4,cmap="coolwarm",
             vmin=-1,vmax=1,figsize=(6.8,5.2))
 ```
 
-Hvert bilde endrer bare to eller fire piksler innenfor én blokk. Positive og negative bidrag opphever hverandre, så gjennomsnittet i den blokken forblir null. De tre andre blokkene er allerede null. Dermed må outputen bli nullbildet for hvert av de tolv inputbildene.
+Hvert bilde endrer bare to eller fire piksler innenfor én blokk. Positive og
+negative bidrag opphever hverandre, så summen og det aritmetiske
+gjennomsnittet av de fire pikselendringene i blokken er null. De tre andre
+blokkene er allerede null. Dermed må alle fire blokkgjennomsnittene, og altså
+hele outputbildet, bli null for hvert av de tolv inputbildene.
 
 Neste celle kontrollerer dette numerisk. Deretter velger den tolv tilfeldige koeffisienter, skalerer hvert kontrastbilde og legger alle sammen. Det sammensatte inputbildet ser uregelmessig ut, men hver blokk har fortsatt sum null.
 
@@ -1535,7 +1600,11 @@ null. Grunnen er linearitet, ikke at vi var heldige med koeffisientene.
 
 Nullrommet er altså en samling der vi kan addere bilder og multiplisere dem med tall uten å forlate samlingen. En slik lineær samling inni et større rom kalles et **underrom**. Vi trenger ingen nye regneregler; ordet beskriver bare at lineærkombinasjoner blir værende i samlingen.
 
-De tolv viste byggesteinene påvirker enten forskjellige blokker eller forskjellige kontraster i samme blokk. Ingen av dem kan fjernes uten at vi mister en mulig lokal endring. Samtidig kan ethvert bilde med null gjennomsnitt i hver blokk bygges av dem, blokk for blokk. De danner derfor en basis for nullrommet, som har dimensjon 12.
+De tolv viste byggesteinene påvirker enten forskjellige blokker eller
+forskjellige kontraster i samme blokk. Ingen av dem kan fjernes uten at vi
+mister en mulig lokal endring. Samtidig kan ethvert bilde der hver blokk har
+sum null bygges av dem, blokk for blokk. De danner derfor en basis for
+nullrommet, som har dimensjon 12.
 
 ### Matrisekolonnene og rangen
 
@@ -1661,9 +1730,32 @@ board.create('text',[7.55,1.15,'Én piksel med verdi 1 gir gjennomsnitt 1/4 i si
 });
 ```
 
-De fire fargene deler inputbildet i fire blokker. Alle piksler med samme farge peker mot samme felt i outputbildet. Når bare én piksel har verdien 1, er gjennomsnittet i blokken $1/4$; de andre tre outputfeltene får 0. Prøv flere piksler med samme farge. Pikselnummeret endrer seg, men outputen gjør ikke det.
+De fire fargene deler inputbildet i fire blokker. Alle piksler med samme
+farge peker mot samme felt i outputbildet. Når bare én piksel har verdien 1,
+er gjennomsnittet av de fire pikslene i akkurat den blokken $1/4$; de andre
+tre blokkene består av nuller og får blokkgjennomsnitt 0. Prøv flere piksler
+med samme farge. Pikselnummeret endrer seg, men outputen gjør ikke det.
 
 Her kommer forbindelsen til matrisen: **Kolonne $j$ i $A$ er outputen vi får når bare inputpiksel $j$ er slått på.** Fire piksler som gir samme output, gir derfor fire identiske kolonner. Figuren viser på denne måten fire grupper av like kolonner, én gruppe for hver farge.
+
+La $f_1,f_2,f_3,f_4$ være pikselbasisen i outputrommet
+$\mathbb R^4$. Forsøkene gir konkret
+
+$$
+\begin{aligned}
+a_1=a_2=a_5=a_6&=\tfrac14 f_1,\\
+a_3=a_4=a_7=a_8&=\tfrac14 f_2,\\
+a_9=a_{10}=a_{13}=a_{14}&=\tfrac14 f_3,\\
+a_{11}=a_{12}=a_{15}=a_{16}&=\tfrac14 f_4.
+\end{aligned}
+$$
+
+Her er $a_j$ kolonne $j$ i $A_{\mathrm{pool}}$. Den første linjen sier for
+eksempel at hver av pikslene 1, 2, 5 og 6 påvirker bare øvre venstre
+outputpiksel, og påvirker den med vekten $1/4$. Dette er den samme matrisen
+som vi bygde radvis i 3.2, men nå er den funnet ved å teste transformasjonen
+på én inputretning om gangen. Slik kan matrisen reverse-engineeres selv om vi
+ikke kjenner den interne oppskriften til transformasjonen.
 
 Koden nedenfor utfører alle de 16 forsøkene på én gang og tegner hver matriskolonne som et lite $2\times2$-bilde.
 
@@ -1678,9 +1770,23 @@ show_images(column_images,[f"Kolonne {j+1}" for j in range(16)],
             cols=4,vmin=0,vmax=0.25,figsize=(6.8,5.8))
 ```
 
-De 16 små bildene bekrefter det vi så i appleten: Kolonnene kommer i fire grupper. Innenfor hver gruppe er outputbildene identiske. Mellom gruppene flytter den eneste lyse outputpikselen seg til en ny plass.
+De 16 små bildene bekrefter det vi så i appleten: Kolonnene kommer i fire
+grupper. Innenfor hver gruppe er outputbildene identiske. Derfor gir flere
+kolonner i samme gruppe ingen ny måte å endre outputen på. Mellom gruppene
+flytter den eneste ikke-null outputpikselen seg til en ny plass.
 
-Dermed har vi funnet fire forskjellige måter å påvirke outputen på. Det neste spørsmålet er om disse fire mulighetene er nok til å lage *ethvert* $2\times2$-bilde. Vi velger fire tilfeldige målbilder. For hvert målbilde lager koden et $4\times4$-inputbilde ved å fylle hver fargede blokk med verdien vi ønsker i det tilsvarende outputfeltet. Deretter lar vi transformasjonen beregne outputen og sammenligner.
+Velg én representant fra hver gruppe, for eksempel kolonne 1, 3, 9 og 11.
+De er henholdsvis $\tfrac14f_1,\tfrac14f_2,\tfrac14f_3$ og
+$\tfrac14f_4$. Ingen av dem kan bygges av de tre andre, fordi hver har sin
+ikke-null verdi på en egen outputplass. De fire representantene er derfor
+lineært uavhengige.
+
+De spenner også ut hele outputrommet. For å lage en ønsket output
+$y=[y_1,y_2,y_3,y_4]^T$ kan vi for eksempel sette inputpikslene 1, 3, 9 og
+11 lik $4y_1,4y_2,4y_3,4y_4$ og la alle andre inputpiksler være null. En
+annen, mer bildelik oppskrift er å fylle hver blokk med den ønskede
+outputverdien. Koden nedenfor bruker den siste oppskriften og kontrollerer den
+på fire målbilder.
 
 ```{pyodide-python}
 #| label: week3-build-arbitrary-output
@@ -1719,7 +1825,12 @@ fysiske pikselstørrelse brukes i alle tre kolonner, så de to outputbildene har
 halvparten av sidelengden til inputbildet. De to små bildene er identiske i
 alle fire forsøk.
 
-Målbildene ble valgt tilfeldig, men den samme oppskriften virker for alle $2\times2$-bilder: kopier hver ønsket outputverdi inn i alle fire pikslene i den tilsvarende inputblokken. Gjennomsnittet av fire like tall er tallet selv. Feilen er derfor nøyaktig null, bortsett fra eventuell avrunding. Transformasjonen kan altså produsere alle vektorer i $\mathbb R^4$.
+Målbildene ble valgt tilfeldig, men den samme oppskriften virker for alle
+$2\times2$-bilder: kopier hver ønsket outputverdi inn i alle fire pikslene i
+den tilsvarende inputblokken. Det aritmetiske gjennomsnittet av fire like
+verdier er denne verdien selv. Feilen er derfor nøyaktig null, bortsett fra
+eventuell avrunding. Transformasjonen kan altså produsere alle vektorer i
+$\mathbb R^4$.
 
 Fra tidligere kjenner vi samlingen av alle outputvektorer en matrise kan produsere som **kolonnerommet**. For hele bildereduksjonen skriver vi
 
@@ -1734,15 +1845,27 @@ $$A_{\mathrm{pool}}x=x_1a_1+\cdots+x_{16}a_{16}.$$
 
 Formelen sier at inputverdien $x_j$ skalerer kolonnebildet $a_j$, og at de 16 skalerte bidragene legges sammen. Alle outputer bygges dermed som lineærkombinasjoner av kolonnebildene. Dette er den samme byggesteinsideen som for basisbilder, men nå er byggesteinene bestemt av transformasjonsmatrisen.
 
-I vårt eksempel holder det å beholde én kolonne fra hver av de fire gruppene, for eksempel kolonne 1, 3, 9 og 11. Disse fire kan varieres uavhengig og bygger alle mulige outputbilder. De andre tolv kolonnene gjentar virkninger vi allerede har.
+I vårt eksempel holder det derfor å beholde pivotkolonnene 1, 3, 9 og 11:
+én fra hver gruppe. De bygger alle mulige outputbilder, og ingen av de fire
+kan fjernes. De andre tolv kolonnene er kopier av virkninger vi allerede har.
 
 **Rangen** er dimensjonen til kolonnerommet:
 
 $$\operatorname{rank}(A_{\mathrm{pool}})
 =\dim\operatorname{Col}(A_{\mathrm{pool}}).$$
 
-Uformelt teller rangen hvor mange outputverdier som kan varieres
-uavhengig. De fire blokkgjennomsnittene kan velges fritt, så rangen er 4.
+Rangen er derfor 4 av tre likeverdige grunner:
+
+1. Vi har funnet fire lineært uavhengige matriskolonner.
+2. Disse fire kolonnene spenner ut hele det firedimensjonale outputrommet.
+3. Gauss-eliminasjon gir fire pivoter, én for hver kolonnegruppe.
+
+Rangen teller altså ikke antallet kolonner (det er 16) og heller ikke bare
+antallet outputplasser (det er 4). Den teller antallet uavhengige
+outputretninger som matrisekolonnene faktisk kan bygge. Her kan de fire
+blokkgjennomsnittene velges fritt, så tallet er 4. For en annen $4\times16$-
+matrise kunne rangen vært mindre dersom noen outputmålinger var avhengige av
+de andre.
 
 ```{pyodide-python}
 #| label: week3-rank-check
