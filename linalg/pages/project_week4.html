@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Uke 4 – Når målingene ikke passer – Matematikk 3A</title>
+<title>Prosjekt 4 – Når målingene ikke passer – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom numpy.polynomial import polynomial as poly\nfrom numpy.polynomial import chebyshev as cheb\n\n# De samme avlesningsmatrisene som i uke 3, ferdigstilt her slik at dette\n# prosjektet ikke avhenger av kode i en annen nettleserside.\ndef monomial_matrix(points, n):\n    \"\"\"Avlesningsmatrise for basisen (1, x, ..., x^n).\"\"\"\n    points = np.asarray(points, dtype=float)\n    powers = np.arange(n+1)\n    return points[:, None]**powers[None, :]\n\n\ndef chebyshev_matrix(points, n):\n    \"\"\"Avlesningsmatrise for basisen (T_0, ..., T_n).\"\"\"\n    return cheb.chebvander(np.asarray(points, dtype=float), n)\n\n\ndef chebyshev_points(n):\n    \"\"\"De n+1 cosinusfordelte punktene brukt i uke 3.\"\"\"\n    k = np.arange(n+1)\n    return np.cos((2*k+1)*np.pi/(2*(n+1)))\n\n\ndef reference_coordinates(n):\n    \"\"\"Moderate, deterministiske koordinater i Chebyshev-basis.\"\"\"\n    k = np.arange(n+1)\n    return (-1.0)**k/(k+1.0)**2\n\n\ndef classical_gram_schmidt(A):\n    \"\"\"Klassisk GS uten rangkontroll, brukt for å framprovosere feil.\"\"\"\n    A = np.asarray(A, dtype=float)\n    m, n = A.shape\n    Q = np.zeros((m, n))\n    R = np.zeros((n, n))\n    for j in range(n):\n        coefficients = Q[:, :j].T @ A[:, j]\n        R[:j, j] = coefficients\n        v = A[:, j] - Q[:, :j] @ coefficients\n        R[j, j] = np.linalg.norm(v)\n        Q[:, j] = v/R[j, j]\n    return Q, R\n\n\ndef modified_gram_schmidt(A, tolerance=None):\n    \"\"\"Modifisert GS med eksplisitt kontroll av små nye retninger.\"\"\"\n    A = np.asarray(A, dtype=float)\n    m, n = A.shape\n    Q = np.zeros((m, n))\n    R = np.zeros((n, n))\n    if tolerance is None:\n        tolerance = np.finfo(float).eps*max(m, n)*np.linalg.norm(A)\n    for j in range(n):\n        v = A[:, j].copy()\n        for i in range(j):\n            R[i, j] = Q[:, i] @ v\n            v = v-R[i, j]*Q[:, i]\n        R[j, j] = np.linalg.norm(v)\n        if R[j, j] <= tolerance:\n            raise np.linalg.LinAlgError(\n                f\"Kolonne {j+1} gir ingen pålitelig ny retning\"\n            )\n        Q[:, j] = v/R[j, j]\n    return Q, R\n\n\ndef qr_solution(A, b, qr_method=modified_gram_schmidt):\n    \"\"\"Minste-kvadraters løsning fra en tynn QR-faktorisering.\"\"\"\n    Q, R = qr_method(A)\n    return np.linalg.solve(R, Q.T@b), Q, R\n\n\ndef method_report(name, A, b, x, Q=None, R=None):\n    \"\"\"Samle kontroller som ellers er lette å glemme.\"\"\"\n    residual = b-A@x\n    report = {\n        \"metode\": name,\n        \"endelig\": bool(np.isfinite(x).all()),\n        \"residual\": float(np.linalg.norm(residual)),\n        \"normaltest\": float(np.linalg.norm(A.T@residual)),\n    }\n    if Q is not None and R is not None:\n        report[\"ortogonalitetsfeil\"] = float(\n            np.linalg.norm(Q.T@Q-np.eye(Q.shape[1]))\n        )\n        report[\"faktoriseringsfeil\"] = float(np.linalg.norm(A-Q@R))\n    return report","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nt = np.linspace(-1.0, 1.0, 6)\nb = np.array([-0.12, 0.34, 0.68, 1.32, 1.55, 2.18])\nA = np.column_stack([np.ones_like(t), t])\n\ncandidates = [\n    np.array([1.0, 1.0]),\n    np.array([0.9, 1.1]),\n    np.array([1.1, 0.8]),\n]\nc_star, _, _, _ = np.linalg.lstsq(A, b, rcond=None)\n\nfor c in candidates+[c_star]:\n    print(c, \"  ||Ac-b|| =\", np.linalg.norm(A@c-b))\n\ngrid = np.linspace(-1.05, 1.05, 300)\nplt.scatter(t, b, color=\"black\", label=\"målinger\")\nplt.plot(grid, c_star[0]+c_star[1]*grid, label=\"lstsq\")\nplt.xlabel(\"t\"); plt.ylabel(\"målt verdi\")\nplt.title(\"Ingen eksakt linje, men én beste tilpasning\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-first-fit","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nc_star, _, _, _ = np.linalg.lstsq(A, b, rcond=None)\nr = b-A@c_star\nprint(\"c_* =\", c_star)\nprint(\"r =\", r)\nprint(\"A^T r =\", A.T@r)\n\ndeltas = np.linspace(-0.4, 0.4, 101)\nerrors_c0 = [np.linalg.norm(A@(c_star+np.array([d, 0]))-b)\n             for d in deltas]\nerrors_c1 = [np.linalg.norm(A@(c_star+np.array([0, d]))-b)\n             for d in deltas]\nplt.plot(deltas, errors_c0, label=\"endre bare c0\")\nplt.plot(deltas, errors_c1, label=\"endre bare c1\")\nplt.axvline(0, color=\"black\", linewidth=0.8)\nplt.xlabel(\"endring fra c_*\"); plt.ylabel(\"residualnorm\")\nplt.title(\"Små endringer i hver koordinat gjør tilpasningen dårligere\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-residual-test","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nc_cgs, Qc, Rc = qr_solution(A, b, classical_gram_schmidt)\nc_mgs, Qm, Rm = qr_solution(A, b, modified_gram_schmidt)\nc_lib, _, _, _ = np.linalg.lstsq(A, b, rcond=None)\n\nprint(method_report(\"klassisk GS\", A, b, c_cgs, Qc, Rc))\nprint(method_report(\"modifisert GS\", A, b, c_mgs, Qm, Rm))\nprint(method_report(\"lstsq\", A, b, c_lib))","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-small-qr","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nB = np.array([[1.0, 0.0, 1.0],\n              [0.0, 1.0, 1.0],\n              [0.0, 0.0, 0.0],\n              [0.0, 0.0, 0.0]])\n\nwith np.errstate(divide=\"warn\", invalid=\"warn\"):\n    Q_bad, R_bad = classical_gram_schmidt(B)\n\nprint(\"rang(B) =\", np.linalg.matrix_rank(B))\nprint(\"diagonal(R) =\", np.diag(R_bad))\nprint(\"Q =\\n\", Q_bad)\nprint(\"alle tall endelige?\", np.isfinite(Q_bad).all())\n\ntry:\n    modified_gram_schmidt(B)\nexcept np.linalg.LinAlgError as error:\n    print(\"Kontrollert stopp:\", error)","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-dependent-nan","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nn = 3\nm = 12\npoints = np.linspace(-1.0, 1.0, m)\ntrue_coordinates = reference_coordinates(n)\nexact_values = cheb.chebval(points, true_coordinates)\n\nrng = np.random.default_rng(2026)\nnoise_size = 1e-3\nnoise = noise_size*rng.standard_normal(m)\nmeasurements = exact_values+noise\n\nC = chebyshev_matrix(points, n)\nrecovered, Q, R = qr_solution(C, measurements)\nresidual = measurements-C@recovered\n\ngrid = np.linspace(-1.0, 1.0, 1001)\nreference_curve = cheb.chebval(grid, true_coordinates)\nfitted_curve = cheb.chebval(grid, recovered)\n\nprint(\"form(C) =\", C.shape, \" rang(C) =\", np.linalg.matrix_rank(C))\nprint(\"||r|| =\", np.linalg.norm(residual))\nprint(\"||C^T r|| =\", np.linalg.norm(C.T@residual))\nprint(\"||Q^TQ-I|| =\", np.linalg.norm(Q.T@Q-np.eye(n+1)))\n\nplt.scatter(points, measurements, color=\"black\", s=25, label=\"målinger\")\nplt.plot(grid, reference_curve, \"--\", label=\"referanse\")\nplt.plot(grid, fitted_curve, label=\"tilpasset polynom\")\nplt.xlabel(\"x\"); plt.ylabel(\"p(x)\")\nplt.title(\"Flere støyfylte målinger enn koeffisienter\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-polynomial-fit","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nn = 12\nm = 25\npoints = np.linspace(-1.0, 1.0, m)\ntrue_chebyshev = reference_coordinates(n)\nexact_values = cheb.chebval(points, true_chebyshev)\nrng = np.random.default_rng(2026)\nnoise = 1e-10*rng.standard_normal(m)\nb_noisy = exact_values+noise\n\nM = monomial_matrix(points, n)\nC = chebyshev_matrix(points, n)\nxM, QM, RM = qr_solution(M, b_noisy)\nxC, QC, RC = qr_solution(C, b_noisy)\nxM_lib, _, _, _ = np.linalg.lstsq(M, b_noisy, rcond=None)\nxC_lib, _, _, _ = np.linalg.lstsq(C, b_noisy, rcond=None)\n\nprint(\"kappa(M) =\", np.linalg.cond(M))\nprint(\"kappa(C) =\", np.linalg.cond(C))\nprint(method_report(\"M, MGS\", M, b_noisy, xM, QM, RM))\nprint(method_report(\"C, MGS\", C, b_noisy, xC, QC, RC))\nprint(method_report(\"M, lstsq\", M, b_noisy, xM_lib))\nprint(method_report(\"C, lstsq\", C, b_noisy, xC_lib))\n\ngrid = np.linspace(-1.0, 1.0, 2001)\nreference = cheb.chebval(grid, true_chebyshev)\ncurve_M = poly.polyval(grid, xM)\ncurve_C = cheb.chebval(grid, xC)\nplt.semilogy(grid, np.maximum(abs(curve_M-reference), 1e-18), label=\"monomial\")\nplt.semilogy(grid, np.maximum(abs(curve_C-reference), 1e-18), label=\"Chebyshev\")\nplt.xlabel(\"x\"); plt.ylabel(\"absolutt kurvefeil\")\nplt.title(\"Samme data og polynom, forskjellig basis\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-basis-comparison","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nfor matrix_name, matrix in [(\"M\", M), (\"C\", C)]:\n    for method_name, method in [\n        (\"klassisk GS\", classical_gram_schmidt),\n        (\"modifisert GS\", modified_gram_schmidt),\n    ]:\n        try:\n            x, Q, R = qr_solution(matrix, b_noisy, method)\n            print(matrix_name, method_report(method_name, matrix, b_noisy,\n                                             x, Q, R))\n        except np.linalg.LinAlgError as error:\n            print(matrix_name, method_name, \"stoppet:\", error)","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-cgs-mgs","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\ndef normal_equation_solution(A, b):\n    return np.linalg.solve(A.T@A, A.T@b)\n\nfor name, matrix in [(\"monomial\", M), (\"Chebyshev\", C)]:\n    x_normal = normal_equation_solution(matrix, b_noisy)\n    x_lstsq, _, _, _ = np.linalg.lstsq(matrix, b_noisy, rcond=None)\n    print(\"\\n\", name)\n    print(\"kappa(A)    =\", np.linalg.cond(matrix))\n    print(\"kappa(A^TA) =\", np.linalg.cond(matrix.T@matrix))\n    print(method_report(\"normal\", matrix, b_noisy, x_normal))\n    print(method_report(\"lstsq\", matrix, b_noisy, x_lstsq))","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-normal-equations","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom numpy.polynomial import polynomial as poly\nfrom numpy.polynomial import chebyshev as cheb\n\n# De samme avlesningsmatrisene som i uke 3, ferdigstilt her slik at dette\n# prosjektet ikke avhenger av kode i en annen nettleserside.\ndef monomial_matrix(points, n):\n    \"\"\"Avlesningsmatrise for basisen (1, x, ..., x^n).\"\"\"\n    points = np.asarray(points, dtype=float)\n    powers = np.arange(n+1)\n    return points[:, None]**powers[None, :]\n\n\ndef chebyshev_matrix(points, n):\n    \"\"\"Avlesningsmatrise for basisen (T_0, ..., T_n).\"\"\"\n    return cheb.chebvander(np.asarray(points, dtype=float), n)\n\n\ndef chebyshev_points(count):\n    \"\"\"Nøyaktig count cosinusfordelte punkter i [-1, 1].\"\"\"\n    if count < 1:\n        raise ValueError(\"count må være minst 1\")\n    k = np.arange(count)\n    return np.cos((2*k+1)*np.pi/(2*count))\n\n\ndef reference_coordinates(n):\n    \"\"\"Moderate, deterministiske koordinater i Chebyshev-basis.\"\"\"\n    k = np.arange(n+1)\n    return (-1.0)**k/(k+1.0)**2\n\n\ndef classical_gram_schmidt(A):\n    \"\"\"Klassisk GS uten rangkontroll, brukt for å framprovosere feil.\"\"\"\n    A = np.asarray(A, dtype=float)\n    m, n = A.shape\n    Q = np.zeros((m, n))\n    R = np.zeros((n, n))\n    for j in range(n):\n        coefficients = Q[:, :j].T @ A[:, j]\n        R[:j, j] = coefficients\n        v = A[:, j] - Q[:, :j] @ coefficients\n        R[j, j] = np.linalg.norm(v)\n        Q[:, j] = v/R[j, j]\n    return Q, R\n\n\ndef modified_gram_schmidt(A, tolerance=None):\n    \"\"\"Modifisert GS med eksplisitt kontroll av små nye retninger.\"\"\"\n    A = np.asarray(A, dtype=float)\n    if A.ndim != 2:\n        raise ValueError(\"A må være todimensjonal\")\n    m, n = A.shape\n    if m < n:\n        raise ValueError(\"Tynn QR her krever minst like mange rader som kolonner\")\n    if not np.isfinite(A).all():\n        raise ValueError(\"A må bare inneholde endelige tall\")\n    Q = np.zeros((m, n))\n    R = np.zeros((n, n))\n    if tolerance is None:\n        tolerance = np.finfo(float).eps*max(m, n)*np.linalg.norm(A, \"fro\")\n    for j in range(n):\n        v = A[:, j].copy()\n        for i in range(j):\n            R[i, j] = Q[:, i] @ v\n            v = v-R[i, j]*Q[:, i]\n        R[j, j] = np.linalg.norm(v)\n        if not np.isfinite(R[j, j]):\n            raise np.linalg.LinAlgError(\n                f\"Kolonne {j+1} ga en ikke-endelig rest\"\n            )\n        if R[j, j] <= tolerance:\n            raise np.linalg.LinAlgError(\n                f\"Kolonne {j+1} gir ingen pålitelig ny retning\"\n            )\n        Q[:, j] = v/R[j, j]\n    return Q, R\n\n\ndef qr_solution(A, b, qr_method=modified_gram_schmidt):\n    \"\"\"Minste-kvadraters løsning fra en tynn QR-faktorisering.\"\"\"\n    A = np.asarray(A, dtype=float)\n    b = np.asarray(b, dtype=float)\n    if A.ndim != 2 or b.ndim != 1 or A.shape[0] != b.size:\n        raise ValueError(\"A må være m x k og b må ha lengde m\")\n    if not np.isfinite(A).all() or not np.isfinite(b).all():\n        raise ValueError(\"A og b må bare inneholde endelige tall\")\n    Q, R = qr_method(A)\n    x = np.linalg.solve(R, Q.T@b)\n    if not np.isfinite(x).all():\n        raise np.linalg.LinAlgError(\"QR-løsningen inneholder ikke-endelige tall\")\n    return x, Q, R\n\n\ndef safe_ratio(numerator, denominator):\n    \"\"\"Skalert diagnostikk, også definert når begge ledd er null.\"\"\"\n    if denominator == 0:\n        return 0.0 if numerator == 0 else np.inf\n    return float(numerator/denominator)\n\n\ndef method_report(name, A, b, x, Q=None, R=None):\n    \"\"\"Samle kontroller som ellers er lette å glemme.\"\"\"\n    A = np.asarray(A, dtype=float)\n    b = np.asarray(b, dtype=float)\n    x = np.asarray(x, dtype=float)\n    residual = b-A@x\n    finite = np.isfinite(A).all() and np.isfinite(b).all()\n    finite = finite and np.isfinite(x).all() and np.isfinite(residual).all()\n    residual_norm = np.linalg.norm(residual)\n    data_scale = np.linalg.norm(A, \"fro\")*np.linalg.norm(x)+np.linalg.norm(b)\n    normal_norm = np.linalg.norm(A.T@residual)\n    normal_scale = np.linalg.norm(A, 2)*residual_norm\n    report = {\n        \"metode\": name,\n        \"form\": f\"{A.shape[0]}x{A.shape[1]}\",\n        \"rang\": int(np.linalg.matrix_rank(A)),\n        \"alle_endelige\": bool(finite),\n        \"relativ_residual\": safe_ratio(residual_norm, data_scale),\n        \"skalert_normaltest\": safe_ratio(normal_norm, normal_scale),\n    }\n    if Q is not None and R is not None:\n        finite_qr = np.isfinite(Q).all() and np.isfinite(R).all()\n        report[\"alle_endelige\"] = bool(report[\"alle_endelige\"] and finite_qr)\n        report[\"ortogonalitetsfeil_F\"] = float(\n            np.linalg.norm(Q.T@Q-np.eye(Q.shape[1]), \"fro\")\n        )\n        report[\"relativ_faktoriseringsfeil_F\"] = safe_ratio(\n            np.linalg.norm(A-Q@R, \"fro\"), np.linalg.norm(A, \"fro\")\n        )\n    return report","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nt = np.linspace(-1.0, 1.0, 6)\nb = np.array([-0.12, 0.34, 0.68, 1.32, 1.55, 2.18])\nA = np.column_stack([np.ones_like(t), t])\n\ncandidates = [\n    np.array([1.0, 1.0]),\n    np.array([0.9, 1.1]),\n    np.array([1.1, 0.8]),\n]\nc_star, _, _, _ = np.linalg.lstsq(A, b, rcond=None)\n\nfor c in candidates+[c_star]:\n    print(c, \"  ||Ac-b||_2 =\", np.linalg.norm(A@c-b))\n\ngrid = np.linspace(-1.05, 1.05, 300)\nplt.scatter(t, b, color=\"black\", label=\"målinger\")\nplt.plot(grid, c_star[0]+c_star[1]*grid, label=\"lstsq\")\nplt.xlabel(\"t\"); plt.ylabel(\"målt verdi\")\nplt.title(\"Ingen eksakt linje, men én beste tilpasning\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-first-fit","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nc_star, _, _, _ = np.linalg.lstsq(A, b, rcond=None)\nr = b-A@c_star\nprint(\"c_* =\", c_star)\nprint(\"r =\", r)\nprint(\"A^T r =\", A.T@r)\n\ndeltas = np.linspace(-0.4, 0.4, 101)\nerrors_c0 = [np.linalg.norm(A@(c_star+np.array([d, 0]))-b)\n             for d in deltas]\nerrors_c1 = [np.linalg.norm(A@(c_star+np.array([0, d]))-b)\n             for d in deltas]\nplt.plot(deltas, errors_c0, label=\"endre bare c0\")\nplt.plot(deltas, errors_c1, label=\"endre bare c1\")\nplt.axvline(0, color=\"black\", linewidth=0.8)\nplt.xlabel(\"endring fra c_*\"); plt.ylabel(\"residualnorm\")\nplt.title(\"Små endringer i hver koordinat gjør tilpasningen dårligere\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-residual-test","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nc_cgs, Qc, Rc = qr_solution(A, b, classical_gram_schmidt)\nc_mgs, Qm, Rm = qr_solution(A, b, modified_gram_schmidt)\nc_lib, _, _, _ = np.linalg.lstsq(A, b, rcond=None)\n\nprint(method_report(\"klassisk GS\", A, b, c_cgs, Qc, Rc))\nprint(method_report(\"modifisert GS\", A, b, c_mgs, Qm, Rm))\nprint(method_report(\"lstsq\", A, b, c_lib))","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-small-qr","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nB = np.array([[1.0, 0.0, 1.0],\n              [0.0, 1.0, 1.0],\n              [0.0, 0.0, 0.0],\n              [0.0, 0.0, 0.0]])\n\nwith np.errstate(divide=\"warn\", invalid=\"warn\"):\n    Q_bad, R_bad = classical_gram_schmidt(B)\n\nprint(\"rang(B) =\", np.linalg.matrix_rank(B))\nprint(\"diagonal(R) =\", np.diag(R_bad))\nprint(\"Q =\\n\", Q_bad)\nprint(\"alle tall endelige?\", np.isfinite(Q_bad).all())\n\ntry:\n    modified_gram_schmidt(B)\nexcept np.linalg.LinAlgError as error:\n    print(\"Kontrollert stopp:\", error)","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-dependent-nan","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nn = 3\nm = 12\npoints = np.linspace(-1.0, 1.0, m)\ntrue_coordinates = reference_coordinates(n)\nexact_values = cheb.chebval(points, true_coordinates)\n\nrng = np.random.default_rng(2026)\nnoise_size = 1e-3\nnoise = noise_size*rng.standard_normal(m)\nmeasurements = exact_values+noise\n\nC = chebyshev_matrix(points, n)\nrecovered, Q, R = qr_solution(C, measurements)\nresidual = measurements-C@recovered\n\ngrid = np.linspace(-1.0, 1.0, 1001)\nreference_curve = cheb.chebval(grid, true_coordinates)\nfitted_curve = cheb.chebval(grid, recovered)\n\nprint(\"form(C) =\", C.shape, \" rang(C) =\", np.linalg.matrix_rank(C))\nprint(\"||r||_2 =\", np.linalg.norm(residual))\nprint(\"||C^T r||_2 =\", np.linalg.norm(C.T@residual))\nprint(\"||Q^TQ-I||_F =\", np.linalg.norm(Q.T@Q-np.eye(n+1), \"fro\"))\n\nplt.scatter(points, measurements, color=\"black\", s=25, label=\"målinger\")\nplt.plot(grid, reference_curve, \"--\", label=\"referanse\")\nplt.plot(grid, fitted_curve, label=\"tilpasset polynom\")\nplt.xlabel(\"x\"); plt.ylabel(\"p(x)\")\nplt.title(\"Flere støyfylte målinger enn koeffisienter\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-polynomial-fit","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nn = 12\nm = 25\npoints = np.linspace(-1.0, 1.0, m)\ntrue_chebyshev = reference_coordinates(n)\nexact_values = cheb.chebval(points, true_chebyshev)\nrng = np.random.default_rng(2026)\nnoise = 1e-10*rng.standard_normal(m)\nb_noisy = exact_values+noise\n\nM = monomial_matrix(points, n)\nC = chebyshev_matrix(points, n)\nxM, QM, RM = qr_solution(M, b_noisy)\nxC, QC, RC = qr_solution(C, b_noisy)\nxM_lib, _, _, _ = np.linalg.lstsq(M, b_noisy, rcond=None)\nxC_lib, _, _, _ = np.linalg.lstsq(C, b_noisy, rcond=None)\n\nprint(\"kappa(M) =\", np.linalg.cond(M))\nprint(\"kappa(C) =\", np.linalg.cond(C))\nprint(method_report(\"M, MGS\", M, b_noisy, xM, QM, RM))\nprint(method_report(\"C, MGS\", C, b_noisy, xC, QC, RC))\nprint(method_report(\"M, lstsq\", M, b_noisy, xM_lib))\nprint(method_report(\"C, lstsq\", C, b_noisy, xC_lib))\n\ngrid = np.linspace(-1.0, 1.0, 2001)\nreference = cheb.chebval(grid, true_chebyshev)\ncurve_M = poly.polyval(grid, xM)\ncurve_C = cheb.chebval(grid, xC)\nplt.semilogy(grid, np.maximum(abs(curve_M-reference), 1e-18), label=\"monomial\")\nplt.semilogy(grid, np.maximum(abs(curve_C-reference), 1e-18), label=\"Chebyshev\")\nplt.xlabel(\"x\"); plt.ylabel(\"absolutt kurvefeil\")\nplt.title(\"Samme data og polynom, forskjellig basis\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-basis-comparison","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nfor matrix_name, matrix in [(\"M\", M), (\"C\", C)]:\n    for method_name, method in [\n        (\"klassisk GS\", classical_gram_schmidt),\n        (\"modifisert GS\", modified_gram_schmidt),\n    ]:\n        try:\n            x, Q, R = qr_solution(matrix, b_noisy, method)\n            print(matrix_name, method_report(method_name, matrix, b_noisy,\n                                             x, Q, R))\n        except np.linalg.LinAlgError as error:\n            print(matrix_name, method_name, \"stoppet:\", error)","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-cgs-mgs","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\ndef normal_equation_solution(A, b):\n    return np.linalg.solve(A.T@A, A.T@b)\n\nfor name, matrix in [(\"monomial\", M), (\"Chebyshev\", C)]:\n    x_lstsq, _, _, _ = np.linalg.lstsq(matrix, b_noisy, rcond=None)\n    print(\"\\n\", name)\n    print(\"kappa(A)    =\", np.linalg.cond(matrix))\n    print(\"kappa(A^TA) =\", np.linalg.cond(matrix.T@matrix))\n    try:\n        x_normal = normal_equation_solution(matrix, b_noisy)\n        if not np.isfinite(x_normal).all():\n            raise np.linalg.LinAlgError(\"ikke-endelig løsning\")\n        print(method_report(\"normal\", matrix, b_noisy, x_normal))\n    except np.linalg.LinAlgError as error:\n        print(\"normal stoppet kontrollert:\", error)\n    print(method_report(\"lstsq\", matrix, b_noisy, x_lstsq))","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-normal-equations","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4189,7 +4189,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week4.html">Uke 4 – Når målingene ikke passer</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week4.html">Prosjekt 4 – Når målingene ikke passer</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -4267,7 +4267,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/uke4.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Uke 4 – ortogonalitet, projeksjon og minste kvadrater</span></a>
+ <span class="menu-text">Uke 4 – ortogonalitet, QR og minste kvadrater</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4361,7 +4361,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week4.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Uke 4 – Når målingene ikke passer</span></a>
+ <span class="menu-text">Prosjekt 4 – Når målingene ikke passer</span></a>
   </div>
 </li>
       </ul>
@@ -4403,9 +4403,9 @@ window.Quarto = {
 </script>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week4.html">Uke 4 – Når målingene ikke passer</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week4.html">Prosjekt 4 – Når målingene ikke passer</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Uke 4 – Når målingene ikke passer</h1>
+<h1 class="title">Prosjekt 4 – Når målingene ikke passer</h1>
 </div>
 
 
@@ -4422,14 +4422,63 @@ window.Quarto = {
 </header>
 
 
-<section id="når-målingene-ikke-passer-ortogonal-redningsaksjon" class="level1">
-<h1>Når målingene ikke passer: ortogonal redningsaksjon</h1>
+<section id="prosjekt-4-når-målingene-ikke-passer" class="level1">
+<h1>Prosjekt 4 – Når målingene ikke passer</h1>
 <p>Dette prosjektet er et utkast for omtrent <strong>4–5 timer selvstendig arbeid</strong>. Det bygger videre på polynomene, basisene og avlesningsmatrisene fra uke 3, men siden er selvstendig: Alle funksjoner du trenger, er definert her. Du skal ikke kopiere kode fra forrige prosjekt.</p>
+<p><a href="../pages/uke4.html">Uke 4: Ortogonalitet, QR og minste kvadrater</a> gir den interaktive veien inn i stoffet, men definisjonene som trengs gjentas nedenfor. Trenger du å repetere basis, kolonnerom eller polynomavlesninger, bruk <a href="../pages/uke3.html">uke 3</a> og <a href="../pages/project_week3.html">prosjekt 3</a>.</p>
 <p>I uke 3 brukte vi <span class="math inline">\(n+1\)</span> polynomverdier til å rekonstruere ett polynom i <span class="math inline">\(\mathcal P_n\)</span>. Nå har vi flere målinger enn koeffisienter, og målingene inneholder støy. Da finnes det vanligvis ikke et polynom som passer alle verdiene eksakt.</p>
 <p>Hovedspørsmålet er:</p>
 <blockquote class="blockquote">
 <p><strong>Hvordan finner vi den beste tilpasningen, og hvordan oppdager vi at algoritmen mister ortogonalitet eller bryter sammen?</strong></p>
 </blockquote>
+<p>Her er notasjonen vi trenger. Polynomrommet</p>
+<p><span class="math display">\[\mathcal P_n=\{c_0+c_1x+\cdots+c_nx^n:c_j\in\mathbb R\}\]</span></p>
+<p>har dimensjon <span class="math inline">\(n+1\)</span>. Vi lagrer alltid koordinatene i stigende grad:</p>
+<p><span class="math display">\[c=\begin{bmatrix}c_0&amp;c_1&amp;\cdots&amp;c_n\end{bmatrix}^T.\]</span></p>
+<p>Chebyshev-polynomene er definert ved</p>
+<p><span class="math display">\[T_0(x)=1,\qquad T_1(x)=x,\qquad
+T_{j+1}(x)=2xT_j(x)-T_{j-1}(x).\]</span></p>
+<p>For <span class="math inline">\(m\)</span> forskjellige målepunkter og grad <span class="math inline">\(n\)</span> får både monomial- og Chebyshev-matrisen form <span class="math inline">\(m\times(n+1)\)</span>. Når <span class="math inline">\(m\ge n+1\)</span>, gir forskjellige punkter full kolonnerang i eksakt matematikk. Det utelukker ikke at matrisen kan være numerisk dårlig kondisjonert.</p>
+<p>Med en <strong>blindsone</strong> mener vi her en perturbasjon som er liten ved målepunktene, men som gir mye større endring mellom punktene. Uke 4 spør hvordan flere målinger, et annet basisvalg eller en annen løsningsmetode kan redusere denne effekten.</p>
+<p>For vektorer <span class="math inline">\(u,v\in\mathbb R^m\)</span> er</p>
+<p><span class="math display">\[u^Tv=\sum_{i=1}^m u_iv_i,\qquad
+\lVert u\rVert_2=\sqrt{u^Tu}.\]</span></p>
+<p>Vektorene er ortogonale når <span class="math inline">\(u^Tv=0\)</span>. Hvis <span class="math inline">\(Q\)</span> har ortonormale kolonner, betyr <span class="math inline">\(Q^TQ=I\)</span>, og <span class="math inline">\(QQ^Tb\)</span> er projeksjonen av <span class="math inline">\(b\)</span> på kolonnerommet <span class="math inline">\(C(Q)\)</span>. For matrisediagnostikk bruker vi Frobeniusnormen <span class="math inline">\(\lVert A\rVert_F=(\sum_{ij}a_{ij}^2)^{1/2}\)</span>; NumPys norm uten ekstra argument bruker denne normen på matriser. Kondisjonstall skrives <span class="math inline">\(\kappa_2(A)\)</span> og bruker spektralnormen.</p>
+<section id="omfang-og-tidsbruk" class="level2">
+<h2 class="anchored" data-anchor-id="omfang-og-tidsbruk">Omfang og tidsbruk</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 30%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Løype</th>
+<th>Deler</th>
+<th style="text-align: right;">Omtrent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Kjerne</strong></td>
+<td>1–6: residual, QR, kontrollert sammenbrudd og polynomtilpasning</td>
+<td style="text-align: right;">2 t 45 min</td>
+</tr>
+<tr class="even">
+<td><strong>Utvidelse</strong></td>
+<td>7–9: algoritmesveip, normalligninger og egen redningsaksjon</td>
+<td style="text-align: right;">1 t 15 min</td>
+</tr>
+<tr class="odd">
+<td><strong>Analyse og rydding</strong></td>
+<td>figurer, tabell og 400–600 ord</td>
+<td style="text-align: right;">45 min</td>
+</tr>
+</tbody>
+</table>
+<p>Gjør kjerneløypa i rekkefølge. Del 1 lager variablene A og b som del 2–4 bruker. Del 5 lager polynomvariablene; del 6 lager M, C og b_noisy som del 7–8 bruker. Hvis du åpner siden på nytt, kjør derfor cellene fra start og nedover.</p>
+</section>
 <section id="arbeidsmåte" class="level2">
 <h2 class="anchored" data-anchor-id="arbeidsmåte">Arbeidsmåte</h2>
 <p>For hvert hovedforsøk:</p>
@@ -4443,6 +4492,71 @@ window.Quarto = {
 <p>En figur er data, ikke en forklaring. Noter alltid grad, punkter, støystørrelse og metode sammen med resultatet.</p>
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<section id="synlig-referanse-for-hjelpefunksjonene" class="level3">
+<h3 class="anchored" data-anchor-id="synlig-referanse-for-hjelpefunksjonene">Synlig referanse for hjelpefunksjonene</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Funksjon</th>
+<th>Input</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>monomial_matrix(points, n)</td>
+<td><span class="math inline">\(m\)</span> punkter, grad <span class="math inline">\(n\)</span></td>
+<td><span class="math inline">\(m\times(n+1)\)</span>-matrise med <span class="math inline">\(x_i^j\)</span></td>
+</tr>
+<tr class="even">
+<td>chebyshev_matrix(points, n)</td>
+<td><span class="math inline">\(m\)</span> punkter, grad <span class="math inline">\(n\)</span></td>
+<td><span class="math inline">\(m\times(n+1)\)</span>-matrise med <span class="math inline">\(T_j(x_i)\)</span></td>
+</tr>
+<tr class="odd">
+<td>chebyshev_points(count)</td>
+<td>antall punkter</td>
+<td>nøyaktig count punkter</td>
+</tr>
+<tr class="even">
+<td>poly.polyval(points, c)</td>
+<td>monomialkoordinater</td>
+<td>polynomverdier</td>
+</tr>
+<tr class="odd">
+<td>cheb.chebval(points, c)</td>
+<td>Chebyshev-koordinater</td>
+<td>polynomverdier</td>
+</tr>
+<tr class="even">
+<td>cheb.chebvander(points, n)</td>
+<td>punkter, grad</td>
+<td>samme matrise som chebyshev_matrix</td>
+</tr>
+<tr class="odd">
+<td>qr_solution(A, b)</td>
+<td>full-rang <span class="math inline">\(A\)</span>, data <span class="math inline">\(b\)</span></td>
+<td>løsning <span class="math inline">\(x\)</span> og tynn <span class="math inline">\(Q,R\)</span></td>
+</tr>
+<tr class="even">
+<td>method_report(…)</td>
+<td>metode og beregnede størrelser</td>
+<td>skalerte diagnostikker</td>
+</tr>
+</tbody>
+</table>
+<p>Standardtoleransen i MGS er</p>
+<p><span class="math display">\[\tau=\varepsilon_{\mathrm{maskin}}\max(m,n)\lVert A\rVert_F.\]</span></p>
+<p>En rest under <span class="math inline">\(\tau\)</span> blir behandlet som numerisk null. Denne skalerte testen er mer meningsfull enn å sammenligne med et fast desimaltall, men avgjørelsen er fortsatt en numerisk rangvurdering og ikke et bevis på eksakt avhengighet.</p>
+</section>
+</section>
+<section id="kjerne" class="level2">
+<h2 class="anchored" data-anchor-id="kjerne">Kjerne</h2>
 </section>
 <section id="start-lett-en-linje-som-ikke-treffer-alle-punktene" class="level2">
 <h2 class="anchored" data-anchor-id="start-lett-en-linje-som-ikke-treffer-alle-punktene">1. Start lett: en linje som ikke treffer alle punktene</h2>
@@ -4488,21 +4602,24 @@ a_2=\begin{bmatrix}-1\\-0.6\\-0.2\\0.2\\0.6\\1\end{bmatrix}.\]</span></p>
 <p><span class="math display">\[\boxed{A^Tr=0.}\]</span></p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Forklar hvorfor nullpunktet i <span class="math inline">\(A^Tr\)</span> handler om ortogonalitet, mens <span class="math inline">\(\lVert r\rVert\)</span> vanligvis ikke er null.</p>
+<p>Forklar hvorfor nullpunktet i <span class="math inline">\(A^Tr\)</span> handler om ortogonalitet, mens <span class="math inline">\(\lVert r\rVert_2\)</span> vanligvis ikke er null.</p>
 </section>
 <section id="løs-det-samme-problemet-med-qr" class="level2">
 <h2 class="anchored" data-anchor-id="løs-det-samme-problemet-med-qr">3. Løs det samme problemet med QR</h2>
-<p>En tynn QR-faktorisering av <span class="math inline">\(A\in\mathbb R^{m\times n}\)</span> er</p>
+<p>En tynn QR-faktorisering av <span class="math inline">\(A\in\mathbb R^{m\times k}\)</span> er</p>
 <p><span class="math display">\[
 A=QR,
 \qquad
-Q\in\mathbb R^{m\times n},
+Q\in\mathbb R^{m\times k},
 \qquad
-R\in\mathbb R^{n\times n},
+R\in\mathbb R^{k\times k},
 \qquad
-Q^TQ=I.
+Q^TQ=I_k.
 \]</span></p>
-<p>Minste-kvadraters koeffisienter finnes fra</p>
+<p>Her antar vi <span class="math inline">\(m\ge k\)</span> og at <span class="math inline">\(A\)</span> har full kolonnerang. Da har <span class="math inline">\(Q\)</span> ortonormale kolonner som spenner ut <span class="math inline">\(C(A)\)</span>, og den øvre triangulære matrisen <span class="math inline">\(R\)</span> er invertibel. For enhver kandidat <span class="math inline">\(c\)</span> gir den ortogonale oppdelingen</p>
+<p><span class="math display">\[\lVert b-Ac\rVert_2^2
+=\lVert b-QQ^Tb\rVert_2^2+\lVert Q^Tb-Rc\rVert_2^2.\]</span></p>
+<p>Det første leddet kan ikke endres av <span class="math inline">\(c\)</span>. Minste-kvadraters koeffisienter finnes derfor fra</p>
 <p><span class="math display">\[\boxed{Rc=Q^Tb.}\]</span></p>
 <p>Kjør begge Gram–Schmidt-variantene på den lille designmatrisen. De bør være enige her fordi kolonnene er tydelig uavhengige.</p>
 <div id="qpyodide-insertion-location-4"></div>
@@ -4520,10 +4637,11 @@ B=\begin{bmatrix}
 0&amp;0&amp;0
 \end{bmatrix}
 \]</span></p>
-<p>har <span class="math inline">\(b_3=b_1+b_2\)</span>. Klassisk Gram–Schmidt bør derfor få nullvektoren når den tredje kolonnen renses.</p>
+<p>har <span class="math inline">\(b_3=b_1+b_2\)</span>. I eksakt aritmetikk får Gram–Schmidt derfor nullvektoren når den tredje kolonnen renses. Denne matrisen bruker binært eksakte tall, så den naive flyttallskoden nedenfor gjør det samme og produserer en ugyldig verdi. For en annen eksakt avhengig matrise kan avrunding etterlate en liten, endelig rest; fravær av ugyldige verdier beviser derfor ikke uavhengighet.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Skriv en forklaring som begynner med kolonnerelasjonen <span class="math inline">\(b_3=b_1+b_2\)</span> og slutter med den konkrete divisjonen som produserer <code>NaN</code>. «Python liker ikke matrisen» er ikke en forklaring.</p>
+<p>Forklar også hvorfor stoppet i MGS er en beslutning om <strong>numerisk rang</strong> ved en skalert toleranse, ikke et bevis på den eksakte rangen.</p>
 </section>
 <section id="gå-tilbake-til-polynomene-fra-uke-3" class="level2">
 <h2 class="anchored" data-anchor-id="gå-tilbake-til-polynomene-fra-uke-3">5. Gå tilbake til polynomene fra uke 3</h2>
@@ -4540,6 +4658,7 @@ T_0(x_{m-1})&amp;T_1(x_{m-1})&amp;\cdots&amp;T_n(x_{m-1})
 \]</span></p>
 <p>I uke 3 brukte vi <span class="math inline">\(m=n+1\)</span> og løste et kvadratisk interpolasjonsproblem. Nå bruker vi <span class="math inline">\(m&gt;n+1\)</span> og legger til målestøy.</p>
 <p>Start med grad <span class="math inline">\(3\)</span> og tolv målinger. Alle nødvendige funksjoner er allerede definert på denne siden.</p>
+<p>Husk API-et: funksjonskallet chebyshev_points(m) lager <span class="math inline">\(m\)</span> punkter; argumentet er antall punkter, ikke polynomgraden.</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Endre først bare <code>noise_size</code>, deretter bare <code>m</code>. Hvordan påvirkes residualen og feilen i den tilpassede kurven? Hvorfor bør residualen ofte vokse når vi legger til flere målinger, selv om tilpasningen kan bli mer pålitelig?</p>
@@ -4557,21 +4676,27 @@ C_{ij}=T_j(x_i).
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Forklar hvilke størrelser som kan sammenlignes på tvers av basisene. Husk at koeffisient nummer <span class="math inline">\(j\)</span> betyr noe forskjellig i de to basisene.</p>
 </section>
+<section id="utvidelse" class="level2">
+<h2 class="anchored" data-anchor-id="utvidelse">Utvidelse</h2>
+</section>
 <section id="klassisk-eller-modifisert-gramschmidt" class="level2">
 <h2 class="anchored" data-anchor-id="klassisk-eller-modifisert-gramschmidt">7. Klassisk eller modifisert Gram–Schmidt?</h2>
 <p>Bruk samme <span class="math inline">\(M\)</span> og <span class="math inline">\(C\)</span> som over. Faktoriser hver matrise både med klassisk og modifisert Gram–Schmidt. Samle resultatene i en tabell med</p>
 <p><span class="math display">\[
-\lVert Q^TQ-I\rVert_2,
+\lVert Q^TQ-I\rVert_F,
 \qquad
-\lVert A-QR\rVert_2,
+\frac{\lVert A-QR\rVert_F}{\lVert A\rVert_F},
 \qquad
-\lVert Ax-b\rVert_2,
+\frac{\lVert Ax-b\rVert_2}
+{\lVert A\rVert_F\lVert x\rVert_2+\lVert b\rVert_2},
 \qquad
-\lVert A^T(Ax-b)\rVert_2.
+\frac{\lVert A^T(Ax-b)\rVert_2}
+{\lVert A\rVert_2\lVert Ax-b\rVert_2}.
 \]</span></p>
 <div id="qpyodide-insertion-location-8"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Øk graden gjennom <span class="math inline">\(n=8,12,16,20\)</span>, men behold omtrent dobbelt så mange målinger som koeffisienter. Lag et plott av ortogonalitetsfeilen mot graden. Ikke fortsett blindt etter at en metode returnerer <code>NaN</code> eller stopper.</p>
+<p>Kontroller finitet og relativ faktoriseringsfeil ved hvert trinn. Beskriv MGS som bedre <strong>i dette forsøket</strong> dersom målingene støtter det; kurvene trenger ikke være monotone, og MGS er ingen universell garanti.</p>
 </section>
 <section id="normalligningene-som-sammenligningsmetode" class="level2">
 <h2 class="anchored" data-anchor-id="normalligningene-som-sammenligningsmetode">8. Normalligningene som sammenligningsmetode</h2>
@@ -4579,8 +4704,9 @@ C_{ij}=T_j(x_i).
 <p><span class="math display">\[A^T(b-Ax)=0\]</span></p>
 <p>får vi normalligningene</p>
 <p><span class="math display">\[\boxed{A^TAx=A^Tb.}\]</span></p>
-<p>De er matematisk riktige når <span class="math inline">\(A\)</span> har full kolonnerang, men produktet <span class="math inline">\(A^TA\)</span> har omtrent kvadrert kondisjonstall:</p>
+<p>Normalligningene karakteriserer alle minste-kvadraters minimatorer også uten full kolonnerang. Full kolonnerang gjør <span class="math inline">\(A^TA\)</span> invertibel og minimatoren entydig. Matematisk gjelder da identiteten</p>
 <p><span class="math display">\[\kappa_2(A^TA)=\kappa_2(A)^2.\]</span></p>
+<p>Flyttallsestimatene som skrives ut trenger ikke oppfylle identiteten nøyaktig, og dannelsen av <span class="math inline">\(A^TA\)</span> gjør problemet numerisk mer sårbart.</p>
 <div id="qpyodide-insertion-location-9"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Forklar hvorfor en liten residual alene ikke beviser at de beregnede koeffisientene er pålitelige.</p>
@@ -4595,7 +4721,7 @@ C_{ij}=T_j(x_i).
 <li>monomial- eller Chebyshev-basis;</li>
 <li>størrelsen på støyen, høyst <span class="math inline">\(10^{-8}\)</span>.</li>
 </ul>
-<p>Start med et referansepolynom fra <code>reference_coordinates</code>. Bruk minst <span class="math inline">\(n+3\)</span> forskjellige målepunkter og et fast tilfeldig frø. Finn først en konfigurasjon der klassisk GS eller normalligningene gir tydelig dårligere diagnostikk enn <code>lstsq</code>. Gjør deretter <strong>én</strong> begrunnet endring som forbedrer rekonstruksjonen.</p>
+<p>Start med et referansepolynom fra <code>reference_coordinates</code>. Bruk minst <span class="math inline">\(n+3\)</span> forskjellige målepunkter og et fast tilfeldig frø. Finn først en konfigurasjon der klassisk GS eller normalligningene gir tydelig dårligere diagnostikk enn <code>lstsq</code>. Gjør deretter <strong>én</strong> begrunnet endring som forbedrer rekonstruksjonen. Hvis du bruker cosinusfordelte punkter, skal funksjonen chebyshev_points kalles med <span class="math inline">\(m\)</span>, altså antall punkter.</p>
 <p>Rapporter før og etter:</p>
 <ol type="1">
 <li><span class="math inline">\(m,n\)</span>, punkter og støystørrelse;</li>
@@ -4628,7 +4754,7 @@ C_{ij}=T_j(x_i).
 </section>
 <section id="dette-skal-leveres" class="level2">
 <h2 class="anchored" data-anchor-id="dette-skal-leveres">Dette skal leveres</h2>
-<p>Lever én Quarto-side eller notebook med:</p>
+<p>For <strong>kjerneløypa</strong>, lever én Quarto-side eller notebook med punkt 1–6 og en kort analyse av disse. For hele prosjektet med <strong>utvidelse</strong>, lever også punkt 7–10:</p>
 <ol type="1">
 <li>den første linjetilpasningen og tolkning av residualen;</li>
 <li>kontrollen <span class="math inline">\(A^Tr\approx0\)</span>;</li>
