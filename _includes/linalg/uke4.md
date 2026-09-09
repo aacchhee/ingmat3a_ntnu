@@ -29,7 +29,7 @@ med Gram–Schmidt. Du skal også kunne diagnostisere eksakt og nesten lineær
 avhengighet, sammenligne klassisk og modifisert Gram–Schmidt og tolke en
 minste-kvadraters løsning som en ortogonal oppdeling av dataene.
 
-## Kort løype
+### Kort løype
 
 I forelesningen følger vi hovedløypa:
 
@@ -45,9 +45,7 @@ I forelesningen følger vi hovedløypa:
 De merkede fordypningene gir flere forklaringer og eksperimenter for
 selvstudium.
 
-:::
-
-## Slik bruker du siden
+### Slik bruker du siden
 
 JSXGraph-figurene brukes til å dra, se og lage hypoteser. Pyodide-cellene
 gjentar forsøkene med tall og lar oss teste mange tilfeller. Figurene og
@@ -57,7 +55,7 @@ på nytt ved hvert forsøk.
 Alle vektorer skrives som kolonner på papir. I NumPy lagres den samme vektoren
 som en endimensjonal array. Dermed svarer `x @ q` til matriseproduktet $x^Tq$.
 
-::: {.callout-note collapse="true"}
+::: {.callout-note}
 ### Notasjon og NumPy på ett sted
 
 For $x,q\in\mathbb R^m$ bruker vi
@@ -93,9 +91,15 @@ Vi starter med forskyvningen
 $$x=\begin{bmatrix}3\\2\end{bmatrix}.$$
 
 Det er lett å lese at vi går $3$ enheter mot høyre og $2$ enheter opp. Men
-hvor mye går vi i en skrå retning? Dra punktet $q$ rundt enhetssirkelen. Den
-blå linjen er en tallinje i den valgte retningen, og den blå prikken viser
-den fortegnede avlesningen av $x$ langs denne linjen.
+hvor mye går vi i en skrå retning?
+
+En **enhetsretning** er en pil med lengde $1$ som bare angir en retning. Vi
+kaller pilen $q$. Alle slike piler som starter i origo, ender på
+**enhetssirkelen**: sirkelen med sentrum i origo og radius $1$. Dra punktet
+$q$ rundt denne sirkelen i figuren. Den blå linjen er en tallinje i den
+valgte retningen, og den blå prikken viser den fortegnede avlesningen av $x$
+langs linjen. Positiv avlesning betyr samme vei som $q$; negativ avlesning
+betyr motsatt vei.
 
 ```{.jsxgraph width="760" height="500"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -159,16 +163,22 @@ Prøv dette før du leser videre:
 
 ## 4.2 Finn regneregelen {#uke4-regneregel}
 
-Skriv en enhetsretning som
+Skriv enhetsretningen som vektoren
 
 $$q=\begin{bmatrix}q_1\\q_2\end{bmatrix},\qquad q_1^2+q_2^2=1.$$
+
+Likningen til høyre sier nettopp at lengden er $1$: Hvis vi bruker
+Pytagoras på den vannrette og loddrette komponenten, får vi
+$\lVert q\rVert_2=\sqrt{q_1^2+q_2^2}=1$.
 
 Én regel gjenskaper alle avlesningene i figuren:
 
 $$\boxed{x^Tq=x_1q_1+x_2q_2.}$$
 
 For $x=(3,2)^T$ blir avlesningen $3q_1+2q_2$. Uttrykket $x^Tq$ kalles
-**indreproduktet** mellom $x$ og $q$.
+**indreproduktet** mellom $x$ og $q$. Symbolet $T$ betyr transponering: Den
+stående kolonnevektoren $x$ vendes til en rad, slik at matriseproduktet
+$x^Tq$ blir ett tall.
 
 ::: {.callout-important}
 ### Retningsmåleren
@@ -190,8 +200,9 @@ for name, q in directions.items():
     print(f"{name:16s}: x^T q = {x @ q: .4f}")
 ```
 
-Legg til en retning som er ortogonal på $x$, og kontroller at avlesningen er
-null. Endre bare én retning om gangen.
+Legg til en retning som står vinkelrett på $x$, og kontroller at avlesningen
+er null. Endre bare én retning om gangen. I del 4.4 gir vi «vinkelrett» et
+matematisk navn og en test.
 
 ## 4.3 En retning må ha lengde én {#uke4-enhetsretning}
 
@@ -208,6 +219,11 @@ $$\lVert v\rVert_2=\sqrt{v^Tv},\qquad q=\frac{v}{\lVert v\rVert_2}.$$
 Normen ble introdusert i uke 3 som avstanden til nullvektoren. Her bruker vi
 den til å lage en vektor med lengde én.
 
+En vektor med lengde én kalles en **enhetsvektor**. Når vi bruker den for å
+angi en retning, kaller vi den også en enhetsretning. Dermed er ordene to
+sider av samme objekt: «enhetsvektor» beskriver lengden, mens
+«enhetsretning» framhever rollen som målepil.
+
 ### Et første sammenbrudd
 
 Hva skjer hvis vi prøver å finne retningen til nullvektoren?
@@ -223,8 +239,9 @@ with np.errstate(divide="warn", invalid="warn"):
 ```
 
 Nullvektoren har ingen retning. Regningen forsøker å dele $0$ på $0$, og
-IEEE 754-resultatet blir `NaN`. En algoritme må kontrollere lengden før den
-normaliserer.
+I flyttallsregningen blir resultatet `NaN` («not a number»). Det er maskinens
+markering av at regningen ikke ga et gyldig tall. En algoritme må kontrollere
+lengden før den normaliserer.
 
 ## 4.4 Null avlesning betyr ortogonalitet {#uke4-ortogonalitet}
 
@@ -247,9 +264,15 @@ En samling $q_1,\ldots,q_k$ er **ortonormal** når
 
 $$q_i^Tq_j=\begin{cases}1,&i=j,\\0,&i\ne j.\end{cases}$$
 
-Hvis $Q=[q_1\ \cdots\ q_k]$, samles alle disse testene i
+Hvis vi samler vektorene som kolonner i $Q=[q_1\ \cdots\ q_k]$, samles alle
+disse testene i
 
-$$\boxed{Q^TQ=I.}$$
+$$\boxed{Q^TQ=I_k.}$$
+
+Her er $I_k$ **identitetsmatrisen** av størrelse $k\times k$: Den har $1$ på
+diagonalen og $0$ ellers. Diagonalen kontrollerer lengdene til kolonnene,
+mens oppføringene utenfor diagonalen kontrollerer at ulike kolonner er
+ortogonale.
 
 ## 4.5 Fra retningsmåler til mønsterdetektor {#uke4-monster}
 
@@ -278,6 +301,15 @@ v=\operatorname{vec}_r(V),\quad d=\operatorname{vec}_r(D),$$
 og bygg bildet og bildevektoren
 
 $$X=2M-H+\frac12V,\qquad x=\operatorname{vec}_r(X).$$
+
+Retningsmåleren er ikke begrenset til to komponenter. For vektorer
+$y,z\in\mathbb R^n$ er det euklidske indreproduktet
+
+$$\boxed{y^Tz=y_1z_1+y_2z_2+\cdots+y_nz_n.}$$
+
+Her er $n=4$: De fire pikselverdiene spiller samme rolle som de to
+koordinatene i pilfiguren. Derfor kan ett bildemønster brukes som en retning
+og et annet bilde måles mot den.
 
 Med $Q_{\text{pattern}}=[m\ h\ v\ d]$ blir avlesningene
 
@@ -381,8 +413,8 @@ $$\boxed{p=(q^Tx)q}$$
 kalles den **ortogonale projeksjonen** av $x$ på retningen $q$. Residualen
 $r=x-p$ er ortogonal på $q$.
 
-For en ortonormal matrise $Q=[q_1\ \cdots\ q_k]$ blir alle avlesningene og
-den samlede projeksjonen
+For en matrise $Q=[q_1\ \cdots\ q_k]$ med ortonormale kolonner blir alle
+avlesningene og den samlede projeksjonen
 
 $$c=Q^Tx,\qquad p=Qc=QQ^Tx,\qquad Q^T(x-p)=0.$$
 
@@ -439,7 +471,11 @@ $$v_2=a_2-r_{12}q_1
 $$\lVert v_2\rVert_2=\frac3{\sqrt5},\qquad
 q_2=\frac1{\sqrt5}\begin{bmatrix}-1\\2\end{bmatrix}.$$
 
-Altså
+Samle først de opprinnelige vektorene som kolonnene i
+
+$$A=[a_1\ a_2]=\begin{bmatrix}2&1\\1&2\end{bmatrix}.$$
+
+Da er resultatet
 
 $$Q=\frac1{\sqrt5}\begin{bmatrix}2&-1\\1&2\end{bmatrix},\qquad
 R=\begin{bmatrix}\sqrt5&4/\sqrt5\\0&3/\sqrt5\end{bmatrix},\qquad
@@ -463,8 +499,9 @@ print("R =\n", R)
 print("||A-QR||_F =", np.linalg.norm(A-Q@R, "fro"))
 ```
 
-Koeffisientene vi målte underveis danner en øvre triangulær matrise $R$,
-og de opprinnelige kolonnene kan bygges opp igjen som
+Koeffisientene vi målte underveis danner en **øvre triangulær matrise** $R$,
+det vil si at alle oppføringer under diagonalen er null. De opprinnelige
+kolonnene kan bygges opp igjen som
 
 $$\boxed{A=QR.}$$
 
@@ -474,7 +511,8 @@ La
 
 $$A=[a_1\ a_2\ \cdots\ a_k]\in\mathbb R^{m\times k},\qquad m\ge k,$$
 
-og anta foreløpig at kolonnene er lineært uavhengige. En **tynn
+og anta foreløpig at kolonnene er lineært uavhengige. Da har $A$ **full
+kolonnerang**: rangen er lik antallet kolonner $k$. En **tynn
 QR-faktorisering** har da
 
 $$Q\in\mathbb R^{m\times k},\qquad
@@ -482,8 +520,9 @@ R\in\mathbb R^{k\times k},\qquad Q^TQ=I_k.$$
 
 Den rektangulære matrisen $Q$ er altså ikke en ortogonal kvadratisk matrise;
 det er kolonnene dens som er ortonormale. De spenner ut det samme
-kolonnerommet som $A$: $C(Q)=C(A)$. Siden $A$ har full kolonnerang, er $R$
-invertibel.
+kolonnerommet som $A$: $C(Q)=C(A)$. Her betyr $C(A)$ samlingen av alle
+vektorer $Ax$ som kolonnene i $A$ kan bygge. Siden $A$ har full
+kolonnerang, er $R$ invertibel, så et system $Rx=d$ har én entydig løsning.
 
 Klassisk Gram–Schmidt konstruerer $q_j$ ved
 
@@ -518,7 +557,14 @@ print("||A-QR||_F   =", np.linalg.norm(A-Q@R, "fro"))
 ```
 
 De to kontrollene bruker Frobeniusnormen og undersøker forskjellige
-egenskaper:
+egenskaper. For en matrise $B=[b_{ij}]$ er den definert ved
+
+$$\lVert B\rVert_F
+=\sqrt{\sum_i\sum_j b_{ij}^2}.$$
+
+Frobeniusnormen behandler altså alle matriseoppføringene som én lang vektor
+og måler størrelsen på denne. Derfor blir begge kontrollene ett ikke-negativt
+tall som er null når matriseidentiteten stemmer eksakt.
 
 - $\lVert Q^TQ-I_k\rVert_F$ måler tap av ortonormalitet;
 - $\lVert A-QR\rVert_F$ måler om faktorene bygger opp $A$ igjen.
@@ -734,8 +780,9 @@ garanterer ikke alene at kolonnene i $Q$ er ortogonale.
 ### Fordypning: hva bruker NumPy?
 
 `numpy.linalg.qr` bruker ikke den pedagogiske Gram–Schmidt-koden over.
-Robuste biblioteker bruker vanligvis Householder-transformasjoner. Vi
-utleder ikke Householder-metoden denne uken.
+Robuste biblioteker bruker vanligvis **Householder-transformasjoner**:
+speilinger som lager nuller uten de samme gjentatte subtraksjonene som
+Gram–Schmidt. Vi utleder ikke Householder-metoden denne uken.
 :::
 
 ## 4.12 Fra QR til minste kvadrater {#uke4-mk}
@@ -749,7 +796,11 @@ systemet er inkonsistent, men med støy vil vi vanligvis ha $b\notin C(A)$,
 der $C(A)$ er kolonnerommet til $A$. Da finnes ingen $x$ som gir $Ax=b$. Vi
 søker i stedet
 
-$$x_*=\operatorname*{argmin}_x\lVert Ax-b\rVert_2.$$
+$$x_*=\operatorname*{argmin}_x\lVert b-Ax\rVert_2.$$
+
+Notasjonen $\operatorname*{argmin}_x$ betyr «den verdien av $x$ som gjør
+uttrykket minst». Her er residualen $r=b-Ax$: forskjellen mellom målingene
+$b$ og verdiene $Ax$ som modellen produserer.
 
 Hvis $A=QR$ er en tynn QR-faktorisering, er kolonnene i $Q$ en ortonormal
 basis for $C(A)$. For en vilkårlig vektor $b$ er $Q^Tb$ koordinatene til
@@ -857,3 +908,5 @@ Kontroller at du kan forklare følgende uten å starte med kode:
 Gå videre til [prosjekt 4: Når målingene ikke passer](project_week4.qmd),
 eller gå tilbake til [uke 3](uke3.qmd) hvis vektorrom, basis og kolonnerom
 trenger en repetisjon.
+
+:::
