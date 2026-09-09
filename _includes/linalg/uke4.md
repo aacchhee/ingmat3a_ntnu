@@ -33,13 +33,14 @@ minste-kvadraters løsning som en ortogonal oppdeling av dataene.
 
 I forelesningen følger vi hovedløypa:
 
-1. dra den blå retningsmåleren og oppdag fortegn og null;
-2. finn regneregelen $x^Tq$;
-3. bruk regelen til å oppdage bildemønstre;
-4. fjern én retning og bygg Gram–Schmidt;
-5. se algoritmen gi `NaN` ved avhengige kolonner;
-6. sammenlign klassisk og modifisert Gram–Schmidt;
-7. bruk $A=QR$ til minste kvadrater.
+1. [dra den blå retningsmåleren](#uke4-retning) og oppdag fortegn og null;
+2. [finn regneregelen $x^Tq$](#uke4-regneregel);
+3. [bruk regelen til å oppdage bildemønstre](#uke4-monster);
+4. [fjern én retning](#uke4-projeksjon) og
+   [bygg Gram–Schmidt](#uke4-gs);
+5. [se algoritmen møte avhengige kolonner](#uke4-avhengighet);
+6. [sammenlign klassisk og modifisert Gram–Schmidt](#uke4-mgs);
+7. [bruk $A=QR$ til minste kvadrater](#uke4-mk).
 
 De merkede fordypningene gir flere forklaringer og eksperimenter for
 selvstudium.
@@ -55,6 +56,27 @@ på nytt ved hvert forsøk.
 
 Alle vektorer skrives som kolonner på papir. I NumPy lagres den samme vektoren
 som en endimensjonal array. Dermed svarer `x @ q` til matriseproduktet $x^Tq$.
+
+::: {.callout-note collapse="true"}
+### Notasjon og NumPy på ett sted
+
+For $x,q\in\mathbb R^m$ bruker vi
+
+$$x^Tq=\sum_{i=1}^m x_iq_i,
+\qquad \lVert x\rVert_2=\sqrt{x^Tx}.$$
+
+| På papir | NumPy | Betydning |
+|---|---|---|
+| $x^Tq$ | `x @ q` | indreprodukt, ett tall |
+| $Ax$ | `A @ x` | matrise ganger vektor |
+| $A^T$ | `A.T` | transponert matrise |
+| $\lVert x\rVert_2$ | `np.linalg.norm(x)` | euklidsk vektornorm |
+| $\lVert A\rVert_F$ | `np.linalg.norm(A)` | Frobeniusnorm for en matrise |
+| $\lVert A\rVert_2$ | `np.linalg.norm(A, 2)` | spektral matrisenorm |
+
+Når vi skriver et $2\times2$-bilde som en vektor, leser vi radene fra venstre
+mot høyre. Denne rekkefølgen er den samme som `X.reshape(-1)`.
+:::
 
 ```{pyodide-python}
 #| label: week4-setup
@@ -110,6 +132,21 @@ board.create('text', [-5.8, 4.9, function () {
 board.create('text', [-5.8, 4.3, function () {
   return 'avlesning = ' + reading().toFixed(3);
 }], {fontSize: 18, color: '#1565c0'});
+board.create('button', [-5.8, -3.7, 'høyre', function () {
+  Q.moveTo([1, 0]);
+}]);
+board.create('button', [-3.6, -3.7, 'opp', function () {
+  Q.moveTo([0, 1]);
+}]);
+board.create('button', [-1.8, -3.7, 'langs x', function () {
+  Q.moveTo([3/Math.sqrt(13), 2/Math.sqrt(13)]);
+}]);
+board.create('button', [0.7, -3.7, 'vinkelrett', function () {
+  Q.moveTo([-2/Math.sqrt(13), 3/Math.sqrt(13)]);
+}]);
+board.create('button', [4.0, -3.7, 'motsatt', function () {
+  Q.moveTo([-3/Math.sqrt(13), -2/Math.sqrt(13)]);
+}]);
 ```
 
 Prøv dette før du leser videre:
@@ -120,7 +157,7 @@ Prøv dette før du leser videre:
 4. Finn en retning som gir avlesning $0$ uten at $x$ er null.
 5. Snu $q$ motsatt vei. Hva skjer med fortegnet?
 
-## 4.2 Finn regneregelen
+## 4.2 Finn regneregelen {#uke4-regneregel}
 
 Skriv en enhetsretning som
 
@@ -156,7 +193,7 @@ for name, q in directions.items():
 Legg til en retning som er ortogonal på $x$, og kontroller at avlesningen er
 null. Endre bare én retning om gangen.
 
-## 4.3 En retning må ha lengde én
+## 4.3 En retning må ha lengde én {#uke4-enhetsretning}
 
 Vektorene
 
@@ -181,7 +218,7 @@ with np.errstate(divide="warn", invalid="warn"):
     for v in [np.array([3.0, 4.0]), np.array([0.0, 0.0])]:
         length = np.linalg.norm(v)
         q = v / length
-        print("v =", v, "  ||v|| =", length, "  v/||v|| =", q)
+        print("v =", v, "  ||v||_2 =", length, "  v/||v||_2 =", q)
         print("endelige tall?", np.isfinite(q).all())
 ```
 
@@ -189,7 +226,7 @@ Nullvektoren har ingen retning. Regningen forsøker å dele $0$ på $0$, og
 IEEE 754-resultatet blir `NaN`. En algoritme må kontrollere lengden før den
 normaliserer.
 
-## 4.4 Null avlesning betyr ortogonalitet
+## 4.4 Null avlesning betyr ortogonalitet {#uke4-ortogonalitet}
 
 To vektorer $x$ og $q$ er **ortogonale** når
 
@@ -214,42 +251,62 @@ Hvis $Q=[q_1\ \cdots\ q_k]$, samles alle disse testene i
 
 $$\boxed{Q^TQ=I.}$$
 
-## 4.5 Fra retningsmåler til mønsterdetektor
+## 4.5 Fra retningsmåler til mønsterdetektor {#uke4-monster}
 
-Vi bruker fire mønstre fra uke 3, men skalerer dem til lengde én:
+Vi bruker fire mønstre fra uke 3. Store bokstaver betegner de synlige
+$2\times2$-bildene:
 
 $$M=\frac12\begin{bmatrix}1&1\\1&1\end{bmatrix},\quad
-H=\frac12\begin{bmatrix}1&1\\-1&-1\end{bmatrix},$$
+H=\frac12\begin{bmatrix}1&-1\\1&-1\end{bmatrix},$$
 
-$$V=\frac12\begin{bmatrix}1&-1\\1&-1\end{bmatrix},\quad
+$$V=\frac12\begin{bmatrix}1&1\\-1&-1\end{bmatrix},\quad
 D=\frac12\begin{bmatrix}1&-1\\-1&1\end{bmatrix}.$$
 
-Et bilde er fortsatt en $2\times2$-rute på skjermen, men i regningen leser
-vi de fire pikselverdiene som en vektor i $\mathbb R^4$. La
+De uskalerte mønstrene har vektorlengde $2$, så faktoren $1/2$ gjør hvert
+mønster til en enhetsvektor. Et bilde er fortsatt en $2\times2$-rute på
+skjermen, men indreproduktet virker på vektorer. Vi avtaler derfor eksplisitt
+radvis vektorisering:
 
-$$x=2M-H+\frac12V.$$
+$$\operatorname{vec}_r\!\left(\begin{bmatrix}a&b\\c&d\end{bmatrix}\right)
+=\begin{bmatrix}a\\b\\c\\d\end{bmatrix}.$$
 
-Før du kjører: Hva tror du de fire avlesningene $M^Tx,H^Tx,V^Tx,D^Tx$
-blir?
+La de små bokstavene være de tilsvarende detektorvektorene
+
+$$m=\operatorname{vec}_r(M),\quad h=\operatorname{vec}_r(H),\quad
+v=\operatorname{vec}_r(V),\quad d=\operatorname{vec}_r(D),$$
+
+og bygg bildet og bildevektoren
+
+$$X=2M-H+\frac12V,\qquad x=\operatorname{vec}_r(X).$$
+
+Med $Q_{\text{pattern}}=[m\ h\ v\ d]$ blir avlesningene
+
+$$Q_{\text{pattern}}^Tx=
+\begin{bmatrix}m^Tx\\h^Tx\\v^Tx\\d^Tx\end{bmatrix}
+=\begin{bmatrix}2\\-1\\1/2\\0\end{bmatrix}.$$
+
+Kontroller dette for hånd før du kjører koden. Hvilke nullprodukter bruker du?
 
 ```{pyodide-python}
 #| label: week4-pattern-detectors
 M = 0.5*np.array([[1.0, 1.0], [1.0, 1.0]])
-H = 0.5*np.array([[1.0, 1.0], [-1.0, -1.0]])
-V = 0.5*np.array([[1.0, -1.0], [1.0, -1.0]])
+H = 0.5*np.array([[1.0, -1.0], [1.0, -1.0]])
+V = 0.5*np.array([[1.0, 1.0], [-1.0, -1.0]])
 D = 0.5*np.array([[1.0, -1.0], [-1.0, 1.0]])
 patterns = [M, H, V, D]
 names = ["M", "H", "V", "D"]
-Q_pattern = np.column_stack([P.reshape(-1) for P in patterns])
+m, h, v, d = [P.reshape(-1) for P in patterns]
+Q_pattern = np.column_stack([m, h, v, d])
 coefficients = np.array([2.0, -1.0, 0.5, 0.0])
-x = (Q_pattern @ coefficients).reshape(2, 2)
-readings = Q_pattern.T @ x.reshape(-1)
+x = Q_pattern @ coefficients
+X = x.reshape(2, 2)
+readings = Q_pattern.T @ x
 
 fig, axes = plt.subplots(1, 6, figsize=(11, 2.2))
 for ax, P, name in zip(axes[:4], patterns, names):
     ax.imshow(P, cmap="RdBu_r", vmin=-1, vmax=1)
     ax.set_title(name); ax.set_xticks([]); ax.set_yticks([])
-axes[4].imshow(x, cmap="RdBu_r", vmin=-2, vmax=2)
+axes[4].imshow(X, cmap="RdBu_r", vmin=-2, vmax=2)
 axes[4].set_title("blanding")
 axes[4].set_xticks([]); axes[4].set_yticks([])
 axes[5].bar(names, readings, color="#1565c0")
@@ -274,7 +331,7 @@ gjenta deteksjonen. Avlesningene blir ikke identiske med de opprinnelige
 koeffisientene, men de forteller fortsatt hvilke mønstre som dominerer.
 :::
 
-## 4.6 Mål, bygg opp og trekk fra
+## 4.6 Mål, bygg opp og trekk fra {#uke4-projeksjon}
 
 La $q$ være en enhetsvektor. Vi kan dele en vektor $x$ i to deler:
 
@@ -302,7 +359,7 @@ var amount = function(){ return X.X()*Q.X()+X.Y()*Q.Y(); };
 var P = board.create('point', [
   function(){return amount()*Q.X();},
   function(){return amount()*Q.Y();}
-], {name:'p', color:'#666666', size:4});
+], {name:'p: projeksjon', color:'#666666', size:4});
 board.create('arrow', [O,P], {strokeColor:'#666666', strokeWidth:4});
 board.create('arrow', [P,X], {strokeColor:'#c62828', strokeWidth:4});
 board.create('line', [O,Q], {strokeColor:'#1565c0', strokeWidth:1});
@@ -339,7 +396,7 @@ $$\operatorname{proj}_a(x)=\frac{a^Tx}{a^Ta}a.$$
 Når $a$ er en enhetsvektor, er $a^Ta=1$.
 :::
 
-## 4.7 Hvor får vi ortogonale detektorer fra?
+## 4.7 Hvor får vi ortogonale detektorer fra? {#uke4-gs}
 
 Anta at vi starter med
 
@@ -349,11 +406,11 @@ a_2=\begin{bmatrix}1\\2\end{bmatrix}.$$
 De spenner ut hele $\mathbb R^2$, men $a_1^Ta_2=4\ne0$. Vi lager nye
 vektorer som spenner ut det samme rommet:
 
-$$q_1=\frac{a_1}{\lVert a_1\rVert},$$
+$$q_1=\frac{a_1}{\lVert a_1\rVert_2},$$
 
 $$r_{12}=q_1^Ta_2,\qquad
 v_2=a_2-r_{12}q_1,\qquad
-q_2=\frac{v_2}{\lVert v_2\rVert}.$$
+q_2=\frac{v_2}{\lVert v_2\rVert_2}.$$
 
 Les operasjonene med språket vi allerede har:
 
@@ -363,6 +420,30 @@ Les operasjonene med språket vi allerede har:
 4. normaliser det som er igjen.
 
 Dette er **Gram–Schmidt-prosessen**.
+
+### Hele regningen for hånd
+
+For de to vektorene over får vi
+
+$$\lVert a_1\rVert_2=\sqrt5,\qquad
+q_1=\frac1{\sqrt5}\begin{bmatrix}2\\1\end{bmatrix},\qquad
+r_{12}=q_1^Ta_2=\frac4{\sqrt5}.$$
+
+Dermed er
+
+$$v_2=a_2-r_{12}q_1
+=\begin{bmatrix}1\\2\end{bmatrix}
+-\frac45\begin{bmatrix}2\\1\end{bmatrix}
+=\begin{bmatrix}-3/5\\6/5\end{bmatrix},$$
+
+$$\lVert v_2\rVert_2=\frac3{\sqrt5},\qquad
+q_2=\frac1{\sqrt5}\begin{bmatrix}-1\\2\end{bmatrix}.$$
+
+Altså
+
+$$Q=\frac1{\sqrt5}\begin{bmatrix}2&-1\\1&2\end{bmatrix},\qquad
+R=\begin{bmatrix}\sqrt5&4/\sqrt5\\0&3/\sqrt5\end{bmatrix},\qquad
+A=QR.$$
 
 ```{pyodide-python}
 #| label: week4-two-vector-gs
@@ -379,7 +460,7 @@ A = np.column_stack([a1, a2])
 print("Q =\n", Q)
 print("Q^T Q =\n", Q.T @ Q)
 print("R =\n", R)
-print("||A-QR|| =", np.linalg.norm(A-Q@R))
+print("||A-QR||_F =", np.linalg.norm(A-Q@R, "fro"))
 ```
 
 Koeffisientene vi målte underveis danner en øvre triangulær matrise $R$,
@@ -387,18 +468,29 @@ og de opprinnelige kolonnene kan bygges opp igjen som
 
 $$\boxed{A=QR.}$$
 
-## 4.8 Klassisk Gram–Schmidt for flere kolonner
+## 4.8 Klassisk Gram–Schmidt for flere kolonner {#uke4-cgs}
 
 La
 
-$$A=[a_1\ a_2\ \cdots\ a_n]\in\mathbb R^{m\times n},\qquad m\ge n.$$
+$$A=[a_1\ a_2\ \cdots\ a_k]\in\mathbb R^{m\times k},\qquad m\ge k,$$
+
+og anta foreløpig at kolonnene er lineært uavhengige. En **tynn
+QR-faktorisering** har da
+
+$$Q\in\mathbb R^{m\times k},\qquad
+R\in\mathbb R^{k\times k},\qquad Q^TQ=I_k.$$
+
+Den rektangulære matrisen $Q$ er altså ikke en ortogonal kvadratisk matrise;
+det er kolonnene dens som er ortonormale. De spenner ut det samme
+kolonnerommet som $A$: $C(Q)=C(A)$. Siden $A$ har full kolonnerang, er $R$
+invertibel.
 
 Klassisk Gram–Schmidt konstruerer $q_j$ ved
 
 $$r_{ij}=q_i^Ta_j\quad(i<j),$$
 
 $$v_j=a_j-\sum_{i=1}^{j-1}r_{ij}q_i,\qquad
-r_{jj}=\lVert v_j\rVert,\qquad q_j=\frac{v_j}{r_{jj}}.$$
+r_{jj}=\lVert v_j\rVert_2,\qquad q_j=\frac{v_j}{r_{jj}}.$$
 
 ```{pyodide-python}
 #| label: week4-classical-gs
@@ -421,16 +513,17 @@ A = np.array([[1.0, 1.0, 0.0],
               [0.0, 1.0, 1.0],
               [1.0, 1.0, 1.0]])
 Q, R = classical_gram_schmidt(A)
-print("||Q^TQ-I|| =", np.linalg.norm(Q.T@Q-np.eye(3)))
-print("||A-QR||    =", np.linalg.norm(A-Q@R))
+print("||Q^TQ-I||_F =", np.linalg.norm(Q.T@Q-np.eye(3), "fro"))
+print("||A-QR||_F   =", np.linalg.norm(A-Q@R, "fro"))
 ```
 
-De to kontrollene undersøker forskjellige egenskaper:
+De to kontrollene bruker Frobeniusnormen og undersøker forskjellige
+egenskaper:
 
-- $\lVert Q^TQ-I\rVert$ måler tap av ortonormalitet;
-- $\lVert A-QR\rVert$ måler om faktorene bygger opp $A$ igjen.
+- $\lVert Q^TQ-I_k\rVert_F$ måler tap av ortonormalitet;
+- $\lVert A-QR\rVert_F$ måler om faktorene bygger opp $A$ igjen.
 
-## 4.9 Bryt algoritmen: eksakt avhengighet
+## 4.9 Bryt algoritmen: eksakt avhengighet {#uke4-avhengighet}
 
 Før vi ser feilen i en matrise, kan vi framprovosere den geometrisk. I
 figuren er
@@ -463,6 +556,9 @@ var alpha = board.create('slider', [[-5.1,-3.5],[-0.6,-3.5],[0.5,1.5,3]], {
 var epsilon = board.create('slider', [[1.0,-3.5],[5.5,-3.5],[0,0.6,1.5]], {
   name:'epsilon', snapWidth:0.05
 });
+board.create('button', [5.8,-3.5,'sett epsilon = 0',function(){
+  epsilon.setValue(0);
+}]);
 var A1 = board.create('point', [2,1], {
   name:'a1', fixed:true, color:'#1565c0', size:4
 });
@@ -470,7 +566,7 @@ board.create('arrow', [O,A1], {strokeColor:'#1565c0', strokeWidth:4});
 var P = board.create('point', [
   function(){return alpha.Value()*qx;},
   function(){return alpha.Value()*qy;}
-], {name:'renset del', color:'#666666', size:3});
+], {name:'projeksjon (delen som fjernes)', color:'#666666', size:3});
 var A2 = board.create('point', [
   function(){return alpha.Value()*qx+epsilon.Value()*nx;},
   function(){return alpha.Value()*qy+epsilon.Value()*ny;}
@@ -480,31 +576,34 @@ board.create('arrow', [O,P], {strokeColor:'#777777', strokeWidth:3});
 board.create('arrow', [P,A2], {strokeColor:'#c62828', strokeWidth:5});
 board.create('line', [O,A1], {strokeColor:'#1565c0', dash:2, strokeWidth:1});
 board.create('text', [-5.3,5.2,function(){
-  return '||v2|| = |epsilon| = '+Math.abs(epsilon.Value()).toFixed(2);
+  return '||v2||_2 = |epsilon| = '+Math.abs(epsilon.Value()).toFixed(2);
 }], {fontSize:18, color:'#c62828'});
 board.create('text', [-5.3,4.6,function(){
   if (Math.abs(epsilon.Value()) < 1e-12) {
-    return 'Ingen ny retning: q2 = v2/||v2|| er udefinert';
+    return 'Ingen ny retning: q2 = v2/||v2||_2 er udefinert';
   }
   if (Math.abs(epsilon.Value()) < 0.15) {
-    return 'Nesten parallell: den nye retningen kommer fra en liten liten rest';
+    return 'Nesten parallell: den nye retningen kommer fra en svært liten rest';
   }
   return 'Tydelig ny retning';
 }], {fontSize:17});
 ```
 
-Ved $\varepsilon=0$ er $a_2$ et multiplum av $q_1$. Da er resten nøyaktig
-null, og det finnes ingen ny retning å normalisere. Når $\varepsilon$ er
-liten, finnes en ny retning matematisk, men hele retningen må hentes fra en
-liten differanse.
+Ved $\varepsilon=0$ er $a_2$ et multiplum av $q_1$. I eksakt matematikk er
+resten null, og det finnes ingen ny retning å normalisere. I flyttallsregning
+kan subtraksjonene etterlate en svært liten rest i stedet for eksakt null.
+Derfor er `NaN` et mulig, men ikke garantert, symptom på eksakt avhengighet.
+Når $\varepsilon$ er liten, finnes en ny retning matematisk, men hele
+retningen må hentes fra en liten differanse.
 
 I matrisen
 
 $$A=\begin{bmatrix}1&2&3\\0&1&1\\0&0&0\end{bmatrix}$$
 
 er $a_3=a_1+a_2$. Den tredje kolonnen inneholder derfor ingen ny retning.
-Gram–Schmidt trekker fra hele kolonnen, får $v_3=0$ og forsøker så å dele på
-$\lVert v_3\rVert=0$.
+I eksakt aritmetikk trekker Gram–Schmidt fra hele kolonnen og får $v_3=0$.
+I dette binært eksakte eksemplet skjer det også i flyttallsregning, og koden
+forsøker så å dele på $\lVert v_3\rVert_2=0$.
 
 ```{pyodide-python}
 #| label: week4-gs-nan
@@ -523,14 +622,15 @@ print("alle tall endelige?", np.isfinite(Q_bad).all())
 
 $$\text{lineært avhengig kolonne}
 \Longrightarrow v_j=0
-\Longrightarrow \lVert v_j\rVert=0
-\Longrightarrow v_j/\lVert v_j\rVert\text{ er udefinert}.$$
+\Longrightarrow \lVert v_j\rVert_2=0
+\Longrightarrow v_j/\lVert v_j\rVert_2\text{ er udefinert}.$$
 
-En robust implementasjon må stoppe og rapportere at matrisen ikke har full
-kolonnerang.
+En robust implementasjon må bruke en skalert toleranse og stoppe når resten
+er for liten til å gi en pålitelig ny retning. Det er en beslutning om
+**numerisk rang**, ikke et bevis på eksakt lineær avhengighet.
 :::
 
-## 4.10 Nesten avhengighet: endelige tall kan også være dårlige
+## 4.10 Nesten avhengighet: endelige tall kan også være dårlige {#uke4-nesten}
 
 Eksakt avhengighet er lett å oppdage når `NaN` dukker opp. Nesten avhengige
 kolonner er farligere: Programmet kan returnere vanlige endelige tall som
@@ -549,7 +649,7 @@ Når $\varepsilon$ er liten, peker de tre kolonnene nesten samme vei. De nye
 retningene må finnes ved å trekke fra nesten like vektorer. Dermed møter vi
 igjen tap av signifikans fra uke 1.
 
-## 4.11 Modifisert Gram–Schmidt
+## 4.11 Modifisert Gram–Schmidt {#uke4-mgs}
 
 Klassisk Gram–Schmidt måler alle komponenter mot den opprinnelige kolonnen
 $a_j$ før de trekkes fra. Modifisert Gram–Schmidt måler på nytt etter hver
@@ -560,10 +660,15 @@ $$v\leftarrow a_j,$$
 $$r_{ij}=q_i^Tv,\qquad v\leftarrow v-r_{ij}q_i,
 \qquad i=1,\ldots,j-1,$$
 
-$$r_{jj}=\lVert v\rVert,\qquad q_j=v/r_{jj}.$$
+$$r_{jj}=\lVert v\rVert_2,\qquad q_j=v/r_{jj}.$$
 
 Kort sagt: Klassisk GS måler all kryssprat før den renser. Modifisert GS
 renser én retning og måler så det som faktisk er igjen.
+
+På matrisefamilien under beholder MGS vanligvis ortogonaliteten lenger enn
+CGS. Det er ikke en garanti for at feilen alltid avtar monotont, eller at MGS
+er best for enhver matrise. Sammenlign derfor diagnostikken, ikke bare
+algoritmenavnene.
 
 ```{pyodide-python}
 #| label: week4-mgs-comparison
@@ -572,14 +677,18 @@ def modified_gram_schmidt(A, tolerance=None):
     m, n = A.shape
     Q = np.zeros((m, n))
     R = np.zeros((n, n))
+    if not np.isfinite(A).all():
+        raise ValueError("A må bare inneholde endelige tall")
     if tolerance is None:
-        tolerance = np.finfo(float).eps * max(m, n) * np.linalg.norm(A)
+        tolerance = np.finfo(float).eps * max(m, n) * np.linalg.norm(A, "fro")
     for j in range(n):
         v = A[:, j].copy()
         for i in range(j):
             R[i, j] = Q[:, i] @ v
             v = v - R[i, j]*Q[:, i]
         R[j, j] = np.linalg.norm(v)
+        if not np.isfinite(R[j, j]):
+            raise np.linalg.LinAlgError("Ikke-endelig rest under faktoriseringen")
         if R[j, j] <= tolerance:
             raise np.linalg.LinAlgError(
                 f"Kolonne {j+1} gir ingen pålitelig ny retning"
@@ -589,26 +698,37 @@ def modified_gram_schmidt(A, tolerance=None):
 
 epsilons = 10.0**(-np.arange(1, 16))
 cgs_errors, mgs_errors = [], []
+cgs_factor_errors, mgs_factor_errors = [], []
+all_finite = []
 for eps in epsilons:
     A_eps = np.vstack([np.ones((1, 3)), eps*np.eye(3)])
     Qc, Rc = classical_gram_schmidt(A_eps)
+    # tolerance=0 brukes bare her for å eksponere feilutviklingen i hele sveipet.
     Qm, Rm = modified_gram_schmidt(A_eps, tolerance=0.0)
-    cgs_errors.append(np.linalg.norm(Qc.T@Qc-np.eye(3)))
-    mgs_errors.append(np.linalg.norm(Qm.T@Qm-np.eye(3)))
+    cgs_errors.append(np.linalg.norm(Qc.T@Qc-np.eye(3), "fro"))
+    mgs_errors.append(np.linalg.norm(Qm.T@Qm-np.eye(3), "fro"))
+    scale = np.linalg.norm(A_eps, "fro")
+    cgs_factor_errors.append(np.linalg.norm(A_eps-Qc@Rc, "fro")/scale)
+    mgs_factor_errors.append(np.linalg.norm(A_eps-Qm@Rm, "fro")/scale)
+    all_finite.append(all(np.isfinite(Z).all() for Z in [Qc, Rc, Qm, Rm]))
 
 plt.loglog(epsilons, cgs_errors, "o-", label="klassisk GS")
 plt.loglog(epsilons, mgs_errors, "s-", label="modifisert GS")
 plt.gca().invert_xaxis()
 plt.xlabel(r"$\varepsilon$")
-plt.ylabel(r"$\|Q^TQ-I\|_2$")
+plt.ylabel(r"$\|Q^TQ-I\|_F$")
 plt.title("Tap av ortogonalitet for nesten parallelle kolonner")
 plt.grid(True, which="both", alpha=0.25); plt.legend(); plt.show()
+print("alle faktorer endelige i sveipet?", all(all_finite))
+print("største relative faktoriseringsfeil, CGS:", max(cgs_factor_errors))
+print("største relative faktoriseringsfeil, MGS:", max(mgs_factor_errors))
 ```
 
-Les figuren fra venstre mot høyre mot mindre $\varepsilon$. Hvor begynner
-klassisk GS å miste ortogonalitet? Hvor mye lenger holder modifisert GS?
-Kontroller også $\lVert A-QR\rVert$: Et lite rekonstruksjonsavvik garanterer
-ikke alene at kolonnene i $Q$ er ortogonale.
+Les figuren mot mindre $\varepsilon$. Hvor begynner klassisk GS å miste
+ortogonalitet i dette forsøket? Hvor mye lenger holder modifisert GS her?
+Kontroller også at alle tall er endelige og den relative feilen
+$\lVert A-QR\rVert_F/\lVert A\rVert_F$: Et lite rekonstruksjonsavvik
+garanterer ikke alene at kolonnene i $Q$ er ortogonale.
 
 ::: {.callout-note collapse="true"}
 ### Fordypning: hva bruker NumPy?
@@ -618,20 +738,32 @@ Robuste biblioteker bruker vanligvis Householder-transformasjoner. Vi
 utleder ikke Householder-metoden denne uken.
 :::
 
-## 4.12 Fra QR til minste kvadrater
+## 4.12 Fra QR til minste kvadrater {#uke4-mk}
 
 Anta at
 
-$$A\in\mathbb R^{m\times n},\qquad m>n,$$
+$$A\in\mathbb R^{m\times k},\qquad m>k,$$
 
 har full kolonnerang. Flere målinger enn parametre betyr ikke automatisk at
-systemet er inkonsistent, men med støy vil vi vanligvis ha $b\notin C(A)$.
-Da finnes ingen $x$ som gir $Ax=b$. Vi søker i stedet
+systemet er inkonsistent, men med støy vil vi vanligvis ha $b\notin C(A)$,
+der $C(A)$ er kolonnerommet til $A$. Da finnes ingen $x$ som gir $Ax=b$. Vi
+søker i stedet
 
 $$x_*=\operatorname*{argmin}_x\lVert Ax-b\rVert_2.$$
 
-Hvis $A=QR$, er kolonnene i $Q$ en ortonormal basis for kolonnerommet. Den
-delen av $b$ som modellen kan lage er $QQ^Tb$. Derfor får vi
+Hvis $A=QR$ er en tynn QR-faktorisering, er kolonnene i $Q$ en ortonormal
+basis for $C(A)$. For en vilkårlig vektor $b$ er $Q^Tb$ koordinatene til
+projeksjonen av $b$ på $C(A)$; det er ikke koordinater for hele $b$ med
+mindre $b\in C(A)$. Den delen av $b$ som modellen kan lage er $QQ^Tb$.
+
+De to vektorene $b-QQ^Tb$ og $QQ^Tb-QRx$ er ortogonale. Pytagoras gir derfor
+
+$$\lVert b-Ax\rVert_2^2
+=\lVert b-QQ^Tb\rVert_2^2
++\lVert Q^Tb-Rx\rVert_2^2.$$
+
+Det første leddet kan ikke påvirkes av $x$. Det andre blir null for den
+entydige løsningen av
 
 $$\boxed{Rx_*=Q^Tb.}$$
 
@@ -672,11 +804,20 @@ plt.title("Residualene kan ikke fjernes, men de kan gjøres kortest")
 plt.grid(alpha=0.25); plt.legend(); plt.show()
 ```
 
+Her er
+
+$$c_*=\begin{bmatrix}1.05\\0.90\end{bmatrix},\qquad
+r=b-Ac_*=\begin{bmatrix}0.05\\-0.15\\0.15\\-0.05\end{bmatrix}.$$
+
+De røde vertikale strekene i plottet viser komponentene i residualvektoren i
+**datarommet** $\mathbb R^4$. De er ikke euklidske, vinkelrette avstander fra
+punktene til den tegnede linjen i $(t,b)$-planet.
+
 Dette er broen til ukeprosjektet: I uke 3 rekonstruerte vi et polynom fra
 akkurat nok avlesninger. Nå bruker vi flere støyfylte avlesninger og finner
 det beste svaret når et eksakt svar ikke finnes.
 
-## 4.13 Oppsummering og kontroll
+## 4.13 Oppsummering og kontroll {#uke4-kontroll}
 
 $$\text{retningsmåling}
 \longrightarrow x^Tq
@@ -696,3 +837,23 @@ Kontroller at du kan forklare følgende uten å starte med kode:
 6. Hvorfor kan nesten avhengige kolonner gi et endelig, men dårlig $Q$?
 7. Hva er forskjellen mellom klassisk og modifisert Gram–Schmidt?
 8. Hvorfor er minste-kvadraters residual ortogonal på kolonnerommet?
+
+::: {.callout-tip collapse="true"}
+### Korte svar til egenkontroll
+
+1. Ellers blander avlesningen retning og lengden til måleren.
+2. Vektorene står vinkelrett; $q$ finner ingen komponent av $x$ i sin retning.
+3. For $x\in C(Q)$ gir $x=Q(Q^Tx)$; ellers er de koordinatene til projeksjonen.
+4. Projeksjonene på retningene som allerede er laget.
+5. Eksakt avhengighet gir ingen ny retning; i det viste eksemplet deles
+   nullvektoren på sin norm null.
+6. En liten rest dannes ved kansellerende subtraksjoner og kan domineres av
+   avrundingsfeil.
+7. CGS måler mot den opprinnelige kolonnen; MGS måler mot den fortløpende
+   rensede resten.
+8. Pytagoras viser at den korteste residualen er delen utenfor $C(A)$.
+:::
+
+Gå videre til [prosjekt 4: Når målingene ikke passer](project_week4.qmd),
+eller gå tilbake til [uke 3](uke3.qmd) hvis vektorrom, basis og kolonnerom
+trenger en repetisjon.

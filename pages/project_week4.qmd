@@ -1,5 +1,5 @@
 ---
-title: "Uke 4 – Når målingene ikke passer"
+title: "Prosjekt 4 – Når målingene ikke passer"
 ---
 
 {{< include ../_includes/projects/week4_orthogonal_rescue.md >}}

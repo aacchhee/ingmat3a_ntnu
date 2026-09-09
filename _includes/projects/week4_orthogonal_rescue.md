@@ -1,9 +1,14 @@
-# Når målingene ikke passer: ortogonal redningsaksjon
+# Prosjekt 4 – Når målingene ikke passer
 
 Dette prosjektet er et utkast for omtrent **4–5 timer selvstendig arbeid**.
 Det bygger videre på polynomene, basisene og avlesningsmatrisene fra uke 3,
 men siden er selvstendig: Alle funksjoner du trenger, er definert her. Du skal
 ikke kopiere kode fra forrige prosjekt.
+
+[Uke 4: Ortogonalitet, QR og minste kvadrater](uke4.qmd) gir den interaktive
+veien inn i stoffet, men definisjonene som trengs gjentas nedenfor. Trenger du
+å repetere basis, kolonnerom eller polynomavlesninger, bruk
+[uke 3](uke3.qmd) og [prosjekt 3](project_week3.qmd).
 
 I uke 3 brukte vi $n+1$ polynomverdier til å rekonstruere ett polynom i
 $\mathcal P_n$. Nå har vi flere målinger enn koeffisienter, og målingene
@@ -14,6 +19,54 @@ Hovedspørsmålet er:
 
 > **Hvordan finner vi den beste tilpasningen, og hvordan oppdager vi at
 > algoritmen mister ortogonalitet eller bryter sammen?**
+
+Her er notasjonen vi trenger. Polynomrommet
+
+$$\mathcal P_n=\{c_0+c_1x+\cdots+c_nx^n:c_j\in\mathbb R\}$$
+
+har dimensjon $n+1$. Vi lagrer alltid koordinatene i stigende grad:
+
+$$c=\begin{bmatrix}c_0&c_1&\cdots&c_n\end{bmatrix}^T.$$
+
+Chebyshev-polynomene er definert ved
+
+$$T_0(x)=1,\qquad T_1(x)=x,\qquad
+T_{j+1}(x)=2xT_j(x)-T_{j-1}(x).$$
+
+For $m$ forskjellige målepunkter og grad $n$ får både monomial- og
+Chebyshev-matrisen form $m\times(n+1)$. Når $m\ge n+1$, gir forskjellige
+punkter full kolonnerang i eksakt matematikk. Det utelukker ikke at matrisen
+kan være numerisk dårlig kondisjonert.
+
+Med en **blindsone** mener vi her en perturbasjon som er liten ved
+målepunktene, men som gir mye større endring mellom punktene. Uke 4 spør
+hvordan flere målinger, et annet basisvalg eller en annen løsningsmetode kan
+redusere denne effekten.
+
+For vektorer $u,v\in\mathbb R^m$ er
+
+$$u^Tv=\sum_{i=1}^m u_iv_i,\qquad
+\lVert u\rVert_2=\sqrt{u^Tu}.$$
+
+Vektorene er ortogonale når $u^Tv=0$. Hvis $Q$ har ortonormale kolonner,
+betyr $Q^TQ=I$, og $QQ^Tb$ er projeksjonen av $b$ på kolonnerommet $C(Q)$.
+For matrisediagnostikk bruker vi Frobeniusnormen
+$\lVert A\rVert_F=(\sum_{ij}a_{ij}^2)^{1/2}$; NumPys norm uten ekstra
+argument bruker denne normen på matriser. Kondisjonstall skrives
+$\kappa_2(A)$ og bruker spektralnormen.
+
+## Omfang og tidsbruk
+
+| Løype | Deler | Omtrent |
+|---|---|---:|
+| **Kjerne** | 1–6: residual, QR, kontrollert sammenbrudd og polynomtilpasning | 2 t 45 min |
+| **Utvidelse** | 7–9: algoritmesveip, normalligninger og egen redningsaksjon | 1 t 15 min |
+| **Analyse og rydding** | figurer, tabell og 400–600 ord | 45 min |
+
+Gjør kjerneløypa i rekkefølge. Del 1 lager variablene A og b som del
+2–4 bruker. Del 5 lager polynomvariablene; del 6 lager M, C og b_noisy
+som del 7–8 bruker. Hvis du åpner siden på nytt, kjør derfor cellene fra
+start og nedover.
 
 ## Arbeidsmåte
 
@@ -52,10 +105,12 @@ def chebyshev_matrix(points, n):
     return cheb.chebvander(np.asarray(points, dtype=float), n)
 
 
-def chebyshev_points(n):
-    """De n+1 cosinusfordelte punktene brukt i uke 3."""
-    k = np.arange(n+1)
-    return np.cos((2*k+1)*np.pi/(2*(n+1)))
+def chebyshev_points(count):
+    """Nøyaktig count cosinusfordelte punkter i [-1, 1]."""
+    if count < 1:
+        raise ValueError("count må være minst 1")
+    k = np.arange(count)
+    return np.cos((2*k+1)*np.pi/(2*count))
 
 
 def reference_coordinates(n):
@@ -82,17 +137,27 @@ def classical_gram_schmidt(A):
 def modified_gram_schmidt(A, tolerance=None):
     """Modifisert GS med eksplisitt kontroll av små nye retninger."""
     A = np.asarray(A, dtype=float)
+    if A.ndim != 2:
+        raise ValueError("A må være todimensjonal")
     m, n = A.shape
+    if m < n:
+        raise ValueError("Tynn QR her krever minst like mange rader som kolonner")
+    if not np.isfinite(A).all():
+        raise ValueError("A må bare inneholde endelige tall")
     Q = np.zeros((m, n))
     R = np.zeros((n, n))
     if tolerance is None:
-        tolerance = np.finfo(float).eps*max(m, n)*np.linalg.norm(A)
+        tolerance = np.finfo(float).eps*max(m, n)*np.linalg.norm(A, "fro")
     for j in range(n):
         v = A[:, j].copy()
         for i in range(j):
             R[i, j] = Q[:, i] @ v
             v = v-R[i, j]*Q[:, i]
         R[j, j] = np.linalg.norm(v)
+        if not np.isfinite(R[j, j]):
+            raise np.linalg.LinAlgError(
+                f"Kolonne {j+1} ga en ikke-endelig rest"
+            )
         if R[j, j] <= tolerance:
             raise np.linalg.LinAlgError(
                 f"Kolonne {j+1} gir ingen pålitelig ny retning"
@@ -103,27 +168,80 @@ def modified_gram_schmidt(A, tolerance=None):
 
 def qr_solution(A, b, qr_method=modified_gram_schmidt):
     """Minste-kvadraters løsning fra en tynn QR-faktorisering."""
+    A = np.asarray(A, dtype=float)
+    b = np.asarray(b, dtype=float)
+    if A.ndim != 2 or b.ndim != 1 or A.shape[0] != b.size:
+        raise ValueError("A må være m x k og b må ha lengde m")
+    if not np.isfinite(A).all() or not np.isfinite(b).all():
+        raise ValueError("A og b må bare inneholde endelige tall")
     Q, R = qr_method(A)
-    return np.linalg.solve(R, Q.T@b), Q, R
+    x = np.linalg.solve(R, Q.T@b)
+    if not np.isfinite(x).all():
+        raise np.linalg.LinAlgError("QR-løsningen inneholder ikke-endelige tall")
+    return x, Q, R
+
+
+def safe_ratio(numerator, denominator):
+    """Skalert diagnostikk, også definert når begge ledd er null."""
+    if denominator == 0:
+        return 0.0 if numerator == 0 else np.inf
+    return float(numerator/denominator)
 
 
 def method_report(name, A, b, x, Q=None, R=None):
     """Samle kontroller som ellers er lette å glemme."""
+    A = np.asarray(A, dtype=float)
+    b = np.asarray(b, dtype=float)
+    x = np.asarray(x, dtype=float)
     residual = b-A@x
+    finite = np.isfinite(A).all() and np.isfinite(b).all()
+    finite = finite and np.isfinite(x).all() and np.isfinite(residual).all()
+    residual_norm = np.linalg.norm(residual)
+    data_scale = np.linalg.norm(A, "fro")*np.linalg.norm(x)+np.linalg.norm(b)
+    normal_norm = np.linalg.norm(A.T@residual)
+    normal_scale = np.linalg.norm(A, 2)*residual_norm
     report = {
         "metode": name,
-        "endelig": bool(np.isfinite(x).all()),
-        "residual": float(np.linalg.norm(residual)),
-        "normaltest": float(np.linalg.norm(A.T@residual)),
+        "form": f"{A.shape[0]}x{A.shape[1]}",
+        "rang": int(np.linalg.matrix_rank(A)),
+        "alle_endelige": bool(finite),
+        "relativ_residual": safe_ratio(residual_norm, data_scale),
+        "skalert_normaltest": safe_ratio(normal_norm, normal_scale),
     }
     if Q is not None and R is not None:
-        report["ortogonalitetsfeil"] = float(
-            np.linalg.norm(Q.T@Q-np.eye(Q.shape[1]))
+        finite_qr = np.isfinite(Q).all() and np.isfinite(R).all()
+        report["alle_endelige"] = bool(report["alle_endelige"] and finite_qr)
+        report["ortogonalitetsfeil_F"] = float(
+            np.linalg.norm(Q.T@Q-np.eye(Q.shape[1]), "fro")
         )
-        report["faktoriseringsfeil"] = float(np.linalg.norm(A-Q@R))
+        report["relativ_faktoriseringsfeil_F"] = safe_ratio(
+            np.linalg.norm(A-Q@R, "fro"), np.linalg.norm(A, "fro")
+        )
     return report
 ```
 
+### Synlig referanse for hjelpefunksjonene
+
+| Funksjon | Input | Output |
+|---|---|---|
+| monomial_matrix(points, n) | $m$ punkter, grad $n$ | $m\times(n+1)$-matrise med $x_i^j$ |
+| chebyshev_matrix(points, n) | $m$ punkter, grad $n$ | $m\times(n+1)$-matrise med $T_j(x_i)$ |
+| chebyshev_points(count) | antall punkter | nøyaktig count punkter |
+| poly.polyval(points, c) | monomialkoordinater | polynomverdier |
+| cheb.chebval(points, c) | Chebyshev-koordinater | polynomverdier |
+| cheb.chebvander(points, n) | punkter, grad | samme matrise som chebyshev_matrix |
+| qr_solution(A, b) | full-rang $A$, data $b$ | løsning $x$ og tynn $Q,R$ |
+| method_report(...) | metode og beregnede størrelser | skalerte diagnostikker |
+
+Standardtoleransen i MGS er
+
+$$\tau=\varepsilon_{\mathrm{maskin}}\max(m,n)\lVert A\rVert_F.$$
+
+En rest under $\tau$ blir behandlet som numerisk null. Denne skalerte testen
+er mer meningsfull enn å sammenligne med et fast desimaltall, men avgjørelsen
+er fortsatt en numerisk rangvurdering og ikke et bevis på eksakt avhengighet.
+
+## Kjerne
 ## 1. Start lett: en linje som ikke treffer alle punktene
 
 Vi tilpasser
@@ -167,7 +285,7 @@ candidates = [
 c_star, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
 
 for c in candidates+[c_star]:
-    print(c, "  ||Ac-b|| =", np.linalg.norm(A@c-b))
+    print(c, "  ||Ac-b||_2 =", np.linalg.norm(A@c-b))
 
 grid = np.linspace(-1.05, 1.05, 300)
 plt.scatter(t, b, color="black", label="målinger")
@@ -227,23 +345,31 @@ plt.grid(alpha=0.25); plt.legend(); plt.show()
 ```
 
 Forklar hvorfor nullpunktet i $A^Tr$ handler om ortogonalitet, mens
-$\lVert r\rVert$ vanligvis ikke er null.
+$\lVert r\rVert_2$ vanligvis ikke er null.
 
 ## 3. Løs det samme problemet med QR
 
-En tynn QR-faktorisering av $A\in\mathbb R^{m\times n}$ er
+En tynn QR-faktorisering av $A\in\mathbb R^{m\times k}$ er
 
 $$
 A=QR,
 \qquad
-Q\in\mathbb R^{m\times n},
+Q\in\mathbb R^{m\times k},
 \qquad
-R\in\mathbb R^{n\times n},
+R\in\mathbb R^{k\times k},
 \qquad
-Q^TQ=I.
+Q^TQ=I_k.
 $$
 
-Minste-kvadraters koeffisienter finnes fra
+Her antar vi $m\ge k$ og at $A$ har full kolonnerang. Da har $Q$
+ortonormale kolonner som spenner ut $C(A)$, og den øvre triangulære matrisen
+$R$ er invertibel. For enhver kandidat $c$ gir den ortogonale oppdelingen
+
+$$\lVert b-Ac\rVert_2^2
+=\lVert b-QQ^Tb\rVert_2^2+\lVert Q^Tb-Rc\rVert_2^2.$$
+
+Det første leddet kan ikke endres av $c$. Minste-kvadraters koeffisienter
+finnes derfor fra
 
 $$\boxed{Rc=Q^Tb.}$$
 
@@ -278,8 +404,11 @@ B=\begin{bmatrix}
 \end{bmatrix}
 $$
 
-har $b_3=b_1+b_2$. Klassisk Gram–Schmidt bør derfor få nullvektoren når
-den tredje kolonnen renses.
+har $b_3=b_1+b_2$. I eksakt aritmetikk får Gram–Schmidt derfor nullvektoren
+når den tredje kolonnen renses. Denne matrisen bruker binært eksakte tall, så
+den naive flyttallskoden nedenfor gjør det samme og produserer en ugyldig
+verdi. For en annen eksakt avhengig matrise kan avrunding etterlate en liten,
+endelig rest; fravær av ugyldige verdier beviser derfor ikke uavhengighet.
 
 ```{pyodide-python}
 #| label: project-week4-dependent-nan
@@ -307,6 +436,9 @@ Skriv en forklaring som begynner med kolonnerelasjonen $b_3=b_1+b_2$ og
 slutter med den konkrete divisjonen som produserer `NaN`. «Python liker ikke
 matrisen» er ikke en forklaring.
 
+Forklar også hvorfor stoppet i MGS er en beslutning om **numerisk rang** ved
+en skalert toleranse, ikke et bevis på den eksakte rangen.
+
 ## 5. Gå tilbake til polynomene fra uke 3
 
 For et polynom
@@ -329,6 +461,9 @@ bruker vi $m>n+1$ og legger til målestøy.
 
 Start med grad $3$ og tolv målinger. Alle nødvendige funksjoner er allerede
 definert på denne siden.
+
+Husk API-et: funksjonskallet chebyshev_points(m) lager $m$ punkter;
+argumentet er antall punkter, ikke polynomgraden.
 
 ```{pyodide-python}
 #| label: project-week4-polynomial-fit
@@ -353,9 +488,9 @@ reference_curve = cheb.chebval(grid, true_coordinates)
 fitted_curve = cheb.chebval(grid, recovered)
 
 print("form(C) =", C.shape, " rang(C) =", np.linalg.matrix_rank(C))
-print("||r|| =", np.linalg.norm(residual))
-print("||C^T r|| =", np.linalg.norm(C.T@residual))
-print("||Q^TQ-I|| =", np.linalg.norm(Q.T@Q-np.eye(n+1)))
+print("||r||_2 =", np.linalg.norm(residual))
+print("||C^T r||_2 =", np.linalg.norm(C.T@residual))
+print("||Q^TQ-I||_F =", np.linalg.norm(Q.T@Q-np.eye(n+1), "fro"))
 
 plt.scatter(points, measurements, color="black", s=25, label="målinger")
 plt.plot(grid, reference_curve, "--", label="referanse")
@@ -423,19 +558,23 @@ plt.grid(alpha=0.25); plt.legend(); plt.show()
 Forklar hvilke størrelser som kan sammenlignes på tvers av basisene. Husk at
 koeffisient nummer $j$ betyr noe forskjellig i de to basisene.
 
+## Utvidelse
+
 ## 7. Klassisk eller modifisert Gram–Schmidt?
 
 Bruk samme $M$ og $C$ som over. Faktoriser hver matrise både med klassisk og
 modifisert Gram–Schmidt. Samle resultatene i en tabell med
 
 $$
-\lVert Q^TQ-I\rVert_2,
+\lVert Q^TQ-I\rVert_F,
 \qquad
-\lVert A-QR\rVert_2,
+\frac{\lVert A-QR\rVert_F}{\lVert A\rVert_F},
 \qquad
-\lVert Ax-b\rVert_2,
+\frac{\lVert Ax-b\rVert_2}
+{\lVert A\rVert_F\lVert x\rVert_2+\lVert b\rVert_2},
 \qquad
-\lVert A^T(Ax-b)\rVert_2.
+\frac{\lVert A^T(Ax-b)\rVert_2}
+{\lVert A\rVert_2\lVert Ax-b\rVert_2}.
 $$
 
 ```{pyodide-python}
@@ -458,6 +597,10 @@ for matrix_name, matrix in [("M", M), ("C", C)]:
 målinger som koeffisienter. Lag et plott av ortogonalitetsfeilen mot graden.
 Ikke fortsett blindt etter at en metode returnerer `NaN` eller stopper.
 
+Kontroller finitet og relativ faktoriseringsfeil ved hvert trinn. Beskriv MGS
+som bedre **i dette forsøket** dersom målingene støtter det; kurvene trenger
+ikke være monotone, og MGS er ingen universell garanti.
+
 ## 8. Normalligningene som sammenligningsmetode
 
 Fra ortogonalitetsbetingelsen
@@ -468,10 +611,14 @@ får vi normalligningene
 
 $$\boxed{A^TAx=A^Tb.}$$
 
-De er matematisk riktige når $A$ har full kolonnerang, men produktet
-$A^TA$ har omtrent kvadrert kondisjonstall:
+Normalligningene karakteriserer alle minste-kvadraters minimatorer også uten
+full kolonnerang. Full kolonnerang gjør $A^TA$ invertibel og minimatoren
+entydig. Matematisk gjelder da identiteten
 
 $$\kappa_2(A^TA)=\kappa_2(A)^2.$$
+
+Flyttallsestimatene som skrives ut trenger ikke oppfylle identiteten nøyaktig,
+og dannelsen av $A^TA$ gjør problemet numerisk mer sårbart.
 
 ```{pyodide-python}
 #| label: project-week4-normal-equations
@@ -480,12 +627,17 @@ def normal_equation_solution(A, b):
     return np.linalg.solve(A.T@A, A.T@b)
 
 for name, matrix in [("monomial", M), ("Chebyshev", C)]:
-    x_normal = normal_equation_solution(matrix, b_noisy)
     x_lstsq, _, _, _ = np.linalg.lstsq(matrix, b_noisy, rcond=None)
     print("\n", name)
     print("kappa(A)    =", np.linalg.cond(matrix))
     print("kappa(A^TA) =", np.linalg.cond(matrix.T@matrix))
-    print(method_report("normal", matrix, b_noisy, x_normal))
+    try:
+        x_normal = normal_equation_solution(matrix, b_noisy)
+        if not np.isfinite(x_normal).all():
+            raise np.linalg.LinAlgError("ikke-endelig løsning")
+        print(method_report("normal", matrix, b_noisy, x_normal))
+    except np.linalg.LinAlgError as error:
+        print("normal stoppet kontrollert:", error)
     print(method_report("lstsq", matrix, b_noisy, x_lstsq))
 ```
 
@@ -507,7 +659,8 @@ Start med et referansepolynom fra `reference_coordinates`. Bruk minst
 $n+3$ forskjellige målepunkter og et fast tilfeldig frø. Finn først en
 konfigurasjon der klassisk GS eller normalligningene gir tydelig dårligere
 diagnostikk enn `lstsq`. Gjør deretter **én** begrunnet endring som forbedrer
-rekonstruksjonen.
+rekonstruksjonen. Hvis du bruker cosinusfordelte punkter, skal funksjonen
+chebyshev_points kalles med $m$, altså antall punkter.
 
 Rapporter før og etter:
 
@@ -543,7 +696,9 @@ Besvar også:
 
 ## Dette skal leveres
 
-Lever én Quarto-side eller notebook med:
+For **kjerneløypa**, lever én Quarto-side eller notebook med punkt 1–6 og en
+kort analyse av disse. For hele prosjektet med **utvidelse**, lever også
+punkt 7–10:
 
 1. den første linjetilpasningen og tolkning av residualen;
 2. kontrollen $A^Tr\approx0$;

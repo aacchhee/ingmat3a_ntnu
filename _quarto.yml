@@ -31,7 +31,7 @@ website:
         contents:
           - text: "Uke 3 – vektorrom, kolonnerom og nullrom"
             file: pages/uke3.qmd
-          - text: "Uke 4 – ortogonalitet, projeksjon og minste kvadrater"
+          - text: "Uke 4 – ortogonalitet, QR og minste kvadrater"
             file: pages/uke4.qmd
           - text: "Uke 5 – egenverdier og gjentatt matrisemultiplikasjon"
             file: pages/uke5.qmd

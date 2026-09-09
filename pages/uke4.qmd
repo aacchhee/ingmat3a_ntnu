@@ -1,5 +1,5 @@
 ---
-title: "Uke 4 – det beste svaret når et eksakt svar ikke finnes"
+title: "Uke 4 – Ortogonalitet, QR og minste kvadrater"
 ---
 
 {{< include ../_includes/linalg/uke4.md >}}
