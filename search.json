@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "TEMPLATE_LOCK.html",
-    "href": "TEMPLATE_LOCK.html",
-    "title": "Matematikk 3A",
-    "section": "",
-    "text": "This project state is locked as the canonical template. Do not change layout, Pyodide loading, or Matplotlib setup. New modules must follow page2.qmd structure."
-  },
-  {
     "objectID": "pages/uke10.html",
     "href": "pages/uke10.html",
     "title": "Uke 10 – Newtons metode",
@@ -568,47 +561,5 @@
       "Projects",
       "Uke 2 – Newtonfraktaler"
     ]
-  },
-  {
-    "objectID": "MATPLOTLIB_STYLE_GUIDE.html",
-    "href": "MATPLOTLIB_STYLE_GUIDE.html",
-    "title": "Matplotlib + Pyodide Style Guide",
-    "section": "",
-    "text": "This project runs Matplotlib inside Pyodide (browser-based Python). Because all cells share the same interpreter, strict rules apply.\n\n\nThe Matplotlib backend is set once in JavaScript:\nmatplotlib.use(\"module://matplotlib_pyodide.html5_canvas_backend\")\n\n\n\nimport matplotlib.pyplot as plt\nplt.close(\"all\")\n\nfig, ax = plt.subplots(...)\nax.plot(...)\n\nplt.show()\n\n\n\n\n❌ Never call plt.figure() if you also use plt.subplots()\n❌ Never rely on implicit pyplot state\n❌ Never omit plt.close(\"all\")\n❌ Never use plt.show() more than once per cell\n✅ Exactly ONE figure per cell\n\n\n\n\n\n\n\nSymptom\nCause\n\n\n\n\nTwo canvases\nplt.figure() + plt.subplots()\n\n\nOld plot appears\nMissing plt.close(\"all\")\n\n\nFigure(600x400) text\nWrong backend or missing plt.show()\n\n\n\n\n\n\nimport matplotlib.pyplot as plt\nplt.close(\"all\")\n\nfig, ax = plt.subplots(figsize=(6,4))\nax.plot(x, y)\n\nplt.show()"
-  },
-  {
-    "objectID": "MATPLOTLIB_STYLE_GUIDE.html#global-setup-handled-automatically",
-    "href": "MATPLOTLIB_STYLE_GUIDE.html#global-setup-handled-automatically",
-    "title": "Matplotlib + Pyodide Style Guide",
-    "section": "",
-    "text": "The Matplotlib backend is set once in JavaScript:\nmatplotlib.use(\"module://matplotlib_pyodide.html5_canvas_backend\")"
-  },
-  {
-    "objectID": "MATPLOTLIB_STYLE_GUIDE.html#required-pattern-for-every-plot",
-    "href": "MATPLOTLIB_STYLE_GUIDE.html#required-pattern-for-every-plot",
-    "title": "Matplotlib + Pyodide Style Guide",
-    "section": "",
-    "text": "import matplotlib.pyplot as plt\nplt.close(\"all\")\n\nfig, ax = plt.subplots(...)\nax.plot(...)\n\nplt.show()"
-  },
-  {
-    "objectID": "MATPLOTLIB_STYLE_GUIDE.html#rules-do-not-break",
-    "href": "MATPLOTLIB_STYLE_GUIDE.html#rules-do-not-break",
-    "title": "Matplotlib + Pyodide Style Guide",
-    "section": "",
-    "text": "❌ Never call plt.figure() if you also use plt.subplots()\n❌ Never rely on implicit pyplot state\n❌ Never omit plt.close(\"all\")\n❌ Never use plt.show() more than once per cell\n✅ Exactly ONE figure per cell"
-  },
-  {
-    "objectID": "MATPLOTLIB_STYLE_GUIDE.html#symptoms-of-violation",
-    "href": "MATPLOTLIB_STYLE_GUIDE.html#symptoms-of-violation",
-    "title": "Matplotlib + Pyodide Style Guide",
-    "section": "",
-    "text": "Symptom\nCause\n\n\n\n\nTwo canvases\nplt.figure() + plt.subplots()\n\n\nOld plot appears\nMissing plt.close(\"all\")\n\n\nFigure(600x400) text\nWrong backend or missing plt.show()"
-  },
-  {
-    "objectID": "MATPLOTLIB_STYLE_GUIDE.html#copy-paste-template",
-    "href": "MATPLOTLIB_STYLE_GUIDE.html#copy-paste-template",
-    "title": "Matplotlib + Pyodide Style Guide",
-    "section": "",
-    "text": "import matplotlib.pyplot as plt\nplt.close(\"all\")\n\nfig, ax = plt.subplots(figsize=(6,4))\nax.plot(x, y)\n\nplt.show()"
   }
 ]
