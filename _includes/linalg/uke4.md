@@ -116,9 +116,9 @@ hvor mye går vi i en skrå retning?
 En **enhetsretning** er en pil med lengde $1$ som bare angir en retning. Vi
 kaller pilen $q$. Alle slike piler som starter i origo, ender på
 **enhetssirkelen**: sirkelen med sentrum i origo og radius $1$. Dra punktet
-$q$ rundt denne sirkelen i figuren. Den blå linjen er en tallinje i den
-valgte retningen. Følg den stiplede linjen fra enden av $x$ vinkelrett ned
-på den blå tallinjen. Treffpunktet er merket $P$.
+$q$ rundt denne sirkelen i figuren. Den tynne blå hjelpelinjen viser
+retningen til $q$. Følg den stiplede linjen fra enden av $x$ vinkelrett
+bort til hjelpelinjen. Treffpunktet er merket $P$.
 
 Hvor langt ligger $P$ fra origo, målt langs $q$? Vi kaller dette tallet
 **komponenten av $x$ langs $q$**, og skriver det som $c$. Tallet har fortegn:
@@ -228,15 +228,35 @@ $$q=\begin{bmatrix}\cos\theta\\\sin\theta\end{bmatrix}.$$
 Dette er den vanlige trekantregelen: cosinus gir vannrett komponent og
 sinus gir loddrett komponent når hypotenusen har lengde én.
 
-Se først på en skrå retning mellom høyre og opp. Ett skritt mot høyre
-bidrar med $\cos\theta$ langs den blå tallinjen. Ett skritt opp danner
-vinkelen $90^\circ-\theta$ med målepilen og bidrar derfor med
-$\cos(90^\circ-\theta)=\sin\theta$.
+Se først på en skrå retning mellom høyre og opp. Vi deler turen i to
+etapper og spør om hver av dem: **Hvor mye av denne bevegelsen går i
+retningen $q$?**
 
-Turen $x=(3,2)^T$ består av tre skritt mot høyre og to opp. Bidragene langs
-den samme tallinjen legges sammen:
+**Første etappe: tre enheter mot høyre.** Tegn først bare ett vannrett
+skritt fra origo. Fra endepunktet trekker vi en linje vinkelrett mot
+retningen $q$, på samme måte som den stiplede linjen i figuren.
+Vi får en rettvinklet trekant: Skrittet er hypotenusen med lengde $1$,
+og siden langs $q$ ligger inntil vinkelen $\theta$. Derfor er
 
-$$\text{komponent}=3\cos\theta+2\sin\theta.$$
+$$\cos\theta
+=\frac{\text{delen langs }q}{1},
+\qquad \text{delen langs }q=\cos\theta.$$
+
+Tre slike skritt gir tre ganger dette bidraget: $3\cos\theta$.
+
+**Andre etappe: to enheter opp.** Et loddrett skritt danner vinkelen
+$90^\circ-\theta$ med $q$. Den samme trekantberegningen gir
+$\cos(90^\circ-\theta)=\sin\theta$ i retningen $q$ per skritt.
+To skritt gir derfor $2\sin\theta$.
+
+**Hele turen.** Den andre etappen begynner der den første slutter.
+I hver etappe kan vi skille mellom bevegelse langs $q$ og bevegelse på
+tvers av $q$. Delene på tvers gir ingen framgang i retningen $q$.
+Dermed er den samlede komponenten summen av bidragene langs $q$:
+
+$$c=
+\underbrace{3\cos\theta}_{\text{fra turen mot høyre}}
++\underbrace{2\sin\theta}_{\text{fra turen opp}}.$$
 
 Prøv $\theta=0^\circ$, $90^\circ$ og $45^\circ$ i figuren. Vi får
 henholdsvis $3$, $2$ og $5/\sqrt2\approx3.54$. Når målepilen dreies videre,
