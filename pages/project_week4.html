@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Uke 3 – Polynomer i blindsonen – Matematikk 3A</title>
+<title>Prosjekt 4 – Når målingene ikke passer – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -25,41 +25,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -1007,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"\n# Felles verktøy for alle kodecellene i prosjektet. Cellen kjøres\n# automatisk og vises ikke på den ferdige siden.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom numpy.polynomial import polynomial as poly\nfrom numpy.polynomial import chebyshev as cheb","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week3-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef chebyshev_recursive(n, x):\n    \"\"\"Beregn T_n(x) direkte fra den rekursive definisjonen.\"\"\"\n    if n < 0:\n        raise ValueError(\"n må være et ikke-negativt heltall\")\n    if n == 0:\n        return 1 + 0*x       # TODO: forklar hvorfor 0*x er nyttig for arrays\n    if n == 1:\n        return x\n    return (2*x*chebyshev_recursive(n-1, x)\n            - chebyshev_recursive(n-2, x))\n\n\nfor n in range(5):\n    print(f\"T_{n}(0.3) = {chebyshev_recursive(n, 0.3): .8f}\")","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import numpy as np\n\ndef chebyshev_table(x, n):\n    \"\"\"Returner en tabell med T_0(x), ..., T_n(x) som kolonner.\"\"\"\n    x = np.asarray(x, dtype=float)\n    # En rad hører til én x-verdi. Den siste aksen reserveres for\n    # polynomnummeret k: kolonne k inneholder T_k(x).\n    table = np.empty(x.shape + (n+1,), dtype=float)\n    table[..., 0] = 1.0\n    if n >= 1:\n        table[..., 1] = x\n    # Tabellen tar vare på tidligere resultater. Derfor kan hver ny kolonne\n    # bygges fra de to foregående uten å beregne dem på nytt.\n    for k in range(1, n):\n        table[..., k+1] = 2*x*table[..., k] - table[..., k-1]\n    return table\n\n\nx_test = np.array([-1.0, -0.25, 0.0, 0.4, 1.0])\nprint(chebyshev_table(x_test, 4))","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\nx_plot = np.linspace(-1.0, 1.0, 1200)\n# Tabellen gjør at vi beregner alle ni kurvene i ett kall. T_plot[:, n]\n# betyr: alle x-rader, men bare kolonnen som hører til T_n.\nT_plot = chebyshev_table(x_plot, 8)\n\nplt.close(\"all\")\nfig, axes = plt.subplots(3, 3, figsize=(8, 6), sharex=True, sharey=True)\nfor n, ax in enumerate(axes.ravel()):\n    ax.plot(x_plot, T_plot[:, n], color=\"#277da1\")\n    ax.axhline(0, color=\"0.75\", linewidth=0.8)\n    ax.set_title(f\"$T_{n}$\")\n    ax.grid(alpha=0.2)\n    ax.set_ylim(-1.15, 1.15)\nfig.supxlabel(\"x\")\nfig.supylabel(\"$T_n(x)$\")\nplt.tight_layout()\nplt.show()","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Hver kolonne skal inneholde monomialkoeffisientene til ett T_k.\n# Rekkefølgen på radene er 1, x, x^2, x^3, x^4.\nQ = np.full((5, 5), np.nan)\n# Kolonne k er koeffisientlisten til T_k. Rangtesten undersøker om de fem\n# listene, og dermed de fem polynomene, er lineært uavhengige.\nQ[:, 0] = [1, 0, 0, 0, 0]  # T_0\nQ[:, 1] = [0, 1, 0, 0, 0]  # T_1\n\n# TODO: Fyll kolonne 2, 3 og 4 fra håndregningen.\n\nif np.isnan(Q).any():\n    print(\"Fyll inn de tre siste kolonnene før rangtesten.\")\nelse:\n    print(\"Rang:\", np.linalg.matrix_rank(Q))\n    print(\"Diagonal:\", np.diag(Q))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def monomial_matrix(points, n):\n    \"\"\"Avlesningsmatrise for basisen (1, x, ..., x^n).\"\"\"\n    points = np.asarray(points, dtype=float)\n    powers = np.arange(n+1)\n    # points[:, None] lager en punktkolonne, og powers[None, :] lager en\n    # potensrad. NumPy kombinerer dem til alle x_i**j samtidig.\n    # TODO: Erstatt neste linje med uttrykket points[:, None] opphøyd i\n    # powers[None, :]. Kontroller resultatet mot minieksemplene over.\n    raise NotImplementedError(\"Fullfør monomial_matrix før du går videre\")\n\n\ndef chebyshev_matrix(points, n):\n    \"\"\"Avlesningsmatrise for basisen (T_0, ..., T_n).\"\"\"\n    # chebyshev_table har allerede riktig design: rad i = punkt x_i og\n    # kolonne k = T_k evaluert i alle punktene.\n    return chebyshev_table(points, n)\n\n\npoints_small = np.array([-1.0, -1/3, 1/3, 1.0])\nM_small = monomial_matrix(points_small, 3)\nC_small = chebyshev_matrix(points_small, 3)\n\nprint(\"Monomialbasis:\\n\", M_small)\nprint(\"\\nChebyshev-basis:\\n\", C_small)\nprint(\"\\nRanger:\", np.linalg.matrix_rank(M_small),\n      np.linalg.matrix_rank(C_small))","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"monomial_true = np.array([1.0, -2.0, 0.5, 1.0])\n# Dette er de eneste dataene de to lineære systemene får.\nmeasurements_small = poly.polyval(points_small, monomial_true)\n\n# Begge systemene har formen «avlesningsmatrise @ koordinater = data».\n# solve returnerer koordinatene; hvilken basis de tilhører bestemmes av\n# matrisen på venstre side.\nmonomial_recovered = np.linalg.solve(M_small, measurements_small)\nchebyshev_recovered = np.linalg.solve(C_small, measurements_small)\n\nprint(\"Avlesninger:\", measurements_small)\nprint(\"Monomialkoordinater:\", monomial_recovered)\nprint(\"Chebyshev-koordinater:\", chebyshev_recovered)\n\nx_dense = np.linspace(-1, 1, 1001)\np_reference = poly.polyval(x_dense, monomial_true)\np_from_monomials = poly.polyval(x_dense, monomial_recovered)\np_from_chebyshev = cheb.chebval(x_dense, chebyshev_recovered)\n\nprint(\"Største forskjell, monomial:\",\n      np.max(np.abs(p_from_monomials-p_reference)))\nprint(\"Største forskjell, Chebyshev:\",\n      np.max(np.abs(p_from_chebyshev-p_reference)))","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Forsøk A: Fjern den siste avlesningen.\npoints_three = points_small[:-1]\nM_three = monomial_matrix(points_three, 3)\n\n# Forsøk B: Bruk fire plasser, men les av samme punkt to ganger.\npoints_repeated = np.array([-1.0, -1/3, 1/3, 1/3])\nM_repeated = monomial_matrix(points_repeated, 3)\n\nprint(\"Form og rang med tre avlesninger:\",\n      M_three.shape, np.linalg.matrix_rank(M_three))\nprint(\"Form og rang med gjentatt punkt:\",\n      M_repeated.shape, np.linalg.matrix_rank(M_repeated))","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# TODO: Utvid produktet du fant, og skriv inn de fire koeffisientene i\n# rekkefølgen 1, x, x^2, x^3. NaN-verdiene skal erstattes.\ninvisible_coefficients = np.full(4, np.nan)\nif np.isnan(invisible_coefficients).any():\n    raise ValueError(\"Fyll inn koeffisientene til z før du går videre\")\n\n# Biblioteket brukes her bare som en uavhengig kontroll av håndregningen.\ncoefficients_check = poly.polyfromroots(points_three)\nprint(\"Største avvik fra polyfromroots:\",\n      np.max(np.abs(invisible_coefficients-coefficients_check)))\n\n# Velg selv en synlig skaleringsfaktor.\nalpha = 2.0\nsecond_polynomial = monomial_true + alpha*invisible_coefficients\n\n# De to polynomene er forskjellige, men z er null i alle tre punktene.\nfirst_values = poly.polyval(points_three, monomial_true)\nsecond_values = poly.polyval(points_three, second_polynomial)\n\nprint(\"Koeffisienter til z:\", invisible_coefficients)\nprint(\"Avlesninger av p:       \", first_values)\nprint(\"Avlesninger av p+alpha*z:\", second_values)\nprint(\"Forskjell i avlesningene:\", second_values-first_values)\n\nplt.close(\"all\")\nplt.plot(x_dense, poly.polyval(x_dense, monomial_true), label=\"$p$\")\nplt.plot(x_dense, poly.polyval(x_dense, second_polynomial),\n         label=\"$p+\\\\alpha z$\")\nplt.scatter(points_three, first_values, color=\"black\", zorder=3,\n            label=\"Tre avlesninger\")\nplt.xlabel(\"x\")\nplt.ylabel(\"polynomverdi\")\nplt.title(\"Forskjellige polynomer, identiske avlesninger\")\nplt.grid(alpha=0.25)\nplt.legend()\nplt.show()","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def chebyshev_points(n):\n    \"\"\"Returner n+1 cosinusfordelte punkter i intervallet [-1,1].\"\"\"\n    # P_n har dimensjon n+1, så vi bruker n+1 forskjellige avlesninger.\n    k = np.arange(n+1)\n    return np.cos((2*k+1)*np.pi/(2*(n+1)))\n\n\ndef reference_coordinates(n):\n    \"\"\"Moderate, deterministiske koordinater i Chebyshev-basis.\"\"\"\n    # En fast formel gir samme referansepolynom hver gang forsøket gjentas.\n    # Avtagende koeffisienter hindrer at vi bygger inn store tall med vilje.\n    k = np.arange(n+1)\n    return (-1.0)**k/(k+1.0)**2\n\n\ndef max_grid_error(values, reference):\n    # Maksimum på et tett rutenett er en numerisk måling, ikke et bevis på\n    # maksimum over alle reelle x i intervallet.\n    return float(np.max(np.abs(values-reference)))","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def compare_bases(n, grid_size=2001):\n    # Det samme polynomet leses av i de samme punktene for begge basiser.\n    points = chebyshev_points(n)\n    true_chebyshev = reference_coordinates(n)\n    measurements = cheb.chebval(points, true_chebyshev)\n\n    # Bare koordinatsystemet endres mellom de to lineære systemene.\n    M = monomial_matrix(points, n)\n    C = chebyshev_matrix(points, n)\n\n    # Reverse engineering i to basiser: solve finner koeffisientene som gir\n    # de oppgitte avlesningene. Svarvektorene kan ikke sammenlignes ledd for\n    # ledd fordi basisene er ulike.\n    recovered_monomial = np.linalg.solve(M, measurements)\n    recovered_chebyshev = np.linalg.solve(C, measurements)\n\n    # Det tette rutenettet gir ingen nye data til systemet. Det brukes bare\n    # til å sammenligne de to ferdige polynomene mellom avlesningspunktene.\n    grid = np.linspace(-1.0, 1.0, grid_size)\n    reference = cheb.chebval(grid, true_chebyshev)\n    from_monomials = poly.polyval(grid, recovered_monomial)\n    from_chebyshev = cheb.chebval(grid, recovered_chebyshev)\n\n    return {\n        \"n\": n,\n        \"points\": points,\n        \"measurements\": measurements,\n        \"grid\": grid,\n        \"reference\": reference,\n        \"monomial_values\": from_monomials,\n        \"chebyshev_values\": from_chebyshev,\n        \"monomial_coordinates\": recovered_monomial,\n        \"chebyshev_coordinates\": recovered_chebyshev,\n        \"monomial_error\": max_grid_error(from_monomials, reference),\n        \"chebyshev_error\": max_grid_error(from_chebyshev, reference),\n    }\n\n\nbasis_data = compare_bases(30)\nprint(\"Grad:\", basis_data[\"n\"])\nprint(\"Største |monomialkoordinat|:\",\n      np.max(np.abs(basis_data[\"monomial_coordinates\"])))\nprint(\"Største |Chebyshev-koordinat|:\",\n      np.max(np.abs(basis_data[\"chebyshev_coordinates\"])))\nprint(\"Maksfeil med monomialbasis:\", basis_data[\"monomial_error\"])\nprint(\"Maksfeil med Chebyshev-basis:\", basis_data[\"chebyshev_error\"])","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"degrees = [3, 10, 20, 25, 30]\nbasis_results = [compare_bases(n) for n in degrees]\n\nprint(f\"{'grad':>5} {'maks |a_k|':>16} {'maks |c_k|':>16} \"\n      f\"{'feil monomial':>18} {'feil Chebyshev':>18}\")\nprint(\"-\"*79)\nfor data in basis_results:\n    print(f\"{data['n']:5d} \"\n          f\"{np.max(np.abs(data['monomial_coordinates'])):16.4e} \"\n          f\"{np.max(np.abs(data['chebyshev_coordinates'])):16.4e} \"\n          f\"{data['monomial_error']:18.4e} \"\n          f\"{data['chebyshev_error']:18.4e}\")","id":12,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"grid = basis_data[\"grid\"]\nerror_monomial = np.abs(\n    basis_data[\"monomial_values\"]-basis_data[\"reference\"]\n)\nerror_chebyshev = np.abs(\n    basis_data[\"chebyshev_values\"]-basis_data[\"reference\"]\n)\n\ntiny = np.finfo(float).tiny\nplt.close(\"all\")\nplt.semilogy(grid, np.maximum(error_monomial, tiny),\n             label=\"Monomialbasis\")\nplt.semilogy(grid, np.maximum(error_chebyshev, tiny),\n             label=\"Chebyshev-basis\")\nplt.xlabel(\"x\")\nplt.ylabel(\"absolutt feil\")\nplt.title(\"Samme polynom og samme avlesningspunkter\")\nplt.grid(alpha=0.25)\nplt.legend()\nplt.show()","id":13,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"n = 30\npoints = chebyshev_points(n)\ntrue_chebyshev = reference_coordinates(n)\nmeasurements = cheb.chebval(points, true_chebyshev)\n\nrng = np.random.default_rng(2026)\n# Fast startverdi gjør forsøket reproduserbart: alle får nøyaktig samme\n# forstyrrelse når cellen kjøres på nytt.\nmeasurement_noise = 1e-10*rng.standard_normal(n+1)\n\nM = monomial_matrix(points, n)\nC = chebyshev_matrix(points, n)\n\na_before = np.linalg.solve(M, measurements)\na_after = np.linalg.solve(M, measurements+measurement_noise)\nc_before = np.linalg.solve(C, measurements)\nc_after = np.linalg.solve(C, measurements+measurement_noise)\n\n# Normen samler endringene i hele koordinatvektoren til ett tall. Vi\n# sammenligner før og etter innen samme basis, ikke koeffisienter på tvers.\nprint(\"Største endring i avlesning:\", np.max(np.abs(measurement_noise)))\nprint(\"Endring i monomialkoordinater:\", np.linalg.norm(a_after-a_before))\nprint(\"Endring i Chebyshev-koordinater:\", np.linalg.norm(c_after-c_before))","id":14,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"n = 30\nequal_points = np.linspace(-1.0, 1.0, n+1)\ncheb_points = chebyshev_points(n)\n\n# Punktene tegnes på hver sin tallinje før løsing. Figuren kontrollerer den\n# variabelen vi skal endre: punktplasseringen.\nplt.close(\"all\")\nfig, axes = plt.subplots(2, 1, figsize=(8, 2.5), sharex=True)\naxes[0].scatter(equal_points, np.zeros_like(equal_points), marker=\"|\", s=180)\naxes[0].set_title(\"Like langt mellom avlesningspunktene\")\naxes[1].scatter(cheb_points, np.zeros_like(cheb_points), marker=\"|\", s=180,\n                color=\"#d98900\")\naxes[1].set_title(\"Cosinusfordelte avlesningspunkter\")\nfor ax in axes:\n    ax.set_yticks([])\n    ax.grid(axis=\"x\", alpha=0.2)\naxes[1].set_xlabel(\"x\")\nplt.tight_layout()\nplt.show()","id":15,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def point_placement_experiment(n, points, noise_size=1e-10,\n                               grid_size=5001):\n    # Lag de nøyaktige avlesningene fra ett fast referansepolynom.\n    true_coordinates = reference_coordinates(n)\n    measurements = cheb.chebval(points, true_coordinates)\n    # Det samme fortegnsmønsteret brukes uansett hvor punktene ligger.\n    noise = noise_size*(-1.0)**np.arange(n+1)\n\n    # Reverse engineering: Finn koeffisientene til polynomet som passer til\n    # de litt forstyrrede avlesningene.\n    C = chebyshev_matrix(points, n)\n    recovered = np.linalg.solve(C, measurements+noise)\n\n    # Sammenlign med referansepolynomet også mellom avlesningspunktene. Det\n    # tette rutenettet påvirker ikke løsningen; det fungerer som måleinstrument.\n    grid = np.linspace(-1.0, 1.0, grid_size)\n    reference = cheb.chebval(grid, true_coordinates)\n    perturbed = cheb.chebval(grid, recovered)\n    error = perturbed-reference\n\n    return {\n        \"n\": n,\n        \"points\": points,\n        \"noise\": noise,\n        \"grid\": grid,\n        \"error\": error,\n        \"max_data_error\": float(np.max(np.abs(noise))),\n        \"max_curve_error\": float(np.max(np.abs(error))),\n    }\n\n\nequal_data = point_placement_experiment(\n    n, equal_points, noise_size=1e-10\n)\ncheb_data = point_placement_experiment(\n    n, cheb_points, noise_size=1e-10\n)\n\nfor name, data in [(\"Jevne punkter\", equal_data),\n                   (\"Cosinusfordelte punkter\", cheb_data)]:\n    amplification = data[\"max_curve_error\"]/data[\"max_data_error\"]\n    print(f\"{name:27s}\",\n          f\"feil i avlesning={data['max_data_error']:.3e}\",\n          f\"kurvefeil={data['max_curve_error']:.3e}\",\n          f\"forsterkning={amplification:.3e}\")","id":16,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"plt.close(\"all\")\nfig, axes = plt.subplots(2, 1, figsize=(8, 6), sharex=True)\n\nfor ax, title, data, color in [\n    (axes[0], \"Like langt mellom punktene\", equal_data, \"#277da1\"),\n    (axes[1], \"Cosinusfordelte punkter\", cheb_data, \"#d98900\"),\n]:\n    ax.plot(data[\"grid\"], data[\"error\"], color=color,\n            label=\"$r(x)$ mellom avlesningene\")\n    ax.scatter(data[\"points\"], data[\"noise\"], color=\"black\", s=16,\n               zorder=3, label=\"$r(x_k)$ ved avlesningspunktene\")\n    ax.axhline(0, color=\"0.7\", linewidth=0.8)\n    ax.set_title(title)\n    ax.set_ylabel(\"feil\")\n    ax.grid(alpha=0.25)\n    ax.legend(loc=\"upper center\")\n\naxes[1].set_xlabel(\"x\")\nplt.tight_layout()\nplt.show()","id":17,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"degrees = [5, 10, 15, 20, 25, 30, 35]\n\nprint(f\"{'grad':>5} {'forsterkning, jevn':>22} \"\n      f\"{'forsterkning, cosinus':>25}\")\nprint(\"-\"*57)\nfor n_test in degrees:\n    equal = point_placement_experiment(\n        n_test, np.linspace(-1.0, 1.0, n_test+1)\n    )\n    cosine = point_placement_experiment(\n        n_test, chebyshev_points(n_test)\n    )\n    amp_equal = equal[\"max_curve_error\"]/equal[\"max_data_error\"]\n    amp_cosine = cosine[\"max_curve_error\"]/cosine[\"max_data_error\"]\n    print(f\"{n_test:5d} {amp_equal:22.4e} {amp_cosine:25.4e}\")","id":18,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"n = 50\nx0 = 0.99\n\ncheb_coordinates = np.zeros(n+1)\n# Denne koordinatvektoren betyr 0*T_0 + ... + 1*T_50.\ncheb_coordinates[n] = 1.0\n# Konverteringen endrer koordinatene, ikke polynomet. Etterpå evalueres det\n# samme matematiske objekt med to forskjellige representasjoner.\nmonomial_coordinates = cheb.cheb2poly(cheb_coordinates)\n\nvalue_monomial = poly.polyval(x0, monomial_coordinates)\nvalue_chebyshev = cheb.chebval(x0, cheb_coordinates)\nvalue_reference = np.cos(n*np.arccos(x0))\n\nprint(\"Største monomialkoeffisient:\",\n      np.max(np.abs(monomial_coordinates)))\nprint(\"Monomialevaluering:   \", value_monomial)\nprint(\"Chebyshev-evaluering: \", value_chebyshev)\nprint(\"Cosinusreferanse:     \", value_reference)\nprint(\"Feil, monomial:       \", abs(value_monomial-value_reference))\nprint(\"Feil, Chebyshev:      \", abs(value_chebyshev-value_reference))","id":19,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"print(f\"{'grad':>5} {'største koeff.':>18} \"\n      f\"{'feil monomial':>18} {'feil Chebyshev':>18}\")\nprint(\"-\"*63)\n\nfor n_test in [10, 20, 30, 40, 50]:\n    c = np.zeros(n_test+1)\n    c[n_test] = 1.0\n    a = cheb.cheb2poly(c)\n    reference = np.cos(n_test*np.arccos(x0))\n    monomial_value = poly.polyval(x0, a)\n    chebyshev_value = cheb.chebval(x0, c)\n    print(f\"{n_test:5d} {np.max(np.abs(a)):18.4e} \"\n          f\"{abs(monomial_value-reference):18.4e} \"\n          f\"{abs(chebyshev_value-reference):18.4e}\")","id":20,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Startforslag: Bytt ut både punktene og fortegnsmønsteret i feilen.\nn_design = 20\nmy_points = np.linspace(-1.0, 1.0, n_design+1)\nmy_noise = 1e-10*(-1.0)**np.arange(n_design+1)\n\ntrue_coordinates = reference_coordinates(n_design)\nmy_measurements = cheb.chebval(my_points, true_coordinates)\nmy_matrix = chebyshev_matrix(my_points, n_design)\n# Reverse engineering i Chebyshev-basis: Vi finner koeffisientene som passer\n# de endrede avlesningene. Dermed undersøker vi punktplasseringen uten å bytte\n# basis samtidig.\nmy_recovered = np.linalg.solve(my_matrix, my_measurements+my_noise)\n\nmy_grid = np.linspace(-1.0, 1.0, 5001)\nmy_reference = cheb.chebval(my_grid, true_coordinates)\nmy_curve = cheb.chebval(my_grid, my_recovered)\nmy_error = my_curve-my_reference\n\nassert len(np.unique(my_points)) == n_design+1\nassert np.all(np.abs(my_points) <= 1.0)\nassert np.max(np.abs(my_noise)) <= 1.000001e-10\nminimum_spacing = np.min(np.diff(np.sort(my_points)))\nassert minimum_spacing >= 1e-3\n\n# Et stort utslag er bare interessant hvis systemet faktisk løser de oppgitte\n# avlesningene. Derfor rapporterer vi både rang og residual.\nmy_rank = np.linalg.matrix_rank(my_matrix)\nmy_residual = np.linalg.norm(\n    my_matrix @ my_recovered - (my_measurements+my_noise), ord=np.inf\n)\nassert my_rank == n_design+1\n\n# Sammenlign den største feilen mellom punktene med den største feilen\n# vi faktisk la inn i avlesningene.\nmy_amplification = (np.max(np.abs(my_error))\n                    / np.max(np.abs(my_noise)))\nprint(\"Forsterkning:\", my_amplification)\nprint(\"Minste punktavstand:\", minimum_spacing)\nprint(\"Rang:\", my_rank)\nprint(\"Største residual i avlesningene:\", my_residual)\n\nplt.close(\"all\")\nplt.plot(my_grid, my_error, label=\"feilpolynomet\")\nplt.scatter(my_points, my_noise, color=\"black\", s=15,\n            label=\"feil ved avlesningspunktene\")\nplt.xlabel(\"x\")\nplt.ylabel(\"feil\")\nplt.title(\"Min blindsone\")\nplt.grid(alpha=0.25)\nplt.legend()\nplt.show()","id":21,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"\n# Felles verktøy for dette prosjektet; lastes automatisk på siden.\n# Funksjonene er samlet her slik at prosjektet kan brukes uten andre sider.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom numpy.polynomial import polynomial as poly\nfrom numpy.polynomial import chebyshev as cheb\n\n# De samme målematrisene som i uke 3, ferdigstilt her slik at dette\n# prosjektet ikke avhenger av kode i en annen nettleserside.\ndef monomial_matrix(points, n):\n    \"\"\"Målematrise for basisen (1, x, ..., x^n).\"\"\"\n    points = np.asarray(points, dtype=float)\n    # Grad n gir n+1 basisfunksjoner, inkludert konstantleddet.\n    powers = np.arange(n+1)\n    # Rad i er punkt i; kolonne j er punktet opphøyd i j. None gjør formene kompatible.\n    return points[:, None]**powers[None, :]\n\n\ndef chebyshev_matrix(points, n):\n    \"\"\"Målematrise for basisen (T_0, ..., T_n).\"\"\"\n    # Samme rad/kolonne-betydning, men med Chebyshev-polynomer i stedet for potenser.\n    return cheb.chebvander(np.asarray(points, dtype=float), n)\n\n\ndef chebyshev_points(count):\n    \"\"\"Nøyaktig count cosinusfordelte punkter i [-1, 1].\"\"\"\n    if count < 1:\n        raise ValueError(\"count må være minst 1\")\n    k = np.arange(count)\n    # Cosinus gir flere målepunkter nær endene av intervallet.\n    return np.cos((2*k+1)*np.pi/(2*count))\n\n\ndef reference_coordinates(n):\n    \"\"\"Moderate, deterministiske koordinater i Chebyshev-basis.\"\"\"\n    k = np.arange(n+1)\n    # Avtakende koeffisienter gir et fast referansepolynom med vekslende fortegn.\n    return (-1.0)**k/(k+1.0)**2\n\n\ndef classical_gram_schmidt(A):\n    \"\"\"Klassisk GS uten rangkontroll, brukt for å framprovosere feil.\"\"\"\n    A = np.asarray(A, dtype=float)\n    m, n = A.shape\n    Q = np.zeros((m, n))\n    R = np.zeros((n, n))\n    for j in range(n):\n        # CGS beregner alle komponenter mot den opprinnelige kolonnen.\n        coefficients = Q[:, :j].T @ A[:, j]\n        R[:j, j] = coefficients\n        # Trekk summen av tidligere vektorbidrag fra den aktuelle kolonnen.\n        v = A[:, j] - Q[:, :j] @ coefficients\n        R[j, j] = np.linalg.norm(v)\n        Q[:, j] = v/R[j, j]\n    return Q, R\n\n\ndef modified_gram_schmidt(A, tolerance=None):\n    \"\"\"Modifisert GS med eksplisitt kontroll av små nye retninger.\"\"\"\n    A = np.asarray(A, dtype=float)\n    if A.ndim != 2:\n        raise ValueError(\"A må være todimensjonal\")\n    m, n = A.shape\n    if m < n:\n        raise ValueError(\"Tynn QR her krever minst like mange rader som kolonner\")\n    if not np.isfinite(A).all():\n        raise ValueError(\"A må bare inneholde endelige tall\")\n    Q = np.zeros((m, n))\n    R = np.zeros((n, n))\n    if tolerance is None:\n        # Skalert grense for når en rest er for liten til å normaliseres pålitelig.\n        tolerance = np.finfo(float).eps*max(m, n)*np.linalg.norm(A, \"fro\")\n    for j in range(n):\n        # MGS oppdaterer en kopi av kolonnen etter hver subtraksjon.\n        v = A[:, j].copy()\n        for i in range(j):\n            # Denne koeffisienten beregnes på den oppdaterte resten.\n            R[i, j] = Q[:, i] @ v\n            v = v-R[i, j]*Q[:, i]\n        R[j, j] = np.linalg.norm(v)\n        if not np.isfinite(R[j, j]):\n            raise np.linalg.LinAlgError(\n                f\"Kolonne {j+1} ga en ikke-endelig rest\"\n            )\n        # Stopp før divisjon med en lengde som er numerisk for liten.\n        if R[j, j] <= tolerance:\n            raise np.linalg.LinAlgError(\n                f\"Kolonne {j+1} gir ingen pålitelig ny retning\"\n            )\n        Q[:, j] = v/R[j, j]\n    return Q, R\n\n\ndef qr_solution(A, b, qr_method=modified_gram_schmidt):\n    \"\"\"Minste-kvadraters løsning fra en tynn QR-faktorisering.\"\"\"\n    A = np.asarray(A, dtype=float)\n    b = np.asarray(b, dtype=float)\n    if A.ndim != 2 or b.ndim != 1 or A.shape[0] != b.size:\n        raise ValueError(\"A må være m x k og b må ha lengde m\")\n    if not np.isfinite(A).all() or not np.isfinite(b).all():\n        raise ValueError(\"A og b må bare inneholde endelige tall\")\n    Q, R = qr_method(A)\n    # Q.T@b er Q-koordinater; løsningen x gir koeffisientene for kolonnene i A.\n    x = np.linalg.solve(R, Q.T@b)\n    if not np.isfinite(x).all():\n        raise np.linalg.LinAlgError(\"QR-løsningen inneholder ikke-endelige tall\")\n    return x, Q, R\n\n\ndef safe_ratio(numerator, denominator):\n    \"\"\"Skalert diagnostikk, også definert når begge ledd er null.\"\"\"\n    # Unngå 0/0 i diagnostikken; ikke-null feil med null skala rapporteres som Inf.\n    if denominator == 0:\n        return 0.0 if numerator == 0 else np.inf\n    return float(numerator/denominator)\n\n\ndef method_report(name, A, b, c, Q=None, R=None):\n    \"\"\"Tall til sammenligning av metoder på de samme dataene.\"\"\"\n    A = np.asarray(A, dtype=float)\n    b = np.asarray(b, dtype=float)\n    c = np.asarray(c, dtype=float)\n    # Ett avvik per målepunkt; normen alene tar ikke hensyn til antallet målinger.\n    residual = b - A @ c\n    residual_norm = np.linalg.norm(residual)\n    report = {\n        \"metode\": name,\n        \"alle_endelige\": bool(\n            np.isfinite(c).all() and np.isfinite(residual).all()\n        ),\n        \"residualnorm\": float(residual_norm),\n        \"residual_per_maling\": float(residual_norm / np.sqrt(b.size)),\n    }\n    if Q is not None and R is not None:\n        report[\"alle_endelige\"] = bool(\n            report[\"alle_endelige\"]\n            and np.isfinite(Q).all() and np.isfinite(R).all()\n        )\n        # Første kontroll tester Q; andre kontroll tester produktet QR.\n        report[\"ortogonalitetsfeil_F\"] = float(\n            np.linalg.norm(Q.T @ Q - np.eye(Q.shape[1]), \"fro\")\n        )\n        report[\"relativ_faktoriseringsfeil_F\"] = safe_ratio(\n            np.linalg.norm(A - Q @ R, \"fro\"), np.linalg.norm(A, \"fro\")\n        )\n    return report","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\n# Data og en foreslått modell. Ingen optimal løsning er beregnet her.\nt = np.linspace(-1.0, 1.0, 6)\nb = np.array([-0.12, 0.34, 0.68, 1.32, 1.55, 2.18])\nc_try = np.array([0.95, 1.10])\n\nplt.scatter(t, b, color=\"black\", label=\"målinger\")\nplt.plot(t, c_try[0] + c_try[1]*t, label=\"foreslått modell\")\nplt.xlabel(\"t\"); plt.ylabel(\"verdi\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()\n\n# TODO: Bygg A, og beregn residualen og kvadratsummen for forslaget.\n# TODO: Bruk Q og R til å finne egne koeffisienter c_qr.\n# TODO: Sammenlign modellverdier og residualer, ikke bare koeffisientene.","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-first-fit","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nB = np.array([[1.0, 0.0, 1.0],\n              [0.0, 1.0, 1.0],\n              [0.0, 0.0, 0.0],\n              [0.0, 0.0, 0.0]])\n\n# Samme matrise sendes til begge funksjonene.\n# En stopp eller en ugyldig verdi skal registreres som et forsøksresultat.\nfor name, method in [\n    (\"klassisk GS\", classical_gram_schmidt),\n    (\"modifisert GS\", modified_gram_schmidt),\n]:\n    try:\n        with np.errstate(divide=\"ignore\", invalid=\"ignore\"):\n            Q_test, R_test = method(B)\n        print(name, \"diagonal i R:\", np.diag(R_test))\n        print(\"alle verdier endelige:\", np.isfinite(Q_test).all())\n    except np.linalg.LinAlgError as error:\n        print(name, \"stoppet:\", error)\n\n# TODO: Gjenta med en kopi av B der elementet i rad 3, kolonne 3 er delta.\n# Python-indeksen til dette elementet er [2, 2].","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-dependent-nan","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\n# Endre én forsøksinnstilling om gangen.\nn = 3\nm = 12\nnoise_size = 1e-3\nseed = 2026\npoints = np.linspace(-1.0, 1.0, m)\n\n# Referansen brukes til kontroll; ikke bruk koeffisientene i tilpasningen.\ntrue_coordinates = reference_coordinates(n)\nexact_values = cheb.chebval(points, true_coordinates)\nrng = np.random.default_rng(seed)\nmeasurements = exact_values + noise_size*rng.standard_normal(m)\n\n# Et tett rutenett gjør det mulig å kontrollere også mellom målepunktene.\ngrid = np.linspace(-1.0, 1.0, 1001)\nreference_curve = cheb.chebval(grid, true_coordinates)\n\n# TODO: Lag C, og finn koeffisientene med qr_solution(C, measurements).\n# TODO: Beregn residualen og den tilpassede kurven på grid.\n# TODO: Registrer kontrolltall og tegn målinger, referanse og tilpasset kurve.","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-polynomial-fit","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\n# Begge basiser skal få nøyaktig de samme dataene.\nn = 12\nm = 25\npoints = np.linspace(-1.0, 1.0, m)\ntrue_chebyshev = reference_coordinates(n)\nexact_values = cheb.chebval(points, true_chebyshev)\nrng = np.random.default_rng(2026)\nnoise = 1e-10*rng.standard_normal(m)\nb_noisy = exact_values + noise\n\nM = monomial_matrix(points, n)\nC = chebyshev_matrix(points, n)\ngrid = np.linspace(-1.0, 1.0, 2001)\nreference = cheb.chebval(grid, true_chebyshev)\n\n# TODO: Tilpass de samme målingene med M og C. Bruk samme QR-metode.\n# TODO: Evaluer M-koeffisienter med poly.polyval og C-koeffisienter med cheb.chebval.\n# TODO: Sammenlign kurvene med referansen, også mellom målepunktene.\n# M, C og b_noisy brukes videre i fordypningsdelene.","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-basis-comparison","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\ndegrees = [8, 12, 16, 20]\nmethods = [\n    (\"klassisk GS\", classical_gram_schmidt),\n    (\"modifisert GS\", modified_gram_schmidt),\n]\nresults = []\n\n# TODO: Lag nye data, M og C for hver grad, etter mønsteret i del 4.\n# TODO: Bruk begge GS-metodene på begge matrisene, og lagre kontrolltall.\n# TODO: Sammenlign modellverdier og kurvefeil med lstsq på de samme dataene.\n# TODO: Registrer en stopp eller ugyldige verdier; ikke ta dem med som vanlige datapunkter.","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-cgs-mgs","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\n# Kjør først del 4 for å opprette M, C og b_noisy.\n# Disse tallene er varsler om følsomhet, ikke målinger av kurvefeilen.\nfor name, matrix in [(\"monomial\", M), (\"Chebyshev\", C)]:\n    print(name)\n    print(\"kondisjonstall for A:    \", np.linalg.cond(matrix))\n    print(\"kondisjonstall for A.T@A:\", np.linalg.cond(matrix.T @ matrix))\n\n# TODO: Løs systemet du utledet, og kontroller at løsningen er endelig.\n# TODO: Sammenlign residual og kurvefeil med QR og lstsq.\n# TODO: Gjenta etter å ha endret graden og laget alle dataene på nytt.","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-normal-equations","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4224,7 +4189,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week3.html">Uke 3 – Polynomer i blindsonen</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week4.html">Prosjekt 4 – Når målingene ikke passer</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -4389,13 +4354,13 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week3.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/project_week3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Uke 3 – Polynomer i blindsonen</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week4.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week4.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Prosjekt 4 – Når målingene ikke passer</span></a>
   </div>
 </li>
@@ -4438,9 +4403,9 @@ window.Quarto = {
 </script>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week3.html">Uke 3 – Polynomer i blindsonen</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week4.html">Prosjekt 4 – Når målingene ikke passer</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Uke 3 – Polynomer i blindsonen</h1>
+<h1 class="title">Prosjekt 4 – Når målingene ikke passer</h1>
 </div>
 
 
@@ -4457,511 +4422,395 @@ window.Quarto = {
 </header>
 
 
-<section id="polynomer-i-blindsonen" class="level1">
-<h1>Polynomer i blindsonen</h1>
-<p>Dette prosjektet er laget for omtrent <strong>4–5 timer selvstendig arbeid</strong>. Kodeassistenter er tillatt, men du er ansvarlig for at eksperimentene faktisk svarer på de matematiske spørsmålene.</p>
-<p>I uke 3 har vi sett at samme vektorrom kan beskrives med forskjellige basiser. I eksakt matematikk er dette bare forskjellige koordinater for de samme objektene. På en datamaskin kan basisvalget likevel få stor betydning.</p>
-<p>Vi skal undersøke polynomrommet <span class="math inline">\(\mathcal P_n\)</span>. Tenk deg at vi ikke kjenner hele grafen til et polynom, men bare leser av polynomverdien på <span class="math inline">\(n+1\)</span> steder. Vi samler avlesningene i en tallkolonne:</p>
-<p><span class="math display">\[
-E(p)=
-\begin{bmatrix}
-p(x_0)\\p(x_1)\\\vdots\\p(x_n)
-\end{bmatrix}.
-\]</span></p>
-<p>Å gå fra et kjent polynom til disse verdiene er vanlig evaluering. Flere steder i prosjektet går vi motsatt vei: Vi får bare verdiene og prøver å finne koeffisientene til polynomet som laget dem. Vi kaller denne baklengsprosessen <strong>reverse engineering</strong> av polynomet.</p>
-<p>Prosjektets hovedspørsmål er:</p>
-<blockquote class="blockquote">
-<p><strong>Hvordan kan matematisk likeverdige beskrivelser av det samme polynomrommet gi svært forskjellige numeriske resultater?</strong></p>
-</blockquote>
-<p>Du skal gjøre tre kontrollerte sammenligninger. Først arbeider du med lav grad og eksakt lineær algebra. Deretter endrer du bare basisen. Til slutt holder du basis fast og endrer bare avlesningspunktene. Ikke bland disse eksperimentene: Ellers vet du ikke hva som forårsaket forskjellen.</p>
+<p><strong>Arbeidstid:</strong> omtrent <strong>5 timer</strong> for hele prosjektet, eller <strong>3 timer</strong> for kjernen alene.</p>
+<p>I uke 3 rekonstruerte vi polynomer fra målinger. Nå skal du undersøke hva som skjer når målingene inneholder støy, og avgjøre om en beregnet tilpasning er pålitelig. Bruk QR og projeksjon fra uke 4 som verktøy.</p>
+<p><strong>Oppdraget er å begrunne en metode og en tilpasning med egne forsøk.</strong> En liten residual er én observasjon; du må også undersøke beregningen og hvordan den tilpassede kurven oppfører seg.</p>
+<section id="arbeidsplan" class="level2">
+<h2 class="anchored" data-anchor-id="arbeidsplan">Arbeidsplan</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 30%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Løype</th>
+<th>Arbeid</th>
+<th style="text-align: right;">Omtrent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Kjerne</strong></td>
+<td>Del 1–4: vurder en tilpasning, undersøk et sammenbrudd og tilpass polynomer</td>
+<td style="text-align: right;">3 timer</td>
+</tr>
+<tr class="even">
+<td><strong>Valgt fordypning</strong></td>
+<td>Del 5 <strong>eller</strong> del 6: sammenlign beregningsmetoder</td>
+<td style="text-align: right;">1 time</td>
+</tr>
+<tr class="odd">
+<td><strong>Redningsforsøk og rapport</strong></td>
+<td>Del 7 og en samlet vurdering</td>
+<td style="text-align: right;">1 time</td>
+</tr>
+</tbody>
+</table>
+<p>Startcellene lager data og gir noen kodeverktøy. <strong>Du fyller selv inn beregningene merket <code>TODO</code>.</strong> Før hvert forsøk skal du skrive en forventning. Etterpå skal du vise et resultat og forklare hva det støtter. Endre én egenskap om gangen, og noter grad, målepunkter, støystørrelse og metode.</p>
+<p>Ved behov: <a href="../pages/uke4.html#uke4-projeksjon">projeksjon i 4.2</a>, <a href="../pages/uke4.html#uke4-mk">minste kvadrater i 4.5</a> og <a href="../pages/uke4.html#uke4-polynomer">polynomer i 4.6</a>. Hintene nedenfor er sammenfoldet, slik at du kan forsøke selv først.</p>
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Kort manual: polynomer i NumPy
+<span class="screen-reader-only">Note</span>Kodeverktøy og kjørerekkefølge
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>På papir skriver vi for eksempel</p>
-<p><span class="math display">\[p(x)=1-2x+0.5x^2+x^3.\]</span></p>
-<p>I Python lagrer vi koeffisientene i samme rekkefølge som leddene over: først konstantleddet, så koeffisienten foran <span class="math inline">\(x\)</span>, deretter koeffisienten foran <span class="math inline">\(x^2\)</span>, og så videre.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="op">-</span><span class="fl">2.0</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>])</span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>np.array</code> lager her bare en talliste som NumPy kan regne med.</p>
-<p>Her betyr altså <code>a[0]</code> konstantleddet <span class="math inline">\(1\)</span>, <code>a[1]</code> betyr <span class="math inline">\(-2\)</span>, og <code>a[3]</code> betyr koeffisienten <span class="math inline">\(1\)</span> foran <span class="math inline">\(x^3\)</span>. For å regne ut <span class="math inline">\(p(0.4)\)</span> skriver vi</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>poly.polyval(<span class="fl">0.4</span>, a)</span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
-<p>For å regne ut polynomverdien i flere punkter på én gang sender vi inn en liste eller en NumPy-array:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([<span class="op">-</span><span class="fl">1.0</span>, <span class="fl">0.0</span>, <span class="fl">0.4</span>, <span class="fl">1.0</span>])</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> poly.polyval(x, a)</span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Da inneholder <code>y</code> de fire tallene <span class="math inline">\(p(-1)\)</span>, <span class="math inline">\(p(0)\)</span>, <span class="math inline">\(p(0.4)\)</span> og <span class="math inline">\(p(1)\)</span> i samme rekkefølge. Dette er alt <code>poly.polyval</code> gjør: Det setter de oppgitte <span class="math inline">\(x\)</span>-verdiene inn i polynomet.</p>
-<p>Senere skriver vi det samme polynomet ved hjelp av <span class="math inline">\(T_0,T_1,T_2,\ldots\)</span> i stedet for <span class="math inline">\(1,x,x^2,\ldots\)</span>. Hvis</p>
-<p><span class="math display">\[p(x)=c_0T_0(x)+c_1T_1(x)+c_2T_2(x),\]</span></p>
-<p>lagrer vi tallene som <code>c = np.array([c_0, c_1, c_2])</code> og bruker <code>cheb.chebval(x, c)</code>. Forskjellen mellom <code>poly.polyval</code> og <code>cheb.chebval</code> er derfor hvilken liste av polynomer koeffisientene hører til.</p>
-<p>Vi bruker også to hjelpefunksjoner senere:</p>
-<ul>
-<li><code>poly.polyfromroots([r1, r2])</code> regner ut koeffisientene til <span class="math inline">\((x-r_1)(x-r_2)\)</span>;</li>
-<li><code>cheb.cheb2poly(c)</code> skriver et polynom fra <span class="math inline">\(T\)</span>-formen om til den vanlige formen <span class="math inline">\(a_0+a_1x+a_2x^2+\cdots\)</span>.</li>
-</ul>
-<p>Bruk funksjonene med prefiksene <code>poly.</code> og <code>cheb.</code> i dette prosjektet. Ikke bruk <code>np.polyval</code>: Den forventer koeffisientene i motsatt rekkefølge og gjør det unødvendig lett å få et svar som ser rimelig ut, men er feil.</p>
+<p>Fellesfunksjonene lastes automatisk på denne siden; du trenger ikke kopiere kode fra prosjekt 3. Kjør startcellene ovenfra og ned. Del 5–6 bruker dataene fra del 4. Etter endringer i data må de tilhørende beregningene kjøres på nytt.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Verktøy</th>
+<th>Hva du får</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>classical_gram_schmidt(A)</code></td>
+<td>Klassisk GS: <code>Q, R</code>, uten kontroll av små rester</td>
+</tr>
+<tr class="even">
+<td><code>modified_gram_schmidt(A)</code></td>
+<td>Modifisert GS: <code>Q, R</code>, med kontroll av små rester</td>
+</tr>
+<tr class="odd">
+<td><code>qr_solution(A, b, metode)</code></td>
+<td>Koeffisienter, <code>Q</code> og <code>R</code>; standardmetoden er modifisert GS</td>
+</tr>
+<tr class="even">
+<td><code>method_report(navn, A, b, c, Q, R)</code></td>
+<td>En samling kontrollverdier til resultattabellen din</td>
+</tr>
+</tbody>
+</table>
+<p>Funksjonene er hjelpemidler for å gjennomføre forsøkene. Du skal forklare hvorfor kontrollene er relevante, og selv velge hva som skal sammenlignes. Modifisert GS stopper hvis en ny rest er for liten til å normaliseres pålitelig.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tips</span>Forslag til arbeidsmåte
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>For hvert hovedeksperiment:</p>
-<ol type="1">
-<li>Skriv ned hva du tror vil skje.</li>
-<li>Endre bare én ting.</li>
-<li>Kjør forsøket og lagre tallene og figuren.</li>
-<li>Finn hvor forskjellen er størst.</li>
-<li>Forklar resultatet med begrepene basis, koordinater, rang og nullrom.</li>
-</ol>
-<p>Store fargerike figurer er ikke et mål i seg selv. Figuren skal brukes som data for en matematisk forklaring.</p>
-</div>
-</div>
-<section id="innledning-bli-kjent-med-chebyshev-polynomene" class="level2">
-<h2 class="anchored" data-anchor-id="innledning-bli-kjent-med-chebyshev-polynomene">Innledning: Bli kjent med Chebyshev-polynomene</h2>
-<p>Chebyshev-polynomene bygges med rekursjonen</p>
-<p><span class="math display">\[
-T_0(x)=1,\qquad T_1(x)=x,\qquad
-T_{n+1}(x)=2xT_n(x)-T_{n-1}(x).
-\]</span></p>
-<p>De første polynomene er altså ikke oppgitt ferdig. Bruk rekursjonen til å regne ut <span class="math inline">\(T_2\)</span>, <span class="math inline">\(T_3\)</span> og <span class="math inline">\(T_4\)</span> for hånd. Samle ledd med samme potens av <span class="math inline">\(x\)</span>.</p>
-<section id="oversett-rekursjonen-fra-papir-til-python" class="level3">
-<h3 class="anchored" data-anchor-id="oversett-rekursjonen-fra-papir-til-python">Oversett rekursjonen fra papir til Python</h3>
-<p>Funksjonen under er en direkte oversettelse av definisjonen. Før du kjører, følg kallene som trengs for å beregne <span class="math inline">\(T_4(0.3)\)</span>, og forklar hvilken linje som svarer til hvert av de tre tilfellene i den matematiske definisjonen.</p>
+</section>
+<section id="kjerne" class="level2">
+<h2 class="anchored" data-anchor-id="kjerne">Kjerne</h2>
+<section id="godkjenn-eller-forkast-en-foreslått-tilpasning" class="level3">
+<h3 class="anchored" data-anchor-id="godkjenn-eller-forkast-en-foreslått-tilpasning">1. Godkjenn eller forkast en foreslått tilpasning</h3>
+<p><strong>Gitt:</strong> seks målinger og modellen <span class="math inline">\(p(t)=c_0+c_1t\)</span>. En foreslått tilpasning har <span class="math inline">\(c_0=0.95\)</span> og <span class="math inline">\(c_1=1.10\)</span>.</p>
+<p><strong>Undersøk:</strong> Er dette den beste tilpasningen i minste kvadraters forstand? Hvilke beregninger trenger du for å avgjøre det?</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Kontroller de håndregnede uttrykkene ved å evaluere dem og <code>chebyshev_recursive</code> i minst tre verdier av <span class="math inline">\(x\)</span>.</p>
-<div class="callout callout-style-default callout-note callout-titled">
+<ol type="1">
+<li>Skriv dimensjonene til <span class="math inline">\(A,c,b\)</span> og bygg <span class="math inline">\(A\)</span>. Beregn <span class="math inline">\(r=b-Ac_{\text{forslag}}\)</span> og kvadratsummen. Hvilke målinger ligger over den foreslåtte modellen?</li>
+<li>Finn en tilpasning med QR. Bruk <code>modified_gram_schmidt(A)</code> til å få <span class="math inline">\(Q,R\)</span>, og beregn deretter koeffisientene selv.</li>
+<li>Kontroller <span class="math inline">\(Q^TQ-I\)</span>, <span class="math inline">\(A-QR\)</span> og <span class="math inline">\(Q^Tr\)</span> for den nye tilpasningen. Forklar hva hver kontroll undersøker. Gjør også den siste kontrollen for den foreslåtte tilpasningen.</li>
+<li>Bruk <code>np.linalg.lstsq(A, b, rcond=None)[0]</code> som kontroll <strong>etter</strong> egen løsning. Lever én figur med begge modellene og en begrunnet avgjørelse: Hva gjør du hvis residualen ikke er null, men QR-kontrollene er gode?</li>
+</ol>
+<p>Når du vil samle alle elementene i en matrise <span class="math inline">\(E\)</span> til ett kontrolltall, bruker du <strong>Frobeniusnormen</strong>: <span class="math inline">\(\lVert E\rVert_F=\sqrt{\sum_{i,j}E_{ij}^2}\)</span>. I Python er dette <code>np.linalg.norm(E, "fro")</code>. Små avrundingsavvik fra null er forventet.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tips</span>Hint: modellen og QR
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Rad <span class="math inline">\(i\)</span> i <span class="math inline">\(A\)</span> er <span class="math inline">\([1\ \ t_i]\)</span>. Fra 4.5 har du <span class="math inline">\(d=Q^Tb\)</span> og <span class="math inline">\(Rc=d\)</span>. <code>np.linalg.solve(R, d)</code> løser det siste systemet. Pass på at residualen beregnes på nytt for koeffisientene du kontrollerer.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="finn-årsaken-når-beregningen-svikter" class="level3">
+<h3 class="anchored" data-anchor-id="finn-årsaken-når-beregningen-svikter">2. Finn årsaken når beregningen svikter</h3>
+<p><strong>Gitt:</strong> en ny matrise <span class="math inline">\(B\)</span> og de to GS-funksjonene. <strong>Undersøk:</strong> Kan alle tre kolonnene gi hver sin ortonormale vektor?</p>
+<p>Før du kjører koden: Finn en eventuell sammenheng mellom kolonnene, og forutsi hva som skjer med diagonalverdiene i <span class="math inline">\(R\)</span>.</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<ol type="1">
+<li>Knytt resultatet til kolonnerelasjonen du fant. Identifiser den konkrete divisjonen i GS som må undersøkes; se eventuelt <a href="../pages/uke4.html#uke4-cgs">algoritmen fra 4.3</a>.</li>
+<li>Sett elementet i tredje rad og tredje kolonne til <span class="math inline">\(\delta=10^{-4},10^{-10},10^{-16}\)</span>, ett forsøk om gangen. Hvor er kolonnene uavhengige på papir, og hvor fullføres beregningen?</li>
+<li>Den modifiserte funksjonen har en stoppkontroll som den klassiske mangler. Hvilken del av forskjellen du observerer skyldes denne kontrollen?</li>
+<li>Vurder påstanden: «Alle verdiene i <span class="math inline">\(Q\)</span> er endelige, derfor er QR-faktoriseringen pålitelig.» Bruk kontrollene fra del 1 som begrunnelse.</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Valgfri utfordring: hvor mye arbeid gjør rekursjonen?
+<span class="screen-reader-only">Tips</span>Hint: hva betyr «for liten rest»?
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Legg inn en teller i funksjonen og sammenlign antall funksjonskall for <span class="math inline">\(n=5,10,15\)</span>. Nullstill telleren mellom hvert forsøk. Forklar hvorfor den direkte rekursjonen gjentar stadig flere delberegninger.</p>
+<p>Stoppgrensen i hjelpefunksjonen tilpasses størrelsen på matrisen og presisjonen i flyttallsregningen. En stopp betyr at funksjonen ikke godtar resten som en pålitelig ny vektor. Det er ikke et bevis på at kolonnene er nøyaktig avhengige.</p>
 </div>
 </div>
 </div>
-<p>Den direkte rekursjonen gjør mange av de samme beregningene flere ganger. Vi vil dessuten snart trenge mange <span class="math inline">\(T\)</span>-polynomer i mange forskjellige <span class="math inline">\(x\)</span>-verdier. Derfor lager vi én tabell som samler alt.</p>
-<p>Hvis <code>x</code> inneholder fem punkter og vi ber om polynomene fra <span class="math inline">\(T_0\)</span> til <span class="math inline">\(T_4\)</span>, får tabellen fem rader og fem kolonner:</p>
-<ul>
-<li>rad 0 inneholder <span class="math inline">\(T_0(x_0),T_1(x_0),\ldots,T_4(x_0)\)</span>;</li>
-<li>rad 1 inneholder de samme fem polynomene regnet ut i <span class="math inline">\(x_1\)</span>;</li>
-<li>kolonne 2 inneholder <span class="math inline">\(T_2\)</span> regnet ut i alle de fem punktene.</li>
-</ul>
-<p>Når en verdi først er regnet ut, blir den liggende i tabellen og kan brukes til å lage neste kolonne. Dermed slipper programmet å starte rekursjonen på nytt hver gang.</p>
-<div id="qpyodide-insertion-location-3"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Les den utskrevne tabellen rad for rad. Kontroller for eksempel at første rad stemmer med <span class="math inline">\(T_k(-1)\)</span> for <span class="math inline">\(k=0,\ldots,4\)</span>, og at kolonne 1 er de fem <span class="math inline">\(x\)</span>-verdiene fordi <span class="math inline">\(T_1(x)=x\)</span>. Senere bruker vi den samme tabellen når vi vil regne ut flere lineærkombinasjoner av <span class="math inline">\(T_0,\ldots,T_n\)</span> i de samme punktene.</p>
 </section>
-<section id="se-hvordan-polynomene-oppfører-seg" class="level3">
-<h3 class="anchored" data-anchor-id="se-hvordan-polynomene-oppfører-seg">Se hvordan polynomene oppfører seg</h3>
-<p>Før vi bruker Chebyshev-polynomene som regneverktøy, trenger vi et bilde av hvordan de oppfører seg på intervallet <span class="math inline">\([-1,1]\)</span>. Er de store eller små? Hvor mange ganger svinger de? Oppfører partalls- og oddetallspolynomene seg ulikt? Dette blir viktig senere når vi skal forstå hvorfor denne beskrivelsen av et polynom kan være numerisk gunstig.</p>
-<p>En graf består av mange beregnede punkter. Koden lager derfor 1200 jevnt fordelte <span class="math inline">\(x\)</span>-verdier og bruker <code>chebyshev_table</code> til å regne ut <span class="math inline">\(T_0,\ldots,T_8\)</span> i alle sammen. Resultatet <code>T_plot</code> har 1200 rader og 9 kolonner. I løkken tegner <code>T_plot[:, n]</code> hele kolonnen som hører til <span class="math inline">\(T_n\)</span>.</p>
+<section id="undersøk-hva-flere-målinger-bidrar-med" class="level3">
+<h3 class="anchored" data-anchor-id="undersøk-hva-flere-målinger-bidrar-med">3. Undersøk hva flere målinger bidrar med</h3>
+<p>Vi går nå over til polynomer. <strong>Gitt:</strong> et referansepolynom av grad <span class="math inline">\(3\)</span> som vi lager støyfylte målinger av. Referansen er kjent i forsøket, slik at vi kan kontrollere resultatet. Selve tilpasningen skal bare bruke målepunktene og de støyfylte målingene.</p>
+<section id="matrisen-med-chebyshev-verdier" class="level4">
+<h4 class="anchored" data-anchor-id="matrisen-med-chebyshev-verdier">Matrisen med Chebyshev-verdier</h4>
+<p>Vi skriver modellen i Chebyshev-basis:</p>
+<p><span class="math display">\[p(x)=c_0T_0(x)+c_1T_1(x)+\cdots+c_nT_n(x),\]</span></p>
+<p>der</p>
+<p><span class="math display">\[T_0(x)=1,\qquad T_1(x)=x,\qquad
+T_{j+1}(x)=2xT_j(x)-T_{j-1}(x).\]</span></p>
+<p><strong>Chebyshev-målematrisen <span class="math inline">\(C\)</span> inneholder verdiene av disse basisfunksjonene ved målepunktene:</strong> rad <span class="math inline">\(i\)</span> hører til <span class="math inline">\(x_i\)</span>, og kolonne <span class="math inline">\(j\)</span> hører til <span class="math inline">\(T_j\)</span>. Altså er <span class="math inline">\(C_{ij}=T_j(x_i)\)</span>. For grad <span class="math inline">\(2\)</span> ser det slik ut, siden <span class="math inline">\(T_2(x)=2x^2-1\)</span>:</p>
+<p><span class="math display">\[C=\begin{bmatrix}
+1&amp;x_0&amp;2x_0^2-1\\
+1&amp;x_1&amp;2x_1^2-1\\
+\vdots&amp;\vdots&amp;\vdots\\
+1&amp;x_{m-1}&amp;2x_{m-1}^2-1
+\end{bmatrix}.\]</span></p>
+<p>Dermed inneholder <span class="math inline">\(Cc\)</span> modellverdiene ved de <span class="math inline">\(m\)</span> målepunktene, akkurat som <span class="math inline">\(Ac\)</span> i linjeforsøket. Grad <span class="math inline">\(n\)</span> gir <span class="math inline">\(n+1\)</span> koeffisienter og en matrise med <span class="math inline">\(m\)</span> rader og <span class="math inline">\(n+1\)</span> kolonner.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Kodeverktøy</th>
+<th>Bruk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>chebyshev_matrix(points, n)</code></td>
+<td>Lag <span class="math inline">\(C\)</span> for målepunktene og graden</td>
+</tr>
+<tr class="even">
+<td><code>cheb.chebval(points, c)</code></td>
+<td>Beregn polynomverdier fra Chebyshev-koeffisienter</td>
+</tr>
+<tr class="odd">
+<td><code>reference_coordinates(n)</code></td>
+<td>Lag et fast referansepolynom av grad <span class="math inline">\(n\)</span></td>
+</tr>
+</tbody>
+</table>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Undersøk figurene før du leser videre:</p>
 <ol type="1">
-<li>Hvor store og små blir polynomene på <span class="math inline">\([-1,1]\)</span>, og hva skjer i endepunktene?</li>
-<li>Hvordan endres nullpunkter, svingninger og symmetri med <span class="math inline">\(n\)</span>?</li>
-<li>Velg én av observasjonene og begrunn den fra rekursjonen.</li>
+<li>Hvor mange ligninger og ukjente har du? Beregn første rad i <span class="math inline">\(C\)</span> for hånd, og kontroller den mot koden.</li>
+<li>Gjennomfør tilpasningen. Registrer residualnormen og den største absolutte forskjellen mellom tilpasset kurve og referanse på <code>grid</code>. Hvorfor må begge størrelsene undersøkes?</li>
+<li>Hold <span class="math inline">\(m=12\)</span> fast og prøv <code>noise_size</code> lik <span class="math inline">\(0\)</span>, <span class="math inline">\(10^{-3}\)</span> og <span class="math inline">\(10^{-2}\)</span>. Hva endrer seg i tilpasningen og kontrolltallene?</li>
+<li>Hold støystørrelsen på <span class="math inline">\(10^{-3}\)</span> og sammenlign <span class="math inline">\(m=8,16,32\)</span>. Gjenta med frøene <span class="math inline">\(2026,2027,2028\)</span>. Er konklusjonen om flere målinger den samme i alle forsøkene?</li>
 </ol>
+<p>Når antallet målinger varierer, rapporter også <span class="math inline">\(\lVert r\rVert_2/\sqrt m\)</span>: kvadrer avvikene, ta gjennomsnittet og deretter kvadratroten. Dette gir et mål på avvik per måling. Bruk én liten tabell til å sammenligne forsøkene; du trenger ikke en figur for hvert frø.</p>
 </section>
-<section id="undersøk-om-chebyshev-polynomene-danner-en-basis" class="level3">
-<h3 class="anchored" data-anchor-id="undersøk-om-chebyshev-polynomene-danner-en-basis">Undersøk om Chebyshev-polynomene danner en basis</h3>
-<p>Den vanlige måten å skrive polynomer i <span class="math inline">\(\mathcal P_4\)</span> på er</p>
-<p><span class="math display">\[p(x)=a_0+a_1x+a_2x^2+a_3x^3+a_4x^4.\]</span></p>
-<p>Polynomene <span class="math inline">\((1,x,x^2,x^3,x^4)\)</span> kalles her <strong>monomialbasis</strong> eller <strong>potensbasis</strong>. Tallkolonnen <span class="math inline">\((a_0,a_1,a_2,a_3,a_4)^T\)</span> er koordinatene til <span class="math inline">\(p\)</span> i denne basisen. For eksempel har <span class="math inline">\(3-2x^2\)</span> koordinatkolonnen</p>
-<p><span class="math display">\[\begin{bmatrix}3&amp;0&amp;-2&amp;0&amp;0\end{bmatrix}^T.\]</span></p>
-<p>Vi vil avgjøre om hvert polynom i <span class="math inline">\(\mathcal P_4\)</span> også kan skrives på nøyaktig én måte som</p>
-<p><span class="math display">\[p(x)=c_0T_0(x)+c_1T_1(x)+\cdots+c_4T_4(x).\]</span></p>
-<p>Hvordan kan vi kontrollere om <span class="math inline">\(T_0,\ldots,T_4\)</span> er lineært uavhengige? Vi må undersøke om det finnes tall <span class="math inline">\(b_0,\ldots,b_4\)</span>, ikke alle lik null, slik at</p>
-<p><span class="math display">\[
-b_0T_0(x)+b_1T_1(x)+\cdots+b_4T_4(x)=0.
-\]</span></p>
-<p>Høyresiden betyr <strong>nullpolynomet</strong>: Alle koeffisientene foran <span class="math inline">\(1,x,x^2,x^3,x^4\)</span> er null. Vi skriver derfor hvert <span class="math inline">\(T_k\)</span> i den kjente monomialbasisen og setter de fem koeffisientlistene som kolonner i matrisen <code>Q</code>. Da er koeffisientkolonnen til summen over akkurat</p>
-<p><span class="math display">\[
-Q
-\begin{bmatrix}b_0\\b_1\\b_2\\b_3\\b_4\end{bmatrix}.
-\]</span></p>
-<p>Polynomsummen er nullpolynomet hvis og bare hvis</p>
-<p><span class="math display">\[
-Qb=0.
-\]</span></p>
-<p>Nå kan vi bruke <strong>rangtesten</strong>. Det er navnet vi bruker på følgende standardtest fra lineær algebra: En matrise med fem kolonner har fem lineært uavhengige kolonner akkurat når rangen er 5. Da har ligningen <span class="math inline">\(Qb=0\)</span> bare løsningen <span class="math inline">\(b=0\)</span>.</p>
-<p>Dette forklarer også hvorfor uavhengige kolonner betyr uavhengige polynomer: Hver kolonne er bare koeffisientlisten til ett bestemt <span class="math inline">\(T_k\)</span>. Hvis ingen ikke-triviell kombinasjon av listene gir nullkolonnen, kan heller ingen ikke-triviell kombinasjon av polynomene gi nullpolynomet.</p>
-<p>Til slutt vet vi at <span class="math inline">\(\mathcal P_4\)</span> har dimensjon 5. Fem lineært uavhengige polynomer i et femdimensjonalt rom fyller hele rommet. Derfor danner de en basis. Start nå med koeffisientene du fant for hånd, og fyll kolonnene i <code>Q</code>.</p>
+</section>
+<section id="samme-målinger-to-forskjellige-basiser" class="level3">
+<h3 class="anchored" data-anchor-id="samme-målinger-to-forskjellige-basiser">4. Samme målinger, to forskjellige basiser</h3>
+<p><strong>Gitt:</strong> ett polynomrom, ett sett punkter og én målevektor. <strong>Undersøk:</strong> Har basisvalget betydning for den beregnede kurven?</p>
+<p>Monomialmatrisen <span class="math inline">\(M\)</span> har kolonnene <span class="math inline">\(1,x,\ldots,x^n\)</span> evaluert ved målepunktene; Chebyshev-matrisen <span class="math inline">\(C\)</span> har kolonnene <span class="math inline">\(T_0,\ldots,T_n\)</span>. Begge beskriver polynomer av grad høyst <span class="math inline">\(n\)</span>. Koeffisientene har ulik betydning, så hver vektor må brukes med riktig basis når du beregner kurven.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Kontroller alle kolonnene mot håndregningen. Bestem deretter om <span class="math inline">\((T_0,T_1,T_2,T_3,T_4)\)</span> er en basis for <span class="math inline">\(\mathcal P_4\)</span>. Begrunnelsen skal bruke matrisen, ikke bare at figurene ser forskjellige ut.</p>
-<p>Hva forteller formen til <code>Q</code> om samme spørsmål for <span class="math inline">\((T_0,\ldots,T_n)\)</span> ved høyere grad? Formuler en begrunnet regel. Pek på mønsteret i matrisen; du trenger ikke bevise regelen for alle <span class="math inline">\(n\)</span>.</p>
+<ol type="1">
+<li>Skriv først hva du forventer: Ville de beste modellverdiene ved målepunktene vært like med de to basisene i eksakt regning? Begrunn.</li>
+<li>Beregn tilpasningene med modifisert GS, og lag én figur av absolutt kurvefeil for hver basis. Registrer også residualnorm, ortogonalitetsfeil og relativ faktoriseringsfeil.</li>
+<li>Gjenta med de støyfrie verdiene <code>exact_values</code>. Hvor mye endres hver beregnet kurve når den lille støyen legges til?</li>
+<li>Bruk <code>lstsq</code> på de samme to matrisene som kontroll. Hva tyder resultatene på om effekten av måledata, basisvalg og beregningsmetode? Ikke anta at én basis alltid gir den beste kurven.</li>
+</ol>
+<p>Selv om forskjellige punkter gir uavhengige modellkolonner på papir, kan små endringer i målinger eller avrundinger påvirke beregningen mye. I denne delen beskriver du følsomheten med de endringene du faktisk måler. Du trenger ikke et nytt matrisebegrep for å gjøre det.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Kontrolltall til tabellen
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>method_report</code> beregner residualnorm og avvik per måling. Hvis du også gir funksjonen <span class="math inline">\(Q,R\)</span>, får du:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Kontroll</th>
+<th>Hva som undersøkes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\lVert Q^TQ-I\rVert_F\)</span></td>
+<td>Hvor godt de beregnede kolonnene er ortonormale</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\lVert A-QR\rVert_F/\lVert A\rVert_F\)</span></td>
+<td>Hvor godt produktet gjengir matrisen det startet med</td>
+</tr>
+<tr class="odd">
+<td><code>alle_endelige</code></td>
+<td>Om koeffisienter, residual og faktorer inneholder ugyldige verdier</td>
+</tr>
+</tbody>
+</table>
+<p>Bruk henholdsvis <span class="math inline">\(M\)</span> og <span class="math inline">\(C\)</span> som <span class="math inline">\(A\)</span> i kontrollene. En liten verdi i én kolonne erstatter ikke de andre kontrollene.</p>
+</div>
+</div>
+</div>
 </section>
 </section>
-<section id="del-1-reverse-engineering-fra-polynomverdier" class="level2">
-<h2 class="anchored" data-anchor-id="del-1-reverse-engineering-fra-polynomverdier">Del 1: Reverse engineering fra polynomverdier</h2>
-<p>Vi går tilbake til lav grad før vi gjør store numeriske eksperimenter. La <span class="math inline">\(p\in\mathcal P_3\)</span>, og les av verdien til <span class="math inline">\(p\)</span> i punktene</p>
-<p><span class="math display">\[x_0=-1,\qquad x_1=-\frac13,\qquad x_2=\frac13,\qquad x_3=1.\]</span></p>
-<p>Transformasjonen</p>
-<p><span class="math display">\[
-E(p)=
-\begin{bmatrix}
-p(x_0)\\p(x_1)\\p(x_2)\\p(x_3)
-\end{bmatrix}
-\]</span></p>
-<p>sender altså et polynom til fire polynomverdier. Avbildningen er lineær: Hvis vi dobler polynomet, dobles alle avlesningene, og avlesning av en sum gir summen av avlesningene:</p>
-<p><span class="math display">\[E(2p)=2E(p),\qquad E(p+q)=E(p)+E(q).\]</span></p>
-<p>Det er nettopp denne lineariteten som gjør at hele avlesningsprosessen kan beskrives med en matrise.</p>
-<section id="bygg-avlesningsmatrisene-for-hånd" class="level3">
-<h3 class="anchored" data-anchor-id="bygg-avlesningsmatrisene-for-hånd">Bygg avlesningsmatrisene for hånd</h3>
-<p>Hvis</p>
-<p><span class="math display">\[p(x)=a_0+a_1x+a_2x^2+a_3x^3,\]</span></p>
-<p>er den første avlesningen</p>
-<p><span class="math display">\[p(x_0)=a_0+a_1x_0+a_2x_0^2+a_3x_0^3.\]</span></p>
-<p>Dermed er første rad i avlesningsmatrisen <span class="math inline">\([1,x_0,x_0^2,x_0^3]\)</span>. Utled de tre andre radene før du fullfører funksjonen under.</p>
-<p>For de fire punktene i dette prosjektet kan hele håndregningen skrives slik:</p>
-<p><span class="math display">\[
-\begin{aligned}
-p(-1) &amp;= a_0-a_1+a_2-a_3,\\
-p(-1/3) &amp;= a_0-\frac13a_1+\frac19a_2-\frac1{27}a_3,\\
-p(1/3) &amp;= a_0+\frac13a_1+\frac19a_2+\frac1{27}a_3,\\
-p(1) &amp;= a_0+a_1+a_2+a_3.
-\end{aligned}
-\]</span></p>
-<p>Koeffisientene foran <span class="math inline">\(a_0,a_1,a_2,a_3\)</span> blir radene i matrisen:</p>
-<p><span class="math display">\[
-\begin{bmatrix}
-p(-1)\\p(-1/3)\\p(1/3)\\p(1)
-\end{bmatrix}
-=
-\underbrace{
-\begin{bmatrix}
-1&amp;-1&amp;1&amp;-1\\
-1&amp;-1/3&amp;1/9&amp;-1/27\\
-1&amp;1/3&amp;1/9&amp;1/27\\
-1&amp;1&amp;1&amp;1
-\end{bmatrix}}_{M_{\text{small}}}
-\begin{bmatrix}a_0\\a_1\\a_2\\a_3\end{bmatrix}.
-\]</span></p>
-<p>Her er et lite eksempel med et førstegradspolynom <span class="math inline">\(p(x)=a_0+a_1x\)</span>. Avlesning i punktene <span class="math inline">\(x_0=-1\)</span> og <span class="math inline">\(x_1=2\)</span> gir</p>
-<p><span class="math display">\[
-p(x_0)=a_0-a_1,
-\qquad
-p(x_1)=a_0+2a_1.
-\]</span></p>
-<p>Begge ligningene kan samles i ett matriseprodukt:</p>
-<p><span class="math display">\[
-\begin{bmatrix}p(-1)\\p(2)\end{bmatrix}
-=
-\begin{bmatrix}1&amp;-1\\1&amp;2\end{bmatrix}
-\begin{bmatrix}a_0\\a_1\end{bmatrix}.
-\]</span></p>
-<p>Et andre eksempel bruker <span class="math inline">\(p(x)=a_0+a_1x+a_2x^2\)</span> og punktene <span class="math inline">\(0,1,2\)</span>:</p>
-<p><span class="math display">\[
-\begin{bmatrix}p(0)\\p(1)\\p(2)\end{bmatrix}
-=
-\begin{bmatrix}1&amp;0&amp;0\\1&amp;1&amp;1\\1&amp;2&amp;4\end{bmatrix}
-\begin{bmatrix}a_0\\a_1\\a_2\end{bmatrix}.
-\]</span></p>
-<p>Se spesielt på siste rad: Den kommer fra <span class="math inline">\(p(2)=a_0+2a_1+2^2a_2\)</span>. Hver rad lages ved å sette ett punkt inn i <span class="math inline">\(1,x,x^2,\ldots\)</span>. Når matrisen multipliseres med koeffisientkolonnen, får vi én polynomverdi per rad. I Python betyr <code>A @ a</code> matriseproduktet <span class="math inline">\(Aa\)</span>.</p>
-<p>Koden under lager denne matrisen for så mange punkter og potenser som vi ber om. Uttrykket med <code>None</code> er NumPys kompakte måte å kombinere hvert punkt med hver potens. Bruk de to små matrisene over som fasit når du fullfører linjen.</p>
-<p>Chebyshev-matrisen bygges på samme måte, men nå skriver vi</p>
-<p><span class="math display">\[p(x)=c_0T_0(x)+c_1T_1(x)+c_2T_2(x)+c_3T_3(x).\]</span></p>
-<p>Ved <span class="math inline">\(x=-1\)</span> får vi <span class="math inline">\(T_0(-1)=1\)</span>, <span class="math inline">\(T_1(-1)=-1\)</span>, <span class="math inline">\(T_2(-1)=1\)</span> og <span class="math inline">\(T_3(-1)=-1\)</span>. Første rad blir derfor <span class="math inline">\([1,-1,1,-1]\)</span>. Ved <span class="math inline">\(x=-1/3\)</span> gir uttrykkene du regnet ut tidligere</p>
-<p><span class="math display">\[
-T_0(-1/3)=1,\quad T_1(-1/3)=-\frac13,\quad
-T_2(-1/3)=-\frac79,\quad T_3(-1/3)=\frac{23}{27}.
-\]</span></p>
-<p>Andre rad blir dermed <span class="math inline">\([1,-1/3,-7/9,23/27]\)</span>. Regn ut de to siste radene på samme måte, og kontroller dem mot utskriften fra <code>chebyshev_matrix</code>.</p>
+<section id="velg-én-fordypning" class="level2">
+<h2 class="anchored" data-anchor-id="velg-én-fordypning">Velg én fordypning</h2>
+<p>Del 5 undersøker selve ortogonaliseringen. Del 6 undersøker en annen måte å løse tilpasningsproblemet på. Begge bruker forsøket fra del 4 som utgangspunkt.</p>
+<section id="når-betyr-gs-varianten-noe" class="level3">
+<h3 class="anchored" data-anchor-id="når-betyr-gs-varianten-noe">5. Når betyr GS-varianten noe?</h3>
+<p>Sammenlign klassisk GS, modifisert GS og <code>lstsq</code> for gradene <span class="math inline">\(n=8,12,16,20\)</span>. Bruk <span class="math inline">\(m=2(n+1)+1\)</span> jevnt fordelte målepunkter, samme referansepolynom for begge basiser ved hver grad og støy av størrelse <span class="math inline">\(10^{-10}\)</span> med fast frø.</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Stopp ved de to utskrevne matrisene før du løser et system. Bruk følgende spørsmål til å knytte tallene til lineær algebra:</p>
-<ol type="1">
-<li>Avbildningen <span class="math inline">\(E\)</span> tar inn et polynom av grad høyst 3 og gir ut fire tall. Skriv derfor definisjonsrommet og verdirommet med symboler. Beskriv også med ord hva ett element i hvert av rommene ser ut som.</li>
-<li>La <span class="math inline">\(a\)</span> være koeffisientkolonnen når <span class="math inline">\(p\)</span> skrives med <span class="math inline">\(1,x,x^2,x^3\)</span>. Forklar hvorfor <code>M_small @ a</code> er det samme som <span class="math inline">\(E(p)\)</span>. Pek på én bestemt rad og vis regnestykket.</li>
-<li>La <span class="math inline">\(c\)</span> være koeffisientkolonnen når det samme <span class="math inline">\(p\)</span> skrives med <span class="math inline">\(T_0,T_1,T_2,T_3\)</span>. Da er <code>C_small @ c</code> også <span class="math inline">\(E(p)\)</span>. Hvorfor kan <code>M_small</code> og <code>C_small</code> være forskjellige selv om de ender med de samme fire polynomverdiene?</li>
-<li>Begge matrisene har rang 4. Hva sier dette om muligheten for at to forskjellige polynomer i <span class="math inline">\(\mathcal P_3\)</span> har de samme fire avlesningene i disse fire forskjellige punktene? Knytt svaret til nullrom og entydighet.</li>
-<li>Koeffisientkolonnene <span class="math inline">\(a\)</span> og <span class="math inline">\(c\)</span> vil vanligvis være forskjellige. Betyr det at polynomene er forskjellige, eller bare at det samme polynomet er skrevet med forskjellige byggeklosser? Hvordan kan du kontrollere svaret?</li>
-</ol>
+<p>Lever en tabell og et plott av ortogonalitetsfeil mot grad. Velg så <strong>ett</strong> resultat som du undersøker nærmere:</p>
+<ul>
+<li>Er en liten faktoriseringsfeil tilstrekkelig til å stole på <span class="math inline">\(Q\)</span>?</li>
+<li>Følger endringer i ortogonalitetsfeilen endringene i kurvefeilen?</li>
+<li>Er metodeforskjellen den samme i begge basiser?</li>
+</ul>
+<p>Konklusjonen skal vise til egne tall. Unngå å formulere en generell garanti ut fra ett forsøk.</p>
 </section>
-<section id="skriv-det-samme-polynomet-i-to-basiser" class="level3">
-<h3 class="anchored" data-anchor-id="skriv-det-samme-polynomet-i-to-basiser">Skriv det samme polynomet i to basiser</h3>
-<p>Nå prøver vi tankegangen i praksis. Vi starter med et kjent polynom,</p>
-<p><span class="math display">\[p(x)=1-2x+\frac12x^2+x^3.\]</span></p>
-<p>Koden regner først ut de fire avlesningene. Deretter later vi som om koeffisientene er glemt og beholder bare avlesningene. Vi skal altså arbeide baklengs: Fra noen målte polynomverdier prøver vi å finne ut hvilket polynom som kan ha laget dem. Vi kaller dette <strong>reverse engineering</strong> av polynomet.</p>
-<p>Vi løser to lineære systemer:</p>
-<p><span class="math display">\[M_{\text{small}}a=E(p),
-\qquad
-C_{\text{small}}c=E(p).\]</span></p>
-<p>Hvorfor finner det første systemet monomialkoeffisientene? Kolonne <span class="math inline">\(j\)</span> i <span class="math inline">\(M_{\text{small}}\)</span> inneholder verdiene til <span class="math inline">\(x^j\)</span> i de fire punktene. Når matrisen multipliseres med <span class="math inline">\(a\)</span>, får vi derfor verdiene til</p>
-<p><span class="math display">\[a_0+a_1x+a_2x^2+a_3x^3\]</span></p>
-<p>i de fire punktene. Ligningen <span class="math inline">\(M_{\text{small}}a=E(p)\)</span> ber om akkurat de tallene <span class="math inline">\(a_0,\ldots,a_3\)</span> som får disse verdiene til å passe med dataene.</p>
-<p>På samme måte inneholder kolonne <span class="math inline">\(j\)</span> i <span class="math inline">\(C_{\text{small}}\)</span> verdiene til <span class="math inline">\(T_j\)</span> i punktene. Produktet <span class="math inline">\(C_{\text{small}}c\)</span> gir derfor avlesningene av</p>
-<p><span class="math display">\[c_0T_0+c_1T_1+c_2T_2+c_3T_3.\]</span></p>
-<p>Ligningen <span class="math inline">\(C_{\text{small}}c=E(p)\)</span> finner dermed Chebyshev-koeffisientene. Det er matrisens kolonner som bestemmer hva de ukjente tallene betyr.</p>
-<p>Til slutt evaluerer vi begge reverse-engineering-svarene på et tett rutenett. Hvis de representerer samme polynom, skal grafverdiene stemme selv om koeffisientlistene ikke gjør det. Kommandoen <code>np.linalg.solve(A, b)</code> betyr bare «finn tallkolonnen <span class="math inline">\(u\)</span> som løser <span class="math inline">\(Au=b\)</span>». Den kjenner ikke til polynomer; tolkningen kommer fra hvordan vi bygde matrisen <code>A</code>.</p>
+<section id="hva-endrer-normalligningene" class="level3">
+<h3 class="anchored" data-anchor-id="hva-endrer-normalligningene">6. Hva endrer normalligningene?</h3>
+<p>Fra residualbetingelsen <span class="math inline">\(A^T(b-Ac)=0\)</span> kan du samle de ukjente i et kvadratisk system.</p>
+<ol type="1">
+<li>Skriv dette systemet selv. Hvilke dimensjoner får matrisen og høyresiden?</li>
+<li>Implementer løsningen med <code>np.linalg.solve</code>.</li>
+<li>Sammenlign med QR og <code>lstsq</code>, først for grad <span class="math inline">\(12\)</span>, deretter for <span class="math inline">\(16\)</span> og <span class="math inline">\(20\)</span>. Bruk samme data som i del 4 og <span class="math inline">\(m=2(n+1)+1\)</span> for hver grad.</li>
+</ol>
+<section id="et-mål-på-følsomhet-når-vi-trenger-det" class="level4">
+<h4 class="anchored" data-anchor-id="et-mål-på-følsomhet-når-vi-trenger-det">Et mål på følsomhet, når vi trenger det</h4>
+<p><strong>Kondisjonstallet</strong> beskriver hvor ulikt matrisen skalerer koeffisientvektorer i forskjellige retninger. Et stort tall varsler at noen endringer i koeffisientene er vanskelige å skille fra hverandre i modellverdiene. Da kan små endringer i data eller avrundinger få stor betydning for de beregnede koeffisientene.</p>
+<p>Vi bruker varianten som skrives <span class="math inline">\(\kappa_2(A)\)</span> og beregnes med <code>np.linalg.cond(A)</code>. Verdier nær <span class="math inline">\(1\)</span> betyr jevn skalering; svært store verdier varsler følsomhet. Tallet er <strong>ikke</strong> den faktiske feilen i koeffisientene eller i den tilpassede kurven.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hva betyr senket 2 og spektralnorm?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Senket <span class="math inline">\(2\)</span> viser at vi bruker vanlig euklidsk vektorlengde. For en matrise definerer vi</p>
+<p><span class="math display">\[\lVert A\rVert_2=\max_{\lVert z\rVert_2=1}\lVert Az\rVert_2.\]</span></p>
+<p>Dette kalles <strong>spektralnormen</strong>: den største faktoren matrisen kan forstørre vektorlengden med. Når kolonnene er lineært uavhengige, er</p>
+<p><span class="math display">\[\kappa_2(A)=
+\frac{\max_{\lVert z\rVert_2=1}\lVert Az\rVert_2}
+{\min_{\lVert z\rVert_2=1}\lVert Az\rVert_2}.\]</span></p>
+<p>Det er altså forholdet mellom den største og den minste skaleringen. Dette er en annen matrisenorm enn Frobeniusnormen vi bruker til QR-kontrollene. Du trenger ikke beregne disse maksimums- og minimumsverdiene selv.</p>
+</div>
+</div>
+</div>
 <div id="qpyodide-insertion-location-7"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Kontroller at de to koordinatvektorene virkelig bygger samme polynom. Skriv polynomet som en lineærkombinasjon av <span class="math inline">\(T_0,T_1,T_2,T_3\)</span> og sammenlign med monomialformen.</p>
-</section>
-<section id="finn-det-avlesningene-ikke-kan-se" class="level3">
-<h3 class="anchored" data-anchor-id="finn-det-avlesningene-ikke-kan-se">Finn det avlesningene ikke kan se</h3>
-<p>Med fire forskjellige avlesningspunkter kunne vi finne et polynom i <span class="math inline">\(\mathcal P_3\)</span> entydig. Nå undersøker vi hvorfor «fire tall» ikke alene er nok: Punktene må også gi fire forskjellige opplysninger. Vi gjør to separate endringer. Først beholder vi bare tre avlesninger. Deretter bruker vi fire rader, men gjentar ett punkt. I begge tilfeller forventer vi at rangen blir mindre enn 4.</p>
-<p>Kjør de to endringene under én om gangen:</p>
-<div id="qpyodide-insertion-location-8"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>En lavere rang betyr at noe ved polynomet er usynlig i avlesningene. Finn et ikke-null polynom <span class="math inline">\(z\in\mathcal P_3\)</span> som tilfredsstiller</p>
-<p><span class="math display">\[z(-1)=z(-1/3)=z(1/3)=0.\]</span></p>
-<p><strong>Hint ved behov:</strong> Et polynom med nullpunktene <span class="math inline">\(r_1,r_2,r_3\)</span> inneholder faktorene <span class="math inline">\((x-r_1)(x-r_2)(x-r_3)\)</span>.</p>
-<p>Bruk deretter koden under til å kontrollere svaret og lage to forskjellige polynomer med identiske tre avlesninger:</p>
-<div id="qpyodide-insertion-location-9"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Gå gjennom argumentet i disse trinnene:</p>
-<ol type="1">
-<li>Regn ut <span class="math inline">\(E(z)\)</span> når <span class="math inline">\(E\)</span> bare leser av i de tre punktene. Hvorfor er resultatet nullkolonnen selv om <span class="math inline">\(z\)</span> ikke er nullpolynomet? Dette viser at <span class="math inline">\(z\)</span> ligger i nullrommet til <span class="math inline">\(E\)</span>.</li>
-<li>Bruk linearitet til å regne ut <span class="math inline">\(E(p+\alpha z)\)</span>. Forklar hvorfor alle valg av tallet <span class="math inline">\(\alpha\)</span> gir de samme tre avlesningene som <span class="math inline">\(p\)</span>.</li>
-<li>Generaliser til <span class="math inline">\(\mathcal P_n\)</span>, som har dimensjon <span class="math inline">\(n+1\)</span>. Anta at vi bruker <span class="math inline">\(m\)</span> <strong>forskjellige</strong> punkter, at <span class="math inline">\(m&lt;n+1\)</span>, og at hvert punkt gir en uavhengig betingelse. Hva blir da rangen til avlesningsmatrisen?</li>
-<li>Bruk rang–nullitet, <span class="math inline">\(\dim(\ker E)+\operatorname{rang}(E)=n+1\)</span>, til å finne dimensjonen til nullrommet. Dette tallet er antallet uavhengige måter et polynom kan endres på uten at de <span class="math inline">\(m\)</span> avlesningene merker det.</li>
-<li>Forklar til slutt hvorfor antakelsen om forskjellige punkter er viktig. Hva så du i forsøket der ett punkt ble gjentatt?</li>
-</ol>
+<p>For uavhengige kolonner gjelder <span class="math inline">\(\kappa_2(A^TA)=\kappa_2(A)^2\)</span> i eksakt regning. Bruk dette som støtte når du tolker forsøket: Hvilken sammenheng ser du mellom følsomhetsvarselet og feilen du faktisk målte? Flyttallsberegnede kondisjonstall kan avvike fra identiteten, særlig når tallene blir svært store.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tips</span>Hint til systemet
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Fordel <span class="math inline">\(A^T\)</span> over parentesen og flytt leddet med <span class="math inline">\(c\)</span> til den andre siden. Systemet har <span class="math inline">\(A^TA\)</span> som matrise. Bruk koden fra del 2 som mønster for å registrere en eventuell <code>LinAlgError</code> uten å avbryte resten av forsøket.</p>
+</div>
+</div>
+</div>
 </section>
 </section>
-<section id="del-2-hold-punktene-fast-og-bytt-basis" class="level2">
-<h2 class="anchored" data-anchor-id="del-2-hold-punktene-fast-og-bytt-basis">Del 2: Hold punktene fast og bytt basis</h2>
-<p>Ved grad 3 fant begge matrisene fram til det riktige polynomet. Det kan derfor se ut som basisvalget bare endrer hvordan koeffisientene skrives. I eksakt matematikk er det riktig. På en datamaskin må imidlertid alle mellomresultater lagres med et begrenset antall sifre. Nå spør vi om én skrivemåte kan føre til større avrundingsproblemer enn den andre når graden øker.</p>
-<p>For å gjøre sammenligningen rettferdig bruker vi nøyaktig det samme referansepolynomet, de samme avlesningspunktene og de samme avlesningsverdiene i begge systemene. Det eneste som byttes, er kolonnene i matrisen: enten <span class="math inline">\(1,x,\ldots,x^n\)</span> eller <span class="math inline">\(T_0,T_1,\ldots,T_n\)</span>. Hvis resultatene blir ulike, har vi dermed isolert virkningen av basisvalget.</p>
-<p>Vi bruker foreløpig punktene</p>
-<p><span class="math display">\[
-x_k=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
-\qquad k=0,\ldots,n.
-\]</span></p>
-<p>Hvorfor disse punktene er interessante, undersøker vi først i del 3. Akkurat nå trenger du bare å merke deg at funksjonen lager <span class="math inline">\(n+1\)</span> forskjellige tall i <span class="math inline">\([-1,1]\)</span>, og at begge basisene får de samme tallene.</p>
-<p>De tre korte hjelpefunksjonene under gjør forsøket mulig å gjenta: <code>chebyshev_points</code> lager punktene, <code>reference_coordinates</code> lager et fast polynom med små Chebyshev-koeffisienter, og <code>max_grid_error</code> måler den største observerte forskjellen på et tett rutenett.</p>
-<div id="qpyodide-insertion-location-10"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Se på formelen i <code>reference_coordinates</code> før du kjører grad 30. Alle tallene <span class="math inline">\(c_k=(-1)^k/(k+1)^2\)</span> ligger mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1\)</span>. Skriv ned om du tror dette også tvinger koeffisientene foran <span class="math inline">\(1,x,x^2,\ldots,x^{30}\)</span> til å være små. Dette er hypotesen som forsøket skal teste.</p>
-<section id="gjør-reverse-engineering-i-begge-basiser" class="level3">
-<h3 class="anchored" data-anchor-id="gjør-reverse-engineering-i-begge-basiser">Gjør reverse engineering i begge basiser</h3>
-<p>Funksjonen følger denne historien:</p>
-<ol type="1">
-<li>Lag et polynom ved å velge Chebyshev-koeffisienter.</li>
-<li>Regn ut polynomets verdi i <span class="math inline">\(n+1\)</span> punkter. Deretter behandles disse avlesningene som de eneste kjente dataene.</li>
-<li>Gjør reverse engineering: Finn koeffisienter som passer til dataene, først i monomialbasis og så i Chebyshev-basis.</li>
-<li>Regn ut de to reverse-engineering-resultatene i mange punkter mellom avlesningene og sammenlign dem med polynomet vi startet med.</li>
-</ol>
-<p>Det tette rutenettet brukes bare til etterkontroll. Det gir ikke de lineære systemene ekstra informasjon.</p>
-<div id="qpyodide-insertion-location-11"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Finn selv rutenettspunktet der hver av de to feilene er størst. Bruk <code>np.argmax</code> på absoluttverdien av feilen, og rapporter både <span class="math inline">\(x\)</span>-verdien og feilen. <code>np.argmax</code> gir plassnummeret til det største tallet, ikke selve tallet. Bruk derfor det samme plassnummeret til å hente både punktet fra <code>basis_data["grid"]</code> og feilen fra feillisten. Dette er et nytt mål du skal beregne; det er ikke ferdigkodet over.</p>
-<p>Ikke gå direkte videre. Les tallene i denne rekkefølgen:</p>
-<ol type="1">
-<li>Bekreft i koden at <code>measurements</code> lages én gang og brukes på høyre side i begge systemene. Hva forteller det om dataene de to metodene får?</li>
-<li>Sammenlign den største koeffisienten i de to listene. Hvor mange tierpotenser skiller dem? Husk at koeffisientene hører til forskjellige polynomer i basislistene og derfor ikke skal sammenlignes ledd for ledd.</li>
-<li>Sammenlign feilene på rutenettet. Hvor ligger maksimumsfeilen du fant med <code>np.argmax</code>?</li>
-<li>Forklar hva som ble holdt fast: polynomrom, referansepolynom, avlesningspunkter og avlesningsverdier. Hva var den eneste endringen?</li>
-<li>I eksakt matematikk er begge basisskrivemåtene likeverdige. Hvilken del av forskjellen i utskriften skyldes derfor flyttallsregning?</li>
-</ol>
 </section>
-<section id="valgfri-utvidelse-se-hva-som-skjer-når-graden-øker" class="level3">
-<h3 class="anchored" data-anchor-id="valgfri-utvidelse-se-hva-som-skjer-når-graden-øker">Valgfri utvidelse: se hva som skjer når graden øker</h3>
-<div id="qpyodide-insertion-location-12"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Lag en logaritmisk feilfigur for grad 30:</p>
-<div id="qpyodide-insertion-location-13"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Skriv en foreløpig forklaring. Bruk minst disse observasjonene:</p>
+<section id="selvstendig-redningsforsøk-og-rapport" class="level2">
+<h2 class="anchored" data-anchor-id="selvstendig-redningsforsøk-og-rapport">Selvstendig redningsforsøk og rapport</h2>
+<section id="gjør-én-begrunnet-forbedring" class="level3">
+<h3 class="anchored" data-anchor-id="gjør-én-begrunnet-forbedring">7. Gjør én begrunnet forbedring</h3>
+<p>Ta utgangspunkt i et forsøk fra den valgte fordypningen der resultatet var mindre pålitelig enn bibliotekets løsning. Hvis du ikke fant en tydelig forskjell, prøv grad <span class="math inline">\(24\)</span> med <span class="math inline">\(51\)</span> jevnt fordelte punkter og klassisk GS i monomialbasis. Kontroller resultatet før du velger tiltak.</p>
+<p>Velg <strong>én</strong> endring: metode, basis, polynomgrad, antall målinger eller plassering av målepunktene. Skriv hvorfor du forventer forbedring, og gjennomfør et før-og-etter-forsøk.</p>
+<p>Hold referansepolynomet fast, også om du endrer modellgraden. Hvis du endrer målepunktene, lag nye målinger av den samme referansen med samme støystørrelse og fast frø. Bruk minst <span class="math inline">\(n+3\)</span> forskjellige punkter, modellgrad høyst <span class="math inline">\(25\)</span> og støy høyst <span class="math inline">\(10^{-8}\)</span>. <code>chebyshev_points(m)</code> gir <span class="math inline">\(m\)</span> cosinusfordelte punkter i <span class="math inline">\([-1,1]\)</span>; argumentet er antallet punkter, ikke graden.</p>
+<p>Rapporter residualnorm, avvik per måling, største kurvefeil på minst 2001 kontrollpunkter og QR-kontrollene når metoden gir <span class="math inline">\(Q,R\)</span>. Dersom du endrer antall målinger eller modellgrad, forklar også hva som gjør sammenligningen rettferdig.</p>
+<p><strong>Målet er en dokumentert forbedring.</strong> Hvis tiltaket ikke hjelper, skal du vise det og begrunne hva du ville undersøkt videre.</p>
+</section>
+<section id="dette-skal-leveres" class="level3">
+<h3 class="anchored" data-anchor-id="dette-skal-leveres">Dette skal leveres</h3>
+<p>Lever én Quarto-side eller notebook med kjørbar kode. Figurer skal ha aksetitler og en forklaring av hva som sammenlignes. Samle kontrolltall i tabeller, og skill tydelig mellom egne forventninger, observerte resultater og konklusjoner.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Omfang</th>
+<th>Leveranse</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Bare kjerne</strong></td>
+<td>Resultater og korte begrunnelser fra del 1–4</td>
+</tr>
+<tr class="even">
+<td><strong>Hele prosjektet</strong></td>
+<td>Kjernen, valgt del 5 eller 6, før-og-etter-forsøket i del 7 og en analyse på 400–600 ord</td>
+</tr>
+</tbody>
+</table>
+<p>Analysen skal bruke konkrete resultater til å svare på:</p>
 <ul>
-<li>størrelsen på koordinatene;</li>
-<li>størrelsen på basisfunksjonene på <span class="math inline">\([-1,1]\)</span>;</li>
-<li>at et moderat sluttresultat kan bygges ved at store ledd nesten kansellerer;</li>
-<li>at hvert mellomresultat lagres med endelig presisjon.</li>
+<li>Når skyldes avviket at modellen ikke passer målingene, og når tyder kontrollene på problemer i beregningen?</li>
+<li>Hva forteller residual, ortogonalitet og kurvefeil hver for seg?</li>
+<li>Hva endret du i redningsforsøket, og hvilke resultater støtter vurderingen?</li>
+<li>Hvilken begrensning ved forsøket gjør at du bør være forsiktige med å generalisere?</li>
 </ul>
-<p>Ikke skriv at «datamaskinen er unøyaktig» uten å identifisere hvilke tall som er store, og hvor kanselleringen oppstår.</p>
-</section>
-<section id="legg-den-samme-lille-feilen-til-begge-systemene" class="level3">
-<h3 class="anchored" data-anchor-id="legg-den-samme-lille-feilen-til-begge-systemene">Legg den samme lille feilen til begge systemene</h3>
-<p>Virkelige avlesninger er sjelden eksakte. Vi legger derfor til en svært liten feil, omtrent <span class="math inline">\(10^{-10}\)</span>, i hver polynomverdi. Først løser vi systemet med de opprinnelige dataene, deretter med de litt endrede dataene. Vi gjør dette i begge basiser med nøyaktig den samme feillisten. Spørsmålet er hvor mye en liten målefeil påvirker reverse engineering av koeffisientene.</p>
-<p>Vi sammenligner <code>a_after-a_before</code> fordi begge vektorene bruker monomialbasis. Tilsvarende sammenligner vi <code>c_after-c_before</code> fordi begge bruker Chebyshev-basis. Derimot ville <code>a_after-c_after</code> ikke hatt en enkel betydning: Plass nummer 2 står foran <span class="math inline">\(x^2\)</span> i den ene listen og foran <span class="math inline">\(T_2\)</span> i den andre.</p>
-<div id="qpyodide-insertion-location-14"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Bruk denne forklaringen til å tolke de tre utskrevne tallene. Hvor stor var endringen i selve dataene? Hvor stor ble endringen i hver koeffisientliste? Hvilken representasjon forsterket den lille dataendringen mest?</p>
-</section>
-</section>
-<section id="del-3-hold-basisen-fast-og-flytt-punktene" class="level2">
-<h2 class="anchored" data-anchor-id="del-3-hold-basisen-fast-og-flytt-punktene">Del 3: Hold basisen fast og flytt punktene</h2>
-<p>I del 2 holdt vi punktene fast og byttet basis. Nå gjør vi det motsatte: Chebyshev-basis brukes i begge systemene, men avlesningspunktene flyttes. Spørsmålet er om <span class="math inline">\(n+1\)</span> avlesninger alltid er like informative, eller om plasseringen av dem betyr noe for hva polynomet kan gjøre mellom punktene.</p>
-<p>De to punktfamiliene er</p>
-<p><span class="math display">\[
-x_k^{\mathrm{jevn}}=-1+\frac{2k}{n}
-\]</span></p>
-<p>og</p>
-<p><span class="math display">\[
-x_k^{\mathrm{Cheb}}
-=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
-\]</span></p>
-<p>for <span class="math inline">\(k=0,\ldots,n\)</span>.</p>
-<section id="sammenlign-punktplasseringene-før-du-regner" class="level3">
-<h3 class="anchored" data-anchor-id="sammenlign-punktplasseringene-før-du-regner">Sammenlign punktplasseringene før du regner</h3>
-<p>Før vi løser et eneste system, tegner vi bare punktene på en tallinje. De jevne punktene har samme avstand overalt. Cosinuspunktene ligger tettere ved endene av intervallet og glisnere nær midten. Figuren skal hjelpe deg å lage en hypotese: Hvis et polynom er tvunget til å passe data i mange punkter nær endene, blir det da lettere eller vanskeligere for polynomet å få store utslag der mellom avlesningene?</p>
-<div id="qpyodide-insertion-location-15"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Hvor er punktavstanden størst og minst i hvert oppsett? Hvilket oppsett ville du valgt dersom du var spesielt redd for at polynomet skulle gjøre noe uventet nær <span class="math inline">\(-1\)</span> eller <span class="math inline">\(1\)</span>? Skriv hypotesen før forsøket med forstyrrelser.</p>
-</section>
-<section id="bruk-den-samme-lille-feilen-med-begge-punktsettene" class="level3">
-<h3 class="anchored" data-anchor-id="bruk-den-samme-lille-feilen-med-begge-punktsettene">Bruk den samme lille feilen med begge punktsettene</h3>
-<p>Vi forstyrrer avlesningene med det faste mønsteret</p>
-<p><span class="math display">\[\delta y_k=10^{-10}(-1)^k.\]</span></p>
-<p>Det er viktig at både størrelsen og fortegnsmønsteret er identisk i de to forsøkene. Dermed kan ikke forskjellen forklares med at det ene forsøket fikk en større eller mer gunstig feil.</p>
-<p>Funksjonen lager først nøyaktige avlesninger fra referansepolynomet. Deretter legger den til feilen og gjør reverse engineering: Den finner det ene polynomet av grad høyst <span class="math inline">\(n\)</span> som passer til de forstyrrede verdiene. Til slutt sammenlignes dette polynomet med referansen på 5001 punkter. Forholdet</p>
-<p><span class="math display">\[
-\frac{\text{største feil på det tette rutenettet}}
-{\text{største feil i de oppgitte avlesningene}}
-\]</span></p>
-<p>kalles her <strong>forsterkning</strong>. En forsterkning på <span class="math inline">\(10^6\)</span> betyr at en feil på <span class="math inline">\(10^{-10}\)</span> ved avlesningspunktene har blitt til en feil på omtrent <span class="math inline">\(10^{-4}\)</span> et sted mellom dem.</p>
-<div id="qpyodide-insertion-location-16"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Sammenlign først <code>feil i avlesning</code> i de to utskriftene: De skal være like. Sammenlign så <code>kurvefeil</code> og <code>forsterkning</code>. Hvor mange tierpotenser skiller forsøkene? Forklar hvorfor forskjellen ikke kan skyldes ulik basis eller ulik størrelse på forstyrrelsen.</p>
-</section>
-<section id="gjør-det-nesten-usynlige-feilpolynomet-synlig" class="level3">
-<h3 class="anchored" data-anchor-id="gjør-det-nesten-usynlige-feilpolynomet-synlig">Gjør det nesten usynlige feilpolynomet synlig</h3>
-<p>For å forstå forsterkningen ser vi ikke bare på to hele polynomer. Vi trekker dem fra hverandre. Forskjellen mellom reverse-engineering-resultatet og det opprinnelige polynomet er selv et polynom:</p>
-<p><span class="math display">\[r(x)=p_{\mathrm{forstyrret}}(x)-p_{\mathrm{opprinnelig}}(x).\]</span></p>
-<p>Ved hvert avlesningspunkt er <span class="math inline">\(r(x_k)\)</span> akkurat den lille forstyrrelsen vi la til. Hvis vi bare så på disse <span class="math inline">\(n+1\)</span> tallene, ville <span class="math inline">\(r\)</span> virke nesten som nullpolynomet. Men avlesningspunktene forteller ikke direkte hva som skjer mellom dem. Figuren tegner derfor både de små svarte verdiene <span class="math inline">\(r(x_k)\)</span> og hele kurven <span class="math inline">\(r(x)\)</span> på det tette rutenettet.</p>
-<div id="qpyodide-insertion-location-17"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Les først de svarte punktene og deretter kurvene:</p>
-<ol type="1">
-<li>Hvor små er <span class="math inline">\(r(x_k)\)</span> ved de oppgitte avlesningspunktene? Sammenlign med maksimum av <span class="math inline">\(|r(x)|\)</span> på hele rutenettet.</li>
-<li>Hvor i intervallet blir <span class="math inline">\(|r(x)|\)</span> størst for jevne punkter? Se tilbake på punktfiguren: Er det få eller mange avlesningspunkter i dette området?</li>
-<li>Gjør den samme sammenligningen for cosinuspunktene. Hvordan har de ekstra punktene nær endene påvirket feiltoppene?</li>
-<li>I del 1 fant vi et eksakt nullromspolynom <span class="math inline">\(z\)</span> med <span class="math inline">\(E(z)=0\)</span>. Her er <span class="math inline">\(E(r)\)</span> ikke null; det består av tall med størrelse <span class="math inline">\(10^{-10}\)</span>. Forklar både likheten og forskjellen mellom <span class="math inline">\(z\)</span> og <span class="math inline">\(r\)</span>.</li>
-</ol>
-<p>Vi kan uformelt kalle <span class="math inline">\(r\)</span> en <strong>numerisk nullromsretning</strong>: Et ikke-null polynom blir sendt til en svært liten, men ikke helt null, avlesningskolonne. Dette er ikke et nytt eksakt nullrom. Uttrykket beskriver at avlesningene nesten ikke ser en endring som likevel kan være stor mellom punktene.</p>
-</section>
-<section id="valgfri-utvidelse-finn-graden-der-forskjellen-blir-synlig" class="level3">
-<h3 class="anchored" data-anchor-id="valgfri-utvidelse-finn-graden-der-forskjellen-blir-synlig">Valgfri utvidelse: finn graden der forskjellen blir synlig</h3>
-<div id="qpyodide-insertion-location-18"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Hvis du gjør utvidelsen, velg minst to ekstra grader selv. Beskriv når forskjellen først blir tydelig, og om veksten ser jevn ut. Tallene viser hva som skjer i forsøkene dine, men de beviser ikke hva som skjer for alle grader.</p>
-</section>
-</section>
-<section id="finale-beregn-det-samme-polynomet-på-tre-måter" class="level2">
-<h2 class="anchored" data-anchor-id="finale-beregn-det-samme-polynomet-på-tre-måter">Finale: Beregn det samme polynomet på tre måter</h2>
-<p>Plottene i starten antydet at <span class="math inline">\(T_n\)</span> holder seg mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1\)</span> på intervallet. Identiteten</p>
-<p><span class="math display">\[T_n(x)=\cos(n\arccos x),\qquad -1\le x\le1,\]</span></p>
-<p>gir oss en uavhengig måte å kontrollere dette på. Dermed kjenner vi størrelsen på det riktige svaret før vi bruker NumPy: <span class="math inline">\(T_{50}(0.99)\)</span> må ligge i <span class="math inline">\([-1,1]\)</span>.</p>
-<p>Vi skal nå evaluere <span class="math inline">\(T_{50}(0.99)\)</span> på tre matematisk likeverdige måter:</p>
-<ol type="1">
-<li>konverter til monomialkoeffisienter og bruk vanlig polynomevaluering;</li>
-<li>bruk Chebyshev-representasjonen direkte;</li>
-<li>bruk cosinusidentiteten som referanse.</li>
-</ol>
-<p>Den første metoden skriver <span class="math inline">\(T_{50}\)</span> som <span class="math inline">\(a_0+a_1x+\cdots+a_{50}x^{50}\)</span> før den setter inn <span class="math inline">\(x=0.99\)</span>. Den andre bruker Chebyshev-rekursjonen direkte, uten å lage denne lange potensformen. Den tredje regner ut cosinusuttrykket og fungerer som en kontroll som ikke bruker noen av koeffisientlistene.</p>
-<p>Skriv ned hvilken metode du forventer vil være mest pålitelig før du kjører, og hvorfor. Følg deretter variablene i koden: <code>cheb_coordinates</code> beskriver nøyaktig ett <span class="math inline">\(T\)</span>-polynom, <code>monomial_coordinates</code> beskriver det samme polynomet med potenser av <span class="math inline">\(x\)</span>, og de tre variablene som begynner med <code>value_</code> er de tre svarene.</p>
-<div id="qpyodide-insertion-location-19"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Hvis et svar ligger langt utenfor intervallet <span class="math inline">\([-1,1]\)</span>, vet du fra cosinusidentiteten at det ikke kan være riktig. Se da på den største monomialkoeffisienten. Når mange svært store ledd til slutt skal gi et svar mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1\)</span>, må positive og negative bidrag nesten kansellere hverandre. Små avrundinger i de store mellomresultatene kan da overleve etter kanselleringen og bli store sammenlignet med det riktige svaret.</p>
-<section id="se-hvordan-feilen-vokser-fram-mot-grad-50" class="level3">
-<h3 class="anchored" data-anchor-id="se-hvordan-feilen-vokser-fram-mot-grad-50">Se hvordan feilen vokser fram mot grad 50</h3>
-<p>For å se om problemet dukker opp plutselig eller bygger seg opp, gjentar vi de tre evalueringene for grad 10, 20, 30, 40 og 50. Tabellen viser ved siden av hverandre hvor stor den største monomialkoeffisienten er og hvor mye de to beregningsmåtene avviker fra cosinuskontrollen.</p>
-<div id="qpyodide-insertion-location-20"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Bygg forklaringen i denne rekkefølgen:</p>
-<ol type="1">
-<li>Skill mellom størrelsen på et polynom på intervallet og størrelsen på koeffisientene i en bestemt basis. Hvorfor er ikke disse det samme?</li>
-<li>Bruk utskriften til å beskrive hvordan de største monomialkoeffisientene vokser. Hvorfor må store positive og negative ledd kansellere hvis sluttverdien skal ligge i <span class="math inline">\([-1,1]\)</span>?</li>
-<li>Knytt avrunding av de store mellomresultatene til flyttallsregningen fra uke 1. Hva blir igjen når den nesten perfekte kanselleringen ikke lenger er perfekt?</li>
-<li>Knytt valget mellom monomialbasis og Chebyshev-basis til uke 3. De to uttrykkene er algebraisk like, så hvorfor kan beregningene likevel få ulik kvalitet?</li>
-<li>Det brukes ingen avlesningsmatrise eller interpolasjon i dette forsøket. Forklar derfor hvorfor feilen her ikke skyldes plasseringen av avlesningspunkter.</li>
-</ol>
-</section>
-</section>
-<section id="åpen-utfordring-lag-din-egen-blindsone" class="level2">
-<h2 class="anchored" data-anchor-id="åpen-utfordring-lag-din-egen-blindsone">Åpen utfordring: Lag din egen blindsone</h2>
-<p>Nå får du bruke ideene fra prosjektet mer fritt. Du skal gjenta historien fra del 3, men velge graden, punktene og fortegnene selv. Start med et referansepolynom, legg en svært liten feil til avlesningene, gjør reverse engineering av polynomet som passer de endrede dataene, og mål hvor stort avviket blir mellom punktene.</p>
-<p>Plasser avlesningspunktene slik at en svært liten feil i avlesningene gir en stor feil mellom punktene, og slik at du kan forklare mekanismen. Målet er ikke et kunstig rekordtall. Følg disse reglene:</p>
-<ul>
-<li>polynomgraden skal være høyst 35;</li>
-<li>alle <span class="math inline">\(n+1\)</span> avlesningspunkter skal være forskjellige og ligge i <span class="math inline">\([-1,1]\)</span>;</li>
-<li>avstanden mellom to nabopunkter skal være minst <span class="math inline">\(10^{-3}\)</span>;</li>
-<li>hver avlesningsfeil skal ha absoluttverdi høyst <span class="math inline">\(10^{-10}\)</span>;</li>
-<li>polynomet skal finnes i Chebyshev-basis;</li>
-<li>forsterkningen skal beregnes på et tett rutenett med minst 5001 punkter.</li>
-</ul>
-<p>Du kan endre graden, punktene og fortegnsmønsteret i forstyrrelsen. Du kan ikke gjøre avlesningsfeilen større eller bryte kravet til minste punktavstand. Før koden kjøres, skriv hvilken endring du prøver og hvorfor du tror den kan skjule feilpolynomet for avlesningene.</p>
-<p>Variablene med prefikset <code>my_</code> er delene du skal følge og senere endre: <code>my_points</code> er avlesningspunktene, <code>my_noise</code> er de små feilene, <code>my_recovered</code> er polynomet som passer de endrede dataene, og <code>my_error</code> er forskjellen fra referansepolynomet på det tette rutenettet. <code>assert</code>-linjene stopper forsøket hvis reglene ikke er fulgt.</p>
-<div id="qpyodide-insertion-location-21"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Prøv minst to ideer, og endre én egenskap om gangen. Det beste forsøket er ikke nødvendigvis det med størst tall. Du må også kunne forklare hvorfor plasseringen av punktene skjuler feilpolynomet.</p>
-</section>
-<section id="samlet-analyse-forklar-hva-forsøkene-viste" class="level2">
-<h2 class="anchored" data-anchor-id="samlet-analyse-forklar-hva-forsøkene-viste">Samlet analyse: Forklar hva forsøkene viste</h2>
-<p>Skriv en sammenhengende analyse på omtrent <strong>400–600 ord</strong>. Figurer og tabeller underbygger analysen, men de erstatter ikke forklaringen.</p>
-<p>Analysen skal skille tydelig mellom:</p>
-<ol type="1">
-<li>polynomrommet og koordinatene i en valgt basis;</li>
-<li>avlesningsavbildningen og matrisen som representerer den;</li>
-<li>eksakt informasjonstap og numerisk nesten-informasjonstap;</li>
-<li>effekten av å bytte basis med punktene faste;</li>
-<li>effekten av å flytte avlesningspunktene med basisen fast;</li>
-<li>algebraisk likeverdighet og numerisk pålitelighet.</li>
-</ol>
-<p>Besvar også følgende hovedspørsmål:</p>
-<ul>
-<li>Hvilket eksperiment ga den største forskjellen, og hvor stor var den?</li>
-<li>Hvor i intervallet oppstod de største feilene?</li>
-<li>Hvilke store tall eller nesten-kanselleringer fant du?</li>
-<li>Hva var nesten usynlig for avlesningsavbildningen?</li>
-<li>Hvilke påstander har du vist matematisk, og hvilke bygger bare på numeriske forsøk?</li>
-<li>Hva lærte <span class="math inline">\(T_{50}\)</span>-forsøket som ikke allerede var synlig ved grad 3?</li>
-</ul>
-</section>
-<section id="dette-skal-leveres" class="level2">
-<h2 class="anchored" data-anchor-id="dette-skal-leveres">Dette skal leveres</h2>
-<p>Lever én Quarto-side eller notebook med:</p>
-<ol type="1">
-<li>håndregnede <span class="math inline">\(T_2,T_3,T_4\)</span> og kontroll av rekursjonen;</li>
-<li>oppvarmingsfigurene og observasjonene dine;</li>
-<li>basis- og rangargumentet for <span class="math inline">\(T_0,\ldots,T_4\)</span>;</li>
-<li>begge avlesningsmatrisene i lav grad og nullromseksperimentet;</li>
-<li>resultater og feilfigur for basiseksperimentet ved grad 30;</li>
-<li>resultater, punktfigur og feilpolynom for forsøket med avlesningspunkter;</li>
-<li><span class="math inline">\(T_{50}\)</span>-resultatene og forklaringen på sammenbruddet;</li>
-<li>minst to forsøk i den åpne utfordringen;</li>
-<li>den samlede analysen.</li>
-</ol>
-<p>Oppgi alltid grad, punkter, størrelsen på forstyrrelsen og rutenettstørrelse sammen med et resultat. Ellers kan forsøket ikke gjentas.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Advarsel</span>Krav til kodeassistenter og numeriske påstander
+<span class="screen-reader-only">Note</span>Bruk av kodeassistenter
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Kodeassistenter kan hjelpe med Python-syntaks og plotting, men de kan også blande sammen effekten av basisvalg og plasseringen av avlesningspunktene. Du må kunne forklare hvorfor hvert eksperiment bare endrer én av dem.</p>
-<p>Et tall fra <code>np.linalg.solve</code> er ikke i seg selv en matematisk forklaring. Kontroller dimensjoner, rang, residualer og hva koordinatene representerer. Påstander om «stabilitet» skal støttes av konkrete forstyrrelser og beregnede feil.</p>
+<p>Du kan få hjelp med syntaks, men skal kunne forklare egne forsøk. Kontroller at metodene får samme data, og noter hvilke variabler du endret. Automatisk generert kode eller en utskrift alene er ikke en faglig begrunnelse.</p>
 </div>
 </div>
-<p>Neste steg er <a href="../pages/project_week4.html">prosjekt 4: Når målingene ikke passer</a>, der flere støyfylte målinger leder til projeksjon, QR og minste kvadrater.</p>
 
 
 </section>
@@ -5149,7 +4998,7 @@ x_k^{\mathrm{Cheb}}
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

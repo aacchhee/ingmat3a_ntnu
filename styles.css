@@ -61,3 +61,8 @@ h2, h3 {
 .pyodide-status {
   margin-bottom: 1rem;
 }
+
+/* Keep fixed-size JSXGraph boards inside the reading column on small screens. */
+.jxgbox {
+  max-width: 100%;
+}
