@@ -84,7 +84,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 ```
 
-## 4.1 Hvor mye går vi i en valgt retning? {#uke4-retning}
+## Retning og indreprodukt
+
+### 4.1 Hvor mye går vi i en valgt retning? {#uke4-retning}
 
 Vi starter med forskyvningen
 
@@ -161,7 +163,7 @@ Prøv dette før du leser videre:
 4. Finn en retning som gir avlesning $0$ uten at $x$ er null.
 5. Snu $q$ motsatt vei. Hva skjer med fortegnet?
 
-## 4.2 Finn regneregelen {#uke4-regneregel}
+### 4.2 Finn regneregelen {#uke4-regneregel}
 
 Skriv enhetsretningen som vektoren
 
@@ -171,7 +173,7 @@ Likningen til høyre sier nettopp at lengden er $1$: Hvis vi bruker
 Pytagoras på den vannrette og loddrette komponenten, får vi
 $\lVert q\rVert_2=\sqrt{q_1^2+q_2^2}=1$.
 
-### Hvorfor blir dette regneregelen?
+#### Hvorfor blir dette regneregelen?
 
 Se på den stiplede linjen i 4.1: Fra endepunktet går vi vinkelrett inn til
 den blå tallinjen. Vi kan dele turen $(3,2)^T$ i tre skritt mot høyre og to
@@ -212,7 +214,7 @@ stående kolonnevektoren $x$ vendes til en rad, slik at matriseproduktet
 $x^Tq$ blir ett tall.
 
 ::: {.callout-important}
-### Retningsmåleren
+#### Retningsmåleren
 
 Når $q$ er en enhetsvektor, er $x^Tq$ et tall som forteller hvor mye av
 $x$ som peker i den valgte retningen $q$.
@@ -235,7 +237,7 @@ Legg til en retning som står vinkelrett på $x$, og kontroller at avlesningen
 er null. Endre bare én retning om gangen. I del 4.4 gir vi «vinkelrett» et
 matematisk navn og en test.
 
-## 4.3 En retning må ha lengde én {#uke4-enhetsretning}
+### 4.3 En retning må ha lengde én {#uke4-enhetsretning}
 
 Vektorene
 
@@ -255,7 +257,7 @@ angi en retning, kaller vi den også en enhetsretning. Dermed er ordene to
 sider av samme objekt: «enhetsvektor» beskriver lengden, mens
 «enhetsretning» framhever rollen som målepil.
 
-### Et første sammenbrudd
+#### Et første sammenbrudd
 
 Hva skjer hvis vi prøver å finne retningen til nullvektoren?
 
@@ -274,7 +276,9 @@ I flyttallsregningen blir resultatet `NaN` («not a number»). Det er maskinens
 markering av at regningen ikke ga et gyldig tall. En algoritme må kontrollere
 lengden før den normaliserer.
 
-## 4.4 Null avlesning betyr ortogonalitet {#uke4-ortogonalitet}
+## Ortogonalitet og projeksjon
+
+### 4.4 Null avlesning betyr ortogonalitet {#uke4-ortogonalitet}
 
 Trykk «vinkelrett» i figuren i 4.1. Pilen $x=(3,2)^T$ er fortsatt like
 lang, men avlesningen er null. Drei målepilen litt til hver side: fortegnet
@@ -321,7 +325,7 @@ diagonalen og $0$ ellers. Diagonalen kontrollerer lengdene til kolonnene,
 mens oppføringene utenfor diagonalen kontrollerer at ulike kolonner er
 ortogonale.
 
-## 4.5 Fra retningsmåler til mønsterdetektor {#uke4-monster}
+### 4.5 Fra retningsmåler til mønsterdetektor {#uke4-monster}
 
 Tenk på et bilde som er lyst til venstre og mørkt til høyre. Vi ønsker ett
 tall som øker når denne forskjellen blir sterkere, blir null for et jevnt
@@ -422,14 +426,14 @@ $Q_{\text{pattern}}^TQ_{\text{pattern}}=I$, og avlesningene gir
 koordinatene direkte.
 
 ::: {.callout-tip collapse="true"}
-### Fordypning: legg til støy
+#### Fordypning: legg til støy
 
 Legg `0.05*np.random.default_rng(4).standard_normal((2, 2))` til bildet og
 gjenta deteksjonen. Avlesningene blir ikke identiske med de opprinnelige
 koeffisientene, men de forteller fortsatt hvilke mønstre som dominerer.
 :::
 
-## 4.6 Mål, bygg opp og trekk fra {#uke4-projeksjon}
+### 4.6 Mål, bygg opp og trekk fra {#uke4-projeksjon}
 
 Start med $x=(3,2)^T$ og målepilen $q=(1,0)^T$. Den leser $3$.
 Bygg denne delen: $3q=(3,0)^T$. Trekk den fra: resten er $(0,2)^T$.
@@ -484,7 +488,7 @@ $$\boxed{p=(q^Tx)q}$$
 kalles den **ortogonale projeksjonen** av $x$ på retningen $q$. Residualen
 $r=x-p$ er ortogonal på $q$.
 
-### Flere piler før vi pakker dem i en matrise
+#### Flere piler før vi pakker dem i en matrise
 
 La $x=(3,2,4)^T$, $q_1=(1,0,0)^T$ og $q_2=(0,1,0)^T$.
 Mål separat: $c_1=q_1^Tx=3$ og $c_2=q_2^Tx=2$.
@@ -510,7 +514,7 @@ avlesningene og den samlede projeksjonen
 $$c=Q^Tx,\qquad p=Qc=QQ^Tx,\qquad Q^T(x-p)=0.$$
 
 ::: {.callout-note collapse="true"}
-### Hvis målevektoren ikke har lengde én
+#### Hvis målevektoren ikke har lengde én
 
 For en vilkårlig ikke-null vektor $a$ må vi korrigere for lengden:
 
@@ -519,7 +523,9 @@ $$\operatorname{proj}_a(x)=\frac{a^Tx}{a^Ta}a.$$
 Når $a$ er en enhetsvektor, er $a^Ta=1$.
 :::
 
-## 4.7 Hvor får vi ortogonale detektorer fra? {#uke4-gs}
+## Gram–Schmidt og QR
+
+### 4.7 Hvor får vi ortogonale detektorer fra? {#uke4-gs}
 
 Anta at vi starter med
 
@@ -554,7 +560,7 @@ $(2,1)\begin{bmatrix}-1\\2\end{bmatrix}=-2+2=0$.
 
 Dette er **Gram–Schmidt-prosessen**.
 
-### Hele regningen for hånd
+#### Hele regningen for hånd
 
 For de to vektorene over får vi
 
@@ -608,9 +614,9 @@ $$\boxed{A=QR.}$$
 
 
 
-## 4.8 Klassisk Gram–Schmidt for flere kolonner {#uke4-cgs}
+### 4.8 Klassisk Gram–Schmidt for flere kolonner {#uke4-cgs}
 
-### En tredje pil: samme handling igjen
+#### En tredje pil: samme handling igjen
 
 Vi har allerede vinkelrette enhetspiler $q_1,q_2$. For en ny pil $a_3$
 måler vi $r_{13}=q_1^Ta_3$ og $r_{23}=q_2^Ta_3$. Trekk delene fra:
@@ -636,7 +642,7 @@ $q_3$. Vi kaller matrisene $A,Q,R$, så likningen blir $A=QR$.
 En **faktorisering** skriver en matrise som et produkt. «Tynn» betyr at vi
 beholder bare de $k$ nødvendige pilene, selv om de har $m>k$ komponenter.
 
-### Den samme oppskriften i kortform
+#### Den samme oppskriften i kortform
 
 La
 
@@ -700,7 +706,9 @@ tall som er null når matriseidentiteten stemmer eksakt.
 - $\lVert Q^TQ-I_k\rVert_F$ måler tap av ortonormalitet;
 - $\lVert A-QR\rVert_F$ måler om faktorene bygger opp $A$ igjen.
 
-## 4.9 Bryt algoritmen: eksakt avhengighet {#uke4-avhengighet}
+## Når regningen svikter
+
+### 4.9 Bryt algoritmen: eksakt avhengighet {#uke4-avhengighet}
 
 Før vi ser feilen i en matrise, kan vi framprovosere den geometrisk. I
 figuren er
@@ -795,7 +803,7 @@ print("alle tall endelige?", np.isfinite(Q_bad).all())
 ```
 
 ::: {.callout-important}
-### `NaN` er et symptom, ikke forklaringen
+#### `NaN` er et symptom, ikke forklaringen
 
 $$\text{lineært avhengig kolonne}
 \Longrightarrow v_j=0
@@ -807,9 +815,9 @@ er for liten til å gi en pålitelig ny retning. Det er en beslutning om
 **numerisk rang**, ikke et bevis på eksakt lineær avhengighet.
 :::
 
-## 4.10 Nesten avhengighet: endelige tall kan også være dårlige {#uke4-nesten}
+### 4.10 Nesten avhengighet: endelige tall kan også være dårlige {#uke4-nesten}
 
-### Følg tre piler, én regneoperasjon om gangen
+#### Følg tre piler, én regneoperasjon om gangen
 
 Vi bruker blått for første pil, grønt for andre og rødt for tredje.
 Fargene følges alltid av navn, slik at regningen også kan leses uten farger.
@@ -825,7 +833,7 @@ samling av disse pilene:
 
 $$A_e=[a_1\ a_2\ a_3]=\begin{bmatrix}1&1&1\\e&0&0\\0&e&0\\0&0&e\end{bmatrix}.$$
 
-### Først regner vi med eksakte tall
+#### Først regner vi med eksakte tall
 
 **Første pil.** Lengden er $\sqrt{1+e^2}$, så
 
@@ -859,7 +867,7 @@ Telleren i $q_1^Tq_3$ er $e-e=0$. Telleren i $q_2^Tq_3$ er
 $e^2+1-(1+e^2)=0$. Alle tre er altså parvis ortogonale i eksakt regning.
 
 ::: {.callout-note}
-### Tilbake til prosjektet i uke 1
+#### Tilbake til prosjektet i uke 1
 
 Dette er samme mekanisme som i [prosjekt 1 – Floating-point attack](project_week1.qmd),
 særlig del 1 («kan du få et tall til å forsvinne?»): Et lite bidrag
@@ -876,7 +884,7 @@ eller algoritme kan hjelpe. Det er også motivasjonen for modifisert
 Gram–Schmidt i 4.11: Vi måler på resten etter hver subtraksjon.
 :::
 
-### Så skjer dette i vanlig float64-regning
+#### Så skjer dette i vanlig float64-regning
 
 En hatt, som i $\widehat q_2$, betyr en beregnet verdi. For $e=10^{-8}$
 blir $1+e^2=1+10^{-16}$ avrundet til $1$. Følg konsekvensene:
@@ -913,7 +921,7 @@ De to pilene er langt fra vinkelrette! Begge har den samme negative andre
 komponenten. Et lite bortfall under den første subtraksjonen førte til en
 feil måling ved neste pil. Ingen av tallene er NaN.
 
-### Kjør regningen og se komponentene
+#### Kjør regningen og se komponentene
 
 ```{pyodide-python}
 #| label: week4-cgs-worked
@@ -958,9 +966,9 @@ som nå overlever. Sammenlign så de to indreproduktene. De viste
 avrundingstrinnene gjelder dette eksemplet ved $10^{-8}$; ikke anta at
 alle nesten avhengige piler feiler ved samme grense.
 
-## 4.11 Modifisert Gram–Schmidt {#uke4-mgs}
+### 4.11 Modifisert Gram–Schmidt {#uke4-mgs}
 
-### Prøv en ny måling på resten fra 4.10
+#### Prøv en ny måling på resten fra 4.10
 
 Etter at første del er trukket fra $a_3$, er resten $w=(0,-e,0,e)^T$.
 Klassisk GS brukte målingen $\widehat q_2^Ta_3=0$. Hva skjer hvis vi i
@@ -1060,7 +1068,7 @@ $\lVert A-QR\rVert_F/\lVert A\rVert_F$: Et lite rekonstruksjonsavvik
 garanterer ikke alene at kolonnene i $Q$ er ortogonale.
 
 ::: {.callout-note collapse="true"}
-### Fordypning: hva bruker NumPy?
+#### Fordypning: hva bruker NumPy?
 
 `numpy.linalg.qr` bruker ikke den pedagogiske Gram–Schmidt-koden over.
 Robuste biblioteker bruker vanligvis **Householder-transformasjoner**:
@@ -1068,9 +1076,11 @@ speilinger som lager nuller uten de samme gjentatte subtraksjonene som
 Gram–Schmidt. Vi utleder ikke Householder-metoden denne uken.
 :::
 
-## 4.12 Fra QR til minste kvadrater {#uke4-mk}
+## Minste kvadrater og oppsummering
 
-### Når ingen linje treffer alt
+### 4.12 Fra QR til minste kvadrater {#uke4-mk}
+
+#### Når ingen linje treffer alt
 
 Se på målingene $(-1,0.2),(0,0.9),(1,2.1),(2,2.8)$. For like store
 skritt i første koordinat øker den andre med $0.7$, så $1.2$, så $0.7$.
@@ -1118,7 +1128,7 @@ Residualen $r=b-Ax_*$ er det modellen ikke kan forklare, og den tilfredsstiller
 
 $$Q^Tr=0\qquad\text{og dermed}\qquad A^Tr=0.$$
 
-### Et helt synlig eksempel
+#### Et helt synlig eksempel
 
 Vi tilpasser linjen $p(t)=c_0+c_1t$ til fire målinger. På papir er
 
@@ -1164,7 +1174,7 @@ Dette er broen til ukeprosjektet: I uke 3 rekonstruerte vi et polynom fra
 akkurat nok avlesninger. Nå bruker vi flere støyfylte avlesninger og finner
 det beste svaret når et eksakt svar ikke finnes.
 
-## 4.13 Oppsummering og kontroll {#uke4-kontroll}
+### 4.13 Oppsummering og kontroll {#uke4-kontroll}
 
 $$\text{retningsmåling}
 \longrightarrow x^Tq
@@ -1186,7 +1196,7 @@ Kontroller at du kan forklare følgende uten å starte med kode:
 8. Hvorfor er minste-kvadraters residual ortogonal på kolonnerommet?
 
 ::: {.callout-tip collapse="true"}
-### Korte svar til egenkontroll
+#### Korte svar til egenkontroll
 
 1. Ellers blander avlesningen retning og lengden til måleren.
 2. Vektorene står vinkelrett; $q$ finner ingen komponent av $x$ i sin retning.
