@@ -636,10 +636,10 @@ Vi bruker de samme fire pikselfargene som i uke 3, i samme rekkefølge:
 
 | Plass i bildet | Nummer og farge |
 |---|---|
-| Øverst til venstre | $\textcolor{#277da1}{1\text{ — blå}} $ |
-| Øverst til høyre | $\textcolor{#d98900}{2\text{ — oransje}} $ |
-| Nederst til venstre | $\textcolor{#4f8f49}{3\text{ — grønn}} $ |
-| Nederst til høyre | $\textcolor{#8b5aa7}{4\text{ — lilla}} $ |
+| Øverst til venstre | $\textcolor{#277da1}{1\text{ — blå}}$ |
+| Øverst til høyre | $\textcolor{#d98900}{2\text{ — oransje}}$ |
+| Nederst til venstre | $\textcolor{#4f8f49}{3\text{ — grønn}}$ |
+| Nederst til høyre | $\textcolor{#8b5aa7}{4\text{ — lilla}}$ |
 
 De fargede numrene i bildene viser hvilken piksel som blir hvilken
 koordinat. **Fargen følger plassen**, mens fortegnet og tallet angir
