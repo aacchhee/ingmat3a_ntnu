@@ -836,6 +836,21 @@ $$Q_{\text{pattern}}^T\vec x
 \end{bmatrix}
 =\begin{bmatrix}2\\-1\\1/2\\0\end{bmatrix}.$$
 
+Her betyr **måling** ett indreprodukt mellom et enhetsmønster og
+bildevektoren. Hvert tall forteller hvor mye av det mønsteret bildet
+inneholder i denne ortonormale basisen:
+
+| Måling | Verdi | Hva betyr den i blandingen? |
+|---|---:|---|
+| $\vec m^{\,T}\vec x$ | $2$ | To ganger M-mønsteret: et jevnt bidrag på $1$ i hver piksel. |
+| $\vec h^{\,T}\vec x$ | $-1$ | H-mønsteret med motsatt fortegn: høyre side blir lysere enn venstre. |
+| $\vec v^{\,T}\vec x$ | $1/2$ | Halv styrke av V-mønsteret: øvre rad blir lysere enn nedre. |
+| $\vec d^{\,T}\vec x$ | $0$ | Ingen del av D-mønsteret i denne blandingen. |
+
+Tallene er **mønstermengder**, ikke de fire pikselverdiene. For eksempel
+er M-mengden $2$, mens gjennomsnittet av pikselverdiene er $1$, fordi
+hver piksel i enhetsmønsteret M har verdien $1/2$.
+
 I Python skriver vi ikke pil over variabelnavn: `h` svarer til $\vec h$.
 `H` lagrer de samme fire verdiene i bildeform, og `H.reshape(-1)` leser
 radene i den avtalte rekkefølgen. Omvendt legger `x.reshape(2, 2)` verdiene
@@ -860,20 +875,43 @@ x = Q_pattern @ coefficients
 X = x.reshape(2, 2)
 readings = Q_pattern.T @ x
 
-fig, axes = plt.subplots(1, 6, figsize=(11, 2.2))
-for ax, P, name in zip(axes[:4], patterns, names):
-    ax.imshow(P, cmap="RdBu_r", vmin=-1, vmax=1)
-    ax.set_title(name); ax.set_xticks([]); ax.set_yticks([])
+# To kolonner: fire mønstre øverst, blanding og målinger nederst.
+fig, grid = plt.subplots(3, 2, figsize=(6, 8), dpi=90)
+axes = grid.ravel()
+pattern_colors = ["#555555", "#277da1", "#4f8f49", "#8b5aa7"]
+for ax, P, name, color in zip(axes[:4], patterns, names, pattern_colors):
+    ax.imshow(P, cmap="RdBu_r", vmin=-2, vmax=2)
+    ax.set_title(name, color=color)
+    ax.set_xticks([]); ax.set_yticks([])
+    for row in range(2):
+        for col in range(2):
+            ax.text(col, row, f"{P[row, col]:g}",
+                    ha="center", va="center", fontsize=11)
 axes[4].imshow(X, cmap="RdBu_r", vmin=-2, vmax=2)
-axes[4].set_title("blanding")
+axes[4].set_title("Blanding x")
 axes[4].set_xticks([]); axes[4].set_yticks([])
-axes[5].bar(names, readings, color="#1565c0")
+for row in range(2):
+    for col in range(2):
+        axes[4].text(col, row, f"{X[row, col]:g}",
+                     ha="center", va="center", fontsize=11,
+                     color="white" if abs(X[row, col]) > 1 else "black")
+axes[5].bar(names, readings, color=pattern_colors)
 axes[5].axhline(0, color="black", linewidth=0.8)
-axes[5].set_title("mønstermengde")
-plt.tight_layout(); plt.show()
+axes[5].set_title("Målte mønstermengder")
+axes[5].set_ylabel("Indreprodukt med x")
+axes[5].margins(y=0.25)
+for i, value in enumerate(readings):
+    axes[5].annotate(f"{value:g}", (i, value),
+                     xytext=(0, 5 if value >= 0 else -5),
+                     textcoords="offset points", ha="center",
+                     va="bottom" if value >= 0 else "top")
+fig.tight_layout()
+plt.show()
 
 print("Q^T Q =\n", Q_pattern.T @ Q_pattern)
-print("målinger =", readings)
+for name, value in zip(names, readings):
+    print(f"Mengde av {name}-mønsteret: {value:g}")
+
 ```
 
 Hver måling reagerer på sitt eget mønster og gir null på de andre. Hver kolonne i
