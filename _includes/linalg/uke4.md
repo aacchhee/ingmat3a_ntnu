@@ -1215,4 +1215,446 @@ Gå videre til [prosjekt 4: Når målingene ikke passer](project_week4.qmd),
 eller gå tilbake til [uke 3](uke3.qmd) hvis vektorrom, basis og kolonnerom
 trenger en repetisjon.
 
+## Oppgaver {#uke4-oppgaver}
+
+Arbeid først på papir, og bruk deretter kode til å undersøke det du fant.
+Oppgave 1–3 er hovedløpet; 4–6 undersøker numeriske feil og hva «god løsning»
+betyr. Beregn omtrent 2–3 timer for hele settet. Alle nødvendige data er
+oppgitt her, og hver kodeoppgave importerer sine egne biblioteker.
+
+I matematikkfeltene kan du skrive for eksempel `sqrt(2)` og `1/sqrt(3)`.
+Kodeoppgavene kontrollerer funksjonen du skriver på flere datasett.
+De åpne forklaringene skriver du i egne notater; de vurderes ikke automatisk.
+Et grønt resultat erstatter derfor ikke begrunnelsen.
+
+### 1. Finn det skjulte mønsteret
+
+Et signal er en liste med åtte målinger. Tre mulige byggesteiner er
+
+$$q_1=\frac{(1,1,1,1,1,1,1,1)^T}{\sqrt8},\quad
+q_2=\frac{(1,-1,1,-1,1,-1,1,-1)^T}{\sqrt8},$$
+$$q_3=\frac{(1,1,-1,-1,1,1,-1,-1)^T}{\sqrt8}.$$
+
+Det første mønsteret måler konstant nivå, det andre veksling fra måling til
+måling, og det tredje veksling mellom par. Kontroller lengdene og minst to
+indreprodukter før du bruker dem som uavhengige målere.
+
+Signalet er
+
+$$x=(6,4,2,0,4,2,0,-2)^T.$$
+
+Mål $c_i=q_i^Tx$ hver for seg. Bygg så $p=c_1q_1+c_2q_2+c_3q_3$ og finn
+resten $r=x-p$. Ikke begynn med matriseproduktet.
+
+```{math-exercise}
+#| label: week4-task-pattern-readings
+#| caption: Tre mønstre og en uforklart rest
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: c₁, c₂, c₃, restens lengde
+
+$c_1=$ __[2*sqrt(8)]
+
+$c_2=$ __[sqrt(8)]
+
+$c_3=$ __[2*sqrt(8)]
+
+$\lVert r\rVert_2=$ __[sqrt(8)]
+```
+
+**Forklar:** Resten har null avlesning på alle tre mønstrene. Hvorfor betyr
+ikke dette at resten er null? Hvilket fjerde mønster ville forklart den?
+
+**Kode:** Samle mønstrene som kolonnene i $Q$. Fullfør `decompose(Q, x)`;
+returner avlesningene, rekonstruksjonen og resten i denne rekkefølgen.
+Forutsett at kolonnene i $Q$ er ortonormale.
+
+```{py-exercise}
+#| label: week4-task-pattern-code
+#| caption: Mål, rekonstruer og undersøk resten
+import numpy as np
+
+def decompose(Q, x):
+    # TODO: beregn c, p og r. Returner tre NumPy-vektorer.
+    return None
+
+Q = np.array([[1,1,1,1,1,1,1,1],
+              [1,-1,1,-1,1,-1,1,-1],
+              [1,1,-1,-1,1,1,-1,-1]], dtype=float).T/np.sqrt(8)
+x = np.array([6,4,2,0,4,2,0,-2], dtype=float)
+# Etter at funksjonen virker: sammenlign decompose(Q, x) med
+# decompose(Q, x + np.array([1,0,0,0,0,0,0,0])).
+
+## TESTS ##
+result = decompose(Q, x)
+assert isinstance(result, (tuple, list)) and len(result) == 3, 'Returner c, p, r i denne rekkefølgen.'
+c, p, r = map(np.asarray, result)
+assert c.shape == (3,) and p.shape == r.shape == (8,), 'Tre avlesninger, men åtte signalverdier.'
+assert np.allclose(c, [2*np.sqrt(8),np.sqrt(8),2*np.sqrt(8)]), 'Hver avlesning er ett indreprodukt med et mønster.'
+assert np.allclose(r, [1,1,1,1,-1,-1,-1,-1]), 'Trekk den gjenoppbygde delen fra signalet.'
+assert np.allclose(p+r, x), 'De to delene må gi det opprinnelige signalet.'
+changed = x.copy(); changed[0] += 1
+c2, p2, r2 = decompose(Q, changed)
+assert np.allclose(np.asarray(c2)-c, np.ones(3)/np.sqrt(8)), 'Første måling inngår med samme vekt i alle tre mønstrene.'
+assert np.allclose(Q.T@r2, 0), 'Resten skal gi null på hver av de valgte målerne.'
+Qtest = np.array([[1.,0.],[0.,0.],[0.,1.]])
+z = np.array([2.,5.,-3.])
+ct, pt, rt = decompose(Qtest, z)
+assert np.allclose(ct,[2,-3]) and np.allclose(pt,[2,0,-3]) and np.allclose(rt,[0,5,0]), 'Funksjonen må også virke med andre ortonormale piler.'
+```
+
+Forutsi hva som skjer med alle tre avlesningene når bare første måling økes
+med $1$. Forklar svaret ut fra komponentene i $q_i$, ikke bare utskriften.
+
+### 2. Når avlesninger ikke er koordinater
+
+Vi bruker nå tre andre enhetspiler i $\mathbb R^4$:
+
+$$u_1=(1,0,0,0)^T,\quad
+u_2=(1,1,0,0)^T/\sqrt2,\quad
+u_3=(0,1,1,1)^T/\sqrt3.$$
+
+De er lineært uavhengige. Bygg
+
+$$x=2u_1-\sqrt2\,u_2+\sqrt3\,u_3=(1,0,1,1)^T.$$
+
+Byggekoeffisientene er dermed kjent. Vil målingene $u_i^Tx$ gi disse
+koeffisientene tilbake? Regn før du leser videre.
+
+```{math-exercise}
+#| label: week4-task-nonorthogonal
+#| caption: Sammenlign oppskrift og avlesninger
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: u₁ᵀx, u₂ᵀx, u₃ᵀx, u₁ᵀu₂, u₂ᵀu₃
+
+$u_1^Tx=$ __[1]
+
+$u_2^Tx=$ __[1/sqrt(2)]
+
+$u_3^Tx=$ __[2/sqrt(3)]
+
+$u_1^Tu_2=$ __[1/sqrt(2)]
+
+$u_2^Tu_3=$ __[1/sqrt(6)]
+```
+
+**Forklar feilen i påstanden:** «Alle pilene har lengde én, derfor leser
+hver pil av sin egen byggekoeffisient.» Bruk ett av indreproduktene du fant.
+
+Skriv først ut
+
+$$u_1^Tx=2(u_1^Tu_1)-\sqrt2(u_1^Tu_2)+\sqrt3(u_1^Tu_3).$$
+
+Gjør tilsvarende for de to andre pilene. Samle deretter pilene i
+$U=[u_1\ u_2\ u_3]$ og koeffisientene i $c=(2,-\sqrt2,\sqrt3)^T$.
+Forklar nå likningen $U^Tx=(U^TU)c$: Hvilke oppføringer i $U^TU$ gjør at
+målingene påvirkes av flere byggekoeffisienter?
+
+### 3. Bygg QR og bruk den
+
+Tre byggesteiner i $\mathbb R^4$ er
+
+$$a_1=(1,1,0,0)^T,\quad a_2=(1,0,1,0)^T,\quad a_3=(1,0,0,1)^T.$$
+
+Utfør Gram–Schmidt på papir. Bruk positive lengder $r_{jj}$ når du
+normaliserer. Vis spesielt resten etter begge subtraksjonene fra $a_3$.
+Kontroller at denne resten er ortogonal på både $q_1$ og $q_2$.
+
+```{math-exercise}
+#| label: week4-task-qr-paper
+#| caption: Mellomregninger og byggeoppskrifter
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: r₁₁, r₁₂, r₂₂, r₁₃, r₂₃, r₃₃
+
+$r_{11}=$ __[sqrt(2)]
+
+$r_{12}=$ __[1/sqrt(2)]
+
+$r_{22}=$ __[sqrt(6)/2]
+
+$r_{13}=$ __[1/sqrt(2)]
+
+$r_{23}=$ __[1/sqrt(6)]
+
+$r_{33}=$ __[2/sqrt(3)]
+```
+
+Skriv $a_1,a_2,a_3$ som summer av de nye pilene. Samle så oppskriftene
+som $A=QR$. For $b=(1,2,3,4)^T$ skal du finne $c$ slik at $Ac$ ligger
+nærmest $b$. Regn $Q^Tb$, løs $Rc=Q^Tb$, og skriv opp resten $b-Ac$.
+
+```{math-exercise}
+#| label: week4-task-qr-fit
+#| caption: Den beste representerbare vektoren
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: c₁, c₂, c₃, residualens lengde
+
+$c_1=$ __[0]
+
+$c_2=$ __[1]
+
+$c_3=$ __[2]
+
+$\lVert b-Ac\rVert_2=$ __[4]
+```
+
+**Kode:** Fullfør modifisert GS og løsningen nedenfor. Algoritmen skal
+fungere for en matrise med $m\ge k$ og full kolonnerang. Ikke bruk ferdig
+`qr` eller `lstsq` i funksjonen. `solve` er tillatt for det triangulære
+systemet. Målingen i den indre løkken skal tas på den oppdaterte resten.
+
+```{py-exercise}
+#| label: week4-task-qr-code
+#| caption: Fra vektorløkke til minste kvadrater
+import numpy as np
+
+def fit_with_gs(A, b):
+    A = np.asarray(A, dtype=float)
+    m, k = A.shape
+    Q = np.zeros((m,k))
+    R = np.zeros((k,k))
+    for j in range(k):
+        v = A[:,j].copy()
+        for i in range(j):
+            # TODO: mål på v, fyll R[i,j], og trekk delen fra v.
+            pass
+        # TODO: fyll R[j,j] og Q[:,j] ved å normalisere v.
+    # TODO: løs for c. Returner Q, R, c.
+    return None
+
+A = np.array([[1,1,1],[1,0,0],[0,1,0],[0,0,1]], dtype=float)
+b = np.array([1,2,3,4], dtype=float)
+
+## TESTS ##
+out = fit_with_gs(A,b)
+assert isinstance(out,(tuple,list)) and len(out)==3, 'Returner Q, R, c.'
+Q,R,c = map(np.asarray,out)
+assert Q.shape==(4,3) and R.shape==(3,3) and c.shape==(3,), 'Kontroller dimensjonene til den tynne faktoriseringen.'
+assert np.allclose(Q.T@Q,np.eye(3)), 'Mål på resten, trekk fra, og normaliser hver nye pil.'
+assert np.allclose(Q@R,A), 'R må bevare alle byggekoeffisientene.'
+assert np.allclose(np.tril(R,-1),0) and np.all(np.diag(R)>0), 'R skal være øvre triangulær med positive normaliseringslengder.'
+assert np.allclose(c,[0,1,2]), 'Løs R c = Q.T @ b, ikke A c = b.'
+assert np.allclose(A.T@(b-A@c),0), 'Residualen skal være ortogonal på alle opprinnelige byggesteiner.'
+T=np.array([[2.,1.],[0.,1.],[1.,-1.],[1.,2.],[0.,3.]])
+z=np.array([1.,-2.,3.,0.,4.])
+Qt,Rt,ct=fit_with_gs(T,z)
+assert np.allclose(Qt@Rt,T) and np.allclose(Qt.T@Qt,np.eye(2)), 'Løkken må fungere med andre antall rader og kolonner.'
+assert np.allclose(ct,np.linalg.lstsq(T,z,rcond=None)[0]), 'Test også høyresider som ikke kan representeres eksakt.'
+```
+
+**Begrunn optimaliteten:** Hvorfor vil en endring av $c$ legge en ny del
+*langs* byggeretningene til en rest som allerede står vinkelrett på dem?
+Bruk Pytagoras til å forklare hvorfor feilen ikke kan bli mindre.
+
+### 4. En nesten usynlig feil blir stor
+
+Sett $e=10^{-8}$ og bruk
+
+$$a_1=(1,e,0,0)^T,\quad a_2=(1,0,e,0)^T,\quad a_3=(1,0,0,e)^T.$$
+
+I float64 avrundes $1+e^2$ til $1$. Etter første normalisering har vi
+$\widehat q_1=(1,e,0,0)^T$, og den beregnede andre resten er
+$\widehat v_2=(0,-e,e,0)^T$. I eksakt regning ville første komponent vært
+$e^2/(1+e^2)$. Følg konsekvensene selv; ikke hopp rett til sluttproduktet.
+
+```{math-exercise}
+#| label: week4-task-rounding
+#| caption: Fra en tapt komponent til feil retning
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: tapt komponent omtrent, q₂ andre komponent, beregnet r₂₃, q₂ᵀq₃
+
+Den tapte komponenten er omtrent __[10^(-16)].
+
+Andre komponent i $\widehat q_2=\widehat v_2/\lVert\widehat v_2\rVert_2$ er __[-1/sqrt(2)].
+
+Klassisk GS måler $\widehat r_{23}=\widehat q_2^Ta_3=$ __[0].
+
+Etter tredje normalisering blir $\widehat q_2^T\widehat q_3=$ __[1/2].
+```
+
+**Kode:** Begge algoritmene ligger i samme funksjon. Den ene manglende
+linjen bestemmer om målingen tas på opprinnelig pil eller oppdatert rest.
+Fullfør også de to diagnostikkene. Returner
+$(\lVert Q^TQ-I\rVert_F,\lVert A-QR\rVert_F/\lVert A\rVert_F)$.
+Funksjonen brukes her bare på uavhengige kolonner med ikke-null rester.
+
+```{py-exercise}
+#| label: week4-task-cgs-mgs
+#| caption: Samme piler, to beregningsmåter
+import numpy as np
+
+def compare_gs(A, modified):
+    A = np.asarray(A,dtype=float)
+    m,k = A.shape
+    Q = np.zeros((m,k)); R = np.zeros((k,k))
+    for j in range(k):
+        v = A[:,j].copy()
+        for i in range(j):
+            source = A[:,j]  # TODO: bruk v når modified er True.
+            R[i,j] = Q[:,i]@source
+            v = v-R[i,j]*Q[:,i]
+        R[j,j] = np.linalg.norm(v)
+        Q[:,j] = v/R[j,j]
+    # TODO: returner ortogonalitetsfeil og relativ rekonstruksjonsfeil.
+    return None
+
+# Etter utfylling: skriv en tabell for e=1e-4, 1e-8 og 1e-12.
+# A = np.vstack([np.ones((1,3)), e*np.eye(3)])
+# Bruk begge verdiene av modified på hver matrise.
+
+## TESTS ##
+A=np.vstack([np.ones((1,3)),1e-8*np.eye(3)])
+u=compare_gs(A,False); v=compare_gs(A,True)
+assert isinstance(u,(tuple,list)) and len(u)==2, 'Returner to diagnostikker i oppgitt rekkefølge.'
+assert isinstance(v,(tuple,list)) and len(v)==2, 'Begge varianter skal returnere to diagnostikker.'
+assert np.isfinite(u).all() and np.isfinite(v).all(), 'Ingen av disse forsøkene skal gi NaN eller Inf.'
+assert .6<u[0]<.8, 'CGS skal her vise stor ortogonalitetsfeil. Måler du mot opprinnelig kolonne?'
+assert 0<=v[0]<1e-6, 'MGS skal her måle mot resten etter forrige subtraksjon.'
+assert 0<=u[1]<1e-12 and 0<=v[1]<1e-12, 'Begge bygger likevel A godt opp igjen. Kontroller relativ rekonstruksjonsfeil.'
+for e in [1e-4,1e-12]:
+    B=np.vstack([np.ones((1,3)),e*np.eye(3)])
+    for modified in [False,True]:
+        orth,recon=compare_gs(B,modified)
+        assert np.isfinite([orth,recon]).all() and orth>=0 and 0<=recon<1e-12, 'Kontroller normene og normaliseringen også for andre e.'
+```
+
+**Forklar:** Hvordan kan begge algoritmene ha liten rekonstruksjonsfeil når
+bare én gir gode måleretninger? Knytt forklaringen til det tapte leddet og
+normaliseringen, og til [prosjekt 1](project_week1.qmd). Unngå påstanden
+«MGS er alltid stabil»; beskriv hva akkurat disse forsøkene viser.
+
+### 5. Kan et ekstra datapunkt gjøre tilpasningen dårligere?
+
+De tre punktene $(-1,0),(0,1),(1,2)$ ligger på linjen $p(t)=1+t$.
+Legg til målingen $(2,6)$. Før du regner: Vil den nye beste linjen fortsatt
+treffe de tre gamle punktene? Hva mener vi egentlig med «dårligere»?
+
+Vi skriver linjen som $p(t)=c_0+c_1t$. Første kolonne i designmatrisen er
+énere og andre kolonne inneholder $t$-verdiene:
+
+$$A_{\rm ny}=\begin{bmatrix}1&-1\\1&0\\1&1\\1&2\end{bmatrix},\qquad
+b_{\rm ny}=(0,1,2,6)^T.$$
+
+```{math-exercise}
+#| label: week4-task-extra-point
+#| caption: Sammenlign på samme datasett
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: ny c₀, ny c₁, ny linje gamle punkter, ny linje alle punkter, gammel linje alle punkter
+
+For den nye minste-kvadraters linjen er $c_0=$ __[13/10] og $c_1=$ __[19/10].
+
+Summen av kvadrerte feil for den nye linjen på de tre gamle punktene er __[189/100].
+
+På alle fire punktene er summen for den nye linjen __[27/10].
+
+På alle fire punktene er summen for den gamle linjen $1+t$ __[9].
+```
+
+**Kode:** Lag `compare_point(t, y, t_new, y_new)`. Returner de nye
+koeffisientene, kvadratfeilen til ny linje på gamle punkter, kvadratfeilen
+til ny linje på alle punkter og kvadratfeilen til gammel linje på alle
+punkter. Bruk `np.linalg.lstsq` og rekkefølgen $(c_0,c_1)$.
+
+```{py-exercise}
+#| label: week4-task-extra-point-code
+#| caption: Hvilken feil ble større?
+import numpy as np
+
+def compare_point(t, y, t_new, y_new):
+    # TODO: tilpass før og etter; evaluer begge linjene på oppgitte data.
+    return None
+
+## TESTS ##
+out=compare_point(np.array([-1.,0.,1.]),np.array([0.,1.,2.]),2.,6.)
+assert isinstance(out,(tuple,list)) and len(out)==4, 'Returner koeffisienter og tre summer av kvadrerte feil.'
+c,old_error,total_error,old_line_error=out
+assert np.allclose(c,[1.3,1.9]), 'Første kolonne må være énere; koeffisientrekkefølgen er konstantledd, stigning.'
+assert np.allclose([old_error,total_error,old_line_error],[1.89,2.7,9.]), 'Skill mellom hvilken linje og hvilket datasett du vurderer.'
+for t,y,tn,yn in [(np.array([0.,1.,2.]),np.array([1.,3.,5.]),3.,7.),
+                  (np.array([-2.,0.,3.]),np.array([1.,-1.,4.]),1.,8.)]:
+    c,e_old,e_all,e_before=compare_point(t,y,tn,yn)
+    A=np.column_stack([np.ones(t.size),t]); T=np.append(t,tn); Y=np.append(y,yn)
+    B=np.column_stack([np.ones(T.size),T])
+    cb=np.linalg.lstsq(A,y,rcond=None)[0]; ca=np.linalg.lstsq(B,Y,rcond=None)[0]
+    assert np.allclose(c,ca), 'Funksjonen må også tilpasse andre målinger.'
+    expected=[np.sum((y-A@ca)**2),np.sum((Y-B@ca)**2),np.sum((Y-B@cb)**2)]
+    assert np.allclose([e_old,e_all,e_before],expected), 'Beregn kvadratfeilene på riktig kombinasjon av linje og data.'
+```
+
+**Diskuter:** Den gamle linjen hadde feil null på tre punkter. Den nye har
+feil $2.7$ på fire punkter. Hvorfor er ikke denne sammenligningen alene et
+argument mot minste kvadrater? Hvilken sammenligning viser at metoden har
+funnet en forbedring på det nye problemet?
+
+### 6. Avslør en falsk kvalitetskontroll
+
+En medstudent hevder: «Hvis $QR=A$, kan vi finne minste-kvadraters løsningen
+fra $Rc=Q^Tb$.» Undersøk følgende eksakte moteksempel:
+
+$$A=\begin{bmatrix}1&0\\0&1\\0&0\end{bmatrix},\quad
+Q=\begin{bmatrix}2&0\\0&1\\0&0\end{bmatrix},\quad
+R=\begin{bmatrix}1/2&0\\0&1\end{bmatrix},\quad b=(1,2,3)^T.$$
+
+Kontroller først $QR=A$ på papir. Kontroller deretter lengdene til kolonnene
+i $Q$. Finn både kandidaten fra $Rc=Q^Tb$ og den faktiske beste løsningen.
+
+```{math-exercise}
+#| label: week4-task-false-qr
+#| caption: Eksakt produkt, feil minste-kvadraters løsning
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: QᵀQ første diagonal, kandidat c₁, kandidat c₂, optimal c₁, optimal c₂, kandidat kvadratfeil, optimal kvadratfeil
+
+Første diagonaloppføring i $Q^TQ$ er __[4].
+
+Kandidaten fra $Rc=Q^Tb$ er $c=($ __[4], __[2] $)^T$.
+
+Den optimale løsningen er $c_*=($ __[1], __[2] $)^T$.
+
+Summen av kvadrerte residualkomponenter er __[18] for kandidaten og __[9] for optimum.
+```
+
+**Kode:** Lag en kontroll som returnerer relativ rekonstruksjonsfeil,
+ortogonalitetsfeil og lengden til $A^T(b-Ac)$ for kandidaten. Dette er tre
+ulike spørsmål: Bygger faktorene $A$? Er måleretningene ortonormale? Er
+kandidatens rest ortogonal på byggeretningene?
+
+```{py-exercise}
+#| label: week4-task-quality-code
+#| caption: Tre kontroller som må skilles
+import numpy as np
+
+def diagnose(A, Q, R, b):
+    c = np.linalg.solve(R, Q.T@b)
+    # TODO: returner relativ rekonstruksjonsfeil, ortogonalitetsfeil,
+    # og lengden til A.T @ (b-A@c). Bruk Frobeniusnorm for matriser.
+    return None
+
+## TESTS ##
+A=np.array([[1.,0.],[0.,1.],[0.,0.]])
+Q=np.array([[2.,0.],[0.,1.],[0.,0.]])
+R=np.diag([.5,1.]); b=np.array([1.,2.,3.])
+out=diagnose(A,Q,R,b)
+assert isinstance(out,(tuple,list)) and len(out)==3, 'Returner tre kontroller i oppgitt rekkefølge.'
+assert np.allclose(out,[0.,3.,3.]), 'Produktet stemmer, men lengden til første Q-kolonne og normaltesten feiler.'
+Qgood,Rgood=np.linalg.qr(A,mode='reduced')
+assert np.allclose(diagnose(A,Qgood,Rgood,b),[0.,0.,0.]), 'En gyldig QR skal bestå alle tre kontrollene selv om residualen ikke er null.'
+A2=np.array([[1.,1.],[1.,0.],[0.,1.]])
+Q2,R2=np.linalg.qr(A2,mode='reduced'); b2=np.array([1.,-2.,4.])
+assert np.allclose(diagnose(A2,Q2,R2,b2),[0.,0.,0.]), 'Bruk antallet kolonner i Q når du lager identitetsmatrisen.'
+Rbad=R2.copy(); Rbad[0,0] *= 1.5
+res=diagnose(A2,Q2,Rbad,b2)
+assert np.isclose(res[0],np.linalg.norm(A2-Q2@Rbad,'fro')/np.linalg.norm(A2,'fro')), 'Rekonstruksjonsfeilen skal skaleres med størrelsen på A.'
+assert res[0]>0 and abs(res[1])<1e-12 and res[2]>0, 'En feil i R kan bevare ortonormaliteten til Q; skill kontrollene.'
+```
+
+Avslutt med å reparere medstudentens påstand. Oppgi forutsetningene som
+mangler, og forklar hvorfor liten rekonstruksjonsfeil alene heller ikke
+var tilstrekkelig i oppgave 4.
+
 :::
