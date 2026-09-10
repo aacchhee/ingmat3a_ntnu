@@ -1358,3 +1358,6 @@ Kontroller dimensjoner, rang, residualer og hva koordinatene representerer.
 Påstander om «stabilitet» skal støttes av konkrete forstyrrelser og beregnede
 feil.
 ::::
+
+Neste steg er [prosjekt 4: Når målingene ikke passer](project_week4.qmd),
+der flere støyfylte målinger leder til projeksjon, QR og minste kvadrater.
