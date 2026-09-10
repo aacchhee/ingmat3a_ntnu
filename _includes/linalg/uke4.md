@@ -2443,9 +2443,28 @@ endre det tilpassede polynomet.
 
 ### Hva betyr ortogonale polynomer i QR-språket?
 
-Kolonnene i $Q$ kan tolkes som verdiene av nye basispolynomer
-$\phi_0,\phi_1,\phi_2$ ved de samme målepunktene.
-For QR-faktoriseringen over er disse
+Kolonnene i $Q$ inneholder verdiene av nye basispolynomer
+$\phi_0,\phi_1,\phi_2$ ved målepunktene. **For å finne selve
+polynomformlene bruker vi sammenhengene i $A=QR$.**
+
+Hver kolonne i $R$ forteller hvordan en opprinnelig kolonne i $A$
+uttrykkes ved kolonnene i $Q$. Her inneholder $a_0,a_1,a_2$ verdiene
+av henholdsvis $1,t,t^2$. Vi bruker de samme lineærkombinasjonene
+for polynomene som for verdivektorene:
+
+| Kolonnesammenheng fra $A=QR$ | Samme sammenheng for polynomene |
+|---|---|
+| $a_0=\textcolor{#8b5aa7}{\sqrt5}\,\textcolor{#1565c0}{q_0}$ | $1=\textcolor{#8b5aa7}{\sqrt5}\,\textcolor{#1565c0}{\phi_0(t)}$ |
+| $a_1=\textcolor{#8b5aa7}{\sqrt{5/2}}\,\textcolor{#1565c0}{q_1}$ | $t=\textcolor{#8b5aa7}{\sqrt{5/2}}\,\textcolor{#1565c0}{\phi_1(t)}$ |
+| $a_2=\textcolor{#8b5aa7}{\frac{\sqrt5}{2}}\,\textcolor{#1565c0}{q_0}+\textcolor{#8b5aa7}{\sqrt{7/8}}\,\textcolor{#1565c0}{q_2}$ | $t^2=\textcolor{#8b5aa7}{\frac{\sqrt5}{2}}\,\textcolor{#1565c0}{\phi_0(t)}+\textcolor{#8b5aa7}{\sqrt{7/8}}\,\textcolor{#1565c0}{\phi_2(t)}$ |
+
+Lilla tall kommer fra $R$; blått følger de nye basisvektorene og
+basispolynomene. De to første radene gir $\phi_0$ og $\phi_1$ ved
+divisjon. I tredje rad setter vi inn $\phi_0(t)=1/\sqrt5$, slik at
+første ledd blir $1/2$. Da får vi
+$t^2-1/2=\sqrt{7/8}\,\phi_2(t)$.
+
+Dermed er de nye basispolynomene
 
 $$\textcolor{#1565c0}{\phi_0(t)=\frac1{\sqrt5}},\qquad
 \textcolor{#1565c0}{\phi_1(t)=\frac{t}{\sqrt{5/2}}},\qquad
