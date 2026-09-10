@@ -632,13 +632,25 @@ Kan et jevnt lyst bilde gi noen forskjell mellom venstre og høyre?
 
 #### Fra fire piksler til én vektor
 
-Vi avtaler rekkefølgen: **øverst til venstre, øverst til høyre,
-nederst til venstre, nederst til høyre**. Tallene 1–4 i bildene viser denne
-rekkefølgen. For H leser vi
+Vi bruker de samme fire pikselfargene som i uke 3, i samme rekkefølge:
 
-$$+\tfrac12,\;-\tfrac12,\;+\tfrac12,\;-\tfrac12
+| Plass i bildet | Nummer og farge |
+|---|---|
+| Øverst til venstre | $\textcolor{#277da1}{1\text{ — blå}} $ |
+| Øverst til høyre | $\textcolor{#d98900}{2\text{ — oransje}} $ |
+| Nederst til venstre | $\textcolor{#4f8f49}{3\text{ — grønn}} $ |
+| Nederst til høyre | $\textcolor{#8b5aa7}{4\text{ — lilla}} $ |
+
+De fargede numrene i bildene viser hvilken piksel som blir hvilken
+koordinat. **Fargen følger plassen**, mens fortegnet og tallet angir
+pikselverdien. For H leser vi
+
+$$\textcolor{#277da1}{+\tfrac12},\quad \textcolor{#d98900}{-\tfrac12},\quad
+\textcolor{#4f8f49}{+\tfrac12},\quad \textcolor{#8b5aa7}{-\tfrac12}
 \quad\longrightarrow\quad
-\vec h=\begin{bmatrix}1/2\\-1/2\\1/2\\-1/2\end{bmatrix}.$$
+\vec h=\begin{bmatrix}
+\textcolor{#277da1}{1/2}\\\textcolor{#d98900}{-1/2}\\\textcolor{#4f8f49}{1/2}\\\textcolor{#8b5aa7}{-1/2}
+\end{bmatrix}.$$
 
 Vi har beholdt alle pikselverdiene; vi har bare skrevet dem som én kolonne.
 Pilen over $\vec h$ sier at symbolet står for **hele vektoren**.
