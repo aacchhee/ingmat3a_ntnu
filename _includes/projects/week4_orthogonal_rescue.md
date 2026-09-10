@@ -86,6 +86,8 @@ støystørrelse og metode sammen med resultatet.
 #| autorun: true
 #| context: setup
 
+# Felles verktøy for dette prosjektet; kjør denne cellen først.
+# Funksjonene er samlet her slik at prosjektet kan brukes uten andre sider.
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.polynomial import polynomial as poly
@@ -96,12 +98,15 @@ from numpy.polynomial import chebyshev as cheb
 def monomial_matrix(points, n):
     """Avlesningsmatrise for basisen (1, x, ..., x^n)."""
     points = np.asarray(points, dtype=float)
+    # Grad n gir n+1 basisfunksjoner, inkludert konstantleddet.
     powers = np.arange(n+1)
+    # Rad i er punkt i; kolonne j er punktet opphøyd i j. None gjør formene kompatible.
     return points[:, None]**powers[None, :]
 
 
 def chebyshev_matrix(points, n):
     """Avlesningsmatrise for basisen (T_0, ..., T_n)."""
+    # Samme rad/kolonne-betydning, men med Chebyshev-polynomer i stedet for potenser.
     return cheb.chebvander(np.asarray(points, dtype=float), n)
 
 
@@ -110,12 +115,14 @@ def chebyshev_points(count):
     if count < 1:
         raise ValueError("count må være minst 1")
     k = np.arange(count)
+    # Cosinus gir flere målepunkter nær endene av intervallet.
     return np.cos((2*k+1)*np.pi/(2*count))
 
 
 def reference_coordinates(n):
     """Moderate, deterministiske koordinater i Chebyshev-basis."""
     k = np.arange(n+1)
+    # Avtakende koeffisienter gir et fast referansepolynom med vekslende fortegn.
     return (-1.0)**k/(k+1.0)**2
 
 
@@ -126,8 +133,10 @@ def classical_gram_schmidt(A):
     Q = np.zeros((m, n))
     R = np.zeros((n, n))
     for j in range(n):
+        # CGS beregner alle komponenter mot den opprinnelige kolonnen.
         coefficients = Q[:, :j].T @ A[:, j]
         R[:j, j] = coefficients
+        # Trekk summen av tidligere vektorbidrag fra den aktuelle kolonnen.
         v = A[:, j] - Q[:, :j] @ coefficients
         R[j, j] = np.linalg.norm(v)
         Q[:, j] = v/R[j, j]
@@ -147,10 +156,13 @@ def modified_gram_schmidt(A, tolerance=None):
     Q = np.zeros((m, n))
     R = np.zeros((n, n))
     if tolerance is None:
+        # Skalert grense for når en rest er for liten til å normaliseres pålitelig.
         tolerance = np.finfo(float).eps*max(m, n)*np.linalg.norm(A, "fro")
     for j in range(n):
+        # MGS oppdaterer en kopi av kolonnen etter hver subtraksjon.
         v = A[:, j].copy()
         for i in range(j):
+            # Denne koeffisienten beregnes på den oppdaterte resten.
             R[i, j] = Q[:, i] @ v
             v = v-R[i, j]*Q[:, i]
         R[j, j] = np.linalg.norm(v)
@@ -158,6 +170,7 @@ def modified_gram_schmidt(A, tolerance=None):
             raise np.linalg.LinAlgError(
                 f"Kolonne {j+1} ga en ikke-endelig rest"
             )
+        # Stopp før divisjon med en lengde som er numerisk for liten.
         if R[j, j] <= tolerance:
             raise np.linalg.LinAlgError(
                 f"Kolonne {j+1} gir ingen pålitelig ny retning"
@@ -175,6 +188,7 @@ def qr_solution(A, b, qr_method=modified_gram_schmidt):
     if not np.isfinite(A).all() or not np.isfinite(b).all():
         raise ValueError("A og b må bare inneholde endelige tall")
     Q, R = qr_method(A)
+    # Q.T@b er Q-koordinater; løsningen x gir koeffisientene for kolonnene i A.
     x = np.linalg.solve(R, Q.T@b)
     if not np.isfinite(x).all():
         raise np.linalg.LinAlgError("QR-løsningen inneholder ikke-endelige tall")
@@ -183,6 +197,7 @@ def qr_solution(A, b, qr_method=modified_gram_schmidt):
 
 def safe_ratio(numerator, denominator):
     """Skalert diagnostikk, også definert når begge ledd er null."""
+    # Unngå 0/0 i diagnostikken; ikke-null feil med null skala rapporteres som Inf.
     if denominator == 0:
         return 0.0 if numerator == 0 else np.inf
     return float(numerator/denominator)
@@ -193,12 +208,16 @@ def method_report(name, A, b, x, Q=None, R=None):
     A = np.asarray(A, dtype=float)
     b = np.asarray(b, dtype=float)
     x = np.asarray(x, dtype=float)
+    # Residualen er data minus modellens verdier, ett avvik per rad i A.
     residual = b-A@x
     finite = np.isfinite(A).all() and np.isfinite(b).all()
     finite = finite and np.isfinite(x).all() and np.isfinite(residual).all()
     residual_norm = np.linalg.norm(residual)
+    # Skaler residualen mot størrelsen på både modellbidraget og dataene.
     data_scale = np.linalg.norm(A, "fro")*np.linalg.norm(x)+np.linalg.norm(b)
+    # A.T@residual tester om resten er ortogonal på alle modellens kolonner.
     normal_norm = np.linalg.norm(A.T@residual)
+    # Denne normaltesten er følsom når residualnormen er svært nær null.
     normal_scale = np.linalg.norm(A, 2)*residual_norm
     report = {
         "metode": name,
@@ -208,6 +227,7 @@ def method_report(name, A, b, x, Q=None, R=None):
         "relativ_residual": safe_ratio(residual_norm, data_scale),
         "skalert_normaltest": safe_ratio(normal_norm, normal_scale),
     }
+    # For QR-metoder undersøker vi også ortonormalitet og rekonstruksjon separat.
     if Q is not None and R is not None:
         finite_qr = np.isfinite(Q).all() and np.isfinite(R).all()
         report["alle_endelige"] = bool(report["alle_endelige"] and finite_qr)
@@ -273,8 +293,11 @@ Kjør cellen, og sammenlign residualene for tre selvvalgte linjer med
 ```{pyodide-python}
 #| label: project-week4-first-fit
 
+# A og b brukes videre i de neste tre forsøkene.
+# Sammenlign noen foreslåtte linjer med løsningen som minimerer residualnormen.
 t = np.linspace(-1.0, 1.0, 6)
 b = np.array([-0.12, 0.34, 0.68, 1.32, 1.55, 2.18])
+# Kolonnene svarer til konstantledd og stigningstall.
 A = np.column_stack([np.ones_like(t), t])
 
 candidates = [
@@ -284,6 +307,7 @@ candidates = [
 ]
 c_star, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
 
+# Hver kandidat vurderes på de samme seks målepunktene.
 for c in candidates+[c_star]:
     print(c, "  ||Ac-b||_2 =", np.linalg.norm(A@c-b))
 
@@ -325,15 +349,20 @@ $$\boxed{A^Tr=0.}$$
 ```{pyodide-python}
 #| label: project-week4-residual-test
 
+# Bruk linjedataene A og b fra forrige celle.
+# Endre én koeffisient om gangen rundt optimum og se hvordan feilen øker.
 c_star, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
+# Residualen er en vektor med ett avvik per måling.
 r = b-A@c_star
 print("c_* =", c_star)
 print("r =", r)
 print("A^T r =", A.T@r)
 
 deltas = np.linspace(-0.4, 0.4, 101)
+# Flytt bare konstantleddet; hold stigningstallet fast.
 errors_c0 = [np.linalg.norm(A@(c_star+np.array([d, 0]))-b)
              for d in deltas]
+# Flytt bare stigningstallet; hold konstantleddet fast.
 errors_c1 = [np.linalg.norm(A@(c_star+np.array([0, d]))-b)
              for d in deltas]
 plt.plot(deltas, errors_c0, label="endre bare c0")
@@ -379,10 +408,13 @@ enige her fordi kolonnene er tydelig uavhengige.
 ```{pyodide-python}
 #| label: project-week4-small-qr
 
+# Samme A og b som i linjeforsøket; bare løsningsmetoden endres.
+# Små residualer og gode ortonormale kolonner er to forskjellige kontroller.
 c_cgs, Qc, Rc = qr_solution(A, b, classical_gram_schmidt)
 c_mgs, Qm, Rm = qr_solution(A, b, modified_gram_schmidt)
 c_lib, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
 
+# Rapporten skiller mellom residual, normaltest og kvaliteten på QR-faktorene.
 print(method_report("klassisk GS", A, b, c_cgs, Qc, Rc))
 print(method_report("modifisert GS", A, b, c_mgs, Qm, Rm))
 print(method_report("lstsq", A, b, c_lib))
@@ -413,11 +445,14 @@ endelig rest; fravær av ugyldige verdier beviser derfor ikke uavhengighet.
 ```{pyodide-python}
 #| label: project-week4-dependent-nan
 
+# B har tre kolonner, men den tredje er summen av de to første.
+# Sammenlign en ugyldig normalisering med en kontrollert stopp før divisjonen.
 B = np.array([[1.0, 0.0, 1.0],
               [0.0, 1.0, 1.0],
               [0.0, 0.0, 0.0],
               [0.0, 0.0, 0.0]])
 
+# Vi lar den naive funksjonen produsere NaN for å kunne forklare feilen.
 with np.errstate(divide="warn", invalid="warn"):
     Q_bad, R_bad = classical_gram_schmidt(B)
 
@@ -426,6 +461,7 @@ print("diagonal(R) =", np.diag(R_bad))
 print("Q =\n", Q_bad)
 print("alle tall endelige?", np.isfinite(Q_bad).all())
 
+# MGS-verktøyet skal oppdage den for lille resten og gi en forklaring.
 try:
     modified_gram_schmidt(B)
 except np.linalg.LinAlgError as error:
@@ -468,21 +504,27 @@ argumentet er antall punkter, ikke polynomgraden.
 ```{pyodide-python}
 #| label: project-week4-polynomial-fit
 
+# n er polynomgraden; antallet ukjente koeffisienter er n+1.
+# m er antallet målinger, som her er større enn antallet ukjente.
 n = 3
 m = 12
 points = np.linspace(-1.0, 1.0, m)
 true_coordinates = reference_coordinates(n)
 exact_values = cheb.chebval(points, true_coordinates)
 
+# Fast frø gjør støyen reproduserbar, slik at metodeendringer kan sammenlignes.
 rng = np.random.default_rng(2026)
 noise_size = 1e-3
 noise = noise_size*rng.standard_normal(m)
 measurements = exact_values+noise
 
+# Kolonne j inneholder T_j evaluert ved alle målepunktene.
 C = chebyshev_matrix(points, n)
+# Løs et overbestemt system med QR; recovered er Chebyshev-koeffisienter.
 recovered, Q, R = qr_solution(C, measurements)
 residual = measurements-C@recovered
 
+# Et tettere rutenett viser også kurven mellom målepunktene.
 grid = np.linspace(-1.0, 1.0, 1001)
 reference_curve = cheb.chebval(grid, true_coordinates)
 fitted_curve = cheb.chebval(grid, recovered)
@@ -521,6 +563,8 @@ Vi sammenligner nå grad $12$ med $25$ målinger.
 ```{pyodide-python}
 #| label: project-week4-basis-comparison
 
+# Hold målepunkter, referansepolynom og støy fast i begge basiser.
+# Koeffisientene har ulik betydning; sammenlign de evaluerte kurvene.
 n = 12
 m = 25
 points = np.linspace(-1.0, 1.0, m)
@@ -530,8 +574,10 @@ rng = np.random.default_rng(2026)
 noise = 1e-10*rng.standard_normal(m)
 b_noisy = exact_values+noise
 
+# Begge matrisene beskriver samme polynomrom ved de samme punktene.
 M = monomial_matrix(points, n)
 C = chebyshev_matrix(points, n)
+# QR-løsninger i hver basis; neste par løsninger gir biblioteksreferanser.
 xM, QM, RM = qr_solution(M, b_noisy)
 xC, QC, RC = qr_solution(C, b_noisy)
 xM_lib, _, _, _ = np.linalg.lstsq(M, b_noisy, rcond=None)
@@ -546,8 +592,10 @@ print(method_report("C, lstsq", C, b_noisy, xC_lib))
 
 grid = np.linspace(-1.0, 1.0, 2001)
 reference = cheb.chebval(grid, true_chebyshev)
+# Evaluer hver koeffisientvektor i den basisen den tilhører.
 curve_M = poly.polyval(grid, xM)
 curve_C = cheb.chebval(grid, xC)
+# Gulvet 1e-18 brukes bare til log-plottet: log(0) kan ikke tegnes.
 plt.semilogy(grid, np.maximum(abs(curve_M-reference), 1e-18), label="monomial")
 plt.semilogy(grid, np.maximum(abs(curve_C-reference), 1e-18), label="Chebyshev")
 plt.xlabel("x"); plt.ylabel("absolutt kurvefeil")
@@ -580,11 +628,14 @@ $$
 ```{pyodide-python}
 #| label: project-week4-cgs-mgs
 
+# Gjenbruk M, C og b_noisy fra basisforsøket.
+# For hver basis sammenlignes CGS og MGS på nøyaktig samme problem.
 for matrix_name, matrix in [("M", M), ("C", C)]:
     for method_name, method in [
         ("klassisk GS", classical_gram_schmidt),
         ("modifisert GS", modified_gram_schmidt),
     ]:
+        # En kontrollert stopp er et resultat å forklare, ikke en kurve som skal ignoreres.
         try:
             x, Q, R = qr_solution(matrix, b_noisy, method)
             print(matrix_name, method_report(method_name, matrix, b_noisy,
@@ -623,14 +674,19 @@ og dannelsen av $A^TA$ gjør problemet numerisk mer sårbart.
 ```{pyodide-python}
 #| label: project-week4-normal-equations
 
+# Normal-likningene samler problemet i A.T @ A.
+# Undersøk hvordan dette påvirker kondisjonstall og løsning for begge basiser.
 def normal_equation_solution(A, b):
+    # Normal-likningene løser (A.T A)x=A.T b; produktet kan forsterke kondisjonsproblemer.
     return np.linalg.solve(A.T@A, A.T@b)
 
 for name, matrix in [("monomial", M), ("Chebyshev", C)]:
+    # Biblioteksløsningen brukes som sammenligningsgrunnlag på samme data.
     x_lstsq, _, _, _ = np.linalg.lstsq(matrix, b_noisy, rcond=None)
     print("\n", name)
     print("kappa(A)    =", np.linalg.cond(matrix))
     print("kappa(A^TA) =", np.linalg.cond(matrix.T@matrix))
+    # Selv en endelig løsning kan være unøyaktig; undersøk rapporten etterpå.
     try:
         x_normal = normal_equation_solution(matrix, b_noisy)
         if not np.isfinite(x_normal).all():
