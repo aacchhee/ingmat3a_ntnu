@@ -296,25 +296,70 @@ Legg til en retning som står vinkelrett på $x$, og kontroller at komponenten
 er null. Endre bare én retning om gangen. I [delen om ortogonalitet](#uke4-ortogonalitet) gir vi «vinkelrett» et
 matematisk navn og en test.
 
-### En retning må ha lengde én {#uke4-enhetsretning}
+### Hva om målepilen ikke har lengde én? {#uke4-enhetsretning}
 
-Vektorene
+Til nå har $q$ hatt lengde én. Det er derfor tallet $x^Tq$ har kunnet
+tolkes direkte som komponenten av $x$ langs $q$. Men selve regningen
+«gang sammen tilsvarende koordinater og legg sammen» kan vi også utføre
+med en lengre eller kortere pil.
 
-$$q=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix}
-\quad\text{og}\quad v=\begin{bmatrix}10\\10\end{bmatrix}$$
+Prøv først med $x=(3,2)^T$, $q=(1,0)^T$ og $v=2q=(2,0)^T$:
 
-peker samme vei, men $x^Tv$ er mye større enn $x^Tq$. Et indreprodukt med
-en vilkårlig målevektor blander retning og lengde. Derfor normaliserer vi:
+$$x^Tq=3\cdot1+2\cdot0=3,$$
+$$x^Tv=3\cdot2+2\cdot0=6=2(x^Tq).$$
+
+Begge målepiler peker mot høyre. Komponenten av $x$ mot høyre er fortsatt
+$3$, men dobling av målepilen dobler resultatet av regningen. Prøv også
+$v=q/2$: Resultatet blir $3/2$. Vi må altså skille mellom **regneregelen**
+og **tolkningen som en komponent**.
+
+For to vilkårlige vektorer i planet bruker vi den samme regneregelen:
+
+$$\boxed{x^Tv=x_1v_1+x_2v_2.}$$
+
+Dette kalles fortsatt indreproduktet, også når ingen av vektorene har
+lengde én. Hva må vi gjøre for å få komponenten langs $v$ tilbake?
+
+Når $v\ne0$, kan vi skrive $v=Lq$, der $L=\lVert v\rVert_2$ er lengden
+og $q=v/L$ har lengde én. Sett dette inn, én koordinat om gangen:
+
+$$x^Tv=x_1(Lq_1)+x_2(Lq_2)
+=L(x_1q_1+x_2q_2)=L(x^Tq).$$
+
+Dermed er
+
+$$\underbrace{x^Tv}_{\text{indreprodukt}}
+=\underbrace{\lVert v\rVert_2}_{\text{målepilens lengde}}
+\;\underbrace{x^Tq}_{\text{komponenten langs }v}.$$
+
+For å finne komponenten deler vi derfor $x^Tv$ på $\lVert v\rVert_2$.
+Når lengden allerede er én, er dette akkurat regelen fra figuren.
+
+**Ta med til neste fane:** En positiv lengdefaktor kan endre størrelsen
+på resultatet, men kan ikke gjøre et nullresultat forskjellig fra null.
+For $v\ne0$ har vi derfor
+
+$$x^Tv=0\quad\Longleftrightarrow\quad x^T\frac{v}{\lVert v\rVert_2}=0.$$
+
+Vi kan altså teste om en pil står på tvers av en annen uten først å gjøre
+målepilen til en enhetsvektor. Nullvektoren gir også indreprodukt null,
+men har ingen retning.
+
+#### Gjør målepilen til en enhetsvektor
+
+Normen ble introdusert i uke 3 som avstanden til nullvektoren. Her bruker vi
+den til å lage en vektor med lengde én:
 
 $$\lVert v\rVert_2=\sqrt{v^Tv},\qquad q=\frac{v}{\lVert v\rVert_2}.$$
 
-Normen ble introdusert i uke 3 som avstanden til nullvektoren. Her bruker vi
-den til å lage en vektor med lengde én.
+For eksempel gir $v=(10,10)^T$ lengden $\sqrt{200}=10\sqrt2$, slik at
+
+$$q=\frac1{10\sqrt2}\begin{bmatrix}10\\10\end{bmatrix}
+=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix}.$$
 
 En vektor med lengde én kalles en **enhetsvektor**. Når vi bruker den for å
-angi en retning, kaller vi den også en enhetsretning. Dermed er ordene to
-sider av samme objekt: «enhetsvektor» beskriver lengden, mens
-«enhetsretning» framhever rollen som målepil.
+angi en retning, kaller vi den også en enhetsretning. Å dele på lengden
+kalles å **normalisere**. Hva om lengden er null?
 
 #### Et første sammenbrudd
 
@@ -348,7 +393,8 @@ Prøv nå på papir med $v=(-2,3)^T$:
 $$x^Tv=3(-2)+2(3)=-6+6=0.$$
 
 Bidragene opphever hverandre. Del $v$ på $\sqrt{13}$ for å få lengde én;
-komponenten forblir null. Vi gir nå denne observerte egenskapen et navn.
+indreproduktet forblir null, slik skaleringen i forrige fane forklarte.
+Vi gir nå denne observerte egenskapen et navn.
 
 To vektorer $x$ og $q$ er **ortogonale** når
 
@@ -370,19 +416,90 @@ seg selv som $1$, men den andre som $0$. Dermed måler de vannrett og loddrett
 bevegelse hver for seg. Vi kaller en slik samling **ortonormal**: pilene har
 lengde én og er parvis ortogonale.
 
-Med navnene $q_1,\ldots,q_k$ skrives de to egenskapene slik:
+#### Fra enkeltpiler til en tabell med alle testene
 
-$$q_i^Tq_j=\begin{cases}1,&i=j,\\0,&i\ne j.\end{cases}$$
+La oss først pakke de to pilene vi nettopp prøvde, inn i en matrise.
+Vi setter dem **ved siden av hverandre som kolonner**, uten å endre dem:
 
-Hvis vi samler vektorene som kolonner i $Q=[q_1\ \cdots\ q_k]$, samles alle
-disse testene i
+$$q_1=\begin{bmatrix}1\\0\end{bmatrix},\qquad
+q_2=\begin{bmatrix}0\\1\end{bmatrix}
+\quad\longrightarrow\quad
+Q=\begin{bmatrix}|&|\\q_1&q_2\\|&|\end{bmatrix}
+=\begin{bmatrix}1&0\\0&1\end{bmatrix}.$$
+
+Når vi transponerer, blir de samme kolonnene til rader:
+
+$$Q^T=\begin{bmatrix}\text{— }q_1^T\text{ —}\\
+\text{— }q_2^T\text{ —}\end{bmatrix}
+=\begin{bmatrix}1&0\\0&1\end{bmatrix}.$$
+
+Matriseproduktet tar én rad fra venstre og én kolonne fra høyre.
+Dermed er oppføringen i rad $i$, kolonne $j$ nettopp $q_i^Tq_j$.
+Her kan vi skrive ut alle fire regnestykkene:
+
+$$Q^TQ
+=\begin{bmatrix}
+q_1^Tq_1&q_1^Tq_2\\
+q_2^Tq_1&q_2^Tq_2
+\end{bmatrix}
+=\begin{bmatrix}
+1\cdot1+0\cdot0&1\cdot0+0\cdot1\\
+0\cdot1+1\cdot0&0\cdot0+1\cdot1
+\end{bmatrix}
+=\begin{bmatrix}1&0\\0&1\end{bmatrix}.$$
+
+På diagonalen måler hver pil seg selv: $q_i^Tq_i=\lVert q_i\rVert_2^2=1$.
+Utenfor diagonalen måler vi to forskjellige piler: De står vinkelrett på
+hverandre, så resultatet er $0$.
+
+#### Samme pakking med flere piler
+
+Hvis vi har $k$ ortonormale piler i $\mathbb R^m$, setter vi igjen pilene
+som kolonner og de transponerte pilene som rader:
+
+$$Q=\begin{bmatrix}|&|&&|\\q_1&q_2&\cdots&q_k\\|&|&&|\end{bmatrix}
+\quad(m\times k),\qquad
+Q^T=\begin{bmatrix}q_1^T\\q_2^T\\\vdots\\q_k^T\end{bmatrix}
+\quad(k\times m).$$
+
+Hele tabellen med indreprodukter blir da
+
+$$Q^TQ=
+\begin{bmatrix}
+q_1^Tq_1&q_1^Tq_2&\cdots&q_1^Tq_k\\
+q_2^Tq_1&q_2^Tq_2&\cdots&q_2^Tq_k\\
+\vdots&\vdots&\ddots&\vdots\\
+q_k^Tq_1&q_k^Tq_2&\cdots&q_k^Tq_k
+\end{bmatrix}.$$
+
+Først bruker vi at ulike piler er ortogonale. Så bruker vi at hver pil
+har lengde én:
+
+$$Q^TQ=
+\begin{bmatrix}
+\lVert q_1\rVert_2^2&0&\cdots&0\\
+0&\lVert q_2\rVert_2^2&\cdots&0\\
+\vdots&\vdots&\ddots&\vdots\\
+0&0&\cdots&\lVert q_k\rVert_2^2
+\end{bmatrix}
+=
+\begin{bmatrix}
+1&0&\cdots&0\\
+0&1&\cdots&0\\
+\vdots&\vdots&\ddots&\vdots\\
+0&0&\cdots&1
+\end{bmatrix}.$$
+
+Matrisen helt til høyre har et navn: **identitetsmatrisen** $I_k$.
+Den har $k$ rader og $k$ kolonner, ettall på diagonalen og nuller ellers.
+Nå kan vi forkorte hele kjeden til
 
 $$\boxed{Q^TQ=I_k.}$$
 
-Her er $I_k$ **identitetsmatrisen** av størrelse $k\times k$: Den har $1$ på
-diagonalen og $0$ ellers. Diagonalen kontrollerer lengdene til kolonnene,
-mens oppføringene utenfor diagonalen kontrollerer at ulike kolonner er
-ortogonale.
+Dette er de samme enkelttestene pakket sammen: Diagonalen kontrollerer
+lengdene, og resten kontrollerer ortogonaliteten. Selve $Q$ trenger
+ikke være en identitetsmatrise; det er **tabellen over indreproduktene**
+som blir $I_k$ når kolonnene er ortonormale.
 
 ### Fra retningsmåler til mønsterdetektor {#uke4-monster}
 
