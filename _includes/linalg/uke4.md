@@ -382,6 +382,12 @@ lengden før den normaliserer.
 
 ## 4.2 Ortogonalitet og projeksjon
 
+I 4.1 fant vi hvor mye av en pil som går i en valgt retning. Nå følger vi
+ett spørsmål videre: **Kan vi skille ut én del av et objekt uten å blande
+inn de andre delene?** Først ser vi hva null komponent betyr. Deretter
+prøver vi samme idé på bilder, og til slutt bygger vi opp den delen vi
+har målt og undersøker hva som blir igjen.
+
 ### Null komponent betyr ortogonalitet {#uke4-ortogonalitet}
 
 Trykk «vinkelrett» i [retningsmåleren](#uke4-retning). Pilen $x=(3,2)^T$ er fortsatt like
@@ -415,6 +421,10 @@ Prøv to målepiler: $(1,0)^T$ og $(0,1)^T$. Begge har lengde én. Hver leser
 seg selv som $1$, men den andre som $0$. Dermed måler de vannrett og loddrett
 bevegelse hver for seg. Vi kaller en slik samling **ortonormal**: pilene har
 lengde én og er parvis ortogonale.
+
+Vi trenger snart flere måleretninger samtidig. Da vil vi kontrollere både
+at hver pil har lengde én, og at ulike piler ikke måler hverandres bidrag.
+En tabell lar oss holde orden på alle disse kontrollene.
 
 #### Fra enkeltpiler til en tabell med alle testene
 
@@ -562,7 +572,36 @@ $$\sqrt{(1/2)^2+(1/2)^2+(1/2)^2+(1/2)^2}=\sqrt1=1.$$
 Det er derfor vi valgte størrelsen $1/2$: Mønstrene kan brukes som
 enhetsretninger, akkurat som målepilen tidligere.
 
-#### Prøv én mønstermåling
+#### Hvorfor kan et mønster være en retning?
+
+For en vanlig pil sier «samme retning» at vi kan få den ene ved å gange
+den andre med et positivt tall. Prøv den samme handlingen på H-bildet:
+Når vi dobler alle fire pikselverdiene, beholder vi kontrastmønsteret,
+men gjør kontrasten dobbelt så sterk. Vi har beveget oss lenger i samme
+**mønsterretning**. Et negativt tall bytter om lyst og mørkt.
+
+Alle bildevektorer av formen $\vec y=t\vec h$, der $t$ er et tall, ligger
+derfor langs én retning i rommet av bildevektorer. Dette er ikke en retning
+vi beveger oss i på skjermen. Det er en bestemt måte å **endre alle fire
+pikselverdiene sammen** på.
+
+I planet har pilen to koordinater. Her har bildevektoren fire koordinater,
+én per pikselplass. Vi kan fortsatt gange med tall og legge sammen
+koordinat for koordinat. Det er disse handlingene som gjør det mulig å
+bruke samme vektoridé på begge objektene. Vi trenger ikke tegne fire
+romlige akser for å undersøke regningen.
+
+#### Et kontrollforsøk: finner vi venstre–høyre-kontrasten?
+
+**Gitt:** Vi kjenner enhetsmønsteret $\vec h$ og tre enkle bilder.
+**Målet:** Undersøke om indreproduktet gir null for et jevnt bilde,
+positivt resultat for H-kontrast og negativt resultat når kontrasten snus.
+Dette er et gjennomregnet eksempel.
+
+![Tre kontrollbilder og blandingen som brukes videre. Pikselverdier og H-måling vises under samme gråskala.](/images/week4-pattern-experiment.svg){width=800}
+
+Vi begynner med de tre kontrollbildene til venstre; blandingen til høyre
+kommer i neste trinn.
 
 Et jevnt bilde har bildevektor $\vec y=(1,1,1,1)^T$. Bruk H-mønsteret:
 Gang sammen verdiene på samme pikselplass og legg sammen.
@@ -590,9 +629,16 @@ Generelt bruker vi for vektorer med $n$ komponenter
 
 $$\boxed{\vec y^{\,T}\vec z=y_1z_1+\cdots+y_nz_n.}$$
 
-#### Bland mønstrene og finn mengdene
+#### Neste forsøk: finner vi igjen ingrediensene i en blanding?
 
-Bygg nå én bildevektor av de kjente mønstrene:
+Kontrollforsøket viste hva H-målingen gjør med rene bilder. Nå vil vi vite
+om den fortsatt finner riktig mengde når flere mønstre er til stede.
+
+**Gitt:** De fire mønstervektorene og oppskriften nedenfor.
+**Målet:** Finne igjen koeffisientene fra pikselverdiene alene. Vi kjenner
+oppskriften på forhånd slik at vi kan kontrollere svaret.
+
+Bildet til høyre i figuren er denne blandingen:
 
 $$\vec x=
 \underbrace{2}_{\text{tall}}\underbrace{\vec m}_{\text{vektor}}
@@ -612,10 +658,55 @@ H-målingen blir
 $$\vec h^{\,T}\vec x
 =\tfrac12(\tfrac34-\tfrac74+\tfrac14-\tfrac54)=-1.$$
 
-Regn også ut $\vec m^{\,T}\vec x=2$, $\vec v^{\,T}\vec x=1/2$ og
-$\vec d^{\,T}\vec x=0$. Dette er fire **tall**, ett for hvert mønster.
+Vi regner de tre andre målingene på samme måte:
 
-Først nå pakker vi de fire mønstervektorene som kolonner i én matrise:
+$\vec m^{\,T}\vec x
+=\tfrac12(\tfrac34+\tfrac74+\tfrac14+\tfrac54)
+=\tfrac12\cdot4=2,$
+
+$\vec v^{\,T}\vec x
+=\tfrac12(\tfrac34+\tfrac74-\tfrac14-\tfrac54)
+=\tfrac12\cdot1=\tfrac12,$
+
+$\vec d^{\,T}\vec x
+=\tfrac12(\tfrac34-\tfrac74-\tfrac14+\tfrac54)=0.$
+
+Vi fikk tilbake $2,-1,1/2,0$: akkurat mengdene i oppskriften. Det siste
+nullresultatet sier at blandingen ikke inneholder noe D-bidrag i denne
+mønsterbasisen.
+
+#### Hvorfor påvirkes ikke H-målingen av de andre ingrediensene?
+
+Se først på to konkrete kontroller:
+
+$\vec h^{\,T}\vec m=\tfrac14(1-1+1-1)=0,\qquad
+\vec h^{\,T}\vec v=\tfrac14(1-1-1+1)=0.$
+
+H-målingen gir null på både jevnt nivå og oppe–nede-kontrast.
+På sitt eget mønster gir den
+$\vec h^{\,T}\vec h=\tfrac14(1+1+1+1)=1$.
+Når vi setter hele oppskriften inn, ser vi derfor hvorfor svaret blir $-1$:
+
+$\vec h^{\,T}\vec x
+=2(\vec h^{\,T}\vec m)-(\vec h^{\,T}\vec h)
++\tfrac12(\vec h^{\,T}\vec v)
+=2\cdot0-1+\tfrac12\cdot0=-1.$
+
+De andre mønsterparene gir også null. Mønstervektorene er altså
+**ortonormale**, akkurat som målepilene tidligere: lengde én hver for seg,
+og indreprodukt null mellom ulike mønstre. Det er derfor målingene gir
+byggekoeffisientene direkte. Med vilkårlige mønstre ville dette ikke vært
+garantert.
+
+#### Hvorfor samler vi mønstervektorene i en matrise?
+
+Vi har nå gjort fire separate beregninger på det samme bildet. For hvert
+nytt bilde ønsker vi å gjenta nettopp disse fire beregningene, i fast
+rekkefølge: M, H, V, D. Matrisen er en kort måte å skrive hele denne
+oppskriften på.
+
+Vi setter derfor de fire kjente mønstervektorene ved siden av hverandre
+som kolonner i én matrise:
 
 $$Q_{\text{pattern}}=
 \begin{bmatrix}|&|&|&|\\
@@ -639,8 +730,9 @@ I Python skriver vi ikke pil over variabelnavn: `h` svarer til $\vec h$.
 radene i den avtalte rekkefølgen. Omvendt legger `x.reshape(2, 2)` verdiene
 tilbake på de fire pikselplassene. Dette endrer bare formen på lagringen.
 
-Endre bare koeffisienten foran H i koden og forutsi hvilken søyle som flytter
-seg. Kontroller også at de andre mønstermålingene holder seg uendret.
+Koden nedenfor gjentar hele eksemplet og viser bildet sammen med de fire
+målte mengdene. Som neste eksperiment kan du endre bare koeffisienten foran
+H: Forklaringen over forutsier at bare H-søylen skal flytte seg.
 
 ```{pyodide-python}
 #| label: week4-pattern-detectors
@@ -688,18 +780,16 @@ koeffisientene, men de forteller fortsatt hvilke mønstre som dominerer.
 
 ### Mål, bygg opp og trekk fra {#uke4-projeksjon}
 
+Vi har brukt ett tall til å finne mengden av et mønster. Nå tar vi neste
+steg: **Kan vi bygge akkurat denne delen, fjerne den og kontrollere at
+ingenting av den valgte retningen er igjen?** Vi ser handlingen med piler
+i planet først. Her bruker vi igjen navnene $x,q,p,r$ uten pil over;
+de betegner vektorer, mens $c$ er ett tall.
+
 Start med $x=(3,2)^T$ og målepilen $q=(1,0)^T$. Den leser $3$.
 Bygg denne delen: $3q=(3,0)^T$. Trekk den fra: resten er $(0,2)^T$.
 Dra så $q$ i figuren. Følg den grå delen vi bygger og den røde resten.
-Resten står på tvers av målepilen. Nå skriver vi handlingene med symboler.
-
-La $q$ være en enhetsvektor. Vi kan dele en vektor $x$ i to deler:
-
-$$c=q^Tx,\qquad p=cq,\qquad r=x-p.$$
-
-- $c$ måler hvor mye av $x$ som går i retning $q$.
-- $p=(q^Tx)q$ bygger opp denne delen som en vektor.
-- $r=x-p$ er det som er igjen.
+Se om den røde resten alltid står på tvers av målepilen.
 
 Dra både $x$ og $q$. Den grå pilen viser $p$, og den røde pilen viser resten
 $r$. Legg merke til komponenten $q^Tr$.
@@ -730,7 +820,16 @@ board.create('text', [-5.1,4.9,function(){
 }], {fontSize:17});
 ```
 
-Regn ut kontrollen på papir:
+La $q$ være en enhetsvektor. Vi kan dele en vektor $x$ i to deler:
+
+$c=q^Tx,\qquad p=cq,\qquad r=x-p.$
+
+- $c$ måler hvor mye av $x$ som går i retning $q$.
+- $p=(q^Tx)q$ bygger opp denne delen som en vektor.
+- $r=x-p$ er det som er igjen.
+
+Figuren viser at resten står vinkelrett på målepilen. Vi forklarer det
+ved å regne ut komponenten langs $q$:
 
 $$q^Tr=q^T\bigl(x-(q^Tx)q\bigr)=q^Tx-(q^Tx)q^Tq=0,$$
 
@@ -775,6 +874,12 @@ $$\operatorname{proj}_a(x)=\frac{a^Tx}{a^Ta}a.$$
 
 Når $a$ er en enhetsvektor, er $a^Ta=1$.
 :::
+
+Nå har vi en måte å fjerne en kjent retning på. I neste fane bruker vi
+nettopp dette til å lage nye ortogonale retninger: Ta en ny pil, fjern
+delen langs de gamle pilene, og normaliser det som står igjen. Dette blir
+Gram–Schmidt.
+
 
 ## 4.3 Gram–Schmidt og QR
 
