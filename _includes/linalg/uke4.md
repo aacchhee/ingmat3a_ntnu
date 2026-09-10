@@ -1051,30 +1051,148 @@ $$\boxed{p=(q^Tx)q}$$
 kalles den **ortogonale projeksjonen** av $x$ på retningen $q$. Residualen
 $r=x-p$ er ortogonal på $q$.
 
-#### Flere piler før vi pakker dem i en matrise
+#### Projeksjon på to ortonormale retninger
 
-La $x=(3,2,4)^T$, $q_1=(1,0,0)^T$ og $q_2=(0,1,0)^T$.
-Mål separat: $c_1=q_1^Tx=3$ og $c_2=q_2^Tx=2$.
-Bygg så delene og legg sammen:
+Vi vil finne den delen av en vektor som kan uttrykkes ved hjelp av
+**to** gitte retninger. I dette eksemplet er
 
-$$p=3q_1+2q_2=(3,2,0)^T,\qquad r=x-p=(0,0,4)^T.$$
+$$x=\begin{bmatrix}3\\2\\4\end{bmatrix},\qquad
+q_1=\begin{bmatrix}1\\0\\0\end{bmatrix},\qquad
+q_2=\begin{bmatrix}0\\1\\0\end{bmatrix}.$$
 
-Begge målerne gir null på resten. Ingen av de valgte pilene kan bygge den
-tredje komponenten. Med flere ortonormale piler gjør vi det samme:
-$c_i=q_i^Tx$, så $p=c_1q_1+\cdots+c_kq_k$.
+Begge retningsvektorene har lengde én, og
+$q_1^Tq_2=1\cdot0+0\cdot1+0\cdot0=0$.
+De er derfor ortonormale. Alle lineærkombinasjoner av dem har tredje
+koordinat null. Vektoren $x$ har tredje koordinat $4$, så hele $x$ kan
+ikke uttrykkes som en slik kombinasjon.
 
-Vi pakker nå pilene som kolonner og målingene som en liste:
+**Beregn komponentene.** Indreproduktet med hver enhetsvektor gir ett tall:
 
-$$Q=[q_1\ q_2]=\begin{bmatrix}1&0\\0&1\\0&0\end{bmatrix},
-\qquad c=\begin{bmatrix}3\\2\end{bmatrix}.$$
+$$c_1=q_1^Tx=1\cdot3+0\cdot2+0\cdot4=3,$$
+$$c_2=q_2^Tx=0\cdot3+1\cdot2+0\cdot4=2.$$
 
-$Q^Tx$ betyr «gjør begge målingene». $Qc$ betyr «bygg $c_1q_1+c_2q_2$».
-Matrisespråket forkorter altså handlinger vi allerede har utført.
+**Beregn vektorbidragene.** Hvert tall multipliseres med den tilhørende
+enhetsvektoren:
 
-For en matrise $Q=[q_1\ \cdots\ q_k]$ med ortonormale kolonner blir alle
-målingene og den samlede projeksjonen
+$$c_1q_1=3\begin{bmatrix}1\\0\\0\end{bmatrix}
+=\begin{bmatrix}3\\0\\0\end{bmatrix},\qquad
+c_2q_2=2\begin{bmatrix}0\\1\\0\end{bmatrix}
+=\begin{bmatrix}0\\2\\0\end{bmatrix}.$$
 
-$$c=Q^Tx,\qquad p=Qc=QQ^Tx,\qquad Q^T(x-p)=0.$$
+Summen er vektoren $p$. Differansen $x-p$ er resten $r$:
+
+$$p=c_1q_1+c_2q_2
+=\begin{bmatrix}3\\0\\0\end{bmatrix}
++\begin{bmatrix}0\\2\\0\end{bmatrix}
+=\begin{bmatrix}3\\2\\0\end{bmatrix},$$
+
+$$r=x-p
+=\begin{bmatrix}3\\2\\4\end{bmatrix}
+-\begin{bmatrix}3\\2\\0\end{bmatrix}
+=\begin{bmatrix}0\\0\\4\end{bmatrix}.$$
+
+**Kontroller resten.** Vi beregner begge indreproduktene:
+
+$$q_1^Tr=1\cdot0+0\cdot0+0\cdot4=0,$$
+$$q_2^Tr=0\cdot0+1\cdot0+0\cdot4=0.$$
+
+Resten er ortogonal på begge retningene. Vektoren $p$ er dermed den
+ortogonale projeksjonen av $x$ på planet som $q_1$ og $q_2$ spenner ut.
+
+#### Samle komponentberegningene i ett matriseprodukt
+
+Vi har utført to indreprodukter på samme vektor. For å skrive begge
+beregningene samlet setter vi retningsvektorene som kolonner i $Q$.
+Vi beholder fargene fra $Q^TQ$: **blått for kolonnene i $Q$** og
+**oransje for radene i $Q^T$**.
+
+$$\textcolor{#1565c0}{Q}=\textcolor{#1565c0}{\begin{bmatrix}|&|\\q_1&q_2\\|&|\end{bmatrix}}
+=\textcolor{#1565c0}{\begin{bmatrix}1&0\\0&1\\0&0\end{bmatrix}},$$
+$$\textcolor{#b45309}{Q^T}=\textcolor{#b45309}{\begin{bmatrix}\text{— }q_1^T\text{ —}\\\text{— }q_2^T\text{ —}\end{bmatrix}}
+=\textcolor{#b45309}{\begin{bmatrix}1&0&0\\0&1&0\end{bmatrix}}.$$
+
+Samle tallene $c_1$ og $c_2$ i en **koeffisientvektor** $c$.
+Vektoren $c$ har to koordinater; $x$ har tre. Radene i $Q^T$ gir
+akkurat de to indreproduktene vi allerede har beregnet:
+
+$$\begin{aligned}
+c=\textcolor{#b45309}{Q^T}x
+&=\textcolor{#b45309}{\begin{bmatrix}\text{— }q_1^T\text{ —}\\\text{— }q_2^T\text{ —}\end{bmatrix}}\begin{bmatrix}3\\2\\4\end{bmatrix}\\
+&=\begin{bmatrix}\textcolor{#b45309}{q_1^T}x\\\textcolor{#b45309}{q_2^T}x\end{bmatrix}\\
+&=\begin{bmatrix}
+\textcolor{#b45309}{1}\cdot3+\textcolor{#b45309}{0}\cdot2+\textcolor{#b45309}{0}\cdot4\\
+\textcolor{#b45309}{0}\cdot3+\textcolor{#b45309}{1}\cdot2+\textcolor{#b45309}{0}\cdot4
+\end{bmatrix}\\
+&=\begin{bmatrix}3\\2\end{bmatrix}.
+\end{aligned}$$
+
+#### Fra koeffisientvektoren tilbake til en vektor i planet
+
+Nå bruker vi kolonnene i $Q$. Å multiplisere $Q$ med $c$ betyr å
+multiplisere første kolonne med $c_1$, andre kolonne med $c_2$,
+og legge sammen de to vektorene:
+
+$$\begin{aligned}
+p=\textcolor{#1565c0}{Q}c
+&=\textcolor{#1565c0}{\begin{bmatrix}|&|\\q_1&q_2\\|&|\end{bmatrix}}\begin{bmatrix}c_1\\c_2\end{bmatrix}\\
+&=c_1\textcolor{#1565c0}{q_1}+c_2\textcolor{#1565c0}{q_2}\\
+&=3\textcolor{#1565c0}{\begin{bmatrix}1\\0\\0\end{bmatrix}}
+ +2\textcolor{#1565c0}{\begin{bmatrix}0\\1\\0\end{bmatrix}}\\
+&=\begin{bmatrix}3\\0\\0\end{bmatrix}
+ +\begin{bmatrix}0\\2\\0\end{bmatrix}
+=\begin{bmatrix}3\\2\\0\end{bmatrix}.
+\end{aligned}$$
+
+Vi får samme $p$ som før. Produktet $Q^Tx$ beregner koeffisientene;
+produktet $Qc$ beregner vektoren med disse koeffisientene.
+Siden $c=Q^Tx$, kan vi sette det første uttrykket inn i det andre:
+
+$$p=\textcolor{#1565c0}{Q}c
+=\textcolor{#1565c0}{Q}\underbrace{(\textcolor{#b45309}{Q^T}x)}_{c}
+=(\textcolor{#1565c0}{Q}\textcolor{#b45309}{Q^T})x.$$
+
+Vi utfører altså to operasjoner i rekkefølge. $Q^T$ går fra tre
+koordinater til to koeffisienter; $Q$ går fra to koeffisienter til tre
+koordinater. Matrisen $QQ^T$ har størrelse $3\times3$ i dette eksemplet.
+Den er ikke $Q^TQ$, som har størrelse $2\times2$.
+
+#### Den samme beregningen med flere ortonormale retninger
+
+La nå $q_1,\ldots,q_k$ være ortonormale vektorer i $\mathbb R^m$.
+Vi beregner først de $k$ tallene $c_i=q_i^Tx$ og deretter vektoren
+$p=c_1q_1+\cdots+c_kq_k$. Med kolonnene samlet i $Q$ blir dette
+
+$$c=\textcolor{#b45309}{Q^T}x
+=\textcolor{#b45309}{\begin{bmatrix}\text{— }q_1^T\text{ —}\\\vdots\\\text{— }q_k^T\text{ —}\end{bmatrix}}x
+=\begin{bmatrix}q_1^Tx\\\vdots\\q_k^Tx\end{bmatrix},$$
+
+$$p=\textcolor{#1565c0}{Q}c
+=\textcolor{#1565c0}{\begin{bmatrix}|&&|\\q_1&\cdots&q_k\\|&&|\end{bmatrix}}
+\begin{bmatrix}c_1\\\vdots\\c_k\end{bmatrix}
+=c_1\textcolor{#1565c0}{q_1}+\cdots+c_k\textcolor{#1565c0}{q_k}.$$
+
+Hvorfor blir resten $r=x-p$ ortogonal på alle de valgte retningene?
+Vi bruker $\sum_{i=1}^k$ som kort skrivemåte for å legge sammen leddene
+med $i=1,2,\ldots,k$. For en bestemt $q_j$ får vi
+
+$$\begin{aligned}
+q_j^Tr
+&=q_j^Tx-\sum_{i=1}^k c_i(q_j^Tq_i)\\
+&=c_j-c_j\\
+&=0.
+\end{aligned}$$
+
+I summen er $q_j^Tq_i=0$ når $i\ne j$, og $q_j^Tq_j=1$.
+Bare leddet $c_j$ står derfor igjen. Når vi samler alle disse
+nullresultatene som en kolonne, får vi
+
+$$\textcolor{#b45309}{Q^T}r
+=\begin{bmatrix}q_1^Tr\\\vdots\\q_k^Tr\end{bmatrix}
+=\begin{bmatrix}0\\\vdots\\0\end{bmatrix}.$$
+
+Vi kan nå oppsummere beregningen med den korte matrisenotasjonen:
+
+$$\boxed{c=Q^Tx,\qquad p=Q(Q^Tx),\qquad Q^T(x-p)=0.}$$
 
 ::: {.callout-note collapse="true"}
 #### Hvis målevektoren ikke har lengde én
