@@ -540,29 +540,46 @@ hverandre, så resultatet er $0$.
 #### Samme pakking med flere piler
 
 Hvis vi har $k$ ortonormale piler i $\mathbb R^m$, setter vi igjen pilene
-som kolonner og de transponerte pilene som rader:
+som kolonner og de transponerte pilene som rader. Blått viser kolonnene
+fra $Q$; oransje viser radene fra $Q^T$:
 
-$$Q=\begin{bmatrix}|&|&&|\\q_1&q_2&\cdots&q_k\\|&|&&|\end{bmatrix}
-\quad(m\times k),\qquad
-Q^T=\begin{bmatrix}q_1^T\\q_2^T\\\vdots\\q_k^T\end{bmatrix}
+$$\textcolor{#1565c0}{Q}=\textcolor{#1565c0}{\begin{bmatrix}|&|&&|\\q_1&q_2&\cdots&q_k\\|&|&&|\end{bmatrix}}
+\quad(m\times k),$$
+
+$$\textcolor{#b45309}{Q^T}=\textcolor{#b45309}{\begin{bmatrix}
+\text{— }q_1^T\text{ —}\\
+\text{— }q_2^T\text{ —}\\
+\vdots\\
+\text{— }q_k^T\text{ —}
+\end{bmatrix}}
 \quad(k\times m).$$
 
-Også her setter vi radstabelen og kolonnestabelen inn før vi regner:
+De vannrette strekene framhever at hvert $q_i^T$ er en hel rad.
+De loddrette strekene framhever at hvert $q_j$ er en hel kolonne.
 
-$$\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}=
-\textcolor{#b45309}{\begin{bmatrix}q_1^T\\q_2^T\\\vdots\\q_k^T\end{bmatrix}}
-\textcolor{#1565c0}{\begin{bmatrix}|&|&&|\\q_1&q_2&\cdots&q_k\\|&|&&|\end{bmatrix}}.$$
+Nå følger vi hele produktet i én kjede. Rad $i$ fra venstre faktor
+møter kolonne $j$ fra høyre faktor:
 
-Rad $i$ møter kolonne $j$ og gir $\textcolor{#b45309}{q_i^T}\textcolor{#1565c0}{q_j}$.
-Hele tabellen med indreprodukter blir da
-
-$$\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}=
-\begin{bmatrix}
+$$\begin{aligned}
+\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}
+&=\underbrace{\textcolor{#b45309}{\begin{bmatrix}
+\text{— }q_1^T\text{ —}\\
+\text{— }q_2^T\text{ —}\\
+\vdots\\
+\text{— }q_k^T\text{ —}
+\end{bmatrix}}}_{\text{rader fra }Q^T}
+\underbrace{\textcolor{#1565c0}{\begin{bmatrix}|&|&&|\\q_1&q_2&\cdots&q_k\\|&|&&|\end{bmatrix}}}_{\text{kolonner fra }Q}\\[8pt]
+&=\begin{bmatrix}
 \textcolor{#b45309}{q_1^T}\textcolor{#1565c0}{q_1}&\textcolor{#b45309}{q_1^T}\textcolor{#1565c0}{q_2}&\cdots&\textcolor{#b45309}{q_1^T}\textcolor{#1565c0}{q_k}\\
 \textcolor{#b45309}{q_2^T}\textcolor{#1565c0}{q_1}&\textcolor{#b45309}{q_2^T}\textcolor{#1565c0}{q_2}&\cdots&\textcolor{#b45309}{q_2^T}\textcolor{#1565c0}{q_k}\\
 \vdots&\vdots&\ddots&\vdots\\
 \textcolor{#b45309}{q_k^T}\textcolor{#1565c0}{q_1}&\textcolor{#b45309}{q_k^T}\textcolor{#1565c0}{q_2}&\cdots&\textcolor{#b45309}{q_k^T}\textcolor{#1565c0}{q_k}
-\end{bmatrix}.$$
+\end{bmatrix}.
+\end{aligned}$$
+
+Oppføringen i rad $i$, kolonne $j$ er altså
+$\textcolor{#b45309}{q_i^T}\textcolor{#1565c0}{q_j}$. Hver oppføring er ett tall, selv om faktorene
+som gir tallet, er en hel rad og en hel kolonne.
 
 Først bruker vi at ulike piler er ortogonale. Så bruker vi at hver pil
 har lengde én:
