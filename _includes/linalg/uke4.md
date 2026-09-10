@@ -1731,7 +1731,12 @@ $$v_2=a_2-r_{12}q_1
 $$\lVert v_2\rVert_2=e\sqrt{\frac{2+e^2}{1+e^2}},\qquad
 \color{#238443}{q_2=\frac{(e,-1,1+e^2,0)^T}{\sqrt{(1+e^2)(2+e^2)}}}.$$
 
-Kontrollen blir null fordi telleren i $q_1^Tq_2$ er $e-e=0$.
+Kontrollen er
+
+$$q_1^Tq_2
+=\frac{1\cdot e+e\cdot(-1)+0\cdot(1+e^2)+0\cdot0}
+{\sqrt{1+e^2}\sqrt{(1+e^2)(2+e^2)}}
+=\frac{e-e}{\sqrt{1+e^2}\sqrt{(1+e^2)(2+e^2)}}=0.$$
 Legg spesielt merke til den lille første komponenten i $v_2$, omtrent
 $e^2=10^{-16}$. Den er nødvendig for denne kanselleringen.
 
@@ -1747,8 +1752,32 @@ $$v_3=a_3-r_{13}q_1-r_{23}q_2
 $$\lVert v_3\rVert_2=e\sqrt{\frac{3+e^2}{2+e^2}},\qquad
 \color{#c62828}{q_3=\frac{(e,-1,-1,2+e^2)^T}{\sqrt{(2+e^2)(3+e^2)}}}.$$
 
-Telleren i $q_1^Tq_3$ er $e-e=0$. Telleren i $q_2^Tq_3$ er
-$e^2+1-(1+e^2)=0$. Alle tre er altså parvis ortogonale i eksakt regning.
+Vi kontrollerer ortogonaliteten ved å sette inn vektorene:
+
+$$\begin{aligned}
+q_1^Tq_3
+&=\frac{
+\textcolor{#1565c0}{\begin{bmatrix}1&e&0&0\end{bmatrix}}
+\textcolor{#c62828}{\begin{bmatrix}e\\-1\\-1\\2+e^2\end{bmatrix}}
+}{\sqrt{1+e^2}\sqrt{(2+e^2)(3+e^2)}}\\
+&=\frac{1\cdot e+e\cdot(-1)+0\cdot(-1)+0\cdot(2+e^2)}
+{\sqrt{1+e^2}\sqrt{(2+e^2)(3+e^2)}}\\
+&=\frac{e-e}{\sqrt{1+e^2}\sqrt{(2+e^2)(3+e^2)}}=0.
+\end{aligned}$$
+
+Tilsvarende får vi for de to siste vektorene
+
+$$\begin{aligned}
+q_2^Tq_3
+&=\frac{
+\textcolor{#238443}{\begin{bmatrix}e&-1&1+e^2&0\end{bmatrix}}
+\textcolor{#c62828}{\begin{bmatrix}e\\-1\\-1\\2+e^2\end{bmatrix}}
+}{\sqrt{(1+e^2)(2+e^2)}\sqrt{(2+e^2)(3+e^2)}}\\
+&=\frac{e^2+1-(1+e^2)+0}
+{\sqrt{(1+e^2)(2+e^2)}\sqrt{(2+e^2)(3+e^2)}}=0.
+\end{aligned}$$
+
+Alle tre er altså parvis ortogonale i eksakt regning.
 
 ::: {.callout-note}
 #### Tilbake til prosjektet i uke 1
