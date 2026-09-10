@@ -1,6 +1,6 @@
 ::: {.panel-tabset}
 
-## Oversikt
+## 4.0 Oversikt
 
 ### Ukens spørsmål
 
@@ -84,9 +84,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 ```
 
-## Retning og indreprodukt
+## 4.1 Retning og indreprodukt
 
-### 4.1 Hvor mye går vi i en valgt retning? {#uke4-retning}
+### Hvor mye går vi i en valgt retning? {#uke4-retning}
 
 Vi starter med forskyvningen
 
@@ -163,7 +163,7 @@ Prøv dette før du leser videre:
 4. Finn en retning som gir avlesning $0$ uten at $x$ er null.
 5. Snu $q$ motsatt vei. Hva skjer med fortegnet?
 
-### 4.2 Finn regneregelen {#uke4-regneregel}
+### Finn regneregelen {#uke4-regneregel}
 
 Skriv enhetsretningen som vektoren
 
@@ -175,7 +175,7 @@ $\lVert q\rVert_2=\sqrt{q_1^2+q_2^2}=1$.
 
 #### Hvorfor blir dette regneregelen?
 
-Se på den stiplede linjen i 4.1: Fra endepunktet går vi vinkelrett inn til
+Se på den stiplede linjen i [retningsmåleren](#uke4-retning): Fra endepunktet går vi vinkelrett inn til
 den blå tallinjen. Vi kan dele turen $(3,2)^T$ i tre skritt mot høyre og to
 opp. Hvor mye bidrar hver etappe langs den blå linjen?
 
@@ -234,10 +234,10 @@ for name, q in directions.items():
 ```
 
 Legg til en retning som står vinkelrett på $x$, og kontroller at avlesningen
-er null. Endre bare én retning om gangen. I del 4.4 gir vi «vinkelrett» et
+er null. Endre bare én retning om gangen. I [delen om ortogonalitet](#uke4-ortogonalitet) gir vi «vinkelrett» et
 matematisk navn og en test.
 
-### 4.3 En retning må ha lengde én {#uke4-enhetsretning}
+### En retning må ha lengde én {#uke4-enhetsretning}
 
 Vektorene
 
@@ -276,11 +276,11 @@ I flyttallsregningen blir resultatet `NaN` («not a number»). Det er maskinens
 markering av at regningen ikke ga et gyldig tall. En algoritme må kontrollere
 lengden før den normaliserer.
 
-## Ortogonalitet og projeksjon
+## 4.2 Ortogonalitet og projeksjon
 
-### 4.4 Null avlesning betyr ortogonalitet {#uke4-ortogonalitet}
+### Null avlesning betyr ortogonalitet {#uke4-ortogonalitet}
 
-Trykk «vinkelrett» i figuren i 4.1. Pilen $x=(3,2)^T$ er fortsatt like
+Trykk «vinkelrett» i [retningsmåleren](#uke4-retning). Pilen $x=(3,2)^T$ er fortsatt like
 lang, men avlesningen er null. Drei målepilen litt til hver side: fortegnet
 skifter. Hele bevegelsen går på tvers av måleretningen akkurat ved null.
 
@@ -325,7 +325,7 @@ diagonalen og $0$ ellers. Diagonalen kontrollerer lengdene til kolonnene,
 mens oppføringene utenfor diagonalen kontrollerer at ulike kolonner er
 ortogonale.
 
-### 4.5 Fra retningsmåler til mønsterdetektor {#uke4-monster}
+### Fra retningsmåler til mønsterdetektor {#uke4-monster}
 
 Tenk på et bilde som er lyst til venstre og mørkt til høyre. Vi ønsker ett
 tall som øker når denne forskjellen blir sterkere, blir null for et jevnt
@@ -433,7 +433,7 @@ gjenta deteksjonen. Avlesningene blir ikke identiske med de opprinnelige
 koeffisientene, men de forteller fortsatt hvilke mønstre som dominerer.
 :::
 
-### 4.6 Mål, bygg opp og trekk fra {#uke4-projeksjon}
+### Mål, bygg opp og trekk fra {#uke4-projeksjon}
 
 Start med $x=(3,2)^T$ og målepilen $q=(1,0)^T$. Den leser $3$.
 Bygg denne delen: $3q=(3,0)^T$. Trekk den fra: resten er $(0,2)^T$.
@@ -523,9 +523,9 @@ $$\operatorname{proj}_a(x)=\frac{a^Tx}{a^Ta}a.$$
 Når $a$ er en enhetsvektor, er $a^Ta=1$.
 :::
 
-## Gram–Schmidt og QR
+## 4.3 Gram–Schmidt og QR
 
-### 4.7 Hvor får vi ortogonale detektorer fra? {#uke4-gs}
+### Hvor får vi ortogonale detektorer fra? {#uke4-gs}
 
 Anta at vi starter med
 
@@ -614,7 +614,7 @@ $$\boxed{A=QR.}$$
 
 
 
-### 4.8 Klassisk Gram–Schmidt for flere kolonner {#uke4-cgs}
+### Klassisk Gram–Schmidt for flere kolonner {#uke4-cgs}
 
 #### En tredje pil: samme handling igjen
 
@@ -706,9 +706,9 @@ tall som er null når matriseidentiteten stemmer eksakt.
 - $\lVert Q^TQ-I_k\rVert_F$ måler tap av ortonormalitet;
 - $\lVert A-QR\rVert_F$ måler om faktorene bygger opp $A$ igjen.
 
-## Når regningen svikter
+## 4.4 Når regningen svikter
 
-### 4.9 Bryt algoritmen: eksakt avhengighet {#uke4-avhengighet}
+### Bryt algoritmen: eksakt avhengighet {#uke4-avhengighet}
 
 Før vi ser feilen i en matrise, kan vi framprovosere den geometrisk. I
 figuren er
@@ -815,7 +815,7 @@ er for liten til å gi en pålitelig ny retning. Det er en beslutning om
 **numerisk rang**, ikke et bevis på eksakt lineær avhengighet.
 :::
 
-### 4.10 Nesten avhengighet: endelige tall kan også være dårlige {#uke4-nesten}
+### Nesten avhengighet: endelige tall kan også være dårlige {#uke4-nesten}
 
 #### Følg tre piler, én regneoperasjon om gangen
 
@@ -881,7 +881,7 @@ tydelig fordi den lille resten etterpå deles på lengden sin.
 
 Del 5 og 7 av prosjekt 1 undersøker hvordan en annen beregningsrekkefølge
 eller algoritme kan hjelpe. Det er også motivasjonen for modifisert
-Gram–Schmidt i 4.11: Vi måler på resten etter hver subtraksjon.
+Gram–Schmidt i [delen om MGS](#uke4-mgs): Vi måler på resten etter hver subtraksjon.
 :::
 
 #### Så skjer dette i vanlig float64-regning
@@ -966,9 +966,9 @@ som nå overlever. Sammenlign så de to indreproduktene. De viste
 avrundingstrinnene gjelder dette eksemplet ved $10^{-8}$; ikke anta at
 alle nesten avhengige piler feiler ved samme grense.
 
-### 4.11 Modifisert Gram–Schmidt {#uke4-mgs}
+### Modifisert Gram–Schmidt {#uke4-mgs}
 
-#### Prøv en ny måling på resten fra 4.10
+#### Prøv en ny måling på resten fra forsøket over
 
 Etter at første del er trukket fra $a_3$, er resten $w=(0,-e,0,e)^T$.
 Klassisk GS brukte målingen $\widehat q_2^Ta_3=0$. Hva skjer hvis vi i
@@ -1076,9 +1076,9 @@ speilinger som lager nuller uten de samme gjentatte subtraksjonene som
 Gram–Schmidt. Vi utleder ikke Householder-metoden denne uken.
 :::
 
-## Minste kvadrater og oppsummering
+## 4.5 Minste kvadrater og oppsummering
 
-### 4.12 Fra QR til minste kvadrater {#uke4-mk}
+### Fra QR til minste kvadrater {#uke4-mk}
 
 #### Når ingen linje treffer alt
 
@@ -1091,7 +1091,7 @@ linje» blir $(0.2,-0.1,0.1,-0.2)^T$. Summen av kvadrerte feil er $0.10$.
 Prøv så $p(t)=1.05+0.9t$: feilene blir $(0.05,-0.15,0.15,-0.05)^T$, og
 summen av kvadratene blir $0.05$. Det er bedre. Hvordan finner vi den
 minste mulige summen? Det er spørsmålet **minste kvadraters metode** løser.
-Nedenfor bruker vi måle-og-bygge-oppskriften fra 4.6 for å finne svaret.
+Nedenfor bruker vi måle-og-bygge-oppskriften fra [projeksjonsforsøket](#uke4-projeksjon) for å finne svaret.
 
 Anta at
 
@@ -1174,7 +1174,7 @@ Dette er broen til ukeprosjektet: I uke 3 rekonstruerte vi et polynom fra
 akkurat nok avlesninger. Nå bruker vi flere støyfylte avlesninger og finner
 det beste svaret når et eksakt svar ikke finnes.
 
-### 4.13 Oppsummering og kontroll {#uke4-kontroll}
+### Oppsummering og kontroll {#uke4-kontroll}
 
 $$\text{retningsmåling}
 \longrightarrow x^Tq
@@ -1215,7 +1215,7 @@ Gå videre til [prosjekt 4: Når målingene ikke passer](project_week4.qmd),
 eller gå tilbake til [uke 3](uke3.qmd) hvis vektorrom, basis og kolonnerom
 trenger en repetisjon.
 
-## Polynomer: fra uke 3 til prosjekt 4 {#uke4-polynomer}
+## 4.6 Polynomer: fra uke 3 til prosjekt 4 {#uke4-polynomer}
 
 ### Samme polynom, flere målinger
 
@@ -1294,8 +1294,24 @@ Fra tredje pil må vi trekke fra den konstante delen:
 $q_0^Ta_2=\frac{5/2}{\sqrt5}=\frac{\sqrt5}{2},\qquad
 v_2=a_2-\tfrac12a_0=(1/2,-1/4,-1/2,-1/4,1/2)^T.$
 
-Kontroller at både $q_0^Tv_2$ og $q_1^Tv_2$ blir null. Lengden er
-$\sqrt{7/8}$, så $q_2=v_2/\sqrt{7/8}$. Vi har nå tre ortonormale piler
+Vi kontrollerer begge retningene ledd for ledd:
+
+$q_0^Tv_2=\frac{1/2-1/4-1/2-1/4+1/2}{\sqrt5}=0,$
+$q_1^Tv_2=
+\frac{(-1)(1/2)+(-1/2)(-1/4)+0(-1/2)+(1/2)(-1/4)+1(1/2)}
+{\sqrt{5/2}}
+=\frac{-1/2+1/8-1/8+1/2}{\sqrt{5/2}}=0.$
+
+Dermed trenger vi ikke trekke fra noe mer. Lengden beregnes fra de fem
+komponentene:
+
+$\lVert v_2\rVert_2^2
+=(1/2)^2+(-1/4)^2+(-1/2)^2+(-1/4)^2+(1/2)^2
+=\frac14+\frac1{16}+\frac14+\frac1{16}+\frac14=\frac78.$
+
+Vi deler hver komponent på $\sqrt{7/8}$ og får
+
+$q_2=\frac{(1/2,-1/4,-1/2,-1/4,1/2)^T}{\sqrt{7/8}}.$ Vi har nå tre ortonormale piler
 som bygger akkurat de samme mulige avlesningsvektorene som før.
 
 Les oppskriftene baklengs, og samle dem til slutt:
@@ -1337,7 +1353,53 @@ $\mathcal P_2$. Kortformen er $d=Q^Tb$ og $\widehat b=Qd$.
 For å finne koeffisientene i den opprinnelige basisen løser vi $Rc=d$.
 **Avlesningene $d$ er ikke monomialkoeffisientene $c$.**
 
-I dette konstruerte eksemplet får vi $c=(1,1,1/2)^T$, og resten blir
+#### Først de tre målingene
+
+Vi regner med de ortonormale pilene fra håndregningen:
+
+$d_0=q_0^Tb
+=\frac{0.51+0.585+1.06+1.585+2.51}{\sqrt5}
+=\frac{6.25}{\sqrt5}=\frac54\sqrt5,$
+
+$d_1=q_1^Tb
+=\frac{-0.51-0.2925+0+0.7925+2.51}{\sqrt{5/2}}
+=\frac{2.5}{\sqrt{5/2}}=\sqrt{5/2},$
+
+$d_2=q_2^Tb
+=\frac{0.255-0.14625-0.53-0.39625+1.255}{\sqrt{7/8}}
+=\frac{0.4375}{\sqrt{7/8}}=\frac12\sqrt{7/8}.$
+
+#### Så tilbake til monomialkoeffisientene
+
+Likningen $Rc=d$ betyr tre vanlige ligninger:
+
+$\sqrt5\,c_0+\frac{\sqrt5}{2}c_2=\frac54\sqrt5,$
+$\sqrt{5/2}\,c_1=\sqrt{5/2},$
+$\sqrt{7/8}\,c_2=\frac12\sqrt{7/8}.$
+
+Start nederst: $c_2=1/2$. Den midterste gir $c_1=1$. Sett $c_2$ inn i den
+første og del på $\sqrt5$:
+
+$c_0+\frac12\cdot\frac12=\frac54
+\quad\Longrightarrow\quad c_0=\frac54-\frac14=1.$
+
+Dette er baklengs innsetting: Vi finner først koeffisienten som står alene,
+og bruker den i ligningene over. Polynomet blir
+$p(t)=1+t+\tfrac12t^2$.
+
+#### Bygg verdiene og trekk dem fra dataene
+
+$\widehat b=a_0+a_1+\tfrac12a_2
+=\begin{bmatrix}1-1+1/2\\1-1/2+1/8\\1+0+0\\1+1/2+1/8\\1+1+1/2\end{bmatrix}
+=\begin{bmatrix}0.5\\0.625\\1\\1.625\\2.5\end{bmatrix}.$
+
+Resten finnes komponentvis:
+
+$b-\widehat b=
+\begin{bmatrix}0.51-0.5\\0.585-0.625\\1.06-1\\1.585-1.625\\2.51-2.5\end{bmatrix}
+=\begin{bmatrix}0.01\\-0.04\\0.06\\-0.04\\0.01\end{bmatrix}.$
+
+Altså får vi $c=(1,1,1/2)^T$, og resten blir
 
 $r=b-\widehat b=0.01(1,-4,6,-4,1)^T.$
 
@@ -1351,7 +1413,7 @@ Resten står dermed vinkelrett på *alle* avlesningsvektorer vi kan bygge.
 Den er ikke null, så ingen andregradspolynom treffer alle målingene.
 Enhver endring i koeffisientene legger til en del langs byggeretningene;
 Pytagoras viser at den bare øker kvadratfeilen. Her er minimum
-$\lVert r\rVert_2^2=0.007$.
+$\lVert r\rVert_2^2=0.01^2+(-0.04)^2+0.06^2+(-0.04)^2+0.01^2=0.007$.
 
 At vi finner tilbake til $p_*$ skyldes at støyen er valgt ortogonal på
 byggeretningene. Vanlig målefeil har også deler langs disse retningene og
@@ -1446,7 +1508,7 @@ og lar deg reparere en vanskelig rekonstruksjon. Alle nødvendige
 hjelpefunksjoner finnes allerede i prosjektet; ingen kode må kopieres fra
 denne fanen eller fra uke 3.
 
-## Oppgaver {#uke4-oppgaver}
+## 4.7 Oppgaver {#uke4-oppgaver}
 
 Arbeid først på papir, og bruk deretter kode til å undersøke det du fant.
 Oppgave 1–3 er hovedløpet; 4–6 undersøker numeriske feil og hva «god løsning»
@@ -1458,7 +1520,7 @@ Kodeoppgavene kontrollerer funksjonen du skriver på flere datasett.
 De åpne forklaringene skriver du i egne notater; de vurderes ikke automatisk.
 Et grønt resultat erstatter derfor ikke begrunnelsen.
 
-### 1. Finn det skjulte mønsteret
+### Finn det skjulte mønsteret
 
 Et signal er en liste med åtte målinger. Tre mulige byggesteiner er
 
@@ -1537,7 +1599,7 @@ assert np.allclose(ct,[2,-3]) and np.allclose(pt,[2,0,-3]) and np.allclose(rt,[0
 Forutsi hva som skjer med alle tre avlesningene når bare første måling økes
 med $1$. Forklar svaret ut fra komponentene i $q_i$, ikke bare utskriften.
 
-### 2. Når avlesninger ikke er koordinater
+### Når avlesninger ikke er koordinater
 
 Vi bruker nå tre andre enhetspiler i $\mathbb R^4$:
 
@@ -1582,7 +1644,7 @@ $U=[u_1\ u_2\ u_3]$ og koeffisientene i $c=(2,-\sqrt2,\sqrt3)^T$.
 Forklar nå likningen $U^Tx=(U^TU)c$: Hvilke oppføringer i $U^TU$ gjør at
 målingene påvirkes av flere byggekoeffisienter?
 
-### 3. Bygg QR og bruk den
+### Bygg QR og bruk den
 
 Tre byggesteiner i $\mathbb R^4$ er
 
@@ -1680,7 +1742,7 @@ assert np.allclose(ct,np.linalg.lstsq(T,z,rcond=None)[0]), 'Test også høyresid
 *langs* byggeretningene til en rest som allerede står vinkelrett på dem?
 Bruk Pytagoras til å forklare hvorfor feilen ikke kan bli mindre.
 
-### 4. En nesten usynlig feil blir stor
+### En nesten usynlig feil blir stor
 
 Sett $e=10^{-8}$ og bruk
 
@@ -1758,7 +1820,7 @@ bare én gir gode måleretninger? Knytt forklaringen til det tapte leddet og
 normaliseringen, og til [prosjekt 1](project_week1.qmd). Unngå påstanden
 «MGS er alltid stabil»; beskriv hva akkurat disse forsøkene viser.
 
-### 5. Kan et ekstra datapunkt gjøre tilpasningen dårligere?
+### Kan et ekstra datapunkt gjøre tilpasningen dårligere?
 
 De tre punktene $(-1,0),(0,1),(1,2)$ ligger på linjen $p(t)=1+t$.
 Legg til målingen $(2,6)$. Før du regner: Vil den nye beste linjen fortsatt
@@ -1822,7 +1884,7 @@ feil $2.7$ på fire punkter. Hvorfor er ikke denne sammenligningen alene et
 argument mot minste kvadrater? Hvilken sammenligning viser at metoden har
 funnet en forbedring på det nye problemet?
 
-### 6. Avslør en falsk kvalitetskontroll
+### Avslør en falsk kvalitetskontroll
 
 En medstudent hevder: «Hvis $QR=A$, kan vi finne minste-kvadraters løsningen
 fra $Rc=Q^Tb$.» Undersøk følgende eksakte moteksempel:
