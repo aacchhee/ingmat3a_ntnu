@@ -2026,7 +2026,7 @@ speilinger som lager nuller uten de samme gjentatte subtraksjonene som
 Gram–Schmidt. Vi utleder ikke Householder-metoden denne uken.
 :::
 
-## 4.5 Minste kvadrater og oppsummering
+## 4.5 Minste kvadrater
 
 ### Fra QR til minste kvadrater {#uke4-mk}
 
@@ -2303,47 +2303,6 @@ Dette er broen til ukeprosjektet: I uke 3 rekonstruerte vi et polynom fra
 akkurat nok målinger. Nå bruker vi flere støyfylte målinger og finner
 det beste svaret når et eksakt svar ikke finnes.
 
-### Oppsummering og kontroll {#uke4-kontroll}
-
-$$\text{retningsmåling}
-\longrightarrow x^Tq
-\longrightarrow \text{ortogonalitet}
-\longrightarrow \text{projeksjon}
-\longrightarrow \text{Gram--Schmidt}
-\longrightarrow A=QR
-\longrightarrow \text{minste kvadrater}.$$
-
-Kontroller at du kan forklare følgende uten å starte med kode:
-
-1. Hvorfor må en retningsmåler ha lengde én?
-2. Hva betyr $x^Tq=0$ geometrisk?
-3. Hvorfor gir $Q^Tx$ koordinatene når $Q^TQ=I$?
-4. Hvilken del trekker Gram–Schmidt fra en ny kolonne?
-5. Hvorfor produserer en avhengig kolonne `NaN` i den naive algoritmen?
-6. Hvorfor kan nesten avhengige kolonner gi et endelig, men dårlig $Q$?
-7. Hva er forskjellen mellom klassisk og modifisert Gram–Schmidt?
-8. Hvorfor er minste-kvadraters residual ortogonal på kolonnerommet?
-
-::: {.callout-tip collapse="true"}
-#### Korte svar til egenkontroll
-
-1. Ellers blander målingen retning og lengden til måleren.
-2. Vektorene står vinkelrett; $q$ finner ingen komponent av $x$ i sin retning.
-3. For $x\in C(Q)$ gir $x=Q(Q^Tx)$; ellers er de koordinatene til projeksjonen.
-4. Projeksjonene på retningene som allerede er laget.
-5. Eksakt avhengighet gir ingen ny retning; i det viste eksemplet deles
-   nullvektoren på sin norm null.
-6. En liten rest dannes ved kansellerende subtraksjoner og kan domineres av
-   avrundingsfeil.
-7. CGS måler mot den opprinnelige kolonnen; MGS måler mot den fortløpende
-   rensede resten.
-8. Pytagoras viser at den korteste residualen er delen utenfor $C(A)$.
-:::
-
-Gå videre til [prosjekt 4: Når målingene ikke passer](project_week4.qmd),
-eller gå tilbake til [uke 3](uke3.qmd) hvis vektorrom, basis og kolonnerom
-trenger en repetisjon.
-
 ## 4.6 Polynomer: fra uke 3 til prosjekt 4 {#uke4-polynomer}
 
 ### Samme polynom, flere målinger
@@ -2375,19 +2334,20 @@ Forutsi: Kan ett andregradspolynom treffe alle fem nye verdiene?
 Det er ikke antallet alene som gjør det umulig; uten støy ville $p_*$
 truffet alle fem. Vi undersøker hva akkurat disse feilene gjør nedenfor.
 
-### Les av hver byggestein før vi lager matrisen
+### Beregn verdiene til basispolynomene
 
-Les først av de tre basispolynomene $1,t,t^2$ hver for seg:
+Beregn hvert basispolynom $1,t,t^2$ i de fem målepunktene.
+Verdiene samles i én vektor per basispolynom:
 
 $a_0=(1,1,1,1,1)^T,\qquad
  a_1=(-1,-1/2,0,1/2,1)^T,\qquad
  a_2=(1,1/4,0,1/4,1)^T.$
 
-For å lage de fem verdiene til $p(t)=c_0+c_1t+c_2t^2$ bygger vi
+Verdiene til $p(t)=c_0+c_1t+c_2t^2$ beregnes med lineærkombinasjonen
 
 $c_0a_0+c_1a_1+c_2a_2.$
 
-Dette er nøyaktig samme byggeoperasjon som med bildemønstrene. Matrisen
+Dette er samme lineærkombinasjon som vi brukte for bildemønstrene. Matrisen
 samler bare de tre ferdige vektorene av polynomverdier som kolonner:
 
 $A=[a_0\ a_1\ a_2]=
@@ -2398,27 +2358,35 @@ c=\begin{bmatrix}c_0\\c_1\\c_2\end{bmatrix},\qquad
 b=\begin{bmatrix}0.51\\0.585\\1.06\\1.585\\2.51\end{bmatrix}.$
 
 $Ac$ er altså fem **polynomverdier**, mens $c$ er tre **koeffisienter**.
-Det er vektorene av polynomverdier i $\mathbb R^5$ vi nå skal gjøre ortogonale.
+Vi ønsker å tilpasse disse fem modellverdiene til målingene $b$.
+For å bruke projeksjonsmetoden fra 4.5 trenger vi en ortonormal basis
+for rommet som kolonnene i $A$ spenner ut.
 
-### Hvorfor trenger vi nye måleretninger?
+### Hvorfor erstatter vi kolonnene med ortonormale vektorer?
 
-Prøv å bruke $a_0$ og $a_2$ som uavhengige målere:
+Kolonnene i $A$ er ikke ortogonale. For eksempel er
 
 $a_0^Ta_2=1+\tfrac14+0+\tfrac14+1=\tfrac52.$
 
-En ren $t^2$-del gir dermed også utslag på måleren for konstant nivå.
-Vi kan ikke lese byggekoeffisientene direkte fra disse indreproduktene.
+For polynomet $p(t)=t^2$ er modellvektoren $a_2$, og konstantkoeffisienten
+er $c_0=0$. Likevel er $a_0^Ta_2=5/2$. Indreproduktet med $a_0$ gir
+altså ikke konstantkoeffisienten.
 
-Bruk Gram–Schmidt på de tre vektorene av polynomverdier. Første pil normaliseres:
+Med ortonormale kolonner i $Q$ får vi i stedet koeffisientene til
+projeksjonen direkte fra $d=Q^Tb$. Deretter gir $Rc=d$ koeffisientene
+i den opprinnelige polynombasisen. **Vi endrer basis for å kunne bruke
+denne beregningen; rommet av mulige modellverdier er det samme.**
+
+Vi bruker Gram–Schmidt. Normalisering av første kolonne gir
 
 $q_0=a_0/\sqrt5.$
 
-Den andre har allerede null måling på første pil, fordi
+Andre kolonne er allerede ortogonal på $q_0$, fordi
 $-1-1/2+0+1/2+1=0$. Derfor er
 
 $q_1=a_1/\sqrt{5/2}.$
 
-Fra tredje pil må vi trekke fra den konstante delen:
+Fra tredje kolonne trekker vi projeksjonen på $q_0$:
 
 $q_0^Ta_2=\frac{5/2}{\sqrt5}=\frac{\sqrt5}{2},\qquad
 v_2=a_2-\tfrac12a_0=(1/2,-1/4,-1/2,-1/4,1/2)^T.$
@@ -2440,10 +2408,11 @@ $\lVert v_2\rVert_2^2
 
 Vi deler hver komponent på $\sqrt{7/8}$ og får
 
-$q_2=\frac{(1/2,-1/4,-1/2,-1/4,1/2)^T}{\sqrt{7/8}}.$ Vi har nå tre ortonormale piler
-som bygger akkurat de samme mulige vektorene av polynomverdier som før.
+$q_2=\frac{(1/2,-1/4,-1/2,-1/4,1/2)^T}{\sqrt{7/8}}.$ Vi har nå tre ortonormale vektorer
+som spenner ut det samme rommet av modellverdier som før.
 
-Les oppskriftene baklengs, og samle dem til slutt:
+Uttrykk de opprinnelige kolonnene med de nye basisvektorene og samle
+koeffisientene i $R$, som i 4.3:
 
 $a_0=\sqrt5q_0,\quad a_1=\sqrt{5/2}q_1,\quad
  a_2=\tfrac{\sqrt5}{2}q_0+\sqrt{7/8}q_2,$
@@ -2453,16 +2422,47 @@ R=\begin{bmatrix}\sqrt5&0&\sqrt5/2\\0&\sqrt{5/2}&0\\0&0&\sqrt{7/8}\end{bmatrix}.
 
 ### Hva betyr ortogonale polynomer her?
 
-De nye pilene inneholder verdiene av polynomene
+Hver kolonne $q_j$ består av verdiene til et polynom $\phi_j$
+i de fem målepunktene. Formlene er
 
 $\phi_0(t)=1/\sqrt5,\qquad \phi_1(t)=t/\sqrt{5/2},\qquad
 \phi_2(t)=(t^2-1/2)/\sqrt{7/8}.$
 
-Test for eksempel $\phi_0$ og $\phi_2$: Gang verdiene i hvert målepunkt
-og summer. Svaret blir null, fordi dette er $q_0^Tq_2$.
-Dette motiverer et **diskret indreprodukt** på polynomer:
+Vi regner gjennom paret $\phi_0,\phi_2$. **Blått** følger verdiene til
+$\phi_0$, og **lilla** følger verdiene til $\phi_2$.
 
-$\langle f,g\rangle_{\rm punkter}=\sum_{i=1}^{5}f(t_i)g(t_i).$
+For eksempel gir målepunktet $t=-1/2$
+
+$$\phi_0(-1/2)=\textcolor{#1565c0}{\frac1{\sqrt5}},\qquad
+\phi_2(-1/2)=\frac{(-1/2)^2-1/2}{\sqrt{7/8}}
+=\textcolor{#8b5aa7}{\frac{-1/4}{\sqrt{7/8}}}.$$
+
+For alle fem punktene får vi vektorene
+
+$$q_0=\textcolor{#1565c0}{\frac1{\sqrt5}
+\begin{bmatrix}1\\1\\1\\1\\1\end{bmatrix}},\qquad
+q_2=\textcolor{#8b5aa7}{\frac1{\sqrt{7/8}}
+\begin{bmatrix}1/2\\-1/4\\-1/2\\-1/4\\1/2\end{bmatrix}}.$$
+
+Gang verdier fra samme målepunkt og summer:
+
+$$\begin{aligned}
+\sum_{i=1}^5\phi_0(t_i)\phi_2(t_i)
+&=\frac{
+\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{\frac12}
++\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{(-\frac14)}
++\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{(-\frac12)}
++\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{(-\frac14)}
++\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{\frac12}}
+{\sqrt5\sqrt{7/8}}\\
+&=\frac{1/2-1/4-1/2-1/4+1/2}{\sqrt5\sqrt{7/8}}
+=0.
+\end{aligned}$$
+
+Dette er akkurat $q_0^Tq_2$. Vi kaller denne regelen et **diskret
+indreprodukt** på polynomrommet $\mathcal P_2$:
+
+$$\langle f,g\rangle_{\rm punkter}=\sum_{i=1}^{5}f(t_i)g(t_i).$$
 
 For disse punktene er $\phi_0,\phi_1,\phi_2$ ortonormale med denne regelen.
 På $\mathcal P_2$ er dette et indreprodukt: Et ikke-null andregradspolynom
@@ -2474,17 +2474,18 @@ Ortogonale **koeffisientlister** er noe annet: $(1,0,0)^T$ og $(0,0,1)^T$
 er ortogonale som lister, men polynomverdiene for $1$ og $t^2$ var ikke det.
 Vi må alltid si hvilken måleregel og hvilke punkter vi bruker.
 
-### Mål dataene og bygg den delen polynomene kan forklare
+### Beregn det tilpassede polynomet
 
-Mål først $d_i=q_i^Tb$. Bygg så $\widehat b=d_0q_0+d_1q_1+d_2q_2$.
-Dette er den delen av de fem målingene som kan lages av et polynom i
+Beregn først komponentene $d_i=q_i^Tb$ og deretter projeksjonen
+$\widehat b=d_0q_0+d_1q_1+d_2q_2$.
+Dette er modellverdiene som ligger nærmest målingene blant polynomene i
 $\mathcal P_2$. Kortformen er $d=Q^Tb$ og $\widehat b=Qd$.
 For å finne koeffisientene i den opprinnelige basisen løser vi $Rc=d$.
 **Komponentene $d$ er ikke monomialkoeffisientene $c$.**
 
-#### Først de tre målingene
+#### Først de tre komponentene
 
-Vi regner med de ortonormale pilene fra håndregningen:
+Vi regner med de ortonormale vektorene fra håndregningen:
 
 $d_0=q_0^Tb
 =\frac{0.51+0.585+1.06+1.585+2.51}{\sqrt5}
@@ -2516,7 +2517,7 @@ Dette er baklengs innsetting: Vi finner først koeffisienten som står alene,
 og bruker den i ligningene over. Polynomet blir
 $p(t)=1+t+\tfrac12t^2$.
 
-#### Bygg verdiene og trekk dem fra dataene
+#### Beregn modellverdiene og residualen
 
 $\widehat b=a_0+a_1+\tfrac12a_2
 =\begin{bmatrix}1-1+1/2\\1-1/2+1/8\\1+0+0\\1+1/2+1/8\\1+1+1/2\end{bmatrix}
@@ -2540,12 +2541,12 @@ $a_1^Tr=0.01(-1+2-2+1)=0,\qquad
 
 Resten står dermed vinkelrett på *alle* vektorer av polynomverdier vi kan bygge.
 Den er ikke null, så ingen andregradspolynom treffer alle målingene.
-Enhver endring i koeffisientene legger til en del langs byggeretningene;
-Pytagoras viser at den bare øker kvadratfeilen. Her er minimum
+Enhver endring i koeffisientene endrer modellvektoren innenfor kolonnerommet.
+Denne endringen er ortogonal på residualen, så Pytagoras viser at kvadratfeilen øker. Her er minimum
 $\lVert r\rVert_2^2=0.01^2+(-0.04)^2+0.06^2+(-0.04)^2+0.01^2=0.007$.
 
 At vi finner tilbake til $p_*$ skyldes at støyen er valgt ortogonal på
-byggeretningene. Vanlig målefeil har også deler langs disse retningene og
+kolonnene i målematrisen. Vanlig målefeil har også komponenter i kolonnerommet og
 vil som regel endre det tilpassede polynomet.
 
 ```{pyodide-python}
@@ -2611,7 +2612,7 @@ avstander til kurven i tegneplanet.
 **Prøv:** Øk bare `noise_scale`. Hvorfor vokser residualen uten at
 polynomet endrer seg? Bytt så støyvektoren i funksjonen med
 `noise_scale*np.array([1., 0., 0., 0., 0.])`. Forutsi hvilke målinger på
-byggeretningene som nå blir ulike null, og se hvordan polynomet endres.
+kolonnene i målematrisen som nå blir ulike null, og se hvordan polynomet endres.
 
 ### Chebyshev-basis er ikke automatisk det samme som QR
 
@@ -2628,7 +2629,7 @@ hvor pålitelig vi klarer å beregne det.
 
 Chebyshev-navnet alene garanterer ikke ortonormale kolonner i målematrisen.
 Prøv punktene $-1,0,1$: Verdiene av $T_0$ og $T_2$ er $(1,1,1)^T$
-og $(1,-1,1)^T$, med indreprodukt $1$. QR lager ortonormale måleretninger
+og $(1,-1,1)^T$, med indreprodukt $1$. QR beregner en ortonormal basis for kolonnerommet
 for akkurat matrisen og punktene vi har valgt.
 
 ### Ta dette med til prosjekt 4
@@ -2646,7 +2647,51 @@ og lar deg reparere en vanskelig rekonstruksjon. Alle nødvendige
 hjelpefunksjoner finnes allerede i prosjektet; ingen kode må kopieres fra
 denne fanen eller fra uke 3.
 
-## 4.7 Oppgaver {#uke4-oppgaver}
+## 4.7 Oppsummering og oppgaver {#uke4-oppgaver}
+
+### Oppsummering og kontroll {#uke4-kontroll}
+
+$$\text{retningsmåling}
+\longrightarrow x^Tq
+\longrightarrow \text{ortogonalitet}
+\longrightarrow \text{projeksjon}
+\longrightarrow \text{Gram--Schmidt}
+\longrightarrow A=QR
+\longrightarrow \text{minste kvadrater}.$$
+
+Kontroller at du kan forklare følgende uten å starte med kode:
+
+1. Hvorfor må en retningsmåler ha lengde én?
+2. Hva betyr $x^Tq=0$ geometrisk?
+3. Hvorfor gir $Q^Tx$ koordinatene når $Q^TQ=I$?
+4. Hvilken del trekker Gram–Schmidt fra en ny kolonne?
+5. Hvorfor produserer en avhengig kolonne `NaN` i den naive algoritmen?
+6. Hvorfor kan nesten avhengige kolonner gi et endelig, men dårlig $Q$?
+7. Hva er forskjellen mellom klassisk og modifisert Gram–Schmidt?
+8. Hvorfor er minste-kvadraters residual ortogonal på kolonnerommet?
+
+::: {.callout-tip collapse="true"}
+#### Korte svar til egenkontroll
+
+1. Ellers blander målingen retning og lengden til måleren.
+2. Vektorene står vinkelrett; $q$ finner ingen komponent av $x$ i sin retning.
+3. For $x\in C(Q)$ gir $x=Q(Q^Tx)$; ellers er de koordinatene til projeksjonen.
+4. Projeksjonene på retningene som allerede er laget.
+5. Eksakt avhengighet gir ingen ny retning; i det viste eksemplet deles
+   nullvektoren på sin norm null.
+6. En liten rest dannes ved kansellerende subtraksjoner og kan domineres av
+   avrundingsfeil.
+7. CGS måler mot den opprinnelige kolonnen; MGS måler mot den fortløpende
+   rensede resten.
+8. Pytagoras viser at den korteste residualen er delen utenfor $C(A)$.
+:::
+
+Gå videre til [prosjekt 4: Når målingene ikke passer](project_week4.qmd),
+eller gå tilbake til [uke 3](uke3.qmd) hvis vektorrom, basis og kolonnerom
+trenger en repetisjon.
+
+### Oppgaver
+
 
 Arbeid først på papir, og bruk deretter kode til å undersøke det du fant.
 Oppgave 1–3 er hovedløpet; 4–6 undersøker numeriske feil og hva «god løsning»
