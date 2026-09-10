@@ -858,6 +858,24 @@ $$\lVert v_3\rVert_2=e\sqrt{\frac{3+e^2}{2+e^2}},\qquad
 Telleren i $q_1^Tq_3$ er $e-e=0$. Telleren i $q_2^Tq_3$ er
 $e^2+1-(1+e^2)=0$. Alle tre er altså parvis ortogonale i eksakt regning.
 
+::: {.callout-note}
+### Tilbake til prosjektet i uke 1
+
+Dette er samme mekanisme som i [prosjekt 1 – Floating-point attack](project_week1.qmd),
+særlig del 1 («kan du få et tall til å forsvinne?»): Et lite bidrag
+forsvinner når det legges til et stort tall. Når det store bidraget senere
+trekkes fra, får vi ikke den tapte informasjonen tilbake.
+
+Her er det lille bidraget $e^2=10^{-16}$ i $1+e^2$. Følg regningen nedenfor
+med samme spørsmål som i prosjekt 1: **I hvilket regnetrinn går informasjon
+tapt, og når blir tapet synlig?** I Gram–Schmidt blir konsekvensen ekstra
+tydelig fordi den lille resten etterpå deles på lengden sin.
+
+Del 5 og 7 av prosjekt 1 undersøker hvordan en annen beregningsrekkefølge
+eller algoritme kan hjelpe. Det er også motivasjonen for modifisert
+Gram–Schmidt i 4.11: Vi måler på resten etter hver subtraksjon.
+:::
+
 ### Så skjer dette i vanlig float64-regning
 
 En hatt, som i $\widehat q_2$, betyr en beregnet verdi. For $e=10^{-8}$
