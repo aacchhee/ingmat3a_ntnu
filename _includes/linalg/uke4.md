@@ -927,21 +927,41 @@ gjenta deteksjonen. Målingene blir ikke identiske med de opprinnelige
 koeffisientene, men de forteller fortsatt hvilke mønstre som dominerer.
 :::
 
-### Mål, bygg opp og trekk fra {#uke4-projeksjon}
+### Fra komponent til vektor og rest {#uke4-projeksjon}
 
-Vi har brukt ett tall til å finne mengden av et mønster. Nå tar vi neste
-steg: **Kan vi bygge akkurat denne delen, fjerne den og kontrollere at
-ingenting av den valgte retningen er igjen?** Vi ser handlingen med piler
-i planet først. Her bruker vi igjen navnene $x,q,p,r$ uten pil over;
-de betegner vektorer, mens $c$ er ett tall.
+Vi har brukt indreproduktet til å beregne mengden av et mønster.
+Nå undersøker vi hvordan en beregnet komponent gir en vektor i den
+valgte retningen, og hva som blir igjen når denne vektoren trekkes fra.
+Vi begynner med et konkret eksempel i planet. Symbolene $x,q,p,r$
+betegner vektorer, mens $c$ betegner ett tall.
 
-Start med $x=(3,2)^T$ og målepilen $q=(1,0)^T$. Den leser $3$.
-Bygg denne delen: $3q=(3,0)^T$. Trekk den fra: resten er $(0,2)^T$.
-Dra så $q$ i figuren. Følg den grå delen vi bygger og den røde resten.
-Se om den røde resten alltid står på tvers av målepilen.
+La $x=(3,2)^T$ og $q=(1,0)^T$. Siden $q$ har lengde én, er komponenten
+av $x$ i retningen $q$ gitt ved indreproduktet
 
-Dra både $x$ og $q$. Den grå pilen viser $p$, og den røde pilen viser resten
-$r$. Legg merke til komponenten $q^Tr$.
+$$c=q^Tx=1\cdot3+0\cdot2=3.$$
+
+Tallet $c=3$ angir hvor mye av $x$ som går i retningen $q$.
+For å uttrykke dette som en **vektor** ganger vi enhetsvektoren $q$
+med tallet $c$:
+
+$$p=cq=3\begin{bmatrix}1\\0\end{bmatrix}
+=\begin{bmatrix}3\\0\end{bmatrix}.$$
+
+Vi beregner deretter differansen mellom den opprinnelige vektoren $x$
+og vektoren $p$:
+
+$$r=x-p=\begin{bmatrix}3\\2\end{bmatrix}
+-\begin{bmatrix}3\\0\end{bmatrix}
+=\begin{bmatrix}0\\2\end{bmatrix}.$$
+
+Dermed er $x=p+r$. I dette eksemplet er $p$ den vannrette delen av $x$,
+mens resten $r$ er loddrett og står vinkelrett på $q$.
+
+**Undersøk i figuren:** Dra i endepunktene til $x$ og $q$. Den grå pilen
+viser den beregnede vektoren $p=(q^Tx)q$. Den røde pilen fra enden av $p$
+til enden av $x$ viser differansen $r=x-p$. Er $r$ fortsatt vinkelrett på
+$q$ når retningen endres? Sammenlign det du ser med tallet $q^Tr$ som
+vises i figuren.
 
 ```{.jsxgraph width="760" height="510"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
