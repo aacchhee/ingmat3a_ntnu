@@ -2030,61 +2030,233 @@ Gram–Schmidt. Vi utleder ikke Householder-metoden denne uken.
 
 ### Fra QR til minste kvadrater {#uke4-mk}
 
-#### Når ingen linje treffer alt
+#### Prøv å tilpasse en linje
 
-Se på målingene $(-1,0.2),(0,0.9),(1,2.1),(2,2.8)$. For like store
-skritt i første koordinat øker den andre med $0.7$, så $1.2$, så $0.7$.
-En rett linje må ha samme økning hver gang. Derfor kan ingen linje treffe
-alle fire målingene. Prøv linjen $p(t)=1+t$ på papir: feilene «måling minus
-linje» blir $(0.2,-0.1,0.1,-0.2)^T$. Summen av kvadrerte feil er $0.10$.
+Vi har fire målinger og ønsker å beskrive dem med en rett linje
+$p(t)=c_0+c_1t$. **Gitt:** målepunktene nedenfor.
+**Det vi kan endre:** konstantleddet $c_0$ og stigningstallet $c_1$.
 
-Prøv så $p(t)=1.05+0.9t$: feilene blir $(0.05,-0.15,0.15,-0.05)^T$, og
-summen av kvadratene blir $0.05$. Det er bedre. Hvordan finner vi den
-minste mulige summen? Det er spørsmålet **minste kvadraters metode** løser.
-Nedenfor bruker vi måle-og-bygge-oppskriften fra [projeksjonsforsøket](#uke4-projeksjon) for å finne svaret.
+| $t$ | $-1$ | $0$ | $1$ | $2$ |
+|---|---:|---:|---:|---:|
+| Målt verdi | $0.2$ | $0.9$ | $2.1$ | $2.8$ |
 
-Anta at
+Dra i skyveknappene. De svarte punktene er målingene, den blå linjen er
+modellen, og de røde strekene viser **målt verdi minus linjens verdi**
+ved hvert målepunkt. Under figuren vises de fire feilene og summen av
+kvadratene deres. Prøv å gjøre denne summen så liten som mulig.
 
-$$A\in\mathbb R^{m\times k},\qquad m>k,$$
+```{.jsxgraph width="640" height="520"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [-1.8, 4.7, 3.4, -1.7], axis: true,
+  showCopyright: false, showNavigation: false, keepaspectratio: false
+});
+var intercept = board.create('slider', [[-1.4,4.25],[1.4,4.25],[0,1,2]], {
+  name:'c_0', snapWidth:0.01, precision:2
+});
+var slope = board.create('slider', [[-1.4,3.75],[1.4,3.75],[-0.2,1,1.8]], {
+  name:'c_1', snapWidth:0.01, precision:2
+});
+var times = [-1,0,1,2], measured = [0.2,0.9,2.1,2.8];
+var fitted = function(t) { return intercept.Value()+slope.Value()*t; };
+var residual = function(i) { return measured[i]-fitted(times[i]); };
+var squaredError = function() {
+  return times.reduce(function(sum,t,i) {
+    var r=residual(i); return sum+r*r;
+  },0);
+};
+board.create('functiongraph', [fitted,-1.35,2.35], {
+  strokeColor:'#1565c0',strokeWidth:2
+});
+times.forEach(function(t,i) {
+  var datum = board.create('point',[t,measured[i]], {
+    name:'',fixed:true,size:3,color:'#222222'
+  });
+  var prediction = board.create('point',[t,function(){return fitted(t);}], {
+    name:'',fixed:true,size:2,color:'#1565c0'
+  });
+  board.create('segment',[prediction,datum],{
+    strokeColor:'#c62828',strokeWidth:2
+  });
+});
+board.create('text',[-1.4,-0.65,function(){
+  return 'Kvadratsum S = '+squaredError().toFixed(4);
+}],{fontSize:16,fixed:true});
+board.create('text',[-1.4,-1.0,function(){
+  return 'Feil: ('+times.map(function(t,i){return residual(i).toFixed(2);}).join(', ')+')';
+}],{fontSize:13,fixed:true});
+board.create('button',[-1.4,-1.4,'Prøv 1 + t',function(){
+  intercept.setValue(1); slope.setValue(1); board.update();
+}]);
+board.create('button',[0.2,-1.4,'Prøv 1.05 + 0.90t',function(){
+  intercept.setValue(1.05); slope.setValue(0.9); board.update();
+}]);
+```
 
-har full kolonnerang. Flere målinger enn parametre betyr ikke automatisk at
-systemet er inkonsistent, men med støy vil vi vanligvis ha $b\notin C(A)$,
-der $C(A)$ er kolonnerommet til $A$. Da finnes ingen $x$ som gir $Ax=b$. Vi
-søker i stedet
+Endre først bare $c_0$: Hele linjen flyttes opp eller ned.
+Endre deretter bare $c_1$: Linjen endrer helning.
+Kan du få alle fire røde strekene til å forsvinne samtidig?
 
-$$x_*=\operatorname*{argmin}_x\lVert b-Ax\rVert_2.$$
+#### Hva betyr kvadratsummen?
 
-Notasjonen $\operatorname*{argmin}_x$ betyr «den verdien av $x$ som gjør
-uttrykket minst». Her er residualen $r=b-Ax$: forskjellen mellom målingene
-$b$ og verdiene $Ax$ som modellen produserer.
+Ta startlinjen $p(t)=1+t$. Ved $t=-1$ gir linjen $0$, mens målingen er
+$0.2$. Feilen der er derfor $0.2-0=0.2$. Slik regner vi på alle punktene:
 
-Hvis $A=QR$ er en tynn QR-faktorisering, er kolonnene i $Q$ en ortonormal
-basis for $C(A)$. For en vilkårlig vektor $b$ er $Q^Tb$ koordinatene til
-projeksjonen av $b$ på $C(A)$; det er ikke koordinater for hele $b$ med
-mindre $b\in C(A)$. Den delen av $b$ som modellen kan lage er $QQ^Tb$.
+| $t$ | Målt verdi | $1+t$ | Feil: måling minus modell |
+|---|---:|---:|---:|
+| $-1$ | $0.2$ | $0$ | $0.2$ |
+| $0$ | $0.9$ | $1$ | $-0.1$ |
+| $1$ | $2.1$ | $2$ | $0.1$ |
+| $2$ | $2.8$ | $3$ | $-0.2$ |
 
-De to vektorene $b-QQ^Tb$ og $QQ^Tb-QRx$ er ortogonale. Pytagoras gir derfor
+Feilene med motsatte fortegn ville opphevet hverandre hvis vi bare
+summerte dem. Vi kvadrerer derfor hvert avvik før vi summerer:
 
-$$\lVert b-Ax\rVert_2^2
-=\lVert b-QQ^Tb\rVert_2^2
-+\lVert Q^Tb-Rx\rVert_2^2.$$
+$$S=(0.2)^2+(-0.1)^2+(0.1)^2+(-0.2)^2=0.10.$$
 
-Det første leddet kan ikke påvirkes av $x$. Det andre blir null for den
-entydige løsningen av
+Trykk på knappen for $1.05+0.90t$. Nå blir feilene
+$(0.05,-0.15,0.15,-0.05)^T$, og
 
-$$\boxed{Rx_*=Q^Tb.}$$
+$$S=(0.05)^2+(-0.15)^2+(0.15)^2+(-0.05)^2=0.05.$$
 
-Residualen $r=b-Ax_*$ er det modellen ikke kan forklare, og den tilfredsstiller
+Denne linjen gir mindre samlet kvadratfeil. Å finne koeffisientene som
+gir **minst mulig kvadratsum**, kalles **minste kvadraters metode**.
 
-$$Q^Tr=0\qquad\text{og dermed}\qquad A^Tr=0.$$
+Ingen linje kan gi feil null her: Måleverdiene øker først med $0.7$,
+så $1.2$, så $0.7$ når $t$ øker med én. En rett linje har samme økning
+hver gang. Spørsmålet er derfor hvilken linje som passer best.
 
-#### Et helt synlig eksempel
+#### Fire modellverdier blir én vektor
 
-Vi tilpasser linjen $p(t)=c_0+c_1t$ til fire målinger. På papir er
+For å bruke verktøyene fra 4.2–4.3 skriver vi ut linjens fire verdier:
 
-$$A=\begin{bmatrix}1&-1\\1&0\\1&1\\1&2\end{bmatrix},\qquad
-b=\begin{bmatrix}0.2\\0.9\\2.1\\2.8\end{bmatrix},\qquad
-c=\begin{bmatrix}c_0\\c_1\end{bmatrix}.$$
+$$\begin{bmatrix}p(-1)\\p(0)\\p(1)\\p(2)\end{bmatrix}
+=\begin{bmatrix}c_0-c_1\\c_0\\c_0+c_1\\c_0+2c_1\end{bmatrix}
+=c_0\underbrace{\begin{bmatrix}1\\1\\1\\1\end{bmatrix}}_{a_1}
++c_1\underbrace{\begin{bmatrix}-1\\0\\1\\2\end{bmatrix}}_{a_2}.$$
+
+Vi har bare to vektorbidrag å justere. Samlet blir dette
+
+$$Ac=
+\underbrace{\begin{bmatrix}1&-1\\1&0\\1&1\\1&2\end{bmatrix}}_A
+\underbrace{\begin{bmatrix}c_0\\c_1\end{bmatrix}}_c,\qquad
+b=\begin{bmatrix}0.2\\0.9\\2.1\\2.8\end{bmatrix}.$$
+
+Her er $b$ målingene, $Ac$ modellverdiene og $r=b-Ac$ feilene.
+Kvadratsummen i figuren er dermed $S=\lVert b-Ac\rVert_2^2$.
+Vi søker en kombinasjon av $a_1,a_2$ som ligger nærmest $b$.
+
+#### QR gir to ortonormale retninger for de samme modellverdiene
+
+Fra 4.3 vet vi hvordan Gram–Schmidt erstatter kolonnene med ortonormale
+vektorer og lagrer koeffisientene. Her blir beregningen kort:
+
+$$q_1=\frac{a_1}{2}=\frac12(1,1,1,1)^T,\qquad
+r_{12}=q_1^Ta_2=\frac{-1+0+1+2}{2}=1,$$
+
+$$v_2=a_2-q_1=\frac12(-3,-1,1,3)^T,\qquad
+\lVert v_2\rVert_2=\sqrt5,\qquad
+q_2=\frac1{2\sqrt5}(-3,-1,1,3)^T.$$
+
+Regnskapet er $a_1=2q_1$ og $a_2=q_1+\sqrt5\,q_2$. Derfor har vi
+
+$$A=QR,\qquad
+\textcolor{#1565c0}{Q=[q_1\ q_2]},\qquad
+\textcolor{#8b5aa7}{R=\begin{bmatrix}2&1\\0&\sqrt5\end{bmatrix}}.$$
+
+Både $a_1,a_2$ og $q_1,q_2$ kan uttrykke de samme modellverdiene.
+Fordelen med $q_1,q_2$ er at vi kan bruke indreproduktene direkte,
+slik vi gjorde i projeksjonsforsøket.
+
+#### Finn den delen av målingene som modellen kan gjengi
+
+Beregn først komponentene av $b$ langs de to enhetsvektorene:
+
+$$d_1=q_1^Tb=\frac{0.2+0.9+2.1+2.8}{2}=3,$$
+
+$$d_2=q_2^Tb
+=\frac{-3(0.2)-0.9+2.1+3(2.8)}{2\sqrt5}
+=\frac{4.5}{\sqrt5}.$$
+
+Tallene $d_1,d_2$ er koeffisienter foran **$q_1,q_2$**.
+De er ennå ikke konstantleddet og stigningstallet.
+De gir den projiserte vektoren
+
+$$b_*=d_1q_1+d_2q_2
+=\begin{bmatrix}1.5\\1.5\\1.5\\1.5\end{bmatrix}
++\begin{bmatrix}-1.35\\-0.45\\0.45\\1.35\end{bmatrix}
+=\begin{bmatrix}0.15\\1.05\\1.95\\2.85\end{bmatrix}.$$
+
+Dette er de fire modellverdiene som ligger nærmest målingene.
+Hvorfor? Resten $b-b_*$ står vinkelrett på begge modellretningene.
+En annen modellvektor endrer bare delen langs disse retningene og
+legger dermed til en ny, vinkelrett del av feilen. Pytagoras sier
+at kvadratfeilen da øker.
+
+#### Finn konstantleddet og stigningstallet
+
+QR-regnskapet sier
+
+$$Ac=c_0(2q_1)+c_1(q_1+\sqrt5\,q_2)
+=(2c_0+c_1)q_1+(\sqrt5\,c_1)q_2.$$
+
+For å få $Ac=b_*$ må koeffisientene foran de samme vektorene være like:
+
+$$2c_0+c_1=3,\qquad \sqrt5\,c_1=\frac{4.5}{\sqrt5}.$$
+
+Løs siste likning først:
+
+$$c_1=\frac{4.5}{5}=0.90,\qquad
+c_0=\frac{3-0.90}{2}=1.05.$$
+
+Dette gir akkurat linjen vi prøvde i figuren. De to likningene kan
+samles i kortformen
+
+$$\underbrace{\begin{bmatrix}2&1\\0&\sqrt5\end{bmatrix}}_R
+\underbrace{\begin{bmatrix}c_0\\c_1\end{bmatrix}}_{c_*}
+=\underbrace{\begin{bmatrix}d_1\\d_2\end{bmatrix}}_{Q^Tb},
+\qquad \boxed{Rc_*=Q^Tb.}$$
+
+Stjernen i $c_*$ markerer de optimale koeffisientene.
+Resten er $r_*=(0.05,-0.15,0.15,-0.05)^T$. Kontrollen blir
+
+$$q_1^Tr_*=\frac{0.05-0.15+0.15-0.05}{2}=0,$$
+$$q_2^Tr_*=\frac{-0.15+0.15+0.15-0.15}{2\sqrt5}=0.$$
+
+Ortogonaliteten gjelder vektorer med **fire koordinater**, én for hver
+måling. De røde strekene i figuren viser disse fire avvikene, ikke
+vinkelrette avstander fra punktene til linjen i tegneplanet.
+
+::: {.callout-note collapse="true"}
+#### Fordypning: hvorfor virker dette generelt?
+
+La $A$ ha full kolonnerang og $A=QR$ med ortonormale kolonner i $Q$.
+Som i eksemplet setter vi $d=Q^Tb$ og $b_*=Qd$.
+Vektoren $b_*$ er projeksjonen på rommet av modellverdier, også kalt
+kolonnerommet $C(A)$. Resten $r_*=b-b_*$ er ortogonal på dette rommet.
+
+For enhver koeffisientvektor $c$ kan feilen deles slik:
+
+$$b-Ac=\underbrace{b-b_*}_{\text{ortogonal på modellrommet}}
++\underbrace{b_*-Ac}_{\text{ligger i modellrommet}}.$$
+
+Pytagoras gir derfor
+
+$$\lVert b-Ac\rVert_2^2
+=\lVert r_*\rVert_2^2+\lVert b_*-Ac\rVert_2^2.$$
+
+Første ledd er fast. Andre ledd blir null når $Ac=b_*$, altså når
+$QRc=Qd$. Siden $Q^TQ=I$, er dette det samme som $Rc=d=Q^Tb$.
+
+Til slutt gir $Q^Tr_*=0$ også
+$A^Tr_*=(QR)^Tr_*=R^T(Q^Tr_*)=0$.
+:::
+
+#### Gjenta forsøket i Python
+
+Koden bruker de samme fire målingene og kontrollerer løsningen mot
+NumPys minste-kvadraters funksjon. Bibliotekets QR kan velge motsatte
+fortegn på noen kolonner i $Q$ og tilhørende rader i $R$; sluttlinjen
+blir den samme.
 
 ```{pyodide-python}
 #| label: week4-least-squares
