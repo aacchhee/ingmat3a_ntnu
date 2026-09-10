@@ -483,36 +483,57 @@ En tabell lar oss holde orden på alle disse kontrollene.
 #### Fra enkeltpiler til en tabell med alle testene
 
 La oss først pakke de to pilene vi nettopp prøvde, inn i en matrise.
-Vi setter dem **ved siden av hverandre som kolonner**, uten å endre dem:
+Vi setter dem **ved siden av hverandre som kolonner**, uten å endre dem.
 
-$$q_1=\begin{bmatrix}1\\0\end{bmatrix},\qquad
-q_2=\begin{bmatrix}0\\1\end{bmatrix}
-\quad\longrightarrow\quad
-Q=\begin{bmatrix}|&|\\q_1&q_2\\|&|\end{bmatrix}
-=\begin{bmatrix}1&0\\0&1\end{bmatrix}.$$
+Fargene følger rollen i produktet: **blått er kolonner fra $Q$**, og
+**oransje er rader fra $Q^T$**. Det er de samme tallene før og etter
+transponering; fargen viser hvilken faktor vi henter dem fra.
+
+$$\textcolor{#1565c0}{q_1=\begin{bmatrix}1\\0\end{bmatrix}},\qquad
+\textcolor{#1565c0}{q_2=\begin{bmatrix}0\\1\end{bmatrix}}.$$
+
+$$\textcolor{#1565c0}{Q}=\textcolor{#1565c0}{\begin{bmatrix}|&|\\q_1&q_2\\|&|\end{bmatrix}}=\textcolor{#1565c0}{\begin{bmatrix}1&0\\0&1\end{bmatrix}}.$$
 
 Når vi transponerer, blir de samme kolonnene til rader:
 
-$$Q^T=\begin{bmatrix}\text{— }q_1^T\text{ —}\\
-\text{— }q_2^T\text{ —}\end{bmatrix}
-=\begin{bmatrix}1&0\\0&1\end{bmatrix}.$$
+$$\textcolor{#b45309}{Q^T}=\textcolor{#b45309}{\begin{bmatrix}\text{— }q_1^T\text{ —}\\\text{— }q_2^T\text{ —}\end{bmatrix}}=\textcolor{#b45309}{\begin{bmatrix}1&0\\0&1\end{bmatrix}}.$$
 
-Matriseproduktet tar én rad fra venstre og én kolonne fra høyre.
-Dermed er oppføringen i rad $i$, kolonne $j$ nettopp $q_i^Tq_j$.
-Her kan vi skrive ut alle fire regnestykkene:
+Nå setter vi **begge stablene inn i selve produktet**:
 
-$$Q^TQ
-=\begin{bmatrix}
-q_1^Tq_1&q_1^Tq_2\\
-q_2^Tq_1&q_2^Tq_2
-\end{bmatrix}
-=\begin{bmatrix}
-1\cdot1+0\cdot0&1\cdot0+0\cdot1\\
-0\cdot1+1\cdot0&0\cdot0+1\cdot1
-\end{bmatrix}
-=\begin{bmatrix}1&0\\0&1\end{bmatrix}.$$
+$$\begin{aligned}
+\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}
+&=\underbrace{\textcolor{#b45309}{\begin{bmatrix}\text{— }q_1^T\text{ —}\\\text{— }q_2^T\text{ —}\end{bmatrix}}}_{\text{rader fra }Q^T}
+\underbrace{\textcolor{#1565c0}{\begin{bmatrix}|&|\\q_1&q_2\\|&|\end{bmatrix}}}_{\text{kolonner fra }Q}\\[6pt]
+&=\begin{bmatrix}
+\textcolor{#b45309}{q_1^T}\textcolor{#1565c0}{q_1}&\textcolor{#b45309}{q_1^T}\textcolor{#1565c0}{q_2}\\
+\textcolor{#b45309}{q_2^T}\textcolor{#1565c0}{q_1}&\textcolor{#b45309}{q_2^T}\textcolor{#1565c0}{q_2}
+\end{bmatrix}.
+\end{aligned}$$
 
-På diagonalen måler hver pil seg selv: $q_i^Tq_i=\lVert q_i\rVert_2^2=1$.
+Hver oppføring kommer fra én oransje rad og én blå kolonne.
+For eksempel bruker oppføringen øverst til høyre **rad 1 fra $Q^T$**
+og **kolonne 2 fra $Q$**:
+
+$$\textcolor{#b45309}{q_1^T}\textcolor{#1565c0}{q_2}
+=\textcolor{#b45309}{\begin{bmatrix}1&0\end{bmatrix}}
+\textcolor{#1565c0}{\begin{bmatrix}0\\1\end{bmatrix}}
+=\textcolor{#b45309}{1}\cdot\textcolor{#1565c0}{0}+\textcolor{#b45309}{0}\cdot\textcolor{#1565c0}{1}=0.$$
+
+Vi gjør det samme i alle fire oppføringene. Fargen følger hvert tall
+helt fram til multiplikasjonen:
+
+$$\begin{aligned}
+\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}
+&=\begin{bmatrix}
+\textcolor{#b45309}{1}\cdot\textcolor{#1565c0}{1}+\textcolor{#b45309}{0}\cdot\textcolor{#1565c0}{0}&\textcolor{#b45309}{1}\cdot\textcolor{#1565c0}{0}+\textcolor{#b45309}{0}\cdot\textcolor{#1565c0}{1}\\
+\textcolor{#b45309}{0}\cdot\textcolor{#1565c0}{1}+\textcolor{#b45309}{1}\cdot\textcolor{#1565c0}{0}&\textcolor{#b45309}{0}\cdot\textcolor{#1565c0}{0}+\textcolor{#b45309}{1}\cdot\textcolor{#1565c0}{1}
+\end{bmatrix}\\[4pt]
+&=\begin{bmatrix}1&0\\0&1\end{bmatrix}.
+\end{aligned}$$
+
+Resultatene skrives uten farge fordi hvert resultat kommer fra **begge**
+faktorene. På diagonalen måler hver pil seg selv:
+$\textcolor{#b45309}{q_i^T}\textcolor{#1565c0}{q_i}=\lVert q_i\rVert_2^2=1$.
 Utenfor diagonalen måler vi to forskjellige piler: De står vinkelrett på
 hverandre, så resultatet er $0$.
 
@@ -526,20 +547,27 @@ $$Q=\begin{bmatrix}|&|&&|\\q_1&q_2&\cdots&q_k\\|&|&&|\end{bmatrix}
 Q^T=\begin{bmatrix}q_1^T\\q_2^T\\\vdots\\q_k^T\end{bmatrix}
 \quad(k\times m).$$
 
+Også her setter vi radstabelen og kolonnestabelen inn før vi regner:
+
+$$\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}=
+\textcolor{#b45309}{\begin{bmatrix}q_1^T\\q_2^T\\\vdots\\q_k^T\end{bmatrix}}
+\textcolor{#1565c0}{\begin{bmatrix}|&|&&|\\q_1&q_2&\cdots&q_k\\|&|&&|\end{bmatrix}}.$$
+
+Rad $i$ møter kolonne $j$ og gir $\textcolor{#b45309}{q_i^T}\textcolor{#1565c0}{q_j}$.
 Hele tabellen med indreprodukter blir da
 
-$$Q^TQ=
+$$\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}=
 \begin{bmatrix}
-q_1^Tq_1&q_1^Tq_2&\cdots&q_1^Tq_k\\
-q_2^Tq_1&q_2^Tq_2&\cdots&q_2^Tq_k\\
+\textcolor{#b45309}{q_1^T}\textcolor{#1565c0}{q_1}&\textcolor{#b45309}{q_1^T}\textcolor{#1565c0}{q_2}&\cdots&\textcolor{#b45309}{q_1^T}\textcolor{#1565c0}{q_k}\\
+\textcolor{#b45309}{q_2^T}\textcolor{#1565c0}{q_1}&\textcolor{#b45309}{q_2^T}\textcolor{#1565c0}{q_2}&\cdots&\textcolor{#b45309}{q_2^T}\textcolor{#1565c0}{q_k}\\
 \vdots&\vdots&\ddots&\vdots\\
-q_k^Tq_1&q_k^Tq_2&\cdots&q_k^Tq_k
+\textcolor{#b45309}{q_k^T}\textcolor{#1565c0}{q_1}&\textcolor{#b45309}{q_k^T}\textcolor{#1565c0}{q_2}&\cdots&\textcolor{#b45309}{q_k^T}\textcolor{#1565c0}{q_k}
 \end{bmatrix}.$$
 
 Først bruker vi at ulike piler er ortogonale. Så bruker vi at hver pil
 har lengde én:
 
-$$Q^TQ=
+$$\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}=
 \begin{bmatrix}
 \lVert q_1\rVert_2^2&0&\cdots&0\\
 0&\lVert q_2\rVert_2^2&\cdots&0\\
@@ -558,7 +586,7 @@ Matrisen helt til høyre har et navn: **identitetsmatrisen** $I_k$.
 Den har $k$ rader og $k$ kolonner, ettall på diagonalen og nuller ellers.
 Nå kan vi forkorte hele kjeden til
 
-$$\boxed{Q^TQ=I_k.}$$
+$$\boxed{\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}=I_k.}$$
 
 Dette er de samme enkelttestene pakket sammen: Diagonalen kontrollerer
 lengdene, og resten kontrollerer ortogonaliteten. Selve $Q$ trenger
