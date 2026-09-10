@@ -538,6 +538,23 @@ Det er altså forholdet mellom den største og den minste skaleringen.
 Dette er en annen matrisenorm enn Frobeniusnormen vi bruker til
 QR-kontrollene. Du trenger ikke beregne disse maksimums- og
 minimumsverdiene selv.
+
+**Et frampek til [uke 5](uke5.qmd):** Egenverdier beskriver hvordan en
+kvadratisk matrise skalerer vektorer langs bestemte retninger,
+kalt egenvektorretninger. Her er forbindelsen gjennom $A^TA$,
+som er kvadratisk selv om $A$ er rektangulær.
+
+Den største og minste egenverdien til $A^TA$ er kvadratene av den
+største og minste skaleringen til $A$. Skriver vi disse egenverdiene
+som $\lambda_{\max}$ og $\lambda_{\min}$, får vi
+
+$$\lVert A\rVert_2=\sqrt{\lambda_{\max}},\qquad
+\kappa_2(A)=\sqrt{\frac{\lambda_{\max}}{\lambda_{\min}}}.$$
+
+Her er $\lambda_{\min}>0$ fordi kolonnene i $A$ er lineært uavhengige.
+Dette knytter følsomheten til stoffet om egenverdier som kommer neste
+uke. I dette prosjektet bruker du fortsatt $\kappa_2(A)$ som et
+følsomhetsvarsel og beregner tallet med `np.linalg.cond(A)`.
 :::
 
 ```{pyodide-python}
