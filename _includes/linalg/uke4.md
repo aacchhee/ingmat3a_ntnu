@@ -1701,138 +1701,118 @@ er for liten til å gi en pålitelig ny retning. Det er en beslutning om
 
 ### Nesten avhengighet: endelige tall kan også være dårlige {#uke4-nesten}
 
-#### Følg tre piler, én regneoperasjon om gangen
+#### Følg GS og avrundingen samtidig
 
-Vi bruker blått for første pil, grønt for andre og rødt for tredje.
-Fargene følges alltid av navn, slik at regningen også kan leses uten farger.
-La $e=10^{-8}$, og skriv først pilene hver for seg:
+Vi setter **$e=10^{-8}$ fra starten** og bruker vanlig float64-regning.
+De tre vektorene er
 
-$$\color{#1565c0}{a_1=(1,e,0,0)^T},\qquad
-\color{#238443}{a_2=(1,0,e,0)^T},\qquad
-\color{#c62828}{a_3=(1,0,0,e)^T}.$$
+$$\textcolor{#1565c0}{a_1=(1,e,0,0)^T},\qquad
+\textcolor{#238443}{a_2=(1,0,e,0)^T},\qquad
+\textcolor{#c62828}{a_3=(1,0,0,e)^T}.$$
 
-Alle har en stor første komponent og én liten ekstra komponent. De er
-uavhengige for $e\ne0$, men peker nesten samme vei. Matrisen er bare en
-samling av disse pilene:
+De er lineært uavhengige, men peker nesten samme vei. Vi følger klassisk
+Gram–Schmidt og undersøker når de beregnede retningene slutter å være
+ortogonale. Blått, grønt og rødt følger henholdsvis første, andre og
+tredje vektor.
 
-$$A_e=[a_1\ a_2\ a_3]=\begin{bmatrix}1&1&1\\e&0&0\\0&e&0\\0&0&e\end{bmatrix}.$$
+En hatt markerer en beregnet verdi, for eksempel $\widehat q_1$.
+Uttrykkene nedenfor viser float64-resultatene med enkle brøker;
+$\approx$ skjuler bare de siste avrundede sifrene.
 
-#### Først regner vi med eksakte tall
+#### Første normalisering: avrundingen skjer allerede her
 
-**Første pil.** Lengden er $\sqrt{1+e^2}$, så
+For å finne lengden til $a_1$ beregner programmet først summen av
+kvadrerte koordinater. Her skjer det avgjørende tapet:
 
-$$\color{#1565c0}{q_1=\frac{(1,e,0,0)^T}{\sqrt{1+e^2}}}.$$
+$$1+e^2=1+10^{-16}
+\quad\xrightarrow{\text{float64}}\quad1.$$
 
-**Andre pil.** Mål, trekk fra og normaliser:
+Bidraget $10^{-16}$ er for lite til å endre tallet $1$ i denne
+beregningen. Programmet beregner derfor lengden som $1$ og får
 
-$$r_{12}=q_1^Ta_2=\frac1{\sqrt{1+e^2}},$$
-$$v_2=a_2-r_{12}q_1
-=\left(\frac{e^2}{1+e^2},-\frac e{1+e^2},e,0\right)^T,$$
-$$\lVert v_2\rVert_2=e\sqrt{\frac{2+e^2}{1+e^2}},\qquad
-\color{#238443}{q_2=\frac{(e,-1,1+e^2,0)^T}{\sqrt{(1+e^2)(2+e^2)}}}.$$
+$$\textcolor{#1565c0}{\widehat q_1=(1,10^{-8},0,0)^T}.$$
 
-Kontrollen er
+Dette er mekanismen fra [prosjekt 1 – Floating-point attack](project_week1.qmd):
+Et lite bidrag forsvinner når det legges til et stort. Nå følger vi
+hvordan tapet påvirker neste GS-operasjon.
 
-$$q_1^Tq_2
-=\frac{1\cdot e+e\cdot(-1)+0\cdot(1+e^2)+0\cdot0}
-{\sqrt{1+e^2}\sqrt{(1+e^2)(2+e^2)}}
-=\frac{e-e}{\sqrt{1+e^2}\sqrt{(1+e^2)(2+e^2)}}=0.$$
-Legg spesielt merke til den lille første komponenten i $v_2$, omtrent
-$e^2=10^{-16}$. Den er nødvendig for denne kanselleringen.
+#### Andre vektor: en liten rest normaliseres
 
-**Tredje pil.** Begge målingene tas på den opprinnelige $a_3$:
+Koeffisienten beregnes med den avrundede første vektoren:
 
-$$r_{13}=\frac1{\sqrt{1+e^2}},\qquad
-r_{23}=\frac e{\sqrt{(1+e^2)(2+e^2)}}.$$
+$$\widehat r_{12}=\widehat q_1^Ta_2
+=1\cdot1+10^{-8}\cdot0+0\cdot10^{-8}+0\cdot0=1.$$
 
-Etter begge subtraksjoner får vi
+Deretter trekker programmet fra:
 
-$$v_3=a_3-r_{13}q_1-r_{23}q_2
-=\left(\frac{e^2}{2+e^2},-\frac e{2+e^2},-\frac e{2+e^2},e\right)^T,$$
-$$\lVert v_3\rVert_2=e\sqrt{\frac{3+e^2}{2+e^2}},\qquad
-\color{#c62828}{q_3=\frac{(e,-1,-1,2+e^2)^T}{\sqrt{(2+e^2)(3+e^2)}}}.$$
+$$\widehat v_2
+=\begin{bmatrix}1\\0\\10^{-8}\\0\end{bmatrix}
+-\begin{bmatrix}1\\10^{-8}\\0\\0\end{bmatrix}
+=\begin{bmatrix}0\\-10^{-8}\\10^{-8}\\0\end{bmatrix}.$$
 
-Vi kontrollerer ortogonaliteten ved å sette inn vektorene:
+Første koordinat blir $1-1=0$. Den lille korreksjonen som gikk tapt
+i normaliseringen, kan ikke gjenopprettes av subtraksjonen.
 
-$$\begin{aligned}
-q_1^Tq_3
-&=\frac{
-\textcolor{#1565c0}{\begin{bmatrix}1&e&0&0\end{bmatrix}}
-\textcolor{#c62828}{\begin{bmatrix}e\\-1\\-1\\2+e^2\end{bmatrix}}
-}{\sqrt{1+e^2}\sqrt{(2+e^2)(3+e^2)}}\\
-&=\frac{1\cdot e+e\cdot(-1)+0\cdot(-1)+0\cdot(2+e^2)}
-{\sqrt{1+e^2}\sqrt{(2+e^2)(3+e^2)}}\\
-&=\frac{e-e}{\sqrt{1+e^2}\sqrt{(2+e^2)(3+e^2)}}=0.
-\end{aligned}$$
+Restens lengde er omtrent $10^{-8}\sqrt2$. Divisjonen med denne lille
+lengden gjør de små koordinatene til tall av størrelse én:
 
-Tilsvarende får vi for de to siste vektorene
+$$\textcolor{#238443}{\widehat q_2
+\approx\frac1{\sqrt2}(0,-1,1,0)^T}.$$
 
-$$\begin{aligned}
-q_2^Tq_3
-&=\frac{
-\textcolor{#238443}{\begin{bmatrix}e&-1&1+e^2&0\end{bmatrix}}
-\textcolor{#c62828}{\begin{bmatrix}e\\-1\\-1\\2+e^2\end{bmatrix}}
-}{\sqrt{(1+e^2)(2+e^2)}\sqrt{(2+e^2)(3+e^2)}}\\
-&=\frac{e^2+1-(1+e^2)+0}
-{\sqrt{(1+e^2)(2+e^2)}\sqrt{(2+e^2)(3+e^2)}}=0.
-\end{aligned}$$
+Kontrollen viser allerede en liten feil:
 
-Alle tre er altså parvis ortogonale i eksakt regning.
+$$\widehat q_1^T\widehat q_2
+\approx\frac{1\cdot0+10^{-8}(-1)+0\cdot1+0\cdot0}{\sqrt2}
+=-\frac{10^{-8}}{\sqrt2}\approx-7.07\cdot10^{-9}.$$
 
-::: {.callout-note}
-#### Tilbake til prosjektet i uke 1
+Resultatet skulle vært null. Foreløpig er avviket lite; neste kolonne
+viser hvorfor det likevel får betydning.
 
-Dette er samme mekanisme som i [prosjekt 1 – Floating-point attack](project_week1.qmd),
-særlig del 1 («kan du få et tall til å forsvinne?»): Et lite bidrag
-forsvinner når det legges til et stort tall. Når det store bidraget senere
-trekkes fra, får vi ikke den tapte informasjonen tilbake.
+#### Tredje vektor: klassisk GS overser et bidrag i resten
 
-Her er det lille bidraget $e^2=10^{-16}$ i $1+e^2$. Følg regningen nedenfor
-med samme spørsmål som i prosjekt 1: **I hvilket regnetrinn går informasjon
-tapt, og når blir tapet synlig?** I Gram–Schmidt blir konsekvensen ekstra
-tydelig fordi den lille resten etterpå deles på lengden sin.
+Klassisk GS beregner begge koeffisientene mot den **opprinnelige**
+vektoren $a_3$:
 
-Del 5 og 7 av prosjekt 1 undersøker hvordan en annen beregningsrekkefølge
-eller algoritme kan hjelpe. Det er også motivasjonen for modifisert
-Gram–Schmidt i [delen om MGS](#uke4-mgs): Vi måler på resten etter hver subtraksjon.
-:::
-
-#### Så skjer dette i vanlig float64-regning
-
-En hatt, som i $\widehat q_2$, betyr en beregnet verdi. For $e=10^{-8}$
-blir $1+e^2=1+10^{-16}$ avrundet til $1$. Følg konsekvensene:
-
-| Trinn | Beregnet resultat | Hva forsvinner? |
-|---|---|---|
-| Normaliser første pil | $\widehat q_1=(1,e,0,0)^T$ | Lengdekorreksjonen avrundes bort. |
-| Mål andre pil | $\widehat r_{12}=1$ | Første subtraksjon blir $1-1$. |
-| Trekk fra | $\widehat v_2=(0,-e,e,0)^T$ | Første komponent, omtrent $e^2$, blir null. |
-| Normaliser resten | $\widehat q_2=(0,-1,1,0)^T/\sqrt2$ | Feilen forstørres ved divisjon med $e\sqrt2$. |
-
-Den første ortogonalitetsfeilen er liten, men ikke null:
-
-$$\widehat q_1^T\widehat q_2=-e/\sqrt2\approx-7.07\cdot10^{-9}.$$
-
-Nå kommer den avgjørende feilen: Klassisk GS måler $a_3$ mot denne
-beregnede andre pilen. Den leser **null**:
+$$\widehat r_{13}=\widehat q_1^Ta_3=1,$$
 
 $$\widehat r_{23}=\widehat q_2^Ta_3
-=0\cdot1+(-1/\sqrt2)\cdot0+(1/\sqrt2)\cdot0+0\cdot e=0.$$
+=0\cdot1+(\widehat q_2)_2\cdot0
++(\widehat q_2)_3\cdot0+0\cdot10^{-8}=0.$$
 
-I eksakt regning var dette tallet omtrent $e/\sqrt2$. Algoritmen trekker
-nå bare fra første retning:
+Siden den andre koeffisienten blir null, trekkes bare bidraget langs
+$\widehat q_1$ fra:
 
-$$\widehat v_3=a_3-\widehat q_1=(0,-e,0,e)^T,\qquad
-\color{#c62828}{\widehat q_3=(0,-1,0,1)^T/\sqrt2}.$$
+$$\widehat v_3
+=\begin{bmatrix}1\\0\\0\\10^{-8}\end{bmatrix}
+-\begin{bmatrix}1\\10^{-8}\\0\\0\end{bmatrix}
+=\begin{bmatrix}0\\-10^{-8}\\0\\10^{-8}\end{bmatrix}.$$
 
-Derfor blir
+Men denne resten har en negativ andre koordinat, akkurat som
+$\widehat q_2$. Klassisk GS beregner ikke koeffisienten på nytt etter
+subtraksjonen. Normaliseringen gir derfor
 
-$$\boxed{\color{#238443}{\widehat q_2}^T
-\color{#c62828}{\widehat q_3}=0+\tfrac12+0+0=\tfrac12.}$$
+$$\textcolor{#c62828}{\widehat q_3
+\approx\frac1{\sqrt2}(0,-1,0,1)^T}.$$
 
-De to pilene er langt fra vinkelrette! Begge har den samme negative andre
-komponenten. Et lite bortfall under den første subtraksjonen førte til en
-feil måling ved neste pil. Ingen av tallene er NaN.
+Nå er feilen stor og lett å se:
+
+$$\begin{aligned}
+\textcolor{#238443}{\widehat q_2}^{\,T}
+\textcolor{#c62828}{\widehat q_3}
+&\approx\frac12
+\begin{bmatrix}0&-1&1&0\end{bmatrix}
+\begin{bmatrix}0\\-1\\0\\1\end{bmatrix}\\
+&=\frac{0+1+0+0}{2}=\frac12.
+\end{aligned}$$
+
+Begge vektorene har lengde omtrent én, men de er langt fra ortogonale.
+Ingen tall er NaN. Forløpet er **avrunding i første normalisering →
+liten ortogonalitetsfeil → koeffisient beregnet før resten oppdateres →
+stor ortogonalitetsfeil**.
+
+Neste spørsmål er derfor konkret: Hva skjer hvis vi beregner
+komponenten langs $\widehat q_2$ **etter** at første bidrag er trukket
+fra? Det undersøker vi med modifisert GS.
 
 #### Kjør regningen og se komponentene
 
@@ -1844,6 +1824,9 @@ e = 1e-8
 a1 = np.array([1., e, 0., 0.])
 a2 = np.array([1., 0., e, 0.])
 a3 = np.array([1., 0., 0., e])
+print("e^2 =", e*e)
+print("1 + e^2 i float64 =", np.float64(1) + e*e)
+print("beregnet lengde av a1 =", np.linalg.norm(a1))
 q1 = a1/np.linalg.norm(a1)
 r12 = q1@a2
 v2 = a2-r12*q1
