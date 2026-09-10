@@ -55,8 +55,8 @@ på nytt ved hvert forsøk.
 Alle vektorer skrives som kolonner på papir. I NumPy lagres den samme vektoren
 som en endimensjonal array. Dermed svarer `x @ q` til matriseproduktet $x^Tq$.
 
-::: {.callout-note}
-### Notasjon og NumPy på ett sted
+::: {.callout-note collapse="true"}
+### Oppslagsverk etter utforskningen: notasjon og NumPy
 
 For $x,q\in\mathbb R^m$ bruker vi
 
@@ -171,7 +171,38 @@ Likningen til høyre sier nettopp at lengden er $1$: Hvis vi bruker
 Pytagoras på den vannrette og loddrette komponenten, får vi
 $\lVert q\rVert_2=\sqrt{q_1^2+q_2^2}=1$.
 
-Én regel gjenskaper alle avlesningene i figuren:
+### Hvorfor blir dette regneregelen?
+
+Se på den stiplede linjen i 4.1: Fra endepunktet går vi vinkelrett inn til
+den blå tallinjen. Vi kan dele turen $(3,2)^T$ i tre skritt mot høyre og to
+opp. Hvor mye bidrar hver etappe langs den blå linjen?
+
+Den blå enhetspilen $q=(q_1,q_2)^T$ danner en rettvinklet trekant med
+vannrett side $q_1$, loddrett side $q_2$ og hypotenus $1$. Likeformede
+rettvinklede trekanter viser at ett vannrett skritt gir avlesningen $q_1$
+langs den blå linjen, mens ett loddrett skritt gir $q_2$. Fortegnet følger
+retningen: et skritt motsatt vei gir motsatt bidrag.
+
+Tre vannrette skritt gir derfor $3q_1$, og to loddrette gir $2q_2$.
+Når vi setter etappene etter hverandre, legges avlesningene på tallinjen
+sammen. Prøv $q=(1,1)^T/\sqrt2$: bidragene er $3/\sqrt2$ og $2/\sqrt2$,
+så avlesningen blir $5/\sqrt2\approx3.54$. Kontroller med figuren.
+
+Prøv de to etappene hver for seg. Koden skriver dem ut før summen.
+Endre retningen og forutsi fortegnene først.
+
+```{pyodide-python}
+#| label: week4-direction-contributions
+import numpy as np
+q = np.array([1., 1.])/np.sqrt(2)
+horizontal = 3*q[0]
+vertical = 2*q[1]
+print("Tre skritt mot høyre bidrar:", horizontal)
+print("To skritt opp bidrar:", vertical)
+print("Til sammen:", horizontal+vertical)
+```
+
+For en tur med $x_1$ vannrette og $x_2$ loddrette skritt får vi derfor:
 
 $$\boxed{x^Tq=x_1q_1+x_2q_2.}$$
 
@@ -245,6 +276,17 @@ lengden før den normaliserer.
 
 ## 4.4 Null avlesning betyr ortogonalitet {#uke4-ortogonalitet}
 
+Trykk «vinkelrett» i figuren i 4.1. Pilen $x=(3,2)^T$ er fortsatt like
+lang, men avlesningen er null. Drei målepilen litt til hver side: fortegnet
+skifter. Hele bevegelsen går på tvers av måleretningen akkurat ved null.
+
+Prøv nå på papir med $v=(-2,3)^T$:
+
+$$x^Tv=3(-2)+2(3)=-6+6=0.$$
+
+Bidragene opphever hverandre. Del $v$ på $\sqrt{13}$ for å få lengde én;
+avlesningen forblir null. Vi gir nå denne observerte egenskapen et navn.
+
 To vektorer $x$ og $q$ er **ortogonale** når
 
 $$\boxed{x^Tq=0.}$$
@@ -260,7 +302,12 @@ $$v=\begin{bmatrix}-2\\3\end{bmatrix}$$
 
 ortogonal på $x$, fordi $x^Tv=3(-2)+2(3)=0$.
 
-En samling $q_1,\ldots,q_k$ er **ortonormal** når
+Prøv to målepiler: $(1,0)^T$ og $(0,1)^T$. Begge har lengde én. Hver leser
+seg selv som $1$, men den andre som $0$. Dermed måler de vannrett og loddrett
+bevegelse hver for seg. Vi kaller en slik samling **ortonormal**: pilene har
+lengde én og er parvis ortogonale.
+
+Med navnene $q_1,\ldots,q_k$ skrives de to egenskapene slik:
 
 $$q_i^Tq_j=\begin{cases}1,&i=j,\\0,&i\ne j.\end{cases}$$
 
@@ -275,6 +322,12 @@ mens oppføringene utenfor diagonalen kontrollerer at ulike kolonner er
 ortogonale.
 
 ## 4.5 Fra retningsmåler til mønsterdetektor {#uke4-monster}
+
+Tenk på et bilde som er lyst til venstre og mørkt til høyre. Vi ønsker ett
+tall som øker når denne forskjellen blir sterkere, blir null for et jevnt
+bilde og skifter fortegn når lys og mørke bytter plass. Vi skal prøve om
+indreproduktet kan gjøre dette. Ordet **detektor** betyr her bare en
+regneoppskrift som måler mengden av ett bestemt mønster.
 
 Vi bruker fire mønstre fra uke 3. Store bokstaver betegner de synlige
 $2\times2$-bildene:
@@ -310,6 +363,19 @@ $$\boxed{y^Tz=y_1z_1+y_2z_2+\cdots+y_nz_n.}$$
 Her er $n=4$: De fire pikselverdiene spiller samme rolle som de to
 koordinatene i pilfiguren. Derfor kan ett bildemønster brukes som en retning
 og et annet bilde måles mot den.
+
+Regn først bare med $h=(1,-1,1,-1)^T/2$. Et jevnt bilde $y=(1,1,1,1)^T$
+gir $h^Ty=(1-1+1-1)/2=0$. Et rent mønster $y=3h$ gir
+$h^Ty=3(h^Th)=3$. Bytter vi lyst og mørkt, gir $y=-3h$ avlesningen $-3$.
+Dette er grunnen til å kalle målingen en detektor.
+
+For blandingen vår er $x=(3/4,7/4,1/4,5/4)^T$. Da er
+
+$$h^Tx=\tfrac12(\tfrac34-\tfrac74+\tfrac14-\tfrac54)=-1.$$
+
+Regn også ut $m^Tx=2$, $v^Tx=1/2$ og $d^Tx=0$. Endre bare mengden av
+$H$ i koden og forutsi hvilken søyle som flytter seg. Først nå samler vi de
+fire målingene i én liste:
 
 Med $Q_{\text{pattern}}=[m\ h\ v\ d]$ blir avlesningene
 
@@ -350,7 +416,7 @@ print("Q^T Q =\n", Q_pattern.T @ Q_pattern)
 print("avlesninger =", readings)
 ```
 
-Mønstrene fungerer som fire detektorer uten kryssprat. Hver kolonne i
+Hver måling reagerer på sitt eget mønster og gir null på de andre. Hver kolonne i
 $Q_{\text{pattern}}$ har lengde én og er ortogonal på de andre. Derfor er
 $Q_{\text{pattern}}^TQ_{\text{pattern}}=I$, og avlesningene gir
 koordinatene direkte.
@@ -364,6 +430,11 @@ koeffisientene, men de forteller fortsatt hvilke mønstre som dominerer.
 :::
 
 ## 4.6 Mål, bygg opp og trekk fra {#uke4-projeksjon}
+
+Start med $x=(3,2)^T$ og målepilen $q=(1,0)^T$. Den leser $3$.
+Bygg denne delen: $3q=(3,0)^T$. Trekk den fra: resten er $(0,2)^T$.
+Dra så $q$ i figuren. Følg den grå delen vi bygger og den røde resten.
+Resten står på tvers av målepilen. Nå skriver vi handlingene med symboler.
 
 La $q$ være en enhetsvektor. Vi kan dele en vektor $x$ i to deler:
 
@@ -413,6 +484,26 @@ $$\boxed{p=(q^Tx)q}$$
 kalles den **ortogonale projeksjonen** av $x$ på retningen $q$. Residualen
 $r=x-p$ er ortogonal på $q$.
 
+### Flere piler før vi pakker dem i en matrise
+
+La $x=(3,2,4)^T$, $q_1=(1,0,0)^T$ og $q_2=(0,1,0)^T$.
+Mål separat: $c_1=q_1^Tx=3$ og $c_2=q_2^Tx=2$.
+Bygg så delene og legg sammen:
+
+$$p=3q_1+2q_2=(3,2,0)^T,\qquad r=x-p=(0,0,4)^T.$$
+
+Begge målerne gir null på resten. Ingen av de valgte pilene kan bygge den
+tredje komponenten. Med flere ortonormale piler gjør vi det samme:
+$c_i=q_i^Tx$, så $p=c_1q_1+\cdots+c_kq_k$.
+
+Vi pakker nå pilene som kolonner og målingene som en liste:
+
+$$Q=[q_1\ q_2]=\begin{bmatrix}1&0\\0&1\\0&0\end{bmatrix},
+\qquad c=\begin{bmatrix}3\\2\end{bmatrix}.$$
+
+$Q^Tx$ betyr «gjør begge målingene». $Qc$ betyr «bygg $c_1q_1+c_2q_2$».
+Matrisespråket forkorter altså handlinger vi allerede har utført.
+
 For en matrise $Q=[q_1\ \cdots\ q_k]$ med ortonormale kolonner blir alle
 avlesningene og den samlede projeksjonen
 
@@ -450,6 +541,16 @@ Les operasjonene med språket vi allerede har:
 2. mål hvor mye av $a_2$ som går i retning $q_1$;
 3. bygg opp og trekk fra denne delen;
 4. normaliser det som er igjen.
+
+Hvorfor blir den nye pilen vinkelrett? Måleren $q_1$ leste $r_{12}$ på
+$a_2$. Vi trekker fra nøyaktig denne mengden i retning $q_1$:
+
+$$q_1^Tv_2=q_1^Ta_2-r_{12}(q_1^Tq_1)=r_{12}-r_{12}=0.$$
+
+Normalisering endrer bare lengden, ikke retningen. Derfor er også
+$q_1^Tq_2=(q_1^Tv_2)/\lVert v_2\rVert_2=0$, så lenge $v_2\ne0$.
+I talleksemplet nedenfor kan du kontrollere det direkte:
+$(2,1)\begin{bmatrix}-1\\2\end{bmatrix}=-2+2=0$.
 
 Dette er **Gram–Schmidt-prosessen**.
 
@@ -505,7 +606,37 @@ kolonnene kan bygges opp igjen som
 
 $$\boxed{A=QR.}$$
 
+
+
 ## 4.8 Klassisk Gram–Schmidt for flere kolonner {#uke4-cgs}
+
+### En tredje pil: samme handling igjen
+
+Vi har allerede vinkelrette enhetspiler $q_1,q_2$. For en ny pil $a_3$
+måler vi $r_{13}=q_1^Ta_3$ og $r_{23}=q_2^Ta_3$. Trekk delene fra:
+
+$$v_3=a_3-r_{13}q_1-r_{23}q_2.$$
+
+Den andre subtraksjonen ødelegger ikke nullavlesningen langs $q_1$, fordi
+$q_1^Tq_2=0$. Kontroller ved å gange uttrykket med $q_1^T$ og $q_2^T$.
+Hvis resten ikke er null, setter vi $r_{33}=\lVert v_3\rVert_2$ og
+$q_3=v_3/r_{33}$. Les regningen baklengs:
+
+$$a_1=r_{11}q_1,\quad a_2=r_{12}q_1+r_{22}q_2,\quad
+ a_3=r_{13}q_1+r_{23}q_2+r_{33}q_3.$$
+
+Dette er tre byggeoppskrifter. Samle pilene i kolonner, og skriv hver
+oppskrift som en kolonne med koeffisienter:
+
+$$[a_1\ a_2\ a_3]=[q_1\ q_2\ q_3]
+\begin{bmatrix}r_{11}&r_{12}&r_{13}\\0&r_{22}&r_{23}\\0&0&r_{33}\end{bmatrix}.$$
+
+Nullene sier at første pil ikke trenger $q_2,q_3$, og andre ikke trenger
+$q_3$. Vi kaller matrisene $A,Q,R$, så likningen blir $A=QR$.
+En **faktorisering** skriver en matrise som et produkt. «Tynn» betyr at vi
+beholder bare de $k$ nødvendige pilene, selv om de har $m>k$ komponenter.
+
+### Den samme oppskriften i kortform
 
 La
 
@@ -589,26 +720,26 @@ trukket fra, er $v_2=\varepsilon q_\perp$.
 
 ```{.jsxgraph width="760" height="520"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
-  boundingbox: [-5.8, 6.0, 8.0, -4.8], axis: true,
+  boundingbox: [-1.2, 3.6, 4.6, -1.2], axis: true,
   showCopyright: false, showNavigation: false, keepaspectratio: true
 });
 var O = board.create('point', [0,0], {visible:false, fixed:true});
 var root5 = Math.sqrt(5);
 var qx = 2/root5, qy = 1/root5;
 var nx = -1/root5, ny = 2/root5;
-var alpha = board.create('slider', [[-5.1,-3.5],[-0.6,-3.5],[0.5,1.5,3]], {
+var alpha = board.create('slider', [[-0.8,-0.45],[1.2,-0.45],[0.5,1.5,3]], {
   name:'alpha', snapWidth:0.1
 });
-var epsilon = board.create('slider', [[1.0,-3.5],[5.5,-3.5],[0,0.6,1.5]], {
+var epsilon = board.create('slider', [[1.6,-0.45],[3.6,-0.45],[0,0.6,1.5]], {
   name:'epsilon', snapWidth:0.05
 });
-board.create('button', [5.8,-3.5,'sett epsilon = 0',function(){
+board.create('button', [1.6,-0.95,'sett epsilon = 0',function(){
   epsilon.setValue(0);
 }]);
 var A1 = board.create('point', [2,1], {
   name:'a1', fixed:true, color:'#1565c0', size:4
 });
-board.create('arrow', [O,A1], {strokeColor:'#1565c0', strokeWidth:4});
+board.create('arrow', [O,A1], {strokeColor:'#1565c0', strokeWidth:2, lastArrow:{type:2,size:4}});
 var P = board.create('point', [
   function(){return alpha.Value()*qx;},
   function(){return alpha.Value()*qy;}
@@ -617,14 +748,14 @@ var A2 = board.create('point', [
   function(){return alpha.Value()*qx+epsilon.Value()*nx;},
   function(){return alpha.Value()*qy+epsilon.Value()*ny;}
 ], {name:'a2', color:'#222222', size:5});
-board.create('arrow', [O,A2], {strokeColor:'#222222', strokeWidth:4});
-board.create('arrow', [O,P], {strokeColor:'#777777', strokeWidth:3});
-board.create('arrow', [P,A2], {strokeColor:'#c62828', strokeWidth:5});
+board.create('arrow', [O,A2], {strokeColor:'#222222', strokeWidth:2, lastArrow:{type:2,size:4}});
+board.create('arrow', [O,P], {strokeColor:'#777777', strokeWidth:2, lastArrow:{type:2,size:4}});
+board.create('arrow', [P,A2], {strokeColor:'#c62828', strokeWidth:2, lastArrow:{type:2,size:4}});
 board.create('line', [O,A1], {strokeColor:'#1565c0', dash:2, strokeWidth:1});
-board.create('text', [-5.3,5.2,function(){
+board.create('text', [-0.9,3.3,function(){
   return '||v2||_2 = |epsilon| = '+Math.abs(epsilon.Value()).toFixed(2);
-}], {fontSize:18, color:'#c62828'});
-board.create('text', [-5.3,4.6,function(){
+}], {fontSize:15, color:'#c62828'});
+board.create('text', [-0.9,2.95,function(){
   if (Math.abs(epsilon.Value()) < 1e-12) {
     return 'Ingen ny retning: q2 = v2/||v2||_2 er udefinert';
   }
@@ -632,7 +763,7 @@ board.create('text', [-5.3,4.6,function(){
     return 'Nesten parallell: den nye retningen kommer fra en svært liten rest';
   }
   return 'Tydelig ny retning';
-}], {fontSize:17});
+}], {fontSize:13});
 ```
 
 Ved $\varepsilon=0$ er $a_2$ et multiplum av $q_1$. I eksakt matematikk er
@@ -678,24 +809,158 @@ er for liten til å gi en pålitelig ny retning. Det er en beslutning om
 
 ## 4.10 Nesten avhengighet: endelige tall kan også være dårlige {#uke4-nesten}
 
-Eksakt avhengighet er lett å oppdage når `NaN` dukker opp. Nesten avhengige
-kolonner er farligere: Programmet kan returnere vanlige endelige tall som
-ikke er særlig ortogonale.
+### Følg tre piler, én regneoperasjon om gangen
 
-Vi bruker familien
+Vi bruker blått for første pil, grønt for andre og rødt for tredje.
+Fargene følges alltid av navn, slik at regningen også kan leses uten farger.
+La $e=10^{-8}$, og skriv først pilene hver for seg:
 
-$$A_\varepsilon=\begin{bmatrix}
-1&1&1\\
-\varepsilon&0&0\\
-0&\varepsilon&0\\
-0&0&\varepsilon
-\end{bmatrix}.$$
+$$\color{#1565c0}{a_1=(1,e,0,0)^T},\qquad
+\color{#238443}{a_2=(1,0,e,0)^T},\qquad
+\color{#c62828}{a_3=(1,0,0,e)^T}.$$
 
-Når $\varepsilon$ er liten, peker de tre kolonnene nesten samme vei. De nye
-retningene må finnes ved å trekke fra nesten like vektorer. Dermed møter vi
-igjen tap av signifikans fra uke 1.
+Alle har en stor første komponent og én liten ekstra komponent. De er
+uavhengige for $e\ne0$, men peker nesten samme vei. Matrisen er bare en
+samling av disse pilene:
+
+$$A_e=[a_1\ a_2\ a_3]=\begin{bmatrix}1&1&1\\e&0&0\\0&e&0\\0&0&e\end{bmatrix}.$$
+
+### Først regner vi med eksakte tall
+
+**Første pil.** Lengden er $\sqrt{1+e^2}$, så
+
+$$\color{#1565c0}{q_1=\frac{(1,e,0,0)^T}{\sqrt{1+e^2}}}.$$
+
+**Andre pil.** Mål, trekk fra og normaliser:
+
+$$r_{12}=q_1^Ta_2=\frac1{\sqrt{1+e^2}},$$
+$$v_2=a_2-r_{12}q_1
+=\left(\frac{e^2}{1+e^2},-\frac e{1+e^2},e,0\right)^T,$$
+$$\lVert v_2\rVert_2=e\sqrt{\frac{2+e^2}{1+e^2}},\qquad
+\color{#238443}{q_2=\frac{(e,-1,1+e^2,0)^T}{\sqrt{(1+e^2)(2+e^2)}}}.$$
+
+Kontrollen blir null fordi telleren i $q_1^Tq_2$ er $e-e=0$.
+Legg spesielt merke til den lille første komponenten i $v_2$, omtrent
+$e^2=10^{-16}$. Den er nødvendig for denne kanselleringen.
+
+**Tredje pil.** Begge målingene tas på den opprinnelige $a_3$:
+
+$$r_{13}=\frac1{\sqrt{1+e^2}},\qquad
+r_{23}=\frac e{\sqrt{(1+e^2)(2+e^2)}}.$$
+
+Etter begge subtraksjoner får vi
+
+$$v_3=a_3-r_{13}q_1-r_{23}q_2
+=\left(\frac{e^2}{2+e^2},-\frac e{2+e^2},-\frac e{2+e^2},e\right)^T,$$
+$$\lVert v_3\rVert_2=e\sqrt{\frac{3+e^2}{2+e^2}},\qquad
+\color{#c62828}{q_3=\frac{(e,-1,-1,2+e^2)^T}{\sqrt{(2+e^2)(3+e^2)}}}.$$
+
+Telleren i $q_1^Tq_3$ er $e-e=0$. Telleren i $q_2^Tq_3$ er
+$e^2+1-(1+e^2)=0$. Alle tre er altså parvis ortogonale i eksakt regning.
+
+### Så skjer dette i vanlig float64-regning
+
+En hatt, som i $\widehat q_2$, betyr en beregnet verdi. For $e=10^{-8}$
+blir $1+e^2=1+10^{-16}$ avrundet til $1$. Følg konsekvensene:
+
+| Trinn | Beregnet resultat | Hva forsvinner? |
+|---|---|---|
+| Normaliser første pil | $\widehat q_1=(1,e,0,0)^T$ | Lengdekorreksjonen avrundes bort. |
+| Mål andre pil | $\widehat r_{12}=1$ | Første subtraksjon blir $1-1$. |
+| Trekk fra | $\widehat v_2=(0,-e,e,0)^T$ | Første komponent, omtrent $e^2$, blir null. |
+| Normaliser resten | $\widehat q_2=(0,-1,1,0)^T/\sqrt2$ | Feilen forstørres ved divisjon med $e\sqrt2$. |
+
+Den første ortogonalitetsfeilen er liten, men ikke null:
+
+$$\widehat q_1^T\widehat q_2=-e/\sqrt2\approx-7.07\cdot10^{-9}.$$
+
+Nå kommer den avgjørende feilen: Klassisk GS måler $a_3$ mot denne
+beregnede andre pilen. Den leser **null**:
+
+$$\widehat r_{23}=\widehat q_2^Ta_3
+=0\cdot1+(-1/\sqrt2)\cdot0+(1/\sqrt2)\cdot0+0\cdot e=0.$$
+
+I eksakt regning var dette tallet omtrent $e/\sqrt2$. Algoritmen trekker
+nå bare fra første retning:
+
+$$\widehat v_3=a_3-\widehat q_1=(0,-e,0,e)^T,\qquad
+\color{#c62828}{\widehat q_3=(0,-1,0,1)^T/\sqrt2}.$$
+
+Derfor blir
+
+$$\boxed{\color{#238443}{\widehat q_2}^T
+\color{#c62828}{\widehat q_3}=0+\tfrac12+0+0=\tfrac12.}$$
+
+De to pilene er langt fra vinkelrette! Begge har den samme negative andre
+komponenten. Et lite bortfall under den første subtraksjonen førte til en
+feil måling ved neste pil. Ingen av tallene er NaN.
+
+### Kjør regningen og se komponentene
+
+```{pyodide-python}
+#| label: week4-cgs-worked
+import numpy as np
+import matplotlib.pyplot as plt
+e = 1e-8
+a1 = np.array([1., e, 0., 0.])
+a2 = np.array([1., 0., e, 0.])
+a3 = np.array([1., 0., 0., e])
+q1 = a1/np.linalg.norm(a1)
+r12 = q1@a2
+v2 = a2-r12*q1
+q2 = v2/np.linalg.norm(v2)
+r13, r23 = q1@a3, q2@a3
+v3 = a3-r13*q1-r23*q2
+q3 = v3/np.linalg.norm(v3)
+for name, value in [('q1', q1), ('r12', r12), ('v2', v2), ('q2', q2),
+                    ('r13', r13), ('r23', r23), ('v3', v3), ('q3', q3)]:
+    print(name, '=', value)
+print('q1 @ q2 =', q1@q2)
+print('q2 @ q3 =', q2@q3)
+fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+positions = np.arange(1, 5)
+axes[0].bar(positions-.15, q2, width=.3, color='#238443', label='q2, beregnet')
+axes[0].bar(positions+.15, q3, width=.3, color='#c62828', label='q3, beregnet')
+axes[0].set_xticks(positions)
+axes[0].set_xlabel('Komponentnummer')
+axes[0].set_title('Samme negative komponent nr. 2')
+axes[0].legend()
+axes[1].bar(positions, q2*q3, color='#6a51a3')
+axes[1].set_xticks(positions)
+axes[1].set_xlabel('Komponentnummer')
+axes[1].set_title('Bidrag til q2 @ q3: summen er 0.5')
+for ax in axes:
+    ax.axhline(0, color='black', linewidth=.8)
+plt.tight_layout()
+plt.show()
+```
+
+Endre $e$ til $10^{-4}$ og gjenta. Finn først hvilken komponent i $v_2$
+som nå overlever. Sammenlign så de to indreproduktene. De viste
+avrundingstrinnene gjelder dette eksemplet ved $10^{-8}$; ikke anta at
+alle nesten avhengige piler feiler ved samme grense.
 
 ## 4.11 Modifisert Gram–Schmidt {#uke4-mgs}
+
+### Prøv en ny måling på resten fra 4.10
+
+Etter at første del er trukket fra $a_3$, er resten $w=(0,-e,0,e)^T$.
+Klassisk GS brukte målingen $\widehat q_2^Ta_3=0$. Hva skjer hvis vi i
+stedet måler på $w$?
+
+$$\widehat q_2^Tw=e/\sqrt2.$$
+
+Denne målingen finner den gjenværende delen i retning $\widehat q_2$!
+Trekk den fra:
+
+$$w-\frac e{\sqrt2}\widehat q_2=(0,-e/2,-e/2,e)^T.$$
+
+Den normaliserte pilen blir $(0,-1,-1,2)^T/\sqrt6$. Indreproduktet med
+$\widehat q_2$ blir $(1-1)/\sqrt{12}=0$. Med $\widehat q_1$ er det
+fortsatt en liten feil, $-e/\sqrt6$, så forsøket lover ikke perfekt regning.
+
+Vi har bare endret *hvilken pil vi måler på*: resten etter forrige
+subtraksjon. Denne varianten kalles **modifisert Gram–Schmidt**.
 
 Klassisk Gram–Schmidt måler alle komponenter mot den opprinnelige kolonnen
 $a_j$ før de trekkes fra. Modifisert Gram–Schmidt måler på nytt etter hver
@@ -708,8 +973,8 @@ $$r_{ij}=q_i^Tv,\qquad v\leftarrow v-r_{ij}q_i,
 
 $$r_{jj}=\lVert v\rVert_2,\qquad q_j=v/r_{jj}.$$
 
-Kort sagt: Klassisk GS måler all kryssprat før den renser. Modifisert GS
-renser én retning og måler så det som faktisk er igjen.
+Kort sagt: Klassisk GS måler alle delene på den opprinnelige pilen. Modifisert GS
+trekker fra én del, og måler deretter på resten.
 
 På matrisefamilien under beholder MGS vanligvis ortogonaliteten lenger enn
 CGS. Det er ikke en garanti for at feilen alltid avtar monotont, eller at MGS
@@ -786,6 +1051,19 @@ Gram–Schmidt. Vi utleder ikke Householder-metoden denne uken.
 :::
 
 ## 4.12 Fra QR til minste kvadrater {#uke4-mk}
+
+### Når ingen linje treffer alt
+
+Se på målingene $(-1,0.2),(0,0.9),(1,2.1),(2,2.8)$. For like store
+skritt i første koordinat øker den andre med $0.7$, så $1.2$, så $0.7$.
+En rett linje må ha samme økning hver gang. Derfor kan ingen linje treffe
+alle fire målingene. Prøv linjen $p(t)=1+t$ på papir: feilene «måling minus
+linje» blir $(0.2,-0.1,0.1,-0.2)^T$. Summen av kvadrerte feil er $0.10$.
+
+Prøv så $p(t)=1.05+0.9t$: feilene blir $(0.05,-0.15,0.15,-0.05)^T$, og
+summen av kvadratene blir $0.05$. Det er bedre. Hvordan finner vi den
+minste mulige summen? Det er spørsmålet **minste kvadraters metode** løser.
+Nedenfor bruker vi måle-og-bygge-oppskriften fra 4.6 for å finne svaret.
 
 Anta at
 
