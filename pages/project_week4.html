@@ -4731,6 +4731,11 @@ T_{j+1}(x)=2xT_j(x)-T_{j-1}(x).\]</span></p>
 \frac{\max_{\lVert z\rVert_2=1}\lVert Az\rVert_2}
 {\min_{\lVert z\rVert_2=1}\lVert Az\rVert_2}.\]</span></p>
 <p>Det er altså forholdet mellom den største og den minste skaleringen. Dette er en annen matrisenorm enn Frobeniusnormen vi bruker til QR-kontrollene. Du trenger ikke beregne disse maksimums- og minimumsverdiene selv.</p>
+<p><strong>Et frampek til <a href="../pages/uke5.html">uke 5</a>:</strong> Egenverdier beskriver hvordan en kvadratisk matrise skalerer vektorer langs bestemte retninger, kalt egenvektorretninger. Her er forbindelsen gjennom <span class="math inline">\(A^TA\)</span>, som er kvadratisk selv om <span class="math inline">\(A\)</span> er rektangulær.</p>
+<p>Den største og minste egenverdien til <span class="math inline">\(A^TA\)</span> er kvadratene av den største og minste skaleringen til <span class="math inline">\(A\)</span>. Skriver vi disse egenverdiene som <span class="math inline">\(\lambda_{\max}\)</span> og <span class="math inline">\(\lambda_{\min}\)</span>, får vi</p>
+<p><span class="math display">\[\lVert A\rVert_2=\sqrt{\lambda_{\max}},\qquad
+\kappa_2(A)=\sqrt{\frac{\lambda_{\max}}{\lambda_{\min}}}.\]</span></p>
+<p>Her er <span class="math inline">\(\lambda_{\min}&gt;0\)</span> fordi kolonnene i <span class="math inline">\(A\)</span> er lineært uavhengige. Dette knytter følsomheten til stoffet om egenverdier som kommer neste uke. I dette prosjektet bruker du fortsatt <span class="math inline">\(\kappa_2(A)\)</span> som et følsomhetsvarsel og beregner tallet med <code>np.linalg.cond(A)</code>.</p>
 </div>
 </div>
 </div>
