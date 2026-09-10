@@ -997,12 +997,54 @@ $c=q^Tx,\qquad p=cq,\qquad r=x-p.$
 - $p=(q^Tx)q$ bygger opp denne delen som en vektor.
 - $r=x-p$ er det som er igjen.
 
-Figuren viser at resten står vinkelrett på målepilen. Vi forklarer det
-ved å regne ut komponenten langs $q$:
+#### Hvorfor er komponenten langs $q$ lik null?
 
-$$q^Tr=q^T\bigl(x-(q^Tx)q\bigr)=q^Tx-(q^Tx)q^Tq=0,$$
+Figuren viser at resten står vinkelrett på målepilen. Vi forklarer dette
+med regning, men skiller først mellom vektorer, transponering og tall.
 
-fordi $q^Tq=1$. Vektoren
+Transponeringen gjør kolonnen $q$ til en rad:
+
+$$q=\begin{bmatrix}q_1\\q_2\end{bmatrix},
+\qquad q^T=\begin{bmatrix}q_1&q_2\end{bmatrix}.$$
+
+Dermed betyr $q^Tx$ rad ganger kolonne, og resultatet er **ett tall**:
+
+$$q^Tx=\begin{bmatrix}q_1&q_2\end{bmatrix}
+\begin{bmatrix}x_1\\x_2\end{bmatrix}=q_1x_1+q_2x_2.$$
+
+For reelle vektorer gir dette også $q^Tx=x^Tq$, fordi
+$q_1x_1+q_2x_2=x_1q_1+x_2q_2$. Vi kan altså bytte plass på de to
+vektorene i dette indreproduktet. Det betyr ikke at faktorer i et
+vilkårlig matriseprodukt kan byttes om.
+
+La nå $c=q^Tx$. Da er $c$ et tall, og resten er $r=x-cq$.
+Vi skriver først ut hva som skjer når raden $q^T$ multipliseres med $cq$:
+
+$$\begin{aligned}
+q^T(cq)
+&=\begin{bmatrix}q_1&q_2\end{bmatrix}
+  \begin{bmatrix}cq_1\\cq_2\end{bmatrix}\\
+&=q_1(cq_1)+q_2(cq_2)\\
+&=c(q_1^2+q_2^2)\\
+&=c(q^Tq).
+\end{aligned}$$
+
+Her trekkes **tallet $c$** utenfor summen. Transponeringen blir stående
+på $q$ gjennom hele regningen.
+
+Nå kan vi ta kontrollen av resten ett steg om gangen:
+
+$$\begin{aligned}
+q^Tr
+&=q^T(x-cq) &&\text{sett inn }r=x-cq\\
+&=q^Tx-q^T(cq) &&\text{fordel over differansen}\\
+&=q^Tx-c(q^Tq) &&\text{trekk tallet }c\text{ utenfor}\\
+&=c-c\cdot1 &&\text{bruk }q^Tx=c\text{ og }q^Tq=1\\
+&=0.
+\end{aligned}$$
+
+Dette forklarer observasjonen: Resten har ingen komponent langs $q$.
+Vektoren
 
 $$\boxed{p=(q^Tx)q}$$
 
