@@ -69,3 +69,4 @@ format:
   html:
     theme: cosmo
     css: styles.css
+    include-after-body: _includes/site/tab-links.html
