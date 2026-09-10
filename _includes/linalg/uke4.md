@@ -13,6 +13,24 @@ som en mønsterdetektor for $2\times2$-bilder fra uke 3. Til slutt lager vi
 ortogonale retninger selv og undersøker hva som skjer når kolonner er
 avhengige eller nesten avhengige.
 
+### Piler, bilder og polynomer – samme struktur
+
+Denne uken møter vi ulike objekter: en pil i planet, et bilde og et polynom.
+De ser forskjellige ut, men har en felles matematisk struktur: Vi kan legge
+dem sammen og gange dem med tall. Derfor kan vi behandle dem som **vektorer**
+og bruke de samme ideene om byggesteiner, retninger og koordinater.
+
+Vi beholder ofte det uformelle ordet **«pil»** for å holde fast i denne
+intuisjonen. En pil representerer selve objektet – noe med størrelse og
+retning – mens koordinatene forteller hvordan vi bygger det i en valgt
+basis. For et bilde kan «retning» være et bestemt kontrastmønster; for et
+polynom kan det være en bestemt polynomform. Å gange med et tall endrer
+mengden av dette mønsteret eller denne formen. Vi trenger ikke kunne tegne
+en vanlig pil for å bruke denne tankegangen.
+
+Når vi senere snakker om lengde og vinkel, må vi også velge hvordan de skal
+måles. Det er indreproduktet som gir oss denne måleregelen.
+
 ### Begreper
 
 - indreprodukt, norm og enhetsvektor
@@ -110,27 +128,27 @@ var board = JXG.JSXGraph.initBoard(BOARDID, {
 });
 var O = board.create('point', [0, 0], {visible: false, fixed: true});
 var X = board.create('point', [3, 2], {
-  name: 'x=(3,2)', fixed: true, color: '#222222', size: 4
+  name: 'x=(3,2)', fixed: true, color: '#222222', size: 3
 });
-board.create('arrow', [O, X], {strokeColor: '#222222', strokeWidth: 4});
+board.create('arrow', [O, X], {strokeColor: '#222222', strokeWidth: 1.5, lastArrow: {type: 2, size: 4}});
 var circle = board.create('circle', [O, 1], {
   strokeColor: '#8fa8c7', dash: 2, fixed: true
 });
 var Q = board.create('glider', [1, 0, circle], {
-  name: 'q', color: '#1565c0', size: 5
+  name: 'q', color: '#1565c0', size: 3
 });
-board.create('arrow', [O, Q], {strokeColor: '#1565c0', strokeWidth: 4});
+board.create('arrow', [O, Q], {strokeColor: '#1565c0', strokeWidth: 1.5, lastArrow: {type: 2, size: 4}});
 var reading = function () { return 3*Q.X() + 2*Q.Y(); };
 var P = board.create('point', [
   function () { return reading()*Q.X(); },
   function () { return reading()*Q.Y(); }
-], {name: 'avlesning', color: '#1565c0', size: 5});
+], {name: 'avlesning', color: '#1565c0', size: 3});
 board.create('line', [O, Q], {
   straightFirst: true, straightLast: true,
-  strokeColor: '#1565c0', strokeWidth: 2
+  strokeColor: '#1565c0', strokeWidth: 1
 });
 board.create('segment', [X, P], {
-  strokeColor: '#777777', dash: 2, strokeWidth: 2
+  strokeColor: '#777777', dash: 2, strokeWidth: 1
 });
 board.create('text', [-5.8, 4.9, function () {
   return 'q = (' + Q.X().toFixed(2) + ', ' + Q.Y().toFixed(2) + ')';
@@ -173,22 +191,34 @@ Likningen til høyre sier nettopp at lengden er $1$: Hvis vi bruker
 Pytagoras på den vannrette og loddrette komponenten, får vi
 $\lVert q\rVert_2=\sqrt{q_1^2+q_2^2}=1$.
 
-#### Hvorfor blir dette regneregelen?
+#### Hvor mye bidrar et vannrett og et loddrett skritt?
 
-Se på den stiplede linjen i [retningsmåleren](#uke4-retning): Fra endepunktet går vi vinkelrett inn til
-den blå tallinjen. Vi kan dele turen $(3,2)^T$ i tre skritt mot høyre og to
-opp. Hvor mye bidrar hver etappe langs den blå linjen?
+La $\theta$ være vinkelen fra den positive vannrette aksen til den blå
+målepilen. På enhetssirkelen har pilen koordinatene
 
-Den blå enhetspilen $q=(q_1,q_2)^T$ danner en rettvinklet trekant med
-vannrett side $q_1$, loddrett side $q_2$ og hypotenus $1$. Likeformede
-rettvinklede trekanter viser at ett vannrett skritt gir avlesningen $q_1$
-langs den blå linjen, mens ett loddrett skritt gir $q_2$. Fortegnet følger
-retningen: et skritt motsatt vei gir motsatt bidrag.
+$$q=\begin{bmatrix}\cos\theta\\\sin\theta\end{bmatrix}.$$
 
-Tre vannrette skritt gir derfor $3q_1$, og to loddrette gir $2q_2$.
-Når vi setter etappene etter hverandre, legges avlesningene på tallinjen
-sammen. Prøv $q=(1,1)^T/\sqrt2$: bidragene er $3/\sqrt2$ og $2/\sqrt2$,
-så avlesningen blir $5/\sqrt2\approx3.54$. Kontroller med figuren.
+Dette er den vanlige trekantregelen: cosinus gir vannrett komponent og
+sinus gir loddrett komponent når hypotenusen har lengde én.
+
+Se først på en skrå retning mellom høyre og opp. Ett skritt mot høyre
+bidrar med $\cos\theta$ langs den blå tallinjen. Ett skritt opp danner
+vinkelen $90^\circ-\theta$ med målepilen og bidrar derfor med
+$\cos(90^\circ-\theta)=\sin\theta$.
+
+Turen $x=(3,2)^T$ består av tre skritt mot høyre og to opp. Bidragene langs
+den samme tallinjen legges sammen:
+
+$$\text{avlesning}=3\cos\theta+2\sin\theta.$$
+
+Prøv $\theta=0^\circ$, $90^\circ$ og $45^\circ$ i figuren. Vi får
+henholdsvis $3$, $2$ og $5/\sqrt2\approx3.54$. Når målepilen dreies videre,
+gir fortegnene til cosinus og sinus automatisk negative bidrag der
+bevegelsen går mot måleretningen.
+
+Siden $q_1=\cos\theta$ og $q_2=\sin\theta$, er dette nettopp
+$3q_1+2q_2$. Den generelle regelen nedenfor er den samme oppskriften for
+$x_1$ vannrette og $x_2$ loddrette skritt.
 
 Prøv de to etappene hver for seg. Koden skriver dem ut før summen.
 Endre retningen og forutsi fortegnene først.
@@ -196,7 +226,9 @@ Endre retningen og forutsi fortegnene først.
 ```{pyodide-python}
 #| label: week4-direction-contributions
 import numpy as np
-q = np.array([1., 1.])/np.sqrt(2)
+theta_degrees = 45.0  # Prøv også 0, 90, 135 og 180 grader.
+theta = np.deg2rad(theta_degrees)  # NumPys cos og sin bruker radianer.
+q = np.array([np.cos(theta), np.sin(theta)])
 horizontal = 3*q[0]
 vertical = 2*q[1]
 print("Tre skritt mot høyre bidrar:", horizontal)
@@ -272,7 +304,7 @@ with np.errstate(divide="warn", invalid="warn"):
 ```
 
 Nullvektoren har ingen retning. Regningen forsøker å dele $0$ på $0$, og
-I flyttallsregningen blir resultatet `NaN` («not a number»). Det er maskinens
+i flyttallsregningen blir resultatet `NaN` («not a number»). Det er maskinens
 markering av at regningen ikke ga et gyldig tall. En algoritme må kontrollere
 lengden før den normaliserer.
 
