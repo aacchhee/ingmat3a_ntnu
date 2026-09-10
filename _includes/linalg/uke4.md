@@ -2165,27 +2165,29 @@ Her er $b$ målingene, $Ac$ modellverdiene og $r=b-Ac$ residualvektoren.
 Kvadratsummen i figuren er dermed $S=\lVert b-Ac\rVert_2^2$.
 Vi søker en kombinasjon av $a_1,a_2$ som ligger nærmest $b$.
 
-#### QR gir to ortonormale retninger for de samme modellverdiene
+#### Bruk QR-faktoriseringen fra 4.3
 
-Fra 4.3 vet vi hvordan Gram–Schmidt erstatter kolonnene med ortonormale
-vektorer og lagrer koeffisientene. Her blir beregningen kort:
+Vi bruker nå QR som et kjent verktøy. Husk to egenskaper:
 
-$$q_1=\frac{a_1}{2}=\frac12(1,1,1,1)^T,\qquad
-r_{12}=q_1^Ta_2=\frac{-1+0+1+2}{2}=1,$$
+- Kolonnene i $Q$ er ortonormale og spenner ut samme rom som kolonnene i $A$.
+- $R$ inneholder koeffisientene som uttrykker de opprinnelige kolonnene:
+  $A=QR$.
 
-$$v_2=a_2-q_1=\frac12(-3,-1,1,3)^T,\qquad
-\lVert v_2\rVert_2=\sqrt5,\qquad
-q_2=\frac1{2\sqrt5}(-3,-1,1,3)^T.$$
+For matrisen i dette eksemplet er faktorene
 
-Regnskapet er $a_1=2q_1$ og $a_2=q_1+\sqrt5\,q_2$. Derfor har vi
-
-$$A=QR,\qquad
-\textcolor{#1565c0}{Q=[q_1\ q_2]},\qquad
+$$\textcolor{#1565c0}{Q=[q_1\ q_2]
+=\begin{bmatrix}
+1/2&-3/(2\sqrt5)\\
+1/2&-1/(2\sqrt5)\\
+1/2&1/(2\sqrt5)\\
+1/2&3/(2\sqrt5)
+\end{bmatrix}},\qquad
 \textcolor{#8b5aa7}{R=\begin{bmatrix}2&1\\0&\sqrt5\end{bmatrix}}.$$
 
-Både $a_1,a_2$ og $q_1,q_2$ kan uttrykke de samme modellverdiene.
-Fordelen med $q_1,q_2$ er at vi kan bruke indreproduktene direkte,
-slik vi gjorde i projeksjonsforsøket.
+Regnskapet i $R$ sier $a_1=2q_1$ og $a_2=q_1+\sqrt5\,q_2$.
+Vi kan derfor arbeide med $q_1,q_2$ uten å endre hvilke modellverdier
+som er mulige. Siden disse vektorene er ortonormale, kan vi beregne
+projeksjonen av målingene med indreprodukter, som i 4.2.
 
 #### Finn den delen av målingene som modellen kan gjengi
 
