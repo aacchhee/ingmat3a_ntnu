@@ -117,13 +117,22 @@ En **enhetsretning** er en pil med lengde $1$ som bare angir en retning. Vi
 kaller pilen $q$. Alle slike piler som starter i origo, ender på
 **enhetssirkelen**: sirkelen med sentrum i origo og radius $1$. Dra punktet
 $q$ rundt denne sirkelen i figuren. Den blå linjen er en tallinje i den
-valgte retningen, og den blå prikken viser den fortegnede avlesningen av $x$
-langs linjen. Positiv avlesning betyr samme vei som $q$; negativ avlesning
-betyr motsatt vei.
+valgte retningen. Følg den stiplede linjen fra enden av $x$ vinkelrett ned
+på den blå tallinjen. Treffpunktet er merket $P$.
 
-```{.jsxgraph width="760" height="500"}
+Hvor langt ligger $P$ fra origo, målt langs $q$? Vi kaller dette tallet
+**komponenten av $x$ langs $q$**, og skriver det som $c$. Tallet har fortegn:
+positivt i samme retning som $q$, negativt i motsatt retning. Mot høyre
+får vi $c=3$; oppover får vi $c=2$. Her er komponenten ett tall; senere
+bruker vi tallet til å bygge en pil.
+
+Den oransje buen viser vinkelen $\theta$ fra positiv vannrett akse til $q$,
+målt mot klokken fra $0^\circ$ til $360^\circ$. Denne vinkelen bruker vi
+snart til å finne regneregelen.
+
+```{.jsxgraph width="620" height="440"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
-  boundingbox: [-6.2, 5.5, 7.8, -4.8], axis: true,
+  boundingbox: [-1.7, 3.8, 4.5, -1.8], axis: true,
   showCopyright: false, showNavigation: false, keepaspectratio: true
 });
 var O = board.create('point', [0, 0], {visible: false, fixed: true});
@@ -138,11 +147,11 @@ var Q = board.create('glider', [1, 0, circle], {
   name: 'q', color: '#1565c0', size: 3
 });
 board.create('arrow', [O, Q], {strokeColor: '#1565c0', strokeWidth: 1.5, lastArrow: {type: 2, size: 4}});
-var reading = function () { return 3*Q.X() + 2*Q.Y(); };
+var component = function () { return 3*Q.X() + 2*Q.Y(); };
 var P = board.create('point', [
-  function () { return reading()*Q.X(); },
-  function () { return reading()*Q.Y(); }
-], {name: 'avlesning', color: '#1565c0', size: 3});
+  function () { return component()*Q.X(); },
+  function () { return component()*Q.Y(); }
+], {name: 'P', color: '#1565c0', size: 3});
 board.create('line', [O, Q], {
   straightFirst: true, straightLast: true,
   strokeColor: '#1565c0', strokeWidth: 1
@@ -150,35 +159,53 @@ board.create('line', [O, Q], {
 board.create('segment', [X, P], {
   strokeColor: '#777777', dash: 2, strokeWidth: 1
 });
-board.create('text', [-5.8, 4.9, function () {
+board.create('text', [-1.4, 3.5, function () {
   return 'q = (' + Q.X().toFixed(2) + ', ' + Q.Y().toFixed(2) + ')';
-}], {fontSize: 17, color: '#1565c0'});
-board.create('text', [-5.8, 4.3, function () {
-  return 'avlesning = ' + reading().toFixed(3);
-}], {fontSize: 18, color: '#1565c0'});
-board.create('button', [-5.8, -3.7, 'høyre', function () {
+}], {fontSize: 15, color: '#1565c0'});
+board.create('text', [-1.4, 3.15, function () {
+  return 'c = ' + component().toFixed(3);
+}], {fontSize: 15, color: '#1565c0'});
+board.create('button', [-1.4, -1.5, 'høyre', function () {
   Q.moveTo([1, 0]);
 }]);
-board.create('button', [-3.6, -3.7, 'opp', function () {
+board.create('button', [-0.3, -1.5, 'opp', function () {
   Q.moveTo([0, 1]);
 }]);
-board.create('button', [-1.8, -3.7, 'langs x', function () {
+board.create('button', [0.6, -1.5, 'langs x', function () {
   Q.moveTo([3/Math.sqrt(13), 2/Math.sqrt(13)]);
 }]);
-board.create('button', [0.7, -3.7, 'vinkelrett', function () {
+board.create('button', [1.9, -1.5, 'vinkelrett', function () {
   Q.moveTo([-2/Math.sqrt(13), 3/Math.sqrt(13)]);
 }]);
-board.create('button', [4.0, -3.7, 'motsatt', function () {
+board.create('button', [3.3, -1.5, 'motsatt', function () {
   Q.moveTo([-3/Math.sqrt(13), -2/Math.sqrt(13)]);
 }]);
+var theta = function () {
+  var angle = Math.atan2(Q.Y(), Q.X());
+  return angle < 0 ? angle + 2*Math.PI : angle;
+};
+board.create('curve', [
+  function (t) { return 0.55*Math.cos(t); },
+  function (t) { return 0.55*Math.sin(t); },
+  0, theta
+], {strokeColor: '#b45309', strokeWidth: 1.5});
+board.create('text', [
+  function () { return 0.72*Math.cos(theta()/2); },
+  function () { return 0.72*Math.sin(theta()/2); },
+  'θ'
+], {fontSize: 16, color: '#b45309', fixed: true});
+board.create('text', [1.5, 3.5, function () {
+  return 'θ = ' + (theta()*180/Math.PI).toFixed(1) + '°';
+}], {fontSize: 15, color: '#b45309'});
+
 ```
 
 Prøv dette før du leser videre:
 
-1. Sett $q$ mot høyre. Hvorfor blir avlesningen $3$?
+1. Sett $q$ mot høyre. Hvorfor blir komponenten $3$?
 2. Sett $q$ oppover. Hvorfor blir den $2$?
-3. Finn retningen som gir størst positiv avlesning.
-4. Finn en retning som gir avlesning $0$ uten at $x$ er null.
+3. Finn retningen som gir størst positiv komponent.
+4. Finn en retning som gir komponent $0$ uten at $x$ er null.
 5. Snu $q$ motsatt vei. Hva skjer med fortegnet?
 
 ### Finn regneregelen {#uke4-regneregel}
@@ -209,7 +236,7 @@ $\cos(90^\circ-\theta)=\sin\theta$.
 Turen $x=(3,2)^T$ består av tre skritt mot høyre og to opp. Bidragene langs
 den samme tallinjen legges sammen:
 
-$$\text{avlesning}=3\cos\theta+2\sin\theta.$$
+$$\text{komponent}=3\cos\theta+2\sin\theta.$$
 
 Prøv $\theta=0^\circ$, $90^\circ$ og $45^\circ$ i figuren. Vi får
 henholdsvis $3$, $2$ og $5/\sqrt2\approx3.54$. Når målepilen dreies videre,
@@ -240,7 +267,7 @@ For en tur med $x_1$ vannrette og $x_2$ loddrette skritt får vi derfor:
 
 $$\boxed{x^Tq=x_1q_1+x_2q_2.}$$
 
-For $x=(3,2)^T$ blir avlesningen $3q_1+2q_2$. Uttrykket $x^Tq$ kalles
+For $x=(3,2)^T$ blir komponenten $3q_1+2q_2$. Uttrykket $x^Tq$ kalles
 **indreproduktet** mellom $x$ og $q$. Symbolet $T$ betyr transponering: Den
 stående kolonnevektoren $x$ vendes til en rad, slik at matriseproduktet
 $x^Tq$ blir ett tall.
@@ -265,7 +292,7 @@ for name, q in directions.items():
     print(f"{name:16s}: x^T q = {x @ q: .4f}")
 ```
 
-Legg til en retning som står vinkelrett på $x$, og kontroller at avlesningen
+Legg til en retning som står vinkelrett på $x$, og kontroller at komponenten
 er null. Endre bare én retning om gangen. I [delen om ortogonalitet](#uke4-ortogonalitet) gir vi «vinkelrett» et
 matematisk navn og en test.
 
@@ -310,10 +337,10 @@ lengden før den normaliserer.
 
 ## 4.2 Ortogonalitet og projeksjon
 
-### Null avlesning betyr ortogonalitet {#uke4-ortogonalitet}
+### Null komponent betyr ortogonalitet {#uke4-ortogonalitet}
 
 Trykk «vinkelrett» i [retningsmåleren](#uke4-retning). Pilen $x=(3,2)^T$ er fortsatt like
-lang, men avlesningen er null. Drei målepilen litt til hver side: fortegnet
+lang, men komponenten er null. Drei målepilen litt til hver side: fortegnet
 skifter. Hele bevegelsen går på tvers av måleretningen akkurat ved null.
 
 Prøv nå på papir med $v=(-2,3)^T$:
@@ -321,7 +348,7 @@ Prøv nå på papir med $v=(-2,3)^T$:
 $$x^Tv=3(-2)+2(3)=-6+6=0.$$
 
 Bidragene opphever hverandre. Del $v$ på $\sqrt{13}$ for å få lengde én;
-avlesningen forblir null. Vi gir nå denne observerte egenskapen et navn.
+komponenten forblir null. Vi gir nå denne observerte egenskapen et navn.
 
 To vektorer $x$ og $q$ er **ortogonale** når
 
@@ -402,7 +429,7 @@ og et annet bilde måles mot den.
 
 Regn først bare med $h=(1,-1,1,-1)^T/2$. Et jevnt bilde $y=(1,1,1,1)^T$
 gir $h^Ty=(1-1+1-1)/2=0$. Et rent mønster $y=3h$ gir
-$h^Ty=3(h^Th)=3$. Bytter vi lyst og mørkt, gir $y=-3h$ avlesningen $-3$.
+$h^Ty=3(h^Th)=3$. Bytter vi lyst og mørkt, gir $y=-3h$ målingen $-3$.
 Dette er grunnen til å kalle målingen en detektor.
 
 For blandingen vår er $x=(3/4,7/4,1/4,5/4)^T$. Da er
@@ -413,7 +440,7 @@ Regn også ut $m^Tx=2$, $v^Tx=1/2$ og $d^Tx=0$. Endre bare mengden av
 $H$ i koden og forutsi hvilken søyle som flytter seg. Først nå samler vi de
 fire målingene i én liste:
 
-Med $Q_{\text{pattern}}=[m\ h\ v\ d]$ blir avlesningene
+Med $Q_{\text{pattern}}=[m\ h\ v\ d]$ blir målingene
 
 $$Q_{\text{pattern}}^Tx=
 \begin{bmatrix}m^Tx\\h^Tx\\v^Tx\\d^Tx\end{bmatrix}
@@ -445,23 +472,23 @@ axes[4].set_title("blanding")
 axes[4].set_xticks([]); axes[4].set_yticks([])
 axes[5].bar(names, readings, color="#1565c0")
 axes[5].axhline(0, color="black", linewidth=0.8)
-axes[5].set_title("avlesning")
+axes[5].set_title("mønstermengde")
 plt.tight_layout(); plt.show()
 
 print("Q^T Q =\n", Q_pattern.T @ Q_pattern)
-print("avlesninger =", readings)
+print("målinger =", readings)
 ```
 
 Hver måling reagerer på sitt eget mønster og gir null på de andre. Hver kolonne i
 $Q_{\text{pattern}}$ har lengde én og er ortogonal på de andre. Derfor er
-$Q_{\text{pattern}}^TQ_{\text{pattern}}=I$, og avlesningene gir
+$Q_{\text{pattern}}^TQ_{\text{pattern}}=I$, og målingene gir
 koordinatene direkte.
 
 ::: {.callout-tip collapse="true"}
 #### Fordypning: legg til støy
 
 Legg `0.05*np.random.default_rng(4).standard_normal((2, 2))` til bildet og
-gjenta deteksjonen. Avlesningene blir ikke identiske med de opprinnelige
+gjenta deteksjonen. Målingene blir ikke identiske med de opprinnelige
 koeffisientene, men de forteller fortsatt hvilke mønstre som dominerer.
 :::
 
@@ -481,7 +508,7 @@ $$c=q^Tx,\qquad p=cq,\qquad r=x-p.$$
 - $r=x-p$ er det som er igjen.
 
 Dra både $x$ og $q$. Den grå pilen viser $p$, og den røde pilen viser resten
-$r$. Legg merke til avlesningen $q^Tr$.
+$r$. Legg merke til komponenten $q^Tr$.
 
 ```{.jsxgraph width="760" height="510"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -541,7 +568,7 @@ $Q^Tx$ betyr «gjør begge målingene». $Qc$ betyr «bygg $c_1q_1+c_2q_2$».
 Matrisespråket forkorter altså handlinger vi allerede har utført.
 
 For en matrise $Q=[q_1\ \cdots\ q_k]$ med ortonormale kolonner blir alle
-avlesningene og den samlede projeksjonen
+målingene og den samlede projeksjonen
 
 $$c=Q^Tx,\qquad p=Qc=QQ^Tx,\qquad Q^T(x-p)=0.$$
 
@@ -655,7 +682,7 @@ måler vi $r_{13}=q_1^Ta_3$ og $r_{23}=q_2^Ta_3$. Trekk delene fra:
 
 $$v_3=a_3-r_{13}q_1-r_{23}q_2.$$
 
-Den andre subtraksjonen ødelegger ikke nullavlesningen langs $q_1$, fordi
+Den andre subtraksjonen ødelegger ikke nullkomponenten langs $q_1$, fordi
 $q_1^Tq_2=0$. Kontroller ved å gange uttrykket med $q_1^T$ og $q_2^T$.
 Hvis resten ikke er null, setter vi $r_{33}=\lVert v_3\rVert_2$ og
 $q_3=v_3/r_{33}$. Les regningen baklengs:
@@ -1203,7 +1230,7 @@ De røde vertikale strekene i plottet viser komponentene i residualvektoren i
 punktene til den tegnede linjen i $(t,b)$-planet.
 
 Dette er broen til ukeprosjektet: I uke 3 rekonstruerte vi et polynom fra
-akkurat nok avlesninger. Nå bruker vi flere støyfylte avlesninger og finner
+akkurat nok målinger. Nå bruker vi flere støyfylte målinger og finner
 det beste svaret når et eksakt svar ikke finnes.
 
 ### Oppsummering og kontroll {#uke4-kontroll}
@@ -1230,7 +1257,7 @@ Kontroller at du kan forklare følgende uten å starte med kode:
 ::: {.callout-tip collapse="true"}
 #### Korte svar til egenkontroll
 
-1. Ellers blander avlesningen retning og lengden til måleren.
+1. Ellers blander målingen retning og lengden til måleren.
 2. Vektorene står vinkelrett; $q$ finner ingen komponent av $x$ i sin retning.
 3. For $x\in C(Q)$ gir $x=Q(Q^Tx)$; ellers er de koordinatene til projeksjonen.
 4. Projeksjonene på retningene som allerede er laget.
@@ -1291,7 +1318,7 @@ For å lage de fem verdiene til $p(t)=c_0+c_1t+c_2t^2$ bygger vi
 $c_0a_0+c_1a_1+c_2a_2.$
 
 Dette er nøyaktig samme byggeoperasjon som med bildemønstrene. Matrisen
-samler bare de tre ferdige avlesningsvektorene som kolonner:
+samler bare de tre ferdige vektorene av polynomverdier som kolonner:
 
 $A=[a_0\ a_1\ a_2]=
 \begin{bmatrix}
@@ -1301,7 +1328,7 @@ c=\begin{bmatrix}c_0\\c_1\\c_2\end{bmatrix},\qquad
 b=\begin{bmatrix}0.51\\0.585\\1.06\\1.585\\2.51\end{bmatrix}.$
 
 $Ac$ er altså fem **polynomverdier**, mens $c$ er tre **koeffisienter**.
-Det er avlesningsvektorene i $\mathbb R^5$ vi nå skal gjøre ortogonale.
+Det er vektorene av polynomverdier i $\mathbb R^5$ vi nå skal gjøre ortogonale.
 
 ### Hvorfor trenger vi nye måleretninger?
 
@@ -1312,11 +1339,11 @@ $a_0^Ta_2=1+\tfrac14+0+\tfrac14+1=\tfrac52.$
 En ren $t^2$-del gir dermed også utslag på måleren for konstant nivå.
 Vi kan ikke lese byggekoeffisientene direkte fra disse indreproduktene.
 
-Bruk Gram–Schmidt på de tre avlesningsvektorene. Første pil normaliseres:
+Bruk Gram–Schmidt på de tre vektorene av polynomverdier. Første pil normaliseres:
 
 $q_0=a_0/\sqrt5.$
 
-Den andre har allerede null avlesning på første pil, fordi
+Den andre har allerede null måling på første pil, fordi
 $-1-1/2+0+1/2+1=0$. Derfor er
 
 $q_1=a_1/\sqrt{5/2}.$
@@ -1344,7 +1371,7 @@ $\lVert v_2\rVert_2^2
 Vi deler hver komponent på $\sqrt{7/8}$ og får
 
 $q_2=\frac{(1/2,-1/4,-1/2,-1/4,1/2)^T}{\sqrt{7/8}}.$ Vi har nå tre ortonormale piler
-som bygger akkurat de samme mulige avlesningsvektorene som før.
+som bygger akkurat de samme mulige vektorene av polynomverdier som før.
 
 Les oppskriftene baklengs, og samle dem til slutt:
 
@@ -1356,7 +1383,7 @@ R=\begin{bmatrix}\sqrt5&0&\sqrt5/2\\0&\sqrt{5/2}&0\\0&0&\sqrt{7/8}\end{bmatrix}.
 
 ### Hva betyr ortogonale polynomer her?
 
-De nye pilene er avlesninger av polynomene
+De nye pilene inneholder verdiene av polynomene
 
 $\phi_0(t)=1/\sqrt5,\qquad \phi_1(t)=t/\sqrt{5/2},\qquad
 \phi_2(t)=(t^2-1/2)/\sqrt{7/8}.$
@@ -1374,7 +1401,7 @@ polynomer ville denne testen ikke skille nullpolynomet fra et polynom med
 nuller i alle målepunktene.
 
 Ortogonale **koeffisientlister** er noe annet: $(1,0,0)^T$ og $(0,0,1)^T$
-er ortogonale som lister, men avlesningene av $1$ og $t^2$ var ikke det.
+er ortogonale som lister, men polynomverdiene for $1$ og $t^2$ var ikke det.
 Vi må alltid si hvilken måleregel og hvilke punkter vi bruker.
 
 ### Mål dataene og bygg den delen polynomene kan forklare
@@ -1383,7 +1410,7 @@ Mål først $d_i=q_i^Tb$. Bygg så $\widehat b=d_0q_0+d_1q_1+d_2q_2$.
 Dette er den delen av de fem målingene som kan lages av et polynom i
 $\mathcal P_2$. Kortformen er $d=Q^Tb$ og $\widehat b=Qd$.
 For å finne koeffisientene i den opprinnelige basisen løser vi $Rc=d$.
-**Avlesningene $d$ er ikke monomialkoeffisientene $c$.**
+**Komponentene $d$ er ikke monomialkoeffisientene $c$.**
 
 #### Først de tre målingene
 
@@ -1441,7 +1468,7 @@ $a_0^Tr=0.01(1-4+6-4+1)=0,$
 $a_1^Tr=0.01(-1+2-2+1)=0,\qquad
  a_2^Tr=0.01(1-1-1+1)=0.$
 
-Resten står dermed vinkelrett på *alle* avlesningsvektorer vi kan bygge.
+Resten står dermed vinkelrett på *alle* vektorer av polynomverdier vi kan bygge.
 Den er ikke null, så ingen andregradspolynom treffer alle målingene.
 Enhver endring i koeffisientene legger til en del langs byggeretningene;
 Pytagoras viser at den bare øker kvadratfeilen. Her er minimum
@@ -1498,7 +1525,7 @@ polynomial_bridge()
 ```
 
 NumPy kan velge andre fortegn på kolonnene i $Q$ enn i håndregningen.
-Da endres også $R$ og avlesningene $d$, men sluttpolynomet er det samme.
+Da endres også $R$ og komponentene $d$, men sluttpolynomet er det samme.
 De røde strekene viser feil i de fem målte verdiene, ikke vinkelrette
 avstander til kurven i tegneplanet.
 
@@ -1515,13 +1542,13 @@ Det samme polynomet kan skrives
 $1+t+\tfrac12t^2=\tfrac54T_0(t)+T_1(t)+\tfrac14T_2(t).$
 
 Koeffisientene er forskjellige, men kurven er den samme. Monomial- og
-Chebyshev-avlesningsmatrisene bygger det samme rommet av måleverdier.
+Chebyshev-målematrisene bygger det samme rommet av måleverdier.
 Derfor gir minste kvadrater samme tilpassede polynom i eksakt regning
 når grad, punkter og data holdes fast. Numerisk kan basisvalget påvirke
 hvor pålitelig vi klarer å beregne det.
 
 Chebyshev-navnet alene garanterer ikke ortonormale kolonner i målematrisen.
-Prøv punktene $-1,0,1$: Avlesningene av $T_0$ og $T_2$ er $(1,1,1)^T$
+Prøv punktene $-1,0,1$: Verdiene av $T_0$ og $T_2$ er $(1,1,1)^T$
 og $(1,-1,1)^T$, med indreprodukt $1$. QR lager ortonormale måleretninger
 for akkurat matrisen og punktene vi har valgt.
 
@@ -1529,9 +1556,9 @@ for akkurat matrisen og punktene vi har valgt.
 
 | Fra uke 3 | Verktøyet i uke 4 | Undersøk i prosjektet |
 |---|---|---|
-| Polynomet bygges av basispolynomer | Kolonnene er avlesninger av hver byggestein | Skriv dimensjoner og kontroller rang. |
+| Polynomet bygges av basispolynomer | Kolonnene inneholder verdiene av hver byggestein | Skriv dimensjoner og kontroller rang. |
 | Målepunktene kan skjule endringer mellom punktene | Liten residual beskriver bare treff ved målepunktene | Kontroller også kurven mellom punktene. |
-| Monomial- og Chebyshev-koordinater beskriver samme polynom | QR gjør avlesningsretningene ortonormale | Hold data fast og sammenlign basisene. |
+| Monomial- og Chebyshev-koordinater beskriver samme polynom | QR gjør kolonnene i målematrisen ortonormale | Hold data fast og sammenlign basisene. |
 | Små forstyrrelser kan gi store utslag | CGS og MGS kan gi ulik ortogonalitetsfeil | Mål både residual, ortogonalitet og rekonstruksjon. |
 
 Gå videre til [prosjekt 4 – Når målingene ikke passer](project_week4.qmd).
@@ -1587,11 +1614,11 @@ $c_3=$ __[2*sqrt(8)]
 $\lVert r\rVert_2=$ __[sqrt(8)]
 ```
 
-**Forklar:** Resten har null avlesning på alle tre mønstrene. Hvorfor betyr
+**Forklar:** Resten har null måling på alle tre mønstrene. Hvorfor betyr
 ikke dette at resten er null? Hvilket fjerde mønster ville forklart den?
 
 **Kode:** Samle mønstrene som kolonnene i $Q$. Fullfør `decompose(Q, x)`;
-returner avlesningene, rekonstruksjonen og resten i denne rekkefølgen.
+returner målingene, rekonstruksjonen og resten i denne rekkefølgen.
 Forutsett at kolonnene i $Q$ er ortonormale.
 
 ```{py-exercise}
@@ -1614,8 +1641,8 @@ x = np.array([6,4,2,0,4,2,0,-2], dtype=float)
 result = decompose(Q, x)
 assert isinstance(result, (tuple, list)) and len(result) == 3, 'Returner c, p, r i denne rekkefølgen.'
 c, p, r = map(np.asarray, result)
-assert c.shape == (3,) and p.shape == r.shape == (8,), 'Tre avlesninger, men åtte signalverdier.'
-assert np.allclose(c, [2*np.sqrt(8),np.sqrt(8),2*np.sqrt(8)]), 'Hver avlesning er ett indreprodukt med et mønster.'
+assert c.shape == (3,) and p.shape == r.shape == (8,), 'Tre målinger, men åtte signalverdier.'
+assert np.allclose(c, [2*np.sqrt(8),np.sqrt(8),2*np.sqrt(8)]), 'Hver måling er ett indreprodukt med et mønster.'
 assert np.allclose(r, [1,1,1,1,-1,-1,-1,-1]), 'Trekk den gjenoppbygde delen fra signalet.'
 assert np.allclose(p+r, x), 'De to delene må gi det opprinnelige signalet.'
 changed = x.copy(); changed[0] += 1
@@ -1628,10 +1655,10 @@ ct, pt, rt = decompose(Qtest, z)
 assert np.allclose(ct,[2,-3]) and np.allclose(pt,[2,0,-3]) and np.allclose(rt,[0,5,0]), 'Funksjonen må også virke med andre ortonormale piler.'
 ```
 
-Forutsi hva som skjer med alle tre avlesningene når bare første måling økes
+Forutsi hva som skjer med alle tre målingene når bare første måling økes
 med $1$. Forklar svaret ut fra komponentene i $q_i$, ikke bare utskriften.
 
-### Når avlesninger ikke er koordinater
+### Når målinger ikke er koordinater
 
 Vi bruker nå tre andre enhetspiler i $\mathbb R^4$:
 
@@ -1648,7 +1675,7 @@ koeffisientene tilbake? Regn før du leser videre.
 
 ```{math-exercise}
 #| label: week4-task-nonorthogonal
-#| caption: Sammenlign oppskrift og avlesninger
+#| caption: Sammenlign oppskrift og målinger
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: u₁ᵀx, u₂ᵀx, u₃ᵀx, u₁ᵀu₂, u₂ᵀu₃
