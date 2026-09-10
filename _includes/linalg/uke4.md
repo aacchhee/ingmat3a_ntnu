@@ -1407,57 +1407,188 @@ og at koeffisientene i $R$ gjenskaper de opprinnelige kolonnene i $A$.
 
 ### Klassisk Gram–Schmidt for flere kolonner {#uke4-cgs}
 
-#### En tredje pil: samme handling igjen
+#### Fra to til tre vektorer
 
-Vi har allerede vinkelrette enhetspiler $q_1,q_2$. For en ny pil $a_3$
-måler vi $r_{13}=q_1^Ta_3$ og $r_{23}=q_2^Ta_3$. Trekk delene fra:
+I eksemplet over lå vektorene i planet. To uavhengige vektorer fyller
+allerede hele planet; en tredje kan derfor ikke gi en ny uavhengig retning
+der. Nå arbeider vi i $\mathbb R^m$ med $m\ge3$ og antar at de tre
+opprinnelige vektorene er lineært uavhengige.
 
-$$v_3=a_3-r_{13}q_1-r_{23}q_2.$$
+Vi viderefører samme regning og samme farger: **blått er de ortonormale
+vektorene**, **lilla er koeffisientene**. Anta at $q_1$ og $q_2$ allerede
+er beregnet fra $a_1$ og $a_2$. Målet er å behandle $a_3$ og samtidig
+bevare et fullstendig regnskap for den.
 
-Den andre subtraksjonen ødelegger ikke nullkomponenten langs $q_1$, fordi
-$q_1^Tq_2=0$. Kontroller ved å gange uttrykket med $q_1^T$ og $q_2^T$.
-Hvis resten ikke er null, setter vi $r_{33}=\lVert v_3\rVert_2$ og
-$q_3=v_3/r_{33}$. Les regningen baklengs:
+**Beregn de to komponentene av $a_3$:**
 
-$$a_1=r_{11}q_1,\quad a_2=r_{12}q_1+r_{22}q_2,\quad
- a_3=r_{13}q_1+r_{23}q_2+r_{33}q_3.$$
+$$\textcolor{#8b5aa7}{r_{13}}=\textcolor{#1565c0}{q_1^T}a_3,\qquad
+\textcolor{#8b5aa7}{r_{23}}=\textcolor{#1565c0}{q_2^T}a_3.$$
 
-Dette er tre byggeoppskrifter. Samle pilene i kolonner, og skriv hver
-oppskrift som en kolonne med koeffisienter:
+Begge koeffisientene er tall. Indeksene i $r_{23}$ betyr «komponenten
+langs $q_2$ i den opprinnelige vektoren $a_3$».
 
-$$[a_1\ a_2\ a_3]=[q_1\ q_2\ q_3]
-\begin{bmatrix}r_{11}&r_{12}&r_{13}\\0&r_{22}&r_{23}\\0&0&r_{33}\end{bmatrix}.$$
+**Beregn og trekk fra vektorbidragene:**
 
-Nullene sier at første pil ikke trenger $q_2,q_3$, og andre ikke trenger
-$q_3$. Vi kaller matrisene $A,Q,R$, så likningen blir $A=QR$.
-En **faktorisering** skriver en matrise som et produkt. «Tynn» betyr at vi
-beholder bare de $k$ nødvendige pilene, selv om de har $m>k$ komponenter.
+$$p_3=\textcolor{#8b5aa7}{r_{13}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{r_{23}}\textcolor{#1565c0}{q_2},$$
+$$v_3=a_3-p_3=a_3-\textcolor{#8b5aa7}{r_{13}}\textcolor{#1565c0}{q_1}-\textcolor{#8b5aa7}{r_{23}}\textcolor{#1565c0}{q_2}.$$
 
-#### Den samme oppskriften i kortform
+Her er $p_3$ projeksjonen på de to tidligere retningene, og $v_3$ er resten.
+Vi bruker navnet $v_3$ fordi denne resten snart skal normaliseres.
 
-La
+#### Kontroller at resten er ortogonal på begge retningene
 
-$$A=[a_1\ a_2\ \cdots\ a_k]\in\mathbb R^{m\times k},\qquad m\ge k,$$
+For den første retningen får vi
 
-og anta foreløpig at kolonnene er lineært uavhengige. Da har $A$ **full
-kolonnerang**: rangen er lik antallet kolonner $k$. En **tynn
-QR-faktorisering** har da
+$$\begin{aligned}
+\textcolor{#1565c0}{q_1^T}v_3
+&=\textcolor{#1565c0}{q_1^T}a_3
+-\textcolor{#8b5aa7}{r_{13}}(\textcolor{#1565c0}{q_1^Tq_1})
+-\textcolor{#8b5aa7}{r_{23}}(\textcolor{#1565c0}{q_1^Tq_2})\\
+&=\textcolor{#8b5aa7}{r_{13}}-\textcolor{#8b5aa7}{r_{13}}\cdot1-\textcolor{#8b5aa7}{r_{23}}\cdot0=0.
+\end{aligned}$$
 
-$$Q\in\mathbb R^{m\times k},\qquad
-R\in\mathbb R^{k\times k},\qquad Q^TQ=I_k.$$
+For den andre retningen får vi tilsvarende
 
-Den rektangulære matrisen $Q$ er altså ikke en ortogonal kvadratisk matrise;
-det er kolonnene dens som er ortonormale. De spenner ut det samme
-kolonnerommet som $A$: $C(Q)=C(A)$. Her betyr $C(A)$ samlingen av alle
-vektorer $Ax$ som kolonnene i $A$ kan bygge. Siden $A$ har full
-kolonnerang, er $R$ invertibel, så et system $Rx=d$ har én entydig løsning.
+$$\begin{aligned}
+\textcolor{#1565c0}{q_2^T}v_3
+&=\textcolor{#1565c0}{q_2^T}a_3
+-\textcolor{#8b5aa7}{r_{13}}(\textcolor{#1565c0}{q_2^Tq_1})
+-\textcolor{#8b5aa7}{r_{23}}(\textcolor{#1565c0}{q_2^Tq_2})\\
+&=\textcolor{#8b5aa7}{r_{23}}-\textcolor{#8b5aa7}{r_{13}}\cdot0-\textcolor{#8b5aa7}{r_{23}}\cdot1=0.
+\end{aligned}$$
 
-Klassisk Gram–Schmidt konstruerer $q_j$ ved
+Kryssleddene er null fordi $q_1$ og $q_2$ er ortogonale.
+Å trekke fra bidraget langs den ene retningen påvirker derfor ikke
+komponenten langs den andre. Dette er en forklaring i eksakt regning;
+i neste fane undersøker vi hva avrunding kan endre.
 
-$$r_{ij}=q_i^Ta_j\quad(i<j),$$
+Siden $a_3$ tilfører en uavhengig retning, er $v_3\ne0$. Normaliser resten:
 
-$$v_j=a_j-\sum_{i=1}^{j-1}r_{ij}q_i,\qquad
-r_{jj}=\lVert v_j\rVert_2,\qquad q_j=\frac{v_j}{r_{jj}}.$$
+$$\textcolor{#8b5aa7}{r_{33}}=\lVert v_3\rVert_2,\qquad
+\textcolor{#1565c0}{q_3}=\frac{v_3}{\textcolor{#8b5aa7}{r_{33}}}.$$
+
+Vi deler med ett positivt tall. Lengden blir én, og de to
+indreproduktene som var null, forblir null. Dermed er $q_1,q_2,q_3$
+ortonormale.
+
+#### Samle regnskapet for tre vektorer
+
+Normaliseringen gir $v_3=r_{33}q_3$. Sett dette inn i
+$a_3=p_3+v_3$. Da har vi følgende tre likninger:
+
+$$\begin{aligned}
+a_1&=\textcolor{#8b5aa7}{r_{11}}\textcolor{#1565c0}{q_1},\\
+a_2&=\textcolor{#8b5aa7}{r_{12}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{r_{22}}\textcolor{#1565c0}{q_2},\\
+a_3&=\textcolor{#8b5aa7}{r_{13}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{r_{23}}\textcolor{#1565c0}{q_2}+\textcolor{#8b5aa7}{r_{33}}\textcolor{#1565c0}{q_3}.
+\end{aligned}$$
+
+Som før blir de blå vektorene kolonnene i $Q$. Koeffisientene for
+$a_1$, $a_2$ og $a_3$ blir henholdsvis første, andre og tredje kolonne
+i $R$:
+
+$$\textcolor{#1565c0}{Q}=\textcolor{#1565c0}{\begin{bmatrix}|&|&|\\q_1&q_2&q_3\\|&|&|\end{bmatrix}},\qquad \textcolor{#8b5aa7}{R}=\textcolor{#8b5aa7}{\begin{bmatrix}r_{11}&r_{12}&r_{13}\\0&r_{22}&r_{23}\\0&0&r_{33}\end{bmatrix}}.$$
+
+Første kolonne i $R$ inneholder $(r_{11},0,0)^T$, fordi uttrykket for
+$a_1$ bare bruker $q_1$. Andre kolonne inneholder $(r_{12},r_{22},0)^T$.
+Tredje kolonne inneholder alle de tre koeffisientene vi nettopp beregnet.
+
+Produktet samler de tre vektorlikningene:
+
+$$\begin{aligned}
+\textcolor{#1565c0}{Q}\textcolor{#8b5aa7}{R}
+&=\textcolor{#1565c0}{\begin{bmatrix}|&|&|\\q_1&q_2&q_3\\|&|&|\end{bmatrix}}\textcolor{#8b5aa7}{\begin{bmatrix}r_{11}&r_{12}&r_{13}\\0&r_{22}&r_{23}\\0&0&r_{33}\end{bmatrix}}\\
+&=\begin{bmatrix}|&|&|\\
+\textcolor{#8b5aa7}{r_{11}}\textcolor{#1565c0}{q_1}&
+\textcolor{#8b5aa7}{r_{12}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{r_{22}}\textcolor{#1565c0}{q_2}&
+\textcolor{#8b5aa7}{r_{13}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{r_{23}}\textcolor{#1565c0}{q_2}+\textcolor{#8b5aa7}{r_{33}}\textcolor{#1565c0}{q_3}\\
+|&|&|
+\end{bmatrix}\\
+&=\begin{bmatrix}|&|&|\\a_1&a_2&a_3\\|&|&|\end{bmatrix}=A.
+\end{aligned}$$
+
+Også med tre kolonner er $A=QR$ kortformen av regnskapet vi allerede
+har ført. Nullene under diagonalen i $R$ beskriver rekkefølgen på
+beregningene: Tidligere vektorer bruker ikke retninger som beregnes senere.
+
+#### Den samme beregningen i generell vektorform
+
+La $a_1,\ldots,a_k$ være lineært uavhengige vektorer i $\mathbb R^m$,
+med $m\ge k$. Anta at $q_1,\ldots,q_{j-1}$ allerede er beregnet.
+For neste vektor $a_j$ gjentar vi nøyaktig de samme operasjonene.
+
+**Først beregner vi tallene som angir komponentene langs tidligere retninger:**
+
+$$\textcolor{#8b5aa7}{r_{1j}}=\textcolor{#1565c0}{q_1^T}a_j,\quad\ldots,\quad
+\textcolor{#8b5aa7}{r_{j-1,j}}=\textcolor{#1565c0}{q_{j-1}^T}a_j.$$
+
+Kort skrevet er dette $\textcolor{#8b5aa7}{r_{ij}}=\textcolor{#1565c0}{q_i^T}a_j$ for $i<j$.
+I **klassisk Gram–Schmidt** beregnes alle disse indreproduktene med
+den opprinnelige vektoren $a_j$.
+
+**Deretter trekker vi fra de tilhørende vektorbidragene:**
+
+$$\begin{aligned}
+v_j
+&=a_j-\textcolor{#8b5aa7}{r_{1j}}\textcolor{#1565c0}{q_1}-\cdots
+-\textcolor{#8b5aa7}{r_{j-1,j}}\textcolor{#1565c0}{q_{j-1}}\\
+&=a_j-\sum_{i=1}^{j-1}\textcolor{#8b5aa7}{r_{ij}}\textcolor{#1565c0}{q_i}.
+\end{aligned}$$
+
+Summetegnet forkorter de samme $j-1$ leddene som står i første linje.
+Til slutt beregner vi lengden og normaliserer:
+
+$$\textcolor{#8b5aa7}{r_{jj}}=\lVert v_j\rVert_2,\qquad
+\textcolor{#1565c0}{q_j}=\frac{v_j}{\textcolor{#8b5aa7}{r_{jj}}}.$$
+
+Ved $j=1$ finnes ingen tidligere retninger: Da er $v_1=a_1$.
+Lineær uavhengighet sikrer at restene er ikke-null i eksakt regning.
+Vi skal senere undersøke hvordan avhengighet og avrunding påvirker
+normaliseringen.
+
+Regnskapet for kolonne $j$ er nå
+
+$$a_j=\sum_{i=1}^{j-1}\textcolor{#8b5aa7}{r_{ij}}\textcolor{#1565c0}{q_i}
++\textcolor{#8b5aa7}{r_{jj}}\textcolor{#1565c0}{q_j}
+=\sum_{i=1}^{j}\textcolor{#8b5aa7}{r_{ij}}\textcolor{#1565c0}{q_i}.$$
+
+Det er denne likningen kolonne $j$ i $R$ lagrer.
+
+#### Dimensjoner og overgangen til kode
+
+Samle de opprinnelige vektorene i $A=[a_1\ \cdots\ a_k]$.
+Lineær uavhengighet betyr at $A$ har **full kolonnerang**, altså rang $k$.
+De $k$ beregnede enhetsvektorene har fortsatt $m$ koordinater hver:
+
+$$A\in\mathbb R^{m\times k},\qquad
+\textcolor{#1565c0}{Q}\in\mathbb R^{m\times k},\qquad
+\textcolor{#8b5aa7}{R}\in\mathbb R^{k\times k}.$$
+
+Dette kalles en **tynn QR-faktorisering**: Vi beholder de $k$ kolonnene
+som trengs for å uttrykke kolonnene i $A$. Vi utvider ikke $Q$ til $m$
+kolonner når $m>k$.
+
+$$A=\textcolor{#1565c0}{Q}\textcolor{#8b5aa7}{R},\qquad Q^TQ=I_k.$$
+
+Kolonnene i $Q$ er ortonormale, også når $Q$ er rektangulær.
+De spenner ut det samme rommet som kolonnene i $A$: $C(Q)=C(A)$.
+Her betyr $C(A)$ alle lineærkombinasjoner av kolonnene i $A$.
+De positive diagonalverdiene $r_{jj}$ gjør $R$ invertibel i eksakt
+regning, så et system $Rc=d$ har én entydig løsning.
+
+Koden nedenfor følger vektorformlene: beregn koeffisientene, trekk fra
+vektorbidragene, beregn lengden og normaliser. I NumPy starter indekser
+på $0$. Variabelen `n` i koden er antallet kolonner, kalt $k$ på papir.
+
+Koden samler de tidligere vektorene i `Q[:, :j]`. Derfor beregner
+`Q[:, :j].T @ A[:, j]` alle de tidligere indreproduktene samtidig,
+og `Q[:, :j] @ coefficients` beregner summen som skal trekkes fra.
+
+Matrisen som brukes i forsøket, er
+
+$$A=\begin{bmatrix}1&1&0\\1&0&1\\0&1&1\\1&1&1\end{bmatrix}.$$
+
+Den har fire rader og tre uavhengige kolonner. Resultatet får derfor
+$Q$ av størrelse $4\times3$ og $R$ av størrelse $3\times3$.
 
 ```{pyodide-python}
 #| label: week4-classical-gs
