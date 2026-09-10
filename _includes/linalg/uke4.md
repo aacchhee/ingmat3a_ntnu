@@ -1249,31 +1249,137 @@ Dette er **Gram–Schmidt-prosessen**.
 
 #### Hele regningen for hånd
 
-For de to vektorene over får vi
+Vi bruker $a_1=(2,1)^T$ og $a_2=(1,2)^T$.
+**Blått følger de nye enhetsvektorene**, og **lilla følger tallene som
+angir hvor mye av hver enhetsvektor som inngår**. De samme fargene brukes
+når vi senere samler resultatene i $Q$ og $R$.
 
-$$\lVert a_1\rVert_2=\sqrt5,\qquad
-q_1=\frac1{\sqrt5}\begin{bmatrix}2\\1\end{bmatrix},\qquad
-r_{12}=q_1^Ta_2=\frac4{\sqrt5}.$$
+Første normalisering gir
 
-Dermed er
+$$\textcolor{#8b5aa7}{r_{11}}=\lVert a_1\rVert_2
+=\sqrt{2^2+1^2}=\textcolor{#8b5aa7}{\sqrt5},\qquad
+\textcolor{#1565c0}{q_1}=\frac{a_1}{\textcolor{#8b5aa7}{r_{11}}}=\textcolor{#1565c0}{\frac1{\sqrt5}\begin{bmatrix}2\\1\end{bmatrix}}.$$
 
-$$v_2=a_2-r_{12}q_1
-=\begin{bmatrix}1\\2\end{bmatrix}
--\frac45\begin{bmatrix}2\\1\end{bmatrix}
-=\begin{bmatrix}-3/5\\6/5\end{bmatrix},$$
+Komponenten av $a_2$ langs $q_1$ er
 
-$$\lVert v_2\rVert_2=\frac3{\sqrt5},\qquad
-q_2=\frac1{\sqrt5}\begin{bmatrix}-1\\2\end{bmatrix}.$$
+$$\textcolor{#8b5aa7}{r_{12}}=\textcolor{#1565c0}{q_1^T}a_2
+=\frac{2\cdot1+1\cdot2}{\sqrt5}=\textcolor{#8b5aa7}{\frac4{\sqrt5}}.$$
 
-Samle først de opprinnelige vektorene som kolonnene i
+Vi trekker den tilhørende vektoren fra $a_2$:
 
-$$A=[a_1\ a_2]=\begin{bmatrix}2&1\\1&2\end{bmatrix}.$$
+$$\begin{aligned}
+v_2&=a_2-\textcolor{#8b5aa7}{r_{12}}\textcolor{#1565c0}{q_1}\\
+&=\begin{bmatrix}1\\2\end{bmatrix}
+-\textcolor{#8b5aa7}{\frac4{\sqrt5}}\,\textcolor{#1565c0}{\frac1{\sqrt5}\begin{bmatrix}2\\1\end{bmatrix}}\\
+&=\begin{bmatrix}1\\2\end{bmatrix}
+-\begin{bmatrix}8/5\\4/5\end{bmatrix}
+=\begin{bmatrix}-3/5\\6/5\end{bmatrix}.
+\end{aligned}$$
 
-Da er resultatet
+Andre normalisering gir
 
-$$Q=\frac1{\sqrt5}\begin{bmatrix}2&-1\\1&2\end{bmatrix},\qquad
-R=\begin{bmatrix}\sqrt5&4/\sqrt5\\0&3/\sqrt5\end{bmatrix},\qquad
-A=QR.$$
+$$\textcolor{#8b5aa7}{r_{22}}=\lVert v_2\rVert_2
+=\sqrt{\frac9{25}+\frac{36}{25}}
+=\textcolor{#8b5aa7}{\frac3{\sqrt5}},\qquad
+\textcolor{#1565c0}{q_2}=\frac{v_2}{\textcolor{#8b5aa7}{r_{22}}}=\textcolor{#1565c0}{\frac1{\sqrt5}\begin{bmatrix}-1\\2\end{bmatrix}}.$$
+
+#### Skriv regnskapet for hver opprinnelig vektor
+
+Hva har vi beregnet? Normaliseringen
+$q_1=a_1/r_{11}$ kan skrives tilbake som
+$a_1=r_{11}q_1$. Tilsvarende gir
+$v_2=a_2-r_{12}q_1$ og $v_2=r_{22}q_2$ uttrykket
+$a_2=r_{12}q_1+r_{22}q_2$.
+
+Vi har altså to ferdige likninger:
+
+$$a_1=\textcolor{#8b5aa7}{r_{11}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{0}\textcolor{#1565c0}{q_2},$$
+$$a_2=\textcolor{#8b5aa7}{r_{12}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{r_{22}}\textcolor{#1565c0}{q_2}.$$
+
+Kontroller begge med tallene fra regningen:
+
+$$a_1=\textcolor{#8b5aa7}{\sqrt5}\,\textcolor{#1565c0}{\frac1{\sqrt5}\begin{bmatrix}2\\1\end{bmatrix}}
+=\begin{bmatrix}2\\1\end{bmatrix},$$
+
+$$\begin{aligned}
+a_2&=\textcolor{#8b5aa7}{\frac4{\sqrt5}}\,\textcolor{#1565c0}{\frac1{\sqrt5}\begin{bmatrix}2\\1\end{bmatrix}}
++\textcolor{#8b5aa7}{\frac3{\sqrt5}}\,\textcolor{#1565c0}{\frac1{\sqrt5}\begin{bmatrix}-1\\2\end{bmatrix}}\\
+&=\begin{bmatrix}8/5\\4/5\end{bmatrix}
++\begin{bmatrix}-3/5\\6/5\end{bmatrix}
+=\begin{bmatrix}1\\2\end{bmatrix}.
+\end{aligned}$$
+
+Ingen nye vektorer eller koeffisienter skal beregnes for å skrive QR.
+Vi skal bare samle disse to likningene.
+
+#### Fra to likninger til to matriser
+
+Begge likningene bruker de samme blå vektorene. Vi setter dem som
+kolonner i én matrise:
+
+$$\textcolor{#1565c0}{Q}=\textcolor{#1565c0}{\begin{bmatrix}|&|\\q_1&q_2\\|&|\end{bmatrix}}=\textcolor{#1565c0}{\frac1{\sqrt5}\begin{bmatrix}2&-1\\1&2\end{bmatrix}}.$$
+
+For hver opprinnelig vektor skriver vi koeffisientene i rekkefølgen
+«mengde av $q_1$, mengde av $q_2$»:
+
+| Opprinnelig vektor | Koeffisient foran $q_1$ | Koeffisient foran $q_2$ |
+|---|---|---|
+| $a_1$ | $\textcolor{#8b5aa7}{r_{11}=\sqrt5}$ | $\textcolor{#8b5aa7}{0}$ |
+| $a_2$ | $\textcolor{#8b5aa7}{r_{12}=4/\sqrt5}$ | $\textcolor{#8b5aa7}{r_{22}=3/\sqrt5}$ |
+
+Koeffisientene for **én opprinnelig vektor blir én kolonne**.
+Dermed får vi matrisen
+
+$$\textcolor{#8b5aa7}{R}=
+\textcolor{#8b5aa7}{\begin{bmatrix}r_{11}&r_{12}\\0&r_{22}\end{bmatrix}}
+=\textcolor{#8b5aa7}{\begin{bmatrix}\sqrt5&4/\sqrt5\\0&3/\sqrt5\end{bmatrix}}.$$
+
+Første kolonne i $R$ hører til $a_1$, og andre kolonne hører til $a_2$.
+Første rad inneholder mengdene av $q_1$; andre rad inneholder mengdene
+av $q_2$. Nulloppføringen sier at $a_1$ ikke trenger noe bidrag fra $q_2$.
+
+#### Utvid produktet før vi gir det et navn
+
+Når $Q$ multipliseres med første kolonne i $R$, får vi uttrykket for
+$a_1$. Andre kolonne gir uttrykket for $a_2$. Hele produktet er derfor
+
+$$\begin{aligned}
+\textcolor{#1565c0}{Q}\textcolor{#8b5aa7}{R}
+&=\textcolor{#1565c0}{\begin{bmatrix}|&|\\q_1&q_2\\|&|\end{bmatrix}}
+\textcolor{#8b5aa7}{\begin{bmatrix}r_{11}&r_{12}\\0&r_{22}\end{bmatrix}}\\
+&=\begin{bmatrix}|&|\\
+\textcolor{#8b5aa7}{r_{11}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{0}\textcolor{#1565c0}{q_2}&
+\textcolor{#8b5aa7}{r_{12}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{r_{22}}\textcolor{#1565c0}{q_2}\\
+|&|
+\end{bmatrix}\\
+&=\begin{bmatrix}|&|\\a_1&a_2\\|&|\end{bmatrix}.
+\end{aligned}$$
+
+Også vanlig rad-ganger-kolonne-regning gir de samme tallene:
+
+$$\begin{aligned}
+\textcolor{#1565c0}{Q}\textcolor{#8b5aa7}{R}
+&=\textcolor{#1565c0}{\frac1{\sqrt5}\begin{bmatrix}2&-1\\1&2\end{bmatrix}}\,\textcolor{#8b5aa7}{\begin{bmatrix}\sqrt5&4/\sqrt5\\0&3/\sqrt5\end{bmatrix}}\\
+&=\frac1{\sqrt5}\begin{bmatrix}
+\textcolor{#1565c0}{2}\cdot\textcolor{#8b5aa7}{\sqrt5}+\textcolor{#1565c0}{(-1)}\cdot\textcolor{#8b5aa7}{0}&
+\textcolor{#1565c0}{2}\cdot\textcolor{#8b5aa7}{\frac4{\sqrt5}}+\textcolor{#1565c0}{(-1)}\cdot\textcolor{#8b5aa7}{\frac3{\sqrt5}}\\
+\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{\sqrt5}+\textcolor{#1565c0}{2}\cdot\textcolor{#8b5aa7}{0}&
+\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{\frac4{\sqrt5}}+\textcolor{#1565c0}{2}\cdot\textcolor{#8b5aa7}{\frac3{\sqrt5}}
+\end{bmatrix}\\
+&=\frac1{\sqrt5}\begin{bmatrix}2\sqrt5&5/\sqrt5\\
+\sqrt5&10/\sqrt5\end{bmatrix}
+=\begin{bmatrix}2&1\\1&2\end{bmatrix}.
+\end{aligned}$$
+
+Matrisen med de opprinnelige vektorene som kolonner kaller vi
+$A=[a_1\ a_2]$. Hele regnskapet kan dermed forkortes til
+
+$$\boxed{A=\textcolor{#1565c0}{Q}\textcolor{#8b5aa7}{R}.}$$
+
+Dette er en **QR-faktorisering**: $Q$ inneholder de ortonormale
+vektorene, og $R$ inneholder koeffisientene som uttrykker hver
+opprinnelig kolonne ved hjelp av dem. Likheten $A=QR$ samler de
+vektorlikningene vi allerede har kontrollert.
 
 ```{pyodide-python}
 #| label: week4-two-vector-gs
@@ -1293,11 +1399,9 @@ print("R =\n", R)
 print("||A-QR||_F =", np.linalg.norm(A-Q@R, "fro"))
 ```
 
-Koeffisientene vi målte underveis danner en **øvre triangulær matrise** $R$,
-det vil si at alle oppføringer under diagonalen er null. De opprinnelige
-kolonnene kan bygges opp igjen som
-
-$$\boxed{A=QR.}$$
+Matrisen $R$ er **øvre triangulær**: Alle oppføringer under diagonalen
+er null. Koden kontrollerer både at kolonnene i $Q$ er ortonormale,
+og at koeffisientene i $R$ gjenskaper de opprinnelige kolonnene i $A$.
 
 
 
