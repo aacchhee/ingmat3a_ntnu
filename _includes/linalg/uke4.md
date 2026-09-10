@@ -1941,44 +1941,91 @@ alle nesten avhengige piler feiler ved samme grense.
 
 ### Modifisert Gram–Schmidt {#uke4-mgs}
 
-#### Prøv en ny måling på resten fra forsøket over
+#### Samme mål, forskjellig rekkefølge
 
-Etter at første del er trukket fra $a_3$, er resten $w=(0,-e,0,e)^T$.
-Klassisk GS brukte målingen $\widehat q_2^Ta_3=0$. Hva skjer hvis vi i
-stedet måler på $w$?
+Begge metodene finner $Q,R$ slik at $A\approx QR$, med tilnærmet
+ortonormale kolonner i $Q$. Forskjellen er **hvilken vektor som brukes
+i hvert indreprodukt**.
 
-$$\widehat q_2^Tw=e/\sqrt2.$$
+I pseudokoden er `a[j]` den opprinnelige kolonnen $a_j$, og
+`rest` er en arbeidskopi som endres når vi trekker fra projeksjoner.
+`lengde(rest)` betyr $\lVert\mathrm{rest}\rVert_2$, og `←` betyr
+«sett lik». Indeksene begynner på $1$.
 
-Denne målingen finner den gjenværende delen i retning $\widehat q_2$!
-Trekk den fra:
+#### Klassisk Gram–Schmidt (GS eller CGS)
 
-$$w-\frac e{\sqrt2}\widehat q_2=(0,-e/2,-e/2,e)^T.$$
+Beregn først alle koeffisientene fra **den opprinnelige kolonnen**.
+Trekk deretter fra bidragene.
 
-Den normaliserte pilen blir $(0,-1,-1,2)^T/\sqrt6$. Indreproduktet med
-$\widehat q_2$ blir $(1-1)/\sqrt{12}=0$. Med $\widehat q_1$ er det
-fortsatt en liten feil, $-e/\sqrt6$, så forsøket lover ikke perfekt regning.
+```text
+Sett alle elementene i R til 0
+For j = 1, …, antall kolonner:
+    For i = 1, …, j−1:
+        r[i,j] ← q[i]ᵀ · a[j]        # Bruk originalkolonnen hver gang
 
-Vi har bare endret *hvilken pil vi måler på*: resten etter forrige
-subtraksjon. Denne varianten kalles **modifisert Gram–Schmidt**.
+    rest ← a[j]
+    For i = 1, …, j−1:
+        rest ← rest − r[i,j] · q[i]
 
-Klassisk Gram–Schmidt måler alle komponenter mot den opprinnelige kolonnen
-$a_j$ før de trekkes fra. Modifisert Gram–Schmidt måler på nytt etter hver
-rensing:
+    r[j,j] ← lengde(rest)
+    Hvis r[j,j] = 0: stopp           # Ingen ny uavhengig vektor
+    q[j] ← rest / r[j,j]
+```
 
-$$v\leftarrow a_j,$$
+#### Modifisert Gram–Schmidt (MGS)
 
-$$r_{ij}=q_i^Tv,\qquad v\leftarrow v-r_{ij}q_i,
-\qquad i=1,\ldots,j-1,$$
+Beregn én koeffisient, trekk fra bidraget, og bruk **den oppdaterte
+resten** i neste indreprodukt.
 
-$$r_{jj}=\lVert v\rVert_2,\qquad q_j=v/r_{jj}.$$
+```text
+Sett alle elementene i R til 0
+For j = 1, …, antall kolonner:
+    rest ← a[j]
+    For i = 1, …, j−1:
+        r[i,j] ← q[i]ᵀ · rest        # Bruk resten slik den er nå
+        rest ← rest − r[i,j] · q[i]  # Oppdater før neste indreprodukt
 
-Kort sagt: Klassisk GS måler alle delene på den opprinnelige pilen. Modifisert GS
-trekker fra én del, og måler deretter på resten.
+    r[j,j] ← lengde(rest)
+    Hvis r[j,j] = 0: stopp           # Ingen ny uavhengig vektor
+    q[j] ← rest / r[j,j]
+```
 
-På matrisefamilien under beholder MGS vanligvis ortogonaliteten lenger enn
-CGS. Det er ikke en garanti for at feilen alltid avtar monotont, eller at MGS
-er best for enhver matrise. Sammenlign derfor diagnostikken, ikke bare
-algoritmenavnene.
+For første kolonne er det ingen tidligere $q_i$ å trekke fra;
+begge metodene normaliserer bare $a_1$.
+Til slutt samles $q_j$ som kolonnene i $Q$.
+I flyttallsregning bør stoppkontrollen også fange opp rester som er
+for små til å normaliseres pålitelig.
+
+**Legg merke til plasseringen av oppdateringen:** I MGS endres `rest`
+før neste koeffisient beregnes. I klassisk GS er alle koeffisientene
+allerede beregnet når subtraksjonene begynner.
+
+I eksakt regning gir metodene samme resultat for uavhengige kolonner.
+De tidligere $q_i$ er da ortogonale, så det å trekke fra én av dem
+endrer ikke komponenten langs de andre. Avrundingsfeil gjør at denne
+egenskapen ikke lenger gjelder nøyaktig.
+
+#### Hva endres i forsøket med nesten avhengige kolonner?
+
+I forsøket over behandlet vi tredje kolonne $a_3$.
+Etter første subtraksjon er `rest` lik $(0,-e,0,e)^T$.
+Når koeffisienten foran $\widehat q_2$ skal beregnes, bruker metodene
+derfor forskjellige vektorer:
+
+| Metode | Indreproduktet som beregnes |
+|---|---|
+| Klassisk GS | $\widehat q_2^Ta_3=0$ |
+| MGS | $\widehat q_2^T\mathrm{rest}=e/\sqrt2$ |
+
+MGS finner dermed en komponent som fortsatt finnes i resten, og
+trekker den fra før normalisering. Dette er den konkrete virkningen
+av oppdateringen i pseudokoden.
+
+På matrisefamilien nedenfor beholder MGS vanligvis ortogonaliteten
+lenger enn CGS. MGS fjerner ikke alle avrundingsfeil; sammenlign
+derfor både ortogonalitetsfeil og faktoriseringsfeil.
+Den naive CGS-funksjonen i forsøket mangler stoppkontrollen vist over,
+mens MGS-funksjonen har en skalert toleranse.
 
 ```{pyodide-python}
 #| label: week4-mgs-comparison
