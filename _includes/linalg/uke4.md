@@ -1215,6 +1215,237 @@ Gå videre til [prosjekt 4: Når målingene ikke passer](project_week4.qmd),
 eller gå tilbake til [uke 3](uke3.qmd) hvis vektorrom, basis og kolonnerom
 trenger en repetisjon.
 
+## Polynomer: fra uke 3 til prosjekt 4 {#uke4-polynomer}
+
+### Samme polynom, flere målinger
+
+I [uke 3, del 3.5](uke3.qmd#uke3-del5) brukte vi polynomer som vektorer og
+polynomverdier som målinger. [Prosjekt 3](project_week3.qmd) undersøkte hvordan
+punktene og basisen påvirker rekonstruksjonen. Nå beholder vi disse objektene,
+men legger til flere målinger og støy. Hva skal vi gjøre når ingen oppskrift
+passer alle målingene?
+
+Begynn med et polynom vi kjenner:
+
+$p_*(t)=1+t+\tfrac12t^2.$
+
+Her bruker vi $t$ som variabel og $c_0,c_1,c_2$ som koeffisienter.
+I rommet $\mathcal P_2$ av polynomer med grad høyst to skriver vi
+$p(t)=c_0+c_1t+c_2t^2$. Tre forskjellige målepunkter bestemmer ett slikt
+polynom entydig i eksakt regning. Ta nå fem punkter:
+
+| $t_i$ | $p_*(t_i)$ | Lagt til målefeil | Måling $b_i$ |
+|---|---:|---:|---:|
+| $-1$ | $0.5$ | $0.01$ | $0.51$ |
+| $-1/2$ | $0.625$ | $-0.04$ | $0.585$ |
+| $0$ | $1$ | $0.06$ | $1.06$ |
+| $1/2$ | $1.625$ | $-0.04$ | $1.585$ |
+| $1$ | $2.5$ | $0.01$ | $2.51$ |
+
+Forutsi: Kan ett andregradspolynom treffe alle fem nye verdiene?
+Det er ikke antallet alene som gjør det umulig; uten støy ville $p_*$
+truffet alle fem. Vi undersøker hva akkurat disse feilene gjør nedenfor.
+
+### Les av hver byggestein før vi lager matrisen
+
+Les først av de tre basispolynomene $1,t,t^2$ hver for seg:
+
+$a_0=(1,1,1,1,1)^T,\qquad
+ a_1=(-1,-1/2,0,1/2,1)^T,\qquad
+ a_2=(1,1/4,0,1/4,1)^T.$
+
+For å lage de fem verdiene til $p(t)=c_0+c_1t+c_2t^2$ bygger vi
+
+$c_0a_0+c_1a_1+c_2a_2.$
+
+Dette er nøyaktig samme byggeoperasjon som med bildemønstrene. Matrisen
+samler bare de tre ferdige avlesningsvektorene som kolonner:
+
+$A=[a_0\ a_1\ a_2]=
+\begin{bmatrix}
+1&-1&1\\1&-1/2&1/4\\1&0&0\\1&1/2&1/4\\1&1&1
+\end{bmatrix},\qquad
+c=\begin{bmatrix}c_0\\c_1\\c_2\end{bmatrix},\qquad
+b=\begin{bmatrix}0.51\\0.585\\1.06\\1.585\\2.51\end{bmatrix}.$
+
+$Ac$ er altså fem **polynomverdier**, mens $c$ er tre **koeffisienter**.
+Det er avlesningsvektorene i $\mathbb R^5$ vi nå skal gjøre ortogonale.
+
+### Hvorfor trenger vi nye måleretninger?
+
+Prøv å bruke $a_0$ og $a_2$ som uavhengige målere:
+
+$a_0^Ta_2=1+\tfrac14+0+\tfrac14+1=\tfrac52.$
+
+En ren $t^2$-del gir dermed også utslag på måleren for konstant nivå.
+Vi kan ikke lese byggekoeffisientene direkte fra disse indreproduktene.
+
+Bruk Gram–Schmidt på de tre avlesningsvektorene. Første pil normaliseres:
+
+$q_0=a_0/\sqrt5.$
+
+Den andre har allerede null avlesning på første pil, fordi
+$-1-1/2+0+1/2+1=0$. Derfor er
+
+$q_1=a_1/\sqrt{5/2}.$
+
+Fra tredje pil må vi trekke fra den konstante delen:
+
+$q_0^Ta_2=\frac{5/2}{\sqrt5}=\frac{\sqrt5}{2},\qquad
+v_2=a_2-\tfrac12a_0=(1/2,-1/4,-1/2,-1/4,1/2)^T.$
+
+Kontroller at både $q_0^Tv_2$ og $q_1^Tv_2$ blir null. Lengden er
+$\sqrt{7/8}$, så $q_2=v_2/\sqrt{7/8}$. Vi har nå tre ortonormale piler
+som bygger akkurat de samme mulige avlesningsvektorene som før.
+
+Les oppskriftene baklengs, og samle dem til slutt:
+
+$a_0=\sqrt5q_0,\quad a_1=\sqrt{5/2}q_1,\quad
+ a_2=\tfrac{\sqrt5}{2}q_0+\sqrt{7/8}q_2,$
+
+$A=QR,\qquad Q=[q_0\ q_1\ q_2],\qquad
+R=\begin{bmatrix}\sqrt5&0&\sqrt5/2\\0&\sqrt{5/2}&0\\0&0&\sqrt{7/8}\end{bmatrix}.$
+
+### Hva betyr ortogonale polynomer her?
+
+De nye pilene er avlesninger av polynomene
+
+$\phi_0(t)=1/\sqrt5,\qquad \phi_1(t)=t/\sqrt{5/2},\qquad
+\phi_2(t)=(t^2-1/2)/\sqrt{7/8}.$
+
+Test for eksempel $\phi_0$ og $\phi_2$: Gang verdiene i hvert målepunkt
+og summer. Svaret blir null, fordi dette er $q_0^Tq_2$.
+Dette motiverer et **diskret indreprodukt** på polynomer:
+
+$\langle f,g\rangle_{\rm punkter}=\sum_{i=1}^{5}f(t_i)g(t_i).$
+
+For disse punktene er $\phi_0,\phi_1,\phi_2$ ortonormale med denne regelen.
+På $\mathcal P_2$ er dette et indreprodukt: Et ikke-null andregradspolynom
+kan ikke være null i alle fem forskjellige punkter. På rommet av *alle*
+polynomer ville denne testen ikke skille nullpolynomet fra et polynom med
+nuller i alle målepunktene.
+
+Ortogonale **koeffisientlister** er noe annet: $(1,0,0)^T$ og $(0,0,1)^T$
+er ortogonale som lister, men avlesningene av $1$ og $t^2$ var ikke det.
+Vi må alltid si hvilken måleregel og hvilke punkter vi bruker.
+
+### Mål dataene og bygg den delen polynomene kan forklare
+
+Mål først $d_i=q_i^Tb$. Bygg så $\widehat b=d_0q_0+d_1q_1+d_2q_2$.
+Dette er den delen av de fem målingene som kan lages av et polynom i
+$\mathcal P_2$. Kortformen er $d=Q^Tb$ og $\widehat b=Qd$.
+For å finne koeffisientene i den opprinnelige basisen løser vi $Rc=d$.
+**Avlesningene $d$ er ikke monomialkoeffisientene $c$.**
+
+I dette konstruerte eksemplet får vi $c=(1,1,1/2)^T$, og resten blir
+
+$r=b-\widehat b=0.01(1,-4,6,-4,1)^T.$
+
+Kontroller for hånd:
+
+$a_0^Tr=0.01(1-4+6-4+1)=0,$
+$a_1^Tr=0.01(-1+2-2+1)=0,\qquad
+ a_2^Tr=0.01(1-1-1+1)=0.$
+
+Resten står dermed vinkelrett på *alle* avlesningsvektorer vi kan bygge.
+Den er ikke null, så ingen andregradspolynom treffer alle målingene.
+Enhver endring i koeffisientene legger til en del langs byggeretningene;
+Pytagoras viser at den bare øker kvadratfeilen. Her er minimum
+$\lVert r\rVert_2^2=0.007$.
+
+At vi finner tilbake til $p_*$ skyldes at støyen er valgt ortogonal på
+byggeretningene. Vanlig målefeil har også deler langs disse retningene og
+vil som regel endre det tilpassede polynomet.
+
+```{pyodide-python}
+#| label: week4-polynomial-bridge
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy.polynomial import polynomial as poly
+from numpy.polynomial import chebyshev as cheb
+
+def polynomial_bridge(noise_scale=0.01):
+    points = np.array([-1., -.5, 0., .5, 1.])
+    reference = 1+points+.5*points**2
+    noise = noise_scale*np.array([1., -4., 6., -4., 1.])
+    measured = reference+noise
+    A = np.column_stack([np.ones(5), points, points**2])
+    Q, R = np.linalg.qr(A, mode='reduced')
+    detected = Q.T@measured
+    coefficients = np.linalg.solve(R, detected)
+    fitted = A@coefficients
+    residual = measured-fitted
+
+    # Samme polynomrom i Chebyshev-basis: T0=1, T1=t, T2=2t²-1.
+    C = cheb.chebvander(points, 2)
+    cheb_coefficients = np.linalg.lstsq(C, measured, rcond=None)[0]
+    grid = np.linspace(-1, 1, 301)
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+    axes[0].scatter(points, measured, color='black', label='målinger')
+    axes[0].plot(grid, poly.polyval(grid, coefficients), color='#1565c0', label='tilpasset polynom')
+    axes[0].plot(grid, cheb.chebval(grid, cheb_coefficients), '--', color='#238443', label='Chebyshev-tilpasning')
+    axes[0].vlines(points, fitted, measured, color='#c62828', label='residualkomponenter')
+    axes[0].set_xlabel('t'); axes[0].set_ylabel('polynomverdi'); axes[0].legend()
+    axes[1].bar(np.arange(3), A.T@residual, color='#c62828')
+    axes[1].set_xticks(np.arange(3), ['a0', 'a1', 'a2'])
+    axes[1].set_ylim(-.01, .01)
+    axes[1].set_title('Resten målt mot hver byggestein')
+    axes[1].set_ylabel('indreprodukt'); axes[1].axhline(0, color='black', linewidth=.8)
+    plt.tight_layout(); plt.show()
+    print('Monomialkoeffisienter:', coefficients)
+    print('Chebyshev-koeffisienter:', cheb_coefficients)
+    print('Residual:', residual)
+    print('Kvadratfeil:', residual@residual)
+    print('A.T @ residual:', A.T@residual)
+    print('Q.T @ residual:', Q.T@residual)
+    print('Samme kurve i begge basiser?', np.allclose(poly.polyval(grid, coefficients), cheb.chebval(grid, cheb_coefficients)))
+
+polynomial_bridge()
+```
+
+NumPy kan velge andre fortegn på kolonnene i $Q$ enn i håndregningen.
+Da endres også $R$ og avlesningene $d$, men sluttpolynomet er det samme.
+De røde strekene viser feil i de fem målte verdiene, ikke vinkelrette
+avstander til kurven i tegneplanet.
+
+**Prøv:** Øk bare `noise_scale`. Hvorfor vokser residualen uten at
+polynomet endrer seg? Bytt så støyvektoren i funksjonen med
+`noise_scale*np.array([1., 0., 0., 0., 0.])`. Forutsi hvilke målinger på
+byggeretningene som nå blir ulike null, og se hvordan polynomet endres.
+
+### Chebyshev-basis er ikke automatisk det samme som QR
+
+Fra uke 3 kjenner vi $T_0(t)=1$, $T_1(t)=t$ og $T_2(t)=2t^2-1$.
+Det samme polynomet kan skrives
+
+$1+t+\tfrac12t^2=\tfrac54T_0(t)+T_1(t)+\tfrac14T_2(t).$
+
+Koeffisientene er forskjellige, men kurven er den samme. Monomial- og
+Chebyshev-avlesningsmatrisene bygger det samme rommet av måleverdier.
+Derfor gir minste kvadrater samme tilpassede polynom i eksakt regning
+når grad, punkter og data holdes fast. Numerisk kan basisvalget påvirke
+hvor pålitelig vi klarer å beregne det.
+
+Chebyshev-navnet alene garanterer ikke ortonormale kolonner i målematrisen.
+Prøv punktene $-1,0,1$: Avlesningene av $T_0$ og $T_2$ er $(1,1,1)^T$
+og $(1,-1,1)^T$, med indreprodukt $1$. QR lager ortonormale måleretninger
+for akkurat matrisen og punktene vi har valgt.
+
+### Ta dette med til prosjekt 4
+
+| Fra uke 3 | Verktøyet i uke 4 | Undersøk i prosjektet |
+|---|---|---|
+| Polynomet bygges av basispolynomer | Kolonnene er avlesninger av hver byggestein | Skriv dimensjoner og kontroller rang. |
+| Målepunktene kan skjule endringer mellom punktene | Liten residual beskriver bare treff ved målepunktene | Kontroller også kurven mellom punktene. |
+| Monomial- og Chebyshev-koordinater beskriver samme polynom | QR gjør avlesningsretningene ortonormale | Hold data fast og sammenlign basisene. |
+| Små forstyrrelser kan gi store utslag | CGS og MGS kan gi ulik ortogonalitetsfeil | Mål både residual, ortogonalitet og rekonstruksjon. |
+
+Gå videre til [prosjekt 4 – Når målingene ikke passer](project_week4.qmd).
+Del 5–6 bruker polynomene og de to basisene; del 7–9 sammenligner metodene
+og lar deg reparere en vanskelig rekonstruksjon. Alle nødvendige
+hjelpefunksjoner finnes allerede i prosjektet; ingen kode må kopieres fra
+denne fanen eller fra uke 3.
+
 ## Oppgaver {#uke4-oppgaver}
 
 Arbeid først på papir, og bruk deretter kode til å undersøke det du fant.
