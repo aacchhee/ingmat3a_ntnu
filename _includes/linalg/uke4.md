@@ -98,6 +98,8 @@ mot høyre. Denne rekkefølgen er den samme som `X.reshape(-1)`.
 #| label: week4-setup
 #| autorun: true
 #| context: setup
+# NumPy regner med vektorer og matriser; pyplot viser de numeriske forsøkene.
+# Kjør oppsettet før cellene som bruker np og plt på denne siden.
 import numpy as np
 import matplotlib.pyplot as plt
 ```
@@ -288,10 +290,14 @@ Endre retningen og forutsi fortegnene først.
 
 ```{pyodide-python}
 #| label: week4-direction-contributions
+# Vi deler x=(3,2) i en vannrett og en loddrett etappe.
+# Beregn bidraget fra hver etappe langs samme enhetsretning q.
 import numpy as np
 theta_degrees = 45.0  # Prøv også 0, 90, 135 og 180 grader.
 theta = np.deg2rad(theta_degrees)  # NumPys cos og sin bruker radianer.
+# cos og sin gir lengde én; q[0] og q[1] er koordinatene til retningen.
 q = np.array([np.cos(theta), np.sin(theta)])
+# Tre vannrette skritt og to loddrette skritt bidrar til samme komponent.
 horizontal = 3*q[0]
 vertical = 2*q[1]
 print("Tre skritt mot høyre bidrar:", horizontal)
@@ -317,6 +323,8 @@ $x$ som peker i den valgte retningen $q$.
 
 ```{pyodide-python}
 #| label: week4-direction-readings
+# Hold x fast og varier bare måleretningen.
+# Alle q nedenfor har lengde én, så x @ q er en komponent med fortegn.
 x = np.array([3.0, 2.0])
 directions = {
     "høyre": np.array([1.0, 0.0]),
@@ -324,6 +332,7 @@ directions = {
     "diagonal": np.array([1.0, 1.0]) / np.sqrt(2),
     "motsatt høyre": np.array([-1.0, 0.0]),
 }
+# @ mellom to 1D-arrays er indreproduktet: ett tall, ikke en vektor.
 for name, q in directions.items():
     print(f"{name:16s}: x^T q = {x @ q: .4f}")
 ```
@@ -355,11 +364,15 @@ Hva skjer hvis vi prøver å finne retningen til nullvektoren?
 
 ```{pyodide-python}
 #| label: week4-normalize-zero
+# Sammenlign en vanlig vektor med nullvektoren.
+# Advarselen og NaN er tilsiktet: Vi vil finne hvilken divisjon som feiler.
 with np.errstate(divide="warn", invalid="warn"):
     for v in [np.array([3.0, 4.0]), np.array([0.0, 0.0])]:
         length = np.linalg.norm(v)
+        # Deling på lengden bevarer retningen når lengden er positiv.
         q = v / length
         print("v =", v, "  ||v||_2 =", length, "  v/||v||_2 =", q)
+        # isfinite er False for NaN og Inf; endelige tall er ikke alene et kvalitetsstempel.
         print("endelige tall?", np.isfinite(q).all())
 ```
 
@@ -862,17 +875,23 @@ H: Forklaringen over forutsier at bare H-søylen skal flytte seg.
 
 ```{pyodide-python}
 #| label: week4-pattern-detectors
+# Hvert mønster har fire piksler og vektorlengde én.
+# Vi lager et bilde med kjent oppskrift og undersøker om målingene finner den igjen.
 M = 0.5*np.array([[1.0, 1.0], [1.0, 1.0]])
 H = 0.5*np.array([[1.0, -1.0], [1.0, -1.0]])
 V = 0.5*np.array([[1.0, 1.0], [-1.0, -1.0]])
 D = 0.5*np.array([[1.0, -1.0], [-1.0, 1.0]])
 patterns = [M, H, V, D]
 names = ["M", "H", "V", "D"]
+# Les øverste rad først. reshape endrer lagringsform, ikke pikselverdiene.
 m, h, v, d = [P.reshape(-1) for P in patterns]
+# Én kolonne per mønster, i rekkefølgen M, H, V, D.
 Q_pattern = np.column_stack([m, h, v, d])
 coefficients = np.array([2.0, -1.0, 0.5, 0.0])
+# Matriseproduktet summerer de fire skalerte mønstervektorene.
 x = Q_pattern @ coefficients
 X = x.reshape(2, 2)
+# Q.T beregner ett indreprodukt per mønster. Ortonormalitet gir koeffisientene tilbake.
 readings = Q_pattern.T @ x
 
 # To kolonner: fire mønstre øverst, blanding og målinger nederst.
@@ -895,6 +914,7 @@ for row in range(2):
         axes[4].text(col, row, f"{X[row, col]:g}",
                      ha="center", va="center", fontsize=11,
                      color="white" if abs(X[row, col]) > 1 else "black")
+# Søylene viser mønstermengder, mens rutene viser pikselverdier.
 axes[5].bar(names, readings, color=pattern_colors)
 axes[5].axhline(0, color="black", linewidth=0.8)
 axes[5].set_title("Målte mønstermengder")
@@ -908,6 +928,7 @@ for i, value in enumerate(readings):
 fig.tight_layout()
 plt.show()
 
+# Ettall på diagonalen kontrollerer lengde; nuller ellers kontrollerer ortogonalitet.
 print("Q^T Q =\n", Q_pattern.T @ Q_pattern)
 for name, value in zip(names, readings):
     print(f"Mengde av {name}-mønsteret: {value:g}")
@@ -1345,19 +1366,27 @@ vektorlikningene vi allerede har kontrollert.
 
 ```{pyodide-python}
 #| label: week4-two-vector-gs
+# Samme to vektorer som i håndregningen: a1=(2,1), a2=(1,2).
+# Følg forskjellen mellom koeffisienten r12 (ett tall) og bidraget r12*q1 (en vektor).
 a1 = np.array([2.0, 1.0])
 a2 = np.array([1.0, 2.0])
+# Normaliser første retning; norm(a1) blir også r11.
 q1 = a1 / np.linalg.norm(a1)
+# Beregn komponenten av a2 langs q1.
 r12 = q1 @ a2
+# Trekk vektorbidraget fra a2; det som står igjen, skal være ortogonalt på q1.
 v2 = a2 - r12*q1
+# Normaliser resten. Dette krever at resten ikke er null.
 q2 = v2 / np.linalg.norm(v2)
 Q = np.column_stack([q1, q2])
+# Første kolonne lagrer a1; andre kolonne lagrer a2, uttrykt med q1 og q2.
 R = np.array([[np.linalg.norm(a1), r12],
               [0.0, np.linalg.norm(v2)]])
 A = np.column_stack([a1, a2])
 print("Q =\n", Q)
 print("Q^T Q =\n", Q.T @ Q)
 print("R =\n", R)
+# Liten rekonstruksjonsfeil må vurderes sammen med Q.T @ Q.
 print("||A-QR||_F =", np.linalg.norm(A-Q@R, "fro"))
 ```
 
@@ -1554,6 +1583,8 @@ $Q$ av størrelse $4\times3$ og $R$ av størrelse $3\times3$.
 
 ```{pyodide-python}
 #| label: week4-classical-gs
+# Én løkkeomgang behandler én opprinnelig kolonne a_j.
+# Q lagrer enhetsvektorene; kolonne j i R lagrer regnskapet for a_j.
 def classical_gram_schmidt(A):
     """Pedagogisk implementasjon uten rangkontroll."""
     A = np.asarray(A, dtype=float)
@@ -1561,10 +1592,14 @@ def classical_gram_schmidt(A):
     Q = np.zeros((m, n))
     R = np.zeros((n, n))
     for j in range(n):
+        # CGS: Alle indreproduktene bruker den opprinnelige kolonnen A[:, j].
         coefficients = Q[:, :j].T @ A[:, j]
+        # Lagre tallene før resten normaliseres; de trengs for å gjenskape a_j.
         R[:j, j] = coefficients
+        # Summen av tidligere vektorbidrag trekkes fra på én gang.
         v = A[:, j] - Q[:, :j] @ coefficients
         R[j, j] = np.linalg.norm(v)
+        # Denne naive varianten deler også når lengden er null; neste forsøk viser følgen.
         Q[:, j] = v / R[j, j]
     return Q, R
 
@@ -1676,12 +1711,15 @@ forsøker så å dele på $\lVert v_3\rVert_2=0$.
 
 ```{pyodide-python}
 #| label: week4-gs-nan
+# Tredje kolonne er summen av de to første og gir ingen ny retning.
+# Bruk den naive CGS-funksjonen fra tidligere for å se hvor NaN oppstår.
 A_dependent = np.array([[1.0, 2.0, 3.0],
                         [0.0, 1.0, 1.0],
                         [0.0, 0.0, 0.0]])
 with np.errstate(divide="warn", invalid="warn"):
     Q_bad, R_bad = classical_gram_schmidt(A_dependent)
 print("Q =\n", Q_bad)
+# Diagonalverdiene er lengdene på restene før normalisering. Se spesielt den siste.
 print("diagonalen i R =", np.diag(R_bad))
 print("alle tall endelige?", np.isfinite(Q_bad).all())
 ```
@@ -1818,6 +1856,8 @@ fra? Det undersøker vi med modifisert GS.
 
 ```{pyodide-python}
 #| label: week4-cgs-worked
+# Følg avrundingen med e=1e-8 fra første normalisering til tredje kolonne.
+# Utskriftene svarer til de beregnede størrelsene med hatt i teksten.
 import numpy as np
 import matplotlib.pyplot as plt
 e = 1e-8
@@ -1827,12 +1867,16 @@ a3 = np.array([1., 0., 0., e])
 print("e^2 =", e*e)
 print("1 + e^2 i float64 =", np.float64(1) + e*e)
 print("beregnet lengde av a1 =", np.linalg.norm(a1))
+# I dette forsøket beregnes lengden som 1 fordi 1+e² avrundes til 1.
 q1 = a1/np.linalg.norm(a1)
 r12 = q1@a2
+# Første koordinat blir 1-1=0; følg hva som skjer når denne resten normaliseres.
 v2 = a2-r12*q1
 q2 = v2/np.linalg.norm(v2)
+# Begge koeffisientene beregnes før a3 endres. Her blir r23 null.
 r13, r23 = q1@a3, q2@a3
 v3 = a3-r13*q1-r23*q2
+# En liten rest deles på en liten lengde og får koordinater av størrelse én.
 q3 = v3/np.linalg.norm(v3)
 for name, value in [('q1', q1), ('r12', r12), ('v2', v2), ('q2', q2),
                     ('r13', r13), ('r23', r23), ('v3', v3), ('q3', q3)]:
@@ -1847,6 +1891,7 @@ axes[0].set_xticks(positions)
 axes[0].set_xlabel('Komponentnummer')
 axes[0].set_title('Samme negative komponent nr. 2')
 axes[0].legend()
+# q2*q3 gir bidrag koordinat for koordinat; summen er indreproduktet q2 @ q3.
 axes[1].bar(positions, q2*q3, color='#6a51a3')
 axes[1].set_xticks(positions)
 axes[1].set_xlabel('Komponentnummer')
@@ -1905,6 +1950,8 @@ algoritmenavnene.
 
 ```{pyodide-python}
 #| label: week4-mgs-comparison
+# MGS beregner hver komponent på den oppdaterte resten.
+# Sammenlign med CGS på identiske matriser, ikke på ulike datasett.
 def modified_gram_schmidt(A, tolerance=None):
     A = np.asarray(A, dtype=float)
     m, n = A.shape
@@ -1912,16 +1959,20 @@ def modified_gram_schmidt(A, tolerance=None):
     R = np.zeros((n, n))
     if not np.isfinite(A).all():
         raise ValueError("A må bare inneholde endelige tall")
+    # Grensen skaleres med maskinpresisjon, dimensjoner og matrisens størrelse.
     if tolerance is None:
         tolerance = np.finfo(float).eps * max(m, n) * np.linalg.norm(A, "fro")
     for j in range(n):
+        # copy lar oss oppdatere resten uten å endre den opprinnelige matrisen.
         v = A[:, j].copy()
         for i in range(j):
+            # MGS: Beregn på resten etter forrige subtraksjon, ikke på A[:, j].
             R[i, j] = Q[:, i] @ v
             v = v - R[i, j]*Q[:, i]
         R[j, j] = np.linalg.norm(v)
         if not np.isfinite(R[j, j]):
             raise np.linalg.LinAlgError("Ikke-endelig rest under faktoriseringen")
+        # En for liten rest gir ingen pålitelig ny retning; stopp før normalisering.
         if R[j, j] <= tolerance:
             raise np.linalg.LinAlgError(
                 f"Kolonne {j+1} gir ingen pålitelig ny retning"
@@ -1929,6 +1980,7 @@ def modified_gram_schmidt(A, tolerance=None):
         Q[:, j] = v/R[j, j]
     return Q, R
 
+# Mindre epsilon gjør kolonnene mer parallelle.
 epsilons = 10.0**(-np.arange(1, 16))
 cgs_errors, mgs_errors = [], []
 cgs_factor_errors, mgs_factor_errors = [], []
@@ -1940,11 +1992,13 @@ for eps in epsilons:
     Qm, Rm = modified_gram_schmidt(A_eps, tolerance=0.0)
     cgs_errors.append(np.linalg.norm(Qc.T@Qc-np.eye(3), "fro"))
     mgs_errors.append(np.linalg.norm(Qm.T@Qm-np.eye(3), "fro"))
+    # Del rekonstruksjonsfeilen på størrelsen til A for å sammenligne relative feil.
     scale = np.linalg.norm(A_eps, "fro")
     cgs_factor_errors.append(np.linalg.norm(A_eps-Qc@Rc, "fro")/scale)
     mgs_factor_errors.append(np.linalg.norm(A_eps-Qm@Rm, "fro")/scale)
     all_finite.append(all(np.isfinite(Z).all() for Z in [Qc, Rc, Qm, Rm]))
 
+# Logaritmiske akser gjør feil over mange størrelsesordener synlige.
 plt.loglog(epsilons, cgs_errors, "o-", label="klassisk GS")
 plt.loglog(epsilons, mgs_errors, "s-", label="modifisert GS")
 plt.gca().invert_xaxis()
@@ -2034,22 +2088,29 @@ c=\begin{bmatrix}c_0\\c_1\end{bmatrix}.$$
 
 ```{pyodide-python}
 #| label: week4-least-squares
+# Tilpass en linje c0+c1*t til fire målinger.
+# Målet er liten samlet kvadratfeil, selv om ingen linje treffer alle punktene.
 t = np.array([-1.0, 0.0, 1.0, 2.0])
 b = np.array([0.2, 0.9, 2.1, 2.8])
+# Første kolonne er konstantleddet, andre er verdiene til basisfunksjonen t.
 A = np.column_stack([np.ones_like(t), t])
 Q, R = np.linalg.qr(A, mode="reduced")
+# Q.T @ b gir komponenter langs Q; løs R*c=Q.T*b for linjekoeffisientene.
 c_qr = np.linalg.solve(R, Q.T @ b)
 c_library, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
+# Residualen er målt verdi minus tilpasset verdi, ved hvert målepunkt.
 r = b-A@c_qr
 print("koeffisienter fra QR:   ", c_qr)
 print("koeffisienter fra lstsq:", c_library)
 print("residual:", r)
+# Disse indreproduktene skal være nær null selv om residualen ikke er null.
 print("Q^T r =", Q.T @ r)
 print("A^T r =", A.T @ r)
 
 grid = np.linspace(-1.2, 2.2, 200)
 plt.scatter(t, b, color="black", label="målinger")
 plt.plot(grid, c_qr[0]+c_qr[1]*grid, label="minste kvadrater")
+# Røde segmenter viser residualkomponentene på de opprinnelige målepunktene.
 for ti, bi, fitted in zip(t, b, A@c_qr):
     plt.plot([ti, ti], [fitted, bi], color="#c62828", alpha=0.7)
 plt.xlabel("t"); plt.ylabel("målt verdi")
@@ -2317,6 +2378,8 @@ vil som regel endre det tilpassede polynomet.
 
 ```{pyodide-python}
 #| label: week4-polynomial-bridge
+# Fem polynomverdier gir et problem med tre koeffisienter.
+# Sammenlign samme tilpasning i monomial- og Chebyshev-basis.
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.polynomial import polynomial as poly
@@ -2325,13 +2388,18 @@ from numpy.polynomial import chebyshev as cheb
 def polynomial_bridge(noise_scale=0.01):
     points = np.array([-1., -.5, 0., .5, 1.])
     reference = 1+points+.5*points**2
+    # Denne bestemte støyretningen er ortogonal på 1, t og t² ved de fem punktene.
     noise = noise_scale*np.array([1., -4., 6., -4., 1.])
     measured = reference+noise
+    # Hver rad er ett målepunkt; kolonnene er verdier av 1, t og t².
     A = np.column_stack([np.ones(5), points, points**2])
     Q, R = np.linalg.qr(A, mode='reduced')
+    # Dette er koordinater langs Q-kolonnene, ikke monomialkoeffisientene.
     detected = Q.T@measured
+    # R omregner mellom monomialkoeffisientene og Q-koordinatene.
     coefficients = np.linalg.solve(R, detected)
     fitted = A@coefficients
+    # Støyen kan her ikke representeres av et andregradspolynom og blir igjen i resten.
     residual = measured-fitted
 
     # Samme polynomrom i Chebyshev-basis: T0=1, T1=t, T2=2t²-1.
@@ -2344,6 +2412,7 @@ def polynomial_bridge(noise_scale=0.01):
     axes[0].plot(grid, cheb.chebval(grid, cheb_coefficients), '--', color='#238443', label='Chebyshev-tilpasning')
     axes[0].vlines(points, fitted, measured, color='#c62828', label='residualkomponenter')
     axes[0].set_xlabel('t'); axes[0].set_ylabel('polynomverdi'); axes[0].legend()
+    # Vis indreproduktet mellom residualen og hver opprinnelig kolonne i A.
     axes[1].bar(np.arange(3), A.T@residual, color='#c62828')
     axes[1].set_xticks(np.arange(3), ['a0', 'a1', 'a2'])
     axes[1].set_ylim(-.01, .01)
@@ -2356,6 +2425,7 @@ def polynomial_bridge(noise_scale=0.01):
     print('Kvadratfeil:', residual@residual)
     print('A.T @ residual:', A.T@residual)
     print('Q.T @ residual:', Q.T@residual)
+    # Bruk riktig evalueringsfunksjon for hver basis; koeffisientlistene er forskjellige.
     print('Samme kurve i begge basiser?', np.allclose(poly.polyval(grid, coefficients), cheb.chebval(grid, cheb_coefficients)))
 
 polynomial_bridge()
@@ -2461,6 +2531,8 @@ Forutsett at kolonnene i $Q$ er ortonormale.
 ```{py-exercise}
 #| label: week4-task-pattern-code
 #| caption: Mål, rekonstruer og undersøk resten
+# Q har én kjent mønstervektor per kolonne; x inneholder signalverdiene.
+# Skill mellom mengdene i c, den representerte delen p og resten r.
 import numpy as np
 
 def decompose(Q, x):
@@ -2598,6 +2670,8 @@ systemet. Målingen i den indre løkken skal tas på den oppdaterte resten.
 ```{py-exercise}
 #| label: week4-task-qr-code
 #| caption: Fra vektorløkke til minste kvadrater
+# Behandle kolonnene i rekkefølge og bevar koeffisientene i R.
+# Vektoren v skal være den gjenværende delen av den aktuelle kolonnen.
 import numpy as np
 
 def fit_with_gs(A, b):
@@ -2674,6 +2748,8 @@ Funksjonen brukes her bare på uavhengige kolonner med ikke-null rester.
 ```{py-exercise}
 #| label: week4-task-cgs-mgs
 #| caption: Samme piler, to beregningsmåter
+# Bare valget av source skiller de to variantene av GS her.
+# Bruk samme matrise for begge; rapporter både ortogonalitet og rekonstruksjon.
 import numpy as np
 
 def compare_gs(A, modified):
@@ -2752,6 +2828,8 @@ punkter. Bruk `np.linalg.lstsq` og rekkefølgen $(c_0,c_1)$.
 ```{py-exercise}
 #| label: week4-task-extra-point-code
 #| caption: Hvilken feil ble større?
+# Skill mellom hvilken linje som brukes og hvilke punkter feilen beregnes på.
+# Et nytt punkt endrer tilpasningen, men sammenligningsgrunnlaget må være tydelig.
 import numpy as np
 
 def compare_point(t, y, t_new, y_new):
@@ -2816,6 +2894,8 @@ kandidatens rest ortogonal på byggeretningene?
 ```{py-exercise}
 #| label: week4-task-quality-code
 #| caption: Tre kontroller som må skilles
+# De tre kontrollene undersøker forskjellige egenskaper ved samme kandidat.
+# At QR gjenskaper A, er alene ikke nok til å stole på løsningen.
 import numpy as np
 
 def diagnose(A, Q, R, b):
