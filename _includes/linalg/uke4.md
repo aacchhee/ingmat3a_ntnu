@@ -2141,7 +2141,13 @@ hver gang. Spørsmålet er derfor hvilken linje som passer best.
 
 #### Fire modellverdier blir én vektor
 
-For å bruke verktøyene fra 4.2–4.3 skriver vi ut linjens fire verdier:
+Vi bruker fortsatt modellen
+
+$$p(t)=c_0+c_1t,$$
+
+der $c_0$ er konstantleddet og $c_1$ er stigningstallet. Målepunktene er
+$t=-1,0,1,2$. For å bruke verktøyene fra 4.2–4.3 beregner vi modellverdien
+ved hvert av disse punktene og samler de fire resultatene i én vektor:
 
 $$\begin{bmatrix}p(-1)\\p(0)\\p(1)\\p(2)\end{bmatrix}
 =\begin{bmatrix}c_0-c_1\\c_0\\c_0+c_1\\c_0+2c_1\end{bmatrix}
