@@ -509,61 +509,138 @@ bilde og skifter fortegn når lys og mørke bytter plass. Vi skal prøve om
 indreproduktet kan gjøre dette. Ordet **detektor** betyr her bare en
 regneoppskrift som måler mengden av ett bestemt mønster.
 
-Vi bruker fire mønstre fra uke 3. Store bokstaver betegner de synlige
-$2\times2$-bildene:
+#### Se mønstrene først
 
-$$M=\frac12\begin{bmatrix}1&1\\1&1\end{bmatrix},\quad
-H=\frac12\begin{bmatrix}1&-1\\1&-1\end{bmatrix},$$
+Her er fire små bilder fra uke 3. Hvert bilde har fire piksler. Lyst betyr
+$+1/2$, og mørkt betyr $-1/2$. Dette er **fortegnede mønsterverdier**:
+minus betyr et mørkt bidrag i forhold til et referansenivå.
 
-$$V=\frac12\begin{bmatrix}1&1\\-1&-1\end{bmatrix},\quad
-D=\frac12\begin{bmatrix}1&-1\\-1&1\end{bmatrix}.$$
+![Fire mønstre: jevnt nivå, venstre–høyre-kontrast, oppe–nede-kontrast og diagonal. Hver piksel er merket med verdi og plass i leserekkefølgen.](/images/week4-patterns.svg){width=760}
 
-De uskalerte mønstrene har vektorlengde $2$, så faktoren $1/2$ gjør hvert
-mønster til en enhetsvektor. Et bilde er fortsatt en $2\times2$-rute på
-skjermen, men indreproduktet virker på vektorer. Vi avtaler derfor eksplisitt
-radvis vektorisering:
+Se på H: Hva skjer med forskjellen mellom venstre og høyre side hvis
+mønsteret dobles? Hva skjer hvis vi bytter fortegn? Se deretter på M:
+Kan et jevnt lyst bilde gi noen forskjell mellom venstre og høyre?
 
-$$\operatorname{vec}_r\!\left(\begin{bmatrix}a&b\\c&d\end{bmatrix}\right)
-=\begin{bmatrix}a\\b\\c\\d\end{bmatrix}.$$
+#### Fra fire piksler til én vektor
 
-La de små bokstavene være de tilsvarende detektorvektorene
+Vi avtaler rekkefølgen: **øverst til venstre, øverst til høyre,
+nederst til venstre, nederst til høyre**. Tallene 1–4 i bildene viser denne
+rekkefølgen. For H leser vi
 
-$$m=\operatorname{vec}_r(M),\quad h=\operatorname{vec}_r(H),\quad
-v=\operatorname{vec}_r(V),\quad d=\operatorname{vec}_r(D),$$
+$$+\tfrac12,\;-\tfrac12,\;+\tfrac12,\;-\tfrac12
+\quad\longrightarrow\quad
+\vec h=\begin{bmatrix}1/2\\-1/2\\1/2\\-1/2\end{bmatrix}.$$
 
-og bygg bildet og bildevektoren
+Vi har beholdt alle pikselverdiene; vi har bare skrevet dem som én kolonne.
+Pilen over $\vec h$ sier at symbolet står for **hele vektoren**.
 
-$$X=2M-H+\frac12V,\qquad x=\operatorname{vec}_r(X).$$
+Vi bruker denne notasjonen i bildedelen:
 
-Retningsmåleren er ikke begrenset til to komponenter. For vektorer
-$y,z\in\mathbb R^n$ er det euklidske indreproduktet
+| Notasjon | Hva er det? |
+|---|---|
+| $x_1,x_2,x_3,x_4$ | fire enkeltverdier, altså tall |
+| $\vec x=(x_1,x_2,x_3,x_4)^T$ | hele bildevektoren |
+| $\vec m,\vec h,\vec v,\vec d$ | fire mønstervektorer, hver med fire tall |
+| $2,-1,1/2$ | koeffisienter som skalerer hele mønstre |
+| $M,H,V,D,X$ i koden | pikselverdiene ordnet som $2\times2$-bilder |
 
-$$\boxed{y^Tz=y_1z_1+y_2z_2+\cdots+y_nz_n.}$$
+For eksempel er $h_2=-1/2$ ett tall, mens $\vec h$ inneholder alle fire.
+Vi bruker $x_1,\ldots,x_4$ fremfor $a,b,c,d$ for pikselverdiene, så
+bokstaven $d$ ikke får to forskjellige roller.
 
-Her er $n=4$: De fire pikselverdiene spiller samme rolle som de to
-koordinatene i pilfiguren. Derfor kan ett bildemønster brukes som en retning
-og et annet bilde måles mot den.
+Les de tre andre bildene i samme rekkefølge. Da får vi
 
-Regn først bare med $h=(1,-1,1,-1)^T/2$. Et jevnt bilde $y=(1,1,1,1)^T$
-gir $h^Ty=(1-1+1-1)/2=0$. Et rent mønster $y=3h$ gir
-$h^Ty=3(h^Th)=3$. Bytter vi lyst og mørkt, gir $y=-3h$ målingen $-3$.
-Dette er grunnen til å kalle målingen en detektor.
+$$\vec m=\frac12\begin{bmatrix}1\\1\\1\\1\end{bmatrix},\qquad
+\vec h=\frac12\begin{bmatrix}1\\-1\\1\\-1\end{bmatrix},$$
+$$\vec v=\frac12\begin{bmatrix}1\\1\\-1\\-1\end{bmatrix},\qquad
+\vec d=\frac12\begin{bmatrix}1\\-1\\-1\\1\end{bmatrix}.$$
 
-For blandingen vår er $x=(3/4,7/4,1/4,5/4)^T$. Da er
+Nå kan vi kontrollere lengden. Hver av de fire vektorene har
 
-$$h^Tx=\tfrac12(\tfrac34-\tfrac74+\tfrac14-\tfrac54)=-1.$$
+$$\sqrt{(1/2)^2+(1/2)^2+(1/2)^2+(1/2)^2}=\sqrt1=1.$$
 
-Regn også ut $m^Tx=2$, $v^Tx=1/2$ og $d^Tx=0$. Endre bare mengden av
-$H$ i koden og forutsi hvilken søyle som flytter seg. Først nå samler vi de
-fire målingene i én liste:
+Det er derfor vi valgte størrelsen $1/2$: Mønstrene kan brukes som
+enhetsretninger, akkurat som målepilen tidligere.
 
-Med $Q_{\text{pattern}}=[m\ h\ v\ d]$ blir målingene
+#### Prøv én mønstermåling
 
-$$Q_{\text{pattern}}^Tx=
-\begin{bmatrix}m^Tx\\h^Tx\\v^Tx\\d^Tx\end{bmatrix}
+Et jevnt bilde har bildevektor $\vec y=(1,1,1,1)^T$. Bruk H-mønsteret:
+Gang sammen verdiene på samme pikselplass og legg sammen.
+
+$$\vec h^{\,T}\vec y
+=\tfrac12\cdot1-\tfrac12\cdot1+\tfrac12\cdot1-\tfrac12\cdot1=0.$$
+
+Venstre og høyre side opphever hverandre. Prøv så et bilde som inneholder
+tre ganger H-mønsteret:
+
+$$\vec y=3\vec h
+=\begin{bmatrix}3/2\\-3/2\\3/2\\-3/2\end{bmatrix},$$
+$$\vec h^{\,T}\vec y
+=\tfrac34+\tfrac34+\tfrac34+\tfrac34=3.$$
+
+Med $\vec y=-3\vec h$ blir resultatet $-3$. Ett tall måler altså mengden
+av dette mønsteret, med fortegn. Det er dette vi mener med en **detektor**.
+
+Vi har brukt samme oppskrift som for to koordinater, bare med fire ledd:
+
+$$\vec h^{\,T}\vec y=h_1y_1+h_2y_2+h_3y_3+h_4y_4.$$
+
+Hver faktor $h_i$ eller $y_i$ er et tall; hele uttrykket gir også ett tall.
+Generelt bruker vi for vektorer med $n$ komponenter
+
+$$\boxed{\vec y^{\,T}\vec z=y_1z_1+\cdots+y_nz_n.}$$
+
+#### Bland mønstrene og finn mengdene
+
+Bygg nå én bildevektor av de kjente mønstrene:
+
+$$\vec x=
+\underbrace{2}_{\text{tall}}\underbrace{\vec m}_{\text{vektor}}
+-\underbrace{1}_{\text{tall}}\underbrace{\vec h}_{\text{vektor}}
++\underbrace{\tfrac12}_{\text{tall}}\underbrace{\vec v}_{\text{vektor}}.$$
+
+Regn piksel for piksel:
+
+$$\vec x=
+\begin{bmatrix}1\\1\\1\\1\end{bmatrix}
++\begin{bmatrix}-1/2\\1/2\\-1/2\\1/2\end{bmatrix}
++\begin{bmatrix}1/4\\1/4\\-1/4\\-1/4\end{bmatrix}
+=\begin{bmatrix}3/4\\7/4\\1/4\\5/4\end{bmatrix}.$$
+
+H-målingen blir
+
+$$\vec h^{\,T}\vec x
+=\tfrac12(\tfrac34-\tfrac74+\tfrac14-\tfrac54)=-1.$$
+
+Regn også ut $\vec m^{\,T}\vec x=2$, $\vec v^{\,T}\vec x=1/2$ og
+$\vec d^{\,T}\vec x=0$. Dette er fire **tall**, ett for hvert mønster.
+
+Først nå pakker vi de fire mønstervektorene som kolonner i én matrise:
+
+$$Q_{\text{pattern}}=
+\begin{bmatrix}|&|&|&|\\
+\vec m&\vec h&\vec v&\vec d\\
+|&|&|&|
+\end{bmatrix}.$$
+
+Da skriver matriseproduktet de fire målingene i én kolonne:
+
+$$Q_{\text{pattern}}^T\vec x
+=\begin{bmatrix}
+\vec m^{\,T}\vec x\\
+\vec h^{\,T}\vec x\\
+\vec v^{\,T}\vec x\\
+\vec d^{\,T}\vec x
+\end{bmatrix}
 =\begin{bmatrix}2\\-1\\1/2\\0\end{bmatrix}.$$
 
-Kontroller dette for hånd før du kjører koden. Hvilke nullprodukter bruker du?
+I Python skriver vi ikke pil over variabelnavn: `h` svarer til $\vec h$.
+`H` lagrer de samme fire verdiene i bildeform, og `H.reshape(-1)` leser
+radene i den avtalte rekkefølgen. Omvendt legger `x.reshape(2, 2)` verdiene
+tilbake på de fire pikselplassene. Dette endrer bare formen på lagringen.
+
+Endre bare koeffisienten foran H i koden og forutsi hvilken søyle som flytter
+seg. Kontroller også at de andre mønstermålingene holder seg uendret.
 
 ```{pyodide-python}
 #| label: week4-pattern-detectors
