@@ -340,11 +340,29 @@ $$\boxed{x^Tv=x_1v_1+x_2v_2.}$$
 Dette kalles fortsatt indreproduktet, også når ingen av vektorene har
 lengde én. Hva må vi gjøre for å få komponenten langs $v$ tilbake?
 
-Når $v\ne0$, kan vi skrive $v=Lq$, der $L=\lVert v\rVert_2$ er lengden
-og $q=v/L$ har lengde én. Sett dette inn, én koordinat om gangen:
+Når $v\ne0$, får vi en enhetsvektor i samme retning ved å dele på lengden:
 
-$$x^Tv=x_1(Lq_1)+x_2(Lq_2)
-=L(x_1q_1+x_2q_2)=L(x^Tq).$$
+$q=\frac{v}{\lVert v\rVert_2}.$
+
+Lengden $\lVert v\rVert_2$ er **ett positivt tall**. For å bygge $v$ tilbake
+ganger vi hver koordinat i $q$ med dette tallet:
+
+$v_1=\lVert v\rVert_2\cdot q_1,\qquad
+v_2=\lVert v\rVert_2\cdot q_2.$
+
+Sett dette inn i indreproduktet:
+
+$\begin{aligned}
+x^Tv
+&=x_1v_1+x_2v_2\\
+&=x_1\bigl(\lVert v\rVert_2\cdot q_1\bigr)
+ +x_2\bigl(\lVert v\rVert_2\cdot q_2\bigr)\\
+&=\lVert v\rVert_2\cdot(x_1q_1+x_2q_2)\\
+&=\lVert v\rVert_2\cdot(x^Tq).
+\end{aligned}$
+
+I tredje linje trekker vi det samme tallet $\lVert v\rVert_2$ utenfor
+begge leddene.
 
 Dermed er
 
