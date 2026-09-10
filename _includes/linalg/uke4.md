@@ -2370,318 +2370,206 @@ Forutsi: Kan ett andregradspolynom treffe alle fem nye verdiene?
 Det er ikke antallet alene som gjør det umulig; uten støy ville $p_*$
 truffet alle fem. Vi undersøker hva akkurat disse feilene gjør nedenfor.
 
-### Beregn verdiene til basispolynomene
+### Modellmatrisen er det som endres fra 4.5
+
+Modellen er nå $p(t)=c_0+c_1t+c_2t^2$. Vi legger derfor til en kolonne
+med verdiene av $t^2$:
+
+$$A=[a_0\ a_1\ a_2]
+=\begin{bmatrix}
+1&-1&1\\
+1&-1/2&1/4\\
+1&0&0\\
+1&1/2&1/4\\
+1&1&1
+\end{bmatrix},
+\qquad c=\begin{bmatrix}c_0\\c_1\\c_2\end{bmatrix}.$$
 
-Beregn hvert basispolynom $1,t,t^2$ i de fem målepunktene.
-Verdiene samles i én vektor per basispolynom:
+Som før er $Ac$ **modellverdier ved målepunktene**, mens $c$ inneholder
+**modellkoeffisientene**. Her har vi fem målinger og tre koeffisienter.
+Vi søker $c$ som gjør $\lVert b-Ac\rVert_2^2$ minst mulig.
+
+### Bruk QR til å projisere og finne koeffisientene
 
-$a_0=(1,1,1,1,1)^T,\qquad
- a_1=(-1,-1/2,0,1/2,1)^T,\qquad
- a_2=(1,1/4,0,1/4,1)^T.$
+Vi faktoriserer $A=\textcolor{#1565c0}{Q}\textcolor{#8b5aa7}{R}$.
+Matrisen $Q$ har fem rader og tre ortonormale kolonner som spenner ut
+det samme rommet av modellverdier som $A$. Matrisen $R$ omregner
+polynomkoeffisientene til koeffisienter i denne ortonormale basisen:
 
-Verdiene til $p(t)=c_0+c_1t+c_2t^2$ beregnes med lineærkombinasjonen
+$$Ac=\textcolor{#1565c0}{Q}\bigl(\textcolor{#8b5aa7}{R}c\bigr).$$
 
-$c_0a_0+c_1a_1+c_2a_2.$
+Vi bruker nå akkurat beregningen fra 4.5:
 
-Dette er samme lineærkombinasjon som vi brukte for bildemønstrene. Matrisen
-samler bare de tre ferdige vektorene av polynomverdier som kolonner:
+$$d=\textcolor{#1565c0}{Q^T}b,\qquad
+\widehat b=\textcolor{#1565c0}{Q}d,\qquad
+\textcolor{#c62828}{r}=b-\widehat b.$$
 
-$A=[a_0\ a_1\ a_2]=
-\begin{bmatrix}
-1&-1&1\\1&-1/2&1/4\\1&0&0\\1&1/2&1/4\\1&1&1
-\end{bmatrix},\qquad
-c=\begin{bmatrix}c_0\\c_1\\c_2\end{bmatrix},\qquad
-b=\begin{bmatrix}0.51\\0.585\\1.06\\1.585\\2.51\end{bmatrix}.$
+Her er $d$ tre **projeksjonskoeffisienter**, $\widehat b$ fem
+**tilpassede modellverdier**, og $r$ fem **residualkomponenter**.
+For å få polynomkoeffisientene løser vi
+$\textcolor{#8b5aa7}{R}c=d$.
 
-$Ac$ er altså fem **polynomverdier**, mens $c$ er tre **koeffisienter**.
-Vi ønsker å tilpasse disse fem modellverdiene til målingene $b$.
-For å bruke projeksjonsmetoden fra 4.5 trenger vi en ortonormal basis
-for rommet som kolonnene i $A$ spenner ut.
+For målepunktene og dataene våre gir QR følgende system, med positive
+diagonalverdier i $R$:
 
-### Hvorfor erstatter vi kolonnene med ortonormale vektorer?
+$$\underbrace{\textcolor{#8b5aa7}{\begin{bmatrix}
+\sqrt5&0&\sqrt5/2\\
+0&\sqrt{5/2}&0\\
+0&0&\sqrt{7/8}
+\end{bmatrix}}}_{R}
+\begin{bmatrix}c_0\\c_1\\c_2\end{bmatrix}
+=
+\underbrace{\begin{bmatrix}
+(5/4)\sqrt5\\
+\sqrt{5/2}\\
+(1/2)\sqrt{7/8}
+\end{bmatrix}}_{d=Q^Tb}.$$
 
-Kolonnene i $A$ er ikke ortogonale. For eksempel er
+Baklengs innsetting gir $c=(1,1,1/2)^T$. Det tilpassede polynomet er
+dermed $p(t)=1+t+\tfrac12t^2$, og residualen blir
 
-$a_0^Ta_2=1+\tfrac14+0+\tfrac14+1=\tfrac52.$
+$$\textcolor{#c62828}{r=0.01\begin{bmatrix}1\\-4\\6\\-4\\1\end{bmatrix}},
+\qquad Q^Tr=0,\qquad
+\lVert r\rVert_2^2=0.007.$$
 
-For polynomet $p(t)=t^2$ er modellvektoren $a_2$, og konstantkoeffisienten
-er $c_0=0$. Likevel er $a_0^Ta_2=5/2$. Indreproduktet med $a_0$ gir
-altså ikke konstantkoeffisienten.
+Som i 4.5 står residualen ortogonalt på rommet av mulige modellverdier.
+Derfor er dette den minste kvadratsummen. Den er ikke null, så ingen
+andregradspolynom treffer alle fem målingene.
 
-Med ortonormale kolonner i $Q$ får vi i stedet koeffisientene til
-projeksjonen direkte fra $d=Q^Tb$. Deretter gir $Rc=d$ koeffisientene
-i den opprinnelige polynombasisen. **Vi endrer basis for å kunne bruke
-denne beregningen; rommet av mulige modellverdier er det samme.**
+**Her finner vi tilbake til referansepolynomet fordi målefeilen er
+valgt ortogonal på kolonnene i $Q$.** Da bidrar den med null i $Q^Tb$.
+Vanlig målefeil har også en komponent i modellrommet og vil som regel
+endre det tilpassede polynomet.
 
-Vi bruker Gram–Schmidt. Normalisering av første kolonne gir
+### Hva betyr ortogonale polynomer i QR-språket?
 
-$q_0=a_0/\sqrt5.$
+Kolonnene i $Q$ kan tolkes som verdiene av nye basispolynomer
+$\phi_0,\phi_1,\phi_2$ ved de samme målepunktene.
+For QR-faktoriseringen over er disse
 
-Andre kolonne er allerede ortogonal på $q_0$, fordi
-$-1-1/2+0+1/2+1=0$. Derfor er
+$$\textcolor{#1565c0}{\phi_0(t)=\frac1{\sqrt5}},\qquad
+\textcolor{#1565c0}{\phi_1(t)=\frac{t}{\sqrt{5/2}}},\qquad
+\textcolor{#1565c0}{\phi_2(t)=\frac{t^2-1/2}{\sqrt{7/8}}}.$$
 
-$q_1=a_1/\sqrt{5/2}.$
+For eksempel inneholder $q_2$ de fem verdiene $\phi_2(t_i)$.
+Når vi ganger verdier fra samme målepunkt og summerer, får vi derfor
 
-Fra tredje kolonne trekker vi projeksjonen på $q_0$:
+$$\langle\phi_j,\phi_k\rangle_{\mathrm{punkter}}
+=\sum_{i=1}^{5}\phi_j(t_i)\phi_k(t_i)
+=q_j^Tq_k.$$
 
-$q_0^Ta_2=\frac{5/2}{\sqrt5}=\frac{\sqrt5}{2},\qquad
-v_2=a_2-\tfrac12a_0=(1/2,-1/4,-1/2,-1/4,1/2)^T.$
+Dette kalles et **diskret indreprodukt** på $\mathcal P_2$.
+At $Q^TQ=I_3$, sier nettopp at basispolynomene er ortonormale med
+denne regelen: resultatet er $1$ for samme basispolynom og $0$ for
+to forskjellige.
 
-Vi kontrollerer begge retningene ledd for ledd:
+Ortogonaliteten gjelder altså **polynomverdiene ved de valgte punktene**,
+ikke koeffisientlistene. Endrer vi målepunktene, kan også den
+ortonormale polynombasisen fra QR endre seg.
 
-$q_0^Tv_2=\frac{1/2-1/4-1/2-1/4+1/2}{\sqrt5}=0,$
-$q_1^Tv_2=
-\frac{(-1)(1/2)+(-1/2)(-1/4)+0(-1/2)+(1/2)(-1/4)+1(1/2)}
-{\sqrt{5/2}}
-=\frac{-1/2+1/8-1/8+1/2}{\sqrt{5/2}}=0.$
+### Bytt polynombasis, behold QR-metoden
 
-Dermed trenger vi ikke trekke fra noe mer. Lengden beregnes fra de fem
-komponentene:
+Fra uke 3 kjenner vi Chebyshev-polynomene
+$T_0(t)=1$, $T_1(t)=t$ og $T_2(t)=2t^2-1$.
+La $C$ være matrisen som inneholder verdiene av disse basispolynomene
+ved de fem målepunktene, altså $C_{ij}=T_j(t_i)$.
 
-$\lVert v_2\rVert_2^2
-=(1/2)^2+(-1/4)^2+(-1/2)^2+(-1/4)^2+(1/2)^2
-=\frac14+\frac1{16}+\frac14+\frac1{16}+\frac14=\frac78.$
+Vi bruker samme framgangsmåte i denne basisen:
 
-Vi deler hver komponent på $\sqrt{7/8}$ og får
+$$C=\textcolor{#1565c0}{Q_C}\textcolor{#8b5aa7}{R_C},
+\qquad
+\textcolor{#8b5aa7}{R_C}c_C=\textcolor{#1565c0}{Q_C^T}b.$$
 
-$q_2=\frac{(1/2,-1/4,-1/2,-1/4,1/2)^T}{\sqrt{7/8}}.$ Vi har nå tre ortonormale vektorer
-som spenner ut det samme rommet av modellverdier som før.
+Da får vi $c_C=(5/4,1,1/4)^T$, som beskriver det samme polynomet:
 
-Uttrykk de opprinnelige kolonnene med de nye basisvektorene og samle
-koeffisientene i $R$, som i 4.3:
+$$\tfrac54T_0(t)+T_1(t)+\tfrac14T_2(t)=1+t+\tfrac12t^2.$$
 
-$a_0=\sqrt5q_0,\quad a_1=\sqrt{5/2}q_1,\quad
- a_2=\tfrac{\sqrt5}{2}q_0+\sqrt{7/8}q_2,$
+Matrisene $A$ og $C$ spenner ut samme rom av modellverdier.
+Derfor gir projeksjonen, og dermed det tilpassede polynomet, samme
+resultat i eksakt regning. Numerisk kan basisvalget påvirke hvor
+pålitelig vi klarer å beregne det.
 
-$A=QR,\qquad Q=[q_0\ q_1\ q_2],\qquad
-R=\begin{bmatrix}\sqrt5&0&\sqrt5/2\\0&\sqrt{5/2}&0\\0&0&\sqrt{7/8}\end{bmatrix}.$
+Chebyshev-basis betyr ikke automatisk ortonormale kolonner.
+**QR beregner en ortonormal basis for den konkrete målematrisen.**
+Det er denne egenskapen som gjør projeksjonsformelen tilgjengelig.
 
-### Hva betyr ortogonale polynomer her?
+### Gjennomfør og endre forsøket
 
-Hver kolonne $q_j$ består av verdiene til et polynom $\phi_j$
-i de fem målepunktene. Formlene er
-
-$\phi_0(t)=1/\sqrt5,\qquad \phi_1(t)=t/\sqrt{5/2},\qquad
-\phi_2(t)=(t^2-1/2)/\sqrt{7/8}.$
-
-Vi regner gjennom paret $\phi_0,\phi_2$. **Blått** følger verdiene til
-$\phi_0$, og **lilla** følger verdiene til $\phi_2$.
-
-For eksempel gir målepunktet $t=-1/2$
-
-$$\phi_0(-1/2)=\textcolor{#1565c0}{\frac1{\sqrt5}},\qquad
-\phi_2(-1/2)=\frac{(-1/2)^2-1/2}{\sqrt{7/8}}
-=\textcolor{#8b5aa7}{\frac{-1/4}{\sqrt{7/8}}}.$$
-
-For alle fem punktene får vi vektorene
-
-$$q_0=\textcolor{#1565c0}{\frac1{\sqrt5}
-\begin{bmatrix}1\\1\\1\\1\\1\end{bmatrix}},\qquad
-q_2=\textcolor{#8b5aa7}{\frac1{\sqrt{7/8}}
-\begin{bmatrix}1/2\\-1/4\\-1/2\\-1/4\\1/2\end{bmatrix}}.$$
-
-Gang verdier fra samme målepunkt og summer:
-
-$$\begin{aligned}
-\sum_{i=1}^5\phi_0(t_i)\phi_2(t_i)
-&=\frac{
-\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{\frac12}
-+\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{(-\frac14)}
-+\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{(-\frac12)}
-+\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{(-\frac14)}
-+\textcolor{#1565c0}{1}\cdot\textcolor{#8b5aa7}{\frac12}}
-{\sqrt5\sqrt{7/8}}\\
-&=\frac{1/2-1/4-1/2-1/4+1/2}{\sqrt5\sqrt{7/8}}
-=0.
-\end{aligned}$$
-
-Dette er akkurat $q_0^Tq_2$. Vi kaller denne regelen et **diskret
-indreprodukt** på polynomrommet $\mathcal P_2$:
-
-$$\langle f,g\rangle_{\rm punkter}=\sum_{i=1}^{5}f(t_i)g(t_i).$$
-
-For disse punktene er $\phi_0,\phi_1,\phi_2$ ortonormale med denne regelen.
-På $\mathcal P_2$ er dette et indreprodukt: Et ikke-null andregradspolynom
-kan ikke være null i alle fem forskjellige punkter. På rommet av *alle*
-polynomer ville denne testen ikke skille nullpolynomet fra et polynom med
-nuller i alle målepunktene.
-
-Ortogonale **koeffisientlister** er noe annet: $(1,0,0)^T$ og $(0,0,1)^T$
-er ortogonale som lister, men polynomverdiene for $1$ og $t^2$ var ikke det.
-Vi må alltid si hvilken måleregel og hvilke punkter vi bruker.
-
-### Beregn det tilpassede polynomet
-
-Beregn først komponentene $d_i=q_i^Tb$ og deretter projeksjonen
-$\widehat b=d_0q_0+d_1q_1+d_2q_2$.
-Dette er modellverdiene som ligger nærmest målingene blant polynomene i
-$\mathcal P_2$. Kortformen er $d=Q^Tb$ og $\widehat b=Qd$.
-For å finne koeffisientene i den opprinnelige basisen løser vi $Rc=d$.
-**Komponentene $d$ er ikke monomialkoeffisientene $c$.**
-
-#### Først de tre komponentene
-
-Vi regner med de ortonormale vektorene fra håndregningen:
-
-$d_0=q_0^Tb
-=\frac{0.51+0.585+1.06+1.585+2.51}{\sqrt5}
-=\frac{6.25}{\sqrt5}=\frac54\sqrt5,$
-
-$d_1=q_1^Tb
-=\frac{-0.51-0.2925+0+0.7925+2.51}{\sqrt{5/2}}
-=\frac{2.5}{\sqrt{5/2}}=\sqrt{5/2},$
-
-$d_2=q_2^Tb
-=\frac{0.255-0.14625-0.53-0.39625+1.255}{\sqrt{7/8}}
-=\frac{0.4375}{\sqrt{7/8}}=\frac12\sqrt{7/8}.$
-
-#### Så tilbake til monomialkoeffisientene
-
-Likningen $Rc=d$ betyr tre vanlige ligninger:
-
-$\sqrt5\,c_0+\frac{\sqrt5}{2}c_2=\frac54\sqrt5,$
-$\sqrt{5/2}\,c_1=\sqrt{5/2},$
-$\sqrt{7/8}\,c_2=\frac12\sqrt{7/8}.$
-
-Start nederst: $c_2=1/2$. Den midterste gir $c_1=1$. Sett $c_2$ inn i den
-første og del på $\sqrt5$:
-
-$c_0+\frac12\cdot\frac12=\frac54
-\quad\Longrightarrow\quad c_0=\frac54-\frac14=1.$
-
-Dette er baklengs innsetting: Vi finner først koeffisienten som står alene,
-og bruker den i ligningene over. Polynomet blir
-$p(t)=1+t+\tfrac12t^2$.
-
-#### Beregn modellverdiene og residualen
-
-$\widehat b=a_0+a_1+\tfrac12a_2
-=\begin{bmatrix}1-1+1/2\\1-1/2+1/8\\1+0+0\\1+1/2+1/8\\1+1+1/2\end{bmatrix}
-=\begin{bmatrix}0.5\\0.625\\1\\1.625\\2.5\end{bmatrix}.$
-
-Resten finnes komponentvis:
-
-$b-\widehat b=
-\begin{bmatrix}0.51-0.5\\0.585-0.625\\1.06-1\\1.585-1.625\\2.51-2.5\end{bmatrix}
-=\begin{bmatrix}0.01\\-0.04\\0.06\\-0.04\\0.01\end{bmatrix}.$
-
-Altså får vi $c=(1,1,1/2)^T$, og resten blir
-
-$r=b-\widehat b=0.01(1,-4,6,-4,1)^T.$
-
-Kontroller for hånd:
-
-$a_0^Tr=0.01(1-4+6-4+1)=0,$
-$a_1^Tr=0.01(-1+2-2+1)=0,\qquad
- a_2^Tr=0.01(1-1-1+1)=0.$
-
-Resten står dermed vinkelrett på *alle* vektorer av polynomverdier vi kan bygge.
-Den er ikke null, så ingen andregradspolynom treffer alle målingene.
-Enhver endring i koeffisientene endrer modellvektoren innenfor kolonnerommet.
-Denne endringen er ortogonal på residualen, så Pytagoras viser at kvadratfeilen øker. Her er minimum
-$\lVert r\rVert_2^2=0.01^2+(-0.04)^2+0.06^2+(-0.04)^2+0.01^2=0.007$.
-
-At vi finner tilbake til $p_*$ skyldes at støyen er valgt ortogonal på
-kolonnene i målematrisen. Vanlig målefeil har også komponenter i kolonnerommet og
-vil som regel endre det tilpassede polynomet.
+Koden følger QR-beregningen over i begge basiser. NumPy kan velge
+andre fortegn på kolonner i $Q$ og tilhørende rader i $R$;
+modellverdiene og polynomet blir de samme.
 
 ```{pyodide-python}
 #| label: week4-polynomial-bridge
-# Fem polynomverdier gir et problem med tre koeffisienter.
-# Sammenlign samme tilpasning i monomial- og Chebyshev-basis.
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.polynomial import polynomial as poly
 from numpy.polynomial import chebyshev as cheb
 
-def polynomial_bridge(noise_scale=0.01):
+def polynomial_bridge(noise_scale=0.01, single_point=False):
     points = np.array([-1., -.5, 0., .5, 1.])
-    reference = 1+points+.5*points**2
-    # Denne bestemte støyretningen er ortogonal på 1, t og t² ved de fem punktene.
-    noise = noise_scale*np.array([1., -4., 6., -4., 1.])
-    measured = reference+noise
-    # Hver rad er ett målepunkt; kolonnene er verdier av 1, t og t².
-    A = np.column_stack([np.ones(5), points, points**2])
-    Q, R = np.linalg.qr(A, mode='reduced')
-    # Dette er koordinater langs Q-kolonnene, ikke monomialkoeffisientene.
-    detected = Q.T@measured
-    # R omregner mellom monomialkoeffisientene og Q-koordinatene.
-    coefficients = np.linalg.solve(R, detected)
-    fitted = A@coefficients
-    # Støyen kan her ikke representeres av et andregradspolynom og blir igjen i resten.
-    residual = measured-fitted
+    reference = 1 + points + .5*points**2
+    # Første mønster er ortogonalt på modellrommet; det andre endrer bare én måling.
+    noise_pattern = np.array([1., 0., 0., 0., 0.]) if single_point else np.array([1., -4., 6., -4., 1.])
+    measured = reference + noise_scale*noise_pattern
 
-    # Samme polynomrom i Chebyshev-basis: T0=1, T1=t, T2=2t²-1.
+    # A inneholder verdier av 1, t og t²; C inneholder verdier av T0, T1 og T2.
+    A = np.column_stack([np.ones_like(points), points, points**2])
     C = cheb.chebvander(points, 2)
-    cheb_coefficients = np.linalg.lstsq(C, measured, rcond=None)[0]
     grid = np.linspace(-1, 1, 301)
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4))
-    axes[0].scatter(points, measured, color='black', label='målinger')
-    axes[0].plot(grid, poly.polyval(grid, coefficients), color='#1565c0', label='tilpasset polynom')
-    axes[0].plot(grid, cheb.chebval(grid, cheb_coefficients), '--', color='#238443', label='Chebyshev-tilpasning')
-    axes[0].vlines(points, fitted, measured, color='#c62828', label='residualkomponenter')
-    axes[0].set_xlabel('t'); axes[0].set_ylabel('polynomverdi'); axes[0].legend()
-    # Vis indreproduktet mellom residualen og hver opprinnelig kolonne i A.
-    axes[1].bar(np.arange(3), A.T@residual, color='#c62828')
-    axes[1].set_xticks(np.arange(3), ['a0', 'a1', 'a2'])
-    axes[1].set_ylim(-.01, .01)
-    axes[1].set_title('Resten målt mot hver byggestein')
-    axes[1].set_ylabel('indreprodukt'); axes[1].axhline(0, color='black', linewidth=.8)
-    plt.tight_layout(); plt.show()
-    print('Monomialkoeffisienter:', coefficients)
-    print('Chebyshev-koeffisienter:', cheb_coefficients)
-    print('Residual:', residual)
-    print('Kvadratfeil:', residual@residual)
-    print('A.T @ residual:', A.T@residual)
-    print('Q.T @ residual:', Q.T@residual)
-    # Bruk riktig evalueringsfunksjon for hver basis; koeffisientlistene er forskjellige.
-    print('Samme kurve i begge basiser?', np.allclose(poly.polyval(grid, coefficients), cheb.chebval(grid, cheb_coefficients)))
+
+    plt.close("all")
+    fig, ax = plt.subplots(figsize=(6.4, 4))
+    ax.scatter(points, measured, color="black", label="målinger")
+    ax.plot(grid, 1 + grid + .5*grid**2, color="gray", label="referanse")
+
+    # Samme QR-metode og målinger; bare basis og evalueringsfunksjon varierer.
+    for name, matrix, evaluate, color, style in [
+        ("monomial", A, poly.polyval, "#1565c0", "-"),
+        ("Chebyshev", C, cheb.chebval, "#238443", "--"),
+    ]:
+        Q, R = np.linalg.qr(matrix, mode="reduced")
+        d = Q.T @ measured                  # Koeffisienter til projeksjonen i Q-basis.
+        coefficients = np.linalg.solve(R, d)  # Koeffisienter i den valgte polynombasisen.
+        fitted = Q @ d                     # De fem tilpassede modellverdiene.
+        residual = measured - fitted       # Ett avvik per målepunkt.
+
+        ax.plot(grid, evaluate(grid, coefficients), color=color, linestyle=style, label=name)
+        if name == "monomial":
+            ax.vlines(points, fitted, measured, color="#c62828", label="residualkomponenter")
+        print(name, "koeffisienter:", coefficients)
+        print("Residual:", residual)
+        print("Kvadratsum:", residual @ residual)
+        # Skal være nær null selv når residualen ikke er null.
+        print("Q.T @ residual:", Q.T @ residual)
+
+    ax.set_xlabel("t"); ax.set_ylabel("verdi")
+    ax.legend(); ax.grid(alpha=.25)
+    fig.tight_layout(); plt.show()
 
 polynomial_bridge()
 ```
 
-NumPy kan velge andre fortegn på kolonnene i $Q$ enn i håndregningen.
-Da endres også $R$ og komponentene $d$, men sluttpolynomet er det samme.
-De røde strekene viser feil i de fem målte verdiene, ikke vinkelrette
-avstander til kurven i tegneplanet.
+**Prøv først:** Øk bare `noise_scale`. Hvorfor vokser residualen
+uten at det tilpassede polynomet endres?
 
-**Prøv:** Øk bare `noise_scale`. Hvorfor vokser residualen uten at
-polynomet endrer seg? Bytt så støyvektoren i funksjonen med
-`noise_scale*np.array([1., 0., 0., 0., 0.])`. Forutsi hvilke målinger på
-kolonnene i målematrisen som nå blir ulike null, og se hvordan polynomet endres.
-
-### Chebyshev-basis er ikke automatisk det samme som QR
-
-Fra uke 3 kjenner vi $T_0(t)=1$, $T_1(t)=t$ og $T_2(t)=2t^2-1$.
-Det samme polynomet kan skrives
-
-$1+t+\tfrac12t^2=\tfrac54T_0(t)+T_1(t)+\tfrac14T_2(t).$
-
-Koeffisientene er forskjellige, men kurven er den samme. Monomial- og
-Chebyshev-målematrisene bygger det samme rommet av måleverdier.
-Derfor gir minste kvadrater samme tilpassede polynom i eksakt regning
-når grad, punkter og data holdes fast. Numerisk kan basisvalget påvirke
-hvor pålitelig vi klarer å beregne det.
-
-Chebyshev-navnet alene garanterer ikke ortonormale kolonner i målematrisen.
-Prøv punktene $-1,0,1$: Verdiene av $T_0$ og $T_2$ er $(1,1,1)^T$
-og $(1,-1,1)^T$, med indreprodukt $1$. QR beregner en ortonormal basis for kolonnerommet
-for akkurat matrisen og punktene vi har valgt.
+**Prøv deretter:** Kjør `polynomial_bridge(single_point=True)`.
+Nå endres bare den første målingen. Forutsi om projeksjonskoeffisientene
+$d$ og polynomet endres, og kontroller med koden.
+I begge forsøkene skal den beregnede residualen fortsatt oppfylle
+$Q^Tr\approx0$.
 
 ### Ta dette med til prosjekt 4
 
-| Fra uke 3 | Verktøyet i uke 4 | Undersøk i prosjektet |
-|---|---|---|
-| Polynomet bygges av basispolynomer | Kolonnene inneholder verdiene av hver byggestein | Skriv dimensjoner og kontroller rang. |
-| Målepunktene kan skjule endringer mellom punktene | Liten residual beskriver bare treff ved målepunktene | Kontroller også kurven mellom punktene. |
-| Monomial- og Chebyshev-koordinater beskriver samme polynom | QR gjør kolonnene i målematrisen ortonormale | Hold data fast og sammenlign basisene. |
-| Små forstyrrelser kan gi store utslag | CGS og MGS kan gi ulik ortogonalitetsfeil | Mål både residual, ortogonalitet og rekonstruksjon. |
+Du bruker samme QR-metode for linjer og polynomer. Det som endres,
+er kolonnene i målematrisen. Residualen beskriver tilpasningen ved
+målepunktene; i prosjektet kontrollerer du også kurven mellom punktene
+og hvor godt algoritmen beregner QR.
 
 Gå videre til [prosjekt 4 – Når målingene ikke passer](project_week4.qmd).
-Del 5–6 bruker polynomene og de to basisene; del 7–9 sammenligner metodene
-og lar deg reparere en vanskelig rekonstruksjon. Alle nødvendige
-hjelpefunksjoner finnes allerede i prosjektet; ingen kode må kopieres fra
-denne fanen eller fra uke 3.
+Del 3–4 undersøker polynomtilpasning og basisvalg. Deretter velger du
+fordypning i del 5 eller 6 og gjør et eget redningsforsøk i del 7.
+Kodeverktøyene finnes på prosjektsiden.
 
 ## 4.7 Oppsummering og oppgaver {#uke4-oppgaver}
 
