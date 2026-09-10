@@ -2040,10 +2040,23 @@ $p(t)=c_0+c_1t$. **Gitt:** målepunktene nedenfor.
 |---|---:|---:|---:|---:|
 | Målt verdi | $0.2$ | $0.9$ | $2.1$ | $2.8$ |
 
-Dra i skyveknappene. De svarte punktene er målingene, den blå linjen er
-modellen, og de røde strekene viser **målt verdi minus linjens verdi**
-ved hvert målepunkt. Under figuren vises de fire feilene og summen av
-kvadratene deres. Prøv å gjøre denne summen så liten som mulig.
+La $b_i$ betegne den målte verdien ved $t_i$. Modellen beregner verdien
+$p(t_i)=c_0+c_1t_i$ ved det samme målepunktet. Differansen
+
+$$r_i=b_i-p(t_i)=b_i-(c_0+c_1t_i)$$
+
+kalles en **residualkomponent**: et avvik med fortegn mellom måling og
+modellberegning. Positivt $r_i$ betyr at målingen ligger over grafen;
+negativt $r_i$ betyr at den ligger under.
+
+I figuren er de svarte punktene målingene $(t_i,b_i)$, og den blå linjen
+er grafen til $p$. Hvert rødt, loddrett segment forbinder
+$(t_i,p(t_i))$ med $(t_i,b_i)$ og har lengde $|r_i|$.
+Under figuren vises residualkomponentene med fortegn og
+kvadratsummen $S=r_1^2+r_2^2+r_3^2+r_4^2$.
+
+Juster $c_0$ og $c_1$ med skyveknappene og undersøk hvilke verdier som
+gir minst kvadratsum.
 
 ```{.jsxgraph width="640" height="520"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -2082,7 +2095,7 @@ board.create('text',[-1.4,-0.65,function(){
   return 'Kvadratsum S = '+squaredError().toFixed(4);
 }],{fontSize:16,fixed:true});
 board.create('text',[-1.4,-1.0,function(){
-  return 'Feil: ('+times.map(function(t,i){return residual(i).toFixed(2);}).join(', ')+')';
+  return 'Residualer: ('+times.map(function(t,i){return residual(i).toFixed(2);}).join(', ')+')';
 }],{fontSize:13,fixed:true});
 board.create('button',[-1.4,-1.4,'Prøv 1 + t',function(){
   intercept.setValue(1); slope.setValue(1); board.update();
@@ -2098,22 +2111,23 @@ Kan du få alle fire røde strekene til å forsvinne samtidig?
 
 #### Hva betyr kvadratsummen?
 
-Ta startlinjen $p(t)=1+t$. Ved $t=-1$ gir linjen $0$, mens målingen er
-$0.2$. Feilen der er derfor $0.2-0=0.2$. Slik regner vi på alle punktene:
+For modellen $p(t)=1+t$ er den beregnede verdien ved $t_1=-1$
+lik $p(-1)=0$. Den målte verdien er $b_1=0.2$, så residualkomponenten
+blir $r_1=b_1-p(-1)=0.2-0=0.2$. Tilsvarende beregner vi de øvrige:
 
-| $t$ | Målt verdi | $1+t$ | Feil: måling minus modell |
+| $t_i$ | Måling $b_i$ | Modellberegning $p(t_i)$ | Residual $r_i=b_i-p(t_i)$ |
 |---|---:|---:|---:|
 | $-1$ | $0.2$ | $0$ | $0.2$ |
 | $0$ | $0.9$ | $1$ | $-0.1$ |
 | $1$ | $2.1$ | $2$ | $0.1$ |
 | $2$ | $2.8$ | $3$ | $-0.2$ |
 
-Feilene med motsatte fortegn ville opphevet hverandre hvis vi bare
+Residualkomponentene med motsatte fortegn ville opphevet hverandre hvis vi bare
 summerte dem. Vi kvadrerer derfor hvert avvik før vi summerer:
 
 $$S=(0.2)^2+(-0.1)^2+(0.1)^2+(-0.2)^2=0.10.$$
 
-Trykk på knappen for $1.05+0.90t$. Nå blir feilene
+Trykk på knappen for $1.05+0.90t$. Nå blir residualvektoren
 $(0.05,-0.15,0.15,-0.05)^T$, og
 
 $$S=(0.05)^2+(-0.15)^2+(0.15)^2+(-0.05)^2=0.05.$$
@@ -2121,7 +2135,7 @@ $$S=(0.05)^2+(-0.15)^2+(0.15)^2+(-0.05)^2=0.05.$$
 Denne linjen gir mindre samlet kvadratfeil. Å finne koeffisientene som
 gir **minst mulig kvadratsum**, kalles **minste kvadraters metode**.
 
-Ingen linje kan gi feil null her: Måleverdiene øker først med $0.7$,
+Ingen valg av $c_0,c_1$ gir null i alle residualkomponentene her: Måleverdiene øker først med $0.7$,
 så $1.2$, så $0.7$ når $t$ øker med én. En rett linje har samme økning
 hver gang. Spørsmålet er derfor hvilken linje som passer best.
 
@@ -2141,7 +2155,7 @@ $$Ac=
 \underbrace{\begin{bmatrix}c_0\\c_1\end{bmatrix}}_c,\qquad
 b=\begin{bmatrix}0.2\\0.9\\2.1\\2.8\end{bmatrix}.$$
 
-Her er $b$ målingene, $Ac$ modellverdiene og $r=b-Ac$ feilene.
+Her er $b$ målingene, $Ac$ modellverdiene og $r=b-Ac$ residualvektoren.
 Kvadratsummen i figuren er dermed $S=\lVert b-Ac\rVert_2^2$.
 Vi søker en kombinasjon av $a_1,a_2$ som ligger nærmest $b$.
 
