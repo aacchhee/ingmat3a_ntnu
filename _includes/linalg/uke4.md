@@ -113,12 +113,29 @@ $$x=\begin{bmatrix}3\\2\end{bmatrix}.$$
 Det er lett å lese at vi går $3$ enheter mot høyre og $2$ enheter opp. Men
 hvor mye går vi i en skrå retning?
 
-En **enhetsretning** er en pil med lengde $1$ som bare angir en retning. Vi
-kaller pilen $q$. Alle slike piler som starter i origo, ender på
-**enhetssirkelen**: sirkelen med sentrum i origo og radius $1$. Dra punktet
-$q$ rundt denne sirkelen i figuren. Den tynne blå hjelpelinjen viser
-retningen til $q$. Følg den stiplede linjen fra enden av $x$ vinkelrett
-bort til hjelpelinjen. Treffpunktet er merket $P$.
+Før vi velger målepil, trenger vi å vite hva lengden til en pil er.
+For $x=(3,2)^T$ gir Pytagoras
+
+$$\text{lengden til }x=\sqrt{3^2+2^2}=\sqrt{13}.$$
+
+Denne lengden kalles den **euklidske normen** og skrives $\lVert x\rVert_2$.
+For en pil $v=(v_1,v_2)^T$ betyr notasjonen altså
+
+$$\lVert v\rVert_2=\sqrt{v_1^2+v_2^2}.$$
+
+Normen er ett ikke-negativt tall. Dette er samme lengdebegrep som i uke 3.
+
+Prøv nå pilene $(1,0)^T$ og $(0,1)^T$: Begge har lengde $1$.
+En slik pil kalles en **enhetsvektor**. Vi velger en enhetsvektor $q$ som
+målepil, slik at størrelsen på målepilen er den samme når vi skifter
+retning. Når vi framhever denne rollen, bruker vi også ordet
+**enhetsretning**.
+
+Alle piler med lengde $1$ som starter i origo, ender på en sirkel med
+radius $1$: **enhetssirkelen**. Dra punktet $q$ rundt sirkelen i figuren.
+Den tynne blå hjelpelinjen viser retningen til $q$. Følg den stiplede
+linjen fra enden av $x$ vinkelrett bort til hjelpelinjen.
+Treffpunktet er merket $P$.
 
 Hvor langt ligger $P$ fra origo, målt langs $q$? Vi kaller dette tallet
 **komponenten av $x$ langs $q$**, og skriver det som $c$. Tallet har fortegn:
@@ -214,8 +231,7 @@ Skriv enhetsretningen som vektoren
 
 $$q=\begin{bmatrix}q_1\\q_2\end{bmatrix},\qquad q_1^2+q_2^2=1.$$
 
-Likningen til høyre sier nettopp at lengden er $1$: Hvis vi bruker
-Pytagoras på den vannrette og loddrette komponenten, får vi
+Likningen til høyre er lengdekravet fra starten av fanen:
 $\lVert q\rVert_2=\sqrt{q_1^2+q_2^2}=1$.
 
 #### Hvor mye bidrar et vannrett og et loddrett skritt?
@@ -316,7 +332,43 @@ Legg til en retning som står vinkelrett på $x$, og kontroller at komponenten
 er null. Endre bare én retning om gangen. I [delen om ortogonalitet](#uke4-ortogonalitet) gir vi «vinkelrett» et
 matematisk navn og en test.
 
-### Hva om målepilen ikke har lengde én? {#uke4-enhetsretning}
+### Lag en målepil fra en vilkårlig retning {#uke4-enhetsretning}
+
+Hvordan lager vi en enhetsvektor som peker samme vei som $v=(3,4)^T$?
+Lengden er $\sqrt{3^2+4^2}=5$. Vi deler derfor begge koordinatene på $5$:
+
+$$q=\begin{bmatrix}3/5\\4/5\end{bmatrix},\qquad
+\lVert q\rVert_2=\sqrt{\frac9{25}+\frac{16}{25}}=1.$$
+
+Pilen er blitt kortere, men peker samme vei. Å dele en ikke-null vektor
+på lengden kalles å **normalisere**. Generelt skriver vi
+
+$$q=\frac{v}{\lVert v\rVert_2},\qquad v\ne0.$$
+
+Nå som vi kjenner indreproduktet, kan vi også skrive lengden på en annen måte:
+$v^Tv=v_1^2+v_2^2$, så $\lVert v\rVert_2=\sqrt{v^Tv}$.
+Dette er den samme Pytagoras-regelen i kortere notasjon.
+
+#### Et første sammenbrudd
+
+Hva skjer hvis vi prøver å finne retningen til nullvektoren?
+
+```{pyodide-python}
+#| label: week4-normalize-zero
+with np.errstate(divide="warn", invalid="warn"):
+    for v in [np.array([3.0, 4.0]), np.array([0.0, 0.0])]:
+        length = np.linalg.norm(v)
+        q = v / length
+        print("v =", v, "  ||v||_2 =", length, "  v/||v||_2 =", q)
+        print("endelige tall?", np.isfinite(q).all())
+```
+
+Nullvektoren har ingen retning. Regningen forsøker å dele $0$ på $0$, og
+i flyttallsregningen blir resultatet `NaN` («not a number»). Det er maskinens
+markering av at regningen ikke ga et gyldig tall. En algoritme må kontrollere
+lengden før den normaliserer.
+
+### Hva om vi bruker målepilen uten å normalisere?
 
 Til nå har $q$ hatt lengde én. Det er derfor tallet $x^Tq$ har kunnet
 tolkes direkte som komponenten av $x$ langs $q$. Men selve regningen
@@ -340,26 +392,25 @@ $$\boxed{x^Tv=x_1v_1+x_2v_2.}$$
 Dette kalles fortsatt indreproduktet, også når ingen av vektorene har
 lengde én. Hva må vi gjøre for å få komponenten langs $v$ tilbake?
 
-Når $v\ne0$, får vi en enhetsvektor i samme retning ved å dele på lengden:
-
-$q=\frac{v}{\lVert v\rVert_2}.$
+Bruk nå normaliseringen vi nettopp fant: $q=v/\lVert v\rVert_2$.
+Da har $q$ lengde én og peker samme vei som $v$.
 
 Lengden $\lVert v\rVert_2$ er **ett positivt tall**. For å bygge $v$ tilbake
 ganger vi hver koordinat i $q$ med dette tallet:
 
-$v_1=\lVert v\rVert_2\cdot q_1,\qquad
-v_2=\lVert v\rVert_2\cdot q_2.$
+$$v_1=\lVert v\rVert_2\cdot q_1,\qquad
+v_2=\lVert v\rVert_2\cdot q_2.$$
 
 Sett dette inn i indreproduktet:
 
-$\begin{aligned}
+$$\begin{aligned}
 x^Tv
 &=x_1v_1+x_2v_2\\
 &=x_1\bigl(\lVert v\rVert_2\cdot q_1\bigr)
  +x_2\bigl(\lVert v\rVert_2\cdot q_2\bigr)\\
 &=\lVert v\rVert_2\cdot(x_1q_1+x_2q_2)\\
 &=\lVert v\rVert_2\cdot(x^Tq).
-\end{aligned}$
+\end{aligned}$$
 
 I tredje linje trekker vi det samme tallet $\lVert v\rVert_2$ utenfor
 begge leddene.
@@ -382,41 +433,6 @@ $$x^Tv=0\quad\Longleftrightarrow\quad x^T\frac{v}{\lVert v\rVert_2}=0.$$
 Vi kan altså teste om en pil står på tvers av en annen uten først å gjøre
 målepilen til en enhetsvektor. Nullvektoren gir også indreprodukt null,
 men har ingen retning.
-
-#### Gjør målepilen til en enhetsvektor
-
-Normen ble introdusert i uke 3 som avstanden til nullvektoren. Her bruker vi
-den til å lage en vektor med lengde én:
-
-$$\lVert v\rVert_2=\sqrt{v^Tv},\qquad q=\frac{v}{\lVert v\rVert_2}.$$
-
-For eksempel gir $v=(10,10)^T$ lengden $\sqrt{200}=10\sqrt2$, slik at
-
-$$q=\frac1{10\sqrt2}\begin{bmatrix}10\\10\end{bmatrix}
-=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix}.$$
-
-En vektor med lengde én kalles en **enhetsvektor**. Når vi bruker den for å
-angi en retning, kaller vi den også en enhetsretning. Å dele på lengden
-kalles å **normalisere**. Hva om lengden er null?
-
-#### Et første sammenbrudd
-
-Hva skjer hvis vi prøver å finne retningen til nullvektoren?
-
-```{pyodide-python}
-#| label: week4-normalize-zero
-with np.errstate(divide="warn", invalid="warn"):
-    for v in [np.array([3.0, 4.0]), np.array([0.0, 0.0])]:
-        length = np.linalg.norm(v)
-        q = v / length
-        print("v =", v, "  ||v||_2 =", length, "  v/||v||_2 =", q)
-        print("endelige tall?", np.isfinite(q).all())
-```
-
-Nullvektoren har ingen retning. Regningen forsøker å dele $0$ på $0$, og
-i flyttallsregningen blir resultatet `NaN` («not a number»). Det er maskinens
-markering av at regningen ikke ga et gyldig tall. En algoritme må kontrollere
-lengden før den normaliserer.
 
 ## 4.2 Ortogonalitet og projeksjon
 
