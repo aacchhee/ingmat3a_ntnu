@@ -1177,6 +1177,38 @@ Vi kan nå oppsummere beregningen med den korte matrisenotasjonen:
 
 $$\boxed{c=Q^Tx,\qquad p=Q(Q^Tx),\qquad Q^T(x-p)=0.}$$
 
+#### Hvorfor er ikke projeksjonen alltid lik $x$?
+
+Vi har vist at **$Q^TQ=I_k$** når de $k$ kolonnene i $Q$ er
+ortonormale. Det betyr ikke at $QQ^T$ er identitetsmatrisen:
+rekkefølgen i produktet er avgjørende.
+
+I eksemplet over har $Q$ to kolonner i $\mathbb R^3$:
+
+$$\textcolor{#1565c0}{Q}
+=\begin{bmatrix}1&0\\0&1\\0&0\end{bmatrix}.$$
+
+De to produktene blir
+
+$$\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}
+=\begin{bmatrix}1&0\\0&1\end{bmatrix}=I_2,
+\qquad
+\textcolor{#1565c0}{Q}\textcolor{#b45309}{Q^T}
+=\begin{bmatrix}1&0&0\\0&1&0\\0&0&0\end{bmatrix}\ne I_3.$$
+
+Kolonnene i $Q$ spenner ut $xy$-planet. Derfor beholder projeksjonen
+de to første komponentene, mens den tredje blir igjen i residualen.
+For $x=(3,2,4)^T$ får vi
+
+$$p=QQ^Tx=\begin{bmatrix}3\\2\\0\end{bmatrix},
+\qquad r=x-p=\begin{bmatrix}0\\0\\4\end{bmatrix}.$$
+
+**Vi får $p=x$ akkurat når $x$ ligger i rommet kolonnene i $Q$
+spenner ut.** Hvis $Q$ er kvadratisk med ortonormale kolonner, spenner
+de ut hele rommet. Da gjelder også $QQ^T=I$, og projeksjonen er lik
+$x$ for alle $x$.
+
+
 ::: {.callout-note collapse="true"}
 #### Hvis målevektoren ikke har lengde én
 
