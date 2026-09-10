@@ -2167,13 +2167,11 @@ Vi søker en kombinasjon av $a_1,a_2$ som ligger nærmest $b$.
 
 #### Bruk QR-faktoriseringen fra 4.3
 
-Vi bruker nå QR som et kjent verktøy. Husk to egenskaper:
+Vi bruker nå $A=QR$ som et kjent verktøy. Husk at kolonnene i $Q$
+er ortonormale og gir de samme mulige modellvektorene som kolonnene i $A$.
+Det gjør projeksjonsformelen fra 4.2 tilgjengelig.
 
-- Kolonnene i $Q$ er ortonormale og spenner ut samme rom som kolonnene i $A$.
-- $R$ inneholder koeffisientene som uttrykker de opprinnelige kolonnene:
-  $A=QR$.
-
-For matrisen i dette eksemplet er faktorene
+For eksemplet vårt kan vi bruke
 
 $$\textcolor{#1565c0}{Q=[q_1\ q_2]
 =\begin{bmatrix}
@@ -2184,146 +2182,130 @@ $$\textcolor{#1565c0}{Q=[q_1\ q_2]
 \end{bmatrix}},\qquad
 \textcolor{#8b5aa7}{R=\begin{bmatrix}2&1\\0&\sqrt5\end{bmatrix}}.$$
 
-Regnskapet i $R$ sier $a_1=2q_1$ og $a_2=q_1+\sqrt5\,q_2$.
-Vi kan derfor arbeide med $q_1,q_2$ uten å endre hvilke modellverdier
-som er mulige. Siden disse vektorene er ortonormale, kan vi beregne
-projeksjonen av målingene med indreprodukter, som i 4.2.
+Her omregner $\textcolor{#8b5aa7}{R}$ linjekoeffisientene $c$ til
+koeffisienter foran kolonnene i $\textcolor{#1565c0}{Q}$:
 
-#### Finn den delen av målingene som modellen kan gjengi
+$$Ac=\textcolor{#1565c0}{Q}\bigl(\textcolor{#8b5aa7}{R}c\bigr).$$
 
-Beregn først komponentene av $b$ langs de to enhetsvektorene:
+#### Projeksjonen skiller modellverdier fra residual
 
-$$d_1=q_1^Tb=\frac{0.2+0.9+2.1+2.8}{2}=3,$$
+Fra 4.2 vet vi hvordan vi finner den nærmeste vektoren i rommet
+som $q_1,q_2$ spenner ut. Først beregner vi de to indreproduktene
 
-$$d_2=q_2^Tb
-=\frac{-3(0.2)-0.9+2.1+3(2.8)}{2\sqrt5}
-=\frac{4.5}{\sqrt5}.$$
+$$d=\textcolor{#1565c0}{Q^T}b
+=\begin{bmatrix}
+\textcolor{#1565c0}{q_1^T}b\\
+\textcolor{#1565c0}{q_2^T}b
+\end{bmatrix}.$$
 
-Tallene $d_1,d_2$ er koeffisienter foran **$q_1,q_2$**.
-De er ennå ikke konstantleddet og stigningstallet.
-De gir den projiserte vektoren
+Så er $Qd$ projeksjonen: de fire modellverdiene som ligger nærmest
+målingene. Dermed får vi oppdelingen
 
-$$b_*=d_1q_1+d_2q_2
-=\begin{bmatrix}1.5\\1.5\\1.5\\1.5\end{bmatrix}
-+\begin{bmatrix}-1.35\\-0.45\\0.45\\1.35\end{bmatrix}
-=\begin{bmatrix}0.15\\1.05\\1.95\\2.85\end{bmatrix}.$$
+$$b=
+\underbrace{\textcolor{#1565c0}{Q}d}_{\text{beste modellverdier}}
++\underbrace{\textcolor{#c62828}{r_*}}_{\text{residual}},
+\qquad
+\textcolor{#1565c0}{Q^T}\textcolor{#c62828}{r_*}=0.$$
 
-Dette er de fire modellverdiene som ligger nærmest målingene.
-Hvorfor? Resten $b-b_*$ står vinkelrett på begge modellretningene.
-En annen modellvektor endrer bare delen langs disse retningene og
-legger dermed til en ny, vinkelrett del av feilen. Pytagoras sier
-at kvadratfeilen da øker.
+Stjernen markerer den beste tilpasningen.
+**$d$ inneholder to koeffisienter i $Q$-basisen; $Qd$ inneholder fire
+modellverdier.** Residualen $r_*=b-Qd$ er avviket som står igjen.
+Den er ortogonal på begge kolonnene i $Q$ og bidrar derfor med null
+i $Q^Tb$. Projeksjonskoeffisientene $d$ er ennå ikke linjens
+konstantledd og stigningstall.
+
+#### Hvor oppstår avviket når vi velger andre koeffisienter?
+
+For et vilkårlig valg av $c$ er modellvektoren $Q(Rc)$.
+Residualvektoren blir derfor
+
+$$r=b-Ac
+=\underbrace{\textcolor{#c62828}{r_*}}_{\text{står igjen ved beste tilpasning}}
++\underbrace{\textcolor{#1565c0}{Q}
+\bigl(d-\textcolor{#8b5aa7}{R}c\bigr)}_{\text{avvik fra beste modellvektor}}.$$
+
+Første ledd er fast for målingene og modellen vi har valgt.
+Det andre skyldes at modellens koeffisienter $Rc$ i $Q$-basisen
+avviker fra projeksjonskoeffisientene $d$.
+
+Disse to vektorleddene er ortogonale. Pytagoras sier derfor at
+kvadratsummen øker hvis det andre leddet ikke er null.
+Vi finner altså den beste tilpasningen ved å velge $Rc=d$.
 
 #### Finn konstantleddet og stigningstallet
 
-QR-regnskapet sier
+Dette gir et lite, øvre triangulært system:
 
-$$Ac=c_0(2q_1)+c_1(q_1+\sqrt5\,q_2)
-=(2c_0+c_1)q_1+(\sqrt5\,c_1)q_2.$$
+$$\boxed{\textcolor{#8b5aa7}{R}c_*=\textcolor{#1565c0}{Q^T}b},
+\qquad
+\textcolor{#8b5aa7}{\begin{bmatrix}2&1\\0&\sqrt5\end{bmatrix}}
+\begin{bmatrix}c_0\\c_1\end{bmatrix}
+=\begin{bmatrix}3\\4.5/\sqrt5\end{bmatrix}.$$
 
-For å få $Ac=b_*$ må koeffisientene foran de samme vektorene være like:
+Ved å løse nedenfra får vi $c_1=0.90$ og $c_0=1.05$.
+Dermed er den beste linjen
 
-$$2c_0+c_1=3,\qquad \sqrt5\,c_1=\frac{4.5}{\sqrt5}.$$
+$$\boxed{p_*(t)=1.05+0.90t.}$$
 
-Løs siste likning først:
+Modellvektoren er nå $Ac_*=Qd$. Residualen og kvadratsummen er
 
-$$c_1=\frac{4.5}{5}=0.90,\qquad
-c_0=\frac{3-0.90}{2}=1.05.$$
+$$\textcolor{#c62828}{r_*=b-Ac_*
+=\begin{bmatrix}0.05\\-0.15\\0.15\\-0.05\end{bmatrix}},
+\qquad S_{\min}=\lVert r_*\rVert_2^2=0.05.$$
 
-Dette gir akkurat linjen vi prøvde i figuren. De to likningene kan
-samles i kortformen
-
-$$\underbrace{\begin{bmatrix}2&1\\0&\sqrt5\end{bmatrix}}_R
-\underbrace{\begin{bmatrix}c_0\\c_1\end{bmatrix}}_{c_*}
-=\underbrace{\begin{bmatrix}d_1\\d_2\end{bmatrix}}_{Q^Tb},
-\qquad \boxed{Rc_*=Q^Tb.}$$
-
-Stjernen i $c_*$ markerer de optimale koeffisientene.
-Resten er $r_*=(0.05,-0.15,0.15,-0.05)^T$. Kontrollen blir
-
-$$q_1^Tr_*=\frac{0.05-0.15+0.15-0.05}{2}=0,$$
-$$q_2^Tr_*=\frac{-0.15+0.15+0.15-0.15}{2\sqrt5}=0.$$
-
-Ortogonaliteten gjelder vektorer med **fire koordinater**, én for hver
-måling. De røde strekene i figuren viser disse fire avvikene, ikke
-vinkelrette avstander fra punktene til linjen i tegneplanet.
-
-::: {.callout-note collapse="true"}
-#### Fordypning: hvorfor virker dette generelt?
-
-La $A$ ha full kolonnerang og $A=QR$ med ortonormale kolonner i $Q$.
-Som i eksemplet setter vi $d=Q^Tb$ og $b_*=Qd$.
-Vektoren $b_*$ er projeksjonen på rommet av modellverdier, også kalt
-kolonnerommet $C(A)$. Resten $r_*=b-b_*$ er ortogonal på dette rommet.
-
-For enhver koeffisientvektor $c$ kan feilen deles slik:
-
-$$b-Ac=\underbrace{b-b_*}_{\text{ortogonal på modellrommet}}
-+\underbrace{b_*-Ac}_{\text{ligger i modellrommet}}.$$
-
-Pytagoras gir derfor
-
-$$\lVert b-Ac\rVert_2^2
-=\lVert r_*\rVert_2^2+\lVert b_*-Ac\rVert_2^2.$$
-
-Første ledd er fast. Andre ledd blir null når $Ac=b_*$, altså når
-$QRc=Qd$. Siden $Q^TQ=I$, er dette det samme som $Rc=d=Q^Tb$.
-
-Til slutt gir $Q^Tr_*=0$ også
-$A^Tr_*=(QR)^Tr_*=R^T(Q^Tr_*)=0$.
-:::
+Dette er linjen vi prøvde i starten. De fire residualkomponentene
+vises som loddrette avvik i figuren. At $Q^Tr_*=0$, gjelder
+vektorene med fire koordinater, én for hver måling; det betyr
+ikke at de røde segmentene står vinkelrett på den tegnede linjen.
 
 #### Gjenta forsøket i Python
 
-Koden bruker de samme fire målingene og kontrollerer løsningen mot
-NumPys minste-kvadraters funksjon. Bibliotekets QR kan velge motsatte
-fortegn på noen kolonner i $Q$ og tilhørende rader i $R$; sluttlinjen
-blir den samme.
+Koden følger de samme trinnene: beregn QR, projiser målingene,
+løs for linjekoeffisientene og beregn residualen.
+NumPys QR kan velge andre fortegn på kolonner i $Q$ og tilhørende
+rader i $R$; modellverdiene og linjen blir de samme.
 
 ```{pyodide-python}
 #| label: week4-least-squares
-# Tilpass en linje c0+c1*t til fire målinger.
-# Målet er liten samlet kvadratfeil, selv om ingen linje treffer alle punktene.
+# Modellen p(t)=c0+c1*t skal tilpasses disse fire målingene.
 t = np.array([-1.0, 0.0, 1.0, 2.0])
 b = np.array([0.2, 0.9, 2.1, 2.8])
-# Første kolonne er konstantleddet, andre er verdiene til basisfunksjonen t.
+# Kolonnene inneholder verdiene til basisfunksjonene 1 og t.
 A = np.column_stack([np.ones_like(t), t])
+
+# Q gir en ortonormal basis for de mulige modellvektorene.
 Q, R = np.linalg.qr(A, mode="reduced")
-# Q.T @ b gir komponenter langs Q; løs R*c=Q.T*b for linjekoeffisientene.
-c_qr = np.linalg.solve(R, Q.T @ b)
-c_library, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
-# Residualen er målt verdi minus tilpasset verdi, ved hvert målepunkt.
-r = b-A@c_qr
-print("koeffisienter fra QR:   ", c_qr)
-print("koeffisienter fra lstsq:", c_library)
+# To projeksjonskoeffisienter gir fire tilpassede modellverdier.
+d = Q.T @ b
+projected = Q @ d
+# R omregner fra linjekoeffisienter til Q-koeffisienter: løs R*c=d.
+c_qr = np.linalg.solve(R, d)
+fitted = A @ c_qr
+
+# Residualen er målt verdi minus modellverdi ved hvert målepunkt.
+r = b - fitted
+print("konstantledd og stigningstall:", c_qr)
+print("modellverdier:", fitted)
 print("residual:", r)
-# Disse indreproduktene skal være nær null selv om residualen ikke er null.
+print("kvadratsum:", r @ r)
+# Begge kontrollene skal gi omtrent null, med små avrundingsavvik.
+print("Ac - Qd =", fitted - projected)
 print("Q^T r =", Q.T @ r)
-print("A^T r =", A.T @ r)
 
 grid = np.linspace(-1.2, 2.2, 200)
 plt.scatter(t, b, color="black", label="målinger")
-plt.plot(grid, c_qr[0]+c_qr[1]*grid, label="minste kvadrater")
-# Røde segmenter viser residualkomponentene på de opprinnelige målepunktene.
-for ti, bi, fitted in zip(t, b, A@c_qr):
-    plt.plot([ti, ti], [fitted, bi], color="#c62828", alpha=0.7)
-plt.xlabel("t"); plt.ylabel("målt verdi")
-plt.title("Residualene kan ikke fjernes, men de kan gjøres kortest")
+plt.plot(grid, c_qr[0] + c_qr[1]*grid, color="#1565c0", label="tilpasset modell")
+# Hvert rødt segment viser ett av de fire avvikene med lengde |r_i|.
+for ti, bi, pi in zip(t, b, fitted):
+    plt.plot([ti, ti], [pi, bi], color="#c62828", alpha=0.7)
+plt.xlabel("t"); plt.ylabel("verdi")
+plt.title("Minste kvadraters tilpasning: p(t) = 1.05 + 0.90t")
 plt.grid(alpha=0.25); plt.legend(); plt.show()
 ```
 
-Her er
-
-$$c_*=\begin{bmatrix}1.05\\0.90\end{bmatrix},\qquad
-r=b-Ac_*=\begin{bmatrix}0.05\\-0.15\\0.15\\-0.05\end{bmatrix}.$$
-
-De røde vertikale strekene i plottet viser komponentene i residualvektoren i
-**datarommet** $\mathbb R^4$. De er ikke euklidske, vinkelrette avstander fra
-punktene til den tegnede linjen i $(t,b)$-planet.
-
-Dette er broen til ukeprosjektet: I uke 3 rekonstruerte vi et polynom fra
-akkurat nok målinger. Nå bruker vi flere støyfylte målinger og finner
-det beste svaret når et eksakt svar ikke finnes.
+I 4.6 bruker vi dette på polynomer. Vi bytter kolonnene i $A$,
+mens projeksjonen og løsningen med QR følger de samme trinnene.
+Som her forutsetter vi at modellkolonnene er lineært uavhengige.
 
 ## 4.6 Polynomer: fra uke 3 til prosjekt 4 {#uke4-polynomer}
 
