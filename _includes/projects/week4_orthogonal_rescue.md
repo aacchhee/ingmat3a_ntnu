@@ -1,13 +1,13 @@
 # Prosjekt 4 – Når målingene ikke passer
 
 Dette prosjektet er et utkast for omtrent **4–5 timer selvstendig arbeid**.
-Det bygger videre på polynomene, basisene og avlesningsmatrisene fra uke 3,
+Det bygger videre på polynomene, basisene og målematrisene fra uke 3,
 men siden er selvstendig: Alle funksjoner du trenger, er definert her. Du skal
 ikke kopiere kode fra forrige prosjekt.
 
 [Uke 4: Ortogonalitet, QR og minste kvadrater](uke4.qmd) gir den interaktive
 veien inn i stoffet, men definisjonene som trengs gjentas nedenfor. Trenger du
-å repetere basis, kolonnerom eller polynomavlesninger, bruk
+å repetere basis, kolonnerom eller beregning av polynomverdier, bruk
 [uke 3](uke3.qmd) og [prosjekt 3](project_week3.qmd).
 
 I uke 3 brukte vi $n+1$ polynomverdier til å rekonstruere ett polynom i
@@ -93,10 +93,10 @@ import matplotlib.pyplot as plt
 from numpy.polynomial import polynomial as poly
 from numpy.polynomial import chebyshev as cheb
 
-# De samme avlesningsmatrisene som i uke 3, ferdigstilt her slik at dette
+# De samme målematrisene som i uke 3, ferdigstilt her slik at dette
 # prosjektet ikke avhenger av kode i en annen nettleserside.
 def monomial_matrix(points, n):
-    """Avlesningsmatrise for basisen (1, x, ..., x^n)."""
+    """Målematrise for basisen (1, x, ..., x^n)."""
     points = np.asarray(points, dtype=float)
     # Grad n gir n+1 basisfunksjoner, inkludert konstantleddet.
     powers = np.arange(n+1)
@@ -105,7 +105,7 @@ def monomial_matrix(points, n):
 
 
 def chebyshev_matrix(points, n):
-    """Avlesningsmatrise for basisen (T_0, ..., T_n)."""
+    """Målematrise for basisen (T_0, ..., T_n)."""
     # Samme rad/kolonne-betydning, men med Chebyshev-polynomer i stedet for potenser.
     return cheb.chebvander(np.asarray(points, dtype=float), n)
 
@@ -481,7 +481,7 @@ For et polynom
 
 $$p(x)=c_0T_0(x)+\cdots+c_nT_n(x)$$
 
-og målepunkter $x_0,\ldots,x_{m-1}$ er Chebyshev-avlesningsmatrisen
+og målepunkter $x_0,\ldots,x_{m-1}$ er Chebyshev-målematrisen
 
 $$
 C=\begin{bmatrix}
