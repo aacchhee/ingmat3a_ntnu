@@ -4442,21 +4442,21 @@ window.Quarto = {
 
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Oppgaver med forklaringer" role="group" aria-label="Velg prosjektvisning">
+<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg prosjektvisning">
 <button type="button" data-mode="lecture" aria-pressed="true">
 Oppgaver
 </button>
 <button type="button" data-mode="reading" aria-pressed="false">
-Oppgaver med forklaringer
+Arbeid videre
 </button>
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <section id="oppdrag-behold-informasjonen-som-betyr-noe" class="level2">
 <h2 class="anchored" data-anchor-id="oppdrag-behold-informasjonen-som-betyr-noe">Oppdrag: behold informasjonen som betyr noe</h2>
-<p>Du skal anbefale en SVD-basert forenkling under et gitt budsjett, og vise både hva den lykkes med og når den svikter. Start med en hypotese, gjør forsøket, forklar resultatet og knytt det til teorien i <a href="../pages/uke7.html">uke 7</a>.</p>
+<p>Du skal anbefale en forenkling med singulærverdidekomposisjon (SVD) under et gitt budsjett, og vise både hva den lykkes med og når den svikter. Start med en hypotese, gjør forsøket, forklar resultatet og knytt det til teorien i <a href="../pages/uke7.html">uke 7</a>.</p>
 <p><strong>Alle gjør del 1–3 og velger deretter enten A eller B.</strong> A undersøker støyfjerning i bilder. B undersøker inversjon av et uskarpt signal og gir en direkte videreføring av residual, feil og kondisjonering fra uke 6. Begge er fullverdige valg; du skal ikke gjøre begge.</p>
-<p>Oppgavevisningen gir felles arbeidsløp. «Oppgaver med forklaringer» åpner støtte underveis. Hint åpnes manuelt etter eget forsøk. Ferdige hjelpere tar seg av forsøksdata og visning; du implementerer selve trunkeringen.</p>
-<p>Prosjektet bygger videre på <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/svd_challenge-1.pdf">det tidligere SVD-challenget</a>. Portrettet er fra samme oppgave, redusert til <span class="math inline">\(96\times96\)</span> gråtoner. De andre bildene lages lokalt. Ingen egne bilder eller nedlastinger trengs.</p>
+<p>Oppgavevisningen gir felles arbeidsløp. «Arbeid videre» åpner støtte underveis. Hint åpnes manuelt etter eget forsøk. Ferdige hjelpere tar seg av forsøksdata og visning; du implementerer selve <strong>trunkeringen</strong>, altså å beholde bare de første leddene i en SVD-sum. I <a href="../pages/uke7.html#uke7-svd">uke 7.3</a> er <span class="math inline">\(U\)</span> og <span class="math inline">\(V\)</span> de ortonormale basisene på hver side, og singulærverdiene er strekkfaktorene, ordnet fra størst til minst.</p>
+<p>Alle forsøksbilder er klare i siden. Portrett: <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif">NTNU, mm.gif</a>, tilpasset til <span class="math inline">\(96\times96\)</span> gråtoner. De andre bildene lages lokalt.</p>
 </section>
 <section id="forutsi-før-du-komprimerer" class="level2">
 <h2 class="anchored" data-anchor-id="forutsi-før-du-komprimerer">1. Forutsi før du komprimerer</h2>
@@ -4476,10 +4476,12 @@ Hva mener vi med komprimerbarhet her?
 </section>
 <section id="lag-rekonstruksjonen-og-kontroller-den" class="level2">
 <h2 class="anchored" data-anchor-id="lag-rekonstruksjonen-og-kontroller-den">2. Lag rekonstruksjonen og kontroller den</h2>
+<p>NumPy gir <code>U, s, Vt</code>, der <code>s</code> inneholder singulærverdiene og <code>Vt</code> allerede er transponert. En komponent er <span class="math inline">\(\sigma_i u_i v_i^T\)</span>: ett rang-1-mønster med sin vekt.</p>
 <p>Implementer <code>truncate(U, s, Vt, k)</code> som bruker de første <span class="math inline">\(k\)</span> komponentene. Bruk NumPy-slicing og matrisemultiplikasjon. Den skal også virke for <span class="math inline">\(k=0\)</span> og <span class="math inline">\(k=\min(m,n)\)</span>. Ikke kall <code>rank_image</code> i din implementasjon.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Kjør så kontrollen. Bruk en rektangulær matrise slik at en utilsiktet transponering ikke skjules av kvadratiske dimensjoner.</p>
+<p><strong>Frobeniusnormen</strong> er kvadratroten av summen av alle kvadrerte matriseelementer. Den gir en samlet pikselfeil når vi bruker den på <span class="math inline">\(A-A_k\)</span>. Den <strong>relative</strong> feilen deler dette på størrelsen til originalen. Kontrollen sammenligner kvadrert pikselfeil med summen av kvadrerte singulærverdier som er utelatt. Dette er feilformelen fra <a href="../pages/uke7.html#uke7-rang">uke 7.5</a>.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Forklar hvorfor kontrollen av feilformelen er mer informativ enn bare å se på et bilde. Vis til slutt samme kontroll for ett av forsøksbildene.</p>
@@ -4544,14 +4546,14 @@ Støyreduksjon er en hypotese om signalet
 <h2 class="anchored" data-anchor-id="velg-b-kan-vi-gjøre-et-uskarpt-signal-skarpt-igjen">Velg B: kan vi gjøre et uskarpt signal skarpt igjen?</h2>
 <section id="opplev-problemet-1" class="level3">
 <h3 class="anchored" data-anchor-id="opplev-problemet-1">Opplev problemet</h3>
-<p>Her er matrisen <span class="math inline">\(H\)</span> en <strong>uskarphetsoperator</strong>: <span class="math inline">\(b=Hx_*+\eta\)</span>. Vi tar SVD av <span class="math inline">\(H\)</span>, ikke av et bilde. De små singulærverdiene beskriver signalretninger som målingen nesten visker ut.</p>
-<p>Forsøket gir en kjent fasit, et normalisert Gauss-filter og fast tilfeldig målestøy. Gjett om en løsning med nesten null residual vil ligne fasiten.</p>
+<p>Her er matrisen <span class="math inline">\(H\)</span> en <strong>uskarphetsoperator</strong>: <span class="math inline">\(b=Hx_*+\eta\)</span>. Her er <span class="math inline">\(x_*\)</span> det skarpe signalet, <span class="math inline">\(b\)</span> målingen og <span class="math inline">\(\eta\)</span> målestøy. Produktet <span class="math inline">\(Hx_*\)</span> gir et uskarpt signal ved å blande verdier fra naboposisjoner. Vi tar SVD av <span class="math inline">\(H\)</span>. Små singulærverdier viser signalretninger som blir svært svake etter denne transformasjonen.</p>
+<p>Forsøket gir en kjent fasit, et normalisert Gauss-filter og fast tilfeldig målestøy. <strong>Residualen</strong> <span class="math inline">\(b-Hx\)</span> måler avviket mot de observerte dataene; <strong>løsningsfeilen</strong> <span class="math inline">\(x-x_*\)</span> måler avviket mot det kjente skarpe signalet. <strong>Kondisjonstallet</strong> er forholdet mellom største og minste singulærverdi; et stort forhold betyr at inversjon kan forsterke relative datafeil mye. Gjett om en løsning med nesten null residual vil ligne fasiten.</p>
 <div id="qpyodide-insertion-location-8"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 </section>
 <section id="forklar-og-bygg-en-mer-forsiktig-inversjon" class="level3">
 <h3 class="anchored" data-anchor-id="forklar-og-bygg-en-mer-forsiktig-inversjon">Forklar og bygg en mer forsiktig inversjon</h3>
-<p>Prosjiser først data på <span class="math inline">\(u_i\)</span>. Rekonstruksjon av denne komponenten deler på <span class="math inline">\(\sigma_i\)</span>. Derfor kan små målefeil gi store signalutslag:</p>
+<p>Finn først datakoordinaten <span class="math inline">\(u_i^Tb\)</span> langs <span class="math inline">\(u_i\)</span> ved hjelp av indreproduktet. Dette er en ortogonal projeksjon fra uke 4. Rekonstruksjon av komponenten deler på <span class="math inline">\(\sigma_i\)</span>. Derfor kan små målefeil gi store signalutslag:</p>
 <p><span class="math display">\[x_k=\sum_{i=1}^k\frac{u_i^Tb}{\sigma_i}v_i.\]</span></p>
 <p>Implementer denne regelen. Her betyr <code>k</code> hvor mange <strong>operatorretninger</strong> vi bruker i inversjonen; det er ikke bildets komprimeringsrang fra del 3.</p>
 <div id="qpyodide-insertion-location-9"></div>
@@ -4575,7 +4577,7 @@ Hint til implementasjonen
 Hvorfor dette forsøket kan feile spektakulært
 </summary>
 <p>Glattende målinger gjør enkelte signalretninger svært svake. Det konstruerte <span class="math inline">\(H\)</span> er så dårlig kondisjonert at de aller minste beregnede singulærverdiene ikke bør tolkes som nøyaktige fysiske størrelser. Direkte løsning brukes som et bevisst feilforsøk. En beregning kan stoppe, eller gi enorme verdier. Begge deler er relevante observasjoner, ikke noe du skal skjule.</p>
-<p>TSVD begrenser støyforsterkning ved å forkaste retninger. Men også fasitens komponenter i disse retningene forsvinner. For liten rang gir derfor en for enkel løsning. Rangvalget balanserer tapt signal mot forsterket støy. En kjent fasit lar oss måle dette i laboratoriet; reelle data krever et begrunnet valg uten tilgang til sann løsning.</p>
+<p>Trunkert SVD, forkortet TSVD, begrenser støyforsterkning ved å forkaste retninger. Men også fasitens komponenter i disse retningene forsvinner. For liten rang gir derfor en for enkel løsning. Rangvalget balanserer tapt signal mot forsterket støy. En kjent fasit lar oss måle dette i laboratoriet; reelle data krever et begrunnet valg uten tilgang til sann løsning.</p>
 </details>
 </section>
 </section>
@@ -4714,8 +4716,8 @@ Hvorfor dette forsøket kan feile spektakulært
       steps.forEach(step => { step.open = mode === 'reading'; });
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
       status.textContent = mode === 'reading'
-        ? (controls.dataset.readingLabel || 'Selvstudium') + ': forklaringene er åpne. Prøv før du leser videre.'
-        : (controls.dataset.lectureLabel || 'Forelesning') + ': forklaringene er lukket. Du kan åpne dem enkeltvis.';
+        ? (controls.dataset.readingLabel || 'Arbeid videre') + ': prøv selv, og følg forklaringene steg for steg.'
+        : (controls.dataset.lectureLabel || 'Forelesning') + (controls.dataset.lectureLabel ? ': prøv oppgavene før du åpner forklaringene.' : ': eksperimenter og diskusjon. Åpne utdypningene ved behov.');
       try { sessionStorage.setItem('learning-mode', mode); } catch (_) {}
       window.dispatchEvent(new Event('resize'));
     }

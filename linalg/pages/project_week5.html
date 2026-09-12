@@ -4440,6 +4440,15 @@ window.Quarto = {
 </header>
 
 
+<div class="learning-mode" data-learning-mode="" data-reading-label="Arbeid videre" role="group" aria-label="Velg lesemodus">
+<button type="button" data-mode="lecture" aria-pressed="true">
+Forelesning
+</button>
+<button type="button" data-mode="reading" aria-pressed="false">
+Arbeid videre
+</button>
+<p><span role="status" aria-live="polite"></span></p>
+</div>
 <section id="ukens-spørsmål" class="level2">
 <h2 class="anchored" data-anchor-id="ukens-spørsmål">Ukens spørsmål</h2>
 <p><strong>Kan en korrekt beregning gi en rangering vi ikke stoler på?</strong></p>
@@ -4483,12 +4492,19 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p>Tegn grafen på papir. Ranger sidene før du regner, og begrunn førsteplassen. Prøv deretter å flytte en jevn besøksfordeling én runde for hånd. Hva er forskjellen på å telle innkommende lenker og å telle besøk?</p>
+<p>En pil fra A til B er en lenke besøkende kan følge. Den går ut fra A og inn til B. Ved hvert klikk velges én utgående lenke med lik sannsynlighet. Vi følger fordelingen av besøk: én andel per side, alle ikke-negative og med sum én. En slik kolonne av andeler er en <strong>sannsynlighetsvektor</strong>.</p>
+<p>Ranger sidene før du kjører modellen, og begrunn førsteplassen. Hva er forskjellen på å telle innkommende lenker og å telle besøk? I matrisen <span class="math inline">\(S\)</span> er kolonne <span class="math inline">\(j\)</span> avsender og rad <span class="math inline">\(i\)</span> mottaker. <span class="math inline">\(S_{ij}\)</span> er sannsynligheten for et klikk fra <span class="math inline">\(j\)</span> til <span class="math inline">\(i\)</span>. Kolonnene må ha sum én; sammen med ikke-negative elementer gjør dette <span class="math inline">\(S\)</span> <strong>kolonnestokastisk</strong>.</p>
+<details class="reading-step">
+<summary>
+Arbeid videre: tegn og kontroller én runde for hånd
+</summary>
+<p>Tegn grafen på papir, og flytt en jevn besøksfordeling én runde langs pilene. Ta vare på resultatet som uavhengig kontroll av koden.</p>
+</details>
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Kontroller før du går videre:</strong> Alle elementer skal være ikke-negative, kolonnesummene skal være én, og <span class="math inline">\(Su\)</span> skal stemme med håndregningen. Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.</p>
+<p><strong>Kontroller før du går videre:</strong> Alle elementer skal være ikke-negative, kolonnesummene skal være én. Sammenlign <span class="math inline">\(Su\)</span> med lenkene og den uavhengige kontrollen under «Arbeid videre». Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.</p>
 <details class="learning-hint">
 <summary>
 Hint: kontroller én avsender om gangen
@@ -4499,13 +4515,13 @@ Hint: kontroller én avsender om gangen
 </section>
 <section id="beregn-og-kontroller-rangeringen" class="level2">
 <h2 class="anchored" data-anchor-id="beregn-og-kontroller-rangeringen">2. Beregn og kontroller rangeringen</h2>
-<p>Bruk først <span class="math inline">\(\alpha=0.85\)</span> og jevn <span class="math inline">\(u\)</span>. <strong>Forutsi:</strong> Vil alle sider få positiv vekt? Tror du en annen startfordeling endrer sluttresultatet?</p>
+<p>Vi gir besøkende to valg: følg en lenke med sannsynlighet <span class="math inline">\(\alpha\)</span>, eller hopp til en side trukket etter sannsynlighetsvektoren <span class="math inline">\(u\)</span>. Disse tilfeldige hoppene kalles <strong>teleportering</strong>; <span class="math inline">\(\alpha\)</span> kalles <strong>dempingsfaktoren</strong>. Bruk først <span class="math inline">\(\alpha=0.85\)</span> og jevn <span class="math inline">\(u\)</span>. <strong>Forutsi:</strong> Vil alle sider få positiv vekt? Tror du en annen startfordeling endrer sluttresultatet?</p>
 <p>Implementer oppdateringen</p>
 <p><span class="math display">\[p_{k+1}=\alpha Sp_k+(1-\alpha)u.\]</span></p>
 <p>Du kan bruke potensmetoden fra forelesningen som mønster, men her bevarer vi summen én og trenger ikke normalisere til euklidsk lengde én.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Den stasjonære residualen er</p>
+<p>En fordeling er <strong>stasjonær</strong> når neste oppdatering gir samme andeler. Besøkende beveger seg fortsatt; det er fordelingen som er uendret. Vi rangerer sidene etter denne fordelingen. <strong>Stasjonær residual</strong> måler hvor mye én ny oppdatering ville endre vektoren:</p>
 <p><span class="math display">\[r_k=\lVert \alpha Sp_k+(1-\alpha)u-p_k\rVert_1,
 \qquad \lVert z\rVert_1=\sum_i|z_i|.\]</span></p>
 <p>Bruk en øvre grense for antall steg og meld fra hvis toleransen ikke nås. Den samme funksjonen skal kunne brukes på nettverk med ulike størrelser.</p>
@@ -4563,13 +4579,20 @@ Hint: hvorfor kan referansesystemet løses?
 </section>
 <section id="la-egenverdiene-forklare-et-forsøk" class="level2">
 <h2 class="anchored" data-anchor-id="la-egenverdiene-forklare-et-forsøk">4. La egenverdiene forklare et forsøk</h2>
+<p>Egenverdiene til en matrise utgjør dens <strong>spektrum</strong>. Den største absoluttverdien kalles <strong>spektralradiusen</strong>. Her vil egenverdien én beskrive den stasjonære fordelingen; de andre beskriver hvordan avvik fra den endres.</p>
 <p>Bruk problemgrafen du valgte, med teleportering. Bygg den lille matrisen</p>
 <p><span class="math display">\[G=\alpha S+(1-\alpha)u\mathbf1^T.\]</span></p>
 <p><strong>Forutsi:</strong> Hvilken egenverdi må du finne? Hva forventer du om absoluttverdien av de andre når <span class="math inline">\(0&lt;\alpha&lt;1\)</span>?</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Finn <span class="math inline">\(p_*\)</span> med referansesystemet fra del 2. Kjør et fast antall oppdateringer, lagre <span class="math inline">\(\lVert p_k-p_*\rVert_1\)</span> og plott feilen med logaritmisk vertikal akse. Sammenlign forholdet mellom to påfølgende feil med <span class="math inline">\(\beta\)</span> i området før avrunding dominerer. Gjenta med en annen start hvis du ikke ser forventet fart.</p>
-<p>For <strong>pendlingstilfellet</strong> skal du i tillegg finne begge egenverdiene til <span class="math inline">\(G\)</span> for hånd, uttrykt ved <span class="math inline">\(\alpha\)</span>, og forklare fortegnet til den andre. For de andre tilfellene: velg en egenverdi ulik én og kontroller en tilhørende numerisk egenvektor med <span class="math inline">\(\lVert Gv-\lambda v\rVert_2\)</span>.</p>
+<details class="reading-step">
+<summary>
+Arbeid videre: forklar pendlingen for hånd
+</summary>
+<p>For pendlingstilfellet: finn begge egenverdiene til <span class="math inline">\(G\)</span>, uttrykt ved <span class="math inline">\(\alpha\)</span>, og forklar fortegnet til den andre.</p>
+</details>
+<p>For de andre tilfellene: velg en egenverdi ulik én og kontroller en tilhørende numerisk egenvektor med <span class="math inline">\(\lVert Gv-\lambda v\rVert_2\)</span>.</p>
 <p>Svar med ord: <strong>Hvorfor trenger vi de andre egenverdiene når PageRank selv bruker egenverdien én?</strong></p>
 <details class="learning-hint">
 <summary>
@@ -4633,9 +4656,6 @@ Hint: startfordelingen kan skjule en egenretning
 <li>virkningen av egenverdiene og virkningen av modellvalgene.</li>
 </ul>
 <p>Kode fra en assistent eller et bibliotek må kunne forklares og kontrolleres. En rangert liste alene er ikke en faglig begrunnelse.</p>
-</section>
-<section id="tilbake-til-forklaringen" class="level3">
-<h3 class="anchored" data-anchor-id="tilbake-til-forklaringen">Tilbake til forklaringen</h3>
 <p>Se <a href="../pages/uke5.html#uke5-google">uke 5</a> for besøksregelen, egenverdiforklaringen og feilgrensen. Prosjektet bruker egne grafer inspirert av <a href="https://github.com/jiadaizhao/Mathematics-for-Machine-Learning/blob/master/Linear%20Algebra/Week5/PageRank.ipynb">PageRank-notebooken</a> og <a href="https://textbooks.math.gatech.edu/ila/stochastic-matrices.html">Interactive Linear Algebra</a>.</p>
 
 
@@ -4763,8 +4783,8 @@ Hint: startfordelingen kan skjule en egenretning
       steps.forEach(step => { step.open = mode === 'reading'; });
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
       status.textContent = mode === 'reading'
-        ? (controls.dataset.readingLabel || 'Selvstudium') + ': forklaringene er åpne. Prøv før du leser videre.'
-        : (controls.dataset.lectureLabel || 'Forelesning') + ': forklaringene er lukket. Du kan åpne dem enkeltvis.';
+        ? (controls.dataset.readingLabel || 'Arbeid videre') + ': prøv selv, og følg forklaringene steg for steg.'
+        : (controls.dataset.lectureLabel || 'Forelesning') + (controls.dataset.lectureLabel ? ': prøv oppgavene før du åpner forklaringene.' : ': eksperimenter og diskusjon. Åpne utdypningene ved behov.');
       try { sessionStorage.setItem('learning-mode', mode); } catch (_) {}
       window.dispatchEvent(new Event('resize'));
     }

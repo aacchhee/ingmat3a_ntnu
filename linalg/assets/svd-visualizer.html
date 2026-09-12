@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Utforsk retninger og strekk</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; padding: 12px; color: #162b3e; background: #fff; font: 15px/1.45 system-ui, sans-serif; }
+p { margin: 0 0 12px; }
+button { padding: 7px 12px; border: 1px solid #a8bbc9; border-radius: 5px; background: #f2f7fa; color: inherit; font: inherit; cursor: pointer; }
+button:hover { background: #dcecf7; }
+button:focus-visible, input:focus-visible, svg:focus-visible { outline: 3px solid #d97706; outline-offset: 3px; }
+.presets { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+.controls { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 20px; }
+label { display: flex; align-items: center; gap: 8px; }
+label span { min-width: 70px; font-variant-numeric: tabular-nums; }
+input { min-width: 30px; width: 100%; }
+#readout { margin: 12px 0; font-weight: 600; }
+.grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+figure { min-width: 0; margin: 0; }
+figcaption { font-weight: 600; min-height: 2.9em; }
+svg { width: 100%; max-width: 250px; height: auto; display: block; margin-inline: auto; background: #fafcfd; border: 1px solid #d4e0e7; border-radius: 5px; }
+#stage1 { touch-action: none; }
+small { display: block; margin-top: 10px; color: #465966; }
+@media (max-width: 430px) { body { padding: 8px; font-size: 13px; } .controls { gap: 8px; } label span { min-width: 56px; } .grid { gap: 8px; } }
+</style>
+</head>
+<body>
+<p>Velg et eksempel. Flytt deretter en av de to store prikkene på sirkelen, eller bruk retningsskyverne. Følg samme farge gjennom de fire rutene.</p>
+<div class="presets" role="group" aria-label="Velg transformasjon">
+<button type="button" data-matrix="1,0,0,1">Uendret</button>
+<button type="button" data-matrix="0,2,1,0">Ellipse</button>
+<button type="button" data-matrix="0,2,0.2,0">Smal ellipse</button>
+<button type="button" data-matrix="0,2,0,0">Rangtap</button>
+<button type="button" data-matrix="1,1,0,1">Skråstilling</button>
+</div>
+<div class="controls" role="group" aria-label="Matriseelementer">
+<label><span id="la">a = 1.00</span><input id="a" aria-labelledby="la" type="range" min="-3" max="3" step="0.02" value="1"></label>
+<label><span id="lb">b = 0.00</span><input id="b" aria-labelledby="lb" type="range" min="-3" max="3" step="0.02" value="0"></label>
+<label><span id="lc">c = 0.00</span><input id="c" aria-labelledby="lc" type="range" min="-3" max="3" step="0.02" value="0"></label>
+<label><span id="ld">d = 1.00</span><input id="d" aria-labelledby="ld" type="range" min="-3" max="3" step="0.02" value="1"></label>
+<label><span>Rosa</span><input id="angle1" aria-label="Rosa retning i grader" type="range" min="0" max="360" step="1" value="35"></label>
+<label><span>Gul</span><input id="angle2" aria-label="Gul retning i grader" type="range" min="0" max="360" step="1" value="135"></label>
+</div>
+<div id="readout" role="status" aria-live="polite"></div>
+<div class="grid">
+<figure><figcaption>1. Start: enhetssirkel og valgte retninger</figcaption><svg id="stage1" viewBox="0 0 300 300" role="img" aria-label="Startretninger. Flytt de rosa og gule prikkene, eller bruk retningsskyverne."></svg></figure>
+<figure><figcaption>2. Nye koordinater: dreiing eller speiling</figcaption><svg id="stage2" viewBox="0 0 300 300" role="img" aria-label="Samme retninger uttrykt i en ortonormal basis"></svg></figure>
+<figure><figcaption>3. Strekk langs koordinataksene</figcaption><svg id="stage3" viewBox="0 0 300 300" role="img" aria-label="Strekk av sirkel og valgte retninger"></svg></figure>
+<figure><figcaption>4. Resultat: dreiing eller speiling</figcaption><svg id="stage4" viewBox="0 0 300 300" role="img" aria-label="Resultatet av hele transformasjonen"></svg></figure>
+</div>
+<small>Blå og fiolett viser de to vinkelrette strekkretningene. Målestokken tilpasses når du endrer A; alle fire rutene bruker samme skala. Ved like strekkfaktorer finnes flere like gode valg av retninger.</small>
+<small>Tilpasset fra <a href="https://andreyac.folk.ntnu.no/svd_complete.html" target="_blank" rel="noopener">den opprinnelige SVD-demoen</a>: samme fire trinn, med norske kontroller og geometrisk inngang.</small>
+<script>
+// Adapted from https://andreyac.folk.ntnu.no/svd_complete.html (user-provided).
+// The 2x2 helper uses eigenvectors of A^T A, as in the original demonstration.
+// This small visual helper is not a general-purpose numerical SVD algorithm.
+// Stable angle eigenvectors and orthogonal completion handle rank loss and zero.
+function svd2x2(a,b,c,d) {
+  const ata00 = a*a+c*c, ata01 = a*b+c*d, ata11 = b*b+d*d;
+  const angle = 0.5*Math.atan2(2*ata01,ata00-ata11);
+  const v1 = [Math.cos(angle),Math.sin(angle)], v2 = [-v1[1],v1[0]];
+  const Av1 = [a*v1[0]+b*v1[1],c*v1[0]+d*v1[1]];
+  const Av2 = [a*v2[0]+b*v2[1],c*v2[0]+d*v2[1]];
+  const sigma1 = Math.hypot(...Av1);
+  const sigma2 = sigma1 > 0 ? Math.abs(a*d-b*c)/sigma1 : 0;
+  const u1 = sigma1 > 0 ? Av1.map(x=>x/sigma1) : [1,0];
+  const sign = a*d-b*c < 0 ? -1 : 1;
+  const u2 = [-sign*u1[1],sign*u1[0]];
+  return {sigma1,sigma2,v1,v2,u1,u2,Av1,Av2};
+}
+function applyVt(x,v1,v2) { return [x[0]*v1[0]+x[1]*v1[1],x[0]*v2[0]+x[1]*v2[1]]; }
+function applyU(x,u1,u2) { return [x[0]*u1[0]+x[1]*u2[0],x[0]*u1[1]+x[1]*u2[1]]; }
+const NS='http://www.w3.org/2000/svg';
+const colors=['#d92a8a','#b18400'];
+let scale=50;
+function element(tag,attributes,parent) {
+  const node=document.createElementNS(NS,tag);
+  for(const [key,value] of Object.entries(attributes)) node.setAttribute(key,value);
+  parent.appendChild(node); return node;
+}
+function point(x) { return [150+scale*x[0],150-scale*x[1]]; }
+function line(svg,x,y,color,width=1) {
+  const p=point(x),q=point(y);
+  return element('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],stroke:color,'stroke-width':width},svg);
+}
+function arrow(svg,x,color,width=3) {
+  line(svg,[0,0],x,color,width);
+  if(Math.hypot(...x)<1e-10) return;
+  const p=point(x),angle=Math.atan2(-x[1],x[0]),size=8;
+  const pts=[p,[p[0]-size*Math.cos(angle-.45),p[1]-size*Math.sin(angle-.45)],
+    [p[0]-size*Math.cos(angle+.45),p[1]-size*Math.sin(angle+.45)]];
+  element('polygon',{points:pts.map(p=>p.join(',')).join(' '),fill:color},svg);
+}
+function panel(id,transform,axes,directions,draggable=false) {
+  const svg=document.getElementById(id); svg.replaceChildren();
+  const extent=145/scale;
+  line(svg,[-extent,0],[extent,0],'#bac9d4'); line(svg,[0,-extent],[0,extent],'#bac9d4');
+  for(let tick=-Math.floor(extent);tick<=extent;tick++) {
+    line(svg,[tick,-.035],[tick,.035],'#8a9caa'); line(svg,[-.035,tick],[.035,tick],'#8a9caa');
+  }
+  const points=Array.from({length:181},(_,i)=>point(transform([Math.cos(i*Math.PI/90),Math.sin(i*Math.PI/90)])));
+  element('polyline',{points:points.map(p=>p.join(',')).join(' '),fill:'none',stroke:'#52748a','stroke-width':2},svg);
+  axes.forEach((x,i)=>arrow(svg,x,['#1856a2','#7846ad'][i],2));
+  directions.forEach((x,i)=>{
+    arrow(svg,x,colors[i]); const p=point(x);
+    const circle=element('circle',{cx:p[0],cy:p[1],r:7,fill:colors[i],stroke:'#fff','stroke-width':1.5},svg);
+    if(draggable) { circle.dataset.direction=String(i); circle.style.cursor='grab'; }
+  });
+}
+function update() {
+  const values=['a','b','c','d'].map(id=>Number(document.getElementById(id).value));
+  values.forEach((x,i)=>document.getElementById('l'+['a','b','c','d'][i]).textContent=['a','b','c','d'][i]+' = '+x.toFixed(2));
+  const [a,b,c,d]=values;
+  const {sigma1,sigma2,v1,v2,u1,u2}=svd2x2(a,b,c,d);
+  scale=130/Math.max(2.3,sigma1*1.12);
+  const start=[1,2].map(i=>{const angle=Number(document.getElementById('angle'+i).value)*Math.PI/180;return [Math.cos(angle),Math.sin(angle)];});
+  const vt=x=>applyVt(x,v1,v2),stretch=x=>[sigma1*x[0],sigma2*x[1]],u=x=>applyU(x,u1,u2);
+  const second=start.map(vt),third=second.map(stretch),fourth=third.map(u);
+  panel('stage1',x=>x,[v1,v2],start,true);
+  panel('stage2',x=>x,[[1,0],[0,1]],second);
+  panel('stage3',stretch,[[sigma1,0],[0,sigma2]],third);
+  panel('stage4',x=>u(stretch(x)),[u1.map(x=>sigma1*x),u2.map(x=>sigma2*x)],fourth);
+  document.getElementById('readout').textContent=`A = [${a.toFixed(2)}, ${b.toFixed(2)}; ${c.toFixed(2)}, ${d.toFixed(2)}] · Største strekk: ${sigma1.toFixed(2)} · Minste strekk: ${sigma2.toFixed(2)}`;
+}
+document.querySelectorAll('input').forEach(input=>input.addEventListener('input',update));
+document.querySelectorAll('[data-matrix]').forEach(button=>button.addEventListener('click',()=>{
+  button.dataset.matrix.split(',').forEach((value,i)=>document.getElementById(['a','b','c','d'][i]).value=value); update();
+}));
+let dragged=null;
+const first=document.getElementById('stage1');
+first.addEventListener('pointerdown',event=>{
+  if(event.target.dataset.direction===undefined) return;
+  dragged=Number(event.target.dataset.direction); first.setPointerCapture(event.pointerId); event.preventDefault();
+});
+first.addEventListener('pointermove',event=>{
+  if(dragged===null) return;
+  const rect=first.getBoundingClientRect();
+  const x=(event.clientX-rect.left)/rect.width*300-150,y=150-(event.clientY-rect.top)/rect.height*300;
+  const angle=(Math.atan2(y,x)*180/Math.PI+360)%360;
+  document.getElementById('angle'+(dragged+1)).value=Math.round(angle); update();
+});
+first.addEventListener('pointerup',()=>dragged=null);
+first.addEventListener('pointercancel',()=>dragged=null);
+update();
+</script>
+</body>
+</html>

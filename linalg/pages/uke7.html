@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nimport base64, zlib\n\n# Original: https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif\n# Gråtoner, skalert til 96 x 96 for korte beregninger i nettleseren.\n_portrait_data = \"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\"\nportrait = np.frombuffer(zlib.decompress(base64.b64decode(_portrait_data)), dtype=np.uint8).reshape(96,96).astype(float)/255\n\ndef challenge_images():\n    n = 96\n    text = np.zeros((n,n))\n    # Fire enkle bokstavformer: H, I, L, I; ingen skrifttypeavhengighet.\n    for col in (8, 30, 52, 74):\n        text[24:72, col:col+5] = 1\n    text[24:72, 20:25] = 1\n    text[46:51, 8:25] = 1\n    text[67:72, 52:69] = 1\n    return {'portrett': portrait.copy(), 'tekst': text,\n            'diagonal': np.eye(n),\n            'tilfeldig': np.random.default_rng(7).random((n,n))}\n\ndef show_images(images):\n    fig, axes = plt.subplots(1, len(images), figsize=(3*len(images),3), squeeze=False)\n    for ax, (name, value) in zip(axes[0], images.items()):\n        ax.imshow(value, cmap='gray', vmin=0, vmax=1)\n        ax.set_title(name); ax.axis('off')\n    plt.tight_layout(); plt.show()\n\ndef rank_image(A, k):\n    U, s, Vt = np.linalg.svd(A, full_matrices=False)\n    return (U[:, :k]*s[:k]) @ Vt[:k, :]\n\ndef blur_problem():\n    n = 80\n    t = np.linspace(0, 1, n)\n    truth = ((t>.2)&(t<.4)).astype(float) + .6*np.exp(-((t-.72)/.06)**2)\n    H = np.exp(-.5*((t[:,None]-t[None,:])/.035)**2)\n    H /= H.sum(axis=1, keepdims=True)\n    clean = H @ truth\n    observed = clean + .005*np.random.default_rng(17).standard_normal(n)\n    return t, H, truth, clean, observed","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"show_images({'original': portrait, **{f'{k} komponenter': rank_image(portrait,k) for k in (1,5,20)}})","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-first-image","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"small = 1.0  # Prøv deretter 0.2 og 0.0. Gjett formen før du kjører.\nA = np.array([[0.,2.],[small,0.]])\ntheta = np.linspace(0,2*np.pi,300)\nX = np.array([np.cos(theta),np.sin(theta)])\nfig, ax = plt.subplots(1,2,figsize=(8,3))\nfor axis, points, title in zip(ax,[X,A@X],['Start: x','Resultat: Ax']):\n    axis.plot(*points)\n    axis.set(xlim=(-2.2,2.2),ylim=(-2.2,2.2),title=title)\n    axis.axhline(0,color='gray',lw=.5); axis.axvline(0,color='gray',lw=.5)\n    axis.set_aspect('equal'); axis.grid()\nplt.show()","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-ellipse","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"A = np.array([[0.,2.],[.02,0.]])\nx_true = np.ones(2)\nb = A @ x_true\nfor db in (np.array([.01,0]), np.array([0,.01])):\n    x = np.linalg.solve(A,b+db)\n    print('dataendring:',db,' løsningsendring:',x-x_true,\n          ' residual mot målte data:',np.linalg.norm(b+db-A@x))","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-perturbation","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"nodes = np.linspace(.95,1.05,12)\nP = np.vander(nodes,4,increasing=True)\nU, s, Vt = np.linalg.svd(P,full_matrices=False)\ndc = Vt[-1]\nprint('Koeffisientendring:',np.linalg.norm(dc))\nprint('Endring i modellverdier:',np.linalg.norm(P@dc))\nprint('Singulærverdier:',s)","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-polynomial","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"A = portrait\nU,s,Vt = np.linalg.svd(A,full_matrices=False)\nk = 20\nAk = (U[:,:k]*s[:k]) @ Vt[:k,:]\nprint('Direkte feil²:',np.linalg.norm(A-Ak,'fro')**2)\nprint('Halen av s²:',np.sum(s[k:]**2))\nprint('Parameterandel:',k*(sum(A.shape)+1)/A.size)","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-tail","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"images = challenge_images()\nshow_images(images)\nm,n = portrait.shape\nk = int(.25*m*n//(m+n+1))\nprint('Felles rang:',k)\nshow_images({name:rank_image(A,k) for name,A in images.items()})","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-budget","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nimport base64, zlib\n\n# Original: https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif\n# Gråtoner, skalert til 96 x 96 for korte beregninger i nettleseren.\n_portrait_data = \"eJxtmndYW1eWwHE2maw32cl+k29SZpJNNpsyk5nUSeKJHfducMMFG2NcKDbNNNMxvfcOBkxHgAEhOqJKoIJ67713CXDbP/feJ4FJds8n6cHnp98597R77jNajVqlUMjlMrlUIpXKEJEjHwogSvenUqXR6TRqJbxPJpWIxRKRWCKBV7eIxSLkJZEAArwffkWlVqmUKq0WXpAvyqRuBUAdQof3gDtUCqXW6lzfeLJmNWhVCjnku8mil3yAd/OlwDoFYpRKDcgqrUajVgOFL/lQvVwuBxegQK3RaA32J8+fPX/x4sXTjXWXzaCRS8ViDxTwpFt8kQTyIQRRABYAjNNAPlgAogB4xQNWQNs1wHqN3uLcePLsOeQ/e7Luspj1erAMGUAB/PYFbHlLKpW73QoXr4UKVIgCuRTBQ74KUa/W6IwWm8Ppevp0w2W1ORxWs16ulEnEKoNOA+KwPQDb+Zt2qgBJq9Nu8WFQEc0qJDwajd4EqC6b1WzUG5UipUoi5FJW6VQyiSWQwyVIEO/8X/6moeCl1cIIAE9ApwO6Eok+tF2j1ut1Oi1fqVapQRboNHIFi82j4ohUoIPJZAhBqGRu3KZfZFAfjIDc7Wdgqlbr1qBERKFA3K9QqrVqidph0SolbIbG7HBqRTyV1ibX6DUSsVwgVgpZbK5YKpdshVQmRVJTLkWsh96AFkO+BipAXIQoRD5Vap3OtuEwyvhClca+5jSwMaNLdIbL5rIaNEalRKkUyEV8iVy6zSUyJKpyxHQPB5iqgXyNBkYTpron69VqvfOJy6xTaQz2tTWHTkRbHGof7Va7nHq5UC6hCCR8tYQllXkUeFwCqXLFyxSEokEEuBgIrDjIBuHQrTmtNqvRYHI4HHajlL44g6mqL52wmMV0IoWxQBNQpXK+UAEDAHyO2I6UpHsFm3wVYj+iAFKhCqhDrdZarVq1VmewOV0Og0pMxw/19+dmFuQz5ey5sZnFWQIPx5WL+VKoAPE+UrRymHmICzb5AOoJMBAYCpBKYBlKk0WjMhikHAXQomVTF+YnW8qSQtPD2laIIyOjU9NEPoEvlYokMiR7POnoLinlS9/AJNduikbj/tCBBRhsBtPamkk41T7LpEkYxKmhof70e36Rfvc60Y/7+qbn8Vw6qF0BaArAO1KRSLbJUyHJrVSo3L/C/rZNA3QWaGEai0FncdlVtLHm4oczo0uLmIEuVGO0/z3vwKKHXY/6p3A4jkApFrEZDK5EIWLRmHyxVObOC9V2QdwDasjDV0MNOoVcD36yWcR4VOH9xPv5zegxVHdP30h6RPrhkOLa9rrxGTyBL1ZIhDwuj89mkOlMcOXzJQoVUvRQhTtRkA4DBSjx1LFWrxLLZVK1zaZhLXTnBZ+6dbewFdXcicIsNJaXX05vamhvmJ5apImB75livUNDp6rsZo2Yz+VyuFLgDvVLQXLSjff4B1aAWqviiY0WLQc31ZaXcO5w4P1CVOvj0WXSFLo2u76ro7drcGiZy2dT+ASGymaQKE1GvU4hZrI4VIYYJshLPnSQhw8/QUtk0vVr6wq2WKVkTHfWlT2IjTt7IqoQhV7CU9mk+dqWzsmJsY72PiKHT54jjOL4cp1KIuDwhRIhi0Sn4slSmCVuuka1xXeLVsMjDK/KNHoRk8eZn+gqzUnJj4i5cSa9AU2gMRgSPrGrb5RHWuwbw5BY3OmpURRFKpfx6YRl4iqHxyBTiSt4klTtSXYNUlAazRYe9EpGQ2b3ktwmYbCoNEJzfnZCTFxcYEzRo1k2j8YRyTiYFbmMR1rlrTKp+KbHPf3LWo2cuTw/2ts/vcphrC4vEeZJcrBVwzrSqt0lhYA9oqgPf9BFFEqZPKVKPJNyMejW3ciY7JJhupiFJ8sVEgboaHIaj0em4rsKGuoGZS6jVkidfNzbOzhBYFDxWOz0CA8po21Zv40v67x01C9jVMmTWYymoUuHfAJDAirLMHialITCCEVKAYkjorAoyzRyS0puTf0YUwzaGhu/hB9Ho6fwOBx2dKRnXoPY70a7A7vpfx2n/4zPiduPpAKxzqIsv37i6PG7uTUN0/M4Hq61b5XLGJ6fRVMYBOJo7I2A27H3m2awlGUug0mfGuztQI1OjY6ie1sf8XVbTESH236gS6WTYe7suxmYzJIIZDpye9rf9lxOedQ7PIAdX1xAoyiCPvTE48Ul0vJsRc1jDKpjZIlKoc4sEInTj1E9gwN9mO4BdH9T7qJRD6H6LbfoPQkKiovZGXG9sHRKwufK5ubyP/N+UIdZJSwuERcnRgm85Ukmj8vhUEgUGpNGxK2wuRwBf74f09OJGZtBo9pRfaNoVE3ysEW3nQ9+0LujoNUoyKP1VR2jMwwhk0mgF36bOEHjSuRCoYRFWqYwiAq9UiYTCUArYNJWyWQajSEWz5W2NnZxePNDNY3d6NnxhvJ741bA1xsMHg2Qv6lKmhdfh2MLBRQWhzBHKQuaVIH7jCajViljUHgaYIhGKZWKBXwWk0al0ugsHh6TV9Iwzlxs669pbCcuDJbX3JtUykGXAUOS3uCGI3yoQquuOR054VxXLa6yiKNTjdU8k9lqsdjMJuhSoxHYpFMrpGKhgMtk0BkUCpNFnGnJqn88VF7Z0tMzLFzsLSrKS6pi6xC6wb0G5OV+qwlZgUnDTPLIKJUwOV7VLwfTlc1ut1ptFqvVYgQa9GByEwkFHDaDRqeQaHQiYbSsqrksqrBhcJLAxXbmZsQduMYyQjB0kfuK+Ade1JLxwuiwrB5s9+T8zGDRlM4Apjew/zrsYBlms9kEFqCUw77MYoAhiLDKWF4YrcyouHo+bwRDZVGHcpOTww4cJpmNW+bDqycOBr1GNF+UFnenqratcWR0qJeiM5qB+UCDw2a1ABUWk0GnlklEAjadRiYS8GQyiTtVmPjg8rXy4dllIrY2NjIxePdhvBWhb64CCDQffGrESzlBN69fPptS0DKOxqwqAdJmQ/g24CC4AJ1aLhELWHTKCn5uFkdawfWXZSTGRGRXDk1OthfEhkZc3e+zYJWpDTBcyBI8C0AySrBUGRpRFLjP2y+zuv7hMMNkMYMB1OmwgzBYoQajXqOQAvtBM1ucnpwlEvGopvLC8NC7Bf1jw40ZEZE3fU/eJFlYUqOHjyjQuflGnZDWExUx0xd6ws/3SkxxFUpsNpltTqfTbgMaLGDMBYmkkvJ5LDoZhx0fH8cuzk0MDnSk3w3J7VyYRxUXpIcF+N7jaRfFJrdjPHxPmkoF9NaY0NHVxohb5/YevXozDac3WO1OYL/dhpgPVqpVSAVcFo2wPD+OwYyMjY9PLgykx8QVN2MXp7q7Cu4GBqTxmSMSEzAXWYJ+q9T0ShoXVxF76z4elRV/7dD+3ceTZ9UW4HygwIEoMBtAlwL7OpdJJeKx4+gh9FBHXXNfZVx+YUNLR8/SxNhIeej1nPn+Xo0JwpGS2axfrVZOYQ5Xl0WfSRnuq0+LuOp9p5ejt4HshAuwQQUWk14DjhcCNpOyvDQ7gX482Ntc1VQcG1JaXT9dnthQ1VVbURyXXJiLBUUPxZNDnkanpC8Pj1REnzieghquj7sR85ijNNpAejpdiIdsZpDXaqVMLADth7SMHRvu7eloKCuIj86pKG+j9gXmVbQUZ2Zk3Y8uFZlM7vAajS/7v15Ln5rsLcwI8Pa94r3fv2ZJIFcbLFZgvwtJUPAVk0Ehk/JJM+jh0YVZTH93R2tNeX5mYkZp3QCWNNeU9yA6PuFBfFC/0W29wZM7nkaqo0wNdE0154T6/fSNfyOBJ5Cq9EaTxe60wdQHqQOaAxeHqcmO8798M6YN3dPaXFtZmp+altODwgyBEWm0PDYnMjzmHsFo3NSwjW/QEedbaNiRzoTAC365wyuPWwcWqUKVwWwzw84DD1GMnvzY4Ov+l+8lx/r5l3fXV5UUPUhJyS99PDM3UltQ14JuTUq5GZw4KDUAB5kQJ3l6NFiKUU/qHWMuj5cEB18LKumvPu17PTypvHNsiQv+VaeHnROTHRFV1NJLYZEXutPOJVQW5uampMcV5pegZvuLg6LSippbE2LComt5RkA3w3gZPbWFxILQRaVOlEZH+Z29VFDqG12eHh96IyileEoJB0elREDpqql6vEDhiMRCJh6VeiY8OzMjJTkp4879/PLcgsIHSRWFdeVROfdicEZIB3yTybDZg4DglpmjbWlhd6+f3JsR9GCFycSPt+aml08IRFKlWsKjYPu6u/tHsAsECoM02VOfciU8IT7pQW51aHBcZlVDSXpcUmZWQ0Ka//lJM+SbPPxNvGmFMduQlxaXcvfC8ehg9BKNTcai6srqhpZoPKlayiGM9zQ1t6GGBlFdKDTqYWVeQlhUfEp2Y2tkcExhd29FUWJsXHJBYsi1QILZbT8QpJG63xbqfF9hSlZ0qJ+vz50MFBo7i11aQtclp7bNM6QaOWu+v7G5d5YpFTMnytNzC3JSY6PvxaUUNvUkx2YUjZFGG9PCI0ITUyKDS1Sg8Vo2+UY332g0c6Z6UoNjszNunzsV9aC8vnNRufbMqZopSukhS3UK1mxnXe+iQCYVS+iTVTEJqfcjomJiUwof9idEpxalFk3PVd64HRB2/96DVasVUWCBLcsTW5BNZtlYbXFR7N2K8pCz90KjMrpIK9OYWbKKWlS9rDApWPOdKBxlMOniiYA7yfkFOfkpMbHxcSkFjW2p4cmZFYl3+mfjfc9eu3evWmkF1W5DdFiQPufOJotpqrRibigjPa3geph/YFxG0Pfvv7X7RuboSgdeY1Wy5sfZ+PtHrv79tT/sePW9X25FJxVXZadlFrfVpyQllpc0NaZM9p71CbgV2ywz25Ft2wK2bRMUM1gL2Ers9JLE6e6MnOqaiFi/vafef+Nvn//5zsxsEWluWW9TMJfIysa8HmxdyLn9f/J67dKjmenuqoKCsvaq5LTCzKre4YdVuDB/P/+Ifi6g26ECK9g1YByQlZitVn1zVFVX4vXG3oSU/LN/8PogvriLAI627EWcxiShr9DkQj5jcRrdXnf7h8M5E5TFodaqosravNDA4pK4xrmFypHoC1cuHkXzQT+3w45oe8m3wh1cvZSe15pyJwiTWzzSf/CTpCEiU67RK/lLK2qdcJXEECukPCZpbmYeOzg8jCUujnVWF1RXFvl538ktii8Z7a4695cff/lnlwr2W+giZNezIKOBBaxFTBT05/aWRJ57VPZwca5hkCngSrSgZ7JxZLWaTyExBPCcKxdwhRK5VMRhEcbay3LKqrK8vS+HNnbE59SlfvT2sc+8u82OTT7YNWxwfELMty/x7Pq+2pK4G3kN7QSeGBQe8JlZI6QuUlUyDpVM54kVag3YI7VqlULMY6xgHuZnFRWEnzns658zWJ+aF/T2nz4+eQdrgzMTVOEePNyLsJjtc4tmu6qxrKWt5WEbWa41wzusOhkHP0uR8OmrRBpbpFBpwXYEn7eIubSFgers9JxMvz3nYvvHJ9oy4s/85x9Phj8Q2+CO53ALEgQbkkp2xSBZSM9PG6CiaxpWpMjeYjerBavzWLqIQyXgiHShQgvHGXDukvAZhOmu4rSklJiL+8JRJAYTk3L72p7DyZGdMmTHRgRGAC4ACoCpaIS+sLgmqrCxal6sBbOPzWpU8gjjsyIpl7I4uUARKfRgJjKAIYXHIs8PN+fcC4uKuH4nt/zRGLYu9saV4MjUuEXhmhOKA7499iOxAGOmTVF+I22Mox8rGGcpjDAqBiVvBb0gNShos6OzOJ5SZwLu1CuFrFXceHdZ4m3/GzeDY5ITskszkwvP+QUH7slrUT8FO7ab73Ru40ORZAWHN3H15MJOglAL9kabUcEn9y3KzWr8QP/4JF6hNdocVoOCT1ue7GvMvHPpwhW/G1HR4QkZFSUhZy5cPPztf394lPfE5dwU+6bxiLjEZfmVj8aZlMqKaYYSbI12i1qIb+yj0pY6Syr7hwdAPZisFr2CT5kfbiuN9z/pc8Y3KCw6OjajvSTk0t6rR957xcsr9sWaC4jbSx4BEQe/uazdD2fw4Mhcltu9ItKCEFt0opHk2xVVOdc/++RmdQ5OKFbrDFo5jzzVUZsRdunkqfN+abdSCx5kVVYk+ATf+K9Xf+flFfI/62trHhWQ7HBsxsPpMixOMfn41vy8KgxdqjWCBihDnXr9C/+A777be9g/QyjmCBVgxGUtDD0sSgw6d+Kcb1Bm4oUk1MjjzvzinJ93vvFvb384+WwN8hEdbvYW3+lcl8zhpmqzirM68FyVzmgxaMgxgfs+33eruG1kmCaXckGVcel4TGdlTkLQ+VO+54sqjv75y1u51TVluYdf+/TtD/aEmtZdEO3mu6kuzxuIZbG0OCPuTmLVBF0K0kWvlgqZ2I4ePFcolUlFIt4qoW8JN95Tl592P+Ty2bPHMwt3/cfO//7oYEykzzteXm98HTD71O0eZBHQfuCotc2Ig5rQ1t29diYwLrdnhSNTg7FRIhaK5GDul4C5gcdlUxfaJuaH2irzMhPDAi6c/vIXnz2/P3dh5wdXbhz9vZfXH8NIG+vA8cjL5fHPVrSdSGUTon1PHbiU2TBDFciVCik4ksrgAxcRncbh0lepZMLSZF9rVVluavTty6c//s/Xdn/y959ePRG///2dXn9u0j9B4G7q2po7qi7ny4x1Wo3V568cikosx5A5YjFfJBh71DeyNFTTkH0nugm3ukqnrUwPdT18WJoVF3zd588H3z7x1ee/ez8y78irXl5xa+trW6BtbtmqZzjqO1DexxqyYnN7cAw+a3U88J+79v7tp2/+8sPXX3z+8Y/ZS0wOAzc50NVak5cSErD/9dN+X+z69Mv9fzr4kdfOUKlrmy+2eWU73+6YOfrdcd/E7M45Kh3X/u2bb/3xq2sXA4oj7379zjtv7Ejn8nirc2NDPQ3FyaHXv9zx10++/u6Tiwe8vLzebQTf/RX/V3i3Arhx0lP3fP5ZVGEHlkxdjvHa8crlbr1IsiFVVAR8/tFxvIDHXV0cG+quK7offPEPXq95nfr+rTOfeHn9ZcpuNTu2Mzct3ioCxHqHRcZM++KfcYWtM1QOD3/pqz8EYxgKmWSuL/LsoeujYBNmk+cnRgaaCuJu+by7w+uVIx99e/4dr/fGZGqrHdrssdtTvwjSU8WILodVSurOvxVU0DjF4EtlOZeC0hv7+IzRR8khvhfLBEKugLkyPTra35QbEXDs01d27PB6/evdv9txDtU1v4bIZm5Cvt29VTo2FwP5dvXjjIy9n2bUjVN4QnH7D3tv1/XUtXfn+J85lkYXcNlsKn4KM9hRmXj74sH3Xn3dy+uVDz/0ev0mqhm17uEjbDffLY7NGLgfB5Da00OOhVf0LdJYbEL4B/+4XfewDx1/7EwFlcWgs+grsyMDHTXZ4QHHfnn7lTff9PL6/ZteHxQ9riC5XirwaNnqzVvNFNmWZ9NjwsMLGtB4EpUyFvbl53uvX9l3KGOKwaJR6TTy3Fh/R0NeUvjFAz++9f07//7Wjp1vvP7lgyqc1eXpCvCC9J+1l8Z7FuBAfjeAofhGYm7LxDKFjp9sTr1zOzRrjMFms+k0Cnlpcrijvig17sahfd9+fHD/vr9/8tX+/3r1x5HNmt1sPlAcv+K78xO2JGVt2K0bqRUoLJXNJBIpDNiWJSI+l00hLc2gO+uKU+4Hnzyw/+vvT8Zlhnv/svczr3eZLjsSV09v9vAdW3h303AiHc/poEVc8gtNbxjCsUQsptQAZhqzWiYWskk4LKa3viT9fujF04d2/2PP3cqixPt3D3331lezdrvb51vwdch3/IbvTl27vi06Mjwus2WaLhQKZPAgb9LIpEIGfhrT01iSFh9y6dzxo/v3nM0qLWhBdYXeDC6dkdu3HAThQH7Nf1l6wH4jp7O2PikytxvPEYJN0WQDu7pEyiPNDLRWZydEBl48f+rkiSOHLufUdU6z2a33Sx4uq4F/Nl2/7sa/bHa/6kbgR4NwoLrqQUJ8MZoqEIplcpVep5aLKdiB6vykiJuXzp/3OXnyyMk9PoWPsCyZjljzsIkCj/qutW32Q/624Dq3NT6XTbXc8aij+e71qkkqW8BlssRKBY+A6apIjQo463P2jI/3qeMnTv9wqvoxWW6waDAr1D6jczt/7Tf2/1aF066XS2bT/xpY3j81tzg3s4KfH++szo0Lu3j0uPcZb58zp0+fu/qNL5bAUVkc9uUlPNridG2D/9Y/2xrey2Xou/7y/rHYwoq66vKaqsKM+IiAq2eOHjvh4+3jc/7CtVuh34cI+BIjaDLS+RWJZ6d1bfGB/B++p1/Adr3x7OmG8MTOf/ns0AX/gCtXLl++4ut98OTRo8dOnTp5+syVoJj4qJ8zDEql2e6w6RfENpg+L2vr/+M7Nk8GcNx98uL5s3Vl+Mevvb7z3a9/+PHnPYeOHj10+Bjge5865RsQkZqTnXKkxKFRWeDTGxLDChe+5vq1/Q7Hr4y3IY8K4UTqfPbi+fNnLkvFkT+++tq/vvHeX7//affeAwcPATl88vSlkKSc8tqa3HO1a1o1mIOtJu6KyeEuX9dLOuA7t20uDvd5Bor9yXPAf7rm7A3Z9+7OV/7lrU/+/vPuXw4cOnhg/4Ejp/3vZZW3dHQ9qvQbcKk18ARnli+rHJvtYRt/q/PD+dyOnDTg7daNZ89eAP88tfQnhR5873dvvvPFtz/v2bf/4MF9e/efuBKTX48aRqNR9aEMm8aAPMvQkRmezN7Eb6xvbGz5x3Mcg3R4Hna+QP4i4flT8cPcrKBd77/zwd/+sWvXrt17fv75lyOX44ubQc7OTg5W5VvNWuQ5iUlLJ1gdvzEeKED4DvecDo+rEG8yO54h/OfP10ktlaXpV//x8YeffvnNjz/u+mnX3kN+MaWtA9hlPH5muGhyzaBHnlUZtDKuHoTXXVcIGrw2Njb9A4+S8JhqMpuMRvsGNB7yDbM9DTVlSZf2ffvNdz/8CMzfe+JKfHn74NTyysoSdqhc6wBs5FGbVqOQWV/6B6CfPNmA9rv3dYebDx+1GW3rz9z8F09F3XmPWhpLEoMungJp733yxPmgBw2o4SkciUxYwLaPbYBzrUlvhE/X9Fq5yIFsu2vA9YjxW3zkEaoVxgmYYln3/D3Ii/+xN353eagf9agsMzkmMjLqXmRcRnXP0NgMbmV1lTiLydWsg5Dp9cizPD046OuBpQh/S+ybYxtMHYA32Vzr60+fI95/8aznQ69bI4OY4Y6GspKyioqKmqYe9PTs/DKBQqMQZwtDn6w57cj/PIAvGvRqhQI+zXe5/fMEyMbT/wW0HKz6\"\nportrait = np.frombuffer(zlib.decompress(base64.b64decode(_portrait_data)), dtype=np.uint8).reshape(96,96).astype(float)/255\n\ndef challenge_images():\n    n = 96\n    text = np.zeros((n,n))\n    # Fire enkle bokstavformer: H, I, L, I; ingen skrifttypeavhengighet.\n    for col in (8, 30, 52, 74):\n        text[24:72, col:col+5] = 1\n    text[24:72, 20:25] = 1\n    text[46:51, 8:25] = 1\n    text[67:72, 52:69] = 1\n    return {'portrett': portrait.copy(), 'tekst': text,\n            'diagonal': np.eye(n),\n            'tilfeldig': np.random.default_rng(7).random((n,n))}\n\ndef show_images(images):\n    fig, axes = plt.subplots(1, len(images), figsize=(3*len(images),3), squeeze=False)\n    for ax, (name, value) in zip(axes[0], images.items()):\n        ax.imshow(value, cmap='gray', vmin=0, vmax=1)\n        ax.set_title(name); ax.axis('off')\n    plt.tight_layout(); plt.show()\n\ndef rank_image(A, k):\n    U, s, Vt = np.linalg.svd(A, full_matrices=False)\n    return (U[:, :k]*s[:k]) @ Vt[:k, :]\n\ndef blur_problem():\n    n = 80\n    t = np.linspace(0, 1, n)\n    truth = ((t>.2)&(t<.4)).astype(float) + .6*np.exp(-((t-.72)/.06)**2)\n    H = np.exp(-.5*((t[:,None]-t[None,:])/.035)**2)\n    H /= H.sum(axis=1, keepdims=True)\n    clean = H @ truth\n    observed = clean + .005*np.random.default_rng(17).standard_normal(n)\n    return t, H, truth, clean, observed","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"show_images({'original': portrait, **{f'{k} komponenter': rank_image(portrait,k) for k in (1,5,20)}})","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-first-image","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"U_img,s_img,Vt_img = np.linalg.svd(portrait,full_matrices=False)\ni = 1  # 0 er første komponent; prøv også 2 og 3.\ncomponent = s_img[i]*np.outer(U_img[:,i],Vt_img[i,:])\nfig,ax = plt.subplots(1,3,figsize=(10,3))\nax[0].plot(U_img[:,i]); ax[0].set_title('Loddrett profil')\nax[1].plot(Vt_img[i,:]); ax[1].set_title('Vannrett profil')\nlimit = np.max(np.abs(component))\nax[2].imshow(component,cmap='RdBu_r',vmin=-limit,vmax=limit)\nax[2].set_title('Produkt × vekt'); ax[2].axis('off')\nplt.tight_layout(); plt.show()","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-building-block","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"A = np.array([[0.,2.],[.02,0.]])\nx_true = np.ones(2)\nb = A @ x_true\nfor db in (np.array([.01,0]), np.array([0,.01])):\n    x = np.linalg.solve(A,b+db)\n    print('Dataendring:',db,' Løsningsendring:',x-x_true,\n          ' Residual mot målte data:',np.linalg.norm(b+db-A@x))","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-perturbation","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"nodes = np.linspace(.95,1.05,12)\nP = np.vander(nodes,4,increasing=True)\nU,s,Vt = np.linalg.svd(P,full_matrices=False)\ndc = Vt[-1]\nprint('Koeffisientendring:',np.linalg.norm(dc))\nprint('Endring i modellverdier:',np.linalg.norm(P@dc))\nprint('Singulærverdier:',s)","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-polynomial","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"A = portrait\nU,s,Vt = np.linalg.svd(A,full_matrices=False)\nk = 20  # Prøv 5, 10 og 40.\nAk = (U[:,:k]*s[:k]) @ Vt[:k,:]\nshow_images({'original':A,f'{k} komponenter':Ak})\nprint('Tall i faktorene:',k*(sum(A.shape)+1),' Mot original:',A.size)\nprint('Samlet relativ pikselfeil:',np.linalg.norm(A-Ak,'fro')/np.linalg.norm(A,'fro'))","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-tail","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"A = portrait\nU,s,Vt = np.linalg.svd(A,full_matrices=False)\nk = 20\nAk = (U[:,:k]*s[:k]) @ Vt[:k,:]\nprint('Direkte feil²:',np.linalg.norm(A-Ak,'fro')**2)\nprint('Sum av utelatte vekter²:',np.sum(s[k:]**2))","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-tail-check","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"images = challenge_images()\nshow_images(images)\nm,n = portrait.shape\nk = int(.25*m*n//(m+n+1))\nprint('Felles rang:',k)\nshow_images({name:rank_image(A,k) for name,A in images.items()})","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-budget","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4447,75 +4447,61 @@ window.Quarto = {
 Forelesning
 </button>
 <button type="button" data-mode="reading" aria-pressed="false">
-Selvstudium
+Arbeid videre
 </button>
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">7.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">7.1 Se før du forklarer</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">7.2 Fra sirkel til ellipse</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">7.3 To basiser, én enkel operasjon</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">7.4 Små datafeil, store løsningsfeil</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">7.5 Rang som et valg</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">7.6 Hva betyr «god nok»?</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">7.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">7.1 Et bilde som en sum av mønstre</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">7.2 Fra sirkel til ellipse</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">7.3 To basiser, én enkel operasjon</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">7.4 Små datafeil, store løsningsfeil</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">7.5 Rang som et valg</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">7.6 Hva betyr «god nok»?</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="uke7-start">
 
 </div>
-<section id="hva-forsvinner-når-vi-forenkler-en-matrise" class="level3">
-<h3 class="anchored" data-anchor-id="hva-forsvinner-når-vi-forenkler-en-matrise">Hva forsvinner når vi forenkler en matrise?</h3>
-<p>Denne uken undersøker vi både <strong>hva en matrise bevarer</strong>, og <strong>hva den nesten visker ut</strong>. Det samme verktøyet forklarer bildekomprimering, rang og følsomme likningssystemer: singulærverdidekomposisjonen (SVD).</p>
-<p>Fellesløpet er det synlige innholdet. Gjør forsøkene før du leser forklaringen. <strong>Selvstudium</strong> åpner mellomregninger og forbindelser til tidligere uker. Hint og fordypning åpner du selv etter eget forsøk.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Minutter</th>
-<th>Fellesløp i én forelesning</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>0–10</td>
-<td><a href="#uke7-bilde">Se hva som overlever</a>: et bilde med få komponenter</td>
-</tr>
-<tr class="even">
-<td>10–30</td>
-<td><a href="#uke7-geometri">Finn strekkretningene</a>: sirkel blir ellipse</td>
-</tr>
-<tr class="odd">
-<td>30–45</td>
-<td><a href="#uke7-svd">Bygg SVD</a>: to ortonormale basiser</td>
-</tr>
-<tr class="even">
-<td>45–65</td>
-<td><a href="#uke7-kondisjon">Forstyrre data</a>: når en liten feil blir stor</td>
-</tr>
-<tr class="odd">
-<td>65–80</td>
-<td><a href="#uke7-rang">Velg rang</a>: komprimering og feil</td>
-</tr>
-<tr class="even">
-<td>80–90</td>
-<td><a href="#uke7-prosjekt">Ta en beslutning</a>: lagringsbudsjett og prosjekt</td>
-</tr>
-</tbody>
-</table>
-<p>Etter uken skal du kunne tolke <span class="math inline">\(Av_i=\sigma_i u_i\)</span>, bruke en ferdig beregnet SVD til rangreduksjon, og forklare sammenhengen mellom små singulærverdier, nullrom og kondisjonering. Vi <strong>beregner</strong> SVD med et bibliotek; en generell algoritme for å finne SVD er ikke pensum i denne forelesningen.</p>
+<section id="hvilken-informasjon-bevares-når-vi-forenkler" class="level3">
+<h3 class="anchored" data-anchor-id="hvilken-informasjon-bevares-når-vi-forenkler">Hvilken informasjon bevares når vi forenkler?</h3>
+<p>Et bilde kan forenkles til noen få mønstre. En måling kan gjøre enkelte forskjeller nesten usynlige. SVD hjelper oss å forklare begge deler. Geometrien til <strong>lineære transformasjoner</strong> gir inngangen: hva endres, hva bevares, og hva kan vi rekonstruere etterpå?</p>
+<p><strong>Forelesning</strong> starter med forsøk og samtale om det vi ser. <strong>Arbeid videre</strong> åpner forklaringene, håndregningen og forbindelsene som gjør observasjonene til matematikk. Du kan også åpne hver forklaring separat.</p>
+<ul>
+<li><a href="#uke7-bilde">Et bilde med få byggeklosser</a>: en forbindelse til basis og koordinater.</li>
+<li><a href="#uke7-geometri">Fra sirkel til ellipse</a>: se hvilke retninger som strekkes.</li>
+<li><a href="#uke7-svd">To basiser</a>: forstå singulærverdidekomposisjonen, forkortet SVD.</li>
+<li><a href="#uke7-kondisjon">Usikre data</a>: knytt strekk til kondisjonering og residual.</li>
+<li><a href="#uke7-rang">Velg hva som beholdes</a>: sammenlign rang, feil og bildedetaljer.</li>
+</ul>
+<p>Etter uken skal du kunne tolke <span class="math inline">\(Av_i=\sigma_i u_i\)</span>, bruke en ferdig beregnet SVD til å forenkle en matrise, og forklare hvorfor små singulærverdier gjør rekonstruksjon følsom. Selve SVD-beregningen gjør vi med et bibliotek.</p>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div id="uke7-bilde">
 
 </div>
-<section id="felles-forsøk-hvor-lite-trenger-vi" class="level3">
-<h3 class="anchored" data-anchor-id="felles-forsøk-hvor-lite-trenger-vi">Felles forsøk — hvor lite trenger vi?</h3>
-<p>Kjør cellen. Den viser samme bilde rekonstruert med henholdsvis 1, 5 og 20 komponenter. Du trenger ennå ikke forstå funksjonen som lager dem.</p>
+<section id="prøv-først-hvor-lite-trenger-vi" class="level3">
+<h3 class="anchored" data-anchor-id="prøv-først-hvor-lite-trenger-vi">Prøv først — hvor lite trenger vi?</h3>
+<p>Kjør cellen og se samme bilde med 1, 5 og 20 <strong>komponenter</strong>, altså byggemønstre som legges sammen. Bytt deretter ett av tallene og prøv igjen. Vi undersøker bildene før vi forklarer hvordan komponentene beregnes.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Før forklaringen:</strong> Beskriv én detalj som kommer tilbake mellom 1 og 5, og én mellom 5 og 20. Gjett om 20 komponenter ville vært like tilstrekkelig for en diagonal strek eller tilfeldig støy. Begrunn uten å regne.</p>
-<p>En matrise kan bygges som en sum av enkle matriser. Her beholdt vi bare noen av dem. «Få komponenter» betyr foreløpig færre byggeklosser; det betyr ikke at vi har beholdt et bestemt antall piksler.</p>
+<p><strong>Snakk sammen:</strong> Hvilken detalj kommer tilbake først? Hva er fortsatt utydelig? Ville det samme antallet komponenter vært nok til en diagonal strek eller tilfeldig støy?</p>
+</section>
+<section id="fra-vektorer-til-bildemønstre" class="level3">
+<h3 class="anchored" data-anchor-id="fra-vektorer-til-bildemønstre">Fra vektorer til bildemønstre</h3>
+<p>I tidligere uker skrev vi en vektor som en sum av <strong>basisvektorer</strong> med <strong>koordinater</strong> som vekter. Nå kan vi tenke tilsvarende om et bilde: vi legger sammen faste bildemønstre, med ett tall som vekt for hvert mønster. Vi skifter dermed fra «hva er lysstyrken i hver piksel?» til «hvor mye trenger vi av hvert mønster?».</p>
+<p>SVD finner mønstre som er tilpasset akkurat dette bildet. Hvert mønster bygges av én loddrett og én vannrett profil. Den vannrette profilen bestemmer hvor sterkt den samme loddrette profilen skal gjentas i hver kolonne. Et slikt mønster har <strong>rang 1</strong>: alle kolonnene ligger langs én og samme vektorretning. Den første komponenten er derfor et helt bildemønster, ikke én piksel eller én bildeflate som er klippet ut.</p>
+<p>Når vi beholder få komponenter, bruker vi færre av disse mønstrene. Noen lysstyrkeforskjeller bevares godt, mens andre blir borte. Mønstrene er en slags bildebyggeklosser; vi skal se både hvordan de lages og hvorfor denne forbindelsen til basis er nyttig.</p>
 <details class="reading-step">
 <summary>
-Lesesporet: hva er matrisen i dette forsøket?
+Arbeid videre: se én byggekloss og knytt den til basis
 </summary>
-<p>Bildet er en <span class="math inline">\(96\times96\)</span>-matrise. Hvert element er en lysstyrke mellom 0 og 1. En rad er en rad av piksler, ikke en observasjon med en innebygd statistisk betydning. Vi sentrerer ikke bildet her. SVD kan brukes direkte på matrisen.</p>
-<p>Forsøksbildet er hentet fra <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/svd_challenge-1.pdf">det tidligere SVD-prosjektet</a>, og er skalert til gråtoner i <span class="math inline">\(96\times96\)</span> for rask kjøring. Alle bilder vises med samme gråtoneskala. Rekonstruksjonene kan ha elementer utenfor <span class="math inline">\([0,1]\)</span>; visningen metter disse, men feilberegningene bruker de opprinnelige tallene uten klipping.</p>
+<p>Bildet er en <span class="math inline">\(96\times96\)</span>-matrise <span class="math inline">\(A\)</span>. Hvert element er en lysstyrke mellom 0 og 1. En enkelt komponent har formen <span class="math inline">\(\sigma_i u_i v_i^T\)</span>: <span class="math inline">\(u_i\)</span> er en kolonnevektor med den loddrette profilen, <span class="math inline">\(v_i^T\)</span> en radvektor med den vannrette, og <span class="math inline">\(\sigma_i\)</span> er vekten. Vi forklarer hvordan SVD velger disse i 7.2–7.3.</p>
+<p>Produktet <span class="math inline">\(u_i v_i^T\)</span> kalles et <strong>ytreprodukt</strong>. Element <span class="math inline">\((j,\ell)\)</span> er <span class="math inline">\((u_i)_j(v_i)_\ell\)</span>. Dermed er kolonne <span class="math inline">\(\ell\)</span> lik <span class="math inline">\((v_i)_\ell u_i\)</span>, og en ikke-null slik matrise har rang 1.</p>
+<p>Prøv først for hånd med <span class="math inline">\(u=(1,2)^T\)</span> og <span class="math inline">\(v=(1,0,-1)^T\)</span>. Skriv de tre kolonnene i <span class="math inline">\(uv^T\)</span>, og forklar hvorfor matrisen har rang 1.</p>
+<p><strong>Slik kan du tenke:</strong> Kolonnene er <span class="math inline">\(u\)</span>, nullvektoren og <span class="math inline">\(-u\)</span>:</p>
+<p><span class="math display">\[uv^T=\begin{bmatrix}1&amp;0&amp;-1\\2&amp;0&amp;-2\end{bmatrix}.\]</span></p>
+<p>Det finnes bare én uavhengig kolonneretning. I et faktisk bilde kan både profiler og komponenter ha negative elementer. De er bidrag til summen, og trenger ikke hver for seg være vanlige gråtonebilder.</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>En presisering av basisbildet: med ortonormale basiser <span class="math inline">\(u_1,\ldots,u_m\)</span> og <span class="math inline">\(v_1,\ldots,v_n\)</span> utgjør <strong>alle</strong> <span class="math inline">\(mn\)</span> matriser <span class="math inline">\(u_i v_j^T\)</span> en basis for rommet av <span class="math inline">\(m\times n\)</span>-matriser. SVD velger basisene slik at akkurat <span class="math inline">\(A\)</span> bare trenger de diagonale mønstrene <span class="math inline">\(u_i v_i^T\)</span>. Disse alene er vanligvis ikke en basis for alle bilder. Vi kommer tilbake til ortogonalitet mellom bildemønstre i 7.5.</p>
+<p>Portrett: <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif">NTNU, mm.gif</a>, tilpasset til <span class="math inline">\(96\times96\)</span> gråtoner. Vi sentrerer ikke bildet. Alle gråtonebilder vises med samme skala; visningen metter verdier utenfor <span class="math inline">\([0,1]\)</span>, men feilberegningene bruker tallene uten klipping.</p>
 </details>
 </section>
 </div>
@@ -4523,29 +4509,37 @@ Lesesporet: hva er matrisen i dette forsøket?
 <div id="uke7-geometri">
 
 </div>
-<section id="felles-forsøk-finn-to-spesielle-retninger" class="level3">
-<h3 class="anchored" data-anchor-id="felles-forsøk-finn-to-spesielle-retninger">Felles forsøk — finn to spesielle retninger</h3>
-<p>La</p>
-<p><span class="math display">\[A=\begin{bmatrix}0&amp;2\\1&amp;0\end{bmatrix}.\]</span></p>
-<p>Beregn <span class="math inline">\(Ax\)</span> for <span class="math inline">\(x=e_1\)</span>, <span class="math inline">\(e_2\)</span> og <span class="math inline">\((1,1)^T/\sqrt2\)</span>. Alle tre startvektorene har lengde 1. Hvilken gir størst lengde etter multiplikasjon? Minst? Gjett bildet av hele enhetssirkelen, og kjør deretter cellen.</p>
-<div id="qpyodide-insertion-location-3"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<section id="prøv-først-følg-en-retning-gjennom-transformasjonen" class="level3">
+<h3 class="anchored" data-anchor-id="prøv-først-følg-en-retning-gjennom-transformasjonen">Prøv først — følg en retning gjennom transformasjonen</h3>
+<p>I forsøket nedenfor er alle startpunktene på en <strong>enhetssirkel</strong>: de representerer vektorer med lengde 1. Velg <strong>Ellipse</strong> og flytt den rosa prikken rundt sirkelen i rute 1. Følg den rosa vektoren helt til rute 4. Retningsskyverne kan også brukes med tastaturet.</p>
+<ul>
+<li>I hvilke startretninger blir resultatvektoren lengst og kortest?</li>
+<li>Velg <strong>Smal ellipse</strong>. Hva blir vanskeligere å skille i resultatet?</li>
+<li>Velg <strong>Rangtap</strong>. Kan ulike startvektorer nå gi samme resultat?</li>
+</ul>
+<p>Se først på rute 1 og 4. De to mellomrutene undersøker vi i neste fane. En <strong>dreiing</strong> snur alle retninger like mye; en <strong>speiling</strong> vender orienteringen som i et speil. Begge bevarer lengder og vinkler.</p>
+<iframe src="../assets/svd-visualizer.html" title="Interaktivt SVD-forsøk: følg retninger fra sirkel til ellipse" loading="lazy" style="width:100%;height:920px;border:1px solid #d4e0e7;border-radius:6px;">
+</iframe>
+<p><a href="../assets/svd-visualizer.html" target="_blank" rel="noopener">Åpne forsøket i eget vindu</a>.</p>
 </section>
-<section id="forklar-det-du-ser" class="level3">
-<h3 class="anchored" data-anchor-id="forklar-det-du-ser">Forklar det du ser</h3>
-<p>For den opprinnelige matrisen er <span class="math inline">\(Ae_2=2e_1\)</span> og <span class="math inline">\(Ae_1=e_2\)</span>. To vinkelrette <strong>inputretninger</strong> gir to vinkelrette <strong>outputretninger</strong>, med strekkfaktorene 2 og 1. Retningene før og etter er forskjellige.</p>
-<p>Skriv <span class="math inline">\(v_1=e_2\)</span>, <span class="math inline">\(v_2=e_1\)</span>, <span class="math inline">\(u_1=e_1\)</span>, <span class="math inline">\(u_2=e_2\)</span>. Da er</p>
-<p><span class="math display">\[Av_1=2u_1,\qquad Av_2=1u_2.\]</span></p>
-<p>Dette er mønsteret vi vil finne også for andre matriser:</p>
-<p><span class="math display">\[\boxed{Av_i=\sigma_i u_i},\qquad \sigma_i\geq0.\]</span></p>
-<p>Tallene <span class="math inline">\(\sigma_i\)</span> kalles <strong>singulærverdier</strong>. Vi ordner dem fra størst til minst.</p>
+<section id="sett-ord-på-det-du-ser" class="level3">
+<h3 class="anchored" data-anchor-id="sett-ord-på-det-du-ser">Sett ord på det du ser</h3>
+<p>Den lengste og korteste halvaksen i ellipsen viser største og minste <strong>strekkfaktor</strong>. Disse tallene kalles <strong>singulærverdier</strong>. Vi skriver <span class="math inline">\(\sigma_1\)</span> for den største og <span class="math inline">\(\sigma_2\)</span> for den minste. De er aldri negative: en vending av retningen hører til basisretningene, ikke til strekkfaktoren.</p>
+<p>Blå og fiolett viser to vinkelrette startretninger. De kalles <strong>høyre singulærvektorer</strong>, <span class="math inline">\(v_1\)</span> og <span class="math inline">\(v_2\)</span>. De tilsvarende enhetsretningene i resultatrommet kalles <strong>venstre singulærvektorer</strong>, <span class="math inline">\(u_1\)</span> og <span class="math inline">\(u_2\)</span>. Ordene «høyre» og «venstre» viser til plasseringen i faktoriseringen vi snart skal se. Koblingen er</p>
+<p><span class="math display">\[\boxed{Av_i=\sigma_i u_i}.\]</span></p>
+<p>Start langs <span class="math inline">\(v_i\)</span>, så ligger resultatet langs <span class="math inline">\(u_i\)</span> og har lengde <span class="math inline">\(\sigma_i\)</span>. Ved en positiv, men liten strekkfaktor blir forskjeller små. Ved strekkfaktor null forsvinner all informasjon om den startkomponenten: dette er <strong>nullrommet</strong> fra uke 3. Lengde og vinkel trenger ikke bevares av hele transformasjonen, selv om dreie- og speiltrinnene bevarer begge deler.</p>
 <details class="reading-step">
 <summary>
-Hvorfor er dette største og minste strekk?
+Arbeid videre: finn største og minste strekk for hånd
 </summary>
-<p>For <span class="math inline">\(x=(a,b)^T\)</span> med <span class="math inline">\(a^2+b^2=1\)</span> får vi</p>
+<p>Eksempelet <strong>Ellipse</strong> bruker</p>
+<p><span class="math display">\[A=\begin{bmatrix}0&amp;2\\1&amp;0\end{bmatrix}.\]</span></p>
+<p>Beregn først <span class="math inline">\(Ax\)</span> for <span class="math inline">\(x=e_1\)</span>, <span class="math inline">\(e_2\)</span> og <span class="math inline">\((1,1)^T/\sqrt2\)</span>. Her er <span class="math inline">\(e_1=(1,0)^T\)</span> og <span class="math inline">\(e_2=(0,1)^T\)</span> standardbasisvektorene. Alle tre har lengde 1. Hvilket resultat blir lengst? Forklar så hvorfor ingen annen enhetsvektor kan gi større lengde enn 2 eller mindre enn 1.</p>
+<p><strong>Slik kan du tenke:</strong> <span class="math inline">\(Ae_1=e_2\)</span>, <span class="math inline">\(Ae_2=2e_1\)</span> og <span class="math inline">\(A(1,1)^T/\sqrt2=(2,1)^T/\sqrt2\)</span>, med lengder <span class="math inline">\(1\)</span>, <span class="math inline">\(2\)</span> og <span class="math inline">\(\sqrt{5/2}\)</span>. For en generell enhetsvektor <span class="math inline">\(x=(a,b)^T\)</span> har vi <span class="math inline">\(a^2+b^2=1\)</span>, så</p>
 <p><span class="math display">\[Ax=(2b,a)^T,\qquad \|Ax\|_2^2=4b^2+a^2=1+3b^2.\]</span></p>
-<p>Lengden ligger derfor mellom 1 og 2. Den blir 2 for <span class="math inline">\(x=\pm e_2\)</span> og 1 for <span class="math inline">\(x=\pm e_1\)</span>. Setter vi nedre venstre element til <span class="math inline">\(s\in[0,1]\)</span>, får vi <span class="math inline">\(\|Ax\|_2^2=4b^2+s^2a^2\)</span>. Den minste strekkfaktoren blir <span class="math inline">\(s\)</span>. Ved <span class="math inline">\(s=0\)</span> sendes hele retningen <span class="math inline">\(e_1\)</span> til null: ellipsen blir et linjestykke. Dette er nullrom og rang fra uke 3, nå synlig som geometri.</p>
+<p>Symbolet <span class="math inline">\(\|x\|_2\)</span> er vektorens vanlige euklidske lengde, <span class="math inline">\(\sqrt{x_1^2+\cdots+x_n^2}\)</span>. Resultatlengden ligger mellom 1 og 2. Setter vi nedre venstre matriseelement til <span class="math inline">\(s\in[0,1]\)</span>, blir <span class="math inline">\(\|Ax\|_2^2=4b^2+s^2a^2\)</span>. Minste strekkfaktor er da <span class="math inline">\(s\)</span>. Ved <span class="math inline">\(s=0\)</span> er alle vektorer langs <span class="math inline">\(e_1\)</span> i nullrommet, og ellipsen blir et linjestykke.</p>
+<p>Når strekkfaktorene er like, finnes flere mulige ortonormale singulærvektorbasiser. Retninger kan derfor skifte brått i en visualisering selv om transformasjonen endres lite. Ved <span class="math inline">\(\sigma_i=0\)</span> bestemmer <span class="math inline">\(Av_i=0\)</span> ingen bestemt <span class="math inline">\(u_i\)</span>; vi fullfører resultatbasis med en vinkelrett enhetsvektor.</p>
+<p>Forsøket er tilpasset fra <a href="https://andreyac.folk.ntnu.no/svd_complete.html">den opprinnelige SVD-demoen</a>. Originalen viser også de numeriske faktorene og produkter med basisvektorene.</p>
 </details>
 </section>
 </div>
@@ -4553,45 +4547,89 @@ Hvorfor er dette største og minste strekk?
 <div id="uke7-svd">
 
 </div>
-<section id="felles-forsøk-sett-sammen-delene" class="level3">
-<h3 class="anchored" data-anchor-id="felles-forsøk-sett-sammen-delene">Felles forsøk — sett sammen delene</h3>
-<p>Bruk retningene fra forrige fane. Skriv <span class="math inline">\(x=(3,4)^T\)</span> som en kombinasjon av <span class="math inline">\(v_1=e_2\)</span> og <span class="math inline">\(v_2=e_1\)</span>. Bruk så <span class="math inline">\(Av_i=\sigma_i u_i\)</span> til å finne <span class="math inline">\(Ax\)</span>. Kontroller med vanlig matrisemultiplikasjon før du leser videre.</p>
+<section id="prøv-først-hvor-endres-lengden" class="level3">
+<h3 class="anchored" data-anchor-id="prøv-først-hvor-endres-lengden">Prøv først — hvor endres lengden?</h3>
+<p>Gå tilbake til forsøket, velg <strong>Skråstilling</strong>, og følg én farge gjennom <strong>alle fire rutene</strong>. Skråstillingen forskyver punkter horisontalt med en avstand som avhenger av høyden. Mellom hvilke ruter endres vektorens lengde? Hva skjer med den blå og den fiolette retningen når de uttrykkes i nye koordinater? Prøv deretter et negativt matriseelement.</p>
+<p><strong>Snakk sammen:</strong> Hvordan kan en transformasjon som både endrer vinkler og lengder settes sammen av noen trinn som bevarer begge deler, og ett som strekker langs aksene?</p>
 </section>
-<section id="fra-koordinater-til-faktorisering" class="level3">
-<h3 class="anchored" data-anchor-id="fra-koordinater-til-faktorisering">Fra koordinater til faktorisering</h3>
-<p>Vi har <span class="math inline">\(x=4v_1+3v_2\)</span>, altså <span class="math inline">\(Ax=8u_1+3u_2=(8,3)^T\)</span>. Samle basisvektorene som kolonner:</p>
+<section id="svd-er-et-valg-av-koordinater-på-hver-side" class="level3">
+<h3 class="anchored" data-anchor-id="svd-er-et-valg-av-koordinater-på-hver-side">SVD er et valg av koordinater på hver side</h3>
+<p>Fra uke 4 kjenner vi en <strong>ortonormal basis</strong>: vektorene er vinkelrette og har lengde 1. Koordinaten langs en slik basisvektor <span class="math inline">\(v_i\)</span> er indreproduktet <span class="math inline">\(v_i^Tx\)</span>. SVD bruker én ortonormal basis for startvektorene og én for resultatvektorene.</p>
+<p><strong>Singulærverdidekomposisjonen</strong>, eller <strong>SVD</strong>, skriver en reell matrise som</p>
+<p><span class="math display">\[\boxed{A=U\Sigma V^T}.\]</span></p>
+<p>Her er <span class="math inline">\(V\)</span> matrisen med startbasisvektorene <span class="math inline">\(v_i\)</span> som kolonner, <span class="math inline">\(U\)</span> har resultatbasisvektorene <span class="math inline">\(u_i\)</span> som kolonner, og <span class="math inline">\(\Sigma\)</span> har singulærverdiene på diagonalen og null ellers. Bokstaven <span class="math inline">\(\Sigma\)</span> leses «sigma». Transponering, <span class="math inline">\(V^T\)</span>, bytter rader og kolonner.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Del</th>
+<th>Hva betyr den?</th>
+<th>Hva bevares eller endres?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(V^Tx\)</span></td>
+<td>Finn koordinatene til startvektoren i basisen <span class="math inline">\(v_i\)</span>.</td>
+<td>Lengder og vinkler bevares.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\Sigma(V^Tx)\)</span></td>
+<td>Gang hver koordinat med dens strekkfaktor.</td>
+<td>Lengder endres; en nullfaktor fjerner en komponent.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(U(\Sigma V^Tx)\)</span></td>
+<td>Bygg resultatet med basisvektorene <span class="math inline">\(u_i\)</span>.</td>
+<td>Lengder og vinkler bevares i dette trinnet.</td>
+</tr>
+</tbody>
+</table>
+<p>Faktoriseringen endrer altså ikke transformasjonen <span class="math inline">\(x\mapsto Ax\)</span>. Den beskriver den med koordinater som gjør strekk og informasjonstap tydelig. Vi kan bruke SVD også når en matrise er rektangulær og start- og resultatrommet har forskjellig dimensjon.</p>
+<details class="reading-step">
+<summary>
+Arbeid videre: utfør de tre trinnene for hånd
+</summary>
+<p>Bruk <span class="math inline">\(A=\begin{bmatrix}0&amp;2\\1&amp;0\end{bmatrix}\)</span> og <span class="math inline">\(x=(3,4)^T\)</span>. Velg <span class="math inline">\(v_1=e_2\)</span>, <span class="math inline">\(v_2=e_1\)</span>, <span class="math inline">\(u_1=e_1\)</span> og <span class="math inline">\(u_2=e_2\)</span>. Skriv først <span class="math inline">\(x\)</span> i <span class="math inline">\(v\)</span>-basisen, skaler koordinatene med 2 og 1, og bygg resultatet i <span class="math inline">\(u\)</span>-basisen. Kontroller med direkte matrisemultiplikasjon.</p>
+<p><strong>Slik kan du tenke:</strong> <span class="math inline">\(x=4v_1+3v_2\)</span>, og derfor <span class="math inline">\(Ax=8u_1+3u_2=(8,3)^T\)</span>. Samlet blir faktorene</p>
 <p><span class="math display">\[U=I,\qquad \Sigma=\begin{bmatrix}2&amp;0\\0&amp;1\end{bmatrix},\qquad
 V=\begin{bmatrix}0&amp;1\\1&amp;0\end{bmatrix}.\]</span></p>
-<p>Da kan samme regning skrives</p>
+<p>De tre trinnene er</p>
 <p><span class="math display">\[x\ \xrightarrow{V^T}\ \begin{bmatrix}4\\3\end{bmatrix}
 \ \xrightarrow{\Sigma}\ \begin{bmatrix}8\\3\end{bmatrix}
 \ \xrightarrow{U}\ Ax.\]</span></p>
-<p><strong>Mål koordinatene, skaler dem, bygg opp resultatet.</strong> Fra uke 4 kjenner vi koordinatene <span class="math inline">\(v_i^Tx\)</span> i en ortonormal basis. Her bruker vi én basis på hver side.</p>
-<p>For enhver reell <span class="math inline">\(m\times n\)</span>-matrise finnes en full SVD</p>
-<p><span class="math display">\[\boxed{A=U\Sigma V^T},\qquad U^TU=I_m,\quad V^TV=I_n.\]</span></p>
-<p>Her er <span class="math inline">\(U\)</span> av størrelse <span class="math inline">\(m\times m\)</span>, <span class="math inline">\(V\)</span> av størrelse <span class="math inline">\(n\times n\)</span>, og <span class="math inline">\(\Sigma\)</span> er <span class="math inline">\(m\times n\)</span> med singulærverdiene på diagonalen.</p>
-<details class="reading-step">
-<summary>
-Egenverdier fra uke 5: hvor kommer retningene fra?
-</summary>
-<p>Sett inn faktoriseringen og bruk ortogonaliteten:</p>
-<p><span class="math display">\[A^TA=(U\Sigma V^T)^T(U\Sigma V^T)
-=V\Sigma^TU^TU\Sigma V^T=V\Sigma^T\Sigma V^T.\]</span></p>
-<p>Dermed er <span class="math inline">\(A^TAv_i=\sigma_i^2v_i\)</span> for de tilhørende diagonalverdiene. Inputretningene er ortonormale egenvektorer til <span class="math inline">\(A^TA\)</span>; singulærverdiene kommer fra kvadratrøttene av de ikke-negative egenverdiene. For <span class="math inline">\(\sigma_i&gt;0\)</span> kan vi så sette <span class="math inline">\(u_i=Av_i/\sigma_i\)</span>.</p>
-<p>Dette forklarer forbindelsen, men er ikke oppskriften vi bruker numerisk: vi kaller <code>np.linalg.svd(A)</code> direkte. Å danne <span class="math inline">\(A^TA\)</span> kan miste informasjon om de minste retningene og kvadrerer kondisjonstallet når <span class="math inline">\(A\)</span> har full kolonnerang.</p>
-<p>Egenvektorer til <span class="math inline">\(A\)</span> oppfyller <span class="math inline">\(Av=\lambda v\)</span> i samme rom og retning. SVD tillater to forskjellige retninger og også rektangulære matriser. For en SPD-matrise kan vi velge <span class="math inline">\(U=V\)</span> og <span class="math inline">\(\sigma_i=\lambda_i\)</span>.</p>
+<p>For en full SVD av en <span class="math inline">\(m\times n\)</span>-matrise er <span class="math inline">\(U\)</span> av størrelse <span class="math inline">\(m\times m\)</span>, <span class="math inline">\(V\)</span> er <span class="math inline">\(n\times n\)</span>, og <span class="math inline">\(\Sigma\)</span> er <span class="math inline">\(m\times n\)</span>. Vi har <span class="math inline">\(U^TU=I_m\)</span> og <span class="math inline">\(V^TV=I_n\)</span>, der <span class="math inline">\(I_m\)</span> og <span class="math inline">\(I_n\)</span> er identitetsmatriser. Dette er grunnen til at koordinatskiftene bevarer indreprodukt og lengde. De <span class="math inline">\(p=\min(m,n)\)</span> diagonalverdiene ordnes <span class="math inline">\(\sigma_1\geq\cdots\geq\sigma_p\geq0\)</span>.</p>
 </details>
 <details class="reading-step">
 <summary>
-Rang, kolonnerom og nullrom fra uke 3
+Arbeid videre: forbindelsen til egenverdier fra uke 5
 </summary>
-<p>Hvis <span class="math inline">\(r\)</span> singulærverdier er positive, er</p>
+<p>En egenvektor til <span class="math inline">\(A\)</span> oppfyller <span class="math inline">\(Av=\lambda v\)</span>: resultatet ligger langs samme vektorretning. SVD tillater forskjellige start- og resultatretninger, også i rom med ulik dimensjon. Derfor er singulærverdier og egenverdier ikke generelt det samme.</p>
+<p>Sett inn faktoriseringen og bruk <span class="math inline">\(U^TU=I\)</span>:</p>
+<p><span class="math display">\[A^TA=(U\Sigma V^T)^T(U\Sigma V^T)
+=V\Sigma^TU^TU\Sigma V^T=V\Sigma^T\Sigma V^T.\]</span></p>
+<p>Matrisen <span class="math inline">\(A^TA\)</span> er symmetrisk og <strong>positiv semidefinit</strong>: <span class="math inline">\(x^TA^TAx=\|Ax\|_2^2\geq0\)</span>. Den har derfor en ortonormal egenvektorbasis og ikke-negative egenverdier. Vektorene <span class="math inline">\(v_i\)</span> kan velges som disse egenvektorene, og tilhørende egenverdier er <span class="math inline">\(\sigma_i^2\)</span>, med eventuelle ekstra nullverdier når <span class="math inline">\(n&gt;m\)</span>. For <span class="math inline">\(\sigma_i&gt;0\)</span> setter vi <span class="math inline">\(u_i=Av_i/\sigma_i\)</span>. Da er</p>
+<p><span class="math display">\[u_i^Tu_j=\frac{v_i^TA^TAv_j}{\sigma_i\sigma_j}
+=\frac{\sigma_j^2 v_i^Tv_j}{\sigma_i\sigma_j},\]</span></p>
+<p>som er 1 når <span class="math inline">\(i=j\)</span> og 0 ellers. Dette forklarer hvorfor også de valgte resultatretningene er ortonormale. Vi fullfører med ortonormale vektorer om nødvendig.</p>
+<p>En <strong>symmetrisk positiv definit matrise</strong>, forkortet SPD, er symmetrisk og oppfyller <span class="math inline">\(x^TAx&gt;0\)</span> for alle <span class="math inline">\(x\ne0\)</span>. For en slik matrise kan vi velge <span class="math inline">\(U=V\)</span> og <span class="math inline">\(\sigma_i=\lambda_i\)</span>. Dette knytter SVD til geometrien i uke 6.</p>
+<p>Vi bruker <code>np.linalg.svd(A)</code> i beregninger. Vi danner ikke <span class="math inline">\(A^TA\)</span> for å finne en generell SVD: avrunding kan skjule de minste singulærverdiene. I 7.4 ser vi også hvorfor dette kvadrerer forholdet mellom største og minste strekk når <span class="math inline">\(A\)</span> har full kolonnerang.</p>
+</details>
+<details class="reading-step">
+<summary>
+Arbeid videre: rang, kolonnerom, nullrom og NumPy
+</summary>
+<p>La <span class="math inline">\(r\)</span> være antallet positive singulærverdier. <strong>Rangen</strong> er antallet uavhengige resultatretninger, <strong>kolonnerommet</strong> er alle mulige resultater <span class="math inline">\(Ax\)</span>, og <strong>nullrommet</strong> er startvektorene som gir <span class="math inline">\(Ax=0\)</span>. SVD gir</p>
 <p><span class="math display">\[\operatorname{rank}(A)=r,\qquad
 \operatorname{Col}(A)=\operatorname{span}(u_1,\ldots,u_r),\qquad
 \operatorname{Null}(A)=\operatorname{span}(v_{r+1},\ldots,v_n).\]</span></p>
-<p>For full SVD er de siste <span class="math inline">\(m-r\)</span> kolonnene i <span class="math inline">\(U\)</span> en basis for nullrommet til <span class="math inline">\(A^T\)</span>. Rangsatsen blir <span class="math inline">\(r+(n-r)=n\)</span>.</p>
-<p>Python returnerer <code>U, s, Vt</code>: den siste matrisen er <strong>allerede transponert</strong>. Med <code>full_matrices=False</code> får vi <span class="math inline">\(p=\min(m,n)\)</span> kolonner i <span class="math inline">\(U\)</span> og <span class="math inline">\(p\)</span> rader i <code>Vt</code>. Det holder for rekonstruksjon, men for en bred matrise mangler da noen av høyre nullromsretningene. Bruk full SVD når hele nullromsbasis skal finnes.</p>
-<p>I flyttallsregning teller vi ikke bare <code>s &gt; 0</code>. En vanlig relativ terskel er <span class="math inline">\(\tau=\max(m,n)\epsilon\sigma_1\)</span>; tell verdier over <span class="math inline">\(\tau\)</span>. For målte data kan usikkerheten begrunne en langt større terskel. Numerisk rang avhenger av skala og toleranse, mens eksakt rang er et matematisk heltall.</p>
+<p>Her betyr <span class="math inline">\(\operatorname{span}\)</span> alle lineærkombinasjoner av de oppgitte vektorene. I full SVD er de siste <span class="math inline">\(m-r\)</span> kolonnene i <span class="math inline">\(U\)</span> en basis for nullrommet til <span class="math inline">\(A^T\)</span>. Rangsatsen fra uke 3 blir <span class="math inline">\(r+(n-r)=n\)</span>.</p>
+<p>Python returnerer <code>U, s, Vt</code>: <code>s</code> er listen med singulærverdier, og <code>Vt</code> er <strong>allerede transponert</strong>. Med <code>full_matrices=False</code> får vi <span class="math inline">\(p=\min(m,n)\)</span> kolonner i <code>U</code> og <span class="math inline">\(p\)</span> rader i <code>Vt</code>. Det holder for rekonstruksjon, men en bred matrise mangler da noen høyre nullromsretninger. Bruk full SVD når du vil finne en basis for hele nullrommet.</p>
+<p>I flyttallsregning bruker vi en terskel i stedet for bare <code>s &gt; 0</code>. En vanlig terskel er <span class="math inline">\(\tau=\max(m,n)\epsilon\sigma_1\)</span>, der <span class="math inline">\(\epsilon\)</span> er maskinpresisjonen fra uke 1. Antallet verdier over terskelen kalles <strong>numerisk rang</strong>. Usikre måledata kan begrunne en større terskel. Numerisk rang avhenger av toleransen; eksakt rang teller nøyaktig positive singulærverdier.</p>
 </details>
 </section>
 </div>
@@ -4599,52 +4637,58 @@ Rang, kolonnerom og nullrom fra uke 3
 <div id="uke7-kondisjon">
 
 </div>
-<section id="felles-forsøk-samme-forstyrrelse-to-utfall" class="level3">
-<h3 class="anchored" data-anchor-id="felles-forsøk-samme-forstyrrelse-to-utfall">Felles forsøk — samme forstyrrelse, to utfall</h3>
-<p>Nå bruker vi <span class="math inline">\(A=\begin{bmatrix}0&amp;2\\0.02&amp;0\end{bmatrix}\)</span> og <span class="math inline">\(x_*=(1,1)^T\)</span>, slik at <span class="math inline">\(b=(2,0.02)^T\)</span>. <strong>Gjett først:</strong> Hva skjer med løsningen hvis vi øker første komponent av <span class="math inline">\(b\)</span> med <span class="math inline">\(0.01\)</span>? Hva hvis vi i stedet øker den andre med samme beløp?</p>
+<section id="prøv-først-samme-dataendring-to-utfall" class="level3">
+<h3 class="anchored" data-anchor-id="prøv-først-samme-dataendring-to-utfall">Prøv først — samme dataendring, to utfall</h3>
+<p>Kjør forsøket. Vi starter med en kjent løsning, lager data, og endrer én datakomponent om gangen med samme lille beløp. <strong>Gjett først:</strong> Blir løsningsendringen like stor i begge tilfeller?</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Snakk sammen:</strong> Begge løsningene passer sine målte data svært godt. Hvorfor kan den ene likevel være langt fra løsningen vi startet med? Knytt forskjellen til den smale ellipsen i 7.2.</p>
 </section>
-<section id="forklar-med-strekkretningene" class="level3">
-<h3 class="anchored" data-anchor-id="forklar-med-strekkretningene">Forklar med strekkretningene</h3>
-<p>Likningene er <span class="math inline">\(2x_2=b_1\)</span> og <span class="math inline">\(0.02x_1=b_2\)</span>. Dermed blir endringene henholdsvis <span class="math inline">\((0,0.005)^T\)</span> og <span class="math inline">\((0.5,0)^T\)</span>. Inversjon <strong>deler på strekkfaktorene</strong>:</p>
+<section id="svak-informasjon-er-vanskelig-å-rekonstruere" class="level3">
+<h3 class="anchored" data-anchor-id="svak-informasjon-er-vanskelig-å-rekonstruere">Svak informasjon er vanskelig å rekonstruere</h3>
+<p>I én retning er strekkfaktoren 2; i den andre er den bare 0.02. Når vi rekonstruerer startvektoren, deler vi på strekkfaktorene. En liten strekkfaktor betyr dermed stor forsterkning av datafeil langs den tilhørende resultatretningen. Vi kaller et problem <strong>dårlig kondisjonert</strong> når små relative dataendringer kan gi store relative løsningsendringer.</p>
+<p><strong>2-normen</strong> er vektorens vanlige euklidske lengde, altså kvadratroten av summen av de kvadrerte koordinatene. For en invertibel, kvadratisk matrise måler <strong>kondisjonstallet i 2-norm</strong> forholdet mellom største og minste strekk:</p>
+<p><span class="math display">\[\boxed{\kappa_2(A)=\frac{\sigma_1}{\sigma_n}}.\]</span></p>
+<p>Her er <span class="math inline">\(n\)</span> antall kolonner, og <span class="math inline">\(\sigma_n&gt;0\)</span> er den minste singulærverdien. I forsøket er forholdet 100. En relativ feil betyr feilens størrelse delt på lengden til referansevektoren. Kondisjonstallet gir en øvre grense for hvor mye en relativ datafeil kan forsterkes når bare høyresiden endres. Retningen betyr noe; ikke alle feil forsterkes like mye.</p>
+<p><strong>Residualen</strong> fra uke 6 er avviket mellom de oppgitte dataene og dataene beregnet fra løsningen, <span class="math inline">\(b-A\widehat x\)</span>. En liten residual viser god tilpasning til disse dataene. Den kan ikke alene vise at den rekonstruerte løsningen er nær sannheten når dataene er usikre.</p>
+<details class="reading-step">
+<summary>
+Arbeid videre: norm, kondisjonstall og håndregning
+</summary>
+<p>For en vektor er <strong>2-normen</strong> den vanlige lengden, <span class="math inline">\(\|x\|_2=\sqrt{\sum_i x_i^2}\)</span>. Matrisens <strong>spektralnorm</strong>, også kalt matrisens 2-norm, er den største lengden av <span class="math inline">\(Ax\)</span> når <span class="math inline">\(x\)</span> har lengde 1:</p>
+<p><span class="math display">\[\|A\|_2=\max_{\|x\|_2=1}\|Ax\|_2=\sigma_1.\]</span></p>
+<p>Den måler altså største strekk. For invertibel <span class="math inline">\(A\)</span> er <span class="math inline">\(\|A^{-1}\|_2=1/\sigma_n\)</span>, slik at den vanlige normdefinisjonen av kondisjonstallet blir</p>
+<p><span class="math display">\[\kappa_2(A)=\|A\|_2\|A^{-1}\|_2=\sigma_1/\sigma_n.\]</span></p>
+<p>Regn gjennom de to dataendringene fra forsøket for hånd med <span class="math inline">\(x_*=(1,1)^T\)</span> og <span class="math inline">\(b=(2,0.02)^T\)</span>.</p>
+<p><strong>Slik kan du tenke:</strong> Likningene er <span class="math inline">\(2x_2=b_1\)</span> og <span class="math inline">\(0.02x_1=b_2\)</span>. En økning på <span class="math inline">\(0.01\)</span> i <span class="math inline">\(b_1\)</span> gir løsningsendringen <span class="math inline">\((0,0.005)^T\)</span>; samme økning i <span class="math inline">\(b_2\)</span> gir <span class="math inline">\((0.5,0)^T\)</span>. Generelt, hvis dataendringen <span class="math inline">\(\delta b\)</span> ligger langs <span class="math inline">\(u_i\)</span> og har størrelse <span class="math inline">\(\eta\)</span>, blir</p>
 <p><span class="math display">\[\delta b=\eta u_i\quad\Longrightarrow\quad
 \delta x=\frac{\eta}{\sigma_i}v_i.\]</span></p>
-<p>For en invertibel matrise definerer vi</p>
-<p><span class="math display">\[\boxed{\kappa_2(A)=\|A\|_2\|A^{-1}\|_2=
-\frac{\sigma_1}{\sigma_n}}.\]</span></p>
-<p>Her er <span class="math inline">\(\kappa_2(A)=100\)</span>. En relativ datafeil kan i verste fall forsterkes med denne faktoren. Retningen til feilen betyr noe; ikke alle feil forsterkes like mye.</p>
-<p><strong>Husk uke 6:</strong> En liten residual bekrefter at vi løser de oppgitte likningene godt. Den garanterer ikke at løsningen er nær sannheten når data er usikre.</p>
-<details class="reading-step">
-<summary>
-Residual, feil og en presis relativ grense
-</summary>
-<p>For invertibel <span class="math inline">\(A\)</span>, <span class="math inline">\(Ax=b\ne0\)</span> og <span class="math inline">\(A(x+\delta x)=b+\delta b\)</span> er <span class="math inline">\(\delta x=A^{-1}\delta b\)</span>. Bruk <span class="math inline">\(\|b\|\leq\|A\|\|x\|\)</span> til å få</p>
+<p>For <span class="math inline">\(Ax=b\ne0\)</span> og <span class="math inline">\(A(x+\delta x)=b+\delta b\)</span> er <span class="math inline">\(\delta x=A^{-1}\delta b\)</span>. Bruk definisjonen av matrisenormen til å få <span class="math inline">\(\|\delta x\|_2\leq\|A^{-1}\|_2\|\delta b\|_2\)</span> og <span class="math inline">\(\|b\|_2\leq\|A\|_2\|x\|_2\)</span>. Sammen gir disse</p>
 <p><span class="math display">\[\frac{\|\delta x\|_2}{\|x\|_2}
 \leq\kappa_2(A)\frac{\|\delta b\|_2}{\|b\|_2}.\]</span></p>
-<p>For en beregnet <span class="math inline">\(\widehat x\)</span>, sett <span class="math inline">\(r=b-A\widehat x\)</span> og <span class="math inline">\(e=x-\widehat x\)</span>. Da er <span class="math inline">\(Ae=r\)</span> og <span class="math inline">\(\|e\|\leq\|r\|/\sigma_n\)</span>. Dette gjelder mot løsningen for <strong>samme</strong> <span class="math inline">\(b\)</span>. I forsøket er residualen målt mot forstyrrede data, mens feilen er målt mot den kjente, uforstyrrede løsningen.</p>
-<p>Hvis <span class="math inline">\(\sigma_n=0\)</span>, kan input i nullrommet ikke bestemmes fra output. For en matrise med full kolonnerang brukes også forholdet <span class="math inline">\(\sigma_1/\sigma_n\)</span> som kondisjonstall, men følsomheten til et generelt minste-kvadratersproblem avhenger i tillegg av residualen og hvilke data som forstyrres. Den enkle relative grensen over er her utledet for et invertibelt system med bare forstyrrelser i <span class="math inline">\(b\)</span>.</p>
+<p>For en beregnet <span class="math inline">\(\widehat x\)</span>, sett <span class="math inline">\(r=b-A\widehat x\)</span> og <span class="math inline">\(e=x-\widehat x\)</span>. Da er <span class="math inline">\(Ae=r\)</span> og <span class="math inline">\(\|e\|_2\leq\|r\|_2/\sigma_n\)</span>. Dette gjelder mot løsningen for <strong>samme</strong> <span class="math inline">\(b\)</span>. I forsøket måler vi residualen mot forstyrrede data, men feilen mot den kjente, uforstyrrede løsningen.</p>
+<p>Hvis <span class="math inline">\(\sigma_n=0\)</span>, finnes ingen invers; informasjon i nullrommet kan ikke rekonstrueres entydig. For en rektangulær matrise med full kolonnerang brukes også forholdet <span class="math inline">\(\sigma_1/\sigma_n\)</span>, men følsomheten til et generelt minste-kvadratersproblem avhenger dessuten av residualen og hvilke data som forstyrres. Grensen ovenfor gjelder et invertibelt system med bare forstyrrelser i <span class="math inline">\(b\)</span>.</p>
 </details>
 <details class="reading-step">
 <summary>
-Uke 4: nesten like kolonner og ustabile polynomkoeffisienter
+Arbeid videre: nesten like kolonner og polynomtilpasning fra uke 4
 </summary>
-<p>For en polynommodell er <span class="math inline">\(A_{ij}=t_i^j\)</span> og <span class="math inline">\(Ac\)</span> modellverdiene i målepunktene. Hvis <span class="math inline">\(t_i\)</span> ligger tett rundt 1, kan kolonnene ligne hverandre sterkt. En liten singulærverdi gir da en koeffisientretning <span class="math inline">\(v_i\)</span> med</p>
+<p>I en polynommodell er <span class="math inline">\(A_{ij}=t_i^j\)</span>, der <span class="math inline">\(t_i\)</span> er målepunktene og <span class="math inline">\(c_j\)</span> er koeffisientene. Produktet <span class="math inline">\(Ac\)</span> gir modellverdiene. Når punktene ligger tett rundt 1, ligner kolonnene hverandre. Med en liten singulærverdi kan en stor endring i koeffisientene gi nesten samme modellverdier:</p>
 <p><span class="math display">\[A(c+\alpha v_i)-Ac=\alpha\sigma_i u_i.\]</span></p>
-<p>Store koeffisientendringer kan gi nesten uendrede verdier i målepunktene. Det forklarer hvorfor god tilpasning ikke alene betyr godt bestemte koeffisienter.</p>
-<p>Prøv cellen og sammenlign de to normene. Gjenta med punkter over <span class="math inline">\([-1,1]\)</span>.</p>
+<p>Her angir <span class="math inline">\(\alpha\)</span> størrelsen på koeffisientendringen langs <span class="math inline">\(v_i\)</span>. Kjør cellen og sammenlign de to lengdene. Gjenta med punkter over <span class="math inline">\([-1,1]\)</span>.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>QR fra uke 4 unngår å danne normallikningene, men kan ikke fjerne følsomheten som allerede ligger i problemet. For full kolonnerang er <span class="math inline">\(\kappa_2(A^TA)=\kappa_2(A)^2\)</span>. Dette følger av egenverdiene <span class="math inline">\(\sigma_i^2\)</span>. Bedre skalering/basis kan hjelpe; mer presis aritmetikk alene reparerer ikke usikre måledata.</p>
+<p>God tilpasning betyr dermed ikke alene at koeffisientene er godt bestemt. QR-faktorisering fra uke 4 unngår å danne normallikningene <span class="math inline">\(A^TAc=A^Tb\)</span>, men kan ikke fjerne følsomheten i selve problemet. Ved full kolonnerang er <span class="math inline">\(\kappa_2(A^TA)=\kappa_2(A)^2\)</span>, fordi største og minste egenverdi i <span class="math inline">\(A^TA\)</span> er <span class="math inline">\(\sigma_1^2\)</span> og <span class="math inline">\(\sigma_n^2\)</span>. Bedre skalering eller valg av polynombasis kan hjelpe. Flere sifre i regningen kan ikke gjenopprette informasjon som målingene ikke gir presist.</p>
 </details>
-<details class="learning-extension">
+<details class="reading-step">
 <summary>
-Videre: minste kvadrater, pseudoinvers og prekondisjonering
+Arbeid videre: minste kvadrater, pseudoinvers og regularisering
 </summary>
-<p>Sett <span class="math inline">\(z=V^Tx\)</span> og <span class="math inline">\(c=U^Tb\)</span>. Ortogonalitet bevarer lengder, så <span class="math inline">\(\|Ax-b\|_2=\|\Sigma z-c\|_2\)</span>. For <span class="math inline">\(i\leq r\)</span> minimerer vi ved <span class="math inline">\(z_i=c_i/\sigma_i\)</span>. Komponentene <span class="math inline">\(c_{r+1},\ldots,c_m\)</span> kan ikke tilpasses. Frie inputkoordinater settes til null for å få løsningen med minst norm:</p>
-<p><span class="math display">\[x^+=\sum_{i=1}^r\frac{u_i^Tb}{\sigma_i}v_i.\]</span></p>
-<p>Dette er pseudoinversløsningen. Å utelate små positive singulærverdier gir en <strong>trunkert SVD-løsning</strong>, en form for regularisering. Vi aksepterer da at noen data ikke tilpasses helt for å begrense forsterkningen av støy.</p>
-<p>I uke 6 endret prekondisjonering geometrien som den iterative metoden så. For SPD-systemer er singulærverdier og egenverdier de samme; et stort forhold gir avlange nivåkurver. I symmetrisk prekondisjonering studerer vi <span class="math inline">\(M^{-1/2}AM^{-1/2}\)</span>, ikke ukritisk egenverdiene til en vilkårlig matrise. Prekondisjonering endrer løsningsprosessen. Trunkering endrer hvilke komponenter av løsningen vi forsøker å rekonstruere.</p>
+<p>Et <strong>minste-kvadratersproblem</strong> søker <span class="math inline">\(x\)</span> som gjør summen av kvadrerte residualkomponenter, <span class="math inline">\(\|Ax-b\|_2^2\)</span>, minst mulig. Hvis flere løsninger oppnår samme minimum, velger <strong>pseudoinversen</strong> den med minst lengde. Pseudoinversen betegnes <span class="math inline">\(A^+\)</span>; den er definert også for rektangulære og rangdefekte matriser og er lik <span class="math inline">\(A^{-1}\)</span> når inversen finnes.</p>
+<p>Sett <span class="math inline">\(z=V^Tx\)</span> og <span class="math inline">\(c=U^Tb\)</span>. Ortonormale koordinatskift bevarer lengden, så <span class="math inline">\(\|Ax-b\|_2=\|\Sigma z-c\|_2\)</span>. La <span class="math inline">\(r\)</span> være antall positive singulærverdier. For <span class="math inline">\(i\leq r\)</span> får vi minste residual med <span class="math inline">\(z_i=c_i/\sigma_i\)</span>. Komponentene <span class="math inline">\(c_{r+1},\ldots,c_m\)</span> ligger utenfor kolonnerommet og kan ikke tilpasses. Frie startkoordinater settes til null for minst lengde:</p>
+<p><span class="math display">\[x^+=A^+b=\sum_{i=1}^r\frac{u_i^Tb}{\sigma_i}v_i.\]</span></p>
+<p><strong>Trunkering</strong> betyr å avkorte en sum. En <strong>trunkert SVD-løsning</strong> beholder bare leddene med de <span class="math inline">\(k\)</span> største singulærverdiene, der <span class="math inline">\(k&lt;r\)</span>. Dette er <strong>regularisering</strong>: vi begrenser tillatte løsningskomponenter for å få mindre forsterkning av usikre data, selv om datatilpasningen blir dårligere. Også virkelig signal langs de utelatte retningene går tapt.</p>
+<p><strong>Prekondisjonering</strong> fra uke 6 omformer likningssystemet for at en iterativ metode skal konvergere bedre, mens den søkte eksakte løsningen bevares. For en SPD-matrise er singulærverdier og egenverdier de samme; et stort forhold gir avlange nivåkurver. Ved symmetrisk prekondisjonering med en SPD-matrise <span class="math inline">\(M\)</span> studerer vi <span class="math inline">\(M^{-1/2}AM^{-1/2}\)</span>. Her er <span class="math inline">\(M^{1/2}\)</span> den symmetriske positive definite kvadratroten og <span class="math inline">\(M^{-1/2}\)</span> dens invers. Trunkering har et annet mål: å begrense hva vi forsøker å rekonstruere fra usikre data.</p>
 </details>
 </section>
 </div>
@@ -4652,30 +4696,38 @@ Videre: minste kvadrater, pseudoinvers og prekondisjonering
 <div id="uke7-rang">
 
 </div>
-<section id="felles-forsøk-hva-koster-én-komponent" class="level3">
-<h3 class="anchored" data-anchor-id="felles-forsøk-hva-koster-én-komponent">Felles forsøk — hva koster én komponent?</h3>
-<p>En komponent er <span class="math inline">\(\sigma_i u_i v_i^T\)</span>. For et <span class="math inline">\(96\times96\)</span>-bilde: Hvor mange tall trenger vi til én slik komponent hvis vi lagrer begge vektorene og singulærverdien? Hvor mange til 20? Sammenlign med alle pikslene.</p>
-</section>
-<section id="bygg-teorien-fra-komponentene" class="level3">
-<h3 class="anchored" data-anchor-id="bygg-teorien-fra-komponentene">Bygg teorien fra komponentene</h3>
-<p>Matrisemultiplikasjonen i SVD kan skrives</p>
-<p><span class="math display">\[A=\sum_{i=1}^r\sigma_i u_i v_i^T,\qquad
-A_k=\sum_{i=1}^k\sigma_i u_i v_i^T.\]</span></p>
-<p>Hver ikke-null komponent har rang 1: alle kolonnene er multipler av <span class="math inline">\(u_i\)</span>. <span class="math inline">\(A_k\)</span> har rang høyst <span class="math inline">\(k\)</span>. I Frobeniusnorm er den en beste tilnærming blant alle matriser med rang høyst <span class="math inline">\(k\)</span>:</p>
-<p><span class="math display">\[\boxed{\|A-A_k\|_F^2=\sum_{i=k+1}^{p}\sigma_i^2},
-\qquad p=\min(m,n).\]</span></p>
-<p>Her er <span class="math inline">\(\|B\|_F^2=\sum_{i,j}B_{ij}^2\)</span>. Vi oppgir optimalitetsteoremet; vi skal kunne tolke og kontrollere feilformelen.</p>
+<section id="prøv-først-mer-detalj-flere-tall" class="level3">
+<h3 class="anchored" data-anchor-id="prøv-først-mer-detalj-flere-tall">Prøv først — mer detalj, flere tall</h3>
+<p>Kjør cellen med ulike verdier av <code>k</code>. Den viser bildet, antallet tall i den lagrede faktorrepresentasjonen og en samlet pikselfeil. <strong>Gjett først:</strong> Vil dobbelt så mange komponenter omtrent halvere feilen?</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Snakk sammen:</strong> Blir den detaljen dere valgte i 7.1 tydelig i samme tempo som den samlede feilen blir liten? Hva kan én feilverdi fortelle om et bilde?</p>
+</section>
+<section id="fra-byggeklosser-til-rangreduksjon" class="level3">
+<h3 class="anchored" data-anchor-id="fra-byggeklosser-til-rangreduksjon">Fra byggeklosser til rangreduksjon</h3>
+<p>Vi kan nå gi mønstrene fra 7.1 navn. En <strong>komponent</strong> er <span class="math inline">\(\sigma_i u_i v_i^T\)</span>: et rang-1-mønster <span class="math inline">\(u_i v_i^T\)</span> med vekt <span class="math inline">\(\sigma_i\)</span>. Hele bildet og en rekonstruksjon med de <span class="math inline">\(k\)</span> første komponentene er</p>
+<p><span class="math display">\[A=\sum_{i=1}^r\sigma_i u_i v_i^T,\qquad
+A_k=\sum_{i=1}^k\sigma_i u_i v_i^T.\]</span></p>
+<p>Her er <span class="math inline">\(r\)</span> antall positive singulærverdier. Matrisen <span class="math inline">\(A_k\)</span> har rang høyst <span class="math inline">\(k\)</span>. <strong>Rangreduksjon</strong> betyr å erstatte matrisen med en slik representasjon med færre uavhengige retninger.</p>
+<p><strong>Frobeniusnormen</strong> måler størrelsen til en matrise som om alle elementene var lagt i én lang vektor: kvadrer elementene, summer og ta kvadratroten. Dermed måler <span class="math inline">\(\|A-A_k\|_F\)</span> en samlet pikselfeil, mens <span class="math inline">\(\|A-A_k\|_F/\|A\|_F\)</span> er den relative feilen fra forsøket.</p>
+<p>SVD-rekonstruksjonen er en <strong>beste tilnærming</strong> i Frobeniusnorm blant alle matriser med rang høyst <span class="math inline">\(k\)</span>. Dette er en presis påstand om samlet tallfeil; den sier ikke at alle detaljer som er viktige for oss blir bevart.</p>
 <details class="reading-step">
 <summary>
-Hvorfor summerer vi kvadrater? Og hva betyr lagringsgevinsten?
+Arbeid videre: feilformelen, ortogonalitet og lagring
 </summary>
-<p>Rang-én-matrisene <span class="math inline">\(u_i v_i^T\)</span> er ortonormale for Frobeniusindreproduktet:</p>
+<p>For en matrise <span class="math inline">\(B\)</span> er <span class="math inline">\(\|B\|_F^2=\sum_{i,j}B_{ij}^2\)</span>. Vi kan også definere <strong>Frobeniusindreproduktet</strong> som <span class="math inline">\(\langle B,C\rangle_F=\sum_{i,j}B_{ij}C_{ij}\)</span>: gang sammen tilsvarende elementer og summer. Det gjør basisideen fra 7.1 presis.</p>
+<p>Rang-1-mønstrene <span class="math inline">\(u_i v_i^T\)</span> er ortonormale for dette indreproduktet:</p>
 <p><span class="math display">\[\langle u_i v_i^T,u_j v_j^T\rangle_F
-=(u_i^Tu_j)(v_i^Tv_j)=\delta_{ij}.\]</span></p>
-<p>Pytagoras fra uke 4 gir derfor feilformelen for den utelatte summen. At ingen annen rang-<span class="math inline">\(k\)</span>-matrise gjør det bedre, er et eget teorem (Eckart–Young); Pytagoras alene beviser ikke hele optimalitetspåstanden. Ved like singulærverdier kan beste tilnærming være ikke-entydig.</p>
-<p>Lagrer vi faktorene, teller vi <span class="math inline">\(k(m+n+1)\)</span> tall mot opprinnelig <span class="math inline">\(mn\)</span>. For <span class="math inline">\(96\times96\)</span> og <span class="math inline">\(k=20\)</span> blir det 3860 mot 9216 tall. Lagrer vi den rekonstruerte matrisen, trenger vi fortsatt <span class="math inline">\(mn\)</span> tall! Og tall er ikke bytes: float64-faktorer bruker 8 bytes per tall, mens et 8-bits gråtonebilde bruker én byte per piksel før filkomprimering. Dette er ikke en sammenligning med PNG eller JPEG.</p>
+=(u_i^Tu_j)(v_i^Tv_j).\]</span></p>
+<p>Uttrykket er 1 når <span class="math inline">\(i=j\)</span> og 0 ellers. Pytagoras fra uke 4 gir derfor kvadrert feil som summen av de utelatte vektene i andre potens:</p>
+<p><span class="math display">\[\boxed{\|A-A_k\|_F^2=\sum_{i=k+1}^{p}\sigma_i^2},
+\qquad p=\min(m,n).\]</span></p>
+<p>Kontroller formelen med cellen. Den er uavhengig av forrige celles tilstand.</p>
+<div id="qpyodide-insertion-location-7"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>At ingen annen matrise med rang høyst <span class="math inline">\(k\)</span> gir mindre Frobeniusfeil, er optimalitetsteoremet til Eckart–Young. Pytagoras forklarer feilformelen, men beviser ikke alene optimaliteten. Ved like singulærverdier kan den beste tilnærmingen være ikke-entydig.</p>
+<p><strong>Arbeid for hånd:</strong> Et bilde har <span class="math inline">\(m\)</span> rader og <span class="math inline">\(n\)</span> kolonner. Tell hvor mange tall som kreves for <span class="math inline">\(k\)</span> vektorer <span class="math inline">\(u_i\)</span>, <span class="math inline">\(k\)</span> vektorer <span class="math inline">\(v_i\)</span> og <span class="math inline">\(k\)</span> singulærverdier. Sammenlign <span class="math inline">\(k=20\)</span> for et <span class="math inline">\(96\times96\)</span>-bilde med lagring av alle pikslene.</p>
+<p><strong>Slik kan du tenke:</strong> Én komponent trenger <span class="math inline">\(m+n+1\)</span> tall; <span class="math inline">\(k\)</span> komponenter trenger <span class="math inline">\(k(m+n+1)\)</span>. Her blir det 3860 mot 9216 tall. Lagrer vi den rekonstruerte matrisen i stedet for faktorene, trenger vi fortsatt <span class="math inline">\(mn\)</span> tall. Tall er dessuten ikke bytes: float64-faktorer bruker 8 bytes per tall, et 8-bits gråtonebilde én byte per piksel før filkomprimering. Denne opptellingen er ikke en sammenligning med PNG eller JPEG.</p>
 </details>
 </section>
 </div>
@@ -4683,24 +4735,27 @@ Hvorfor summerer vi kvadrater? Og hva betyr lagringsgevinsten?
 <div id="uke7-prosjekt">
 
 </div>
-<section id="felles-beslutning-samme-budsjett-ulik-informasjon" class="level3">
-<h3 class="anchored" data-anchor-id="felles-beslutning-samme-budsjett-ulik-informasjon">Felles beslutning — samme budsjett, ulik informasjon</h3>
-<p>Se bildene, og ranger dem etter hvor godt du tror lav rang vil virke. Velg deretter <strong>ett felles parameterbudsjett på høyst 25 %</strong> av antall piksler. Finn største tillatte <span class="math inline">\(k\)</span> med <span class="math inline">\(k(m+n+1)\leq0.25mn\)</span>, og sammenlign.</p>
-<div id="qpyodide-insertion-location-7"></div>
+<section id="prøv-først-samme-budsjett-ulik-informasjon" class="level3">
+<h3 class="anchored" data-anchor-id="prøv-først-samme-budsjett-ulik-informasjon">Prøv først — samme budsjett, ulik informasjon</h3>
+<p>Se de fire bildene og ranger dem etter hvor godt dere tror lav rang vil fungere. Kjør så sammenligningen. Koden velger samme antall komponenter for alle bildene slik at faktorene krever høyst <strong>25 % så mange tall</strong> som de opprinnelige bildematrisene.</p>
+<div id="qpyodide-insertion-location-8"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Velg én detalj som må overleve i et av bildene. Er lav normfeil nok til å sikre dette? Ta med ett eksempel der «ser enkelt ut» gir feil forventning om lav rang. Dette er utgangspunktet for <a href="../pages/project_week7.html">prosjekt 7</a>.</p>
-<details class="learning-hint">
+<p><strong>Snakk sammen:</strong> Hvilken forventning ble utfordret? Velg én detalj som må bevares i et av bildene. Er liten samlet pikselfeil nok til å sikre det? Forklar hvorfor et bilde kan være enkelt å beskrive med ord og likevel kreve mange SVD-komponenter. Dette er utgangspunktet for <a href="../pages/project_week7.html">prosjekt 7</a>.</p>
+<details class="reading-step">
 <summary>
-Etter egen vurdering: den diagonale streken
+Arbeid videre: regn på budsjettet og den diagonale streken
 </summary>
-<p>Den diagonale streken er identitetsmatrisen: alle 96 singulærverdier er 1. Relativ Frobeniusfeil ved rang <span class="math inline">\(k\)</span> blir <span class="math inline">\(\sqrt{(96-k)/96}\)</span>. Den er enkel å beskrive med ord, men har ingen foretrukne små SVD-komponenter å kaste. SVD-komprimering utnytter bestemte lineære sammenhenger, ikke enhver form for visuell enkelhet.</p>
+<p>Finn største heltall <span class="math inline">\(k\)</span> som oppfyller <span class="math inline">\(k(m+n+1)\leq0.25mn\)</span> for <span class="math inline">\(m=n=96\)</span>. <strong>Slik kan du tenke:</strong> <span class="math inline">\(0.25\cdot96^2/193\approx11.94\)</span>, så <span class="math inline">\(k=11\)</span> er største tillatte rang.</p>
+<p>Den diagonale streken er identitetsmatrisen. Alle 96 singulærverdier er 1, så den relative Frobeniusfeilen ved rang <span class="math inline">\(k\)</span> er</p>
+<p><span class="math display">\[\frac{\|A-A_k\|_F}{\|A\|_F}=\sqrt{\frac{96-k}{96}}.\]</span></p>
+<p>Den er enkel å beskrive, men ingen av SVD-komponentene har mindre vekt enn de andre. SVD-forenkling utnytter bestemte lineære sammenhenger mellom rader og kolonner, ikke enhver form for visuell enkelhet.</p>
 </details>
 <details class="reading-step">
 <summary>
-Sjekk deg selv og se forbindelsen til optimering
+Arbeid videre: samle trådene og se fram mot optimering
 </summary>
-<p>Forklar uten kode: hvorfor to basiser? Hvorfor deler inversjon på <span class="math inline">\(\sigma_i\)</span>? Hva er forskjellen mellom null og nesten null? Hvorfor kan samme rang gi svært ulik feil i to bilder?</p>
-<p>I kommende uker vil vi minimere funksjoner. For <span class="math inline">\(f(x)=\tfrac12\|Ax-b\|_2^2\)</span> er gradienten <span class="math inline">\(A^T(Ax-b)\)</span> og Hessianen <span class="math inline">\(A^TA\)</span>. Dermed gir <span class="math inline">\(v_i\)</span> retninger med krumning <span class="math inline">\(\sigma_i^2\)</span>. Små singulærverdier betyr flate retninger: store endringer i <span class="math inline">\(x\)</span> gir liten endring i modellen. Dette knytter dagens geometri til gradientmetoden og nivåkurvene fra uke 6.</p>
+<p>Forklar med egne ord: Hvorfor bruker SVD to basiser? Hvorfor deler inversjon på <span class="math inline">\(\sigma_i\)</span>? Hva er forskjellen mellom null og nesten null? Hvorfor kan samme rang gi svært ulik bildefeil?</p>
+<p>Forbindelsen til optimering kan uttrykkes med <span class="math inline">\(f(x)=\tfrac12\|Ax-b\|_2^2\)</span>. <strong>Gradienten</strong>, vektoren av førstederiverte, er <span class="math inline">\(A^T(Ax-b)\)</span>. <strong>Hessianen</strong>, matrisen av andrederiverte, er <span class="math inline">\(A^TA\)</span>. Retningen <span class="math inline">\(v_i\)</span> har derfor krumning <span class="math inline">\(\sigma_i^2\)</span>. Små singulærverdier gir flate retninger: store endringer i <span class="math inline">\(x\)</span> gir liten endring i modellen. Det er den samme geometrien som i nivåkurvene og gradientmetoden fra uke 6.</p>
 </details>
 </section>
 </div>
@@ -4830,8 +4885,8 @@ Sjekk deg selv og se forbindelsen til optimering
       steps.forEach(step => { step.open = mode === 'reading'; });
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
       status.textContent = mode === 'reading'
-        ? (controls.dataset.readingLabel || 'Selvstudium') + ': forklaringene er åpne. Prøv før du leser videre.'
-        : (controls.dataset.lectureLabel || 'Forelesning') + ': forklaringene er lukket. Du kan åpne dem enkeltvis.';
+        ? (controls.dataset.readingLabel || 'Arbeid videre') + ': prøv selv, og følg forklaringene steg for steg.'
+        : (controls.dataset.lectureLabel || 'Forelesning') + (controls.dataset.lectureLabel ? ': prøv oppgavene før du åpner forklaringene.' : ': eksperimenter og diskusjon. Åpne utdypningene ved behov.');
       try { sessionStorage.setItem('learning-mode', mode); } catch (_) {}
       window.dispatchEvent(new Event('resize'));
     }
