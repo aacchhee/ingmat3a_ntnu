@@ -1101,25 +1101,44 @@ besøksregel og følger hva som skjer når den gjentas.
 
 ### Slik leser du figuren
 
+::: {.week5-network-model}
+::: {.week5-network-description}
+
 Hvert punkt er en nettside, og bokstaven er navnet. En pil A → B betyr at
 A har en lenke til B: en besøkende på A kan klikke seg til B. Den samme
 lenken er **utgående fra A** og **innkommende til B**. Pilen angir bare
 mulig bevegelse denne veien; en vei tilbake må ha sin egen pil.
 Avstanden mellom punktene og plasseringen på skjermen har ingen betydning i modellen.
 
+Ved hvert klikk velger den besøkende én av lenkene fra siden hen er på,
+med lik sannsynlighet. **Tallene på pilene er overgangssannsynligheter:**
+et tall angir sannsynligheten for å velge akkurat denne neste siden,
+gitt at den besøkende er på siden pilen starter i. Fra A er det to valg,
+så hver har sannsynlighet $1/2$. Fra B er C det eneste valget,
+så overgangen B → C har sannsynlighet $1$.
+
+:::
+::: {.week5-network-figure}
+
+![Tallene angir sannsynligheten for neste side, gitt siden vi er på nå.](../assets/week5-network.svg){fig-alt="Nettverk med fire nettsider og seks rettede lenker. Tallene ved lenkene angir overgangssannsynligheter."}
+
+:::
+:::
+
 | Siden den besøkende er på | Mulige neste sider | Regelen for ett klikk |
 |---|---|---|
-| A | B og C | Halvparten av sannsynligheten til hver |
-| B | C | Hele sannsynligheten til C |
-| C | A og D | Halvparten til hver |
-| D | A | Hele sannsynligheten til A |
+| A | B og C | B med sannsynlighet $1/2$; C med sannsynlighet $1/2$ |
+| B | C | C med sannsynlighet $1$ |
+| C | A og D | A med sannsynlighet $1/2$; D med sannsynlighet $1/2$ |
+| D | A | A med sannsynlighet $1$ |
 
 ### Hva betyr én runde og prosentene?
 
-Vi forestiller oss en besøkende som fortsetter å klikke. Ved **hvert steg**
-velges én av lenkene fra den nåværende siden, med lik sannsynlighet.
-Fra A er sjansen $1/2$ for B og $1/2$ for C. Fra B er neste side alltid C.
-Valget avhenger bare av siden den besøkende er på nå, ikke av tidligere besøk.
+Vi forestiller oss en besøkende som fortsetter å klikke etter denne regelen.
+En slik tilfeldig følge av besøk kalles en **tilfeldig vandring** (*random walk*)
+på nettverket. A → C → D → A → B er ett mulig forløp. Ved et nytt forsøk
+kan de tilfeldige valgene gi et annet forløp. Ett steg i vandringen er ett klikk.
+Valget av neste side avhenger bare av siden den besøkende er på nå, ikke av tidligere besøk.
 Vi antar foreløpig at ingen går ut av disse fire sidene, at ingen kommer
 utenfra, og at lenkene ikke endres. Alle fire har minst én lenke å følge.
 
@@ -1135,8 +1154,9 @@ tenke på en stor gruppe uavhengige besøkende: 50 % på B betyr da den
 50 på B og 50 på C etter ett klikk, men et faktisk tilfeldig forsøk trenger
 ikke gi nøyaktig 50 av hver.
 
-Figuren regner direkte på sannsynlighetene. Den simulerer ikke enkeltpersoners
-tilfeldige klikk. Derfor får du samme fordeling hver gang du velger samme start.
+Den interaktive figuren nedenfor regner direkte på **sannsynlighetsfordelingen**
+for hvor den besøkende befinner seg etter hvert steg. Den viser altså ikke én
+tilfeldig vandring og simulerer ikke enkeltpersoners tilfeldige klikk. Derfor får du samme fordeling hver gang du velger samme start.
 **Neste runde** lar alle bidragene flyttes én gang etter tabellen;
 **20 runder** gjentar dette 20 ganger fra fordelingen som vises nå.
 Summen er alltid 100 %, fordi den besøkende må være på én av de fire sidene.
