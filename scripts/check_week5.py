@@ -19,6 +19,19 @@ PATTERN = r"```\{pyodide-python\}\n(.*?)```"
 
 
 def main():
+    # Quarto section wrappers can move Markdown headings out of <details>.
+    # Keep internal headings as bold paragraphs so handwork stays in its track.
+    for week in (5, 6, 7):
+        depth, fenced = 0, False
+        for line in (ROOT / f'_includes/linalg/uke{week}.md').read_text().splitlines():
+            if line.startswith('```'):
+                fenced = not fenced
+            if fenced:
+                continue
+            depth += line.count('<details')
+            assert not (depth and re.match(r'^#{1,6} ', line)), (week, line)
+            depth -= line.count('</details>')
+        assert depth == 0
     namespace = {}
     for index, cell in enumerate(re.findall(PATTERN, LECTURE.read_text(), re.S)):
         exec(compile(cell, f"week5-cell-{index}", "exec"), namespace)

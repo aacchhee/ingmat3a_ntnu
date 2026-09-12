@@ -117,6 +117,10 @@ ax.set(xlabel='GS-sveip', ylabel='‖x_k − x_*‖₂')
 ax.legend(); plt.show()
 ```
 
+Kurvene viser at feilen kan avta eller vokse. Vi skriver nå oppdateringen
+som algebra for å forklare forskjellen; matrisen som styrer feilen, kan
+deretter finnes ved regning.
+
 Et GS-sveip kan skrives $x_{k+1}=Tx_k+c$. Løsningen er et **fikspunkt**:
 den endres ikke av oppdateringen, altså $x_*=Tx_*+c$.
 **Feilen** $e_k=x_k-x_*$ følger derfor $e_{k+1}=Te_k$.

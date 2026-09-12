@@ -220,6 +220,10 @@ og ett som strekker langs aksene?
 
 ### SVD er et valg av koordinater på hver side
 
+Vi så geometrisk at transformasjonen kunne deles i koordinatskift og strekk.
+Nå skriver vi trinnene som matriseprodukter. Det gir en algebraisk beskrivelse
+som lar oss beregne retningene, strekkfaktorene og effekten på en vilkårlig vektor.
+
 Fra uke 4 kjenner vi en **ortonormal basis**: vektorene er vinkelrette
 og har lengde 1. Koordinaten langs en slik basisvektor $v_i$ er
 indreproduktet $v_i^Tx$. SVD bruker én ortonormal basis for startvektorene

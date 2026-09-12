@@ -260,33 +260,23 @@ observasjonen om linjen $x_2=x_1$, som vi forklarer i 5.2–5.3.
 
 <div id="uke5-egen"></div>
 
-### Prøv: samme linje, ulik skalering
+### Fra geometrisk observasjon til algebra
 
-Vi undersøker retningene $(1,1)^T$ og $(1,-1)^T$ fra figuren.
-Den nye matrisen $B$ bytter de to koordinatene.
-Gjett hvilken retning den snur. Kjør cellen og sammenlign pilene før og etter.
-Bytt deretter `start` til `[1., 0.]`: ligger svaret fortsatt på samme linje?
+I figuren i 5.1 ble startene langs $(1,1)^T$ og $(1,-1)^T$ liggende på
+hver sin linje. Figuren normaliserte lengden etter hvert steg. Nå spør vi:
+**Hva gjør transformasjonen langs disse linjene før vi normaliserer?**
 
-```{pyodide-python}
-#| label: week5-directions
-A = np.array([[2., 1.], [1., 2.]])
-B = np.array([[0., 1.], [1., 0.]])
-start = np.array([1., -1.])  # Prøv også [1., 1.] og [1., 0.].
-fig, axes = plt.subplots(1, 2, figsize=(7, 3))
-for ax, M, name in zip(axes, [A, B], ["A", "B"]):
-    for vector, color, label in [(start, "#a04a00", "Før"), (M @ start, "#1565c0", "Etter")]:
-        ax.quiver(0, 0, *vector, angles="xy", scale_units="xy", scale=1,
-                  color=color, alpha=.7, label=label)
-    ax.set(xlim=(-3.5, 3.5), ylim=(-3.5, 3.5), title=name, xlabel="Første koordinat", ylabel="Andre koordinat")
-    ax.set_aspect("equal")
-    ax.grid()
-    ax.legend()
-plt.tight_layout()
-plt.show()
-```
+Vi tar den geometriske observasjonen «samme linje» og skriver den som
+algebra: resultatet må være **ett tall ganger startvektoren**. For
+$A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ får vi
 
-For de to spesielle startene virker matrisene som ett tall ganger vektoren.
-Tallet kan endre lengden og snu orienteringen. En generell start blir også dreid.
+$$A\begin{bmatrix}1\\1\end{bmatrix}=3\begin{bmatrix}1\\1\end{bmatrix},
+\qquad A\begin{bmatrix}1\\-1\end{bmatrix}=1\begin{bmatrix}1\\-1\end{bmatrix}.$$
+
+Den ene retningen strekkes med faktor 3; den andre har faktor 1.
+**Hva kunne normaliseringen i figuren skjule?** Vi bruker observasjonen
+til å formulere en likning, og bruker så regning til å finne både
+strekkfaktorene og alle vektorene som oppfyller likningen.
 
 ### Nå gir vi mønsteret et navn
 
@@ -302,13 +292,24 @@ gjelder for alle $\lambda$ og derfor ikke identifiserer noen spesiell retning.
 
 Samlingen av egenverdier kalles matrisens **spektrum**.
 Ordet **spektral** betyr at vi beskriver noe ved hjelp av disse egenverdiene.
-For $A$ er spekteret $\{3,1\}$; for $B$ er det $\{1,-1\}$.
+For $A$ er spekteret $\{3,1\}$.
 Fortegn forteller om orientering, og absoluttverdi forteller om lengdeskalering.
+
+For en bestemt egenverdi $\lambda$ samler vi **alle** vektorer som oppfyller
+likningen i **egenrommet**
+
+$$E_\lambda=\{v:Av=\lambda v\}=\operatorname{Null}(A-\lambda I).$$
+
+Det er et underrom og inneholder også nullvektoren. De øvrige vektorene i
+rommet er egenvektorer. Her er $E_3=\operatorname{span}\{(1,1)^T\}$ og
+$E_1=\operatorname{span}\{(1,-1)^T\}$: to linjer gjennom origo.
+Et egenrom kan også ha høyere dimensjon; for identitetsmatrisen er hele
+rommet egenrommet til egenverdien 1.
 
 <details class="reading-step">
 <summary>Arbeid videre: finn egenverdier og egenrom for hånd</summary>
 
-**Gjenta forsøket for hånd.**
+**Undersøk de observerte retningene for hånd.**
 
 Bruk de to retningene fra figuren.
 
@@ -324,7 +325,7 @@ w=\begin{bmatrix}1\\-1\end{bmatrix}.$$
 4. Noter hvilke produkter som endrer lengden, og hvilket som snur
    orienteringen. **Ikke normaliser i dette forsøket.**
 
-### Sammenlign etter at du har regnet
+**Slik kan du tenke**
 
 $$\begin{aligned}
 Av&=\begin{bmatrix}2\cdot1+1\cdot1\\1\cdot1+2\cdot1\end{bmatrix}
@@ -339,7 +340,7 @@ Matrisen $A$ tredobler lengden langs $v$ og lar $w$ være uendret.
 Matrisen $B$ bytter koordinatene. For $w$ betyr dette en fortegnsendring,
 men vektoren ligger fortsatt på samme linje gjennom origo.
 
-### Hvordan finner vi dem uten å gjette?
+**Hvordan finner vi dem uten å gjette?**
 
 Vi vil finne et tall og en ikke-null vektor som oppfyller samme mønster.
 Siden $Iv=v$, får vi
@@ -451,26 +452,69 @@ symmetriske matriser, der dette faktisk gjelder, i 5.3.
 
 </details>
 
+<details class="reading-step">
+<summary>Arbeid videre: undersøk også en transformasjon som snur en retning</summary>
+
+Matrisen $B$ bytter koordinatene. Gjett hva den gjør med $(1,-1)^T$,
+og bruk plottet til å kontrollere tolkningen av en negativ egenverdi.
+Prøv også $(1,1)^T$ og $(1,0)^T$. Dette er en ekstra kontroll etter håndarbeidet.
+
+```{pyodide-python}
+#| label: week5-directions
+A = np.array([[2., 1.], [1., 2.]])
+B = np.array([[0., 1.], [1., 0.]])
+start = np.array([1., -1.])  # Prøv også [1., 1.] og [1., 0.].
+fig, axes = plt.subplots(1, 2, figsize=(7, 3))
+for ax, M, name in zip(axes, [A, B], ["A", "B"]):
+    for vector, color, label in [(start, "#a04a00", "Før"), (M @ start, "#1565c0", "Etter")]:
+        ax.quiver(0, 0, *vector, angles="xy", scale_units="xy", scale=1,
+                  color=color, alpha=.7, label=label)
+    ax.set(xlim=(-3.5, 3.5), ylim=(-3.5, 3.5), title=name, xlabel="Første koordinat", ylabel="Andre koordinat")
+    ax.set_aspect("equal")
+    ax.grid()
+    ax.legend()
+plt.tight_layout()
+plt.show()
+```
+
+</details>
+
 ## 5.3 Basis og gjentakelse
 
 <div id="uke5-basis"></div>
 
 ### Prøv: hvilken del tar over?
 
-Vi kan bygge starten av de to egenretningene: én langs $(1,1)^T$ og én
-langs $(1,-1)^T$. Den første tredobles for hvert steg; den andre beholder lengden.
-**Gjett:** Forsvinner den andre delen, eller blir den bare relativt mindre?
-Kjør cellen og bytt deretter `c1` fra `0.5` til `0.0`.
+Vi bruker samme $A$ og egenvektorene $v_1=(1,1)^T$, $v_2=(1,-1)^T$.
+Starten skrives $x_0=c_1v_1+c_2v_2$. Med `c1 = c2 = 0.5` er dette
+$x_0=(1,0)^T$: summen av to like lange bidrag langs de to linjene.
+
+Ved hver multiplikasjon får det første bidraget en faktor
+${\color{#1565c0}3}$ og det andre en faktor ${\color{#a04a00}1}$.
+I plottet følger vi **hvor stor del av summen av bidragenes lengder** som
+kommer fra hver retning. Dette er ikke koordinatene til resultatvektoren,
+og heller ikke lengdene delt på lengden til summen av vektorene.
+
+- Blå kurve: bidraget med egenverdi ${\color{#1565c0}\lambda_1=3}$.
+- Oransje kurve: bidraget med egenverdi ${\color{#a04a00}\lambda_2=1}$.
+- Vannrett akse: antall multiplikasjoner; ved 0 har begge andel $1/2$.
+
+**Før kjøring:** Blir det oransje bidraget kortere, eller blir bare andelen
+mindre? Kjør deretter med `c1 = 0.0`, mens `c2 = 0.5` beholdes.
+Da starter vi bare langs $v_2$. Kan multiplikasjonene skape det blå bidraget?
 
 ```{pyodide-python}
 #| label: week5-contributions
 c1, c2 = 0.5, 0.5
 steps = np.arange(7)
+if c1 == 0 and c2 == 0:
+    raise ValueError('Velg minst ett bidrag ulik null')
+# v1 og v2 har samme lengde sqrt(2); den forkortes bort i andelene.
 first = abs(c1) * 3.**steps
-second = abs(c2) * np.ones_like(steps)
+second = abs(c2) * 1.**steps
 plt.figure()
-plt.plot(steps, first/(first+second), "o-", label="Andel langs (1, 1)")
-plt.plot(steps, second/(first+second), "o-", label="Andel langs (1, −1)")
+plt.plot(steps, first/(first+second), "o-", color="#1565c0", label="λ₁ = 3: andel langs (1, 1)")
+plt.plot(steps, second/(first+second), "o-", color="#a04a00", label="λ₂ = 1: andel langs (1, −1)")
 plt.xlabel("Antall multiplikasjoner")
 plt.ylabel("Andel av de to bidragenes lengder")
 plt.legend()
@@ -480,6 +524,20 @@ plt.show()
 En del kan bestå i absolutte tall og likevel miste betydning for retningen.
 Hvis den raskest voksende delen mangler ved start, kan eksakt regning ikke
 skape den. **Diskuter:** Hvorfor er både matrisen og starten viktige?
+
+### Skriv observasjonen som algebra
+
+Linearitet betyr at $A$ virker på hvert bidrag for seg. De to egenverdiene
+brukes én gang for hvert steg; vi lar potensene stå synlige:
+
+$$\begin{aligned}
+Ax_0&=\tfrac12{\color{#1565c0}3}\,v_1+\tfrac12{\color{#a04a00}1}\,v_2=(2,1)^T,\\
+A^2x_0&=\tfrac12{\color{#1565c0}3^2}\,v_1+\tfrac12{\color{#a04a00}1^2}\,v_2=(5,4)^T,\\
+A^3x_0&=\tfrac12{\color{#1565c0}3^3}\,v_1+\tfrac12{\color{#a04a00}1^3}\,v_2=(14,13)^T.
+\end{aligned}$$
+
+Dette forklarer kurvene: den oransje lengden er konstant, mens den blå
+vokser. At en andel nærmer seg null, betyr altså ikke at selve bidraget blir null.
 
 ### Fra dette eksemplet til teorien
 
@@ -512,18 +570,20 @@ $$x_0=\begin{bmatrix}1\\0\end{bmatrix}
 Skriv $Ax_0$, $A^2x_0$ og $A^3x_0$ som summer av disse to vektorene.
 Noter forholdet mellom den andre og den første koeffisienten.
 
-**Sammenlign regningen:** Linearitet lar oss behandle ett bidrag om gangen:
+**Slik kan du tenke:** Bruk $Av_1=3v_1$ og $Av_2=1v_2$ på hvert ledd.
+Fargene er de samme som i plottet:
 
 $$\begin{aligned}
-Ax_0&=\tfrac12Av_1+\tfrac12Av_2=\tfrac32v_1+\tfrac12v_2=(2,1)^T,\\
-A^2x_0&=\tfrac32Av_1+\tfrac12Av_2=\tfrac92v_1+\tfrac12v_2=(5,4)^T,\\
-A^3x_0&=\tfrac{27}2v_1+\tfrac12v_2=(14,13)^T.
+Ax_0&=\tfrac12Av_1+\tfrac12Av_2
+=\tfrac12{\color{#1565c0}3}\,v_1+\tfrac12{\color{#a04a00}1}\,v_2,\\
+A^2x_0&=\tfrac12{\color{#1565c0}3^2}\,v_1+\tfrac12{\color{#a04a00}1^2}\,v_2,\\
+A^3x_0&=\tfrac12{\color{#1565c0}3^3}\,v_1+\tfrac12{\color{#a04a00}1^3}\,v_2.
 \end{aligned}$$
 
 Etter $k$ steg er
 
-$$A^kx_0=\tfrac12 3^k\begin{bmatrix}1\\1\end{bmatrix}
-+\tfrac12\begin{bmatrix}1\\-1\end{bmatrix}.$$
+$$A^kx_0=\tfrac12{\color{#1565c0}3^k}\begin{bmatrix}1\\1\end{bmatrix}
++\tfrac12{\color{#a04a00}1^k}\begin{bmatrix}1\\-1\end{bmatrix}.$$
 
 Det andre bidraget forsvinner ikke. Men forholdet mellom bidragene er
 $3^{-k}$, og derfor nærmer den normaliserte vektoren seg den første linjen.
@@ -591,11 +651,15 @@ kan skrives
 
 $$A=Q\Lambda Q^T.$$
 
-Som i uke 4: $Q^T$ måler komponentene, $\Lambda$ skalerer dem, og $Q$ bygger
-vektoren igjen. Her er $Q$ kvadratisk og inneholder en full basis.
+Koordinatene i denne ortonormale basisen er indreproduktene
+$c_i=q_i^Tx$, samlet i $c=Q^Tx$. Den ortogonale projeksjonen av $x$ på
+linjen spent ut av $q_i$ er vektoren $(q_i^Tx)q_i$.
+$\Lambda$ ganger koordinat $c_i$ med egenverdi $\lambda_i$, og $Q$ danner
+summen av de skalerte basisbidragene. Her er $Q$ kvadratisk og inneholder en full basis.
 Dette er **spektralteoremet**, oppkalt etter spekteret: egenverdiene står
 på diagonalen i $\Lambda$. $Q$ har de ortonormale egenvektorene som kolonner.
-**Diskuter:** Hvordan henger «måle, skalere, bygge» sammen med uke 4?
+**Diskuter:** Hvorfor gir indreproduktet basisens koordinater når
+basisvektorene har lengde én og står vinkelrett?
 
 <details class="reading-step">
 <summary>Arbeid videre: hvorfor ortogonale egenvektorer?</summary>
@@ -743,14 +807,34 @@ Ett steg og de to kontrollstørrelsene er
 
 $$y_k=Ax_k,\qquad x_{k+1}=\frac{y_k}{\lVert y_k\rVert_2}.$$
 
-Vi trenger både et tall for skaleringen og en kontroll. Fra uke 4 vet vi
-hvordan vi måler langs en retning:
+### Fra projeksjon til et anslag for egenverdien
 
-$$\rho(x)=\frac{x^TAx}{x^Tx},\qquad r=Ax-\rho(x)x.$$
+Potensmetoden finner først en mulig egenvektorretning $x$. Vi trenger
+også en skalering: **hvilket tall $t$ gjør $tx$ til den beste tilnærmingen
+til $Ax$?** Vi søker altså den ortogonale projeksjonen av $Ax$ på linjen
+$\operatorname{span}\{x\}$, ikke på en av koordinataksene.
 
-$\rho$ kalles **Rayleigh-kvotienten**. Resten $r$, forskjellen mellom $Ax$
-og den foreslåtte skaleringen $\rho x$, kalles **egenresidualen**.
-Hvis $x$ er en egenvektor, får vi dens egenverdi og null residual.
+Fra uke 4: For $x\ne0$ er projeksjonen av en vektor $b$ på denne linjen
+$\frac{x^Tb}{x^Tx}x$. **Indreproduktet** $x^Tb=\sum_i x_i b_i$ gir telleren;
+nevneren $x^Tx=\|x\|_2^2$ korrigerer for lengden til $x$.
+Med $b=Ax$ blir projeksjonen $\rho(x)x$, der
+
+$$\rho(x)=\frac{x^TAx}{x^Tx},\qquad r=Ax-\rho(x)x,\qquad x^Tr=0.$$
+
+$\rho$ kalles **Rayleigh-kvotienten** og er koeffisienten som minimerer
+$\|Ax-tx\|_2$ over alle tall $t$. **Egenresidualen** $r$ er den delen av
+$Ax$ som står vinkelrett på $x$ og derfor ikke kan beskrives som en skalering
+av $x$. Geometrien gir projeksjonen; algebraen gir en formel vi kan beregne.
+
+For $x=(1,0)^T$ og matrisen fra 5.1 er $Ax=(2,1)^T$.
+Projeksjonen på førsteaksen er $(2,0)^T=2x$, så $\rho=2$ og $r=(0,1)^T$.
+Det gjenstår et bidrag på tvers: $x$ er ikke en egenvektor.
+For $x=(1,1)^T/\sqrt2$ ligger hele $Ax$ på samme linje: $\rho=3$ og $r=0$.
+
+**Hva forteller kontrollen?** Liten $\|r\|_2$ betyr at egenvektorlikningen
+nesten er oppfylt. Det sier ikke at vi har funnet den dominante egenverdien:
+retningen med egenverdi 1 gir også null residual. Derfor ser vi både på
+starten, utviklingen i forsøket og residualen når vi vurderer resultatet.
 
 <details class="reading-step">
 <summary>Arbeid videre: hvorfor akkurat denne kvotienten?</summary>
