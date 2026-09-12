@@ -24,6 +24,16 @@ Under **Gå i dybden** finner du håndregning, begrunnelser og flere spørsmål.
 Vi skal oppdage spesielle retninger, forklare hvorfor noen bidrag tar over,
 og bruke den samme ideen til å rangere nettsider etter besøk.
 
+### To deler: hente fram og bygge videre
+
+| Matte 1 – dette henter vi fram | Matte 3A – dette bygger vi nå |
+|---|---|
+| Løse lineære likningssystemer; finne egenverdier og egenvektorer. Repetisjon i 5.2. | Forklare gjentatt multiplikasjon med bidrag langs egenvektorer, og undersøke når én retning dominerer. Forsøk i 5.1, teori i 5.3–5.4. |
+| Bruke $(A-\lambda I)v=0$ til å finne alle egenvektorene til en egenverdi. | Knytte egenvektorbasis til tidligere arbeid med basis og ortogonalitet, og bruke dette i potensmetoden og PageRank (5.3–5.6). |
+
+Du trenger ikke huske regneoppskriftene før første forsøk. I **Gå i dybden**
+henter vi dem fram trinn for trinn. Oppgavene i 5.7 er delt i de samme to delene.
+
 ```{pyodide-python}
 #| label: week5-setup
 #| autorun: true
@@ -35,6 +45,9 @@ import matplotlib.pyplot as plt
 ## 5.1 En retning vokser fram
 
 <div id="uke5-erfaring"></div>
+
+**Matte 3A: et nytt spørsmål.** Vi bruker et forsøk til å vekke til live
+begrepene fra Matte 1; repetisjonen kommer i 5.2.
 
 ### Prøv før vi forklarer
 
@@ -260,6 +273,9 @@ observasjonen om linjen $x_2=x_1$, som vi forklarer i 5.2–5.3.
 
 <div id="uke5-egen"></div>
 
+**Matte 1: hent fram egenverdier og egenvektorer.** Her repeterer vi
+betydningen og regnemetoden; du finner full håndregning under «Gå i dybden».
+
 ### Fra geometrisk observasjon til algebra
 
 I figuren i 5.1 ble startene langs $(1,1)^T$ og $(1,-1)^T$ liggende på
@@ -482,6 +498,9 @@ plt.show()
 ## 5.3 Basis og gjentakelse
 
 <div id="uke5-basis"></div>
+
+**Matte 3A: fra én multiplikasjon til mange.** Vi bruker de repeterte
+begrepene til å forklare utviklingen, med basis som bindeledd.
 
 ### Prøv: hvilken del tar over?
 
@@ -1085,7 +1104,45 @@ men fjerner ikke mekanismen med relativ vekst mellom retningene.
 
 <div id="uke5-nett"></div>
 
-### Hvorfor dukker egenvektorer opp når vi rangerer nettsider?
+### Én besøksregel, fire nettsider
+
+**Hvilke sider blir mest besøkt når vi følger lenkene mange ganger?**
+Vi undersøker en enkel modell; rangeringen skal beskrive besøk under denne regelen.
+
+::: {.week5-network-model}
+::: {.week5-network-description}
+
+- A–D er nettsider. En pil A → B betyr at en besøkende kan klikke fra A til B.
+- Ved hvert klikk velges én av lenkene fra siden med lik sannsynlighet.
+  Tallene på pilene er **overgangssannsynligheter**, gitt siden vi er på nå.
+- En tilfeldig følge av slike besøk kalles en **tilfeldig vandring** (*random walk*).
+  Alle blir i nettverket; lenkene endres ikke.
+
+**Les figuren:** Fra A går vi til B eller C med sannsynlighet $1/2$ hver.
+Fra B går vi til C med sannsynlighet $1$.
+
+:::
+::: {.week5-network-figure}
+
+![Sannsynlighet for neste side, gitt siden vi er på nå.](../assets/week5-network.svg){fig-alt="A til B og C: 1/2 hver. B til C: 1. C til A og D: 1/2 hver. D til A: 1."}
+
+:::
+:::
+
+### Prøv: hvor er den besøkende etter neste klikk?
+
+Velg **Alle på A**. Forutsi neste fordeling, trykk **Neste runde**, og gjenta
+én gang. Hvilke lenker forklarer prosentene? Prøv så **20 runder** fra både
+**Jevn start** og **Alle på A**. Ser startfordelingen ut til å miste betydning?
+
+Prosentene viser **sannsynligheten for å være på hver side nå**, ikke antall
+besøk samlet over tid. Figuren beregner fordelingen direkte; den trekker
+ikke én tilfeldig vandring. Ett trykk på **Neste runde** er ett klikk i modellen.
+
+<details class="reading-step">
+<summary>Gå i dybden: besøksregelen, tilfeldig vandring og sannsynlighetsfordeling</summary>
+
+**Hvorfor dukker egenvektorer opp når vi rangerer nettsider?**
 
 Vi ønsker å gi hver av fire nettsider A, B, C og D et tall som beskriver
 hvor mye den blir besøkt i en enkel modell. En **nettside** er et dokument
@@ -1099,10 +1156,7 @@ besøkt side. Da avhenger betydningen av én side av betydningen til de andre.
 **Hvordan kan vi finne alle disse tallene samtidig?** Vi begynner med en
 besøksregel og følger hva som skjer når den gjentas.
 
-### Slik leser du figuren
-
-::: {.week5-network-model}
-::: {.week5-network-description}
+**Slik leser du figuren**
 
 Hvert punkt er en nettside, og bokstaven er navnet. En pil A → B betyr at
 A har en lenke til B: en besøkende på A kan klikke seg til B. Den samme
@@ -1117,13 +1171,6 @@ gitt at den besøkende er på siden pilen starter i. Fra A er det to valg,
 så hver har sannsynlighet $1/2$. Fra B er C det eneste valget,
 så overgangen B → C har sannsynlighet $1$.
 
-:::
-::: {.week5-network-figure}
-
-![Tallene angir sannsynligheten for neste side, gitt siden vi er på nå.](../assets/week5-network.svg){fig-alt="Nettverk med fire nettsider og seks rettede lenker. Tallene ved lenkene angir overgangssannsynligheter."}
-
-:::
-:::
 
 | Siden den besøkende er på | Mulige neste sider | Regelen for ett klikk |
 |---|---|---|
@@ -1132,7 +1179,7 @@ så overgangen B → C har sannsynlighet $1$.
 | C | A og D | A med sannsynlighet $1/2$; D med sannsynlighet $1/2$ |
 | D | A | A med sannsynlighet $1$ |
 
-### Hva betyr én runde og prosentene?
+**Hva betyr én runde og prosentene?**
 
 Vi forestiller oss en besøkende som fortsetter å klikke etter denne regelen.
 En slik tilfeldig følge av besøk kalles en **tilfeldig vandring** (*random walk*)
@@ -1161,15 +1208,8 @@ tilfeldig vandring og simulerer ikke enkeltpersoners tilfeldige klikk. Derfor f�
 **20 runder** gjentar dette 20 ganger fra fordelingen som vises nå.
 Summen er alltid 100 %, fordi den besøkende må være på én av de fire sidene.
 
-### Prøv: hvor flytter sannsynligheten seg?
 
-Velg **Alle på A**, og trykk **Neste runde**. Les av hvilke sider som får
-besøk, og bruk pilene fra A til å forklare fordelingen. Før neste klikk:
-**Hvor kan besøkene fra B og C gå nå?** Se deretter hva figuren viser.
-
-Prøv så **Jevn start** og **20 runder**. Gjenta fra **Alle på A**.
-Ser det ut som startfordelingen fortsatt betyr mye, eller nærmer begge
-forsøkene seg samme fordeling? Vi skal forklare observasjonen med lineær algebra.
+</details>
 
 ```{.jsxgraph width="680" height="550" style="width:100%;max-width:680px;height:550px;border:0;"}
 document.documentElement.lang = 'nb';
@@ -1228,7 +1268,51 @@ if(typeof ResizeObserver!=='undefined'){var observer=new ResizeObserver(resize);
 window.addEventListener('resize',resize);window.addEventListener('pageshow',resize);show();resize();
 ```
 
-### Fra besøksfordeling til vektor
+### Fra figuren til lineær algebra
+
+Vi samler sannsynlighetene i $p_k=(p_A^{(k)},p_B^{(k)},p_C^{(k)},p_D^{(k)})^T$.
+Her teller $k$ klikk. En **sannsynlighetsvektor** har ikke-negative elementer
+med sum én. Fra «Alle på A» så vi
+
+$$\underbrace{\begin{bmatrix}1\\0\\0\\0\end{bmatrix}}_{p_0}
+\longmapsto\underbrace{\begin{bmatrix}0\\1/2\\1/2\\0\end{bmatrix}}_{p_1}
+\longmapsto\underbrace{\begin{bmatrix}1/4\\0\\1/2\\1/4\end{bmatrix}}_{p_2}.$$
+
+**Én kolonne per startside, én rad per neste side:** overgangsmatrisen
+$S$ samler regelen fra figuren. For eksempel er kolonne A fordelingen etter ett klikk fra A.
+
+$$S=\begin{array}{c|rrrr}
+ & A&B&C&D\\\hline
+ A&0&0&1/2&1\\
+ B&1/2&0&0&0\\
+ C&1/2&1&0&0\\
+ D&0&0&1/2&0
+\end{array},\qquad p_{k+1}=Sp_k.$$
+
+Rad A sier $p_A^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}$: vi summerer
+bidragene fra C og D. Hver kolonne summerer til én. Med ikke-negative
+elementer kalles $S$ **kolonnestokastisk**; oppdateringen bevarer summen i $p_k$.
+
+### Hvor kommer egenvektoren inn?
+
+Når neste fordeling er lik den vi har, kaller vi fordelingen **stasjonær**:
+
+$$\underbrace{Sp_*}_{\text{neste fordeling}}=
+\underbrace{p_*}_{\text{nåværende fordeling}}
+\qquad\Longleftrightarrow\qquad Sp_*=1p_*.$$
+
+Dette er en egenvektor med egenverdi **1**, skalert til sum én.
+Her er $p_*=(1/3,1/6,1/3,1/6)^T$: A og C deler førsteplassen.
+Den besøkende flytter fortsatt; det er **fordelingen** som er uendret.
+
+**Diskuter:** Hvorfor kan en lenke fra en mye besøkt side gi flere besøk enn
+en lenke fra en lite besøkt side? Besøk under vår regel er ikke det samme
+som kvalitet eller relevans. I 5.6 undersøker vi dessuten om fordelingen alltid stabiliserer seg.
+
+<details class="reading-step">
+<summary>Gå i dybden: fra besøksregel til matrise og egenvektor</summary>
+
+**Fra besøksfordeling til vektor**
 
 Vi samler sannsynlighetene i en kolonne, i den faste rekkefølgen A, B, C, D:
 
@@ -1251,7 +1335,7 @@ $1/2$ deles i to: $1/4$ til A og $1/4$ til D. Dette er forklaringen på
 prosentene vi nettopp observerte. Nå skriver vi den samme flytteregelen
 som ett matriseprodukt, slik at vi kan bruke teorien fra resten av uken.
 
-### Fra lenker til en matrise
+**Fra lenker til en matrise**
 
 En **overgangsmatrise** lagrer sannsynlighetene for neste klikk.
 Vi lar **kolonne $j$ være siden vi går fra, og rad $i$ være siden vi går til**:
@@ -1296,7 +1380,7 @@ fordelingen er uendret: hver side får like mye sannsynlighet inn som den
 sender videre. For A kommer $1/6$ fra C og $1/6$ fra D, altså $1/3$ på nytt.
 **Stasjonær** betyr dermed ikke at noen har sluttet å klikke.
 
-### Hva sier rangeringen – og hva sier den ikke?
+**Hva sier rangeringen – og hva sier den ikke?**
 
 Vi gir høyere rang til sidene med størst andel i denne uendrede fordelingen.
 A og C deler førsteplassen her. Dette er et mål på **besøk under den valgte
@@ -1327,6 +1411,9 @@ for k in range(40):
 print("A, B, C, D:", p)
 print("Sum:", p.sum(), "største endring ved neste klikk:", np.max(abs(S @ p-p)))
 ```
+
+
+</details>
 
 <details class="reading-step">
 <summary>Gå i dybden: ett matriseprodukt og en bevaringslov</summary>
@@ -1642,59 +1729,185 @@ En lik residualtoleranse gir altså ikke samme feilgaranti når $\alpha$ endres.
 
 <div id="uke5-oppgaver"></div>
 
-**Diskuter:** Kan vi ha en liten residual uten å ha den egenverdien vi var
-ute etter? Kan en rangering være beregnet nøyaktig og likevel være lite nyttig?
-Bruk ett forsøk fra uken som eksempel.
+Oppgavene er til eget arbeid. Første del henter fram verktøyene fra Matte 1;
+andre del bruker dem på spørsmålene i Matte 3A. Svarfeltene sjekker regningen.
+Begrunnelsene og undersøkelsene er like viktige: et godkjent tall er ikke en forklaring.
 
-<details class="reading-step">
-<summary>Gå i dybden: oppgaver med egen begrunnelse</summary>
+### Del 1 – Matte 1: hent fram verktøyene
 
-Løs på papir først, og bruk Python som kontroll der det passer.
-Åpne «Slik kan du tenke» etter at du har prøvd selv.
+**1. Lineært system og basiskoeffisienter.** Vi vil skrive
+$(2,1)^T=c_1(1,1)^T+c_2(1,-1)^T$. Sett opp og løs de to likningene.
 
-1. Finn egenverdier og egenrom til $\begin{bmatrix}4&0\\0&-2\end{bmatrix}$.
-   Forutsi $A^kx_0$ fra $x_0=(1,1)^T$. Hva gjør normalisering med bildet?
-2. Bruk $C$ fra 5.2. Skriv $(2,1)^T$ i en egenvektorbasis og finn $C^k(2,1)^T$.
-3. Lag en startvektor som gir null egenresidual uten å finne den dominante
-   egenverdien til $\operatorname{diag}(5,2)$. Forklar hvorfor testen godtar den.
-4. To sider lenker bare til hverandre. Prøv start $(1,0)^T$ og $(1/2,1/2)^T$.
-   Finn begge egenverdiene. Finnes en entydig stasjonær sannsynlighetsvektor?
-   Konvergerer begge startene til den?
-5. En tredje side har ingen utgående lenker. Forklar hvordan du bygger
-   kolonnen dens, og hvorfor teleportering alene ikke reparerer en nullkolonne.
+```{math-exercise}
+#| label: week5-task-coordinates
+#| caption: Finn koeffisientene ved å løse et lineært system
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: c₁, c₂
+
+$c_1=$ __[3/2]
+
+$c_2=$ __[1/2]
+```
+
+Kontroller ved å bygge vektoren opp igjen. Hvorfor gir ikke de to
+koordinatene i $(2,1)^T$ direkte koeffisientene i denne basisen?
+
+**2. Egenverdier og egenvektorer.** La $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
+Finn egenverdiene fra $\det(A-\lambda I)=0$, og løs deretter
+$(A-\lambda I)v=0$ for hver av dem. Oppgi egenverdiene i synkende rekkefølge.
+Vi velger første koordinat i hver egenvektor lik 1.
+
+```{math-exercise}
+#| label: week5-task-eigenvectors
+#| caption: Fra determinantlikning til homogene systemer
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: største egenverdi, andre egenverdi, andre koordinat i v₁, andre koordinat i v₂
+
+$\lambda_1=$ __[3]
+
+$\lambda_2=$ __[1]
+
+$v_1=(1,$ __[1] $)^T$
+
+$v_2=(1,$ __[-1] $)^T$
+```
+
+Beskriv **alle** egenvektorene til hver egenverdi. Hvorfor inngår nullvektoren
+i egenrommet, men ikke blant egenvektorene? Kan $(2,2)^T$ også brukes som $v_1$?
 
 <details class="learning-hint">
-<summary>Slik kan du tenke</summary>
+<summary>Et hint til regnemetoden</summary>
 
-1. Egenverdier $4,-2$, koordinataksene er egenrommene. Vektoren er
-   $(4^k,(-2)^k)^T$; den normaliserte retningen nærmer seg første akse.
-2. $(2,1)^T=3(1,0)^T-(1,-1)^T$, så svaret er
-   $3\cdot2^k(1,0)^T-(1,-1)^T$.
-3. Start med $(0,1)^T$: egenverdien er $2$, og residualen er null.
-4. Matrisen er $\begin{bmatrix}0&1\\1&0\end{bmatrix}$, med egenverdier $1,-1$.
-   Den eneste stasjonære sannsynlighetsvektoren er $(1/2,1/2)^T$, men første
-   start veksler mellom sidene. Entydighet alene sikrer ikke konvergens.
-5. Erstatt nullkolonnen med $u$. Hvis du beholder nullkolonnen, får den
-   tilsvarende kolonnen i $G$ sum $1-\alpha$, ikke én.
-
-**Mellomregning til oppgave 2:** Med $v_1=(1,0)^T$, $v_2=(1,-1)^T$ løser vi
-$c_1v_1+c_2v_2=(2,1)^T$. Andre koordinat gir $-c_2=1$, altså $c_2=-1$.
-Første gir $c_1+c_2=2$, altså $c_1=3$. Siden $Cv_1=2v_1$ og $Cv_2=v_2$,
-er resultatet $C^k(2,1)^T=(3\cdot2^k-1,1)^T$.
-
-**Mellomregning til oppgave 4:** Stasjonaritet gir $p_1=p_2$.
-Sammen med $p_1+p_2=1$ gir dette nøyaktig én sannsynlighetsvektor.
-Men fra $(1,0)^T$ blir resultatene $(0,1)^T,(1,0)^T,\ldots$.
-Den andre egenverdien $-1$ bevarer størrelsen på avviket fra likevekt og
-snur fortegnet hver gang. Dette er grunnen til at entydighet ikke er nok.
+Første oppgave gir $c_1+c_2=2$ og $c_1-c_2=1$.
+I andre oppgave er determinantlikningen $(2-\lambda)^2-1=0$.
+Etter at du har funnet en rot, setter du den inn i $A-\lambda I$
+og løser det homogene systemet. Ikke forsøk å invertere denne matrisen.
 
 </details>
 
-</details>
+### Del 2 – Matte 3A: forklar utviklingen og undersøk grensene
 
-I [prosjekt 5](project_week5.qmd) skal du bygge og kontrollere en rangering,
-diagnostisere et problem og gjennomføre en egen undersøkelse. Ta med disse
-spørsmålene: **Oppfyller svaret likningen? Konvergerer metoden? Måler modellen
-det vi ønsket?** De er tre forskjellige spørsmål.
+**3. Gjentakelse i egenvektorbasis.** Bruk $A$ fra oppgave 2 og
+$x_0=(2,1)^T$ fra oppgave 1. Skriv $A^kx_0$ ved hjelp av de to
+basiskoeffisientene og egenverdiene, før du setter inn $k=3$.
+
+```{math-exercise}
+#| label: week5-task-powers
+#| caption: To bidrag som utvikler seg forskjellig
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første koordinat, andre koordinat, forhold mellom bidragslengder
+
+$A^3x_0=($ __[41] $, $ __[40] $)^T$
+
+Lengden av bidraget langs $v_2$, delt på lengden av bidraget langs $v_1$, etter tre steg:
+__[1/81]
+```
+
+Forklar hvorfor retningen nærmer seg linjen gjennom $v_1$ selv om bidraget
+langs $v_2$ ikke blir kortere. Finn en annen ikke-null start der dette ikke skjer.
+Hva endres dersom den andre egenverdien byttes fra $1$ til $-1$?
+
+**4. En liten residual – svar på hvilket spørsmål?** Fullfør funksjonen.
+Den skal normalisere starten, utføre `steps` normaliserte multiplikasjoner,
+og returnere siste enhetsvektor, Rayleigh-kvotienten og lengden av egenresidualen.
+Forutsett en ikke-null start og at ingen multiplikasjon gir nullvektoren.
+
+```{py-exercise}
+#| label: week5-task-power-residual
+#| caption: Implementer potensmetoden og utfordre kontrollen
+import numpy as np
+
+def power_check(A, start, steps):
+    # x = start / ||start||; deretter steps ganger: x = Ax / ||Ax||.
+    # rho = (x.T @ A @ x)/(x.T @ x), residual = ||A @ x - rho*x||.
+    # Returner x, rho, residual.
+    return None
+
+A = np.diag([5., 2.])
+# Undersøk [1., 1.], [0., 1.] og [1.e-8, 1.] med samme antall steg.
+
+## TESTS ##
+x, rho, residual = power_check(np.diag([5.,2.]), np.array([0.,3.]), 4)
+assert np.allclose(x, [0,1]) and np.isclose(rho,2) and np.isclose(residual,0), 'En start i det andre egenrommet blir der.'
+x, rho, residual = power_check(np.diag([5.,2.]), np.array([1.,1.]), 2)
+y = np.array([25.,4.]); y /= np.linalg.norm(y)
+assert np.allclose(x,y), 'Normaliser, og utfør akkurat det oppgitte antallet steg.'
+assert np.isclose(rho, np.dot(y, np.diag([5.,2.])@y)), 'Bruk Rayleigh-kvotienten for siste vektor.'
+assert np.isclose(residual,np.linalg.norm(np.diag([5.,2.])@y-rho*y)), 'Mål egenresidualen, ikke endringen mellom iterasjoner.'
+x, rho, residual = power_check(np.array([[2.,1.],[1.,2.]]), np.array([3.,4.]), 0)
+assert np.allclose(x,[.6,.8]), 'Også starten skal normaliseres når steps er 0.'
+assert np.isclose(rho,2.96) and np.isclose(residual,.28), 'Funksjonen må også virke for en matrise som ikke er diagonal.'
+```
+
+**Undersøk:** Forutsi hvilken av de tre startene som finner egenverdi 5
+raskest. Velg selv hvor mange steg du trenger for å undersøke hypotesen.
+Kan residualen være null når du har funnet egenverdi 2? Forklar hva testen
+bekrefter, og hva den ikke bekrefter. Bruk uttrykket for $A^kx_0$ til å
+forklare forskjellen mellom startene $[0,1]^T$ og $[10^{-8},1]^T$.
+
+**5. En stasjonær fordeling uten konvergens.** To sider lenker bare til
+hverandre, så $S=\begin{bmatrix}0&1\\1&0\end{bmatrix}$.
+Finn egenverdiene og løs $Sp_*=p_*$ sammen med $p_{*,1}+p_{*,2}=1$.
+
+```{math-exercise}
+#| label: week5-task-stationary-cycle
+#| caption: Skill mellom en uendret fordeling og en grense
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første stasjonære andel, andre stasjonære andel, andre egenverdi
+
+$p_*=($ __[1/2] $, $ __[1/2] $)^T$
+
+Egenverdien forskjellig fra $1$ er __[-1]
+```
+
+Forutsi forløpet fra $(1,0)^T$ og fra $p_*$. Forklar ved hjelp av den
+andre egenverdien hvorfor en entydig stasjonær fordeling ikke er nok til
+å sikre at alle starter nærmer seg den.
+
+**6. Endre modellen, og forklar effekten.** Teleportering betyr at vi med
+sannsynlighet $1-\alpha$ velger neste side etter en fast sannsynlighetsvektor
+$u$, og ellers følger lenkene i $S$. Fullfør ett steg
+$p_{k+1}=\alpha Sp_k+(1-\alpha)u$. Her er $S$ kolonnestokastisk,
+$p$ og $u$ sannsynlighetsvektorer og $0\leq\alpha<1$.
+
+```{py-exercise}
+#| label: week5-task-teleportation
+#| caption: Fra pendling til konvergens
+import numpy as np
+
+def visit_step(S, p, alpha, u):
+    # Returner fordelingen etter ett steg med teleportering.
+    return None
+
+S = np.array([[0.,1.],[1.,0.]])
+u = np.array([.5,.5])
+p = np.array([1.,0.])
+# Når funksjonen virker: gjenta steget og følg avstanden ||p-u||.
+
+## TESTS ##
+S2 = np.array([[0.,1.],[1.,0.]])
+out = visit_step(S2, np.array([1.,0.]), .8, np.array([.5,.5]))
+assert np.allclose(out,[.1,.9]), 'Bland lenkesteget med den faste fordelingen u.'
+assert np.allclose(visit_step(S2,np.array([.3,.7]),0,np.array([.8,.2])),[.8,.2]), 'Ved alpha=0 bestemmer u hele neste fordeling.'
+S3 = np.array([[0.,0.,1.],[1.,0.,0.],[0.,1.,0.]])
+out = visit_step(S3,np.array([1.,0.,0.]),.6,np.array([.5,.25,.25]))
+assert np.allclose(out,[.2,.7,.1]), 'Bruk kolonner som avsendere; funksjonen skal også virke for tre sider.'
+assert np.isclose(np.sum(out),1) and np.all(np.asarray(out)>=0), 'Resultatet skal være en sannsynlighetsvektor.'
+```
+
+**Undersøk:** Behold de to sidene og jevn $u$. Velg minst to verdier av
+$\alpha$ som du tror vil gi tydelig forskjellig fart. Forutsi først hvordan
+avstanden til $u$ endres fra ett steg til det neste; bruk deretter iterasjonene
+til å utfordre forklaringen. Vis algebraisk hva som skjer med avviket
+$p_k-u$ langs $(1,-1)^T$. Hva koster raskere konvergens i form av hvor mye
+rangeringen bygger på de opprinnelige lenkene?
+
+I [prosjekt 5](project_week5.qmd) bruker du dette til en egen undersøkelse
+av rangering. Skill mellom tre spørsmål: Oppfyller svaret likningen?
+Konvergerer metoden? Måler modellen det vi ønsket?
 
 :::
