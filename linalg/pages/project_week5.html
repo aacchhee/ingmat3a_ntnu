@@ -4440,15 +4440,6 @@ window.Quarto = {
 </header>
 
 
-<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">
-Oppgaver
-</button>
-<button type="button" data-mode="reading" aria-pressed="false">
-Gå i dybden
-</button>
-<p><span role="status" aria-live="polite"></span></p>
-</div>
 <section id="ukens-spørsmål" class="level2">
 <h2 class="anchored" data-anchor-id="ukens-spørsmål">Ukens spørsmål</h2>
 <p><strong>Kan en korrekt beregning gi en rangering vi ikke stoler på?</strong></p>
@@ -4494,24 +4485,16 @@ Gå i dybden
 </table>
 <p>En pil fra A til B er en lenke besøkende kan følge. Den går ut fra A og inn til B. Ved hvert klikk velges én utgående lenke med lik sannsynlighet. Vi følger fordelingen av besøk: én andel per side, alle ikke-negative og med sum én. En slik kolonne av andeler er en <strong>sannsynlighetsvektor</strong>.</p>
 <p>Ranger sidene før du kjører modellen, og begrunn førsteplassen. Hva er forskjellen på å telle innkommende lenker og å telle besøk? I matrisen <span class="math inline">\(S\)</span> er kolonne <span class="math inline">\(j\)</span> avsender og rad <span class="math inline">\(i\)</span> mottaker. <span class="math inline">\(S_{ij}\)</span> er sannsynligheten for et klikk fra <span class="math inline">\(j\)</span> til <span class="math inline">\(i\)</span>. Kolonnene må ha sum én; sammen med ikke-negative elementer gjør dette <span class="math inline">\(S\)</span> <strong>kolonnestokastisk</strong>.</p>
-<details class="reading-step">
-<summary>
-Gå i dybden: tegn og kontroller én runde for hånd
-</summary>
+<p><strong>Tegn og kontroller én runde for hånd</strong></p>
 <p>Tegn grafen på papir, og flytt en jevn besøksfordeling én runde langs pilene. Ta vare på resultatet som uavhengig kontroll av koden.</p>
-</details>
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Kontroller før du går videre:</strong> Alle elementer skal være ikke-negative, kolonnesummene skal være én. Sammenlign <span class="math inline">\(Su\)</span> med lenkene og den uavhengige kontrollen under «Gå i dybden». Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.</p>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke: kontroller én avsender om gangen
-</summary>
+<p><strong>Kontroller før du går videre:</strong> Alle elementer skal være ikke-negative, kolonnesummene skal være én. Sammenlign <span class="math inline">\(Su\)</span> med lenkene og den uavhengige håndberegningen fra starten av del 1. Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.</p>
+<p><strong>Kontroller én avsender om gangen</strong></p>
 <p>Fra A går halvparten til B og halvparten til C, altså <span class="math inline">\(S_{1,0}=S_{2,0}=1/2\)</span> med Python-indekser. Alle andre elementer i kolonne null er null. Start med denne kolonnen og kolonnen for C, som bare har én lenke.</p>
 <p>Første runde fra jevn start skal bli <span class="math inline">\((1/6,1/12,1/4,1/4,1/12,1/6)^T\)</span>.</p>
-</details>
 </section>
 <section id="beregn-og-kontroller-rangeringen" class="level2">
 <h2 class="anchored" data-anchor-id="beregn-og-kontroller-rangeringen">2. Beregn og kontroller rangeringen</h2>
@@ -4530,13 +4513,9 @@ Slik kan du tenke: kontroller én avsender om gangen
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Presenter rangering og kontrolltall. Gjenta med alle besøk på A ved start. Forklar hvorfor referanseberegningen må bruke samme <span class="math inline">\(S\)</span>, <span class="math inline">\(u\)</span> og <span class="math inline">\(\alpha\)</span>. Enighet mellom to metoder på ulike modeller ville ikke være en kontroll.</p>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke: hvorfor kan referansesystemet løses?
-</summary>
+<p><strong>Hvorfor kan referansesystemet løses?</strong></p>
 <p>Egenverdiene til en stokastisk matrise har absoluttverdi høyst én. Når <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, kan ikke <span class="math inline">\(\alpha S\)</span> ha egenverdi én. Dermed er <span class="math inline">\(I-\alpha S\)</span> invertibel.</p>
 <p>Du kan kontrollere kolonnesummer med <code>np.allclose(S.sum(axis=0), 1)</code>. Hvis en inngang er ugyldig, bruk <code>raise ValueError(...)</code> med en forklaring. Ikke endre inngangsvektoren til brukeren: lag en kopi av <code>p0</code>.</p>
-</details>
 </section>
 <section id="diagnostiser-et-problem-før-du-reparerer-det" class="level2">
 <h2 class="anchored" data-anchor-id="diagnostiser-et-problem-før-du-reparerer-det">3. Diagnostiser et problem før du reparerer det</h2>
@@ -4587,21 +4566,13 @@ Slik kan du tenke: hvorfor kan referansesystemet løses?
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Finn <span class="math inline">\(p_*\)</span> med referansesystemet fra del 2. Kjør et fast antall oppdateringer, lagre <span class="math inline">\(\lVert p_k-p_*\rVert_1\)</span> og plott feilen med logaritmisk vertikal akse. Sammenlign forholdet mellom to påfølgende feil med <span class="math inline">\(\beta\)</span> i området før avrunding dominerer. Gjenta med en annen start hvis du ikke ser forventet fart.</p>
-<details class="reading-step">
-<summary>
-Gå i dybden: forklar pendlingen for hånd
-</summary>
+<p><strong>Forklar pendlingen for hånd</strong></p>
 <p>For pendlingstilfellet: finn begge egenverdiene til <span class="math inline">\(G\)</span>, uttrykt ved <span class="math inline">\(\alpha\)</span>, og forklar fortegnet til den andre.</p>
-</details>
 <p>For de andre tilfellene: velg en egenverdi ulik én og kontroller en tilhørende numerisk egenvektor med <span class="math inline">\(\lVert Gv-\lambda v\rVert_2\)</span>.</p>
 <p>Svar med ord: <strong>Hvorfor trenger vi de andre egenverdiene når PageRank selv bruker egenverdien én?</strong></p>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke: startfordelingen kan skjule en egenretning
-</summary>
+<p><strong>Startfordelingen kan skjule en egenretning</strong></p>
 <p>Forskjellen <span class="math inline">\(p_k-p_*\)</span> har sum null. Et bidrag i en egenretning med egenverdi <span class="math inline">\(\lambda\)</span> får faktoren <span class="math inline">\(\lambda^k\)</span>. Hvis den valgte starten mangler bidraget som avtar langsomst, kan du observere raskere konvergens enn <span class="math inline">\(\beta\)</span> antyder. Komplekse egenverdier og flere bidrag kan også gi variasjon i feilforholdet.</p>
 <p>For to sider med jevn teleportering er <span class="math inline">\(G=\begin{bmatrix}(1-\alpha)/2&amp;(1+\alpha)/2\\(1+\alpha)/2&amp;(1-\alpha)/2\end{bmatrix}\)</span>. Prøv den på <span class="math inline">\((1,1)^T\)</span> og <span class="math inline">\((1,-1)^T\)</span> før du beregner determinanten.</p>
-</details>
 </section>
 <section id="velg-én-egen-undersøkelse" class="level2">
 <h2 class="anchored" data-anchor-id="velg-én-egen-undersøkelse">5. Velg én egen undersøkelse</h2>
@@ -4610,15 +4581,11 @@ Slik kan du tenke: startfordelingen kan skjule en egenretning
 <h3 class="anchored" data-anchor-id="a.-demping-rangering-og-regnefart">A. Demping, rangering og regnefart</h3>
 <p>Hold grafen og startfordelingen fast. Velg verdier av <span class="math inline">\(\alpha\)</span> som kan belyse påstanden din; <span class="math inline">\(\{0.5,0.85,0.95,0.99\}\)</span> er mulige startverdier. Forutsi først hvordan rangering og antall steg endres. Mål faktisk feil mot referansesystemet, antall steg og <span class="math inline">\(\beta\)</span>.</p>
 <p>For en rettferdig sammenligning av arbeid ved samme garanterte nøyaktighet, bruk residualtoleranse <span class="math inline">\((1-\alpha)\cdot10^{-8}\)</span>. Da gir feilgrensen nedenfor <span class="math inline">\(\lVert p-p_*\rVert_1\le10^{-8}\)</span>. Hold maksimalgrensen fast og rapporter hvis en kjøring ikke når toleransen. Høyere <span class="math inline">\(\alpha\)</span> gir ikke nødvendigvis en streng økning av antall steg på alle grafer; forklar det du faktisk observerer.</p>
-<details class="reading-step">
-<summary>
-Gå i dybden: hvorfor justere toleransen med dempingen?
-</summary>
+<p><strong>Hvorfor justere toleransen med dempingen?</strong></p>
 <p>Sett <span class="math inline">\(T(p)=\alpha Sp+(1-\alpha)u\)</span>. Kolonnesummene og ikke-negativiteten gir <span class="math inline">\(\|Sz\|_1\leq\|z\|_1\)</span>, så <span class="math inline">\(\|T(p)-T(q)\|_1\leq\alpha\|p-q\|_1\)</span>. Med <span class="math inline">\(T(p_*)=p_*\)</span> og <span class="math inline">\(r=\|T(p)-p\|_1\)</span> gir trekantulikheten</p>
 <p><span class="math display">\[\|p-p_*\|_1\leq r+\alpha\|p-p_*\|_1,
 \qquad \|p-p_*\|_1\leq\frac{r}{1-\alpha}.\]</span></p>
 <p>Samme residualtoleranse ved ulike <span class="math inline">\(\alpha\)</span> betyr derfor ikke samme garanterte løsningsnøyaktighet. Sammenlign også med den direkte løsningen.</p>
-</details>
 </section>
 <section id="b.-kan-lenker-manipulere-rangeringen" class="level3">
 <h3 class="anchored" data-anchor-id="b.-kan-lenker-manipulere-rangeringen">B. Kan lenker manipulere rangeringen?</h3>

@@ -4477,19 +4477,10 @@ window.Quarto = {
 
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg prosjektvisning">
-<button type="button" data-mode="lecture" aria-pressed="true">
-Oppgaver
-</button>
-<button type="button" data-mode="reading" aria-pressed="false">
-Gå i dybden
-</button>
-<p><span role="status" aria-live="polite"></span></p>
-</div>
 <section id="kan-vi-gjøre-systemet-lettere-uten-å-endre-løsningen" class="level2">
 <h2 class="anchored" data-anchor-id="kan-vi-gjøre-systemet-lettere-uten-å-endre-løsningen">Kan vi gjøre systemet lettere uten å endre løsningen?</h2>
-<p>Du skal undersøke <strong>diagonal prekondisjonering av konjugert gradient (CG)</strong>. CG er introdusert i <a href="../pages/uke6.html#uke6-cg">uke 6</a>; her bruker vi diagonalen i matrisen til å endre skaleringen og undersøker om det gir mindre arbeid. Vi følger samme arbeidsform som i notatene: <strong>forutsi → kjør → beskriv → forklar</strong>. Skriv forventningene før du åpner forklaringene eller kjører sammenligningen.</p>
-<p>Kjernen er del 1–5. Du får fungerende CG, matriser og plottverktøy. Din implementasjonsoppgave er å fullføre <strong>prekondisjonert konjugert gradient (PCG)</strong> fra pseudokoden i del 4. MINRES er en valgfri utvidelse etter kjernen.</p>
+<p>Du skal undersøke <strong>diagonal prekondisjonering av konjugert gradient (CG)</strong>. CG er introdusert i <a href="../pages/uke6.html#uke6-cg">uke 6</a>; her bruker vi diagonalen i matrisen til å endre skaleringen og undersøker om det gir mindre arbeid. Vi følger samme arbeidsform som i notatene: <strong>forutsi → kjør → beskriv → forklar</strong>. Skriv forventningene før du kjører sammenligningen; bruk forklaringene til å tolke resultatene.</p>
+<p>Kjernen er del 1–5. Du får fungerende CG, matriser og plottverktøy. Din implementasjonsoppgave er å fullføre <strong>prekondisjonert konjugert gradient (PCG)</strong> fra pseudokoden i del 4.</p>
 <section id="før-du-begynner" class="level3">
 <h3 class="anchored" data-anchor-id="før-du-begynner">Før du begynner</h3>
 <p>Alle systemer i kjernen har <strong>symmetrisk positivt definitte (SPD)</strong> matriser: <span class="math inline">\(A^T=A\)</span> og <span class="math inline">\(z^TAz&gt;0\)</span> for alle <span class="math inline">\(z\ne0\)</span>. De har kjent løsning <span class="math inline">\(x_*\)</span>. Vi lager <span class="math inline">\(b=Ax_*\)</span> for å kunne måle faktisk feil. Dette er et kontrollert forsøk, ikke en påstand om at vi kjenner løsningen i praktiske problemer. Matrisene er små og tette for å gjøre alle kontrollene tilgjengelige i nettleseren. Et <strong>glissent system</strong> har en matrise med få elementer som er ulike null. Arbeid og lagring for slike store systemer kan ikke vurderes ut fra kjøretidene til disse små, tette matrisene.</p>
@@ -4508,21 +4499,14 @@ Gå i dybden
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Bruk CG-funksjonen nedenfor på begge systemene, foreløpig uten prekondisjonering. Noter antall steg og hvilken residual som ble nådd. Bruk retningstolkningen fra uke 6 når du forklarer forskjellen etter forsøket.</p>
-<details class="reading-step">
-<summary>
-Gå i dybden: fungerende CG og måling av original residual
-</summary>
+<p><strong>Fungerende CG og måling av original residual</strong></p>
 <p>Denne cellen definerer CG automatisk. Den returnerer hele banen og kontrolltall. Vi sjekker <span class="math inline">\(b-Ax\)</span> direkte ved hvert steg, også om algoritmen vedlikeholder en residual med en kort oppdateringsformel.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Symmetrikontrollen er ikke et SPD-bevis. De leverte matrisene er SPD av konstruksjon. Testen på <span class="math inline">\(p^TAp\)</span> oppdager enkelte problemer, men erstatter ikke forutsetningen om SPD. Vi håndterer riktig start ved å stoppe før divisjon.</p>
-</details>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<details class="reading-step">
-<summary>
-Gå i dybden: knytt forsøket til CG fra forelesningen
-</summary>
+<p><strong>Knytt forsøket til CG fra forelesningen</strong></p>
 <p>Bratteste nedstigning velger <span class="math inline">\(p_k=r_k\)</span> hver gang. CG kombinerer den nye residualen med forrige søkeretning slik at retningene i eksakt regning er <strong>A-konjugerte</strong>:</p>
 <p><span class="math display">\[p_i^TAp_j=0\quad(i\ne j).\]</span></p>
 <p>Fra uke 4 kjenner vi ortogonalitet. Her er måleregelen <span class="math inline">\(\langle v,w\rangle_A=v^TAw\)</span>, som er et indreprodukt fordi <span class="math inline">\(A\)</span> er SPD. En linjeminimering langs en ny konjugert retning bevarer optimaliteten i de gamle retningene. CG trenger ikke lagre alle retningene:</p>
@@ -4531,7 +4515,6 @@ x_{k+1}=x_k+\alpha_kp_k,\quad r_{k+1}=r_k-\alpha_kAp_k,\]</span></p>
 <p><span class="math display">\[\beta_k=\frac{r_{k+1}^Tr_{k+1}}{r_k^Tr_k},\quad
 p_{k+1}=r_{k+1}+\beta_kp_k.\]</span></p>
 <p>I eksakt regning terminerer CG etter høyst <span class="math inline">\(n\)</span> steg for SPD-systemer. Flyttallsregning kan kreve flere. Antall steg påvirkes av fordelingen av egenverdiene og hvilke feilbidrag starten har, ikke bare dimensjonen. Et kondisjonstall alene beskriver ikke hele konvergenshistorikken. <strong>Energifeilen</strong> er <span class="math inline">\(\lVert x-x_*\rVert_A=\sqrt{(x-x_*)^TA(x-x_*)}\)</span>. CG minimerer den over stadig større rom av tilgjengelige søkeretninger; den euklidske residualnormen trenger ikke avta i hvert eneste steg.</p>
-</details>
 </section>
 <section id="prøv-å-endre-koordinatene" class="level2">
 <h2 class="anchored" data-anchor-id="prøv-å-endre-koordinatene">2. Prøv å endre koordinatene</h2>
@@ -4540,10 +4523,7 @@ p_{k+1}=r_{k+1}+\beta_kp_k.\]</span></p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Noter hva som endret seg. Dette er en første undersøkelse, <strong>ikke ennå en rettferdig sammenligning av antall steg</strong>: stoppet her bruker en transformert residual. Del 4 bruker samme opprinnelige residualkrav i begge metoder.</p>
-<details class="reading-step">
-<summary>
-Gå i dybden: samme løsning og bevart symmetri
-</summary>
+<p><strong>Samme løsning og bevart symmetri</strong></p>
 <p>Vi setter <span class="math inline">\(x=M^{-1/2}y\)</span> og multipliserer <span class="math inline">\(Ax=b\)</span> fra venstre med <span class="math inline">\(M^{-1/2}\)</span>:</p>
 <p><span class="math display">\[\underbrace{M^{-1/2}AM^{-1/2}}_{\widetilde A}y
 =\underbrace{M^{-1/2}b}_{\widetilde b},\qquad x=M^{-1/2}y.\]</span></p>
@@ -4551,7 +4531,6 @@ Gå i dybden: samme løsning og bevart symmetri
 <p><span class="math display">\[z^T\widetilde Az=(M^{-1/2}z)^TA(M^{-1/2}z)&gt;0,\]</span></p>
 <p>og <span class="math inline">\(\widetilde A^T=\widetilde A\)</span>. Dermed kan vi bruke vanlig CG på dette systemet. Derimot er <span class="math inline">\(M^{-1}A\)</span> generelt ikke symmetrisk i det vanlige indreproduktet; vi skal ikke bare sende denne matrisen til en vanlig CG-rutine.</p>
 <p>Original residual er <span class="math inline">\(r=b-Ax\)</span>. Transformert residual er <span class="math inline">\(\widetilde r=M^{-1/2}r\)</span>. De to normene måler derfor forskjellige skaleringer av det samme avviket. Det er den originale residualen som brukes til hovedsammenligningen vår.</p>
-</details>
 </section>
 <section id="se-hva-skaleringen-faktisk-endrer" class="level2">
 <h2 class="anchored" data-anchor-id="se-hva-skaleringen-faktisk-endrer">3. Se hva skaleringen faktisk endrer</h2>
@@ -4561,20 +4540,16 @@ Gå i dybden: samme løsning og bevart symmetri
 <p>Lag også et lite konturforsøk. Endre bare koordinatene, og kontroller at minimumet omregnes riktig:</p>
 <div id="qpyodide-insertion-location-7"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<details class="reading-step">
-<summary>
-Gå i dybden: hvorfor kan ett tiltak gi to forskjellige resultater?
-</summary>
+<p><strong>Hvorfor kan ett tiltak gi to forskjellige resultater?</strong></p>
 <p>Første system er <span class="math inline">\(A=DBD\)</span> med <span class="math inline">\(D=\operatorname{diag}(d)\)</span>. Siden <span class="math inline">\(B\)</span> har diagonal to, er <span class="math inline">\(M=2D^2\)</span> og</p>
 <p><span class="math display">\[M^{-1/2}AM^{-1/2}=B/2.\]</span></p>
 <p>Den store forskjellen mellom koordinatskaleringene fjernes. <span class="math inline">\(B\)</span> er SPD: diagonal to er større enn summen av de to nabobidragene <span class="math inline">\(0.5\)</span>, og egenverdiene ligger mellom <span class="math inline">\(1.5\)</span> og <span class="math inline">\(2.5\)</span>. Skalering på begge sider med invertibel diagonal <span class="math inline">\(D\)</span> bevarer positiv definitet: <span class="math inline">\(z^TDBDz=(Dz)^TB(Dz)&gt;0\)</span> for <span class="math inline">\(z\ne0\)</span>.</p>
 <p>For Poisson-matrisen er <span class="math inline">\(M=2I\)</span>, slik at <span class="math inline">\(\widetilde A=A/2\)</span>. Alle egenverdier halveres, men forholdet mellom største og minste er det samme. Diagonal prekondisjonering endrer derfor ikke vanskeligheten for CG i eksakt regning. Små forskjeller i flyttall er ikke en systematisk forbedring.</p>
 <p>Poisson-matrisen er SPD fordi, med <span class="math inline">\(z_0=z_{n+1}=0\)</span>, <span class="math inline">\(z^TAz=\sum_{i=0}^n(z_{i+1}-z_i)^2&gt;0\)</span> for <span class="math inline">\(z\ne0\)</span>. Navnet <strong>Jacobi-prekondisjonering</strong> betyr her bruk av diagonalen, ikke at vi kjører Jacobi-iterasjoner.</p>
-</details>
 </section>
 <section id="fullfør-pcg" class="level2">
 <h2 class="anchored" data-anchor-id="fullfør-pcg">4. Fullfør PCG</h2>
-<p>Vi kan få effekten av koordinatskiftet uten å bygge <span class="math inline">\(\widetilde A\)</span>. For hver residual løser vi det enkle systemet <span class="math inline">\(Mz=r\)</span>. Med diagonal <span class="math inline">\(M\)</span> betyr dette <span class="math inline">\(z_i=r_i/m_i\)</span>.</p>
+<p>Vi kan få effekten av koordinatskiftet uten å bygge <span class="math inline">\(\widetilde A\)</span>. For hver residual løser vi det enkle systemet <span class="math inline">\(Mz=r\)</span>. Med diagonal <span class="math inline">\(M\)</span> betyr dette <span class="math inline">\(z_i=r_i/m_i\)</span>. I malen lagres diagonalen som vektoren <code>m</code>, så <code>r/m</code> deler koordinatvis.</p>
 <p><strong>Din kodeoppgave:</strong> Fyll de tre markerte uttrykkene i malen. Følg pseudokoden:</p>
 <pre class="text"><code>r = b − A x
 Hvis original residual er liten nok: stopp.
@@ -4600,21 +4575,11 @@ Gjenta:
 <li>Med <span class="math inline">\(x_0=x_*\)</span> skal metoden stoppe uten et eneste søkesteg.</li>
 <li>På det lille <span class="math inline">\(A_2\)</span> i del 3 skal svaret stemme med vanlig CG på det symmetrisk transformerte systemet etter omregning til <span class="math inline">\(x\)</span>.</li>
 </ul>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke: de tre uttrykkene
-</summary>
-<p><code>m</code> er en vektor med diagonalverdier, ikke en matrise. NumPy-uttrykket <code>r/m</code> deler koordinatvis. Kvotienten for <code>beta</code> har ny verdi i telleren og gammel i nevneren. Den nye retningen er det prekondisjonerte residualet pluss et skalert bidrag fra den forrige retningen. Kontroller mot pseudokoden før du kjører.</p>
-</details>
-<details class="reading-step">
-<summary>
-Gå i dybden: hvorfor byttes rᵀr ut med rᵀz?
-</summary>
+<p><strong>Hvorfor byttes rᵀr ut med rᵀz?</strong></p>
 <p>I de nye koordinatene er residualen <span class="math inline">\(\widetilde r=M^{-1/2}r\)</span>. Dermed er</p>
 <p><span class="math display">\[\widetilde r^T\widetilde r=r^TM^{-1}r=r^Tz.\]</span></p>
 <p>Den vanlige CG-metoden i de nye koordinatene kan derfor skrives med <span class="math inline">\(\gamma=r^Tz\)</span> i de opprinnelige koordinatene. Første retning blir <span class="math inline">\(p=M^{-1}r=z\)</span>. Ved å omregne resten av CG får vi pseudokoden over.</p>
 <p>En prekondisjonering skal være billig å anvende og gjøre det transformerte problemet lettere. Vi beregner ikke <span class="math inline">\(M^{-1}\)</span> eksplisitt. Diagonal <span class="math inline">\(M\)</span> trenger <span class="math inline">\(n\)</span> lagrede tall og <span class="math inline">\(n\)</span> divisjoner per anvendelse. Et mer avansert valg kan kreve større oppsett og en egen lineær løsning hver gang. PCG trenger en fast SPD-prekondisjonering i denne formuleringen.</p>
-</details>
 </section>
 <section id="en-rettferdig-sammenligning" class="level2">
 <h2 class="anchored" data-anchor-id="en-rettferdig-sammenligning">5. En rettferdig sammenligning</h2>
@@ -4648,12 +4613,6 @@ Gå i dybden: hvorfor byttes rᵀr ut med rᵀz?
 <li>Hvilken ekstra kostnad har prekondisjoneringen, og hva må undersøkes før vi generaliserer til store, glisne systemer?</li>
 </ol>
 </section>
-</section>
-<section id="valgfritt-etter-kjernen-hvor-stopper-cgs-forutsetninger" class="level2">
-<h2 class="anchored" data-anchor-id="valgfritt-etter-kjernen-hvor-stopper-cgs-forutsetninger">Valgfritt etter kjernen: hvor stopper CGs forutsetninger?</h2>
-<p>Dette er ikke en del av den påkrevde leveransen. Bruk et lokalt Python-miljø med SciPy dersom du velger utvidelsen.</p>
-<p>Velg <span class="math inline">\(A=\operatorname{diag}(-1,2,5)\)</span>, <span class="math inline">\(x_*=(1,1,1)^T\)</span> og <span class="math inline">\(b=Ax_*\)</span>. Matrisen er symmetrisk, men ikke positivt definitt. Forutsi hvorfor minimeringsforklaringen fra forelesningen ikke lenger gjelder. Prøv bibliotekets MINRES og kontroller original residual og faktisk feil. Se <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.minres.html">SciPys MINRES-dokumentasjon</a> for argumentene i din versjon. Du skal ikke implementere MINRES selv.</p>
-<p>En CG-kjøring kan iblant nå løsningen også her; det beviser ikke at CG er sikret for systemer der matrisen har både positive og negative egenverdier. Undersøk forutsetningene, ikke bare ett utfall. Hvis du også tester prekondisjonering av MINRES, må prekondisjoneringen være SPD; den fortegnede diagonalen til denne <span class="math inline">\(A\)</span> er ikke et slikt valg.</p>
 <section id="tilbake-til-notatene" class="level3">
 <h3 class="anchored" data-anchor-id="tilbake-til-notatene">Tilbake til notatene</h3>
 <p>Se <a href="../pages/uke6.html#uke6-cg">CG i uke 6</a> for konjugerte retninger og <a href="../pages/uke6.html#uke6-residual">residualforsøket</a> for forskjellen mellom residual og feil.</p>

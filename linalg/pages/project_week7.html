@@ -4477,20 +4477,11 @@ window.Quarto = {
 
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg prosjektvisning">
-<button type="button" data-mode="lecture" aria-pressed="true">
-Oppgaver
-</button>
-<button type="button" data-mode="reading" aria-pressed="false">
-Gå i dybden
-</button>
-<p><span role="status" aria-live="polite"></span></p>
-</div>
 <section id="oppdrag-behold-informasjonen-som-betyr-noe" class="level2">
 <h2 class="anchored" data-anchor-id="oppdrag-behold-informasjonen-som-betyr-noe">Oppdrag: behold informasjonen som betyr noe</h2>
 <p>Du skal anbefale en forenkling med singulærverdidekomposisjon (SVD) under et gitt budsjett, og vise både hva den lykkes med og når den svikter. Start med en hypotese, gjør forsøket, forklar resultatet og knytt det til teorien i <a href="../pages/uke7.html">uke 7</a>.</p>
 <p><strong>Alle gjør del 1–3 og velger deretter enten A eller B.</strong> A undersøker støyfjerning i bilder. B undersøker inversjon av et uskarpt signal og gir en direkte videreføring av residual, feil og kondisjonering fra uke 6. Begge er fullverdige valg; du skal ikke gjøre begge.</p>
-<p>Oppgavevisningen gir felles arbeidsløp. «Gå i dybden» åpner støtte underveis. Hint åpnes manuelt etter eget forsøk. Ferdige hjelpere tar seg av forsøksdata og visning; du implementerer selve <strong>trunkeringen</strong>, altså å beholde bare de første leddene i en SVD-sum. I <a href="../pages/uke7.html#uke7-svd">uke 7.3</a> er <span class="math inline">\(U\)</span> og <span class="math inline">\(V\)</span> de ortonormale basisene på hver side, og singulærverdiene er strekkfaktorene, ordnet fra størst til minst.</p>
+<p>Ferdige hjelpere tar seg av forsøksdata og visning; du implementerer selve <strong>trunkeringen</strong>, altså å beholde bare de første leddene i en SVD-sum. I <a href="../pages/uke7.html#uke7-svd">uke 7.3</a> er <span class="math inline">\(U\)</span> og <span class="math inline">\(V\)</span> de ortonormale basisene på hver side, og singulærverdiene er strekkfaktorene, ordnet fra størst til minst.</p>
 <p>Alle forsøksbilder er klare i siden. Portrett: <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif">NTNU, mm.gif</a>, tilpasset til <span class="math inline">\(96\times96\)</span> gråtoner. De andre bildene lages lokalt.</p>
 <section id="kjør-her-eller-i-en-egen-notebook" class="level3">
 <h3 class="anchored" data-anchor-id="kjør-her-eller-i-en-egen-notebook">Kjør her eller i en egen notebook</h3>
@@ -4508,16 +4499,12 @@ Gå i dybden
 <li>Velg en konkret detalj i portrettet eller teksten som må bevares. Beskriv hvordan du vil avgjøre om den fortsatt er synlig.</li>
 <li>Alle bildene er like store. Hvorfor gjør dette sammenligningen enklere?</li>
 </ol>
-<details class="reading-step">
-<summary>
-Hva mener vi med komprimerbarhet her?
-</summary>
+<p><strong>Hva mener vi med komprimerbarhet her?</strong></p>
 <p>Vi spør hvor liten rang vi trenger for å få liten feil og bevare ønsket informasjon. Vi undersøker ikke hvor liten en PNG-fil blir. En diagonal strek er enkel å beskrive, men det er ikke gitt at den har lav matriserang. Noter forventningen også når du er usikker: et avkreftet gjett er et resultat.</p>
-</details>
 </section>
 <section id="lag-rekonstruksjonen-og-kontroller-den" class="level2">
 <h2 class="anchored" data-anchor-id="lag-rekonstruksjonen-og-kontroller-den">2. Lag rekonstruksjonen og kontroller den</h2>
-<p>NumPy gir <code>U, s, Vt</code>, der <code>s</code> inneholder singulærverdiene og <code>Vt</code> allerede er transponert. En komponent er <span class="math inline">\(\sigma_i u_i v_i^T\)</span>: ett rang-1-mønster med sin vekt.</p>
+<p>NumPy gir <code>U, s, Vt</code>, der <code>s</code> inneholder singulærverdiene og <code>Vt</code> allerede er transponert: basisvektorene <span class="math inline">\(v_i^T\)</span> ligger som rader i <code>Vt</code>. En komponent er <span class="math inline">\(\sigma_i u_i v_i^T\)</span>: ett rang-1-mønster med sin vekt.</p>
 <p>Implementer <code>truncate(U, s, Vt, k)</code> som bruker de første <span class="math inline">\(k\)</span> komponentene. Bruk NumPy-slicing og matrisemultiplikasjon. Den skal også virke for <span class="math inline">\(k=0\)</span> og <span class="math inline">\(k=\min(m,n)\)</span>. Ikke kall <code>rank_image</code> i din implementasjon.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -4526,18 +4513,8 @@ Hva mener vi med komprimerbarhet her?
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Forklar hvorfor kontrollen av feilformelen er mer informativ enn bare å se på et bilde. Vis til slutt samme kontroll for ett av forsøksbildene.</p>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke: hvilken vei peker V?
-</summary>
-<p>NumPy gir <span class="math inline">\(V^T\)</span>, ikke <span class="math inline">\(V\)</span>. De første <span class="math inline">\(k\)</span> radene i <code>Vt</code> må derfor beholdes. Uttrykket <code>U[:, :k] * s[:k]</code> skalerer hver beholdt kolonne med sin singulærverdi. Multipliser dette med <code>Vt[:k, :]</code>. For <span class="math inline">\(k=0\)</span> gir produktet av de tomme faktorene riktig nullmatrise.</p>
-</details>
-<details class="reading-step">
-<summary>
-Kontroll mot teori og avrunding
-</summary>
+<p><strong>Kontroll mot teori og avrunding</strong></p>
 <p>For <span class="math inline">\(A_k=\sum_{i=1}^k\sigma_i u_i v_i^T\)</span> er <span class="math inline">\(\|A-A_k\|_F^2=\sum_{i&gt;k}\sigma_i^2\)</span>. Venstresiden bruker hele rekonstruksjonen; høyresiden bruker bare singulærverdiene. Uenighet kan avsløre feil indeksering eller feil behandling av <code>Vt</code>. Ved full rang blir den beregnede feilen vanligvis svært liten, ikke nøyaktig null. Bruk toleranse, slik vi gjorde med flyttall i uke 1.</p>
-</details>
 </section>
 <section id="samme-budsjett-fire-ulike-utfall" class="level2">
 <h2 class="anchored" data-anchor-id="samme-budsjett-fire-ulike-utfall">3. Samme budsjett, fire ulike utfall</h2>
@@ -4551,13 +4528,9 @@ Kontroll mot teori og avrunding
 <li>Finn ett tydelig eksempel der metoden virker dårlig. Bruk singulærverdiene til å forklare det, og kommenter hvorfor visuell enkelhet kan villede.</li>
 <li>Beregn både parameterandel og byteandel hvis originalen er 8-bit og faktorene lagres som float64. Er det fortsatt en lagringsgevinst? Ikke ta med filformatkomprimering i denne sammenligningen.</li>
 </ul>
-<details class="reading-step">
-<summary>
-Fra tall til en anbefaling
-</summary>
+<p><strong>Fra tall til en anbefaling</strong></p>
 <p>Parameterandelen er <span class="math inline">\(k(m+n+1)/(mn)\)</span>. Byteandelen i den beskrevne modellen er <span class="math inline">\(8k(m+n+1)/(mn)\)</span>, før eventuell metadata. Et budsjett på 25 % av antall tall kan altså bruke mer plass enn det opprinnelige 8-bitsbildet. Du kan diskutere float32 eller kvantisering, men trenger ikke implementere det.</p>
 <p>Lav Frobeniusfeil er en samlet pikselfeil. Den sier ikke direkte at en liten bokstavdetalj eller ansiktsdetalj er bevart. Bruk derfor både tall og den konkrete detaljen fra del 1. Ikke klipp rekonstruksjonen før feilberegning: da undersøker du en annen tilnærming enn den som feilformelen beskriver.</p>
-</details>
 </section>
 <section id="velg-a-kan-færre-komponenter-gi-et-bedre-bilde" class="level2">
 <h2 class="anchored" data-anchor-id="velg-a-kan-færre-komponenter-gi-et-bedre-bilde">Velg A: kan færre komponenter gi et bedre bilde?</h2>
@@ -4576,13 +4549,9 @@ Fra tall til en anbefaling
 <li>Bruk diagonalbildet som en strukturell utfordring til forklaringen. En enkelt rekonstruksjon er nok; du trenger ikke gjenta hele rangsøket. Hva kan denne undersøkelsen si, og hva kan den ikke si om andre bilder?</li>
 </ol>
 <p>Du designer kriteriet og begrunner rangvalget; et rangnummer alene er ikke resultatet. Vis om påstanden overlever kontrollen, også dersom den feiler. Én ny støymåling er en uavhengig kontroll av dette forsøket, ikke bevis for at rangvalget vanligvis er godt. Flere frø er valgfritt hvis du vil undersøke variasjonen.</p>
-<details class="reading-step">
-<summary>
-Støyreduksjon er en hypotese om signalet
-</summary>
+<p><strong>Støyreduksjon er en hypotese om signalet</strong></p>
 <p>Mot det støyete bildet synker feilen når flere komponenter beholdes. Mot det rene bildet kan den først synke og så stige: flere komponenter kan også tilpasse støy. Dette hjelper når signalet kan beskrives med få store komponenter og støyen fordeles annerledes. Det gjelder ikke automatisk for alle bilder; diagonalbildet utfordrer nettopp denne antakelsen.</p>
 <p>Med kjent fasit kan vi velge beste prøvde rang i ettertid. Uten fasit kan vi for eksempel bruke en uavhengig gjentatt måling til validering, eller et anslag for støynivå og en eksplisitt regel for tillatt datafeil. En knekk i singulærverdikurven alene er ingen garanti for riktig skille mellom signal og støy.</p>
-</details>
 </section>
 </section>
 <section id="velg-b-kan-vi-gjøre-et-uskarpt-signal-skarpt-igjen" class="level2">
@@ -4598,7 +4567,7 @@ Støyreduksjon er en hypotese om signalet
 <h3 class="anchored" data-anchor-id="forklar-og-bygg-en-mer-forsiktig-inversjon">Forklar og bygg en mer forsiktig inversjon</h3>
 <p>Finn først datakoordinaten <span class="math inline">\(u_i^Tb\)</span> langs <span class="math inline">\(u_i\)</span> ved hjelp av indreproduktet. Dette er en ortogonal projeksjon fra uke 4. Rekonstruksjon av komponenten deler på <span class="math inline">\(\sigma_i\)</span>. Derfor kan små målefeil gi store signalutslag:</p>
 <p><span class="math display">\[x_k=\sum_{i=1}^k\frac{u_i^Tb}{\sigma_i}v_i.\]</span></p>
-<p>Implementer denne regelen. Her betyr <code>k</code> hvor mange <strong>operatorretninger</strong> vi bruker i inversjonen; det er ikke bildets komprimeringsrang fra del 3.</p>
+<p>Implementer denne regelen. Her betyr <code>k</code> hvor mange <strong>operatorretninger</strong> vi bruker i inversjonen; det er ikke bildets komprimeringsrang fra del 3. Behold bare ledd med positiv singulærverdi: nullverdier skal aldri inverteres. Bruk faktorene direkte, uten å bygge en full inversmatrise.</p>
 <div id="qpyodide-insertion-location-9"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p><strong>Kontroller funksjonen før uskarphetsforsøket.</strong> Her er fasiten kjent uten å bruke en annen SVD-rutine til å finne svaret. Matrisen er rektangulær; den tredje koordinaten er i nullrommet og settes til null i løsningen med minst euklidsk lengde.</p>
@@ -4614,19 +4583,9 @@ Støyreduksjon er en hypotese om signalet
 <li>Forklar forskjellen mellom trunkering og prekondisjonering fra uke 6. Hva mister vi ved å utelate retninger, og hva kan én kontroll ikke si om andre signaler eller måleoperatorer?</li>
 </ol>
 <p>Her bestemmer du hvilke retninger inversjonen får bruke. <strong>25 %-budsjettet fra bildedelen gjelder ikke denne operatoren</strong>; dette er et valg av regularisering, altså en begrensning som demper støyforsterkning.</p>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke: implementasjonen
-</summary>
-<p><code>U[:, :k].T @ b</code> gir de beholdte datakoordinatene. Del komponentvis på <code>s[:k]</code>, og multipliser med <code>Vt[:k, :].T</code>. Ikke lag hele inversmatrisen. Vi prøver her ranger med positive singulærverdier; nullverdier skal aldri inverteres.</p>
-</details>
-<details class="reading-step">
-<summary>
-Hvorfor dette forsøket kan feile spektakulært
-</summary>
+<p><strong>Hvorfor dette forsøket kan feile spektakulært</strong></p>
 <p>Glattende målinger gjør enkelte signalretninger svært svake. Det konstruerte <span class="math inline">\(H\)</span> er så dårlig kondisjonert at de aller minste beregnede singulærverdiene ikke bør tolkes som nøyaktige fysiske størrelser. Direkte løsning brukes som et bevisst feilforsøk. En beregning kan stoppe, eller gi enorme verdier. Begge deler er relevante observasjoner, ikke noe du skal skjule.</p>
 <p>Trunkert SVD, forkortet TSVD, begrenser støyforsterkning ved å forkaste retninger. Men også fasitens komponenter i disse retningene forsvinner. For liten rang gir derfor en for enkel løsning. Rangvalget balanserer tapt signal mot forsterket støy. En kjent fasit lar oss måle dette i laboratoriet; reelle data krever et begrunnet valg uten tilgang til sann løsning.</p>
-</details>
 </section>
 </section>
 <section id="levering" class="level2">
