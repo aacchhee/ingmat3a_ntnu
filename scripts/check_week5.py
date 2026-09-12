@@ -47,7 +47,7 @@ def main():
     _, _, _, status = power(np.diag([1., -1.]), [1., 1.], max_steps=30)
     assert status == "maksimalt antall steg"
 
-    # Check the hand calculations preserved under Arbeid videre.
+    # Check the hand calculations preserved under Gå i dybden.
     A = np.array([[2., 1.], [1., 2.]])
     x = np.array([2., 1.]) / np.sqrt(5)
     rho = x @ A @ x

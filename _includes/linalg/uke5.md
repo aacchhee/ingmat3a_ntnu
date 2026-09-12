@@ -1,6 +1,6 @@
-<div class="learning-mode" data-learning-mode data-reading-label="Arbeid videre" role="group" aria-label="Velg lesemodus">
+<div class="learning-mode" data-learning-mode data-reading-label="Gå i dybden" role="group" aria-label="Velg lesemodus">
 <button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
+<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
 <span role="status" aria-live="polite"></span>
 </div>
 
@@ -19,7 +19,7 @@ matematikken som trengs for å undersøke når det virker.
 
 
 **Prøv først, forklar etterpå.** Bruk figurene og de korte kodeforsøkene.
-Under **Arbeid videre** finner du håndregning, begrunnelser og flere spørsmål.
+Under **Gå i dybden** finner du håndregning, begrunnelser og flere spørsmål.
 
 Vi skal oppdage spesielle retninger, forklare hvorfor noen bidrag tar over,
 og bruke den samme ideen til å rangere nettsider etter besøk.
@@ -208,7 +208,7 @@ og $I$ er identitetsmatrisen, som lar vektoren være uendret. Vi setter $A^0=I$.
 hvilken retning matrisen favoriserer? Hva skiller de to spesielle startene?
 
 <details class="reading-step">
-<summary>Arbeid videre: skaler uten å dreie</summary>
+<summary>Gå i dybden: skaler uten å dreie</summary>
 
 For starten $(1,0)^T$ er første steg helt konkret
 
@@ -307,7 +307,7 @@ Et egenrom kan også ha høyere dimensjon; for identitetsmatrisen er hele
 rommet egenrommet til egenverdien 1.
 
 <details class="reading-step">
-<summary>Arbeid videre: finn egenverdier og egenrom for hånd</summary>
+<summary>Gå i dybden: finn egenverdier og egenrom for hånd</summary>
 
 **Undersøk de observerte retningene for hånd.**
 
@@ -422,7 +422,7 @@ determinantpolynomer. Håndregningen her forklarer hva algoritmene leter etter.
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: egenretninger som ikke står vinkelrett</summary>
+<summary>Gå i dybden: egenretninger som ikke står vinkelrett</summary>
 
 Finn egenverdier og egenrom til
 $C=\begin{bmatrix}2&1\\0&1\end{bmatrix}$. Kontroller med $Cv=\lambda v$.
@@ -453,7 +453,7 @@ symmetriske matriser, der dette faktisk gjelder, i 5.3.
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: undersøk også en transformasjon som snur en retning</summary>
+<summary>Gå i dybden: undersøk også en transformasjon som snur en retning</summary>
 
 Matrisen $B$ bytter koordinatene. Gjett hva den gjør med $(1,-1)^T$,
 og bruk plottet til å kontrollere tolkningen av en negativ egenverdi.
@@ -555,7 +555,7 @@ $|\lambda_2/\lambda_1|$, med egenverdiene sortert etter absoluttverdi,
 forklarer farten etter mange steg: nær én betyr langsom utskilling.
 
 <details class="reading-step">
-<summary>Arbeid videre: hvorfor kan vi behandle bidragene hver for seg?</summary>
+<summary>Gå i dybden: hvorfor kan vi behandle bidragene hver for seg?</summary>
 
 **Følg to bidrag for hånd.**
 
@@ -662,7 +662,7 @@ på diagonalen i $\Lambda$. $Q$ har de ortonormale egenvektorene som kolonner.
 basisvektorene har lengde én og står vinkelrett?
 
 <details class="reading-step">
-<summary>Arbeid videre: hvorfor ortogonale egenvektorer?</summary>
+<summary>Gå i dybden: hvorfor ortogonale egenvektorer?</summary>
 
 **Gjenta for hånd:** Normaliser $(1,1)^T$ og $(1,-1)^T$.
 Sett resultatene som kolonner i $Q$. Beregn de fire elementene i $Q^TQ$,
@@ -759,7 +759,7 @@ det lille bidraget nederst i plottet.
 avrunding til slutt bli større enn bidraget vi prøver å måle?
 
 <details class="reading-step">
-<summary>Arbeid videre: les konvergensplottet</summary>
+<summary>Gå i dybden: les konvergensplottet</summary>
 
 Siden startkoeffisientene her er like store, forutsier teorien
 
@@ -837,7 +837,7 @@ retningen med egenverdi 1 gir også null residual. Derfor ser vi både på
 starten, utviklingen i forsøket og residualen når vi vurderer resultatet.
 
 <details class="reading-step">
-<summary>Arbeid videre: hvorfor akkurat denne kvotienten?</summary>
+<summary>Gå i dybden: hvorfor akkurat denne kvotienten?</summary>
 
 Vi prøver å beskrive $Ax$ ved én vektor $\rho x$ på linjen gjennom $x$.
 Projeksjonsregelen fra uke 4 gir koeffisienten
@@ -869,7 +869,7 @@ både $\rho$ og residualnormen, ikke hele residualvektoren.
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: beregn skaleringen og det som blir igjen</summary>
+<summary>Gå i dybden: beregn skaleringen og det som blir igjen</summary>
 
 **Gjenta for hånd:** Bruk første normaliserte steg $x=(2,1)^T/\sqrt5$ fra 5.1.
 Beregn først $Ax$, deretter $\rho$ og $r$. Sammenlign med
@@ -886,7 +886,7 @@ start til $3/5$ etter ett steg.
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: implementasjonen av potensmetoden</summary>
+<summary>Gå i dybden: implementasjonen av potensmetoden</summary>
 
 Definisjonen kjøres automatisk. Les koden etter pseudokoden: normalisering,
 Rayleigh-kvotient, residual og en øvre grense for antall steg.
@@ -1000,7 +1000,7 @@ For å måle endring av **linje** kan vi bruke
 $\min(\lVert x_{k+1}-x_k\rVert_2,\lVert x_{k+1}+x_k\rVert_2)$ for enhetsvektorer.
 
 <details class="reading-step">
-<summary>Arbeid videre: slik kan du tenke om de fire tilfellene</summary>
+<summary>Gå i dybden: slik kan du tenke om de fire tilfellene</summary>
 
 Gjenta de to første stegene for hånd før du følger forklaringen.
 
@@ -1059,7 +1059,7 @@ hver runde. **Diskuter:** Hvorfor kan to nesten like starter følge svært ulike
 baner? Hvorfor hjelper ikke lengde én mot alle former for feil?
 
 <details class="reading-step">
-<summary>Arbeid videre: skill mellom startfeil og feil i hvert steg</summary>
+<summary>Gå i dybden: skill mellom startfeil og feil i hvert steg</summary>
 
 Uten normalisering blir starten $(\varepsilon,1)^T$ til
 $(3^k\varepsilon,1)^T$. For $\varepsilon=10^{-12}$ og $k=30$ er forholdet
@@ -1085,21 +1085,71 @@ men fjerner ikke mekanismen med relativ vekst mellom retningene.
 
 <div id="uke5-nett"></div>
 
-### Prøv: følg en besøkende
+### Hvorfor dukker egenvektorer opp når vi rangerer nettsider?
 
-Tenk deg fire nettsider A–D. En pil fra A til B betyr at **A har en lenke
-til B**. Den er utgående fra A og innkommende til B.
-En besøkende klikker på én av lenkene fra siden hen er på, valgt tilfeldig
-med lik sannsynlighet. Fra A går besøket derfor til B eller C; fra B går det til C.
+Vi ønsker å gi hver av fire nettsider A, B, C og D et tall som beskriver
+hvor mye den blir besøkt i en enkel modell. En **nettside** er et dokument
+vi kan lese i nettleseren. En **lenke** er noe vi kan klikke på for å komme
+fra dokumentet vi leser til et annet. Vi trenger ingen kunnskap om hvordan
+nettsidene er programmert; det eneste vi bruker, er hvilke sider som lenker til hvilke.
 
-Vi følger sannsynligheten for hvor den besøkende er: tallene ved sidene
-summerer til 100 %. De kan også leses som forventede andeler i en stor gruppe
-uavhengige besøkende. Ett klikk på **Neste runde** flytter hele fordelingen
-etter lenkeregelen, uten å trekke tilfeldige enkeltturer.
+Én idé er å telle hvor mange lenker som peker til en side. Men en lenke fra
+en mye besøkt side kan føre flere besøk videre enn en lenke fra en lite
+besøkt side. Da avhenger betydningen av én side av betydningen til de andre.
+**Hvordan kan vi finne alle disse tallene samtidig?** Vi begynner med en
+besøksregel og følger hva som skjer når den gjentas.
 
-**Gjett hvem som blir mest besøkt.** Velg **Alle på A**, og trykk to ganger.
-Hvilke piler forklarer hvor besøkene havner? Velg deretter **Jevn start**,
-trykk **20 runder**, og sammenlign med samme forsøk fra **Alle på A**.
+### Slik leser du figuren
+
+Hvert punkt er en nettside, og bokstaven er navnet. En pil A → B betyr at
+A har en lenke til B: en besøkende på A kan klikke seg til B. Den samme
+lenken er **utgående fra A** og **innkommende til B**. Pilen angir bare
+mulig bevegelse denne veien; en vei tilbake må ha sin egen pil.
+Avstanden mellom punktene og plasseringen på skjermen har ingen betydning i modellen.
+
+| Siden den besøkende er på | Mulige neste sider | Regelen for ett klikk |
+|---|---|---|
+| A | B og C | Halvparten av sannsynligheten til hver |
+| B | C | Hele sannsynligheten til C |
+| C | A og D | Halvparten til hver |
+| D | A | Hele sannsynligheten til A |
+
+### Hva betyr én runde og prosentene?
+
+Vi forestiller oss en besøkende som fortsetter å klikke. Ved **hvert steg**
+velges én av lenkene fra den nåværende siden, med lik sannsynlighet.
+Fra A er sjansen $1/2$ for B og $1/2$ for C. Fra B er neste side alltid C.
+Valget avhenger bare av siden den besøkende er på nå, ikke av tidligere besøk.
+Vi antar foreløpig at ingen går ut av disse fire sidene, at ingen kommer
+utenfra, og at lenkene ikke endres. Alle fire har minst én lenke å følge.
+
+Prosenten ved en side angir **sannsynligheten for å være på akkurat denne
+siden etter det aktuelle steget**. Den angir ikke hvor mange besøk siden har
+samlet opp siden start. Ved «Alle på A» er startsannsynligheten 100 % på A;
+ved «Jevn start» er den 25 % på hver side.
+
+En enkelt besøkende kan bare være på én side om gangen. Likevel kan vi
+fordele sannsynligheten mellom flere mulige steder. Alternativt kan vi
+tenke på en stor gruppe uavhengige besøkende: 50 % på B betyr da den
+**forventede andelen** på B. Hvis 100 personer starter på A, forventer vi
+50 på B og 50 på C etter ett klikk, men et faktisk tilfeldig forsøk trenger
+ikke gi nøyaktig 50 av hver.
+
+Figuren regner direkte på sannsynlighetene. Den simulerer ikke enkeltpersoners
+tilfeldige klikk. Derfor får du samme fordeling hver gang du velger samme start.
+**Neste runde** lar alle bidragene flyttes én gang etter tabellen;
+**20 runder** gjentar dette 20 ganger fra fordelingen som vises nå.
+Summen er alltid 100 %, fordi den besøkende må være på én av de fire sidene.
+
+### Prøv: hvor flytter sannsynligheten seg?
+
+Velg **Alle på A**, og trykk **Neste runde**. Les av hvilke sider som får
+besøk, og bruk pilene fra A til å forklare fordelingen. Før neste klikk:
+**Hvor kan besøkene fra B og C gå nå?** Se deretter hva figuren viser.
+
+Prøv så **Jevn start** og **20 runder**. Gjenta fra **Alle på A**.
+Ser det ut som startfordelingen fortsatt betyr mye, eller nærmer begge
+forsøkene seg samme fordeling? Vi skal forklare observasjonen med lineær algebra.
 
 ```{.jsxgraph width="680" height="550" style="width:100%;max-width:680px;height:550px;border:0;"}
 document.documentElement.lang = 'nb';
@@ -1158,26 +1208,54 @@ if(typeof ResizeObserver!=='undefined'){var observer=new ResizeObserver(resize);
 window.addEventListener('resize',resize);window.addEventListener('pageshow',resize);show();resize();
 ```
 
-### Hva er det vi rangerer?
+### Fra besøksfordeling til vektor
 
-A og C nærmer seg samme andel, omtrent en tredel hver. En innkommende lenke
-teller mer når avsenderen er mye besøkt, og mindre når avsenderen fordeler
-besøkene på mange lenker. Rangeringen beskriver **besøk etter denne regelen**.
-**Diskuter:** Er det det samme som kvalitet, relevans eller antall lenker?
+Vi samler sannsynlighetene i en kolonne, i den faste rekkefølgen A, B, C, D:
 
-En **sannsynlighetsvektor** samler andelene som en kolonne, her i rekkefølgen
-A, B, C, D. Elementene er ikke-negative og har sum én. Vi bruker andeler
-mellom 0 og 1 i regningen; figuren viser de samme tallene i prosent.
+$$p_k=\begin{bmatrix}p_A^{(k)}\\p_B^{(k)}\\p_C^{(k)}\\p_D^{(k)}\end{bmatrix}.$$
+
+Her er $k$ antall klikk etter start. For eksempel betyr $p_C^{(k)}=0.5$
+at sannsynligheten for å være på C etter $k$ klikk er 50 %.
+Elementene er ikke-negative og summerer til én; en slik vektor kalles en
+**sannsynlighetsvektor**. Koordinatene er andeler, ikke plasseringen av
+punktene i tegningen.
+
+Fra «Alle på A» viser figuren de to første oppdateringene:
+
+$$\begin{bmatrix}1\\0\\0\\0\end{bmatrix}
+\longmapsto\begin{bmatrix}0\\1/2\\1/2\\0\end{bmatrix}
+\longmapsto\begin{bmatrix}1/4\\0\\1/2\\1/4\end{bmatrix}.$$
+
+Ved det andre klikket går hele B-bidraget på $1/2$ til C. C-bidraget på
+$1/2$ deles i to: $1/4$ til A og $1/4$ til D. Dette er forklaringen på
+prosentene vi nettopp observerte. Nå skriver vi den samme flytteregelen
+som ett matriseprodukt, slik at vi kan bruke teorien fra resten av uken.
 
 ### Fra lenker til en matrise
 
 En **overgangsmatrise** lagrer sannsynlighetene for neste klikk.
 Vi lar **kolonne $j$ være siden vi går fra, og rad $i$ være siden vi går til**:
 $S_{ij}$ er sannsynligheten for å gå fra $j$ til $i$.
-A-kolonnen er derfor $(0,1/2,1/2,0)^T$: ingenting til A eller D, halvparten til B og C.
+A-kolonnen er derfor $(0,1/2,1/2,0)^T$: den viser neste fordeling hvis
+hele starten er på A. Tilsvarende viser B-kolonnen hvor en start bare på B
+havner. Hver kolonne er altså resultatet av å bruke regelen på én
+standardbasisvektor, akkurat som for lineære transformasjoner tidligere.
+
+For en blandet fordeling vekter vi A-kolonnen med $p_A$, B-kolonnen med
+$p_B$, og så videre, og legger bidragene sammen. Dette er nettopp
+**kolonnetolkningen av matrisemultiplikasjon**:
 
 $$S=\begin{bmatrix}0&0&1/2&1\\1/2&0&0&0\\1/2&1&0&0\\0&0&1/2&0\end{bmatrix},
 \qquad p_{k+1}=Sp_k.$$
+
+Se også på første rad: Bare C og D sender besøk til A. Halvparten av
+C-bidraget og hele D-bidraget gir
+
+$$p_A^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}.$$
+
+Faktoren $1/2$ er ikke Cs andel av alle besøk. Den er andelen av **Cs eget
+bidrag** som sendes til A. Derfor må den multipliseres med $p_C^{(k)}$.
+De fire radene gjør samme opptelling for hver sin side.
 
 Produktet summerer bidragene til hver mottaker. Alle besøk fra én avsender
 fordeles videre, så hver kolonne summerer til én. En matrise med denne
@@ -1192,8 +1270,27 @@ $$Sp_*=p_*.$$
 
 Stjernen markerer en slik uendret fordeling. Den kalles **stasjonær**.
 Dette er egenvektorlikningen fra 5.2 med egenverdi **1**.
-Hvis overgangsmatrisen i en annen tekst heter $P$, er samme utsagn $Px=x$.
-Navnet på matrisen endrer ikke besøksregelen.
+I dette eksemplet nærmer vi oss
+$p_*=(1/3,1/6,1/3,1/6)^T$. Den besøkende fortsetter å flytte seg, men
+fordelingen er uendret: hver side får like mye sannsynlighet inn som den
+sender videre. For A kommer $1/6$ fra C og $1/6$ fra D, altså $1/3$ på nytt.
+**Stasjonær** betyr dermed ikke at noen har sluttet å klikke.
+
+### Hva sier rangeringen – og hva sier den ikke?
+
+Vi gir høyere rang til sidene med størst andel i denne uendrede fordelingen.
+A og C deler førsteplassen her. Dette er et mål på **besøk under den valgte
+regelen**, ikke en direkte måling av kvalitet, sannhet eller relevans.
+Alle lenker fra samme side ble behandlet likt; modellen vet ingenting om
+hva teksten på siden inneholder, eller hva en virkelig person foretrekker.
+
+Vi har gått fra et spørsmål om besøk til en likning om egenvektorer:
+$Sp_*=1p_*$. Summen én bestemmer skaleringen av sannsynlighetsvektoren.
+I 5.6 undersøker vi hva som kan gå galt med besøksregelen, og endrer
+modellen før vi kaller den endelige rangeringen PageRank.
+
+**Diskuter:** Hvorfor kan en side få mange besøk selv om få sider lenker til den?
+Og hvorfor kan riktig løsning av likningen likevel gi en lite nyttig rangering?
 
 **Prøv som kontroll:** Kjør cellen fra begge startene. Hvilken forskjell
 måler utskriften? Kan et lite tall alene si at lenkene er lagt inn riktig?
@@ -1212,7 +1309,24 @@ print("Sum:", p.sum(), "største endring ved neste klikk:", np.max(abs(S @ p-p))
 ```
 
 <details class="reading-step">
-<summary>Arbeid videre: ett matriseprodukt og en bevaringslov</summary>
+<summary>Gå i dybden: ett matriseprodukt og en bevaringslov</summary>
+
+**Sannsynlighet for neste side og samlet sannsynlighet.** $S_{ij}$ gjelder
+under forutsetning av at vi allerede er på side $j$. Produktet $S_{ij}p_j$
+er sannsynligheten for både å være på $j$ nå og gå videre til $i$.
+Bidrag fra forskjellige avsendersider legges sammen fordi man bare kan
+være på én av dem om gangen. Derfor er
+
+$$(Sp)_i=\sum_j S_{ij}p_j.$$
+
+Dette forklarer både multiplikasjonen og summeringen i matriseregelen.
+Slik skiller vi selve modellen (hvem som kan flytte hvor, med hvilke
+sannsynligheter) fra regnemetoden (gjentatte matriseprodukter).
+
+En stasjonær fordeling er ikke automatisk grensen for alle starter på
+alle nettverk. To sider som bare lenker til hverandre, kan gi pendling.
+Forsøkene i 5.6 undersøker hvorfor modellen trenger en ekstra regel.
+
 
 Fra jevn start er første mottak til A $\tfrac12\cdot\tfrac14+1\cdot\tfrac14=3/8$.
 Hele svaret blir $(3/8,1/8,3/8,1/8)^T$.
@@ -1352,7 +1466,7 @@ av en **hengende node**. Den skiller seg fra en side som lenker til seg selv:
 selvlenken bevarer besøkene, men kan fange dem.
 
 <details class="reading-step">
-<summary>Arbeid videre: fra besøksregel til Google-matrise</summary>
+<summary>Gå i dybden: fra besøksregel til Google-matrise</summary>
 
 Siden $\mathbf1^Tp_k=1$, kan vi også skrive $p_{k+1}=Gp_k$, med
 
@@ -1420,7 +1534,7 @@ kvalitet? Hva skjer med lenkenes betydning når $\alpha=0$? Hvilken garanti
 mister vi ved $\alpha=1$?
 
 <details class="reading-step">
-<summary>Arbeid videre: andre egenverdier beskriver avvikene</summary>
+<summary>Gå i dybden: andre egenverdier beskriver avvikene</summary>
 
 La $p_*$ være den stasjonære fordelingen. Differansen $e_k=p_k-p_*$ har sum
 null, så teleporteringstermen kanselleres:
@@ -1513,7 +1627,7 @@ ute etter? Kan en rangering være beregnet nøyaktig og likevel være lite nytti
 Bruk ett forsøk fra uken som eksempel.
 
 <details class="reading-step">
-<summary>Arbeid videre: oppgaver med egen begrunnelse</summary>
+<summary>Gå i dybden: oppgaver med egen begrunnelse</summary>
 
 Løs på papir først, og bruk Python som kontroll der det passer.
 Åpne «Slik kan du tenke» etter at du har prøvd selv.

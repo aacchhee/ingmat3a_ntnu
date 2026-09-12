@@ -1,6 +1,6 @@
 <div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
 <button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
+<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
 <span role="status" aria-live="polite"></span>
 </div>
 
@@ -18,7 +18,7 @@ konvergensen, og prøver **konjugert gradient (CG)**: en metode som bygger
 nye søkeretninger ut fra informasjonen i tidligere steg.
 
 I **Forelesning** kjører vi korte demonstrasjoner og diskuterer det vi ser.
-**Arbeid videre** åpner oppgaver, mellomregninger og forklaringer til hvert
+**Gå i dybden** åpner oppgaver, mellomregninger og forklaringer til hvert
 forsøk. Prøv oppgavene før du åpner «Slik kan du tenke».
 
 - [Husk oppdateringene](#uke6-gs) og [følg feilen](#uke6-fikspunkt).
@@ -69,7 +69,7 @@ Begge nærmer seg løsningen her. **Ville dere stole på samme oppskrift for
 ethvert system?** Neste forsøk endrer bare matrisen og høyresiden.
 
 <details class="reading-step">
-<summary>Arbeid videre: gjenskap de første oppdateringene</summary>
+<summary>Gå i dybden: gjenskap de første oppdateringene</summary>
 
 1. Isoler $u$ og $v$ i hver sin likning, og gjør ett Jacobi-sveip fra null.
 2. Gjør to GS-sveip. Marker hvor en ny verdi brukes.
@@ -135,7 +135,7 @@ akkurat når $\rho(T)<1$. Det er $T$ vi undersøker her.
 **Hvorfor er én vellykket kjøring ikke nok til å si at alle starter virker?**
 
 <details class="reading-step">
-<summary>Arbeid videre: finn matrisen som oppdaterer feilen</summary>
+<summary>Gå i dybden: finn matrisen som oppdaterer feilen</summary>
 
 1. Sett GS-uttrykket for $u_{k+1}$ inn i uttrykket for $v_{k+1}$ for $A_a$.
    Les av $T$ og $c$.
@@ -207,7 +207,7 @@ for antall steg. **Hva ville dere rapportert hvis maksimalgrensen nås før
 residualkravet er oppfylt?**
 
 <details class="reading-step">
-<summary>Arbeid videre: residual, feil og følsomhet</summary>
+<summary>Gå i dybden: residual, feil og følsomhet</summary>
 
 1. Regn residual og feil for begge forslagene i forsøket.
 2. Forklar hvorfor null residual gir riktig løsning når $A$ er invertibel.
@@ -263,7 +263,7 @@ GS beveger seg langs én koordinat om gangen. **Kunne vi komme raskere fram
 ved å velge andre retninger?** Det prøver vi i neste fane.
 
 <details class="reading-step">
-<summary>Arbeid videre: hvorfor er løsningen et minimum?</summary>
+<summary>Gå i dybden: hvorfor er løsningen et minimum?</summary>
 
 1. Utvid $\phi(u,v)$ for matrisen i forsøket.
 2. Sett $x=x_*+e$ og vis at $\phi(x)-\phi(x_*)=\tfrac12e^TAe$.
@@ -348,7 +348,7 @@ Det alene bestemmer ikke antall steg. **Hva viser todimensjonsforsøket om
 forskjellen mellom en smal skål og mange CG-steg?**
 
 <details class="reading-step">
-<summary>Arbeid videre: følg CG og forklar retningene</summary>
+<summary>Gå i dybden: følg CG og forklar retningene</summary>
 
 Når residualen ikke er null, bruker CG
 
@@ -422,7 +422,7 @@ Ett problem får stor forbedring; et annet viser en begrensning.
 og hvilken residual som brukes til å stoppe?**
 
 <details class="reading-step">
-<summary>Arbeid videre: forbered prosjektet</summary>
+<summary>Gå i dybden: forbered prosjektet</summary>
 
 1. For $A=\operatorname{diag}(1,100)$, sett $y_1=x_1$, $y_2=10x_2$.
    Skriv $x^TAx$ med de nye koordinatene. Hvordan finner du $x$ fra $y$?

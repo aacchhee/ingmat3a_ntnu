@@ -1,6 +1,6 @@
 <div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
 <button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
+<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
 <span role="status" aria-live="polite"></span>
 </div>
 
@@ -18,7 +18,7 @@ Geometrien til **lineære transformasjoner** gir inngangen: hva endres,
 hva bevares, og hva kan vi rekonstruere etterpå?
 
 **Forelesning** starter med forsøk og samtale om det vi ser.
-**Arbeid videre** åpner forklaringene, håndregningen og forbindelsene
+**Gå i dybden** åpner forklaringene, håndregningen og forbindelsene
 som gjør observasjonene til matematikk. Du kan også åpne hver forklaring separat.
 
 - [Et bilde med få byggeklosser](#uke7-bilde): en forbindelse til basis og koordinater.
@@ -71,7 +71,7 @@ Mønstrene er en slags bildebyggeklosser; vi skal se både hvordan de lages
 og hvorfor denne forbindelsen til basis er nyttig.
 
 <details class="reading-step">
-<summary>Arbeid videre: se én byggekloss og knytt den til basis</summary>
+<summary>Gå i dybden: se én byggekloss og knytt den til basis</summary>
 
 Bildet er en $96\times96$-matrise $A$. Hvert element er en lysstyrke mellom
 0 og 1. En enkelt komponent har formen $\sigma_i u_i v_i^T$:
@@ -167,7 +167,7 @@ fra uke 3. Lengde og vinkel trenger ikke bevares av hele transformasjonen,
 selv om dreie- og speiltrinnene bevarer begge deler.
 
 <details class="reading-step">
-<summary>Arbeid videre: finn største og minste strekk for hånd</summary>
+<summary>Gå i dybden: finn største og minste strekk for hånd</summary>
 
 Eksempelet **Ellipse** bruker
 
@@ -250,7 +250,7 @@ Vi kan bruke SVD også når en matrise er rektangulær og start- og resultatromm
 har forskjellig dimensjon.
 
 <details class="reading-step">
-<summary>Arbeid videre: utfør de tre trinnene for hånd</summary>
+<summary>Gå i dybden: utfør de tre trinnene for hånd</summary>
 
 Bruk $A=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ og $x=(3,4)^T$.
 Velg $v_1=e_2$, $v_2=e_1$, $u_1=e_1$ og $u_2=e_2$.
@@ -279,7 +279,7 @@ $\sigma_1\geq\cdots\geq\sigma_p\geq0$.
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: forbindelsen til egenverdier fra uke 5</summary>
+<summary>Gå i dybden: forbindelsen til egenverdier fra uke 5</summary>
 
 En egenvektor til $A$ oppfyller $Av=\lambda v$: resultatet ligger langs
 samme vektorretning. SVD tillater forskjellige start- og resultatretninger,
@@ -317,7 +317,7 @@ minste strekk når $A$ har full kolonnerang.
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: rang, kolonnerom, nullrom og NumPy</summary>
+<summary>Gå i dybden: rang, kolonnerom, nullrom og NumPy</summary>
 
 La $r$ være antallet positive singulærverdier. **Rangen** er antallet
 uavhengige resultatretninger, **kolonnerommet** er alle mulige resultater
@@ -398,7 +398,7 @@ tilpasning til disse dataene. Den kan ikke alene vise at den rekonstruerte
 løsningen er nær sannheten når dataene er usikre.
 
 <details class="reading-step">
-<summary>Arbeid videre: norm, kondisjonstall og håndregning</summary>
+<summary>Gå i dybden: norm, kondisjonstall og håndregning</summary>
 
 For en vektor er **2-normen** den vanlige lengden,
 $\|x\|_2=\sqrt{\sum_i x_i^2}$. Matrisens **spektralnorm**, også kalt
@@ -446,7 +446,7 @@ forstyrrelser i $b$.
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: nesten like kolonner og polynomtilpasning fra uke 4</summary>
+<summary>Gå i dybden: nesten like kolonner og polynomtilpasning fra uke 4</summary>
 
 I en polynommodell er $A_{ij}=t_i^j$, der $t_i$ er målepunktene og
 $c_j$ er koeffisientene. Produktet $Ac$ gir modellverdiene. Når punktene
@@ -480,7 +480,7 @@ regningen kan ikke gjenopprette informasjon som målingene ikke gir presist.
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: minste kvadrater, pseudoinvers og regularisering</summary>
+<summary>Gå i dybden: minste kvadrater, pseudoinvers og regularisering</summary>
 
 Et **minste-kvadratersproblem** søker $x$ som gjør summen av kvadrerte
 residualkomponenter, $\|Ax-b\|_2^2$, minst mulig. Hvis flere løsninger
@@ -560,7 +560,7 @@ matriser med rang høyst $k$. Dette er en presis påstand om samlet tallfeil;
 den sier ikke at alle detaljer som er viktige for oss blir bevart.
 
 <details class="reading-step">
-<summary>Arbeid videre: feilformelen, ortogonalitet og lagring</summary>
+<summary>Gå i dybden: feilformelen, ortogonalitet og lagring</summary>
 
 For en matrise $B$ er $\|B\|_F^2=\sum_{i,j}B_{ij}^2$.
 Vi kan også definere **Frobeniusindreproduktet** som
@@ -637,7 +637,7 @@ kreve mange SVD-komponenter. Dette er utgangspunktet for
 [prosjekt 7](project_week7.qmd).
 
 <details class="reading-step">
-<summary>Arbeid videre: regn på budsjettet og den diagonale streken</summary>
+<summary>Gå i dybden: regn på budsjettet og den diagonale streken</summary>
 
 Finn største heltall $k$ som oppfyller $k(m+n+1)\leq0.25mn$ for
 $m=n=96$. **Slik kan du tenke:** $0.25\cdot96^2/193\approx11.94$,
@@ -655,7 +655,7 @@ rader og kolonner, ikke enhver form for visuell enkelhet.
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: samle trådene og se fram mot optimering</summary>
+<summary>Gå i dybden: samle trådene og se fram mot optimering</summary>
 
 Forklar med egne ord: Hvorfor bruker SVD to basiser? Hvorfor deler inversjon
 på $\sigma_i$? Hva er forskjellen mellom null og nesten null? Hvorfor

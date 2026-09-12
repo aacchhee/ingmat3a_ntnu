@@ -1,6 +1,6 @@
-<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg prosjektvisning">
+<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg prosjektvisning">
 <button type="button" data-mode="lecture" aria-pressed="true">Oppgaver</button>
-<button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
+<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
 <span role="status" aria-live="polite"></span>
 </div>
 
@@ -77,7 +77,7 @@ prekondisjonering. Noter antall steg og hvilken residual som ble nådd.
 Bruk retningstolkningen fra uke 6 når du forklarer forskjellen etter forsøket.
 
 <details class="reading-step">
-<summary>Arbeid videre: fungerende CG og måling av original residual</summary>
+<summary>Gå i dybden: fungerende CG og måling av original residual</summary>
 
 Denne cellen definerer CG automatisk. Den returnerer hele banen og kontrolltall.
 Vi sjekker $b-Ax$ direkte ved hvert steg, også om algoritmen vedlikeholder
@@ -149,7 +149,7 @@ for name, A in problems.items():
 ```
 
 <details class="reading-step">
-<summary>Arbeid videre: knytt forsøket til CG fra forelesningen</summary>
+<summary>Gå i dybden: knytt forsøket til CG fra forelesningen</summary>
 
 Bratteste nedstigning velger $p_k=r_k$ hver gang. CG kombinerer den nye
 residualen med forrige søkeretning slik at retningene i eksakt regning er
@@ -209,7 +209,7 @@ rettferdig sammenligning av antall steg**: stoppet her bruker en transformert
 residual. Del 4 bruker samme opprinnelige residualkrav i begge metoder.
 
 <details class="reading-step">
-<summary>Arbeid videre: samme løsning og bevart symmetri</summary>
+<summary>Gå i dybden: samme løsning og bevart symmetri</summary>
 
 Vi setter $x=M^{-1/2}y$ og multipliserer $Ax=b$ fra venstre med $M^{-1/2}$:
 
@@ -268,7 +268,7 @@ plt.show()
 ```
 
 <details class="reading-step">
-<summary>Arbeid videre: hvorfor kan ett tiltak gi to forskjellige resultater?</summary>
+<summary>Gå i dybden: hvorfor kan ett tiltak gi to forskjellige resultater?</summary>
 
 Første system er $A=DBD$ med $D=\operatorname{diag}(d)$.
 Siden $B$ har diagonal to, er $M=2D^2$ og
@@ -391,7 +391,7 @@ skalert bidrag fra den forrige retningen. Kontroller mot pseudokoden før du kj�
 </details>
 
 <details class="reading-step">
-<summary>Arbeid videre: hvorfor byttes rᵀr ut med rᵀz?</summary>
+<summary>Gå i dybden: hvorfor byttes rᵀr ut med rᵀz?</summary>
 
 I de nye koordinatene er residualen $\widetilde r=M^{-1/2}r$.
 Dermed er

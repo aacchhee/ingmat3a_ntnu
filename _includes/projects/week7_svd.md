@@ -1,6 +1,6 @@
-<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg prosjektvisning">
+<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg prosjektvisning">
 <button type="button" data-mode="lecture" aria-pressed="true">Oppgaver</button>
-<button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
+<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
 <span role="status" aria-live="polite"></span>
 </div>
 
@@ -15,7 +15,7 @@ støyfjerning i bilder. B undersøker inversjon av et uskarpt signal og gir
 en direkte videreføring av residual, feil og kondisjonering fra uke 6.
 Begge er fullverdige valg; du skal ikke gjøre begge.
 
-Oppgavevisningen gir felles arbeidsløp. «Arbeid videre» åpner
+Oppgavevisningen gir felles arbeidsløp. «Gå i dybden» åpner
 støtte underveis. Hint åpnes manuelt etter eget forsøk. Ferdige hjelpere
 tar seg av forsøksdata og visning; du implementerer selve **trunkeringen**,
 altså å beholde bare de første leddene i en SVD-sum. I [uke 7.3](uke7.qmd#uke7-svd)

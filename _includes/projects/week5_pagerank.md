@@ -1,6 +1,6 @@
-<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg lesemodus">
+<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg lesemodus">
 <button type="button" data-mode="lecture" aria-pressed="true">Oppgaver</button>
-<button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
+<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
 <span role="status" aria-live="polite"></span>
 </div>
 
@@ -44,7 +44,7 @@ sannsynligheten for et klikk fra $j$ til $i$. Kolonnene må ha sum én;
 sammen med ikke-negative elementer gjør dette $S$ **kolonnestokastisk**.
 
 <details class="reading-step">
-<summary>Arbeid videre: tegn og kontroller én runde for hånd</summary>
+<summary>Gå i dybden: tegn og kontroller én runde for hånd</summary>
 
 Tegn grafen på papir, og flytt en jevn besøksfordeling én runde langs pilene.
 Ta vare på resultatet som uavhengig kontroll av koden.
@@ -84,7 +84,7 @@ def transition_matrix(links, u):
 
 **Kontroller før du går videre:** Alle elementer skal være ikke-negative,
 kolonnesummene skal være én. Sammenlign $Su$ med lenkene og den uavhengige
-kontrollen under «Arbeid videre».
+kontrollen under «Gå i dybden».
 Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.
 
 <details class="learning-hint">
@@ -246,7 +246,7 @@ Sammenlign forholdet mellom to påfølgende feil med $\beta$ i området før
 avrunding dominerer. Gjenta med en annen start hvis du ikke ser forventet fart.
 
 <details class="reading-step">
-<summary>Arbeid videre: forklar pendlingen for hånd</summary>
+<summary>Gå i dybden: forklar pendlingen for hånd</summary>
 
 For pendlingstilfellet: finn begge egenverdiene til $G$, uttrykt ved
 $\alpha$, og forklar fortegnet til den andre.
@@ -291,7 +291,7 @@ Høyere $\alpha$ gir ikke nødvendigvis en streng økning av antall steg på
 alle grafer; forklar det du faktisk observerer.
 
 <details class="reading-step">
-<summary>Arbeid videre: hvorfor justere toleransen med dempingen?</summary>
+<summary>Gå i dybden: hvorfor justere toleransen med dempingen?</summary>
 
 Sett $T(p)=\alpha Sp+(1-\alpha)u$. Kolonnesummene og ikke-negativiteten gir
 $\|Sz\|_1\leq\|z\|_1$, så $\|T(p)-T(q)\|_1\leq\alpha\|p-q\|_1$.
