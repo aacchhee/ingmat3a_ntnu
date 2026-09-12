@@ -70,58 +70,139 @@ $$A=\begin{bmatrix}2&1\\1&2\end{bmatrix}.$$
 Startvalgene angir retninger og normaliseres til lengde én. Den oransje
 vektoren $x_0$ er starten; den blå er det nåværende resultatet. Hvert klikk
 regner ut $Ax$ og deler på lengden til svaret. Vi bruker ingen
-normalisering av enkeltkoordinater. Merkingen $A^kx_0$ ved endepunktet viser
-hvilket produkt retningen kommer fra; lengden i figuren er alltid normalisert til én.
+normalisering av enkeltkoordinater. Formelen under figuren viser hvilket
+produkt den blå retningen kommer fra; lengden er alltid normalisert til én.
+Den oransje ringen kan dras også når den ligger rundt det blå endepunktet.
 
-```{.jsxgraph width="680" height="640"}
+```{.jsxgraph width="680" height="650" style="width:100%;max-width:680px;height:650px;border:0;"}
+// The extension isolates this document in a sandboxed iframe. Keep both
+// controls and their CSS here; board coordinates are only for mathematics.
+document.documentElement.lang = 'nb';
+var graph = document.querySelector('.jxgbox');
+var labStyle = document.createElement('style');
+labStyle.textContent = `
+  html, body { margin: 0; width: 100%; height: 100%; font-family: system-ui, sans-serif; color: #243447; }
+  * { box-sizing: border-box; }
+  .week5-lab { height: 100%; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    border: 1px solid #d4dde5; border-radius: 12px; background: #fff; }
+  .week5-lab fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+  .week5-lab legend { padding: 0; margin-bottom: 8px; font-weight: 650; font-size: 16px; }
+  .week5-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .week5-lab button { min-height: 44px; padding: 8px; border: 1px solid #a8b6c4; border-radius: 7px;
+    background: #fff; color: #243447; font: inherit; font-size: 15px; cursor: pointer; }
+  .week5-lab button:hover { background: #f0f4f8; }
+  .week5-lab button[aria-pressed="true"] { background: #fff1df; border: 2px solid #a04a00; font-weight: 700; }
+  .week5-lab button:focus-visible { outline: 3px solid #1565c0; outline-offset: 2px; }
+  .week5-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .week5-lab .week5-main-step { min-height: 48px; background: #1557a0; border-color: #1557a0;
+    color: #fff; font-size: 18px; font-weight: 700; }
+  .week5-lab .week5-main-step:hover { background: #10457f; }
+  .week5-graph-slot { flex: 1 1 auto; min-height: 180px; position: relative; }
+  .week5-graph-slot .jxgbox { position: absolute; inset: 0; width: 100% !important; height: 100% !important; border: 0; }
+  .week5-readout { flex: 0 0 auto; padding: 12px; border-radius: 8px; background: #f3f6fa; }
+  .week5-readout p { margin: 0; line-height: 1.5; }
+  .week5-start-key { color: #854000; font-size: 14px; }
+  .week5-formula { color: #1557a0; font-size: clamp(16px, 3vw, 20px); font-weight: 650; overflow-wrap: anywhere; }
+  .week5-coordinates { font-size: 15px; font-variant-numeric: tabular-nums; }
+  @media (max-width: 380px) { .week5-lab { padding: 10px; gap: 10px; } .week5-readout { padding: 10px; } .week5-actions { grid-template-columns: 1fr; } }
+`;
+document.head.appendChild(labStyle);
+var lab = document.createElement('section');
+lab.className = 'week5-lab';
+lab.setAttribute('aria-label', 'Gjentatt matrisemultiplikasjon');
+lab.innerHTML = `
+  <fieldset><legend>Velg startretning</legend><div class="week5-presets"></div></fieldset>
+  <div class="week5-actions">
+    <button type="button" class="week5-main-step">Ett steg</button>
+    <button type="button" class="week5-reset">Tilbake til start</button>
+  </div>
+  <div class="week5-graph-slot"></div>
+  <div class="week5-readout">
+    <p class="week5-start-key"></p>
+    <p class="week5-start-key">Dra den oransje ringen for å velge en egen start.</p>
+    <div role="status" aria-live="polite" aria-atomic="true">
+      <p class="week5-formula"></p>
+      <p class="week5-coordinates"></p>
+    </div>
+  </div>
+`;
+graph.parentNode.insertBefore(lab, graph);
+lab.querySelector('.week5-graph-slot').appendChild(graph);
+var formula = lab.querySelector('.week5-formula');
+var coordinates = lab.querySelector('.week5-coordinates');
+var startKey = lab.querySelector('.week5-start-key');
+var selectedStart = '(1, 0)';
+var presets = [[1, 0, '(1, 0)'], [-1, 0, '(−1, 0)'], [1, 1, '(1, 1)'],
+  [1, -1, '(1, −1)'], [0, 1, '(0, 1)'], [1, -0.9, '(1, −0.9)']];
+var presetButtons = [];
+var bounds = [-1.3, 1.3, 1.3, -1.3];
 var board = JXG.JSXGraph.initBoard(BOARDID, {
-  boundingbox: [-1.65, 1.8, 1.65, -2.55], axis: true,
+  boundingbox: bounds, axis: true, pan: {enabled: false}, zoom: {enabled: false},
   showCopyright: false, showNavigation: false, keepaspectratio: true
 });
 var origin = board.create('point', [0, 0], {visible: false, fixed: true});
-var circle = board.create('circle', [origin, 1], {strokeColor: '#aab6c1', dash: 2});
-var start = board.create('glider', [1, 0, circle], {name: 'x₀', color: '#a04a00'});
-board.create('arrow', [origin, start], {strokeColor: '#a04a00', strokeWidth: 1.5, dash: 2});
+var circle = board.create('circle', [origin, 1], {strokeColor: '#aab6c1', dash: 2, fixed: true, highlight: false});
+var start = board.create('glider', [1, 0, circle], {
+  name: '', withLabel: false, size: 9, strokeWidth: 3, strokeColor: '#a04a00',
+  fillColor: '#fff', fillOpacity: 0, highlightFillOpacity: 0, highlightStrokeColor: '#a04a00', layer: 9
+});
+board.create('arrow', [origin, start], {strokeColor: '#a04a00', strokeWidth: 2, dash: 2, fixed: true, highlight: false});
 var current = [1, 0], count = 0;
 var end = board.create('point', [function(){return current[0];}, function(){return current[1];}],
-  {name: '', withLabel: false, fixed: true, color: '#1565c0'});
-board.create('arrow', [origin, end], {strokeColor: '#1565c0', strokeWidth: 3});
-board.create('text', [
-  function(){return current[0] + 0.08;},
-  function(){return current[1] + 0.12;},
-  function(){return 'A<sup>'+count+'</sup>x<sub>0</sub>';}
-], {display: 'html', fontSize: 19, color: '#1565c0', fixed: true, highlight: false});
+  {name: '', withLabel: false, fixed: true, size: 3, color: '#1565c0', highlight: false, layer: 8});
+board.create('arrow', [origin, end], {strokeColor: '#1565c0', strokeWidth: 3, fixed: true, highlight: false});
+function formatCoordinate(value) { return (Math.abs(value) < 0.0005 ? 0 : value).toFixed(3); }
+function updateReadout() {
+  startKey.textContent = 'Oransje ring · '+(selectedStart || 'Egen start')+': x₀ = ('+
+    formatCoordinate(start.X())+', '+formatCoordinate(start.Y())+')';
+  formula.innerHTML = 'Blå: x<sub>'+count+'</sub> = A<sup>'+count+'</sup>x<sub>0</sub>' +
+    ' / ‖A<sup>'+count+'</sup>x<sub>0</sub>‖<sub>2</sub>';
+  var rounded = current.map(formatCoordinate);
+  coordinates.textContent = 'Steg '+count+' · ('+rounded[0]+', '+rounded[1]+')';
+}
 function reset() {
-  current = [start.X(), start.Y()]; count = 0; board.update();
+  current = [start.X(), start.Y()]; count = 0; board.update(); updateReadout();
 }
-function choose(a, b) {
+function choose(a, b, selected) {
   var length = Math.hypot(a, b);
-  start.moveTo([a/length, b/length]); reset();
+  start.moveTo([a/length, b/length]);
+  selectedStart = selected ? selected.textContent : null;
+  presetButtons.forEach(function(button) { button.setAttribute('aria-pressed', String(button === selected)); });
+  reset();
 }
-start.on('drag', reset);
-var stepButton = board.create('button', [-1.5, -1.3, 'Ett steg', function() {
+presets.forEach(function(preset) {
+  var button = document.createElement('button');
+  button.type = 'button'; button.textContent = preset[2];
+  button.setAttribute('aria-pressed', String(presetButtons.length === 0));
+  button.addEventListener('click', function() { choose(preset[0], preset[1], button); });
+  presetButtons.push(button); lab.querySelector('.week5-presets').appendChild(button);
+});
+start.on('drag', function() {
+  selectedStart = null;
+  presetButtons.forEach(function(button) { button.setAttribute('aria-pressed', 'false'); });
+  reset();
+});
+lab.querySelector('.week5-main-step').addEventListener('click', function() {
   var y = [2*current[0]+current[1], current[0]+2*current[1]];
   var length = Math.hypot(y[0], y[1]);
-  current = [y[0]/length, y[1]/length]; count++; board.update();
-}]);
-// Style the actual HTML button, not its positioned JSXGraph wrapper.
-if (stepButton.rendNodeButton) stepButton.rendNodeButton.classList.add('week5-main-step');
-board.create('button', [-0.2, -1.3, 'Start på nytt', reset]);
-board.create('text', [-1.5, -1.62, 'Velg startretning:'],
-  {fontSize: 14, fixed: true, highlight: false});
-board.create('button', [-1.5, -1.85, '(1, 0)', function(){choose(1, 0);}]);
-board.create('button', [-0.2, -1.85, '(−1, 0)', function(){choose(-1, 0);}]);
-board.create('button', [-1.5, -2.15, '(1, 1)', function(){choose(1, 1);}]);
-board.create('button', [-0.2, -2.15, '(1, −1)', function(){choose(1, -1);}]);
-board.create('button', [-1.5, -2.45, '(0, 1)', function(){choose(0, 1);}]);
-board.create('button', [-0.2, -2.45, '(1, −0.9)', function(){choose(1, -0.9);}]);
-board.create('text', [-1.5, 1.57, function() {
-  return 'x<sub>'+count+'</sub> = A<sup>'+count+'</sup>x<sub>0</sub>' +
-    ' / ‖A<sup>'+count+'</sup>x<sub>0</sub>‖<sub>2</sub>';
-}], {display: 'html', fontSize: 16, fixed: true, highlight: false});
-board.create('text', [-1.5, 1.27, function() {
-  return 'x<sub>'+count+'</sub> = ('+current[0].toFixed(3)+', '+current[1].toFixed(3)+')';
-}], {display: 'html', fontSize: 14, fixed: true, highlight: false});
+  current = [y[0]/length, y[1]/length]; count++; board.update(); updateReadout();
+});
+lab.querySelector('.week5-reset').addEventListener('click', reset);
+// Re-measure on width changes and when the containing Quarto tab becomes visible.
+// Ignore zero dimensions while hidden; retain CSS ownership of the graph size.
+function resizeGraph() {
+  var width = graph.clientWidth, height = graph.clientHeight;
+  if (!(width > 0 && height > 0)) return;
+  board.resizeContainer(width, height, true);
+  board.setBoundingBox(bounds, true); board.fullUpdate();
+}
+if (typeof ResizeObserver !== 'undefined') {
+  var graphObserver = new ResizeObserver(resizeGraph);
+  graphObserver.observe(graph);
+}
+window.addEventListener('resize', resizeGraph);
+window.addEventListener('pageshow', resizeGraph);
+updateReadout(); resizeGraph();
 ```
 
 ### Hva la du merke til?
