@@ -4440,9 +4440,9 @@ window.Quarto = {
 </header>
 
 
-<div class="learning-mode" data-learning-mode="" data-reading-label="Arbeid videre" role="group" aria-label="Velg lesemodus">
+<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg lesemodus">
 <button type="button" data-mode="lecture" aria-pressed="true">
-Forelesning
+Oppgaver
 </button>
 <button type="button" data-mode="reading" aria-pressed="false">
 Arbeid videre
@@ -4453,7 +4453,7 @@ Arbeid videre
 <h2 class="anchored" data-anchor-id="ukens-spørsmål">Ukens spørsmål</h2>
 <p><strong>Kan en korrekt beregning gi en rangering vi ikke stoler på?</strong></p>
 <p>I forelesningen så vi hvordan besøk flyttes mellom nettsider, og hvordan en stasjonær fordeling blir en egenvektor. Nå skal du bygge en rangering, kontrollere regningen og undersøke hva et modellvalg gjør med resultatet.</p>
-<p>Følg samme arbeidsform i hver del: <strong>forutsi → prøv → beskriv → forklar</strong>. Skriv forventningen før du kjører forsøket. En figur uten tolkning er ikke et svar. Kjernen er del 1–4. Deretter velger du én fordypning og gjør et begrunnet før-og-etter-forsøk.</p>
+<p>Følg samme arbeidsform i hver del: <strong>forutsi → prøv → beskriv → forklar</strong>. Skriv forventningen før du kjører forsøket. Del 1–4 gir verktøy og kontroller. Deretter gjør du <strong>én egen undersøkelse</strong> fra del 5–6. Begge deler inngår i prosjektet: kontrollerte beregninger alene er ikke en ferdig undersøkelse. Du kan kjøre hele prosjektet uten å kjøre cellene i forelesningsnotatene først.</p>
 </section>
 <section id="hvem-tror-du-blir-viktigst" class="level2">
 <h2 class="anchored" data-anchor-id="hvem-tror-du-blir-viktigst">1. Hvem tror du blir viktigst?</h2>
@@ -4507,7 +4507,7 @@ Arbeid videre: tegn og kontroller én runde for hånd
 <p><strong>Kontroller før du går videre:</strong> Alle elementer skal være ikke-negative, kolonnesummene skal være én. Sammenlign <span class="math inline">\(Su\)</span> med lenkene og den uavhengige kontrollen under «Arbeid videre». Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.</p>
 <details class="learning-hint">
 <summary>
-Hint: kontroller én avsender om gangen
+Slik kan du tenke: kontroller én avsender om gangen
 </summary>
 <p>Fra A går halvparten til B og halvparten til C, altså <span class="math inline">\(S_{1,0}=S_{2,0}=1/2\)</span> med Python-indekser. Alle andre elementer i kolonne null er null. Start med denne kolonnen og kolonnen for C, som bare har én lenke.</p>
 <p>Første runde fra jevn start skal bli <span class="math inline">\((1/6,1/12,1/4,1/4,1/12,1/6)^T\)</span>.</p>
@@ -4524,7 +4524,7 @@ Hint: kontroller én avsender om gangen
 <p>En fordeling er <strong>stasjonær</strong> når neste oppdatering gir samme andeler. Besøkende beveger seg fortsatt; det er fordelingen som er uendret. Vi rangerer sidene etter denne fordelingen. <strong>Stasjonær residual</strong> måler hvor mye én ny oppdatering ville endre vektoren:</p>
 <p><span class="math display">\[r_k=\lVert \alpha Sp_k+(1-\alpha)u-p_k\rVert_1,
 \qquad \lVert z\rVert_1=\sum_i|z_i|.\]</span></p>
-<p>Bruk en øvre grense for antall steg og meld fra hvis toleransen ikke nås. Den samme funksjonen skal kunne brukes på nettverk med ulike størrelser.</p>
+<p>Bruk en øvre grense for antall steg og meld fra hvis toleransen ikke nås. Den samme funksjonen skal kunne brukes på nettverk med ulike størrelser. Antall steg er antall utførte oppdateringer. Når historikken inneholder residualen ved start og ved hver returnert iterasjon, er dette <code>len(residuals)-1</code>. Kontroller også residualen etter siste tillatte oppdatering; ikke merk en løsning som mislykket bare fordi den nådde kravet på siste steg.</p>
 <p>For denne lille grafen kan du kontrollere svaret uavhengig av iterasjonen. Fra den stasjonære likningen får vi</p>
 <p><span class="math display">\[(I-\alpha S)p_*=(1-\alpha)u.\]</span></p>
 <div id="qpyodide-insertion-location-4"></div>
@@ -4532,7 +4532,7 @@ Hint: kontroller én avsender om gangen
 <p>Presenter rangering og kontrolltall. Gjenta med alle besøk på A ved start. Forklar hvorfor referanseberegningen må bruke samme <span class="math inline">\(S\)</span>, <span class="math inline">\(u\)</span> og <span class="math inline">\(\alpha\)</span>. Enighet mellom to metoder på ulike modeller ville ikke være en kontroll.</p>
 <details class="learning-hint">
 <summary>
-Hint: hvorfor kan referansesystemet løses?
+Slik kan du tenke: hvorfor kan referansesystemet løses?
 </summary>
 <p>Egenverdiene til en stokastisk matrise har absoluttverdi høyst én. Når <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, kan ikke <span class="math inline">\(\alpha S\)</span> ha egenverdi én. Dermed er <span class="math inline">\(I-\alpha S\)</span> invertibel.</p>
 <p>Du kan kontrollere kolonnesummer med <code>np.allclose(S.sum(axis=0), 1)</code>. Hvis en inngang er ugyldig, bruk <code>raise ValueError(...)</code> med en forklaring. Ikke endre inngangsvektoren til brukeren: lag en kopi av <code>p0</code>.</p>
@@ -4582,6 +4582,7 @@ Hint: hvorfor kan referansesystemet løses?
 <p>Egenverdiene til en matrise utgjør dens <strong>spektrum</strong>. Den største absoluttverdien kalles <strong>spektralradiusen</strong>. Her vil egenverdien én beskrive den stasjonære fordelingen; de andre beskriver hvordan avvik fra den endres.</p>
 <p>Bruk problemgrafen du valgte, med teleportering. Bygg den lille matrisen</p>
 <p><span class="math display">\[G=\alpha S+(1-\alpha)u\mathbf1^T.\]</span></p>
+<p>Her er <span class="math inline">\(\mathbf1\)</span> en kolonne med ettall. Siden <span class="math inline">\(\mathbf1^Tp=1\)</span>, gir <span class="math inline">\(Gp\)</span> akkurat besøksregelen i del 2. For <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, positiv <span class="math inline">\(u\)</span> og kolonnestokastisk <span class="math inline">\(S\)</span> er <span class="math inline">\(G\)</span> positiv og kolonnestokastisk. Da finnes én stasjonær sannsynlighetsvektor, og iterasjonen konvergerer fra enhver startfordeling. Dette er garantien vi bruker; den sier ikke at modellen gir en god måling av kvalitet.</p>
 <p><strong>Forutsi:</strong> Hvilken egenverdi må du finne? Hva forventer du om absoluttverdien av de andre når <span class="math inline">\(0&lt;\alpha&lt;1\)</span>?</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -4596,7 +4597,7 @@ Arbeid videre: forklar pendlingen for hånd
 <p>Svar med ord: <strong>Hvorfor trenger vi de andre egenverdiene når PageRank selv bruker egenverdien én?</strong></p>
 <details class="learning-hint">
 <summary>
-Hint: startfordelingen kan skjule en egenretning
+Slik kan du tenke: startfordelingen kan skjule en egenretning
 </summary>
 <p>Forskjellen <span class="math inline">\(p_k-p_*\)</span> har sum null. Et bidrag i en egenretning med egenverdi <span class="math inline">\(\lambda\)</span> får faktoren <span class="math inline">\(\lambda^k\)</span>. Hvis den valgte starten mangler bidraget som avtar langsomst, kan du observere raskere konvergens enn <span class="math inline">\(\beta\)</span> antyder. Komplekse egenverdier og flere bidrag kan også gi variasjon i feilforholdet.</p>
 <p>For to sider med jevn teleportering er <span class="math inline">\(G=\begin{bmatrix}(1-\alpha)/2&amp;(1+\alpha)/2\\(1+\alpha)/2&amp;(1-\alpha)/2\end{bmatrix}\)</span>. Prøv den på <span class="math inline">\((1,1)^T\)</span> og <span class="math inline">\((1,-1)^T\)</span> før du beregner determinanten.</p>
@@ -4604,10 +4605,20 @@ Hint: startfordelingen kan skjule en egenretning
 </section>
 <section id="velg-én-egen-undersøkelse" class="level2">
 <h2 class="anchored" data-anchor-id="velg-én-egen-undersøkelse">5. Velg én egen undersøkelse</h2>
+<p>Velg én av A–C. Bruk planleggingspunktene i del 6 <strong>før du kjører</strong> den valgte undersøkelsen. Del 5 og 6 er ett arbeid, ikke to separate forsøksoppgaver.</p>
 <section id="a.-demping-rangering-og-regnefart" class="level3">
 <h3 class="anchored" data-anchor-id="a.-demping-rangering-og-regnefart">A. Demping, rangering og regnefart</h3>
-<p>Hold seks-siders grafen og startfordelingen fast. Varier <span class="math inline">\(\alpha\in\{0.5,0.85,0.95,0.99\}\)</span>. Forutsi først hvordan rangering og antall steg endres. Mål faktisk feil mot referansesystemet, antall steg og <span class="math inline">\(\beta\)</span>.</p>
-<p>For en rettferdig sammenligning av arbeid ved samme garanterte nøyaktighet, bruk residualtoleranse <span class="math inline">\((1-\alpha)\cdot10^{-8}\)</span>. Da gir feilgrensen fra forelesningens fordypning <span class="math inline">\(\lVert p-p_*\rVert_1\le10^{-8}\)</span>. Hold maksimalgrensen fast og rapporter hvis en kjøring ikke når toleransen. Høyere <span class="math inline">\(\alpha\)</span> gir ikke nødvendigvis en streng økning av antall steg på alle grafer; forklar det du faktisk observerer.</p>
+<p>Hold grafen og startfordelingen fast. Velg verdier av <span class="math inline">\(\alpha\)</span> som kan belyse påstanden din; <span class="math inline">\(\{0.5,0.85,0.95,0.99\}\)</span> er mulige startverdier. Forutsi først hvordan rangering og antall steg endres. Mål faktisk feil mot referansesystemet, antall steg og <span class="math inline">\(\beta\)</span>.</p>
+<p>For en rettferdig sammenligning av arbeid ved samme garanterte nøyaktighet, bruk residualtoleranse <span class="math inline">\((1-\alpha)\cdot10^{-8}\)</span>. Da gir feilgrensen nedenfor <span class="math inline">\(\lVert p-p_*\rVert_1\le10^{-8}\)</span>. Hold maksimalgrensen fast og rapporter hvis en kjøring ikke når toleransen. Høyere <span class="math inline">\(\alpha\)</span> gir ikke nødvendigvis en streng økning av antall steg på alle grafer; forklar det du faktisk observerer.</p>
+<details class="reading-step">
+<summary>
+Arbeid videre: hvorfor justere toleransen med dempingen?
+</summary>
+<p>Sett <span class="math inline">\(T(p)=\alpha Sp+(1-\alpha)u\)</span>. Kolonnesummene og ikke-negativiteten gir <span class="math inline">\(\|Sz\|_1\leq\|z\|_1\)</span>, så <span class="math inline">\(\|T(p)-T(q)\|_1\leq\alpha\|p-q\|_1\)</span>. Med <span class="math inline">\(T(p_*)=p_*\)</span> og <span class="math inline">\(r=\|T(p)-p\|_1\)</span> gir trekantulikheten</p>
+<p><span class="math display">\[\|p-p_*\|_1\leq r+\alpha\|p-p_*\|_1,
+\qquad \|p-p_*\|_1\leq\frac{r}{1-\alpha}.\]</span></p>
+<p>Samme residualtoleranse ved ulike <span class="math inline">\(\alpha\)</span> betyr derfor ikke samme garanterte løsningsnøyaktighet. Sammenlign også med den direkte løsningen.</p>
+</details>
 </section>
 <section id="b.-kan-lenker-manipulere-rangeringen" class="level3">
 <h3 class="anchored" data-anchor-id="b.-kan-lenker-manipulere-rangeringen">B. Kan lenker manipulere rangeringen?</h3>
@@ -4616,38 +4627,24 @@ Hint: startfordelingen kan skjule en egenretning
 </section>
 <section id="c.-hvem-er-rangeringen-laget-for" class="level3">
 <h3 class="anchored" data-anchor-id="c.-hvem-er-rangeringen-laget-for">C. Hvem er rangeringen laget for?</h3>
-<p>Behold seks-siders grafen og <span class="math inline">\(\alpha=0.85\)</span>. Sammenlign jevn <span class="math inline">\(u\)</span> med <span class="math inline">\(u=(0.5,0.1,0.1,0.1,0.1,0.1)^T\)</span>. Alle elementene er fortsatt positive. Forutsi hvem som får mer vekt, og mål endringene i score og plassering. Formuler hva rangeringen nå uttrykker om besøkendes interesser.</p>
+<p>Behold grafen og <span class="math inline">\(\alpha=0.85\)</span>. Velg selv en positiv <span class="math inline">\(u\)</span> ut fra et angitt besøksmønster, og sammenlign med jevn <span class="math inline">\(u\)</span>. Et mulig utgangspunkt er <span class="math inline">\(u=(0.5,0.1,0.1,0.1,0.1,0.1)^T\)</span>. Alle elementene er fortsatt positive. Forutsi hvem som får mer vekt, og mål endringene i score og plassering. Formuler hva rangeringen nå uttrykker om besøkendes interesser.</p>
 </section>
 </section>
-<section id="gjør-ett-begrunnet-før-og-etter-forsøk" class="level2">
-<h2 class="anchored" data-anchor-id="gjør-ett-begrunnet-før-og-etter-forsøk">6. Gjør ett begrunnet før-og-etter-forsøk</h2>
-<p>Velg en konkret observasjon fra undersøkelsen din og endre <strong>én</strong> ting. Skriv målet først: raskere beregning ved samme feil, mindre innflytelse fra en lenkegruppe, eller en rangering som passer et angitt besøksmønster.</p>
-<p>Vis et før-og-etter-resultat og vurder om målet ble nådd. Oppgi hva som ble holdt fast. Hvis tiltaket ikke hjelper, er det et resultat som skal forklares.</p>
+<section id="sett-din-egen-påstand-på-prøve" class="level2">
+<h2 class="anchored" data-anchor-id="sett-din-egen-påstand-på-prøve">6. Sett din egen påstand på prøve</h2>
+<p>Bruk dette som forsøksplan og rapportstruktur for undersøkelsen du velger i del 5. Formuler <strong>én påstand som kan vise seg å være feil</strong>, og bestem forsøket før du kjører det. For eksempel kan du undersøke om en bestemt lenkeendring gir målsiden høyere score også når startgrafen endres, eller om et valgt hoppmønster oppfyller et angitt mål.</p>
+<p>Skriv en kort forsøksplan med:</p>
+<ol type="1">
+<li>Påstanden og en mekanisme: hvorfor skulle besøksregelen gi denne effekten?</li>
+<li>Hva du endrer, hva du holder fast, og hva som ville tale mot påstanden.</li>
+<li>Et målbart kriterium: for eksempel endring i score, topplassering eller arbeid ved samme feilgrense. Bestem hvordan nesten like scorer skal behandles.</li>
+</ol>
+<p>Gjennomfør det kontrollerte før-og-etter-paret du designer i del 5. Det samme paret brukes her; du skal ikke gjøre en ekstra undersøkelse. <strong>Valgfritt:</strong> Prøv deretter samme tiltak på én ny graf eller ett nytt positivt hoppmønster valgt for å utfordre forklaringen. Endre bare denne bakgrunnsbetingelsen; behold tiltaket og vurderingskriteriet. Du trenger ikke en stor samling kjøringer.</p>
+<p>Vis det kontrollerte paret og eventuell ekstra kontroll, også hvis effekten uteblir eller snur. Forklar hva resultatene støtter, hva de avkrefter, og hvor snever konklusjonen må være. Å velge den best utseende kjøringen i ettertid er ikke en kontroll av påstanden.</p>
 <section id="dette-skal-leveres" class="level3">
 <h3 class="anchored" data-anchor-id="dette-skal-leveres">Dette skal leveres</h3>
 <p>Lever én kjørbar notebook eller Quarto-side. Figurer skal ha aksetitler, kurveforklaringer og korte tolkninger. Vis forventninger før resultater.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Omfang</th>
-<th>Leveranse</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bare kjerne</td>
-<td>Del 1–4: egen matrise og iterasjon, kontroller, problem og reparasjon, egenverdiforklaring</td>
-</tr>
-<tr class="even">
-<td>Hele prosjektet</td>
-<td>Kjernen, én undersøkelse fra del 5 og før-og-etter-forsøket; analyse på 400–600 ord</td>
-</tr>
-</tbody>
-</table>
+<p>Lever kontroller fra del 1–4 og én valgt undersøkelse fra del 5, dokumentert med forsøksplanen og det kontrollerte paret i del 6. Analysen på <strong>400–600 ord</strong> skal inneholde påstanden skrevet før forsøket, forsøksvalgene, et mulig motfunn og en avgrenset konklusjon.</p>
 <p>Analysen skal bruke konkrete resultater til å skille mellom:</p>
 <ul>
 <li>en liten residual og en riktig implementert modell;</li>
