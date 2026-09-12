@@ -1,9 +1,3 @@
-<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg prosjektvisning">
-<button type="button" data-mode="lecture" aria-pressed="true">Oppgaver</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ## Oppdrag: behold informasjonen som betyr noe
 
 Du skal anbefale en forenkling med singulærverdidekomposisjon (SVD) under et gitt budsjett, og vise
@@ -15,8 +9,7 @@ støyfjerning i bilder. B undersøker inversjon av et uskarpt signal og gir
 en direkte videreføring av residual, feil og kondisjonering fra uke 6.
 Begge er fullverdige valg; du skal ikke gjøre begge.
 
-Oppgavevisningen gir felles arbeidsløp. «Gå i dybden» åpner
-støtte underveis. Hint åpnes manuelt etter eget forsøk. Ferdige hjelpere
+Ferdige hjelpere
 tar seg av forsøksdata og visning; du implementerer selve **trunkeringen**,
 altså å beholde bare de første leddene i en SVD-sum. I [uke 7.3](uke7.qmd#uke7-svd)
 er $U$ og $V$ de ortonormale basisene på hver side, og singulærverdiene
@@ -55,20 +48,18 @@ show_images(images)
    Beskriv hvordan du vil avgjøre om den fortsatt er synlig.
 3. Alle bildene er like store. Hvorfor gjør dette sammenligningen enklere?
 
-<details class="reading-step">
-<summary>Hva mener vi med komprimerbarhet her?</summary>
+**Hva mener vi med komprimerbarhet her?**
 
 Vi spør hvor liten rang vi trenger for å få liten feil og bevare ønsket
 informasjon. Vi undersøker ikke hvor liten en PNG-fil blir. En diagonal
 strek er enkel å beskrive, men det er ikke gitt at den har lav matriserang.
 Noter forventningen også når du er usikker: et avkreftet gjett er et resultat.
 
-</details>
 
 ## 2. Lag rekonstruksjonen og kontroller den
 
 NumPy gir `U, s, Vt`, der `s` inneholder singulærverdiene og `Vt` allerede
-er transponert. En komponent er $\sigma_i u_i v_i^T$: ett rang-1-mønster
+er transponert: basisvektorene $v_i^T$ ligger som rader i `Vt`. En komponent er $\sigma_i u_i v_i^T$: ett rang-1-mønster
 med sin vekt.
 
 Implementer `truncate(U, s, Vt, k)` som bruker de første $k$ komponentene.
@@ -107,18 +98,7 @@ print('Rekonstruksjon og halefeil stemmer på kontrollmatrisen.')
 Forklar hvorfor kontrollen av feilformelen er mer informativ enn bare
 å se på et bilde. Vis til slutt samme kontroll for ett av forsøksbildene.
 
-<details class="learning-hint">
-<summary>Slik kan du tenke: hvilken vei peker V?</summary>
-
-NumPy gir $V^T$, ikke $V$. De første $k$ radene i `Vt` må derfor beholdes.
-Uttrykket `U[:, :k] * s[:k]` skalerer hver beholdt kolonne med sin
-singulærverdi. Multipliser dette med `Vt[:k, :]`. For $k=0$ gir produktet
-av de tomme faktorene riktig nullmatrise.
-
-</details>
-
-<details class="reading-step">
-<summary>Kontroll mot teori og avrunding</summary>
+**Kontroll mot teori og avrunding**
 
 For $A_k=\sum_{i=1}^k\sigma_i u_i v_i^T$ er
 $\|A-A_k\|_F^2=\sum_{i>k}\sigma_i^2$. Venstresiden bruker hele
@@ -127,7 +107,6 @@ avsløre feil indeksering eller feil behandling av `Vt`.
 Ved full rang blir den beregnede feilen vanligvis svært liten, ikke
 nøyaktig null. Bruk toleranse, slik vi gjorde med flyttall i uke 1.
 
-</details>
 
 ## 3. Samme budsjett, fire ulike utfall
 
@@ -167,8 +146,7 @@ Frobeniusfeil $\|A-A_k\|_F/\|A\|_F$. Sammenlign med hypotesen i del 1.
   faktorene lagres som float64. Er det fortsatt en lagringsgevinst?
   Ikke ta med filformatkomprimering i denne sammenligningen.
 
-<details class="reading-step">
-<summary>Fra tall til en anbefaling</summary>
+**Fra tall til en anbefaling**
 
 Parameterandelen er $k(m+n+1)/(mn)$. Byteandelen i den beskrevne modellen er
 $8k(m+n+1)/(mn)$, før eventuell metadata. Et budsjett på 25 % av antall tall
@@ -180,7 +158,6 @@ bokstavdetalj eller ansiktsdetalj er bevart. Bruk derfor både tall og den
 konkrete detaljen fra del 1. Ikke klipp rekonstruksjonen før feilberegning:
 da undersøker du en annen tilnærming enn den som feilformelen beskriver.
 
-</details>
 
 ## Velg A: kan færre komponenter gi et bedre bilde?
 
@@ -235,8 +212,7 @@ resultatet. Vis om påstanden overlever kontrollen, også dersom den feiler.
 Én ny støymåling er en uavhengig kontroll av dette forsøket, ikke bevis for
 at rangvalget vanligvis er godt. Flere frø er valgfritt hvis du vil undersøke variasjonen.
 
-<details class="reading-step">
-<summary>Støyreduksjon er en hypotese om signalet</summary>
+**Støyreduksjon er en hypotese om signalet**
 
 Mot det støyete bildet synker feilen når flere komponenter beholdes.
 Mot det rene bildet kan den først synke og så stige: flere komponenter
@@ -249,7 +225,6 @@ for eksempel bruke en uavhengig gjentatt måling til validering, eller et anslag
 for støynivå og en eksplisitt regel for tillatt datafeil. En knekk i
 singulærverdikurven alene er ingen garanti for riktig skille mellom signal og støy.
 
-</details>
 
 ## Velg B: kan vi gjøre et uskarpt signal skarpt igjen?
 
@@ -299,6 +274,8 @@ $$x_k=\sum_{i=1}^k\frac{u_i^Tb}{\sigma_i}v_i.$$
 
 Implementer denne regelen. Her betyr `k` hvor mange **operatorretninger**
 vi bruker i inversjonen; det er ikke bildets komprimeringsrang fra del 3.
+Behold bare ledd med positiv singulærverdi: nullverdier skal aldri inverteres.
+Bruk faktorene direkte, uten å bygge en full inversmatrise.
 
 ```{pyodide-python}
 #| label: project7-tsvd
@@ -373,17 +350,7 @@ Her bestemmer du hvilke retninger inversjonen får bruke. **25 %-budsjettet
 fra bildedelen gjelder ikke denne operatoren**; dette er et valg av
 regularisering, altså en begrensning som demper støyforsterkning.
 
-<details class="learning-hint">
-<summary>Slik kan du tenke: implementasjonen</summary>
-
-`U[:, :k].T @ b` gir de beholdte datakoordinatene. Del komponentvis på
-`s[:k]`, og multipliser med `Vt[:k, :].T`. Ikke lag hele inversmatrisen.
-Vi prøver her ranger med positive singulærverdier; nullverdier skal aldri inverteres.
-
-</details>
-
-<details class="reading-step">
-<summary>Hvorfor dette forsøket kan feile spektakulært</summary>
+**Hvorfor dette forsøket kan feile spektakulært**
 
 Glattende målinger gjør enkelte signalretninger svært svake. Det konstruerte
 $H$ er så dårlig kondisjonert at de aller minste beregnede singulærverdiene
@@ -397,7 +364,6 @@ for enkel løsning. Rangvalget balanserer tapt signal mot forsterket støy.
 En kjent fasit lar oss måle dette i laboratoriet; reelle data krever et
 begrunnet valg uten tilgang til sann løsning.
 
-</details>
 
 ## Levering
 

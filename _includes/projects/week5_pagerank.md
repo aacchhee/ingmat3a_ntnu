@@ -1,9 +1,3 @@
-<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Oppgaver</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ## Ukens spørsmål
 
 **Kan en korrekt beregning gi en rangering vi ikke stoler på?**
@@ -43,13 +37,11 @@ I matrisen $S$ er kolonne $j$ avsender og rad $i$ mottaker. $S_{ij}$ er
 sannsynligheten for et klikk fra $j$ til $i$. Kolonnene må ha sum én;
 sammen med ikke-negative elementer gjør dette $S$ **kolonnestokastisk**.
 
-<details class="reading-step">
-<summary>Gå i dybden: tegn og kontroller én runde for hånd</summary>
+**Tegn og kontroller én runde for hånd**
 
 Tegn grafen på papir, og flytt en jevn besøksfordeling én runde langs pilene.
 Ta vare på resultatet som uavhengig kontroll av koden.
 
-</details>
 
 ```{pyodide-python}
 #| label: project-week5-setup
@@ -84,11 +76,10 @@ def transition_matrix(links, u):
 
 **Kontroller før du går videre:** Alle elementer skal være ikke-negative,
 kolonnesummene skal være én. Sammenlign $Su$ med lenkene og den uavhengige
-kontrollen under «Gå i dybden».
+håndberegningen fra starten av del 1.
 Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.
 
-<details class="learning-hint">
-<summary>Slik kan du tenke: kontroller én avsender om gangen</summary>
+**Kontroller én avsender om gangen**
 
 Fra A går halvparten til B og halvparten til C, altså
 $S_{1,0}=S_{2,0}=1/2$ med Python-indekser. Alle andre elementer i kolonne
@@ -97,7 +88,6 @@ null er null. Start med denne kolonnen og kolonnen for C, som bare har én lenke
 Første runde fra jevn start skal bli
 $(1/6,1/12,1/4,1/4,1/12,1/6)^T$.
 
-</details>
 
 ## 2. Beregn og kontroller rangeringen
 
@@ -166,8 +156,7 @@ Presenter rangering og kontrolltall. Gjenta med alle besøk på A ved start.
 Forklar hvorfor referanseberegningen må bruke samme $S$, $u$ og $\alpha$.
 Enighet mellom to metoder på ulike modeller ville ikke være en kontroll.
 
-<details class="learning-hint">
-<summary>Slik kan du tenke: hvorfor kan referansesystemet løses?</summary>
+**Hvorfor kan referansesystemet løses?**
 
 Egenverdiene til en stokastisk matrise har absoluttverdi høyst én.
 Når $0<\alpha<1$, kan ikke $\alpha S$ ha egenverdi én.
@@ -177,7 +166,6 @@ Du kan kontrollere kolonnesummer med `np.allclose(S.sum(axis=0), 1)`.
 Hvis en inngang er ugyldig, bruk `raise ValueError(...)` med en forklaring.
 Ikke endre inngangsvektoren til brukeren: lag en kopi av `p0`.
 
-</details>
 
 ## 3. Diagnostiser et problem før du reparerer det
 
@@ -245,13 +233,11 @@ lagre $\lVert p_k-p_*\rVert_1$ og plott feilen med logaritmisk vertikal akse.
 Sammenlign forholdet mellom to påfølgende feil med $\beta$ i området før
 avrunding dominerer. Gjenta med en annen start hvis du ikke ser forventet fart.
 
-<details class="reading-step">
-<summary>Gå i dybden: forklar pendlingen for hånd</summary>
+**Forklar pendlingen for hånd**
 
 For pendlingstilfellet: finn begge egenverdiene til $G$, uttrykt ved
 $\alpha$, og forklar fortegnet til den andre.
 
-</details>
 
 For de andre tilfellene: velg en egenverdi ulik én og kontroller en tilhørende
 numerisk egenvektor med $\lVert Gv-\lambda v\rVert_2$.
@@ -259,8 +245,7 @@ numerisk egenvektor med $\lVert Gv-\lambda v\rVert_2$.
 Svar med ord: **Hvorfor trenger vi de andre egenverdiene når PageRank selv
 bruker egenverdien én?**
 
-<details class="learning-hint">
-<summary>Slik kan du tenke: startfordelingen kan skjule en egenretning</summary>
+**Startfordelingen kan skjule en egenretning**
 
 Forskjellen $p_k-p_*$ har sum null. Et bidrag i en egenretning med egenverdi
 $\lambda$ får faktoren $\lambda^k$. Hvis den valgte starten mangler bidraget
@@ -271,7 +256,6 @@ For to sider med jevn teleportering er
 $G=\begin{bmatrix}(1-\alpha)/2&(1+\alpha)/2\\(1+\alpha)/2&(1-\alpha)/2\end{bmatrix}$.
 Prøv den på $(1,1)^T$ og $(1,-1)^T$ før du beregner determinanten.
 
-</details>
 
 ## 5. Velg én egen undersøkelse
 
@@ -290,8 +274,7 @@ Hold maksimalgrensen fast og rapporter hvis en kjøring ikke når toleransen.
 Høyere $\alpha$ gir ikke nødvendigvis en streng økning av antall steg på
 alle grafer; forklar det du faktisk observerer.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor justere toleransen med dempingen?</summary>
+**Hvorfor justere toleransen med dempingen?**
 
 Sett $T(p)=\alpha Sp+(1-\alpha)u$. Kolonnesummene og ikke-negativiteten gir
 $\|Sz\|_1\leq\|z\|_1$, så $\|T(p)-T(q)\|_1\leq\alpha\|p-q\|_1$.
@@ -303,7 +286,6 @@ $$\|p-p_*\|_1\leq r+\alpha\|p-p_*\|_1,
 Samme residualtoleranse ved ulike $\alpha$ betyr derfor ikke samme
 garanterte løsningsnøyaktighet. Sammenlign også med den direkte løsningen.
 
-</details>
 
 ### B. Kan lenker manipulere rangeringen?
 

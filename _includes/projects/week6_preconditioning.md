@@ -1,9 +1,3 @@
-<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg prosjektvisning">
-<button type="button" data-mode="lecture" aria-pressed="true">Oppgaver</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ## Kan vi gjøre systemet lettere uten å endre løsningen?
 
 Du skal undersøke **diagonal prekondisjonering av konjugert gradient (CG)**.
@@ -11,12 +5,11 @@ CG er introdusert i [uke 6](uke6.qmd#uke6-cg); her bruker vi diagonalen i
 matrisen til å endre skaleringen og undersøker om det gir mindre arbeid.
 Vi følger samme
 arbeidsform som i notatene: **forutsi → kjør → beskriv → forklar**.
-Skriv forventningene før du åpner forklaringene eller kjører sammenligningen.
+Skriv forventningene før du kjører sammenligningen; bruk forklaringene til å tolke resultatene.
 
 Kjernen er del 1–5. Du får fungerende CG, matriser og plottverktøy.
 Din implementasjonsoppgave er å fullføre **prekondisjonert konjugert gradient
 (PCG)** fra pseudokoden i del 4.
-MINRES er en valgfri utvidelse etter kjernen.
 
 ### Før du begynner
 
@@ -76,8 +69,7 @@ Bruk CG-funksjonen nedenfor på begge systemene, foreløpig uten
 prekondisjonering. Noter antall steg og hvilken residual som ble nådd.
 Bruk retningstolkningen fra uke 6 når du forklarer forskjellen etter forsøket.
 
-<details class="reading-step">
-<summary>Gå i dybden: fungerende CG og måling av original residual</summary>
+**Fungerende CG og måling av original residual**
 
 Denne cellen definerer CG automatisk. Den returnerer hele banen og kontrolltall.
 Vi sjekker $b-Ax$ direkte ved hvert steg, også om algoritmen vedlikeholder
@@ -134,7 +126,6 @@ Symmetrikontrollen er ikke et SPD-bevis. De leverte matrisene er SPD av
 konstruksjon. Testen på $p^TAp$ oppdager enkelte problemer, men erstatter ikke
 forutsetningen om SPD. Vi håndterer riktig start ved å stoppe før divisjon.
 
-</details>
 
 ```{pyodide-python}
 #| label: project-week6-baseline
@@ -148,8 +139,7 @@ for name, A in problems.items():
           'konvergert:', result['converged'])
 ```
 
-<details class="reading-step">
-<summary>Gå i dybden: knytt forsøket til CG fra forelesningen</summary>
+**Knytt forsøket til CG fra forelesningen**
 
 Bratteste nedstigning velger $p_k=r_k$ hver gang. CG kombinerer den nye
 residualen med forrige søkeretning slik at retningene i eksakt regning er
@@ -176,7 +166,6 @@ Et kondisjonstall alene beskriver ikke hele konvergenshistorikken.
 CG minimerer den over stadig større rom av tilgjengelige søkeretninger; den euklidske
 residualnormen trenger ikke avta i hvert eneste steg.
 
-</details>
 
 ## 2. Prøv å endre koordinatene
 
@@ -208,8 +197,7 @@ Noter hva som endret seg. Dette er en første undersøkelse, **ikke ennå en
 rettferdig sammenligning av antall steg**: stoppet her bruker en transformert
 residual. Del 4 bruker samme opprinnelige residualkrav i begge metoder.
 
-<details class="reading-step">
-<summary>Gå i dybden: samme løsning og bevart symmetri</summary>
+**Samme løsning og bevart symmetri**
 
 Vi setter $x=M^{-1/2}y$ og multipliserer $Ax=b$ fra venstre med $M^{-1/2}$:
 
@@ -229,7 +217,6 @@ Original residual er $r=b-Ax$. Transformert residual er $\widetilde r=M^{-1/2}r$
 De to normene måler derfor forskjellige skaleringer av det samme avviket.
 Det er den originale residualen som brukes til hovedsammenligningen vår.
 
-</details>
 
 ## 3. Se hva skaleringen faktisk endrer
 
@@ -267,8 +254,7 @@ axes[1].set(title='Nye y-koordinater', xlabel='y₁', ylabel='y₂')
 plt.show()
 ```
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor kan ett tiltak gi to forskjellige resultater?</summary>
+**Hvorfor kan ett tiltak gi to forskjellige resultater?**
 
 Første system er $A=DBD$ med $D=\operatorname{diag}(d)$.
 Siden $B$ har diagonal to, er $M=2D^2$ og
@@ -291,13 +277,13 @@ $z^TAz=\sum_{i=0}^n(z_{i+1}-z_i)^2>0$ for $z\ne0$.
 Navnet **Jacobi-prekondisjonering** betyr her bruk av diagonalen, ikke at
 vi kjører Jacobi-iterasjoner.
 
-</details>
 
 ## 4. Fullfør PCG
 
 Vi kan få effekten av koordinatskiftet uten å bygge $\widetilde A$.
 For hver residual løser vi det enkle systemet $Mz=r$.
-Med diagonal $M$ betyr dette $z_i=r_i/m_i$.
+Med diagonal $M$ betyr dette $z_i=r_i/m_i$. I malen lagres diagonalen
+som vektoren `m`, så `r/m` deler koordinatvis.
 
 **Din kodeoppgave:** Fyll de tre markerte uttrykkene i malen. Følg pseudokoden:
 
@@ -380,18 +366,7 @@ def pcg(A, b, m, x0=None, rtol=1e-8, atol=0., max_steps=1000):
 - På det lille $A_2$ i del 3 skal svaret stemme med vanlig CG på det
   symmetrisk transformerte systemet etter omregning til $x$.
 
-<details class="learning-hint">
-<summary>Slik kan du tenke: de tre uttrykkene</summary>
-
-`m` er en vektor med diagonalverdier, ikke en matrise. NumPy-uttrykket `r/m`
-deler koordinatvis. Kvotienten for `beta` har ny verdi i telleren og gammel
-i nevneren. Den nye retningen er det prekondisjonerte residualet pluss et
-skalert bidrag fra den forrige retningen. Kontroller mot pseudokoden før du kjører.
-
-</details>
-
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor byttes rᵀr ut med rᵀz?</summary>
+**Hvorfor byttes rᵀr ut med rᵀz?**
 
 I de nye koordinatene er residualen $\widetilde r=M^{-1/2}r$.
 Dermed er
@@ -408,7 +383,6 @@ $n$ lagrede tall og $n$ divisjoner per anvendelse. Et mer avansert valg kan
 kreve større oppsett og en egen lineær løsning hver gang.
 PCG trenger en fast SPD-prekondisjonering i denne formuleringen.
 
-</details>
 
 ## 5. En rettferdig sammenligning
 
@@ -511,23 +485,6 @@ Bruk figurer med aksetitler og en tabell med kontrolltall. Analysen skal svare p
 3. Oppnådde begge metodene samme residualkrav? Hva forteller faktisk feil i tillegg?
 4. Hvilken ekstra kostnad har prekondisjoneringen, og hva må undersøkes
    før vi generaliserer til store, glisne systemer?
-
-## Valgfritt etter kjernen: hvor stopper CGs forutsetninger?
-
-Dette er ikke en del av den påkrevde leveransen. Bruk et lokalt Python-miljø
-med SciPy dersom du velger utvidelsen.
-
-Velg $A=\operatorname{diag}(-1,2,5)$, $x_*=(1,1,1)^T$ og $b=Ax_*$.
-Matrisen er symmetrisk, men ikke positivt definitt.
-Forutsi hvorfor minimeringsforklaringen fra forelesningen ikke lenger gjelder.
-Prøv bibliotekets MINRES og kontroller original residual og faktisk feil.
-Se [SciPys MINRES-dokumentasjon](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.minres.html)
-for argumentene i din versjon. Du skal ikke implementere MINRES selv.
-
-En CG-kjøring kan iblant nå løsningen også her; det beviser ikke at CG er
-sikret for systemer der matrisen har både positive og negative egenverdier. Undersøk forutsetningene, ikke bare ett utfall.
-Hvis du også tester prekondisjonering av MINRES, må prekondisjoneringen være SPD;
-den fortegnede diagonalen til denne $A$ er ikke et slikt valg.
 
 ### Tilbake til notatene
 
