@@ -25,6 +25,23 @@ er strekkfaktorene, ordnet fra størst til minst.
 Alle forsøksbilder er klare i siden. Portrett: [NTNU, mm.gif](https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif),
 tilpasset til $96\times96$ gråtoner. De andre bildene lages lokalt.
 
+### Kjør her eller i en egen notebook
+
+På denne siden lastes oppsettet automatisk; du trenger ikke åpne forelesningsnotatene.
+For en egen notebook: last ned [oppsettsfilen](../assets/project_week7_setup.py){download="project_week7_setup.py"},
+legg den i samme mappe som notebooken, og kjør følgende i første celle:
+
+```python
+from project_week7_setup import *
+```
+
+Python-miljøet må ha NumPy og Matplotlib installert. Filen inneholder hjelpefunksjonene
+og forsøksdataene; du trenger ingen nettforbindelse når den er lastet ned.
+Kopier deretter kodecellene fra del 1–3 og **bare den valgte delen A eller B**,
+i rekkefølge, og fullfør de markerte oppgavene.
+Ta med oppsettsfilen ved levering, og kontroller notebooken med **Restart / Run all**.
+Importlinjen over er bare for egen notebook, ikke for cellene på nettsiden.
+
 ## 1. Forutsi før du komprimerer
 
 ```{pyodide-python}
@@ -91,7 +108,7 @@ Forklar hvorfor kontrollen av feilformelen er mer informativ enn bare
 å se på et bilde. Vis til slutt samme kontroll for ett av forsøksbildene.
 
 <details class="learning-hint">
-<summary>Hint: hvilken vei peker V?</summary>
+<summary>Slik kan du tenke: hvilken vei peker V?</summary>
 
 NumPy gir $V^T$, ikke $V$. De første $k$ radene i `Vt` må derfor beholdes.
 Uttrykket `U[:, :k] * s[:k]` skalerer hver beholdt kolonne med sin
@@ -177,10 +194,11 @@ hvis vi måler mot det rene? Hvorfor?
 #| label: project7-denoise
 clean_image = challenge_images()['portrett']  # Bytt senere til 'diagonal'.
 noise_level = .12
-noisy_image = clean_image + noise_level*np.random.default_rng(23).standard_normal(clean_image.shape)
+noise_seed = 23  # Første forsøk brukes til å velge rang, ikke som sluttkontroll.
+noisy_image = clean_image + noise_level*np.random.default_rng(noise_seed).standard_normal(clean_image.shape)
 show_images({'rent':clean_image,'med støy':noisy_image})
 U_noise,s_noise,Vt_noise = np.linalg.svd(noisy_image,full_matrices=False)
-ranks = [1,3,5,10,15,20,30,50,70,96]
+ranks = sorted(set([1,3,5,10,15,20,30,50,70,96,k_budget]))
 fits = [truncate(U_noise,s_noise,Vt_noise,k) for k in ranks]
 # Sammenlign disse to feildefinisjonene før du tegner kurvene.
 error_to_data = [np.linalg.norm(B-noisy_image,'fro')/np.linalg.norm(noisy_image,'fro') for B in fits]
@@ -198,10 +216,24 @@ show_images({'rent':clean_image,'med støy':noisy_image,f'rang {ranks[best]}':fi
 ```
 
 1. Forklar forskjellen på feilkurvene. Hvorfor er full rang best mot dataene?
-2. Sammenlign beste prøvde rang med full rang og med rang fra budsjettet i del 3.
-3. Gjenta med diagonalbildet. Undersøk om trunkering også fjerner viktig signal.
-4. Du fikk se fasiten. Hvordan ville du begrunnet rangvalget uten et rent bilde?
-   Foreslå én praktisk framgangsmåte og beskriv hva den ikke garanterer.
+2. Sammenlign beste prøvde rang med full rang og budsjettets `k_budget`.
+   Valget som bruker kjent fasit er en **etterpå-vurdering**, ikke en test av
+   hvordan rangvalget vil virke på nye målinger.
+3. Formuler en egen påstand om hvilken detalj eller feilforbedring du forventer.
+   Velg en rang eller en presis rangregel, og skriv hva som ville tale mot
+   påstanden. **Lås valget før neste støymåling.**
+4. Lag ny støy med et annet frø, men samme rene bilde og støynivå. Bruk det
+   låste valget på de nye dataene. Sammenlign med det ubehandlede støybildet,
+   og mål både relativ feil mot fasiten og den detaljen du valgte. Ikke
+   velg ny rang ved å se på fasitfeilene for den nye målingen.
+5. Bruk diagonalbildet som en strukturell utfordring til forklaringen.
+   En enkelt rekonstruksjon er nok; du trenger ikke gjenta hele rangsøket.
+   Hva kan denne undersøkelsen si, og hva kan den ikke si om andre bilder?
+
+Du designer kriteriet og begrunner rangvalget; et rangnummer alene er ikke
+resultatet. Vis om påstanden overlever kontrollen, også dersom den feiler.
+Én ny støymåling er en uavhengig kontroll av dette forsøket, ikke bevis for
+at rangvalget vanligvis er godt. Flere frø er valgfritt hvis du vil undersøke variasjonen.
 
 <details class="reading-step">
 <summary>Støyreduksjon er en hypotese om signalet</summary>
@@ -276,9 +308,34 @@ def tsvd(U,s,Vt,b,k):
     raise NotImplementedError('Fyll inn trunkert inversjon')
 ```
 
+**Kontroller funksjonen før uskarphetsforsøket.** Her er fasiten kjent uten
+å bruke en annen SVD-rutine til å finne svaret. Matrisen er rektangulær;
+den tredje koordinaten er i nullrommet og settes til null i løsningen med minst euklidsk lengde.
+
+```{pyodide-python}
+#| label: project7-tsvd-check
+H_check = np.array([[4.,0.,0.],[0.,2.,0.]])
+U_check,s_check,Vt_check = np.linalg.svd(H_check,full_matrices=False)
+b_check = np.array([8.,6.])
+assert np.allclose(tsvd(U_check,s_check,Vt_check,b_check,0),[0.,0.,0.])
+assert np.allclose(tsvd(U_check,s_check,Vt_check,b_check,1),[2.,0.,0.])
+assert np.allclose(tsvd(U_check,s_check,Vt_check,b_check,2),[2.,3.,0.])
+print('Null rang, én komponent og rektangulær inversjon er kontrollert.')
+```
+
 ```{pyodide-python}
 #| label: project7-blur-compare
-position,H,truth,clean_data,observed = blur_problem()
+noise_level = .005
+noise_seed = 17
+position,H,truth,clean_data,observed = blur_problem(noise_level=noise_level,seed=noise_seed)
+# Alle metodene bruker akkurat samme observed, også når parametrene endres.
+try:
+    direct = np.linalg.solve(H,observed)
+    print('Direkte: relativ residual',np.linalg.norm(H@direct-observed)/np.linalg.norm(observed),
+          'relativ feil',np.linalg.norm(direct-truth)/np.linalg.norm(truth))
+except np.linalg.LinAlgError:
+    direct = None
+    print('Direkte løsning stoppet: numerisk singulært system.')
 U_h,s_h,Vt_h = np.linalg.svd(H,full_matrices=False)
 trial_ranks = [2,5,10,15,20,25,30,40]
 solutions = [tsvd(U_h,s_h,Vt_h,observed,k) for k in trial_ranks]
@@ -294,18 +351,30 @@ ax[1].plot(position,solutions[best],label=f'rang {trial_ranks[best]}')
 ax[1].set_xlabel('Posisjon'); ax[1].legend(); plt.tight_layout(); plt.show()
 ```
 
-1. Sammenlign direkte løsning, en svært liten rang og beste prøvde rang.
-   Vis både residual og feil. Hvorfor er minste residual feil beslutningsregel her?
-2. Gjør støyen dobbelt så stor med samme støymønster:
-   `observed = clean_data + 2*(observed-clean_data)` etter `blur_problem()`
-   i sammenligningscellen. Undersøk om rangvalget endres.
-3. Knytt feilen til $\delta b=\eta u_i\Rightarrow\delta x=(\eta/\sigma_i)v_i$.
-   Forklar hvilken informasjon vi gir avkall på ved trunkering.
-4. Er dette prekondisjonering fra uke 6? Forklar forskjellen mellom å løse
-   samme problem raskere og å begrense hvilke løsningskomponenter vi tar med.
+1. Bruk det første forsøket til å sammenligne direkte løsning, svært liten
+   rang og beste prøvde rang. Vis residual og feil. Forklar hvorfor liten
+   residual alene ikke er en god beslutningsregel her.
+2. Formuler en egen kvalitetspåstand og velg en rang eller presis rangregel.
+   Angi hva som ville tale mot påstanden, og lås valget før kontrollen.
+3. Design én ny kontroll: **enten** nytt støymønster ved samme nivå (endre
+   `noise_seed`), **eller** nytt støynivå med samme mønster (behold frøet).
+   Begrunn hvilken antakelse kontrollen utfordrer. Bruk den låste rangen/reglen;
+   ikke velg på nytt med `argmin(errors)` på de nye dataene. Det store rangsøket
+   er bare for det første forsøket.
+4. Beregn både direkte løsning og TSVD fra samme nye `observed`. Sammenlign
+   også med én på forhånd valgt, liten referanserang. Vis om påstanden holder,
+   og knytt resultatet til $\delta b=\eta u_i\Rightarrow\delta x=(\eta/\sigma_i)v_i$.
+   Et negativt resultat skal forklares, ikke fjernes fra rapporten.
+5. Forklar forskjellen mellom trunkering og prekondisjonering fra uke 6.
+   Hva mister vi ved å utelate retninger, og hva kan én kontroll ikke si om
+   andre signaler eller måleoperatorer?
+
+Her bestemmer du hvilke retninger inversjonen får bruke. **25 %-budsjettet
+fra bildedelen gjelder ikke denne operatoren**; dette er et valg av
+regularisering, altså en begrensning som demper støyforsterkning.
 
 <details class="learning-hint">
-<summary>Hint til implementasjonen</summary>
+<summary>Slik kan du tenke: implementasjonen</summary>
 
 `U[:, :k].T @ b` gir de beholdte datakoordinatene. Del komponentvis på
 `s[:k]`, og multipliser med `Vt[:k, :].T`. Ikke lag hele inversmatrisen.
@@ -337,11 +406,13 @@ rapport på omtrent **400–600 ord**, utenom bildetekster og tabeller:
 
 - Hypotesen fra del 1 og budsjettabellen for alle fire bilder.
 - Ett original/rekonstruksjon-par med den viktige detaljen tydelig beskrevet.
-- Feilkurvene og én sammenligning fra valgt utvidelse A eller B.
+- Feilkurvene fra første forsøk, din forhåndsformulerte påstand og
+  rang/rangregel, samt kontrollen på nye data fra **én** av A eller B.
 - En anbefaling med valgt rang, begrunnelse, og ett dokumentert tilfelle der
   metoden ikke bevarer det du ønsker.
 
 Knytt forklaringen eksplisitt til minst to tidligere temaer, for eksempel
 ortogonale koordinater og rang, eller kondisjonering og residual.
+Skill mellom data brukt til å velge rang og data brukt til å vurdere valget.
 Resultatene skal kunne gjenskapes med oppgitte frø og parametere. Vi vurderer
 særlig om du skiller mellom **å passe data, bevare informasjon og spare lagring**.

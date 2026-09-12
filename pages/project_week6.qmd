@@ -1,5 +1,7 @@
 ---
 title: "Prosjekt 6 – Samme løsning, mindre arbeid?"
+resources:
+  - ../assets/project_week6_setup.py
 ---
 
 {{< include ../_includes/linalg/week6_setup.md >}}

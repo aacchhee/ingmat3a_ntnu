@@ -20,16 +20,31 @@ def main():
     for file in ['_includes/linalg/week7_setup.md', '_includes/linalg/uke7.md']:
         for code in cells(file):
             run(code, ns)
-    # Independent project state: it must not depend on visiting the notes first.
-    ns = {}
-    for code in cells('_includes/linalg/week7_setup.md'):
-        run(code, ns)
-    for code in cells('_includes/projects/week7_svd.md'):
-        code = code.replace("raise NotImplementedError('Fyll inn trunkert rekonstruksjon')",
-                            'return (U[:, :k]*s[:k]) @ Vt[:k, :]')
-        code = code.replace("raise NotImplementedError('Fyll inn trunkert inversjon')",
-                            'return Vt[:k, :].T @ ((U[:, :k].T @ b)/s[:k])')
-        run(code, ns)
+    # Each choice runs from a fresh project setup and the common core only.
+    project = (ROOT/'_includes/projects/week7_svd.md').read_text()
+    core, branches = project.split('## Velg A:',1)
+    branch_a, branch_b = branches.split('## Velg B:',1)
+    states = []
+    for branch in (branch_a, branch_b):
+        ns = {}
+        # Exercise the exact downloadable setup, including embedded image data.
+        run((ROOT/'assets/project_week7_setup.py').read_text(),ns)
+        for code in re.findall(r'```\{pyodide-python\}\n(.*?)```', core+branch, re.S):
+            code = code.replace("raise NotImplementedError('Fyll inn trunkert rekonstruksjon')",
+                                'return (U[:, :k]*s[:k]) @ Vt[:k, :]')
+            code = code.replace("raise NotImplementedError('Fyll inn trunkert inversjon')",
+                                'return Vt[:k, :].T @ ((U[:, :k].T @ b)/s[:k])')
+            run(code, ns)
+        states.append(ns)
+    assert states[0]['k_budget'] in states[0]['ranks']
+    # Merge only after both independent executions, for the shared assertions below.
+    ns = {**states[0], **states[1]}
+    first = ns['blur_problem'](noise_level=.005,seed=17)
+    doubled = ns['blur_problem'](noise_level=.01,seed=17)
+    fresh = ns['blur_problem'](noise_level=.005,seed=18)
+    assert np.allclose(doubled[4]-doubled[3],2*(first[4]-first[3]))
+    assert np.array_equal(first[1],fresh[1]) and np.array_equal(first[2],fresh[2])
+    assert not np.allclose(first[4],fresh[4])
     truncate, tsvd = ns['truncate'], ns['tsvd']
     rng = np.random.default_rng(91)
     for shape in [(3,7),(7,3)]:

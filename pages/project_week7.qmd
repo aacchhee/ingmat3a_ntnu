@@ -1,5 +1,7 @@
 ---
 title: "Prosjekt 7 – Behold informasjonen som betyr noe"
+resources:
+  - ../assets/project_week7_setup.py
 ---
 
 {{< include ../_includes/linalg/week7_setup.md >}}

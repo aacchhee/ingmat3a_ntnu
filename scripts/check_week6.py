@@ -46,11 +46,18 @@ def main():
     sd_narrow = ns['descent_path'](narrow, rhs, [0.,0.], steps=16)
     assert cg_narrow['converged'] and len(cg_narrow['path']) <= 3
     assert np.linalg.norm(rhs-narrow@sd_narrow[-1]) > 1e-6
+    # Project must run from its own setup, without a previous lecture session.
+    ns = {}
+    for code in cells('_includes/linalg/week6_setup.md'): run(code, ns)
     for code in cells('_includes/projects/week6_preconditioning.md'):
         # Finish only the student's three marked expressions for verification.
         code = code.replace("raise NotImplementedError('TODO 1')", 'return r/m')
         code = code.replace('beta = None', 'beta = gamma_new/gamma').replace('p = None', 'p = z + beta*p')
         run(code, ns)
+    # Same diagonal, changed couplings: independently verify promised SPD family.
+    family = [ns['coupled_problem'](12,20,c) for c in (0,.4,.99)]
+    assert all(np.allclose(np.diag(A),np.diag(family[0])) for A in family)
+    assert all(np.linalg.eigvalsh(A).min()>0 for A in family)
     cg, pcg = ns['cg'], ns['pcg']
     # The displayed project routine and lecture helper must produce the same CG run.
     assert np.allclose(cg(A,b,rtol=1e-12)['path'], out['path'])

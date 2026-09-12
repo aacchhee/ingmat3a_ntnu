@@ -1,5 +1,5 @@
-<div class="learning-mode" data-learning-mode data-reading-label="Arbeid videre" role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
+<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg lesemodus">
+<button type="button" data-mode="lecture" aria-pressed="true">Oppgaver</button>
 <button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
 <span role="status" aria-live="polite"></span>
 </div>
@@ -13,9 +13,10 @@ stasjonær fordeling blir en egenvektor. Nå skal du bygge en rangering,
 kontrollere regningen og undersøke hva et modellvalg gjør med resultatet.
 
 Følg samme arbeidsform i hver del: **forutsi → prøv → beskriv → forklar**.
-Skriv forventningen før du kjører forsøket. En figur uten tolkning er ikke
-et svar. Kjernen er del 1–4. Deretter velger du én fordypning og gjør et
-begrunnet før-og-etter-forsøk.
+Skriv forventningen før du kjører forsøket. Del 1–4 gir verktøy og kontroller.
+Deretter gjør du **én egen undersøkelse** fra del 5–6. Begge deler inngår i
+prosjektet: kontrollerte beregninger alene er ikke en ferdig undersøkelse.
+Du kan kjøre hele prosjektet uten å kjøre cellene i forelesningsnotatene først.
 
 ## 1. Hvem tror du blir viktigst?
 
@@ -87,7 +88,7 @@ kontrollen under «Arbeid videre».
 Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.
 
 <details class="learning-hint">
-<summary>Hint: kontroller én avsender om gangen</summary>
+<summary>Slik kan du tenke: kontroller én avsender om gangen</summary>
 
 Fra A går halvparten til B og halvparten til C, altså
 $S_{1,0}=S_{2,0}=1/2$ med Python-indekser. Alle andre elementer i kolonne
@@ -136,6 +137,10 @@ $$r_k=\lVert \alpha Sp_k+(1-\alpha)u-p_k\rVert_1,
 
 Bruk en øvre grense for antall steg og meld fra hvis toleransen ikke nås.
 Den samme funksjonen skal kunne brukes på nettverk med ulike størrelser.
+Antall steg er antall utførte oppdateringer. Når historikken inneholder
+residualen ved start og ved hver returnert iterasjon, er dette
+`len(residuals)-1`. Kontroller også residualen etter siste tillatte oppdatering;
+ikke merk en løsning som mislykket bare fordi den nådde kravet på siste steg.
 
 For denne lille grafen kan du kontrollere svaret uavhengig av iterasjonen.
 Fra den stasjonære likningen får vi
@@ -162,7 +167,7 @@ Forklar hvorfor referanseberegningen må bruke samme $S$, $u$ og $\alpha$.
 Enighet mellom to metoder på ulike modeller ville ikke være en kontroll.
 
 <details class="learning-hint">
-<summary>Hint: hvorfor kan referansesystemet løses?</summary>
+<summary>Slik kan du tenke: hvorfor kan referansesystemet løses?</summary>
 
 Egenverdiene til en stokastisk matrise har absoluttverdi høyst én.
 Når $0<\alpha<1$, kan ikke $\alpha S$ ha egenverdi én.
@@ -211,6 +216,13 @@ Bruk problemgrafen du valgte, med teleportering. Bygg den lille matrisen
 
 $$G=\alpha S+(1-\alpha)u\mathbf1^T.$$
 
+Her er $\mathbf1$ en kolonne med ettall. Siden $\mathbf1^Tp=1$, gir
+$Gp$ akkurat besøksregelen i del 2. For $0<\alpha<1$, positiv $u$ og
+kolonnestokastisk $S$ er $G$ positiv og kolonnestokastisk. Da finnes én
+stasjonær sannsynlighetsvektor, og iterasjonen konvergerer fra enhver
+startfordeling. Dette er garantien vi bruker; den sier ikke at modellen
+gir en god måling av kvalitet.
+
 **Forutsi:** Hvilken egenverdi må du finne? Hva forventer du om absoluttverdien
 av de andre når $0<\alpha<1$?
 
@@ -248,7 +260,7 @@ Svar med ord: **Hvorfor trenger vi de andre egenverdiene når PageRank selv
 bruker egenverdien én?**
 
 <details class="learning-hint">
-<summary>Hint: startfordelingen kan skjule en egenretning</summary>
+<summary>Slik kan du tenke: startfordelingen kan skjule en egenretning</summary>
 
 Forskjellen $p_k-p_*$ har sum null. Et bidrag i en egenretning med egenverdi
 $\lambda$ får faktoren $\lambda^k$. Hvis den valgte starten mangler bidraget
@@ -263,18 +275,35 @@ Prøv den på $(1,1)^T$ og $(1,-1)^T$ før du beregner determinanten.
 
 ## 5. Velg én egen undersøkelse
 
+Velg én av A–C. Bruk planleggingspunktene i del 6 **før du kjører** den valgte
+undersøkelsen. Del 5 og 6 er ett arbeid, ikke to separate forsøksoppgaver.
+
 ### A. Demping, rangering og regnefart
 
-Hold seks-siders grafen og startfordelingen fast. Varier
-$\alpha\in\{0.5,0.85,0.95,0.99\}$. Forutsi først hvordan rangering og antall
+Hold grafen og startfordelingen fast. Velg verdier av $\alpha$ som kan
+belyse påstanden din; $\{0.5,0.85,0.95,0.99\}$ er mulige startverdier. Forutsi først hvordan rangering og antall
 steg endres. Mål faktisk feil mot referansesystemet, antall steg og $\beta$.
 
 For en rettferdig sammenligning av arbeid ved samme garanterte nøyaktighet,
-bruk residualtoleranse $(1-\alpha)\cdot10^{-8}$. Da gir feilgrensen fra
-forelesningens fordypning $\lVert p-p_*\rVert_1\le10^{-8}$.
+bruk residualtoleranse $(1-\alpha)\cdot10^{-8}$. Da gir feilgrensen nedenfor $\lVert p-p_*\rVert_1\le10^{-8}$.
 Hold maksimalgrensen fast og rapporter hvis en kjøring ikke når toleransen.
 Høyere $\alpha$ gir ikke nødvendigvis en streng økning av antall steg på
 alle grafer; forklar det du faktisk observerer.
+
+<details class="reading-step">
+<summary>Arbeid videre: hvorfor justere toleransen med dempingen?</summary>
+
+Sett $T(p)=\alpha Sp+(1-\alpha)u$. Kolonnesummene og ikke-negativiteten gir
+$\|Sz\|_1\leq\|z\|_1$, så $\|T(p)-T(q)\|_1\leq\alpha\|p-q\|_1$.
+Med $T(p_*)=p_*$ og $r=\|T(p)-p\|_1$ gir trekantulikheten
+
+$$\|p-p_*\|_1\leq r+\alpha\|p-p_*\|_1,
+\qquad \|p-p_*\|_1\leq\frac{r}{1-\alpha}.$$
+
+Samme residualtoleranse ved ulike $\alpha$ betyr derfor ikke samme
+garanterte løsningsnøyaktighet. Sammenlign også med den direkte løsningen.
+
+</details>
 
 ### B. Kan lenker manipulere rangeringen?
 
@@ -289,29 +318,45 @@ rangeringen er vanskelig å manipulere?
 
 ### C. Hvem er rangeringen laget for?
 
-Behold seks-siders grafen og $\alpha=0.85$. Sammenlign jevn $u$ med
+Behold grafen og $\alpha=0.85$. Velg selv en positiv $u$ ut fra et
+angitt besøksmønster, og sammenlign med jevn $u$. Et mulig utgangspunkt er
 $u=(0.5,0.1,0.1,0.1,0.1,0.1)^T$. Alle elementene er fortsatt positive.
 Forutsi hvem som får mer vekt, og mål endringene i score og plassering.
 Formuler hva rangeringen nå uttrykker om besøkendes interesser.
 
-## 6. Gjør ett begrunnet før-og-etter-forsøk
+## 6. Sett din egen påstand på prøve
 
-Velg en konkret observasjon fra undersøkelsen din og endre **én** ting.
-Skriv målet først: raskere beregning ved samme feil, mindre innflytelse fra
-en lenkegruppe, eller en rangering som passer et angitt besøksmønster.
+Bruk dette som forsøksplan og rapportstruktur for undersøkelsen du velger
+i del 5. Formuler **én påstand som kan vise
+seg å være feil**, og bestem forsøket før du kjører det. For eksempel kan
+du undersøke om en bestemt lenkeendring gir målsiden høyere score også når
+startgrafen endres, eller om et valgt hoppmønster oppfyller et angitt mål.
 
-Vis et før-og-etter-resultat og vurder om målet ble nådd. Oppgi hva som ble
-holdt fast. Hvis tiltaket ikke hjelper, er det et resultat som skal forklares.
+Skriv en kort forsøksplan med:
+
+1. Påstanden og en mekanisme: hvorfor skulle besøksregelen gi denne effekten?
+2. Hva du endrer, hva du holder fast, og hva som ville tale mot påstanden.
+3. Et målbart kriterium: for eksempel endring i score, topplassering eller
+   arbeid ved samme feilgrense. Bestem hvordan nesten like scorer skal behandles.
+
+Gjennomfør det kontrollerte før-og-etter-paret du designer i del 5.
+Det samme paret brukes her; du skal ikke gjøre en ekstra undersøkelse.
+**Valgfritt:** Prøv deretter samme tiltak på én ny graf eller ett nytt positivt hoppmønster
+valgt for å utfordre forklaringen. Endre bare denne bakgrunnsbetingelsen;
+behold tiltaket og vurderingskriteriet. Du trenger ikke en stor samling kjøringer.
+
+Vis det kontrollerte paret og eventuell ekstra kontroll, også hvis effekten uteblir eller snur. Forklar hva resultatene
+støtter, hva de avkrefter, og hvor snever konklusjonen må være. Å velge den
+best utseende kjøringen i ettertid er ikke en kontroll av påstanden.
 
 ### Dette skal leveres
 
 Lever én kjørbar notebook eller Quarto-side. Figurer skal ha aksetitler,
 kurveforklaringer og korte tolkninger. Vis forventninger før resultater.
 
-| Omfang | Leveranse |
-|---|---|
-| Bare kjerne | Del 1–4: egen matrise og iterasjon, kontroller, problem og reparasjon, egenverdiforklaring |
-| Hele prosjektet | Kjernen, én undersøkelse fra del 5 og før-og-etter-forsøket; analyse på 400–600 ord |
+Lever kontroller fra del 1–4 og én valgt undersøkelse fra del 5,
+dokumentert med forsøksplanen og det kontrollerte paret i del 6. Analysen på **400–600 ord** skal inneholde påstanden skrevet
+før forsøket, forsøksvalgene, et mulig motfunn og en avgrenset konklusjon.
 
 Analysen skal bruke konkrete resultater til å skille mellom:
 

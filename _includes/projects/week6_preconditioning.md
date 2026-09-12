@@ -29,6 +29,31 @@ Et **glissent system** har en matrise med få elementer som er ulike null.
 Arbeid og lagring for slike store systemer kan ikke vurderes ut fra
 kjøretidene til disse små, tette matrisene.
 
+### Kjør her eller i en egen notebook
+
+På denne siden lastes oppsettet automatisk; du trenger ikke åpne forelesningsnotatene.
+For en egen notebook: last ned [oppsettsfilen](../assets/project_week6_setup.py){download="project_week6_setup.py"},
+legg den i samme mappe som notebooken, og kjør følgende i første celle:
+
+```python
+from project_week6_setup import *
+```
+
+Python-miljøet må ha NumPy og Matplotlib installert. Filen inneholder hjelpefunksjonene
+og forsøksdataene; du trenger ingen nettforbindelse når den er lastet ned.
+Kopier deretter prosjektets kodeceller i rekkefølge og fullfør de markerte oppgavene.
+Ta med oppsettsfilen ved levering, og kontroller notebooken med **Restart / Run all**.
+Importlinjen over er bare for egen notebook, ikke for cellene på nettsiden.
+
+**Residualen** er $r=b-Ax$: avviket i de opprinnelige likningene.
+Vi bruker vanlig vektorlengde $\|r\|_2=\sqrt{\sum_i r_i^2}$.
+Relativ residual er $\|b-Ax\|_2/\|b\|_2$, og relativ løsningsfeil er
+$\|x-x_*\|_2/\|x_*\|_2$; forsøksdataene har ikke-null nevnere.
+**Spekteret** er samlingen av egenverdier. For SPD er
+$\kappa_2(A)=\lambda_{\max}/\lambda_{\min}$ **kondisjonstallet**, som
+måler forholdet mellom største og minste strekk. Det bestemmer ikke alene
+antall CG-steg; egenverdienes fordeling og høyresiden spiller også inn.
+
 ## 1. Oppdag en forskjell i arbeidsmengde
 
 To SPD-matriser kan ha samme størrelse og likevel kreve svært ulikt arbeid.
@@ -356,7 +381,7 @@ def pcg(A, b, m, x0=None, rtol=1e-8, atol=0., max_steps=1000):
   symmetrisk transformerte systemet etter omregning til $x$.
 
 <details class="learning-hint">
-<summary>Hint til de tre uttrykkene</summary>
+<summary>Slik kan du tenke: de tre uttrykkene</summary>
 
 `m` er en vektor med diagonalverdier, ikke en matrise. NumPy-uttrykket `r/m`
 deler koordinatvis. Kvotienten for `beta` har ny verdi i telleren og gammel
@@ -426,15 +451,58 @@ gang, og hver anvendelse krever $n$ divisjoner. Våre tellere inkluderer
 direkte residualkontroll, men ikke etterfølgende analyseplott, spektralberegninger
 eller konstruksjon av testdata. Skillet skal oppgis i rapporten.
 
-Gjenta med én endring: øk skaleringens spenn fra 100 til 1000, eller endre
-$n$ fra 60 til 100. Lag alle matriser, $x_*$ og høyresider på nytt med samme
-oppskrift, og hold dem identiske mellom metodene i hver sammenligning.
-**Målet er en forklart forbedring og en forklart begrensning**, ikke flest mulig kjøringer.
+### Din undersøkelse: når er diagonal skalering nok?
+
+De to ferdige systemene viser en mulig gevinst og en begrensning. De er
+**kalibrering av verktøyene**, ikke belegg for en generell konklusjon.
+Formuler én påstand om hva som styrer gevinsten, og konstruer et nytt
+kontrollert forsøk som kan utfordre den. Du skal selv begrunne både
+matrisevalget og hva som ville telle som et moteksempel.
+
+Velg én vei:
+
+- Hold diagonalen og størrelsen fast, men endre koblingene utenfor diagonalen.
+  Er samme diagonale skala nok til å forutsi samme gevinst?
+- Hold matrisen fast, men endre den kjente løsningen og dermed $b=Ax_*$.
+  Er gevinsten uavhengig av hvilke egenretninger problemet aktiverer?
+
+Du kan bruke konstruksjonen nedenfor til den første veien. Velg selv
+parameterverdier og påstand; funksjonen er dataverktøy, ikke en ferdig undersøkelse.
+
+```{pyodide-python}
+#| label: project-week6-research-family
+def coupled_problem(n, span, coupling):
+    if n < 2 or span < 1 or not 0 <= coupling < 1:
+        raise ValueError('Bruk n >= 2, span >= 1 og 0 <= coupling < 1')
+    d = np.geomspace(1., span, n)
+    B = 2*np.eye(n) - coupling*(np.eye(n,k=1)+np.eye(n,k=-1))
+    return d[:,None]*B*d[None,:]
+```
+
+For fast `n` og `span` er diagonalen alltid $2d_i^2$. $B$ er symmetrisk og
+strengt diagonaldominant: diagonalelementet er større enn summen av
+absoluttverdiene til de andre elementene i raden. Med positiv diagonal gir
+dette SPD her. Med $D=\operatorname{diag}(d)$ er $A=DBD$.
+Skaleringen bevarer positiv definitet siden
+$z^TAz=(Dz)^TB(Dz)>0$ for $z\ne0$. Ved andre egne konstruksjoner
+må du selv begrunne at CGs forutsetninger fortsatt er oppfylt.
+
+Skriv påstand, kontrollvariabler og suksesskriterium **før** kjøring.
+Mål gevinsten med antall matrise-vektor-produkter ved samme originale
+residualkrav; oppgi også PCGs ekstra arbeid. Ikke kall en avbrutt kjøring
+raskere fordi den brukte færre steg.
+
+Lag ett kontrollert par. **Valgfritt:** Prøv deretter forklaringen på ett nytt par
+med en mer krevende kobling eller en annen høyreside. Behold
+sammenligningsreglene. Vis alle kjøringene du bruker, også et eventuelt motfunn,
+og avgrens konklusjonen til det du faktisk har undersøkt.
 
 ### Leveranse
 
 Lever én kjørbar notebook eller Quarto-side med fullført PCG, de fire
-kontrollene i del 4, to før-og-etter-sammenligninger og en analyse på 400–600 ord.
+kontrollene i del 4, de to kalibreringssystemene og din egen undersøkelse
+med ett kontrollert par. Skriv en analyse på 400–600 ord med påstand,
+forsøksdesign, et mulig motfunn og en avgrenset konklusjon.
 Bruk figurer med aksetitler og en tabell med kontrolltall. Analysen skal svare på:
 
 1. Hvorfor løser vi fortsatt det samme opprinnelige problemet?
