@@ -4440,12 +4440,12 @@ window.Quarto = {
 </header>
 
 
-<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg lesemodus">
+<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg lesemodus">
 <button type="button" data-mode="lecture" aria-pressed="true">
 Oppgaver
 </button>
 <button type="button" data-mode="reading" aria-pressed="false">
-Arbeid videre
+Gå i dybden
 </button>
 <p><span role="status" aria-live="polite"></span></p>
 </div>
@@ -4496,7 +4496,7 @@ Arbeid videre
 <p>Ranger sidene før du kjører modellen, og begrunn førsteplassen. Hva er forskjellen på å telle innkommende lenker og å telle besøk? I matrisen <span class="math inline">\(S\)</span> er kolonne <span class="math inline">\(j\)</span> avsender og rad <span class="math inline">\(i\)</span> mottaker. <span class="math inline">\(S_{ij}\)</span> er sannsynligheten for et klikk fra <span class="math inline">\(j\)</span> til <span class="math inline">\(i\)</span>. Kolonnene må ha sum én; sammen med ikke-negative elementer gjør dette <span class="math inline">\(S\)</span> <strong>kolonnestokastisk</strong>.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: tegn og kontroller én runde for hånd
+Gå i dybden: tegn og kontroller én runde for hånd
 </summary>
 <p>Tegn grafen på papir, og flytt en jevn besøksfordeling én runde langs pilene. Ta vare på resultatet som uavhengig kontroll av koden.</p>
 </details>
@@ -4504,7 +4504,7 @@ Arbeid videre: tegn og kontroller én runde for hånd
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Kontroller før du går videre:</strong> Alle elementer skal være ikke-negative, kolonnesummene skal være én. Sammenlign <span class="math inline">\(Su\)</span> med lenkene og den uavhengige kontrollen under «Arbeid videre». Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.</p>
+<p><strong>Kontroller før du går videre:</strong> Alle elementer skal være ikke-negative, kolonnesummene skal være én. Sammenlign <span class="math inline">\(Su\)</span> med lenkene og den uavhengige kontrollen under «Gå i dybden». Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.</p>
 <details class="learning-hint">
 <summary>
 Slik kan du tenke: kontroller én avsender om gangen
@@ -4589,7 +4589,7 @@ Slik kan du tenke: hvorfor kan referansesystemet løses?
 <p>Finn <span class="math inline">\(p_*\)</span> med referansesystemet fra del 2. Kjør et fast antall oppdateringer, lagre <span class="math inline">\(\lVert p_k-p_*\rVert_1\)</span> og plott feilen med logaritmisk vertikal akse. Sammenlign forholdet mellom to påfølgende feil med <span class="math inline">\(\beta\)</span> i området før avrunding dominerer. Gjenta med en annen start hvis du ikke ser forventet fart.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: forklar pendlingen for hånd
+Gå i dybden: forklar pendlingen for hånd
 </summary>
 <p>For pendlingstilfellet: finn begge egenverdiene til <span class="math inline">\(G\)</span>, uttrykt ved <span class="math inline">\(\alpha\)</span>, og forklar fortegnet til den andre.</p>
 </details>
@@ -4612,7 +4612,7 @@ Slik kan du tenke: startfordelingen kan skjule en egenretning
 <p>For en rettferdig sammenligning av arbeid ved samme garanterte nøyaktighet, bruk residualtoleranse <span class="math inline">\((1-\alpha)\cdot10^{-8}\)</span>. Da gir feilgrensen nedenfor <span class="math inline">\(\lVert p-p_*\rVert_1\le10^{-8}\)</span>. Hold maksimalgrensen fast og rapporter hvis en kjøring ikke når toleransen. Høyere <span class="math inline">\(\alpha\)</span> gir ikke nødvendigvis en streng økning av antall steg på alle grafer; forklar det du faktisk observerer.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: hvorfor justere toleransen med dempingen?
+Gå i dybden: hvorfor justere toleransen med dempingen?
 </summary>
 <p>Sett <span class="math inline">\(T(p)=\alpha Sp+(1-\alpha)u\)</span>. Kolonnesummene og ikke-negativiteten gir <span class="math inline">\(\|Sz\|_1\leq\|z\|_1\)</span>, så <span class="math inline">\(\|T(p)-T(q)\|_1\leq\alpha\|p-q\|_1\)</span>. Med <span class="math inline">\(T(p_*)=p_*\)</span> og <span class="math inline">\(r=\|T(p)-p\|_1\)</span> gir trekantulikheten</p>
 <p><span class="math display">\[\|p-p_*\|_1\leq r+\alpha\|p-p_*\|_1,
@@ -4780,7 +4780,7 @@ Arbeid videre: hvorfor justere toleransen med dempingen?
       steps.forEach(step => { step.open = mode === 'reading'; });
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
       status.textContent = mode === 'reading'
-        ? (controls.dataset.readingLabel || 'Arbeid videre') + ': prøv selv, og følg forklaringene steg for steg.'
+        ? (controls.dataset.readingLabel || 'Gå i dybden') + ': prøv selv, og følg forklaringene steg for steg.'
         : (controls.dataset.lectureLabel || 'Forelesning') + (controls.dataset.lectureLabel ? ': prøv oppgavene før du åpner forklaringene.' : ': eksperimenter og diskusjon. Åpne utdypningene ved behov.');
       try { sessionStorage.setItem('learning-mode', mode); } catch (_) {}
       window.dispatchEvent(new Event('resize'));

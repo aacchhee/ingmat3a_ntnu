@@ -4447,7 +4447,7 @@ window.Quarto = {
 Forelesning
 </button>
 <button type="button" data-mode="reading" aria-pressed="false">
-Arbeid videre
+Gå i dybden
 </button>
 <p><span role="status" aria-live="polite"></span></p>
 </div>
@@ -4461,7 +4461,7 @@ Arbeid videre
 <section id="fra-gjentatte-korreksjoner-til-cg" class="level3">
 <h3 class="anchored" data-anchor-id="fra-gjentatte-korreksjoner-til-cg">Fra gjentatte korreksjoner til CG</h3>
 <p>Hvordan kan vi løse <span class="math inline">\(Ax=b\)</span> uten å faktorisere hele matrisen? Vi henter kort fram Jacobi og Gauss–Seidel, undersøker hva som styrer konvergensen, og prøver <strong>konjugert gradient (CG)</strong>: en metode som bygger nye søkeretninger ut fra informasjonen i tidligere steg.</p>
-<p>I <strong>Forelesning</strong> kjører vi korte demonstrasjoner og diskuterer det vi ser. <strong>Arbeid videre</strong> åpner oppgaver, mellomregninger og forklaringer til hvert forsøk. Prøv oppgavene før du åpner «Slik kan du tenke».</p>
+<p>I <strong>Forelesning</strong> kjører vi korte demonstrasjoner og diskuterer det vi ser. <strong>Gå i dybden</strong> åpner oppgaver, mellomregninger og forklaringer til hvert forsøk. Prøv oppgavene før du åpner «Slik kan du tenke».</p>
 <ul>
 <li><a href="#uke6-gs">Husk oppdateringene</a> og <a href="#uke6-fikspunkt">følg feilen</a>.</li>
 <li><a href="#uke6-residual">Skill residual fra feil</a>.</li>
@@ -4488,7 +4488,7 @@ Arbeid videre
 <p>Begge nærmer seg løsningen her. <strong>Ville dere stole på samme oppskrift for ethvert system?</strong> Neste forsøk endrer bare matrisen og høyresiden.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: gjenskap de første oppdateringene
+Gå i dybden: gjenskap de første oppdateringene
 </summary>
 <ol type="1">
 <li>Isoler <span class="math inline">\(u\)</span> og <span class="math inline">\(v\)</span> i hver sin likning, og gjør ett Jacobi-sveip fra null.</li>
@@ -4524,7 +4524,7 @@ Slik kan du tenke
 <p><strong>Spektralradiusen</strong> er største absoluttverdi av egenverdiene: <span class="math inline">\(\rho(T)=\max_i|\lambda_i(T)|\)</span>. Iterasjonen konvergerer fra enhver start akkurat når <span class="math inline">\(\rho(T)&lt;1\)</span>. Det er <span class="math inline">\(T\)</span> vi undersøker her. <strong>Hvorfor er én vellykket kjøring ikke nok til å si at alle starter virker?</strong></p>
 <details class="reading-step">
 <summary>
-Arbeid videre: finn matrisen som oppdaterer feilen
+Gå i dybden: finn matrisen som oppdaterer feilen
 </summary>
 <ol type="1">
 <li>Sett GS-uttrykket for <span class="math inline">\(u_{k+1}\)</span> inn i uttrykket for <span class="math inline">\(v_{k+1}\)</span> for <span class="math inline">\(A_a\)</span>. Les av <span class="math inline">\(T\)</span> og <span class="math inline">\(c\)</span>.</li>
@@ -4563,7 +4563,7 @@ Slik kan du tenke
 <p>med absolutt toleranse <code>atol</code>, relativ toleranse <code>rtol</code> og en øvre grense for antall steg. <strong>Hva ville dere rapportert hvis maksimalgrensen nås før residualkravet er oppfylt?</strong></p>
 <details class="reading-step">
 <summary>
-Arbeid videre: residual, feil og følsomhet
+Gå i dybden: residual, feil og følsomhet
 </summary>
 <ol type="1">
 <li>Regn residual og feil for begge forslagene i forsøket.</li>
@@ -4597,7 +4597,7 @@ Slik kan du tenke
 <p>Da ligger løsningen av <span class="math inline">\(Ax=b\)</span> i det eneste minimumet til <span class="math inline">\(\phi\)</span>. GS beveger seg langs én koordinat om gangen. <strong>Kunne vi komme raskere fram ved å velge andre retninger?</strong> Det prøver vi i neste fane.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: hvorfor er løsningen et minimum?
+Gå i dybden: hvorfor er løsningen et minimum?
 </summary>
 <ol type="1">
 <li>Utvid <span class="math inline">\(\phi(u,v)\)</span> for matrisen i forsøket.</li>
@@ -4639,7 +4639,7 @@ Slik kan du tenke
 <p>Egenverdienes fordeling påvirker hvor raskt CG arbeider. For SPD er <span class="math inline">\(\kappa_2(A)=\lambda_{\max}/\lambda_{\min}\)</span> et mål på hvor ulikt matrisen skalerer forskjellige retninger; dette kalles <strong>kondisjonstallet</strong>. Det alene bestemmer ikke antall steg. <strong>Hva viser todimensjonsforsøket om forskjellen mellom en smal skål og mange CG-steg?</strong></p>
 <details class="reading-step">
 <summary>
-Arbeid videre: følg CG og forklar retningene
+Gå i dybden: følg CG og forklar retningene
 </summary>
 <p>Når residualen ikke er null, bruker CG</p>
 <p><span class="math display">\[\alpha_k=\frac{r_k^Tr_k}{p_k^TAp_k},\qquad
@@ -4680,7 +4680,7 @@ Ap_1=(-50/49,50/49)^T.\]</span></p>
 <p>Du prøver <strong>diagonal prekondisjonering</strong>, som bruker diagonalen til <span class="math inline">\(A\)</span>, og fullfører <strong>prekondisjonert konjugert gradient (PCG)</strong> fra pseudokode. Ett problem får stor forbedring; et annet viser en begrensning. <strong>Er færre steg tilstrekkelig, eller må vi også se på ekstra arbeid per steg og hvilken residual som brukes til å stoppe?</strong></p>
 <details class="reading-step">
 <summary>
-Arbeid videre: forbered prosjektet
+Gå i dybden: forbered prosjektet
 </summary>
 <ol type="1">
 <li>For <span class="math inline">\(A=\operatorname{diag}(1,100)\)</span>, sett <span class="math inline">\(y_1=x_1\)</span>, <span class="math inline">\(y_2=10x_2\)</span>. Skriv <span class="math inline">\(x^TAx\)</span> med de nye koordinatene. Hvordan finner du <span class="math inline">\(x\)</span> fra <span class="math inline">\(y\)</span>?</li>
@@ -4823,7 +4823,7 @@ Slik kan du tenke
       steps.forEach(step => { step.open = mode === 'reading'; });
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
       status.textContent = mode === 'reading'
-        ? (controls.dataset.readingLabel || 'Arbeid videre') + ': prøv selv, og følg forklaringene steg for steg.'
+        ? (controls.dataset.readingLabel || 'Gå i dybden') + ': prøv selv, og følg forklaringene steg for steg.'
         : (controls.dataset.lectureLabel || 'Forelesning') + (controls.dataset.lectureLabel ? ': prøv oppgavene før du åpner forklaringene.' : ': eksperimenter og diskusjon. Åpne utdypningene ved behov.');
       try { sessionStorage.setItem('learning-mode', mode); } catch (_) {}
       window.dispatchEvent(new Event('resize'));

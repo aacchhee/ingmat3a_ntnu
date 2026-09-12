@@ -4447,7 +4447,7 @@ window.Quarto = {
 Forelesning
 </button>
 <button type="button" data-mode="reading" aria-pressed="false">
-Arbeid videre
+Gå i dybden
 </button>
 <p><span role="status" aria-live="polite"></span></p>
 </div>
@@ -4461,7 +4461,7 @@ Arbeid videre
 <section id="hvilken-informasjon-bevares-når-vi-forenkler" class="level3">
 <h3 class="anchored" data-anchor-id="hvilken-informasjon-bevares-når-vi-forenkler">Hvilken informasjon bevares når vi forenkler?</h3>
 <p>Et bilde kan forenkles til noen få mønstre. En måling kan gjøre enkelte forskjeller nesten usynlige. SVD hjelper oss å forklare begge deler. Geometrien til <strong>lineære transformasjoner</strong> gir inngangen: hva endres, hva bevares, og hva kan vi rekonstruere etterpå?</p>
-<p><strong>Forelesning</strong> starter med forsøk og samtale om det vi ser. <strong>Arbeid videre</strong> åpner forklaringene, håndregningen og forbindelsene som gjør observasjonene til matematikk. Du kan også åpne hver forklaring separat.</p>
+<p><strong>Forelesning</strong> starter med forsøk og samtale om det vi ser. <strong>Gå i dybden</strong> åpner forklaringene, håndregningen og forbindelsene som gjør observasjonene til matematikk. Du kan også åpne hver forklaring separat.</p>
 <ul>
 <li><a href="#uke7-bilde">Et bilde med få byggeklosser</a>: en forbindelse til basis og koordinater.</li>
 <li><a href="#uke7-geometri">Fra sirkel til ellipse</a>: se hvilke retninger som strekkes.</li>
@@ -4490,7 +4490,7 @@ Arbeid videre
 <p>Når vi beholder få komponenter, bruker vi færre av disse mønstrene. Noen lysstyrkeforskjeller bevares godt, mens andre blir borte. Mønstrene er en slags bildebyggeklosser; vi skal se både hvordan de lages og hvorfor denne forbindelsen til basis er nyttig.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: se én byggekloss og knytt den til basis
+Gå i dybden: se én byggekloss og knytt den til basis
 </summary>
 <p>Bildet er en <span class="math inline">\(96\times96\)</span>-matrise <span class="math inline">\(A\)</span>. Hvert element er en lysstyrke mellom 0 og 1. En enkelt komponent har formen <span class="math inline">\(\sigma_i u_i v_i^T\)</span>: <span class="math inline">\(u_i\)</span> er en kolonnevektor med den loddrette profilen, <span class="math inline">\(v_i^T\)</span> en radvektor med den vannrette, og <span class="math inline">\(\sigma_i\)</span> er vekten. Vi forklarer hvordan SVD velger disse i 7.2–7.3.</p>
 <p>Produktet <span class="math inline">\(u_i v_i^T\)</span> kalles et <strong>ytreprodukt</strong>. Element <span class="math inline">\((j,\ell)\)</span> er <span class="math inline">\((u_i)_j(v_i)_\ell\)</span>. Dermed er kolonne <span class="math inline">\(\ell\)</span> lik <span class="math inline">\((v_i)_\ell u_i\)</span>, og en ikke-null slik matrise har rang 1.</p>
@@ -4530,7 +4530,7 @@ Arbeid videre: se én byggekloss og knytt den til basis
 <p>Start langs <span class="math inline">\(v_i\)</span>, så ligger resultatet langs <span class="math inline">\(u_i\)</span> og har lengde <span class="math inline">\(\sigma_i\)</span>. Ved en positiv, men liten strekkfaktor blir forskjeller små. Ved strekkfaktor null forsvinner all informasjon om den startkomponenten: dette er <strong>nullrommet</strong> fra uke 3. Lengde og vinkel trenger ikke bevares av hele transformasjonen, selv om dreie- og speiltrinnene bevarer begge deler.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: finn største og minste strekk for hånd
+Gå i dybden: finn største og minste strekk for hånd
 </summary>
 <p>Eksempelet <strong>Ellipse</strong> bruker</p>
 <p><span class="math display">\[A=\begin{bmatrix}0&amp;2\\1&amp;0\end{bmatrix}.\]</span></p>
@@ -4593,7 +4593,7 @@ Arbeid videre: finn største og minste strekk for hånd
 <p>Faktoriseringen endrer altså ikke transformasjonen <span class="math inline">\(x\mapsto Ax\)</span>. Den beskriver den med koordinater som gjør strekk og informasjonstap tydelig. Vi kan bruke SVD også når en matrise er rektangulær og start- og resultatrommet har forskjellig dimensjon.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: utfør de tre trinnene for hånd
+Gå i dybden: utfør de tre trinnene for hånd
 </summary>
 <p>Bruk <span class="math inline">\(A=\begin{bmatrix}0&amp;2\\1&amp;0\end{bmatrix}\)</span> og <span class="math inline">\(x=(3,4)^T\)</span>. Velg <span class="math inline">\(v_1=e_2\)</span>, <span class="math inline">\(v_2=e_1\)</span>, <span class="math inline">\(u_1=e_1\)</span> og <span class="math inline">\(u_2=e_2\)</span>. Skriv først <span class="math inline">\(x\)</span> i <span class="math inline">\(v\)</span>-basisen, skaler koordinatene med 2 og 1, og bygg resultatet i <span class="math inline">\(u\)</span>-basisen. Kontroller med direkte matrisemultiplikasjon.</p>
 <p><strong>Slik kan du tenke:</strong> <span class="math inline">\(x=4v_1+3v_2\)</span>, og derfor <span class="math inline">\(Ax=8u_1+3u_2=(8,3)^T\)</span>. Samlet blir faktorene</p>
@@ -4607,7 +4607,7 @@ V=\begin{bmatrix}0&amp;1\\1&amp;0\end{bmatrix}.\]</span></p>
 </details>
 <details class="reading-step">
 <summary>
-Arbeid videre: forbindelsen til egenverdier fra uke 5
+Gå i dybden: forbindelsen til egenverdier fra uke 5
 </summary>
 <p>En egenvektor til <span class="math inline">\(A\)</span> oppfyller <span class="math inline">\(Av=\lambda v\)</span>: resultatet ligger langs samme vektorretning. SVD tillater forskjellige start- og resultatretninger, også i rom med ulik dimensjon. Derfor er singulærverdier og egenverdier ikke generelt det samme.</p>
 <p>Sett inn faktoriseringen og bruk <span class="math inline">\(U^TU=I\)</span>:</p>
@@ -4622,7 +4622,7 @@ Arbeid videre: forbindelsen til egenverdier fra uke 5
 </details>
 <details class="reading-step">
 <summary>
-Arbeid videre: rang, kolonnerom, nullrom og NumPy
+Gå i dybden: rang, kolonnerom, nullrom og NumPy
 </summary>
 <p>La <span class="math inline">\(r\)</span> være antallet positive singulærverdier. <strong>Rangen</strong> er antallet uavhengige resultatretninger, <strong>kolonnerommet</strong> er alle mulige resultater <span class="math inline">\(Ax\)</span>, og <strong>nullrommet</strong> er startvektorene som gir <span class="math inline">\(Ax=0\)</span>. SVD gir</p>
 <p><span class="math display">\[\operatorname{rank}(A)=r,\qquad
@@ -4654,7 +4654,7 @@ Arbeid videre: rang, kolonnerom, nullrom og NumPy
 <p><strong>Residualen</strong> fra uke 6 er avviket mellom de oppgitte dataene og dataene beregnet fra løsningen, <span class="math inline">\(b-A\widehat x\)</span>. En liten residual viser god tilpasning til disse dataene. Den kan ikke alene vise at den rekonstruerte løsningen er nær sannheten når dataene er usikre.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: norm, kondisjonstall og håndregning
+Gå i dybden: norm, kondisjonstall og håndregning
 </summary>
 <p>For en vektor er <strong>2-normen</strong> den vanlige lengden, <span class="math inline">\(\|x\|_2=\sqrt{\sum_i x_i^2}\)</span>. Matrisens <strong>spektralnorm</strong>, også kalt matrisens 2-norm, er den største lengden av <span class="math inline">\(Ax\)</span> når <span class="math inline">\(x\)</span> har lengde 1:</p>
 <p><span class="math display">\[\|A\|_2=\max_{\|x\|_2=1}\|Ax\|_2=\sigma_1.\]</span></p>
@@ -4672,7 +4672,7 @@ Arbeid videre: norm, kondisjonstall og håndregning
 </details>
 <details class="reading-step">
 <summary>
-Arbeid videre: nesten like kolonner og polynomtilpasning fra uke 4
+Gå i dybden: nesten like kolonner og polynomtilpasning fra uke 4
 </summary>
 <p>I en polynommodell er <span class="math inline">\(A_{ij}=t_i^j\)</span>, der <span class="math inline">\(t_i\)</span> er målepunktene og <span class="math inline">\(c_j\)</span> er koeffisientene. Produktet <span class="math inline">\(Ac\)</span> gir modellverdiene. Når punktene ligger tett rundt 1, ligner kolonnene hverandre. Med en liten singulærverdi kan en stor endring i koeffisientene gi nesten samme modellverdier:</p>
 <p><span class="math display">\[A(c+\alpha v_i)-Ac=\alpha\sigma_i u_i.\]</span></p>
@@ -4683,7 +4683,7 @@ Arbeid videre: nesten like kolonner og polynomtilpasning fra uke 4
 </details>
 <details class="reading-step">
 <summary>
-Arbeid videre: minste kvadrater, pseudoinvers og regularisering
+Gå i dybden: minste kvadrater, pseudoinvers og regularisering
 </summary>
 <p>Et <strong>minste-kvadratersproblem</strong> søker <span class="math inline">\(x\)</span> som gjør summen av kvadrerte residualkomponenter, <span class="math inline">\(\|Ax-b\|_2^2\)</span>, minst mulig. Hvis flere løsninger oppnår samme minimum, velger <strong>pseudoinversen</strong> den med minst lengde. Pseudoinversen betegnes <span class="math inline">\(A^+\)</span>; den er definert også for rektangulære og rangdefekte matriser og er lik <span class="math inline">\(A^{-1}\)</span> når inversen finnes.</p>
 <p>Sett <span class="math inline">\(z=V^Tx\)</span> og <span class="math inline">\(c=U^Tb\)</span>. Ortonormale koordinatskift bevarer lengden, så <span class="math inline">\(\|Ax-b\|_2=\|\Sigma z-c\|_2\)</span>. La <span class="math inline">\(r\)</span> være antall positive singulærverdier. For <span class="math inline">\(i\leq r\)</span> får vi minste residual med <span class="math inline">\(z_i=c_i/\sigma_i\)</span>. Komponentene <span class="math inline">\(c_{r+1},\ldots,c_m\)</span> ligger utenfor kolonnerommet og kan ikke tilpasses. Frie startkoordinater settes til null for minst lengde:</p>
@@ -4714,7 +4714,7 @@ A_k=\sum_{i=1}^k\sigma_i u_i v_i^T.\]</span></p>
 <p>SVD-rekonstruksjonen er en <strong>beste tilnærming</strong> i Frobeniusnorm blant alle matriser med rang høyst <span class="math inline">\(k\)</span>. Dette er en presis påstand om samlet tallfeil; den sier ikke at alle detaljer som er viktige for oss blir bevart.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: feilformelen, ortogonalitet og lagring
+Gå i dybden: feilformelen, ortogonalitet og lagring
 </summary>
 <p>For en matrise <span class="math inline">\(B\)</span> er <span class="math inline">\(\|B\|_F^2=\sum_{i,j}B_{ij}^2\)</span>. Vi kan også definere <strong>Frobeniusindreproduktet</strong> som <span class="math inline">\(\langle B,C\rangle_F=\sum_{i,j}B_{ij}C_{ij}\)</span>: gang sammen tilsvarende elementer og summer. Det gjør basisideen fra 7.1 presis.</p>
 <p>Rang-1-mønstrene <span class="math inline">\(u_i v_i^T\)</span> er ortonormale for dette indreproduktet:</p>
@@ -4744,7 +4744,7 @@ Arbeid videre: feilformelen, ortogonalitet og lagring
 <p><strong>Snakk sammen:</strong> Hvilken forventning ble utfordret? Velg én detalj som må bevares i et av bildene. Er liten samlet pikselfeil nok til å sikre det? Forklar hvorfor et bilde kan være enkelt å beskrive med ord og likevel kreve mange SVD-komponenter. Dette er utgangspunktet for <a href="../pages/project_week7.html">prosjekt 7</a>.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: regn på budsjettet og den diagonale streken
+Gå i dybden: regn på budsjettet og den diagonale streken
 </summary>
 <p>Finn største heltall <span class="math inline">\(k\)</span> som oppfyller <span class="math inline">\(k(m+n+1)\leq0.25mn\)</span> for <span class="math inline">\(m=n=96\)</span>. <strong>Slik kan du tenke:</strong> <span class="math inline">\(0.25\cdot96^2/193\approx11.94\)</span>, så <span class="math inline">\(k=11\)</span> er største tillatte rang.</p>
 <p>Den diagonale streken er identitetsmatrisen. Alle 96 singulærverdier er 1, så den relative Frobeniusfeilen ved rang <span class="math inline">\(k\)</span> er</p>
@@ -4753,7 +4753,7 @@ Arbeid videre: regn på budsjettet og den diagonale streken
 </details>
 <details class="reading-step">
 <summary>
-Arbeid videre: samle trådene og se fram mot optimering
+Gå i dybden: samle trådene og se fram mot optimering
 </summary>
 <p>Forklar med egne ord: Hvorfor bruker SVD to basiser? Hvorfor deler inversjon på <span class="math inline">\(\sigma_i\)</span>? Hva er forskjellen mellom null og nesten null? Hvorfor kan samme rang gi svært ulik bildefeil?</p>
 <p>Forbindelsen til optimering kan uttrykkes med <span class="math inline">\(f(x)=\tfrac12\|Ax-b\|_2^2\)</span>. <strong>Gradienten</strong>, vektoren av førstederiverte, er <span class="math inline">\(A^T(Ax-b)\)</span>. <strong>Hessianen</strong>, matrisen av andrederiverte, er <span class="math inline">\(A^TA\)</span>. Retningen <span class="math inline">\(v_i\)</span> har derfor krumning <span class="math inline">\(\sigma_i^2\)</span>. Små singulærverdier gir flate retninger: store endringer i <span class="math inline">\(x\)</span> gir liten endring i modellen. Det er den samme geometrien som i nivåkurvene og gradientmetoden fra uke 6.</p>
@@ -4886,7 +4886,7 @@ Arbeid videre: samle trådene og se fram mot optimering
       steps.forEach(step => { step.open = mode === 'reading'; });
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
       status.textContent = mode === 'reading'
-        ? (controls.dataset.readingLabel || 'Arbeid videre') + ': prøv selv, og følg forklaringene steg for steg.'
+        ? (controls.dataset.readingLabel || 'Gå i dybden') + ': prøv selv, og følg forklaringene steg for steg.'
         : (controls.dataset.lectureLabel || 'Forelesning') + (controls.dataset.lectureLabel ? ': prøv oppgavene før du åpner forklaringene.' : ': eksperimenter og diskusjon. Åpne utdypningene ved behov.');
       try { sessionStorage.setItem('learning-mode', mode); } catch (_) {}
       window.dispatchEvent(new Event('resize'));

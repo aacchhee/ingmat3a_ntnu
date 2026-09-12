@@ -4477,12 +4477,12 @@ window.Quarto = {
 
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg prosjektvisning">
+<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg prosjektvisning">
 <button type="button" data-mode="lecture" aria-pressed="true">
 Oppgaver
 </button>
 <button type="button" data-mode="reading" aria-pressed="false">
-Arbeid videre
+Gå i dybden
 </button>
 <p><span role="status" aria-live="polite"></span></p>
 </div>
@@ -4510,7 +4510,7 @@ Arbeid videre
 <p>Bruk CG-funksjonen nedenfor på begge systemene, foreløpig uten prekondisjonering. Noter antall steg og hvilken residual som ble nådd. Bruk retningstolkningen fra uke 6 når du forklarer forskjellen etter forsøket.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: fungerende CG og måling av original residual
+Gå i dybden: fungerende CG og måling av original residual
 </summary>
 <p>Denne cellen definerer CG automatisk. Den returnerer hele banen og kontrolltall. Vi sjekker <span class="math inline">\(b-Ax\)</span> direkte ved hvert steg, også om algoritmen vedlikeholder en residual med en kort oppdateringsformel.</p>
 <div id="qpyodide-insertion-location-3"></div>
@@ -4521,7 +4521,7 @@ Arbeid videre: fungerende CG og måling av original residual
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <details class="reading-step">
 <summary>
-Arbeid videre: knytt forsøket til CG fra forelesningen
+Gå i dybden: knytt forsøket til CG fra forelesningen
 </summary>
 <p>Bratteste nedstigning velger <span class="math inline">\(p_k=r_k\)</span> hver gang. CG kombinerer den nye residualen med forrige søkeretning slik at retningene i eksakt regning er <strong>A-konjugerte</strong>:</p>
 <p><span class="math display">\[p_i^TAp_j=0\quad(i\ne j).\]</span></p>
@@ -4542,7 +4542,7 @@ p_{k+1}=r_{k+1}+\beta_kp_k.\]</span></p>
 <p>Noter hva som endret seg. Dette er en første undersøkelse, <strong>ikke ennå en rettferdig sammenligning av antall steg</strong>: stoppet her bruker en transformert residual. Del 4 bruker samme opprinnelige residualkrav i begge metoder.</p>
 <details class="reading-step">
 <summary>
-Arbeid videre: samme løsning og bevart symmetri
+Gå i dybden: samme løsning og bevart symmetri
 </summary>
 <p>Vi setter <span class="math inline">\(x=M^{-1/2}y\)</span> og multipliserer <span class="math inline">\(Ax=b\)</span> fra venstre med <span class="math inline">\(M^{-1/2}\)</span>:</p>
 <p><span class="math display">\[\underbrace{M^{-1/2}AM^{-1/2}}_{\widetilde A}y
@@ -4563,7 +4563,7 @@ Arbeid videre: samme løsning og bevart symmetri
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <details class="reading-step">
 <summary>
-Arbeid videre: hvorfor kan ett tiltak gi to forskjellige resultater?
+Gå i dybden: hvorfor kan ett tiltak gi to forskjellige resultater?
 </summary>
 <p>Første system er <span class="math inline">\(A=DBD\)</span> med <span class="math inline">\(D=\operatorname{diag}(d)\)</span>. Siden <span class="math inline">\(B\)</span> har diagonal to, er <span class="math inline">\(M=2D^2\)</span> og</p>
 <p><span class="math display">\[M^{-1/2}AM^{-1/2}=B/2.\]</span></p>
@@ -4608,7 +4608,7 @@ Slik kan du tenke: de tre uttrykkene
 </details>
 <details class="reading-step">
 <summary>
-Arbeid videre: hvorfor byttes rᵀr ut med rᵀz?
+Gå i dybden: hvorfor byttes rᵀr ut med rᵀz?
 </summary>
 <p>I de nye koordinatene er residualen <span class="math inline">\(\widetilde r=M^{-1/2}r\)</span>. Dermed er</p>
 <p><span class="math display">\[\widetilde r^T\widetilde r=r^TM^{-1}r=r^Tz.\]</span></p>
@@ -4783,7 +4783,7 @@ Arbeid videre: hvorfor byttes rᵀr ut med rᵀz?
       steps.forEach(step => { step.open = mode === 'reading'; });
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
       status.textContent = mode === 'reading'
-        ? (controls.dataset.readingLabel || 'Arbeid videre') + ': prøv selv, og følg forklaringene steg for steg.'
+        ? (controls.dataset.readingLabel || 'Gå i dybden') + ': prøv selv, og følg forklaringene steg for steg.'
         : (controls.dataset.lectureLabel || 'Forelesning') + (controls.dataset.lectureLabel ? ': prøv oppgavene før du åpner forklaringene.' : ': eksperimenter og diskusjon. Åpne utdypningene ved behov.');
       try { sessionStorage.setItem('learning-mode', mode); } catch (_) {}
       window.dispatchEvent(new Event('resize'));

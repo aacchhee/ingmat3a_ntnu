@@ -4477,12 +4477,12 @@ window.Quarto = {
 
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg prosjektvisning">
+<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Gå i dybden" role="group" aria-label="Velg prosjektvisning">
 <button type="button" data-mode="lecture" aria-pressed="true">
 Oppgaver
 </button>
 <button type="button" data-mode="reading" aria-pressed="false">
-Arbeid videre
+Gå i dybden
 </button>
 <p><span role="status" aria-live="polite"></span></p>
 </div>
@@ -4490,7 +4490,7 @@ Arbeid videre
 <h2 class="anchored" data-anchor-id="oppdrag-behold-informasjonen-som-betyr-noe">Oppdrag: behold informasjonen som betyr noe</h2>
 <p>Du skal anbefale en forenkling med singulærverdidekomposisjon (SVD) under et gitt budsjett, og vise både hva den lykkes med og når den svikter. Start med en hypotese, gjør forsøket, forklar resultatet og knytt det til teorien i <a href="../pages/uke7.html">uke 7</a>.</p>
 <p><strong>Alle gjør del 1–3 og velger deretter enten A eller B.</strong> A undersøker støyfjerning i bilder. B undersøker inversjon av et uskarpt signal og gir en direkte videreføring av residual, feil og kondisjonering fra uke 6. Begge er fullverdige valg; du skal ikke gjøre begge.</p>
-<p>Oppgavevisningen gir felles arbeidsløp. «Arbeid videre» åpner støtte underveis. Hint åpnes manuelt etter eget forsøk. Ferdige hjelpere tar seg av forsøksdata og visning; du implementerer selve <strong>trunkeringen</strong>, altså å beholde bare de første leddene i en SVD-sum. I <a href="../pages/uke7.html#uke7-svd">uke 7.3</a> er <span class="math inline">\(U\)</span> og <span class="math inline">\(V\)</span> de ortonormale basisene på hver side, og singulærverdiene er strekkfaktorene, ordnet fra størst til minst.</p>
+<p>Oppgavevisningen gir felles arbeidsløp. «Gå i dybden» åpner støtte underveis. Hint åpnes manuelt etter eget forsøk. Ferdige hjelpere tar seg av forsøksdata og visning; du implementerer selve <strong>trunkeringen</strong>, altså å beholde bare de første leddene i en SVD-sum. I <a href="../pages/uke7.html#uke7-svd">uke 7.3</a> er <span class="math inline">\(U\)</span> og <span class="math inline">\(V\)</span> de ortonormale basisene på hver side, og singulærverdiene er strekkfaktorene, ordnet fra størst til minst.</p>
 <p>Alle forsøksbilder er klare i siden. Portrett: <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif">NTNU, mm.gif</a>, tilpasset til <span class="math inline">\(96\times96\)</span> gråtoner. De andre bildene lages lokalt.</p>
 <section id="kjør-her-eller-i-en-egen-notebook" class="level3">
 <h3 class="anchored" data-anchor-id="kjør-her-eller-i-en-egen-notebook">Kjør her eller i en egen notebook</h3>
@@ -4764,7 +4764,7 @@ Hvorfor dette forsøket kan feile spektakulært
       steps.forEach(step => { step.open = mode === 'reading'; });
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
       status.textContent = mode === 'reading'
-        ? (controls.dataset.readingLabel || 'Arbeid videre') + ': prøv selv, og følg forklaringene steg for steg.'
+        ? (controls.dataset.readingLabel || 'Gå i dybden') + ': prøv selv, og følg forklaringene steg for steg.'
         : (controls.dataset.lectureLabel || 'Forelesning') + (controls.dataset.lectureLabel ? ': prøv oppgavene før du åpner forklaringene.' : ': eksperimenter og diskusjon. Åpne utdypningene ved behov.');
       try { sessionStorage.setItem('learning-mode', mode); } catch (_) {}
       window.dispatchEvent(new Event('resize'));
