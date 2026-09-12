@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Prosjekt 4 – Når målingene ikke passer – Matematikk 3A</title>
+<title>Prosjekt 7 – Behold informasjonen som betyr noe – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"\n# Felles verktøy for dette prosjektet; lastes automatisk på siden.\n# Funksjonene er samlet her slik at prosjektet kan brukes uten andre sider.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom numpy.polynomial import polynomial as poly\nfrom numpy.polynomial import chebyshev as cheb\n\n# De samme målematrisene som i uke 3, ferdigstilt her slik at dette\n# prosjektet ikke avhenger av kode i en annen nettleserside.\ndef monomial_matrix(points, n):\n    \"\"\"Målematrise for basisen (1, x, ..., x^n).\"\"\"\n    points = np.asarray(points, dtype=float)\n    # Grad n gir n+1 basisfunksjoner, inkludert konstantleddet.\n    powers = np.arange(n+1)\n    # Rad i er punkt i; kolonne j er punktet opphøyd i j. None gjør formene kompatible.\n    return points[:, None]**powers[None, :]\n\n\ndef chebyshev_matrix(points, n):\n    \"\"\"Målematrise for basisen (T_0, ..., T_n).\"\"\"\n    # Samme rad/kolonne-betydning, men med Chebyshev-polynomer i stedet for potenser.\n    return cheb.chebvander(np.asarray(points, dtype=float), n)\n\n\ndef chebyshev_points(count):\n    \"\"\"Nøyaktig count cosinusfordelte punkter i [-1, 1].\"\"\"\n    if count < 1:\n        raise ValueError(\"count må være minst 1\")\n    k = np.arange(count)\n    # Cosinus gir flere målepunkter nær endene av intervallet.\n    return np.cos((2*k+1)*np.pi/(2*count))\n\n\ndef reference_coordinates(n):\n    \"\"\"Moderate, deterministiske koordinater i Chebyshev-basis.\"\"\"\n    k = np.arange(n+1)\n    # Avtakende koeffisienter gir et fast referansepolynom med vekslende fortegn.\n    return (-1.0)**k/(k+1.0)**2\n\n\ndef classical_gram_schmidt(A):\n    \"\"\"Klassisk GS uten rangkontroll, brukt for å framprovosere feil.\"\"\"\n    A = np.asarray(A, dtype=float)\n    m, n = A.shape\n    Q = np.zeros((m, n))\n    R = np.zeros((n, n))\n    for j in range(n):\n        # CGS beregner alle komponenter mot den opprinnelige kolonnen.\n        coefficients = Q[:, :j].T @ A[:, j]\n        R[:j, j] = coefficients\n        # Trekk summen av tidligere vektorbidrag fra den aktuelle kolonnen.\n        v = A[:, j] - Q[:, :j] @ coefficients\n        R[j, j] = np.linalg.norm(v)\n        Q[:, j] = v/R[j, j]\n    return Q, R\n\n\ndef modified_gram_schmidt(A, tolerance=None):\n    \"\"\"Modifisert GS med eksplisitt kontroll av små nye retninger.\"\"\"\n    A = np.asarray(A, dtype=float)\n    if A.ndim != 2:\n        raise ValueError(\"A må være todimensjonal\")\n    m, n = A.shape\n    if m < n:\n        raise ValueError(\"Tynn QR her krever minst like mange rader som kolonner\")\n    if not np.isfinite(A).all():\n        raise ValueError(\"A må bare inneholde endelige tall\")\n    Q = np.zeros((m, n))\n    R = np.zeros((n, n))\n    if tolerance is None:\n        # Skalert grense for når en rest er for liten til å normaliseres pålitelig.\n        tolerance = np.finfo(float).eps*max(m, n)*np.linalg.norm(A, \"fro\")\n    for j in range(n):\n        # MGS oppdaterer en kopi av kolonnen etter hver subtraksjon.\n        v = A[:, j].copy()\n        for i in range(j):\n            # Denne koeffisienten beregnes på den oppdaterte resten.\n            R[i, j] = Q[:, i] @ v\n            v = v-R[i, j]*Q[:, i]\n        R[j, j] = np.linalg.norm(v)\n        if not np.isfinite(R[j, j]):\n            raise np.linalg.LinAlgError(\n                f\"Kolonne {j+1} ga en ikke-endelig rest\"\n            )\n        # Stopp før divisjon med en lengde som er numerisk for liten.\n        if R[j, j] <= tolerance:\n            raise np.linalg.LinAlgError(\n                f\"Kolonne {j+1} gir ingen pålitelig ny retning\"\n            )\n        Q[:, j] = v/R[j, j]\n    return Q, R\n\n\ndef qr_solution(A, b, qr_method=modified_gram_schmidt):\n    \"\"\"Minste-kvadraters løsning fra en tynn QR-faktorisering.\"\"\"\n    A = np.asarray(A, dtype=float)\n    b = np.asarray(b, dtype=float)\n    if A.ndim != 2 or b.ndim != 1 or A.shape[0] != b.size:\n        raise ValueError(\"A må være m x k og b må ha lengde m\")\n    if not np.isfinite(A).all() or not np.isfinite(b).all():\n        raise ValueError(\"A og b må bare inneholde endelige tall\")\n    Q, R = qr_method(A)\n    # Q.T@b er Q-koordinater; løsningen x gir koeffisientene for kolonnene i A.\n    x = np.linalg.solve(R, Q.T@b)\n    if not np.isfinite(x).all():\n        raise np.linalg.LinAlgError(\"QR-løsningen inneholder ikke-endelige tall\")\n    return x, Q, R\n\n\ndef safe_ratio(numerator, denominator):\n    \"\"\"Skalert diagnostikk, også definert når begge ledd er null.\"\"\"\n    # Unngå 0/0 i diagnostikken; ikke-null feil med null skala rapporteres som Inf.\n    if denominator == 0:\n        return 0.0 if numerator == 0 else np.inf\n    return float(numerator/denominator)\n\n\ndef method_report(name, A, b, c, Q=None, R=None):\n    \"\"\"Tall til sammenligning av metoder på de samme dataene.\"\"\"\n    A = np.asarray(A, dtype=float)\n    b = np.asarray(b, dtype=float)\n    c = np.asarray(c, dtype=float)\n    # Ett avvik per målepunkt; normen alene tar ikke hensyn til antallet målinger.\n    residual = b - A @ c\n    residual_norm = np.linalg.norm(residual)\n    report = {\n        \"metode\": name,\n        \"alle_endelige\": bool(\n            np.isfinite(c).all() and np.isfinite(residual).all()\n        ),\n        \"residualnorm\": float(residual_norm),\n        \"residual_per_maling\": float(residual_norm / np.sqrt(b.size)),\n    }\n    if Q is not None and R is not None:\n        report[\"alle_endelige\"] = bool(\n            report[\"alle_endelige\"]\n            and np.isfinite(Q).all() and np.isfinite(R).all()\n        )\n        # Første kontroll tester Q; andre kontroll tester produktet QR.\n        report[\"ortogonalitetsfeil_F\"] = float(\n            np.linalg.norm(Q.T @ Q - np.eye(Q.shape[1]), \"fro\")\n        )\n        report[\"relativ_faktoriseringsfeil_F\"] = safe_ratio(\n            np.linalg.norm(A - Q @ R, \"fro\"), np.linalg.norm(A, \"fro\")\n        )\n    return report","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\n# Data og en foreslått modell. Ingen optimal løsning er beregnet her.\nt = np.linspace(-1.0, 1.0, 6)\nb = np.array([-0.12, 0.34, 0.68, 1.32, 1.55, 2.18])\nc_try = np.array([0.95, 1.10])\n\nplt.scatter(t, b, color=\"black\", label=\"målinger\")\nplt.plot(t, c_try[0] + c_try[1]*t, label=\"foreslått modell\")\nplt.xlabel(\"t\"); plt.ylabel(\"verdi\")\nplt.grid(alpha=0.25); plt.legend(); plt.show()\n\n# TODO: Bygg A, og beregn residualen og kvadratsummen for forslaget.\n# TODO: Bruk Q og R til å finne egne koeffisienter c_qr.\n# TODO: Sammenlign modellverdier og residualer, ikke bare koeffisientene.","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-first-fit","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\nB = np.array([[1.0, 0.0, 1.0],\n              [0.0, 1.0, 1.0],\n              [0.0, 0.0, 0.0],\n              [0.0, 0.0, 0.0]])\n\n# Samme matrise sendes til begge funksjonene.\n# En stopp eller en ugyldig verdi skal registreres som et forsøksresultat.\nfor name, method in [\n    (\"klassisk GS\", classical_gram_schmidt),\n    (\"modifisert GS\", modified_gram_schmidt),\n]:\n    try:\n        with np.errstate(divide=\"ignore\", invalid=\"ignore\"):\n            Q_test, R_test = method(B)\n        print(name, \"diagonal i R:\", np.diag(R_test))\n        print(\"alle verdier endelige:\", np.isfinite(Q_test).all())\n    except np.linalg.LinAlgError as error:\n        print(name, \"stoppet:\", error)\n\n# TODO: Gjenta med en kopi av B der elementet i rad 3, kolonne 3 er delta.\n# Python-indeksen til dette elementet er [2, 2].","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-dependent-nan","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\n# Endre én forsøksinnstilling om gangen.\nn = 3\nm = 12\nnoise_size = 1e-3\nseed = 2026\npoints = np.linspace(-1.0, 1.0, m)\n\n# Referansen brukes til kontroll; ikke bruk koeffisientene i tilpasningen.\ntrue_coordinates = reference_coordinates(n)\nexact_values = cheb.chebval(points, true_coordinates)\nrng = np.random.default_rng(seed)\nmeasurements = exact_values + noise_size*rng.standard_normal(m)\n\n# Et tett rutenett gjør det mulig å kontrollere også mellom målepunktene.\ngrid = np.linspace(-1.0, 1.0, 1001)\nreference_curve = cheb.chebval(grid, true_coordinates)\n\n# TODO: Lag C, og finn koeffisientene med qr_solution(C, measurements).\n# TODO: Beregn residualen og den tilpassede kurven på grid.\n# TODO: Registrer kontrolltall og tegn målinger, referanse og tilpasset kurve.","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-polynomial-fit","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\n# Begge basiser skal få nøyaktig de samme dataene.\nn = 12\nm = 25\npoints = np.linspace(-1.0, 1.0, m)\ntrue_chebyshev = reference_coordinates(n)\nexact_values = cheb.chebval(points, true_chebyshev)\nrng = np.random.default_rng(2026)\nnoise = 1e-10*rng.standard_normal(m)\nb_noisy = exact_values + noise\n\nM = monomial_matrix(points, n)\nC = chebyshev_matrix(points, n)\ngrid = np.linspace(-1.0, 1.0, 2001)\nreference = cheb.chebval(grid, true_chebyshev)\n\n# TODO: Tilpass de samme målingene med M og C. Bruk samme QR-metode.\n# TODO: Evaluer M-koeffisienter med poly.polyval og C-koeffisienter med cheb.chebval.\n# TODO: Sammenlign kurvene med referansen, også mellom målepunktene.\n# M, C og b_noisy brukes videre i fordypningsdelene.","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-basis-comparison","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\ndegrees = [8, 12, 16, 20]\nmethods = [\n    (\"klassisk GS\", classical_gram_schmidt),\n    (\"modifisert GS\", modified_gram_schmidt),\n]\nresults = []\n\n# TODO: Lag nye data, M og C for hver grad, etter mønsteret i del 4.\n# TODO: Bruk begge GS-metodene på begge matrisene, og lagre kontrolltall.\n# TODO: Sammenlign modellverdier og kurvefeil med lstsq på de samme dataene.\n# TODO: Registrer en stopp eller ugyldige verdier; ikke ta dem med som vanlige datapunkter.","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-cgs-mgs","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"\n# Kjør først del 4 for å opprette M, C og b_noisy.\n# Disse tallene er varsler om følsomhet, ikke målinger av kurvefeilen.\nfor name, matrix in [(\"monomial\", M), (\"Chebyshev\", C)]:\n    print(name)\n    print(\"kondisjonstall for A:    \", np.linalg.cond(matrix))\n    print(\"kondisjonstall for A.T@A:\", np.linalg.cond(matrix.T @ matrix))\n\n# TODO: Løs systemet du utledet, og kontroller at løsningen er endelig.\n# TODO: Sammenlign residual og kurvefeil med QR og lstsq.\n# TODO: Gjenta etter å ha endret graden og laget alle dataene på nytt.","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week4-normal-equations","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nimport base64, zlib\n\n# Original: https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif\n# Gråtoner, skalert til 96 x 96 for korte beregninger i nettleseren.\n_portrait_data = \"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\"\nportrait = np.frombuffer(zlib.decompress(base64.b64decode(_portrait_data)), dtype=np.uint8).reshape(96,96).astype(float)/255\n\ndef challenge_images():\n    n = 96\n    text = np.zeros((n,n))\n    # Fire enkle bokstavformer: H, I, L, I; ingen skrifttypeavhengighet.\n    for col in (8, 30, 52, 74):\n        text[24:72, col:col+5] = 1\n    text[24:72, 20:25] = 1\n    text[46:51, 8:25] = 1\n    text[67:72, 52:69] = 1\n    return {'portrett': portrait.copy(), 'tekst': text,\n            'diagonal': np.eye(n),\n            'tilfeldig': np.random.default_rng(7).random((n,n))}\n\ndef show_images(images):\n    fig, axes = plt.subplots(1, len(images), figsize=(3*len(images),3), squeeze=False)\n    for ax, (name, value) in zip(axes[0], images.items()):\n        ax.imshow(value, cmap='gray', vmin=0, vmax=1)\n        ax.set_title(name); ax.axis('off')\n    plt.tight_layout(); plt.show()\n\ndef rank_image(A, k):\n    U, s, Vt = np.linalg.svd(A, full_matrices=False)\n    return (U[:, :k]*s[:k]) @ Vt[:k, :]\n\ndef blur_problem():\n    n = 80\n    t = np.linspace(0, 1, n)\n    truth = ((t>.2)&(t<.4)).astype(float) + .6*np.exp(-((t-.72)/.06)**2)\n    H = np.exp(-.5*((t[:,None]-t[None,:])/.035)**2)\n    H /= H.sum(axis=1, keepdims=True)\n    clean = H @ truth\n    observed = clean + .005*np.random.default_rng(17).standard_normal(n)\n    return t, H, truth, clean, observed","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"images = challenge_images()\nshow_images(images)","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-inputs","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Kjør denne cellen på nytt etter at du har fylt inn funksjonen.\ndef truncate(U, s, Vt, k):\n    # TODO: returner en matrise med samme form som U @ diag(s) @ Vt.\n    raise NotImplementedError('Fyll inn trunkert rekonstruksjon')","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-truncate","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"test_A = np.array([[1.,2.,0.],[0.,1.,3.]])\nU,s,Vt = np.linalg.svd(test_A,full_matrices=False)\nassert np.allclose(truncate(U,s,Vt,0),np.zeros_like(test_A))\nassert np.allclose(truncate(U,s,Vt,len(s)),test_A)\nfor k in range(len(s)+1):\n    observed = np.linalg.norm(test_A-truncate(U,s,Vt,k),'fro')**2\n    assert np.isclose(observed,np.sum(s[k:]**2))\nprint('Rekonstruksjon og halefeil stemmer på kontrollmatrisen.')","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-check","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"images = challenge_images()\nfactors = {name:np.linalg.svd(A,full_matrices=False) for name,A in images.items()}\nbudget = .25\nm,n = next(iter(images.values())).shape\nk_budget = min(m,n,int(budget*m*n//(m+n+1)))\nprint('Rang under budsjettet:',k_budget)\nreconstructed = {name:truncate(*factors[name],k_budget) for name in images}\nshow_images(reconstructed)\nplt.figure(figsize=(7,4))\nfor name,(U,s,Vt) in factors.items():\n    plt.semilogy(np.arange(1,len(s)+1),np.maximum(s/s[0],1e-16),label=name)\nplt.xlabel('Komponent i'); plt.ylabel('σᵢ / σ₁ (visningsgulv 10⁻¹⁶)')\nplt.legend(); plt.grid(); plt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-budget","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"clean_image = challenge_images()['portrett']  # Bytt senere til 'diagonal'.\nnoise_level = .12\nnoisy_image = clean_image + noise_level*np.random.default_rng(23).standard_normal(clean_image.shape)\nshow_images({'rent':clean_image,'med støy':noisy_image})\nU_noise,s_noise,Vt_noise = np.linalg.svd(noisy_image,full_matrices=False)\nranks = [1,3,5,10,15,20,30,50,70,96]\nfits = [truncate(U_noise,s_noise,Vt_noise,k) for k in ranks]\n# Sammenlign disse to feildefinisjonene før du tegner kurvene.\nerror_to_data = [np.linalg.norm(B-noisy_image,'fro')/np.linalg.norm(noisy_image,'fro') for B in fits]\nerror_to_clean = [np.linalg.norm(B-clean_image,'fro')/np.linalg.norm(clean_image,'fro') for B in fits]","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-denoise","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"plt.figure()\nplt.plot(ranks,error_to_data,'o-',label='mot støyete data')\nplt.plot(ranks,error_to_clean,'o-',label='mot kjent rent bilde')\nplt.xlabel('Rang'); plt.ylabel('Relativ Frobeniusfeil'); plt.legend(); plt.grid(); plt.show()\nbest = int(np.argmin(error_to_clean))\nshow_images({'rent':clean_image,'med støy':noisy_image,f'rang {ranks[best]}':fits[best]})","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-denoise-plot","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"position,H,truth,clean_data,observed = blur_problem()\nU_h,s_h,Vt_h = np.linalg.svd(H,full_matrices=False)\nprint('Kondisjonstall:',s_h[0]/s_h[-1])\ntry:\n    direct = np.linalg.solve(H,observed)\nexcept np.linalg.LinAlgError:\n    direct = None\n    print('Direkte løsning stoppet: matrisen oppfattes som singulær.')\nfig,ax = plt.subplots(1,2,figsize=(10,3))\nax[0].plot(position,truth,label='fasit')\nax[0].plot(position,observed,label='måling'); ax[0].legend()\nif direct is not None:\n    ax[1].plot(position,direct,label='direkte løsning'); ax[1].legend()\n    print('Relativ residual:',np.linalg.norm(H@direct-observed)/np.linalg.norm(observed))\n    print('Relativ feil:',np.linalg.norm(direct-truth)/np.linalg.norm(truth))\nfor axis in ax: axis.set_xlabel('Posisjon')\nplt.tight_layout(); plt.show()","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-blur","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Kjør cellen på nytt etter at du har fylt inn funksjonen.\ndef tsvd(U,s,Vt,b,k):\n    # TODO: projiser b, del på de beholdte singulærverdiene, rekonstruer.\n    raise NotImplementedError('Fyll inn trunkert inversjon')","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-tsvd","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"position,H,truth,clean_data,observed = blur_problem()\nU_h,s_h,Vt_h = np.linalg.svd(H,full_matrices=False)\ntrial_ranks = [2,5,10,15,20,25,30,40]\nsolutions = [tsvd(U_h,s_h,Vt_h,observed,k) for k in trial_ranks]\nresiduals = [np.linalg.norm(H@x-observed)/np.linalg.norm(observed) for x in solutions]\nerrors = [np.linalg.norm(x-truth)/np.linalg.norm(truth) for x in solutions]\nfig,ax = plt.subplots(1,2,figsize=(10,3))\nax[0].semilogy(trial_ranks,residuals,'o-',label='relativ residual')\nax[0].semilogy(trial_ranks,errors,'o-',label='relativ feil')\nax[0].set_xlabel('Antall beholdte retninger'); ax[0].legend(); ax[0].grid()\nbest = int(np.argmin(errors))\nax[1].plot(position,truth,label='fasit')\nax[1].plot(position,solutions[best],label=f'rang {trial_ranks[best]}')\nax[1].set_xlabel('Posisjon'); ax[1].legend(); plt.tight_layout(); plt.show()","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-blur-compare","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4189,7 +4189,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week4.html">Prosjekt 4 – Når målingene ikke passer</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week7.html">Prosjekt 7 – Behold informasjonen som betyr noe</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -4360,7 +4360,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week4.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/project_week4.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Prosjekt 4 – Når målingene ikke passer</span></a>
   </div>
 </li>
@@ -4378,7 +4378,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week7.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week7.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Prosjekt 7 – Behold informasjonen som betyr noe</span></a>
   </div>
 </li>
@@ -4421,9 +4421,9 @@ window.Quarto = {
 </script>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week4.html">Prosjekt 4 – Når målingene ikke passer</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week7.html">Prosjekt 7 – Behold informasjonen som betyr noe</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Prosjekt 4 – Når målingene ikke passer</h1>
+<h1 class="title">Prosjekt 7 – Behold informasjonen som betyr noe</h1>
 </div>
 
 
@@ -4440,403 +4440,157 @@ window.Quarto = {
 </header>
 
 
-<p><strong>Arbeidstid:</strong> omtrent <strong>5 timer</strong> for hele prosjektet, eller <strong>3 timer</strong> for kjernen alene.</p>
-<p>I uke 3 rekonstruerte vi polynomer fra målinger. Nå skal du undersøke hva som skjer når målingene inneholder støy, og avgjøre om en beregnet tilpasning er pålitelig. Bruk QR og projeksjon fra uke 4 som verktøy.</p>
-<p><strong>Oppdraget er å begrunne en metode og en tilpasning med egne forsøk.</strong> En liten residual er én observasjon; du må også undersøke beregningen og hvordan den tilpassede kurven oppfører seg.</p>
-<section id="arbeidsplan" class="level2">
-<h2 class="anchored" data-anchor-id="arbeidsplan">Arbeidsplan</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 30%">
-<col style="width: 30%">
-<col style="width: 40%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Løype</th>
-<th>Arbeid</th>
-<th style="text-align: right;">Omtrent</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Kjerne</strong></td>
-<td>Del 1–4: vurder en tilpasning, undersøk et sammenbrudd og tilpass polynomer</td>
-<td style="text-align: right;">3 timer</td>
-</tr>
-<tr class="even">
-<td><strong>Valgt fordypning</strong></td>
-<td>Del 5 <strong>eller</strong> del 6: sammenlign beregningsmetoder</td>
-<td style="text-align: right;">1 time</td>
-</tr>
-<tr class="odd">
-<td><strong>Redningsforsøk og rapport</strong></td>
-<td>Del 7 og en samlet vurdering</td>
-<td style="text-align: right;">1 time</td>
-</tr>
-</tbody>
-</table>
-<p>Startcellene lager data og gir noen kodeverktøy. <strong>Du fyller selv inn beregningene merket <code>TODO</code>.</strong> Før hvert forsøk skal du skrive en forventning. Etterpå skal du vise et resultat og forklare hva det støtter. Endre én egenskap om gangen, og noter grad, målepunkter, støystørrelse og metode.</p>
-<p>Ved behov: <a href="../pages/uke4.html#uke4-projeksjon">projeksjon i 4.2</a>, <a href="../pages/uke4.html#uke4-mk">minste kvadrater i 4.5</a> og <a href="../pages/uke4.html#uke4-polynomer">polynomer i 4.6</a>. Hintene nedenfor er sammenfoldet, slik at du kan forsøke selv først.</p>
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<div class="learning-mode" data-learning-mode="" data-lecture-label="Oppgaver" data-reading-label="Oppgaver med forklaringer" role="group" aria-label="Velg prosjektvisning">
+<button type="button" data-mode="lecture" aria-pressed="true">
+Oppgaver
+</button>
+<button type="button" data-mode="reading" aria-pressed="false">
+Oppgaver med forklaringer
+</button>
+<p><span role="status" aria-live="polite"></span></p>
 </div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Kodeverktøy og kjørerekkefølge
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Fellesfunksjonene lastes automatisk på denne siden; du trenger ikke kopiere kode fra prosjekt 3. Kjør startcellene ovenfra og ned. Del 5–6 bruker dataene fra del 4. Etter endringer i data må de tilhørende beregningene kjøres på nytt.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Verktøy</th>
-<th>Hva du får</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>classical_gram_schmidt(A)</code></td>
-<td>Klassisk GS: <code>Q, R</code>, uten kontroll av små rester</td>
-</tr>
-<tr class="even">
-<td><code>modified_gram_schmidt(A)</code></td>
-<td>Modifisert GS: <code>Q, R</code>, med kontroll av små rester</td>
-</tr>
-<tr class="odd">
-<td><code>qr_solution(A, b, metode)</code></td>
-<td>Koeffisienter, <code>Q</code> og <code>R</code>; standardmetoden er modifisert GS</td>
-</tr>
-<tr class="even">
-<td><code>method_report(navn, A, b, c, Q, R)</code></td>
-<td>En samling kontrollverdier til resultattabellen din</td>
-</tr>
-</tbody>
-</table>
-<p>Funksjonene er hjelpemidler for å gjennomføre forsøkene. Du skal forklare hvorfor kontrollene er relevante, og selv velge hva som skal sammenlignes. Modifisert GS stopper hvis en ny rest er for liten til å normaliseres pålitelig.</p>
-</div>
-</div>
-</div>
+<section id="oppdrag-behold-informasjonen-som-betyr-noe" class="level2">
+<h2 class="anchored" data-anchor-id="oppdrag-behold-informasjonen-som-betyr-noe">Oppdrag: behold informasjonen som betyr noe</h2>
+<p>Du skal anbefale en SVD-basert forenkling under et gitt budsjett, og vise både hva den lykkes med og når den svikter. Start med en hypotese, gjør forsøket, forklar resultatet og knytt det til teorien i <a href="../pages/uke7.html">uke 7</a>.</p>
+<p><strong>Alle gjør del 1–3 og velger deretter enten A eller B.</strong> A undersøker støyfjerning i bilder. B undersøker inversjon av et uskarpt signal og gir en direkte videreføring av residual, feil og kondisjonering fra uke 6. Begge er fullverdige valg; du skal ikke gjøre begge.</p>
+<p>Oppgavevisningen gir felles arbeidsløp. «Oppgaver med forklaringer» åpner støtte underveis. Hint åpnes manuelt etter eget forsøk. Ferdige hjelpere tar seg av forsøksdata og visning; du implementerer selve trunkeringen.</p>
+<p>Prosjektet bygger videre på <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/svd_challenge-1.pdf">det tidligere SVD-challenget</a>. Portrettet er fra samme oppgave, redusert til <span class="math inline">\(96\times96\)</span> gråtoner. De andre bildene lages lokalt. Ingen egne bilder eller nedlastinger trengs.</p>
 </section>
-<section id="kjerne" class="level2">
-<h2 class="anchored" data-anchor-id="kjerne">Kjerne</h2>
-<section id="godkjenn-eller-forkast-en-foreslått-tilpasning" class="level3">
-<h3 class="anchored" data-anchor-id="godkjenn-eller-forkast-en-foreslått-tilpasning">1. Godkjenn eller forkast en foreslått tilpasning</h3>
-<p><strong>Gitt:</strong> seks målinger og modellen <span class="math inline">\(p(t)=c_0+c_1t\)</span>. En foreslått tilpasning har <span class="math inline">\(c_0=0.95\)</span> og <span class="math inline">\(c_1=1.10\)</span>.</p>
-<p><strong>Undersøk:</strong> Er dette den beste tilpasningen i minste kvadraters forstand? Hvilke beregninger trenger du for å avgjøre det?</p>
+<section id="forutsi-før-du-komprimerer" class="level2">
+<h2 class="anchored" data-anchor-id="forutsi-før-du-komprimerer">1. Forutsi før du komprimerer</h2>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <ol type="1">
-<li>Skriv dimensjonene til <span class="math inline">\(A,c,b\)</span> og bygg <span class="math inline">\(A\)</span>. Beregn <span class="math inline">\(r=b-Ac_{\text{forslag}}\)</span> og kvadratsummen. Hvilke målinger ligger over den foreslåtte modellen?</li>
-<li>Finn en tilpasning med QR. Bruk <code>modified_gram_schmidt(A)</code> til å få <span class="math inline">\(Q,R\)</span>, og beregn deretter koeffisientene selv.</li>
-<li>Kontroller <span class="math inline">\(Q^TQ-I\)</span>, <span class="math inline">\(A-QR\)</span> og <span class="math inline">\(Q^Tr\)</span> for den nye tilpasningen. Forklar hva hver kontroll undersøker. Gjør også den siste kontrollen for den foreslåtte tilpasningen.</li>
-<li>Bruk <code>np.linalg.lstsq(A, b, rcond=None)[0]</code> som kontroll <strong>etter</strong> egen løsning. Lever én figur med begge modellene og en begrunnet avgjørelse: Hva gjør du hvis residualen ikke er null, men QR-kontrollene er gode?</li>
+<li>Ranger bildene etter forventet komprimerbarhet. Skriv begrunnelsen før SVD.</li>
+<li>Velg en konkret detalj i portrettet eller teksten som må bevares. Beskriv hvordan du vil avgjøre om den fortsatt er synlig.</li>
+<li>Alle bildene er like store. Hvorfor gjør dette sammenligningen enklere?</li>
 </ol>
-<p>Når du vil samle alle elementene i en matrise <span class="math inline">\(E\)</span> til ett kontrolltall, bruker du <strong>Frobeniusnormen</strong>: <span class="math inline">\(\lVert E\rVert_F=\sqrt{\sum_{i,j}E_{ij}^2}\)</span>. I Python er dette <code>np.linalg.norm(E, "fro")</code>. Små avrundingsavvik fra null er forventet.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tips</span>Hint: modellen og QR
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Rad <span class="math inline">\(i\)</span> i <span class="math inline">\(A\)</span> er <span class="math inline">\([1\ \ t_i]\)</span>. Fra 4.5 har du <span class="math inline">\(d=Q^Tb\)</span> og <span class="math inline">\(Rc=d\)</span>. <code>np.linalg.solve(R, d)</code> løser det siste systemet. Pass på at residualen beregnes på nytt for koeffisientene du kontrollerer.</p>
-</div>
-</div>
-</div>
+<details class="reading-step">
+<summary>
+Hva mener vi med komprimerbarhet her?
+</summary>
+<p>Vi spør hvor liten rang vi trenger for å få liten feil og bevare ønsket informasjon. Vi undersøker ikke hvor liten en PNG-fil blir. En diagonal strek er enkel å beskrive, men det er ikke gitt at den har lav matriserang. Noter forventningen også når du er usikker: et avkreftet gjett er et resultat.</p>
+</details>
 </section>
-<section id="finn-årsaken-når-beregningen-svikter" class="level3">
-<h3 class="anchored" data-anchor-id="finn-årsaken-når-beregningen-svikter">2. Finn årsaken når beregningen svikter</h3>
-<p><strong>Gitt:</strong> en ny matrise <span class="math inline">\(B\)</span> og de to GS-funksjonene. <strong>Undersøk:</strong> Kan alle tre kolonnene gi hver sin ortonormale vektor?</p>
-<p>Før du kjører koden: Finn en eventuell sammenheng mellom kolonnene, og forutsi hva som skjer med diagonalverdiene i <span class="math inline">\(R\)</span>.</p>
+<section id="lag-rekonstruksjonen-og-kontroller-den" class="level2">
+<h2 class="anchored" data-anchor-id="lag-rekonstruksjonen-og-kontroller-den">2. Lag rekonstruksjonen og kontroller den</h2>
+<p>Implementer <code>truncate(U, s, Vt, k)</code> som bruker de første <span class="math inline">\(k\)</span> komponentene. Bruk NumPy-slicing og matrisemultiplikasjon. Den skal også virke for <span class="math inline">\(k=0\)</span> og <span class="math inline">\(k=\min(m,n)\)</span>. Ikke kall <code>rank_image</code> i din implementasjon.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<ol type="1">
-<li>Knytt resultatet til kolonnerelasjonen du fant. Identifiser den konkrete divisjonen i GS som må undersøkes; se eventuelt <a href="../pages/uke4.html#uke4-cgs">algoritmen fra 4.3</a>.</li>
-<li>Sett elementet i tredje rad og tredje kolonne til <span class="math inline">\(\delta=10^{-4},10^{-10},10^{-16}\)</span>, ett forsøk om gangen. Hvor er kolonnene uavhengige på papir, og hvor fullføres beregningen?</li>
-<li>Den modifiserte funksjonen har en stoppkontroll som den klassiske mangler. Hvilken del av forskjellen du observerer skyldes denne kontrollen?</li>
-<li>Vurder påstanden: «Alle verdiene i <span class="math inline">\(Q\)</span> er endelige, derfor er QR-faktoriseringen pålitelig.» Bruk kontrollene fra del 1 som begrunnelse.</li>
-</ol>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tips</span>Hint: hva betyr «for liten rest»?
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Stoppgrensen i hjelpefunksjonen tilpasses størrelsen på matrisen og presisjonen i flyttallsregningen. En stopp betyr at funksjonen ikke godtar resten som en pålitelig ny vektor. Det er ikke et bevis på at kolonnene er nøyaktig avhengige.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="undersøk-hva-flere-målinger-bidrar-med" class="level3">
-<h3 class="anchored" data-anchor-id="undersøk-hva-flere-målinger-bidrar-med">3. Undersøk hva flere målinger bidrar med</h3>
-<p>Vi går nå over til polynomer. <strong>Gitt:</strong> et referansepolynom av grad <span class="math inline">\(3\)</span> som vi lager støyfylte målinger av. Referansen er kjent i forsøket, slik at vi kan kontrollere resultatet. Selve tilpasningen skal bare bruke målepunktene og de støyfylte målingene.</p>
-<section id="matrisen-med-chebyshev-verdier" class="level4">
-<h4 class="anchored" data-anchor-id="matrisen-med-chebyshev-verdier">Matrisen med Chebyshev-verdier</h4>
-<p>Vi skriver modellen i Chebyshev-basis:</p>
-<p><span class="math display">\[p(x)=c_0T_0(x)+c_1T_1(x)+\cdots+c_nT_n(x),\]</span></p>
-<p>der</p>
-<p><span class="math display">\[T_0(x)=1,\qquad T_1(x)=x,\qquad
-T_{j+1}(x)=2xT_j(x)-T_{j-1}(x).\]</span></p>
-<p><strong>Chebyshev-målematrisen <span class="math inline">\(C\)</span> inneholder verdiene av disse basisfunksjonene ved målepunktene:</strong> rad <span class="math inline">\(i\)</span> hører til <span class="math inline">\(x_i\)</span>, og kolonne <span class="math inline">\(j\)</span> hører til <span class="math inline">\(T_j\)</span>. Altså er <span class="math inline">\(C_{ij}=T_j(x_i)\)</span>. For grad <span class="math inline">\(2\)</span> ser det slik ut, siden <span class="math inline">\(T_2(x)=2x^2-1\)</span>:</p>
-<p><span class="math display">\[C=\begin{bmatrix}
-1&amp;x_0&amp;2x_0^2-1\\
-1&amp;x_1&amp;2x_1^2-1\\
-\vdots&amp;\vdots&amp;\vdots\\
-1&amp;x_{m-1}&amp;2x_{m-1}^2-1
-\end{bmatrix}.\]</span></p>
-<p>Dermed inneholder <span class="math inline">\(Cc\)</span> modellverdiene ved de <span class="math inline">\(m\)</span> målepunktene, akkurat som <span class="math inline">\(Ac\)</span> i linjeforsøket. Grad <span class="math inline">\(n\)</span> gir <span class="math inline">\(n+1\)</span> koeffisienter og en matrise med <span class="math inline">\(m\)</span> rader og <span class="math inline">\(n+1\)</span> kolonner.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Kodeverktøy</th>
-<th>Bruk</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>chebyshev_matrix(points, n)</code></td>
-<td>Lag <span class="math inline">\(C\)</span> for målepunktene og graden</td>
-</tr>
-<tr class="even">
-<td><code>cheb.chebval(points, c)</code></td>
-<td>Beregn polynomverdier fra Chebyshev-koeffisienter</td>
-</tr>
-<tr class="odd">
-<td><code>reference_coordinates(n)</code></td>
-<td>Lag et fast referansepolynom av grad <span class="math inline">\(n\)</span></td>
-</tr>
-</tbody>
-</table>
+<p>Kjør så kontrollen. Bruk en rektangulær matrise slik at en utilsiktet transponering ikke skjules av kvadratiske dimensjoner.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<ol type="1">
-<li>Hvor mange ligninger og ukjente har du? Beregn første rad i <span class="math inline">\(C\)</span> for hånd, og kontroller den mot koden.</li>
-<li>Gjennomfør tilpasningen. Registrer residualnormen og den største absolutte forskjellen mellom tilpasset kurve og referanse på <code>grid</code>. Hvorfor må begge størrelsene undersøkes?</li>
-<li>Hold <span class="math inline">\(m=12\)</span> fast og prøv <code>noise_size</code> lik <span class="math inline">\(0\)</span>, <span class="math inline">\(10^{-3}\)</span> og <span class="math inline">\(10^{-2}\)</span>. Hva endrer seg i tilpasningen og kontrolltallene?</li>
-<li>Hold støystørrelsen på <span class="math inline">\(10^{-3}\)</span> og sammenlign <span class="math inline">\(m=8,16,32\)</span>. Gjenta med frøene <span class="math inline">\(2026,2027,2028\)</span>. Er konklusjonen om flere målinger den samme i alle forsøkene?</li>
-</ol>
-<p>Når antallet målinger varierer, rapporter også <span class="math inline">\(\lVert r\rVert_2/\sqrt m\)</span>: kvadrer avvikene, ta gjennomsnittet og deretter kvadratroten. Dette gir et mål på avvik per måling. Bruk én liten tabell til å sammenligne forsøkene; du trenger ikke en figur for hvert frø.</p>
+<p>Forklar hvorfor kontrollen av feilformelen er mer informativ enn bare å se på et bilde. Vis til slutt samme kontroll for ett av forsøksbildene.</p>
+<details class="learning-hint">
+<summary>
+Hint: hvilken vei peker V?
+</summary>
+<p>NumPy gir <span class="math inline">\(V^T\)</span>, ikke <span class="math inline">\(V\)</span>. De første <span class="math inline">\(k\)</span> radene i <code>Vt</code> må derfor beholdes. Uttrykket <code>U[:, :k] * s[:k]</code> skalerer hver beholdt kolonne med sin singulærverdi. Multipliser dette med <code>Vt[:k, :]</code>. For <span class="math inline">\(k=0\)</span> gir produktet av de tomme faktorene riktig nullmatrise.</p>
+</details>
+<details class="reading-step">
+<summary>
+Kontroll mot teori og avrunding
+</summary>
+<p>For <span class="math inline">\(A_k=\sum_{i=1}^k\sigma_i u_i v_i^T\)</span> er <span class="math inline">\(\|A-A_k\|_F^2=\sum_{i&gt;k}\sigma_i^2\)</span>. Venstresiden bruker hele rekonstruksjonen; høyresiden bruker bare singulærverdiene. Uenighet kan avsløre feil indeksering eller feil behandling av <code>Vt</code>. Ved full rang blir den beregnede feilen vanligvis svært liten, ikke nøyaktig null. Bruk toleranse, slik vi gjorde med flyttall i uke 1.</p>
+</details>
 </section>
-</section>
-<section id="samme-målinger-to-forskjellige-basiser" class="level3">
-<h3 class="anchored" data-anchor-id="samme-målinger-to-forskjellige-basiser">4. Samme målinger, to forskjellige basiser</h3>
-<p><strong>Gitt:</strong> ett polynomrom, ett sett punkter og én målevektor. <strong>Undersøk:</strong> Har basisvalget betydning for den beregnede kurven?</p>
-<p>Monomialmatrisen <span class="math inline">\(M\)</span> har kolonnene <span class="math inline">\(1,x,\ldots,x^n\)</span> evaluert ved målepunktene; Chebyshev-matrisen <span class="math inline">\(C\)</span> har kolonnene <span class="math inline">\(T_0,\ldots,T_n\)</span>. Begge beskriver polynomer av grad høyst <span class="math inline">\(n\)</span>. Koeffisientene har ulik betydning, så hver vektor må brukes med riktig basis når du beregner kurven.</p>
+<section id="samme-budsjett-fire-ulike-utfall" class="level2">
+<h2 class="anchored" data-anchor-id="samme-budsjett-fire-ulike-utfall">3. Samme budsjett, fire ulike utfall</h2>
+<p>Bruk et parameterbudsjett på <strong>25 % av antall piksler</strong>. Hvis vi lagrer <span class="math inline">\(U_k\)</span>, <span class="math inline">\(s_k\)</span> og <span class="math inline">\(V_k^T\)</span>, trenger vi <span class="math inline">\(k(m+n+1)\)</span> tall. Finn største heltall <span class="math inline">\(k\)</span> som tilfredsstiller budsjettet og <span class="math inline">\(k\leq\min(m,n)\)</span>.</p>
+<p>Kjør cellen etter at <code>truncate</code> er implementert. Den beregner hver SVD én gang og lager figurgrunnlaget. Legg selv til feilberegningen og en resultatoversikt.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<ol type="1">
-<li>Skriv først hva du forventer: Ville de beste modellverdiene ved målepunktene vært like med de to basisene i eksakt regning? Begrunn.</li>
-<li>Beregn tilpasningene med modifisert GS, og lag én figur av absolutt kurvefeil for hver basis. Registrer også residualnorm, ortogonalitetsfeil og relativ faktoriseringsfeil.</li>
-<li>Gjenta med de støyfrie verdiene <code>exact_values</code>. Hvor mye endres hver beregnet kurve når den lille støyen legges til?</li>
-<li>Bruk <code>lstsq</code> på de samme to matrisene som kontroll. Hva tyder resultatene på om effekten av måledata, basisvalg og beregningsmetode? Ikke anta at én basis alltid gir den beste kurven.</li>
-</ol>
-<p>Selv om forskjellige punkter gir uavhengige modellkolonner på papir, kan små endringer i målinger eller avrundinger påvirke beregningen mye. I denne delen beskriver du følsomheten med de endringene du faktisk måler. Du trenger ikke et nytt matrisebegrep for å gjøre det.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Kontrolltall til tabellen
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p><code>method_report</code> beregner residualnorm og avvik per måling. Hvis du også gir funksjonen <span class="math inline">\(Q,R\)</span>, får du:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Kontroll</th>
-<th>Hva som undersøkes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><span class="math inline">\(\lVert Q^TQ-I\rVert_F\)</span></td>
-<td>Hvor godt de beregnede kolonnene er ortonormale</td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\(\lVert A-QR\rVert_F/\lVert A\rVert_F\)</span></td>
-<td>Hvor godt produktet gjengir matrisen det startet med</td>
-</tr>
-<tr class="odd">
-<td><code>alle_endelige</code></td>
-<td>Om koeffisienter, residual og faktorer inneholder ugyldige verdier</td>
-</tr>
-</tbody>
-</table>
-<p>Bruk henholdsvis <span class="math inline">\(M\)</span> og <span class="math inline">\(C\)</span> som <span class="math inline">\(A\)</span> i kontrollene. En liten verdi i én kolonne erstatter ikke de andre kontrollene.</p>
-</div>
-</div>
-</div>
+<p>Lever en tabell med bilde, valgt rang, parameterandel og relativ Frobeniusfeil <span class="math inline">\(\|A-A_k\|_F/\|A\|_F\)</span>. Sammenlign med hypotesen i del 1.</p>
+<ul>
+<li>Undersøk også rangene <span class="math inline">\(1,5,10,20,40,96\)</span> for bildet med din valgte detalj. Hvilken er den minste <strong>av disse prøvde rangene</strong> som bevarer detaljen? Ligger den innenfor budsjettet?</li>
+<li>Finn ett tydelig eksempel der metoden virker dårlig. Bruk singulærverdiene til å forklare det, og kommenter hvorfor visuell enkelhet kan villede.</li>
+<li>Beregn både parameterandel og byteandel hvis originalen er 8-bit og faktorene lagres som float64. Er det fortsatt en lagringsgevinst? Ikke ta med filformatkomprimering i denne sammenligningen.</li>
+</ul>
+<details class="reading-step">
+<summary>
+Fra tall til en anbefaling
+</summary>
+<p>Parameterandelen er <span class="math inline">\(k(m+n+1)/(mn)\)</span>. Byteandelen i den beskrevne modellen er <span class="math inline">\(8k(m+n+1)/(mn)\)</span>, før eventuell metadata. Et budsjett på 25 % av antall tall kan altså bruke mer plass enn det opprinnelige 8-bitsbildet. Du kan diskutere float32 eller kvantisering, men trenger ikke implementere det.</p>
+<p>Lav Frobeniusfeil er en samlet pikselfeil. Den sier ikke direkte at en liten bokstavdetalj eller ansiktsdetalj er bevart. Bruk derfor både tall og den konkrete detaljen fra del 1. Ikke klipp rekonstruksjonen før feilberegning: da undersøker du en annen tilnærming enn den som feilformelen beskriver.</p>
+</details>
 </section>
-</section>
-<section id="velg-én-fordypning" class="level2">
-<h2 class="anchored" data-anchor-id="velg-én-fordypning">Velg én fordypning</h2>
-<p>Del 5 undersøker selve ortogonaliseringen. Del 6 undersøker en annen måte å løse tilpasningsproblemet på. Begge bruker forsøket fra del 4 som utgangspunkt.</p>
-<section id="når-betyr-gs-varianten-noe" class="level3">
-<h3 class="anchored" data-anchor-id="når-betyr-gs-varianten-noe">5. Når betyr GS-varianten noe?</h3>
-<p>Sammenlign klassisk GS, modifisert GS og <code>lstsq</code> for gradene <span class="math inline">\(n=8,12,16,20\)</span>. Bruk <span class="math inline">\(m=2(n+1)+1\)</span> jevnt fordelte målepunkter, samme referansepolynom for begge basiser ved hver grad og støy av størrelse <span class="math inline">\(10^{-10}\)</span> med fast frø.</p>
+<section id="velg-a-kan-færre-komponenter-gi-et-bedre-bilde" class="level2">
+<h2 class="anchored" data-anchor-id="velg-a-kan-færre-komponenter-gi-et-bedre-bilde">Velg A: kan færre komponenter gi et bedre bilde?</h2>
+<section id="opplev-problemet" class="level3">
+<h3 class="anchored" data-anchor-id="opplev-problemet">Opplev problemet</h3>
+<p>Vi kjenner et rent bilde og legger til kontrollert støy. Før kjøring: Vil beste rang være den samme hvis vi måler mot det støyete bildet som hvis vi måler mot det rene? Hvorfor?</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Lever en tabell og et plott av ortogonalitetsfeil mot grad. Velg så <strong>ett</strong> resultat som du undersøker nærmere:</p>
-<ul>
-<li>Er en liten faktoriseringsfeil tilstrekkelig til å stole på <span class="math inline">\(Q\)</span>?</li>
-<li>Følger endringer i ortogonalitetsfeilen endringene i kurvefeilen?</li>
-<li>Er metodeforskjellen den samme i begge basiser?</li>
-</ul>
-<p>Konklusjonen skal vise til egne tall. Unngå å formulere en generell garanti ut fra ett forsøk.</p>
-</section>
-<section id="hva-endrer-normalligningene" class="level3">
-<h3 class="anchored" data-anchor-id="hva-endrer-normalligningene">6. Hva endrer normalligningene?</h3>
-<p>Fra residualbetingelsen <span class="math inline">\(A^T(b-Ac)=0\)</span> kan du samle de ukjente i et kvadratisk system.</p>
-<ol type="1">
-<li>Skriv dette systemet selv. Hvilke dimensjoner får matrisen og høyresiden?</li>
-<li>Implementer løsningen med <code>np.linalg.solve</code>.</li>
-<li>Sammenlign med QR og <code>lstsq</code>, først for grad <span class="math inline">\(12\)</span>, deretter for <span class="math inline">\(16\)</span> og <span class="math inline">\(20\)</span>. Bruk samme data som i del 4 og <span class="math inline">\(m=2(n+1)+1\)</span> for hver grad.</li>
-</ol>
-<section id="et-mål-på-følsomhet-når-vi-trenger-det" class="level4">
-<h4 class="anchored" data-anchor-id="et-mål-på-følsomhet-når-vi-trenger-det">Et mål på følsomhet, når vi trenger det</h4>
-<p><strong>Kondisjonstallet</strong> beskriver hvor ulikt matrisen skalerer koeffisientvektorer i forskjellige retninger. Et stort tall varsler at noen endringer i koeffisientene er vanskelige å skille fra hverandre i modellverdiene. Da kan små endringer i data eller avrundinger få stor betydning for de beregnede koeffisientene.</p>
-<p>Vi bruker varianten som skrives <span class="math inline">\(\kappa_2(A)\)</span> og beregnes med <code>np.linalg.cond(A)</code>. Verdier nær <span class="math inline">\(1\)</span> betyr jevn skalering; svært store verdier varsler følsomhet. Tallet er <strong>ikke</strong> den faktiske feilen i koeffisientene eller i den tilpassede kurven.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Hva betyr senket 2 og spektralnorm?
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Senket <span class="math inline">\(2\)</span> viser at vi bruker vanlig euklidsk vektorlengde. For en matrise definerer vi</p>
-<p><span class="math display">\[\lVert A\rVert_2=\max_{\lVert z\rVert_2=1}\lVert Az\rVert_2.\]</span></p>
-<p>Dette kalles <strong>spektralnormen</strong>: den største faktoren matrisen kan forstørre vektorlengden med. Når kolonnene er lineært uavhengige, er</p>
-<p><span class="math display">\[\kappa_2(A)=
-\frac{\max_{\lVert z\rVert_2=1}\lVert Az\rVert_2}
-{\min_{\lVert z\rVert_2=1}\lVert Az\rVert_2}.\]</span></p>
-<p>Det er altså forholdet mellom den største og den minste skaleringen. Dette er en annen matrisenorm enn Frobeniusnormen vi bruker til QR-kontrollene. Du trenger ikke beregne disse maksimums- og minimumsverdiene selv.</p>
-<p><strong>Et frampek til <a href="../pages/uke5.html">uke 5</a>:</strong> Egenverdier beskriver hvordan en kvadratisk matrise skalerer vektorer langs bestemte retninger, kalt egenvektorretninger. Her er forbindelsen gjennom <span class="math inline">\(A^TA\)</span>, som er kvadratisk selv om <span class="math inline">\(A\)</span> er rektangulær.</p>
-<p>Den største og minste egenverdien til <span class="math inline">\(A^TA\)</span> er kvadratene av den største og minste skaleringen til <span class="math inline">\(A\)</span>. Skriver vi disse egenverdiene som <span class="math inline">\(\lambda_{\max}\)</span> og <span class="math inline">\(\lambda_{\min}\)</span>, får vi</p>
-<p><span class="math display">\[\lVert A\rVert_2=\sqrt{\lambda_{\max}},\qquad
-\kappa_2(A)=\sqrt{\frac{\lambda_{\max}}{\lambda_{\min}}}.\]</span></p>
-<p>Her er <span class="math inline">\(\lambda_{\min}&gt;0\)</span> fordi kolonnene i <span class="math inline">\(A\)</span> er lineært uavhengige. Dette knytter følsomheten til stoffet om egenverdier som kommer neste uke. I dette prosjektet bruker du fortsatt <span class="math inline">\(\kappa_2(A)\)</span> som et følsomhetsvarsel og beregner tallet med <code>np.linalg.cond(A)</code>.</p>
-</div>
-</div>
-</div>
 <div id="qpyodide-insertion-location-7"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>For uavhengige kolonner gjelder <span class="math inline">\(\kappa_2(A^TA)=\kappa_2(A)^2\)</span> i eksakt regning. Bruk dette som støtte når du tolker forsøket: Hvilken sammenheng ser du mellom følsomhetsvarselet og feilen du faktisk målte? Flyttallsberegnede kondisjonstall kan avvike fra identiteten, særlig når tallene blir svært store.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tips</span>Hint til systemet
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Fordel <span class="math inline">\(A^T\)</span> over parentesen og flytt leddet med <span class="math inline">\(c\)</span> til den andre siden. Systemet har <span class="math inline">\(A^TA\)</span> som matrise. Bruk koden fra del 2 som mønster for å registrere en eventuell <code>LinAlgError</code> uten å avbryte resten av forsøket.</p>
-</div>
-</div>
-</div>
+<ol type="1">
+<li>Forklar forskjellen på feilkurvene. Hvorfor er full rang best mot dataene?</li>
+<li>Sammenlign beste prøvde rang med full rang og med rang fra budsjettet i del 3.</li>
+<li>Gjenta med diagonalbildet. Undersøk om trunkering også fjerner viktig signal.</li>
+<li>Du fikk se fasiten. Hvordan ville du begrunnet rangvalget uten et rent bilde? Foreslå én praktisk framgangsmåte og beskriv hva den ikke garanterer.</li>
+</ol>
+<details class="reading-step">
+<summary>
+Støyreduksjon er en hypotese om signalet
+</summary>
+<p>Mot det støyete bildet synker feilen når flere komponenter beholdes. Mot det rene bildet kan den først synke og så stige: flere komponenter kan også tilpasse støy. Dette hjelper når signalet kan beskrives med få store komponenter og støyen fordeles annerledes. Det gjelder ikke automatisk for alle bilder; diagonalbildet utfordrer nettopp denne antakelsen.</p>
+<p>Med kjent fasit kan vi velge beste prøvde rang i ettertid. Uten fasit kan vi for eksempel bruke en uavhengig gjentatt måling til validering, eller et anslag for støynivå og en eksplisitt regel for tillatt datafeil. En knekk i singulærverdikurven alene er ingen garanti for riktig skille mellom signal og støy.</p>
+</details>
 </section>
 </section>
+<section id="velg-b-kan-vi-gjøre-et-uskarpt-signal-skarpt-igjen" class="level2">
+<h2 class="anchored" data-anchor-id="velg-b-kan-vi-gjøre-et-uskarpt-signal-skarpt-igjen">Velg B: kan vi gjøre et uskarpt signal skarpt igjen?</h2>
+<section id="opplev-problemet-1" class="level3">
+<h3 class="anchored" data-anchor-id="opplev-problemet-1">Opplev problemet</h3>
+<p>Her er matrisen <span class="math inline">\(H\)</span> en <strong>uskarphetsoperator</strong>: <span class="math inline">\(b=Hx_*+\eta\)</span>. Vi tar SVD av <span class="math inline">\(H\)</span>, ikke av et bilde. De små singulærverdiene beskriver signalretninger som målingen nesten visker ut.</p>
+<p>Forsøket gir en kjent fasit, et normalisert Gauss-filter og fast tilfeldig målestøy. Gjett om en løsning med nesten null residual vil ligne fasiten.</p>
+<div id="qpyodide-insertion-location-8"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 </section>
-<section id="selvstendig-redningsforsøk-og-rapport" class="level2">
-<h2 class="anchored" data-anchor-id="selvstendig-redningsforsøk-og-rapport">Selvstendig redningsforsøk og rapport</h2>
-<section id="gjør-én-begrunnet-forbedring" class="level3">
-<h3 class="anchored" data-anchor-id="gjør-én-begrunnet-forbedring">7. Gjør én begrunnet forbedring</h3>
-<p>Ta utgangspunkt i et forsøk fra den valgte fordypningen der resultatet var mindre pålitelig enn bibliotekets løsning. Hvis du ikke fant en tydelig forskjell, prøv grad <span class="math inline">\(24\)</span> med <span class="math inline">\(51\)</span> jevnt fordelte punkter og klassisk GS i monomialbasis. Kontroller resultatet før du velger tiltak.</p>
-<p>Velg <strong>én</strong> endring: metode, basis, polynomgrad, antall målinger eller plassering av målepunktene. Skriv hvorfor du forventer forbedring, og gjennomfør et før-og-etter-forsøk.</p>
-<p>Hold referansepolynomet fast, også om du endrer modellgraden. Hvis du endrer målepunktene, lag nye målinger av den samme referansen med samme støystørrelse og fast frø. Bruk minst <span class="math inline">\(n+3\)</span> forskjellige punkter, modellgrad høyst <span class="math inline">\(25\)</span> og støy høyst <span class="math inline">\(10^{-8}\)</span>. <code>chebyshev_points(m)</code> gir <span class="math inline">\(m\)</span> cosinusfordelte punkter i <span class="math inline">\([-1,1]\)</span>; argumentet er antallet punkter, ikke graden.</p>
-<p>Rapporter residualnorm, avvik per måling, største kurvefeil på minst 2001 kontrollpunkter og QR-kontrollene når metoden gir <span class="math inline">\(Q,R\)</span>. Dersom du endrer antall målinger eller modellgrad, forklar også hva som gjør sammenligningen rettferdig.</p>
-<p><strong>Målet er en dokumentert forbedring.</strong> Hvis tiltaket ikke hjelper, skal du vise det og begrunne hva du ville undersøkt videre.</p>
+<section id="forklar-og-bygg-en-mer-forsiktig-inversjon" class="level3">
+<h3 class="anchored" data-anchor-id="forklar-og-bygg-en-mer-forsiktig-inversjon">Forklar og bygg en mer forsiktig inversjon</h3>
+<p>Prosjiser først data på <span class="math inline">\(u_i\)</span>. Rekonstruksjon av denne komponenten deler på <span class="math inline">\(\sigma_i\)</span>. Derfor kan små målefeil gi store signalutslag:</p>
+<p><span class="math display">\[x_k=\sum_{i=1}^k\frac{u_i^Tb}{\sigma_i}v_i.\]</span></p>
+<p>Implementer denne regelen. Her betyr <code>k</code> hvor mange <strong>operatorretninger</strong> vi bruker i inversjonen; det er ikke bildets komprimeringsrang fra del 3.</p>
+<div id="qpyodide-insertion-location-9"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<div id="qpyodide-insertion-location-10"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<ol type="1">
+<li>Sammenlign direkte løsning, en svært liten rang og beste prøvde rang. Vis både residual og feil. Hvorfor er minste residual feil beslutningsregel her?</li>
+<li>Gjør støyen dobbelt så stor med samme støymønster: <code>observed = clean_data + 2*(observed-clean_data)</code> etter <code>blur_problem()</code> i sammenligningscellen. Undersøk om rangvalget endres.</li>
+<li>Knytt feilen til <span class="math inline">\(\delta b=\eta u_i\Rightarrow\delta x=(\eta/\sigma_i)v_i\)</span>. Forklar hvilken informasjon vi gir avkall på ved trunkering.</li>
+<li>Er dette prekondisjonering fra uke 6? Forklar forskjellen mellom å løse samme problem raskere og å begrense hvilke løsningskomponenter vi tar med.</li>
+</ol>
+<details class="learning-hint">
+<summary>
+Hint til implementasjonen
+</summary>
+<p><code>U[:, :k].T @ b</code> gir de beholdte datakoordinatene. Del komponentvis på <code>s[:k]</code>, og multipliser med <code>Vt[:k, :].T</code>. Ikke lag hele inversmatrisen. Vi prøver her ranger med positive singulærverdier; nullverdier skal aldri inverteres.</p>
+</details>
+<details class="reading-step">
+<summary>
+Hvorfor dette forsøket kan feile spektakulært
+</summary>
+<p>Glattende målinger gjør enkelte signalretninger svært svake. Det konstruerte <span class="math inline">\(H\)</span> er så dårlig kondisjonert at de aller minste beregnede singulærverdiene ikke bør tolkes som nøyaktige fysiske størrelser. Direkte løsning brukes som et bevisst feilforsøk. En beregning kan stoppe, eller gi enorme verdier. Begge deler er relevante observasjoner, ikke noe du skal skjule.</p>
+<p>TSVD begrenser støyforsterkning ved å forkaste retninger. Men også fasitens komponenter i disse retningene forsvinner. For liten rang gir derfor en for enkel løsning. Rangvalget balanserer tapt signal mot forsterket støy. En kjent fasit lar oss måle dette i laboratoriet; reelle data krever et begrunnet valg uten tilgang til sann løsning.</p>
+</details>
 </section>
-<section id="dette-skal-leveres" class="level3">
-<h3 class="anchored" data-anchor-id="dette-skal-leveres">Dette skal leveres</h3>
-<p>Lever én Quarto-side eller notebook med kjørbar kode. Figurer skal ha aksetitler og en forklaring av hva som sammenlignes. Samle kontrolltall i tabeller, og skill tydelig mellom egne forventninger, observerte resultater og konklusjoner.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Omfang</th>
-<th>Leveranse</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Bare kjerne</strong></td>
-<td>Resultater og korte begrunnelser fra del 1–4</td>
-</tr>
-<tr class="even">
-<td><strong>Hele prosjektet</strong></td>
-<td>Kjernen, valgt del 5 eller 6, før-og-etter-forsøket i del 7 og en analyse på 400–600 ord</td>
-</tr>
-</tbody>
-</table>
-<p>Analysen skal bruke konkrete resultater til å svare på:</p>
+</section>
+<section id="levering" class="level2">
+<h2 class="anchored" data-anchor-id="levering">Levering</h2>
+<p>Lever en kjørbar notebook eller tilsvarende kode med figurer, og en kort rapport på omtrent <strong>400–600 ord</strong>, utenom bildetekster og tabeller:</p>
 <ul>
-<li>Når skyldes avviket at modellen ikke passer målingene, og når tyder kontrollene på problemer i beregningen?</li>
-<li>Hva forteller residual, ortogonalitet og kurvefeil hver for seg?</li>
-<li>Hva endret du i redningsforsøket, og hvilke resultater støtter vurderingen?</li>
-<li>Hvilken begrensning ved forsøket gjør at du bør være forsiktige med å generalisere?</li>
+<li>Hypotesen fra del 1 og budsjettabellen for alle fire bilder.</li>
+<li>Ett original/rekonstruksjon-par med den viktige detaljen tydelig beskrevet.</li>
+<li>Feilkurvene og én sammenligning fra valgt utvidelse A eller B.</li>
+<li>En anbefaling med valgt rang, begrunnelse, og ett dokumentert tilfelle der metoden ikke bevarer det du ønsker.</li>
 </ul>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Bruk av kodeassistenter
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Du kan få hjelp med syntaks, men skal kunne forklare egne forsøk. Kontroller at metodene får samme data, og noter hvilke variabler du endret. Automatisk generert kode eller en utskrift alene er ikke en faglig begrunnelse.</p>
-</div>
-</div>
+<p>Knytt forklaringen eksplisitt til minst to tidligere temaer, for eksempel ortogonale koordinater og rang, eller kondisjonering og residual. Resultatene skal kunne gjenskapes med oppgitte frø og parametere. Vi vurderer særlig om du skiller mellom <strong>å passe data, bevare informasjon og spare lagring</strong>.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
