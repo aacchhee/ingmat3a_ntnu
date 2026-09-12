@@ -144,3 +144,10 @@ Do not call required explanations “Fordypning”. Keep the full teaching
 sequence identical between modes. Leave short experimental code visible;
 use hidden setup cells only for imports and shared definitions. Week 1–4
 material has not yet been converted to this structure.
+
+Week 5 uses numbered Quarto tabs like weeks 1–4. Keep the mode controls
+outside the tabset so they remain available in every tab. Section fragment
+IDs live on elements inside each pane: Quarto replaces the tab headings,
+so IDs attached only to those headings would break the lecture-route links.
+Use explicit action prompts in the common route and preserve the worked
+mathematical steps connecting each experiment to its explanation.

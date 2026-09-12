@@ -34,6 +34,18 @@ def main():
     _, _, _, status = power(np.diag([1., -1.]), [1., 1.], max_steps=30)
     assert status == "maksimalt antall steg"
 
+    # Check the new visible intermediate calculations in the lecture route.
+    A = np.array([[2., 1.], [1., 2.]])
+    x = np.array([2., 1.]) / np.sqrt(5)
+    rho = x @ A @ x
+    residual = A @ x - rho*x
+    assert np.isclose(rho, 14/5)
+    assert np.allclose(residual, np.array([-3., 6.]) / (5*np.sqrt(5)))
+    assert np.isclose(np.linalg.norm(residual), 3/5)
+    assert (2.9/3)**135 >= 1e-2 and (2.9/3)**136 < 1e-2
+    for k, expected in [(1, [2, 1]), (2, [5, 4]), (3, [14, 13])]:
+        assert np.allclose(np.linalg.matrix_power(A, k) @ [1, 0], expected)
+
     # Independent fixture for the six-page project graph.
     S = np.array([[0, 0, 1, 0, 0, 0],
                   [.5, 0, 0, 0, 0, 0],
