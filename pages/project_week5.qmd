@@ -1,0 +1,5 @@
+---
+title: "Prosjekt 5 – Kan vi stole på rangeringen?"
+---
+
+{{< include ../_includes/projects/week5_pagerank.md >}}

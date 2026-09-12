@@ -122,3 +122,25 @@ Before publishing an AI-assisted exercise:
 ## Contributing
 
 Open an issue with the page, exercise label, reproduction steps, browser, and a screenshot when relevant. Pull requests should keep page assembly files small and place substantial course content under `_includes/`.
+
+### Lecture and self-study loops
+
+Week 5 pilots a shared narrative with two reading modes. Every core loop
+starts with a prediction and an experiment, then an informal explanation,
+then the mathematical formulation and a transfer question. Keep the central
+reasoning visible in both modes; do not introduce definitions before the
+experience that motivates them.
+
+Use native `<details class="reading-step">` with a summary beginning
+`Forklaring steg for steg:` for necessary intermediate explanations.
+The page-level `data-learning-mode` controls open these in self-study mode
+and close them in lecture mode. Hints (`learning-hint`) and optional
+extensions (`learning-extension`) remain individually controlled. Put blank
+lines around Markdown inside details. These blocks work without JavaScript;
+the mode script does nothing on pages without controls. The choice lasts
+for the browser session, and printing expands the reading explanations.
+
+Do not call required explanations “Fordypning”. Keep the full teaching
+sequence identical between modes. Leave short experimental code visible;
+use hidden setup cells only for imports and shared definitions. Week 1–4
+material has not yet been converted to this structure.

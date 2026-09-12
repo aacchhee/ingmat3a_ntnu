@@ -59,6 +59,7 @@ website:
           - pages/project_week2.qmd
           - pages/project_week3.qmd
           - pages/project_week4.qmd
+          - pages/project_week5.qmd
 
       - section: "Eksamensoppgaver"
         contents:
@@ -69,4 +70,6 @@ format:
   html:
     theme: cosmo
     css: styles.css
-    include-after-body: _includes/site/tab-links.html
+    include-after-body:
+      - _includes/site/tab-links.html
+      - _includes/site/learning-mode.html
