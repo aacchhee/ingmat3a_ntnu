@@ -64,16 +64,18 @@ $$A=\begin{bmatrix}2&1\\1&2\end{bmatrix}.$$
 2. Velg **(−1, 0)** og gjenta. Er det samme linje? Samme orientering?
 3. Velg **(1, 1)** og deretter **(1, −1)**. Gjør tre steg fra hver start.
    Endres retningen? Skriv én observasjon for hver start.
-4. Dra det oransje punktet til en egen start og prøv hypotesen din.
+4. Prøv også **(0, 1)** og **(1, −0.9)**. Det siste valget ligger nær den
+   spesielle retningen $(1,-1)^T$. Dra deretter til en egen start.
 
 Startvalgene angir retninger og normaliseres til lengde én. Den oransje
 vektoren $x_0$ er starten; den blå er det nåværende resultatet. Hvert klikk
 regner ut $Ax$ og deler på lengden til svaret. Vi bruker ingen
-normalisering av enkeltkoordinater.
+normalisering av enkeltkoordinater. Merkingen $A^kx_0$ ved endepunktet viser
+hvilket produkt retningen kommer fra; lengden i figuren er alltid normalisert til én.
 
-```{.jsxgraph width="680" height="600"}
+```{.jsxgraph width="680" height="640"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
-  boundingbox: [-1.65, 1.8, 1.65, -2.25], axis: true,
+  boundingbox: [-1.65, 1.8, 1.65, -2.55], axis: true,
   showCopyright: false, showNavigation: false, keepaspectratio: true
 });
 var origin = board.create('point', [0, 0], {visible: false, fixed: true});
@@ -82,8 +84,13 @@ var start = board.create('glider', [1, 0, circle], {name: 'x₀', color: '#a04a0
 board.create('arrow', [origin, start], {strokeColor: '#a04a00', strokeWidth: 1.5, dash: 2});
 var current = [1, 0], count = 0;
 var end = board.create('point', [function(){return current[0];}, function(){return current[1];}],
-  {name: 'xₖ', fixed: true, color: '#1565c0'});
+  {name: '', withLabel: false, fixed: true, color: '#1565c0'});
 board.create('arrow', [origin, end], {strokeColor: '#1565c0', strokeWidth: 3});
+board.create('text', [
+  function(){return current[0] + 0.08;},
+  function(){return current[1] + 0.12;},
+  function(){return 'A<sup>'+count+'</sup>x<sub>0</sub>';}
+], {display: 'html', fontSize: 19, color: '#1565c0', fixed: true, highlight: false});
 function reset() {
   current = [start.X(), start.Y()]; count = 0; board.update();
 }
@@ -92,16 +99,22 @@ function choose(a, b) {
   start.moveTo([a/length, b/length]); reset();
 }
 start.on('drag', reset);
-board.create('button', [-1.5, -1.28, 'Ett steg', function() {
+var stepButton = board.create('button', [-1.5, -1.3, 'Ett steg', function() {
   var y = [2*current[0]+current[1], current[0]+2*current[1]];
   var length = Math.hypot(y[0], y[1]);
   current = [y[0]/length, y[1]/length]; count++; board.update();
 }]);
-board.create('button', [-0.2, -1.28, 'Start på nytt', reset]);
-board.create('button', [-1.5, -1.65, '(1, 0)', function(){choose(1, 0);}]);
-board.create('button', [-0.2, -1.65, '(−1, 0)', function(){choose(-1, 0);}]);
-board.create('button', [-1.5, -2.02, '(1, 1)', function(){choose(1, 1);}]);
-board.create('button', [-0.2, -2.02, '(1, −1)', function(){choose(1, -1);}]);
+// Style the actual HTML button, not its positioned JSXGraph wrapper.
+if (stepButton.rendNodeButton) stepButton.rendNodeButton.classList.add('week5-main-step');
+board.create('button', [-0.2, -1.3, 'Start på nytt', reset]);
+board.create('text', [-1.5, -1.62, 'Velg startretning:'],
+  {fontSize: 14, fixed: true, highlight: false});
+board.create('button', [-1.5, -1.85, '(1, 0)', function(){choose(1, 0);}]);
+board.create('button', [-0.2, -1.85, '(−1, 0)', function(){choose(-1, 0);}]);
+board.create('button', [-1.5, -2.15, '(1, 1)', function(){choose(1, 1);}]);
+board.create('button', [-0.2, -2.15, '(1, −1)', function(){choose(1, -1);}]);
+board.create('button', [-1.5, -2.45, '(0, 1)', function(){choose(0, 1);}]);
+board.create('button', [-0.2, -2.45, '(1, −0.9)', function(){choose(1, -0.9);}]);
 board.create('text', [-1.5, 1.57, function() {
   return 'x<sub>'+count+'</sub> = A<sup>'+count+'</sup>x<sub>0</sub>' +
     ' / ‖A<sup>'+count+'</sup>x<sub>0</sub>‖<sub>2</sub>';
