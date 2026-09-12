@@ -65,11 +65,17 @@ er tilgjengelig. En runde gjennom alle ukjente kalles et **sveip**.
 
 ```{pyodide-python}
 #| label: week6-gs-experiment
+# Begge metodene får samme system, nullstart og antall hele sveip.
+# Vi kjenner løsningen (1,2), så her kan vi måle faktisk feil.
+# Se om det hjelper å bruke den nye koordinatverdien med én gang.
+
 A = np.array([[3., 1.], [1., 2.]])
 b = np.array([5., 5.])
+# Hjelperen lagrer hvert koordinatsteg; [::2] velger slutten av hele sveip.
 gs = gs_path(A, b, [0., 0.], sweeps=6)[::2]
 jacobi = [np.zeros(2)]
 for k in range(6):
+    # Begge Jacobi-uttrykkene nedenfor bruker samme gamle par (u,v).
     u, v = jacobi[-1]
     jacobi.append(np.array([(5-v)/3, (5-u)/2]))
 fig, ax = plt.subplots()
@@ -128,6 +134,10 @@ Slik vet vi hvor kurvene skal ende, og kan måle feilen direkte.
 
 ```{pyodide-python}
 #| label: week6-convergence
+# Vi konstruerer b fra en kjent løsning for å isolere effekten av A.
+# Samme GS-regel kan dempe eller forsterke feil, avhengig av iterasjonsmatrisen.
+# Se på utviklingen over flere sveip, ikke bare første forbedring.
+
 star = np.array([1., 2.])
 fig, ax = plt.subplots()
 for name, A in [('A_a = [[3,1],[1,2]]', np.array([[3.,1.],[1.,2.]])),
@@ -223,6 +233,10 @@ Vi kjenner $x_*$ i dette forsøket og kan sammenligne begge.
 
 ```{pyodide-python}
 #| label: week6-residual-experiment
+# De to forslagene har feil i hver sin koordinat.
+# Residualen måles ETTER at A har virket på feilen; andre koordinat dempes kraftig.
+# Sammenlign begge kolonnene før du velger hvilket forslag som er best.
+
 A = np.diag([1., 1e-4])
 star = np.ones(2); b = A @ star
 print('Forslag       residualnorm       feilnorm')
@@ -298,6 +312,10 @@ $\phi(x)=\tfrac12x^TAx-b^Tx$. **Hvor ser løsningen ut til å ligge?**
 
 ```{pyodide-python}
 #| label: week6-coordinate-energy
+# Nivåkurvene viser phi(x) = x.T @ A @ x / 2 - b.T @ x.
+# GS-banen viser hver koordinatkorreksjon, ikke bare slutten på hvert sveip.
+# Se hvordan hvert steg minimerer langs én akseretning.
+
 A = np.array([[3.,1.],[1.,2.]])
 b = np.array([5.,5.])
 fig, ax = plt.subplots()
@@ -372,6 +390,10 @@ i origo og søker samme minimum. Følg både banene og antall CG-steg.
 
 ```{pyodide-python}
 #| label: week6-cg-experiment
+# Vi beholder egenvektorene i Q og endrer skålens form via egenverdiene.
+# Begge metodene får samme system og nullstart i hvert bilde.
+# Tell CG-steg, men husk at dette bare er et todimensjonalt problem.
+
 Q = np.array([[1.,-1.],[1.,1.]])/np.sqrt(2)
 star = np.array([1.,-1.1])
 fig, axes = plt.subplots(1, 2, figsize=(10,4))

@@ -38,6 +38,9 @@ henter vi dem fram trinn for trinn. Oppgavene i 5.7 er delt i de samme to delene
 #| label: week5-setup
 #| autorun: true
 #| context: setup
+# NumPy gir oss vektorer og matriser; Matplotlib tegner resultatene.
+# Oppsettet kjøres automatisk og brukes av forsøkene i denne uken.
+
 import numpy as np
 import matplotlib.pyplot as plt
 ```
@@ -477,6 +480,9 @@ Prøv også $(1,1)^T$ og $(1,0)^T$. Dette er en ekstra kontroll etter håndarbei
 
 ```{pyodide-python}
 #| label: week5-directions
+# Vi sammenligner én transformasjon med startvektoren, uten normalisering.
+# Endre bare start: blir resultatet på samme linje, og endres lengde eller fortegn?
+
 A = np.array([[2., 1.], [1., 2.]])
 B = np.array([[0., 1.], [1., 0.]])
 start = np.array([1., -1.])  # Prøv også [1., 1.] og [1., 0.].
@@ -524,11 +530,16 @@ Da starter vi bare langs $v_2$. Kan multiplikasjonene skape det blå bidraget?
 
 ```{pyodide-python}
 #| label: week5-contributions
+# Følg bidragene langs to egenvektorer hver for seg.
+# Endre c1 og c2, og forutsi kurvene før du kjører.
+# En mindre ANDEL betyr ikke nødvendigvis at bidragets lengde avtar.
+
 c1, c2 = 0.5, 0.5
 steps = np.arange(7)
 if c1 == 0 and c2 == 0:
     raise ValueError('Velg minst ett bidrag ulik null')
 # v1 og v2 har samme lengde sqrt(2); den forkortes bort i andelene.
+# Absoluttverdien brukes fordi vi sammenligner lengder, ikke fortegn.
 first = abs(c1) * 3.**steps
 second = abs(c2) * 1.**steps
 plt.figure()
@@ -750,18 +761,25 @@ De to matrisene har samme egenvektorer; bare den andre skaleringen endres.
 
 ```{pyodide-python}
 #| label: week5-speed
+# Kolonnene i Q er en fast ortonormal egenvektorbasis.
+# Vi endrer bare den andre egenverdien og beholder samme start.
+# Se etter hvordan forholdet |lambda2/lambda1| påvirker farten.
+
 Q = np.array([[1., 1.], [1., -1.]]) / np.sqrt(2)
 fig, ax = plt.subplots()
 for second in [1., 2.9]:
+    # Les i egenvektorbasis, skaler hvert bidrag, og bygg tilbake i standardbasis.
     A = Q @ np.diag([3., second]) @ Q.T
     x = np.array([1., 0.])
     ratios = []
     for k in range(81):
         # Her kjenner vi basisen og kan måle de to bidragene.
+        # Ortonormal basis: indreproduktene gir koordinatene langs egenvektorene.
         c = Q.T @ x
         ratios.append(abs(c[1] / c[0]))
         x = A @ x
         x = x / np.linalg.norm(x)
+    # Logaritmisk akse viser mange størrelsesordener; gulvet 1e-16 er bare for tegningen.
     ax.semilogy(range(81), np.maximum(ratios, 1e-16), label=f"λ₂ = {second}")
 ax.set(xlabel="Antall multiplikasjoner", ylabel="|andre bidrag / første bidrag|",
        title="Hvor raskt blir ett bidrag dominerende?")
@@ -913,6 +931,10 @@ Rayleigh-kvotient, residual og en øvre grense for antall steg.
 ```{pyodide-python}
 #| label: week5-power
 #| autorun: true
+# Potensmetoden følger en retning; normalisering hindrer at lengden vokser ukontrollert.
+# Rayleigh-kvotienten anslår egenverdien, mens egenresidualen kontrollerer Av ≈ rho*v.
+# En liten egenresidual sier ikke at vi har funnet den største egenverdien.
+
 # Definer funksjonen som brukes i de korte forsøkene nedenfor.
 def power_iteration(A, x0, tol=1e-10, max_steps=500):
     A = np.asarray(A, dtype=float)
@@ -924,11 +946,14 @@ def power_iteration(A, x0, tol=1e-10, max_steps=500):
     if np.linalg.norm(x) == 0 or tol <= 0 or max_steps < 1:
         raise ValueError("Bruk x0 ≠ 0, positiv toleranse og minst ett steg")
     x /= np.linalg.norm(x)
+    # Skaler stoppkravet med matrisens størrelse; tol er ikke en absolutt feilgrense for rho.
     scale = np.linalg.norm(A, 'fro')
     history = []
     for k in range(max_steps + 1):
         y = A @ x
+        # x er normert, så Rayleigh-kvotientens nevner x.T @ x er 1.
         rho = x @ y
+        # Mål delen av Ax som ikke forklares av skaleringen rho*x.
         residual = np.linalg.norm(y - rho * x)
         history.append((rho, residual))
         if np.linalg.norm(y) == 0:
@@ -936,9 +961,9 @@ def power_iteration(A, x0, tol=1e-10, max_steps=500):
         if residual <= tol * scale:
             return x, rho, np.array(history), "liten egenresidual"
         if k < max_steps:
+            # Behold retningen, men sett lengden tilbake til 1 før neste multiplikasjon.
             x = y / np.linalg.norm(y)
     return x, rho, np.array(history), "maksimalt antall steg"
-
 ```
 
 **Følg én løkkeomgang:** `y` er $Ax$, `rho` er $x^TAx$ siden $\lVert x\rVert_2=1$,
@@ -961,6 +986,9 @@ ikke at det er den dominante egenverdien som er funnet.
 
 ```{pyodide-python}
 #| label: week5-power-demo
+# Funksjonen fra forrige celle returnerer både et forslag og en kontroll.
+# Les status sammen med rho og siste residual; ikke vurder bare vektoren x.
+
 A = np.array([[2., 1.], [1., 2.]])
 x, rho, history, status = power_iteration(A, [1., 0.])
 print(status, "ρ =", rho, "x =", x)
@@ -989,6 +1017,10 @@ Figuren viser seks steg; utskriften bruker algoritmens stoppkriterium.
 
 ```{pyodide-python}
 #| label: week5-failures
+# De fire tilfellene utfordrer forskjellige forutsetninger for potensmetoden.
+# Forutsi først om retningen stabiliseres, skifter fortegn eller roterer.
+# Sammenhold banen med status og egenresidual: de svarer på ulike spørsmål.
+
 cases = [
     ("Feil startretning", np.diag([3., 1.]), [0., 1.]),
     ("Negativ dominant", np.diag([-3., 1.]), [1., 1.]),
@@ -1061,6 +1093,10 @@ på $10^{-12}$ bli synlig etter bare 30 steg?
 
 ```{pyodide-python}
 #| label: week5-roundoff
+# Bare første startkoordinat endres; matrisen og antall steg holdes faste.
+# 1e-12 er en bevisst innlagt forstyrrelse, ikke en måling av maskinens avrundingsfeil.
+# Forklar forskjellen ved at det første bidraget får en faktor 3 i hvert steg.
+
 A = np.diag([3., 1.])
 for tiny in [0., 1e-12]:
     x = np.array([tiny, 1.])
@@ -1401,6 +1437,10 @@ måler utskriften? Kan et lite tall alene si at lenkene er lagt inn riktig?
 
 ```{pyodide-python}
 #| label: week5-network
+# Kolonne j er avsender, rad i er mottaker; S @ p gir neste fordeling.
+# Start fra jevn fordeling eller alle på A, og sammenlign sluttfordelingene.
+# Summen skal forbli 1 uten normalisering av vektorlengden.
+
 S = np.array([[0., 0., 1/2, 1.],
               [1/2, 0., 0., 0.],
               [1/2, 1., 0., 0.],
@@ -1491,17 +1531,23 @@ på D, men ikke slippe ut. Cellen definerer selv nettverket fra 5.5.
 
 ```{pyodide-python}
 #| label: week5-trap
+# Vi endrer bare lenkene UT fra D, altså én kolonne.
+# En besøksandel som kommer til D, kan deretter ikke forlate siden.
+# Følg alle fire andeler: en stabil fordeling trenger ikke gi en nyttig rangering.
+
 # Samme nettverk som i 5.5; tallene gjentas så denne fanen kan kjøres direkte.
 S = np.array([[0., 0., 1/2, 1.],
               [1/2, 0., 0., 0.],
               [1/2, 1., 0., 0.],
               [0., 0., 1/2, 0.]])
 trap = S.copy()
+# Kolonne 3 er D: alle som er på D, går tilbake til D ved neste klikk.
 trap[:, 3] = [0., 0., 0., 1.]
 p = np.ones(4) / 4
 values = [p.copy()]
 for k in range(100):
     p = trap @ p
+    # Lagre et eget øyeblikksbilde av fordelingen for hver runde.
     values.append(p.copy())
 plt.figure()
 plt.plot(values)
@@ -1535,6 +1581,10 @@ D for $0.95$, $0.85$ og $0.5$. Undersøk samtidig om noen sider får score null.
 
 ```{pyodide-python}
 #| label: week5-teleport
+# alpha er sannsynligheten for å følge lenker; 1-alpha er sannsynligheten for et hopp.
+# Hoppfordelingen u er fast, mens p er den nåværende besøksfordelingen.
+# Sammenlign hvor mye score D beholder når modellen endres.
+
 # Kjør felleforsøket først. u fordeler de tilfeldige hoppene likt.
 u = np.ones(4) / 4
 fig, ax = plt.subplots()
@@ -1818,6 +1868,10 @@ Forutsett en ikke-null start og at ingen multiplikasjon gir nullvektoren.
 ```{py-exercise}
 #| label: week5-task-power-residual
 #| caption: Implementer potensmetoden og utfordre kontrollen
+# Skill mellom retningen x, egenverdianslaget rho og residualens lengde.
+# Samme antall steg gjør startvektorene sammenlignbare.
+# Behold funksjonens returformat slik at kontrollene kan undersøke alle tre.
+
 import numpy as np
 
 def power_check(A, start, steps):
@@ -1877,6 +1931,10 @@ $p$ og $u$ sannsynlighetsvektorer og $0\leq\alpha<1$.
 ```{py-exercise}
 #| label: week5-task-teleportation
 #| caption: Fra pendling til konvergens
+# Denne funksjonen skal gjøre ETT steg, ikke iterere til konvergens.
+# S @ p fordeler lenkebesøkene; u beskriver hvor de uavhengige hoppene lander.
+# En løkke utenfor funksjonen kan deretter følge hele utviklingen.
+
 import numpy as np
 
 def visit_step(S, p, alpha, u):

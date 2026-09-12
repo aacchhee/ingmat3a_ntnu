@@ -43,6 +43,9 @@ Vi undersøker bildene før vi forklarer hvordan komponentene beregnes.
 
 ```{pyodide-python}
 #| label: week7-first-image
+# rank_image beholder de k første SVD-leddene i bildet.
+# Se etter hvilke detaljer som forsvinner først; få ledd trenger ikke bevare alt viktig.
+
 show_images({'original': portrait, **{f'{k} komponenter': rank_image(portrait,k) for k in (1,5,20)}})
 ```
 
@@ -96,8 +99,13 @@ og trenger ikke hver for seg være vanlige gråtonebilder.
 
 ```{pyodide-python}
 #| label: week7-building-block
+# Ett SVD-ledd er en loddrett profil ganger en vannrett profil, skalert med sigma_i.
+# Indekser starter på 0 i Python; i=1 velger derfor det andre leddet.
+# Fargene viser positive og negative bidrag, ikke et ferdig gråtonebilde.
+
 U_img,s_img,Vt_img = np.linalg.svd(portrait,full_matrices=False)
 i = 1  # 0 er første komponent; prøv også 2 og 3.
+# Ytreproduktet lager én verdi per piksel fra de to endimensjonale profilene.
 component = s_img[i]*np.outer(U_img[:,i],Vt_img[i,:])
 fig,ax = plt.subplots(1,3,figsize=(10,3))
 ax[0].plot(U_img[:,i]); ax[0].set_title('Loddrett profil')
@@ -358,6 +366,10 @@ Blir løsningsendringen like stor i begge tilfeller?
 
 ```{pyodide-python}
 #| label: week7-perturbation
+# Begge dataendringene har samme lengde, men ulike retninger.
+# Vi løser systemet for de ENDREDE dataene og sammenligner med den opprinnelige fasiten.
+# En liten residual mot endrede data utelukker ikke en stor løsningsendring.
+
 A = np.array([[0.,2.],[.02,0.]])
 x_true = np.ones(2)
 b = A @ x_true
@@ -460,9 +472,15 @@ Kjør cellen og sammenlign de to lengdene. Gjenta med punkter over $[-1,1]$.
 
 ```{pyodide-python}
 #| label: week7-polynomial
+# P sender polynomkoeffisienter til verdier i de valgte punktene, som i uke 4.
+# Punktene ligger tett rundt 1; ulike koeffisienter kan gi nesten samme verdier.
+# Vi undersøker koeffisientretningen som gir minst endring i verdiene.
+
 nodes = np.linspace(.95,1.05,12)
+# Kolonnene er 1, t, t², t³ evaluert i nodes: P @ c gir polynomverdiene.
 P = np.vander(nodes,4,increasing=True)
 U,s,Vt = np.linalg.svd(P,full_matrices=False)
+# Siste rad er høyre singularvektor for minste singulærverdi; lengden er 1.
 dc = Vt[-1]
 print('Koeffisientendring:',np.linalg.norm(dc))
 print('Endring i modellverdier:',np.linalg.norm(P@dc))
@@ -525,9 +543,14 @@ den lagrede faktorrepresentasjonen og en samlet pikselfeil.
 
 ```{pyodide-python}
 #| label: week7-tail
+# Vi beholder bare de k største singulærverdiene og tilhørende basisvektorer.
+# Endre k og vurder både bildet, feilnormen og antall lagrede tall.
+# Antall tall er et parameterbudsjett, ikke størrelsen på en PNG-fil.
+
 A = portrait
 U,s,Vt = np.linalg.svd(A,full_matrices=False)
 k = 20  # Prøv 5, 10 og 40.
+# * skalerer hver U-kolonne; @ summerer de k vektede rang-1-bidragene.
 Ak = (U[:,:k]*s[:k]) @ Vt[:k,:]
 show_images({'original':A,f'{k} komponenter':Ak})
 print('Tall i faktorene:',k*(sum(A.shape)+1),' Mot original:',A.size)
@@ -582,9 +605,13 @@ Kontroller formelen med cellen. Den er uavhengig av forrige celles tilstand.
 
 ```{pyodide-python}
 #| label: week7-tail-check
+# Samme feil beregnes på to uavhengige måter: fra bildet og fra utelatte singulærverdier.
+# Tallene skal stemme opp til avrunding; det kontrollerer koblingen mellom kode og teori.
+
 A = portrait
 U,s,Vt = np.linalg.svd(A,full_matrices=False)
 k = 20
+# * skalerer hver U-kolonne; @ summerer de k vektede rang-1-bidragene.
 Ak = (U[:,:k]*s[:k]) @ Vt[:k,:]
 print('Direkte feil²:',np.linalg.norm(A-Ak,'fro')**2)
 print('Sum av utelatte vekter²:',np.sum(s[k:]**2))
@@ -622,9 +649,14 @@ som de opprinnelige bildematrisene.
 
 ```{pyodide-python}
 #| label: week7-budget
+# Alle bildene har samme dimensjoner og får samme parameterbudsjett.
+# Rang k bestemmes av hva vi har råd til å lagre, ikke av ønsket bildekvalitet.
+# Undersøk hvorfor samme rang kan gi svært ulikt resultat.
+
 images = challenge_images()
 show_images(images)
 m,n = portrait.shape
+# Heltallsdivisjon runder ned slik at k*(m+n+1) ikke overskrider budsjettet.
 k = int(.25*m*n//(m+n+1))
 print('Felles rang:',k)
 show_images({name:rank_image(A,k) for name,A in images.items()})

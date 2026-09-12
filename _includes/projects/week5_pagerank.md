@@ -47,12 +47,19 @@ Ta vare på resultatet som uavhengig kontroll av koden.
 #| label: project-week5-setup
 #| autorun: true
 #| context: setup
+# Dette oppsettet gjør prosjektet uavhengig av cellene i forelesningsnotatene.
+# np brukes til lineær algebra; plt brukes til å vise utviklingen.
+
 import numpy as np
 import matplotlib.pyplot as plt
 ```
 
 ```{pyodide-python}
 #| label: project-week5-data
+# Oversett lenketabellen til en lineær transformasjon, én avsender om gangen.
+# Tom mottakerliste trenger en besøksregel, ellers forsvinner sannsynlighet.
+# Kontroller én runde mot håndberegningen før du bruker S i en lang iterasjon.
+
 names = list("ABCDEF")
 links = [[1, 2], [2, 3], [0], [2, 4], [5], [3]]
 u = np.ones(len(names)) / len(names)
@@ -106,6 +113,11 @@ vi summen én og trenger ikke normalisere til euklidsk lengde én.
 
 ```{pyodide-python}
 #| label: project-week5-iteration
+# Denne funksjonen skal både beregne rangeringen og rapportere om stoppkravet ble nådd.
+# Bruk besøksregelen alpha*(S @ p) + (1-alpha)*u.
+# Residualen er 1-normen av forskjellen mellom denne nye fordelingen og p.
+# Maksimalt antall steg er en sikkerhetsgrense, ikke et bevis på konvergens.
+
 # S skal være kolonnestokastisk. u og p0 skal være sannsynlighetsvektorer.
 def pagerank(S, alpha, u, p0, tol=1e-10, max_steps=10000):
     # TODO: Kontroller 0 < alpha < 1, positive u-elementer, riktig form,
@@ -139,6 +151,10 @@ $$(I-\alpha S)p_*=(1-\alpha)u.$$
 
 ```{pyodide-python}
 #| label: project-week5-reference
+# Aktiver de kommenterte kodelinjene når egne funksjoner er klare.
+# Referansen løser stasjonaritetslikningen direkte, uten den iterative metoden.
+# Enighet kontrollerer iterasjonen for din S; kontroller lenkemodellen separat.
+
 # Kjør når transition_matrix og pagerank er implementert.
 # alpha = 0.85
 # S = transition_matrix(links, u)
@@ -216,6 +232,10 @@ av de andre når $0<\alpha<1$?
 
 ```{pyodide-python}
 #| label: project-week5-spectrum
+# Aktiver kodelinjene etter at tilfellet fra del 3 er valgt.
+# G inkluderer både lenkefølging og hopp; hver kolonne får det samme hoppbidraget.
+# Vi skiller egenverdien 1 fra de andre, som beskriver hvordan avvik utvikler seg.
+
 # Sett S_case, u_case og p0_case til grafen og starten fra del 3.
 # alpha = 0.85
 # n = len(u_case)

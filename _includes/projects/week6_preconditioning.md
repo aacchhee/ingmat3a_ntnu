@@ -54,9 +54,14 @@ To SPD-matriser kan ha samme størrelse og likevel kreve svært ulikt arbeid.
 
 ```{pyodide-python}
 #| label: project-week6-data
+# To kontrollerte SPD-systemer: ulik koordinatskala og sterk nabokobling.
+# Vi vil undersøke om samme diagonale tiltak hjelper like mye i begge.
+# Fast tilfeldig frø gir samme fasit ved gjentatte kjøringer.
+
 n = 60
 B = 2*np.eye(n) - .25*np.eye(n, k=1) - .25*np.eye(n, k=-1)
 d = np.geomspace(1., 100., n)
+# Dette er D B D: [:,None] skalerer rader, [None,:] skalerer kolonner.
 A_scaled = d[:,None] * B * d[None,:]
 A_poisson = 2*np.eye(n) - np.eye(n, k=1) - np.eye(n, k=-1)
 rng = np.random.default_rng(6)
@@ -78,6 +83,10 @@ en residual med en kort oppdateringsformel.
 ```{pyodide-python}
 #| label: project-week6-cg
 #| autorun: true
+# Ferdig CG er referansemetoden som PCG skal sammenlignes med.
+# path lagrer løsningsforslag; residuals lagrer lengden av b-Ax.
+# Vi teller også matrise-vektor-produkter brukt til direkte stoppkontroll.
+
 
 def cg(A, b, x0=None, rtol=1e-8, atol=0., max_steps=1000):
     A, b = np.asarray(A, float), np.asarray(b, float)
@@ -88,10 +97,14 @@ def cg(A, b, x0=None, rtol=1e-8, atol=0., max_steps=1000):
         raise ValueError('Kontroller start, toleranser og maksimalgrense')
     if not all(np.all(np.isfinite(t)) for t in [A, b, x]):
         raise ValueError('Bruk endelige tall')
+    # Residualen er ubalansen i de opprinnelige likningene, og kan beregnes uten fasit.
     r = b - A @ x
+    # Starten teller som første lagrede punkt, men ikke som et iterasjonssteg.
     path, residuals = [x.copy()], [np.linalg.norm(r)]
+    # Absolutt margin pluss margin relativt til b; samme krav brukes ved sammenligning.
     target = atol + rtol*np.linalg.norm(b)
     matvecs = 1
+    # Kontroller også startforslaget: riktig start skal stoppe før noen divisjon.
     if residuals[-1] <= target:
         return {'path':np.array(path), 'residuals':np.array(residuals),
                 'converged':True, 'matvecs':matvecs, 'preconditioner_calls':0}
@@ -100,11 +113,14 @@ def cg(A, b, x0=None, rtol=1e-8, atol=0., max_steps=1000):
     for k in range(max_steps):
         Ap = A @ p
         matvecs += 1
+        # p.T @ A @ p er positiv for en ikke-null retning når A er SPD.
         curvature = p @ Ap
         if curvature <= 0 or not np.isfinite(curvature):
             raise ValueError('CG trenger positiv krumning; kontroller SPD')
+        # Velg minimum langs søkeretningen; rr er r.T @ r i vanlig CG.
         alpha = rr / curvature
         x = x + alpha*p
+        # Kort oppdatering av residualen; avrunding kan gi avvik fra direkte beregnet b-Ax.
         r = r - alpha*Ap
         # Direkte kontroll i det opprinnelige systemet.
         actual = np.linalg.norm(b - A @ x)
@@ -115,6 +131,7 @@ def cg(A, b, x0=None, rtol=1e-8, atol=0., max_steps=1000):
         rr_new = r @ r
         if rr_new == 0:
             break  # Rapporter manglende konvergens hvis direkte kontroll ikke var liten.
+        # Kombiner ny residual med forrige retning for å bevare A-konjugerthet i eksakt regning.
         p = r + (rr_new/rr)*p
         rr = rr_new
     return {'path':np.array(path), 'residuals':np.array(residuals),
@@ -129,6 +146,10 @@ forutsetningen om SPD. Vi håndterer riktig start ved å stoppe før divisjon.
 
 ```{pyodide-python}
 #| label: project-week6-baseline
+# Dette er sammenligningsgrunnlaget før vi endrer skalering eller metode.
+# Hvert system får b = A @ x_star, slik at vi kan måle feil mot kjent fasit.
+# Les converged sammen med antall steg: et tidlig avbrudd er ikke en forbedring.
+
 baseline = {}
 for name, A in problems.items():
     b = A @ x_star
@@ -177,12 +198,19 @@ Utfør følgende omregning og kjør vanlig CG på det nye systemet:
 
 ```{pyodide-python}
 #| label: project-week6-transform
+# Skaler på BEGGE sider av A for å bevare symmetri og positiv definitet.
+# At og bt er systemet i y-koordinater; sluttkontrollen gjøres tilbake i x-koordinater.
+# Den strenge toleransen her gjelder det transformerte systemet, ikke det opprinnelige.
+
 transformed = {}
 for name, A in problems.items():
     b = A @ x_star
+    # Lagre bare diagonalverdiene til M, ikke en full diagonalmatrise.
     m = np.diag(A)
     invroot = 1/np.sqrt(m)
+    # M^(-1/2) A M^(-1/2): tosidig skalering beholder symmetrien som CG trenger.
     At = invroot[:,None] * A * invroot[None,:]
+    # Høyresiden må transformeres sammen med matrisen for å bevare problemet.
     bt = invroot*b
     result = cg(At, bt, rtol=1e-12)
     # Hver rad i path er y_k. Omregn alle tilbake til x-koordinater.
@@ -225,9 +253,14 @@ for hvert problem. Finn deretter egenverdiene til $A$ og $\widetilde A$.
 
 ```{pyodide-python}
 #| label: project-week6-spectrum
+# Sammenlign hele egenverdifordelingen før og etter koordinatskiftet.
+# For SPD er største/minste egenverdi kondisjonstallet i 2-norm.
+# Bare å flytte alle egenverdiene med samme faktor endrer ikke dette forholdet.
+
 fig, axes = plt.subplots(1, 2, figsize=(10,3))
 for ax, (name, A) in zip(axes, problems.items()):
     At = transformed[name][0]
+    # eigvalsh bruker symmetrien og gir reelle egenverdier i stigende rekkefølge.
     lam, lamt = np.linalg.eigvalsh(A), np.linalg.eigvalsh(At)
     ax.semilogy(lam, '.', label='A')
     ax.semilogy(lamt, '.', label='symmetrisk skalert A')
@@ -242,6 +275,10 @@ minimumet omregnes riktig:
 
 ```{pyodide-python}
 #| label: project-week6-contours
+# Vi viser samme minimeringsproblem i to koordinatsystemer.
+# Minimumet får nye koordinater, men kan oversettes tilbake til samme x.
+# Se på formen til nivåkurvene, ikke bare hvor bunnen ligger på aksene.
+
 A2 = np.array([[1., 2.], [2., 100.]])
 s2 = np.array([1., 1.]); b2 = A2 @ s2
 w = 1/np.sqrt(np.diag(A2))
@@ -307,6 +344,10 @@ Gjenta:
 
 ```{pyodide-python}
 #| label: project-week6-pcg-template
+# Fullfør bare de tre TODO-delene ved hjelp av pseudokoden.
+# m lagrer diagonalen til M; z er løsningen av hjelpesystemet Mz=r.
+# Vi arbeider fortsatt med A og stopper på den opprinnelige residualen b-Ax.
+
 
 def pcg(A, b, m, x0=None, rtol=1e-8, atol=0., max_steps=1000):
     A, b, m = np.asarray(A,float), np.asarray(b,float), np.asarray(m,float)
@@ -319,10 +360,14 @@ def pcg(A, b, m, x0=None, rtol=1e-8, atol=0., max_steps=1000):
         raise ValueError('Kontroller start, toleranser og maksimalgrense')
     if not all(np.all(np.isfinite(t)) for t in [A,b,m,x]):
         raise ValueError('Bruk endelige tall')
+    # Residualen er ubalansen i de opprinnelige likningene, og kan beregnes uten fasit.
     r = b - A @ x
+    # Starten teller som første lagrede punkt, men ikke som et iterasjonssteg.
     path, residuals = [x.copy()], [np.linalg.norm(r)]
+    # Absolutt margin pluss margin relativt til b; samme krav brukes ved sammenligning.
     target = atol + rtol*np.linalg.norm(b)
     matvecs, applies = 1, 0
+    # Kontroller også startforslaget: riktig start skal stoppe før noen divisjon.
     if residuals[-1] <= target:
         return {'path':np.array(path), 'residuals':np.array(residuals),
                 'converged':True, 'matvecs':matvecs, 'preconditioner_calls':applies}
@@ -333,17 +378,21 @@ def pcg(A, b, m, x0=None, rtol=1e-8, atol=0., max_steps=1000):
     p = z.copy(); gamma = r @ z
     for k in range(max_steps):
         Ap = A @ p; matvecs += 1
+        # p.T @ A @ p er positiv for en ikke-null retning når A er SPD.
         curvature = p @ Ap
         if curvature <= 0 or not np.isfinite(curvature):
             raise ValueError('PCG krever SPD')
+        # PCG bruker gamma = r.T @ z i stedet for r.T @ r.
         alpha = gamma / curvature
         x = x + alpha*p
+        # Kort oppdatering av residualen; avrunding kan gi avvik fra direkte beregnet b-Ax.
         r = r - alpha*Ap
         actual = np.linalg.norm(b - A @ x); matvecs += 1
         path.append(x.copy()); residuals.append(actual)
         if actual <= target:
             break
         z = apply_M_inverse(r); applies += 1
+        # Indreproduktet måler residualen i de transformerte koordinatene.
         gamma_new = r @ z
         if gamma_new <= 0:
             break
@@ -395,6 +444,10 @@ Fyll først PCG-malen; fjern deretter kommentartegnene i kjørecellen.
 
 ```{pyodide-python}
 #| label: project-week6-comparison
+# Rettferdig sammenligning krever samme A, b, start og residualkrav.
+# Vi viser både oppfylt likning (residual) og avstand til fasit (feil).
+# Arbeidsaksen teller A-produkter; M-løsninger rapporteres separat og er ikke gratis.
+
 
 def compare_runs(A, b, star, runs):
     fig, axes = plt.subplots(1,2,figsize=(10,3))
@@ -403,6 +456,7 @@ def compare_runs(A, b, star, runs):
         # I disse implementasjonene: én startberegning og to produkter per steg.
         work = 1 + 2*np.arange(len(path))
         residuals = out['residuals']/np.linalg.norm(b)
+        # axis=1 tar lengden av hver rad: én feilnorm per lagret løsningsforslag.
         errors = np.linalg.norm(path-star,axis=1)/np.linalg.norm(star)
         axes[0].semilogy(work, np.maximum(residuals,1e-16), label=name)
         axes[1].semilogy(work, np.maximum(errors,1e-16), label=name)
@@ -445,6 +499,10 @@ parameterverdier og påstand; funksjonen er dataverktøy, ikke en ferdig unders�
 
 ```{pyodide-python}
 #| label: project-week6-research-family
+# span endrer koordinatskalaen; coupling endrer styrken på nabokoblingen.
+# Endre én av dem om gangen for å undersøke en konkret forklaring.
+# Kravet coupling < 1 sikrer positiv definitet for denne familien.
+
 def coupled_problem(n, span, coupling):
     if n < 2 or span < 1 or not 0 <= coupling < 1:
         raise ValueError('Bruk n >= 2, span >= 1 og 0 <= coupling < 1')

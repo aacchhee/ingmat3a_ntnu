@@ -39,6 +39,9 @@ Importlinjen over er bare for egen notebook, ikke for cellene på nettsiden.
 
 ```{pyodide-python}
 #| label: project7-inputs
+# Se på originalene før du velger hvilke detaljer rekonstruksjonen må bevare.
+# Alle har samme størrelse; forskjellene ligger i mønstrene, ikke antall piksler.
+
 images = challenge_images()
 show_images(images)
 ```
@@ -68,6 +71,10 @@ og $k=\min(m,n)$. Ikke kall `rank_image` i din implementasjon.
 
 ```{pyodide-python}
 #| label: project7-truncate
+# U har venstre basisvektorer i kolonner; Vt har høyre basisvektorer i rader.
+# Funksjonen skal summere de k første rang-1-leddene, også når k er 0.
+# Behold TODO-en som din implementasjonsoppgave; kontrollcellen sjekker resultatet.
+
 # Kjør denne cellen på nytt etter at du har fylt inn funksjonen.
 def truncate(U, s, Vt, k):
     # TODO: returner en matrise med samme form som U @ diag(s) @ Vt.
@@ -85,6 +92,10 @@ singulærverdier som er utelatt. Dette er feilformelen fra [uke 7.5](uke7.qmd#uk
 
 ```{pyodide-python}
 #| label: project7-check
+# En rektangulær test avslører transponeringsfeil som kan skjules i kvadratiske bilder.
+# Vi tester null ledd, alle ledd og feilformelen for hver mellomliggende rang.
+# allclose/isclose tillater små avrundingsavvik; eksakt likhet er feil krav her.
+
 test_A = np.array([[1.,2.,0.],[0.,1.,3.]])
 U,s,Vt = np.linalg.svd(test_A,full_matrices=False)
 assert np.allclose(truncate(U,s,Vt,0),np.zeros_like(test_A))
@@ -119,16 +130,22 @@ og lager figurgrunnlaget. Legg selv til feilberegningen og en resultatoversikt.
 
 ```{pyodide-python}
 #| label: project7-budget
+# SVD beregnes én gang per original; samme budsjett bestemmer rang for alle.
+# Hvert ledd koster m+n+1 tall: to basisvektorer og én singulærverdi.
+# Se på hvor raskt singulærverdiene avtar, og sammenhold dette med synlige detaljer.
+
 images = challenge_images()
 factors = {name:np.linalg.svd(A,full_matrices=False) for name,A in images.items()}
 budget = .25
 m,n = next(iter(images.values())).shape
+# Velg største heltallsrang innen budsjettet og tilgjengelige SVD-komponenter.
 k_budget = min(m,n,int(budget*m*n//(m+n+1)))
 print('Rang under budsjettet:',k_budget)
 reconstructed = {name:truncate(*factors[name],k_budget) for name in images}
 show_images(reconstructed)
 plt.figure(figsize=(7,4))
 for name,(U,s,Vt) in factors.items():
+    # Del på største singulærverdi for å sammenligne avtakning; gulvet er bare visuelt.
     plt.semilogy(np.arange(1,len(s)+1),np.maximum(s/s[0],1e-16),label=name)
 plt.xlabel('Komponent i'); plt.ylabel('σᵢ / σ₁ (visningsgulv 10⁻¹⁶)')
 plt.legend(); plt.grid(); plt.show()
@@ -169,6 +186,10 @@ hvis vi måler mot det rene? Hvorfor?
 
 ```{pyodide-python}
 #| label: project7-denoise
+# SVD beregnes av det støyete bildet, altså dataene vi faktisk ville hatt.
+# Det rene bildet er bare fasit for å undersøke metoden i dette forsøket.
+# Bruk samme støyrealisasjon for alle ranger, slik at bare rangvalget endres.
+
 clean_image = challenge_images()['portrett']  # Bytt senere til 'diagonal'.
 noise_level = .12
 noise_seed = 23  # Første forsøk brukes til å velge rang, ikke som sluttkontroll.
@@ -184,10 +205,15 @@ error_to_clean = [np.linalg.norm(B-clean_image,'fro')/np.linalg.norm(clean_image
 
 ```{pyodide-python}
 #| label: project7-denoise-plot
+# Datafeil måler tilpasning til støyete målinger; fasitfeil måler gjenfinning av signalet.
+# Rangen valgt med fasit er best blant de prøvde rangene på dette forsøket.
+# Den er ikke en ferdig regel for nye data uten fasit; test valget med et nytt frø.
+
 plt.figure()
 plt.plot(ranks,error_to_data,'o-',label='mot støyete data')
 plt.plot(ranks,error_to_clean,'o-',label='mot kjent rent bilde')
 plt.xlabel('Rang'); plt.ylabel('Relativ Frobeniusfeil'); plt.legend(); plt.grid(); plt.show()
+# Dette valget bruker fasiten; skill det fra en rangregel som må fungere uten fasit.
 best = int(np.argmin(error_to_clean))
 show_images({'rent':clean_image,'med støy':noisy_image,f'rang {ranks[best]}':fits[best]})
 ```
@@ -245,10 +271,16 @@ Gjett om en løsning med nesten null residual vil ligne fasiten.
 
 ```{pyodide-python}
 #| label: project7-blur
+# H sender det skarpe signalet til en uskarp måling; observed inneholder også støy.
+# Direkte løsning forsøker å forklare selv svake og støyfulle måleretninger.
+# Se på både residual og faktisk feil, også når løsningen ser urimelig ut.
+
 position,H,truth,clean_data,observed = blur_problem()
 U_h,s_h,Vt_h = np.linalg.svd(H,full_matrices=False)
+# For invertibel H er dette sigma_max/sigma_min; svært små verdier er avrundingsfølsomme.
 print('Kondisjonstall:',s_h[0]/s_h[-1])
 try:
+    # Løs mot målingene, inkludert støyen; en liten residual er derfor ikke nok.
     direct = np.linalg.solve(H,observed)
 except np.linalg.LinAlgError:
     direct = None
@@ -279,6 +311,10 @@ Bruk faktorene direkte, uten å bygge en full inversmatrise.
 
 ```{pyodide-python}
 #| label: project7-tsvd
+# Først måles b langs venstre singularvektorer, så oppheves de beholdte strekkfaktorene.
+# Til slutt bygges løsningen i høyre singularvektorer; de utelatte bidragene settes til null.
+# k teller operatorretninger, og null singulærverdier skal aldri inverteres.
+
 # Kjør cellen på nytt etter at du har fylt inn funksjonen.
 def tsvd(U,s,Vt,b,k):
     # TODO: projiser b, del på de beholdte singulærverdiene, rekonstruer.
@@ -291,6 +327,10 @@ den tredje koordinaten er i nullrommet og settes til null i løsningen med minst
 
 ```{pyodide-python}
 #| label: project7-tsvd-check
+# Her kjenner vi svaret direkte fra 4*x1=8 og 2*x2=6.
+# Tredje koordinat påvirker ikke dataene og skal settes til 0 i denne løsningen.
+# Testen skiller dermed mellom datarommet og løsningsrommet.
+
 H_check = np.array([[4.,0.,0.],[0.,2.,0.]])
 U_check,s_check,Vt_check = np.linalg.svd(H_check,full_matrices=False)
 b_check = np.array([8.,6.])
@@ -302,11 +342,16 @@ print('Null rang, én komponent og rektangulær inversjon er kontrollert.')
 
 ```{pyodide-python}
 #| label: project7-blur-compare
+# Alle rangvalg bruker samme måling; bare antall beholdte retninger endres.
+# Sammenlign hvor godt vi passer målingen med hvor godt vi gjenfinner fasiten.
+# Fasitvalgt rang er en laboratoriekontroll; din regel må også prøves på nye data.
+
 noise_level = .005
 noise_seed = 17
 position,H,truth,clean_data,observed = blur_problem(noise_level=noise_level,seed=noise_seed)
 # Alle metodene bruker akkurat samme observed, også når parametrene endres.
 try:
+    # Løs mot målingene, inkludert støyen; en liten residual er derfor ikke nok.
     direct = np.linalg.solve(H,observed)
     print('Direkte: relativ residual',np.linalg.norm(H@direct-observed)/np.linalg.norm(observed),
           'relativ feil',np.linalg.norm(direct-truth)/np.linalg.norm(truth))
@@ -322,6 +367,7 @@ fig,ax = plt.subplots(1,2,figsize=(10,3))
 ax[0].semilogy(trial_ranks,residuals,'o-',label='relativ residual')
 ax[0].semilogy(trial_ranks,errors,'o-',label='relativ feil')
 ax[0].set_xlabel('Antall beholdte retninger'); ax[0].legend(); ax[0].grid()
+# Beste prøvde rang for denne fasiten og denne støyen, ikke nødvendigvis for nye data.
 best = int(np.argmin(errors))
 ax[1].plot(position,truth,label='fasit')
 ax[1].plot(position,solutions[best],label=f'rang {trial_ranks[best]}')
