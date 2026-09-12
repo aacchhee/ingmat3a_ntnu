@@ -4341,6 +4341,12 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
  <span class="menu-text">Prosjekt 5 – Kan vi stole på rangeringen?</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 6 – Samme løsning, mindre arbeid?</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -4641,8 +4647,8 @@ to use immediately after the page has loaded or the Python environment restarts.
       steps.forEach(step => { step.open = mode === 'reading'; });
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
       status.textContent = mode === 'reading'
-        ? 'Selvstudium: forklaringene er åpne. Prøv før du leser videre.'
-        : 'Forelesning: forklaringene er lukket. Du kan åpne dem enkeltvis.';
+        ? (controls.dataset.readingLabel || 'Selvstudium') + ': forklaringene er åpne. Prøv før du leser videre.'
+        : (controls.dataset.lectureLabel || 'Forelesning') + ': forklaringene er lukket. Du kan åpne dem enkeltvis.';
       try { sessionStorage.setItem('learning-mode', mode); } catch (_) {}
       window.dispatchEvent(new Event('resize'));
     }
