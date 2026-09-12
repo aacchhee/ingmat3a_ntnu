@@ -1,5 +1,7 @@
 ---
 title: "Uke 7 – SVD: viktige retninger og følsomme løsninger"
+resources:
+  - ../assets/svd-visualizer.html
 ---
 
 {{< include ../_includes/linalg/week7_setup.md >}}

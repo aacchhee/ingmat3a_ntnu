@@ -1,5 +1,5 @@
 ---
-title: "Uke 6 – fra gjentatte korreksjoner til minimering"
+title: "Uke 6 – fra gjentatte korreksjoner til konjugert gradient"
 ---
 
 {{< include ../_includes/linalg/week6_setup.md >}}

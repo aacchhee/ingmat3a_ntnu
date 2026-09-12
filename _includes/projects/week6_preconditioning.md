@@ -1,26 +1,33 @@
-<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Oppgaver med forklaringer" role="group" aria-label="Velg prosjektvisning">
+<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg prosjektvisning">
 <button type="button" data-mode="lecture" aria-pressed="true">Oppgaver</button>
-<button type="button" data-mode="reading" aria-pressed="false">Oppgaver med forklaringer</button>
+<button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
 <span role="status" aria-live="polite"></span>
 </div>
 
 ## Kan vi gjøre systemet lettere uten å endre løsningen?
 
-Du skal undersøke **diagonal prekondisjonering av CG**. Vi følger samme
+Du skal undersøke **diagonal prekondisjonering av konjugert gradient (CG)**.
+CG er introdusert i [uke 6](uke6.qmd#uke6-cg); her bruker vi diagonalen i
+matrisen til å endre skaleringen og undersøker om det gir mindre arbeid.
+Vi følger samme
 arbeidsform som i notatene: **forutsi → kjør → beskriv → forklar**.
 Skriv forventningene før du åpner forklaringene eller kjører sammenligningen.
 
 Kjernen er del 1–5. Du får fungerende CG, matriser og plottverktøy.
-Din implementasjonsoppgave er å fullføre PCG fra pseudokoden i del 4.
+Din implementasjonsoppgave er å fullføre **prekondisjonert konjugert gradient
+(PCG)** fra pseudokoden i del 4.
 MINRES er en valgfri utvidelse etter kjernen.
 
 ### Før du begynner
 
-Alle systemer i kjernen er SPD og har kjent løsning $x_*$.
+Alle systemer i kjernen har **symmetrisk positivt definitte (SPD)** matriser:
+$A^T=A$ og $z^TAz>0$ for alle $z\ne0$. De har kjent løsning $x_*$.
 Vi lager $b=Ax_*$ for å kunne måle faktisk feil. Dette er et kontrollert
 forsøk, ikke en påstand om at vi kjenner løsningen i praktiske problemer.
 Matrisene er små og tette for å gjøre alle kontrollene tilgjengelige i nettleseren.
-Ikke bruk disse kjøretidene til å konkludere om store, glisne systemer.
+Et **glissent system** har en matrise med få elementer som er ulike null.
+Arbeid og lagring for slike store systemer kan ikke vurderes ut fra
+kjøretidene til disse små, tette matrisene.
 
 ## 1. Oppdag en forskjell i arbeidsmengde
 
@@ -42,10 +49,10 @@ problems = {'Ujevn skalering': A_scaled, 'Poisson': A_poisson}
 
 Bruk CG-funksjonen nedenfor på begge systemene, foreløpig uten
 prekondisjonering. Noter antall steg og hvilken residual som ble nådd.
-Først etter sammenligningen leser du forklaringen om hvordan CG velger retninger.
+Bruk retningstolkningen fra uke 6 når du forklarer forskjellen etter forsøket.
 
 <details class="reading-step">
-<summary>Arbeidskode: fungerende CG og måling av original residual</summary>
+<summary>Arbeid videre: fungerende CG og måling av original residual</summary>
 
 Denne cellen definerer CG automatisk. Den returnerer hele banen og kontrolltall.
 Vi sjekker $b-Ax$ direkte ved hvert steg, også om algoritmen vedlikeholder
@@ -117,7 +124,7 @@ for name, A in problems.items():
 ```
 
 <details class="reading-step">
-<summary>Forklaring etter forsøket: fra bratteste nedstigning til CG</summary>
+<summary>Arbeid videre: knytt forsøket til CG fra forelesningen</summary>
 
 Bratteste nedstigning velger $p_k=r_k$ hver gang. CG kombinerer den nye
 residualen med forrige søkeretning slik at retningene i eksakt regning er
@@ -140,7 +147,8 @@ I eksakt regning terminerer CG etter høyst $n$ steg for SPD-systemer.
 Flyttallsregning kan kreve flere. Antall steg påvirkes av fordelingen av
 egenverdiene og hvilke feilbidrag starten har, ikke bare dimensjonen.
 Et kondisjonstall alene beskriver ikke hele konvergenshistorikken.
-CG minimerer energifeilen over stadig større søkerom; den euklidske
+**Energifeilen** er $\lVert x-x_*\rVert_A=\sqrt{(x-x_*)^TA(x-x_*)}$.
+CG minimerer den over stadig større rom av tilgjengelige søkeretninger; den euklidske
 residualnormen trenger ikke avta i hvert eneste steg.
 
 </details>
@@ -176,7 +184,7 @@ rettferdig sammenligning av antall steg**: stoppet her bruker en transformert
 residual. Del 4 bruker samme opprinnelige residualkrav i begge metoder.
 
 <details class="reading-step">
-<summary>Forklaring etter forsøket: samme løsning og bevart symmetri</summary>
+<summary>Arbeid videre: samme løsning og bevart symmetri</summary>
 
 Vi setter $x=M^{-1/2}y$ og multipliserer $Ax=b$ fra venstre med $M^{-1/2}$:
 
@@ -235,7 +243,7 @@ plt.show()
 ```
 
 <details class="reading-step">
-<summary>Forklaring etter forsøket: hvorfor kan ett tiltak gi to forskjellige resultater?</summary>
+<summary>Arbeid videre: hvorfor kan ett tiltak gi to forskjellige resultater?</summary>
 
 Første system er $A=DBD$ med $D=\operatorname{diag}(d)$.
 Siden $B$ har diagonal to, er $M=2D^2$ og
@@ -245,11 +253,12 @@ $$M^{-1/2}AM^{-1/2}=B/2.$$
 Den store forskjellen mellom koordinatskaleringene fjernes.
 $B$ er SPD: diagonal to er større enn summen av de to nabobidragene $0.5$,
 og egenverdiene ligger mellom $1.5$ og $2.5$.
-Diagonal kongruens med invertibel $D$ bevarer positiv definitet.
+Skalering på begge sider med invertibel diagonal $D$ bevarer positiv
+definitet: $z^TDBDz=(Dz)^TB(Dz)>0$ for $z\ne0$.
 
 For Poisson-matrisen er $M=2I$, slik at $\widetilde A=A/2$.
 Alle egenverdier halveres, men forholdet mellom største og minste er det
-samme. Diagonal preconditioning endrer derfor ikke vanskeligheten for CG
+samme. Diagonal prekondisjonering endrer derfor ikke vanskeligheten for CG
 i eksakt regning. Små forskjeller i flyttall er ikke en systematisk forbedring.
 
 Poisson-matrisen er SPD fordi, med $z_0=z_{n+1}=0$,
@@ -357,7 +366,7 @@ skalert bidrag fra den forrige retningen. Kontroller mot pseudokoden før du kj�
 </details>
 
 <details class="reading-step">
-<summary>Forklaring steg for steg: hvorfor byttes rᵀr ut med rᵀz?</summary>
+<summary>Arbeid videre: hvorfor byttes rᵀr ut med rᵀz?</summary>
 
 I de nye koordinatene er residualen $\widetilde r=M^{-1/2}r$.
 Dermed er
@@ -368,11 +377,11 @@ Den vanlige CG-metoden i de nye koordinatene kan derfor skrives med
 $\gamma=r^Tz$ i de opprinnelige koordinatene. Første retning blir
 $p=M^{-1}r=z$. Ved å omregne resten av CG får vi pseudokoden over.
 
-En preconditioner skal være billig å anvende og gjøre det transformerte
+En prekondisjonering skal være billig å anvende og gjøre det transformerte
 problemet lettere. Vi beregner ikke $M^{-1}$ eksplisitt. Diagonal $M$ trenger
 $n$ lagrede tall og $n$ divisjoner per anvendelse. Et mer avansert valg kan
 kreve større oppsett og en egen lineær løsning hver gang.
-PCG trenger en fast SPD-preconditioner i denne formuleringen.
+PCG trenger en fast SPD-prekondisjonering i denne formuleringen.
 
 </details>
 
@@ -429,8 +438,8 @@ kontrollene i del 4, to før-og-etter-sammenligninger og en analyse på 400–60
 Bruk figurer med aksetitler og en tabell med kontrolltall. Analysen skal svare på:
 
 1. Hvorfor løser vi fortsatt det samme opprinnelige problemet?
-2. Hvilken endring i spekteret forklarer forbedringen, og hvorfor hjelper
-   diagonal preconditioning ikke nødvendigvis på Poisson-systemet?
+2. Hvilken endring i spekteret (samlingen av egenverdier) forklarer forbedringen, og hvorfor hjelper
+   diagonal prekondisjonering ikke nødvendigvis på Poisson-systemet?
 3. Oppnådde begge metodene samme residualkrav? Hva forteller faktisk feil i tillegg?
 4. Hvilken ekstra kostnad har prekondisjoneringen, og hva må undersøkes
    før vi generaliserer til store, glisne systemer?
@@ -448,12 +457,11 @@ Se [SciPys MINRES-dokumentasjon](https://docs.scipy.org/doc/scipy/reference/gene
 for argumentene i din versjon. Du skal ikke implementere MINRES selv.
 
 En CG-kjøring kan iblant nå løsningen også her; det beviser ikke at CG er
-sikret for indefinite systemer. Undersøk forutsetningene, ikke bare ett utfall.
-Hvis du også tester prekondisjonering av MINRES, må preconditioneren være SPD;
+sikret for systemer der matrisen har både positive og negative egenverdier. Undersøk forutsetningene, ikke bare ett utfall.
+Hvis du også tester prekondisjonering av MINRES, må prekondisjoneringen være SPD;
 den fortegnede diagonalen til denne $A$ er ikke et slikt valg.
 
 ### Tilbake til notatene
 
-Se [uke 6](uke6.qmd#uke6-retning) for gradient, linjeminimering og residual.
-Prosjektet bygger videre på [de eldre SPD/CG-notatene](https://wiki.math.ntnu.no/_media/imax3011/2025h/iterative2-h24.pdf),
-med en mindre kjerne og eksplisitt kontroll av den opprinnelige residualen.
+Se [CG i uke 6](uke6.qmd#uke6-cg) for konjugerte retninger og
+[residualforsøket](uke6.qmd#uke6-residual) for forskjellen mellom residual og feil.

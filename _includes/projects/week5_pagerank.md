@@ -1,3 +1,9 @@
+<div class="learning-mode" data-learning-mode data-reading-label="Arbeid videre" role="group" aria-label="Velg lesemodus">
+<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
+<button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
+<span role="status" aria-live="polite"></span>
+</div>
+
 ## Ukens spørsmål
 
 **Kan en korrekt beregning gi en rangering vi ikke stoler på?**
@@ -25,9 +31,24 @@ modellen; hver oppført lenke fra samme side får lik vekt.
 | E | F |
 | F | D |
 
-Tegn grafen på papir. Ranger sidene før du regner, og begrunn førsteplassen.
-Prøv deretter å flytte en jevn besøksfordeling én runde for hånd.
+En pil fra A til B er en lenke besøkende kan følge. Den går ut fra A og
+inn til B. Ved hvert klikk velges én utgående lenke med lik sannsynlighet.
+Vi følger fordelingen av besøk: én andel per side, alle ikke-negative og med
+sum én. En slik kolonne av andeler er en **sannsynlighetsvektor**.
+
+Ranger sidene før du kjører modellen, og begrunn førsteplassen.
 Hva er forskjellen på å telle innkommende lenker og å telle besøk?
+I matrisen $S$ er kolonne $j$ avsender og rad $i$ mottaker. $S_{ij}$ er
+sannsynligheten for et klikk fra $j$ til $i$. Kolonnene må ha sum én;
+sammen med ikke-negative elementer gjør dette $S$ **kolonnestokastisk**.
+
+<details class="reading-step">
+<summary>Arbeid videre: tegn og kontroller én runde for hånd</summary>
+
+Tegn grafen på papir, og flytt en jevn besøksfordeling én runde langs pilene.
+Ta vare på resultatet som uavhengig kontroll av koden.
+
+</details>
 
 ```{pyodide-python}
 #| label: project-week5-setup
@@ -61,7 +82,8 @@ def transition_matrix(links, u):
 ```
 
 **Kontroller før du går videre:** Alle elementer skal være ikke-negative,
-kolonnesummene skal være én, og $Su$ skal stemme med håndregningen.
+kolonnesummene skal være én. Sammenlign $Su$ med lenkene og den uavhengige
+kontrollen under «Arbeid videre».
 Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.
 
 <details class="learning-hint">
@@ -78,6 +100,9 @@ $(1/6,1/12,1/4,1/4,1/12,1/6)^T$.
 
 ## 2. Beregn og kontroller rangeringen
 
+Vi gir besøkende to valg: følg en lenke med sannsynlighet $\alpha$, eller
+hopp til en side trukket etter sannsynlighetsvektoren $u$. Disse tilfeldige
+hoppene kalles **teleportering**; $\alpha$ kalles **dempingsfaktoren**.
 Bruk først $\alpha=0.85$ og jevn $u$. **Forutsi:** Vil alle sider få
 positiv vekt? Tror du en annen startfordeling endrer sluttresultatet?
 
@@ -101,7 +126,10 @@ def pagerank(S, alpha, u, p0, tol=1e-10, max_steps=10000):
     raise NotImplementedError("Implementer besøksregelen og stoppkriteriet")
 ```
 
-Den stasjonære residualen er
+En fordeling er **stasjonær** når neste oppdatering gir samme andeler.
+Besøkende beveger seg fortsatt; det er fordelingen som er uendret.
+Vi rangerer sidene etter denne fordelingen. **Stasjonær residual** måler
+hvor mye én ny oppdatering ville endre vektoren:
 
 $$r_k=\lVert \alpha Sp_k+(1-\alpha)u-p_k\rVert_1,
 \qquad \lVert z\rVert_1=\sum_i|z_i|.$$
@@ -175,6 +203,10 @@ F-kolonnen lik $u$. Forklar forskjellen mellom denne siden og en selvlenke.
 
 ## 4. La egenverdiene forklare et forsøk
 
+Egenverdiene til en matrise utgjør dens **spektrum**. Den største
+absoluttverdien kalles **spektralradiusen**. Her vil egenverdien én beskrive
+den stasjonære fordelingen; de andre beskriver hvordan avvik fra den endres.
+
 Bruk problemgrafen du valgte, med teleportering. Bygg den lille matrisen
 
 $$G=\alpha S+(1-\alpha)u\mathbf1^T.$$
@@ -201,8 +233,14 @@ lagre $\lVert p_k-p_*\rVert_1$ og plott feilen med logaritmisk vertikal akse.
 Sammenlign forholdet mellom to påfølgende feil med $\beta$ i området før
 avrunding dominerer. Gjenta med en annen start hvis du ikke ser forventet fart.
 
-For **pendlingstilfellet** skal du i tillegg finne begge egenverdiene til
-$G$ for hånd, uttrykt ved $\alpha$, og forklare fortegnet til den andre.
+<details class="reading-step">
+<summary>Arbeid videre: forklar pendlingen for hånd</summary>
+
+For pendlingstilfellet: finn begge egenverdiene til $G$, uttrykt ved
+$\alpha$, og forklar fortegnet til den andre.
+
+</details>
+
 For de andre tilfellene: velg en egenverdi ulik én og kontroller en tilhørende
 numerisk egenvektor med $\lVert Gv-\lambda v\rVert_2$.
 
@@ -284,8 +322,6 @@ Analysen skal bruke konkrete resultater til å skille mellom:
 
 Kode fra en assistent eller et bibliotek må kunne forklares og kontrolleres.
 En rangert liste alene er ikke en faglig begrunnelse.
-
-### Tilbake til forklaringen
 
 Se [uke 5](uke5.qmd#uke5-google) for besøksregelen, egenverdiforklaringen
 og feilgrensen. Prosjektet bruker egne grafer inspirert av

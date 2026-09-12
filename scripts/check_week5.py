@@ -34,7 +34,7 @@ def main():
     _, _, _, status = power(np.diag([1., -1.]), [1., 1.], max_steps=30)
     assert status == "maksimalt antall steg"
 
-    # Check the new visible intermediate calculations in the lecture route.
+    # Check the hand calculations preserved under Arbeid videre.
     A = np.array([[2., 1.], [1., 2.]])
     x = np.array([2., 1.]) / np.sqrt(5)
     rho = x @ A @ x
@@ -45,6 +45,15 @@ def main():
     assert (2.9/3)**135 >= 1e-2 and (2.9/3)**136 < 1e-2
     for k, expected in [(1, [2, 1]), (2, [5, 4]), (3, [14, 13])]:
         assert np.allclose(np.linalg.matrix_power(A, k) @ [1, 0], expected)
+
+    # The explicit perturbation experiment separates exact and near-exact starts.
+    for epsilon in [0., 1e-12]:
+        x = np.array([epsilon, 1.])
+        for _ in range(30):
+            x = np.diag([3., 1.]) @ x
+            x /= np.linalg.norm(x)
+        expected = np.array([3.**30*epsilon, 1.])
+        assert np.allclose(x, expected/np.linalg.norm(expected))
 
     # Independent fixture for the six-page project graph.
     S = np.array([[0, 0, 1, 0, 0, 0],

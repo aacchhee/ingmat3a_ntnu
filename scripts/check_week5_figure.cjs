@@ -125,3 +125,38 @@ assert.equal(resizes.length, beforeHidden);
 graph.clientWidth = 280; graph.clientHeight = 350; resizeCallback();
 assert.deepEqual(resizes.at(-1), [280, 350, true]);
 console.log('Week 5 figure: six presets, normalization, formula, reset/drag, semantic controls, ring layering and hidden-tab resize passed.');
+
+// The network experiment must use exactly the displayed links and preserve mass.
+const networkCode = [...source.matchAll(/```\{\.jsxgraph[^\n]*\}\n([\s\S]*?)\n```/g)][1][1];
+body.children = [];
+const networkGraph = body.appendChild(new Element('div'));
+networkGraph.className = 'jxgbox'; networkGraph.clientWidth = 600; networkGraph.clientHeight = 340;
+const networkBoard = {
+  create() { return {}; }, update() {}, fullUpdate() {}, setBoundingBox() {}, resizeContainer() {}
+};
+const network = vm.createContext({
+  document, window: {addEventListener() {}}, BOARDID: 'network-test',
+  ResizeObserver: class { observe() {} },
+  JXG: {JSXGraph: {initBoard: () => networkBoard}}
+});
+vm.runInContext(networkCode, network);
+const nextRound = document.querySelector('.net-step');
+nextRound.click();
+[3/8, 1/8, 3/8, 1/8].forEach((expected, i) => close(network.distribution[i], expected));
+assert.equal(network.round, 1);
+assert.equal(document.querySelector('.net-status').getAttribute('aria-live'), 'polite');
+document.querySelector('.net-all').click();
+assert.equal(network.round, 0);
+nextRound.click();
+[0, .5, .5, 0].forEach((expected, i) => close(network.distribution[i], expected));
+nextRound.click();
+[.25, 0, .5, .25].forEach((expected, i) => close(network.distribution[i], expected));
+for (let k=0; k<4; k++) document.querySelector('.net-many').click();
+[1/3, 1/6, 1/3, 1/6].forEach((expected, i) => close(network.distribution[i], expected));
+close(network.distribution.reduce((a,b) => a+b, 0), 1);
+assert(network.distribution.every(value => value >= 0));
+document.querySelector('.net-even').click();
+assert.equal(document.querySelector('.net-even').getAttribute('aria-pressed'), 'true');
+network.distribution.forEach(value => close(value, .25));
+assert.equal(network.round, 0);
+console.log('Week 5 network: both starts, one-step link distribution, repeated rounds, stationarity and mass preservation passed.');

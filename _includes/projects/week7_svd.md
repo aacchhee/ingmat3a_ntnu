@@ -1,12 +1,12 @@
-<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Oppgaver med forklaringer" role="group" aria-label="Velg prosjektvisning">
+<div class="learning-mode" data-learning-mode data-lecture-label="Oppgaver" data-reading-label="Arbeid videre" role="group" aria-label="Velg prosjektvisning">
 <button type="button" data-mode="lecture" aria-pressed="true">Oppgaver</button>
-<button type="button" data-mode="reading" aria-pressed="false">Oppgaver med forklaringer</button>
+<button type="button" data-mode="reading" aria-pressed="false">Arbeid videre</button>
 <span role="status" aria-live="polite"></span>
 </div>
 
 ## Oppdrag: behold informasjonen som betyr noe
 
-Du skal anbefale en SVD-basert forenkling under et gitt budsjett, og vise
+Du skal anbefale en forenkling med singulærverdidekomposisjon (SVD) under et gitt budsjett, og vise
 både hva den lykkes med og når den svikter. Start med en hypotese, gjør
 forsøket, forklar resultatet og knytt det til teorien i [uke 7](uke7.qmd).
 
@@ -15,13 +15,15 @@ støyfjerning i bilder. B undersøker inversjon av et uskarpt signal og gir
 en direkte videreføring av residual, feil og kondisjonering fra uke 6.
 Begge er fullverdige valg; du skal ikke gjøre begge.
 
-Oppgavevisningen gir felles arbeidsløp. «Oppgaver med forklaringer» åpner
+Oppgavevisningen gir felles arbeidsløp. «Arbeid videre» åpner
 støtte underveis. Hint åpnes manuelt etter eget forsøk. Ferdige hjelpere
-tar seg av forsøksdata og visning; du implementerer selve trunkeringen.
+tar seg av forsøksdata og visning; du implementerer selve **trunkeringen**,
+altså å beholde bare de første leddene i en SVD-sum. I [uke 7.3](uke7.qmd#uke7-svd)
+er $U$ og $V$ de ortonormale basisene på hver side, og singulærverdiene
+er strekkfaktorene, ordnet fra størst til minst.
 
-Prosjektet bygger videre på [det tidligere SVD-challenget](https://wiki.math.ntnu.no/_media/imax3011/2025h/svd_challenge-1.pdf).
-Portrettet er fra samme oppgave, redusert til $96\times96$ gråtoner.
-De andre bildene lages lokalt. Ingen egne bilder eller nedlastinger trengs.
+Alle forsøksbilder er klare i siden. Portrett: [NTNU, mm.gif](https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif),
+tilpasset til $96\times96$ gråtoner. De andre bildene lages lokalt.
 
 ## 1. Forutsi før du komprimerer
 
@@ -48,6 +50,10 @@ Noter forventningen også når du er usikker: et avkreftet gjett er et resultat.
 
 ## 2. Lag rekonstruksjonen og kontroller den
 
+NumPy gir `U, s, Vt`, der `s` inneholder singulærverdiene og `Vt` allerede
+er transponert. En komponent er $\sigma_i u_i v_i^T$: ett rang-1-mønster
+med sin vekt.
+
 Implementer `truncate(U, s, Vt, k)` som bruker de første $k$ komponentene.
 Bruk NumPy-slicing og matrisemultiplikasjon. Den skal også virke for $k=0$
 og $k=\min(m,n)$. Ikke kall `rank_image` i din implementasjon.
@@ -62,6 +68,12 @@ def truncate(U, s, Vt, k):
 
 Kjør så kontrollen. Bruk en rektangulær matrise slik at en utilsiktet
 transponering ikke skjules av kvadratiske dimensjoner.
+
+**Frobeniusnormen** er kvadratroten av summen av alle kvadrerte
+matriseelementer. Den gir en samlet pikselfeil når vi bruker den på
+$A-A_k$. Den **relative** feilen deler dette på størrelsen til originalen.
+Kontrollen sammenligner kvadrert pikselfeil med summen av kvadrerte
+singulærverdier som er utelatt. Dette er feilformelen fra [uke 7.5](uke7.qmd#uke7-rang).
 
 ```{pyodide-python}
 #| label: project7-check
@@ -212,11 +224,17 @@ singulærverdikurven alene er ingen garanti for riktig skille mellom signal og s
 ### Opplev problemet
 
 Her er matrisen $H$ en **uskarphetsoperator**: $b=Hx_*+\eta$.
-Vi tar SVD av $H$, ikke av et bilde. De små singulærverdiene beskriver
-signalretninger som målingen nesten visker ut.
+Her er $x_*$ det skarpe signalet, $b$ målingen og $\eta$ målestøy.
+Produktet $Hx_*$ gir et uskarpt signal ved å blande verdier fra naboposisjoner.
+Vi tar SVD av $H$. Små singulærverdier viser signalretninger som blir
+svært svake etter denne transformasjonen.
 
 Forsøket gir en kjent fasit, et normalisert Gauss-filter og fast tilfeldig
-målestøy. Gjett om en løsning med nesten null residual vil ligne fasiten.
+målestøy. **Residualen** $b-Hx$ måler avviket mot de observerte dataene;
+**løsningsfeilen** $x-x_*$ måler avviket mot det kjente skarpe signalet.
+**Kondisjonstallet** er forholdet mellom største og minste singulærverdi;
+et stort forhold betyr at inversjon kan forsterke relative datafeil mye.
+Gjett om en løsning med nesten null residual vil ligne fasiten.
 
 ```{pyodide-python}
 #| label: project7-blur
@@ -241,7 +259,8 @@ plt.tight_layout(); plt.show()
 
 ### Forklar og bygg en mer forsiktig inversjon
 
-Prosjiser først data på $u_i$. Rekonstruksjon av denne komponenten deler
+Finn først datakoordinaten $u_i^Tb$ langs $u_i$ ved hjelp av indreproduktet.
+Dette er en ortogonal projeksjon fra uke 4. Rekonstruksjon av komponenten deler
 på $\sigma_i$. Derfor kan små målefeil gi store signalutslag:
 
 $$x_k=\sum_{i=1}^k\frac{u_i^Tb}{\sigma_i}v_i.$$
@@ -303,7 +322,7 @@ ikke bør tolkes som nøyaktige fysiske størrelser. Direkte løsning brukes
 som et bevisst feilforsøk. En beregning kan stoppe, eller gi enorme verdier.
 Begge deler er relevante observasjoner, ikke noe du skal skjule.
 
-TSVD begrenser støyforsterkning ved å forkaste retninger. Men også fasitens
+Trunkert SVD, forkortet TSVD, begrenser støyforsterkning ved å forkaste retninger. Men også fasitens
 komponenter i disse retningene forsvinner. For liten rang gir derfor en
 for enkel løsning. Rangvalget balanserer tapt signal mot forsterket støy.
 En kjent fasit lar oss måle dette i laboratoriet; reelle data krever et
