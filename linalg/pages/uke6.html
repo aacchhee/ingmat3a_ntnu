@@ -4460,8 +4460,9 @@ Gå i dybden
 </div>
 <section id="fra-gjentatte-korreksjoner-til-cg" class="level3">
 <h3 class="anchored" data-anchor-id="fra-gjentatte-korreksjoner-til-cg">Fra gjentatte korreksjoner til CG</h3>
-<p>Hvordan kan vi løse <span class="math inline">\(Ax=b\)</span> uten å faktorisere hele matrisen? Vi henter kort fram Jacobi og Gauss–Seidel, undersøker hva som styrer konvergensen, og prøver <strong>konjugert gradient (CG)</strong>: en metode som bygger nye søkeretninger ut fra informasjonen i tidligere steg.</p>
-<p>I <strong>Forelesning</strong> kjører vi korte demonstrasjoner og diskuterer det vi ser. <strong>Gå i dybden</strong> åpner oppgaver, mellomregninger og forklaringer til hvert forsøk. Prøv oppgavene før du åpner «Slik kan du tenke».</p>
+<p>I uke 5 brukte vi gjentatte matriseprodukter til å finne en retning som stabiliserte seg. Nå skal gjentakelse hjelpe oss med et annet mål: å løse <span class="math inline">\(Ax=b\)</span>. Vi starter med et forslag og korrigerer det, i stedet for å finne hele løsningen i én direkte beregning. Det er særlig interessant for store systemer der matrise–vektor-produkter er billige, men faktorisering krever mye arbeid eller lagring.</p>
+<p><strong>Hvordan vet vi om korreksjonene bringer oss nærmere løsningen – og kan vi velge dem smartere?</strong> Vi henter kort fram Jacobi og Gauss–Seidel, undersøker hva som styrer konvergensen, og prøver <strong>konjugert gradient (CG)</strong>: en metode som bygger nye søkeretninger ut fra informasjonen i tidligere steg.</p>
+<p>I <strong>Forelesning</strong> kjører vi korte demonstrasjoner og diskuterer det vi ser. <strong>Gå i dybden</strong> åpner oppgaver, mellomregninger og forklaringer til hvert forsøk i ett samlet felt. Der følger <strong>Prøv selv</strong>, <strong>Regnegangen</strong> og <strong>Hva forklarer dette?</strong> etter hverandre, uten flere felt å åpne.</p>
 <ul>
 <li><a href="#uke6-gs">Husk oppdateringene</a> og <a href="#uke6-fikspunkt">følg feilen</a>.</li>
 <li><a href="#uke6-residual">Skill residual fra feil</a>.</li>
@@ -4477,7 +4478,8 @@ Gå i dybden
 </div>
 <section id="demonstrasjon-når-bruker-vi-den-nye-verdien" class="level3">
 <h3 class="anchored" data-anchor-id="demonstrasjon-når-bruker-vi-den-nye-verdien">Demonstrasjon — når bruker vi den nye verdien?</h3>
-<p>For systemet <span class="math inline">\(3u+v=5\)</span>, <span class="math inline">\(u+2v=5\)</span> er oppdateringene</p>
+<p>Jacobi og Gauss–Seidel er kjent fra numerikk. Vi henter fram én idé: <strong>bruk én likning til å korrigere én ukjent mens de andre holdes faste.</strong> Et forslag trenger ikke oppfylle alle likningene samtidig. Etter en korreksjon kan én likning stemme, men neste korreksjon kan forstyrre den igjen. Derfor gjentar vi runden.</p>
+<p>For systemet <span class="math inline">\(3u+v=5\)</span>, <span class="math inline">\(u+2v=5\)</span> isolerer vi henholdsvis <span class="math inline">\(u\)</span> og <span class="math inline">\(v\)</span>. Dette gir oppdateringene</p>
 <p><span class="math display">\[\begin{array}{ll}
 \text{Jacobi:}&amp;u_{k+1}=(5-v_k)/3,\quad v_{k+1}=(5-u_k)/2,\\
 \text{Gauss–Seidel (GS):}&amp;u_{k+1}=(5-v_k)/3,\quad v_{k+1}=(5-u_{k+1})/2.
@@ -4490,22 +4492,20 @@ Gå i dybden
 <summary>
 Gå i dybden: gjenskap de første oppdateringene
 </summary>
+<p><strong>Prøv selv</strong></p>
 <ol type="1">
 <li>Isoler <span class="math inline">\(u\)</span> og <span class="math inline">\(v\)</span> i hver sin likning, og gjør ett Jacobi-sveip fra null.</li>
 <li>Gjør to GS-sveip. Marker hvor en ny verdi brukes.</li>
 <li>Kontroller at <span class="math inline">\((1,2)\)</span> løser begge de opprinnelige likningene.</li>
 </ol>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke
-</summary>
+<p><strong>Regnegangen</strong></p>
 <p>Første likning gir <span class="math inline">\(u=(5-v)/3\)</span>, andre gir <span class="math inline">\(v=(5-u)/2\)</span>. Jacobi gir <span class="math inline">\((5/3,5/2)\)</span> i første sveip. GS gir</p>
 <p><span class="math display">\[(0,0)\longmapsto(5/3,5/3)\longmapsto(10/9,35/18).\]</span></p>
+<p><strong>Hva forklarer dette?</strong></p>
 <p>Generelt er GS-oppdateringen</p>
 <p><span class="math display">\[x_i^{(k+1)}=\frac{b_i-\sum_{j&lt;i}a_{ij}x_j^{(k+1)}
 -\sum_{j&gt;i}a_{ij}x_j^{(k)}}{a_{ii}},\]</span></p>
 <p>som krever <span class="math inline">\(a_{ii}\ne0\)</span>. Koden bruker den likeverdige korreksjonen <span class="math inline">\(x_i\leftarrow x_i+(b_i-(Ax)_i)/a_{ii}\)</span> og overskriver én koordinat om gangen. <code>gs_path</code> lagrer alle koordinatoppdateringer; <code>path[::n]</code> velger hele sveip.</p>
-</details>
 </details>
 </section>
 </div>
@@ -4515,36 +4515,38 @@ Slik kan du tenke
 </div>
 <section id="demonstrasjon-flere-sveip-er-ikke-alltid-bedre" class="level3">
 <h3 class="anchored" data-anchor-id="demonstrasjon-flere-sveip-er-ikke-alltid-bedre">Demonstrasjon — flere sveip er ikke alltid bedre</h3>
-<p>Vi bruker kjent løsning <span class="math inline">\(x_*=(1,2)^T\)</span> og lager <span class="math inline">\(b=Ax_*\)</span> for hver matrise. <strong>Hvilket forløp tror dere vokser?</strong></p>
+<p>I første forsøk hjalp det å gjenta sveipene. Nå beholder vi samme oppdateringsregel, men endrer koblingen mellom de ukjente. Kan en korreksjon forstyrre den andre likningen så mye at neste korreksjon blir enda større?</p>
+<p>Vi bruker kjent løsning <span class="math inline">\(x_*=(1,2)^T\)</span> og lager <span class="math inline">\(b=Ax_*\)</span> for hver matrise. Slik vet vi hvor kurvene skal ende, og kan måle feilen direkte. <strong>Hvilket forløp tror dere vokser?</strong></p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Kurvene viser at feilen kan avta eller vokse. Vi skriver nå oppdateringen som algebra for å forklare forskjellen; matrisen som styrer feilen, kan deretter finnes ved regning.</p>
-<p>Et GS-sveip kan skrives <span class="math inline">\(x_{k+1}=Tx_k+c\)</span>. Løsningen er et <strong>fikspunkt</strong>: den endres ikke av oppdateringen, altså <span class="math inline">\(x_*=Tx_*+c\)</span>. <strong>Feilen</strong> <span class="math inline">\(e_k=x_k-x_*\)</span> følger derfor <span class="math inline">\(e_{k+1}=Te_k\)</span>.</p>
+<p>Et GS-sveip kan skrives <span class="math inline">\(x_{k+1}=Tx_k+c\)</span>. Løsningen er et <strong>fikspunkt</strong>: den endres ikke av oppdateringen, altså <span class="math inline">\(x_*=Tx_*+c\)</span>. <strong>Feilen</strong> <span class="math inline">\(e_k=x_k-x_*\)</span> følger derfor</p>
+<p><span class="math display">\[e_{k+1}=(Tx_k+c)-(Tx_*+c)=T(x_k-x_*)=Te_k.\]</span></p>
+<p>Dermed er <span class="math inline">\(e_k=T^ke_0\)</span>. Dette er forbindelsen til uke 5: der fulgte vi hvilket vektorbidrag som tok over; nå ønsker vi at <strong>alle feilbidrag skal forsvinne</strong>. <span class="math inline">\(T\)</span> beskriver ett helt sveip, mens <span class="math inline">\(A\)</span> beskriver det opprinnelige likningssystemet. De to matrisene har forskjellige roller.</p>
 <p>Her kommer egenverdiene tilbake. For første matrise har <strong>iterasjonsmatrisen <span class="math inline">\(T\)</span></strong> egenverdier <span class="math inline">\(0\)</span> og <span class="math inline">\(1/6\)</span>; for den andre <span class="math inline">\(0\)</span> og <span class="math inline">\(4\)</span>. Feil langs en egenvektor blir ganget med den tilhørende egenverdien per sveip.</p>
 <p><strong>Spektralradiusen</strong> er største absoluttverdi av egenverdiene: <span class="math inline">\(\rho(T)=\max_i|\lambda_i(T)|\)</span>. Iterasjonen konvergerer fra enhver start akkurat når <span class="math inline">\(\rho(T)&lt;1\)</span>. Det er <span class="math inline">\(T\)</span> vi undersøker her. <strong>Hvorfor er én vellykket kjøring ikke nok til å si at alle starter virker?</strong></p>
 <details class="reading-step">
 <summary>
 Gå i dybden: finn matrisen som oppdaterer feilen
 </summary>
+<p><strong>Prøv selv</strong></p>
 <ol type="1">
 <li>Sett GS-uttrykket for <span class="math inline">\(u_{k+1}\)</span> inn i uttrykket for <span class="math inline">\(v_{k+1}\)</span> for <span class="math inline">\(A_a\)</span>. Les av <span class="math inline">\(T\)</span> og <span class="math inline">\(c\)</span>.</li>
 <li>Gjør det samme for <span class="math inline">\(A_b\)</span>, der <span class="math inline">\(b=(5,4)^T\)</span>.</li>
 <li>Finn <span class="math inline">\(T\)</span> og <span class="math inline">\(\rho(T)\)</span> når <span class="math inline">\(A=\begin{bmatrix}4&amp;1\\1&amp;3\end{bmatrix}\)</span>. Avhenger <span class="math inline">\(T\)</span> av <span class="math inline">\(b\)</span>?</li>
 </ol>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke
-</summary>
+<p><strong>Regnegangen</strong></p>
 <p>For første system er <span class="math inline">\(u_{k+1}=5/3-v_k/3\)</span> og <span class="math inline">\(v_{k+1}=5/3+v_k/6\)</span>:</p>
 <p><span class="math display">\[T_a=\begin{bmatrix}0&amp;-1/3\\0&amp;1/6\end{bmatrix},\quad c_a=(5/3,5/3)^T.\]</span></p>
 <p>For andre er <span class="math inline">\(u_{k+1}=5-2v_k\)</span>, <span class="math inline">\(v_{k+1}=-6+4v_k\)</span>:</p>
 <p><span class="math display">\[T_b=\begin{bmatrix}0&amp;-2\\0&amp;4\end{bmatrix},\quad c_b=(5,-6)^T.\]</span></p>
+<p><strong>Hva forklarer dette?</strong></p>
 <p>Å trekke <span class="math inline">\(x_*=Tx_*+c\)</span> fra iterasjonen gir <span class="math inline">\(e_{k+1}=Te_k\)</span> og <span class="math inline">\(e_k=T^ke_0\)</span>. En spesiell start kan mangle feilbidraget langs en voksende egenvektor. Når en egenvektorbasis finnes, skaleres hvert bidrag med <span class="math inline">\(\lambda_i^k\)</span>. Kriteriet <span class="math inline">\(\rho(T)&lt;1\)</span> gjelder også uten en egenvektorbasis.</p>
 <p>I oppgave 3 er <span class="math inline">\(T=\begin{bmatrix}0&amp;-1/4\\0&amp;1/12\end{bmatrix}\)</span> og <span class="math inline">\(\rho(T)=1/12\)</span>. <span class="math inline">\(b\)</span> endrer fikspunktet, men ikke <span class="math inline">\(T\)</span>.</p>
+<p><strong>Fra eksemplet til en generell matrise</strong></p>
 <p>For generell <span class="math inline">\(A=D+L+U\)</span> er <span class="math inline">\(D\)</span> diagonalen, <span class="math inline">\(L\)</span> den strengt nedre delen og <span class="math inline">\(U\)</span> den strengt øvre delen, med opprinnelige fortegn. Da er</p>
 <p><span class="math display">\[(D+L)x_{k+1}=b-Ux_k,\qquad T=-(D+L)^{-1}U.\]</span></p>
 <p>Dette er et analyseuttrykk; implementasjonen trenger ikke en eksplisitt invers. For Jacobi er <span class="math inline">\(T=-D^{-1}(L+U)\)</span>.</p>
-</details>
 </details>
 </section>
 </div>
@@ -4554,33 +4556,33 @@ Slik kan du tenke
 </div>
 <section id="demonstrasjon-liten-rest-stor-feil" class="level3">
 <h3 class="anchored" data-anchor-id="demonstrasjon-liten-rest-stor-feil">Demonstrasjon — liten rest, stor feil?</h3>
+<p>Hittil har vi målt avstanden til en løsning vi selv la inn. I et virkelig problem er løsningen ukjent – ellers hadde vi ikke trengt iterasjonen. Vi trenger derfor en kontroll som bare bruker <span class="math inline">\(A\)</span>, <span class="math inline">\(b\)</span> og forslaget <span class="math inline">\(x\)</span>.</p>
 <p><strong>Residualen</strong> <span class="math inline">\(r=b-Ax\)</span> er det som mangler for at forslaget <span class="math inline">\(x\)</span> skal oppfylle likningene. Feilen <span class="math inline">\(e=x-x_*\)</span> er forskjellen mellom forslaget og den ukjente løsningen. Vi kjenner <span class="math inline">\(x_*\)</span> i dette forsøket og kan sammenligne begge. <strong>Tror dere forslaget med minst residual også ligger nærmest løsningen?</strong></p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Matrisen demper feil i andre koordinat kraftig. En stor feil kan dermed gi liten residual: <span class="math inline">\(r=-Ae\)</span>. Residualen kan vi beregne i praksis; faktisk feil krever at løsningen er kjent.</p>
+<p>Transformasjonen <span class="math inline">\(x\mapsto Ax\)</span> demper feil i andre koordinat kraftig. En stor feil kan dermed gi liten residual: <span class="math inline">\(r=-Ae\)</span>. Residualen kan vi beregne i praksis; faktisk feil krever at løsningen er kjent.</p>
 <p>Et mulig stoppkrav er</p>
 <p><span class="math display">\[\lVert b-Ax_k\rVert_2\le\text{atol}+\text{rtol}\lVert b\rVert_2,\]</span></p>
-<p>med absolutt toleranse <code>atol</code>, relativ toleranse <code>rtol</code> og en øvre grense for antall steg. <strong>Hva ville dere rapportert hvis maksimalgrensen nås før residualkravet er oppfylt?</strong></p>
+<p>Her er <code>atol</code> en absolutt feilmargin for residualen, mens <code>rtol</code> setter marginen i forhold til størrelsen på høyresiden. Dette er et krav til hvor godt likningene er oppfylt, ikke en garanti for like mange riktige sifre i <span class="math inline">\(x\)</span>. Vi bruker også en øvre grense for antall steg. <strong>Hva ville dere rapportert hvis maksimalgrensen nås før residualkravet er oppfylt?</strong></p>
 <details class="reading-step">
 <summary>
 Gå i dybden: residual, feil og følsomhet
 </summary>
+<p><strong>Prøv selv</strong></p>
 <ol type="1">
 <li>Regn residual og feil for begge forslagene i forsøket.</li>
 <li>Forklar hvorfor null residual gir riktig løsning når <span class="math inline">\(A\)</span> er invertibel.</li>
 <li>Bruk <span class="math inline">\(e=-A^{-1}r\)</span> til å begrunne hvorfor liten residual ikke alene er nok.</li>
 </ol>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke
-</summary>
+<p><strong>Regnegangen</strong></p>
 <p>Her er <span class="math inline">\(b=(1,10^{-4})^T\)</span>. Første forslag har <span class="math inline">\(r=(0,10^{-4})^T\)</span>, <span class="math inline">\(e=(0,-1)^T\)</span>. Andre har <span class="math inline">\(r=(0.01,0)^T\)</span>, <span class="math inline">\(e=(-0.01,0)^T\)</span>. Derfor har det første minst residual og størst feil.</p>
+<p><strong>Hva forklarer dette?</strong></p>
 <p>For invertibel <span class="math inline">\(A\)</span> gir <span class="math inline">\(e=-A^{-1}r\)</span> at <span class="math inline">\(\lVert e\rVert_2\le\lVert A^{-1}\rVert_2\lVert r\rVert_2\)</span>. Når <span class="math inline">\(b\ne0\)</span>, får vi</p>
 <p><span class="math display">\[\frac{\lVert e\rVert_2}{\lVert x_*\rVert_2}
 \le\kappa_2(A)\frac{\lVert r\rVert_2}{\lVert b\rVert_2},\qquad
 \kappa_2(A)=\lVert A\rVert_2\lVert A^{-1}\rVert_2.\]</span></p>
+<p>Her er matrisenormen <span class="math inline">\(\lVert A\rVert_2\)</span> den største faktoren som transformasjonen kan forstørre en vektorlengde med: <span class="math inline">\(\lVert A\rVert_2=\max_{z\ne0}\lVert Az\rVert_2/\lVert z\rVert_2\)</span>.</p>
 <p><strong>Kondisjonstallet</strong> <span class="math inline">\(\kappa_2(A)\)</span> beskriver mulig forsterkning av relative avvik. Her er det <span class="math inline">\(10^4\)</span>. Uke 7 forklarer dette med SVD for generelle matriser. Hvis maksimalgrensen nås, rapporterer vi manglende konvergens og oppnådd residual. En liten endring i <span class="math inline">\(x\)</span> mellom to steg er heller ikke et sikkert stopptegn.</p>
-</details>
 </details>
 </section>
 </div>
@@ -4590,29 +4592,31 @@ Slik kan du tenke
 </div>
 <section id="demonstrasjon-samme-løsning-et-annet-bilde" class="level3">
 <h3 class="anchored" data-anchor-id="demonstrasjon-samme-løsning-et-annet-bilde">Demonstrasjon — samme løsning, et annet bilde</h3>
-<p>Kurvene under forbinder punkter med samme verdi av funksjonen <span class="math inline">\(\phi(x)=\tfrac12x^TAx-b^Tx\)</span>. <strong>Hvor ser løsningen ut til å ligge?</strong></p>
+<p>Vi har nå en enkel metode og en kontroll av svaret. Men GS velger retning etter koordinataksene, uavhengig av hvordan problemet ser ut. For å finne bedre retninger trenger vi et geometrisk bilde av hva vi prøver å oppnå.</p>
+<p>Vi går tilbake til systemet i 6.1. I figuren tegner vi <strong>nivåkurver</strong>: kurver som forbinder punkter med samme verdi av funksjonen <span class="math inline">\(\phi(x)=\tfrac12x^TAx-b^Tx\)</span>. <strong>Hvor ser løsningen ut til å ligge?</strong></p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Vi bruker <strong>symmetrisk positivt definitte (SPD)</strong> matriser: <span class="math inline">\(A^T=A\)</span> og <span class="math inline">\(z^TAz&gt;0\)</span> for alle <span class="math inline">\(z\ne0\)</span>. For en reell symmetrisk matrise betyr dette at alle egenverdiene er positive.</p>
-<p>Da ligger løsningen av <span class="math inline">\(Ax=b\)</span> i det eneste minimumet til <span class="math inline">\(\phi\)</span>. GS beveger seg langs én koordinat om gangen. <strong>Kunne vi komme raskere fram ved å velge andre retninger?</strong> Det prøver vi i neste fane.</p>
+<p>Denne forutsetningen gjør grafen til <span class="math inline">\(\phi\)</span> til en skål med én bunn. Hvorfor er bunnen akkurat løsningen? Med <span class="math inline">\(e=x-x_*\)</span> får vi</p>
+<p><span class="math display">\[\phi(x)-\phi(x_*)=\tfrac12e^TAe&gt;0\qquad(x\ne x_*).\]</span></p>
+<p>Alle andre punkter har altså høyere funksjonsverdi. Å løse <span class="math inline">\(Ax=b\)</span> er derfor det samme som å minimere <span class="math inline">\(\phi\)</span> for disse matrisene. Vi trenger ikke en ny oppgave; vi har fått et nytt bilde av den samme.</p>
+<p>GS finner minimum langs én koordinatretning om gangen, med de andre koordinatene faste. <strong>Kunne vi komme raskere fram ved å velge andre retninger?</strong> Det prøver vi i neste fane.</p>
 <details class="reading-step">
 <summary>
 Gå i dybden: hvorfor er løsningen et minimum?
 </summary>
+<p><strong>Prøv selv</strong></p>
 <ol type="1">
 <li>Utvid <span class="math inline">\(\phi(u,v)\)</span> for matrisen i forsøket.</li>
 <li>Sett <span class="math inline">\(x=x_*+e\)</span> og vis at <span class="math inline">\(\phi(x)-\phi(x_*)=\tfrac12e^TAe\)</span>.</li>
 <li>Finn en symmetrisk matrise med positiv diagonal som likevel ikke er SPD.</li>
 </ol>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke
-</summary>
+<p><strong>Regnegangen</strong></p>
 <p>Her er <span class="math inline">\(\phi(u,v)=\tfrac32u^2+uv+v^2-5u-5v\)</span>. Symmetrien slår sammen kryssleddene når vi utvider rundt <span class="math inline">\(x_*\)</span>:</p>
 <p><span class="math display">\[\phi(x_*+e)=\phi(x_*)+e^TAx_*-b^Te+\tfrac12e^TAe.\]</span></p>
+<p><strong>Hva forklarer dette?</strong></p>
 <p>Siden <span class="math inline">\(Ax_*=b\)</span>, forsvinner de to midterste leddene. Positiv definitet gir <span class="math inline">\(\phi(x)-\phi(x_*)&gt;0\)</span> for alle <span class="math inline">\(x\ne x_*\)</span>, så minimumet er entydig. Med <span class="math inline">\(A=Q\Lambda Q^T\)</span> og <span class="math inline">\(z=Q^Te\)</span> er <span class="math inline">\(e^TAe=\sum_i\lambda_i z_i^2\)</span>: egenverdiene forteller hvor raskt funksjonen stiger i hver egenvektorretning.</p>
 <p>Matrisen <span class="math inline">\(\begin{bmatrix}1&amp;2\\2&amp;1\end{bmatrix}\)</span> har positiv diagonal, men egenverdier <span class="math inline">\(3\)</span> og <span class="math inline">\(-1\)</span>. For <span class="math inline">\(z=(1,-1)^T\)</span> er <span class="math inline">\(z^TAz=-2\)</span>. Positiv diagonal alene er derfor ikke nok.</p>
-</details>
 </details>
 </section>
 </div>
@@ -4625,22 +4629,26 @@ Slik kan du tenke
 </div>
 <section id="demonstrasjon-velg-retninger-med-hukommelse" class="level3">
 <h3 class="anchored" data-anchor-id="demonstrasjon-velg-retninger-med-hukommelse">Demonstrasjon — velg retninger med hukommelse</h3>
+<p>I en lang, smal skål kan lokale forbedringer gi en omvei: vi krysser dalen flere ganger mens vi langsomt beveger oss mot bunnen. Nå spør vi om en metode kan ta vare på det den allerede har oppnådd i tidligere retninger.</p>
 <p>Vi sammenligner to metoder på samme SPD-system. <strong>Bratteste nedstigning</strong> velger residualen som retning og finner beste punkt langs den linjen. <strong>Konjugert gradient (CG)</strong> bruker også forrige retning når den velger den neste. <strong>Hvilken bane tror dere slipper unna sikksakk på den smale skålen?</strong></p>
+<p>Venstre bilde har to like egenverdier; høyre har én liten egenverdi og derfor en retning der skålen stiger mye langsommere. Begge metodene starter i origo og søker samme minimum. Følg både banene og antall CG-steg.</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 </section>
 <section id="hva-tar-cg-vare-på" class="level3">
 <h3 class="anchored" data-anchor-id="hva-tar-cg-vare-på">Hva tar CG vare på?</h3>
+<p>Bratteste nedstigning følger residualen fordi <span class="math inline">\(-r=Ax-b\)</span> er <strong>gradienten</strong> til <span class="math inline">\(\phi\)</span>: vektoren av de partiellderiverte, som peker i retningen for raskest lokal økning. <span class="math inline">\(r\)</span> peker dermed mot raskest lokal nedgang. Men den retningen trenger ikke peke rett mot bunnen.</p>
 <p>En <strong>søkeretning</strong> <span class="math inline">\(p_k\)</span> angir linjen vi beveger oss langs: <span class="math inline">\(x_{k+1}=x_k+\alpha_kp_k\)</span>, der <span class="math inline">\(\alpha_k\)</span> er <strong>steglengden</strong>. CG starter med <span class="math inline">\(p_0=r_0\)</span> og kombinerer senere en ny residual med forrige retning.</p>
 <p>For SPD kan vi måle ortogonalitet med indreproduktet <span class="math inline">\(\langle p,q\rangle_A=p^TAq\)</span>. Retninger som oppfyller</p>
 <p><span class="math display">\[p_i^TAp_j=0\qquad(i\ne j)\]</span></p>
-<p>kalles <strong>A-konjugerte</strong>. De trenger ikke stå vinkelrett i det vanlige plottet. CG velger slike retninger i eksakt regning. Når metoden finner minimum langs en ny retning, bevarer den minimumsegenskapen langs de tidligere retningene. Det er dette «hukommelsen» brukes til.</p>
+<p>kalles <strong>A-konjugerte</strong>. De trenger ikke stå vinkelrett i det vanlige plottet. CG velger slike retninger i eksakt regning. Når metoden finner minimum langs en ny retning, bevarer den minimumsegenskapen langs de tidligere retningene. Det er dette «hukommelsen» brukes til. Vanlig ortogonalitet fra uke 4 måler vinkler med <span class="math inline">\(p^Tq\)</span>; her tilpasses indreproduktet til skålen gjennom <span class="math inline">\(A\)</span>. CG trenger derfor ikke gjøre om en tidligere minimering når den arbeider videre i en ny konjugert retning.</p>
 <p>I <strong>eksakt regning</strong>, uten avrunding, når CG løsningen av et SPD-system med <span class="math inline">\(n\)</span> ukjente etter høyst <span class="math inline">\(n\)</span> steg, og noen ganger langt tidligere. I <strong>flyttallsregning</strong>, der tall avrundes, kan retningene miste konjugerthet og flere steg bli nødvendige. Derfor kontrollerer koden <span class="math inline">\(b-Ax\)</span> direkte. Residualnormen trenger ikke bli mindre i hvert steg.</p>
 <p>Egenverdienes fordeling påvirker hvor raskt CG arbeider. For SPD er <span class="math inline">\(\kappa_2(A)=\lambda_{\max}/\lambda_{\min}\)</span> et mål på hvor ulikt matrisen skalerer forskjellige retninger; dette kalles <strong>kondisjonstallet</strong>. Det alene bestemmer ikke antall steg. <strong>Hva viser todimensjonsforsøket om forskjellen mellom en smal skål og mange CG-steg?</strong></p>
 <details class="reading-step">
 <summary>
 Gå i dybden: følg CG og forklar retningene
 </summary>
+<p><strong>Prøv selv</strong></p>
 <p>Når residualen ikke er null, bruker CG</p>
 <p><span class="math display">\[\alpha_k=\frac{r_k^Tr_k}{p_k^TAp_k},\qquad
 x_{k+1}=x_k+\alpha_kp_k,\qquad r_{k+1}=r_k-\alpha_kAp_k,\]</span></p>
@@ -4652,21 +4660,18 @@ p_{k+1}=r_{k+1}+\beta_kp_k.\]</span></p>
 <li>Forklar hvorfor et nytt steg langs <span class="math inline">\(p_j\)</span> bevarer minimeringen langs <span class="math inline">\(p_i\)</span> når <span class="math inline">\(p_i^TAp_j=0\)</span>.</li>
 <li>Endre <code>small</code> i forsøket. Hvorfor bør dere ikke bruke en figur i to dimensjoner til å forutsi antall CG-steg i et stort problem?</li>
 </ol>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke
-</summary>
+<p><strong>Regnegangen</strong></p>
 <p>Først er <span class="math inline">\(p_0=r_0=(5,5)^T\)</span> og <span class="math inline">\(Ap_0=(20,15)^T\)</span>. Da blir</p>
 <p><span class="math display">\[\alpha_0=2/7,\quad x_1=(10/7,10/7)^T,\quad r_1=(-5/7,5/7)^T,\]</span></p>
 <p><span class="math display">\[\beta_0=1/49,\quad p_1=(-30/49,40/49)^T,\quad
 Ap_1=(-50/49,50/49)^T.\]</span></p>
 <p>Dermed er <span class="math inline">\(p_0^TAp_1=0\)</span>. Bratteste nedstigning ville brukt <span class="math inline">\(r_1\)</span> som neste retning. Begge bruker bare matrise-vektor-produkter og indreprodukter her.</p>
+<p><strong>Hva forklarer dette?</strong></p>
 <p>For å forklare minimeringen holder vi <span class="math inline">\(x,p\)</span> faste og ser på én variabel:</p>
 <p><span class="math display">\[\phi(x+\alpha p)=\phi(x)-\alpha p^Tr+\tfrac12\alpha^2p^TAp.\]</span></p>
 <p>Beste steg er <span class="math inline">\(\alpha=p^Tr/(p^TAp)\)</span>, fordi <span class="math inline">\(p^TAp&gt;0\)</span>. Etter steget er <span class="math inline">\(p^Tr_{\mathrm{ny}}=0\)</span>. Hvis vi deretter går langs en A-konjugert retning <span class="math inline">\(q\)</span>, endres residualen med <span class="math inline">\(-\alpha Aq\)</span>, så <span class="math inline">\(p^Tr\)</span> endres med <span class="math inline">\(-\alpha p^TAq=0\)</span>. Den gamle minimeringen bevares. I CG gir ortogonaliteten <span class="math inline">\(p_k^Tr_k=r_k^Tr_k\)</span>, som forklarer telleren over.</p>
 <p>Ikke-null A-konjugerte retninger er lineært uavhengige. Det finnes høyst <span class="math inline">\(n\)</span> slike retninger i <span class="math inline">\(\mathbb R^n\)</span>. CG minimerer over stadig flere av dem; derfor er hele rommet dekket etter høyst <span class="math inline">\(n\)</span> steg i eksakt regning. Todimensjonsforsøket kan kreve høyst to slike steg uansett hvor smal skålen er. I større problemer spiller både fordelingen av egenverdiene og startfeilen inn.</p>
 <p><strong>Energifeilen</strong> er <span class="math inline">\(\lVert e\rVert_A=\sqrt{e^TAe}\)</span>. Den avtar under CGs minimering i eksakt regning. Den vanlige residualnormen <span class="math inline">\(\lVert r\rVert_2\)</span> er et annet mål og har ingen tilsvarende garanti for hvert steg. For SPD må vi dessuten skille mellom små avrundingsfeil i implementasjonen og det matematiske utsagnet om eksakt regning.</p>
-</details>
 </details>
 </section>
 </div>
@@ -4676,24 +4681,23 @@ Ap_1=(-50/49,50/49)^T.\]</span></p>
 </div>
 <section id="diskusjon-samme-løsning-bedre-skalering" class="level3">
 <h3 class="anchored" data-anchor-id="diskusjon-samme-løsning-bedre-skalering">Diskusjon — samme løsning, bedre skalering?</h3>
-<p>I <a href="../pages/project_week6.html">prosjekt 6</a> bygger du videre på CG. <strong>Prekondisjonering</strong> betyr at vi bruker et enklere system til å endre skaleringen eller geometrien som den iterative metoden arbeider med. Målet er færre eller billigere steg fram til samme opprinnelige løsning.</p>
+<p>CG utnytter tidligere retninger, men arbeider fortsatt med geometrien til det systemet vi gir metoden. Neste spørsmål er derfor: <strong>Kan vi først endre koordinatskalaen slik at problemet blir lettere for CG?</strong> En ren endring av koordinater må kunne oversettes tilbake til den samme løsningen av det opprinnelige systemet.</p>
+<p>I <a href="../pages/project_week6.html">prosjekt 6</a> undersøker du dette. <strong>Prekondisjonering</strong> betyr at vi bruker et enklere system til å endre skaleringen eller geometrien som den iterative metoden arbeider med. Målet er færre eller billigere steg fram til samme opprinnelige løsning.</p>
 <p>Du prøver <strong>diagonal prekondisjonering</strong>, som bruker diagonalen til <span class="math inline">\(A\)</span>, og fullfører <strong>prekondisjonert konjugert gradient (PCG)</strong> fra pseudokode. Ett problem får stor forbedring; et annet viser en begrensning. <strong>Er færre steg tilstrekkelig, eller må vi også se på ekstra arbeid per steg og hvilken residual som brukes til å stoppe?</strong></p>
 <details class="reading-step">
 <summary>
 Gå i dybden: forbered prosjektet
 </summary>
+<p><strong>Prøv selv</strong></p>
 <ol type="1">
 <li>For <span class="math inline">\(A=\operatorname{diag}(1,100)\)</span>, sett <span class="math inline">\(y_1=x_1\)</span>, <span class="math inline">\(y_2=10x_2\)</span>. Skriv <span class="math inline">\(x^TAx\)</span> med de nye koordinatene. Hvordan finner du <span class="math inline">\(x\)</span> fra <span class="math inline">\(y\)</span>?</li>
 <li>Forklar forskjellen mellom en Jacobi-iterasjon og diagonal prekondisjonering.</li>
 <li>Skriv hvilke størrelser du vil holde like når du sammenligner CG og PCG.</li>
 </ol>
-<details class="learning-hint">
-<summary>
-Slik kan du tenke
-</summary>
+<p><strong>Regnegangen</strong></p>
 <p>Her blir <span class="math inline">\(x^TAx=y_1^2+y_2^2\)</span>; tilbake får vi <span class="math inline">\(x_1=y_1\)</span>, <span class="math inline">\(x_2=y_2/10\)</span>. Den nye skalaen gir runde nivåkurver. Prosjektet viser hvordan hele likningssystemet må omregnes for å bevare løsningen og symmetrien.</p>
+<p><strong>Hva forklarer dette?</strong></p>
 <p>Jacobi er en egen iterasjon som oppdaterer løsningen. Diagonal prekondisjonering bruker <span class="math inline">\(M=\operatorname{diag}(A)\)</span> som et hjelpemiddel inne i for eksempel CG. Sammenlign på samme <span class="math inline">\(A,b,x_0\)</span>, samme opprinnelige residualkrav og samme maksimalgrense. Tell også matrise-vektor-produkter og arbeid med prekondisjoneringen.</p>
-</details>
 </details>
 </section>
 </div>
