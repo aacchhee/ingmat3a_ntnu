@@ -61,6 +61,7 @@ website:
           - pages/project_week4.qmd
           - pages/project_week5.qmd
           - pages/project_week6.qmd
+          - pages/project_week7.qmd
 
       - section: "Eksamensoppgaver"
         contents:
