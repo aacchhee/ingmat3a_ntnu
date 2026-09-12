@@ -98,3 +98,17 @@ main details.reading-step, main details.learning-hint, main details.learning-ext
 main details > summary { cursor: pointer; font-weight: 600; }
 main details[open] > summary { margin-bottom: 0.8rem; }
 @media print { .learning-mode { display: none; } }
+
+/* Keep the model's static reference graph beside its explanation. */
+.week5-network-model {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 1.5rem;
+  align-items: start;
+}
+.week5-network-figure { max-width: 300px; margin-inline: auto; }
+.week5-network-figure img { display: block; width: 100%; height: auto; }
+.week5-network-figure figcaption { font-size: 0.85rem; }
+@media (max-width: 760px) {
+  .week5-network-model { grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+}
