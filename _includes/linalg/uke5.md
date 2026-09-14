@@ -1374,117 +1374,73 @@ men fjerner ikke mekanismen med relativ vekst mellom retningene.
 
 </details>
 
-## 5.5 Besøk på nettsider
+## 5.5 PageRank
 
 <div id="uke5-nett"></div>
 
-### Én besøksregel, fire nettsider
+### Fra lenker til en rangering
 
-**Hvilke sider blir mest besøkt når vi følger lenkene mange ganger?**
-Vi undersøker en enkel modell; rangeringen skal beskrive besøk under denne regelen.
+**Hvordan kan vi rangere nettsider ved hjelp av lenkene mellom dem?**
+Å telle lenker er én mulighet. Men en lenke fra en mye besøkt side kan gi
+flere besøk enn en lenke fra en lite besøkt side. Vi trenger derfor en modell
+der besøksandelene bestemmes sammen. Dette er utgangspunktet for **PageRank**:
+en rangering basert på en modell for hvordan en besøkende beveger seg mellom nettsider.
+Vi bygger først modellen med lenker; i 5.6 legger vi til tilfeldige hopp.
 
 ::: {.week5-network-model}
 ::: {.week5-network-description}
 
-- A–D er nettsider. En pil A → B betyr at en besøkende kan klikke fra A til B.
-- Ved hvert klikk velges én av lenkene fra siden med lik sannsynlighet.
-  Tallene på pilene er **overgangssannsynligheter**, gitt siden vi er på nå.
-- En tilfeldig følge av slike besøk kalles en **tilfeldig vandring** (*random walk*).
-  Alle blir i nettverket; lenkene endres ikke.
+Tenk deg én besøkende på fire nettsider A–D. En pil A → B betyr at A har
+en lenke til B. Ved hvert steg klikker den besøkende på én av lenkene fra
+siden hen er på, valgt med lik sannsynlighet. Fra A er det dermed like
+sannsynlig å gå til B som til C. Fra B er C det eneste valget.
 
-**Les figuren:** Fra A går vi til B eller C med sannsynlighet $1/2$ hver.
-Fra B går vi til C med sannsynlighet $1$.
+Den besøkende fortsetter etter samme regel, uten å forlate disse fire sidene.
+En slik tilfeldig følge av besøk kalles en **tilfeldig vandring** (*random walk*).
+For eksempel er A → B → C → D → A et mulig forløp.
+
+Tallene på pilene er **overgangssannsynligheter**: sannsynligheten for neste
+side, gitt siden den besøkende er på nå. Plasseringen av punktene har ingen
+betydning for besøksregelen.
 
 :::
 ::: {.week5-network-figure}
 
-![Sannsynlighet for neste side, gitt siden vi er på nå.](../assets/week5-network.svg){fig-alt="A til B og C: 1/2 hver. B til C: 1. C til A og D: 1/2 hver. D til A: 1."}
+![Sannsynlighet for neste side, gitt siden den besøkende er på nå.](../assets/week5-network.svg){fig-alt="A til B og C: 1/2 hver. B til C: 1. C til A og D: 1/2 hver. D til A: 1."}
 
 :::
 :::
 
-### Eksperiment 6 – hvor er den besøkende etter neste klikk?
+### Eksperiment 6 – blir rangeringen uavhengig av startsiden?
 
-Velg **Alle på A**. Forutsi neste fordeling, trykk **Neste runde**, og gjenta
-én gang. Hvilke lenker forklarer prosentene? Prøv så **20 runder** fra både
-**Jevn fordeling** og **Alle på A**. Ser startfordelingen ut til å miste betydning?
+Vi følger **sannsynlighetsfordelingen**: fire tall som angir sannsynligheten
+for å være på hver side etter et bestemt antall klikk. De summerer til 100 %.
+Figuren beregner disse tallene, i stedet for å trekke én tilfeldig vandring.
 
-Prosentene viser **sannsynligheten for å være på hver side nå**, ikke antall
-besøk samlet over tid. Figuren beregner fordelingen direkte; den trekker
-ikke én tilfeldig vandring. Ett trykk på **Neste runde** er ett klikk i modellen.
+- **100 % på A** betyr at den besøkende starter på A med sikkerhet.
+- **25 % på hver side** betyr at startsiden velges med lik sannsynlighet.
+- **Ett klikk** beregner fordelingen etter neste klikk; **20 klikk** gjentar
+  oppdateringen 20 ganger fra fordelingen som vises.
+
+Velg **100 % på A**. Hvor kan den besøkende være etter ett klikk?
+Trykk **Ett klikk**, og undersøk så ett klikk til.
+Velg deretter hver av de to startfordelingene og trykk **20 klikk**.
+**Ser de samme sidene ut til å få størst sannsynlighet, uansett startfordeling?**
 
 <details class="reading-step">
-<summary>Gå i dybden: besøksregelen, tilfeldig vandring og sannsynlighetsfordeling</summary>
+<summary>Gå i dybden: én vandring og en fordeling</summary>
 
-**Hvorfor dukker egenvektorer opp når vi rangerer nettsider?**
+Én besøkende er bare på én side om gangen. Fordelingen beskriver usikkerheten
+om hvilken side det er. Etter ett klikk fra A er sannsynligheten 50 % for B
+og 50 % for C; den besøkende er ikke delt mellom sidene.
 
-Vi ønsker å gi hver av fire nettsider A, B, C og D et tall som beskriver
-hvor mye den blir besøkt i en enkel modell. En **nettside** er et dokument
-vi kan lese i nettleseren. En **lenke** er noe vi kan klikke på for å komme
-fra dokumentet vi leser til et annet. Vi trenger ingen kunnskap om hvordan
-nettsidene er programmert; det eneste vi bruker, er hvilke sider som lenker til hvilke.
-
-Én idé er å telle hvor mange lenker som peker til en side. Men en lenke fra
-en mye besøkt side kan føre flere besøk videre enn en lenke fra en lite
-besøkt side. Da avhenger betydningen av én side av betydningen til de andre.
-**Hvordan kan vi finne alle disse tallene samtidig?** Vi begynner med en
-besøksregel og følger hva som skjer når den gjentas.
-
-**Slik leser du figuren**
-
-Hvert punkt er en nettside, og bokstaven er navnet. En pil A → B betyr at
-A har en lenke til B: en besøkende på A kan klikke seg til B. Den samme
-lenken er **utgående fra A** og **innkommende til B**. Pilen angir bare
-mulig bevegelse denne veien; en vei tilbake må ha sin egen pil.
-Avstanden mellom punktene og plasseringen på skjermen har ingen betydning i modellen.
-
-Ved hvert klikk velger den besøkende én av lenkene fra siden hen er på,
-med lik sannsynlighet. **Tallene på pilene er overgangssannsynligheter:**
-et tall angir sannsynligheten for å velge akkurat denne neste siden,
-gitt at den besøkende er på siden pilen starter i. Fra A er det to valg,
-så hver har sannsynlighet $1/2$. Fra B er C det eneste valget,
-så overgangen B → C har sannsynlighet $1$.
-
-
-| Siden den besøkende er på | Mulige neste sider | Regelen for ett klikk |
-|---|---|---|
-| A | B og C | B med sannsynlighet $1/2$; C med sannsynlighet $1/2$ |
-| B | C | C med sannsynlighet $1$ |
-| C | A og D | A med sannsynlighet $1/2$; D med sannsynlighet $1/2$ |
-| D | A | A med sannsynlighet $1$ |
-
-**Hva betyr én runde og prosentene?**
-
-Vi forestiller oss en besøkende som fortsetter å klikke etter denne regelen.
-En slik tilfeldig følge av besøk kalles en **tilfeldig vandring** (*random walk*)
-på nettverket. A → C → D → A → B er ett mulig forløp. Ved et nytt forsøk
-kan de tilfeldige valgene gi et annet forløp. Ett steg i vandringen er ett klikk.
-Valget av neste side avhenger bare av siden den besøkende er på nå, ikke av tidligere besøk.
-Vi antar foreløpig at ingen går ut av disse fire sidene, at ingen kommer
-utenfra, og at lenkene ikke endres. Alle fire har minst én lenke å følge.
-
-Prosenten ved en side angir **sannsynligheten for å være på akkurat denne
-siden etter det aktuelle steget**. Den angir ikke hvor mange besøk siden har
-samlet opp siden det første klikket. Ved «Alle på A» er startsannsynligheten 100 % på A;
-ved «Jevn fordeling» er den 25 % på hver side.
-
-En enkelt besøkende kan bare være på én side om gangen. Likevel kan vi
-fordele sannsynligheten mellom flere mulige steder. Alternativt kan vi
-tenke på en stor gruppe uavhengige besøkende: 50 % på B betyr da den
-**forventede andelen** på B. Hvis 100 personer starter på A, forventer vi
-50 på B og 50 på C etter ett klikk, men et faktisk tilfeldig forsøk trenger
-ikke gi nøyaktig 50 av hver.
-
-Den interaktive figuren nedenfor regner direkte på **sannsynlighetsfordelingen**
-for hvor den besøkende befinner seg etter hvert steg. Den viser altså ikke én
-tilfeldig vandring og simulerer ikke enkeltpersoners tilfeldige klikk. Derfor får du samme fordeling hver gang du velger samme startfordeling.
-**Neste runde** lar alle bidragene flyttes én gang etter tabellen;
-**20 runder** gjentar dette 20 ganger fra fordelingen som vises nå.
-Summen er alltid 100 %, fordi den besøkende må være på én av de fire sidene.
-
+Vi kan også tenke på mange uavhengige besøkende som følger samme regel.
+Starter 100 personer på A, er det forventede antallet etter ett klikk
+50 på B og 50 på C. Et tilfeldig forsøk trenger ikke gi nøyaktig disse tallene.
+Figuren viser de beregnede sannsynlighetene, som også er de forventede andelene.
+Den viser ikke antall besøk samlet over tid.
 
 </details>
-
 ```{.jsxgraph width="680" height="550" style="width:100%;max-width:680px;height:550px;border:0;"}
 document.documentElement.lang = 'nb';
 var graph = document.querySelector('.jxgbox');
@@ -1503,7 +1459,7 @@ html,body{margin:0;width:100%;height:100%;font-family:system-ui,sans-serif;color
 document.head.appendChild(style);
 var lab = document.createElement('section');
 lab.className='net-lab'; lab.setAttribute('aria-label','Besøk mellom fire nettsider');
-lab.innerHTML='<div class="net-controls"><button type="button" class="net-even" aria-pressed="true">Jevn fordeling</button><button type="button" class="net-all" aria-pressed="false">Alle på A</button><button type="button" class="net-step">Neste runde</button><button type="button" class="net-many">20 runder</button></div><div class="net-slot"></div><div class="net-status" role="status" aria-live="polite" aria-atomic="true"></div>';
+lab.innerHTML='<div class="net-controls"><button type="button" class="net-even" aria-pressed="true">25 % på hver side</button><button type="button" class="net-all" aria-pressed="false">100 % på A</button><button type="button" class="net-step">Ett klikk</button><button type="button" class="net-many">20 klikk</button></div><div class="net-slot"></div><div class="net-status" role="status" aria-live="polite" aria-atomic="true"></div>';
 graph.parentNode.insertBefore(lab,graph);lab.querySelector('.net-slot').appendChild(graph);
 var bounds=[-2.1,1.7,2.1,-1.7];
 var board=JXG.JSXGraph.initBoard(BOARDID,{boundingbox:bounds,axis:false,keepaspectratio:true,showCopyright:false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false}});
@@ -1525,7 +1481,7 @@ positions.forEach(function(xy,i){
 });
 function show(){
   board.update();
-  lab.querySelector('.net-status').textContent='Runde '+round+' · '+names.map(function(name,i){return name+': '+(100*distribution[i]).toFixed(1)+' %';}).join(' · ')+' · Sum: '+(100*distribution.reduce(function(a,b){return a+b;},0)).toFixed(1)+' %';
+  lab.querySelector('.net-status').textContent='Antall klikk: '+round+' · '+names.map(function(name,i){return name+': '+(100*distribution[i]).toFixed(1)+' %';}).join(' · ')+' · Sum: '+(100*distribution.reduce(function(a,b){return a+b;},0)).toFixed(1)+' %';
 }
 function reset(all){distribution=all?[1,0,0,0]:[.25,.25,.25,.25];round=0;
   lab.querySelector('.net-even').setAttribute('aria-pressed',String(!all));
@@ -1546,14 +1502,17 @@ window.addEventListener('resize',resize);window.addEventListener('pageshow',resi
 
 Vi samler sannsynlighetene i $p_k=(p_A^{(k)},p_B^{(k)},p_C^{(k)},p_D^{(k)})^T$.
 Her teller $k$ klikk. En **sannsynlighetsvektor** har ikke-negative elementer
-med sum én. Fra «Alle på A» så vi
+med sum én. Når den besøkende starter på A med sikkerhet, er $p_0=(1,0,0,0)^T$.
+Besøksregelen gir da
 
 $$\underbrace{\begin{bmatrix}1\\0\\0\\0\end{bmatrix}}_{p_0}
 \longmapsto\underbrace{\begin{bmatrix}0\\1/2\\1/2\\0\end{bmatrix}}_{p_1}
 \longmapsto\underbrace{\begin{bmatrix}1/4\\0\\1/2\\1/4\end{bmatrix}}_{p_2}.$$
 
-**Én kolonne per startside, én rad per neste side:** overgangsmatrisen
-$S$ samler regelen fra figuren. For eksempel er kolonne A fordelingen etter ett klikk fra A.
+Vi samler overgangssannsynlighetene i en **overgangsmatrise** $S$.
+Elementet $S_{ij}$ er sannsynligheten for å gå til side $i$, gitt at den
+besøkende er på side $j$. **Kolonnen angir siden vi går fra; raden angir siden
+vi går til.** Kolonne A er derfor $(0,1/2,1/2,0)^T$.
 
 $$S=\begin{array}{c|rrrr}
  & A&B&C&D\\\hline
@@ -1563,7 +1522,10 @@ $$S=\begin{array}{c|rrrr}
  D&0&0&1/2&0
 \end{array},\qquad p_{k+1}=Sp_k.$$
 
-Rad A sier $p_A^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}$: vi summerer
+For en vilkårlig fordeling vekter vi hver kolonne med sannsynligheten for
+å være på den aktuelle siden. Summen av disse kolonnebidragene er matriseproduktet
+$Sp_k$: den nye fordelingen. Rad A sier
+$p_A^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}$: vi summerer
 bidragene fra C og D. Hver kolonne summerer til én. Med ikke-negative
 elementer kalles $S$ **kolonnestokastisk**; oppdateringen bevarer summen i $p_k$.
 
@@ -1598,15 +1560,14 @@ Elementene er ikke-negative og summerer til én; en slik vektor kalles en
 **sannsynlighetsvektor**. Koordinatene er andeler, ikke plasseringen av
 punktene i tegningen.
 
-Fra «Alle på A» viser figuren de to første oppdateringene:
+Når den besøkende starter på A med sikkerhet, gir de to første klikkene:
 
 $$\begin{bmatrix}1\\0\\0\\0\end{bmatrix}
 \longmapsto\begin{bmatrix}0\\1/2\\1/2\\0\end{bmatrix}
 \longmapsto\begin{bmatrix}1/4\\0\\1/2\\1/4\end{bmatrix}.$$
 
 Ved det andre klikket går hele B-bidraget på $1/2$ til C. C-bidraget på
-$1/2$ deles i to: $1/4$ til A og $1/4$ til D. Dette er forklaringen på
-prosentene vi nettopp observerte. Nå skriver vi den samme flytteregelen
+$1/2$ deles i to: $1/4$ til A og $1/4$ til D. Dette gir prosentene i figuren. Nå skriver vi den samme flytteregelen
 som ett matriseprodukt, slik at vi kan bruke teorien fra resten av uken.
 
 **Fra lenker til en matrise**
@@ -1759,13 +1720,17 @@ Dette er normalisering med et annet formål enn lengde én i potensmetoden.
 
 ### Eksperiment 7 – kan én side fange besøkene?
 
-Vi endrer **bare D**: siden lenker nå kun til seg selv.
+I 5.5 brukte vi en stasjonær fordeling til å rangere sidene. Men kan lenkene
+gi en høy rangering av en helt annen grunn enn at en side er nyttig?
+Vi undersøker dette ved å endre **bare lenken fra D**: i stedet for å gå til A
+fører den nå tilbake til D. Den som følger denne lenken, blir på samme side.
 **Gjett først:** D har fortsatt bare én innkommende lenke fra en annen side.
 Kan D likevel ende med nesten alle besøkene?
 
-**Undersøk fellen:** Skriv forventningen for D etter 100 runder, kjør cellen,
-og noter sluttverdien. Forklar så med lenkene hvorfor besøk kan komme inn
-på D, men ikke slippe ut. Cellen definerer selv nettverket fra 5.5.
+**Undersøk:** Startfordelingen er 25 % på hver side. Hvordan tror du
+sannsynligheten for å være på D utvikler seg? Kjør cellen og følg de fire
+kurvene. Hvilke lenker gjør at den besøkende kan komme til D, men ikke forlate D?
+Vannrett akse viser antall klikk; hver kurve viser sannsynligheten for én side.
 
 ```{pyodide-python}
 #| label: week5-trap
@@ -1789,8 +1754,8 @@ for k in range(100):
     values.append(p.copy())
 plt.figure()
 plt.plot(values)
-plt.xlabel("Runde")
-plt.ylabel("Andel besøk")
+plt.xlabel("Antall klikk")
+plt.ylabel("Sannsynlighet for å være på siden")
 plt.legend(list("ABCD"))
 plt.title("Besøkene slipper ikke ut av D")
 plt.show()
@@ -1804,24 +1769,32 @@ Den nye siste raden viser oppsamlingen:
 $$p_D^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}\ge p_D^{(k)}.$$
 
 I dette nettverket nærmer fordelingen seg $(0,0,0,1)^T$.
-Denne vektoren oppfyller $S_{\mathrm{felle}}p=p$ nøyaktig.
-Problemet er derfor ikke nødvendigvis stor residual.
+Lar vi $S_{\mathrm{felle}}$ betegne overgangsmatrisen med den endrede D-kolonnen,
+oppfyller denne vektoren $S_{\mathrm{felle}}p=p$ nøyaktig.
+Residualen $r=S_{\mathrm{felle}}p-p$ er altså null: vi har løst modellens likning,
+men selve besøksregelen gir D høyest rang fordi siden holder på besøkene.
 
 ### Eksperiment 8 – gir tilfeldige hopp en utvei?
 
-La besøkende følge en lenke med sannsynlighet $\alpha$, og ellers hoppe til
-en tilfeldig side. **Hva tror du skjer når $\alpha$ senkes fra $0.95$ til
-$0.5$?**
+Vi trenger en mulighet til å forlate D. Derfor endrer vi besøksregelen:
+ved hvert steg følger den besøkende en lenke med sannsynlighet $\alpha$.
+Med sannsynlighet $1-\alpha$ velger hen i stedet én av de fire sidene med
+lik sannsynlighet, uavhengig av lenkene. Også siden hen allerede er på, kan velges.
+Et slikt tilfeldig hopp kalles **teleportering**.
 
-**Undersøk den nye regelen:** Noter om D får større eller mindre andel når flere
-besøkende hopper tilfeldig. Kjør cellen etter felleforsøket og sammenlign
-D for $0.95$, $0.85$ og $0.5$. Undersøk samtidig om noen sider får score null.
+Tallet $\alpha$ kalles **dempingsfaktoren** og styrer hvor stor vekt lenkene får.
+For $\alpha=0.85$ er det 85 % sannsynlighet for å følge en lenke og 15 % for
+et hopp. **Vil D beholde like høy rang når den besøkende kan hoppe ut av fellen?**
+
+**Undersøk:** Kjør cellen etter eksperiment 7. Hver kurve viser fordelingen
+etter 500 steg for én verdi av $\alpha$. Sammenlign D for $0.95$, $0.85$ og
+$0.5$: hva skjer når tilfeldige hopp blir vanligere? Får alle sidene positiv sannsynlighet?
 
 ```{pyodide-python}
 #| label: week5-teleport
 # alpha er sannsynligheten for å følge lenker; 1-alpha er sannsynligheten for et hopp.
 # Hoppfordelingen u er fast, mens p er den nåværende besøksfordelingen.
-# Sammenlign hvor mye score D beholder når modellen endres.
+# Sammenlign den stasjonære sannsynligheten for D når hopp blir vanligere.
 
 # Kjør felleforsøket først. u fordeler de tilfeldige hoppene likt.
 u = np.ones(4) / 4
@@ -1831,34 +1804,38 @@ for alpha in [0.5, 0.85, 0.95]:
     for k in range(500):
         p = alpha * (trap @ p) + (1-alpha) * u
     ax.plot(list("ABCD"), p, 'o-', label=f"α = {alpha}")
-ax.set(xlabel="Side", ylabel="Stasjonær andel besøk", title="En utvei fra fellen")
+ax.set(xlabel="Side", ylabel="Stasjonær sannsynlighet", title="En utvei fra fellen")
 ax.legend()
 plt.show()
 ```
 
 ### Bygg matematikken fra besøksregelen
 
-Hoppene gir en vei ut. For en sannsynlighetsvektor $p_k$ er oppdateringen
+La $S$ være overgangsmatrisen for lenkene, her med fellen på D.
+La $u=(1/4,1/4,1/4,1/4)^T$ være **hoppfordelingen**: sannsynlighetene for
+hvilken side et tilfeldig hopp ender på. Den nye fordelingen er summen av
+bidraget fra lenkeklikk og bidraget fra hopp:
 
-$$p_{k+1}=\alpha Sp_k+(1-\alpha)u,$$
+$$p_{k+1}=\underbrace{\alpha Sp_k}_{\text{følger lenker}}+
+\underbrace{(1-\alpha)u}_{\text{tilfeldige hopp}}.$$
 
-Her bruker vi $S$ for den valgte lenkemodellen, inkludert fellen.
-Vektoren $u$ er sannsynlighetsvektoren for tilfeldige hopp. I forsøket er alle
-elementene $1/4$, slik at hver side er like sannsynlig.
-Her er $n$ antall sider, og $\mathbf1$ er kolonnen med $n$ ettall.
-De tilfeldige hoppene kalles **teleportering**. Hele besøksregelen kan også
-samles i én overgangsmatrise:
+For å skrive dette som ett matriseprodukt lar vi $n$ være antall sider og
+$\mathbf1$ kolonnen med $n$ ettall. Matrisen $u\mathbf1^T$ har $u$ i hver
+kolonne: den beskriver samme hoppfordeling fra alle sider. Siden
+$\mathbf1^Tp_k=1$, er $(u\mathbf1^T)p_k=u$. Dermed er oppdateringen
+$p_{k+1}=Gp_k$, der
 
 $$G=\alpha S+(1-\alpha)u\mathbf1^T.$$
 
 Matrisen $G$ kalles **Google-matrisen**, og dens stasjonære sannsynlighetsvektor er
-**PageRank-vektoren**. $\alpha$ er dempingsfaktoren; større $\alpha$ gir
-lenkene mer vekt. Det innebærer et modellvalg, ikke bare et valg av regnefart.
+**PageRank-vektoren** $p_*$. Den oppfyller $Gp_*=p_*$: igjen en egenvektor
+med egenverdi én, skalert til sum én. Sidene rangeres etter elementene i $p_*$.
+Valget av $\alpha$ påvirker dermed selve rangeringen.
 
-**Hva hvis en side ikke har lenker?** En nullkolonne mister besøk og er
-ikke stokastisk. Erstatt den med $u$ **før** du lager $G$. Dette er behandlingen
-av en **hengende node**. Den skiller seg fra en side som lenker til seg selv:
-selvlenken bevarer besøkene, men kan fange dem.
+**Hva hvis en side ikke har lenker?** En slik side kalles en **hengende node**
+i nettverket. Da mangler vandringen et neste steg hvis lenkeregelen velges.
+Vi lar derfor også denne overgangen følge $u$: erstatt sidens nullkolonne i
+$S$ med $u$ **før** $G$ dannes. Kolonnen summerer da til én, som de andre.
 
 <details class="reading-step">
 <summary>Gå i dybden: fra besøksregel til Google-matrise</summary>
@@ -1949,7 +1926,7 @@ Trekk de to oppdateringslikningene fra hverandre:
 
 $$\begin{aligned}
 e_{k+1}&=p_{k+1}-p_*\\
-&=\alpha Sp_k+(1-\alpha)u-igl(\alpha Sp_*+(1-\alpha)u\bigr)\\
+&=\alpha Sp_k+(1-\alpha)u-\bigl(\alpha Sp_*+(1-\alpha)u\bigr)\\
 &=\alpha S(p_k-p_*)=\alpha Se_k.
 \end{aligned}$$
 
