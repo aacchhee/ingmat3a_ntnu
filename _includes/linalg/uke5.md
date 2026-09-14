@@ -897,84 +897,95 @@ løsningen av et lineært system til et entydig minimum.
 
 ### Eksperiment 3 – hva bestemmer farten?
 
-**Vi undersøker om nesten like egenverdier gjør at retningen endres langsommere.**
-Vi sammenligner to transformasjoner representert ved
-$A_\mu=Q\operatorname{diag}(3,\mu)Q^T$. Kolonnene i $Q$ er de normaliserte
-egenvektorene fra 5.3; $\operatorname{diag}(3,\mu)$ betyr en matrise med $3$
-og $\mu$ på diagonalen og null ellers.
-Startvektoren er $(1,0)^T$ i begge kjøringer.
+**Hvor raskt øker andelen langs egenvektoren med størst egenverdi?**
+Vi beholder egenvektorene fra eksperiment 2 og sammenligner
+$A_\mu=Q\operatorname{diag}(3,\mu)Q^T$ for $\mu=1$ og $\mu=2.9$.
+Kolonnene i $Q$ er de ortonormale egenvektorene fra 5.3.
+Startvektoren er $x_0=(1,0)^T$ i begge iterasjonsfølgene.
 
-1. Gjett om $\mu=1$ eller $\mu=2.9$ gir raskest utskilling av én retning.
-2. Kjør cellen. Les av forholdet mellom bidragene etter 10 steg for hver kurve.
-3. Noter hvilken kurve som først kommer under $10^{-2}$. Hvis den andre
-   ikke når dit innen 80 steg, noter det også.
+Vi bruker **de samme andelene som i eksperiment 2**:
 
-De to matrisene har samme egenvektorer; bare den andre skaleringen endres.
+$$a_i(k)=\frac{\lVert b_i(k)\rVert_2}
+{\lVert b_1(k)\rVert_2+\lVert b_2(k)\rVert_2},\qquad i=1,2.$$
+
+Her er $b_1(k)$ bidraget langs $q_1$ med egenverdi 3, og $b_2(k)$
+bidraget langs $q_2$ med egenverdi $\mu$. Figuren har fire kurver:
+
+- **Blå:** $a_1(k)$. **Oransje:** $a_2(k)$.
+- **Heltrukket:** $\mu=1$. **Stiplet:** $\mu=2.9$.
+
+1. Forutsi hvilket kurvepar som raskest nærmer seg andelene 1 og 0.
+2. Kjør cellen. Sammenlign de to oransje kurvene etter 10 steg.
+3. Omtrent hvor mange steg kreves før hver oransje kurve kommer under 0.1?
+   Hva sier forskjellen om effekten av nesten like egenverdier?
 
 ```{pyodide-python}
 #| label: week5-speed
-# Kolonnene i Q er en fast ortonormal egenvektorbasis.
-# Vi endrer bare den andre egenverdien og beholder samme startvektor.
-# Se etter hvordan forholdet |lambda2/lambda1| påvirker farten.
+# Samme andelsmål og farger som i eksperiment 2.
+# Linjestilen skiller transformasjonene; fargen skiller egenvektorbidragene.
+# Begge iterasjonsfølgene bruker samme startvektor og 80 multiplikasjoner.
 
 Q = np.array([[1., 1.], [1., -1.]]) / np.sqrt(2)
+steps = np.arange(81)
 fig, ax = plt.subplots()
-for second in [1., 2.9]:
-    # Les i egenvektorbasis, skaler hvert bidrag, og bygg tilbake i standardbasis.
-    A = Q @ np.diag([3., second]) @ Q.T
+for mu, style in [(1., '-'), (2.9, '--')]:
+    A = Q @ np.diag([3., mu]) @ Q.T
     x = np.array([1., 0.])
-    ratios = []
-    for k in range(81):
-        # Her kjenner vi basisen og kan måle de to bidragene.
-        # Ortonormal basis: indreproduktene gir koordinatene langs egenvektorene.
+    shares = []
+    for k in steps:
+        # Indreproduktene gir koordinatene i den ortonormale egenvektorbasisen.
         c = Q.T @ x
-        ratios.append(abs(c[1] / c[0]))
-        x = A @ x
-        x = x / np.linalg.norm(x)
-    # Logaritmisk akse viser mange størrelsesordener; gulvet 1e-16 er bare for tegningen.
-    ax.semilogy(range(81), np.maximum(ratios, 1e-16), label=f"λ₂ = {second}")
-ax.set(xlabel="Antall multiplikasjoner", ylabel="|andre bidrag / første bidrag|",
-       title="Hvor raskt blir ett bidrag dominerende?")
+        # q1 og q2 har lengde 1, så |c_i| er lengden av bidraget c_i*q_i.
+        lengths = np.abs(c)
+        shares.append(lengths / lengths.sum())
+        if k < steps[-1]:
+            x = A @ x
+            # Felles normalisering endrer ikke andelene av bidragenes lengder.
+            x = x / np.linalg.norm(x)
+    shares = np.array(shares)
+    ax.plot(steps, shares[:, 0], color='#1565c0', linestyle=style,
+            marker='o', markevery=5, markersize=3, label=f'a₁: λ₁ = 3, μ = {mu}')
+    ax.plot(steps, shares[:, 1], color='#a04a00', linestyle=style,
+            marker='o', markevery=5, markersize=3, label=f'a₂: λ₂ = μ = {mu}')
+ax.set(xlabel='Antall multiplikasjoner', ylabel='Andel av de to bidragenes lengder',
+       ylim=(-0.03, 1.03), title='Samme startvektor, ulik avstand mellom egenverdiene')
 ax.legend()
 plt.show()
 ```
 
-Farten styres av den **relative** skaleringen. Forholdene er $1/3$ og
-$2.9/3$. Det siste er nær én, så bidragene skiller lag langsomt.
-Maskinen lagrer tall med begrenset presisjon. Forskjellen mellom det eksakte
-tallet og det lagrede tallet kalles **avrunding**. Den kan til slutt dominere
-det lille bidraget nederst i plottet.
-**Diskuter:** Kan flere steg alltid gjøre svaret bedre, eller kan maskinens
-avrunding til slutt bli større enn bidraget vi prøver å måle?
+For $\mu=1$ øker den blå andelen raskt mot 1. For $\mu=2.9$ endres
+andelene langsommere: begge bidragene vokser nesten like mye ved hvert steg.
+Det er **forholdet mellom egenverdiene**, $\mu/3$, som bestemmer farten.
 
 <details class="reading-step">
-<summary>Gå i dybden: les konvergensplottet</summary>
+<summary>Gå i dybden: knytt andelskurvene til egenverdiene</summary>
 
-Siden startkoeffisientene her er like store, forutsier teorien
+Startvektoren har like store koordinater langs $q_1$ og $q_2$.
+Etter $k$ multiplikasjoner er forholdet mellom bidragenes lengder derfor
 
-$$\left|\frac{c_2^{(k)}}{c_1^{(k)}}\right|
-=\left(\frac{|\mu|}{3}\right)^k,\qquad
-(1/3)^{10}\approx1.69\cdot10^{-5},\quad
-(2.9/3)^{10}\approx0.712.$$
+$$r_k=\frac{\lVert b_2(k)\rVert_2}{\lVert b_1(k)\rVert_2}
+=\left(\frac{|\mu|}{3}\right)^k.$$
 
-Normaliseringen deler begge koeffisientene på samme tall og endrer ikke
-forholdet. Derfor kan vi sammenligne kurvene direkte med denne formelen.
+Forholdet $r_k$ og andelen $a_2(k)$ er ulike størrelser. Del teller og
+nevner i andelsformelen på $\lVert b_1(k)\rVert_2$:
 
+$${\color{#1565c0}a_1(k)=\frac{1}{1+r_k}},\qquad
+{\color{#a04a00}a_2(k)=\frac{r_k}{1+r_k}}.$$
 
-`c = Q.T @ x` måler de to koeffisientene i den ortonormale basisen.
-`abs(c[1]/c[0])` er størrelsen på det andre bidraget relativt til det første.
-Det er ikke den andre koordinaten til $x$ i standardbasisen.
+Ved $k=0$ er begge andelene $1/2$. Etter 10 steg er den oransje andelen
+omtrent $0.0000169$ for $\mu=1$, men $0.416$ for $\mu=2.9$.
 
-Med $q=|\mu|/3$ får vi etter hvert steg ett nytt produkt med $q$.
-For å nå under $10^{-2}$ må $q^k<10^{-2}$.
-For $q=1/3$ er fem steg nok; for $q=2.9/3$ trengs 136 steg.
-Utvid løkken og den horisontale aksen sammen dersom du vil se det siste.
+For å få $a_2(k)<0.1$ må
 
-På en logaritmisk vertikal akse blir
-$\log(q^k)=k\log q$ en rett linje i eksakt regning.
-Når det andre bidraget blir omtrent like lite som avrundingen, kan kurven
-flate ut eller variere. Koden viser ikke verdier under $10^{-16}$ i plottet;
-dette er en visningsgrense, ikke en bevist nedre grense for feilen.
+$$\frac{r_k}{1+r_k}<0.1\quad\Longleftrightarrow\quad r_k<\frac19.$$
+
+Dette gir 3 steg for $\mu=1$ og 65 steg for $\mu=2.9$.
+Kontroller med potensuttrykket for $r_k$.
+
+I koden beregner vi koordinatene fra de itererte vektorene, ikke direkte
+fra potensformelen. Avrunding kan derfor påvirke svært små bidrag.
+Den lineære andelsaksen gjør sammenligningen med eksperiment 2 direkte,
+men viser ikke slike små avvik tydelig.
 
 </details>
 
