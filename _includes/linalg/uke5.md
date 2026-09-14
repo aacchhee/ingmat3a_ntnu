@@ -1382,74 +1382,64 @@ men fjerner ikke mekanismen med relativ vekst mellom retningene.
 
 ### Fra lenker til en rangering
 
-**Hvilke nettsider er viktige i et nettverk av lenker?** Vi ønsker å gi hver
-side et tall som uttrykker «viktighet» ut fra hvordan sidene lenker til hverandre.
-Å **rangere** sidene betyr å ordne dem fra høyest til lavest verdi.
+**Hvordan kan lenkene fortelle oss hvilke nettsider som er viktige?**
+Vi vil gi hver side et tall og **rangere** sidene fra høyest til lavest verdi.
+En lenke til en side kan tolkes som en anbefaling. Men en lenke fra en side
+som mange besøker, kan sende flere besøk videre enn en lenke fra en side
+som få besøker. Vi ønsker et mål som tar hensyn til hele lenkenettverket.
 
-En lenke til en side kan tolkes som en anbefaling. Men skal alle anbefalinger
-telle like mye? Ideen bak **PageRank** er at en lenke fra en viktig side
-skal telle mer. Da avhenger sidenes viktighet av hverandre, og tallene må bestemmes sammen.
-
-Vi gjør ideen konkret med en modell for en besøkende som følger lenker.
-**En side regnes som viktig hvis modellen gir høy sannsynlighet for å være
-på siden etter mange steg, når fordelingen har stabilisert seg.** Det er
-disse sannsynlighetene vi rangerer etter. Vi bygger først besøksregelen med
-lenker; i 5.6 legger vi til tilfeldige hopp som sikrer en entydig, stabil fordeling.
+**PageRank** bygger på denne ideen. Vi skal gjøre den presis ved å beskrive
+hvordan en tenkt besøkende beveger seg, og deretter bruke sannsynligheten
+for å være på hver side som mål på viktighet i modellen.
 
 ::: {.week5-network-model}
 ::: {.week5-network-description}
 
-Tenk deg én besøkende på fire nettsider A–D. En pil A → B betyr at A har
-en lenke til B. Ved hvert steg klikker den besøkende på én av lenkene fra
-siden hen er på, valgt med lik sannsynlighet. Fra A er det dermed like
-sannsynlig å gå til B som til C. Fra B er C det eneste valget.
+Vi begynner med de fire nettsidene A–D i figuren. En pil A → B betyr at A
+har en lenke til B. Den besøkende velger én av lenkene på siden hen er på,
+med lik sannsynlighet, og åpner siden lenken peker til.
+Dette **lenkeklikket er ett steg** i besøksmodellen.
 
-Den besøkende fortsetter etter samme regel, uten å forlate disse fire sidene.
-En slik tilfeldig følge av besøk kalles en **tilfeldig vandring** (*random walk*).
-For eksempel er A → B → C → D → A et mulig forløp.
+Fra A er det to valg: B og C, hver med sannsynlighet $1/2$.
+Fra B er C det eneste valget. Tallene på pilene er
+**overgangssannsynligheter**: sannsynligheten for neste side, gitt siden
+den besøkende er på nå. Punktenes plassering i tegningen påvirker ikke regelen.
 
-Tallene på pilene er **overgangssannsynligheter**: sannsynligheten for neste
-side, gitt siden den besøkende er på nå. Plasseringen av punktene har ingen
-betydning for besøksregelen.
+Den besøkende gjentar regelen og holder seg innenfor disse fire sidene.
+En slik tilfeldig følge av besøk kalles en **tilfeldig vandring**
+(*random walk*). A → B → C → D → A er ett mulig forløp.
 
 :::
 ::: {.week5-network-figure}
 
-![Sannsynlighet for neste side, gitt siden den besøkende er på nå.](../assets/week5-network.svg){fig-alt="A til B og C: 1/2 hver. B til C: 1. C til A og D: 1/2 hver. D til A: 1."}
+![Lenkene og sannsynligheten for neste side.](../assets/week5-network.svg){fig-alt="A til B og C: 1/2 hver. B til C: 1. C til A og D: 1/2 hver. D til A: 1."}
 
 :::
 :::
 
-### Eksperiment 6 – blir rangeringen uavhengig av startsiden?
+### Eksperiment 6 – gir ulike startfordelinger samme rangering?
 
-Vi følger **sannsynlighetsfordelingen**: fire tall som angir sannsynligheten
-for å være på hver side etter et bestemt antall klikk. De summerer til 100 %.
-Figuren beregner disse tallene, i stedet for å trekke én tilfeldig vandring.
+En tilfeldig vandring gir én side ved hvert steg. For å undersøke hvilke
+sider besøksregelen favoriserer, følger vi i stedet
+**sannsynlighetsfordelingen**: fire tall som angir sannsynligheten for å
+være på A, B, C og D etter et bestemt antall steg. Tallene summerer til
+100 %. De beskriver dette tidspunktet, ikke antall besøk samlet over tid.
 
-- **100 % på A** betyr at den besøkende starter på A med sikkerhet.
-- **25 % på hver side** betyr at startsiden velges med lik sannsynlighet.
-- **Ett klikk** beregner fordelingen etter neste klikk; **20 klikk** gjentar
-  oppdateringen 20 ganger fra fordelingen som vises.
+Figuren beregner fordelingen direkte. **100 % på A** velger A som sikker
+startside; **25 % på hver side** lar startsiden være tilfeldig med lik
+sannsynlighet. Begge valgene starter forsøket på nytt.
+**Beregn ett steg** oppdaterer fordelingen for ett lenkeklikk i modellen.
+**Beregn 20 steg** gjør tjue slike oppdateringer. Knappetrykket styrer
+beregningen; figuren trekker ikke en enkelt besøkendes rute.
 
-Velg **100 % på A**. Hvor kan den besøkende være etter ett klikk?
-Trykk **Ett klikk**, og undersøk så ett klikk til.
-Velg deretter hver av de to startfordelingene og trykk **20 klikk**.
-**Ser de samme sidene ut til å få størst sannsynlighet, uansett startfordeling?**
+1. Velg **100 % på A**. Bruk pilene til å forutsi hvilke sider som er mulige
+   etter ett steg. Trykk **Beregn ett steg**, og undersøk deretter ett steg til.
+2. Start på nytt med **100 % på A** og trykk **Beregn 20 steg**.
+   Hvilke sider ser ut til å få høyest rang?
+3. Gjenta fra **25 % på hver side**. Sammenlign fordelingene, og beregn
+   gjerne flere steg. **Tyder forsøket på at startvalget påvirker
+   rangeringen etter mange steg?**
 
-<details class="reading-step">
-<summary>Gå i dybden: én vandring og en fordeling</summary>
-
-Én besøkende er bare på én side om gangen. Fordelingen beskriver usikkerheten
-om hvilken side det er. Etter ett klikk fra A er sannsynligheten 50 % for B
-og 50 % for C; den besøkende er ikke delt mellom sidene.
-
-Vi kan også tenke på mange uavhengige besøkende som følger samme regel.
-Starter 100 personer på A, er det forventede antallet etter ett klikk
-50 på B og 50 på C. Et tilfeldig forsøk trenger ikke gi nøyaktig disse tallene.
-Figuren viser de beregnede sannsynlighetene, som også er de forventede andelene.
-Den viser ikke antall besøk samlet over tid.
-
-</details>
 ```{.jsxgraph width="680" height="550" style="width:100%;max-width:680px;height:550px;border:0;"}
 document.documentElement.lang = 'nb';
 var graph = document.querySelector('.jxgbox');
@@ -1468,7 +1458,7 @@ html,body{margin:0;width:100%;height:100%;font-family:system-ui,sans-serif;color
 document.head.appendChild(style);
 var lab = document.createElement('section');
 lab.className='net-lab'; lab.setAttribute('aria-label','Besøk mellom fire nettsider');
-lab.innerHTML='<div class="net-controls"><button type="button" class="net-even" aria-pressed="true">25 % på hver side</button><button type="button" class="net-all" aria-pressed="false">100 % på A</button><button type="button" class="net-step">Ett klikk</button><button type="button" class="net-many">20 klikk</button></div><div class="net-slot"></div><div class="net-status" role="status" aria-live="polite" aria-atomic="true"></div>';
+lab.innerHTML='<div class="net-controls"><button type="button" class="net-even" aria-pressed="true">25 % på hver side</button><button type="button" class="net-all" aria-pressed="false">100 % på A</button><button type="button" class="net-step">Beregn ett steg</button><button type="button" class="net-many">Beregn 20 steg</button></div><div class="net-slot"></div><div class="net-status" role="status" aria-live="polite" aria-atomic="true"></div>';
 graph.parentNode.insertBefore(lab,graph);lab.querySelector('.net-slot').appendChild(graph);
 var bounds=[-2.1,1.7,2.1,-1.7];
 var board=JXG.JSXGraph.initBoard(BOARDID,{boundingbox:bounds,axis:false,keepaspectratio:true,showCopyright:false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false}});
@@ -1490,7 +1480,7 @@ positions.forEach(function(xy,i){
 });
 function show(){
   board.update();
-  lab.querySelector('.net-status').textContent='Antall klikk: '+round+' · '+names.map(function(name,i){return name+': '+(100*distribution[i]).toFixed(1)+' %';}).join(' · ')+' · Sum: '+(100*distribution.reduce(function(a,b){return a+b;},0)).toFixed(1)+' %';
+  lab.querySelector('.net-status').textContent='Steg k = '+round+' · '+names.map(function(name,i){return name+': '+(100*distribution[i]).toFixed(1)+' %';}).join(' · ')+' · Sum: '+(100*distribution.reduce(function(a,b){return a+b;},0)).toFixed(1)+' %';
 }
 function reset(all){distribution=all?[1,0,0,0]:[.25,.25,.25,.25];round=0;
   lab.querySelector('.net-even').setAttribute('aria-pressed',String(!all));
@@ -1507,21 +1497,20 @@ if(typeof ResizeObserver!=='undefined'){var observer=new ResizeObserver(resize);
 window.addEventListener('resize',resize);window.addEventListener('pageshow',resize);show();resize();
 ```
 
-### Fra figuren til lineær algebra
+### Fra besøksregelen til et matriseprodukt
 
-Vi samler sannsynlighetene i $p_k=(p_A^{(k)},p_B^{(k)},p_C^{(k)},p_D^{(k)})^T$.
-Her teller $k$ klikk. En **sannsynlighetsvektor** har ikke-negative elementer
-med sum én. Når den besøkende starter på A med sikkerhet, er $p_0=(1,0,0,0)^T$.
-Besøksregelen gir da
+Vi samler sannsynlighetene i en kolonnevektor, i rekkefølgen A, B, C, D:
 
-$$\underbrace{\begin{bmatrix}1\\0\\0\\0\end{bmatrix}}_{p_0}
-\longmapsto\underbrace{\begin{bmatrix}0\\1/2\\1/2\\0\end{bmatrix}}_{p_1}
-\longmapsto\underbrace{\begin{bmatrix}1/4\\0\\1/2\\1/4\end{bmatrix}}_{p_2}.$$
+$$p_k=(p_A^{(k)},p_B^{(k)},p_C^{(k)},p_D^{(k)})^T.$$
 
-Vi samler overgangssannsynlighetene i en **overgangsmatrise** $S$.
-Elementet $S_{ij}$ er sannsynligheten for å gå til side $i$, gitt at den
-besøkende er på side $j$. **Kolonnen angir siden vi går fra; raden angir siden
-vi går til.** Kolonne A er derfor $(0,1/2,1/2,0)^T$.
+Her teller $k$ stegene i modellen. For eksempel er $p_0=(1,0,0,0)^T$
+når startsiden sikkert er A. En vektor med ikke-negative elementer og sum
+én kalles en **sannsynlighetsvektor**.
+
+Besøksregelen lagres i en **overgangsmatrise** $S$.
+Elementet $S_{ij}$ er sannsynligheten for å gå fra side $j$ til side $i$:
+**kolonnen er siden vi går fra, og raden er siden vi går til**.
+Kolonne A blir derfor $(0,1/2,1/2,0)^T$.
 
 $$S=\begin{array}{c|rrrr}
  & A&B&C&D\\\hline
@@ -1531,124 +1520,123 @@ $$S=\begin{array}{c|rrrr}
  D&0&0&1/2&0
 \end{array},\qquad p_{k+1}=Sp_k.$$
 
-For en vilkårlig fordeling vekter vi hver kolonne med sannsynligheten for
-å være på den aktuelle siden. Summen av disse kolonnebidragene er matriseproduktet
-$Sp_k$: den nye fordelingen. Rad A sier
-$p_A^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}$: vi summerer
-bidragene fra C og D. Hver kolonne summerer til én. Med ikke-negative
-elementer kalles $S$ **kolonnestokastisk**; oppdateringen bevarer summen i $p_k$.
+Matriseproduktet vekter hver kolonne med sannsynligheten for å være på
+avsendersiden og summerer bidragene til hver mottaker.
+For eksempel mottar A halvparten av bidraget fra C og hele bidraget fra D.
+Bidraget fra en side er proporsjonalt med sannsynligheten for å være der,
+og deles likt mellom sidens utgående lenker.
 
-### Hvor kommer egenvektoren inn?
+Alle kolonnene har ikke-negative elementer og sum én.
+En slik matrise kalles **kolonnestokastisk**. Oppdateringen $p\mapsto Sp$
+bevarer summen i $p$. Gjentar vi oppdateringen, får vi $p_k=S^kp_0$: samme gjentatte
+matrisemultiplikasjon som tidligere i uken, nå uten normalisering av lengden.
 
-Når neste fordeling er lik den vi har, kaller vi fordelingen **stasjonær**:
+### Når fordelingen ikke lenger endres
 
-$$\underbrace{Sp_*}_{\text{neste fordeling}}=
-\underbrace{p_*}_{\text{nåværende fordeling}}
-\qquad\Longleftrightarrow\qquad Sp_*=1p_*.$$
+I forsøket nærmet de to startfordelingene seg samme fordeling.
+En fordeling som er uendret ved neste steg, kalles **stasjonær**.
+Vi markerer den med en stjerne:
 
-Dette er en egenvektor med egenverdi **1**, skalert til sum én.
-Her er $p_*=(1/3,1/6,1/3,1/6)^T$. Elementene er modellens mål på
-sidenes viktighet: A og C får verdien $1/3$ og deler førsteplassen;
-B og D får $1/6$ og deler neste plass.
-Den besøkende flytter fortsatt; det er **fordelingen** som er uendret.
+$$Sp_*=p_*=1p_*.$$
 
-**Diskuter:** Hvorfor kan en lenke fra en mye besøkt side gi flere besøk enn
-en lenke fra en lite besøkt side? Besøk under vår regel er ikke det samme
-som kvalitet eller relevans. I 5.6 undersøker vi dessuten om fordelingen alltid stabiliserer seg.
+Her møter vi egenvektorene igjen: $p_*$ er en egenvektor med egenverdi
+**1**, skalert til sum én. For dette nettverket er
+
+$$p_*=(1/3,1/6,1/3,1/6)^T.$$
+
+Rangerer vi etter disse sannsynlighetene, deler A og C førsteplassen,
+mens B og D deler neste plass. Den besøkende fortsetter å følge lenker;
+det er sannsynlighetene som er uendret.
+
+Dette gir et presist mål på **viktighet under besøksregelen**.
+Modellen kjenner verken innholdets kvalitet eller hva en bruker søker etter.
+Dessuten sier likningen $Sp_*=p_*$ alene ingenting om hvorvidt alle
+startfordelinger nærmer seg $p_*$. I 5.6 undersøker vi hva lenkeregelen
+kan føre til, og bygger den ferdige PageRank-modellen.
 
 <details class="reading-step">
-<summary>Gå i dybden: fra besøksregel til matrise og egenvektor</summary>
+<summary>Gå i dybden: fra lenkeklikk til matriseprodukt</summary>
 
-**Fra besøksfordeling til vektor**
+Én besøkende er på én side om gangen. Etter ett steg fra A er
+sannsynligheten $1/2$ for B og $1/2$ for C.
+Starter mange uavhengige besøkende på A, er dette også de forventede
+andelene på B og C. De faktiske andelene i et tilfeldig forsøk kan avvike.
 
-Vi samler sannsynlighetene i en kolonne, i den faste rekkefølgen A, B, C, D:
+De to første oppdateringene fra A gir
 
-$$p_k=\begin{bmatrix}p_A^{(k)}\\p_B^{(k)}\\p_C^{(k)}\\p_D^{(k)}\end{bmatrix}.$$
+$$\underbrace{\begin{bmatrix}1\\0\\0\\0\end{bmatrix}}_{p_0}
+\longmapsto\underbrace{\begin{bmatrix}0\\1/2\\1/2\\0\end{bmatrix}}_{p_1}
+\longmapsto\underbrace{\begin{bmatrix}1/4\\0\\1/2\\1/4\end{bmatrix}}_{p_2}.$$
 
-Her er $k$ antall klikk etter at startfordelingen er valgt. For eksempel betyr $p_C^{(k)}=0.5$
-at sannsynligheten for å være på C etter $k$ klikk er 50 %.
-Elementene er ikke-negative og summerer til én; en slik vektor kalles en
-**sannsynlighetsvektor**. Koordinatene er andeler, ikke plasseringen av
-punktene i tegningen.
+Ved det andre steget går hele B-bidraget på $1/2$ til C.
+C-bidraget på $1/2$ deles i to: $1/4$ til A og $1/4$ til D.
 
-Når den besøkende starter på A med sikkerhet, gir de to første klikkene:
+Generelt er $S_{ij}$ sannsynligheten for å gå til $i$ når vi er på $j$.
+Produktet $S_{ij}p_j$ er derfor sannsynligheten for både å være på $j$ nå
+og gå videre til $i$. Siden avsendersidene utelukker hverandre, summerer
+vi bidragene:
 
-$$\begin{bmatrix}1\\0\\0\\0\end{bmatrix}
-\longmapsto\begin{bmatrix}0\\1/2\\1/2\\0\end{bmatrix}
-\longmapsto\begin{bmatrix}1/4\\0\\1/2\\1/4\end{bmatrix}.$$
+$$(Sp)_i=\sum_j S_{ij}p_j.$$
 
-Ved det andre klikket går hele B-bidraget på $1/2$ til C. C-bidraget på
-$1/2$ deles i to: $1/4$ til A og $1/4$ til D. Dette gir prosentene i figuren. Nå skriver vi den samme flytteregelen
-som ett matriseprodukt, slik at vi kan bruke teorien fra resten av uken.
+Dette er rad-ganger-kolonne-regelen. Vi kan også lese produktet kolonnevis:
+$Sp$ er summen av kolonnene i $S$, vektet med koordinatene i $p$.
+Kolonne $j$ er $Se_j$, der $e_j$ er standardbasisvektoren som betyr sikker
+start på side $j$. Slik kjenner vi igjen matriserepresentasjonen av en
+lineær transformasjon fra tidligere uker.
 
-**Fra lenker til en matrise**
+**Prøv for hånd:** Start med $p=(1/4,1/4,1/4,1/4)^T$.
+Til A kommer $\tfrac12\cdot\tfrac14+1\cdot\tfrac14=3/8$.
+Kontroller de andre radene og få $Sp=(3/8,1/8,3/8,1/8)^T$.
 
-En **overgangsmatrise** lagrer sannsynlighetene for neste klikk.
-Vi lar **kolonne $j$ være siden vi går fra, og rad $i$ være siden vi går til**:
-$S_{ij}$ er sannsynligheten for å gå fra $j$ til $i$.
-A-kolonnen er derfor $(0,1/2,1/2,0)^T$: den viser neste fordeling hvis
-startfordelingen er $p_0=(1,0,0,0)^T$. Tilsvarende viser B-kolonnen
-fordelingen etter ett klikk fra $p_0=(0,1,0,0)^T$. Hver kolonne er altså resultatet av å bruke regelen på én
-standardbasisvektor, akkurat som for lineære transformasjoner tidligere.
+For å vise at summen bevares, sett $\mathbf1=(1,1,1,1)^T$.
+Kolonnesummene gir $\mathbf1^TS=\mathbf1^T$, og dermed
 
-For en blandet fordeling vekter vi A-kolonnen med $p_A$, B-kolonnen med
-$p_B$, og så videre, og legger bidragene sammen. Dette er nettopp
-**kolonnetolkningen av matrisemultiplikasjon**:
+$$\mathbf1^T(Sp)=\mathbf1^Tp=1.$$
 
-$$S=\begin{bmatrix}0&0&1/2&1\\1/2&0&0&0\\1/2&1&0&0\\0&0&1/2&0\end{bmatrix},
-\qquad p_{k+1}=Sp_k.$$
+Ikke-negative elementer i $S$ og $p$ gir også ikke-negative elementer i
+$Sp$. Oppdateringen sender altså sannsynlighetsvektorer til
+sannsynlighetsvektorer. Vi trenger ikke dele på vektorlengden.
 
-Se også på første rad: Bare C og D sender besøk til A. Halvparten av
-C-bidraget og hele D-bidraget gir
+Merk forskjellen på kolonne- og radsummer: $\mathbf1^TS=\mathbf1^T$
+betyr ikke $S\mathbf1=\mathbf1$. Rad A summerer til $3/2$, fordi den
+samler bidrag fra forskjellige avsendere.
 
-$$p_A^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}.$$
+</details>
 
-Faktoren $1/2$ er ikke Cs andel av alle besøk. Den er andelen av **Cs eget
-bidrag** som sendes til A. Derfor må den multipliseres med $p_C^{(k)}$.
-De fire radene gjør samme opptelling for hver sin side.
+<details class="reading-step">
+<summary>Gå i dybden: finn og kontroller den stasjonære fordelingen</summary>
 
-Produktet summerer bidragene til hver mottaker. Alle besøk fra én avsender
-fordeles videre, så hver kolonne summerer til én. En matrise med denne
-egenskapen og ikke-negative elementer kalles **kolonnestokastisk**.
-Her teller $k$ rundene. Vi deler ikke på vektorlengden: summen én bevares av modellen.
+Likningen $Sp=p$ gir
 
-Når andelene er de samme etter ett nytt klikk, er **fordelingen uendret**,
-selv om hver besøkende fortsatt flytter seg. «Ny fordeling = gammel fordeling»
-skrives
+$$\begin{aligned}
+p_A&=p_C/2+p_D, &p_B&=p_A/2,\\
+p_C&=p_A/2+p_B, &p_D&=p_C/2.
+\end{aligned}$$
 
-$$Sp_*=p_*.$$
+Sett $p_B=p_A/2$ inn i tredje likning: $p_C=p_A$.
+Da er $p_D=p_A/2$, og løsningene har formen
+$t(1,1/2,1,1/2)^T$. Kravet om sum én gir $3t=1$, så
 
-Stjernen markerer en slik uendret fordeling. Den kalles **stasjonær**.
-Dette er egenvektorlikningen fra 5.2 med egenverdi **1**.
-I dette eksemplet konvergerer følgen av sannsynlighetsvektorer mot
-$p_*=(1/3,1/6,1/3,1/6)^T$. Den besøkende fortsetter å flytte seg, men
-fordelingen er uendret: hver side får like mye sannsynlighet inn som den
-sender videre. For A kommer $1/6$ fra C og $1/6$ fra D, altså $1/3$ på nytt.
-**Stasjonær** betyr dermed ikke at noen har sluttet å klikke.
+$$p_*=(1/3,1/6,1/3,1/6)^T.$$
 
-**Hva sier rangeringen – og hva sier den ikke?**
+Systemet $(S-I)p=0$ bestemmer en egenretning. Summen én velger den
+vektoren på denne retningen som er en sannsynlighetsfordeling.
 
-Vi gir høyere rang til sidene med størst andel i denne uendrede fordelingen.
-A og C deler førsteplassen her. Dette er et mål på **besøk under den valgte
-regelen**, ikke en direkte måling av kvalitet, sannhet eller relevans.
-Alle lenker fra samme side ble behandlet likt; modellen vet ingenting om
-hva teksten på siden inneholder, eller hva en virkelig person foretrekker.
+Kolonnesummene viser dessuten at $S^T\mathbf1=\mathbf1$.
+Dermed har $S^T$ egenverdi én. En matrise og dens transponerte har samme
+karakteristiske polynom $\det(S-\lambda I)$, så også $S$ har egenverdi én.
+Dette argumentet alene sier ikke at $S^kp_0$ konvergerer.
 
-Vi har gått fra et spørsmål om besøk til en likning om egenvektorer:
-$Sp_*=1p_*$. Summen én bestemmer skaleringen av sannsynlighetsvektoren.
-I 5.6 undersøker vi hva som kan gå galt med besøksregelen, og endrer
-modellen før vi kaller den endelige rangeringen PageRank.
-
-**Diskuter:** Hvorfor kan en side få mange besøk selv om få sider lenker til den?
-Og hvorfor kan riktig løsning av likningen likevel gi en lite nyttig rangering?
-
-**Prøv som kontroll:** Kjør cellen fra begge startfordelingene. Hvilken forskjell
-måler utskriften? Kan et lite tall alene si at lenkene er lagt inn riktig?
+**Kontroller med kode:** Kjør cellen fra begge startfordelingene.
+Sammenlign resultatet med den eksakte løsningen. Utskriften måler
+største koordinatendring ved neste steg. Hvorfor kan et lite tall
+bekrefte at fordelingen er nesten stasjonær uten å bekrefte at vi la inn
+riktige lenker?
 
 ```{pyodide-python}
 #| label: week5-network
 # Kolonne j er avsender, rad i er mottaker; S @ p gir neste fordeling.
-# Start fra jevn fordeling eller alle på A, og sammenlign sluttfordelingene.
+# Velg 25 % på hver side eller 100 % på A som startfordeling; sammenlign etter 40 steg.
 # Summen skal forbli 1 uten normalisering av vektorlengden.
 
 S = np.array([[0., 0., 1/2, 1.],
@@ -1659,69 +1647,8 @@ p = np.ones(4)/4  # Prøv np.array([1., 0., 0., 0.]).
 for k in range(40):
     p = S @ p
 print("A, B, C, D:", p)
-print("Sum:", p.sum(), "største endring ved neste klikk:", np.max(abs(S @ p-p)))
+print("Sum:", p.sum(), "største endring ved neste steg:", np.max(abs(S @ p-p)))
 ```
-
-
-</details>
-
-<details class="reading-step">
-<summary>Gå i dybden: ett matriseprodukt og en bevaringslov</summary>
-
-**Sannsynlighet for neste side og samlet sannsynlighet.** $S_{ij}$ gjelder
-under forutsetning av at vi allerede er på side $j$. Produktet $S_{ij}p_j$
-er sannsynligheten for både å være på $j$ nå og gå videre til $i$.
-Bidrag fra forskjellige avsendersider legges sammen fordi man bare kan
-være på én av dem om gangen. Derfor er
-
-$$(Sp)_i=\sum_j S_{ij}p_j.$$
-
-Dette forklarer både multiplikasjonen og summeringen i matriseregelen.
-Slik skiller vi selve modellen (hvem som kan flytte hvor, med hvilke
-sannsynligheter) fra regnemetoden (gjentatte matriseprodukter).
-
-En stasjonær fordeling er ikke automatisk grensen for iterasjonsfølgene fra alle startfordelinger på
-alle nettverk. To sider som bare lenker til hverandre, kan gi pendling.
-Forsøkene i 5.6 undersøker hvorfor modellen trenger en ekstra regel.
-
-
-Fra jevn startfordeling er første mottak til A $\tfrac12\cdot\tfrac14+1\cdot\tfrac14=3/8$.
-Hele svaret blir $(3/8,1/8,3/8,1/8)^T$.
-Generelt er $(Sp)_i=\sum_j S_{ij}p_j$: summer alle bidrag til mottaker $i$.
-
-Skriv $\mathbf1=(1,\ldots,1)^T$. Kolonnesummene betyr
-$\mathbf1^TS=\mathbf1^T$, og dermed $\mathbf1^TSp=\mathbf1^Tp$.
-Summen bevares. Dette betyr **ikke** at $S\mathbf1=\mathbf1$; det ville
-kreve at også radsummene var én.
-
-Her gir $Sp=p$ likningene $p_B=p_A/2$, $p_D=p_C/2$ og $p_A=p_C$.
-Normalisering gir $p=(1/3,1/6,1/3,1/6)^T$. A og C deler førsteplassen.
-
-Kolonnesummene gir også $S^T\mathbf1=\mathbf1$, så $S^T$ har egenverdi én.
-Siden en matrise og dens transponerte har samme polynom $\det(S-\lambda I)$, kalt det **karakteristiske polynomet**,
-har $S$ også egenverdi én. Men dette alene garanterer ikke at iterasjonen
-konvergerer til én bestemt fordeling.
-
-**Les én kolonne og én rad.** Kolonne C er $(1/2,0,0,1/2)^T$ fordi en
-besøkende på C går til A eller D med lik sannsynlighet. Rad A er
-$(0,0,1/2,1)$ fordi A mottar halvparten fra C og alt fra D.
-Rad A summerer til $3/2$, som er helt i orden: raden samler ulike avsendere.
-
-**Finn den uendrede fordelingen for hånd:**
-
-$$\begin{aligned}
-p_A&=p_C/2+p_D, &p_B&=p_A/2,\\
-p_C&=p_A/2+p_B, &p_D&=p_C/2.
-\end{aligned}$$
-
-Sett inn $p_B=p_A/2$ i tredje likning: $p_C=p_A$.
-Da er også $p_D=p_A/2$. Alle stasjonære løsninger har formen
-$t(1,1/2,1,1/2)^T$. Kravet om sum én gir $3t=1$ og $t=1/3$.
-Dermed er $p_*=(1/3,1/6,1/3,1/6)^T$.
-
-Det homogene systemet $(S-I)p=0$ velger en retning. Tilleggskravet
-$\sum_i p_i=1$ velger én vektor på denne retningen.
-Dette er normalisering med et annet formål enn lengde én i potensmetoden.
 
 </details>
 
@@ -1731,17 +1658,18 @@ Dette er normalisering med et annet formål enn lengde én i potensmetoden.
 
 ### Eksperiment 7 – kan én side fange besøkene?
 
-I 5.5 brukte vi en stasjonær fordeling til å rangere sidene. Men kan lenkene
-gi en høy rangering av en helt annen grunn enn at en side er nyttig?
-Vi undersøker dette ved å endre **bare lenken fra D**: i stedet for å gå til A
-fører den nå tilbake til D. Den som følger denne lenken, blir på samme side.
-**Gjett først:** D har fortsatt bare én innkommende lenke fra en annen side.
-Kan D likevel ende med nesten alle besøkene?
+**Kan en side få høyest verdi bare fordi besøkende ikke kommer seg videre?**
+Behold nettverket fra 5.5, men endre **bare lenken fra D**:
+D → A blir D → D. Å følge den nye lenken fører tilbake til samme side.
 
-**Undersøk:** Startfordelingen er 25 % på hver side. Hvordan tror du
-sannsynligheten for å være på D utvikler seg? Kjør cellen og følg de fire
-kurvene. Hvilke lenker gjør at den besøkende kan komme til D, men ikke forlate D?
-Vannrett akse viser antall klikk; hver kurve viser sannsynligheten for én side.
+**Gjett først:** D har fortsatt bare én innkommende lenke fra en annen side.
+Hvordan tror du sannsynligheten for å være på D vil utvikle seg?
+
+Kjør cellen fra startfordelingen 25 % på hver side.
+Vannrett akse viser antall steg; de fire kurvene viser sannsynligheten
+for å være på hver side ved hvert steg.
+**Sammenlign med gjetningen:** Hvilke veier fører til D, og hvilke fører ut igjen?
+Hva blir rangeringen etter mange steg?
 
 ```{pyodide-python}
 #| label: week5-trap
@@ -1755,17 +1683,17 @@ S = np.array([[0., 0., 1/2, 1.],
               [1/2, 1., 0., 0.],
               [0., 0., 1/2, 0.]])
 trap = S.copy()
-# Kolonne 3 er D: alle som er på D, går tilbake til D ved neste klikk.
+# Kolonne 3 er D: alle som er på D, går tilbake til D ved neste steg.
 trap[:, 3] = [0., 0., 0., 1.]
 p = np.ones(4) / 4
 values = [p.copy()]
 for k in range(100):
     p = trap @ p
-    # Lagre et eget øyeblikksbilde av fordelingen for hver runde.
+    # Lagre et eget øyeblikksbilde av fordelingen for hvert steg.
     values.append(p.copy())
 plt.figure()
 plt.plot(values)
-plt.xlabel("Antall klikk")
+plt.xlabel("Antall steg")
 plt.ylabel("Sannsynlighet for å være på siden")
 plt.legend(list("ABCD"))
 plt.title("Besøkene slipper ikke ut av D")
@@ -1773,33 +1701,54 @@ plt.show()
 print(p)
 ```
 
-D er en felle: besøk kan komme inn, men ikke ut. Regningen kan konvergere
-helt fint selv om rangeringen ikke uttrykker det vi ønsket å måle.
-Den nye siste raden viser oppsamlingen:
+D er blitt en **felle**: den besøkende kan komme dit, men lenkene gir
+ingen utvei. Fordelingen nærmer seg $(0,0,0,1)^T$, slik at D får all vekt
+i rangeringen. D kommer øverst fordi siden holder på besøkene.
 
-$$p_D^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}\ge p_D^{(k)}.$$
+Regningen konvergerer altså til en stasjonær fordeling, men besøksregelen
+gir et lite nyttig mål på viktighet. Kall den endrede overgangsmatrisen
+$S_{\mathrm{felle}}$. Residualen $r=S_{\mathrm{felle}}p-p$ måler endringen
+ved neste steg. En liten residual viser at $p$ omtrent oppfyller modellens
+likning; den kan ikke bekrefte at modellen måler det vi ønsker.
 
-I dette nettverket nærmer fordelingen seg $(0,0,0,1)^T$.
-Lar vi $S_{\mathrm{felle}}$ betegne overgangsmatrisen med den endrede D-kolonnen,
-oppfyller denne vektoren $S_{\mathrm{felle}}p=p$ nøyaktig.
-Residualen $r=S_{\mathrm{felle}}p-p$ er altså null: vi har løst modellens likning,
-men selve besøksregelen gir D høyest rang fordi siden holder på besøkene.
+<details class="reading-step">
+<summary>Gå i dybden: en korrekt løsning for en uheldig besøksregel</summary>
 
-### Eksperiment 8 – gir tilfeldige hopp en utvei?
+Endringen D → A til D → D bytter siste kolonne fra $(1,0,0,0)^T$ til
+$(0,0,0,1)^T$. Den nye D-raden gir
 
-Vi trenger en mulighet til å forlate D. Derfor endrer vi besøksregelen:
-ved hvert steg følger den besøkende en lenke med sannsynlighet $\alpha$.
-Med sannsynlighet $1-\alpha$ velger hen i stedet én av de fire sidene med
-lik sannsynlighet, uavhengig av lenkene. Også siden hen allerede er på, kan velges.
-Et slikt tilfeldig hopp kalles **teleportering**.
+$$p_D^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}\geq p_D^{(k)}.$$
 
-Tallet $\alpha$ kalles **dempingsfaktoren** og styrer hvor stor vekt lenkene får.
-For $\alpha=0.85$ er det 85 % sannsynlighet for å følge en lenke og 15 % for
-et hopp. **Vil D beholde like høy rang når den besøkende kan hoppe ut av fellen?**
+Sannsynlighet på D blir der, mens C kan sende mer inn.
+For $p=(0,0,0,1)^T$ får vi nøyaktig
 
-**Undersøk:** Kjør cellen etter eksperiment 7. Hver kurve viser fordelingen
-etter 500 steg for én verdi av $\alpha$. Sammenlign D for $0.95$, $0.85$ og
-$0.5$: hva skjer når tilfeldige hopp blir vanligere? Får alle sidene positiv sannsynlighet?
+$$S_{\mathrm{felle}}p=p,\qquad r=S_{\mathrm{felle}}p-p=0.$$
+
+En null residual bekrefter stasjonaritet. At D får all vekt, følger av
+lenkene vi valgte. En selvlenke er altså noe annet enn mangel på lenker:
+her finnes et lenkevalg, men det gir ingen utvei.
+
+</details>
+
+### Eksperiment 8 – hva endres når vi kan hoppe ut?
+
+Vi gir den besøkende en ny mulighet. Ved hvert steg velger hen mellom to handlinger:
+
+- Med sannsynlighet $\alpha$ følger hen en lenke etter regelen vi allerede har.
+- Med sannsynlighet $1-\alpha$ velger hen neste side uavhengig av lenkene,
+  med lik sannsynlighet blant A–D. Også nåværende side kan velges.
+
+Det siste kalles **teleportering**. Ett steg i denne modellen kan altså
+være et lenkeklikk eller et tilfeldig hopp.
+**Dempingsfaktoren** $\alpha$ bestemmer hvor stor vekt lenkene får.
+Når $\alpha=0.85$, er sannsynligheten 85 % for et lenkeklikk og 15 % for et hopp.
+**Hoppfordelingen** $u=(1/4,1/4,1/4,1/4)^T$ beskriver hvor hoppet lander.
+
+**Gjett først:** Hvordan vil verdien til D endres når vi gjør hopp vanligere?
+Kjør cellen etter eksperiment 7. Vannrett akse viser nå sidene A–D.
+Hver kurve viser fordelingen etter 500 steg for én verdi av $\alpha$.
+Sammenlign $0.95$, $0.85$ og $0.5$: Hvor stor vekt beholder D, og får
+de andre sidene også positiv sannsynlighet?
 
 ```{pyodide-python}
 #| label: week5-teleport
@@ -1820,184 +1769,176 @@ ax.legend()
 plt.show()
 ```
 
-### Bygg matematikken fra besøksregelen
+### Fra den nye regelen til PageRank
 
-La $S$ være overgangsmatrisen for lenkene, her med fellen på D.
-La $u=(1/4,1/4,1/4,1/4)^T$ være **hoppfordelingen**: sannsynlighetene for
-hvilken side et tilfeldig hopp ender på. Den nye fordelingen er summen av
-bidraget fra lenkeklikk og bidraget fra hopp:
+Hoppene gir en utvei fra D. Forsøket viser at $\alpha$ påvirker verdiene
+som brukes til rangering, selv om rekkefølgen er den samme her.
+På andre nettverk kan også rekkefølgen endres: å endre sannsynligheten
+for et hopp er å endre modellen.
 
-$$p_{k+1}=\underbrace{\alpha Sp_k}_{\text{følger lenker}}+
+La nå $S$ være lenkematrisen for nettverket vi undersøker; i forsøket
+er det matrisen med fellen på D. For en sannsynlighetsvektor $p_k$ blir
+neste fordeling
+
+$$p_{k+1}=\underbrace{\alpha Sp_k}_{\text{lenkeklikk}}+
 \underbrace{(1-\alpha)u}_{\text{tilfeldige hopp}}.$$
 
-For å skrive dette som ett matriseprodukt lar vi $n$ være antall sider og
-$\mathbf1$ kolonnen med $n$ ettall. Matrisen $u\mathbf1^T$ har $u$ i hver
-kolonne: den beskriver samme hoppfordeling fra alle sider. Siden
-$\mathbf1^Tp_k=1$, er $(u\mathbf1^T)p_k=u$. Dermed er oppdateringen
-$p_{k+1}=Gp_k$, der
+Regelen må også fungere på en side uten utgående lenker, en
+**hengende node**. Der finnes ingen lenke å velge.
+Vi bruker derfor $u$ også når den besøkende er på en slik side og skulle
+ha fulgt en lenke: erstatt nullkolonnen i $S$ med $u$.
+Da er $S$ kolonnestokastisk.
 
-$$G=\alpha S+(1-\alpha)u\mathbf1^T.$$
+For et nettverk med $n$ sider velger vi en fast hoppfordeling $u$ med $n$
+koordinater og lar $\mathbf1$ være kolonnen med $n$ ettall. Matrisen $u\mathbf1^T$ har hoppfordelingen $u$ i hver kolonne,
+fordi hoppene har samme fordeling fra alle avsendersider.
+Den samlede overgangsmatrisen er derfor
 
-Matrisen $G$ kalles **Google-matrisen**, og dens stasjonære sannsynlighetsvektor er
-**PageRank-vektoren** $p_*$. Den oppfyller $Gp_*=p_*$: igjen en egenvektor
-med egenverdi én, skalert til sum én. Sidene rangeres etter elementene i $p_*$.
-Valget av $\alpha$ påvirker dermed selve rangeringen.
+$$G=\alpha S+(1-\alpha)u\mathbf1^T,\qquad p_{k+1}=Gp_k.$$
 
-**Hva hvis en side ikke har lenker?** En slik side kalles en **hengende node**
-i nettverket. Da mangler vandringen et neste steg hvis lenkeregelen velges.
-Vi lar derfor også denne overgangen følge $u$: erstatt sidens nullkolonne i
-$S$ med $u$ **før** $G$ dannes. Kolonnen summerer da til én, som de andre.
+$G$ kalles **Google-matrisen**. Dens stasjonære sannsynlighetsvektor
+$p_*$ er **PageRank-vektoren**:
+
+$$Gp_*=p_*,\qquad p_{*,i}\geq0,\qquad \sum_i p_{*,i}=1.$$
+
+Elementene er sidenes PageRank-verdier, som vi rangerer fra størst til minst.
+
+### Hvorfor får vi nå én bestemt rangering?
+
+Anta at $S$ er kolonnestokastisk, at $u_i>0$ for alle sider,
+at $\sum_i u_i=1$, og at $0<\alpha<1$.
+Da er alle elementene i $G$ positive, og hver kolonne summerer til én.
+**Perron–Frobenius-teoremet** gir da det vi trenger:
+Det finnes nøyaktig én stasjonær sannsynlighetsvektor, alle elementene
+er positive, og $G^kp_0$ konvergerer mot den fra enhver startfordeling $p_0$.
+Dette krever verken symmetri eller en egenvektorbasis.
+
+Garantien gjelder beregningen under den valgte besøksregelen.
+**Diskuter:** Hva betyr det for målet på viktighet når $\alpha$ senkes?
+Ved $\alpha=0$ velges alle sider etter $u$ allerede i første steg.
+Ved $\alpha=1$ følger vi bare lenker og mister den generelle
+konvergensgarantien. Kan en rangering være entydig og lett å beregne,
+men likevel lite relevant for det en bruker leter etter?
 
 <details class="reading-step">
-<summary>Gå i dybden: fra besøksregel til Google-matrise</summary>
+<summary>Gå i dybden: utled Google-matrisen</summary>
 
-Siden $\mathbf1^Tp_k=1$, kan vi også skrive $p_{k+1}=Gp_k$, med
+Produktet av kolonnen $u$ og raden $\mathbf1^T$ er en $n\times n$-matrise:
 
-$$G=\alpha S+(1-\alpha)u\mathbf1^T.$$
+$$u\mathbf1^T=\begin{bmatrix}u&u&\cdots&u\end{bmatrix}.$$
 
-Produktet $u\mathbf1^T$ har $u$ i hver kolonne:
+Siden $p_k$ har sum én, får vi
 
-$$u\mathbf1^T=\begin{bmatrix}u&u&\cdots&u\end{bmatrix},\qquad
-(u\mathbf1^T)p_k=u\underbrace{(\mathbf1^Tp_k)}_{1}=u.$$
+$$(u\mathbf1^T)p_k=u(\mathbf1^Tp_k)=u.$$
 
-Dermed beskriver $Gp_k$ akkurat samme besøksregel. For fire sider og
-$\alpha=0.85$ får hver side et hoppbidrag $0.15/4=0.0375$ per runde.
-I fellen blir for eksempel D-regelen
+Dermed blir $Gp_k=\alpha Sp_k+(1-\alpha)u$, som er akkurat den nye
+besøksregelen. I fellen med $\alpha=0.85$ og jevn hoppfordeling blir
+D-regelen for eksempel
 
-$$p_D^{(k+1)}=0.85\bigl(\tfrac12p_C^{(k)}+p_D^{(k)}\bigr)+0.0375.$$
+$$p_D^{(k+1)}
+=0.85\bigl(\tfrac12p_C^{(k)}+p_D^{(k)}\bigr)+0.0375.$$
 
-**Kontroller for hånd:** Hvis D-kolonnen var null, hva ville
-kolonnesummen til $G$ bli? Regn før du sammenligner:
+Under forutsetningene i teoremet er hvert element positivt:
 
-$$\sum_iG_{iD}=\alpha\cdot0+(1-\alpha)\cdot1=1-\alpha.$$
+$$G_{ij}=\alpha S_{ij}+(1-\alpha)u_i>0.$$
 
-Derfor må vi først erstatte nullkolonnen med $u$, slik at summen blir
-$\alpha\cdot1+(1-\alpha)\cdot1=1$.
+Kolonnesummene er
 
-Det er to valg i hver runde. Andelen $\alpha$ følger lenkene og gir bidraget
-$\alpha Sp_k$. Resten, $1-\alpha$, fordeles etter $u$ og gir $(1-\alpha)u$.
-Siden alle besøk må telles, legger vi bidragene sammen.
+$$\sum_i G_{ij}
+=\alpha\underbrace{\sum_i S_{ij}}_{1}
+ +(1-\alpha)\underbrace{\sum_i u_i}_{1}=1.$$
 
-Matrisen $u\mathbf1^T$ har dimensjon $n\times n$: en kolonne med $n$ elementer
-ganges med en rad med $n$ ettall. Element $(i,j)$ blir $u_i\cdot1=u_i$.
-Hver avsender får dermed samme fordeling for tilfeldige hopp.
+Hvis en hengende node hadde beholdt en nullkolonne i $S$, ville den
+tilsvarende kolonnen i $G$ summert til $1-\alpha$.
+Derfor erstatter vi nullkolonnen med $u$ før vi danner $G$.
 
-Med $u_i>0$ er $G_{ij}=\alpha S_{ij}+(1-\alpha)u_i>0$.
-Kolonnesummen er $\alpha\sum_iS_{ij}+(1-\alpha)\sum_iu_i=1$.
-Dette er de to egenskapene vi trenger for teoremet nedenfor.
-
-En hengende node har ingen utgående lenker. Vi velger at besøkende derfra
-fordeles etter $u$. En selvlenke er derimot et eksisterende lenkevalg:
-ved å følge den blir besøkende på samme side. Teleporteringen gir også
-disse besøkende en mulighet til å gå videre.
-
-Vi kan beregne den stasjonære fordelingen på to måter. Iterasjonen gir
-$p_{k+1}=\alpha Sp_k+(1-\alpha)u$. Ved stasjonaritet får vi
+Ved stasjonaritet kan vi flytte ledd og få et lineært system:
 
 $$p_*=\alpha Sp_*+(1-\alpha)u
-\quad\Longrightarrow\quad
+\quad\Longleftrightarrow\quad
 (I-\alpha S)p_*=(1-\alpha)u.$$
 
-Dette lille lineære systemet blir en uavhengig kontroll i prosjektet.
-På store nettverk bruker vi matrise-vektor-produktet; vi trenger ikke
-lagre den tette matrisen $u\mathbf1^T$.
+På små nettverk kan dette brukes som en uavhengig kontroll av iterasjonen.
+På store nettverk beregner vi $\alpha Sp+(1-\alpha)u$ direkte; vi trenger
+ikke lagre den tette matrisen $u\mathbf1^T$.
 
 </details>
 
-### Hva kan vi nå garantere?
-
-Hvis $S$ er kolonnestokastisk, $u_i>0$, $\sum_i u_i=1$ og $0<\alpha<1$,
-er alle elementene i $G$ positive og kolonnene summerer til én.
-Da finnes **nøyaktig én stasjonær sannsynlighetsvektor**, alle sidene får
-positiv andel. Iterasjonsfølgen konvergerer mot denne fordelingen fra enhver startfordeling.
-Dette er konklusjonen vi bruker fra **Perron–Frobenius-teoremet**. Det krever ikke at $G$ er symmetrisk eller diagonaliserbar.
-
-**Sjekk forståelsen:** Lover teoremet at rangeringen er en god måling av
-kvalitet? Hva skjer med lenkenes betydning når $\alpha=0$? Hvilken garanti
-mister vi ved $\alpha=1$?
-
 <details class="reading-step">
-<summary>Gå i dybden: andre egenverdier beskriver avvikene</summary>
+<summary>Gå i dybden: egenverdier forklarer pendling og avtagende avvik</summary>
 
-La $p_*$ være den stasjonære fordelingen. Differansen $e_k=p_k-p_*$ har sum
-null, så teleporteringstermen kanselleres:
-
-$$e_{k+1}=Ge_k=\alpha Se_k.$$
-
-Et avvik i en egenretning skaleres med den tilhørende egenverdien ved hvert
-steg. Derfor er de andre egenverdiene relevante selv om selve rangeringen
-alltid bruker egenverdien én. Med $0<\alpha<1$ har alle de andre
-egenverdiene til $G$ absoluttverdi mindre enn én, faktisk høyst $\alpha$.
-
-På små grafer kan vi finne alle egenverdiene og sammenligne størrelsen på
-den nest største med et konvergensplott. Flere bidrag, startfordelingen og
-avrunding kan påvirke plottet; det er ikke alltid én rett linje fra første steg.
-
-Trekk de to oppdateringslikningene fra hverandre:
+La $e_k=p_k-p_*$ være avviket fra den stasjonære fordelingen.
+Trekk oppdateringene fra hverandre:
 
 $$\begin{aligned}
-e_{k+1}&=p_{k+1}-p_*\\
-&=\alpha Sp_k+(1-\alpha)u-\bigl(\alpha Sp_*+(1-\alpha)u\bigr)\\
+e_{k+1}
+&=\alpha Sp_k+(1-\alpha)u
+  -\bigl(\alpha Sp_*+(1-\alpha)u\bigr)\\
 &=\alpha S(p_k-p_*)=\alpha Se_k.
 \end{aligned}$$
 
-Siden begge fordelinger summerer til én, har $e_k$ sum null, og
-$u\mathbf1^Te_k=0$. Derfor er også $Ge_k=\alpha Se_k$.
+Begge fordelinger har sum én, så $\mathbf1^Te_k=0$.
+Derfor er også $Ge_k=\alpha Se_k$.
+Et avvik i en egenretning skaleres med den tilhørende egenverdien.
+De øvrige egenverdiene til $G$ har absoluttverdi høyst $\alpha<1$;
+deres bidrag avtar. Normargumentet i neste fordypning gir en feilgrense
+også uten en egenvektorbasis.
 
-Se på to sider som bare lenker til hverandre. Med jevne hopp blir
+Se dette konkret med to sider som bare lenker til hverandre.
+Uten hopp blir fordelingen fra sikker start på første side
+$(1,0)^T,(0,1)^T,(1,0)^T,\ldots$.
+Fordelingen $(1/2,1/2)^T$ er stasjonær, men denne følgen nærmer seg den ikke.
 
-$$G=\begin{bmatrix}(1-\alpha)/2&(1+\alpha)/2\\
-(1+\alpha)/2&(1-\alpha)/2\end{bmatrix}.$$
+Med jevn hoppfordeling får vi
 
-Regn på $v=(1,1)^T$ og $w=(1,-1)^T$: $Gv=v$ og $Gw=-\alpha w$.
-Den stasjonære fordelingen er $p_*=v/2$. Fra $p_0=(1,0)^T$ er
+$$G=\begin{bmatrix}
+(1-\alpha)/2&(1+\alpha)/2\\
+(1+\alpha)/2&(1-\alpha)/2
+\end{bmatrix}.$$
+
+For $v=(1,1)^T$ og $w=(1,-1)^T$ er $Gv=v$ og $Gw=-\alpha w$.
+Den stasjonære fordelingen er $p_*=v/2$.
+Fra $p_0=(1,0)^T=(v+w)/2$ får vi
 
 $$p_k=\tfrac12v+\tfrac12(-\alpha)^kw.$$
 
-Fortegnet til avviket veksler, men størrelsen avtar med faktoren $\alpha$
-per steg. Ved $\alpha=1$ avtar det ikke. Dette knytter nettverket direkte
-til fortegnsforsøket i 5.4.
+Fortegnet på avviket veksler, men størrelsen avtar med faktor $\alpha$
+per steg når $0<\alpha<1$. Ved $\alpha=1$ fortsetter pendlingen.
+Dette knytter besøksmodellen til fortegnsforsøket i 5.4.
 
 </details>
 
-<details class="learning-extension">
-<summary>Fordypning: en feilgrense uten en egenvektorbasis</summary>
+<details class="reading-step">
+<summary>Gå i dybden: en feilgrense uten en egenvektorbasis</summary>
 
-For $\lVert z\rVert_1=\sum_i|z_i|$ gir kolonnesummene og trekantulikheten
-
-$$\lVert Sz\rVert_1\le\sum_{i,j}S_{ij}|z_j|=\lVert z\rVert_1.$$
-
-Derfor er $\lVert e_{k+1}\rVert_1\le\alpha\lVert e_k\rVert_1$.
-For en sannsynlighetsvektor $p$ får vi dessuten
-
-$$\lVert p-p_*\rVert_1\le\frac{\lVert Gp-p\rVert_1}{1-\alpha}.$$
-
-For å se dette, skriv $p-p_*=(p-Gp)+(Gp-Gp_*)$, bruk trekantulikheten
-og flytt $\alpha\lVert p-p_*\rVert_1$ til venstre.
-Nær $\alpha=1$ må residualen være mindre for å gi samme feilgaranti.
-
-Mer detaljert starter normulikheten slik:
+Vi bruker normen $\lVert z\rVert_1=\sum_i|z_i|$.
+Fordi $S$ har ikke-negative elementer og kolonnesum én, gir
+trekantulikheten
 
 $$\begin{aligned}
 \lVert Sz\rVert_1
-&=\sum_i\left|\sum_jS_{ij}z_j\right|\\
-&\le\sum_i\sum_j S_{ij}|z_j|\\
-&=\sum_j|z_j|\underbrace{\sum_iS_{ij}}_{1}=\lVert z\rVert_1.
+&=\sum_i\left|\sum_j S_{ij}z_j\right|\\
+&\leq\sum_j|z_j|\underbrace{\sum_iS_{ij}}_{1}
+=\lVert z\rVert_1.
 \end{aligned}$$
 
-Ikke-negative matriseelementer gjør at $|S_{ij}z_j|=S_{ij}|z_j|$.
-For feilgrensen setter vi $e=p-p_*$ og $r=Gp-p$.
-Da er $e=-r+Ge$, og fordi $e$ har sum null, er
-$\lVert Ge\rVert_1\le\alpha\lVert e\rVert_1$.
+Sammen med $e_{k+1}=\alpha Se_k$ gir dette
 
-$$\lVert e\rVert_1\le\lVert r\rVert_1+\alpha\lVert e\rVert_1
+$$\lVert e_k\rVert_1\leq\alpha^k\lVert e_0\rVert_1.$$
+
+Vi får også en kontroll som ikke krever at vi kjenner $p_*$.
+La $p$ være en sannsynlighetsvektor, $e=p-p_*$ og $r=Gp-p$.
+Siden $e$ har sum null, er $\lVert Ge\rVert_1\leq\alpha\lVert e\rVert_1$.
+Likningen $e=-r+Ge$ gir derfor
+
+$$\lVert e\rVert_1\leq\lVert r\rVert_1+\alpha\lVert e\rVert_1
 \quad\Longrightarrow\quad
-(1-\alpha)\lVert e\rVert_1\le\lVert r\rVert_1.$$
+\boxed{\lVert p-p_*\rVert_1\leq
+\frac{\lVert Gp-p\rVert_1}{1-\alpha}}.$$
 
-For $\alpha=0.85$ og residual $10^{-8}$ blir feilgrensen
-$10^{-8}/0.15\approx6.67\cdot10^{-8}$.
-For $\alpha=0.99$ blir den $10^{-6}$ ved samme residual.
-En lik residualtoleranse gir altså ikke samme feilgaranti når $\alpha$ endres.
+Her er $0\leq\alpha<1$. Nær $\alpha=1$ må residualen være mindre for å
+garantere samme feil. Med $\lVert r\rVert_1=10^{-8}$ er feilgrensen
+omtrent $6.67\cdot10^{-8}$ ved $\alpha=0.85$, men $10^{-6}$ ved $\alpha=0.99$.
 
 </details>
 
