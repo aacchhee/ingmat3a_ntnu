@@ -167,14 +167,30 @@ function canvasFormula() {
     '<span style="border-bottom:1px solid #1565c0;padding:0 3px">'+power+'</span>' +
     '<span>‖'+power+'‖<sub>2</sub></span></span>';
 }
-var iterateLabel = board.create('text', [
-  function(){ return Math.max(-0.45, Math.min(0.45, current[0])); },
-  function(){ return current[1] + (current[1] > 0.75 ? -0.30 : 0.25); },
-  canvasFormula
-], {anchorX:'middle', anchorY:'middle', display:'html', fontSize:14,
-    fixed:true, highlight:false, layer:9, useMathJax:false});
+// Use a DOM overlay inside the plotting area so JSXGraph's text renderer
+// does not process or hide the HTML fraction.
+var iterateLabel = document.createElement('div');
+iterateLabel.className = 'week5-canvas-label';
+iterateLabel.style.cssText = 'position:absolute;z-index:20;pointer-events:none;font-size:14px;line-height:1.25;';
+lab.querySelector('.week5-graph-slot').appendChild(iterateLabel);
+function positionIterateLabel() {
+  var width = graph.clientWidth, height = graph.clientHeight;
+  if (!(width > 0 && height > 0)) return;
+  var px = board.origin.scrCoords[1] + current[0] * board.unitX;
+  var py = board.origin.scrCoords[2] - current[1] * board.unitY;
+  var labelWidth = iterateLabel.offsetWidth;
+  var labelHeight = iterateLabel.offsetHeight;
+  var left = Math.max(6, Math.min(width-labelWidth-6, px+12));
+  var top = py-labelHeight-12;
+  if (top < 6) top = py+12;
+  top = Math.max(6, Math.min(height-labelHeight-6, top));
+  iterateLabel.style.left = left+'px';
+  iterateLabel.style.top = top+'px';
+}
 function formatCoordinate(value) { return (Math.abs(value) < 0.0005 ? 0 : value).toFixed(3); }
 function updateReadout() {
+  iterateLabel.innerHTML = canvasFormula();
+  positionIterateLabel();
   startKey.textContent = 'Oransje ring · '+(selectedStart || 'Egen start')+': x₀ = ('+
     formatCoordinate(start.X())+', '+formatCoordinate(start.Y())+')';
   formula.innerHTML = 'Blå: x<sub>'+count+'</sub> = A<sup>'+count+'</sup>x<sub>0</sub>' +
@@ -217,6 +233,7 @@ function resizeGraph() {
   if (!(width > 0 && height > 0)) return;
   board.resizeContainer(width, height, true);
   board.setBoundingBox(bounds, true); board.fullUpdate();
+  positionIterateLabel();
 }
 if (typeof ResizeObserver !== 'undefined') {
   var graphObserver = new ResizeObserver(resizeGraph);
