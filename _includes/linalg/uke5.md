@@ -26,13 +26,15 @@ og bruke den samme ideen til å rangere nettsider etter besøk.
 
 ### To deler: hente fram og bygge videre
 
-| Matte 1 – dette henter vi fram | Matte 3A – dette bygger vi nå |
+| Matematikk 1 – dette henter vi fram | Matematikk 3A – dette bygger vi nå |
 |---|---|
 | Løse lineære likningssystemer; finne egenverdier og egenvektorer. Repetisjon i 5.2. | Forklare gjentatt multiplikasjon med bidrag langs egenvektorer, og undersøke når én retning dominerer. Forsøk i 5.1, teori i 5.3–5.4. |
 | Bruke $(A-\lambda I)v=0$ til å finne alle egenvektorene til en egenverdi. | Knytte egenvektorbasis til tidligere arbeid med basis og ortogonalitet, og bruke dette i potensmetoden og PageRank (5.3–5.6). |
 
 Du trenger ikke huske regneoppskriftene før første forsøk. I **Gå i dybden**
-henter vi dem fram trinn for trinn. Oppgavene i 5.7 er delt i de samme to delene.
+henter vi dem fram trinn for trinn. Oppgavene i **5.7 Hovedløp** bruker ukens
+nye ideer. **5.8 Støtteløp** gir repetisjon av lineære systemer, egenverdier og
+egenvektorer ved behov. Du trenger ikke gjøre hele støtteløpet før hovedløpet.
 
 ```{pyodide-python}
 #| label: week5-setup
@@ -49,8 +51,8 @@ import matplotlib.pyplot as plt
 
 <div id="uke5-erfaring"></div>
 
-**Matte 3A: et nytt spørsmål.** Vi bruker et forsøk til å vekke til live
-begrepene fra Matte 1; repetisjonen kommer i 5.2.
+**Matematikk 3A: et nytt spørsmål.** Vi bruker et forsøk til å vekke til live
+begrepene fra Matematikk 1; repetisjonen kommer i 5.2.
 
 ### Eksperiment 1 – hvilken retning blir igjen?
 
@@ -314,7 +316,7 @@ observasjonen om linjen $x_2=x_1$, som vi forklarer i 5.2–5.3.
 
 <div id="uke5-egen"></div>
 
-**Matte 1: hent fram egenverdier og egenvektorer.** Her repeterer vi
+**Matematikk 1: hent fram egenverdier og egenvektorer.** Her repeterer vi
 betydningen og regnemetoden; du finner full håndregning under «Gå i dybden».
 
 ### Fra geometrisk observasjon til algebra
@@ -579,7 +581,7 @@ plt.show()
 
 <div id="uke5-basis"></div>
 
-**Matte 3A: hvorfor nærmer iterasjonsfølgene seg samme linje fra ulike startvektorer?**
+**Matematikk 3A: hvorfor nærmer iterasjonsfølgene seg samme linje fra ulike startvektorer?**
 I 5.1 valgte vi startvektoren $x_0=(1,0)^T$. Ved gjentatt anvendelse av
 transformasjonen $T(x)=Ax$, med normalisering etter hvert steg, nærmet
 vektorene $x_k$ seg linjen gjennom $(1,1)^T$.
@@ -1990,139 +1992,36 @@ En lik residualtoleranse gir altså ikke samme feilgaranti når $\alpha$ endres.
 
 </details>
 
-## 5.7 Oppgaver
+## 5.7 Hovedløp: iterasjon og PageRank
 
 <div id="uke5-oppgaver"></div>
 
-Oppgave 1–2 repeterer Matte 1. Oppgave 3–6 bruker verktøyene til å undersøke
-iterasjon og PageRank i Matte 3A. Hver del angir hva du skal levere:
-tall i svarfeltene, kode i kodevinduet eller en skriftlig begrunnelse i egne notater.
-Bruk eksakte tall i matematikkfeltene, for eksempel `3/2` og `sqrt(2)`.
+Oppgave 3–6 bruker ukens nye ideer i matematikk 3A: utvikling i en
+egenvektorbasis, potensmetoden og PageRank. Dette er hovedløpet.
+Hvis du trenger repetisjon av lineære systemer, egenverdier eller egenvektorer,
+bruk oppgave 1–2 i [5.8 Støtteløp](#uke5-stotte-oppgaver) og kom tilbake hit.
 
-### Oppgave 1 – koordinater i en annen basis
-
-Vi har $v_1=(1,1)^T$, $v_2=(1,-1)^T$ og $x=(2,1)^T$.
-Vi skal finne tallene $c_1,c_2$ slik at $x=c_1v_1+c_2v_2$.
-
-**a. Sett opp systemet.** Skriv én likning for hver koordinat.
-**Svar i egne notater:** to lineære likninger med ukjente $c_1,c_2$.
-
-**b. Løs systemet.** Skriv ett reelt tall i hvert felt, ikke en vektor eller en likning.
-
-```{math-exercise}
-#| label: week5-task-coordinates
-#| caption: Finn koeffisientene ved å løse et lineært system
-#| mode: equivalent
-#| partial-credit: true
-#| field-labels: c₁, c₂
-
-$c_1=$ __[3/2]
-
-$c_2=$ __[1/2]
-```
-
-**c. Kontroller og tolk.** Beregn $c_1v_1+c_2v_2$, og forklar hvorfor
-$c_1,c_2$ ikke er de samme som standardkoordinatene $2,1$.
-**Svar i egne notater:** én vektorberegning og en kort forklaring.
-
-<details class="learning-hint">
-<summary>Hint til oppgave 1</summary>
-
-Likningene er $c_1+c_2=2$ og $c_1-c_2=1$. Hva skjer når du legger dem sammen?
-
-</details>
-
-### Oppgave 2 – egenverdier og valgfrie egenvektorer
-
-Vi undersøker $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
-
-**a. Finn egenverdiene.** Sett opp $\det(A-\lambda I)=0$ og løs likningen.
-**Svar i egne notater:** determinantlikningen med mellomregning.
-
-**b. Finn en egenvektor til hver egenverdi.** Løs $(A-\lambda I)v=0$
-for hver egenverdi. Du velger selv skaleringen: vektorene trenger ikke ha
-lengde én eller første koordinat lik én.
-
-**Svarformat:** to reelle egenverdier i synkende rekkefølge, hver med en
-tilhørende ikke-null vektor i $\mathbb R^2$. Skriv ett tall per felt;
-vektorfeltene står som kolonner. Kontrollen undersøker $Av_i=\lambda_i v_i$
-og godtar alle gyldige skaleringer.
-
-```{math-exercise}
-#| label: week5-task-eigenvectors
-#| caption: To egenverdier med tilhørende egenvektorer
-#| mode: custom
-#| field-labels: største egenverdi λ₁, første koordinat i v₁, andre koordinat i v₁, minste egenverdi λ₂, første koordinat i v₂, andre koordinat i v₂
-#| checker: |
-#|   def check(response, symbols):
-#|       values = response["expressions"]
-#|       if len(values) != 6:
-#|           return {"score": 0, "feedback": "Fyll inn to egenverdier og to koordinater i hver egenvektor."}
-#|       # Godta eksakte reelle tall, også brøker og røtter, men ikke frie parametre.
-#|       if any(z.free_symbols or z.is_real is not True or z.is_finite is not True for z in values):
-#|           return {"score": 0, "feedback": "Bruk konkrete, endelige reelle tall. Beskriv parameterfamiliene i del c."}
-#|       A = Matrix([[2, 1], [1, 2]])
-#|       checks = []
-#|       messages = []
-#|       for i, target in enumerate((3, 1)):
-#|           lam = values[3*i]
-#|           v = Matrix(values[3*i+1:3*i+3])
-#|           eigenvalue_ok = simplify(lam-target) == 0
-#|           nonzero = any(simplify(z) != 0 for z in v)
-#|           # Test egenvektorlikningen, ikke likhet med én forhåndsvalgt vektor.
-#|           eigenvector_ok = nonzero and all(simplify(z) == 0 for z in A*v-lam*v)
-#|           checks.extend([eigenvalue_ok, eigenvalue_ok and eigenvector_ok])
-#|           if not eigenvalue_ok:
-#|               messages.append(f"Par {i+1}: kontroller egenverdien og den synkende rekkefølgen.")
-#|           elif not nonzero:
-#|               messages.append(f"Par {i+1}: nullvektoren er ikke en egenvektor.")
-#|           elif not eigenvector_ok:
-#|               messages.append(f"Par {i+1}: kontroller at Av = λv med din egenverdi og vektor.")
-#|           else:
-#|               messages.append(f"Par {i+1}: egenverdien og egenvektoren stemmer.")
-#|       return {"score": sum(checks)/4, "show_score": False, "feedback": " ".join(messages)}
-
-For $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$: oppgi $\lambda_1>\lambda_2$
-og ikke-null vektorer som oppfyller $Av_i=\lambda_i v_i$.
-
-Største egenverdi: $\lambda_1=$ __[3]
-
-En tilhørende egenvektor: $v_1=$ vec[1,1]
-
-Minste egenverdi: $\lambda_2=$ __[1]
-
-En tilhørende egenvektor: $v_2=$ vec[1,-1]
-```
-
-**c. Beskriv alle valgene.** Bruk de to egenvektorene dine til å beskrive
-alle egenvektorene til hver egenverdi og de to egenrommene.
-**Svar i egne notater:** to parameterfamilier $t v_i$, med presist vilkår på
-$t\in\mathbb R$ for henholdsvis egenvektorer og egenrom. Forklar hvorfor
-nullvektoren behandles forskjellig.
-
-<details class="learning-hint">
-<summary>Hint til oppgave 2</summary>
-
-Determinantlikningen er $(2-\lambda)^2-1=0$. Sett hver rot inn i
-$A-\lambda I$ og løs det homogene systemet. Matrisen er singulær,
-så du skal ikke forsøke å invertere den.
-
-</details>
-
+Hver del angir hva du skal levere: tall i svarfeltene, kode i kodevinduet
+eller begrunnelser i egne notater. Bruk eksakte tall i matematikkfeltene,
+for eksempel `3/2` og `sqrt(2)`.
 ### Oppgave 3 – gjentatt transformasjon i en egenvektorbasis
 
-Her bruker vi $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$, $x_0=(2,1)^T$,
-$v_1=(1,1)^T$ og $v_2=(1,-1)^T$, med egenverdier $3$ og $1$.
-Bruk disse faste basisvektorene i oppgaven, uansett hvilke skaleringer du valgte i oppgave 2.
+Vi undersøker en ny transformasjon, representert ved
 
-**a. Finn et uttrykk for alle steg.** Skriv $A^kx_0=c_1 3^k v_1+c_2 1^k v_2$
+$$B=\begin{bmatrix}2&2\\2&5\end{bmatrix},\qquad x_0=(3,1)^T.$$
+
+Du får oppgitt egenvektorene $w_1=(1,2)^T$ og $w_2=(2,-1)^T$, med
+henholdsvis egenverdiene $6$ og $1$. Her skal du bruke egenvektorbasisen
+til å undersøke gjentatt transformasjon.
+
+**a. Finn et uttrykk for alle steg.** Skriv $B^kx_0=c_1 6^k w_1+c_2 1^k w_2$
 og bestem $c_1,c_2$.
 **Svar i egne notater:** én vektorformel som gjelder for alle heltall $k\geq0$.
 
 **b. Beregn ved $k=3$.** De to første feltene er standardkoordinatene
-til vektoren $A^3x_0$. Det siste feltet er ett ikke-negativt tall:
+til vektoren $B^3x_0$. Det siste feltet er ett ikke-negativt tall:
 
-$$\frac{\lVert c_2 1^3 v_2\rVert_2}{\lVert c_1 3^3 v_1\rVert_2}.$$
+$$\frac{\lVert c_2 1^3 w_2\rVert_2}{\lVert c_1 6^3 w_1\rVert_2}.$$
 
 ```{math-exercise}
 #| label: week5-task-powers
@@ -2131,22 +2030,23 @@ $$\frac{\lVert c_2 1^3 v_2\rVert_2}{\lVert c_1 3^3 v_1\rVert_2}.$$
 #| partial-credit: true
 #| field-labels: første koordinat, andre koordinat, forhold mellom bidragslengder
 
-$A^3x_0=($ __[41] $, $ __[40] $)^T$
+$B^3x_0=($ __[218] $, $ __[431] $)^T$
 
-Lengden av bidraget langs $v_2$, delt på lengden av bidraget langs $v_1$, etter tre steg:
-__[1/81]
+Lengden av bidraget langs $w_2$, delt på lengden av bidraget langs $w_1$, etter tre steg:
+__[1/216]
 ```
 
 **c. Forklar retningen.** Hvorfor nærmer de normaliserte vektorene seg
-linjen gjennom $v_1$, selv om lengden av bidraget langs $v_2$ ikke avtar?
+linjen gjennom $w_1$, selv om lengden av bidraget langs $w_2$ ikke avtar?
 **Svar i egne notater:** en kort forklaring med forholdet mellom bidragslengdene.
 
 **d. Undersøk to endringer.**
 
 1. Oppgi én konkret ikke-null startvektor som gir en iterasjonsfølge som
-   ikke nærmer seg linjen gjennom $v_1$. Begrunn valget.
-2. Behold $x_0=(2,1)^T$ og basisvektorene, men la egenverdiene være $3$ og $-1$.
-   Skriv den nye formelen for $A^kx_0$. Hva endres ved fortegnet og størrelsen
+   ikke nærmer seg linjen gjennom $w_1$. Begrunn valget.
+2. Behold $x_0=(3,1)^T$ og basisvektorene, men la den nye transformasjonen
+   ha egenverdiene $6$ og $-1$. Kall matrisen for denne transformasjonen $\widetilde B$.
+   Skriv formelen for $\widetilde B^kx_0$. Hva endres ved fortegnet og størrelsen
    til det andre bidraget?
 
 **Svar i egne notater:** én vektor, én vektorformel og begrunnelser.
@@ -2317,5 +2217,128 @@ som sammenligningsgrunnlag.
 I [prosjekt 5](project_week5.qmd) bruker du dette til en egen undersøkelse
 av rangering. Skill mellom tre spørsmål: Oppfyller svaret likningen?
 Konvergerer metoden? Måler modellen det vi ønsket?
+
+
+## 5.8 Støtteløp: repetisjon ved behov
+
+<div id="uke5-stotte-oppgaver"></div>
+
+Oppgave 1–2 repeterer verktøy fra matematikk 1. Bruk dem som selvtest
+dersom lineære systemer, egenverdier eller egenvektorer ikke sitter friskt.
+Du trenger ikke fullføre støtteløpet dersom forkunnskapene sitter;
+gå da direkte til [5.7 Hovedløp](#uke5-oppgaver).
+
+Arbeid først på papir og bruk svarfeltene til å kontrollere regningen.
+Bruk eksakte tall, for eksempel `3/2` og `sqrt(2)`. Skriftlige begrunnelser
+føres i egne notater.
+### Oppgave 1 – koordinater i en annen basis
+
+Vi har $v_1=(1,1)^T$, $v_2=(1,-1)^T$ og $x=(2,1)^T$.
+Vi skal finne tallene $c_1,c_2$ slik at $x=c_1v_1+c_2v_2$.
+
+**a. Sett opp systemet.** Skriv én likning for hver koordinat.
+**Svar i egne notater:** to lineære likninger med ukjente $c_1,c_2$.
+
+**b. Løs systemet.** Skriv ett reelt tall i hvert felt, ikke en vektor eller en likning.
+
+```{math-exercise}
+#| label: week5-task-coordinates
+#| caption: Finn koeffisientene ved å løse et lineært system
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: c₁, c₂
+
+$c_1=$ __[3/2]
+
+$c_2=$ __[1/2]
+```
+
+**c. Kontroller og tolk.** Beregn $c_1v_1+c_2v_2$, og forklar hvorfor
+$c_1,c_2$ ikke er de samme som standardkoordinatene $2,1$.
+**Svar i egne notater:** én vektorberegning og en kort forklaring.
+
+<details class="learning-hint">
+<summary>Hint til oppgave 1</summary>
+
+Likningene er $c_1+c_2=2$ og $c_1-c_2=1$. Hva skjer når du legger dem sammen?
+
+</details>
+
+### Oppgave 2 – egenverdier og valgfrie egenvektorer
+
+Vi undersøker $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
+
+**a. Finn egenverdiene.** Sett opp $\det(A-\lambda I)=0$ og løs likningen.
+**Svar i egne notater:** determinantlikningen med mellomregning.
+
+**b. Finn en egenvektor til hver egenverdi.** Løs $(A-\lambda I)v=0$
+for hver egenverdi. Du velger selv skaleringen: vektorene trenger ikke ha
+lengde én eller første koordinat lik én.
+
+**Svarformat:** to reelle egenverdier i synkende rekkefølge, hver med en
+tilhørende ikke-null vektor i $\mathbb R^2$. Skriv ett tall per felt;
+vektorfeltene står som kolonner. Kontrollen undersøker $Av_i=\lambda_i v_i$
+og godtar alle gyldige skaleringer.
+
+```{math-exercise}
+#| label: week5-task-eigenvectors
+#| caption: To egenverdier med tilhørende egenvektorer
+#| mode: custom
+#| field-labels: største egenverdi λ₁, første koordinat i v₁, andre koordinat i v₁, minste egenverdi λ₂, første koordinat i v₂, andre koordinat i v₂
+#| checker: |
+#|   def check(response, symbols):
+#|       values = response["expressions"]
+#|       if len(values) != 6:
+#|           return {"score": 0, "feedback": "Fyll inn to egenverdier og to koordinater i hver egenvektor."}
+#|       # Godta eksakte reelle tall, også brøker og røtter, men ikke frie parametre.
+#|       if any(z.free_symbols or z.is_real is not True or z.is_finite is not True for z in values):
+#|           return {"score": 0, "feedback": "Bruk konkrete, endelige reelle tall. Beskriv parameterfamiliene i del c."}
+#|       A = Matrix([[2, 1], [1, 2]])
+#|       checks = []
+#|       messages = []
+#|       for i, target in enumerate((3, 1)):
+#|           lam = values[3*i]
+#|           v = Matrix(values[3*i+1:3*i+3])
+#|           eigenvalue_ok = simplify(lam-target) == 0
+#|           nonzero = any(simplify(z) != 0 for z in v)
+#|           # Test egenvektorlikningen, ikke likhet med én forhåndsvalgt vektor.
+#|           eigenvector_ok = nonzero and all(simplify(z) == 0 for z in A*v-lam*v)
+#|           checks.extend([eigenvalue_ok, eigenvalue_ok and eigenvector_ok])
+#|           if not eigenvalue_ok:
+#|               messages.append(f"Par {i+1}: kontroller egenverdien og den synkende rekkefølgen.")
+#|           elif not nonzero:
+#|               messages.append(f"Par {i+1}: nullvektoren er ikke en egenvektor.")
+#|           elif not eigenvector_ok:
+#|               messages.append(f"Par {i+1}: kontroller at Av = λv med din egenverdi og vektor.")
+#|           else:
+#|               messages.append(f"Par {i+1}: egenverdien og egenvektoren stemmer.")
+#|       return {"score": sum(checks)/4, "show_score": False, "feedback": " ".join(messages)}
+
+For $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$: oppgi $\lambda_1>\lambda_2$
+og ikke-null vektorer som oppfyller $Av_i=\lambda_i v_i$.
+
+Største egenverdi: $\lambda_1=$ __[3]
+
+En tilhørende egenvektor: $v_1=$ vec[1,1]
+
+Minste egenverdi: $\lambda_2=$ __[1]
+
+En tilhørende egenvektor: $v_2=$ vec[1,-1]
+```
+
+**c. Beskriv alle valgene.** Bruk de to egenvektorene dine til å beskrive
+alle egenvektorene til hver egenverdi og de to egenrommene.
+**Svar i egne notater:** to parameterfamilier $t v_i$, med presist vilkår på
+$t\in\mathbb R$ for henholdsvis egenvektorer og egenrom. Forklar hvorfor
+nullvektoren behandles forskjellig.
+
+<details class="learning-hint">
+<summary>Hint til oppgave 2</summary>
+
+Determinantlikningen er $(2-\lambda)^2-1=0$. Sett hver rot inn i
+$A-\lambda I$ og løs det homogene systemet. Matrisen er singulær,
+så du skal ikke forsøke å invertere den.
+
+</details>
 
 :::
