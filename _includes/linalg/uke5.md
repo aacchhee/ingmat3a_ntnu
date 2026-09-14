@@ -58,22 +58,23 @@ Vi gjentar transformasjonen $T(x)=Ax$, representert i standardbasisen ved
 
 $$A=\begin{bmatrix}2&1\\1&2\end{bmatrix}.$$
 
-**Spørsmålet er om ulike startretninger ender langs samme linje.**
+**Spørsmålet er om iterasjonsfølgene fra ulike startvektorer nærmer seg samme linje.**
 Et klikk bruker transformasjonen én gang og setter deretter vektorlengden til én.
 Dermed kan vi følge retningen uten at voksende lengder tar vektoren ut av figuren.
-Undersøk både starter som endrer retning, og starter som blir på sin egen linje:
+Undersøk både startvektorer som gir endret retning under iterasjonen,
+og egenvektorer der alle itererte vektorer forblir på samme linje:
 
 1. Velg **(1, 0)**. Gjett hvilken linje den blå vektoren vil nærme seg.
    Trykk **Ett steg** fem ganger og noter om koordinatene nærmer seg hverandre.
 2. Velg **(−1, 0)** og gjenta. Er det samme linje? Samme orientering?
-3. Velg **(1, 1)** og deretter **(1, −1)**. Gjør tre steg fra hver start.
+3. Velg **(1, 1)** og deretter **(1, −1)**. Gjør tre steg fra hver startvektor.
    Endres retningen? Skriv én observasjon for hver start.
 4. Prøv også **(0, 1)** og **(1, −0.9)**. Det siste valget ligger nær den
-   spesielle retningen $(1,-1)^T$. Dra deretter til en egen start.
+   spesielle retningen $(1,-1)^T$. Dra deretter til en egen startvektor.
 
 Startvalgene angir retninger. Å **normalisere** betyr her å dele på lengden,
 slik at vektoren får lengde én. Den oransje
-vektoren $x_0$ er starten; den blå er det nåværende resultatet. Hvert klikk
+vektoren viser startvektoren $x_0$; den blå viser den normaliserte vektoren $x_k$. Hvert klikk
 regner ut $Ax$ og deler på lengden til svaret. Vi bruker ingen
 normalisering av enkeltkoordinater. Formelen ved det blå endepunktet viser
 hvilket produkt retningen kommer fra, og at lengden er normalisert til én.
@@ -119,12 +120,12 @@ lab.innerHTML = `
   <fieldset><legend>Velg startretning</legend><div class="week5-presets"></div></fieldset>
   <div class="week5-actions">
     <button type="button" class="week5-main-step">Ett steg</button>
-    <button type="button" class="week5-reset">Tilbake til start</button>
+    <button type="button" class="week5-reset">Tilbake til startvektoren</button>
   </div>
   <div class="week5-graph-slot"></div>
   <div class="week5-readout">
     <p class="week5-start-key"></p>
-    <p class="week5-start-key">Dra den oransje ringen for å velge en egen start.</p>
+    <p class="week5-start-key">Dra den oransje ringen for å velge en egen startvektor.</p>
     <div role="status" aria-live="polite" aria-atomic="true">
       <p class="week5-formula"></p>
       <p class="week5-coordinates"></p>
@@ -191,7 +192,7 @@ function formatCoordinate(value) { return (Math.abs(value) < 0.0005 ? 0 : value)
 function updateReadout() {
   iterateLabel.innerHTML = canvasFormula();
   positionIterateLabel();
-  startKey.textContent = 'Oransje ring · '+(selectedStart || 'Egen start')+': x₀ = ('+
+  startKey.textContent = 'Oransje ring · '+(selectedStart || 'Egen startvektor')+': x₀ = ('+
     formatCoordinate(start.X())+', '+formatCoordinate(start.Y())+')';
   formula.innerHTML = 'Blå: x<sub>'+count+'</sub> = A<sup>'+count+'</sup>x<sub>0</sub>' +
     ' / ‖A<sup>'+count+'</sup>x<sub>0</sub>‖<sub>2</sub>';
@@ -246,9 +247,9 @@ updateReadout(); resizeGraph();
 
 ### Hva la du merke til?
 
-Mange startvektorer nærmer seg samme **linje**, men kan ha motsatt orientering.
-Startene langs $(1,1)^T$ og $(1,-1)^T$ skiller seg ut: der endres ikke
-retningen. Vi skal undersøke hvordan transformasjonen virker langs disse linjene.
+For mange startvektorer nærmer følgen av normaliserte vektorer $x_k$ seg samme
+**linje** når transformasjonen gjentas, men grensevektorene kan ha motsatt orientering.
+Med startvektor langs $(1,1)^T$ eller $(1,-1)^T$ er retningen uendret gjennom iterasjonen. Vi skal undersøke hvordan transformasjonen virker langs disse linjene.
 
 Figurens regneoperasjon kan nå skrives
 
@@ -258,12 +259,12 @@ x_k=\frac{A^kx_0}{\lVert A^kx_0\rVert_2}.$$
 Her teller $k$ multiplikasjonene, $\lVert x\rVert_2$ er vektorens vanlige lengde,
 og $I$ representerer identitetstransformasjonen $x\mapsto x$. Vi setter $A^0=I$.
 **Diskuter:** Hvorfor kan vi miste informasjon om lengde og likevel se
-hvilken retning som dominerer etter gjentatt transformasjon? Hva skiller de to spesielle startene?
+hvilken retning som dominerer etter gjentatt transformasjon? Hva skiller de to spesielle startvektorene?
 
 <details class="reading-step">
 <summary>Gå i dybden: skaler uten å dreie</summary>
 
-For starten $(1,0)^T$ er første steg helt konkret
+For startvektoren $(1,0)^T$ er første steg helt konkret
 
 $$Ax_0=\begin{bmatrix}2\\1\end{bmatrix},\quad
 \lVert Ax_0\rVert_2=\sqrt5,\quad
@@ -304,7 +305,7 @@ Her betyr $x_1,x_2$ i linjelikningen koordinater, mens indeksen $k$ i
 $x_k$ ovenfor teller steg.
 
 Ved valget $(1,-1)$ bruker figuren $x_0=(1,-1)^T/\sqrt2$.
-Da er $Ax_0=x_0$ allerede ved start. Dette er et viktig unntak fra
+Da er $Ax_0=x_0$ allerede for startvektoren. Dette er et viktig unntak fra
 observasjonen om linjen $x_2=x_1$, som vi forklarer i 5.2–5.3.
 
 </details>
@@ -318,8 +319,8 @@ betydningen og regnemetoden; du finner full håndregning under «Gå i dybden».
 
 ### Fra geometrisk observasjon til algebra
 
-I figuren i 5.1 ble startene langs $(1,1)^T$ og $(1,-1)^T$ liggende på
-hver sin linje. Figuren normaliserte lengden etter hvert steg. Nå spør vi:
+I figuren i 5.1 forble alle itererte vektorer på samme linje som startvektoren
+når denne lå langs $(1,1)^T$ eller $(1,-1)^T$. Figuren normaliserte lengden etter hvert steg. Nå spør vi:
 **Hva gjør transformasjonen langs disse linjene før vi normaliserer?**
 
 Vi tar den geometriske observasjonen «samme linje» og skriver den som
@@ -537,7 +538,7 @@ startvektor som ikke er en egenvektor**.
 
 Plottet sammenligner $R(x)=Bx$ med den kjente transformasjonen $T(x)=Ax$,
 der $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
-For hver start: forutsi først hvor resultatet av koordinatbyttet ligger,
+For hver startvektor: forutsi først hvor resultatet av koordinatbyttet ligger,
 og bruk deretter figuren som kontroll.
 
 1. Sett `start = [1., -1.]`. Er $Bx=x$, $Bx=-x$ eller ingen av delene?
@@ -554,7 +555,7 @@ Plottet bruker ingen normalisering; både lengde og orientering er synlige.
 ```{pyodide-python}
 #| label: week5-directions
 # Vi sammenligner én transformasjon med startvektoren, uten normalisering.
-# Endre bare start: blir resultatet på samme linje, og endres lengde eller fortegn?
+# Endre bare startvektoren: blir resultatet på samme linje, og endres lengde eller fortegn?
 
 A = np.array([[2., 1.], [1., 2.]])
 B = np.array([[0., 1.], [1., 0.]])
@@ -578,34 +579,48 @@ plt.show()
 
 <div id="uke5-basis"></div>
 
-**Matte 3A: hvorfor nærmer så mange starter seg samme linje?**
-I 5.1 så vi at starten $(1,0)^T$ dreide mot linjen gjennom $(1,1)^T$.
+**Matte 3A: hvorfor nærmer iterasjonsfølgene seg samme linje fra ulike startvektorer?**
+I 5.1 valgte vi startvektoren $x_0=(1,0)^T$. Ved gjentatt anvendelse av
+transformasjonen $T(x)=Ax$, med normalisering etter hvert steg, nærmet
+vektorene $x_k$ seg linjen gjennom $(1,1)^T$.
 I 5.2 fant vi de to egenretningene. Nå bruker vi dem til å dele startvektoren
 i to bidrag og følge hvert bidrag når transformasjonen gjentas.
 
 ### Eksperiment 2 – hvilken del tar over?
 
 For $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ bruker vi
-$v_1=(1,1)^T$ og $v_2=(1,-1)^T$. Starten kan bygges slik:
+$v_1=(1,1)^T$ og $v_2=(1,-1)^T$. Startvektoren kan bygges slik:
 
 $$x_0=\begin{bmatrix}1\\0\end{bmatrix}
-=\underbrace{\tfrac12\begin{bmatrix}1\\1\end{bmatrix}}_{\text{blått bidrag}}
-+\underbrace{\tfrac12\begin{bmatrix}1\\-1\end{bmatrix}}_{\text{oransje bidrag}}.$$
+={\color{#1565c0}\underbrace{\tfrac12\begin{bmatrix}1\\1\end{bmatrix}}_{c_1v_1}}
++{\color{#a04a00}\underbrace{\tfrac12\begin{bmatrix}1\\-1\end{bmatrix}}_{c_2v_2}}.$$
 
-Ved hvert steg tredobles det blå bidraget, mens det oransje beholder lengden.
-**Hvordan endres da balansen mellom dem?**
+Etter $k$ anvendelser av transformasjonen, før normalisering, er bidragene
 
-Plottet viser andelen av de to bidragenes samlede lengde:
-blå lengde delt på blå pluss oransje lengde, og tilsvarende for oransje.
-Andelene starter på $1/2$ og summerer alltid til 1.
-Vannrett akse teller multiplikasjonene.
-Blå kurve hører til $\lambda_1={\color{#1565c0}3}$,
-oransje til $\lambda_2={\color{#a04a00}1}$.
+$${\color{#1565c0}b_1(k)=c_1\,3^k v_1},\qquad
+{\color{#a04a00}b_2(k)=c_2\,1^k v_2},\qquad
+A^kx_0=b_1(k)+b_2(k).$$
+
+Ved hvert steg tredobles lengden til $b_1(k)$, mens $b_2(k)$ beholder lengden.
+**Hvordan endres bidragenes relative størrelse under gjentatt transformasjon?**
+
+Kurvene viser hver sin andel av summen av bidragenes lengder:
+
+$${\color{#1565c0}a_1(k)=
+\frac{\lVert b_1(k)\rVert_2}{\lVert b_1(k)\rVert_2+\lVert b_2(k)\rVert_2}},
+\qquad
+{\color{#a04a00}a_2(k)=
+\frac{\lVert b_2(k)\rVert_2}{\lVert b_1(k)\rVert_2+\lVert b_2(k)\rVert_2}}.$$
+
+Nevneren er summen av **bidragenes lengder**, ikke lengden av summen
+$b_1(k)+b_2(k)$. For $c_1=c_2=1/2$ er $a_1(0)=a_2(0)=1/2$.
+For alle $k$ er $a_1(k)+a_2(k)=1$. Vannrett akse viser $k$;
+blå kurve viser $a_1(k)$ og oransje viser $a_2(k)$.
 
 1. Kjør med `c1 = c2 = 0.5`. Blir det oransje bidraget kortere,
    eller blir det bare mindre sammenlignet med det blå?
 2. Sett deretter `c1 = 0.0` og behold `c2 = 0.5`.
-   Nå mangler det blå bidraget ved start. Forutsi om det kan dukke opp.
+   Nå er koeffisienten til $v_1$ i startvektoren null. Kan $b_1(k)$ bli ulik null under iterasjonen?
 
 ```{pyodide-python}
 #| label: week5-contributions
@@ -631,8 +646,8 @@ plt.show()
 ```
 
 En del kan bestå i absolutte tall og likevel miste betydning for retningen.
-Hvis den raskest voksende delen mangler ved start, kan eksakt regning ikke
-skape den. **Diskuter:** Hvorfor er både matrisen og starten viktige?
+Hvis koeffisienten langs egenvektoren med størst egenverdi i absoluttverdi
+er null i startvektoren, forblir dette bidraget null under iterasjonen i eksakt regning. **Diskuter:** Hvordan avhenger iterasjonsfølgen av transformasjonen og startvektoren?
 
 ### Skriv observasjonen som algebra
 
@@ -653,7 +668,7 @@ vokser. At en andel nærmer seg null, betyr altså ikke at selve bidraget blir n
 
 En **basis** lar oss skrive enhver vektor entydig som en sum av bidrag
 langs basisvektorene. Hvis egenvektorene $v_1,\ldots,v_n$ er en basis,
-og $c_i$ er startens koeffisient i retning $v_i$, får vi
+og $c_i$ er startvektorens koeffisient i retning $v_i$, får vi
 
 $$x_0=\sum_{i=1}^n c_iv_i,
 \qquad A^kx_0=\sum_{i=1}^n c_i\lambda_i^kv_i.$$
@@ -703,7 +718,7 @@ $$A^kx_0=\tfrac12 3^k\bigl(v_1+3^{-k}v_2\bigr),\qquad
 x_k=\frac{v_1+3^{-k}v_2}{\lVert v_1+3^{-k}v_2\rVert_2}
 \longrightarrow\frac{v_1}{\sqrt2}.$$
 
-**Prøv en annen start:** Hva endres hvis starten er $x_0=v_2/\sqrt2$?
+**Prøv en annen startvektor:** Hva endres i iterasjonsfølgen hvis startvektoren er $x_0=v_2/\sqrt2$?
 Da mangler bidraget langs $v_1$ helt, slik du så med startvalget $(1,-1)$ i figuren.
 
 Linearitet gir $A(c_1v_1+c_2v_2)=c_1Av_1+c_2Av_2$.
@@ -721,7 +736,7 @@ Les fra høyre: finn bidragene, skaler dem, og bygg vektoren igjen.
 Ikke alle matriser har en egenvektorbasis. Vi bruker en slik basis som
 forutsetning i denne forklaringen av potensmetoden.
 
-**Hvordan finner vi koeffisientene?** For en vilkårlig start $(a,b)^T$ løser vi
+**Hvordan finner vi koeffisientene?** For en vilkårlig startvektor $(a,b)^T$ løser vi
 
 $$c_1(1,1)^T+c_2(1,-1)^T=(a,b)^T.$$
 
@@ -831,7 +846,7 @@ Vi sammenligner to transformasjoner representert ved
 $A_\mu=Q\operatorname{diag}(3,\mu)Q^T$. Kolonnene i $Q$ er de normaliserte
 egenvektorene fra 5.3; $\operatorname{diag}(3,\mu)$ betyr en matrise med $3$
 og $\mu$ på diagonalen og null ellers.
-Starten er $(1,0)^T$ i begge kjøringer.
+Startvektoren er $(1,0)^T$ i begge kjøringer.
 
 1. Gjett om $\mu=1$ eller $\mu=2.9$ gir raskest utskilling av én retning.
 2. Kjør cellen. Les av forholdet mellom bidragene etter 10 steg for hver kurve.
@@ -843,7 +858,7 @@ De to matrisene har samme egenvektorer; bare den andre skaleringen endres.
 ```{pyodide-python}
 #| label: week5-speed
 # Kolonnene i Q er en fast ortonormal egenvektorbasis.
-# Vi endrer bare den andre egenverdien og beholder samme start.
+# Vi endrer bare den andre egenverdien og beholder samme startvektor.
 # Se etter hvordan forholdet |lambda2/lambda1| påvirker farten.
 
 Q = np.array([[1., 1.], [1., -1.]]) / np.sqrt(2)
@@ -952,7 +967,7 @@ For $x=(1,1)^T/\sqrt2$ ligger hele $Ax$ på samme linje: $\rho=3$ og $r=0$.
 **Hva forteller kontrollen?** Liten $\|r\|_2$ betyr at egenvektorlikningen
 nesten er oppfylt. Det sier ikke at vi har funnet den dominante egenverdien:
 retningen med egenverdi 1 gir også null residual. Derfor ser vi både på
-starten, utviklingen i forsøket og residualen når vi vurderer resultatet.
+startvektoren, utviklingen i forsøket og residualen når vi vurderer resultatet.
 
 <details class="reading-step">
 <summary>Gå i dybden: hvorfor akkurat denne kvotienten?</summary>
@@ -998,8 +1013,8 @@ $$Ax=\frac1{\sqrt5}\begin{bmatrix}5\\4\end{bmatrix},\qquad
 $$r=\frac1{5\sqrt5}\begin{bmatrix}-3\\6\end{bmatrix},\qquad
 \lVert r\rVert_2=\frac35.$$
 
-Retningen er ennå ikke en egenretning, men residualen har falt fra $1$ ved
-start til $3/5$ etter ett steg.
+Retningen er ennå ikke en egenretning, men residualnormen har falt fra $1$ ved
+$k=0$ til $3/5$ etter ett steg.
 
 </details>
 
@@ -1089,7 +1104,7 @@ linje, hvilke veksler, og hvilken går rundt? Utpek ett tilfelle der en liten
 residual kan gi et misvisende inntrykk av hva metoden har funnet.
 Figuren viser seks steg; utskriften bruker algoritmens stoppkriterium.
 
-| Matrise | Start før normalisering |
+| Matrise | Startvektor før normalisering |
 |---|---|
 | $\operatorname{diag}(3,1)$ | $(0,1)^T$ |
 | $\operatorname{diag}(-3,1)$ | $(1,1)^T$ |
@@ -1136,12 +1151,12 @@ $\min(\lVert x_{k+1}-x_k\rVert_2,\lVert x_{k+1}+x_k\rVert_2)$ for enhetsvektorer
 
 Gjenta de to første stegene for hånd før du følger forklaringen.
 
-- Starten $(0,1)^T$ mangler det dominante bidraget. Residualen er null
-  allerede ved start, men egenverdien er $1$, ikke $3$.
+- Startvektoren $(0,1)^T$ mangler det dominante bidraget. Residualen er null
+  allerede for startvektoren, men egenverdien er $1$, ikke $3$.
 - Med $-3$ som dominant egenverdi nærmer vektorene seg samme linje og skifter
   fortegn. Rayleigh-kvotienten nærmer seg $-3$.
 - For $1$ og $-1$ er forholdet mellom absoluttverdiene én. Begge bidragene
-  består, og den valgte starten gir en syklus med to ulike vektorer.
+  består, og den valgte startvektoren gir en syklus med to ulike vektorer.
 - En kvart omdreining har ingen reell egenretning. Over komplekse tall er
   egenverdiene $i$ og $-i$, begge med absoluttverdi én. Her går vektoren i sirkel.
 
@@ -1161,7 +1176,7 @@ I tredje linje er begge koordinatene alltid like store i absoluttverdi;
 normalisering endrer derfor ikke syklusen.
 
 Rotasjonen gir $(1,0)^T\mapsto(0,1)^T\mapsto(-1,0)^T\mapsto(0,-1)^T$
-og tilbake til starten. For enhver reell enhetsvektor er $x^TAx=0$ her,
+og tilbake til startvektoren. For enhver reell enhetsvektor er $x^TAx=0$ her,
 så $\rho=0$ og residualnormen er $\lVert Ax\rVert_2=1$.
 Det er ingen reell egenvektor som metoden kan nærme seg.
 
@@ -1191,13 +1206,13 @@ for tiny in [0., 1e-12]:
 Her legger vi inn en liten forstyrrelse med vilje; vi måler ikke faktisk
 maskinavrunding. Forsøket viser mekanismen: en liten del i den raskest
 voksende retningen kan forsterkes ved gjentakelse. Nye avrundinger kan tilføres
-hver runde. **Diskuter:** Hvorfor kan to nesten like starter følge svært ulike
+hver runde. **Diskuter:** Hvorfor kan to nesten like startvektorer gi svært ulike
 baner? Hvorfor hjelper ikke lengde én mot alle former for feil?
 
 <details class="reading-step">
 <summary>Gå i dybden: skill mellom startfeil og feil i hvert steg</summary>
 
-Uten normalisering blir starten $(\varepsilon,1)^T$ til
+Uten normalisering blir startvektoren $(\varepsilon,1)^T$ til
 $(3^k\varepsilon,1)^T$. For $\varepsilon=10^{-12}$ og $k=30$ er forholdet
 $3^{30}10^{-12}\approx206$. Den opprinnelig lille delen dominerer.
 Dette forklarer også hvorfor en eksakt manglende egenretning og en nesten
@@ -1250,7 +1265,7 @@ Fra B går vi til C med sannsynlighet $1$.
 
 Velg **Alle på A**. Forutsi neste fordeling, trykk **Neste runde**, og gjenta
 én gang. Hvilke lenker forklarer prosentene? Prøv så **20 runder** fra både
-**Jevn start** og **Alle på A**. Ser startfordelingen ut til å miste betydning?
+**Jevn fordeling** og **Alle på A**. Ser startfordelingen ut til å miste betydning?
 
 Prosentene viser **sannsynligheten for å være på hver side nå**, ikke antall
 besøk samlet over tid. Figuren beregner fordelingen direkte; den trekker
@@ -1308,8 +1323,8 @@ utenfra, og at lenkene ikke endres. Alle fire har minst én lenke å følge.
 
 Prosenten ved en side angir **sannsynligheten for å være på akkurat denne
 siden etter det aktuelle steget**. Den angir ikke hvor mange besøk siden har
-samlet opp siden start. Ved «Alle på A» er startsannsynligheten 100 % på A;
-ved «Jevn start» er den 25 % på hver side.
+samlet opp siden det første klikket. Ved «Alle på A» er startsannsynligheten 100 % på A;
+ved «Jevn fordeling» er den 25 % på hver side.
 
 En enkelt besøkende kan bare være på én side om gangen. Likevel kan vi
 fordele sannsynligheten mellom flere mulige steder. Alternativt kan vi
@@ -1320,7 +1335,7 @@ ikke gi nøyaktig 50 av hver.
 
 Den interaktive figuren nedenfor regner direkte på **sannsynlighetsfordelingen**
 for hvor den besøkende befinner seg etter hvert steg. Den viser altså ikke én
-tilfeldig vandring og simulerer ikke enkeltpersoners tilfeldige klikk. Derfor får du samme fordeling hver gang du velger samme start.
+tilfeldig vandring og simulerer ikke enkeltpersoners tilfeldige klikk. Derfor får du samme fordeling hver gang du velger samme startfordeling.
 **Neste runde** lar alle bidragene flyttes én gang etter tabellen;
 **20 runder** gjentar dette 20 ganger fra fordelingen som vises nå.
 Summen er alltid 100 %, fordi den besøkende må være på én av de fire sidene.
@@ -1346,7 +1361,7 @@ html,body{margin:0;width:100%;height:100%;font-family:system-ui,sans-serif;color
 document.head.appendChild(style);
 var lab = document.createElement('section');
 lab.className='net-lab'; lab.setAttribute('aria-label','Besøk mellom fire nettsider');
-lab.innerHTML='<div class="net-controls"><button type="button" class="net-even" aria-pressed="true">Jevn start</button><button type="button" class="net-all" aria-pressed="false">Alle på A</button><button type="button" class="net-step">Neste runde</button><button type="button" class="net-many">20 runder</button></div><div class="net-slot"></div><div class="net-status" role="status" aria-live="polite" aria-atomic="true"></div>';
+lab.innerHTML='<div class="net-controls"><button type="button" class="net-even" aria-pressed="true">Jevn fordeling</button><button type="button" class="net-all" aria-pressed="false">Alle på A</button><button type="button" class="net-step">Neste runde</button><button type="button" class="net-many">20 runder</button></div><div class="net-slot"></div><div class="net-status" role="status" aria-live="polite" aria-atomic="true"></div>';
 graph.parentNode.insertBefore(lab,graph);lab.querySelector('.net-slot').appendChild(graph);
 var bounds=[-2.1,1.7,2.1,-1.7];
 var board=JXG.JSXGraph.initBoard(BOARDID,{boundingbox:bounds,axis:false,keepaspectratio:true,showCopyright:false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false}});
@@ -1435,7 +1450,7 @@ Vi samler sannsynlighetene i en kolonne, i den faste rekkefølgen A, B, C, D:
 
 $$p_k=\begin{bmatrix}p_A^{(k)}\\p_B^{(k)}\\p_C^{(k)}\\p_D^{(k)}\end{bmatrix}.$$
 
-Her er $k$ antall klikk etter start. For eksempel betyr $p_C^{(k)}=0.5$
+Her er $k$ antall klikk etter at startfordelingen er valgt. For eksempel betyr $p_C^{(k)}=0.5$
 at sannsynligheten for å være på C etter $k$ klikk er 50 %.
 Elementene er ikke-negative og summerer til én; en slik vektor kalles en
 **sannsynlighetsvektor**. Koordinatene er andeler, ikke plasseringen av
@@ -1458,8 +1473,8 @@ En **overgangsmatrise** lagrer sannsynlighetene for neste klikk.
 Vi lar **kolonne $j$ være siden vi går fra, og rad $i$ være siden vi går til**:
 $S_{ij}$ er sannsynligheten for å gå fra $j$ til $i$.
 A-kolonnen er derfor $(0,1/2,1/2,0)^T$: den viser neste fordeling hvis
-hele starten er på A. Tilsvarende viser B-kolonnen hvor en start bare på B
-havner. Hver kolonne er altså resultatet av å bruke regelen på én
+startfordelingen er $p_0=(1,0,0,0)^T$. Tilsvarende viser B-kolonnen
+fordelingen etter ett klikk fra $p_0=(0,1,0,0)^T$. Hver kolonne er altså resultatet av å bruke regelen på én
 standardbasisvektor, akkurat som for lineære transformasjoner tidligere.
 
 For en blandet fordeling vekter vi A-kolonnen med $p_A$, B-kolonnen med
@@ -1491,7 +1506,7 @@ $$Sp_*=p_*.$$
 
 Stjernen markerer en slik uendret fordeling. Den kalles **stasjonær**.
 Dette er egenvektorlikningen fra 5.2 med egenverdi **1**.
-I dette eksemplet nærmer vi oss
+I dette eksemplet konvergerer følgen av sannsynlighetsvektorer mot
 $p_*=(1/3,1/6,1/3,1/6)^T$. Den besøkende fortsetter å flytte seg, men
 fordelingen er uendret: hver side får like mye sannsynlighet inn som den
 sender videre. For A kommer $1/6$ fra C og $1/6$ fra D, altså $1/3$ på nytt.
@@ -1513,7 +1528,7 @@ modellen før vi kaller den endelige rangeringen PageRank.
 **Diskuter:** Hvorfor kan en side få mange besøk selv om få sider lenker til den?
 Og hvorfor kan riktig løsning av likningen likevel gi en lite nyttig rangering?
 
-**Prøv som kontroll:** Kjør cellen fra begge startene. Hvilken forskjell
+**Prøv som kontroll:** Kjør cellen fra begge startfordelingene. Hvilken forskjell
 måler utskriften? Kan et lite tall alene si at lenkene er lagt inn riktig?
 
 ```{pyodide-python}
@@ -1551,12 +1566,12 @@ Dette forklarer både multiplikasjonen og summeringen i matriseregelen.
 Slik skiller vi selve modellen (hvem som kan flytte hvor, med hvilke
 sannsynligheter) fra regnemetoden (gjentatte matriseprodukter).
 
-En stasjonær fordeling er ikke automatisk grensen for alle starter på
+En stasjonær fordeling er ikke automatisk grensen for iterasjonsfølgene fra alle startfordelinger på
 alle nettverk. To sider som bare lenker til hverandre, kan gi pendling.
 Forsøkene i 5.6 undersøker hvorfor modellen trenger en ekstra regel.
 
 
-Fra jevn start er første mottak til A $\tfrac12\cdot\tfrac14+1\cdot\tfrac14=3/8$.
+Fra jevn startfordeling er første mottak til A $\tfrac12\cdot\tfrac14+1\cdot\tfrac14=3/8$.
 Hele svaret blir $(3/8,1/8,3/8,1/8)^T$.
 Generelt er $(Sp)_i=\sum_j S_{ij}p_j$: summer alle bidrag til mottaker $i$.
 
@@ -1764,7 +1779,7 @@ lagre den tette matrisen $u\mathbf1^T$.
 Hvis $S$ er kolonnestokastisk, $u_i>0$, $\sum_i u_i=1$ og $0<\alpha<1$,
 er alle elementene i $G$ positive og kolonnene summerer til én.
 Da finnes **nøyaktig én stasjonær sannsynlighetsvektor**, alle sidene får
-positiv andel, og gjentatte oppdateringer fra enhver startfordeling nærmer seg den.
+positiv andel. Iterasjonsfølgen konvergerer mot denne fordelingen fra enhver startfordeling.
 Dette er konklusjonen vi bruker fra **Perron–Frobenius-teoremet**. Det krever ikke at $G$ er symmetrisk eller diagonaliserbar.
 
 **Sjekk forståelsen:** Lover teoremet at rangeringen er en god måling av
@@ -1938,13 +1953,13 @@ __[1/81]
 ```
 
 Forklar hvorfor retningen nærmer seg linjen gjennom $v_1$ selv om bidraget
-langs $v_2$ ikke blir kortere. Finn en annen ikke-null start der dette ikke skjer.
+langs $v_2$ ikke blir kortere. Finn en annen ikke-null startvektor som gir en iterasjonsfølge uten denne grensen.
 Hva endres dersom den andre egenverdien byttes fra $1$ til $-1$?
 
 **4. En liten residual – svar på hvilket spørsmål?** Fullfør funksjonen.
-Den skal normalisere starten, utføre `steps` normaliserte multiplikasjoner,
+Den skal normalisere startvektoren, utføre `steps` normaliserte multiplikasjoner,
 og returnere siste enhetsvektor, Rayleigh-kvotienten og lengden av egenresidualen.
-Forutsett en ikke-null start og at ingen multiplikasjon gir nullvektoren.
+Forutsett en ikke-null startvektor og at ingen multiplikasjon gir nullvektoren.
 
 ```{py-exercise}
 #| label: week5-task-power-residual
@@ -1966,22 +1981,22 @@ A = np.diag([5., 2.])
 
 ## TESTS ##
 x, rho, residual = power_check(np.diag([5.,2.]), np.array([0.,3.]), 4)
-assert np.allclose(x, [0,1]) and np.isclose(rho,2) and np.isclose(residual,0), 'En start i det andre egenrommet blir der.'
+assert np.allclose(x, [0,1]) and np.isclose(rho,2) and np.isclose(residual,0), 'En startvektor i det andre egenrommet gir itererte vektorer i samme egenrom.'
 x, rho, residual = power_check(np.diag([5.,2.]), np.array([1.,1.]), 2)
 y = np.array([25.,4.]); y /= np.linalg.norm(y)
 assert np.allclose(x,y), 'Normaliser, og utfør akkurat det oppgitte antallet steg.'
 assert np.isclose(rho, np.dot(y, np.diag([5.,2.])@y)), 'Bruk Rayleigh-kvotienten for siste vektor.'
 assert np.isclose(residual,np.linalg.norm(np.diag([5.,2.])@y-rho*y)), 'Mål egenresidualen, ikke endringen mellom iterasjoner.'
 x, rho, residual = power_check(np.array([[2.,1.],[1.,2.]]), np.array([3.,4.]), 0)
-assert np.allclose(x,[.6,.8]), 'Også starten skal normaliseres når steps er 0.'
+assert np.allclose(x,[.6,.8]), 'Også startvektoren skal normaliseres når steps er 0.'
 assert np.isclose(rho,2.96) and np.isclose(residual,.28), 'Funksjonen må også virke for en matrise som ikke er diagonal.'
 ```
 
-**Undersøk:** Forutsi hvilken av de tre startene som finner egenverdi 5
+**Undersøk:** Forutsi hvilken av de tre startvektorene som gir raskest tilnærming til egenverdi 5
 raskest. Velg selv hvor mange steg du trenger for å undersøke hypotesen.
 Kan residualen være null når du har funnet egenverdi 2? Forklar hva testen
 bekrefter, og hva den ikke bekrefter. Bruk uttrykket for $A^kx_0$ til å
-forklare forskjellen mellom startene $[0,1]^T$ og $[10^{-8},1]^T$.
+forklare forskjellen mellom startvektorene $[0,1]^T$ og $[10^{-8},1]^T$.
 
 **5. En stasjonær fordeling uten konvergens.** To sider lenker bare til
 hverandre, så $S=\begin{bmatrix}0&1\\1&0\end{bmatrix}$.
@@ -2001,7 +2016,7 @@ Egenverdien forskjellig fra $1$ er __[-1]
 
 Forutsi forløpet fra $(1,0)^T$ og fra $p_*$. Forklar ved hjelp av den
 andre egenverdien hvorfor en entydig stasjonær fordeling ikke er nok til
-å sikre at alle starter nærmer seg den.
+å sikre at iterasjonsfølgen konvergerer mot denne fordelingen fra enhver startfordeling.
 
 **6. Endre modellen, og forklar effekten.** Teleportering betyr at vi med
 sannsynlighet $1-\alpha$ velger neste side etter en fast sannsynlighetsvektor

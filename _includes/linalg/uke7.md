@@ -360,7 +360,7 @@ singulærverdier.
 
 ### Eksperiment 4 – samme dataendring, to utfall
 
-Kjør forsøket. Vi starter med en kjent løsning, lager data, og endrer
+Kjør forsøket. Vi velger en kjent løsning, beregner tilhørende data, og endrer
 én datakomponent om gangen med samme lille beløp. **Gjett først:**
 Blir løsningsendringen like stor i begge tilfeller?
 

@@ -94,17 +94,17 @@ def cg(A, b, x0=None, rtol=1e-8, atol=0., max_steps=1000):
         raise ValueError('Bruk en symmetrisk kvadratisk matrise')
     x = np.zeros_like(b) if x0 is None else np.array(x0, float, copy=True)
     if x.shape != b.shape or rtol <= 0 or atol < 0 or max_steps < 1:
-        raise ValueError('Kontroller start, toleranser og maksimalgrense')
+        raise ValueError('Kontroller startvektor, toleranser og maksimalgrense')
     if not all(np.all(np.isfinite(t)) for t in [A, b, x]):
         raise ValueError('Bruk endelige tall')
     # Residualen er ubalansen i de opprinnelige likningene, og kan beregnes uten fasit.
     r = b - A @ x
-    # Starten teller som første lagrede punkt, men ikke som et iterasjonssteg.
+    # Startvektoren teller som første lagrede punkt, men ikke som et iterasjonssteg.
     path, residuals = [x.copy()], [np.linalg.norm(r)]
     # Absolutt margin pluss margin relativt til b; samme krav brukes ved sammenligning.
     target = atol + rtol*np.linalg.norm(b)
     matvecs = 1
-    # Kontroller også startforslaget: riktig start skal stoppe før noen divisjon.
+    # Kontroller også startforslaget: en startvektor som oppfyller residualkravet skal gi stopp før noen divisjon.
     if residuals[-1] <= target:
         return {'path':np.array(path), 'residuals':np.array(residuals),
                 'converged':True, 'matvecs':matvecs, 'preconditioner_calls':0}
@@ -141,7 +141,7 @@ def cg(A, b, x0=None, rtol=1e-8, atol=0., max_steps=1000):
 
 Symmetrikontrollen er ikke et SPD-bevis. De leverte matrisene er SPD av
 konstruksjon. Testen på $p^TAp$ oppdager enkelte problemer, men erstatter ikke
-forutsetningen om SPD. Vi håndterer riktig start ved å stoppe før divisjon.
+forutsetningen om SPD. Hvis startvektoren oppfyller residualkravet, stopper metoden før divisjon.
 
 
 ```{pyodide-python}
@@ -181,7 +181,7 @@ p_{k+1}=r_{k+1}+\beta_kp_k.$$
 
 I eksakt regning terminerer CG etter høyst $n$ steg for SPD-systemer.
 Flyttallsregning kan kreve flere. Antall steg påvirkes av fordelingen av
-egenverdiene og hvilke feilbidrag starten har, ikke bare dimensjonen.
+egenverdiene og hvilke egenretninger som inngår i startfeilen, ikke bare dimensjonen.
 Et kondisjonstall alene beskriver ikke hele konvergenshistorikken.
 **Energifeilen** er $\lVert x-x_*\rVert_A=\sqrt{(x-x_*)^TA(x-x_*)}$.
 CG minimerer den over stadig større rom av tilgjengelige søkeretninger; den euklidske
@@ -357,17 +357,17 @@ def pcg(A, b, m, x0=None, rtol=1e-8, atol=0., max_steps=1000):
         raise ValueError('Prekondisjoneringen må ha positiv diagonal')
     x = np.zeros_like(b) if x0 is None else np.array(x0,float,copy=True)
     if x.shape != b.shape or rtol <= 0 or atol < 0 or max_steps < 1:
-        raise ValueError('Kontroller start, toleranser og maksimalgrense')
+        raise ValueError('Kontroller startvektor, toleranser og maksimalgrense')
     if not all(np.all(np.isfinite(t)) for t in [A,b,m,x]):
         raise ValueError('Bruk endelige tall')
     # Residualen er ubalansen i de opprinnelige likningene, og kan beregnes uten fasit.
     r = b - A @ x
-    # Starten teller som første lagrede punkt, men ikke som et iterasjonssteg.
+    # Startvektoren teller som første lagrede punkt, men ikke som et iterasjonssteg.
     path, residuals = [x.copy()], [np.linalg.norm(r)]
     # Absolutt margin pluss margin relativt til b; samme krav brukes ved sammenligning.
     target = atol + rtol*np.linalg.norm(b)
     matvecs, applies = 1, 0
-    # Kontroller også startforslaget: riktig start skal stoppe før noen divisjon.
+    # Kontroller også startforslaget: en startvektor som oppfyller residualkravet skal gi stopp før noen divisjon.
     if residuals[-1] <= target:
         return {'path':np.array(path), 'residuals':np.array(residuals),
                 'converged':True, 'matvecs':matvecs, 'preconditioner_calls':applies}
@@ -444,7 +444,7 @@ Fyll først PCG-malen; fjern deretter kommentartegnene i kjørecellen.
 
 ```{pyodide-python}
 #| label: project-week6-comparison
-# Rettferdig sammenligning krever samme A, b, start og residualkrav.
+# Rettferdig sammenligning krever samme A, b, startvektor og residualkrav.
 # Vi viser både oppfylt likning (residual) og avstand til fasit (feil).
 # Arbeidsaksen teller A-produkter; M-løsninger rapporteres separat og er ikke gratis.
 

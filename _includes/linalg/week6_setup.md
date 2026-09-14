@@ -65,17 +65,17 @@ def cg(A, b, x0=None, rtol=1e-8, atol=0., max_steps=1000):
         raise ValueError('Bruk en symmetrisk kvadratisk matrise')
     x = np.zeros_like(b) if x0 is None else np.array(x0, float, copy=True)
     if x.shape != b.shape or rtol <= 0 or atol < 0 or max_steps < 1:
-        raise ValueError('Kontroller start, toleranser og maksimalgrense')
+        raise ValueError('Kontroller startvektor, toleranser og maksimalgrense')
     if not all(np.all(np.isfinite(t)) for t in [A, b, x]):
         raise ValueError('Bruk endelige tall')
     # Residualen er ubalansen i de opprinnelige likningene, og kan beregnes uten fasit.
     r = b - A @ x
-    # Starten teller som første lagrede punkt, men ikke som et iterasjonssteg.
+    # Startvektoren teller som første lagrede punkt, men ikke som et iterasjonssteg.
     path, residuals = [x.copy()], [np.linalg.norm(r)]
     # Absolutt margin pluss margin relativt til b; samme krav brukes ved sammenligning.
     target = atol + rtol*np.linalg.norm(b)
     matvecs = 1
-    # Kontroller også startforslaget: riktig start skal stoppe før noen divisjon.
+    # Kontroller også startforslaget: en startvektor som oppfyller residualkravet skal gi stopp før noen divisjon.
     if residuals[-1] <= target:
         return {'path':np.array(path), 'residuals':np.array(residuals),
                 'converged':True, 'matvecs':matvecs, 'preconditioner_calls':0}

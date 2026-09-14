@@ -61,7 +61,7 @@ $$\begin{array}{ll}
 
 Jacobi bruker forrige rundes verdier. GS bruker den nye verdien straks den
 er tilgjengelig. En runde gjennom alle ukjente kalles et **sveip**.
-**Hva forventer dere å se når vi starter fra null?**
+**Hvordan forventer dere at iterasjonsfølgene utvikler seg fra startvektoren $x_0=(0,0)^T$?**
 
 ```{pyodide-python}
 #| label: week6-gs-experiment
@@ -86,7 +86,7 @@ ax.set(xlabel='Sveip', ylabel='Avstand til løsningen (1, 2)')
 ax.legend(); plt.show()
 ```
 
-Begge nærmer seg løsningen her. **Ville dere stole på samme oppskrift for
+Begge iterasjonsfølgene nærmer seg løsningen i dette eksemplet. **Ville dere stole på samme oppskrift for
 ethvert system?** Neste forsøk endrer bare matrisen og høyresiden.
 
 <details class="reading-step">
@@ -169,9 +169,9 @@ Her kommer egenverdiene tilbake. For første matrise har
 Feil langs en egenvektor blir ganget med den tilhørende egenverdien per sveip.
 
 **Spektralradiusen** er største absoluttverdi av egenverdiene:
-$\rho(T)=\max_i|\lambda_i(T)|$. Iterasjonen konvergerer fra enhver start
+$\rho(T)=\max_i|\lambda_i(T)|$. Iterasjonen konvergerer fra enhver startvektor
 akkurat når $\rho(T)<1$. Det er $T$ vi undersøker her.
-**Hvorfor er én vellykket kjøring ikke nok til å si at alle starter virker?**
+**Hvorfor er én vellykket kjøring ikke nok til å garantere konvergens fra enhver startvektor?**
 
 <details class="reading-step">
 <summary>Gå i dybden: finn matriserepresentasjonen av feiloppdateringen</summary>
@@ -197,7 +197,7 @@ $$T_b=\begin{bmatrix}0&-2\\0&4\end{bmatrix},\quad c_b=(5,-6)^T.$$
 **Hva forklarer dette?**
 
 Å trekke $x_*=Tx_*+c$ fra iterasjonen gir $e_{k+1}=Te_k$ og $e_k=T^ke_0$.
-En spesiell start kan mangle feilbidraget langs en voksende egenvektor.
+For enkelte startvektorer er bidraget til startfeilen langs en voksende egenretning null.
 Når en egenvektorbasis finnes, skaleres hvert bidrag med $\lambda_i^k$.
 Kriteriet $\rho(T)<1$ gjelder også uten en egenvektorbasis.
 

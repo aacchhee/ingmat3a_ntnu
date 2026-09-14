@@ -92,7 +92,7 @@ Fra A går halvparten til B og halvparten til C, altså
 $S_{1,0}=S_{2,0}=1/2$ med Python-indekser. Alle andre elementer i kolonne
 null er null. Start med denne kolonnen og kolonnen for C, som bare har én lenke.
 
-Første runde fra jevn start skal bli
+Første runde fra jevn startfordeling skal bli
 $(1/6,1/12,1/4,1/4,1/12,1/6)^T$.
 
 
@@ -140,7 +140,7 @@ $$r_k=\lVert \alpha Sp_k+(1-\alpha)u-p_k\rVert_1,
 Bruk en øvre grense for antall steg og meld fra hvis toleransen ikke nås.
 Den samme funksjonen skal kunne brukes på nettverk med ulike størrelser.
 Antall steg er antall utførte oppdateringer. Når historikken inneholder
-residualen ved start og ved hver returnert iterasjon, er dette
+residualen for startfordelingen og ved hver returnert iterasjon, er dette
 `len(residuals)-1`. Kontroller også residualen etter siste tillatte oppdatering;
 ikke merk en løsning som mislykket bare fordi den nådde kravet på siste steg.
 
@@ -168,7 +168,7 @@ $$(I-\alpha S)p_*=(1-\alpha)u.$$
 #     print(names[j], p[j])
 ```
 
-Presenter rangering og kontrolltall. Gjenta med alle besøk på A ved start.
+Presenter rangering og kontrolltall. Gjenta med startfordelingen konsentrert på A.
 Forklar hvorfor referanseberegningen må bruke samme $S$, $u$ og $\alpha$.
 Enighet mellom to metoder på ulike modeller ville ikke være en kontroll.
 
@@ -193,8 +193,8 @@ $\alpha=1$.
 | Tilfelle | Nettverk uten teleportering | Undersøk |
 |---|---|---|
 | Felle | Seks-siders grafen fra del 1, men F lenker bare til F | Hvor havner besøkene? Er dette en feil i regningen? |
-| To adskilte grupper | A→B, B→A, C→D, D→C | Avhenger fordelingen mellom gruppene av starten? |
-| Pendling | A→B, B→A | Sammenlign start $(1,0)^T$ og $(1/2,1/2)^T$. |
+| To adskilte grupper | A→B, B→A, C→D, D→C | Avhenger fordelingen mellom gruppene av startfordelingen? |
+| Pendling | A→B, B→A | Sammenlign iterasjonsfølgene fra startfordelingene $(1,0)^T$ og $(1/2,1/2)^T$. |
 
 Bruk nye variabelnavn for problemgrafen, slik at grunnmodellen fra del 1 er
 bevart. Lag minst to startfordelinger. Vis komponentene gjennom iterasjonen.
@@ -236,7 +236,7 @@ av de andre når $0<\alpha<1$?
 # G inkluderer både lenkefølging og hopp; hver kolonne får det samme hoppbidraget.
 # Vi skiller egenverdien 1 fra de andre, som beskriver hvordan avvik utvikler seg.
 
-# Sett S_case, u_case og p0_case til grafen og starten fra del 3.
+# Sett S_case, u_case og p0_case til grafen og startfordelingen fra del 3.
 # alpha = 0.85
 # n = len(u_case)
 # G = alpha*S_case + (1-alpha)*np.outer(u_case, np.ones(n))
@@ -251,7 +251,7 @@ av de andre når $0<\alpha<1$?
 Finn $p_*$ med referansesystemet fra del 2. Kjør et fast antall oppdateringer,
 lagre $\lVert p_k-p_*\rVert_1$ og plott feilen med logaritmisk vertikal akse.
 Sammenlign forholdet mellom to påfølgende feil med $\beta$ i området før
-avrunding dominerer. Gjenta med en annen start hvis du ikke ser forventet fart.
+avrunding dominerer. Gjenta med en annen startfordeling hvis du ikke ser forventet fart.
 
 **Forklar pendlingen for hånd**
 
@@ -268,7 +268,7 @@ bruker egenverdien én?**
 **Startfordelingen kan skjule en egenretning**
 
 Forskjellen $p_k-p_*$ har sum null. Et bidrag i en egenretning med egenverdi
-$\lambda$ får faktoren $\lambda^k$. Hvis den valgte starten mangler bidraget
+$\lambda$ får faktoren $\lambda^k$. Hvis avviket mellom startfordelingen og den stasjonære fordelingen mangler bidraget
 som avtar langsomst, kan du observere raskere konvergens enn $\beta$ antyder.
 Komplekse egenverdier og flere bidrag kan også gi variasjon i feilforholdet.
 
@@ -363,7 +363,7 @@ før forsøket, forsøksvalgene, et mulig motfunn og en avgrenset konklusjon.
 Analysen skal bruke konkrete resultater til å skille mellom:
 
 - en liten residual og en riktig implementert modell;
-- entydighet av stasjonær fordeling og konvergens fra en valgt start;
+- entydighet av stasjonær fordeling og konvergens fra en valgt startfordeling;
 - god numerisk nøyaktighet og en meningsfull rangering;
 - virkningen av egenverdiene og virkningen av modellvalgene.
 
