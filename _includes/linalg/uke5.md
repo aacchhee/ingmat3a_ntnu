@@ -260,6 +260,13 @@ x_k=\frac{A^kx_0}{\lVert A^kx_0\rVert_2}.$$
 
 Her teller $k$ multiplikasjonene, $\lVert x\rVert_2$ er vektorens vanlige lengde,
 og $I$ representerer identitetstransformasjonen $x\mapsto x$. Vi setter $A^0=I$.
+
+Dette er en **fikspunktiterasjon**: vi bruker samme oppdateringsregel
+$F(x)=Ax/\lVert Ax\rVert_2$ om igjen, slik at $x_{k+1}=F(x_k)$.
+En vektor $x_*$ er et **fikspunkt** hvis $F(x_*)=x_*$: neste steg gir samme
+vektor. Regelen er definert når $Ax\ne0$. I 5.4 undersøker vi når
+iterasjonen nærmer seg et slikt punkt, og når den ikke gjør det.
+
 **Diskuter:** Hvorfor kan vi miste informasjon om lengde og likevel se
 hvilken retning som dominerer etter gjentatt transformasjon? Hva skiller de to spesielle startvektorene?
 
@@ -1005,9 +1012,29 @@ Gjenta, med en øvre grense for antall steg:
     Kontroller hvor godt A x ≈ ρ x.
 ```
 
-Ett steg og de to kontrollstørrelsene er
+Ett steg består av multiplikasjon og normalisering:
 
 $$y_k=Ax_k,\qquad x_{k+1}=\frac{y_k}{\lVert y_k\rVert_2}.$$
+
+### Potensmetoden som fikspunktiterasjon
+
+Oppdateringen fra 5.1 er $x_{k+1}=F(x_k)$ med
+$F(x)=Ax/\lVert Ax\rVert_2$. Normaliseringen gjør $F$ til en ikke-lineær
+avbildning, selv om $x\mapsto Ax$ er lineær.
+
+**Hvilke vektorer blir stående uendret?** Hvis $F(x_*)=x_*$, så
+
+$$Ax_*=\lVert Ax_*\rVert_2\,x_*.$$
+
+Et fikspunkt er altså en enhetsvektor som er egenvektor til en **positiv**
+egenverdi. Omvendt er enhver slik egenvektor et fikspunkt.
+Det betyr ikke at alle startvektorer nærmer seg det:
+egenverdiene og bidragene i startvektoren avgjør utviklingen.
+
+For en enhetsegenvektor $v$ med negativ egenverdi er $F(v)=-v$ og
+$F(-v)=v$. Iterasjonen veksler da mellom to vektorer på samme linje.
+Linjen er uendret, men vektoren er ikke et fikspunkt.
+Dette er en av situasjonene vi undersøker i eksperiment 4.
 
 ### Fra projeksjon til et anslag for egenverdien
 
@@ -1534,12 +1561,16 @@ matrisemultiplikasjon som tidligere i uken, nå uten normalisering av lengden.
 
 I forsøket nærmet de to startfordelingene seg samme fordeling.
 En fordeling som er uendret ved neste steg, kalles **stasjonær**.
+Dette er et **fikspunkt** for oppdateringen $p\mapsto Sp$.
 Vi markerer den med en stjerne:
 
 $$Sp_*=p_*=1p_*.$$
 
 Her møter vi egenvektorene igjen: $p_*$ er en egenvektor med egenverdi
-**1**, skalert til sum én. For dette nettverket er
+**1**, skalert til sum én. Iterasjonen $p_{k+1}=Sp_k$ er dermed både
+en fikspunktiterasjon og en variant av potensmetoden fra 5.4.
+Her bevares summen én av besøksregelen, så vi trenger ingen ekstra
+normalisering. For dette nettverket er
 
 $$p_*=(1/3,1/6,1/3,1/6)^T.$$
 
@@ -1801,6 +1832,9 @@ $p_*$ er **PageRank-vektoren**:
 $$Gp_*=p_*,\qquad p_{*,i}\geq0,\qquad \sum_i p_{*,i}=1.$$
 
 Elementene er sidenes PageRank-verdier, som vi rangerer fra størst til minst.
+Også her bruker vi en fikspunktiterasjon: $p_{k+1}=Gp_k$.
+Spørsmålet er nå om iterasjonen nærmer seg samme fikspunkt fra alle
+startfordelinger.
 
 ### Hvorfor får vi nå én bestemt rangering?
 
