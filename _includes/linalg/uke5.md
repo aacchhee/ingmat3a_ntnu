@@ -253,19 +253,24 @@ For mange startvektorer nærmer følgen av normaliserte vektorer $x_k$ seg samme
 **linje** når transformasjonen gjentas, men grensevektorene kan ha motsatt orientering.
 Med startvektor langs $(1,1)^T$ eller $(1,-1)^T$ er retningen uendret gjennom iterasjonen. Vi skal undersøke hvordan transformasjonen virker langs disse linjene.
 
-Figurens regneoperasjon kan nå skrives
+Vi samler multiplikasjon og normalisering i én oppdateringsregel:
 
-$$x_{k+1}=\frac{Ax_k}{\lVert Ax_k\rVert_2},\qquad
-x_k=\frac{A^kx_0}{\lVert A^kx_0\rVert_2}.$$
+$$F(x)=\frac{Ax}{\lVert Ax\rVert_2},\qquad x_{k+1}=F(x_k).$$
 
-Her teller $k$ multiplikasjonene, $\lVert x\rVert_2$ er vektorens vanlige lengde,
-og $I$ representerer identitetstransformasjonen $x\mapsto x$. Vi setter $A^0=I$.
+Her er $\lVert x\rVert_2$ vektorens vanlige lengde, og $k$ teller stegene.
+Regelen er definert når $Ax\ne0$.
 
-Dette er en **fikspunktiterasjon**: vi bruker samme oppdateringsregel
-$F(x)=Ax/\lVert Ax\rVert_2$ om igjen, slik at $x_{k+1}=F(x_k)$.
-En vektor $x_*$ er et **fikspunkt** hvis $F(x_*)=x_*$: neste steg gir samme
-vektor. Regelen er definert når $Ax\ne0$. I 5.4 undersøker vi når
-iterasjonen nærmer seg et slikt punkt, og når den ikke gjør det.
+**Kjenner dere igjen formen fra [uke 2](page4.qmd)?**
+Da sendte vi et tall inn i en regel og brukte svaret som neste verdi.
+Hva er likt nå, og hva er annerledes? Hvilken likning må en vektor
+oppfylle hvis neste steg skal gi akkurat samme vektor?
+
+Etter $k$ steg kan vi også skrive
+
+$$x_k=\frac{A^kx_0}{\lVert A^kx_0\rVert_2}.$$
+
+Vi setter $A^0=I$, der $I$ representerer identitetstransformasjonen
+$x\mapsto x$. Startvektoren i figuren er normalisert til lengde én.
 
 **Diskuter:** Hvorfor kan vi miste informasjon om lengde og likevel se
 hvilken retning som dominerer etter gjentatt transformasjon? Hva skiller de to spesielle startvektorene?
@@ -991,6 +996,11 @@ $$\frac{r_k}{1+r_k}<0.1\quad\Longleftrightarrow\quad r_k<\frac19.$$
 Dette gir 3 steg for $\mu=1$ og 65 steg for $\mu=2.9$.
 Kontroller med potensuttrykket for $r_k$.
 
+Dette minner om [konvergensfarten i uke 2.2–2.3](page4.qmd#lokalt-globalt-og-raskt):
+der ble en liten feil omtrent ganget med $|g'(r)|$ ved hvert steg.
+Her gjelder den eksakte skaleringen $r_{k+1}=(|\mu|/3)r_k$ for forholdet
+mellom bidragene. En faktor nær én gir langsom endring i begge tilfeller.
+
 I koden beregner vi koordinatene fra de itererte vektorene, ikke direkte
 fra potensformelen. Avrunding kan derfor påvirke svært små bidrag.
 Den lineære andelsaksen gjør sammenligningen med eksperiment 2 direkte,
@@ -1018,9 +1028,15 @@ $$y_k=Ax_k,\qquad x_{k+1}=\frac{y_k}{\lVert y_k\rVert_2}.$$
 
 ### Potensmetoden som fikspunktiterasjon
 
-Oppdateringen fra 5.1 er $x_{k+1}=F(x_k)$ med
-$F(x)=Ax/\lVert Ax\rVert_2$. Normaliseringen gjør $F$ til en ikke-lineær
-avbildning, selv om $x\mapsto Ax$ er lineær.
+I [uke 2.1](page4.qmd#fikspunkt-og-konvergens) brukte vi
+$x_{k+1}=g(x_k)$ for å nærme oss et tall $r$ som oppfyller $g(r)=r$.
+Oppdateringen fra 5.1 har samme form, men nå er $x_k$ en vektor:
+$x_{k+1}=F(x_k)$ med $F(x)=Ax/\lVert Ax\rVert_2$.
+Potensmetoden er altså en **fikspunktiterasjon**. Et **fikspunkt**
+$x_*$ oppfyller $F(x_*)=x_*$.
+
+Normaliseringen gjør $F$ til en ikke-lineær avbildning, selv om
+$x\mapsto Ax$ er lineær.
 
 **Hvilke vektorer blir stående uendret?** Hvis $F(x_*)=x_*$, så
 
@@ -1059,6 +1075,13 @@ For $x=(1,0)^T$ og matrisen fra 5.1 er $Ax=(2,1)^T$.
 Projeksjonen på førsteaksen er $(2,0)^T=2x$, så $\rho=2$ og $r=(0,1)^T$.
 Det gjenstår et bidrag på tvers: $x$ er ikke en egenvektor.
 For $x=(1,1)^T/\sqrt2$ ligger hele $Ax$ på samme linje: $\rho=3$ og $r=0$.
+
+I [uke 2.4](page4.qmd#feil-residual-og-toleranse) målte vi
+fikspunktresidualen $g(x)-x$. Her måler vi **egenresidualen**
+$Ax-\rho x$, som kontrollerer en annen likning.
+For en enhetsegenvektor $v$ med negativ egenverdi er egenresidualen null,
+mens fikspunktresidualen er $F(v)-v=-2v$. Derfor kan potensmetoden
+ha funnet en egenvektor selv om neste normaliserte vektor har motsatt fortegn.
 
 **Hva forteller kontrollen?** Liten $\|r\|_2$ betyr at egenvektorlikningen
 nesten er oppfylt. Det sier ikke at vi har funnet den dominante egenverdien:
@@ -1284,6 +1307,11 @@ Iterasjonen besøker fire punkter før den gjentas.
 For enhver reell enhetsvektor står $Ax$ vinkelrett på $x$, så
 $\rho=x^TAx=0$ og $\lVert Ax-\rho x\rVert_2=1$.
 Ingen reell ikke-null vektor oppfyller $Ax=\lambda x$.
+
+I [uke 2.3](page4.qmd#lokalt-globalt-og-raskt) så vi at en iterasjon
+kan nærme seg en 2-syklus i stedet for et fikspunkt.
+Tilfelle 2 og 3 viser samme skille for vektorer: to tilstander gjentas
+eller nærmes vekselvis, selv om ett enkelt grensepunkt mangler.
 
 **Diskuter:** Hvorfor er det tre forskjellige spørsmål om vektorene
 konvergerer, om linjen de spenner ut stabiliseres, og om vi har funnet
@@ -1561,7 +1589,8 @@ matrisemultiplikasjon som tidligere i uken, nå uten normalisering av lengden.
 
 I forsøket nærmet de to startfordelingene seg samme fordeling.
 En fordeling som er uendret ved neste steg, kalles **stasjonær**.
-Dette er et **fikspunkt** for oppdateringen $p\mapsto Sp$.
+Dette er et **fikspunkt**, slik som i [uke 2.1](page4.qmd#fikspunkt-og-konvergens),
+nå for oppdateringen $p\mapsto Sp$.
 Vi markerer den med en stjerne:
 
 $$Sp_*=p_*=1p_*.$$
@@ -1832,7 +1861,8 @@ $p_*$ er **PageRank-vektoren**:
 $$Gp_*=p_*,\qquad p_{*,i}\geq0,\qquad \sum_i p_{*,i}=1.$$
 
 Elementene er sidenes PageRank-verdier, som vi rangerer fra størst til minst.
-Også her bruker vi en fikspunktiterasjon: $p_{k+1}=Gp_k$.
+Også her bruker vi fikspunktiterasjon fra uke 2: $p_{k+1}=Gp_k$.
+Fikspunktresidualen er $Gp-p$, forskjellen mellom neste og nåværende fordeling.
 Spørsmålet er nå om iterasjonen nærmer seg samme fikspunkt fra alle
 startfordelinger.
 
