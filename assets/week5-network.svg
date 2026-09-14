@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 290" role="img" aria-labelledby="title desc">
+  <title id="title">Lenker og overgangssannsynligheter</title>
+  <desc id="desc">A til B og C: en halv hver. B til C: en. C til A og D: en halv hver. D til A: en. Retningene mellom A og C har hver sin pil.</desc>
+  <defs>
+    <marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#47647a"/>
+    </marker>
+  </defs>
+  <rect width="300" height="290" rx="12" fill="#f6f8fa"/>
+  <g fill="none" stroke="#47647a" stroke-width="2" marker-end="url(#tip)">
+    <path data-from="A" data-to="B" data-probability="0.5" d="M 72 48 H 228"/>
+    <path data-from="B" data-to="C" data-probability="1" d="M 250 70 V 220"/>
+    <path data-from="C" data-to="D" data-probability="0.5" d="M 228 242 H 72"/>
+    <path data-from="D" data-to="A" data-probability="1" d="M 50 220 V 70"/>
+    <path data-from="A" data-to="C" data-probability="0.5" d="M 70 59 Q 197 99 239 222"/>
+    <path data-from="C" data-to="A" data-probability="0.5" d="M 230 231 Q 103 191 61 68"/>
+  </g>
+  <g font-family="system-ui, sans-serif" font-size="17" text-anchor="middle" fill="#243447" stroke="#f6f8fa" stroke-width="7" paint-order="stroke">
+    <text x="150" y="36">1/2</text>
+    <text x="270" y="151">1</text>
+    <text x="150" y="268">1/2</text>
+    <text x="30" y="151">1</text>
+    <text x="193" y="111">1/2</text>
+    <text x="107" y="187">1/2</text>
+  </g>
+  <g fill="#e7f0fa" stroke="#1565c0" stroke-width="2">
+    <circle cx="50" cy="48" r="21"/>
+    <circle cx="250" cy="48" r="21"/>
+    <circle cx="250" cy="242" r="21"/>
+    <circle cx="50" cy="242" r="21"/>
+  </g>
+  <g font-family="system-ui, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="#174f86">
+    <text x="50" y="55">A</text><text x="250" y="55">B</text>
+    <text x="250" y="249">C</text><text x="50" y="249">D</text>
+  </g>
+</svg>
