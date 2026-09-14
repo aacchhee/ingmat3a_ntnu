@@ -4476,9 +4476,9 @@ Gå i dybden
 <div id="uke7-bilde">
 
 </div>
-<section id="prøv-først-hvor-lite-trenger-vi" class="level3">
-<h3 class="anchored" data-anchor-id="prøv-først-hvor-lite-trenger-vi">Prøv først — hvor lite trenger vi?</h3>
-<p>Kjør cellen og se samme bilde med 1, 5 og 20 <strong>komponenter</strong>, altså byggemønstre som legges sammen. Bytt deretter ett av tallene og prøv igjen. Vi undersøker bildene før vi forklarer hvordan komponentene beregnes.</p>
+<section id="eksperiment-1-hvor-lite-trenger-vi" class="level3">
+<h3 class="anchored" data-anchor-id="eksperiment-1-hvor-lite-trenger-vi">Eksperiment 1 – hvor lite trenger vi?</h3>
+<p>Kjør cellen og se samme bilde med 1, 5 og 20 <strong>komponenter</strong>, altså byggemønstre som legges sammen. Bytt deretter ett av tallene og prøv igjen. Hvilke detaljer kan dere gjenkjenne med få komponenter, og hvilke krever flere?</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p><strong>Snakk sammen:</strong> Hvilken detalj kommer tilbake først? Hva er fortsatt utydelig? Ville det samme antallet komponenter vært nok til en diagonal strek eller tilfeldig støy?</p>
@@ -4492,7 +4492,7 @@ Gå i dybden
 <summary>
 Gå i dybden: se én byggekloss og knytt den til basis
 </summary>
-<p>Bildet er en <span class="math inline">\(96\times96\)</span>-matrise <span class="math inline">\(A\)</span>. Hvert element er en lysstyrke mellom 0 og 1. En enkelt komponent har formen <span class="math inline">\(\sigma_i u_i v_i^T\)</span>: <span class="math inline">\(u_i\)</span> er en kolonnevektor med den loddrette profilen, <span class="math inline">\(v_i^T\)</span> en radvektor med den vannrette, og <span class="math inline">\(\sigma_i\)</span> er vekten. Vi forklarer hvordan SVD velger disse i 7.2–7.3.</p>
+<p>Bildet er en <span class="math inline">\(96\times96\)</span>-matrise <span class="math inline">\(A\)</span>. Hvert element er en lysstyrke mellom 0 og 1. En enkelt komponent har formen <span class="math inline">\(\sigma_i u_i v_i^T\)</span>: <span class="math inline">\(u_i\)</span> er en kolonnevektor med den loddrette profilen, <span class="math inline">\(v_i^T\)</span> en radvektor med den vannrette, og <span class="math inline">\(\sigma_i\)</span> er vekten. Hvordan disse profilene og vektene henger sammen med geometrien, undersøker vi i 7.2–7.3.</p>
 <p>Produktet <span class="math inline">\(u_i v_i^T\)</span> kalles et <strong>ytreprodukt</strong>. Element <span class="math inline">\((j,\ell)\)</span> er <span class="math inline">\((u_i)_j(v_i)_\ell\)</span>. Dermed er kolonne <span class="math inline">\(\ell\)</span> lik <span class="math inline">\((v_i)_\ell u_i\)</span>, og en ikke-null slik matrise har rang 1.</p>
 <p>Prøv først for hånd med <span class="math inline">\(u=(1,2)^T\)</span> og <span class="math inline">\(v=(1,0,-1)^T\)</span>. Skriv de tre kolonnene i <span class="math inline">\(uv^T\)</span>, og forklar hvorfor matrisen har rang 1.</p>
 <p><strong>Slik kan du tenke:</strong> Kolonnene er <span class="math inline">\(u\)</span>, nullvektoren og <span class="math inline">\(-u\)</span>:</p>
@@ -4509,8 +4509,8 @@ Gå i dybden: se én byggekloss og knytt den til basis
 <div id="uke7-geometri">
 
 </div>
-<section id="prøv-først-følg-en-retning-gjennom-transformasjonen" class="level3">
-<h3 class="anchored" data-anchor-id="prøv-først-følg-en-retning-gjennom-transformasjonen">Prøv først — følg en retning gjennom transformasjonen</h3>
+<section id="eksperiment-2-følg-en-retning-gjennom-transformasjonen" class="level3">
+<h3 class="anchored" data-anchor-id="eksperiment-2-følg-en-retning-gjennom-transformasjonen">Eksperiment 2 – følg en retning gjennom transformasjonen</h3>
 <p>I forsøket nedenfor er alle startpunktene på en <strong>enhetssirkel</strong>: de representerer vektorer med lengde 1. Velg <strong>Ellipse</strong> og flytt den rosa prikken rundt sirkelen i rute 1. Følg den rosa vektoren helt til rute 4. Retningsskyverne kan også brukes med tastaturet.</p>
 <ul>
 <li>I hvilke startretninger blir resultatvektoren lengst og kortest?</li>
@@ -4547,8 +4547,8 @@ Gå i dybden: finn største og minste strekk for hånd
 <div id="uke7-svd">
 
 </div>
-<section id="prøv-først-hvor-endres-lengden" class="level3">
-<h3 class="anchored" data-anchor-id="prøv-først-hvor-endres-lengden">Prøv først — hvor endres lengden?</h3>
+<section id="eksperiment-3-hvor-endres-lengden" class="level3">
+<h3 class="anchored" data-anchor-id="eksperiment-3-hvor-endres-lengden">Eksperiment 3 – hvor endres lengden?</h3>
 <p>Gå tilbake til forsøket, velg <strong>Skråstilling</strong>, og følg én farge gjennom <strong>alle fire rutene</strong>. Skråstillingen forskyver punkter horisontalt med en avstand som avhenger av høyden. Mellom hvilke ruter endres vektorens lengde? Hva skjer med den blå og den fiolette retningen når de uttrykkes i nye koordinater? Prøv deretter et negativt matriseelement.</p>
 <p><strong>Snakk sammen:</strong> Hvordan kan en transformasjon som både endrer vinkler og lengder settes sammen av noen trinn som bevarer begge deler, og ett som strekker langs aksene?</p>
 </section>
@@ -4638,8 +4638,8 @@ Gå i dybden: rang, kolonnerom, nullrom og NumPy
 <div id="uke7-kondisjon">
 
 </div>
-<section id="prøv-først-samme-dataendring-to-utfall" class="level3">
-<h3 class="anchored" data-anchor-id="prøv-først-samme-dataendring-to-utfall">Prøv først — samme dataendring, to utfall</h3>
+<section id="eksperiment-4-samme-dataendring-to-utfall" class="level3">
+<h3 class="anchored" data-anchor-id="eksperiment-4-samme-dataendring-to-utfall">Eksperiment 4 – samme dataendring, to utfall</h3>
 <p>Kjør forsøket. Vi starter med en kjent løsning, lager data, og endrer én datakomponent om gangen med samme lille beløp. <strong>Gjett først:</strong> Blir løsningsendringen like stor i begge tilfeller?</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -4697,8 +4697,8 @@ Gå i dybden: minste kvadrater, pseudoinvers og regularisering
 <div id="uke7-rang">
 
 </div>
-<section id="prøv-først-mer-detalj-flere-tall" class="level3">
-<h3 class="anchored" data-anchor-id="prøv-først-mer-detalj-flere-tall">Prøv først — mer detalj, flere tall</h3>
+<section id="eksperiment-5-mer-detalj-flere-tall" class="level3">
+<h3 class="anchored" data-anchor-id="eksperiment-5-mer-detalj-flere-tall">Eksperiment 5 – mer detalj, flere tall</h3>
 <p>Kjør cellen med ulike verdier av <code>k</code>. Den viser bildet, antallet tall i den lagrede faktorrepresentasjonen og en samlet pikselfeil. <strong>Gjett først:</strong> Vil dobbelt så mange komponenter omtrent halvere feilen?</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -4736,8 +4736,8 @@ Gå i dybden: feilformelen, ortogonalitet og lagring
 <div id="uke7-prosjekt">
 
 </div>
-<section id="prøv-først-samme-budsjett-ulik-informasjon" class="level3">
-<h3 class="anchored" data-anchor-id="prøv-først-samme-budsjett-ulik-informasjon">Prøv først — samme budsjett, ulik informasjon</h3>
+<section id="eksperiment-6-samme-budsjett-ulik-informasjon" class="level3">
+<h3 class="anchored" data-anchor-id="eksperiment-6-samme-budsjett-ulik-informasjon">Eksperiment 6 – samme budsjett, ulik informasjon</h3>
 <p>Se de fire bildene og ranger dem etter hvor godt dere tror lav rang vil fungere. Kjør så sammenligningen. Koden velger samme antall komponenter for alle bildene slik at faktorene krever høyst <strong>25 % så mange tall</strong> som de opprinnelige bildematrisene.</p>
 <div id="qpyodide-insertion-location-8"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
