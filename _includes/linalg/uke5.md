@@ -764,30 +764,64 @@ kan veksle mellom motsatte orienteringer.
 
 </details>
 
-### En forbindelse til uke 4
+### Fra projeksjon i uke 4 til egenvektorbidrag
 
-Matrisen $A$ er **symmetrisk**: $A^T=A$, altså uendret når rader og
-kolonner bytter plass. Egenretningene i figuren står vinkelrett.
-Vektorer med lengde én som står parvis vinkelrett, kalles **ortonormale**.
+I [uke 4.2](uke4.qmd) fant vi den ortogonale projeksjonen av en vektor $x$
+på en linje med enhetsvektor $q$. Vi skilte mellom **ett tall** og **en vektor**:
 
-De normaliserte vektorene danner en ortonormal basis. Dette er en generell
-mulighet for **reelle symmetriske matriser**: de har reelle egenverdier og
-kan skrives
+$$\underbrace{c=q^Tx}_{\text{koordinaten langs }q},\qquad
+\underbrace{p=(q^Tx)q=cq}_{\text{projeksjonen på linjen gjennom }q}.$$
 
-$$A=Q\Lambda Q^T.$$
+Koordinaten $c$ kan være negativ; fortegnet angir orientering langs $q$.
+Projeksjonsvektoren $p$ er bidraget til $x$ langs denne linjen.
 
-Koordinatene i denne ortonormale basisen er indreproduktene
-$c_i=q_i^Tx$, samlet i $c=Q^Tx$. Den ortogonale projeksjonen av $x$ på
-linjen spent ut av $q_i$ er vektoren $(q_i^Tx)q_i$.
-$\Lambda$ ganger koordinat $c_i$ med egenverdi $\lambda_i$, og $Q$ danner
-summen av de skalerte basisbidragene. Her er $Q$ kvadratisk og inneholder en full basis.
-Dette er **spektralteoremet**, oppkalt etter spekteret: egenverdiene står
-på diagonalen i $\Lambda$. $Q$ har de ortonormale egenvektorene som kolonner.
-**Diskuter:** Hvorfor gir indreproduktet basisens koordinater når
-basisvektorene har lengde én og står vinkelrett?
+Her bruker vi de samme projeksjonene på de to egenretningene. Vi normaliserer
+egenvektorene fra eksperimentet:
+
+$${\color{#1565c0}q_1=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix}},
+\qquad
+{\color{#a04a00}q_2=\frac1{\sqrt2}\begin{bmatrix}1\\-1\end{bmatrix}}.$$
+
+De har lengde én og står vinkelrett, så de danner en **ortonormal basis**
+for $\mathbb R^2$. Dermed er enhver vektor summen av de to projeksjonene:
+
+$$x={\color{#1565c0}(q_1^Tx)q_1}
+  +{\color{#a04a00}(q_2^Tx)q_2}.$$
+
+**Hva er nytt i uke 5?** Basisvektorene er også egenvektorer:
+$Aq_1=3q_1$ og $Aq_2=1q_2$. Under transformasjonen $T(x)=Ax$
+skaleres derfor hvert projeksjonsbidrag med sin egenverdi:
+
+$$Ax={\color{#1565c0}3(q_1^Tx)q_1}
+   +{\color{#a04a00}1(q_2^Tx)q_2}.$$
+
+**Diskuter:** Hvis projeksjonen av startvektoren på linjen gjennom $q_1$
+er null, kan gjentatt anvendelse av $T$ gi et bidrag langs denne linjen?
+
+### Spektralteoremet: en ortonormal basis av egenvektorer
+
+Dette er mulig for alle reelle symmetriske matriser, ikke bare for eksemplet
+vårt. **Spektralteoremet:** En reell symmetrisk matrise $A$ ($A^T=A$) har
+reelle egenverdier og en ortonormal basis av egenvektorer
+$q_1,\ldots,q_n$ for hele $\mathbb R^n$.
+
+Sett egenvektorene som kolonner i $Q=[q_1\ \cdots\ q_n]$ og de tilhørende
+egenverdiene på diagonalen i $\Lambda$. Da er
+
+$$A=Q\Lambda Q^T,\qquad
+Ax=\sum_{i=1}^n\lambda_i(q_i^Tx)q_i.$$
+
+Faktoriseringen uttrykker akkurat oppdelingen vi nettopp brukte:
+$Q^Tx$ gir koordinatene, $\Lambda(Q^Tx)$ gir de skalerte koordinatene,
+og multiplikasjon med $Q$ gir summen av de skalerte egenvektorbidragene.
+Navnet **spektral** viser til spekteret, samlingen av egenverdier.
+
+I uke 4 kunne $Q$ inneholde en basis for bare et underrom; da var $QQ^Tx$
+projeksjonen på dette underrommet. **Her er basisen fullstendig**, så
+$QQ^Tx=x$ for alle $x$ og $QQ^T=I$.
 
 <details class="reading-step">
-<summary>Gå i dybden: hvorfor ortogonale egenvektorer?</summary>
+<summary>Gå i dybden: projeksjonskoordinater, symmetri og spektralteoremet</summary>
 
 **Gjenta for hånd:** Normaliser $(1,1)^T$ og $(1,-1)^T$.
 Sett resultatene som kolonner i $Q$. Beregn de fire elementene i $Q^TQ$,
@@ -797,8 +831,11 @@ $$Q=\frac1{\sqrt2}\begin{bmatrix}1&1\\1&-1\end{bmatrix},\quad
 Q^TQ=\frac12\begin{bmatrix}2&0\\0&2\end{bmatrix}=I,\quad
 Q^T\begin{bmatrix}1\\0\end{bmatrix}=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix}.$$
 
-Her måler $Q^Tx$ koeffisientene i den **normaliserte** basisen.
-De er $1/\sqrt2$, mens koeffisientene i basisen $(v_1,v_2)$ var $1/2$.
+Her er $Q^Tx$ koordinatene i den **ortonormale** basisen.
+De er $1/\sqrt2$, mens koordinatene i basisen $(v_1,v_2)$ var $1/2$.
+Projeksjonsvektorene er likevel de samme: siden $q_i=v_i/\sqrt2$, er
+$(1/\sqrt2)q_i=(1/2)v_i$. Normaliseringen endrer basisvektorens lengde
+og koordinaten, men ikke vektorbidraget deres produkt beskriver.
 
 For $A=A^T$, $Av=\lambda v$ og $Aw=\mu w$ har vi
 $\lambda v^Tw=(Av)^Tw=v^TAw=\mu v^Tw$.
@@ -816,7 +853,8 @@ Til slutt er $v^TAw=v^T(\mu w)=\mu v^Tw$.
 Derfor er $(\lambda-\mu)v^Tw=0$. Når første faktor er ulik null,
 må indreproduktet være null.
 
-Innenfor ett egenrom virker $A$ som samme skalering på alle vektorer.
+Innenfor ett egenrom er transformasjonen $x\mapsto Ax$ en skalering med
+den tilhørende egenverdien.
 Lineærkombinasjoner laget av Gram–Schmidt blir derfor i det egenrommet.
 Beviset over forklarer ortogonalitet mellom ulike egenrom; selve
 spektralteoremet sikrer i tillegg at egenrommene til sammen fyller hele rommet.
@@ -825,7 +863,7 @@ I vårt eksempel gir faktoriseringen den konkrete beregningen
 
 $$Ax=Q\begin{bmatrix}3&0\\0&1\end{bmatrix}(Q^Tx).$$
 
-For $x=(1,0)^T$ er målingene $(1/\sqrt2,1/\sqrt2)^T$.
+For $x=(1,0)^T$ er projeksjonskoordinatene $(1/\sqrt2,1/\sqrt2)^T$.
 Etter skalering er de $(3/\sqrt2,1/\sqrt2)^T$.
 Rekonstruksjonen med $Q$ gir $(2,1)^T$, akkurat som direkte multiplikasjon.
 
