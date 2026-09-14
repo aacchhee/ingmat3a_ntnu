@@ -821,55 +821,73 @@ projeksjonen på dette underrommet. **Her er basisen fullstendig**, så
 $QQ^Tx=x$ for alle $x$ og $QQ^T=I$.
 
 <details class="reading-step">
-<summary>Gå i dybden: projeksjonskoordinater, symmetri og spektralteoremet</summary>
+<summary>Gå i dybden: fra projeksjonskoordinater til spektralteoremet</summary>
 
-**Gjenta for hånd:** Normaliser $(1,1)^T$ og $(1,-1)^T$.
-Sett resultatene som kolonner i $Q$. Beregn de fire elementene i $Q^TQ$,
-og beregn $Q^T(1,0)^T$. Sammenlign deretter med regningen nedenfor.
+Vi følger ett eksempel hele veien: $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ og
+$x=(1,0)^T$. Deretter undersøker vi hva symmetrien garanterer generelt.
 
-$$Q=\frac1{\sqrt2}\begin{bmatrix}1&1\\1&-1\end{bmatrix},\quad
-Q^TQ=\frac12\begin{bmatrix}2&0\\0&2\end{bmatrix}=I,\quad
-Q^T\begin{bmatrix}1\\0\end{bmatrix}=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix}.$$
+**1. Finn koordinatene med projeksjon fra uke 4**
 
-Her er $Q^Tx$ koordinatene i den **ortonormale** basisen.
-De er $1/\sqrt2$, mens koordinatene i basisen $(v_1,v_2)$ var $1/2$.
-Projeksjonsvektorene er likevel de samme: siden $q_i=v_i/\sqrt2$, er
-$(1/\sqrt2)q_i=(1/2)v_i$. Normaliseringen endrer basisvektorens lengde
-og koordinaten, men ikke vektorbidraget deres produkt beskriver.
+Normaliser egenvektorene $v_1=(1,1)^T$ og $v_2=(1,-1)^T$. Sett dem
+som kolonner i $Q$, og beregn selv $Q^TQ$ og $c=Q^Tx$.
 
-For $A=A^T$, $Av=\lambda v$ og $Aw=\mu w$ har vi
-$\lambda v^Tw=(Av)^Tw=v^TAw=\mu v^Tw$.
-Hvis $\lambda\ne\mu$, må $v^Tw=0$. Innenfor et egenrom kan vi bruke
-Gram–Schmidt. Spektralteoremet sikrer at vi får nok vektorer til en full basis.
+$$Q=\frac1{\sqrt2}\begin{bmatrix}1&1\\1&-1\end{bmatrix},
+\qquad Q^TQ=I,\qquad
+c=Q^Tx=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix}.$$
 
-Med $z=Q^Tx$ følger også
-$x^TAx=z^T\Lambda z=\sum_i\lambda_i z_i^2$.
-Hvis alle egenverdiene er positive, er uttrykket positivt for alle $x\ne0$.
-Dette blir nyttig når vi studerer energi og lineære systemer i uke 6.
+Hver koordinat $c_i=q_i^Tx$ er et tall. Projeksjonsvektoren er $c_iq_i$.
+For denne $x$ får vi
 
-**Les beviset ledd for ledd.** Først er $(Av)^Tw=(\lambda v)^Tw=\lambda v^Tw$.
-Transponeringsregelen gir $(Av)^T=v^TA^T=v^TA$, fordi $A$ er symmetrisk.
-Til slutt er $v^TAw=v^T(\mu w)=\mu v^Tw$.
-Derfor er $(\lambda-\mu)v^Tw=0$. Når første faktor er ulik null,
-må indreproduktet være null.
+$$x={\color{#1565c0}\frac1{\sqrt2}q_1}
++{\color{#a04a00}\frac1{\sqrt2}q_2}
+={\color{#1565c0}\frac12v_1}+{\color{#a04a00}\frac12v_2}.$$
 
-Innenfor ett egenrom er transformasjonen $x\mapsto Ax$ en skalering med
-den tilhørende egenverdien.
-Lineærkombinasjoner laget av Gram–Schmidt blir derfor i det egenrommet.
-Beviset over forklarer ortogonalitet mellom ulike egenrom; selve
-spektralteoremet sikrer i tillegg at egenrommene til sammen fyller hele rommet.
+Koordinatene endres når basisvektorene normaliseres, men de to
+projeksjonsvektorene er uendret.
 
-I vårt eksempel gir faktoriseringen den konkrete beregningen
+**2. Skaler projeksjonsbidragene med egenverdiene**
 
-$$Ax=Q\begin{bmatrix}3&0\\0&1\end{bmatrix}(Q^Tx).$$
+Siden $Aq_1=3q_1$ og $Aq_2=q_2$, blir
 
-For $x=(1,0)^T$ er projeksjonskoordinatene $(1/\sqrt2,1/\sqrt2)^T$.
-Etter skalering er de $(3/\sqrt2,1/\sqrt2)^T$.
-Rekonstruksjonen med $Q$ gir $(2,1)^T$, akkurat som direkte multiplikasjon.
+$$Ax={\color{#1565c0}\frac3{\sqrt2}q_1}
++{\color{#a04a00}\frac1{\sqrt2}q_2}
+=\begin{bmatrix}2\\1\end{bmatrix}.$$
 
-I energiuttrykket er $z\ne0$ når $x\ne0$, siden $Q$ er invertibel.
-Minst ett $z_i^2$ er da positivt. Med alle $\lambda_i>0$ blir summen
-$\sum_i\lambda_i z_i^2>0$. Denne egenskapen kalles **positiv definitet**: $x^TAx>0$ for alle $x\ne0$.
+Dette er beregningen $Ax=Q\Lambda(Q^Tx)$: finn koordinatene, skaler dem
+med egenverdiene, og summer de nye basisbidragene. Kontroller med direkte
+multiplikasjon at resultatet er det samme.
+
+**3. Hvorfor står egenretningene vinkelrett?**
+
+La nå $A$ være en vilkårlig reell symmetrisk matrise, med
+$Av=\lambda v$ og $Aw=\mu w$. Da er
+
+$$\begin{aligned}
+\lambda v^Tw&=(Av)^Tw &&\text{fordi }Av=\lambda v,\\
+&=v^TA^Tw &&\text{ved transponering},\\
+&=v^TAw &&\text{fordi }A^T=A,\\
+&=\mu v^Tw &&\text{fordi }Aw=\mu w.
+\end{aligned}$$
+
+Dermed er $(\lambda-\mu)v^Tw=0$. **Ulike egenverdier gir derfor
+ortogonale egenvektorer når $A$ er reell og symmetrisk.**
+
+Innenfor samme egenrom kan vi bruke Gram–Schmidt fra uke 4; alle
+lineærkombinasjonene forblir i egenrommet. Spektralteoremet sier i tillegg
+at det finnes nok egenvektorer til en basis for hele rommet.
+Dette siste utsagnet er ikke bevist av regningen ovenfor.
+
+**4. En følge vi bruker i uke 6**
+
+For en reell symmetrisk matrise skriver vi $x=Qc$, der $c=Q^Tx$. Da gir
+$Q^TQ=I$ og $A=Q\Lambda Q^T$ at
+
+$$x^TAx=c^T\Lambda c=\sum_i\lambda_i c_i^2.$$
+
+Er alle egenverdiene positive, er summen positiv for enhver $x\ne0$,
+fordi minst én koordinat $c_i$ da er ulik null. Dette kalles
+**positiv definitet**. I uke 6 bruker vi egenskapen til å knytte
+løsningen av et lineært system til et entydig minimum.
 
 </details>
 
