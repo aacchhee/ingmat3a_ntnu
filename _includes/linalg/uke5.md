@@ -1305,8 +1305,19 @@ hva som skjer når startvektoren får et lite bidrag langs den dominante egenret
 
 ### Eksperiment 5 – kan en liten startforskjell vokse?
 
-Kjør cellen: kan en startendring
-på $10^{-12}$ bli synlig etter bare 30 steg?
+I eksperiment 4 ble iterasjonsfølgen værende langs $(0,1)^T$, selv om
+egenverdien $3$ tilhører retningen $(1,0)^T$. Startvektoren hadde **nøyaktig null**
+bidrag i denne retningen. **Hvor følsom er denne konklusjonen for en liten endring
+i startvektoren?** Dette er relevant når startdata ikke er helt nøyaktige.
+
+Vi bruker fortsatt $A=\operatorname{diag}(3,1)$ og sammenligner startvektorene
+$(0,1)^T$ og $(10^{-12},1)^T$, begge normalisert til lengde én.
+Forskjellen er svært liten. I hver iterasjon beregner vi $Ax_k$ og normaliserer
+resultatet; cellen skriver ut de to vektorene etter 30 steg.
+
+**Undersøk:** Vil de to beregningene fortsatt gi nesten samme vektor etter 30 steg?
+Kjør cellen. Hvilken egenretning ligger hvert resultat nær?
+Prøv deretter 10 og 20 steg: når blir forskjellen tydelig?
 
 ```{pyodide-python}
 #| label: week5-roundoff
@@ -1324,11 +1335,21 @@ for tiny in [0., 1e-12]:
     print("Første startkoordinat:", tiny, "→ etter 30 steg:", x)
 ```
 
-Her legger vi inn en liten forstyrrelse med vilje; vi måler ikke faktisk
-maskinavrunding. Forsøket viser mekanismen: en liten del i den raskest
-voksende retningen kan forsterkes ved gjentakelse. Nye avrundinger kan tilføres
-hver runde. **Diskuter:** Hvorfor kan to nesten like startvektorer gi svært ulike
-baner? Hvorfor hjelper ikke lengde én mot alle former for feil?
+**Koble observasjonen til egenverdiene:** Ved hver multiplikasjon blir det første
+bidraget skalert med $3$, mens det andre blir skalert med $1$.
+Normaliseringen deler begge koordinatene på samme tall og endrer derfor ikke
+forholdet mellom dem. For startvektoren $(\varepsilon,1)^T$ får vi
+
+$\frac{|(x_k)_1|}{|(x_k)_2|}=3^k|\varepsilon|.$
+
+Et bidrag som er nøyaktig null, forblir null i dette eksemplet.
+Et lite bidrag som ikke er null, kan etter tilstrekkelig mange steg dominere.
+**Diskuter:** Hvorfor kan normalisering holde lengden lik én uten å hindre
+at en liten endring i startvektoren etter hvert gir en helt annen retning?
+
+Her er $10^{-12}$ en bevisst innlagt forstyrrelse av startdata, ikke en måling
+av maskinavrunding. Avrundingsfeil som oppstår under selve beregningen,
+behandles i «Gå i dybden».
 
 <details class="reading-step">
 <summary>Gå i dybden: skill mellom startfeil og feil i hvert steg</summary>
