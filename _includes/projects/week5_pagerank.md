@@ -1,23 +1,30 @@
-## Ukens spørsmål
+## Kan et annet besøksmønster få to sider til å bytte plass?
 
-**Kan en korrekt beregning gi en rangering vi ikke stoler på?**
+PageRank gir hver nettside en verdi som mål på viktighet ut fra en besøksmodell.
+Vi rangerer sidene fra høyest til lavest verdi. Men besøkende kan ha ulike
+interesser. **Hvor mye må vi endre besøksmønsteret før to sider bytter plass?**
 
-I forelesningen så vi hvordan besøk flyttes mellom nettsider, og hvordan en
-stasjonær fordeling blir en egenvektor. Nå skal du bygge en rangering,
-kontrollere regningen og undersøke hva et modellvalg gjør med resultatet.
+I dette prosjektet skal du først bygge og kontrollere modellen. Deretter bruker
+du lineær algebra til å undersøke et selvvalgt besøksmønster. Koden brukes til
+å regne og kontrollere; de matematiske begrunnelsene er hovedarbeidet.
+Prosjektet er lagt opp til omtrent 3–4 timers arbeid med notatene tilgjengelig.
 
-Følg samme arbeidsform i hver del: **forutsi → prøv → beskriv → forklar**.
-Skriv forventningen før du kjører forsøket. Del 1–4 gir verktøy og kontroller.
-Deretter gjør du **én egen undersøkelse** fra del 5–6. Begge deler inngår i
-prosjektet: kontrollerte beregninger alene er ikke en ferdig undersøkelse.
-Du kan kjøre hele prosjektet uten å kjøre cellene i forelesningsnotatene først.
+Du trenger [besøksmodellen i 5.5](uke5.qmd#uke5-nett),
+[PageRank og tilfeldige hopp i 5.6](uke5.qmd#uke5-google) og
+[fikspunktiterasjon fra uke 2](page4.qmd).
+Utledningene under bruker også egenverdier og egenvektorer fra 5.2–5.4.
+Alle nødvendige data og kodefunksjoner finnes på denne siden.
 
-## 1. Hvem tror du blir viktigst?
+**Arbeidsform:** Skriv en forventning før hvert forsøk. Regn og begrunn, bruk
+koden som kontroll, og forklar eventuelle forskjeller. Alle fire delene inngår
+i prosjektet. Det er ikke nødvendig å bygge flere nettverk eller prøve mange parametre.
 
-Vi bruker seks sider med følgende lenker. Selvlenker er tillatt i denne
-modellen; hver oppført lenke fra samme side får lik vekt.
+## 1. Fra lenker til en overgangsmatrise
 
-| Fra | Til |
+Vi bruker seks nettsider. Hver rad i tabellen viser hvilke lenker som finnes
+på en side:
+
+| Fra side | Lenker til |
 |---|---|
 | A | B, C |
 | B | C, D |
@@ -26,351 +33,343 @@ modellen; hver oppført lenke fra samme side får lik vekt.
 | E | F |
 | F | D |
 
-En pil fra A til B er en lenke besøkende kan følge. Den går ut fra A og
-inn til B. Ved hvert klikk velges én utgående lenke med lik sannsynlighet.
-Vi følger fordelingen av besøk: én andel per side, alle ikke-negative og med
-sum én. En slik kolonne av andeler er en **sannsynlighetsvektor**.
+En tenkt besøkende velger én av lenkene på siden hen er på, med lik
+sannsynlighet, og åpner siden lenken peker til. Dette er ett steg.
+Vi følger sannsynligheten for å være på hver side etter et bestemt antall steg,
+ikke antall besøk samlet over tid.
 
-Ranger sidene før du kjører modellen, og begrunn førsteplassen.
-Hva er forskjellen på å telle innkommende lenker og å telle besøk?
-I matrisen $S$ er kolonne $j$ avsender og rad $i$ mottaker. $S_{ij}$ er
-sannsynligheten for et klikk fra $j$ til $i$. Kolonnene må ha sum én;
-sammen med ikke-negative elementer gjør dette $S$ **kolonnestokastisk**.
+**a. Tegn og forutsi.** Tegn de seks sidene og pilene mellom dem.
+Hvilken side tror du besøksregelen vil gi høyest verdi? Begrunn forventningen
+med lenkene. En side med mange innkommende lenker er én mulig kandidat,
+men hvilke sider lenkene kommer fra, kan også ha betydning.
 
-**Tegn og kontroller én runde for hånd**
+**b. Skriv matrisen.** Bruk rekkefølgen A, B, C, D, E, F.
+Elementet $S_{ij}$ er sannsynligheten for å gå fra side $j$ til side $i$.
+Kolonne $j$ beskriver altså siden vi går fra, og rad $i$ siden vi går til.
 
-Tegn grafen på papir, og flytt en jevn besøksfordeling én runde langs pilene.
-Ta vare på resultatet som uavhengig kontroll av koden.
+**Svar:** en $6\times6$ overgangsmatrise $S$. Forklar én kolonne og én rad med ord.
 
+**c. Beregn ett steg og vis at summen bevares.** La
+
+$$u_0=\frac16(1,1,1,1,1,1)^T.$$
+
+Beregn $Su_0$ for hånd. Vis deretter at $Sp$ har ikke-negative elementer
+og sum én når $p$ har det. Du kan bruke $\mathbf1=(1,1,1,1,1,1)^T$
+og uttrykke kolonnesummene som $\mathbf1^TS=\mathbf1^T$.
+
+**Svar:** én sannsynlighetsvektor og en kort generell utledning.
+En matrise med ikke-negative elementer og kolonnesum én kalles
+**kolonnestokastisk**.
 
 ```{pyodide-python}
 #| label: project-week5-setup
 #| autorun: true
 #| context: setup
-# Dette oppsettet gjør prosjektet uavhengig av cellene i forelesningsnotatene.
-# np brukes til lineær algebra; plt brukes til å vise utviklingen.
-
+# Felles verktøy for prosjektet. Ingen celler fra notatene må kjøres først.
 import numpy as np
 import matplotlib.pyplot as plt
 ```
 
 ```{pyodide-python}
 #| label: project-week5-data
-# Oversett lenketabellen til en lineær transformasjon, én avsender om gangen.
-# Tom mottakerliste trenger en besøksregel, ellers forsvinner sannsynlighet.
-# Kontroller én runde mot håndberegningen før du bruker S i en lang iterasjon.
-
+# Overfør matrisen fra papir. Hver innerste liste er EN RAD.
+# Kolonnene er avsendersider, selv om vi skriver matrisen radvis i Python.
 names = list("ABCDEF")
-links = [[1, 2], [2, 3], [0], [2, 4], [5], [3]]
-u = np.ones(len(names)) / len(names)
+u0 = np.ones(6) / 6
+S = np.array([
+    [0., 0., 0., 0., 0., 0.],  # TODO: sannsynligheter for å komme til A
+    [0., 0., 0., 0., 0., 0.],  # TODO: til B
+    [0., 0., 0., 0., 0., 0.],  # TODO: til C
+    [0., 0., 0., 0., 0., 0.],  # TODO: til D
+    [0., 0., 0., 0., 0., 0.],  # TODO: til E
+    [0., 0., 0., 0., 0., 0.],  # TODO: til F
+])
 
-# links[j] inneholder mottakerne fra side j; A=0, B=1, osv.
-# Lag S selv: én kolonne per avsender, én rad per mottaker.
-# For en tom mottakerliste skal kolonnen være u.
-def transition_matrix(links, u):
-    n = len(links)
-    S = np.zeros((n, n))
-    # TODO: Fyll én kolonne om gangen. Fordel likt mellom mottakerne.
-    # TODO: Bruk u hvis mottakerlisten er tom.
-    return S
-
-# Fjern kommentartegnene når funksjonen er ferdig.
-# S = transition_matrix(links, u)
-# print(S)
-# print("kolonnesummer:", S.sum(axis=0))
-# print("én runde:", S @ u)
+# Disse kontrollene avslører feil summer, men ikke alle feilplasserte lenker.
+assert S.shape == (6, 6) and np.all(S >= 0)
+assert np.allclose(S.sum(axis=0), 1), "Fyll inn S og kontroller hver avsenderkolonne."
+print("Fordelingen etter ett steg:", S @ u0)
+# Sammenlign med håndberegningen. Ikke normaliser bort en feil i matrisen.
 ```
 
-**Kontroller før du går videre:** Alle elementer skal være ikke-negative,
-kolonnesummene skal være én. Sammenlign $Su$ med lenkene og den uavhengige
-håndberegningen fra starten av del 1.
-Ikke normaliser et feilaktig resultat for å skjule at besøk blir borte.
+## 2. Finn en stasjonær fordeling og kontroller beregningen
 
-**Kontroller én avsender om gangen**
+Vi legger til tilfeldige hopp, slik som i 5.6. Ved hvert steg følger den
+besøkende en lenke med sannsynlighet $\alpha$, og velger ellers neste side
+etter en **hoppfordeling** $u$. Denne sannsynlighetsvektoren beskriver hvor
+et hopp ender, uavhengig av nåværende side. Vi bruker $\alpha=0.85$
+i denne delen og i del 4.
 
-Fra A går halvparten til B og halvparten til C, altså
-$S_{1,0}=S_{2,0}=1/2$ med Python-indekser. Alle andre elementer i kolonne
-null er null. Start med denne kolonnen og kolonnen for C, som bare har én lenke.
+En oppdatering er
 
-Første runde fra jevn startfordeling skal bli
-$(1/6,1/12,1/4,1/4,1/12,1/6)^T$.
+$$T(p)=\alpha Sp+(1-\alpha)u,\qquad p_{k+1}=T(p_k).$$
 
+En **stasjonær fordeling** $p_*$ er et fikspunkt: $T(p_*)=p_*$.
+Den besøkende fortsetter å bevege seg, men fordelingen endres ikke.
+PageRank-verdiene er koordinatene i $p_*$.
 
-## 2. Beregn og kontroller rangeringen
+**a. Utled et lineært system.** Start med $T(p_*)=p_*$.
+Samle leddene som inneholder $p_*$ på venstre side, og skriv systemet
+på formen $Mp_*=b$. Oppgi $M$ og $b$ uttrykt ved $S$, $u$ og $\alpha$.
 
-Vi gir besøkende to valg: følg en lenke med sannsynlighet $\alpha$, eller
-hopp til en side trukket etter sannsynlighetsvektoren $u$. Disse tilfeldige
-hoppene kalles **teleportering**; $\alpha$ kalles **dempingsfaktoren**.
-Bruk først $\alpha=0.85$ og jevn $u$. **Forutsi:** Vil alle sider få
-positiv vekt? Tror du en annen startfordeling endrer sluttresultatet?
+**Hvorfor finnes én løsning?** Du kan bruke at egenverdiene til en
+kolonnestokastisk matrise har absoluttverdi høyst én.
+Forklar hvorfor matrisen $M$ er invertibel når $0<\alpha<1$.
+Fra 5.6 vet vi dessuten at positiv $u$ gir en positiv stasjonær fordeling
+som iterasjonen nærmer seg fra enhver startfordeling.
 
-Implementer oppdateringen
+**b. Fullfør to regneuttrykk.** Koden under har ferdig løkke, stoppkontroll
+og direkte løsning. Du fyller bare inn besøksregelen og residualnormen:
 
-$$p_{k+1}=\alpha Sp_k+(1-\alpha)u.$$
+$$r(p)=T(p)-p,\qquad \lVert r(p)\rVert_1=\sum_i|r(p)_i|.$$
 
-Du kan bruke potensmetoden fra forelesningen som mønster, men her bevarer
-vi summen én og trenger ikke normalisere til euklidsk lengde én.
+`S` er en NumPy-matrise med form `(n, n)`. `p` og `u` er
+NumPy-vektorer med form `(n,)`. `visit_step` skal returnere en vektor med
+samme form; `residual_norm` skal returnere ett ikke-negativt tall.
+Bruk `np.linalg.norm(vektor, 1)` for 1-normen.
 
 ```{pyodide-python}
 #| label: project-week5-iteration
-# Denne funksjonen skal både beregne rangeringen og rapportere om stoppkravet ble nådd.
-# Bruk besøksregelen alpha*(S @ p) + (1-alpha)*u.
-# Residualen er 1-normen av forskjellen mellom denne nye fordelingen og p.
-# Maksimalt antall steg er en sikkerhetsgrense, ikke et bevis på konvergens.
+def visit_step(S, alpha, u, p):
+    # TODO: returner fordelingen etter ett steg med lenker og hopp.
+    return None
 
-# S skal være kolonnestokastisk. u og p0 skal være sannsynlighetsvektorer.
-def pagerank(S, alpha, u, p0, tol=1e-10, max_steps=10000):
-    # TODO: Kontroller 0 < alpha < 1, positive u-elementer, riktig form,
-    #       ikke-negative S- og p0-elementer og summer lik én.
-    # TODO: Kopier p0. Beregn stasjonær residual før hver oppdatering.
-    # TODO: Stopp når residual <= tol, eller når max_steps er brukt.
-    # Returner p, residualhistorikk og en boolsk verdi converged.
-    # Siste verdi i historikken skal gjelde vektoren du returnerer.
-    raise NotImplementedError("Implementer besøksregelen og stoppkriteriet")
+def residual_norm(S, alpha, u, p):
+    # TODO: bruk visit_step og returner ||T(p) - p||_1.
+    return None
+
+# Ferdig støttefunksjon: forutsetter gyldige sannsynlighetsvektorer,
+# kolonnestokastisk S og 0 < alpha < 1. Den endrer ikke p0.
+def pagerank(S, alpha, u, p0, error_goal=1e-8, max_steps=10000):
+    p = np.array(p0, dtype=float, copy=True)
+    residuals = []
+    # Grensen fra 5.6 gjør residualkravet til en garanti for faktisk feil.
+    tolerance = (1-alpha) * error_goal
+    for k in range(max_steps + 1):
+        r = float(residual_norm(S, alpha, u, p))
+        residuals.append(r)
+        if r <= tolerance:
+            return p, np.array(residuals), True
+        if k < max_steps:
+            p = visit_step(S, alpha, u, p)
+    return p, np.array(residuals), False
+
+def direct_rank(S, alpha, u):
+    # Sammenlign systemet i denne linjen med din utledning i del a.
+    return np.linalg.solve(np.eye(len(u)) - alpha*S, (1-alpha)*u)
 ```
 
-En fordeling er **stasjonær** når neste oppdatering gir samme andeler.
-Besøkende beveger seg fortsatt; det er fordelingen som er uendret.
-Vi rangerer sidene etter denne fordelingen. **Stasjonær residual** måler
-hvor mye én ny oppdatering ville endre vektoren:
-
-$$r_k=\lVert \alpha Sp_k+(1-\alpha)u-p_k\rVert_1,
-\qquad \lVert z\rVert_1=\sum_i|z_i|.$$
-
-Bruk en øvre grense for antall steg og meld fra hvis toleransen ikke nås.
-Den samme funksjonen skal kunne brukes på nettverk med ulike størrelser.
-Antall steg er antall utførte oppdateringer. Når historikken inneholder
-residualen for startfordelingen og ved hver returnert iterasjon, er dette
-`len(residuals)-1`. Kontroller også residualen etter siste tillatte oppdatering;
-ikke merk en løsning som mislykket bare fordi den nådde kravet på siste steg.
-
-For denne lille grafen kan du kontrollere svaret uavhengig av iterasjonen.
-Fra den stasjonære likningen får vi
-
-$$(I-\alpha S)p_*=(1-\alpha)u.$$
+**c. Sammenlign to metoder.** Bruk jevn hoppfordeling $u=u_0$.
+Forutsi om startfordelingen kan endre den stasjonære løsningen.
+Kjør fra både jevn startfordeling og sikker start på A.
 
 ```{pyodide-python}
 #| label: project-week5-reference
-# Aktiver de kommenterte kodelinjene når egne funksjoner er klare.
-# Referansen løser stasjonaritetslikningen direkte, uten den iterative metoden.
-# Enighet kontrollerer iterasjonen for din S; kontroller lenkemodellen separat.
+alpha = 0.85
+p_ref = direct_rank(S, alpha, u0)
 
-# Kjør når transition_matrix og pagerank er implementert.
-# alpha = 0.85
-# S = transition_matrix(links, u)
-# p, residuals, converged = pagerank(S, alpha, u, u)
-# p_ref = np.linalg.solve(np.eye(len(u)) - alpha*S, (1-alpha)*u)
-# print("konvergert:", converged)
-# print("sum og minste element:", p.sum(), p.min())
-# print("siste residual:", residuals[-1])
-# print("feil mot referansen:", np.linalg.norm(p-p_ref, 1))
-# for j in np.argsort(-p):
-#     print(names[j], p[j])
+# Samme S, alpha og u i begge metodene: bare regnemetoden varierer.
+starts = {"jevn": u0, "sikker start på A": np.eye(6)[0]}
+print("Start | steg | residualnorm | feil mot direkte løsning | stoppkrav nådd")
+for label, p_start in starts.items():
+    p, history, converged = pagerank(S, alpha, u0, p_start)
+    error = np.linalg.norm(p - p_ref, 1)
+    print(label, len(history)-1, history[-1], error, converged)
+
+print("Side | PageRank-verdi")
+for j in np.argsort(-p_ref):
+    print(names[j], p_ref[j])
 ```
 
-Presenter rangering og kontrolltall. Gjenta med startfordelingen konsentrert på A.
-Forklar hvorfor referanseberegningen må bruke samme $S$, $u$ og $\alpha$.
-Enighet mellom to metoder på ulike modeller ville ikke være en kontroll.
+**Svar:** rangeringen og kontrolltabellen fra de to startfordelingene.
+Forklar hva enighet mellom iterasjon og direkte løsning kontrollerer.
+Kan begge metodene være enige selv om en lenke er lagt inn feil?
 
-**Hvorfor kan referansesystemet løses?**
+Stoppkravet bygger på feilgrensen fra [5.6](uke5.qmd#uke5-google):
 
-Egenverdiene til en stokastisk matrise har absoluttverdi høyst én.
-Når $0<\alpha<1$, kan ikke $\alpha S$ ha egenverdi én.
-Dermed er $I-\alpha S$ invertibel.
+$$\lVert p-p_*\rVert_1\leq\frac{\lVert T(p)-p\rVert_1}{1-\alpha}.$$
 
-Du kan kontrollere kolonnesummer med `np.allclose(S.sum(axis=0), 1)`.
-Hvis en inngang er ugyldig, bruk `raise ValueError(...)` med en forklaring.
-Ikke endre inngangsvektoren til brukeren: lag en kopi av `p0`.
+Forklar hvorfor koden sammenligner residualnormen med
+$(1-\alpha)\cdot10^{-8}$ når målet er feil høyst $10^{-8}$.
+Du trenger ikke utlede denne grensen på nytt.
 
+## 3. Forklar konvergens med egenverdier
 
-## 3. Diagnostiser et problem før du reparerer det
+Vi bruker nå et lite nettverk som kan analyseres helt for hånd:
+to sider som bare lenker til hverandre. La $S_2$ være overgangsmatrisen
+og $u_2=(1/2,1/2)^T$ den jevne hoppfordelingen.
+I denne delen er $\alpha$ en parameter med $0<\alpha<1$.
 
-Velg ett av tilfellene nedenfor. **Skriv forventningen først.** Bruk til å
-begynne med ren iterasjon $p_{k+1}=Sp_k$ i et fast antall runder, for eksempel
-100. Funksjonen fra del 2 er laget for $0<\alpha<1$ og skal ikke brukes med
-$\alpha=1$.
+**a. Finn egenverdiene.** Skriv $S_2$ og Google-matrisen
+$G_2=\alpha S_2+(1-\alpha)u_2\mathbf1^T$, der $\mathbf1=(1,1)^T$.
+Beregn $G_2v$ og $G_2w$ for $v=(1,1)^T$ og $w=(1,-1)^T$.
+Finn begge egenverdiene som uttrykk i $\alpha$, og bestem den
+stasjonære sannsynlighetsvektoren.
 
-| Tilfelle | Nettverk uten teleportering | Undersøk |
-|---|---|---|
-| Felle | Seks-siders grafen fra del 1, men F lenker bare til F | Hvor havner besøkene? Er dette en feil i regningen? |
-| To adskilte grupper | A→B, B→A, C→D, D→C | Avhenger fordelingen mellom gruppene av startfordelingen? |
-| Pendling | A→B, B→A | Sammenlign iterasjonsfølgene fra startfordelingene $(1,0)^T$ og $(1/2,1/2)^T$. |
+**b. Utled feiloppdateringen.** For det generelle nettverket setter vi
+$e_k=p_k-p_*$. Trekk de to likningene
 
-Bruk nye variabelnavn for problemgrafen, slik at grunnmodellen fra del 1 er
-bevart. Lag minst to startfordelinger. Vis komponentene gjennom iterasjonen.
+$$p_{k+1}=\alpha Sp_k+(1-\alpha)u,\qquad
+p_*=\alpha Sp_*+(1-\alpha)u$$
 
-**Forklar observasjonen:** Er problemet manglende konvergens, flere mulige
-stasjonære fordelinger eller en rangering som er lite nyttig? Flere av
-fenomenene kan forekomme samtidig.
+fra hverandre. Vis at $e_{k+1}=\alpha Se_k$.
+Forklar også hvorfor $\mathbf1^Te_k=0$.
+Dette gjelder uten at vi trenger en egenvektorbasis for $S$.
 
-Reparer så modellen med jevn teleportering og $\alpha=0.85$. Bruk samme
-startfordelinger og sammenlign før og etter. Hva endret seg, og hvorfor?
+**c. Finn hele følgen for to sider.** Bruk $p_0=(1,0)^T$.
+Skriv startfordelingen som en lineærkombinasjon av $v$ og $w$,
+og finn et uttrykk for $p_k$ og $p_k-u_2$ for alle heltall $k\geq0$.
+Forklar både fortegnsvekslingen og konvergensfarten.
+Hva skjer ved $\alpha=1$, når hoppene fjernes?
 
-**En separat kontroll av hengende noder:** Lag også varianten av seks-siders
-grafen der F har en tom mottakerliste. Kontroller at din konstruksjon gir
-F-kolonnen lik $u$. Forklar forskjellen mellom denne siden og en selvlenke.
-
-## 4. La egenverdiene forklare et forsøk
-
-Egenverdiene til en matrise utgjør dens **spektrum**. Den største
-absoluttverdien kalles **spektralradiusen**. Her vil egenverdien én beskrive
-den stasjonære fordelingen; de andre beskriver hvordan avvik fra den endres.
-
-Bruk problemgrafen du valgte, med teleportering. Bygg den lille matrisen
-
-$$G=\alpha S+(1-\alpha)u\mathbf1^T.$$
-
-Her er $\mathbf1$ en kolonne med ettall. Siden $\mathbf1^Tp=1$, gir
-$Gp$ akkurat besøksregelen i del 2. For $0<\alpha<1$, positiv $u$ og
-kolonnestokastisk $S$ er $G$ positiv og kolonnestokastisk. Da finnes én
-stasjonær sannsynlighetsvektor, og iterasjonen konvergerer fra enhver
-startfordeling. Dette er garantien vi bruker; den sier ikke at modellen
-gir en god måling av kvalitet.
-
-**Forutsi:** Hvilken egenverdi må du finne? Hva forventer du om absoluttverdien
-av de andre når $0<\alpha<1$?
+**Svar:** de to egenverdiene, en stasjonær fordeling, feiloppdateringen
+og en eksplisitt vektorformel for $p_k$. Sammenlign med
+[fortegnsforsøket i 5.4](uke5.qmd#uke5-potens).
 
 ```{pyodide-python}
-#| label: project-week5-spectrum
-# Aktiver kodelinjene etter at tilfellet fra del 3 er valgt.
-# G inkluderer både lenkefølging og hopp; hver kolonne får det samme hoppbidraget.
-# Vi skiller egenverdien 1 fra de andre, som beskriver hvordan avvik utvikler seg.
+#| label: project-week5-two-pages
+# Kontroller den håndutledede formelen; her er S2 allerede oppgitt.
+S2 = np.array([[0., 1.], [1., 0.]])
+u2 = np.array([0.5, 0.5])
+alpha2 = 0.85
+p2 = np.array([1., 0.])
+values2 = [p2.copy()]
+for k in range(20):
+    p2 = visit_step(S2, alpha2, u2, p2)
+    values2.append(p2.copy())
+values2 = np.array(values2)
 
-# Sett S_case, u_case og p0_case til grafen og startfordelingen fra del 3.
-# alpha = 0.85
-# n = len(u_case)
-# G = alpha*S_case + (1-alpha)*np.outer(u_case, np.ones(n))
-# eigenvalues = np.linalg.eigvals(G)
-# stationary_index = np.argmin(abs(eigenvalues-1))
-# others = np.delete(eigenvalues, stationary_index)
-# beta = np.max(abs(others))
-# print("egenverdier:", eigenvalues)
-# print("største absoluttverdi blant de andre:", beta)
+# Begge koordinatene skal nærme seg den stasjonære fordelingen.
+plt.figure()
+plt.plot(np.arange(21), values2[:, 0], 'o-', label="Side 1")
+plt.plot(np.arange(21), values2[:, 1], 's-', label="Side 2")
+plt.axhline(0.5, color="gray", linestyle="--", label="Stasjonær sannsynlighet")
+plt.xlabel("Antall steg k")
+plt.ylabel("Sannsynlighet for å være på siden")
+plt.legend()
+plt.show()
+# Bruk din formel til å kontrollere verdiene ved k=1 og k=2.
+print("p1 og p2:", values2[1], values2[2])
 ```
 
-Finn $p_*$ med referansesystemet fra del 2. Kjør et fast antall oppdateringer,
-lagre $\lVert p_k-p_*\rVert_1$ og plott feilen med logaritmisk vertikal akse.
-Sammenlign forholdet mellom to påfølgende feil med $\beta$ i området før
-avrunding dominerer. Gjenta med en annen startfordeling hvis du ikke ser forventet fart.
+## 4. Egen undersøkelse: når bytter to sider plass?
 
-**Forklar pendlingen for hånd**
+Vi vender tilbake til seksidersgrafen. **Hold $S$ og $\alpha=0.85$ faste.**
+Vi endrer bare hvor tilfeldige hopp lander.
+Ingen side i denne grafen mangler lenker, så $S$ er uavhengig av hoppfordelingen.
 
-For pendlingstilfellet: finn begge egenverdiene til $G$, uttrykt ved
-$\alpha$, og forklar fortegnet til den andre.
+**a. Velg et besøksmønster og en påstand.** Velg en positiv
+sannsynlighetsvektor $u_1\ne u_0$ som uttrykker en interesse du kan beskrive.
+For eksempel kan besøkende oftere hoppe til F. Alle seks koordinater
+skal være større enn null og summere til én.
 
+Vi blander jevn hopping og dette besøksmønsteret:
 
-For de andre tilfellene: velg en egenverdi ulik én og kontroller en tilhørende
-numerisk egenvektor med $\lVert Gv-\lambda v\rVert_2$.
+$$u(t)=(1-t)u_0+tu_1,\qquad 0\leq t\leq1.$$
 
-Svar med ord: **Hvorfor trenger vi de andre egenverdiene når PageRank selv
-bruker egenverdien én?**
+Her er $t$ vekten på det nye besøksmønsteret, **ikke antall steg**.
+$t=0$ gir jevne hopp, og $t=1$ gir hopp etter $u_1$.
+Vis at $u(t)$ er en positiv sannsynlighetsvektor for hele intervallet.
 
-**Startfordelingen kan skjule en egenretning**
+Velg to forskjellige sider, $i$ og $j$, og skriv en påstand **før du kjører**:
+Vil de bytte plass når $t$ øker fra 0 til 1? Hvorfor?
+Bruk lenkene til å begrunne forventningen. Oppgi hva som ville avkrefte den.
 
-Forskjellen $p_k-p_*$ har sum null. Et bidrag i en egenretning med egenverdi
-$\lambda$ får faktoren $\lambda^k$. Hvis avviket mellom startfordelingen og den stasjonære fordelingen mangler bidraget
-som avtar langsomst, kan du observere raskere konvergens enn $\beta$ antyder.
-Komplekse egenverdier og flere bidrag kan også gi variasjon i feilforholdet.
+**b. Vis hvordan løsningen avhenger av $t$.** La $p(t)$ være den
+stasjonære fordelingen for hoppfordelingen $u(t)$.
+Notasjonen $p(0)$ og $p(1)$ betegner altså to **stasjonære løsninger**,
+ikke startvektoren og første iterasjon.
 
-For to sider med jevn teleportering er
-$G=\begin{bmatrix}(1-\alpha)/2&(1+\alpha)/2\\(1+\alpha)/2&(1-\alpha)/2\end{bmatrix}$.
-Prøv den på $(1,1)^T$ og $(1,-1)^T$ før du beregner determinanten.
+Bruk det lineære systemet fra del 2 til å vise at
 
+$$p(t)=(1-t)p(0)+tp(1).$$
 
-## 5. Velg én egen undersøkelse
+Du kan sette høyresiden inn i systemet og bruke at løsningen er entydig.
+Dette er en eksakt matematisk sammenheng; et plott alene beviser den ikke.
 
-Velg én av A–C. Bruk planleggingspunktene i del 6 **før du kjører** den valgte
-undersøkelsen. Del 5 og 6 er ett arbeid, ikke to separate forsøksoppgaver.
+**c. Finn en terskel, eller vis at det ikke finnes noen.**
+Sett $d(t)=p_i(t)-p_j(t)$. Utled et uttrykk for $d(t)$ fra del b.
+Finn når $d(t)=0$, og bestem hvilken side som ligger høyest på hver side
+av en eventuell terskel. Ta med tilfellene der $d(t)$ er konstant,
+der sidene er like for alle $t$, og der likhet bare oppstår ved et endepunkt.
 
-### A. Demping, rangering og regnefart
+**Svar:** et uttrykk for $d(t)$, en terskel i $[0,1]$ dersom den finnes,
+og en konklusjon om plassforholdet. En terskel utenfor intervallet gir
+ikke et plassbytte i forsøket. Hvis plassbyttet uteblir, er det også et
+gyldig resultat når du begrunner det.
 
-Hold grafen og startfordelingen fast. Velg verdier av $\alpha$ som kan
-belyse påstanden din; $\{0.5,0.85,0.95,0.99\}$ er mulige startverdier. Forutsi først hvordan rangering og antall
-steg endres. Mål faktisk feil mot referansesystemet, antall steg og $\beta$.
+**d. Kontroller med få beregninger.** Beregn $p(0)$ og $p(1)$ direkte.
+Bruk tallene til å bestemme terskelen numerisk, etter at du har utledet
+formelen. Velg noen få verdier av $t$ som tester konklusjonen, for eksempel
+én på hver side av terskelen. Sammenlign direkte løsning med uttrykket
+fra del b. Du trenger ikke søke gjennom et stort antall verdier.
 
-For en rettferdig sammenligning av arbeid ved samme garanterte nøyaktighet,
-bruk residualtoleranse $(1-\alpha)\cdot10^{-8}$. Da gir feilgrensen nedenfor $\lVert p-p_*\rVert_1\le10^{-8}$.
-Hold maksimalgrensen fast og rapporter hvis en kjøring ikke når toleransen.
-Høyere $\alpha$ gir ikke nødvendigvis en streng økning av antall steg på
-alle grafer; forklar det du faktisk observerer.
+```{pyodide-python}
+#| label: project-week5-personalization
+# Startforslag: hopp oftere til F. Velg og begrunn ditt eget mønster.
+# Du kan bruke forslaget hvis det svarer til påstanden du vil undersøke.
+u1 = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.5])
+pair = ("A", "F")  # Velg to forskjellige sider FØR kjøring.
 
-**Hvorfor justere toleransen med dempingen?**
+assert u1.shape == u0.shape and np.all(u1 > 0) and np.isclose(u1.sum(), 1)
+assert not np.allclose(u1, u0), "Velg et annet besøksmønster enn jevne hopp."
+assert pair[0] != pair[1] and all(name in names for name in pair)
+i, j = (names.index(name) for name in pair)
+alpha = 0.85
+p_left = direct_rank(S, alpha, u0)   # p(0), en stasjonær løsning
+p_right = direct_rank(S, alpha, u1)  # p(1), en annen stasjonær løsning
+print("Side | p(0) | p(1)")
+for name, left, right in zip(names, p_left, p_right):
+    print(name, left, right)
 
-Sett $T(p)=\alpha Sp+(1-\alpha)u$. Kolonnesummene og ikke-negativiteten gir
-$\|Sz\|_1\leq\|z\|_1$, så $\|T(p)-T(q)\|_1\leq\alpha\|p-q\|_1$.
-Med $T(p_*)=p_*$ og $r=\|T(p)-p\|_1$ gir trekantulikheten
+# Endepunktene bestemmer de rette linjene. Kontroller formelen matematisk!
+t_plot = np.linspace(0, 1, 101)
+p_blend = (1-t_plot[:, None])*p_left + t_plot[:, None]*p_right
+plt.figure()
+plt.plot(t_plot, p_blend[:, i], label=pair[0])
+plt.plot(t_plot, p_blend[:, j], label=pair[1])
+plt.xlabel("Vekt t på det nye besøksmønsteret")
+plt.ylabel("Stasjonær sannsynlighet")
+plt.legend()
+plt.show()
 
-$$\|p-p_*\|_1\leq r+\alpha\|p-p_*\|_1,
-\qquad \|p-p_*\|_1\leq\frac{r}{1-\alpha}.$$
+# Endre kontrollpunktene ut fra din matematisk bestemte terskel.
+# De direkte løsningene er en kontroll, ikke en leting etter terskelen.
+t_checks = [0.25, 0.75]
+print("t | forskjell mellom sidene | avvik fra blandingsformelen")
+for t in t_checks:
+    assert 0 <= t <= 1
+    u_t = (1-t)*u0 + t*u1
+    p_direct = direct_rank(S, alpha, u_t)
+    predicted = (1-t)*p_left + t*p_right
+    print(t, p_direct[i]-p_direct[j], np.linalg.norm(p_direct-predicted, 1))
+```
 
-Samme residualtoleranse ved ulike $\alpha$ betyr derfor ikke samme
-garanterte løsningsnøyaktighet. Sammenlign også med den direkte løsningen.
+**Hvor sikker er konklusjonen?** Oppgi hvor mange sifre du bruker i terskelen.
+Et svært lite beregnet avvik er ikke automatisk en eksakt likhet.
+Hvis to verdier er så nær hverandre at beregningsfeilen kan avgjøre
+fortegnet, rapporter usikkerheten eller bruk strengere nøyaktighet.
+Drøft også forskjellen på at to sider bytter innbyrdes plass og at en side
+blir høyest rangert blant alle seks.
 
+## Dette skal leveres
 
-### B. Kan lenker manipulere rangeringen?
+Lever én kjørbar notebook eller Quarto-side med:
 
-Velg en målside og legg til to nye sider. Sammenlign to grafer med de samme
-åtte sidene: én der de nye sidene bare lenker til hverandre, og én der du
-endrer lenkene deres for å fremme målsiden. Hold $\alpha$, $u$ og antall sider
-fast mellom disse to grafene. Oppgi alle lenkene før og etter.
+- Grafen, overgangsmatrisen og håndberegningen av ett steg.
+- Korte utledninger av bevaring av sum én, referansesystemet og feiloppdateringen.
+- Tosideanalysen med egenverdier, stasjonær fordeling og formel for iterasjonsfølgen.
+- Rangeringen og kontrolltabellen fra del 2, samt høyst to figurer totalt.
+- Den egne undersøkelsen: valgt $u_1$ og sidepar, påstanden før forsøket,
+  beviset for blandingsformelen, terskelberegningen og de numeriske kontrollene.
 
-Mål målsidens score og plassering, og vis hvem som mister andel.
-Prøv minst to verdier av $\alpha$. Sikrer en entydig stasjonær fordeling at
-rangeringen er vanskelig å manipulere?
+Skriv omtrent **300–500 ord analyse** i tillegg til formler og beregninger.
+Bruk de konkrete resultatene til å skille mellom:
 
-### C. Hvem er rangeringen laget for?
+1. Om koden løser den innlagte modellens likning.
+2. Om iterasjonen konvergerer.
+3. Hva modellen måler som «viktighet», og hvordan besøksmønsteret påvirker dette.
 
-Behold grafen og $\alpha=0.85$. Velg selv en positiv $u$ ut fra et
-angitt besøksmønster, og sammenlign med jevn $u$. Et mulig utgangspunkt er
-$u=(0.5,0.1,0.1,0.1,0.1,0.1)^T$. Alle elementene er fortsatt positive.
-Forutsi hvem som får mer vekt, og mål endringene i score og plassering.
-Formuler hva rangeringen nå uttrykker om besøkendes interesser.
-
-## 6. Sett din egen påstand på prøve
-
-Bruk dette som forsøksplan og rapportstruktur for undersøkelsen du velger
-i del 5. Formuler **én påstand som kan vise
-seg å være feil**, og bestem forsøket før du kjører det. For eksempel kan
-du undersøke om en bestemt lenkeendring gir målsiden høyere score også når
-startgrafen endres, eller om et valgt hoppmønster oppfyller et angitt mål.
-
-Skriv en kort forsøksplan med:
-
-1. Påstanden og en mekanisme: hvorfor skulle besøksregelen gi denne effekten?
-2. Hva du endrer, hva du holder fast, og hva som ville tale mot påstanden.
-3. Et målbart kriterium: for eksempel endring i score, topplassering eller
-   arbeid ved samme feilgrense. Bestem hvordan nesten like scorer skal behandles.
-
-Gjennomfør det kontrollerte før-og-etter-paret du designer i del 5.
-Det samme paret brukes her; du skal ikke gjøre en ekstra undersøkelse.
-**Valgfritt:** Prøv deretter samme tiltak på én ny graf eller ett nytt positivt hoppmønster
-valgt for å utfordre forklaringen. Endre bare denne bakgrunnsbetingelsen;
-behold tiltaket og vurderingskriteriet. Du trenger ikke en stor samling kjøringer.
-
-Vis det kontrollerte paret og eventuell ekstra kontroll, også hvis effekten uteblir eller snur. Forklar hva resultatene
-støtter, hva de avkrefter, og hvor snever konklusjonen må være. Å velge den
-best utseende kjøringen i ettertid er ikke en kontroll av påstanden.
-
-### Dette skal leveres
-
-Lever én kjørbar notebook eller Quarto-side. Figurer skal ha aksetitler,
-kurveforklaringer og korte tolkninger. Vis forventninger før resultater.
-
-Lever kontroller fra del 1–4 og én valgt undersøkelse fra del 5,
-dokumentert med forsøksplanen og det kontrollerte paret i del 6. Analysen på **400–600 ord** skal inneholde påstanden skrevet
-før forsøket, forsøksvalgene, et mulig motfunn og en avgrenset konklusjon.
-
-Analysen skal bruke konkrete resultater til å skille mellom:
-
-- en liten residual og en riktig implementert modell;
-- entydighet av stasjonær fordeling og konvergens fra en valgt startfordeling;
-- god numerisk nøyaktighet og en meningsfull rangering;
-- virkningen av egenverdiene og virkningen av modellvalgene.
-
-Kode fra en assistent eller et bibliotek må kunne forklares og kontrolleres.
-En rangert liste alene er ikke en faglig begrunnelse.
-
-Se [uke 5](uke5.qmd#uke5-google) for besøksregelen, egenverdiforklaringen
-og feilgrensen. Prosjektet bruker egne grafer inspirert av
-[PageRank-notebooken](https://github.com/jiadaizhao/Mathematics-for-Machine-Learning/blob/master/Linear%20Algebra/Week5/PageRank.ipynb)
-og [Interactive Linear Algebra](https://textbooks.math.gatech.edu/ila/stochastic-matrices.html).
+En påstand som blir avkreftet, er et godt prosjektresultat når undersøkelsen
+og begrunnelsen er tydelige. Det er ikke nødvendig å finne et dramatisk plassbytte.
+Kode du får hjelp til å skrive, må du kunne forklare og kontrollere.
