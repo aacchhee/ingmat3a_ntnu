@@ -1166,17 +1166,34 @@ matriseelementene. Dette gjør testen uavhengig av en felles skalering av $A$.
 
 ### Eksperiment 4 – når stabiliseres ikke retningen?
 
-**Prøv:** Kjør cellen og sammenlign de fire banene. Hvilke blir på samme
-linje, hvilke veksler, og hvilken går rundt? Utpek ett tilfelle der en liten
-residual kan gi et misvisende inntrykk av hva metoden har funnet.
-Figuren viser seks steg; utskriften bruker algoritmens stoppkriterium.
+I eksperiment 3 var én egenverdi størst i absoluttverdi, og startvektoren
+hadde et bidrag langs den tilhørende egenvektoren. Nå undersøker vi hva
+som skjer når et slikt bidrag mangler, når fortegnet skifter, eller når
+ingen egenretning får større relativ vekt.
 
-| Matrise | Startvektor før normalisering |
-|---|---|
-| $\operatorname{diag}(3,1)$ | $(0,1)^T$ |
-| $\operatorname{diag}(-3,1)$ | $(1,1)^T$ |
-| $\operatorname{diag}(1,-1)$ | $(1,1)^T$ |
-| $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ | $(1,0)^T$ |
+I alle fire tilfellene bruker vi samme oppdatering:
+
+$$x_{k+1}=\frac{Ax_k}{\lVert Ax_k\rVert_2}.$$
+
+| Tilfelle | Matrise for transformasjonen | Startvektor før normalisering | Spørsmål før kjøring |
+|---|---|---|---|
+| Manglende dominant bidrag | $\operatorname{diag}(3,1)$ | $(0,1)^T$ | Kan første koordinat bli ulik null? |
+| Negativ dominant egenverdi | $\operatorname{diag}(-3,1)$ | $(1,1)^T$ | Hva skjer med fortegnet til første koordinat ved hvert steg? |
+| Like store absoluttverdier | $\operatorname{diag}(1,-1)$ | $(1,1)^T$ | Kan ett av de to bidragene dominere det andre? |
+| Rotasjon | $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ | $(1,0)^T$ | Hva skjer når en kvart omdreining gjentas? |
+
+**Slik leser du figurene:** Hvert punkt er endepunktet til en normalisert
+vektor $x_k$. Aksene viser koordinatene, ikke antall steg.
+Strekene forbinder påfølgende punkter; de viser ikke en kontinuerlig bevegelse.
+Figuren viser $x_0,\ldots,x_6$. Punkter som er like, ligger oppå hverandre.
+
+**Forutsi, og kjør:** Hvilket tilfelle gir samme vektor ved hvert steg?
+Hvilket nærmer seg én linje uten å nærme seg én bestemt enhetsvektor?
+Hvilke gir en gjentakende syklus?
+
+Utskriften kommer fra en **egen kjøring av potensmetoden** med inntil 100 steg.
+Den stopper når egenresidualen er liten nok, eller når steggrensen nås.
+Derfor kan den rapportere et annet antall steg enn de seks som tegnes.
 
 ```{pyodide-python}
 #| label: week5-failures
@@ -1185,7 +1202,7 @@ Figuren viser seks steg; utskriften bruker algoritmens stoppkriterium.
 # Sammenhold banen med status og egenresidual: de svarer på ulike spørsmål.
 
 cases = [
-    ("Feil startretning", np.diag([3., 1.]), [0., 1.]),
+    ("Manglende dominant bidrag", np.diag([3., 1.]), [0., 1.]),
     ("Negativ dominant", np.diag([-3., 1.]), [1., 1.]),
     ("Lik absoluttverdi", np.diag([1., -1.]), [1., 1.]),
     ("Rotasjon", np.array([[0., -1.], [1., 0.]]), [1., 0.]),
@@ -1203,34 +1220,54 @@ for ax, (name, A, start) in zip(axes.flat, cases):
     ax.set(title=name, xlabel="x₁", ylabel="x₂", xlim=(-1.2, 1.2), ylim=(-1.2, 1.2))
     ax.set_aspect('equal')
     _, rho, h, status = power_iteration(A, start, max_steps=100)
-    print(name, ":", status, "; ρ =", rho, "; residual =", h[-1, 1])
+    print(name, ":", status, "; steg =", len(h)-1, "; ρ =", rho, "; residual =", h[-1, 1])
 fig.tight_layout()
 plt.show()
 ```
 
-En linje kan stabilisere seg selv om vektoren skifter fortegn. Og en liten
-residual kan tilhøre en annen egenverdi enn den dominante.
-For å måle endring av **linje** kan vi bruke
-$\min(\lVert x_{k+1}-x_k\rVert_2,\lVert x_{k+1}+x_k\rVert_2)$ for enhetsvektorer.
+**1. Manglende dominant bidrag: riktig egenvektor, men feil egenverdi for målet vårt**
+
+Fra $x_0=(0,1)^T$ er $Ax_0=x_0$. Første koordinat forblir null, så
+iterasjonen kan ikke utvikle et bidrag langs egenvektoren til egenverdi 3.
+Den returnerer egenverdi 1 med residual null. Kontrollen bekrefter et
+egenpar, men bekrefter ikke at egenverdien er størst i absoluttverdi.
+
+**2. Negativ dominant egenverdi: linjen stabiliseres, orienteringen veksler**
+
+Før normalisering er $A^k(1,1)^T=((-3)^k,1)^T$.
+Første koordinat dominerer i absoluttverdi og skifter fortegn.
+De normaliserte vektorene nærmer seg derfor vekselvis $(1,0)^T$ og $(-1,0)^T$.
+Begge ligger på samme egenlinje. Rayleigh-kvotienten nærmer seg $-3$,
+og egenresidualen nærmer seg null selv om vektorene ikke konvergerer mot ett punkt.
+
+**3. Like store absoluttverdier: ingen av bidragene blir dominerende**
+
+Her veksler de normaliserte vektorene mellom
+$(1,1)^T/\sqrt2$ og $(1,-1)^T/\sqrt2$.
+Bidragene beholder samme lengde; bare fortegnet til det andre endres.
+Dette er to forskjellige linjer, ikke motsatt orientering på én linje.
+Rayleigh-kvotienten er 0 og egenresidualens norm er 1.
+
+**4. Rotasjon: ingen reell egenlinje å nærme seg**
+
+Transformasjonen roterer vektoren $90^\circ$ mot klokken ved hvert steg.
+Iterasjonen besøker fire punkter før den gjentas.
+For enhver reell enhetsvektor står $Ax$ vinkelrett på $x$, så
+$\rho=x^TAx=0$ og $\lVert Ax-\rho x\rVert_2=1$.
+Ingen reell ikke-null vektor oppfyller $Ax=\lambda x$.
+
+**Diskuter:** Hvorfor er det tre forskjellige spørsmål om vektorene
+konvergerer, om linjen de spenner ut stabiliseres, og om vi har funnet
+egenverdien med størst absoluttverdi? Bruk tilfelle 1 og 2 som eksempler.
 
 <details class="reading-step">
-<summary>Gå i dybden: slik kan du tenke om de fire tilfellene</summary>
+<summary>Gå i dybden: beregn forløpene og skill mellom vektor og linje</summary>
 
-Gjenta de to første stegene for hånd før du følger forklaringen.
+**Beregn to steg i hvert tilfelle.** Normaliser startvektoren først.
+Beregn deretter Rayleigh-kvotienten $\rho_k=x_k^TAx_k$ og
+egenresidualen $r_k=Ax_k-\rho_kx_k$. Sammenhold med observasjonene ovenfor.
 
-- Startvektoren $(0,1)^T$ mangler det dominante bidraget. Residualen er null
-  allerede for startvektoren, men egenverdien er $1$, ikke $3$.
-- Med $-3$ som dominant egenverdi nærmer vektorene seg samme linje og skifter
-  fortegn. Rayleigh-kvotienten nærmer seg $-3$.
-- For $1$ og $-1$ er forholdet mellom absoluttverdiene én. Begge bidragene
-  består, og den valgte startvektoren gir en syklus med to ulike vektorer.
-- En kvart omdreining har ingen reell egenretning. Over komplekse tall er
-  egenverdiene $i$ og $-i$, begge med absoluttverdi én. Her går vektoren i sirkel.
-
-I flyttallsregning kan avrunding tilføre et lite manglende bidrag.
-Den eksakte diagonale starttesten gjør det lettere å isolere prinsippet.
-
-Regningen før normalisering viser forskjellene tydelig:
+For de tre diagonalmatrisene kan vi først regne uten normalisering:
 
 $$\begin{aligned}
 \operatorname{diag}(3,1)^k(0,1)^T&=(0,1)^T,\\
@@ -1238,14 +1275,31 @@ $$\begin{aligned}
 \operatorname{diag}(1,-1)^k(1,1)^T&=(1,(-1)^k)^T.
 \end{aligned}$$
 
-I andre linje blir første koordinat dominerende, men skifter fortegn.
-I tredje linje er begge koordinatene alltid like store i absoluttverdi;
-normalisering endrer derfor ikke syklusen.
+I andre tilfelle deler vi på $\sqrt{3^{2k}+1}$.
+Andre koordinat går da mot null, mens første går mot 1 langs partallsstegene
+og mot $-1$ langs oddetallsstegene. I tredje tilfelle deler vi alltid på
+$\sqrt2$, så begge bidragene består.
+
+**Hvordan måle endring av linje?** Enhetsvektorene $x$ og $-x$ spenner ut
+samme linje. Derfor kan vi sammenligne begge orienteringene:
+
+$$d_k=\min\bigl(\lVert x_{k+1}-x_k\rVert_2,
+\lVert x_{k+1}+x_k\rVert_2\bigr).$$
+
+Første norm er liten når vektorene er nesten like; andre norm er liten
+når de er nesten motsatte. I tilfelle 2 går $d_k$ mot null, selv om
+$\lVert x_{k+1}-x_k\rVert_2$ går mot 2.
+I tilfelle 3 og 4 er påfølgende vektorer ortogonale, så $d_k=\sqrt2$.
+En liten $d_k$ alene sier likevel ikke hvilken egenverdi vi har funnet.
 
 Rotasjonen gir $(1,0)^T\mapsto(0,1)^T\mapsto(-1,0)^T\mapsto(0,-1)^T$
-og tilbake til startvektoren. For enhver reell enhetsvektor er $x^TAx=0$ her,
-så $\rho=0$ og residualnormen er $\lVert Ax\rVert_2=1$.
-Det er ingen reell egenvektor som metoden kan nærme seg.
+og deretter startvektoren igjen. Determinantlikningen er $\lambda^2+1=0$,
+som ikke har reelle løsninger. Over komplekse tall er egenverdiene $i$ og $-i$.
+
+Tilfelle 1 beskriver eksakt regning. Avrunding kan i andre beregninger
+tilføre et lite bidrag som mangler matematisk. Her brukes en diagonalmatrise
+og en eksakt nullkoordinat for å isolere mekanismen. Eksperiment 5 undersøker
+hva som skjer når startvektoren får et lite bidrag langs den dominante egenretningen.
 
 </details>
 
