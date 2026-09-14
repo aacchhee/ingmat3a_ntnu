@@ -323,7 +323,9 @@ hver sin linje. Figuren normaliserte lengden etter hvert steg. Nå spør vi:
 **Hva gjør transformasjonen langs disse linjene før vi normaliserer?**
 
 Vi tar den geometriske observasjonen «samme linje» og skriver den som
-algebra: resultatet må være **ett tall ganger startvektoren**. For
+algebra: **resultatet $T(x)$ er et tall ganger startvektoren $x$**, altså
+$T(x)=\lambda x$ for et tall $\lambda$ og en startvektor $x\ne0$.
+Siden $T(x)=Ax$, blir dette $Ax=\lambda x$. For
 $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ får vi
 
 $$A\begin{bmatrix}1\\1\end{bmatrix}=3\begin{bmatrix}1\\1\end{bmatrix},
@@ -515,23 +517,39 @@ Ulike egenverdier gir altså ikke generelt ortogonale egenvektorer.
 **For en reell symmetrisk matrise er egenvektorer til ulike egenverdier
 ortogonale:** Hvis $A^T=A$, $Av=\lambda v$, $Aw=\mu w$ og
 $\lambda\ne\mu$, så er $v^Tw=0$. Dette viktige resultatet begrunnes i 5.3.
-Eksemplet med $C$ viser hvorfor forutsetningen om symmetri trengs.
+Eksemplet med $C$ viser at **ulike egenverdier alene ikke garanterer
+ortogonale egenvektorer**. Symmetri er en tilstrekkelig betingelse som gir
+oss denne garantien. Eksemplet sier ikke at ortogonalitet er umulig uten
+symmetri: også en ikke-symmetrisk matrise kan ha enkelte ortogonale
+egenvektorer til ulike egenverdier.
 
 </details>
 
 <details class="reading-step">
-<summary>Gå i dybden: undersøk også en transformasjon som snur en retning</summary>
+<summary>Gå i dybden: når gir koordinatbyttet Bx = x, Bx = −x eller en ny linje?</summary>
 
-En negativ egenverdi betyr at resultatet peker motsatt vei på samme linje.
-Her sammenligner vi $T(x)=Ax$ med koordinatbyttet $R(x)=Bx$, der
-$A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ og
+**Kan samme transformasjon la én vektor være uendret, snu en annen og
+sende en tredje til en annen linje?** Undersøk koordinatbyttet
+$R(x_1,x_2)=(x_2,x_1)$, representert ved
 $B=\begin{bmatrix}0&1\\1&0\end{bmatrix}$.
+Målet er å skille mellom **positiv egenverdi, negativ egenverdi og en
+startvektor som ikke er en egenvektor**.
 
-Velg først $(1,-1)^T$. Forutsi resultatet i hvert bilde, og kjør cellen.
-Prøv deretter $(1,1)^T$: hvorfor gir samme koordinatbytte nå et annet fortegn
-på egenverdien? Avslutt med $(1,0)^T$, som ikke er en egenvektor for noen
-av disse transformasjonene. Plottet viser før og etter én transformasjon,
-**uten normalisering**, slik at både lengde og orientering er synlige.
+Plottet sammenligner $R(x)=Bx$ med den kjente transformasjonen $T(x)=Ax$,
+der $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
+For hver start: forutsi først hvor resultatet av koordinatbyttet ligger,
+og bruk deretter figuren som kontroll.
+
+1. Sett `start = [1., -1.]`. Er $Bx=x$, $Bx=-x$ eller ingen av delene?
+   Ligger $Ax$ på samme linje som $Bx$, og peker de samme vei?
+2. Sett `start = [1., 1.]`. Gjør koordinatbyttet nå det samme som i første tilfelle?
+   Hvilket tall $\lambda$ oppfyller $Bx=\lambda x$?
+3. Sett `start = [1., 0.]`. Finnes det noe tall $\lambda$ slik at
+   $Bx=\lambda x$? Begrunn svaret med koordinatene, ikke bare med tegningen.
+
+**Formuler konklusjonen:** Hva skiller det å snu orienteringen på samme
+linje fra det å sende vektoren til en annen linje?
+Plottet bruker ingen normalisering; både lengde og orientering er synlige.
 
 ```{pyodide-python}
 #| label: week5-directions
