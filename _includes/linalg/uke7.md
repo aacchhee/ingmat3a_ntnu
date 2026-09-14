@@ -35,11 +35,11 @@ rekonstruksjon følsom. Selve SVD-beregningen gjør vi med et bibliotek.
 
 <div id="uke7-bilde"></div>
 
-### Prøv først — hvor lite trenger vi?
+### Eksperiment 1 – hvor lite trenger vi?
 
 Kjør cellen og se samme bilde med 1, 5 og 20 **komponenter**, altså
 byggemønstre som legges sammen. Bytt deretter ett av tallene og prøv igjen.
-Vi undersøker bildene før vi forklarer hvordan komponentene beregnes.
+Hvilke detaljer kan dere gjenkjenne med få komponenter, og hvilke krever flere?
 
 ```{pyodide-python}
 #| label: week7-first-image
@@ -79,8 +79,8 @@ og hvorfor denne forbindelsen til basis er nyttig.
 Bildet er en $96\times96$-matrise $A$. Hvert element er en lysstyrke mellom
 0 og 1. En enkelt komponent har formen $\sigma_i u_i v_i^T$:
 $u_i$ er en kolonnevektor med den loddrette profilen, $v_i^T$ en radvektor
-med den vannrette, og $\sigma_i$ er vekten. Vi forklarer hvordan SVD velger
-disse i 7.2–7.3.
+med den vannrette, og $\sigma_i$ er vekten. Hvordan disse profilene og vektene henger sammen med geometrien,
+undersøker vi i 7.2–7.3.
 
 Produktet $u_i v_i^T$ kalles et **ytreprodukt**. Element $(j,\ell)$ er
 $(u_i)_j(v_i)_\ell$. Dermed er kolonne $\ell$ lik $(v_i)_\ell u_i$,
@@ -134,7 +134,7 @@ $[0,1]$, men feilberegningene bruker tallene uten klipping.
 
 <div id="uke7-geometri"></div>
 
-### Prøv først — følg en retning gjennom transformasjonen
+### Eksperiment 2 – følg en retning gjennom transformasjonen
 
 I forsøket nedenfor er alle startpunktene på en **enhetssirkel**: de
 representerer vektorer med lengde 1. Velg **Ellipse** og flytt den rosa
@@ -214,7 +214,7 @@ Originalen viser også de numeriske faktorene og produkter med basisvektorene.
 
 <div id="uke7-svd"></div>
 
-### Prøv først — hvor endres lengden?
+### Eksperiment 3 – hvor endres lengden?
 
 Gå tilbake til forsøket, velg **Skråstilling**, og følg én farge gjennom
 **alle fire rutene**. Skråstillingen forskyver punkter horisontalt med
@@ -358,7 +358,7 @@ singulærverdier.
 
 <div id="uke7-kondisjon"></div>
 
-### Prøv først — samme dataendring, to utfall
+### Eksperiment 4 – samme dataendring, to utfall
 
 Kjør forsøket. Vi starter med en kjent løsning, lager data, og endrer
 én datakomponent om gangen med samme lille beløp. **Gjett først:**
@@ -535,7 +535,7 @@ fra usikre data.
 
 <div id="uke7-rang"></div>
 
-### Prøv først — mer detalj, flere tall
+### Eksperiment 5 – mer detalj, flere tall
 
 Kjør cellen med ulike verdier av `k`. Den viser bildet, antallet tall i
 den lagrede faktorrepresentasjonen og en samlet pikselfeil.
@@ -640,7 +640,7 @@ Denne opptellingen er ikke en sammenligning med PNG eller JPEG.
 
 <div id="uke7-prosjekt"></div>
 
-### Prøv først — samme budsjett, ulik informasjon
+### Eksperiment 6 – samme budsjett, ulik informasjon
 
 Se de fire bildene og ranger dem etter hvor godt dere tror lav rang vil
 fungere. Kjør så sammenligningen. Koden velger samme antall komponenter

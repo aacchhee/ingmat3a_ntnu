@@ -24,7 +24,7 @@ Vi henter kort fram Jacobi og Gauss–Seidel, undersøker hva som styrer
 konvergensen, og prøver **konjugert gradient (CG)**: en metode som bygger
 nye søkeretninger ut fra informasjonen i tidligere steg.
 
-I **Forelesning** kjører vi korte demonstrasjoner og diskuterer det vi ser.
+I **Forelesning** undersøker vi korte eksperimenter og diskuterer det vi ser.
 **Gå i dybden** åpner oppgaver, mellomregninger og forklaringer til hvert
 forsøk i ett samlet felt. Der følger **Prøv selv**, **Regnegangen** og
 **Hva forklarer dette?** etter hverandre, uten flere felt å åpne.
@@ -43,7 +43,7 @@ endre arbeidsmengden for CG.
 
 <div id="uke6-gs"></div>
 
-### Demonstrasjon — når bruker vi den nye verdien?
+### Eksperiment 1 – når bruker vi den nye verdien?
 
 Jacobi og Gauss–Seidel er kjent fra numerikk. Vi henter fram én idé:
 **bruk én likning til å korrigere én ukjent mens de andre holdes faste.**
@@ -122,7 +122,7 @@ $x_i\leftarrow x_i+(b_i-(Ax)_i)/a_{ii}$ og overskriver én koordinat om gangen.
 
 <div id="uke6-fikspunkt"></div>
 
-### Demonstrasjon — flere sveip er ikke alltid bedre
+### Eksperiment 2 – er flere sveip alltid bedre?
 
 I første forsøk hjalp det å gjenta sveipene. Nå beholder vi samme
 oppdateringsregel, men endrer koblingen mellom de ukjente. Kan en
@@ -150,7 +150,7 @@ ax.legend(); plt.show()
 ```
 
 Kurvene viser at feilen kan avta eller vokse. Vi skriver nå oppdateringen
-som algebra for å forklare forskjellen; matrisen som styrer feilen, kan
+som algebra for å forklare forskjellen; matriserepresentasjonen av feiloppdateringen kan
 deretter finnes ved regning.
 
 Et GS-sveip kan skrives $x_{k+1}=Tx_k+c$. Løsningen er et **fikspunkt**:
@@ -174,7 +174,7 @@ akkurat når $\rho(T)<1$. Det er $T$ vi undersøker her.
 **Hvorfor er én vellykket kjøring ikke nok til å si at alle starter virker?**
 
 <details class="reading-step">
-<summary>Gå i dybden: finn matrisen som oppdaterer feilen</summary>
+<summary>Gå i dybden: finn matriserepresentasjonen av feiloppdateringen</summary>
 
 **Prøv selv**
 
@@ -220,7 +220,7 @@ For Jacobi er $T=-D^{-1}(L+U)$.
 
 <div id="uke6-residual"></div>
 
-### Demonstrasjon — liten rest, stor feil?
+### Eksperiment 3 – liten rest, stor feil?
 
 Hittil har vi målt avstanden til en løsning vi selv la inn. I et virkelig
 problem er løsningen ukjent – ellers hadde vi ikke trengt iterasjonen.
@@ -300,7 +300,7 @@ residual. En liten endring i $x$ mellom to steg er heller ikke et sikkert stoppt
 
 <div id="uke6-energi"></div>
 
-### Demonstrasjon — samme løsning, et annet bilde
+### Eksperiment 4 – hvor ligger løsningen i nivåkurvebildet?
 
 Vi har nå en enkel metode og en kontroll av svaret. Men GS velger retning
 etter koordinataksene, uavhengig av hvordan problemet ser ut. For å finne
@@ -373,7 +373,7 @@ Positiv diagonal alene er derfor ikke nok.
 <div id="uke6-retning"></div>
 <div id="uke6-cg"></div>
 
-### Demonstrasjon — velg retninger med hukommelse
+### Eksperiment 5 – hvilke retninger unngår sikksakk?
 
 I en lang, smal skål kan lokale forbedringer gi en omvei: vi krysser
 dalen flere ganger mens vi langsomt beveger oss mot bunnen. Nå spør vi
@@ -441,7 +441,7 @@ og flere steg bli nødvendige. Derfor kontrollerer koden $b-Ax$ direkte.
 Residualnormen trenger ikke bli mindre i hvert steg.
 
 Egenverdienes fordeling påvirker hvor raskt CG arbeider. For SPD er
-$\kappa_2(A)=\lambda_{\max}/\lambda_{\min}$ et mål på hvor ulikt matrisen
+$\kappa_2(A)=\lambda_{\max}/\lambda_{\min}$ et mål på hvor ulikt transformasjonen $x\mapsto Ax$
 skalerer forskjellige retninger; dette kalles **kondisjonstallet**.
 Det alene bestemmer ikke antall steg. **Hva viser todimensjonsforsøket om
 forskjellen mellom en smal skål og mange CG-steg?**

@@ -10,15 +10,15 @@
 
 <div id="uke5-start"></div>
 
-Hva skjer hvis vi bruker den samme matrisen på en vektor mange ganger?
+Hva skjer hvis vi gjentar den samme lineære transformasjonen på en vektor mange ganger?
 Og kan den samme regneoperasjonen brukes til å rangere nettsider?
 
-Vi begynner med å prøve. Deretter forklarer vi mønsteret vi ser, og bygger
-matematikken som trengs for å undersøke når det virker.
+Eksperimentene gir observasjoner å diskutere. Vi formulerer hypoteser,
+skriver dem som algebra og undersøker hvilke betingelser de trenger.
 
 
 
-**Prøv først, forklar etterpå.** Bruk figurene og de korte kodeforsøkene.
+**Undersøk, diskuter og begrunn.** Bruk figurene og de korte kodeforsøkene.
 Under **Gå i dybden** finner du håndregning, begrunnelser og flere spørsmål.
 
 Vi skal oppdage spesielle retninger, forklare hvorfor noen bidrag tar over,
@@ -52,13 +52,16 @@ import matplotlib.pyplot as plt
 **Matte 3A: et nytt spørsmål.** Vi bruker et forsøk til å vekke til live
 begrepene fra Matte 1; repetisjonen kommer i 5.2.
 
-### Prøv før vi forklarer
+### Eksperiment 1 – hvilken retning blir igjen?
 
-Matrisen er
+Vi gjentar transformasjonen $T(x)=Ax$, representert i standardbasisen ved
 
 $$A=\begin{bmatrix}2&1\\1&2\end{bmatrix}.$$
 
-**Felles forsøk — bruk figuren:**
+**Spørsmålet er om ulike startretninger ender langs samme linje.**
+Et klikk bruker transformasjonen én gang og setter deretter vektorlengden til én.
+Dermed kan vi følge retningen uten at voksende lengder tar vektoren ut av figuren.
+Undersøk både starter som endrer retning, og starter som blir på sin egen linje:
 
 1. Velg **(1, 0)**. Gjett hvilken linje den blå vektoren vil nærme seg.
    Trykk **Ett steg** fem ganger og noter om koordinatene nærmer seg hverandre.
@@ -72,8 +75,8 @@ Startvalgene angir retninger. Å **normalisere** betyr her å dele på lengden,
 slik at vektoren får lengde én. Den oransje
 vektoren $x_0$ er starten; den blå er det nåværende resultatet. Hvert klikk
 regner ut $Ax$ og deler på lengden til svaret. Vi bruker ingen
-normalisering av enkeltkoordinater. Formelen under figuren viser hvilket
-produkt den blå retningen kommer fra; lengden er alltid normalisert til én.
+normalisering av enkeltkoordinater. Formelen ved det blå endepunktet viser
+hvilket produkt retningen kommer fra, og at lengden er normalisert til én.
 Den oransje ringen kan dras også når den ligger rundt det blå endepunktet.
 
 ```{.jsxgraph width="680" height="650" style="width:100%;max-width:680px;height:650px;border:0;"}
@@ -153,6 +156,23 @@ var current = [1, 0], count = 0;
 var end = board.create('point', [function(){return current[0];}, function(){return current[1];}],
   {name: '', withLabel: false, fixed: true, size: 3, color: '#1565c0', highlight: false, layer: 8});
 board.create('arrow', [origin, end], {strokeColor: '#1565c0', strokeWidth: 3, fixed: true, highlight: false});
+// Keep the normalized iterate identifiable next to the blue endpoint.
+// The compact fraction fits inside the board even for starts near its edges.
+function canvasFormula() {
+  var power = 'A<sup>'+count+'</sup>x<sub>0</sub>';
+  return '<span style="display:inline-flex;align-items:center;gap:4px;white-space:nowrap;' +
+    'background:rgba(255,255,255,.94);padding:3px 5px;border-radius:4px;color:#1565c0">' +
+    '<span>x<sub>'+count+'</sub> =</span>' +
+    '<span style="display:inline-flex;flex-direction:column;text-align:center;line-height:1.25">' +
+    '<span style="border-bottom:1px solid #1565c0;padding:0 3px">'+power+'</span>' +
+    '<span>‖'+power+'‖<sub>2</sub></span></span>';
+}
+var iterateLabel = board.create('text', [
+  function(){ return Math.max(-0.45, Math.min(0.45, current[0])); },
+  function(){ return current[1] + (current[1] > 0.75 ? -0.30 : 0.25); },
+  canvasFormula
+], {anchorX:'middle', anchorY:'middle', display:'html', fontSize:14,
+    fixed:true, highlight:false, layer:9, useMathJax:false});
 function formatCoordinate(value) { return (Math.abs(value) < 0.0005 ? 0 : value).toFixed(3); }
 function updateReadout() {
   startKey.textContent = 'Oransje ring · '+(selectedStart || 'Egen start')+': x₀ = ('+
@@ -211,7 +231,7 @@ updateReadout(); resizeGraph();
 
 Mange startvektorer nærmer seg samme **linje**, men kan ha motsatt orientering.
 Startene langs $(1,1)^T$ og $(1,-1)^T$ skiller seg ut: der endres ikke
-retningen. Vi skal undersøke hva matrisen gjør langs disse linjene.
+retningen. Vi skal undersøke hvordan transformasjonen virker langs disse linjene.
 
 Figurens regneoperasjon kan nå skrives
 
@@ -219,9 +239,9 @@ $$x_{k+1}=\frac{Ax_k}{\lVert Ax_k\rVert_2},\qquad
 x_k=\frac{A^kx_0}{\lVert A^kx_0\rVert_2}.$$
 
 Her teller $k$ multiplikasjonene, $\lVert x\rVert_2$ er vektorens vanlige lengde,
-og $I$ er identitetsmatrisen, som lar vektoren være uendret. Vi setter $A^0=I$.
+og $I$ representerer identitetstransformasjonen $x\mapsto x$. Vi setter $A^0=I$.
 **Diskuter:** Hvorfor kan vi miste informasjon om lengde og likevel se
-hvilken retning matrisen favoriserer? Hva skiller de to spesielle startene?
+hvilken retning som dominerer etter gjentatt transformasjon? Hva skiller de to spesielle startene?
 
 <details class="reading-step">
 <summary>Gå i dybden: skaler uten å dreie</summary>
@@ -330,9 +350,13 @@ rommet egenrommet til egenverdien 1.
 
 **Undersøk de observerte retningene for hånd.**
 
-Bruk de to retningene fra figuren.
+Vi sammenligner to transformasjoner på de samme to retningene fra figuren.
+Den første, $T(x)=Ax$, er den vi allerede har undersøkt. Den andre,
+$R(x)=Bx$, bytter koordinatene: $R(x_1,x_2)=(x_2,x_1)$.
+Vi innfører $B$ for å undersøke om en egenretning også kan få motsatt orientering.
+Begge matrisene er gitt i standardbasisen.
 
-$$A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
+$A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
 B=\begin{bmatrix}0&1\\1&0\end{bmatrix},\qquad
 v=\begin{bmatrix}1\\1\end{bmatrix},\quad
 w=\begin{bmatrix}1\\-1\end{bmatrix}.$$
@@ -355,8 +379,8 @@ Bv&=\begin{bmatrix}1\\1\end{bmatrix}=v,
 & Bw&=\begin{bmatrix}-1\\1\end{bmatrix}=-w.
 \end{aligned}$$
 
-Matrisen $A$ tredobler lengden langs $v$ og lar $w$ være uendret.
-Matrisen $B$ bytter koordinatene. For $w$ betyr dette en fortegnsendring,
+Transformasjonen $x\mapsto Ax$ tredobler lengden langs $v$ og lar $w$ være uendret.
+Transformasjonen $x\mapsto Bx$ bytter koordinatene. For $w$ betyr dette en fortegnsendring,
 men vektoren ligger fortsatt på samme linje gjennom origo.
 
 **Hvordan finner vi dem uten å gjette?**
@@ -443,9 +467,12 @@ determinantpolynomer. Håndregningen her forklarer hva algoritmene leter etter.
 <details class="reading-step">
 <summary>Gå i dybden: egenretninger som ikke står vinkelrett</summary>
 
-Finn egenverdier og egenrom til
-$C=\begin{bmatrix}2&1\\0&1\end{bmatrix}$. Kontroller med $Cv=\lambda v$.
-Er egenvektorene ortogonale?
+I eksemplene med $A$ og $B$ står de to egenretningene vinkelrett.
+Skyldes det ulike egenverdier, eller en ekstra egenskap ved disse eksemplene?
+Undersøk transformasjonen med standardmatrise
+$C=\begin{bmatrix}2&1\\0&1\end{bmatrix}$.
+Finn egenverdier og egenrom, kontroller med $Cv=\lambda v$, og beregn
+indreproduktet mellom en egenvektor fra hvert egenrom.
 
 **Slik kan du tenke.**
 
@@ -466,17 +493,28 @@ $$C(1,0)^T=(2,0)^T=2(1,0)^T,\qquad
 C(1,-1)^T=(1,-1)^T.$$
 
 Indreproduktet mellom basisvektorene er $1\cdot1+0\cdot(-1)=1$, ikke null.
-Ulike egenverdier gir ikke generelt ortogonale egenvektorer. Vi kommer til
-symmetriske matriser, der dette faktisk gjelder, i 5.3.
+Ulike egenverdier gir altså ikke generelt ortogonale egenvektorer.
+
+**For en reell symmetrisk matrise er egenvektorer til ulike egenverdier
+ortogonale:** Hvis $A^T=A$, $Av=\lambda v$, $Aw=\mu w$ og
+$\lambda\ne\mu$, så er $v^Tw=0$. Dette viktige resultatet begrunnes i 5.3.
+Eksemplet med $C$ viser hvorfor forutsetningen om symmetri trengs.
 
 </details>
 
 <details class="reading-step">
 <summary>Gå i dybden: undersøk også en transformasjon som snur en retning</summary>
 
-Matrisen $B$ bytter koordinatene. Gjett hva den gjør med $(1,-1)^T$,
-og bruk plottet til å kontrollere tolkningen av en negativ egenverdi.
-Prøv også $(1,1)^T$ og $(1,0)^T$. Dette er en ekstra kontroll etter håndarbeidet.
+En negativ egenverdi betyr at resultatet peker motsatt vei på samme linje.
+Her sammenligner vi $T(x)=Ax$ med koordinatbyttet $R(x)=Bx$, der
+$A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ og
+$B=\begin{bmatrix}0&1\\1&0\end{bmatrix}$.
+
+Velg først $(1,-1)^T$. Forutsi resultatet i hvert bilde, og kjør cellen.
+Prøv deretter $(1,1)^T$: hvorfor gir samme koordinatbytte nå et annet fortegn
+på egenverdien? Avslutt med $(1,0)^T$, som ikke er en egenvektor for noen
+av disse transformasjonene. Plottet viser før og etter én transformasjon,
+**uten normalisering**, slik at både lengde og orientering er synlige.
 
 ```{pyodide-python}
 #| label: week5-directions
@@ -505,28 +543,34 @@ plt.show()
 
 <div id="uke5-basis"></div>
 
-**Matte 3A: fra én multiplikasjon til mange.** Vi bruker de repeterte
-begrepene til å forklare utviklingen, med basis som bindeledd.
+**Matte 3A: hvorfor nærmer så mange starter seg samme linje?**
+I 5.1 så vi at starten $(1,0)^T$ dreide mot linjen gjennom $(1,1)^T$.
+I 5.2 fant vi de to egenretningene. Nå bruker vi dem til å dele startvektoren
+i to bidrag og følge hvert bidrag når transformasjonen gjentas.
 
-### Prøv: hvilken del tar over?
+### Eksperiment 2 – hvilken del tar over?
 
-Vi bruker samme $A$ og egenvektorene $v_1=(1,1)^T$, $v_2=(1,-1)^T$.
-Starten skrives $x_0=c_1v_1+c_2v_2$. Med `c1 = c2 = 0.5` er dette
-$x_0=(1,0)^T$: summen av to like lange bidrag langs de to linjene.
+For $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ bruker vi
+$v_1=(1,1)^T$ og $v_2=(1,-1)^T$. Starten kan bygges slik:
 
-Ved hver multiplikasjon får det første bidraget en faktor
-${\color{#1565c0}3}$ og det andre en faktor ${\color{#a04a00}1}$.
-I plottet følger vi **hvor stor del av summen av bidragenes lengder** som
-kommer fra hver retning. Dette er ikke koordinatene til resultatvektoren,
-og heller ikke lengdene delt på lengden til summen av vektorene.
+$$x_0=\begin{bmatrix}1\\0\end{bmatrix}
+=\underbrace{\tfrac12\begin{bmatrix}1\\1\end{bmatrix}}_{\text{blått bidrag}}
++\underbrace{\tfrac12\begin{bmatrix}1\\-1\end{bmatrix}}_{\text{oransje bidrag}}.$$
 
-- Blå kurve: bidraget med egenverdi ${\color{#1565c0}\lambda_1=3}$.
-- Oransje kurve: bidraget med egenverdi ${\color{#a04a00}\lambda_2=1}$.
-- Vannrett akse: antall multiplikasjoner; ved 0 har begge andel $1/2$.
+Ved hvert steg tredobles det blå bidraget, mens det oransje beholder lengden.
+**Hvordan endres da balansen mellom dem?**
 
-**Før kjøring:** Blir det oransje bidraget kortere, eller blir bare andelen
-mindre? Kjør deretter med `c1 = 0.0`, mens `c2 = 0.5` beholdes.
-Da starter vi bare langs $v_2$. Kan multiplikasjonene skape det blå bidraget?
+Plottet viser andelen av de to bidragenes samlede lengde:
+blå lengde delt på blå pluss oransje lengde, og tilsvarende for oransje.
+Andelene starter på $1/2$ og summerer alltid til 1.
+Vannrett akse teller multiplikasjonene.
+Blå kurve hører til $\lambda_1={\color{#1565c0}3}$,
+oransje til $\lambda_2={\color{#a04a00}1}$.
+
+1. Kjør med `c1 = c2 = 0.5`. Blir det oransje bidraget kortere,
+   eller blir det bare mindre sammenlignet med det blå?
+2. Sett deretter `c1 = 0.0` og behold `c2 = 0.5`.
+   Nå mangler det blå bidraget ved start. Forutsi om det kan dukke opp.
 
 ```{pyodide-python}
 #| label: week5-contributions
@@ -557,7 +601,8 @@ skape den. **Diskuter:** Hvorfor er både matrisen og starten viktige?
 
 ### Skriv observasjonen som algebra
 
-Linearitet betyr at $A$ virker på hvert bidrag for seg. De to egenverdiene
+Linearitet betyr at transformasjonen virker på hvert bidrag for seg:
+$A(c_1v_1+c_2v_2)=c_1Av_1+c_2Av_2$. De to egenverdiene
 brukes én gang for hvert steg; vi lar potensene stå synlige:
 
 $$\begin{aligned}
@@ -744,9 +789,10 @@ $\sum_i\lambda_i z_i^2>0$. Denne egenskapen kalles **positiv definitet**: $x^TAx
 
 <div id="uke5-potens"></div>
 
-### Et forsøk med farten
+### Eksperiment 3 – hva bestemmer farten?
 
-**Felles forsøk — forutsi, kjør cellen, les av:** Vi bruker
+**Vi undersøker om nesten like egenverdier gjør at retningen endres langsommere.**
+Vi sammenligner to transformasjoner representert ved
 $A_\mu=Q\operatorname{diag}(3,\mu)Q^T$. Kolonnene i $Q$ er de normaliserte
 egenvektorene fra 5.3; $\operatorname{diag}(3,\mu)$ betyr en matrise med $3$
 og $\mu$ på diagonalen og null ellers.
@@ -896,7 +942,7 @@ x^TAx-\rho x^Tx=0
 \rho=\frac{x^TAx}{x^Tx}.$$
 
 For $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ og $x=(1,0)^T$ er
-$Ax=(2,1)^T$, $\rho=2$ og $r=(0,1)^T$. Matrisen gir altså også et
+$Ax=(2,1)^T$, $\rho=2$ og $r=(0,1)^T$. Transformasjonen gir altså også et
 bidrag på tvers av den valgte retningen; den er ennå ingen egenretning.
 For $x=(1,1)^T/\sqrt2$ blir derimot $\rho=3$ og $r=0$.
 
@@ -1001,7 +1047,7 @@ $\text{tol}\,\lVert A\rVert_F$ fordi $x$ har
 lengde én. Frobeniusnormen er kvadratroten av summen av de kvadrerte
 matriseelementene. Dette gjør testen uavhengig av en felles skalering av $A$.
 
-### Forutsi fire problemtilfeller
+### Eksperiment 4 – når stabiliseres ikke retningen?
 
 **Prøv:** Kjør cellen og sammenlign de fire banene. Hvilke blir på samme
 linje, hvilke veksler, og hvilken går rundt? Utpek ett tilfelle der en liten
@@ -1086,7 +1132,7 @@ Det er ingen reell egenvektor som metoden kan nærme seg.
 
 </details>
 
-### Prøv: en nesten usynlig startforskjell
+### Eksperiment 5 – kan en liten startforskjell vokse?
 
 Kjør cellen: kan en startendring
 på $10^{-12}$ bli synlig etter bare 30 steg?
@@ -1165,7 +1211,7 @@ Fra B går vi til C med sannsynlighet $1$.
 :::
 :::
 
-### Prøv: hvor er den besøkende etter neste klikk?
+### Eksperiment 6 – hvor er den besøkende etter neste klikk?
 
 Velg **Alle på A**. Forutsi neste fordeling, trykk **Neste runde**, og gjenta
 én gang. Hvilke lenker forklarer prosentene? Prøv så **20 runder** fra både
@@ -1519,13 +1565,13 @@ Dette er normalisering med et annet formål enn lengde én i potensmetoden.
 
 <div id="uke5-google"></div>
 
-### Bryt nettverket
+### Eksperiment 7 – kan én side fange besøkene?
 
 Vi endrer **bare D**: siden lenker nå kun til seg selv.
 **Gjett først:** D har fortsatt bare én innkommende lenke fra en annen side.
 Kan D likevel ende med nesten alle besøkene?
 
-**Felles forsøk:** Skriv forventningen for D etter 100 runder, kjør cellen,
+**Undersøk fellen:** Skriv forventningen for D etter 100 runder, kjør cellen,
 og noter sluttverdien. Forklar så med lenkene hvorfor besøk kan komme inn
 på D, men ikke slippe ut. Cellen definerer selv nettverket fra 5.5.
 
@@ -1569,13 +1615,13 @@ I dette nettverket nærmer fordelingen seg $(0,0,0,1)^T$.
 Denne vektoren oppfyller $S_{\mathrm{felle}}p=p$ nøyaktig.
 Problemet er derfor ikke nødvendigvis stor residual.
 
-### Prøv en ny besøksregel
+### Eksperiment 8 – gir tilfeldige hopp en utvei?
 
 La besøkende følge en lenke med sannsynlighet $\alpha$, og ellers hoppe til
 en tilfeldig side. **Hva tror du skjer når $\alpha$ senkes fra $0.95$ til
 $0.5$?**
 
-**Felles forsøk:** Noter om D får større eller mindre andel når flere
+**Undersøk den nye regelen:** Noter om D får større eller mindre andel når flere
 besøkende hopper tilfeldig. Kjør cellen etter felleforsøket og sammenlign
 D for $0.95$, $0.85$ og $0.5$. Undersøk samtidig om noen sider får score null.
 
