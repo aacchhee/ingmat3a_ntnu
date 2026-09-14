@@ -1994,14 +1994,20 @@ En lik residualtoleranse gir altså ikke samme feilgaranti når $\alpha$ endres.
 
 <div id="uke5-oppgaver"></div>
 
-Oppgavene er til eget arbeid. Første del henter fram verktøyene fra Matte 1;
-andre del bruker dem på spørsmålene i Matte 3A. Svarfeltene sjekker regningen.
-Begrunnelsene og undersøkelsene er like viktige: et godkjent tall er ikke en forklaring.
+Oppgave 1–2 repeterer Matte 1. Oppgave 3–6 bruker verktøyene til å undersøke
+iterasjon og PageRank i Matte 3A. Hver del angir hva du skal levere:
+tall i svarfeltene, kode i kodevinduet eller en skriftlig begrunnelse i egne notater.
+Bruk eksakte tall i matematikkfeltene, for eksempel `3/2` og `sqrt(2)`.
 
-### Del 1 – Matte 1: hent fram verktøyene
+### Oppgave 1 – koordinater i en annen basis
 
-**1. Lineært system og basiskoeffisienter.** Vi vil skrive
-$(2,1)^T=c_1(1,1)^T+c_2(1,-1)^T$. Sett opp og løs de to likningene.
+Vi har $v_1=(1,1)^T$, $v_2=(1,-1)^T$ og $x=(2,1)^T$.
+Vi skal finne tallene $c_1,c_2$ slik at $x=c_1v_1+c_2v_2$.
+
+**a. Sett opp systemet.** Skriv én likning for hver koordinat.
+**Svar i egne notater:** to lineære likninger med ukjente $c_1,c_2$.
+
+**b. Løs systemet.** Skriv ett reelt tall i hvert felt, ikke en vektor eller en likning.
 
 ```{math-exercise}
 #| label: week5-task-coordinates
@@ -2015,48 +2021,108 @@ $c_1=$ __[3/2]
 $c_2=$ __[1/2]
 ```
 
-Kontroller ved å bygge vektoren opp igjen. Hvorfor gir ikke de to
-koordinatene i $(2,1)^T$ direkte koeffisientene i denne basisen?
-
-**2. Egenverdier og egenvektorer.** La $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
-Finn egenverdiene fra $\det(A-\lambda I)=0$, og løs deretter
-$(A-\lambda I)v=0$ for hver av dem. Oppgi egenverdiene i synkende rekkefølge.
-Vi velger første koordinat i hver egenvektor lik 1.
-
-```{math-exercise}
-#| label: week5-task-eigenvectors
-#| caption: Fra determinantlikning til homogene systemer
-#| mode: equivalent
-#| partial-credit: true
-#| field-labels: største egenverdi, andre egenverdi, andre koordinat i v₁, andre koordinat i v₂
-
-$\lambda_1=$ __[3]
-
-$\lambda_2=$ __[1]
-
-$v_1=(1,$ __[1] $)^T$
-
-$v_2=(1,$ __[-1] $)^T$
-```
-
-Beskriv **alle** egenvektorene til hver egenverdi. Hvorfor inngår nullvektoren
-i egenrommet, men ikke blant egenvektorene? Kan $(2,2)^T$ også brukes som $v_1$?
+**c. Kontroller og tolk.** Beregn $c_1v_1+c_2v_2$, og forklar hvorfor
+$c_1,c_2$ ikke er de samme som standardkoordinatene $2,1$.
+**Svar i egne notater:** én vektorberegning og en kort forklaring.
 
 <details class="learning-hint">
-<summary>Et hint til regnemetoden</summary>
+<summary>Hint til oppgave 1</summary>
 
-Første oppgave gir $c_1+c_2=2$ og $c_1-c_2=1$.
-I andre oppgave er determinantlikningen $(2-\lambda)^2-1=0$.
-Etter at du har funnet en rot, setter du den inn i $A-\lambda I$
-og løser det homogene systemet. Ikke forsøk å invertere denne matrisen.
+Likningene er $c_1+c_2=2$ og $c_1-c_2=1$. Hva skjer når du legger dem sammen?
 
 </details>
 
-### Del 2 – Matte 3A: forklar utviklingen og undersøk grensene
+### Oppgave 2 – egenverdier og valgfrie egenvektorer
 
-**3. Gjentakelse i egenvektorbasis.** Bruk $A$ fra oppgave 2 og
-$x_0=(2,1)^T$ fra oppgave 1. Skriv $A^kx_0$ ved hjelp av de to
-basiskoeffisientene og egenverdiene, før du setter inn $k=3$.
+Vi undersøker $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
+
+**a. Finn egenverdiene.** Sett opp $\det(A-\lambda I)=0$ og løs likningen.
+**Svar i egne notater:** determinantlikningen med mellomregning.
+
+**b. Finn en egenvektor til hver egenverdi.** Løs $(A-\lambda I)v=0$
+for hver egenverdi. Du velger selv skaleringen: vektorene trenger ikke ha
+lengde én eller første koordinat lik én.
+
+**Svarformat:** to reelle egenverdier i synkende rekkefølge, hver med en
+tilhørende ikke-null vektor i $\mathbb R^2$. Skriv ett tall per felt;
+vektorfeltene står som kolonner. Kontrollen undersøker $Av_i=\lambda_i v_i$
+og godtar alle gyldige skaleringer.
+
+```{math-exercise}
+#| label: week5-task-eigenvectors
+#| caption: To egenverdier med tilhørende egenvektorer
+#| mode: custom
+#| field-labels: største egenverdi λ₁, første koordinat i v₁, andre koordinat i v₁, minste egenverdi λ₂, første koordinat i v₂, andre koordinat i v₂
+#| checker: |
+#|   def check(response, symbols):
+#|       values = response["expressions"]
+#|       if len(values) != 6:
+#|           return {"score": 0, "feedback": "Fyll inn to egenverdier og to koordinater i hver egenvektor."}
+#|       # Godta eksakte reelle tall, også brøker og røtter, men ikke frie parametre.
+#|       if any(z.free_symbols or z.is_real is not True or z.is_finite is not True for z in values):
+#|           return {"score": 0, "feedback": "Bruk konkrete, endelige reelle tall. Beskriv parameterfamiliene i del c."}
+#|       A = Matrix([[2, 1], [1, 2]])
+#|       checks = []
+#|       messages = []
+#|       for i, target in enumerate((3, 1)):
+#|           lam = values[3*i]
+#|           v = Matrix(values[3*i+1:3*i+3])
+#|           eigenvalue_ok = simplify(lam-target) == 0
+#|           nonzero = any(simplify(z) != 0 for z in v)
+#|           # Test egenvektorlikningen, ikke likhet med én forhåndsvalgt vektor.
+#|           eigenvector_ok = nonzero and all(simplify(z) == 0 for z in A*v-lam*v)
+#|           checks.extend([eigenvalue_ok, eigenvalue_ok and eigenvector_ok])
+#|           if not eigenvalue_ok:
+#|               messages.append(f"Par {i+1}: kontroller egenverdien og den synkende rekkefølgen.")
+#|           elif not nonzero:
+#|               messages.append(f"Par {i+1}: nullvektoren er ikke en egenvektor.")
+#|           elif not eigenvector_ok:
+#|               messages.append(f"Par {i+1}: kontroller at Av = λv med din egenverdi og vektor.")
+#|           else:
+#|               messages.append(f"Par {i+1}: egenverdien og egenvektoren stemmer.")
+#|       return {"score": sum(checks)/4, "show_score": False, "feedback": " ".join(messages)}
+
+For $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$: oppgi $\lambda_1>\lambda_2$
+og ikke-null vektorer som oppfyller $Av_i=\lambda_i v_i$.
+
+Største egenverdi: $\lambda_1=$ __[3]
+
+En tilhørende egenvektor: $v_1=$ vec[1,1]
+
+Minste egenverdi: $\lambda_2=$ __[1]
+
+En tilhørende egenvektor: $v_2=$ vec[1,-1]
+```
+
+**c. Beskriv alle valgene.** Bruk de to egenvektorene dine til å beskrive
+alle egenvektorene til hver egenverdi og de to egenrommene.
+**Svar i egne notater:** to parameterfamilier $t v_i$, med presist vilkår på
+$t\in\mathbb R$ for henholdsvis egenvektorer og egenrom. Forklar hvorfor
+nullvektoren behandles forskjellig.
+
+<details class="learning-hint">
+<summary>Hint til oppgave 2</summary>
+
+Determinantlikningen er $(2-\lambda)^2-1=0$. Sett hver rot inn i
+$A-\lambda I$ og løs det homogene systemet. Matrisen er singulær,
+så du skal ikke forsøke å invertere den.
+
+</details>
+
+### Oppgave 3 – gjentatt transformasjon i en egenvektorbasis
+
+Her bruker vi $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$, $x_0=(2,1)^T$,
+$v_1=(1,1)^T$ og $v_2=(1,-1)^T$, med egenverdier $3$ og $1$.
+Bruk disse faste basisvektorene i oppgaven, uansett hvilke skaleringer du valgte i oppgave 2.
+
+**a. Finn et uttrykk for alle steg.** Skriv $A^kx_0=c_1 3^k v_1+c_2 1^k v_2$
+og bestem $c_1,c_2$.
+**Svar i egne notater:** én vektorformel som gjelder for alle heltall $k\geq0$.
+
+**b. Beregn ved $k=3$.** De to første feltene er standardkoordinatene
+til vektoren $A^3x_0$. Det siste feltet er ett ikke-negativt tall:
+
+$$\frac{\lVert c_2 1^3 v_2\rVert_2}{\lVert c_1 3^3 v_1\rVert_2}.$$
 
 ```{math-exercise}
 #| label: week5-task-powers
@@ -2071,14 +2137,40 @@ Lengden av bidraget langs $v_2$, delt på lengden av bidraget langs $v_1$, etter
 __[1/81]
 ```
 
-Forklar hvorfor retningen nærmer seg linjen gjennom $v_1$ selv om bidraget
-langs $v_2$ ikke blir kortere. Finn en annen ikke-null startvektor som gir en iterasjonsfølge uten denne grensen.
-Hva endres dersom den andre egenverdien byttes fra $1$ til $-1$?
+**c. Forklar retningen.** Hvorfor nærmer de normaliserte vektorene seg
+linjen gjennom $v_1$, selv om lengden av bidraget langs $v_2$ ikke avtar?
+**Svar i egne notater:** en kort forklaring med forholdet mellom bidragslengdene.
 
-**4. En liten residual – svar på hvilket spørsmål?** Fullfør funksjonen.
-Den skal normalisere startvektoren, utføre `steps` normaliserte multiplikasjoner,
-og returnere siste enhetsvektor, Rayleigh-kvotienten og lengden av egenresidualen.
-Forutsett en ikke-null startvektor og at ingen multiplikasjon gir nullvektoren.
+**d. Undersøk to endringer.**
+
+1. Oppgi én konkret ikke-null startvektor som gir en iterasjonsfølge som
+   ikke nærmer seg linjen gjennom $v_1$. Begrunn valget.
+2. Behold $x_0=(2,1)^T$ og basisvektorene, men la egenverdiene være $3$ og $-1$.
+   Skriv den nye formelen for $A^kx_0$. Hva endres ved fortegnet og størrelsen
+   til det andre bidraget?
+
+**Svar i egne notater:** én vektor, én vektorformel og begrunnelser.
+
+### Oppgave 4 – hva kontrollerer en liten egenresidual?
+
+**a. Programmer potensmetoden.** Fullfør `power_check`.
+Normaliser startvektoren og utfør deretter nøyaktig `steps` oppdateringer
+$x\leftarrow Ax/\lVert Ax\rVert_2$. Beregn til slutt
+
+$$\rho=\frac{x^TAx}{x^Tx},\qquad r=Ax-\rho x.$$
+
+| Navn | Type og betydning |
+|---|---|
+| `A` | Reell NumPy-matrise med form `(n, n)` |
+| `start` | Reell NumPy-vektor med form `(n,)`, forskjellig fra null |
+| `steps` | Heltall større enn eller lik null |
+| Returverdi | Tuple `(x, rho, residual)` |
+| `x` | NumPy-vektor med form `(n,)` og lengde én |
+| `rho` | Reelt skalar: Rayleigh-kvotienten for siste vektor |
+| `residual` | Ikke-negativt skalar: $\lVert r\rVert_2$ |
+
+Forutsett at ingen multiplikasjon gir nullvektoren.
+Når `steps=0`, skal funksjonen fortsatt normalisere startvektoren og beregne de to skalarene.
 
 ```{py-exercise}
 #| label: week5-task-power-residual
@@ -2111,15 +2203,29 @@ assert np.allclose(x,[.6,.8]), 'Også startvektoren skal normaliseres når steps
 assert np.isclose(rho,2.96) and np.isclose(residual,.28), 'Funksjonen må også virke for en matrise som ikke er diagonal.'
 ```
 
-**Undersøk:** Forutsi hvilken av de tre startvektorene som gir raskest tilnærming til egenverdi 5
-raskest. Velg selv hvor mange steg du trenger for å undersøke hypotesen.
-Kan residualen være null når du har funnet egenverdi 2? Forklar hva testen
-bekrefter, og hva den ikke bekrefter. Bruk uttrykket for $A^kx_0$ til å
-forklare forskjellen mellom startvektorene $[0,1]^T$ og $[10^{-8},1]^T$.
+**b. Sammenlign tre startvektorer.** Bruk $A=\operatorname{diag}(5,2)$ og
+$(1,1)^T$, $(0,1)^T$, $(10^{-8},1)^T$.
+Forutsi hvilke som vil gi tilnærming til egenverdien $5$, og hvilken som vil
+gi raskest tilnærming. Prøv deretter 5, 20 og 40 steg for hver startvektor.
+Legg egne funksjonskall før `## TESTS ##` i kodevinduet.
 
-**5. En stasjonær fordeling uten konvergens.** To sider lenker bare til
-hverandre, så $S=\begin{bmatrix}0&1\\1&0\end{bmatrix}$.
-Finn egenverdiene og løs $Sp_*=p_*$ sammen med $p_{*,1}+p_{*,2}=1$.
+**Svar:** en tabell med startvektor, antall steg, $\rho$ og residualens lengde.
+
+**c. Tolk kontrollen.** Kan residualen være null når $\rho=2$?
+Hva bekrefter en null residual, og hva sier den ikke om størrelsen på egenverdien?
+Bruk uttrykket for $A^kx_0$ til å forklare forskjellen mellom startvektorene
+$(0,1)^T$ og $(10^{-8},1)^T$.
+**Svar i egne notater:** én vektorformel og en kort konklusjon.
+
+### Oppgave 5 – stasjonær fordeling uten konvergens
+
+To nettsider lenker bare til hverandre. Overgangsmatrisen er
+$S=\begin{bmatrix}0&1\\1&0\end{bmatrix}$, med kolonner som avsendersider.
+
+**a. Finn den stasjonære fordelingen.** Løs $Sp_*=p_*$ sammen med
+$p_{*,1}+p_{*,2}=1$, og finn begge egenverdiene.
+**Svarformat:** to sannsynligheter mellom 0 og 1 med sum én,
+og ett reelt tall for egenverdien forskjellig fra $1$.
 
 ```{math-exercise}
 #| label: week5-task-stationary-cycle
@@ -2133,15 +2239,30 @@ $p_*=($ __[1/2] $, $ __[1/2] $)^T$
 Egenverdien forskjellig fra $1$ er __[-1]
 ```
 
-Forutsi forløpet fra $(1,0)^T$ og fra $p_*$. Forklar ved hjelp av den
-andre egenverdien hvorfor en entydig stasjonær fordeling ikke er nok til
-å sikre at iterasjonsfølgen konvergerer mot denne fordelingen fra enhver startfordeling.
+**b. Følg to startfordelinger.** Finn $p_0,p_1,p_2,p_3$ både når
+$p_0=(1,0)^T$ og når $p_0=p_*$.
+**Svar i egne notater:** to følger med fire vektorer hver.
 
-**6. Endre modellen, og forklar effekten.** Teleportering betyr at vi med
-sannsynlighet $1-\alpha$ velger neste side etter en fast sannsynlighetsvektor
-$u$, og ellers følger lenkene i $S$. Fullfør ett steg
-$p_{k+1}=\alpha Sp_k+(1-\alpha)u$. Her er $S$ kolonnestokastisk,
-$p$ og $u$ sannsynlighetsvektorer og $0\leq\alpha<1$.
+**c. Forklar forskjellen.** Bruk den andre egenverdien til å forklare
+hvorfor en entydig stasjonær fordeling ikke sikrer konvergens fra enhver startfordeling.
+**Svar i egne notater:** en kort begrunnelse knyttet til vektorene i del b.
+
+### Oppgave 6 – tilfeldige hopp endrer både forløp og rangering
+
+Vi følger lenkene med sannsynlighet $\alpha$ og velger ellers neste side
+etter en fast sannsynlighetsvektor $u$. Oppdateringen er
+$p_{k+1}=\alpha Sp_k+(1-\alpha)u$.
+
+**a. Programmer ett steg.** Fullfør `visit_step`.
+
+| Navn | Type og betydning |
+|---|---|
+| `S` | NumPy-matrise med form `(n, n)`, ikke-negative elementer og kolonnesum én |
+| `p`, `u` | NumPy-vektorer med form `(n,)`, ikke-negative elementer og sum én |
+| `alpha` | Reelt skalar med $0\leq\alpha<1$ |
+| Returverdi | NumPy-vektor med form `(n,)`: fordelingen etter **ett** steg |
+
+Funksjonen skal returnere vektoren, ikke skrive den ut eller returnere flere verdier.
 
 ```{py-exercise}
 #| label: week5-task-teleportation
@@ -2172,12 +2293,26 @@ assert np.allclose(out,[.2,.7,.1]), 'Bruk kolonner som avsendere; funksjonen ska
 assert np.isclose(np.sum(out),1) and np.all(np.asarray(out)>=0), 'Resultatet skal være en sannsynlighetsvektor.'
 ```
 
-**Undersøk:** Behold de to sidene og jevn $u$. Velg minst to verdier av
-$\alpha$ som du tror vil gi tydelig forskjellig fart. Forutsi først hvordan
-avstanden til $u$ endres fra ett steg til det neste; bruk deretter iterasjonene
-til å utfordre forklaringen. Vis algebraisk hva som skjer med avviket
-$p_k-u$ langs $(1,-1)^T$. Hva koster raskere konvergens i form av hvor mye
-rangeringen bygger på de opprinnelige lenkene?
+**b. Undersøk farten.** Bruk $S=\begin{bmatrix}0&1\\1&0\end{bmatrix}$,
+$u=(1/2,1/2)^T$ og $p_0=(1,0)^T$. Velg to verdier $0<\alpha<1$ som
+du tror vil gi tydelig forskjellig konvergensfart. Bruk samme startfordeling
+og antall steg i begge forsøk.
+
+**Svar:** ett plott av $\lVert p_k-u\rVert_2$ mot $k$ med én merket kurve
+for hver verdi av $\alpha$, og en kort sammenligning med forventningen din.
+Legg forsøkskoden før `## TESTS ##`.
+
+**c. Begrunn observasjonen.** Skriv avviket $p_k-u$ som et tall ganger
+$(1,-1)^T$. Vis hvordan dette tallet endres ved ett steg.
+**Svar i egne notater:** en formel i $k$ og $\alpha$ og en forklaring av
+både fortegnet og konvergensfarten.
+
+**d. Skill regnefart fra modellvalg.** Forklar hva en lavere $\alpha$ betyr
+for vekten på lenkene. I dette symmetriske eksemplet er den stasjonære
+fordelingen $u$ for alle $0\leq\alpha<1$. Hvorfor betyr ikke dette at
+rangeringen på andre nettverk er uavhengig av $\alpha$? Bruk fellen i 5.6
+som sammenligningsgrunnlag.
+**Svar i egne notater:** en kort forklaring med henvisning til besøksregelen.
 
 I [prosjekt 5](project_week5.qmd) bruker du dette til en egen undersøkelse
 av rangering. Skill mellom tre spørsmål: Oppfyller svaret likningen?
