@@ -1388,9 +1388,8 @@ En lenke til en side kan tolkes som en anbefaling. Men en lenke fra en side
 som mange besøker, kan sende flere besøk videre enn en lenke fra en side
 som få besøker. Vi ønsker et mål som tar hensyn til hele lenkenettverket.
 
-**PageRank** bygger på denne ideen. Vi skal gjøre den presis ved å beskrive
-hvordan en tenkt besøkende beveger seg, og deretter bruke sannsynligheten
-for å være på hver side som mål på viktighet i modellen.
+**PageRank** bygger på denne ideen. Vi lar en tenkt besøkende følge lenkene
+fra side til side. En side regnes som viktig hvis den besøkende ofte havner der.
 
 ::: {.week5-network-model}
 ::: {.week5-network-description}
