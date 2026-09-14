@@ -1382,12 +1382,19 @@ men fjerner ikke mekanismen med relativ vekst mellom retningene.
 
 ### Fra lenker til en rangering
 
-**Hvordan kan vi rangere nettsider ved hjelp av lenkene mellom dem?**
-Å telle lenker er én mulighet. Men en lenke fra en mye besøkt side kan gi
-flere besøk enn en lenke fra en lite besøkt side. Vi trenger derfor en modell
-der besøksandelene bestemmes sammen. Dette er utgangspunktet for **PageRank**:
-en rangering basert på en modell for hvordan en besøkende beveger seg mellom nettsider.
-Vi bygger først modellen med lenker; i 5.6 legger vi til tilfeldige hopp.
+**Hvilke nettsider er viktige i et nettverk av lenker?** Vi ønsker å gi hver
+side et tall som uttrykker «viktighet» ut fra hvordan sidene lenker til hverandre.
+Å **rangere** sidene betyr å ordne dem fra høyest til lavest verdi.
+
+En lenke til en side kan tolkes som en anbefaling. Men skal alle anbefalinger
+telle like mye? Ideen bak **PageRank** er at en lenke fra en viktig side
+skal telle mer. Da avhenger sidenes viktighet av hverandre, og tallene må bestemmes sammen.
+
+Vi gjør ideen konkret med en modell for en besøkende som følger lenker.
+**En side regnes som viktig hvis modellen gir høy sannsynlighet for å være
+på siden etter mange steg, når fordelingen har stabilisert seg.** Det er
+disse sannsynlighetene vi rangerer etter. Vi bygger først besøksregelen med
+lenker; i 5.6 legger vi til tilfeldige hopp som sikrer en entydig, stabil fordeling.
 
 ::: {.week5-network-model}
 ::: {.week5-network-description}
@@ -1540,7 +1547,9 @@ $$\underbrace{Sp_*}_{\text{neste fordeling}}=
 \qquad\Longleftrightarrow\qquad Sp_*=1p_*.$$
 
 Dette er en egenvektor med egenverdi **1**, skalert til sum én.
-Her er $p_*=(1/3,1/6,1/3,1/6)^T$: A og C deler førsteplassen.
+Her er $p_*=(1/3,1/6,1/3,1/6)^T$. Elementene er modellens mål på
+sidenes viktighet: A og C får verdien $1/3$ og deler førsteplassen;
+B og D får $1/6$ og deler neste plass.
 Den besøkende flytter fortsatt; det er **fordelingen** som er uendret.
 
 **Diskuter:** Hvorfor kan en lenke fra en mye besøkt side gi flere besøk enn
