@@ -679,116 +679,68 @@ løsningen av de opprinnelige. Dette er **følsomhet i problemet**,
 også kalt kondisjon. Det er ikke i seg selv en feil i algoritmen.
 Neste forsøk viser forskjellen.
 
-### Eksperiment 3 – samme algoritme, ulikt tap av nøyaktighet
+### Eksperiment 3 – liten dataendring, stor endring i svaret?
 
-Vi skal endre høyresiden litt og se hvor mye løsningen flytter seg.
-Alle systemene har to ukjente, og vi bruker samme algoritme,
-`np.linalg.solve`, hver gang. Vi velger matrisene slik at bare
-kondisjonstallet endres.
+**Kan programmet løse likningene godt, men likevel gi et svar langt
+fra den opprinnelige løsningen?**
 
-Vi bruker to faste, vinkelrette enhetsvektorer
+Vi bruker samme løser, `np.linalg.solve`, på fem systemer.
+Likningene er $x_1=1$ og $x_2/K=0$, med løsning $(1,0)$.
+Matrisen er diagonal og har kondisjonstall $K$: første koordinat
+beholdes, mens andre deles på $K$.
 
-$$q_1=(0.8,0.6)^T,\qquad q_2=(-0.6,0.8)^T.$$
-
-For hvert tall $K$ lager vi en matrise $A_K$ som virker slik:
-
-$$A_Kq_1=q_1,\qquad A_Kq_2=\frac1Kq_2.$$
-
-En vektor langs $q_1$ beholder lengden sin. En vektor langs $q_2$
-blir $K$ ganger kortere. Matrisen har derfor kondisjonstall $K$.
-Koden lager den som $Q\operatorname{diag}(1,1/K)Q^T$, der
-$Q=[q_1\ q_2]$: $Q^T$ gir koordinatene langs de to retningene,
-diagonalmatrisen skalerer dem, og $Q$ regner tilbake.
-
-Vi setter $\varepsilon=10^{-8}$. **Dette gjør vi for hver matrise:**
-
-1. Velg den samme eksakte løsningen $x_*=q_1$ og beregn $b=A_Kx_*=q_1$.
-2. Lag høyresiden $b_1=b+\varepsilon q_1$ og løs systemet med denne.
-   Kall det beregnede svaret $\hat x_1$. Mål foroverfeilen mot $x_*$.
-3. Lag høyresiden $b_2=b+\varepsilon q_2$ og beregn svaret $\hat x_2$.
-   Endringen i data har samme lengde, men en annen retning.
-
-Både $b$ og $x_*$ har lengde $1$, så den relative dataendringen er
-$\varepsilon$ i begge tilfeller. Når vi løser systemet, må vi
-oppheve det matrisen gjør. **Hva skjer med endringen langs $q_2$ når
-vi må gange med $K$ for å oppheve divisjonen med $K$?**
+Så endrer vi høyresiden i andre likning fra $0$ til $10^{-8}$.
+Koden kaller den nye høyresiden `b_endret` og sender den til løseren.
+Vi måler både hvor langt svaret har flyttet seg, og hvor godt det
+oppfyller de endrede likningene.
 
 ```{pyodide-python}
 #| label: week6-conditioning-experiment
-Q = np.array([[.8, -.6], [.6, .8]])  # ortonormale kolonner
-star = Q[:,0]
-epsilon = 1e-8
-kappas, errors_strong, errors_weak, residuals_weak = [], [], [], []
-for K in [1., 1e2, 1e4, 1e6, 1e8]:
-    A = Q @ np.diag([1., 1/K]) @ Q.T
-    b = A @ star
-    b1 = b + epsilon*np.linalg.norm(b)*Q[:,0]
-    b2 = b + epsilon*np.linalg.norm(b)*Q[:,1]
-    x1 = np.linalg.solve(A, b1)
-    x2 = np.linalg.solve(A, b2)
-    kappas.append(np.linalg.cond(A, 2))
-    errors_strong.append(np.linalg.norm(x1-star)/np.linalg.norm(star))
-    errors_weak.append(np.linalg.norm(x2-star)/np.linalg.norm(star))
-    # Nederste bilde: bare q2-forsøket, med høyreside b2 og beregnet svar x2.
-    residuals_weak.append(np.linalg.norm(b2-A@x2)/np.linalg.norm(b2))
+K_verdier = [1., 1e2, 1e4, 1e6, 1e8]
+x_fasit = np.array([1., 0.])
+b = np.array([1., 0.])
+b_endret = b + np.array([0., 1e-8])
+feil, residualer = [], []
+for K in K_verdier:
+    A = np.diag([1., 1/K])
+    x = np.linalg.solve(A, b_endret)
+    # Sammenlign med den opprinnelige løsningen.
+    feil.append(np.linalg.norm(x - x_fasit) / np.linalg.norm(x_fasit))
+    # Kontroller de samme likningene som løseren fikk.
+    residualer.append(np.linalg.norm(b_endret - A @ x) / np.linalg.norm(b_endret))
 
-kappas = np.array(kappas)
 fig, axes = plt.subplots(2, 1, figsize=(7, 9))
-axes[0].loglog(kappas, errors_weak, 'o-', label='Dataendring langs q₂: feilen vokser med K')
-axes[0].loglog(kappas, errors_strong, 's-', label='Dataendring langs q₁')
-axes[0].loglog(kappas, epsilon*kappas, 'k:', label='κ₂(A) · ε')
-axes[0].set(xlabel='Kondisjonstall κ₂(A)', ylabel='Relativ foroverfeil',
-            title='Samme løser og samme relative datastøy')
-axes[0].legend(fontsize=8)
-# Lineær skala her: residualen kan være nøyaktig null i flyttallsregningen.
-axes[1].semilogx(kappas, residuals_weak, 'o-')
-axes[1].set(xlabel='Kondisjonstall κ₂(A)', ylabel=r'$\|b_2-A_K\hat{x}_2\|_2/\|b_2\|_2$',
-            title='Bare q₂-forsøket: residual mot b₂',
-            ylim=(0, max(5e-16, 1.2*max(residuals_weak))))
-for ax in axes: ax.grid(alpha=.25)
+axes[0].loglog(K_verdier, feil, 'o-')
+axes[0].set(ylabel='Relativ foroverfeil',
+            title='Avstand fra den opprinnelige løsningen')
+# Lineær skala på loddrett akse, slik at også null residual kan vises.
+axes[1].semilogx(K_verdier, residualer, 'o-')
+axes[1].set(ylabel='Relativ residual',
+            title='Kontroll mot den endrede høyresiden',
+            ylim=(-0.2e-16, 5e-16))
+for ax in axes:
+    ax.set_xlabel('Kondisjonstall K')
+    ax.grid(alpha=.25)
 fig.tight_layout(); plt.show()
 ```
 
-**Øverste bilde: hvor mye endres svaret?** Den vannrette aksen viser
-kondisjonstallet. Den loddrette viser relativ **foroverfeil mot den
-opprinnelige løsningen** $x_*$. Ved endring langs $q_1$ er feilen
-omtrent $10^{-8}$. Ved endring langs $q_2$ blir den omtrent
-$K\cdot10^{-8}$: $10^{-8},10^{-6},10^{-4},10^{-2},1$.
-En foroverfeil på $1$ betyr her $100\%$ relativ feil.
+**Øverste bilde: hvor mye flyttet svaret seg?** Når kondisjonstallet
+øker fra $1$ til $10^8$, vokser feilen fra $10^{-8}$ til $1$, altså
+$100\%$ relativ feil. Den andre likningen løses ved å gange med $K$;
+derfor blir også dataendringen ganget med $K$.
 
-**Nederste bilde: bare forsøket med endring langs $q_2$.**
-Her bruker vi svaret $\hat x_2$ som programmet beregnet med høyresiden
+**Nederste bilde: løste programmet likningene det fikk?** Her bruker
+vi det samme beregnede svaret, men kontrollerer `b_endret - A @ x`.
+Høyresiden er altså den **endrede** høyresiden som ble sendt til
+`solve`. Residualen er null eller svært liten. Programmet oppfyller
+de endrede likningene godt, selv når svaret ligger langt fra den
+opprinnelige løsningen.
 
-$$b_2=b+\varepsilon q_2=q_1+\varepsilon q_2.$$
-
-Vi setter dette svaret tilbake i **de samme likningene som programmet
-fikk**, altså systemet med høyreside $b_2$. Det som tegnes, er
-
-$$\frac{\lVert b_2-A_K\hat x_2\rVert_2}{\lVert b_2\rVert_2}.$$
-
-Dette er relativ bakoverfeil for det endrede systemet, med fast $A_K$.
-Kurven ligger nær null; legg merke til faktoren $10^{-16}$ ved den
-loddrette aksen. Det betyr at $\hat x_2$ oppfyller de endrede likningene
-svært godt. Forsøket med $b_1=b+\varepsilon q_1$ er **ikke med i dette bildet**.
-
-Hvorfor kan feilen likevel være stor i øverste bilde? Der måler
-$q_2$-kurven avstanden fra $\hat x_2$ til **den opprinnelige løsningen**
-$x_*=q_1$. Nederste bilde kontrollerer derimot likningene med den
-**endrede høyresiden** $b_2$. Det er to forskjellige sammenligninger:
-programmet kan løse det endrede systemet nøyaktig, selv om løsningen
-har flyttet seg langt fra $x_*$.
-
-Hvis vi i stedet setter samme $\hat x_2$ inn i de opprinnelige
-likningene, beregner vi $b-A_K\hat x_2$, med $b=q_1$.
-Denne residualen er omtrent $-\varepsilon q_2$, så den relative
-bakoverfeilen mot opprinnelig $b$ er omtrent $10^{-8}$.
-**Denne residualen vises ikke i nederste bilde.**
-
-De store feilene i øverste bilde skyldes først og fremst følsomheten
-for dataendringen vi la til. Sammenlign de to kurvene der: like stor
-endring langs $q_1$ og $q_2$ kan gi svært ulik foroverfeil.
-I «Gå i dybden» regner vi dette ut nøyaktig og sammenligner med en
-kjøring uten tilført støy.
+**Et følsomt problem kan gi stor feil i svaret selv om løseren gjør
+en god jobb.** Her valgte vi en dataendring som gir størst utslag.
+Kondisjonstallet sier hvor stor feilen kan bli; den faktiske feilen
+avhenger også av hvilken komponent vi endrer. Det prøver vi i
+«Gå i dybden».
 
 ### Hva betyr dette for stoppkravet vårt?
 
@@ -817,9 +769,9 @@ hvilken øvre grense får dere for relativ feil?**
 2. Begrunn at $\kappa_2(cA)=\kappa_2(A)$ når $c\ne0$.
 3. Forklar mellomsteget fra de to normulikhetene til den relative
    feilgrensen. Hvorfor må $b$ være ulik null?
-4. Vis uten Python at forsøket gir relativ feil $\varepsilon$ for
-   $\delta b=\varepsilon q_1$, og $K\varepsilon$ for
-   $\delta b=\varepsilon q_2$, i eksakt regning.
+4. Finn den nye løsningen i eksperiment 3 uten Python. Hva blir
+   foroverfeilen hvis vi i stedet legger $10^{-8}$ til første
+   komponent i høyresiden?
 
 **Regnegangen**
 
@@ -841,13 +793,19 @@ Multiplikasjon gir den relative feilgrensen. Null residual gir null
 feil når $A$ er invertibel. For stoppkravseksemplet er grensen
 $10^6\cdot10^{-10}=10^{-4}$.
 
-I forsøket er $b=q_1$ og både $b$ og $x_*$ har lengde $1$.
-Siden $A_K^{-1}q_1=q_1$ og $A_K^{-1}q_2=Kq_2$, får vi
+I eksperiment 3 har både den opprinnelige høyresiden og løsningen
+lengde $1$. Vi kan derfor lese den relative feilen direkte fra
+endringen i løsningen. Sett $\varepsilon=10^{-8}$:
 
-$$\delta x=A_K^{-1}\delta b=
-\begin{cases}\varepsilon q_1,&\delta b=\varepsilon q_1,\\
-K\varepsilon q_2,&\delta b=\varepsilon q_2.
-\end{cases}$$
+| Hvor legger vi til $\varepsilon$? | Nøyaktig løsning av de endrede likningene | Relativ foroverfeil |
+|:--|:--|:--|
+| Første komponent i høyresiden | $(1+\varepsilon,0)$ | $\varepsilon$ |
+| Andre komponent, som i forsøket | $(1,K\varepsilon)$ | $K\varepsilon$ |
+
+Kontrollerer vi forsøket mot den **opprinnelige** høyresiden,
+blir residualen $(0,-\varepsilon)$ og relativ bakoverfeil
+$\varepsilon$. Nederste bilde kontrollerer den **endrede**
+høyresiden, og viser derfor en annen residual.
 
 **Hva forklarer dette?**
 
@@ -871,34 +829,30 @@ $(5\pm\sqrt5)/2$, og kondisjonstallet er omtrent $2.62$.
 For en generell matrise kan vi ikke bruke denne egenverdikvotienten;
 uke 7 forklarer sammenhengen med singularverdier.
 
-**Et ekstra forsøk: hva skjer uten tilført datastøy?**
+**Et ekstra forsøk: betyr det noe hvilken komponent vi endrer?**
 
-Vi bruker de samme matrisene og samme løser. Nå sammenligner vi
-kjøringen med støy langs $q_2$ med en kjøring uten tilført støy.
+Vi bruker de samme matrisene og samme løser. Tabellen skriver ut
+relativ foroverfeil for tre valg av høyreside.
 
 ```{pyodide-python}
 #| label: week6-conditioning-roundoff
-Q = np.array([[.8, -.6], [.6, .8]])
-star = Q[:,0]
+x_fasit = np.array([1., 0.])
+b = np.array([1., 0.])
 epsilon = 1e-8
-print('cond₂(A)    feil uten tilført støy    feil med støy langs q₂')
+print('K          ingen endring    endring i første    endring i andre')
 for K in [1., 1e2, 1e4, 1e6, 1e8]:
-    A = Q @ np.diag([1., 1/K]) @ Q.T
-    b = A @ star
-    x_clean = np.linalg.solve(A, b)
-    b_weak = b + epsilon*np.linalg.norm(b)*Q[:,1]
-    x_weak = np.linalg.solve(A, b_weak)
-    clean_error = np.linalg.norm(x_clean-star)/np.linalg.norm(star)
-    noisy_error = np.linalg.norm(x_weak-star)/np.linalg.norm(star)
-    print(f'{np.linalg.cond(A, 2):9.1e}   {clean_error:20.2e}   {noisy_error:20.2e}')
+    A = np.diag([1., 1/K])
+    feil = []
+    for endring in [[0., 0.], [epsilon, 0.], [0., epsilon]]:
+        x = np.linalg.solve(A, b + endring)
+        feil.append(np.linalg.norm(x - x_fasit) / np.linalg.norm(x_fasit))
+    print(f'{K:9.1e}  {feil[0]:13.2e}  {feil[1]:18.2e}  {feil[2]:17.2e}')
 ```
 
-Kolonnen uten tilført støy viser virkningen av flyttallsregningen i
-både oppbyggingen av systemet og selve løsningen. Tallene kan variere
-mellom maskiner og trenger ikke vokse jevnt. En beregnet feil på null
-kan forekomme for enkelte data og er ingen generell garanti.
-Sammenlign med den langt større, kontrollerte effekten fra
-$\varepsilon=10^{-8}$ i siste kolonne.
+Bare endringen i andre komponent forsterkes med $K$. Stor feil er
+altså mulig ved stort kondisjonstall, men oppstår ikke for alle
+dataendringer. Uten endring får vi eksakt fasit i dette enkle
+eksemplet; andre systemer kan også få feil fra flyttallsavrunding.
 
 </details>
 
