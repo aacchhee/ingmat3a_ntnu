@@ -80,7 +80,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-24c09a13944ec7e1f31d2917b1251fc2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-56a7063a21dd4c20fbc96590a1db8d87.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -6515,32 +6515,32 @@ S=0,\qquad e=0,\qquad E=1023,
 <div id="mini-machine-format" class="math-exercise-context">
 <p>Her bygger vi en <strong>mini-versjon av en flyttallsmaskin</strong>. Poenget er at formatet er så lite at vi faktisk kan se <em>alle</em> tallene maskinen kjenner.</p>
 <p>Vi bruker et forenklet format med</p>
-<p><span data-math-exercise-tex="
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 \boxed{S}\quad\boxed{EEE}\quad\boxed{MMMM}
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 \boxed{S}\quad\boxed{EEE}\quad\boxed{MMMM}
 \]</span></span></p>
 <p>der</p>
 <ul>
-<li><span data-math-exercise-tex="S" data-math-exercise-display="false"><span class="math inline">\(S\)</span></span> er én fortegnsbit,</li>
-<li><span data-math-exercise-tex="E" data-math-exercise-display="false"><span class="math inline">\(E\)</span></span> er 3 eksponentbiter,</li>
-<li><span data-math-exercise-tex="M" data-math-exercise-display="false"><span class="math inline">\(M\)</span></span> er 4 mantissebiter,</li>
-<li>bias er <span data-math-exercise-tex="3" data-math-exercise-display="false"><span class="math inline">\(3\)</span></span>.</li>
+<li><span data-math-exercise-display="false" data-math-exercise-tex="S"><span class="math inline">\(S\)</span></span> er én fortegnsbit,</li>
+<li><span data-math-exercise-display="false" data-math-exercise-tex="E"><span class="math inline">\(E\)</span></span> er 3 eksponentbiter,</li>
+<li><span data-math-exercise-display="false" data-math-exercise-tex="M"><span class="math inline">\(M\)</span></span> er 4 mantissebiter,</li>
+<li>bias er <span data-math-exercise-display="false" data-math-exercise-tex="3"><span class="math inline">\(3\)</span></span>.</li>
 </ul>
 <p>Vi bruker bare normaliserte tall med</p>
-<p><span data-math-exercise-tex="
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 E=1,2,\ldots,6.
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 E=1,2,\ldots,6.
 \]</span></span></p>
-<p>Bitmønstrene <span data-math-exercise-tex="E=0" data-math-exercise-display="false"><span class="math inline">\(E=0\)</span></span> og <span data-math-exercise-tex="E=7" data-math-exercise-display="false"><span class="math inline">\(E=7\)</span></span> lar vi ligge. Vi ignorerer altså subnormale tall, <code>inf</code> og <code>NaN</code> i denne mini-maskinen.</p>
+<p>Bitmønstrene <span data-math-exercise-display="false" data-math-exercise-tex="E=0"><span class="math inline">\(E=0\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="E=7"><span class="math inline">\(E=7\)</span></span> lar vi ligge. Vi ignorerer altså subnormale tall, <code>inf</code> og <code>NaN</code> i denne mini-maskinen.</p>
 <p>Et tall tolkes som</p>
-<p><span data-math-exercise-tex="
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 (-1)^S\left(1+\frac{M}{16}\right)2^{E-3},
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 (-1)^S\left(1+\frac{M}{16}\right)2^{E-3},
 \]</span></span></p>
-<p>der <span data-math-exercise-tex="M" data-math-exercise-display="false"><span class="math inline">\(M\)</span></span> er heltallsverdien til de fire mantissebitene.</p>
+<p>der <span data-math-exercise-display="false" data-math-exercise-tex="M"><span class="math inline">\(M\)</span></span> er heltallsverdien til de fire mantissebitene.</p>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -6562,30 +6562,30 @@ E=1,2,\ldots,6.
 <p>Vi starter med å lese bitmønstre.</p>
 <div id="mini-machine-decode-method" class="math-exercise-context">
 <p>For eksempel</p>
-<p><span data-math-exercise-tex="
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 0\;|\;100\;|\;0110
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 0\;|\;100\;|\;0110
 \]</span></span></p>
 <p>gir</p>
-<p><span data-math-exercise-tex="
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 S=0,\qquad E=(100)_2=4,\qquad e=4-3=1,
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 S=0,\qquad E=(100)_2=4,\qquad e=4-3=1,
 \]</span></span></p>
 <p>og</p>
-<p><span data-math-exercise-tex="
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 M=(0110)_2=6.
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 M=(0110)_2=6.
 \]</span></span></p>
 <p>Dermed</p>
-<p><span data-math-exercise-tex="
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 x=(1+6/16)2^1=2.75.
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 x=(1+6/16)2^1=2.75.
 \]</span></span></p>
-<p>For å dekode et bitmønster leser vi derfor de tre feltene hver for seg: fortegnsbiten <span data-math-exercise-tex="S" data-math-exercise-display="false"><span class="math inline">\(S\)</span></span>, de tre eksponentbitene <span data-math-exercise-tex="E" data-math-exercise-display="false"><span class="math inline">\(E\)</span></span> og de fire mantissebitene <span data-math-exercise-tex="M" data-math-exercise-display="false"><span class="math inline">\(M\)</span></span>. Deretter regner vi ut <span data-math-exercise-tex="e=E-3" data-math-exercise-display="false"><span class="math inline">\(e=E-3\)</span></span> og setter verdiene inn i mini-maskinens formel.</p>
+<p>For å dekode et bitmønster leser vi derfor de tre feltene hver for seg: fortegnsbiten <span data-math-exercise-display="false" data-math-exercise-tex="S"><span class="math inline">\(S\)</span></span>, de tre eksponentbitene <span data-math-exercise-display="false" data-math-exercise-tex="E"><span class="math inline">\(E\)</span></span> og de fire mantissebitene <span data-math-exercise-display="false" data-math-exercise-tex="M"><span class="math inline">\(M\)</span></span>. Deretter regner vi ut <span data-math-exercise-display="false" data-math-exercise-tex="e=E-3"><span class="math inline">\(e=E-3\)</span></span> og setter verdiene inn i mini-maskinens formel.</p>
 </div>
 <section id="oppgave-1a-dekod-bitmønsteret" class="level4">
 <h4 class="anchored" data-anchor-id="oppgave-1a-dekod-bitmønsteret">Oppgave 1A – dekod bitmønsteret</h4>
@@ -6611,12 +6611,12 @@ x=(1+6/16)2^1=2.75.
 </div>
 <div id="mini-machine-encode-method" class="math-exercise-context">
 <p>Nå går vi motsatt vei. Hvis et tall allerede er representerbart, kan vi skrive det som</p>
-<p><span data-math-exercise-tex="
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 \pm(1.MMMM)_2\,2^e,
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 \pm(1.MMMM)_2\,2^e,
 \]</span></span></p>
-<p>finne <span data-math-exercise-tex="E=e+3" data-math-exercise-display="false"><span class="math inline">\(E=e+3\)</span></span>, og deretter skrive <span data-math-exercise-tex="S" data-math-exercise-display="false"><span class="math inline">\(S\)</span></span>, <span data-math-exercise-tex="E" data-math-exercise-display="false"><span class="math inline">\(E\)</span></span> og <span data-math-exercise-tex="M" data-math-exercise-display="false"><span class="math inline">\(M\)</span></span> som bit.</p>
+<p>finne <span data-math-exercise-display="false" data-math-exercise-tex="E=e+3"><span class="math inline">\(E=e+3\)</span></span>, og deretter skrive <span data-math-exercise-display="false" data-math-exercise-tex="S"><span class="math inline">\(S\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="E"><span class="math inline">\(E\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="M"><span class="math inline">\(M\)</span></span> som bit.</p>
 </div>
 </section>
 <section id="oppgave-1b-kod-et-tall" class="level4">
@@ -6674,20 +6674,20 @@ x=(1+6/16)2^1=2.75.
 <div id="mini-machine-rounding" class="math-exercise-context">
 <p>Et vanlig reelt tall trenger ikke være blant de 96 positive eller 96 negative verdiene maskinen kjenner.</p>
 <p>Da må vi velge det <strong>nærmeste representerbare tallet</strong>.</p>
-<p>For eksempel ligger <span data-math-exercise-tex="1.1" data-math-exercise-display="false"><span class="math inline">\(1.1\)</span></span> mellom</p>
-<p><span data-math-exercise-tex="
+<p>For eksempel ligger <span data-math-exercise-display="false" data-math-exercise-tex="1.1"><span class="math inline">\(1.1\)</span></span> mellom</p>
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 1.0625
 \quad\text{og}\quad
 1.125.
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 1.0625
 \quad\text{og}\quad
 1.125.
 \]</span></span></p>
-<p>Det nærmeste er <span data-math-exercise-tex="1.125" data-math-exercise-display="false"><span class="math inline">\(1.125\)</span></span>, så mini-maskinen vil lagre</p>
-<p><span data-math-exercise-tex="
+<p>Det nærmeste er <span data-math-exercise-display="false" data-math-exercise-tex="1.125"><span class="math inline">\(1.125\)</span></span>, så mini-maskinen vil lagre</p>
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 1.1\longmapsto1.125.
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 1.1\longmapsto1.125.
 \]</span></span></p>
 <p>Avrunding i mini-maskinen betyr altså å velge den representerbare verdien med minst avstand til tallet som skal lagres.</p>
@@ -6739,14 +6739,14 @@ mini_float(x)</code></pre>
 <section id="oppgave-3c-mini-maskinens-maskinepsilon" class="level4">
 <h4 class="anchored" data-anchor-id="oppgave-3c-mini-maskinens-maskinepsilon">Oppgave 3C – mini-maskinens maskinepsilon</h4>
 <div id="mini-machine-epsilon-rule" class="math-exercise-context">
-<p>For et binært format med <span data-math-exercise-tex="p" data-math-exercise-display="false"><span class="math inline">\(p\)</span></span> lagrede mantissebiter er neste representerbare tall over <span data-math-exercise-tex="1" data-math-exercise-display="false"><span class="math inline">\(1\)</span></span></p>
-<p><span data-math-exercise-tex="
+<p>For et binært format med <span data-math-exercise-display="false" data-math-exercise-tex="p"><span class="math inline">\(p\)</span></span> lagrede mantissebiter er neste representerbare tall over <span data-math-exercise-display="false" data-math-exercise-tex="1"><span class="math inline">\(1\)</span></span></p>
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 1+2^{-p}.
-" data-math-exercise-display="true"><span class="math display">\[
+"><span class="math display">\[
 1+2^{-p}.
 \]</span></span></p>
 <p>Finn maskinepsilon.</p>
-<p>Maskinepsilon er dermed avstanden fra <span data-math-exercise-tex="1" data-math-exercise-display="false"><span class="math inline">\(1\)</span></span> til det neste større representerbare tallet, altså <span data-math-exercise-tex="\varepsilon_{\mathrm{mach}}=2^{-p}" data-math-exercise-display="false"><span class="math inline">\(\varepsilon_{\mathrm{mach}}=2^{-p}\)</span></span> for disse formatene.</p>
+<p>Maskinepsilon er dermed avstanden fra <span data-math-exercise-display="false" data-math-exercise-tex="1"><span class="math inline">\(1\)</span></span> til det neste større representerbare tallet, altså <span data-math-exercise-display="false" data-math-exercise-tex="\varepsilon_{\mathrm{mach}}=2^{-p}"><span class="math inline">\(\varepsilon_{\mathrm{mach}}=2^{-p}\)</span></span> for disse formatene.</p>
 </div>
 <div class="math-exercise-cell" id="math-exercise-7" data-label="mini-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="mini-machine-epsilon-rule" data-context="&quot;Oppgave 3C – mini-maskinens maskinepsilon\nFor et binært format med \\(p\\) lagrede mantissebiter er neste representerbare tall over \\(1\\)\\[\n1+2^{-p}.\n\\]Finn maskinepsilon.Maskinepsilon er dermed avstanden fra \\(1\\) til det neste større representerbare tallet, altså \\(\\varepsilon_{\\mathrm{mach}}=2^{-p}\\) for disse formatene.&quot;" data-pool="[&quot;Formatet lagrer $p=2$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/4]&quot;,&quot;Formatet lagrer $p=3$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/8]&quot;,&quot;Mini-maskinen vår lagrer $p=4$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/16]&quot;,&quot;Formatet lagrer $p=5$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/32]&quot;,&quot;Formatet lagrer $p=6$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/64]&quot;]" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Maskinepsilon for små binære formater" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Maskinepsilon for små binære formater</div>

@@ -45,7 +45,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-24c09a13944ec7e1f31d2917b1251fc2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-56a7063a21dd4c20fbc96590a1db8d87.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -6040,12 +6040,12 @@ p_{k+1}=r_{k+1}+\beta_kp_k.\]</span></p>
 </section>
 <section id="oppgaver-til-ukens-pensum" class="level3">
 <h3 class="anchored" data-anchor-id="oppgaver-til-ukens-pensum">Oppgaver til ukens pensum</h3>
-<p>Regn på papir, og bruk svarfeltene til å kontrollere regningen. Skriv eksakte tall, for eksempel <code>3/2</code> og <code>1/sqrt(2)</code>. I uttrykk bruker du <code>*</code> for multiplikasjon og <code>^</code> for potens. Skriv bare uttrykket i feltet, uten likhetstegn. Korte begrunnelser fører du i egne notater.</p>
+<p>Regn på papir, og bruk svarfeltene til å kontrollere regningen. Alle svar skal være eksakte; ikke avrund til desimaltall. Du kan skrive brøker og kvadratrøtter, for eksempel <code>5/7</code> og <code>sqrt(3)</code>. I uttrykk bruker du <code>*</code> for multiplikasjon og <code>^</code> for potens. Skriv bare uttrykket i feltet, uten likhetstegn. Korte begrunnelser fører du i egne notater.</p>
 <p>I oppgave <strong>1–2 og 4–6</strong> bruker vi det samme systemet:</p>
 <p><span class="math display">\[A=\begin{bmatrix}2&amp;1\\1&amp;2\end{bmatrix},\qquad
 b=\begin{bmatrix}3\\0\end{bmatrix},\qquad
 x=\begin{bmatrix}u\\v\end{bmatrix}.\]</span></p>
-<p>Det vil si <span class="math inline">\(2u+v=3\)</span> og <span class="math inline">\(u+2v=0\)</span>. Oppgave 3 har sitt eget system. Oppgavene krever ingen programmering. Hint og løsningsforslag kan åpnes under hver oppgave.</p>
+<p>Det vil si <span class="math inline">\(2u+v=3\)</span> og <span class="math inline">\(u+2v=0\)</span>. Oppgave 3 har sitt eget system. Oppgavene krever ingen programmering.</p>
 </section>
 <section id="oppgave-1-jacobi-eller-gaussseidel" class="level3">
 <h3 class="anchored" data-anchor-id="oppgave-1-jacobi-eller-gaussseidel">Oppgave 1 – Jacobi eller Gauss–Seidel?</h3>
@@ -6073,18 +6073,6 @@ Gauss–Seidel: \(x_1=\) <span class="math-vec" style="--n:2"><input type="text"
 </div>
 </div>
 <p><strong>Forklar i egne notater:</strong> Hvorfor får metodene ulik andre koordinat? Pek på hvilken verdi av <span class="math inline">\(u\)</span> hver metode bruker.</p>
-<details class="learning-hint">
-<summary>
-Hint til oppgave 1
-</summary>
-<p>Oppdateringsreglene bygger på <span class="math inline">\(u=(3-v)/2\)</span> og <span class="math inline">\(v=-u/2\)</span>. Jacobi bruker verdiene fra starten av sveipet i begge beregningene. Gauss–Seidel bruker den nye verdien av <span class="math inline">\(u\)</span> når <span class="math inline">\(v\)</span> oppdateres.</p>
-</details>
-<details class="learning-hint">
-<summary>
-Løsningsforslag til oppgave 1
-</summary>
-<p>Begge metodene får <span class="math inline">\(u_1=(3-0)/2=3/2\)</span>. Jacobi bruker fortsatt <span class="math inline">\(u_0=0\)</span> og får <span class="math inline">\(v_1=0\)</span>. Gauss–Seidel bruker <span class="math inline">\(u_1=3/2\)</span> og får <span class="math inline">\(v_1=-3/4\)</span>. Dermed er punktene henholdsvis <span class="math inline">\((3/2,0)^T\)</span> og <span class="math inline">\((3/2,-3/4)^T\)</span>.</p>
-</details>
 </section>
 <section id="oppgave-2-blir-feilen-mindre" class="level3">
 <h3 class="anchored" data-anchor-id="oppgave-2-blir-feilen-mindre">Oppgave 2 – blir feilen mindre?</h3>
@@ -6117,18 +6105,6 @@ Etter tre sveip er \(e_{k+3}=c e_k\), der \(c=\) <input type="text" id="math-exe
 </div>
 </div>
 <p><strong>Forklar i egne notater:</strong> Hvorfor går feilen mot null fra enhver startverdi? Hvorfor går da også første koordinat mot riktig verdi?</p>
-<details class="learning-hint">
-<summary>
-Hint til oppgave 2
-</summary>
-<p>Bruk <span class="math inline">\(u_{k+1}=(3-v_k)/2\)</span> og <span class="math inline">\(v_{k+1}=-u_{k+1}/2\)</span>. Den eksakte koordinaten <span class="math inline">\(v_*\)</span> oppfyller den samme regelen uten å endres. Trekk denne likningen fra oppdateringen for <span class="math inline">\(v_{k+1}\)</span>.</p>
-</details>
-<details class="learning-hint">
-<summary>
-Løsningsforslag til oppgave 2
-</summary>
-<p>Innsetting gir <span class="math inline">\(v_{k+1}=-3/4+v_k/4\)</span>. Siden også <span class="math inline">\(v_*=-3/4+v_*/4\)</span>, får vi <span class="math inline">\(e_{k+1}=(v_k-v_*)/4=e_k/4\)</span>. Tre sveip gir faktoren <span class="math inline">\((1/4)^3=1/64\)</span>. Faktoren har absoluttverdi mindre enn én, så feilen går mot null. Dessuten er <span class="math inline">\(u_{k+1}-u_*=-e_k/2\)</span>, så også første koordinat konvergerer. Dette er en fikspunktiterasjon, som i uke 2.</p>
-</details>
 </section>
 <section id="oppgave-3-liten-residual-godt-svar" class="level3">
 <h3 class="anchored" data-anchor-id="oppgave-3-liten-residual-godt-svar">Oppgave 3 – liten residual, godt svar?</h3>
@@ -6159,8 +6135,8 @@ b=\begin{bmatrix}1\\0.01\end{bmatrix},\qquad
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<p><strong>b.</strong> Beregn de to relative feilene og kondisjonstallet. Bruk 2-normen. For bakoverfeilen holder vi <span class="math inline">\(A\)</span> fast og tillater bare endringer i <span class="math inline">\(b\)</span>.</p>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="week6-task-forward-backward" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;relativ foroverfeil&quot;,&quot;relativ bakoverfeil med fast A&quot;,&quot;kondisjonstall&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Oppgave 3 – liten residual, godt svar?\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}1&amp;0\\\\0&amp;0.01\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\0.01\\end{bmatrix},\\qquad\n\\hat x=\\begin{bmatrix}1\\\\0\\end{bmatrix}.\\]\na. Finn den eksakte løsningen \\(x_*\\) og residualen \\(r=b-A\\hat x\\).\nb. Beregn de to relative feilene og kondisjonstallet. Bruk 2-normen. For bakoverfeilen holder vi \\(A\\) fast og tillater bare endringer i \\(b\\).&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<p><strong>b.</strong> Beregn de to relative feilene og kondisjonstallet. Bruk 2-normen. For bakoverfeilen holder vi <span class="math inline">\(A\)</span> fast og tillater bare endringer i <span class="math inline">\(b\)</span>. Skriv feilene som eksakte uttrykk med kvadratrøtter, ikke avrundede desimaltall.</p>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="week6-task-forward-backward" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;relativ foroverfeil&quot;,&quot;relativ bakoverfeil med fast A&quot;,&quot;kondisjonstall&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Oppgave 3 – liten residual, godt svar?\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}1&amp;0\\\\0&amp;0.01\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\0.01\\end{bmatrix},\\qquad\n\\hat x=\\begin{bmatrix}1\\\\0\\end{bmatrix}.\\]\na. Finn den eksakte løsningen \\(x_*\\) og residualen \\(r=b-A\\hat x\\).\nb. Beregn de to relative feilene og kondisjonstallet. Bruk 2-normen. For bakoverfeilen holder vi \\(A\\) fast og tillater bare endringer i \\(b\\). Skriv feilene som eksakte uttrykk med kvadratrøtter, ikke avrundede desimaltall.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Hvor stor er feilen i svar og data?" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Hvor stor er feilen i svar og data?</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -6187,20 +6163,6 @@ Relativ bakoverfeil, \(\lVert r\rVert_2/\lVert b\rVert_2=\) <input type="text" i
 </div>
 </div>
 <p><strong>Forklar i egne notater:</strong> Hva sier tallene om nøyaktigheten i <span class="math inline">\(\hat x\)</span>? Kontroller feilgrensen fra 6.3, og forklar hvorfor liten bakoverfeil ikke nødvendigvis gir liten foroverfeil.</p>
-<details class="learning-hint">
-<summary>
-Hint til oppgave 3
-</summary>
-<p>Løs de to likningene hver for seg. Bruk så <span class="math inline">\(\lVert(z_1,z_2)^T\rVert_2=\sqrt{z_1^2+z_2^2}\)</span>. For denne positive diagonalmatrisen er kondisjonstallet forholdet mellom største og minste diagonalelement.</p>
-</details>
-<details class="learning-hint">
-<summary>
-Løsningsforslag til oppgave 3
-</summary>
-<p>Vi får <span class="math inline">\(x_*=(1,1)^T\)</span>, mens residualen er <span class="math inline">\((0,0.01)^T\)</span>. Feilen i løsningen har norm <span class="math inline">\(1\)</span>, og <span class="math inline">\(\lVert x_*\rVert_2=\sqrt2\)</span>. Den relative foroverfeilen er derfor <span class="math inline">\(1/\sqrt2\approx0.707\)</span>.</p>
-<p>Siden <span class="math inline">\(\lVert b\rVert_2=\sqrt{10001}/100\)</span>, er den relative bakoverfeilen <span class="math inline">\(1/\sqrt{10001}\approx0.010\)</span>. Tilnærmingen løser systemet med høyreside <span class="math inline">\((1,0)^T\)</span> eksakt; det krever bare en liten endring i hele høyresidevektoren. Likevel er andre koordinat i svaret feil med én hel enhet.</p>
-<p>Kondisjonstallet er <span class="math inline">\(100\)</span>. Feilgrensen gir <span class="math inline">\(1/\sqrt2\leq100/\sqrt{10001}\approx1\)</span>, som stemmer. Den lille koeffisienten <span class="math inline">\(0.01\)</span> gjør at en stor feil i andre koordinat bare gir et lite utslag i residualen.</p>
-</details>
 </section>
 <section id="oppgave-4-fra-likningssystem-til-minimum" class="level3">
 <h3 class="anchored" data-anchor-id="oppgave-4-fra-likningssystem-til-minimum">Oppgave 4 – fra likningssystem til minimum</h3>
@@ -6248,21 +6210,6 @@ Løsningsforslag til oppgave 3
 </div>
 </div>
 <p><strong>Forklar i egne notater:</strong> Hvorfor er dette punktet minimum for <span class="math inline">\(\phi\)</span>? Begrunn at <span class="math inline">\(A\)</span> er positiv definit, for eksempel med egenverdiene. At gradienten er null, er ikke alene nok til å avgjøre dette.</p>
-<details class="learning-hint">
-<summary>
-Hint til oppgave 4
-</summary>
-<p>Regn først ut <span class="math inline">\(Ax\)</span>, og deretter <span class="math inline">\(x^T(Ax)\)</span>. Husk faktoren <span class="math inline">\(1/2\)</span> og leddet <span class="math inline">\(-b^Tx\)</span>. For å undersøke positiv definithet kan du prøve vektorene <span class="math inline">\((1,1)^T\)</span> og <span class="math inline">\((1,-1)^T\)</span> som egenvektorer.</p>
-</details>
-<details class="learning-hint">
-<summary>
-Løsningsforslag til oppgave 4
-</summary>
-<p>Vi får <span class="math inline">\(x^TAx=2u^2+2uv+2v^2\)</span> og <span class="math inline">\(b^Tx=3u\)</span>, altså</p>
-<p><span class="math display">\[\phi(u,v)=u^2+uv+v^2-3u,\qquad
-\nabla\phi(u,v)=\begin{bmatrix}2u+v-3\\u+2v\end{bmatrix}.\]</span></p>
-<p>Null gradient gir det opprinnelige systemet, med løsning <span class="math inline">\((2,-1)^T\)</span>. Matrisen er symmetrisk og har egenverdiene <span class="math inline">\(3\)</span> og <span class="math inline">\(1\)</span>, begge positive. Fra 6.4 vet vi da at løsningen er det entydige globale minimumet til <span class="math inline">\(\phi\)</span>. Funksjonsverdien der er <span class="math inline">\(-3\)</span>.</p>
-</details>
 </section>
 <section id="oppgave-5-ett-steg-med-bratteste-nedstigning" class="level3">
 <h3 class="anchored" data-anchor-id="oppgave-5-ett-steg-med-bratteste-nedstigning">Oppgave 5 – ett steg med bratteste nedstigning</h3>
@@ -6314,19 +6261,6 @@ Løsningsforslag til oppgave 4
 </div>
 </div>
 <p><strong>Forklar i egne notater:</strong> Hvorfor har vi funnet minimum langs søkelinjen uten å ha løst hele likningssystemet? Bruk residualen i svaret.</p>
-<details class="learning-hint">
-<summary>
-Hint til oppgave 5
-</summary>
-<p>Fra 6.5 er beste faktor langs en retning <span class="math inline">\(p\)</span> <span class="math inline">\(\alpha=p^Tr/(p^TAp)\)</span>, der <span class="math inline">\(r=b-Ax\)</span> i punktet vi starter fra. Du kan også sette <span class="math inline">\(x_0+\alpha p_0\)</span> inn i funksjonen fra oppgave 4 og derivere med hensyn på <span class="math inline">\(\alpha\)</span>.</p>
-</details>
-<details class="learning-hint">
-<summary>
-Løsningsforslag til oppgave 5
-</summary>
-<p>Residualen er <span class="math inline">\(r_0=(3,0)^T\)</span>, så <span class="math inline">\(p_0=(3,0)^T\)</span> og <span class="math inline">\(Ap_0=(6,3)^T\)</span>. Dermed er <span class="math inline">\(\alpha_0=9/18=1/2\)</span>, og <span class="math inline">\(x_1=(3/2,0)^T\)</span>. Den nye residualen blir <span class="math inline">\(r_1=(0,-3/2)^T\)</span>.</p>
-<p>Første søkeretning endrer bare <span class="math inline">\(u\)</span>, og vi har funnet den beste verdien av <span class="math inline">\(u\)</span> når <span class="math inline">\(v=0\)</span>. Men andre likning er ikke oppfylt: residualen er ikke null. Vi trenger en ny søkeretning som også kan endre <span class="math inline">\(v\)</span>.</p>
-</details>
 </section>
 <section id="oppgave-6-lag-neste-cg-retning-med-gramschmidt" class="level3">
 <h3 class="anchored" data-anchor-id="oppgave-6-lag-neste-cg-retning-med-gramschmidt">Oppgave 6 – lag neste CG-retning med Gram–Schmidt</h3>
@@ -6390,19 +6324,6 @@ Sammenlign med vanlig indreprodukt: \(p_0^Tp_1=\) <input type="text" id="math-ex
 </div>
 </div>
 <p><strong>Forklar i egne notater:</strong> Hvorfor trenger ikke de to søkeretningene stå vinkelrett i det vanlige koordinatplanet? Hva sikrer A-konjugertheten når vi gjør det andre linjesøket?</p>
-<details class="learning-hint">
-<summary>
-Hint til oppgave 6
-</summary>
-<p>Sett <span class="math inline">\(p_1=r_1-cp_0\)</span> inn i kravet <span class="math inline">\(p_0^TAp_1=0\)</span>, og løs for <span class="math inline">\(c\)</span>. Bruk deretter samme linjesøkformel som i oppgave 5, nå med <span class="math inline">\(p_1\)</span> og <span class="math inline">\(r_1\)</span>. Merk at <span class="math inline">\(c\)</span> er projeksjonskoeffisienten som trekkes fra; CGs vanlige <span class="math inline">\(\beta_0\)</span> har motsatt fortegn.</p>
-</details>
-<details class="learning-hint">
-<summary>
-Løsningsforslag til oppgave 6
-</summary>
-<p>Vi får <span class="math inline">\(p_0^TAr_1=-9/2\)</span> og <span class="math inline">\(p_0^TAp_0=18\)</span>. Derfor er <span class="math inline">\(c=-1/4\)</span>, og <span class="math inline">\(p_1=r_1+(1/4)p_0=(3/4,-3/2)^T\)</span>. Da er <span class="math inline">\(Ap_1=(0,-9/4)^T\)</span>, slik at <span class="math inline">\(p_0^TAp_1=0\)</span>. Det vanlige indreproduktet er derimot <span class="math inline">\(p_0^Tp_1=9/4\)</span>. Retningene er ortogonale med A-indreproduktet, men ikke med det vanlige.</p>
-<p>Linjesøket gir <span class="math inline">\(\alpha_1=(9/4)/(27/8)=2/3\)</span> og <span class="math inline">\(x_2=(3/2,0)^T+(2/3)(3/4,-3/2)^T=(2,-1)^T\)</span>. Residualen er null. A-konjugertheten gjør at vi bevarer minimeringen i den første søkeretningen når vi går i den andre. Her er to slike retninger nok til å finne løsningen.</p>
-</details>
 </section>
 </div>
 </div>
