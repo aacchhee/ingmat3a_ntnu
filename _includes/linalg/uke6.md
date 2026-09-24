@@ -1673,25 +1673,19 @@ Den grønne linjen er **ikke en nivåkurve**. Funksjonsverdien varierer
 langs den; hver oransje prikk er minimum på en annen blå linje.
 Stjernen er lavest av alle. De grå ellipsene er nivåkurvene.
 
-### Må vi lete i den gamle retningen en gang til?
+### Sammenlign to valg for neste retning
 
-Fra $x_1$ lar vi begge metodene ta ett nytt steg. Bratteste nedstigning
-bruker den nye residualen som retning. CG følger den grønne linjen.
-Begge finner minimum langs linjen de velger.
+Vi tegner nå **begge metodene i samme koordinatplan**. Begge har kommet
+til $x_1$ etter første linjesøk. Derfra tar de ulike andre steg:
+bratteste nedstigning følger den nye residualen, mens CG følger den
+grønne linjen gjennom minimumspunktene.
 
-Nå gjør vi en tenkt kontroll fra punktet hver metode kom til:
-**Kan vi senke funksjonsverdien ved å gå i den første retningen igjen?**
-Den første retningen var langs $u=v$. Å gå i denne retningen betyr
-å øke eller redusere begge koordinatene like mye.
-
-Figurene nedenfor viser hva en slik ekstra bevegelse ville gjort med
-funksjonsverdien. De har samme skala og leses slik:
-
-- **Vannrett:** hvor mye vi flytter begge koordinatene. Ved $0$ står
-  vi i punktet etter andre steg. Til høyre øker vi begge koordinatene;
-  til venstre reduserer vi dem.
-- **Loddrett:** endringen i funksjonsverdi fra dette punktet.
-  Under den stiplede nullinjen betyr **lavere verdi enn før**.
+Start med den svarte prikken $x_1$ i figuren, og følg de to pilene.
+Den **oransje pilen** ender i $S$, punktet bratteste nedstigning kommer
+til. Den **grønne pilen** ender i stjernen, der CG kommer til løsningen.
+Pilene viser bare andre steg; startpunktet $x_0=(0,0)^T$ ligger utenfor
+utsnittet. Aksene viser koordinatene $u$ og $v$, og de grå kurvene er
+nivåkurver for $\phi$.
 
 ```{pyodide-python}
 #| label: week6-cg-preservation
@@ -1699,63 +1693,80 @@ A = np.array([[3.,1.], [1.,2.]])
 b = np.array([5.,5.])
 sd_two = descent_path(A, b, [0.,0.], steps=2)
 cg_two = cg(A, b, rtol=1e-12)['path']
+first = sd_two[1]
+S = sd_two[2]
+solution = cg_two[2]
 
-def phi(point):
-    return .5*point @ A @ point - b @ point
+# M er minimum på linjen gjennom S i den gamle retningen (1,1).
+# Det er et sammenligningspunkt, ikke et ekstra steg i noen av banene.
+old_direction = np.array([1.,1.])
+t = old_direction @ (b-A@S) / (old_direction @ A @ old_direction)
+M = S + t*old_direction
 
-old_direction = np.array([1.,1.])  # Parallell med første retning (5,5).
-shifts = np.linspace(-.07,.16,240)
-fig, axes = plt.subplots(2, 1, figsize=(7, 8.5), sharex=True, sharey=True)
-for ax, path, name in zip(axes, [sd_two, cg_two], ['Bratteste nedstigning', 'CG']):
-    point = path[-1]
-    changes = np.array([phi(point+s*old_direction)-phi(point) for s in shifts])
-    # Finn bunnen ved et tenkt ekstra linjesøk i den første retningen.
-    best_shift = old_direction @ (b-A@point) / (old_direction @ A @ old_direction)
-    best_change = phi(point+best_shift*old_direction)-phi(point)
-    ax.axhline(0, color='#64748b', ls='--', lw=1.2)
-    ax.axvline(0, color='#cbd5e1', lw=1)
-    ax.plot(shifts, changes, color='#334155', lw=2.5)
-    ax.set(xlim=(-.07,.16), ylim=(-.035,.095),
-           xlabel='Hvor mye vi flytter begge koordinatene',
-           ylabel='Endring i funksjonsverdi')
-    ax.set_xticks([-.05,0,.05,.10,.15])
-    ax.set_yticks([-.02,0,.02,.04,.06,.08])
-    ax.tick_params(labelbottom=True)
-    for side in ['top','right']:
-        ax.spines[side].set_visible(False)
-    ax.set_title(name, loc='left', fontsize=13, fontweight='bold', pad=12)
-    if name == 'Bratteste nedstigning':
-        ax.fill_between(shifts, changes, 0, where=changes < 0,
-                        color='#fed7aa', interpolate=True)
-        ax.plot(0, 0, 'o', color='#334155', markersize=7, zorder=4)
-        ax.annotate('Etter steg 2', (0,0), xytext=(0,.04),
-                    ha='center', fontsize=11,
-                    arrowprops=dict(arrowstyle='-', color='#64748b'))
-        ax.plot(best_shift, best_change, 'o', color='#c2410c', markersize=8, zorder=4)
-        ax.annotate('Et ekstra søk\ngir lavere verdi', (best_shift,best_change),
-                    xytext=(.095,.03), fontsize=11, color='#9a3412',
-                    arrowprops=dict(arrowstyle='->', color='#c2410c',
-                                    connectionstyle='arc3,rad=-.2'))
-    else:
-        ax.plot(0, 0, 'o', color='#15803d', markersize=8, zorder=4)
-        ax.annotate('Etter steg 2:\nallerede i bunnen', (0,0),
-                    xytext=(.04,.055), fontsize=11, color='#166534',
-                    arrowprops=dict(arrowstyle='->', color='#15803d'))
+fig, ax = plt.subplots(figsize=(7.5,7.5))
+bowl_plot(ax, A, b, {}, bounds=(.78,1.60,1.28,2.16))
+ax.get_legend().remove()
+for collection in ax.collections:
+    collection.set_alpha(.45)
+u = np.linspace(.78,1.60,200)
+ax.plot(u, (10-4*u)/3, '--', color='#15803d', lw=1.5)
+# Denne blå linjen er parallell med den første søkeretningen.
+u_blue = np.linspace(.84,1.16,100)
+ax.plot(u_blue, u_blue+S[1]-S[0], ':', color='#2563eb', lw=1.8)
+
+for end, color in [(S, '#c2410c'), (solution, '#15803d')]:
+    ax.annotate('', xy=end, xytext=first,
+                arrowprops=dict(arrowstyle='->', color=color, lw=2.5,
+                                shrinkA=5, shrinkB=7, mutation_scale=15))
+ax.plot(*first, 'o', color='#111827', markersize=7, zorder=5)
+ax.plot(*S, 'o', color='#c2410c', markersize=7, zorder=5)
+ax.plot(*M, 'o', markerfacecolor='white', markeredgecolor='#2563eb',
+        markeredgewidth=1.8, markersize=7, zorder=5)
+ax.plot(*solution, '*', color='black', markersize=13, zorder=6)
+
+label_box = dict(facecolor='white', edgecolor='none', alpha=.9, pad=2)
+ax.annotate('x₁: felles utgangspunkt', first, xytext=(1.17,1.34),
+            fontsize=11, bbox=label_box,
+            arrowprops=dict(arrowstyle='-', color='#64748b'))
+ax.annotate('S: bratteste\nnedstigning', S, xytext=(.80,1.76),
+            fontsize=11, color='#9a3412', bbox=label_box,
+            arrowprops=dict(arrowstyle='-', color='#c2410c'))
+ax.annotate('CG: løsningen', solution, xytext=(.80,2.09),
+            fontsize=11, color='#166534', bbox=label_box,
+            arrowprops=dict(arrowstyle='-', color='#15803d'))
+ax.annotate('M: minimum på\nden blå linjen', M, xytext=(1.19,2.02),
+            fontsize=11, color='#1d4ed8', bbox=label_box,
+            arrowprops=dict(arrowstyle='-', color='#2563eb'))
+ax.set(xlabel='u', ylabel='v', title='Samme første steg – to ulike andre steg')
 fig.tight_layout(); plt.show()
 ```
 
-**Øverst:** Kurven går under null. Etter andre steg med bratteste
-nedstigning kan vi altså senke verdien mer ved å øke begge koordinatene
-litt. Den gamle retningen er nyttig igjen.
+**1. Hva forteller den grønne, stiplede linjen?** Dette er samme linje
+som i forrige figur. Hvert punkt på den er minimum langs en linje
+parallell med den første søkeretningen $(1,1)^T$. Fra et slikt punkt
+kan vi altså ikke senke $\phi$ ved å øke eller redusere begge
+koordinatene like mye. Både $x_1$ og stjernen ligger på den grønne linjen.
 
-**Nederst:** Kurven har bunnen akkurat ved null. Etter andre CG-steg
-kan ingen bevegelse i den gamle retningen senke verdien.
-CG har bevart det første linjesøket oppnådde.
+**2. Følg den oransje pilen til $S$.** Bratteste nedstigning har funnet
+minimum langs linjen fra $x_1$ i den nye residualens retning. Men $S$
+ligger utenfor den grønne linjen. For å se hva det betyr, har vi tegnet
+den blå, prikkede linjen gjennom $S$. Den går i den **gamle** retningen:
+begge koordinatene endres like mye. Minimum på denne blå linjen er
+den åpne sirkelen $M$, der den krysser den grønne linjen.
+Dermed er $\phi(M)<\phi(S)$: fra $S$ kan vi senke funksjonsverdien
+igjen ved å gå i en retning vi allerede har brukt.
+$M$ er bare tegnet for å vise dette; det er ikke metodens neste steg
+og heller ikke selve løsningen.
 
-Dette er poenget med den grønne linjen i forrige figur: **Hvert punkt
-på den er allerede best i den gamle retningen.** I dette eksemplet
-treffer CG også selve løsningen etter andre steg. Egenskapen vi bygger
-på videre, er at nye steg bevarer minimeringen i tidligere retninger.
+**3. Følg den grønne pilen fra $x_1$.** CG går langs den grønne linjen.
+Hvert punkt underveis er derfor fortsatt minimum i den gamle retningen,
+langs sin egen parallelle linje. Det nye linjesøket finner det laveste
+punktet langs den grønne linjen: i dette todimensjonale eksemplet er
+det stjernen $(1,2)^T$. Vi har nå minimert i begge søkeretningene,
+uten at det andre steget har gjort ny leting i den første nødvendig.
+
+Det er denne egenskapen vi vil bygge inn i regneoppskriften:
+**Den nye retningen skal bevare minimeringen i den gamle retningen.**
 
 ### Fra figuren til konjugerte retninger
 
