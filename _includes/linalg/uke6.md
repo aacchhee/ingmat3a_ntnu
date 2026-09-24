@@ -700,16 +700,16 @@ Koden lager den som $Q\operatorname{diag}(1,1/K)Q^T$, der
 $Q=[q_1\ q_2]$: $Q^T$ gir koordinatene langs de to retningene,
 diagonalmatrisen skalerer dem, og $Q$ regner tilbake.
 
-**Dette gjør vi for hver matrise:**
+Vi setter $\varepsilon=10^{-8}$. **Dette gjør vi for hver matrise:**
 
 1. Velg den samme eksakte løsningen $x_*=q_1$ og beregn $b=A_Kx_*=q_1$.
-2. Legg til en liten vektor $\delta b=10^{-8}q_1$ i høyresiden og løs
-   det endrede systemet. Mål foroverfeilen mot $x_*$.
-3. Gjenta med $\delta b=10^{-8}q_2$. Endringen i data har samme lengde,
-   men en annen retning.
+2. Lag høyresiden $b_1=b+\varepsilon q_1$ og løs systemet med denne.
+   Kall det beregnede svaret $\hat x_1$. Mål foroverfeilen mot $x_*$.
+3. Lag høyresiden $b_2=b+\varepsilon q_2$ og beregn svaret $\hat x_2$.
+   Endringen i data har samme lengde, men en annen retning.
 
 Både $b$ og $x_*$ har lengde $1$, så den relative dataendringen er
-$\varepsilon=10^{-8}$ i begge tilfeller. Når vi løser systemet, må vi
+$\varepsilon$ i begge tilfeller. Når vi løser systemet, må vi
 oppheve det matrisen gjør. **Hva skjer med endringen langs $q_2$ når
 vi må gange med $K$ for å oppheve divisjonen med $K$?**
 
@@ -722,28 +722,28 @@ kappas, errors_strong, errors_weak, residuals_weak = [], [], [], []
 for K in [1., 1e2, 1e4, 1e6, 1e8]:
     A = Q @ np.diag([1., 1/K]) @ Q.T
     b = A @ star
-    b_strong = b + epsilon*np.linalg.norm(b)*Q[:,0]
-    b_weak = b + epsilon*np.linalg.norm(b)*Q[:,1]
-    x_strong = np.linalg.solve(A, b_strong)
-    x_weak = np.linalg.solve(A, b_weak)
+    b1 = b + epsilon*np.linalg.norm(b)*Q[:,0]
+    b2 = b + epsilon*np.linalg.norm(b)*Q[:,1]
+    x1 = np.linalg.solve(A, b1)
+    x2 = np.linalg.solve(A, b2)
     kappas.append(np.linalg.cond(A, 2))
-    errors_strong.append(np.linalg.norm(x_strong-star)/np.linalg.norm(star))
-    errors_weak.append(np.linalg.norm(x_weak-star)/np.linalg.norm(star))
-    # Kontroller de likningene løseren faktisk fikk, altså med b_weak.
-    residuals_weak.append(np.linalg.norm(b_weak-A@x_weak)/np.linalg.norm(b_weak))
+    errors_strong.append(np.linalg.norm(x1-star)/np.linalg.norm(star))
+    errors_weak.append(np.linalg.norm(x2-star)/np.linalg.norm(star))
+    # Nederste bilde: bare q2-forsøket, med høyreside b2 og beregnet svar x2.
+    residuals_weak.append(np.linalg.norm(b2-A@x2)/np.linalg.norm(b2))
 
 kappas = np.array(kappas)
 fig, axes = plt.subplots(2, 1, figsize=(7, 9))
 axes[0].loglog(kappas, errors_weak, 'o-', label='Dataendring langs q₂: feilen vokser med K')
-axes[0].loglog(kappas, errors_strong, 's-', label='Støy langs q₁')
+axes[0].loglog(kappas, errors_strong, 's-', label='Dataendring langs q₁')
 axes[0].loglog(kappas, epsilon*kappas, 'k:', label='κ₂(A) · ε')
 axes[0].set(xlabel='Kondisjonstall κ₂(A)', ylabel='Relativ foroverfeil',
             title='Samme løser og samme relative datastøy')
 axes[0].legend(fontsize=8)
 # Lineær skala her: residualen kan være nøyaktig null i flyttallsregningen.
 axes[1].semilogx(kappas, residuals_weak, 'o-')
-axes[1].set(xlabel='Kondisjonstall κ₂(A)', ylabel='Relativ residual mot forstyrret b',
-            title='Likningene løseren fikk, er godt oppfylt',
+axes[1].set(xlabel='Kondisjonstall κ₂(A)', ylabel=r'$\|b_2-A_K\hat{x}_2\|_2/\|b_2\|_2$',
+            title='Bare q₂-forsøket: residual mot b₂',
             ylim=(0, max(5e-16, 1.2*max(residuals_weak))))
 for ax in axes: ax.grid(alpha=.25)
 fig.tight_layout(); plt.show()
@@ -756,22 +756,39 @@ omtrent $10^{-8}$. Ved endring langs $q_2$ blir den omtrent
 $K\cdot10^{-8}$: $10^{-8},10^{-6},10^{-4},10^{-2},1$.
 En foroverfeil på $1$ betyr her $100\%$ relativ feil.
 
-**Nederste bilde: hvor godt løste algoritmen likningene den fikk?**
-Her beregnes residualen mot den **endrede høyresiden** $b+\delta b$.
-Den er svært liten. Algoritmen har altså liten bakoverfeil for det
-endrede systemet, selv når svaret ligger langt fra den opprinnelige
-løsningen. Stor følsomhet i problemet forklarer forskjellen.
+**Nederste bilde: bare forsøket med endring langs $q_2$.**
+Her bruker vi svaret $\hat x_2$ som programmet beregnet med høyresiden
 
-Kontrollerer vi i stedet mot opprinnelig $b$, er residualen omtrent
-$-\delta b$. Da er relativ bakoverfeil omtrent $10^{-8}$, mens
-foroverfeilen kan være langt større. Hold derfor rede på **hvilken
-høyreside** en residual gjelder.
+$$b_2=b+\varepsilon q_2=q_1+\varepsilon q_2.$$
 
-Vi har lagt til en kjent dataendring; plottet måler ikke bare
-avrundingsfeil fra `solve`. Forsøket viser også at samme kondisjonstall
-og like stor dataendring kan gi ulik foroverfeil. Retningen til
-dataendringen betyr noe. I «Gå i dybden» regner vi dette ut nøyaktig
-og sammenligner med en kjøring uten tilført støy.
+Vi setter dette svaret tilbake i **de samme likningene som programmet
+fikk**, altså systemet med høyreside $b_2$. Det som tegnes, er
+
+$$\frac{\lVert b_2-A_K\hat x_2\rVert_2}{\lVert b_2\rVert_2}.$$
+
+Dette er relativ bakoverfeil for det endrede systemet, med fast $A_K$.
+Kurven ligger nær null; legg merke til faktoren $10^{-16}$ ved den
+loddrette aksen. Det betyr at $\hat x_2$ oppfyller de endrede likningene
+svært godt. Forsøket med $b_1=b+\varepsilon q_1$ er **ikke med i dette bildet**.
+
+Hvorfor kan feilen likevel være stor i øverste bilde? Der måler
+$q_2$-kurven avstanden fra $\hat x_2$ til **den opprinnelige løsningen**
+$x_*=q_1$. Nederste bilde kontrollerer derimot likningene med den
+**endrede høyresiden** $b_2$. Det er to forskjellige sammenligninger:
+programmet kan løse det endrede systemet nøyaktig, selv om løsningen
+har flyttet seg langt fra $x_*$.
+
+Hvis vi i stedet setter samme $\hat x_2$ inn i de opprinnelige
+likningene, beregner vi $b-A_K\hat x_2$, med $b=q_1$.
+Denne residualen er omtrent $-\varepsilon q_2$, så den relative
+bakoverfeilen mot opprinnelig $b$ er omtrent $10^{-8}$.
+**Denne residualen vises ikke i nederste bilde.**
+
+De store feilene i øverste bilde skyldes først og fremst følsomheten
+for dataendringen vi la til. Sammenlign de to kurvene der: like stor
+endring langs $q_1$ og $q_2$ kan gi svært ulik foroverfeil.
+I «Gå i dybden» regner vi dette ut nøyaktig og sammenligner med en
+kjøring uten tilført støy.
 
 ### Hva betyr dette for stoppkravet vårt?
 
