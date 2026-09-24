@@ -467,39 +467,32 @@ koeffisienten er $1$. **Svaret med minst residual har altså størst
 foroverfeil.** Dette ligner den flate funksjonsgrafen i uke 2:
 stor avstand til løsningen kan gi en liten residual.
 
-### Residualen som bakoverfeil: hvilket problem løser svaret eksakt?
+### Bakoverfeil: hvor mye må høyresiden endres?
 
-Vi holder $A$ fast og tillater at høyresiden $b$ endres. Siden
-$r=b-A\hat x$, har vi
+Se igjen på det beregnede svaret $\hat x=(1,0)^T$. Det oppfyller
+
+$$x_1=1,\qquad 10^{-4}x_2=0.$$
+
+Det opprinnelige systemet hadde $10^{-4}$ på høyresiden i andre
+likning. Endrer vi dette tallet til $0$, blir det beregnede svaret
+helt riktig for de nye likningene.
+
+**Bakoverfeilen måler hvor mye vi må endre problemet for at det
+beregnede svaret skal bli eksakt.** Her endrer vi bare høyresiden;
+matrisen $A$ beholdes.
+
+Dette kan vi gjøre for enhver beregnet vektor $\hat x$.
+Residualen $r=b-A\hat x$ forteller akkurat hva vi må trekke fra $b$:
 
 $$A\hat x=b-r.$$
 
-Den beregnede vektoren $\hat x$ er derfor en **eksakt løsning av det
-endrede systemet** med høyreside $b-r$. Endringen i data er
-$\delta b=-r$. Når bare $b$ kan endres, er den absolutte bakoverfeilen
-akkurat $\lVert r\rVert_2$. For $b\ne0$ får vi
+Den nødvendige endringen i høyresiden er altså $-r$, og størrelsen
+på endringen er $\lVert r\rVert_2$. **Med fast $A$ er residualnormen
+den absolutte bakoverfeilen.** I eksemplet er den $10^{-4}$.
 
-$$\text{relativ bakoverfeil}=
-\frac{\lVert\delta b\rVert_2}{\lVert b\rVert_2}
-=\frac{\lVert r\rVert_2}{\lVert b\rVert_2}.$$
-
-For eksempel løser $(1,0)^T$ systemet med høyreside $(1,0)^T$ eksakt.
-Vi trenger bare å endre andre komponent i $b$ fra $10^{-4}$ til $0$.
-Det er en liten endring målt i forhold til **hele vektoren** $b$,
-selv om den er stor i forhold til andre komponent alene.
-
-Vi må oppgi hva som får endres når vi bruker ordet bakoverfeil.
-Hvis vi også tillater endringer i $A$, får vi et annet mål.
-Her bruker vi konsekvent bakoverfeil med **fast $A$**.
-
-For å knytte de to feilbegrepene sammen setter vi $e=\hat x-x_*$.
-Da er
-
-$$r=b-A\hat x=Ax_*-A\hat x=-Ae.$$
-
-I eksemplet over ganger $A$ den andre feilkomponenten med $10^{-4}$.
-For en generell matrise trenger vi et mål på hvor mye et
-matriseprodukt kan endre lengden til en vektor. Det leder til matrisenormen.
+Vi har dermed et svar med liten bakoverfeil, men stor foroverfeil.
+For å forstå hvor stor forskjellen kan bli, må vi først se på
+hvordan matrisen endrer vektorlengder.
 
 ### Matrisens 2-norm: den største strekkfaktoren
 
@@ -595,15 +588,19 @@ i svaret. Nå skal vi gjøre denne sammenhengen presis.
 ### Hva betyr tallet for nøyaktigheten?
 
 Vi ønsker en grense for **foroverfeilen**, men kan vanligvis bare
-beregne residualen, altså **bakoverfeilen med fast $A$**.
-Når $A$ er invertibel, gir $r=-Ae$ at $e=-A^{-1}r$.
-Matrisenormen gir dermed
+beregne residualen. Nå bruker vi matrisenormen til å knytte dem sammen.
+Sett $e=\hat x-x_*$. Siden den eksakte løsningen oppfyller $Ax_*=b$, er
+
+$$r=b-A\hat x=Ax_*-A\hat x=-Ae.$$
+
+Når $A$ er invertibel, får vi $e=-A^{-1}r$. Matrisenormen gir dermed
 
 $$\lVert e\rVert_2\le\lVert A^{-1}\rVert_2\lVert r\rVert_2.$$
 
 For å gjøre grensen relativ bruker vi også $b=Ax_*$, som gir
 $\lVert b\rVert_2\le\lVert A\rVert_2\lVert x_*\rVert_2$.
-For $b\ne0$ kan vi derfor dele og sette sammen de to ulikhetene:
+Vi måler den relative bakoverfeilen ved å dele residualnormen på
+$\lVert b\rVert_2$. For $b\ne0$ gir de to ulikhetene da
 
 $$\underbrace{\frac{\lVert\hat x-x_*\rVert_2}{\lVert x_*\rVert_2}}
 _{\text{relativ foroverfeil}}
