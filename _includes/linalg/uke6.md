@@ -2057,29 +2057,381 @@ Ett problem får stor forbedring; et annet viser en begrensning.
 **Er færre steg tilstrekkelig, eller må vi også se på ekstra arbeid per steg
 og hvilken residual som brukes til å stoppe?**
 
-<details class="reading-step">
-<summary>Gå i dybden: forbered prosjektet</summary>
+### Oppgaver til ukens pensum
 
-**Prøv selv**
+Regn på papir, og bruk svarfeltene til å kontrollere regningen.
+Skriv eksakte tall, for eksempel `3/2` og `1/sqrt(2)`. I uttrykk bruker
+du `*` for multiplikasjon og `^` for potens. Skriv bare uttrykket i
+feltet, uten likhetstegn. Korte begrunnelser fører du i egne notater.
 
-1. For $A=\operatorname{diag}(1,100)$, sett $y_1=x_1$, $y_2=10x_2$.
-   Skriv $x^TAx$ med de nye koordinatene. Hvordan finner du $x$ fra $y$?
-2. Forklar forskjellen mellom en Jacobi-iterasjon og diagonal prekondisjonering.
-3. Skriv hvilke størrelser du vil holde like når du sammenligner CG og PCG.
+I oppgave **1–2 og 4–6** bruker vi det samme systemet:
 
-**Regnegangen**
+$$A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
+b=\begin{bmatrix}3\\0\end{bmatrix},\qquad
+x=\begin{bmatrix}u\\v\end{bmatrix}.$$
 
-Her blir $x^TAx=y_1^2+y_2^2$; tilbake får vi $x_1=y_1$, $x_2=y_2/10$.
-Den nye skalaen gir runde nivåkurver. Prosjektet viser hvordan hele
-likningssystemet må omregnes for å bevare løsningen og symmetrien.
+Det vil si $2u+v=3$ og $u+2v=0$. Oppgave 3 har sitt eget system.
+Oppgavene krever ingen programmering. Hint og løsningsforslag kan
+åpnes under hver oppgave.
 
-**Hva forklarer dette?**
+### Oppgave 1 – Jacobi eller Gauss–Seidel?
 
-Jacobi er en egen iterasjon som oppdaterer løsningen. Diagonal
-prekondisjonering bruker $M=\operatorname{diag}(A)$ som et hjelpemiddel inne
-i for eksempel CG. Sammenlign på samme $A,b,x_0$, samme opprinnelige
-residualkrav og samme maksimalgrense. Tell også matrise-vektor-produkter
-og arbeid med prekondisjoneringen.
+Start i $x_0=(0,0)^T$. Isoler $u$ i første likning og $v$ i andre.
+Beregn **ett helt sveip** med Jacobi og ett med Gauss–Seidel.
+I begge tilfeller oppdaterer du $u$ først og deretter $v$.
+
+```{math-exercise}
+#| label: week6-task-sweeps
+#| caption: Punktet etter ett sveip
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: u etter Jacobi, v etter Jacobi, u etter Gauss–Seidel, v etter Gauss–Seidel
+
+Jacobi: $x_1=$ vec[3/2,0]
+
+Gauss–Seidel: $x_1=$ vec[3/2,-3/4]
+```
+
+**Forklar i egne notater:** Hvorfor får metodene ulik andre koordinat?
+Pek på hvilken verdi av $u$ hver metode bruker.
+
+<details class="learning-hint">
+<summary>Hint til oppgave 1</summary>
+
+Oppdateringsreglene bygger på $u=(3-v)/2$ og $v=-u/2$.
+Jacobi bruker verdiene fra starten av sveipet i begge beregningene.
+Gauss–Seidel bruker den nye verdien av $u$ når $v$ oppdateres.
+
+</details>
+
+<details class="learning-hint">
+<summary>Løsningsforslag til oppgave 1</summary>
+
+Begge metodene får $u_1=(3-0)/2=3/2$.
+Jacobi bruker fortsatt $u_0=0$ og får $v_1=0$.
+Gauss–Seidel bruker $u_1=3/2$ og får $v_1=-3/4$.
+Dermed er punktene henholdsvis $(3/2,0)^T$ og $(3/2,-3/4)^T$.
+
+</details>
+
+### Oppgave 2 – blir feilen mindre?
+
+Fortsett med Gauss–Seidel. Sett uttrykket for $u_{k+1}$ inn i
+oppdateringen for $v_{k+1}$. Da får du en regel som bare bruker $v_k$.
+I det første svarfeltet skriver du **v** for den gamle verdien $v_k$.
+
+La $v_*$ være andre koordinat i den eksakte løsningen, og sett
+$e_k=v_k-v_*$. Dette er feilen i andre koordinat etter $k$ sveip.
+Finn tallet $q$ slik at $e_{k+1}=q e_k$.
+
+```{math-exercise}
+#| label: week6-task-error-factor
+#| caption: Fra oppdateringsregel til feil etter flere sveip
+#| vars: v
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: ny v som uttrykk i gammel v, feilfaktoren q, feilfaktoren etter tre sveip
+
+Ny verdi av andre koordinat: __[-3/4+v/4]
+
+$q=$ __[1/4]
+
+Etter tre sveip er $e_{k+3}=c e_k$, der $c=$ __[1/64]
+```
+
+**Forklar i egne notater:** Hvorfor går feilen mot null fra enhver
+startverdi? Hvorfor går da også første koordinat mot riktig verdi?
+
+<details class="learning-hint">
+<summary>Hint til oppgave 2</summary>
+
+Bruk $u_{k+1}=(3-v_k)/2$ og $v_{k+1}=-u_{k+1}/2$.
+Den eksakte koordinaten $v_*$ oppfyller den samme regelen uten å endres.
+Trekk denne likningen fra oppdateringen for $v_{k+1}$.
+
+</details>
+
+<details class="learning-hint">
+<summary>Løsningsforslag til oppgave 2</summary>
+
+Innsetting gir $v_{k+1}=-3/4+v_k/4$.
+Siden også $v_*=-3/4+v_*/4$, får vi
+$e_{k+1}=(v_k-v_*)/4=e_k/4$.
+Tre sveip gir faktoren $(1/4)^3=1/64$.
+Faktoren har absoluttverdi mindre enn én, så feilen går mot null.
+Dessuten er $u_{k+1}-u_*=-e_k/2$, så også første koordinat konvergerer.
+Dette er en fikspunktiterasjon, som i uke 2.
+
+</details>
+
+### Oppgave 3 – liten residual, godt svar?
+
+**Bare i denne oppgaven** bruker vi
+
+$$A=\begin{bmatrix}1&0\\0&0.01\end{bmatrix},\qquad
+b=\begin{bmatrix}1\\0.01\end{bmatrix},\qquad
+\hat x=\begin{bmatrix}1\\0\end{bmatrix}.$$
+
+**a.** Finn den eksakte løsningen $x_*$ og residualen $r=b-A\hat x$.
+
+```{math-exercise}
+#| label: week6-task-residual
+#| caption: Eksakt løsning og residual
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første koordinat i løsningen, andre koordinat i løsningen, første residualkomponent, andre residualkomponent
+
+$x_*=$ vec[1,1]
+
+$r=$ vec[0,1/100]
+```
+
+**b.** Beregn de to relative feilene og kondisjonstallet.
+Bruk 2-normen. For bakoverfeilen holder vi $A$ fast og tillater
+bare endringer i $b$.
+
+```{math-exercise}
+#| label: week6-task-forward-backward
+#| caption: Hvor stor er feilen i svar og data?
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: relativ foroverfeil, relativ bakoverfeil med fast A, kondisjonstall
+
+Relativ foroverfeil, $\lVert\hat x-x_*\rVert_2/\lVert x_*\rVert_2=$ __[1/sqrt(2)]
+
+Relativ bakoverfeil, $\lVert r\rVert_2/\lVert b\rVert_2=$ __[1/sqrt(10001)]
+
+$\kappa_2(A)=$ __[100]
+```
+
+**Forklar i egne notater:** Hva sier tallene om nøyaktigheten i
+$\hat x$? Kontroller feilgrensen fra 6.3, og forklar hvorfor liten
+bakoverfeil ikke nødvendigvis gir liten foroverfeil.
+
+<details class="learning-hint">
+<summary>Hint til oppgave 3</summary>
+
+Løs de to likningene hver for seg. Bruk så
+$\lVert(z_1,z_2)^T\rVert_2=\sqrt{z_1^2+z_2^2}$.
+For denne positive diagonalmatrisen er kondisjonstallet forholdet
+mellom største og minste diagonalelement.
+
+</details>
+
+<details class="learning-hint">
+<summary>Løsningsforslag til oppgave 3</summary>
+
+Vi får $x_*=(1,1)^T$, mens residualen er $(0,0.01)^T$.
+Feilen i løsningen har norm $1$, og $\lVert x_*\rVert_2=\sqrt2$.
+Den relative foroverfeilen er derfor $1/\sqrt2\approx0.707$.
+
+Siden $\lVert b\rVert_2=\sqrt{10001}/100$, er den relative
+bakoverfeilen $1/\sqrt{10001}\approx0.010$.
+Tilnærmingen løser systemet med høyreside $(1,0)^T$ eksakt;
+det krever bare en liten endring i hele høyresidevektoren.
+Likevel er andre koordinat i svaret feil med én hel enhet.
+
+Kondisjonstallet er $100$. Feilgrensen gir
+$1/\sqrt2\leq100/\sqrt{10001}\approx1$, som stemmer.
+Den lille koeffisienten $0.01$ gjør at en stor feil i andre koordinat
+bare gir et lite utslag i residualen.
+
+</details>
+
+### Oppgave 4 – fra likningssystem til minimum
+
+Vi går tilbake til $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$,
+$b=(3,0)^T$ og $x=(u,v)^T$.
+
+**a. Skriv funksjonen selv.** Multipliser ut
+$\phi(x)=\tfrac12x^TAx-b^Tx$, og skriv resultatet som et uttrykk i
+$u$ og $v$. Finn deretter begge de partiellderiverte.
+Funksjonsfeltet skal inneholde hele uttrykket for $\phi(u,v)$.
+
+```{math-exercise}
+#| label: week6-task-quadratic-function
+#| caption: Funksjonen og gradienten
+#| vars: u, v
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: funksjonsuttrykket phi, den deriverte med hensyn på u, den deriverte med hensyn på v
+
+$\phi(u,v)=$ ___[u^2+u*v+v^2-3*u]
+
+$\nabla\phi(u,v)=$ vec[2*u+v-3,u+2*v]
+```
+
+**b.** Finn punktet der begge de partiellderiverte er null.
+
+```{math-exercise}
+#| label: week6-task-minimum
+#| caption: Punktet der gradienten er null
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: u i minimumspunktet, v i minimumspunktet
+
+$x_*=$ vec[2,-1]
+```
+
+**Forklar i egne notater:** Hvorfor er dette punktet minimum for
+$\phi$? Begrunn at $A$ er positiv definit, for eksempel med egenverdiene.
+At gradienten er null, er ikke alene nok til å avgjøre dette.
+
+<details class="learning-hint">
+<summary>Hint til oppgave 4</summary>
+
+Regn først ut $Ax$, og deretter $x^T(Ax)$. Husk faktoren $1/2$ og
+leddet $-b^Tx$. For å undersøke positiv definithet kan du prøve
+vektorene $(1,1)^T$ og $(1,-1)^T$ som egenvektorer.
+
+</details>
+
+<details class="learning-hint">
+<summary>Løsningsforslag til oppgave 4</summary>
+
+Vi får $x^TAx=2u^2+2uv+2v^2$ og $b^Tx=3u$, altså
+
+$$\phi(u,v)=u^2+uv+v^2-3u,\qquad
+\nabla\phi(u,v)=\begin{bmatrix}2u+v-3\\u+2v\end{bmatrix}.$$
+
+Null gradient gir det opprinnelige systemet, med løsning $(2,-1)^T$.
+Matrisen er symmetrisk og har egenverdiene $3$ og $1$, begge positive.
+Fra 6.4 vet vi da at løsningen er det entydige globale minimumet til
+$\phi$. Funksjonsverdien der er $-3$.
+
+</details>
+
+### Oppgave 5 – ett steg med bratteste nedstigning
+
+Bruk samme $A$ og $b$ som i oppgave 4, men start i $x_0=(0,0)^T$.
+Vi skal gå i residualens retning $p_0=r_0=b-Ax_0$.
+
+**a.** Finn $r_0$ og tallet $\alpha_0$ som gjør
+$\phi(x_0+\alpha_0p_0)$ minst mulig. Bruk $p_0=r_0$ uten å normalisere.
+
+```{math-exercise}
+#| label: week6-task-first-line-search
+#| caption: Retningen og faktoren i første steg
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første residualkomponent, andre residualkomponent, alpha i første linjesøk
+
+$r_0=$ vec[3,0]
+
+$\alpha_0=$ __[1/2]
+```
+
+**b.** Beregn $x_1=x_0+\alpha_0p_0$ og den nye residualen $r_1=b-Ax_1$.
+
+```{math-exercise}
+#| label: week6-task-first-step
+#| caption: Det nye punktet og residualen der
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første koordinat etter steget, andre koordinat etter steget, første nye residualkomponent, andre nye residualkomponent
+
+$x_1=$ vec[3/2,0]
+
+$r_1=$ vec[0,-3/2]
+```
+
+**Forklar i egne notater:** Hvorfor har vi funnet minimum langs
+søkelinjen uten å ha løst hele likningssystemet? Bruk residualen i svaret.
+
+<details class="learning-hint">
+<summary>Hint til oppgave 5</summary>
+
+Fra 6.5 er beste faktor langs en retning $p$
+$\alpha=p^Tr/(p^TAp)$, der $r=b-Ax$ i punktet vi starter fra.
+Du kan også sette $x_0+\alpha p_0$ inn i funksjonen fra oppgave 4 og
+derivere med hensyn på $\alpha$.
+
+</details>
+
+<details class="learning-hint">
+<summary>Løsningsforslag til oppgave 5</summary>
+
+Residualen er $r_0=(3,0)^T$, så $p_0=(3,0)^T$ og $Ap_0=(6,3)^T$.
+Dermed er $\alpha_0=9/18=1/2$, og $x_1=(3/2,0)^T$.
+Den nye residualen blir $r_1=(0,-3/2)^T$.
+
+Første søkeretning endrer bare $u$, og vi har funnet den beste verdien
+av $u$ når $v=0$. Men andre likning er ikke oppfylt: residualen er
+ikke null. Vi trenger en ny søkeretning som også kan endre $v$.
+
+</details>
+
+### Oppgave 6 – lag neste CG-retning med Gram–Schmidt
+
+Fortsett fra oppgave 5. Vi har $p_0=(3,0)^T$, $x_1=(3/2,0)^T$ og
+$r_1=(0,-3/2)^T$. I stedet for å bruke $r_1$ alene vil vi lage en ny
+retning som er A-konjugert med $p_0$.
+
+**a.** Bruk Gram–Schmidt med $\langle p,q\rangle_A=p^TAq$.
+Finn tallet $c$ slik at $p_1=r_1-cp_0$ oppfyller $p_0^TAp_1=0$.
+Behold akkurat denne skaleringen av $p_1$; ikke normaliser den.
+
+```{math-exercise}
+#| label: week6-task-conjugate-direction
+#| caption: Trekk fra projeksjonen med A-indreproduktet
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: projeksjonskoeffisienten c, første koordinat i p₁, andre koordinat i p₁, A-indreproduktet, vanlig indreprodukt
+
+$c=$ __[-1/4]
+
+$p_1=$ vec[3/4,-3/2]
+
+Kontroller: $p_0^TAp_1=$ __[0]
+
+Sammenlign med vanlig indreprodukt: $p_0^Tp_1=$ __[9/4]
+```
+
+**b.** Gjør linjesøket fra $x_1$ langs $p_1$.
+Finn $\alpha_1$, beregn $x_2=x_1+\alpha_1p_1$, og kontroller residualen.
+
+```{math-exercise}
+#| label: week6-task-second-cg-step
+#| caption: Andre CG-steg
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: alpha i andre linjesøk, første koordinat i x₂, andre koordinat i x₂, residualnormen etter andre steg
+
+$\alpha_1=$ __[2/3]
+
+$x_2=$ vec[2,-1]
+
+$\lVert b-Ax_2\rVert_2=$ __[0]
+```
+
+**Forklar i egne notater:** Hvorfor trenger ikke de to søkeretningene
+stå vinkelrett i det vanlige koordinatplanet? Hva sikrer
+A-konjugertheten når vi gjør det andre linjesøket?
+
+<details class="learning-hint">
+<summary>Hint til oppgave 6</summary>
+
+Sett $p_1=r_1-cp_0$ inn i kravet $p_0^TAp_1=0$, og løs for $c$.
+Bruk deretter samme linjesøkformel som i oppgave 5, nå med $p_1$ og
+$r_1$. Merk at $c$ er projeksjonskoeffisienten som trekkes fra;
+CGs vanlige $\beta_0$ har motsatt fortegn.
+
+</details>
+
+<details class="learning-hint">
+<summary>Løsningsforslag til oppgave 6</summary>
+
+Vi får $p_0^TAr_1=-9/2$ og $p_0^TAp_0=18$. Derfor er
+$c=-1/4$, og $p_1=r_1+(1/4)p_0=(3/4,-3/2)^T$.
+Da er $Ap_1=(0,-9/4)^T$, slik at $p_0^TAp_1=0$.
+Det vanlige indreproduktet er derimot $p_0^Tp_1=9/4$.
+Retningene er ortogonale med A-indreproduktet, men ikke med det vanlige.
+
+Linjesøket gir $\alpha_1=(9/4)/(27/8)=2/3$ og
+$x_2=(3/2,0)^T+(2/3)(3/4,-3/2)^T=(2,-1)^T$.
+Residualen er null. A-konjugertheten gjør at vi bevarer minimeringen
+i den første søkeretningen når vi går i den andre. Her er to slike
+retninger nok til å finne løsningen.
 
 </details>
 
