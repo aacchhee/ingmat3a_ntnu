@@ -6,4 +6,7 @@ resources:
 
 {{< include ../_includes/linalg/week6_setup.md >}}
 
+{{< include ../_includes/projects/week6_setup.md >}}
+
 {{< include ../_includes/projects/week6_preconditioning.md >}}
+
