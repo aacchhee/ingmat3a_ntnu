@@ -1743,9 +1743,45 @@ den grønne linjen er $q=(-3,4)^T$: endringene gir
 $4\cdot(-3)+3\cdot4=0$, så vi holder oss på linjen $4u+3v=10$.
 Vi kan også kontrollere $p_0^TAq=0$ med matrisen vår.
 
-Dette er ikke det samme som vanlig rett vinkel. Vanlig ortogonalitet
-betyr $p^Tq=0$; her står $A$ mellom vektorene. Retningene tilpasses
-dermed funksjonen vi minimerer. Når $A=I$, er de to kravene like.
+### Gram–Schmidt igjen – med et nytt indreprodukt
+
+I uke 4.3 laget vi ortogonale retninger med **Gram–Schmidt**:
+Fra en ny vektor trakk vi fra projeksjonene på de gamle retningene.
+Vi kan bruke samme framgangsmåte her, men med et annet indreprodukt:
+
+$$\langle p,q\rangle_A=p^TAq.$$
+
+Dette er et indreprodukt fordi $A$ er symmetrisk positiv definit:
+symmetrien gjør at rekkefølgen på vektorene ikke spiller noen rolle,
+og $\langle p,p\rangle_A>0$ for $p\ne0$. Regnereglene for summer og
+skalering følger av matriseproduktet.
+**A-konjugerte retninger er altså ortogonale med dette indreproduktet.**
+De trenger ikke stå vinkelrett på arket. Når $A=I$, får vi det vanlige
+indreproduktet og vanlig ortogonalitet tilbake.
+
+Hvordan lager vi den andre søkeretningen? Vi kjenner $p_0$ og den nye
+residualen $r_1$. Start med $r_1$, og trekk fra en passende mengde av
+$p_0$: skriv $p_1=r_1-cp_0$. Vi velger tallet $c$ slik at
+$\langle p_0,p_1\rangle_A=0$. Innsetting gir
+
+$$0=\langle p_0,r_1\rangle_A-c\langle p_0,p_0\rangle_A
+\quad\Longrightarrow\quad
+c=\frac{\langle p_0,r_1\rangle_A}{\langle p_0,p_0\rangle_A}.$$
+
+Dermed blir Gram–Schmidt-steget
+
+$$\boxed{p_1=r_1-\frac{p_0^TAr_1}{p_0^TAp_0}\,p_0.}$$
+
+Leddet vi trekker fra, er **projeksjonen av $r_1$ på $p_0$ målt med
+A-indreproduktet**. Nevneren er med fordi $p_0$ ikke er normalisert.
+Vi trenger heller ikke normalisere den nye retningen: linjesøket
+bestemmer hvor langt vi går langs den.
+
+I eksemplet er $r_1=(-5/7,5/7)^T$ og $c=-1/49$. Da får vi
+$p_1=r_1+(1/49)p_0=(-30/49,40/49)^T$. Denne vektoren er
+$10/49$ ganger $(-3,4)^T$: **Gram–Schmidt gir nettopp retningen langs
+den grønne linjen.** Nå har vi en regneoppskrift for retningen vi
+fant geometrisk.
 
 ### Hva gjør CG i praksis?
 
@@ -1761,15 +1797,21 @@ Den praktiske oppskriften er:
 2. Finn minimum langs linjen gjennom gjeldende punkt i søkeretningen.
    Dette gir neste tilnærming $x_{k+1}$.
 3. Beregn ny residual. Stopp hvis residualkravet er oppfylt.
-4. Kombiner ny residual med forrige søkeretning slik at den nye
-   retningen blir konjugert med de tidligere. Gjenta linjesøket.
+4. Trekk fra projeksjonen av den nye residualen på forrige søkeretning,
+   målt med A-indreproduktet, slik vi nettopp gjorde. Gjenta linjesøket
+   med retningen som står igjen.
 
-Faktorene som bestemmer steglengden og kombinasjonen, kan beregnes
-med indreprodukter. Formlene og et fullstendig regneeksempel står
-i «Gå i dybden». I to dimensjoner så vi hva dette betyr: først finner
-vi det beste punktet på én linje, og så velger vi en ny retning som
-lar oss bli ferdige med den andre ukjente uten å gjøre om den første
-minimeringen. CG bruker samme idé i større systemer, i eksakt regning.
+I vanlig Gram–Schmidt må vi trekke fra bidrag i **alle** tidligere
+retninger. For CG med SPD-matrise og eksakte linjesøk holder det å
+bruke **den siste**: den nye retningen blir også A-ortogonal til de
+eldre retningene, i eksakt regning. Dette er en egen egenskap ved CG.
+
+CG skriver oppdateringen som $p_{k+1}=r_{k+1}+\beta_kp_k$.
+Plusstegnet skyldes at $\beta_k$ er minus projeksjonskoeffisienten;
+i eksemplet er $\beta_0=1/49$. I «Gå i dybden» utleder vi den korte
+formelen for $\beta_k$ og regner ferdig eksemplet. Hovedideen er den
+samme som i uke 4: **fjern bidrag i gamle retninger før du bruker den
+nye**, nå med A-indreproduktet.
 
 ### Eksperiment 6 – samme skåler, nye retninger
 
@@ -1894,16 +1936,6 @@ Mer generelt vil kryssleddene forsvinne når vi skriver en korreksjon
 som en kombinasjon av parvis konjugerte retninger. Minimering i en
 ny retning endrer da ikke de optimale koeffisientene i tidligere
 retninger. Dette er bakgrunnen for grensen på $n$ steg.
-
-**Koblingen til Gram–Schmidt fra uke 4**
-
-For SPD definerer $\langle p,q\rangle_A=p^TAq$ et indreprodukt.
-Konjugerthet er ortogonalitet i dette indreproduktet. Vi kan derfor
-bruke ideen fra Gram–Schmidt: start med den nye residualen og fjern
-bidrag i tidligere søkeretninger, nå målt med A-indreproduktet.
-For CG kan dette organiseres slik at bare forrige søkeretning må
-tas med i neste oppdatering. Det krever CGs struktur; det er ikke
-en regel for vilkårlig valgte retninger.
 
 **Den korte CG-oppdateringen**
 
