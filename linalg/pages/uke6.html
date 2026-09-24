@@ -45,7 +45,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-56a7063a21dd4c20fbc96590a1db8d87.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-24c09a13944ec7e1f31d2917b1251fc2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -4836,14 +4836,42 @@ b=\begin{bmatrix}1\\10^{-4}\end{bmatrix}.\]</span></p>
 <h3 class="anchored" data-anchor-id="hva-betyr-tallet-for-nøyaktigheten">Hva betyr tallet for nøyaktigheten?</h3>
 <p>Vi ønsker en grense for <strong>foroverfeilen</strong>, men kan vanligvis bare beregne residualen. Nå bruker vi matrisenormen til å knytte dem sammen. Sett <span class="math inline">\(e=\hat x-x_*\)</span>. Siden den eksakte løsningen oppfyller <span class="math inline">\(Ax_*=b\)</span>, er</p>
 <p><span class="math display">\[r=b-A\hat x=Ax_*-A\hat x=-Ae.\]</span></p>
-<p>Når <span class="math inline">\(A\)</span> er invertibel, får vi <span class="math inline">\(e=-A^{-1}r\)</span>. Matrisenormen gir dermed</p>
-<p><span class="math display">\[\lVert e\rVert_2\le\lVert A^{-1}\rVert_2\lVert r\rVert_2.\]</span></p>
-<p>For å gjøre grensen relativ bruker vi også <span class="math inline">\(b=Ax_*\)</span>, som gir <span class="math inline">\(\lVert b\rVert_2\le\lVert A\rVert_2\lVert x_*\rVert_2\)</span>. Vi måler den relative bakoverfeilen ved å dele residualnormen på <span class="math inline">\(\lVert b\rVert_2\)</span>. For <span class="math inline">\(b\ne0\)</span> gir de to ulikhetene da</p>
-<p><span class="math display">\[\underbrace{\frac{\lVert\hat x-x_*\rVert_2}{\lVert x_*\rVert_2}}
-_{\text{relativ foroverfeil}}
-\le\underbrace{\lVert A^{-1}\rVert_2\lVert A\rVert_2}_{\kappa_2(A)}
-\underbrace{\frac{\lVert b-A\hat x\rVert_2}{\lVert b\rVert_2}}
-_{\text{relativ bakoverfeil, fast }A}.\]</span></p>
+<p>Anta at <span class="math inline">\(A\)</span> er invertibel og <span class="math inline">\(b\ne0\)</span>. Da er også <span class="math inline">\(x_*\ne0\)</span>, så vi kan dele på både <span class="math inline">\(\lVert b\rVert_2\)</span> og <span class="math inline">\(\lVert x_*\rVert_2\)</span>. Vi tar utledningen i tre trinn.</p>
+<p><strong>1. Del den absolutte feilgrensen på størrelsen til løsningen.</strong></p>
+<p>Fra <span class="math inline">\(r=-Ae\)</span> får vi <span class="math inline">\(e=-A^{-1}r\)</span>. Matrisenormen gir en grense for lengden av et matriseprodukt: <span class="math inline">\(\lVert Cz\rVert_2\le\lVert C\rVert_2\lVert z\rVert_2\)</span>. Vi bruker dette med <span class="math inline">\(C=A^{-1}\)</span> og <span class="math inline">\(z=r\)</span>. Minustegnet endrer ikke lengden, så</p>
+<p><span class="math display">\[\lVert e\rVert_2=\lVert A^{-1}r\rVert_2
+\le\lVert A^{-1}\rVert_2\lVert r\rVert_2.\]</span></p>
+<p>Del begge sider på <span class="math inline">\(\lVert x_*\rVert_2\)</span>. Da får vi relativ feil på venstresiden:</p>
+<p><span class="math display">\[\frac{\lVert e\rVert_2}{\lVert x_*\rVert_2}
+\le\lVert A^{-1}\rVert_2\lVert r\rVert_2
+\frac{1}{\lVert x_*\rVert_2}.\]</span></p>
+<p><strong>2. Finn en øvre grense for faktoren <span class="math inline">\(1/\lVert x_*\rVert_2\)</span>.</strong></p>
+<p>Høyresiden inneholder fortsatt den ukjente løsningen <span class="math inline">\(x_*\)</span>. Vi bruker at <span class="math inline">\(b=Ax_*\)</span>. Den samme regelen for matrisenormen gir</p>
+<p><span class="math display">\[\lVert b\rVert_2=\lVert Ax_*\rVert_2
+\le\lVert A\rVert_2\lVert x_*\rVert_2.\]</span></p>
+<p>Del nå <strong>begge sider</strong> på det positive tallet <span class="math inline">\(\lVert b\rVert_2\lVert x_*\rVert_2\)</span>. På venstresiden forkortes <span class="math inline">\(\lVert b\rVert_2\)</span>, og på høyresiden forkortes <span class="math inline">\(\lVert x_*\rVert_2\)</span>:</p>
+<p><span class="math display">\[\frac{1}{\lVert x_*\rVert_2}
+\le\frac{\lVert A\rVert_2}{\lVert b\rVert_2}.\]</span></p>
+<p>Dette er mellomsteget vi trenger: faktoren med den ukjente løsningen kan erstattes av en øvre grense som bare bruker <span class="math inline">\(A\)</span> og <span class="math inline">\(b\)</span>.</p>
+<p><strong>3. Sett denne grensen inn i resultatet fra trinn 1.</strong></p>
+<p>Faktoren <span class="math inline">\(\lVert A^{-1}\rVert_2\lVert r\rVert_2\)</span> er ikke-negativ. Vi kan derfor bruke ulikheten fra trinn 2 uten å snu ulikhetstegnet:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\frac{\lVert e\rVert_2}{\lVert x_*\rVert_2}
+&amp;\le\lVert A^{-1}\rVert_2\lVert r\rVert_2
+       \frac{1}{\lVert x_*\rVert_2}\\[4pt]
+&amp;\le\lVert A^{-1}\rVert_2\lVert r\rVert_2
+       \frac{\lVert A\rVert_2}{\lVert b\rVert_2}\\[4pt]
+&amp;=\bigl(\lVert A^{-1}\rVert_2\lVert A\rVert_2\bigr)
+       \frac{\lVert r\rVert_2}{\lVert b\rVert_2}.
+\end{aligned}
+\]</span></p>
+<p>I siste linje har vi bare byttet rekkefølge på tallfaktorene. Produktet i parentes er kondisjonstallet <span class="math inline">\(\kappa_2(A)\)</span>. Setter vi tilbake <span class="math inline">\(e=\hat x-x_*\)</span> og <span class="math inline">\(r=b-A\hat x\)</span>, får vi</p>
+<p><span class="math display">\[\boxed{
+\frac{\lVert\hat x-x_*\rVert_2}{\lVert x_*\rVert_2}
+\le\kappa_2(A)\frac{\lVert b-A\hat x\rVert_2}{\lVert b\rVert_2}.
+}\]</span></p>
+<p>Venstresiden er <strong>relativ foroverfeil</strong>. Siste brøk på høyresiden er <strong>relativ bakoverfeil med fast <span class="math inline">\(A\)</span></strong>: residualnormen delt på størrelsen til høyresiden <span class="math inline">\(b\)</span>.</p>
 <p>Dette er rollen til kondisjonstallet: det gir en øvre grense for hvor mye en liten bakoverfeil kan slå ut i svaret. Relativ residual <span class="math inline">\(10^{-8}\)</span> og <span class="math inline">\(\kappa_2(A)=10^2\)</span> gir foroverfeil høyst <span class="math inline">\(10^{-6}\)</span>. Med <span class="math inline">\(\kappa_2(A)=10^8\)</span> blir grensen <span class="math inline">\(1\)</span>, som ikke garanterer et nøyaktig svar. En øvre grense sier hvor stor feilen <strong>kan</strong> bli, ikke at den alltid blir så stor.</p>
 <p>Vi kan også endre dataene med vilje og løse <span class="math inline">\(A\tilde x=b+\delta b\)</span>. Da gir subtraksjon av <span class="math inline">\(Ax_*=b\)</span> at <span class="math inline">\(A(\tilde x-x_*)=\delta b\)</span>. Samme regning gir</p>
 <p><span class="math display">\[\frac{\lVert\tilde x-x_*\rVert_2}{\lVert x_*\rVert_2}
