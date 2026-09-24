@@ -130,7 +130,7 @@ def make_week6_problems(n=60):
 
 def show_coordinate_change(A, b, At, bt):
     """Samme kvadratiske problem i x- og y-koordinater, for oppvarmingen."""
-    fig, axes = plt.subplots(1,2,figsize=(10,4))
+    fig, axes = plt.subplots(2,1,figsize=(7,9))
     bowl_plot(axes[0], A, b, {}, bounds=(-2,4,-1,3))
     bowl_plot(axes[1], At, bt, {}, bounds=(-3,5,6,14))
     axes[0].set(title='Opprinnelige x-koordinater', xlabel='x₁', ylabel='x₂')
@@ -140,8 +140,8 @@ def show_coordinate_change(A, b, At, bt):
 
 def show_spectra(problems, transformed):
     """Egenverdier og kondisjonstall før/etter symmetrisk skalering."""
-    fig, axes = plt.subplots(1, len(problems), figsize=(10,3.6), squeeze=False)
-    for ax, (name, A) in zip(axes[0], problems.items()):
+    fig, axes = plt.subplots(len(problems), 1, figsize=(7,4*len(problems)), squeeze=False)
+    for ax, (name, A) in zip(axes[:,0], problems.items()):
         At = transformed[name][0]
         lam, lamt = np.linalg.eigvalsh(A), np.linalg.eigvalsh(At)
         ax.semilogy(lam, '.', label='A')
@@ -153,7 +153,7 @@ def show_spectra(problems, transformed):
 
 
 def compare_runs(A, b, star, runs):
-    fig, axes = plt.subplots(1,2,figsize=(10,3))
+    fig, axes = plt.subplots(2,1,figsize=(7,8))
     print(f'{"Metode":<8} {"Steg":>5} {"A-prod.":>8} {"M-løsn.":>8} '
           f'{"Rel. residual":>14} {"Rel. feil":>12} {"Konvergert":>11}')
     for name, out in runs.items():
@@ -171,7 +171,7 @@ def compare_runs(A, b, star, runs):
     for ax, label in zip(axes,['Original relativ residual','Relativ løsningsfeil']):
         ax.set(xlabel='Antall A-vektor-produkter inkl. stoppkontroll',ylabel=label)
         ax.legend()
-    plt.show()
+    fig.tight_layout(); plt.show()
 
 
 def check_pcg(pcg_method):

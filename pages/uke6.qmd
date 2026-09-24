@@ -1,5 +1,5 @@
 ---
-title: "Uke 6 – fra gjentatte korreksjoner til konjugert gradient"
+title: "Uke 6 – iterative metoder for lineære systemer"
 ---
 
 {{< include ../_includes/linalg/week6_setup.md >}}

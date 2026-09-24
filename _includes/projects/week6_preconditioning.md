@@ -42,9 +42,11 @@ Her er begrepene vi bruker, samlet på ett sted:
   $\phi(x)=\tfrac12x^TAx-b^Tx$ ett minimum, som er løsningen av $Ax=b$.
 - **Residual:** $r=b-Ax$ måler avviket i likningene. Den er negativ
   gradient til $\phi$. Relativ residual er $\lVert r\rVert_2/\lVert b\rVert_2$.
-- **Feil:** Når vi kjenner løsningen $x_*$, kan vi også måle
+  Siden $Ax=b-r$, gjør endringen $-r$ i høyresiden $x$ til en eksakt
+  løsning. Med fast $A$ er relativ residual dermed **relativ bakoverfeil**.
+- **Foroverfeil:** Når vi kjenner løsningen $x_*$, kan vi også måle
   $\lVert x-x_*\rVert_2/\lVert x_*\rVert_2$. Liten residual og liten
-  feil er forskjellige krav.
+  foroverfeil er forskjellige krav, slik vi så i uke 2 og del 6.3.
 - **Kondisjonstall:** $\lVert A\rVert_2=\max_{\lVert z\rVert_2=1}\lVert Az\rVert_2$
   er største strekkfaktor. For SPD er
   $\kappa_2(A)=\lVert A\rVert_2\lVert A^{-1}\rVert_2=\lambda_{\max}/\lambda_{\min}$.
@@ -126,9 +128,9 @@ show_coordinate_change(A2, b2, At2, bt2)
 ```
 
 Hjelperen `show_coordinate_change` tegner nivåkurvene før og etter
-omregningen. Stjernene er minimumspunktene. Venstre bilde bruker
-$x$-koordinater, høyre bruker $y$-koordinater; aksene har derfor
-forskjellige betydninger. **Oversett stjernen i høyre bilde tilbake
+omregningen. Stjernene er minimumspunktene. Øverste bilde bruker
+$x$-koordinater, nederste bruker $y$-koordinater; aksene har derfor
+forskjellige betydninger. **Oversett stjernen i nederste bilde tilbake
 til $x$. Får du samme løsning?**
 
 <details>
@@ -537,8 +539,8 @@ for name, A in problems.items():
     compare_runs(A, b, x_star, results)
 ```
 
-`compare_runs` viser original relativ residual til venstre og relativ
-løsningsfeil til høyre. Den vannrette aksen teller produkter av $A$
+`compare_runs` viser original relativ residual øverst og relativ
+løsningsfeil nederst. Den vannrette aksen teller produkter av $A$
 med en vektor, inkludert direkte residualkontroll. Her brukes ett
 produkt i starten og to per steg, altså $1+2k$ etter $k$ steg.
 Verdier under $10^{-16}$ vises ved $10^{-16}$ i logaritmeplottene.

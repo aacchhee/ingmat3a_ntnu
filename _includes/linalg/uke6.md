@@ -10,16 +10,16 @@
 
 <div id="uke6-start"></div>
 
-### Fra gjentatte korreksjoner til CG
+### Fra et første anslag til CG
 
 I uke 5 brukte vi gjentatte matriseprodukter til å finne en retning som
 stabiliserte seg. Nå skal gjentakelse hjelpe oss med et annet mål: å løse
-$Ax=b$. Vi starter med et forslag og korrigerer det, i stedet for å finne
-hele løsningen i én direkte beregning. Det er særlig interessant for store
+$Ax=b$. Vi starter med en vektor med foreløpige verdier for de ukjente, og
+beregner nye verdier flere ganger. Håpet er å komme stadig nærmere løsningen. Det er særlig interessant for store
 systemer der matrise–vektor-produkter er billige, men faktorisering krever mye arbeid eller lagring.
 
-**Hvordan vet vi om korreksjonene bringer oss nærmere løsningen – og kan vi
-velge dem smartere?**
+**Hvordan vet vi om de nye verdiene er bedre enn de gamle – og hvordan
+skal vi beregne dem?**
 Vi henter kort fram Jacobi og Gauss–Seidel, undersøker hva som styrer
 konvergensen, og prøver **konjugert gradient (CG)**: en metode som bygger
 nye søkeretninger ut fra informasjonen i tidligere steg.
@@ -293,9 +293,17 @@ og bruker den uendret i alle korreksjonene, får vi Jacobi.
 
 ### Eksperiment 2 – er flere sveip alltid bedre?
 
-I første forsøk hjalp det å gjenta sveipene. Nå beholder vi samme
-oppdateringsregel, men endrer koblingen mellom de ukjente. Kan en
-korreksjon forstyrre den andre likningen så mye at neste korreksjon blir enda større?
+I første forsøk kom GS nærmere løsningen for hvert sveip. Skjer det
+alltid? Vi sammenligner nå to matriser:
+
+$$A_a=\begin{bmatrix}3&1\\1&2\end{bmatrix},\qquad
+A_b=\begin{bmatrix}1&2\\2&1\end{bmatrix}.$$
+
+I begge systemene inngår både $u$ og $v$ i hver likning. Når vi endrer
+$u$ for å oppfylle den første likningen, endres derfor også venstresiden
+i den andre. GS beregner deretter en ny $v$, som igjen påvirker den
+første likningen. Vi undersøker om disse vekselvise oppdateringene
+bringer oss nærmere løsningen for begge matrisene.
 
 Vi bruker kjent løsning $x_*=(1,2)^T$ og lager $b=Ax_*$ for hver matrise.
 Slik vet vi hvor kurvene skal ende, og kan måle feilen direkte.
@@ -318,11 +326,20 @@ ax.set(xlabel='GS-sveip', ylabel='‖x_k − x_*‖₂')
 ax.legend(); plt.show()
 ```
 
-Kurvene viser at feilen kan avta eller vokse. Vi skriver nå oppdateringen
-som algebra for å forklare forskjellen; matriserepresentasjonen av feiloppdateringen kan
-deretter finnes ved regning.
+For $A_a$ avtar feilen; for $A_b$ vokser den fra vår startvektor.
+Vi kan allerede se en viktig forskjell i matrisene. I hver rad i
+$A_a$ er diagonalelementet større i absoluttverdi enn summen av de
+andre elementenes absoluttverdier: $3>1$ og $2>1$. Dette kalles
+**streng diagonaldominans**. Det er en tilstrekkelig betingelse for
+at GS konvergerer fra enhver startvektor.
 
-Et GS-sveip kan skrives $x_{k+1}=Tx_k+c$. Løsningen er et **fikspunkt**:
+$A_b$ oppfyller ikke denne betingelsen, siden $1<2$. Det alene beviser
+ikke at GS mislykkes: diagonaldominans er en garanti, ikke et nødvendig
+krav. For å forklare hva som skjer i akkurat disse to forsøkene,
+undersøker vi hvordan ett sveip endrer feilen.
+
+Som i [uke 2](page4.qmd) kan vi skrive metoden som en fikspunktiterasjon.
+Her er oppdateringen $x_{k+1}=Tx_k+c$. Løsningen er et **fikspunkt**:
 den endres ikke av oppdateringen, altså $x_*=Tx_*+c$.
 **Feilen** $e_k=x_k-x_*$ følger derfor
 
@@ -333,9 +350,23 @@ hvilket vektorbidrag som tok over; nå ønsker vi at **alle feilbidrag skal
 forsvinne**. $T$ beskriver ett helt sveip, mens $A$ beskriver det opprinnelige
 likningssystemet. De to matrisene har forskjellige roller.
 
-Her kommer egenverdiene tilbake. For første matrise har
-**iterasjonsmatrisen $T$** egenverdier $0$ og $1/6$; for den andre $0$ og $4$.
-Feil langs en egenvektor blir ganget med den tilhørende egenverdien per sveip.
+Ved å sette oppdateringen av $u$ inn i oppdateringen av $v$ får vi
+de to **iterasjonsmatrisene** (mellomregningen står i «Gå i dybden»):
+
+$$T_a=\begin{bmatrix}0&-1/3\\0&1/6\end{bmatrix},\qquad
+T_b=\begin{bmatrix}0&-2\\0&4\end{bmatrix}.$$
+
+**Hvorfor undersøke egenverdier her?** Hvis feilvektoren er en
+egenvektor $w$ til $T$, er neste feil $Tw=\lambda w$. Da forteller
+$\lambda$ akkurat hvilken faktor feilen ganges med i hvert sveip.
+Dette er samme gjentatte matriseprodukt som i uke 5.
+
+Begge $T$-matrisene er trekantmatriser, så egenverdiene står på
+diagonalen: $0$ og $1/6$ for $T_a$, $0$ og $4$ for $T_b$.
+Et feilbidrag langs egenvektoren til $1/6$ blir seks ganger mindre
+per sveip. Et bidrag langs egenvektoren til $4$ blir fire ganger større.
+Det er egenverdiene til **$T$, ikke til $A$**, som beskriver denne
+feilutviklingen.
 
 **Spektralradiusen** er største absoluttverdi av egenverdiene:
 $\rho(T)=\max_i|\lambda_i(T)|$. Iterasjonen konvergerer fra enhver startvektor
@@ -389,48 +420,91 @@ For Jacobi er $T=-D^{-1}(L+U)$.
 
 <div id="uke6-residual"></div>
 
-### Når er et beregnet svar godt nok?
+### Fra ett tall i uke 2 til en vektor i uke 6
 
-I de første forsøkene kjente vi løsningen og kunne måle feilen direkte.
-Det gjør vi vanligvis ikke. Vi har i stedet en beregnet vektor $\hat x$,
-og må undersøke om den er til å stole på. To spørsmål må skilles:
+I [uke 1](page2.qmd) målte vi absolutt og relativ feil. I
+[uke 2, del 2.4](page4.qmd) skilte vi mellom **foroverfeil** (feil i
+svaret) og **bakoverfeil** (hvor mye problemet må endres for at svaret
+skal bli eksakt). Vi bruker nå de samme spørsmålene for $Ax=b$.
 
-- **Hvor godt oppfyller $\hat x$ likningene?** Sett den inn og beregn
-  residualen $r=b-A\hat x$.
-- **Hvor nær er $\hat x$ den riktige løsningen $x_*$?** Dette måles av
-  feilen $e=\hat x-x_*$, men krever at vi kjenner $x_*$.
+La $x_*$ være den eksakte løsningen og $\hat x$ en **beregnet tilnærming**.
+$\hat x$ kan for eksempel være vektoren etter ti GS-sveip; den er ikke
+nødvendigvis startvektoren. For en vektor bruker vi den vanlige lengden
 
-Siden $Ax_*=b$, henger de to sammen ved $r=-Ae$.
-Matrisen virker altså på feilen før vi ser den som en residual.
-Hvis $A$ demper en retning kraftig, kan en stor feil i den retningen
-bli nesten usynlig i residualen.
+$$\lVert z\rVert_2=\sqrt{z_1^2+\cdots+z_n^2}.$$
 
-### Et lite eksempel før vi regner på datamaskinen
+De to spørsmålene gir forskjellige størrelser:
 
-La
+| Spørsmål | Beregning | Hva trenger vi? |
+|:--|:--|:--|
+| Hvor langt er svaret fra løsningen? | Absolutt **foroverfeil** $\lVert\hat x-x_*\rVert_2$ | Den eksakte løsningen eller en god referanse. |
+| Hvor godt oppfyller svaret likningene? | **Residual** $r=b-A\hat x$, med størrelse $\lVert r\rVert_2$ | Bare $A$, $b$ og den beregnede vektoren. |
+
+Residualen er det som mangler når vi setter $\hat x$ inn i likningene.
+Den kan beregnes selv om vi ikke kjenner $x_*$.
+
+### To beregnede svar: minst residual eller minst feil?
+
+Se på systemet
 
 $$A=\begin{bmatrix}1&0\\0&10^{-4}\end{bmatrix},\qquad
-b=\begin{bmatrix}1\\10^{-4}\end{bmatrix},\qquad x_*=(1,1)^T.$$
+b=\begin{bmatrix}1\\10^{-4}\end{bmatrix}.$$
 
-**Hvilket av forslagene $(1,0)^T$ og $(0.99,1)^T$ vil dere foretrekke?**
-Det første bommer med én hel enhet i andre koordinat. Likevel er det
-bare $10^{-4}$ som mangler i andre likning. Det andre forslaget bommer
-med $0.01$ i første koordinat, og dette synes fullt ut i første likning.
+Likningene er $x_1=1$ og $10^{-4}x_2=10^{-4}$, så den eksakte
+løsningen er $x_*=(1,1)^T$. Tenk at to beregninger har gitt oss
+$\hat x^{(a)}=(1,0)^T$ og $\hat x^{(b)}=(0.99,1)^T$.
+Vi sammenligner svarene; vi starter ikke to nye iterasjoner.
 
-| Forslag $\hat x$ | Residual $r=b-A\hat x$ | Feil $e=\hat x-x_*$ | $\lVert r\rVert_2$ | $\lVert e\rVert_2$ |
+| Beregnet svar $\hat x$ | Residual $b-A\hat x$ | Feilvektor $\hat x-x_*$ | Residualnorm | Absolutt foroverfeil |
 |:--|:--|:--|:--|:--|
 | $(1,0)^T$ | $(0,10^{-4})^T$ | $(0,-1)^T$ | $10^{-4}$ | $1$ |
 | $(0.99,1)^T$ | $(0.01,0)^T$ | $(-0.01,0)^T$ | $0.01$ | $0.01$ |
 
-Forslaget med minst residual har størst feil. For å forstå hvor mye
-matrisen kan skjule eller forsterke, trenger vi et mål på hvordan den
-endrer **vektorlengder**.
+Det første svaret bommer med $1$ i andre koordinat, men denne feilen
+ganges med $10^{-4}$ når vi setter svaret inn i andre likning.
+Det andre svaret bommer bare med $0.01$ i første koordinat, der
+koeffisienten er $1$. **Svaret med minst residual har altså størst
+foroverfeil.** Dette ligner den flate funksjonsgrafen i uke 2:
+stor avstand til løsningen kan gi en liten residual.
+
+### Residualen som bakoverfeil: hvilket problem løser svaret eksakt?
+
+Vi holder $A$ fast og tillater at høyresiden $b$ endres. Siden
+$r=b-A\hat x$, har vi
+
+$$A\hat x=b-r.$$
+
+Den beregnede vektoren $\hat x$ er derfor en **eksakt løsning av det
+endrede systemet** med høyreside $b-r$. Endringen i data er
+$\delta b=-r$. Når bare $b$ kan endres, er den absolutte bakoverfeilen
+akkurat $\lVert r\rVert_2$. For $b\ne0$ får vi
+
+$$\text{relativ bakoverfeil}=
+\frac{\lVert\delta b\rVert_2}{\lVert b\rVert_2}
+=\frac{\lVert r\rVert_2}{\lVert b\rVert_2}.$$
+
+For eksempel løser $(1,0)^T$ systemet med høyreside $(1,0)^T$ eksakt.
+Vi trenger bare å endre andre komponent i $b$ fra $10^{-4}$ til $0$.
+Det er en liten endring målt i forhold til **hele vektoren** $b$,
+selv om den er stor i forhold til andre komponent alene.
+
+Vi må oppgi hva som får endres når vi bruker ordet bakoverfeil.
+Hvis vi også tillater endringer i $A$, får vi et annet mål.
+Her bruker vi konsekvent bakoverfeil med **fast $A$**.
+
+For å knytte de to feilbegrepene sammen setter vi $e=\hat x-x_*$.
+Da er
+
+$$r=b-A\hat x=Ax_*-A\hat x=-Ae.$$
+
+I eksemplet over ganger $A$ den andre feilkomponenten med $10^{-4}$.
+For en generell matrise trenger vi et mål på hvor mye et
+matriseprodukt kan endre lengden til en vektor. Det leder til matrisenormen.
 
 ### Matrisens 2-norm: den største strekkfaktoren
 
-For en vektor er 2-normen den vanlige euklidiske lengden:
-$\lVert z\rVert_2=\sqrt{z_1^2+\cdots+z_n^2}$.
-Tidligere brukte vi **Frobenius-normen** til matriser:
+Vi har nettopp brukt 2-normen til vektorer. Til matriser har vi
+tidligere brukt **Frobenius-normen**:
 
 $$\lVert A\rVert_F=\sqrt{\sum_{i,j}a_{ij}^2}.$$
 
@@ -444,8 +518,9 @@ $$\boxed{\lVert A\rVert_2
 
 Vi sender alle enhetsvektorer gjennom $A$ og finner den lengste
 resultatvektoren. Normen er lengden til denne, altså den største
-strekkfaktoren. Ordet «strekk» omfatter også demping: normen kan være
-mindre enn $1$. Definisjonen gir straks
+strekkfaktoren. En strekkfaktor på $0.01$ betyr at vektoren blir
+hundre ganger kortere; dette kalles også at vektoren **dempes**.
+Faktoren trenger altså ikke være større enn $1$. Definisjonen gir
 $\lVert Az\rVert_2\le\lVert A\rVert_2\lVert z\rVert_2$ for enhver $z$.
 
 For $B=\operatorname{diag}(3,1)$ blir $(1,0)^T$ strukket til $(3,0)^T$,
@@ -461,7 +536,7 @@ B = np.diag([3., 1.])
 theta = np.linspace(0, 2*np.pi, 300)
 circle = np.array([np.cos(theta), np.sin(theta)])
 ellipse = B @ circle
-fig, axes = plt.subplots(1, 2, figsize=(10, 3.8))
+fig, axes = plt.subplots(2, 1, figsize=(7, 9))
 for ax, points, vectors, title in zip(axes, [circle, ellipse], [np.eye(2), B],
                                      ['Enhetsvektorer z', 'Bildene Bz']):
     ax.plot(*points, color='#64748b')
@@ -478,8 +553,8 @@ print('2-norm:', np.linalg.norm(B, 2))
 print('Frobenius-norm:', np.linalg.norm(B, 'fro'))
 ```
 
-Begge bilder har samme akseskala. Venstre bilde viser retningene vi
-prøver; høyre viser hvordan $B$ virker på dem. Den lengste halvaksen
+Begge bilder har samme akseskala. Øverste bilde viser retningene vi
+prøver; nederste viser hvordan $B$ virker på dem. Den lengste halvaksen
 i ellipsen gir 2-normen. En rotasjon av ellipsen ville ikke endret
 lengden til denne halvaksen.
 
@@ -505,59 +580,89 @@ at transformasjonen behandler ulike retninger svært ulikt.
 | $I_2$ | $1$ | $1$ | $1$ | Alle lengder bevares. |
 | $1000I_2$ | $1000$ | $10^{-3}$ | $1$ | Alle retninger skaleres like mye. |
 | $\operatorname{diag}(3,1)$ | $3$ | $1$ | $3$ | Tre ganger så stort strekk i én retning. |
-| $\operatorname{diag}(1,10^{-4})$ | $1$ | $10^4$ | $10^4$ | Én retning dempes kraftig. |
+| $\operatorname{diag}(1,10^{-4})$ | $1$ | $10^4$ | $10^4$ | Andre koordinat ganges med $10^{-4}$. |
 
 Store matriseelementer betyr altså ikke automatisk dårlig kondisjon.
 Å multiplisere hele $A$ med samme ikke-null tall endrer ikke
 $\kappa_2(A)$. En singulær matrise har ingen invers; da bruker vi
 konvensjonen $\kappa_2(A)=\infty$.
 
-For **symmetrisk positivt definitte** matriser, som vi møter i 6.4,
-er strekkfaktorene egenverdiene, og
-$\kappa_2(A)=\lambda_{\max}/\lambda_{\min}$.
-For matrisen $\begin{bmatrix}3&1\\1&2\end{bmatrix}$ fra 6.1 er
-egenverdiene $(5\pm\sqrt5)/2$, og kondisjonstallet er omtrent $2.62$.
-Kvotienten av egenverdiene er ikke en generell oppskrift for alle
-matriser. Uke 7 forklarer den generelle sammenhengen med singularverdier.
+Matrisen fra det første eksemplet har altså kondisjonstall $10^4$.
+Når vi løser systemet, må vi dele andre komponent i høyresiden på
+$10^{-4}$. Da kan små endringer i denne komponenten gi store endringer
+i svaret. Nå skal vi gjøre denne sammenhengen presis.
 
 ### Hva betyr tallet for nøyaktigheten?
 
-For invertibel $A$ og $b\ne0$ har vi feilgrensen
+Vi ønsker en grense for **foroverfeilen**, men kan vanligvis bare
+beregne residualen, altså **bakoverfeilen med fast $A$**.
+Når $A$ er invertibel, gir $r=-Ae$ at $e=-A^{-1}r$.
+Matrisenormen gir dermed
 
-$$\frac{\lVert\hat x-x_*\rVert_2}{\lVert x_*\rVert_2}
-\le\kappa_2(A)\frac{\lVert b-A\hat x\rVert_2}{\lVert b\rVert_2}.$$
+$$\lVert e\rVert_2\le\lVert A^{-1}\rVert_2\lVert r\rVert_2.$$
 
-Venstresiden er **relativ feil**, og siste brøk på høyresiden er
-**relativ residual**. Hvis residualen er $10^{-8}$ relativt til $b$,
-gir $\kappa_2(A)=10^2$ en feilgrense på $10^{-6}$. Med
-$\kappa_2(A)=10^8$ blir grensen $1$, som ikke garanterer en liten
-relativ feil. Grensen beskriver en mulig forsterkning, ikke en
-påstand om at alle feil blir så store.
+For å gjøre grensen relativ bruker vi også $b=Ax_*$, som gir
+$\lVert b\rVert_2\le\lVert A\rVert_2\lVert x_*\rVert_2$.
+For $b\ne0$ kan vi derfor dele og sette sammen de to ulikhetene:
 
-Det samme tallet beskriver følsomhet for data. Hvis vi i stedet løser
-$A\tilde x=b+\delta b$, gjelder
+$$\underbrace{\frac{\lVert\hat x-x_*\rVert_2}{\lVert x_*\rVert_2}}
+_{\text{relativ foroverfeil}}
+\le\underbrace{\lVert A^{-1}\rVert_2\lVert A\rVert_2}_{\kappa_2(A)}
+\underbrace{\frac{\lVert b-A\hat x\rVert_2}{\lVert b\rVert_2}}
+_{\text{relativ bakoverfeil, fast }A}.$$
+
+Dette er rollen til kondisjonstallet: det gir en øvre grense for
+hvor mye en liten bakoverfeil kan slå ut i svaret. Relativ residual
+$10^{-8}$ og $\kappa_2(A)=10^2$ gir foroverfeil høyst $10^{-6}$.
+Med $\kappa_2(A)=10^8$ blir grensen $1$, som ikke garanterer et
+nøyaktig svar. En øvre grense sier hvor stor feilen **kan** bli,
+ikke at den alltid blir så stor.
+
+Vi kan også endre dataene med vilje og løse $A\tilde x=b+\delta b$.
+Da gir subtraksjon av $Ax_*=b$ at
+$A(\tilde x-x_*)=\delta b$. Samme regning gir
 
 $$\frac{\lVert\tilde x-x_*\rVert_2}{\lVert x_*\rVert_2}
 \le\kappa_2(A)\frac{\lVert\delta b\rVert_2}{\lVert b\rVert_2}.$$
 
-Selv en eksakt algoritme vil da finne en annen løsning fordi den får
-andre data. **Kondisjon er en egenskap ved problemet.** Avrundingsfeil
-og valg av løsningsalgoritme kommer i tillegg.
+En eksakt løsning av de endrede likningene kan altså ligge langt fra
+løsningen av de opprinnelige. Dette er **følsomhet i problemet**,
+også kalt kondisjon. Det er ikke i seg selv en feil i algoritmen.
+Neste forsøk viser forskjellen.
 
 ### Eksperiment 3 – samme algoritme, ulikt tap av nøyaktighet
 
-Vi bruker `np.linalg.solve` i alle tilfellene. Vi endrer matrisens
-kondisjonstall, men beholder dimensjonen, egenretningene, den riktige
-løsningen og størrelsen på dataforstyrrelsen.
+Vi skal endre høyresiden litt og se hvor mye løsningen flytter seg.
+Alle systemene har to ukjente, og vi bruker samme algoritme,
+`np.linalg.solve`, hver gang. Vi velger matrisene slik at bare
+kondisjonstallet endres.
 
-Matrisene er $A_K=Q\operatorname{diag}(1,1/K)Q^T$, der kolonnene
-$q_1,q_2$ i $Q$ er ortonormale. De strekker med henholdsvis $1$ og
-$1/K$, slik at $\kappa_2(A_K)=K$. Vi velger $x_*=q_1$.
-Høyresiden får en relativ forstyrrelse $\varepsilon=10^{-8}$,
-én gang langs $q_1$ og én gang langs $q_2$.
+Vi bruker to faste, vinkelrette enhetsvektorer
 
-**Hva tror dere skjer med svaret når forstyrrelsen ligger i retningen
-som matrisen demper mest?**
+$$q_1=(0.8,0.6)^T,\qquad q_2=(-0.6,0.8)^T.$$
+
+For hvert tall $K$ lager vi en matrise $A_K$ som virker slik:
+
+$$A_Kq_1=q_1,\qquad A_Kq_2=\frac1Kq_2.$$
+
+En vektor langs $q_1$ beholder lengden sin. En vektor langs $q_2$
+blir $K$ ganger kortere. Matrisen har derfor kondisjonstall $K$.
+Koden lager den som $Q\operatorname{diag}(1,1/K)Q^T$, der
+$Q=[q_1\ q_2]$: $Q^T$ gir koordinatene langs de to retningene,
+diagonalmatrisen skalerer dem, og $Q$ regner tilbake.
+
+**Dette gjør vi for hver matrise:**
+
+1. Velg den samme eksakte løsningen $x_*=q_1$ og beregn $b=A_Kx_*=q_1$.
+2. Legg til en liten vektor $\delta b=10^{-8}q_1$ i høyresiden og løs
+   det endrede systemet. Mål foroverfeilen mot $x_*$.
+3. Gjenta med $\delta b=10^{-8}q_2$. Endringen i data har samme lengde,
+   men en annen retning.
+
+Både $b$ og $x_*$ har lengde $1$, så den relative dataendringen er
+$\varepsilon=10^{-8}$ i begge tilfeller. Når vi løser systemet, må vi
+oppheve det matrisen gjør. **Hva skjer med endringen langs $q_2$ når
+vi må gange med $K$ for å oppheve divisjonen med $K$?**
 
 ```{pyodide-python}
 #| label: week6-conditioning-experiment
@@ -579,11 +684,11 @@ for K in [1., 1e2, 1e4, 1e6, 1e8]:
     residuals_weak.append(np.linalg.norm(b_weak-A@x_weak)/np.linalg.norm(b_weak))
 
 kappas = np.array(kappas)
-fig, axes = plt.subplots(1, 2, figsize=(11, 4))
-axes[0].loglog(kappas, errors_weak, 'o-', label='Støy langs svakt strukket retning q₂')
+fig, axes = plt.subplots(2, 1, figsize=(7, 9))
+axes[0].loglog(kappas, errors_weak, 'o-', label='Dataendring langs q₂: feilen vokser med K')
 axes[0].loglog(kappas, errors_strong, 's-', label='Støy langs q₁')
 axes[0].loglog(kappas, epsilon*kappas, 'k:', label='κ₂(A) · ε')
-axes[0].set(xlabel='Kondisjonstall κ₂(A)', ylabel='Relativ feil i løsningen',
+axes[0].set(xlabel='Kondisjonstall κ₂(A)', ylabel='Relativ foroverfeil',
             title='Samme løser og samme relative datastøy')
 axes[0].legend(fontsize=8)
 # Lineær skala her: residualen kan være nøyaktig null i flyttallsregningen.
@@ -595,21 +700,29 @@ for ax in axes: ax.grid(alpha=.25)
 fig.tight_layout(); plt.show()
 ```
 
-**Slik leser vi bildene.** Til venstre måler vi feil mot den opprinnelige
-løsningen. Langs $q_2$ vokser feilen omtrent som $K\varepsilon$:
-$10^{-8},10^{-6},10^{-4},10^{-2},1$. Samme lille endring i høyresiden
-kan altså gi alt fra en svært presis løsning til omtrent $100\%$
-relativ feil. Langs $q_1$ er forsterkningen langt mindre, selv med
-samme kondisjonstall. Retningen til forstyrrelsen betyr noe.
+**Øverste bilde: hvor mye endres svaret?** Den vannrette aksen viser
+kondisjonstallet. Den loddrette viser relativ **foroverfeil mot den
+opprinnelige løsningen** $x_*$. Ved endring langs $q_1$ er feilen
+omtrent $10^{-8}$. Ved endring langs $q_2$ blir den omtrent
+$K\cdot10^{-8}$: $10^{-8},10^{-6},10^{-4},10^{-2},1$.
+En foroverfeil på $1$ betyr her $100\%$ relativ feil.
 
-Til høyre er residualen liten for **det forstyrrede systemet som
-algoritmen faktisk løste**. Det motsier ikke den store feilen mot
-opprinnelig løsning. Kontrollerer vi mot opprinnelig $b$, vil
-residualen i stedet være omtrent på størrelse med dataforstyrrelsen.
+**Nederste bilde: hvor godt løste algoritmen likningene den fikk?**
+Her beregnes residualen mot den **endrede høyresiden** $b+\delta b$.
+Den er svært liten. Algoritmen har altså liten bakoverfeil for det
+endrede systemet, selv når svaret ligger langt fra den opprinnelige
+løsningen. Stor følsomhet i problemet forklarer forskjellen.
 
-Plottet viser følsomheten for tilført datastøy, ikke ren avrundingsfeil
-fra `solve`. I «Gå i dybden» sammenligner vi også med en kjøring uten
-tilført støy.
+Kontrollerer vi i stedet mot opprinnelig $b$, er residualen omtrent
+$-\delta b$. Da er relativ bakoverfeil omtrent $10^{-8}$, mens
+foroverfeilen kan være langt større. Hold derfor rede på **hvilken
+høyreside** en residual gjelder.
+
+Vi har lagt til en kjent dataendring; plottet måler ikke bare
+avrundingsfeil fra `solve`. Forsøket viser også at samme kondisjonstall
+og like stor dataendring kan gi ulik foroverfeil. Retningen til
+dataendringen betyr noe. I «Gå i dybden» regner vi dette ut nøyaktig
+og sammenligner med en kjøring uten tilført støy.
 
 ### Hva betyr dette for stoppkravet vårt?
 
@@ -618,7 +731,8 @@ I et iterativt program kan vi kreve
 $$\lVert b-Ax_k\rVert_2\le\text{atol}+\text{rtol}\lVert b\rVert_2.$$
 
 `atol` er en absolutt toleranse og `rtol` en relativ toleranse.
-Dette kontrollerer likningene, men hvor god løsningen er, avhenger
+Dette setter en grense for residualen, og dermed for bakoverfeilen
+med fast $A$. Det garanterer ikke like liten foroverfeil; den avhenger
 også av kondisjonstallet og nøyaktigheten i dataene. Vi begrenser i
 tillegg antall steg, og rapporterer manglende konvergens hvis
 stoppkravet ikke er nådd. En liten endring mellom to iterasjoner
@@ -635,7 +749,8 @@ hvilken øvre grense får dere for relativ feil?**
 1. Finn både 2-normen og Frobenius-normen til $I_2$ og
    $\operatorname{diag}(1,10^{-4})$. Finn også kondisjonstallene.
 2. Begrunn at $\kappa_2(cA)=\kappa_2(A)$ når $c\ne0$.
-3. Utled feilgrensen fra $e=-A^{-1}r$ og $b=Ax_*$.
+3. Forklar mellomsteget fra de to normulikhetene til den relative
+   feilgrensen. Hvorfor må $b$ være ulik null?
 4. Vis uten Python at forsøket gir relativ feil $\varepsilon$ for
    $\delta b=\varepsilon q_1$, og $K\varepsilon$ for
    $\delta b=\varepsilon q_2$, i eksakt regning.
@@ -678,6 +793,18 @@ må vi bruke strekkfaktorer, ikke bare egenverdier. For eksempel har
 $\begin{bmatrix}1&10\\0&1\end{bmatrix}$ begge egenverdier lik $1$,
 men kondisjonstall omtrent $102$.
 
+**Når kan vi bruke egenverdiene til å finne kondisjonstallet?**
+
+For reelle symmetriske matriser finnes en ortonormal egenvektorbasis.
+Hvis alle egenverdiene er positive, er de også strekkfaktorene i
+egenvektorretningene. Da er
+$\kappa_2(A)=\lambda_{\max}/\lambda_{\min}$.
+Dette er de **symmetrisk positivt definitte** matrisene vi bruker fra 6.4.
+For $\begin{bmatrix}3&1\\1&2\end{bmatrix}$ er egenverdiene
+$(5\pm\sqrt5)/2$, og kondisjonstallet er omtrent $2.62$.
+For en generell matrise kan vi ikke bruke denne egenverdikvotienten;
+uke 7 forklarer sammenhengen med singularverdier.
+
 **Et ekstra forsøk: hva skjer uten tilført datastøy?**
 
 Vi bruker de samme matrisene og samme løser. Nå sammenligner vi
@@ -715,9 +842,9 @@ $\varepsilon=10^{-8}$ i siste kolonne.
 
 ### Fra to likninger til én funksjon
 
-I 6.1 korrigerte vi én ukjent om gangen. I 6.3 brukte vi residualen til
+I 6.1 beregnet vi en ny verdi for én ukjent om gangen. I 6.3 brukte vi residualen til
 å kontrollere hvor godt likningene var oppfylt. Nå spør vi:
-**Kan vi knytte en funksjonsverdi til hvert forslag, slik at løsningen
+**Kan vi knytte en funksjonsverdi til hver vektor $x$, slik at løsningen
 er punktet der funksjonen er minst?** Da kan vi forstå GS geometrisk
 og undersøke om andre søkeretninger kan være bedre.
 
@@ -751,15 +878,19 @@ oversettelse mellom **matrise og høyreside** og **funksjonsuttrykk**.
 
 ### Hvorfor er løsningen akkurat minimumet?
 
-Først finner vi løsningen av systemet for hånd. Fra andre likning får
+Å løse $Ax=b$ betyr her å finne $u$ og $v$ som oppfyller **begge**
+likningene $3u+v=5$ og $u+2v=5$ samtidig.
+Først finner vi disse tallene for hånd. Fra andre likning får
 vi $u=5-2v$. Innsetting i første gir $15-5v=5$, altså $v=2$ og $u=1$.
 Dermed er
 
 $$x_*=(1,2)^T,\qquad \phi(1,2)=-\tfrac{15}{2}=-7.5.$$
 
-At dette punktet løser likningene, er ikke i seg selv et bevis på at
-funksjonen er minst der. Vi sammenligner derfor med et vilkårlig punkt.
-Skriv $p=u-1$ og $q=v-2$. Innsetting og samling av ledd gir
+Punktet $(u,v)=(1,2)$ oppfyller altså begge likningene: $3\cdot1+2=5$
+og $1+2\cdot2=5$. Men hvorfor skal også $\phi$ være minst akkurat der?
+Vi tar et vilkårlig annet punkt $(u,v)$ og beregner hvor mye høyere
+funksjonsverdien er. Skriv $p=u-1$ og $q=v-2$ for forskjellene i de
+to koordinatene. Ved å sette $u=1+p$ og $v=2+q$ inn i $\phi$ får vi
 
 $$
 \begin{aligned}
@@ -833,20 +964,24 @@ def phi(u, v):
 
 u, v = np.meshgrid(np.linspace(-1, 3, 120), np.linspace(-1, 4, 120))
 Z = phi(u, v)
-fig = plt.figure(figsize=(11, 4.5))
-surface = fig.add_subplot(1, 2, 1, projection='3d')
+fig = plt.figure(figsize=(7, 10))
+surface = fig.add_subplot(2, 1, 1, projection='3d')
 surface.plot_surface(u, v, Z, cmap='viridis', alpha=.8)
 surface.scatter([1], [2], [-7.5], color='red', s=50)
-surface.set(xlabel='u', ylabel='v', zlabel='φ(u,v)', title='Funksjonsverdien som høyde')
+surface.set(xlabel='u', ylabel='v', title='Høyde z = φ(u,v)')
+surface.text2D(1.03, .5, 'φ(u,v)', transform=surface.transAxes,
+               rotation=90, va='center')
 
-ax = fig.add_subplot(1, 2, 2)
+ax = fig.add_subplot(2, 1, 2)
 curves = ax.contour(u, v, Z, levels=[-7, -6, -4, 0, 5, 10], cmap='viridis')
 ax.clabel(curves, inline=True, fontsize=9)
 ax.plot(1, 2, 'r*', markersize=12, label='Minimum (1, 2)')
 ax.plot([0, 2], [2, 2], 'ko', label='φ = −6')
 ax.set(xlabel='u', ylabel='v', title='Nivåkurver sett ovenfra')
 ax.set_aspect('equal'); ax.legend()
-fig.tight_layout(); plt.show()
+# Ekstra høyremarg gir plass til høydeaksens tittel i 3D-bildet.
+fig.subplots_adjust(left=.08, right=.83, bottom=.06, top=.95, hspace=.25)
+plt.show()
 ```
 
 **Finn nivåkurven med verdi $-6$. Hvorfor er det ingen ellipse merket
@@ -863,17 +998,18 @@ sammen. Positiv definitet betyr at det kvadratiske bidraget er positivt i enhver
 ikke-null retning. Kvadratfullføringen ovenfor viser at matrisen vår
 har nettopp denne egenskapen.
 
-For en reell symmetrisk matrise er positiv definitet likeverdig med
-at alle egenverdiene er positive. Det knytter skålformen til uke 5.
-En SPD-matrise er invertibel, så $Ax=b$ har én løsning $x_*$.
-For $e=x-x_*$ gjelder
+**Hva får vi igjen for denne forutsetningen?** For enhver SPD-matrise
+kan vi løse $Ax=b$ ved å finne minimumet til $\phi$. Det finnes
+nøyaktig én løsning, og den er det eneste punktet der $\phi$ er minst.
+Vi trenger altså ikke gjenta kvadratfullføringen for hver ny matrise.
+Det generelle beviset og et eksempel med tre ukjente står i «Gå i dybden».
 
-$$\boxed{\phi(x)-\phi(x_*)=\tfrac12e^TAe.}$$
-
-Høyresiden er positiv hvis $x\ne x_*$. Dette er den generelle versjonen
-av kvadratfullføringen over: løsningen er det **entydige globale
-minimumet**, altså det laveste punktet blant alle $x\in\mathbb R^n$.
-En full utledning og et eksempel med tre ukjente ligger i «Gå i dybden».
+Fra uke 5 har vi også en måte å kontrollere kravet på: en reell
+symmetrisk matrise er positivt definit akkurat når alle egenverdiene
+er positive. I en ortonormal egenvektorbasis er disse egenverdiene
+strekkfaktorene. For SPD er derfor
+$\kappa_2(A)=\lambda_{\max}/\lambda_{\min}$: stor forskjell mellom
+egenverdiene gir en skål som er bratt i én retning og slak i en annen.
 
 Forutsetningen betyr noe. Matrisen
 $\begin{bmatrix}1&2\\2&1\end{bmatrix}$ fra 6.2 har positiv diagonal,
@@ -1175,40 +1311,89 @@ Vi samler dem i en vektor, **gradienten**:
 $$\nabla\phi(u,v)=\begin{bmatrix}3u+v-5\\u+2v-5\end{bmatrix}.$$
 
 Dette er den samme vektoren som $Ax-b$. Vi har altså ikke innført
-nye data: helningene kan regnes ut fra matrisen og forslaget vårt.
+nye data: helningene kan regnes ut fra matrisen og det gjeldende punktet $x=(u,v)^T$.
 Med residualkonvensjonen $r=b-Ax$ får vi
 
 $$\boxed{\nabla\phi(x)=Ax-b=-r.}$$
 
-Hva sier vektoren om en bevegelse som endrer **begge** koordinatene?
-For et lite steg $h=(h_u,h_v)^T$ er endringen omtrent
-$\nabla\phi(x)^Th$. De to helningene bidrar med hver sin
-koordinatendring. Blant steg med samme lille lengde blir dette
-indreproduktet mest negativt når $h$ peker motsatt gradienten.
-Derfor peker **$-\nabla\phi=r$ mot brattest lokal nedgang**.
-Utledningen med Cauchy–Schwarz ligger i «Gå i dybden».
+Et **steg** betyr nå en endring i koordinatene: fra $x=(u,v)^T$ til
+$x+h=(u+h_u,v+h_v)^T$. Vektoren $h=(h_u,h_v)^T$ beskriver bevegelsen
+i planet. Dette må skilles fra endringen i **funksjonsverdi**,
+$\phi(x+h)-\phi(x)$.
 
-I startpunktet $(0,0)$ er gradienten $(-5,-5)^T$, så residualen er
-$(5,5)^T$. Nedoverretningen går diagonalt mot høyre og oppover i
-koordinatplanet. «Nedover» gjelder funksjonsverdien, ikke plasseringen
-på arket. Retningen til selve løsningen $(1,2)$ er annerledes.
+Fra derivasjon i én variabel kjenner vi «endring omtrent lik
+derivert ganger endring i variabelen». For små endringer i begge
+koordinatene legger vi sammen bidragene:
 
-**Hvorfor kan en retning være brattest ned akkurat her, uten å peke
-rett mot det laveste punktet i hele skålen?** Skålens helning endrer
-seg når vi flytter oss. Gradienten gir lokal informasjon.
+$$\phi(u+h_u,v+h_v)-\phi(u,v)
+\approx \frac{\partial\phi}{\partial u}h_u
++\frac{\partial\phi}{\partial v}h_v
+=\nabla\phi(x)^Th.$$
+
+Vi sammenligner små steg med **samme lengde**. Indreproduktet blir
+mest negativt når steget peker motsatt gradienten. Derfor gir
+$-\nabla\phi(x)=r$ den bratteste lokale nedgangen i funksjonsverdi.
+Begrunnelsen med Cauchy–Schwarz står i «Gå i dybden».
+
+### Se forskjellen mellom nedoverretningen og veien til løsningen
+
+I startpunktet $x_0=(0,0)^T$ er gradienten $(-5,-5)^T$ og residualen
+$r_0=(5,5)^T$. Et lite steg i residualens retning øker derfor både
+$u$ og $v$. Likevel **synker** $\phi$: «nedover» viser til høyden på
+skålen, ikke til nedover på arket.
+
+```{pyodide-python}
+#| label: week6-gradient-direction
+A = np.array([[3.,1.], [1.,2.]])
+b = np.array([5.,5.])
+fig, ax = plt.subplots(figsize=(6.5,5.5))
+bowl_plot(ax, A, b, {}, bounds=(-.4,2.5,-.4,2.7))
+ax.plot(0, 0, 'ko')
+ax.annotate('x₀ = (0, 0)', (0,0), xytext=(7,-18), textcoords='offset points')
+# Pilen viser retningen (5,5), forkortet for å passe i figuren.
+ax.annotate('', xy=(1.4,1.4), xytext=(0,0),
+            arrowprops=dict(arrowstyle='->', color='#2563eb', lw=2))
+ax.text(1.45,1.25, 'r₀-retning', color='#2563eb')
+ax.plot([0,1], [0,2], '--', color='#c2410c', label='Rett linje til løsningen')
+ax.set(xlabel='u', ylabel='v', title='Brattest ned her er ikke rett mot bunnen')
+ax.legend(loc='upper right'); fig.tight_layout(); plt.show()
+```
+
+Den blå pilen viser residualens retning; lengden er forkortet for å
+passe i figuren. Den stiplede linjen går rett til $x_*=(1,2)^T$.
+Dette er to forskjellige retninger. Vi kjenner løsningen i dette
+lille eksemplet og kan tegne den som referanse; metoden bruker bare
+$A$, $b$ og sitt nåværende punkt til å beregne den blå retningen.
+
+**Hvorfor peker ikke den blå pilen rett på stjernen?** Gradienten
+beskriver helningen akkurat der vi står. Helningen endres når vi
+flytter oss. Vi må derfor skille mellom retningen som gir brattest
+lokal nedgang og retningen til bunnen av hele skålen.
 
 ### Fra retning til det beste punktet på linjen
 
-La $p$ være en valgt **søkeretning**. Vi leter blant punktene
+La $x$ være punktet vi har kommet til, altså vår nåværende tilnærming
+til løsningen av $Ax=b$. Vi vil finne et nytt punkt med mindre
+funksjonsverdi. Først velger vi en vektor $p\ne0$ som
+**søkeretning**. Så begrenser vi letingen til linjen gjennom $x$:
 
-$$x+\alpha p,$$
+$$x_{\mathrm{ny}}=x+\alpha p.$$
 
-der tallet $\alpha$ bestemmer hvor langt vi går. Et **linjesøk**
-betyr at vi velger $\alpha$ ved å se på funksjonen langs akkurat denne
-linjen. For vår kvadratiske funksjon får vi en oppovervendt parabel
-som funksjon av $\alpha$, så minimumet kan finnes nøyaktig.
-Stegets faktiske lengde er $|\alpha|\lVert p\rVert_2$;
-$\alpha$ alene avhenger av hvor lang vektoren $p$ er.
+For hver verdi av tallet $\alpha$ får vi ett punkt på linjen. Vi setter
+punktet inn i $\phi$ og velger den $\alpha$-verdien som gir minst
+funksjonsverdi. Dette kalles et **linjesøk**. Vi finner det beste
+punktet på denne ene linjen, ikke nødvendigvis minimumet i hele planet.
+
+Bevegelsen fra gammelt til nytt punkt er
+$x_{\mathrm{ny}}-x=\alpha p$. Derfor er avstanden vi flytter oss
+
+$$\lVert x_{\mathrm{ny}}-x\rVert_2
+=\lVert\alpha p\rVert_2=|\alpha|\lVert p\rVert_2.$$
+
+$\alpha$ er altså en faktor vi ganger $p$ med. Bare når $p$ har
+lengde $1$, er $|\alpha|$ også avstanden. For eksempel gir
+$p=(5,5)^T$ og $\alpha=0.2$ bevegelsen $(1,1)^T$, med lengde
+$\sqrt2$, ikke $0.2$.
 
 Fra $x_0=(0,0)^T$ velger vi $p_0=r_0=(5,5)^T$. Punktene på linjen
 er $(5\alpha,5\alpha)$. Setter vi disse inn i $\phi$, får vi
@@ -1216,16 +1401,34 @@ er $(5\alpha,5\alpha)$. Setter vi disse inn i $\phi$, får vi
 $$\psi(\alpha)=\phi(5\alpha,5\alpha)
 =\tfrac{175}{2}\alpha^2-50\alpha.$$
 
-Parabelen har minimum ved $\alpha_0=2/7$. Dermed er første nye punkt
+For å finne minimum deriverer vi: $\psi'(\alpha)=175\alpha-50=0$
+gir $\alpha_0=2/7$. Koeffisienten foran $\alpha^2$ er positiv, så
+punktet er parabelens minimum. Dermed er første nye punkt
 $x_1=(10/7,10/7)^T$. Det er det beste punktet på linjen $u=v$,
 men det er ennå ikke minimumet $(1,2)$ i hele planet.
 
 ### Eksperiment 5a – ett steg, sett på to måter
 
-Venstre bilde viser linjen i koordinatplanet. Høyre bilde viser
-funksjonsverdien langs **den samme linjen**, med $\alpha$ på
-vannrett akse. Stjernen til venstre er løsningen av hele problemet;
-punktet nederst i parabelen til høyre er bare linjens minimum.
+Vi skal velge **hvor langt vi går i retningen $p_0=(5,5)^T$**.
+Retningen er allerede bestemt; forsøket skal vise hvordan linjesøket
+velger neste punkt. Følg samme valg av $\alpha$ i begge bildene:
+
+| $\alpha$ | Punktet $x_0+\alpha p_0$ i planet | Høyden $\psi(\alpha)$ |
+|:--|:--|:--|
+| $0$ | $(0,0)$ | $0$ |
+| $0.2$ | $(1,1)$ | $-6.5$ |
+| $2/7$ | $(10/7,10/7)$ | $-50/7\approx-7.143$ |
+| $0.4$ | $(2,2)$ | $-6$ |
+
+Øverste bilde viser **hvor punktene ligger** i $(u,v)$-planet.
+Nederste bilde viser **hvilken funksjonsverdi de har**, som en parabel
+med $\alpha$ på vannrett akse. Det blå punktet på parabelen og
+$x_1$ i øverste bilde er samme valg, $\alpha=2/7$.
+
+**Forutsi:** Hvorfor gir $\alpha=0.4$ et dårligere punkt enn $2/7$,
+selv om vi har gått lenger fra start? Vi tegner også hele skålens
+minsteverdi $-7.5$ som sammenligning. Den verdien kan vi ikke nå langs
+linjen $u=v$, fordi løsningen $(1,2)$ ikke ligger på den.
 
 ```{pyodide-python}
 #| label: week6-line-search
@@ -1235,7 +1438,7 @@ x0 = np.zeros(2)
 p0 = b - A @ x0
 alpha0 = (p0 @ p0)/(p0 @ A @ p0)
 x1 = x0 + alpha0*p0
-fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
+fig, axes = plt.subplots(2, 1, figsize=(7, 9))
 bowl_plot(axes[0], A, b, {'Første steg':np.array([x0,x1])},
           bounds=(-.5,2.7,-.5,3.2))
 axes[0].plot([-.5,2.7], [-.5,2.7], '--', color='#2563eb', alpha=.5)
@@ -1263,9 +1466,9 @@ fig.tight_layout(); plt.show()
 ```
 
 **Følg steget i begge bilder.** Når $\alpha$ øker fra null, går vi
-langs den blå linjen til venstre og nedover parabelen til høyre.
+langs den blå linjen i øverste bilde og nedover parabelen i nederste.
 Ved $\alpha=2/7$ er videre bevegelse langs samme linje ingen forbedring.
-Den stiplede vannrette linjen til høyre ligger enda litt lavere:
+Den stiplede vannrette linjen i nederste bilde ligger enda litt lavere:
 minimumet i hele planet er ikke tilgjengelig langs den valgte linjen.
 Vi må velge en ny retning.
 
@@ -1293,9 +1496,11 @@ langs den mot bunnen.
 
 ### Eksperiment 5b – rund eller smal skål?
 
-Vi beholder løsningen $x_*=(1,-1.1)^T$, startpunktet og egenretningene.
-Til venstre er begge egenverdiene $1$, slik at nivåkurvene er sirkler.
-Til høyre er egenverdiene $1$ og $0.04$, slik at nivåkurvene er
+Nå sammenligner vi to nye systemer. Begge får den kjente løsningen
+$x_*=(1,-1.1)^T$ og startvektoren $(0,0)^T$. Vi lager $b=Ax_*$ for
+hver matrise. Egenvektorretningene er de samme; bare egenverdiene endres.
+I øverste bilde er begge egenverdiene $1$, slik at nivåkurvene er sirkler.
+I nederste bilde er egenverdiene $1$ og $0.04$, slik at nivåkurvene er
 ellipser. Kondisjonstallene er henholdsvis $1$ og $25$.
 
 **I hvilket bilde tror dere residualen peker rett mot løsningen?**
@@ -1304,7 +1509,7 @@ ellipser. Kondisjonstallene er henholdsvis $1$ og $25$.
 #| label: week6-steepest-descent
 Q = np.array([[1.,-1.],[1.,1.]])/np.sqrt(2)
 star = np.array([1.,-1.1])
-fig, axes = plt.subplots(1, 2, figsize=(10, 4.3))
+fig, axes = plt.subplots(2, 1, figsize=(7, 9))
 for ax, small in zip(axes, [1., .04]):
     A = Q @ np.diag([1.,small]) @ Q.T
     b = A @ star
@@ -1316,16 +1521,16 @@ for ax, small in zip(axes, [1., .04]):
 fig.tight_layout(); plt.show()
 ```
 
-Til venstre treffer ett linjesøk bunnen. For $A=I$ er
-$r=b-x=x_*-x$, altså nøyaktig vektoren fra forslaget til løsningen.
-Til høyre er residualen påvirket av ulik skalering i de to
+I øverste bilde treffer ett linjesøk bunnen. For $A=I$ er
+$r=b-x=x_*-x$, altså nøyaktig vektoren fra gjeldende punkt til løsningen.
+I nederste bilde er residualen påvirket av ulik skalering i de to
 egenretningene. Banen skifter retning ved hvert markerte punkt,
 men bruker mange steg på å nærme seg stjernen.
 
 Hvert linjesøk er optimalt på sin linje. Det er **valget av neste
-linje** som gjør hele banen langsom. Dette er spørsmålet CG skal
-svare på i 6.6: Kan vi velge en ny retning uten å ødelegge
-minimumsegenskapen vi allerede har oppnådd langs en tidligere retning?
+linje** som gjør hele banen langsom. I 6.6 spør vi om det neste
+linjesøket kan velges slik at vi slipper å lete i den gamle retningen
+på nytt. Dette leder til CG.
 
 <details class="reading-step">
 <summary>Gå i dybden: fra partiellderiverte til eksakt linjesøk</summary>
@@ -1389,40 +1594,77 @@ og vi trenger ingen ny søkeretning.
 
 <div id="uke6-cg"></div>
 
-### Hva vil vi beholde fra forrige steg?
+### Først: hva har ett linjesøk gitt oss?
 
-Bratteste nedstigning finner det beste punktet på én linje, måler
-helningen på nytt og velger en ny linje. Vi så at dette kan gi en
-sikksakkbane. Nå vil vi bruke informasjonen fra tidligere steg til
-å velge retning mer bevisst.
+Vi skal fortsatt løse $Ax=b$ ved å gjøre $\phi(x)$ minst mulig.
+Matrisen er $A=\begin{bmatrix}3&1\\1&2\end{bmatrix}$ og $b=(5,5)^T$.
+Fra $x_0=(0,0)^T$ gikk vi langs $p_0=(5,5)^T$, altså linjen $u=v$.
+Linjesøket ga $x_1=(10/7,10/7)^T$.
 
-Vi fortsetter med $A=\begin{bmatrix}3&1\\1&2\end{bmatrix}$,
-$b=(5,5)^T$ og start i origo. Første linjesøk langs $p_0=(5,5)^T$
-ga $x_1=(10/7,10/7)^T$. I $x_1$ kan vi ikke senke $\phi$ ved å
-bevege oss langs den første søkeretningen: vi har allerede funnet
-minimum på den linjen.
+Fra $x_1$ hjelper det ikke å gå videre eller tilbake langs $u=v$:
+alle andre punkter på **denne linjen** har større funksjonsverdi.
+Men vi er ikke ferdige, for stjernen $(1,2)$ ligger lavere og utenfor
+linjen. Vi må velge en ny retning.
 
-**Kan vi flytte oss videre og samtidig beholde denne egenskapen?**
-Det betyr at det nye punktet også skal være minimum langs linjen
-gjennom punktet som er **parallell med $p_0$**. Vi vil kunne gå
-videre uten å måtte korrigere oss i den gamle retningen etterpå.
+Bratteste nedstigning bruker den nye residualen. CG velger den nye
+retningen slik at vi slipper å gjøre om igjen minimeringen i den
+første retningen. For å forstå hva dette betyr, ser vi først på
+flere linjer som er parallelle med $u=v$.
 
-### Et bilde av hva som bevares
+### Én linje, ett minimum – flere linjer, flere minimumspunkter
 
-I dette eksemplet kan vi tegne alle punkter som allerede er optimale
-langs retningen $p_0$. De ligger på den grønne linjen
-$4u+3v=10$. Vi utleder likningen i «Gå i dybden».
-Både $x_1$ og den endelige løsningen ligger på denne linjen.
+Tenk at vi flytter linjen $u=v$ parallelt med seg selv. På hver av
+disse linjene finnes ett punkt der $\phi$ er minst. De oransje
+punktene i figuren er slike **minimum på hver sin linje**.
+Bare ett av dem er også minimum i hele planet.
 
-I venstre bilde velger vi den nye residualen som retning, slik
-bratteste nedstigning gjør. I høyre bilde velger vi en retning
-**langs den grønne linjen**, og gjør linjesøk der.
-Begge metoder har samme startpunkt og samme første steg.
-Vi zoomer inn rundt $x_1$ og løsningen for å se forskjellen tydelig;
-startpunktet $x_0$ ligger utenfor disse utsnittene.
+```{pyodide-python}
+#| label: week6-parallel-minima
+A = np.array([[3.,1.], [1.,2.]])
+b = np.array([5.,5.])
+fig, ax = plt.subplots(figsize=(6.5,5.5))
+bowl_plot(ax, A, b, {}, bounds=(.35,2.1,.65,2.65))
+u = np.linspace(.35,2.1,180)
+for c in [-.4, 0., .5, 1.]:
+    ax.plot(u, u+c, color='#2563eb', alpha=.5, lw=1.3,
+            label='Parallelle søkelinjer' if c == -.4 else None)
+    point = np.array([(10-3*c)/7, (10+4*c)/7])
+    ax.plot(*point, 'o', color='#c2410c', markersize=7,
+            label='Minimum på hver sin linje' if c == -.4 else None)
+ax.plot(u, (10-4*u)/3, '--', color='#15803d', label='Linjen gjennom minimumspunktene')
+ax.annotate('x₁', (10/7,10/7), xytext=(10,-18), textcoords='offset points')
+ax.set(xlabel='u', ylabel='v', title='Minimer langs hver blå linje')
+ax.legend(loc='upper right', fontsize=8); fig.tight_layout(); plt.show()
+```
 
-**Hvilken av de to nye retningene bevarer det første linjesøkets
-minimumsegenskap?**
+**Velg et oransje punkt.** Hvis vi flytter oss fra dette punktet i
+begge retninger langs dets blå linje, går funksjonsverdien opp.
+Vi har gjort oss ferdige med letingen langs akkurat den linjen.
+I dette eksemplet ligger alle slike minimumspunkter på den grønne
+linjen $4u+3v=10$. Likningen utledes i «Gå i dybden».
+
+Nå blir målet konkret: **Fra $x_1$ vil vi gå til et nytt punkt som
+også er best på sin egen blå linje.** Vi beholder ikke samme punkt
+eller samme funksjonsverdi. Vi beholder egenskapen «ingen forbedring
+ved å gå i den gamle retningen». Derfor skal den nye retningen følge
+den grønne linjen.
+
+Den grønne linjen er **ikke en nivåkurve**. Funksjonsverdien varierer
+langs den; hver oransje prikk er minimum på en annen blå linje.
+Stjernen er lavest av alle. De grå ellipsene er nivåkurvene.
+
+### Sammenlign to valg for neste retning
+
+I begge bildene nedenfor starter vi i $x_1$, etter det samme første
+linjesøket. Vi zoomer inn for å se neste bevegelse tydelig; $x_0$
+ligger utenfor utsnittet.
+
+- **Øverst:** Bratteste nedstigning går i den nye residualens retning.
+- **Nederst:** CG går langs den grønne linjen gjennom minimumspunktene.
+
+Begge metodene finner minimum langs sin nye søkelinje. **Hvilken
+metode ender i et punkt der det fortsatt ikke hjelper å gå i den
+første retningen, parallelt med $u=v$?**
 
 ```{pyodide-python}
 #| label: week6-cg-preservation
@@ -1430,12 +1672,19 @@ A = np.array([[3.,1.], [1.,2.]])
 b = np.array([5.,5.])
 sd_two = descent_path(A, b, [0.,0.], steps=2)
 cg_two = cg(A, b, rtol=1e-12)['path']
-fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
+fig, axes = plt.subplots(2, 1, figsize=(7, 9))
 for ax, path, name in zip(axes, [sd_two, cg_two], ['Bratteste nedstigning', 'CG']):
     bowl_plot(ax, A, b, {name:path[1:]}, bounds=(.75,1.65,1.2,2.2))
     u = np.linspace(.75,1.65,150)
     ax.plot(u, (10-4*u)/3, '--', color='#15803d',
-            label='Fortsatt minimum langs p₀')
+            label='Minimum på parallelle linjer')
+    # Blå linje gjennom det nye punktet, parallell med første søkeretning.
+    c = path[-1,1] - path[-1,0]
+    ax.plot(u, u+c, ':', color='#2563eb', alpha=.7,
+            label='Gammel retning gjennom x₂')
+    line_minimum = np.array([(10-3*c)/7, (10+4*c)/7])
+    ax.plot(*line_minimum, 'o', color='#c2410c', markersize=5,
+            label='Minimum på denne blå linjen')
     for j, point in enumerate(path[1:], start=1):
         offset = (9,-15) if j == 1 else (-28,-18)
         ax.annotate(f'x{j}', point, xytext=offset, textcoords='offset points')
@@ -1444,47 +1693,39 @@ for ax, path, name in zip(axes, [sd_two, cg_two], ['Bratteste nedstigning', 'CG'
 fig.tight_layout(); plt.show()
 ```
 
-**Les først venstre bilde.** Første steg ender på den grønne linjen.
-Neste steg går til et lavere funksjonsnivå, men forlater linjen.
-I det nye punktet kan vi igjen forbedre svaret ved å gå i den gamle
-retningen. Det er noe av forklaringen på at metoden må korrigere seg
-flere ganger.
+**Øverst** ender andre steg utenfor den grønne linjen. Den prikkede
+blå linjen gjennom det nye punktet er parallell med $u=v$. Dens
+minimum er den oransje prikken der den krysser den grønne linjen. Vi kan
+altså senke $\phi$ igjen ved å gå i den gamle retningen. Den første
+minimeringen må følges opp med mer arbeid i samme retning.
 
-**Les deretter høyre bilde.** Den nye retningen følger den grønne
-linjen, så minimumsegenskapen langs den første retningen bevares.
-Linjesøket langs den nye retningen treffer stjernen. Nå kan vi ikke
-forbedre funksjonen langs noen av de to uavhengige retningene.
-I to dimensjoner har vi da nådd minimumet i hele planet.
+**Nederst** følger andre steg den grønne linjen. Uansett hvor langt
+vi går langs den, er vi i minimum på linjen gjennom punktet som er
+parallell med $u=v$. Linjesøket velger det laveste punktet langs
+den grønne linjen, og treffer her stjernen. Etter to slike steg er
+vi ferdige med begge ukjente.
 
-De grønne strekene er **ikke nivåkurver**: funksjonsverdien endrer
-seg langs dem. De viser punkter som er optimale langs en bestemt
-annen retning. De grå ellipsene er fortsatt nivåkurvene fra 6.4.
+### Fra figuren til konjugerte retninger
 
-### Konjugerte retninger passer til matrisen
-
-Hvilken betingelse på den nye retningen gjør at den gamle
-minimumsegenskapen bevares? For en kvadratisk funksjon med SPD-matrise
-$A$ er svaret
+Hvordan kan vi velge en slik retning uten å tegne alle linjene?
+For en kvadratisk funksjon med SPD-matrise $A$ finnes et enkelt
+regnekrav: to søkeretninger $p$ og $q$ skal oppfylle
 
 $$\boxed{p^TAq=0.}$$
 
-Da kalles $p$ og $q$ **A-konjugerte retninger**. Dette ligner
-ortogonalitet fra uke 4, men matrisen er med i indreproduktet.
-Vi bruker $\langle p,q\rangle_A=p^TAq$ i stedet for $p^Tq$.
-SPD-forutsetningen gjør dette til et indreprodukt.
+Da kalles de **A-konjugerte**. Betydningen er nettopp den vi så:
+etter at vi har minimert langs $p$, kan vi gå langs $q$ uten at
+det blir nødvendig å minimere i $p$-retningen på nytt.
+Utledningen står i «Gå i dybden».
 
-Retningene behøver derfor ikke se vinkelrette ut på arket.
-Vanlig rett vinkel betyr $p^Tq=0$; konjugerthet betyr $p^TAq=0$.
-Når $A=I$, er de to begrepene like. For en skjev eller smal skål
-må retningene tilpasses matrisen. Det høyre bildet viser hvordan den nye retningen bevarer
-minimeringen langs den første.
+I figuren er den første retningen $p_0=(5,5)^T$. En retning langs
+den grønne linjen er $q=(-3,4)^T$: endringene gir
+$4\cdot(-3)+3\cdot4=0$, så vi holder oss på linjen $4u+3v=10$.
+Vi kan også kontrollere $p_0^TAq=0$ med matrisen vår.
 
-Dette knytter CG til **Gram–Schmidt**: vi kan starte med en foreslått
-retning og fjerne bidrag langs tidligere retninger, men nå med
-indreproduktet bestemt av $A$. CG bruker den nye residualen som
-utgangspunkt. For SPD kan hele beregningen organiseres slik at vi
-bare trenger residualen og forrige søkeretning for å lage den neste.
-Vi behøver ikke lagre alle de gamle retningene.
+Dette er ikke det samme som vanlig rett vinkel. Vanlig ortogonalitet
+betyr $p^Tq=0$; her står $A$ mellom vektorene. Retningene tilpasses
+dermed funksjonen vi minimerer. Når $A=I$, er de to kravene like.
 
 ### Hva gjør CG i praksis?
 
@@ -1495,23 +1736,26 @@ lik residualen alene.
 
 Den praktiske oppskriften er:
 
-1. Start med et forslag $x_0$, beregn residualen, og bruk den som første retning.
-2. Finn minimum langs søkeretningen og oppdater forslaget.
+1. Velg en startvektor $x_0$, for eksempel nullvektoren. Beregn
+   residualen $r_0=b-Ax_0$, og bruk den som første retning hvis vi ikke allerede er framme.
+2. Finn minimum langs linjen gjennom gjeldende punkt i søkeretningen.
+   Dette gir neste tilnærming $x_{k+1}$.
 3. Beregn ny residual. Stopp hvis residualkravet er oppfylt.
 4. Kombiner ny residual med forrige søkeretning slik at den nye
    retningen blir konjugert med de tidligere. Gjenta linjesøket.
 
 Faktorene som bestemmer steglengden og kombinasjonen, kan beregnes
 med indreprodukter. Formlene og et fullstendig regneeksempel står
-nedenfor. Hovedideen er at **hvert steg utvider mengden av retninger
-vi allerede har minimert over**, samtidig som tidligere minimeringer
-bevares i eksakt regning.
+i «Gå i dybden». I to dimensjoner så vi hva dette betyr: først finner
+vi det beste punktet på én linje, og så velger vi en ny retning som
+lar oss bli ferdige med den andre ukjente uten å gjøre om den første
+minimeringen. CG bruker samme idé i større systemer, i eksakt regning.
 
 ### Eksperiment 6 – samme skåler, nye retninger
 
 Vi vender tilbake til de to skålene fra 6.5. Denne gangen legger vi
 CG-banen oppå banen til bratteste nedstigning. Hjelperen `cg` returnerer
-blant annet `path`, som inneholder startpunktet og de nye forslagene,
+blant annet `path`, som inneholder startvektoren og tilnærmingen etter hvert steg,
 og `residuals`, som inneholder direkte beregnede residualnormer.
 Stjernen fra `bowl_plot` er bare et referansepunkt; CG bruker ikke
 en direkte løsning for å beregne banen.
@@ -1523,7 +1767,7 @@ Og hva tror dere endrer seg på den smale?**
 #| label: week6-cg-experiment
 Q = np.array([[1.,-1.],[1.,1.]])/np.sqrt(2)
 star = np.array([1.,-1.1])
-fig, axes = plt.subplots(1, 2, figsize=(10,4.3))
+fig, axes = plt.subplots(2, 1, figsize=(7, 9))
 for ax, small in zip(axes, [1., .04]):
     A = Q @ np.diag([1.,small]) @ Q.T
     b = A @ star
@@ -1537,8 +1781,8 @@ for ax, small in zip(axes, [1., .04]):
 fig.tight_layout(); plt.show()
 ```
 
-Til venstre ligger banene oppå hverandre: første retning peker rett
-mot løsningen, og ett linjesøk er nok. Til høyre er første steg også
+I øverste bilde ligger banene oppå hverandre: første retning peker rett
+mot løsningen, og ett linjesøk er nok. I nederste bilde er første steg også
 felles, men deretter skiller metodene lag. Bratteste nedstigning måler
 bare den nye lokale helningen og fortsetter sikksakk. CG korrigerer
 den nye residualretningen ved hjelp av den forrige søkeretningen og
@@ -1631,6 +1875,16 @@ som en kombinasjon av parvis konjugerte retninger. Minimering i en
 ny retning endrer da ikke de optimale koeffisientene i tidligere
 retninger. Dette er bakgrunnen for grensen på $n$ steg.
 
+**Koblingen til Gram–Schmidt fra uke 4**
+
+For SPD definerer $\langle p,q\rangle_A=p^TAq$ et indreprodukt.
+Konjugerthet er ortogonalitet i dette indreproduktet. Vi kan derfor
+bruke ideen fra Gram–Schmidt: start med den nye residualen og fjern
+bidrag i tidligere søkeretninger, nå målt med A-indreproduktet.
+For CG kan dette organiseres slik at bare forrige søkeretning må
+tas med i neste oppdatering. Det krever CGs struktur; det er ikke
+en regel for vilkårlig valgte retninger.
+
 **Den korte CG-oppdateringen**
 
 Vi starter med $r_0=b-Ax_0$ og $p_0=r_0$. Hvis startresidualen allerede
@@ -1682,10 +1936,7 @@ størrelse og har ingen tilsvarende garanti for hvert enkelt steg.
 
 </details>
 
-Oppbygningen er inspirert av Jonas J. Harangs
-[Iterative metoder 2 (30. oktober 2024)](https://wiki.math.ntnu.no/_media/imax3011/2025h/iterative2-h24.pdf),
-særlig koblingen mellom kvadratisk minimering, A-indreprodukt og
-Gram–Schmidt. Her bruker vi konsekvent residualen $r=b-Ax$.
+
 
 ## 6.7 Prosjekt og egenarbeid
 
@@ -1737,4 +1988,3 @@ og arbeid med prekondisjoneringen.
 </details>
 
 :::
-
