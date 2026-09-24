@@ -973,30 +973,37 @@ window.Quarto = {
 <section id="halvpresisjonsformatet" class="level3">
 <h3 class="anchored" data-anchor-id="halvpresisjonsformatet">Halvpresisjonsformatet</h3>
 <p>Et binært flyttall skrives som</p>
-<p><span class="math display">\[
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 t=\pm m\,2^e,
-\]</span></p>
-<p>der <span class="math inline">\(1\le m&lt;2\)</span>. Halvpresisjonsformatet har 16 bit:</p>
+"><span class="math display">\[
+t=\pm m\,2^e,
+\]</span></span></p>
+<p>der <span data-math-exercise-display="false" data-math-exercise-tex="1\le m<2"><span class="math inline">\(1\le m&lt;2\)</span></span>. Halvpresisjonsformatet har 16 bit:</p>
 <ul>
 <li>1 fortegnsbit,</li>
 <li>5 eksponentbiter med bias 15,</li>
 <li>10 brøkbiter i mantissen.</li>
 </ul>
 <p>For et normalisert tall er verdien</p>
-<p><span class="math display">\[
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 (-1)^s(1.f)_2\,2^{E-15},
-\]</span></p>
-<p>der <span class="math inline">\(E\)</span> er heltallsverdien til eksponentfeltet og den ledende eneren i mantissen er skjult. Runding skjer til nærmeste representerbare tall, med ties-to-even når et tall ligger nøyaktig midt mellom to alternativer.</p>
+"><span class="math display">\[
+(-1)^s(1.f)_2\,2^{E-15},
+\]</span></span></p>
+<p>der <span data-math-exercise-display="false" data-math-exercise-tex="E"><span class="math inline">\(E\)</span></span> er heltallsverdien til eksponentfeltet og den ledende eneren i mantissen er skjult. Runding skjer til nærmeste representerbare tall, med ties-to-even når et tall ligger nøyaktig midt mellom to alternativer.</p>
 </section>
 </div>
 <section id="a-maskinepsilon" class="level3">
 <h3 class="anchored" data-anchor-id="a-maskinepsilon">a) Maskinepsilon</h3>
 <p>Maskinepsilon er det minste positive tallet <span class="math inline">\(\varepsilon\)</span> slik at <span class="math inline">\(1+\varepsilon\)</span> er forskjellig fra 1 i formatet.</p>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="exam-h25-10-machine-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Finn maskinepsilon</div>
+<div class="math-exercise-cell" id="math-exercise-1" data-label="exam-h25-10-machine-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon\nMaskinepsilon er det minste positive tallet \\(\\varepsilon\\) slik at \\(1+\\varepsilon\\) er forskjellig fra 1 i formatet.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Finn maskinepsilon" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Finn maskinepsilon</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Svarformat: Skriv et eksakt matematisk uttrykk, for eksempel `2**(-k)` for en<br>
+<div class="math-exercise-question" data-math-exercise-source="Svarformat: Skriv et eksakt matematisk uttrykk, for eksempel `2**(-k)` for en<br>
+heltallig eksponent \(k\).<br>
+<br>
+\[\varepsilon =\] <input type=&quot;text&quot; id=&quot;math-exercise-1-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>">Svarformat: Skriv et eksakt matematisk uttrykk, for eksempel `2**(-k)` for en<br>
 heltallig eksponent \(k\).<br>
 <br>
 \[\varepsilon =\] <input type="text" id="math-exercise-1-f1" data-answer="2**(-10)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
@@ -1014,11 +1021,18 @@ heltallig eksponent \(k\).<br>
 </div>
 </div>
 <p>Kontroller også bitmønstrene rundt 1.</p>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="exam-h25-10-epsilon-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;eksponent for 1&quot;,&quot;mantisse for 1&quot;,&quot;eksponent for neste tall&quot;,&quot;mantisse for neste tall&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon Maskinepsilon er det minste positive tallet \\varepsilon slik at 1+\\varepsilon er forskjellig fra 1 i formatet. Kontroller også bitmønstrene rundt 1.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;,&quot;math-exercise-2-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene for 1 og neste tall</div>
+<div class="math-exercise-cell" id="math-exercise-2" data-label="exam-h25-10-epsilon-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;eksponent for 1&quot;,&quot;mantisse for 1&quot;,&quot;eksponent for neste tall&quot;,&quot;mantisse for neste tall&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;a) Maskinepsilon\nMaskinepsilon er det minste positive tallet \\(\\varepsilon\\) slik at \\(1+\\varepsilon\\) er forskjellig fra 1 i formatet.\nKontroller også bitmønstrene rundt 1.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;,&quot;math-exercise-2-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Bitmønstrene for 1 og neste tall" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene for 1 og neste tall</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Svarformat: Hvert eksponentfelt skal være en binær streng med nøyaktig 5 bit.<br>
+<div class="math-exercise-question" data-math-exercise-source="Svarformat: Hvert eksponentfelt skal være en binær streng med nøyaktig 5 bit.<br>
+Hvert mantissefelt skal være en binær streng med nøyaktig 10 bit. Bruk bare<br>
+nuller og enere, uten mellomrom eller skilletegn.<br>
+<br>
+For tallet 1: eksponentfelt: <input type=&quot;text&quot; id=&quot;math-exercise-2-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> og mantissefelt: <input type=&quot;text&quot; id=&quot;math-exercise-2-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>.<br>
+<br>
+For det nærmeste tallet over 1: eksponentfelt: <input type=&quot;text&quot; id=&quot;math-exercise-2-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> og mantissefelt:<br>
+<input type=&quot;text&quot; id=&quot;math-exercise-2-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>.">Svarformat: Hvert eksponentfelt skal være en binær streng med nøyaktig 5 bit.<br>
 Hvert mantissefelt skal være en binær streng med nøyaktig 10 bit. Bruk bare<br>
 nuller og enere, uten mellomrom eller skilletegn.<br>
 <br>
@@ -1046,11 +1060,15 @@ For det nærmeste tallet over 1: eksponentfelt: <input type="text" id="math-exer
 <p><span class="math display">\[
 12345=(11000000111001)_2.
 \]</span></p>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="exam-h25-10-encode-12345" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;b) Representasjon av 12345 Tallet er gitt i binær form som 12345=(11000000111001)_2.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Kod 12345 i halvpresisjon</div>
+<div class="math-exercise-cell" id="math-exercise-3" data-label="exam-h25-10-encode-12345" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;b) Representasjon av 12345\nTallet er gitt i binær form som\n\\[\n12345=(11000000111001)_2.\n\\]&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Kod 12345 i halvpresisjon" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Kod 12345 i halvpresisjon</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 5 bit og<br>
+<div class="math-exercise-question" data-math-exercise-source="Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 5 bit og<br>
+mantissefeltet nøyaktig 10 bit. Bruk bare nuller og enere, uten mellomrom eller<br>
+skilletegn.<br>
+<br>
+\(s=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> &amp;nbsp;&amp;nbsp; \(E=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> &amp;nbsp;&amp;nbsp; \(f=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 5 bit og<br>
 mantissefeltet nøyaktig 10 bit. Bruk bare nuller og enere, uten mellomrom eller<br>
 skilletegn.<br>
 <br>
@@ -1075,11 +1093,18 @@ skilletegn.<br>
 <p><span class="math display">\[
 x=1+2^{-12}+2^{-15}.
 \]</span></p>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="exam-h25-10-round-near-one" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;lagret verdi&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallene og den lagrede verdien</div>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="exam-h25-10-round-near-one" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;lagret verdi&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1\nVi ønsker å lagre\n\\[\nx=1+2^{-12}+2^{-15}.\n\\]&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Finn nabotallene og den lagrede verdien" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallene og den lagrede verdien</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Svarformat: Skriv hvert svar som et heltall eller et eksakt uttrykk. Bruk<br>
+<div class="math-exercise-question" data-math-exercise-source="Svarformat: Skriv hvert svar som et heltall eller et eksakt uttrykk. Bruk<br>
+`2**(-k)` for \(2^{-k}\).<br>
+<br>
+Det nedre representerbare nabotallet er <input type=&quot;text&quot; id=&quot;math-exercise-4-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>.<br>
+<br>
+Det øvre representerbare nabotallet er <input type=&quot;text&quot; id=&quot;math-exercise-4-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>.<br>
+<br>
+Etter avrunding lagres verdien <input type=&quot;text&quot; id=&quot;math-exercise-4-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>.">Svarformat: Skriv hvert svar som et heltall eller et eksakt uttrykk. Bruk<br>
 `2**(-k)` for \(2^{-k}\).<br>
 <br>
 Det nedre representerbare nabotallet er <input type="text" id="math-exercise-4-f1" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.<br>
@@ -1100,11 +1125,18 @@ Etter avrunding lagres verdien <input type="text" id="math-exercise-4-f3" data-a
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<div class="math-exercise-cell" id="math-exercise-5" data-label="exam-h25-10-round-near-one-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1 Vi ønsker å lagre x=1+2^{-12}+2^{-15}.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene til nabotallene</div>
+<div class="math-exercise-cell" id="math-exercise-5" data-label="exam-h25-10-round-near-one-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="h25-half-format" data-context="&quot;c) Avrunding nær 1\nVi ønsker å lagre\n\\[\nx=1+2^{-12}+2^{-15}.\n\\]&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Bitmønstrene til nabotallene" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Bitmønstrene til nabotallene</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Begge tallene har fortegn 0 og eksponentfelt 01111.<br>
+<div class="math-exercise-question" data-math-exercise-source="Begge tallene har fortegn 0 og eksponentfelt 01111.<br>
+<br>
+Svarformat: Hvert svar skal være en binær streng med nøyaktig 10 bit. Bruk bare<br>
+nuller og enere, uten mellomrom eller skilletegn.<br>
+<br>
+Nedre: <input type=&quot;text&quot; id=&quot;math-exercise-5-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp;&amp;nbsp; Øvre: <input type=&quot;text&quot; id=&quot;math-exercise-5-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Valgt etter avrunding: <input type=&quot;text&quot; id=&quot;math-exercise-5-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Begge tallene har fortegn 0 og eksponentfelt 01111.<br>
 <br>
 Svarformat: Hvert svar skal være en binær streng med nøyaktig 10 bit. Bruk bare<br>
 nuller og enere, uten mellomrom eller skilletegn.<br>
@@ -1133,20 +1165,31 @@ Valgt etter avrunding: <input type="text" id="math-exercise-5-f3" data-answer="0
 <div id="k26-minifloat-format" class="math-exercise-context">
 <section id="minifloat133" class="level3">
 <h3 class="anchored" data-anchor-id="minifloat133">MiniFloat(1,3,3)</h3>
-<p>Formatet har sju bit: én fortegnsbit <span class="math inline">\(s\)</span>, tre eksponentbiter <span class="math inline">\(e\)</span> og tre brøkbiter <span class="math inline">\(f\)</span>. Bias er <span class="math inline">\(B=3\)</span>. Alle tall i denne oppgaven er normaliserte og tolkes som</p>
-<p><span class="math display">\[
+<p>Formatet har sju bit: én fortegnsbit <span data-math-exercise-display="false" data-math-exercise-tex="s"><span class="math inline">\(s\)</span></span>, tre eksponentbiter <span data-math-exercise-display="false" data-math-exercise-tex="e"><span class="math inline">\(e\)</span></span> og tre brøkbiter <span data-math-exercise-display="false" data-math-exercise-tex="f"><span class="math inline">\(f\)</span></span>. Bias er <span data-math-exercise-display="false" data-math-exercise-tex="B=3"><span class="math inline">\(B=3\)</span></span>. Alle tall i denne oppgaven er normaliserte og tolkes som</p>
+<p><span data-math-exercise-display="true" data-math-exercise-tex="
 x=(-1)^s(1.f)_2\,2^{e-B}.
-\]</span></p>
+"><span class="math display">\[
+x=(-1)^s(1.f)_2\,2^{e-B}.
+\]</span></span></p>
 <p>Eksponentkodene <code>000</code> og <code>111</code> brukes ikke. Ved avrunding velges nærmeste representerbare tall. Ligger verdien nøyaktig midt mellom to tall, bruker vi ties-to-even: alternativet med siste mantissebit 0 velges.</p>
 </section>
 </div>
 <section id="a-dekoding" class="level3">
 <h3 class="anchored" data-anchor-id="a-dekoding">a) Dekoding</h3>
 <div class="math-exercise-cell" id="math-exercise-6" data-label="exam-k26-8-decode" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;a) Dekoding&quot;" data-fields="[&quot;math-exercise-6-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Dekod et MiniFloat-tall</div>
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Dekod et MiniFloat-tall" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Dekod et MiniFloat-tall</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Svarformat: Oppgi én eksakt tallverdi som heltall, brøk eller desimaltall med<br>
+<div class="math-exercise-question" data-math-exercise-source="Svarformat: Oppgi én eksakt tallverdi som heltall, brøk eller desimaltall med<br>
+punktum som desimalskilletegn.<br>
+<br>
+Hva er desimalverdien av bitmønsteret<br>
+<br>
+\[<br>
+\texttt{0 100 010}?<br>
+\]<br>
+<br>
+Verdien er <input type=&quot;text&quot; id=&quot;math-exercise-6-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>.">Svarformat: Oppgi én eksakt tallverdi som heltall, brøk eller desimaltall med<br>
 punktum som desimalskilletegn.<br>
 <br>
 Hva er desimalverdien av bitmønsteret<br>
@@ -1173,11 +1216,15 @@ Verdien er <input type="text" id="math-exercise-6-f1" data-answer="5/2" data-var
 <section id="b-koding-og-avrunding" class="level3">
 <h3 class="anchored" data-anchor-id="b-koding-og-avrunding">b) Koding og avrunding</h3>
 <p>Tallet <span class="math inline">\(5.25\)</span> ligger nøyaktig midt mellom to representerbare MiniFloat-tall.</p>
-<div class="math-exercise-cell" id="math-exercise-7" data-label="exam-k26-8-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;b) Koding og avrunding Tallet 5.25 ligger nøyaktig midt mellom to representerbare MiniFloat-tall.&quot;" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;,&quot;math-exercise-7-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Kod 5.25 med ties-to-even</div>
+<div class="math-exercise-cell" id="math-exercise-7" data-label="exam-k26-8-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;fortegn&quot;,&quot;eksponentfelt&quot;,&quot;mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;b) Koding og avrunding\nTallet \\(5.25\\) ligger nøyaktig midt mellom to representerbare MiniFloat-tall.&quot;" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;,&quot;math-exercise-7-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Kod 5.25 med ties-to-even" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Kod 5.25 med ties-to-even</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 3 bit og<br>
+<div class="math-exercise-question" data-math-exercise-source="Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 3 bit og<br>
+mantissefeltet nøyaktig 3 bit. Bruk bare nuller og enere, uten mellomrom eller<br>
+skilletegn.<br>
+<br>
+\(s=\) <input type=&quot;text&quot; id=&quot;math-exercise-7-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> &amp;nbsp;&amp;nbsp; \(e=\) <input type=&quot;text&quot; id=&quot;math-exercise-7-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> &amp;nbsp;&amp;nbsp; \(f=\) <input type=&quot;text&quot; id=&quot;math-exercise-7-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>">Svarformat: Fortegnet skal være 1 bit, eksponentfeltet nøyaktig 3 bit og<br>
 mantissefeltet nøyaktig 3 bit. Bruk bare nuller og enere, uten mellomrom eller<br>
 skilletegn.<br>
 <br>
@@ -1199,10 +1246,17 @@ skilletegn.<br>
 <section id="c-nærmeste-tall-til-0.3" class="level3">
 <h3 class="anchored" data-anchor-id="c-nærmeste-tall-til-0.3">c) Nærmeste tall til 0.3</h3>
 <div class="math-exercise-cell" id="math-exercise-8" data-label="exam-k26-8-round-point-three" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre nabotall&quot;,&quot;øvre nabotall&quot;,&quot;avrundet verdi&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Rund 0.3 til MiniFloat</div>
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Rund 0.3 til MiniFloat" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Rund 0.3 til MiniFloat</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Svarformat: Oppgi hvert tall som en eksakt brøk eller som et desimaltall med<br>
+<div class="math-exercise-question" data-math-exercise-source="Svarformat: Oppgi hvert tall som en eksakt brøk eller som et desimaltall med<br>
+punktum som desimalskilletegn.<br>
+<br>
+Det nedre representerbare nabotallet er <input type=&quot;text&quot; id=&quot;math-exercise-8-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>.<br>
+<br>
+Det øvre representerbare nabotallet er <input type=&quot;text&quot; id=&quot;math-exercise-8-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>.<br>
+<br>
+Ved avrunding til nærmeste lagres <input type=&quot;text&quot; id=&quot;math-exercise-8-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>.">Svarformat: Oppgi hvert tall som en eksakt brøk eller som et desimaltall med<br>
 punktum som desimalskilletegn.<br>
 <br>
 Det nedre representerbare nabotallet er <input type="text" id="math-exercise-8-f1" data-answer="9/32" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">.<br>
@@ -1224,10 +1278,15 @@ Ved avrunding til nærmeste lagres <input type="text" id="math-exercise-8-f3" da
 </div>
 </div>
 <div class="math-exercise-cell" id="math-exercise-9" data-label="exam-k26-8-round-point-three-bits" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nedre mantissefelt&quot;,&quot;øvre mantissefelt&quot;,&quot;valgt mantissefelt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;c) Nærmeste tall til 0.3&quot;" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Bitmønstre rundt 0.3</div>
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Bitmønstre rundt 0.3" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Bitmønstre rundt 0.3</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Alle tre svarene har fortegn 0 og eksponentfelt 001.<br>
+<div class="math-exercise-question" data-math-exercise-source="Alle tre svarene har fortegn 0 og eksponentfelt 001.<br>
+<br>
+Svarformat: Hvert svar skal være en binær streng med nøyaktig 3 bit. Bruk bare<br>
+nuller og enere, uten mellomrom eller skilletegn.<br>
+<br>
+Nedre: <input type=&quot;text&quot; id=&quot;math-exercise-9-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> &amp;nbsp;&amp;nbsp; Øvre: <input type=&quot;text&quot; id=&quot;math-exercise-9-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> &amp;nbsp;&amp;nbsp; Valgt: <input type=&quot;text&quot; id=&quot;math-exercise-9-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>">Alle tre svarene har fortegn 0 og eksponentfelt 001.<br>
 <br>
 Svarformat: Hvert svar skal være en binær streng med nøyaktig 3 bit. Bruk bare<br>
 nuller og enere, uten mellomrom eller skilletegn.<br>
@@ -1250,10 +1309,16 @@ Nedre: <input type="text" id="math-exercise-9-f1" data-answer="001" data-vars=""
 <section id="d-avstand-mellom-nabotall" class="level3">
 <h3 class="anchored" data-anchor-id="d-avstand-mellom-nabotall">d) Avstand mellom nabotall</h3>
 <div class="math-exercise-cell" id="math-exercise-10" data-label="exam-k26-8-spacing" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k26-minifloat-format" data-context="&quot;d) Avstand mellom nabotall&quot;" data-fields="[&quot;math-exercise-10-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallsavstanden</div>
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Finn nabotallsavstanden" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Finn nabotallsavstanden</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Hold eksponentfeltet fast på \(e=\texttt{100}\). Avstanden mellom to tall som<br>
+<div class="math-exercise-question" data-math-exercise-source="Hold eksponentfeltet fast på \(e=\texttt{100}\). Avstanden mellom to tall som<br>
+bare skiller seg med 1 i mantissefeltet er<br>
+<br>
+Svarformat: Oppgi én eksakt brøk eller et desimaltall med punktum som<br>
+desimalskilletegn.<br>
+<br>
+\[\Delta =\] <input type=&quot;text&quot; id=&quot;math-exercise-10-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>.">Hold eksponentfeltet fast på \(e=\texttt{100}\). Avstanden mellom to tall som<br>
 bare skiller seg med 1 i mantissefeltet er<br>
 <br>
 Svarformat: Oppgi én eksakt brøk eller et desimaltall med punktum som<br>
@@ -1288,11 +1353,20 @@ desimalskilletegn.<br>
 <section id="a-maskinell-differanse" class="level3">
 <h3 class="anchored" data-anchor-id="a-maskinell-differanse">a) Maskinell differanse</h3>
 <p>La <span class="math inline">\(x=12.345\)</span> og <span class="math inline">\(y=12.344\)</span>.</p>
-<div class="math-exercise-cell" id="math-exercise-11" data-label="exam-k2-8-machine-difference" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;lagret x&quot;,&quot;lagret y&quot;,&quot;maskinell differanse&quot;,&quot;eksakt differanse&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-11-f1&quot;,&quot;math-exercise-11-f2&quot;,&quot;math-exercise-11-f3&quot;,&quot;math-exercise-11-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Lagre og subtraher med fire signifikante sifre</div>
+<div class="math-exercise-cell" id="math-exercise-11" data-label="exam-k2-8-machine-difference" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;lagret x&quot;,&quot;lagret y&quot;,&quot;maskinell differanse&quot;,&quot;eksakt differanse&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse\nLa \\(x=12.345\\) og \\(y=12.344\\).&quot;" data-fields="[&quot;math-exercise-11-f1&quot;,&quot;math-exercise-11-f2&quot;,&quot;math-exercise-11-f3&quot;,&quot;math-exercise-11-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Lagre og subtraher med fire signifikante sifre" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Lagre og subtraher med fire signifikante sifre</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Svarformat: Oppgi bare tallverdien i hvert felt. Bruk punktum som<br>
+<div class="math-exercise-question" data-math-exercise-source="Svarformat: Oppgi bare tallverdien i hvert felt. Bruk punktum som<br>
+desimalskilletegn, ikke komma.<br>
+<br>
+\[\operatorname{fl}(x)=\] <input type=&quot;text&quot; id=&quot;math-exercise-11-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;><br>
+<br>
+\[\operatorname{fl}(y)=\] <input type=&quot;text&quot; id=&quot;math-exercise-11-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;><br>
+<br>
+\[\operatorname{fl}(\operatorname{fl}(x)-\operatorname{fl}(y))=\] <input type=&quot;text&quot; id=&quot;math-exercise-11-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;><br>
+<br>
+Den eksakte differansen er \(x-y=\) <input type=&quot;text&quot; id=&quot;math-exercise-11-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>.">Svarformat: Oppgi bare tallverdien i hvert felt. Bruk punktum som<br>
 desimalskilletegn, ikke komma.<br>
 <br>
 \[\operatorname{fl}(x)=\] <input type="text" id="math-exercise-11-f1" data-answer="12.35" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
@@ -1315,11 +1389,13 @@ Den eksakte differansen er \(x-y=\) <input type="text" id="math-exercise-11-f4" 
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<div class="math-exercise-cell" id="math-exercise-12" data-label="exam-k2-8-error-factor" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse La x=12.345 og y=12.344.&quot;" data-fields="[&quot;math-exercise-12-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Sammenlign differansene</div>
+<div class="math-exercise-cell" id="math-exercise-12" data-label="exam-k2-8-error-factor" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format" data-context="&quot;a) Maskinell differanse\nLa \\(x=12.345\\) og \\(y=12.344\\).&quot;" data-fields="[&quot;math-exercise-12-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Sammenlign differansene" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Sammenlign differansene</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Svarformat: Oppgi ett positivt heltall.<br>
+<div class="math-exercise-question" data-math-exercise-source="Svarformat: Oppgi ett positivt heltall.<br>
+<br>
+Den maskinelle differansen er <input type=&quot;text&quot; id=&quot;math-exercise-12-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> ganger den eksakte differansen.">Svarformat: Oppgi ett positivt heltall.<br>
 <br>
 Den maskinelle differansen er <input type="text" id="math-exercise-12-f1" data-answer="10" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> ganger den eksakte differansen.</div>
 
@@ -1339,16 +1415,23 @@ Den maskinelle differansen er <input type="text" id="math-exercise-12-f1" data-a
 <div id="k2-stable-rationalization" class="math-exercise-context">
 <section id="stabil-omskriving" class="level3">
 <h3 class="anchored" data-anchor-id="stabil-omskriving">Stabil omskriving</h3>
-<p>For små <span class="math inline">\(t&gt;0\)</span> er <span class="math inline">\(\sqrt{1+t}\)</span> nær 1. Direkte beregning av <span class="math inline">\(\sqrt{1+t}-1\)</span> subtraherer derfor to nesten like tall og kan miste mange signifikante sifre. Ved å multiplisere teller og nevner med den konjugerte <span class="math inline">\(\sqrt{1+t}+1\)</span> kan subtraksjonen fjernes.</p>
+<p>For små <span data-math-exercise-display="false" data-math-exercise-tex="t>0"><span class="math inline">\(t&gt;0\)</span></span> er <span data-math-exercise-display="false" data-math-exercise-tex="\sqrt{1+t}"><span class="math inline">\(\sqrt{1+t}\)</span></span> nær 1. Direkte beregning av <span data-math-exercise-display="false" data-math-exercise-tex="\sqrt{1+t}-1"><span class="math inline">\(\sqrt{1+t}-1\)</span></span> subtraherer derfor to nesten like tall og kan miste mange signifikante sifre. Ved å multiplisere teller og nevner med den konjugerte <span data-math-exercise-display="false" data-math-exercise-tex="\sqrt{1+t}+1"><span class="math inline">\(\sqrt{1+t}+1\)</span></span> kan subtraksjonen fjernes.</p>
 </section>
 </div>
 <section id="bc-kansellering-og-rasjonalisering" class="level3">
 <h3 class="anchored" data-anchor-id="bc-kansellering-og-rasjonalisering">b–c) Kansellering og rasjonalisering</h3>
 <div class="math-exercise-cell" id="math-exercise-13" data-label="exam-k2-8-rationalize" data-mode="equivalent" data-reject="sqrt(1+t)-1" data-vars="t" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[]" data-vecdir="col" data-context-mode="explicit" data-context-refs="k2-decimal-format, k2-stable-rationalization" data-context="&quot;b–c) Kansellering og rasjonalisering&quot;" data-fields="[&quot;math-exercise-13-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Skriv om uttrykket</div>
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Skriv om uttrykket" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Skriv om uttrykket</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question">Skriv \(\sqrt{1+t}-1\) på en matematisk ekvivalent form som unngår subtraksjon<br>
+<div class="math-exercise-question" data-math-exercise-source="Skriv \(\sqrt{1+t}-1\) på en matematisk ekvivalent form som unngår subtraksjon<br>
+av to nesten like tall.<br>
+<br>
+Svarformat: Bruk variabelen `t` og skriv kvadratroten som `sqrt(...)`. Bruk<br>
+vanlige regneoperatorer som `+`, `-`, `*` og `/`. Det opprinnelige uttrykket<br>
+godtas ikke.<br>
+<br>
+\[\sqrt{1+t}-1 =\] <input type=&quot;text&quot; id=&quot;math-exercise-13-f1&quot; data-vars=&quot;t&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Skriv \(\sqrt{1+t}-1\) på en matematisk ekvivalent form som unngår subtraksjon<br>
 av to nesten like tall.<br>
 <br>
 Svarformat: Bruk variabelen `t` og skriv kvadratroten som `sqrt(...)`. Bruk<br>
@@ -3356,6 +3439,13 @@ godtas ikke.<br>
     };
   }
 
+  // Pool questions are replaced on every draw. Save this draw's source before
+  // typesetting, without answer keys; input ids remain for current field labels.
+  function setQuestionContent(el, rendered) {
+    el.dataset.mathExerciseSource = rendered.html.replace(/ data-answer="[^"]*"/g, '');
+    el.innerHTML = rendered.html;
+  }
+
   function localizeStructuralLabel(token) {
     if (!token) return '';
     if (/^v\d+$/.test(token)) return L.vecComponent(token.slice(1));
@@ -4185,20 +4275,26 @@ godtas ikke.<br>
   //                referenced by id via #| context: id1, id2. Resolved here,
   //                lazily, from the live rendered DOM: elements may appear
   //                anywhere on the page and in any order, and this also
-  //                captures KaTeX-rendered math cleanly (as LaTeX source)
-  //                instead of a build-time plain-text stringify.
+  //                preserves source math saved by the filter and recovers
+  //                MathJax/KaTeX source for dynamically generated content.
   //   "none"     – #| context: none; no context is sent.
   // ---------------------------------------------------------------------------
 
   var MAX_FEEDBACK_CONTEXT_CHARS = 6000;
 
-  // Extracts a clean text/LaTeX rendering of a context element's *current*
-  // visible content: skips hidden/UI-chrome nodes, turns KaTeX spans back
-  // into their original $...$ source (rather than KaTeX's generated markup),
-  // and normalizes block-level tags to newlines so paragraphs/list items
-  // don't run together.
-  function contextText(root) {
+  // One serializer for context, captions and questions. Never infer mathematics
+  // from rendered glyphs: fraction bars, powers and SVG text are not plain text.
+  // fieldLabels is supplied only for the question, not for surrounding context.
+  function contextText(root, fieldLabels) {
+    if (!root) return '';
     var parts = [];
+    var mathItems = new Map();
+    var mathDocument = window.MathJax && window.MathJax.startup && window.MathJax.startup.document;
+    if (mathDocument && typeof mathDocument.getMathItemsWithin === 'function') {
+      mathDocument.getMathItemsWithin([root]).forEach(function (item) {
+        if (item.typesetRoot) mathItems.set(item.typesetRoot, item);
+      });
+    }
     var blockTags = {
       ADDRESS: true, ARTICLE: true, ASIDE: true, BLOCKQUOTE: true,
       DIV: true, FIGCAPTION: true, FIGURE: true, FOOTER: true,
@@ -4211,26 +4307,70 @@ godtas ikke.<br>
       if (parts.length && parts[parts.length - 1] !== '\n') parts.push('\n');
     }
 
+    function math(tex, display) {
+      parts.push({ math: (display ? '\\[' : '\\(') + tex + (display ? '\\]' : '\\)') });
+    }
+
+    function missingMath() {
+      console.warn('math-exercise: mathematical source unavailable; rendered glyphs were not sent to AI.');
+      parts.push('[Mathematical source unavailable]');
+    }
+
     function walk(node) {
       if (node.nodeType === Node.TEXT_NODE) {
         parts.push(node.nodeValue || '');
+        return;
+      }
+      if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+        Array.prototype.forEach.call(node.childNodes, walk);
         return;
       }
       if (node.nodeType !== Node.ELEMENT_NODE) return;
 
       var el = node;
       if (el.matches(
-        'script, style, noscript, template, button, input, textarea, select, ' +
+        'script, style, noscript, template, button, select, ' +
         '.math-exercise-cell, .math-exercise-controls, .math-feedback-area, ' +
-        '.math-legend-panel, [hidden], [aria-hidden="true"]'
+        '.math-legend-panel, .math-dynamic-matrix-controls, [hidden], [aria-hidden="true"]'
       )) return;
 
       var style = window.getComputedStyle(el);
       if (style.display === 'none' || style.visibility === 'hidden') return;
 
-      if (el.classList.contains('katex')) {
+      if (el.matches('input, textarea')) {
+        if (fieldLabels && Object.prototype.hasOwnProperty.call(fieldLabels, el.id)) {
+          parts.push('[' + fieldLabels[el.id] + ']');
+        }
+        return;
+      }
+      if (fieldLabels && el.classList.contains('math-dynamic-matrix-wrap')) {
+        parts.push('[Matrix ' + (el.dataset.matrixName || '') + ']');
+        return;
+      }
+
+      // Authored context math survives either renderer and asynchronous loading.
+      if (el.hasAttribute('data-math-exercise-tex')) {
+        math(el.dataset.mathExerciseTex, el.dataset.mathExerciseDisplay === 'true');
+        return;
+      }
+
+      if (el.matches('.katex, .katex-display')) {
         var annotation = el.querySelector('annotation[encoding="application/x-tex"]');
-        parts.push(annotation ? '$' + annotation.textContent.trim() + '$' : el.textContent);
+        if (annotation) math(annotation.textContent, el.classList.contains('katex-display'));
+        else missingMath();
+        return;
+      }
+
+      if (el.matches('mjx-container') || mathItems.has(el)) {
+        var item = mathItems.get(el);
+        var latex = el.querySelector('mjx-math[data-latex], [data-mml-node="math"][data-latex]');
+        var texAnnotation = el.querySelector('annotation[encoding="application/x-tex"]');
+        if (item && typeof item.math === 'string') math(item.math, item.display);
+        // MathJax 4 exposes source on the root math node. Use the outermost
+        // expression only; never concatenate the source of individual glyphs.
+        else if (latex) math(latex.getAttribute('data-latex'), el.getAttribute('display') === 'true');
+        else if (texAnnotation) math(texAnnotation.textContent, el.getAttribute('display') === 'true');
+        else missingMath();
         return;
       }
 
@@ -4242,6 +4382,7 @@ godtas ikke.<br>
       var isBlock = !!blockTags[el.tagName];
       if (isBlock) newline();
       if (el.tagName === 'LI') parts.push('- ');
+      if (el.tagName === 'TD' || el.tagName === 'TH') parts.push(' | ');
 
       Array.prototype.forEach.call(el.childNodes, walk);
 
@@ -4249,12 +4390,35 @@ godtas ikke.<br>
     }
 
     walk(root);
-    return parts.join('')
-      .replace(/\u00a0/g, ' ')
-      .replace(/[ \t]+/g, ' ')
-      .replace(/ *\n */g, '\n')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim();
+    var text = '', prose = '';
+    function flush() {
+      text += prose.replace(/\u00a0/g, ' ').replace(/[ \t]+/g, ' ')
+        .replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n');
+      prose = '';
+    }
+    parts.forEach(function (part) {
+      if (typeof part === 'string') prose += part;
+      else { flush(); text += part.math; }
+    });
+    flush();
+    return text.trim();
+  }
+
+  function sourceText(el, fieldLabels) {
+    if (!el) return '';
+    if (!el.hasAttribute('data-math-exercise-source')) return contextText(el, fieldLabels);
+    // Inert HTML: no scripts, image requests or custom element constructors.
+    var template = document.createElement('template');
+    template.innerHTML = el.dataset.mathExerciseSource;
+    return contextText(template.content, fieldLabels);
+  }
+
+  function questionText(cell, fieldIds, fieldLabel) {
+    var labels = Object.create(null);
+    fieldIds.forEach(function (id, index) { labels[id] = fieldLabel(index); });
+    var caption = sourceText(cell.querySelector('.math-exercise-caption'));
+    var question = sourceText(cell.querySelector('.math-exercise-question'), labels);
+    return (caption ? caption + '\n' : '') + question;
   }
 
   // Resolves #| context: id1, id2, ... against the live DOM. Duplicate,
@@ -4537,7 +4701,7 @@ godtas ikke.<br>
       }
       var r = renderTaskText(poolTasks[idx], cell.id, vars, vecdir, mode);
       var qDiv = cell.querySelector('.math-exercise-question');
-      qDiv.innerHTML = r.html;
+      setQuestionContent(qDiv, r);
       cell.dataset.fields = JSON.stringify(r.fieldIds);
       cell.dataset.structuralFieldLabels = JSON.stringify(r.structuralLabels);
       structuralFieldLabels = r.structuralLabels;
@@ -4731,7 +4895,7 @@ godtas ikke.<br>
 
         var r = renderTaskText(poolTasks[next], cell.id, vars, vecdir, mode);
         var qDivR = cell.querySelector('.math-exercise-question');
-        qDivR.innerHTML = r.html;
+        setQuestionContent(qDivR, r);
         cell.dataset.fields = JSON.stringify(r.fieldIds);
         cell.dataset.structuralFieldLabels = JSON.stringify(r.structuralLabels);
         fieldIds = r.fieldIds;
@@ -4764,23 +4928,7 @@ godtas ikke.<br>
           fbDiv.innerHTML = '<div class="math-fb-empty">' + L.needAnswerFirst + '</div>';
           return;
         }
-        var qDiv   = cell.querySelector('.math-exercise-question');
-        var capEl  = cell.querySelector('.math-exercise-caption');
-        var clone  = qDiv.cloneNode(true);
-        clone.querySelectorAll('.math-dynamic-matrix-wrap').forEach(function (wrap) {
-          var marker = document.createElement('span');
-          marker.textContent = '[Matrix ' + (wrap.dataset.matrixName || '') + ']';
-          wrap.parentNode.replaceChild(marker, wrap);
-        });
-        clone.querySelectorAll('.math-dynamic-matrix-controls').forEach(function (controls) { controls.remove(); });
-        var clonedFields = clone.querySelectorAll('input, textarea');
-        clonedFields.forEach(function (el) {
-          var s = document.createElement('span');
-          var originalIndex = fieldIds.indexOf(el.id);
-          s.textContent = '[' + fieldLabel(originalIndex >= 0 ? originalIndex : 0) + ']';
-          el.parentNode.replaceChild(s, el);
-        });
-        var question = (capEl ? capEl.textContent + '\n' : '') + clone.textContent.replace(/\s+/g, ' ').trim();
+        var question = questionText(cell, fieldIds, fieldLabel);
         var contexts = resolveContexts(cell);
 
         async function doFeedback(cfg) {
@@ -4905,6 +5053,11 @@ godtas ikke.<br>
       dynamicSpecFromElement: dynamicSpecFromElement,
       resizedDynamicMatrixShape: resizedDynamicMatrixShape,
       renderTaskText: renderTaskText,
+      setQuestionContent: setQuestionContent,
+      contextText: contextText,
+      questionText: questionText,
+      resolveContexts: resolveContexts,
+      setupCell: setupCell,
       normalizeTaskMathDelimiters: normalizeTaskMathDelimiters,
       localizeStructuralLabel: localizeStructuralLabel,
       expressionAnswersXml: expressionAnswersXml,
