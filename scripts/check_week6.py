@@ -1,6 +1,7 @@
 """Check lecture experiments, CG claims and a completed PCG exercise."""
 from pathlib import Path
 import re
+import runpy
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -48,18 +49,36 @@ def main():
     assert np.linalg.norm(rhs-narrow@sd_narrow[-1]) > 1e-6
     # Project must run from its own setup, without a previous lecture session.
     ns = {}
-    for code in cells('_includes/linalg/week6_setup.md'): run(code, ns)
-    for code in cells('_includes/projects/week6_preconditioning.md'):
-        # Finish only the student's three marked expressions for verification.
-        code = code.replace("raise NotImplementedError('TODO 1')", 'return r/m')
-        code = code.replace('beta = None', 'beta = gamma_new/gamma').replace('p = None', 'p = z + beta*p')
+    for file in ['_includes/linalg/week6_setup.md', '_includes/projects/week6_setup.md']:
+        for code in cells(file): run(code, ns)
+    project_cells = cells('_includes/projects/week6_preconditioning.md')
+    replacements = {
+        "raise NotImplementedError('TODO 1')": 'return r/m',
+        'beta = None': 'beta = gamma_new/gamma',
+        'p = None': 'p = z + beta*p',
+    }
+    for old in replacements:
+        assert sum(code.count(old) for code in project_cells) == 1, old
+    completed_cells = []
+    for code in project_cells:
+        for old, new in replacements.items(): code = code.replace(old, new)
+        completed_cells.append(code)
         run(code, ns)
+    # The downloaded setup is the other independent entry route, not a previous lecture session.
+    notebook = runpy.run_path(str(ROOT / 'assets/project_week6_setup.py'))
+    assert 'pcg' not in notebook, 'Do not export a completed student solution.'
+    for code in completed_cells: run(code, notebook)
+    assert np.allclose(notebook['At2'], [[1., .2], [.2, 1.]])
+    assert np.allclose(notebook['bt2'], [3., 10.2])
+    for name in ns['problems']:
+        assert np.array_equal(notebook['problems'][name], ns['problems'][name])
+        assert np.allclose(notebook['baseline'][name]['path'], ns['baseline'][name]['path'])
     # Same diagonal, changed couplings: independently verify promised SPD family.
     family = [ns['coupled_problem'](12,20,c) for c in (0,.4,.99)]
     assert all(np.allclose(np.diag(A),np.diag(family[0])) for A in family)
     assert all(np.linalg.eigvalsh(A).min()>0 for A in family)
     cg, pcg = ns['cg'], ns['pcg']
-    # The displayed project routine and lecture helper must produce the same CG run.
+    # The shared project routine and lecture helper must produce the same CG run.
     assert np.allclose(cg(A,b,rtol=1e-12)['path'], out['path'])
     for name, A in ns['problems'].items():
         star=ns['x_star']; b=A@star; m=np.diag(A)
@@ -88,7 +107,8 @@ def main():
     assert pcg(np.eye(2),np.zeros(2),np.ones(2))['converged']
     for file in ['_includes/linalg/uke6.md','_includes/projects/week6_preconditioning.md']:
         text=(ROOT/file).read_text()
-        assert text.count('<details ')==text.count('</details>')
-    print('Week 6 cells, CG directions/stopping/energy and PCG comparisons passed.')
+        assert text.count('<details')==text.count('</details>')
+    print('Week 6 lecture, independent browser/notebook project routes, CG and PCG checks passed.')
 
 if __name__=='__main__': main()
+
