@@ -5328,7 +5328,20 @@ Gå i dybden: fra partiellderiverte til eksakt linjesøk
 <p><span class="math display">\[\boxed{p^TAq=0.}\]</span></p>
 <p>Da kalles de <strong>A-konjugerte</strong>. Betydningen er nettopp den vi så: etter at vi har minimert langs <span class="math inline">\(p\)</span>, kan vi gå langs <span class="math inline">\(q\)</span> uten at det blir nødvendig å minimere i <span class="math inline">\(p\)</span>-retningen på nytt. Utledningen står i «Gå i dybden».</p>
 <p>I figuren er den første retningen <span class="math inline">\(p_0=(5,5)^T\)</span>. En retning langs den grønne linjen er <span class="math inline">\(q=(-3,4)^T\)</span>: endringene gir <span class="math inline">\(4\cdot(-3)+3\cdot4=0\)</span>, så vi holder oss på linjen <span class="math inline">\(4u+3v=10\)</span>. Vi kan også kontrollere <span class="math inline">\(p_0^TAq=0\)</span> med matrisen vår.</p>
-<p>Dette er ikke det samme som vanlig rett vinkel. Vanlig ortogonalitet betyr <span class="math inline">\(p^Tq=0\)</span>; her står <span class="math inline">\(A\)</span> mellom vektorene. Retningene tilpasses dermed funksjonen vi minimerer. Når <span class="math inline">\(A=I\)</span>, er de to kravene like.</p>
+</section>
+<section id="gramschmidt-igjen-med-et-nytt-indreprodukt" class="level3">
+<h3 class="anchored" data-anchor-id="gramschmidt-igjen-med-et-nytt-indreprodukt">Gram–Schmidt igjen – med et nytt indreprodukt</h3>
+<p>I uke 4.3 laget vi ortogonale retninger med <strong>Gram–Schmidt</strong>: Fra en ny vektor trakk vi fra projeksjonene på de gamle retningene. Vi kan bruke samme framgangsmåte her, men med et annet indreprodukt:</p>
+<p><span class="math display">\[\langle p,q\rangle_A=p^TAq.\]</span></p>
+<p>Dette er et indreprodukt fordi <span class="math inline">\(A\)</span> er symmetrisk positiv definit: symmetrien gjør at rekkefølgen på vektorene ikke spiller noen rolle, og <span class="math inline">\(\langle p,p\rangle_A&gt;0\)</span> for <span class="math inline">\(p\ne0\)</span>. Regnereglene for summer og skalering følger av matriseproduktet. <strong>A-konjugerte retninger er altså ortogonale med dette indreproduktet.</strong> De trenger ikke stå vinkelrett på arket. Når <span class="math inline">\(A=I\)</span>, får vi det vanlige indreproduktet og vanlig ortogonalitet tilbake.</p>
+<p>Hvordan lager vi den andre søkeretningen? Vi kjenner <span class="math inline">\(p_0\)</span> og den nye residualen <span class="math inline">\(r_1\)</span>. Start med <span class="math inline">\(r_1\)</span>, og trekk fra en passende mengde av <span class="math inline">\(p_0\)</span>: skriv <span class="math inline">\(p_1=r_1-cp_0\)</span>. Vi velger tallet <span class="math inline">\(c\)</span> slik at <span class="math inline">\(\langle p_0,p_1\rangle_A=0\)</span>. Innsetting gir</p>
+<p><span class="math display">\[0=\langle p_0,r_1\rangle_A-c\langle p_0,p_0\rangle_A
+\quad\Longrightarrow\quad
+c=\frac{\langle p_0,r_1\rangle_A}{\langle p_0,p_0\rangle_A}.\]</span></p>
+<p>Dermed blir Gram–Schmidt-steget</p>
+<p><span class="math display">\[\boxed{p_1=r_1-\frac{p_0^TAr_1}{p_0^TAp_0}\,p_0.}\]</span></p>
+<p>Leddet vi trekker fra, er <strong>projeksjonen av <span class="math inline">\(r_1\)</span> på <span class="math inline">\(p_0\)</span> målt med A-indreproduktet</strong>. Nevneren er med fordi <span class="math inline">\(p_0\)</span> ikke er normalisert. Vi trenger heller ikke normalisere den nye retningen: linjesøket bestemmer hvor langt vi går langs den.</p>
+<p>I eksemplet er <span class="math inline">\(r_1=(-5/7,5/7)^T\)</span> og <span class="math inline">\(c=-1/49\)</span>. Da får vi <span class="math inline">\(p_1=r_1+(1/49)p_0=(-30/49,40/49)^T\)</span>. Denne vektoren er <span class="math inline">\(10/49\)</span> ganger <span class="math inline">\((-3,4)^T\)</span>: <strong>Gram–Schmidt gir nettopp retningen langs den grønne linjen.</strong> Nå har vi en regneoppskrift for retningen vi fant geometrisk.</p>
 </section>
 <section id="hva-gjør-cg-i-praksis" class="level3">
 <h3 class="anchored" data-anchor-id="hva-gjør-cg-i-praksis">Hva gjør CG i praksis?</h3>
@@ -5338,9 +5351,10 @@ Gå i dybden: fra partiellderiverte til eksakt linjesøk
 <li>Velg en startvektor <span class="math inline">\(x_0\)</span>, for eksempel nullvektoren. Beregn residualen <span class="math inline">\(r_0=b-Ax_0\)</span>, og bruk den som første retning hvis vi ikke allerede er framme.</li>
 <li>Finn minimum langs linjen gjennom gjeldende punkt i søkeretningen. Dette gir neste tilnærming <span class="math inline">\(x_{k+1}\)</span>.</li>
 <li>Beregn ny residual. Stopp hvis residualkravet er oppfylt.</li>
-<li>Kombiner ny residual med forrige søkeretning slik at den nye retningen blir konjugert med de tidligere. Gjenta linjesøket.</li>
+<li>Trekk fra projeksjonen av den nye residualen på forrige søkeretning, målt med A-indreproduktet, slik vi nettopp gjorde. Gjenta linjesøket med retningen som står igjen.</li>
 </ol>
-<p>Faktorene som bestemmer steglengden og kombinasjonen, kan beregnes med indreprodukter. Formlene og et fullstendig regneeksempel står i «Gå i dybden». I to dimensjoner så vi hva dette betyr: først finner vi det beste punktet på én linje, og så velger vi en ny retning som lar oss bli ferdige med den andre ukjente uten å gjøre om den første minimeringen. CG bruker samme idé i større systemer, i eksakt regning.</p>
+<p>I vanlig Gram–Schmidt må vi trekke fra bidrag i <strong>alle</strong> tidligere retninger. For CG med SPD-matrise og eksakte linjesøk holder det å bruke <strong>den siste</strong>: den nye retningen blir også A-ortogonal til de eldre retningene, i eksakt regning. Dette er en egen egenskap ved CG.</p>
+<p>CG skriver oppdateringen som <span class="math inline">\(p_{k+1}=r_{k+1}+\beta_kp_k\)</span>. Plusstegnet skyldes at <span class="math inline">\(\beta_k\)</span> er minus projeksjonskoeffisienten; i eksemplet er <span class="math inline">\(\beta_0=1/49\)</span>. I «Gå i dybden» utleder vi den korte formelen for <span class="math inline">\(\beta_k\)</span> og regner ferdig eksemplet. Hovedideen er den samme som i uke 4: <strong>fjern bidrag i gamle retninger før du bruker den nye</strong>, nå med A-indreproduktet.</p>
 </section>
 <section id="eksperiment-6-samme-skåler-nye-retninger" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-6-samme-skåler-nye-retninger">Eksperiment 6 – samme skåler, nye retninger</h3>
@@ -5388,8 +5402,6 @@ x_2=x_1+\alpha_1p_1=(1,2)^T.\]</span></p>
 =p^T(Ax-b)+\alpha p^TAq.\]</span></p>
 <p>Første ledd er null. Det andre er også null hvis <span class="math inline">\(p^TAq=0\)</span>. Dermed bevares minimeringen langs <span class="math inline">\(p\)</span>. Dette forklarer både den grønne linjen i figuren og hvorfor konjugerthet er riktig krav.</p>
 <p>Mer generelt vil kryssleddene forsvinne når vi skriver en korreksjon som en kombinasjon av parvis konjugerte retninger. Minimering i en ny retning endrer da ikke de optimale koeffisientene i tidligere retninger. Dette er bakgrunnen for grensen på <span class="math inline">\(n\)</span> steg.</p>
-<p><strong>Koblingen til Gram–Schmidt fra uke 4</strong></p>
-<p>For SPD definerer <span class="math inline">\(\langle p,q\rangle_A=p^TAq\)</span> et indreprodukt. Konjugerthet er ortogonalitet i dette indreproduktet. Vi kan derfor bruke ideen fra Gram–Schmidt: start med den nye residualen og fjern bidrag i tidligere søkeretninger, nå målt med A-indreproduktet. For CG kan dette organiseres slik at bare forrige søkeretning må tas med i neste oppdatering. Det krever CGs struktur; det er ikke en regel for vilkårlig valgte retninger.</p>
 <p><strong>Den korte CG-oppdateringen</strong></p>
 <p>Vi starter med <span class="math inline">\(r_0=b-Ax_0\)</span> og <span class="math inline">\(p_0=r_0\)</span>. Hvis startresidualen allerede er liten nok, stopper vi før første divisjon. Ellers bruker vi</p>
 <p><span class="math display">\[\alpha_k=\frac{r_k^Tr_k}{p_k^TAp_k},\qquad

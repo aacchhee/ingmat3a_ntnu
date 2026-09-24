@@ -973,24 +973,24 @@ window.Quarto = {
 <section id="halvpresisjonsformatet" class="level3">
 <h3 class="anchored" data-anchor-id="halvpresisjonsformatet">Halvpresisjonsformatet</h3>
 <p>Et binært flyttall skrives som</p>
-<p><span data-math-exercise-display="true" data-math-exercise-tex="
+<p><span data-math-exercise-tex="
 t=\pm m\,2^e,
-"><span class="math display">\[
+" data-math-exercise-display="true"><span class="math display">\[
 t=\pm m\,2^e,
 \]</span></span></p>
-<p>der <span data-math-exercise-display="false" data-math-exercise-tex="1\le m<2"><span class="math inline">\(1\le m&lt;2\)</span></span>. Halvpresisjonsformatet har 16 bit:</p>
+<p>der <span data-math-exercise-tex="1\le m<2" data-math-exercise-display="false"><span class="math inline">\(1\le m&lt;2\)</span></span>. Halvpresisjonsformatet har 16 bit:</p>
 <ul>
 <li>1 fortegnsbit,</li>
 <li>5 eksponentbiter med bias 15,</li>
 <li>10 brøkbiter i mantissen.</li>
 </ul>
 <p>For et normalisert tall er verdien</p>
-<p><span data-math-exercise-display="true" data-math-exercise-tex="
+<p><span data-math-exercise-tex="
 (-1)^s(1.f)_2\,2^{E-15},
-"><span class="math display">\[
+" data-math-exercise-display="true"><span class="math display">\[
 (-1)^s(1.f)_2\,2^{E-15},
 \]</span></span></p>
-<p>der <span data-math-exercise-display="false" data-math-exercise-tex="E"><span class="math inline">\(E\)</span></span> er heltallsverdien til eksponentfeltet og den ledende eneren i mantissen er skjult. Runding skjer til nærmeste representerbare tall, med ties-to-even når et tall ligger nøyaktig midt mellom to alternativer.</p>
+<p>der <span data-math-exercise-tex="E" data-math-exercise-display="false"><span class="math inline">\(E\)</span></span> er heltallsverdien til eksponentfeltet og den ledende eneren i mantissen er skjult. Runding skjer til nærmeste representerbare tall, med ties-to-even når et tall ligger nøyaktig midt mellom to alternativer.</p>
 </section>
 </div>
 <section id="a-maskinepsilon" class="level3">
@@ -1165,10 +1165,10 @@ Valgt etter avrunding: <input type="text" id="math-exercise-5-f3" data-answer="0
 <div id="k26-minifloat-format" class="math-exercise-context">
 <section id="minifloat133" class="level3">
 <h3 class="anchored" data-anchor-id="minifloat133">MiniFloat(1,3,3)</h3>
-<p>Formatet har sju bit: én fortegnsbit <span data-math-exercise-display="false" data-math-exercise-tex="s"><span class="math inline">\(s\)</span></span>, tre eksponentbiter <span data-math-exercise-display="false" data-math-exercise-tex="e"><span class="math inline">\(e\)</span></span> og tre brøkbiter <span data-math-exercise-display="false" data-math-exercise-tex="f"><span class="math inline">\(f\)</span></span>. Bias er <span data-math-exercise-display="false" data-math-exercise-tex="B=3"><span class="math inline">\(B=3\)</span></span>. Alle tall i denne oppgaven er normaliserte og tolkes som</p>
-<p><span data-math-exercise-display="true" data-math-exercise-tex="
+<p>Formatet har sju bit: én fortegnsbit <span data-math-exercise-tex="s" data-math-exercise-display="false"><span class="math inline">\(s\)</span></span>, tre eksponentbiter <span data-math-exercise-tex="e" data-math-exercise-display="false"><span class="math inline">\(e\)</span></span> og tre brøkbiter <span data-math-exercise-tex="f" data-math-exercise-display="false"><span class="math inline">\(f\)</span></span>. Bias er <span data-math-exercise-tex="B=3" data-math-exercise-display="false"><span class="math inline">\(B=3\)</span></span>. Alle tall i denne oppgaven er normaliserte og tolkes som</p>
+<p><span data-math-exercise-tex="
 x=(-1)^s(1.f)_2\,2^{e-B}.
-"><span class="math display">\[
+" data-math-exercise-display="true"><span class="math display">\[
 x=(-1)^s(1.f)_2\,2^{e-B}.
 \]</span></span></p>
 <p>Eksponentkodene <code>000</code> og <code>111</code> brukes ikke. Ved avrunding velges nærmeste representerbare tall. Ligger verdien nøyaktig midt mellom to tall, bruker vi ties-to-even: alternativet med siste mantissebit 0 velges.</p>
@@ -1415,7 +1415,7 @@ Den maskinelle differansen er <input type="text" id="math-exercise-12-f1" data-a
 <div id="k2-stable-rationalization" class="math-exercise-context">
 <section id="stabil-omskriving" class="level3">
 <h3 class="anchored" data-anchor-id="stabil-omskriving">Stabil omskriving</h3>
-<p>For små <span data-math-exercise-display="false" data-math-exercise-tex="t>0"><span class="math inline">\(t&gt;0\)</span></span> er <span data-math-exercise-display="false" data-math-exercise-tex="\sqrt{1+t}"><span class="math inline">\(\sqrt{1+t}\)</span></span> nær 1. Direkte beregning av <span data-math-exercise-display="false" data-math-exercise-tex="\sqrt{1+t}-1"><span class="math inline">\(\sqrt{1+t}-1\)</span></span> subtraherer derfor to nesten like tall og kan miste mange signifikante sifre. Ved å multiplisere teller og nevner med den konjugerte <span data-math-exercise-display="false" data-math-exercise-tex="\sqrt{1+t}+1"><span class="math inline">\(\sqrt{1+t}+1\)</span></span> kan subtraksjonen fjernes.</p>
+<p>For små <span data-math-exercise-tex="t>0" data-math-exercise-display="false"><span class="math inline">\(t&gt;0\)</span></span> er <span data-math-exercise-tex="\sqrt{1+t}" data-math-exercise-display="false"><span class="math inline">\(\sqrt{1+t}\)</span></span> nær 1. Direkte beregning av <span data-math-exercise-tex="\sqrt{1+t}-1" data-math-exercise-display="false"><span class="math inline">\(\sqrt{1+t}-1\)</span></span> subtraherer derfor to nesten like tall og kan miste mange signifikante sifre. Ved å multiplisere teller og nevner med den konjugerte <span data-math-exercise-tex="\sqrt{1+t}+1" data-math-exercise-display="false"><span class="math inline">\(\sqrt{1+t}+1\)</span></span> kan subtraksjonen fjernes.</p>
 </section>
 </div>
 <section id="bc-kansellering-og-rasjonalisering" class="level3">
