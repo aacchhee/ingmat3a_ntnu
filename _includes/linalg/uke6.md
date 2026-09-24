@@ -593,20 +593,72 @@ Sett $e=\hat x-x_*$. Siden den eksakte løsningen oppfyller $Ax_*=b$, er
 
 $$r=b-A\hat x=Ax_*-A\hat x=-Ae.$$
 
-Når $A$ er invertibel, får vi $e=-A^{-1}r$. Matrisenormen gir dermed
+Anta at $A$ er invertibel og $b\ne0$. Da er også $x_*\ne0$,
+så vi kan dele på både $\lVert b\rVert_2$ og $\lVert x_*\rVert_2$.
+Vi tar utledningen i tre trinn.
 
-$$\lVert e\rVert_2\le\lVert A^{-1}\rVert_2\lVert r\rVert_2.$$
+**1. Del den absolutte feilgrensen på størrelsen til løsningen.**
 
-For å gjøre grensen relativ bruker vi også $b=Ax_*$, som gir
-$\lVert b\rVert_2\le\lVert A\rVert_2\lVert x_*\rVert_2$.
-Vi måler den relative bakoverfeilen ved å dele residualnormen på
-$\lVert b\rVert_2$. For $b\ne0$ gir de to ulikhetene da
+Fra $r=-Ae$ får vi $e=-A^{-1}r$. Matrisenormen gir en grense for
+lengden av et matriseprodukt: $\lVert Cz\rVert_2\le\lVert C\rVert_2\lVert z\rVert_2$.
+Vi bruker dette med $C=A^{-1}$ og $z=r$. Minustegnet endrer ikke lengden, så
 
-$$\underbrace{\frac{\lVert\hat x-x_*\rVert_2}{\lVert x_*\rVert_2}}
-_{\text{relativ foroverfeil}}
-\le\underbrace{\lVert A^{-1}\rVert_2\lVert A\rVert_2}_{\kappa_2(A)}
-\underbrace{\frac{\lVert b-A\hat x\rVert_2}{\lVert b\rVert_2}}
-_{\text{relativ bakoverfeil, fast }A}.$$
+$$\lVert e\rVert_2=\lVert A^{-1}r\rVert_2
+\le\lVert A^{-1}\rVert_2\lVert r\rVert_2.$$
+
+Del begge sider på $\lVert x_*\rVert_2$. Da får vi relativ feil på venstresiden:
+
+$$\frac{\lVert e\rVert_2}{\lVert x_*\rVert_2}
+\le\lVert A^{-1}\rVert_2\lVert r\rVert_2
+\frac{1}{\lVert x_*\rVert_2}.$$
+
+**2. Finn en øvre grense for faktoren $1/\lVert x_*\rVert_2$.**
+
+Høyresiden inneholder fortsatt den ukjente løsningen $x_*$.
+Vi bruker at $b=Ax_*$. Den samme regelen for matrisenormen gir
+
+$$\lVert b\rVert_2=\lVert Ax_*\rVert_2
+\le\lVert A\rVert_2\lVert x_*\rVert_2.$$
+
+Del nå **begge sider** på det positive tallet
+$\lVert b\rVert_2\lVert x_*\rVert_2$. På venstresiden forkortes
+$\lVert b\rVert_2$, og på høyresiden forkortes $\lVert x_*\rVert_2$:
+
+$$\frac{1}{\lVert x_*\rVert_2}
+\le\frac{\lVert A\rVert_2}{\lVert b\rVert_2}.$$
+
+Dette er mellomsteget vi trenger: faktoren med den ukjente løsningen
+kan erstattes av en øvre grense som bare bruker $A$ og $b$.
+
+**3. Sett denne grensen inn i resultatet fra trinn 1.**
+
+Faktoren $\lVert A^{-1}\rVert_2\lVert r\rVert_2$ er ikke-negativ.
+Vi kan derfor bruke ulikheten fra trinn 2 uten å snu ulikhetstegnet:
+
+$$
+\begin{aligned}
+\frac{\lVert e\rVert_2}{\lVert x_*\rVert_2}
+&\le\lVert A^{-1}\rVert_2\lVert r\rVert_2
+       \frac{1}{\lVert x_*\rVert_2}\\[4pt]
+&\le\lVert A^{-1}\rVert_2\lVert r\rVert_2
+       \frac{\lVert A\rVert_2}{\lVert b\rVert_2}\\[4pt]
+&=\bigl(\lVert A^{-1}\rVert_2\lVert A\rVert_2\bigr)
+       \frac{\lVert r\rVert_2}{\lVert b\rVert_2}.
+\end{aligned}
+$$
+
+I siste linje har vi bare byttet rekkefølge på tallfaktorene.
+Produktet i parentes er kondisjonstallet $\kappa_2(A)$.
+Setter vi tilbake $e=\hat x-x_*$ og $r=b-A\hat x$, får vi
+
+$$\boxed{
+\frac{\lVert\hat x-x_*\rVert_2}{\lVert x_*\rVert_2}
+\le\kappa_2(A)\frac{\lVert b-A\hat x\rVert_2}{\lVert b\rVert_2}.
+}$$
+
+Venstresiden er **relativ foroverfeil**. Siste brøk på høyresiden er
+**relativ bakoverfeil med fast $A$**: residualnormen delt på
+størrelsen til høyresiden $b$.
 
 Dette er rollen til kondisjonstallet: det gir en øvre grense for
 hvor mye en liten bakoverfeil kan slå ut i svaret. Relativ residual
