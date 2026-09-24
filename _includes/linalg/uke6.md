@@ -125,44 +125,72 @@ De tre $4\times4$-matrisene er
 
 $$
 \begin{aligned}
-\textcolor{#1565C0}{L}&=\textcolor{#1565C0}{\begin{bmatrix}0&0&0&0\\-1&0&0&0\\0&-1&0&0\\0&0&-1&0\end{bmatrix}},\\[4pt]
-\textcolor{#B45309}{D}&=\textcolor{#B45309}{\begin{bmatrix}4&0&0&0\\0&4&0&0\\0&0&4&0\\0&0&0&4\end{bmatrix}},\\[4pt]
-\textcolor{#7E22CE}{U}&=\textcolor{#7E22CE}{\begin{bmatrix}0&-1&0&0\\0&0&-1&0\\0&0&0&-1\\0&0&0&0\end{bmatrix}}.
+\textcolor{#1565C0}{L}&=\begin{bmatrix}0&0&0&0\\\textcolor{#1565C0}{-1}&0&0&0\\\textcolor{#1565C0}{0}&\textcolor{#1565C0}{-1}&0&0\\\textcolor{#1565C0}{0}&\textcolor{#1565C0}{0}&\textcolor{#1565C0}{-1}&0\end{bmatrix},\\[4pt]
+\textcolor{#B45309}{D}&=\begin{bmatrix}\textcolor{#B45309}{4}&0&0&0\\0&\textcolor{#B45309}{4}&0&0\\0&0&\textcolor{#B45309}{4}&0\\0&0&0&\textcolor{#B45309}{4}\end{bmatrix},\\[4pt]
+\textcolor{#7E22CE}{U}&=\begin{bmatrix}0&\textcolor{#7E22CE}{-1}&\textcolor{#7E22CE}{0}&\textcolor{#7E22CE}{0}\\0&0&\textcolor{#7E22CE}{-1}&\textcolor{#7E22CE}{0}\\0&0&0&\textcolor{#7E22CE}{-1}\\0&0&0&0\end{bmatrix}.
 \end{aligned}
 $$
+
+Fargede tall er hentet fra den tilsvarende delen av $A$, også når
+verdien er null. Svarte nuller er satt inn for å fylle plassene som
+ikke tilhører denne delen.
 
 Vi kan skrive $L+D+U$ eller $D+L+U$; summen er den samme.
 **Kontroller én rad ved å legge sammen de tre delmatrisene.**
 
 Ta $b=(3,2,2,3)^T$ og oppdater i rekkefølgen $x_1,x_2,x_3,x_4$.
-GS gir
+Her er de to oppskriftene ved siden av hverandre. Fargene viser fortsatt
+bidragene fra $L$ og $U$; eksponenten $k$ eller $k+1$ viser om verdien
+er gammel eller ny.
+
+::: {.columns}
+::: {.column width="50%"}
+
+**Jacobi: alle høyresider bruker gamle verdier**
 
 $$
 \begin{aligned}
-x_1^{(k+1)}&=(3+x_2^{(k)})/4,\\
+x_1^{(k+1)}&=(3+\textcolor{#7E22CE}{x_2^{(k)}})/4,\\
+x_2^{(k+1)}&=(2+\textcolor{#1565C0}{x_1^{(k)}}+\textcolor{#7E22CE}{x_3^{(k)}})/4,\\
+x_3^{(k+1)}&=(2+\textcolor{#1565C0}{x_2^{(k)}}+\textcolor{#7E22CE}{x_4^{(k)}})/4,\\
+x_4^{(k+1)}&=(3+\textcolor{#1565C0}{x_3^{(k)}})/4.
+\end{aligned}
+$$
+
+:::
+::: {.column width="50%"}
+
+**Gauss–Seidel: bruk nye verdier straks de finnes**
+
+$$
+\begin{aligned}
+x_1^{(k+1)}&=(3+\textcolor{#7E22CE}{x_2^{(k)}})/4,\\
 x_2^{(k+1)}&=(2+\textcolor{#1565C0}{x_1^{(k+1)}}+\textcolor{#7E22CE}{x_3^{(k)}})/4,\\
 x_3^{(k+1)}&=(2+\textcolor{#1565C0}{x_2^{(k+1)}}+\textcolor{#7E22CE}{x_4^{(k)}})/4,\\
 x_4^{(k+1)}&=(3+\textcolor{#1565C0}{x_3^{(k+1)}})/4.
 \end{aligned}
 $$
 
-Når vi arbeider med rad $i$, er koordinatene med indeks $j<i$ allerede
-oppdatert. De hører til $L$ og bruker **nye verdier**. Koordinatene med
-$j>i$ venter på tur. De hører til $U$ og bruker **gamle verdier**.
+:::
+:::
+
+**Sammenlign andre rad. Hvor oppstår den første forskjellen?**
+I GS er koordinatene med indeks $j<i$ allerede oppdatert når vi
+arbeider med rad $i$. De hører til $L$ og bruker nye verdier.
+Koordinatene med $j>i$ hører til $U$ og venter på tur.
 Diagonalelementet brukes til å isolere koordinaten vi beregner nå.
-Fra nullstart blir første sveip
 
-$$x^{(1)}=\begin{bmatrix}3/4\\11/16\\43/64\\235/256\end{bmatrix}.$$
+Samler vi alle radene for GS, får vi
 
-Samler vi alle radene, får vi den samme oppskriften i matriseform:
-
-$$(D+L)x^{(k+1)}=b-Ux^{(k)}.$$
+$$(\textcolor{#B45309}{D}+\textcolor{#1565C0}{L})x^{(k+1)}
+=b-\textcolor{#7E22CE}{U}x^{(k)}.$$
 
 Venstresiden er et nedre trekantsystem. Vi løser det ovenfra og ned,
 nettopp slik vi gjorde i de fire oppdateringene. Jacobi bruker derimot
 bare gamle verdier på høyresiden:
 
-$$Dx^{(k+1)}=b-(L+U)x^{(k)}.$$
+$$\textcolor{#B45309}{D}x^{(k+1)}
+=b-(\textcolor{#1565C0}{L}+\textcolor{#7E22CE}{U})x^{(k)}.$$
 
 Dette forklarer forskjellen mellom metodene for et vilkårlig antall
 ukjente. Begge oppskriftene krever $a_{ii}\ne0$ for alle $i$; det alene
@@ -202,43 +230,60 @@ samme oppskrift for ethvert system?** I 6.2 endrer vi matrisen for å
 undersøke dette.
 
 <details class="reading-step">
-<summary>Gå i dybden: fra radoppdatering til matriseform</summary>
+<summary>Gå i dybden: rekkefølgen i sveipet og korreksjonen i koden</summary>
 
 **Prøv selv**
 
-1. Gjør to GS-sveip for $2\times2$-systemet. Ta med mellompunktet i hvert sveip.
-2. Gjør første Jacobi-sveip for $4\times4$-systemet fra nullstart, og
-   sammenlign med GS. Kontroller at $(1,1,1,1)^T$ løser systemet.
-3. Skriv rad $i$ i $(D+L)x^{(k+1)}=b-Ux^{(k)}$ og isoler $x_i^{(k+1)}$.
+1. Bruk $4\times4$-systemet over, men oppdater i motsatt rekkefølge:
+   $x_4,x_3,x_2,x_1$. Regn ett sveip fra nullstart. Hvilke verdier er
+   nå nye, og hvordan må matriseformen endres?
+2. Skriv rad $i$ i det vanlige GS-sveipet
+   $(D+L)x^{(k+1)}=b-Ux^{(k)}$, og isoler $x_i^{(k+1)}$.
+3. Hjelperen `gs_path` bruker korreksjonen
+   $x_i\leftarrow x_i+(b_i-(Ax)_i)/a_{ii}$. Vis at den gir samme
+   oppdatering. Hvorfor må $Ax$ bruke den gjeldende vektoren?
 
 **Regnegangen**
 
-I to dimensjoner er de første koordinatstegene
+I det omvendte sveipet får vi først $x_4=3/4$, deretter
+$x_3=(2+3/4)/4=11/16$, $x_2=(2+11/16)/4=43/64$ og til slutt
+$x_1=(3+43/64)/4=235/256$. Etter sveipet er altså
 
-$$(0,0)\longmapsto(5/3,0)\longmapsto(5/3,5/3)
-\longmapsto(10/9,5/3)\longmapsto(10/9,35/18).$$
+$$x^{(1)}=\begin{bmatrix}235/256\\43/64\\11/16\\3/4\end{bmatrix}.$$
 
-I fire dimensjoner gir Jacobi $x^{(1)}=(3/4,1/2,1/2,3/4)^T$.
-GS bruker derimot $3/4$ i andre rad, deretter $11/16$ i tredje rad
-og til slutt $43/64$ i fjerde rad. Produktet $A(1,1,1,1)^T$ er
-$(3,2,2,3)^T=b$.
+Nå er koordinatene med høyere indeks allerede oppdatert. Matriseformen
+blir derfor
 
-**Hva forklarer dette?**
+$$(\textcolor{#B45309}{D}+\textcolor{#7E22CE}{U})x^{(k+1)}
+=b-\textcolor{#1565C0}{L}x^{(k)}.$$
 
-Rad $i$ i matriseformen er
+Vi løser et øvre trekantsystem nedenfra og opp. Rekkefølgen endrer
+mellomregningen og iterasjonsfølgen, selv om vi søker løsningen av
+samme system. Jacobi har ikke denne avhengigheten mellom nye verdier
+innenfor ett sveip.
+
+For det vanlige sveipet er rad $i$
 
 $$\sum_{j<i}a_{ij}x_j^{(k+1)}+a_{ii}x_i^{(k+1)}
 =b_i-\sum_{j>i}a_{ij}x_j^{(k)}.$$
 
-Dermed får vi den generelle GS-oppdateringen
+Isolerer vi koordinaten på diagonalen, får vi
 
 $$x_i^{(k+1)}=\frac{b_i-\sum_{j<i}a_{ij}x_j^{(k+1)}
 -\sum_{j>i}a_{ij}x_j^{(k)}}{a_{ii}}.$$
 
-Koden bruker den likeverdige korreksjonen
-$x_i\leftarrow x_i+(b_i-(Ax)_i)/a_{ii}$, der $x$ inneholder de nyeste
-verdiene som er tilgjengelige. Bidraget $a_{ii}x_i$ i $(Ax)_i$
-kansellerer den gamle $x_i$ når uttrykket utvides.
+**Hva forklarer dette?**
+
+La $x$ i koden inneholde de nyeste verdiene som er tilgjengelige.
+Siden $(Ax)_i=a_{ii}x_i+\sum_{j\ne i}a_{ij}x_j$, er
+
+$$x_i+\frac{b_i-(Ax)_i}{a_{ii}}
+=\frac{b_i-\sum_{j\ne i}a_{ij}x_j}{a_{ii}}.$$
+
+Den gamle $x_i$ kansellerer. Når vi overskriver én koordinat om
+gangen, bruker neste rad de oppdaterte verdiene automatisk.
+Beregner vi derimot hele residualen én gang ved starten av sveipet
+og bruker den uendret i alle korreksjonene, får vi Jacobi.
 
 </details>
 
@@ -449,9 +494,10 @@ For en invertibel, kvadratisk matrise definerer vi
 
 $$\boxed{\kappa_2(A)=\lVert A\rVert_2\lVert A^{-1}\rVert_2.}$$
 
-Den inverse transformasjonen forstørrer mest i den retningen der $A$
-demper mest. Derfor er kondisjonstallet også **største strekkfaktor
-delt på minste strekkfaktor**. Det er minst $1$. Et stort tall betyr
+Den inverse transformasjonen må oppheve også den svakeste strekkingen
+fra $A$. Derfor er $\lVert A^{-1}\rVert_2$ den inverse av den minste
+strekkfaktoren. Kondisjonstallet er dermed **største strekkfaktor delt
+på minste strekkfaktor**. Det er minst $1$. Et stort tall betyr
 at transformasjonen behandler ulike retninger svært ulikt.
 
 | Matrise | $\lVert A\rVert_2$ | $\lVert A^{-1}\rVert_2$ | $\kappa_2(A)$ | Hva ser vi? |
@@ -519,11 +565,9 @@ Q = np.array([[.8, -.6], [.6, .8]])  # ortonormale kolonner
 star = Q[:,0]
 epsilon = 1e-8
 kappas, errors_strong, errors_weak, residuals_weak = [], [], [], []
-print('cond₂(A)    feil uten tilført støy    feil med støy langs q₂')
 for K in [1., 1e2, 1e4, 1e6, 1e8]:
     A = Q @ np.diag([1., 1/K]) @ Q.T
     b = A @ star
-    x_clean = np.linalg.solve(A, b)
     b_strong = b + epsilon*np.linalg.norm(b)*Q[:,0]
     b_weak = b + epsilon*np.linalg.norm(b)*Q[:,1]
     x_strong = np.linalg.solve(A, b_strong)
@@ -533,8 +577,6 @@ for K in [1., 1e2, 1e4, 1e6, 1e8]:
     errors_weak.append(np.linalg.norm(x_weak-star)/np.linalg.norm(star))
     # Kontroller de likningene løseren faktisk fikk, altså med b_weak.
     residuals_weak.append(np.linalg.norm(b_weak-A@x_weak)/np.linalg.norm(b_weak))
-    print(f'{kappas[-1]:9.1e}   {np.linalg.norm(x_clean-star)/np.linalg.norm(star):20.2e}'
-          f'   {errors_weak[-1]:20.2e}')
 
 kappas = np.array(kappas)
 fig, axes = plt.subplots(1, 2, figsize=(11, 4))
@@ -565,11 +607,9 @@ algoritmen faktisk løste**. Det motsier ikke den store feilen mot
 opprinnelig løsning. Kontrollerer vi mot opprinnelig $b$, vil
 residualen i stedet være omtrent på størrelse med dataforstyrrelsen.
 
-Den utskrevne kolonnen uten tilført støy viser virkningen av
-flyttallsregningen i dette forsøket. Den kan variere mellom maskiner
-og trenger ikke vokse jevnt. Plottets store, kontrollerte effekt kommer
-fra følsomheten for den påførte datastøyen; den skal ikke omtales som
-ren avrundingsfeil i `solve`.
+Plottet viser følsomheten for tilført datastøy, ikke ren avrundingsfeil
+fra `solve`. I «Gå i dybden» sammenligner vi også med en kjøring uten
+tilført støy.
 
 ### Hva betyr dette for stoppkravet vårt?
 
@@ -637,6 +677,35 @@ ikke alle forstyrrelser utløser dette tapet. For generelle matriser
 må vi bruke strekkfaktorer, ikke bare egenverdier. For eksempel har
 $\begin{bmatrix}1&10\\0&1\end{bmatrix}$ begge egenverdier lik $1$,
 men kondisjonstall omtrent $102$.
+
+**Et ekstra forsøk: hva skjer uten tilført datastøy?**
+
+Vi bruker de samme matrisene og samme løser. Nå sammenligner vi
+kjøringen med støy langs $q_2$ med en kjøring uten tilført støy.
+
+```{pyodide-python}
+#| label: week6-conditioning-roundoff
+Q = np.array([[.8, -.6], [.6, .8]])
+star = Q[:,0]
+epsilon = 1e-8
+print('cond₂(A)    feil uten tilført støy    feil med støy langs q₂')
+for K in [1., 1e2, 1e4, 1e6, 1e8]:
+    A = Q @ np.diag([1., 1/K]) @ Q.T
+    b = A @ star
+    x_clean = np.linalg.solve(A, b)
+    b_weak = b + epsilon*np.linalg.norm(b)*Q[:,1]
+    x_weak = np.linalg.solve(A, b_weak)
+    clean_error = np.linalg.norm(x_clean-star)/np.linalg.norm(star)
+    noisy_error = np.linalg.norm(x_weak-star)/np.linalg.norm(star)
+    print(f'{np.linalg.cond(A, 2):9.1e}   {clean_error:20.2e}   {noisy_error:20.2e}')
+```
+
+Kolonnen uten tilført støy viser virkningen av flyttallsregningen i
+både oppbyggingen av systemet og selve løsningen. Tallene kan variere
+mellom maskiner og trenger ikke vokse jevnt. En beregnet feil på null
+kan forekomme for enkelte data og er ingen generell garanti.
+Sammenlign med den langt større, kontrollerte effekten fra
+$\varepsilon=10^{-8}$ i siste kolonne.
 
 </details>
 
@@ -790,11 +859,9 @@ Vi bruker her **symmetrisk positivt definitte (SPD)** matriser:
 $$A^T=A,\qquad z^TAz>0\quad\text{for alle }z\ne0.$$
 
 Symmetrien gjør at kryssleddene fra hver side av diagonalen passer
-sammen. Positiv definitet betyr at det kvadratiske bidraget er
-positivt i enhver ikke-null retning. For vår matrise er
-
-$$z^TAz=3p^2+2pq+2q^2
-=3(p+q/3)^2+\tfrac53q^2>0\quad\text{når }(p,q)\ne(0,0).$$
+sammen. Positiv definitet betyr at det kvadratiske bidraget er positivt i enhver
+ikke-null retning. Kvadratfullføringen ovenfor viser at matrisen vår
+har nettopp denne egenskapen.
 
 For en reell symmetrisk matrise er positiv definitet likeverdig med
 at alle egenverdiene er positive. Det knytter skålformen til uke 5.
@@ -861,20 +928,10 @@ forstyrret igjen, slik vi så i 6.1.
 
 ### GS-banen i nivåkurvebildet – hva er `bowl_plot`?
 
-`bowl_plot` er en **hjelpefunksjon definert i sidens Python-oppsett**;
-det er ikke en innebygd NumPy-funksjon eller en ny numerisk metode.
-Navnet viser til skålformen. Kallet
-`bowl_plot(ax, A, b, paths)` gjør følgende:
-
-- beregner $\tfrac12x^TAx-b^Tx$ på et rutenett og tegner nivåkurvene
-  i tegnefeltet `ax`, slik `contour` gjorde over;
-- tegner de ferdig beregnede banene i `paths`, med navn som forklaring;
-- markerer løsningen med en stjerne. Den bruker `np.linalg.solve`
-  bare for dette referansepunktet; GS-banen beregnes av `gs_path`.
-
-Hjelperen brukes her for symmetriske $2\times2$-matriser.
-`{'GS': path}` betyr «tegn punktene i `path` og kall banen GS».
-Nå beholder vi hvert koordinatsteg, slik at de horisontale og vertikale
+`bowl_plot` er en hjelper i sidens Python-oppsett som tegner nivåkurvene
+til $\phi$ og den ferdig beregnede GS-banen. Stjernen er en direkte
+beregnet referanseløsning; den brukes ikke av GS-iterasjonen.
+Nå beholder vi hvert koordinatsteg, så de horisontale og vertikale
 bevegelsene blir synlige. Figuraksene $x_1,x_2$ er våre $u,v$.
 
 ```{pyodide-python}
@@ -902,17 +959,10 @@ eksakt GS-steg, og den avtar strengt når koordinaten faktisk endres.
 Dette er et utsagn om $\phi$, ikke om at residualnormen nødvendigvis
 avtar i hvert koordinatsteg.
 
-For å knytte dette til neste fane samler vi de partiellderiverte i
-**gradienten**:
-
-$$\nabla\phi(u,v)=\begin{bmatrix}3u+v-5\\u+2v-5\end{bmatrix}
-=Ax-b=-r.$$
-
-Ved minimum er begge komponentene null samtidig, altså $Ax=b$.
-GS setter én komponent lik null om gangen ved å minimere langs en
-koordinatretning. **Kan vi velge andre retninger som tar oss raskere
-mot minimumet, og som bevarer det vi allerede har oppnådd?** Dette
-leder til bratteste nedstigning i 6.5 og konjugert gradient i 6.6.
+GS minimerer langs koordinataksene. **Kan vi velge andre linjer som tar
+oss raskere mot minimumet?** I 6.5 bruker vi funksjonens helninger til
+å velge retning. I 6.6 undersøker vi hvordan CG kan bevare det vi
+allerede har oppnådd i tidligere retninger.
 
 <details class="reading-step">
 <summary>Gå i dybden: tre ukjente og den generelle minimeringen</summary>
@@ -1066,6 +1116,23 @@ har vi nådd hele problemets minimum. Jacobi beregner alle
 koordinatforslagene med gamle verdier; vi kan derfor ikke uten videre
 overføre argumentet om påfølgende minimeringer til Jacobi.
 
+**Hva gjør plottehjelperen?**
+
+`bowl_plot` er ikke en innebygd NumPy-funksjon eller en ny numerisk
+metode. Navnet viser til skålformen. Kallet
+`bowl_plot(ax, A, b, paths)` gjør følgende:
+
+- beregner $\tfrac12x^TAx-b^Tx$ på et rutenett og tegner nivåkurvene
+  i tegnefeltet `ax`, slik `contour` gjorde i det første forsøket;
+- tegner de ferdig beregnede banene i `paths`, med navn som forklaring;
+- markerer løsningen med en stjerne. Den bruker `np.linalg.solve`
+  bare for dette referansepunktet; GS-banen beregnes av `gs_path`.
+
+Hjelperen brukes her for symmetriske $2\times2$-matriser.
+`{'GS': path}` betyr «tegn punktene i `path` og kall banen GS».
+Matrisen og høyresiden bestemmer nivåkurvene, mens `path` bestemmer
+hvilke løsningsforslag som forbindes i figuren.
+
 </details>
 
 ## 6.5 Fra skål til søkeretning
@@ -1172,6 +1239,15 @@ fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
 bowl_plot(axes[0], A, b, {'Første steg':np.array([x0,x1])},
           bounds=(-.5,2.7,-.5,3.2))
 axes[0].plot([-.5,2.7], [-.5,2.7], '--', color='#2563eb', alpha=.5)
+# Tegn akkurat nivåkurven gjennom x1, som søkelinjen tangerer.
+u, v = np.meshgrid(np.linspace(-.5,2.7,220), np.linspace(-.5,3.2,220))
+Z = 1.5*u**2 + u*v + v**2 - 5*u - 5*v
+axes[0].contour(u, v, Z, levels=[-50/7], colors=['#c2410c'], linewidths=2)
+r1 = b - A @ x1
+arrow_end = x1 + .5*r1/np.linalg.norm(r1)
+axes[0].annotate('', xy=arrow_end, xytext=x1,
+                 arrowprops=dict(arrowstyle='->', color='#15803d', lw=2))
+axes[0].annotate('r₁', arrow_end, xytext=(-12,5), textcoords='offset points', color='#15803d')
 axes[0].annotate('x₀', x0, xytext=(8,-14), textcoords='offset points')
 axes[0].annotate('x₁: best på linjen', x1, xytext=(-90,-28), textcoords='offset points')
 axes[0].set(xlabel='u', ylabel='v', title='Retning p₀ = r₀: linjen u = v')
@@ -1193,10 +1269,12 @@ Den stiplede vannrette linjen til høyre ligger enda litt lavere:
 minimumet i hele planet er ikke tilgjengelig langs den valgte linjen.
 Vi må velge en ny retning.
 
-Nivåkurven gjennom $x_1$ berører søkelinjen der. Gradienten står
-vinkelrett på nivåkurven, og dermed også på søkelinjen i dette punktet.
-Det forklarer hvorfor neste residual står vinkelrett på den første
-søkeretningen når vi gjør et eksakt linjesøk.
+Den oransje nivåkurven går gjennom $x_1$ og berører søkelinjen der.
+Den grønne pilen viser retningen til neste residual $r_1$; lengden er
+tilpasset figuren. Gradienten, og dermed også residualen, står
+vinkelrett på nivåkurven. Pilen står derfor vinkelrett på søkelinjen
+i dette punktet. Slik ser vi hvorfor et eksakt linjesøk gir en ny
+residual som er ortogonal til den første søkeretningen.
 
 ### Bratteste nedstigning: mål helningen på nytt
 
@@ -1398,9 +1476,8 @@ SPD-forutsetningen gjør dette til et indreprodukt.
 Retningene behøver derfor ikke se vinkelrette ut på arket.
 Vanlig rett vinkel betyr $p^Tq=0$; konjugerthet betyr $p^TAq=0$.
 Når $A=I$, er de to begrepene like. For en skjev eller smal skål
-må retningene tilpasses matrisen. Det høyre bildet viser nettopp
-et slikt par retninger som virker sammen uten å forstyrre hverandres
-minimeringer.
+må retningene tilpasses matrisen. Det høyre bildet viser hvordan den nye retningen bevarer
+minimeringen langs den første.
 
 Dette knytter CG til **Gram–Schmidt**: vi kan starte med en foreslått
 retning og fjerne bidrag langs tidligere retninger, men nå med
