@@ -45,7 +45,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-24c09a13944ec7e1f31d2917b1251fc2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-56a7063a21dd4c20fbc96590a1db8d87.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -4749,19 +4749,16 @@ b=\begin{bmatrix}1\\10^{-4}\end{bmatrix}.\]</span></p>
 </table>
 <p>Det første svaret bommer med <span class="math inline">\(1\)</span> i andre koordinat, men denne feilen ganges med <span class="math inline">\(10^{-4}\)</span> når vi setter svaret inn i andre likning. Det andre svaret bommer bare med <span class="math inline">\(0.01\)</span> i første koordinat, der koeffisienten er <span class="math inline">\(1\)</span>. <strong>Svaret med minst residual har altså størst foroverfeil.</strong> Dette ligner den flate funksjonsgrafen i uke 2: stor avstand til løsningen kan gi en liten residual.</p>
 </section>
-<section id="residualen-som-bakoverfeil-hvilket-problem-løser-svaret-eksakt" class="level3">
-<h3 class="anchored" data-anchor-id="residualen-som-bakoverfeil-hvilket-problem-løser-svaret-eksakt">Residualen som bakoverfeil: hvilket problem løser svaret eksakt?</h3>
-<p>Vi holder <span class="math inline">\(A\)</span> fast og tillater at høyresiden <span class="math inline">\(b\)</span> endres. Siden <span class="math inline">\(r=b-A\hat x\)</span>, har vi</p>
+<section id="bakoverfeil-hvor-mye-må-høyresiden-endres" class="level3">
+<h3 class="anchored" data-anchor-id="bakoverfeil-hvor-mye-må-høyresiden-endres">Bakoverfeil: hvor mye må høyresiden endres?</h3>
+<p>Se igjen på det beregnede svaret <span class="math inline">\(\hat x=(1,0)^T\)</span>. Det oppfyller</p>
+<p><span class="math display">\[x_1=1,\qquad 10^{-4}x_2=0.\]</span></p>
+<p>Det opprinnelige systemet hadde <span class="math inline">\(10^{-4}\)</span> på høyresiden i andre likning. Endrer vi dette tallet til <span class="math inline">\(0\)</span>, blir det beregnede svaret helt riktig for de nye likningene.</p>
+<p><strong>Bakoverfeilen måler hvor mye vi må endre problemet for at det beregnede svaret skal bli eksakt.</strong> Her endrer vi bare høyresiden; matrisen <span class="math inline">\(A\)</span> beholdes.</p>
+<p>Dette kan vi gjøre for enhver beregnet vektor <span class="math inline">\(\hat x\)</span>. Residualen <span class="math inline">\(r=b-A\hat x\)</span> forteller akkurat hva vi må trekke fra <span class="math inline">\(b\)</span>:</p>
 <p><span class="math display">\[A\hat x=b-r.\]</span></p>
-<p>Den beregnede vektoren <span class="math inline">\(\hat x\)</span> er derfor en <strong>eksakt løsning av det endrede systemet</strong> med høyreside <span class="math inline">\(b-r\)</span>. Endringen i data er <span class="math inline">\(\delta b=-r\)</span>. Når bare <span class="math inline">\(b\)</span> kan endres, er den absolutte bakoverfeilen akkurat <span class="math inline">\(\lVert r\rVert_2\)</span>. For <span class="math inline">\(b\ne0\)</span> får vi</p>
-<p><span class="math display">\[\text{relativ bakoverfeil}=
-\frac{\lVert\delta b\rVert_2}{\lVert b\rVert_2}
-=\frac{\lVert r\rVert_2}{\lVert b\rVert_2}.\]</span></p>
-<p>For eksempel løser <span class="math inline">\((1,0)^T\)</span> systemet med høyreside <span class="math inline">\((1,0)^T\)</span> eksakt. Vi trenger bare å endre andre komponent i <span class="math inline">\(b\)</span> fra <span class="math inline">\(10^{-4}\)</span> til <span class="math inline">\(0\)</span>. Det er en liten endring målt i forhold til <strong>hele vektoren</strong> <span class="math inline">\(b\)</span>, selv om den er stor i forhold til andre komponent alene.</p>
-<p>Vi må oppgi hva som får endres når vi bruker ordet bakoverfeil. Hvis vi også tillater endringer i <span class="math inline">\(A\)</span>, får vi et annet mål. Her bruker vi konsekvent bakoverfeil med <strong>fast <span class="math inline">\(A\)</span></strong>.</p>
-<p>For å knytte de to feilbegrepene sammen setter vi <span class="math inline">\(e=\hat x-x_*\)</span>. Da er</p>
-<p><span class="math display">\[r=b-A\hat x=Ax_*-A\hat x=-Ae.\]</span></p>
-<p>I eksemplet over ganger <span class="math inline">\(A\)</span> den andre feilkomponenten med <span class="math inline">\(10^{-4}\)</span>. For en generell matrise trenger vi et mål på hvor mye et matriseprodukt kan endre lengden til en vektor. Det leder til matrisenormen.</p>
+<p>Den nødvendige endringen i høyresiden er altså <span class="math inline">\(-r\)</span>, og størrelsen på endringen er <span class="math inline">\(\lVert r\rVert_2\)</span>. <strong>Med fast <span class="math inline">\(A\)</span> er residualnormen den absolutte bakoverfeilen.</strong> I eksemplet er den <span class="math inline">\(10^{-4}\)</span>.</p>
+<p>Vi har dermed et svar med liten bakoverfeil, men stor foroverfeil. For å forstå hvor stor forskjellen kan bli, må vi først se på hvordan matrisen endrer vektorlengder.</p>
 </section>
 <section id="matrisens-2-norm-den-største-strekkfaktoren" class="level3">
 <h3 class="anchored" data-anchor-id="matrisens-2-norm-den-største-strekkfaktoren">Matrisens 2-norm: den største strekkfaktoren</h3>
@@ -4837,9 +4834,11 @@ b=\begin{bmatrix}1\\10^{-4}\end{bmatrix}.\]</span></p>
 </section>
 <section id="hva-betyr-tallet-for-nøyaktigheten" class="level3">
 <h3 class="anchored" data-anchor-id="hva-betyr-tallet-for-nøyaktigheten">Hva betyr tallet for nøyaktigheten?</h3>
-<p>Vi ønsker en grense for <strong>foroverfeilen</strong>, men kan vanligvis bare beregne residualen, altså <strong>bakoverfeilen med fast <span class="math inline">\(A\)</span></strong>. Når <span class="math inline">\(A\)</span> er invertibel, gir <span class="math inline">\(r=-Ae\)</span> at <span class="math inline">\(e=-A^{-1}r\)</span>. Matrisenormen gir dermed</p>
+<p>Vi ønsker en grense for <strong>foroverfeilen</strong>, men kan vanligvis bare beregne residualen. Nå bruker vi matrisenormen til å knytte dem sammen. Sett <span class="math inline">\(e=\hat x-x_*\)</span>. Siden den eksakte løsningen oppfyller <span class="math inline">\(Ax_*=b\)</span>, er</p>
+<p><span class="math display">\[r=b-A\hat x=Ax_*-A\hat x=-Ae.\]</span></p>
+<p>Når <span class="math inline">\(A\)</span> er invertibel, får vi <span class="math inline">\(e=-A^{-1}r\)</span>. Matrisenormen gir dermed</p>
 <p><span class="math display">\[\lVert e\rVert_2\le\lVert A^{-1}\rVert_2\lVert r\rVert_2.\]</span></p>
-<p>For å gjøre grensen relativ bruker vi også <span class="math inline">\(b=Ax_*\)</span>, som gir <span class="math inline">\(\lVert b\rVert_2\le\lVert A\rVert_2\lVert x_*\rVert_2\)</span>. For <span class="math inline">\(b\ne0\)</span> kan vi derfor dele og sette sammen de to ulikhetene:</p>
+<p>For å gjøre grensen relativ bruker vi også <span class="math inline">\(b=Ax_*\)</span>, som gir <span class="math inline">\(\lVert b\rVert_2\le\lVert A\rVert_2\lVert x_*\rVert_2\)</span>. Vi måler den relative bakoverfeilen ved å dele residualnormen på <span class="math inline">\(\lVert b\rVert_2\)</span>. For <span class="math inline">\(b\ne0\)</span> gir de to ulikhetene da</p>
 <p><span class="math display">\[\underbrace{\frac{\lVert\hat x-x_*\rVert_2}{\lVert x_*\rVert_2}}
 _{\text{relativ foroverfeil}}
 \le\underbrace{\lVert A^{-1}\rVert_2\lVert A\rVert_2}_{\kappa_2(A)}
