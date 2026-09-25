@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import minimize","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"b, r = np.meshgrid(np.arange(51), np.arange(101), indexing=\"ij\")\nallowed = (10*b + r <= 100) & (b + 3*r <= 50)\nprofit = 500*b + 250*r - 650\nbest = tuple(int(i) for i in np.unravel_index(\n    np.argmax(np.where(allowed, profit, -np.inf)), profit.shape))\nprint(f\"Best blant {allowed.sum()} tillatte heltallspar: (b,r)={best}, P={profit[best]} kr\")\nprint(f\"Ressursbruk: {10*best[0]+best[1]} komponenter, {best[0]+3*best[1]} timer\")\nfig, ax = plt.subplots(figsize=(6, 5))\npoints = ax.scatter(b[allowed], r[allowed], c=profit[allowed], s=19, cmap=\"viridis\")\nax.plot(*best, \"r*\", markersize=16, label=\"Beste heltallsvalg\")\nax.set(xlabel=\"Nye maskiner b\", ylabel=\"Reparasjoner r\", title=\"Tillatte heltallsvalg\")\nfig.colorbar(points, ax=ax, label=\"Nettooverskudd (kr)\")\nax.legend(); plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-production","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def wavy(z):\n    x, y = z\n    return 20 + x*x + y*y - 10*(np.cos(2*np.pi*x) + np.cos(2*np.pi*y))\n\ndef wavy_grad(z):\n    x, y = z\n    return np.array([2*x + 20*np.pi*np.sin(2*np.pi*x),\n                     2*y + 20*np.pi*np.sin(2*np.pi*y)])\n\nfor start in ([0., 0.], [2., 2.]):\n    result = minimize(wavy, start, jac=wavy_grad, method=\"BFGS\")\n    x, y = result.x\n    print(f\"Start {start}: punkt ({x:.4f}, {y:.4f}), \"\n          f\"f={result.fun:.4f}, ||grad f||={np.linalg.norm(wavy_grad(result.x)):.2e}\")\n\ngrid = np.linspace(-.3, 2.4, 180)\nX, Y = np.meshgrid(grid, grid)\nfig, ax = plt.subplots(figsize=(6, 5))\ncurves = ax.contour(X, Y, wavy((X, Y)), levels=np.arange(0, 24, 2))\nax.clabel(curves, inline=True, fontsize=8)\nax.plot(0, 0, \"ko\", label=\"Start nær (0,0)\")\nax.plot(2, 2, \"r*\", markersize=12, label=\"Start nær (2,2)\")\nax.set(xlabel=\"x\", ylabel=\"y\", title=\"Nivåkurver for kostnaden\")\nax.legend(); plt.show()","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-local-minima","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"for n in (10, 100, 1000):\n    sample = np.arange(1, n)/n  # Begge endepunkter er utelatt.\n    print(f\"{n-1:4d} indre punkter: minste g={sample.min():.3f}, \"\n          f\"største g={sample.max():.3f}\")","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-open-domain","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def phi(z):\n    u, v = z\n    return 1.5*u*u + u*v + v*v - 5*u - 5*v\n\na, b = np.array([0., 0.]), np.array([1., 2.])\nprint(f\"Kvadratikk: midten {phi((a+b)/2):.3f}, \"\n      f\"snitt av ender {(phi(a)+phi(b))/2:.3f}\")\nc, d = np.array([0., 0.]), np.array([1., 0.])\nprint(f\"Bølget:    midten {wavy((c+d)/2):.2f}, \"\n      f\"snitt av ender {(wavy(c)+wavy(d))/2:.2f}\")\nprint(\"Egenverdier til kvadratikkens Hessian:\",\n      np.linalg.eigvalsh(np.array([[3., 1.], [1., 2.]])))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-convex-midpoints","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"# Felles oppsett for kodeforsøkene i 8.6: vektorregning og figurer.\nimport numpy as np\nimport matplotlib.pyplot as plt\n# SciPys lokale minimeringsrutine; hvert forsøk oppgir funksjon og startpunkt.\nfrom scipy.optimize import minimize","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Lag alle ikke-negative heltallspar innenfor sikre øvre grenser.\nb, r = np.meshgrid(np.arange(51), np.arange(101), indexing=\"ij\")\n\n# Marker parene som holder seg innenfor 100 komponenter og 50 timer.\nallowed = (10*b + r <= 100) & (b + 3*r <= 50)\n\n# Turen er allerede bestilt og koster 650 kr også ved null produksjon.\nprofit = 500*b + 250*r - 650\n\n# Ugyldige par får -uendelig og kan derfor ikke vinne maksimeringen.\nscore = np.where(allowed, profit, -np.inf)\n# argmax gir en flat indeks; unravel_index finner rad og kolonne i tabellen.\nbest_index = np.unravel_index(np.argmax(score), score.shape)\nbest = (int(b[best_index]), int(r[best_index]))\nbest_profit = int(profit[best_index])\n\n# Kontroller både resultatet og ressursbruken ved det valgte paret.\nprint(f\"Best blant {allowed.sum()} tillatte heltallspar: (b,r)={best}, P={best_profit} kr\")\nprint(f\"Ressursbruk: {10*best[0]+best[1]} komponenter, {best[0]+3*best[1]} timer\")\n\n# Figuren viser bare tillatte punkter; fargen er nettooverskuddet.\nfig, ax = plt.subplots(figsize=(6, 5))\npoints = ax.scatter(b[allowed], r[allowed], c=profit[allowed], s=19, cmap=\"viridis\")\nax.plot(*best, \"r*\", markersize=16, label=\"Beste heltallsvalg\")\nax.set(xlabel=\"Nye maskiner b\", ylabel=\"Reparasjoner r\", title=\"Tillatte heltallsvalg\")\nfig.colorbar(points, ax=ax, label=\"Nettooverskudd (kr)\")\nax.legend()\nplt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-production","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Definer funksjonen som skal minimeres og dens analytiske gradient.\ndef wavy(z):\n    x, y = z\n    return 20 + x*x + y*y - 10*(np.cos(2*np.pi*x) + np.cos(2*np.pi*y))\n\ndef wavy_grad(z):\n    x, y = z\n    return np.array([2*x + 20*np.pi*np.sin(2*np.pi*x),\n                     2*y + 20*np.pi*np.sin(2*np.pi*y)])\n\n# Kjør samme lokale metode fra to forskjellige startvektorer.\nstarts = [np.array([0., 0.]), np.array([2., 2.])]\nresults = []\nfor start in starts:\n    # Send inn selve funksjonene, slik at SciPy kan evaluere dem flere ganger.\n    # jac gir gradienten; method velger den lokale søkemetoden.\n    result = minimize(wavy, start, jac=wavy_grad, method=\"BFGS\")\n    results.append(result)\n    # .x er punktet, .fun er verdien; liten gradient sjekker små deriverte.\n    x, y = result.x\n    grad_norm = np.linalg.norm(wavy_grad(result.x))\n    print(f\"Start {start}: funnet punkt ({x:.4f}, {y:.4f}), \"\n          f\"f={result.fun:.4f}, ||grad f||={grad_norm:.2e}, \"\n          f\"success={result.success}\")\n\n# Beregn nivåkurver for å vise dalene i samme koordinatsystem.\ngrid = np.linspace(-.3, 2.4, 180)\nX, Y = np.meshgrid(grid, grid)\nfig, ax = plt.subplots(figsize=(6, 5))\ncurves = ax.contour(X, Y, wavy((X, Y)), levels=np.arange(0, 24, 2))\nax.clabel(curves, inline=True, fontsize=8)\n\n# Tomme ringer viser starter; fylte markører viser hvor søkene endte.\ncolors = [\"tab:blue\", \"tab:orange\"]\nfor index, (start, result, color) in enumerate(zip(starts, results, colors), start=1):\n    ax.plot(*start, marker=\"o\", markerfacecolor=\"none\", markeredgecolor=color,\n            markeredgewidth=2, markersize=12, linestyle=\"None\", label=f\"Start {index}\")\n    ax.plot(*result.x, marker=\"X\", color=color, markersize=9,\n            linestyle=\"None\", label=f\"Funnet punkt {index}\")\nax.set(xlabel=\"x\", ylabel=\"y\", title=\"To lokale søk i samme landskap\")\nax.legend()\nplt.show()","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-local-minima","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"for n in (10, 100, 1000):\n    # Start ved 1/n og stopp før 1, slik at begge endepunktene er utelatt.\n    sample = np.arange(1, n)/n\n    # g(x)=x, så tallene i sample er også funksjonsverdiene.\n    print(f\"{n-1:4d} indre punkter: minste g={sample.min():.3f}, \"\n          f\"største g={sample.max():.3f}\")","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-open-domain","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Definer begge funksjonene her, slik at forsøket kan kjøres alene.\ndef phi(z):\n    u, v = z\n    return 1.5*u*u + u*v + v*v - 5*u - 5*v\n\ndef wavy_midpoint(z):\n    x, y = z\n    return 20 + x*x + y*y - 10*(np.cos(2*np.pi*x) + np.cos(2*np.pi*y))\n\n# Begynn med parablen fra 8.4: verdi i midten mot snitt av endene.\nprint(\"x²: midten\", 0.**2, \"snitt av ender\", ((-1.)**2 + 1.**2)/2)\n\n# Sammenlign også skålen fra uke 6 og den bølgede funksjonen.\na, b = np.array([0., 0.]), np.array([1., 2.])\nprint(f\"Kvadratikk: midten {phi((a+b)/2):.3f}, \"\n      f\"snitt av ender {(phi(a)+phi(b))/2:.3f}\")\nc, d = np.array([0., 0.]), np.array([1., 0.])\nprint(f\"Bølget:    midten {wavy_midpoint((c+d)/2):.2f}, \"\n      f\"snitt av ender {(wavy_midpoint(c)+wavy_midpoint(d))/2:.2f}\")\n\n# Undersøk den symmetriske Hessianen til den kvadratiske funksjonen.\nH_phi = np.array([[3., 1.], [1., 2.]])\nprint(\"Egenverdier til kvadratikkens Hessian:\", np.linalg.eigvalsh(H_phi))\n\n# Tegn de to sammenligningene i 8.4, med bildene under hverandre.\nfig, axes = plt.subplots(2, 1, figsize=(6, 8), constrained_layout=True)\nx = np.linspace(-1, 1, 200)\naxes[0].plot(x, x**2, label=\"Funksjonen x²\")\naxes[0].plot([-1, 1], [1, 1], \"--\", label=\"Linje mellom endeverdiene\")\naxes[0].plot(0, 0, \"ko\", label=\"Verdi i midtpunktet\")\naxes[0].set(xlabel=\"x\", ylabel=\"Funksjonsverdi\", title=\"Konveks: grafen ligger under linjen\")\n\n# På linjen y=0 blir den bølgede funksjonen en funksjon av x alene.\nx = np.linspace(0, 1, 200)\naxes[1].plot(x, wavy_midpoint((x, 0.)), label=\"Bølget funksjon langs y=0\")\naxes[1].plot([0, 1], [0, 1], \"--\", label=\"Linje mellom endeverdiene\")\naxes[1].plot(.5, 20.25, \"ko\", label=\"Verdi i midtpunktet\")\naxes[1].set(xlabel=\"x\", ylabel=\"Funksjonsverdi\", title=\"Ikke konveks: midtpunktet bryter kravet\")\nfor ax in axes:\n    ax.legend(fontsize=8)\n    ax.grid(alpha=.2)\nplt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-convex-midpoints","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4755,6 +4755,338 @@ select.math-modal-input {
 }
 
 </style>
+<style type="text/css">
+/* ============================================================
+   py-exercise – Quarto extension
+   Interactive Python exercise cells with hidden unit tests.
+   ============================================================ */
+
+/* Exercise container */
+.py-exercise-cell {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-left: 4px solid #0d6efd;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
+}
+
+/* Monaco editor wrapper (Monaco itself switches vs/vs-dark via JS) */
+.py-exercise-editor {
+  border: 1px solid var(--bs-border-color, #ced4da);
+  border-radius: 4px;
+  overflow: hidden;
+  min-height: 80px;
+  margin-bottom: 0.75rem;
+  background: var(--bs-body-bg, #ffffff);
+}
+
+/* Button bar */
+.py-exercise-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.py-exercise-check,
+.py-exercise-reset {
+  font-size: 0.875rem;
+}
+
+/* Running indicator */
+.py-exercise-running {
+  color: var(--bs-secondary-color, #6c757d);
+  font-style: italic;
+  padding: 0.4rem 0;
+}
+
+/* Error box (student code has a runtime / syntax error) */
+.py-exercise-error {
+  background: #fff3f3;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: #842029;
+}
+
+.py-exercise-error pre {
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* Captured stdout from student code */
+.py-exercise-stdout {
+  background: var(--bs-body-bg, #ffffff);
+  color: var(--bs-body-color, #212529);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.875rem;
+}
+
+.py-exercise-stdout-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color, #6c757d);
+  margin-bottom: 0.2rem;
+}
+
+.py-exercise-stdout pre {
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Test summary */
+.py-exercise-summary {
+  padding: 0.25rem 0;
+}
+
+.py-exercise-all-passed {
+  color: #0f5132;
+  background: #d1e7dd;
+  border: 1px solid #badbcc;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+}
+
+.py-exercise-some-failed {
+  color: #842029;
+  background: #f8d7da;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Per-test list (shown when there are multiple tests) */
+.py-exercise-test-list {
+  list-style: none;
+  padding: 0.25rem 0 0;
+  margin: 0;
+}
+
+.py-exercise-test-list li {
+  padding: 0.15rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.py-test-pass { color: #0f5132; }
+.py-test-fail { color: #842029; }
+
+/* Forbidden construct violations */
+.py-exercise-violations {
+  background: #fff3cd;
+  border: 1px solid #ffecb5;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: #664d03;
+}
+
+.py-exercise-violation-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.py-exercise-violation-list li {
+  padding: 0.1rem 0;
+}
+
+/* Single-test hint / assertion message */
+.py-exercise-hint {
+  color: #664d03;
+  background: #fff3cd;
+  border: 1px solid #ffecb5;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* ============================================================
+   Submission header & footer
+   ============================================================ */
+
+.py-submission-header {
+  border: 1px solid var(--bs-border-color, #c3cfe2);
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f0faf4);
+  color: var(--bs-body-color, #212529);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.py-submission-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.py-submission-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.py-submission-fields {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.py-submission-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 160px;
+}
+
+.py-submission-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+}
+
+.py-submission-field input {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.py-submission-field input:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.2);
+}
+
+/* Footer */
+.py-submission-footer {
+  border: 1px solid var(--bs-border-color, #c3cfe2);
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f0faf4);
+  color: var(--bs-body-color, #212529);
+  padding: 1rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.py-submission-export-btn {
+  font-size: 0.9rem;
+}
+
+.py-submission-msg {
+  margin-top: 0.5rem;
+}
+
+.py-submission-error {
+  color: #842029;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.py-submission-output-wrap {
+  margin-top: 0.75rem;
+}
+
+.py-submission-output-labelrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.py-submission-output-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.py-submission-copy-btn {
+  font-size: 0.78rem;
+  padding: 0.15rem 0.5rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.py-submission-copy-ok {
+  background-color: #d1e7dd !important;
+  color: #0f5132 !important;
+  border-color: #badbcc !important;
+}
+
+/* Download section (inside submission footer or standalone) */
+.py-download-footer {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-left: 4px solid #6c757d;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
+  padding: 0.85rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.py-download-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.py-download-btn {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.py-download-hint {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.py-footer-sep {
+  margin: 0.75rem 0;
+  border-color: #ced4da;
+}
+
+.py-submission-output {
+  width: 100%;
+  font-family: monospace;
+  font-size: 0.78rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  resize: vertical;
+  color: #333;
+  cursor: pointer;
+}
+
+
+</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
@@ -5041,6 +5373,7 @@ window.Quarto = {
   });
 </script>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
+<script>window.__pyExerciseConfig = {"lang":"en","submission":false,"submissionKey":"py-exercise"};</script>
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke8.html">Uke 8 – introduksjon til optimering</a></li></ol></nav>
 <div class="quarto-title">
@@ -5073,7 +5406,7 @@ Gå i dybden
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">8.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">8.1 Modell, valg og tillatt område</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">8.2 Kritiske punkter er kandidater</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">8.3 Kompakthet og eksistens</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">8.4 Konveksitet gir en global garanti</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">8.5 Oppgaver og Python-huskeliste</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">8.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">8.1 Modell, valg og tillatt område</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">8.2 Kritiske punkter er kandidater</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">8.3 Kompakthet og eksistens</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">8.4 Konveksitet gir en global garanti</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">8.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">8.6 Python: utforsk modellene</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="uke8-start">
@@ -5089,7 +5422,7 @@ Gå i dybden
 <li><strong>Hvordan finner vi en kandidat?</strong> En numerisk metode undersøker bare en del av området.</li>
 <li><strong>Hvorfor er kandidaten best?</strong> Vi trenger en matematisk begrunnelse for å gå fra et lovende tall til en garanti.</li>
 </ul>
-<p>Denne uken bygger vi begrepene som trengs for å svare. Først lager vi en modell. Deretter bruker vi deriverte til å undersøke punkter nær en kandidat. Til slutt ser vi hvilke egenskaper ved hele området og funksjonen som sikrer at et minimum finnes, og at et lokalt minimum også er globalt. <strong>Forelesning</strong> viser hovedløpet; <strong>Gå i dybden</strong> åpner lengre begrunnelser og mellomregninger.</p>
+<p>Denne uken bygger vi begrepene som trengs for å svare. Først lager vi en modell. Deretter bruker vi deriverte til å undersøke punkter nær en kandidat. Til slutt ser vi hvilke egenskaper ved hele området og funksjonen som sikrer at et minimum finnes, og at et lokalt minimum også er globalt. Regneoppgavene i 8.5 følger eksemplene i teksten. All Python, et sammenfoldet SciPy-oppslag og kodeoppgaver ligger i 8.6; figurene og resultatene i hovedteksten kan leses uten å kjøre kode. <strong>Forelesning</strong> viser hovedløpet; <strong>Gå i dybden</strong> åpner lengre begrunnelser og mellomregninger.</p>
 <p>I <a href="../pages/uke9.html">uke 9</a> utvikler vi søkemetoder, og i <a href="../pages/uke10.html">uke 10</a> bruker vi andrederiverte til å velge bedre steg. <a href="../pages/uke11.html">Uke 11</a> og <a href="../pages/uke12.html">uke 12</a> handler om hvordan begrensninger endrer både søket og begrunnelsen for at et svar er optimalt.</p>
 </section>
 </div>
@@ -5103,15 +5436,55 @@ Gå i dybden
 <p>betyr at vi søker en <strong>minimumsverdi</strong> blant punktene i <span class="math inline">\(D\)</span>. Et punkt <span class="math inline">\(z_*\)</span> som oppnår verdien, er et <strong>minimumspunkt</strong>; selve tallet er <span class="math inline">\(f(z_*)\)</span>. Vi skriver ofte at vi «finner minimum», men må holde disse to størrelsene fra hverandre. Å maksimere <span class="math inline">\(f\)</span> er det samme som å minimere <span class="math inline">\(-f\)</span>: de samme punktene blir best.</p>
 <section id="eksperiment-1-lønner-det-seg-å-bruke-alle-ressursene" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-1-lønner-det-seg-å-bruke-alle-ressursene">Eksperiment 1 – lønner det seg å bruke alle ressursene?</h3>
-<p>Fire studenter bygger nye datamaskiner og reparerer gamle. La <span class="math inline">\(b\)</span> være antall <strong>nye</strong> maskiner og <span class="math inline">\(r\)</span> antall <strong>reparasjoner</strong> i én uke. En ny maskin gir 500 kr i overskudd før reisen, en reparasjon 250 kr, og en ukentlig innkjøpstur koster 650 kr. Hver ny maskin bruker 10 komponenter og én arbeidstime; hver reparasjon bruker én komponent og tre arbeidstimer. De har høyst 100 komponenter og 50 timer. Begge antall må være ikke-negative heltall.</p>
-<p>Målet er å <strong>maksimere</strong> nettooverskuddet <span class="math inline">\(P(b,r)=500b+250r-650\)</span> over det tillatte området</p>
+<p>Fire studenter driver et lite dataverksted. De skal velge hvor mange nye datamaskiner de bygger, og hvor mange gamle de reparerer <strong>denne uken</strong>. De har kjøpt inn 100 komponenter som skal hentes hos grossisten, og har til sammen 50 arbeidstimer til bygging og reparasjon. Vi bruker følgende forenklede modell:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Arbeid</th>
+<th style="text-align: right;">Komponenter per maskin</th>
+<th style="text-align: right;">Timer per maskin</th>
+<th style="text-align: right;">Overskudd per maskin</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Bygge en ny maskin</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">500 kr</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Reparere en gammel maskin</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">250 kr</td>
+</tr>
+</tbody>
+</table>
+<p>Overskuddene i tabellen er inntekter minus kostnader per maskin. I tillegg har studentene allerede avtalt en reise til grossisten for å hente komponentene. <strong>Denne innkjøpsreisen koster 650 kr totalt, uansett hvor mange maskiner de velger å arbeide med.</strong> Kostnaden er ikke trukket fra i tabellen. Vi antar at de får solgt alt de bygger, og har nok reparasjonsoppdrag.</p>
+<p>La <span class="math inline">\(b\)</span> være antall nye maskiner og <span class="math inline">\(r\)</span> antall reparasjoner. Vi vil <strong>maksimere</strong> ukens nettooverskudd</p>
+<p><span class="math display">\[P(b,r)=500b+250r-650.\]</span></p>
+<p>En produksjonsplan må oppfylle</p>
+<p><span class="math display">\[10b+r\le100\quad\text{(komponenter)},\qquad
+b+3r\le50\quad\text{(arbeidstimer)},\]</span></p>
+<p>og <span class="math inline">\(b,r\)</span> må være ikke-negative heltall. Samlet kan vi skrive området som</p>
 <p><span class="math display">\[D=\{(b,r)\in\mathbb Z_{\ge0}^2:10b+r\le100,\ b+3r\le50\}.\]</span></p>
-<p>Her betyr <span class="math inline">\(\in\)</span> «er med i», <span class="math inline">\(\mathbb Z_{\ge0}\)</span> er de ikke-negative heltallene, og krøllparentesene samler alle par som oppfyller kravene. I svaret skiller vi mellom <strong>maksimumpunktet</strong> <span class="math inline">\((b,r)\)</span> og <strong>maksimalverdien</strong> <span class="math inline">\(P(b,r)\)</span>.</p>
-<p>I koden lager <code>meshgrid</code> alle par av de to listene med antall. <code>allowed</code> markerer hvilke par som oppfyller begge ressurskravene. <code>np.where</code> lar bare disse konkurrere, og <code>argmax</code> finner plasseringen med høyest overskudd. Det er en systematisk opptelling, ikke en metode basert på deriverte.</p>
-<p>Forutsatt at turen gjennomføres, er reisekostnaden fast. <strong>Gjett:</strong> Er det beste heltallsvalget et punkt som bruker nøyaktig begge ressursene? Vi prøver alle mulige heltallspar i det lille, avgrensede området. Figuren viser bare tillatte valg.</p>
-<div id="qpyodide-insertion-location-2"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Forsøket finner <span class="math inline">\((b,r)=(8,14)\)</span> og 6850 kr. Det bruker 94 komponenter og alle 50 timene. Et uttrykk med <span class="math inline">\(b=8.62\)</span> kan ikke beskrive antall maskiner, selv om det er et tillatt punkt når vi <strong>midlertidig</strong> lar variablene være reelle. Modellen bestemmer både <em>hva som måles</em>, og <em>hvilke svar som teller</em>. Om turen kunne droppes, måtte også valget «ingen tur, ingen fast kostnad» stå i modellen.</p>
+<p>Her betyr <span class="math inline">\(\in\)</span> «er med i», og <span class="math inline">\(\mathbb Z_{\ge0}\)</span> er de ikke-negative heltallene. Krøllparentesene samler alle par som oppfyller kravene.</p>
+<p>Det er få nok muligheter til at vi kan regne ut overskuddet for <strong>alle</strong> tillatte heltallspar. Figuren viser resultatet av denne opptellingen; <a href="#uke8-python-production">koden står i 8.6</a>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/optimization/week8-production.svg" class="img-fluid figure-img" width="620"></p>
+<figcaption>Hvert punkt er en tillatt produksjonsplan. Fargen viser nettooverskuddet; stjernen markerer planen med størst overskudd.</figcaption>
+</figure>
+</div>
+<p>Det beste valget er <span class="math inline">\((b,r)=(8,14)\)</span>, med <span class="math inline">\(P(8,14)=6850\)</span> kr. Planen bruker <span class="math inline">\(10\cdot8+14=94\)</span> komponenter og <span class="math inline">\(8+3\cdot14=50\)</span> timer. Det lønner seg altså ikke nødvendigvis å bruke opp begge ressursene. <strong>Maksimumpunktet</strong> er produksjonsplanen <span class="math inline">\((8,14)\)</span>; <strong>maksimalverdien</strong> er overskuddet 6850 kr.</p>
+<p>Et svar med for eksempel <span class="math inline">\(b=8.62\)</span> er ingen produksjonsplan: vi kan ikke bygge en brøkdel av en maskin i denne modellen. Den faste reisekostnaden endrer overskuddet, men ikke hvilken plan som er best, siden alle planer får samme fratrekk.</p>
 </section>
 <section id="lokalt-og-globalt-svarer-på-forskjellige-spørsmål" class="level3">
 <h3 class="anchored" data-anchor-id="lokalt-og-globalt-svarer-på-forskjellige-spørsmål">Lokalt og globalt svarer på forskjellige spørsmål</h3>
@@ -5121,9 +5494,9 @@ Gå i dybden
 <p>Heltallsvalg kan ikke endres med vilkårlig små steg. Faktisk blir hvert isolert heltallspunkt et lokalt optimum etter definisjonen over, fordi et lite nok område ikke inneholder andre tillatte punkter. Derfor handler derivasjonstestene i neste avsnitt om <strong>reelle variabler</strong>.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: kontinuerlig avslapning og fast reisekostnad
+Gå i dybden: hva skjer hvis vi tillater brøkdeler av maskiner?
 </summary>
-<p>Hvis <span class="math inline">\(b,r\)</span> tillates å være reelle, blir det tillatte området en lukket, begrenset mangekant. Denne utvidelsen kalles en <strong>relaksasjon</strong>: vi tillater flere valg, så beste overskudd kan bare øke. <span class="math inline">\(P\)</span> er <strong>affin</strong>, altså lineær pluss en konstant. På en slik mangekant oppnår en affin funksjon et maksimum i minst ett hjørne; langs en kant varierer den lineært og kan også være konstant. I <a href="../pages/uke11.html#uke11-modell">uke 11</a> utvikler vi denne hjørnemetoden. Sammenligning av hjørnene gir skjæringen mellom ressursgrensene: <span class="math inline">\(b=250/29\)</span> og <span class="math inline">\(r=400/29\)</span>, med <span class="math inline">\(P=225000/29-650\approx7108.62\)</span> kr. Dette er en <strong>øvre grense</strong> for heltallsproblemet, ikke en gjennomførbar produksjonsplan. Punktet <span class="math inline">\((8,14)\)</span> bruker <span class="math inline">\(10\cdot8+14=94\)</span> komponenter og <span class="math inline">\(8+3\cdot14=50\)</span> timer. Hvis null produksjon ikke krever en tur, må vi i stedet definere <span class="math inline">\(P(0,0)=0\)</span> som eget valg; formelen med <span class="math inline">\(-650\)</span> beskriver en tur som faktisk tas.</p>
+<p>Hvis <span class="math inline">\(b,r\)</span> tillates å være reelle, blir det tillatte området en mangekant med kantene inkludert. Denne utvidelsen kalles en <strong>relaksasjon</strong>: vi tillater flere valg, så beste overskudd kan bare øke. <span class="math inline">\(P\)</span> er <strong>affin</strong>, altså lineær pluss en konstant. På en slik mangekant oppnår en affin funksjon et maksimum i minst ett hjørne; langs en kant varierer den lineært og kan også være konstant. I <a href="../pages/uke11.html#uke11-modell">uke 11</a> utvikler vi denne hjørnemetoden. Sammenligning av hjørnene gir skjæringen mellom ressursgrensene: <span class="math inline">\(b=250/29\)</span> og <span class="math inline">\(r=400/29\)</span>, med <span class="math inline">\(P=225000/29-650\approx7108.62\)</span> kr. Dette er en <strong>øvre grense</strong> for heltallsproblemet, ikke en gjennomførbar produksjonsplan. Punktet <span class="math inline">\((8,14)\)</span> bruker <span class="math inline">\(10\cdot8+14=94\)</span> komponenter og <span class="math inline">\(8+3\cdot14=50\)</span> timer.</p>
 </details>
 </section>
 </div>
@@ -5149,23 +5522,44 @@ Gå i dybden: kontinuerlig avslapning og fast reisekostnad
 <h3 class="anchored" data-anchor-id="eksperiment-2-to-starter-to-svar">Eksperiment 2 – to starter, to svar</h3>
 <p>Vi minimerer nå en kostnadsfunksjon med to reelle innstillinger <span class="math inline">\(x,y\)</span>. Den er <strong>glatt</strong>: de deriverte vi trenger finnes og varierer kontinuerlig, uten sprang:</p>
 <p><span class="math display">\[f(x,y)=20+x^2+y^2-10\bigl(\cos(2\pi x)+\cos(2\pi y)\bigr).\]</span></p>
-<p>Kvadratleddene straffer store innstillinger; cosinusleddene gir flere små daler. <strong>Forutsi:</strong> Vil to lokale søk fra <span class="math inline">\((0,0)\)</span> og <span class="math inline">\((2,2)\)</span> gi samme verdi? En <strong>nivåkurve</strong> forbinder punkter med samme funksjonsverdi; figuren under viser slike kurver rundt dalene.</p>
-</section>
-<section id="første-møte-med-scipy" class="level3">
-<h3 class="anchored" data-anchor-id="første-møte-med-scipy">Første møte med SciPy</h3>
-<p><strong>NumPy</strong> gir oss arrayer, vektorregning og elementære funksjoner. <strong>SciPy</strong> bygger videre på NumPy med ferdige numeriske metoder. Her bruker vi <code>minimize</code> fra delen <code>scipy.optimize</code>. Oppsettet på siden har allerede kjørt importen <code>from scipy.optimize import minimize</code>. Du trenger ikke installere noe for å bruke kodecellene.</p>
-<p>Kallet <code>minimize(wavy, start, jac=wavy_grad, method="BFGS")</code> betyr:</p>
-<ul>
-<li><code>wavy</code> er Python-funksjonen som skal minimeres. Den tar inn en array <code>z</code> og returnerer ett tall. Vi sender inn <strong>funksjonen</strong>, uten parenteser, så SciPy kan kalle den på flere punkter.</li>
-<li><code>start</code> er startvektoren, altså første punkt som prøves.</li>
-<li><code>jac=wavy_grad</code> gir funksjonen som beregner gradienten. Navnet <code>jac</code> brukes av SciPy; her skal den returnere en array med én derivert per variabel.</li>
-<li><code>method="BFGS"</code> velger en lokal søkemetode som bruker gradienter til å anslå krumningen. Vi undersøker prinsippet i uke 10; her bruker vi metoden for å sammenligne to startpunkter.</li>
-</ul>
-<p>Svaret <code>result</code> er en samling opplysninger: <code>result.x</code> er punktet metoden fant, og <code>result.fun</code> er funksjonsverdien der. Vi kontrollerer også <strong>gradientnormen</strong> <span class="math inline">\(\|\nabla f\|_2\)</span>, altså lengden på gradientvektoren. Liten norm betyr små deriverte, og er bare en kontroll av stasjonaritet, ikke et bevis på minimum.</p>
-<p>Kjør cellen og sammenlign punktene, verdiene og gradientnormene.</p>
-<div id="qpyodide-insertion-location-3"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Fra null får vi verdi 0. Fra <span class="math inline">\((2,2)\)</span> får vi omtrent <span class="math inline">\((1.9899,1.9899)\)</span>, verdi 7.9597 og gradientnorm rundt <span class="math inline">\(10^{-6}\)</span>. Begge ligger ved dalbunner; gradienten er nesten null også ved den <strong>dårligere</strong> dalen. Dessuten kan vi her bevise globalitet uten å stole på søket: <span class="math inline">\(x^2+y^2\ge0\)</span> og hver cosinus er høyst 1, så <span class="math inline">\(f(x,y)\ge0\)</span> for alle <span class="math inline">\((x,y)\)</span>. Nullpunktet oppnår grensen. <strong>Ville to starter alene vært et bevis for denne påstanden?</strong></p>
+<p>Kvadratleddene gjør store innstillinger kostbare; cosinusleddene gir flere små daler. Vi lar en lokal søkemetode prøve to startpunkter. Metoden flytter punktet for å senke funksjonsverdien, men undersøker ikke hele planet. <a href="#uke8-python-local">SciPy-koden står i 8.6</a>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Startpunkt</th>
+<th style="text-align: left;">Punktet søket finner, avrundet</th>
+<th style="text-align: right;">Funksjonsverdi, avrundet</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0,0)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\((0,0)\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(0\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((2,2)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\((1.9899,1.9899)\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(7.9597\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>En <strong>nivåkurve</strong> forbinder punkter med samme funksjonsverdi. Kurvene i figuren omringer flere dalbunner. De to søkene ender i forskjellige daler, selv om de bruker samme metode.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/optimization/week8-local-minima.svg" class="img-fluid figure-img" width="620"></p>
+<figcaption>Nivåkurver for den bølgede funksjonen. Markeringene viser startpunktene og punktene de to søkene finner. Et lokalt søk trenger ikke finne den dypeste dalen.</figcaption>
+</figure>
+</div>
+<p>Begge svarene har nesten null gradient. Lengden <span class="math inline">\(\|\nabla f\|_2\)</span>, <strong>gradientnormen</strong>, er rundt <span class="math inline">\(10^{-6}\)</span> ved det andre svaret. Små deriverte skiller altså ikke den beste dalen fra en dårligere dal. Andrederivertene nedenfor hjelper oss å skille en dalbunn fra et sadelpunkt.</p>
+<p>Her kan vi også begrunne hvilket svar som er <strong>globalt</strong> best. Skriv funksjonen som</p>
+<p><span class="math display">\[f(x,y)=x^2+y^2+10(1-\cos(2\pi x))+10(1-\cos(2\pi y)).\]</span></p>
+<p>Alle fire ledd er ikke-negative. Dermed er <span class="math inline">\(f(x,y)\ge0\)</span> overalt, og <span class="math inline">\((0,0)\)</span> oppnår verdien 0. Dette er beviset på globalt minimum; de to numeriske søkene alene ville ikke gitt en slik garanti.</p>
 <div id="uke8-hessian">
 
 </div>
@@ -5181,7 +5575,7 @@ Gå i dybden: kontinuerlig avslapning og fast reisekostnad
 <p>Diagonalene beskriver krumning når én koordinat endres. De blandede partiellderiverte beskriver hvordan helningen i én koordinat endres når den andre endres. Når de andrederiverte er kontinuerlige (skrevet <span class="math inline">\(f\in C^2\)</span>), er de blandede deriverte like, så Hessianen er symmetrisk. I <span class="math inline">\(n\)</span> variabler er den en <span class="math inline">\(n\times n\)</span>-matrise.</p>
 <p>Hessianen inngår i en <strong>lokal kvadratisk modell</strong>, Taylor-tilnærmingen:</p>
 <p><span class="math display">\[f(z+h)\approx f(z)+\nabla f(z)^Th+\tfrac12 h^TH_f(z)h.\]</span></p>
-<p>Her er <span class="math inline">\(h\)</span> en liten endring i punktet, første ledd er verdien vi starter fra, andre ledd er endringen gradienten forutsier, og siste ledd tar med krumningen. Ved et stasjonært punkt er det lineære leddet null; da er fortegnet til <span class="math inline">\(h^TH_f(z)h\)</span> avgjørende for andrederiverttesten.</p>
+<p>Her er <span class="math inline">\(h\)</span> en liten endring i punktet, første ledd er verdien vi starter fra, andre ledd anslår endringen ved hjelp av gradienten, og siste ledd tar med krumningen. Ved et stasjonært punkt er det lineære leddet null; da er fortegnet til <span class="math inline">\(h^TH_f(z)h\)</span> avgjørende for andrederiverttesten.</p>
 <p>Fra <a href="../pages/uke5.html">uke 5</a> og <a href="../pages/uke6.html#uke6-energi">uke 6</a> kjenner vi følgende egenskaper for symmetriske matriser:</p>
 <table class="caption-top table">
 <colgroup>
@@ -5225,6 +5619,39 @@ Gå i dybden: kontinuerlig avslapning og fast reisekostnad
 </tbody>
 </table>
 <p><strong>SPD</strong> forkorter «symmetrisk positiv definit». I et stasjonært indre punkt gir positiv definit Hessian et <strong>strengt lokalt minimum</strong>; negativ definit gir et strengt lokalt maksimum. En indefinit Hessian gir et <strong>sadelpunkt</strong>: det finnes både høyere og lavere funksjonsverdier vilkårlig nær punktet. En semidefinit Hessian med en null egenverdi avgjør ikke typen. For eksempel har både <span class="math inline">\(u^4\)</span> og <span class="math inline">\(-u^4\)</span> andrederivert null i origo, men den ene har minimum og den andre maksimum.</p>
+<p><strong>Tre enkle eksempler ved origo.</strong> Alle har gradient null der. Notasjonen <span class="math inline">\(\operatorname{diag}(a,b)\)</span> betyr en diagonalmatrise med <span class="math inline">\(a,b\)</span> på diagonalen og null ellers:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Funksjon</th>
+<th style="text-align: left;">Hessian</th>
+<th style="text-align: left;">Hva skjer når vi går bort fra origo?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(u^2+v^2\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\operatorname{diag}(2,2)\)</span></td>
+<td style="text-align: left;">Verdien øker i alle retninger: strengt minimum.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(-u^2-v^2\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\operatorname{diag}(-2,-2)\)</span></td>
+<td style="text-align: left;">Verdien avtar i alle retninger: strengt maksimum.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(u^2-v^2\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\operatorname{diag}(2,-2)\)</span></td>
+<td style="text-align: left;">Verdien øker langs <span class="math inline">\(u\)</span>-aksen og avtar langs <span class="math inline">\(v\)</span>-aksen: sadelpunkt.</td>
+</tr>
+</tbody>
+</table>
+<p>I disse eksemplene er minimum og maksimum også globale; andrederiverttesten alene gir bare en lokal konklusjon.</p>
 <p>Den kvadratiske funksjonen fra uke 6 var <span class="math inline">\(\phi(u,v)=\tfrac32u^2+uv+v^2-5u-5v\)</span>. Direkte derivasjon gir</p>
 <p><span class="math display">\[\nabla\phi(u,v)=\begin{pmatrix}3u+v-5\\u+2v-5\end{pmatrix},
 \qquad H_\phi=\begin{pmatrix}3&amp;1\\1&amp;2\end{pmatrix}=A.\]</span></p>
@@ -5235,7 +5662,7 @@ Gå i dybden: kontinuerlig avslapning og fast reisekostnad
 Gå i dybden: nødvendige og tilstrekkelige lokale tester
 </summary>
 <p>Ved et indre lokalt minimum kan vi gå både fram og tilbake langs hver koordinat uten å forlate området. Den endimensjonale derivasjonstesten gir derfor alle partiellderiverte lik null. For en to ganger kontinuerlig deriverbar funksjon gjelder dessuten <span class="math inline">\(v^TH_f(x_*)v\ge0\)</span> for enhver retning <span class="math inline">\(v\)</span>: Hessian er <strong>positiv semidefinit</strong>, en nødvendig betingelse som tillater null egenverdier. I et kritisk punkt er positiv <strong>definit</strong> Hessian en tilstrekkelig betingelse for strengt lokalt minimum. Null egenverdi i en semidefinit Hessian avgjør ingenting: <span class="math inline">\(x^4\)</span> har lokalt minimum ved null, mens <span class="math inline">\(-x^4\)</span> har lokalt maksimum der; begge har andrederivert null. Dette er den generelle utvidelsen av den <a href="../pages/uke6.html#uke6-energi">positive definite kvadratiske funksjonen fra uke 6</a>.</p>
-<p>For den bølgede funksjonen er <span class="math inline">\(H_f(x,y)=\operatorname{diag}(2+40\pi^2\cos(2\pi x),2+40\pi^2\cos(2\pi y))\)</span>. Begge diagonalverdiene er positive nær <span class="math inline">\((1.9899,1.9899)\)</span>. Punktet er altså et lokalt minimum, mens ulikheten <span class="math inline">\(f\ge0\)</span> viser at det ikke er globalt. Ved <span class="math inline">\(f(x,y)=x^2-y^2\)</span> er gradienten null i origo, men Hessian har egenverdiene <span class="math inline">\(2\)</span> og <span class="math inline">\(-2\)</span>: et sadelpunkt.</p>
+<p>For den bølgede funksjonen er <span class="math inline">\(H_f(x,y)=\operatorname{diag}(2+40\pi^2\cos(2\pi x),2+40\pi^2\cos(2\pi y))\)</span>. Begge diagonalverdiene er positive nær <span class="math inline">\((1.9899,1.9899)\)</span>. Dette stemmer med at søket er nær et lokalt minimum, men den avrundede vektoren er ikke et eksakt stasjonært punkt. For den eksakte påstanden må vi først finne et punkt med gradient nøyaktig null, og deretter bruke den positive definite Hessianen. Den beregnede verdien nær 7.96 kan uansett ikke være globalt best, siden origo gir verdi 0. Ved <span class="math inline">\(f(x,y)=x^2-y^2\)</span> er gradienten null i origo, men Hessian har egenverdiene <span class="math inline">\(2\)</span> og <span class="math inline">\(-2\)</span>: et sadelpunkt.</p>
 </details>
 </section>
 </div>
@@ -5243,18 +5670,145 @@ Gå i dybden: nødvendige og tilstrekkelige lokale tester
 <div id="uke8-kompakt">
 
 </div>
-<section id="eksperiment-3-et-tall-vi-nærmer-oss-uten-å-nå" class="level3">
-<h3 class="anchored" data-anchor-id="eksperiment-3-et-tall-vi-nærmer-oss-uten-å-nå">Eksperiment 3 – et tall vi nærmer oss uten å nå</h3>
-<p>Tenk at vi vil minimere <span class="math inline">\(g(x)=x\)</span>. På det lukkede intervallet <span class="math inline">\([0,1]\)</span> er svaret 0. Hva med det <strong>åpne</strong> intervallet <span class="math inline">\((0,1)\)</span>? La et rutenett med flere og flere indre punkter prøve å finne minimum. <strong>Forutsi:</strong> Vil det minste rapporterte punktet noensinne være et tillatt minimum?</p>
-<div id="qpyodide-insertion-location-4"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Tallene blir <span class="math inline">\(0.1,0.01,0.001\)</span> for de minste verdiene. Vi kan alltid velge et nytt tillatt punkt nærmere 0. <strong>Infimum</strong> er den største nedre grensen for funksjonsverdiene. Her er den 0, men ingen <span class="math inline">\(x\in(0,1)\)</span> oppnår den. <strong>Supremum</strong> er den minste øvre grensen; her er den 1, og den oppnås heller ikke. Minimum og maksimum krever at en tillatt verdi faktisk oppnår grensen. Det er ikke et spørsmål om finere numerisk oppløsning. På <span class="math inline">\([0,1]\)</span> er begge endepunktene tillatt.</p>
-<p>Et <strong>grensepunkt</strong> kan nås som grensen av punkter i mengden. Mengden er <strong>lukket</strong> hvis alle slike grenser også er med, og <strong>begrenset</strong> hvis alle punktene får plass i en ball med endelig radius. I <span class="math inline">\(\mathbb R^n\)</span> betyr <strong>kompakt</strong> at mengden er både lukket og begrenset. For eksempel er <span class="math inline">\([0,1]\)</span> kompakt, men <span class="math inline">\((0,1)\)</span> mangler grensepunktene 0 og 1. En <strong>kontinuerlig</strong> funksjon bevarer grenser: når punkter nærmer seg et punkt, nærmer funksjonsverdiene seg verdien der. Setningen om ekstremalverdier sier at en <strong>kontinuerlig</strong> funksjon på en <strong>ikke-tom kompakt</strong> mengde oppnår både minimum og maksimum. Heltallsområdet i 8.1 er endelig og dermed kompakt; den kontinuerlige polygonen er også kompakt. Åpenhet eller ubegrensethet fjerner garantien, men utelukker ikke alltid et optimum: <span class="math inline">\(x^2\)</span> har minimum på hele <span class="math inline">\(\mathbb R\)</span>. <strong>Hvorfor garanterer ikke setningen at søket fra én start finner minimumet?</strong></p>
+<p>Vi har sett hvordan vi kan undersøke et mulig minimum. Nå tar vi et skritt tilbake: <strong>finnes det et minimumspunkt i det hele tatt?</strong> Det avhenger både av funksjonen og av hvilke punkter som er tillatt.</p>
+<section id="eksperiment-3-stadig-mindre-men-aldri-minst" class="level3">
+<h3 class="anchored" data-anchor-id="eksperiment-3-stadig-mindre-men-aldri-minst">Eksperiment 3 – stadig mindre, men aldri minst</h3>
+<p>Vi vil minimere <span class="math inline">\(g(x)=x\)</span> på intervallet <span class="math inline">\((0,1)\)</span>. Runde parenteser betyr at endepunktene ikke er med. Prøver vi jevnt fordelte punkter inne i intervallet, får vi følgende resultater:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Punkter vi prøver</th>
+<th style="text-align: right;">Minste verdi blant de prøvde punktene</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(0.1,0.2,\ldots,0.9\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(0.1\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(0.01,0.02,\ldots,0.99\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(0.01\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(0.001,0.002,\ldots,0.999\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(0.001\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><a href="#uke8-python-domain">Koden i 8.6</a> lager tabellen. Hver rad har en minste verdi, men ingen av dem er et minimum på <strong>hele</strong> <span class="math inline">\((0,1)\)</span>. For ethvert tillatt <span class="math inline">\(x\)</span> er også <span class="math inline">\(x/2\)</span> tillatt, og <span class="math inline">\(g(x/2)&lt;g(x)\)</span>. Vi kan derfor alltid gjøre svaret bedre. Grensen 0 er ikke tillatt.</p>
+<p>På <span class="math inline">\([0,1]\)</span> er situasjonen annerledes. Hakeparentesene betyr at endepunktene er med; nå er <span class="math inline">\(x=0\)</span> et minimumspunkt og 0 minimumsverdien.</p>
+</section>
+<section id="infimum-er-en-grense-minimum-må-oppnås" class="level3">
+<h3 class="anchored" data-anchor-id="infimum-er-en-grense-minimum-må-oppnås">Infimum er en grense; minimum må oppnås</h3>
+<p>Tallet 0 er en nedre grense for <span class="math inline">\(g(x)=x\)</span> på <span class="math inline">\((0,1)\)</span>: alle funksjonsverdiene er større enn 0. Tall som <span class="math inline">\(-1\)</span> er også nedre grenser, men 0 er den <strong>største</strong> av dem. Denne største nedre grensen kalles <strong>infimum</strong>, skrevet <span class="math inline">\(\inf\)</span>. Tilsvarende er <strong>supremum</strong>, skrevet <span class="math inline">\(\sup\)</span>, den minste øvre grensen.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Område for <span class="math inline">\(g(x)=x\)</span></th>
+<th style="text-align: right;">Infimum</th>
+<th style="text-align: left;">Oppnås det som minimum?</th>
+<th style="text-align: right;">Supremum</th>
+<th style="text-align: left;">Oppnås det som maksimum?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0,1)\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: left;">Nei</td>
+<td style="text-align: right;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: left;">Nei</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((0,1]\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: left;">Nei</td>
+<td style="text-align: right;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: left;">Ja, ved <span class="math inline">\(x=1\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\([0,1]\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: left;">Ja, ved <span class="math inline">\(x=0\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: left;">Ja, ved <span class="math inline">\(x=1\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Funksjonen er den samme i alle radene. Bare tillatte endepunkter er endret. Et finere rutenett kan ikke gjøre et utelatt endepunkt tillatt.</p>
+</section>
+<section id="lukket-og-begrenset-to-forskjellige-krav" class="level3">
+<h3 class="anchored" data-anchor-id="lukket-og-begrenset-to-forskjellige-krav">Lukket og begrenset: to forskjellige krav</h3>
+<p>En mengde er <strong>lukket</strong> når den inneholder alle grenseverdier av punktfølger fra mengden. En punktfølge er en liste <span class="math inline">\(x_1,x_2,\ldots\)</span>. For eksempel ligger <span class="math inline">\(x_n=1/(n+1)\)</span> i <span class="math inline">\((0,1)\)</span> og nærmer seg 0. Siden 0 mangler, er <span class="math inline">\((0,1)\)</span> ikke lukket. Intervallet <span class="math inline">\([0,1]\)</span> er lukket: slike grenser blir innenfor intervallet, inkludert endepunktene.</p>
+<p>En mengde er <strong>begrenset</strong> når alle punktene får plass innenfor en endelig avstand fra origo. Intervallet <span class="math inline">\([0,1]\)</span> er begrenset. Halvlinjen <span class="math inline">\([0,\infty)\)</span> er lukket, men ikke begrenset: den inneholder vilkårlig store tall.</p>
+<p>I <span class="math inline">\(\mathbb R^n\)</span> betyr <strong>kompakt</strong> nettopp <em>lukket og begrenset</em>.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Mengde</th>
+<th style="text-align: left;">Lukket?</th>
+<th style="text-align: left;">Begrenset?</th>
+<th style="text-align: left;">Kompakt?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\([0,1]\)</span></td>
+<td style="text-align: left;">Ja</td>
+<td style="text-align: left;">Ja</td>
+<td style="text-align: left;">Ja</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((0,1)\)</span></td>
+<td style="text-align: left;">Nei</td>
+<td style="text-align: left;">Ja</td>
+<td style="text-align: left;">Nei</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\([0,\infty)\)</span></td>
+<td style="text-align: left;">Ja</td>
+<td style="text-align: left;">Nei</td>
+<td style="text-align: left;">Nei</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Skiven <span class="math inline">\(u^2+v^2\le1\)</span>, med kanten</td>
+<td style="text-align: left;">Ja</td>
+<td style="text-align: left;">Ja</td>
+<td style="text-align: left;">Ja</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bare sirkelranden <span class="math inline">\(u^2+v^2=1\)</span></td>
+<td style="text-align: left;">Ja</td>
+<td style="text-align: left;">Ja</td>
+<td style="text-align: left;">Ja</td>
+</tr>
+</tbody>
+</table>
+<p>De to siste radene viser at en kompakt mengde ikke trenger å være et intervall eller å inneholde noe areal. Skiven inneholder hele innsiden; sirkelranden inneholder bare punktene i avstand 1 fra origo.</p>
+</section>
+<section id="når-kan-vi-garantere-minimum-og-maksimum" class="level3">
+<h3 class="anchored" data-anchor-id="når-kan-vi-garantere-minimum-og-maksimum">Når kan vi garantere minimum og maksimum?</h3>
+<p>En funksjon er <strong>kontinuerlig</strong> når funksjonsverdiene nærmer seg <span class="math inline">\(f(x)\)</span> hver gang punktene nærmer seg <span class="math inline">\(x\)</span> innenfor området. Det betyr at verdien ikke gjør et sprang i grensen. Funksjonene <span class="math inline">\(x\)</span>, <span class="math inline">\(x^2\)</span> og polynomet <span class="math inline">\(\phi\)</span> fra uke 6 er kontinuerlige.</p>
+<p><strong>Ekstremalverdisetningen.</strong> En kontinuerlig funksjon på en ikke-tom, kompakt mengde oppnår både minimum og maksimum.</p>
+<p>Bruk setningen ved å kontrollere <strong>området</strong> og <strong>funksjonen</strong> hver for seg. For <span class="math inline">\(f(u,v)=u^2+v^2\)</span> på skiven <span class="math inline">\(u^2+v^2\le1\)</span> er området kompakt og funksjonen kontinuerlig. Begge ekstremalverdier finnes. Her ser vi også hvilke de er: minimum 0 i origo, maksimum 1 på hele sirkelranden. Setningen garanterer ikke at punktet er entydig.</p>
+<p>For produksjonsmodellen i 8.1 er det bare endelig mange tillatte punkter. Da kan vi finne størst og minst ved å sammenligne alle verdiene, slik opptellingen gjorde. Ekstremalverdisetningen gir en garanti også når vi ikke kan telle punktene.</p>
+<p><strong>Garantien er tilstrekkelig, ikke nødvendig.</strong> På hele <span class="math inline">\(\mathbb R\)</span> er området ikke kompakt. Likevel har <span class="math inline">\(x^2\)</span> minimum 0 ved <span class="math inline">\(x=0\)</span>. Derimot har <span class="math inline">\(f(x)=x\)</span> verken minimum eller maksimum på <span class="math inline">\(\mathbb R\)</span>. Når kravene i setningen ikke er oppfylt, må vi undersøke problemet på annen måte. Setningen sier heller ikke hvordan et søk finner minimum.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: hvorfor lukkethet og begrensning begge teller
+Gå i dybden: hvorfor trenger vi også kontinuitet?
 </summary>
-<p>Først må funksjonsverdiene være begrenset: ellers kunne vi velge punkter med <span class="math inline">\(|f|\)</span> stadig større uten grense. En konvergent delfølge ville da motsi kontinuitet i grensepunktet. Infimum er derfor et endelig tall. Hvis funksjonen ikke oppnådde sin infimumverdi, kunne vi velge en følge av tillatte punkter med funksjonsverdi stadig nærmere infimum. Kompakthet gir en konvergent delfølge med grensepunkt <em>i området</em>. Kontinuitet ville så gitt akkurat infimum i grensepunktet: en motsigelse. Intervallet <span class="math inline">\((0,1)\)</span> mister grensepunktet 0; på <span class="math inline">\(\mathbb R\)</span> kan en følge i stedet løpe ubegrenset langt bort. Setningen gir <strong>eksistens</strong>, ikke en metode for å lokalisere punktet eller entydighet.</p>
+<p>Selv på det kompakte intervallet <span class="math inline">\([0,1]\)</span> kan minimum mangle hvis funksjonen gjør et sprang. Betrakt</p>
+<p><span class="math display">\[h(x)=\begin{cases}1,&amp;x=0,\\x,&amp;0&lt;x\le1.\end{cases}\]</span></p>
+<p>Vi har <span class="math inline">\(h(1/n)=1/n\to0\)</span>, men <span class="math inline">\(h(0)=1\)</span>. Funksjonen er derfor ikke kontinuerlig i 0. Infimum er 0, men ingen tillatt <span class="math inline">\(x\)</span> gir <span class="math inline">\(h(x)=0\)</span>. Å inkludere endepunktet i området er altså ikke nok; funksjonsverdien må også passe med grensen.</p>
+<p>Intuisjonen bak setningen er nå: begrensning hindrer punktene i å forsvinne uendelig langt bort, lukkethet beholder grensepunktene, og kontinuitet sørger for at funksjonsverdien følger med i grensen.</p>
 </details>
 </section>
 </div>
@@ -5262,23 +5816,96 @@ Gå i dybden: hvorfor lukkethet og begrensning begge teller
 <div id="uke8-konveks">
 
 </div>
-<section id="eksperiment-4-test-et-punkt-mellom-to-andre" class="level3">
-<h3 class="anchored" data-anchor-id="eksperiment-4-test-et-punkt-mellom-to-andre">Eksperiment 4 – test et punkt mellom to andre</h3>
-<p>At et minimum finnes, forteller ikke om en lokal metode finner det. Nå ser vi etter en egenskap som gjør alle lokale minima globale. Vi vender tilbake til akkurat den kvadratiske funksjonen fra <a href="../pages/uke6.html#uke6-energi">uke 6</a>: <span class="math inline">\(\phi(u,v)=\tfrac32u^2+uv+v^2-5u-5v\)</span>. Vi sammenligner den med <span class="math inline">\(f\)</span> fra 8.2. For to punkter <span class="math inline">\(a,b\)</span> tester vi midtpunktet <span class="math inline">\(m=(a+b)/2\)</span>. <strong>Forutsi:</strong> Ligger funksjonsverdien i midten over eller under gjennomsnittet av endeverdiene?</p>
-<div id="qpyodide-insertion-location-5"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Kvadratikken gir <span class="math inline">\(-5.625\le-3.750\)</span>. Den bølgede gir <span class="math inline">\(20.25&gt;0.50\)</span>, så <strong>ett</strong> moteksempel er nok til å avkrefte konveksitet. En mengde <span class="math inline">\(D\)</span> er <strong>konveks</strong> dersom hele linjestykket <span class="math inline">\(ta+(1-t)b\)</span> ligger i <span class="math inline">\(D\)</span> når <span class="math inline">\(a,b\in D\)</span> og <span class="math inline">\(0\le t\le1\)</span>. En funksjon på et konvekst område er <strong>konveks</strong> dersom</p>
-<p><span class="math display">\[f(ta+(1-t)b)\le t f(a)+(1-t)f(b)\qquad(a,b\in D,\ 0\le t\le1).\]</span></p>
-<p>Venstresiden er verdien i et punkt mellom endepunktene; høyresiden er samme vektede gjennomsnitt av endeverdiene. Grafen ligger dermed under den rette forbindelsen mellom endeverdiene. For å <em>bevise</em> konveksitet må ulikheten gjelde alle slike punkter. For en <span class="math inline">\(C^2\)</span>-funksjon på et <strong>åpent konvekst område</strong> (alle punktene er indre punkter) er positiv semidefinit Hessian overalt en tilstrekkelig test for konveksitet. <strong>Streng konveksitet</strong> betyr streng ulikhet for ulike endepunkter og <span class="math inline">\(0&lt;t&lt;1\)</span>; da kan det finnes høyst ett minimum, men eksistens må vises separat. Kvadratikken har konstant Hessian med egenverdiene <span class="math inline">\((5-\sqrt5)/2\)</span> og <span class="math inline">\((5+\sqrt5)/2\)</span>, begge positive. Den er strengt konveks, og det kritiske punktet <span class="math inline">\((1,2)\)</span> er dermed dens unike globale minimum på <span class="math inline">\(\mathbb R^2\)</span>. Her betyr <strong>entydig</strong> at ingen andre punkter oppnår minimumsverdien. Dette utvikler SPD-argumentet fra uke 6 til en test for generelle funksjoner: Hessian må nå undersøkes i <strong>hele området</strong>, ikke bare i ett punkt.</p>
-<p>På et konvekst område er ethvert lokalt minimum av en konveks funksjon også globalt. Hvorfor kan heller ikke et stasjonært punkt skjule en dårligere dal? For en deriverbar konveks funksjon gjelder <strong>tangentulikheten</strong></p>
+<p>Kompakthet og kontinuitet hjelper oss å vise at et minimum <strong>finnes</strong>. De utelukker ikke flere daler. Nå undersøker vi en annen egenskap, <strong>konveksitet</strong>, som kan gjøre en lokal konklusjon global. Vi må skille mellom konveksitet av et <strong>område</strong> og av en <strong>funksjon</strong>.</p>
+<section id="et-konvekst-område-inneholder-forbindelsen-mellom-punktene" class="level3">
+<h3 class="anchored" data-anchor-id="et-konvekst-område-inneholder-forbindelsen-mellom-punktene">Et konvekst område inneholder forbindelsen mellom punktene</h3>
+<p>Velg to punkter <span class="math inline">\(a,b\)</span> i området. Kan vi gå rett fra det ene til det andre uten å forlate området? Hvis svaret er ja for <strong>alle</strong> slike punktpar, er området konvekst. Matematisk betyr dette</p>
+<p><span class="math display">\[ta+(1-t)b\in D\qquad\text{når }a,b\in D,\quad 0\le t\le1.\]</span></p>
+<p>Når <span class="math inline">\(t\)</span> går fra 0 til 1, går uttrykket langs linjestykket fra <span class="math inline">\(b\)</span> til <span class="math inline">\(a\)</span>. Ved <span class="math inline">\(t=1/2\)</span> får vi midtpunktet <span class="math inline">\((a+b)/2\)</span>.</p>
+<ul>
+<li>Intervallet <span class="math inline">\([0,1]\)</span> er konvekst: tall mellom to tillatte tall er også tillatt.</li>
+<li>Skiven <span class="math inline">\(u^2+v^2\le1\)</span> er konveks: rette linjestykker mellom punkter i skiven holder seg i skiven.</li>
+<li>Sirkelranden <span class="math inline">\(u^2+v^2=1\)</span> er <strong>ikke</strong> konveks. Punktene <span class="math inline">\((1,0)\)</span> og <span class="math inline">\((-1,0)\)</span> er med, men midtpunktet <span class="math inline">\((0,0)\)</span> er ikke med.</li>
+<li>Heltallspunktene i produksjonsmodellen er ikke konvekse: <span class="math inline">\((0,0)\)</span> og <span class="math inline">\((1,0)\)</span> er tillatt, men midtpunktet <span class="math inline">\((1/2,0)\)</span> er ikke et heltallsvalg.</li>
+</ul>
+<p>Både skiven og sirkelranden er kompakte, men bare skiven er konveks. Hele <span class="math inline">\(\mathbb R\)</span> er konveks, men ikke kompakt. <strong>Kompakt</strong> og <strong>konveks</strong> er altså to ulike egenskaper.</p>
+</section>
+<section id="eksperiment-4-funksjonsverdien-mellom-to-punkter" class="level3">
+<h3 class="anchored" data-anchor-id="eksperiment-4-funksjonsverdien-mellom-to-punkter">Eksperiment 4 – funksjonsverdien mellom to punkter</h3>
+<p>For <span class="math inline">\(f(x)=x^2\)</span> velger vi <span class="math inline">\(a=-1\)</span>, <span class="math inline">\(b=1\)</span>. I midtpunktet er verdien <span class="math inline">\(f(0)=0\)</span>, mens gjennomsnittet av endeverdiene er <span class="math inline">\((f(-1)+f(1))/2=1\)</span>. Grafen ligger under den rette forbindelsen mellom disse to punktene på grafen.</p>
+<p>For den bølgede funksjonen fra 8.2 velger vi i stedet <span class="math inline">\(a=(0,0)\)</span> og <span class="math inline">\(b=(1,0)\)</span>. Nå får vi</p>
+<p><span class="math display">\[f((a+b)/2)=20.25&gt;\frac{f(a)+f(b)}2=0.5.\]</span></p>
+<p>Mellom endepunktene kommer det en topp. Disse to beregningene viser hva konveksitetstesten leter etter.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/optimization/week8-convex-midpoints.svg" class="img-fluid figure-img" width="620"></p>
+<figcaption>Øverst ligger grafen til x² under linjen mellom endeverdiene. Nederst ligger den bølgede funksjonen, langs y=0, over denne linjen ved midtpunktet.</figcaption>
+</figure>
+</div>
+<p>En funksjon på et konvekst område er <strong>konveks</strong> når</p>
+<p><span class="math display">\[f(ta+(1-t)b)\le t f(a)+(1-t)f(b)
+\qquad\text{for alle }a,b\in D,\quad 0\le t\le1.\]</span></p>
+<p>Venstresiden er funksjonsverdien i punktet mellom <span class="math inline">\(a\)</span> og <span class="math inline">\(b\)</span>. Høyresiden er høyden på den rette forbindelsen mellom endeverdiene. Ved <span class="math inline">\(t=1/2\)</span> er denne høyden det vanlige gjennomsnittet.</p>
+<p>For <span class="math inline">\(x^2\)</span> gjelder ulikheten for alle punktpar; se utregningen under «Gå i dybden». Den bølgede funksjonen er ikke konveks, siden allerede <strong>ett</strong> punktpar bryter kravet. Omvendt er én vellykket sammenligning ikke et bevis på konveksitet. <a href="#uke8-python-convex">Koden i 8.6</a> gjengir sammenligningene og figuren.</p>
+</section>
+<section id="konveks-er-ikke-det-samme-som-strengt-konveks" class="level3">
+<h3 class="anchored" data-anchor-id="konveks-er-ikke-det-samme-som-strengt-konveks">Konveks er ikke det samme som strengt konveks</h3>
+<p>Funksjonen <span class="math inline">\(f(x)=x\)</span> er konveks: grafen er selv en rett linje, så vi får likhet i testen. Også den konstante funksjonen <span class="math inline">\(f(x)=0\)</span> er konveks. På <span class="math inline">\([0,1]\)</span> har sistnevnte minimum i <strong>alle</strong> punkter.</p>
+<p>En funksjon er <strong>strengt konveks</strong> når ulikheten er streng for <span class="math inline">\(a\ne b\)</span> og <span class="math inline">\(0&lt;t&lt;1\)</span>. Funksjonen <span class="math inline">\(x^2\)</span> er strengt konveks på <span class="math inline">\(\mathbb R\)</span>. Streng konveksitet innebærer at det finnes <strong>høyst ett</strong> minimumspunkt. Ellers ville punktet mellom to minimumspunkter gitt en enda mindre verdi.</p>
+<p>«Høyst ett» betyr ikke «ett»: <span class="math inline">\(x^2\)</span> er også strengt konveks på <span class="math inline">\((0,1)\)</span>, men der finnes ikke noe minimum. Dette er samme problem med et utelatt endepunkt som i 8.3.</p>
+</section>
+<section id="hessianen-kan-kontrollere-alle-punktene-på-én-gang" class="level3">
+<h3 class="anchored" data-anchor-id="hessianen-kan-kontrollere-alle-punktene-på-én-gang">Hessianen kan kontrollere alle punktene på én gang</h3>
+<p>For en funksjon med kontinuerlige andrederiverte på et åpent, konvekst område kan vi bruke følgende tester. <strong>Åpent</strong> betyr her at hvert punkt er et indre punkt; <span class="math inline">\(\mathbb R^n\)</span> er et eksempel.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Hessianen i hele området</th>
+<th style="text-align: left;">Konklusjon</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Positiv semidefinit overalt</td>
+<td style="text-align: left;">Funksjonen er konveks.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Positiv definit overalt</td>
+<td style="text-align: left;">Funksjonen er strengt konveks.</td>
+</tr>
+</tbody>
+</table>
+<p>Dette er tester i <strong>alle</strong> punkter, ikke bare ved én kandidat som i den lokale andrederiverttesten i 8.2.</p>
+<p><strong>Eksempel: en dal med flat bunn.</strong> For <span class="math inline">\(f(u,v)=u^2\)</span> er <span class="math inline">\(H_f=\operatorname{diag}(2,0)\)</span> overalt. Hessianen er positiv semidefinit, og funksjonen er konveks. Den er ikke strengt konveks: langs linjen <span class="math inline">\(u=0\)</span> er verdien konstant lik 0. Alle punktene <span class="math inline">\((0,v)\)</span> er globale minimumspunkter. En null egenverdi betyr at denne Hessiantesten ikke kan garantere <em>streng</em> konveksitet.</p>
+<p><strong>Eksempel: skålen fra uke 6.</strong> For <span class="math inline">\(\phi(u,v)=\tfrac32u^2+uv+v^2-5u-5v\)</span> er Hessianen</p>
+<p><span class="math display">\[H_\phi=\begin{pmatrix}3&amp;1\\1&amp;2\end{pmatrix}\]</span></p>
+<p>overalt. Den har positive egenverdier <span class="math inline">\((5-\sqrt5)/2\)</span> og <span class="math inline">\((5+\sqrt5)/2\)</span>, så funksjonen er strengt konveks. Vi fant allerede <span class="math inline">\(\nabla\phi(1,2)=0\)</span>. Punktet <span class="math inline">\((1,2)\)</span> er et lokalt minimum etter testen i 8.2. Neste regel viser at det også er det entydige globale minimumet, akkurat som i uke 6.</p>
+</section>
+<section id="fra-lokalt-til-globalt" class="level3">
+<h3 class="anchored" data-anchor-id="fra-lokalt-til-globalt">Fra lokalt til globalt</h3>
+<p><strong>På et konvekst område er ethvert lokalt minimum av en konveks funksjon også globalt.</strong> Hvis funksjonen dessuten er strengt konveks, er dette minimumspunktet entydig. Et bevis står under «Gå i dybden».</p>
+<p>For deriverbare konvekse funksjoner kan vi også bruke <strong>tangentulikheten</strong>:</p>
 <p><span class="math display">\[f(y)\ge f(z)+\nabla f(z)^T(y-z).\]</span></p>
-<p>Den lineære modellen ved <span class="math inline">\(z\)</span> ligger altså under funksjonen i alle tillatte punkter <span class="math inline">\(y\)</span>. Ved et stasjonært punkt forsvinner indreproduktet, så <span class="math inline">\(f(y)\ge f(z)\)</span> overalt: punktet er globalt minimum. Dette gir et bevis, ikke bare en lokal test. I uke 11 lager vi andre slike globale grenser når målet og bibetingelsene er lineære. Et randminimum kan fremdeles ha gradient ulik null. Den <strong>reelle</strong> versjonen av produksjonsområdet er konveks, mens heltallspunktene ikke er det: midtpunktet mellom <span class="math inline">\((0,0)\)</span> og <span class="math inline">\((1,0)\)</span> er ikke et tillatt heltallsvalg. <strong>Hvordan påvirker dette hvilken garanti vi kan bruke i produksjonsmodellen?</strong></p>
+<p>Her er <span class="math inline">\(z\)</span> punktet vi undersøker, og <span class="math inline">\(y\)</span> et hvilket som helst annet punkt i området. Høyresiden er den lineære modellen fra 8.2. For en konveks funksjon ligger denne modellen under funksjonen i <strong>hele</strong> området.</p>
+<p><strong>Eksempel med tall.</strong> For <span class="math inline">\(f(x)=x^2\)</span>, ved <span class="math inline">\(z=1\)</span>, sier ulikheten <span class="math inline">\(y^2\ge1+2(y-1)=2y-1\)</span>. Differansen er <span class="math inline">\((y-1)^2\ge0\)</span>, så den gjelder for alle <span class="math inline">\(y\)</span>. Ved <span class="math inline">\(z=0\)</span> er den deriverte 0, og samme regel gir <span class="math inline">\(y^2\ge0\)</span>: vi har bevist at 0 er et globalt minimumspunkt.</p>
+<p>Generelt forsvinner indreproduktet når <span class="math inline">\(\nabla f(z)=0\)</span>. Da gir tangentulikheten <span class="math inline">\(f(y)\ge f(z)\)</span> for alle <span class="math inline">\(y\)</span>. <strong>En null gradient er derfor nok til globalt minimum når vi først har vist konveksitet.</strong> Uten konveksitet kan vi få den dårligere dalen fra 8.2, eller et sadelpunkt.</p>
+<p>Et minimum på randen kan fortsatt ha gradient ulik null, som <span class="math inline">\(f(x)=x\)</span> på <span class="math inline">\([0,1]\)</span>. I uke 11–12 kombinerer vi derfor slike ulikheter med begrensningene i problemet.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: fra linjestykke til globalt minimum
+Gå i dybden: hvorfor gjelder de globale garantiene?
 </summary>
-<p>Anta at <span class="math inline">\(x_*\)</span> er lokalt minimum til en konveks funksjon på en konveks mengde <span class="math inline">\(D\)</span>. Hvis et annet punkt <span class="math inline">\(y\in D\)</span> hadde <span class="math inline">\(f(y)&lt;f(x_*)\)</span>, ville for hvert <span class="math inline">\(0&lt;t\le1\)</span> punktet <span class="math inline">\(x_t=(1-t)x_*+ty\)</span> ligge i <span class="math inline">\(D\)</span>, og konveksitet ville gi <span class="math inline">\(f(x_t)\le(1-t)f(x_*)+tf(y)&lt;f(x_*)\)</span>. For tilstrekkelig liten positiv <span class="math inline">\(t\)</span> ligger <span class="math inline">\(x_t\)</span> vilkårlig nær <span class="math inline">\(x_*\)</span>, i strid med lokal minimalitet.</p>
-<p>For en deriverbar konveks funksjon gjelder tangentulikheten <span class="math inline">\(f(y)\ge f(x)+\nabla f(x)^T(y-x)\)</span>. Hvis <span class="math inline">\(\nabla f(x_*)=0\)</span>, får vi <span class="math inline">\(f(y)\ge f(x_*)\)</span> for alle <span class="math inline">\(y\)</span> i området. For en kvadratisk funksjon <span class="math inline">\(\phi(z)=\tfrac12 z^TAz-b^Tz\)</span> er Hessian lik <span class="math inline">\(A\)</span> overalt, slik vi så i uke 6. Med positiv definit <span class="math inline">\(A\)</span> er minimumet entydig. På en rand må vi undersøke <strong>tillatte retninger</strong>; gradienten trenger ikke være null.</p>
+<p><strong>Konveksitet av <span class="math inline">\(x^2\)</span>.</strong> Regner vi ut forskjellen mellom høyre og venstre side i definisjonen, får vi</p>
+<p><span class="math display">\[ta^2+(1-t)b^2-\bigl(ta+(1-t)b\bigr)^2
+=t(1-t)(a-b)^2\ge0.\]</span></p>
+<p>Hvis <span class="math inline">\(a\ne b\)</span> og <span class="math inline">\(0&lt;t&lt;1\)</span>, er alle faktorene positive. Dermed er funksjonen strengt konveks.</p>
+<p><strong>Hvorfor kan ikke et lokalt minimum være dårligere enn et annet punkt?</strong> Anta at <span class="math inline">\(x_*\)</span> er lokalt minimum, men at et tillatt <span class="math inline">\(y\)</span> har <span class="math inline">\(f(y)&lt;f(x_*)\)</span>. Konveksitet av området gjør alle punktene <span class="math inline">\(x_t=(1-t)x_*+ty\)</span> tillatte. Konveksitet av funksjonen gir for <span class="math inline">\(0&lt;t\le1\)</span></p>
+<p><span class="math display">\[f(x_t)\le(1-t)f(x_*)+tf(y)&lt;f(x_*).\]</span></p>
+<p>Vi kan velge <span class="math inline">\(t\)</span> så liten at <span class="math inline">\(x_t\)</span> er vilkårlig nær <span class="math inline">\(x_*\)</span>. Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.</p>
+<p><strong>Hvor kommer tangentulikheten fra?</strong> For <span class="math inline">\(0&lt;t\le1\)</span> gir konveksitet</p>
+<p><span class="math display">\[f(z+t(y-z))\le(1-t)f(z)+tf(y).\]</span></p>
+<p>Trekk fra <span class="math inline">\(f(z)\)</span> og del på <span class="math inline">\(t\)</span>. Da er</p>
+<p><span class="math display">\[\frac{f(z+t(y-z))-f(z)}{t}\le f(y)-f(z).\]</span></p>
+<p>Når <span class="math inline">\(t\to0^+\)</span>, går venstresiden mot den retningsderiverte <span class="math inline">\(\nabla f(z)^T(y-z)\)</span> fra 8.2. Flytt så <span class="math inline">\(f(z)\)</span> til venstre side. Dette gir tangentulikheten.</p>
 </details>
 </section>
 </div>
@@ -5286,20 +5913,20 @@ Gå i dybden: fra linjestykke til globalt minimum
 <div id="uke8-oppgaver">
 
 </div>
-<section id="kontroller-regningen-selv" class="level3">
-<h3 class="anchored" data-anchor-id="kontroller-regningen-selv">Kontroller regningen selv</h3>
-<p>Svar eksakt uten avrunding. Skriv <code>*</code> for multiplikasjon og <code>^</code> for potens i uttrykksfelter. Skriv bare uttrykket, uten likhetstegn. Begrunn klassifikasjoner i egne notater; kontrollfeltene sjekker de konkrete beregningene og gir ingen løsningsgang.</p>
-<div id="uke8-exercise-model-context" class="math-exercise-context">
-<p>I produksjonsmodellen er <span data-math-exercise-display="false" data-math-exercise-tex="b,r"><span class="math inline">\(b,r\)</span></span> ikke-negative heltall. Det går med <span data-math-exercise-display="false" data-math-exercise-tex="10b+r"><span class="math inline">\(10b+r\)</span></span> komponenter og <span data-math-exercise-display="false" data-math-exercise-tex="b+3r"><span class="math inline">\(b+3r\)</span></span> arbeidstimer, med kapasitet henholdsvis 100 og 50. Turen koster 650 kr når den tas. Nettooverskudd er <span data-math-exercise-display="false" data-math-exercise-tex="P=500b+250r-650"><span class="math inline">\(P=500b+250r-650\)</span></span> for en tur som gjennomføres.</p>
-</div>
-<p><strong>Oppgave 1 – modell.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="week8-task-model" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;antall komponenter&quot;,&quot;antall timer&quot;,&quot;nettooverskudd i kroner&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="uke8-exercise-model-context" data-context="&quot;Kontroller regningen selv\nSvar eksakt uten avrunding. Skriv * for multiplikasjon og ^ for potens i uttrykksfelter. Skriv bare uttrykket, uten likhetstegn. Begrunn klassifikasjoner i egne notater; kontrollfeltene sjekker de konkrete beregningene og gir ingen løsningsgang.\nI produksjonsmodellen er \\(b,r\\) ikke-negative heltall. Det går med \\(10b+r\\) komponenter og \\(b+3r\\) arbeidstimer, med kapasitet henholdsvis 100 og 50. Turen koster 650 kr når den tas. Nettooverskudd er \\(P=500b+250r-650\\) for en tur som gjennomføres.\nOppgave 1 – modell.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Sjekk modellen" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Sjekk modellen</div>
+<p>Oppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.</p>
+<p>Svar eksakt uten avrunding. I uttrykksfeltene bruker du <code>*</code> for multiplikasjon og <code>^</code> for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.</p>
+<p><strong>Oppgave 1 – modell og ressursbruk.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-1" data-label="week8-task-model" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;antall komponenter&quot;,&quot;antall timer&quot;,&quot;nettooverskudd i kroner&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;\\[ta^2+(1-t)b^2-\\bigl(ta+(1-t)b\\bigr)^2\n=t(1-t)(a-b)^2\\ge0.\\]\nHvis \\(a\\ne b\\) og \\(0<t<1\\), er alle faktorene positive. Dermed er funksjonen strengt konveks.\nHvorfor kan ikke et lokalt minimum være dårligere enn et annet punkt? Anta at \\(x_*\\) er lokalt minimum, men at et tillatt \\(y\\) har \\(f(y)<f(x_*)\\). Konveksitet av området gjør alle punktene \\(x_t=(1-t)x_*+ty\\) tillatte. Konveksitet av funksjonen gir for \\(0<t\\le1\\)\n\\[f(x_t)\\le(1-t)f(x_*)+tf(y)<f(x_*).\\]\nVi kan velge \\(t\\) så liten at \\(x_t\\) er vilkårlig nær \\(x_*\\). Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.\nHvor kommer tangentulikheten fra? For \\(0<t\\le1\\) gir konveksitet\n\\[f(z+t(y-z))\\le(1-t)f(z)+tf(y).\\]\nTrekk fra \\(f(z)\\) og del på \\(t\\). Da er\n\\[\\frac{f(z+t(y-z))-f(z)}{t}\\le f(y)-f(z).\\]\nNår \\(t\\to0^+\\), går venstresiden mot den retningsderiverte \\(\\nabla f(z)^T(y-z)\\) fra 8.2. Flytt så \\(f(z)\\) til venstre side. Dette gir tangentulikheten.\n8.4 Konveksitet gir en global garanti\nOppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.\nSvar eksakt uten avrunding. I uttrykksfeltene bruker du * for multiplikasjon og ^ for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.\nOppgave 1 – modell og ressursbruk.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 1 – modell og ressursbruk" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 1 – modell og ressursbruk</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question" data-math-exercise-source="Du planlegger \(b=6\) nye maskiner og \(r=12\) reparasjoner. Beregn ressursbruk og nettooverskudd. Er valget tillatt? Begrunn i egne notater.<br>
+<div class="math-exercise-question" data-math-exercise-source="I verkstedet fra 8.1 bruker en ny maskin 10 komponenter og 1 time og gir 500 kr i overskudd. En reparasjon bruker 1 komponent og 3 timer og gir 250 kr. Kapasiteten er 100 komponenter og 50 timer. Den allerede avtalte innkjøpsreisen koster 650 kr uansett produksjon.<br>
 <br>
-Komponenter: <input type=&quot;text&quot; id=&quot;math-exercise-1-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Timer: <input type=&quot;text&quot; id=&quot;math-exercise-1-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Nettooverskudd (kr): <input type=&quot;text&quot; id=&quot;math-exercise-1-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Du planlegger \(b=6\) nye maskiner og \(r=12\) reparasjoner. Beregn ressursbruk og nettooverskudd. Er valget tillatt? Begrunn i egne notater.<br>
+Du planlegger \(b=6\) nye maskiner og \(r=12\) reparasjoner. Beregn ressursbruk og nettooverskudd. Er planen tillatt? Begrunn i egne notater.<br>
+<br>
+Komponenter: <input type=&quot;text&quot; id=&quot;math-exercise-1-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Timer: <input type=&quot;text&quot; id=&quot;math-exercise-1-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Nettooverskudd (kr): <input type=&quot;text&quot; id=&quot;math-exercise-1-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">I verkstedet fra 8.1 bruker en ny maskin 10 komponenter og 1 time og gir 500 kr i overskudd. En reparasjon bruker 1 komponent og 3 timer og gir 250 kr. Kapasiteten er 100 komponenter og 50 timer. Den allerede avtalte innkjøpsreisen koster 650 kr uansett produksjon.<br>
+<br>
+Du planlegger \(b=6\) nye maskiner og \(r=12\) reparasjoner. Beregn ressursbruk og nettooverskudd. Er planen tillatt? Begrunn i egne notater.<br>
 <br>
 Komponenter: <input type="text" id="math-exercise-1-f1" data-answer="72" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Timer: <input type="text" id="math-exercise-1-f2" data-answer="42" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Nettooverskudd (kr): <input type="text" id="math-exercise-1-f3" data-answer="5350" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
 
@@ -5315,17 +5942,14 @@ Komponenter: <input type="text" id="math-exercise-1-f1" data-answer="72" data-va
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<div id="uke8-exercise-hessian-context" class="math-exercise-context">
-<p>For en <span data-math-exercise-display="false" data-math-exercise-tex="C^2"><span class="math inline">\(C^2\)</span></span>-funksjon på et åpent område er null gradient nødvendig ved et indre lokalt ekstremum. I et kritisk punkt gir positiv definit Hessian et strengt lokalt minimum, negativ definit Hessian et strengt lokalt maksimum, og egenverdier med begge fortegn et sadelpunkt, også når flere egenverdier er null. En semidefinit Hessian med en null egenverdi gir ingen konklusjon fra andrederiverttesten. For <span data-math-exercise-display="false" data-math-exercise-tex="h(u,v)=u^2-4v^2"><span class="math inline">\(h(u,v)=u^2-4v^2\)</span></span> er Hessian matrisen med andre partiellderiverte.</p>
-</div>
-<p><strong>Oppgave 2 – krumning.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="week8-task-hessian" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;positiv egenverdi&quot;,&quot;negativ egenverdi&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="uke8-exercise-hessian-context" data-context="&quot;Kontroller regningen selv\nSvar eksakt uten avrunding. Skriv * for multiplikasjon og ^ for potens i uttrykksfelter. Skriv bare uttrykket, uten likhetstegn. Begrunn klassifikasjoner i egne notater; kontrollfeltene sjekker de konkrete beregningene og gir ingen løsningsgang.\nI produksjonsmodellen er \\(b,r\\) ikke-negative heltall. Det går med \\(10b+r\\) komponenter og \\(b+3r\\) arbeidstimer, med kapasitet henholdsvis 100 og 50. Turen koster 650 kr når den tas. Nettooverskudd er \\(P=500b+250r-650\\) for en tur som gjennomføres.\nOppgave 1 – modell.\nFor en \\(C^2\\)-funksjon på et åpent område er null gradient nødvendig ved et indre lokalt ekstremum. I et kritisk punkt gir positiv definit Hessian et strengt lokalt minimum, negativ definit Hessian et strengt lokalt maksimum, og egenverdier med begge fortegn et sadelpunkt, også når flere egenverdier er null. En semidefinit Hessian med en null egenverdi gir ingen konklusjon fra andrederiverttesten. For \\(h(u,v)=u^2-4v^2\\) er Hessian matrisen med andre partiellderiverte.\nOppgave 2 – krumning.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Test et kritisk punkt" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Test et kritisk punkt</div>
+<p><strong>Oppgave 2 – kritisk punkt og krumning.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-2" data-label="week8-task-hessian" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;positiv egenverdi&quot;,&quot;negativ egenverdi&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Hvis \\(a\\ne b\\) og \\(0<t<1\\), er alle faktorene positive. Dermed er funksjonen strengt konveks.\nHvorfor kan ikke et lokalt minimum være dårligere enn et annet punkt? Anta at \\(x_*\\) er lokalt minimum, men at et tillatt \\(y\\) har \\(f(y)<f(x_*)\\). Konveksitet av området gjør alle punktene \\(x_t=(1-t)x_*+ty\\) tillatte. Konveksitet av funksjonen gir for \\(0<t\\le1\\)\n\\[f(x_t)\\le(1-t)f(x_*)+tf(y)<f(x_*).\\]\nVi kan velge \\(t\\) så liten at \\(x_t\\) er vilkårlig nær \\(x_*\\). Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.\nHvor kommer tangentulikheten fra? For \\(0<t\\le1\\) gir konveksitet\n\\[f(z+t(y-z))\\le(1-t)f(z)+tf(y).\\]\nTrekk fra \\(f(z)\\) og del på \\(t\\). Da er\n\\[\\frac{f(z+t(y-z))-f(z)}{t}\\le f(y)-f(z).\\]\nNår \\(t\\to0^+\\), går venstresiden mot den retningsderiverte \\(\\nabla f(z)^T(y-z)\\) fra 8.2. Flytt så \\(f(z)\\) til venstre side. Dette gir tangentulikheten.\n8.4 Konveksitet gir en global garanti\nOppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.\nSvar eksakt uten avrunding. I uttrykksfeltene bruker du * for multiplikasjon og ^ for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.\nOppgave 1 – modell og ressursbruk.\nOppgave 2 – kritisk punkt og krumning.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 2 – kritisk punkt og krumning" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 2 – kritisk punkt og krumning</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question" data-math-exercise-source="Finn egenverdiene til Hessian for \(h(u,v)=u^2-4v^2\) ved origo. Klassifiser punktet i egne notater.<br>
+<div class="math-exercise-question" data-math-exercise-source="For \(h(u,v)=u^2-4v^2\) skal du først kontrollere at gradienten er null i origo. Finn så egenverdiene til Hessianen. Er origo et lokalt minimum, et lokalt maksimum eller et sadelpunkt? Begrunn med verdiene langs de to koordinataksene.<br>
 <br>
-Positiv egenverdi: <input type=&quot;text&quot; id=&quot;math-exercise-2-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Negativ egenverdi: <input type=&quot;text&quot; id=&quot;math-exercise-2-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Finn egenverdiene til Hessian for \(h(u,v)=u^2-4v^2\) ved origo. Klassifiser punktet i egne notater.<br>
+Positiv egenverdi: <input type=&quot;text&quot; id=&quot;math-exercise-2-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Negativ egenverdi: <input type=&quot;text&quot; id=&quot;math-exercise-2-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For \(h(u,v)=u^2-4v^2\) skal du først kontrollere at gradienten er null i origo. Finn så egenverdiene til Hessianen. Er origo et lokalt minimum, et lokalt maksimum eller et sadelpunkt? Begrunn med verdiene langs de to koordinataksene.<br>
 <br>
 Positiv egenverdi: <input type="text" id="math-exercise-2-f1" data-answer="2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Negativ egenverdi: <input type="text" id="math-exercise-2-f2" data-answer="-8" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
 
@@ -5341,19 +5965,28 @@ Positiv egenverdi: <input type="text" id="math-exercise-2-f1" data-answer="2" da
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<div id="uke8-exercise-domain-context" class="math-exercise-context">
-<p>Et minimum for en funksjon på <span data-math-exercise-display="false" data-math-exercise-tex="D"><span class="math inline">\(D\)</span></span> krever et tillatt punkt som oppnår den minste verdien. Infimum trenger ikke å oppnås. Et intervall i <span data-math-exercise-display="false" data-math-exercise-tex="\mathbb R"><span class="math inline">\(\mathbb R\)</span></span> er kompakt hvis det er lukket og begrenset. Betrakt <span data-math-exercise-display="false" data-math-exercise-tex="g(x)=x^2"><span class="math inline">\(g(x)=x^2\)</span></span> på <span data-math-exercise-display="false" data-math-exercise-tex="D=(0,2)"><span class="math inline">\(D=(0,2)\)</span></span>; begge endepunktene er utelatt.</p>
-</div>
-<p><strong>Oppgave 3 – eksistens.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="week8-task-infimum" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;infimum til g&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="uke8-exercise-domain-context" data-context="&quot;Kontroller regningen selv\nSvar eksakt uten avrunding. Skriv * for multiplikasjon og ^ for potens i uttrykksfelter. Skriv bare uttrykket, uten likhetstegn. Begrunn klassifikasjoner i egne notater; kontrollfeltene sjekker de konkrete beregningene og gir ingen løsningsgang.\nI produksjonsmodellen er \\(b,r\\) ikke-negative heltall. Det går med \\(10b+r\\) komponenter og \\(b+3r\\) arbeidstimer, med kapasitet henholdsvis 100 og 50. Turen koster 650 kr når den tas. Nettooverskudd er \\(P=500b+250r-650\\) for en tur som gjennomføres.\nOppgave 1 – modell.\nFor en \\(C^2\\)-funksjon på et åpent område er null gradient nødvendig ved et indre lokalt ekstremum. I et kritisk punkt gir positiv definit Hessian et strengt lokalt minimum, negativ definit Hessian et strengt lokalt maksimum, og egenverdier med begge fortegn et sadelpunkt, også når flere egenverdier er null. En semidefinit Hessian med en null egenverdi gir ingen konklusjon fra andrederiverttesten. For \\(h(u,v)=u^2-4v^2\\) er Hessian matrisen med andre partiellderiverte.\nOppgave 2 – krumning.\nEt minimum for en funksjon på \\(D\\) krever et tillatt punkt som oppnår den minste verdien. Infimum trenger ikke å oppnås. Et intervall i \\(\\mathbb R\\) er kompakt hvis det er lukket og begrenset. Betrakt \\(g(x)=x^2\\) på \\(D=(0,2)\\); begge endepunktene er utelatt.\nOppgave 3 – eksistens.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Grenseverdi eller oppnådd verdi?" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Grenseverdi eller oppnådd verdi?</div>
+<p><strong>Oppgave 3 – grenseverdi eller oppnådd verdi?</strong></p>
+<div class="math-exercise-cell" id="math-exercise-3" data-label="week8-task-infimum" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;infimum&quot;,&quot;supremum&quot;,&quot;minimum finnes på åpent intervall&quot;,&quot;minimum finnes på lukket intervall&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Hvis \\(a\\ne b\\) og \\(0<t<1\\), er alle faktorene positive. Dermed er funksjonen strengt konveks.\nHvorfor kan ikke et lokalt minimum være dårligere enn et annet punkt? Anta at \\(x_*\\) er lokalt minimum, men at et tillatt \\(y\\) har \\(f(y)<f(x_*)\\). Konveksitet av området gjør alle punktene \\(x_t=(1-t)x_*+ty\\) tillatte. Konveksitet av funksjonen gir for \\(0<t\\le1\\)\n\\[f(x_t)\\le(1-t)f(x_*)+tf(y)<f(x_*).\\]\nVi kan velge \\(t\\) så liten at \\(x_t\\) er vilkårlig nær \\(x_*\\). Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.\nHvor kommer tangentulikheten fra? For \\(0<t\\le1\\) gir konveksitet\n\\[f(z+t(y-z))\\le(1-t)f(z)+tf(y).\\]\nTrekk fra \\(f(z)\\) og del på \\(t\\). Da er\n\\[\\frac{f(z+t(y-z))-f(z)}{t}\\le f(y)-f(z).\\]\nNår \\(t\\to0^+\\), går venstresiden mot den retningsderiverte \\(\\nabla f(z)^T(y-z)\\) fra 8.2. Flytt så \\(f(z)\\) til venstre side. Dette gir tangentulikheten.\n8.4 Konveksitet gir en global garanti\nOppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.\nSvar eksakt uten avrunding. I uttrykksfeltene bruker du * for multiplikasjon og ^ for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.\nOppgave 1 – modell og ressursbruk.\nOppgave 2 – kritisk punkt og krumning.\nOppgave 3 – grenseverdi eller oppnådd verdi?&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;,&quot;math-exercise-3-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 3 – grenseverdi eller oppnådd verdi?" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 3 – grenseverdi eller oppnådd verdi?</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question" data-math-exercise-source="Finn infimum for \(g(x)=x^2\) på \((0,2)\). Finnes det et minimum? Gi begrunnelse i egne notater.<br>
+<div class="math-exercise-question" data-math-exercise-source="La \(g(x)=x^2\). På det åpne intervallet \((0,2)\) er begge endepunktene utelatt. Finn infimum og supremum. Avgjør om et minimum finnes, både på \((0,2)\) og på \([0,2]\).<br>
 <br>
-\(\inf_{x\in(0,2)}g(x)=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Finn infimum for \(g(x)=x^2\) på \((0,2)\). Finnes det et minimum? Gi begrunnelse i egne notater.<br>
+Infimum på \((0,2)\): <input type=&quot;text&quot; id=&quot;math-exercise-3-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Supremum på \((0,2)\): <input type=&quot;text&quot; id=&quot;math-exercise-3-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
 <br>
-\(\inf_{x\in(0,2)}g(x)=\) <input type="text" id="math-exercise-3-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+Skriv **1 for ja, 0 for nei** i de neste feltene:<br>
+<br>
+Minimum finnes på \((0,2)\): <input type=&quot;text&quot; id=&quot;math-exercise-3-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Minimum finnes på \([0,2]\): <input type=&quot;text&quot; id=&quot;math-exercise-3-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Forklar i egne notater hvorfor et finere rutenett ikke endrer svaret på det åpne intervallet. Finnes det et maksimum på hvert av intervallene?">La \(g(x)=x^2\). På det åpne intervallet \((0,2)\) er begge endepunktene utelatt. Finn infimum og supremum. Avgjør om et minimum finnes, både på \((0,2)\) og på \([0,2]\).<br>
+<br>
+Infimum på \((0,2)\): <input type="text" id="math-exercise-3-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Supremum på \((0,2)\): <input type="text" id="math-exercise-3-f2" data-answer="4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Skriv **1 for ja, 0 for nei** i de neste feltene:<br>
+<br>
+Minimum finnes på \((0,2)\): <input type="text" id="math-exercise-3-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Minimum finnes på \([0,2]\): <input type="text" id="math-exercise-3-f4" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Forklar i egne notater hvorfor et finere rutenett ikke endrer svaret på det åpne intervallet. Finnes det et maksimum på hvert av intervallene?</div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5367,19 +6000,24 @@ Positiv egenverdi: <input type="text" id="math-exercise-2-f1" data-answer="2" da
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<div id="uke8-exercise-convex-context" class="math-exercise-context">
-<p>For en konveks funksjon skal midtpunktsulikheten <span data-math-exercise-display="false" data-math-exercise-tex="f((a+b)/2)\le(f(a)+f(b))/2"><span class="math inline">\(f((a+b)/2)\le(f(a)+f(b))/2\)</span></span> gjelde. For å motbevise konveksitet er ett brudd nok. Bruk <span data-math-exercise-display="false" data-math-exercise-tex="q(x)=x^4-2x^2"><span class="math inline">\(q(x)=x^4-2x^2\)</span></span> og punktene <span data-math-exercise-display="false" data-math-exercise-tex="a=-1"><span class="math inline">\(a=-1\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="b=1"><span class="math inline">\(b=1\)</span></span>.</p>
-</div>
-<p><strong>Oppgave 4 – konveksitet.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="week8-task-convex" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;q i midtpunktet&quot;,&quot;gjennomsnitt av endeverdiene&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="uke8-exercise-convex-context" data-context="&quot;I produksjonsmodellen er \\(b,r\\) ikke-negative heltall. Det går med \\(10b+r\\) komponenter og \\(b+3r\\) arbeidstimer, med kapasitet henholdsvis 100 og 50. Turen koster 650 kr når den tas. Nettooverskudd er \\(P=500b+250r-650\\) for en tur som gjennomføres.\nOppgave 1 – modell.\nFor en \\(C^2\\)-funksjon på et åpent område er null gradient nødvendig ved et indre lokalt ekstremum. I et kritisk punkt gir positiv definit Hessian et strengt lokalt minimum, negativ definit Hessian et strengt lokalt maksimum, og egenverdier med begge fortegn et sadelpunkt, også når flere egenverdier er null. En semidefinit Hessian med en null egenverdi gir ingen konklusjon fra andrederiverttesten. For \\(h(u,v)=u^2-4v^2\\) er Hessian matrisen med andre partiellderiverte.\nOppgave 2 – krumning.\nEt minimum for en funksjon på \\(D\\) krever et tillatt punkt som oppnår den minste verdien. Infimum trenger ikke å oppnås. Et intervall i \\(\\mathbb R\\) er kompakt hvis det er lukket og begrenset. Betrakt \\(g(x)=x^2\\) på \\(D=(0,2)\\); begge endepunktene er utelatt.\nOppgave 3 – eksistens.\nFor en konveks funksjon skal midtpunktsulikheten \\(f((a+b)/2)\\le(f(a)+f(b))/2\\) gjelde. For å motbevise konveksitet er ett brudd nok. Bruk \\(q(x)=x^4-2x^2\\) og punktene \\(a=-1\\), \\(b=1\\).\nOppgave 4 – konveksitet.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Midtpunktsulikheten" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Midtpunktsulikheten</div>
+<p><strong>Oppgave 4 – lukket er ikke nok.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="week8-task-compact" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;A lukket&quot;,&quot;A begrenset&quot;,&quot;A kompakt&quot;,&quot;B lukket&quot;,&quot;B begrenset&quot;,&quot;B kompakt&quot;,&quot;C lukket&quot;,&quot;C begrenset&quot;,&quot;C kompakt&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Hvorfor kan ikke et lokalt minimum være dårligere enn et annet punkt? Anta at \\(x_*\\) er lokalt minimum, men at et tillatt \\(y\\) har \\(f(y)<f(x_*)\\). Konveksitet av området gjør alle punktene \\(x_t=(1-t)x_*+ty\\) tillatte. Konveksitet av funksjonen gir for \\(0<t\\le1\\)\n\\[f(x_t)\\le(1-t)f(x_*)+tf(y)<f(x_*).\\]\nVi kan velge \\(t\\) så liten at \\(x_t\\) er vilkårlig nær \\(x_*\\). Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.\nHvor kommer tangentulikheten fra? For \\(0<t\\le1\\) gir konveksitet\n\\[f(z+t(y-z))\\le(1-t)f(z)+tf(y).\\]\nTrekk fra \\(f(z)\\) og del på \\(t\\). Da er\n\\[\\frac{f(z+t(y-z))-f(z)}{t}\\le f(y)-f(z).\\]\nNår \\(t\\to0^+\\), går venstresiden mot den retningsderiverte \\(\\nabla f(z)^T(y-z)\\) fra 8.2. Flytt så \\(f(z)\\) til venstre side. Dette gir tangentulikheten.\n8.4 Konveksitet gir en global garanti\nOppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.\nSvar eksakt uten avrunding. I uttrykksfeltene bruker du * for multiplikasjon og ^ for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.\nOppgave 1 – modell og ressursbruk.\nOppgave 2 – kritisk punkt og krumning.\nOppgave 3 – grenseverdi eller oppnådd verdi?\nOppgave 4 – lukket er ikke nok.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;,&quot;math-exercise-4-f4&quot;,&quot;math-exercise-4-f5&quot;,&quot;math-exercise-4-f6&quot;,&quot;math-exercise-4-f7&quot;,&quot;math-exercise-4-f8&quot;,&quot;math-exercise-4-f9&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 4 – lukket er ikke nok" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 4 – lukket er ikke nok</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question" data-math-exercise-source="For \(q(x)=x^4-2x^2\) bruker du \(a=-1\) og \(b=1\). Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene. Hva sier sammenligningen om konveksitet? Begrunn i egne notater.<br>
+<div class="math-exercise-question" data-math-exercise-source="Undersøk \(A=[-2,3]\), \(B=(-2,3]\) og \(C=[0,\infty)\). Skriv **1 for ja, 0 for nei**. For hver mengde skal du begrunne i egne notater hvilke endepunkter som er med, og om punktene kan bli vilkårlig store i absoluttverdi.<br>
 <br>
-\(q((a+b)/2)=\) <input type=&quot;text&quot; id=&quot;math-exercise-4-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; \((q(a)+q(b))/2=\) <input type=&quot;text&quot; id=&quot;math-exercise-4-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For \(q(x)=x^4-2x^2\) bruker du \(a=-1\) og \(b=1\). Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene. Hva sier sammenligningen om konveksitet? Begrunn i egne notater.<br>
+\(A\): lukket <input type=&quot;text&quot; id=&quot;math-exercise-4-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, begrenset <input type=&quot;text&quot; id=&quot;math-exercise-4-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, kompakt <input type=&quot;text&quot; id=&quot;math-exercise-4-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
 <br>
-\(q((a+b)/2)=\) <input type="text" id="math-exercise-4-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; \((q(a)+q(b))/2=\) <input type="text" id="math-exercise-4-f2" data-answer="-1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+\(B\): lukket <input type=&quot;text&quot; id=&quot;math-exercise-4-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, begrenset <input type=&quot;text&quot; id=&quot;math-exercise-4-f5&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, kompakt <input type=&quot;text&quot; id=&quot;math-exercise-4-f6&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+\(C\): lukket <input type=&quot;text&quot; id=&quot;math-exercise-4-f7&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, begrenset <input type=&quot;text&quot; id=&quot;math-exercise-4-f8&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, kompakt <input type=&quot;text&quot; id=&quot;math-exercise-4-f9&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Undersøk \(A=[-2,3]\), \(B=(-2,3]\) og \(C=[0,\infty)\). Skriv **1 for ja, 0 for nei**. For hver mengde skal du begrunne i egne notater hvilke endepunkter som er med, og om punktene kan bli vilkårlig store i absoluttverdi.<br>
+<br>
+\(A\): lukket <input type="text" id="math-exercise-4-f1" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, begrenset <input type="text" id="math-exercise-4-f2" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, kompakt <input type="text" id="math-exercise-4-f3" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+\(B\): lukket <input type="text" id="math-exercise-4-f4" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, begrenset <input type="text" id="math-exercise-4-f5" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, kompakt <input type="text" id="math-exercise-4-f6" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+\(C\): lukket <input type="text" id="math-exercise-4-f7" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, begrenset <input type="text" id="math-exercise-4-f8" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, kompakt <input type="text" id="math-exercise-4-f9" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5393,13 +6031,202 @@ Positiv egenverdi: <input type="text" id="math-exercise-2-f1" data-answer="2" da
 <div class="math-feedback-area"></div>
 </div>
 </div>
+<p><strong>Oppgave 5 – bruk ekstremalverdisetningen.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-5" data-label="week8-task-existence-disk" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;minimumsverdi&quot;,&quot;maksimumsverdi&quot;,&quot;u i minimumspunktet&quot;,&quot;v i minimumspunktet&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Hvorfor kan ikke et lokalt minimum være dårligere enn et annet punkt? Anta at \\(x_*\\) er lokalt minimum, men at et tillatt \\(y\\) har \\(f(y)<f(x_*)\\). Konveksitet av området gjør alle punktene \\(x_t=(1-t)x_*+ty\\) tillatte. Konveksitet av funksjonen gir for \\(0<t\\le1\\)\n\\[f(x_t)\\le(1-t)f(x_*)+tf(y)<f(x_*).\\]\nVi kan velge \\(t\\) så liten at \\(x_t\\) er vilkårlig nær \\(x_*\\). Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.\nHvor kommer tangentulikheten fra? For \\(0<t\\le1\\) gir konveksitet\n\\[f(z+t(y-z))\\le(1-t)f(z)+tf(y).\\]\nTrekk fra \\(f(z)\\) og del på \\(t\\). Da er\n\\[\\frac{f(z+t(y-z))-f(z)}{t}\\le f(y)-f(z).\\]\nNår \\(t\\to0^+\\), går venstresiden mot den retningsderiverte \\(\\nabla f(z)^T(y-z)\\) fra 8.2. Flytt så \\(f(z)\\) til venstre side. Dette gir tangentulikheten.\n8.4 Konveksitet gir en global garanti\nOppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.\nSvar eksakt uten avrunding. I uttrykksfeltene bruker du * for multiplikasjon og ^ for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.\nOppgave 1 – modell og ressursbruk.\nOppgave 2 – kritisk punkt og krumning.\nOppgave 3 – grenseverdi eller oppnådd verdi?\nOppgave 4 – lukket er ikke nok.\nOppgave 5 – bruk ekstremalverdisetningen.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;,&quot;math-exercise-5-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 5 – bruk ekstremalverdisetningen" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 5 – bruk ekstremalverdisetningen</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="Vi undersøker \(f(u,v)=u^2+v^2\) på skiven \(D=\{(u,v):u^2+v^2\le4\}\). Kontroller først kravene i ekstremalverdisetningen: er området ikke-tomt og kompakt, og er funksjonen kontinuerlig? Finn så ekstremalverdiene.<br>
+<br>
+Minimumsverdi: <input type=&quot;text&quot; id=&quot;math-exercise-5-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Maksimumsverdi: <input type=&quot;text&quot; id=&quot;math-exercise-5-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Minimumspunkt: \(u=\) <input type=&quot;text&quot; id=&quot;math-exercise-5-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, \(v=\) <input type=&quot;text&quot; id=&quot;math-exercise-5-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Beskriv alle maksimumspunktene i egne notater. Hvorfor gir ikke setningen et entydig maksimumspunkt her?">Vi undersøker \(f(u,v)=u^2+v^2\) på skiven \(D=\{(u,v):u^2+v^2\le4\}\). Kontroller først kravene i ekstremalverdisetningen: er området ikke-tomt og kompakt, og er funksjonen kontinuerlig? Finn så ekstremalverdiene.<br>
+<br>
+Minimumsverdi: <input type="text" id="math-exercise-5-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Maksimumsverdi: <input type="text" id="math-exercise-5-f2" data-answer="4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Minimumspunkt: \(u=\) <input type="text" id="math-exercise-5-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, \(v=\) <input type="text" id="math-exercise-5-f4" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Beskriv alle maksimumspunktene i egne notater. Hvorfor gir ikke setningen et entydig maksimumspunkt her?</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p><strong>Oppgave 6 – skive og sirkelrand.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-6" data-label="week8-task-convex-set" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;midtpunktets første koordinat&quot;,&quot;midtpunktets andre koordinat&quot;,&quot;midtpunktet på sirkelranden&quot;,&quot;midtpunktet i skiven&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Hvorfor kan ikke et lokalt minimum være dårligere enn et annet punkt? Anta at \\(x_*\\) er lokalt minimum, men at et tillatt \\(y\\) har \\(f(y)<f(x_*)\\). Konveksitet av området gjør alle punktene \\(x_t=(1-t)x_*+ty\\) tillatte. Konveksitet av funksjonen gir for \\(0<t\\le1\\)\n\\[f(x_t)\\le(1-t)f(x_*)+tf(y)<f(x_*).\\]\nVi kan velge \\(t\\) så liten at \\(x_t\\) er vilkårlig nær \\(x_*\\). Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.\nHvor kommer tangentulikheten fra? For \\(0<t\\le1\\) gir konveksitet\n\\[f(z+t(y-z))\\le(1-t)f(z)+tf(y).\\]\nTrekk fra \\(f(z)\\) og del på \\(t\\). Da er\n\\[\\frac{f(z+t(y-z))-f(z)}{t}\\le f(y)-f(z).\\]\nNår \\(t\\to0^+\\), går venstresiden mot den retningsderiverte \\(\\nabla f(z)^T(y-z)\\) fra 8.2. Flytt så \\(f(z)\\) til venstre side. Dette gir tangentulikheten.\n8.4 Konveksitet gir en global garanti\nOppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.\nSvar eksakt uten avrunding. I uttrykksfeltene bruker du * for multiplikasjon og ^ for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.\nOppgave 1 – modell og ressursbruk.\nOppgave 2 – kritisk punkt og krumning.\nOppgave 3 – grenseverdi eller oppnådd verdi?\nOppgave 4 – lukket er ikke nok.\nOppgave 5 – bruk ekstremalverdisetningen.\nOppgave 6 – skive og sirkelrand.&quot;" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;,&quot;math-exercise-6-f3&quot;,&quot;math-exercise-6-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 6 – skive og sirkelrand" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 6 – skive og sirkelrand</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="Punktene \(a=(2,0)\) og \(b=(-2,0)\) ligger både på sirkelranden \(S=\{(u,v):u^2+v^2=4\}\) og i skiven \(D=\{(u,v):u^2+v^2\le4\}\). Finn midtpunktet \(m=(a+b)/2\).<br>
+<br>
+\(m_1=\) <input type=&quot;text&quot; id=&quot;math-exercise-6-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, \(m_2=\) <input type=&quot;text&quot; id=&quot;math-exercise-6-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Skriv **1 for ja, 0 for nei**:<br>
+<br>
+Er \(m\) på sirkelranden \(S\)? <input type=&quot;text&quot; id=&quot;math-exercise-6-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Er \(m\) i skiven \(D\)? <input type=&quot;text&quot; id=&quot;math-exercise-6-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Hvilken av mengdene kan du dermed bevise at ikke er konveks? Forklar hvorfor én midtpunktsberegning ikke alene beviser at den andre mengden er konveks. Er begge mengdene kompakte?">Punktene \(a=(2,0)\) og \(b=(-2,0)\) ligger både på sirkelranden \(S=\{(u,v):u^2+v^2=4\}\) og i skiven \(D=\{(u,v):u^2+v^2\le4\}\). Finn midtpunktet \(m=(a+b)/2\).<br>
+<br>
+\(m_1=\) <input type="text" id="math-exercise-6-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, \(m_2=\) <input type="text" id="math-exercise-6-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Skriv **1 for ja, 0 for nei**:<br>
+<br>
+Er \(m\) på sirkelranden \(S\)? <input type="text" id="math-exercise-6-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Er \(m\) i skiven \(D\)? <input type="text" id="math-exercise-6-f4" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Hvilken av mengdene kan du dermed bevise at ikke er konveks? Forklar hvorfor én midtpunktsberegning ikke alene beviser at den andre mengden er konveks. Er begge mengdene kompakte?</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p><strong>Oppgave 7 – ett brudd på konveksitet er nok.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-7" data-label="week8-task-convex" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;q i midtpunktet&quot;,&quot;gjennomsnitt av endeverdiene&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;\\[f(x_t)\\le(1-t)f(x_*)+tf(y)<f(x_*).\\]\nVi kan velge \\(t\\) så liten at \\(x_t\\) er vilkårlig nær \\(x_*\\). Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.\nHvor kommer tangentulikheten fra? For \\(0<t\\le1\\) gir konveksitet\n\\[f(z+t(y-z))\\le(1-t)f(z)+tf(y).\\]\nTrekk fra \\(f(z)\\) og del på \\(t\\). Da er\n\\[\\frac{f(z+t(y-z))-f(z)}{t}\\le f(y)-f(z).\\]\nNår \\(t\\to0^+\\), går venstresiden mot den retningsderiverte \\(\\nabla f(z)^T(y-z)\\) fra 8.2. Flytt så \\(f(z)\\) til venstre side. Dette gir tangentulikheten.\n8.4 Konveksitet gir en global garanti\nOppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.\nSvar eksakt uten avrunding. I uttrykksfeltene bruker du * for multiplikasjon og ^ for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.\nOppgave 1 – modell og ressursbruk.\nOppgave 2 – kritisk punkt og krumning.\nOppgave 3 – grenseverdi eller oppnådd verdi?\nOppgave 4 – lukket er ikke nok.\nOppgave 5 – bruk ekstremalverdisetningen.\nOppgave 6 – skive og sirkelrand.\nOppgave 7 – ett brudd på konveksitet er nok.&quot;" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 7 – ett brudd på konveksitet er nok" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 7 – ett brudd på konveksitet er nok</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="For \(q(x)=x^4-2x^2\) bruker du \(a=-1\) og \(b=1\). Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene.<br>
+<br>
+\(q((a+b)/2)=\) <input type=&quot;text&quot; id=&quot;math-exercise-7-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; \((q(a)+q(b))/2=\) <input type=&quot;text&quot; id=&quot;math-exercise-7-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Hva sier sammenligningen om konveksitet på \(\mathbb R\)? Begrunn med ulikheten fra 8.4.">For \(q(x)=x^4-2x^2\) bruker du \(a=-1\) og \(b=1\). Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene.<br>
+<br>
+\(q((a+b)/2)=\) <input type="text" id="math-exercise-7-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; \((q(a)+q(b))/2=\) <input type="text" id="math-exercise-7-f2" data-answer="-1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Hva sier sammenligningen om konveksitet på \(\mathbb R\)? Begrunn med ulikheten fra 8.4.</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p><strong>Oppgave 8 – én bunn eller en hel linje?</strong></p>
+<div class="math-exercise-cell" id="math-exercise-8" data-label="week8-task-strict-convex" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;minste egenverdi til Hf&quot;,&quot;største egenverdi til Hf&quot;,&quot;minimumsverdi for f&quot;,&quot;u ved minimum av g&quot;,&quot;v ved minimum av g&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;\\[f(x_t)\\le(1-t)f(x_*)+tf(y)<f(x_*).\\]\nVi kan velge \\(t\\) så liten at \\(x_t\\) er vilkårlig nær \\(x_*\\). Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.\nHvor kommer tangentulikheten fra? For \\(0<t\\le1\\) gir konveksitet\n\\[f(z+t(y-z))\\le(1-t)f(z)+tf(y).\\]\nTrekk fra \\(f(z)\\) og del på \\(t\\). Da er\n\\[\\frac{f(z+t(y-z))-f(z)}{t}\\le f(y)-f(z).\\]\nNår \\(t\\to0^+\\), går venstresiden mot den retningsderiverte \\(\\nabla f(z)^T(y-z)\\) fra 8.2. Flytt så \\(f(z)\\) til venstre side. Dette gir tangentulikheten.\n8.4 Konveksitet gir en global garanti\nOppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.\nSvar eksakt uten avrunding. I uttrykksfeltene bruker du * for multiplikasjon og ^ for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.\nOppgave 1 – modell og ressursbruk.\nOppgave 2 – kritisk punkt og krumning.\nOppgave 3 – grenseverdi eller oppnådd verdi?\nOppgave 4 – lukket er ikke nok.\nOppgave 5 – bruk ekstremalverdisetningen.\nOppgave 6 – skive og sirkelrand.\nOppgave 7 – ett brudd på konveksitet er nok.\nOppgave 8 – én bunn eller en hel linje?&quot;" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;,&quot;math-exercise-8-f4&quot;,&quot;math-exercise-8-f5&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 8 – én bunn eller en hel linje?" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 8 – én bunn eller en hel linje?</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="Sammenlign \(f(u,v)=(u-2)^2\) og \(g(u,v)=(u-2)^2+(v+1)^2\) på \(\mathbb R^2\).<br>
+<br>
+Hessianen til \(f\): minste egenverdi <input type=&quot;text&quot; id=&quot;math-exercise-8-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, største egenverdi <input type=&quot;text&quot; id=&quot;math-exercise-8-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Minimumsverdien til \(f\): <input type=&quot;text&quot; id=&quot;math-exercise-8-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Minimumspunktet til \(g\): \(u=\) <input type=&quot;text&quot; id=&quot;math-exercise-8-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, \(v=\) <input type=&quot;text&quot; id=&quot;math-exercise-8-f5&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Beskriv alle minimumspunktene til \(f\). Forklar hvorfor begge funksjonene er konvekse, men bare \(g\) er strengt konveks. Bruk Hessianene og hva som skjer langs linjen \(u=2\).">Sammenlign \(f(u,v)=(u-2)^2\) og \(g(u,v)=(u-2)^2+(v+1)^2\) på \(\mathbb R^2\).<br>
+<br>
+Hessianen til \(f\): minste egenverdi <input type="text" id="math-exercise-8-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, største egenverdi <input type="text" id="math-exercise-8-f2" data-answer="2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Minimumsverdien til \(f\): <input type="text" id="math-exercise-8-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Minimumspunktet til \(g\): \(u=\) <input type="text" id="math-exercise-8-f4" data-answer="2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, \(v=\) <input type="text" id="math-exercise-8-f5" data-answer="-1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Beskriv alle minimumspunktene til \(f\). Forklar hvorfor begge funksjonene er konvekse, men bare \(g\) er strengt konveks. Bruk Hessianene og hva som skjer langs linjen \(u=2\).</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p><strong>Oppgave 9 – en nedre grense fra tangenten.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-9" data-label="week8-task-tangent" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;tangentuttrykk i y&quot;,&quot;stasjonært punkt&quot;,&quot;minimumsverdi&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;\\[f(x_t)\\le(1-t)f(x_*)+tf(y)<f(x_*).\\]\nVi kan velge \\(t\\) så liten at \\(x_t\\) er vilkårlig nær \\(x_*\\). Da har vi funnet et bedre punkt rett ved et lokalt minimum, en motsigelse.\nHvor kommer tangentulikheten fra? For \\(0<t\\le1\\) gir konveksitet\n\\[f(z+t(y-z))\\le(1-t)f(z)+tf(y).\\]\nTrekk fra \\(f(z)\\) og del på \\(t\\). Da er\n\\[\\frac{f(z+t(y-z))-f(z)}{t}\\le f(y)-f(z).\\]\nNår \\(t\\to0^+\\), går venstresiden mot den retningsderiverte \\(\\nabla f(z)^T(y-z)\\) fra 8.2. Flytt så \\(f(z)\\) til venstre side. Dette gir tangentulikheten.\n8.4 Konveksitet gir en global garanti\nOppgave 1–2 følger modell og lokale tester i 8.1–8.2. Oppgave 3–5 følger eksemplene om eksistens i 8.3, og oppgave 6–9 følger konveksitet i 8.4. Kodeoppgavene kommer i 8.6.\nSvar eksakt uten avrunding. I uttrykksfeltene bruker du * for multiplikasjon og ^ for potens, og skriver bare uttrykket, uten likhetstegn. Der det spørres om ja/nei, er tallkodene angitt i oppgaven. Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.\nOppgave 1 – modell og ressursbruk.\nOppgave 2 – kritisk punkt og krumning.\nOppgave 3 – grenseverdi eller oppnådd verdi?\nOppgave 4 – lukket er ikke nok.\nOppgave 5 – bruk ekstremalverdisetningen.\nOppgave 6 – skive og sirkelrand.\nOppgave 7 – ett brudd på konveksitet er nok.\nOppgave 8 – én bunn eller en hel linje?\nOppgave 9 – en nedre grense fra tangenten.&quot;" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 9 – en nedre grense fra tangenten" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 9 – en nedre grense fra tangenten</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="La \(q(x)=(x-3)^2\). Beregn \(q(1)\) og \(q'(1)\), og skriv den lineære modellen ved \(x=1\) som et uttrykk i \(y\).<br>
+<br>
+\(q(1)+q'(1)(y-1)=\) <input type=&quot;text&quot; id=&quot;math-exercise-9-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Finn også det stasjonære punktet og funksjonsverdien der:<br>
+<br>
+\(x_*=\) <input type=&quot;text&quot; id=&quot;math-exercise-9-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; \(q(x_*)=\) <input type=&quot;text&quot; id=&quot;math-exercise-9-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+Bruk \(q''(x)\) til å begrunne streng konveksitet. Forklar deretter hvorfor tangentulikheten ved \(x_*\) gir et globalt, entydig minimum.">La \(q(x)=(x-3)^2\). Beregn \(q(1)\) og \(q'(1)\), og skriv den lineære modellen ved \(x=1\) som et uttrykk i \(y\).<br>
+<br>
+\(q(1)+q'(1)(y-1)=\) <input type="text" id="math-exercise-9-f1" data-answer="-4*y+8" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Finn også det stasjonære punktet og funksjonsverdien der:<br>
+<br>
+\(x_*=\) <input type="text" id="math-exercise-9-f2" data-answer="3" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; \(q(x_*)=\) <input type="text" id="math-exercise-9-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Bruk \(q''(x)\) til å begrunne streng konveksitet. Forklar deretter hvorfor tangentulikheten ved \(x_*\) gir et globalt, entydig minimum.</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+</div>
+<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
+<div id="uke8-python">
+
+</div>
+<p>Her samler vi kodeforsøkene fra 8.1–8.4. Cellene kan kjøres og endres direkte. Sideoppsettet importerer NumPy som <code>np</code>, Matplotlib som <code>plt</code> og <code>minimize</code> fra <code>scipy.optimize</code>. Hvert forsøk definerer selv det det ellers trenger.</p>
+<section id="produksjon-tell-alle-tillatte-heltallsvalg" class="level3">
+<h3 class="anchored" data-anchor-id="produksjon-tell-alle-tillatte-heltallsvalg">Produksjon: tell alle tillatte heltallsvalg</h3>
+<div id="uke8-python-production">
+
+</div>
+<p>I modellen fra 8.1 er innkjøpsturen allerede bestilt: 650 kr betales uansett hvor mange maskiner gruppen lager denne uken. Vi teller alle heltallspar, beregner nettooverskuddet og lar bare tillatte par konkurrere. <code>meshgrid</code> lager tabeller med hvert par <span class="math inline">\((b,r)\)</span>; den boolske tabellen <code>allowed</code> markerer ressurskravene. Et slikt uttømmende søk kan brukes fordi antallet mulige valg her er endelig og lite.</p>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Beste heltallsvalg er <span class="math inline">\((8,14)\)</span>, med 6850 kr i nettooverskudd. Det bruker 94 komponenter og alle 50 arbeidstimene. Figuren og opptellingen undersøker <em>hele</em> det tillatte heltallsområdet; derfor er dette et globalt svar for akkurat denne modellen.</p>
+</section>
+<section id="lokalt-søk-funksjon-gradient-og-startpunkt" class="level3">
+<h3 class="anchored" data-anchor-id="lokalt-søk-funksjon-gradient-og-startpunkt">Lokalt søk: funksjon, gradient og startpunkt</h3>
+<div id="uke8-python-local">
+
+</div>
+<p>I 8.2 har den bølgede kostnadsfunksjonen flere daler. NumPy utfører arrayregningen; <strong>SciPy</strong> tilbyr ferdige numeriske metoder. Kallet <code>minimize(wavy, start, jac=wavy_grad, method="BFGS")</code> søker etter et lokalt minimum av <code>wavy</code> fra <code>start</code>. Argumentet <code>jac</code> gir SciPy en funksjon for gradienten, med én partiell derivert per variabel. <code>BFGS</code> er navnet på en metode som bruker gradienter til å anslå krumningen underveis; vi utvikler søkemetoder i uke 9–10.</p>
+<p><code>minimize</code> returnerer et <strong>OptimizeResult</strong>, et resultatobjekt med navngitte felt. <code>result.x</code> er punktet søket fant, <code>result.fun</code> verdien der, og <code>result.success</code> forteller om metodens stoppkrav ble oppfylt. Det siste er ingen garanti for global optimalitet. Vi sjekker også lengden av gradienten i punktet. Figuren skiller mellom <strong>startpunktene</strong> (ringer) og <strong>punktene som ble funnet</strong> (fylte markører).</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Fra <span class="math inline">\((0,0)\)</span> finner søket verdi 0; fra <span class="math inline">\((2,2)\)</span> finner det en annen dal nær <span class="math inline">\((1.9899,1.9899)\)</span>, med verdi omtrent 7.9597. Liten gradient betyr små deriverte i punktet, men alene kan verken den eller <code>success=True</code> fortelle hvilken dal som er best globalt. Her gir ulikheten <span class="math inline">\(f(x,y)\geq0\)</span> fra 8.2 den globale garantien ved origo.</p>
 <div id="uke8-scipy">
 
 </div>
-</section>
-<section id="huskeliste-numpy-scipy-og-resultatet-av-et-søk" class="level3">
-<h3 class="anchored" data-anchor-id="huskeliste-numpy-scipy-og-resultatet-av-et-søk">Huskeliste: NumPy, SciPy og resultatet av et søk</h3>
-<p>De neste ukene bruker vi samme arbeidsmåte: skriv målfunksjonen som en Python-funksjon, velg startpunkt eller tillatt område, kjør metoden, og kontroller svaret. Oppsettet på hver side importerer pakkene; kodecellene på siden kan kjøres og endres direkte. Kjør dem i rekkefølge.</p>
+<details>
+<summary>
+SciPy-oppslag: kall, returverdi og kontroll
+</summary>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -5407,59 +6234,87 @@ Positiv egenverdi: <input type="text" id="math-exercise-2-f1" data-answer="2" da
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Uttrykk i koden</th>
-<th style="text-align: left;">Hva det betyr</th>
+<th style="text-align: left;">Uttrykk</th>
+<th style="text-align: left;">Betydning i dette forsøket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><code>import numpy as np</code></td>
-<td style="text-align: left;">Importer NumPy; <code>np</code> er et kort navn vi velger.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>from scipy.optimize import minimize</code></td>
-<td style="text-align: left;">Hent minimeringsrutinen fra SciPy.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>z = np.array([1., 2.])</code></td>
-<td style="text-align: left;">En vektor med to flyttall. I beregningene brukes punktum som desimaltegn.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>u, v = z</code></td>
-<td style="text-align: left;">Gi de to komponentene hvert sitt navn.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>A @ z</code> og <code>p @ q</code></td>
-<td style="text-align: left;">Matrise–vektor-produkt og indreprodukt for arrayer med riktig form. <code>*</code> betyr elementvis multiplikasjon.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>np.linalg.norm(z)</code></td>
-<td style="text-align: left;">Den vanlige lengden <span class="math inline">\(\|z\|_2\)</span>.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>np.linalg.eigvalsh(H)</code></td>
-<td style="text-align: left;">Egenverdiene til en reell symmetrisk matrise.</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;"><code>minimize(f, x0, jac=grad_f, method="BFGS")</code></td>
-<td style="text-align: left;">Søk etter et lokalt minimum fra <code>x0</code>, med gradientfunksjonen <code>grad_f</code>.</td>
+<td style="text-align: left;">Søk lokalt fra <code>x0</code>. <code>f</code> returnerer ett tall; <code>grad_f</code> returnerer en array med gradienten.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>result.x</code>, <code>result.fun</code></td>
 <td style="text-align: left;">Punktet som ble funnet, og funksjonsverdien der.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>result.success</code>, <code>result.message</code></td>
-<td style="text-align: left;">Om metodens egne stoppkrav ble oppfylt, og en forklaring på hvorfor den stoppet.</td>
+<td style="text-align: left;">Om SciPys stoppkrav ble oppfylt, og hvorfor kjøringen stoppet.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>result.nit</code>, <code>result.nfev</code></td>
+<td style="text-align: left;">Antall oppdateringssteg (iterasjoner) og antall ganger målfunksjonen er beregnet (funksjonsevalueringer). Ett steg kan kreve flere evalueringer.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><code>result.nit</code>, <code>result.nfev</code></td>
-<td style="text-align: left;">Antall iterasjoner og funksjonsevalueringer. En <strong>iterasjon</strong> er én gjentakelse av metodens oppdatering; én iterasjon kan prøve funksjonen flere ganger.</td>
+<td style="text-align: left;"><code>np.linalg.norm(wavy_grad(result.x))</code></td>
+<td style="text-align: left;">Gradientens lengde ved funnet punkt; kontrollerer om det ser stasjonært ut.</td>
 </tr>
 </tbody>
 </table>
-<p><code>success=True</code> beviser verken at punktet er et globalt minimum eller at en feilgrense du selv har valgt, er oppfylt. Sjekk verdien, tillatte valg og relevante deriverte. Med en matematisk nedre grense kan vi i tillegg sammenligne verdien med det beste som er mulig.</p>
-<p>I <a href="../pages/uke9.html#uke9-start">uke 9</a> åpner vi selve søkeprosessen: hvilke punkter skal vi prøve, og når er forbedringen så liten at vi stopper? Skill da mellom å <strong>finne en kandidat</strong>, å <strong>kontrollere nødvendige betingelser</strong> og å <strong>bevise global optimalitet</strong>. Forsøkene i denne uken viser hvorfor det er tre forskjellige oppgaver.</p>
+<p><code>f</code> skal ta en vektor med form <code>(n,)</code> og returnere ett tall; gradientfunksjonen skal returnere en vektor med samme form <code>(n,)</code>. <code>result.x</code> er en array, <code>result.fun</code> et tall, <code>result.success</code> en boolsk verdi og <code>result.message</code> en tekst. Eksempel: et søk på den bølgede funksjonen kan ha <code>success=True</code> og <code>fun</code> nær 7.96, selv om en bedre verdi finnes ved origo.</p>
+<p>Et resultat fra ett eller flere lokale søk er en kandidat. For en global konklusjon trenger vi i tillegg et argument som gjelder alle tillatte punkter, slik som nedre grense i 8.2 eller konveksiteten i 8.4.</p>
+</details>
+</section>
+<section id="åpent-område-et-rutenett-kan-nærme-seg-en-grense" class="level3">
+<h3 class="anchored" data-anchor-id="åpent-område-et-rutenett-kan-nærme-seg-en-grense">Åpent område: et rutenett kan nærme seg en grense</h3>
+<div id="uke8-python-domain">
+
+</div>
+<p>For <span class="math inline">\(g(x)=x\)</span> på <span class="math inline">\((0,1)\)</span> er endepunktene utelatt. I hvert rutenett bruker vi bare indre punkter og rapporterer de minste og største verdiene. Tettere sampling endrer ikke hvilket område som er tillatt.</p>
+<div id="qpyodide-insertion-location-4"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>De minste verdiene blir 0.1, 0.01 og 0.001. Infimum er 0, men ingen tillatt <span class="math inline">\(x\)</span> oppnår verdien. Den numeriske utviklingen illustrerer skillet mellom en verdi vi nærmer oss og et faktisk minimum.</p>
+</section>
+<section id="midtpunkter-ett-moteksempel-er-nok" class="level3">
+<h3 class="anchored" data-anchor-id="midtpunkter-ett-moteksempel-er-nok">Midtpunkter: ett moteksempel er nok</h3>
+<div id="uke8-python-convex">
+
+</div>
+<p>For konveksitet skal funksjonsverdien i midtpunktet ikke overstige gjennomsnittet av endeverdiene. Et testpar kan avkrefte egenskapen, men endelig mange vellykkede tester kan ikke bevise den. <code>eigvalsh</code> finner egenverdiene til en symmetrisk matrise; den positive definite Hessianen i kvadratikken gir den generelle begrunnelsen fra 8.4.</p>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Parabelen gir <span class="math inline">\(0&lt;1\)</span>. Kvadratikken fra uke 6 gir <span class="math inline">\(-5.625\leq-3.750\)</span>. Den bølgede funksjonen gir <span class="math inline">\(20.25&gt;0.50\)</span>, som avkrefter konveksitet. De beregnede egenverdiene støtter konklusjonen fra 8.4. Der brukte vi de eksakte egenverdiene til den konstante Hessianen til å bevise streng konveksitet.</p>
+</section>
+<section id="prøv-selv" class="level3">
+<h3 class="anchored" data-anchor-id="prøv-selv">Prøv selv</h3>
+<p>Fullfør de tre korte funksjonene. Hver oppgave har egne importer og definisjoner og kan kjøres uavhengig av de andre cellene. Kontrollene vurderer resultatet uten å vise løsningskode.</p>
+<p><strong>Oppgave 1 – gradienten.</strong> For <span class="math inline">\(q(x,y)=(x-1)^2+2(y+2)^2\)</span> skal <code>grad_q(z)</code> returnere begge partiellderiverte som en NumPy-array. Fullfør returuttrykket.</p>
+<div class="py-exercise-cell" id="py-exercise-1">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Beregn gradienten til en kvadratisk funksjon","forbiddenImports":[],"forbiddenKeywords":[],"id":1,"label":"week8-python-gradient","showTestHints":false,"starter":"import numpy as np\n\n# Gradientfunksjonen skal gi SciPy én partiell derivert per variabel.\ndef grad_q(z):\n    x, y = z\n    # TODO: Returner de to partiellderiverte i riktig rekkefølge.\n    return np.array([0., 0.])","tests":"assert np.allclose(grad_q(np.array([1., -2.])), [0., 0.])\nassert np.allclose(grad_q(np.array([3., 0.])), [4., 8.])\nassert np.allclose(grad_q(np.array([-2., -3.])), [-6., -4.])"});
+</script>
+<p><strong>Oppgave 2 – SciPy-resultatet.</strong> Minimer <span class="math inline">\(q(x,y)=(x+1)^2+3(y-2)^2\)</span> fra den oppgitte <code>start</code>-vektoren med <code>jac=grad_q</code> og <code>method="BFGS"</code>. Returner paret <code>(result.x, result.fun)</code>.</p>
+<div class="py-exercise-cell" id="py-exercise-2">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Kjør BFGS og les punkt og verdi","forbiddenImports":[],"forbiddenKeywords":[],"id":2,"label":"week8-python-minimize","showTestHints":false,"starter":"import numpy as np\nfrom scipy.optimize import minimize\n\n# Denne målfunksjonen returnerer ett tall for hver vektor z.\ndef q(z):\n    x, y = z\n    return (x + 1)**2 + 3*(y - 2)**2\n\n# Gradientfunksjonen skal gi SciPy én partiell derivert per variabel.\ndef grad_q(z):\n    x, y = z\n    return np.array([2*(x + 1), 6*(y - 2)])\n\ndef solve_q(start):\n    # TODO: Kall minimize med funksjon, startpunkt, gradient og metode.\n    result = None\n    # TODO: Returner punktet og funksjonsverdien i resultatet.\n    return None","tests":"assert np.allclose(solve_q(np.array([0., 0.]))[0], [-1., 2.], atol=1e-5)\nassert np.isclose(solve_q(np.array([0., 0.]))[1], 0., atol=1e-9)\nassert np.allclose(solve_q(np.array([7., 3.]))[0], [-1., 2.], atol=1e-5)\nassert np.isclose(solve_q(np.array([7., 3.]))[1], 0., atol=1e-9)"});
+</script>
+<p><strong>Oppgave 3 – to starter.</strong> Bruk <code>minimize</code> med <code>jac=wavy_grad</code> og <code>method="BFGS"</code> én gang fra hver av de to startvektorene nedenfor. Returner <code>(first, second)</code>, altså de to <code>OptimizeResult</code>-objektene, slik at både punkter og verdier kan undersøkes.</p>
+<div class="py-exercise-cell" id="py-exercise-3">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Sammenlign to lokale søk","forbiddenImports":[],"forbiddenKeywords":[],"id":3,"label":"week8-python-two-starts","showTestHints":false,"starter":"import numpy as np\nfrom scipy.optimize import minimize\n\n# Målfunksjon og gradient er ferdig gitt; oppgaven gjelder SciPy-kallene.\ndef wavy(z):\n    x, y = z\n    return 20 + x*x + y*y - 10*(np.cos(2*np.pi*x) + np.cos(2*np.pi*y))\n\ndef wavy_grad(z):\n    x, y = z\n    return np.array([2*x + 20*np.pi*np.sin(2*np.pi*x),\n                     2*y + 20*np.pi*np.sin(2*np.pi*y)])\n\ndef two_searches():\n    near_zero = np.array([0., 0.])\n    near_two = np.array([2., 2.])\n    # TODO: Kjør BFGS fra near_zero og near_two med gradienten over.\n    first = None\n    second = None\n    return first, second","tests":"assert np.allclose(two_searches()[0].x, [0., 0.], atol=1e-5)\nassert np.isclose(two_searches()[0].fun, 0., atol=1e-7)\nassert np.allclose(two_searches()[1].x, [1.9899, 1.9899], atol=5e-4)\nassert 7.9 < two_searches()[1].fun < 8.1"});
+</script>
 </section>
 </div>
 </div>
@@ -10154,6 +11009,781 @@ qpyodideReady
     ensurePyodide().catch(function (e) {
       console.warn('math-exercise: Pyodide preload failed (will retry on the first check):', e);
     });
+  });
+
+})();
+
+</script>
+<script type="text/javascript">
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------------------
+  // Locales – add new languages here
+  // ---------------------------------------------------------------------------
+
+  var LOCALES = {
+    en: {
+      btnCheck:             '<i class="fa-solid fa-check"></i> Check',
+      btnCheckTitle:        'Run checks (Shift+Enter)',
+      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Reset',
+      btnResetTitle:        'Restore starter code',
+      running:              '⏳ Checking…',
+      errorHeader:          '❌ Error in code:',
+      unexpectedError:      '❌ Unexpected error:',
+      stdoutLabel:          'Output:',
+      allPassed: function (n) {
+        return '✅ All ' + n + ' test' + (n === 1 ? '' : 's') + ' passed!';
+      },
+      someFailed: function (p, t) {
+        return '❌ ' + p + ' of ' + t + ' test' + (t === 1 ? '' : 's') + ' passed';
+      },
+      violationsHeader:     '🚫 Not allowed:',
+      // Submission UI
+      submissionTitle:      '📋 Submission',
+      studentIdLabel:       'Student ID',
+      studentIdPlaceholder: 'e.g. s123456',
+      quizIdLabel:          'Quiz ID',
+      quizIdPlaceholder:    'e.g. quiz-01',
+      exportBtn:            '<i class="fa-solid fa-file-export"></i> Export results',
+      outputLabel:          'Copy encoded string and submit:',
+      copyBtn:              '<i class="fa-regular fa-copy"></i> Copy',
+      copyOk:               '<i class="fa-solid fa-check"></i> Copied!',
+      validationError:      'Please fill in Student ID and Quiz ID.',
+      encodingError:        'Error during encoding: ',
+      // Download
+      downloadBtn:          '<i class="fa-solid fa-download"></i> Download as JSON',
+      downloadBtnTitle:     'Save current code and test results for all exercises',
+      downloadHint:         'Saves your code and test results for personal documentation.',
+      downloadFilename:     'exercises-',
+      // Python message templates – use {} as placeholder for str.format()
+      msgForbiddenImport:   "Forbidden import: '{}'",
+      msgForbiddenFunction: "Forbidden function: '{}'",
+      msgForbiddenMethod:   "Forbidden method: '.{}'",
+      msgForbiddenKeyword:  "Forbidden keyword: '{}'",
+      msgAssertionFailed:   'Assertion failed',
+      msgTestError:         'Error: {}',
+      msgSyntaxError:       'Syntax error in tests: {}',
+    },
+    de: {
+      btnCheck:             '<i class="fa-solid fa-check"></i> Überprüfen',
+      btnCheckTitle:        'Code prüfen (Shift+Enter)',
+      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Zurücksetzen',
+      btnResetTitle:        'Starter-Code wiederherstellen',
+      running:              '⏳ Überprüfe…',
+      errorHeader:          '❌ Fehler im Code:',
+      unexpectedError:      '❌ Unerwarteter Fehler:',
+      stdoutLabel:          'Ausgabe:',
+      allPassed: function (n) {
+        return '✅ Alle ' + n + ' Test' + (n === 1 ? '' : 's') + ' bestanden!';
+      },
+      someFailed: function (p, t) {
+        return '❌ ' + p + ' von ' + t + ' Test' + (t === 1 ? '' : 's') + ' bestanden';
+      },
+      violationsHeader:     '🚫 Nicht erlaubt:',
+      // Submission UI
+      submissionTitle:      '📋 Abgabe',
+      studentIdLabel:       'Student-ID',
+      studentIdPlaceholder: 'z.B. s123456',
+      quizIdLabel:          'Quiz-ID',
+      quizIdPlaceholder:    'z.B. quiz-01',
+      exportBtn:            '<i class="fa-solid fa-file-export"></i> Ergebnis exportieren',
+      outputLabel:          'Kodierten String kopieren und abgeben:',
+      copyBtn:              '<i class="fa-regular fa-copy"></i> Kopieren',
+      copyOk:               '<i class="fa-solid fa-check"></i> Kopiert!',
+      validationError:      'Bitte Student-ID und Quiz-ID ausfüllen.',
+      encodingError:        'Fehler beim Kodieren: ',
+      // Download
+      downloadBtn:          '<i class="fa-solid fa-download"></i> Als JSON herunterladen',
+      downloadBtnTitle:     'Aktuellen Code und Testergebnisse aller Aufgaben speichern',
+      downloadHint:         'Speichert Code-Eingaben und Testergebnisse zur eigenen Dokumentation.',
+      downloadFilename:     'aufgaben-',
+      // Python message templates
+      msgForbiddenImport:   "Verbotener Import: '{}'",
+      msgForbiddenFunction: "Verbotene Funktion: '{}'",
+      msgForbiddenMethod:   "Verbotene Methode: '.{}'",
+      msgForbiddenKeyword:  "Verbotenes Schlüsselwort: '{}'",
+      msgAssertionFailed:   'Assertion fehlgeschlagen',
+      msgTestError:         'Fehler: {}',
+      msgSyntaxError:       'Syntaxfehler in Tests: {}',
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // Utilities
+  // ---------------------------------------------------------------------------
+
+  // Laedt ein Skript genau einmal. Ist der Tag schon da, aber noch nicht
+  // fertig geladen, wird auf dessen load-Event gewartet - NICHT sofort
+  // aufgeloest. Sonst greift eine zweite Extension auf globals zu, die es
+  // noch gar nicht gibt.
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var existing = document.querySelector('script[src="' + src + '"]');
+      if (existing) {
+        if (existing.dataset.qLoaded === '1') { resolve(); return; }
+        existing.addEventListener('load', function () { resolve(); });
+        existing.addEventListener('error', function () {
+          reject(new Error('Failed to load: ' + src));
+        });
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = function () { s.dataset.qLoaded = '1'; resolve(); };
+      s.onerror = function () { reject(new Error('Failed to load: ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensurePyodide() {
+    // coatless-quarto/pyodide is loading — wait for its promise instead of loading a second instance
+    if (typeof qpyodideInstance !== 'undefined') {
+      window.mainPyodide = await qpyodideInstance;
+      return;
+    }
+    // coatless already finished
+    if (typeof mainPyodide !== 'undefined') return;
+    // Standalone. Gemeinsames Promise, damit math-exercise und py-exercise auf
+    // derselben Seite nicht zwei Pyodide-Instanzen starten oder sich beim
+    // Laden ins Gehege kommen.
+    var cdnBase = 'https://cdn.jsdelivr.net/pyodide/v0.27.2/full/';
+    if (!globalThis.__qExercisePyodide) {
+      globalThis.__qExercisePyodide = (async function () {
+        await loadScript(cdnBase + 'pyodide.js');
+        return await loadPyodide({ indexURL: cdnBase });
+      })();
+    }
+    window.mainPyodide = await globalThis.__qExercisePyodide;
+  }
+
+  // Monaco is normally already loaded by the pyodide extension. If not (standalone
+  // use), we load the AMD loader from CDN and let it fetch the editor itself.
+  async function ensureMonaco() {
+    var cdnBase = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs';
+    if (typeof require === 'undefined') {
+      await loadScript(cdnBase + '/loader.js');
+    }
+    require.config({ paths: { vs: cdnBase } });
+    await new Promise(function (resolve) {
+      require(['vs/editor/editor.main'], resolve);
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Submission state + locale
+  // ---------------------------------------------------------------------------
+
+  var submissionConfig = window.__pyExerciseConfig || { submission: false, submissionKey: 'py-exercise', lang: 'en' };
+  var L = LOCALES[submissionConfig.lang] || LOCALES['en'];
+
+  // Map of exercise label → { label, passed, total, tests: [bool, ...] }
+  var exerciseResults = {};
+
+  // Map of exercise label → Monaco editor instance
+  var exerciseEditors = {};
+
+  // ---------------------------------------------------------------------------
+  // Python: AST-based violation checker
+  // ---------------------------------------------------------------------------
+  var CHECKER_PY = [
+    'import ast as _ast, json as _json',
+    '',
+    '_fi = list(_exercise_forbidden_imports)',
+    '_fk = list(_exercise_forbidden_keywords)',
+    '',
+    '_KW_NODES = {',
+    '    "for":      _ast.For,',
+    '    "while":    _ast.While,',
+    '    "with":     _ast.With,',
+    '    "lambda":   _ast.Lambda,',
+    '    "class":    _ast.ClassDef,',
+    '    "global":   _ast.Global,',
+    '    "nonlocal": _ast.Nonlocal,',
+    '    "try":      _ast.Try,',
+    '    "raise":    _ast.Raise,',
+    '    "del":      _ast.Delete,',
+    '    "assert":   _ast.Assert,',
+    '    "yield":    _ast.Yield,',
+    '}',
+    '',
+    '_violations = []',
+    '_seen = set()',
+    '',
+    'def _add(msg):',
+    '    if msg not in _seen:',
+    '        _seen.add(msg)',
+    '        _violations.append(msg)',
+    '',
+    'try:',
+    '    _tree = _ast.parse(_exercise_student_code)',
+    '    for _node in _ast.walk(_tree):',
+    '        if isinstance(_node, _ast.Import):',
+    '            for _a in _node.names:',
+    '                _top = _a.name.split(".")[0]',
+    '                if _top in _fi:',
+    '                    _add(_msg_forbidden_import.format(_top))',
+    '        elif isinstance(_node, _ast.ImportFrom):',
+    '            if _node.module:',
+    '                _top = _node.module.split(".")[0]',
+    '                if _top in _fi:',
+    '                    _add(_msg_forbidden_import.format(_top))',
+    '        elif isinstance(_node, _ast.Call):',
+    '            if isinstance(_node.func, _ast.Name):',
+    '                if _node.func.id in _fk:',
+    '                    _add(_msg_forbidden_function.format(_node.func.id))',
+    '            elif isinstance(_node.func, _ast.Attribute):',
+    '                if _node.func.attr in _fk:',
+    '                    _add(_msg_forbidden_method.format(_node.func.attr))',
+    '        else:',
+    '            for _kw, _nt in _KW_NODES.items():',
+    '                if _kw in _fk and isinstance(_node, _nt):',
+    '                    _add(_msg_forbidden_keyword.format(_kw))',
+    'except SyntaxError:',
+    '    pass',
+    '',
+    '_json.dumps(_violations)',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Python: main runner
+  // ---------------------------------------------------------------------------
+  var RUNNER_PY = [
+    'import ast, json, io, sys, traceback',
+    '',
+    '_ns = {}',
+    '_results = {"student_error": None, "stdout": "", "tests": []}',
+    '',
+    '_buf = io.StringIO()',
+    '_old_stdout = sys.stdout',
+    'sys.stdout = _buf',
+    'try:',
+    '    exec(compile(_exercise_student_code, "<student>", "exec"), _ns)',
+    '    _results["stdout"] = _buf.getvalue()',
+    'except Exception:',
+    '    _results["student_error"] = traceback.format_exc()',
+    '    _results["stdout"] = _buf.getvalue()',
+    'finally:',
+    '    sys.stdout = _old_stdout',
+    '',
+    'if _results["student_error"] is None:',
+    '    try:',
+    '        _tree = ast.parse(_exercise_test_code)',
+    '        for _stmt in _tree.body:',
+    '            _single = compile(',
+    '                ast.Module(body=[_stmt], type_ignores=[]),',
+    '                "<test>", "exec"',
+    '            )',
+    '            try:',
+    '                exec(_single, _ns)',
+    '                _results["tests"].append({"passed": True})',
+    '            except AssertionError as e:',
+    '                _results["tests"].append({',
+    '                    "passed": False,',
+    '                    "message": str(e) if str(e) else _msg_assertion_failed',
+    '                })',
+    '            except Exception as e:',
+    '                _results["tests"].append({"passed": False, "message": _msg_test_error.format(e)})',
+    '    except SyntaxError as e:',
+    '        _results["student_error"] = _msg_syntax_error.format(e)',
+    '',
+    'json.dumps(_results)',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Python: submission encoder
+  // ---------------------------------------------------------------------------
+  // Encoding: JSON → UTF-8 bytes → XOR with cycling key → Base64.
+  var ENCODER_PY = [
+    'import json as _json, base64 as _b64',
+    '',
+    '_key  = _submission_key.encode("utf-8")',
+    '_raw  = _json.dumps(_submission_payload, ensure_ascii=False).encode("utf-8")',
+    '_xord = bytes(b ^ _key[i % len(_key)] for i, b in enumerate(_raw))',
+    '_b64.b64encode(_xord).decode("ascii")',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Result rendering
+  // ---------------------------------------------------------------------------
+
+  function renderViolations(area, violations) {
+    var items = violations.map(function (v) {
+      return '<li>' + escapeHtml(v) + '</li>';
+    }).join('');
+    area.innerHTML =
+      '<div class="py-exercise-violations">' +
+      '<strong>' + L.violationsHeader + '</strong>' +
+      '<ul class="py-exercise-violation-list">' + items + '</ul>' +
+      '</div>';
+  }
+
+  function renderResult(area, data, label, showHints) {
+    var html = '';
+
+    if (data.student_error) {
+      area.innerHTML =
+        '<div class="py-exercise-error">' +
+        '<strong>' + L.errorHeader + '</strong>' +
+        '<pre>' + escapeHtml(data.student_error) + '</pre>' +
+        '</div>';
+      return;
+    }
+
+    if (data.stdout && data.stdout.trim()) {
+      html +=
+        '<div class="py-exercise-stdout">' +
+        '<span class="py-exercise-stdout-label">' + L.stdoutLabel + '</span>' +
+        '<pre>' + escapeHtml(data.stdout) + '</pre>' +
+        '</div>';
+    }
+
+    var tests   = data.tests || [];
+    var passed  = tests.filter(function (t) { return t.passed; }).length;
+    var total   = tests.length;
+    var allPass = total > 0 && passed === total;
+
+    // Store result for submission export
+    if (label && total > 0) {
+      exerciseResults[label] = {
+        label:  label,
+        passed: passed,
+        total:  total,
+        tests:  tests.map(function (t) { return t.passed; }),
+      };
+    }
+
+    html += '<div class="py-exercise-summary">';
+    if (allPass) {
+      html += '<div class="py-exercise-all-passed">' + L.allPassed(total) + '</div>';
+    } else {
+      html += '<div class="py-exercise-some-failed">' + L.someFailed(passed, total) + '</div>';
+    }
+
+    if (total > 1) {
+      html += '<ul class="py-exercise-test-list">';
+      tests.forEach(function (t, i) {
+        if (t.passed) {
+          html += '<li class="py-test-pass">✓ Test ' + (i + 1) + '</li>';
+        } else {
+          html +=
+            '<li class="py-test-fail">✗ Test ' + (i + 1) +
+            (showHints !== false && t.message ? ': ' + escapeHtml(t.message) : '') +
+            '</li>';
+        }
+      });
+      html += '</ul>';
+    } else if (!allPass && showHints !== false && tests[0] && tests[0].message) {
+      html += '<div class="py-exercise-hint">' + escapeHtml(tests[0].message) + '</div>';
+    }
+
+    html += '</div>';
+    area.innerHTML = html;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Exercise cell setup
+  // ---------------------------------------------------------------------------
+
+  function setupExercise(exerciseData) {
+    var container = document.getElementById('py-exercise-' + exerciseData.id);
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    var starterCode       = exerciseData.starter           || '';
+    var testsCode         = exerciseData.tests             || '';
+    var forbiddenImports  = exerciseData.forbiddenImports  || [];
+    var forbiddenKeywords = exerciseData.forbiddenKeywords || [];
+    var label             = exerciseData.label;
+    var showHints         = exerciseData.showTestHints !== false;
+    // caption is metadata only (used in downloadAll JSON), not rendered visually
+
+    // localStorage key scoped to this page + label
+    var storageKey = 'pyex|' + window.location.pathname + '|' + label;
+    var savedCode = null;
+    try { savedCode = localStorage.getItem(storageKey); } catch (e) {}
+
+    // Monaco editor container
+    var editorContainer = document.createElement('div');
+    editorContainer.className = 'py-exercise-editor';
+    container.appendChild(editorContainer);
+
+    // Button bar
+    var buttonBar = document.createElement('div');
+    buttonBar.className = 'py-exercise-buttons';
+
+    var checkBtn = document.createElement('button');
+    checkBtn.className = 'btn btn-primary py-exercise-check';
+    checkBtn.innerHTML = L.btnCheck;
+    checkBtn.type = 'button';
+    checkBtn.title = L.btnCheckTitle;
+
+    var resetBtn = document.createElement('button');
+    resetBtn.className = 'btn btn-light py-exercise-reset';
+    resetBtn.innerHTML = L.btnReset;
+    resetBtn.type = 'button';
+    resetBtn.title = L.btnResetTitle;
+
+    buttonBar.appendChild(checkBtn);
+    buttonBar.appendChild(resetBtn);
+    container.appendChild(buttonBar);
+
+    var resultArea = document.createElement('div');
+    resultArea.className = 'py-exercise-result';
+    container.appendChild(resultArea);
+
+    var editor;
+    require(['vs/editor/editor.main'], function () {
+      editor = monaco.editor.create(editorContainer, {
+        value: savedCode !== null ? savedCode : starterCode,
+        language: 'python',
+        theme: 'vs-light',
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        minimap: { enabled: false },
+        fontSize: 14,
+        renderLineHighlight: 'none',
+        hideCursorInOverviewRuler: true,
+      });
+
+      // Store reference so downloadAll() can read the current code later
+      exerciseEditors[label] = editor;
+
+      var updateHeight = function () {
+        var h = Math.max(80, editor.getContentHeight());
+        editorContainer.style.height = h + 'px';
+        editor.layout();
+      };
+      editor.onDidContentSizeChange(updateHeight);
+      updateHeight();
+
+      // Persist code across reloads
+      var saveTimer;
+      editor.onDidChangeModelContent(function () {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(function () {
+          try { localStorage.setItem(storageKey, editor.getValue()); } catch (e) {}
+        }, 500);
+      });
+
+      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, runCheck);
+    });
+
+    async function runCheck() {
+      if (!editor) return;
+
+      resultArea.innerHTML = '<div class="py-exercise-running">' + L.running + '</div>';
+      checkBtn.disabled = true;
+      resetBtn.disabled = true;
+
+      var studentCode = editor.getValue();
+
+      try {
+        mainPyodide.globals.set('_exercise_student_code',  studentCode);
+        mainPyodide.globals.set('_exercise_test_code',     testsCode);
+        mainPyodide.globals.set('_exercise_forbidden_imports',  mainPyodide.toPy(forbiddenImports));
+        mainPyodide.globals.set('_exercise_forbidden_keywords', mainPyodide.toPy(forbiddenKeywords));
+
+        if (forbiddenImports.length > 0 || forbiddenKeywords.length > 0) {
+          var violationsRaw = await mainPyodide.runPythonAsync(CHECKER_PY);
+          var violations = JSON.parse(violationsRaw);
+          if (violations.length > 0) {
+            renderViolations(resultArea, violations);
+            return;
+          }
+        }
+
+        await mainPyodide.loadPackagesFromImports(studentCode);
+        var raw  = await mainPyodide.runPythonAsync(RUNNER_PY);
+        var data = JSON.parse(raw);
+        renderResult(resultArea, data, label, showHints);
+
+      } catch (err) {
+        resultArea.innerHTML =
+          '<div class="py-exercise-error">' +
+          '<strong>' + L.unexpectedError + '</strong>' +
+          '<pre>' + escapeHtml(String(err)) + '</pre>' +
+          '</div>';
+      } finally {
+        checkBtn.disabled = false;
+        resetBtn.disabled = false;
+      }
+    }
+
+    checkBtn.onclick = runCheck;
+    resetBtn.onclick = function () {
+      if (editor) editor.setValue(starterCode);
+      try { localStorage.removeItem(storageKey); } catch (e) {}
+      resultArea.innerHTML = '';
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Submission UI
+  // ---------------------------------------------------------------------------
+
+  function buildSubmissionHeader() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-submission-header';
+    wrap.innerHTML =
+      '<div class="py-submission-header-inner">' +
+        '<h5 class="py-submission-title">' + L.submissionTitle + '</h5>' +
+        '<div class="py-submission-fields">' +
+          '<div class="py-submission-field">' +
+            '<label for="py-submission-student-id">' + L.studentIdLabel + '</label>' +
+            '<input type="text" id="py-submission-student-id" ' +
+                   'placeholder="' + escapeHtml(L.studentIdPlaceholder) + '" autocomplete="off">' +
+          '</div>' +
+          '<div class="py-submission-field">' +
+            '<label for="py-submission-quiz-id">' + L.quizIdLabel + '</label>' +
+            '<input type="text" id="py-submission-quiz-id" ' +
+                   'placeholder="' + escapeHtml(L.quizIdPlaceholder) + '" autocomplete="off">' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    return wrap;
+  }
+
+  function buildSubmissionFooter() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-submission-footer';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-success py-submission-export-btn';
+    btn.innerHTML = L.exportBtn;
+    btn.type = 'button';
+    btn.onclick = exportResults;
+
+    var msg = document.createElement('div');
+    msg.className = 'py-submission-msg';
+    msg.id = 'py-submission-msg';
+
+    var outWrap = document.createElement('div');
+    outWrap.className = 'py-submission-output-wrap';
+    outWrap.id = 'py-submission-output-wrap';
+    outWrap.style.display = 'none';
+
+    var outLabelRow = document.createElement('div');
+    outLabelRow.className = 'py-submission-output-labelrow';
+
+    var outLabel = document.createElement('span');
+    outLabel.className = 'py-submission-output-label';
+    outLabel.textContent = L.outputLabel;
+
+    var copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-light btn-sm py-submission-copy-btn';
+    copyBtn.id = 'py-submission-copy-btn';
+    copyBtn.type = 'button';
+    copyBtn.innerHTML = L.copyBtn;
+    copyBtn.onclick = function () {
+      var text = (document.getElementById('py-submission-output') || {}).value || '';
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(function () {
+        copyBtn.innerHTML = L.copyOk;
+        copyBtn.classList.add('py-submission-copy-ok');
+        setTimeout(function () {
+          copyBtn.innerHTML = L.copyBtn;
+          copyBtn.classList.remove('py-submission-copy-ok');
+        }, 2000);
+      });
+    };
+
+    outLabelRow.appendChild(outLabel);
+    outLabelRow.appendChild(copyBtn);
+
+    var textarea = document.createElement('textarea');
+    textarea.className = 'py-submission-output';
+    textarea.id = 'py-submission-output';
+    textarea.readOnly = true;
+    textarea.rows = 4;
+    textarea.onclick = function () { this.select(); };
+
+    outWrap.appendChild(outLabelRow);
+    outWrap.appendChild(textarea);
+
+    wrap.appendChild(btn);
+    wrap.appendChild(msg);
+    wrap.appendChild(outWrap);
+    return wrap;
+  }
+
+  async function exportResults() {
+    var studentId = (document.getElementById('py-submission-student-id') || {}).value;
+    var quizId    = (document.getElementById('py-submission-quiz-id')    || {}).value;
+
+    studentId = (studentId || '').trim();
+    quizId    = (quizId    || '').trim();
+
+    var msgEl     = document.getElementById('py-submission-msg');
+    var outWrap   = document.getElementById('py-submission-output-wrap');
+    var outArea   = document.getElementById('py-submission-output');
+
+    if (!studentId || !quizId) {
+      if (msgEl) {
+        msgEl.innerHTML =
+          '<div class="py-submission-error">' + escapeHtml(L.validationError) + '</div>';
+      }
+      if (outWrap) outWrap.style.display = 'none';
+      return;
+    }
+    if (msgEl) msgEl.innerHTML = '';
+
+    // Collect results for every registered exercise (unattempted → 0/total)
+    var allResults = (window.__pyExercises || []).map(function (ex) {
+      return exerciseResults[ex.label] || {
+        label:  ex.label,
+        passed: 0,
+        total:  0,        // 0 = not attempted
+        tests:  [],
+      };
+    });
+
+    var payload = {
+      v:       1,
+      sid:     studentId,
+      qid:     quizId,
+      ts:      new Date().toISOString(),
+      results: allResults,
+    };
+
+    try {
+      mainPyodide.globals.set('_submission_payload', mainPyodide.toPy(payload));
+      mainPyodide.globals.set('_submission_key',     submissionConfig.submissionKey || 'py-exercise');
+
+      var encoded = await mainPyodide.runPythonAsync(ENCODER_PY);
+
+      if (outArea)  outArea.value = encoded;
+      if (outWrap)  outWrap.style.display = '';
+      if (msgEl)    msgEl.innerHTML = '';
+
+    } catch (err) {
+      if (msgEl) {
+        msgEl.innerHTML =
+          '<div class="py-submission-error">' +
+          escapeHtml(L.encodingError) + escapeHtml(String(err)) +
+          '</div>';
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Download (personal documentation)
+  // ---------------------------------------------------------------------------
+
+  function downloadAll() {
+    var exercises = (window.__pyExercises || []).map(function (ex) {
+      var editor = exerciseEditors[ex.label];
+      var result = exerciseResults[ex.label] || null;
+      return {
+        label:   ex.label,
+        caption: ex.caption || null,
+        code:    editor ? editor.getValue() : ex.starter,
+        result:  result,
+      };
+    });
+
+    var data = {
+      exported_at: new Date().toISOString(),
+      exercises:   exercises,
+    };
+
+    var json = JSON.stringify(data, null, 2);
+    var blob = new Blob([json], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href     = url;
+    a.download = L.downloadFilename + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function buildDownloadSection() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-download-section';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-outline-secondary py-download-btn';
+    btn.innerHTML = L.downloadBtn;
+    btn.type = 'button';
+    btn.title = L.downloadBtnTitle;
+    btn.onclick = downloadAll;
+
+    var hint = document.createElement('span');
+    hint.className = 'py-download-hint';
+    hint.textContent = L.downloadHint;
+
+    wrap.appendChild(btn);
+    wrap.appendChild(hint);
+    return wrap;
+  }
+
+  function initDownload() {
+    var cells = document.querySelectorAll('.py-exercise-cell');
+    if (cells.length === 0) return;
+
+    // If a submission footer exists, append the download section to it (with separator).
+    // Otherwise create a standalone footer after the last exercise cell.
+    var subFooter = document.querySelector('.py-submission-footer');
+    if (subFooter) {
+      var sep = document.createElement('hr');
+      sep.className = 'py-footer-sep';
+      subFooter.appendChild(sep);
+      subFooter.appendChild(buildDownloadSection());
+    } else {
+      var footer = document.createElement('div');
+      footer.className = 'py-download-footer';
+      footer.appendChild(buildDownloadSection());
+      var lastCell = cells[cells.length - 1];
+      lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
+    }
+  }
+
+  function initSubmission() {
+    if (!submissionConfig.submission) return;
+
+    var cells = document.querySelectorAll('.py-exercise-cell');
+    if (cells.length === 0) return;
+
+    // Header before the first exercise cell
+    var header = buildSubmissionHeader();
+    cells[0].parentNode.insertBefore(header, cells[0]);
+
+    // Footer after the last exercise cell
+    var lastCell = cells[cells.length - 1];
+    var footer = buildSubmissionFooter();
+    lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Init
+  // ---------------------------------------------------------------------------
+  document.addEventListener('DOMContentLoaded', async function () {
+    await ensurePyodide();
+    await ensureMonaco();
+
+    mainPyodide.globals.set('_msg_forbidden_import',   L.msgForbiddenImport);
+    mainPyodide.globals.set('_msg_forbidden_function', L.msgForbiddenFunction);
+    mainPyodide.globals.set('_msg_forbidden_method',   L.msgForbiddenMethod);
+    mainPyodide.globals.set('_msg_forbidden_keyword',  L.msgForbiddenKeyword);
+    mainPyodide.globals.set('_msg_assertion_failed',   L.msgAssertionFailed);
+    mainPyodide.globals.set('_msg_test_error',         L.msgTestError);
+    mainPyodide.globals.set('_msg_syntax_error',       L.msgSyntaxError);
+
+    var exercises = window.__pyExercises || [];
+    exercises.forEach(setupExercise);
+    initSubmission();
+    initDownload();
   });
 
 })();
