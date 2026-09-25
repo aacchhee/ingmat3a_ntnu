@@ -8,7 +8,7 @@ Quarto course notes for IMAX3011. The website combines explanatory text, browser
 
 Thanks to Jonas Harang, Elias Sandal and Ute Schaarschmidt for ideas and suggestions that have helped improve these pages.
 
-Thanks also to the [Erasmus-CTM team](https://github.com/Erasmus-CTM) for their collaboration on digital tools and teaching resources. The author is happy to be part of this team.
+Thanks also to the [Erasmus-CTM team](https://github.com/Erasmus-CTM) and especially to Michael Kallweit for their collaboration on digital tools and teaching resources. The author is happy to be part of this team.
 
 This work has been partially supported by the Erasmus+ project “Computational Thinking makes sense of Mathematics” (project no. 2023-1-NO01-KA220-HED-000166744).
 
