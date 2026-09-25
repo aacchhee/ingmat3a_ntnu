@@ -10,7 +10,18 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from check_optimization import CELL, ROOT, expanded
+ROOT = Path(__file__).resolve().parents[1]
+CELL = re.compile(r"```\{pyodide-python\}\n(.*?)```", re.S)
+INCLUDE = re.compile(r"\{\{<\s*include\s+([^\s>]+)\s*>\}\}")
+
+
+def expanded(path, include_root=None):
+    # Quarto resolves nested includes from the original page's directory.
+    include_root = path.parent if include_root is None else include_root
+    return INCLUDE.sub(
+        lambda match: expanded((include_root / match[1]).resolve(), include_root),
+        path.read_text(),
+    )
 
 OUTPUT = ROOT / "assets" / "optimization"
 FIGURE_LABELS = {"week8-production", "week8-local-minima", "week8-convex-midpoints"}
