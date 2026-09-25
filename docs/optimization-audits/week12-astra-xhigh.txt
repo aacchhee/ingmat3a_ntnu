@@ -1,0 +1,101 @@
+Final status: APPROVED. Required findings were resolved and rechecked.
+Reviewer: Astra XHIGH, separate reviewer for each week.
+
+# Week 12 rewrite — independent Astra audit
+
+Audited 2026-09-25. Scope: the current complete `_includes/optimization/uke12.md` (706 lines) and `week12_setup.md`, with the approved current week 8 as the main style/prerequisite reference, and relevant current week 4, 6 and 11 passages. Read the rewrite verification log and completed-exercise fixture. Course files were read only. Root confirmed the latest user instruction explicitly allows Python where it fits the main learning sequence; the new independent coding exercises must follow the regneoppgaver. Thus the existing lecture-cell placement is appropriate.
+
+## Verdict
+
+**Sound mathematical core; accept after the small, focused corrections below.** The rewrite has a coherent sequence: feasible geometry → Lagrange candidates → classification → numerical checks → degeneracy and a global lower bound. Each main concept has a concrete example, and the six regneoppgaver follow those examples. No KKT expansion, new chapter, or larger multi-constraint exercise is needed. The main remaining risks are a missing explicit definition of constrained stationarity, one misleading sentence about numerical residuals, and a few gaps between what exercise prose says and what it actually tests.
+
+Line references describe this audited snapshot; section and exercise labels are stable references after editing.
+
+## Prioritized corrections
+
+### P1 — Say precisely what small residuals establish
+
+**12.3, lines 306–309.** “Residualene sier kun at den beregnede kandidaten ligger nær det vi forventer” can be read as a distance-to-solution guarantee. Neither equality residual nor stationarity residual supplies that guarantee by itself. The farthest circle point has both residuals exactly zero with its own multiplier.
+
+Replace the sentence with the concrete claim that the constraint and stationarity equations are approximately satisfied; small residuals alone neither classify the point nor bound its distance to a minimum. The immediately preceding Cauchy–Schwarz proof is the global guarantee. The existing deep-reading comparison of the closest and farthest points is correct and supports this distinction.
+
+### P1 — Define constrained stationarity before using its name
+
+**12.1 immediately after lines 102–105; first unexplained use is 12.2 line 173.** Week 8 explicitly defines “stasjonært” by `∇f = 0`. Week 12 uses a different, constrained notion without explicitly naming that change. This is the most important definition-order gap.
+
+After the boxed equations, say that a feasible point is **stasjonært under likhetsbetingelsen** when the first derivative of the objective is zero in every feasible tangent direction; at a regular point this is equivalent to existence of a multiplier satisfying the Lagrange equation. Explicitly say that the ordinary objective gradient need not be zero. The circle example already supplies the necessary contrast `(1,2) ≠ 0`; no new example is needed.
+
+### P2 — Supply two short bridges in the first worked calculation
+
+**12.1, lines 106–111.** The first central Lagrange calculation jumps from the two equations to both exact points and multipliers. Add the short elimination `y = 2x`, followed by `5x² = 1`, before the answer. This is enough for students who use the notes as their only text.
+
+The attribution “Cauchy–Schwarz fra uke 4” is not supported by the current week 4 text: it develops dot products, lengths, and projections, but does not state the named inequality. State the inequality locally in one sentence, such as `|u·v| ≤ ||u||₂ ||v||₂`, and explain that the absolute inner product is at most the product of the lengths, before the displayed application. Week 6 uses the inequality in a deep-reading argument, so a week 6 link is possible, but a short local statement is more useful here. No long proof is required.
+
+### P2 — Make the exercise wording support the intended reasoning
+
+1. **`week12-dual-bound`, lines 558–567.** All three numerical answers are correct: `c = 2`, `min L = 3/4`, and `F(1,0) = 1`. However, comparing a lower bound with one arbitrary feasible value does not determine whether the bound is sharp. Explicitly ask students to compare `3/4` with the exact minimum value from 12.3, `(sqrt(5)-1)²/2 = 3-sqrt(5)`. Since `3/4 < 3-sqrt(5)`, this multiplier's bound is not sharp. Alternatively, have them show the unique unconstrained minimizer of this SPD Lagrangian, `a/2`, is infeasible. The first option is shorter and follows the main example directly.
+
+2. **`week12-python-normal`, lines 579–582.** “Kontrollen undersøker normalens lengde” is false: the tests compare both gradient components in three points. Say that the control checks the components of the normal vector. The title can simply be “normalvektor”; the task does not compute a tangent. There is no need to add more work to the exercise.
+
+### P2 — Tiny terminology corrections while touching these passages
+
+- **12.2 depth, lines 200–203:** replace “tilfredsstillende lokal minimumstest” with “tilstrekkelig test for et strengt lokalt minimum”. State the maximum version with negativity in **all nonzero tangent directions**, mirroring the preceding quantifier. The mathematics intended here is correct.
+- **First occurrence of `enhetstangent`, line 205:** write “enhetstangent, altså en tangentvektor med lengde 1”. This is a short composition of known concepts, but defining it prevents a needless new-term gap before exercise 1.
+- **12.4 depth, lines 434–437:** replace “den ubetingede minimatoren”/“minimatoren” with “minimumspunktet uten bibetingelser”.
+
+## Concept → definition → example → exercise coverage
+
+| Concept | Definition or prerequisite | Worked example | Exercise coverage / assessment |
+|---|---|---|---|
+| Equality constraint and feasible set | 12.0 distinguishes the circle from its disk; 12.1 identifies `f` and `h=0` | Unit circle and three feasible objective values | Regneoppgaver 1–6; Python 3 encodes `type='eq'`. Good. |
+| Tangent direction and normal direction | 12.1 first uses the point `(1,0)`, then perpendicularity and the chain rule | Vertical tangent, horizontal radius; constraint gradient `(2,0)` | Regneoppgave 1 and Python 1. Unit tangent needs the one short definition above. |
+| Regularity for one equality | `∇h(z*) ≠ 0`, 12.1 | Circle normal nonzero; contrasted with the isolated-point example in 12.4 | Regneoppgaver 1 and 5. Good. The argument takes smoothness of the functions as understood from the preceding derivative discussion. |
+| Lagrange function and multiplier | Named and defined before the boxed equations in 12.1; consistent plus convention | Linear objective on circle, with points, values and multipliers | Regneoppgave 2. Add the two elimination steps above. |
+| Constrained stationarity versus classification | Equations and geometric explanation are present, but the constrained term is not explicitly defined | `xy` has four stationary candidates with values `±1/2`; global bounds classify them | Regneoppgaver 2–4. Definition correction required above. |
+| Global optimum and sharp bound | Definitions already in week 8; week 12 applies explicit inequalities | Linear objective bound `sqrt(5)`; product bound `±1/2`; nearest-point bound `3-sqrt(5)` | Regneoppgaver 2, 3 and 6. Cauchy–Schwarz statement and exercise-6 comparison correction above. |
+| Curvature along a feasible curve | Main 12.2 gives the one-variable composition; depth gives Hessian of `L` restricted to tangents | `0.5 sin(2t)`, with reduced-Hessian values `-2` and `+2` | Regneoppgave 3 asks the one-variable second derivative; no long tangent-Hessian derivation is needed in the main route. Good. |
+| Numerical equality and stationarity residuals | Both norms are defined before the SLSQP example; projected multiplier formula includes the nonzero-normal condition | Nearest point to `(2,1)`, analytic solution and measured errors | Regneoppgave 4 and Python 2. Residual interpretation correction required above. |
+| SLSQP equality interface and reported iterates | `eq`, `fun`, `jac` and callback are explained before the call | Full nearest-point solve and plot of the actual callback data | Python 3 and collapsed reference. No unsupported `result.multipliers` access. Good. |
+| Degeneracy | Defined immediately after showing `∇h=0` and failure of the multiplier equation | `h=x²+y²=0` leaves only `(0,0)` | Regneoppgave 5. Good; it says regularity failure can invalidate the necessary-condition method, not that every degenerate problem lacks multipliers. |
+| Dual lower bound | Main text shows `F=L` on feasible points and global minimization of the SPD `L`; depth defines `d(λ)=inf L` | Exact sharp bound at `(sqrt(5)-1)/2` and an unsharp bound at `1/2` | Regneoppgave 6. Infimum and SPD were already defined in week 8. Good after the sharpness-question correction. |
+| Several equalities, Jacobian and independent normals | Defined in 12.1 depth before equations and example | Sphere intersected with `z=0`; normals `(2,0,0)` and `(0,0,1)` yield tangent `(0,t,0)` | No required exercise. Appropriate depth-only extension; no need to enlarge it into a full multi-constraint unit. |
+| Multiplier units and local sensitivity | Brief final depth-only paragraph, consistent with plus convention and `h=g-r` | Units are explained, but there is no separate numerical sensitivity example | Not a main learning objective or assessed concept. This is the only auxiliary extension without its own worked numerical example; it is not an acceptance blocker. |
+
+## Mathematical checks
+
+- Linear circle problem: `∇f=(1,2)`, `∇h=2z`, stationary points `±(1,2)/sqrt(5)`, multipliers `∓sqrt(5)/2`. Upper and lower objective values are `±sqrt(5)`.
+- Product problem: neither coordinate vanishes in the Lagrange system; `4λ²=1`; the four diagonal points exhaust the candidates. The stated inequalities prove both global extremes. The displayed reduced Hessian gives `-2` at a maximum and `+2` at a minimum.
+- Distance problem: `F(z)=0.5||z-a||²`, `∇F=z-a`; the nearest point is `a/sqrt(5)`, objective `3-sqrt(5)≈0.7639320225`, plus-convention multiplier `(sqrt(5)-1)/2≈0.6180339887`. The farthest stationary point has objective `3+sqrt(5)` and multiplier `-(sqrt(5)+1)/2`, confirming why zero residual is not a classification.
+- The projected multiplier `-∇F·∇h / ||∇h||²` is correct for a nonzero equality normal. It is intentionally reconstructed rather than obtained from a solver result attribute. This is compatible with the specified SciPy 1.14.1 runtime.
+- Degenerate example: `(0,0)` is the only feasible point and hence both a global maximum and minimum; the Lagrangian gradient cannot vanish for any multiplier.
+- Dual formula `d(λ)=5/2-λ-5/[2(1+2λ)]` is correct for `1+2λ>0`; at the selected `λ*`, its global minimizer is feasible. No general strong-duality claim for arbitrary nonconvex equality problems is made.
+- Exercise answers checked algebraically: `(0,4)` and `(1,0)`; `(1,2)/sqrt(5)` and `-sqrt(5)/2`; `1/2` and `-2`; residuals `0` and `1`; `(0,0)` and zero constraint gradient; `2`, `3/4`, and `1`.
+
+## Structure, code and assessment checks
+
+- The main route is example-led and readable without an additional textbook. Definitions of tangent, normal, regularity, multiplier and Lagrange function remain visible. Multiple constraints and the longer tangent-Hessian material remain in `Gå i dybden`.
+- The three half-written Python exercises are after regneoppgaver, small, and independent: each imports its packages and defines the quantities it uses. Each code block has explanatory comments, including the setup. There is no notebook requirement, prediction/guess demand, hint block or solution block.
+- The SciPy table is collapsed. No full KKT theory is introduced. Equality-versus-inequality scope is explicit, and multipliers for equalities are correctly unrestricted in sign.
+- All six math exercises select exact/equivalent mode, the introduction asks for exact expressions, and all expected scalar/vector-component labels match their inputs. Each full task statement is inside its exercise fence, so its problem data reaches the explicit assessment context.
+- The source defines two single-axis figures and no horizontal pair. The path plot uses observed callback data and explicitly disclaims that the connecting segments form a feasible path.
+- Execution evidence was reviewed, not relabeled as a new browser test: `week12-rewrite-native-test.log` reports six lecture/setup cells passing in a fresh namespace, with equality residual `2.22e-15` and stationarity residual `1.43e-12`. The supplied fixture contains complete versions of the three independent Python exercises; their stated tests are consistent with the verified mathematics. Root/writer reports those completed exercises passed.
+
+## Verification limits
+
+This is a source, mathematics, terminology, prerequisite and exercise-design audit. It does not claim a fresh browser/Pyodide run, rendered-page visual QA, or optional AI-feedback test. Root owns final integration and any rendering checks. No publication, git mutation, course-file edit, or expansion of scope was performed.
+
+## Resolution check and final verdict — 2026-09-25
+
+Re-read the changed passages in the current course file after root applied the audit corrections. **All required findings above are resolved.**
+
+- Constrained stationarity is now explicitly defined immediately after the boxed Lagrange equations, including its distinction from `∇f=0`.
+- The first Lagrange solve includes `λ≠0`, elimination to `y=2x`, and substitution to `5x²=1`.
+- Cauchy–Schwarz is stated and explained locally; the unsupported attribution to the current week 4 text is removed.
+- The numerical-results paragraph says the residuals check the equality and Lagrange equations, gives no distance-to-minimum guarantee, and identifies the farthest stationary circle point as a counterexample.
+- Unit tangent is defined as a tangent vector of length 1 at its first appearance.
+- The tangent-Hessian paragraph states a sufficient test for a strict local minimum and quantifies negativity over all nonzero tangents for the corresponding strict maximum test.
+- “Minimumspunktet uten bibetingelser” replaces the incorrect/awkward “minimatoren” wording.
+- Regneoppgave 6 explicitly compares its lower bound with the exact minimum from 12.3, so the sharpness question now requires valid reasoning.
+- Python exercise 1 correctly says its tests check the normal's components.
+
+**Final verdict: approved for content, mathematical correctness, definition order, and alignment of examples with exercises. No remaining required source-content corrections from this audit.** Main-loop Python and the separate coding section remain within the confirmed user scope. No additional tests or scope expansion were needed for these prose-only corrections. Final render/browser checks remain with root; this content approval does not claim those checks were performed here.

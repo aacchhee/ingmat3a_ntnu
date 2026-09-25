@@ -40,6 +40,16 @@ bruker vi andrederiverte til å velge bedre steg. [Uke 11](uke11.qmd)
 og [uke 12](uke12.qmd) handler om hvordan begrensninger endrer både
 søket og begrunnelsen for at et svar er optimalt.
 
+### Læringsmål
+
+Etter denne uka skal du kunne
+
+- formulere en målfunksjon og et tillatt område, og skille minimumspunkt fra minimumsverdi,
+- bruke gradient og Hessian til å undersøke et kritisk punkt,
+- skille infimum fra minimum og bruke ekstremalverdisetningen til å vise at ekstremalverdier finnes,
+- undersøke konveksitet og forklare når et lokalt minimum også er globalt,
+- bruke `minimize` i SciPy og kontrollere punkt, funksjonsverdi og gradient i svaret.
+
 ## 8.1 Modell, valg og tillatt område
 
 <div id="uke8-modell"></div>

@@ -10,74 +10,76 @@
 
 <div id="uke9-start"></div>
 
-### Fra spredte prøver til en nedgående retning
+### Fra prøver til en søkemetode
 
-Vi vil minimere en funksjon $f(x,y)$ når vi kan beregne verdien i et punkt.
-Noen ganger kjenner vi også de deriverte, andre ganger er hver beregning
-bare en måling. [I uke 6](uke6.qmd#uke6-retning) var målet et lineært
-system, og den kvadratiske energien hadde gradient $Ax-b$. Nå beholder vi
-ideen om **retning og steglengde**, men funksjonen er ikke kvadratisk og
-kan ha flere minimumspunkter. Fra [uke 8](uke8.qmd#uke8-lokalt) tar vi med
-skillet mellom lokale og globale påstander: en liten gradient eller en lav
-verdi i noen prøver beviser ikke at et punkt er best i hele området.
+I [uke 6](uke6.qmd#uke6-retning) fant vi et minimum av en kvadratisk
+energi ved å velge retning og steglengde. I [uke 8](uke8.qmd#uke8-lokalt)
+så vi at et lokalt minimum kan være dårligere enn et globalt. Nå skal
+vi faktisk **lete** i en funksjon som har flere daler. Vi sammenligner
+et endelig utvalg av prøver, et kompassøk som tilpasser prøvene, og
+gradientmetoden som bruker deriverte.
 
-Vi bruker gjennom hele uken funksjonen
+Vi bruker hele tiden
 
 $$f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2.$$
 
-Den kan evalueres uten deriverte. Fordi den er en sum av kvadrater, er
-$f\geq0$; punktet $(3,2)$ gir $f(3,2)=0$ og er derfor et **globalt**
-minimumspunkt. Algoritmene får ikke dette punktet oppgitt. De må lete.
-Resultatet av en endelig datakjøring er i seg selv bare evidens, mens
-kvadratargumentet gir et bevis i akkurat dette eksemplet. Vi starter med
-uavhengige prøver på et endelig utvalg, lar deretter neste prøver avhenge
-av det beste punktet, og bruker til slutt den deriverte til å velge retning.
-Slik ser vi hva ekstra informasjon om $f$ faktisk kjøper oss. Alle tre
-metodene må bestemme når de skal slutte; den avgjørelsen er forskjellig
-fra et matematisk sertifikat for et minimum.
+En **funksjonsevaluering** betyr at vi beregner $f$ i ett punkt.
+En **iterasjon** er én runde som kan oppdatere gjeldende punkt.
+I kodeeksemplene tar `f9(z)` inn vektoren `z = [x, y]` og gir
+funksjonsverdien; `grad9(z)` gir de to partiellderiverte. Alle forsøk
+kan kjøres i teksten. De bruker samme funksjon, slik at forskjellene
+kommer fra valg av søkemetode og steg.
 
-En **iterasjon** er én oppdatering fra gjeldende punkt $z_k$ til et nytt
-punkt. Mange iterative metoder kan skrives $z_{k+1}=z_k+\alpha_k p_k$:
-$p_k$ er en **søkeretning**, og den positive faktoren $\alpha_k$ styrer
-**steglengden** $\alpha_k\|p_k\|$. For kompassøk er $\alpha_k=\Delta$ og
-$p_k$ en av fire koordinatretninger; i gradientmetoden avledes retningen
-fra $f$. En **stoppregel** kan gjelde prøvebudsjett, minste steglengde
-eller liten gradient. Ingen slik numerisk terskel er alene et globalt bevis.
-Målet er å kunne velge og kontrollere en metode ut fra tilgjengelig
-informasjon, regne ut en gradientretning og skille observert nedgang fra
-en garanti.
+Et kontrollpunkt er $(3,2)$: begge parentesene i $f$ blir null der,
+og $f(3,2)=0$. Siden kvadrater aldri er negative, beviser dette at
+$(3,2)$ er et globalt minimumspunkt. Metodene får ikke punktet oppgitt
+som start. De endelige prøvene viser bare hvilke verdier de observerte;
+det matematiske argumentet er den globale garantien.
 
-## 9.1 Endelig søk: hvor godt er beste prøve?
+### Læringsmål
+
+Etter denne uken skal du kunne
+
+- sammenligne et endelig gittersøk og tilfeldig sampling med samme antall funksjonsevalueringer,
+- utføre en runde kompassøk og forklare når steget halveres,
+- beregne en gradient og bruke den til å finne en lokal nedgangsretning,
+- skille en nedgangsretning fra et stegs faktiske funksjonsverdi og bruke en enkel Armijo-test,
+- tolke stoppregel, funksjonsverdi og gradientnorm uten å forveksle dem med et globalt bevis.
+
+## 9.1 Endelig søk: beste prøve i et utvalg
 
 <div id="uke9-endelig"></div>
 
-Et **gittersøk** evaluerer funksjonen i et fast nett. Et **tilfeldig søk**
-trekker punkter fra en gitt mengde. Begge undersøker bare et endelig
-antall kandidater. Vi bruker kvadratet $[-4,4]^2$ og et budsjett på
-64 evalueringer for hver metode. En fast tilfeldig startverdi gjør
-forsøket mulig å gjenta. **Forutsi:** Vil punktene på gitteret eller de
-tilfeldige punktene gi lavest observert verdi denne gangen?
+### Eksperiment 1 – 64 prøver på to måter
 
-Oppsettet definerer `f9(z)`, som tar en vektor `z = [x, y]` og returnerer
-funksjonsverdien. Senere bruker vi `grad9(z)`, som returnerer de to
-partiellderiverte i samme rekkefølge. Disse er to ulike slags
-informasjon om det samme målet.
+Et **gittersøk** prøver alle kombinasjoner av utvalgte koordinater.
+Åtte verdier for $x$ og åtte for $y$ gir $8^2=64$ punkter i kvadratet
+$[-4,4]^2$. Ved **tilfeldig sampling** trekker vi i stedet 64
+uavhengige punkter i det samme kvadratet. Hvert punkt trekkes uavhengig av de tidligere punktene, med jevn
+fordeling over kvadratet.
+`default_rng(42)` fester den tilfeldige startverdien, slik at forsøket
+kan gjentas.
 
 ```{pyodide-python}
 #| label: week9-finite-search
+# Åtte faste koordinater per akse gir 64 gitterpunkter.
 axis = np.linspace(-4, 4, 8)
 u, v = np.meshgrid(axis, axis)
 grid = np.column_stack((u.ravel(), v.ravel()))
+# Samme frø gjør de 64 uavhengige, tilfeldige prøvene reproduserbare.
 rng = np.random.default_rng(42)
 random_points = rng.uniform(-4, 4, size=(64, 2))
+# Evaluer samme målfunksjon én gang i hvert prøvd punkt.
 grid_values = np.array([f9(z) for z in grid])
 random_values = np.array([f9(z) for z in random_points])
+# Rapporter den laveste observerte verdien for hvert utvalg.
 for name, points, values in [('Gitter', grid, grid_values),
                              ('Tilfeldig', random_points, random_values)]:
     i = np.argmin(values)
     print(f'{name}: {len(values)} prøver; beste punkt {points[i].round(3)}, '
           f'f = {values[i]:.3f}')
 
+# Marker alle prøvene og det kjente nullpunktet i samme plan.
 fig, ax = plt.subplots(figsize=(6, 5))
 ax.scatter(grid[:, 0], grid[:, 1], s=22, label='gitter')
 ax.scatter(random_points[:, 0], random_points[:, 1], s=12,
@@ -87,32 +89,36 @@ ax.set(xlim=(-4.2, 4.2), ylim=(-4.2, 4.2), xlabel='x', ylabel='y')
 ax.set_aspect('equal'); ax.legend(); plt.show()
 ```
 
-Her gir gitteret omtrent $2{,}710$ ved $(2{,}857,1{,}714)$, mens det
-tilfeldige utvalget gir omtrent $0{,}094$ ved $(-3{,}818,-3{,}280)$.
-Dette er én realisering; et annet frø kan endre rekkefølgen. Ingen av
-disse 64-punktslistene forteller hva funksjonen gjør **mellom** punktene.
-Selv om et utvalg skulle treffe $f=0$, er det sum-av-kvadrater-argumentet,
-og ikke søkerutinen, som viser at ingen lavere verdi finnes.
+Gitteret finner omtrent $2{,}710$ ved $(2{,}857,1{,}714)$.
+Det tilfeldige utvalget finner omtrent $0{,}094$ ved
+$(-3{,}818,-3{,}280)$. Stjernen viser det kjente punktet $(3,2)$;
+den er en referanse i figuren, ikke en av metodens prøver.
+Denne gangen får tilfeldige prøver lavere verdi, men et annet frø
+kan endre rekkefølgen. Ingen av utvalgene undersøker alle punktene
+**mellom** prøvene. Selv om vi ser en verdi nær null, er det bare
+sum-av-kvadrater-argumentet i 9.0 som kan utelukke lavere verdier.
 
-**Overføring:** Hvis én funksjonsevaluering tok et minutt, hvordan ville
-du bruke de neste fire evalueringene rundt det beste punktet?
+### Prøvebudsjett og dimensjon
+
+Med $m$ punkter langs hver av $d$ koordinater bruker et fullt gitter
+$m^d$ evalueringer. For $m=8$ øker tallet fra $64$ i to dimensjoner
+til $8^6=262144$ i seks dimensjoner. Tilfeldig sampling kan holdes
+til et gitt budsjett, men gir heller ingen sikkerhet for å treffe et
+lite område med lav verdi. Vi kan bruke tidligere målinger til å velge
+hvor vi prøver neste gang.
 
 <details class="reading-step">
-<summary>Gå i dybden: dimensjon og prøvetall</summary>
+<summary>Gå i dybden: tilfeldig vandring med aksepterte forslag</summary>
 
-Med åtte verdier i hver av $d$ koordinater trenger et fullt gitter
-$8^d$ funksjonsverdier. Allerede for $d=6$ er det $262144$ prøver.
-Tilfeldige punkter slipper det faste produktet, men gir heller ingen
-generell garanti for å treffe et lite område med gode verdier.
-Ved en **tilfeldig vandring for minimering** trekkes derimot neste
-forslag *relativt til det gjeldende, aksepterte punktet*. Velg start,
-steglengde og antall prøver; trekk en tilfeldig retning, evaluer et
-forslag, og behold det bare ved forbedring. Hvis forslaget forkastes,
-blir vi stående og trekker en ny retning. Dette skiller metoden fra
-tilfeldig søk med uavhengige punkter i hele kvadratet.
+En **tilfeldig vandring** velger neste forslag relativt til punktet vi
+har beholdt. Vi trekker en tilfeldig retning med vektorlengde 1,
+prøver et steg på 0,5 og beholder forslaget bare når verdien synker.
+Ved avslag blir vi stående og trekker en ny retning. Dermed er dette
+en annen prosess enn de uavhengige prøvene over.
 
 ```{pyodide-python}
 #| label: week9-random-walk-extension
+# Trekk én ny retning om gangen; behold bare forbedringer.
 walk_rng = np.random.default_rng(7)
 walk = np.array([0., 0.])
 for trial_number in range(20):
@@ -124,7 +130,7 @@ for trial_number in range(20):
 print(f'Vandring etter 20 prøver: {walk.round(3)}, f={f9(walk):.3f}')
 ```
 
-Også her gir en begrenset prøvekvote ingen global garanti.
+Et endelig antall forsøk gir fortsatt ikke et globalt bevis.
 
 </details>
 
@@ -132,32 +138,59 @@ Også her gir en begrenset prøvekvote ingen global garanti.
 
 <div id="uke9-kompass"></div>
 
-Vi begynner nå i $z_0=(0,0)$, med steglengde $\Delta=1$. Et
-**kompassøk** undersøker fire koordinatretninger rundt det gjeldende
-punktet: $z\pm\Delta(1,0)$ og $z\pm\Delta(0,1)$. Er en prøve bedre,
-flytter vi til den beste av de fire; ellers halverer vi $\Delta$.
-**Forutsi første flytting:** Hvilket av $(1,0)$, $(-1,0)$, $(0,1)$ og
-$(0,-1)$ tror du har minst verdi? Vi teller funksjonsevalueringene;
-en ny runde bruker fire nye prøver.
+### Eksperiment 2 – undersøk fire naboer
+
+Vi starter i $z_0=(0,0)$ med stegstørrelse $\Delta=1$.
+Et **kompassøk** evaluerer de fire naboene
+$z+\Delta(1,0)$, $z-\Delta(1,0)$, $z+\Delta(0,1)$ og
+$z-\Delta(0,1)$. Finner det en lavere verdi, flytter det til den
+beste av de fire. Ellers beholder det punktet og halverer $\Delta$.
+En slik undersøkelse av fire naboer er én **prøverunde**. Vi stopper
+når $\Delta<1/128$ eller etter 100 runder.
+
+I første runde er startverdien $f(0,0)=170$:
+
+| Prøve i oppgitt rekkefølge | $(1,0)$ | $(-1,0)$ | $(0,1)$ | $(0,-1)$ |
+|:--|--:|--:|--:|--:|
+| Funksjonsverdi | 136 | 164 | 136 | 180 |
+
+Første og tredje kandidat deler laveste verdi. Når det er likt,
+velger `argmin` den første, altså $(1,0)$. Oppdateringsregelen er:
+
+1. Beregn de fire naboverdiene; tell fire evalueringer.
+2. Flytt til beste nabo hvis verdien er lavere enn nåværende verdi.
+3. Hvis ingen er bedre, halver $\Delta$ uten å flytte.
+4. Gjenta til en av stoppreglene slår inn.
+
+**En runde uten forbedring.** Når vi senere står i $(3,2)$ med
+$\Delta=1$, er den nåværende verdien 0. De fire naboverdiene er
+$50$, $26$, $26$ og $10$ i samme rekkefølge som over. Ingen er
+lavere enn 0, så vi beholder $(3,2)$ og halverer $\Delta$ til $1/2$.
+Dette er en ny prøverunde, men ingen flytting.
 
 ```{pyodide-python}
 #| label: week9-compass
+# Rekkefølgen avgjør hvilken kandidat som vinner ved lik verdi.
 directions = np.array([[1., 0.], [-1., 0.], [0., 1.], [0., -1.]])
 z = np.array([0., 0.])
 step = 1.
 current = f9(z)
 path = [z.copy()]
 polls = 0
+# Stopp ved valgt oppløsning eller et øvre tak på antall runder.
 while step >= 1/128 and polls < 100:
+    # Beregn alle fire prøver før vi bestemmer oss.
     trials = z + step * directions
     values = np.array([f9(t) for t in trials])
     polls += 1
     best = np.argmin(values)
     if values[best] < current - 1e-12:
+        # Bare aksepterte punkter føres opp i banen.
         z = trials[best].copy()
         current = values[best]
         path.append(z.copy())
     else:
+        # Ingen forbedring på denne skalaen: bli stående og prøv mindre steg.
         step /= 2
 path = np.array(path)
 print('Første prøveverdier:', np.array([f9(t) for t in directions]))
@@ -166,82 +199,137 @@ print(f'Sluttpunkt {z}, f = {f9(z):.6g}; '
 
 xx, yy = np.meshgrid(np.linspace(-4, 4, 180), np.linspace(-4, 4, 180))
 zz = (xx*xx + yy - 11)**2 + (xx + yy*yy - 7)**2
-fig, ax = plt.subplots(figsize=(6, 5))
-ax.contour(xx, yy, zz, levels=[1, 5, 20, 50, 100, 200], colors='#aab2bd')
-ax.plot(path[:, 0], path[:, 1], 'o-', color='#bb4a37', label='kompass')
-ax.plot(3, 2, 'k*', markersize=11, label='kjent nullpunkt')
-ax.set(xlim=(-4, 4), ylim=(-4, 4), xlabel='x', ylabel='y')
-ax.set_aspect('equal'); ax.legend(); plt.show()
+# Øverst: aksepterte punkt på nivåkurvene. Nederst: deres verdier.
+fig, (ax_map, ax_value) = plt.subplots(2, 1, figsize=(6, 9),
+                                       constrained_layout=True)
+ax_map.contour(xx, yy, zz, levels=[1, 5, 20, 50, 100, 200],
+               colors='#aab2bd')
+ax_map.plot(path[:, 0], path[:, 1], 'o-', color='#bb4a37',
+            markersize=4, label='kompass')
+ax_map.plot(3, 2, 'k*', markersize=11, label='kjent nullpunkt')
+ax_map.set(xlim=(-4, 4), ylim=(-4, 4), xlabel='x', ylabel='y',
+           title='Aksepterte punkt på nivåkurvene')
+ax_map.set_aspect('equal')
+ax_map.legend()
+# Verdiplottet teller bare flyttingene; halveringer gir ikke nye punkter.
+ax_value.plot(np.arange(len(path)), [f9(t) for t in path], 'o-',
+              color='#bb4a37', markersize=4)
+ax_value.set(xlabel='Akseptert flytting', ylabel='f',
+             title='Funksjonsverdi langs kompassbanen')
+plt.show()
 ```
 
-Fra null er prøveverdiene $136$, $164$, $136$ og $180$ i rekkefølgen
-over, mens startverdien er $170$. Første og tredje prøve er like gode;
-`argmin` velger den første, så metoden flytter til $(1,0)$.
-Med denne rekkefølgen og stoppregelen ender den i $(3,2)$, med $f=0$,
-etter 53 funksjonsevalueringer. Når ingen av fire prøver forbedrer
-verdien, betyr det **ikke** at ingen andre punkter gjør det. Metoden
-undersøker da en mindre skala. Å stoppe når $\Delta<1/128$ er en
-praktisk oppløsningsregel, ikke en global garanti. Fra et annet
-startpunkt kan banen ende nær et annet minimum.
-
-**Overføring:** Hva vil skje med antall prøver og posisjonens presisjon
-hvis vi halverer den minste tillatte $\Delta$?
+Banens siste punkt er $(3,2)$ med $f=0$. Kjøringen bruker 53
+evalueringer når startpunktet regnes med. Figuren viser bare **aksepterte
+punkter**: en halvering uten flytting lager ikke et nytt punkt på banen.
+Det nederste panelet viser funksjonsverdien ved hver aksepterte flytting.
+Her gir summen av kvadrater beviset på at sluttpunktet er globalt;
+kompassøket alene gir ikke det beviset. Hvis fire prøver ikke gir
+forbedring på én skala, kan andre punkter fremdeles være bedre.
+Stoppgrensen for $\Delta$ er derfor en regel for oppløsning, ikke
+for optimalitet.
 
 <details class="reading-step">
-<summary>Gå i dybden: variasjoner av et kompassøk</summary>
+<summary>Gå i dybden: valg som gir andre baner</summary>
 
-Her sammenligner vi alle fire kandidater før vi flytter. En variant
-flytter straks den første forbedringen finnes og bruker dermed noen
-ganger færre evalueringer, men får en annen bane. Et annet valg er å
-prøve diagonale retninger i tillegg. Å mislykkes i et endelig sett
-retninger ved én steglengde er fremdeles ikke et bevis for globalt
-minimum. I figuren over ser du hvilke punkter som ble akseptert; en
-halvering uten flytting gir ikke et nytt punkt på banen.
+Vi evaluerer alle fire naboer før vi flytter. En variant flytter til
+første forbedring og kan bruke færre evalueringer, men følger en annen
+bane. Vi kunne også prøve diagonale retninger. Ingen av variantene
+utelukker at en lavere verdi finnes mellom prøvene eller i en annen
+dal. Fra et annet startpunkt kan samme regel ende et annet sted.
 
 </details>
 
-## 9.3 Gradientmetoden: retning er ikke steg
+## 9.3 Gradientmetoden: velg en retning
 
 <div id="uke9-gradient"></div>
 
-Nå utnytter vi at vi også kan derivere $f$. I [uke 6](uke6.qmd#uke6-retning)
-var $-\nabla\phi=b-Ax$ residualen, og for SPD-kvadratikken fant vi
-steglengden med en lukket formel. For vår ikke-kvadratiske funksjon
-setter vi $a=x^2+y-11$ og $b=x+y^2-7$. Kjerneregelen gir
+### Bruk helningen akkurat der vi står
 
-$$g(z)=\nabla f(x,y)=\begin{bmatrix}4xa+2b\\2a+4yb\end{bmatrix},\qquad
-p_k=-g(z_k),\qquad z_{k+1}=z_k+\alpha_k p_k.$$
+Når vi kan derivere målfunksjonen, trenger vi ikke prøve alle
+retningene for å finne en som peker lokalt nedover. Fra
+[uke 8](uke8.qmd#uke8-gradient) kjenner vi **gradienten** $\nabla f$,
+vektoren av partiellderiverte. Langs en valgt retning $p$ er den
+**retningsderiverte** ved startpunktet $\nabla f(z)^Tp$.
+Er dette tallet negativt, synker $f$ langs tilstrekkelig korte,
+positive steg.
 
-Gradienten gir den lokale endringen: langs en retning $p$ er den
-deriverte i starten $\nabla f(z)^Tp$. Når dette skalarproduktet er
-negativt, synker $f$ for tilstrekkelig små positive steg. For $p=-g$
-er det $-\|g\|_2^2<0$ så lenge $g\ne0$. Ved $z_0=(0,0)$ er
-$g=(-14,-22)$ og $p=(14,22)$, med starthelning $-680$.
-Retningen sier likevel ikke hvor langt vi kan gå: funksjonen kan
-stige igjen langs samme linje. I den kvadratiske modellen fra uke 6
-kunne vi beregne det beste steget eksakt; her må vi prøve verdier.
+For vår funksjon setter vi $a=x^2+y-11$ og $b=x+y^2-7$.
+Kjerneregelen gir
 
-Et **Armijo-søk** starter her med $\alpha=1$ og halverer til den
-faktiske reduksjonen er stor nok sammenlignet med starthelningen:
+$$\nabla f(x,y)=\begin{pmatrix}4xa+2b\\2a+4yb\end{pmatrix}.$$
 
-$$f(z+\alpha p)\le f(z)+10^{-4}\alpha\,g(z)^Tp.
-\qquad (p=-g(z))$$
+Velger vi $p=-\nabla f(z)$, blir starthelningen
+$\nabla f(z)^Tp=-\|\nabla f(z)\|_2^2<0$ så lenge gradienten ikke er
+null. **Negativ gradient er altså en lokal nedgangsretning.**
+Metoden oppdaterer $z_{k+1}=z_k+\alpha_kp_k$ med en positiv faktor
+$\alpha_k$. Produktet $\alpha_k\|p_k\|_2$ er lengden på steget.
 
-Høyresiden er da $f(z)-10^{-4}\alpha\|g(z)\|_2^2$. Vi krever altså
-en liten, men ekte reduksjon; det er ingen jakt på det aller beste
-steget. Koden under stopper dessuten ved gradientnorm under $10^{-6}$
-eller et gitt iterasjonsbudsjett. En liten gradient er bare en
-stasjonaritetskontroll, slik vi så i uke 8. **Forutsi:** Vil en fast
-faktor $0{,}1$ alltid være bedre enn $0{,}02$ fordi den tar lengre steg?
-På et nivåkurvekart er gradienten vinkelrett på kurven: den deriverte
-langs en tangent til samme nivå er null. Negativ gradient peker lokalt
-mot lavere nivåer, mens neste retning beregnes på nytt etter hvert steg.
-I figuren viser vi banene for det lille faste steget og Armijo-søket
-over verdikurvene, med verdi per iterasjon under. Det store faste
-steget tegnes bare i verdiplottet fordi banen raskt forlater kartet.
+### Et første steg med tall
+
+I origo er $a=-11$ og $b=-7$. Dermed er
+$\nabla f(0,0)=(-14,-22)^T$, $p=(14,22)^T$ og starthelningen
+$(-14,-22)\cdot(14,22)=-680$. Setter vi $\alpha=1/100$,
+får vi $z_1=(0{,}14,0{,}22)$. Regner vi inn i **selve** funksjonen,
+finner vi $f(z_1)\approx162{,}18<170$.
+Hvis vi derimot velger $\alpha=1$, havner vi i $(14,22)$ og får
+en svært høy funksjonsverdi. Retningen forteller hva som skjer for
+*korte* steg, ikke at ethvert steg i den retningen virker.
+
+I [uke 6](uke6.qmd#uke6-retning) kunne vi beregne en eksakt steglengde
+for en SPD-kvadratisk energi ved hjelp av residualen $b-Ax$.
+Denne funksjonen er ikke kvadratisk. Vi må prøve den faktiske
+funksjonsverdien før vi godtar et steg.
+
+## 9.4 Linjesøk: velg og kontroller steget
+
+<div id="uke9-linjesok"></div>
+
+Et **linjesøk** holder punktet $z$ og retningen $p$ fast, og prøver
+stegfaktorer $\alpha>0$ i $f(z+\alpha p)$. Først bruker vi en test
+som godtar tilstrekkelig nedgang. Deretter lar vi en numerisk rutine
+søke etter en lav verdi på ett avgrenset intervall.
+
+### Eksperiment 3 – fast faktor eller halvering?
+
+Med **fast faktor** bruker vi samme $\alpha$ for alle gradientsteg.
+Et **Armijo-søk** starter her med $\alpha=1$ og halverer til
+funksjonsverdien synker tilstrekkelig mye:
+
+$$f(z+\alpha p)\le f(z)+10^{-4}\alpha\nabla f(z)^Tp,
+\qquad p=-\nabla f(z).$$
+
+Siden skalarproduktet er negativt, krever høyresiden en reell,
+men beskjeden nedgang. Testen søker ikke etter den beste steglengden.
+Gradientmetoden med Armijo-steg stopper når $\|\nabla f\|_2<10^{-6}$ eller når
+iterasjonsbudsjettet er brukt. **Gradientnormen** er lengden på
+gradienten; liten norm er en stasjonaritetskontroll, ikke et bevis
+for globalt minimum.
+
+**Første linjesøk med tall.** Fra origo er $f(z)=170$ og
+$\nabla f(z)^Tp=-680$. For $\alpha=1/8$ er høyresiden
+$170-10^{-4}\cdot(1/8)\cdot680=169.9915$.
+Halveringen prøver følgende faktorer i rekkefølge:
+
+| $\alpha$ | Faktisk $f(z+\alpha p)$ | Høyresiden i testen | Godtas? |
+|:--|--:|--:|:--|
+| $1$ | $283930$ | $169.932$ | Nei |
+| $1/2$ | $17042$ | $169.966$ | Nei |
+| $1/4$ | $761.125$ | $169.983$ | Nei |
+| $1/8$ | $32.2578125$ | $169.9915$ | Ja |
+
+Vi velger altså $\alpha=1/8$ for **dette** gradientsteget. Først
+etter flyttingen beregner vi en ny gradient og starter et nytt linjesøk.
+
+I figuren er det øverste panelet et **nivåkurvekart**: hver kurve
+forbinder punkter med samme funksjonsverdi. De tegnede banene viser
+aksepterte punkter for $\alpha=0{,}02$ og halvering. Det nederste
+panelet viser verdien per iterasjon på logaritmisk skala, også for
+$\alpha=0{,}1$. Den siste banen skyter fort ut av kartets område.
 
 ```{pyodide-python}
 #| label: week9-gradient-steps
+# Sammenlign to faste faktorer med samme start og iterasjonsbudsjett.
 def fixed_steps(rate, n=40):
     z = np.array([0., 0.])
     history = [f9(z)]
@@ -254,6 +342,7 @@ def fixed_steps(rate, n=40):
         path.append(z.copy())
     return z, np.array(history), np.array(path)
 
+# Velg faktoren på nytt i hver iterasjon ved Armijo-halvering.
 def shrinking_steps(n=60):
     z = np.array([0., 0.])
     history = [f9(z)]
@@ -263,6 +352,7 @@ def shrinking_steps(n=60):
         if np.linalg.norm(g) < 1e-6:
             break
         rate = 1.
+        # Krev at det faktiske funksjonsfallet følger starthelningen.
         while f9(z-rate*g) > f9(z) - 1e-4*rate*(g @ g):
             rate /= 2
         z -= rate*g
@@ -284,6 +374,7 @@ curves['halvering'] = values
 paths['halvering'] = points
 print(f'Halvering: punkt {end.round(6)}, f={f9(end):.3g}, '
       f'||gradient||={np.linalg.norm(grad9(end)):.3g}')
+# Panelene står under hverandre så bane og verdi kan sammenlignes.
 fig, (ax_map, ax) = plt.subplots(2, 1, figsize=(6.5, 9))
 gx, gy = np.meshgrid(np.linspace(-1, 4, 160), np.linspace(-1, 4, 160))
 gz = (gx*gx + gy - 11)**2 + (gx + gy*gy - 7)**2
@@ -309,43 +400,32 @@ ax.legend()
 fig.tight_layout(); plt.show()
 ```
 
-Med $\alpha=0{,}02$ er $f$ etter 40 steg omtrent $1{,}46\cdot10^{-15}$.
-Med $\alpha=0{,}1$ vokser funksjonen raskt; vi stopper tegningen når
-stegene vokser så mye at sikkerhetsgrensen i koden bryter kjøringen.
-Halvering finner omtrent $(3,2)$, med
-$f<10^{-14}$ og gradientnorm under $10^{-6}$, fra samme startpunkt.
-Øverst følger de to tegnede banene de samme aksepterte punktene som
-verdiplottet under teller. Starten er en svart firkant; de fargede
-endepunktene ligger praktisk talt på den svarte stjernen. Banen med
-$\alpha=0{,}1$ er utelatt fra kartet, ikke konvergent: verdiplottet
-viser hvorfor et stort steg kan skyte langt forbi lave nivåer.
-Retningen er lokalt nedgående når gradienten er ulik null, men en
-vilkårlig lang bevegelse kan gå opp igjen. Er nedgangen i Armijo-testen
-for liten, halveres $\alpha$ og vi prøver igjen. Her arbeider vi med en
-glatt funksjon uten sidebetingelser. Gradient lik null kan likevel bety et
-sadelpunkt. Vi sammenholder derfor gradientnorm, funksjonsverdi og
-eventuelle matematiske garantier, ikke bare at koden stoppet.
+Fra samme startpunkt gir $\alpha=0{,}02$ en verdi rundt
+$1{,}46\cdot10^{-15}$ etter 40 steg. Med $\alpha=0{,}1$ vokser
+verdiene raskt, og koden stopper tegningen ved en sikkerhetsgrense.
+Halveringen finner et punkt nær $(3,2)$ med $f<10^{-14}$ og
+gradientnorm under $10^{-6}$. Den nedre grafen teller også steg
+som ikke får plass på kartet. Som i 9.2 er det sum-av-kvadrater-beviset,
+ikke den lille gradientnormen, som bekrefter at verdi 0 er globalt best.
 
-**Numerisk linjesøk med SciPy.** I uke 6 kunne vi beregne den beste
-steglengden for en SPD-kvadratisk funksjon fra indreprodukter. Her er
-funksjonen langs $-\nabla f(z_0)$ ikke en parabel. Etter at startpunkt
-og retning er låst, lager `lambda alpha: f9(start + alpha*direction)`
-en funksjon av **ett tall**. `minimize_scalar` (importert i oppsettet)
-søker langs denne linjen; `bounds=(0., .2)` og `method='bounded'`
-avgrenser forsøket til steglengder mellom 0 og 0,2. Det er et annet
-valg enn Armijo: her brukes evalueringer for å finne en liten verdi
-langs én fast linje, ikke bare den første tilstrekkelige nedgangen.
-`options={'xatol': 1e-10}` setter en absolutt stopptoleranse for den
-valgte $\alpha$, ikke en garantert feil i funksjonsverdien eller et
-globalt optimalitetsbevis.
+### Én linje er ikke hele planet
+
+Med fast $z$ og $p$ undersøker vi funksjonen
+$h(\alpha)=f(z+\alpha p)$ av ett tall.
+Et avgrenset numerisk søk kan prøve flere $\alpha$-verdier langs denne
+linjen. Det er et annet valg enn Armijo-halvering, som stopper så snart
+tilstrekkelig nedgang er funnet. I koden søker `minimize_scalar`
+i intervallet $0\le\alpha\le0{,}2$ fra origo langs negativ gradient.
 
 ```{pyodide-python}
 #| label: week9-scalar-line-search
+# Frys startpunkt og retning; bare stegfaktoren varierer.
 start = np.array([0., 0.])
 direction = -grad9(start)
 line = minimize_scalar(lambda alpha: f9(start + alpha*direction),
                        bounds=(0., .2), method='bounded',
                        options={'xatol': 1e-10})
+# Kontroller både verdien og hele gradienten i det valgte punktet.
 line_point = start + line.x*direction
 line_gradient = grad9(line_point)
 print(f'α={line.x:.6f}, punkt={line_point.round(6)}, '
@@ -355,140 +435,247 @@ print(f'||gradient||={np.linalg.norm(line_gradient):.3f}, '
       f'derivert langs linjen={line_gradient @ direction:.3g}')
 ```
 
-`line.x` er den valgte steglengden, `line.nfev` antall evalueringer,
-og `line.success` angir om søkets egne stoppvilkår ble oppfylt.
-Vi får omtrent $\alpha=0{,}127336$ og $f=32{,}126$, lavere enn
-startverdien 170. Den fulle gradientnormen er likevel omtrent $36{,}2$:
-punktet er ikke stasjonært i planet. `bounded` gir en **lokal numerisk
-minimumskandidat** på det valgte intervallet; `success=True` sertifiserer
-ikke et globalt minimum, verken der eller i hele planet.
+Kallet gir omtrent $\alpha=0{,}127336$ og $f=32{,}126$, mot 170
+ved start. Selv om den deriverte **langs linjen** er nær null, er
+gradientnormen i planet rundt $36{,}2$. Ett linjesøk løser derfor
+ikke hele todimensjonale problemet; neste iterasjon må beregne en ny
+retning. `success=True` angir bare at rutinen oppfylte sine egne
+stoppvilkår. Verdien er en numerisk minimumskandidat på det valgte
+intervallet, ikke et bevis på den beste verdien langs hele linjen.
 
-**SciPy-huskelapp for ett linjesøk.**
+<div id="uke9-scipy"></div>
 
-| Del | Bruk her |
+<details>
+<summary>SciPy-oppslag: ett avgrenset linjesøk</summary>
+
+| Uttrykk | Betydning |
 |:--|:--|
-| Import | `from scipy.optimize import minimize_scalar` (gjort i oppsettet). |
-| Mål og intervall | `minimize_scalar(h, bounds=(a,b), method='bounded')`, der `h(alpha)` returnerer ett tall. |
-| Stoppvalg | `options={'xatol': 1e-10}` er en absolutt toleranse for $\alpha$; ingen garanti for feil i funksjonsverdien eller global optimalitet. |
-| Resultat | `line.x` er $\alpha$, `line.fun` er `h(alpha)`, `line.nfev` teller funksjonskall, `line.success` er rutines stoppstatus. |
+| `minimize_scalar(h, bounds=(0., .2), method="bounded")` | Søk numerisk på valgt intervall, der `h(alpha)` returnerer ett tall. |
+| `options={"xatol": 1e-10}` | Absolutt stopptoleranse for stegfaktoren $\alpha$, ikke en garantert feil i $f$. |
+| `line.x`, `line.fun`, `line.nfev` | Valgt faktor, verdi langs linjen og antall evalueringer. |
+| `line.success` | Om rutinen nådde sitt stoppvilkår, ikke et globalt optimalitetsbevis. |
 
-Beregn deretter $z+\alpha p$ og kontroller den **fulle** gradienten:
-en liten derivert *langs linjen* er ikke det samme som $\nabla f=0$.
-
-**Overføring:** Hvis $f$ bare var tilgjengelig som laboratoriemålinger,
-hvilken del av denne metoden ville mangle? Hva fra 9.1–9.2 kan fortsatt
-utføres?
-
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor halvering og linjesøk er forskjellige</summary>
-
-Skriv $p=-\nabla f(z)$ og $g(\alpha)=f(z+\alpha p)$.
-Derivasjon langs linjen gir $g'(0)=\nabla f(z)^Tp=-\|\nabla f(z)\|^2$.
-Til forskjell fra SPD-tilfellet er $g$ her ikke generelt en parabel,
-så uttrykket $(r^Tr)/(r^TAr)$ fra uke 6 kan ikke brukes. Betingelsen
-i `shrinking_steps` er en enkel Armijo-test:
-$f(z+\alpha p)\leq f(z)+10^{-4}\alpha\nabla f(z)^Tp$.
-Vi starter med $\alpha=1$ og halverer til testen er oppfylt.
-Ved en glatt funksjon og en nedgående retning finnes tilstrekkelig små
-positive steg som oppfyller testen.
-
-Avgrenset numerisk linjesøk bruker ekstra funksjonsevalueringer for å
-velge én steglengde, mens Armijo-halvering bare prøver å finne et
-tilstrekkelig nedgående steg. Valget av intervall kan utelate bedre steg.
-At den deriverte langs linjen er nær null i forsøket, mens den fulle
-gradientnormen ikke er det, viser forskjellen mellom de to oppgavene.
+Etter kallet kan vi regne ut $z+\alpha p$ og hele gradienten der.
+En liten derivert langs én linje betyr ikke at hele gradienten er null.
 
 </details>
 
-## 9.4 Regneoppgaver
+<details class="reading-step">
+<summary>Gå i dybden: hvorfor halveringen til slutt finner et steg</summary>
+
+Sett $h(\alpha)=f(z+\alpha p)$ med $p=-\nabla f(z)$. Da er
+$h'(0)=\nabla f(z)^Tp=-\|\nabla f(z)\|_2^2<0$ når gradienten
+ikke er null. For en deriverbar funksjon er
+$h(\alpha)=h(0)+\alpha h'(0)+o(\alpha)$ ved små positive $\alpha$.
+Restleddet $o(\alpha)$ betyr at restleddet delt på $\alpha$ går mot null.
+Siden Armijo bare krever $10^{-4}$ av den første lineære nedgangen,
+vil tilstrekkelig små positive steg oppfylle testen. En stor fast
+faktor har ingen tilsvarende garanti. Uten en nedgangsretning
+($\nabla f(z)^Tp<0$) gjelder ikke dette argumentet.
+
+</details>
+
+## 9.5 Regneoppgaver
 
 <div id="uke9-oppgaver"></div>
 
-Regn uten å kjøre kode først. Skriv brøker eller hele tall i feltene;
-for vektorer skriver du én komponent i hver svarboks.
+Oppgave 1 følger gittersøket, 2–3 kompassøket, og 4–6 gradient og
+stegvalg. Regn uten kode først. Skriv eksakte hele tall eller brøker;
+vektorer har én komponent i hver boks. Begrunnelser skriver du i
+egne notater.
 
-::: {#week9-model-context .math-exercise-context}
-
-Gjennom uken er $f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2$ på $\mathbb R^2$.
-Et gitter med $m$ koordinatverdier i hver akse har $m^2$ punkter.
-Kompassøket tester i denne rekkefølgen
-$(x+\Delta,y),(x-\Delta,y),(x,y+\Delta),(x,y-\Delta)$ og velger
-minste funksjonsverdi ved forbedring. Gradientmetoden bruker
-$z_{k+1}=z_k-\alpha\nabla f(z_k)$ med analytisk gradient
-$(4x(x^2+y-11)+2(x+y^2-7),\ 2(x^2+y-11)+4y(x+y^2-7))$.
-En funksjon som er en sum av kvadrater er ikke-negativ.
-
-:::
-
-### Oppgave 1 – prøvetall
+**Oppgave 1 – tell evalueringene.**
 
 ```{math-exercise}
 #| label: week9-task-grid-count
-#| caption: Antall punkter på gitteret
+#| caption: Oppgave 1 – tell evalueringene
 #| mode: equivalent
-#| context: week9-model-context
 
-Et gitter har 9 verdier i hver koordinat. Hvor mange funksjonsverdier
-må beregnes? Skriv et heltall.
+Et gitter har 9 verdier i hver av de to koordinatene. Hvor mange
+funksjonsverdier må beregnes?
 
 Antall evalueringer: __[81]
 ```
 
-### Oppgave 2 – første kompassrunde
+**Oppgave 2 – første kompassrunde.**
 
 ```{math-exercise}
 #| label: week9-task-compass-first
-#| caption: Funksjonsverdi etter første flytting
+#| caption: Oppgave 2 – første kompassrunde
 #| mode: equivalent
-#| context: week9-model-context
 
-Start i $(0,0)$ med $\Delta=1$. Finn funksjonsverdien i punktet som
-kompassøket velger etter én runde, når alle fire kandidater undersøkes.
-Skriv et heltall.
+For $f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2$ starter du i $(0,0)$
+med $\Delta=1$. Prøv de fire naboene $(1,0)$, $(-1,0)$,
+$(0,1)$ og $(0,-1)$. Hva er verdien i punktet som velges hvis
+første punkt vinner ved lik verdi?
 
 Valgt funksjonsverdi: __[136]
 ```
 
-### Oppgave 3 – retning og et kort steg
+**Oppgave 3 – halver uten å flytte.**
+
+```{math-exercise}
+#| label: week9-task-compass-shrink
+#| caption: Oppgave 3 – halver uten å flytte
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første koordinat, andre koordinat, ny stegstørrelse
+
+Et kompassøk står i $(3,2)$ med $\Delta=1/2$. Ingen av de fire
+naboene gir lavere verdi. Oppgi punkt og steg etter regelen fra 9.2.
+
+Nytt punkt: $x=$ __[3], $y=$ __[2] &nbsp; Ny $\Delta=$ __[1/4]
+```
+
+**Oppgave 4 – gradient og første steg.**
 
 ```{math-exercise}
 #| label: week9-task-first-gradient-step
-#| caption: Gradientretning og nytt punkt
+#| caption: Oppgave 4 – gradient og første steg
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: første komponent i negativ gradient, andre komponent i negativ gradient, første koordinat i nytt punkt, andre koordinat i nytt punkt
-#| context: week9-model-context
+#| field-labels: negativ gradients første komponent, negativ gradients andre komponent, nytt punkts første koordinat, nytt punkts andre koordinat
 
-Fra $z_0=(0,0)$, finn $-\nabla f(z_0)$ og neste punkt når
-$\alpha=1/100$. Skriv én komponent i hver svarboks.
+For $f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2$ er
+$a=x^2+y-11$ og $b=x+y^2-7$. Gradientens komponenter er
+$4xa+2b$ og $2a+4yb$. Fra $(0,0)$ finner du negativ gradient
+og punktet etter et steg med $\alpha=1/100$.
 
-$-\nabla f(z_0)=$ vec[14,22]
+$-\nabla f(0,0)=$ vec[14,22]
 
 $z_1=$ vec[7/50,11/50]
 ```
 
-### Oppgave 4 – matematisk sertifikat
+**Oppgave 5 – test et steg.**
+
+```{math-exercise}
+#| label: week9-task-armijo
+#| caption: Oppgave 5 – test et steg
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: høyreside i Armijo-testen, steget godtas
+
+Ved et punkt er $f(z)=10$ og $\nabla f(z)^Tp=-20$.
+Vi prøver $\alpha=1/2$ med Armijo-faktor $10^{-4}$ og
+måler $f(z+\alpha p)=9$. Regn ut høyresiden
+$f(z)+10^{-4}\alpha\nabla f(z)^Tp$ som en brøk.
+Skriv **1 for ja, 0 for nei** om steget godtas.
+
+Høyreside: __[9999/1000] &nbsp; Godtas: __[1]
+```
+
+**Oppgave 6 – verdi og nedre grense.**
 
 ```{math-exercise}
 #| label: week9-task-certificate
-#| caption: Verdi og global nedre grense
+#| caption: Oppgave 6 – verdi og nedre grense
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: funksjonsverdi ved nullpunktet, global nedre grense
-#| context: week9-model-context
+#| field-labels: funksjonsverdi ved punktet, global nedre grense
 
-Finn $f(3,2)$ og den største mulige nedre grensen for $f$ på hele planet.
-Skriv to hele tall. Begrunn muntlig hvorfor disse tallene sammen
-viser at $(3,2)$ er globalt minimumspunkt.
+For $f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2$ på hele planet,
+finn $f(3,2)$ og en global nedre grense som oppnås i dette punktet. Begrunn i egne notater
+hvorfor disse to tallene viser at $(3,2)$ er et globalt minimumspunkt.
 
-$f(3,2)=$ __[0]
-
-Nedre grense: __[0]
+$f(3,2)=$ __[0] &nbsp; Nedre grense: __[0]
 ```
 
-I denne uken valgte gradienten en retning, mens funksjonsverdiene
-avgjorde om steget var forsvarlig. I [uke 10](uke10.qmd#uke10-likning)
-bruker vi også Hessianen til å forme retningen etter lokal krumning.
-Vi må fortsatt kontrollere at hele steget faktisk forbedrer målet.
+## 9.6 Python: prøv søkereglene
+
+<div id="uke9-python"></div>
+
+Fullfør én eller to linjer i hver oppgave. Hver celle har egne importer
+og egne funksjonsdefinisjoner og kan kjøres uavhengig. Kontrollene
+vurderer resultatet uten å vise løsningskode.
+
+**Oppgave 1 – finn beste prøvde punkt.** Funksjonen er ferdig gitt;
+bruk de oppgitte punktene, og returner paret `(punkt, verdi)`.
+
+```{py-exercise}
+#| label: week9-python-best-sample
+#| caption: Finn beste punkt i en endelig prøveliste
+#| show-test-hints: false
+import numpy as np
+
+# Hvert innsendt punkt er en vektor med koordinatene x og y.
+def f(z):
+    x, y = z
+    return (x*x + y - 11)**2 + (x + y*y - 7)**2
+
+def best_sample(points):
+    # TODO: Lag en array med f-verdien i hvert punkt.
+    values = np.array([])
+    # TODO: Finn indeksen til laveste verdi.
+    index = 0
+    return points[index], values[index]
+
+## TESTS ##
+assert np.allclose(best_sample(np.array([[0., 0.], [3., 2.]]))[0], [3., 2.])
+assert np.isclose(best_sample(np.array([[0., 0.], [3., 2.]]))[1], 0.)
+assert np.allclose(best_sample(np.array([[0., 0.], [1., 0.]]))[0], [1., 0.])
+assert np.isclose(best_sample(np.array([[0., 0.], [1., 0.]]))[1], 136.)
+```
+
+**Oppgave 2 – én kompassrunde.** Returner den beste naboen dersom
+verdien synker; ellers returner det opprinnelige punktet og halvparten
+av stegstørrelsen. De fire retningene og sammenligningen er gitt.
+
+```{py-exercise}
+#| label: week9-python-compass-round
+#| caption: Fullfør én runde med kompassøk
+#| show-test-hints: false
+import numpy as np
+
+# Denne enklere skålen gjør det lett å kontrollere både flytting og halvering.
+def f(z):
+    return (z[0] - 2)**2 + (z[1] - 1)**2
+
+def compass_round(z, step):
+    directions = np.array([[1., 0.], [-1., 0.], [0., 1.], [0., -1.]])
+    # TODO: Lag de fire naboene ved hjelp av z, step og directions.
+    trials = np.empty((0, 2))
+    values = np.array([f(t) for t in trials])
+    best = np.argmin(values)
+    if values[best] < f(z):
+        return trials[best], step
+    # TODO: Behold z og halver step når ingen er bedre.
+    return z, step
+
+## TESTS ##
+assert np.allclose(compass_round(np.array([0., 0.]), 1.)[0], [1., 0.])
+assert np.isclose(compass_round(np.array([0., 0.]), 1.)[1], 1.)
+assert np.allclose(compass_round(np.array([2., 1.]), .5)[0], [2., 1.])
+assert np.isclose(compass_round(np.array([2., 1.]), .5)[1], .25)
+```
+
+**Oppgave 3 – godta eller halver.** Armijo-testen trenger verdien i
+punktet, verdien i kandidaten og starthelningen langs retningen.
+Returner den oppdaterte stegfaktoren; de andre beregningene er gitt.
+
+```{py-exercise}
+#| label: week9-python-armijo-step
+#| caption: Test én stegfaktor mot Armijo-kravet
+#| show-test-hints: false
+import numpy as np
+
+# Samme test som i 9.4, men med tall gitt direkte som argumenter.
+def accept_or_halve(start_value, candidate_value, slope, alpha):
+    threshold = start_value + 1e-4 * alpha * slope
+    if candidate_value <= threshold:
+        # TODO: Godkjenn stegfaktoren.
+        return None
+    # TODO: Halver stegfaktoren.
+    return None
+
+## TESTS ##
+assert np.isclose(accept_or_halve(10., 9., -20., .5), .5)
+assert np.isclose(accept_or_halve(10., 10., -20., .5), .25)
+assert np.isclose(accept_or_halve(8., 7.999, -10., 1.), 1.)
+assert np.isclose(accept_or_halve(8., 8.1, -10., 1.), .5)
+```
+
+Neste uke bruker vi [Hessianen](uke10.qmd#uke10-likning) til å
+forme retningen etter lokal krumning. Vi må fortsatt undersøke
+funksjonsverdien før et helt steg godtas.
 
 :::

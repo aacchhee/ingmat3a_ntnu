@@ -1,0 +1,133 @@
+Final status: APPROVED. Required findings were resolved and rechecked.
+Reviewer: Astra XHIGH, separate reviewer for each week.
+
+# Week 11 rewrite — dedicated Astra audit
+
+Audited 2026-09-25. Scope: the whole current `_includes/optimization/uke11.md` and `week11_setup.md`, read against the approved Week 8 model and the Week 11 pre-rewrite version. Week 12 was read only for the transition. No course or project files were edited. No publication was attempted.
+
+Snapshot: `uke11.md` SHA-256 `7c7089f7b7072104e37e0dd282dcf304abaac17a529116cc05fabeda89dda774`; `week11_setup.md` SHA-256 `87896cf0bc1f8bafadfbdef4d5609cd0660aa5f184c5fbc83adc72ad2d099bab`. Line references below apply to that snapshot.
+
+## Verdict
+
+**Mathematically sound, with targeted pedagogical revisions needed before final acceptance.** The concrete resource model, numerical weighted-price proof before general dual notation, and small-versus-large capacity comparison are substantially improved. No incorrect vertex, optimum, exercise answer, duality assertion, sensitivity interval, or SciPy sign was found. The remaining important issue is preservation and teaching depth: standard-form conversions disappeared, complementary slackness is compressed, and several formerly illustrated topics have become bare assertions. These can be repaired with short worked passages, not a longer general exposition.
+
+The five goals are specific, attainable and consistent with the week's main route. The six math exercises and three independent coding exercises satisfy their structural requirements. Natural demonstrations may remain in the main text; moving every Python cell is neither necessary nor recommended.
+
+## Prioritized corrections
+
+### P1 — restore standard forms with definitions and one worked conversion
+
+The pre-rewrite text explicitly covered reversing a `>=` row, expressing a free variable as a difference, and converting inequalities to equalities with slack variables. Those topics are now absent; line 179 nevertheless uses “fri dualvariabel” and “fri primalvariabel” without explaining “fri”. An `A_eq` reference in the final API table does not teach these transformations.
+
+Add a compact depth passage beside the model/solver transition:
+
+- Define a free variable as one allowed to take any real value. Show `t=t_+-t_-`, with both new variables nonnegative.
+- Show `t>=2` becoming `-t<=-2`; this directly explains the second row of the impossible-model code already on the page.
+- Define a slack variable through `2x+y+s_1=9`, `s_1>=0`; at `(4,1)`, `s_1=0`, while the labor equation has `s_2=3`.
+- Explain that equivalent forms describe the same feasible choices, and that the solver accepts equality rows through `A_eq`, `b_eq`.
+
+Keep this optional and concrete. No simplex tableau is needed. “Affin” and “relaksasjon” are already taught in the approved Week 8; their omission as repeated labels is not itself a blocking loss. “Polyeder” could be restored as a short definition if it remains required source vocabulary.
+
+### P1 — make complementary slackness a worked tool
+
+Lines 173–179 correctly state the gap identity and the two complementary-slackness rules, but the former worked derivation of the prices has disappeared. Restore it immediately after the numerical slack vector:
+
+`4-x=1>0` forces `w=0`; positive production of both products forces `2u+v+w=5` and `u+2v=4`; solving gives `u=2`, `v=1`. Verify nonnegativity and the product-price inequalities afterward. This explains where the apparently chosen prices came from without reversing the successful “numerical proof first” teaching order.
+
+Explicitly connect this to optimality: for a feasible plan and feasible prices, all five products being zero is equivalent to a zero gap and hence certifies both optima. An active constraint need not have positive price; do not imply the converse.
+
+Strengthen the written part of existing math Oppgave 2 so students use these facts to recover or justify the prices. Keep the six-widget count and its existing exact answer fields.
+
+### P2 — finish the changed-capacity guarantee with new prices
+
+Line 189 correctly asserts that `(4,5/2)` gives the new optimum 30 at `Delta=2`, but the displayed old certificate only proves the weaker upper bound 31. Add the new certificate:
+
+`2(x+2y)+3x = 5x+4y <= 2*9+3*4 = 30`.
+
+The new prices are `(u,v,w)=(0,2,3)` and the plan attains the bound. This short calculation both proves the claim and explains the changed resource values: the machine constraint has slack `1/2`, and labor plus the A-limit determine the answer. At `Delta=3/2`, these same optimal prices also give a concrete example of an active machine constraint with zero price.
+
+### P2 — give the main route a few meaningful subheadings
+
+Sections 11.1–11.4 currently have no internal headings. Tables, formulas and figures help, but the progression is still less legible than the approved Week 8. Suggested divisions, without adding filler:
+
+- 11.1: “Fra tabell til krav”, “Hjørner og slakk”, “Hvorfor er hjørnene nok?”
+- 11.3: “En regning som gjelder alle planer”, “Fra ressurspriser til dualen”
+- 11.4: “En liten og en større endring”, “Marginaler i SciPy”
+
+In the capacity figure, draw and label `x=4`: this is the decisive new binding limit, but it currently appears only as the edge of the fill. The two supplied PNGs are otherwise correct and readable. Replace the layout description “De to loddrett plasserte figurene” with an explanation of what the upper/lower panels show.
+
+### P2 — retain worked examples for the remaining asserted concepts
+
+The original explicit multiple-optima example was removed, and simplex is now only named (line 90). Two brief optional examples suffice:
+
+- With objective `2x+y` on the same production polygon, both `(4,1)` and `(3,3)`, and every point on their connecting edge, give the maximum 9. This illustrates “an optimum exists at a corner” versus “all optima must be corners”.
+- Describe simplex at the intended outline level as moving between adjacent corners without decreasing the objective. The path `(0,0) -> (4,0) -> (4,1) -> (3,3)` gives values `0,20,24,27` on this polygon. Do not present it as a guarantee that every implementation takes that path.
+
+For the corner proof itself, a midpoint calculation such as `(3.5,2)=((4,1)+(3,3))/2`, giving `P=25.5=(24+27)/2`, would make “veid gjennomsnitt” concrete. State that the weights are nonnegative and sum to one. Existing Oppgave 1 can include a short written comparison of corners to assess goal 2 without adding another widget.
+
+### Small refinements
+
+- Explain “variable kostnader” in the dekningsbidrag definition as costs that vary with production, or use that plain wording directly (line 33).
+- Define marginal as change **per unit** of a right-hand side, holding other data fixed; the current sign interpretation and numerical use are correct (219–237).
+- Say that negative `Delta` means reduced capacity before stating the two-sided interval (246).
+- The certificate exercise's completed fixture correctly checks all required inequalities. Its tests do not catch omitted `z>=0` or `q>=0` checks. Two targeted cases would do so: reject `z=(-1,0)` with valid prices, and reject `q=(2,2,-1)` with a valid plan even though `A.T@q>=p` holds. This is test coverage, not a defect in the supplied completed fixture.
+
+## Concept → definition → worked example → exercise coverage
+
+| Concept | Definition/explanation in current text | Worked example | Exercise coverage / finding |
+|:--|:--|:--|:--|
+| Delbare variables, production model | 11.0–11.1; units and constant-data assumptions | Resource table to all five inequalities | Math 1; Python 1–2. Good. |
+| Feasible plan, slack, active limit | 11.1, before subsequent use | `(3,3)` has slack `(0,0,1)` | Math 1; Python 1 and 3. Good. |
+| Corners and objective lines | 11.1, constant-value lines and pairwise intersections | Five-corner table and figure; intersection in depth | No task finds the original optimum from corners; add written comparison. |
+| LP and corner guarantee | 11.1, linear data and weighted averages | Main polygon and value 27 | Add one numerical weighted-average illustration. |
+| Compactness and convexity | Recalled/explained in 11.1; established in Week 8 | Main nonempty bounded polygon | Adequate prerequisite use; no new full exercise required. |
+| Simplex outline | Named in 11.1 depth | No worked corner path | Restore short outline/example if preserving source coverage. |
+| Standard forms, free variables, slack variables | Removed except undeveloped sign rules | None | Required restoration; can use current status model. |
+| `linprog` inputs and maximization sign | 11.2 before call | `(3,3)`, `fun=-27`, slack | Python 2. Good. |
+| Impossible versus unbounded | 11.2 before example code | Contradictory one-variable model and unbounded `max t` | Math 6. Good. |
+| Resource-price bound / certificate | Numerical proof first in 11.3 | `2*(machine row)+(labor row)` gives 27 | Math 2 and 5; Python 3. Strong. |
+| Primal and dual, weak duality | 11.3 after concrete proof | Same model, all feasible price choices | Python 3 checks dual feasibility; math 2 currently only substitutes known prices. |
+| Strong duality | 11.3; feasibility and finite optimum assumed | Matched values 27 | Correct sufficient assumptions; numerical certificate does not rely on theorem. |
+| Complementary slackness | 11.3 depth; correct identity and meaning | Lists optimal prices/slacks, but no derivation | Restore worked price recovery; add written part to math 2. |
+| Other sign conventions | 11.3 depth | None; “free” is undefined | Teach through restored definition and small conversion example. |
+| Local capacity value and failed extrapolation | 11.4 before marginal API | `Delta=1/2` gives 28; `Delta=2` gives 30 versus old bound 31 | Math 3–4. Add new certificate for 30. |
+| Exact sensitivity interval | 11.4 depth | `x=3+2Delta/3`, `y=3-Delta/3`, interval `[-9/2,3/2]` | Math 4 tests upper endpoint; correct. |
+| SciPy marginal sign | 11.4 before call | `(-2,-1,0)` for minimized `-P`; values `(2,1,0)` for `P` | Demonstration provides correct comparison. |
+| Multiple optima | Mentioned in 11.1 | Former explicit example removed | Restore short same-polygon example. |
+| Continuous relaxation of integer model | 11.4 depth; Week 8 prerequisite | Fractional plan `(10/3,17/6)` cannot be used as whole batches | Adequate caveat and connection. |
+
+## Mathematical checks
+
+All five corners and their values `0,20,24,27,18` are correct. At `(4,1)`, the three slacks are `(0,3,0)` and profit is 24. Prices `(3,1,0)` give product prices `(7,5)` and bound 36. The math answer fields contain exactly those values.
+
+The perturbation solution is `(3+2Delta/3,3-Delta/3)`. Nonnegativity and the A-limit give exactly `-9/2<=Delta<=3/2`; both endpoints are included. The original dual prices remain feasible after changing capacities and their bound is achieved throughout that interval. `Delta=1` gives `(11/3,8/3)` and 29. `Delta=2` gives `(4,5/2)` and 30, with machine slack `1/2`. No rounding instructions are missing: all six math tasks request exact answers and use equivalent-answer mode.
+
+The weak-duality chain uses nonnegative production, nonnegative prices and resource feasibility correctly. The gap decomposition is correct. The strong-duality sentence gives sufficient, if slightly redundant, assumptions; it does not claim that infeasible or unbounded problems have matching finite optima. Compactness and corner arguments are correctly confined to the current nonempty bounded polygon.
+
+## Code and compatibility checks
+
+Inspected all five main `pyodide-python` cells plus the setup cell, all three independent `py-exercise` starters, their hidden tests and the completed JSON fixture. Each exercise imports its own dependencies and defines its own data. All three are unfinished at explicit TODOs, hide test hints, and expose no solution block. The SciPy reference is collapsed and follows the new coding section after Regneoppgaver. No Jupyter or other executable fence was introduced. Code blocks contain explanatory comments.
+
+The used API is documented in the official [SciPy 1.14.1 HiGHS reference](https://docs.scipy.org/doc/scipy-1.14.1/reference/optimize.linprog-highs.html): minimization, one shared bounds tuple, status fields, `ineqlin.residual` and `ineqlin.marginals` are all available. The sign reversal is correct because the objective supplied is `-P`. No newer result field is used.
+
+The local native Python installation reports SciPy 1.17.0, so this audit does **not** mislabel native execution as a SciPy 1.14.1 runtime test. Parent reports that the six native cells and three completed fixtures already passed; I did not redundantly rerun them. Browser execution/rendering remains the parent's integration gate. I directly inspected both current generated figure PNGs, not a fresh full-page browser render.
+
+## Final re-review after corrections
+
+Re-read the entire revised Week 11 on 2026-09-25. New `uke11.md` SHA-256: `4740c49b2e9af18703f41360758b0393d76e76f1fc82f49deb0ec13a502b7881`; setup hash is unchanged. The following verdict supersedes the initial conditional verdict above.
+
+**PASS for mathematics, topic preservation, instructional structure and exercise design. All required corrections are resolved.** No new mathematical or code defect was introduced. The final page render and browser execution are being handled by the parent and are outside this read-only re-review.
+
+| Finding | Verified correction | Status |
+|:--|:--|:--|
+| P1: standard forms and undefined free variables | Lines 150–170 define free/slack variables before the later dual rules, work through row reversal, splitting a free variable with the example `y=-3`, and two numerical slack values; equality inputs are identified. | Resolved |
+| P1: complementary slackness needs a worked derivation | Lines 219–223 derive `w=0`, then `u=2,v=1` from the known optimal plan. Earlier certificate calculations already verify feasibility and matched values. Math Oppgave 2 now asks students to reproduce the reasoning. | Resolved |
+| Changed-capacity optimality guarantee | Lines 239–246 prove 30 using `(0,2,3)` and explain which capacities determine it. The same prices at `Delta=3/2` correctly illustrate an active constraint with zero price. | Resolved |
+| Main-text structure and capacity-boundary visibility | Purposeful subheadings divide 11.1, 11.3 and 11.4. The capacity plotting code draws and labels `x=4` in both panels. Figure prose describes the scenarios directly. | Resolved in source; final rendering with parent |
+| Multiple-optima and simplex examples | Lines 90–92 work through `R=2x+y` on the same edge. Lines 99–102 show a valid improving path with the correct four values, explicitly as one possible path. | Resolved |
+| Exercise coverage of corners and price recovery | Written parts in math Oppgaver 1–2 cover both missing skills while retaining six exact-answer widgets. | Resolved |
+| Dekningsbidrag terminology | The definition now explains the production-dependent costs in plain language and gives materials as an example. | Resolved |
+
+The original report's remaining small suggestions—a numerical weighted-average illustration, explicitly saying “per unit” for marginals, explicitly interpreting negative `Delta`, and two additional negative-coordinate test cases—are optional refinements. Their absence is not a remaining mathematical or acceptance defect. Current examples, formulas and completed fixtures already state or implement the correct behavior. No further expansion is required to approve this week.
+
+All three coding exercises remain independent, intentionally incomplete and without solution blocks or displayed test hints. The collapsed SciPy reference remains after the coding exercises. The six math answers and five short learning goals remain correct. Course and project files were not edited during either audit pass.
