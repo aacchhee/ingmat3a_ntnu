@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"# NumPy gir vektorer og gitter; Matplotlib tegner prøvepunkter og baner.\nimport numpy as np\nimport matplotlib.pyplot as plt\n# SciPy brukes bare til det avgrensede linjesøket i 9.4.\nfrom scipy.optimize import minimize_scalar\n\n# Samme målfunksjon og analytiske gradient i alle ukens forsøk.\ndef f9(z):\n    # Pakk ut punktet og summer de to kvadrerte avvikene.\n    x, y = z\n    return (x*x + y - 11)**2 + (x + y*y - 7)**2\n\ndef grad9(z):\n    # Mellomuttrykkene gjør kjerneregelen synlig i begge komponenter.\n    x, y = z\n    a, b = x*x + y - 11, x + y*y - 7\n    return np.array([4*x*a + 2*b, 2*a + 4*y*b])\n# Meldingen vises først når både importene og funksjonsdefinisjonene er klare.\nprint(\"Oppsett for uke 9 er klart. Nå kan du kjøre eksperimentene.\")","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Åtte faste koordinater per akse gir 64 gitterpunkter.\naxis = np.linspace(-4, 4, 8)\nu, v = np.meshgrid(axis, axis)\ngrid = np.column_stack((u.ravel(), v.ravel()))\n# Samme frø gjør de 64 uavhengige, tilfeldige prøvene reproduserbare.\nrng = np.random.default_rng(42)\nrandom_points = rng.uniform(-4, 4, size=(64, 2))\n# Evaluer samme målfunksjon én gang i hvert prøvd punkt.\ngrid_values = np.array([f9(z) for z in grid])\nrandom_values = np.array([f9(z) for z in random_points])\n# Sammenlign metodene rad for rad med samme antall evalueringer.\nprint(f'{\"Metode\":<12} {\"Prøver\":>7} {\"Beste punkt (x, y)\":>25} {\"Laveste f\":>12}')\nfor name, points, values in [('Gitter', grid, grid_values),\n                             ('Tilfeldig', random_points, random_values)]:\n    i = np.argmin(values)\n    best_point = f'({points[i, 0]:.3f}, {points[i, 1]:.3f})'\n    print(f'{name:<12} {len(values):>7} {best_point:>25} {values[i]:>12.3f}')\n\n# Marker alle prøvene og det kjente nullpunktet i samme plan.\nfig, ax = plt.subplots(figsize=(6, 5))\nax.scatter(grid[:, 0], grid[:, 1], s=22, label='gitter')\nax.scatter(random_points[:, 0], random_points[:, 1], s=12,\n           alpha=.7, label='tilfeldig, frø 42')\nax.plot(3, 2, 'k*', markersize=12, label='kjent nullpunkt')\nax.set(xlim=(-4.2, 4.2), ylim=(-4.2, 4.2), xlabel='x', ylabel='y')\nax.set_aspect('equal'); ax.legend(); plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-finite-search","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Start i origo; senere forslag tas fra det sist aksepterte punktet.\nwalk_rng = np.random.default_rng(7)\nwalk = np.array([0., 0.])\nfor trial_number in range(20):\n    # Normaliser en tilfeldig vektor: 0,5 blir faktisk steglengden.\n    direction = walk_rng.normal(size=2)\n    direction /= np.linalg.norm(direction)\n    candidate = walk + 0.5*direction\n    # Ved avslag forblir walk uendret før neste forslag trekkes.\n    if f9(candidate) < f9(walk):\n        walk = candidate\nprint('Tilfeldig vandring etter 20 forslag')\nprint(f'  Sluttpunkt (x, y): ({walk[0]:.3f}, {walk[1]:.3f})')\nprint(f'  Funksjonsverdi:    {f9(walk):.3f}')","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-random-walk-extension","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Rekkefølgen avgjør hvilken kandidat som vinner ved lik verdi.\ndirections = np.array([[1., 0.], [-1., 0.], [0., 1.], [0., -1.]])\nz = np.array([0., 0.])\nstep = 1.\ncurrent = f9(z)\npath = [z.copy()]\npolls = 0\n# Hver runde undersøker fire naboer, også når vi bare halverer steget.\n# Stopp ved valgt oppløsning eller et øvre tak på antall runder.\nwhile step >= 1/128 and polls < 100:\n    # Beregn alle fire prøver før vi bestemmer oss.\n    trials = z + step * directions\n    values = np.array([f9(t) for t in trials])\n    polls += 1\n    best = np.argmin(values)\n    if values[best] < current:\n        # Bare aksepterte punkter føres opp i banen.\n        z = trials[best].copy()\n        current = values[best]\n        path.append(z.copy())\n    else:\n        # Ingen forbedring på denne skalaen: bli stående og prøv mindre steg.\n        step /= 2\npath = np.array(path)\nprint('Første kompassrunde fra (0, 0), steglengde 1')\nprint(f'{\"Nabo (x, y)\":<16} {\"Funksjonsverdi\":>16}')\nfor trial in directions:\n    neighbor = f'({trial[0]:g}, {trial[1]:g})'\n    print(f'{neighbor:<16} {f9(trial):>16.0f}')\nprint('Resultat etter kompassøket')\nprint(f'  Sluttpunkt (x, y): ({z[0]:g}, {z[1]:g})')\nprint(f'  Funksjonsverdi:    {current:.6g}')\nprint(f'  Evalueringer i søket: {4*polls+1} (inkludert startpunktet)')\nprint(f'  Siste steglengde:  {step:g}')\n\nxx, yy = np.meshgrid(np.linspace(-4, 4, 180), np.linspace(-4, 4, 180))\nzz = (xx*xx + yy - 11)**2 + (xx + yy*yy - 7)**2\n# Øverst: aksepterte punkt på nivåkurvene. Nederst: deres verdier.\nfig, (ax_map, ax_value) = plt.subplots(2, 1, figsize=(6, 9),\n                                       constrained_layout=True)\nax_map.contour(xx, yy, zz, levels=[1, 5, 20, 50, 100, 200],\n               colors='#aab2bd')\nax_map.plot(path[:, 0], path[:, 1], 'o-', color='#bb4a37',\n            markersize=4, label='kompass')\nax_map.plot(3, 2, 'k*', markersize=11, label='kjent nullpunkt')\nax_map.set(xlim=(-4, 4), ylim=(-4, 4), xlabel='x', ylabel='y',\n           title='Aksepterte punkt på nivåkurvene')\nax_map.set_aspect('equal')\nax_map.legend()\n# Verdiplottet teller bare flyttingene; halveringer gir ikke nye punkter.\nax_value.plot(np.arange(len(path)), [f9(t) for t in path], 'o-',\n              color='#bb4a37', markersize=4)\nax_value.set(xlabel='Akseptert flytting', ylabel='f',\n             title='Funksjonsverdi langs kompassbanen')\nplt.show()","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-compass","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Sammenlign to faste faktorer med samme start og iterasjonsbudsjett.\ndef fixed_steps(rate, n=40):\n    z = np.array([0., 0.])\n    # Ta med startverdien slik at første flytting får indeks 1 i grafen.\n    history = [f9(z)]\n    path = [z.copy()]\n    for k in range(n):\n        # Fast rate brukes uansett hvordan gradienten endres langs banen.\n        candidate = z - rate*grad9(z)\n        if not np.all(np.isfinite(candidate)) or np.linalg.norm(candidate) > 1e6:\n            break  # Ikke-endelig kandidat eller valgt grense for tegningen.\n        z = candidate\n        history.append(f9(z))\n        path.append(z.copy())\n    return z, np.array(history), np.array(path)\n\n# Velg faktoren på nytt i hver iterasjon ved Armijo-halvering.\ndef shrinking_steps(n=60):\n    z = np.array([0., 0.])\n    history = [f9(z)]\n    path = [z.copy()]\n    for k in range(n):\n        g = grad9(z)\n        # Liten gradientnorm er stoppregelen for dette forsøket.\n        if np.linalg.norm(g) < 1e-6:\n            break\n        rate = 1.\n        # Halver til den faktiske verdien oppfyller Armijo-kravet.\n        # For p=-g er starthelningen g·p = -(g·g).\n        while f9(z-rate*g) > f9(z) - 1e-4*rate*(g @ g):\n            rate /= 2\n        # Beregn ny gradient først i neste iterasjon, fra det nye punktet.\n        z -= rate*g\n        history.append(f9(z))\n        path.append(z.copy())\n    return z, np.array(history), np.array(path)\n\ncurves = {}\npaths = {}\nresults = []\nfor rate in [0.02, 0.1]:\n    end, values, points = fixed_steps(rate)\n    curves[f'fast α={rate:g}'] = values\n    if rate == 0.02:\n        paths['fast α=0.02'] = points\n    results.append((f'Fast α={rate:g}', len(values)-1,\n                    values[-1], np.linalg.norm(grad9(end))))\nend, values, points = shrinking_steps()\ncurves['halvering'] = values\npaths['halvering'] = points\nresults.append(('Halvering', len(values)-1, values[-1],\n                np.linalg.norm(grad9(end))))\n# Skill mellom antall tegnede steg, funksjonsverdi og gradientnorm.\nprint(f'{\"Stegregel\":<16} {\"Steg\":>6} {\"Siste f\":>13} {\"Gradientnorm\":>15}')\nfor name, steps, final_value, gradient_norm in results:\n    print(f'{name:<16} {steps:>6} {final_value:>13.3g} {gradient_norm:>15.3g}')\nprint(f'Halveringens sluttpunkt (x, y): ({end[0]:.6f}, {end[1]:.6f})')\n# Panelene står under hverandre så bane og verdi kan sammenlignes.\nfig, (ax_map, ax) = plt.subplots(2, 1, figsize=(6.5, 9))\ngx, gy = np.meshgrid(np.linspace(-1, 4, 160), np.linspace(-1, 4, 160))\ngz = (gx*gx + gy - 11)**2 + (gx + gy*gy - 7)**2\nax_map.contour(gx, gy, gz, levels=[1, 5, 20, 50, 100, 200],\n               colors='#adb5bd', linewidths=.8)\ncolors = {'fast α=0.02': '#1665ad', 'fast α=0.1': '#b5483f',\n          'halvering': '#2b8a61'}\nfor name, points in paths.items():\n    ax_map.plot(points[:, 0], points[:, 1], 'o-', color=colors[name],\n                markersize=2.5, linewidth=1.4, label=name)\n    ax_map.plot(*points[-1], 'o', color=colors[name], markersize=7)\nax_map.plot(0, 0, 'ks', markersize=6, label='start k=0')\nax_map.plot(3, 2, 'k*', markersize=11, label='kjent globalt punkt')\nax_map.set(xlim=(-1, 4), ylim=(-1, 4), xlabel='x', ylabel='y',\n           title='Aksepterte punkter på nivåkurvene til f')\nax_map.set_aspect('equal')\nax_map.legend(fontsize=8, loc='upper left')\nfor name, values in curves.items():\n    # Logaritmisk akse kan ikke tegne null; løft bare viste verdier under 1e-15.\n    ax.semilogy(np.arange(len(values)), np.maximum(values, 1e-15),\n                'o-', markersize=3, color=colors[name], label=name)\nax.set(xlabel='Iterasjonssteg', ylabel='f (logaritmisk skala)')\nax.legend()\nfig.tight_layout(); plt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-gradient-steps","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Frys startpunkt og retning; dette er et søk i én variabel, α.\nstart = np.array([0., 0.])\ndirection = -grad9(start)\n# Rutinen prøver faktorer bare innenfor det oppgitte intervallet.\nline = minimize_scalar(lambda alpha: f9(start + alpha*direction),\n                       bounds=(0., .2), method='bounded',\n                       options={'xatol': 1e-10})\n# Regn tilbake til et punkt i planet og mål om hele gradienten er liten.\nline_point = start + line.x*direction\nline_gradient = grad9(line_point)\nprint('Avgrenset søk langs negativ gradient fra origo')\nprint(f'  Stegfaktor α:          {line.x:.6f}')\nprint(f'  Punkt (x, y):         ({line_point[0]:.6f}, {line_point[1]:.6f})')\nprint(f'  Funksjonsverdi:       {f9(line_point):.6f}')\nprint(f'  Evalueringer:         {line.nfev}')\nprint(f'  Derivert langs linjen:{line_gradient @ direction:>11.3g}')\nprint(f'  Gradientnorm i planet:{np.linalg.norm(line_gradient):>10.3f}')\nprint(f'  Rutinen lyktes:       {line.success}')","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-scalar-line-search","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"# NumPy gir vektorer og gitter; Matplotlib tegner prøvepunkter og baner.\nimport numpy as np\nimport matplotlib.pyplot as plt\n# SciPy brukes bare til det avgrensede linjesøket i 9.4.\nfrom scipy.optimize import minimize_scalar\n\n# Samme målfunksjon og analytiske gradient i alle ukens forsøk.\ndef f9(z):\n    # Pakk ut punktet og summer de to kvadrerte avvikene.\n    x, y = z\n    return (x*x + y - 11)**2 + (x + y*y - 7)**2\n\ndef grad9(z):\n    # Mellomuttrykkene gjør kjerneregelen synlig i begge komponenter.\n    x, y = z\n    a, b = x*x + y - 11, x + y*y - 7\n    return np.array([4*x*a + 2*b, 2*a + 4*y*b])","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# NumPy gir vektorer og gitter; Matplotlib tegner prøvepunkter og baner.\nimport numpy as np\nimport matplotlib.pyplot as plt\n# SciPy brukes bare til det avgrensede linjesøket i 9.4.\nfrom scipy.optimize import minimize_scalar\n\n# Samme målfunksjon og analytiske gradient i alle ukens forsøk.\ndef f9(z):\n    # Pakk ut punktet og summer de to kvadrerte avvikene.\n    x, y = z\n    return (x*x + y - 11)**2 + (x + y*y - 7)**2\n\ndef grad9(z):\n    # Mellomuttrykkene gjør kjerneregelen synlig i begge komponenter.\n    x, y = z\n    a, b = x*x + y - 11, x + y*y - 7\n    return np.array([4*x*a + 2*b, 2*a + 4*y*b])\n\n# Åtte faste koordinater per akse gir 64 gitterpunkter.\naxis = np.linspace(-4, 4, 8)\nu, v = np.meshgrid(axis, axis)\ngrid = np.column_stack((u.ravel(), v.ravel()))\n# Samme frø gjør de 64 uavhengige, tilfeldige prøvene reproduserbare.\nrng = np.random.default_rng(42)\nrandom_points = rng.uniform(-4, 4, size=(64, 2))\n# Evaluer samme målfunksjon én gang i hvert prøvd punkt.\ngrid_values = np.array([f9(z) for z in grid])\nrandom_values = np.array([f9(z) for z in random_points])\n# Sammenlign metodene rad for rad med samme antall evalueringer.\nprint(f'{\"Metode\":<12} {\"Prøver\":>7} {\"Beste punkt (x, y)\":>25} {\"Laveste f\":>12}')\nfor name, points, values in [('Gitter', grid, grid_values),\n                             ('Tilfeldig', random_points, random_values)]:\n    i = np.argmin(values)\n    best_point = f'({points[i, 0]:.3f}, {points[i, 1]:.3f})'\n    print(f'{name:<12} {len(values):>7} {best_point:>25} {values[i]:>12.3f}')\n\n# Marker alle prøvene og det kjente nullpunktet i samme plan.\nfig, ax = plt.subplots(figsize=(6, 5))\nax.scatter(grid[:, 0], grid[:, 1], s=22, label='gitter')\nax.scatter(random_points[:, 0], random_points[:, 1], s=12,\n           alpha=.7, label='tilfeldig, frø 42')\nax.plot(3, 2, 'k*', markersize=12, label='kjent nullpunkt')\nax.set(xlim=(-4.2, 4.2), ylim=(-4.2, 4.2), xlabel='x', ylabel='y')\nax.set_aspect('equal'); ax.legend(); plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-finite-search","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Start i origo; senere forslag tas fra det sist aksepterte punktet.\nwalk_rng = np.random.default_rng(7)\nwalk = np.array([0., 0.])\nfor trial_number in range(20):\n    # Normaliser en tilfeldig vektor: 0,5 blir faktisk steglengden.\n    direction = walk_rng.normal(size=2)\n    direction /= np.linalg.norm(direction)\n    candidate = walk + 0.5*direction\n    # Ved avslag forblir walk uendret før neste forslag trekkes.\n    if f9(candidate) < f9(walk):\n        walk = candidate\nprint('Tilfeldig vandring etter 20 forslag')\nprint(f'  Sluttpunkt (x, y): ({walk[0]:.3f}, {walk[1]:.3f})')\nprint(f'  Funksjonsverdi:    {f9(walk):.3f}')","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-random-walk-extension","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Rekkefølgen avgjør hvilken kandidat som vinner ved lik verdi.\ndirections = np.array([[1., 0.], [-1., 0.], [0., 1.], [0., -1.]])\nz = np.array([0., 0.])\nstep = 1.\ncurrent = f9(z)\npath = [z.copy()]\npolls = 0\n# Hver runde undersøker fire naboer, også når vi bare halverer steget.\n# Stopp ved valgt oppløsning eller et øvre tak på antall runder.\nwhile step >= 1/128 and polls < 100:\n    # Beregn alle fire prøver før vi bestemmer oss.\n    trials = z + step * directions\n    values = np.array([f9(t) for t in trials])\n    polls += 1\n    best = np.argmin(values)\n    if values[best] < current:\n        # Bare aksepterte punkter føres opp i banen.\n        z = trials[best].copy()\n        current = values[best]\n        path.append(z.copy())\n    else:\n        # Ingen forbedring på denne skalaen: bli stående og prøv mindre steg.\n        step /= 2\npath = np.array(path)\nprint('Første kompassrunde fra (0, 0), steglengde 1')\nprint(f'{\"Nabo (x, y)\":<16} {\"Funksjonsverdi\":>16}')\nfor trial in directions:\n    neighbor = f'({trial[0]:g}, {trial[1]:g})'\n    print(f'{neighbor:<16} {f9(trial):>16.0f}')\nprint('Resultat etter kompassøket')\nprint(f'  Sluttpunkt (x, y): ({z[0]:g}, {z[1]:g})')\nprint(f'  Funksjonsverdi:    {current:.6g}')\nprint(f'  Evalueringer i søket: {4*polls+1} (inkludert startpunktet)')\nprint(f'  Siste steglengde:  {step:g}')\n\nxx, yy = np.meshgrid(np.linspace(-4, 4, 180), np.linspace(-4, 4, 180))\nzz = (xx*xx + yy - 11)**2 + (xx + yy*yy - 7)**2\n# Øverst: aksepterte punkt på nivåkurvene. Nederst: deres verdier.\nfig, (ax_map, ax_value) = plt.subplots(2, 1, figsize=(6, 9),\n                                       constrained_layout=True)\nax_map.contour(xx, yy, zz, levels=[1, 5, 20, 50, 100, 200],\n               colors='#aab2bd')\nax_map.plot(path[:, 0], path[:, 1], 'o-', color='#bb4a37',\n            markersize=4, label='kompass')\nax_map.plot(3, 2, 'k*', markersize=11, label='kjent nullpunkt')\nax_map.set(xlim=(-4, 4), ylim=(-4, 4), xlabel='x', ylabel='y',\n           title='Aksepterte punkt på nivåkurvene')\nax_map.set_aspect('equal')\nax_map.legend()\n# Verdiplottet teller bare flyttingene; halveringer gir ikke nye punkter.\nax_value.plot(np.arange(len(path)), [f9(t) for t in path], 'o-',\n              color='#bb4a37', markersize=4)\nax_value.set(xlabel='Akseptert flytting', ylabel='f',\n             title='Funksjonsverdi langs kompassbanen')\nplt.show()","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-compass","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Sammenlign to faste faktorer med samme start og iterasjonsbudsjett.\ndef fixed_steps(rate, n=40):\n    z = np.array([0., 0.])\n    # Ta med startverdien slik at første flytting får indeks 1 i grafen.\n    history = [f9(z)]\n    path = [z.copy()]\n    for k in range(n):\n        # Fast rate brukes uansett hvordan gradienten endres langs banen.\n        candidate = z - rate*grad9(z)\n        if not np.all(np.isfinite(candidate)) or np.linalg.norm(candidate) > 1e6:\n            break  # Ikke-endelig kandidat eller valgt grense for tegningen.\n        z = candidate\n        history.append(f9(z))\n        path.append(z.copy())\n    return z, np.array(history), np.array(path)\n\n# Velg faktoren på nytt i hver iterasjon ved Armijo-halvering.\ndef shrinking_steps(n=60):\n    z = np.array([0., 0.])\n    history = [f9(z)]\n    path = [z.copy()]\n    for k in range(n):\n        g = grad9(z)\n        # Liten gradientnorm er stoppregelen for dette forsøket.\n        if np.linalg.norm(g) < 1e-6:\n            break\n        rate = 1.\n        # Halver til den faktiske verdien oppfyller Armijo-kravet.\n        # For p=-g er starthelningen g·p = -(g·g).\n        while f9(z-rate*g) > f9(z) - 1e-4*rate*(g @ g):\n            rate /= 2\n        # Beregn ny gradient først i neste iterasjon, fra det nye punktet.\n        z -= rate*g\n        history.append(f9(z))\n        path.append(z.copy())\n    return z, np.array(history), np.array(path)\n\ncurves = {}\npaths = {}\nresults = []\nfor rate in [0.02, 0.1]:\n    end, values, points = fixed_steps(rate)\n    curves[f'fast α={rate:g}'] = values\n    if rate == 0.02:\n        paths['fast α=0.02'] = points\n    results.append((f'Fast α={rate:g}', len(values)-1,\n                    values[-1], np.linalg.norm(grad9(end))))\nend, values, points = shrinking_steps()\ncurves['halvering'] = values\npaths['halvering'] = points\nresults.append(('Halvering', len(values)-1, values[-1],\n                np.linalg.norm(grad9(end))))\n# Skill mellom antall tegnede steg, funksjonsverdi og gradientnorm.\nprint(f'{\"Stegregel\":<16} {\"Steg\":>6} {\"Siste f\":>13} {\"Gradientnorm\":>15}')\nfor name, steps, final_value, gradient_norm in results:\n    print(f'{name:<16} {steps:>6} {final_value:>13.3g} {gradient_norm:>15.3g}')\nprint(f'Halveringens sluttpunkt (x, y): ({end[0]:.6f}, {end[1]:.6f})')\n# Panelene står under hverandre så bane og verdi kan sammenlignes.\nfig, (ax_map, ax) = plt.subplots(2, 1, figsize=(6.5, 9))\ngx, gy = np.meshgrid(np.linspace(-1, 4, 160), np.linspace(-1, 4, 160))\ngz = (gx*gx + gy - 11)**2 + (gx + gy*gy - 7)**2\nax_map.contour(gx, gy, gz, levels=[1, 5, 20, 50, 100, 200],\n               colors='#adb5bd', linewidths=.8)\ncolors = {'fast α=0.02': '#1665ad', 'fast α=0.1': '#b5483f',\n          'halvering': '#2b8a61'}\nfor name, points in paths.items():\n    ax_map.plot(points[:, 0], points[:, 1], 'o-', color=colors[name],\n                markersize=2.5, linewidth=1.4, label=name)\n    ax_map.plot(*points[-1], 'o', color=colors[name], markersize=7)\nax_map.plot(0, 0, 'ks', markersize=6, label='start k=0')\nax_map.plot(3, 2, 'k*', markersize=11, label='kjent globalt punkt')\nax_map.set(xlim=(-1, 4), ylim=(-1, 4), xlabel='x', ylabel='y',\n           title='Aksepterte punkter på nivåkurvene til f')\nax_map.set_aspect('equal')\nax_map.legend(fontsize=8, loc='upper left')\nfor name, values in curves.items():\n    # Logaritmisk akse kan ikke tegne null; løft bare viste verdier under 1e-15.\n    ax.semilogy(np.arange(len(values)), np.maximum(values, 1e-15),\n                'o-', markersize=3, color=colors[name], label=name)\nax.set(xlabel='Iterasjonssteg', ylabel='f (logaritmisk skala)')\nax.legend()\nfig.tight_layout(); plt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-gradient-steps","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Frys startpunkt og retning; dette er et søk i én variabel, α.\nstart = np.array([0., 0.])\ndirection = -grad9(start)\n# Rutinen prøver faktorer bare innenfor det oppgitte intervallet.\nline = minimize_scalar(lambda alpha: f9(start + alpha*direction),\n                       bounds=(0., .2), method='bounded',\n                       options={'xatol': 1e-10})\n# Regn tilbake til et punkt i planet og mål om hele gradienten er liten.\nline_point = start + line.x*direction\nline_gradient = grad9(line_point)\nprint('Avgrenset søk langs negativ gradient fra origo')\nprint(f'  Stegfaktor α:          {line.x:.6f}')\nprint(f'  Punkt (x, y):         ({line_point[0]:.6f}, {line_point[1]:.6f})')\nprint(f'  Funksjonsverdi:       {f9(line_point):.6f}')\nprint(f'  Evalueringer:         {line.nfev}')\nprint(f'  Derivert langs linjen:{line_gradient @ direction:>11.3g}')\nprint(f'  Gradientnorm i planet:{np.linalg.norm(line_gradient):>10.3f}')\nprint(f'  Rutinen lyktes:       {line.success}')","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week9-scalar-line-search","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -5394,6 +5394,10 @@ window.Quarto = {
 </header>
 
 
+<div class="python-setup" style="display: none;" aria-hidden="true">
+<div id="qpyodide-insertion-location-1"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+</div>
 <div class="learning-mode" data-learning-mode="" role="group" aria-label="Velg lesemodus">
 <button type="button" data-mode="lecture" aria-pressed="true">
 Forelesning
@@ -5404,7 +5408,7 @@ Gå i dybden
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">9.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python-oppsett</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">9.1 Endelig søk: beste prøve i et utvalg</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">9.2 Kompassøk: flytt og krymp</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">9.3 Gradientmetoden: velg en retning</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">9.4 Linjesøk: velg og kontroller steget</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">9.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-8" role="tab" aria-controls="tabset-1-8" aria-selected="false" href="">9.6 Python: prøv søkereglene</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">9.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">9.1 Endelig søk: beste prøve i et utvalg</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">9.2 Kompassøk: flytt og krymp</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">9.3 Gradientmetoden: velg en retning</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">9.4 Linjesøk: velg og kontroller steget</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">9.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">9.6 Python: prøv søkereglene</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="uke9-start">
@@ -5431,25 +5435,18 @@ Gå i dybden
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<div id="uke9-oppsett">
-
-</div>
-<p>Denne cellen importerer pakkene og definerer funksjonene som brukes i ukens forsøk. Den kjøres automatisk når Python er klart. <strong>Vent på meldingen «Oppsett for uke 9 er klart» før du kjører et eksperiment.</strong> Første oppstart kan ta litt tid fordi nettleseren må hente pakkene.</p>
-<p>Her er <code>f9(z)</code> målfunksjonen fra 9.0, og <code>grad9(z)</code> er gradienten. Du kan lese definisjonene og kjøre oppsettet på nytt med <strong>Kjør</strong>. Hvis en celle melder at et navn ikke er definert, kjør oppsettet på nytt og deretter forsøket. Kodeoppgavene til slutt inneholder sine egne importer.</p>
-<div id="qpyodide-insertion-location-1"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-</div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div id="uke9-endelig">
 
 </div>
+<p>Et <strong>gittersøk</strong> prøver alle kombinasjoner av utvalgte koordinater. Åtte verdier for <span class="math inline">\(x\)</span> og åtte for <span class="math inline">\(y\)</span> gir <span class="math inline">\(8^2=64\)</span> punkter i kvadratet <span class="math inline">\([-4,4]^2\)</span>. Ved <strong>tilfeldig sampling</strong> trekker vi i stedet 64 punkter i det samme kvadratet, uavhengig av tidligere punkter og jevnt fordelt over kvadratet. Metodene har samme budsjett, men plasserer prøvene forskjellig. Den <strong>laveste observerte verdien</strong> er bare best blant punktene vi faktisk har undersøkt. Vi undersøker hvor mye plasseringen av prøvene betyr ved likt budsjett.</p>
 <section id="eksperiment-1-64-prøver-på-to-måter" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-1-64-prøver-på-to-måter">Eksperiment 1 – 64 prøver på to måter</h3>
-<p>Vi vil se hvor mye plasseringen av prøvene betyr når begge metoder får samme budsjett. Se etter <strong>laveste observerte verdi</strong> i utskriften og etter hvor de to prøvesettene ligger i figuren. Stjernen markerer bare ett kjent minimumspunkt. En lav verdi i et endelig utvalg er ikke i seg selv et bevis for globalt minimum.</p>
-<p>Et <strong>gittersøk</strong> prøver alle kombinasjoner av utvalgte koordinater. Åtte verdier for <span class="math inline">\(x\)</span> og åtte for <span class="math inline">\(y\)</span> gir <span class="math inline">\(8^2=64\)</span> punkter i kvadratet <span class="math inline">\([-4,4]^2\)</span>. Ved <strong>tilfeldig sampling</strong> trekker vi i stedet 64 uavhengige punkter i det samme kvadratet. Hvert punkt trekkes uavhengig av de tidligere punktene, med jevn fordeling over kvadratet. <code>default_rng(42)</code> fester den tilfeldige startverdien, slik at forsøket kan gjentas.</p>
+<p>Sammenlign laveste verdi i utskriften og punktenes plassering i figuren. Stjernen viser ett kjent minimumspunkt som referanse. En lav prøvd verdi gir ingen global garanti.</p>
+<p><code>default_rng(42)</code> fester den tilfeldige startverdien, slik at forsøket kan gjentas.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Gitteret finner omtrent <span class="math inline">\(2{,}710\)</span> ved <span class="math inline">\((2{,}857,1{,}714)\)</span>. Det tilfeldige utvalget finner omtrent <span class="math inline">\(0{,}094\)</span> ved <span class="math inline">\((-3{,}818,-3{,}280)\)</span>. Stjernen viser det kjente punktet <span class="math inline">\((3,2)\)</span>; den er en referanse i figuren, ikke en av metodens prøver. Det beste tilfeldige punktet ligger i en annen dal. Avstand til den ene stjernen rangerer derfor ikke funksjonsverdiene. Denne gangen får tilfeldige prøver lavere verdi, men et annet frø kan endre rekkefølgen. Ingen av utvalgene undersøker alle punktene <strong>mellom</strong> prøvene. Selv om vi ser en verdi nær null, er det bare sum-av-kvadrater-argumentet i 9.0 som kan utelukke negative verdier.</p>
+<p>Gitteret finner omtrent <span class="math inline">\(2{,}710\)</span> ved <span class="math inline">\((2{,}857,1{,}714)\)</span>. Det tilfeldige utvalget finner omtrent <span class="math inline">\(0{,}094\)</span> ved <span class="math inline">\((-3{,}818,-3{,}280)\)</span>. Stjernen ved <span class="math inline">\((3,2)\)</span> er ikke en av prøvene. Det beste tilfeldige punktet ligger i en annen dal, så avstand til stjernen rangerer ikke funksjonsverdiene.</p>
+<p>Tilfeldige prøver vinner denne gangen; et annet frø kan endre det. Begge utvalgene lar punktene <strong>mellom</strong> prøvene være uprøvd. Sum-av-kvadrater-argumentet i 9.0, ikke søket, utelukker negative verdier.</p>
 </section>
 <section id="prøvebudsjett-og-dimensjon" class="level3">
 <h3 class="anchored" data-anchor-id="prøvebudsjett-og-dimensjon">Prøvebudsjett og dimensjon</h3>
@@ -5465,35 +5462,19 @@ Gå i dybden: tilfeldig vandring med aksepterte forslag
 </details>
 </section>
 </div>
-<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div id="uke9-kompass">
 
 </div>
+<p>Et <strong>kompassøk</strong> bruker gjeldende punkt til å velge de neste prøvene. Med stegstørrelse <span class="math inline">\(\Delta\)</span> evaluerer det de fire naboene <span class="math inline">\(z+\Delta(1,0)\)</span>, <span class="math inline">\(z-\Delta(1,0)\)</span>, <span class="math inline">\(z+\Delta(0,1)\)</span> og <span class="math inline">\(z-\Delta(0,1)\)</span>. Finner det en lavere verdi, flytter det til den beste av de fire. Ellers beholder det punktet og halverer <span class="math inline">\(\Delta\)</span>. En slik undersøkelse av fire naboer er én <strong>prøverunde</strong>. Vi stopper når <span class="math inline">\(\Delta&lt;1/128\)</span> eller etter 100 runder. Vi kaller en flytting som senker verdien <strong>akseptert</strong>. En halvering uten flytting legger ikke til et nytt punkt i banen. En <strong>nivåkurve</strong> forbinder punkter med samme funksjonsverdi i kartet. Vi undersøker hvordan denne regelen velger neste punkt og krymper søket.</p>
 <section id="eksperiment-2-undersøk-fire-naboer" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-2-undersøk-fire-naboer">Eksperiment 2 – undersøk fire naboer</h3>
-<p>Vi bruker de tidligere prøvene til å velge et nytt punkt, og krymper søket når ingen nabo hjelper. Se på første prøverunde i utskriften: samme verdi kan gi flere beste naboer. Sammenlign deretter antall evalueringer og sluttpunktet med banen i figuren. Den nederste grafen viser bare verdier etter <strong>aksepterte flyttinger</strong>.</p>
-<p>Vi starter i <span class="math inline">\(z_0=(0,0)\)</span> med stegstørrelse <span class="math inline">\(\Delta=1\)</span>. Et <strong>kompassøk</strong> evaluerer de fire naboene <span class="math inline">\(z+\Delta(1,0)\)</span>, <span class="math inline">\(z-\Delta(1,0)\)</span>, <span class="math inline">\(z+\Delta(0,1)\)</span> og <span class="math inline">\(z-\Delta(0,1)\)</span>. Finner det en lavere verdi, flytter det til den beste av de fire. Ellers beholder det punktet og halverer <span class="math inline">\(\Delta\)</span>. En slik undersøkelse av fire naboer er én <strong>prøverunde</strong>. Vi stopper når <span class="math inline">\(\Delta&lt;1/128\)</span> eller etter 100 runder.</p>
-<p>I første runde er startverdien <span class="math inline">\(f(0,0)=170\)</span>:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Prøve i oppgitt rekkefølge</th>
-<th style="text-align: right;"><span class="math inline">\((1,0)\)</span></th>
-<th style="text-align: right;"><span class="math inline">\((-1,0)\)</span></th>
-<th style="text-align: right;"><span class="math inline">\((0,1)\)</span></th>
-<th style="text-align: right;"><span class="math inline">\((0,-1)\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Funksjonsverdi</td>
-<td style="text-align: right;">136</td>
-<td style="text-align: right;">164</td>
-<td style="text-align: right;">136</td>
-<td style="text-align: right;">180</td>
-</tr>
-</tbody>
-</table>
+<p>Vi starter i <span class="math inline">\(z_0=(0,0)\)</span> med <span class="math inline">\(\Delta=1\)</span>. Sjekk om flere naboer får samme verdi i første runde. Sammenlign deretter sluttpunkt og antall evalueringer med banen i figuren. Den nederste grafen viser bare verdier etter <strong>aksepterte flyttinger</strong>.</p>
+<p>I første runde er startverdien <span class="math inline">\(f(0,0)=170\)</span>. Prøvene gir:</p>
+<ol type="1">
+<li><span class="math inline">\(f(1,0)=136\)</span> og <span class="math inline">\(f(-1,0)=164\)</span>.</li>
+<li><span class="math inline">\(f(0,1)=136\)</span> og <span class="math inline">\(f(0,-1)=180\)</span>.</li>
+</ol>
 <p>Første og tredje kandidat deler laveste verdi. Når det er likt, velger <code>argmin</code> den første, altså <span class="math inline">\((1,0)\)</span>. Oppdateringsregelen er:</p>
 <ol type="1">
 <li>Beregn de fire naboverdiene; tell fire evalueringer.</li>
@@ -5502,10 +5483,12 @@ Gå i dybden: tilfeldig vandring med aksepterte forslag
 <li>Gjenta til en av stoppreglene slår inn.</li>
 </ol>
 <p><strong>En runde uten forbedring.</strong> Når vi senere står i <span class="math inline">\((3,2)\)</span> med <span class="math inline">\(\Delta=1\)</span>, er den nåværende verdien 0. De fire naboverdiene er <span class="math inline">\(50\)</span>, <span class="math inline">\(26\)</span>, <span class="math inline">\(26\)</span> og <span class="math inline">\(10\)</span> i samme rekkefølge som over. Ingen er lavere enn 0, så vi beholder <span class="math inline">\((3,2)\)</span> og halverer <span class="math inline">\(\Delta\)</span> til <span class="math inline">\(1/2\)</span>. Dette er en ny prøverunde, men ingen flytting.</p>
-<p>I figuren er hver <strong>nivåkurve</strong> en linje av punkter med samme verdi av <span class="math inline">\(f\)</span>. Følg de aksepterte punktene på kartet øverst og verdiene deres i grafen rett under.</p>
+<p>Følg de aksepterte punktene på kartet øverst og verdiene deres i grafen rett under.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Banens siste punkt er <span class="math inline">\((3,2)\)</span> med <span class="math inline">\(f=0\)</span>. Selve søket bruker 53 evalueringer når startpunktet regnes med. Koden evaluerer dessuten punkter på nytt for tabellen og grafen; de er ikke nye søkeprøver. Figuren viser bare <strong>aksepterte punkter</strong>: en halvering uten flytting lager ikke et nytt punkt på banen. Det nederste panelet viser funksjonsverdien ved hver aksepterte flytting. Her gir summen av kvadrater beviset på at sluttpunktet er globalt; kompassøket alene gir ikke det beviset. Hvis fire prøver ikke gir forbedring på én skala, kan andre punkter fremdeles være bedre. Stoppgrensen for <span class="math inline">\(\Delta\)</span> er derfor en regel for oppløsning, ikke for optimalitet.</p>
+<p><strong>Resultat.</strong> Banen ender i <span class="math inline">\((3,2)\)</span> med <span class="math inline">\(f=0\)</span>. Søket bruker 53 evalueringer inkludert startpunktet. Tabell og graf evaluerer noen punkter på nytt; de inngår ikke i dette søketallet.</p>
+<p><strong>Les figuren.</strong> Kartet viser bare aksepterte punkter. Halvering uten flytting setter ingen ny markør. Det nederste panelet viser verdien etter hver aksepterte flytting.</p>
+<p><strong>Konklusjon.</strong> Summen av kvadrater fra 9.0 beviser at sluttpunktets verdi er globalt minst. Fire naboer uten forbedring på én skala utelukker ikke bedre punkter andre steder. Stoppgrensen for <span class="math inline">\(\Delta\)</span> bestemmer bare søkets oppløsning.</p>
 <details class="reading-step">
 <summary>
 Gå i dybden: valg som gir andre baner
@@ -5514,7 +5497,7 @@ Gå i dybden: valg som gir andre baner
 </details>
 </section>
 </div>
-<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
 <div id="uke9-gradient">
 
 </div>
@@ -5528,66 +5511,17 @@ Gå i dybden: valg som gir andre baner
 <section id="et-første-steg-med-tall" class="level3">
 <h3 class="anchored" data-anchor-id="et-første-steg-med-tall">Et første steg med tall</h3>
 <p>Vi starter i <span class="math inline">\(z_0=(0,0)\)</span>, der <span class="math inline">\(f(z_0)=170\)</span>. Målet er å finne en retning som peker nedover <strong>lokalt</strong>, velge en stegfaktor og så kontrollere verdien i det nye punktet. Symbolene <span class="math inline">\(a\)</span> og <span class="math inline">\(b\)</span> er de to parentesene som blir kvadrert i <span class="math inline">\(f\)</span>; <span class="math inline">\(p\)</span> er søkeretningen, og <span class="math inline">\(\alpha\)</span> bestemmer hvor langt vi går langs den.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Trinn</th>
-<th style="text-align: left;">Hva vi beregner</th>
-<th style="text-align: left;">Resultat i origo</th>
-<th style="text-align: left;">Hvorfor det trengs</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1. Finn parentesene</td>
-<td style="text-align: left;"><span class="math inline">\(a=x^2+y-11\)</span>, <span class="math inline">\(b=x+y^2-7\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(a=-11\)</span>, <span class="math inline">\(b=-7\)</span></td>
-<td style="text-align: left;">De inngår i gradientformelen.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2. Finn gradienten</td>
-<td style="text-align: left;"><span class="math inline">\(\nabla f=(4xa+2b,\,2a+4yb)^T\)</span></td>
-<td style="text-align: left;"><span class="math inline">\((-14,-22)^T\)</span></td>
-<td style="text-align: left;">Den beskriver lokal endring.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3. Velg retning</td>
-<td style="text-align: left;"><span class="math inline">\(p=-\nabla f(z_0)\)</span></td>
-<td style="text-align: left;"><span class="math inline">\((14,22)^T\)</span></td>
-<td style="text-align: left;">Negativ gradient peker lokalt nedover.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">4. Sjekk starthelningen</td>
-<td style="text-align: left;"><span class="math inline">\(\nabla f(z_0)^Tp\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(-680\)</span></td>
-<td style="text-align: left;">Negativt tall betyr nedgang ved korte positive steg.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">5. Prøv et kort steg</td>
-<td style="text-align: left;"><span class="math inline">\(z_1=z_0+\alpha p\)</span>, <span class="math inline">\(\alpha=1/100\)</span></td>
-<td style="text-align: left;"><span class="math inline">\((0{,}14,0{,}22)\)</span></td>
-<td style="text-align: left;">Vi får et punkt der vi kan måle <span class="math inline">\(f\)</span>.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">6. Kontroller verdien</td>
-<td style="text-align: left;"><span class="math inline">\(f(z_1)\)</span> mot <span class="math inline">\(f(z_0)\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(162{,}18\)</span> mot <span class="math inline">\(170\)</span></td>
-<td style="text-align: left;">Den faktiske verdien avgjør om steget hjalp.</td>
-</tr>
-</tbody>
-</table>
-<p>Et negativt tall i trinn 4 sier ikke hvor langt vi kan gå. Med <span class="math inline">\(\alpha=1\)</span> blir punktet <span class="math inline">\((14,22)\)</span> og <span class="math inline">\(f(14,22)=283930\)</span>, som er større enn startverdien. Derfor må vi kontrollere <strong>selve</strong> funksjonen ved hvert foreslått steg.</p>
+<ol type="1">
+<li><strong>Regn ut helningen.</strong> I origo er <span class="math inline">\(a=-11\)</span> og <span class="math inline">\(b=-7\)</span>, så <span class="math inline">\(\nabla f(z_0)=(2b,2a)^T=(-14,-22)^T\)</span>.</li>
+<li><strong>Velg retning.</strong> <span class="math inline">\(p=-\nabla f(z_0)=(14,22)^T\)</span>, og <span class="math inline">\(\nabla f(z_0)^Tp=-14\cdot14-22\cdot22=-680&lt;0\)</span>.</li>
+<li><strong>Prøv og kontroller.</strong> Med <span class="math inline">\(\alpha=1/100\)</span> får vi <span class="math inline">\(z_1=(0{,}14,0{,}22)\)</span> og <span class="math inline">\(f(z_1)\approx162{,}18&lt;170=f(z_0)\)</span>.</li>
+</ol>
+<p>Et negativt tall i trinn 2 sier ikke hvor langt vi kan gå. Med <span class="math inline">\(\alpha=1\)</span> blir punktet <span class="math inline">\((14,22)\)</span> og <span class="math inline">\(f(14,22)=283930\)</span>, som er større enn startverdien. Derfor må vi kontrollere <strong>selve</strong> funksjonen ved hvert foreslått steg.</p>
 <details class="reading-step">
 <summary>
 Gå i dybden: regn ut det første gradientsteget
 </summary>
-<p>Ved <span class="math inline">\((0,0)\)</span> får vi <span class="math inline">\(a=0^2+0-11=-11\)</span> og <span class="math inline">\(b=0+0^2-7=-7\)</span>. Gradientformelen gir første komponent <span class="math inline">\(4\cdot0\cdot(-11)+2(-7)=-14\)</span> og andre komponent <span class="math inline">\(2(-11)+4\cdot0\cdot(-7)=-22\)</span>. Med <span class="math inline">\(p=(14,22)^T\)</span> er starthelningen <span class="math inline">\((-14,-22)\cdot(14,22)=-196-484=-680\)</span>. Faktoren <span class="math inline">\(1/100\)</span> gir <span class="math inline">\(z_1=(0,0)+(14,22)/100=(0{,}14,0{,}22)\)</span>. Setter vi inn koordinatene i funksjonen, får vi</p>
+<p>For å kontrollere siste trinn setter vi koordinatene direkte inn i funksjonen:</p>
 <p><span class="math display">\[f(0{,}14,0{,}22)
 =(0{,}14^2+0{,}22-11)^2+(0{,}14+0{,}22^2-7)^2
 \approx162{,}1841.\]</span></p>
@@ -5595,7 +5529,7 @@ Gå i dybden: regn ut det første gradientsteget
 <p>I <a href="../pages/uke6.html#uke6-retning">uke 6</a> kunne vi beregne en eksakt steglengde for en SPD-kvadratisk energi ved hjelp av residualen <span class="math inline">\(b-Ax\)</span>. Denne funksjonen er ikke kvadratisk. Vi må prøve den faktiske funksjonsverdien før vi godtar et steg.</p>
 </section>
 </div>
-<div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
 <div id="uke9-linjesok">
 
 </div>
@@ -5609,51 +5543,22 @@ Gå i dybden: regn ut det første gradientsteget
 <li>Armijo med faktor <span class="math inline">\(10^{-4}\)</span> ville allerede godta <span class="math inline">\(\alpha=1\)</span>: startverdien er <span class="math inline">\(q(0)=4\)</span>, starthelningen er <span class="math inline">\(q'(0)=-4\)</span>, og <span class="math inline">\(q(1)=1\le4+10^{-4}\cdot1\cdot(-4)=3{,}9996\)</span>.</li>
 </ol>
 <p>Armijo krever altså tilstrekkelig nedgang, ikke det eksakt beste steget. For ukens funksjon er verdien langs en retning mer komplisert; vi prøver derfor faktorer og kontrollerer verdien numerisk.</p>
-</section>
-<section id="eksperiment-3-fast-faktor-eller-halvering" class="level3">
-<h3 class="anchored" data-anchor-id="eksperiment-3-fast-faktor-eller-halvering">Eksperiment 3 – fast faktor eller halvering?</h3>
-<p>Vi sammenligner stegregler fra <strong>samme startpunkt</strong> for å se hvordan steglengden påvirker banen. Les først de siste verdiene i utskriften. Se så hvilke baner som blir liggende innenfor nivåkurvekartet og hvordan verdiene utvikler seg i den nederste grafen. Ett godt gradientsteg lover ikke at en fast faktor passer i alle iterasjoner.</p>
 <p>Med <strong>fast faktor</strong> bruker vi samme <span class="math inline">\(\alpha\)</span> for alle gradientsteg. Et <strong>Armijo-søk</strong> starter her med <span class="math inline">\(\alpha=1\)</span> og halverer til funksjonsverdien synker tilstrekkelig mye:</p>
 <p><span class="math display">\[f(z+\alpha p)\le f(z)+10^{-4}\alpha\nabla f(z)^Tp,
 \qquad p=-\nabla f(z).\]</span></p>
-<p>Siden skalarproduktet er negativt, krever høyresiden en reell, men beskjeden nedgang. Testen søker ikke etter den beste steglengden. Gradientmetoden med Armijo-steg stopper når <span class="math inline">\(\|\nabla f\|_2&lt;10^{-6}\)</span> eller når iterasjonsbudsjettet er brukt. <strong>Gradientnormen</strong> er lengden på gradienten; liten norm er en stasjonaritetskontroll, ikke et bevis for globalt minimum.</p>
+<p>Siden skalarproduktet er negativt, krever høyresiden en reell, men beskjeden nedgang. Testen søker ikke etter den beste steglengden. Gradientmetoden med Armijo-steg stopper når <span class="math inline">\(\|\nabla f\|_2&lt;10^{-6}\)</span> eller når iterasjonsbudsjettet er brukt. <strong>Gradientnormen</strong> er lengden på gradienten; liten norm er en stasjonaritetskontroll, ikke et bevis for globalt minimum. Vi undersøker hvordan fast faktor og halvering endrer banen fra samme startpunkt.</p>
+</section>
+<section id="eksperiment-3-fast-faktor-eller-halvering" class="level3">
+<h3 class="anchored" data-anchor-id="eksperiment-3-fast-faktor-eller-halvering">Eksperiment 3 – fast faktor eller halvering?</h3>
+<p>Les de siste verdiene i utskriften, og se hvordan banene og verdiene utvikler seg i de to grafene. Ett godt steg lover ikke at en fast faktor alltid passer.</p>
 <p><strong>Første linjesøk med tall.</strong> Fra origo er <span class="math inline">\(f(z)=170\)</span>, og starthelningen <span class="math inline">\(\nabla f(z)^Tp=-680\)</span> er negativ. For hver faktor <span class="math inline">\(\alpha\)</span> sammenligner vi den <strong>faktiske</strong> verdien i kandidatpunktet med Armijo-testens høyreside. Et steg godtas når verdien ikke er større enn høyresiden. Halveringen prøver faktorene i denne rekkefølgen:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;"><span class="math inline">\(\alpha\)</span></th>
-<th style="text-align: right;">Faktisk <span class="math inline">\(f(z+\alpha p)\)</span></th>
-<th style="text-align: right;">Høyresiden i testen</th>
-<th style="text-align: left;">Godtas?</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><span class="math inline">\(1\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(283930\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(169.932\)</span></td>
-<td style="text-align: left;">Nei</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><span class="math inline">\(1/2\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(17042\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(169.966\)</span></td>
-<td style="text-align: left;">Nei</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><span class="math inline">\(1/4\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(761.125\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(169.983\)</span></td>
-<td style="text-align: left;">Nei</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><span class="math inline">\(1/8\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(32.2578125\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(169.9915\)</span></td>
-<td style="text-align: left;">Ja</td>
-</tr>
-</tbody>
-</table>
+<ol type="1">
+<li><span class="math inline">\(\alpha=1\)</span>: <span class="math inline">\(283930&gt;169{,}932\)</span>. Avvis.</li>
+<li><span class="math inline">\(\alpha=1/2\)</span>: <span class="math inline">\(17042&gt;169{,}966\)</span>. Avvis.</li>
+<li><span class="math inline">\(\alpha=1/4\)</span>: <span class="math inline">\(761{,}125&gt;169{,}983\)</span>. Avvis.</li>
+<li><span class="math inline">\(\alpha=1/8\)</span>: <span class="math inline">\(32{,}2578125\le169{,}9915\)</span>. Godta.</li>
+</ol>
+<p>Hvert ledd sammenligner faktisk verdi til venstre med Armijo-grensen til høyre.</p>
 <p>Vi velger altså <span class="math inline">\(\alpha=1/8\)</span> for <strong>dette</strong> gradientsteget. Først etter flyttingen beregner vi en ny gradient og starter et nytt linjesøk.</p>
 <details class="reading-step">
 <summary>
@@ -5661,10 +5566,12 @@ Gå i dybden: regn ut en Armijo-grense
 </summary>
 <p>For <span class="math inline">\(\alpha=1/8\)</span> blir høyresiden <span class="math inline">\(170+10^{-4}(1/8)(-680)=169{,}9915\)</span>. Kandidatpunktet er <span class="math inline">\((0,0)+(1/8)(14,22)=(1{,}75,2{,}75)\)</span>; der gir direkte innsetting <span class="math inline">\(f=32{,}2578125\)</span>. Siden <span class="math inline">\(32{,}2578125\le169{,}9915\)</span>, godtar testen dette steget.</p>
 </details>
-<p>I figuren viser det øverste nivåkurvekartet aksepterte punkter for <span class="math inline">\(\alpha=0{,}02\)</span> og halvering. Det nederste panelet viser verdien per iterasjon på logaritmisk skala, også for <span class="math inline">\(\alpha=0{,}1\)</span>. Like store avstander på den loddrette aksen betyr samme faktor: avstanden fra 1 til 0,1 er lik avstanden fra 0,1 til 0,01. Den siste banen skyter fort ut av kartets område. Verdier under <span class="math inline">\(10^{-15}\)</span> vises ved en valgt nedre visningsgrense på <span class="math inline">\(10^{-15}\)</span>. Null kan ikke tegnes på en logaritmisk akse; små positive tall kan tegnes, men får samme visningsgrense her. Utskriften viser de faktiske beregnede verdiene.</p>
+<p>Øverst viser nivåkurvekartet aksepterte punkter for <span class="math inline">\(\alpha=0{,}02\)</span> og halvering. Banen med <span class="math inline">\(\alpha=0{,}1\)</span> skyter ut av kartet.</p>
+<p>Nederst vises verdien per iterasjon på logaritmisk skala, også for <span class="math inline">\(\alpha=0{,}1\)</span>. Like avstander betyr samme faktor: fra 1 til 0,1 er samme avstand som fra 0,1 til 0,01. Null kan ikke tegnes der. Verdier under <span class="math inline">\(10^{-15}\)</span> vises derfor ved en nedre visningsgrense; utskriften beholder de faktisk beregnede verdiene.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Fra samme startpunkt gir <span class="math inline">\(\alpha=0{,}02\)</span> en verdi rundt <span class="math inline">\(1{,}46\cdot10^{-15}\)</span> etter 40 steg. Med <span class="math inline">\(\alpha=0{,}1\)</span> vokser verdiene raskt, og koden stopper tegningen ved en sikkerhetsgrense. Halveringen finner et punkt nær <span class="math inline">\((3,2)\)</span> med <span class="math inline">\(f&lt;10^{-14}\)</span> og gradientnorm under <span class="math inline">\(10^{-6}\)</span>. Den nedre grafen teller også steg som ikke får plass på kartet. Som i 9.2 er det sum-av-kvadrater-beviset, ikke den lille gradientnormen, som bekrefter at verdi 0 er globalt best.</p>
+<p>Med <span class="math inline">\(\alpha=0{,}02\)</span> blir verdien rundt <span class="math inline">\(1{,}46\cdot10^{-15}\)</span> etter 40 steg. Med <span class="math inline">\(\alpha=0{,}1\)</span> vokser den raskt, og koden stanser tegningen ved en sikkerhetsgrense. Den nedre grafen teller også steg utenfor kartet.</p>
+<p>Halveringen finner et punkt nær <span class="math inline">\((3,2)\)</span> med <span class="math inline">\(f&lt;10^{-14}\)</span> og gradientnorm under <span class="math inline">\(10^{-6}\)</span>. Sum-av-kvadrater-beviset fra 9.0 bekrefter at 0 er globalt best; gradientnormen gjør ikke det.</p>
 </section>
 <section id="én-linje-er-ikke-hele-planet" class="level3">
 <h3 class="anchored" data-anchor-id="én-linje-er-ikke-hele-planet">Én linje er ikke hele planet</h3>
@@ -5720,7 +5627,7 @@ Gå i dybden: hvorfor halveringen til slutt finner et steg
 </details>
 </section>
 </div>
-<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
+<div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
 <div id="uke9-oppgaver">
 
 </div>
@@ -5896,7 +5803,7 @@ hvorfor disse to tallene viser at \((3,2)\) er et globalt minimumspunkt.<br>
 </div>
 </div>
 </div>
-<div id="tabset-1-8" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-8-tab">
+<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
 <div id="uke9-python">
 
 </div>

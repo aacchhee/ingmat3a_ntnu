@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"# NumPy holder koeffisienter og planer som arrayer.\nimport numpy as np\n# Matplotlib tegner tillatte områder og mållinjer.\nimport matplotlib.pyplot as plt\n# linprog løser den lineære modellen i SciPy.\nfrom scipy.optimize import linprog\n# Meldingen vises først når alle importene og definisjonene er klare.\nprint(\"Oppsett for uke 11 er klart. Nå kan du kjøre eksperimentene.\")","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Hvert hjørne er en plan (antall A-partier, antall B-partier).\n# Rekkefølgen følger kanten rundt området, slik at utfyllingen blir riktig.\ncorners = np.array([[0., 0.], [4., 0.], [4., 1.],\n                    [3., 3.], [0., 4.5]])\n\n# Fyll alle tillatte planer og trekk opp kanten ved å gjenta første hjørne.\nfig, ax = plt.subplots(figsize=(6, 5))\nax.fill(corners[:, 0], corners[:, 1], alpha=.22, color=\"tab:blue\",\n        label=\"Tillatte planer\")\nax.plot(*np.vstack((corners, corners[0])).T, color=\"tab:blue\")\nax.plot(3, 3, \"o\", color=\"tab:red\", label=\"Beste plan (3, 3)\")\n\n# Løs 5x + 4y = nivå for y; hvert nivå gir én parallell mållinje.\n# Sammenlign hvor linjene for 20, 24 og 27 treffer det blå området.\nxx = np.linspace(0, 4.8, 120)\nfor level in (20, 24, 27):\n    ax.plot(xx, (level - 5*xx)/4, \"--\", label=f\"P = {level}\")\nax.set(xlim=(0, 4.8), ylim=(0, 5.1), xlabel=\"A-partier x\",\n       ylabel=\"B-partier y\", title=\"Tillatt område og mållinjer\")\nax.set_aspect(\"equal\")\nax.legend(fontsize=8)\nplt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-polygon","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bidrag per parti: først A, så B, i tusen kroner.\np = np.array([5., 4.])\n# Kolonner: A, B. Rader: maskintimer, arbeidstimer, A-grense.\nA = np.array([[2., 1.], [1., 2.], [1., 0.]])\nb = np.array([9., 9., 4.])\n\n# SciPy minimerer. Minus foran p gjør minimum av -P til maksimum av P.\n# bounds angir at både x og y er minst null.\nresult = linprog(-p, A_ub=A, b_ub=b, bounds=(0, None), method=\"highs\")\nprint(f\"Løserstatus: {result.status} — {result.message}\")\n\n# x og fun kan mangle dersom løseren ikke fant et endelig optimum.\nif result.success:\n    print(f\"Plan: A = {result.x[0]:g}, B = {result.x[1]:g} partier\")\n    print(f\"Dekningsbidrag: {-result.fun:g} tusen kr\")\n    print(\"Ressurs          Kapasitet  Brukt  Slakk  Kontroll\")\n    # Slakk fra SciPy skal stemme med b - A @ planen, rad for rad.\n    for name, capacity, used, slack, check in zip(\n        (\"Maskintimer\", \"Arbeidstimer\", \"A-grense\"),\n        b, A @ result.x, result.ineqlin.residual, b - A @ result.x\n    ):\n        print(f\"{name:<16}{capacity:>9g}{used:>7g}{slack:>7g}{check:>10g}\")","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-highs","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Første modell: t <= 1 og t >= 2 motsier hverandre.\n# Skriv t >= 2 som -t <= -2 for A_ub og b_ub.\nimpossible = linprog([1.], A_ub=[[1.], [-1.]], b_ub=[1., -2.],\n                     bounds=(0, None), method=\"highs\")\n\n# Andre modell: minimer -t, altså maksimer t, med bare t >= 0.\n# Uten en øvre grense kan t og målet vokse så mye vi vil.\nunbounded = linprog([-1.], bounds=(0, None), method=\"highs\")\nprint(\"Modell                Status  Tolkning\")\nprint(f\"Motstridende krav     {impossible.status:>6}  Umulig\")\nprint(f\"Mål uten øvre grense  {unbounded.status:>6}  Ubegrenset\")","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-status","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bruk vertikale paneler med samme akser, så endret form kan sammenlignes.\nfig, axes = plt.subplots(2, 1, figsize=(6, 10), constrained_layout=True)\n# x-verdiene brukes til å tegne grense- og mållinjene i hvert panel.\nxx = np.linspace(0, 4.8, 120)\n# For hvert tilfelle: ekstra timer, hjørnene rundt området, beste plan, bidrag.\ncases = [\n    (0., np.array([[0., 0.], [4., 0.], [4., 1.],\n                    [3., 3.], [0., 4.5]]), (3., 3.), 27.),\n    (2., np.array([[0., 0.], [4., 0.], [4., 2.5],\n                    [0., 4.5]]), (4., 2.5), 30.),\n]\nfor ax, (delta, polygon, best, value) in zip(axes, cases):\n    # Fyll planene som oppfyller alle krav; de rette linjene viser timegrenser.\n    ax.fill(polygon[:, 0], polygon[:, 1], alpha=.22, color=\"tab:blue\",\n            label=\"Tillatte planer\")\n    # En økt høyreside skyver bare maskinlinjen utover.\n    ax.plot(xx, 9 + delta - 2*xx, color=\"tab:blue\", label=\"Maskintimer\")\n    ax.plot(xx, (9 - xx)/2, color=\"tab:green\", label=\"Arbeidstimer\")\n    # A-grensen står fast; den blir avgjørende i det nederste panelet.\n    ax.axvline(4, color=\"tab:purple\", linestyle=\":\", label=\"A-grense x = 4\")\n    # Legg mållinjen gjennom beste plan og marker berøringspunktet.\n    ax.plot(xx, (value - 5*xx)/4, \"--\", color=\"tab:orange\",\n            label=f\"P = {value:g}\")\n    ax.plot(*best, \"o\", color=\"tab:red\", label=\"Beste plan\")\n    ax.set(xlim=(0, 4.8), ylim=(0, 5.1), xlabel=\"A-partier x\",\n           ylabel=\"B-partier y\", title=f\"Ekstra maskintimer: Δ = {delta:g}\")\n    ax.set_aspect(\"equal\")\n    ax.legend(fontsize=8, loc=\"upper right\")\nplt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-capacity-geometry","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Endre bare første kapasitet (maskintimene); hold A, p og andre grenser fast.\n# Sammenlign løserens beste verdi med øvre grense fra de gamle prisene.\nprint(\"Δ timer  A-partier  B-partier  Beste bidrag  Gammel grense\")\nfor delta in (0., .5, 2.):\n    changed = b.copy()\n    changed[0] += delta\n    # Vi minimerer -P også her, så snu fortegnet på fun i utskriften.\n    trial = linprog(-p, A_ub=A, b_ub=changed,\n                    bounds=(0, None), method=\"highs\")\n    if trial.success:\n        print(f\"{delta:>7g}{trial.x[0]:>12.3f}{trial.x[1]:>12.3f}\"\n              f\"{-trial.fun:>14g}{27+2*delta:>16g}\")\n    else:\n        # Meld fra om status før et resultatobjekt uten plan kan brukes.\n        print(f\"{delta:>7g}  Status {trial.status}: {trial.message}\")\n\n# Marginalene fra startmodellen gjelder lokalt rundt Δ = 0.\n# De tre tallene står i samme rekkefølge som radene i A.\nprint(\"\\nLokal ressursverdi ved Δ = 0 (tusen kr per ekstra enhet)\")\nfor name, value in zip((\"Maskintime\", \"Arbeidstime\", \"A-parti\"),\n                       -result.ineqlin.marginals):\n    print(f\"{name:<16}{value:g}\")","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-marginals","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"# NumPy holder koeffisienter og planer som arrayer.\nimport numpy as np\n# Matplotlib tegner tillatte områder og mållinjer.\nimport matplotlib.pyplot as plt\n# linprog løser den lineære modellen i SciPy.\nfrom scipy.optimize import linprog","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# NumPy lagrer koeffisientene, Matplotlib tegner og linprog løser modellen.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import linprog\n\n# Hvert hjørne er en plan (antall A-partier, antall B-partier).\n# Rekkefølgen følger kanten rundt området, slik at utfyllingen blir riktig.\ncorners = np.array([[0., 0.], [4., 0.], [4., 1.],\n                    [3., 3.], [0., 4.5]])\n\n# Fyll alle tillatte planer og trekk opp kanten ved å gjenta første hjørne.\nfig, ax = plt.subplots(figsize=(6, 5))\nax.fill(corners[:, 0], corners[:, 1], alpha=.22, color=\"tab:blue\",\n        label=\"Tillatte planer\")\nax.plot(*np.vstack((corners, corners[0])).T, color=\"tab:blue\")\nax.plot(3, 3, \"o\", color=\"tab:red\", label=\"Beste plan (3, 3)\")\n\n# Løs 5x + 4y = nivå for y; hvert nivå gir én parallell mållinje.\n# Sammenlign hvor linjene for 20, 24 og 27 treffer det blå området.\nxx = np.linspace(0, 4.8, 120)\nfor level in (20, 24, 27):\n    ax.plot(xx, (level - 5*xx)/4, \"--\", label=f\"P = {level}\")\nax.set(xlim=(0, 4.8), ylim=(0, 5.1), xlabel=\"A-partier x\",\n       ylabel=\"B-partier y\", title=\"Tillatt område og mållinjer\")\nax.set_aspect(\"equal\")\nax.legend(fontsize=8)\nplt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-polygon","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bidrag per parti: først A, så B, i tusen kroner.\np = np.array([5., 4.])\n# Kolonner: A, B. Rader: maskintimer, arbeidstimer, A-grense.\nA = np.array([[2., 1.], [1., 2.], [1., 0.]])\nb = np.array([9., 9., 4.])\n\n# SciPy minimerer. Minus foran p gjør minimum av -P til maksimum av P.\n# bounds angir at både x og y er minst null.\nresult = linprog(-p, A_ub=A, b_ub=b, bounds=(0, None), method=\"highs\")\nprint(f\"Løserstatus: {result.status} — {result.message}\")\n\n# x og fun kan mangle dersom løseren ikke fant et endelig optimum.\nif result.success:\n    print(f\"Plan: A = {result.x[0]:g}, B = {result.x[1]:g} partier\")\n    print(f\"Dekningsbidrag: {-result.fun:g} tusen kr\")\n    print(\"Ressurs          Kapasitet  Brukt  Slakk  Kontroll\")\n    # Slakk fra SciPy skal stemme med b - A @ planen, rad for rad.\n    for name, capacity, used, slack, check in zip(\n        (\"Maskintimer\", \"Arbeidstimer\", \"A-grense\"),\n        b, A @ result.x, result.ineqlin.residual, b - A @ result.x\n    ):\n        print(f\"{name:<16}{capacity:>9g}{used:>7g}{slack:>7g}{check:>10g}\")","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-highs","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Første modell: t <= 1 og t >= 2 motsier hverandre.\n# Skriv t >= 2 som -t <= -2 for A_ub og b_ub.\nimpossible = linprog([1.], A_ub=[[1.], [-1.]], b_ub=[1., -2.],\n                     bounds=(0, None), method=\"highs\")\n\n# Andre modell: minimer -t, altså maksimer t, med bare t >= 0.\n# Uten en øvre grense kan t og målet vokse så mye vi vil.\nunbounded = linprog([-1.], bounds=(0, None), method=\"highs\")\nprint(\"Modell                Status  Tolkning\")\nprint(f\"Motstridende krav     {impossible.status:>6}  Umulig\")\nprint(f\"Mål uten øvre grense  {unbounded.status:>6}  Ubegrenset\")","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-status","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bruk vertikale paneler med samme akser, så endret form kan sammenlignes.\nfig, axes = plt.subplots(2, 1, figsize=(6, 10), constrained_layout=True)\n# x-verdiene brukes til å tegne grense- og mållinjene i hvert panel.\nxx = np.linspace(0, 4.8, 120)\n# For hvert tilfelle: ekstra timer, hjørnene rundt området, beste plan, bidrag.\ncases = [\n    (0., np.array([[0., 0.], [4., 0.], [4., 1.],\n                    [3., 3.], [0., 4.5]]), (3., 3.), 27.),\n    (2., np.array([[0., 0.], [4., 0.], [4., 2.5],\n                    [0., 4.5]]), (4., 2.5), 30.),\n]\nfor ax, (delta, polygon, best, value) in zip(axes, cases):\n    # Fyll planene som oppfyller alle krav; de rette linjene viser timegrenser.\n    ax.fill(polygon[:, 0], polygon[:, 1], alpha=.22, color=\"tab:blue\",\n            label=\"Tillatte planer\")\n    # En økt høyreside skyver bare maskinlinjen utover.\n    ax.plot(xx, 9 + delta - 2*xx, color=\"tab:blue\", label=\"Maskintimer\")\n    ax.plot(xx, (9 - xx)/2, color=\"tab:green\", label=\"Arbeidstimer\")\n    # A-grensen står fast; den blir avgjørende i det nederste panelet.\n    ax.axvline(4, color=\"tab:purple\", linestyle=\":\", label=\"A-grense x = 4\")\n    # Legg mållinjen gjennom beste plan og marker berøringspunktet.\n    ax.plot(xx, (value - 5*xx)/4, \"--\", color=\"tab:orange\",\n            label=f\"P = {value:g}\")\n    ax.plot(*best, \"o\", color=\"tab:red\", label=\"Beste plan\")\n    ax.set(xlim=(0, 4.8), ylim=(0, 5.1), xlabel=\"A-partier x\",\n           ylabel=\"B-partier y\", title=f\"Ekstra maskintimer: Δ = {delta:g}\")\n    ax.set_aspect(\"equal\")\n    ax.legend(fontsize=8, loc=\"upper right\")\nplt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-capacity-geometry","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Endre bare første kapasitet (maskintimene); hold A, p og andre grenser fast.\n# Sammenlign løserens beste verdi med øvre grense fra de gamle prisene.\nprint(\"Δ timer  A-partier  B-partier  Beste bidrag  Gammel grense\")\nfor delta in (0., .5, 2.):\n    changed = b.copy()\n    changed[0] += delta\n    # Vi minimerer -P også her, så snu fortegnet på fun i utskriften.\n    trial = linprog(-p, A_ub=A, b_ub=changed,\n                    bounds=(0, None), method=\"highs\")\n    if trial.success:\n        print(f\"{delta:>7g}{trial.x[0]:>12.3f}{trial.x[1]:>12.3f}\"\n              f\"{-trial.fun:>14g}{27+2*delta:>16g}\")\n    else:\n        # Meld fra om status før et resultatobjekt uten plan kan brukes.\n        print(f\"{delta:>7g}  Status {trial.status}: {trial.message}\")\n\n# Marginalene fra startmodellen gjelder lokalt rundt Δ = 0.\n# De tre tallene står i samme rekkefølge som radene i A.\nprint(\"\\nLokal ressursverdi ved Δ = 0 (tusen kr per ekstra enhet)\")\nfor name, value in zip((\"Maskintime\", \"Arbeidstime\", \"A-parti\"),\n                       -result.ineqlin.marginals):\n    print(f\"{name:<16}{value:g}\")","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-marginals","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -5394,6 +5394,10 @@ window.Quarto = {
 </header>
 
 
+<div class="python-setup" style="display: none;" aria-hidden="true">
+<div id="qpyodide-insertion-location-1"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+</div>
 <div class="learning-mode" data-learning-mode="" role="group" aria-label="Velg lesemodus">
 <button type="button" data-mode="lecture" aria-pressed="true">
 Forelesning
@@ -5404,7 +5408,7 @@ Gå i dybden
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">11.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python-oppsett</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">11.1 Fra tabell til tillatt område</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">11.2 Finn planen med <code>linprog</code></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">11.3 Ressurspriser gir en øvre grense</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">11.4 Hva er en ekstra maskintime verdt?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">11.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-8" role="tab" aria-controls="tabset-1-8" aria-selected="false" href="">11.6 Python: undersøk og kontroller</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">11.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">11.1 Fra tabell til tillatt område</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">11.2 Finn planen med <code>linprog</code></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">11.3 Ressurspriser gir en øvre grense</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">11.4 Hva er en ekstra maskintime verdt?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">11.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">11.6 Python: undersøk og kontroller</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="uke11-start">
@@ -5428,15 +5432,6 @@ Gå i dybden
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<div id="uke11-oppsett">
-
-</div>
-<p>Denne cellen importerer pakkene som brukes i ukens forsøk. Den kjøres automatisk når Python er klart. <strong>Vent på meldingen «Oppsett for uke 11 er klart» før du kjører et eksperiment.</strong> Første oppstart kan ta litt tid fordi nettleseren må hente pakkene.</p>
-<p><code>linprog</code> er SciPy-funksjonen som løser de lineære modellene. Koeffisientene til hver modell settes i forsøket der de brukes. Du kan lese koden og kjøre oppsettet på nytt med <strong>Kjør</strong>. Hvis en celle melder at et navn ikke er definert, kjør oppsettet på nytt og deretter forsøket. Kodeoppgavene til slutt inneholder sine egne importer.</p>
-<div id="qpyodide-insertion-location-1"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-</div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div id="uke11-modell">
 
 </div>
@@ -5511,116 +5506,72 @@ Gå i dybden
 </tr>
 </tbody>
 </table>
-<p>Les hver rad i produkttabellen som «timer per parti × antall partier». For den lille planen <span class="math inline">\((x,y)=(2,1)\)</span> er regningen:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Kontroll</th>
-<th style="text-align: left;">Utregning</th>
-<th style="text-align: left;">Sammenligning</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Maskintimer</td>
-<td style="text-align: left;"><span class="math inline">\(2\cdot2+1\cdot1=5\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(5\le9\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Arbeidstimer</td>
-<td style="text-align: left;"><span class="math inline">\(1\cdot2+2\cdot1=4\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(4\le9\)</span></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A-grense</td>
-<td style="text-align: left;"><span class="math inline">\(x=2\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(2\le4\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dekningsbidrag</td>
-<td style="text-align: left;"><span class="math inline">\(5\cdot2+4\cdot1=14\)</span></td>
-<td style="text-align: left;">14 tusen kr</td>
-</tr>
-</tbody>
-</table>
+<p>Les hver rad i produkttabellen som «timer per parti × antall partier». Sjekk planen <span class="math inline">\((x,y)=(2,1)\)</span>:</p>
+<ol type="1">
+<li>Maskintimer: <span class="math inline">\(2\cdot2+1\cdot1=5\le9\)</span>.</li>
+<li>Arbeidstimer: <span class="math inline">\(1\cdot2+2\cdot1=4\le9\)</span>.</li>
+<li>A-grensen: <span class="math inline">\(x=2\le4\)</span>. Dekningsbidraget er <span class="math inline">\(5\cdot2+4\cdot1=14\)</span> tusen kroner.</li>
+</ol>
 <p>Begge partimengdene er ikke-negative, så planen er tillatt. Den har <span class="math inline">\(9-5=4\)</span> ubrukte maskintimer, <span class="math inline">\(9-4=5\)</span> ubrukte arbeidstimer og rom for <span class="math inline">\(4-2=2\)</span> flere A-partier.</p>
+<p>Dette er <strong>lineær programmering (LP)</strong>: både målet <span class="math inline">\(P=5x+4y\)</span> og ressursbruken er lineære i <span class="math inline">\(x,y\)</span>. Vi leter etter den tillatte planen med størst <span class="math inline">\(P\)</span>.</p>
 </section>
 <section id="sammenlign-hjørnene" class="level3">
 <h3 class="anchored" data-anchor-id="sammenlign-hjørnene">Sammenlign hjørnene</h3>
-<p>For å finne en beste plan tegner vi først alle planene som oppfyller kravene. Deretter undersøker vi hjørnene: her kan et lineært mål ikke bli større i det indre av en kant enn ved begge endene. Grensene der to krav holder med likhet, gir følgende hjørner. Et skjæringspunkt som bryter et annet krav, tas ikke med.</p>
+<p>Langs en kant varierer det lineære målet <span class="math inline">\(P\)</span> mellom verdiene i endepunktene. Derfor undersøker vi hjørnene der grensene møtes. Vi finner dem fra grenselikningene og tar bare med punkter som oppfyller <em>alle</em> kravene:</p>
+<ol type="1">
+<li>Sett begge timekrav lik 9: <span class="math inline">\(2x+y=9\)</span> og <span class="math inline">\(x+2y=9\)</span>. Trekk den andre likningen fra den første: <span class="math inline">\(x-y=0\)</span>, altså <span class="math inline">\(x=y\)</span>. Da gir <span class="math inline">\(x+2y=9\)</span> at <span class="math inline">\(3x=9\)</span>, så <span class="math inline">\((x,y)=(3,3)\)</span>.</li>
+<li>Sett <span class="math inline">\(x=4\)</span>. Maskinkravet gir <span class="math inline">\(8+y\le9\)</span>, så hjørnet øverst på denne grensen er <span class="math inline">\((4,1)\)</span>. På aksen <span class="math inline">\(x=0\)</span> gir arbeidskravet <span class="math inline">\(2y\le9\)</span>, så vi får <span class="math inline">\((0,9/2)\)</span>.</li>
+<li>Ta med akseskjæringene <span class="math inline">\((0,0)\)</span> og <span class="math inline">\((4,0)\)</span>. Alle de fem punktene oppfyller de andre kravene. Regn ut <span class="math inline">\(P=5x+4y\)</span> for å sammenligne dem:</li>
+</ol>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Hjørne <span class="math inline">\((x,y)\)</span></th>
-<th style="text-align: right;">Maskintimer <span class="math inline">\(2x+y\)</span></th>
-<th style="text-align: right;">Arbeidstimer <span class="math inline">\(x+2y\)</span></th>
-<th style="text-align: right;">Bidrag <span class="math inline">\(5x+4y\)</span> (tusen kr)</th>
+<th style="text-align: right;"><span class="math inline">\(P\)</span> (tusen kr)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><span class="math inline">\((0,0)\)</span></td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span class="math inline">\((4,0)\)</span></td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">4</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span class="math inline">\((4,1)\)</span></td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">6</td>
 <td style="text-align: right;">24</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span class="math inline">\((3,3)\)</span></td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">9</td>
 <td style="text-align: right;"><strong>27</strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span class="math inline">\((0,9/2)\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(9/2\)</span></td>
-<td style="text-align: right;">9</td>
 <td style="text-align: right;">18</td>
 </tr>
 </tbody>
 </table>
 <p>I <span class="math inline">\((3,3)\)</span> er begge timekapasitetene brukt opp, men det er rom for ett A-parti før grensen <span class="math inline">\(x\le4\)</span> nås. <strong>Slakk</strong> er kapasitet minus bruk. De tre slakkene er altså <span class="math inline">\((0,0,1)\)</span>. En grense med null slakk er <strong>aktiv</strong>.</p>
-<p>Vi tegner området for å se <em>hvorfor</em> sammenligningen av hjørner virker. Se først hvilke punkter som ligger innenfor alle grensene; følg så de stiplede linjene med konstant <span class="math inline">\(P\)</span>. Når bidraget øker fra 20 til 27, flyttes linjen opp og til høyre. Den siste linjen som treffer området, møter det ved <span class="math inline">\((3,3)\)</span>.</p>
+<p>Vi tegner området for å se <em>hvorfor</em> sammenligningen av hjørner virker. En <strong>mållinje</strong> består av planer med samme <span class="math inline">\(P\)</span>. Se først hvilke punkter som ligger innenfor alle grensene; følg så de stiplede mållinjene. Når bidraget øker fra 20 til 27, flyttes linjen opp og til høyre. Den siste linjen som treffer området, møter det ved <span class="math inline">\((3,3)\)</span>.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 </section>
 <section id="hvorfor-er-hjørnene-nok-her" class="level3">
 <h3 class="anchored" data-anchor-id="hvorfor-er-hjørnene-nok-her">Hvorfor er hjørnene nok her?</h3>
-<p>Dette er <strong>lineær programmering (LP)</strong>: både målet og ressursbruken er lineære i <span class="math inline">\(x,y\)</span>. Langs en kant varierer <span class="math inline">\(P\)</span> lineært mellom hjørnene. Hvert punkt inni mangekanten kan skrives som et veid gjennomsnitt av hjørnene, så verdien av <span class="math inline">\(P\)</span> blir samme gjennomsnitt av tabellverdiene. Ingen plan kan dermed gi mer enn 27. Hvis en mållinje følger en kant, kan flere planer være like gode. For eksempel ville et annet mål, <span class="math inline">\(R=2x+y\)</span>, fått maksimum 9 både ved <span class="math inline">\((4,1)\)</span> og <span class="math inline">\((3,3)\)</span>, og i alle punktene på kanten mellom dem. Det finnes da mange maksimumspunkter, selv om maksimalverdien er ett tall.</p>
+<p>Hvert punkt inni mangekanten kan skrives som et veid gjennomsnitt av hjørnene, så verdien av <span class="math inline">\(P\)</span> blir samme gjennomsnitt av tabellverdiene. Ingen plan kan dermed gi mer enn 27. Hvis en mållinje følger en kant, kan flere planer være like gode. For eksempel ville et annet mål, <span class="math inline">\(R=2x+y\)</span>, fått maksimum 9 både ved <span class="math inline">\((4,1)\)</span> og <span class="math inline">\((3,3)\)</span>, og i alle punktene på kanten mellom dem. Det finnes da mange maksimumspunkter, selv om maksimalverdien er ett tall.</p>
 <p>Området er lukket og begrenset, altså <strong>kompakt</strong> slik vi så i <a href="../pages/uke8.html#uke8-kompakt">uke 8</a>; et kontinuerlig mål oppnår et maksimum der. Området er også <strong>konvekst</strong>: linjestykket mellom to tillatte planer er tillatt. Ressurskravene er rader av koeffisienter som i de lineære systemene tidligere i kurset, men her må vi beholde <em>ulikhetene</em> når vi sjekker skjæringspunktene.</p>
 <details class="reading-step">
 <summary>
 Gå i dybden: hjørner og begrensninger for argumentet
 </summary>
-<p>Vi kan hente hjørnene fra grenselikningene i tre trinn:</p>
-<ol type="1">
-<li>Sett begge timekrav lik 9: <span class="math inline">\(2x+y=9\)</span> og <span class="math inline">\(x+2y=9\)</span>. Trekk den andre likningen fra den første: <span class="math inline">\((2x+y)-(x+2y)=9-9\)</span>, så <span class="math inline">\(x-y=0\)</span> og <span class="math inline">\(x=y\)</span>. Sett dette inn i <span class="math inline">\(x+2y=9\)</span>: <span class="math inline">\(y+2y=9\)</span>, altså <span class="math inline">\(3y=9\)</span> og <span class="math inline">\(y=3\)</span>. Dermed er <span class="math inline">\(x=3\)</span>.</li>
-<li>Sett <span class="math inline">\(x=4\)</span>: maskintimene gir <span class="math inline">\(8+y\le9\)</span>, altså <span class="math inline">\(y\le1\)</span>. Sett <span class="math inline">\(x=0\)</span>: arbeidstimene gir <span class="math inline">\(2y\le9\)</span>, altså <span class="math inline">\(y\le9/2\)</span>.</li>
-<li>Ta med skjæringene med aksene og kontroller hvert punkt mot <em>alle</em> kravene. Da står vi igjen med de fem hjørnene i tabellen.</li>
-</ol>
 <p><strong>Simpleksmetoden</strong> går mellom nabohjørner for å forbedre målet. I vårt polygon er en mulig forbedrende hjørnebane <span class="math inline">\((0,0)\to(4,0)\to(4,1)\to(3,3)\)</span>, med verdiene <span class="math inline">\(0,20,24,27\)</span>. Vi trenger ingen simplekstabell for å lese denne banen fra figuren.</p>
 <p>En LP kan også ha et tomt tillatt område eller et mål som kan bli vilkårlig stort. Hjørneargumentet over gjelder vårt ikke-tomme, begrensede område. Gradient <span class="math inline">\(\nabla P=(5,4)\)</span> er konstant og Hessianen er null. Det finnes derfor ikke noe indre stasjonært punkt slik de lokale testene fra <a href="../pages/uke8.html#uke8-lokalt">uke 8</a> og <a href="../pages/uke10.html">uke 10</a> undersøkte; grensene stopper forbedringen.</p>
 </details>
 </section>
 </div>
-<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div id="uke11-linprog">
 
 </div>
@@ -5653,7 +5604,7 @@ Gå i dybden: hjørner og begrensninger for argumentet
 </table>
 <p><span class="math display">\[A=\begin{pmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{pmatrix},\qquad Az\le b.\]</span></p>
 <p>SciPys <code>linprog</code> <strong>minimerer</strong>. For å maksimere <span class="math inline">\(p^Tz\)</span> sender vi derfor inn <code>-p</code>. Argumentene <code>A_ub</code>, <code>b_ub</code> angir radene <span class="math inline">\(Az\le b\)</span>, mens <code>bounds=(0,None)</code> gir både <span class="math inline">\(x\)</span> og <span class="math inline">\(y\)</span> nedre grense null.</p>
-<p>Dette forsøket gir en uavhengig kontroll av hjørnetabellen og viser hvilke tall vi bør sjekke når en løser svarer: status, plan, bidrag og slakk. Sammenlign særlig <code>Slakk</code> med <code>Kontroll</code> i utskriften. De skal vise samme tre verdier.</p>
+<p>Dette forsøket gir en uavhengig kontroll av hjørnetabellen og viser hvilke tall vi bør sjekke når en løser svarer: status, plan, bidrag og slakk. Status 0 betyr at løseren fant et optimum. Sammenlign særlig <code>Slakk</code> med <code>Kontroll</code> i utskriften. De skal vise samme tre verdier.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Status 0 og <code>success=True</code> gir <span class="math inline">\((3,3)\)</span>, verdi 27 og slakk <span class="math inline">\((0,0,1)\)</span>. <code>result.fun=-27</code> er funksjonen SciPy faktisk minimerte. Vi kontrollerer fortegnet og at planen oppfyller kravene. Flyttallsregning kan gi små avvik fra null.</p>
@@ -5670,7 +5621,7 @@ Gå i dybden: skriv andre krav på samme form
 <p>En <strong>slakkvariabel</strong> gjør ubrukt kapasitet til en egen variabel: <span class="math inline">\(2x+y\le9\)</span> er det samme som <span class="math inline">\(2x+y+s=9\)</span> med <span class="math inline">\(s\ge0\)</span>. Ved planen <span class="math inline">\((4,1)\)</span> er <span class="math inline">\(s=0\)</span>; ved <span class="math inline">\((3,2)\)</span> er <span class="math inline">\(s=1\)</span>. Å samle alle krav i én slik avtalt form kalles å skrive problemet på <strong>standardform</strong>. Ulike framstillinger velger ulikhetsform eller likhetsform; oppgi derfor alltid formen.</p>
 </details>
 </div>
-<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
 <div id="uke11-dual">
 
 </div>
@@ -5731,9 +5682,14 @@ Gå i dybden: skriv andre krav på samme form
 </tr>
 </tbody>
 </table>
-<p>Prisregningen gir to trinn for hver tillatt plan:</p>
+<p>For hver tillatt plan og hvert gyldig prisvalg får vi den vektede ulikheten</p>
 <p><span class="math display">\[5x+4y\le(2u+v+w)x+(u+2v)y\le9u+9v+4w.\]</span></p>
-<p>Først bruker vi prisreglene og <span class="math inline">\(x,y\ge0\)</span> til å dekke produktenes bidrag. Så bruker vi kapasitetskravene til å erstatte ressursbruken med kapasitetene. Ethvert gyldig prisvalg gir en øvre grense. Å finne den laveste slike grensen er et eget problem: <strong>dualen</strong> til produksjonsproblemet, som kalles <strong>primalen</strong>. At planens verdi aldri overstiger prisgrensen, kalles <strong>svak dualitet</strong>. Lik verdi 27 på begge sider beviser optimalitet her.</p>
+<ol type="1">
+<li>Pris hvert produkt: <span class="math inline">\(2u+v+w\ge5\)</span> og <span class="math inline">\(u+2v\ge4\)</span>. Siden <span class="math inline">\(x,y\ge0\)</span>, gir dette <span class="math inline">\(5x+4y\le(2u+v+w)x+(u+2v)y\)</span>.</li>
+<li>Samle ressursene og bruk kapasitetene: <span class="math inline">\((2x+y)u+(x+2y)v+xw\le9u+9v+4w\)</span>. Her kan vi multiplisere kravene med prisene fordi <span class="math inline">\(u,v,w\ge0\)</span>.</li>
+<li>Sammenlign en plan med prisgrensen: <span class="math inline">\((3,3)\)</span> gir <span class="math inline">\(5\cdot3+4\cdot3=27\)</span>, mens prisene <span class="math inline">\((2,1,0)\)</span> gir <span class="math inline">\(9\cdot2+9\cdot1+4\cdot0=27\)</span>. Planen når grensen, så ingen tillatt plan er bedre.</li>
+</ol>
+<p>Produksjonsproblemet kalles <strong>primalen</strong>. Å velge gyldige priser med lavest mulig øvre grense er <strong>dualen</strong>. At verdien til enhver tillatt plan er høyst grensen fra ethvert gyldig prisvalg, kalles <strong>svak dualitet</strong>. Når en plan når prisgrensen, gir de to et <strong>optimalitetssertifikat</strong>.</p>
 <p>Mer kompakt kan et maksimeringsproblem skrives</p>
 <p><span class="math display">\[\max_{z\ge0}p^Tz\quad\text{slik at }Az\le b.\]</span></p>
 <p>Hver rad i <span class="math inline">\(A\)</span> får én ikke-negativ pris i <span class="math inline">\(q\)</span>; her er <span class="math inline">\(q=(u,v,w)\)</span> i rekkefølgen maskintimer, arbeidstimer, A-grense. Priskravene er <span class="math inline">\(A^Tq\ge p\)</span>. Den samme vektede ulikheten gir dualproblemet</p>
@@ -5744,91 +5700,42 @@ Gå i dybden: skriv andre krav på samme form
 <summary>
 Gå i dybden: hvor blir forskjellen mellom grensene av?
 </summary>
-<p>For mulige <span class="math inline">\(z,q\)</span> kan differansen deles i summer av ikke-negative produkter:</p>
+<p>For en tillatt plan <span class="math inline">\(z\)</span> og gyldige priser <span class="math inline">\(q\)</span> kan forskjellen mellom prisgrensen og bidraget deles i summer av ikke-negative produkter:</p>
 <p><span class="math display">\[b^Tq-p^Tz=q^T(b-Az)+z^T(A^Tq-p)\ge0.\]</span></p>
-<p>Når forskjellen er null, må hver positiv pris møte en aktiv begrensning: <span class="math inline">\(q_i(b_i-(Az)_i)=0\)</span>. Hvert produkt som lages i positiv mengde, må ha innsatspris lik bidraget: <span class="math inline">\(z_j((A^Tq)_j-p_j)=0\)</span>. Dette kalles <strong>komplementær slakk</strong>. Ved <span class="math inline">\(z=(3,3)\)</span> og <span class="math inline">\(q=(2,1,0)\)</span> er kapasitetslakken <span class="math inline">\((0,0,1)\)</span> og produktprisene <span class="math inline">\((5,4)\)</span>. En aktiv grense kan likevel ha pris null, som vi ser ved kapasitetsskiftet i 11.4.</p>
-<p><strong>Slik finner vi prisene fra planen <span class="math inline">\((3,3)\)</span>.</strong> A-grensen har slakk 1, så komplementær slakk gir <span class="math inline">\(w=0\)</span>. Begge produktene lages i positiv mengde, derfor må <span class="math inline">\(2u+v+w=5\)</span> og <span class="math inline">\(u+2v=4\)</span>. Med <span class="math inline">\(w=0\)</span> blir den første likningen <span class="math inline">\(2u+v=5\)</span>, altså <span class="math inline">\(v=5-2u\)</span>. Sett dette inn i den andre:</p>
-<p><span class="math display">\[u+2(5-2u)=4\quad\Longrightarrow\quad 10-3u=4\quad\Longrightarrow\quad u=2.\]</span></p>
-<p>Da er <span class="math inline">\(v=5-2\cdot2=1\)</span>, og sammen med <span class="math inline">\(w=0\)</span> får vi prisene <span class="math inline">\((u,v,w)=(2,1,0)\)</span>. Kontrollen er <span class="math inline">\(2u+v+w=5\)</span> for A, <span class="math inline">\(u+2v=4\)</span> for B, og totalprisen for kapasitetene er <span class="math inline">\(9u+9v+4w=27\)</span>. Prisene kan altså utledes fra hvilke varer som produseres og hvilke grenser som har slakk.</p>
+<p>Når forskjellen er null, må hvert ledd i summen være null. Dette kalles <strong>komplementær slakk</strong>: en positiv pris krever null slakk i sitt kapasitetskrav, og et produkt som lages i positiv mengde, må ha innsatspris lik bidraget. Vi bruker regelen til å finne prisene fra <span class="math inline">\((3,3)\)</span>:</p>
+<ol type="1">
+<li>A-grensen har slakk <span class="math inline">\(4-3=1\)</span>. Da må <span class="math inline">\(w(4-3)=0\)</span>, altså <span class="math inline">\(w=0\)</span>.</li>
+<li>Både <span class="math inline">\(x=3\)</span> og <span class="math inline">\(y=3\)</span> er positive. Derfor må <span class="math inline">\(2u+v+w=5\)</span> og <span class="math inline">\(u+2v=4\)</span>. Med <span class="math inline">\(w=0\)</span> gir den første likningen <span class="math inline">\(v=5-2u\)</span>. Sett inn i den andre: <span class="math inline">\(u+2(5-2u)=4\)</span>, så <span class="math inline">\(10-3u=4\)</span> og <span class="math inline">\(u=2\)</span>. Dermed er <span class="math inline">\(v=1\)</span>.</li>
+<li>Kontroller prisene <span class="math inline">\((u,v,w)=(2,1,0)\)</span>: <span class="math inline">\(2u+v+w=5\)</span> for A, <span class="math inline">\(u+2v=4\)</span> for B og <span class="math inline">\(9u+9v+4w=27\)</span>. Prisgrensen er lik planens bidrag, så prisene er optimale.</li>
+</ol>
+<p>En aktiv grense kan likevel ha pris null, som vi ser ved kapasitetsskiftet i 11.4.</p>
 <p>Hvis rader eller variabler har andre fortegn, må også prisreglene endres. For et primalproblem som maksimeres, gir en <span class="math inline">\(\ge\)</span>-rad en ikke-positiv dualvariabel og en likningsrad en fri dualvariabel. En fri primalvariabel gir et likhetskrav i dualen. Den vektede ulikheten forklarer fortegnsreglene. I hovedmodellen bruker vi bare <span class="math inline">\(Az\le b\)</span> og <span class="math inline">\(z\ge0\)</span>.</p>
 </details>
 </section>
 </div>
-<div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
 <div id="uke11-sensitivitet">
 
 </div>
+<p>En <strong>lokal ressursverdi</strong> er økningen i det beste bidraget <strong>per ekstra enhet</strong> av ressursen, når kapasiteten endres litt. Vi undersøker om verdien av en maskintime fortsatt er 2 tusen kroner når kapasiteten endres.</p>
 <section id="når-den-gamle-timeprisen-fortsatt-virker" class="level3">
 <h3 class="anchored" data-anchor-id="når-den-gamle-timeprisen-fortsatt-virker">Når den gamle timeprisen fortsatt virker</h3>
-<p>Hvor mye bør verkstedet betale for mer maskinkapasitet? Gi det <span class="math inline">\(\Delta\)</span> flere maskintimer. De gamle prisene <span class="math inline">\((2,1,0)\)</span> gir da øvre grense <span class="math inline">\(2(9+\Delta)+9=27+2\Delta\)</span>. For <span class="math inline">\(\Delta=1/2\)</span> møtes timegrensene ved <span class="math inline">\((10/3,17/6)\)</span>. Kontroller planen rad for rad:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Kontroll ved <span class="math inline">\(\Delta=1/2\)</span></th>
-<th style="text-align: left;">Beregning</th>
-<th style="text-align: left;">Resultat</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Maskintimer</td>
-<td style="text-align: left;"><span class="math inline">\(2(10/3)+17/6\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(19/2=9+1/2\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Arbeidstimer</td>
-<td style="text-align: left;"><span class="math inline">\(10/3+2(17/6)\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(9\)</span></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A-grense</td>
-<td style="text-align: left;"><span class="math inline">\(10/3\le4\)</span></td>
-<td style="text-align: left;">Oppfylt</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Bidrag</td>
-<td style="text-align: left;"><span class="math inline">\(5(10/3)+4(17/6)\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(28\)</span> tusen kr</td>
-</tr>
-</tbody>
-</table>
-<p>Planen oppnår prisgrensen <span class="math inline">\(27+2(1/2)=28\)</span>. Den halve ekstra maskintimen øker dermed det beste bidraget med 1 tusen kroner.</p>
+<p>Hvor mye bør verkstedet betale for mer maskinkapasitet? Gi det <span class="math inline">\(\Delta\)</span> flere maskintimer. De gamle prisene <span class="math inline">\((2,1,0)\)</span> gir da øvre grense <span class="math inline">\(2(9+\Delta)+9=27+2\Delta\)</span>. Regn ut om planen når denne grensen ved <span class="math inline">\(\Delta=1/2\)</span>:</p>
+<ol type="1">
+<li>Sett begge timekrav lik kapasiteten: <span class="math inline">\(2x+y=19/2\)</span> og <span class="math inline">\(x+2y=9\)</span>. Trekk den andre likningen fra den første: <span class="math inline">\(x-y=1/2\)</span>, altså <span class="math inline">\(x=y+1/2\)</span>.</li>
+<li>Sett inn i arbeidstiden: <span class="math inline">\((y+1/2)+2y=9\)</span>, så <span class="math inline">\(3y=17/2\)</span>, <span class="math inline">\(y=17/6\)</span> og <span class="math inline">\(x=10/3\)</span>. Planen oppfyller også <span class="math inline">\(x=10/3\le4\)</span> og <span class="math inline">\(x,y\ge0\)</span>.</li>
+<li>Kontroller både timer og bidrag: <span class="math inline">\(2(10/3)+17/6=19/2\)</span>, <span class="math inline">\(10/3+2(17/6)=9\)</span>, og <span class="math inline">\(5(10/3)+4(17/6)=28\)</span>. Dette er prisgrensen <span class="math inline">\(27+2(1/2)=28\)</span>, så den halve ekstra maskintimen øker det beste bidraget med 1 tusen kroner.</li>
+</ol>
 </section>
 <section id="når-en-annen-grense-stopper-produksjonen" class="level3">
 <h3 class="anchored" data-anchor-id="når-en-annen-grense-stopper-produksjonen">Når en annen grense stopper produksjonen</h3>
-<p>Kan vi fortsatt bruke prisen 2 per maskintime etter en større økning? Ved <span class="math inline">\(\Delta=2\)</span> øker maskinkapasiteten til 11. Skjæringen mellom timegrensene ville gi <span class="math inline">\(x=13/3&gt;4\)</span> og bryter A-grensen. Vi setter derfor <span class="math inline">\(x=4\)</span> og lar arbeidstiden være brukt opp: <span class="math inline">\(4+2y=9\)</span> gir <span class="math inline">\(2y=5\)</span> og <span class="math inline">\(y=5/2\)</span>. Kontroller planen <span class="math inline">\((4,5/2)\)</span>:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Kontroll ved <span class="math inline">\(\Delta=2\)</span></th>
-<th style="text-align: left;">Beregning</th>
-<th style="text-align: left;">Resultat</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Maskintimer</td>
-<td style="text-align: left;"><span class="math inline">\(2\cdot4+5/2\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(21/2\le11\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Arbeidstimer</td>
-<td style="text-align: left;"><span class="math inline">\(4+2(5/2)\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(9\)</span></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A-grense</td>
-<td style="text-align: left;"><span class="math inline">\(x=4\)</span></td>
-<td style="text-align: left;">Brukt opp</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Bidrag</td>
-<td style="text-align: left;"><span class="math inline">\(5\cdot4+4(5/2)\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(30\)</span> tusen kr</td>
-</tr>
-</tbody>
-</table>
-<p>Den gamle prisformelen gir fortsatt en gyldig øvre grense på <span class="math inline">\(27+2\cdot2=31\)</span>, men planen oppnår den ikke. Vi kan bevise den nye grensen med prisene <span class="math inline">\((u,v,w)=(0,2,3)\)</span>:</p>
+<p>Kan vi fortsatt bruke prisen 2 per maskintime etter en større økning? Ved <span class="math inline">\(\Delta=2\)</span> øker maskinkapasiteten til 11:</p>
+<ol type="1">
+<li>Løs først timegrensene: <span class="math inline">\(2x+y=11\)</span> og <span class="math inline">\(x+2y=9\)</span> gir <span class="math inline">\(x-y=2\)</span>, så <span class="math inline">\(x=y+2\)</span>. Dermed er <span class="math inline">\(3y+2=9\)</span>, <span class="math inline">\(y=7/3\)</span> og <span class="math inline">\(x=13/3&gt;4\)</span>. Denne planen bryter A-grensen.</li>
+<li>Sett i stedet <span class="math inline">\(x=4\)</span> og bruk all arbeidstid: <span class="math inline">\(4+2y=9\)</span> gir <span class="math inline">\(y=5/2\)</span>. Planen <span class="math inline">\((4,5/2)\)</span> bruker <span class="math inline">\(2\cdot4+5/2=21/2\le11\)</span> maskintimer og gir <span class="math inline">\(5\cdot4+4(5/2)=30\)</span> tusen kr.</li>
+<li>Den gamle prisformelen gir øvre grense <span class="math inline">\(27+2\cdot2=31\)</span>, som planen ikke når. Prøv prisene <span class="math inline">\((u,v,w)=(0,2,3)\)</span>: de priser A til <span class="math inline">\(2\cdot0+2+3=5\)</span> og B til <span class="math inline">\(0+2\cdot2=4\)</span>.</li>
+</ol>
+<p>Disse prisene gir en ny øvre grense:</p>
 <p><span class="math display">\[2(x+2y)+3x=5x+4y\le2\cdot9+3\cdot4=30.\]</span></p>
 <p>Planen <span class="math inline">\((4,5/2)\)</span> oppnår 30. Nå er det arbeidstimene og A-grensen som bestemmer beste verdi; ekstra maskintimer alene hjelper ikke. Allerede ved <span class="math inline">\(\Delta=3/2\)</span> er disse prisene optimale, selv om maskintimekravet fortsatt er aktivt. En aktiv grense kan altså ha pris null. Figuren lar oss se <em>hvilken grense</em> som stopper forbedringen. Sammenlign hvor mållinjen berører det blå området i øverste panel (opprinnelig kapasitet) og nederste panel (to ekstra maskintimer). Begge panelene har samme akser.</p>
 <div id="qpyodide-insertion-location-5"></div>
@@ -5844,55 +5751,26 @@ Gå i dybden: hvor blir forskjellen mellom grensene av?
 <summary>
 Gå i dybden: hvor lenge er prisformelen eksakt?
 </summary>
-<p>For å finne hele intervallet der gammel pris gir riktig <em>optimalverdi</em>, lar vi <span class="math inline">\(\Delta\)</span> være en endring i maskinkapasiteten: positiv <span class="math inline">\(\Delta\)</span> betyr flere timer, negativ <span class="math inline">\(\Delta\)</span> betyr færre. Den nye kapasiteten <span class="math inline">\(9+\Delta\)</span> må være ikke-negativ. Hold begge timegrensene aktive og sett <span class="math inline">\(2x+y=9+\Delta\)</span> og <span class="math inline">\(x+2y=9\)</span>. Eliminering gir</p>
-<p><span class="math display">\[x=3+\frac{2\Delta}{3},\qquad y=3-\frac{\Delta}{3}.\]</span></p>
-<p>Kontroller den nye planen mot de tre andre kravene:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Krav</th>
-<th style="text-align: left;">Sett inn <span class="math inline">\(x=3+2\Delta/3\)</span>, <span class="math inline">\(y=3-\Delta/3\)</span></th>
-<th style="text-align: left;">Grense for <span class="math inline">\(\Delta\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><span class="math inline">\(x\ge0\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(3+2\Delta/3\ge0\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(\Delta\ge-9/2\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><span class="math inline">\(y\ge0\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(3-\Delta/3\ge0\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(\Delta\le9\)</span></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><span class="math inline">\(x\le4\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(3+2\Delta/3\le4\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(\Delta\le3/2\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>Det felles intervallet er <span class="math inline">\(-9/2\le\Delta\le3/2\)</span>, som også gir ikke-negativ maskinkapasitet. La <span class="math inline">\(P_*(\Delta)\)</span> betegne <em>størst mulig dekningsbidrag</em> ved maskinkapasitet <span class="math inline">\(9+\Delta\)</span>. I dette intervallet er planen tillatt og har verdien <span class="math inline">\(5x+4y=27+2\Delta\)</span>. Siden den oppnår den gamle prisgrensen, er <span class="math inline">\(P_*(\Delta)=27+2\Delta\)</span>. For kapasitetsøkninger gjelder dette til og med <span class="math inline">\(\Delta=3/2\)</span>. Etterpå må vi finne et nytt beste punkt.</p>
+<p>For å finne hele intervallet der gammel pris gir riktig <em>optimalverdi</em>, lar vi <span class="math inline">\(\Delta\)</span> være en endring i maskinkapasiteten: positiv <span class="math inline">\(\Delta\)</span> betyr flere timer, negativ <span class="math inline">\(\Delta\)</span> betyr færre. Den nye kapasiteten er <span class="math inline">\(9+\Delta\)</span>.</p>
+<ol type="1">
+<li>Hold begge timegrensene aktive: <span class="math inline">\(2x+y=9+\Delta\)</span> og <span class="math inline">\(x+2y=9\)</span>. Trekk den andre fra den første: <span class="math inline">\(x-y=\Delta\)</span>, så <span class="math inline">\(x=y+\Delta\)</span>. Sett inn: <span class="math inline">\(3y+\Delta=9\)</span>. Dermed er <span class="math inline">\(y=3-\Delta/3\)</span> og <span class="math inline">\(x=3+2\Delta/3\)</span>.</li>
+<li>Kontroller de øvrige kravene: <span class="math inline">\(x\ge0\)</span> gir <span class="math inline">\(\Delta\ge-9/2\)</span>; <span class="math inline">\(y\ge0\)</span> gir <span class="math inline">\(\Delta\le9\)</span>; <span class="math inline">\(x\le4\)</span> gir <span class="math inline">\(\Delta\le3/2\)</span>. Felles intervall er <span class="math inline">\(-9/2\le\Delta\le3/2\)</span>. Her er også <span class="math inline">\(9+\Delta\ge0\)</span>.</li>
+<li>Sett planen inn i målet: <span class="math inline">\(5(3+2\Delta/3)+4(3-\Delta/3)=27+2\Delta\)</span>. Planen oppnår prisgrensen. Hvis <span class="math inline">\(P_*(\Delta)\)</span> er <em>størst mulig dekningsbidrag</em> ved kapasitet <span class="math inline">\(9+\Delta\)</span>, er derfor <span class="math inline">\(P_*(\Delta)=27+2\Delta\)</span> i intervallet. For økninger gjelder dette til og med <span class="math inline">\(\Delta=3/2\)</span>; etterpå trengs en ny pris.</li>
+</ol>
 <p>Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i <a href="../pages/uke8.html#uke8-modell">uke 8</a>. Etter <span class="math inline">\(\Delta=1/2\)</span> er <span class="math inline">\((10/3,17/6)\)</span> ikke en plan med hele partier.</p>
 </details>
 </section>
 </div>
-<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
+<div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
 <div id="uke11-oppgaver">
 
 </div>
 <p>Oppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.</p>
 <div id="week11-exercise-context" class="math-exercise-context">
-<p>Verkstedet maksimerer <span data-math-exercise-tex="P=5x+4y" data-math-exercise-display="false"><span class="math inline">\(P=5x+4y\)</span></span> under <span data-math-exercise-tex="2x+y\le9" data-math-exercise-display="false"><span class="math inline">\(2x+y\le9\)</span></span>, <span data-math-exercise-tex="x+2y\le9" data-math-exercise-display="false"><span class="math inline">\(x+2y\le9\)</span></span>, <span data-math-exercise-tex="x\le4" data-math-exercise-display="false"><span class="math inline">\(x\le4\)</span></span> og <span data-math-exercise-tex="x,y\ge0" data-math-exercise-display="false"><span class="math inline">\(x,y\ge0\)</span></span>. Slakk er kapasitet minus bruk. Gyldige ikke-negative priser <span data-math-exercise-tex="(u,v,w)" data-math-exercise-display="false"><span class="math inline">\((u,v,w)\)</span></span> oppfyller <span data-math-exercise-tex="2u+v+w\ge5" data-math-exercise-display="false"><span class="math inline">\(2u+v+w\ge5\)</span></span> og <span data-math-exercise-tex="u+2v\ge4" data-math-exercise-display="false"><span class="math inline">\(u+2v\ge4\)</span></span>; da er <span data-math-exercise-tex="9u+9v+4w" data-math-exercise-display="false"><span class="math inline">\(9u+9v+4w\)</span></span> en øvre grense for <span data-math-exercise-tex="P" data-math-exercise-display="false"><span class="math inline">\(P\)</span></span>.</p>
+<p>Verkstedet maksimerer <span data-math-exercise-display="false" data-math-exercise-tex="P=5x+4y"><span class="math inline">\(P=5x+4y\)</span></span> under <span data-math-exercise-display="false" data-math-exercise-tex="2x+y\le9"><span class="math inline">\(2x+y\le9\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="x+2y\le9"><span class="math inline">\(x+2y\le9\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="x\le4"><span class="math inline">\(x\le4\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="x,y\ge0"><span class="math inline">\(x,y\ge0\)</span></span>. Slakk er kapasitet minus bruk. Gyldige ikke-negative priser <span data-math-exercise-display="false" data-math-exercise-tex="(u,v,w)"><span class="math inline">\((u,v,w)\)</span></span> oppfyller <span data-math-exercise-display="false" data-math-exercise-tex="2u+v+w\ge5"><span class="math inline">\(2u+v+w\ge5\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="u+2v\ge4"><span class="math inline">\(u+2v\ge4\)</span></span>; da er <span data-math-exercise-display="false" data-math-exercise-tex="9u+9v+4w"><span class="math inline">\(9u+9v+4w\)</span></span> en øvre grense for <span data-math-exercise-display="false" data-math-exercise-tex="P"><span class="math inline">\(P\)</span></span>.</p>
 </div>
 <p><strong>Oppgave 1 – undersøk en plan.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="week11-task-slack" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;slakk maskintimer&quot;,&quot;slakk arbeidstimer&quot;,&quot;slakk A-grense&quot;,&quot;dekningsbidrag&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Kontroller den nye planen mot de tre andre kravene:\nKravSett inn \\(x=3+2\\Delta/3\\), \\(y=3-\\Delta/3\\)Grense for \\(\\Delta\\)\\(x\\ge0\\)\\(3+2\\Delta/3\\ge0\\)\\(\\Delta\\ge-9/2\\)\\(y\\ge0\\)\\(3-\\Delta/3\\ge0\\)\\(\\Delta\\le9\\)\\(x\\le4\\)\\(3+2\\Delta/3\\le4\\)\\(\\Delta\\le3/2\\)\nDet felles intervallet er \\(-9/2\\le\\Delta\\le3/2\\), som også gir ikke-negativ maskinkapasitet. La \\(P_*(\\Delta)\\) betegne størst mulig dekningsbidrag ved maskinkapasitet \\(9+\\Delta\\). I dette intervallet er planen tillatt og har verdien \\(5x+4y=27+2\\Delta\\). Siden den oppnår den gamle prisgrensen, er \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v3&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" id="math-exercise-1" data-label="week11-task-slack" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;slakk maskintimer&quot;,&quot;slakk arbeidstimer&quot;,&quot;slakk A-grense&quot;,&quot;dekningsbidrag&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Hold begge timegrensene aktive: \\(2x+y=9+\\Delta\\) og \\(x+2y=9\\). Trekk den andre fra den første: \\(x-y=\\Delta\\), så \\(x=y+\\Delta\\). Sett inn: \\(3y+\\Delta=9\\). Dermed er \\(y=3-\\Delta/3\\) og \\(x=3+2\\Delta/3\\).Kontroller de øvrige kravene: \\(x\\ge0\\) gir \\(\\Delta\\ge-9/2\\); \\(y\\ge0\\) gir \\(\\Delta\\le9\\); \\(x\\le4\\) gir \\(\\Delta\\le3/2\\). Felles intervall er \\(-9/2\\le\\Delta\\le3/2\\). Her er også \\(9+\\Delta\\ge0\\).Sett planen inn i målet: \\(5(3+2\\Delta/3)+4(3-\\Delta/3)=27+2\\Delta\\). Planen oppnår prisgrensen. Hvis \\(P_*(\\Delta)\\) er størst mulig dekningsbidrag ved kapasitet \\(9+\\Delta\\), er derfor \\(P_*(\\Delta)=27+2\\Delta\\) i intervallet. For økninger gjelder dette til og med \\(\\Delta=3/2\\); etterpå trengs en ny pris.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v3&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Slakk og dekningsbidrag" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Slakk og dekningsbidrag</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -5921,7 +5799,7 @@ der med bidragene i hjørnetabellen i 11.1, og forklar hvilken plan som er best.
 </div>
 </div>
 <p><strong>Oppgave 2 – bygg en øvre grense.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="week11-task-bound" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;øvre grense&quot;,&quot;innsatspris A&quot;,&quot;innsatspris B&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Kontroller den nye planen mot de tre andre kravene:\nKravSett inn \\(x=3+2\\Delta/3\\), \\(y=3-\\Delta/3\\)Grense for \\(\\Delta\\)\\(x\\ge0\\)\\(3+2\\Delta/3\\ge0\\)\\(\\Delta\\ge-9/2\\)\\(y\\ge0\\)\\(3-\\Delta/3\\ge0\\)\\(\\Delta\\le9\\)\\(x\\le4\\)\\(3+2\\Delta/3\\le4\\)\\(\\Delta\\le3/2\\)\nDet felles intervallet er \\(-9/2\\le\\Delta\\le3/2\\), som også gir ikke-negativ maskinkapasitet. La \\(P_*(\\Delta)\\) betegne størst mulig dekningsbidrag ved maskinkapasitet \\(9+\\Delta\\). I dette intervallet er planen tillatt og har verdien \\(5x+4y=27+2\\Delta\\). Siden den oppnår den gamle prisgrensen, er \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-cell" id="math-exercise-2" data-label="week11-task-bound" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;øvre grense&quot;,&quot;innsatspris A&quot;,&quot;innsatspris B&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Ressurspriser som sertifikat" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Ressurspriser som sertifikat</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -5952,7 +5830,7 @@ de andre prisene? Skriv regningen i egne notater.</div>
 </div>
 </div>
 <p><strong>Oppgave 3 – endret kapasitet.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="week11-task-perturb" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nye partier A&quot;,&quot;nye partier B&quot;,&quot;nytt dekningsbidrag&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;KravSett inn \\(x=3+2\\Delta/3\\), \\(y=3-\\Delta/3\\)Grense for \\(\\Delta\\)\\(x\\ge0\\)\\(3+2\\Delta/3\\ge0\\)\\(\\Delta\\ge-9/2\\)\\(y\\ge0\\)\\(3-\\Delta/3\\ge0\\)\\(\\Delta\\le9\\)\\(x\\le4\\)\\(3+2\\Delta/3\\le4\\)\\(\\Delta\\le3/2\\)\nDet felles intervallet er \\(-9/2\\le\\Delta\\le3/2\\), som også gir ikke-negativ maskinkapasitet. La \\(P_*(\\Delta)\\) betegne størst mulig dekningsbidrag ved maskinkapasitet \\(9+\\Delta\\). I dette intervallet er planen tillatt og har verdien \\(5x+4y=27+2\\Delta\\). Siden den oppnår den gamle prisgrensen, er \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" id="math-exercise-3" data-label="week11-task-perturb" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nye partier A&quot;,&quot;nye partier B&quot;,&quot;nytt dekningsbidrag&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Nytt skjæringspunkt" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Nytt skjæringspunkt</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -5975,7 +5853,7 @@ Plan: <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-
 </div>
 </div>
 <p><strong>Oppgave 4 – prisen har et gyldighetsområde.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="week11-task-range" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;største kapasitetsøkning&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Det felles intervallet er \\(-9/2\\le\\Delta\\le3/2\\), som også gir ikke-negativ maskinkapasitet. La \\(P_*(\\Delta)\\) betegne størst mulig dekningsbidrag ved maskinkapasitet \\(9+\\Delta\\). I dette intervallet er planen tillatt og har verdien \\(5x+4y=27+2\\Delta\\). Siden den oppnår den gamle prisgrensen, er \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.\nOppgave 4 – prisen har et gyldighetsområde.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
+<div class="math-exercise-cell" id="math-exercise-4" data-label="week11-task-range" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;største kapasitetsøkning&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.\nOppgave 4 – prisen har et gyldighetsområde.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Største økning med gammel pris" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Største økning med gammel pris</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -5998,7 +5876,7 @@ Plan: <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-
 </div>
 </div>
 <p><strong>Oppgave 5 – en øvre grense trenger ikke være skarp.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-5" data-label="week11-task-loose-bound" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;innsatspris A&quot;,&quot;innsatspris B&quot;,&quot;øvre grense&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Det felles intervallet er \\(-9/2\\le\\Delta\\le3/2\\), som også gir ikke-negativ maskinkapasitet. La \\(P_*(\\Delta)\\) betegne størst mulig dekningsbidrag ved maskinkapasitet \\(9+\\Delta\\). I dette intervallet er planen tillatt og har verdien \\(5x+4y=27+2\\Delta\\). Siden den oppnår den gamle prisgrensen, er \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.\nOppgave 4 – prisen har et gyldighetsområde.\nOppgave 5 – en øvre grense trenger ikke være skarp.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" id="math-exercise-5" data-label="week11-task-loose-bound" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;innsatspris A&quot;,&quot;innsatspris B&quot;,&quot;øvre grense&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.\nOppgave 4 – prisen har et gyldighetsområde.\nOppgave 5 – en øvre grense trenger ikke være skarp.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Gyldig, men løs øvre grense" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Gyldig, men løs øvre grense</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -6021,7 +5899,7 @@ Innsatspriser (A, B): <span class="math-vec" style="--n:2"><input type="text" id
 </div>
 </div>
 <p><strong>Oppgave 6 – skille mellom ulike utfall.</strong></p>
-<div class="math-exercise-cell" id="math-exercise-6" data-label="week11-task-status" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;motstridende t-krav&quot;,&quot;t uten øvre grense&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Det felles intervallet er \\(-9/2\\le\\Delta\\le3/2\\), som også gir ikke-negativ maskinkapasitet. La \\(P_*(\\Delta)\\) betegne størst mulig dekningsbidrag ved maskinkapasitet \\(9+\\Delta\\). I dette intervallet er planen tillatt og har verdien \\(5x+4y=27+2\\Delta\\). Siden den oppnår den gamle prisgrensen, er \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.\nOppgave 4 – prisen har et gyldighetsområde.\nOppgave 5 – en øvre grense trenger ikke være skarp.\nOppgave 6 – skille mellom ulike utfall.&quot;" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" id="math-exercise-6" data-label="week11-task-status" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;motstridende t-krav&quot;,&quot;t uten øvre grense&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.\nOppgave 4 – prisen har et gyldighetsområde.\nOppgave 5 – en øvre grense trenger ikke være skarp.\nOppgave 6 – skille mellom ulike utfall.&quot;" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Tillatt område og ubegrenset mål" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Tillatt område og ubegrenset mål</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -6045,7 +5923,7 @@ Problem I: <input type="text" id="math-exercise-6-f1" data-answer="2" data-vars=
 </div>
 <p>I <a href="../pages/project_week11.html">prosjektet</a> bruker du ressurspriser på et større produksjonsvalg.</p>
 </div>
-<div id="tabset-1-8" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-8-tab">
+<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
 <div id="uke11-python">
 
 </div>
