@@ -108,6 +108,12 @@ Hvis du ikke kan bruke GitHub, kan du sende e-post til <andrey.chesnokov@ntnu.no
 **Forfatter:** Andrey Chesnokov, NTNU —
 [andrey.chesnokov@ntnu.no](mailto:andrey.chesnokov@ntnu.no).
 
+Takk til Jonas Harang, Elias Sandal og Ute Schaarschmidt for ideer og innspill som har bidratt til å gjøre disse sidene bedre.
+
+Takk også til [Erasmus-CTM-teamet](https://github.com/Erasmus-CTM) for samarbeidet om digitale verktøy og undervisningsressurser. Forfatteren har gleden av å være en del av dette teamet.
+
+Arbeidet er delvis støttet av Erasmus+-prosjektet «Computational Thinking makes sense of Mathematics».
+
 Det egenutviklede kursmaterialet, inkludert tekst, figurer, oppgaver og kode,
 er publisert under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/deed.en),
 med mindre annet er oppgitt. Hele lisensen finnes i
