@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import minimize\n\n# To mål: en ikke-konveks dobbeltbrønn og en bøyd dal.\ndef well(x):\n    u, v = x\n    return (u*u - 1)**2 + .5*v*v\n\ndef well_grad(x):\n    u, v = x\n    return np.array([4*u*(u*u-1), v])\n\ndef well_hess(x):\n    u, v = x\n    return np.diag([12*u*u-4, 1.])\n\ndef valley(x):\n    u, v = x\n    return (1-u)**2 + 10*(v-u*u)**2\n\ndef valley_grad(x):\n    u, v = x\n    return np.array([2*(u-1)-40*u*(v-u*u), 20*(v-u*u)])\n\ndef valley_hess(x):\n    u, v = x\n    return np.array([[2-40*v+120*u*u, -40*u],[-40*u, 20.]])\n\ndef armijo(f, g, x, p, c=1e-4, max_halvings=25):\n    \"\"\"Halver fra 1 til tilstrekkelig reduksjon eller meld feil.\"\"\"\n    slope = float(g @ p)\n    if slope >= 0 or not np.isfinite(slope):\n        raise ValueError('Retningen er ikke en nedgangsretning')\n    a = 1.\n    for j in range(max_halvings + 1):\n        if f(x+a*p) <= f(x) + c*a*slope:\n            return a, j\n        a *= .5\n    raise RuntimeError('Ingen godkjent lengde innen budsjettet')","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"A = np.array([[3., 1.], [1., 2.]])\nb = np.array([5., 5.])\nx = np.array([-2., 3.])\ng = A @ x - b\np = np.linalg.solve(A, -g)  # Løs Ap = -g, ikke beregn en invers.\nprint('g(x0) =', g, 'p =', p)\nprint('x1 =', x+p, '||g(x1)|| =', np.linalg.norm(A @ (x+p)-b))","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-quadratic-step","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"x = np.array([.2, 0.])\ng, H = well_grad(x), well_hess(x)\np = np.linalg.solve(H, -g)\nprint('g =', g, 'H-diagonal =', np.diag(H))\nprint('p =', p, 'g·p =', g @ p)\nprint('f før og etter helt steg:', well(x), well(x+p))\nprint('Ved origo: ||g|| =', np.linalg.norm(well_grad([0.,0.])),\n      ', Hessian-egneverdier =', np.linalg.eigvalsh(well_hess([0.,0.])))","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-ascent","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"x = np.array([.2, 0.]); g, H = well_grad(x), well_hess(x)\nlam = max(0., .25 - np.linalg.eigvalsh(H)[0])\np = np.linalg.solve(H + lam*np.eye(2), -g)\nfor a in [1., .5, .25]:\n    print(f'alpha={a:g}: f={well(x+a*p):.6f}')\na, halvings = armijo(well, g, x, p)\nprint('lambda =', lam, 'g·p =', g @ p,\n      'valgt alpha =', a, 'nytt x =', x+a*p)","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-regularized-step","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"x = np.array([0., 0.]); g, H = valley_grad(x), valley_hess(x)\np = np.linalg.solve(H, -g)\na, halvings = armijo(valley, g, x, p)\nprint('H-egneverdier:', np.linalg.eigvalsh(H), 'p:', p)\nprint('q(x), q(x+p), q(x+alpha*p):', valley(x), valley(x+p), valley(x+a*p))\nprint('alpha:', a, 'halveringer:', halvings)\n\ndef newton_path(damped, n):\n    point = np.array([0., 0.])\n    points = [point.copy()]\n    for k in range(n):\n        grad, hess = valley_grad(point), valley_hess(point)\n        direction = np.linalg.solve(hess, -grad)\n        step = armijo(valley, grad, point, direction)[0] if damped else 1.\n        point = point + step*direction\n        points.append(point.copy())\n    return np.array(points)\n\nfull_path = newton_path(damped=False, n=2)\ndamped_path = newton_path(damped=True, n=5)\nfig, (ax_map, ax_line) = plt.subplots(2, 1, figsize=(6.5, 9))\nu, v = np.meshgrid(np.linspace(-.1, 1.2, 180), np.linspace(-.2, 1.2, 180))\nq_grid = (1-u)**2 + 10*(v-u*u)**2\nax_map.contour(u, v, q_grid,\n               levels=[.001, .01, .05, .1, .25, .5, 1, 2, 5, 10],\n               colors='#adb5bd', linewidths=.8)\nfor name, points, color in [('full Newton', full_path, '#b5483f'),\n                            ('Armijo-dempet', damped_path, '#1665ad')]:\n    ax_map.plot(points[:, 0], points[:, 1], 'o-', color=color,\n                markersize=4, linewidth=1.5, label=name)\nax_map.plot(0, 0, 'ks', markersize=6, label='start k=0')\nax_map.plot(1, 1, 'k*', markersize=11, label='q=0')\nax_map.annotate('full: k=1, q=10', (1, 0), xytext=(-130, 45),\n                textcoords='offset points', color='#92392f', fontsize=8,\n                arrowprops={'arrowstyle': '-', 'color': '#92392f'})\nax_map.annotate('dempet: k=1, q=0.875', (.5, 0), xytext=(5, -29),\n                textcoords='offset points', color='#14517f', fontsize=8,\n                arrowprops={'arrowstyle': '-', 'color': '#14517f'})\nax_map.set(xlim=(-.1, 1.2), ylim=(-.2, 1.2), xlabel='u', ylabel='v',\n           title='Baner over nivåkurvene til faktisk q')\nax_map.set_aspect('equal'); ax_map.legend(fontsize=8, loc='upper left')\n\nalpha_grid = np.linspace(0, 1.1, 180)\nactual = np.array([valley(x+t*p) for t in alpha_grid])\nmodel = valley(x) + alpha_grid*(g @ p) + .5*alpha_grid**2*(p @ H @ p)\nax_line.plot(alpha_grid, actual, color='#34495e', label='faktisk q(x+αp)')\nax_line.plot(alpha_grid, model, '--', color='#9262a4',\n             label='lokal modell mₓ(αp)')\nax_line.plot([a, 1], [valley(x+a*p), valley(x+p)], 'ko', markersize=4)\nax_line.set(xlabel='Faktor α langs første Newton-retning',\n            ylabel='Verdi', title='Modellen undervurderer hele steget')\nax_line.legend(fontsize=8)\nfig.tight_layout(); plt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-backtrack-positive-hess","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"for name, kwargs in [('BFGS', {}), ('Newton-CG', {'hess': valley_hess})]:\n    res = minimize(valley, np.array([0., 0.]), jac=valley_grad,\n                   method=name, options={'maxiter': 100}, **kwargs)\n    print(name, 'success:', res.success, 'iter:', res.nit,\n          'nfev:', res.nfev, 'njev:', res.njev,\n          'nhev:', getattr(res, 'nhev', 0))\n    print('  x:', np.round(res.x, 8), 'q:', f'{valley(res.x):.3e}',\n          '||g||:', f'{np.linalg.norm(valley_grad(res.x)):.3e}')","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-scipy-compare","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import minimize\n\n# Dobbeltbrønnen har to globale minima og et sadelpunkt i origo.\ndef well(x):\n    # Pakk ut begge koordinatene og returner funksjonsverdien.\n    u, v = x\n    return (u*u - 1)**2 + .5*v*v\n\ndef well_grad(x):\n    # Returner de to partiellderiverte i en vektor.\n    u, v = x\n    return np.array([4*u*(u*u-1), v])\n\ndef well_hess(x):\n    # De blandede andrederiverte er null i dette eksemplet.\n    u, v = x\n    return np.diag([12*u*u-4, 1.])\n\n# Den bøyde dalen har et globalt minimum i (1, 1).\ndef valley(x):\n    # Begge kvadratledd er ikke-negative.\n    u, v = x\n    return (1-u)**2 + 10*(v-u*u)**2\n\ndef valley_grad(x):\n    # Bruk kjerneregelen på leddet (v-u²)².\n    u, v = x\n    return np.array([2*(u-1)-40*u*(v-u*u), 20*(v-u*u)])\n\ndef valley_hess(x):\n    # Den symmetriske matrisen endrer seg langs dalen.\n    u, v = x\n    return np.array([[2-40*v+120*u*u, -40*u],[-40*u, 20.]])\n\ndef armijo(f, g, x, p, c=1e-4, max_halvings=25):\n    \"\"\"Returner godkjent stegfaktor og antall halveringer.\"\"\"\n    # Positiv retningsderivert gir ikke nedgang for små positive steg.\n    slope = float(g @ p)\n    if slope >= 0 or not np.isfinite(slope):\n        raise ValueError('Retningen er ikke en nedgangsretning')\n    # Prøv fullt steg først og halver til testen er oppfylt.\n    a = 1.\n    for j in range(max_halvings + 1):\n        if f(x+a*p) <= f(x) + c*a*slope:\n            return a, j\n        a *= .5\n    # Et begrenset budsjett er ikke en matematisk garanti om aksept.\n    raise RuntimeError('Ingen godkjent lengde innen budsjettet')","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bruk den samme matrisen og høyresiden som i uke 6.\nA = np.array([[3., 1.], [1., 2.]])\nb = np.array([5., 5.])\nx = np.array([-2., 3.])\n# Gradient og Hessian er Ax-b og A for denne kvadratikken.\ng = A @ x - b\np = np.linalg.solve(A, -g)\n# Kontroller det nye punktet med en ny gradient.\nprint('g(x0) =', g, 'p =', p)\nprint('x1 =', x+p, '||g(x1)|| =', np.linalg.norm(A @ (x+p)-b))","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-quadratic-step","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Velg et punkt i den venstre skråningen nær sadelpunktet.\nx = np.array([.2, 0.])\ng, H = well_grad(x), well_hess(x)\n# Løs Newton-systemet og kontroller om retningen peker nedover.\np = np.linalg.solve(H, -g)\nprint('g =', g, 'H-diagonal =', np.diag(H))\nprint('p =', p, 'g·p =', g @ p)\nprint('f før og etter helt steg:', well(x), well(x+p))\n# Kontroller at stasjonaritet i origo ikke betyr minimum.\nprint('Ved origo: ||g|| =', np.linalg.norm(well_grad([0., 0.])),\n      ', Hessian-egneverdier =', np.linalg.eigvalsh(well_hess([0., 0.])))","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-ascent","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Finn minste Hessian-egneverdi og flytt den til minst 0.25.\nx = np.array([.2, 0.])\ng, H = well_grad(x), well_hess(x)\nlam = max(0., .25 - np.linalg.eigvalsh(H)[0])\np = np.linalg.solve(H + lam*np.eye(2), -g)\n# Sammenlign faktiske verdier ved fullt, halvt og kvart steg.\nfor a in [1., .5, .25]:\n    print(f'alpha={a:g}: f={well(x+a*p):.6f}')\n# La Armijo velge den første faktoren som gir nok nedgang.\na, halvings = armijo(well, g, x, p)\nprint('lambda =', lam, 'g·p =', g @ p,\n      'valgt alpha =', a, 'nytt x =', x+a*p)","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-regularized-step","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Kontroller første steg fra origo mot faktiske verdier.\nx = np.array([0., 0.])\ng, H = valley_grad(x), valley_hess(x)\np = np.linalg.solve(H, -g)\na, halvings = armijo(valley, g, x, p)\nprint('H-egneverdier:', np.linalg.eigvalsh(H), 'p:', p)\nprint('q(x), q(x+p), q(x+alpha*p):', valley(x), valley(x+p), valley(x+a*p))\nprint('alpha:', a, 'halveringer:', halvings)\n\n# Lag en kort Newton-bane med enten fullt eller kontrollert steg.\ndef newton_path(damped, n):\n    point = np.array([0., 0.])\n    points = [point.copy()]\n    for _ in range(n):\n        grad, hess = valley_grad(point), valley_hess(point)\n        direction = np.linalg.solve(hess, -grad)\n        step = armijo(valley, grad, point, direction)[0] if damped else 1.\n        point = point + step*direction\n        points.append(point.copy())\n    return np.array(points)\n\n# Tegn begge banene i det samme landskapet.\nfull_path = newton_path(damped=False, n=2)\ndamped_path = newton_path(damped=True, n=5)\nfig, (ax_map, ax_line) = plt.subplots(2, 1, figsize=(6.5, 9))\nu, v = np.meshgrid(np.linspace(-.1, 1.2, 180), np.linspace(-.2, 1.2, 180))\nq_grid = (1-u)**2 + 10*(v-u*u)**2\nax_map.contour(u, v, q_grid,\n               levels=[.001, .01, .05, .1, .25, .5, 1, 2, 5, 10],\n               colors='#adb5bd', linewidths=.8)\nfor name, points, color in [('full Newton', full_path, '#b5483f'),\n                            ('Armijo-dempet', damped_path, '#1665ad')]:\n    ax_map.plot(points[:, 0], points[:, 1], 'o-', color=color,\n                markersize=4, linewidth=1.5, label=name)\nax_map.plot(0, 0, 'ks', markersize=6, label='start k=0')\nax_map.plot(1, 1, 'k*', markersize=11, label='q=0')\nax_map.annotate('full: k=1, q=10', (1, 0), xytext=(-130, 45),\n                textcoords='offset points', color='#92392f', fontsize=8,\n                arrowprops={'arrowstyle': '-', 'color': '#92392f'})\nax_map.annotate('dempet: k=1, q=0.875', (.5, 0), xytext=(5, -29),\n                textcoords='offset points', color='#14517f', fontsize=8,\n                arrowprops={'arrowstyle': '-', 'color': '#14517f'})\nax_map.set(xlim=(-.1, 1.2), ylim=(-.2, 1.2), xlabel='u', ylabel='v',\n           title='Baner over nivåkurvene til faktisk q')\nax_map.set_aspect('equal')\nax_map.legend(fontsize=8, loc='upper left')\n\n# Sammenlign den første kvadratiske modellen med den virkelige funksjonen.\nalpha_grid = np.linspace(0, 1.1, 180)\nactual = np.array([valley(x+t*p) for t in alpha_grid])\nmodel = valley(x) + alpha_grid*(g @ p) + .5*alpha_grid**2*(p @ H @ p)\nax_line.plot(alpha_grid, actual, color='#34495e', label='faktisk q(x+αp)')\nax_line.plot(alpha_grid, model, '--', color='#9262a4', label='lokal modell mₓ(αp)')\nax_line.plot([a, 1], [valley(x+a*p), valley(x+p)], 'ko', markersize=4)\nax_line.set(xlabel='Faktor α langs første Newton-retning',\n            ylabel='Verdi', title='Modellen undervurderer hele steget')\nax_line.legend(fontsize=8)\nfig.tight_layout()\nplt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-backtrack-positive-hess","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bruk samme funksjon, gradient og startpunkt i begge forsøkene.\nfor name, kwargs in [('BFGS', {}), ('Newton-CG', {'hess': valley_hess})]:\n    # Newton-CG får også Hessianen; BFGS bygger sitt eget anslag.\n    res = minimize(valley, np.array([0., 0.]), jac=valley_grad,\n                   method=name, options={'maxiter': 100}, **kwargs)\n    # Evaluer gradienten selv ved resultatet og les tellere hvis de finnes.\n    print(name, 'success:', res.success, 'iter:', res.nit,\n          'nfev:', res.nfev, 'njev:', res.njev,\n          'nhev:', getattr(res, 'nhev', 0))\n    print('  x:', np.round(res.x, 8), 'q:', f'{valley(res.x):.3e}',\n          '||g||:', f'{np.linalg.norm(valley_grad(res.x)):.3e}')","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-scipy-compare","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4755,6 +4755,338 @@ select.math-modal-input {
 }
 
 </style>
+<style type="text/css">
+/* ============================================================
+   py-exercise – Quarto extension
+   Interactive Python exercise cells with hidden unit tests.
+   ============================================================ */
+
+/* Exercise container */
+.py-exercise-cell {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-left: 4px solid #0d6efd;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
+}
+
+/* Monaco editor wrapper (Monaco itself switches vs/vs-dark via JS) */
+.py-exercise-editor {
+  border: 1px solid var(--bs-border-color, #ced4da);
+  border-radius: 4px;
+  overflow: hidden;
+  min-height: 80px;
+  margin-bottom: 0.75rem;
+  background: var(--bs-body-bg, #ffffff);
+}
+
+/* Button bar */
+.py-exercise-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.py-exercise-check,
+.py-exercise-reset {
+  font-size: 0.875rem;
+}
+
+/* Running indicator */
+.py-exercise-running {
+  color: var(--bs-secondary-color, #6c757d);
+  font-style: italic;
+  padding: 0.4rem 0;
+}
+
+/* Error box (student code has a runtime / syntax error) */
+.py-exercise-error {
+  background: #fff3f3;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: #842029;
+}
+
+.py-exercise-error pre {
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* Captured stdout from student code */
+.py-exercise-stdout {
+  background: var(--bs-body-bg, #ffffff);
+  color: var(--bs-body-color, #212529);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.875rem;
+}
+
+.py-exercise-stdout-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color, #6c757d);
+  margin-bottom: 0.2rem;
+}
+
+.py-exercise-stdout pre {
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Test summary */
+.py-exercise-summary {
+  padding: 0.25rem 0;
+}
+
+.py-exercise-all-passed {
+  color: #0f5132;
+  background: #d1e7dd;
+  border: 1px solid #badbcc;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+}
+
+.py-exercise-some-failed {
+  color: #842029;
+  background: #f8d7da;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Per-test list (shown when there are multiple tests) */
+.py-exercise-test-list {
+  list-style: none;
+  padding: 0.25rem 0 0;
+  margin: 0;
+}
+
+.py-exercise-test-list li {
+  padding: 0.15rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.py-test-pass { color: #0f5132; }
+.py-test-fail { color: #842029; }
+
+/* Forbidden construct violations */
+.py-exercise-violations {
+  background: #fff3cd;
+  border: 1px solid #ffecb5;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: #664d03;
+}
+
+.py-exercise-violation-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.py-exercise-violation-list li {
+  padding: 0.1rem 0;
+}
+
+/* Single-test hint / assertion message */
+.py-exercise-hint {
+  color: #664d03;
+  background: #fff3cd;
+  border: 1px solid #ffecb5;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* ============================================================
+   Submission header & footer
+   ============================================================ */
+
+.py-submission-header {
+  border: 1px solid var(--bs-border-color, #c3cfe2);
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f0faf4);
+  color: var(--bs-body-color, #212529);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.py-submission-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.py-submission-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.py-submission-fields {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.py-submission-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 160px;
+}
+
+.py-submission-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+}
+
+.py-submission-field input {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.py-submission-field input:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.2);
+}
+
+/* Footer */
+.py-submission-footer {
+  border: 1px solid var(--bs-border-color, #c3cfe2);
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f0faf4);
+  color: var(--bs-body-color, #212529);
+  padding: 1rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.py-submission-export-btn {
+  font-size: 0.9rem;
+}
+
+.py-submission-msg {
+  margin-top: 0.5rem;
+}
+
+.py-submission-error {
+  color: #842029;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.py-submission-output-wrap {
+  margin-top: 0.75rem;
+}
+
+.py-submission-output-labelrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.py-submission-output-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.py-submission-copy-btn {
+  font-size: 0.78rem;
+  padding: 0.15rem 0.5rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.py-submission-copy-ok {
+  background-color: #d1e7dd !important;
+  color: #0f5132 !important;
+  border-color: #badbcc !important;
+}
+
+/* Download section (inside submission footer or standalone) */
+.py-download-footer {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-left: 4px solid #6c757d;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
+  padding: 0.85rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.py-download-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.py-download-btn {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.py-download-hint {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.py-footer-sep {
+  margin: 0.75rem 0;
+  border-color: #ced4da;
+}
+
+.py-submission-output {
+  width: 100%;
+  font-family: monospace;
+  font-size: 0.78rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  resize: vertical;
+  color: #333;
+  cursor: pointer;
+}
+
+
+</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
@@ -5041,6 +5373,7 @@ window.Quarto = {
   });
 </script>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
+<script>window.__pyExerciseConfig = {"lang":"en","submission":false,"submissionKey":"py-exercise"};</script>
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke10.html">Uke 10 – Newtons metode</a></li></ol></nav>
 <div class="quarto-title">
@@ -5073,87 +5406,123 @@ Gå i dybden
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">10.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">10.1 En ligning for retningen</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">10.2 Stasjonær er ikke det samme som minimal</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">10.3 Når hele Newton-steget ikke duger</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">10.4 Sammenlign og kontroller</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">10.5 Oppgaver og prosjekt</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">10.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">10.1 Newton på en kvadratisk skål</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">10.2 Negativ krumning: feil retning og feil punkt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">10.3 Sikre retningen og lengden</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">10.4 Sammenlign og kontroller</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">10.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">10.6 Python: prøv stegene selv</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="uke10-start">
 
 </div>
-<section id="fra-gradient-til-lokal-krumning" class="level3">
-<h3 class="anchored" data-anchor-id="fra-gradient-til-lokal-krumning">Fra gradient til lokal krumning</h3>
-<p>I <a href="../pages/uke6.html#uke6-energi">uke 6</a> løste vi et kvadratisk minimum ved et lineært system. I <a href="../pages/uke8.html#uke8-hessian">uke 8</a> brukte vi gradient og Hessian til å undersøke <em>hvilken type punkt</em> et søk hadde funnet. I <a href="../pages/uke9.html#uke9-gradient">uke 9</a> valgte vi retning fra gradienten og sjekket steglengden mot de faktiske funksjonsverdiene. Nå bruker vi også <strong>krumningen akkurat der vi står</strong> til å foreslå retningen. Newtons metode forsøker å løse <span class="math inline">\(\nabla f(x)=0\)</span> ved en lokal tilnærming. Først viser samme kvadratikk fra uke 6 hvorfor tilnærmingen kan være eksakt. Deretter møter vi to ikke-kvadratiske problemer: en stasjonær kandidat som er feil mål, og en god retning med for langt steg. Slik blir regularisering og demping svar på to forskjellige problemer.</p>
-<p>Etter uken skal du kunne danne gradient og Hessian, løse for Newton-retningen uten matriseinvers, skille stasjonaritet fra minimum, velge et forsvarlig dempet steg og kontrollere et numerisk svar. Vi arbeider med frie, glatt deriverbare funksjoner i to variabler. Startpunkt og variabelskalering undersøkes videre i <a href="../pages/project_week10.html">prosjekt 10</a>.</p>
+<section id="fra-helning-til-krumning" class="level3">
+<h3 class="anchored" data-anchor-id="fra-helning-til-krumning">Fra helning til krumning</h3>
+<p>I <a href="../pages/uke6.html#uke6-energi">uke 6</a> fant vi minimum av en kvadratisk funksjon ved å løse et lineært system. I <a href="../pages/uke8.html#uke8-hessian">uke 8</a> brukte vi Hessianen til å kjenne igjen minimum og sadelpunkter. I <a href="../pages/uke9.html#uke9-gradient">uke 9</a> valgte vi en retning fra gradienten og kontrollerte steglengden mot den faktiske funksjonen. <strong>Newtons metode</strong> bruker også krumningen til å velge retning. Målet er fortsatt å minimere en glatt funksjon uten bibetingelser.</p>
+<p>Vi begynner med kvadratikken fra uke 6: her treffer Newton minimum på ett steg. To videre forsøk viser hva som kan gå galt: En negativ krumning kan gi en oppadgående retning, og en positiv krumning kan gi et helt steg som er for langt. Vi endrer da henholdsvis <em>retningen</em> ved regularisering og <em>lengden</em> ved demping. Til slutt sammenligner vi med SciPy. Regneoppgavene står i 10.5 og korte, selvstendige kodeoppgaver i 10.6. <strong>Gå i dybden</strong> åpner lengre begrunnelser.</p>
+</section>
+<section id="læringsmål" class="level3">
+<h3 class="anchored" data-anchor-id="læringsmål">Læringsmål</h3>
+<p>Etter denne uken skal du kunne</p>
+<ul>
+<li>beregne gradient og Hessian og løse systemet som gir Newton-retningen,</li>
+<li>regne ut ett Newton-steg for en kvadratisk funksjon og forklare hvorfor det treffer minimum,</li>
+<li>bruke Hessianens egenverdier og <span class="math inline">\(g^Tp\)</span> til å skille sadelpunkt og oppadgående retning fra lokalt minimum og nedgangsretning,</li>
+<li>regularisere en indefinit Hessian og velge en dempet steglengde ved å kontrollere faktiske funksjonsverdier,</li>
+<li>tolke et numerisk stoppresultat og begrunne et globalt minimum når en egen nedre grense finnes.</li>
+</ul>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div id="uke10-likning">
 
 </div>
-<p>Vi vil minimere <span class="math inline">\(f(x)\)</span>, der <span class="math inline">\(x=(u,v)^T\)</span>. Første nødvendige betingelse for et indre, deriverbart lokalt minimum er <span class="math inline">\(g(x)=\nabla f(x)=0\)</span>. Dette er ingen tilstrekkelig test, slik vi så i uke 8. I <a href="../pages/page4.html">uke 2</a> brukte vi Newton på en skalar likning. For en vektorfunksjon <span class="math inline">\(g=(g_1,g_2)^T\)</span> betyr <strong>Jacobimatrisen</strong> <span class="math inline">\(J_g\)</span> matrisen der post <span class="math inline">\((i,j)\)</span> er den partiellderiverte <span class="math inline">\(\partial g_i/\partial x_j\)</span>. Når <span class="math inline">\(g=\nabla f\)</span>, er denne matrisen nettopp <strong>Hessianen</strong>:</p>
-<p><span class="math display">\[H_f(x)=J_g(x)=\nabla^2 f(x)=
-\begin{bmatrix}f_{uu}(x)&amp;f_{uv}(x)\\f_{vu}(x)&amp;f_{vv}(x)\end{bmatrix}.\]</span></p>
-<p>For en to ganger kontinuerlig deriverbar funksjon er de blandede deriverte like, så Hessianen er symmetrisk. Den beskriver hvordan gradienten endrer seg. Den lokale andreordensmodellen fra <a href="../pages/uke8.html#uke8-hessian">uke 8</a> er</p>
-<p><span class="math display">\[m_x(p)=f(x)+g(x)^Tp+\tfrac12p^TH(x)p.\]</span></p>
-<p>Hvis <span class="math inline">\(H(x)\)</span> er positiv definit (SPD), har denne kvadratiske modellen ett minimum. Modellens gradient med hensyn til <span class="math inline">\(p\)</span> er <span class="math inline">\(g(x)+H(x)p\)</span>; dermed fås <strong>Newton-retningen</strong> ved å løse</p>
-<p><span class="math display">\[H(x_k)p_k=-g(x_k),\qquad x_{k+1}=x_k+p_k.\]</span></p>
-<p>Dette er også Newton-lineariseringen <span class="math inline">\(g(x+p)\approx g(x)+H(x)p\)</span> av stasjonslikningen. Vi løser det lineære systemet med <code>np.linalg.solve(H, -g)</code>; vi beregner ikke <span class="math inline">\(H^{-1}\)</span> eksplisitt. Når <span class="math inline">\(H\)</span> er SPD og <span class="math inline">\(g\ne0\)</span>, gir <span class="math inline">\(g^Tp=-p^THp&lt;0\)</span>, så retningen er lokalt nedgående. Hele steget må fortsatt kontrolleres mot den virkelige funksjonen.</p>
-<p><strong>Forutsi:</strong> For kvadratikken <span class="math inline">\(\phi(x)=\tfrac12x^TAx-b^Tx\)</span> med <span class="math inline">\(A=\begin{bmatrix}3&amp;1\\1&amp;2\end{bmatrix}\)</span> og <span class="math inline">\(b=(5,5)^T\)</span> fra uke 6: hvor mange Newton-steg trengs fra en vilkårlig start for å nå <span class="math inline">\((1,2)\)</span>?</p>
+<p>La <span class="math inline">\(x=(u,v)^T\)</span> og <span class="math inline">\(f(x)\)</span> være funksjonen vi vil minimere. <strong>Gradienten</strong> <span class="math inline">\(g(x)=\nabla f(x)\)</span> samler de første partiellderiverte; <strong>Hessianen</strong> <span class="math inline">\(H(x)=\nabla^2 f(x)\)</span> samler de andre. Vi vet fra 8.2 at gradient null er nødvendig ved et indre, deriverbart lokalt minimum, men ikke tilstrekkelig. Et <strong>Newton-steg</strong> velger en endring <span class="math inline">\(p\)</span> som får den lokalt tilnærmede gradienten til å bli null.</p>
+<p>Bruk den kjente funksjonen fra uke 6:</p>
+<p><span class="math display">\[\phi(x)=\tfrac12x^TAx-b^Tx,\qquad
+A=\begin{bmatrix}3&amp;1\\1&amp;2\end{bmatrix},\quad b=\begin{bmatrix}5\\5\end{bmatrix}.\]</span></p>
+<p>Her er <span class="math inline">\(g(x)=Ax-b\)</span> og <span class="math inline">\(H(x)=A\)</span> i <em>alle</em> punkter. Starter vi i <span class="math inline">\(x_0=(-2,3)^T\)</span>, får vi</p>
+<p><span class="math display">\[g(x_0)=\begin{bmatrix}-8\\-1\end{bmatrix},\qquad
+Ap=-g(x_0)=\begin{bmatrix}8\\1\end{bmatrix}.\]</span></p>
+<p>Løsning av de to likningene <span class="math inline">\(3p_1+p_2=8\)</span> og <span class="math inline">\(p_1+2p_2=1\)</span> gir <span class="math inline">\(p=(3,-1)^T\)</span>. Dermed er <span class="math inline">\(x_1=x_0+p=(1,2)^T\)</span>, og <span class="math inline">\(g(x_1)=0\)</span>. Følgende celle gjentar regningen med et lineært system; <code>np.linalg.solve</code> løser systemet uten å beregne en eksplisitt matriseinvers.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Her er <span class="math inline">\(g(x_0)=(-8,-1)^T\)</span>, <span class="math inline">\(p=(3,-1)^T\)</span> og <span class="math inline">\(x_1=(1,2)^T\)</span>; gradientnormen er null (innen flyttallspresisjon). <strong>Hvorfor</strong> er dette mer enn et heldig startpunkt? For denne kvadratiske funksjonen er <span class="math inline">\(g(x)=Ax-b\)</span> og <span class="math inline">\(H(x)=A\)</span> overalt. Den lokale modellen <span class="math inline">\(m_x(p)\)</span> er hele funksjonen <span class="math inline">\(\phi(x+p)\)</span>, ikke bare en tilnærming, og <span class="math inline">\(g(x+p)=g(x)+Ap=0\)</span>. Siden <span class="math inline">\(A\)</span> er SPD, er dette også det unike globale minimumet. For en ikke-kvadratisk funksjon endrer <span class="math inline">\(H\)</span> seg med <span class="math inline">\(x\)</span>. Da må vi beregne retningen på nytt, og et helt steg kan være for langt.</p>
+<p>Resultatet er <span class="math inline">\(p=(3,-1)^T\)</span> og <span class="math inline">\(x_1=(1,2)^T\)</span> med gradientnorm 0 innen flyttallspresisjon. Dette gjelder fra <em>ethvert</em> startpunkt: <span class="math inline">\(g(x+p)=Ax-b+Ap=g(x)+Ap=0\)</span>. <span class="math inline">\(A\)</span> er <strong>symmetrisk positiv definit (SPD)</strong>: begge egenverdiene <span class="math inline">\((5\pm\sqrt5)/2\)</span> er positive. Derfor er <span class="math inline">\((1,2)\)</span> også det entydige globale minimumspunktet. Ett steg er her eksakt fordi krumningen er konstant.</p>
+<section id="regelen-bak-forsøket" class="level3">
+<h3 class="anchored" data-anchor-id="regelen-bak-forsøket">Regelen bak forsøket</h3>
+<p>For en glatt, to ganger deriverbar funksjon er den lokale kvadratiske modellen fra <a href="../pages/uke8.html#uke8-hessian">uke 8</a></p>
+<p><span class="math display">\[m_x(p)=f(x)+g(x)^Tp+\tfrac12p^TH(x)p.\]</span></p>
+<p>Uttrykket beskriver funksjonen nær <span class="math inline">\(x\)</span> når vi flytter oss med <span class="math inline">\(p\)</span>. Modellens gradient med hensyn til <span class="math inline">\(p\)</span> er <span class="math inline">\(g(x)+H(x)p\)</span>. Hvis <span class="math inline">\(H(x)\)</span> er SPD, finner vi modellens entydige minimum ved å løse</p>
+<p><span class="math display">\[H(x_k)p_k=-g(x_k),\qquad x_{k+1}=x_k+p_k.\]</span></p>
+<p>Newton-systemet har en entydig løsning når <span class="math inline">\(H\)</span> er <strong>invertibel</strong>, altså når ingen egenverdi er null. SPD sikrer i tillegg at retningen minimerer den kvadratiske modellen. En invertibel, indefinit Hessian kan derfor gi en entydig Newton-retning som ikke peker nedover.</p>
+<p>Dette er også lineariseringen <span class="math inline">\(g(x+p)\approx g(x)+H(x)p\)</span> av likningen <span class="math inline">\(g=0\)</span>. For en ikke-kvadratisk funksjon er modellen bare lokal og Hessianen kan endre seg. Da må vi beregne en ny retning i hvert punkt og undersøke det foreslåtte steget.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: hvorfor er retningen fallende ved positiv Hessian?
+Gå i dybden: Jacobimatrise og hvorfor SPD gir nedgang
 </summary>
-<p>For en SPD-Hessian er <span class="math inline">\(p=-H^{-1}g\)</span> godt definert matematisk, selv om koden løser systemet direkte. Setter vi <span class="math inline">\(Hp=-g\)</span> inn i modellen, blir <span class="math inline">\(m_x(p)-m_x(0)=g^Tp+\tfrac12p^THp=-\tfrac12p^THp&lt;0\)</span> når <span class="math inline">\(g\ne0\)</span>. Dette gjelder modellens verdi ved <span class="math inline">\(p\)</span>. For den virkelige funksjonen gir <span class="math inline">\(g^Tp&lt;0\)</span> garantert reduksjon bare ved tilstrekkelig små positive steg; et stort steg kan forlate området der modellen er god.</p>
+<p>I <a href="../pages/page4.html">uke 2</a> brukte vi Newton på én likning. For en vektorfunksjon <span class="math inline">\(g=(g_1,g_2)^T\)</span> er <strong>Jacobimatrisen</strong> <span class="math inline">\(J_g\)</span> gitt ved <span class="math inline">\((J_g)_{ij}=\partial g_i/\partial x_j\)</span>. Når <span class="math inline">\(g=\nabla f\)</span>, er <span class="math inline">\(J_g=H_f\)</span>. For kontinuerlige andrederiverte er <span class="math inline">\(f_{uv}=f_{vu}\)</span>, så Hessianen er symmetrisk. Likningen <span class="math inline">\(H(x)p=-g(x)\)</span> er dermed Newton-lineariseringen av <span class="math inline">\(g(x)=0\)</span>.</p>
+<p>Ved SPD-Hessian og <span class="math inline">\(g\ne0\)</span> er <span class="math inline">\(p\ne0\)</span>, og <span class="math inline">\(g^Tp=-p^THp&lt;0\)</span>. Indreproduktet <span class="math inline">\(g^Tp\)</span> er den <strong>retningsderiverte</strong>: det beskriver den første endringen når vi går et lite positivt stykke langs <span class="math inline">\(p\)</span>. Modellen synker med <span class="math inline">\(m_x(p)-m_x(0)=-\tfrac12p^THp&lt;0\)</span>. Den virkelige funksjonen synker for tilstrekkelig små positive steg, men trenger ikke å synke for hele <span class="math inline">\(p\)</span>.</p>
 </details>
-<p><strong>Overfør:</strong> Hvilket ledd i argumentet for ett steg forsvinner hvis <span class="math inline">\(H\)</span> varierer mellom <span class="math inline">\(x\)</span> og <span class="math inline">\(x+p\)</span>?</p>
+</section>
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div id="uke10-stasjonaer">
 
 </div>
-<p>La <span class="math inline">\(f(u,v)=(u^2-1)^2+v^2/2\)</span>. De to punktene <span class="math inline">\((\pm1,0)\)</span> har funksjonsverdi null og er globale minima siden begge ledd er ikke-negative. Her er</p>
+<p>Studer <strong>dobbeltbrønnen</strong> <span class="math inline">\(f(u,v)=(u^2-1)^2+v^2/2\)</span>. Siden begge ledd er ikke-negative, er <span class="math inline">\((1,0)\)</span> og <span class="math inline">\((-1,0)\)</span> globale minimumspunkter med verdi 0. Derivasjon gir</p>
 <p><span class="math display">\[g(u,v)=\begin{bmatrix}4u(u^2-1)\\v\end{bmatrix},\qquad
 H(u,v)=\begin{bmatrix}12u^2-4&amp;0\\0&amp;1\end{bmatrix}.\]</span></p>
-<p>Oppsettet definerer <code>well(x)</code>, <code>well_grad(x)</code> og <code>well_hess(x)</code> for disse tre uttrykkene; hver tar vektoren <code>x = [u, v]</code> og returnerer henholdsvis ett tall, en vektor og en <span class="math inline">\(2\times2\)</span>-matrise. Men <span class="math inline">\((0,0)\)</span> er også stasjonært. <strong>Forutsi:</strong> Hva gjør Newton fra <span class="math inline">\((0.2,0)\)</span>? Undersøk fortegnet til både <span class="math inline">\(g^Tp\)</span> og <span class="math inline">\(f(x+p)-f(x)\)</span> før du kjører.</p>
+<p>Ved <span class="math inline">\(x=(0.2,0)^T\)</span> er <span class="math inline">\(g=(-0.768,0)^T\)</span> og <span class="math inline">\(H=\operatorname{diag}(-3.52,1)\)</span>. Newton-systemet gir <span class="math inline">\(p\approx(-0.218182,0)^T\)</span>. Regner vi ut retningsderiverten, får vi <span class="math inline">\(g^Tp\approx0.16756&gt;0\)</span>: retningen går <em>oppover</em> allerede for små positive steg. Den følgende cellen viser også funksjonsverdiene og undersøker origo.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><span class="math inline">\(H(x)=\operatorname{diag}(-3.52,1)\)</span>, så Newton peker i første koordinat mot omtrent <span class="math inline">\(-0.01818\)</span>, <em>opp</em> fra <span class="math inline">\(f(x)=0.9216\)</span> til omtrent <span class="math inline">\(0.99934\)</span>. Retningen har <span class="math inline">\(g^Tp&gt;0\)</span>: selv tilstrekkelig små positive steg øker <span class="math inline">\(f\)</span>. I <span class="math inline">\((0,0)\)</span> er gradienten null, men Hessianen har egenverdiene <span class="math inline">\(-4\)</span> og <span class="math inline">\(1\)</span>. Funksjonen avtar langs <span class="math inline">\(u\)</span> og øker langs <span class="math inline">\(v\)</span> fra dette punktet: det er et <strong>sadelpunkt</strong>. Gradientnorm null kontrollerer derfor bare en nødvendig betingelse for et fritt minimum.</p>
-<p>En SPD-Hessian ved et stasjonært punkt gir et strengt lokalt minimum for en to ganger kontinuerlig deriverbar funksjon. For et globalt minimum trenger vi mer, for eksempel konveksitet på hele området. Et negativt Hessian-ledd i vårt forsøk gjør også den kvadratiske modellen ubegrenset nedenfra. Å halvere den uendrede Newton-retningen er ikke en pålitelig reparasjon av en <strong>oppadgående retning</strong>.</p>
-<p><strong>Overfør:</strong> Hva ville en kode som bare stoppet ved liten gradientnorm rapportert i origo? Hvilke to ekstra kontroller ville du bedt om?</p>
+<p>Funksjonen øker fra <span class="math inline">\(0.9216\)</span> til omtrent <span class="math inline">\(0.99934\)</span> etter helt steg. I origo er gradienten null, men Hessianens egenverdier er <span class="math inline">\(-4\)</span> og <span class="math inline">\(1\)</span>: langs <span class="math inline">\(u\)</span> synker funksjonen fra 1, mens den langs <span class="math inline">\(v\)</span> stiger. Origo er et <strong>sadelpunkt</strong>. En liten gradientnorm alene ville ha stoppet også her. Fra <a href="../pages/uke8.html#uke8-hessian">uke 8</a> vet vi at SPD-Hessian <em>ved et eksakt stasjonært punkt</em> gir et strengt lokalt minimum; en <strong>indefinit</strong> Hessian med egenverdier av begge fortegn gir sadelpunkt. For globalitet kreves et argument som gjelder hele området, slik som sum av ikke-negative ledd ovenfor.</p>
 </div>
 <div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
 <div id="uke10-demping">
 
 </div>
-<p>Vi kan først rette problemet med negativ krumning. La <span class="math inline">\(I\)</span> være identitetsmatrisen (<code>np.eye(2)</code> i kode); løs så <span class="math inline">\((H+\lambda I)p=-g\)</span>, der <span class="math inline">\(\lambda\geq0\)</span> velges slik at matrisen er SPD. Når vi legger til <span class="math inline">\(\lambda I\)</span>, øker hver egenverdi til <span class="math inline">\(H\)</span> med <span class="math inline">\(\lambda\)</span>. Hvis <span class="math inline">\(\lambda_{\min}\)</span> er den minste egenverdien, gir <span class="math inline">\(\lambda=\max(0,0.25-\lambda_{\min})\)</span> derfor minste egenverdi minst <span class="math inline">\(0.25\)</span> i dette lille eksemplet. Det er <strong>regularisering</strong>, og endrer retningen. Deretter prøver vi steglengder <span class="math inline">\(\alpha=1,1/2,1/4,\ldots\)</span> til en tilstrekkelig reduksjon er oppnådd. Det er <strong>demping</strong>. Vi bruker Armijo-testen fra <a href="../pages/uke9.html#uke9-gradient">uke 9</a>, nå for en generell retning <span class="math inline">\(p\)</span>: <span class="math inline">\(f(x+\alpha p)\leq f(x)+10^{-4}\alpha g^Tp\)</span>. Den krever <span class="math inline">\(g^Tp&lt;0\)</span>. Hvis <span class="math inline">\(g^Tp&gt;0\)</span>, øker funksjonen langs alle tilstrekkelig små positive steg, så halvering gir ingen garanti for nedgang. Oppsettets <code>armijo(f, g, x, p)</code> tar selve funksjonen, gradientvektoren, startpunktet og retningen; den returnerer godkjent <span class="math inline">\(\alpha\)</span> og antall halveringer, eller melder feil ved manglende nedgang innen budsjettet.</p>
-<p><strong>Forutsi:</strong> Med <span class="math inline">\(x=(0.2,0)\)</span> gir denne regelen <span class="math inline">\(\lambda=3.77\)</span>, <span class="math inline">\(p=(3.072,0)\)</span>. Vil helt steg, halvt steg eller kvart steg bli godkjent? Sammenlign faktiske <span class="math inline">\(f\)</span>-verdier, ikke bare modellen.</p>
+<section id="regularisering-endrer-retningen" class="level3">
+<h3 class="anchored" data-anchor-id="regularisering-endrer-retningen">Regularisering endrer retningen</h3>
+<p>For å rette oppadgående Newton-retning kan vi legge til <span class="math inline">\(\lambda I\)</span> i Hessianen og løse <span class="math inline">\((H+\lambda I)p=-g\)</span>. Her er <span class="math inline">\(I\)</span> identitetsmatrisen og <span class="math inline">\(\lambda\ge0\)</span>. Dette kalles <strong>regularisering</strong>. Hver egenverdi øker med <span class="math inline">\(\lambda\)</span>. La <span class="math inline">\(\lambda_{\min}(H)\)</span> betegne den minste egenverdien til <span class="math inline">\(H\)</span>; velg i vårt lille forsøk</p>
+<p><span class="math display">\[\lambda=\max(0,\,0.25-\lambda_{\min}(H)),\]</span></p>
+<p>slik at den minste egenverdien til <span class="math inline">\(H+\lambda I\)</span> blir minst 0.25. For dobbeltbrønnen ved <span class="math inline">\((0.2,0)\)</span> er <span class="math inline">\(\lambda=3.77\)</span> og <span class="math inline">\(p=(3.072,0)^T\)</span>. Nå er <span class="math inline">\(g^Tp=-2.359296&lt;0\)</span>. Retningen er nedgående <em>nær</em> startpunktet, men et helt steg kan fortsatt gå for langt.</p>
+</section>
+<section id="demping-kontrollerer-steglengden" class="level3">
+<h3 class="anchored" data-anchor-id="demping-kontrollerer-steglengden">Demping kontrollerer steglengden</h3>
+<p>Vi prøver derfor <strong>demping</strong> med faktorer <span class="math inline">\(\alpha=1,1/2,1/4,\ldots\)</span> og setter <span class="math inline">\(x_+=x+\alpha p\)</span>. <a href="../pages/uke9.html#uke9-linjesok">Armijo-testen fra uke 9</a> krever her</p>
+<p><span class="math display">\[f(x+\alpha p)\le f(x)+10^{-4}\alpha g^Tp.\]</span></p>
+<p>Når <span class="math inline">\(g^Tp&lt;0\)</span>, krever høyresiden en faktisk reduksjon. Funksjonen <code>armijo</code> i oppsettet returnerer den første godkjente faktoren og antall halveringer. Den avviser retninger som ikke er nedgående, og har et begrenset antall forsøk.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Hele og halve steg øker her <span class="math inline">\(f\)</span>; kvart steg gir <span class="math inline">\(x=(0.968,0)\)</span> og reduserer <span class="math inline">\(f\)</span> fra <span class="math inline">\(0.9216\)</span> til omtrent <span class="math inline">\(0.00396\)</span>. Fordi <span class="math inline">\(g^Tp&lt;0\)</span>, kreves en reell reduksjon. For en glatt funksjon finnes et lite nok steg lokalt når <span class="math inline">\(p\)</span> er en nedgangsretning; vårt begrensede søk kan likevel melde feil. Verdien <span class="math inline">\(0.25\)</span> er ikke en universell regel: skalering, kostnaden for Hessian og valg av regularisering må vurderes for et nytt problem.</p>
-<p>Også en <em>positiv</em> Hessian kan gi et helt steg som mislykkes når funksjonen bøyer seg bort fra modellen. Prøv den bøyde dalen <span class="math inline">\(q(u,v)=(1-u)^2+10(v-u^2)^2\)</span>, med minimum <span class="math inline">\(q(1,1)=0\)</span>. Gradienten er <span class="math inline">\((2(u-1)-40u(v-u^2),\ 20(v-u^2))^T\)</span>, og Hessianen er <span class="math inline">\(\begin{bmatrix}2-40v+120u^2&amp;-40u\\-40u&amp;20\end{bmatrix}\)</span>. Oppsettet kaller disse <code>valley</code>, <code>valley_grad</code> og <code>valley_hess</code>, med samme inndata og utdatatypene som for dobbeltbrønnen. <strong>Forutsi:</strong> I startpunktet er Hessianen SPD, så modellen har et minimum langs Newton-retningen. Ligger det foreslåtte punktet også lavere på den <em>virkelige</em> bøyde dalen? Sammenlign fullstegbanen og Armijo-banen på nivåkurvene. Nederst sammenligner vi modellen og den virkelige funksjonen langs den første retningen.</p>
+<p>Hele og halve steg øker <span class="math inline">\(f\)</span>. Kvart steg gir <span class="math inline">\((0.968,0)\)</span> og omtrent <span class="math inline">\(0.00396\)</span>, fra <span class="math inline">\(0.9216\)</span>. Regulariseringen endret retningen, og dempingen bestemte hvor langt vi skulle følge den. Tallet 0.25 i regulariseringen er et illustrerende valg, ikke en universell parameter.</p>
+<p>Prøv nå den <strong>bøyde dalen</strong></p>
+<p><span class="math display">\[q(u,v)=(1-u)^2+10(v-u^2)^2.\]</span></p>
+<p>Begge ledd er ikke-negative og <span class="math inline">\(q(1,1)=0\)</span>, så <span class="math inline">\((1,1)\)</span> er et globalt minimumspunkt. Ved å derivere får vi</p>
+<p><span class="math display">\[g(u,v)=\begin{bmatrix}2(u-1)-40u(v-u^2)\\20(v-u^2)\end{bmatrix},\qquad
+H(u,v)=\begin{bmatrix}2-40v+120u^2&amp;-40u\\-40u&amp;20\end{bmatrix}.\]</span></p>
+<p>I <span class="math inline">\((0,0)\)</span> er <span class="math inline">\(g=(-2,0)^T\)</span> og <span class="math inline">\(H=\operatorname{diag}(2,20)\)</span>, altså SPD. Newton gir <span class="math inline">\(p=(1,0)^T\)</span>. Modellen anslår <span class="math inline">\(m_x(\alpha p)=(1-\alpha)^2\)</span>, men den <em>faktiske</em> funksjonen langs denne linjen er <span class="math inline">\((1-\alpha)^2+10\alpha^4\)</span>. Hele steget gir derfor <span class="math inline">\(q(1,0)=10&gt;q(0,0)=1\)</span>. Halvt steg gir <span class="math inline">\(q(0.5,0)=0.875\)</span> og godtas av Armijo.</p>
+<p>Cellen sammenligner hele og dempede banen på nivåkurver. Under nivåkurvene vises modell og virkelig verdi langs første retning. <code>valley</code>, <code>valley_grad</code> og <code>valley_hess</code> i oppsettet definerer funksjonen og dens deriverte.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Her er <span class="math inline">\(H=\operatorname{diag}(2,20)\)</span> og <span class="math inline">\(p=(1,0)\)</span>, men det hele steget går fra <span class="math inline">\(q=1\)</span> til <span class="math inline">\(q=10\)</span>. Linjesøket godtar <span class="math inline">\(\alpha=1/2\)</span>; den nye verdien er <span class="math inline">\(q(0.5,0)=0.875\)</span>. SPD gjør retningen fallende <em>nær startpunktet</em>, ikke nødvendigvis på hele veien. I øvre figur går full Newton først til modellens foreslåtte bunn <span class="math inline">\((1,0)\)</span> og øker <span class="math inline">\(q\)</span>; neste steg når <span class="math inline">\((1,1)\)</span>. Den dempede banen avviser første fullsteg, velger <span class="math inline">\((0.5,0)\)</span> og senker <span class="math inline">\(q\)</span> videre i fem aksepterte steg. I nedre figur er første kvadratiske modell <span class="math inline">\(m_x(\alpha p)=(1-\alpha)^2\)</span>, mens den faktiske verdien langs samme linje er <span class="math inline">\(q(\alpha,0)=(1-\alpha)^2+10\alpha^4\)</span>. Differansen kommer fra den bøyde dalen som andreordensmodellen ved start ikke fanger opp. Krumning velger retningen; demping velger hvor langt vi følger den.</p>
-<p>En Hessian er <strong>lokalt Lipschitz-kontinuerlig</strong> nær <span class="math inline">\(x_*\)</span> hvis den ikke endrer seg raskere enn en fast konstant ganger avstanden: det finnes <span class="math inline">\(L\)</span> slik at <span class="math inline">\(\|H(x)-H(y)\|\le L\|x-y\|\)</span> for nærliggende <span class="math inline">\(x,y\)</span>. Når <span class="math inline">\(x_*\)</span> er stasjonært, <span class="math inline">\(H(x_*)\)</span> er invertibel, Hessianen har denne egenskapen og starten er tilstrekkelig nær <span class="math inline">\(x_*\)</span>, får <strong>rene Newton-steg</strong> lokal kvadratisk konvergens: feilen i neste steg er høyst en konstant ganger kvadratet av den nåværende feilen. Hvis Hessianen er SPD ved <span class="math inline">\(x_*\)</span>, er punktet et strengt lokalt minimum. For å bruke samme lokale garanti på vår sikrede metode må linjesøket etter hvert godta <span class="math inline">\(\alpha=1\)</span> <strong>og</strong> regulariseringen bli inaktiv (<span class="math inline">\(\lambda=0\)</span>). En fast positiv regularisering kan gjøre sluttfasen tregere.</p>
+<p>Øverst går fullt Newton først til <span class="math inline">\((1,0)\)</span>, hvor <span class="math inline">\(q=10\)</span>, og deretter til <span class="math inline">\((1,1)\)</span>. Den dempede banen senker verdien allerede på første steg og fortsetter gjennom fem godkjente steg. Nederst viser avstanden <span class="math inline">\(10\alpha^4\)</span> mellom kurvene hvorfor modellen undervurderer store steg. SPD sikrer nedgang for <em>tilstrekkelig små</em> steg, ikke for hvert helt steg.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: lokal fart og begrensninger
+Gå i dybden: lokal fart og grensen for sikringen
 </summary>
-<p>La <span class="math inline">\(g(x_*)=0\)</span> og <span class="math inline">\(H(x_*)\)</span> være invertibel. Når Hessianen er Lipschitz-kontinuerlig i et område rundt <span class="math inline">\(x_*\)</span>, og startpunktet er tilstrekkelig nær, gir lineariseringens restledd en lokal feilgrense <span class="math inline">\(\|x_{k+1}-x_*\|\leq C\|x_k-x_*\|^2\)</span> for rene Newton-steg. Det er ikke en garanti fra enhver start. Ved et strengt lokalt minimum med SPD-Hessian vil et vanlig Armijo-søk med liten nok Armijo-konstant typisk kunne velge hele steg når vi kommer nær nok. Å bygge og løse et Hessian-system kan koste mer per steg enn en gradientoppdatering. En fast Hessian fra et tidlig steg sparer faktorisering, men mister generelt denne lokale kvadratiske farten.</p>
+<p>La <span class="math inline">\(e_k=\|x_k-x_*\|_2\)</span> være avstanden til et eksakt stasjonært punkt. <strong>Kvadratisk konvergens</strong> betyr at <span class="math inline">\(e_{k+1}\le C e_k^2\)</span> nær løsningen, for en konstant <span class="math inline">\(C\)</span>. Hvis for eksempel <span class="math inline">\(C=1\)</span> og feilen er <span class="math inline">\(10^{-2}\)</span>, blir neste feil høyst <span class="math inline">\(10^{-4}\)</span> og den neste høyst <span class="math inline">\(10^{-8}\)</span>. Dette illustrerer feilgrensen; det er ikke målte tall fra forsøket.</p>
+<p>En <strong>lokalt Lipschitz-kontinuerlig Hessian</strong> endrer seg høyst en konstant ganger avstanden mellom punktene i et lite område. Den konstante Hessianen i 10.1 oppfyller dette, siden endringen er null. Hvis <span class="math inline">\(g(x_*)=0\)</span>, <span class="math inline">\(H(x_*)\)</span> er invertibel, Hessianen oppfyller dette kravet og starten er nær nok, har rene Newton-steg kvadratisk konvergens. Påstanden er lokal og gjelder også nær stasjonære punkter som ikke er minima.</p>
+<p>En vanlig måte å bevare samme lokale sluttfart i en sikret metode på er at regulariseringen blir inaktiv og linjesøket etter hvert godtar <span class="math inline">\(\alpha=1\)</span>. En fast positiv <span class="math inline">\(\lambda\)</span> kan gi tregere sluttfase. Å bygge Hessianen og løse et system koster dessuten mer per steg enn en gradientoppdatering. Selv når <span class="math inline">\(g^Tp&lt;0\)</span>, garanterer teorien bare at et tilstrekkelig lite steg gir nedgang; et linjesøk med et endelig halveringsbudsjett kan melde feil.</p>
 </details>
-<p><strong>Overfør:</strong> Kan du forklare hvilken feil regularisering og steglengde håndterer hver for seg?</p>
+</section>
 </div>
 <div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
 <div id="uke10-scipy">
 
 </div>
-<p>SciPy-rutinen <code>minimize</code> fra <a href="../pages/uke8.html#uke8-scipy">uke 8</a> tar en mål-funksjon av vektoren <span class="math inline">\(x\)</span>, startpunktet <code>x0</code> og en valgt metode. <code>jac=valley_grad</code> gir den analytiske gradientfunksjonen (SciPy kaller argumentet <code>jac</code>), og <code>hess=valley_hess</code> gir Hessianen når metoden trenger den. <code>BFGS</code> bygger en tilnærming til krumning fra endringer i gradienten, så vi slipper å gi Hessianen. <code>Newton-CG</code> bruker Hessianen til å beregne en Newton-liknende retning ved en indre iterasjon, og kan bruke et linjesøk for steget. De implementerer mer enn forsøkene over; ingen av dem er identisk med vår eksplisitte SPD-regularisering. Fra samme start i den bøyde dalen: <strong>forutsi</strong> om færrest ytre iterasjoner også betyr minst arbeid. Vi bruker <code>options={'maxiter': 100}</code> som øvre grense og leser både verdi, gradient og antall funksjons-/gradient-/Hessian-evalueringer.</p>
+<p>SciPys <code>minimize</code> fra <a href="../pages/uke8.html#uke8-scipy">uke 8</a> kan gjøre hele søket for den bøyde dalen. <code>BFGS</code> anslår krumningen fra gradientendringer. <code>Newton-CG</code> tar også inn Hessianen og bruker en indre iterativ beregning av en Newton-liknende retning; CG-ideen fra <a href="../pages/uke6.html#uke6-cg">uke 6</a> gir bakgrunn for navnet. De er ikke identiske med den eksplisitte regulariseringen vår. Vi sammenligner fra samme start og ser både på punkt, verdi, gradientnorm og antall evalueringer.</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Begge ender nær <span class="math inline">\((1,1)\)</span> med liten verdi og liten gradient i dette eksemplet. Antall <em>ytre</em> iterasjoner er ikke et tidsmål: en Newton- iterasjon bruker krumningsinformasjon og kan ha indre lineære løsninger; BFGS bruker gradienthistorikk. Et <code>success</code>-flagg beskriver solverens stoppvilkår, ikke et bevis for globalt minimum. Her kjenner vi global fasit separat fordi <span class="math inline">\(q\)</span> er en sum av ikke-negative ledd og når null i <span class="math inline">\((1,1)\)</span>.</p>
-<p><strong>SciPy-huskelapp for dette forsøket.</strong></p>
+<p>Begge ender nær <span class="math inline">\((1,1)\)</span> med liten verdi og gradientnorm. Et <code>success</code>-flagg betyr at metodens egne stoppkrav ble møtt, ikke at et globalt minimum er bevist. Her beviser vi globalitet separat: <span class="math inline">\(q\)</span> er summen av to ikke-negative ledd og <span class="math inline">\(q(1,1)=0\)</span>. Færre ytre iterasjoner er heller ikke nødvendigvis mindre arbeid, siden Hessian, gradient og indre lineære løsninger har forskjellige kostnader.</p>
+<details>
+<summary>
+SciPy-oppslag: kall og resultat
+</summary>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -5161,52 +5530,52 @@ Gå i dybden: lokal fart og begrensninger
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Del</th>
-<th style="text-align: left;">Bruk her</th>
+<th style="text-align: left;">Uttrykk</th>
+<th style="text-align: left;">Betydning her</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Import og kall</td>
-<td style="text-align: left;"><code>from scipy.optimize import minimize</code> (gjort i oppsettet); <code>minimize(fun, x0, jac=grad, method='BFGS')</code> tar mål, start og gradient.</td>
+<td style="text-align: left;"><code>minimize(fun, x0, jac=grad, method='BFGS')</code></td>
+<td style="text-align: left;">Søk fra <code>x0</code>; <code>fun</code> returnerer et tall, <code>grad</code> en vektor.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Krumningsmetode</td>
-<td style="text-align: left;"><code>method='Newton-CG'</code> med <code>hess=H</code> bruker også Hessianen.</td>
+<td style="text-align: left;"><code>method='Newton-CG', hess=H</code></td>
+<td style="text-align: left;">Gi også funksjonen som returnerer Hessianmatrisen.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Stoppvalg</td>
-<td style="text-align: left;"><code>options={'maxiter': 100}</code> begrenser ytre iterasjoner i koden. <code>gtol</code> er en valgfri gradientnormtoleranse for BFGS, mens <code>xtol</code> er en valgfri relativ løsningstoleranse for Newton-CG; de er ikke satt i dette forsøket.</td>
+<td style="text-align: left;"><code>options={'maxiter': 100}</code></td>
+<td style="text-align: left;">Begrens antall ytre iterasjoner.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Resultat</td>
-<td style="text-align: left;"><code>res.x</code> er punktet, <code>res.fun</code> verdien, <code>res.success</code> rutines stoppstatus, <code>res.nit</code> ytre iterasjoner. <code>res.nfev</code>, <code>res.njev</code>, <code>res.nhev</code> teller mål-, gradient- og Hessian-kall når feltene finnes.</td>
+<td style="text-align: left;"><code>res.x</code>, <code>res.fun</code>, <code>res.success</code></td>
+<td style="text-align: left;">Funnet punkt, verdi og solverens stoppstatus.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>res.nit</code>, <code>res.nfev</code>, <code>res.njev</code>, <code>res.nhev</code></td>
+<td style="text-align: left;">Ytre iterasjoner og antall mål-, gradient- og Hessian-evalueringer når feltene finnes.</td>
 </tr>
 </tbody>
 </table>
-<p>Evaluer selv <span class="math inline">\(\|\nabla f(\texttt{res.x})\|\)</span> og spør hva som eventuelt beviser globalitet. <code>np.linalg.solve(H, -g)</code> i de små forsøkene løser <span class="math inline">\(Hp=-g\)</span> direkte; <code>minimize</code> håndterer en hel serie slike oppdateringer.</p>
-<p>Når vi legger til lineære bibetingelser og et lineært mål, får vi et annet slags problem. Da ligger optimum ofte på randen, og <span class="math inline">\(\nabla f=0\)</span> er ikke lenger kontrollen vi skal bruke. Dette er overgangen til <a href="../pages/uke11.html">lineær optimering i uke 11</a>.</p>
+<p><code>jac</code> er SciPys navn på gradientargumentet. <code>np.linalg.solve(H,-g)</code> fra de små forsøkene løser ett lineært system; <code>minimize</code> håndterer en serie oppdateringer og egne stoppvilkår.</p>
+</details>
+<p>I <a href="../pages/uke11.html">uke 11</a> får vi lineære bibetingelser og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige nødvendige kontrollen.</p>
 </div>
 <div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
 <div id="uke10-oppgaver">
 
 </div>
-<p>Regn først selv. Skriv eksakte uttrykk, for eksempel <code>1/2</code>, <code>u^2</code> og <code>sqrt(2)</code>. For vektorer fyller du inn ett tall i hvert komponentfelt. Ingen avrunding er nødvendig.</p>
-<div id="uke10-exercise-context" class="math-exercise-context">
-<p>For <span data-math-exercise-tex="f(u,v)=(u^2-1)^2+v^2/2" data-math-exercise-display="false"><span class="math inline">\(f(u,v)=(u^2-1)^2+v^2/2\)</span></span> gjelder <span data-math-exercise-tex="\nabla f=(4u(u^2-1),v)^T" data-math-exercise-display="false"><span class="math inline">\(\nabla f=(4u(u^2-1),v)^T\)</span></span> og <span data-math-exercise-tex="H=\operatorname{diag}(12u^2-4,1)" data-math-exercise-display="false"><span class="math inline">\(H=\operatorname{diag}(12u^2-4,1)\)</span></span>. Et Newton-steg løser <span data-math-exercise-tex="Hp=-\nabla f" data-math-exercise-display="false"><span class="math inline">\(Hp=-\nabla f\)</span></span> og setter <span data-math-exercise-tex="x_{+}=x+p" data-math-exercise-display="false"><span class="math inline">\(x_{+}=x+p\)</span></span> når <span data-math-exercise-tex="H" data-math-exercise-display="false"><span class="math inline">\(H\)</span></span> er invertibel. Hvis Hessianen har både positiv og negativ egenverdi i et stasjonært punkt, er dette et sadelpunkt.</p>
-</div>
-<section id="oppgave-1-retning-i-en-kvadratisk-skål" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-1-retning-i-en-kvadratisk-skål">Oppgave 1 – retning i en kvadratisk skål</h3>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="week10-task-quadratic" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;p første komponent&quot;,&quot;p andre komponent&quot;,&quot;x1 første komponent&quot;,&quot;x1 andre komponent&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;Oppgave 1 – retning i en kvadratisk skål&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
-<div class="math-exercise-question" data-math-exercise-source="La \(A=\begin{bmatrix}3&amp;0\\0&amp;2\end{bmatrix}\), \(b=(3,4)^T\) og<br>
-\(f(x)=\tfrac12x^TAx-b^Tx\). Start i \(x_0=(0,0)^T\). Finn Newton-retningen<br>
-ved å løse \(Ap=-\nabla f(x_0)\) og punktet etter ett steg.<br>
+<p>Oppgave 1 følger kvadratikken i 10.1, oppgave 2–4 dobbeltbrønnen i 10.2–10.3, og oppgave 5–6 den bøyde dalen. Svar eksakt der det står «eksakt». Når desimaler er tillatt, rund til angitt antall plasser. For vektorer fyller du inn én verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene kontrollerer regningen. Kodeoppgavene følger i 10.6.</p>
+<p><strong>Oppgave 1 – ett Newton-steg i skålen fra uke 6.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-1" data-label="week10-task-quadratic" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;p første komponent&quot;,&quot;p andre komponent&quot;,&quot;x1 første komponent&quot;,&quot;x1 andre komponent&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;SciPy-oppslag: kall og resultat\nUttrykkBetydning herminimize(fun, x0, jac=grad, method='BFGS')Søk fra x0; fun returnerer et tall, grad en vektor.method='Newton-CG', hess=HGi også funksjonen som returnerer Hessianmatrisen.options={'maxiter': 100}Begrens antall ytre iterasjoner.res.x, res.fun, res.successFunnet punkt, verdi og solverens stoppstatus.res.nit, res.nfev, res.njev, res.nhevYtre iterasjoner og antall mål-, gradient- og Hessian-evalueringer når feltene finnes.\njac er SciPys navn på gradientargumentet. np.linalg.solve(H,-g) fra de små forsøkene løser ett lineært system; minimize håndterer en serie oppdateringer og egne stoppvilkår.\nI uke 11 får vi lineære bibetingelser og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige nødvendige kontrollen.\n10.4 Sammenlign og kontroller\nOppgave 1 følger kvadratikken i 10.1, oppgave 2–4 dobbeltbrønnen i 10.2–10.3, og oppgave 5–6 den bøyde dalen. Svar eksakt der det står «eksakt». Når desimaler er tillatt, rund til angitt antall plasser. For vektorer fyller du inn én verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene kontrollerer regningen. Kodeoppgavene følger i 10.6.\nOppgave 1 – ett Newton-steg i skålen fra uke 6.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 1 – ett Newton-steg" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 1 – ett Newton-steg</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="Bruk \(A=\begin{bmatrix}3&amp;1\\1&amp;2\end{bmatrix}\), \(b=(5,5)^T\) og \(\phi(x)=\tfrac12x^TAx-b^Tx\). Fra \(x_0=(0,0)^T\): løs \(Ap=-\nabla\phi(x_0)\) og finn punktet etter ett steg. Svar eksakt.<br>
 <br>
 \(p=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(x_1=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span>">La \(A=\begin{bmatrix}3&amp;0\\0&amp;2\end{bmatrix}\), \(b=(3,4)^T\) og<br>
-\(f(x)=\tfrac12x^TAx-b^Tx\). Start i \(x_0=(0,0)^T\). Finn Newton-retningen<br>
-ved å løse \(Ap=-\nabla f(x_0)\) og punktet etter ett steg.<br>
+\(x_1=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span>">Bruk \(A=\begin{bmatrix}3&amp;1\\1&amp;2\end{bmatrix}\), \(b=(5,5)^T\) og \(\phi(x)=\tfrac12x^TAx-b^Tx\). Fra \(x_0=(0,0)^T\): løs \(Ap=-\nabla\phi(x_0)\) og finn punktet etter ett steg. Svar eksakt.<br>
 <br>
 \(p=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-1-f1" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f2" data-answer="2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
@@ -5223,17 +5592,17 @@ ved å løse \(Ap=-\nabla f(x_0)\) og punktet etter ett steg.<br>
 <div class="math-legend-panel" style="display:none;"></div>
 <div class="math-feedback-area"></div>
 </div>
-</section>
-<section id="oppgave-2-en-annen-type-stasjonært-punkt" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-2-en-annen-type-stasjonært-punkt">Oppgave 2 – en annen type stasjonært punkt</h3>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="week10-task-saddle" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;Gradient første komponent&quot;,&quot;Gradient andre komponent&quot;,&quot;Minste Hessian-egneverdi&quot;,&quot;Største Hessian-egneverdi&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="uke10-exercise-context" data-context="&quot;Oppgave 2 – en annen type stasjonært punkt&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;,&quot;math-exercise-2-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-question" data-math-exercise-source="For \(f(u,v)=(u^2-1)^2+v^2/2\): Finn gradienten i \((0,0)\) og<br>
-egenverdiene til Hessianen der, i stigende rekkefølge.<br>
+</div>
+<p><strong>Oppgave 2 – sadelpunktet i dobbeltbrønnen.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-2" data-label="week10-task-saddle" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;Gradient første komponent&quot;,&quot;Gradient andre komponent&quot;,&quot;Minste egenverdi&quot;,&quot;Største egenverdi&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;SciPy-oppslag: kall og resultat\nUttrykkBetydning herminimize(fun, x0, jac=grad, method='BFGS')Søk fra x0; fun returnerer et tall, grad en vektor.method='Newton-CG', hess=HGi også funksjonen som returnerer Hessianmatrisen.options={'maxiter': 100}Begrens antall ytre iterasjoner.res.x, res.fun, res.successFunnet punkt, verdi og solverens stoppstatus.res.nit, res.nfev, res.njev, res.nhevYtre iterasjoner og antall mål-, gradient- og Hessian-evalueringer når feltene finnes.\njac er SciPys navn på gradientargumentet. np.linalg.solve(H,-g) fra de små forsøkene løser ett lineært system; minimize håndterer en serie oppdateringer og egne stoppvilkår.\nI uke 11 får vi lineære bibetingelser og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige nødvendige kontrollen.\n10.4 Sammenlign og kontroller\nOppgave 1 følger kvadratikken i 10.1, oppgave 2–4 dobbeltbrønnen i 10.2–10.3, og oppgave 5–6 den bøyde dalen. Svar eksakt der det står «eksakt». Når desimaler er tillatt, rund til angitt antall plasser. For vektorer fyller du inn én verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene kontrollerer regningen. Kodeoppgavene følger i 10.6.\nOppgave 1 – ett Newton-steg i skålen fra uke 6.\nOppgave 2 – sadelpunktet i dobbeltbrønnen.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;,&quot;math-exercise-2-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 2 – sadelpunkt" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 2 – sadelpunkt</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="For \(f(u,v)=(u^2-1)^2+v^2/2\), beregn gradienten i \((0,0)\) og Hessianens egenverdier der i stigende rekkefølge. Svar eksakt. Hvorfor er punktet ikke et minimum?<br>
 <br>
 \(\nabla f(0,0)=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(\lambda_{\min}=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, \(\lambda_{\max}=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For \(f(u,v)=(u^2-1)^2+v^2/2\): Finn gradienten i \((0,0)\) og<br>
-egenverdiene til Hessianen der, i stigende rekkefølge.<br>
+\(\lambda_{\min}=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, \(\lambda_{\max}=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For \(f(u,v)=(u^2-1)^2+v^2/2\), beregn gradienten i \((0,0)\) og Hessianens egenverdier der i stigende rekkefølge. Svar eksakt. Hvorfor er punktet ikke et minimum?<br>
 <br>
 \(\nabla f(0,0)=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-2-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
@@ -5250,24 +5619,21 @@ egenverdiene til Hessianen der, i stigende rekkefølge.<br>
 <div class="math-legend-panel" style="display:none;"></div>
 <div class="math-feedback-area"></div>
 </div>
-<p>Begrunn klassifiseringen i egne notater.</p>
-</section>
-<section id="oppgave-3-newton-steg-med-negativ-krumning" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-3-newton-steg-med-negativ-krumning">Oppgave 3 – Newton-steg med negativ krumning</h3>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="week10-task-direction" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;Første komponent av p&quot;,&quot;Andre komponent av p&quot;,&quot;Gradienten prikk p&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="uke10-exercise-context" data-context="&quot;Oppgave 3 – Newton-steg med negativ krumning&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
-<div class="math-exercise-question" data-math-exercise-source="For \(f(u,v)=(u^2-1)^2+v^2/2\): Start i \((1/2,0)\) og løs<br>
-\(Hp=-\nabla f\) eksakt. Finn skalarproduktet mellom gradient og<br>
-retning.<br>
+</div>
+<p><strong>Oppgave 3 – Newton-retning med negativ krumning.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-3" data-label="week10-task-direction" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;Første komponent av p&quot;,&quot;Andre komponent av p&quot;,&quot;g prikk p&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;SciPy-oppslag: kall og resultat\nUttrykkBetydning herminimize(fun, x0, jac=grad, method='BFGS')Søk fra x0; fun returnerer et tall, grad en vektor.method='Newton-CG', hess=HGi også funksjonen som returnerer Hessianmatrisen.options={'maxiter': 100}Begrens antall ytre iterasjoner.res.x, res.fun, res.successFunnet punkt, verdi og solverens stoppstatus.res.nit, res.nfev, res.njev, res.nhevYtre iterasjoner og antall mål-, gradient- og Hessian-evalueringer når feltene finnes.\njac er SciPys navn på gradientargumentet. np.linalg.solve(H,-g) fra de små forsøkene løser ett lineært system; minimize håndterer en serie oppdateringer og egne stoppvilkår.\nI uke 11 får vi lineære bibetingelser og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige nødvendige kontrollen.\n10.4 Sammenlign og kontroller\nOppgave 1 følger kvadratikken i 10.1, oppgave 2–4 dobbeltbrønnen i 10.2–10.3, og oppgave 5–6 den bøyde dalen. Svar eksakt der det står «eksakt». Når desimaler er tillatt, rund til angitt antall plasser. For vektorer fyller du inn én verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene kontrollerer regningen. Kodeoppgavene følger i 10.6.\nOppgave 1 – ett Newton-steg i skålen fra uke 6.\nOppgave 2 – sadelpunktet i dobbeltbrønnen.\nOppgave 3 – Newton-retning med negativ krumning.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 3 – retningsderivert" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 3 – retningsderivert</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="For dobbeltbrønnen over: start i \((1/2,0)\) og løs \(Hp=-g\) eksakt. Beregn \(g^Tp\). Betyr fortegnet nedgang eller oppgang for små positive steg?<br>
 <br>
 \(p=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-3-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-3-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(\nabla f\cdot p=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For \(f(u,v)=(u^2-1)^2+v^2/2\): Start i \((1/2,0)\) og løs<br>
-\(Hp=-\nabla f\) eksakt. Finn skalarproduktet mellom gradient og<br>
-retning.<br>
+\(g^Tp=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For dobbeltbrønnen over: start i \((1/2,0)\) og løs \(Hp=-g\) eksakt. Beregn \(g^Tp\). Betyr fortegnet nedgang eller oppgang for små positive steg?<br>
 <br>
 \(p=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-3-f1" data-answer="-3/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
-\(\nabla f\cdot p=\) <input type="text" id="math-exercise-3-f3" data-answer="9/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+\(g^Tp=\) <input type="text" id="math-exercise-3-f3" data-answer="9/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5280,23 +5646,21 @@ retning.<br>
 <div class="math-legend-panel" style="display:none;"></div>
 <div class="math-feedback-area"></div>
 </div>
-</section>
-<section id="oppgave-4-regularisert-retning" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-4-regularisert-retning">Oppgave 4 – regularisert retning</h3>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="week10-task-regularize" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;Første komponent av regularisert p&quot;,&quot;Andre komponent av regularisert p&quot;,&quot;Gradienten prikk p&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="uke10-exercise-context" data-context="&quot;Oppgave 4 – regularisert retning&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
-<div class="math-exercise-question" data-math-exercise-source="For \(f(u,v)=(u^2-1)^2+v^2/2\): I \((1/2,0)\), løs<br>
-\((H+2I)p=-\nabla f\). Finn retningen og \(\nabla f\cdot p\)<br>
-som eksakte tall.<br>
+</div>
+<p><strong>Oppgave 4 – regularisering retter retningen.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="week10-task-regularize" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;Første komponent av p&quot;,&quot;Andre komponent av p&quot;,&quot;g prikk p&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;SciPy-oppslag: kall og resultat\nUttrykkBetydning herminimize(fun, x0, jac=grad, method='BFGS')Søk fra x0; fun returnerer et tall, grad en vektor.method='Newton-CG', hess=HGi også funksjonen som returnerer Hessianmatrisen.options={'maxiter': 100}Begrens antall ytre iterasjoner.res.x, res.fun, res.successFunnet punkt, verdi og solverens stoppstatus.res.nit, res.nfev, res.njev, res.nhevYtre iterasjoner og antall mål-, gradient- og Hessian-evalueringer når feltene finnes.\njac er SciPys navn på gradientargumentet. np.linalg.solve(H,-g) fra de små forsøkene løser ett lineært system; minimize håndterer en serie oppdateringer og egne stoppvilkår.\nI uke 11 får vi lineære bibetingelser og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige nødvendige kontrollen.\n10.4 Sammenlign og kontroller\nOppgave 1 følger kvadratikken i 10.1, oppgave 2–4 dobbeltbrønnen i 10.2–10.3, og oppgave 5–6 den bøyde dalen. Svar eksakt der det står «eksakt». Når desimaler er tillatt, rund til angitt antall plasser. For vektorer fyller du inn én verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene kontrollerer regningen. Kodeoppgavene følger i 10.6.\nOppgave 1 – ett Newton-steg i skålen fra uke 6.\nOppgave 2 – sadelpunktet i dobbeltbrønnen.\nOppgave 3 – Newton-retning med negativ krumning.\nOppgave 4 – regularisering retter retningen.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 4 – regularisert retning" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 4 – regularisert retning</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="I samme punkt \((1/2,0)\), løs \((H+2I)p=-g\). Beregn \(g^Tp\) og forklar hvorfor et lite positivt steg nå gir nedgang. Svar eksakt.<br>
 <br>
 \(p=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-4-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-4-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(\nabla f\cdot p=\) <input type=&quot;text&quot; id=&quot;math-exercise-4-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For \(f(u,v)=(u^2-1)^2+v^2/2\): I \((1/2,0)\), løs<br>
-\((H+2I)p=-\nabla f\). Finn retningen og \(\nabla f\cdot p\)<br>
-som eksakte tall.<br>
+\(g^Tp=\) <input type=&quot;text&quot; id=&quot;math-exercise-4-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">I samme punkt \((1/2,0)\), løs \((H+2I)p=-g\). Beregn \(g^Tp\) og forklar hvorfor et lite positivt steg nå gir nedgang. Svar eksakt.<br>
 <br>
 \(p=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-4-f1" data-answer="3/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-4-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
-\(\nabla f\cdot p=\) <input type="text" id="math-exercise-4-f3" data-answer="-9/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+\(g^Tp=\) <input type="text" id="math-exercise-4-f3" data-answer="-9/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5309,8 +5673,103 @@ som eksakte tall.<br>
 <div class="math-legend-panel" style="display:none;"></div>
 <div class="math-feedback-area"></div>
 </div>
+</div>
+<p><strong>Oppgave 5 – modellen i den bøyde dalen.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-5" data-label="week10-task-valley" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;Newton-retning første komponent&quot;,&quot;Newton-retning andre komponent&quot;,&quot;modell ved fullt steg&quot;,&quot;faktisk verdi ved fullt steg&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;SciPy-oppslag: kall og resultat\nUttrykkBetydning herminimize(fun, x0, jac=grad, method='BFGS')Søk fra x0; fun returnerer et tall, grad en vektor.method='Newton-CG', hess=HGi også funksjonen som returnerer Hessianmatrisen.options={'maxiter': 100}Begrens antall ytre iterasjoner.res.x, res.fun, res.successFunnet punkt, verdi og solverens stoppstatus.res.nit, res.nfev, res.njev, res.nhevYtre iterasjoner og antall mål-, gradient- og Hessian-evalueringer når feltene finnes.\njac er SciPys navn på gradientargumentet. np.linalg.solve(H,-g) fra de små forsøkene løser ett lineært system; minimize håndterer en serie oppdateringer og egne stoppvilkår.\nI uke 11 får vi lineære bibetingelser og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige nødvendige kontrollen.\n10.4 Sammenlign og kontroller\nOppgave 1 følger kvadratikken i 10.1, oppgave 2–4 dobbeltbrønnen i 10.2–10.3, og oppgave 5–6 den bøyde dalen. Svar eksakt der det står «eksakt». Når desimaler er tillatt, rund til angitt antall plasser. For vektorer fyller du inn én verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene kontrollerer regningen. Kodeoppgavene følger i 10.6.\nOppgave 1 – ett Newton-steg i skålen fra uke 6.\nOppgave 2 – sadelpunktet i dobbeltbrønnen.\nOppgave 3 – Newton-retning med negativ krumning.\nOppgave 4 – regularisering retter retningen.\nOppgave 5 – modellen i den bøyde dalen.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;,&quot;math-exercise-5-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 5 – modell og virkelig verdi" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 5 – modell og virkelig verdi</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="For \(q(u,v)=(1-u)^2+10(v-u^2)^2\) er \(g(0,0)=(-2,0)^T\) og \(H(0,0)=\operatorname{diag}(2,20)\). Finn \(p\) fra \(Hp=-g\), modellverdien \(m_{(0,0)}(p)=q(0,0)+g^Tp+\tfrac12p^THp\), og den faktiske verdien \(q((0,0)+p)\). Svar eksakt.<br>
+<br>
+\(p=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
+<br>
+\(m_{(0,0)}(p)=\) <input type=&quot;text&quot; id=&quot;math-exercise-5-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; \(q(p)=\) <input type=&quot;text&quot; id=&quot;math-exercise-5-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For \(q(u,v)=(1-u)^2+10(v-u^2)^2\) er \(g(0,0)=(-2,0)^T\) og \(H(0,0)=\operatorname{diag}(2,20)\). Finn \(p\) fra \(Hp=-g\), modellverdien \(m_{(0,0)}(p)=q(0,0)+g^Tp+\tfrac12p^THp\), og den faktiske verdien \(q((0,0)+p)\). Svar eksakt.<br>
+<br>
+\(p=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-5-f1" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-5-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
+<br>
+\(m_{(0,0)}(p)=\) <input type="text" id="math-exercise-5-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; \(q(p)=\) <input type="text" id="math-exercise-5-f4" data-answer="10" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p><strong>Oppgave 6 – halvt steg og global grense.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-6" data-label="week10-task-half-step" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;Halvt steg første koordinat&quot;,&quot;Halvt steg andre koordinat&quot;,&quot;Funksjonsverdien etter halvt steg&quot;,&quot;Global minimumsverdi&quot;]" data-vecdir="col" data-context-mode="auto" data-context-refs="" data-context="&quot;SciPy-oppslag: kall og resultat\nUttrykkBetydning herminimize(fun, x0, jac=grad, method='BFGS')Søk fra x0; fun returnerer et tall, grad en vektor.method='Newton-CG', hess=HGi også funksjonen som returnerer Hessianmatrisen.options={'maxiter': 100}Begrens antall ytre iterasjoner.res.x, res.fun, res.successFunnet punkt, verdi og solverens stoppstatus.res.nit, res.nfev, res.njev, res.nhevYtre iterasjoner og antall mål-, gradient- og Hessian-evalueringer når feltene finnes.\njac er SciPys navn på gradientargumentet. np.linalg.solve(H,-g) fra de små forsøkene løser ett lineært system; minimize håndterer en serie oppdateringer og egne stoppvilkår.\nI uke 11 får vi lineære bibetingelser og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige nødvendige kontrollen.\n10.4 Sammenlign og kontroller\nOppgave 1 følger kvadratikken i 10.1, oppgave 2–4 dobbeltbrønnen i 10.2–10.3, og oppgave 5–6 den bøyde dalen. Svar eksakt der det står «eksakt». Når desimaler er tillatt, rund til angitt antall plasser. For vektorer fyller du inn én verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene kontrollerer regningen. Kodeoppgavene følger i 10.6.\nOppgave 1 – ett Newton-steg i skålen fra uke 6.\nOppgave 2 – sadelpunktet i dobbeltbrønnen.\nOppgave 3 – Newton-retning med negativ krumning.\nOppgave 4 – regularisering retter retningen.\nOppgave 5 – modellen i den bøyde dalen.\nOppgave 6 – halvt steg og global grense.&quot;" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;,&quot;math-exercise-6-f3&quot;,&quot;math-exercise-6-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Oppgave 6 – dempet steg" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Oppgave 6 – dempet steg</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="Bruk \(q(u,v)=(1-u)^2+10(v-u^2)^2\), start \((0,0)\) og retning \(p=(1,0)\). Beregn punktet og funksjonsverdien for \(\alpha=1/2\). Hvilken global nedre grense følger av uttrykket som sum av kvadrater, og oppnås den? Svar eksakt.<br>
+<br>
+\(x_+=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-6-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-6-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
+<br>
+\(q(x_+)=\) <input type=&quot;text&quot; id=&quot;math-exercise-6-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Global minimumsverdi: <input type=&quot;text&quot; id=&quot;math-exercise-6-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+<br>
+En numerisk løser rapporterer `success=True` og liten gradientnorm.<br>
+Forklar i egne notater hva dette kontrollerer, og hvilket eget<br>
+argument som viser at verdi 0 er globalt best for akkurat \(q\).">Bruk \(q(u,v)=(1-u)^2+10(v-u^2)^2\), start \((0,0)\) og retning \(p=(1,0)\). Beregn punktet og funksjonsverdien for \(\alpha=1/2\). Hvilken global nedre grense følger av uttrykket som sum av kvadrater, og oppnås den? Svar eksakt.<br>
+<br>
+\(x_+=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-6-f1" data-answer="1/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-6-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
+<br>
+\(q(x_+)=\) <input type="text" id="math-exercise-6-f3" data-answer="7/8" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Global minimumsverdi: <input type="text" id="math-exercise-6-f4" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+En numerisk løser rapporterer `success=True` og liten gradientnorm.<br>
+Forklar i egne notater hva dette kontrollerer, og hvilket eget<br>
+argument som viser at verdi 0 er globalt best for akkurat \(q\).</div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
 <p>Arbeid videre med <a href="../pages/project_week10.html">prosjekt 10: startpunkt, skala og Newton</a>.</p>
-</section>
+</div>
+<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
+<div id="uke10-python">
+
+</div>
+<p>Fullfør tre korte funksjoner. Hver oppgave har egne importer og definisjoner og kan kjøres uavhengig av cellene over og av de andre oppgavene. <code>TODO</code> markerer det du skal fylle inn. Kontrollene prøver flere inndata uten å vise løsningskoden.</p>
+<p><strong>Oppgave 1 – løs Newton-systemet.</strong> Funksjonen skal returnere retningen <span class="math inline">\(p\)</span> for den kvadratiske skålen med Hessian <span class="math inline">\(A\)</span>, for et vilkårlig startpunkt <code>x</code>.</p>
+<div class="py-exercise-cell" id="py-exercise-1">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Newton-retning i den kvadratiske skålen","forbiddenImports":[],"forbiddenKeywords":[],"id":1,"label":"week10-python-quadratic","showTestHints":false,"starter":"import numpy as np\n\n# Den konstante Hessianen og høyresiden fra uke 6.\nA = np.array([[3., 1.], [1., 2.]])\nb = np.array([5., 5.])\n\ndef newton_direction(x):\n    # Beregn gradienten ved x.\n    g = A @ x - b\n    # TODO: Løs A p = -g uten å beregne matriseinversen.\n    p = np.zeros(2)\n    return p","tests":"assert np.allclose(newton_direction(np.array([-2., 3.])), [3., -1.])\nassert np.allclose(newton_direction(np.array([0., 0.])), [1., 2.])\nassert np.allclose(newton_direction(np.array([1., 2.])), [0., 0.])"});
+</script>
+<p><strong>Oppgave 2 – kontroller krumningen.</strong> Funksjonen skal returnere <code>True</code> bare når begge egenverdiene til dobbeltbrønnens Hessian ved <code>x</code> er strengt positive. <code>np.linalg.eigvalsh</code> er laget for symmetriske matriser.</p>
+<div class="py-exercise-cell" id="py-exercise-2">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Er Hessianen positiv definit?","forbiddenImports":[],"forbiddenKeywords":[],"id":2,"label":"week10-python-curvature","showTestHints":false,"starter":"import numpy as np\n\n# Dobbeltbrønnens Hessian; oppgaven gjelder testen, ikke derivasjonen.\ndef well_hess(x):\n    u, v = x\n    return np.diag([12*u*u - 4, 1.])\n\ndef positive_curvature(x):\n    # Beregn egenverdiene til den symmetriske Hessianen.\n    eigenvalues = np.linalg.eigvalsh(well_hess(x))\n    # TODO: Returner en boolsk verdi som krever positivt fortegn for alle.\n    return False","tests":"assert positive_curvature(np.array([1., 0.]))\nassert positive_curvature(np.array([-1., 3.]))\nassert not positive_curvature(np.array([0., 0.]))\nassert not positive_curvature(np.array([.5, 0.]))"});
+</script>
+<p><strong>Oppgave 3 – velg mellom tre steglengder.</strong> Bruk funksjonen for den bøyde dalen med et oppgitt punkt <code>x</code>, en retning <code>p</code> og gradient <code>g</code>. Prøv <code>1</code>, <code>1/2</code> og <code>1/4</code> i den rekkefølgen, og returner første faktor som oppfyller Armijo-ulikheten med <span class="math inline">\(c=10^{-4}\)</span>. All kode utenom selve testen er gitt. Denne oppgaven krever ikke svarene i oppgave 1 eller 2.</p>
+<div class="py-exercise-cell" id="py-exercise-3">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Velg første godkjente steglengde","forbiddenImports":[],"forbiddenKeywords":[],"id":3,"label":"week10-python-armijo","showTestHints":false,"starter":"import numpy as np\n\n# Den bøyde dalen; x, p og g kommer fra funksjonens argumenter.\ndef valley(x):\n    u, v = x\n    return (1-u)**2 + 10*(v-u*u)**2\n\ndef first_accepted(x, p, g):\n    c = 1e-4\n    for alpha in (1., .5, .25):\n        # TODO: Erstatt False med Armijo-testen for dette alpha.\n        if False:\n            return alpha\n    return None","tests":"assert first_accepted(np.array([0., 0.]), np.array([1., 0.]),\n                      np.array([-2., 0.])) == .5\nassert first_accepted(np.array([1., 0.]), np.array([0., 1.]),\n                      np.array([40., -20.])) == 1.\nassert first_accepted(np.array([0., 0.]), np.array([.1, 0.]),\n                      np.array([-2., 0.])) == 1."});
+</script>
 </div>
 </div>
 </div>
@@ -10004,6 +10463,781 @@ qpyodideReady
     ensurePyodide().catch(function (e) {
       console.warn('math-exercise: Pyodide preload failed (will retry on the first check):', e);
     });
+  });
+
+})();
+
+</script>
+<script type="text/javascript">
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------------------
+  // Locales – add new languages here
+  // ---------------------------------------------------------------------------
+
+  var LOCALES = {
+    en: {
+      btnCheck:             '<i class="fa-solid fa-check"></i> Check',
+      btnCheckTitle:        'Run checks (Shift+Enter)',
+      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Reset',
+      btnResetTitle:        'Restore starter code',
+      running:              '⏳ Checking…',
+      errorHeader:          '❌ Error in code:',
+      unexpectedError:      '❌ Unexpected error:',
+      stdoutLabel:          'Output:',
+      allPassed: function (n) {
+        return '✅ All ' + n + ' test' + (n === 1 ? '' : 's') + ' passed!';
+      },
+      someFailed: function (p, t) {
+        return '❌ ' + p + ' of ' + t + ' test' + (t === 1 ? '' : 's') + ' passed';
+      },
+      violationsHeader:     '🚫 Not allowed:',
+      // Submission UI
+      submissionTitle:      '📋 Submission',
+      studentIdLabel:       'Student ID',
+      studentIdPlaceholder: 'e.g. s123456',
+      quizIdLabel:          'Quiz ID',
+      quizIdPlaceholder:    'e.g. quiz-01',
+      exportBtn:            '<i class="fa-solid fa-file-export"></i> Export results',
+      outputLabel:          'Copy encoded string and submit:',
+      copyBtn:              '<i class="fa-regular fa-copy"></i> Copy',
+      copyOk:               '<i class="fa-solid fa-check"></i> Copied!',
+      validationError:      'Please fill in Student ID and Quiz ID.',
+      encodingError:        'Error during encoding: ',
+      // Download
+      downloadBtn:          '<i class="fa-solid fa-download"></i> Download as JSON',
+      downloadBtnTitle:     'Save current code and test results for all exercises',
+      downloadHint:         'Saves your code and test results for personal documentation.',
+      downloadFilename:     'exercises-',
+      // Python message templates – use {} as placeholder for str.format()
+      msgForbiddenImport:   "Forbidden import: '{}'",
+      msgForbiddenFunction: "Forbidden function: '{}'",
+      msgForbiddenMethod:   "Forbidden method: '.{}'",
+      msgForbiddenKeyword:  "Forbidden keyword: '{}'",
+      msgAssertionFailed:   'Assertion failed',
+      msgTestError:         'Error: {}',
+      msgSyntaxError:       'Syntax error in tests: {}',
+    },
+    de: {
+      btnCheck:             '<i class="fa-solid fa-check"></i> Überprüfen',
+      btnCheckTitle:        'Code prüfen (Shift+Enter)',
+      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Zurücksetzen',
+      btnResetTitle:        'Starter-Code wiederherstellen',
+      running:              '⏳ Überprüfe…',
+      errorHeader:          '❌ Fehler im Code:',
+      unexpectedError:      '❌ Unerwarteter Fehler:',
+      stdoutLabel:          'Ausgabe:',
+      allPassed: function (n) {
+        return '✅ Alle ' + n + ' Test' + (n === 1 ? '' : 's') + ' bestanden!';
+      },
+      someFailed: function (p, t) {
+        return '❌ ' + p + ' von ' + t + ' Test' + (t === 1 ? '' : 's') + ' bestanden';
+      },
+      violationsHeader:     '🚫 Nicht erlaubt:',
+      // Submission UI
+      submissionTitle:      '📋 Abgabe',
+      studentIdLabel:       'Student-ID',
+      studentIdPlaceholder: 'z.B. s123456',
+      quizIdLabel:          'Quiz-ID',
+      quizIdPlaceholder:    'z.B. quiz-01',
+      exportBtn:            '<i class="fa-solid fa-file-export"></i> Ergebnis exportieren',
+      outputLabel:          'Kodierten String kopieren und abgeben:',
+      copyBtn:              '<i class="fa-regular fa-copy"></i> Kopieren',
+      copyOk:               '<i class="fa-solid fa-check"></i> Kopiert!',
+      validationError:      'Bitte Student-ID und Quiz-ID ausfüllen.',
+      encodingError:        'Fehler beim Kodieren: ',
+      // Download
+      downloadBtn:          '<i class="fa-solid fa-download"></i> Als JSON herunterladen',
+      downloadBtnTitle:     'Aktuellen Code und Testergebnisse aller Aufgaben speichern',
+      downloadHint:         'Speichert Code-Eingaben und Testergebnisse zur eigenen Dokumentation.',
+      downloadFilename:     'aufgaben-',
+      // Python message templates
+      msgForbiddenImport:   "Verbotener Import: '{}'",
+      msgForbiddenFunction: "Verbotene Funktion: '{}'",
+      msgForbiddenMethod:   "Verbotene Methode: '.{}'",
+      msgForbiddenKeyword:  "Verbotenes Schlüsselwort: '{}'",
+      msgAssertionFailed:   'Assertion fehlgeschlagen',
+      msgTestError:         'Fehler: {}',
+      msgSyntaxError:       'Syntaxfehler in Tests: {}',
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // Utilities
+  // ---------------------------------------------------------------------------
+
+  // Laedt ein Skript genau einmal. Ist der Tag schon da, aber noch nicht
+  // fertig geladen, wird auf dessen load-Event gewartet - NICHT sofort
+  // aufgeloest. Sonst greift eine zweite Extension auf globals zu, die es
+  // noch gar nicht gibt.
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var existing = document.querySelector('script[src="' + src + '"]');
+      if (existing) {
+        if (existing.dataset.qLoaded === '1') { resolve(); return; }
+        existing.addEventListener('load', function () { resolve(); });
+        existing.addEventListener('error', function () {
+          reject(new Error('Failed to load: ' + src));
+        });
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = function () { s.dataset.qLoaded = '1'; resolve(); };
+      s.onerror = function () { reject(new Error('Failed to load: ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensurePyodide() {
+    // coatless-quarto/pyodide is loading — wait for its promise instead of loading a second instance
+    if (typeof qpyodideInstance !== 'undefined') {
+      window.mainPyodide = await qpyodideInstance;
+      return;
+    }
+    // coatless already finished
+    if (typeof mainPyodide !== 'undefined') return;
+    // Standalone. Gemeinsames Promise, damit math-exercise und py-exercise auf
+    // derselben Seite nicht zwei Pyodide-Instanzen starten oder sich beim
+    // Laden ins Gehege kommen.
+    var cdnBase = 'https://cdn.jsdelivr.net/pyodide/v0.27.2/full/';
+    if (!globalThis.__qExercisePyodide) {
+      globalThis.__qExercisePyodide = (async function () {
+        await loadScript(cdnBase + 'pyodide.js');
+        return await loadPyodide({ indexURL: cdnBase });
+      })();
+    }
+    window.mainPyodide = await globalThis.__qExercisePyodide;
+  }
+
+  // Monaco is normally already loaded by the pyodide extension. If not (standalone
+  // use), we load the AMD loader from CDN and let it fetch the editor itself.
+  async function ensureMonaco() {
+    var cdnBase = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs';
+    if (typeof require === 'undefined') {
+      await loadScript(cdnBase + '/loader.js');
+    }
+    require.config({ paths: { vs: cdnBase } });
+    await new Promise(function (resolve) {
+      require(['vs/editor/editor.main'], resolve);
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Submission state + locale
+  // ---------------------------------------------------------------------------
+
+  var submissionConfig = window.__pyExerciseConfig || { submission: false, submissionKey: 'py-exercise', lang: 'en' };
+  var L = LOCALES[submissionConfig.lang] || LOCALES['en'];
+
+  // Map of exercise label → { label, passed, total, tests: [bool, ...] }
+  var exerciseResults = {};
+
+  // Map of exercise label → Monaco editor instance
+  var exerciseEditors = {};
+
+  // ---------------------------------------------------------------------------
+  // Python: AST-based violation checker
+  // ---------------------------------------------------------------------------
+  var CHECKER_PY = [
+    'import ast as _ast, json as _json',
+    '',
+    '_fi = list(_exercise_forbidden_imports)',
+    '_fk = list(_exercise_forbidden_keywords)',
+    '',
+    '_KW_NODES = {',
+    '    "for":      _ast.For,',
+    '    "while":    _ast.While,',
+    '    "with":     _ast.With,',
+    '    "lambda":   _ast.Lambda,',
+    '    "class":    _ast.ClassDef,',
+    '    "global":   _ast.Global,',
+    '    "nonlocal": _ast.Nonlocal,',
+    '    "try":      _ast.Try,',
+    '    "raise":    _ast.Raise,',
+    '    "del":      _ast.Delete,',
+    '    "assert":   _ast.Assert,',
+    '    "yield":    _ast.Yield,',
+    '}',
+    '',
+    '_violations = []',
+    '_seen = set()',
+    '',
+    'def _add(msg):',
+    '    if msg not in _seen:',
+    '        _seen.add(msg)',
+    '        _violations.append(msg)',
+    '',
+    'try:',
+    '    _tree = _ast.parse(_exercise_student_code)',
+    '    for _node in _ast.walk(_tree):',
+    '        if isinstance(_node, _ast.Import):',
+    '            for _a in _node.names:',
+    '                _top = _a.name.split(".")[0]',
+    '                if _top in _fi:',
+    '                    _add(_msg_forbidden_import.format(_top))',
+    '        elif isinstance(_node, _ast.ImportFrom):',
+    '            if _node.module:',
+    '                _top = _node.module.split(".")[0]',
+    '                if _top in _fi:',
+    '                    _add(_msg_forbidden_import.format(_top))',
+    '        elif isinstance(_node, _ast.Call):',
+    '            if isinstance(_node.func, _ast.Name):',
+    '                if _node.func.id in _fk:',
+    '                    _add(_msg_forbidden_function.format(_node.func.id))',
+    '            elif isinstance(_node.func, _ast.Attribute):',
+    '                if _node.func.attr in _fk:',
+    '                    _add(_msg_forbidden_method.format(_node.func.attr))',
+    '        else:',
+    '            for _kw, _nt in _KW_NODES.items():',
+    '                if _kw in _fk and isinstance(_node, _nt):',
+    '                    _add(_msg_forbidden_keyword.format(_kw))',
+    'except SyntaxError:',
+    '    pass',
+    '',
+    '_json.dumps(_violations)',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Python: main runner
+  // ---------------------------------------------------------------------------
+  var RUNNER_PY = [
+    'import ast, json, io, sys, traceback',
+    '',
+    '_ns = {}',
+    '_results = {"student_error": None, "stdout": "", "tests": []}',
+    '',
+    '_buf = io.StringIO()',
+    '_old_stdout = sys.stdout',
+    'sys.stdout = _buf',
+    'try:',
+    '    exec(compile(_exercise_student_code, "<student>", "exec"), _ns)',
+    '    _results["stdout"] = _buf.getvalue()',
+    'except Exception:',
+    '    _results["student_error"] = traceback.format_exc()',
+    '    _results["stdout"] = _buf.getvalue()',
+    'finally:',
+    '    sys.stdout = _old_stdout',
+    '',
+    'if _results["student_error"] is None:',
+    '    try:',
+    '        _tree = ast.parse(_exercise_test_code)',
+    '        for _stmt in _tree.body:',
+    '            _single = compile(',
+    '                ast.Module(body=[_stmt], type_ignores=[]),',
+    '                "<test>", "exec"',
+    '            )',
+    '            try:',
+    '                exec(_single, _ns)',
+    '                _results["tests"].append({"passed": True})',
+    '            except AssertionError as e:',
+    '                _results["tests"].append({',
+    '                    "passed": False,',
+    '                    "message": str(e) if str(e) else _msg_assertion_failed',
+    '                })',
+    '            except Exception as e:',
+    '                _results["tests"].append({"passed": False, "message": _msg_test_error.format(e)})',
+    '    except SyntaxError as e:',
+    '        _results["student_error"] = _msg_syntax_error.format(e)',
+    '',
+    'json.dumps(_results)',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Python: submission encoder
+  // ---------------------------------------------------------------------------
+  // Encoding: JSON → UTF-8 bytes → XOR with cycling key → Base64.
+  var ENCODER_PY = [
+    'import json as _json, base64 as _b64',
+    '',
+    '_key  = _submission_key.encode("utf-8")',
+    '_raw  = _json.dumps(_submission_payload, ensure_ascii=False).encode("utf-8")',
+    '_xord = bytes(b ^ _key[i % len(_key)] for i, b in enumerate(_raw))',
+    '_b64.b64encode(_xord).decode("ascii")',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Result rendering
+  // ---------------------------------------------------------------------------
+
+  function renderViolations(area, violations) {
+    var items = violations.map(function (v) {
+      return '<li>' + escapeHtml(v) + '</li>';
+    }).join('');
+    area.innerHTML =
+      '<div class="py-exercise-violations">' +
+      '<strong>' + L.violationsHeader + '</strong>' +
+      '<ul class="py-exercise-violation-list">' + items + '</ul>' +
+      '</div>';
+  }
+
+  function renderResult(area, data, label, showHints) {
+    var html = '';
+
+    if (data.student_error) {
+      area.innerHTML =
+        '<div class="py-exercise-error">' +
+        '<strong>' + L.errorHeader + '</strong>' +
+        '<pre>' + escapeHtml(data.student_error) + '</pre>' +
+        '</div>';
+      return;
+    }
+
+    if (data.stdout && data.stdout.trim()) {
+      html +=
+        '<div class="py-exercise-stdout">' +
+        '<span class="py-exercise-stdout-label">' + L.stdoutLabel + '</span>' +
+        '<pre>' + escapeHtml(data.stdout) + '</pre>' +
+        '</div>';
+    }
+
+    var tests   = data.tests || [];
+    var passed  = tests.filter(function (t) { return t.passed; }).length;
+    var total   = tests.length;
+    var allPass = total > 0 && passed === total;
+
+    // Store result for submission export
+    if (label && total > 0) {
+      exerciseResults[label] = {
+        label:  label,
+        passed: passed,
+        total:  total,
+        tests:  tests.map(function (t) { return t.passed; }),
+      };
+    }
+
+    html += '<div class="py-exercise-summary">';
+    if (allPass) {
+      html += '<div class="py-exercise-all-passed">' + L.allPassed(total) + '</div>';
+    } else {
+      html += '<div class="py-exercise-some-failed">' + L.someFailed(passed, total) + '</div>';
+    }
+
+    if (total > 1) {
+      html += '<ul class="py-exercise-test-list">';
+      tests.forEach(function (t, i) {
+        if (t.passed) {
+          html += '<li class="py-test-pass">✓ Test ' + (i + 1) + '</li>';
+        } else {
+          html +=
+            '<li class="py-test-fail">✗ Test ' + (i + 1) +
+            (showHints !== false && t.message ? ': ' + escapeHtml(t.message) : '') +
+            '</li>';
+        }
+      });
+      html += '</ul>';
+    } else if (!allPass && showHints !== false && tests[0] && tests[0].message) {
+      html += '<div class="py-exercise-hint">' + escapeHtml(tests[0].message) + '</div>';
+    }
+
+    html += '</div>';
+    area.innerHTML = html;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Exercise cell setup
+  // ---------------------------------------------------------------------------
+
+  function setupExercise(exerciseData) {
+    var container = document.getElementById('py-exercise-' + exerciseData.id);
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    var starterCode       = exerciseData.starter           || '';
+    var testsCode         = exerciseData.tests             || '';
+    var forbiddenImports  = exerciseData.forbiddenImports  || [];
+    var forbiddenKeywords = exerciseData.forbiddenKeywords || [];
+    var label             = exerciseData.label;
+    var showHints         = exerciseData.showTestHints !== false;
+    // caption is metadata only (used in downloadAll JSON), not rendered visually
+
+    // localStorage key scoped to this page + label
+    var storageKey = 'pyex|' + window.location.pathname + '|' + label;
+    var savedCode = null;
+    try { savedCode = localStorage.getItem(storageKey); } catch (e) {}
+
+    // Monaco editor container
+    var editorContainer = document.createElement('div');
+    editorContainer.className = 'py-exercise-editor';
+    container.appendChild(editorContainer);
+
+    // Button bar
+    var buttonBar = document.createElement('div');
+    buttonBar.className = 'py-exercise-buttons';
+
+    var checkBtn = document.createElement('button');
+    checkBtn.className = 'btn btn-primary py-exercise-check';
+    checkBtn.innerHTML = L.btnCheck;
+    checkBtn.type = 'button';
+    checkBtn.title = L.btnCheckTitle;
+
+    var resetBtn = document.createElement('button');
+    resetBtn.className = 'btn btn-light py-exercise-reset';
+    resetBtn.innerHTML = L.btnReset;
+    resetBtn.type = 'button';
+    resetBtn.title = L.btnResetTitle;
+
+    buttonBar.appendChild(checkBtn);
+    buttonBar.appendChild(resetBtn);
+    container.appendChild(buttonBar);
+
+    var resultArea = document.createElement('div');
+    resultArea.className = 'py-exercise-result';
+    container.appendChild(resultArea);
+
+    var editor;
+    require(['vs/editor/editor.main'], function () {
+      editor = monaco.editor.create(editorContainer, {
+        value: savedCode !== null ? savedCode : starterCode,
+        language: 'python',
+        theme: 'vs-light',
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        minimap: { enabled: false },
+        fontSize: 14,
+        renderLineHighlight: 'none',
+        hideCursorInOverviewRuler: true,
+      });
+
+      // Store reference so downloadAll() can read the current code later
+      exerciseEditors[label] = editor;
+
+      var updateHeight = function () {
+        var h = Math.max(80, editor.getContentHeight());
+        editorContainer.style.height = h + 'px';
+        editor.layout();
+      };
+      editor.onDidContentSizeChange(updateHeight);
+      updateHeight();
+
+      // Persist code across reloads
+      var saveTimer;
+      editor.onDidChangeModelContent(function () {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(function () {
+          try { localStorage.setItem(storageKey, editor.getValue()); } catch (e) {}
+        }, 500);
+      });
+
+      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, runCheck);
+    });
+
+    async function runCheck() {
+      if (!editor) return;
+
+      resultArea.innerHTML = '<div class="py-exercise-running">' + L.running + '</div>';
+      checkBtn.disabled = true;
+      resetBtn.disabled = true;
+
+      var studentCode = editor.getValue();
+
+      try {
+        mainPyodide.globals.set('_exercise_student_code',  studentCode);
+        mainPyodide.globals.set('_exercise_test_code',     testsCode);
+        mainPyodide.globals.set('_exercise_forbidden_imports',  mainPyodide.toPy(forbiddenImports));
+        mainPyodide.globals.set('_exercise_forbidden_keywords', mainPyodide.toPy(forbiddenKeywords));
+
+        if (forbiddenImports.length > 0 || forbiddenKeywords.length > 0) {
+          var violationsRaw = await mainPyodide.runPythonAsync(CHECKER_PY);
+          var violations = JSON.parse(violationsRaw);
+          if (violations.length > 0) {
+            renderViolations(resultArea, violations);
+            return;
+          }
+        }
+
+        await mainPyodide.loadPackagesFromImports(studentCode);
+        var raw  = await mainPyodide.runPythonAsync(RUNNER_PY);
+        var data = JSON.parse(raw);
+        renderResult(resultArea, data, label, showHints);
+
+      } catch (err) {
+        resultArea.innerHTML =
+          '<div class="py-exercise-error">' +
+          '<strong>' + L.unexpectedError + '</strong>' +
+          '<pre>' + escapeHtml(String(err)) + '</pre>' +
+          '</div>';
+      } finally {
+        checkBtn.disabled = false;
+        resetBtn.disabled = false;
+      }
+    }
+
+    checkBtn.onclick = runCheck;
+    resetBtn.onclick = function () {
+      if (editor) editor.setValue(starterCode);
+      try { localStorage.removeItem(storageKey); } catch (e) {}
+      resultArea.innerHTML = '';
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Submission UI
+  // ---------------------------------------------------------------------------
+
+  function buildSubmissionHeader() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-submission-header';
+    wrap.innerHTML =
+      '<div class="py-submission-header-inner">' +
+        '<h5 class="py-submission-title">' + L.submissionTitle + '</h5>' +
+        '<div class="py-submission-fields">' +
+          '<div class="py-submission-field">' +
+            '<label for="py-submission-student-id">' + L.studentIdLabel + '</label>' +
+            '<input type="text" id="py-submission-student-id" ' +
+                   'placeholder="' + escapeHtml(L.studentIdPlaceholder) + '" autocomplete="off">' +
+          '</div>' +
+          '<div class="py-submission-field">' +
+            '<label for="py-submission-quiz-id">' + L.quizIdLabel + '</label>' +
+            '<input type="text" id="py-submission-quiz-id" ' +
+                   'placeholder="' + escapeHtml(L.quizIdPlaceholder) + '" autocomplete="off">' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    return wrap;
+  }
+
+  function buildSubmissionFooter() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-submission-footer';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-success py-submission-export-btn';
+    btn.innerHTML = L.exportBtn;
+    btn.type = 'button';
+    btn.onclick = exportResults;
+
+    var msg = document.createElement('div');
+    msg.className = 'py-submission-msg';
+    msg.id = 'py-submission-msg';
+
+    var outWrap = document.createElement('div');
+    outWrap.className = 'py-submission-output-wrap';
+    outWrap.id = 'py-submission-output-wrap';
+    outWrap.style.display = 'none';
+
+    var outLabelRow = document.createElement('div');
+    outLabelRow.className = 'py-submission-output-labelrow';
+
+    var outLabel = document.createElement('span');
+    outLabel.className = 'py-submission-output-label';
+    outLabel.textContent = L.outputLabel;
+
+    var copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-light btn-sm py-submission-copy-btn';
+    copyBtn.id = 'py-submission-copy-btn';
+    copyBtn.type = 'button';
+    copyBtn.innerHTML = L.copyBtn;
+    copyBtn.onclick = function () {
+      var text = (document.getElementById('py-submission-output') || {}).value || '';
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(function () {
+        copyBtn.innerHTML = L.copyOk;
+        copyBtn.classList.add('py-submission-copy-ok');
+        setTimeout(function () {
+          copyBtn.innerHTML = L.copyBtn;
+          copyBtn.classList.remove('py-submission-copy-ok');
+        }, 2000);
+      });
+    };
+
+    outLabelRow.appendChild(outLabel);
+    outLabelRow.appendChild(copyBtn);
+
+    var textarea = document.createElement('textarea');
+    textarea.className = 'py-submission-output';
+    textarea.id = 'py-submission-output';
+    textarea.readOnly = true;
+    textarea.rows = 4;
+    textarea.onclick = function () { this.select(); };
+
+    outWrap.appendChild(outLabelRow);
+    outWrap.appendChild(textarea);
+
+    wrap.appendChild(btn);
+    wrap.appendChild(msg);
+    wrap.appendChild(outWrap);
+    return wrap;
+  }
+
+  async function exportResults() {
+    var studentId = (document.getElementById('py-submission-student-id') || {}).value;
+    var quizId    = (document.getElementById('py-submission-quiz-id')    || {}).value;
+
+    studentId = (studentId || '').trim();
+    quizId    = (quizId    || '').trim();
+
+    var msgEl     = document.getElementById('py-submission-msg');
+    var outWrap   = document.getElementById('py-submission-output-wrap');
+    var outArea   = document.getElementById('py-submission-output');
+
+    if (!studentId || !quizId) {
+      if (msgEl) {
+        msgEl.innerHTML =
+          '<div class="py-submission-error">' + escapeHtml(L.validationError) + '</div>';
+      }
+      if (outWrap) outWrap.style.display = 'none';
+      return;
+    }
+    if (msgEl) msgEl.innerHTML = '';
+
+    // Collect results for every registered exercise (unattempted → 0/total)
+    var allResults = (window.__pyExercises || []).map(function (ex) {
+      return exerciseResults[ex.label] || {
+        label:  ex.label,
+        passed: 0,
+        total:  0,        // 0 = not attempted
+        tests:  [],
+      };
+    });
+
+    var payload = {
+      v:       1,
+      sid:     studentId,
+      qid:     quizId,
+      ts:      new Date().toISOString(),
+      results: allResults,
+    };
+
+    try {
+      mainPyodide.globals.set('_submission_payload', mainPyodide.toPy(payload));
+      mainPyodide.globals.set('_submission_key',     submissionConfig.submissionKey || 'py-exercise');
+
+      var encoded = await mainPyodide.runPythonAsync(ENCODER_PY);
+
+      if (outArea)  outArea.value = encoded;
+      if (outWrap)  outWrap.style.display = '';
+      if (msgEl)    msgEl.innerHTML = '';
+
+    } catch (err) {
+      if (msgEl) {
+        msgEl.innerHTML =
+          '<div class="py-submission-error">' +
+          escapeHtml(L.encodingError) + escapeHtml(String(err)) +
+          '</div>';
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Download (personal documentation)
+  // ---------------------------------------------------------------------------
+
+  function downloadAll() {
+    var exercises = (window.__pyExercises || []).map(function (ex) {
+      var editor = exerciseEditors[ex.label];
+      var result = exerciseResults[ex.label] || null;
+      return {
+        label:   ex.label,
+        caption: ex.caption || null,
+        code:    editor ? editor.getValue() : ex.starter,
+        result:  result,
+      };
+    });
+
+    var data = {
+      exported_at: new Date().toISOString(),
+      exercises:   exercises,
+    };
+
+    var json = JSON.stringify(data, null, 2);
+    var blob = new Blob([json], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href     = url;
+    a.download = L.downloadFilename + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function buildDownloadSection() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-download-section';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-outline-secondary py-download-btn';
+    btn.innerHTML = L.downloadBtn;
+    btn.type = 'button';
+    btn.title = L.downloadBtnTitle;
+    btn.onclick = downloadAll;
+
+    var hint = document.createElement('span');
+    hint.className = 'py-download-hint';
+    hint.textContent = L.downloadHint;
+
+    wrap.appendChild(btn);
+    wrap.appendChild(hint);
+    return wrap;
+  }
+
+  function initDownload() {
+    var cells = document.querySelectorAll('.py-exercise-cell');
+    if (cells.length === 0) return;
+
+    // If a submission footer exists, append the download section to it (with separator).
+    // Otherwise create a standalone footer after the last exercise cell.
+    var subFooter = document.querySelector('.py-submission-footer');
+    if (subFooter) {
+      var sep = document.createElement('hr');
+      sep.className = 'py-footer-sep';
+      subFooter.appendChild(sep);
+      subFooter.appendChild(buildDownloadSection());
+    } else {
+      var footer = document.createElement('div');
+      footer.className = 'py-download-footer';
+      footer.appendChild(buildDownloadSection());
+      var lastCell = cells[cells.length - 1];
+      lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
+    }
+  }
+
+  function initSubmission() {
+    if (!submissionConfig.submission) return;
+
+    var cells = document.querySelectorAll('.py-exercise-cell');
+    if (cells.length === 0) return;
+
+    // Header before the first exercise cell
+    var header = buildSubmissionHeader();
+    cells[0].parentNode.insertBefore(header, cells[0]);
+
+    // Footer after the last exercise cell
+    var lastCell = cells[cells.length - 1];
+    var footer = buildSubmissionFooter();
+    lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Init
+  // ---------------------------------------------------------------------------
+  document.addEventListener('DOMContentLoaded', async function () {
+    await ensurePyodide();
+    await ensureMonaco();
+
+    mainPyodide.globals.set('_msg_forbidden_import',   L.msgForbiddenImport);
+    mainPyodide.globals.set('_msg_forbidden_function', L.msgForbiddenFunction);
+    mainPyodide.globals.set('_msg_forbidden_method',   L.msgForbiddenMethod);
+    mainPyodide.globals.set('_msg_forbidden_keyword',  L.msgForbiddenKeyword);
+    mainPyodide.globals.set('_msg_assertion_failed',   L.msgAssertionFailed);
+    mainPyodide.globals.set('_msg_test_error',         L.msgTestError);
+    mainPyodide.globals.set('_msg_syntax_error',       L.msgSyntaxError);
+
+    var exercises = window.__pyExercises || [];
+    exercises.forEach(setupExercise);
+    initSubmission();
+    initDownload();
   });
 
 })();

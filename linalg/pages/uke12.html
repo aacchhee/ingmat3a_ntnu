@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"theta = np.linspace(0, 2*np.pi, 721)\ncircle = np.column_stack((np.cos(theta), np.sin(theta)))\nvalues = circle @ np.array([1., 2.])\nimax, imin = np.argmax(values), np.argmin(values)\nprint('Største prøveverdi:', round(values[imax], 6), 'ved', np.round(circle[imax], 4))\nprint('Minste prøveverdi:', round(values[imin], 6), 'ved', np.round(circle[imin], 4))\nfig, ax = plt.subplots(figsize=(6, 6))\nxx, yy = np.meshgrid(np.linspace(-1.2, 1.2, 130), np.linspace(-1.2, 1.2, 130))\nax.contour(xx, yy, xx + 2*yy, levels=np.arange(-2, 2.1, .5), colors='#a6a6a6')\nax.plot(circle[:, 0], circle[:, 1], color='#1b607c', label='h = 0')\nax.plot(xx[0], (np.sqrt(5)-xx[0])/2, '--', color='#ad3d22',\n        label='nivålinje f = √5')\nax.plot(*(np.array([1., 2.])/np.sqrt(5)), 'o', color='#ad3d22', label='eksakt maksimum')\nax.set(xlabel='x', ylabel='y', xlim=(-1.25, 1.25), ylim=(-1.25, 1.25))\nax.set_aspect('equal'); ax.legend(); plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-circle-experiment","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"points = np.array([[1,1], [1,-1], [-1,1], [-1,-1]], float)/np.sqrt(2)\nfor p in points:\n    tangent = np.array([-p[1], p[0]])\n    grad = p[::-1]            # grad(x*y) = (y,x)\n    print('punkt', np.round(p, 4), 'f =', round(np.prod(p), 4),\n          'derivert langs tangenten =', round(grad @ tangent, 8))","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-xy-experiment","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"from scipy.optimize import minimize\na = np.array([2., 1.])\ndef F(z): return .5*np.sum((z-a)**2)\ndef grad_F(z): return z-a\ndef h(z): return np.dot(z,z)-1.\ndef grad_h(z): return 2*z\nx0 = np.array([.4, .9])\npath = [x0.copy()]\ndef save_iterate(z):\n    path.append(z.copy())\nresult = minimize(F, x0, jac=grad_F, method='SLSQP',\n                  constraints=[{'type':'eq', 'fun':h, 'jac':grad_h}],\n                  callback=save_iterate,\n                  options={'ftol':1e-12, 'maxiter':100})\nprint('status:', result.status, result.message)\nz = result.x\n# Med L = F + lambda*h må den uoppfylte gradienten peke langs grad(h).\nlam = -np.dot(grad_F(z),grad_h(z))/np.dot(grad_h(z),grad_h(z))\nprint('punkt:', np.round(z, 8), 'success:', result.success)\nprint('F:', round(result.fun, 10), 'h:', f'{h(z):.2e}')\nprint('lambda:', round(lam, 8),\n      'stasjonaritetsresidual:', f'{np.linalg.norm(grad_F(z)+lam*grad_h(z)):.2e}')\nprint('analytisk punkt:', np.round(a/np.linalg.norm(a), 8),\n      'global nedre grense:', round(.5*(np.linalg.norm(a)-1)**2, 10))","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-slsqp-experiment","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"track = np.array(path)\nif not np.allclose(track[-1], result.x):\n    track = np.vstack([track, result.x])\nu, v = np.meshgrid(np.linspace(-1.2, 2.55, 220),\n                   np.linspace(-1.25, 2.25, 220))\nlevels = .5*((u-a[0])**2 + (v-a[1])**2)\nfig, ax = plt.subplots(figsize=(7, 6))\ncontours = ax.contour(u, v, levels, levels=[.25, .5, .764, 1., 2., 3.],\n                      colors='0.72', linestyles='dotted')\nax.clabel(contours, inline=True, fontsize=8, fmt='F = %g')\nangles = np.linspace(0, 2*np.pi, 400)\nax.plot(np.cos(angles), np.sin(angles), color='tab:blue', lw=2,\n        label='tillatt sirkel h = 0')\nax.plot(track[:, 0], track[:, 1], '-o', color='tab:orange',\n        lw=1.5, markersize=4, label='rapporterte iterater (callback)')\nax.scatter(*x0, marker='s', s=75, color='tab:purple', zorder=5,\n           label='start')\nexact = a/np.linalg.norm(a)\nax.scatter(*exact, marker='o', facecolors='none', edgecolors='tab:green',\n           linewidths=2.2, s=260, zorder=5, label='eksakt nærmeste punkt')\nax.scatter(*result.x, marker='*', s=170, color='tab:red', zorder=6,\n           label='numerisk sluttpunkt')\nfor i in range(1, min(4, len(track))):\n    ax.annotate(str(i), track[i], xytext=(5, 6),\n                textcoords='offset points', fontsize=9)\nax.scatter(*a, marker='x', color='black', s=65, label='målepunkt a')\nax.set(xlabel='x', ylabel='y', xlim=(-1.2, 2.55), ylim=(-1.25, 2.25))\nax.set_aspect('equal')\nax.legend(loc='upper center', bbox_to_anchor=(.5, -.10), ncol=2,\n          frameon=False, fontsize=9)\nfig.tight_layout()\nplt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-slsqp-path","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"p = np.array([0., 0.])\nprint('mål i eneste tillatte punkt:', p[0])\nprint('grad f:', np.array([1.,0.]), 'grad h:', 2*p)\nfor lam_test in [-10, 0, 10]:\n    print('lambda =', lam_test, ', stasjonaritetsresidual =',\n          np.linalg.norm(np.array([1.,0.]) + lam_test*2*p))","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-degenerate-experiment","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"# NumPy regner med vektorer; Matplotlib tegner geometrien i forsøkene.\nimport numpy as np\nimport matplotlib.pyplot as plt","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Lag prøvepunkter på sirkelen og regn ut målets verdi i hvert punkt.\ntheta = np.linspace(0, 2*np.pi, 721)\ncircle = np.column_stack((np.cos(theta), np.sin(theta)))\nvalues = circle @ np.array([1., 2.])\nprint(\"Største prøveverdi:\", round(values.max(), 6))\nprint(\"Minste prøveverdi:\", round(values.min(), 6))\n\n# Tegn nivålinjer og den tillatte kurven i samme koordinatsystem.\nxx, yy = np.meshgrid(np.linspace(-1.25, 1.25, 130),\n                     np.linspace(-1.25, 1.25, 130))\nfig, ax = plt.subplots(figsize=(6, 6))\nax.contour(xx, yy, xx + 2*yy, levels=np.arange(-2, 2.1, .5),\n           colors=\"0.7\")\nax.plot(circle[:, 0], circle[:, 1], color=\"tab:blue\", label=\"h = 0\")\nax.plot(xx[0], (np.sqrt(5)-xx[0])/2, \"--\", color=\"tab:red\",\n        label=\"nivålinje f = √5\")\n# Markøren er håndregnet; prøvepunktene gir ikke et bevis.\np_max = np.array([1., 2.])/np.sqrt(5)\nax.plot(*p_max, \"o\", color=\"tab:red\", label=\"eksakt maksimum\")\nax.set(xlabel=\"x\", ylabel=\"y\", xlim=(-1.25, 1.25), ylim=(-1.25, 1.25))\nax.set_aspect(\"equal\")\nax.legend()\nplt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-circle-experiment","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Undersøk verdier og deriverte langs en tangent i de fire diagonalpunktene.\npoints = np.array([[1, 1], [1, -1], [-1, 1], [-1, -1]], float)/np.sqrt(2)\nfor p in points:\n    tangent = np.array([-p[1], p[0]])\n    gradient = p[::-1]  # For f(x,y)=xy er gradienten (y,x).\n    print(\"punkt\", np.round(p, 4), \"f =\", round(np.prod(p), 4),\n          \"tangentderivert =\", round(gradient @ tangent, 8))","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-xy-experiment","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# SLSQP tar en målfunksjon, dens gradient og et likhetskrav.\nfrom scipy.optimize import minimize\n\na = np.array([2., 1.])\n\ndef F(z):\n    # Halvparten av kvadrert avstand gir samme minimumspunkt som avstand.\n    return .5*np.sum((z-a)**2)\n\ndef grad_F(z):\n    # Gradienten til halvparten av kvadrert avstand er residualen.\n    return z-a\n\ndef h(z):\n    # Null betyr at punktet ligger på enhetssirkelen.\n    return np.dot(z, z)-1.\n\ndef grad_h(z):\n    # Denne normalen må ikke være null i kontrollen nedenfor.\n    return 2*z\n\nx0 = np.array([.4, .9])\npath = [x0.copy()]\n\ndef save_iterate(z):\n    # Lagre en kopi, slik at senere oppdateringer ikke endrer eldre iterater.\n    path.append(z.copy())\n\n# Metoden kan rapportere punkter utenfor sirkelen underveis.\nresult = minimize(F, x0, jac=grad_F, method=\"SLSQP\",\n                  constraints=[{\"type\": \"eq\", \"fun\": h, \"jac\": grad_h}],\n                  callback=save_iterate,\n                  options={\"ftol\": 1e-12, \"maxiter\": 100})\nz = result.x\n\n# Finn multiplikatoren ved å projisere minus målgradienten på normalen.\nlam = -np.dot(grad_F(z), grad_h(z))/np.dot(grad_h(z), grad_h(z))\nfeasibility = abs(h(z))\nstationarity = np.linalg.norm(grad_F(z)+lam*grad_h(z))\nprint(\"punkt:\", np.round(z, 8), \"F:\", round(result.fun, 10))\nprint(\"betingelsesfeil:\", f\"{feasibility:.2e}\",\n      \"stasjonaritetsfeil:\", f\"{stationarity:.2e}\")\nprint(\"lambda:\", round(lam, 8), \"success:\", result.success)\nprint(\"eksakt punkt:\", np.round(a/np.linalg.norm(a), 8))","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-slsqp-experiment","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bruk de observerte callback-punktene, med sluttpunktet hvis det mangler.\ntrack = np.array(path)\nif not np.allclose(track[-1], result.x):\n    track = np.vstack([track, result.x])\n\n# Tegn nivåkurver til avstandsmålet og hele den tillatte sirkelen.\nu, v = np.meshgrid(np.linspace(-1.2, 2.55, 220),\n                   np.linspace(-1.25, 2.25, 220))\nlevels = .5*((u-a[0])**2 + (v-a[1])**2)\nfig, ax = plt.subplots(figsize=(7, 6))\ncontours = ax.contour(u, v, levels, levels=[.25, .5, .764, 1., 2., 3.],\n                      colors=\"0.72\", linestyles=\"dotted\")\nax.clabel(contours, inline=True, fontsize=8, fmt=\"F = %g\")\nangles = np.linspace(0, 2*np.pi, 400)\nax.plot(np.cos(angles), np.sin(angles), color=\"tab:blue\", lw=2,\n        label=\"tillatt sirkel h = 0\")\n\n# Forbindelsen angir rekkefølge, ikke en tillatt søkekurve.\nax.plot(track[:, 0], track[:, 1], \"-o\", color=\"tab:orange\",\n        lw=1.5, markersize=4, label=\"rapporterte iterater\")\nax.scatter(*x0, marker=\"s\", s=75, color=\"tab:purple\", zorder=5,\n           label=\"start\")\nexact = a/np.linalg.norm(a)\nax.scatter(*exact, marker=\"o\", facecolors=\"none\", edgecolors=\"tab:green\",\n           linewidths=2.2, s=260, zorder=5, label=\"eksakt nærmeste punkt\")\nax.scatter(*result.x, marker=\"*\", s=170, color=\"tab:red\", zorder=6,\n           label=\"numerisk sluttpunkt\")\n# Nummerer bare de første rapporterte iteratene, hvis de finnes.\nfor i in range(1, min(4, len(track))):\n    ax.annotate(str(i), track[i], xytext=(5, 6),\n                textcoords=\"offset points\", fontsize=9)\nax.scatter(*a, marker=\"x\", color=\"black\", s=65, label=\"målepunkt a\")\nax.set(xlabel=\"x\", ylabel=\"y\", xlim=(-1.2, 2.55), ylim=(-1.25, 2.25))\nax.set_aspect(\"equal\")\nax.legend(loc=\"upper center\", bbox_to_anchor=(.5, -.10), ncol=2,\n          frameon=False, fontsize=9)\nfig.tight_layout()\nplt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-slsqp-path","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Kontroller at normalen forsvinner, uansett valg av multiplikator.\np = np.array([0., 0.])\ngrad_f = np.array([1., 0.])\ngrad_constraint = 2*p\nprint(\"eneste tillatte punkt:\", p, \"grad h:\", grad_constraint)\nfor lam_test in [-10, 0, 10]:\n    # Stasjonaritetsfeilen forblir én når grad h er null.\n    error = np.linalg.norm(grad_f + lam_test*grad_constraint)\n    print(\"lambda =\", lam_test, \"stasjonaritetsfeil =\", error)","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week12-degenerate-experiment","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4755,6 +4755,338 @@ select.math-modal-input {
 }
 
 </style>
+<style type="text/css">
+/* ============================================================
+   py-exercise – Quarto extension
+   Interactive Python exercise cells with hidden unit tests.
+   ============================================================ */
+
+/* Exercise container */
+.py-exercise-cell {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-left: 4px solid #0d6efd;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
+}
+
+/* Monaco editor wrapper (Monaco itself switches vs/vs-dark via JS) */
+.py-exercise-editor {
+  border: 1px solid var(--bs-border-color, #ced4da);
+  border-radius: 4px;
+  overflow: hidden;
+  min-height: 80px;
+  margin-bottom: 0.75rem;
+  background: var(--bs-body-bg, #ffffff);
+}
+
+/* Button bar */
+.py-exercise-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.py-exercise-check,
+.py-exercise-reset {
+  font-size: 0.875rem;
+}
+
+/* Running indicator */
+.py-exercise-running {
+  color: var(--bs-secondary-color, #6c757d);
+  font-style: italic;
+  padding: 0.4rem 0;
+}
+
+/* Error box (student code has a runtime / syntax error) */
+.py-exercise-error {
+  background: #fff3f3;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: #842029;
+}
+
+.py-exercise-error pre {
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* Captured stdout from student code */
+.py-exercise-stdout {
+  background: var(--bs-body-bg, #ffffff);
+  color: var(--bs-body-color, #212529);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.875rem;
+}
+
+.py-exercise-stdout-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color, #6c757d);
+  margin-bottom: 0.2rem;
+}
+
+.py-exercise-stdout pre {
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Test summary */
+.py-exercise-summary {
+  padding: 0.25rem 0;
+}
+
+.py-exercise-all-passed {
+  color: #0f5132;
+  background: #d1e7dd;
+  border: 1px solid #badbcc;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+}
+
+.py-exercise-some-failed {
+  color: #842029;
+  background: #f8d7da;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Per-test list (shown when there are multiple tests) */
+.py-exercise-test-list {
+  list-style: none;
+  padding: 0.25rem 0 0;
+  margin: 0;
+}
+
+.py-exercise-test-list li {
+  padding: 0.15rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.py-test-pass { color: #0f5132; }
+.py-test-fail { color: #842029; }
+
+/* Forbidden construct violations */
+.py-exercise-violations {
+  background: #fff3cd;
+  border: 1px solid #ffecb5;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: #664d03;
+}
+
+.py-exercise-violation-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.py-exercise-violation-list li {
+  padding: 0.1rem 0;
+}
+
+/* Single-test hint / assertion message */
+.py-exercise-hint {
+  color: #664d03;
+  background: #fff3cd;
+  border: 1px solid #ffecb5;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* ============================================================
+   Submission header & footer
+   ============================================================ */
+
+.py-submission-header {
+  border: 1px solid var(--bs-border-color, #c3cfe2);
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f0faf4);
+  color: var(--bs-body-color, #212529);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.py-submission-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.py-submission-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.py-submission-fields {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.py-submission-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 160px;
+}
+
+.py-submission-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+}
+
+.py-submission-field input {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.py-submission-field input:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.2);
+}
+
+/* Footer */
+.py-submission-footer {
+  border: 1px solid var(--bs-border-color, #c3cfe2);
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f0faf4);
+  color: var(--bs-body-color, #212529);
+  padding: 1rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.py-submission-export-btn {
+  font-size: 0.9rem;
+}
+
+.py-submission-msg {
+  margin-top: 0.5rem;
+}
+
+.py-submission-error {
+  color: #842029;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.py-submission-output-wrap {
+  margin-top: 0.75rem;
+}
+
+.py-submission-output-labelrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.py-submission-output-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.py-submission-copy-btn {
+  font-size: 0.78rem;
+  padding: 0.15rem 0.5rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.py-submission-copy-ok {
+  background-color: #d1e7dd !important;
+  color: #0f5132 !important;
+  border-color: #badbcc !important;
+}
+
+/* Download section (inside submission footer or standalone) */
+.py-download-footer {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-left: 4px solid #6c757d;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
+  padding: 0.85rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.py-download-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.py-download-btn {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.py-download-hint {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.py-footer-sep {
+  margin: 0.75rem 0;
+  border-color: #ced4da;
+}
+
+.py-submission-output {
+  width: 100%;
+  font-family: monospace;
+  font-size: 0.78rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  resize: vertical;
+  color: #333;
+  cursor: pointer;
+}
+
+
+</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
@@ -5041,6 +5373,7 @@ window.Quarto = {
   });
 </script>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
+<script>window.__pyExerciseConfig = {"lang":"en","submission":false,"submissionKey":"py-exercise"};</script>
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke12.html">Uke 12 – optimering med bibetingelser</a></li></ol></nav>
 <div class="quarto-title">
@@ -5073,128 +5406,145 @@ Gå i dybden
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">12.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">12.1 Sirkelen og de tillatte retningene</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">12.2 Ligninger gir kandidater, ikke klassifisering</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">12.3 En numerisk løsning må kontrolleres</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">12.4 Når metoden svikter, og forbindelsen til dualitet</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">12.5 Regn selv og oppslag</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">12.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">12.1 Sirkelen: retninger som er tillatt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">12.2 Lagranges likninger gir kandidater</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">12.3 Finn et punkt numerisk og kontroller det</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">12.4 Degenerasjon og en nedre grense</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">12.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">12.6 Python: prøv kontrollene selv</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="uke12-start">
 
 </div>
-<section id="hvor-kan-vi-bevege-oss" class="level3">
-<h3 class="anchored" data-anchor-id="hvor-kan-vi-bevege-oss">Hvor kan vi bevege oss?</h3>
-<p>I <a href="../pages/uke11.html#uke11-dual">uke 11</a> stoppet lineære ressursgrenser en ellers forbedrende produksjonsretning. Nå kan begrensningen være en <strong>krum likning</strong>, for eksempel at et punkt må ligge på en sirkel. Fra <a href="../pages/uke6.html#uke6-retning">uke 6</a> vet vi at gradienten beskriver lokal endring, men <span class="math inline">\(-\nabla f\)</span> kan peke ut av den tillatte mengden. Vi undersøker derfor endring <strong>langs</strong> begrensningen, finner kandidater med Lagranges metode og skiller lokal stasjonaritet fra et globalt bevis, slik vi gjorde i <a href="../pages/uke8.html#uke8-lokalt">uke 8</a>.</p>
-<p>Vi optimerer <span class="math inline">\(f(x)\)</span> under én eller flere likninger <span class="math inline">\(h_i(x)=0\)</span>. Punktene som oppfyller alle likningene, utgjør den <strong>tillatte mengden</strong>. Du bruker derivasjon, skalarprodukt og lineære likninger fra tidligere uker. Etterpå skal du kunne forklare en tangent og en normal, løse multiplikatorlikningene under en regulær betingelse og kontrollere mulighet og stasjonaritet i et numerisk svar.</p>
+<section id="en-begrensning-kan-være-en-kurve" class="level3">
+<h3 class="anchored" data-anchor-id="en-begrensning-kan-være-en-kurve">En begrensning kan være en kurve</h3>
+<p>I <a href="../pages/uke11.html#uke11-modell">uke 11</a> var ressurskravene ulikheter, og vi sammenlignet hjørner i et tillatt område. Nå må et punkt oppfylle en <strong>likning</strong>, for eksempel <span class="math inline">\(x^2+y^2=1\)</span>. Da er bare selve sirkelranden tillatt, ikke skiven inni. Vi finner først de retningene vi kan bevege oss i langs kurven. Så bruker vi Lagranges metode til å finne kandidater, kontrollerer et numerisk svar og undersøker når metoden kan svikte. I 12.5 kommer regneoppgaver; i 12.6 kan du prøve korte Python-oppgaver. <strong>Forelesning</strong> viser hovedideen, mens <strong>Gå i dybden</strong> åpner begrunnelser med flere likninger og andrederiverte.</p>
+</section>
+<section id="læringsmål" class="level3">
+<h3 class="anchored" data-anchor-id="læringsmål">Læringsmål</h3>
+<p>Etter denne uken skal du kunne</p>
+<ul>
+<li>finne tangent og normal til en regulær likhetsbetingelse i et punkt,</li>
+<li>sette opp og løse Lagranges likninger for én likhetsbetingelse,</li>
+<li>skille kandidater fra lokale og globale ekstremalpunkter ved å sammenligne verdier eller finne en global grense,</li>
+<li>kontrollere både betingelsesfeil og stasjonaritetsfeil i et numerisk SLSQP-svar,</li>
+<li>kjenne igjen en degenerert betingelse og forklare hvordan en Lagrangemultiplikator kan gi en nedre grense.</li>
+</ul>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div id="uke12-tangent">
 
 </div>
-<p>Vi vil først gjøre <span class="math inline">\(f(x,y)=x+2y\)</span> størst mulig når punktet <span class="math inline">\((x,y)\)</span> ligger på enhetssirkelen <span class="math inline">\(h(x,y)=x^2+y^2-1=0\)</span>. <strong>Hvor på sirkelen tror dere maksimum ligger? Vil gradienten til <span class="math inline">\(f\)</span> være null der?</strong> Start med å sammenligne retningen <span class="math inline">\((1,2)\)</span> med radiusvektoren til de punktene dere foreslår.</p>
+<p>Vi velger et punkt <span class="math inline">\(z=(x,y)\)</span> på enhetssirkelen og vil <strong>maksimere</strong> <span class="math inline">\(f(x,y)=x+2y\)</span>. Kravet er <span class="math inline">\(h(x,y)=x^2+y^2-1=0\)</span>. Her er <span class="math inline">\(f\)</span> målet og <span class="math inline">\(h=0\)</span> likhetsbetingelsen. Tre tillatte punkter gir <span class="math inline">\(f(1,0)=1\)</span>, <span class="math inline">\(f(0,1)=2\)</span> og <span class="math inline">\(f((1,2)/\sqrt5)=\sqrt5\approx2.236\)</span>. Det siste punktet ligger på sirkelen fordi <span class="math inline">\((1^2+2^2)/5=1\)</span>.</p>
+<p>En <strong>nivålinje</strong> har samme verdi av <span class="math inline">\(f\)</span> overalt: <span class="math inline">\(x+2y=c\)</span>. Figuren viser at linjen med størst verdi som fortsatt berører sirkelen, berører den ved <span class="math inline">\((1,2)/\sqrt5\)</span>. Vi regner også verdier på et tett utvalg av sirkelpunkter. Utvalget illustrerer plasseringen; selve garantien for maksimum kommer nedenfor.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Den tette prøvetakingen gir omtrent <span class="math inline">\(2.236\)</span> ved <span class="math inline">\((0.446,0.895)\)</span>, men prøvene alene beviser ikke at dette er størst. Nivålinjene <span class="math inline">\(x+2y=c\)</span> skyves i gradientretningen <span class="math inline">\((1,2)\)</span> til de akkurat berører sirkelen. Ved berøringen kan vi fortsatt bevege oss <em>langs</em> sirkelen, men ingen slik liten bevegelse øker <span class="math inline">\(f\)</span> i første orden.</p>
-<p>Skriv en glatt kurve av tillatte punkter som <span class="math inline">\(p(t)\)</span>, med <span class="math inline">\(p(0)=x_*\)</span>. Siden <span class="math inline">\(h(p(t))=0\)</span>, gir kjerneregelen</p>
-<p><span class="math display">\[\nabla h(x_*)\mathbin{\cdot}p'(0)=0.\]</span></p>
-<p>Vektoren <span class="math inline">\(p'(0)\)</span> er en <strong>tangentretning</strong>, og <span class="math inline">\(\nabla h(x_*)\)</span> er en <strong>normal</strong>: den står vinkelrett på slike retninger. Tangenten er en øyeblikksfart langs en mulig kurve, ikke et løfte om at den rette linjen <span class="math inline">\(x_*+tv\)</span> består av tillatte punkter for endelige <span class="math inline">\(t\)</span>. På sirkelen ved <span class="math inline">\((1,0)\)</span> er <span class="math inline">\(v=(0,1)\)</span> tangent, mens <span class="math inline">\((1,t)\)</span> ikke ligger på sirkelen når <span class="math inline">\(t\ne0\)</span>.</p>
-<p>I et lokalt ekstremalpunkt har også <span class="math inline">\(\nabla f(x_*)\cdot p'(0)=0\)</span>: gradientens komponent langs tangenten er null. Vi kaller likningen <strong>regulær</strong> i punktet når <span class="math inline">\(\nabla h(x_*)\ne0\)</span>; da beskriver den lokalt en glatt kurve, og gradientene må være parallelle. Vi skriver dette med et ukjent tall <span class="math inline">\(\lambda\)</span>, en <strong>Lagrangemultiplikator</strong>, og velger fortegn ved å definere <strong>Lagrangefunksjonen</strong> <span class="math inline">\(L(x,\lambda)=f(x)+\lambda h(x)\)</span>:</p>
-<p><span class="math display">\[\boxed{h(x_*)=0,\qquad \nabla f(x_*)+\lambda\nabla h(x_*)=0.}\]</span></p>
-<p>Den samme utledningen gjelder en <strong>flate</strong>: På enhetssfæren i <span class="math inline">\(\mathbb R^3\)</span> er <span class="math inline">\(h(x,y,z)=x^2+y^2+z^2-1\)</span>, og ved <span class="math inline">\((0,0,1)\)</span> er normalvektoren <span class="math inline">\(\nabla h=(0,0,2)\)</span>. Alle tangentretninger ligger i planet med tredje komponent null. Vi trenger altså ikke parametrisere hele flaten for å kjenne dens tillatte retninger.</p>
-<p>Her krever <span class="math inline">\(h=0\)</span> mulighet, mens <span class="math inline">\(\nabla_xL=0\)</span> sier at ingen tillatt tangentbevegelse endrer målet i første orden. <span class="math inline">\(\lambda\)</span> er ikke en ny fri koordinat på sirkelen. For vårt eksempel er <span class="math inline">\(\nabla f=(1,2)\)</span> og <span class="math inline">\(\nabla h=(2x,2y)\)</span>; de to punktene er <span class="math inline">\(\pm(1,2)/\sqrt5\)</span>. Funksjonsverdiene er <span class="math inline">\(\pm\sqrt5\)</span>. Kompaktheten til sirkelen sikrer at globale maksimum og minimum finnes, og kandidatene dekker dem; alternativt gir Cauchy–Schwarz-ulikheten <span class="math inline">\(|a^Tz|\le\|a\|\|z\|\)</span> med <span class="math inline">\(a=(1,2)\)</span> direkte <span class="math inline">\(x+2y\le\sqrt5\sqrt{x^2+y^2}=\sqrt5\)</span>. Dette er sterkere enn å bare finne en kandidat.</p>
-<p><strong>Overføring:</strong> Hvis vi erstatter sirkelen med <span class="math inline">\(h(x,y)=x^2+4y^2-1=0\)</span>, hvilken vektor må gradienten til <span class="math inline">\(f\)</span> være parallell med ved et regulært ekstremalpunkt?</p>
+<p>Ved <span class="math inline">\((1,0)\)</span> kan vi bevege oss oppover eller nedover <em>langs</em> sirkelen. Den øyeblikkelige <strong>tangentretningen</strong> er <span class="math inline">\(v=(0,1)\)</span>. En <strong>enhetstangent</strong> er en tangentvektor med lengde 1, slik som <span class="math inline">\(v\)</span> her. Radiusen <span class="math inline">\((1,0)\)</span> er en <strong>normalretning</strong>, vinkelrett på tangenten. Den rette linjen <span class="math inline">\((1,t)\)</span> er derimot ikke på sirkelen når <span class="math inline">\(t\ne0\)</span>; tangenten beskriver bare retningen i punktet. For <span class="math inline">\(h=x^2+y^2-1\)</span> er gradienten <span class="math inline">\(\nabla h=(2x,2y)\)</span>, slik at <span class="math inline">\(\nabla h(1,0)=(2,0)\)</span> peker langs radiusen. Ved maksimumspunktet er <span class="math inline">\(\nabla f=(1,2)\)</span> også en normal, selv om den ikke er null. Dette er forskjellen fra den frie testen <span class="math inline">\(\nabla f=0\)</span> i <a href="../pages/uke8.html#uke8-lokalt">uke 8</a>.</p>
+<p>For å begrunne dette generelt lar vi <span class="math inline">\(p(t)\)</span> være en glatt kurve med tillatte punkter og <span class="math inline">\(p(0)=z_*\)</span>. Siden <span class="math inline">\(h(p(t))=0\)</span>, gir kjerneregelen <span class="math inline">\(\nabla h(z_*)\cdot p'(0)=0\)</span>. Den tillatte tangentretningen <span class="math inline">\(p'(0)\)</span> står altså vinkelrett på <span class="math inline">\(\nabla h\)</span>. Ved et lokalt ekstremum langs kurven må også <span class="math inline">\(\nabla f(z_*)\cdot p'(0)=0\)</span>. Når <span class="math inline">\(\nabla h(z_*)\ne0\)</span>, kaller vi betingelsen <strong>regulær</strong> der: lokalt har vi en glatt kurve og de to gradientene må være parallelle.</p>
+<p>Vi skriver parallelliteten ved hjelp av et tall <span class="math inline">\(\lambda\)</span>, en <strong>Lagrangemultiplikator</strong>. Med fortegnskonvensjonen <span class="math inline">\(L(z,\lambda)=f(z)+\lambda h(z)\)</span>, kalt <strong>Lagrangefunksjonen</strong>, er de nødvendige likningene ved et regulært lokalt ekstremum</p>
+<p><span class="math display">\[\boxed{h(z_*)=0,\qquad \nabla f(z_*)+\lambda\nabla h(z_*)=0.}\]</span></p>
+<p>Et tillatt punkt med null derivert langs alle tillatte tangenter kalles <strong>stasjonært under bibetingelsen</strong>. Ved en regulær betingelse betyr dette at Lagranges likninger er oppfylt. Det krever ikke <span class="math inline">\(\nabla f=0\)</span>, slik stasjonaritet uten bibetingelser gjorde i uke 8.</p>
+<p>Den første likningen sikrer at punktet er tillatt. Den andre sier at målgradienten ikke har noen komponent langs tangenten. Her blir <span class="math inline">\(1+2\lambda x=0\)</span> og <span class="math inline">\(2+2\lambda y=0\)</span>. Den første likningen viser at <span class="math inline">\(\lambda\ne0\)</span>. Trekker vi to ganger den første fra den andre, får vi <span class="math inline">\(y=2x\)</span>. Sirkelkravet blir da <span class="math inline">\(5x^2=1\)</span>. Punktene er <span class="math inline">\(\pm(1,2)/\sqrt5\)</span>, med verdier <span class="math inline">\(\pm\sqrt5\)</span> og multiplikatorer <span class="math inline">\(\mp\sqrt5/2\)</span>. Vi må fremdeles avgjøre hvilket punkt som er best: <strong>Cauchy–Schwarz-ulikheten</strong> sier at <span class="math inline">\(|a^Tb|\le\|a\|_2\|b\|_2\)</span>: absoluttverdien av et indreprodukt er høyst produktet av vektorlengdene. For alle tillatte <span class="math inline">\(z\)</span> gir den</p>
+<p><span class="math display">\[x+2y=(1,2)\cdot z\le\|(1,2)\|_2\|z\|_2=\sqrt5.\]</span></p>
+<p>Punktet <span class="math inline">\((1,2)/\sqrt5\)</span> oppnår grensen, og er derfor <strong>globalt</strong> maksimum. Det motsatte punktet er globalt minimum. At sirkelen er kompakt, sikrer dessuten at begge verdiene oppnås, slik vi så i 8.3.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: parametrisering og fortegnet til multiplikatoren
+Gå i dybden: parametrisering og flere likninger
 </summary>
-<p>Parametriser sirkelen med <span class="math inline">\(p(t)=(\cos t,\sin t)\)</span>. Da er <span class="math inline">\(p'(t)=(-\sin t,\cos t)\)</span> og <span class="math inline">\(f(p(t))=\cos t+2\sin t\)</span>. Den deriverte er <span class="math inline">\(-\sin t+2\cos t=\nabla f(p(t))\cdot p'(t)\)</span>. Når den er null, er gradienten vinkelrett på tangenten, altså parallell med radiusen <span class="math inline">\(p(t)\)</span>.</p>
-<p>Lagrangelikningene er <span class="math inline">\(1+2\lambda x=0\)</span>, <span class="math inline">\(2+2\lambda y=0\)</span> og <span class="math inline">\(x^2+y^2=1\)</span>. De gir <span class="math inline">\(5/(4\lambda^2)=1\)</span>, så <span class="math inline">\(\lambda=\mp\sqrt5/2\)</span>. Den negative multiplikatoren hører til maksimumspunktet <span class="math inline">\((1,2)/\sqrt5\)</span>. Å velge <span class="math inline">\(L=f-\lambda h\)</span> er også mulig, men skifter fortegnet på alle rapporterte multiplikatorer; vær konsekvent gjennom utledning og kode.</p>
+<p>Parametriser sirkelen med <span class="math inline">\(p(t)=(\cos t,\sin t)\)</span>. Da er <span class="math inline">\(p'(t)=(-\sin t,\cos t)\)</span> og den deriverte av <span class="math inline">\(f(p(t))=\cos t+2\sin t\)</span> lik <span class="math inline">\(-\sin t+2\cos t\)</span>. Dette er <span class="math inline">\(\nabla f(p(t))\cdot p'(t)\)</span>. Null derivert betyr at målgradienten står normalt på sirkelkurven. En likning i tre variabler kan på samme måte beskrive en flate: for <span class="math inline">\(x^2+y^2+z^2=1\)</span> er normalvektoren ved <span class="math inline">\((0,0,1)\)</span> lik <span class="math inline">\((0,0,2)\)</span>, og tangentretningene har tredje komponent null.</p>
+<p>Hvis vi har flere krav <span class="math inline">\(h_i(z)=0\)</span>, får hver likning én multiplikator. <strong>Jacobianen</strong> <span class="math inline">\(J_h\)</span> er matrisen med radene <span class="math inline">\(\nabla h_i^T\)</span>. En førsteordens tangentretning <span class="math inline">\(v\)</span> oppfyller <span class="math inline">\(J_h(z_*)v=0\)</span>. Når normalene <span class="math inline">\(\nabla h_i(z_*)\)</span> er lineært uavhengige, er kravene regulære. Da er de nødvendige likningene</p>
+<p><span class="math display">\[h_i(z_*)=0\quad(i=1,\ldots,m),\qquad
+\nabla f(z_*)+\sum_{i=1}^m\lambda_i\nabla h_i(z_*)=0.\]</span></p>
+<p>For eksempel gir <span class="math inline">\(x^2+y^2+z^2=1\)</span> og <span class="math inline">\(z=0\)</span> ved <span class="math inline">\((1,0,0)\)</span> normalene <span class="math inline">\((2,0,0)\)</span> og <span class="math inline">\((0,0,1)\)</span>. De er uavhengige; en tangent må ha formen <span class="math inline">\((0,t,0)\)</span>. Dersom normalene ikke er uavhengige, kan Lagranges likninger overse et ekstremum, som i 12.4.</p>
 </details>
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div id="uke12-kandidater">
 
 </div>
-<p>Behold sirkelen, men sett <span class="math inline">\(f(x,y)=xy\)</span>. <strong>Hvor mange stasjonære punkter langs sirkelen venter dere nå, og er alle minima?</strong> Test tegn og verdier på fire diagonalpunkter før dere leser likningene.</p>
+<p>På samme sirkel vil vi nå <strong>maksimere og minimere</strong> <span class="math inline">\(f(x,y)=xy\)</span>. De fire diagonalpunktene <span class="math inline">\((\pm1,\pm1)/\sqrt2\)</span> ligger på sirkelen. Ved to av dem er produktet <span class="math inline">\(1/2\)</span>, ved de andre <span class="math inline">\(-1/2\)</span>. Den samme likhetsbetingelsen kan altså ha både maksimums- og minimumskandidater med null endring langs tangenten.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Alle fire har derivert null i tangentretningen, men to gir <span class="math inline">\(f=1/2\)</span> og to gir <span class="math inline">\(f=-1/2\)</span>. Lagranges nødvendige likninger er</p>
+<p>For <span class="math inline">\(f=xy\)</span> gir Lagranges likninger</p>
 <p><span class="math display">\[y+2\lambda x=0,\qquad x+2\lambda y=0,\qquad x^2+y^2=1.\]</span></p>
-<p>Ingen kandidat har <span class="math inline">\(x=0\)</span> eller <span class="math inline">\(y=0\)</span>; eliminasjon gir <span class="math inline">\(4\lambda^2=1\)</span>. For <span class="math inline">\(\lambda=-1/2\)</span> får vi <span class="math inline">\(x=y=\pm1/\sqrt2\)</span>, og for <span class="math inline">\(\lambda=1/2\)</span> får vi <span class="math inline">\(x=-y=\pm1/\sqrt2\)</span>. Likningene finner mulige ekstremalpunkter, men avgjør ikke typen. Fra <span class="math inline">\((x-y)^2\ge0\)</span> får vi <span class="math inline">\(2xy\le x^2+y^2=1\)</span>; fra <span class="math inline">\((x+y)^2\ge0\)</span> får vi <span class="math inline">\(2xy\ge-1\)</span>. Dermed er <span class="math inline">\(-1/2\le xy\le1/2\)</span>, så punktene med like fortegn er globale maksimum og de andre globale minimum.</p>
-<p>For flere likhetsbetingelser <span class="math inline">\(h_i(x)=0\)</span> legger vi til én multiplikator per likning. Samle likningene i <span class="math inline">\(h=(h_1,\ldots,h_m)\)</span> og gradientene som rader i <strong>Jacobianen</strong> <span class="math inline">\(J_h\)</span>; da betyr <span class="math inline">\(J_h(x_*)v=0\)</span> at <span class="math inline">\(v\)</span> er tangent i første orden. Med <span class="math inline">\(L=f+\sum_i\lambda_i h_i\)</span> blir likningene</p>
-<p><span class="math display">\[\nabla f(x_*)+\sum_{i=1}^m\lambda_i\nabla h_i(x_*)=0,
-\qquad h_i(x_*)=0\quad (i=1,\ldots,m).\]</span></p>
-<p>Når de <span class="math inline">\(m\)</span> normalvektorene <span class="math inline">\(\nabla h_i(x_*)\)</span> er lineært uavhengige, altså når <span class="math inline">\(J_h\)</span> har <span class="math inline">\(m\)</span> uavhengige rader, kaller vi betingelsene <strong>regulære</strong>. Da gjelder multiplikatorlikningene ved et lokalt ekstremum. For eksempel gir <span class="math inline">\(h_1=x^2+y^2+z^2-1=0\)</span> og <span class="math inline">\(h_2=z=0\)</span> ved <span class="math inline">\((1,0,0)\)</span> normalene <span class="math inline">\((2,0,0)\)</span> og <span class="math inline">\((0,0,1)\)</span>; <span class="math inline">\(J_hv=0\)</span> gir <span class="math inline">\(v=(0,t,0)\)</span>. Målets gradient må ligge i spennet av de to normalene. Uavhengigheten er avgjørende: hvis normalene forsvinner eller peker likt, kan likningene overse et ekstremum, som vi ser i 12.4.</p>
-<p>Selv når betingelsene er regulære, er stasjonaritet bare nødvendig, ikke tilstrekkelig. <a href="../pages/uke8.html#uke8-lokalt">Uke 8</a> undersøkte Hessianen ved frie kritiske punkter. Anta her at <span class="math inline">\(f\)</span> og alle <span class="math inline">\(h_i\)</span> er to ganger kontinuerlig deriverbare i et nabolag av punktet. Krumning må undersøkes langs tillatte tangenter, og det er Hessianen til <span class="math inline">\(L\)</span> med hensyn til <span class="math inline">\(x\)</span> som teller: ved et regulært stasjonært punkt må <span class="math inline">\(v^T\nabla^2_{xx}L\,v\ge0\)</span> for alle tangenter <span class="math inline">\(v\)</span> ved et lokalt minimum. Streng positivitet for alle ikke-null tangenter gir et strengt lokalt minimum; negativt fortegn gir tilsvarende maksimum. Med vår sirkel og <span class="math inline">\(f=xy\)</span> velger vi enhetstangenten <span class="math inline">\(v=(-1,1)/\sqrt2\)</span> ved <span class="math inline">\((1,1)/\sqrt2\)</span>; da blir <span class="math inline">\(v^T\nabla^2_{xx}L\,v=-2\)</span>, et lokalt maksimum. <strong>Overføring:</strong> Hvilket fortegn har den andrederiverte av <span class="math inline">\(f(\cos t,\sin t)\)</span> ved punktene <span class="math inline">\(x=y\)</span>?</p>
-<p>På sirkelen sikrer kompaktheten at begge globale ekstrema finnes. På en ubegrenset kurve som <span class="math inline">\(x^2-2y^2=4\)</span> kan en målfunksjon mangle globalt maksimum, selv om vi finner stasjonære punkter.</p>
+<p>Verken <span class="math inline">\(x\)</span> eller <span class="math inline">\(y\)</span> kan være null i disse likningene. Eliminasjon gir <span class="math inline">\(4\lambda^2=1\)</span>: ved <span class="math inline">\(\lambda=-1/2\)</span> får vi <span class="math inline">\(x=y\)</span> og de to punktene med verdi <span class="math inline">\(1/2\)</span>; ved <span class="math inline">\(\lambda=1/2\)</span> får vi <span class="math inline">\(x=-y\)</span> og de to punktene med verdi <span class="math inline">\(-1/2\)</span>. Stasjonaritet alene skiller dem ikke. Her får vi en global klassifisering uten numerisk søk: <span class="math inline">\((x-y)^2\ge0\)</span> gir <span class="math inline">\(2xy\le x^2+y^2=1\)</span>, og <span class="math inline">\((x+y)^2\ge0\)</span> gir <span class="math inline">\(2xy\ge-1\)</span>. Dermed er <span class="math inline">\(-1/2\le xy\le1/2\)</span>, og alle fire kandidatene oppnår en av grensene.</p>
+<p>Et annet uttrykk for forskjellen mellom kandidatene er å følge sirkelen som <span class="math inline">\(p(t)=(\cos t,\sin t)\)</span>. Da er <span class="math inline">\(f(p(t))=\tfrac12\sin(2t)\)</span>: rundt <span class="math inline">\(t=\pi/4\)</span> bøyer verdien nedover (maksimum), og rundt <span class="math inline">\(t=-\pi/4\)</span> bøyer den oppover (minimum). <a href="../pages/uke8.html#uke8-hessian">Uke 8</a> testet tilsvarende krumning ved frie stasjonære punkter. På en kurve undersøker vi bare de tillatte tangentretningene. Den globale verdiulikheten over gir mer enn en lokal andrederiverttest.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: krumning i tangentretningen
+Gå i dybden: andrederivert langs en tangent
 </summary>
-<p>For <span class="math inline">\(x=y=1/\sqrt2\)</span> er <span class="math inline">\(\lambda=-1/2\)</span> og tangenten <span class="math inline">\(v=(-1,1)/\sqrt2\)</span>. Hessianen til <span class="math inline">\(L\)</span> med hensyn på <span class="math inline">\((x,y)\)</span> er <span class="math inline">\(\nabla^2_{xx}L=\left(\begin{smallmatrix}2\lambda&amp;1\\1&amp;2\lambda\end{smallmatrix}\right)\)</span>. Her blir <span class="math inline">\(v^T\nabla^2_{xx}Lv=-2&lt;0\)</span>: et strengt lokalt maksimum langs kurven. Ved <span class="math inline">\(x=-y\)</span> er <span class="math inline">\(\lambda=1/2\)</span>, og tangentkrumningen er <span class="math inline">\(+2\)</span>: et lokalt minimum. Vi bruker Hessianen til <em>L</em>, begrenset til tillatte tangentretninger, fordi selve tangenten endrer retning mens vi følger kurven. Den direkte globale ulikheten over er sterkere og enklere i dette eksemplet.</p>
-<p>Hvorfor kommer <span class="math inline">\(H_L\)</span> inn? La <span class="math inline">\(\gamma(t)\)</span> være en tillatt kurve gjennom et regulært stasjonært punkt, med <span class="math inline">\(\gamma'(0)=v\)</span>. To derivasjoner av <span class="math inline">\(h(\gamma(t))=0\)</span> gir <span class="math inline">\(0=v^T\nabla^2h\,v+\nabla h^T\gamma''(0)\)</span>. Samtidig er <span class="math inline">\((f\circ\gamma)''(0)=v^T\nabla^2f\,v+\nabla f^T\gamma''(0)\)</span>. Sett inn <span class="math inline">\(\nabla f=-\lambda\nabla h\)</span> fra Lagranges likning: <span class="math inline">\(\gamma''\)</span>-leddet blir <span class="math inline">\(\lambda v^T\nabla^2h\,v\)</span>, slik at <span class="math inline">\((f\circ\gamma)''(0)=v^T\nabla^2_{xx}L\,v\)</span>. Med flere likninger summeres disse bidragene med sine <span class="math inline">\(\lambda_i\)</span>.</p>
-<p>Hvis en tangentkvadratisk form har både positive og negative verdier, kan punktet ikke være et lokalt ekstremum. Hvis formen er semidefinit og er null i en ikke-null tangentretning, avgjør ikke andrederiverttesten typen. Begge utsagn krever at vi undersøker de tillatte tangentene, ikke hele rommet.</p>
+<p>Anta at <span class="math inline">\(f\)</span> og <span class="math inline">\(h\)</span> er to ganger kontinuerlig deriverbare nær et regulært stasjonært punkt. For en tillatt kurve <span class="math inline">\(\gamma(t)\)</span> gjennom punktet, med <span class="math inline">\(\gamma'(0)=v\)</span>, er førsteordens endring null. Ved to derivasjoner av <span class="math inline">\(h(\gamma(t))=0\)</span> og innsetting av <span class="math inline">\(\nabla f=-\lambda\nabla h\)</span> får vi</p>
+<p><span class="math display">\[(f\circ\gamma)''(0)=v^T\nabla^2_{zz}L(z_*,\lambda)v.\]</span></p>
+<p>Vi bruker Hessianen til <em>L</em> begrenset til tangentene, fordi kurven selv bøyer seg. Positiv verdi for alle ikke-null tangenter er en tilstrekkelig test for strengt lokalt minimum; ved lokalt minimum må verdien være ikke-negativ. Negativ verdi for alle ikke-null tangenter gir strengt lokalt maksimum, mens null ikke avgjør saken. Med <span class="math inline">\(f=xy\)</span> og <span class="math inline">\(h=x^2+y^2-1\)</span> er <span class="math inline">\(\nabla^2_{zz}L=\left(\begin{smallmatrix}2\lambda&amp;1\\1&amp;2\lambda\end{smallmatrix}\right)\)</span>. Ved <span class="math inline">\(p=(1,1)/\sqrt2\)</span>, <span class="math inline">\(\lambda=-1/2\)</span> og enhetstangent <span class="math inline">\(v=(-1,1)/\sqrt2\)</span> gir formen <span class="math inline">\(-2\)</span>. Ved <span class="math inline">\(x=-y\)</span> blir den <span class="math inline">\(+2\)</span>. Det stemmer med <span class="math inline">\(\frac{d^2}{dt^2}(\tfrac12\sin 2t)=-2\sin2t\)</span>.</p>
+<p>For flere regulære likninger bruker vi <span class="math inline">\(L=f+\sum_i\lambda_i h_i\)</span> og bare tangenter med <span class="math inline">\(J_hv=0\)</span>. En semidefinit form med null i en ikke-null tangentretning er fortsatt ikke en avgjørende test.</p>
 </details>
 </div>
 <div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
 <div id="uke12-slsqp">
 
 </div>
-<p>Et målepunkt <span class="math inline">\(a=(2,1)\)</span> ligger utenfor enhetssirkelen. Finn punktet <span class="math inline">\(z=(x,y)\)</span> på sirkelen som er nærmest <span class="math inline">\(a\)</span>, ved å minimere <span class="math inline">\(F(z)=\tfrac12\|z-a\|_2^2\)</span> med <span class="math inline">\(h(z)=\|z\|_2^2-1=0\)</span>. Normen <span class="math inline">\(\|z-a\|_2\)</span> er den vanlige avstanden; kvadrering og faktoren <span class="math inline">\(1/2\)</span> endrer ikke nærmeste punkt, men gir den enkle gradienten <span class="math inline">\(z-a\)</span>.</p>
-<p>Vi importerer <code>minimize</code> fra <code>scipy.optimize</code>. Kallet <code>minimize(F, x0, jac=grad_F, method='SLSQP', constraints=[...])</code> minimerer funksjonen <code>F</code> fra startpunktet <code>x0=(.4,.9)</code>; <code>jac=grad_F</code> gir dens gradient. SLSQP er en numerisk metode for begrensede problemer. Ordboken <code>{'type':'eq', 'fun':h, 'jac':grad_h}</code> krever <code>h(z)=0</code> og leverer gradienten til likningen. <code>options</code> setter stoppetoleranse og maksimalt antall iterasjoner. Med <code>callback=save_iterate</code> får vår funksjon hvert rapporterte løseriterat og lagrer en kopi i <code>path</code>. Svaret <code>result.x</code> er beregnet punkt, <code>result.fun</code> er beregnet verdi, og <code>result.success</code> sier om algoritmen rapporterte vellykket avslutning. Det gir ingen garanti for globalt optimum. <strong>Forutsi punktet og avstanden før vi ber SciPy løse problemet. Må alle mellomliggende iterater ligge på sirkelen? Hva bør vi kontrollere i sluttsvaret utover <code>success</code>?</strong></p>
+<p>Et målepunkt <span class="math inline">\(a=(2,1)\)</span> ligger utenfor enhetssirkelen. Vi søker punktet <span class="math inline">\(z=(x,y)\)</span> på sirkelen som er <strong>nærmest</strong> <span class="math inline">\(a\)</span>. Avstanden er <span class="math inline">\(\|z-a\|_2\)</span>; vi minimerer i stedet <span class="math inline">\(F(z)=\tfrac12\|z-a\|_2^2\)</span> under <span class="math inline">\(h(z)=\|z\|_2^2-1=0\)</span>. Kvadrering og faktoren <span class="math inline">\(1/2\)</span> endrer ikke nærmeste punkt. I <a href="../pages/uke4.html#uke4-mk">uke 4</a> minimerte vi også kvadrerte residualer; her må residualen <span class="math inline">\(z-a\)</span> ved løsningen stå normalt på den krumme tillatte mengden. For eksempel er <span class="math inline">\((1,0)\)</span> tillatt med <span class="math inline">\(F=1\)</span>, mens punktet <span class="math inline">\(a/\sqrt5\)</span> er tillatt med <span class="math inline">\(F=\tfrac12(\sqrt5-1)^2\approx0.763932\)</span>. Geometrisk peker det nærmeste punktet fra origo mot <span class="math inline">\(a\)</span>.</p>
+<p>Vi lar nå SciPys <code>minimize</code> søke fra <span class="math inline">\(x_0=(0.4,0.9)\)</span> med metoden <code>SLSQP</code>, som kan håndtere likhetsbetingelser. Det nye i kallet er <code>constraints=[{'type':'eq', 'fun':h, 'jac':grad_h}]</code>: <code>'eq'</code> betyr <span class="math inline">\(h(z)=0\)</span>, <code>fun</code> beregner betingelsesverdien og <code>jac</code> beregner gradienten <span class="math inline">\(\nabla h\)</span>. Målgradienten sendes separat som <code>jac=grad_F</code>. <code>callback</code> lagrer iteratene metoden faktisk rapporterer. Resultatet er en <strong>numerisk kandidat</strong>.</p>
+<p>Vi undersøker derfor både <strong>betingelsesfeilen</strong> <span class="math inline">\(|h(z)|\)</span> og <strong>stasjonaritetsfeilen</strong> <span class="math inline">\(\|\nabla F(z)+\lambda\nabla h(z)\|_2\)</span>. For å finne et tall <span class="math inline">\(\lambda\)</span> som gir minst slik feil, projiserer vi <span class="math inline">\(-\nabla F\)</span> på normalen <span class="math inline">\(\nabla h\)</span>: <span class="math inline">\(\lambda=-\nabla F\cdot\nabla h/\|\nabla h\|_2^2\)</span> når <span class="math inline">\(\nabla h\ne0\)</span>. Begge feil bør være små, for eksempel under <span class="math inline">\(10^{-7}\)</span> i denne enkle modellen. En liten verdi av bare den ene sikrer ikke den andre.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Her skal den numeriske løsningen være nær <span class="math inline">\(a/\sqrt5=(0.89442719,0.44721360)\)</span>, ha avstand <span class="math inline">\(\sqrt5-1\)</span>, ha <span class="math inline">\(h(z)\)</span> og stasjonaritetsresidual nær null, og gi <span class="math inline">\(F\approx0.76393202\)</span>. Stasjonaritetsresidualen er lengden av <span class="math inline">\(\nabla F(z)+\lambda\nabla h(z)\)</span>; vi regner ut <span class="math inline">\(\lambda\)</span> ved å projisere <span class="math inline">\(-\nabla F\)</span> på <span class="math inline">\(\nabla h\)</span>. Vi kontrollerer både <span class="math inline">\(|h(z)|\)</span> og denne lengden mot en liten toleranse; en liten av dem kan ikke erstatte den andre. Multiplikatoren med vårt plussfortegn skal være <span class="math inline">\((\sqrt5-1)/2\approx0.618034\)</span>. Hvorfor er dette et <strong>globalt</strong> minimum? For ethvert punkt på sirkelen er</p>
-<p><span class="math display">\[F(z)=\tfrac12(\|a\|^2+1-2a^Tz)\ge\tfrac12(\sqrt5-1)^2,\]</span></p>
-<p>fordi <span class="math inline">\(a^Tz\le\|a\|\|z\|=\sqrt5\)</span>; likhet oppnås akkurat når <span class="math inline">\(z=a/\sqrt5\)</span>. Ingen solverstatus alene ville bevist dette. Hvis vi endrer mål eller tillatt mengde, må vi undersøke globalitet på nytt.</p>
-<p>Tegn nå iteratene sammen med sirkelen og nivåkurvene til <span class="math inline">\(F\)</span>. Koden nummererer de første iteratene som løseren rapporterer; den rette forbindelsen mellom dem er bare en visualisering av rekkefølgen, ikke en tillatt bane langs sirkelen.</p>
+<p>Kjøringen finner omtrent <span class="math inline">\((0.89442719,0.44721360)\)</span>, verdi <span class="math inline">\(0.76393202\)</span>, multiplikator <span class="math inline">\(0.618034\)</span> med vårt plussfortegn, og små verdier av begge feilene. <code>success=True</code> beskriver bare løserens stopp, ikke en global garanti. Vi kan gi en slik garanti med håndregning: for ethvert tillatt <span class="math inline">\(z\)</span> gir Cauchy–Schwarz <span class="math inline">\(a\cdot z\le\sqrt5\)</span>, og derfor</p>
+<p><span class="math display">\[F(z)=\tfrac12(\|a\|_2^2+1-2a\cdot z)
+\ge\tfrac12(\sqrt5-1)^2.\]</span></p>
+<p>Likhet oppnås ved <span class="math inline">\(z=a/\sqrt5\)</span>. Det er dermed det globalt nærmeste punktet. Denne begrunnelsen gjelder alle sirkelpunktene; residualene kontrollerer likhetskravet og Lagranges likninger. De gir alene ingen grense for avstanden til minimumspunktet: også det fjerneste sirkelpunktet oppfyller disse likningene.</p>
+<p>Figuren viser nivåkurver for avstandsfunksjonen og <strong>bare iteratene SLSQP faktisk rapporterte</strong>. Linjestykkene mellom markørene viser rekkefølgen, ikke en tillatt bane på sirkelen. Et mellomliggende iterat kan ligge utenfor sirkelen og ha lavere verdi enn det beste <em>tillatte</em> punktet.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Nivåkurvene er sirkler rundt målepunktet <span class="math inline">\(a\)</span>. Den minste som berører den tillatte sirkelen, gjør det ved <span class="math inline">\(a/\sqrt5\)</span>. Første løseriterat kan ligge utenfor den tillatte sirkelen og til og med ha lavere <span class="math inline">\(F\)</span> enn det globale <em>tillatte</em> minimumet; det er ingen motsigelse. Iteratene nærmer seg et punkt på sirkelen. Derfor kontrollerte vi <span class="math inline">\(h(z)\)</span> i sluttpunktet, i tillegg til stasjonaritet og verdi.</p>
-<p>Dette er også den samme <strong>ortogonalitetsideen</strong> som i <a href="../pages/uke4.html#uke4-mk">uke 4</a>: Vi minimerer summen av kvadrerte komponenter i residualen <span class="math inline">\(z-a\)</span>. Forskjellen er at <span class="math inline">\(z\)</span> nå må ligge på en krum sirkel; ved løsningen er residualen normal på tangenten. <strong>Overføring:</strong> Hva ville du kontrollert hvis SciPy hadde returnert et punkt med svært liten gradientresidual, men <span class="math inline">\(|h(z)|=0.1\)</span>?</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: hvorfor en lokal SLSQP-løsning stemmer med håndregning
+Gå i dybden: begge stasjonære punkter i avstandsproblemet
 </summary>
-<p>SciPy tolker <code>{'type':'eq', 'fun':h}</code> som kravet <span class="math inline">\(h(z)=0\)</span>. Jacobianen <code>jac</code> får gradienten av betingelsen, og <code>jac=grad_F</code> i <code>minimize</code> leverer gradienten til målet. Metoden søker numerisk etter en lokal løsning. Koden beregner selv en multiplikator ved ortogonal projeksjon av <span class="math inline">\(-\nabla F\)</span> på <span class="math inline">\(\nabla h\)</span>; formelen er gyldig her fordi <span class="math inline">\(\nabla h=2z\ne0\)</span>. En liten projeksjonsresidual viser tilnærmet stasjonaritet, men ikke klassifisering.</p>
-<p>Fra <span class="math inline">\(z-a+2\lambda z=0\)</span> følger <span class="math inline">\(z=a/(1+2\lambda)\)</span> når nevneren er ulik null. Kravet <span class="math inline">\(\|z\|=1\)</span> gir <span class="math inline">\(|1+2\lambda|=\sqrt5\)</span>, altså både nærmeste punkt <span class="math inline">\(a/\sqrt5\)</span> og fjerneste punkt <span class="math inline">\(-a/\sqrt5\)</span>. De er begge stasjonære. Den eksplisitte verdigrensen avgjør hvilket som er minimum.</p>
+<p>Fra <span class="math inline">\(z-a+2\lambda z=0\)</span> følger <span class="math inline">\(z=a/(1+2\lambda)\)</span> når nevneren er ulik null. Kravet <span class="math inline">\(\|z\|_2=1\)</span> gir <span class="math inline">\(|1+2\lambda|=\sqrt5\)</span>. Det finnes dermed to stasjonære sirkelpunkter: det nærmeste <span class="math inline">\(a/\sqrt5\)</span> og det fjerneste <span class="math inline">\(-a/\sqrt5\)</span>. En null residual alene klassifiserer dem ikke. Den globale ulikheten ovenfor gjør det.</p>
 </details>
 </div>
 <div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
 <div id="uke12-degenerert">
 
 </div>
-<p><strong>Hva hvis den eneste tillatte løsningen faktisk er et minimum, men betingelsens gradient er null der?</strong> Prøv <span class="math inline">\(f(x,y)=x\)</span> med <span class="math inline">\(h(x,y)=x^2+y^2=0\)</span>. Dette er én likning, men den tillatte mengden består bare av <span class="math inline">\((0,0)\)</span>.</p>
+<p>La målet være <span class="math inline">\(f(x,y)=x\)</span>, og krev <span class="math inline">\(h(x,y)=x^2+y^2=0\)</span>. Den eneste tillatte løsningen er <span class="math inline">\((0,0)\)</span>, så den er både globalt minimum og globalt maksimum relativt til denne mengden. Likevel er <span class="math inline">\(\nabla f(0,0)=(1,0)\)</span> og <span class="math inline">\(\nabla h(0,0)=(0,0)\)</span>. Ingen multiplikator kan gjøre <span class="math inline">\(\nabla f+\lambda\nabla h=0\)</span>. Likningen er <strong>degenerert</strong> i punktet: regularitetskravet i 12.1 mangler. Her må vi undersøke det tillatte punktet direkte.</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Punktet er trivielt både globalt minimum og maksimum på denne tillatte mengden, men <span class="math inline">\(\nabla f(0,0)+\lambda\nabla h(0,0)=(1,0)\)</span> for <em>alle</em> <span class="math inline">\(\lambda\)</span>. Det er ingen regulær tangentkurve gjennom punktet. Derfor må vi sjekke at betingelsesgradienten er ulik null (eller at flere normaler er uavhengige) før vi bruker Lagranges likninger som et fullstendig søk etter ekstremalpunkter. I degenererte tilfeller må punktet undersøkes direkte.</p>
-<p>En ulikhet, for eksempel <span class="math inline">\(x^2+y^2\le1\)</span>, beskriver hele skiven, ikke bare randen. Den trenger egne betingelser for innside og rand; denne uken løser vi likhetsbetingelser.</p>
-<p>I <a href="../pages/uke11.html#uke11-dual">uke 11</a> ga en mulig prisvektor en global <strong>øvre</strong> grense for fortjenesten i en maksimering. Her minimerer vi <span class="math inline">\(F\)</span>: for alle tillatte <span class="math inline">\(z\)</span> er <span class="math inline">\(L(z,\lambda)=F(z)+\lambda h(z)=F(z)\)</span>, uansett <span class="math inline">\(\lambda\)</span>. Derfor gir <span class="math inline">\(d(\lambda)=\inf_z L(z,\lambda)\)</span> en global <strong>nedre</strong> grense for minimumsverdien, også hvis infimumet er <span class="math inline">\(-\infty\)</span> (da er grensen ubrukelig). Hvis vi finner et tillatt <span class="math inline">\(z_*\)</span> som også minimerer <span class="math inline">\(L(\cdot,\lambda_*)\)</span> over alle <span class="math inline">\(z\)</span>, møtes grensen og verdien: da har vi et globalt bevis. Likningen <span class="math inline">\(\nabla_xL=0\)</span> alene sier mindre; den kan også beskrive maksimum som i 12.2. I motsetning til de ikke-negative prisene for <span class="math inline">\(\le\)</span>-grenser i uke 11 er multiplikatoren til en <strong>likning</strong> fri i fortegn. Fortegnet avhenger dessuten av om vi skriver <span class="math inline">\(L=f+\lambda h\)</span> eller <span class="math inline">\(L=f-\lambda h\)</span>. Hvis <span class="math inline">\(f\)</span> måles i kroner og <span class="math inline">\(h\)</span> i ressursenheter, har <span class="math inline">\(\lambda\)</span> enhet kroner per ressursenhet; enhetene må passe i summen <span class="math inline">\(f+\lambda h\)</span>. For en likning skrevet <span class="math inline">\(h(z)=g(z)-r=0\)</span> er <span class="math inline">\(-\lambda\)</span> den lokale endringen i optimal minimeringsverdi per ekstra enhet av <span class="math inline">\(r\)</span>, når optimum varierer glatt og samme løsningstype vedvarer.</p>
+<p>Til slutt bruker vi ideen om <strong>grenser for optimalverdien</strong> fra <a href="../pages/uke11.html#uke11-dual">uke 11</a>. I avstandsproblemet er <span class="math inline">\(L(z,\lambda)=F(z)+\lambda h(z)\)</span>. På tillatte punkter er <span class="math inline">\(h(z)=0\)</span>, så <span class="math inline">\(L(z,\lambda)=F(z)\)</span> for ethvert <span class="math inline">\(\lambda\)</span>. Velger vi <span class="math inline">\(\lambda_*=(\sqrt5-1)/2\)</span>, blir <span class="math inline">\(L(\cdot,\lambda_*)\)</span> en kvadratisk funksjon av <span class="math inline">\(z\)</span> med positiv definit Hessian <span class="math inline">\((1+2\lambda_*)I=\sqrt5 I\)</span>. Det er samme type <strong>SPD-skål</strong> som i <a href="../pages/uke6.html#uke6-energi">uke 6</a>. Minimum over <em>alle</em> <span class="math inline">\(z\)</span> ligger ved <span class="math inline">\(z_*=a/\sqrt5\)</span>; dette punktet er også tillatt. Dermed gjelder for hvert tillatt <span class="math inline">\(z\)</span></p>
+<p><span class="math display">\[F(z)=L(z,\lambda_*)\ge L(z_*,\lambda_*)
+=F(z_*)=\tfrac12(\sqrt5-1)^2.\]</span></p>
+<p>Dette er en global nedre grense som faktisk oppnås. I uke 11 ga ressurspriser en <strong>øvre</strong> grense for et maksimalt overskudd; her gir en multiplikator en <strong>nedre</strong> grense for et minimalt mål. Multiplikatoren til en likning kan ha begge fortegn, og et valg av <span class="math inline">\(L=f-\lambda h\)</span> ville snudd fortegnet. Vi holder oss til <span class="math inline">\(L=f+\lambda h\)</span>. En ulikhet som <span class="math inline">\(x^2+y^2\le1\)</span> beskriver hele skiven og har andre krav for indre punkter og rand; denne uken gjelder likninger.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: en eksakt nedre grense fra multiplikatoren
+Gå i dybden: generell dualgrense og regning i eksemplet
 </summary>
-<p>I avstandsproblemet er <span class="math inline">\(L(z,\lambda)=\tfrac12\|z-a\|^2+\lambda(\|z\|^2-1)\)</span>. Når <span class="math inline">\(1+2\lambda&gt;0\)</span>, er dette en strengt konveks kvadratisk funksjon av <span class="math inline">\(z\)</span>, med ubetinget minimum ved <span class="math inline">\(z=a/(1+2\lambda)\)</span>. Dermed er</p>
-<p><span class="math display">\[d(\lambda)=\tfrac12\|a\|^2-\lambda-\frac{\|a\|^2}{2(1+2\lambda)}.\]</span></p>
-<p>Sett <span class="math inline">\(\lambda_*=(\sqrt5-1)/2\)</span>. Da minimeres <span class="math inline">\(L(\cdot,\lambda_*)\)</span> ved <span class="math inline">\(z_*=a/\sqrt5\)</span>, som også oppfyller <span class="math inline">\(h(z_*)=0\)</span>. Altså er <span class="math inline">\(d(\lambda_*)=L(z_*,\lambda_*)=F(z_*)=\tfrac12(\sqrt5-1)^2\)</span>. Dette er et eksempel der dualgrensen er skarp; det er ikke en generell garanti for alle ikke-konvekse likhetsproblemer.</p>
+<p>For en minimering med likhetskrav setter vi <span class="math inline">\(d(\lambda)=\inf_z L(z,\lambda)\)</span>. Siden <span class="math inline">\(F(z)=L(z,\lambda)\)</span> på alle tillatte punkter, er <span class="math inline">\(d(\lambda)\)</span> en nedre grense for den tillatte minimumsverdien, også når grensen er ubrukelig (<span class="math inline">\(-\infty\)</span>). Hvis et tillatt punkt samtidig minimerer <span class="math inline">\(L\)</span> globalt, møtes nedre grense og punktets verdi. Likningen <span class="math inline">\(\nabla_zL=0\)</span> alene er ikke nok til å vise dette.</p>
+<p>I vårt eksempel er <span class="math inline">\(\|a\|^2=5\)</span> og, når <span class="math inline">\(1+2\lambda&gt;0\)</span>,</p>
+<p><span class="math display">\[L(z,\lambda)=\tfrac12(1+2\lambda)\|z\|^2-a\cdot z
++\tfrac52-\lambda.\]</span></p>
+<p>Minimumspunktet uten bibetingelser er <span class="math inline">\(a/(1+2\lambda)\)</span>. Ved innsetting får vi <span class="math inline">\(d(\lambda)=\tfrac52-\lambda-
+\frac5{2(1+2\lambda)}\)</span>. For <span class="math inline">\(\lambda_*=(\sqrt5-1)/2\)</span> er minimumspunktet <span class="math inline">\(a/\sqrt5\)</span> tillatt, og den nedre grensen blir nøyaktig <span class="math inline">\(F(a/\sqrt5)\)</span>. En slik skarp grense er ikke garantert for enhver likhetsbetingelse.</p>
+<p>Hvis målet har enhet kroner og kravet er <span class="math inline">\(h=g-r=0\)</span> målt i en ressursenhet, har <span class="math inline">\(\lambda\)</span> enhet kroner per ressursenhet, slik at <span class="math inline">\(f+\lambda h\)</span> kan summeres. Når optimal verdi varierer glatt med <span class="math inline">\(r\)</span> uten skifte av løsningstype, er <span class="math inline">\(-\lambda\)</span> den lokale endringen per ekstra enhet <span class="math inline">\(r\)</span>.</p>
 </details>
 </div>
 <div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
 <div id="uke12-oppgaver">
 
 </div>
-<p>Skriv én komponent i hvert felt. Bruk eksakte uttrykk, for eksempel <code>1/sqrt(5)</code>. Ingen løsningsforslag er lagt ved kontrollfeltene.</p>
+<p>Oppgave 1–2 bruker normal, tangent og Lagranges likninger fra 12.1. Oppgave 3 gjelder klassifisering i 12.2, oppgave 4 betingelsesfeil fra 12.3, og oppgave 5–6 degenerasjon og en nedre grense fra 12.4. Begrunn framgangsmåten i egne notater; feltene kontrollerer tallene. Skriv eksakte uttrykk som <code>1/sqrt(5)</code> med mindre oppgaven ber om desimaler.</p>
 <div id="week12-exercise-convention" class="math-exercise-context">
-<p>Vi bruker likhetsbetingelsen <span data-math-exercise-display="false" data-math-exercise-tex="h=0"><span class="math inline">\(h=0\)</span></span> og fortegnskonvensjonen <span data-math-exercise-display="false" data-math-exercise-tex="L=f+\lambda h"><span class="math inline">\(L=f+\lambda h\)</span></span>. Ved en regulær kandidat gjelder <span data-math-exercise-display="false" data-math-exercise-tex="h=0"><span class="math inline">\(h=0\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="\nabla f+\lambda\nabla h=0"><span class="math inline">\(\nabla f+\lambda\nabla h=0\)</span></span>. En kandidat trenger egen kontroll av ekstremumstype. Når <span data-math-exercise-display="false" data-math-exercise-tex="\nabla h=0"><span class="math inline">\(\nabla h=0\)</span></span>, kan multiplikatorbetingelsen svikte selv ved et ekstremum.</p>
+<p>Vi bruker <span data-math-exercise-display="false" data-math-exercise-tex="h=0"><span class="math inline">\(h=0\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="L=f+\lambda h"><span class="math inline">\(L=f+\lambda h\)</span></span>. Ved et regulært ekstremum må <span data-math-exercise-display="false" data-math-exercise-tex="h=0"><span class="math inline">\(h=0\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="\nabla f+\lambda\nabla h=0"><span class="math inline">\(\nabla f+\lambda\nabla h=0\)</span></span>. Løsning av disse likningene gir kandidater som må klassifiseres.</p>
 </div>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="week12-normal-tangent" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;normalens x-komponent&quot;,&quot;normalens y-komponent&quot;,&quot;tangentens x-komponent&quot;,&quot;tangentens y-komponent&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;Gå i dybden: en eksakt nedre grense fra multiplikatoren\nI avstandsproblemet er \\(L(z,\\lambda)=\\tfrac12\\|z-a\\|^2+\\lambda(\\|z\\|^2-1)\\). Når \\(1+2\\lambda>0\\), er dette en strengt konveks kvadratisk funksjon av \\(z\\), med ubetinget minimum ved \\(z=a/(1+2\\lambda)\\). Dermed er\n\\[d(\\lambda)=\\tfrac12\\|a\\|^2-\\lambda-\\frac{\\|a\\|^2}{2(1+2\\lambda)}.\\]\nSett \\(\\lambda_*=(\\sqrt5-1)/2\\). Da minimeres \\(L(\\cdot,\\lambda_*)\\) ved \\(z_*=a/\\sqrt5\\), som også oppfyller \\(h(z_*)=0\\). Altså er \\(d(\\lambda_*)=L(z_*,\\lambda_*)=F(z_*)=\\tfrac12(\\sqrt5-1)^2\\). Dette er et eksempel der dualgrensen er skarp; det er ikke en generell garanti for alle ikke-konvekse likhetsproblemer.\n12.4 Når metoden svikter, og forbindelsen til dualitet\nSkriv én komponent i hvert felt. Bruk eksakte uttrykk, for eksempel 1/sqrt(5). Ingen løsningsforslag er lagt ved kontrollfeltene.\nVi bruker likhetsbetingelsen \\(h=0\\) og fortegnskonvensjonen \\(L=f+\\lambda h\\). Ved en regulær kandidat gjelder \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). En kandidat trenger egen kontroll av ekstremumstype. Når \\(\\nabla h=0\\), kan multiplikatorbetingelsen svikte selv ved et ekstremum.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
-<div class="math-exercise-question" data-math-exercise-source="**1. Tangent og normal.** La \(h(x,y)=x^2+4y^2-1\) og \(p=(0,1/2)\). Finn gradienten til \(h\) og én tangentvektor med lengde én og **positiv \(x\)-komponent** i \(p\).<br>
+<div class="math-exercise-cell" id="math-exercise-1" data-label="week12-normal-tangent" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;normalens x-komponent&quot;,&quot;normalens y-komponent&quot;,&quot;tangentens x-komponent&quot;,&quot;tangentens y-komponent&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;I vårt eksempel er \\(\\|a\\|^2=5\\) og, når \\(1+2\\lambda>0\\),\n\\[L(z,\\lambda)=\\tfrac12(1+2\\lambda)\\|z\\|^2-a\\cdot z\n+\\tfrac52-\\lambda.\\]\nMinimumspunktet uten bibetingelser er \\(a/(1+2\\lambda)\\). Ved innsetting får vi \\(d(\\lambda)=\\tfrac52-\\lambda-\n\\frac5{2(1+2\\lambda)}\\). For \\(\\lambda_*=(\\sqrt5-1)/2\\) er minimumspunktet \\(a/\\sqrt5\\) tillatt, og den nedre grensen blir nøyaktig \\(F(a/\\sqrt5)\\). En slik skarp grense er ikke garantert for enhver likhetsbetingelse.\nHvis målet har enhet kroner og kravet er \\(h=g-r=0\\) målt i en ressursenhet, har \\(\\lambda\\) enhet kroner per ressursenhet, slik at \\(f+\\lambda h\\) kan summeres. Når optimal verdi varierer glatt med \\(r\\) uten skifte av løsningstype, er \\(-\\lambda\\) den lokale endringen per ekstra enhet \\(r\\).\n12.4 Degenerasjon og en nedre grense\nOppgave 1–2 bruker normal, tangent og Lagranges likninger fra 12.1. Oppgave 3 gjelder klassifisering i 12.2, oppgave 4 betingelsesfeil fra 12.3, og oppgave 5–6 degenerasjon og en nedre grense fra 12.4. Begrunn framgangsmåten i egne notater; feltene kontrollerer tallene. Skriv eksakte uttrykk som 1/sqrt(5) med mindre oppgaven ber om desimaler.\nVi bruker \\(h=0\\) og \\(L=f+\\lambda h\\). Ved et regulært ekstremum må \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). Løsning av disse likningene gir kandidater som må klassifiseres.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-question" data-math-exercise-source="**1. Tangent og normal.** La \(h(x,y)=x^2+4y^2-1\) og \(p=(0,1/2)\).<br>
+Finn \(\nabla h(p)\) og en enhetstangent med positiv \(x\)-komponent.<br>
+Kontroller at skalarproduktet av de to vektorene er null.<br>
 <br>
 \(\nabla h(p)=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-Enhetstangent med positiv \(x\)-komponent \(=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span>">**1. Tangent og normal.** La \(h(x,y)=x^2+4y^2-1\) og \(p=(0,1/2)\). Finn gradienten til \(h\) og én tangentvektor med lengde én og **positiv \(x\)-komponent** i \(p\).<br>
+Enhetstangent \(=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span>">**1. Tangent og normal.** La \(h(x,y)=x^2+4y^2-1\) og \(p=(0,1/2)\).<br>
+Finn \(\nabla h(p)\) og en enhetstangent med positiv \(x\)-komponent.<br>
+Kontroller at skalarproduktet av de to vektorene er null.<br>
 <br>
 \(\nabla h(p)=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-1-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f2" data-answer="4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
-Enhetstangent med positiv \(x\)-komponent \(=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-1-f3" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f4" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span></div>
+Enhetstangent \(=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-1-f3" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f4" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5207,12 +5557,18 @@ Enhetstangent med positiv \(x\)-komponent \(=\) <span class="math-vec" style="--
 <div class="math-legend-panel" style="display:none;"></div>
 <div class="math-feedback-area"></div>
 </div>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="week12-circle-lagrange" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;maksimumspunktets x-koordinat&quot;,&quot;maksimumspunktets y-koordinat&quot;,&quot;multiplikator ved maksimum&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;Gå i dybden: en eksakt nedre grense fra multiplikatoren\nI avstandsproblemet er \\(L(z,\\lambda)=\\tfrac12\\|z-a\\|^2+\\lambda(\\|z\\|^2-1)\\). Når \\(1+2\\lambda>0\\), er dette en strengt konveks kvadratisk funksjon av \\(z\\), med ubetinget minimum ved \\(z=a/(1+2\\lambda)\\). Dermed er\n\\[d(\\lambda)=\\tfrac12\\|a\\|^2-\\lambda-\\frac{\\|a\\|^2}{2(1+2\\lambda)}.\\]\nSett \\(\\lambda_*=(\\sqrt5-1)/2\\). Da minimeres \\(L(\\cdot,\\lambda_*)\\) ved \\(z_*=a/\\sqrt5\\), som også oppfyller \\(h(z_*)=0\\). Altså er \\(d(\\lambda_*)=L(z_*,\\lambda_*)=F(z_*)=\\tfrac12(\\sqrt5-1)^2\\). Dette er et eksempel der dualgrensen er skarp; det er ikke en generell garanti for alle ikke-konvekse likhetsproblemer.\n12.4 Når metoden svikter, og forbindelsen til dualitet\nSkriv én komponent i hvert felt. Bruk eksakte uttrykk, for eksempel 1/sqrt(5). Ingen løsningsforslag er lagt ved kontrollfeltene.\nVi bruker likhetsbetingelsen \\(h=0\\) og fortegnskonvensjonen \\(L=f+\\lambda h\\). Ved en regulær kandidat gjelder \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). En kandidat trenger egen kontroll av ekstremumstype. Når \\(\\nabla h=0\\), kan multiplikatorbetingelsen svikte selv ved et ekstremum.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
-<div class="math-exercise-question" data-math-exercise-source="**2. Lagrangelikninger.** Maksimer/minimer \(f(x,y)=x+2y\) med \(h(x,y)=x^2+y^2-1=0\). Oppgi *maksimumspunktet* og multiplikatoren for konvensjonen over. Velg det positive funksjonsmaksimumet.<br>
+<div class="math-exercise-cell" id="math-exercise-2" data-label="week12-circle-lagrange" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;maksimumspunktets x-koordinat&quot;,&quot;maksimumspunktets y-koordinat&quot;,&quot;multiplikator ved maksimum&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;I vårt eksempel er \\(\\|a\\|^2=5\\) og, når \\(1+2\\lambda>0\\),\n\\[L(z,\\lambda)=\\tfrac12(1+2\\lambda)\\|z\\|^2-a\\cdot z\n+\\tfrac52-\\lambda.\\]\nMinimumspunktet uten bibetingelser er \\(a/(1+2\\lambda)\\). Ved innsetting får vi \\(d(\\lambda)=\\tfrac52-\\lambda-\n\\frac5{2(1+2\\lambda)}\\). For \\(\\lambda_*=(\\sqrt5-1)/2\\) er minimumspunktet \\(a/\\sqrt5\\) tillatt, og den nedre grensen blir nøyaktig \\(F(a/\\sqrt5)\\). En slik skarp grense er ikke garantert for enhver likhetsbetingelse.\nHvis målet har enhet kroner og kravet er \\(h=g-r=0\\) målt i en ressursenhet, har \\(\\lambda\\) enhet kroner per ressursenhet, slik at \\(f+\\lambda h\\) kan summeres. Når optimal verdi varierer glatt med \\(r\\) uten skifte av løsningstype, er \\(-\\lambda\\) den lokale endringen per ekstra enhet \\(r\\).\n12.4 Degenerasjon og en nedre grense\nOppgave 1–2 bruker normal, tangent og Lagranges likninger fra 12.1. Oppgave 3 gjelder klassifisering i 12.2, oppgave 4 betingelsesfeil fra 12.3, og oppgave 5–6 degenerasjon og en nedre grense fra 12.4. Begrunn framgangsmåten i egne notater; feltene kontrollerer tallene. Skriv eksakte uttrykk som 1/sqrt(5) med mindre oppgaven ber om desimaler.\nVi bruker \\(h=0\\) og \\(L=f+\\lambda h\\). Ved et regulært ekstremum må \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). Løsning av disse likningene gir kandidater som må klassifiseres.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
+<div class="math-exercise-question" data-math-exercise-source="**2. Lagrange på sirkelen.** Maksimer \(f(x,y)=x+2y\) med<br>
+\(h=x^2+y^2-1=0\). Finn maksimumspunktet og multiplikatoren<br>
+for \(L=f+\lambda h\). Forklar hvorfor verdien er større enn<br>
+ved det motsatte punktet.<br>
 <br>
 \((x,y)=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(\lambda=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">**2. Lagrangelikninger.** Maksimer/minimer \(f(x,y)=x+2y\) med \(h(x,y)=x^2+y^2-1=0\). Oppgi *maksimumspunktet* og multiplikatoren for konvensjonen over. Velg det positive funksjonsmaksimumet.<br>
+\(\lambda=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">**2. Lagrange på sirkelen.** Maksimer \(f(x,y)=x+2y\) med<br>
+\(h=x^2+y^2-1=0\). Finn maksimumspunktet og multiplikatoren<br>
+for \(L=f+\lambda h\). Forklar hvorfor verdien er større enn<br>
+ved det motsatte punktet.<br>
 <br>
 \((x,y)=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-2-f1" data-answer="1/sqrt(5)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-f2" data-answer="2/sqrt(5)" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
@@ -5229,12 +5585,18 @@ Enhetstangent med positiv \(x\)-komponent \(=\) <span class="math-vec" style="--
 <div class="math-legend-panel" style="display:none;"></div>
 <div class="math-feedback-area"></div>
 </div>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="week12-xy-classification" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;funksjonsverdi&quot;,&quot;andrederivert langs sirkelen&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;Gå i dybden: en eksakt nedre grense fra multiplikatoren\nI avstandsproblemet er \\(L(z,\\lambda)=\\tfrac12\\|z-a\\|^2+\\lambda(\\|z\\|^2-1)\\). Når \\(1+2\\lambda>0\\), er dette en strengt konveks kvadratisk funksjon av \\(z\\), med ubetinget minimum ved \\(z=a/(1+2\\lambda)\\). Dermed er\n\\[d(\\lambda)=\\tfrac12\\|a\\|^2-\\lambda-\\frac{\\|a\\|^2}{2(1+2\\lambda)}.\\]\nSett \\(\\lambda_*=(\\sqrt5-1)/2\\). Da minimeres \\(L(\\cdot,\\lambda_*)\\) ved \\(z_*=a/\\sqrt5\\), som også oppfyller \\(h(z_*)=0\\). Altså er \\(d(\\lambda_*)=L(z_*,\\lambda_*)=F(z_*)=\\tfrac12(\\sqrt5-1)^2\\). Dette er et eksempel der dualgrensen er skarp; det er ikke en generell garanti for alle ikke-konvekse likhetsproblemer.\n12.4 Når metoden svikter, og forbindelsen til dualitet\nSkriv én komponent i hvert felt. Bruk eksakte uttrykk, for eksempel 1/sqrt(5). Ingen løsningsforslag er lagt ved kontrollfeltene.\nVi bruker likhetsbetingelsen \\(h=0\\) og fortegnskonvensjonen \\(L=f+\\lambda h\\). Ved en regulær kandidat gjelder \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). En kandidat trenger egen kontroll av ekstremumstype. Når \\(\\nabla h=0\\), kan multiplikatorbetingelsen svikte selv ved et ekstremum.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
-<div class="math-exercise-question" data-math-exercise-source="**3. Stasjonær er ikke nok.** For \(f(x,y)=xy\) på enhetssirkelen \(x^2+y^2=1\), bruk punktet \(p=(1,1)/\sqrt2\). Finn funksjonsverdien og andrederiverte av \(f(\cos t,\sin t)\) ved \(t=\pi/4\).<br>
+<div class="math-exercise-cell" id="math-exercise-3" data-label="week12-xy-classification" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;funksjonsverdi&quot;,&quot;andrederivert langs sirkelen&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;I vårt eksempel er \\(\\|a\\|^2=5\\) og, når \\(1+2\\lambda>0\\),\n\\[L(z,\\lambda)=\\tfrac12(1+2\\lambda)\\|z\\|^2-a\\cdot z\n+\\tfrac52-\\lambda.\\]\nMinimumspunktet uten bibetingelser er \\(a/(1+2\\lambda)\\). Ved innsetting får vi \\(d(\\lambda)=\\tfrac52-\\lambda-\n\\frac5{2(1+2\\lambda)}\\). For \\(\\lambda_*=(\\sqrt5-1)/2\\) er minimumspunktet \\(a/\\sqrt5\\) tillatt, og den nedre grensen blir nøyaktig \\(F(a/\\sqrt5)\\). En slik skarp grense er ikke garantert for enhver likhetsbetingelse.\nHvis målet har enhet kroner og kravet er \\(h=g-r=0\\) målt i en ressursenhet, har \\(\\lambda\\) enhet kroner per ressursenhet, slik at \\(f+\\lambda h\\) kan summeres. Når optimal verdi varierer glatt med \\(r\\) uten skifte av løsningstype, er \\(-\\lambda\\) den lokale endringen per ekstra enhet \\(r\\).\n12.4 Degenerasjon og en nedre grense\nOppgave 1–2 bruker normal, tangent og Lagranges likninger fra 12.1. Oppgave 3 gjelder klassifisering i 12.2, oppgave 4 betingelsesfeil fra 12.3, og oppgave 5–6 degenerasjon og en nedre grense fra 12.4. Begrunn framgangsmåten i egne notater; feltene kontrollerer tallene. Skriv eksakte uttrykk som 1/sqrt(5) med mindre oppgaven ber om desimaler.\nVi bruker \\(h=0\\) og \\(L=f+\\lambda h\\). Ved et regulært ekstremum må \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). Løsning av disse likningene gir kandidater som må klassifiseres.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-question" data-math-exercise-source="**3. Kandidat og type.** For \(f(x,y)=xy\) på sirkelen, bruk<br>
+\(p=(1,1)/\sqrt2\). Finn verdien og andrederiverten av<br>
+\(f(\cos t,\sin t)\) ved \(t=\pi/4\). Forklar hvorfor punktet er<br>
+et maksimum langs sirkelen.<br>
 <br>
 \(f(p)=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
 <br>
-\(\frac{d^2}{dt^2}f(\cos t,\sin t)\big|_{t=\pi/4}=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">**3. Stasjonær er ikke nok.** For \(f(x,y)=xy\) på enhetssirkelen \(x^2+y^2=1\), bruk punktet \(p=(1,1)/\sqrt2\). Finn funksjonsverdien og andrederiverte av \(f(\cos t,\sin t)\) ved \(t=\pi/4\).<br>
+\(\frac{d^2}{dt^2}f(\cos t,\sin t)\big|_{t=\pi/4}=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">**3. Kandidat og type.** For \(f(x,y)=xy\) på sirkelen, bruk<br>
+\(p=(1,1)/\sqrt2\). Finn verdien og andrederiverten av<br>
+\(f(\cos t,\sin t)\) ved \(t=\pi/4\). Forklar hvorfor punktet er<br>
+et maksimum langs sirkelen.<br>
 <br>
 \(f(p)=\) <input type="text" id="math-exercise-3-f1" data-answer="1/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
 <br>
@@ -5251,16 +5613,20 @@ Enhetstangent med positiv \(x\)-komponent \(=\) <span class="math-vec" style="--
 <div class="math-legend-panel" style="display:none;"></div>
 <div class="math-feedback-area"></div>
 </div>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="week12-degenerate-check" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;punktets x-koordinat&quot;,&quot;punktets y-koordinat&quot;,&quot;betingelsesgradientens x-komponent&quot;,&quot;betingelsesgradientens y-komponent&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;Gå i dybden: en eksakt nedre grense fra multiplikatoren\nI avstandsproblemet er \\(L(z,\\lambda)=\\tfrac12\\|z-a\\|^2+\\lambda(\\|z\\|^2-1)\\). Når \\(1+2\\lambda>0\\), er dette en strengt konveks kvadratisk funksjon av \\(z\\), med ubetinget minimum ved \\(z=a/(1+2\\lambda)\\). Dermed er\n\\[d(\\lambda)=\\tfrac12\\|a\\|^2-\\lambda-\\frac{\\|a\\|^2}{2(1+2\\lambda)}.\\]\nSett \\(\\lambda_*=(\\sqrt5-1)/2\\). Da minimeres \\(L(\\cdot,\\lambda_*)\\) ved \\(z_*=a/\\sqrt5\\), som også oppfyller \\(h(z_*)=0\\). Altså er \\(d(\\lambda_*)=L(z_*,\\lambda_*)=F(z_*)=\\tfrac12(\\sqrt5-1)^2\\). Dette er et eksempel der dualgrensen er skarp; det er ikke en generell garanti for alle ikke-konvekse likhetsproblemer.\n12.4 Når metoden svikter, og forbindelsen til dualitet\nSkriv én komponent i hvert felt. Bruk eksakte uttrykk, for eksempel 1/sqrt(5). Ingen løsningsforslag er lagt ved kontrollfeltene.\nVi bruker likhetsbetingelsen \\(h=0\\) og fortegnskonvensjonen \\(L=f+\\lambda h\\). Ved en regulær kandidat gjelder \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). En kandidat trenger egen kontroll av ekstremumstype. Når \\(\\nabla h=0\\), kan multiplikatorbetingelsen svikte selv ved et ekstremum.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;,&quot;math-exercise-4-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
-<div class="math-exercise-question" data-math-exercise-source="**4. En degenerert likning.** For \(f(x,y)=x+3y\) og \(h(x,y)=x^2+y^2=0\), finn det eneste tillatte punktet og \(\nabla h\) der. Kontroller i egne notater hvorfor ingen multiplikator kan oppfylle stasjonaritetslikningen.<br>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="week12-numeric-check" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;betingelsesfeil&quot;,&quot;stasjonaritetsfeil&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;I vårt eksempel er \\(\\|a\\|^2=5\\) og, når \\(1+2\\lambda>0\\),\n\\[L(z,\\lambda)=\\tfrac12(1+2\\lambda)\\|z\\|^2-a\\cdot z\n+\\tfrac52-\\lambda.\\]\nMinimumspunktet uten bibetingelser er \\(a/(1+2\\lambda)\\). Ved innsetting får vi \\(d(\\lambda)=\\tfrac52-\\lambda-\n\\frac5{2(1+2\\lambda)}\\). For \\(\\lambda_*=(\\sqrt5-1)/2\\) er minimumspunktet \\(a/\\sqrt5\\) tillatt, og den nedre grensen blir nøyaktig \\(F(a/\\sqrt5)\\). En slik skarp grense er ikke garantert for enhver likhetsbetingelse.\nHvis målet har enhet kroner og kravet er \\(h=g-r=0\\) målt i en ressursenhet, har \\(\\lambda\\) enhet kroner per ressursenhet, slik at \\(f+\\lambda h\\) kan summeres. Når optimal verdi varierer glatt med \\(r\\) uten skifte av løsningstype, er \\(-\\lambda\\) den lokale endringen per ekstra enhet \\(r\\).\n12.4 Degenerasjon og en nedre grense\nOppgave 1–2 bruker normal, tangent og Lagranges likninger fra 12.1. Oppgave 3 gjelder klassifisering i 12.2, oppgave 4 betingelsesfeil fra 12.3, og oppgave 5–6 degenerasjon og en nedre grense fra 12.4. Begrunn framgangsmåten i egne notater; feltene kontrollerer tallene. Skriv eksakte uttrykk som 1/sqrt(5) med mindre oppgaven ber om desimaler.\nVi bruker \\(h=0\\) og \\(L=f+\\lambda h\\). Ved et regulært ekstremum må \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). Løsning av disse likningene gir kandidater som må klassifiseres.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-question" data-math-exercise-source="**4. Kontroller et numerisk forslag.** I avstandsproblemet er<br>
+\(a=(2,1)\), \(F(z)=\tfrac12\|z-a\|^2\), \(h(z)=\|z\|^2-1\).<br>
+En løser rapporterer \(z=(1,0)\) og \(\lambda=1/2\).<br>
+Regn ut \(|h(z)|\) og \(\|\nabla F(z)+\lambda\nabla h(z)\|_2\).<br>
+Hvilken kontroll avslører at dette ikke er et stasjonært punkt?<br>
 <br>
-Tillatt punkt \(=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-4-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-4-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
+\(|h(z)|=\) <input type=&quot;text&quot; id=&quot;math-exercise-4-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Stasjonaritetsfeil \(=\) <input type=&quot;text&quot; id=&quot;math-exercise-4-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">**4. Kontroller et numerisk forslag.** I avstandsproblemet er<br>
+\(a=(2,1)\), \(F(z)=\tfrac12\|z-a\|^2\), \(h(z)=\|z\|^2-1\).<br>
+En løser rapporterer \(z=(1,0)\) og \(\lambda=1/2\).<br>
+Regn ut \(|h(z)|\) og \(\|\nabla F(z)+\lambda\nabla h(z)\|_2\).<br>
+Hvilken kontroll avslører at dette ikke er et stasjonært punkt?<br>
 <br>
-\(\nabla h(0,0)=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-4-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-4-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span>">**4. En degenerert likning.** For \(f(x,y)=x+3y\) og \(h(x,y)=x^2+y^2=0\), finn det eneste tillatte punktet og \(\nabla h\) der. Kontroller i egne notater hvorfor ingen multiplikator kan oppfylle stasjonaritetslikningen.<br>
-<br>
-Tillatt punkt \(=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-4-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-4-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
-<br>
-\(\nabla h(0,0)=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-4-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-4-f4" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span></div>
+\(|h(z)|=\) <input type="text" id="math-exercise-4-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Stasjonaritetsfeil \(=\) <input type="text" id="math-exercise-4-f2" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5273,8 +5639,108 @@ Tillatt punkt \(=\) <span class="math-vec" style="--n:2"><input type="text" id="
 <div class="math-legend-panel" style="display:none;"></div>
 <div class="math-feedback-area"></div>
 </div>
-<section id="kort-oppslag-minimize-med-slsqp" class="level3">
-<h3 class="anchored" data-anchor-id="kort-oppslag-minimize-med-slsqp">Kort oppslag: <code>minimize</code> med SLSQP</h3>
+<div class="math-exercise-cell" id="math-exercise-5" data-label="week12-degenerate-check" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;punktets x-koordinat&quot;,&quot;punktets y-koordinat&quot;,&quot;betingelsesgradientens x-komponent&quot;,&quot;betingelsesgradientens y-komponent&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;I vårt eksempel er \\(\\|a\\|^2=5\\) og, når \\(1+2\\lambda>0\\),\n\\[L(z,\\lambda)=\\tfrac12(1+2\\lambda)\\|z\\|^2-a\\cdot z\n+\\tfrac52-\\lambda.\\]\nMinimumspunktet uten bibetingelser er \\(a/(1+2\\lambda)\\). Ved innsetting får vi \\(d(\\lambda)=\\tfrac52-\\lambda-\n\\frac5{2(1+2\\lambda)}\\). For \\(\\lambda_*=(\\sqrt5-1)/2\\) er minimumspunktet \\(a/\\sqrt5\\) tillatt, og den nedre grensen blir nøyaktig \\(F(a/\\sqrt5)\\). En slik skarp grense er ikke garantert for enhver likhetsbetingelse.\nHvis målet har enhet kroner og kravet er \\(h=g-r=0\\) målt i en ressursenhet, har \\(\\lambda\\) enhet kroner per ressursenhet, slik at \\(f+\\lambda h\\) kan summeres. Når optimal verdi varierer glatt med \\(r\\) uten skifte av løsningstype, er \\(-\\lambda\\) den lokale endringen per ekstra enhet \\(r\\).\n12.4 Degenerasjon og en nedre grense\nOppgave 1–2 bruker normal, tangent og Lagranges likninger fra 12.1. Oppgave 3 gjelder klassifisering i 12.2, oppgave 4 betingelsesfeil fra 12.3, og oppgave 5–6 degenerasjon og en nedre grense fra 12.4. Begrunn framgangsmåten i egne notater; feltene kontrollerer tallene. Skriv eksakte uttrykk som 1/sqrt(5) med mindre oppgaven ber om desimaler.\nVi bruker \\(h=0\\) og \\(L=f+\\lambda h\\). Ved et regulært ekstremum må \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). Løsning av disse likningene gir kandidater som må klassifiseres.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;,&quot;math-exercise-5-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-question" data-math-exercise-source="**5. Degenerert likning.** La \(f(x,y)=x+3y\) og<br>
+\(h(x,y)=x^2+y^2=0\). Finn det eneste tillatte punktet og<br>
+\(\nabla h\) der. Forklar hvorfor ingen multiplikator kan gjøre<br>
+\(\nabla f+\lambda\nabla h=0\), selv om punktet er et optimum.<br>
+<br>
+Tillatt punkt \(=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
+<br>
+\(\nabla h(0,0)=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span>">**5. Degenerert likning.** La \(f(x,y)=x+3y\) og<br>
+\(h(x,y)=x^2+y^2=0\). Finn det eneste tillatte punktet og<br>
+\(\nabla h\) der. Forklar hvorfor ingen multiplikator kan gjøre<br>
+\(\nabla f+\lambda\nabla h=0\), selv om punktet er et optimum.<br>
+<br>
+Tillatt punkt \(=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-5-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-5-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
+<br>
+\(\nabla h(0,0)=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-5-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-5-f4" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+<div class="math-exercise-cell" id="math-exercise-6" data-label="week12-dual-bound" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;SPD Hessianverdi&quot;,&quot;minste verdi av L&quot;,&quot;F i tillatt punkt&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week12-exercise-convention" data-context="&quot;I vårt eksempel er \\(\\|a\\|^2=5\\) og, når \\(1+2\\lambda>0\\),\n\\[L(z,\\lambda)=\\tfrac12(1+2\\lambda)\\|z\\|^2-a\\cdot z\n+\\tfrac52-\\lambda.\\]\nMinimumspunktet uten bibetingelser er \\(a/(1+2\\lambda)\\). Ved innsetting får vi \\(d(\\lambda)=\\tfrac52-\\lambda-\n\\frac5{2(1+2\\lambda)}\\). For \\(\\lambda_*=(\\sqrt5-1)/2\\) er minimumspunktet \\(a/\\sqrt5\\) tillatt, og den nedre grensen blir nøyaktig \\(F(a/\\sqrt5)\\). En slik skarp grense er ikke garantert for enhver likhetsbetingelse.\nHvis målet har enhet kroner og kravet er \\(h=g-r=0\\) målt i en ressursenhet, har \\(\\lambda\\) enhet kroner per ressursenhet, slik at \\(f+\\lambda h\\) kan summeres. Når optimal verdi varierer glatt med \\(r\\) uten skifte av løsningstype, er \\(-\\lambda\\) den lokale endringen per ekstra enhet \\(r\\).\n12.4 Degenerasjon og en nedre grense\nOppgave 1–2 bruker normal, tangent og Lagranges likninger fra 12.1. Oppgave 3 gjelder klassifisering i 12.2, oppgave 4 betingelsesfeil fra 12.3, og oppgave 5–6 degenerasjon og en nedre grense fra 12.4. Begrunn framgangsmåten i egne notater; feltene kontrollerer tallene. Skriv eksakte uttrykk som 1/sqrt(5) med mindre oppgaven ber om desimaler.\nVi bruker \\(h=0\\) og \\(L=f+\\lambda h\\). Ved et regulært ekstremum må \\(h=0\\) og \\(\\nabla f+\\lambda\\nabla h=0\\). Løsning av disse likningene gir kandidater som må klassifiseres.&quot;" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;,&quot;math-exercise-6-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-question" data-math-exercise-source="**6. En nedre grense.** Bruk \(F(z)=\tfrac12\|z-(2,1)\|^2\),<br>
+\(h(z)=\|z\|^2-1\) og \(\lambda=1/2\). Da er<br>
+\(L=F+\lambda h\) en kvadratisk funksjon.<br>
+Finn tallet \(c\) slik at Hessianen til \(L\) er \(cI\).<br>
+Finn deretter minimumsverdien av \(L\) over alle \(z\), og<br>
+verdien \(F(1,0)\) i ett tillatt punkt. For å avgjøre om nedre grense<br>
+er skarp, sammenlign den med den eksakte minimumsverdien<br>
+\(\tfrac12(\sqrt5-1)^2\) fra 12.3. Begrunn i egne notater.<br>
+<br>
+\(c=\) <input type=&quot;text&quot; id=&quot;math-exercise-6-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; \(\min_z L(z,1/2)=\) <input type=&quot;text&quot; id=&quot;math-exercise-6-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp;<br>
+\(F(1,0)=\) <input type=&quot;text&quot; id=&quot;math-exercise-6-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">**6. En nedre grense.** Bruk \(F(z)=\tfrac12\|z-(2,1)\|^2\),<br>
+\(h(z)=\|z\|^2-1\) og \(\lambda=1/2\). Da er<br>
+\(L=F+\lambda h\) en kvadratisk funksjon.<br>
+Finn tallet \(c\) slik at Hessianen til \(L\) er \(cI\).<br>
+Finn deretter minimumsverdien av \(L\) over alle \(z\), og<br>
+verdien \(F(1,0)\) i ett tillatt punkt. For å avgjøre om nedre grense<br>
+er skarp, sammenlign den med den eksakte minimumsverdien<br>
+\(\tfrac12(\sqrt5-1)^2\) fra 12.3. Begrunn i egne notater.<br>
+<br>
+\(c=\) <input type="text" id="math-exercise-6-f1" data-answer="2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; \(\min_z L(z,1/2)=\) <input type="text" id="math-exercise-6-f2" data-answer="3/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp;<br>
+\(F(1,0)=\) <input type="text" id="math-exercise-6-f3" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
+<div id="uke12-python">
+
+</div>
+<p>Sideoppsettet importerer NumPy som <code>np</code> og Matplotlib som <code>plt</code>. Oppgavene nedenfor har egne importer og definisjoner og kan kjøres uavhengig av forsøkene over. Fyll bare hullene merket <code>TODO</code>. Testene kontrollerer resultatene uten å vise løsningen.</p>
+<p><strong>Oppgave 1 – normal og tangent.</strong> For <span class="math inline">\(h(x,y)=x^2+4y^2-1\)</span>, returner gradienten som en vektor. Den ferdige kontrollen undersøker normalens komponenter; tangentene fra 12.1 står vinkelrett på denne normalen.</p>
+<div class="py-exercise-cell" id="py-exercise-1">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Beregn normalvektoren til en ellipse","forbiddenImports":[],"forbiddenKeywords":[],"id":1,"label":"week12-python-normal","showTestHints":false,"starter":"import numpy as np\n\n# En likningsgradient har én komponent per variabel.\ndef grad_h(z):\n    x, y = z\n    # TODO: Bytt ut begge komponentene med partiellderiverte av h.\n    return np.array([0., 0.])","tests":"# Test i flere punkter, også et punkt med to ikke-null koordinater.\nassert np.allclose(grad_h(np.array([0., .5])), [0., 4.])\nassert np.allclose(grad_h(np.array([1., 0.])), [2., 0.])\nassert np.allclose(grad_h(np.array([.25, -.5])), [.5, -4.])"});
+</script>
+<p><strong>Oppgave 2 – les et numerisk svar.</strong> For avstandsproblemet fra 12.3 er målet og de to gradientene gitt. Fullfør funksjonen som returnerer begge kontrollfeilene for et foreslått punkt og en oppgitt multiplikator. En liten stasjonaritetsfeil kan ikke erstatte en liten betingelsesfeil.</p>
+<div class="py-exercise-cell" id="py-exercise-2">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Kontroller mulighet og stasjonaritet","forbiddenImports":[],"forbiddenKeywords":[],"id":2,"label":"week12-python-residuals","showTestHints":false,"starter":"import numpy as np\n\n# Definer hele modellen lokalt, så cellen kan kjøres alene.\na = np.array([2., 1.])\n\ndef h(z):\n    return np.dot(z, z)-1.\n\ndef grad_h(z):\n    return 2*z\n\ndef grad_F(z):\n    return z-a\n\ndef check(z, lam):\n    # TODO: Regn ut absolutt betingelsesfeil.\n    feasibility = None\n    # TODO: Regn ut lengden av grad_F(z) + lam*grad_h(z).\n    stationarity = None\n    return feasibility, stationarity","tests":"# Ett punkt er tillatt, men ikke stasjonært; det andre er ikke tillatt.\nassert np.allclose(check(np.array([1., 0.]), .5), (0., 1.))\nassert np.allclose(check(np.array([0., 0.]), 0.), (1., np.sqrt(5)))\n# Den eksakte løsningen tilfredsstiller begge kontrollene.\nexact = a/np.sqrt(5)\nassert np.allclose(check(exact, (np.sqrt(5)-1)/2), (0., 0.), atol=1e-12)"});
+</script>
+<p><strong>Oppgave 3 – send likningen til SLSQP.</strong> Mål og gradient er ferdig definert. Fyll inn den ene ordboken som angir <span class="math inline">\(h(z)=0\)</span> og dens gradient, og returner løserresultatet. SLSQP kan starte utenfor sirkelen; kontrollen gjelder sluttpunktet.</p>
+<div class="py-exercise-cell" id="py-exercise-3">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Legg inn likhetsbetingelsen i SLSQP","forbiddenImports":[],"forbiddenKeywords":[],"id":3,"label":"week12-python-slsqp","showTestHints":false,"starter":"import numpy as np\nfrom scipy.optimize import minimize\n\n# Målfunksjon og gradient er gitt; oppgaven gjelder constraints.\na = np.array([2., 1.])\n\ndef F(z):\n    return .5*np.sum((z-a)**2)\n\ndef grad_F(z):\n    return z-a\n\ndef h(z):\n    return np.dot(z, z)-1.\n\ndef grad_h(z):\n    return 2*z\n\ndef solve(start):\n    # TODO: Sett inn ordboken med type 'eq', fun h og jac grad_h.\n    condition = None\n    # Den oppgitte metoden og målgradienten er klare.\n    return minimize(F, start, jac=grad_F, method=\"SLSQP\",\n                    constraints=[condition], options={\"ftol\": 1e-12})","tests":"# To starter skal begge gi et tillatt punkt nær det håndregnede svaret.\nfor start in (np.array([.4, .9]), np.array([1., 0.])):\n    result = solve(start)\n    assert result.success\n    assert abs(h(result.x)) < 1e-8\n    assert np.allclose(result.x, a/np.sqrt(5), atol=1e-6)"});
+</script>
+<div id="uke12-scipy">
+
+</div>
+<details>
+<summary>
+SciPy-oppslag: det nye ved SLSQP
+</summary>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -5282,42 +5748,31 @@ Tillatt punkt \(=\) <span class="math-vec" style="--n:2"><input type="text" id="
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Skriv/les</th>
-<th style="text-align: left;">Betydning i dette eksemplet</th>
+<th style="text-align: left;">Uttrykk</th>
+<th style="text-align: left;">Betydning i avstandsproblemet</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><code>from scipy.optimize import minimize</code></td>
-<td style="text-align: left;">Importerer løseren.</td>
+<td style="text-align: left;"><code>method="SLSQP"</code></td>
+<td style="text-align: left;">Velger en numerisk metode som kan bruke likhetsbetingelser.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><code>minimize(F, x0, jac=grad_F, method='SLSQP', constraints=[...])</code></td>
-<td style="text-align: left;">Minimer <span class="math inline">\(F\)</span> fra startpunktet <code>x0</code>; <code>jac</code> gir målgradienten.</td>
+<td style="text-align: left;"><code>{"type":"eq", "fun":h, "jac":grad_h}</code></td>
+<td style="text-align: left;">Krever <span class="math inline">\(h(z)=0\)</span> og oppgir gradienten som normalvektor. For flere likninger brukes flere slike ordbøker.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><code>{'type':'eq', 'fun':h, 'jac':grad_h}</code></td>
-<td style="text-align: left;">Én likning <span class="math inline">\(h(z)=0\)</span> og dens gradient. Flere likninger kan gis som flere ordbøker.</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;"><code>callback=save_iterate</code></td>
-<td style="text-align: left;">Kaller funksjonen med løserens iterat slik at vi kan tegne forløpet; iteratene trenger ikke oppfylle <span class="math inline">\(h=0\)</span>.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>result.success</code>, <code>result.status</code>, <code>result.message</code></td>
-<td style="text-align: left;">Algoritmens stoppstatus, ikke et globalt bevis.</td>
+<td style="text-align: left;">Lagrer rapporterte iterater; de behøver ikke ligge på den tillatte kurven.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><code>result.x</code>, <code>result.fun</code></td>
-<td style="text-align: left;">Beregnet punkt og beregnet verdi; undersøk selv <span class="math inline">\(|h(z)|\)</span> og <span class="math inline">\(\|\nabla F+\lambda\nabla h\|\)</span>.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>options={'ftol':1e-12, 'maxiter':100}</code></td>
-<td style="text-align: left;"><code>ftol</code> setter en intern toleranse for flere stoppkontroller, ikke en garanti for nøyaktig punkt eller mulighet; <code>maxiter</code> begrenser antall iterasjoner. Kontroller residualene uavhengig.</td>
+<td style="text-align: left;"><code>options={"ftol":1e-12, "maxiter":100}</code></td>
+<td style="text-align: left;">Setter løserens interne stopptoleranse og grense for iterasjoner; kontroller residualene selv.</td>
 </tr>
 </tbody>
 </table>
-</section>
+<p><code>result.x</code>, <code>result.fun</code> og <code>result.success</code> har samme betydning som ved de frie søkene i <a href="../pages/uke8.html#uke8-python-local">uke 8</a>: punkt, verdi og rapportert stopp. Her må vi i tillegg kontrollere <span class="math inline">\(|h|\)</span> og <span class="math inline">\(\|\nabla F+\lambda\nabla h\|_2\)</span>. Koden i 12.3 beregner selv <span class="math inline">\(\lambda\)</span> med vår fortegnskonvensjon.</p>
+</details>
 </div>
 </div>
 </div>
@@ -10011,6 +10466,781 @@ qpyodideReady
     ensurePyodide().catch(function (e) {
       console.warn('math-exercise: Pyodide preload failed (will retry on the first check):', e);
     });
+  });
+
+})();
+
+</script>
+<script type="text/javascript">
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------------------
+  // Locales – add new languages here
+  // ---------------------------------------------------------------------------
+
+  var LOCALES = {
+    en: {
+      btnCheck:             '<i class="fa-solid fa-check"></i> Check',
+      btnCheckTitle:        'Run checks (Shift+Enter)',
+      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Reset',
+      btnResetTitle:        'Restore starter code',
+      running:              '⏳ Checking…',
+      errorHeader:          '❌ Error in code:',
+      unexpectedError:      '❌ Unexpected error:',
+      stdoutLabel:          'Output:',
+      allPassed: function (n) {
+        return '✅ All ' + n + ' test' + (n === 1 ? '' : 's') + ' passed!';
+      },
+      someFailed: function (p, t) {
+        return '❌ ' + p + ' of ' + t + ' test' + (t === 1 ? '' : 's') + ' passed';
+      },
+      violationsHeader:     '🚫 Not allowed:',
+      // Submission UI
+      submissionTitle:      '📋 Submission',
+      studentIdLabel:       'Student ID',
+      studentIdPlaceholder: 'e.g. s123456',
+      quizIdLabel:          'Quiz ID',
+      quizIdPlaceholder:    'e.g. quiz-01',
+      exportBtn:            '<i class="fa-solid fa-file-export"></i> Export results',
+      outputLabel:          'Copy encoded string and submit:',
+      copyBtn:              '<i class="fa-regular fa-copy"></i> Copy',
+      copyOk:               '<i class="fa-solid fa-check"></i> Copied!',
+      validationError:      'Please fill in Student ID and Quiz ID.',
+      encodingError:        'Error during encoding: ',
+      // Download
+      downloadBtn:          '<i class="fa-solid fa-download"></i> Download as JSON',
+      downloadBtnTitle:     'Save current code and test results for all exercises',
+      downloadHint:         'Saves your code and test results for personal documentation.',
+      downloadFilename:     'exercises-',
+      // Python message templates – use {} as placeholder for str.format()
+      msgForbiddenImport:   "Forbidden import: '{}'",
+      msgForbiddenFunction: "Forbidden function: '{}'",
+      msgForbiddenMethod:   "Forbidden method: '.{}'",
+      msgForbiddenKeyword:  "Forbidden keyword: '{}'",
+      msgAssertionFailed:   'Assertion failed',
+      msgTestError:         'Error: {}',
+      msgSyntaxError:       'Syntax error in tests: {}',
+    },
+    de: {
+      btnCheck:             '<i class="fa-solid fa-check"></i> Überprüfen',
+      btnCheckTitle:        'Code prüfen (Shift+Enter)',
+      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Zurücksetzen',
+      btnResetTitle:        'Starter-Code wiederherstellen',
+      running:              '⏳ Überprüfe…',
+      errorHeader:          '❌ Fehler im Code:',
+      unexpectedError:      '❌ Unerwarteter Fehler:',
+      stdoutLabel:          'Ausgabe:',
+      allPassed: function (n) {
+        return '✅ Alle ' + n + ' Test' + (n === 1 ? '' : 's') + ' bestanden!';
+      },
+      someFailed: function (p, t) {
+        return '❌ ' + p + ' von ' + t + ' Test' + (t === 1 ? '' : 's') + ' bestanden';
+      },
+      violationsHeader:     '🚫 Nicht erlaubt:',
+      // Submission UI
+      submissionTitle:      '📋 Abgabe',
+      studentIdLabel:       'Student-ID',
+      studentIdPlaceholder: 'z.B. s123456',
+      quizIdLabel:          'Quiz-ID',
+      quizIdPlaceholder:    'z.B. quiz-01',
+      exportBtn:            '<i class="fa-solid fa-file-export"></i> Ergebnis exportieren',
+      outputLabel:          'Kodierten String kopieren und abgeben:',
+      copyBtn:              '<i class="fa-regular fa-copy"></i> Kopieren',
+      copyOk:               '<i class="fa-solid fa-check"></i> Kopiert!',
+      validationError:      'Bitte Student-ID und Quiz-ID ausfüllen.',
+      encodingError:        'Fehler beim Kodieren: ',
+      // Download
+      downloadBtn:          '<i class="fa-solid fa-download"></i> Als JSON herunterladen',
+      downloadBtnTitle:     'Aktuellen Code und Testergebnisse aller Aufgaben speichern',
+      downloadHint:         'Speichert Code-Eingaben und Testergebnisse zur eigenen Dokumentation.',
+      downloadFilename:     'aufgaben-',
+      // Python message templates
+      msgForbiddenImport:   "Verbotener Import: '{}'",
+      msgForbiddenFunction: "Verbotene Funktion: '{}'",
+      msgForbiddenMethod:   "Verbotene Methode: '.{}'",
+      msgForbiddenKeyword:  "Verbotenes Schlüsselwort: '{}'",
+      msgAssertionFailed:   'Assertion fehlgeschlagen',
+      msgTestError:         'Fehler: {}',
+      msgSyntaxError:       'Syntaxfehler in Tests: {}',
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // Utilities
+  // ---------------------------------------------------------------------------
+
+  // Laedt ein Skript genau einmal. Ist der Tag schon da, aber noch nicht
+  // fertig geladen, wird auf dessen load-Event gewartet - NICHT sofort
+  // aufgeloest. Sonst greift eine zweite Extension auf globals zu, die es
+  // noch gar nicht gibt.
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var existing = document.querySelector('script[src="' + src + '"]');
+      if (existing) {
+        if (existing.dataset.qLoaded === '1') { resolve(); return; }
+        existing.addEventListener('load', function () { resolve(); });
+        existing.addEventListener('error', function () {
+          reject(new Error('Failed to load: ' + src));
+        });
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = function () { s.dataset.qLoaded = '1'; resolve(); };
+      s.onerror = function () { reject(new Error('Failed to load: ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensurePyodide() {
+    // coatless-quarto/pyodide is loading — wait for its promise instead of loading a second instance
+    if (typeof qpyodideInstance !== 'undefined') {
+      window.mainPyodide = await qpyodideInstance;
+      return;
+    }
+    // coatless already finished
+    if (typeof mainPyodide !== 'undefined') return;
+    // Standalone. Gemeinsames Promise, damit math-exercise und py-exercise auf
+    // derselben Seite nicht zwei Pyodide-Instanzen starten oder sich beim
+    // Laden ins Gehege kommen.
+    var cdnBase = 'https://cdn.jsdelivr.net/pyodide/v0.27.2/full/';
+    if (!globalThis.__qExercisePyodide) {
+      globalThis.__qExercisePyodide = (async function () {
+        await loadScript(cdnBase + 'pyodide.js');
+        return await loadPyodide({ indexURL: cdnBase });
+      })();
+    }
+    window.mainPyodide = await globalThis.__qExercisePyodide;
+  }
+
+  // Monaco is normally already loaded by the pyodide extension. If not (standalone
+  // use), we load the AMD loader from CDN and let it fetch the editor itself.
+  async function ensureMonaco() {
+    var cdnBase = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs';
+    if (typeof require === 'undefined') {
+      await loadScript(cdnBase + '/loader.js');
+    }
+    require.config({ paths: { vs: cdnBase } });
+    await new Promise(function (resolve) {
+      require(['vs/editor/editor.main'], resolve);
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Submission state + locale
+  // ---------------------------------------------------------------------------
+
+  var submissionConfig = window.__pyExerciseConfig || { submission: false, submissionKey: 'py-exercise', lang: 'en' };
+  var L = LOCALES[submissionConfig.lang] || LOCALES['en'];
+
+  // Map of exercise label → { label, passed, total, tests: [bool, ...] }
+  var exerciseResults = {};
+
+  // Map of exercise label → Monaco editor instance
+  var exerciseEditors = {};
+
+  // ---------------------------------------------------------------------------
+  // Python: AST-based violation checker
+  // ---------------------------------------------------------------------------
+  var CHECKER_PY = [
+    'import ast as _ast, json as _json',
+    '',
+    '_fi = list(_exercise_forbidden_imports)',
+    '_fk = list(_exercise_forbidden_keywords)',
+    '',
+    '_KW_NODES = {',
+    '    "for":      _ast.For,',
+    '    "while":    _ast.While,',
+    '    "with":     _ast.With,',
+    '    "lambda":   _ast.Lambda,',
+    '    "class":    _ast.ClassDef,',
+    '    "global":   _ast.Global,',
+    '    "nonlocal": _ast.Nonlocal,',
+    '    "try":      _ast.Try,',
+    '    "raise":    _ast.Raise,',
+    '    "del":      _ast.Delete,',
+    '    "assert":   _ast.Assert,',
+    '    "yield":    _ast.Yield,',
+    '}',
+    '',
+    '_violations = []',
+    '_seen = set()',
+    '',
+    'def _add(msg):',
+    '    if msg not in _seen:',
+    '        _seen.add(msg)',
+    '        _violations.append(msg)',
+    '',
+    'try:',
+    '    _tree = _ast.parse(_exercise_student_code)',
+    '    for _node in _ast.walk(_tree):',
+    '        if isinstance(_node, _ast.Import):',
+    '            for _a in _node.names:',
+    '                _top = _a.name.split(".")[0]',
+    '                if _top in _fi:',
+    '                    _add(_msg_forbidden_import.format(_top))',
+    '        elif isinstance(_node, _ast.ImportFrom):',
+    '            if _node.module:',
+    '                _top = _node.module.split(".")[0]',
+    '                if _top in _fi:',
+    '                    _add(_msg_forbidden_import.format(_top))',
+    '        elif isinstance(_node, _ast.Call):',
+    '            if isinstance(_node.func, _ast.Name):',
+    '                if _node.func.id in _fk:',
+    '                    _add(_msg_forbidden_function.format(_node.func.id))',
+    '            elif isinstance(_node.func, _ast.Attribute):',
+    '                if _node.func.attr in _fk:',
+    '                    _add(_msg_forbidden_method.format(_node.func.attr))',
+    '        else:',
+    '            for _kw, _nt in _KW_NODES.items():',
+    '                if _kw in _fk and isinstance(_node, _nt):',
+    '                    _add(_msg_forbidden_keyword.format(_kw))',
+    'except SyntaxError:',
+    '    pass',
+    '',
+    '_json.dumps(_violations)',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Python: main runner
+  // ---------------------------------------------------------------------------
+  var RUNNER_PY = [
+    'import ast, json, io, sys, traceback',
+    '',
+    '_ns = {}',
+    '_results = {"student_error": None, "stdout": "", "tests": []}',
+    '',
+    '_buf = io.StringIO()',
+    '_old_stdout = sys.stdout',
+    'sys.stdout = _buf',
+    'try:',
+    '    exec(compile(_exercise_student_code, "<student>", "exec"), _ns)',
+    '    _results["stdout"] = _buf.getvalue()',
+    'except Exception:',
+    '    _results["student_error"] = traceback.format_exc()',
+    '    _results["stdout"] = _buf.getvalue()',
+    'finally:',
+    '    sys.stdout = _old_stdout',
+    '',
+    'if _results["student_error"] is None:',
+    '    try:',
+    '        _tree = ast.parse(_exercise_test_code)',
+    '        for _stmt in _tree.body:',
+    '            _single = compile(',
+    '                ast.Module(body=[_stmt], type_ignores=[]),',
+    '                "<test>", "exec"',
+    '            )',
+    '            try:',
+    '                exec(_single, _ns)',
+    '                _results["tests"].append({"passed": True})',
+    '            except AssertionError as e:',
+    '                _results["tests"].append({',
+    '                    "passed": False,',
+    '                    "message": str(e) if str(e) else _msg_assertion_failed',
+    '                })',
+    '            except Exception as e:',
+    '                _results["tests"].append({"passed": False, "message": _msg_test_error.format(e)})',
+    '    except SyntaxError as e:',
+    '        _results["student_error"] = _msg_syntax_error.format(e)',
+    '',
+    'json.dumps(_results)',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Python: submission encoder
+  // ---------------------------------------------------------------------------
+  // Encoding: JSON → UTF-8 bytes → XOR with cycling key → Base64.
+  var ENCODER_PY = [
+    'import json as _json, base64 as _b64',
+    '',
+    '_key  = _submission_key.encode("utf-8")',
+    '_raw  = _json.dumps(_submission_payload, ensure_ascii=False).encode("utf-8")',
+    '_xord = bytes(b ^ _key[i % len(_key)] for i, b in enumerate(_raw))',
+    '_b64.b64encode(_xord).decode("ascii")',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Result rendering
+  // ---------------------------------------------------------------------------
+
+  function renderViolations(area, violations) {
+    var items = violations.map(function (v) {
+      return '<li>' + escapeHtml(v) + '</li>';
+    }).join('');
+    area.innerHTML =
+      '<div class="py-exercise-violations">' +
+      '<strong>' + L.violationsHeader + '</strong>' +
+      '<ul class="py-exercise-violation-list">' + items + '</ul>' +
+      '</div>';
+  }
+
+  function renderResult(area, data, label, showHints) {
+    var html = '';
+
+    if (data.student_error) {
+      area.innerHTML =
+        '<div class="py-exercise-error">' +
+        '<strong>' + L.errorHeader + '</strong>' +
+        '<pre>' + escapeHtml(data.student_error) + '</pre>' +
+        '</div>';
+      return;
+    }
+
+    if (data.stdout && data.stdout.trim()) {
+      html +=
+        '<div class="py-exercise-stdout">' +
+        '<span class="py-exercise-stdout-label">' + L.stdoutLabel + '</span>' +
+        '<pre>' + escapeHtml(data.stdout) + '</pre>' +
+        '</div>';
+    }
+
+    var tests   = data.tests || [];
+    var passed  = tests.filter(function (t) { return t.passed; }).length;
+    var total   = tests.length;
+    var allPass = total > 0 && passed === total;
+
+    // Store result for submission export
+    if (label && total > 0) {
+      exerciseResults[label] = {
+        label:  label,
+        passed: passed,
+        total:  total,
+        tests:  tests.map(function (t) { return t.passed; }),
+      };
+    }
+
+    html += '<div class="py-exercise-summary">';
+    if (allPass) {
+      html += '<div class="py-exercise-all-passed">' + L.allPassed(total) + '</div>';
+    } else {
+      html += '<div class="py-exercise-some-failed">' + L.someFailed(passed, total) + '</div>';
+    }
+
+    if (total > 1) {
+      html += '<ul class="py-exercise-test-list">';
+      tests.forEach(function (t, i) {
+        if (t.passed) {
+          html += '<li class="py-test-pass">✓ Test ' + (i + 1) + '</li>';
+        } else {
+          html +=
+            '<li class="py-test-fail">✗ Test ' + (i + 1) +
+            (showHints !== false && t.message ? ': ' + escapeHtml(t.message) : '') +
+            '</li>';
+        }
+      });
+      html += '</ul>';
+    } else if (!allPass && showHints !== false && tests[0] && tests[0].message) {
+      html += '<div class="py-exercise-hint">' + escapeHtml(tests[0].message) + '</div>';
+    }
+
+    html += '</div>';
+    area.innerHTML = html;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Exercise cell setup
+  // ---------------------------------------------------------------------------
+
+  function setupExercise(exerciseData) {
+    var container = document.getElementById('py-exercise-' + exerciseData.id);
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    var starterCode       = exerciseData.starter           || '';
+    var testsCode         = exerciseData.tests             || '';
+    var forbiddenImports  = exerciseData.forbiddenImports  || [];
+    var forbiddenKeywords = exerciseData.forbiddenKeywords || [];
+    var label             = exerciseData.label;
+    var showHints         = exerciseData.showTestHints !== false;
+    // caption is metadata only (used in downloadAll JSON), not rendered visually
+
+    // localStorage key scoped to this page + label
+    var storageKey = 'pyex|' + window.location.pathname + '|' + label;
+    var savedCode = null;
+    try { savedCode = localStorage.getItem(storageKey); } catch (e) {}
+
+    // Monaco editor container
+    var editorContainer = document.createElement('div');
+    editorContainer.className = 'py-exercise-editor';
+    container.appendChild(editorContainer);
+
+    // Button bar
+    var buttonBar = document.createElement('div');
+    buttonBar.className = 'py-exercise-buttons';
+
+    var checkBtn = document.createElement('button');
+    checkBtn.className = 'btn btn-primary py-exercise-check';
+    checkBtn.innerHTML = L.btnCheck;
+    checkBtn.type = 'button';
+    checkBtn.title = L.btnCheckTitle;
+
+    var resetBtn = document.createElement('button');
+    resetBtn.className = 'btn btn-light py-exercise-reset';
+    resetBtn.innerHTML = L.btnReset;
+    resetBtn.type = 'button';
+    resetBtn.title = L.btnResetTitle;
+
+    buttonBar.appendChild(checkBtn);
+    buttonBar.appendChild(resetBtn);
+    container.appendChild(buttonBar);
+
+    var resultArea = document.createElement('div');
+    resultArea.className = 'py-exercise-result';
+    container.appendChild(resultArea);
+
+    var editor;
+    require(['vs/editor/editor.main'], function () {
+      editor = monaco.editor.create(editorContainer, {
+        value: savedCode !== null ? savedCode : starterCode,
+        language: 'python',
+        theme: 'vs-light',
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        minimap: { enabled: false },
+        fontSize: 14,
+        renderLineHighlight: 'none',
+        hideCursorInOverviewRuler: true,
+      });
+
+      // Store reference so downloadAll() can read the current code later
+      exerciseEditors[label] = editor;
+
+      var updateHeight = function () {
+        var h = Math.max(80, editor.getContentHeight());
+        editorContainer.style.height = h + 'px';
+        editor.layout();
+      };
+      editor.onDidContentSizeChange(updateHeight);
+      updateHeight();
+
+      // Persist code across reloads
+      var saveTimer;
+      editor.onDidChangeModelContent(function () {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(function () {
+          try { localStorage.setItem(storageKey, editor.getValue()); } catch (e) {}
+        }, 500);
+      });
+
+      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, runCheck);
+    });
+
+    async function runCheck() {
+      if (!editor) return;
+
+      resultArea.innerHTML = '<div class="py-exercise-running">' + L.running + '</div>';
+      checkBtn.disabled = true;
+      resetBtn.disabled = true;
+
+      var studentCode = editor.getValue();
+
+      try {
+        mainPyodide.globals.set('_exercise_student_code',  studentCode);
+        mainPyodide.globals.set('_exercise_test_code',     testsCode);
+        mainPyodide.globals.set('_exercise_forbidden_imports',  mainPyodide.toPy(forbiddenImports));
+        mainPyodide.globals.set('_exercise_forbidden_keywords', mainPyodide.toPy(forbiddenKeywords));
+
+        if (forbiddenImports.length > 0 || forbiddenKeywords.length > 0) {
+          var violationsRaw = await mainPyodide.runPythonAsync(CHECKER_PY);
+          var violations = JSON.parse(violationsRaw);
+          if (violations.length > 0) {
+            renderViolations(resultArea, violations);
+            return;
+          }
+        }
+
+        await mainPyodide.loadPackagesFromImports(studentCode);
+        var raw  = await mainPyodide.runPythonAsync(RUNNER_PY);
+        var data = JSON.parse(raw);
+        renderResult(resultArea, data, label, showHints);
+
+      } catch (err) {
+        resultArea.innerHTML =
+          '<div class="py-exercise-error">' +
+          '<strong>' + L.unexpectedError + '</strong>' +
+          '<pre>' + escapeHtml(String(err)) + '</pre>' +
+          '</div>';
+      } finally {
+        checkBtn.disabled = false;
+        resetBtn.disabled = false;
+      }
+    }
+
+    checkBtn.onclick = runCheck;
+    resetBtn.onclick = function () {
+      if (editor) editor.setValue(starterCode);
+      try { localStorage.removeItem(storageKey); } catch (e) {}
+      resultArea.innerHTML = '';
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Submission UI
+  // ---------------------------------------------------------------------------
+
+  function buildSubmissionHeader() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-submission-header';
+    wrap.innerHTML =
+      '<div class="py-submission-header-inner">' +
+        '<h5 class="py-submission-title">' + L.submissionTitle + '</h5>' +
+        '<div class="py-submission-fields">' +
+          '<div class="py-submission-field">' +
+            '<label for="py-submission-student-id">' + L.studentIdLabel + '</label>' +
+            '<input type="text" id="py-submission-student-id" ' +
+                   'placeholder="' + escapeHtml(L.studentIdPlaceholder) + '" autocomplete="off">' +
+          '</div>' +
+          '<div class="py-submission-field">' +
+            '<label for="py-submission-quiz-id">' + L.quizIdLabel + '</label>' +
+            '<input type="text" id="py-submission-quiz-id" ' +
+                   'placeholder="' + escapeHtml(L.quizIdPlaceholder) + '" autocomplete="off">' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    return wrap;
+  }
+
+  function buildSubmissionFooter() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-submission-footer';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-success py-submission-export-btn';
+    btn.innerHTML = L.exportBtn;
+    btn.type = 'button';
+    btn.onclick = exportResults;
+
+    var msg = document.createElement('div');
+    msg.className = 'py-submission-msg';
+    msg.id = 'py-submission-msg';
+
+    var outWrap = document.createElement('div');
+    outWrap.className = 'py-submission-output-wrap';
+    outWrap.id = 'py-submission-output-wrap';
+    outWrap.style.display = 'none';
+
+    var outLabelRow = document.createElement('div');
+    outLabelRow.className = 'py-submission-output-labelrow';
+
+    var outLabel = document.createElement('span');
+    outLabel.className = 'py-submission-output-label';
+    outLabel.textContent = L.outputLabel;
+
+    var copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-light btn-sm py-submission-copy-btn';
+    copyBtn.id = 'py-submission-copy-btn';
+    copyBtn.type = 'button';
+    copyBtn.innerHTML = L.copyBtn;
+    copyBtn.onclick = function () {
+      var text = (document.getElementById('py-submission-output') || {}).value || '';
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(function () {
+        copyBtn.innerHTML = L.copyOk;
+        copyBtn.classList.add('py-submission-copy-ok');
+        setTimeout(function () {
+          copyBtn.innerHTML = L.copyBtn;
+          copyBtn.classList.remove('py-submission-copy-ok');
+        }, 2000);
+      });
+    };
+
+    outLabelRow.appendChild(outLabel);
+    outLabelRow.appendChild(copyBtn);
+
+    var textarea = document.createElement('textarea');
+    textarea.className = 'py-submission-output';
+    textarea.id = 'py-submission-output';
+    textarea.readOnly = true;
+    textarea.rows = 4;
+    textarea.onclick = function () { this.select(); };
+
+    outWrap.appendChild(outLabelRow);
+    outWrap.appendChild(textarea);
+
+    wrap.appendChild(btn);
+    wrap.appendChild(msg);
+    wrap.appendChild(outWrap);
+    return wrap;
+  }
+
+  async function exportResults() {
+    var studentId = (document.getElementById('py-submission-student-id') || {}).value;
+    var quizId    = (document.getElementById('py-submission-quiz-id')    || {}).value;
+
+    studentId = (studentId || '').trim();
+    quizId    = (quizId    || '').trim();
+
+    var msgEl     = document.getElementById('py-submission-msg');
+    var outWrap   = document.getElementById('py-submission-output-wrap');
+    var outArea   = document.getElementById('py-submission-output');
+
+    if (!studentId || !quizId) {
+      if (msgEl) {
+        msgEl.innerHTML =
+          '<div class="py-submission-error">' + escapeHtml(L.validationError) + '</div>';
+      }
+      if (outWrap) outWrap.style.display = 'none';
+      return;
+    }
+    if (msgEl) msgEl.innerHTML = '';
+
+    // Collect results for every registered exercise (unattempted → 0/total)
+    var allResults = (window.__pyExercises || []).map(function (ex) {
+      return exerciseResults[ex.label] || {
+        label:  ex.label,
+        passed: 0,
+        total:  0,        // 0 = not attempted
+        tests:  [],
+      };
+    });
+
+    var payload = {
+      v:       1,
+      sid:     studentId,
+      qid:     quizId,
+      ts:      new Date().toISOString(),
+      results: allResults,
+    };
+
+    try {
+      mainPyodide.globals.set('_submission_payload', mainPyodide.toPy(payload));
+      mainPyodide.globals.set('_submission_key',     submissionConfig.submissionKey || 'py-exercise');
+
+      var encoded = await mainPyodide.runPythonAsync(ENCODER_PY);
+
+      if (outArea)  outArea.value = encoded;
+      if (outWrap)  outWrap.style.display = '';
+      if (msgEl)    msgEl.innerHTML = '';
+
+    } catch (err) {
+      if (msgEl) {
+        msgEl.innerHTML =
+          '<div class="py-submission-error">' +
+          escapeHtml(L.encodingError) + escapeHtml(String(err)) +
+          '</div>';
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Download (personal documentation)
+  // ---------------------------------------------------------------------------
+
+  function downloadAll() {
+    var exercises = (window.__pyExercises || []).map(function (ex) {
+      var editor = exerciseEditors[ex.label];
+      var result = exerciseResults[ex.label] || null;
+      return {
+        label:   ex.label,
+        caption: ex.caption || null,
+        code:    editor ? editor.getValue() : ex.starter,
+        result:  result,
+      };
+    });
+
+    var data = {
+      exported_at: new Date().toISOString(),
+      exercises:   exercises,
+    };
+
+    var json = JSON.stringify(data, null, 2);
+    var blob = new Blob([json], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href     = url;
+    a.download = L.downloadFilename + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function buildDownloadSection() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-download-section';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-outline-secondary py-download-btn';
+    btn.innerHTML = L.downloadBtn;
+    btn.type = 'button';
+    btn.title = L.downloadBtnTitle;
+    btn.onclick = downloadAll;
+
+    var hint = document.createElement('span');
+    hint.className = 'py-download-hint';
+    hint.textContent = L.downloadHint;
+
+    wrap.appendChild(btn);
+    wrap.appendChild(hint);
+    return wrap;
+  }
+
+  function initDownload() {
+    var cells = document.querySelectorAll('.py-exercise-cell');
+    if (cells.length === 0) return;
+
+    // If a submission footer exists, append the download section to it (with separator).
+    // Otherwise create a standalone footer after the last exercise cell.
+    var subFooter = document.querySelector('.py-submission-footer');
+    if (subFooter) {
+      var sep = document.createElement('hr');
+      sep.className = 'py-footer-sep';
+      subFooter.appendChild(sep);
+      subFooter.appendChild(buildDownloadSection());
+    } else {
+      var footer = document.createElement('div');
+      footer.className = 'py-download-footer';
+      footer.appendChild(buildDownloadSection());
+      var lastCell = cells[cells.length - 1];
+      lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
+    }
+  }
+
+  function initSubmission() {
+    if (!submissionConfig.submission) return;
+
+    var cells = document.querySelectorAll('.py-exercise-cell');
+    if (cells.length === 0) return;
+
+    // Header before the first exercise cell
+    var header = buildSubmissionHeader();
+    cells[0].parentNode.insertBefore(header, cells[0]);
+
+    // Footer after the last exercise cell
+    var lastCell = cells[cells.length - 1];
+    var footer = buildSubmissionFooter();
+    lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Init
+  // ---------------------------------------------------------------------------
+  document.addEventListener('DOMContentLoaded', async function () {
+    await ensurePyodide();
+    await ensureMonaco();
+
+    mainPyodide.globals.set('_msg_forbidden_import',   L.msgForbiddenImport);
+    mainPyodide.globals.set('_msg_forbidden_function', L.msgForbiddenFunction);
+    mainPyodide.globals.set('_msg_forbidden_method',   L.msgForbiddenMethod);
+    mainPyodide.globals.set('_msg_forbidden_keyword',  L.msgForbiddenKeyword);
+    mainPyodide.globals.set('_msg_assertion_failed',   L.msgAssertionFailed);
+    mainPyodide.globals.set('_msg_test_error',         L.msgTestError);
+    mainPyodide.globals.set('_msg_syntax_error',       L.msgSyntaxError);
+
+    var exercises = window.__pyExercises || [];
+    exercises.forEach(setupExercise);
+    initSubmission();
+    initDownload();
   });
 
 })();

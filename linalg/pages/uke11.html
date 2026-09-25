@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import linprog","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"corners = np.array([[0.,0.], [4.,0.], [4.,1.], [3.,3.], [0.,4.5]])\nprofits = corners @ np.array([5.,4.])\nfor point, value in zip(corners, profits):\n    print(f\"({point[0]:g}, {point[1]:g}) -> {value:g} tusen kr\")\nfig, ax = plt.subplots()\nax.fill(*corners.T, alpha=.22, color=\"tab:blue\", label=\"mulig område\")\nax.plot(*np.vstack([corners,corners[0]]).T, color=\"tab:blue\")\nfor point, value in zip(corners, profits):\n    ax.annotate(f\"{value:g}\", point, xytext=(5,5), textcoords=\"offset points\")\nxx = np.linspace(0,4.8,100)\nax.plot(xx, (27-5*xx)/4, \"--\", color=\"tab:orange\", label=\"P = 27\")\nax.set(xlim=(0,4.8), ylim=(0,5.2), xlabel=\"A: x (partier)\",\n       ylabel=\"B: y (partier)\")\nax.legend(); ax.set_aspect(\"equal\"); plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-polygon","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"p = np.array([5.,4.])\nA = np.array([[2.,1.], [1.,2.], [1.,0.]])\nb = np.array([9.,9.,4.])\nresult = linprog(-p, A_ub=A, b_ub=b, bounds=(0,None), method=\"highs\")\nprint(\"status:\", result.status, result.message)\nif result.status == 0:\n    print(\"partier:\", result.x, \"fortjeneste:\", -result.fun)\n    print(\"slakk b-Az:\", b-A@result.x)\n    print(\"største brudd:\",\n          max(0., float(np.max(A@result.x-b)), float(-np.min(result.x))))","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-highs","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"impossible = linprog([1.], A_ub=[[1.],[-1.]], b_ub=[1.,-2.],\n                     bounds=(0,None), method=\"highs\")\nunbounded = linprog([-1.], bounds=(0,None), method=\"highs\")\nprint(\"umulig:\", impossible.status, impossible.message)\nprint(\"ubegrenset:\", unbounded.status, unbounded.message)","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-status","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"z = np.array([3.,3.])\nprices = np.array([2.,1.,0.])\nprint(\"Primal mulig:\", np.all(A@z <= b+1e-9), np.all(z >= -1e-9))\nprint(\"Dual mulig:\", np.all(A.T@prices >= p-1e-9),\n      np.all(prices >= -1e-9))\nprint(\"Målverdier:\", p@z, b@prices)\nprint(\"Ressursslakk:\", b-A@z, \"produktoverskudd:\", A.T@prices-p)","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-certificate","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"for delta in (0., .5, 2.):\n    changed = b.copy()\n    changed[0] += delta\n    trial = linprog(-p, A_ub=A, b_ub=changed,\n                    bounds=(0,None), method=\"highs\")\n    if trial.status == 0:\n        print(f\"Δ={delta:g}: z={trial.x}, P={-trial.fun:g}, \"\n              f\"lineært anslag={27+2*delta:g}, \"\n              f\"slakk={changed-A@trial.x}\")\nprint(\"SciPy-marginaler for minimeringsmålet:\", result.ineqlin.marginals)","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-marginals","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"# NumPy holder koeffisienter og planer som arrayer.\nimport numpy as np\n# Matplotlib tegner tillatte områder og mållinjer.\nimport matplotlib.pyplot as plt\n# linprog løser den lineære modellen i SciPy.\nfrom scipy.optimize import linprog","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Legg hjørnene i rekkefølge rundt det tillatte området.\ncorners = np.array([[0., 0.], [4., 0.], [4., 1.],\n                    [3., 3.], [0., 4.5]])\n\n# Fyll området og marker planen med høyest dekningsbidrag.\nfig, ax = plt.subplots(figsize=(6, 5))\nax.fill(corners[:, 0], corners[:, 1], alpha=.22, color=\"tab:blue\",\n        label=\"Tillatte planer\")\nax.plot(*np.vstack((corners, corners[0])).T, color=\"tab:blue\")\nax.plot(3, 3, \"o\", color=\"tab:red\", label=\"Beste plan (3, 3)\")\n\n# Hver stiplet linje viser planene med samme dekningsbidrag.\nxx = np.linspace(0, 4.8, 120)\nfor level in (20, 24, 27):\n    ax.plot(xx, (level - 5*xx)/4, \"--\", label=f\"P = {level}\")\nax.set(xlim=(0, 4.8), ylim=(0, 5.1), xlabel=\"A-partier x\",\n       ylabel=\"B-partier y\", title=\"Tillatt område og mållinjer\")\nax.set_aspect(\"equal\")\nax.legend(fontsize=8)\nplt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-polygon","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Legg produktene i kolonner og begrensningene i rader.\np = np.array([5., 4.])\nA = np.array([[2., 1.], [1., 2.], [1., 0.]])\nb = np.array([9., 9., 4.])\n\n# Minimer -P under de tre kravene og ikke-negative produksjonstall.\nresult = linprog(-p, A_ub=A, b_ub=b, bounds=(0, None), method=\"highs\")\nprint(\"Status:\", result.status, result.message)\n\n# Les planen bare dersom løseren fant et optimum.\nif result.success:\n    print(\"Plan:\", result.x, \"dekningsbidrag:\", -result.fun)\n    print(\"Slakk:\", result.ineqlin.residual)\n    print(\"Direkte kontroll b-Az:\", b - A @ result.x)","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-highs","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# t <= 1 og t >= 2 kan ikke begge gjelde.\nimpossible = linprog([1.], A_ub=[[1.], [-1.]], b_ub=[1., -2.],\n                     bounds=(0, None), method=\"highs\")\n\n# Maksimering av t >= 0 uten en øvre grense har ingen endelig verdi.\nunbounded = linprog([-1.], bounds=(0, None), method=\"highs\")\nprint(\"Umulig problem:\", impossible.status)\nprint(\"Ubegrenset problem:\", unbounded.status)","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-status","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Sammenlign startkapasitet med to ekstra maskintimer i vertikale paneler.\nfig, axes = plt.subplots(2, 1, figsize=(6, 10), constrained_layout=True)\nxx = np.linspace(0, 4.8, 120)\ncases = [\n    (0., np.array([[0., 0.], [4., 0.], [4., 1.],\n                    [3., 3.], [0., 4.5]]), (3., 3.), 27.),\n    (2., np.array([[0., 0.], [4., 0.], [4., 2.5],\n                    [0., 4.5]]), (4., 2.5), 30.),\n]\nfor ax, (delta, polygon, best, value) in zip(axes, cases):\n    # Vis tillatte planer og grensene for maskin- og arbeidstimer.\n    ax.fill(polygon[:, 0], polygon[:, 1], alpha=.22, color=\"tab:blue\",\n            label=\"Tillatte planer\")\n    ax.plot(xx, 9 + delta - 2*xx, color=\"tab:blue\", label=\"Maskintimer\")\n    ax.plot(xx, (9 - xx)/2, color=\"tab:green\", label=\"Arbeidstimer\")\n    # Vis også A-grensen som blir avgjørende når maskinkapasiteten øker.\n    ax.axvline(4, color=\"tab:purple\", linestyle=\":\", label=\"A-grense x = 4\")\n    # Mållinjen gjennom optimum viser hvor forbedringen stoppes.\n    ax.plot(xx, (value - 5*xx)/4, \"--\", color=\"tab:orange\",\n            label=f\"P = {value:g}\")\n    ax.plot(*best, \"o\", color=\"tab:red\", label=\"Beste plan\")\n    ax.set(xlim=(0, 4.8), ylim=(0, 5.1), xlabel=\"A-partier x\",\n           ylabel=\"B-partier y\", title=f\"Ekstra maskintimer: Δ = {delta:g}\")\n    ax.set_aspect(\"equal\")\n    ax.legend(fontsize=8, loc=\"upper right\")\nplt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-capacity-geometry","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Løs samme modell med tre timekapasiteter og samme øvrige data.\nfor delta in (0., .5, 2.):\n    changed = b.copy()\n    changed[0] += delta\n    trial = linprog(-p, A_ub=A, b_ub=changed,\n                    bounds=(0, None), method=\"highs\")\n    if trial.success:\n        print(f\"Δ={delta:g}: plan={trial.x}, P={-trial.fun:g}, \"\n              f\"gammelt prisanslag={27+2*delta:g}\")\n\n# Dette er marginalene for bidraget P, ikke for -P.\nprint(\"Ressursverdier nær Δ=0:\", -result.ineqlin.marginals)","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week11-marginals","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4755,6 +4755,338 @@ select.math-modal-input {
 }
 
 </style>
+<style type="text/css">
+/* ============================================================
+   py-exercise – Quarto extension
+   Interactive Python exercise cells with hidden unit tests.
+   ============================================================ */
+
+/* Exercise container */
+.py-exercise-cell {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-left: 4px solid #0d6efd;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
+}
+
+/* Monaco editor wrapper (Monaco itself switches vs/vs-dark via JS) */
+.py-exercise-editor {
+  border: 1px solid var(--bs-border-color, #ced4da);
+  border-radius: 4px;
+  overflow: hidden;
+  min-height: 80px;
+  margin-bottom: 0.75rem;
+  background: var(--bs-body-bg, #ffffff);
+}
+
+/* Button bar */
+.py-exercise-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.py-exercise-check,
+.py-exercise-reset {
+  font-size: 0.875rem;
+}
+
+/* Running indicator */
+.py-exercise-running {
+  color: var(--bs-secondary-color, #6c757d);
+  font-style: italic;
+  padding: 0.4rem 0;
+}
+
+/* Error box (student code has a runtime / syntax error) */
+.py-exercise-error {
+  background: #fff3f3;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: #842029;
+}
+
+.py-exercise-error pre {
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* Captured stdout from student code */
+.py-exercise-stdout {
+  background: var(--bs-body-bg, #ffffff);
+  color: var(--bs-body-color, #212529);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.875rem;
+}
+
+.py-exercise-stdout-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color, #6c757d);
+  margin-bottom: 0.2rem;
+}
+
+.py-exercise-stdout pre {
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Test summary */
+.py-exercise-summary {
+  padding: 0.25rem 0;
+}
+
+.py-exercise-all-passed {
+  color: #0f5132;
+  background: #d1e7dd;
+  border: 1px solid #badbcc;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+}
+
+.py-exercise-some-failed {
+  color: #842029;
+  background: #f8d7da;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Per-test list (shown when there are multiple tests) */
+.py-exercise-test-list {
+  list-style: none;
+  padding: 0.25rem 0 0;
+  margin: 0;
+}
+
+.py-exercise-test-list li {
+  padding: 0.15rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.py-test-pass { color: #0f5132; }
+.py-test-fail { color: #842029; }
+
+/* Forbidden construct violations */
+.py-exercise-violations {
+  background: #fff3cd;
+  border: 1px solid #ffecb5;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: #664d03;
+}
+
+.py-exercise-violation-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.py-exercise-violation-list li {
+  padding: 0.1rem 0;
+}
+
+/* Single-test hint / assertion message */
+.py-exercise-hint {
+  color: #664d03;
+  background: #fff3cd;
+  border: 1px solid #ffecb5;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* ============================================================
+   Submission header & footer
+   ============================================================ */
+
+.py-submission-header {
+  border: 1px solid var(--bs-border-color, #c3cfe2);
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f0faf4);
+  color: var(--bs-body-color, #212529);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.py-submission-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.py-submission-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.py-submission-fields {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.py-submission-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 160px;
+}
+
+.py-submission-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+}
+
+.py-submission-field input {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.py-submission-field input:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.2);
+}
+
+/* Footer */
+.py-submission-footer {
+  border: 1px solid var(--bs-border-color, #c3cfe2);
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f0faf4);
+  color: var(--bs-body-color, #212529);
+  padding: 1rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.py-submission-export-btn {
+  font-size: 0.9rem;
+}
+
+.py-submission-msg {
+  margin-top: 0.5rem;
+}
+
+.py-submission-error {
+  color: #842029;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.py-submission-output-wrap {
+  margin-top: 0.75rem;
+}
+
+.py-submission-output-labelrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.py-submission-output-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.py-submission-copy-btn {
+  font-size: 0.78rem;
+  padding: 0.15rem 0.5rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.py-submission-copy-ok {
+  background-color: #d1e7dd !important;
+  color: #0f5132 !important;
+  border-color: #badbcc !important;
+}
+
+/* Download section (inside submission footer or standalone) */
+.py-download-footer {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-left: 4px solid #6c757d;
+  border-radius: 6px;
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
+  padding: 0.85rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.py-download-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.py-download-btn {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.py-download-hint {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.py-footer-sep {
+  margin: 0.75rem 0;
+  border-color: #ced4da;
+}
+
+.py-submission-output {
+  width: 100%;
+  font-family: monospace;
+  font-size: 0.78rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  resize: vertical;
+  color: #333;
+  cursor: pointer;
+}
+
+
+</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
@@ -5041,6 +5373,7 @@ window.Quarto = {
   });
 </script>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
+<script>window.__pyExerciseConfig = {"lang":"en","submission":false,"submissionKey":"py-exercise"};</script>
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke8.html">Optimering</a></li><li class="breadcrumb-item"><a href="../pages/uke11.html">Uke 11 – lineær programmering</a></li></ol></nav>
 <div class="quarto-title">
@@ -5073,109 +5406,245 @@ Gå i dybden
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">11.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">11.1 Modell og mulig område</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">11.2 Løs, og undersøk resultatet</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">11.3 Priser som beviser optimum</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">11.4 Hva er én ekstra ressurs verdt?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">11.5 Øv selv og arbeid videre</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">11.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">11.1 Fra tabell til tillatt område</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">11.2 Finn planen med <code>linprog</code></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">11.3 Ressurspriser gir en øvre grense</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">11.4 Hva er en ekstra maskintime verdt?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">11.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">11.6 Python: undersøk og kontroller</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="uke11-start">
 
 </div>
-<section id="hvor-mye-skal-vi-lage" class="level3">
-<h3 class="anchored" data-anchor-id="hvor-mye-skal-vi-lage">Hvor mye skal vi lage?</h3>
-<p>I <a href="../pages/uke8.html#uke8-modell">uke 8</a> måtte antall maskiner være heltall. Nå kan et verksted dele produksjonen i partier, og vi får et sammenhengende område av tillatte valg. Vi vil gå fra modell og geometri til en beregnet produksjonsplan, og deretter bevise at ingen annen plan er bedre. Til sist bruker vi beviset til å verdsette en ekstra ressursenhet. I <a href="../pages/uke6.html#uke6-retning">uke 6</a> ga gradienten en lokal forbedringsretning; her bestemmer ressursgrensene hvilke steg som faktisk er tillatt.</p>
-<p>Etter uken skal du kunne oversette et ressursproblem til ulikheter, skille <strong>mulig løsning</strong>, <strong>optimal løsning</strong>, <strong>umulig problem</strong> og <strong>ubegrenset problem</strong>, formulere dualen til et maksimeringsproblem med <span class="math inline">\(Ax\le b\)</span>, og kontrollere en optimalverdi med primal og dual løsning. Du skal tolke slakk og marginaler uten å forveksle fortegnet i SciPy med ressursens verdi. I <strong>Gå i dybden</strong> finner du lengre regninger og avgrensninger.</p>
+<section id="en-produksjonsplan-og-en-garanti" class="level3">
+<h3 class="anchored" data-anchor-id="en-produksjonsplan-og-en-garanti">En produksjonsplan og en garanti</h3>
+<p>I <a href="../pages/uke8.html#uke8-modell">uke 8</a> talte vi opp hele maskiner. Nå lager et verksted produktpartier som kan deles opp: <span class="math inline">\(2.5\)</span> partier er to hele partier og et halvt. Vi tegner de tillatte planene, finner den beste og kontrollerer den med en ressursregning som setter en øvre grense for <em>alle</em> planer. Til sist undersøker vi hva mer kapasitet kan være verdt.</p>
+</section>
+<section id="læringsmål" class="level3">
+<h3 class="anchored" data-anchor-id="læringsmål">Læringsmål</h3>
+<p>Etter denne uken skal du kunne</p>
+<ul>
+<li>oversette en produksjonstabell til et lineært mål og ressursulikheter og finne ubrukt kapasitet for en plan,</li>
+<li>bruke hjørner og mållinjer til å finne og begrunne en beste plan i to variabler,</li>
+<li>prissette ressursene for å gi en øvre grense og bevise optimalitet når en plan oppnår grensen,</li>
+<li>tolke verdien av en liten kapasitetsendring og undersøke når den gamle prisen slutter å gi den nye optimalverdien,</li>
+<li>kode modellen med <code>linprog</code>, sjekke løserens status og kontrollere resultatet mot kravene.</li>
+</ul>
+<p>I 11.1–11.4 følger vi ett verksted. Regneoppgavene i 11.5 og kodeoppgavene i 11.6 bruker samme tall. <strong>Gå i dybden</strong> åpner lengre begrunnelser.</p>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div id="uke11-modell">
 
 </div>
-<p>Et verksted lager to delbare produktpartier, <span class="math inline">\(x\)</span> av type A og <span class="math inline">\(y\)</span> av type B. Ett parti A gir 5 tusen kroner i dekningsbidrag og bruker 2 enheter av første ressurs og 1 av andre. Ett parti B gir 4 tusen kroner og bruker henholdsvis 1 og 2 enheter. Vi har 9 enheter av hver ressurs og kan høyst lage 4 partier A. Anta at partier kan deles; hele partier krever en annen modell.</p>
-<p><strong>Forutsi:</strong> Er <span class="math inline">\((4,1)\)</span>, <span class="math inline">\((3,3)\)</span> eller <span class="math inline">\((0,4.5)\)</span> best? Hvilke begrensninger er aktive (holder med likhet) ved hvert punkt? Før vi velger, krever vi</p>
-<p>[ _{x,y}; P=5x+4y 2x+y,x+2y,x,x,y. ]</p>
-<p>Punktene som oppfyller alle ulikhetene, er <strong>mulige løsninger</strong>; sammen danner de det mulige området. Dette området er et <strong>polyeder</strong>, altså et snitt av halvplan (områder på én side av en rett linje), eller halvrom i flere dimensjoner; her er det en begrenset polygon. En begrensning er <strong>aktiv</strong> når den holder med likhet. Dens <strong>slakk</strong> for en <span class="math inline">\(\le\)</span>-ulikhet er høyreside minus venstreside, for eksempel <span class="math inline">\(9-(2x+y)\)</span>; slakken er null når grensen er aktiv. Vi tegner området og beregner <span class="math inline">\(P\)</span> i alle hjørnene. Listen kan kontrolleres ved å løse par av grenselikninger og forkaste skjæringspunkter som bryter andre krav. Dette er <strong>lineær programmering (LP)</strong>: <span class="math inline">\(P\)</span> er lineær i variablene, mens grensene kan skrives <span class="math inline">\(a^Tz\le b\)</span>. Uttrykket <span class="math inline">\(a^Tz-b\)</span> er <strong>affint</strong> når <span class="math inline">\(b\ne0\)</span> (lineært uttrykk pluss konstant); det er fremdeles en LP, ikke et krumt problem.</p>
+<section id="modellen-to-produkter-og-to-typer-timer" class="level3">
+<h3 class="anchored" data-anchor-id="modellen-to-produkter-og-to-typer-timer">Modellen: to produkter og to typer timer</h3>
+<p>Verkstedet produserer partier av A og B. <strong>Dekningsbidrag</strong> betyr salgsinntekt minus kostnadene som følger produksjonen, for eksempel materialer; her måles det i tusen kroner per parti. Vi antar at hele produksjonen blir solgt, at timer kan fordeles på delbare partier, og at tabellens tall er konstante i denne perioden.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Produkt</th>
+<th style="text-align: right;">Maskintimer per parti</th>
+<th style="text-align: right;">Arbeidstimer per parti</th>
+<th style="text-align: right;">Dekningsbidrag per parti</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5 tusen kr</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4 tusen kr</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tilgjengelig kapasitet</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
+<p>I tillegg kan verkstedet lage høyst fire A-partier. La <span class="math inline">\(x\)</span> være antall A-partier og <span class="math inline">\(y\)</span> antall B-partier. Vi vil gjøre <span class="math inline">\(P=5x+4y\)</span> (tusen kroner) størst mulig. En plan er <strong>tillatt</strong> når</p>
+<p><span class="math display">\[2x+y\le9\quad\text{(maskintimer)},\qquad x+2y\le9\quad\text{(arbeidstimer)},\qquad x\le4,\qquad x,y\ge0.\]</span></p>
+</section>
+<section id="sammenlign-hjørnene" class="level3">
+<h3 class="anchored" data-anchor-id="sammenlign-hjørnene">Sammenlign hjørnene</h3>
+<p>Grensene der to krav holder med likhet, gir følgende hjørner. Vi forkaster skjæringspunkter som bryter et annet krav.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Hjørne <span class="math inline">\((x,y)\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(P\)</span> (tusen kr)</th>
+<th style="text-align: left;">Brukte maskintimer, arbeidstimer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0,0)\)</span></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\((0,0)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((4,0)\)</span></td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;"><span class="math inline">\((8,4)\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((4,1)\)</span></td>
+<td style="text-align: right;">24</td>
+<td style="text-align: left;"><span class="math inline">\((9,6)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((3,3)\)</span></td>
+<td style="text-align: right;"><strong>27</strong></td>
+<td style="text-align: left;"><span class="math inline">\((9,9)\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0,9/2)\)</span></td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;"><span class="math inline">\((9/2,9)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>I <span class="math inline">\((3,3)\)</span> er begge timekapasitetene brukt opp, men det er rom for ett A-parti før grensen <span class="math inline">\(x\le4\)</span> nås. <strong>Slakk</strong> er kapasitet minus bruk. De tre slakkene er altså <span class="math inline">\((0,0,1)\)</span>. En grense med null slakk er <strong>aktiv</strong>.</p>
+<p>Figuren viser området og linjer med konstant <span class="math inline">\(P\)</span>. En høyere mållinje flyttes opp og til høyre; <span class="math inline">\(P=27\)</span> treffer området ved <span class="math inline">\((3,3)\)</span>.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Figuren gir målverdiene <span class="math inline">\(0,20,24,27,18\)</span> i oppført rekkefølge. Dermed er <span class="math inline">\((3,3)\)</span> best blant disse hjørnene, med 27 tusen kroner. Linjen <span class="math inline">\(5x+4y=27\)</span> treffer området der de to ressursgrensene møtes. <strong>Hvorfor kan ikke et punkt midt i en kant gi mer enn begge endepunktene?</strong> Ethvert punkt i polygonet kan skrives som et veid gjennomsnitt av hjørnene med ikke-negative vekter som summerer til 1. Fordi <span class="math inline">\(P\)</span> er lineær, er verdien samme veide gjennomsnitt av hjørneverdiene og kan derfor ikke overstige 27. Hjørnesammenligningen er et <strong>globalt bevis</strong> for dette begrensede polygonet. En hel kant kan være optimal når mållinjen følger kanten. Nedenfor bygger vi også et algebraisk bevis som virker uten at vi må tegne alle punktene.</p>
-<p>Dette forklarer også forskjellen fra <a href="../pages/uke8.html#uke8-lokalt">uke 8</a> og <a href="../pages/uke10.html#uke10-stasjonaer">uke 10</a>: <span class="math inline">\(\nabla P=(5,4)\)</span> er konstant og Hessianen er null. Det finnes ikke et indre punkt med <span class="math inline">\(\nabla P=0\)</span> å lete etter; et beste punkt kan ligge der en forbedrende retning stoppes av aktive ressursgrenser. Et begrenset, ikke-tomt polygon gir her et maksimum fordi det er lukket og begrenset, slik kompakthetsargumentet i <a href="../pages/uke8.html#uke8-kompakt">uke 8</a> tilsier.</p>
+</section>
+<section id="hvorfor-er-hjørnene-nok-her" class="level3">
+<h3 class="anchored" data-anchor-id="hvorfor-er-hjørnene-nok-her">Hvorfor er hjørnene nok her?</h3>
+<p>Dette er <strong>lineær programmering (LP)</strong>: både målet og ressursbruken er lineære i <span class="math inline">\(x,y\)</span>. Langs en kant varierer <span class="math inline">\(P\)</span> lineært mellom hjørnene. Hvert punkt inni mangekanten kan skrives som et veid gjennomsnitt av hjørnene, så verdien av <span class="math inline">\(P\)</span> blir samme gjennomsnitt av tabellverdiene. Ingen plan kan dermed gi mer enn 27. Hvis en mållinje følger en kant, kan flere planer være like gode. For eksempel ville et annet mål, <span class="math inline">\(R=2x+y\)</span>, fått maksimum 9 både ved <span class="math inline">\((4,1)\)</span> og <span class="math inline">\((3,3)\)</span>, og i alle punktene på kanten mellom dem. Det finnes da mange maksimumspunkter, selv om maksimalverdien er ett tall.</p>
+<p>Området er lukket og begrenset, altså <strong>kompakt</strong> slik vi så i <a href="../pages/uke8.html#uke8-kompakt">uke 8</a>; et kontinuerlig mål oppnår et maksimum der. Området er også <strong>konvekst</strong>: linjestykket mellom to tillatte planer er tillatt. Ressurskravene er rader av koeffisienter som i de lineære systemene tidligere i kurset, men her må vi beholde <em>ulikhetene</em> når vi sjekker skjæringspunktene.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: hjørner, standardformer og når påstanden trenger forbehold
+Gå i dybden: hjørner og begrensninger for argumentet
 </summary>
-<p>Grensene <span class="math inline">\(2x+y=9\)</span> og <span class="math inline">\(x+2y=9\)</span> gir <span class="math inline">\(x=y=3\)</span>. På <span class="math inline">\(x=4\)</span> gir første ressurs <span class="math inline">\(y\le1\)</span>, og på <span class="math inline">\(x=0\)</span> gir andre ressurs <span class="math inline">\(y\le4.5\)</span>. Disse sammen med origo gir polygonet i figuren. Et vilkårlig indre punkt kan flyttes langs en linje i en retning der målet ikke avtar, til en grense nås; derfra kan vi gjøre det samme langs en kant. Dette argumentet bruker et begrenset område med hjørner. <strong>Simpleksmetoden</strong> utnytter dette i større LP-er ved å gå mellom nabohjørner langs kanter som forbedrer målet. Vi regner ikke simplekstabeller her; de er ikke nødvendige for å formulere og kontrollere vår produksjonsmodell. Et ubundet mulig område kan likevel ha et endelig minimum, og et LP uten hjørner kan ha et endelig optimum. Ikke påstå at <em>alle</em> optimum nødvendigvis er hjørner.</p>
-<p>En vanlig positiv-variabel-form er <span class="math inline">\(\max p^Tz\)</span> slik at <span class="math inline">\(Az\le b\)</span> og <span class="math inline">\(z\ge0\)</span>. SciPy bruker <span class="math inline">\(\min c^Tz\)</span>, <span class="math inline">\(A_{ub}z\le b_{ub}\)</span>, eventuelt <span class="math inline">\(A_{eq}z=b_{eq}\)</span>, og egne grenser på variablene. En <span class="math inline">\(\ge\)</span>-ulikhet snus ved å multiplisere <strong>begge sider</strong> med <span class="math inline">\(-1\)</span>; en fri variabel kan skrives som differansen av to ikke-negative. Likninger kan legges inn direkte med <code>A_eq</code> og <code>b_eq</code>. Med slakkvariabelen <span class="math inline">\(s=b-Az\ge0\)</span> kan <span class="math inline">\(Az\le b\)</span> også skrives som likningen <span class="math inline">\(Az+s=b\)</span>. Hvilken form som kalles «standard», avhenger av konteksten.</p>
+<p>Løs <span class="math inline">\(2x+y=9\)</span> og <span class="math inline">\(x+2y=9\)</span> som et lineært system: <span class="math inline">\(x=y=3\)</span>. På <span class="math inline">\(x=4\)</span> krever maskintimene <span class="math inline">\(y\le1\)</span>; på <span class="math inline">\(x=0\)</span> krever arbeidstimene <span class="math inline">\(y\le9/2\)</span>. Aksene og disse skjæringene gir de fem hjørnene. <strong>Simpleksmetoden</strong> går mellom nabohjørner for å forbedre målet. I vårt polygon er en mulig forbedrende hjørnebane <span class="math inline">\((0,0)\to(4,0)\to(4,1)\to(3,3)\)</span>, med verdiene <span class="math inline">\(0,20,24,27\)</span>. Vi trenger ingen simplekstabell for å lese denne banen fra figuren.</p>
+<p>En LP kan også ha et tomt tillatt område eller et mål som kan bli vilkårlig stort. Hjørneargumentet over gjelder vårt ikke-tomme, begrensede område. Gradient <span class="math inline">\(\nabla P=(5,4)\)</span> er konstant og Hessianen er null. Det finnes derfor ikke noe indre stasjonært punkt slik de lokale testene fra <a href="../pages/uke8.html#uke8-lokalt">uke 8</a> og <a href="../pages/uke10.html">uke 10</a> undersøkte; grensene stopper forbedringen.</p>
 </details>
+</section>
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div id="uke11-linprog">
 
 </div>
-<p><code>linprog</code> fra <code>scipy.optimize</code> løser en <strong>minimering</strong> av <span class="math inline">\(c^Tz\)</span>. Oppsettet øverst på siden importerer <code>numpy as np</code>, <code>matplotlib.pyplot as plt</code> og <code>linprog</code>; du kan kjøre rutene nedenfor fortløpende. Vi legger <span class="math inline">\(z=(x,y)\)</span>, <span class="math inline">\(p=(5,4)\)</span>, <span class="math inline">\(A=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{smallmatrix}\right)\)</span> og <span class="math inline">\(b=(9,9,4)\)</span> i arrayer. <code>A_ub=A, b_ub=b</code> betyr <span class="math inline">\(Az\le b\)</span>, én begrensning per rad. Fordi vi vil <strong>maksimere</strong> <span class="math inline">\(p^Tz\)</span>, sender vi <code>-p</code> som <span class="math inline">\(c\)</span>. <code>bounds=(0,None)</code> betyr nedre grense 0 og ingen øvre grense for <strong>hver</strong> av de to variablene; kravet <span class="math inline">\(x\le4\)</span> ligger i matrisen. <code>method="highs"</code> velger LP-løseren HiGHS. <strong>Forutsi:</strong> Hva blir fortegnet på <code>result.fun</code>, og hvilke av de tre slakkene <span class="math inline">\(b-Az\)</span> blir null?</p>
+<p>For mange produkter er en hjørnetabell tungvint. Samle bidragene i <span class="math inline">\(p=(5,4)\)</span>, timebruken og A-grensen i <span class="math inline">\(A=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{smallmatrix}\right)\)</span> og kapasitetene i <span class="math inline">\(b=(9,9,4)\)</span>. Da betyr <span class="math inline">\(Az\le b\)</span> kravene for <span class="math inline">\(z=(x,y)\)</span>. SciPys <code>linprog</code> <strong>minimerer</strong>, så vi sender inn <code>-p</code> for å maksimere <span class="math inline">\(p^Tz\)</span>. <code>A_ub</code>, <code>b_ub</code> angir <span class="math inline">\(\le\)</span>-rader, mens <code>bounds=(0,None)</code> gir begge variabler nedre grense null.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><code>result.status==0</code> og <code>result.success</code> angir at løseren meldte vellykket avslutning; først da leser vi <code>result.x</code> (planen) og <code>result.fun</code> (minimumet av <span class="math inline">\(-P\)</span>). Status 2 betegner et umulig problem, status 3 et ubegrenset problem. <code>result.message</code> utdyper statusen. Status 0 gir <span class="math inline">\(z=(3,3)\)</span>, <span class="math inline">\(P=27\)</span>, slakk <span class="math inline">\((0,0,1)\)</span> og største brudd 0 innenfor avrunding. De to ressursene er fullt utnyttet; grensen <span class="math inline">\(x\le4\)</span> har én enhet igjen. <code>result.fun=-27</code> er verdien av funksjonen SciPy faktisk minimerte. Ved større problemer må vi tolke små residualer mot solverens toleranser, ikke kreve eksakt null av flyttall. Et <code>success</code>-flagg alene er heller ikke et håndfast sertifikat for vår opprinnelige modell: kontroller fortegn, variabelgrenser, mulighet og målet.</p>
-<p>Hva betyr det at metoden <strong>ikke</strong> finner et optimum? Prøv to små modeller og les status før du prøver å bruke <code>x</code> eller <code>fun</code>. Den første krever samtidig <span class="math inline">\(t\le1\)</span> og <span class="math inline">\(t\ge2\)</span>. Den andre maksimerer <span class="math inline">\(t\)</span> med bare <span class="math inline">\(t\ge0\)</span>.</p>
+<p>Status 0 og <code>success=True</code> gir <span class="math inline">\((3,3)\)</span>, verdi 27 og slakk <span class="math inline">\((0,0,1)\)</span>. <code>result.fun=-27</code> er funksjonen SciPy faktisk minimerte. Vi kontrollerer fortegnet og at planen oppfyller kravene. Flyttallsregning kan gi små avvik fra null.</p>
+<p>Et problem kan også være <strong>umulig</strong> (ingen plan oppfyller alle krav, status 2), eller målet kan være <strong>ubegrenset</strong> (det kan forbedres uten en endelig beste verdi, status 3). Les status <em>før</em> du bruker <code>x</code> og <code>fun</code>:</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>HiGHS rapporterer vanligvis status 2 for et <strong>umulig</strong> problem og status 3 for et <strong>ubegrenset</strong> mål. Fravær av mulige punkter og fravær av en endelig beste verdi er forskjellige ting. Solverens status gjelder modellen du skrev inn; en feil i modelleringen blir ikke reparert av algoritmen.</p>
+<p>Statusen gjelder modellen vi skrev inn. En feil i produksjonskravene blir ikke rettet av løseren.</p>
+<details class="reading-step">
+<summary>
+Gå i dybden: skriv andre krav på samme form
+</summary>
+<p>SciPy tar imot ulikheter på formen <span class="math inline">\(Az\le b\)</span>. Et krav <span class="math inline">\(x+y\ge2\)</span> skrives derfor <span class="math inline">\(-x-y\le-2\)</span>: både koeffisientene og høyresiden skifter fortegn. Likninger kan gis direkte med <code>A_eq</code> og <code>b_eq</code>.</p>
+<p>En <strong>fri variabel</strong> kan være både positiv og negativ. Hvis <span class="math inline">\(y\)</span> er fri, kan vi skrive <span class="math inline">\(y=y_+-y_-\)</span> med <span class="math inline">\(y_+,y_-\ge0\)</span>. For eksempel representeres <span class="math inline">\(y=-3\)</span> av <span class="math inline">\(y_+=0\)</span>, <span class="math inline">\(y_-=3\)</span>. Kravet over blir da <span class="math inline">\(-x-y_++y_-\le-2\)</span>. Med denne omskrivingen kan vi bruke bare ikke-negative variabler. Alternativt kan <code>linprog</code> gi <span class="math inline">\(y\)</span> grensene <code>(None, None)</code> direkte.</p>
+<p>En <strong>slakkvariabel</strong> gjør ubrukt kapasitet til en egen variabel: <span class="math inline">\(2x+y\le9\)</span> er det samme som <span class="math inline">\(2x+y+s=9\)</span> med <span class="math inline">\(s\ge0\)</span>. Ved planen <span class="math inline">\((4,1)\)</span> er <span class="math inline">\(s=0\)</span>; ved <span class="math inline">\((3,2)\)</span> er <span class="math inline">\(s=1\)</span>. Å samle alle krav i én slik avtalt form kalles å skrive problemet på <strong>standardform</strong>. Ulike framstillinger velger ulikhetsform eller likhetsform; oppgi derfor alltid formen.</p>
+</details>
 </div>
 <div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
 <div id="uke11-dual">
 
 </div>
-<p>Vi vil bevise at ingen mulig plan kan tjene over 27, også uten å tegne polygonet. Den opprinnelige maksimeringen kalles <strong>primalen</strong>. Sett ikke-negative priser <span class="math inline">\(q=(u,v,w)\)</span> (tusen kroner per enhet av den tilsvarende kapasiteten) på begrensningene <span class="math inline">\(2x+y\le9\)</span>, <span class="math inline">\(x+2y\le9\)</span>, <span class="math inline">\(x\le4\)</span>. Hvis den samlede prisen på ressursene som ett parti A bruker minst er 5, og prisen på ressursene for B minst er 4, får vi et øvre bound:</p>
-<p>[ 2u+v+w,u+2v 5x+4y(2u+v+w)x+(u+2v)y9u+9v+4w. ]</p>
-<p>Den første ulikheten bruker <span class="math inline">\(x,y\ge0\)</span>; den andre bruker ressursgrensene og <span class="math inline">\(u,v,w\ge0\)</span>. Dette er <strong>svak dualitet</strong>: enhver mulig produksjonsplan gir et nedre anslag på beste fortjeneste, og enhver <strong>dual mulig</strong> prisvektor (en som oppfyller priskravene over) gir et øvre anslag. Problemet med å finne det beste, laveste øvre anslaget kalles <strong>dualen</strong>. <strong>Forutsi:</strong> Kan <span class="math inline">\(u=2,v=1,w=0\)</span> bevise at planen fra forsøket er best?</p>
-<div id="qpyodide-insertion-location-5"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Begge målverdiene er 27. Enhver mulig plan har verdi høyst 27, mens <span class="math inline">\(z=(3,3)\)</span> oppnår 27. Vi har dermed bevist optimalitet. Likhet i de to ulikhetene i beviset krever at en positiv ressurspris ledsages av null slakk: <span class="math inline">\(q_i(b_i-(Az)_i)=0\)</span>. For et produsert produkt må tilsvarende prisen på innsatsfaktorene treffe fortjenesten: <span class="math inline">\(z_j((A^Tq)_j-p_j)=0\)</span>. Dette kalles <strong>komplementær slakk</strong>. Her er <span class="math inline">\(w=0\)</span> og <span class="math inline">\(4-x=1\)</span>; <span class="math inline">\(x,y&gt;0\)</span> og produktprisene er nøyaktig 5 og 4. <strong>Overføring:</strong> Hvorfor må en pris være null ved optimalitet når den tilhørende begrensningen har positiv slakk?</p>
-<p>Generelt gir et primalproblem <span class="math inline">\(\max p^Tz\)</span> med <span class="math inline">\(Az\le b, z\ge0\)</span> dualproblemet [ _{q} b^Tq A^Tqp. ] Når begge har mulige løsninger og et endelig optimum, er de beste målverdiene like (<strong>sterk dualitet</strong>). Vi trenger ikke forutsette sterk dualitet for å verifisere akkurat dette talleksemplet: vi har vist en mulig løsning på hver side med samme verdi.</p>
+<section id="et-prisbevis-med-tall" class="level3">
+<h3 class="anchored" data-anchor-id="et-prisbevis-med-tall">Et prisbevis med tall</h3>
+<p>Hjørnene og løseren peker på 27. Nå får vi en kort kontroll som gjelder <em>hver</em> tillatte plan. Sett en tenkt pris på 2 tusen kroner per maskintime og 1 tusen kroner per arbeidstime. Grensen på A-partier får pris null. Innsatsen til ett A-parti prises da til <span class="math inline">\(2\cdot2+1\cdot1=5\)</span>, og til ett B-parti til <span class="math inline">\(1\cdot2+2\cdot1=4\)</span>: akkurat produktenes bidrag.</p>
+<p>Multipliser maskintimekravet med 2 og arbeidstimekravet med 1, og legg sammen:</p>
+<p><span class="math display">\[2(2x+y)+(x+2y)=5x+4y\le2\cdot9+9=27.\]</span></p>
+<p>Ingen tillatt plan kan gi mer enn 27, mens <span class="math inline">\((3,3)\)</span> gir 27. Vi har et <strong>optimalitetssertifikat</strong> uten å måtte undersøke flere punkter. Prisen på A-grensen er null, og grensen har ett ubrukt parti: å øke bare denne grensen litt hjelper ikke nå.</p>
+</section>
+<section id="fra-prisforslag-til-et-nytt-optimeringsproblem" class="level3">
+<h3 class="anchored" data-anchor-id="fra-prisforslag-til-et-nytt-optimeringsproblem">Fra prisforslag til et nytt optimeringsproblem</h3>
+<p>Bruk nå andre ikke-negative timepriser <span class="math inline">\(u,v\)</span> og pris <span class="math inline">\(w\)</span> på A-grensen. Innsatsen må koste <strong>minst</strong> bidraget per parti, ellers kan prisregningen ikke avgrense bidraget:</p>
+<p><span class="math display">\[2u+v+w\ge5\quad\text{(A)},\qquad u+2v\ge4\quad\text{(B)},\qquad u,v,w\ge0.\]</span></p>
+<p>For hver tillatt plan får vi dermed</p>
+<p><span class="math display">\[5x+4y\le(2u+v+w)x+(u+2v)y\le9u+9v+4w.\]</span></p>
+<p>Den første ulikheten bruker <span class="math inline">\(x,y\ge0\)</span>, den andre de tre kapasitetskravene. Ethvert gyldig prisvalg gir en øvre grense. Å finne den laveste slike grensen er et eget problem: <strong>dualen</strong> til produksjonsproblemet, som kalles <strong>primalen</strong>. At planens verdi aldri overstiger prisgrensen, kalles <strong>svak dualitet</strong>. Lik verdi 27 på begge sider beviser optimalitet her.</p>
+<p>Mer kompakt kan et maksimeringsproblem skrives</p>
+<p><span class="math display">\[\max_{z\ge0}p^Tz\quad\text{slik at }Az\le b.\]</span></p>
+<p>Hver rad i <span class="math inline">\(A\)</span> får én ikke-negativ pris i <span class="math inline">\(q\)</span>. Den samme vektede ulikheten gir dualen</p>
+<p><span class="math display">\[\min_{q\ge0}b^Tq\quad\text{slik at }A^Tq\ge p,\qquad p^Tz\le b^Tq.\]</span></p>
+<p>Når begge LP-er har mulige løsninger og et endelig optimum, er de beste verdiene like (<strong>sterk dualitet</strong>). Vårt talleksempel trenger ikke denne generelle setningen: vi har allerede vist to mulige valg med samme verdi.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: dualitetsgap og komplementær slakk
+Gå i dybden: hvor blir forskjellen mellom grensene av?
 </summary>
-<p>Trekk den primale verdien fra det duale boundet. For mulige <span class="math inline">\(z,q\)</span>: [ b<sup>Tq-p</sup>Tz =q<sup>T(b-Az)+z</sup>T(A^Tq-p). ] Begge ledd er summer av ikke-negative produkter. Gapet er null akkurat når hvert slikt produkt er null. Derfor gjelder ved optimum <span class="math inline">\(q_i(b_i-(Az)_i)=0\)</span> for hver ressurs og <span class="math inline">\(z_j((A^Tq)_j-p_j)=0\)</span> for hvert produkt. En bindende begrensning kan likevel ha pris null ved degenerasjon; «aktiv» betyr ikke automatisk «strengt positiv pris».</p>
-<p>For en primal <strong>maksimering</strong> bytter dualvariabelen fortegn når en primal rad snus: en <span class="math inline">\(\le\)</span>-rad gir dualvariabel <span class="math inline">\(\ge0\)</span>, en <span class="math inline">\(\ge\)</span>-rad gir <span class="math inline">\(\le0\)</span>, og en likningsrad gir fri dualvariabel. På kolonnesiden gir <span class="math inline">\(z_j\ge0\)</span> en dual <span class="math inline">\(\ge p_j\)</span>-ulikhet; en fri <span class="math inline">\(z_j\)</span> gir likhet. Dette følger av samme øvre-bound-regning når radene og variablene får andre fortegnsbetingelser. Vi bruker bare <span class="math inline">\(Az\le b, z\ge0\)</span> i hovedforsøket.</p>
-<p>Vi kan også regne ut prisene her. Begge produktene er produsert i positivt antall, så <span class="math inline">\(2u+v+w=5\)</span> og <span class="math inline">\(u+2v=4\)</span>. Tredje begrensning har slakk, så <span class="math inline">\(w=0\)</span>. Løsningen er <span class="math inline">\(u=2,v=1\)</span>. Denne beregningen forklarer tallene i sertifikatet; den erstatter ikke kontrollen av at alle primal- og dualulikheter holder.</p>
+<p>For mulige <span class="math inline">\(z,q\)</span> kan differansen deles i summer av ikke-negative produkter:</p>
+<p><span class="math display">\[b^Tq-p^Tz=q^T(b-Az)+z^T(A^Tq-p)\ge0.\]</span></p>
+<p>Når forskjellen er null, må hver positiv pris møte en aktiv begrensning: <span class="math inline">\(q_i(b_i-(Az)_i)=0\)</span>. Hvert produkt som lages i positiv mengde, må ha innsatspris lik bidraget: <span class="math inline">\(z_j((A^Tq)_j-p_j)=0\)</span>. Dette kalles <strong>komplementær slakk</strong>. Ved <span class="math inline">\(z=(3,3)\)</span> og <span class="math inline">\(q=(2,1,0)\)</span> er kapasitetslakken <span class="math inline">\((0,0,1)\)</span> og produktprisene <span class="math inline">\((5,4)\)</span>. En aktiv grense kan likevel ha pris null, som vi ser ved kapasitetsskiftet i 11.4.</p>
+<p><strong>Slik finner vi prisene fra planen <span class="math inline">\((3,3)\)</span>.</strong> A-grensen har slakk 1, så komplementær slakk gir <span class="math inline">\(w=0\)</span>. Begge produktene lages i positiv mengde, derfor må <span class="math inline">\(2u+v=5\)</span> og <span class="math inline">\(u+2v=4\)</span>. Løsning av disse to likningene gir <span class="math inline">\(u=2\)</span>, <span class="math inline">\(v=1\)</span>. Prisene <span class="math inline">\((2,1,0)\)</span> kan altså utledes fra hvilke varer som produseres og hvilke grenser som har slakk.</p>
+<p>Hvis rader eller variabler har andre fortegn, må også prisreglene endres. For et primalproblem som maksimeres, gir en <span class="math inline">\(\ge\)</span>-rad en ikke-positiv dualvariabel og en likningsrad en fri dualvariabel. En fri primalvariabel gir et likhetskrav i dualen. Den vektede ulikheten forklarer fortegnsreglene. I hovedmodellen bruker vi bare <span class="math inline">\(Az\le b\)</span> og <span class="math inline">\(z\ge0\)</span>.</p>
 </details>
+</section>
 </div>
 <div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
 <div id="uke11-sensitivitet">
 
 </div>
-<p>Vi gir første ressurs <span class="math inline">\(\Delta\)</span> flere enheter. Prisvektoren <span class="math inline">\((2,1,0)\)</span> gir da boundet <span class="math inline">\(27+2Δ\)</span>. Hvis de samme to ressursgrensene fortsatt møtes i et mulig punkt, blir dette også fortjenesten. <strong>Forutsi:</strong> Vil samme økning på 2 tusen kroner per ekstra ressursenhet gjelde for både <span class="math inline">\(Δ=0.5\)</span> og <span class="math inline">\(Δ=2\)</span>?</p>
+<section id="når-den-gamle-timeprisen-fortsatt-virker" class="level3">
+<h3 class="anchored" data-anchor-id="når-den-gamle-timeprisen-fortsatt-virker">Når den gamle timeprisen fortsatt virker</h3>
+<p>Gi verkstedet <span class="math inline">\(\Delta\)</span> flere maskintimer. Prisene <span class="math inline">\((2,1,0)\)</span> gir nå en øvre grense <span class="math inline">\(27+2\Delta\)</span>. For <span class="math inline">\(\Delta=1/2\)</span> møtes timegrensene ved <span class="math inline">\((10/3,17/6)\)</span>, en tillatt plan med <span class="math inline">\(P=28\)</span>. Grensen oppnås: en halv ekstra maskintime er verdt 1 tusen kroner her.</p>
+</section>
+<section id="når-en-annen-grense-stopper-produksjonen" class="level3">
+<h3 class="anchored" data-anchor-id="når-en-annen-grense-stopper-produksjonen">Når en annen grense stopper produksjonen</h3>
+<p>For <span class="math inline">\(\Delta=2\)</span> ville skjæringen fått <span class="math inline">\(x=13/3&gt;4\)</span>, som bryter A-grensen. Nå er <span class="math inline">\((4,5/2)\)</span> best og gir <span class="math inline">\(P=30\)</span>. Den gamle prisformelen gir fortsatt en gyldig øvre grense på 31, men den oppnås ikke. Vi kan bevise den nye grensen med prisene <span class="math inline">\((u,v,w)=(0,2,3)\)</span>:</p>
+<p><span class="math display">\[2(x+2y)+3x=5x+4y\le2\cdot9+3\cdot4=30.\]</span></p>
+<p>Planen <span class="math inline">\((4,5/2)\)</span> oppnår 30. Nå er det arbeidstimene og A-grensen som bestemmer beste verdi; ekstra maskintimer alene hjelper ikke. Allerede ved <span class="math inline">\(\Delta=3/2\)</span> er disse prisene optimale, selv om maskintimekravet fortsatt er aktivt. En aktiv grense kan altså ha pris null. Figuren viser opprinnelig kapasitet øverst og to ekstra maskintimer nederst, med samme akser.</p>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+</section>
+<section id="les-ressursverdiene-fra-scipy" class="level3">
+<h3 class="anchored" data-anchor-id="les-ressursverdiene-fra-scipy">Les ressursverdiene fra SciPy</h3>
+<p>Vi kontrollerer endringen med <code>linprog</code>. <code>ineqlin.marginals</code> beskriver den <em>lokale</em> endringen i minimeringsverdien når en høyreside økes. SciPy minimerer <span class="math inline">\(-P\)</span>, så vi snur fortegnet for å lese ressursverdier for <span class="math inline">\(P\)</span>.</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Ved <span class="math inline">\(Δ=0.5\)</span> blir fortjenesten 28, akkurat som anslaget. Ved <span class="math inline">\(Δ=2\)</span> blir den 30, mens den uendrede dualprisen bare gir et bound på 31: tredje begrensning begynner å binde. <code>result.ineqlin.residual</code> er de tre slakkene <span class="math inline">\(b-Az\)</span>, og <code>result.ineqlin.marginals</code> er omtrent <span class="math inline">\((-2,-1,0)\)</span>. En <strong>marginal</strong> er den lokale endringen i optimal målverdi når en høyreside økes litt, mens de øvrige dataene holdes fast. SciPy oppgir derivert av <strong>minimeringsverdien</strong> <span class="math inline">\(-P_*\)</span> med hensyn til høyresiden. For vårt maksimeringsmål er den lokale ressursverdien derfor motsatt fortegn: <span class="math inline">\((2,1,0)\)</span>. Dette er et lokalt utsagn, ikke en lov for vilkårlig store endringer.</p>
-<p>Hvis vi holder de første to begrensningene aktive, gir likningene <span class="math inline">\(x=3+2Δ/3\)</span>, <span class="math inline">\(y=3-Δ/3\)</span>. Kravene <span class="math inline">\(x,y\ge0\)</span> og <span class="math inline">\(x\le4\)</span> gir <span class="math inline">\(-4.5\leΔ\le1.5\)</span>. I akkurat dette intervallet er planen mulig og dualprisen fortsatt mulig, så verdien er <strong>eksakt</strong> <span class="math inline">\(27+2Δ\)</span>. Ved endepunktene kan flere begrensninger bli aktive. <strong>Overføring:</strong> Hvorfor gir en pris på null for <span class="math inline">\(x\le4\)</span> mening før kapasiteten er brukt opp, men ikke nødvendigvis etterpå?</p>
+<p>Bidragene blir <span class="math inline">\(27,28,30\)</span>, mens den gamle prisformelen gir <span class="math inline">\(27,28,31\)</span>. Ved utgangspunktet er SciPy-marginalene omtrent <span class="math inline">\((-2,-1,0)\)</span>; de lokale verdiene for ekstra maskintime, arbeidstime og høyere A-grense er <span class="math inline">\((2,1,0)\)</span>. For større endringer må vi sjekke om en plan fortsatt kan oppnå prisgrensen.</p>
 <details class="reading-step">
 <summary>
-Gå i dybden: flere optimale planer og hele partier
+Gå i dybden: hvor lenge er prisformelen eksakt?
 </summary>
-<p>Hvis målet er parallelt med en aktiv kant, kan alle punkter på et kantstykke gi samme optimum. For eksempel gir <span class="math inline">\(P=2x+y\)</span> på området <span class="math inline">\(2x+y\le9, x,y\ge0\)</span> verdien 9 langs hele kanten fra <span class="math inline">\((0,9)\)</span> til <span class="math inline">\((4.5,0)\)</span>. En solver returnerer én optimal plan, ikke en uttømmende liste over alle.</p>
-<p>Hvis partier må være hele, er vår kontinuerlige modell en <em>relaksasjon</em>: dens maksverdi er et øvre bound for heltallsproblemet. I vårt basistilfelle er <span class="math inline">\((3,3)\)</span> allerede en heltallsplan, men etter en kapasitetsendring kan løsningene være brøker. Et tall fra den kontinuerlige modellen kan da ikke ukritisk brukes som gjennomførbar produksjonsplan.</p>
+<p>Når begge timegrensene fortsatt er aktive, gir systemet</p>
+<p><span class="math display">\[x=3+\frac{2\Delta}{3},\qquad y=3-\frac{\Delta}{3}.\]</span></p>
+<p>Kravene <span class="math inline">\(x,y\ge0\)</span> og <span class="math inline">\(x\le4\)</span> gir <span class="math inline">\(-9/2\le\Delta\le3/2\)</span>. I dette intervallet er planen tillatt og de gamle prisene gir samme verdi: <span class="math inline">\(P_*(\Delta)=27+2\Delta\)</span>. For kapasitetsøkninger gjelder dette til og med <span class="math inline">\(\Delta=3/2\)</span>. Etterpå må vi finne et nytt beste punkt.</p>
+<p>Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i <a href="../pages/uke8.html#uke8-modell">uke 8</a>. Etter <span class="math inline">\(\Delta=1/2\)</span> er <span class="math inline">\((10/3,17/6)\)</span> ikke en plan med hele partier.</p>
 </details>
+</section>
 </div>
 <div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
 <div id="uke11-oppgaver">
 
 </div>
-<p>Bruk den samme modellen som i 11.1–11.4. Svar med eksakte tall eller brøker der det er mulig. Disse oppgavene krever ikke Python.</p>
+<p>Oppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.</p>
 <div id="week11-exercise-context" class="math-exercise-context">
-<p>La <span data-math-exercise-display="false" data-math-exercise-tex="z=(x,y)\ge0"><span class="math inline">\(z=(x,y)\ge0\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="p=(5,4)"><span class="math inline">\(p=(5,4)\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="A=\begin{bmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{bmatrix}"><span class="math inline">\(A=\begin{bmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{bmatrix}\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="b=(9,9,4)"><span class="math inline">\(b=(9,9,4)\)</span></span>. Primalen maksimerer <span data-math-exercise-display="false" data-math-exercise-tex="p^Tz"><span class="math inline">\(p^Tz\)</span></span> med <span data-math-exercise-display="false" data-math-exercise-tex="Az\le b"><span class="math inline">\(Az\le b\)</span></span>. Dualen minimerer <span data-math-exercise-display="false" data-math-exercise-tex="b^Tq"><span class="math inline">\(b^Tq\)</span></span> med <span data-math-exercise-display="false" data-math-exercise-tex="A^Tq\ge p, q\ge0"><span class="math inline">\(A^Tq\ge p, q\ge0\)</span></span>. Slakk er <span data-math-exercise-display="false" data-math-exercise-tex="b-Az"><span class="math inline">\(b-Az\)</span></span>. En primal og en dual mulig løsning med lik verdi sertifiserer optimum ved svak dualitet.</p>
+<p>Verkstedet maksimerer <span data-math-exercise-display="false" data-math-exercise-tex="P=5x+4y"><span class="math inline">\(P=5x+4y\)</span></span> under <span data-math-exercise-display="false" data-math-exercise-tex="2x+y\le9"><span class="math inline">\(2x+y\le9\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="x+2y\le9"><span class="math inline">\(x+2y\le9\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="x\le4"><span class="math inline">\(x\le4\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="x,y\ge0"><span class="math inline">\(x,y\ge0\)</span></span>. Slakk er kapasitet minus bruk. Gyldige ikke-negative priser <span data-math-exercise-display="false" data-math-exercise-tex="(u,v,w)"><span class="math inline">\((u,v,w)\)</span></span> oppfyller <span data-math-exercise-display="false" data-math-exercise-tex="2u+v+w\ge5"><span class="math inline">\(2u+v+w\ge5\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="u+2v\ge4"><span class="math inline">\(u+2v\ge4\)</span></span>; da er <span data-math-exercise-display="false" data-math-exercise-tex="9u+9v+4w"><span class="math inline">\(9u+9v+4w\)</span></span> en øvre grense for <span data-math-exercise-display="false" data-math-exercise-tex="P"><span class="math inline">\(P\)</span></span>.</p>
 </div>
-<section id="oppgave-1-oversett-en-plan" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-1-oversett-en-plan">Oppgave 1 – oversett en plan</h3>
-<div class="math-exercise-cell" id="math-exercise-1" data-label="week11-task-slack" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;slakk ressurs 1&quot;,&quot;slakk ressurs 2&quot;,&quot;slakk A-grense&quot;,&quot;fortjeneste&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Oppgave 1 – oversett en plan&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v3&quot;,&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Slakk og fortjeneste" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Slakk og fortjeneste</div>
+<p><strong>Oppgave 1 – undersøk en plan.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-1" data-label="week11-task-slack" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;slakk maskintimer&quot;,&quot;slakk arbeidstimer&quot;,&quot;slakk A-grense&quot;,&quot;dekningsbidrag&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Bidragene blir \\(27,28,30\\), mens den gamle prisformelen gir \\(27,28,31\\). Ved utgangspunktet er SciPy-marginalene omtrent \\((-2,-1,0)\\); de lokale verdiene for ekstra maskintime, arbeidstime og høyere A-grense er \\((2,1,0)\\). For større endringer må vi sjekke om en plan fortsatt kan oppnå prisgrensen.\nGå i dybden: hvor lenge er prisformelen eksakt?\nNår begge timegrensene fortsatt er aktive, gir systemet\n\\[x=3+\\frac{2\\Delta}{3},\\qquad y=3-\\frac{\\Delta}{3}.\\]\nKravene \\(x,y\\ge0\\) og \\(x\\le4\\) gir \\(-9/2\\le\\Delta\\le3/2\\). I dette intervallet er planen tillatt og de gamle prisene gir samme verdi: \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.&quot;" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v3&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Slakk og dekningsbidrag" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Slakk og dekningsbidrag</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question" data-math-exercise-source="Sett \(z=(4,1)\). Finn slakk på de to ressursene og grensen på A,<br>
-og beregn fortjenesten. Oppgi slakkene i oppført rekkefølge.<br>
+<div class="math-exercise-question" data-math-exercise-source="Sett \((x,y)=(4,1)\). Finn slakken i de tre begrensningene i oppført rekkefølge og beregn dekningsbidraget. Forklar i egne notater om planen er tillatt og hvilke grenser som er aktive.<br>
 <br>
-Slakk: <span class=&quot;math-vec&quot; style=&quot;--n:3&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span> &amp;nbsp; Fortjeneste: <input type=&quot;text&quot; id=&quot;math-exercise-1-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Sett \(z=(4,1)\). Finn slakk på de to ressursene og grensen på A,<br>
-og beregn fortjenesten. Oppgi slakkene i oppført rekkefølge.<br>
+Slakk: <span class=&quot;math-vec&quot; style=&quot;--n:3&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-1-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span> &amp;nbsp; Dekningsbidrag: <input type=&quot;text&quot; id=&quot;math-exercise-1-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
 <br>
-Slakk: <span class="math-vec" style="--n:3"><input type="text" id="math-exercise-1-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f2" data-answer="3" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span> &nbsp; Fortjeneste: <input type="text" id="math-exercise-1-f4" data-answer="24" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+Finn også skjæringen mellom de to timegrensene. Sammenlign bidraget<br>
+der med bidragene i hjørnetabellen i 11.1, og forklar hvilken plan som er best.">Sett \((x,y)=(4,1)\). Finn slakken i de tre begrensningene i oppført rekkefølge og beregn dekningsbidraget. Forklar i egne notater om planen er tillatt og hvilke grenser som er aktive.<br>
+<br>
+Slakk: <span class="math-vec" style="--n:3"><input type="text" id="math-exercise-1-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f2" data-answer="3" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-1-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span> &nbsp; Dekningsbidrag: <input type="text" id="math-exercise-1-f4" data-answer="24" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+<br>
+Finn også skjæringen mellom de to timegrensene. Sammenlign bidraget<br>
+der med bidragene i hjørnetabellen i 11.1, og forklar hvilken plan som er best.</div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5189,20 +5658,24 @@ Slakk: <span class="math-vec" style="--n:3"><input type="text" id="math-exercise
 <div class="math-feedback-area"></div>
 </div>
 </div>
-</section>
-<section id="oppgave-2-lag-et-bound" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-2-lag-et-bound">Oppgave 2 – lag et bound</h3>
-<div class="math-exercise-cell" id="math-exercise-2" data-label="week11-task-bound" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;dual kostnad&quot;,&quot;pris på A&quot;,&quot;pris på B&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Oppgave 2 – lag et bound&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Et dualt sertifikat" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Et dualt sertifikat</div>
+<p><strong>Oppgave 2 – bygg en øvre grense.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-2" data-label="week11-task-bound" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;øvre grense&quot;,&quot;innsatspris A&quot;,&quot;innsatspris B&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Gå i dybden: hvor lenge er prisformelen eksakt?\nNår begge timegrensene fortsatt er aktive, gir systemet\n\\[x=3+\\frac{2\\Delta}{3},\\qquad y=3-\\frac{\\Delta}{3}.\\]\nKravene \\(x,y\\ge0\\) og \\(x\\le4\\) gir \\(-9/2\\le\\Delta\\le3/2\\). I dette intervallet er planen tillatt og de gamle prisene gir samme verdi: \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.&quot;" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Ressurspriser som sertifikat" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Ressurspriser som sertifikat</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question" data-math-exercise-source="Bruk \(q=(2,1,0)\). Finn kostnaden \(b^Tq\) og prisene \(A^Tq\)<br>
-på ett parti av hver produkttype. Skriv prisene som en vektor.<br>
+<div class="math-exercise-question" data-math-exercise-source="Bruk prisene \((u,v,w)=(2,1,0)\). Finn øvre grense \(9u+9v+4w\) og innsatsprisene \(2u+v+w\) for A og \(u+2v\) for B. Forklar hvorfor en tillatt plan med bidrag lik grensen er optimal.<br>
 <br>
-Kostnad: <input type=&quot;text&quot; id=&quot;math-exercise-2-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Produktpriser: <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span>">Bruk \(q=(2,1,0)\). Finn kostnaden \(b^Tq\) og prisene \(A^Tq\)<br>
-på ett parti av hver produkttype. Skriv prisene som en vektor.<br>
+Øvre grense: <input type=&quot;text&quot; id=&quot;math-exercise-2-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Innsatspriser (A, B): <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-Kostnad: <input type="text" id="math-exercise-2-f1" data-answer="27" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Produktpriser: <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-2-f2" data-answer="5" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-f3" data-answer="4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span></div>
+Utled deretter prisene fra planen \((3,3)\) ved hjelp av komplementær<br>
+slakk: hvilken pris må være null, og hvilke to likninger bestemmer<br>
+de andre prisene? Skriv regningen i egne notater.">Bruk prisene \((u,v,w)=(2,1,0)\). Finn øvre grense \(9u+9v+4w\) og innsatsprisene \(2u+v+w\) for A og \(u+2v\) for B. Forklar hvorfor en tillatt plan med bidrag lik grensen er optimal.<br>
+<br>
+Øvre grense: <input type="text" id="math-exercise-2-f1" data-answer="27" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Innsatspriser (A, B): <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-2-f2" data-answer="5" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-f3" data-answer="4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
+<br>
+Utled deretter prisene fra planen \((3,3)\) ved hjelp av komplementær<br>
+slakk: hvilken pris må være null, og hvilke to likninger bestemmer<br>
+de andre prisene? Skriv regningen i egne notater.</div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5216,22 +5689,16 @@ Kostnad: <input type="text" id="math-exercise-2-f1" data-answer="27" data-vars="
 <div class="math-feedback-area"></div>
 </div>
 </div>
-</section>
-<section id="oppgave-3-ny-kapasitet" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-3-ny-kapasitet">Oppgave 3 – ny kapasitet</h3>
-<div class="math-exercise-cell" id="math-exercise-3" data-label="week11-task-perturb" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nye partier A&quot;,&quot;nye partier B&quot;,&quot;ny fortjeneste&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Oppgave 3 – ny kapasitet&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
+<p><strong>Oppgave 3 – endret kapasitet.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-3" data-label="week11-task-perturb" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;nye partier A&quot;,&quot;nye partier B&quot;,&quot;nytt dekningsbidrag&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Gå i dybden: hvor lenge er prisformelen eksakt?\nNår begge timegrensene fortsatt er aktive, gir systemet\n\\[x=3+\\frac{2\\Delta}{3},\\qquad y=3-\\frac{\\Delta}{3}.\\]\nKravene \\(x,y\\ge0\\) og \\(x\\le4\\) gir \\(-9/2\\le\\Delta\\le3/2\\). I dette intervallet er planen tillatt og de gamle prisene gir samme verdi: \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.&quot;" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Nytt skjæringspunkt" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Nytt skjæringspunkt</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question" data-math-exercise-source="Øk bare høyresiden i første ressursulikhet fra 9 til 10. Anta at<br>
-de to ressursulikhetene fortsatt holder med likhet. Løs dem for<br>
-ny produksjonsplan og beregn fortjenesten. Bruk brøk for \(x,y\).<br>
+<div class="math-exercise-question" data-math-exercise-source="Øk bare maskintimene fra 9 til 10. Anta at de to timegrensene fortsatt er aktive. Løs grenselikningene, kontroller \(x\le4\) og finn det nye dekningsbidraget. Skriv produksjonstallene som brøker.<br>
 <br>
-Plan: <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-3-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-3-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span> &amp;nbsp; Fortjeneste: <input type=&quot;text&quot; id=&quot;math-exercise-3-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Øk bare høyresiden i første ressursulikhet fra 9 til 10. Anta at<br>
-de to ressursulikhetene fortsatt holder med likhet. Løs dem for<br>
-ny produksjonsplan og beregn fortjenesten. Bruk brøk for \(x,y\).<br>
+Plan: <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-3-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-3-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span> &amp;nbsp; Dekningsbidrag: <input type=&quot;text&quot; id=&quot;math-exercise-3-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Øk bare maskintimene fra 9 til 10. Anta at de to timegrensene fortsatt er aktive. Løs grenselikningene, kontroller \(x\le4\) og finn det nye dekningsbidraget. Skriv produksjonstallene som brøker.<br>
 <br>
-Plan: <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-3-f1" data-answer="11/3" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-f2" data-answer="8/3" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span> &nbsp; Fortjeneste: <input type="text" id="math-exercise-3-f3" data-answer="29" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+Plan: <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-3-f1" data-answer="11/3" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-f2" data-answer="8/3" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span> &nbsp; Dekningsbidrag: <input type="text" id="math-exercise-3-f3" data-answer="29" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5245,26 +5712,16 @@ Plan: <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-
 <div class="math-feedback-area"></div>
 </div>
 </div>
-</section>
-<section id="oppgave-4-når-slutter-anslaget" class="level3">
-<h3 class="anchored" data-anchor-id="oppgave-4-når-slutter-anslaget">Oppgave 4 – når slutter anslaget?</h3>
-<div class="math-exercise-cell" id="math-exercise-4" data-label="week11-task-range" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;største kapasitetsøkning&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Oppgave 4 – når slutter anslaget?&quot;" data-fields="[&quot;math-exercise-4-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
-<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Gyldig marginalpris" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Gyldig marginalpris</div>
+<p><strong>Oppgave 4 – prisen har et gyldighetsområde.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-4" data-label="week11-task-range" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;største kapasitetsøkning&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Gå i dybden: hvor lenge er prisformelen eksakt?\nNår begge timegrensene fortsatt er aktive, gir systemet\n\\[x=3+\\frac{2\\Delta}{3},\\qquad y=3-\\frac{\\Delta}{3}.\\]\nKravene \\(x,y\\ge0\\) og \\(x\\le4\\) gir \\(-9/2\\le\\Delta\\le3/2\\). I dette intervallet er planen tillatt og de gamle prisene gir samme verdi: \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.\nOppgave 4 – prisen har et gyldighetsområde.&quot;" data-fields="[&quot;math-exercise-4-f1&quot;]" data-structural-field-labels="[&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Største økning med gammel pris" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Største økning med gammel pris</div>
 
 <div class="math-exercise-body" aria-hidden="true">
-<div class="math-exercise-question" data-math-exercise-source="Sett \(b_1=9+Δ\), mens de øvrige høyresidene er uendret.<br>
-Ved de to aktive ressurslikningene får vi<br>
-\(x=3+2Δ/3, y=3-Δ/3\). Finn den **største**<br>
-verdien av \(Δ\ge0\) som fortsatt oppfyller \(x\le4\).<br>
-Skriv svaret eksakt.<br>
+<div class="math-exercise-question" data-math-exercise-source="Med maskinkapasitet \(9+\Delta\) gir de to aktive timegrensene \(x=3+2\Delta/3\) og \(y=3-\Delta/3\). Finn den største \(\Delta\ge0\) som fortsatt oppfyller \(x\le4\). Hvorfor må prisanslaget undersøkes på nytt etter denne økningen?<br>
 <br>
-Δ = <input type=&quot;text&quot; id=&quot;math-exercise-4-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Sett \(b_1=9+Δ\), mens de øvrige høyresidene er uendret.<br>
-Ved de to aktive ressurslikningene får vi<br>
-\(x=3+2Δ/3, y=3-Δ/3\). Finn den **største**<br>
-verdien av \(Δ\ge0\) som fortsatt oppfyller \(x\le4\).<br>
-Skriv svaret eksakt.<br>
+\(\Delta=\) <input type=&quot;text&quot; id=&quot;math-exercise-4-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Med maskinkapasitet \(9+\Delta\) gir de to aktive timegrensene \(x=3+2\Delta/3\) og \(y=3-\Delta/3\). Finn den største \(\Delta\ge0\) som fortsatt oppfyller \(x\le4\). Hvorfor må prisanslaget undersøkes på nytt etter denne økningen?<br>
 <br>
-Δ = <input type="text" id="math-exercise-4-f1" data-answer="3/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+\(\Delta=\) <input type="text" id="math-exercise-4-f1" data-answer="3/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5278,10 +5735,90 @@ Skriv svaret eksakt.<br>
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<p>I <a href="../pages/project_week11.html">prosjektet</a> undersøker du et større produksjonsvalg der du må begrunne hvilke kapasitetsendringer en ressurspris faktisk kan brukes for.</p>
-</section>
-<section id="kort-oppslag-linprog" class="level3">
-<h3 class="anchored" data-anchor-id="kort-oppslag-linprog">Kort oppslag: <code>linprog</code></h3>
+<p><strong>Oppgave 5 – en øvre grense trenger ikke være skarp.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-5" data-label="week11-task-loose-bound" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;innsatspris A&quot;,&quot;innsatspris B&quot;,&quot;øvre grense&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Gå i dybden: hvor lenge er prisformelen eksakt?\nNår begge timegrensene fortsatt er aktive, gir systemet\n\\[x=3+\\frac{2\\Delta}{3},\\qquad y=3-\\frac{\\Delta}{3}.\\]\nKravene \\(x,y\\ge0\\) og \\(x\\le4\\) gir \\(-9/2\\le\\Delta\\le3/2\\). I dette intervallet er planen tillatt og de gamle prisene gir samme verdi: \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.\nOppgave 4 – prisen har et gyldighetsområde.\nOppgave 5 – en øvre grense trenger ikke være skarp.&quot;" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Gyldig, men løs øvre grense" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Gyldig, men løs øvre grense</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="Prøv \((u,v,w)=(3,1,0)\). Finn innsatsprisene for A og B og den øvre grensen. Sammenlign med planen \((3,3)\): beviser akkurat dette prisvalget at den er optimal?<br>
+<br>
+Innsatspriser (A, B): <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span> &amp;nbsp; Øvre grense: <input type=&quot;text&quot; id=&quot;math-exercise-5-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Prøv \((u,v,w)=(3,1,0)\). Finn innsatsprisene for A og B og den øvre grensen. Sammenlign med planen \((3,3)\): beviser akkurat dette prisvalget at den er optimal?<br>
+<br>
+Innsatspriser (A, B): <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-5-f1" data-answer="7" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-5-f2" data-answer="5" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span> &nbsp; Øvre grense: <input type="text" id="math-exercise-5-f3" data-answer="36" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p><strong>Oppgave 6 – skille mellom ulike utfall.</strong></p>
+<div class="math-exercise-cell" id="math-exercise-6" data-label="week11-task-status" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;motstridende t-krav&quot;,&quot;t uten øvre grense&quot;]" data-vecdir="col" data-context-mode="explicit" data-context-refs="week11-exercise-context" data-context="&quot;Gå i dybden: hvor lenge er prisformelen eksakt?\nNår begge timegrensene fortsatt er aktive, gir systemet\n\\[x=3+\\frac{2\\Delta}{3},\\qquad y=3-\\frac{\\Delta}{3}.\\]\nKravene \\(x,y\\ge0\\) og \\(x\\le4\\) gir \\(-9/2\\le\\Delta\\le3/2\\). I dette intervallet er planen tillatt og de gamle prisene gir samme verdi: \\(P_*(\\Delta)=27+2\\Delta\\). For kapasitetsøkninger gjelder dette til og med \\(\\Delta=3/2\\). Etterpå må vi finne et nytt beste punkt.\nHvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i uke 8. Etter \\(\\Delta=1/2\\) er \\((10/3,17/6)\\) ikke en plan med hele partier.\n11.4 Hva er en ekstra maskintime verdt?\nOppgave 1–2 følger modell og prisbevis; oppgave 3–4 følger kapasitetsforsøket; oppgave 5–6 kontrollerer om en grense eller et problem faktisk gir et optimum. Svar eksakt uten avrunding. Begrunn tolkningene i egne notater. Kodeoppgavene er i 11.6.\nVerkstedet maksimerer \\(P=5x+4y\\) under \\(2x+y\\le9\\), \\(x+2y\\le9\\), \\(x\\le4\\) og \\(x,y\\ge0\\). Slakk er kapasitet minus bruk. Gyldige ikke-negative priser \\((u,v,w)\\) oppfyller \\(2u+v+w\\ge5\\) og \\(u+2v\\ge4\\); da er \\(9u+9v+4w\\) en øvre grense for \\(P\\).\nOppgave 1 – undersøk en plan.\nOppgave 2 – bygg en øvre grense.\nOppgave 3 – endret kapasitet.\nOppgave 4 – prisen har et gyldighetsområde.\nOppgave 5 – en øvre grense trenger ikke være skarp.\nOppgave 6 – skille mellom ulike utfall.&quot;" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Tillatt område og ubegrenset mål" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Tillatt område og ubegrenset mål</div>
+
+<div class="math-exercise-body" aria-hidden="true">
+<div class="math-exercise-question" data-math-exercise-source="Problem I krever \(t\ge0\), \(t\le1\) og \(t\ge2\). Problem II maksimerer \(t\) under bare \(t\ge0\). Skriv **2** for umulig problem og **3** for ubegrenset mål. Forklar i egne notater hvorfor utfallene er forskjellige.<br>
+<br>
+Problem I: <input type=&quot;text&quot; id=&quot;math-exercise-6-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Problem II: <input type=&quot;text&quot; id=&quot;math-exercise-6-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">Problem I krever \(t\ge0\), \(t\le1\) og \(t\ge2\). Problem II maksimerer \(t\) under bare \(t\ge0\). Skriv **2** for umulig problem og **3** for ubegrenset mål. Forklar i egne notater hvorfor utfallene er forskjellige.<br>
+<br>
+Problem I: <input type="text" id="math-exercise-6-f1" data-answer="2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Problem II: <input type="text" id="math-exercise-6-f2" data-answer="3" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+
+<div class="math-exercise-controls">
+  <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
+  <button type="button" class="btn btn-light math-legend-btn">ⓘ&nbsp;Inntastingshjelp</button>
+  <div class="btn-group">
+    <button type="button" class="btn btn-light math-feedback-btn">💬&nbsp;Tilbakemelding</button>
+    <button type="button" class="btn btn-light math-reconfig-btn" title="Endre KI-oppsett">⚙</button>
+  </div>
+</div>
+<div class="math-legend-panel" style="display:none;"></div>
+<div class="math-feedback-area"></div>
+</div>
+</div>
+<p>I <a href="../pages/project_week11.html">prosjektet</a> bruker du ressurspriser på et større produksjonsvalg.</p>
+</div>
+<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
+<div id="uke11-python">
+
+</div>
+<p>Disse korte oppgavene kan kjøres uavhengig av hverandre. Data, importer og funksjonsrammer er gitt; fyll inn bare <code>TODO</code>-stedene. Kontrollene vurderer returverdier uten å vise løsningskode.</p>
+<p><strong>Oppgave 1 – beregn slakk og bidrag.</strong> Returner paret <code>(slack, profit)</code> for en plan <code>z</code>. <code>slack</code> skal ha én verdi per rad i <code>A</code>, også når planen bryter en grense.</p>
+<div class="py-exercise-cell" id="py-exercise-1">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Beregn ressursbruk og dekningsbidrag","forbiddenImports":[],"forbiddenKeywords":[],"id":1,"label":"week11-python-evaluate","showTestHints":false,"starter":"# Bruk NumPy til matrise- og vektorregningen.\nimport numpy as np\n\n# Radene er kapasitetene; kolonnene er produktene A og B.\nA = np.array([[2., 1.], [1., 2.], [1., 0.]])\nb = np.array([9., 9., 4.])\np = np.array([5., 4.])\n\ndef evaluate(z):\n    # TODO: Beregn slakk som kapasitet minus bruk og bidrag som p@z.\n    return None","tests":"assert np.allclose(evaluate(np.array([3., 3.]))[0], [0., 0., 1.])\nassert np.isclose(evaluate(np.array([3., 3.]))[1], 27.)\nassert np.allclose(evaluate(np.array([4., 2.]))[0], [-1., 1., 0.])\nassert np.isclose(evaluate(np.array([4., 2.]))[1], 28.)"});
+</script>
+<p><strong>Oppgave 2 – send modellen til SciPy.</strong> Bruk arrayene til å maksimere bidraget med <code>linprog</code>. Returner hele resultatobjektet, slik at det kan kontrolleres.</p>
+<div class="py-exercise-cell" id="py-exercise-2">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Løs den delbare produksjonsmodellen","forbiddenImports":[],"forbiddenKeywords":[],"id":2,"label":"week11-python-solve","showTestHints":false,"starter":"# NumPy holder dataene, mens SciPy løser LP-modellen.\nimport numpy as np\nfrom scipy.optimize import linprog\n\n# En rad per begrensning og en kolonne per produkt.\np = np.array([5., 4.])\nA = np.array([[2., 1.], [1., 2.], [1., 0.]])\nb = np.array([9., 9., 4.])\n\ndef solve_production():\n    # TODO: Bruk linprog til å maksimere p@z med Az<=b og z>=0.\n    result = None\n    return result","tests":"assert solve_production().success\nassert np.allclose(solve_production().x, [3., 3.], atol=1e-7)\nassert np.isclose(-solve_production().fun, 27., atol=1e-7)\nassert np.allclose(b - A @ solve_production().x, [0., 0., 1.], atol=1e-7)"});
+</script>
+<p><strong>Oppgave 3 – kontroller et prisbevis.</strong> Returner <code>(plan_ok, prices_ok, gap)</code>: om planen oppfyller alle krav, om prisene oppfyller alle prisreglene, og forskjellen mellom øvre grense og planens bidrag. Bruk toleranse <code>1e-9</code> ved sammenligning.</p>
+<div class="py-exercise-cell" id="py-exercise-3">
+  <noscript>
+    Please enable JavaScript to load the interactive exercise.
+  </noscript>
+</div>
+<script>
+(window.__pyExercises = window.__pyExercises || []).push({"caption":"Kontroller en plan og ressurspriser","forbiddenImports":[],"forbiddenKeywords":[],"id":3,"label":"week11-python-certificate","showTestHints":false,"starter":"# Bruk NumPy til å kontrollere ulikhetene koordinatvis.\nimport numpy as np\n\n# Hver rad svarer til én kapasitet, hver kolonne til ett produkt.\np = np.array([5., 4.])\nA = np.array([[2., 1.], [1., 2.], [1., 0.]])\nb = np.array([9., 9., 4.])\n\ndef certificate(z, q):\n    # TODO: Sjekk Az<=b og z>=0, deretter A.T@q>=p og q>=0.\n    # TODO: Beregn gapet b@q-p@z og returner alle tre verdiene.\n    return None","tests":"plan_ok, prices_ok, gap = certificate(np.array([3., 3.]), np.array([2., 1., 0.]))\nassert plan_ok and prices_ok and np.isclose(gap, 0.)\nassert not certificate(np.array([5., 0.]), np.array([2., 1., 0.]))[0]\nassert not certificate(np.array([3., 3.]), np.array([0., 0., 0.]))[1]\nassert np.isclose(certificate(np.array([4., 1.]), np.array([3., 1., 0.]))[2], 12.)"});
+</script>
+<details>
+<summary>
+Kort SciPy-oppslag
+</summary>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -5290,38 +5827,30 @@ Skriv svaret eksakt.<br>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Skriv/les</th>
-<th style="text-align: left;">Betydning i dette eksemplet</th>
+<th style="text-align: left;">Betydning i modellen</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><code>from scipy.optimize import linprog</code></td>
-<td style="text-align: left;">Importen finnes i oppsettet over.</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;"><code>linprog(-p, A_ub=A, b_ub=b, bounds=(0,None), method="highs")</code></td>
-<td style="text-align: left;">Minimer <span class="math inline">\(-p^Tz\)</span> under <span class="math inline">\(Az\le b\)</span> og <span class="math inline">\(z\ge0\)</span>. Med likninger brukes <code>A_eq</code>, <code>b_eq</code>.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>bounds=(0,None)</code></td>
-<td style="text-align: left;">Bruker samme nedre grense 0 for alle variabler; <code>None</code> betyr ingen øvre grense. Ulike grenser kan gis per variabel, for eksempel <code>[(0,4),(0,None)]</code> for <span class="math inline">\(x,y\)</span>.</td>
+<td style="text-align: left;">Minimer <span class="math inline">\(-p^Tz\)</span> under <span class="math inline">\(Az\le b\)</span> og <span class="math inline">\(z\ge0\)</span>. Likninger kan gis med <code>A_eq</code>, <code>b_eq</code>.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><code>result.success</code>, <code>result.status</code>, <code>result.message</code></td>
-<td style="text-align: left;">Les løserens status først; 0 er vellykket, 2 er umulig, 3 er ubegrenset.</td>
+<td style="text-align: left;"><code>result.status</code>, <code>result.success</code>, <code>result.message</code></td>
+<td style="text-align: left;">Undersøk utfallet først; status 0 er vellykket, 2 umulig, 3 ubegrenset.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>result.x</code>, <code>result.fun</code></td>
-<td style="text-align: left;">Les ved vellykket status: variabler og verdi av <strong>minimeringsmålet</strong>. Vår fortjeneste er <code>-result.fun</code>.</td>
+<td style="text-align: left;">Plan og <strong>minimeringsverdi</strong>. Vårt bidrag er <code>-result.fun</code>.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>result.ineqlin.residual</code>, <code>result.ineqlin.marginals</code></td>
-<td style="text-align: left;">Slakk og lokal verdifølsomhet for hver <code>A_ub</code>-rad. Her er marginalene negative fordi målet er <span class="math inline">\(-P\)</span>; ressursprisene for <span class="math inline">\(P\)</span> får motsatt fortegn.</td>
+<td style="text-align: left;">Slakk og lokal verdiendring for minimeringsmålet per rad. Snudd fortegn gir ressursverdien for <span class="math inline">\(P\)</span>.</td>
 </tr>
 </tbody>
 </table>
-<p>I <a href="../pages/uke12.html">uke 12</a> bruker vi samme spørsmål om tillatte retninger og bevis for optimalitet når begrensningene er krumme.</p>
-</section>
+</details>
+<p>I <a href="../pages/uke12.html">uke 12</a> undersøker vi igjen tillatte retninger og optimalitet, også når grensene er krumme.</p>
 </div>
 </div>
 </div>
@@ -10015,6 +10544,781 @@ qpyodideReady
     ensurePyodide().catch(function (e) {
       console.warn('math-exercise: Pyodide preload failed (will retry on the first check):', e);
     });
+  });
+
+})();
+
+</script>
+<script type="text/javascript">
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------------------
+  // Locales – add new languages here
+  // ---------------------------------------------------------------------------
+
+  var LOCALES = {
+    en: {
+      btnCheck:             '<i class="fa-solid fa-check"></i> Check',
+      btnCheckTitle:        'Run checks (Shift+Enter)',
+      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Reset',
+      btnResetTitle:        'Restore starter code',
+      running:              '⏳ Checking…',
+      errorHeader:          '❌ Error in code:',
+      unexpectedError:      '❌ Unexpected error:',
+      stdoutLabel:          'Output:',
+      allPassed: function (n) {
+        return '✅ All ' + n + ' test' + (n === 1 ? '' : 's') + ' passed!';
+      },
+      someFailed: function (p, t) {
+        return '❌ ' + p + ' of ' + t + ' test' + (t === 1 ? '' : 's') + ' passed';
+      },
+      violationsHeader:     '🚫 Not allowed:',
+      // Submission UI
+      submissionTitle:      '📋 Submission',
+      studentIdLabel:       'Student ID',
+      studentIdPlaceholder: 'e.g. s123456',
+      quizIdLabel:          'Quiz ID',
+      quizIdPlaceholder:    'e.g. quiz-01',
+      exportBtn:            '<i class="fa-solid fa-file-export"></i> Export results',
+      outputLabel:          'Copy encoded string and submit:',
+      copyBtn:              '<i class="fa-regular fa-copy"></i> Copy',
+      copyOk:               '<i class="fa-solid fa-check"></i> Copied!',
+      validationError:      'Please fill in Student ID and Quiz ID.',
+      encodingError:        'Error during encoding: ',
+      // Download
+      downloadBtn:          '<i class="fa-solid fa-download"></i> Download as JSON',
+      downloadBtnTitle:     'Save current code and test results for all exercises',
+      downloadHint:         'Saves your code and test results for personal documentation.',
+      downloadFilename:     'exercises-',
+      // Python message templates – use {} as placeholder for str.format()
+      msgForbiddenImport:   "Forbidden import: '{}'",
+      msgForbiddenFunction: "Forbidden function: '{}'",
+      msgForbiddenMethod:   "Forbidden method: '.{}'",
+      msgForbiddenKeyword:  "Forbidden keyword: '{}'",
+      msgAssertionFailed:   'Assertion failed',
+      msgTestError:         'Error: {}',
+      msgSyntaxError:       'Syntax error in tests: {}',
+    },
+    de: {
+      btnCheck:             '<i class="fa-solid fa-check"></i> Überprüfen',
+      btnCheckTitle:        'Code prüfen (Shift+Enter)',
+      btnReset:             '<i class="fa-solid fa-arrows-rotate"></i> Zurücksetzen',
+      btnResetTitle:        'Starter-Code wiederherstellen',
+      running:              '⏳ Überprüfe…',
+      errorHeader:          '❌ Fehler im Code:',
+      unexpectedError:      '❌ Unerwarteter Fehler:',
+      stdoutLabel:          'Ausgabe:',
+      allPassed: function (n) {
+        return '✅ Alle ' + n + ' Test' + (n === 1 ? '' : 's') + ' bestanden!';
+      },
+      someFailed: function (p, t) {
+        return '❌ ' + p + ' von ' + t + ' Test' + (t === 1 ? '' : 's') + ' bestanden';
+      },
+      violationsHeader:     '🚫 Nicht erlaubt:',
+      // Submission UI
+      submissionTitle:      '📋 Abgabe',
+      studentIdLabel:       'Student-ID',
+      studentIdPlaceholder: 'z.B. s123456',
+      quizIdLabel:          'Quiz-ID',
+      quizIdPlaceholder:    'z.B. quiz-01',
+      exportBtn:            '<i class="fa-solid fa-file-export"></i> Ergebnis exportieren',
+      outputLabel:          'Kodierten String kopieren und abgeben:',
+      copyBtn:              '<i class="fa-regular fa-copy"></i> Kopieren',
+      copyOk:               '<i class="fa-solid fa-check"></i> Kopiert!',
+      validationError:      'Bitte Student-ID und Quiz-ID ausfüllen.',
+      encodingError:        'Fehler beim Kodieren: ',
+      // Download
+      downloadBtn:          '<i class="fa-solid fa-download"></i> Als JSON herunterladen',
+      downloadBtnTitle:     'Aktuellen Code und Testergebnisse aller Aufgaben speichern',
+      downloadHint:         'Speichert Code-Eingaben und Testergebnisse zur eigenen Dokumentation.',
+      downloadFilename:     'aufgaben-',
+      // Python message templates
+      msgForbiddenImport:   "Verbotener Import: '{}'",
+      msgForbiddenFunction: "Verbotene Funktion: '{}'",
+      msgForbiddenMethod:   "Verbotene Methode: '.{}'",
+      msgForbiddenKeyword:  "Verbotenes Schlüsselwort: '{}'",
+      msgAssertionFailed:   'Assertion fehlgeschlagen',
+      msgTestError:         'Fehler: {}',
+      msgSyntaxError:       'Syntaxfehler in Tests: {}',
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // Utilities
+  // ---------------------------------------------------------------------------
+
+  // Laedt ein Skript genau einmal. Ist der Tag schon da, aber noch nicht
+  // fertig geladen, wird auf dessen load-Event gewartet - NICHT sofort
+  // aufgeloest. Sonst greift eine zweite Extension auf globals zu, die es
+  // noch gar nicht gibt.
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var existing = document.querySelector('script[src="' + src + '"]');
+      if (existing) {
+        if (existing.dataset.qLoaded === '1') { resolve(); return; }
+        existing.addEventListener('load', function () { resolve(); });
+        existing.addEventListener('error', function () {
+          reject(new Error('Failed to load: ' + src));
+        });
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = function () { s.dataset.qLoaded = '1'; resolve(); };
+      s.onerror = function () { reject(new Error('Failed to load: ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensurePyodide() {
+    // coatless-quarto/pyodide is loading — wait for its promise instead of loading a second instance
+    if (typeof qpyodideInstance !== 'undefined') {
+      window.mainPyodide = await qpyodideInstance;
+      return;
+    }
+    // coatless already finished
+    if (typeof mainPyodide !== 'undefined') return;
+    // Standalone. Gemeinsames Promise, damit math-exercise und py-exercise auf
+    // derselben Seite nicht zwei Pyodide-Instanzen starten oder sich beim
+    // Laden ins Gehege kommen.
+    var cdnBase = 'https://cdn.jsdelivr.net/pyodide/v0.27.2/full/';
+    if (!globalThis.__qExercisePyodide) {
+      globalThis.__qExercisePyodide = (async function () {
+        await loadScript(cdnBase + 'pyodide.js');
+        return await loadPyodide({ indexURL: cdnBase });
+      })();
+    }
+    window.mainPyodide = await globalThis.__qExercisePyodide;
+  }
+
+  // Monaco is normally already loaded by the pyodide extension. If not (standalone
+  // use), we load the AMD loader from CDN and let it fetch the editor itself.
+  async function ensureMonaco() {
+    var cdnBase = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs';
+    if (typeof require === 'undefined') {
+      await loadScript(cdnBase + '/loader.js');
+    }
+    require.config({ paths: { vs: cdnBase } });
+    await new Promise(function (resolve) {
+      require(['vs/editor/editor.main'], resolve);
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Submission state + locale
+  // ---------------------------------------------------------------------------
+
+  var submissionConfig = window.__pyExerciseConfig || { submission: false, submissionKey: 'py-exercise', lang: 'en' };
+  var L = LOCALES[submissionConfig.lang] || LOCALES['en'];
+
+  // Map of exercise label → { label, passed, total, tests: [bool, ...] }
+  var exerciseResults = {};
+
+  // Map of exercise label → Monaco editor instance
+  var exerciseEditors = {};
+
+  // ---------------------------------------------------------------------------
+  // Python: AST-based violation checker
+  // ---------------------------------------------------------------------------
+  var CHECKER_PY = [
+    'import ast as _ast, json as _json',
+    '',
+    '_fi = list(_exercise_forbidden_imports)',
+    '_fk = list(_exercise_forbidden_keywords)',
+    '',
+    '_KW_NODES = {',
+    '    "for":      _ast.For,',
+    '    "while":    _ast.While,',
+    '    "with":     _ast.With,',
+    '    "lambda":   _ast.Lambda,',
+    '    "class":    _ast.ClassDef,',
+    '    "global":   _ast.Global,',
+    '    "nonlocal": _ast.Nonlocal,',
+    '    "try":      _ast.Try,',
+    '    "raise":    _ast.Raise,',
+    '    "del":      _ast.Delete,',
+    '    "assert":   _ast.Assert,',
+    '    "yield":    _ast.Yield,',
+    '}',
+    '',
+    '_violations = []',
+    '_seen = set()',
+    '',
+    'def _add(msg):',
+    '    if msg not in _seen:',
+    '        _seen.add(msg)',
+    '        _violations.append(msg)',
+    '',
+    'try:',
+    '    _tree = _ast.parse(_exercise_student_code)',
+    '    for _node in _ast.walk(_tree):',
+    '        if isinstance(_node, _ast.Import):',
+    '            for _a in _node.names:',
+    '                _top = _a.name.split(".")[0]',
+    '                if _top in _fi:',
+    '                    _add(_msg_forbidden_import.format(_top))',
+    '        elif isinstance(_node, _ast.ImportFrom):',
+    '            if _node.module:',
+    '                _top = _node.module.split(".")[0]',
+    '                if _top in _fi:',
+    '                    _add(_msg_forbidden_import.format(_top))',
+    '        elif isinstance(_node, _ast.Call):',
+    '            if isinstance(_node.func, _ast.Name):',
+    '                if _node.func.id in _fk:',
+    '                    _add(_msg_forbidden_function.format(_node.func.id))',
+    '            elif isinstance(_node.func, _ast.Attribute):',
+    '                if _node.func.attr in _fk:',
+    '                    _add(_msg_forbidden_method.format(_node.func.attr))',
+    '        else:',
+    '            for _kw, _nt in _KW_NODES.items():',
+    '                if _kw in _fk and isinstance(_node, _nt):',
+    '                    _add(_msg_forbidden_keyword.format(_kw))',
+    'except SyntaxError:',
+    '    pass',
+    '',
+    '_json.dumps(_violations)',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Python: main runner
+  // ---------------------------------------------------------------------------
+  var RUNNER_PY = [
+    'import ast, json, io, sys, traceback',
+    '',
+    '_ns = {}',
+    '_results = {"student_error": None, "stdout": "", "tests": []}',
+    '',
+    '_buf = io.StringIO()',
+    '_old_stdout = sys.stdout',
+    'sys.stdout = _buf',
+    'try:',
+    '    exec(compile(_exercise_student_code, "<student>", "exec"), _ns)',
+    '    _results["stdout"] = _buf.getvalue()',
+    'except Exception:',
+    '    _results["student_error"] = traceback.format_exc()',
+    '    _results["stdout"] = _buf.getvalue()',
+    'finally:',
+    '    sys.stdout = _old_stdout',
+    '',
+    'if _results["student_error"] is None:',
+    '    try:',
+    '        _tree = ast.parse(_exercise_test_code)',
+    '        for _stmt in _tree.body:',
+    '            _single = compile(',
+    '                ast.Module(body=[_stmt], type_ignores=[]),',
+    '                "<test>", "exec"',
+    '            )',
+    '            try:',
+    '                exec(_single, _ns)',
+    '                _results["tests"].append({"passed": True})',
+    '            except AssertionError as e:',
+    '                _results["tests"].append({',
+    '                    "passed": False,',
+    '                    "message": str(e) if str(e) else _msg_assertion_failed',
+    '                })',
+    '            except Exception as e:',
+    '                _results["tests"].append({"passed": False, "message": _msg_test_error.format(e)})',
+    '    except SyntaxError as e:',
+    '        _results["student_error"] = _msg_syntax_error.format(e)',
+    '',
+    'json.dumps(_results)',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Python: submission encoder
+  // ---------------------------------------------------------------------------
+  // Encoding: JSON → UTF-8 bytes → XOR with cycling key → Base64.
+  var ENCODER_PY = [
+    'import json as _json, base64 as _b64',
+    '',
+    '_key  = _submission_key.encode("utf-8")',
+    '_raw  = _json.dumps(_submission_payload, ensure_ascii=False).encode("utf-8")',
+    '_xord = bytes(b ^ _key[i % len(_key)] for i, b in enumerate(_raw))',
+    '_b64.b64encode(_xord).decode("ascii")',
+  ].join('\n');
+
+  // ---------------------------------------------------------------------------
+  // Result rendering
+  // ---------------------------------------------------------------------------
+
+  function renderViolations(area, violations) {
+    var items = violations.map(function (v) {
+      return '<li>' + escapeHtml(v) + '</li>';
+    }).join('');
+    area.innerHTML =
+      '<div class="py-exercise-violations">' +
+      '<strong>' + L.violationsHeader + '</strong>' +
+      '<ul class="py-exercise-violation-list">' + items + '</ul>' +
+      '</div>';
+  }
+
+  function renderResult(area, data, label, showHints) {
+    var html = '';
+
+    if (data.student_error) {
+      area.innerHTML =
+        '<div class="py-exercise-error">' +
+        '<strong>' + L.errorHeader + '</strong>' +
+        '<pre>' + escapeHtml(data.student_error) + '</pre>' +
+        '</div>';
+      return;
+    }
+
+    if (data.stdout && data.stdout.trim()) {
+      html +=
+        '<div class="py-exercise-stdout">' +
+        '<span class="py-exercise-stdout-label">' + L.stdoutLabel + '</span>' +
+        '<pre>' + escapeHtml(data.stdout) + '</pre>' +
+        '</div>';
+    }
+
+    var tests   = data.tests || [];
+    var passed  = tests.filter(function (t) { return t.passed; }).length;
+    var total   = tests.length;
+    var allPass = total > 0 && passed === total;
+
+    // Store result for submission export
+    if (label && total > 0) {
+      exerciseResults[label] = {
+        label:  label,
+        passed: passed,
+        total:  total,
+        tests:  tests.map(function (t) { return t.passed; }),
+      };
+    }
+
+    html += '<div class="py-exercise-summary">';
+    if (allPass) {
+      html += '<div class="py-exercise-all-passed">' + L.allPassed(total) + '</div>';
+    } else {
+      html += '<div class="py-exercise-some-failed">' + L.someFailed(passed, total) + '</div>';
+    }
+
+    if (total > 1) {
+      html += '<ul class="py-exercise-test-list">';
+      tests.forEach(function (t, i) {
+        if (t.passed) {
+          html += '<li class="py-test-pass">✓ Test ' + (i + 1) + '</li>';
+        } else {
+          html +=
+            '<li class="py-test-fail">✗ Test ' + (i + 1) +
+            (showHints !== false && t.message ? ': ' + escapeHtml(t.message) : '') +
+            '</li>';
+        }
+      });
+      html += '</ul>';
+    } else if (!allPass && showHints !== false && tests[0] && tests[0].message) {
+      html += '<div class="py-exercise-hint">' + escapeHtml(tests[0].message) + '</div>';
+    }
+
+    html += '</div>';
+    area.innerHTML = html;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Exercise cell setup
+  // ---------------------------------------------------------------------------
+
+  function setupExercise(exerciseData) {
+    var container = document.getElementById('py-exercise-' + exerciseData.id);
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    var starterCode       = exerciseData.starter           || '';
+    var testsCode         = exerciseData.tests             || '';
+    var forbiddenImports  = exerciseData.forbiddenImports  || [];
+    var forbiddenKeywords = exerciseData.forbiddenKeywords || [];
+    var label             = exerciseData.label;
+    var showHints         = exerciseData.showTestHints !== false;
+    // caption is metadata only (used in downloadAll JSON), not rendered visually
+
+    // localStorage key scoped to this page + label
+    var storageKey = 'pyex|' + window.location.pathname + '|' + label;
+    var savedCode = null;
+    try { savedCode = localStorage.getItem(storageKey); } catch (e) {}
+
+    // Monaco editor container
+    var editorContainer = document.createElement('div');
+    editorContainer.className = 'py-exercise-editor';
+    container.appendChild(editorContainer);
+
+    // Button bar
+    var buttonBar = document.createElement('div');
+    buttonBar.className = 'py-exercise-buttons';
+
+    var checkBtn = document.createElement('button');
+    checkBtn.className = 'btn btn-primary py-exercise-check';
+    checkBtn.innerHTML = L.btnCheck;
+    checkBtn.type = 'button';
+    checkBtn.title = L.btnCheckTitle;
+
+    var resetBtn = document.createElement('button');
+    resetBtn.className = 'btn btn-light py-exercise-reset';
+    resetBtn.innerHTML = L.btnReset;
+    resetBtn.type = 'button';
+    resetBtn.title = L.btnResetTitle;
+
+    buttonBar.appendChild(checkBtn);
+    buttonBar.appendChild(resetBtn);
+    container.appendChild(buttonBar);
+
+    var resultArea = document.createElement('div');
+    resultArea.className = 'py-exercise-result';
+    container.appendChild(resultArea);
+
+    var editor;
+    require(['vs/editor/editor.main'], function () {
+      editor = monaco.editor.create(editorContainer, {
+        value: savedCode !== null ? savedCode : starterCode,
+        language: 'python',
+        theme: 'vs-light',
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        minimap: { enabled: false },
+        fontSize: 14,
+        renderLineHighlight: 'none',
+        hideCursorInOverviewRuler: true,
+      });
+
+      // Store reference so downloadAll() can read the current code later
+      exerciseEditors[label] = editor;
+
+      var updateHeight = function () {
+        var h = Math.max(80, editor.getContentHeight());
+        editorContainer.style.height = h + 'px';
+        editor.layout();
+      };
+      editor.onDidContentSizeChange(updateHeight);
+      updateHeight();
+
+      // Persist code across reloads
+      var saveTimer;
+      editor.onDidChangeModelContent(function () {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(function () {
+          try { localStorage.setItem(storageKey, editor.getValue()); } catch (e) {}
+        }, 500);
+      });
+
+      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, runCheck);
+    });
+
+    async function runCheck() {
+      if (!editor) return;
+
+      resultArea.innerHTML = '<div class="py-exercise-running">' + L.running + '</div>';
+      checkBtn.disabled = true;
+      resetBtn.disabled = true;
+
+      var studentCode = editor.getValue();
+
+      try {
+        mainPyodide.globals.set('_exercise_student_code',  studentCode);
+        mainPyodide.globals.set('_exercise_test_code',     testsCode);
+        mainPyodide.globals.set('_exercise_forbidden_imports',  mainPyodide.toPy(forbiddenImports));
+        mainPyodide.globals.set('_exercise_forbidden_keywords', mainPyodide.toPy(forbiddenKeywords));
+
+        if (forbiddenImports.length > 0 || forbiddenKeywords.length > 0) {
+          var violationsRaw = await mainPyodide.runPythonAsync(CHECKER_PY);
+          var violations = JSON.parse(violationsRaw);
+          if (violations.length > 0) {
+            renderViolations(resultArea, violations);
+            return;
+          }
+        }
+
+        await mainPyodide.loadPackagesFromImports(studentCode);
+        var raw  = await mainPyodide.runPythonAsync(RUNNER_PY);
+        var data = JSON.parse(raw);
+        renderResult(resultArea, data, label, showHints);
+
+      } catch (err) {
+        resultArea.innerHTML =
+          '<div class="py-exercise-error">' +
+          '<strong>' + L.unexpectedError + '</strong>' +
+          '<pre>' + escapeHtml(String(err)) + '</pre>' +
+          '</div>';
+      } finally {
+        checkBtn.disabled = false;
+        resetBtn.disabled = false;
+      }
+    }
+
+    checkBtn.onclick = runCheck;
+    resetBtn.onclick = function () {
+      if (editor) editor.setValue(starterCode);
+      try { localStorage.removeItem(storageKey); } catch (e) {}
+      resultArea.innerHTML = '';
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Submission UI
+  // ---------------------------------------------------------------------------
+
+  function buildSubmissionHeader() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-submission-header';
+    wrap.innerHTML =
+      '<div class="py-submission-header-inner">' +
+        '<h5 class="py-submission-title">' + L.submissionTitle + '</h5>' +
+        '<div class="py-submission-fields">' +
+          '<div class="py-submission-field">' +
+            '<label for="py-submission-student-id">' + L.studentIdLabel + '</label>' +
+            '<input type="text" id="py-submission-student-id" ' +
+                   'placeholder="' + escapeHtml(L.studentIdPlaceholder) + '" autocomplete="off">' +
+          '</div>' +
+          '<div class="py-submission-field">' +
+            '<label for="py-submission-quiz-id">' + L.quizIdLabel + '</label>' +
+            '<input type="text" id="py-submission-quiz-id" ' +
+                   'placeholder="' + escapeHtml(L.quizIdPlaceholder) + '" autocomplete="off">' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    return wrap;
+  }
+
+  function buildSubmissionFooter() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-submission-footer';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-success py-submission-export-btn';
+    btn.innerHTML = L.exportBtn;
+    btn.type = 'button';
+    btn.onclick = exportResults;
+
+    var msg = document.createElement('div');
+    msg.className = 'py-submission-msg';
+    msg.id = 'py-submission-msg';
+
+    var outWrap = document.createElement('div');
+    outWrap.className = 'py-submission-output-wrap';
+    outWrap.id = 'py-submission-output-wrap';
+    outWrap.style.display = 'none';
+
+    var outLabelRow = document.createElement('div');
+    outLabelRow.className = 'py-submission-output-labelrow';
+
+    var outLabel = document.createElement('span');
+    outLabel.className = 'py-submission-output-label';
+    outLabel.textContent = L.outputLabel;
+
+    var copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-light btn-sm py-submission-copy-btn';
+    copyBtn.id = 'py-submission-copy-btn';
+    copyBtn.type = 'button';
+    copyBtn.innerHTML = L.copyBtn;
+    copyBtn.onclick = function () {
+      var text = (document.getElementById('py-submission-output') || {}).value || '';
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(function () {
+        copyBtn.innerHTML = L.copyOk;
+        copyBtn.classList.add('py-submission-copy-ok');
+        setTimeout(function () {
+          copyBtn.innerHTML = L.copyBtn;
+          copyBtn.classList.remove('py-submission-copy-ok');
+        }, 2000);
+      });
+    };
+
+    outLabelRow.appendChild(outLabel);
+    outLabelRow.appendChild(copyBtn);
+
+    var textarea = document.createElement('textarea');
+    textarea.className = 'py-submission-output';
+    textarea.id = 'py-submission-output';
+    textarea.readOnly = true;
+    textarea.rows = 4;
+    textarea.onclick = function () { this.select(); };
+
+    outWrap.appendChild(outLabelRow);
+    outWrap.appendChild(textarea);
+
+    wrap.appendChild(btn);
+    wrap.appendChild(msg);
+    wrap.appendChild(outWrap);
+    return wrap;
+  }
+
+  async function exportResults() {
+    var studentId = (document.getElementById('py-submission-student-id') || {}).value;
+    var quizId    = (document.getElementById('py-submission-quiz-id')    || {}).value;
+
+    studentId = (studentId || '').trim();
+    quizId    = (quizId    || '').trim();
+
+    var msgEl     = document.getElementById('py-submission-msg');
+    var outWrap   = document.getElementById('py-submission-output-wrap');
+    var outArea   = document.getElementById('py-submission-output');
+
+    if (!studentId || !quizId) {
+      if (msgEl) {
+        msgEl.innerHTML =
+          '<div class="py-submission-error">' + escapeHtml(L.validationError) + '</div>';
+      }
+      if (outWrap) outWrap.style.display = 'none';
+      return;
+    }
+    if (msgEl) msgEl.innerHTML = '';
+
+    // Collect results for every registered exercise (unattempted → 0/total)
+    var allResults = (window.__pyExercises || []).map(function (ex) {
+      return exerciseResults[ex.label] || {
+        label:  ex.label,
+        passed: 0,
+        total:  0,        // 0 = not attempted
+        tests:  [],
+      };
+    });
+
+    var payload = {
+      v:       1,
+      sid:     studentId,
+      qid:     quizId,
+      ts:      new Date().toISOString(),
+      results: allResults,
+    };
+
+    try {
+      mainPyodide.globals.set('_submission_payload', mainPyodide.toPy(payload));
+      mainPyodide.globals.set('_submission_key',     submissionConfig.submissionKey || 'py-exercise');
+
+      var encoded = await mainPyodide.runPythonAsync(ENCODER_PY);
+
+      if (outArea)  outArea.value = encoded;
+      if (outWrap)  outWrap.style.display = '';
+      if (msgEl)    msgEl.innerHTML = '';
+
+    } catch (err) {
+      if (msgEl) {
+        msgEl.innerHTML =
+          '<div class="py-submission-error">' +
+          escapeHtml(L.encodingError) + escapeHtml(String(err)) +
+          '</div>';
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Download (personal documentation)
+  // ---------------------------------------------------------------------------
+
+  function downloadAll() {
+    var exercises = (window.__pyExercises || []).map(function (ex) {
+      var editor = exerciseEditors[ex.label];
+      var result = exerciseResults[ex.label] || null;
+      return {
+        label:   ex.label,
+        caption: ex.caption || null,
+        code:    editor ? editor.getValue() : ex.starter,
+        result:  result,
+      };
+    });
+
+    var data = {
+      exported_at: new Date().toISOString(),
+      exercises:   exercises,
+    };
+
+    var json = JSON.stringify(data, null, 2);
+    var blob = new Blob([json], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href     = url;
+    a.download = L.downloadFilename + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function buildDownloadSection() {
+    var wrap = document.createElement('div');
+    wrap.className = 'py-download-section';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-outline-secondary py-download-btn';
+    btn.innerHTML = L.downloadBtn;
+    btn.type = 'button';
+    btn.title = L.downloadBtnTitle;
+    btn.onclick = downloadAll;
+
+    var hint = document.createElement('span');
+    hint.className = 'py-download-hint';
+    hint.textContent = L.downloadHint;
+
+    wrap.appendChild(btn);
+    wrap.appendChild(hint);
+    return wrap;
+  }
+
+  function initDownload() {
+    var cells = document.querySelectorAll('.py-exercise-cell');
+    if (cells.length === 0) return;
+
+    // If a submission footer exists, append the download section to it (with separator).
+    // Otherwise create a standalone footer after the last exercise cell.
+    var subFooter = document.querySelector('.py-submission-footer');
+    if (subFooter) {
+      var sep = document.createElement('hr');
+      sep.className = 'py-footer-sep';
+      subFooter.appendChild(sep);
+      subFooter.appendChild(buildDownloadSection());
+    } else {
+      var footer = document.createElement('div');
+      footer.className = 'py-download-footer';
+      footer.appendChild(buildDownloadSection());
+      var lastCell = cells[cells.length - 1];
+      lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
+    }
+  }
+
+  function initSubmission() {
+    if (!submissionConfig.submission) return;
+
+    var cells = document.querySelectorAll('.py-exercise-cell');
+    if (cells.length === 0) return;
+
+    // Header before the first exercise cell
+    var header = buildSubmissionHeader();
+    cells[0].parentNode.insertBefore(header, cells[0]);
+
+    // Footer after the last exercise cell
+    var lastCell = cells[cells.length - 1];
+    var footer = buildSubmissionFooter();
+    lastCell.parentNode.insertBefore(footer, lastCell.nextSibling);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Init
+  // ---------------------------------------------------------------------------
+  document.addEventListener('DOMContentLoaded', async function () {
+    await ensurePyodide();
+    await ensureMonaco();
+
+    mainPyodide.globals.set('_msg_forbidden_import',   L.msgForbiddenImport);
+    mainPyodide.globals.set('_msg_forbidden_function', L.msgForbiddenFunction);
+    mainPyodide.globals.set('_msg_forbidden_method',   L.msgForbiddenMethod);
+    mainPyodide.globals.set('_msg_forbidden_keyword',  L.msgForbiddenKeyword);
+    mainPyodide.globals.set('_msg_assertion_failed',   L.msgAssertionFailed);
+    mainPyodide.globals.set('_msg_test_error',         L.msgTestError);
+    mainPyodide.globals.set('_msg_syntax_error',       L.msgSyntaxError);
+
+    var exercises = window.__pyExercises || [];
+    exercises.forEach(setupExercise);
+    initSubmission();
+    initDownload();
   });
 
 })();
