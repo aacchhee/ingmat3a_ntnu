@@ -58,17 +58,6 @@ Koden lagres ikke automatisk. Kopier kode du vil beholde til en lokal fil, VS Co
 
 ## README
 
-### Forfatter og lisens
-
-**Forfatter:** Andrey Chesnokov, NTNU —
-[andrey.chesnokov@ntnu.no](mailto:andrey.chesnokov@ntnu.no).
-
-Det egenutviklede kursmaterialet, inkludert tekst, figurer, oppgaver og kode,
-er publisert under [CC BY-SA 4.0 – Navngivelse-DelPåSammeVilkår](https://creativecommons.org/licenses/by-sa/4.0/deed.no),
-med mindre annet er oppgitt. Hele lisensen finnes i
-[LICENSE i repoet](https://github.com/aacchhee/ingmat3a_ntnu/blob/main/LICENSE).
-Tredjepartsmateriale og avhengigheter beholder sine egne lisenser og krediteringer.
-
 ### KI-feedback
 
 #### Hvordan få KI-tilbakemeldingen?
@@ -113,5 +102,16 @@ Ikke skriv nøkkelen i Python-kode, del den med andre eller legg den i Git. Fjer
 Åpne helst en [sak på GitHub](https://github.com/aacchhee/ingmat3a_ntnu/issues) med sidenavn, oppgave, hva du gjorde, og hva du forventet skulle skje. Skjermbilde og nettlesernavn er nyttig ved visningsproblemer. Du kan også rette problemet i en fork og sende en pull request.
 
 Hvis du ikke kan bruke GitHub, kan du sende e-post til <andrey.chesnokov@ntnu.no>.
+
+### Forfatter og lisens
+
+**Forfatter:** Andrey Chesnokov, NTNU —
+[andrey.chesnokov@ntnu.no](mailto:andrey.chesnokov@ntnu.no).
+
+Det egenutviklede kursmaterialet, inkludert tekst, figurer, oppgaver og kode,
+er publisert under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/deed.en),
+med mindre annet er oppgitt. Hele lisensen finnes i
+[LICENSE i repoet](https://github.com/aacchhee/ingmat3a_ntnu/blob/main/LICENSE).
+Tredjepartsmateriale og avhengigheter beholder sine egne lisenser og krediteringer.
 
 :::

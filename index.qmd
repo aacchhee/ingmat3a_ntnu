@@ -5,7 +5,7 @@ format: html
 
 Emnet går fra tall og beregningsfeil via lineær algebra til optimering.
 Vi bruker små regneeksempler, figurer og Python-forsøk til å utvikle og
-kontrollere metodene. Klikk på uken eller spørsmålet for å åpne undervisningssiden.
+kontrollere metodene. Klikk på uken for å åpne undervisningssiden.
 
 ::: {.course-overview}
 
@@ -13,18 +13,18 @@ kontrollere metodene. Klikk på uken eller spørsmålet for å åpne undervisnin
 
 | Uke | Spørsmålet vi starter med | Matematisk innhold og anvendelser |
 |:---|:---|:---|
-| [Uke 1](pages/page2.qmd) | [Hvordan kan vi regne raskere, og hvorfor blir ikke 0,1 + 0,2 alltid nøyaktig 0,3 på en datamaskin?](pages/page2.qmd) | Absolutt og relativ feil, regneoperasjoner og Horners metode. Binære tall, IEEE 754-flyttall, avrunding, maskinepsilon og tap av signifikans. Vi undersøker både beregningskostnad og numerisk stabilitet. |
-| [Uke 2](pages/page4.qmd) | [Kan vi finne kvadratroten av 2 ved å gjenta en enkel regneregel – og hvordan vet vi når svaret er nøyaktig nok?](pages/page4.qmd) | Fikspunktiterasjon, spindelvevplott, lokal og global konvergens og konvergensfart. Feil, residual, skrittlengde og toleranse brukes til å bygge en robust iterasjonsalgoritme. Newtons iterasjon for kvadratrøtter gir et raskt eksempel. |
+| [Uke 1](pages/page2.qmd) | **Hvordan kan vi regne raskere, og hvorfor blir ikke 0,1 + 0,2 alltid nøyaktig 0,3 på en datamaskin?** | Absolutt og relativ feil, regneoperasjoner og Horners metode. Binære tall, IEEE 754-flyttall, avrunding, maskinepsilon og tap av signifikans. Vi undersøker både beregningskostnad og numerisk stabilitet. |
+| [Uke 2](pages/page4.qmd) | **Kan vi finne kvadratroten av 2 ved å gjenta en enkel regneregel – og hvordan vet vi når svaret er nøyaktig nok?** | Fikspunktiterasjon, spindelvevplott, lokal og global konvergens og konvergensfart. Feil, residual, skrittlengde og toleranse brukes til å bygge en robust iterasjonsalgoritme. Newtons iterasjon for kvadratrøtter gir et raskt eksempel. |
 
 ## Numerisk lineær algebra
 
 | Uke | Spørsmålet vi starter med | Matematisk innhold og anvendelser |
 |:---|:---|:---|
-| [Uke 3](pages/uke3.qmd) | [Kan et bilde av et sjakkbrett og et ensfarget bilde bli helt like når vi gjør dem mindre?](pages/uke3.qmd) | Lineære transformasjoner, vektorrom, basis, koordinater og lineær avhengighet. Kolonnerom, nullrom og rang forklarer hvilken informasjon en bildetransformasjon beholder eller mister. De samme ideene brukes på polynomer. |
-| [Uke 4](pages/uke4.qmd) | [Hvordan finner vi den rette linjen som samlet sett ligger nærmest en samling målepunkter?](pages/uke4.qmd) | Indreprodukt, ortogonalitet og projeksjon leder til Gram–Schmidt, QR-faktorisering og minste kvadrater. Vi undersøker nesten avhengige kolonner, tap av ortogonalitet og tilpasning av polynomer til data. |
-| [Uke 5](pages/uke5.qmd) | [Hvordan kan lenkene mellom nettsider brukes til å lage en rangering av sidene?](pages/uke5.qmd) | Egenverdier, egenvektorer, diagonalisering og spektralteoremet forklarer gjentatte matriseprodukter. Potensmetoden finner en dominerende retning. PageRank viser hvordan stasjonære fordelinger og tilfeldige hopp kan brukes til å rangere nettsider. |
-| [Uke 6](pages/uke6.qmd) | [Kan vi løse tusenvis av likninger ved å begynne med et grovt svar og forbedre det litt om gangen?](pages/uke6.qmd) | Jacobi, Gauss–Seidel og konvergens. Residual, foroverfeil, bakoverfeil, matrisenorm og kondisjonstall. Vi tolker et SPD-system som et minimumsproblem og bygger bratteste nedstigning, linjesøk og konjugert gradient (CG). Prosjektet undersøker prekondisjonering. |
-| [Uke 7](pages/uke7.qmd) | [Hvor mye kan vi komprimere et bilde før viktige detaljer blir borte?](pages/uke7.qmd) | Singulærverdidekomposisjon (SVD), ortogonale basiser, rang og kondisjonering. Lavrangsapproksimasjoner og feil målt med Frobeniusnorm brukes til bildekompresjon. Pseudoinvers og trunkert SVD knytter minste kvadrater til følsom rekonstruksjon og støyfiltrering. |
+| [Uke 3](pages/uke3.qmd) | **Kan et bilde av et sjakkbrett og et ensfarget bilde bli helt like når vi gjør dem mindre?** | Lineære transformasjoner, vektorrom, basis, koordinater og lineær avhengighet. Kolonnerom, nullrom og rang forklarer hvilken informasjon en bildetransformasjon beholder eller mister. De samme ideene brukes på polynomer. |
+| [Uke 4](pages/uke4.qmd) | **Hvordan finner vi den rette linjen som samlet sett ligger nærmest en samling målepunkter?** | Indreprodukt, ortogonalitet og projeksjon leder til Gram–Schmidt, QR-faktorisering og minste kvadrater. Vi undersøker nesten avhengige kolonner, tap av ortogonalitet og tilpasning av polynomer til data. |
+| [Uke 5](pages/uke5.qmd) | **Hvordan kan lenkene mellom nettsider brukes til å lage en rangering av sidene?** | Egenverdier, egenvektorer, diagonalisering og spektralteoremet forklarer gjentatte matriseprodukter. Potensmetoden finner en dominerende retning. PageRank viser hvordan stasjonære fordelinger og tilfeldige hopp kan brukes til å rangere nettsider. |
+| [Uke 6](pages/uke6.qmd) | **Kan vi løse tusenvis av likninger ved å begynne med et grovt svar og forbedre det litt om gangen?** | Jacobi, Gauss–Seidel og konvergens. Residual, foroverfeil, bakoverfeil, matrisenorm og kondisjonstall. Vi tolker et SPD-system som et minimumsproblem og bygger bratteste nedstigning, linjesøk og konjugert gradient (CG). Prosjektet undersøker prekondisjonering. |
+| [Uke 7](pages/uke7.qmd) | **Hvor mye kan vi komprimere et bilde før viktige detaljer blir borte?** | Singulærverdidekomposisjon (SVD), ortogonale basiser, rang og kondisjonering. Lavrangsapproksimasjoner og feil målt med Frobeniusnorm brukes til bildekompresjon. Pseudoinvers og trunkert SVD knytter minste kvadrater til følsom rekonstruksjon og støyfiltrering. |
 
 ## Optimering
 
@@ -34,10 +34,10 @@ Minste kvadraters metode fra [uke 4](pages/uke4.qmd) og
 
 | Uke | Spørsmålet vi starter med | Matematisk innhold og anvendelser |
 |:---|:---|:---|
-| [Uke 8](pages/uke8.qmd) | [Hva bør et verksted bygge og reparere for å tjene mest når både tid og deler er begrenset?](pages/uke8.qmd) | Målfunksjon, tillatt område og lokale og globale ekstremalpunkter. Gradient og Hessian brukes til å undersøke kandidater; kompakthet gir eksistens og konveksitet gir globale garantier. Vi introduserer SciPys `minimize`. |
-| [Uke 9](pages/uke9.qmd) | [Hvordan kan vi lete etter det laveste punktet i et landskap når vi bare får måle høyden noen få steder?](pages/uke9.qmd) | Gittersøk, tilfeldig søk, kompassøk og gradientmetoden. Linjesøk, Armijo-test og stoppkriterier skiller valg av retning fra valg av steglengde. Vi sammenligner søkebaner og bruker SciPy til søk langs én linje. |
-| [Uke 10](pages/uke10.qmd) | [Kan vi finne bunnen av en dal raskere ved å bruke både hvor bratt bakken er og hvordan helningen endrer seg?](pages/uke10.qmd) | Newtons metode og lokale kvadratiske modeller. Cholesky-faktorisering løser SPD-systemet som gir Newton-retningen; CG er et iterativt alternativ. Negativ krumning, regularisering og demping forklarer hvorfor retning og steglengde må kontrolleres. Vi sammenligner med SciPy. |
-| [Uke 11](pages/uke11.qmd) | [Et verksted lager to produkter med de samme maskinene. Hva bør det produsere, og hvor mye er én ekstra maskintime verdt?](pages/uke11.qmd) | Lineær programmering, tillatte hjørnepunkter og slakk. Dualitet og komplementær slakkhet gir optimalitetskontroller; ressurspriser beskriver verdien av små kapasitetsendringer. En produksjonsmodell løses med SciPys `linprog`. |
-| [Uke 12](pages/uke12.qmd) | [Hvordan finner vi punktet på en sirkel som ligger nærmest et punkt utenfor sirkelen?](pages/uke12.qmd) | Likhetsbetingelser, tangent, normal og Lagranges multiplikatorer. Vi klassifiserer kandidater, undersøker regularitet og degenerasjon og finner globale nedre grenser. SLSQP-svar kontrolleres mot både bibetingelsen og stasjonaritetskravet. |
+| [Uke 8](pages/uke8.qmd) | **Hva bør et verksted bygge og reparere for å tjene mest når både tid og deler er begrenset?** | Målfunksjon, tillatt område og lokale og globale ekstremalpunkter. Gradient og Hessian brukes til å undersøke kandidater; kompakthet gir eksistens og konveksitet gir globale garantier. Vi introduserer SciPys `minimize`. |
+| [Uke 9](pages/uke9.qmd) | **Hvordan kan vi lete etter det laveste punktet i et landskap når vi bare får måle høyden noen få steder?** | Gittersøk, tilfeldig søk, kompassøk og gradientmetoden. Linjesøk, Armijo-test og stoppkriterier skiller valg av retning fra valg av steglengde. Vi sammenligner søkebaner og bruker SciPy til søk langs én linje. |
+| [Uke 10](pages/uke10.qmd) | **Kan vi finne bunnen av en dal raskere ved å bruke både hvor bratt bakken er og hvordan helningen endrer seg?** | Newtons metode og lokale kvadratiske modeller. Cholesky-faktorisering løser SPD-systemet som gir Newton-retningen; CG er et iterativt alternativ. Negativ krumning, regularisering og demping forklarer hvorfor retning og steglengde må kontrolleres. Vi sammenligner med SciPy. |
+| [Uke 11](pages/uke11.qmd) | **Et verksted lager to produkter med de samme maskinene. Hva bør det produsere, og hvor mye er én ekstra maskintime verdt?** | Lineær programmering, tillatte hjørnepunkter og slakk. Dualitet og komplementær slakkhet gir optimalitetskontroller; ressurspriser beskriver verdien av små kapasitetsendringer. En produksjonsmodell løses med SciPys `linprog`. |
+| [Uke 12](pages/uke12.qmd) | **Hvordan finner vi punktet på en sirkel som ligger nærmest et punkt utenfor sirkelen?** | Likhetsbetingelser, tangent, normal og Lagranges multiplikatorer. Vi klassifiserer kandidater, undersøker regularitet og degenerasjon og finner globale nedre grenser. SLSQP-svar kontrolleres mot både bibetingelsen og stasjonaritetskravet. |
 
 :::

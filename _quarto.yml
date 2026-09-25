@@ -14,7 +14,7 @@ website:
   page-footer:
     border: true
     center: >-
-      Publisert under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.no).
+      Publisert under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
   sidebar:
     style: "docked"
     contents:

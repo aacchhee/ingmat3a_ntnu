@@ -8,7 +8,7 @@ Quarto course notes for IMAX3011. The website combines explanatory text, browser
 
 Unless otherwise indicated, the original material in this repository and on
 the course website, including text, figures, exercises and code, is licensed
-under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/).
+under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
 The full license text is in [LICENSE](LICENSE).
 
 Third-party material and dependencies retain their own attribution and licenses.
