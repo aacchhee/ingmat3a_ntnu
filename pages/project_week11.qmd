@@ -1,0 +1,9 @@
+---
+title: "Prosjekt 11 – Produksjonsplan og ressurspriser"
+resources:
+  - ../assets/project_week11.py
+---
+
+{{< include ../_includes/projects/week11_setup.md >}}
+
+{{< include ../_includes/projects/week11_linear_programming.md >}}

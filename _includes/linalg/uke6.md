@@ -1024,6 +1024,12 @@ nøyaktig én løsning, og den er det eneste punktet der $\phi$ er minst.
 Vi trenger altså ikke gjenta kvadratfullføringen for hver ny matrise.
 Det generelle beviset og et eksempel med tre ukjente står i «Gå i dybden».
 
+Et SPD-system kan også løses direkte med **Cholesky-faktorisering**:
+vi skriver $A=LL^T$ og løser først $Ly=b$, så $L^Tx=y$.
+Her er $L$ nedre triangulær, altså null over diagonalen.
+I [uke 10](uke10.qmd#uke10-cholesky) regner vi gjennom denne metoden
+og bruker den til å finne Newton-retninger.
+
 Fra uke 5 har vi også en måte å kontrollere kravet på: en reell
 symmetrisk matrise er positivt definit akkurat når alle egenverdiene
 er positive. I en ortonormal egenvektorbasis er disse egenverdiene

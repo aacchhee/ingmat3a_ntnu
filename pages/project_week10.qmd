@@ -1,0 +1,7 @@
+---
+title: "Prosjekt 10 – Newton, startpunkt og skala"
+---
+
+{{< include ../_includes/projects/week10_setup.md >}}
+
+{{< include ../_includes/projects/week10_optimization.md >}}
