@@ -1,0 +1,85 @@
+FINAL STATUS: APPROVED after corrections and independent Astra XHIGH recheck.
+Content review of clarity, terminology, worked examples, and mathematical correctness.
+Browser verification is recorded separately below.
+
+# Week 12 independent clarity and mathematical audit
+
+Reviewed `_includes/optimization/uke12.md` and `week12_setup.md` in `optim_repo` on 2026-09-25. This is a read-only content audit; no course content or commits were changed. Line references refer to the reviewed source snapshot. The root agent is separately handling visible setup, autorun integration and browser cold-start validation; those pending tasks are not findings here.
+
+## Verdict
+
+The revised week addresses the reported crowded opening and is pedagogically coherent. Two small corrections below are required. No further restructuring or substantial expansion is needed.
+
+The 12.1 opening now separates the model, feasible sample points, and the purpose of the plot. The subsequent three algebra steps and candidate table provide a clear route from the Lagrange equations to the result. The distinction between sampling, stationarity and a global proof is maintained throughout the week.
+
+## Required corrections
+
+### R1 — Wrong equation referenced in the exclusion of zero coordinates
+
+**Location:** `uke12.md`, line 215, section 12.2.
+
+The text says that if `x = 0`, the **second** equation gives `y = 0`. The displayed equations are
+
+`y + 2 λ x = 0`, `x + 2 λ y = 0`.
+
+It is the **first** equation that immediately gives `y = 0`. The second would only give `λ y = 0`, and `λ ≠ 0` has not yet been established. The candidates and subsequent calculations are correct.
+
+**Minimal correction:** replace “den andre likningen” with “den første likningen”. For extra explicitness, the next clause may say that `y = 0` similarly makes the second equation give `x = 0`.
+
+### R2 — The cited lower bound does not also establish the farthest-point classification
+
+**Location:** `uke12.md`, lines 438–442, 12.3 reading-depth panel.
+
+The panel identifies both the nearest and farthest stationary points and ends with “Den globale ulikheten ovenfor gjør det.” The displayed inequality above proves the nearest point is a global minimum, but only states a **lower** bound for `F`; it does not establish the farthest point as a global maximum. The claimed classifications themselves are correct.
+
+**Compact correction:** replace the final sentence with the two-sided bound:
+
+“Fra $-\sqrt5\le a\cdot z\le\sqrt5$ får vi
+$\tfrac12(\sqrt5-1)^2\le F(z)\le\tfrac12(\sqrt5+1)^2$;
+de to punktene oppnår hver sin grense.”
+
+This supplies the missing reasoning with one short extension inside the optional panel.
+
+## Clarity checks
+
+| Area | Assessment |
+|---|---|
+| 12.1 opening | The role table isolates choice, objective and constraint. The second table separates each feasible point, constraint check and objective value. The following text explicitly says three samples cannot prove optimality. |
+| Circle experiment | Its purpose is stated before the cell: compare the feasible curve with level lines. The reader is told to inspect the contact at `c = √5`. Comments divide sampling, plotting and the exact reference marker. |
+| 12.1 derivation | Tangent, unit tangent, normal, regularity, multiplier, Lagrange function and constrained stationarity are introduced with concrete circle examples. Algebra is broken into three steps, then candidate values and multipliers are tabulated. Cauchy–Schwarz is stated and applied. |
+| Product experiment | The reader knows why the four points are tested and what zero in the final column means. The output interpretation gives both values; the candidate table and global inequalities classify them. R1 is the only algebraic wording defect. |
+| Numerical solve | Choice, objective and constraint are explicit. `eq`, `fun`, `jac` and callback are explained before use. Both residuals are defined, their distinct purposes explained, and a scale appropriate to this example is given before execution. Output values are interpreted afterwards. |
+| Iteration plot | The paragraph before the cell tells the reader what to inspect and explains that line segments show order, not a feasible trajectory. It also explains why intermediate infeasible points may have a smaller objective. |
+| Degeneracy experiment | The feasible set is identified first, the vanishing normal is computed analytically, and the reader is instructed to compare the same residual across three multipliers. The finite numerical sample illustrates an already established all-multipliers argument. |
+| Lower-bound example | The three numbered steps connect the selected multiplier, positive definite quadratic, feasible minimizer and attained global bound. The relation to week 11 is useful and sign conventions are consistent. |
+| Exercises | All six numerical answer sets are mathematically consistent. Tasks correspond to the taught examples and ask for reasoning in notes. Python tasks contain their own imports and definitions, with useful TODO comments and meaningful checks. |
+| Scope and length | The main path has a manageable progression: geometry, candidates, numerical checks, failure of regularity, and a global bound. Multiple constraints, constrained Hessians and the general dual formula remain in depth panels. More general theory in the main path would weaken the current pacing. |
+
+Important inherited vocabulary is supported by prior-week references: gradient/Hessian, compactness, residuals and SPD. New central vocabulary is defined locally and paired with examples. An optional, non-blocking refinement would explain `inf` in the 12.4 depth panel as “største nedre grense” before using it; this does not need a new example or a main-path addition.
+
+## Independent verification
+
+Executed the setup cell and all five `pyodide-python` experiment cells sequentially in a fresh native Python namespace with a noninteractive Matplotlib backend. All completed successfully. This verifies the numerical content, not the browser runtime.
+
+- Circle sample extrema: approximately `±2.236067`, consistent with exact `±√5`.
+- Product examples: values `±0.5`, all four tangent derivatives zero.
+- SLSQP solution: `(0.89442719, 0.44721360)`, objective `0.7639320225`, multiplier `0.61803399` under `L = F + λh`.
+- Constraint error: `2.22e-15`; stationarity error: `1.43e-12`; reported success true.
+- Constrained tangent curvatures independently evaluated as `−2` at a product maximum and `+2` at a product minimum.
+- Degenerate example: all three tested multipliers give stationarity error `1.0`, consistent with the analytical argument.
+- Exercise 6: `λ = 1/2` gives Hessian `2I`, unconstrained Lagrangian minimum `3/4`, and `F(1,0) = 1`; the bound is correctly below the exact optimum.
+
+The second-order derivation, multiplier projection formula, dual function formula, multiplier signs and the stated sensitivity sign were also checked algebraically. No further mathematical defects were found.
+
+## Final recheck and resolutions
+
+Rechecked the revised source after the root agent's corrections on 2026-09-25.
+
+**Final content verdict: PASS. Both required findings are resolved. No further mathematical or substantial pedagogical corrections are required.** Browser rendering, widget layout, setup autorun and cold-start behavior remain the root agent's separate validation gate.
+
+- **R1 resolved:** section 12.2 now correctly uses the first equation when `x = 0`, and explicitly uses the second when `y = 0`. The subsequent division by nonzero `x` is justified.
+- **R2 resolved:** the 12.3 depth panel now states the two-sided Cauchy–Schwarz bound, expands `F(z) = (6 − 2a·z)/2`, and gives both bounds on `F`. The two stationary points attain the respective bounds, correctly proving the minimum and maximum classifications.
+- **Added pen-and-paper example checked:** minimizing `x² + y²` under `x + y = 2` is developed in four clear steps: Lagrange equations, elimination, candidate/multiplier/value, and a global proof. The result `(1,1)`, multiplier `−2`, and value `2` are correct. The identity `x² + (2 − x)² = 2 + 2(x − 1)²` proves uniqueness. This short example supports transferring the method from a circle to a different feasible set without making the main lesson needlessly long.
+- **Source-level setup and exercise presentation:** a visible setup tab now explains NumPy/Matplotlib, the readiness message and the separate SciPy import. Mathematical exercise headings use HTML emphasis and scalar fields use the shorter field form; the exercise mathematics and expected answers are unchanged. Actual rendering is not claimed by this audit.
+
+Two minor setup copy refinements were relayed to the root agent and are non-blocking for the content verdict: the setup prose says it defines functions even though this setup only imports packages; and missing-name recovery would be more precise if it explicitly reminded students to run the SLSQP solve before its dependent path plot. The prior optional `inf` gloss also remains non-blocking.

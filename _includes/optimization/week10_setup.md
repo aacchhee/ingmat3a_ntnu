@@ -1,7 +1,8 @@
 ```{pyodide-python}
 #| label: week10-setup
 #| autorun: true
-#| context: setup
+#| context: interactive
+#| code-fold: false
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
@@ -52,4 +53,6 @@ def armijo(f, g, x, p, c=1e-4, max_halvings=25):
         a *= .5
     # Et begrenset budsjett er ikke en matematisk garanti om aksept.
     raise RuntimeError('Ingen godkjent lengde innen budsjettet')
+# Meldingen vises først når alle importene og definisjonene er klare.
+print("Oppsett for uke 10 er klart. Nå kan du kjøre eksperimentene.")
 ```

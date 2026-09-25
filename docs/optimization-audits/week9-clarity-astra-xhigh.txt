@@ -1,0 +1,55 @@
+FINAL STATUS: APPROVED after corrections and independent Astra XHIGH recheck.
+Content review of clarity, terminology, worked examples, and mathematical correctness.
+Browser verification is recorded separately below.
+
+# Week 9 clarity audit — current rewrite
+
+Reviewed `_includes/optimization/uke9.md` and `week9_setup.md` read-only. The visible Python setup integration is being handled by the root agent; browser cold-start behavior is outside this content audit.
+
+## Required fixes before content sign-off
+
+1. **Experiment 1 directs attention to a misleading geometric proxy.** In the introduction, “avstanden fra prøvene til stjernen” suggests closeness to `(3, 2)` explains the winning sample. The winning random sample is `(-3.818, -3.280)`, near a different minimum and far from that star. Ask readers to compare coverage/location and the printed function values instead. In the result paragraph, explicitly say the best random sample lies in another valley and distance to this one marked minimum does not rank function values. Also change “utelukke lavere verdier” to “utelukke negative verdier”: the sum-of-squares argument does not exclude values below the observed `0.094`; it excludes values below zero.
+
+2. **One added code comment contradicts the random-walk lesson.** Before `walk_rng`, “slik at alle forslag måles fra samme første punkt” is false: proposals are relative to the last accepted point, not all to the origin. Suggested replacement: `# Start i origo; senere forslag tas fra det sist aksepterte punktet.` The surrounding prose and actual code are correct.
+
+3. **Finish explaining the gradient figure before asking students to read it.** “Logaritmisk skala” is introduced without an explanation/example. Add one sentence such as: “Like store avstander på den loddrette aksen betyr samme faktor; for eksempel er avstanden fra 1 til 0,1 lik avstanden fra 0,1 til 0,01.” Explain the display floor `np.maximum(values, 1e-15)` in a useful inline comment (and ideally the nearby figure prose), since the final Armijo value `8.19e-16` is plotted at `1e-15`. The printed values remain the actual results. This satisfies the explicit new-term/example and useful-comment requirements.
+
+4. **Align the remaining code comments and cost labels with what the code does.** Three short clarifications suffice:
+   - Compass condition `values[best] < current - 1e-12` uses an undocumented improvement tolerance, while the prose states any strict improvement. Remove this unnecessary tolerance to match the stated method, or define/comment it as requiring improvement greater than `1e-12`.
+   - Label `4*polls+1` as evaluations **in the search**, and change “Kjøringen bruker 53” accordingly. The cell separately reevaluates four neighbors for the demonstration and six path values for the graph; those calls are intentionally outside the algorithm's 53-evaluation budget.
+   - The fixed-step cutoff comment “Ingen flere endelige, lesbare verdier” overstates what the test proves. The `norm(candidate) > 1e6` branch can discard finite values. Say that this is a chosen safety/display bound or a nonfinite candidate, not a convergence condition. The result paragraph already calls it a safety limit.
+
+## Checks passed
+
+- All five demonstration cells now have a preceding purpose and reading instruction, including the optional random walk and scalar line search.
+- The first-gradient-step table resolves the reported packed-equation issue: intermediate expressions, gradient, direction, slope, proposed point, and measured value appear in separate rows with reasons.
+- The Armijo table, compass-neighbor table, and output tables are structured and mathematically correct.
+- Central concepts have worked examples: finite sampling, dimension-dependent grid cost, compass acceptance/halving, negative gradient, short versus large step, Armijo rejection/acceptance, restricted line minimization versus the full gradient, and the sum-of-squares global certificate.
+- Level curves, stationary points, and gradient norms were introduced in Week 8; Week 9 does not need to re-teach them. Moving the level-curve reminder from 9.4 to immediately before the first compass graph would still be a useful small improvement.
+- Setup functions `f9` and `grad9` are correct. Existing comments explain substantial algorithmic choices and are much more helpful than bare executable code.
+- Native execution of setup plus all five demo cells completed. Observed output matches the text: grid `2.710`, random `0.094`; compass `(3,2)`, value `0`, 13 polls/53 search evaluations; fixed `0.02` gives `1.46e-15` after 40 steps; fixed `0.1` grows to `1.93e18` after four retained steps; halving stops after 25 steps with `8.19e-16` and gradient norm `3.40e-7`; scalar search gives factor `0.127336`, value `32.125704`, full gradient norm `36.199`, and line derivative about `-2.2e-5`.
+- All six mathematical exercise answers and the three Python exercise contracts are consistent with the taught rules. No numerical or algebraic error found.
+
+Content verdict: close to ready; apply the four small clarification groups above, then recheck. No substantial rewrite is needed.
+
+## Final source recheck — applied fixes and new hand calculation
+
+All four original clarification groups are resolved. Experiment 1 now distinguishes the other valley from the marked minimum and correctly states the nonnegative lower bound. The random-walk comment, compass acceptance condition, evaluation label/accounting, fixed-step cutoff comment, log-scale example, and display-floor code comment all agree with their algorithms. The level-curve reminder also now appears before the first compass graph.
+
+The visible, rerunnable setup tab has an appropriate purpose/instruction paragraph and an explicit completion message. Math-exercise scalar fields and `<strong>` markup retain the same correct mathematical answers. Runtime initialization and rendered widget behavior remain for the root agent's native/browser checks.
+
+The new `q(t)=(t-2)^2` example is a good fit for the requested small, complete pen-and-paper examples: it fixes the start and direction, writes the function along the line, solves the derivative equation, and computes the Armijo comparison with actual numbers. All numbers are correct: `q(0)=4`, `q'(0)=-4`, exact factor `2`, `q(2)=0`, and `q(1)=1 <= 3.9996`. The example clearly separates exact line minimization from sufficient decrease.
+
+Three very small final wording corrections are still needed:
+
+1. The new example now uses **Armijo** before the later definition. Add a brief definition before its numbered steps (“Armijo er en test som godtar et steg når verdien synker tilstrekkelig i forhold til starthelningen”), or position the example after that definition. This preserves the explicit define-before-use requirement.
+2. In step 2, after solving `q'(alpha)=0`, add that `q` is a square, hence nonnegative, while `q(2)=0`. That completes the promised hand proof of “eksakt beste faktor” and avoids suggesting that a zero derivative alone establishes a minimum.
+3. In the gradient-plot prose, values below `1e-15` are raised “for at de skal kunne tegnes”. Positive values below that threshold **can** be plotted on a logarithmic axis. Call `1e-15` a chosen lower display limit; only zero cannot be plotted on a log axis. The code comment already makes the zero restriction correctly.
+
+Verdict: original findings closed; pen-and-paper addition fits and is arithmetically correct. Content sign-off follows once the three short wording corrections above are applied. No other required content changes found.
+
+## Final approval
+
+Rechecked the three final source edits. Armijo is now defined before the hand example; the exact factor `alpha=2` is justified by `q(t)>=0` together with `q(2)=0`; and the plotting paragraph accurately distinguishes an optional `1e-15` display floor from the impossibility of displaying zero on a logarithmic axis.
+
+**Content audit approved.** All findings above are resolved. The revised Week 9 material meets the requested explanatory introductions, structured calculations, useful code comments, definitions, and small worked examples. No remaining mathematical or pedagogical corrections identified within this audit's scope. Browser initialization and rendered layout verification remain covered by the root agent's separate integration checks.

@@ -32,32 +32,64 @@ Etter denne uken skal du kunne
 - kontrollere både betingelsesfeil og stasjonaritetsfeil i et numerisk SLSQP-svar,
 - kjenne igjen en degenerert betingelse og forklare hvordan en Lagrangemultiplikator kan gi en nedre grense.
 
+## Python-oppsett
+
+<div id="uke12-oppsett"></div>
+
+Denne cellen importerer pakkene som brukes i ukens forsøk. Den kjøres automatisk når Python er klart. **Vent på meldingen
+«Oppsett for uke 12 er klart» før du kjører et eksperiment.** Første oppstart
+kan ta litt tid fordi nettleseren må hente pakkene.
+
+NumPy brukes til vektorregning og Matplotlib til figurene.
+SLSQP-forsøket importerer også `minimize` fra SciPy i sin egen celle.
+Du kan lese koden og kjøre oppsettet på nytt med **Kjør**.
+Hvis en celle melder at et navn ikke er definert, kjør oppsettet på nytt
+og deretter forsøket. Banefiguren i 12.3 bruker resultatet fra SLSQP-cellen
+rett foran; kjør den cellen før figuren. Kodeoppgavene til slutt inneholder
+sine egne importer.
+
+{{< include ../_includes/optimization/week12_setup.md >}}
+
 ## 12.1 Sirkelen: retninger som er tillatt
 
 <div id="uke12-tangent"></div>
 
-Vi velger et punkt $z=(x,y)$ på enhetssirkelen og vil **maksimere**
-$f(x,y)=x+2y$. Kravet er $h(x,y)=x^2+y^2-1=0$. Her er $f$
-målet og $h=0$ likhetsbetingelsen. Tre tillatte punkter gir
-$f(1,0)=1$, $f(0,1)=2$ og $f((1,2)/\sqrt5)=\sqrt5\approx2.236$.
-Det siste punktet ligger på sirkelen fordi $(1^2+2^2)/5=1$.
+Tenk at vi skal velge et punkt på kanten av en rund plate. En verdi
+blir større når vi går mot høyre, og vokser dobbelt så raskt når vi
+går oppover. Hvor på kanten blir verdien størst? Dette gir modellen
 
-En **nivålinje** har samme verdi av $f$ overalt: $x+2y=c$.
-Figuren viser at linjen med størst verdi som fortsatt berører
-sirkelen, berører den ved $(1,2)/\sqrt5$. Vi regner også verdier på
-et tett utvalg av sirkelpunkter. Utvalget illustrerer plasseringen;
-selve garantien for maksimum kommer nedenfor.
+| Rolle | Uttrykk | Hva det betyr |
+|:--|:--|:--|
+| Valg | $z=(x,y)$ | Punktet vi flytter på. |
+| Mål | Maksimer $f(x,y)=x+2y$ | Vi ønsker størst mulig verdi. |
+| Krav | $h(x,y)=x^2+y^2-1=0$ | Bare punkter på enhetssirkelens rand er tillatt. |
+
+Vi kan begynne med å sammenligne noen punkter som oppfyller kravet:
+
+| Tillatt punkt $z$ | Kontroll av $x^2+y^2$ | Målverdi $f(z)$ |
+|:--|:--|:--|
+| $(1,0)$ | $1$ | $1$ |
+| $(0,1)$ | $1$ | $2$ |
+| $(1,2)/\sqrt5$ | $(1^2+2^2)/5=1$ | $\sqrt5\approx2.236$ |
+
+Den siste raden viser et bedre punkt enn de to første, men tre
+prøver kan ikke bevise at det er best. Vi tegner derfor den tillatte
+kurven sammen med **nivålinjer** $x+2y=c$: på hver slik linje er
+$f$ konstant. Se hvor linjen for $c=\sqrt5$ berører sirkelen.
+Prøvepunktene i koden viser plasseringen; en global garanti kommer
+etterpå.
 
 ```{pyodide-python}
 #| label: week12-circle-experiment
-# Lag prøvepunkter på sirkelen og regn ut målets verdi i hvert punkt.
+# 1. Prøv mange tillatte punkter for å se omtrentlige ytterverdier.
 theta = np.linspace(0, 2*np.pi, 721)
 circle = np.column_stack((np.cos(theta), np.sin(theta)))
 values = circle @ np.array([1., 2.])
-print("Største prøveverdi:", round(values.max(), 6))
-print("Minste prøveverdi:", round(values.min(), 6))
+print("Prøvepunkter på sirkelen:", len(circle))
+print("Største verdi i utvalget:", round(values.max(), 6))
+print("Minste verdi i utvalget:", round(values.min(), 6))
 
-# Tegn nivålinjer og den tillatte kurven i samme koordinatsystem.
+# 2. Sammenlign nivålinjene med hele den tillatte kurven.
 xx, yy = np.meshgrid(np.linspace(-1.25, 1.25, 130),
                      np.linspace(-1.25, 1.25, 130))
 fig, ax = plt.subplots(figsize=(6, 6))
@@ -66,7 +98,7 @@ ax.contour(xx, yy, xx + 2*yy, levels=np.arange(-2, 2.1, .5),
 ax.plot(circle[:, 0], circle[:, 1], color="tab:blue", label="h = 0")
 ax.plot(xx[0], (np.sqrt(5)-xx[0])/2, "--", color="tab:red",
         label="nivålinje f = √5")
-# Markøren er håndregnet; prøvepunktene gir ikke et bevis.
+# 3. Merk det eksakte punktet som vi skal begrunne nedenfor.
 p_max = np.array([1., 2.])/np.sqrt(5)
 ax.plot(*p_max, "o", color="tab:red", label="eksakt maksimum")
 ax.set(xlabel="x", ylabel="y", xlim=(-1.25, 1.25), ylim=(-1.25, 1.25))
@@ -108,13 +140,27 @@ betyr dette at Lagranges likninger er oppfylt. Det krever ikke
 $\nabla f=0$, slik stasjonaritet uten bibetingelser gjorde i uke 8.
 
 Den første likningen sikrer at punktet er tillatt. Den andre sier at
-målgradienten ikke har noen komponent langs tangenten. Her blir
-$1+2\lambda x=0$ og $2+2\lambda y=0$. Den første likningen
-viser at $\lambda\ne0$. Trekker vi to ganger den første fra den
-andre, får vi $y=2x$. Sirkelkravet blir da $5x^2=1$. Punktene er
-$\pm(1,2)/\sqrt5$, med verdier $\pm\sqrt5$ og multiplikatorer
-$\mp\sqrt5/2$. Vi må fremdeles avgjøre hvilket punkt som er best:
-**Cauchy–Schwarz-ulikheten** sier at
+målgradienten ikke har noen komponent langs tangenten. For vårt mål
+og vår sirkel blir likningene
+
+$$1+2\lambda x=0,\qquad 2+2\lambda y=0,\qquad x^2+y^2=1.$$
+
+Vi løser dem i tre steg:
+
+1. $\lambda$ kan ikke være null, siden den første likningen da blir $1=0$.
+2. Den første likningen gir $x=-1/(2\lambda)$, og den andre gir $y=-1/\lambda$. Dermed er $y=2x$.
+3. Sirkelkravet blir $x^2+(2x)^2=5x^2=1$.
+
+Dette gir to **kandidater**. De må sammenlignes før vi kan kalle
+noen av dem maksimum:
+
+| Kandidat | $f=x+2y$ | $\lambda$ |
+|:--|:--|:--|
+| $(1,2)/\sqrt5$ | $\sqrt5$ | $-\sqrt5/2$ |
+| $-(1,2)/\sqrt5$ | $-\sqrt5$ | $\sqrt5/2$ |
+
+For å sikre at ingen andre sirkelpunkter har en større verdi,
+bruker vi **Cauchy–Schwarz-ulikheten**. Den sier at
 $|a^Tb|\le\|a\|_2\|b\|_2$: absoluttverdien av et indreprodukt
 er høyst produktet av vektorlengdene. For alle tillatte $z$ gir den
 
@@ -152,39 +198,79 @@ Lagranges likninger overse et ekstremum, som i 12.4.
 
 </details>
 
+### Et kort regneeksempel: nærmest origo på en linje
+
+Før vi går videre til flere kandidater, prøver vi samme metode med
+en rett linje som tillatt mengde. Vi vil **minimere**
+$f(x,y)=x^2+y^2$ under kravet $h(x,y)=x+y-2=0$. Målet er
+kvadratet av avstanden til origo, så vi søker punktet på linjen
+som ligger nærmest origo.
+
+1. Sett $L=x^2+y^2+\lambda(x+y-2)$. Kravet og de to
+   gradientlikningene er $x+y-2=0$, $2x+\lambda=0$ og
+   $2y+\lambda=0$.
+2. Trekk de to gradientlikningene fra hverandre: $2x-2y=0$,
+   så $x=y$.
+3. Sett $x=y$ inn i kravet. Da er $2x=2$, altså $(x,y)=(1,1)$.
+   Gradientlikningene gir $\lambda=-2$ med vårt plussfortegn,
+   og $f(1,1)=2$.
+4. Kontroller at kandidaten virkelig er et minimum: på linjen
+   er $y=2-x$. Da er
+   $f(x,2-x)=x^2+(2-x)^2=2+2(x-1)^2\ge2$.
+
+Likhet gjelder bare ved $x=1$, så $(1,1)$ er linjens **globale**
+minimumspunkt. Lagranges likninger fant kandidaten; den siste
+ulikheten klassifiserte den.
+
 ## 12.2 Lagranges likninger gir kandidater
 
 <div id="uke12-kandidater"></div>
 
-På samme sirkel vil vi nå **maksimere og minimere** $f(x,y)=xy$.
-De fire diagonalpunktene $(\pm1,\pm1)/\sqrt2$ ligger på sirkelen.
-Ved to av dem er produktet $1/2$, ved de andre $-1/2$.
-Den samme likhetsbetingelsen kan altså ha både maksimums- og
-minimumskandidater med null endring langs tangenten.
+På samme sirkel bytter vi mål til $f(x,y)=xy$ og søker både
+**maksimum og minimum**. Nå kan Lagranges likninger gi flere
+punkter med null endring langs sirkelen, selv om verdiene deres
+er ulike. Vi undersøker de fire diagonalpunktene
+$(\pm1,\pm1)/\sqrt2$: de oppfyller $x^2+y^2=1$. I koden regner vi
+ut både $xy$ og den deriverte i en tangentretning. Null i den siste
+kolonnen betyr bare at punktet er en kandidat.
 
 ```{pyodide-python}
 #| label: week12-xy-experiment
-# Undersøk verdier og deriverte langs en tangent i de fire diagonalpunktene.
+# 1. Ta med begge fortegn for hver koordinat; alle punktene er tillatt.
 points = np.array([[1, 1], [1, -1], [-1, 1], [-1, -1]], float)/np.sqrt(2)
+print("Punkt (x, y)       | f = xy | derivert langs tangenten")
 for p in points:
+    # 2. En tangent på sirkelen står vinkelrett på radiusen p.
     tangent = np.array([-p[1], p[0]])
-    gradient = p[::-1]  # For f(x,y)=xy er gradienten (y,x).
-    print("punkt", np.round(p, 4), "f =", round(np.prod(p), 4),
-          "tangentderivert =", round(gradient @ tangent, 8))
+    gradient = p[::-1]  # Gradienten til xy er (y, x).
+    directional = gradient @ tangent
+    print(f"{np.array2string(p, precision=4):20s} |"
+          f" {np.prod(p):6.3f} | {directional: .2e}")
 ```
 
+Tabellen viser verdiene $1/2$ og $-1/2$, mens alle de fire
+tangentderiverte er null. Vi kan finne kandidatene systematisk.
 For $f=xy$ gir Lagranges likninger
 
 $$y+2\lambda x=0,\qquad x+2\lambda y=0,\qquad x^2+y^2=1.$$
 
-Verken $x$ eller $y$ kan være null i disse likningene. Eliminasjon
-gir $4\lambda^2=1$: ved $\lambda=-1/2$ får vi $x=y$ og de
-to punktene med verdi $1/2$; ved $\lambda=1/2$ får vi $x=-y$
-og de to punktene med verdi $-1/2$. Stasjonaritet alene skiller dem
-ikke. Her får vi en global klassifisering uten numerisk søk:
+Hvis $x=0$, gir den første likningen $y=0$, i strid med sirkelkravet.
+Hvis $y=0$, gir den andre likningen tilsvarende $x=0$.
+Fra de to første likningene får vi $y=-2\lambda x$ og
+$x=-2\lambda y$. Innsetting gir
+$x=4\lambda^2x$, så $4\lambda^2=1$. Til slutt bruker vi
+sirkelkravet til å finne koordinatene:
+
+| $\lambda$ | Relasjon | Kandidater | Verdi $xy$ |
+|:--|:--|:--|:--|
+| $-1/2$ | $x=y$ | $(1,1)/\sqrt2$ og $(-1,-1)/\sqrt2$ | $1/2$ |
+| $1/2$ | $x=-y$ | $(1,-1)/\sqrt2$ og $(-1,1)/\sqrt2$ | $-1/2$ |
+
+For å klassifisere dem globalt uten numerisk søk bruker vi at
 $(x-y)^2\ge0$ gir $2xy\le x^2+y^2=1$, og $(x+y)^2\ge0$ gir
 $2xy\ge-1$. Dermed er $-1/2\le xy\le1/2$, og alle fire
-kandidatene oppnår en av grensene.
+kandidatene oppnår en av grensene. De to med verdi $1/2$ er
+globale maksimum; de andre er globale minimum.
 
 Et annet uttrykk for forskjellen mellom kandidatene er å følge
 sirkelen som $p(t)=(\cos t,\sin t)$. Da er
@@ -199,10 +285,17 @@ over gir mer enn en lokal andrederiverttest.
 <summary>Gå i dybden: andrederivert langs en tangent</summary>
 
 Anta at $f$ og $h$ er to ganger kontinuerlig deriverbare nær et
-regulært stasjonært punkt. For en tillatt kurve $\gamma(t)$ gjennom
-punktet, med $\gamma'(0)=v$, er førsteordens endring null. Ved
-to derivasjoner av $h(\gamma(t))=0$ og innsetting av
-$\nabla f=-\lambda\nabla h$ får vi
+regulært stasjonært punkt. La en tillatt kurve $\gamma(t)$ gå
+gjennom punktet, med tangent $\gamma'(0)=v$. Når vi deriverer
+$h(\gamma(t))=0$ to ganger, får vi først
+$\nabla h\cdot v=0$ og deretter
+
+$$v^T\nabla^2h\,v+\nabla h\cdot\gamma''(0)=0.$$
+
+Samtidig er den andrederiverte av målet langs kurven
+$v^T\nabla^2f\,v+\nabla f\cdot\gamma''(0)$. Ved et stasjonært
+punkt er $\nabla f=-\lambda\nabla h$. Vi setter inn dette og
+bruker likningen for $h$ til å fjerne leddet med $\gamma''(0)$:
 
 $$(f\circ\gamma)''(0)=v^T\nabla^2_{zz}L(z_*,\lambda)v.$$
 
@@ -226,17 +319,23 @@ ikke-null tangentretning er fortsatt ikke en avgjørende test.
 
 <div id="uke12-slsqp"></div>
 
-Et målepunkt $a=(2,1)$ ligger utenfor enhetssirkelen. Vi søker
-punktet $z=(x,y)$ på sirkelen som er **nærmest** $a$. Avstanden er
-$\|z-a\|_2$; vi minimerer i stedet
-$F(z)=\tfrac12\|z-a\|_2^2$ under $h(z)=\|z\|_2^2-1=0$.
-Kvadrering og faktoren $1/2$ endrer ikke nærmeste punkt.
-I [uke 4](uke4.qmd#uke4-mk) minimerte vi også kvadrerte
-residualer; her må residualen $z-a$ ved løsningen stå normalt på
-den krumme tillatte mengden. For eksempel er $(1,0)$ tillatt med
-$F=1$, mens punktet $a/\sqrt5$ er tillatt med
-$F=\tfrac12(\sqrt5-1)^2\approx0.763932$. Geometrisk peker det
-nærmeste punktet fra origo mot $a$.
+Et målepunkt $a=(2,1)$ ligger utenfor enhetssirkelen. Vi vil finne
+sirkelpunktet som er **nærmest** målepunktet. Dette ligner
+minimering av kvadrerte residualer i [uke 4](uke4.qmd#uke4-mk),
+men nå må residualen $z-a$ ved løsningen stå normalt på den krumme
+tillatte mengden.
+
+| Rolle | Uttrykk |
+|:--|:--|
+| Valg | $z=(x,y)$ |
+| Mål | Minimer $F(z)=\tfrac12\|z-a\|_2^2$ |
+| Krav | $h(z)=\|z\|_2^2-1=0$ |
+
+Kvadrering og faktoren $1/2$ endrer ikke hvilket punkt som er
+nærmest. To tillatte eksempler gir et utgangspunkt for sammenligning:
+$(1,0)$ har $F=1$, mens $a/\sqrt5$ har
+$F=\tfrac12(\sqrt5-1)^2\approx0.763932$. Vi skal la en numerisk
+metode finne et punkt og deretter kontrollere svaret.
 
 Vi lar nå SciPys `minimize` søke fra $x_0=(0.4,0.9)$ med metoden
 `SLSQP`, som kan håndtere likhetsbetingelser. Det nye i kallet er
@@ -246,18 +345,21 @@ beregner gradienten $\nabla h$. Målgradienten sendes separat som
 `jac=grad_F`. `callback` lagrer iteratene metoden faktisk
 rapporterer. Resultatet er en **numerisk kandidat**.
 
-Vi undersøker derfor både **betingelsesfeilen** $|h(z)|$ og
+Et stoppflagg er ikke nok til å avgjøre om kandidaten følger
+modellen. Vi undersøker derfor både **betingelsesfeilen** $|h(z)|$ og
 **stasjonaritetsfeilen** $\|\nabla F(z)+\lambda\nabla h(z)\|_2$.
 For å finne et tall $\lambda$ som gir minst slik feil, projiserer vi
 $-\nabla F$ på normalen $\nabla h$:
 $\lambda=-\nabla F\cdot\nabla h/\|\nabla h\|_2^2$ når
 $\nabla h\ne0$. Begge feil bør være små, for eksempel under
-$10^{-7}$ i denne enkle modellen. En liten verdi av bare den ene
-sikrer ikke den andre.
+$10^{-7}$ i denne enkle modellen. Den første tester at punktet er på
+sirkelen; den andre tester Lagranges gradientlikning. En liten verdi
+av bare den ene sikrer ikke den andre. Utskriften nedenfor gir hver
+kontroll sin egen linje ved siden av det eksakte referansepunktet.
 
 ```{pyodide-python}
 #| label: week12-slsqp-experiment
-# SLSQP tar en målfunksjon, dens gradient og et likhetskrav.
+# 1. Definer avstandsmålet, sirkelkravet og gradientene deres.
 from scipy.optimize import minimize
 
 a = np.array([2., 1.])
@@ -285,22 +387,26 @@ def save_iterate(z):
     # Lagre en kopi, slik at senere oppdateringer ikke endrer eldre iterater.
     path.append(z.copy())
 
-# Metoden kan rapportere punkter utenfor sirkelen underveis.
+# 2. Løs problemet. Rapporterte mellomiterater kan bryte sirkelkravet.
 result = minimize(F, x0, jac=grad_F, method="SLSQP",
                   constraints=[{"type": "eq", "fun": h, "jac": grad_h}],
                   callback=save_iterate,
                   options={"ftol": 1e-12, "maxiter": 100})
 z = result.x
 
-# Finn multiplikatoren ved å projisere minus målgradienten på normalen.
+# 3. Finn multiplikatoren som gir minst stasjonaritetsfeil.
 lam = -np.dot(grad_F(z), grad_h(z))/np.dot(grad_h(z), grad_h(z))
 feasibility = abs(h(z))
 stationarity = np.linalg.norm(grad_F(z)+lam*grad_h(z))
-print("punkt:", np.round(z, 8), "F:", round(result.fun, 10))
-print("betingelsesfeil:", f"{feasibility:.2e}",
-      "stasjonaritetsfeil:", f"{stationarity:.2e}")
-print("lambda:", round(lam, 8), "success:", result.success)
-print("eksakt punkt:", np.round(a/np.linalg.norm(a), 8))
+print("Numerisk kandidat:")
+print("  punkt z             =", np.round(z, 8))
+print("  verdi F(z)          =", round(result.fun, 10))
+print("Kontroller:")
+print("  betingelsesfeil |h| =", f"{feasibility:.2e}")
+print("  stasjonaritetsfeil  =", f"{stationarity:.2e}")
+print("  multiplikator       =", round(lam, 8))
+print("  løserens success    =", result.success)
+print("Eksakt referansepunkt =", np.round(a/np.linalg.norm(a), 8))
 ```
 
 Kjøringen finner omtrent $(0.89442719,0.44721360)$, verdi
@@ -319,20 +425,22 @@ residualene kontrollerer likhetskravet og Lagranges likninger.
 De gir alene ingen grense for avstanden til minimumspunktet: også
 det fjerneste sirkelpunktet oppfyller disse likningene.
 
-Figuren viser nivåkurver for avstandsfunksjonen og **bare iteratene
-SLSQP faktisk rapporterte**. Linjestykkene mellom markørene viser
-rekkefølgen, ikke en tillatt bane på sirkelen. Et mellomliggende
-iterat kan ligge utenfor sirkelen og ha lavere verdi enn det beste
-*tillatte* punktet.
+For å forstå hvordan søket kom fram til sluttpunktet, tegner vi
+nivåkurver for avstandsmålet og **bare iteratene SLSQP faktisk
+rapporterte**. Se hvor startpunktet og sluttpunktet ligger i forhold
+til sirkelen og det eksakte punktet. Linjestykkene mellom markørene
+viser rekkefølgen, ikke en tillatt bane på sirkelen. Et
+mellomliggende iterat kan ligge utenfor sirkelen og ha lavere verdi
+enn det beste *tillatte* punktet.
 
 ```{pyodide-python}
 #| label: week12-slsqp-path
-# Bruk de observerte callback-punktene, med sluttpunktet hvis det mangler.
+# 1. Bruk rapporterte iterater, og legg til sluttpunktet ved behov.
 track = np.array(path)
 if not np.allclose(track[-1], result.x):
     track = np.vstack([track, result.x])
 
-# Tegn nivåkurver til avstandsmålet og hele den tillatte sirkelen.
+# 2. Tegn nivåkurver til målet og hele den tillatte sirkelen.
 u, v = np.meshgrid(np.linspace(-1.2, 2.55, 220),
                    np.linspace(-1.25, 2.25, 220))
 levels = .5*((u-a[0])**2 + (v-a[1])**2)
@@ -344,7 +452,7 @@ angles = np.linspace(0, 2*np.pi, 400)
 ax.plot(np.cos(angles), np.sin(angles), color="tab:blue", lw=2,
         label="tillatt sirkel h = 0")
 
-# Forbindelsen angir rekkefølge, ikke en tillatt søkekurve.
+# 3. Forbind markørene i rapportert rekkefølge.
 ax.plot(track[:, 0], track[:, 1], "-o", color="tab:orange",
         lw=1.5, markersize=4, label="rapporterte iterater")
 ax.scatter(*x0, marker="s", s=75, color="tab:purple", zorder=5,
@@ -374,7 +482,13 @@ Fra $z-a+2\lambda z=0$ følger $z=a/(1+2\lambda)$ når nevneren
 er ulik null. Kravet $\|z\|_2=1$ gir $|1+2\lambda|=\sqrt5$.
 Det finnes dermed to stasjonære sirkelpunkter: det nærmeste
 $a/\sqrt5$ og det fjerneste $-a/\sqrt5$. En null residual alene
-klassifiserer dem ikke. Den globale ulikheten ovenfor gjør det.
+klassifiserer dem ikke. For alle sirkelpunkter gir Cauchy–Schwarz
+$-\sqrt5\le a\cdot z\le\sqrt5$. Siden
+$F(z)=\tfrac12(6-2a\cdot z)$, følger den tosidige grensen
+
+$$\tfrac12(\sqrt5-1)^2\le F(z)\le\tfrac12(\sqrt5+1)^2.$$
+
+De to punktene oppnår hver sin grense.
 
 </details>
 
@@ -382,37 +496,52 @@ klassifiserer dem ikke. Den globale ulikheten ovenfor gjør det.
 
 <div id="uke12-degenerert"></div>
 
-La målet være $f(x,y)=x$, og krev $h(x,y)=x^2+y^2=0$.
-Den eneste tillatte løsningen er $(0,0)$, så den er både globalt
-minimum og globalt maksimum relativt til denne mengden. Likevel
-er $\nabla f(0,0)=(1,0)$ og $\nabla h(0,0)=(0,0)$.
-Ingen multiplikator kan gjøre $\nabla f+\lambda\nabla h=0$.
-Likningen er **degenerert** i punktet: regularitetskravet i 12.1
-mangler. Her må vi undersøke det tillatte punktet direkte.
+Lagranges likninger i 12.1 forutsatte at normalen $\nabla h$ ikke
+forsvinner. Vi undersøker hvorfor denne forutsetningen trengs med
+et krav som bare tillater ett punkt:
+
+| Rolle | Uttrykk |
+|:--|:--|
+| Mål | $f(x,y)=x$ |
+| Krav | $h(x,y)=x^2+y^2=0$ |
+| Tillatt punkt | Bare $(0,0)$, siden summen av to kvadrater er null bare der. |
+
+Punktet er både globalt minimum og globalt maksimum *relativt til
+den tillatte mengden*. Men $\nabla f(0,0)=(1,0)$ og
+$\nabla h(0,0)=(0,0)$. Derfor er
+$\nabla f+\lambda\nabla h=(1,0)$ uansett $\lambda$. Koden
+kontrollerer dette for tre valg av multiplikator; se at feilen er
+den samme hver gang. Likningen er **degenerert** i punktet, og vi
+må undersøke den tillatte mengden direkte.
 
 ```{pyodide-python}
 #| label: week12-degenerate-experiment
-# Kontroller at normalen forsvinner, uansett valg av multiplikator.
+# 1. Regn ut gradientene i det eneste tillatte punktet.
 p = np.array([0., 0.])
 grad_f = np.array([1., 0.])
 grad_constraint = 2*p
-print("eneste tillatte punkt:", p, "grad h:", grad_constraint)
+print("Tillatt punkt:", p)
+print("Målgradient grad f:", grad_f)
+print("Betingelsesgradient grad h:", grad_constraint)
+print("Prøvd multiplikator | stasjonaritetsfeil")
+# 2. Ingen av valgene kan endre grad f når grad h er null.
 for lam_test in [-10, 0, 10]:
-    # Stasjonaritetsfeilen forblir én når grad h er null.
     error = np.linalg.norm(grad_f + lam_test*grad_constraint)
-    print("lambda =", lam_test, "stasjonaritetsfeil =", error)
+    print(f"{lam_test:18d} | {error:.1f}")
 ```
 
-Til slutt bruker vi ideen om **grenser for optimalverdien** fra
-[uke 11](uke11.qmd#uke11-dual). I avstandsproblemet er
-$L(z,\lambda)=F(z)+\lambda h(z)$. På tillatte punkter er $h(z)=0$,
-så $L(z,\lambda)=F(z)$ for ethvert $\lambda$. Velger vi
-$\lambda_*=(\sqrt5-1)/2$, blir $L(\cdot,\lambda_*)$ en
-kvadratisk funksjon av $z$ med positiv definit Hessian
-$(1+2\lambda_*)I=\sqrt5 I$. Det er samme type **SPD-skål** som i
-[uke 6](uke6.qmd#uke6-energi). Minimum over *alle* $z$ ligger ved
-$z_*=a/\sqrt5$; dette punktet er også tillatt. Dermed gjelder
-for hvert tillatt $z$
+Vi vender nå tilbake til avstandsproblemet i 12.3. Der vil vi
+begrunne en **nedre grense for optimalverdien**, slik vi brukte
+grenser i [uke 11](uke11.qmd#uke11-dual). Lagrangefunksjonen er
+$L(z,\lambda)=F(z)+\lambda h(z)$. Fordi $h(z)=0$ på sirkelen,
+er $L(z,\lambda)=F(z)$ for alle tillatte punkter og ethvert
+$\lambda$. Vi kan derfor gjøre følgende:
+
+1. Velg $\lambda_*=(\sqrt5-1)/2$. Da er Hessianen til $L$ som funksjon av $z$ lik $(1+2\lambda_*)I=\sqrt5 I$.
+2. Denne positive definite Hessianen gir en **SPD-skål**, som i [uke 6](uke6.qmd#uke6-energi). Gradientlikningen $\nabla_z L=0$ gir skålens globale minimum ved $z_*=a/\sqrt5$.
+3. Punktet oppfyller også sirkelkravet. Minimum over alle $z$ er dermed en nedre grense som et tillatt punkt oppnår.
+
+For hvert tillatt $z$ har vi altså
 
 $$F(z)=L(z,\lambda_*)\ge L(z_*,\lambda_*)
 =F(z_*)=\tfrac12(\sqrt5-1)^2.$$
@@ -437,16 +566,21 @@ den tillatte minimumsverdien, også når grensen er ubrukelig
 møtes nedre grense og punktets verdi. Likningen $\nabla_zL=0$
 alene er ikke nok til å vise dette.
 
-I vårt eksempel er $\|a\|^2=5$ og, når $1+2\lambda>0$,
+I vårt eksempel utvider vi kvadratet i $F$ og samler leddene
+med $\|z\|^2$. Siden $\|a\|^2=5$, får vi, når $1+2\lambda>0$,
 
 $$L(z,\lambda)=\tfrac12(1+2\lambda)\|z\|^2-a\cdot z
 +\tfrac52-\lambda.$$
 
-Minimumspunktet uten bibetingelser er $a/(1+2\lambda)$. Ved innsetting
-får vi $d(\lambda)=\tfrac52-\lambda-
-\frac5{2(1+2\lambda)}$. For
-$\lambda_*=(\sqrt5-1)/2$ er minimumspunktet $a/\sqrt5$ tillatt,
-og den nedre grensen blir nøyaktig $F(a/\sqrt5)$.
+Gradienten med hensyn til $z$ er $(1+2\lambda)z-a$.
+Derfor ligger minimum uten bibetingelser ved
+$z=a/(1+2\lambda)$. Innsetting i $L$ gir
+
+$$d(\lambda)=\tfrac52-\lambda-\frac5{2(1+2\lambda)}.$$
+
+Når $\lambda=\lambda_*=(\sqrt5-1)/2$, blir nevneren
+$1+2\lambda_*=\sqrt5$. Da er minimumspunktet $a/\sqrt5$
+tillatt, og den nedre grensen blir nøyaktig $F(a/\sqrt5)$.
 En slik skarp grense er ikke garantert for enhver likhetsbetingelse.
 
 Hvis målet har enhet kroner og kravet er $h=g-r=0$ målt i
@@ -483,7 +617,7 @@ likningene gir kandidater som må klassifiseres.
 #| partial-credit: true
 #| field-labels: normalens x-komponent, normalens y-komponent, tangentens x-komponent, tangentens y-komponent
 
-**1. Tangent og normal.** La $h(x,y)=x^2+4y^2-1$ og $p=(0,1/2)$.
+<strong>1. Tangent og normal.</strong> La $h(x,y)=x^2+4y^2-1$ og $p=(0,1/2)$.
 Finn $\nabla h(p)$ og en enhetstangent med positiv $x$-komponent.
 Kontroller at skalarproduktet av de to vektorene er null.
 
@@ -499,14 +633,14 @@ Enhetstangent $=$ vec[1,0]
 #| partial-credit: true
 #| field-labels: maksimumspunktets x-koordinat, maksimumspunktets y-koordinat, multiplikator ved maksimum
 
-**2. Lagrange på sirkelen.** Maksimer $f(x,y)=x+2y$ med
+<strong>2. Lagrange på sirkelen.</strong> Maksimer $f(x,y)=x+2y$ med
 $h=x^2+y^2-1=0$. Finn maksimumspunktet og multiplikatoren
 for $L=f+\lambda h$. Forklar hvorfor verdien er større enn
 ved det motsatte punktet.
 
 $(x,y)=$ vec[1/sqrt(5),2/sqrt(5)]
 
-$\lambda=$ __[-sqrt(5)/2]
+$\lambda=$ _[-sqrt(5)/2]
 ```
 
 ```{math-exercise}
@@ -516,14 +650,14 @@ $\lambda=$ __[-sqrt(5)/2]
 #| partial-credit: true
 #| field-labels: funksjonsverdi, andrederivert langs sirkelen
 
-**3. Kandidat og type.** For $f(x,y)=xy$ på sirkelen, bruk
+<strong>3. Kandidat og type.</strong> For $f(x,y)=xy$ på sirkelen, bruk
 $p=(1,1)/\sqrt2$. Finn verdien og andrederiverten av
 $f(\cos t,\sin t)$ ved $t=\pi/4$. Forklar hvorfor punktet er
 et maksimum langs sirkelen.
 
-$f(p)=$ __[1/2]
+$f(p)=$ _[1/2]
 
-$\frac{d^2}{dt^2}f(\cos t,\sin t)\big|_{t=\pi/4}=$ __[-2]
+$\frac{d^2}{dt^2}f(\cos t,\sin t)\big|_{t=\pi/4}=$ _[-2]
 ```
 
 ```{math-exercise}
@@ -533,13 +667,13 @@ $\frac{d^2}{dt^2}f(\cos t,\sin t)\big|_{t=\pi/4}=$ __[-2]
 #| partial-credit: true
 #| field-labels: betingelsesfeil, stasjonaritetsfeil
 
-**4. Kontroller et numerisk forslag.** I avstandsproblemet er
+<strong>4. Kontroller et numerisk forslag.</strong> I avstandsproblemet er
 $a=(2,1)$, $F(z)=\tfrac12\|z-a\|^2$, $h(z)=\|z\|^2-1$.
 En løser rapporterer $z=(1,0)$ og $\lambda=1/2$.
 Regn ut $|h(z)|$ og $\|\nabla F(z)+\lambda\nabla h(z)\|_2$.
 Hvilken kontroll avslører at dette ikke er et stasjonært punkt?
 
-$|h(z)|=$ __[0] &nbsp; Stasjonaritetsfeil $=$ __[1]
+$|h(z)|=$ _[0] &nbsp; Stasjonaritetsfeil $=$ _[1]
 ```
 
 ```{math-exercise}
@@ -549,7 +683,7 @@ $|h(z)|=$ __[0] &nbsp; Stasjonaritetsfeil $=$ __[1]
 #| partial-credit: true
 #| field-labels: punktets x-koordinat, punktets y-koordinat, betingelsesgradientens x-komponent, betingelsesgradientens y-komponent
 
-**5. Degenerert likning.** La $f(x,y)=x+3y$ og
+<strong>5. Degenerert likning.</strong> La $f(x,y)=x+3y$ og
 $h(x,y)=x^2+y^2=0$. Finn det eneste tillatte punktet og
 $\nabla h$ der. Forklar hvorfor ingen multiplikator kan gjøre
 $\nabla f+\lambda\nabla h=0$, selv om punktet er et optimum.
@@ -566,7 +700,7 @@ $\nabla h(0,0)=$ vec[0,0]
 #| partial-credit: true
 #| field-labels: SPD Hessianverdi, minste verdi av L, F i tillatt punkt
 
-**6. En nedre grense.** Bruk $F(z)=\tfrac12\|z-(2,1)\|^2$,
+<strong>6. En nedre grense.</strong> Bruk $F(z)=\tfrac12\|z-(2,1)\|^2$,
 $h(z)=\|z\|^2-1$ og $\lambda=1/2$. Da er
 $L=F+\lambda h$ en kvadratisk funksjon.
 Finn tallet $c$ slik at Hessianen til $L$ er $cI$.
@@ -575,8 +709,8 @@ verdien $F(1,0)$ i ett tillatt punkt. For å avgjøre om nedre grense
 er skarp, sammenlign den med den eksakte minimumsverdien
 $\tfrac12(\sqrt5-1)^2$ fra 12.3. Begrunn i egne notater.
 
-$c=$ __[2] &nbsp; $\min_z L(z,1/2)=$ __[3/4] &nbsp;
-$F(1,0)=$ __[1]
+$c=$ _[2] &nbsp; $\min_z L(z,1/2)=$ _[3/4] &nbsp;
+$F(1,0)=$ _[1]
 ```
 
 ## 12.6 Python: prøv kontrollene selv

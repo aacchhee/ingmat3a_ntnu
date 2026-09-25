@@ -26,6 +26,22 @@ Etter denne uken skal du kunne
 
 I 11.1–11.4 følger vi ett verksted. Regneoppgavene i 11.5 og kodeoppgavene i 11.6 bruker samme tall. **Gå i dybden** åpner lengre begrunnelser.
 
+## Python-oppsett
+
+<div id="uke11-oppsett"></div>
+
+Denne cellen importerer pakkene som brukes i ukens forsøk. Den kjøres automatisk når Python er klart. **Vent på meldingen
+«Oppsett for uke 11 er klart» før du kjører et eksperiment.** Første oppstart
+kan ta litt tid fordi nettleseren må hente pakkene.
+
+`linprog` er SciPy-funksjonen som løser de lineære modellene.
+Koeffisientene til hver modell settes i forsøket der de brukes.
+Du kan lese koden og kjøre oppsettet på nytt med **Kjør**.
+Hvis en celle melder at et navn ikke er definert, kjør oppsettet på nytt
+og deretter forsøket. Kodeoppgavene til slutt inneholder sine egne importer.
+
+{{< include ../_includes/optimization/week11_setup.md >}}
+
 ## 11.1 Fra tabell til tillatt område
 
 <div id="uke11-modell"></div>
@@ -40,40 +56,58 @@ Verkstedet produserer partier av A og B. **Dekningsbidrag** betyr salgsinntekt m
 | B | 1 | 2 | 4 tusen kr |
 | Tilgjengelig kapasitet | 9 | 9 | |
 
-I tillegg kan verkstedet lage høyst fire A-partier. La $x$ være antall A-partier og $y$ antall B-partier. Vi vil gjøre $P=5x+4y$ (tusen kroner) størst mulig. En plan er **tillatt** når
+I tillegg kan verkstedet lage høyst fire A-partier. La $x$ være antall A-partier og $y$ antall B-partier. Vi vil gjøre $P=5x+4y$ (tusen kroner) størst mulig. En plan er **tillatt** når alle kravene er oppfylt:
 
-$$2x+y\le9\quad\text{(maskintimer)},\qquad x+2y\le9\quad\text{(arbeidstimer)},\qquad x\le4,\qquad x,y\ge0.$$
+| Krav | Regning for en plan $(x,y)$ | Grense |
+|:--|:--|:--|
+| Maskintimer | $2x+y$ | $2x+y\le9$ |
+| Arbeidstimer | $x+2y$ | $x+2y\le9$ |
+| Antall A-partier | $x$ | $x\le4$ |
+| Ikke-negativ produksjon | $x,y$ | $x\ge0,\ y\ge0$ |
+
+Les hver rad i produkttabellen som «timer per parti × antall partier». For den lille planen $(x,y)=(2,1)$ er regningen:
+
+| Kontroll | Utregning | Sammenligning |
+|:--|:--|:--|
+| Maskintimer | $2\cdot2+1\cdot1=5$ | $5\le9$ |
+| Arbeidstimer | $1\cdot2+2\cdot1=4$ | $4\le9$ |
+| A-grense | $x=2$ | $2\le4$ |
+| Dekningsbidrag | $5\cdot2+4\cdot1=14$ | 14 tusen kr |
+
+Begge partimengdene er ikke-negative, så planen er tillatt. Den har $9-5=4$ ubrukte maskintimer, $9-4=5$ ubrukte arbeidstimer og rom for $4-2=2$ flere A-partier.
 
 ### Sammenlign hjørnene
 
-Grensene der to krav holder med likhet, gir følgende hjørner. Vi forkaster skjæringspunkter som bryter et annet krav.
+For å finne en beste plan tegner vi først alle planene som oppfyller kravene. Deretter undersøker vi hjørnene: her kan et lineært mål ikke bli større i det indre av en kant enn ved begge endene. Grensene der to krav holder med likhet, gir følgende hjørner. Et skjæringspunkt som bryter et annet krav, tas ikke med.
 
-| Hjørne $(x,y)$ | $P$ (tusen kr) | Brukte maskintimer, arbeidstimer |
-|:--|--:|:--|
-| $(0,0)$ | 0 | $(0,0)$ |
-| $(4,0)$ | 20 | $(8,4)$ |
-| $(4,1)$ | 24 | $(9,6)$ |
-| $(3,3)$ | **27** | $(9,9)$ |
-| $(0,9/2)$ | 18 | $(9/2,9)$ |
+| Hjørne $(x,y)$ | Maskintimer $2x+y$ | Arbeidstimer $x+2y$ | Bidrag $5x+4y$ (tusen kr) |
+|:--|--:|--:|--:|
+| $(0,0)$ | 0 | 0 | 0 |
+| $(4,0)$ | 8 | 4 | 20 |
+| $(4,1)$ | 9 | 6 | 24 |
+| $(3,3)$ | 9 | 9 | **27** |
+| $(0,9/2)$ | $9/2$ | 9 | 18 |
 
 I $(3,3)$ er begge timekapasitetene brukt opp, men det er rom for ett A-parti før grensen $x\le4$ nås. **Slakk** er kapasitet minus bruk. De tre slakkene er altså $(0,0,1)$. En grense med null slakk er **aktiv**.
 
-Figuren viser området og linjer med konstant $P$. En høyere mållinje flyttes opp og til høyre; $P=27$ treffer området ved $(3,3)$.
+Vi tegner området for å se *hvorfor* sammenligningen av hjørner virker. Se først hvilke punkter som ligger innenfor alle grensene; følg så de stiplede linjene med konstant $P$. Når bidraget øker fra 20 til 27, flyttes linjen opp og til høyre. Den siste linjen som treffer området, møter det ved $(3,3)$.
 
 ```{pyodide-python}
 #| label: week11-polygon
-# Legg hjørnene i rekkefølge rundt det tillatte området.
+# Hvert hjørne er en plan (antall A-partier, antall B-partier).
+# Rekkefølgen følger kanten rundt området, slik at utfyllingen blir riktig.
 corners = np.array([[0., 0.], [4., 0.], [4., 1.],
                     [3., 3.], [0., 4.5]])
 
-# Fyll området og marker planen med høyest dekningsbidrag.
+# Fyll alle tillatte planer og trekk opp kanten ved å gjenta første hjørne.
 fig, ax = plt.subplots(figsize=(6, 5))
 ax.fill(corners[:, 0], corners[:, 1], alpha=.22, color="tab:blue",
         label="Tillatte planer")
 ax.plot(*np.vstack((corners, corners[0])).T, color="tab:blue")
 ax.plot(3, 3, "o", color="tab:red", label="Beste plan (3, 3)")
 
-# Hver stiplet linje viser planene med samme dekningsbidrag.
+# Løs 5x + 4y = nivå for y; hvert nivå gir én parallell mållinje.
+# Sammenlign hvor linjene for 20, 24 og 27 treffer det blå området.
 xx = np.linspace(0, 4.8, 120)
 for level in (20, 24, 27):
     ax.plot(xx, (level - 5*xx)/4, "--", label=f"P = {level}")
@@ -96,7 +130,13 @@ Området er lukket og begrenset, altså **kompakt** slik vi så i [uke 8](uke8.q
 <details class="reading-step">
 <summary>Gå i dybden: hjørner og begrensninger for argumentet</summary>
 
-Løs $2x+y=9$ og $x+2y=9$ som et lineært system: $x=y=3$. På $x=4$ krever maskintimene $y\le1$; på $x=0$ krever arbeidstimene $y\le9/2$. Aksene og disse skjæringene gir de fem hjørnene. **Simpleksmetoden** går mellom nabohjørner for å forbedre målet.
+Vi kan hente hjørnene fra grenselikningene i tre trinn:
+
+1. Sett begge timekrav lik 9: $2x+y=9$ og $x+2y=9$. Trekk den andre likningen fra den første: $(2x+y)-(x+2y)=9-9$, så $x-y=0$ og $x=y$. Sett dette inn i $x+2y=9$: $y+2y=9$, altså $3y=9$ og $y=3$. Dermed er $x=3$.
+2. Sett $x=4$: maskintimene gir $8+y\le9$, altså $y\le1$. Sett $x=0$: arbeidstimene gir $2y\le9$, altså $y\le9/2$.
+3. Ta med skjæringene med aksene og kontroller hvert punkt mot *alle* kravene. Da står vi igjen med de fem hjørnene i tabellen.
+
+**Simpleksmetoden** går mellom nabohjørner for å forbedre målet.
 I vårt polygon er en mulig forbedrende hjørnebane
 $(0,0)\to(4,0)\to(4,1)\to(3,3)$, med verdiene
 $0,20,24,27$. Vi trenger ingen simplekstabell for å lese denne banen fra figuren.
@@ -109,40 +149,63 @@ En LP kan også ha et tomt tillatt område eller et mål som kan bli vilkårlig 
 
 <div id="uke11-linprog"></div>
 
-For mange produkter er en hjørnetabell tungvint. Samle bidragene i $p=(5,4)$, timebruken og A-grensen i $A=\left(\begin{smallmatrix}2&1\\1&2\\1&0\end{smallmatrix}\right)$ og kapasitetene i $b=(9,9,4)$. Da betyr $Az\le b$ kravene for $z=(x,y)$. SciPys `linprog` **minimerer**, så vi sender inn `-p` for å maksimere $p^Tz$. `A_ub`, `b_ub` angir $\le$-rader, mens `bounds=(0,None)` gir begge variabler nedre grense null.
+For mange produkter er en hjørnetabell tungvint. Vi samler tallene i vektorer og en matrise. **Kolonnene** står i produktrekkefølgen A, B; **radene** står i kravrekkefølgen maskintimer, arbeidstimer, A-grense:
+
+| Symbol | Betydning | Verdi |
+|:--|:--|:--|
+| $z$ | Antall partier A, B | $(x,y)$ |
+| $p$ | Bidrag per parti A, B | $(5,4)$ |
+| $b$ | Kapasitet per rad i $A$ | $(9,9,4)$ |
+
+$$A=\begin{pmatrix}2&1\\1&2\\1&0\end{pmatrix},\qquad Az\le b.$$
+
+SciPys `linprog` **minimerer**. For å maksimere $p^Tz$ sender vi derfor inn `-p`. Argumentene `A_ub`, `b_ub` angir radene $Az\le b$, mens `bounds=(0,None)` gir både $x$ og $y$ nedre grense null.
+
+Dette forsøket gir en uavhengig kontroll av hjørnetabellen og viser hvilke tall vi bør sjekke når en løser svarer: status, plan, bidrag og slakk. Sammenlign særlig `Slakk` med `Kontroll` i utskriften. De skal vise samme tre verdier.
 
 ```{pyodide-python}
 #| label: week11-highs
-# Legg produktene i kolonner og begrensningene i rader.
+# Bidrag per parti: først A, så B, i tusen kroner.
 p = np.array([5., 4.])
+# Kolonner: A, B. Rader: maskintimer, arbeidstimer, A-grense.
 A = np.array([[2., 1.], [1., 2.], [1., 0.]])
 b = np.array([9., 9., 4.])
 
-# Minimer -P under de tre kravene og ikke-negative produksjonstall.
+# SciPy minimerer. Minus foran p gjør minimum av -P til maksimum av P.
+# bounds angir at både x og y er minst null.
 result = linprog(-p, A_ub=A, b_ub=b, bounds=(0, None), method="highs")
-print("Status:", result.status, result.message)
+print(f"Løserstatus: {result.status} — {result.message}")
 
-# Les planen bare dersom løseren fant et optimum.
+# x og fun kan mangle dersom løseren ikke fant et endelig optimum.
 if result.success:
-    print("Plan:", result.x, "dekningsbidrag:", -result.fun)
-    print("Slakk:", result.ineqlin.residual)
-    print("Direkte kontroll b-Az:", b - A @ result.x)
+    print(f"Plan: A = {result.x[0]:g}, B = {result.x[1]:g} partier")
+    print(f"Dekningsbidrag: {-result.fun:g} tusen kr")
+    print("Ressurs          Kapasitet  Brukt  Slakk  Kontroll")
+    # Slakk fra SciPy skal stemme med b - A @ planen, rad for rad.
+    for name, capacity, used, slack, check in zip(
+        ("Maskintimer", "Arbeidstimer", "A-grense"),
+        b, A @ result.x, result.ineqlin.residual, b - A @ result.x
+    ):
+        print(f"{name:<16}{capacity:>9g}{used:>7g}{slack:>7g}{check:>10g}")
 ```
 
 Status 0 og `success=True` gir $(3,3)$, verdi 27 og slakk $(0,0,1)$. `result.fun=-27` er funksjonen SciPy faktisk minimerte. Vi kontrollerer fortegnet og at planen oppfyller kravene. Flyttallsregning kan gi små avvik fra null.
 
-Et problem kan også være **umulig** (ingen plan oppfyller alle krav, status 2), eller målet kan være **ubegrenset** (det kan forbedres uten en endelig beste verdi, status 3). Les status *før* du bruker `x` og `fun`:
+Hva skjer hvis løseren *ikke* finner en beste plan? Vi prøver to små modeller for å skille **umulig** (ingen plan oppfyller alle krav, status 2) fra **ubegrenset** (målet kan forbedres uten en endelig beste verdi, status 3). Se hvilken status hver modell får; ikke les `x` og `fun` uten først å sjekke status:
 
 ```{pyodide-python}
 #| label: week11-status
-# t <= 1 og t >= 2 kan ikke begge gjelde.
+# Første modell: t <= 1 og t >= 2 motsier hverandre.
+# Skriv t >= 2 som -t <= -2 for A_ub og b_ub.
 impossible = linprog([1.], A_ub=[[1.], [-1.]], b_ub=[1., -2.],
                      bounds=(0, None), method="highs")
 
-# Maksimering av t >= 0 uten en øvre grense har ingen endelig verdi.
+# Andre modell: minimer -t, altså maksimer t, med bare t >= 0.
+# Uten en øvre grense kan t og målet vokse så mye vi vil.
 unbounded = linprog([-1.], bounds=(0, None), method="highs")
-print("Umulig problem:", impossible.status)
-print("Ubegrenset problem:", unbounded.status)
+print("Modell                Status  Tolkning")
+print(f"Motstridende krav     {impossible.status:>6}  Umulig")
+print(f"Mål uten øvre grense  {unbounded.status:>6}  Ubegrenset")
 ```
 
 Statusen gjelder modellen vi skrev inn. En feil i produksjonskravene blir ikke rettet av løseren.
@@ -177,9 +240,14 @@ velger ulikhetsform eller likhetsform; oppgi derfor alltid formen.
 
 ### Et prisbevis med tall
 
-Hjørnene og løseren peker på 27. Nå får vi en kort kontroll som gjelder *hver* tillatte plan. Sett en tenkt pris på 2 tusen kroner per maskintime og 1 tusen kroner per arbeidstime. Grensen på A-partier får pris null. Innsatsen til ett A-parti prises da til $2\cdot2+1\cdot1=5$, og til ett B-parti til $1\cdot2+2\cdot1=4$: akkurat produktenes bidrag.
+Hjørnene og løseren peker på 27. For å vite at ingen oversett plan er bedre, lager vi en øvre grense som gjelder *hver* tillatte plan. Sett en tenkt pris på 2 tusen kroner per maskintime og 1 tusen kroner per arbeidstime. Grensen på A-partier får pris null. Sammenlign innsatspris og bidrag for hvert produkt:
 
-Multipliser maskintimekravet med 2 og arbeidstimekravet med 1, og legg sammen:
+| Produkt | Priset ressursbruk per parti | Bidrag per parti (tusen kr) |
+|:--|:--|--:|
+| A | $2\cdot2+1\cdot1+0\cdot1=5$ | 5 |
+| B | $2\cdot1+1\cdot2+0\cdot0=4$ | 4 |
+
+Hvert partis bidrag dekkes av innsatsprisen. Multipliser derfor maskintimekravet med 2 og arbeidstimekravet med 1, og legg sammen:
 
 $$2(2x+y)+(x+2y)=5x+4y\le2\cdot9+9=27.$$
 
@@ -187,23 +255,29 @@ Ingen tillatt plan kan gi mer enn 27, mens $(3,3)$ gir 27. Vi har et **optimalit
 
 ### Fra prisforslag til et nytt optimeringsproblem
 
-Bruk nå andre ikke-negative timepriser $u,v$ og pris $w$ på A-grensen. Innsatsen må koste **minst** bidraget per parti, ellers kan prisregningen ikke avgrense bidraget:
+Bruk nå $u$ som pris per maskintime, $v$ som pris per arbeidstime og $w$ som pris per ekstra tillatt A-parti, målt i tusen kroner per enhet. Alle tre er ikke-negative. Innsatsen må koste **minst** bidraget per parti, ellers kan prisregningen ikke avgrense bidraget:
 
-$$2u+v+w\ge5\quad\text{(A)},\qquad u+2v\ge4\quad\text{(B)},\qquad u,v,w\ge0.$$
+| Prisregel | Ressurser per parti × pris | Krav |
+|:--|:--|:--|
+| A-parti | $2u+v+w$ | $2u+v+w\ge5$ |
+| B-parti | $u+2v$ | $u+2v\ge4$ |
+| Prisene | $u,v,w$ | $u,v,w\ge0$ |
 
-For hver tillatt plan får vi dermed
+Prisregningen gir to trinn for hver tillatt plan:
 
 $$5x+4y\le(2u+v+w)x+(u+2v)y\le9u+9v+4w.$$
 
-Den første ulikheten bruker $x,y\ge0$, den andre de tre kapasitetskravene. Ethvert gyldig prisvalg gir en øvre grense. Å finne den laveste slike grensen er et eget problem: **dualen** til produksjonsproblemet, som kalles **primalen**. At planens verdi aldri overstiger prisgrensen, kalles **svak dualitet**. Lik verdi 27 på begge sider beviser optimalitet her.
+Først bruker vi prisreglene og $x,y\ge0$ til å dekke produktenes bidrag. Så bruker vi kapasitetskravene til å erstatte ressursbruken med kapasitetene. Ethvert gyldig prisvalg gir en øvre grense. Å finne den laveste slike grensen er et eget problem: **dualen** til produksjonsproblemet, som kalles **primalen**. At planens verdi aldri overstiger prisgrensen, kalles **svak dualitet**. Lik verdi 27 på begge sider beviser optimalitet her.
 
 Mer kompakt kan et maksimeringsproblem skrives
 
 $$\max_{z\ge0}p^Tz\quad\text{slik at }Az\le b.$$
 
-Hver rad i $A$ får én ikke-negativ pris i $q$. Den samme vektede ulikheten gir dualen
+Hver rad i $A$ får én ikke-negativ pris i $q$; her er $q=(u,v,w)$ i rekkefølgen maskintimer, arbeidstimer, A-grense. Priskravene er $A^Tq\ge p$. Den samme vektede ulikheten gir dualproblemet
 
-$$\min_{q\ge0}b^Tq\quad\text{slik at }A^Tq\ge p,\qquad p^Tz\le b^Tq.$$
+$$\min_{q\ge0}b^Tq\quad\text{slik at }A^Tq\ge p.$$
+
+For enhver tillatt plan $z$ og ethvert gyldig prisvalg $q$ gjelder den svake dualiteten $p^Tz\le b^Tq$.
 
 Når begge LP-er har mulige løsninger og et endelig optimum, er de beste verdiene like (**sterk dualitet**). Vårt talleksempel trenger ikke denne generelle setningen: vi har allerede vist to mulige valg med samme verdi.
 
@@ -216,11 +290,11 @@ $$b^Tq-p^Tz=q^T(b-Az)+z^T(A^Tq-p)\ge0.$$
 
 Når forskjellen er null, må hver positiv pris møte en aktiv begrensning: $q_i(b_i-(Az)_i)=0$. Hvert produkt som lages i positiv mengde, må ha innsatspris lik bidraget: $z_j((A^Tq)_j-p_j)=0$. Dette kalles **komplementær slakk**. Ved $z=(3,3)$ og $q=(2,1,0)$ er kapasitetslakken $(0,0,1)$ og produktprisene $(5,4)$. En aktiv grense kan likevel ha pris null, som vi ser ved kapasitetsskiftet i 11.4.
 
-**Slik finner vi prisene fra planen $(3,3)$.** A-grensen har slakk 1,
-så komplementær slakk gir $w=0$. Begge produktene lages i positiv
-mengde, derfor må $2u+v=5$ og $u+2v=4$. Løsning av disse to
-likningene gir $u=2$, $v=1$. Prisene $(2,1,0)$ kan altså utledes
-fra hvilke varer som produseres og hvilke grenser som har slakk.
+**Slik finner vi prisene fra planen $(3,3)$.** A-grensen har slakk 1, så komplementær slakk gir $w=0$. Begge produktene lages i positiv mengde, derfor må $2u+v+w=5$ og $u+2v=4$. Med $w=0$ blir den første likningen $2u+v=5$, altså $v=5-2u$. Sett dette inn i den andre:
+
+$$u+2(5-2u)=4\quad\Longrightarrow\quad 10-3u=4\quad\Longrightarrow\quad u=2.$$
+
+Da er $v=5-2\cdot2=1$, og sammen med $w=0$ får vi prisene $(u,v,w)=(2,1,0)$. Kontrollen er $2u+v+w=5$ for A, $u+2v=4$ for B, og totalprisen for kapasitetene er $9u+9v+4w=27$. Prisene kan altså utledes fra hvilke varer som produseres og hvilke grenser som har slakk.
 
 Hvis rader eller variabler har andre fortegn, må også prisreglene endres. For et primalproblem som maksimeres, gir en $\ge$-rad en ikke-positiv dualvariabel og en likningsrad en fri dualvariabel. En fri primalvariabel gir et likhetskrav i dualen. Den vektede ulikheten forklarer fortegnsreglene. I hovedmodellen bruker vi bare $Az\le b$ og $z\ge0$.
 
@@ -232,11 +306,29 @@ Hvis rader eller variabler har andre fortegn, må også prisreglene endres. For 
 
 ### Når den gamle timeprisen fortsatt virker
 
-Gi verkstedet $\Delta$ flere maskintimer. Prisene $(2,1,0)$ gir nå en øvre grense $27+2\Delta$. For $\Delta=1/2$ møtes timegrensene ved $(10/3,17/6)$, en tillatt plan med $P=28$. Grensen oppnås: en halv ekstra maskintime er verdt 1 tusen kroner her.
+Hvor mye bør verkstedet betale for mer maskinkapasitet? Gi det $\Delta$ flere maskintimer. De gamle prisene $(2,1,0)$ gir da øvre grense $2(9+\Delta)+9=27+2\Delta$. For $\Delta=1/2$ møtes timegrensene ved $(10/3,17/6)$. Kontroller planen rad for rad:
+
+| Kontroll ved $\Delta=1/2$ | Beregning | Resultat |
+|:--|:--|:--|
+| Maskintimer | $2(10/3)+17/6$ | $19/2=9+1/2$ |
+| Arbeidstimer | $10/3+2(17/6)$ | $9$ |
+| A-grense | $10/3\le4$ | Oppfylt |
+| Bidrag | $5(10/3)+4(17/6)$ | $28$ tusen kr |
+
+Planen oppnår prisgrensen $27+2(1/2)=28$. Den halve ekstra maskintimen øker dermed det beste bidraget med 1 tusen kroner.
 
 ### Når en annen grense stopper produksjonen
 
-For $\Delta=2$ ville skjæringen fått $x=13/3>4$, som bryter A-grensen. Nå er $(4,5/2)$ best og gir $P=30$. Den gamle prisformelen gir fortsatt en gyldig øvre grense på 31, men den oppnås ikke. Vi kan bevise den nye grensen med prisene $(u,v,w)=(0,2,3)$:
+Kan vi fortsatt bruke prisen 2 per maskintime etter en større økning? Ved $\Delta=2$ øker maskinkapasiteten til 11. Skjæringen mellom timegrensene ville gi $x=13/3>4$ og bryter A-grensen. Vi setter derfor $x=4$ og lar arbeidstiden være brukt opp: $4+2y=9$ gir $2y=5$ og $y=5/2$. Kontroller planen $(4,5/2)$:
+
+| Kontroll ved $\Delta=2$ | Beregning | Resultat |
+|:--|:--|:--|
+| Maskintimer | $2\cdot4+5/2$ | $21/2\le11$ |
+| Arbeidstimer | $4+2(5/2)$ | $9$ |
+| A-grense | $x=4$ | Brukt opp |
+| Bidrag | $5\cdot4+4(5/2)$ | $30$ tusen kr |
+
+Den gamle prisformelen gir fortsatt en gyldig øvre grense på $27+2\cdot2=31$, men planen oppnår den ikke. Vi kan bevise den nye grensen med prisene $(u,v,w)=(0,2,3)$:
 
 $$2(x+2y)+3x=5x+4y\le2\cdot9+3\cdot4=30.$$
 
@@ -244,14 +336,15 @@ Planen $(4,5/2)$ oppnår 30. Nå er det arbeidstimene og A-grensen
 som bestemmer beste verdi; ekstra maskintimer alene hjelper ikke.
 Allerede ved $\Delta=3/2$ er disse prisene optimale, selv om
 maskintimekravet fortsatt er aktivt. En aktiv grense kan altså ha pris null.
-Figuren viser opprinnelig kapasitet øverst og to ekstra maskintimer
-nederst, med samme akser.
+Figuren lar oss se *hvilken grense* som stopper forbedringen. Sammenlign hvor mållinjen berører det blå området i øverste panel (opprinnelig kapasitet) og nederste panel (to ekstra maskintimer). Begge panelene har samme akser.
 
 ```{pyodide-python}
 #| label: week11-capacity-geometry
-# Sammenlign startkapasitet med to ekstra maskintimer i vertikale paneler.
+# Bruk vertikale paneler med samme akser, så endret form kan sammenlignes.
 fig, axes = plt.subplots(2, 1, figsize=(6, 10), constrained_layout=True)
+# x-verdiene brukes til å tegne grense- og mållinjene i hvert panel.
 xx = np.linspace(0, 4.8, 120)
+# For hvert tilfelle: ekstra timer, hjørnene rundt området, beste plan, bidrag.
 cases = [
     (0., np.array([[0., 0.], [4., 0.], [4., 1.],
                     [3., 3.], [0., 4.5]]), (3., 3.), 27.),
@@ -259,14 +352,15 @@ cases = [
                     [0., 4.5]]), (4., 2.5), 30.),
 ]
 for ax, (delta, polygon, best, value) in zip(axes, cases):
-    # Vis tillatte planer og grensene for maskin- og arbeidstimer.
+    # Fyll planene som oppfyller alle krav; de rette linjene viser timegrenser.
     ax.fill(polygon[:, 0], polygon[:, 1], alpha=.22, color="tab:blue",
             label="Tillatte planer")
+    # En økt høyreside skyver bare maskinlinjen utover.
     ax.plot(xx, 9 + delta - 2*xx, color="tab:blue", label="Maskintimer")
     ax.plot(xx, (9 - xx)/2, color="tab:green", label="Arbeidstimer")
-    # Vis også A-grensen som blir avgjørende når maskinkapasiteten øker.
+    # A-grensen står fast; den blir avgjørende i det nederste panelet.
     ax.axvline(4, color="tab:purple", linestyle=":", label="A-grense x = 4")
-    # Mållinjen gjennom optimum viser hvor forbedringen stoppes.
+    # Legg mållinjen gjennom beste plan og marker berøringspunktet.
     ax.plot(xx, (value - 5*xx)/4, "--", color="tab:orange",
             label=f"P = {value:g}")
     ax.plot(*best, "o", color="tab:red", label="Beste plan")
@@ -279,22 +373,32 @@ plt.show()
 
 ### Les ressursverdiene fra SciPy
 
-Vi kontrollerer endringen med `linprog`. `ineqlin.marginals` beskriver den *lokale* endringen i minimeringsverdien når en høyreside økes. SciPy minimerer $-P$, så vi snur fortegnet for å lese ressursverdier for $P$.
+Vi kontrollerer de tre tilfellene numerisk for å se når det gamle prisanslaget slutter å være eksakt. Se på kolonnene «Beste bidrag» og «Gammel grense»: de er like ved $\Delta=0$ og $1/2$, men ulike ved $\Delta=2$. `ineqlin.marginals` beskriver den *lokale* endringen i minimeringsverdien når en høyreside økes. SciPy minimerer $-P$, så vi snur fortegnet for å lese ressursverdier for $P$.
 
 ```{pyodide-python}
 #| label: week11-marginals
-# Løs samme modell med tre timekapasiteter og samme øvrige data.
+# Endre bare første kapasitet (maskintimene); hold A, p og andre grenser fast.
+# Sammenlign løserens beste verdi med øvre grense fra de gamle prisene.
+print("Δ timer  A-partier  B-partier  Beste bidrag  Gammel grense")
 for delta in (0., .5, 2.):
     changed = b.copy()
     changed[0] += delta
+    # Vi minimerer -P også her, så snu fortegnet på fun i utskriften.
     trial = linprog(-p, A_ub=A, b_ub=changed,
                     bounds=(0, None), method="highs")
     if trial.success:
-        print(f"Δ={delta:g}: plan={trial.x}, P={-trial.fun:g}, "
-              f"gammelt prisanslag={27+2*delta:g}")
+        print(f"{delta:>7g}{trial.x[0]:>12.3f}{trial.x[1]:>12.3f}"
+              f"{-trial.fun:>14g}{27+2*delta:>16g}")
+    else:
+        # Meld fra om status før et resultatobjekt uten plan kan brukes.
+        print(f"{delta:>7g}  Status {trial.status}: {trial.message}")
 
-# Dette er marginalene for bidraget P, ikke for -P.
-print("Ressursverdier nær Δ=0:", -result.ineqlin.marginals)
+# Marginalene fra startmodellen gjelder lokalt rundt Δ = 0.
+# De tre tallene står i samme rekkefølge som radene i A.
+print("\nLokal ressursverdi ved Δ = 0 (tusen kr per ekstra enhet)")
+for name, value in zip(("Maskintime", "Arbeidstime", "A-parti"),
+                       -result.ineqlin.marginals):
+    print(f"{name:<16}{value:g}")
 ```
 
 Bidragene blir $27,28,30$, mens den gamle prisformelen gir $27,28,31$. Ved utgangspunktet er SciPy-marginalene omtrent $(-2,-1,0)$; de lokale verdiene for ekstra maskintime, arbeidstime og høyere A-grense er $(2,1,0)$. For større endringer må vi sjekke om en plan fortsatt kan oppnå prisgrensen.
@@ -302,11 +406,19 @@ Bidragene blir $27,28,30$, mens den gamle prisformelen gir $27,28,31$. Ved utgan
 <details class="reading-step">
 <summary>Gå i dybden: hvor lenge er prisformelen eksakt?</summary>
 
-Når begge timegrensene fortsatt er aktive, gir systemet
+For å finne hele intervallet der gammel pris gir riktig *optimalverdi*, lar vi $\Delta$ være en endring i maskinkapasiteten: positiv $\Delta$ betyr flere timer, negativ $\Delta$ betyr færre. Den nye kapasiteten $9+\Delta$ må være ikke-negativ. Hold begge timegrensene aktive og sett $2x+y=9+\Delta$ og $x+2y=9$. Eliminering gir
 
 $$x=3+\frac{2\Delta}{3},\qquad y=3-\frac{\Delta}{3}.$$
 
-Kravene $x,y\ge0$ og $x\le4$ gir $-9/2\le\Delta\le3/2$. I dette intervallet er planen tillatt og de gamle prisene gir samme verdi: $P_*(\Delta)=27+2\Delta$. For kapasitetsøkninger gjelder dette til og med $\Delta=3/2$. Etterpå må vi finne et nytt beste punkt.
+Kontroller den nye planen mot de tre andre kravene:
+
+| Krav | Sett inn $x=3+2\Delta/3$, $y=3-\Delta/3$ | Grense for $\Delta$ |
+|:--|:--|:--|
+| $x\ge0$ | $3+2\Delta/3\ge0$ | $\Delta\ge-9/2$ |
+| $y\ge0$ | $3-\Delta/3\ge0$ | $\Delta\le9$ |
+| $x\le4$ | $3+2\Delta/3\le4$ | $\Delta\le3/2$ |
+
+Det felles intervallet er $-9/2\le\Delta\le3/2$, som også gir ikke-negativ maskinkapasitet. La $P_*(\Delta)$ betegne *størst mulig dekningsbidrag* ved maskinkapasitet $9+\Delta$. I dette intervallet er planen tillatt og har verdien $5x+4y=27+2\Delta$. Siden den oppnår den gamle prisgrensen, er $P_*(\Delta)=27+2\Delta$. For kapasitetsøkninger gjelder dette til og med $\Delta=3/2$. Etterpå må vi finne et nytt beste punkt.
 
 Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i [uke 8](uke8.qmd#uke8-modell). Etter $\Delta=1/2$ er $(10/3,17/6)$ ikke en plan med hele partier.
 
@@ -336,7 +448,7 @@ Verkstedet maksimerer $P=5x+4y$ under $2x+y\le9$, $x+2y\le9$, $x\le4$ og $x,y\ge
 
 Sett $(x,y)=(4,1)$. Finn slakken i de tre begrensningene i oppført rekkefølge og beregn dekningsbidraget. Forklar i egne notater om planen er tillatt og hvilke grenser som er aktive.
 
-Slakk: vec[0,3,0] &nbsp; Dekningsbidrag: __[24]
+Slakk: vec[0,3,0] &nbsp; Dekningsbidrag: _[24]
 
 Finn også skjæringen mellom de to timegrensene. Sammenlign bidraget
 der med bidragene i hjørnetabellen i 11.1, og forklar hvilken plan som er best.
@@ -354,7 +466,7 @@ der med bidragene i hjørnetabellen i 11.1, og forklar hvilken plan som er best.
 
 Bruk prisene $(u,v,w)=(2,1,0)$. Finn øvre grense $9u+9v+4w$ og innsatsprisene $2u+v+w$ for A og $u+2v$ for B. Forklar hvorfor en tillatt plan med bidrag lik grensen er optimal.
 
-Øvre grense: __[27] &nbsp; Innsatspriser (A, B): vec[5,4]
+Øvre grense: _[27] &nbsp; Innsatspriser (A, B): vec[5,4]
 
 Utled deretter prisene fra planen $(3,3)$ ved hjelp av komplementær
 slakk: hvilken pris må være null, og hvilke to likninger bestemmer
@@ -373,7 +485,7 @@ de andre prisene? Skriv regningen i egne notater.
 
 Øk bare maskintimene fra 9 til 10. Anta at de to timegrensene fortsatt er aktive. Løs grenselikningene, kontroller $x\le4$ og finn det nye dekningsbidraget. Skriv produksjonstallene som brøker.
 
-Plan: vec[11/3,8/3] &nbsp; Dekningsbidrag: __[29]
+Plan: vec[11/3,8/3] &nbsp; Dekningsbidrag: _[29]
 ```
 
 **Oppgave 4 – prisen har et gyldighetsområde.**
@@ -387,7 +499,7 @@ Plan: vec[11/3,8/3] &nbsp; Dekningsbidrag: __[29]
 
 Med maskinkapasitet $9+\Delta$ gir de to aktive timegrensene $x=3+2\Delta/3$ og $y=3-\Delta/3$. Finn den største $\Delta\ge0$ som fortsatt oppfyller $x\le4$. Hvorfor må prisanslaget undersøkes på nytt etter denne økningen?
 
-$\Delta=$ __[3/2]
+$\Delta=$ _[3/2]
 ```
 
 **Oppgave 5 – en øvre grense trenger ikke være skarp.**
@@ -402,7 +514,7 @@ $\Delta=$ __[3/2]
 
 Prøv $(u,v,w)=(3,1,0)$. Finn innsatsprisene for A og B og den øvre grensen. Sammenlign med planen $(3,3)$: beviser akkurat dette prisvalget at den er optimal?
 
-Innsatspriser (A, B): vec[7,5] &nbsp; Øvre grense: __[36]
+Innsatspriser (A, B): vec[7,5] &nbsp; Øvre grense: _[36]
 ```
 
 **Oppgave 6 – skille mellom ulike utfall.**
@@ -415,9 +527,9 @@ Innsatspriser (A, B): vec[7,5] &nbsp; Øvre grense: __[36]
 #| partial-credit: true
 #| field-labels: motstridende t-krav, t uten øvre grense
 
-Problem I krever $t\ge0$, $t\le1$ og $t\ge2$. Problem II maksimerer $t$ under bare $t\ge0$. Skriv **2** for umulig problem og **3** for ubegrenset mål. Forklar i egne notater hvorfor utfallene er forskjellige.
+Problem I krever $t\ge0$, $t\le1$ og $t\ge2$. Problem II maksimerer $t$ under bare $t\ge0$. Skriv <strong>2</strong> for umulig problem og <strong>3</strong> for ubegrenset mål. Forklar i egne notater hvorfor utfallene er forskjellige.
 
-Problem I: __[2] &nbsp; Problem II: __[3]
+Problem I: _[2] &nbsp; Problem II: _[3]
 ```
 
 I [prosjektet](project_week11.qmd) bruker du ressurspriser på et større produksjonsvalg.
@@ -437,7 +549,7 @@ Disse korte oppgavene kan kjøres uavhengig av hverandre. Data, importer og funk
 # Bruk NumPy til matrise- og vektorregningen.
 import numpy as np
 
-# Radene er kapasitetene; kolonnene er produktene A og B.
+# Radene er ressurskravene; kapasitetene står i b. Kolonner: A, B.
 A = np.array([[2., 1.], [1., 2.], [1., 0.]])
 b = np.array([9., 9., 4.])
 p = np.array([5., 4.])

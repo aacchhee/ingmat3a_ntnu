@@ -2,6 +2,4 @@
 title: "Uke 10 – Newtons metode for optimering"
 ---
 
-{{< include ../_includes/optimization/week10_setup.md >}}
-
 {{< include ../_includes/optimization/uke10.md >}}

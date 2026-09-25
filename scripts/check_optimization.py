@@ -16,9 +16,13 @@ INCLUDE = re.compile(r"\{\{<\s*include\s+([^\s>]+)\s*>\}\}")
 CELL = re.compile(r"```\{pyodide-python\}\n(.*?)```", re.S)
 
 
-def expanded(path):
+def expanded(path, include_root=None):
+    # Quarto resolves nested include paths relative to the original .qmd file.
+    include_root = path.parent if include_root is None else include_root
     text = path.read_text()
-    return INCLUDE.sub(lambda m: expanded((path.parent / m[1]).resolve()), text)
+    return INCLUDE.sub(
+        lambda m: expanded((include_root / m[1]).resolve(), include_root), text
+    )
 
 
 def run_page(page, figures=None, replacements=None):

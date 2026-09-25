@@ -30,8 +30,9 @@ en modell. Deretter bruker vi deriverte til å undersøke punkter nær en
 kandidat. Til slutt ser vi hvilke egenskaper ved hele området og
 funksjonen som sikrer at et minimum finnes, og at et lokalt minimum
 også er globalt. Regneoppgavene i 8.5 følger eksemplene i teksten.
-All Python, et sammenfoldet SciPy-oppslag og kodeoppgaver ligger i 8.6;
-figurene og resultatene i hovedteksten kan leses uten å kjøre kode.
+Kodeforsøk, et sammenfoldet SciPy-oppslag og kodeoppgaver ligger i 8.6;
+felles importer finner du under **Python-oppsett**.
+Figurene og resultatene i hovedteksten kan leses uten å kjøre kode.
 **Forelesning** viser hovedløpet; **Gå i dybden** åpner
 lengre begrunnelser og mellomregninger.
 
@@ -49,6 +50,23 @@ Etter denne uka skal du kunne
 - skille infimum fra minimum og bruke ekstremalverdisetningen til å vise at ekstremalverdier finnes,
 - undersøke konveksitet og forklare når et lokalt minimum også er globalt,
 - bruke `minimize` i SciPy og kontrollere punkt, funksjonsverdi og gradient i svaret.
+
+## Python-oppsett
+
+<div id="uke8-oppsett"></div>
+
+Denne cellen importerer pakkene som brukes i ukens kodeforsøk i 8.6.
+Den kjøres automatisk når Python er klart. **Vent på meldingen
+«Oppsett for uke 8 er klart» før du kjører et eksperiment.** Første oppstart
+kan ta litt tid fordi nettleseren må hente pakkene.
+
+NumPy brukes til vektorregning, Matplotlib tegner figurene, og
+`minimize` fra SciPy leter etter lokale minima. Du kan lese importene
+og kjøre oppsettet på nytt med **Kjør**. Hvis en celle melder at et navn
+ikke er definert, kjør oppsettet på nytt og deretter forsøket.
+Kodeoppgavene til slutt inneholder sine egne importer.
+
+{{< include ../_includes/optimization/week8_setup.md >}}
 
 ## 8.1 Modell, valg og tillatt område
 
@@ -71,6 +89,10 @@ men må holde disse to størrelsene fra hverandre. Å maksimere $f$ er
 det samme som å minimere $-f$: de samme punktene blir best.
 
 ### Eksperiment 1 – lønner det seg å bruke alle ressursene?
+
+Vi skal se om planen med størst overskudd også bruker opp både
+komponentene og arbeidstiden. Sammenlign derfor overskuddet og
+ressursbruken for den beste tillatte planen.
 
 Fire studenter driver et lite dataverksted. De skal velge hvor mange
 nye datamaskiner de bygger, og hvor mange gamle de reparerer **denne uken**.
@@ -113,10 +135,18 @@ tillatte heltallspar. Figuren viser resultatet av denne opptellingen;
 
 ![Hvert punkt er en tillatt produksjonsplan. Fargen viser nettooverskuddet; stjernen markerer planen med størst overskudd.](../assets/optimization/week8-production.svg){width=620}
 
-Det beste valget er $(b,r)=(8,14)$, med
-$P(8,14)=6850$ kr. Planen bruker $10\cdot8+14=94$ komponenter og
-$8+3\cdot14=50$ timer. Det lønner seg altså ikke nødvendigvis å bruke
-opp begge ressursene. **Maksimumpunktet** er produksjonsplanen $(8,14)$;
+Opptellingen gir planen $(b,r)=(8,14)$. Kontroller den mot de tre
+størrelsene i modellen:
+
+| Størrelse | Beregning | Resultat |
+|:--|:--|--:|
+| Nettooverskudd | $500\cdot8+250\cdot14-650$ | $6850$ kr |
+| Komponenter | $10\cdot8+14$ | $94$ av $100$ |
+| Arbeidstimer | $8+3\cdot14$ | $50$ av $50$ |
+
+Planen bruker alle timene, men ikke alle komponentene. Det lønner seg
+altså ikke nødvendigvis å bruke opp begge ressursene.
+**Maksimumpunktet** er produksjonsplanen $(8,14)$;
 **maksimalverdien** er overskuddet 6850 kr.
 
 Et svar med for eksempel $b=8.62$ er ingen produksjonsplan: vi kan
@@ -154,7 +184,29 @@ handler derivasjonstestene i neste avsnitt om **reelle variabler**.
 <details class="reading-step">
 <summary>Gå i dybden: hva skjer hvis vi tillater brøkdeler av maskiner?</summary>
 
-Hvis $b,r$ tillates å være reelle, blir det tillatte området en mangekant med kantene inkludert. Denne utvidelsen kalles en **relaksasjon**: vi tillater flere valg, så beste overskudd kan bare øke. $P$ er **affin**, altså lineær pluss en konstant. På en slik mangekant oppnår en affin funksjon et maksimum i minst ett hjørne; langs en kant varierer den lineært og kan også være konstant. I [uke 11](uke11.qmd#uke11-modell) utvikler vi denne hjørnemetoden. Sammenligning av hjørnene gir skjæringen mellom ressursgrensene: $b=250/29$ og $r=400/29$, med $P=225000/29-650\approx7108.62$ kr. Dette er en **øvre grense** for heltallsproblemet, ikke en gjennomførbar produksjonsplan. Punktet $(8,14)$ bruker $10\cdot8+14=94$ komponenter og $8+3\cdot14=50$ timer.
+Hvis $b,r$ tillates å være reelle, blir det tillatte området en
+mangekant med kantene inkludert. Denne utvidelsen kalles en
+**relaksasjon**: vi tillater flere valg, så beste overskudd kan bare
+øke. $P$ er **affin**, altså lineær pluss en konstant. På en slik
+mangekant oppnår en affin funksjon et maksimum i minst ett hjørne;
+langs en kant varierer den lineært og kan også være konstant. I
+[uke 11](uke11.qmd#uke11-modell) utvikler vi denne hjørnemetoden.
+
+Skjæringen mellom de to ressursgrensene er ett av hjørnene. Setter
+vi begge kravene lik kapasiteten, får vi
+
+$$10b+r=100,\qquad b+3r=50
+\quad\Longrightarrow\quad b=\frac{250}{29},\quad r=\frac{400}{29}.$$
+
+Sammenligning av hjørnene viser at dette gir størst overskudd i
+relaksasjonen:
+
+$$P\left(\frac{250}{29},\frac{400}{29}\right)
+=\frac{225000}{29}-650\approx7108.62\text{ kr}.$$
+
+Dette er en **øvre grense** for heltallsproblemet, ikke en
+gjennomførbar produksjonsplan. Heltallsløsningen $(8,14)$ gir 6850 kr
+og lar seks komponenter stå ubrukt.
 
 </details>
 
@@ -191,6 +243,20 @@ Når produktet er negativt, senker tilstrekkelig små positive steg
 funksjonen. Retningen $-\nabla f(z)$ har denne egenskapen så lenge
 gradienten ikke er null. Vi bruker den til å bygge en metode i uke 9.
 
+**Regn for hånd.** Sett $f(x,y)=x^2+2y^2$, $z=(1,-1)$ og
+$p=(1,1)$. Et steg på $t=0.1$ gir $h=tp=(0.1,0.1)$.
+
+1. Deriver: $\nabla f(x,y)=(2x,4y)$, så
+   $\nabla f(1,-1)=(2,-4)$.
+2. Retningsderiverten langs $p$ er
+   $\nabla f(z)^Tp=2\cdot1-4\cdot1=-2$.
+   Førsteordensanslaget for steget er derfor $t(-2)=-0.2$.
+3. Regn ut den faktiske endringen:
+   $f(1.1,-0.9)-f(1,-1)=(1.21+1.62)-3=-0.17$.
+
+Anslaget er nær den faktiske endringen. Forskjellen $0.03$ kommer
+fra de kvadratiske leddene som førsteordensanslaget utelater.
+
 Et **indre punkt** i $D$ har et lite område rundt seg der alle punkter
 er tillatt. Et **randpunkt** ligger på grensen mellom tillatte og
 utelukkede valg. Ved et indre lokalt minimum kan vi bevege oss litt i
@@ -201,6 +267,10 @@ betingelse**: alle slike minima må oppfylle den. Det er ennå ikke en
 **tilstrekkelig betingelse**, altså noe som alene garanterer minimum.
 
 ### Eksperiment 2 – to starter, to svar
+
+Vi vil finne ut om én lokal søkekjøring er nok til å finne den beste
+dalen. Sammenlign hvor søkene ender, verdien de får og om små
+gradienter gir samme konklusjon om globalt minimum.
 
 Vi minimerer nå en kostnadsfunksjon med to reelle innstillinger $x,y$. Den er **glatt**: de deriverte vi trenger finnes og varierer kontinuerlig, uten sprang:
 
@@ -318,9 +388,33 @@ begrensningene tillater.
 <details class="reading-step">
 <summary>Gå i dybden: nødvendige og tilstrekkelige lokale tester</summary>
 
-Ved et indre lokalt minimum kan vi gå både fram og tilbake langs hver koordinat uten å forlate området. Den endimensjonale derivasjonstesten gir derfor alle partiellderiverte lik null. For en to ganger kontinuerlig deriverbar funksjon gjelder dessuten $v^TH_f(x_*)v\ge0$ for enhver retning $v$: Hessian er **positiv semidefinit**, en nødvendig betingelse som tillater null egenverdier. I et kritisk punkt er positiv **definit** Hessian en tilstrekkelig betingelse for strengt lokalt minimum. Null egenverdi i en semidefinit Hessian avgjør ingenting: $x^4$ har lokalt minimum ved null, mens $-x^4$ har lokalt maksimum der; begge har andrederivert null. Dette er den generelle utvidelsen av den [positive definite kvadratiske funksjonen fra uke 6](uke6.qmd#uke6-energi).
+Ved et indre lokalt minimum kan vi gå både fram og tilbake langs hver
+koordinat uten å forlate området. Den endimensjonale derivasjonstesten
+gir derfor alle partiellderiverte lik null. For en to ganger
+kontinuerlig deriverbar funksjon gjelder dessuten
+$v^TH_f(x_*)v\ge0$ for enhver retning $v$: Hessianen er **positiv
+semidefinit**. Dette er nødvendige betingelser.
 
-For den bølgede funksjonen er $H_f(x,y)=\operatorname{diag}(2+40\pi^2\cos(2\pi x),2+40\pi^2\cos(2\pi y))$. Begge diagonalverdiene er positive nær $(1.9899,1.9899)$. Dette stemmer med at søket er nær et lokalt minimum, men den avrundede vektoren er ikke et eksakt stasjonært punkt. For den eksakte påstanden må vi først finne et punkt med gradient nøyaktig null, og deretter bruke den positive definite Hessianen. Den beregnede verdien nær 7.96 kan uansett ikke være globalt best, siden origo gir verdi 0. Ved $f(x,y)=x^2-y^2$ er gradienten null i origo, men Hessian har egenverdiene $2$ og $-2$: et sadelpunkt.
+I et kritisk punkt er positiv **definit** Hessian tilstrekkelig for
+strengt lokalt minimum. En positiv semidefinit Hessian med en null
+egenverdi gir derimot ikke noe svar:
+$x^4$ har lokalt minimum ved null, mens $-x^4$ har lokalt maksimum
+der. Begge har andrederivert null. Disse testene utvider eksemplet
+med en [positiv definit kvadratisk funksjon fra uke 6](uke6.qmd#uke6-energi).
+
+For den bølgede funksjonen får vi en diagonal Hessian:
+
+$$H_f(x,y)=\operatorname{diag}\bigl(
+2+40\pi^2\cos(2\pi x),\;2+40\pi^2\cos(2\pi y)\bigr).$$
+
+Begge diagonalverdiene er positive nær $(1.9899,1.9899)$. Det stemmer
+med at søket er nær et lokalt minimum. Den avrundede vektoren er
+likevel ikke et eksakt stasjonært punkt. For en eksakt påstand må vi
+først finne et punkt med gradient nøyaktig null og deretter bruke den
+positive definite Hessianen. Verdien nær 7.96 kan uansett ikke være
+globalt best, siden origo gir verdi 0. Som kontrast har $x^2-y^2$
+gradient null i origo og Hessian med egenverdiene $2$ og $-2$:
+det er et sadelpunkt.
 
 </details>
 
@@ -334,9 +428,13 @@ Det avhenger både av funksjonen og av hvilke punkter som er tillatt.
 
 ### Eksperiment 3 – stadig mindre, men aldri minst
 
-Vi vil minimere $g(x)=x$ på intervallet $(0,1)$. Runde parenteser
-betyr at endepunktene ikke er med. Prøver vi jevnt fordelte punkter
-inne i intervallet, får vi følgende resultater:
+Vi vil undersøke om stadig finere numeriske søk faktisk finner et
+minimum. Se på den minste prøvde verdien i hver rad, og spør om
+grenseverdien selv er et tillatt punkt.
+
+Vi minimerer $g(x)=x$ på intervallet $(0,1)$. Runde parenteser betyr
+at endepunktene ikke er med. Jevnt fordelte punkter inne i intervallet
+gir følgende resultater:
 
 | Punkter vi prøver | Minste verdi blant de prøvde punktene |
 |:--|--:|
@@ -471,7 +569,86 @@ Både skiven og sirkelranden er kompakte, men bare skiven er konveks.
 Hele $\mathbb R$ er konveks, men ikke kompakt. **Kompakt** og
 **konveks** er altså to ulike egenskaper.
 
+**Endre formen på et område.** Velg en parameter $a$ mellom $-1$ og
+$1$ og la
+
+$$C_a=\{(x,y): |x|\le1,\;ax^2\le y\le2\}.$$
+
+Skyv $a$ i figuren. Det blå området ligger over kurven $y=ax^2$
+og under linjen $y=2$. Følg linjestykket mellom de to markerte
+punktene på den nedre kanten, og se om midtpunktet fortsatt er blått.
+
+<div id="uke8-konveks-omraade-applet"></div>
+
+```{.jsxgraph width="620" height="460"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [-1.45, 2.65, 1.9, -1.8], axis: true,
+  showCopyright: false, showNavigation: false
+});
+var a = board.create('slider', [[-0.9,-1.35],[0.9,-1.35],[-1,0.5,1]], {
+  name: 'a', snapWidth: 0.05
+});
+// Fyll området med et fint polygon som følger parameteren.
+// Tegn den eksakte nedre kurven separat langs polygonkanten.
+var edge = [];
+for (var i = 0; i <= 80; i++) {
+  (function (x) {
+    edge.push(board.create('point', [x, function () {
+      return a.Value()*x*x;
+    }], {visible: false, fixed: true, name: ''}));
+  })(-1 + i/40);
+}
+var topRight = board.create('point', [1,2], {visible:false, fixed:true});
+var topLeft = board.create('point', [-1,2], {visible:false, fixed:true});
+board.create('polygon', edge.concat([topRight, topLeft]), {
+  fillColor: '#82b6e6', fillOpacity: 0.35,
+  borders: {visible: false}, vertices: {visible: false}
+});
+board.create('functiongraph', [function (x) { return a.Value()*x*x; }, -1, 1], {
+  strokeColor: '#1565c0', strokeWidth: 3
+});
+var A = board.create('point', [-1, function () { return a.Value(); }], {
+  name: 'A', fixed: true, color: '#c62828', size: 3
+});
+var B = board.create('point', [1, function () { return a.Value(); }], {
+  name: 'B', fixed: true, color: '#c62828', size: 3
+});
+var M = board.create('point', [0, function () { return a.Value(); }], {
+  name: 'M', fixed: true, color: '#c62828', size: 3
+});
+board.create('segment', [A,B], {strokeColor:'#c62828', strokeWidth:2});
+board.create('text', [-1.25,2.32,function () {
+  return a.Value() < -0.001 ? 'a < 0: midtpunktet M faller utenfor' :
+    'a ≥ 0: dette området er konvekst';
+}], {fontSize:14, color:'#263238'});
+```
+
+Her er en liten kontroll med penn og papir. Velg $a=-\tfrac12$.
+Endepunktene $A=(-1,-\tfrac12)$ og $B=(1,-\tfrac12)$ er tillatt,
+men midtpunktet $M=(0,-\tfrac12)$ ligger **under** den nedre grensen
+$a\cdot0^2=0$. Området er dermed ikke konvekst. Ved $a=\tfrac12$
+ligger samme type midtpunkt $(0,\tfrac12)$ over nedre grense $0$.
+Ett slikt vellykket linjestykke beviser ikke konveksitet alene.
+
+For å avgjøre *alle* parameterverdier, sett
+$x_t=tx_1+(1-t)x_2$ og $y_t=ty_1+(1-t)y_2$ for to punkter i $C_a$.
+Når $a\ge0$, får vi
+
+$$y_t\ge a\bigl(tx_1^2+(1-t)x_2^2\bigr)
+\ge a x_t^2,$$
+
+fordi forskjellen mellom de to kvadratuttrykkene er
+$t(1-t)(x_1-x_2)^2\ge0$. Dessuten er $|x_t|\le1$ og $y_t\le2$.
+Hele linjestykket er da tillatt. Når $a<0$, viser $A=(-1,a)$,
+$B=(1,a)$ og $M=(0,a)$ at midtpunktet faller utenfor.
+**Dermed er $C_a$ konvekst akkurat når $a\ge0$.** Ved $a=0$ er
+området et rektangel.
+
 ### Eksperiment 4 – funksjonsverdien mellom to punkter
+
+Vi trenger en test som kan avsløre en topp mellom to punkter. Sammenlign
+funksjonsverdien i midtpunktet med gjennomsnittet av endeverdiene:
+en verdi over gjennomsnittet bryter kravet til konveksitet.
 
 For $f(x)=x^2$ velger vi $a=-1$, $b=1$. I midtpunktet er verdien
 $f(0)=0$, mens gjennomsnittet av endeverdiene er
@@ -479,12 +656,16 @@ $(f(-1)+f(1))/2=1$. Grafen ligger under den rette forbindelsen
 mellom disse to punktene på grafen.
 
 For den bølgede funksjonen fra 8.2 velger vi i stedet $a=(0,0)$ og
-$b=(1,0)$. Nå får vi
+$b=(1,0)$. Resultatene kan sammenlignes direkte:
 
-$$f((a+b)/2)=20.25>\frac{f(a)+f(b)}2=0.5.$$
+| Funksjon og endepunkter | Verdi i midtpunktet | Gjennomsnitt av endeverdiene |
+|:--|--:|--:|
+| $x^2$, $-1$ og $1$ | $0$ | $1$ |
+| Bølget $f$, $(0,0)$ og $(1,0)$ | $20.25$ | $0.5$ |
 
-Mellom endepunktene kommer det en topp. Disse to beregningene viser
-hva konveksitetstesten leter etter.
+For den bølgede funksjonen er $20.25>0.5$: mellom endepunktene
+kommer det en topp. Disse to beregningene viser hva konveksitetstesten
+leter etter.
 
 ![Øverst ligger grafen til x² under linjen mellom endeverdiene. Nederst ligger den bølgede funksjonen, langs y=0, over denne linjen ved midtpunktet.](../assets/optimization/week8-convex-midpoints.svg){width=620}
 
@@ -518,6 +699,55 @@ en enda mindre verdi.
 «Høyst ett» betyr ikke «ett»: $x^2$ er også strengt konveks på $(0,1)$,
 men der finnes ikke noe minimum. Dette er samme problem med et
 utelatt endepunkt som i 8.3.
+
+### Skyv mellom konveks og ikke-konveks funksjon
+
+**Endre krumningen til en funksjon.** I neste figur er
+$f_a(x)=ax^2$ på $[-2,2]$. Skyv $a$ fra negativ til positiv og se
+hvordan verdien i midtpunktet mellom $-1$ og $1$ ligger i forhold
+til den røde forbindelsen mellom endeverdiene.
+
+<div id="uke8-konveks-funksjon-applet"></div>
+
+```{.jsxgraph width="620" height="460"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [-2.55, 5.7, 2.55, -6.2], axis: true,
+  showCopyright: false, showNavigation: false
+});
+var a = board.create('slider', [[-1.8,-5.3],[1.8,-5.3],[-1,0.5,1]], {
+  name: 'a', snapWidth: 0.05
+});
+// Kurven, forbindelseslinjen og midtverdien følger samme parameter.
+board.create('functiongraph', [function (x) { return a.Value()*x*x; }, -2, 2], {
+  strokeColor: '#1565c0', strokeWidth: 3
+});
+var L = board.create('point', [-1, function () { return a.Value(); }], {
+  name: 'f(-1)', fixed: true, color: '#c62828', size: 3
+});
+var R = board.create('point', [1, function () { return a.Value(); }], {
+  name: 'f(1)', fixed: true, color: '#c62828', size: 3
+});
+board.create('segment', [L,R], {strokeColor:'#c62828', strokeWidth:2});
+board.create('point', [0,0], {
+  name: 'f(0)', fixed: true, color: '#1565c0', size: 3
+});
+board.create('text', [-2.25,4.95,function () {
+  return a.Value() < -0.001 ? 'a < 0: ikke konveks' :
+    (a.Value() < 0.001 ? 'a = 0: konstant og konveks' :
+      'a > 0: strengt konveks');
+}], {fontSize:14, color:'#263238'});
+```
+
+Regn for eksempel med $a=-\tfrac12$: $f_a(-1)=f_a(1)=-\tfrac12$,
+men $f_a(0)=0>-\tfrac12$. Dette ene moteksemplet avkrefter
+konveksitet. For $a=\tfrac12$ ligger midtpunktverdien $0$ under
+endeverdienes gjennomsnitt $\tfrac12$. Den generelle utregningen er
+
+$$tf_a(x)+(1-t)f_a(y)-f_a(tx+(1-t)y)
+=a\,t(1-t)(x-y)^2.$$
+
+Fortegnet bestemmes av $a$. Derfor er $f_a$ strengt konveks når
+$a>0$, konveks og konstant når $a=0$, og ikke konveks når $a<0$.
 
 ### Hessianen kan kontrollere alle punktene på én gang
 
@@ -645,7 +875,7 @@ I verkstedet fra 8.1 bruker en ny maskin 10 komponenter og 1 time og gir 500 kr 
 
 Du planlegger $b=6$ nye maskiner og $r=12$ reparasjoner. Beregn ressursbruk og nettooverskudd. Er planen tillatt? Begrunn i egne notater.
 
-Komponenter: __[72] &nbsp; Timer: __[42] &nbsp; Nettooverskudd (kr): __[5350]
+Komponenter: _[72] &nbsp; Timer: _[42] &nbsp; Nettooverskudd (kr): _[5350]
 ```
 
 **Oppgave 2 – kritisk punkt og krumning.**
@@ -659,7 +889,7 @@ Komponenter: __[72] &nbsp; Timer: __[42] &nbsp; Nettooverskudd (kr): __[5350]
 
 For $h(u,v)=u^2-4v^2$ skal du først kontrollere at gradienten er null i origo. Finn så egenverdiene til Hessianen. Er origo et lokalt minimum, et lokalt maksimum eller et sadelpunkt? Begrunn med verdiene langs de to koordinataksene.
 
-Positiv egenverdi: __[2] &nbsp; Negativ egenverdi: __[-8]
+Positiv egenverdi: _[2] &nbsp; Negativ egenverdi: _[-8]
 ```
 
 **Oppgave 3 – grenseverdi eller oppnådd verdi?**
@@ -673,11 +903,11 @@ Positiv egenverdi: __[2] &nbsp; Negativ egenverdi: __[-8]
 
 La $g(x)=x^2$. På det åpne intervallet $(0,2)$ er begge endepunktene utelatt. Finn infimum og supremum. Avgjør om et minimum finnes, både på $(0,2)$ og på $[0,2]$.
 
-Infimum på $(0,2)$: __[0] &nbsp; Supremum på $(0,2)$: __[4]
+Infimum på $(0,2)$: _[0] &nbsp; Supremum på $(0,2)$: _[4]
 
-Skriv **1 for ja, 0 for nei** i de neste feltene:
+Skriv <strong>1 for ja, 0 for nei</strong> i de neste feltene:
 
-Minimum finnes på $(0,2)$: __[0] &nbsp; Minimum finnes på $[0,2]$: __[1]
+Minimum finnes på $(0,2)$: _[0] &nbsp; Minimum finnes på $[0,2]$: _[1]
 
 Forklar i egne notater hvorfor et finere rutenett ikke endrer svaret på det åpne intervallet. Finnes det et maksimum på hvert av intervallene?
 ```
@@ -691,13 +921,13 @@ Forklar i egne notater hvorfor et finere rutenett ikke endrer svaret på det åp
 #| partial-credit: true
 #| field-labels: A lukket, A begrenset, A kompakt, B lukket, B begrenset, B kompakt, C lukket, C begrenset, C kompakt
 
-Undersøk $A=[-2,3]$, $B=(-2,3]$ og $C=[0,\infty)$. Skriv **1 for ja, 0 for nei**. For hver mengde skal du begrunne i egne notater hvilke endepunkter som er med, og om punktene kan bli vilkårlig store i absoluttverdi.
+Undersøk $A=[-2,3]$, $B=(-2,3]$ og $C=[0,\infty)$. Skriv <strong>1 for ja, 0 for nei</strong>. For hver mengde skal du begrunne i egne notater hvilke endepunkter som er med, og om punktene kan bli vilkårlig store i absoluttverdi.
 
-$A$: lukket __[1], begrenset __[1], kompakt __[1]
+$A$: lukket _[1], begrenset _[1], kompakt _[1]
 
-$B$: lukket __[0], begrenset __[1], kompakt __[0]
+$B$: lukket _[0], begrenset _[1], kompakt _[0]
 
-$C$: lukket __[1], begrenset __[0], kompakt __[0]
+$C$: lukket _[1], begrenset _[0], kompakt _[0]
 ```
 
 **Oppgave 5 – bruk ekstremalverdisetningen.**
@@ -711,9 +941,9 @@ $C$: lukket __[1], begrenset __[0], kompakt __[0]
 
 Vi undersøker $f(u,v)=u^2+v^2$ på skiven $D=\{(u,v):u^2+v^2\le4\}$. Kontroller først kravene i ekstremalverdisetningen: er området ikke-tomt og kompakt, og er funksjonen kontinuerlig? Finn så ekstremalverdiene.
 
-Minimumsverdi: __[0] &nbsp; Maksimumsverdi: __[4]
+Minimumsverdi: _[0] &nbsp; Maksimumsverdi: _[4]
 
-Minimumspunkt: $u=$ __[0], $v=$ __[0]
+Minimumspunkt: $u=$ _[0], $v=$ _[0]
 
 Beskriv alle maksimumspunktene i egne notater. Hvorfor gir ikke setningen et entydig maksimumspunkt her?
 ```
@@ -729,11 +959,11 @@ Beskriv alle maksimumspunktene i egne notater. Hvorfor gir ikke setningen et ent
 
 Punktene $a=(2,0)$ og $b=(-2,0)$ ligger både på sirkelranden $S=\{(u,v):u^2+v^2=4\}$ og i skiven $D=\{(u,v):u^2+v^2\le4\}$. Finn midtpunktet $m=(a+b)/2$.
 
-$m_1=$ __[0], $m_2=$ __[0]
+$m_1=$ _[0], $m_2=$ _[0]
 
-Skriv **1 for ja, 0 for nei**:
+Skriv <strong>1 for ja, 0 for nei</strong>:
 
-Er $m$ på sirkelranden $S$? __[0] &nbsp; Er $m$ i skiven $D$? __[1]
+Er $m$ på sirkelranden $S$? _[0] &nbsp; Er $m$ i skiven $D$? _[1]
 
 Hvilken av mengdene kan du dermed bevise at ikke er konveks? Forklar hvorfor én midtpunktsberegning ikke alene beviser at den andre mengden er konveks. Er begge mengdene kompakte?
 ```
@@ -749,7 +979,7 @@ Hvilken av mengdene kan du dermed bevise at ikke er konveks? Forklar hvorfor én
 
 For $q(x)=x^4-2x^2$ bruker du $a=-1$ og $b=1$. Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene.
 
-$q((a+b)/2)=$ __[0] &nbsp; $(q(a)+q(b))/2=$ __[-1]
+$q((a+b)/2)=$ _[0] &nbsp; $(q(a)+q(b))/2=$ _[-1]
 
 Hva sier sammenligningen om konveksitet på $\mathbb R$? Begrunn med ulikheten fra 8.4.
 ```
@@ -765,11 +995,11 @@ Hva sier sammenligningen om konveksitet på $\mathbb R$? Begrunn med ulikheten f
 
 Sammenlign $f(u,v)=(u-2)^2$ og $g(u,v)=(u-2)^2+(v+1)^2$ på $\mathbb R^2$.
 
-Hessianen til $f$: minste egenverdi __[0], største egenverdi __[2]
+Hessianen til $f$: minste egenverdi _[0], største egenverdi _[2]
 
-Minimumsverdien til $f$: __[0]
+Minimumsverdien til $f$: _[0]
 
-Minimumspunktet til $g$: $u=$ __[2], $v=$ __[-1]
+Minimumspunktet til $g$: $u=$ _[2], $v=$ _[-1]
 
 Beskriv alle minimumspunktene til $f$. Forklar hvorfor begge funksjonene er konvekse, men bare $g$ er strengt konveks. Bruk Hessianene og hva som skjer langs linjen $u=2$.
 ```
@@ -789,7 +1019,7 @@ $q(1)+q'(1)(y-1)=$ __[-4*y+8]
 
 Finn også det stasjonære punktet og funksjonsverdien der:
 
-$x_*=$ __[3] &nbsp; $q(x_*)=$ __[0]
+$x_*=$ _[3] &nbsp; $q(x_*)=$ _[0]
 
 Bruk $q''(x)$ til å begrunne streng konveksitet. Forklar deretter hvorfor tangentulikheten ved $x_*$ gir et globalt, entydig minimum.
 ```
@@ -804,7 +1034,15 @@ Her samler vi kodeforsøkene fra 8.1–8.4. Cellene kan kjøres og endres direkt
 
 <div id="uke8-python-production"></div>
 
-I modellen fra 8.1 er innkjøpsturen allerede bestilt: 650 kr betales uansett hvor mange maskiner gruppen lager denne uken. Vi teller alle heltallspar, beregner nettooverskuddet og lar bare tillatte par konkurrere. `meshgrid` lager tabeller med hvert par $(b,r)$; den boolske tabellen `allowed` markerer ressurskravene. Et slikt uttømmende søk kan brukes fordi antallet mulige valg her er endelig og lite.
+I modellen fra 8.1 er innkjøpsturen allerede bestilt: 650 kr betales
+uansett hvor mange maskiner gruppen lager denne uken. Vi teller alle
+heltallspar, beregner nettooverskuddet og lar bare tillatte par
+konkurrere. `meshgrid` lager tabeller med hvert par $(b,r)$; den
+**boolske** tabellen `allowed` har verdien `True` for tillatte par og
+`False` for andre par. Et slikt uttømmende
+søk kan brukes fordi antallet mulige valg her er endelig og lite.
+Se etter om den vinnende planen bruker like mange komponenter og timer
+som kapasiteten tillater.
 
 ```{pyodide-python}
 #| label: week8-production
@@ -824,9 +1062,12 @@ best_index = np.unravel_index(np.argmax(score), score.shape)
 best = (int(b[best_index]), int(r[best_index]))
 best_profit = int(profit[best_index])
 
-# Kontroller både resultatet og ressursbruken ved det valgte paret.
-print(f"Best blant {allowed.sum()} tillatte heltallspar: (b,r)={best}, P={best_profit} kr")
-print(f"Ressursbruk: {10*best[0]+best[1]} komponenter, {best[0]+3*best[1]} timer")
+# Vis vinneren og ressursbruken i korte, merkede rader.
+print(f"Antall tillatte par: {allowed.sum()}")
+print(f"Beste plan (b, r): {best}")
+print(f"Nettooverskudd:    {best_profit} kr")
+print(f"Komponenter:       {10*best[0] + best[1]} av 100")
+print(f"Arbeidstimer:      {best[0] + 3*best[1]} av 50")
 
 # Figuren viser bare tillatte punkter; fargen er nettooverskuddet.
 fig, ax = plt.subplots(figsize=(6, 5))
@@ -846,7 +1087,14 @@ Beste heltallsvalg er $(8,14)$, med 6850 kr i nettooverskudd. Det bruker 94 komp
 
 I 8.2 har den bølgede kostnadsfunksjonen flere daler. NumPy utfører arrayregningen; **SciPy** tilbyr ferdige numeriske metoder. Kallet `minimize(wavy, start, jac=wavy_grad, method="BFGS")` søker etter et lokalt minimum av `wavy` fra `start`. Argumentet `jac` gir SciPy en funksjon for gradienten, med én partiell derivert per variabel. `BFGS` er navnet på en metode som bruker gradienter til å anslå krumningen underveis; vi utvikler søkemetoder i uke 9–10.
 
-`minimize` returnerer et **OptimizeResult**, et resultatobjekt med navngitte felt. `result.x` er punktet søket fant, `result.fun` verdien der, og `result.success` forteller om metodens stoppkrav ble oppfylt. Det siste er ingen garanti for global optimalitet. Vi sjekker også lengden av gradienten i punktet. Figuren skiller mellom **startpunktene** (ringer) og **punktene som ble funnet** (fylte markører).
+`minimize` returnerer et **OptimizeResult**, et resultatobjekt med
+navngitte felt. `result.x` er punktet søket fant, `result.fun` verdien
+der, og `result.success` forteller om metodens stoppkrav ble oppfylt.
+Det siste er ingen garanti for global optimalitet. Vi sjekker også
+lengden av gradienten i punktet. Sammenlign særlig de to verdiene når
+begge søkene har små gradienter. Figuren skiller mellom
+**startpunktene** (ringer) og **punktene som ble funnet** (fylte
+markører).
 
 ```{pyodide-python}
 #| label: week8-local-minima
@@ -868,12 +1116,15 @@ for start in starts:
     # jac gir gradienten; method velger den lokale søkemetoden.
     result = minimize(wavy, start, jac=wavy_grad, method="BFGS")
     results.append(result)
-    # .x er punktet, .fun er verdien; liten gradient sjekker små deriverte.
-    x, y = result.x
+
+# Les .x (punkt), .fun (verdi) og success (stoppkrav) i hver rad.
+# Gradientnormen sjekker om de deriverte er små ved det funne punktet.
+print("Start     Funnet punkt     Verdi    ||grad f||  success")
+for start, result in zip(starts, results):
     grad_norm = np.linalg.norm(wavy_grad(result.x))
-    print(f"Start {start}: funnet punkt ({x:.4f}, {y:.4f}), "
-          f"f={result.fun:.4f}, ||grad f||={grad_norm:.2e}, "
-          f"success={result.success}")
+    print(f"({start[0]:.0f},{start[1]:.0f})     "
+          f"({result.x[0]:.4f},{result.x[1]:.4f})   "
+          f"{result.fun:7.4f}  {grad_norm:9.2e}  {result.success}")
 
 # Beregn nivåkurver for å vise dalene i samme koordinatsystem.
 grid = np.linspace(-.3, 2.4, 180)
@@ -919,16 +1170,19 @@ Et resultat fra ett eller flere lokale søk er en kandidat. For en global konklu
 
 <div id="uke8-python-domain"></div>
 
-For $g(x)=x$ på $(0,1)$ er endepunktene utelatt. I hvert rutenett bruker vi bare indre punkter og rapporterer de minste og største verdiene. Tettere sampling endrer ikke hvilket område som er tillatt.
+For $g(x)=x$ på $(0,1)$ er endepunktene utelatt. I hvert rutenett
+bruker vi bare indre punkter og rapporterer de minste og største
+verdiene. Se hvordan begge nærmer seg endepunkter uten å nå dem.
+Tettere sampling endrer ikke hvilket område som er tillatt.
 
 ```{pyodide-python}
 #| label: week8-open-domain
+print("Indre punkter  Minste g   Største g")
 for n in (10, 100, 1000):
     # Start ved 1/n og stopp før 1, slik at begge endepunktene er utelatt.
     sample = np.arange(1, n)/n
     # g(x)=x, så tallene i sample er også funksjonsverdiene.
-    print(f"{n-1:4d} indre punkter: minste g={sample.min():.3f}, "
-          f"største g={sample.max():.3f}")
+    print(f"{n-1:12d}  {sample.min():8.3f}   {sample.max():9.3f}")
 ```
 
 De minste verdiene blir 0.1, 0.01 og 0.001. Infimum er 0, men ingen tillatt $x$ oppnår verdien. Den numeriske utviklingen illustrerer skillet mellom en verdi vi nærmer oss og et faktisk minimum.
@@ -937,7 +1191,12 @@ De minste verdiene blir 0.1, 0.01 og 0.001. Infimum er 0, men ingen tillatt $x$ 
 
 <div id="uke8-python-convex"></div>
 
-For konveksitet skal funksjonsverdien i midtpunktet ikke overstige gjennomsnittet av endeverdiene. Et testpar kan avkrefte egenskapen, men endelig mange vellykkede tester kan ikke bevise den. `eigvalsh` finner egenverdiene til en symmetrisk matrise; den positive definite Hessianen i kvadratikken gir den generelle begrunnelsen fra 8.4.
+For konveksitet skal funksjonsverdien i midtpunktet ikke overstige
+gjennomsnittet av endeverdiene. Se hvilken rad som bryter ulikheten.
+Et testpar kan avkrefte egenskapen, men endelig mange vellykkede
+tester kan ikke bevise den. `eigvalsh` finner egenverdiene til en
+symmetrisk matrise; den positive definite Hessianen i kvadratikken
+gir den generelle begrunnelsen fra 8.4.
 
 ```{pyodide-python}
 #| label: week8-convex-midpoints
@@ -950,16 +1209,23 @@ def wavy_midpoint(z):
     x, y = z
     return 20 + x*x + y*y - 10*(np.cos(2*np.pi*x) + np.cos(2*np.pi*y))
 
-# Begynn med parablen fra 8.4: verdi i midten mot snitt av endene.
-print("x²: midten", 0.**2, "snitt av ender", ((-1.)**2 + 1.**2)/2)
-
-# Sammenlign også skålen fra uke 6 og den bølgede funksjonen.
+# Sammenlign midtpunkt med gjennomsnittet av endeverdiene for tre par.
+# Den første raden bruker -1 og 1 på parablen x².
+parabola_mid = 0.**2
+parabola_ends = ((-1.)**2 + 1.**2)/2
+# Den andre raden bruker skålen fra uke 6.
 a, b = np.array([0., 0.]), np.array([1., 2.])
-print(f"Kvadratikk: midten {phi((a+b)/2):.3f}, "
-      f"snitt av ender {(phi(a)+phi(b))/2:.3f}")
+phi_mid = phi((a+b)/2)
+phi_ends = (phi(a)+phi(b))/2
+# Den tredje raden bruker den bølgede funksjonen fra 8.2.
 c, d = np.array([0., 0.]), np.array([1., 0.])
-print(f"Bølget:    midten {wavy_midpoint((c+d)/2):.2f}, "
-      f"snitt av ender {(wavy_midpoint(c)+wavy_midpoint(d))/2:.2f}")
+wavy_mid = wavy_midpoint((c+d)/2)
+wavy_ends = (wavy_midpoint(c)+wavy_midpoint(d))/2
+print("Funksjon      Midtpunkt  Snitt ender  Kravet oppfylt?")
+for name, middle, ends in (("x²", parabola_mid, parabola_ends),
+                           ("Kvadratikk", phi_mid, phi_ends),
+                           ("Bølget", wavy_mid, wavy_ends)):
+    print(f"{name:12}  {middle:8.3f}  {ends:11.3f}  {middle <= ends}")
 
 # Undersøk den symmetriske Hessianen til den kvadratiske funksjonen.
 H_phi = np.array([[3., 1.], [1., 2.]])

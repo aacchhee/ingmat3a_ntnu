@@ -1,0 +1,33 @@
+Clarity and startup revision — 2026-09-25
+
+The hidden setup race was reproduced with delayed SciPy loading: an experiment
+started while the setup imports were pending and raised NameError. After the
+change, the interactive autorun setup holds the normal run-button lock and
+shows progress/errors plus a completion message. It can also be run again.
+Each week has a Python-oppsett tab. No extension fork or patch was needed.
+
+The final cold-load checks wait for the setup's lastRunCode completion marker,
+then click the first experiment's actual Run button. Setup is NOT manually
+executed by the harness. All subsequent lecture cells are awaited individually,
+and must produce nonempty text or a rendered plot.
+
+Week 8: setup autorun and first real Run click passed; 4 lecture cells; 9 math widgets; 3 coding exercises. No JS errors, no horizontal overflow.
+Week 9: setup autorun and first real Run click passed; 5 lecture cells; 6 math widgets; 3 coding exercises. No JS errors, no horizontal overflow.
+Week 10: setup autorun and first real Run click passed; 5 lecture cells; 6 math widgets; 3 coding exercises. No JS errors, no horizontal overflow.
+Week 11: setup autorun and first real Run click passed; 5 lecture cells; 6 math widgets; 3 coding exercises. No JS errors, no horizontal overflow.
+Week 12: setup autorun and first real Run click passed; 5 lecture cells; 6 math widgets; 3 coding exercises. No JS errors, no horizontal overflow.
+
+All 29 setup/lecture cells passed native execution. Full Quarto render passed
+with --no-execute; the final week8 page was rendered again after its text edits.
+All 15 coding exercises rejected unfinished starters and accepted completed
+fixtures through the actual browser checker. All 33 math widgets accepted
+correct answers; one deliberately wrong answer per week was rejected.
+Math-widget text contains no raw Markdown bold/backticks; numeric scalar fields
+use short markers. The one algebraic expression retains its medium-width field.
+
+Week8 JSXGraph: both sliders tested at -1, 0 and 1; plotted point coordinates
+and status text checked. Actual pointer dragging from +1 to -1 succeeded for
+both applets. Screenshots inspected for set fill, chord and midpoint geometry.
+
+The native checker now resolves nested include paths relative to the original
+.qmd file, matching Quarto, as setup includes moved inside the tabbed notes.

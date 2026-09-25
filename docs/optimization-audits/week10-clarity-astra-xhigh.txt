@@ -1,0 +1,71 @@
+FINAL STATUS: APPROVED after corrections and independent Astra XHIGH recheck.
+Content review of clarity, terminology, worked examples, and mathematical correctness.
+Browser verification is recorded separately below.
+
+# Uke 10 – uavhengig audit av forklaringer og Newton–CG-forbindelsen
+
+Dato: 2026-09-25. Kilder: hele `_includes/optimization/uke10.md` og `week10_setup.md`, samt de relevante begrepsavsnittene i uke 6, 8 og 9. Gjennomgangen er gjort etter forfatterens siste omskriving. Ingen kursfiler eller commits er endret.
+
+## Konklusjon
+
+**GODKJENT. Ingen påkrevde innholdsrettinger.**
+
+Revisjonen oppfyller bestillingen om formål før forsøk, konkrete ting å undersøke, forklart regnegang og tolkning etter resultatet. Forbindelsen til uke 6 er nå eksplisitt og matematisk riktig. Den skiller mellom å finne en Newton-retning ved en indre lineær løsning og å oppdatere punktet i den ytre minimeringen. SciPy `Newton-CG` fremstilles ikke som vanlig SPD-CG anvendt ukritisk på vilkårlige Hessianer.
+
+Synlig oppsett, automatisk oppstart og nettleserens kaldstart er under separat integrering og kontroll hos root. De er ikke vurdert som mangler i denne innholdsauditen.
+
+## Formål, inspeksjon og resultat i hvert forsøk
+
+| Forsøk | Formål før cellen | Det studenten skal undersøke | Forklaring etterpå | Vurdering |
+|:--|:--|:--|:--|:--|
+| Kvadratisk skål, 10.1 | Følg ett Newton-steg i den kjente funksjonen fra uke 6. | Skill høyresiden, løsningen `p` og det oppdaterte punktet `x1`; kontroller gradienten i det nye punktet. | Resultatet `(1,2)` forklares med konstant Hessian og identiteten `g(x+p)=g(x)+Ap=0`. SPD gir globalt og entydig minimum. | Dekket |
+| Negativ krumning, 10.2 | Undersøk hvorfor en løst Newton-likning kan gi oppadgående retning. | Les fortegnet til `gᵀp`, sammenlign faktiske verdier før og etter steget, og undersøk origos egenverdier. | Verdiøkningen tallfestes; origo forklares som sadelpunkt med lavere verdier langs én akse og høyere langs den andre. | Dekket |
+| Regularisering og demping, 10.3 | Gjør den nye retningen nedgående og finn hvor langt den kan følges. | Sammenlign de tre prøveverdiene, akseptert faktor og antall halveringer. | Retningsendringen og steglengdevalget skilles uttrykkelig. Det godkjente punktet og funksjonsverdien oppgis. | Dekket |
+| Bøyd dal, 10.3 | Vis at SPD og en lokalt nedgående retning ikke sikrer et godt helt steg. | Se første punkt på hver bane; sammenlign lokal modell og faktisk funksjon langs første retning. | Hele og halve steg regnes ut før figuren; resultatet og modellavviket `10α⁴` tolkes etterpå. | Dekket |
+| SciPy-sammenligning, 10.4 | Sammenlign sluttpunkt, verdi, gradientnorm og rapportert arbeid fra samme start. | Les stoppstatus separat fra resultat og evalueringstellere. | Begge sluttpunkter tolkes, globalitet bevises uavhengig, og ulike kostnader per ytre iterasjon påpekes. | Dekket |
+
+Regnetabellene i 10.1, 10.2 og daleksemplet gjør mellomregningen synlig og knytter tallene til det studenten skal konkludere. Kommentarene i kodecellene er direkte og forklarer hensikten med beregningsblokkene. Oppsettets funksjoner forklarer koordinater, derivasjon, krumning og linjesøk uten å gjenta alle syntaksdetaljer.
+
+## Newton og CG: faglig kontroll
+
+Avsnittet «To typer iterasjoner: Newton utenpå, CG inni», særlig linje 88–97 i den leste filen, løser den sentrale pedagogiske utfordringen.
+
+- Uke 6s problem `Az=b` og kvadratiske energi kobles til Newton-systemet ved den eksplisitte tilordningen `A=H(x_k)`, `b=-g(x_k)` og ukjent `z=p_k`.
+- Den indre kvadratikken er `½pᵀHp+gᵀp=m_x(p)-f(x)`. Påstanden om modellminimering opp til konstantleddet er riktig.
+- Hessian og gradient holdes knyttet til samme ytre punkt mens den indre CG-løsningen forbedres. Tabellen skiller dette fra oppdateringen av selve punktet.
+- Vanlig CGs SPD-forutsetning oppgis uttrykkelig. Invertibilitet alene fremstilles ikke som tilstrekkelig for CG eller modellminimering.
+- Fra `p=0` løser eksakt CG det todimensjonale SPD-systemet på høyst to indre iterasjoner. Forbeholdet om eksakt aritmetikk står der det skal. Det ene ytre Newton-steget er en annen telling.
+- Tidlig indre stopp beskrives korrekt som en tilnærmet Newton-retning. Det loves ingen eksakt ettstegsløsning når den indre løsningen er unøyaktig.
+- I det indefinite eksemplet gir regulariseringen en SPD-matrise, som derfor kan brukes med vanlig CG. Teksten sier ikke at et slikt indre system alene løser hele det opprinnelige minimeringsproblemet.
+
+Det trengs ikke et nytt CG-kodeforsøk eller en repetisjon av alle CG-rekurrensene for å gjøre denne forbindelsen forståelig. Uke 6-lenken, den konkrete tilordningen og sammenligningstabellen er tilstrekkelige.
+
+## Begreper før bruk og eksempler
+
+De nye begrepene forklares før de brukes i vesentlige argumenter: Newton-steg, lokal modell, invertibilitet, indre/ytre iterasjon, regularisering, identitetsmatrise, minste egenverdi, demping, Jacobimatrise, kvadratisk konvergens og lokal Lipschitz-kontinuitet. De viktigste har et konkret eksempel i samme tekst.
+
+Ord som «indefinit», «retningsderivert», «stasjonært punkt», gradientnorm og diagonalmatrise er kjent fra de eksplisitt refererte foregående ukene. Dette er kontrollert mot faktisk kilde, ikke antatt. Uke 8 definerer Hessiantypene og `diag`, og uke 9 forklarer retningsderivert og lokal nedgang i hovedløpet. At uke 10 gjentar noen av disse forklaringene senere eller i fordypning, er derfor ikke et begrep-før-definisjon-problem i kursets rekkefølge.
+
+Fordypningen definerer feilen og kvadratisk konvergens før teoremet, gir et tydelig betinget talleksempel, forklarer Lipschitz-kravet før det brukes og gir den konstante Hessianen som eksempel. Vilkårene for Newtons lokale konvergens er riktig avgrenset. Inaktiv regularisering og fullt steg presenteres som en vanlig tilstrekkelig mekanisme for samme sluttfart, ikke som universelt nødvendige vilkår.
+
+## SciPy-kontroll
+
+Forklaringen i 10.4 er faglig riktig. Den er kontrollert mot den installerte SciPy 1.17.0-kilden for `scipy.optimize._optimize._minimize_newtoncg`. Implementasjonen bruker en indre CG-basert beregning med residualstopp og kontroll av krumning, avbryter eller velger en gradientretning ved negativ krumning, og bruker et linjesøk før det ytre punktet oppdateres. Dette støtter tekstens skille fra både uke 6s vanlige SPD-CG og undervisningseksemplets eksplisitte `H+λI`-regularisering.
+
+`res.nit` fremstilles som ytre iterasjoner, ikke antall indre CG-steg. `success` tolkes som metodens egen stoppstatus og ikke som bevis for globalitet. Teksten bygger heller ingen generell effektivitetsrangering på én iterasjonsteller. Det er derfor ingen nødvendig retting i sammenligningen.
+
+## Øvrig matematikk og avgrensning
+
+De viste gradientene, Hessianene, Newton-retningene, egenverdiene, skalarproduktene og de eksakte oppgavesvarene er kontrollert. Globalitetsargumentene bygger korrekt på ikke-negative kvadratledd. Armijo-ulikheten bruker en positiv stegfaktor og negativ retningsderivert; oppsettet avviser uegnede retninger og håndterer at et endelig halveringsbudsjett kan bli brukt opp. Den andre skjulte testen i Python-oppgave 3 bruker den korrekte gradienten `(40,-20)` ved `(1,0)`.
+
+Dette er en innholdsaudit med kilde- og matematikkontroll, ikke en ny nettleser-/Pyodide-kjøring. Den lokale SciPy-kilden verifiserer algoritmebeskrivelsen, men identifiserer ikke hvilken SciPy-versjon nettleserens Pyodide vil laste. Ingen av godkjenningene over forutsetter at de to runtime-versjonene er identiske.
+
+## Sluttkontroll etter håndregning og oppsettintegrering
+
+Dato: 2026-09-25. De siste avgrensede endringene i uke 10, oppsettfilen og `pages/uke10.qmd` er lest på nytt.
+
+**Endelig vurdering: GODKJENT, uten nye rettingskrav.** Den utvidede håndregningen er korrekt: `p₂=8−3p₁` gir `−5p₁=−15`, deretter `p₁=3`, `p₂=−1`, `x₁=(1,2)` og `Ax₁−b=0`. Tabellen forklarer nå både eliminasjon og tilbakesubstitusjon, samtidig som den beholder skillet mellom å løse for retningen og å oppdatere punktet. Dette oppfyller ønsket om et mer fullstendig håndregnet eksempel.
+
+Den nye fanen «Python-oppsett» forklarer formål, funksjonsnavn, automatisk oppstart, klarmelding og hvordan oppsettet kan kjøres på nytt. Oppsettfilen er synlig og interaktiv, har `autorun: true` og skriver klarmeldingen først etter importene og funksjonsdefinisjonene. Sidefilen inkluderer hovedteksten, som nå inkluderer oppsettet på riktig sted; ingen ekstra oppsettinkludering står igjen i sidefilen.
+
+De kortere skalarfeltene beholder alle korrekte svar og samme feltrekkefølge. `<code>success=True</code>` i den siste regneoppgaven endrer bare presentasjonen, og tolkningsspørsmålet er bevart. Dette er kildekontroll av endringene; roots separate kontroll av faktisk rendering og kaldstart gjelder fortsatt.
