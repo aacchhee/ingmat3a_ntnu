@@ -1,7 +1,43 @@
-
 ---
 title: "Matematikk for ingeniørfag 3A"
 format: html
 ---
 
-Velg ei side fra venstre kolonne.
+Emnet går fra tall og beregningsfeil via lineær algebra til optimering.
+Vi bruker små regneeksempler, figurer og Python-forsøk til å utvikle og
+kontrollere metodene. Klikk på ukenummeret for å åpne undervisningssiden.
+
+::: {.course-overview}
+
+## Tall og algoritmer
+
+| Uke | Spørsmålet vi starter med | Matematisk innhold og anvendelser |
+|:---|:---|:---|
+| **[1](pages/page2.qmd)** | **Hvorfor kan to riktige regnemåter ha ulik kostnad og gi ulike svar på en datamaskin?** | Absolutt og relativ feil, regneoperasjoner og Horners metode. Binære tall, IEEE 754-flyttall, avrunding, maskinepsilon og tap av signifikans. Vi undersøker både beregningskostnad og numerisk stabilitet. |
+| **[2](pages/page4.qmd)** | **Hvorfor nærmer noen gjentatte beregninger seg en løsning, mens andre går i syklus eller løper bort?** | Fikspunktiterasjon, spindelvevplott, lokal og global konvergens og konvergensfart. Feil, residual, skrittlengde og toleranse brukes til å bygge en robust iterasjonsalgoritme. Newtons iterasjon for kvadratrøtter gir et raskt eksempel. |
+
+## Numerisk lineær algebra
+
+| Uke | Spørsmålet vi starter med | Matematisk innhold og anvendelser |
+|:---|:---|:---|
+| **[3](pages/uke3.qmd)** | **Kan forskjellige inputvektorer gi samme output?** | Lineære transformasjoner, vektorrom, basis, koordinater og lineær avhengighet. Kolonnerom, nullrom og rang forklarer hvilken informasjon en bildetransformasjon beholder eller mister. De samme ideene brukes på polynomer. |
+| **[4](pages/uke4.qmd)** | **Hvor mye av en vektor peker i en valgt retning, og hva gjør vi når dataene ikke passer modellen nøyaktig?** | Indreprodukt, ortogonalitet og projeksjon leder til Gram–Schmidt, QR-faktorisering og minste kvadrater. Vi undersøker nesten avhengige kolonner, tap av ortogonalitet og tilpasning av polynomer til data. |
+| **[5](pages/uke5.qmd)** | **Hva skjer når vi gjentar den samme transformasjonen?** | Egenverdier, egenvektorer, diagonalisering og spektralteoremet forklarer gjentatte matriseprodukter. Potensmetoden finner en dominerende retning. PageRank viser hvordan stasjonære fordelinger og tilfeldige hopp kan brukes til å rangere nettsider. |
+| **[6](pages/uke6.qmd)** | **Hvordan løser vi et stort lineært system ved å forbedre et foreløpig svar?** | Jacobi, Gauss–Seidel og konvergens. Residual, foroverfeil, bakoverfeil, matrisenorm og kondisjonstall. Vi tolker et SPD-system som et minimumsproblem og bygger bratteste nedstigning, linjesøk og konjugert gradient (CG). Prosjektet undersøker prekondisjonering. |
+| **[7](pages/uke7.qmd)** | **Hvilken informasjon bevares når vi forenkler en matrise, og hva kan vi rekonstruere fra usikre data?** | Singulærverdidekomposisjon (SVD), ortogonale basiser, rang og kondisjonering. Lavrangsapproksimasjoner og feil målt med Frobeniusnorm brukes til bildekompresjon. Pseudoinvers og trunkert SVD knytter minste kvadrater til følsom rekonstruksjon og støyfiltrering. |
+
+## Optimering
+
+Vi bygger videre på minimum, gradient og linjesøk fra [uke 6](pages/uke6.qmd).
+Minste kvadraters metode fra [uke 4](pages/uke4.qmd) og
+[uke 7](pages/uke7.qmd) er et eksempel vi kan knytte de nye ideene til.
+
+| Uke | Spørsmålet vi starter med | Matematisk innhold og anvendelser |
+|:---|:---|:---|
+| **[8](pages/uke8.qmd)** | **Hva mener vi med den beste løsningen, og finnes den?** | Målfunksjon, tillatt område og lokale og globale ekstremalpunkter. Gradient og Hessian brukes til å undersøke kandidater; kompakthet gir eksistens og konveksitet gir globale garantier. Vi introduserer SciPys `minimize`. |
+| **[9](pages/uke9.qmd)** | **Hvordan leter vi etter et minimum med få funksjonsberegninger?** | Gittersøk, tilfeldig søk, kompassøk og gradientmetoden. Linjesøk, Armijo-test og stoppkriterier skiller valg av retning fra valg av steglengde. Vi sammenligner søkebaner og bruker SciPy til søk langs én linje. |
+| **[10](pages/uke10.qmd)** | **Kan krumningen hjelpe oss fram, og når fører den oss feil?** | Newtons metode og lokale kvadratiske modeller. Cholesky-faktorisering løser SPD-systemet som gir Newton-retningen; CG er et iterativt alternativ. Negativ krumning, regularisering og demping forklarer hvorfor retning og steglengde må kontrolleres. Vi sammenligner med SciPy. |
+| **[11](pages/uke11.qmd)** | **Hvordan fordeler vi begrensede ressurser best, og hva er mer kapasitet verdt?** | Lineær programmering, tillatte hjørnepunkter og slakk. Dualitet og komplementær slakkhet gir optimalitetskontroller; ressurspriser beskriver verdien av små kapasitetsendringer. En produksjonsmodell løses med SciPys `linprog`. |
+| **[12](pages/uke12.qmd)** | **Hvordan finner vi det beste punktet når vi må holde oss på en kurve?** | Likhetsbetingelser, tangent, normal og Lagranges multiplikatorer. Vi klassifiserer kandidater, undersøker regularitet og degenerasjon og finner globale nedre grenser. SLSQP-svar kontrolleres mot både bibetingelsen og stasjonaritetskravet. |
+
+:::

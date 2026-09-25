@@ -112,3 +112,10 @@ main details[open] > summary { margin-bottom: 0.8rem; }
 @media (max-width: 760px) {
   .week5-network-model { grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
 }
+
+/* Keep the course overview readable within narrow screens. */
+.course-overview th,
+.course-overview td {
+  hyphens: auto;
+  overflow-wrap: anywhere;
+}

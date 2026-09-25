@@ -1,5 +1,0 @@
----
-title: "Emneinnhold"
----
-
-{{< include ../_includes/course/emneinnhold.md >}}

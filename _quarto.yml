@@ -14,11 +14,11 @@ website:
   sidebar:
     style: "docked"
     contents:
+      - text: "Forside"
+        file: index.qmd
+
       - text: "IDE / Readme"
         file: pages/page1.qmd
-
-      - text: "Emneinnhold"
-        file: pages/emneinnhold.qmd
 
       - section: "Tall og algoritmer"
         contents:
