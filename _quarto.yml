@@ -11,6 +11,10 @@ filters:
 
 website:
   title: "Matematikk 3A"
+  page-footer:
+    border: true
+    center: >-
+      Publisert under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.no).
   sidebar:
     style: "docked"
     contents:

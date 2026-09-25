@@ -58,6 +58,17 @@ Koden lagres ikke automatisk. Kopier kode du vil beholde til en lokal fil, VS Co
 
 ## README
 
+### Forfatter og lisens
+
+**Forfatter:** Andrey Chesnokov, NTNU —
+[andrey.chesnokov@ntnu.no](mailto:andrey.chesnokov@ntnu.no).
+
+Det egenutviklede kursmaterialet, inkludert tekst, figurer, oppgaver og kode,
+er publisert under [CC BY-SA 4.0 – Navngivelse-DelPåSammeVilkår](https://creativecommons.org/licenses/by-sa/4.0/deed.no),
+med mindre annet er oppgitt. Hele lisensen finnes i
+[LICENSE i repoet](https://github.com/aacchhee/ingmat3a_ntnu/blob/main/LICENSE).
+Tredjepartsmateriale og avhengigheter beholder sine egne lisenser og krediteringer.
+
 ### KI-feedback
 
 #### Hvordan få KI-tilbakemeldingen?

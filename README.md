@@ -2,6 +2,17 @@
 
 Quarto course notes for IMAX3011. The website combines explanatory text, browser-based Python exercises, and interactive mathematics exercises.
 
+## Author and license
+
+**Author:** Andrey Chesnokov, NTNU — [andrey.chesnokov@ntnu.no](mailto:andrey.chesnokov@ntnu.no).
+
+Unless otherwise indicated, the original material in this repository and on
+the course website, including text, figures, exercises and code, is licensed
+under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/).
+The full license text is in [LICENSE](LICENSE).
+
+Third-party material and dependencies retain their own attribution and licenses.
+
 ## Page structure
 
 Files in `pages/` are deliberately small assembly files. They contain the page title, the page-level setup include, and the ordered content includes. The teaching material lives in `_includes/`:
