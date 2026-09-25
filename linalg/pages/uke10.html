@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import minimize\n\n# Dobbeltbrønnen har to globale minima og et sadelpunkt i origo.\ndef well(x):\n    # Pakk ut begge koordinatene og returner funksjonsverdien.\n    u, v = x\n    return (u*u - 1)**2 + .5*v*v\n\ndef well_grad(x):\n    # Returner de to partiellderiverte i en vektor.\n    u, v = x\n    return np.array([4*u*(u*u-1), v])\n\ndef well_hess(x):\n    # De blandede andrederiverte er null i dette eksemplet.\n    u, v = x\n    return np.diag([12*u*u-4, 1.])\n\n# Den bøyde dalen har et globalt minimum i (1, 1).\ndef valley(x):\n    # Begge kvadratledd er ikke-negative.\n    u, v = x\n    return (1-u)**2 + 10*(v-u*u)**2\n\ndef valley_grad(x):\n    # Bruk kjerneregelen på leddet (v-u²)².\n    u, v = x\n    return np.array([2*(u-1)-40*u*(v-u*u), 20*(v-u*u)])\n\ndef valley_hess(x):\n    # Den symmetriske matrisen endrer seg langs dalen.\n    u, v = x\n    return np.array([[2-40*v+120*u*u, -40*u],[-40*u, 20.]])\n\ndef armijo(f, g, x, p, c=1e-4, max_halvings=25):\n    \"\"\"Returner godkjent stegfaktor og antall halveringer.\"\"\"\n    # Positiv retningsderivert gir ikke nedgang for små positive steg.\n    slope = float(g @ p)\n    if slope >= 0 or not np.isfinite(slope):\n        raise ValueError('Retningen er ikke en nedgangsretning')\n    # Prøv fullt steg først og halver til testen er oppfylt.\n    a = 1.\n    for j in range(max_halvings + 1):\n        if f(x+a*p) <= f(x) + c*a*slope:\n            return a, j\n        a *= .5\n    # Et begrenset budsjett er ikke en matematisk garanti om aksept.\n    raise RuntimeError('Ingen godkjent lengde innen budsjettet')","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bruk den samme matrisen og høyresiden som i uke 6.\nA = np.array([[3., 1.], [1., 2.]])\nb = np.array([5., 5.])\nx = np.array([-2., 3.])\n# Gradient og Hessian er Ax-b og A for denne kvadratikken.\ng = A @ x - b\np = np.linalg.solve(A, -g)\n# Kontroller det nye punktet med en ny gradient.\nprint('g(x0) =', g, 'p =', p)\nprint('x1 =', x+p, '||g(x1)|| =', np.linalg.norm(A @ (x+p)-b))","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-quadratic-step","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Velg et punkt i den venstre skråningen nær sadelpunktet.\nx = np.array([.2, 0.])\ng, H = well_grad(x), well_hess(x)\n# Løs Newton-systemet og kontroller om retningen peker nedover.\np = np.linalg.solve(H, -g)\nprint('g =', g, 'H-diagonal =', np.diag(H))\nprint('p =', p, 'g·p =', g @ p)\nprint('f før og etter helt steg:', well(x), well(x+p))\n# Kontroller at stasjonaritet i origo ikke betyr minimum.\nprint('Ved origo: ||g|| =', np.linalg.norm(well_grad([0., 0.])),\n      ', Hessian-egneverdier =', np.linalg.eigvalsh(well_hess([0., 0.])))","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-ascent","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Finn minste Hessian-egneverdi og flytt den til minst 0.25.\nx = np.array([.2, 0.])\ng, H = well_grad(x), well_hess(x)\nlam = max(0., .25 - np.linalg.eigvalsh(H)[0])\np = np.linalg.solve(H + lam*np.eye(2), -g)\n# Sammenlign faktiske verdier ved fullt, halvt og kvart steg.\nfor a in [1., .5, .25]:\n    print(f'alpha={a:g}: f={well(x+a*p):.6f}')\n# La Armijo velge den første faktoren som gir nok nedgang.\na, halvings = armijo(well, g, x, p)\nprint('lambda =', lam, 'g·p =', g @ p,\n      'valgt alpha =', a, 'nytt x =', x+a*p)","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-regularized-step","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Kontroller første steg fra origo mot faktiske verdier.\nx = np.array([0., 0.])\ng, H = valley_grad(x), valley_hess(x)\np = np.linalg.solve(H, -g)\na, halvings = armijo(valley, g, x, p)\nprint('H-egneverdier:', np.linalg.eigvalsh(H), 'p:', p)\nprint('q(x), q(x+p), q(x+alpha*p):', valley(x), valley(x+p), valley(x+a*p))\nprint('alpha:', a, 'halveringer:', halvings)\n\n# Lag en kort Newton-bane med enten fullt eller kontrollert steg.\ndef newton_path(damped, n):\n    point = np.array([0., 0.])\n    points = [point.copy()]\n    for _ in range(n):\n        grad, hess = valley_grad(point), valley_hess(point)\n        direction = np.linalg.solve(hess, -grad)\n        step = armijo(valley, grad, point, direction)[0] if damped else 1.\n        point = point + step*direction\n        points.append(point.copy())\n    return np.array(points)\n\n# Tegn begge banene i det samme landskapet.\nfull_path = newton_path(damped=False, n=2)\ndamped_path = newton_path(damped=True, n=5)\nfig, (ax_map, ax_line) = plt.subplots(2, 1, figsize=(6.5, 9))\nu, v = np.meshgrid(np.linspace(-.1, 1.2, 180), np.linspace(-.2, 1.2, 180))\nq_grid = (1-u)**2 + 10*(v-u*u)**2\nax_map.contour(u, v, q_grid,\n               levels=[.001, .01, .05, .1, .25, .5, 1, 2, 5, 10],\n               colors='#adb5bd', linewidths=.8)\nfor name, points, color in [('full Newton', full_path, '#b5483f'),\n                            ('Armijo-dempet', damped_path, '#1665ad')]:\n    ax_map.plot(points[:, 0], points[:, 1], 'o-', color=color,\n                markersize=4, linewidth=1.5, label=name)\nax_map.plot(0, 0, 'ks', markersize=6, label='start k=0')\nax_map.plot(1, 1, 'k*', markersize=11, label='q=0')\nax_map.annotate('full: k=1, q=10', (1, 0), xytext=(-130, 45),\n                textcoords='offset points', color='#92392f', fontsize=8,\n                arrowprops={'arrowstyle': '-', 'color': '#92392f'})\nax_map.annotate('dempet: k=1, q=0.875', (.5, 0), xytext=(5, -29),\n                textcoords='offset points', color='#14517f', fontsize=8,\n                arrowprops={'arrowstyle': '-', 'color': '#14517f'})\nax_map.set(xlim=(-.1, 1.2), ylim=(-.2, 1.2), xlabel='u', ylabel='v',\n           title='Baner over nivåkurvene til faktisk q')\nax_map.set_aspect('equal')\nax_map.legend(fontsize=8, loc='upper left')\n\n# Sammenlign den første kvadratiske modellen med den virkelige funksjonen.\nalpha_grid = np.linspace(0, 1.1, 180)\nactual = np.array([valley(x+t*p) for t in alpha_grid])\nmodel = valley(x) + alpha_grid*(g @ p) + .5*alpha_grid**2*(p @ H @ p)\nax_line.plot(alpha_grid, actual, color='#34495e', label='faktisk q(x+αp)')\nax_line.plot(alpha_grid, model, '--', color='#9262a4', label='lokal modell mₓ(αp)')\nax_line.plot([a, 1], [valley(x+a*p), valley(x+p)], 'ko', markersize=4)\nax_line.set(xlabel='Faktor α langs første Newton-retning',\n            ylabel='Verdi', title='Modellen undervurderer hele steget')\nax_line.legend(fontsize=8)\nfig.tight_layout()\nplt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-backtrack-positive-hess","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Bruk samme funksjon, gradient og startpunkt i begge forsøkene.\nfor name, kwargs in [('BFGS', {}), ('Newton-CG', {'hess': valley_hess})]:\n    # Newton-CG får også Hessianen; BFGS bygger sitt eget anslag.\n    res = minimize(valley, np.array([0., 0.]), jac=valley_grad,\n                   method=name, options={'maxiter': 100}, **kwargs)\n    # Evaluer gradienten selv ved resultatet og les tellere hvis de finnes.\n    print(name, 'success:', res.success, 'iter:', res.nit,\n          'nfev:', res.nfev, 'njev:', res.njev,\n          'nhev:', getattr(res, 'nhev', 0))\n    print('  x:', np.round(res.x, 8), 'q:', f'{valley(res.x):.3e}',\n          '||g||:', f'{np.linalg.norm(valley_grad(res.x)):.3e}')","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-scipy-compare","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import minimize\n\n# Dobbeltbrønnen har to globale minima og et sadelpunkt i origo.\ndef well(x):\n    # Pakk ut begge koordinatene og returner funksjonsverdien.\n    u, v = x\n    return (u*u - 1)**2 + .5*v*v\n\ndef well_grad(x):\n    # Returner de to partiellderiverte i en vektor.\n    u, v = x\n    return np.array([4*u*(u*u-1), v])\n\ndef well_hess(x):\n    # De blandede andrederiverte er null i dette eksemplet.\n    u, v = x\n    return np.diag([12*u*u-4, 1.])\n\n# Den bøyde dalen har et globalt minimum i (1, 1).\ndef valley(x):\n    # Begge kvadratledd er ikke-negative.\n    u, v = x\n    return (1-u)**2 + 10*(v-u*u)**2\n\ndef valley_grad(x):\n    # Bruk kjerneregelen på leddet (v-u²)².\n    u, v = x\n    return np.array([2*(u-1)-40*u*(v-u*u), 20*(v-u*u)])\n\ndef valley_hess(x):\n    # Den symmetriske matrisen endrer seg langs dalen.\n    u, v = x\n    return np.array([[2-40*v+120*u*u, -40*u],[-40*u, 20.]])\n\ndef armijo(f, g, x, p, c=1e-4, max_halvings=25):\n    \"\"\"Returner godkjent stegfaktor og antall halveringer.\"\"\"\n    # Positiv retningsderivert gir ikke nedgang for små positive steg.\n    slope = float(g @ p)\n    if slope >= 0 or not np.isfinite(slope):\n        raise ValueError('Retningen er ikke en nedgangsretning')\n    # Prøv fullt steg først og halver til testen er oppfylt.\n    a = 1.\n    for j in range(max_halvings + 1):\n        if f(x+a*p) <= f(x) + c*a*slope:\n            return a, j\n        a *= .5\n    # Et begrenset budsjett er ikke en matematisk garanti om aksept.\n    raise RuntimeError('Ingen godkjent lengde innen budsjettet')\n# Meldingen vises først når alle importene og definisjonene er klare.\nprint(\"Oppsett for uke 10 er klart. Nå kan du kjøre eksperimentene.\")","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"interactive","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Matrisen A og vektoren b er de samme som i uke 6.\nA = np.array([[3., 1.], [1., 2.]])\nb = np.array([5., 5.])\nx = np.array([-2., 3.])\n# Beregn høyresiden -g i systemet A p = -g.\ng = A @ x - b\np = np.linalg.solve(A, -g)\n# Skil løsningen av systemet p fra Newton-oppdateringen x1.\nx1 = x + p\nprint('Lineært system: -g(x0) =', -g)\nprint('Løsning av systemet: p =', p)\nprint('Newton-oppdatering: x1 =', x1)\nprint('Kontroll: ||g(x1)|| =', np.linalg.norm(A @ x1-b))","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-quadratic-step","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Ved u=0.2 er krumningen i u-retning negativ.\nx = np.array([.2, 0.])\ng, H = well_grad(x), well_hess(x)\n# Løs H p = -g; fortegnet til g·p tester små positive steg.\np = np.linalg.solve(H, -g)\nprint('I x=(0.2, 0): g =', g)\nprint('H-egneverdier =', np.linalg.eigvalsh(H))\nprint('Retning p =', p, 'med g·p =', g @ p)\nprint('Funksjonsverdi før =', well(x), 'og etter helt steg =', well(x+p))\n# I origo tester egenverdiene hva som skjer i ulike retninger.\nprint('I origo: ||g|| =', np.linalg.norm(well_grad([0., 0.])))\nprint('I origo: egenverdier H =', np.linalg.eigvalsh(well_hess([0., 0.])))","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-ascent","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Sjekk hvilken egenverdi som må flyttes for å få positiv krumning.\nx = np.array([.2, 0.])\ng, H = well_grad(x), well_hess(x)\nlam = max(0., .25 - np.linalg.eigvalsh(H)[0])\np = np.linalg.solve(H + lam*np.eye(2), -g)\n# Se hvilke prøvesteg som faktisk senker f fra startverdien.\nprint(f'Startverdi f(x) = {well(x):.6f}')\nprint('alpha    f(x+alpha*p)')\nfor a in [1., .5, .25]:\n    print(f'{a:<8g} {well(x+a*p):.6f}')\n# Armijo tester i samme rekkefølge og krever tilstrekkelig nedgang.\na, halvings = armijo(well, g, x, p)\nprint('lambda =', lam, 'og g·p =', g @ p)\nprint('Godkjent alpha =', a, '| antall halveringer =', halvings)\nprint('Nytt punkt =', x+a*p)","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-regularized-step","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Finn retningen fra origo og test hvor langt vi kan følge den.\nx = np.array([0., 0.])\ng, H = valley_grad(x), valley_hess(x)\np = np.linalg.solve(H, -g)\na, halvings = armijo(valley, g, x, p)\nprint('Krumning: H-egneverdier =', np.linalg.eigvalsh(H))\nprint('Retning p =', p)\nprint('Fullt steg: q(x) =', valley(x), 'og q(x+p) =', valley(x+p))\nprint('Armijo: alpha =', a, '| antall halveringer =', halvings)\nprint('Dempet steg: q(x+alpha*p) =', valley(x+a*p))\n\n# Gjenta ytre Newton-steg: løsning av H p = -g, så oppdatering av punktet.\ndef newton_path(damped, n):\n    point = np.array([0., 0.])\n    points = [point.copy()]\n    for _ in range(n):\n        grad, hess = valley_grad(point), valley_hess(point)\n        direction = np.linalg.solve(hess, -grad)\n        step = armijo(valley, grad, point, direction)[0] if damped else 1.\n        point = point + step*direction\n        points.append(point.copy())\n    return np.array(points)\n\n# Øverst: sammenlign oppdaterte punkter for fullt og dempet steg.\nfull_path = newton_path(damped=False, n=2)\ndamped_path = newton_path(damped=True, n=5)\nfig, (ax_map, ax_line) = plt.subplots(2, 1, figsize=(6.5, 9))\nu, v = np.meshgrid(np.linspace(-.1, 1.2, 180), np.linspace(-.2, 1.2, 180))\nq_grid = (1-u)**2 + 10*(v-u*u)**2\nax_map.contour(u, v, q_grid,\n               levels=[.001, .01, .05, .1, .25, .5, 1, 2, 5, 10],\n               colors='#adb5bd', linewidths=.8)\nfor name, points, color in [('full Newton', full_path, '#b5483f'),\n                            ('Armijo-dempet', damped_path, '#1665ad')]:\n    ax_map.plot(points[:, 0], points[:, 1], 'o-', color=color,\n                markersize=4, linewidth=1.5, label=name)\nax_map.plot(0, 0, 'ks', markersize=6, label='start k=0')\nax_map.plot(1, 1, 'k*', markersize=11, label='q=0')\nax_map.annotate('full: k=1, q=10', (1, 0), xytext=(-130, 45),\n                textcoords='offset points', color='#92392f', fontsize=8,\n                arrowprops={'arrowstyle': '-', 'color': '#92392f'})\nax_map.annotate('dempet: k=1, q=0.875', (.5, 0), xytext=(5, -29),\n                textcoords='offset points', color='#14517f', fontsize=8,\n                arrowprops={'arrowstyle': '-', 'color': '#14517f'})\nax_map.set(xlim=(-.1, 1.2), ylim=(-.2, 1.2), xlabel='u', ylabel='v',\n           title='Baner over nivåkurvene til faktisk q')\nax_map.set_aspect('equal')\nax_map.legend(fontsize=8, loc='upper left')\n\n# Nederst: sammenlign modellen med faktisk q langs første retning.\nalpha_grid = np.linspace(0, 1.1, 180)\nactual = np.array([valley(x+t*p) for t in alpha_grid])\nmodel = valley(x) + alpha_grid*(g @ p) + .5*alpha_grid**2*(p @ H @ p)\nax_line.plot(alpha_grid, actual, color='#34495e', label='faktisk q(x+αp)')\nax_line.plot(alpha_grid, model, '--', color='#9262a4', label='lokal modell mₓ(αp)')\nax_line.plot([a, 1], [valley(x+a*p), valley(x+p)], 'ko', markersize=4)\nax_line.set(xlabel='Faktor α langs første Newton-retning',\n            ylabel='Verdi', title='Modellen undervurderer hele steget')\nax_line.legend(fontsize=8)\nfig.tight_layout()\nplt.show()","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-backtrack-positive-hess","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Samme dal og startpunkt gjør sluttpunkt og tellere sammenlignbare.\nfor name, kwargs in [('BFGS', {}), ('Newton-CG', {'hess': valley_hess})]:\n    # Newton-CG får Hessianen; BFGS anslår krumning fra gradienter.\n    res = minimize(valley, np.array([0., 0.]), jac=valley_grad,\n                   method=name, options={'maxiter': 100}, **kwargs)\n    # Skill stoppstatus, sluttresultat og antall funksjonskall.\n    print(f'{name}: success={res.success}, ytre iterasjoner={res.nit}')\n    print('  x =', np.round(res.x, 8), 'q(x) =', f'{valley(res.x):.3e}')\n    print('  ||g(x)|| =', f'{np.linalg.norm(valley_grad(res.x)):.3e}')\n    print(f'  evalueringer: q={res.nfev}, g={res.njev}, '\n          f'H={getattr(res, \"nhev\", 0)}')","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week10-scipy-compare","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -5394,8 +5394,6 @@ window.Quarto = {
 </header>
 
 
-<div id="qpyodide-insertion-location-1"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <div class="learning-mode" data-learning-mode="" role="group" aria-label="Velg lesemodus">
 <button type="button" data-mode="lecture" aria-pressed="true">
 Forelesning
@@ -5406,7 +5404,7 @@ Gå i dybden
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">10.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">10.1 Newton på en kvadratisk skål</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">10.2 Negativ krumning: feil retning og feil punkt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">10.3 Sikre retningen og lengden</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">10.4 Sammenlign og kontroller</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">10.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">10.6 Python: prøv stegene selv</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">10.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python-oppsett</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">10.1 Newton på en kvadratisk skål</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">10.2 Negativ krumning: feil retning og feil punkt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">10.3 Sikre retningen og lengden</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">10.4 Sammenlign og kontroller</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">10.5 Regneoppgaver</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-8" role="tab" aria-controls="tabset-1-8" aria-selected="false" href="">10.6 Python: prøv stegene selv</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="uke10-start">
@@ -5414,14 +5412,14 @@ Gå i dybden
 </div>
 <section id="fra-helning-til-krumning" class="level3">
 <h3 class="anchored" data-anchor-id="fra-helning-til-krumning">Fra helning til krumning</h3>
-<p>I <a href="../pages/uke6.html#uke6-energi">uke 6</a> fant vi minimum av en kvadratisk funksjon ved å løse et lineært system. I <a href="../pages/uke8.html#uke8-hessian">uke 8</a> brukte vi Hessianen til å kjenne igjen minimum og sadelpunkter. I <a href="../pages/uke9.html#uke9-gradient">uke 9</a> valgte vi en retning fra gradienten og kontrollerte steglengden mot den faktiske funksjonen. <strong>Newtons metode</strong> bruker også krumningen til å velge retning. Målet er fortsatt å minimere en glatt funksjon uten bibetingelser.</p>
+<p>I <a href="../pages/uke6.html#uke6-energi">uke 6</a> fant vi minimum av en kvadratisk funksjon ved å løse et lineært system, blant annet med <a href="../pages/uke6.html#uke6-cg">konjugert gradient (CG)</a>. I <a href="../pages/uke8.html#uke8-hessian">uke 8</a> brukte vi Hessianen til å kjenne igjen minimum og sadelpunkter. I <a href="../pages/uke9.html#uke9-gradient">uke 9</a> valgte vi en retning fra gradienten og kontrollerte steglengden mot den faktiske funksjonen. <strong>Newtons metode</strong> bruker krumningen til å velge retning. Vi skal skille mellom å oppdatere punktet i <em>minimeringen</em> og å løse det <em>lineære systemet</em> som gir retningen. Målet er fortsatt å minimere en glatt funksjon uten bibetingelser.</p>
 <p>Vi begynner med kvadratikken fra uke 6: her treffer Newton minimum på ett steg. To videre forsøk viser hva som kan gå galt: En negativ krumning kan gi en oppadgående retning, og en positiv krumning kan gi et helt steg som er for langt. Vi endrer da henholdsvis <em>retningen</em> ved regularisering og <em>lengden</em> ved demping. Til slutt sammenligner vi med SciPy. Regneoppgavene står i 10.5 og korte, selvstendige kodeoppgaver i 10.6. <strong>Gå i dybden</strong> åpner lengre begrunnelser.</p>
 </section>
 <section id="læringsmål" class="level3">
 <h3 class="anchored" data-anchor-id="læringsmål">Læringsmål</h3>
 <p>Etter denne uken skal du kunne</p>
 <ul>
-<li>beregne gradient og Hessian og løse systemet som gir Newton-retningen,</li>
+<li>beregne gradient og Hessian, løse systemet som gir Newton-retningen og forklare hvor CG kan brukes inni dette steget,</li>
 <li>regne ut ett Newton-steg for en kvadratisk funksjon og forklare hvorfor det treffer minimum,</li>
 <li>bruke Hessianens egenverdier og <span class="math inline">\(g^Tp\)</span> til å skille sadelpunkt og oppadgående retning fra lokalt minimum og nedgangsretning,</li>
 <li>regularisere en indefinit Hessian og velge en dempet steglengde ved å kontrollere faktiske funksjonsverdier,</li>
@@ -5430,6 +5428,15 @@ Gå i dybden
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="uke10-oppsett">
+
+</div>
+<p>Denne cellen importerer pakkene og definerer funksjonene som brukes i ukens forsøk. Den kjøres automatisk når Python er klart. <strong>Vent på meldingen «Oppsett for uke 10 er klart» før du kjører et eksperiment.</strong> Første oppstart kan ta litt tid fordi nettleseren må hente pakkene.</p>
+<p><code>well</code>, <code>well_grad</code> og <code>well_hess</code> beskriver dobbeltbrønnen i 10.2. <code>valley</code>, <code>valley_grad</code> og <code>valley_hess</code> beskriver dalen i 10.3. <code>armijo</code> halverer stegfaktoren til nedgangstesten er oppfylt. Du kan lese koden og kjøre oppsettet på nytt med <strong>Kjør</strong>. Hvis en celle melder at et navn ikke er definert, kjør oppsettet på nytt og deretter forsøket. Kodeoppgavene til slutt inneholder sine egne importer.</p>
+<div id="qpyodide-insertion-location-1"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div id="uke10-likning">
 
 </div>
@@ -5440,7 +5447,49 @@ A=\begin{bmatrix}3&amp;1\\1&amp;2\end{bmatrix},\quad b=\begin{bmatrix}5\\5\end{b
 <p>Her er <span class="math inline">\(g(x)=Ax-b\)</span> og <span class="math inline">\(H(x)=A\)</span> i <em>alle</em> punkter. Starter vi i <span class="math inline">\(x_0=(-2,3)^T\)</span>, får vi</p>
 <p><span class="math display">\[g(x_0)=\begin{bmatrix}-8\\-1\end{bmatrix},\qquad
 Ap=-g(x_0)=\begin{bmatrix}8\\1\end{bmatrix}.\]</span></p>
-<p>Løsning av de to likningene <span class="math inline">\(3p_1+p_2=8\)</span> og <span class="math inline">\(p_1+2p_2=1\)</span> gir <span class="math inline">\(p=(3,-1)^T\)</span>. Dermed er <span class="math inline">\(x_1=x_0+p=(1,2)^T\)</span>, og <span class="math inline">\(g(x_1)=0\)</span>. Følgende celle gjentar regningen med et lineært system; <code>np.linalg.solve</code> løser systemet uten å beregne en eksplisitt matriseinvers.</p>
+<p>Regn gjennom ett ytre Newton-steg for hånd. Først finner vi retningen <span class="math inline">\(p\)</span> ved å løse et lineært system; deretter legger vi <span class="math inline">\(p\)</span> til startpunktet:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Del</th>
+<th style="text-align: left;">Utregning</th>
+<th style="text-align: left;">Hva den gir</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Gradient i <span class="math inline">\(x_0\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(Ax_0-b=(-8,-1)^T\)</span></td>
+<td style="text-align: left;">Høyresiden er <span class="math inline">\(-g(x_0)=(8,1)^T\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Skriv systemet</td>
+<td style="text-align: left;"><span class="math inline">\(3p_1+p_2=8\)</span> og <span class="math inline">\(p_1+2p_2=1\)</span></td>
+<td style="text-align: left;">Vi søker de to komponentene i <span class="math inline">\(p\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Eliminer <span class="math inline">\(p_2\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(p_2=8-3p_1\)</span>; dermed <span class="math inline">\(p_1+2(8-3p_1)=1\)</span>, altså <span class="math inline">\(-5p_1=-15\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(p_1=3\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sett tilbake</td>
+<td style="text-align: left;"><span class="math inline">\(p_2=8-3\cdot3=-1\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(p=(3,-1)^T\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Oppdater og kontroller</td>
+<td style="text-align: left;"><span class="math inline">\(x_1=(-2,3)^T+(3,-1)^T=(1,2)^T\)</span>; <span class="math inline">\(Ax_1-b=(5,5)^T-(5,5)^T\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(g(x_1)=0\)</span>.</td>
+</tr>
+</tbody>
+</table>
+<p>Cellen gjentar regningen. Vi vil kontrollere at det <em>nye punktet</em>, og ikke bare retningen, har gradient null. <code>np.linalg.solve</code> løser systemet uten en eksplisitt matriseinvers.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Resultatet er <span class="math inline">\(p=(3,-1)^T\)</span> og <span class="math inline">\(x_1=(1,2)^T\)</span> med gradientnorm 0 innen flyttallspresisjon. Dette gjelder fra <em>ethvert</em> startpunkt: <span class="math inline">\(g(x+p)=Ax-b+Ap=g(x)+Ap=0\)</span>. <span class="math inline">\(A\)</span> er <strong>symmetrisk positiv definit (SPD)</strong>: begge egenverdiene <span class="math inline">\((5\pm\sqrt5)/2\)</span> er positive. Derfor er <span class="math inline">\((1,2)\)</span> også det entydige globale minimumspunktet. Ett steg er her eksakt fordi krumningen er konstant.</p>
@@ -5452,6 +5501,37 @@ Ap=-g(x_0)=\begin{bmatrix}8\\1\end{bmatrix}.\]</span></p>
 <p><span class="math display">\[H(x_k)p_k=-g(x_k),\qquad x_{k+1}=x_k+p_k.\]</span></p>
 <p>Newton-systemet har en entydig løsning når <span class="math inline">\(H\)</span> er <strong>invertibel</strong>, altså når ingen egenverdi er null. SPD sikrer i tillegg at retningen minimerer den kvadratiske modellen. En invertibel, indefinit Hessian kan derfor gi en entydig Newton-retning som ikke peker nedover.</p>
 <p>Dette er også lineariseringen <span class="math inline">\(g(x+p)\approx g(x)+H(x)p\)</span> av likningen <span class="math inline">\(g=0\)</span>. For en ikke-kvadratisk funksjon er modellen bare lokal og Hessianen kan endre seg. Da må vi beregne en ny retning i hvert punkt og undersøke det foreslåtte steget.</p>
+</section>
+<section id="to-typer-iterasjoner-newton-utenpå-cg-inni" class="level3">
+<h3 class="anchored" data-anchor-id="to-typer-iterasjoner-newton-utenpå-cg-inni">To typer iterasjoner: Newton utenpå, CG inni</h3>
+<p>I <a href="../pages/uke6.html#uke6-cg">uke 6</a> løste CG <span class="math inline">\(Az=b\)</span> ved å minimere <span class="math inline">\(\tfrac12z^TAz-b^Tz\)</span> når <span class="math inline">\(A\)</span> er SPD. Her får vi på hvert ytre Newton-steg et <em>nytt</em> system <span class="math inline">\(H(x_k)p_k=-g(x_k)\)</span>. Hvis <span class="math inline">\(H(x_k)\)</span> er SPD, kan CG løse dette systemet iterativt: sett <span class="math inline">\(z=p_k\)</span>, <span class="math inline">\(A=H(x_k)\)</span> og høyresiden <span class="math inline">\(b=-g(x_k)\)</span>. CG minimerer da den lokale modellen <span class="math inline">\(m_{x_k}(p)\)</span>, opp til konstantleddet <span class="math inline">\(f(x_k)\)</span>. En indre CG-iterasjon forbedrer et anslag på <strong>samme</strong> <span class="math inline">\(p_k\)</span>; først etter den lineære løsningen oppdaterer Newton punktet <span class="math inline">\(x_{k+1}\)</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Nivå</th>
+<th style="text-align: left;">Hva endres?</th>
+<th style="text-align: left;">I skålen fra starten <span class="math inline">\(x_0=(-2,3)^T\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Indre CG</td>
+<td style="text-align: left;">Anslaget på <span class="math inline">\(p\)</span> i <span class="math inline">\(Ap=(8,1)^T\)</span>.</td>
+<td style="text-align: left;">Fra <span class="math inline">\(p=0\)</span> ville eksakt CG finne <span class="math inline">\(p=(3,-1)^T\)</span> på høyst to indre iterasjoner i eksakt aritmetikk.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ytre Newton</td>
+<td style="text-align: left;">Punktet <span class="math inline">\(x\)</span> etter at retningen er funnet.</td>
+<td style="text-align: left;">Én oppdatering gir <span class="math inline">\(x_1=x_0+p=(1,2)^T\)</span>.</td>
+</tr>
+</tbody>
+</table>
+<p>I to dimensjoner er <code>np.linalg.solve</code> enklere. For store systemer kan en iterativ indre løsning spare arbeid. <strong>Vanlig CG fra uke 6 krever SPD</strong>; at <span class="math inline">\(H\)</span> bare er invertibel er ikke nok. Ved negativ krumning i 10.2 må vi håndtere dette, for eksempel ved å regularisere Hessianen før vi eventuelt bruker CG. Et indre CG-stopp før eksakt løsning gir dessuten en tilnærmet Newton-retning.</p>
 <details class="reading-step">
 <summary>
 Gå i dybden: Jacobimatrise og hvorfor SPD gir nedgang
@@ -5461,19 +5541,51 @@ Gå i dybden: Jacobimatrise og hvorfor SPD gir nedgang
 </details>
 </section>
 </div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
 <div id="uke10-stasjonaer">
 
 </div>
 <p>Studer <strong>dobbeltbrønnen</strong> <span class="math inline">\(f(u,v)=(u^2-1)^2+v^2/2\)</span>. Siden begge ledd er ikke-negative, er <span class="math inline">\((1,0)\)</span> og <span class="math inline">\((-1,0)\)</span> globale minimumspunkter med verdi 0. Derivasjon gir</p>
 <p><span class="math display">\[g(u,v)=\begin{bmatrix}4u(u^2-1)\\v\end{bmatrix},\qquad
 H(u,v)=\begin{bmatrix}12u^2-4&amp;0\\0&amp;1\end{bmatrix}.\]</span></p>
-<p>Ved <span class="math inline">\(x=(0.2,0)^T\)</span> er <span class="math inline">\(g=(-0.768,0)^T\)</span> og <span class="math inline">\(H=\operatorname{diag}(-3.52,1)\)</span>. Newton-systemet gir <span class="math inline">\(p\approx(-0.218182,0)^T\)</span>. Regner vi ut retningsderiverten, får vi <span class="math inline">\(g^Tp\approx0.16756&gt;0\)</span>: retningen går <em>oppover</em> allerede for små positive steg. Den følgende cellen viser også funksjonsverdiene og undersøker origo.</p>
+<p>Vi undersøker hvordan en løst Newton-likning kan gi feil retning. Ved <span class="math inline">\(x=(0.2,0)^T\)</span> viser gradient, Hessian og retningsderivert årsaken:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Trinn</th>
+<th style="text-align: left;">Regning</th>
+<th style="text-align: left;">Tolkning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Deriverte</td>
+<td style="text-align: left;"><span class="math inline">\(g=(-0.768,0)^T\)</span>, <span class="math inline">\(H=\operatorname{diag}(-3.52,1)\)</span></td>
+<td style="text-align: left;">Krumningen langs <span class="math inline">\(u\)</span> er negativ.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Newton-system</td>
+<td style="text-align: left;"><span class="math inline">\(-3.52p_1=0.768\)</span>, <span class="math inline">\(p_2=0\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(p\approx(-0.218182,0)^T\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Retningsderivert</td>
+<td style="text-align: left;"><span class="math inline">\(g^Tp\approx0.16756&gt;0\)</span></td>
+<td style="text-align: left;">Små positive steg i denne retningen går <em>oppover</em>.</td>
+</tr>
+</tbody>
+</table>
+<p>Cellen sammenligner deretter <span class="math inline">\(f(x)\)</span> med <span class="math inline">\(f(x+p)\)</span>, slik at vi ser om den faktiske endringen følger fortegnet til retningsderiverten. Den undersøker også hvorfor <span class="math inline">\(g=0\)</span> i origo ikke alene er nok til å kalle punktet et minimum.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Funksjonen øker fra <span class="math inline">\(0.9216\)</span> til omtrent <span class="math inline">\(0.99934\)</span> etter helt steg. I origo er gradienten null, men Hessianens egenverdier er <span class="math inline">\(-4\)</span> og <span class="math inline">\(1\)</span>: langs <span class="math inline">\(u\)</span> synker funksjonen fra 1, mens den langs <span class="math inline">\(v\)</span> stiger. Origo er et <strong>sadelpunkt</strong>. En liten gradientnorm alene ville ha stoppet også her. Fra <a href="../pages/uke8.html#uke8-hessian">uke 8</a> vet vi at SPD-Hessian <em>ved et eksakt stasjonært punkt</em> gir et strengt lokalt minimum; en <strong>indefinit</strong> Hessian med egenverdier av begge fortegn gir sadelpunkt. For globalitet kreves et argument som gjelder hele området, slik som sum av ikke-negative ledd ovenfor.</p>
 </div>
-<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
 <div id="uke10-demping">
 
 </div>
@@ -5481,23 +5593,55 @@ H(u,v)=\begin{bmatrix}12u^2-4&amp;0\\0&amp;1\end{bmatrix}.\]</span></p>
 <h3 class="anchored" data-anchor-id="regularisering-endrer-retningen">Regularisering endrer retningen</h3>
 <p>For å rette oppadgående Newton-retning kan vi legge til <span class="math inline">\(\lambda I\)</span> i Hessianen og løse <span class="math inline">\((H+\lambda I)p=-g\)</span>. Her er <span class="math inline">\(I\)</span> identitetsmatrisen og <span class="math inline">\(\lambda\ge0\)</span>. Dette kalles <strong>regularisering</strong>. Hver egenverdi øker med <span class="math inline">\(\lambda\)</span>. La <span class="math inline">\(\lambda_{\min}(H)\)</span> betegne den minste egenverdien til <span class="math inline">\(H\)</span>; velg i vårt lille forsøk</p>
 <p><span class="math display">\[\lambda=\max(0,\,0.25-\lambda_{\min}(H)),\]</span></p>
-<p>slik at den minste egenverdien til <span class="math inline">\(H+\lambda I\)</span> blir minst 0.25. For dobbeltbrønnen ved <span class="math inline">\((0.2,0)\)</span> er <span class="math inline">\(\lambda=3.77\)</span> og <span class="math inline">\(p=(3.072,0)^T\)</span>. Nå er <span class="math inline">\(g^Tp=-2.359296&lt;0\)</span>. Retningen er nedgående <em>nær</em> startpunktet, men et helt steg kan fortsatt gå for langt.</p>
+<p>slik at den minste egenverdien til <span class="math inline">\(H+\lambda I\)</span> blir minst 0.25. I vårt punkt er <span class="math inline">\(\lambda_{\min}(H)=-3.52\)</span>, så <span class="math inline">\(\lambda=0.25-(-3.52)=3.77\)</span>. Dermed er <span class="math inline">\(H+\lambda I=\operatorname{diag}(0.25,4.77)\)</span>: en SPD-matrise som også ville egne seg for vanlig CG. Løsningen av <span class="math inline">\((H+\lambda I)p=(0.768,0)^T\)</span> er <span class="math inline">\(p=(3.072,0)^T\)</span>, og <span class="math inline">\(g^Tp=-2.359296&lt;0\)</span>. Retningen er nedgående <em>nær</em> startpunktet, men et helt steg kan fortsatt gå for langt.</p>
 </section>
 <section id="demping-kontrollerer-steglengden" class="level3">
 <h3 class="anchored" data-anchor-id="demping-kontrollerer-steglengden">Demping kontrollerer steglengden</h3>
 <p>Vi prøver derfor <strong>demping</strong> med faktorer <span class="math inline">\(\alpha=1,1/2,1/4,\ldots\)</span> og setter <span class="math inline">\(x_+=x+\alpha p\)</span>. <a href="../pages/uke9.html#uke9-linjesok">Armijo-testen fra uke 9</a> krever her</p>
 <p><span class="math display">\[f(x+\alpha p)\le f(x)+10^{-4}\alpha g^Tp.\]</span></p>
-<p>Når <span class="math inline">\(g^Tp&lt;0\)</span>, krever høyresiden en faktisk reduksjon. Funksjonen <code>armijo</code> i oppsettet returnerer den første godkjente faktoren og antall halveringer. Den avviser retninger som ikke er nedgående, og har et begrenset antall forsøk.</p>
+<p>Når <span class="math inline">\(g^Tp&lt;0\)</span>, krever høyresiden en faktisk reduksjon. Cellen viser hvor langt vi kan gå langs den nye retningen: Den prøver først tre steg og skriver ut verdiene, før <code>armijo</code> velger den første godkjente faktoren og antall halveringer. Funksjonen avviser retninger som ikke er nedgående, og har et begrenset antall forsøk.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Hele og halve steg øker <span class="math inline">\(f\)</span>. Kvart steg gir <span class="math inline">\((0.968,0)\)</span> og omtrent <span class="math inline">\(0.00396\)</span>, fra <span class="math inline">\(0.9216\)</span>. Regulariseringen endret retningen, og dempingen bestemte hvor langt vi skulle følge den. Tallet 0.25 i regulariseringen er et illustrerende valg, ikke en universell parameter.</p>
-<p>Prøv nå den <strong>bøyde dalen</strong></p>
+<p>Prøv nå den <strong>bøyde dalen</strong>. Dette forsøket viser at hele steget kan svikte selv om Hessianen er SPD og retningen peker nedover nær start:</p>
 <p><span class="math display">\[q(u,v)=(1-u)^2+10(v-u^2)^2.\]</span></p>
 <p>Begge ledd er ikke-negative og <span class="math inline">\(q(1,1)=0\)</span>, så <span class="math inline">\((1,1)\)</span> er et globalt minimumspunkt. Ved å derivere får vi</p>
 <p><span class="math display">\[g(u,v)=\begin{bmatrix}2(u-1)-40u(v-u^2)\\20(v-u^2)\end{bmatrix},\qquad
 H(u,v)=\begin{bmatrix}2-40v+120u^2&amp;-40u\\-40u&amp;20\end{bmatrix}.\]</span></p>
-<p>I <span class="math inline">\((0,0)\)</span> er <span class="math inline">\(g=(-2,0)^T\)</span> og <span class="math inline">\(H=\operatorname{diag}(2,20)\)</span>, altså SPD. Newton gir <span class="math inline">\(p=(1,0)^T\)</span>. Modellen anslår <span class="math inline">\(m_x(\alpha p)=(1-\alpha)^2\)</span>, men den <em>faktiske</em> funksjonen langs denne linjen er <span class="math inline">\((1-\alpha)^2+10\alpha^4\)</span>. Hele steget gir derfor <span class="math inline">\(q(1,0)=10&gt;q(0,0)=1\)</span>. Halvt steg gir <span class="math inline">\(q(0.5,0)=0.875\)</span> og godtas av Armijo.</p>
-<p>Cellen sammenligner hele og dempede banen på nivåkurver. Under nivåkurvene vises modell og virkelig verdi langs første retning. <code>valley</code>, <code>valley_grad</code> og <code>valley_hess</code> i oppsettet definerer funksjonen og dens deriverte.</p>
+<p>I <span class="math inline">\((0,0)\)</span> er <span class="math inline">\(g=(-2,0)^T\)</span> og <span class="math inline">\(H=\operatorname{diag}(2,20)\)</span>, altså SPD. Løser vi <span class="math inline">\(Hp=-g\)</span>, får vi <span class="math inline">\(p=(1,0)^T\)</span>. Langs denne retningen skiller modell og funksjon lag:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Faktor</th>
+<th style="text-align: right;">Lokal kvadratisk modell <span class="math inline">\(m_x(\alpha p)=(1-\alpha)^2\)</span></th>
+<th style="text-align: right;">Faktisk <span class="math inline">\(q(x+\alpha p)=(1-\alpha)^2+10\alpha^4\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(1\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(10\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(1/2\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(1/4\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(7/8=0.875\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Hele steget øker altså verdien fra 1 til 10; halvt steg senker den til <span class="math inline">\(0.875\)</span> og godtas av Armijo. Forskjellen <span class="math inline">\(10\alpha^4\)</span> er et ledd den lokale modellen ikke fanger opp.</p>
+<p>Cellen sammenligner hele og dempede banen på nivåkurver: Se hvor det første punktet etter start havner på hver bane. Under nivåkurvene sammenlignes modell og virkelig verdi langs den første retningen; avstanden viser hvorfor et fullt steg er risikabelt. <code>valley</code>, <code>valley_grad</code> og <code>valley_hess</code> i oppsettet definerer funksjonen og dens deriverte.</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Øverst går fullt Newton først til <span class="math inline">\((1,0)\)</span>, hvor <span class="math inline">\(q=10\)</span>, og deretter til <span class="math inline">\((1,1)\)</span>. Den dempede banen senker verdien allerede på første steg og fortsetter gjennom fem godkjente steg. Nederst viser avstanden <span class="math inline">\(10\alpha^4\)</span> mellom kurvene hvorfor modellen undervurderer store steg. SPD sikrer nedgang for <em>tilstrekkelig små</em> steg, ikke for hvert helt steg.</p>
@@ -5511,11 +5655,11 @@ Gå i dybden: lokal fart og grensen for sikringen
 </details>
 </section>
 </div>
-<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
 <div id="uke10-scipy">
 
 </div>
-<p>SciPys <code>minimize</code> fra <a href="../pages/uke8.html#uke8-scipy">uke 8</a> kan gjøre hele søket for den bøyde dalen. <code>BFGS</code> anslår krumningen fra gradientendringer. <code>Newton-CG</code> tar også inn Hessianen og bruker en indre iterativ beregning av en Newton-liknende retning; CG-ideen fra <a href="../pages/uke6.html#uke6-cg">uke 6</a> gir bakgrunn for navnet. De er ikke identiske med den eksplisitte regulariseringen vår. Vi sammenligner fra samme start og ser både på punkt, verdi, gradientnorm og antall evalueringer.</p>
+<p>SciPys <code>minimize</code> fra <a href="../pages/uke8.html#uke8-scipy">uke 8</a> kan gjøre hele søket for den bøyde dalen. <code>BFGS</code> anslår krumningen fra gradientendringer. <code>Newton-CG</code> bruker Hessianinformasjon og en indre, CG-basert iterasjon for å finne retningen til hvert ytre steg. Her betyr «CG» altså arbeid <em>inni</em> Newton-steget, som i tabellen i 10.1. SciPys algoritme er ikke det samme som å kalle uke 6s vanlige SPD-CG blindt på enhver Hessian, og heller ikke identisk med vår eksplisitte regularisering. Vi sammenligner fra samme start for å se sluttpunkt, verdi, gradientnorm og rapportert arbeid.</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Begge ender nær <span class="math inline">\((1,1)\)</span> med liten verdi og gradientnorm. Et <code>success</code>-flagg betyr at metodens egne stoppkrav ble møtt, ikke at et globalt minimum er bevist. Her beviser vi globalitet separat: <span class="math inline">\(q\)</span> er summen av to ikke-negative ledd og <span class="math inline">\(q(1,1)=0\)</span>. Færre ytre iterasjoner er heller ikke nødvendigvis mindre arbeid, siden Hessian, gradient og indre lineære løsninger har forskjellige kostnader.</p>
@@ -5561,7 +5705,7 @@ SciPy-oppslag: kall og resultat
 </details>
 <p>I <a href="../pages/uke11.html">uke 11</a> får vi lineære bibetingelser og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige nødvendige kontrollen.</p>
 </div>
-<div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
+<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
 <div id="uke10-oppgaver">
 
 </div>
@@ -5602,11 +5746,11 @@ SciPy-oppslag: kall og resultat
 <br>
 \(\nabla f(0,0)=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-2-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(\lambda_{\min}=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>, \(\lambda_{\max}=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For \(f(u,v)=(u^2-1)^2+v^2/2\), beregn gradienten i \((0,0)\) og Hessianens egenverdier der i stigende rekkefølge. Svar eksakt. Hvorfor er punktet ikke et minimum?<br>
+\(\lambda_{\min}=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>, \(\lambda_{\max}=\) <input type=&quot;text&quot; id=&quot;math-exercise-2-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>">For \(f(u,v)=(u^2-1)^2+v^2/2\), beregn gradienten i \((0,0)\) og Hessianens egenverdier der i stigende rekkefølge. Svar eksakt. Hvorfor er punktet ikke et minimum?<br>
 <br>
 \(\nabla f(0,0)=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-2-f1" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-2-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
-\(\lambda_{\min}=\) <input type="text" id="math-exercise-2-f3" data-answer="-4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium">, \(\lambda_{\max}=\) <input type="text" id="math-exercise-2-f4" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+\(\lambda_{\min}=\) <input type="text" id="math-exercise-2-f3" data-answer="-4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small">, \(\lambda_{\max}=\) <input type="text" id="math-exercise-2-f4" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5629,11 +5773,11 @@ SciPy-oppslag: kall og resultat
 <br>
 \(p=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-3-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-3-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(g^Tp=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For dobbeltbrønnen over: start i \((1/2,0)\) og løs \(Hp=-g\) eksakt. Beregn \(g^Tp\). Betyr fortegnet nedgang eller oppgang for små positive steg?<br>
+\(g^Tp=\) <input type=&quot;text&quot; id=&quot;math-exercise-3-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>">For dobbeltbrønnen over: start i \((1/2,0)\) og løs \(Hp=-g\) eksakt. Beregn \(g^Tp\). Betyr fortegnet nedgang eller oppgang for små positive steg?<br>
 <br>
 \(p=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-3-f1" data-answer="-3/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-3-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
-\(g^Tp=\) <input type="text" id="math-exercise-3-f3" data-answer="9/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+\(g^Tp=\) <input type="text" id="math-exercise-3-f3" data-answer="9/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5656,11 +5800,11 @@ SciPy-oppslag: kall og resultat
 <br>
 \(p=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-4-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-4-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(g^Tp=\) <input type=&quot;text&quot; id=&quot;math-exercise-4-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">I samme punkt \((1/2,0)\), løs \((H+2I)p=-g\). Beregn \(g^Tp\) og forklar hvorfor et lite positivt steg nå gir nedgang. Svar eksakt.<br>
+\(g^Tp=\) <input type=&quot;text&quot; id=&quot;math-exercise-4-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>">I samme punkt \((1/2,0)\), løs \((H+2I)p=-g\). Beregn \(g^Tp\) og forklar hvorfor et lite positivt steg nå gir nedgang. Svar eksakt.<br>
 <br>
 \(p=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-4-f1" data-answer="3/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-4-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
-\(g^Tp=\) <input type="text" id="math-exercise-4-f3" data-answer="-9/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+\(g^Tp=\) <input type="text" id="math-exercise-4-f3" data-answer="-9/4" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5683,11 +5827,11 @@ SciPy-oppslag: kall og resultat
 <br>
 \(p=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-5-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(m_{(0,0)}(p)=\) <input type=&quot;text&quot; id=&quot;math-exercise-5-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; \(q(p)=\) <input type=&quot;text&quot; id=&quot;math-exercise-5-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;>">For \(q(u,v)=(1-u)^2+10(v-u^2)^2\) er \(g(0,0)=(-2,0)^T\) og \(H(0,0)=\operatorname{diag}(2,20)\). Finn \(p\) fra \(Hp=-g\), modellverdien \(m_{(0,0)}(p)=q(0,0)+g^Tp+\tfrac12p^THp\), og den faktiske verdien \(q((0,0)+p)\). Svar eksakt.<br>
+\(m_{(0,0)}(p)=\) <input type=&quot;text&quot; id=&quot;math-exercise-5-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> &amp;nbsp; \(q(p)=\) <input type=&quot;text&quot; id=&quot;math-exercise-5-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;>">For \(q(u,v)=(1-u)^2+10(v-u^2)^2\) er \(g(0,0)=(-2,0)^T\) og \(H(0,0)=\operatorname{diag}(2,20)\). Finn \(p\) fra \(Hp=-g\), modellverdien \(m_{(0,0)}(p)=q(0,0)+g^Tp+\tfrac12p^THp\), og den faktiske verdien \(q((0,0)+p)\). Svar eksakt.<br>
 <br>
 \(p=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-5-f1" data-answer="1" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-5-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
-\(m_{(0,0)}(p)=\) <input type="text" id="math-exercise-5-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; \(q(p)=\) <input type="text" id="math-exercise-5-f4" data-answer="10" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"></div>
+\(m_{(0,0)}(p)=\) <input type="text" id="math-exercise-5-f3" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp; \(q(p)=\) <input type="text" id="math-exercise-5-f4" data-answer="10" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"></div>
 
 <div class="math-exercise-controls">
   <button type="button" class="btn btn-primary math-check-btn">✓&nbsp;Sjekk</button>
@@ -5710,17 +5854,17 @@ SciPy-oppslag: kall og resultat
 <br>
 \(x_+=\) <span class=&quot;math-vec&quot; style=&quot;--n:2&quot;><input type=&quot;text&quot; id=&quot;math-exercise-6-f1&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;><input type=&quot;text&quot; id=&quot;math-exercise-6-f2&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-mat-cell&quot;></span><br>
 <br>
-\(q(x_+)=\) <input type=&quot;text&quot; id=&quot;math-exercise-6-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;> &amp;nbsp; Global minimumsverdi: <input type=&quot;text&quot; id=&quot;math-exercise-6-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-medium&quot;><br>
+\(q(x_+)=\) <input type=&quot;text&quot; id=&quot;math-exercise-6-f3&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;> &amp;nbsp; Global minimumsverdi: <input type=&quot;text&quot; id=&quot;math-exercise-6-f4&quot; data-vars=&quot;&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; spellcheck=&quot;false&quot; class=&quot;math-input math-input-small&quot;><br>
 <br>
-En numerisk løser rapporterer `success=True` og liten gradientnorm.<br>
+En numerisk løser rapporterer <code>success=True</code> og liten gradientnorm.<br>
 Forklar i egne notater hva dette kontrollerer, og hvilket eget<br>
 argument som viser at verdi 0 er globalt best for akkurat \(q\).">Bruk \(q(u,v)=(1-u)^2+10(v-u^2)^2\), start \((0,0)\) og retning \(p=(1,0)\). Beregn punktet og funksjonsverdien for \(\alpha=1/2\). Hvilken global nedre grense følger av uttrykket som sum av kvadrater, og oppnås den? Svar eksakt.<br>
 <br>
 \(x_+=\) <span class="math-vec" style="--n:2"><input type="text" id="math-exercise-6-f1" data-answer="1/2" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"><input type="text" id="math-exercise-6-f2" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-mat-cell"></span><br>
 <br>
-\(q(x_+)=\) <input type="text" id="math-exercise-6-f3" data-answer="7/8" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"> &nbsp; Global minimumsverdi: <input type="text" id="math-exercise-6-f4" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-medium"><br>
+\(q(x_+)=\) <input type="text" id="math-exercise-6-f3" data-answer="7/8" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"> &nbsp; Global minimumsverdi: <input type="text" id="math-exercise-6-f4" data-answer="0" data-vars="" autocomplete="off" autocorrect="off" spellcheck="false" class="math-input math-input-small"><br>
 <br>
-En numerisk løser rapporterer `success=True` og liten gradientnorm.<br>
+En numerisk løser rapporterer <code>success=True</code> og liten gradientnorm.<br>
 Forklar i egne notater hva dette kontrollerer, og hvilket eget<br>
 argument som viser at verdi 0 er globalt best for akkurat \(q\).</div>
 
@@ -5738,7 +5882,7 @@ argument som viser at verdi 0 er globalt best for akkurat \(q\).</div>
 </div>
 <p>Arbeid videre med <a href="../pages/project_week10.html">prosjekt 10: startpunkt, skala og Newton</a>.</p>
 </div>
-<div id="tabset-1-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-7-tab">
+<div id="tabset-1-8" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-8-tab">
 <div id="uke10-python">
 
 </div>
