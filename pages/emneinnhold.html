@@ -45,7 +45,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-56a7063a21dd4c20fbc96590a1db8d87.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-24c09a13944ec7e1f31d2917b1251fc2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -235,7 +235,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden</span></a>
+ <span class="menu-text">Uke 9 – søk uten deriverte og gradientmetoden</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -253,7 +253,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/uke12.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Uke 12 – optimering med bibetingelser og minste kvadrater</span></a>
+ <span class="menu-text">Uke 12 – optimering med bibetingelser</span></a>
   </div>
 </li>
       </ul>
@@ -307,6 +307,18 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week7.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Prosjekt 7 – Behold informasjonen som betyr noe</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 10 – Newton, startpunkt og skala</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 11 – Produksjonsplan og ressurspriser</span></a>
   </div>
 </li>
       </ul>
@@ -426,6 +438,46 @@ window.Quarto = {
 <td><strong>7</strong></td>
 <td><strong>Hvilke inputretninger påvirker outputen mest?</strong> Vi deler transformasjonen opp i ortogonale inputretninger og måler hvor sterkt hver retning forsterkes eller dempes.</td>
 <td>SVD samler ideene om kolonnerom, nullrom, rang og følsomhet. Lavrangsapproksimasjoner brukes til dimensjonsreduksjon, kompresjon, støyfiltrering og tilnærming av store vektmatriser.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="optimering" class="level2">
+<h2 class="anchored" data-anchor-id="optimering">Optimering</h2>
+<p>Vi bygger videre på minimum, gradient og linjesøk fra uke 6. Minste kvadraters metode er allerede behandlet i uke 4 og 7; her bruker vi forbindelsen når den hjelper oss å forstå et nytt problem.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Uke</th>
+<th>Spørsmålet vi starter med</th>
+<th>Matematisk innhold og kobling til anvendelser</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><a href="../pages/uke8.html">8</a></strong></td>
+<td><strong>Hva mener vi med den beste løsningen, og finnes den?</strong> Vi skiller mellom det beste punktet vi har prøvd, et lokalt minimum og et globalt minimum.</td>
+<td>Målfunksjon og tillatt område, kompakthet, konvekse mengder og funksjoner, og betingelser for et minimum.</td>
+</tr>
+<tr class="even">
+<td><strong><a href="../pages/uke9.html">9</a></strong></td>
+<td><strong>Hvordan leter vi etter et minimum med få funksjonsberegninger?</strong> Vi sammenligner prøving av punkter med bevegelser som bruker lokal informasjon.</td>
+<td>Gittersøk, tilfeldig søk, kompassøk og gradientmetoden. Valg av steglengde og stoppkriterium viderefører uke 6 til funksjoner som ikke er kvadratiske.</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="../pages/uke10.html">10</a></strong></td>
+<td><strong>Kan krumningen hjelpe oss fram, og når fører den oss feil?</strong> Vi sammenligner gradient- og Newton-steg fra ulike startpunkter.</td>
+<td>Hessian, lokal kvadratisk modell, Newtons metode og sikring av nedgang. Et prosjekt undersøker startpunkt, skalering og kontroll av numeriske svar.</td>
+</tr>
+<tr class="even">
+<td><strong><a href="../pages/uke11.html">11</a></strong></td>
+<td><strong>Hvordan fordeler vi begrensede ressurser best?</strong> Vi formulerer en produksjonsmodell og undersøker verdien av mer kapasitet.</td>
+<td>Lineær programmering, tillatte hjørnepunkter, dualitet og skyggepriser. SciPy brukes sammen med matematiske optimalitetskontroller.</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="../pages/uke12.html">12</a></strong></td>
+<td><strong>Hvordan finner vi et minimum når vi må holde oss på en kurve eller flate?</strong> Vi undersøker hvilke bevegelser bibetingelsene tillater.</td>
+<td>Lagranges multiplikatorer, tangentretninger, regularitet og kontroll av kandidater. Numeriske løsninger kontrolleres mot både bibetingelser og optimalitetsbetingelser.</td>
 </tr>
 </tbody>
 </table>

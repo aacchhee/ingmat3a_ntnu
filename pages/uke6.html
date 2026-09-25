@@ -45,7 +45,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-56a7063a21dd4c20fbc96590a1db8d87.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-24c09a13944ec7e1f31d2917b1251fc2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -4917,7 +4917,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Uke 9 – grunnleggende prinsipper, gittersøk og gradientmetoden</span></a>
+ <span class="menu-text">Uke 9 – søk uten deriverte og gradientmetoden</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4935,7 +4935,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/uke12.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Uke 12 – optimering med bibetingelser og minste kvadrater</span></a>
+ <span class="menu-text">Uke 12 – optimering med bibetingelser</span></a>
   </div>
 </li>
       </ul>
@@ -4989,6 +4989,18 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week7.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Prosjekt 7 – Behold informasjonen som betyr noe</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 10 – Newton, startpunkt og skala</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 11 – Produksjonsplan og ressurspriser</span></a>
   </div>
 </li>
       </ul>
@@ -5624,6 +5636,7 @@ x\text{ minimerer }\phi(x)=\tfrac12x^TAx-b^Tx.}\]</span></p>
 <p><span class="math display">\[A^T=A,\qquad z^TAz&gt;0\quad\text{for alle }z\ne0.\]</span></p>
 <p>Symmetrien gjør at kryssleddene fra hver side av diagonalen passer sammen. Positiv definitet betyr at det kvadratiske bidraget er positivt i enhver ikke-null retning. Kvadratfullføringen ovenfor viser at matrisen vår har nettopp denne egenskapen.</p>
 <p><strong>Hva får vi igjen for denne forutsetningen?</strong> For enhver SPD-matrise kan vi løse <span class="math inline">\(Ax=b\)</span> ved å finne minimumet til <span class="math inline">\(\phi\)</span>. Det finnes nøyaktig én løsning, og den er det eneste punktet der <span class="math inline">\(\phi\)</span> er minst. Vi trenger altså ikke gjenta kvadratfullføringen for hver ny matrise. Det generelle beviset og et eksempel med tre ukjente står i «Gå i dybden».</p>
+<p>Et SPD-system kan også løses direkte med <strong>Cholesky-faktorisering</strong>: vi skriver <span class="math inline">\(A=LL^T\)</span> og løser først <span class="math inline">\(Ly=b\)</span>, så <span class="math inline">\(L^Tx=y\)</span>. Her er <span class="math inline">\(L\)</span> nedre triangulær, altså null over diagonalen. I <a href="../pages/uke10.html#uke10-cholesky">uke 10</a> regner vi gjennom denne metoden og bruker den til å finne Newton-retninger.</p>
 <p>Fra uke 5 har vi også en måte å kontrollere kravet på: en reell symmetrisk matrise er positivt definit akkurat når alle egenverdiene er positive. I en ortonormal egenvektorbasis er disse egenverdiene strekkfaktorene. For SPD er derfor <span class="math inline">\(\kappa_2(A)=\lambda_{\max}/\lambda_{\min}\)</span>: stor forskjell mellom egenverdiene gir en skål som er bratt i én retning og slak i en annen.</p>
 <p>Forutsetningen betyr noe. Matrisen <span class="math inline">\(\begin{bmatrix}1&amp;2\\2&amp;1\end{bmatrix}\)</span> fra 6.2 har positiv diagonal, men <span class="math inline">\(z^TAz=-2\)</span> for <span class="math inline">\(z=(1,-1)^T\)</span>. Den tilhørende funksjonen har ikke en skål med én bunn. Vi kan derfor ikke tolke ethvert lineært system som minimering av denne <span class="math inline">\(\phi\)</span>.</p>
 </section>

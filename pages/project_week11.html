@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Prosjekt 6 – Samme løsning, mindre arbeid? – Matematikk 3A</title>
+<title>Prosjekt 11 – Produksjonsplan og ressurspriser – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -25,41 +25,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -1007,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"# Hjelpefunksjoner for ukens forsøk: hver bane lagrer alle løsningsforslag.\n# Les særlig koblingen mellom residual, korreksjon og stoppkontroll.\n# Oppsettet kjøres automatisk; det er ikke en ekstra implementasjonsoppgave.\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# GS korrigerer én koordinat om gangen og lagrer også mellomstegene.\ndef gs_path(A, b, x0, sweeps=12):\n    A, b = np.asarray(A, float), np.asarray(b, float)\n    x = np.array(x0, dtype=float, copy=True)\n    if np.any(np.diag(A) == 0):\n        raise ValueError(\"GS krever ikke-null diagonalelementer\")\n    path = [x.copy()]\n    for k in range(sweeps):\n        for i in range(len(b)):\n            # Bruk gjeldende x, inkludert koordinatene som allerede er oppdatert i sveipet.\n            x[i] += (b[i] - A[i] @ x) / A[i, i]\n            path.append(x.copy())\n    return np.array(path)\n\n# Bratteste nedstigning velger ny residualretning ved hvert steg, uten CGs hukommelse.\ndef descent_path(A, b, x0, steps=25, rtol=1e-10):\n    x = np.array(x0, dtype=float, copy=True)\n    path = [x.copy()]\n    target = rtol * np.linalg.norm(b)\n    for k in range(steps):\n        # Residualen er ubalansen i de opprinnelige likningene, og kan beregnes uten fasit.\n        r = b - A @ x\n        if np.linalg.norm(r) <= target:\n            break\n        Ar = A @ r\n        if r @ Ar <= 0:\n            raise ValueError(\"Positiv krumning mangler; bruk SPD i dette forsøket\")\n        # Kvotienten gir minimum langs linjen x + alpha*r for en SPD-matrise.\n        x += (r @ r)/(r @ Ar)*r\n        path.append(x.copy())\n    return np.array(path)\n\n# Tegn nivåkurver for den kvadratiske funksjonen og baner fra valgte metoder.\ndef bowl_plot(ax, A, b, paths, bounds=(-1, 3, -1, 3)):\n    lo, hi, bottom, top = bounds\n    u, v = np.meshgrid(np.linspace(lo, hi, 180), np.linspace(bottom, top, 180))\n    Z = .5*(A[0,0]*u*u + 2*A[0,1]*u*v + A[1,1]*v*v) - b[0]*u - b[1]*v\n    # Direkte løsning brukes bare som referansepunkt i figuren, ikke av iterasjonen.\n    star = np.linalg.solve(A, b)\n    minimum = .5*star @ A @ star - b @ star\n    span = max(float(Z.max()-minimum), 1.)\n    ax.contour(u, v, Z, levels=minimum+np.geomspace(.01, span, 14), colors='#adb5bd')\n    for name, values in paths.items():\n        ax.plot(values[:,0], values[:,1], 'o-', markersize=3, label=name)\n    ax.plot(*star, '*', color='black', markersize=12, label='løsning')\n    ax.set(xlabel='x₁', ylabel='x₂', xlim=(lo, hi), ylim=(bottom, top))\n    ax.set_aspect('equal')\n    ax.legend()\n\n\ndef cg(A, b, x0=None, rtol=1e-8, atol=0., max_steps=1000):\n    A, b = np.asarray(A, float), np.asarray(b, float)\n    if A.shape != (b.size, b.size) or not np.allclose(A, A.T):\n        raise ValueError('Bruk en symmetrisk kvadratisk matrise')\n    x = np.zeros_like(b) if x0 is None else np.array(x0, float, copy=True)\n    if x.shape != b.shape or rtol <= 0 or atol < 0 or max_steps < 1:\n        raise ValueError('Kontroller startvektor, toleranser og maksimalgrense')\n    if not all(np.all(np.isfinite(t)) for t in [A, b, x]):\n        raise ValueError('Bruk endelige tall')\n    # Residualen er ubalansen i de opprinnelige likningene, og kan beregnes uten fasit.\n    r = b - A @ x\n    # Startvektoren teller som første lagrede punkt, men ikke som et iterasjonssteg.\n    path, residuals = [x.copy()], [np.linalg.norm(r)]\n    # Absolutt margin pluss margin relativt til b; samme krav brukes ved sammenligning.\n    target = atol + rtol*np.linalg.norm(b)\n    matvecs = 1\n    # Kontroller også startforslaget: en startvektor som oppfyller residualkravet skal gi stopp før noen divisjon.\n    if residuals[-1] <= target:\n        return {'path':np.array(path), 'residuals':np.array(residuals),\n                'converged':True, 'matvecs':matvecs, 'preconditioner_calls':0}\n    p = r.copy()\n    rr = r @ r\n    for k in range(max_steps):\n        Ap = A @ p\n        matvecs += 1\n        # p.T @ A @ p er positiv for en ikke-null retning når A er SPD.\n        curvature = p @ Ap\n        if curvature <= 0 or not np.isfinite(curvature):\n            raise ValueError('CG trenger positiv krumning; kontroller SPD')\n        # Velg minimum langs søkeretningen; rr er r.T @ r i vanlig CG.\n        alpha = rr / curvature\n        x = x + alpha*p\n        # Kort oppdatering av residualen; avrunding kan gi avvik fra direkte beregnet b-Ax.\n        r = r - alpha*Ap\n        # Direkte kontroll i det opprinnelige systemet.\n        actual = np.linalg.norm(b - A @ x)\n        matvecs += 1\n        path.append(x.copy()); residuals.append(actual)\n        if actual <= target:\n            break\n        rr_new = r @ r\n        if rr_new == 0:\n            break  # Rapporter manglende konvergens hvis direkte kontroll ikke var liten.\n        # Kombiner ny residual med forrige retning for å bevare A-konjugerthet i eksakt regning.\n        p = r + (rr_new/rr)*p\n        rr = rr_new\n    return {'path':np.array(path), 'residuals':np.array(residuals),\n            'converged':residuals[-1] <= target, 'matvecs':matvecs,\n            'preconditioner_calls':0}","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week6-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Prosjektverktøy: CG, NumPy og Matplotlib kommer fra week6-setup.\n# Matematiske data og kontroller beskrives i selve prosjektet.\n\ndef coupled_problem(n, span, coupling):\n    if n < 2 or span < 1 or not 0 <= coupling < 1:\n        raise ValueError('Bruk n >= 2, span >= 1 og 0 <= coupling < 1')\n    d = np.geomspace(1., span, n)\n    B = 2*np.eye(n) - coupling*(np.eye(n,k=1)+np.eye(n,k=-1))\n    return d[:,None]*B*d[None,:]\n\ndef make_week6_problems(n=60):\n    \"\"\"To SPD-systemer med samme kjente løsning og ulik skalering/kobling.\"\"\"\n    rng = np.random.default_rng(6)\n    star = rng.normal(size=n)\n    problems = {\n        'Ujevn skalering': coupled_problem(n, 100., .25),\n        'Poisson': 2*np.eye(n) - np.eye(n,k=1) - np.eye(n,k=-1),\n    }\n    return star, problems\n\n\ndef show_coordinate_change(A, b, At, bt):\n    \"\"\"Samme kvadratiske problem i x- og y-koordinater, for oppvarmingen.\"\"\"\n    fig, axes = plt.subplots(2,1,figsize=(7,9))\n    bowl_plot(axes[0], A, b, {}, bounds=(-2,4,-1,3))\n    bowl_plot(axes[1], At, bt, {}, bounds=(-3,5,6,14))\n    axes[0].set(title='Opprinnelige x-koordinater', xlabel='x₁', ylabel='x₂')\n    axes[1].set(title='Nye y-koordinater', xlabel='y₁', ylabel='y₂')\n    fig.tight_layout(); plt.show()\n\n\ndef show_spectra(problems, transformed):\n    \"\"\"Egenverdier og kondisjonstall før/etter symmetrisk skalering.\"\"\"\n    fig, axes = plt.subplots(len(problems), 1, figsize=(7,4*len(problems)), squeeze=False)\n    for ax, (name, A) in zip(axes[:,0], problems.items()):\n        At = transformed[name][0]\n        lam, lamt = np.linalg.eigvalsh(A), np.linalg.eigvalsh(At)\n        ax.semilogy(lam, '.', label='A')\n        ax.semilogy(lamt, '.', label='Symmetrisk skalert A')\n        ax.set(title=name, xlabel='Sortert indeks', ylabel='Egenverdi')\n        ax.legend()\n        print(name, 'κ₂ før:', lam[-1]/lam[0], 'etter:', lamt[-1]/lamt[0])\n    fig.tight_layout(); plt.show()\n\n\ndef compare_runs(A, b, star, runs):\n    fig, axes = plt.subplots(2,1,figsize=(7,8))\n    print(f'{\"Metode\":<8} {\"Steg\":>5} {\"A-prod.\":>8} {\"M-løsn.\":>8} '\n          f'{\"Rel. residual\":>14} {\"Rel. feil\":>12} {\"Konvergert\":>11}')\n    for name, out in runs.items():\n        path = out['path']\n        # I disse implementasjonene: én startberegning og to produkter per steg.\n        work = 1 + 2*np.arange(len(path))\n        residuals = out['residuals']/np.linalg.norm(b)\n        # axis=1 tar lengden av hver rad: én feilnorm per lagret løsningsforslag.\n        errors = np.linalg.norm(path-star,axis=1)/np.linalg.norm(star)\n        axes[0].semilogy(work, np.maximum(residuals,1e-16), label=name)\n        axes[1].semilogy(work, np.maximum(errors,1e-16), label=name)\n        print(f'{name:<8} {len(path)-1:5d} {out[\"matvecs\"]:8d} '\n              f'{out[\"preconditioner_calls\"]:8d} {residuals[-1]:14.3e} '\n              f'{errors[-1]:12.3e} {str(out[\"converged\"]):>11}')\n    for ax, label in zip(axes,['Original relativ residual','Relativ løsningsfeil']):\n        ax.set(xlabel='Antall A-vektor-produkter inkl. stoppkontroll',ylabel=label)\n        ax.legend()\n    fig.tight_layout(); plt.show()\n\n\ndef check_pcg(pcg_method):\n    \"\"\"Fire kontroller av studentens fullførte PCG før hovedforsøket.\"\"\"\n    A = np.diag([1.,100.]); star = np.ones(2); b = A @ star\n    one = pcg_method(A, b, np.diag(A), rtol=1e-12)\n    assert one['converged'] and len(one['path']) == 2, 'Diagonaltesten skal bruke ett steg.'\n    assert np.allclose(one['path'][-1], star), 'Kontroller diagonalløsningen.'\n    A = np.array([[1.,2.],[2.,100.]]); b = A @ star\n    ref = cg(A, b, rtol=1e-12)\n    identity = pcg_method(A, b, np.ones(2), rtol=1e-12)\n    assert identity['converged'] and np.allclose(identity['path'],ref['path']), 'M=I skal gi CG.'\n    exact = pcg_method(A, b, np.diag(A), x0=star, rtol=1e-12)\n    assert exact['converged'] and len(exact['path']) == 1, 'Eksakt start skal gi null steg.'\n    w = 1/np.sqrt(np.diag(A))\n    At = w[:,None]*A*w[None,:]; bt = w*b\n    direct = pcg_method(A, b, np.diag(A), rtol=1e-12)\n    changed = cg(At, bt, rtol=1e-12)\n    assert direct['converged'] and changed['converged'], 'Begge koordinatbeskrivelser skal konvergere.'\n    assert np.allclose(direct['path'], changed['path']*w), 'Banene må stemme etter omregning.'\n    print('Fire PCG-kontroller bestått: ett steg, M=I, eksakt start og koordinatskifte.')","id":2,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week6-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"A2 = np.array([[1.,2.],[2.,100.]])\ns2 = np.array([1.,1.]); b2 = A2 @ s2\nw = 1/np.sqrt(np.diag(A2))\nAt2 = w[:,None]*A2*w[None,:]\nbt2 = w*b2\nprint('Ny matrise:', At2, 'Ny høyreside:', bt2, sep='\\n')\nshow_coordinate_change(A2, b2, At2, bt2)","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week6-contours","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"x_star, problems = make_week6_problems(n=60)\nbaseline = {}\nfor name, A in problems.items():\n    b = A @ x_star\n    result = cg(A, b)\n    baseline[name] = result\n    print(name, 'steg:', len(result['path'])-1,\n          'relativ residual:', result['residuals'][-1]/np.linalg.norm(b),\n          'konvergert:', result['converged'])","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week6-baseline","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"transformed = {}\nfor name, A in problems.items():\n    b = A @ x_star\n    invroot = 1/np.sqrt(np.diag(A))\n    At = invroot[:,None] * A * invroot[None,:]\n    bt = invroot*b\n    out = cg(At, bt, rtol=1e-12)\n    x_path = out['path'] * invroot[None,:]\n    transformed[name] = (At, x_path)\n    print(name, 'original relativ residual etter omregning:',\n          np.linalg.norm(b-A@x_path[-1])/np.linalg.norm(b))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week6-transform","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"show_spectra(problems, transformed)","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week6-spectrum","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Fullfør bare de tre TODO-delene ved hjelp av pseudokoden.\n# m lagrer diagonalen til M; z er løsningen av hjelpesystemet Mz=r.\n# Vi arbeider fortsatt med A og stopper på den opprinnelige residualen b-Ax.\n\n\ndef pcg(A, b, m, x0=None, rtol=1e-8, atol=0., max_steps=1000):\n    A, b, m = np.asarray(A,float), np.asarray(b,float), np.asarray(m,float)\n    if A.shape != (b.size,b.size) or not np.allclose(A,A.T):\n        raise ValueError('Bruk en symmetrisk kvadratisk matrise')\n    if m.shape != b.shape or np.any(m <= 0):\n        raise ValueError('Prekondisjoneringen må ha positiv diagonal')\n    x = np.zeros_like(b) if x0 is None else np.array(x0,float,copy=True)\n    if x.shape != b.shape or rtol <= 0 or atol < 0 or max_steps < 1:\n        raise ValueError('Kontroller startvektor, toleranser og maksimalgrense')\n    if not all(np.all(np.isfinite(t)) for t in [A,b,m,x]):\n        raise ValueError('Bruk endelige tall')\n    # Residualen er ubalansen i de opprinnelige likningene, og kan beregnes uten fasit.\n    r = b - A @ x\n    # Startvektoren teller som første lagrede punkt, men ikke som et iterasjonssteg.\n    path, residuals = [x.copy()], [np.linalg.norm(r)]\n    # Absolutt margin pluss margin relativt til b; samme krav brukes ved sammenligning.\n    target = atol + rtol*np.linalg.norm(b)\n    matvecs, applies = 1, 0\n    # Kontroller også startforslaget: en startvektor som oppfyller residualkravet skal gi stopp før noen divisjon.\n    if residuals[-1] <= target:\n        return {'path':np.array(path), 'residuals':np.array(residuals),\n                'converged':True, 'matvecs':matvecs, 'preconditioner_calls':applies}\n    def apply_M_inverse(r):\n        # TODO 1: returner løsningen av M z = r ved koordinatvis divisjon.\n        raise NotImplementedError('TODO 1')\n    z = apply_M_inverse(r); applies += 1\n    p = z.copy(); gamma = r @ z\n    for k in range(max_steps):\n        Ap = A @ p; matvecs += 1\n        # p.T @ A @ p er positiv for en ikke-null retning når A er SPD.\n        curvature = p @ Ap\n        if curvature <= 0 or not np.isfinite(curvature):\n            raise ValueError('PCG krever SPD')\n        # PCG bruker gamma = r.T @ z i stedet for r.T @ r.\n        alpha = gamma / curvature\n        x = x + alpha*p\n        # Kort oppdatering av residualen; avrunding kan gi avvik fra direkte beregnet b-Ax.\n        r = r - alpha*Ap\n        actual = np.linalg.norm(b - A @ x); matvecs += 1\n        path.append(x.copy()); residuals.append(actual)\n        if actual <= target:\n            break\n        z = apply_M_inverse(r); applies += 1\n        # Indreproduktet måler residualen i de transformerte koordinatene.\n        gamma_new = r @ z\n        if gamma_new <= 0:\n            break\n        # TODO 2: beregn beta fra gamma_new og gamma.\n        beta = None\n        # TODO 3: oppdater søkeretningen med z og forrige p.\n        p = None\n        gamma = gamma_new\n    return {'path':np.array(path), 'residuals':np.array(residuals),\n            'converged':residuals[-1] <= target, 'matvecs':matvecs,\n            'preconditioner_calls':applies}","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week6-pcg-template","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"check_pcg(pcg)","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week6-checks","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"for name, A in problems.items():\n    b = A @ x_star\n    results = {'CG':cg(A,b), 'PCG':pcg(A,b,np.diag(A))}\n    print(name)\n    compare_runs(A, b, x_star, results)","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week6-comparison","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"# Grunndata for et selvstendig prosjekt. Ingen resultater er forhåndsberegnet.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import linprog\n\nproduct_names = ('A', 'B', 'C')\nresource_names = ('maskintid', 'monteringstid', 'materiale')\nprofit = np.array([6., 5., 7.])          # tusen kroner per produktparti\nuse = np.array([[2., 1., 3.],         # rader = ressurser, kolonner = produkter\n                [1., 2., 1.],\n                [1., 1., 2.]])\ncapacity = np.array([20., 16., 15.])   # ressursenheter per uke","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week11-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"# Vi minimerer det negative dekningsbidraget.\nbase = linprog(-profit, A_ub=use, b_ub=capacity,\n               bounds=(0,None), method=\"highs\")\nprint(\"status:\", base.status, base.message)\nif base.status == 0:\n    print(\"plan:\", base.x, \"dekningsbidrag:\", -base.fun)\n    print(\"forbruk:\", use @ base.x, \"slakk:\", capacity-use @ base.x)","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-baseline","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"candidate_plan = np.zeros(3)    # TODO: sett inn din plan (A, B, C)\ncandidate_prices = np.zeros(3)  # TODO: sett inn priser (maskin, montering, materiale)\nprint(\"primal brudd:\", np.maximum(use@candidate_plan-capacity, 0),\n      \"negative variabler:\", np.minimum(candidate_plan,0))\nprint(\"dual mangel:\", np.maximum(profit-use.T@candidate_prices, 0),\n      \"negative priser:\", np.minimum(candidate_prices,0))\nprint(\"målverdier:\", profit@candidate_plan, capacity@candidate_prices)","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-own-certificate","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"for delta in (0., 6., 12.):\n    new_capacity = capacity.copy()\n    new_capacity[0] += delta\n    trial = linprog(-profit, A_ub=use, b_ub=new_capacity,\n                    bounds=(0,None), method=\"highs\")\n    print(\"endring:\", delta, \"status:\", trial.status)\n    if trial.status == 0:\n        print(\" plan:\", trial.x, \"bidrag:\", -trial.fun,\n              \"slakk:\", new_capacity-use@trial.x,\n              \"marginaler for min-målet:\", trial.ineqlin.marginals)","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-perturbations","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4224,7 +4189,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week6.html">Prosjekt 6 – Samme løsning, mindre arbeid?</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week11.html">Prosjekt 11 – Produksjonsplan og ressurspriser</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -4407,7 +4372,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week6.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/project_week6.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Prosjekt 6 – Samme løsning, mindre arbeid?</span></a>
   </div>
 </li>
@@ -4425,7 +4390,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Prosjekt 11 – Produksjonsplan og ressurspriser</span></a>
   </div>
 </li>
@@ -4468,9 +4433,9 @@ window.Quarto = {
 </script>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week6.html">Prosjekt 6 – Samme løsning, mindre arbeid?</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week11.html">Prosjekt 11 – Produksjonsplan og ressurspriser</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Prosjekt 6 – Samme løsning, mindre arbeid?</h1>
+<h1 class="title">Prosjekt 11 – Produksjonsplan og ressurspriser</h1>
 </div>
 
 
@@ -4489,351 +4454,93 @@ window.Quarto = {
 
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<section id="oppdrag-når-er-en-ekstra-maskintime-verdt-pengene" class="level2">
+<h2 class="anchored" data-anchor-id="oppdrag-når-er-en-ekstra-maskintime-verdt-pengene">Oppdrag: når er en ekstra maskintime verdt pengene?</h2>
+<p>En bedrift kan lage tre typer <strong>delbare produktpartier</strong>, A, B og C. Hver uke begrenses produksjonen av maskintid, monteringstid og materiale. Du skal gi en begrunnet anbefaling om produksjonsplan og mulig kjøp av mer maskintid. Tallene er i tabellen; dekningsbidraget er oppgitt i tusen kroner per parti. Dette er en kontinuerlig planleggingsmodell. Dersom produksjon må skje i hele partier, må modellen endres.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">A</th>
+<th style="text-align: right;">B</th>
+<th style="text-align: right;">C</th>
+<th style="text-align: right;">Tilgjengelig</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Maskintid</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Monteringstid</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Materiale</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dekningsbidrag (tusen kr)</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">–</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lever en kort rapport med regninger, kontrolltabeller og en anbefaling.</strong> Arbeidet er beregnet for flere timer: først modell og dualt bevis, deretter en eksakt følsomhetsanalyse og til slutt en ny beslutningssituasjon. Kode kan brukes til å teste hypoteser, men erstatter ikke begrunnelsen for når en ressurspris gjelder. <a href="../pages/uke11.html#uke11-dual">Uke 11</a> viser hvordan to mulige løsninger med lik målverdi sertifiserer optimum.</p>
+<section id="kjør-forsøkene-på-denne-siden" class="level3">
+<h3 class="anchored" data-anchor-id="kjør-forsøkene-på-denne-siden">Kjør forsøkene på denne siden</h3>
+<p>Prosjektets data lastes automatisk i <code>pyodide-python</code>. Kjør kodecellene i rekkefølge på siden, og endre de markerte variablene her når du vil teste egne forslag. Regningene og begrunnelsene skriver du i rapporten. Hvis du foretrekker en egen editor, finnes det også <a href="../assets/project_week11.py" download="project_week11.py">én samlet Python-fil</a> med de samme dataene og kjørbare forsøkene. Oppgavene løses fremdeles med dine egne regninger og forklaringer.</p>
+</section>
+</section>
+<section id="del-1-lag-en-plan-og-prøv-å-motbevise-den" class="level2">
+<h2 class="anchored" data-anchor-id="del-1-lag-en-plan-og-prøv-å-motbevise-den">Del 1 – lag en plan og prøv å motbevise den</h2>
+<p>Kall antall partier <span class="math inline">\(x_A,x_B,x_C\)</span>. Formuler selv målfunksjonen og alle ressursulikhetene på papir før du kjører kode. Skriv også problemet på formen <span class="math inline">\(\max p^Tx\)</span> slik at <span class="math inline">\(Ux\le b,\ x\ge0\)</span>. Forklar hva hver rad og kolonne i <span class="math inline">\(U\)</span> betyr. En negativt oppført kostnad i <code>linprog</code> er nødvendig fordi løserens mål er et <strong>minimum</strong>.</p>
+<p><strong>Forutsi:</strong> Vil produktet med høyest bidrag per parti alltid inngå i beste plan? Begrunn hypotesen med ressursbruk, og noter hva som kan falsifisere den.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<section id="samme-løsning-mindre-arbeid" class="level2">
-<h2 class="anchored" data-anchor-id="samme-løsning-mindre-arbeid">Samme løsning, mindre arbeid?</h2>
-<p>I uke 6 så vi at en smal skål kan gjøre veien mot minimumet vanskelig. CG velger søkeretningene med omtanke, men må fortsatt arbeide med matrisen vi gir metoden. Nå skal vi undersøke en annen mulighet: <strong>Kan vi velge en bedre skala på koordinatene før vi begynner?</strong></p>
-<p>Tenk på et kart der de to aksene bruker svært ulike målestokker. Et koordinatskifte endrer hvordan kartet ser ut, men ikke hvilket sted vi vil fram til. På samme måte skal vi endre beskrivelsen av et likningssystem og kunne oversette svaret tilbake til den samme løsningen. Spørsmålet er om CG da får mindre arbeid å gjøre.</p>
-<p>Prosjektet starter med to ukjente og en regning på papir. Deretter prøver vi ideen på større systemer, forklarer hva som endres og bygger <strong>diagonalt prekondisjonert CG (PCG)</strong>. Til slutt velger du ett eget forsøk som undersøker når denne ideen hjelper.</p>
-<p>Du får ferdig CG, forsøksdata og plotteverktøy. Kodeoppgaven består av tre uttrykk i PCG. Den viktigste jobben er å <strong>begrunne at problemet er bevart, forutsi virkningen og tolke resultatene</strong>.</p>
-<section id="en-vei-gjennom-prosjektet" class="level3">
-<h3 class="anchored" data-anchor-id="en-vei-gjennom-prosjektet">En vei gjennom prosjektet</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Del</th>
-<th style="text-align: left;">Spørsmålet vi arbeider med</th>
-<th style="text-align: left;">Det du tar med videre</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1. En skål i nye koordinater</td>
-<td style="text-align: left;">Kan samme minimum få en enklere beskrivelse?</td>
-<td style="text-align: left;">Et gjennomregnet <span class="math inline">\(2\times2\)</span>-eksempel.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2. Fra eksempel til metode</td>
-<td style="text-align: left;">Hvorfor bevares løsningen og SPD?</td>
-<td style="text-align: left;">Omregningsformlene og en begrunnelse.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3. To større systemer</td>
-<td style="text-align: left;">Når fjerner skalering den vanskelige delen?</td>
-<td style="text-align: left;">En forutsigelse og to referansekjøringer.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">4. Fra koordinatskifte til PCG</td>
-<td style="text-align: left;">Hvordan får vi effekten uten å bygge en ny matrise?</td>
-<td style="text-align: left;">En utledning, tre kodeuttrykk og fire kontroller.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">5. Din undersøkelse</td>
-<td style="text-align: left;">Hvor langt rekker forklaringen vår?</td>
-<td style="text-align: left;">Ett kontrollert par og en avgrenset konklusjon.</td>
-</tr>
-</tbody>
-</table>
-<p>Skriv en kort forventning før hvert forsøk. Kjør så, beskriv hva du ser, og bruk matematikken til å forklare forskjellen. Utregningene kan stå i egne tekstceller; de trenger ikke flettes inn i programkoden.</p>
-</section>
-<section id="det-vi-trenger-fra-uke-6" class="level3">
-<h3 class="anchored" data-anchor-id="det-vi-trenger-fra-uke-6">Det vi trenger fra uke 6</h3>
-<p>Her er begrepene vi bruker, samlet på ett sted:</p>
-<ul>
-<li><strong>SPD:</strong> <span class="math inline">\(A^T=A\)</span> og <span class="math inline">\(z^TAz&gt;0\)</span> for alle <span class="math inline">\(z\ne0\)</span>. Da har <span class="math inline">\(\phi(x)=\tfrac12x^TAx-b^Tx\)</span> ett minimum, som er løsningen av <span class="math inline">\(Ax=b\)</span>.</li>
-<li><strong>Residual:</strong> <span class="math inline">\(r=b-Ax\)</span> måler avviket i likningene. Den er negativ gradient til <span class="math inline">\(\phi\)</span>. Relativ residual er <span class="math inline">\(\lVert r\rVert_2/\lVert b\rVert_2\)</span>. Siden <span class="math inline">\(Ax=b-r\)</span>, gjør endringen <span class="math inline">\(-r\)</span> i høyresiden <span class="math inline">\(x\)</span> til en eksakt løsning. Med fast <span class="math inline">\(A\)</span> er relativ residual dermed <strong>relativ bakoverfeil</strong>.</li>
-<li><strong>Foroverfeil:</strong> Når vi kjenner løsningen <span class="math inline">\(x_*\)</span>, kan vi også måle <span class="math inline">\(\lVert x-x_*\rVert_2/\lVert x_*\rVert_2\)</span>. Liten residual og liten foroverfeil er forskjellige krav, slik vi så i uke 2 og del 6.3.</li>
-<li><strong>Kondisjonstall:</strong> <span class="math inline">\(\lVert A\rVert_2=\max_{\lVert z\rVert_2=1}\lVert Az\rVert_2\)</span> er største strekkfaktor. For SPD er <span class="math inline">\(\kappa_2(A)=\lVert A\rVert_2\lVert A^{-1}\rVert_2=\lambda_{\max}/\lambda_{\min}\)</span>. Forholdet sier noe om følsomhet og skålform, men bestemmer ikke alene antall CG-steg.</li>
-</ul>
-<p>CG minimerer langs <strong>A-konjugerte retninger</strong>, som oppfyller <span class="math inline">\(p_i^TAp_j=0\)</span> når <span class="math inline">\(i\ne j\)</span>. Dette gjør at en ny minimering bevarer de tidligere. I eksakt regning er høyst <span class="math inline">\(n\)</span> steg nok for <span class="math inline">\(n\)</span> ukjente; avrunding kan gjøre at flere steg trengs. Residualnormen trenger ikke avta i hvert enkelt steg.</p>
-<p>Vil du se flere bilder, finnes de i <a href="../pages/uke6.html#uke6-residual">6.3 om residual og kondisjon</a>, <a href="../pages/uke6.html#uke6-energi">6.4 om skålen</a> og <a href="../pages/uke6.html#uke6-cg">6.6 om CG</a>. Alle opplysninger du trenger for prosjektet, står også her.</p>
-</section>
-<section id="kjøring-på-siden-eller-i-egen-notebook" class="level3">
-<h3 class="anchored" data-anchor-id="kjøring-på-siden-eller-i-egen-notebook">Kjøring på siden eller i egen notebook</h3>
-<p>Oppsettet på denne siden lastes automatisk og inneholder alle hjelpefunksjonene. Start med del 1 og kjør cellene i rekkefølge. Den ferdige CG-koden ligger i oppsettet; PCG-malen åpner du i del 4.</p>
-<details>
-<summary>
-Egen notebook: last ned oppsettet og kom i gang
-</summary>
-<p>Last ned <a href="../assets/project_week6_setup.py" download="project_week6_setup.py">project_week6_setup.py</a> og legg filen ved siden av notebooken. Kjør først</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> project_week6_setup <span class="im">import</span> <span class="op">*</span></span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Miljøet trenger NumPy og Matplotlib. Filen inneholder de samme hjelpefunksjonene og datakonstruksjonene som siden, og kan brukes uten nett etter nedlasting. Den inneholder ingen ferdig PCG-løsning. Kopier deretter forsøkscellene og PCG-malen fra prosjektet. Etter at du har fullført malen, skal hele notebooken kunne kjøres med <strong>Restart / Run all</strong>. Ta med oppsettsfilen ved levering. Importlinjen brukes bare i egen notebook.</p>
-</details>
-</section>
-</section>
-<section id="begynn-med-en-skål-vi-kan-regne-på" class="level2">
-<h2 class="anchored" data-anchor-id="begynn-med-en-skål-vi-kan-regne-på">1. Begynn med en skål vi kan regne på</h2>
-<p>Vi starter med</p>
-<p><span class="math display">\[A_2=\begin{bmatrix}1&amp;2\\2&amp;100\end{bmatrix},\qquad
-b_2=\begin{bmatrix}3\\102\end{bmatrix}.\]</span></p>
-<p>Løsningen er <span class="math inline">\(x_*=(1,1)^T\)</span>. Matrisen er symmetrisk, og <span class="math inline">\(z^TA_2z=(z_1+2z_2)^2+96z_2^2&gt;0\)</span> for <span class="math inline">\(z\ne0\)</span>, så den er SPD. Den tilhørende funksjonen er</p>
-<p><span class="math display">\[\phi(x_1,x_2)=\tfrac12x_1^2+2x_1x_2+50x_2^2-3x_1-102x_2.\]</span></p>
-<p>Kvadratleddene har svært ulik størrelse. La oss prøve <span class="math inline">\(y_1=x_1\)</span> og <span class="math inline">\(y_2=10x_2\)</span>. Tilbake får vi <span class="math inline">\(x_1=y_1\)</span> og <span class="math inline">\(x_2=y_2/10\)</span>.</p>
-<p><strong>Før du kjører:</strong></p>
 <ol type="1">
-<li>Kontroller løsningen <span class="math inline">\(x_*\)</span>. Hvilke koordinater får den i <span class="math inline">\(y\)</span>?</li>
-<li>Sett koordinatskiftet inn i <span class="math inline">\(\phi\)</span>. Hva skjer med kvadratleddene?</li>
-<li>Sett det inn i likningssystemet, og del den andre likningen på <span class="math inline">\(10\)</span>. Skriv det nye systemet som <span class="math inline">\(\widetilde A_2y=\widetilde b_2\)</span>.</li>
-<li>Forutsi om nivåkurvene blir rundere. Hvorfor er det ikke nok å endre matrisen og beholde den gamle høyresiden?</li>
+<li>Kontroller alle begrensninger og bidraget med egne utregninger. Hvilke ressurser er brukt opp, og hvilke produkter velger modellen? Oppgi planen i partier og bidraget i tusen kroner.</li>
+<li>Finn to andre mulige planer, én med positiv produksjon av C og én der en ressurs står ubrukt. Sammenlign bidrag, forbruk og slakk. Forklar hvorfor en høyere fortjeneste per parti ikke alene avgjør valget.</li>
+<li>Skriv dualproblemet: én ikke-negativ pris per ressurs, én ulikhet per produkttype. Angi enhet på hver pris. Bruk planens aktive begrensninger og komplementær slakk som <strong>kandidater</strong> for likninger; kontroller så alle dualulikhetene. Kan en mulig produksjonsplan og en mulig prisvektor med samme målverdi gi et bevis her? Vis hele kjeden <span class="math inline">\(p^Tx\le q^TUx\le q^Tb\)</span>, og kontroller likhet.</li>
 </ol>
-<p>Når du har et forslag, kan du kontrollere det og se på figuren:</p>
+<p>Koden nedenfor er et kontrollverktøy for dine egne forslag. Erstatt nullvektorene med din plan og prisvektor. Den kjører som den står og viser hvilke krav som ennå ikke er oppfylt; ikke bruk utskriften som en ferdig løsning.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Hjelperen <code>show_coordinate_change</code> tegner nivåkurvene før og etter omregningen. Stjernene er minimumspunktene. Øverste bilde bruker <span class="math inline">\(x\)</span>-koordinater, nederste bruker <span class="math inline">\(y\)</span>-koordinater; aksene har derfor forskjellige betydninger. <strong>Oversett stjernen i nederste bilde tilbake til <span class="math inline">\(x\)</span>. Får du samme løsning?</strong></p>
-<details>
-<summary>
-Regnehjelp: samme minimum i to koordinatsystemer
-</summary>
-<p>Etter innsetting er funksjonen</p>
-<p><span class="math display">\[\widetilde\phi(y_1,y_2)
-=\tfrac12y_1^2+0.2y_1y_2+\tfrac12y_2^2-3y_1-10.2y_2.\]</span></p>
-<p>Begge kvadratkoeffisientene er nå <span class="math inline">\(1/2\)</span>. Likningssystemet blir</p>
-<p><span class="math display">\[\widetilde A_2=\begin{bmatrix}1&amp;0.2\\0.2&amp;1\end{bmatrix},\qquad
-\widetilde b_2=\begin{bmatrix}3\\10.2\end{bmatrix}.\]</span></p>
-<p>Minimumet er <span class="math inline">\(y_*=(1,10)^T\)</span>, som gir <span class="math inline">\(x_*=(1,1)^T\)</span> etter omregning. Vi har <span class="math inline">\(\widetilde\phi(y)=\phi(x)\)</span> for punkter som svarer til hverandre. Det er derfor samme minimeringsproblem i nye koordinater.</p>
-<p>Egenverdiene til <span class="math inline">\(\widetilde A_2\)</span> er <span class="math inline">\(1.2\)</span> og <span class="math inline">\(0.8\)</span>, så kondisjonstallet er <span class="math inline">\(1.5\)</span>. Kryssleddet er fortsatt med: kurvene er blitt rundere, men er ikke helt sirkulære. Koordinatskiftet har heller ikke endret hvilket fysisk eller matematisk svar vi søker i de opprinnelige variablene.</p>
-</details>
-<p><strong>Ta med videre:</strong> Skriv de to systemene og pilene mellom <span class="math inline">\(x\)</span> og <span class="math inline">\(y\)</span> ved siden av hverandre. Dette er modellen for resten av prosjektet.</p>
 </section>
-<section id="gjør-omregningen-generell" class="level2">
-<h2 class="anchored" data-anchor-id="gjør-omregningen-generell">2. Gjør omregningen generell</h2>
-<p>I eksemplet delte vi andre koordinat på kvadratroten av det andre diagonalelementet. For en generell SPD-matrise velger vi</p>
-<p><span class="math display">\[M=\operatorname{diag}(A),\qquad m_i=a_{ii}&gt;0.\]</span></p>
-<p><span class="math inline">\(M^{1/2}\)</span> er diagonalmatrisen med <span class="math inline">\(\sqrt{m_i}\)</span> på diagonalen, og <span class="math inline">\(M^{-1/2}\)</span> har <span class="math inline">\(1/\sqrt{m_i}\)</span>. Å bruke disse matrisene betyr bare å gange eller dele koordinatvis. Vi trenger ingen tett invers.</p>
-<p>Vi setter <span class="math inline">\(x=M^{-1/2}y\)</span>. <strong>Gjør først omregningen selv:</strong> Sett dette inn i <span class="math inline">\(Ax=b\)</span>, og multipliser begge sider fra venstre med <span class="math inline">\(M^{-1/2}\)</span>. Du skal ende med</p>
-<p><span class="math display">\[\underbrace{M^{-1/2}AM^{-1/2}}_{\widetilde A}y
-=\underbrace{M^{-1/2}b}_{\widetilde b},\qquad x=M^{-1/2}y.\]</span></p>
-<p>Å bruke et enkelt hjelpesystem til å gjøre CG-problemet lettere kalles <strong>prekondisjonering</strong>. Her bruker vi diagonalen, så metoden kalles diagonal prekondisjonering, også kjent som Jacobi-prekondisjonering. Navnet betyr ikke at vi utfører Jacobi-iterasjoner.</p>
-<p><strong>Tre korte matematiske kontroller:</strong></p>
-<ol type="1">
-<li>Vis at diagonalen til <span class="math inline">\(\widetilde A\)</span> består av ettall.</li>
-<li>Vis at <span class="math inline">\(\widetilde A\)</span> er symmetrisk og positivt definit.</li>
-<li>La <span class="math inline">\(r=b-Ax\)</span> og <span class="math inline">\(\widetilde r=\widetilde b-\widetilde Ay\)</span>. Finn sammenhengen mellom residualene. Betyr like små residualnormer i de to koordinatsystemene det samme?</li>
+<section id="del-2-undersøk-hvor-langt-én-pris-rekker" class="level2">
+<h2 class="anchored" data-anchor-id="del-2-undersøk-hvor-langt-én-pris-rekker">Del 2 – undersøk hvor langt én pris rekker</h2>
+<p>La maskinkapasiteten bli <span class="math inline">\(20+\delta\)</span>, mens de andre tallene forblir uforandret. Anta først at samme to begrensninger fortsatt er aktive, og at det samme produktet fortsatt ikke produseres. Løs de aktive likningene symbolsk for antall partier som funksjoner av <span class="math inline">\(\delta\)</span>.</p>
+<ol start="4" type="1">
+<li>Utled et <strong>eksakt intervall</strong> for <span class="math inline">\(\delta\)</span> der denne planen er mulig. Sjekk både ikke-negative produktmengder og den hittil ubrukte ressursen. Vis at den opprinnelige dualprisen fortsatt er dualt mulig, og bruk like målverdier til å bevise at det lineære verdianslaget er eksakt på intervallet. Undersøk endepunktene særskilt: hvilke nye likheter oppstår?</li>
+<li>Regn ut plan og bidrag ved <span class="math inline">\(\delta=6\)</span> og <span class="math inline">\(\delta=12\)</span>. Ett av punktene ligger utenfor intervallet du fant. Sammenlign løserens resultat med å forlenge den opprinnelige tangentlinjen. Hvilket utsagn gir dualprisen fortsatt utenfor intervallet? Forklar hvorfor en <strong>øvre grense</strong> ikke nødvendigvis er den oppnåelige fortjenesten.</li>
+<li>Kontroller fortegnet på <code>base.ineqlin.marginals</code> mot en liten positiv endring av én kapasitet. Hva må du gjøre med fortegnet når du tolker en marginal for <strong>maksimert</strong> dekningsbidrag? Oppgi enheten og presiser hvor stor endring du har vist at tolkningen gjelder for.</li>
 </ol>
-<details>
-<summary>
-Gå i dybden: symmetri, positiv definitet og residual
-</summary>
-<p>Det nye diagonalelementet er <span class="math inline">\(a_{ii}/(\sqrt{m_i}\sqrt{m_i})=1\)</span>. Symmetrien følger av at <span class="math inline">\(M^{-1/2}\)</span> er diagonal og <span class="math inline">\(A^T=A\)</span>:</p>
-<p><span class="math display">\[\widetilde A^T=M^{-1/2}A^TM^{-1/2}=\widetilde A.\]</span></p>
-<p>For <span class="math inline">\(z\ne0\)</span> er også <span class="math inline">\(M^{-1/2}z\ne0\)</span>, og</p>
-<p><span class="math display">\[z^T\widetilde Az=(M^{-1/2}z)^TA(M^{-1/2}z)&gt;0.\]</span></p>
-<p>Vi har dermed bevart forutsetningene for vanlig CG. Matrisen <span class="math inline">\(M^{-1}A\)</span> er derimot generelt ikke symmetrisk i det vanlige indreproduktet. Vi skal derfor ikke bare sende den til CG-rutinen.</p>
-<p>Residualene henger sammen ved</p>
-<p><span class="math display">\[\widetilde r=M^{-1/2}b-M^{-1/2}AM^{-1/2}y=M^{-1/2}r.\]</span></p>
-<p>De to normene måler ulik skalering av samme avvik. Et stoppkrav på <span class="math inline">\(\lVert\widetilde r\rVert_2\)</span> er derfor ikke automatisk det samme som et stoppkrav på <span class="math inline">\(\lVert r\rVert_2\)</span>.</p>
-</details>
-<p><strong>Ta med videre:</strong> Vi kan bruke CG på det nye systemet og regne svaret tilbake. Når vi sammenligner metoder senere, skal begge kontrolleres med residualen i <strong>det opprinnelige systemet</strong>.</p>
-</section>
-<section id="to-større-systemer-vil-samme-tiltak-hjelpe-begge" class="level2">
-<h2 class="anchored" data-anchor-id="to-større-systemer-vil-samme-tiltak-hjelpe-begge">3. To større systemer – vil samme tiltak hjelpe begge?</h2>
-<p>Nå går vi fra to til 60 ukjente. Vi bruker to ferdige SPD-systemer med forskjellig årsak til ulik skalering av retninger:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">System</th>
-<th style="text-align: left;">Slik er matrisen bygd</th>
-<th style="text-align: left;">Hva kan diagonalen hjelpe med?</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Ujevn skalering</td>
-<td style="text-align: left;"><span class="math inline">\(A=DBD\)</span>. <span class="math inline">\(B\)</span> har <span class="math inline">\(2\)</span> på diagonalen og <span class="math inline">\(-0.25\)</span> på nabodiagonalene. <span class="math inline">\(D\)</span> har positive verdier fra <span class="math inline">\(1\)</span> til <span class="math inline">\(100\)</span>.</td>
-<td style="text-align: left;">Koordinatene har fått svært ulike skalaer.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Poisson</td>
-<td style="text-align: left;"><span class="math inline">\(A\)</span> har <span class="math inline">\(2\)</span> på diagonalen og <span class="math inline">\(-1\)</span> på nabodiagonalene. Ellers er elementene null.</td>
-<td style="text-align: left;">Diagonalen er allerede lik overalt; nabokoblingen er sterkere.</td>
-</tr>
-</tbody>
-</table>
-<p>Her er <span class="math inline">\(D\)</span> bare navnet på skaleringen som brukes til å lage det første forsøksproblemet. Prekondisjoneringen heter fortsatt <span class="math inline">\(M=\operatorname{diag}(A)\)</span>. Vi velger samme kjente løsning <span class="math inline">\(x_*\)</span> og lager <span class="math inline">\(b=Ax_*\)</span> i begge systemene. Høyresidene blir forskjellige. Dette lar oss måle faktisk feil i forsøket; i et praktisk problem kjenner vi vanligvis ikke løsningen.</p>
-<section id="først-et-sammenligningsgrunnlag" class="level3">
-<h3 class="anchored" data-anchor-id="først-et-sammenligningsgrunnlag">Først et sammenligningsgrunnlag</h3>
-<p><strong>Forutsi:</strong> Trenger to systemer med samme størrelse like mange CG-steg? Kjør vanlig CG fra nullstart, og noter oppnådd residual og om metoden faktisk nådde stoppkravet.</p>
+<p>Her er en kjørbar kontroll for de to konkrete endringene. Endre den selv for å undersøke flere <span class="math inline">\(\delta\)</span>-verdier eller lage <strong>én</strong> figur med faktisk optimalverdi og ditt lineære anslag. Ikke tegn en kurve med <code>-trial.fun</code> hvis <code>trial.status</code> ikke er 0.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><code>make_week6_problems</code> lager nettopp matrisene beskrevet i tabellen, med fast tilfeldig frø for den kjente løsningen. <code>cg</code> er den ferdige referansemetoden. Den stopper på en direkte beregning av <span class="math inline">\(b-Ax\)</span> og returnerer løsningsforslagene i <code>path</code>, residualnormene i <code>residuals</code> og et sannhetsverdi-felt <code>converged</code>.</p>
 </section>
-<section id="forutsi-før-du-skalerer" class="level3">
-<h3 class="anchored" data-anchor-id="forutsi-før-du-skalerer">Forutsi før du skalerer</h3>
-<p>Bruk matrisebeskrivelsene over til å vise</p>
-<p><span class="math display">\[M=2D^2\quad\text{og}\quad\widetilde A=B/2
-\quad\text{for ujevn skalering},\]</span></p>
-<p><span class="math display">\[M=2I\quad\text{og}\quad\widetilde A=A/2
-\quad\text{for Poisson-systemet}.\]</span></p>
-<p><strong>Hva fjernes i det første tilfellet? Hva endres ikke i det andre?</strong> Skriv en forventning om kondisjonstall og arbeidsmengde før neste kjøring.</p>
-<div id="qpyodide-insertion-location-5"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><code>invroot[:,None]</code> skalerer radene og <code>invroot[None,:]</code> kolonnene. De to linjene for <code>At</code> og <code>bt</code> er omregningen fra del 2 skrevet i NumPy. Her stopper CG på den <strong>transformerte</strong> residualen. Dette er en kontroll av koordinatskiftet, ikke en rettferdig sammenligning av antall steg. Den kommer i del 5.</p>
-<p>Se deretter på <strong>spekteret</strong>, altså samlingen av egenverdier:</p>
-<div id="qpyodide-insertion-location-6"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Hvert punkt i figuren er en egenverdi, sortert fra minst til størst. Den loddrette aksen er logaritmisk. Hjelperen viser begge spektrene og skriver ut kondisjonstallene. <strong>Se etter forholdet mellom største og minste verdi, ikke bare om punktene flytter seg nedover.</strong> Sammenlign med forventningen din.</p>
-<details>
-<summary>
-Gå i dybden: hvorfor er matrisene SPD, og hva forklarer forskjellen?
-</summary>
-<p>For det første systemet er <span class="math inline">\(M=2D^2\)</span> og <span class="math inline">\(M^{-1/2}=D^{-1}/\sqrt2\)</span>, fordi diagonalen i <span class="math inline">\(D\)</span> er positiv. Dermed</p>
-<p><span class="math display">\[\widetilde A=\frac1{\sqrt2}D^{-1}(DBD)D^{-1}\frac1{\sqrt2}=B/2.\]</span></p>
-<p>Forskjellen mellom koordinatskaleringene er fjernet. <span class="math inline">\(B\)</span> er symmetrisk og strengt diagonaldominant med positiv diagonal. Egenverdiene ligger mellom <span class="math inline">\(1.5\)</span> og <span class="math inline">\(2.5\)</span>, så <span class="math inline">\(B\)</span> er SPD. Dessuten er <span class="math inline">\(z^TDBDz=(Dz)^TB(Dz)&gt;0\)</span> for <span class="math inline">\(z\ne0\)</span>. Det beviser at også forsøksmatrisen er SPD.</p>
-<p>For Poisson-systemet er <span class="math inline">\(M=2I\)</span>, så <span class="math inline">\(\widetilde A=A/2\)</span>. Alle egenverdier halveres, men forholdet mellom største og minste forblir det samme. I eksakt regning får CG den samme banen i de opprinnelige koordinatene med denne skalare prekondisjoneringen. Små flyttallsforskjeller er ikke en systematisk forbedring.</p>
-<p>For å se at Poisson-matrisen er SPD, sett <span class="math inline">\(z_0=z_{n+1}=0\)</span>. Da er</p>
-<p><span class="math display">\[z^TAz=\sum_{i=0}^n(z_{i+1}-z_i)^2&gt;0\qquad(z\ne0).\]</span></p>
-<p>Summen kan bare være null når alle naboforskjellene er null; med randverdiene null betyr det at hele vektoren er null.</p>
-</details>
-<p><strong>Ta med videre:</strong> En god forklaring må skille mellom å fjerne ujevn koordinatskala og å endre koblingen mellom koordinater. At diagonalen blir lik én, er ikke alene et bevis på at CG får mindre arbeid.</p>
-</section>
-</section>
-<section id="fra-koordinatskifte-til-pcg" class="level2">
-<h2 class="anchored" data-anchor-id="fra-koordinatskifte-til-pcg">4. Fra koordinatskifte til PCG</h2>
-<p>Vi har hittil bygd <span class="math inline">\(\widetilde A\)</span> og regnet i <span class="math inline">\(y\)</span>-koordinater. PCG får den samme virkningen ved å arbeide direkte med <span class="math inline">\(A\)</span> og løse et enkelt hjelpesystem for hver residual:</p>
-<p><span class="math display">\[Mz=r\quad\Longrightarrow\quad z_i=\frac{r_i}{m_i}.\]</span></p>
-<p>Her er <span class="math inline">\(z\)</span> en <strong>skalert residual</strong>, ikke en ny løsning av <span class="math inline">\(Ax=b\)</span>. I koden lagrer vi bare diagonalen som vektoren <code>m</code>; løsningen av <span class="math inline">\(Mz=r\)</span> er derfor koordinatvis divisjon.</p>
-<section id="finn-de-nye-størrelsene-før-du-åpner-malen" class="level3">
-<h3 class="anchored" data-anchor-id="finn-de-nye-størrelsene-før-du-åpner-malen">Finn de nye størrelsene før du åpner malen</h3>
-<p>I vanlig CG inngår <span class="math inline">\(r^Tr\)</span>. Men residualen i de nye koordinatene er <span class="math inline">\(\widetilde r=M^{-1/2}r\)</span>.</p>
-<ol type="1">
-<li>Vis at <span class="math inline">\(\widetilde r^T\widetilde r=r^TM^{-1}r=r^Tz\)</span>.</li>
-<li>Første CG-retning i <span class="math inline">\(y\)</span>-koordinater er <span class="math inline">\(\widetilde p_0=\widetilde r_0\)</span>. Omregn denne til en retning i <span class="math inline">\(x\)</span>-koordinater. Vis at <span class="math inline">\(p_0=z_0\)</span>.</li>
-<li>Sett <span class="math inline">\(p=M^{-1/2}\widetilde p\)</span> inn i <span class="math inline">\(\widetilde p^T\widetilde A\widetilde p\)</span>. Hvorfor blir nevneren i linjesøket fortsatt <span class="math inline">\(p^TAp\)</span>?</li>
+<section id="del-3-gjør-anbefalingen-robust" class="level2">
+<h2 class="anchored" data-anchor-id="del-3-gjør-anbefalingen-robust">Del 3 – gjør anbefalingen robust</h2>
+<p>Et tilbud om ekstra maskintid har pris <span class="math inline">\(r\)</span> tusen kroner per ressursenhet. Bedriften kan kjøpe <span class="math inline">\(0\le\delta\le12\)</span>, og betaler <span class="math inline">\(r\delta\)</span> også hvis tiden ikke brukes. Drøft følgende på papir og bruk en liten beregning som uavhengig kontroll:</p>
+<ol start="7" type="1">
+<li>Finn en regel for hvilke kjøp som kan øke <strong>netto</strong> bidrag for små <span class="math inline">\(\delta\)</span>. Velg deretter to konkrete priser, én på hver side av din terskel. Undersøk beste netto bidrag for <span class="math inline">\(\delta\)</span> i hele intervallet <span class="math inline">\([0,12]\)</span>, ikke bare heltallsverdiene 0 og 12. Begrunn eventuelle knekkpunkter ved aktive begrensninger.</li>
+<li>Markedet kan endre bidraget per parti C til 9 tusen kroner, mens ressursbruk og kapasiteter er uendret. Test om <strong>det gamle</strong> duale sertifikatet fortsatt er gyldig. Løs den nye modellen og forklar hva som må revurderes før man bruker den gamle maskinprisen i et innkjøpsvalg. Her holder det med en ny primal og dual kontroll; du trenger ikke utlede et fullstendig todimensjonalt følsomhetsområde.</li>
 </ol>
-<p>Disse tre regningene forklarer de viktigste endringene fra CG til PCG. Vi kaller den nye telleren <span class="math inline">\(\gamma=r^Tz\)</span>.</p>
-<details>
-<summary>
-Regnehjelp: omregn residual og søkeretning
-</summary>
-<p>Siden <span class="math inline">\(M^{-1/2}\)</span> er symmetrisk, får vi</p>
-<p><span class="math display">\[\widetilde r^T\widetilde r
-=r^TM^{-1/2}M^{-1/2}r=r^TM^{-1}r=r^Tz.\]</span></p>
-<p>Den første retningen i opprinnelige koordinater blir</p>
-<p><span class="math display">\[p_0=M^{-1/2}\widetilde p_0
-=M^{-1/2}\widetilde r_0=M^{-1}r_0=z_0.\]</span></p>
-<p>Og for en vilkårlig søkeretning er</p>
-<p><span class="math display">\[\widetilde p^T\widetilde A\widetilde p
-=\widetilde p^TM^{-1/2}AM^{-1/2}\widetilde p=p^TAp.\]</span></p>
-<p>Derfor får linjesøket telleren <span class="math inline">\(r^Tz\)</span> og nevneren <span class="math inline">\(p^TAp\)</span>. Omregning av retningsoppdateringen gir <span class="math inline">\(p_{k+1}=z_{k+1}+\beta_kp_k\)</span>, med <span class="math inline">\(\beta_k=\gamma_{k+1}/\gamma_k\)</span>. Vi bruker en fast SPD-prekondisjonering gjennom hele kjøringen; det er forutsetningen for denne PCG-oppskriften.</p>
-</details>
-</section>
-<section id="oppskriften-du-skal-kode" class="level3">
-<h3 class="anchored" data-anchor-id="oppskriften-du-skal-kode">Oppskriften du skal kode</h3>
-<p>Les pseudokoden med papirregningen ved siden av. Det er tre steder der den skal kobles til Python i malen: hjelpesystemet, <code>beta</code> og neste retning.</p>
-<pre class="text"><code>r = b − A x
-Hvis original residual er liten nok: stopp.
-z = løs M z = r
-p = z; gamma = rᵀ z
-Gjenta:
-    Ap = A p
-    alpha = gamma / (pᵀ Ap)
-    x = x + alpha p
-    r = r − alpha Ap
-    Kontroller original residual b − A x; stopp hvis liten nok.
-    z = løs M z = r
-    gamma_ny = rᵀ z
-    beta = gamma_ny / gamma
-    p = z + beta p
-    gamma = gamma_ny</code></pre>
-<details>
-<summary>
-Kodeverksted: åpne PCG-malen og fyll tre uttrykk
-</summary>
-<p>Fyll bare de tre markerte TODO-delene. Resten av malen tar hånd om startvektor, inputkontroll, stoppkrav og telling av arbeid. Kjør cellen på nytt etter redigering. Den definerer <code>pcg</code>, men utfører ennå ingen av forsøkene.</p>
-<div id="qpyodide-insertion-location-7"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Symmetrikontrollen i koden er ikke et SPD-bevis. Våre matriser er SPD av konstruksjon, og testen på <span class="math inline">\(p^TAp\)</span> oppdager bare enkelte brudd på forutsetningen. Direkte kontroll av <span class="math inline">\(b-Ax\)</span> brukes fordi den kort oppdaterte residualen kan samle avrundingsfeil.</p>
-</details>
-</section>
-<section id="fire-små-kontroller-før-hovedforsøket" class="level3">
-<h3 class="anchored" data-anchor-id="fire-små-kontroller-før-hovedforsøket">Fire små kontroller før hovedforsøket</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Kontroll</th>
-<th style="text-align: left;">Hva skal skje?</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><span class="math inline">\(A=\operatorname{diag}(1,100)\)</span>, <span class="math inline">\(b=(1,100)^T\)</span>, <span class="math inline">\(x_0=0\)</span>, <span class="math inline">\(M=A\)</span></td>
-<td style="text-align: left;">Ett steg gir <span class="math inline">\((1,1)^T\)</span>, opp til avrunding.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><span class="math inline">\(M=I\)</span></td>
-<td style="text-align: left;">PCG gir samme bane som CG, opp til avrunding.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Start i den kjente løsningen <span class="math inline">\(x_0=x_*\)</span></td>
-<td style="text-align: left;">Metoden stopper med null søkesteg.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Bruk <span class="math inline">\(A_2\)</span> fra del 1</td>
-<td style="text-align: left;">PCG-banen stemmer med CG-banen i nye koordinater når den regnes tilbake til <span class="math inline">\(x\)</span>.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Begrunn forventningene før du kjører.</strong> Deretter kan du bruke den ferdige kontrollfunksjonen. Den tar din <code>pcg</code> som argument og sjekker alle fire tilfellene. Hvis en kontroll feiler, gå tilbake til det matematiske uttrykket den skal representere.</p>
-<div id="qpyodide-insertion-location-8"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Ta med videre:</strong> En fungerende PCG og en kort forklaring av hvorfor hver av de fire kontrollene er relevant. Det er mer informativt enn at programmet bare kjører uten feilmelding.</p>
-</section>
-</section>
-<section id="sammenlign-rettferdig-og-lag-din-egen-undersøkelse" class="level2">
-<h2 class="anchored" data-anchor-id="sammenlign-rettferdig-og-lag-din-egen-undersøkelse">5. Sammenlign rettferdig – og lag din egen undersøkelse</h2>
-<p>Nå kan vi sammenligne vanlig CG og PCG med samme regler. Begge får samme <span class="math inline">\(A,b,x_0=0\)</span>, <code>rtol=1e-8</code>, <code>atol=0</code> og maksimalgrense 1000. Begge stopper på <strong>original residual</strong> <span class="math inline">\(\lVert b-Ax\rVert_2\)</span>.</p>
-<p><strong>Skriv forventningen først:</strong> På hvilket av de to systemene venter du størst gevinst, og hvilken utregning fra del 3 støtter svaret?</p>
-<div id="qpyodide-insertion-location-9"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><code>compare_runs</code> viser original relativ residual øverst og relativ løsningsfeil nederst. Den vannrette aksen teller produkter av <span class="math inline">\(A\)</span> med en vektor, inkludert direkte residualkontroll. Her brukes ett produkt i starten og to per steg, altså <span class="math inline">\(1+2k\)</span> etter <span class="math inline">\(k\)</span> steg. Verdier under <span class="math inline">\(10^{-16}\)</span> vises ved <span class="math inline">\(10^{-16}\)</span> i logaritmeplottene.</p>
-<p>Tabellen som skrives ut, viser også oppnådd relativ residual og løsningsfeil, antall anvendelser av prekondisjoneringen og om stoppkravet ble nådd. Hver anvendelse av diagonal <span class="math inline">\(M\)</span> krever <span class="math inline">\(n\)</span> divisjoner; <span class="math inline">\(n\)</span> diagonalverdier lagres én gang. Færre steg er derfor ikke hele kostnadsbildet. Våre tellere tar ikke med konstruksjon av data, spektralberegning eller analyseplott.</p>
-<section id="din-påstand-og-ett-kontrollert-par" class="level3">
-<h3 class="anchored" data-anchor-id="din-påstand-og-ett-kontrollert-par">Din påstand og ett kontrollert par</h3>
-<p>De to ferdige systemene viser en gevinst og en begrensning. Nå skal du undersøke om forklaringen din holder utenfor akkurat disse eksemplene. Formuler én påstand, og velg <strong>én</strong> av disse veiene:</p>
-<ul>
-<li>Hold størrelse og diagonal fast, men endre koblingene utenfor diagonalen. Er samme diagonale skala nok til å forutsi samme gevinst?</li>
-<li>Hold matrisen fast, men endre den kjente løsningen og dermed <span class="math inline">\(b=Ax_*\)</span>. Er gevinsten uavhengig av hvilke egenretninger problemet aktiverer?</li>
-</ul>
-<p>For første vei kan du bruke den ferdige datakonstruksjonen <code>coupled_problem(n, span, coupling)</code>. Den lager <span class="math inline">\(A=DBD\)</span>, med positive verdier i <span class="math inline">\(D\)</span> fra <span class="math inline">\(1\)</span> til <code>span</code>, <span class="math inline">\(2\)</span> på diagonalen i <span class="math inline">\(B\)</span> og <code>-coupling</code> på nabodiagonalene. Når <code>n</code> og <code>span</code> holdes fast, er diagonalen i <span class="math inline">\(A\)</span> alltid <span class="math inline">\(2d_i^2\)</span>, uansett <code>coupling</code>. Kravene er <code>n &gt;= 2</code>, <code>span &gt;= 1</code> og <code>0 &lt;= coupling &lt; 1</code>.</p>
-<details>
-<summary>
-Gå i dybden: hvorfor er denne forsøksfamilien SPD?
-</summary>
-<p><span class="math inline">\(B\)</span> er symmetrisk og strengt diagonaldominant: <span class="math inline">\(2\)</span> er større enn summen av nabobidragene, som er høyst <span class="math inline">\(2\,\text{coupling}&lt;2\)</span>. Med positiv diagonal gir dette positive egenverdier og dermed SPD. Skaleringen med invertibel <span class="math inline">\(D\)</span> bevarer egenskapen: <span class="math inline">\(z^TDBDz=(Dz)^TB(Dz)&gt;0\)</span> når <span class="math inline">\(z\ne0\)</span>. Ved andre egne konstruksjoner må du selv begrunne at CGs forutsetninger fortsatt er oppfylt.</p>
-</details>
-<p>Velg <span class="math inline">\(x_*\ne0\)</span>; da er også <span class="math inline">\(b=Ax_*\ne0\)</span> for SPD. Dermed er relativ residual og relativ løsningsfeil definert i forsøket ditt.</p>
-<p><strong>Før kjøring skriver du ned:</strong> påstanden, hvilke størrelser du holder faste, hva du endrer, og hvilket resultat som ville utfordre påstanden. Velg selv parameterverdier. Bruk samme opprinnelige residualkrav, rapporter konvergensstatus og tell også PCGs ekstra arbeid. En avbrutt kjøring er ikke en raskere løsning.</p>
-<p>Lag ett kontrollert par og forklar resultatet. <strong>Valgfritt:</strong> Prøv forklaringen på et nytt par med sterkere kobling eller en annen høyreside. Vis også eventuelle motfunn, og avgrens konklusjonen til det du faktisk har undersøkt.</p>
-</section>
-<section id="det-du-leverer" class="level3">
-<h3 class="anchored" data-anchor-id="det-du-leverer">Det du leverer</h3>
-<p>Lever én kjørbar notebook eller Quarto-side med:</p>
-<ul>
-<li>papirregningene fra del 1–2 og utledningen av PCG-størrelsene fra del 4;</li>
-<li>fullført PCG, begrunnelser og resultater for de fire kontrollene;</li>
-<li>de to referanseforsøkene og din egen undersøkelse med ett kontrollert par;</li>
-<li>figurer med aksetitler og en tabell med steg, <span class="math inline">\(A\)</span>-produkter, <span class="math inline">\(M\)</span>-anvendelser, oppnådd residual, faktisk feil og konvergensstatus.</li>
-</ul>
-<p>Skriv i tillegg en analyse på <strong>400–600 ord</strong> med påstand, forsøksdesign, et mulig motfunn og en avgrenset konklusjon. Utregningene og koden kommer utenom denne tekstmengden. Analysen skal forklare hvorfor løsningen bevares, hva som endres i spekteret, hva residual og feil forteller, og hvilken ekstra kostnad <span class="math inline">\(M\)</span> har.</p>
-<p>Matrisene her er små og lagres som tette matriser for at alle kontrollene skal være lette å gjennomføre i nettleseren. Et <strong>glissent system</strong> har få ikke-null matriseelementer. Avslutt med å si hva som må undersøkes før du overfører konklusjonen til store, glisne systemer; kjøretiden i disse små forsøkene alene er ikke nok.</p>
+<p>Avslutt rapporten med en tabell over opprinnelig plan, de to kapasitetsendringene og den endrede C-prisen. Oppgi mulighet, målverdi, slakk, dualt bound der du har et, og om prisanslaget er eksakt eller bare et bound. En anbefaling skal si <strong>hvilken modellantakelse</strong> om delbare partier den bygger på. Dersom du ønsker hele partier, er det et eget heltallsproblem; avrunding av en kontinuerlig optimalplan har ingen garanti for optimalitet.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -5062,7 +4769,7 @@ Gå i dybden: hvorfor er denne forsøksfamilien SPD?
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
