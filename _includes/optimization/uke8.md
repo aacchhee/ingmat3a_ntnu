@@ -31,7 +31,7 @@ kandidat. Til slutt ser vi hvilke egenskaper ved hele området og
 funksjonen som sikrer at et minimum finnes, og at et lokalt minimum
 også er globalt. Regneoppgavene i 8.5 følger eksemplene i teksten.
 Kodeforsøk, et sammenfoldet SciPy-oppslag og kodeoppgaver ligger i 8.6;
-felles importer finner du under **Python-oppsett**.
+importene står i den første kodecellen.
 Figurene og resultatene i hovedteksten kan leses uten å kjøre kode.
 **Forelesning** viser hovedløpet; **Gå i dybden** åpner
 lengre begrunnelser og mellomregninger.
@@ -50,23 +50,6 @@ Etter denne uka skal du kunne
 - skille infimum fra minimum og bruke ekstremalverdisetningen til å vise at ekstremalverdier finnes,
 - undersøke konveksitet og forklare når et lokalt minimum også er globalt,
 - bruke `minimize` i SciPy og kontrollere punkt, funksjonsverdi og gradient i svaret.
-
-## Python-oppsett
-
-<div id="uke8-oppsett"></div>
-
-Denne cellen importerer pakkene som brukes i ukens kodeforsøk i 8.6.
-Den kjøres automatisk når Python er klart. **Vent på meldingen
-«Oppsett for uke 8 er klart» før du kjører et eksperiment.** Første oppstart
-kan ta litt tid fordi nettleseren må hente pakkene.
-
-NumPy brukes til vektorregning, Matplotlib tegner figurene, og
-`minimize` fra SciPy leter etter lokale minima. Du kan lese importene
-og kjøre oppsettet på nytt med **Kjør**. Hvis en celle melder at et navn
-ikke er definert, kjør oppsettet på nytt og deretter forsøket.
-Kodeoppgavene til slutt inneholder sine egne importer.
-
-{{< include ../_includes/optimization/week8_setup.md >}}
 
 ## 8.1 Modell, valg og tillatt område
 
@@ -87,12 +70,6 @@ Et punkt $z_*$ som oppnår verdien, er et **minimumspunkt**;
 selve tallet er $f(z_*)$. Vi skriver ofte at vi «finner minimum»,
 men må holde disse to størrelsene fra hverandre. Å maksimere $f$ er
 det samme som å minimere $-f$: de samme punktene blir best.
-
-### Eksperiment 1 – lønner det seg å bruke alle ressursene?
-
-Vi skal se om planen med størst overskudd også bruker opp både
-komponentene og arbeidstiden. Sammenlign derfor overskuddet og
-ressursbruken for den beste tillatte planen.
 
 Fire studenter driver et lite dataverksted. De skal velge hvor mange
 nye datamaskiner de bygger, og hvor mange gamle de reparerer **denne uken**.
@@ -128,6 +105,11 @@ $$D=\{(b,r)\in\mathbb Z_{\ge0}^2:10b+r\le100,\ b+3r\le50\}.$$
 
 Her betyr $\in$ «er med i», og $\mathbb Z_{\ge0}$ er de ikke-negative
 heltallene. Krøllparentesene samler alle par som oppfyller kravene.
+Vi undersøker om størst overskudd krever at begge ressursene brukes opp.
+
+### Eksperiment 1 – lønner det seg å bruke alle ressursene?
+
+Sammenlign overskudd og ressursbruk for den beste tillatte planen.
 
 Det er få nok muligheter til at vi kan regne ut overskuddet for **alle**
 tillatte heltallspar. Figuren viser resultatet av denne opptellingen;
@@ -259,42 +241,44 @@ fra de kvadratiske leddene som førsteordensanslaget utelater.
 
 Et **indre punkt** i $D$ har et lite område rundt seg der alle punkter
 er tillatt. Et **randpunkt** ligger på grensen mellom tillatte og
-utelukkede valg. Ved et indre lokalt minimum kan vi bevege oss litt i
+utelukkede valg.
+
+Ved et indre lokalt minimum kan vi bevege oss litt i
 begge fortegn langs hver koordinat. Da må alle partiellderiverte være
 null. Et punkt med $\nabla f(z)=0$ kalles **stasjonært**, eller
 **kritisk** i våre deriverbare problemer. Dette er en **nødvendig
 betingelse**: alle slike minima må oppfylle den. Det er ennå ikke en
 **tilstrekkelig betingelse**, altså noe som alene garanterer minimum.
 
-### Eksperiment 2 – to starter, to svar
-
-Vi vil finne ut om én lokal søkekjøring er nok til å finne den beste
-dalen. Sammenlign hvor søkene ender, verdien de får og om små
-gradienter gir samme konklusjon om globalt minimum.
-
 Vi minimerer nå en kostnadsfunksjon med to reelle innstillinger $x,y$. Den er **glatt**: de deriverte vi trenger finnes og varierer kontinuerlig, uten sprang:
 
 $$f(x,y)=20+x^2+y^2-10\bigl(\cos(2\pi x)+\cos(2\pi y)\bigr).$$
 
 Kvadratleddene gjør store innstillinger kostbare; cosinusleddene gir flere
-små daler. Vi lar en lokal søkemetode prøve to startpunkter. Metoden
-flytter punktet for å senke funksjonsverdien, men undersøker ikke
-hele planet. [SciPy-koden står i 8.6](#uke8-python-local).
+små daler. En lokal søkemetode flytter punktet for å senke
+funksjonsverdien, men undersøker ikke hele planet. En **nivåkurve**
+forbinder punkter med samme funksjonsverdi og viser dalene i et kart.
+**Gradientnormen** $\|\nabla f\|_2$ er lengden av gradienten.
+En liten gradientnorm betyr at de lokale helningene er små.
+Vi undersøker om én lokal søkekjøring finner den beste dalen.
+
+### Eksperiment 2 – to starter, to svar
+
+Prøv to startpunkter med samme lokale metode. Sammenlign sluttpunkter, verdier og
+gradienter. [SciPy-koden står i 8.6](#uke8-python-local).
 
 | Startpunkt | Punktet søket finner, avrundet | Funksjonsverdi, avrundet |
 |:--|:--|--:|
 | $(0,0)$ | $(0,0)$ | $0$ |
 | $(2,2)$ | $(1.9899,1.9899)$ | $7.9597$ |
 
-En **nivåkurve** forbinder punkter med samme funksjonsverdi.
-Kurvene i figuren omringer flere dalbunner. De to søkene ender i
+Nivåkurvene i figuren omringer flere dalbunner. De to søkene ender i
 forskjellige daler, selv om de bruker samme metode.
 
 ![Nivåkurver for den bølgede funksjonen. Markeringene viser startpunktene og punktene de to søkene finner. Et lokalt søk trenger ikke finne den dypeste dalen.](../assets/optimization/week8-local-minima.svg){width=620}
 
-Begge svarene har nesten null gradient. Lengden
-$\|\nabla f\|_2$, **gradientnormen**, er rundt $10^{-6}$ ved det
-andre svaret. Små deriverte skiller altså ikke den beste dalen fra
+Begge svarene har nesten null gradient. Gradientnormen er rundt
+$10^{-6}$ ved det andre svaret. Små deriverte skiller altså ikke den beste dalen fra
 en dårligere dal. Andrederivertene nedenfor hjelper oss å skille en dalbunn fra et
 sadelpunkt.
 
@@ -426,15 +410,31 @@ Vi har sett hvordan vi kan undersøke et mulig minimum. Nå tar vi et
 skritt tilbake: **finnes det et minimumspunkt i det hele tatt?**
 Det avhenger både av funksjonen og av hvilke punkter som er tillatt.
 
+Et **minimum** må oppnås i et tillatt punkt. **Infimum** er den største
+nedre grensen for funksjonsverdiene; den trenger ikke oppnås.
+Tilsvarende er **supremum** den minste øvre grensen. Vi skriver $\inf$
+og $\sup$.
+
+Et **kompakt** område er lukket og begrenset. Lukket betyr at
+områdets grensepunkter er med; begrenset betyr at punktene ikke
+kan komme vilkårlig langt bort.
+
+**Kontinuitet** betyr at funksjonsverdiene nærmer seg verdien i et
+punkt når punktene nærmer seg det. Senere kombinerer vi kontinuitet
+og kompakthet for å garantere at minimum og maksimum oppnås.
+
+På $(0,1)$ er endepunktene utelatt; på $[0,1]$ er de med. Det lille
+skillet avgjør om $g(x)=x$ oppnår sin nedre grense 0.
+Vi undersøker om finere numeriske prøver kan gi et minimum når
+grensepunktet er utelatt.
+
 ### Eksperiment 3 – stadig mindre, men aldri minst
 
-Vi vil undersøke om stadig finere numeriske søk faktisk finner et
-minimum. Se på den minste prøvde verdien i hver rad, og spør om
-grenseverdien selv er et tillatt punkt.
+Se på den minste prøvde verdien i hver rad, og spør om grenseverdien
+selv er et tillatt punkt.
 
-Vi minimerer $g(x)=x$ på intervallet $(0,1)$. Runde parenteser betyr
-at endepunktene ikke er med. Jevnt fordelte punkter inne i intervallet
-gir følgende resultater:
+Vi minimerer $g(x)=x$ på intervallet $(0,1)$. Jevnt fordelte indre
+punkter gir følgende resultater:
 
 | Punkter vi prøver | Minste verdi blant de prøvde punktene |
 |:--|--:|
@@ -450,13 +450,12 @@ Vi kan derfor alltid gjøre svaret bedre. Grensen 0 er ikke tillatt.
 På $[0,1]$ er situasjonen annerledes. Hakeparentesene betyr at
 endepunktene er med; nå er $x=0$ et minimumspunkt og 0 minimumsverdien.
 
-### Infimum er en grense; minimum må oppnås
+### Nedre og øvre grenser i tre områder
 
 Tallet 0 er en nedre grense for $g(x)=x$ på $(0,1)$: alle
 funksjonsverdiene er større enn 0. Tall som $-1$ er også nedre grenser,
-men 0 er den **største** av dem. Denne største nedre grensen kalles
-**infimum**, skrevet $\inf$. Tilsvarende er **supremum**, skrevet
-$\sup$, den minste øvre grensen.
+men 0 er den største av dem: $\inf_{x\in(0,1)}g(x)=0$.
+Også $\sup_{x\in(0,1)}g(x)=1$, selv om 1 ikke oppnås der.
 
 | Område for $g(x)=x$ | Infimum | Oppnås det som minimum? | Supremum | Oppnås det som maksimum? |
 |:--|--:|:--|--:|:--|
@@ -630,25 +629,36 @@ $a\cdot0^2=0$. Området er dermed ikke konvekst. Ved $a=\tfrac12$
 ligger samme type midtpunkt $(0,\tfrac12)$ over nedre grense $0$.
 Ett slikt vellykket linjestykke beviser ikke konveksitet alene.
 
-For å avgjøre *alle* parameterverdier, sett
-$x_t=tx_1+(1-t)x_2$ og $y_t=ty_1+(1-t)y_2$ for to punkter i $C_a$.
-Når $a\ge0$, får vi
+For å avgjøre *alle* parameterverdier tar vi to punkter i $C_a$ og
+skriver $x_t=tx_1+(1-t)x_2$ og $y_t=ty_1+(1-t)y_2$.
 
-$$y_t\ge a\bigl(tx_1^2+(1-t)x_2^2\bigr)
-\ge a x_t^2,$$
+1. Når $a\ge0$, får vi
+   $y_t\ge a(tx_1^2+(1-t)x_2^2)\ge ax_t^2$.
+   Forskjellen mellom de to kvadratuttrykkene er
+   $t(1-t)(x_1-x_2)^2\ge0$. Også $|x_t|\le1$ og $y_t\le2$, så hele
+   linjestykket er tillatt.
+2. Når $a<0$, er $A=(-1,a)$ og $B=(1,a)$ tillatt, mens
+   midtpunktet $M=(0,a)$ faller utenfor.
 
-fordi forskjellen mellom de to kvadratuttrykkene er
-$t(1-t)(x_1-x_2)^2\ge0$. Dessuten er $|x_t|\le1$ og $y_t\le2$.
-Hele linjestykket er da tillatt. Når $a<0$, viser $A=(-1,a)$,
-$B=(1,a)$ og $M=(0,a)$ at midtpunktet faller utenfor.
-**Dermed er $C_a$ konvekst akkurat når $a\ge0$.** Ved $a=0$ er
-området et rektangel.
+Dermed er $C_a$ konvekst akkurat når $a\ge0$. Ved $a=0$ er området
+et rektangel.
+
+For en **konveks funksjon** på et konvekst område ligger verdien
+mellom to punkter aldri over den rette forbindelsen mellom
+endeverdiene. Kravet er
+
+$$f(ta+(1-t)b)\le t f(a)+(1-t)f(b)
+\qquad\text{for alle }a,b\in D,\quad 0\le t\le1.$$
+
+Venstresiden er verdien i punktet mellom $a$ og $b$. Høyresiden
+er høyden på forbindelseslinjen; ved $t=1/2$ er den gjennomsnittet
+av endeverdiene. Ett brudd er nok til å avkrefte konveksitet.
+Vi vil teste om en topp mellom to punkter bryter dette kravet.
 
 ### Eksperiment 4 – funksjonsverdien mellom to punkter
 
-Vi trenger en test som kan avsløre en topp mellom to punkter. Sammenlign
-funksjonsverdien i midtpunktet med gjennomsnittet av endeverdiene:
-en verdi over gjennomsnittet bryter kravet til konveksitet.
+Sammenlign verdien i midtpunktet med gjennomsnittet av endeverdiene.
+En verdi over gjennomsnittet bryter kravet til konveksitet.
 
 For $f(x)=x^2$ velger vi $a=-1$, $b=1$. I midtpunktet er verdien
 $f(0)=0$, mens gjennomsnittet av endeverdiene er
@@ -668,15 +678,6 @@ kommer det en topp. Disse to beregningene viser hva konveksitetstesten
 leter etter.
 
 ![Øverst ligger grafen til x² under linjen mellom endeverdiene. Nederst ligger den bølgede funksjonen, langs y=0, over denne linjen ved midtpunktet.](../assets/optimization/week8-convex-midpoints.svg){width=620}
-
-En funksjon på et konvekst område er **konveks** når
-
-$$f(ta+(1-t)b)\le t f(a)+(1-t)f(b)
-\qquad\text{for alle }a,b\in D,\quad 0\le t\le1.$$
-
-Venstresiden er funksjonsverdien i punktet mellom $a$ og $b$.
-Høyresiden er høyden på den rette forbindelsen mellom endeverdiene.
-Ved $t=1/2$ er denne høyden det vanlige gjennomsnittet.
 
 For $x^2$ gjelder ulikheten for alle punktpar; se utregningen under
 «Gå i dybden». Den bølgede funksjonen er ikke konveks, siden allerede
@@ -1028,7 +1029,7 @@ Bruk $q''(x)$ til å begrunne streng konveksitet. Forklar deretter hvorfor tange
 
 <div id="uke8-python"></div>
 
-Her samler vi kodeforsøkene fra 8.1–8.4. Cellene kan kjøres og endres direkte. Sideoppsettet importerer NumPy som `np`, Matplotlib som `plt` og `minimize` fra `scipy.optimize`. Hvert forsøk definerer selv det det ellers trenger.
+Her samler vi kodeforsøkene fra 8.1–8.4. Cellene kan kjøres og endres direkte. Første celle importerer NumPy som `np`, Matplotlib som `plt` og `minimize` fra `scipy.optimize`. Hvert forsøk definerer selv det det ellers trenger.
 
 ### Produksjon: tell alle tillatte heltallsvalg
 
@@ -1046,6 +1047,11 @@ som kapasiteten tillater.
 
 ```{pyodide-python}
 #| label: week8-production
+# NumPy gir vektorregning, Matplotlib figurer og SciPy minimeringsrutinen.
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+
 # Lag alle ikke-negative heltallspar innenfor sikre øvre grenser.
 b, r = np.meshgrid(np.arange(51), np.arange(101), indexing="ij")
 

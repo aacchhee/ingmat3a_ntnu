@@ -26,22 +26,6 @@ Etter denne uken skal du kunne
 
 I 11.1–11.4 følger vi ett verksted. Regneoppgavene i 11.5 og kodeoppgavene i 11.6 bruker samme tall. **Gå i dybden** åpner lengre begrunnelser.
 
-## Python-oppsett
-
-<div id="uke11-oppsett"></div>
-
-Denne cellen importerer pakkene som brukes i ukens forsøk. Den kjøres automatisk når Python er klart. **Vent på meldingen
-«Oppsett for uke 11 er klart» før du kjører et eksperiment.** Første oppstart
-kan ta litt tid fordi nettleseren må hente pakkene.
-
-`linprog` er SciPy-funksjonen som løser de lineære modellene.
-Koeffisientene til hver modell settes i forsøket der de brukes.
-Du kan lese koden og kjøre oppsettet på nytt med **Kjør**.
-Hvis en celle melder at et navn ikke er definert, kjør oppsettet på nytt
-og deretter forsøket. Kodeoppgavene til slutt inneholder sine egne importer.
-
-{{< include ../_includes/optimization/week11_setup.md >}}
-
 ## 11.1 Fra tabell til tillatt område
 
 <div id="uke11-modell"></div>
@@ -65,35 +49,43 @@ I tillegg kan verkstedet lage høyst fire A-partier. La $x$ være antall A-parti
 | Antall A-partier | $x$ | $x\le4$ |
 | Ikke-negativ produksjon | $x,y$ | $x\ge0,\ y\ge0$ |
 
-Les hver rad i produkttabellen som «timer per parti × antall partier». For den lille planen $(x,y)=(2,1)$ er regningen:
+Les hver rad i produkttabellen som «timer per parti × antall partier». Sjekk planen $(x,y)=(2,1)$:
 
-| Kontroll | Utregning | Sammenligning |
-|:--|:--|:--|
-| Maskintimer | $2\cdot2+1\cdot1=5$ | $5\le9$ |
-| Arbeidstimer | $1\cdot2+2\cdot1=4$ | $4\le9$ |
-| A-grense | $x=2$ | $2\le4$ |
-| Dekningsbidrag | $5\cdot2+4\cdot1=14$ | 14 tusen kr |
+1. Maskintimer: $2\cdot2+1\cdot1=5\le9$.
+2. Arbeidstimer: $1\cdot2+2\cdot1=4\le9$.
+3. A-grensen: $x=2\le4$. Dekningsbidraget er $5\cdot2+4\cdot1=14$ tusen kroner.
 
 Begge partimengdene er ikke-negative, så planen er tillatt. Den har $9-5=4$ ubrukte maskintimer, $9-4=5$ ubrukte arbeidstimer og rom for $4-2=2$ flere A-partier.
 
+Dette er **lineær programmering (LP)**: både målet $P=5x+4y$ og ressursbruken er lineære i $x,y$. Vi leter etter den tillatte planen med størst $P$.
+
 ### Sammenlign hjørnene
 
-For å finne en beste plan tegner vi først alle planene som oppfyller kravene. Deretter undersøker vi hjørnene: her kan et lineært mål ikke bli større i det indre av en kant enn ved begge endene. Grensene der to krav holder med likhet, gir følgende hjørner. Et skjæringspunkt som bryter et annet krav, tas ikke med.
+Langs en kant varierer det lineære målet $P$ mellom verdiene i endepunktene. Derfor undersøker vi hjørnene der grensene møtes. Vi finner dem fra grenselikningene og tar bare med punkter som oppfyller *alle* kravene:
 
-| Hjørne $(x,y)$ | Maskintimer $2x+y$ | Arbeidstimer $x+2y$ | Bidrag $5x+4y$ (tusen kr) |
-|:--|--:|--:|--:|
-| $(0,0)$ | 0 | 0 | 0 |
-| $(4,0)$ | 8 | 4 | 20 |
-| $(4,1)$ | 9 | 6 | 24 |
-| $(3,3)$ | 9 | 9 | **27** |
-| $(0,9/2)$ | $9/2$ | 9 | 18 |
+1. Sett begge timekrav lik 9: $2x+y=9$ og $x+2y=9$. Trekk den andre likningen fra den første: $x-y=0$, altså $x=y$. Da gir $x+2y=9$ at $3x=9$, så $(x,y)=(3,3)$.
+2. Sett $x=4$. Maskinkravet gir $8+y\le9$, så hjørnet øverst på denne grensen er $(4,1)$. På aksen $x=0$ gir arbeidskravet $2y\le9$, så vi får $(0,9/2)$.
+3. Ta med akseskjæringene $(0,0)$ og $(4,0)$. Alle de fem punktene oppfyller de andre kravene. Regn ut $P=5x+4y$ for å sammenligne dem:
+
+| Hjørne $(x,y)$ | $P$ (tusen kr) |
+|:--|--:|
+| $(0,0)$ | 0 |
+| $(4,0)$ | 20 |
+| $(4,1)$ | 24 |
+| $(3,3)$ | **27** |
+| $(0,9/2)$ | 18 |
 
 I $(3,3)$ er begge timekapasitetene brukt opp, men det er rom for ett A-parti før grensen $x\le4$ nås. **Slakk** er kapasitet minus bruk. De tre slakkene er altså $(0,0,1)$. En grense med null slakk er **aktiv**.
 
-Vi tegner området for å se *hvorfor* sammenligningen av hjørner virker. Se først hvilke punkter som ligger innenfor alle grensene; følg så de stiplede linjene med konstant $P$. Når bidraget øker fra 20 til 27, flyttes linjen opp og til høyre. Den siste linjen som treffer området, møter det ved $(3,3)$.
+Vi tegner området for å se *hvorfor* sammenligningen av hjørner virker. En **mållinje** består av planer med samme $P$. Se først hvilke punkter som ligger innenfor alle grensene; følg så de stiplede mållinjene. Når bidraget øker fra 20 til 27, flyttes linjen opp og til høyre. Den siste linjen som treffer området, møter det ved $(3,3)$.
 
 ```{pyodide-python}
 #| label: week11-polygon
+# NumPy lagrer koeffisientene, Matplotlib tegner og linprog løser modellen.
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import linprog
+
 # Hvert hjørne er en plan (antall A-partier, antall B-partier).
 # Rekkefølgen følger kanten rundt området, slik at utfyllingen blir riktig.
 corners = np.array([[0., 0.], [4., 0.], [4., 1.],
@@ -120,7 +112,7 @@ plt.show()
 
 ### Hvorfor er hjørnene nok her?
 
-Dette er **lineær programmering (LP)**: både målet og ressursbruken er lineære i $x,y$. Langs en kant varierer $P$ lineært mellom hjørnene. Hvert punkt inni mangekanten kan skrives som et veid gjennomsnitt av hjørnene, så verdien av $P$ blir samme gjennomsnitt av tabellverdiene. Ingen plan kan dermed gi mer enn 27. Hvis en mållinje følger en kant, kan flere planer være like gode.
+Hvert punkt inni mangekanten kan skrives som et veid gjennomsnitt av hjørnene, så verdien av $P$ blir samme gjennomsnitt av tabellverdiene. Ingen plan kan dermed gi mer enn 27. Hvis en mållinje følger en kant, kan flere planer være like gode.
 For eksempel ville et annet mål, $R=2x+y$, fått maksimum 9
 både ved $(4,1)$ og $(3,3)$, og i alle punktene på kanten mellom dem.
 Det finnes da mange maksimumspunkter, selv om maksimalverdien er ett tall.
@@ -129,12 +121,6 @@ Området er lukket og begrenset, altså **kompakt** slik vi så i [uke 8](uke8.q
 
 <details class="reading-step">
 <summary>Gå i dybden: hjørner og begrensninger for argumentet</summary>
-
-Vi kan hente hjørnene fra grenselikningene i tre trinn:
-
-1. Sett begge timekrav lik 9: $2x+y=9$ og $x+2y=9$. Trekk den andre likningen fra den første: $(2x+y)-(x+2y)=9-9$, så $x-y=0$ og $x=y$. Sett dette inn i $x+2y=9$: $y+2y=9$, altså $3y=9$ og $y=3$. Dermed er $x=3$.
-2. Sett $x=4$: maskintimene gir $8+y\le9$, altså $y\le1$. Sett $x=0$: arbeidstimene gir $2y\le9$, altså $y\le9/2$.
-3. Ta med skjæringene med aksene og kontroller hvert punkt mot *alle* kravene. Da står vi igjen med de fem hjørnene i tabellen.
 
 **Simpleksmetoden** går mellom nabohjørner for å forbedre målet.
 I vårt polygon er en mulig forbedrende hjørnebane
@@ -161,7 +147,7 @@ $$A=\begin{pmatrix}2&1\\1&2\\1&0\end{pmatrix},\qquad Az\le b.$$
 
 SciPys `linprog` **minimerer**. For å maksimere $p^Tz$ sender vi derfor inn `-p`. Argumentene `A_ub`, `b_ub` angir radene $Az\le b$, mens `bounds=(0,None)` gir både $x$ og $y$ nedre grense null.
 
-Dette forsøket gir en uavhengig kontroll av hjørnetabellen og viser hvilke tall vi bør sjekke når en løser svarer: status, plan, bidrag og slakk. Sammenlign særlig `Slakk` med `Kontroll` i utskriften. De skal vise samme tre verdier.
+Dette forsøket gir en uavhengig kontroll av hjørnetabellen og viser hvilke tall vi bør sjekke når en løser svarer: status, plan, bidrag og slakk. Status 0 betyr at løseren fant et optimum. Sammenlign særlig `Slakk` med `Kontroll` i utskriften. De skal vise samme tre verdier.
 
 ```{pyodide-python}
 #| label: week11-highs
@@ -263,11 +249,15 @@ Bruk nå $u$ som pris per maskintime, $v$ som pris per arbeidstime og $w$ som pr
 | B-parti | $u+2v$ | $u+2v\ge4$ |
 | Prisene | $u,v,w$ | $u,v,w\ge0$ |
 
-Prisregningen gir to trinn for hver tillatt plan:
+For hver tillatt plan og hvert gyldig prisvalg får vi den vektede ulikheten
 
 $$5x+4y\le(2u+v+w)x+(u+2v)y\le9u+9v+4w.$$
 
-Først bruker vi prisreglene og $x,y\ge0$ til å dekke produktenes bidrag. Så bruker vi kapasitetskravene til å erstatte ressursbruken med kapasitetene. Ethvert gyldig prisvalg gir en øvre grense. Å finne den laveste slike grensen er et eget problem: **dualen** til produksjonsproblemet, som kalles **primalen**. At planens verdi aldri overstiger prisgrensen, kalles **svak dualitet**. Lik verdi 27 på begge sider beviser optimalitet her.
+1. Pris hvert produkt: $2u+v+w\ge5$ og $u+2v\ge4$. Siden $x,y\ge0$, gir dette $5x+4y\le(2u+v+w)x+(u+2v)y$.
+2. Samle ressursene og bruk kapasitetene: $(2x+y)u+(x+2y)v+xw\le9u+9v+4w$. Her kan vi multiplisere kravene med prisene fordi $u,v,w\ge0$.
+3. Sammenlign en plan med prisgrensen: $(3,3)$ gir $5\cdot3+4\cdot3=27$, mens prisene $(2,1,0)$ gir $9\cdot2+9\cdot1+4\cdot0=27$. Planen når grensen, så ingen tillatt plan er bedre.
+
+Produksjonsproblemet kalles **primalen**. Å velge gyldige priser med lavest mulig øvre grense er **dualen**. At verdien til enhver tillatt plan er høyst grensen fra ethvert gyldig prisvalg, kalles **svak dualitet**. Når en plan når prisgrensen, gir de to et **optimalitetssertifikat**.
 
 Mer kompakt kan et maksimeringsproblem skrives
 
@@ -284,17 +274,17 @@ Når begge LP-er har mulige løsninger og et endelig optimum, er de beste verdie
 <details class="reading-step">
 <summary>Gå i dybden: hvor blir forskjellen mellom grensene av?</summary>
 
-For mulige $z,q$ kan differansen deles i summer av ikke-negative produkter:
+For en tillatt plan $z$ og gyldige priser $q$ kan forskjellen mellom prisgrensen og bidraget deles i summer av ikke-negative produkter:
 
 $$b^Tq-p^Tz=q^T(b-Az)+z^T(A^Tq-p)\ge0.$$
 
-Når forskjellen er null, må hver positiv pris møte en aktiv begrensning: $q_i(b_i-(Az)_i)=0$. Hvert produkt som lages i positiv mengde, må ha innsatspris lik bidraget: $z_j((A^Tq)_j-p_j)=0$. Dette kalles **komplementær slakk**. Ved $z=(3,3)$ og $q=(2,1,0)$ er kapasitetslakken $(0,0,1)$ og produktprisene $(5,4)$. En aktiv grense kan likevel ha pris null, som vi ser ved kapasitetsskiftet i 11.4.
+Når forskjellen er null, må hvert ledd i summen være null. Dette kalles **komplementær slakk**: en positiv pris krever null slakk i sitt kapasitetskrav, og et produkt som lages i positiv mengde, må ha innsatspris lik bidraget. Vi bruker regelen til å finne prisene fra $(3,3)$:
 
-**Slik finner vi prisene fra planen $(3,3)$.** A-grensen har slakk 1, så komplementær slakk gir $w=0$. Begge produktene lages i positiv mengde, derfor må $2u+v+w=5$ og $u+2v=4$. Med $w=0$ blir den første likningen $2u+v=5$, altså $v=5-2u$. Sett dette inn i den andre:
+1. A-grensen har slakk $4-3=1$. Da må $w(4-3)=0$, altså $w=0$.
+2. Både $x=3$ og $y=3$ er positive. Derfor må $2u+v+w=5$ og $u+2v=4$. Med $w=0$ gir den første likningen $v=5-2u$. Sett inn i den andre: $u+2(5-2u)=4$, så $10-3u=4$ og $u=2$. Dermed er $v=1$.
+3. Kontroller prisene $(u,v,w)=(2,1,0)$: $2u+v+w=5$ for A, $u+2v=4$ for B og $9u+9v+4w=27$. Prisgrensen er lik planens bidrag, så prisene er optimale.
 
-$$u+2(5-2u)=4\quad\Longrightarrow\quad 10-3u=4\quad\Longrightarrow\quad u=2.$$
-
-Da er $v=5-2\cdot2=1$, og sammen med $w=0$ får vi prisene $(u,v,w)=(2,1,0)$. Kontrollen er $2u+v+w=5$ for A, $u+2v=4$ for B, og totalprisen for kapasitetene er $9u+9v+4w=27$. Prisene kan altså utledes fra hvilke varer som produseres og hvilke grenser som har slakk.
+En aktiv grense kan likevel ha pris null, som vi ser ved kapasitetsskiftet i 11.4.
 
 Hvis rader eller variabler har andre fortegn, må også prisreglene endres. For et primalproblem som maksimeres, gir en $\ge$-rad en ikke-positiv dualvariabel og en likningsrad en fri dualvariabel. En fri primalvariabel gir et likhetskrav i dualen. Den vektede ulikheten forklarer fortegnsreglene. I hovedmodellen bruker vi bare $Az\le b$ og $z\ge0$.
 
@@ -304,31 +294,25 @@ Hvis rader eller variabler har andre fortegn, må også prisreglene endres. For 
 
 <div id="uke11-sensitivitet"></div>
 
+En **lokal ressursverdi** er økningen i det beste bidraget **per ekstra enhet** av ressursen, når kapasiteten endres litt. Vi undersøker om verdien av en maskintime fortsatt er 2 tusen kroner når kapasiteten endres.
+
 ### Når den gamle timeprisen fortsatt virker
 
-Hvor mye bør verkstedet betale for mer maskinkapasitet? Gi det $\Delta$ flere maskintimer. De gamle prisene $(2,1,0)$ gir da øvre grense $2(9+\Delta)+9=27+2\Delta$. For $\Delta=1/2$ møtes timegrensene ved $(10/3,17/6)$. Kontroller planen rad for rad:
+Hvor mye bør verkstedet betale for mer maskinkapasitet? Gi det $\Delta$ flere maskintimer. De gamle prisene $(2,1,0)$ gir da øvre grense $2(9+\Delta)+9=27+2\Delta$. Regn ut om planen når denne grensen ved $\Delta=1/2$:
 
-| Kontroll ved $\Delta=1/2$ | Beregning | Resultat |
-|:--|:--|:--|
-| Maskintimer | $2(10/3)+17/6$ | $19/2=9+1/2$ |
-| Arbeidstimer | $10/3+2(17/6)$ | $9$ |
-| A-grense | $10/3\le4$ | Oppfylt |
-| Bidrag | $5(10/3)+4(17/6)$ | $28$ tusen kr |
-
-Planen oppnår prisgrensen $27+2(1/2)=28$. Den halve ekstra maskintimen øker dermed det beste bidraget med 1 tusen kroner.
+1. Sett begge timekrav lik kapasiteten: $2x+y=19/2$ og $x+2y=9$. Trekk den andre likningen fra den første: $x-y=1/2$, altså $x=y+1/2$.
+2. Sett inn i arbeidstiden: $(y+1/2)+2y=9$, så $3y=17/2$, $y=17/6$ og $x=10/3$. Planen oppfyller også $x=10/3\le4$ og $x,y\ge0$.
+3. Kontroller både timer og bidrag: $2(10/3)+17/6=19/2$, $10/3+2(17/6)=9$, og $5(10/3)+4(17/6)=28$. Dette er prisgrensen $27+2(1/2)=28$, så den halve ekstra maskintimen øker det beste bidraget med 1 tusen kroner.
 
 ### Når en annen grense stopper produksjonen
 
-Kan vi fortsatt bruke prisen 2 per maskintime etter en større økning? Ved $\Delta=2$ øker maskinkapasiteten til 11. Skjæringen mellom timegrensene ville gi $x=13/3>4$ og bryter A-grensen. Vi setter derfor $x=4$ og lar arbeidstiden være brukt opp: $4+2y=9$ gir $2y=5$ og $y=5/2$. Kontroller planen $(4,5/2)$:
+Kan vi fortsatt bruke prisen 2 per maskintime etter en større økning? Ved $\Delta=2$ øker maskinkapasiteten til 11:
 
-| Kontroll ved $\Delta=2$ | Beregning | Resultat |
-|:--|:--|:--|
-| Maskintimer | $2\cdot4+5/2$ | $21/2\le11$ |
-| Arbeidstimer | $4+2(5/2)$ | $9$ |
-| A-grense | $x=4$ | Brukt opp |
-| Bidrag | $5\cdot4+4(5/2)$ | $30$ tusen kr |
+1. Løs først timegrensene: $2x+y=11$ og $x+2y=9$ gir $x-y=2$, så $x=y+2$. Dermed er $3y+2=9$, $y=7/3$ og $x=13/3>4$. Denne planen bryter A-grensen.
+2. Sett i stedet $x=4$ og bruk all arbeidstid: $4+2y=9$ gir $y=5/2$. Planen $(4,5/2)$ bruker $2\cdot4+5/2=21/2\le11$ maskintimer og gir $5\cdot4+4(5/2)=30$ tusen kr.
+3. Den gamle prisformelen gir øvre grense $27+2\cdot2=31$, som planen ikke når. Prøv prisene $(u,v,w)=(0,2,3)$: de priser A til $2\cdot0+2+3=5$ og B til $0+2\cdot2=4$.
 
-Den gamle prisformelen gir fortsatt en gyldig øvre grense på $27+2\cdot2=31$, men planen oppnår den ikke. Vi kan bevise den nye grensen med prisene $(u,v,w)=(0,2,3)$:
+Disse prisene gir en ny øvre grense:
 
 $$2(x+2y)+3x=5x+4y\le2\cdot9+3\cdot4=30.$$
 
@@ -406,19 +390,11 @@ Bidragene blir $27,28,30$, mens den gamle prisformelen gir $27,28,31$. Ved utgan
 <details class="reading-step">
 <summary>Gå i dybden: hvor lenge er prisformelen eksakt?</summary>
 
-For å finne hele intervallet der gammel pris gir riktig *optimalverdi*, lar vi $\Delta$ være en endring i maskinkapasiteten: positiv $\Delta$ betyr flere timer, negativ $\Delta$ betyr færre. Den nye kapasiteten $9+\Delta$ må være ikke-negativ. Hold begge timegrensene aktive og sett $2x+y=9+\Delta$ og $x+2y=9$. Eliminering gir
+For å finne hele intervallet der gammel pris gir riktig *optimalverdi*, lar vi $\Delta$ være en endring i maskinkapasiteten: positiv $\Delta$ betyr flere timer, negativ $\Delta$ betyr færre. Den nye kapasiteten er $9+\Delta$.
 
-$$x=3+\frac{2\Delta}{3},\qquad y=3-\frac{\Delta}{3}.$$
-
-Kontroller den nye planen mot de tre andre kravene:
-
-| Krav | Sett inn $x=3+2\Delta/3$, $y=3-\Delta/3$ | Grense for $\Delta$ |
-|:--|:--|:--|
-| $x\ge0$ | $3+2\Delta/3\ge0$ | $\Delta\ge-9/2$ |
-| $y\ge0$ | $3-\Delta/3\ge0$ | $\Delta\le9$ |
-| $x\le4$ | $3+2\Delta/3\le4$ | $\Delta\le3/2$ |
-
-Det felles intervallet er $-9/2\le\Delta\le3/2$, som også gir ikke-negativ maskinkapasitet. La $P_*(\Delta)$ betegne *størst mulig dekningsbidrag* ved maskinkapasitet $9+\Delta$. I dette intervallet er planen tillatt og har verdien $5x+4y=27+2\Delta$. Siden den oppnår den gamle prisgrensen, er $P_*(\Delta)=27+2\Delta$. For kapasitetsøkninger gjelder dette til og med $\Delta=3/2$. Etterpå må vi finne et nytt beste punkt.
+1. Hold begge timegrensene aktive: $2x+y=9+\Delta$ og $x+2y=9$. Trekk den andre fra den første: $x-y=\Delta$, så $x=y+\Delta$. Sett inn: $3y+\Delta=9$. Dermed er $y=3-\Delta/3$ og $x=3+2\Delta/3$.
+2. Kontroller de øvrige kravene: $x\ge0$ gir $\Delta\ge-9/2$; $y\ge0$ gir $\Delta\le9$; $x\le4$ gir $\Delta\le3/2$. Felles intervall er $-9/2\le\Delta\le3/2$. Her er også $9+\Delta\ge0$.
+3. Sett planen inn i målet: $5(3+2\Delta/3)+4(3-\Delta/3)=27+2\Delta$. Planen oppnår prisgrensen. Hvis $P_*(\Delta)$ er *størst mulig dekningsbidrag* ved kapasitet $9+\Delta$, er derfor $P_*(\Delta)=27+2\Delta$ i intervallet. For økninger gjelder dette til og med $\Delta=3/2$; etterpå trengs en ny pris.
 
 Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i [uke 8](uke8.qmd#uke8-modell). Etter $\Delta=1/2$ er $(10/3,17/6)$ ikke en plan med hele partier.
 

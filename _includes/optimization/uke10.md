@@ -12,37 +12,23 @@
 
 ### Fra helning til krumning
 
-I [uke 6](uke6.qmd#uke6-energi) fant vi minimum av en kvadratisk funksjon ved å løse et lineært system, blant annet med [konjugert gradient (CG)](uke6.qmd#uke6-cg). I [uke 8](uke8.qmd#uke8-hessian) brukte vi Hessianen til å kjenne igjen minimum og sadelpunkter. I [uke 9](uke9.qmd#uke9-gradient) valgte vi en retning fra gradienten og kontrollerte steglengden mot den faktiske funksjonen. **Newtons metode** bruker krumningen til å velge retning. Vi skal skille mellom å oppdatere punktet i *minimeringen* og å løse det *lineære systemet* som gir retningen. Målet er fortsatt å minimere en glatt funksjon uten bibetingelser.
+I [uke 6](uke6.qmd#uke6-energi) fant vi minimum av en kvadratisk funksjon ved å løse et lineært system, blant annet med [konjugert gradient (CG)](uke6.qmd#uke6-cg). I [uke 8](uke8.qmd#uke8-hessian) brukte vi Hessianen til å kjenne igjen minimum og sadelpunkter. I [uke 9](uke9.qmd#uke9-gradient) valgte vi en retning fra gradienten og kontrollerte steglengden mot den faktiske funksjonen.
 
-Vi begynner med kvadratikken fra uke 6: her treffer Newton minimum på ett steg. To videre forsøk viser hva som kan gå galt: En negativ krumning kan gi en oppadgående retning, og en positiv krumning kan gi et helt steg som er for langt. Vi endrer da henholdsvis *retningen* ved regularisering og *lengden* ved demping. Til slutt sammenligner vi med SciPy. Regneoppgavene står i 10.5 og korte, selvstendige kodeoppgaver i 10.6. **Gå i dybden** åpner lengre begrunnelser.
+**Newtons metode** bruker krumningen til å velge retning. Vi skal skille mellom å oppdatere punktet i *minimeringen* og å løse det *lineære systemet* som gir retningen. Målet er fortsatt å minimere en glatt funksjon uten bibetingelser.
+
+Vi begynner med kvadratikken fra uke 6: her treffer Newton minimum på ett steg. Deretter bruker vi Cholesky til å løse Newton-systemet når Hessianen er SPD. To videre forsøk viser hva som kan gå galt: Negativ krumning kan gi en oppadgående retning, og et helt steg kan være for langt selv med positiv krumning. Vi endrer da henholdsvis *retningen* ved regularisering og *lengden* ved demping.
+
+Til slutt sammenligner vi med SciPy. Regneoppgavene står i 10.5 og korte, selvstendige kodeoppgaver i 10.6. **Gå i dybden** åpner lengre begrunnelser.
 
 ### Læringsmål
 
 Etter denne uken skal du kunne
 
-- beregne gradient og Hessian, løse systemet som gir Newton-retningen og forklare hvor CG kan brukes inni dette steget,
+- beregne gradient og Hessian, løse Newton-systemet med Cholesky-faktorisering når Hessianen er SPD, og forklare hvor CG kan brukes inni steget,
 - regne ut ett Newton-steg for en kvadratisk funksjon og forklare hvorfor det treffer minimum,
 - bruke Hessianens egenverdier og $g^Tp$ til å skille sadelpunkt og oppadgående retning fra lokalt minimum og nedgangsretning,
 - regularisere en indefinit Hessian og velge en dempet steglengde ved å kontrollere faktiske funksjonsverdier,
 - tolke et numerisk stoppresultat og begrunne et globalt minimum når en egen nedre grense finnes.
-
-## Python-oppsett
-
-<div id="uke10-oppsett"></div>
-
-Denne cellen importerer pakkene og definerer funksjonene som brukes i ukens
-forsøk. Den kjøres automatisk når Python er klart. **Vent på meldingen
-«Oppsett for uke 10 er klart» før du kjører et eksperiment.** Første oppstart
-kan ta litt tid fordi nettleseren må hente pakkene.
-
-`well`, `well_grad` og `well_hess` beskriver dobbeltbrønnen i 10.2.
-`valley`, `valley_grad` og `valley_hess` beskriver dalen i 10.3.
-`armijo` halverer stegfaktoren til nedgangstesten er oppfylt.
-Du kan lese koden og kjøre oppsettet på nytt med **Kjør**.
-Hvis en celle melder at et navn ikke er definert, kjør oppsettet på nytt
-og deretter forsøket. Kodeoppgavene til slutt inneholder sine egne importer.
-
-{{< include ../_includes/optimization/week10_setup.md >}}
 
 ## 10.1 Newton på en kvadratisk skål
 
@@ -60,20 +46,21 @@ Her er $g(x)=Ax-b$ og $H(x)=A$ i *alle* punkter. Starter vi i $x_0=(-2,3)^T$, f�
 $$g(x_0)=\begin{bmatrix}-8\\-1\end{bmatrix},\qquad
 Ap=-g(x_0)=\begin{bmatrix}8\\1\end{bmatrix}.$$
 
-Regn gjennom ett ytre Newton-steg for hånd. Først finner vi retningen $p$ ved å løse et lineært system; deretter legger vi $p$ til startpunktet:
+**Regn for hånd:**
 
-| Del | Utregning | Hva den gir |
-|:--|:--|:--|
-| Gradient i $x_0$ | $Ax_0-b=(-8,-1)^T$ | Høyresiden er $-g(x_0)=(8,1)^T$. |
-| Skriv systemet | $3p_1+p_2=8$ og $p_1+2p_2=1$ | Vi søker de to komponentene i $p$. |
-| Eliminer $p_2$ | $p_2=8-3p_1$; dermed $p_1+2(8-3p_1)=1$, altså $-5p_1=-15$ | $p_1=3$. |
-| Sett tilbake | $p_2=8-3\cdot3=-1$ | $p=(3,-1)^T$. |
-| Oppdater og kontroller | $x_1=(-2,3)^T+(3,-1)^T=(1,2)^T$; $Ax_1-b=(5,5)^T-(5,5)^T$ | $g(x_1)=0$. |
+1. Skriv $Ap=-g(x_0)$ som $3p_1+p_2=8$ og $p_1+2p_2=1$.
+2. Første likning gir $p_2=8-3p_1$. Sett inn i den andre: $p_1+2(8-3p_1)=1$, så $p_1=3$ og $p_2=-1$.
+3. Oppdater punktet: $x_1=x_0+p=(-2,3)^T+(3,-1)^T=(1,2)^T$. Kontrollen $Ax_1-b=0$ viser at den nye gradienten er null.
 
 Cellen gjentar regningen. Vi vil kontrollere at det *nye punktet*, og ikke bare retningen, har gradient null. `np.linalg.solve` løser systemet uten en eksplisitt matriseinvers.
 
 ```{pyodide-python}
 #| label: week10-quadratic-step
+# Importene står også her, slik at første forsøk kan kjøres for seg selv.
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+
 # Matrisen A og vektoren b er de samme som i uke 6.
 A = np.array([[3., 1.], [1., 2.]])
 b = np.array([5., 5.])
@@ -89,7 +76,9 @@ print('Newton-oppdatering: x1 =', x1)
 print('Kontroll: ||g(x1)|| =', np.linalg.norm(A @ x1-b))
 ```
 
-Resultatet er $p=(3,-1)^T$ og $x_1=(1,2)^T$ med gradientnorm 0 innen flyttallspresisjon. Dette gjelder fra *ethvert* startpunkt: $g(x+p)=Ax-b+Ap=g(x)+Ap=0$. $A$ er **symmetrisk positiv definit (SPD)**: begge egenverdiene $(5\pm\sqrt5)/2$ er positive. Derfor er $(1,2)$ også det entydige globale minimumspunktet. Ett steg er her eksakt fordi krumningen er konstant.
+Resultatet er $p=(3,-1)^T$ og $x_1=(1,2)^T$ med gradientnorm 0 innen flyttallspresisjon. Dette gjelder fra *ethvert* startpunkt: $g(x+p)=Ax-b+Ap=g(x)+Ap=0$.
+
+$A$ er **symmetrisk positiv definit (SPD)**: begge egenverdiene $(5\pm\sqrt5)/2$ er positive. Derfor er $(1,2)$ også det entydige globale minimumspunktet. Ett steg er her eksakt fordi krumningen er konstant.
 
 ### Regelen bak forsøket
 
@@ -105,16 +94,71 @@ Newton-systemet har en entydig løsning når $H$ er **invertibel**, altså når 
 
 Dette er også lineariseringen $g(x+p)\approx g(x)+H(x)p$ av likningen $g=0$. For en ikke-kvadratisk funksjon er modellen bare lokal og Hessianen kan endre seg. Da må vi beregne en ny retning i hvert punkt og undersøke det foreslåtte steget.
 
+### Cholesky løser Newton-systemet når Hessianen er SPD
+
+<div id="uke10-cholesky"></div>
+
+For en symmetrisk positiv definit matrise $H$ kan vi skrive **Cholesky-faktoriseringen** $H=LL^T$. Her er $L$ nedre triangulær, med null over diagonalen og positive diagonalelementer. I Newton-systemet $Hp=-g$ finner vi retningen med to enklere systemer:
+
+$$Ly=-g,\qquad L^Tp=y.$$
+
+$y$ er en hjelpevektor, ikke et nytt punkt i minimeringen. Vi finner først $y$ ved innsetting ovenfra og ned i $Ly=-g$, og deretter $p$ nedenfra og opp i $L^Tp=y$. Først når $p$ er funnet, oppdaterer vi $x$.
+
+**Regn for hånd:** Ta $H=\begin{bmatrix}4&2\\2&3\end{bmatrix}$ og en gradient $g=(-6,-5)^T$ i det aktuelle punktet. Da er høyresiden $-g=(6,5)^T$.
+
+1. **Finn faktoren $L$.** Sett $L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$ med $a,c>0$. Matriseproduktet skal være lik $H$:
+
+   $$LL^T=\begin{bmatrix}a^2&ab\\ab&b^2+c^2\end{bmatrix}
+   =\begin{bmatrix}4&2\\2&3\end{bmatrix}.$$
+
+   Sammenlign ett element om gangen: $a^2=4$ gir $a=2$, deretter gir $ab=2$ at $b=1$. Til slutt gir $b^2+c^2=3$ at $c=\sqrt2$. Dermed er
+
+   $$L=\begin{bmatrix}2&0\\1&\sqrt2\end{bmatrix}.$$
+
+2. **Finn hjelpevektoren $y$.** Løs $Ly=(6,5)^T$ ovenfra og ned:
+
+   $$2y_1=6\ \Rightarrow\ y_1=3,\qquad
+   3+\sqrt2y_2=5\ \Rightarrow\ y_2=\sqrt2.$$
+
+3. **Finn Newton-retningen $p$.** Løs $L^Tp=y$ nedenfra og opp:
+
+   $$\sqrt2p_2=\sqrt2\ \Rightarrow\ p_2=1,\qquad
+   2p_1+1=3\ \Rightarrow\ p_1=1.$$
+
+   Kontroller svaret i det opprinnelige systemet: $Hp=(6,5)^T=-g$.
+
+Cellen viser den samme oppdelingen numerisk. `np.linalg.cholesky(H)` beregner den nedre faktoren $L$; et kall til `np.linalg.solve` for hvert av de to triangulære systemene finner først $y$, så $p$. `np.linalg.cholesky` alene løser altså ikke Newton-systemet. I større programmer kan `scipy.linalg.solve_triangular` utnytte at faktorene er triangulære.
+
+```{pyodide-python}
+#| label: week10-cholesky-solve
+# Del opp H p = -g i faktorisering og to lineære løsninger.
+H = np.array([[4., 2.], [2., 3.]])
+g = np.array([-6., -5.])
+L = np.linalg.cholesky(H)
+# Første triangulære system gir hjelpevektoren y.
+y = np.linalg.solve(L, -g)
+# Andre system gir selve Newton-retningen p.
+p = np.linalg.solve(L.T, y)
+print('Nedre faktor L =\n', L)
+print('Hjelpevektor y =', y)
+print('Newton-retning p =', p)
+print('Kontroll: H @ p =', H @ p, 'og -g =', -g)
+```
+
+Her er $p=(1,1)^T$. Faktoriseringen og de to løsningene er *indre* arbeid for å finne ett Newton-steg. Siden $H$ er SPD, kunne CG også løst det samme systemet iterativt; for en liten tett matrise er Cholesky en direkte måte å gjøre det på. Hvis $H$ er indefinit, er denne SPD-faktoriseringen ikke tilgjengelig. Da må vi kontrollere krumningen og eventuelt endre Hessianen før vi bruker den.
+
 ### To typer iterasjoner: Newton utenpå, CG inni
 
-I [uke 6](uke6.qmd#uke6-cg) løste CG $Az=b$ ved å minimere $\tfrac12z^TAz-b^Tz$ når $A$ er SPD. Her får vi på hvert ytre Newton-steg et *nytt* system $H(x_k)p_k=-g(x_k)$. Hvis $H(x_k)$ er SPD, kan CG løse dette systemet iterativt: sett $z=p_k$, $A=H(x_k)$ og høyresiden $b=-g(x_k)$. CG minimerer da den lokale modellen $m_{x_k}(p)$, opp til konstantleddet $f(x_k)$. En indre CG-iterasjon forbedrer et anslag på **samme** $p_k$; først etter den lineære løsningen oppdaterer Newton punktet $x_{k+1}$.
+I [uke 6](uke6.qmd#uke6-cg) løste CG $Az=b$ ved å minimere $\tfrac12z^TAz-b^Tz$ når $A$ er SPD. På hvert ytre Newton-steg får vi et *nytt* system $H(x_k)p_k=-g(x_k)$. Hvis $H(x_k)$ er SPD, kan CG løse dette systemet iterativt: Bruk $A=H(x_k)$, $z=p_k$ og $b=-g(x_k)$. Da minimerer CG den lokale modellen $m_{x_k}(p)$, bortsett fra konstantleddet $f(x_k)$.
+
+En indre CG-iterasjon forbedrer anslaget på **samme** $p_k$. Først når vi har en retning, oppdaterer det ytre Newton-steget punktet $x_{k+1}$. Cholesky i forrige avsnitt og CG her er dermed to måter å løse det indre SPD-systemet på.
 
 | Nivå | Hva endres? | I skålen fra starten $x_0=(-2,3)^T$ |
 |:--|:--|:--|
 | Indre CG | Anslaget på $p$ i $Ap=(8,1)^T$. | Fra $p=0$ ville eksakt CG finne $p=(3,-1)^T$ på høyst to indre iterasjoner i eksakt aritmetikk. |
 | Ytre Newton | Punktet $x$ etter at retningen er funnet. | Én oppdatering gir $x_1=x_0+p=(1,2)^T$. |
 
-I to dimensjoner er `np.linalg.solve` enklere. For store systemer kan en iterativ indre løsning spare arbeid. **Vanlig CG fra uke 6 krever SPD**; at $H$ bare er invertibel er ikke nok. Ved negativ krumning i 10.2 må vi håndtere dette, for eksempel ved å regularisere Hessianen før vi eventuelt bruker CG. Et indre CG-stopp før eksakt løsning gir dessuten en tilnærmet Newton-retning.
+I to dimensjoner er en direkte løsning enkel. For store systemer kan en iterativ indre løsning spare arbeid. **Vanlig CG fra uke 6 krever SPD**; at $H$ bare er invertibel er ikke nok. Ved negativ krumning i 10.2 må vi håndtere dette, for eksempel ved å regularisere Hessianen før vi eventuelt bruker CG. Stopper vi CG før en eksakt løsning, får vi en tilnærmet Newton-retning.
 
 <details class="reading-step">
 <summary>Gå i dybden: Jacobimatrise og hvorfor SPD gir nedgang</summary>
@@ -134,13 +178,11 @@ Studer **dobbeltbrønnen** $f(u,v)=(u^2-1)^2+v^2/2$. Siden begge ledd er ikke-ne
 $$g(u,v)=\begin{bmatrix}4u(u^2-1)\\v\end{bmatrix},\qquad
 H(u,v)=\begin{bmatrix}12u^2-4&0\\0&1\end{bmatrix}.$$
 
-Vi undersøker hvordan en løst Newton-likning kan gi feil retning. Ved $x=(0.2,0)^T$ viser gradient, Hessian og retningsderivert årsaken:
+Vi undersøker hvordan en løst Newton-likning kan gi feil retning. **Regn for hånd** ved $x=(0.2,0)^T$:
 
-| Trinn | Regning | Tolkning |
-|:--|:--|:--|
-| Deriverte | $g=(-0.768,0)^T$, $H=\operatorname{diag}(-3.52,1)$ | Krumningen langs $u$ er negativ. |
-| Newton-system | $-3.52p_1=0.768$, $p_2=0$ | $p\approx(-0.218182,0)^T$. |
-| Retningsderivert | $g^Tp\approx0.16756>0$ | Små positive steg i denne retningen går *oppover*. |
+1. Sett inn i de deriverte: $g=(-0.768,0)^T$ og $H=\operatorname{diag}(-3.52,1)$. Krumningen langs $u$ er negativ.
+2. Løs $Hp=-g$: $-3.52p_1=0.768$ og $p_2=0$, så $p\approx(-0.218182,0)^T$.
+3. Test den **retningsderiverte** $g^Tp\approx0.16756>0$. For et lite positivt steg langs $p$ øker funksjonen.
 
 Cellen sammenligner deretter $f(x)$ med $f(x+p)$, slik at vi ser om den faktiske endringen følger fortegnet til retningsderiverten. Den undersøker også hvorfor $g=0$ i origo ikke alene er nok til å kalle punktet et minimum.
 
@@ -160,7 +202,14 @@ print('I origo: ||g|| =', np.linalg.norm(well_grad([0., 0.])))
 print('I origo: egenverdier H =', np.linalg.eigvalsh(well_hess([0., 0.])))
 ```
 
-Funksjonen øker fra $0.9216$ til omtrent $0.99934$ etter helt steg. I origo er gradienten null, men Hessianens egenverdier er $-4$ og $1$: langs $u$ synker funksjonen fra 1, mens den langs $v$ stiger. Origo er et **sadelpunkt**. En liten gradientnorm alene ville ha stoppet også her. Fra [uke 8](uke8.qmd#uke8-hessian) vet vi at SPD-Hessian *ved et eksakt stasjonært punkt* gir et strengt lokalt minimum; en **indefinit** Hessian med egenverdier av begge fortegn gir sadelpunkt. For globalitet kreves et argument som gjelder hele området, slik som sum av ikke-negative ledd ovenfor.
+Ved $(0.2,0)$ øker $f$ fra $0.9216$ til omtrent $0.99934$ etter et helt Newton-steg. Den positive retningsderiverte forklarer også hvorfor små steg langs samme retning går oppover.
+
+Hva skjer hvis gradienten allerede er null? I origo er $g(0,0)=0$ og $H(0,0)=\operatorname{diag}(-4,1)$, med én negativ og én positiv egenverdi. Regn direkte langs koordinataksene:
+
+1. Langs $u$ er $f(t,0)=(t^2-1)^2=1-2t^2+t^4<1$ for små $t\ne0$.
+2. Langs $v$ er $f(0,t)=1+t^2/2>1$ for $t\ne0$.
+
+Origo er derfor et **sadelpunkt**, ikke et lokalt minimum. Hessianen er **indefinit**: egenverdiene har begge fortegn. En liten gradientnorm alene ville ha stoppet også her. En SPD-Hessian *ved et eksakt stasjonært punkt* gir derimot et strengt lokalt minimum, som i [uke 8](uke8.qmd#uke8-hessian). For å vise *globalt* minimum i dobbeltbrønnen bruker vi i tillegg argumentet fra starten av avsnittet: Begge leddene i $f$ er ikke-negative, og $f(\pm1,0)=0$.
 
 ## 10.3 Sikre retningen og lengden
 
@@ -168,11 +217,17 @@ Funksjonen øker fra $0.9216$ til omtrent $0.99934$ etter helt steg. I origo er 
 
 ### Regularisering endrer retningen
 
-For å rette oppadgående Newton-retning kan vi legge til $\lambda I$ i Hessianen og løse $(H+\lambda I)p=-g$. Her er $I$ identitetsmatrisen og $\lambda\ge0$. Dette kalles **regularisering**. Hver egenverdi øker med $\lambda$. La $\lambda_{\min}(H)$ betegne den minste egenverdien til $H$; velg i vårt lille forsøk
+For å rette en oppadgående Newton-retning kan vi legge til $\lambda I$ i Hessianen og løse $(H+\lambda I)p=-g$. Her er $I$ identitetsmatrisen og $\lambda\ge0$. Dette kalles **regularisering**; hver egenverdi øker med $\lambda$. La $\lambda_{\min}(H)$ betegne den minste egenverdien til $H$. I vårt lille forsøk velger vi
 
 $$\lambda=\max(0,\,0.25-\lambda_{\min}(H)),$$
 
-slik at den minste egenverdien til $H+\lambda I$ blir minst 0.25. I vårt punkt er $\lambda_{\min}(H)=-3.52$, så $\lambda=0.25-(-3.52)=3.77$. Dermed er $H+\lambda I=\operatorname{diag}(0.25,4.77)$: en SPD-matrise som også ville egne seg for vanlig CG. Løsningen av $(H+\lambda I)p=(0.768,0)^T$ er $p=(3.072,0)^T$, og $g^Tp=-2.359296<0$. Retningen er nedgående *nær* startpunktet, men et helt steg kan fortsatt gå for langt.
+Dette sikrer at den minste egenverdien til $H+\lambda I$ er minst 0.25. **Regn for hånd** i punktet fra 10.2:
+
+1. $\lambda_{\min}(H)=-3.52$ gir $\lambda=0.25-(-3.52)=3.77$.
+2. Da er $H+\lambda I=\operatorname{diag}(0.25,4.77)$, en SPD-matrise som også egner seg for vanlig CG.
+3. Løs $(H+\lambda I)p=(0.768,0)^T$: $p=(3.072,0)^T$ og $g^Tp=-2.359296<0$.
+
+Retningen er nedgående *nær* startpunktet, men et helt steg kan fortsatt gå for langt.
 
 ### Demping kontrollerer steglengden
 
@@ -222,7 +277,9 @@ I $(0,0)$ er $g=(-2,0)^T$ og $H=\operatorname{diag}(2,20)$, altså SPD. Løser v
 
 Hele steget øker altså verdien fra 1 til 10; halvt steg senker den til $0.875$ og godtas av Armijo. Forskjellen $10\alpha^4$ er et ledd den lokale modellen ikke fanger opp.
 
-Cellen sammenligner hele og dempede banen på nivåkurver: Se hvor det første punktet etter start havner på hver bane. Under nivåkurvene sammenlignes modell og virkelig verdi langs den første retningen; avstanden viser hvorfor et fullt steg er risikabelt. `valley`, `valley_grad` og `valley_hess` i oppsettet definerer funksjonen og dens deriverte.
+Cellen sammenligner hele og dempede banen på nivåkurver: Se hvor det første punktet etter start havner på hver bane. Under nivåkurvene sammenlignes modell og virkelig verdi langs den første retningen; avstanden viser hvorfor et fullt steg er risikabelt.
+
+Hjelpefunksjonene `valley`, `valley_grad` og `valley_hess` beregner funksjonen og dens deriverte. De lastes automatisk når du åpner siden.
 
 ```{pyodide-python}
 #| label: week10-backtrack-positive-hess
@@ -321,7 +378,9 @@ halveringsbudsjett kan melde feil.
 
 <div id="uke10-scipy"></div>
 
-SciPys `minimize` fra [uke 8](uke8.qmd#uke8-scipy) kan gjøre hele søket for den bøyde dalen. `BFGS` anslår krumningen fra gradientendringer. `Newton-CG` bruker Hessianinformasjon og en indre, CG-basert iterasjon for å finne retningen til hvert ytre steg. Her betyr «CG» altså arbeid *inni* Newton-steget, som i tabellen i 10.1. SciPys algoritme er ikke det samme som å kalle uke 6s vanlige SPD-CG blindt på enhver Hessian, og heller ikke identisk med vår eksplisitte regularisering. Vi sammenligner fra samme start for å se sluttpunkt, verdi, gradientnorm og rapportert arbeid.
+SciPys `minimize` fra [uke 8](uke8.qmd#uke8-scipy) kan gjøre hele søket for den bøyde dalen. Vi prøver to metoder fra samme start: `BFGS` anslår krumningen fra gradientendringer, mens `Newton-CG` bruker Hessianinformasjon og en indre CG-basert iterasjon for å finne retningen til hvert ytre steg. Her betyr «CG» arbeid *inni* Newton-steget, som i 10.1.
+
+SciPys `Newton-CG` håndterer sitt eget søk; den er ikke identisk med vår eksplisitte regularisering av $H$, og vi kan ikke anta at vanlig SPD-CG fra uke 6 virker på en indefinit Hessian. Vi sammenligner sluttpunkt, funksjonsverdi, gradientnorm og rapportert arbeid. Små verdier er numeriske funn; vi må fortsatt begrunne eventuell globalitet matematisk.
 
 ```{pyodide-python}
 #| label: week10-scipy-compare
@@ -361,7 +420,7 @@ I [uke 11](uke11.qmd) får vi lineære bibetingelser og ofte et beste punkt på 
 
 <div id="uke10-oppgaver"></div>
 
-Oppgave 1 følger kvadratikken i 10.1, oppgave 2–4 dobbeltbrønnen i 10.2–10.3, og oppgave 5–6 den bøyde dalen. Svar eksakt der det står «eksakt». Når desimaler er tillatt, rund til angitt antall plasser. For vektorer fyller du inn én verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene kontrollerer regningen. Kodeoppgavene følger i 10.6.
+Oppgave 1 følger kvadratikken i 10.1, oppgave 2–4 dobbeltbrønnen i 10.2–10.3, oppgave 5–6 den bøyde dalen, og oppgave 7–9 Cholesky-metoden i 10.1. Svar eksakt der det står «eksakt». Når desimaler er tillatt, rund til angitt antall plasser. For vektorer fyller du inn én verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene kontrollerer regningen. Kodeoppgavene følger i 10.6.
 
 **Oppgave 1 – ett Newton-steg i skålen fra uke 6.**
 
@@ -461,6 +520,50 @@ $q(x_+)=$ _[7/8] &nbsp; Global minimumsverdi: _[0]
 En numerisk løser rapporterer <code>success=True</code> og liten gradientnorm.
 Forklar i egne notater hva dette kontrollerer, og hvilket eget
 argument som viser at verdi 0 er globalt best for akkurat $q$.
+```
+
+I de neste tre oppgavene er $H=\begin{bmatrix}9&3\\3&5\end{bmatrix}$ SPD. Som i 10.1 skriver vi $H=LL^T$, der $L$ er nedre triangulær med positiv diagonal. Newton-systemet har høyreside $-g=(9,7)^T$; hjelpevektoren $y$ oppfyller $Ly=-g$, og retningen $p$ oppfyller $L^Tp=y$.
+
+**Oppgave 7 – finn Cholesky-faktoren.**
+
+```{math-exercise}
+#| label: week10-task-cholesky-factor
+#| caption: Oppgave 7 – Cholesky-faktor
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: Første diagonalelement, Nedre element, Andre diagonalelement
+
+For $H=\begin{bmatrix}9&3\\3&5\end{bmatrix}$, finn $a$, $b$ og $c$ i $H=LL^T$ der $L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$ og $a,c>0$. Svar eksakt.
+
+$a=$ _[3] &nbsp; $b=$ _[1] &nbsp; $c=$ _[2]
+```
+
+**Oppgave 8 – løs nedre triangulære system.**
+
+```{math-exercise}
+#| label: week10-task-cholesky-forward
+#| caption: Oppgave 8 – finn hjelpevektoren
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: Første komponent av y, Andre komponent av y
+
+Bruk $L=\begin{bmatrix}3&0\\1&2\end{bmatrix}$ og $-g=(9,7)^T$. Finn hjelpevektoren $y$ fra $Ly=-g$. Svar eksakt.
+
+$y_1=$ _[3] &nbsp; $y_2=$ _[2]
+```
+
+**Oppgave 9 – løs øvre triangulære system.**
+
+```{math-exercise}
+#| label: week10-task-cholesky-backward
+#| caption: Oppgave 9 – finn Newton-retningen
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: Første komponent av p, Andre komponent av p
+
+Bruk $L=\begin{bmatrix}3&0\\1&2\end{bmatrix}$ og $y=(3,2)^T$. Finn Newton-retningen $p$ fra $L^Tp=y$. Svar eksakt.
+
+$p_1=$ _[2/3] &nbsp; $p_2=$ _[1]
 ```
 
 Arbeid videre med [prosjekt 10: startpunkt, skala og Newton](project_week10.qmd).

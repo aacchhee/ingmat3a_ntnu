@@ -1,8 +1,9 @@
+::: {.python-setup style="display: none;" aria-hidden="true"}
+
 ```{pyodide-python}
 #| label: week9-setup
 #| autorun: true
 #| context: interactive
-#| code-fold: false
 # NumPy gir vektorer og gitter; Matplotlib tegner prøvepunkter og baner.
 import numpy as np
 import matplotlib.pyplot as plt
@@ -20,6 +21,6 @@ def grad9(z):
     x, y = z
     a, b = x*x + y - 11, x + y*y - 7
     return np.array([4*x*a + 2*b, 2*a + 4*y*b])
-# Meldingen vises først når både importene og funksjonsdefinisjonene er klare.
-print("Oppsett for uke 9 er klart. Nå kan du kjøre eksperimentene.")
 ```
+
+:::

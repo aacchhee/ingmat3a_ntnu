@@ -25,7 +25,7 @@ def expanded(path, include_root=None):
     )
 
 
-def run_page(page, figures=None, replacements=None):
+def run_page(page, figures=None, replacements=None, first_only=False):
     """Run in page order; replacements are only for explicitly completed tasks."""
     text = expanded(ROOT / page)
     labels = re.findall(r"^#\| label: (.+)$", text, re.M)
@@ -37,6 +37,10 @@ def run_page(page, figures=None, replacements=None):
         raise AssertionError(f"Placeholder left in {page}")
     ns = {"__name__": "__main__"}
     cells = CELL.findall(text)
+    if first_only:
+        # The first visible experiment must work without the automatic helpers.
+        cells = [code for code in cells
+                 if not re.search(r"^#\| label: .*?-setup$", code, re.M)][:1]
     if not cells:
         raise AssertionError(f"No experiments: {page}")
     for number, code in enumerate(cells, 1):
@@ -58,7 +62,8 @@ def run_page(page, figures=None, replacements=None):
         finally:
             plt.show = original_show
             plt.close("all")
-    print(f"PASS {page}: {len(cells)} Python cells in a fresh environment")
+    scope = "first visible cell alone" if first_only else f"{len(cells)} Python cells"
+    print(f"PASS {page}: {scope} in a fresh environment")
     return ns
 
 
@@ -67,9 +72,11 @@ if __name__ == "__main__":
     parser.add_argument("--week", type=int, nargs="+", choices=range(8, 13), default=list(range(8, 13)))
     parser.add_argument("--figures", type=Path)
     parser.add_argument("--projects", action="store_true", help="Also run both project pages and their editor supplements")
+    parser.add_argument("--first-only", action="store_true",
+                        help="Run the first visible experiment without setup or earlier cells")
     args = parser.parse_args()
     for week in args.week:
-        run_page(f"pages/uke{week}.qmd", args.figures)
+        run_page(f"pages/uke{week}.qmd", args.figures, first_only=args.first_only)
     if args.projects:
         for week in (10, 11):
             run_page(f"pages/project_week{week}.qmd", args.figures)
