@@ -128,12 +128,10 @@ main details[open] > summary { margin-bottom: 0.8rem; }
 .course-overview td:first-child {
   white-space: nowrap;
 }
-.course-overview td:first-child,
-.course-overview td:nth-child(2) {
+.course-overview td:first-child {
   padding: 0;
 }
-.course-overview td:first-child a,
-.course-overview td:nth-child(2) a {
+.course-overview td:first-child a {
   display: block;
   padding: 0.65rem 0.5rem;
   font-weight: 600;
