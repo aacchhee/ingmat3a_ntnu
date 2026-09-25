@@ -4994,13 +4994,13 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week10.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Prosjekt 10 – Første utkast: Newton, startpunkt og skala</span></a>
+ <span class="menu-text">Prosjekt 10 – Newton, startpunkt og skala</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Prosjekt 11 – Produksjonsplan og ressurspriser (førsteutkast)</span></a>
+ <span class="menu-text">Prosjekt 11 – Produksjonsplan og ressurspriser</span></a>
   </div>
 </li>
       </ul>
@@ -5081,38 +5081,7 @@ Gå i dybden
 </div>
 <section id="hvor-mye-skal-vi-lage" class="level3">
 <h3 class="anchored" data-anchor-id="hvor-mye-skal-vi-lage">Hvor mye skal vi lage?</h3>
-<p>I <a href="../pages/uke10.html">uke 10</a> lette vi etter et minimum ved hjelp av deriverte. Nå er både målet og begrensningene lineære. Et skritt som øker fortjenesten kan fortsette helt til en ressurs stopper oss. Vi skal formulere et produksjonsvalg, se hvorfor hjørner er interessante, løse modellen med <code>scipy.optimize.linprog</code> og lage et <strong>dualt sertifikat</strong> som kontrollerer resultatet. Til sist spør vi hva én ekstra enhet av en ressurs er verdt.</p>
-<p>Du trenger matrise–vektor-produkt, lineære likninger og ulikheter. Fra <a href="../pages/uke6.html#uke6-retning">uke 6</a> kjenner du skillet mellom en retning som forbedrer målet og et faktisk minimum. Her må retningen i tillegg holde oss innenfor begrensningene.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Tid</th>
-<th style="text-align: left;">Felles rute</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">0–25 min</td>
-<td style="text-align: left;">Modell og mulig område: forutsi beste produksjonsplan</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">25–50 min</td>
-<td style="text-align: left;">Hjørner og HiGHS: kontroller mål, slakk og status</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">50–85 min</td>
-<td style="text-align: left;">Duale priser: bygg et øvre bound som blir skarpt</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">85–110 min</td>
-<td style="text-align: left;">Endre én kapasitet: test marginalverdiens gyldighet</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">110–120 min</td>
-<td style="text-align: left;">Overføring, spørsmål og prosjektstart</td>
-</tr>
-</tbody>
-</table>
+<p>I <a href="../pages/uke8.html#uke8-modell">uke 8</a> måtte antall maskiner være heltall. Nå kan et verksted dele produksjonen i partier, og vi får et sammenhengende område av tillatte valg. Vi vil gå fra modell og geometri til en beregnet produksjonsplan, og deretter bevise at ingen annen plan er bedre. Til sist bruker vi beviset til å verdsette en ekstra ressursenhet. I <a href="../pages/uke6.html#uke6-retning">uke 6</a> ga gradienten en lokal forbedringsretning; her bestemmer ressursgrensene hvilke steg som faktisk er tillatt.</p>
 <p>Etter uken skal du kunne oversette et ressursproblem til ulikheter, skille <strong>mulig løsning</strong>, <strong>optimal løsning</strong>, <strong>umulig problem</strong> og <strong>ubegrenset problem</strong>, formulere dualen til et maksimeringsproblem med <span class="math inline">\(Ax\le b\)</span>, og kontrollere en optimalverdi med primal og dual løsning. Du skal tolke slakk og marginaler uten å forveksle fortegnet i SciPy med ressursens verdi. I <strong>Gå i dybden</strong> finner du lengre regninger og avgrensninger.</p>
 </section>
 </div>
@@ -5123,10 +5092,11 @@ Gå i dybden
 <p>Et verksted lager to delbare produktpartier, <span class="math inline">\(x\)</span> av type A og <span class="math inline">\(y\)</span> av type B. Ett parti A gir 5 tusen kroner i dekningsbidrag og bruker 2 enheter av første ressurs og 1 av andre. Ett parti B gir 4 tusen kroner og bruker henholdsvis 1 og 2 enheter. Vi har 9 enheter av hver ressurs og kan høyst lage 4 partier A. Anta at partier kan deles; hele partier krever en annen modell.</p>
 <p><strong>Forutsi:</strong> Er <span class="math inline">\((4,1)\)</span>, <span class="math inline">\((3,3)\)</span> eller <span class="math inline">\((0,4.5)\)</span> best? Hvilke begrensninger er aktive (holder med likhet) ved hvert punkt? Før vi velger, krever vi</p>
 <p>[ _{x,y}; P=5x+4y 2x+y,x+2y,x,x,y. ]</p>
-<p>Punktene på og innenfor alle grensene danner det <strong>mulige området</strong>. Vi tegner det og beregner <span class="math inline">\(P\)</span> i alle hjørnene. Listen over hjørner kan du kontrollere ved å løse par av grenselikninger.</p>
+<p>Punktene som oppfyller alle ulikhetene, er <strong>mulige løsninger</strong>; sammen danner de det mulige området. Dette området er et <strong>polyeder</strong>, altså et snitt av halvplan (områder på én side av en rett linje), eller halvrom i flere dimensjoner; her er det en begrenset polygon. En begrensning er <strong>aktiv</strong> når den holder med likhet. Dens <strong>slakk</strong> for en <span class="math inline">\(\le\)</span>-ulikhet er høyreside minus venstreside, for eksempel <span class="math inline">\(9-(2x+y)\)</span>; slakken er null når grensen er aktiv. Vi tegner området og beregner <span class="math inline">\(P\)</span> i alle hjørnene. Listen kan kontrolleres ved å løse par av grenselikninger og forkaste skjæringspunkter som bryter andre krav. Dette er <strong>lineær programmering (LP)</strong>: <span class="math inline">\(P\)</span> er lineær i variablene, mens grensene kan skrives <span class="math inline">\(a^Tz\le b\)</span>. Uttrykket <span class="math inline">\(a^Tz-b\)</span> er <strong>affint</strong> når <span class="math inline">\(b\ne0\)</span> (lineært uttrykk pluss konstant); det er fremdeles en LP, ikke et krumt problem.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Figuren gir målverdiene <span class="math inline">\(0,20,24,27,18\)</span> i oppført rekkefølge. Dermed er <span class="math inline">\((3,3)\)</span> best blant disse hjørnene, med 27 tusen kroner. Linjen <span class="math inline">\(5x+4y=27\)</span> treffer området der de to ressursgrensene møtes. <strong>Hvorfor kan ikke et punkt midt i en kant gi mer enn begge endepunktene?</strong> Langs en rett kant er målet lineært, så verdien mellom endene er et veid gjennomsnitt. For et ikke-tomt, begrenset polyeder finnes minst ett optimalt hjørne; flere punkter kan være optimale når mållinjen følger en kant. Dette er ennå ikke en kontroll av alle mulige punkter: vi skal snart lage et algebraisk øvre bound.</p>
+<p>Figuren gir målverdiene <span class="math inline">\(0,20,24,27,18\)</span> i oppført rekkefølge. Dermed er <span class="math inline">\((3,3)\)</span> best blant disse hjørnene, med 27 tusen kroner. Linjen <span class="math inline">\(5x+4y=27\)</span> treffer området der de to ressursgrensene møtes. <strong>Hvorfor kan ikke et punkt midt i en kant gi mer enn begge endepunktene?</strong> Ethvert punkt i polygonet kan skrives som et veid gjennomsnitt av hjørnene med ikke-negative vekter som summerer til 1. Fordi <span class="math inline">\(P\)</span> er lineær, er verdien samme veide gjennomsnitt av hjørneverdiene og kan derfor ikke overstige 27. Hjørnesammenligningen er et <strong>globalt bevis</strong> for dette begrensede polygonet. En hel kant kan være optimal når mållinjen følger kanten. Nedenfor bygger vi også et algebraisk bevis som virker uten at vi må tegne alle punktene.</p>
+<p>Dette forklarer også forskjellen fra <a href="../pages/uke8.html#uke8-lokalt">uke 8</a> og <a href="../pages/uke10.html#uke10-stasjonaer">uke 10</a>: <span class="math inline">\(\nabla P=(5,4)\)</span> er konstant og Hessianen er null. Det finnes ikke et indre punkt med <span class="math inline">\(\nabla P=0\)</span> å lete etter; et beste punkt kan ligge der en forbedrende retning stoppes av aktive ressursgrenser. Et begrenset, ikke-tomt polygon gir her et maksimum fordi det er lukket og begrenset, slik kompakthetsargumentet i <a href="../pages/uke8.html#uke8-kompakt">uke 8</a> tilsier.</p>
 <details class="reading-step">
 <summary>
 Gå i dybden: hjørner, standardformer og når påstanden trenger forbehold
@@ -5139,10 +5109,10 @@ Gå i dybden: hjørner, standardformer og når påstanden trenger forbehold
 <div id="uke11-linprog">
 
 </div>
-<p><code>linprog</code> <strong>minimerer</strong>. Vi sender derfor <span class="math inline">\(c=(-5,-4)\)</span>, og bruker <code>bounds=(0,None)</code> for begge beslutningsvariablene. Radene i <code>A_ub</code> står i samme rekkefølge som ressursene og øvre grense på A. <strong>Forutsi:</strong> Hva blir fortegnet på <code>result.fun</code>, og hvilke av de tre slakkene <span class="math inline">\(b-Az\)</span> blir null?</p>
+<p><code>linprog</code> fra <code>scipy.optimize</code> løser en <strong>minimering</strong> av <span class="math inline">\(c^Tz\)</span>. Oppsettet øverst på siden importerer <code>numpy as np</code>, <code>matplotlib.pyplot as plt</code> og <code>linprog</code>; du kan kjøre rutene nedenfor fortløpende. Vi legger <span class="math inline">\(z=(x,y)\)</span>, <span class="math inline">\(p=(5,4)\)</span>, <span class="math inline">\(A=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{smallmatrix}\right)\)</span> og <span class="math inline">\(b=(9,9,4)\)</span> i arrayer. <code>A_ub=A, b_ub=b</code> betyr <span class="math inline">\(Az\le b\)</span>, én begrensning per rad. Fordi vi vil <strong>maksimere</strong> <span class="math inline">\(p^Tz\)</span>, sender vi <code>-p</code> som <span class="math inline">\(c\)</span>. <code>bounds=(0,None)</code> betyr nedre grense 0 og ingen øvre grense for <strong>hver</strong> av de to variablene; kravet <span class="math inline">\(x\le4\)</span> ligger i matrisen. <code>method="highs"</code> velger LP-løseren HiGHS. <strong>Forutsi:</strong> Hva blir fortegnet på <code>result.fun</code>, og hvilke av de tre slakkene <span class="math inline">\(b-Az\)</span> blir null?</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Status 0 gir <span class="math inline">\(z=(3,3)\)</span>, <span class="math inline">\(P=27\)</span>, slakk <span class="math inline">\((0,0,1)\)</span> og største brudd 0 innenfor avrunding. De to ressursene er fullt utnyttet; grensen <span class="math inline">\(x\le4\)</span> har én enhet igjen. <code>result.fun=-27</code> er verdien av funksjonen SciPy faktisk minimerte. Ved større problemer må vi tolke små residualer mot solverens toleranser, ikke kreve eksakt null av flyttall. Et <code>success</code>-flagg alene er heller ikke et håndfast sertifikat for vår opprinnelige modell: kontroller fortegn, variabelgrenser, mulighet og målet.</p>
+<p><code>result.status==0</code> og <code>result.success</code> angir at løseren meldte vellykket avslutning; først da leser vi <code>result.x</code> (planen) og <code>result.fun</code> (minimumet av <span class="math inline">\(-P\)</span>). Status 2 betegner et umulig problem, status 3 et ubegrenset problem. <code>result.message</code> utdyper statusen. Status 0 gir <span class="math inline">\(z=(3,3)\)</span>, <span class="math inline">\(P=27\)</span>, slakk <span class="math inline">\((0,0,1)\)</span> og største brudd 0 innenfor avrunding. De to ressursene er fullt utnyttet; grensen <span class="math inline">\(x\le4\)</span> har én enhet igjen. <code>result.fun=-27</code> er verdien av funksjonen SciPy faktisk minimerte. Ved større problemer må vi tolke små residualer mot solverens toleranser, ikke kreve eksakt null av flyttall. Et <code>success</code>-flagg alene er heller ikke et håndfast sertifikat for vår opprinnelige modell: kontroller fortegn, variabelgrenser, mulighet og målet.</p>
 <p>Hva betyr det at metoden <strong>ikke</strong> finner et optimum? Prøv to små modeller og les status før du prøver å bruke <code>x</code> eller <code>fun</code>. Den første krever samtidig <span class="math inline">\(t\le1\)</span> og <span class="math inline">\(t\ge2\)</span>. Den andre maksimerer <span class="math inline">\(t\)</span> med bare <span class="math inline">\(t\ge0\)</span>.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -5152,12 +5122,12 @@ Gå i dybden: hjørner, standardformer og når påstanden trenger forbehold
 <div id="uke11-dual">
 
 </div>
-<p>Vi vil bevise at ingen mulig plan kan tjene over 27, også uten å stole på figuren. Sett ikke-negative priser <span class="math inline">\(u,v,w\)</span> på begrensningene <span class="math inline">\(2x+y\le9\)</span>, <span class="math inline">\(x+2y\le9\)</span>, <span class="math inline">\(x\le4\)</span>. Hvis den samlede prisen på ressursene som ett parti A bruker minst er 5, og prisen på ressursene for B minst er 4, får vi et øvre bound:</p>
+<p>Vi vil bevise at ingen mulig plan kan tjene over 27, også uten å tegne polygonet. Den opprinnelige maksimeringen kalles <strong>primalen</strong>. Sett ikke-negative priser <span class="math inline">\(q=(u,v,w)\)</span> (tusen kroner per enhet av den tilsvarende kapasiteten) på begrensningene <span class="math inline">\(2x+y\le9\)</span>, <span class="math inline">\(x+2y\le9\)</span>, <span class="math inline">\(x\le4\)</span>. Hvis den samlede prisen på ressursene som ett parti A bruker minst er 5, og prisen på ressursene for B minst er 4, får vi et øvre bound:</p>
 <p>[ 2u+v+w,u+2v 5x+4y(2u+v+w)x+(u+2v)y9u+9v+4w. ]</p>
-<p>Den første ulikheten bruker <span class="math inline">\(x,y\ge0\)</span>; den andre bruker ressursgrensene og <span class="math inline">\(u,v,w\ge0\)</span>. Dette er <strong>svak dualitet</strong>: enhver mulig produksjonsplan gir et nedre anslag på beste fortjeneste, og enhver mulig prisvektor gir et øvre anslag. <strong>Forutsi:</strong> Kan <span class="math inline">\(u=2,v=1,w=0\)</span> bevise at planen fra forsøket er best?</p>
+<p>Den første ulikheten bruker <span class="math inline">\(x,y\ge0\)</span>; den andre bruker ressursgrensene og <span class="math inline">\(u,v,w\ge0\)</span>. Dette er <strong>svak dualitet</strong>: enhver mulig produksjonsplan gir et nedre anslag på beste fortjeneste, og enhver <strong>dual mulig</strong> prisvektor (en som oppfyller priskravene over) gir et øvre anslag. Problemet med å finne det beste, laveste øvre anslaget kalles <strong>dualen</strong>. <strong>Forutsi:</strong> Kan <span class="math inline">\(u=2,v=1,w=0\)</span> bevise at planen fra forsøket er best?</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Begge målverdiene er 27. Enhver mulig plan har verdi høyst 27, mens <span class="math inline">\(z=(3,3)\)</span> oppnår 27. Vi har dermed bevist optimalitet. <strong>Overføring:</strong> Hvilken pris må være null når en begrensning har positiv slakk? Her er <span class="math inline">\(w=0\)</span> og <span class="math inline">\(4-x=1\)</span>.</p>
+<p>Begge målverdiene er 27. Enhver mulig plan har verdi høyst 27, mens <span class="math inline">\(z=(3,3)\)</span> oppnår 27. Vi har dermed bevist optimalitet. Likhet i de to ulikhetene i beviset krever at en positiv ressurspris ledsages av null slakk: <span class="math inline">\(q_i(b_i-(Az)_i)=0\)</span>. For et produsert produkt må tilsvarende prisen på innsatsfaktorene treffe fortjenesten: <span class="math inline">\(z_j((A^Tq)_j-p_j)=0\)</span>. Dette kalles <strong>komplementær slakk</strong>. Her er <span class="math inline">\(w=0\)</span> og <span class="math inline">\(4-x=1\)</span>; <span class="math inline">\(x,y&gt;0\)</span> og produktprisene er nøyaktig 5 og 4. <strong>Overføring:</strong> Hvorfor må en pris være null ved optimalitet når den tilhørende begrensningen har positiv slakk?</p>
 <p>Generelt gir et primalproblem <span class="math inline">\(\max p^Tz\)</span> med <span class="math inline">\(Az\le b, z\ge0\)</span> dualproblemet [ _{q} b^Tq A^Tqp. ] Når begge har mulige løsninger og et endelig optimum, er de beste målverdiene like (<strong>sterk dualitet</strong>). Vi trenger ikke forutsette sterk dualitet for å verifisere akkurat dette talleksemplet: vi har vist en mulig løsning på hver side med samme verdi.</p>
 <details class="reading-step">
 <summary>
@@ -5172,10 +5142,10 @@ Gå i dybden: dualitetsgap og komplementær slakk
 <div id="uke11-sensitivitet">
 
 </div>
-<p>Vi gir første ressurs <span class="math inline">\(Δ\)</span> flere enheter. Prisvektoren <span class="math inline">\((2,1,0)\)</span> gir da boundet <span class="math inline">\(27+2Δ\)</span>. Hvis de samme to ressursgrensene fortsatt møtes i et mulig punkt, blir dette også fortjenesten. <strong>Forutsi:</strong> Vil samme økning på 2 tusen kroner per ekstra ressursenhet gjelde for både <span class="math inline">\(Δ=0.5\)</span> og <span class="math inline">\(Δ=2\)</span>?</p>
+<p>Vi gir første ressurs <span class="math inline">\(\Delta\)</span> flere enheter. Prisvektoren <span class="math inline">\((2,1,0)\)</span> gir da boundet <span class="math inline">\(27+2Δ\)</span>. Hvis de samme to ressursgrensene fortsatt møtes i et mulig punkt, blir dette også fortjenesten. <strong>Forutsi:</strong> Vil samme økning på 2 tusen kroner per ekstra ressursenhet gjelde for både <span class="math inline">\(Δ=0.5\)</span> og <span class="math inline">\(Δ=2\)</span>?</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Ved <span class="math inline">\(Δ=0.5\)</span> blir fortjenesten 28, akkurat som anslaget. Ved <span class="math inline">\(Δ=2\)</span> blir den 30, mens den uendrede dualprisen bare gir et bound på 31: tredje begrensning begynner å binde. <code>result.ineqlin.marginals</code> er <span class="math inline">\((-2,-1,0)\)</span>, fordi SciPy oppgir derivert av <strong>minimeringsverdien</strong> <span class="math inline">\(-P_*\)</span> med hensyn til høyresiden. For vårt maksimeringsmål er den lokale ressursverdien derfor motsatt fortegn: <span class="math inline">\((2,1,0)\)</span>. Dette er et lokalt utsagn, ikke en lov for vilkårlig store endringer.</p>
+<p>Ved <span class="math inline">\(Δ=0.5\)</span> blir fortjenesten 28, akkurat som anslaget. Ved <span class="math inline">\(Δ=2\)</span> blir den 30, mens den uendrede dualprisen bare gir et bound på 31: tredje begrensning begynner å binde. <code>result.ineqlin.residual</code> er de tre slakkene <span class="math inline">\(b-Az\)</span>, og <code>result.ineqlin.marginals</code> er omtrent <span class="math inline">\((-2,-1,0)\)</span>. En <strong>marginal</strong> er den lokale endringen i optimal målverdi når en høyreside økes litt, mens de øvrige dataene holdes fast. SciPy oppgir derivert av <strong>minimeringsverdien</strong> <span class="math inline">\(-P_*\)</span> med hensyn til høyresiden. For vårt maksimeringsmål er den lokale ressursverdien derfor motsatt fortegn: <span class="math inline">\((2,1,0)\)</span>. Dette er et lokalt utsagn, ikke en lov for vilkårlig store endringer.</p>
 <p>Hvis vi holder de første to begrensningene aktive, gir likningene <span class="math inline">\(x=3+2Δ/3\)</span>, <span class="math inline">\(y=3-Δ/3\)</span>. Kravene <span class="math inline">\(x,y\ge0\)</span> og <span class="math inline">\(x\le4\)</span> gir <span class="math inline">\(-4.5\leΔ\le1.5\)</span>. I akkurat dette intervallet er planen mulig og dualprisen fortsatt mulig, så verdien er <strong>eksakt</strong> <span class="math inline">\(27+2Δ\)</span>. Ved endepunktene kan flere begrensninger bli aktive. <strong>Overføring:</strong> Hvorfor gir en pris på null for <span class="math inline">\(x\le4\)</span> mening før kapasiteten er brukt opp, men ikke nødvendigvis etterpå?</p>
 <details class="reading-step">
 <summary>
@@ -5191,7 +5161,7 @@ Gå i dybden: flere optimale planer og hele partier
 </div>
 <p>Bruk den samme modellen som i 11.1–11.4. Svar med eksakte tall eller brøker der det er mulig. Disse oppgavene krever ikke Python.</p>
 <div id="week11-exercise-context" class="math-exercise-context">
-<p>La <span data-math-exercise-display="false" data-math-exercise-tex="z=(x,y)\ge0"><span class="math inline">\(z=(x,y)\ge0\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="p=(5,4)"><span class="math inline">\(p=(5,4)\)</span></span>, <span data-math-exercise-display="false" data-math-exercise-tex="A=\begin{bmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{bmatrix}"><span class="math inline">\(A=\begin{bmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{bmatrix}\)</span></span> og <span data-math-exercise-display="false" data-math-exercise-tex="b=(9,9,4)"><span class="math inline">\(b=(9,9,4)\)</span></span>. Primalen maksimerer <span data-math-exercise-display="false" data-math-exercise-tex="p^Tz"><span class="math inline">\(p^Tz\)</span></span> med <span data-math-exercise-display="false" data-math-exercise-tex="Az\le b"><span class="math inline">\(Az\le b\)</span></span>. Dualen minimerer <span data-math-exercise-display="false" data-math-exercise-tex="b^Tq"><span class="math inline">\(b^Tq\)</span></span> med <span data-math-exercise-display="false" data-math-exercise-tex="A^Tq\ge p, q\ge0"><span class="math inline">\(A^Tq\ge p, q\ge0\)</span></span>. Slakk er <span data-math-exercise-display="false" data-math-exercise-tex="b-Az"><span class="math inline">\(b-Az\)</span></span>. En primal og en dual mulig løsning med lik verdi sertifiserer optimum ved svak dualitet.</p>
+<p>La <span data-math-exercise-tex="z=(x,y)\ge0" data-math-exercise-display="false"><span class="math inline">\(z=(x,y)\ge0\)</span></span>, <span data-math-exercise-tex="p=(5,4)" data-math-exercise-display="false"><span class="math inline">\(p=(5,4)\)</span></span>, <span data-math-exercise-tex="A=\begin{bmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{bmatrix}" data-math-exercise-display="false"><span class="math inline">\(A=\begin{bmatrix}2&amp;1\\1&amp;2\\1&amp;0\end{bmatrix}\)</span></span> og <span data-math-exercise-tex="b=(9,9,4)" data-math-exercise-display="false"><span class="math inline">\(b=(9,9,4)\)</span></span>. Primalen maksimerer <span data-math-exercise-tex="p^Tz" data-math-exercise-display="false"><span class="math inline">\(p^Tz\)</span></span> med <span data-math-exercise-tex="Az\le b" data-math-exercise-display="false"><span class="math inline">\(Az\le b\)</span></span>. Dualen minimerer <span data-math-exercise-tex="b^Tq" data-math-exercise-display="false"><span class="math inline">\(b^Tq\)</span></span> med <span data-math-exercise-tex="A^Tq\ge p, q\ge0" data-math-exercise-display="false"><span class="math inline">\(A^Tq\ge p, q\ge0\)</span></span>. Slakk er <span data-math-exercise-tex="b-Az" data-math-exercise-display="false"><span class="math inline">\(b-Az\)</span></span>. En primal og en dual mulig løsning med lik verdi sertifiserer optimum ved svak dualitet.</p>
 </div>
 <section id="oppgave-1-oversett-en-plan" class="level3">
 <h3 class="anchored" data-anchor-id="oppgave-1-oversett-en-plan">Oppgave 1 – oversett en plan</h3>
@@ -5310,9 +5280,47 @@ Skriv svaret eksakt.<br>
 </div>
 <p>I <a href="../pages/project_week11.html">prosjektet</a> undersøker du et større produksjonsvalg der du må begrunne hvilke kapasitetsendringer en ressurspris faktisk kan brukes for.</p>
 </section>
-<section id="kilder-og-overgang" class="level3">
-<h3 class="anchored" data-anchor-id="kilder-og-overgang">Kilder og overgang</h3>
-<p>Denne siden svarer til Gjøvik <strong>kalenderuke 44</strong>: <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/lineaer_optimering_-_standard_former.pdf">lineær optimering – standardformer</a> og <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/lineaer_optimering_-_dualitet.pdf">lineær optimering – dualitet</a>. Trondheims <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning21.pdf">forelesning 21</a> og <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning22.pdf">forelesning 22</a> gir den tilhørende LP-ruten. <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html">SciPy-dokumentasjonen for <code>linprog</code></a> og <a href="https://docs.scipy.org/doc/scipy/reference/optimize.linprog-highs.html">HiGHS-resultatet</a> beskriver API, statuser og marginalenes fortegn. Koblingen fra duale priser til multiplikatorer ved ikke-lineære begrensninger utvikles i <a href="../pages/uke12.html">uke 12</a>.</p>
+<section id="kort-oppslag-linprog" class="level3">
+<h3 class="anchored" data-anchor-id="kort-oppslag-linprog">Kort oppslag: <code>linprog</code></h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Skriv/les</th>
+<th style="text-align: left;">Betydning i dette eksemplet</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>from scipy.optimize import linprog</code></td>
+<td style="text-align: left;">Importen finnes i oppsettet over.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>linprog(-p, A_ub=A, b_ub=b, bounds=(0,None), method="highs")</code></td>
+<td style="text-align: left;">Minimer <span class="math inline">\(-p^Tz\)</span> under <span class="math inline">\(Az\le b\)</span> og <span class="math inline">\(z\ge0\)</span>. Med likninger brukes <code>A_eq</code>, <code>b_eq</code>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>bounds=(0,None)</code></td>
+<td style="text-align: left;">Bruker samme nedre grense 0 for alle variabler; <code>None</code> betyr ingen øvre grense. Ulike grenser kan gis per variabel, for eksempel <code>[(0,4),(0,None)]</code> for <span class="math inline">\(x,y\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>result.success</code>, <code>result.status</code>, <code>result.message</code></td>
+<td style="text-align: left;">Les løserens status først; 0 er vellykket, 2 er umulig, 3 er ubegrenset.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>result.x</code>, <code>result.fun</code></td>
+<td style="text-align: left;">Les ved vellykket status: variabler og verdi av <strong>minimeringsmålet</strong>. Vår fortjeneste er <code>-result.fun</code>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>result.ineqlin.residual</code>, <code>result.ineqlin.marginals</code></td>
+<td style="text-align: left;">Slakk og lokal verdifølsomhet for hver <code>A_ub</code>-rad. Her er marginalene negative fordi målet er <span class="math inline">\(-P\)</span>; ressursprisene for <span class="math inline">\(P\)</span> får motsatt fortegn.</td>
+</tr>
+</tbody>
+</table>
+<p>I <a href="../pages/uke12.html">uke 12</a> bruker vi samme spørsmål om tillatte retninger og bevis for optimalitet når begrensningene er krumme.</p>
 </section>
 </div>
 </div>

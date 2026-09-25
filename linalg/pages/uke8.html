@@ -972,7 +972,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import minimize","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"b, r = np.meshgrid(np.arange(51), np.arange(101), indexing=\"ij\")\nallowed = (10*b + r <= 100) & (b + 3*r <= 50)\nprofit = 500*b + 250*r - 650\nbest = tuple(int(i) for i in np.unravel_index(\n    np.argmax(np.where(allowed, profit, -np.inf)), profit.shape))\nprint(f\"Best blant {allowed.sum()} tillatte heltallspar: (b,r)={best}, P={profit[best]} kr\")\nprint(f\"Ressursbruk: {10*best[0]+best[1]} komponenter, {best[0]+3*best[1]} timer\")\nfig, ax = plt.subplots(figsize=(6, 5))\npoints = ax.scatter(b[allowed], r[allowed], c=profit[allowed], s=19, cmap=\"viridis\")\nax.plot(*best, \"r*\", markersize=16, label=\"Beste heltallsvalg\")\nax.set(xlabel=\"Nye maskiner b\", ylabel=\"Reparasjoner r\", title=\"Tillatte heltallsvalg\")\nfig.colorbar(points, ax=ax, label=\"Nettooverskudd (kr)\")\nax.legend(); plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-production","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def wavy(z):\n    x, y = z\n    return 20 + x*x + y*y - 10*(np.cos(2*np.pi*x) + np.cos(2*np.pi*y))\n\ndef wavy_grad(z):\n    x, y = z\n    return np.array([2*x + 20*np.pi*np.sin(2*np.pi*x),\n                     2*y + 20*np.pi*np.sin(2*np.pi*y)])\n\nfor start in ([0., 0.], [2., 2.]):\n    result = minimize(wavy, start, jac=wavy_grad, method=\"BFGS\")\n    x, y = result.x\n    print(f\"Start {start}: punkt ({x:.4f}, {y:.4f}), \"\n          f\"f={result.fun:.4f}, ||grad f||={np.linalg.norm(wavy_grad(result.x)):.2e}\")\n\ngrid = np.linspace(-.3, 2.4, 180)\nX, Y = np.meshgrid(grid, grid)\nfig, ax = plt.subplots(figsize=(6, 5))\ncurves = ax.contour(X, Y, wavy((X, Y)), levels=np.arange(0, 24, 2))\nax.clabel(curves, inline=True, fontsize=8)\nax.plot(0, 0, \"ko\", label=\"Start nær (0,0)\")\nax.plot(2, 2, \"r*\", markersize=12, label=\"Start nær (2,2)\")\nax.set(xlabel=\"x\", ylabel=\"y\", title=\"Nivåkurver for kostnaden\")\nax.legend(); plt.show()","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-local-minima","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"for n in (10, 100, 1000):\n    sample = np.arange(1, n)/n  # Begge endepunkter er utelatt.\n    print(f\"{n-1:4d} indre punkter: minste g={sample.min():.3f}, \"\n          f\"største g={sample.max():.3f}\")","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-open-domain","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def phi(z):\n    u, v = z\n    return u*u + u*v + v*v - 3*u\n\na, b = np.array([0., 0.]), np.array([2., -1.])\nprint(f\"Kvadratikk: midten {phi((a+b)/2):.2f}, \"\n      f\"snitt av ender {(phi(a)+phi(b))/2:.2f}\")\nc, d = np.array([0., 0.]), np.array([1., 0.])\nprint(f\"Bølget:    midten {wavy((c+d)/2):.2f}, \"\n      f\"snitt av ender {(wavy(c)+wavy(d))/2:.2f}\")\nprint(\"Egenverdier til kvadratikkens Hessian:\",\n      np.linalg.eigvalsh(np.array([[2., 1.], [1., 2.]])))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-convex-midpoints","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import minimize","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-setup","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"b, r = np.meshgrid(np.arange(51), np.arange(101), indexing=\"ij\")\nallowed = (10*b + r <= 100) & (b + 3*r <= 50)\nprofit = 500*b + 250*r - 650\nbest = tuple(int(i) for i in np.unravel_index(\n    np.argmax(np.where(allowed, profit, -np.inf)), profit.shape))\nprint(f\"Best blant {allowed.sum()} tillatte heltallspar: (b,r)={best}, P={profit[best]} kr\")\nprint(f\"Ressursbruk: {10*best[0]+best[1]} komponenter, {best[0]+3*best[1]} timer\")\nfig, ax = plt.subplots(figsize=(6, 5))\npoints = ax.scatter(b[allowed], r[allowed], c=profit[allowed], s=19, cmap=\"viridis\")\nax.plot(*best, \"r*\", markersize=16, label=\"Beste heltallsvalg\")\nax.set(xlabel=\"Nye maskiner b\", ylabel=\"Reparasjoner r\", title=\"Tillatte heltallsvalg\")\nfig.colorbar(points, ax=ax, label=\"Nettooverskudd (kr)\")\nax.legend(); plt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-production","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def wavy(z):\n    x, y = z\n    return 20 + x*x + y*y - 10*(np.cos(2*np.pi*x) + np.cos(2*np.pi*y))\n\ndef wavy_grad(z):\n    x, y = z\n    return np.array([2*x + 20*np.pi*np.sin(2*np.pi*x),\n                     2*y + 20*np.pi*np.sin(2*np.pi*y)])\n\nfor start in ([0., 0.], [2., 2.]):\n    result = minimize(wavy, start, jac=wavy_grad, method=\"BFGS\")\n    x, y = result.x\n    print(f\"Start {start}: punkt ({x:.4f}, {y:.4f}), \"\n          f\"f={result.fun:.4f}, ||grad f||={np.linalg.norm(wavy_grad(result.x)):.2e}\")\n\ngrid = np.linspace(-.3, 2.4, 180)\nX, Y = np.meshgrid(grid, grid)\nfig, ax = plt.subplots(figsize=(6, 5))\ncurves = ax.contour(X, Y, wavy((X, Y)), levels=np.arange(0, 24, 2))\nax.clabel(curves, inline=True, fontsize=8)\nax.plot(0, 0, \"ko\", label=\"Start nær (0,0)\")\nax.plot(2, 2, \"r*\", markersize=12, label=\"Start nær (2,2)\")\nax.set(xlabel=\"x\", ylabel=\"y\", title=\"Nivåkurver for kostnaden\")\nax.legend(); plt.show()","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-local-minima","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"for n in (10, 100, 1000):\n    sample = np.arange(1, n)/n  # Begge endepunkter er utelatt.\n    print(f\"{n-1:4d} indre punkter: minste g={sample.min():.3f}, \"\n          f\"største g={sample.max():.3f}\")","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-open-domain","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"def phi(z):\n    u, v = z\n    return 1.5*u*u + u*v + v*v - 5*u - 5*v\n\na, b = np.array([0., 0.]), np.array([1., 2.])\nprint(f\"Kvadratikk: midten {phi((a+b)/2):.3f}, \"\n      f\"snitt av ender {(phi(a)+phi(b))/2:.3f}\")\nc, d = np.array([0., 0.]), np.array([1., 0.])\nprint(f\"Bølget:    midten {wavy((c+d)/2):.2f}, \"\n      f\"snitt av ender {(wavy(c)+wavy(d))/2:.2f}\")\nprint(\"Egenverdier til kvadratikkens Hessian:\",\n      np.linalg.eigvalsh(np.array([[3., 1.], [1., 2.]])))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week8-convex-midpoints","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4994,13 +4994,13 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week10.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Prosjekt 10 – Første utkast: Newton, startpunkt og skala</span></a>
+ <span class="menu-text">Prosjekt 10 – Newton, startpunkt og skala</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Prosjekt 11 – Produksjonsplan og ressurspriser (førsteutkast)</span></a>
+ <span class="menu-text">Prosjekt 11 – Produksjonsplan og ressurspriser</span></a>
   </div>
 </li>
       </ul>
@@ -5073,7 +5073,7 @@ Gå i dybden
 <p><span role="status" aria-live="polite"></span></p>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">8.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">8.1 Modell, valg og tillatt område</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">8.2 Kritiske punkter er kandidater</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">8.3 Kompakthet og eksistens</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">8.4 Konveksitet gir en global garanti</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">8.5 Oppgaver og kilder</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">8.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">8.1 Modell, valg og tillatt område</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">8.2 Kritiske punkter er kandidater</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">8.3 Kompakthet og eksistens</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">8.4 Konveksitet gir en global garanti</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">8.5 Oppgaver og Python-huskeliste</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="uke8-start">
@@ -5081,62 +5081,49 @@ Gå i dybden
 </div>
 <section id="fra-et-likningssystem-til-et-valg" class="level3">
 <h3 class="anchored" data-anchor-id="fra-et-likningssystem-til-et-valg">Fra et likningssystem til et valg</h3>
-<p>I <a href="../pages/uke6.html#uke6-energi">uke 6</a> fant vi minimum til en kvadratisk funksjon med positiv definit matrise. Der svarte null gradient til én global løsning. Hva skjer når vi må velge mellom heltall, når funksjonen har flere bunner, eller når det beste tallet ligger utenfor det tillatte området?</p>
-<p>Vi forutsetter partiellderivasjon, gradient og egenverdier fra tidligere uker. Etter denne uken skal du kunne formulere et mål og et tillatt område, skille lokale og globale optima, undersøke indre kritiske punkter med gradient og Hessian, og forklare hva kompakt og konveks betyr for et minimum. <strong>Forelesning</strong> følger forsøkene; <strong>Gå i dybden</strong> åpner mellomregningene.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Tid</th>
-<th style="text-align: left;">Felles rute</th>
-<th style="text-align: left;">Spørsmål</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">0–25 min</td>
-<td style="text-align: left;"><a href="#uke8-modell">8.1 Modell og område</a></td>
-<td style="text-align: left;">Hvilke valg er tillatt?</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">25–60 min</td>
-<td style="text-align: left;"><a href="#uke8-lokalt">8.2 Lokalt og globalt</a></td>
-<td style="text-align: left;">Hva kan gradient og Hessian avgjøre?</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">60–85 min</td>
-<td style="text-align: left;"><a href="#uke8-kompakt">8.3 Kompakthet</a></td>
-<td style="text-align: left;">Finnes det alltid et beste punkt?</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">85–120 min</td>
-<td style="text-align: left;"><a href="#uke8-konveks">8.4 Konveksitet</a></td>
-<td style="text-align: left;">Når er et lokalt minimum globalt?</td>
-</tr>
-</tbody>
-</table>
-<p>Pensum her følger <strong>Gjøvik, kalenderuke 41</strong>, og <strong>Trondheim, kalenderuke 41 (forelesning 15–16)</strong>. Uke 9–10 tar for seg hvordan vi faktisk bygger og forbedrer iterative optimeringsmetoder. Denne uken undersøker vi først hvilket problem de skal løse, og hvilke konklusjoner et numerisk svar tåler.</p>
+<p>I <a href="../pages/uke6.html#uke6-energi">uke 6</a> fant vi løsningen av et lineært system ved å minimere en kvadratisk funksjon. Nå skal vi undersøke problemer der funksjonen kan ha flere bunner, og der noen valg er utelukket av begrensninger. Før vi velger en regnemetode, må vi vite hva vi mener med en løsning og hvordan vi kan kontrollere den.</p>
+<p>Fire spørsmål følger oss gjennom hele optimeringsdelen:</p>
+<ul>
+<li><strong>Hva er problemet?</strong> Vi må velge en målfunksjon og angi hvilke punkter som er tillatt.</li>
+<li><strong>Finnes det en beste verdi?</strong> En følge av stadig bedre svar trenger ikke å nå et minimum.</li>
+<li><strong>Hvordan finner vi en kandidat?</strong> En numerisk metode undersøker bare en del av området.</li>
+<li><strong>Hvorfor er kandidaten best?</strong> Vi trenger en matematisk begrunnelse for å gå fra et lovende tall til en garanti.</li>
+</ul>
+<p>Denne uken bygger vi begrepene som trengs for å svare. Først lager vi en modell. Deretter bruker vi deriverte til å undersøke punkter nær en kandidat. Til slutt ser vi hvilke egenskaper ved hele området og funksjonen som sikrer at et minimum finnes, og at et lokalt minimum også er globalt. <strong>Forelesning</strong> viser hovedløpet; <strong>Gå i dybden</strong> åpner lengre begrunnelser og mellomregninger.</p>
+<p>I <a href="../pages/uke9.html">uke 9</a> utvikler vi søkemetoder, og i <a href="../pages/uke10.html">uke 10</a> bruker vi andrederiverte til å velge bedre steg. <a href="../pages/uke11.html">Uke 11</a> og <a href="../pages/uke12.html">uke 12</a> handler om hvordan begrensninger endrer både søket og begrunnelsen for at et svar er optimalt.</p>
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div id="uke8-modell">
 
 </div>
+<p>Et <strong>optimeringsproblem</strong> ber oss finne det beste tillatte valget. Valgene samles i en vektor <span class="math inline">\(z=(z_1,\ldots,z_n)^T\)</span>, og <strong>målfunksjonen</strong> <span class="math inline">\(f(z)\)</span> er tallet vi vil gjøre minst eller størst. Det <strong>tillatte området</strong> <span class="math inline">\(D\)</span> er mengden av valg som oppfyller alle kravene, også kalt <strong>bibetingelser</strong>. Et punkt i <span class="math inline">\(D\)</span> er et tillatt punkt.</p>
+<p>Notasjonen</p>
+<p><span class="math display">\[\min_{z\in D} f(z)\]</span></p>
+<p>betyr at vi søker en <strong>minimumsverdi</strong> blant punktene i <span class="math inline">\(D\)</span>. Et punkt <span class="math inline">\(z_*\)</span> som oppnår verdien, er et <strong>minimumspunkt</strong>; selve tallet er <span class="math inline">\(f(z_*)\)</span>. Vi skriver ofte at vi «finner minimum», men må holde disse to størrelsene fra hverandre. Å maksimere <span class="math inline">\(f\)</span> er det samme som å minimere <span class="math inline">\(-f\)</span>: de samme punktene blir best.</p>
 <section id="eksperiment-1-lønner-det-seg-å-bruke-alle-ressursene" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-1-lønner-det-seg-å-bruke-alle-ressursene">Eksperiment 1 – lønner det seg å bruke alle ressursene?</h3>
 <p>Fire studenter bygger nye datamaskiner og reparerer gamle. La <span class="math inline">\(b\)</span> være antall <strong>nye</strong> maskiner og <span class="math inline">\(r\)</span> antall <strong>reparasjoner</strong> i én uke. En ny maskin gir 500 kr i overskudd før reisen, en reparasjon 250 kr, og en ukentlig innkjøpstur koster 650 kr. Hver ny maskin bruker 10 komponenter og én arbeidstime; hver reparasjon bruker én komponent og tre arbeidstimer. De har høyst 100 komponenter og 50 timer. Begge antall må være ikke-negative heltall.</p>
 <p>Målet er å <strong>maksimere</strong> nettooverskuddet <span class="math inline">\(P(b,r)=500b+250r-650\)</span> over det tillatte området</p>
 <p><span class="math display">\[D=\{(b,r)\in\mathbb Z_{\ge0}^2:10b+r\le100,\ b+3r\le50\}.\]</span></p>
-<p>Her betyr <span class="math inline">\(\in\)</span> «er med i», og krøllparentesene samler alle par som oppfyller kravene. I svaret skiller vi mellom <strong>maksimumpunktet</strong> <span class="math inline">\((b,r)\)</span> og <strong>maksimalverdien</strong> <span class="math inline">\(P(b,r)\)</span>.</p>
+<p>Her betyr <span class="math inline">\(\in\)</span> «er med i», <span class="math inline">\(\mathbb Z_{\ge0}\)</span> er de ikke-negative heltallene, og krøllparentesene samler alle par som oppfyller kravene. I svaret skiller vi mellom <strong>maksimumpunktet</strong> <span class="math inline">\((b,r)\)</span> og <strong>maksimalverdien</strong> <span class="math inline">\(P(b,r)\)</span>.</p>
+<p>I koden lager <code>meshgrid</code> alle par av de to listene med antall. <code>allowed</code> markerer hvilke par som oppfyller begge ressurskravene. <code>np.where</code> lar bare disse konkurrere, og <code>argmax</code> finner plasseringen med høyest overskudd. Det er en systematisk opptelling, ikke en metode basert på deriverte.</p>
 <p>Forutsatt at turen gjennomføres, er reisekostnaden fast. <strong>Gjett:</strong> Er det beste heltallsvalget et punkt som bruker nøyaktig begge ressursene? Vi prøver alle mulige heltallspar i det lille, avgrensede området. Figuren viser bare tillatte valg.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Forsøket finner <span class="math inline">\((b,r)=(8,14)\)</span> og 6850 kr. Det bruker 94 komponenter og alle 50 timene. Et uttrykk med <span class="math inline">\(b=8.62\)</span> kan ikke beskrive antall maskiner, selv om det er et tillatt punkt når vi <strong>midlertidig</strong> lar variablene være reelle. Modellen bestemmer både <em>hva som måles</em>, og <em>hvilke svar som teller</em>. Om turen kunne droppes, måtte også valget «ingen tur, ingen fast kostnad» stå i modellen.</p>
-<p>Et punkt <span class="math inline">\(x_*\)</span> er et <strong>lokalt minimum</strong> for <span class="math inline">\(f\)</span> på <span class="math inline">\(D\)</span> når <span class="math inline">\(f(x_*)\le f(x)\)</span> for alle tillatte <span class="math inline">\(x\)</span> tilstrekkelig nær <span class="math inline">\(x_*\)</span>. Det er <strong>globalt</strong> når ulikheten gjelder for alle <span class="math inline">\(x\in D\)</span>. For maksimum snur vi ulikheten. Ordene gjelder alltid et bestemt <strong>mål og område</strong>. Heltallsvalgene er isolerte: i den vanlige topologiske definisjonen blir faktisk hvert slikt punkt et lokalt optimum ved å velge et lite nok nabolag. En gradient forteller derfor ikke hvilke heltallsvalg som er bedre. <strong>Hva ville endret seg hvis <span class="math inline">\(b\)</span> og <span class="math inline">\(r\)</span> var delbare størrelser?</strong></p>
+</section>
+<section id="lokalt-og-globalt-svarer-på-forskjellige-spørsmål" class="level3">
+<h3 class="anchored" data-anchor-id="lokalt-og-globalt-svarer-på-forskjellige-spørsmål">Lokalt og globalt svarer på forskjellige spørsmål</h3>
+<p>Et tillatt punkt <span class="math inline">\(z_*\)</span> er et <strong>globalt minimumspunkt</strong> når <span class="math inline">\(f(z_*)\le f(z)\)</span> for alle <span class="math inline">\(z\in D\)</span>. Det er et <strong>lokalt minimumspunkt</strong> når ulikheten gjelder for alle tillatte punkter tilstrekkelig nær <span class="math inline">\(z_*\)</span>. «Nær» betyr liten avstand <span class="math inline">\(\|z-z_*\|_2\)</span>, med den vanlige vektorlengden fra <a href="../pages/uke4.html">uke 4</a>. Et minimum er <strong>strengt</strong> når ulikheten er streng for andre punkter i området vi sammenligner med. For maksimum snur vi ulikhetene. <strong>Ekstremum</strong> er en fellesbetegnelse for minimum og maksimum; <strong>optimalt</strong> betyr best for det valgte målet.</p>
+<p>I produksjonsforsøket fant vi et globalt maksimum fordi vi undersøkte <em>alle</em> tillatte heltallspar. For reelle variabler er det som regel uendelig mange punkter, så den framgangsmåten er ikke tilgjengelig. Et lokalt søk kan da finne en dalbunn uten å oppdage en dypere dal.</p>
+<p>Et tall <span class="math inline">\(L\)</span> er en <strong>nedre grense</strong> dersom <span class="math inline">\(L\le f(z)\)</span> for alle tillatte <span class="math inline">\(z\)</span>; en <strong>øvre grense</strong> defineres med motsatt ulikhet. Hvis et tillatt punkt oppnår en slik grense, har vi et bevis på at verdien er globalt best. Denne ideen kommer igjen i alle ukene, særlig som <strong>dualitet</strong> i uke 11. Vi skal først se den i en enkel sum av ikke-negative ledd.</p>
+<p>Heltallsvalg kan ikke endres med vilkårlig små steg. Faktisk blir hvert isolert heltallspunkt et lokalt optimum etter definisjonen over, fordi et lite nok område ikke inneholder andre tillatte punkter. Derfor handler derivasjonstestene i neste avsnitt om <strong>reelle variabler</strong>.</p>
 <details class="reading-step">
 <summary>
 Gå i dybden: kontinuerlig avslapning og fast reisekostnad
 </summary>
-<p>Hvis <span class="math inline">\(b,r\)</span> tillates å være reelle, er området en kompakt polygon. <span class="math inline">\(P\)</span> er affin: langs hver rette kant er verdien lineær, så et maksimum finnes i et hjørne (eller på en hel kant med samme verdi). Sammenligning av hjørnene gir skjæringen mellom ressursgrensene: <span class="math inline">\(b=250/29\)</span> og <span class="math inline">\(r=400/29\)</span>, med <span class="math inline">\(P=225000/29-650\approx7108.62\)</span> kr. Dette er en <strong>øvre grense</strong> for heltallsproblemet, ikke en gjennomførbar produksjonsplan. Punktet <span class="math inline">\((8,14)\)</span> bruker <span class="math inline">\(10\cdot8+14=94\)</span> komponenter og <span class="math inline">\(8+3\cdot14=50\)</span> timer. Hvis null produksjon ikke krever en tur, må vi i stedet definere <span class="math inline">\(P(0,0)=0\)</span> som eget valg; formelen med <span class="math inline">\(-650\)</span> beskriver en tur som faktisk tas.</p>
+<p>Hvis <span class="math inline">\(b,r\)</span> tillates å være reelle, blir det tillatte området en lukket, begrenset mangekant. Denne utvidelsen kalles en <strong>relaksasjon</strong>: vi tillater flere valg, så beste overskudd kan bare øke. <span class="math inline">\(P\)</span> er <strong>affin</strong>, altså lineær pluss en konstant. På en slik mangekant oppnår en affin funksjon et maksimum i minst ett hjørne; langs en kant varierer den lineært og kan også være konstant. I <a href="../pages/uke11.html#uke11-modell">uke 11</a> utvikler vi denne hjørnemetoden. Sammenligning av hjørnene gir skjæringen mellom ressursgrensene: <span class="math inline">\(b=250/29\)</span> og <span class="math inline">\(r=400/29\)</span>, med <span class="math inline">\(P=225000/29-650\approx7108.62\)</span> kr. Dette er en <strong>øvre grense</strong> for heltallsproblemet, ikke en gjennomførbar produksjonsplan. Punktet <span class="math inline">\((8,14)\)</span> bruker <span class="math inline">\(10\cdot8+14=94\)</span> komponenter og <span class="math inline">\(8+3\cdot14=50\)</span> timer. Hvis null produksjon ikke krever en tur, må vi i stedet definere <span class="math inline">\(P(0,0)=0\)</span> som eget valg; formelen med <span class="math inline">\(-650\)</span> beskriver en tur som faktisk tas.</p>
 </details>
 </section>
 </div>
@@ -5144,15 +5131,105 @@ Gå i dybden: kontinuerlig avslapning og fast reisekostnad
 <div id="uke8-lokalt">
 
 </div>
+<p>For å undersøke en dalbunn trenger vi å beskrive hvordan funksjonen endrer seg når vi flytter et punkt litt. Vi repeterer derfor den flerdimensjonale derivasjonen fra <a href="../pages/uke6.html#uke6-retning">uke 6</a>.</p>
+<div id="uke8-gradient">
+
+</div>
+<section id="gradient-endring-i-en-valgt-retning" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-endring-i-en-valgt-retning">Gradient: endring i en valgt retning</h3>
+<p>For <span class="math inline">\(f(u,v)\)</span> er den <strong>partiellderiverte</strong> <span class="math inline">\(\partial f/\partial u\)</span> deriverten når <span class="math inline">\(u\)</span> endres og <span class="math inline">\(v\)</span> holdes fast. De to partiellderiverte samles i <strong>gradienten</strong></p>
+<p><span class="math display">\[\nabla f(z)=\begin{pmatrix}\partial f/\partial u\\
+\partial f/\partial v\end{pmatrix},\qquad z=(u,v)^T.\]</span></p>
+<p>For et lite steg <span class="math inline">\(h\)</span> er endringen omtrent <span class="math inline">\(f(z+h)-f(z)\approx\nabla f(z)^Th\)</span>. Produktet er det vanlige indreproduktet: hver koordinatendring multipliseres med sin helning. Langs en bestemt retning <span class="math inline">\(p\)</span> er den deriverte med hensyn på stegparameteren <span class="math inline">\(t\)</span></p>
+<p><span class="math display">\[\left.\frac{d}{dt}f(z+tp)\right|_{t=0}=\nabla f(z)^Tp.\]</span></p>
+<p>Dette følger av kjerneregelen og kalles den <strong>retningsderiverte langs <span class="math inline">\(p\)</span></strong>; dersom <span class="math inline">\(p\)</span> har lengde 1, måler den endring per lengdeenhet. Når produktet er negativt, senker tilstrekkelig små positive steg funksjonen. Retningen <span class="math inline">\(-\nabla f(z)\)</span> har denne egenskapen så lenge gradienten ikke er null. Vi bruker den til å bygge en metode i uke 9.</p>
+<p>Et <strong>indre punkt</strong> i <span class="math inline">\(D\)</span> har et lite område rundt seg der alle punkter er tillatt. Et <strong>randpunkt</strong> ligger på grensen mellom tillatte og utelukkede valg. Ved et indre lokalt minimum kan vi bevege oss litt i begge fortegn langs hver koordinat. Da må alle partiellderiverte være null. Et punkt med <span class="math inline">\(\nabla f(z)=0\)</span> kalles <strong>stasjonært</strong>, eller <strong>kritisk</strong> i våre deriverbare problemer. Dette er en <strong>nødvendig betingelse</strong>: alle slike minima må oppfylle den. Det er ennå ikke en <strong>tilstrekkelig betingelse</strong>, altså noe som alene garanterer minimum.</p>
+</section>
 <section id="eksperiment-2-to-starter-to-svar" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-2-to-starter-to-svar">Eksperiment 2 – to starter, to svar</h3>
-<p>Vi minimerer nå en glatt kostnadsfunksjon med to reelle innstillinger <span class="math inline">\(x,y\)</span>:</p>
+<p>Vi minimerer nå en kostnadsfunksjon med to reelle innstillinger <span class="math inline">\(x,y\)</span>. Den er <strong>glatt</strong>: de deriverte vi trenger finnes og varierer kontinuerlig, uten sprang:</p>
 <p><span class="math display">\[f(x,y)=20+x^2+y^2-10\bigl(\cos(2\pi x)+\cos(2\pi y)\bigr).\]</span></p>
-<p>Kvadratleddene straffer store innstillinger; cosinusleddene gir flere små daler. <strong>Forutsi:</strong> Vil to lokale søk fra <span class="math inline">\((0,0)\)</span> og <span class="math inline">\((2,2)\)</span> rapportere samme verdi? Vi gir SciPy den analytiske gradienten og kontrollerer verdi og gradient etterpå. Rutinen er foreløpig et måleinstrument; vi utleder algoritmene i senere uker.</p>
+<p>Kvadratleddene straffer store innstillinger; cosinusleddene gir flere små daler. <strong>Forutsi:</strong> Vil to lokale søk fra <span class="math inline">\((0,0)\)</span> og <span class="math inline">\((2,2)\)</span> gi samme verdi? En <strong>nivåkurve</strong> forbinder punkter med samme funksjonsverdi; figuren under viser slike kurver rundt dalene.</p>
+</section>
+<section id="første-møte-med-scipy" class="level3">
+<h3 class="anchored" data-anchor-id="første-møte-med-scipy">Første møte med SciPy</h3>
+<p><strong>NumPy</strong> gir oss arrayer, vektorregning og elementære funksjoner. <strong>SciPy</strong> bygger videre på NumPy med ferdige numeriske metoder. Her bruker vi <code>minimize</code> fra delen <code>scipy.optimize</code>. Oppsettet på siden har allerede kjørt importen <code>from scipy.optimize import minimize</code>. Du trenger ikke installere noe for å bruke kodecellene.</p>
+<p>Kallet <code>minimize(wavy, start, jac=wavy_grad, method="BFGS")</code> betyr:</p>
+<ul>
+<li><code>wavy</code> er Python-funksjonen som skal minimeres. Den tar inn en array <code>z</code> og returnerer ett tall. Vi sender inn <strong>funksjonen</strong>, uten parenteser, så SciPy kan kalle den på flere punkter.</li>
+<li><code>start</code> er startvektoren, altså første punkt som prøves.</li>
+<li><code>jac=wavy_grad</code> gir funksjonen som beregner gradienten. Navnet <code>jac</code> brukes av SciPy; her skal den returnere en array med én derivert per variabel.</li>
+<li><code>method="BFGS"</code> velger en lokal søkemetode som bruker gradienter til å anslå krumningen. Vi undersøker prinsippet i uke 10; her bruker vi metoden for å sammenligne to startpunkter.</li>
+</ul>
+<p>Svaret <code>result</code> er en samling opplysninger: <code>result.x</code> er punktet metoden fant, og <code>result.fun</code> er funksjonsverdien der. Vi kontrollerer også <strong>gradientnormen</strong> <span class="math inline">\(\|\nabla f\|_2\)</span>, altså lengden på gradientvektoren. Liten norm betyr små deriverte, og er bare en kontroll av stasjonaritet, ikke et bevis på minimum.</p>
+<p>Kjør cellen og sammenlign punktene, verdiene og gradientnormene.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Fra null får vi verdi 0. Fra <span class="math inline">\((2,2)\)</span> får vi omtrent <span class="math inline">\((1.9899,1.9899)\)</span>, verdi 7.9597 og gradientnorm rundt <span class="math inline">\(10^{-6}\)</span>. Begge ligger ved dalbunner; gradienten er nesten null også ved den <strong>dårligere</strong> dalen. Dessuten kan vi her bevise globalitet uten å stole på søket: <span class="math inline">\(x^2+y^2\ge0\)</span> og hver cosinus er høyst 1, så <span class="math inline">\(f(x,y)\ge0\)</span> for alle <span class="math inline">\((x,y)\)</span>. Nullpunktet oppnår grensen. <strong>Ville to starter alene vært et bevis for denne påstanden?</strong></p>
-<p>Anta at <span class="math inline">\(f\)</span> er to ganger kontinuerlig deriverbar i et åpent nabolag av et punkt <strong>inne i</strong> området. Ved et lokalt ekstremum må <span class="math inline">\(\nabla f(x_*)=0\)</span>: punktet er <strong>kritisk</strong>. For å skille kandidater undersøker vi Hessianmatrisen <span class="math inline">\(H_f\)</span>, matrisen av andre partiellderiverte. Er alle egenverdier positive i et kritisk punkt, har vi et strengt lokalt minimum; alle negative gir et strengt lokalt maksimum. Egenverdier med begge fortegn gir et sadelpunkt, også om andre egenverdier er null. Er Hessian semidefinit med en null egenverdi, avgjør testen ikke punktets type. Klassifikasjonen sier fortsatt ikke at minimum er globalt. På <strong>randen</strong> kan optimum ha gradient ulik null, slik som minimum av <span class="math inline">\(f(x)=x\)</span> på <span class="math inline">\([0,1]\)</span> ved <span class="math inline">\(x=0\)</span>.</p>
+<div id="uke8-hessian">
+
+</div>
+</section>
+<section id="hessian-hvilken-vei-krummer-funksjonen" class="level3">
+<h3 class="anchored" data-anchor-id="hessian-hvilken-vei-krummer-funksjonen">Hessian: hvilken vei krummer funksjonen?</h3>
+<p>Den andrederiverte forteller om en kurve bøyer opp eller ned. For to variabler samler vi alle andre partiellderiverte i <strong>Hessianmatrisen</strong>:</p>
+<p><span class="math display">\[H_f(z)=\nabla^2 f(z)=
+\begin{pmatrix}
+\dfrac{\partial^2 f}{\partial u^2} &amp; \dfrac{\partial^2 f}{\partial u\partial v}\\[6pt]
+\dfrac{\partial^2 f}{\partial v\partial u} &amp; \dfrac{\partial^2 f}{\partial v^2}
+\end{pmatrix}.\]</span></p>
+<p>Diagonalene beskriver krumning når én koordinat endres. De blandede partiellderiverte beskriver hvordan helningen i én koordinat endres når den andre endres. Når de andrederiverte er kontinuerlige (skrevet <span class="math inline">\(f\in C^2\)</span>), er de blandede deriverte like, så Hessianen er symmetrisk. I <span class="math inline">\(n\)</span> variabler er den en <span class="math inline">\(n\times n\)</span>-matrise.</p>
+<p>Hessianen inngår i en <strong>lokal kvadratisk modell</strong>, Taylor-tilnærmingen:</p>
+<p><span class="math display">\[f(z+h)\approx f(z)+\nabla f(z)^Th+\tfrac12 h^TH_f(z)h.\]</span></p>
+<p>Her er <span class="math inline">\(h\)</span> en liten endring i punktet, første ledd er verdien vi starter fra, andre ledd er endringen gradienten forutsier, og siste ledd tar med krumningen. Ved et stasjonært punkt er det lineære leddet null; da er fortegnet til <span class="math inline">\(h^TH_f(z)h\)</span> avgjørende for andrederiverttesten.</p>
+<p>Fra <a href="../pages/uke5.html">uke 5</a> og <a href="../pages/uke6.html#uke6-energi">uke 6</a> kjenner vi følgende egenskaper for symmetriske matriser:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Egenskap</th>
+<th style="text-align: left;">Hva betyr den for alle vektorer <span class="math inline">\(h\ne0\)</span>?</th>
+<th style="text-align: left;">Egenverdier</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Positiv definit</td>
+<td style="text-align: left;"><span class="math inline">\(h^THh&gt;0\)</span></td>
+<td style="text-align: left;">Alle er positive</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Positiv semidefinit</td>
+<td style="text-align: left;"><span class="math inline">\(h^THh\ge0\)</span></td>
+<td style="text-align: left;">Alle er ikke-negative</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Negativ definit</td>
+<td style="text-align: left;"><span class="math inline">\(h^THh&lt;0\)</span></td>
+<td style="text-align: left;">Alle er negative</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Negativ semidefinit</td>
+<td style="text-align: left;"><span class="math inline">\(h^THh\le0\)</span></td>
+<td style="text-align: left;">Alle er ikke-positive</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Indefinit</td>
+<td style="text-align: left;">Uttrykket er positivt for noen <span class="math inline">\(h\)</span> og negativt for andre</td>
+<td style="text-align: left;">Begge fortegn finnes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>SPD</strong> forkorter «symmetrisk positiv definit». I et stasjonært indre punkt gir positiv definit Hessian et <strong>strengt lokalt minimum</strong>; negativ definit gir et strengt lokalt maksimum. En indefinit Hessian gir et <strong>sadelpunkt</strong>: det finnes både høyere og lavere funksjonsverdier vilkårlig nær punktet. En semidefinit Hessian med en null egenverdi avgjør ikke typen. For eksempel har både <span class="math inline">\(u^4\)</span> og <span class="math inline">\(-u^4\)</span> andrederivert null i origo, men den ene har minimum og den andre maksimum.</p>
+<p>Den kvadratiske funksjonen fra uke 6 var <span class="math inline">\(\phi(u,v)=\tfrac32u^2+uv+v^2-5u-5v\)</span>. Direkte derivasjon gir</p>
+<p><span class="math display">\[\nabla\phi(u,v)=\begin{pmatrix}3u+v-5\\u+2v-5\end{pmatrix},
+\qquad H_\phi=\begin{pmatrix}3&amp;1\\1&amp;2\end{pmatrix}=A.\]</span></p>
+<p>Hessianen er altså nettopp systemmatrisen. Taylor-modellen er eksakt for denne funksjonen. For den bølgede funksjonen varierer Hessianen med punktet, og modellen er bare en lokal tilnærming. Det er dette skillet vi bygger Newtons metode på i uke 10.</p>
+<p>Testen krever et <strong>indre</strong> punkt. Minimum av <span class="math inline">\(f(x)=x\)</span> på <span class="math inline">\([0,1]\)</span> ligger ved randen <span class="math inline">\(x=0\)</span>, selv om den deriverte er 1. Der er alle små <em>tillatte</em> bevegelser mot høyre. I uke 11–12 må vi derfor kombinere informasjon om funksjonen med informasjon om hvilke bevegelser begrensningene tillater.</p>
 <details class="reading-step">
 <summary>
 Gå i dybden: nødvendige og tilstrekkelige lokale tester
@@ -5171,13 +5248,13 @@ Gå i dybden: nødvendige og tilstrekkelige lokale tester
 <p>Tenk at vi vil minimere <span class="math inline">\(g(x)=x\)</span>. På det lukkede intervallet <span class="math inline">\([0,1]\)</span> er svaret 0. Hva med det <strong>åpne</strong> intervallet <span class="math inline">\((0,1)\)</span>? La et rutenett med flere og flere indre punkter prøve å finne minimum. <strong>Forutsi:</strong> Vil det minste rapporterte punktet noensinne være et tillatt minimum?</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Tallene blir <span class="math inline">\(0.1,0.01,0.001\)</span> for de minste verdiene. Vi kan alltid velge et nytt tillatt punkt nærmere 0. <strong>Infimum</strong> er 0, men ingen <span class="math inline">\(x\in(0,1)\)</span> oppnår det; heller ikke supremum 1 er et maksimum der. Det er ikke et spørsmål om finere numerisk oppløsning. På <span class="math inline">\([0,1]\)</span> er begge endepunktene tillatt.</p>
-<p>En mengde i <span class="math inline">\(\mathbb R^n\)</span> er <strong>kompakt</strong> når den er <strong>lukket</strong> (inneholder alle sine grensepunkter) og <strong>begrenset</strong> (får plass innenfor en endelig radius). Setningen om ekstremalverdier sier at en <strong>kontinuerlig</strong> funksjon på en <strong>ikke-tom kompakt</strong> mengde oppnår både minimum og maksimum. Heltallsområdet i 8.1 er endelig og dermed kompakt; den kontinuerlige polygonen er også kompakt. Åpenhet eller ubegrensethet fjerner garantien, men utelukker ikke alltid et optimum: <span class="math inline">\(x^2\)</span> har minimum på hele <span class="math inline">\(\mathbb R\)</span>. <strong>Hvorfor garanterer ikke setningen at søket fra én start finner minimumet?</strong></p>
+<p>Tallene blir <span class="math inline">\(0.1,0.01,0.001\)</span> for de minste verdiene. Vi kan alltid velge et nytt tillatt punkt nærmere 0. <strong>Infimum</strong> er den største nedre grensen for funksjonsverdiene. Her er den 0, men ingen <span class="math inline">\(x\in(0,1)\)</span> oppnår den. <strong>Supremum</strong> er den minste øvre grensen; her er den 1, og den oppnås heller ikke. Minimum og maksimum krever at en tillatt verdi faktisk oppnår grensen. Det er ikke et spørsmål om finere numerisk oppløsning. På <span class="math inline">\([0,1]\)</span> er begge endepunktene tillatt.</p>
+<p>Et <strong>grensepunkt</strong> kan nås som grensen av punkter i mengden. Mengden er <strong>lukket</strong> hvis alle slike grenser også er med, og <strong>begrenset</strong> hvis alle punktene får plass i en ball med endelig radius. I <span class="math inline">\(\mathbb R^n\)</span> betyr <strong>kompakt</strong> at mengden er både lukket og begrenset. For eksempel er <span class="math inline">\([0,1]\)</span> kompakt, men <span class="math inline">\((0,1)\)</span> mangler grensepunktene 0 og 1. En <strong>kontinuerlig</strong> funksjon bevarer grenser: når punkter nærmer seg et punkt, nærmer funksjonsverdiene seg verdien der. Setningen om ekstremalverdier sier at en <strong>kontinuerlig</strong> funksjon på en <strong>ikke-tom kompakt</strong> mengde oppnår både minimum og maksimum. Heltallsområdet i 8.1 er endelig og dermed kompakt; den kontinuerlige polygonen er også kompakt. Åpenhet eller ubegrensethet fjerner garantien, men utelukker ikke alltid et optimum: <span class="math inline">\(x^2\)</span> har minimum på hele <span class="math inline">\(\mathbb R\)</span>. <strong>Hvorfor garanterer ikke setningen at søket fra én start finner minimumet?</strong></p>
 <details class="reading-step">
 <summary>
 Gå i dybden: hvorfor lukkethet og begrensning begge teller
 </summary>
-<p>Hvis en kontinuerlig funksjon på en ikke-tom kompakt mengde ikke oppnådde sin infimumverdi, kunne vi velge en følge av tillatte punkter med funksjonsverdi stadig nærmere infimum. Kompakthet gir en konvergent delfølge med grensepunkt <em>i området</em>. Kontinuitet ville så gitt akkurat infimum i grensepunktet: en motsigelse. Intervallet <span class="math inline">\((0,1)\)</span> mister grensepunktet 0; på <span class="math inline">\(\mathbb R\)</span> kan en følge i stedet løpe ubegrenset langt bort. Setningen gir <strong>eksistens</strong>, ikke en metode for å lokalisere punktet eller entydighet.</p>
+<p>Først må funksjonsverdiene være begrenset: ellers kunne vi velge punkter med <span class="math inline">\(|f|\)</span> stadig større uten grense. En konvergent delfølge ville da motsi kontinuitet i grensepunktet. Infimum er derfor et endelig tall. Hvis funksjonen ikke oppnådde sin infimumverdi, kunne vi velge en følge av tillatte punkter med funksjonsverdi stadig nærmere infimum. Kompakthet gir en konvergent delfølge med grensepunkt <em>i området</em>. Kontinuitet ville så gitt akkurat infimum i grensepunktet: en motsigelse. Intervallet <span class="math inline">\((0,1)\)</span> mister grensepunktet 0; på <span class="math inline">\(\mathbb R\)</span> kan en følge i stedet løpe ubegrenset langt bort. Setningen gir <strong>eksistens</strong>, ikke en metode for å lokalisere punktet eller entydighet.</p>
 </details>
 </section>
 </div>
@@ -5187,13 +5264,15 @@ Gå i dybden: hvorfor lukkethet og begrensning begge teller
 </div>
 <section id="eksperiment-4-test-et-punkt-mellom-to-andre" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-4-test-et-punkt-mellom-to-andre">Eksperiment 4 – test et punkt mellom to andre</h3>
-<p>Vi tar en kvadratikk av samme type som i <a href="../pages/uke6.html#uke6-retning">uke 6, valg av søkeretning</a>: <span class="math inline">\(\phi(u,v)=u^2+uv+v^2-3u\)</span>. Vi sammenligner den med <span class="math inline">\(f\)</span> fra 8.2. For to punkter <span class="math inline">\(a,b\)</span> tester vi midtpunktet <span class="math inline">\(m=(a+b)/2\)</span>. <strong>Forutsi:</strong> Ligger funksjonsverdien i midten over eller under gjennomsnittet av endeverdiene?</p>
+<p>At et minimum finnes, forteller ikke om en lokal metode finner det. Nå ser vi etter en egenskap som gjør alle lokale minima globale. Vi vender tilbake til akkurat den kvadratiske funksjonen fra <a href="../pages/uke6.html#uke6-energi">uke 6</a>: <span class="math inline">\(\phi(u,v)=\tfrac32u^2+uv+v^2-5u-5v\)</span>. Vi sammenligner den med <span class="math inline">\(f\)</span> fra 8.2. For to punkter <span class="math inline">\(a,b\)</span> tester vi midtpunktet <span class="math inline">\(m=(a+b)/2\)</span>. <strong>Forutsi:</strong> Ligger funksjonsverdien i midten over eller under gjennomsnittet av endeverdiene?</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Kvadratikken gir <span class="math inline">\(-2.25\le-1.50\)</span>. Den bølgede gir <span class="math inline">\(20.25&gt;0.50\)</span>, så <strong>ett</strong> moteksempel er nok til å avkrefte konveksitet. En mengde <span class="math inline">\(D\)</span> er <strong>konveks</strong> dersom hele linjestykket <span class="math inline">\(ta+(1-t)b\)</span> ligger i <span class="math inline">\(D\)</span> når <span class="math inline">\(a,b\in D\)</span> og <span class="math inline">\(0\le t\le1\)</span>. En funksjon på et konvekst område er <strong>konveks</strong> dersom</p>
+<p>Kvadratikken gir <span class="math inline">\(-5.625\le-3.750\)</span>. Den bølgede gir <span class="math inline">\(20.25&gt;0.50\)</span>, så <strong>ett</strong> moteksempel er nok til å avkrefte konveksitet. En mengde <span class="math inline">\(D\)</span> er <strong>konveks</strong> dersom hele linjestykket <span class="math inline">\(ta+(1-t)b\)</span> ligger i <span class="math inline">\(D\)</span> når <span class="math inline">\(a,b\in D\)</span> og <span class="math inline">\(0\le t\le1\)</span>. En funksjon på et konvekst område er <strong>konveks</strong> dersom</p>
 <p><span class="math display">\[f(ta+(1-t)b)\le t f(a)+(1-t)f(b)\qquad(a,b\in D,\ 0\le t\le1).\]</span></p>
-<p>For å <em>bevise</em> konveksitet må ulikheten gjelde alle slike punkter. For en <span class="math inline">\(C^2\)</span>-funksjon på et <strong>åpent konvekst område</strong> er positiv semidefinit Hessian overalt en tilstrekkelig test for konveksitet. <strong>Streng konveksitet</strong> betyr streng ulikhet for ulike endepunkter og <span class="math inline">\(0&lt;t&lt;1\)</span>; da kan det finnes høyst ett minimum, men eksistens må vises separat. Kvadratikken har konstant Hessian med egenverdiene 1 og 3. Den er strengt konveks, og det kritiske punktet <span class="math inline">\((2,-1)\)</span> er dermed dens unike globale minimum på <span class="math inline">\(\mathbb R^2\)</span>. Dette utvikler SPD-argumentet fra uke 6 til en test for generelle funksjoner: Hessian må nå undersøkes i <strong>hele området</strong>, ikke bare i ett punkt.</p>
-<p>På et konvekst område er ethvert lokalt minimum av en konveks funksjon også globalt. Et indre kritisk punkt er dermed globalt, men et randminimum kan fremdeles ha gradient ulik null. Den <strong>reelle</strong> versjonen av produksjonsområdet er konveks, mens heltallspunktene ikke er det: midtpunktet mellom <span class="math inline">\((0,0)\)</span> og <span class="math inline">\((1,0)\)</span> er ikke et tillatt heltallsvalg. <strong>Hvordan påvirker dette hvilken garanti vi kan bruke i produksjonsmodellen?</strong></p>
+<p>Venstresiden er verdien i et punkt mellom endepunktene; høyresiden er samme vektede gjennomsnitt av endeverdiene. Grafen ligger dermed under den rette forbindelsen mellom endeverdiene. For å <em>bevise</em> konveksitet må ulikheten gjelde alle slike punkter. For en <span class="math inline">\(C^2\)</span>-funksjon på et <strong>åpent konvekst område</strong> (alle punktene er indre punkter) er positiv semidefinit Hessian overalt en tilstrekkelig test for konveksitet. <strong>Streng konveksitet</strong> betyr streng ulikhet for ulike endepunkter og <span class="math inline">\(0&lt;t&lt;1\)</span>; da kan det finnes høyst ett minimum, men eksistens må vises separat. Kvadratikken har konstant Hessian med egenverdiene <span class="math inline">\((5-\sqrt5)/2\)</span> og <span class="math inline">\((5+\sqrt5)/2\)</span>, begge positive. Den er strengt konveks, og det kritiske punktet <span class="math inline">\((1,2)\)</span> er dermed dens unike globale minimum på <span class="math inline">\(\mathbb R^2\)</span>. Her betyr <strong>entydig</strong> at ingen andre punkter oppnår minimumsverdien. Dette utvikler SPD-argumentet fra uke 6 til en test for generelle funksjoner: Hessian må nå undersøkes i <strong>hele området</strong>, ikke bare i ett punkt.</p>
+<p>På et konvekst område er ethvert lokalt minimum av en konveks funksjon også globalt. Hvorfor kan heller ikke et stasjonært punkt skjule en dårligere dal? For en deriverbar konveks funksjon gjelder <strong>tangentulikheten</strong></p>
+<p><span class="math display">\[f(y)\ge f(z)+\nabla f(z)^T(y-z).\]</span></p>
+<p>Den lineære modellen ved <span class="math inline">\(z\)</span> ligger altså under funksjonen i alle tillatte punkter <span class="math inline">\(y\)</span>. Ved et stasjonært punkt forsvinner indreproduktet, så <span class="math inline">\(f(y)\ge f(z)\)</span> overalt: punktet er globalt minimum. Dette gir et bevis, ikke bare en lokal test. I uke 11 lager vi andre slike globale grenser når målet og bibetingelsene er lineære. Et randminimum kan fremdeles ha gradient ulik null. Den <strong>reelle</strong> versjonen av produksjonsområdet er konveks, mens heltallspunktene ikke er det: midtpunktet mellom <span class="math inline">\((0,0)\)</span> og <span class="math inline">\((1,0)\)</span> er ikke et tillatt heltallsvalg. <strong>Hvordan påvirker dette hvilken garanti vi kan bruke i produksjonsmodellen?</strong></p>
 <details class="reading-step">
 <summary>
 Gå i dybden: fra linjestykke til globalt minimum
@@ -5314,10 +5393,73 @@ Positiv egenverdi: <input type="text" id="math-exercise-2-f1" data-answer="2" da
 <div class="math-feedback-area"></div>
 </div>
 </div>
+<div id="uke8-scipy">
+
+</div>
 </section>
-<section id="kilder-og-videre-arbeid" class="level3">
-<h3 class="anchored" data-anchor-id="kilder-og-videre-arbeid">Kilder og videre arbeid</h3>
-<p>Uken bygger på Gjøviks notater <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/introduksjon_til_optimering.pdf">Introduksjon til optimering</a> og <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/konveksitet_og_kompakthet.pdf">Konveksitet og kompakthet</a> fra kalenderuke 41, samt Trondheims <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning15.pdf">forelesning 15</a> og <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning16.pdf">forelesning 16</a>. Vi har brukt <code>scipy.optimize.minimize</code> til å undersøke <em>lokale</em> resultater; senere uker bygger metodene som ligger bak slike søk.</p>
+<section id="huskeliste-numpy-scipy-og-resultatet-av-et-søk" class="level3">
+<h3 class="anchored" data-anchor-id="huskeliste-numpy-scipy-og-resultatet-av-et-søk">Huskeliste: NumPy, SciPy og resultatet av et søk</h3>
+<p>De neste ukene bruker vi samme arbeidsmåte: skriv målfunksjonen som en Python-funksjon, velg startpunkt eller tillatt område, kjør metoden, og kontroller svaret. Oppsettet på hver side importerer pakkene; kodecellene på siden kan kjøres og endres direkte. Kjør dem i rekkefølge.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Uttrykk i koden</th>
+<th style="text-align: left;">Hva det betyr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>import numpy as np</code></td>
+<td style="text-align: left;">Importer NumPy; <code>np</code> er et kort navn vi velger.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>from scipy.optimize import minimize</code></td>
+<td style="text-align: left;">Hent minimeringsrutinen fra SciPy.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>z = np.array([1., 2.])</code></td>
+<td style="text-align: left;">En vektor med to flyttall. I beregningene brukes punktum som desimaltegn.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>u, v = z</code></td>
+<td style="text-align: left;">Gi de to komponentene hvert sitt navn.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>A @ z</code> og <code>p @ q</code></td>
+<td style="text-align: left;">Matrise–vektor-produkt og indreprodukt for arrayer med riktig form. <code>*</code> betyr elementvis multiplikasjon.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>np.linalg.norm(z)</code></td>
+<td style="text-align: left;">Den vanlige lengden <span class="math inline">\(\|z\|_2\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>np.linalg.eigvalsh(H)</code></td>
+<td style="text-align: left;">Egenverdiene til en reell symmetrisk matrise.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>minimize(f, x0, jac=grad_f, method="BFGS")</code></td>
+<td style="text-align: left;">Søk etter et lokalt minimum fra <code>x0</code>, med gradientfunksjonen <code>grad_f</code>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>result.x</code>, <code>result.fun</code></td>
+<td style="text-align: left;">Punktet som ble funnet, og funksjonsverdien der.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>result.success</code>, <code>result.message</code></td>
+<td style="text-align: left;">Om metodens egne stoppkrav ble oppfylt, og en forklaring på hvorfor den stoppet.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>result.nit</code>, <code>result.nfev</code></td>
+<td style="text-align: left;">Antall iterasjoner og funksjonsevalueringer. En <strong>iterasjon</strong> er én gjentakelse av metodens oppdatering; én iterasjon kan prøve funksjonen flere ganger.</td>
+</tr>
+</tbody>
+</table>
+<p><code>success=True</code> beviser verken at punktet er et globalt minimum eller at en feilgrense du selv har valgt, er oppfylt. Sjekk verdien, tillatte valg og relevante deriverte. Med en matematisk nedre grense kan vi i tillegg sammenligne verdien med det beste som er mulig.</p>
+<p>I <a href="../pages/uke9.html#uke9-start">uke 9</a> åpner vi selve søkeprosessen: hvilke punkter skal vi prøve, og når er forbedringen så liten at vi stopper? Skill da mellom å <strong>finne en kandidat</strong>, å <strong>kontrollere nødvendige betingelser</strong> og å <strong>bevise global optimalitet</strong>. Forsøkene i denne uken viser hvorfor det er tre forskjellige oppgaver.</p>
 </section>
 </div>
 </div>

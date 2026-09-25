@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Emneinnhold – Matematikk 3A</title>
+<title>optimization-package-review – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -116,7 +116,9 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/emneinnhold.html">Emneinnhold</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      Matematikk 3A
+      </li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -149,7 +151,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/emneinnhold.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/emneinnhold.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Emneinnhold</span></a>
   </div>
 </li>
@@ -347,30 +349,19 @@ window.Quarto = {
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 <script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Emneinnhold</h1>
-</div>
 
 
 
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<section id="tall-og-algoritmer" class="level2">
-<h2 class="anchored" data-anchor-id="tall-og-algoritmer">Tall og algoritmer</h2>
+<section id="optimisation-package-final-holistic-review" class="level1">
+<h1>Optimisation package: final holistic review</h1>
+<p>Reviewed the complete revised weeks 8–12 on <code>linalg-branch</code>, against the working tree based on <code>e8d086a</code>. This is a package-level review of mathematical accuracy, prerequisite order, connected exposition, week-to-week progression and beginner SciPy use. It follows an initial reading of all five original notes and a second reading of all five revised notes, including the writers’ final corrections.</p>
+<section id="verdict" class="level2">
+<h2 class="anchored" data-anchor-id="verdict">Verdict</h2>
+<p>No remaining substantive mathematical or instructional blocker was found. The revised package is suitable as the written course resource for these five topics, with the preceding course weeks as its stated foundation. It now explains the route through the material rather than presenting a sequence of largely independent experiments. Essential definitions and usable theorem statements are in the main route; longer arguments remain under <strong>Gå i dybden</strong>.</p>
+<p>The preserved progression is coherent:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -379,110 +370,130 @@ window.Quarto = {
 </colgroup>
 <thead>
 <tr class="header">
-<th>Uke</th>
-<th>Spørsmålet vi starter med</th>
-<th>Matematisk innhold og kobling til anvendelser</th>
+<th>Week</th>
+<th>Question developed</th>
+<th>Connection and outcome</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>1</strong></td>
-<td><strong>Hvorfor kan to matematisk riktige beregningsmåter koste svært forskjellig – og hvorfor gir datamaskinen noen ganger overraskende svar?</strong> Vi sammenligner algoritmer for polynomevaluering og undersøker hvordan tall faktisk representeres i maskinen.</td>
-<td>Regneoperasjoner og Horners metode, binære tall, IEEE 754-flyttall, avrunding og numerisk stabilitet. Dette forklarer både beregningskostnad og hvorfor vanlige regneregler ikke alltid oppfører seg som forventet i flyttallsaritmetikk.</td>
+<td>8</td>
+<td>What is an optimisation problem, and what makes an answer best?</td>
+<td>Defines the objective and feasible set, local/global and strict extrema, derivatives, Hessian tests, existence and convexity. Separates finding a candidate from proving its quality.</td>
 </tr>
 <tr class="even">
-<td><strong>2</strong></td>
-<td><strong>Hvorfor nærmer noen gjentatte beregninger seg en løsning, mens andre går i syklus eller løper bort?</strong> Vi skriver samme ligning som forskjellige fikspunktiterasjoner og sammenligner utviklingen numerisk og grafisk.</td>
-<td>Fikspunkt, lokal og global konvergens, konvergensfart, feil, residual, skrittlengde og toleranse. Vi bygger en robust iterasjonsalgoritme med historikk, stoppkriterium og diagnostikk.</td>
+<td>9</td>
+<td>How can we find a candidate with the information available?</td>
+<td>Develops finite sampling, adaptive compass search and gradient descent on one nonlinear function. Extends week 6’s distinction between direction and step, and distinguishes Armijo acceptance from minimising along a line.</td>
+</tr>
+<tr class="odd">
+<td>10</td>
+<td>What does local curvature add to the search?</td>
+<td>Derives Newton’s system from the quadratic model before using it. Distinguishes an unsuitable direction from an excessive step, then treats regularisation, damping and local convergence under explicit assumptions.</td>
+</tr>
+<tr class="even">
+<td>11</td>
+<td>How do resource constraints change the problem and its certificate?</td>
+<td>Connects divisible production to week 8’s integer model. Explains vertices, solver translation, primal/dual bounds, complementary slackness and the finite validity interval of a resource price.</td>
+</tr>
+<tr class="odd">
+<td>12</td>
+<td>How do we optimise when feasible movement follows a curve or surface?</td>
+<td>Derives tangent and normal geometry, introduces the Lagrangian and regularity, classifies candidates, checks SLSQP output, and connects multipliers to week 11’s global bounds.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="numerisk-lineær-algebra" class="level2">
-<h2 class="anchored" data-anchor-id="numerisk-lineær-algebra">Numerisk lineær algebra</h2>
+<section id="continuity-and-prerequisite-sequencing" class="level2">
+<h2 class="anchored" data-anchor-id="continuity-and-prerequisite-sequencing">Continuity and prerequisite sequencing</h2>
+<p>The shared quadratic from week 6 is now genuinely reused in weeks 8 and 10:</p>
+<p><span class="math display">\[
+\phi(u,v)=\tfrac32u^2+uv+v^2-5u-5v,\qquad
+A=\begin{pmatrix}3&amp;1\\1&amp;2\end{pmatrix},\qquad x_*=(1,2)^T.
+\]</span></p>
+<p>Week 8 explains why its Hessian is the same matrix, why its Taylor model is exact and why positive eigenvalues certify strict convexity. Week 10 then makes the same model the reason that one Newton step solves the quadratic problem. The changed midpoint values, eigenvalues and Newton direction agree with this common example.</p>
+<p>Week 9 retains one nonlinear objective throughout its search comparisons. Week 10’s two nonlinear examples have distinct purposes: the double well exposes ascent towards a saddle; the curved valley shows that a positive definite Hessian does not justify an unrestricted full step. Week 11 keeps one production model through geometry, duality and sensitivity. Week 12 keeps the circle through tangent geometry, multiple stationary points and the distance problem. These changes and repetitions are mathematically motivated.</p>
+<p>Relevant earlier material was checked directly: week 4’s projection and residual orthogonality, week 5’s symmetric eigenvalue framework, week 6’s quadratic energy/gradient/line-search treatment, and week 7’s short Hessian bridge. Week 8 no longer relies on that folded week 7 mention to define the Hessian. The week 12 least-squares connection correctly reuses orthogonality without reopening QR or SVD as new material.</p>
+</section>
+<section id="mathematical-checks-and-corrections" class="level2">
+<h2 class="anchored" data-anchor-id="mathematical-checks-and-corrections">Mathematical checks and corrections</h2>
+<p>The final notes distinguish necessary conditions from sufficient ones and local statements from global ones. In particular:</p>
+<ul>
+<li>The interior stationary-point and Hessian tests include the required smoothness and definiteness distinctions. Semidefinite singular tests are inconclusive; an indefinite Hessian still excludes extrema even if it also has zero eigenvalues or zero quadratic-form directions.</li>
+<li>Compactness gives attainment under continuity, not a search method or uniqueness. The depth argument now first establishes bounded function values before using a finite infimum.</li>
+<li>Convexity is a property on the whole convex domain. The visible tangent inequality now explains why a stationary point is globally minimal.</li>
+<li>Gradient descent uses the directional derivative to justify sufficiently small steps. Armijo is explained before its first code use. Newton regularisation shifts eigenvalues; damping controls movement along the chosen direction. Local quadratic convergence has a nearby start and the relevant Hessian assumptions, with full steps and inactive regularisation required to recover the pure Newton guarantee.</li>
+<li>The vertex comparison in week 11 is correctly recognised as a global proof for the bounded polygon. The independent dual bound also proves the value 27. Complementary slackness is stated in the optimality setting. The capacity interval and marginal-sign conversion are correct.</li>
+<li>Lagrange stationarity is conditioned on regularity. A tangent is a feasible-curve velocity, not a finite straight feasible displacement. The constrained second-order test states its smoothness assumptions and restricts the quadratic form to the tangent space.</li>
+<li>The week 12 curvature example specifies a unit tangent before giving the value −2. The depth explanation now derives the appearance of the Hessian of the Lagrangian by differentiating a feasible curve twice.</li>
+<li>The final constrained test correctly says that a <strong>semidefinite</strong> tangent form with a nonzero null direction is inconclusive; the broader, incorrect statement about every form with null directions was removed during this review.</li>
+<li>The distance problem’s global lower bound, multiplier sign and equality case agree. The nonlinear dual bound is not presented as a general strong-duality theorem.</li>
+</ul>
+</section>
+<section id="progressive-scipy-literacy" class="level2">
+<h2 class="anchored" data-anchor-id="progressive-scipy-literacy">Progressive SciPy literacy</h2>
+<p>The API explanations now form a progression suitable for readers who have not previously used SciPy:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Uke</th>
-<th>Spørsmålet vi starter med</th>
-<th>Matematisk innhold og kobling til anvendelser</th>
+<th>Week</th>
+<th>What the student can now read in the code</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>3</strong></td>
-<td><strong>Kan forskjellige inputvektorer gi samme output?</strong> Vi undersøker en transformasjon der <span class="math inline">\(Ax_1=Ax_2\)</span>, selv om <span class="math inline">\(x_1\neq x_2\)</span>. Outputen er da ikke tilstrekkelig til å avgjøre hvilken input som ble brukt. Forskjellen <span class="math inline">\(x_1-x_2\)</span> transformeres til null.</td>
-<td>Kolonnerommet beskriver alle outputvektorer transformasjonen kan produsere. Nullrommet består av inputretningene som transformeres til null. Ved bildereduksjon kan ulike bilder derfor gi samme reduserte bilde.</td>
+<td>8</td>
+<td>NumPy versus SciPy, imports, a callable objective, vector input and scalar output, start vector, gradient callback, <code>minimize</code>, selected result fields and independent gradient checks.</td>
 </tr>
 <tr class="even">
-<td><strong>4</strong></td>
-<td><strong>Hva gjør vi når en ønsket output ikke kan produseres nøyaktig?</strong> For støyfylte data ligger <span class="math inline">\(b\)</span> vanligvis ikke blant outputvektorene <span class="math inline">\(Ax\)</span> som modellen kan produsere. Vi søker derfor den oppnåelige outputen som ligger nærmest <span class="math inline">\(b\)</span>.</td>
-<td>Ortogonal projeksjon leder til minste kvadraters metode, Gram–Schmidt og QR-faktorisering. Minste kvadrater er en grunnleggende metode for å tilpasse lineære modeller til data.</td>
+<td>9</td>
+<td>The page’s shared helper functions; a scalar line objective created with <code>lambda</code>; <code>minimize_scalar</code>, the bounded interval, <code>xatol</code> and the meaning of the returned scalar.</td>
 </tr>
 <tr class="odd">
-<td><strong>5</strong></td>
-<td><strong>Hva skjer når vi gjentar den samme transformasjonen?</strong> Vi beregner <span class="math inline">\(x_{k+1}=Ax_k\)</span> flere ganger og normaliserer underveis. Under bestemte betingelser vil én retning etter hvert dominere.</td>
-<td>Egenvektorer er retninger som transformasjonen bevarer, bortsett fra skalering og eventuelt fortegn. Dette leder til potensmetoden og PageRank. Beslektede spektrale metoder brukes til å analysere grafer og finne mønstre i data.</td>
+<td>10</td>
+<td>Gradient and Hessian callback shapes, the Armijo helper’s contract, <code>np.linalg.solve</code>, <code>jac</code>/<code>hess</code>, BFGS versus Newton-CG, iteration limits and evaluation counters.</td>
 </tr>
 <tr class="even">
-<td><strong>6</strong></td>
-<td><strong>Hvordan finner vi inputen som gir en bestemt output når systemet er stort?</strong> Vi ønsker å løse <span class="math inline">\(Ax=b\)</span>, men en generell tett løsningsmetode kan bruke unødvendig mye tid og minne.</td>
-<td>Cholesky, Gauss–Seidel, konjugerte gradienter og prekondisjonering viser hvordan matrisestruktur kan utnyttes. Store lineære systemer oppstår blant annet i optimering og maskinlæring.</td>
+<td>11</td>
+<td>Translating a maximisation into <code>linprog</code>, one matrix row per inequality, bounds, status before reading results, slack and the sign of marginal values.</td>
 </tr>
 <tr class="odd">
-<td><strong>7</strong></td>
-<td><strong>Hvilke inputretninger påvirker outputen mest?</strong> Vi deler transformasjonen opp i ortogonale inputretninger og måler hvor sterkt hver retning forsterkes eller dempes.</td>
-<td>SVD samler ideene om kolonnerom, nullrom, rang og følsomhet. Lavrangsapproksimasjoner brukes til dimensjonsreduksjon, kompresjon, støyfiltrering og tilnærming av store vektmatriser.</td>
+<td>12</td>
+<td><code>SLSQP</code>, the equality-constraint dictionary, objective and constraint gradients, options, status and separately computed feasibility/stationarity residuals.</td>
 </tr>
 </tbody>
 </table>
+<p>Every routine has a compact reference in the notes. Tolerances and success flags are consistently treated as algorithmic stopping information, not mathematical guarantees. The notes explain hidden setup helpers at their meaningful use rather than assuming their names are familiar. Method-option semantics for the final week 9–10 references were checked by the responsible writer against official SciPy documentation.</p>
 </section>
-<section id="optimering" class="level2">
-<h2 class="anchored" data-anchor-id="optimering">Optimering</h2>
-<p>Vi bygger videre på minimum, gradient og linjesøk fra uke 6. Minste kvadraters metode er allerede behandlet i uke 4 og 7; her bruker vi forbindelsen når den hjelper oss å forstå et nytt problem.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Uke</th>
-<th>Spørsmålet vi starter med</th>
-<th>Matematisk innhold og kobling til anvendelser</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong><a href="../pages/uke8.html">8</a></strong></td>
-<td><strong>Hva mener vi med den beste løsningen, og finnes den?</strong> Vi skiller mellom det beste punktet vi har prøvd, et lokalt minimum og et globalt minimum.</td>
-<td>Målfunksjon og tillatt område, kompakthet, konvekse mengder og funksjoner, og betingelser for et minimum.</td>
-</tr>
-<tr class="even">
-<td><strong><a href="../pages/uke9.html">9</a></strong></td>
-<td><strong>Hvordan leter vi etter et minimum med få funksjonsberegninger?</strong> Vi sammenligner prøving av punkter med bevegelser som bruker lokal informasjon.</td>
-<td>Gittersøk, tilfeldig søk, kompassøk og gradientmetoden. Valg av steglengde og stoppkriterium viderefører uke 6 til funksjoner som ikke er kvadratiske.</td>
-</tr>
-<tr class="odd">
-<td><strong><a href="../pages/uke10.html">10</a></strong></td>
-<td><strong>Kan krumningen hjelpe oss fram, og når fører den oss feil?</strong> Vi sammenligner gradient- og Newton-steg fra ulike startpunkter.</td>
-<td>Hessian, lokal kvadratisk modell, Newtons metode og sikring av nedgang. Et prosjekt undersøker startpunkt, skalering og kontroll av numeriske svar.</td>
-</tr>
-<tr class="even">
-<td><strong><a href="../pages/uke11.html">11</a></strong></td>
-<td><strong>Hvordan fordeler vi begrensede ressurser best?</strong> Vi formulerer en produksjonsmodell og undersøker verdien av mer kapasitet.</td>
-<td>Lineær programmering, tillatte hjørnepunkter, dualitet og skyggepriser. SciPy brukes sammen med matematiske optimalitetskontroller.</td>
-</tr>
-<tr class="odd">
-<td><strong><a href="../pages/uke12.html">12</a></strong></td>
-<td><strong>Hvordan finner vi et minimum når vi må holde oss på en kurve eller flate?</strong> Vi undersøker hvilke bevegelser bibetingelsene tillater.</td>
-<td>Lagranges multiplikatorer, tangentretninger, regularitet og kontroll av kandidater. Numeriske løsninger kontrolleres mot både bibetingelser og optimalitetsbetingelser.</td>
-</tr>
-</tbody>
-</table>
+<section id="scope-and-verification-record" class="level2">
+<h2 class="anchored" data-anchor-id="scope-and-verification-record">Scope and verification record</h2>
+<ul>
+<li>Reviewed all five lecture includes, their setup includes and page wrappers. Projects were excluded from this substantive review; the coordinating author reports only removal of draft labels from project titles, with project content unchanged.</li>
+<li>All five lecture pages are free of source sections, external source links, calendar placement, draft labels and timed lecture plans. Internal source mapping may remain internal.</li>
+<li>The five files retain 20 assessment exercises, four per week, with no authored hint or solution blocks. The question data and exact answer contracts remain consistent with the notes.</li>
+<li>All 23 visible executable lecture cells remain <code>pyodide-python</code>; the five setup cells also use that runtime. No alternative student execution workflow was introduced.</li>
+<li>Details blocks are balanced in all five includes, and <code>git diff --check</code> passes after the final corrections.</li>
+<li>This review checked mathematics and code/prose consistency directly and did not rerun all previously validated code. The coordinating author reports that all 28 lecture/setup cells pass native execution, the full render passes, links resolve on all five pages, and exercise contracts are unchanged. Targeted browser checks of the changed quadratic examples and new reference layouts were underway when this report was completed; this review does not claim a new complete browser-runtime test.</li>
+</ul>
+<p>The final required findings have been corrected and re-read. No further content change is requested by this review.</p>
+</section>
+<section id="addendum-algorithm-path-figures" class="level2">
+<h2 class="anchored" data-anchor-id="addendum-algorithm-path-figures">Addendum: algorithm-path figures</h2>
+<p>The later request for week-6-style geometric illustrations was reviewed separately, limited to the additions in <code>week9-gradient-steps</code>, <code>week10-backtrack-positive-hess</code> and <code>week12-slsqp-path</code>, the callback change supporting the last figure, and their surrounding explanation. Source, algebra and fresh native PNG captures were inspected; unrelated material was not retested.</p>
+<ul>
+<li><strong>Week 9:</strong> The contour map and vertically stacked objective-value graph use the same stored iterates. The start and known global minimiser are identified. The divergent large fixed-step path is deliberately omitted from the map and explicitly explained; its rapidly increasing objective values remain visible below. The discussion connects level-curve geometry, changing gradient direction and the separate choice of step length.</li>
+<li><strong>Week 10:</strong> The true-objective contour map honestly shows full Newton taking <code>(0,0) → (1,0) → (1,1)</code>, with an initial objective increase, alongside five damped steps. The lower graph separates the first quadratic model <code>(1−α)²</code> from the actual objective <code>(1−α)²+10α⁴</code>. The text distinguishes the model’s proposed minimiser from the accepted damped point and explains why curvature and damping address different decisions. The relocated annotations are readable and distinguish the first steps.</li>
+<li><strong>Week 12:</strong> Callback iterates are copied and plotted with the start, returned solution, exact closest point, feasible circle and objective contours. The explanation correctly says that intermediate iterates may be infeasible and may have objective values below the feasible optimum. Straight connecting segments are explicitly presented as an indication of order, not a feasible curve. The plot gives a concrete reason to check feasibility separately from objective value.</li>
+</ul>
+<p>The initial week 12 capture clipped the external legend. The coordinating author added layout adjustment, and the fresh capture shows all six legend entries completely. The fresh week 10 capture also confirms the improved annotation placement. No remaining mathematical or visual blocker was found in these additions.</p>
+<p>These additions preserve the prior package verdict. There are now 24 visible lecture Python cells plus five setup cells; the additional cell is the week 12 path plot. The coordinating author reports that final native execution of the changed weeks 9, 10 and 12 passes. The exercise contracts and project content are unaffected.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
