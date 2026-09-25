@@ -87,9 +87,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Matematikk 3A
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Forside</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -116,14 +114,14 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/page1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">IDE / Readme</span></a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Forside</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pages/emneinnhold.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Emneinnhold</span></a>
+  <a href="./pages/page1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IDE / Readme</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -342,7 +340,112 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Velg ei side fra venstre kolonne.</p>
+<p>Emnet går fra tall og beregningsfeil via lineær algebra til optimering. Vi bruker små regneeksempler, figurer og Python-forsøk til å utvikle og kontrollere metodene. Klikk på ukenummeret for å åpne undervisningssiden.</p>
+<div class="course-overview">
+<section id="tall-og-algoritmer" class="level2">
+<h2 class="anchored" data-anchor-id="tall-og-algoritmer">Tall og algoritmer</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Uke</th>
+<th style="text-align: left;">Spørsmålet vi starter med</th>
+<th style="text-align: left;">Matematisk innhold og anvendelser</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong><a href="./pages/page2.html">1</a></strong></td>
+<td style="text-align: left;"><strong>Hvorfor kan to riktige regnemåter ha ulik kostnad og gi ulike svar på en datamaskin?</strong></td>
+<td style="text-align: left;">Absolutt og relativ feil, regneoperasjoner og Horners metode. Binære tall, IEEE 754-flyttall, avrunding, maskinepsilon og tap av signifikans. Vi undersøker både beregningskostnad og numerisk stabilitet.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong><a href="./pages/page4.html">2</a></strong></td>
+<td style="text-align: left;"><strong>Hvorfor nærmer noen gjentatte beregninger seg en løsning, mens andre går i syklus eller løper bort?</strong></td>
+<td style="text-align: left;">Fikspunktiterasjon, spindelvevplott, lokal og global konvergens og konvergensfart. Feil, residual, skrittlengde og toleranse brukes til å bygge en robust iterasjonsalgoritme. Newtons iterasjon for kvadratrøtter gir et raskt eksempel.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="numerisk-lineær-algebra" class="level2">
+<h2 class="anchored" data-anchor-id="numerisk-lineær-algebra">Numerisk lineær algebra</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Uke</th>
+<th style="text-align: left;">Spørsmålet vi starter med</th>
+<th style="text-align: left;">Matematisk innhold og anvendelser</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong><a href="./pages/uke3.html">3</a></strong></td>
+<td style="text-align: left;"><strong>Kan forskjellige inputvektorer gi samme output?</strong></td>
+<td style="text-align: left;">Lineære transformasjoner, vektorrom, basis, koordinater og lineær avhengighet. Kolonnerom, nullrom og rang forklarer hvilken informasjon en bildetransformasjon beholder eller mister. De samme ideene brukes på polynomer.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong><a href="./pages/uke4.html">4</a></strong></td>
+<td style="text-align: left;"><strong>Hvor mye av en vektor peker i en valgt retning, og hva gjør vi når dataene ikke passer modellen nøyaktig?</strong></td>
+<td style="text-align: left;">Indreprodukt, ortogonalitet og projeksjon leder til Gram–Schmidt, QR-faktorisering og minste kvadrater. Vi undersøker nesten avhengige kolonner, tap av ortogonalitet og tilpasning av polynomer til data.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong><a href="./pages/uke5.html">5</a></strong></td>
+<td style="text-align: left;"><strong>Hva skjer når vi gjentar den samme transformasjonen?</strong></td>
+<td style="text-align: left;">Egenverdier, egenvektorer, diagonalisering og spektralteoremet forklarer gjentatte matriseprodukter. Potensmetoden finner en dominerende retning. PageRank viser hvordan stasjonære fordelinger og tilfeldige hopp kan brukes til å rangere nettsider.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong><a href="./pages/uke6.html">6</a></strong></td>
+<td style="text-align: left;"><strong>Hvordan løser vi et stort lineært system ved å forbedre et foreløpig svar?</strong></td>
+<td style="text-align: left;">Jacobi, Gauss–Seidel og konvergens. Residual, foroverfeil, bakoverfeil, matrisenorm og kondisjonstall. Vi tolker et SPD-system som et minimumsproblem og bygger bratteste nedstigning, linjesøk og konjugert gradient (CG). Prosjektet undersøker prekondisjonering.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong><a href="./pages/uke7.html">7</a></strong></td>
+<td style="text-align: left;"><strong>Hvilken informasjon bevares når vi forenkler en matrise, og hva kan vi rekonstruere fra usikre data?</strong></td>
+<td style="text-align: left;">Singulærverdidekomposisjon (SVD), ortogonale basiser, rang og kondisjonering. Lavrangsapproksimasjoner og feil målt med Frobeniusnorm brukes til bildekompresjon. Pseudoinvers og trunkert SVD knytter minste kvadrater til følsom rekonstruksjon og støyfiltrering.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="optimering" class="level2">
+<h2 class="anchored" data-anchor-id="optimering">Optimering</h2>
+<p>Vi bygger videre på minimum, gradient og linjesøk fra <a href="./pages/uke6.html">uke 6</a>. Minste kvadraters metode fra <a href="./pages/uke4.html">uke 4</a> og <a href="./pages/uke7.html">uke 7</a> er et eksempel vi kan knytte de nye ideene til.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Uke</th>
+<th style="text-align: left;">Spørsmålet vi starter med</th>
+<th style="text-align: left;">Matematisk innhold og anvendelser</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong><a href="./pages/uke8.html">8</a></strong></td>
+<td style="text-align: left;"><strong>Hva mener vi med den beste løsningen, og finnes den?</strong></td>
+<td style="text-align: left;">Målfunksjon, tillatt område og lokale og globale ekstremalpunkter. Gradient og Hessian brukes til å undersøke kandidater; kompakthet gir eksistens og konveksitet gir globale garantier. Vi introduserer SciPys <code>minimize</code>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong><a href="./pages/uke9.html">9</a></strong></td>
+<td style="text-align: left;"><strong>Hvordan leter vi etter et minimum med få funksjonsberegninger?</strong></td>
+<td style="text-align: left;">Gittersøk, tilfeldig søk, kompassøk og gradientmetoden. Linjesøk, Armijo-test og stoppkriterier skiller valg av retning fra valg av steglengde. Vi sammenligner søkebaner og bruker SciPy til søk langs én linje.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong><a href="./pages/uke10.html">10</a></strong></td>
+<td style="text-align: left;"><strong>Kan krumningen hjelpe oss fram, og når fører den oss feil?</strong></td>
+<td style="text-align: left;">Newtons metode og lokale kvadratiske modeller. Cholesky-faktorisering løser SPD-systemet som gir Newton-retningen; CG er et iterativt alternativ. Negativ krumning, regularisering og demping forklarer hvorfor retning og steglengde må kontrolleres. Vi sammenligner med SciPy.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong><a href="./pages/uke11.html">11</a></strong></td>
+<td style="text-align: left;"><strong>Hvordan fordeler vi begrensede ressurser best, og hva er mer kapasitet verdt?</strong></td>
+<td style="text-align: left;">Lineær programmering, tillatte hjørnepunkter og slakk. Dualitet og komplementær slakkhet gir optimalitetskontroller; ressurspriser beskriver verdien av små kapasitetsendringer. En produksjonsmodell løses med SciPys <code>linprog</code>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong><a href="./pages/uke12.html">12</a></strong></td>
+<td style="text-align: left;"><strong>Hvordan finner vi det beste punktet når vi må holde oss på en kurve?</strong></td>
+<td style="text-align: left;">Likhetsbetingelser, tangent, normal og Lagranges multiplikatorer. Vi klassifiserer kandidater, undersøker regularitet og degenerasjon og finner globale nedre grenser. SLSQP-svar kontrolleres mot både bibetingelsen og stasjonaritetskravet.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
 
 
 
