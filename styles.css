@@ -114,8 +114,51 @@ main details[open] > summary { margin-bottom: 0.8rem; }
 }
 
 /* Keep the course overview readable within narrow screens. */
+.course-overview table {
+  width: 100%;
+  table-layout: fixed;
+}
+.course-overview th:first-child {
+  width: 5rem;
+}
+.course-overview th:nth-child(2) {
+  width: 34%;
+}
+.course-overview th:first-child,
+.course-overview td:first-child {
+  white-space: nowrap;
+}
+.course-overview td:first-child,
+.course-overview td:nth-child(2) {
+  padding: 0;
+}
+.course-overview td:first-child a,
+.course-overview td:nth-child(2) a {
+  display: block;
+  padding: 0.65rem 0.5rem;
+  font-weight: 600;
+}
 .course-overview th,
 .course-overview td {
-  hyphens: auto;
   overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .course-overview thead {
+    display: none;
+  }
+  .course-overview tbody {
+    display: block;
+  }
+  .course-overview tr {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    border-bottom: 1px solid var(--bs-border-color);
+  }
+  .course-overview td {
+    border: 0;
+  }
+  .course-overview td:nth-child(3) {
+    grid-column: 1 / -1;
+    padding: 0 0.5rem 0.8rem;
+  }
 }
