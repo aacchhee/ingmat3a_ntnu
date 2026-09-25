@@ -1,6 +1,8 @@
 # Engineering Mathematics 3A at NTNU
 
-Quarto course notes for IMAX3011. The website combines explanatory text, browser-based Python exercises, and interactive mathematics exercises.
+[Open the course website](https://aacchhee.github.io/ingmat3a_ntnu/). Python examples and interactive exercises run directly in your browser; no local installation is needed.
+
+Course notes for IMAX3011 at NTNU, written in Norwegian for engineering students. The material covers numerical methods, linear algebra and optimisation, combining explanations, Python experiments and interactive mathematics exercises.
 
 ## Author and license
 
@@ -58,3 +60,7 @@ Mathematics feedback is progressive. It should respond to the submitted answer a
 | 4+ | Give a complete, checked worked solution | Unsupported assumptions or invented notation |
 
 This sequence is part of the feedback prompt, not a guarantee that every model will behave perfectly. Exercise context should therefore be precise enough to constrain the model, and model output should still be treated as fallible.
+
+## Errors and suggestions
+
+To report an error or suggest an improvement, [open a GitHub issue](https://github.com/aacchhee/ingmat3a_ntnu/issues) with a link to the relevant page and a short description.
