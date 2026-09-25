@@ -1,5 +1,5 @@
 ---
-title: "Prosjekt 11 – Produksjonsplan og ressurspriser (førsteutkast)"
+title: "Prosjekt 11 – Produksjonsplan og ressurspriser"
 resources:
   - ../assets/project_week11.py
 ---

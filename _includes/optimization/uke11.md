@@ -12,25 +12,13 @@
 
 ### Hvor mye skal vi lage?
 
-I [uke 10](uke10.qmd) lette vi etter et minimum ved hjelp av deriverte. Nå
-er både målet og begrensningene lineære. Et skritt som øker fortjenesten kan
-fortsette helt til en ressurs stopper oss. Vi skal formulere et
-produksjonsvalg, se hvorfor hjørner er interessante, løse modellen med
-`scipy.optimize.linprog` og lage et **dualt sertifikat** som kontrollerer
-resultatet. Til sist spør vi hva én ekstra enhet av en ressurs er verdt.
-
-Du trenger matrise–vektor-produkt, lineære likninger og ulikheter. Fra
-[uke 6](uke6.qmd#uke6-retning) kjenner du skillet mellom en retning som
-forbedrer målet og et faktisk minimum. Her må retningen i tillegg holde
-oss innenfor begrensningene.
-
-| Tid | Felles rute |
-|:--|:--|
-| 0–25 min | Modell og mulig område: forutsi beste produksjonsplan |
-| 25–50 min | Hjørner og HiGHS: kontroller mål, slakk og status |
-| 50–85 min | Duale priser: bygg et øvre bound som blir skarpt |
-| 85–110 min | Endre én kapasitet: test marginalverdiens gyldighet |
-| 110–120 min | Overføring, spørsmål og prosjektstart |
+I [uke 8](uke8.qmd#uke8-modell) måtte antall maskiner være heltall.
+Nå kan et verksted dele produksjonen i partier, og vi får et sammenhengende
+område av tillatte valg. Vi vil gå fra modell og geometri til en beregnet
+produksjonsplan, og deretter bevise at ingen annen plan er bedre. Til sist
+bruker vi beviset til å verdsette en ekstra ressursenhet. I
+[uke 6](uke6.qmd#uke6-retning) ga gradienten en lokal forbedringsretning;
+her bestemmer ressursgrensene hvilke steg som faktisk er tillatt.
 
 Etter uken skal du kunne oversette et ressursproblem til ulikheter, skille
 **mulig løsning**, **optimal løsning**, **umulig problem** og **ubegrenset
@@ -59,9 +47,20 @@ begrensninger er aktive (holder med likhet) ved hvert punkt? Før vi velger, kre
 2x+y\le9,\quad x+2y\le9,\quad x\le4,\quad x,y\ge0.
 \]
 
-Punktene på og innenfor alle grensene danner det **mulige området**.
-Vi tegner det og beregner $P$ i alle hjørnene. Listen over hjørner
-kan du kontrollere ved å løse par av grenselikninger.
+Punktene som oppfyller alle ulikhetene, er **mulige løsninger**; sammen
+danner de det mulige området. Dette området er et **polyeder**, altså et
+snitt av halvplan (områder på én side av en rett linje), eller halvrom
+i flere dimensjoner; her er det en begrenset
+polygon. En begrensning er **aktiv** når den holder med likhet. Dens
+**slakk** for en $\le$-ulikhet er høyreside minus venstreside,
+for eksempel $9-(2x+y)$;
+slakken er null når grensen er aktiv. Vi tegner området og beregner
+$P$ i alle hjørnene. Listen kan kontrolleres ved å løse par av
+grenselikninger og forkaste skjæringspunkter som bryter andre krav.
+Dette er **lineær programmering (LP)**: $P$ er lineær i variablene,
+mens grensene kan skrives $a^Tz\le b$. Uttrykket $a^Tz-b$ er
+**affint** når $b\ne0$ (lineært uttrykk pluss konstant); det er
+fremdeles en LP, ikke et krumt problem.
 
 ```{pyodide-python}
 #| label: week11-polygon
@@ -85,11 +84,21 @@ Figuren gir målverdiene $0,20,24,27,18$ i oppført rekkefølge.
 Dermed er $(3,3)$ best blant disse hjørnene, med 27 tusen kroner.
 Linjen $5x+4y=27$ treffer området der de to ressursgrensene møtes.
 **Hvorfor kan ikke et punkt midt i en kant gi mer enn begge endepunktene?**
-Langs en rett kant er målet lineært, så verdien mellom endene er et
-veid gjennomsnitt. For et ikke-tomt, begrenset polyeder finnes minst
-ett optimalt hjørne; flere punkter kan være optimale når mållinjen
-følger en kant. Dette er ennå ikke en kontroll av alle mulige punkter:
-vi skal snart lage et algebraisk øvre bound.
+Ethvert punkt i polygonet kan skrives som et veid gjennomsnitt av
+hjørnene med ikke-negative vekter som summerer til 1. Fordi $P$ er
+lineær, er verdien samme veide gjennomsnitt av hjørneverdiene og kan
+derfor ikke overstige 27. Hjørnesammenligningen er et **globalt bevis**
+for dette begrensede polygonet. En hel kant kan være optimal når
+mållinjen følger kanten. Nedenfor bygger vi også et algebraisk bevis
+som virker uten at vi må tegne alle punktene.
+
+Dette forklarer også forskjellen fra [uke 8](uke8.qmd#uke8-lokalt)
+og [uke 10](uke10.qmd#uke10-stasjonaer): $\nabla P=(5,4)$ er konstant
+og Hessianen er null. Det finnes ikke et indre punkt med
+$\nabla P=0$ å lete etter; et beste punkt kan ligge der en forbedrende
+retning stoppes av aktive ressursgrenser. Et begrenset, ikke-tomt
+polygon gir her et maksimum fordi det er lukket og begrenset, slik
+kompakthetsargumentet i [uke 8](uke8.qmd#uke8-kompakt) tilsier.
 
 <details class="reading-step">
 <summary>Gå i dybden: hjørner, standardformer og når påstanden trenger forbehold</summary>
@@ -124,9 +133,16 @@ konteksten.
 
 <div id="uke11-linprog"></div>
 
-`linprog` **minimerer**. Vi sender derfor $c=(-5,-4)$, og bruker
-`bounds=(0,None)` for begge beslutningsvariablene. Radene i `A_ub`
-står i samme rekkefølge som ressursene og øvre grense på A.
+`linprog` fra `scipy.optimize` løser en **minimering** av $c^Tz$.
+Oppsettet øverst på siden importerer `numpy as np`,
+`matplotlib.pyplot as plt` og `linprog`; du kan kjøre rutene nedenfor
+fortløpende. Vi legger $z=(x,y)$, $p=(5,4)$,
+$A=\left(\begin{smallmatrix}2&1\\1&2\\1&0\end{smallmatrix}\right)$
+og $b=(9,9,4)$ i arrayer. `A_ub=A, b_ub=b` betyr $Az\le b$,
+én begrensning per rad. Fordi vi vil **maksimere** $p^Tz$, sender vi
+`-p` som $c$. `bounds=(0,None)` betyr nedre grense 0 og ingen øvre
+grense for **hver** av de to variablene; kravet $x\le4$ ligger i
+matrisen. `method="highs"` velger LP-løseren HiGHS.
 **Forutsi:** Hva blir fortegnet på `result.fun`, og hvilke av de tre
 slakkene $b-Az$ blir null?
 
@@ -144,6 +160,10 @@ if result.status == 0:
           max(0., float(np.max(A@result.x-b)), float(-np.min(result.x))))
 ```
 
+`result.status==0` og `result.success` angir at løseren meldte
+vellykket avslutning; først da leser vi `result.x` (planen) og
+`result.fun` (minimumet av $-P$). Status 2 betegner et umulig problem,
+status 3 et ubegrenset problem. `result.message` utdyper statusen.
 Status 0 gir $z=(3,3)$, $P=27$, slakk $(0,0,1)$ og største
 brudd 0 innenfor avrunding. De to ressursene er fullt utnyttet;
 grensen $x\le4$ har én enhet igjen. `result.fun=-27` er verdien
@@ -178,7 +198,10 @@ ikke reparert av algoritmen.
 <div id="uke11-dual"></div>
 
 Vi vil bevise at ingen mulig plan kan tjene over 27, også uten å
-stole på figuren. Sett ikke-negative priser $u,v,w$ på begrensningene
+tegne polygonet. Den opprinnelige maksimeringen kalles **primalen**.
+Sett ikke-negative priser $q=(u,v,w)$ (tusen kroner per enhet av
+den tilsvarende kapasiteten)
+på begrensningene
 $2x+y\le9$, $x+2y\le9$, $x\le4$. Hvis den samlede prisen på
 ressursene som ett parti A bruker minst er 5, og prisen på ressursene
 for B minst er 4, får vi et øvre bound:
@@ -192,7 +215,9 @@ for B minst er 4, får vi et øvre bound:
 Den første ulikheten bruker $x,y\ge0$; den andre bruker
 ressursgrensene og $u,v,w\ge0$. Dette er **svak dualitet**:
 enhver mulig produksjonsplan gir et nedre anslag på beste
-fortjeneste, og enhver mulig prisvektor gir et øvre anslag.
+fortjeneste, og enhver **dual mulig** prisvektor (en som oppfyller
+priskravene over) gir et øvre anslag. Problemet med å finne det
+beste, laveste øvre anslaget kalles **dualen**.
 **Forutsi:** Kan $u=2,v=1,w=0$ bevise at planen fra forsøket er best?
 
 ```{pyodide-python}
@@ -208,8 +233,14 @@ print("Ressursslakk:", b-A@z, "produktoverskudd:", A.T@prices-p)
 
 Begge målverdiene er 27. Enhver mulig plan har verdi høyst 27,
 mens $z=(3,3)$ oppnår 27. Vi har dermed bevist optimalitet.
-**Overføring:** Hvilken pris må være null når en begrensning har
-positiv slakk? Her er $w=0$ og $4-x=1$.
+Likhet i de to ulikhetene i beviset krever at en positiv
+ressurspris ledsages av null slakk: $q_i(b_i-(Az)_i)=0$.
+For et produsert produkt må tilsvarende prisen på innsatsfaktorene
+treffe fortjenesten: $z_j((A^Tq)_j-p_j)=0$. Dette kalles
+**komplementær slakk**. Her er $w=0$ og $4-x=1$; $x,y>0$ og
+produktprisene er nøyaktig 5 og 4. **Overføring:** Hvorfor må en
+pris være null ved optimalitet når den tilhørende begrensningen har
+positiv slakk?
 
 Generelt gir et primalproblem $\max p^Tz$ med $Az\le b, z\ge0$
 dualproblemet
@@ -257,7 +288,7 @@ ikke kontrollen av at alle primal- og dualulikheter holder.
 
 <div id="uke11-sensitivitet"></div>
 
-Vi gir første ressurs $Δ$ flere enheter. Prisvektoren
+Vi gir første ressurs $\Delta$ flere enheter. Prisvektoren
 $(2,1,0)$ gir da boundet $27+2Δ$. Hvis de samme to
 ressursgrensene fortsatt møtes i et mulig punkt, blir dette også
 fortjenesten. **Forutsi:** Vil samme økning på 2 tusen kroner per
@@ -280,7 +311,10 @@ print("SciPy-marginaler for minimeringsmålet:", result.ineqlin.marginals)
 Ved $Δ=0.5$ blir fortjenesten 28, akkurat som anslaget.
 Ved $Δ=2$ blir den 30, mens den uendrede dualprisen bare
 gir et bound på 31: tredje begrensning begynner å binde.
-`result.ineqlin.marginals` er $(-2,-1,0)$, fordi SciPy oppgir
+`result.ineqlin.residual` er de tre slakkene $b-Az$,
+og `result.ineqlin.marginals` er omtrent $(-2,-1,0)$.
+En **marginal** er den lokale endringen i optimal målverdi når
+en høyreside økes litt, mens de øvrige dataene holdes fast. SciPy oppgir
 derivert av **minimeringsverdien** $-P_*$ med hensyn til
 høyresiden. For vårt maksimeringsmål er den lokale
 ressursverdien derfor motsatt fortegn: $(2,1,0)$.
@@ -402,18 +436,18 @@ I [prosjektet](project_week11.qmd) undersøker du et større
 produksjonsvalg der du må begrunne hvilke kapasitetsendringer en
 ressurspris faktisk kan brukes for.
 
-### Kilder og overgang
+### Kort oppslag: `linprog`
 
-Denne siden svarer til Gjøvik **kalenderuke 44**:
-[lineær optimering – standardformer](https://wiki.math.ntnu.no/_media/imax3011/2025h/lineaer_optimering_-_standard_former.pdf)
-og [lineær optimering – dualitet](https://wiki.math.ntnu.no/_media/imax3011/2025h/lineaer_optimering_-_dualitet.pdf).
-Trondheims [forelesning 21](https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning21.pdf)
-og [forelesning 22](https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning22.pdf)
-gir den tilhørende LP-ruten. [SciPy-dokumentasjonen for
-`linprog`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html)
-og [HiGHS-resultatet](https://docs.scipy.org/doc/scipy/reference/optimize.linprog-highs.html)
-beskriver API, statuser og marginalenes fortegn. Koblingen fra
-duale priser til multiplikatorer ved ikke-lineære begrensninger
-utvikles i [uke 12](uke12.qmd).
+| Skriv/les | Betydning i dette eksemplet |
+|:--|:--|
+| `from scipy.optimize import linprog` | Importen finnes i oppsettet over. |
+| `linprog(-p, A_ub=A, b_ub=b, bounds=(0,None), method="highs")` | Minimer $-p^Tz$ under $Az\le b$ og $z\ge0$. Med likninger brukes `A_eq`, `b_eq`. |
+| `bounds=(0,None)` | Bruker samme nedre grense 0 for alle variabler; `None` betyr ingen øvre grense. Ulike grenser kan gis per variabel, for eksempel `[(0,4),(0,None)]` for $x,y$. |
+| `result.success`, `result.status`, `result.message` | Les løserens status først; 0 er vellykket, 2 er umulig, 3 er ubegrenset. |
+| `result.x`, `result.fun` | Les ved vellykket status: variabler og verdi av **minimeringsmålet**. Vår fortjeneste er `-result.fun`. |
+| `result.ineqlin.residual`, `result.ineqlin.marginals` | Slakk og lokal verdifølsomhet for hver `A_ub`-rad. Her er marginalene negative fordi målet er $-P$; ressursprisene for $P$ får motsatt fortegn. |
+
+I [uke 12](uke12.qmd) bruker vi samme spørsmål om tillatte
+retninger og bevis for optimalitet når begrensningene er krumme.
 
 :::

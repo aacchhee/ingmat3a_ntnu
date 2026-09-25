@@ -1,4 +1,4 @@
-## Første utkast: Når er Newton rask, og når blir et steg dyrt?
+## Når er Newton rask, og når blir et steg dyrt?
 
 I [uke 10](uke10.qmd) så vi at Newton bruker Hessianen i et lokalt
 kvadratisk bilde. Et helt steg kan likevel være for langt, og

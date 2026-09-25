@@ -17,8 +17,9 @@ Noen ganger kjenner vi også de deriverte, andre ganger er hver beregning
 bare en måling. [I uke 6](uke6.qmd#uke6-retning) var målet et lineært
 system, og den kvadratiske energien hadde gradient $Ax-b$. Nå beholder vi
 ideen om **retning og steglengde**, men funksjonen er ikke kvadratisk og
-kan ha flere minimumspunkter. Fra uke 8 tar vi med skillet mellom lokale
-og globale påstander.
+kan ha flere minimumspunkter. Fra [uke 8](uke8.qmd#uke8-lokalt) tar vi med
+skillet mellom lokale og globale påstander: en liten gradient eller en lav
+verdi i noen prøver beviser ikke at et punkt er best i hele området.
 
 Vi bruker gjennom hele uken funksjonen
 
@@ -28,20 +29,23 @@ Den kan evalueres uten deriverte. Fordi den er en sum av kvadrater, er
 $f\geq0$; punktet $(3,2)$ gir $f(3,2)=0$ og er derfor et **globalt**
 minimumspunkt. Algoritmene får ikke dette punktet oppgitt. De må lete.
 Resultatet av en endelig datakjøring er i seg selv bare evidens, mens
-kvadratargumentet gir et bevis i akkurat dette eksemplet.
+kvadratargumentet gir et bevis i akkurat dette eksemplet. Vi starter med
+uavhengige prøver på et endelig utvalg, lar deretter neste prøver avhenge
+av det beste punktet, og bruker til slutt den deriverte til å velge retning.
+Slik ser vi hva ekstra informasjon om $f$ faktisk kjøper oss. Alle tre
+metodene må bestemme når de skal slutte; den avgjørelsen er forskjellig
+fra et matematisk sertifikat for et minimum.
 
-| Tid | Felles rute, omtrent 120 minutter |
-|:--|:--|
-| 0–30 min | [Prøv gitter og tilfeldig utvalg](#uke9-endelig) med samme antall funksjonsverdier. |
-| 30–65 min | [La kompassøk endre oppløsningen](#uke9-kompass). |
-| 65–105 min | [Bruk gradient og undersøk steglengden](#uke9-gradient). |
-| 105–120 min | Sammenlign stoppkontroller, bevis og [egne regneoppgaver](#uke9-oppgaver). |
-
-Etterpå skal du kunne skille søk uten deriverte fra gradientmetoden,
-forklare hva de fire kompassretningene og steglengden gjør, beregne en
-gradientretning og begrunne hvorfor nedgang i funksjonsverdi ikke alene
-beviser et optimum. Kalenderuke 42 i Gjøvik og forelesning 17–18 i
-Trondheim ligger bak denne siden; kildene står nederst.
+En **iterasjon** er én oppdatering fra gjeldende punkt $z_k$ til et nytt
+punkt. Mange iterative metoder kan skrives $z_{k+1}=z_k+\alpha_k p_k$:
+$p_k$ er en **søkeretning**, og den positive faktoren $\alpha_k$ styrer
+**steglengden** $\alpha_k\|p_k\|$. For kompassøk er $\alpha_k=\Delta$ og
+$p_k$ en av fire koordinatretninger; i gradientmetoden avledes retningen
+fra $f$. En **stoppregel** kan gjelde prøvebudsjett, minste steglengde
+eller liten gradient. Ingen slik numerisk terskel er alene et globalt bevis.
+Målet er å kunne velge og kontrollere en metode ut fra tilgjengelig
+informasjon, regne ut en gradientretning og skille observert nedgang fra
+en garanti.
 
 ## 9.1 Endelig søk: hvor godt er beste prøve?
 
@@ -53,6 +57,11 @@ antall kandidater. Vi bruker kvadratet $[-4,4]^2$ og et budsjett på
 64 evalueringer for hver metode. En fast tilfeldig startverdi gjør
 forsøket mulig å gjenta. **Forutsi:** Vil punktene på gitteret eller de
 tilfeldige punktene gi lavest observert verdi denne gangen?
+
+Oppsettet definerer `f9(z)`, som tar en vektor `z = [x, y]` og returnerer
+funksjonsverdien. Senere bruker vi `grad9(z)`, som returnerer de to
+partiellderiverte i samme rekkefølge. Disse er to ulike slags
+informasjon om det samme målet.
 
 ```{pyodide-python}
 #| label: week9-finite-search
@@ -186,8 +195,8 @@ flytter straks den første forbedringen finnes og bruker dermed noen
 ganger færre evalueringer, men får en annen bane. Et annet valg er å
 prøve diagonale retninger i tillegg. Å mislykkes i et endelig sett
 retninger ved én steglengde er fremdeles ikke et bevis for globalt
-minimum. Figurene i kildearket viser hvordan søkepunktene og
-steglengden endres mellom rundene.
+minimum. I figuren over ser du hvilke punkter som ble akseptert; en
+halvering uten flytting gir ikke et nytt punkt på banen.
 
 </details>
 
@@ -200,31 +209,55 @@ var $-\nabla\phi=b-Ax$ residualen, og for SPD-kvadratikken fant vi
 steglengden med en lukket formel. For vår ikke-kvadratiske funksjon
 setter vi $a=x^2+y-11$ og $b=x+y^2-7$. Kjerneregelen gir
 
-$$\nabla f(x,y)=\begin{bmatrix}4xa+2b\\2a+4yb\end{bmatrix},\qquad
-z_{k+1}=z_k-\alpha_k\nabla f(z_k).$$
+$$g(z)=\nabla f(x,y)=\begin{bmatrix}4xa+2b\\2a+4yb\end{bmatrix},\qquad
+p_k=-g(z_k),\qquad z_{k+1}=z_k+\alpha_k p_k.$$
 
-Ved $z_0=(0,0)$ er gradienten $(-14,-22)$, så negativ gradient peker
-mot $(14,22)$. Den deriverte av $f(z_0-\alpha\nabla f(z_0))$ ved
-$\alpha=0$ er $-\|\nabla f(z_0)\|_2^2=-680<0$. **Forutsi:** Vil en
-fast faktor $0{,}1$ alltid være bedre enn $0{,}02$ fordi den tar et
-lengre steg? Prøv to faste valg og en metode som krymper steget til
-funksjonen gir tilstrekkelig nedgang.
+Gradienten gir den lokale endringen: langs en retning $p$ er den
+deriverte i starten $\nabla f(z)^Tp$. Når dette skalarproduktet er
+negativt, synker $f$ for tilstrekkelig små positive steg. For $p=-g$
+er det $-\|g\|_2^2<0$ så lenge $g\ne0$. Ved $z_0=(0,0)$ er
+$g=(-14,-22)$ og $p=(14,22)$, med starthelning $-680$.
+Retningen sier likevel ikke hvor langt vi kan gå: funksjonen kan
+stige igjen langs samme linje. I den kvadratiske modellen fra uke 6
+kunne vi beregne det beste steget eksakt; her må vi prøve verdier.
+
+Et **Armijo-søk** starter her med $\alpha=1$ og halverer til den
+faktiske reduksjonen er stor nok sammenlignet med starthelningen:
+
+$$f(z+\alpha p)\le f(z)+10^{-4}\alpha\,g(z)^Tp.
+\qquad (p=-g(z))$$
+
+Høyresiden er da $f(z)-10^{-4}\alpha\|g(z)\|_2^2$. Vi krever altså
+en liten, men ekte reduksjon; det er ingen jakt på det aller beste
+steget. Koden under stopper dessuten ved gradientnorm under $10^{-6}$
+eller et gitt iterasjonsbudsjett. En liten gradient er bare en
+stasjonaritetskontroll, slik vi så i uke 8. **Forutsi:** Vil en fast
+faktor $0{,}1$ alltid være bedre enn $0{,}02$ fordi den tar lengre steg?
+På et nivåkurvekart er gradienten vinkelrett på kurven: den deriverte
+langs en tangent til samme nivå er null. Negativ gradient peker lokalt
+mot lavere nivåer, mens neste retning beregnes på nytt etter hvert steg.
+I figuren viser vi banene for det lille faste steget og Armijo-søket
+over verdikurvene, med verdi per iterasjon under. Det store faste
+steget tegnes bare i verdiplottet fordi banen raskt forlater kartet.
 
 ```{pyodide-python}
 #| label: week9-gradient-steps
 def fixed_steps(rate, n=40):
     z = np.array([0., 0.])
     history = [f9(z)]
+    path = [z.copy()]
     for k in range(n):
         z = z - rate*grad9(z)
         if not np.all(np.isfinite(z)) or np.linalg.norm(z) > 1e6:
-            break  # Vi tegner bare punktene innenfor et lesbart område.
+            break  # Ingen flere endelige, lesbare verdier i forsøket.
         history.append(f9(z))
-    return z, np.array(history)
+        path.append(z.copy())
+    return z, np.array(history), np.array(path)
 
 def shrinking_steps(n=60):
     z = np.array([0., 0.])
     history = [f9(z)]
+    path = [z.copy()]
     for k in range(n):
         g = grad9(z)
         if np.linalg.norm(g) < 1e-6:
@@ -234,24 +267,46 @@ def shrinking_steps(n=60):
             rate /= 2
         z -= rate*g
         history.append(f9(z))
-    return z, np.array(history)
+        path.append(z.copy())
+    return z, np.array(history), np.array(path)
 
 curves = {}
+paths = {}
 for rate in [0.02, 0.1]:
-    end, values = fixed_steps(rate)
+    end, values, points = fixed_steps(rate)
     curves[f'fast α={rate:g}'] = values
+    if rate == 0.02:
+        paths['fast α=0.02'] = points
     print(f'Fast α={rate:g}: {len(values)-1} tegnede steg, '
           f'siste f={values[-1]:.3g}')
-end, values = shrinking_steps()
+end, values, points = shrinking_steps()
 curves['halvering'] = values
+paths['halvering'] = points
 print(f'Halvering: punkt {end.round(6)}, f={f9(end):.3g}, '
       f'||gradient||={np.linalg.norm(grad9(end)):.3g}')
-fig, ax = plt.subplots(figsize=(6, 4))
+fig, (ax_map, ax) = plt.subplots(2, 1, figsize=(6.5, 9))
+gx, gy = np.meshgrid(np.linspace(-1, 4, 160), np.linspace(-1, 4, 160))
+gz = (gx*gx + gy - 11)**2 + (gx + gy*gy - 7)**2
+ax_map.contour(gx, gy, gz, levels=[1, 5, 20, 50, 100, 200],
+               colors='#adb5bd', linewidths=.8)
+colors = {'fast α=0.02': '#1665ad', 'fast α=0.1': '#b5483f',
+          'halvering': '#2b8a61'}
+for name, points in paths.items():
+    ax_map.plot(points[:, 0], points[:, 1], 'o-', color=colors[name],
+                markersize=2.5, linewidth=1.4, label=name)
+    ax_map.plot(*points[-1], 'o', color=colors[name], markersize=7)
+ax_map.plot(0, 0, 'ks', markersize=6, label='start k=0')
+ax_map.plot(3, 2, 'k*', markersize=11, label='kjent globalt punkt')
+ax_map.set(xlim=(-1, 4), ylim=(-1, 4), xlabel='x', ylabel='y',
+           title='Aksepterte punkter på nivåkurvene til f')
+ax_map.set_aspect('equal')
+ax_map.legend(fontsize=8, loc='upper left')
 for name, values in curves.items():
     ax.semilogy(np.arange(len(values)), np.maximum(values, 1e-15),
-                'o-', markersize=3, label=name)
+                'o-', markersize=3, color=colors[name], label=name)
 ax.set(xlabel='Iterasjonssteg', ylabel='f (logaritmisk skala)')
-ax.legend(); plt.show()
+ax.legend()
+fig.tight_layout(); plt.show()
 ```
 
 Med $\alpha=0{,}02$ er $f$ etter 40 steg omtrent $1{,}46\cdot10^{-15}$.
@@ -259,25 +314,30 @@ Med $\alpha=0{,}1$ vokser funksjonen raskt; vi stopper tegningen når
 stegene vokser så mye at sikkerhetsgrensen i koden bryter kjøringen.
 Halvering finner omtrent $(3,2)$, med
 $f<10^{-14}$ og gradientnorm under $10^{-6}$, fra samme startpunkt.
+Øverst følger de to tegnede banene de samme aksepterte punktene som
+verdiplottet under teller. Starten er en svart firkant; de fargede
+endepunktene ligger praktisk talt på den svarte stjernen. Banen med
+$\alpha=0{,}1$ er utelatt fra kartet, ikke konvergent: verdiplottet
+viser hvorfor et stort steg kan skyte langt forbi lave nivåer.
 Retningen er lokalt nedgående når gradienten er ulik null, men en
-vilkårlig lang bevegelse kan gå opp igjen. **Armijo-testen** i koden er
-
-$$f(z-\alpha g)\leq f(z)-10^{-4}\alpha\,g^Tg,
-\qquad g=\nabla f(z).$$
-
-Den krever minst en liten andel av nedgangen som den lokale helningen
-forutsier; er nedgangen for liten, halveres $\alpha$ og vi prøver igjen.
-Her arbeider vi med en glatt funksjon uten sidebetingelser. Gradient
-lik null kan likevel også bety et
+vilkårlig lang bevegelse kan gå opp igjen. Er nedgangen i Armijo-testen
+for liten, halveres $\alpha$ og vi prøver igjen. Her arbeider vi med en
+glatt funksjon uten sidebetingelser. Gradient lik null kan likevel bety et
 sadelpunkt. Vi sammenholder derfor gradientnorm, funksjonsverdi og
 eventuelle matematiske garantier, ikke bare at koden stoppet.
 
 **Numerisk linjesøk med SciPy.** I uke 6 kunne vi beregne den beste
 steglengden for en SPD-kvadratisk funksjon fra indreprodukter. Her er
-funksjonen langs $-\nabla f(z_0)$ ikke en parabel. Vi lar
-[`scipy.optimize.minimize_scalar`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize_scalar.html)
-prøve steglengder i intervallet $(0,0{,}2)$, og kontrollerer resultatet
-i det todimensjonale problemet:
+funksjonen langs $-\nabla f(z_0)$ ikke en parabel. Etter at startpunkt
+og retning er låst, lager `lambda alpha: f9(start + alpha*direction)`
+en funksjon av **ett tall**. `minimize_scalar` (importert i oppsettet)
+søker langs denne linjen; `bounds=(0., .2)` og `method='bounded'`
+avgrenser forsøket til steglengder mellom 0 og 0,2. Det er et annet
+valg enn Armijo: her brukes evalueringer for å finne en liten verdi
+langs én fast linje, ikke bare den første tilstrekkelige nedgangen.
+`options={'xatol': 1e-10}` setter en absolutt stopptoleranse for den
+valgte $\alpha$, ikke en garantert feil i funksjonsverdien eller et
+globalt optimalitetsbevis.
 
 ```{pyodide-python}
 #| label: week9-scalar-line-search
@@ -295,11 +355,25 @@ print(f'||gradient||={np.linalg.norm(line_gradient):.3f}, '
       f'derivert langs linjen={line_gradient @ direction:.3g}')
 ```
 
+`line.x` er den valgte steglengden, `line.nfev` antall evalueringer,
+og `line.success` angir om søkets egne stoppvilkår ble oppfylt.
 Vi får omtrent $\alpha=0{,}127336$ og $f=32{,}126$, lavere enn
 startverdien 170. Den fulle gradientnormen er likevel omtrent $36{,}2$:
 punktet er ikke stasjonært i planet. `bounded` gir en **lokal numerisk
 minimumskandidat** på det valgte intervallet; `success=True` sertifiserer
 ikke et globalt minimum, verken der eller i hele planet.
+
+**SciPy-huskelapp for ett linjesøk.**
+
+| Del | Bruk her |
+|:--|:--|
+| Import | `from scipy.optimize import minimize_scalar` (gjort i oppsettet). |
+| Mål og intervall | `minimize_scalar(h, bounds=(a,b), method='bounded')`, der `h(alpha)` returnerer ett tall. |
+| Stoppvalg | `options={'xatol': 1e-10}` er en absolutt toleranse for $\alpha$; ingen garanti for feil i funksjonsverdien eller global optimalitet. |
+| Resultat | `line.x` er $\alpha$, `line.fun` er `h(alpha)`, `line.nfev` teller funksjonskall, `line.success` er rutines stoppstatus. |
+
+Beregn deretter $z+\alpha p$ og kontroller den **fulle** gradienten:
+en liten derivert *langs linjen* er ikke det samme som $\nabla f=0$.
 
 **Overføring:** Hvis $f$ bare var tilgjengelig som laboratoriemålinger,
 hvilken del av denne metoden ville mangle? Hva fra 9.1–9.2 kan fortsatt
@@ -326,7 +400,7 @@ gradientnormen ikke er det, viser forskjellen mellom de to oppgavene.
 
 </details>
 
-## 9.4 Regneoppgaver og kilder
+## 9.4 Regneoppgaver
 
 <div id="uke9-oppgaver"></div>
 
@@ -412,14 +486,9 @@ $f(3,2)=$ __[0]
 Nedre grense: __[0]
 ```
 
-**Kilder og kalenderkobling.** Gjøvik kalenderuke 42:
-[iterative metoder uten deriverte](https://wiki.math.ntnu.no/_media/imax3011/2025h/iterative_metoder_uten_deriverte.pdf),
-[illustrasjon av kompassøk](https://wiki.math.ntnu.no/_media/imax3011/2025h/kompasssok.pdf) og
-[gradientmetoden](https://wiki.math.ntnu.no/_media/imax3011/2025h/numeriske_metoder_-_gradient_metode.pdf).
-Trondheim forelesning 17–18:
-[grid, random search og random walks](https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning17.pdf) og
-[gradientmetoden](https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning18.pdf).
-Siden samler søkestrategiene på én funksjon, mens Newtons metode og
-Hessimatriser utvikles i neste uke.
+I denne uken valgte gradienten en retning, mens funksjonsverdiene
+avgjorde om steget var forsvarlig. I [uke 10](uke10.qmd#uke10-likning)
+bruker vi også Hessianen til å forme retningen etter lokal krumning.
+Vi må fortsatt kontrollere at hele steget faktisk forbedrer målet.
 
 :::

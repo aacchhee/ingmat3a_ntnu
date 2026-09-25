@@ -1,5 +1,25 @@
 # Optimisation weeks: first-draft review
 
+## Current lecture revision
+
+The five lecture pages were subsequently revised as a self-contained textbook
+sequence. Timetables, calendar mappings and visible source sections were removed.
+Definitions and essential theory now precede the calculations that need them;
+explicit links connect the previous linear algebra weeks to the new methods.
+The same week-6 quadratic develops from geometry and convexity to Newton's step.
+Each solver has beginner call guidance and a compact SciPy reference.
+New geometry figures connect gradient trajectories to objective histories,
+Newton paths to the local quadratic model, and SLSQP iterates to the feasible
+circle. Paired panels are arranged vertically and discussed in the text. A second
+Astra XHIGH review considers all five weeks together, including the progression
+of mathematical prerequisites and programming vocabulary. Project content is
+unchanged apart from removing draft labels from titles.
+
+The source mapping and initial review record below are retained for maintainers;
+they do not describe the current student-facing headings or reading requirements.
+
+## Initial drafting record
+
 Drafted on `linalg-branch` from the 2025 IMAX3011 campus lecture material.
 Each lecture page has a proposed 120-minute route, small executable experiments,
 questions about their results, and longer derivations under **Gå i dybden**.

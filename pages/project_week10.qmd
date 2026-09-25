@@ -1,5 +1,5 @@
 ---
-title: "Prosjekt 10 – Første utkast: Newton, startpunkt og skala"
+title: "Prosjekt 10 – Newton, startpunkt og skala"
 ---
 
 {{< include ../_includes/projects/week10_setup.md >}}

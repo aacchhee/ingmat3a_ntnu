@@ -12,19 +12,17 @@
 
 ### Fra gradient til lokal krumning
 
-I [uke 6](uke6.qmd#uke6-retning) fant vi en søkeretning for en positivt
-definitt kvadratisk funksjon; [uke 9](uke9.qmd) brukte gradienten på
-generelle funksjoner. Her spør vi om **krumningen akkurat der vi står**
-kan gi et bedre steg. Newtons metode forsøker å løse likningen
-$\nabla f(x)=0$ ved en lokal linearisering. Likningen beskriver
-stasjonære punkter, og disse er ikke nødvendigvis minima.
-
-| Tid | Felles arbeid i forelesningen | Kontrollspørsmål |
-|:--|:--|:--|
-| 0–25 min | Ett Newton-steg på en kvadratisk funksjon | Hvorfor er løsningen eksakt? |
-| 25–50 min | Et ikke-konvekst moteksempel | Kan et stasjonært punkt være galt mål? |
-| 50–90 min | Fortegn, regularisering og steglengde | Hvorfor hjelper ikke bare å halvere alle steg? |
-| 90–120 min | Lokal fart, SciPy og overgang til bibetingelser | Hva har vi faktisk kontrollert? |
+I [uke 6](uke6.qmd#uke6-energi) løste vi et kvadratisk minimum ved et
+lineært system. I [uke 8](uke8.qmd#uke8-hessian) brukte vi gradient og
+Hessian til å undersøke *hvilken type punkt* et søk hadde funnet. I
+[uke 9](uke9.qmd#uke9-gradient) valgte vi retning fra gradienten og
+sjekket steglengden mot de faktiske funksjonsverdiene. Nå bruker vi også
+**krumningen akkurat der vi står** til å foreslå retningen. Newtons
+metode forsøker å løse $\nabla f(x)=0$ ved en lokal tilnærming. Først
+viser samme kvadratikk fra uke 6 hvorfor tilnærmingen kan være eksakt.
+Deretter møter vi to ikke-kvadratiske problemer: en stasjonær kandidat
+som er feil mål, og en god retning med for langt steg. Slik blir
+regularisering og demping svar på to forskjellige problemer.
 
 Etter uken skal du kunne danne gradient og Hessian, løse for
 Newton-retningen uten matriseinvers, skille stasjonaritet fra minimum,
@@ -39,26 +37,43 @@ Startpunkt og variabelskalering undersøkes videre i
 
 Vi vil minimere $f(x)$, der $x=(u,v)^T$. Første nødvendige betingelse
 for et indre, deriverbart lokalt minimum er $g(x)=\nabla f(x)=0$.
-I [uke 2](page4.qmd) brukte vi Newton på en skalar likning. For den
-vektorverdige likningen $g(x)=0$ er Jacobimatrisen til $g$ nettopp
-**Hessianen** $H(x)=\nabla^2 f(x)$, matrisen av andrepartiellderiverte.
-Med to variabler har den postene $f_{uu},f_{uv},f_{vu},f_{vv}$ i
-den rekkefølgen en $2\times2$-matrise leses radvis. For en glatt
-funksjon er de blandede deriverte like, så Hessianen er symmetrisk.
-Den forteller hvordan *gradienten endrer seg* når vi flytter oss,
-mens gradienten selv angir den lokale endringen av målet. Dette
-er grunnen til at det er Hessianen, og ikke funksjonsverdien, som
-står som koeffisientmatrise når vi løser den lineariserte
-stasjonslikningen.
+Dette er ingen tilstrekkelig test, slik vi så i uke 8. I
+[uke 2](page4.qmd) brukte vi Newton på en skalar likning. For en
+vektorfunksjon $g=(g_1,g_2)^T$ betyr **Jacobimatrisen** $J_g$ matrisen
+der post $(i,j)$ er den partiellderiverte $\partial g_i/\partial x_j$.
+Når $g=\nabla f$, er denne matrisen nettopp **Hessianen**:
 
-**Forutsi:** Hvis $f(x)=\tfrac12x^TAx-b^Tx$ og $A$ er symmetrisk
-positivt definit (SPD), hvor mange Newton-steg trengs fra en vilkårlig
-start? I [uke 6](uke6.qmd#uke6-energi) så vi at minimum løser $Ax=b$.
+$$H_f(x)=J_g(x)=\nabla^2 f(x)=
+\begin{bmatrix}f_{uu}(x)&f_{uv}(x)\\f_{vu}(x)&f_{vv}(x)\end{bmatrix}.$$
+
+For en to ganger kontinuerlig deriverbar funksjon er de blandede
+deriverte like, så Hessianen er symmetrisk. Den beskriver hvordan
+gradienten endrer seg. Den lokale andreordensmodellen fra
+[uke 8](uke8.qmd#uke8-hessian) er
+
+$$m_x(p)=f(x)+g(x)^Tp+\tfrac12p^TH(x)p.$$
+
+Hvis $H(x)$ er positiv definit (SPD), har denne kvadratiske modellen
+ett minimum. Modellens gradient med hensyn til $p$ er $g(x)+H(x)p$;
+dermed fås **Newton-retningen** ved å løse
+
+$$H(x_k)p_k=-g(x_k),\qquad x_{k+1}=x_k+p_k.$$
+
+Dette er også Newton-lineariseringen $g(x+p)\approx g(x)+H(x)p$ av
+stasjonslikningen. Vi løser det lineære systemet med
+`np.linalg.solve(H, -g)`; vi beregner ikke $H^{-1}$ eksplisitt.
+Når $H$ er SPD og $g\ne0$,
+gir $g^Tp=-p^THp<0$, så retningen er lokalt nedgående. Hele steget må
+fortsatt kontrolleres mot den virkelige funksjonen.
+
+**Forutsi:** For kvadratikken $\phi(x)=\tfrac12x^TAx-b^Tx$ med
+$A=\begin{bmatrix}3&1\\1&2\end{bmatrix}$ og $b=(5,5)^T$ fra uke 6:
+hvor mange Newton-steg trengs fra en vilkårlig start for å nå $(1,2)$?
 
 ```{pyodide-python}
 #| label: week10-quadratic-step
-A = np.array([[4., 1.], [1., 2.]])
-b = np.array([5., 3.])
+A = np.array([[3., 1.], [1., 2.]])
+b = np.array([5., 5.])
 x = np.array([-2., 3.])
 g = A @ x - b
 p = np.linalg.solve(A, -g)  # Løs Ap = -g, ikke beregn en invers.
@@ -66,27 +81,23 @@ print('g(x0) =', g, 'p =', p)
 print('x1 =', x+p, '||g(x1)|| =', np.linalg.norm(A @ (x+p)-b))
 ```
 
-Her er $g(x_0)=(-10,1)^T$, $p=(3,-2)^T$ og $x_1=(1,1)^T$;
+Her er $g(x_0)=(-8,-1)^T$, $p=(3,-1)^T$ og $x_1=(1,2)^T$;
 gradientnormen er null (innen flyttallspresisjon). **Hvorfor** er
-dette mer enn et heldig startpunkt? Lineariseringen
-$g(x+p)\approx g(x)+H(x)p$ gir Newton-likningen
-
-$$H(x_k)p_k=-g(x_k),\qquad x_{k+1}=x_k+p_k.$$
-
-For denne kvadratiske funksjonen er $g(x)=Ax-b$ og $H(x)=A$ overalt.
-Lineariseringen er derfor *eksakt*; $g(x+p)=g(x)+Ap=0$. For en
-ikke-kvadratisk funksjon endrer $H$ seg med $x$. Da må vi beregne
-retningen på nytt, og et helt steg kan være for langt.
+dette mer enn et heldig startpunkt? For denne kvadratiske funksjonen
+er $g(x)=Ax-b$ og $H(x)=A$ overalt. Den lokale modellen $m_x(p)$ er
+hele funksjonen $\phi(x+p)$, ikke bare en tilnærming, og
+$g(x+p)=g(x)+Ap=0$. Siden $A$ er SPD, er dette også det unike globale
+minimumet. For en ikke-kvadratisk funksjon endrer $H$ seg med $x$.
+Da må vi beregne retningen på nytt, og et helt steg kan være for langt.
 
 <details class="reading-step"><summary>Gå i dybden: hvorfor er retningen fallende ved positiv Hessian?</summary>
 
-Den andreordens lokale modellen er
-$m_x(p)=f(x)+g(x)^Tp+\tfrac12p^TH(x)p$. Gradient med hensyn til $p$
-er $g(x)+H(x)p$. Når $H(x)$ er SPD, har denne modellen ett minimum,
-gitt ved $Hp=-g$. Hvis $g\ne0$, er
-$g^Tp=-p^THp<0$: små positive steg langs $p$ senker funksjonen.
-SPD *i ett punkt* er likevel bare lokal informasjon. Modellen
-garanterer ikke at $f(x+p)<f(x)$ for det hele steget.
+For en SPD-Hessian er $p=-H^{-1}g$ godt definert matematisk, selv om
+koden løser systemet direkte. Setter vi $Hp=-g$ inn i modellen, blir
+$m_x(p)-m_x(0)=g^Tp+\tfrac12p^THp=-\tfrac12p^THp<0$ når $g\ne0$.
+Dette gjelder modellens verdi ved $p$. For den virkelige funksjonen
+gir $g^Tp<0$ garantert reduksjon bare ved tilstrekkelig små positive
+steg; et stort steg kan forlate området der modellen er god.
 
 </details>
 
@@ -99,7 +110,15 @@ $H$ varierer mellom $x$ og $x+p$?
 
 La $f(u,v)=(u^2-1)^2+v^2/2$. De to punktene $(\pm1,0)$ har
 funksjonsverdi null og er globale minima siden begge ledd er
-ikke-negative. Men $(0,0)$ er også stasjonært. **Forutsi:** Hva gjør
+ikke-negative. Her er
+
+$$g(u,v)=\begin{bmatrix}4u(u^2-1)\\v\end{bmatrix},\qquad
+H(u,v)=\begin{bmatrix}12u^2-4&0\\0&1\end{bmatrix}.$$
+
+Oppsettet definerer `well(x)`, `well_grad(x)` og `well_hess(x)` for
+disse tre uttrykkene; hver tar vektoren `x = [u, v]` og returnerer
+henholdsvis ett tall, en vektor og en $2\times2$-matrise.
+Men $(0,0)$ er også stasjonært. **Forutsi:** Hva gjør
 Newton fra $(0.2,0)$? Undersøk fortegnet til både $g^Tp$ og
 $f(x+p)-f(x)$ før du kjører.
 
@@ -137,12 +156,23 @@ rapportert i origo? Hvilke to ekstra kontroller ville du bedt om?
 
 <div id="uke10-demping"></div>
 
-Vi kan først rette problemet med negativ krumning: løs
-$(H+\lambda I)p=-g$, der $\lambda\geq0$ velges slik at matrisen
-er SPD. Her velger vi minste egenverdi minst $0.25$, kun for dette
-lille eksemplet. Det er **regularisering**, og endrer retningen.
+Vi kan først rette problemet med negativ krumning. La $I$ være
+identitetsmatrisen (`np.eye(2)` i kode); løs så
+$(H+\lambda I)p=-g$, der $\lambda\geq0$ velges slik at matrisen er SPD.
+Når vi legger til $\lambda I$, øker hver egenverdi til $H$ med
+$\lambda$. Hvis $\lambda_{\min}$ er den minste egenverdien, gir
+$\lambda=\max(0,0.25-\lambda_{\min})$ derfor minste egenverdi minst
+$0.25$ i dette lille eksemplet. Det er **regularisering**, og endrer
+retningen.
 Deretter prøver vi steglengder $\alpha=1,1/2,1/4,\ldots$ til en
-tilstrekkelig reduksjon er oppnådd. Det er **demping**.
+tilstrekkelig reduksjon er oppnådd. Det er **demping**. Vi bruker
+Armijo-testen fra [uke 9](uke9.qmd#uke9-gradient), nå for en generell
+retning $p$: $f(x+\alpha p)\leq f(x)+10^{-4}\alpha g^Tp$. Den krever
+$g^Tp<0$. Hvis $g^Tp>0$, øker funksjonen langs alle tilstrekkelig
+små positive steg, så halvering gir ingen garanti for nedgang.
+Oppsettets `armijo(f, g, x, p)` tar selve funksjonen, gradientvektoren,
+startpunktet og retningen; den returnerer godkjent $\alpha$ og antall
+halveringer, eller melder feil ved manglende nedgang innen budsjettet.
 
 **Forutsi:** Med $x=(0.2,0)$ gir denne regelen $\lambda=3.77$,
 $p=(3.072,0)$. Vil helt steg, halvt steg eller kvart steg bli
@@ -162,8 +192,6 @@ print('lambda =', lam, 'g·p =', g @ p,
 
 Hele og halve steg øker her $f$; kvart steg gir $x=(0.968,0)$
 og reduserer $f$ fra $0.9216$ til omtrent $0.00396$.
-Koden godtar et steg når
-$f(x+\alpha p)\leq f(x)+10^{-4}\alpha g^Tp$.
 Fordi $g^Tp<0$, kreves en reell reduksjon. For en glatt funksjon
 finnes et lite nok steg lokalt når $p$ er en nedgangsretning;
 vårt begrensede søk kan likevel melde feil. Verdien $0.25$ er ikke
@@ -173,6 +201,15 @@ regularisering må vurderes for et nytt problem.
 Også en *positiv* Hessian kan gi et helt steg som mislykkes når
 funksjonen bøyer seg bort fra modellen. Prøv den bøyde dalen
 $q(u,v)=(1-u)^2+10(v-u^2)^2$, med minimum $q(1,1)=0$.
+Gradienten er $(2(u-1)-40u(v-u^2),\ 20(v-u^2))^T$, og Hessianen er
+$\begin{bmatrix}2-40v+120u^2&-40u\\-40u&20\end{bmatrix}$.
+Oppsettet kaller disse `valley`, `valley_grad` og `valley_hess`, med
+samme inndata og utdatatypene som for dobbeltbrønnen.
+**Forutsi:** I startpunktet er Hessianen SPD, så modellen har et
+minimum langs Newton-retningen. Ligger det foreslåtte punktet også
+lavere på den *virkelige* bøyde dalen? Sammenlign fullstegbanen og
+Armijo-banen på nivåkurvene. Nederst sammenligner vi modellen og den
+virkelige funksjonen langs den første retningen.
 
 ```{pyodide-python}
 #| label: week10-backtrack-positive-hess
@@ -182,21 +219,80 @@ a, halvings = armijo(valley, g, x, p)
 print('H-egneverdier:', np.linalg.eigvalsh(H), 'p:', p)
 print('q(x), q(x+p), q(x+alpha*p):', valley(x), valley(x+p), valley(x+a*p))
 print('alpha:', a, 'halveringer:', halvings)
+
+def newton_path(damped, n):
+    point = np.array([0., 0.])
+    points = [point.copy()]
+    for k in range(n):
+        grad, hess = valley_grad(point), valley_hess(point)
+        direction = np.linalg.solve(hess, -grad)
+        step = armijo(valley, grad, point, direction)[0] if damped else 1.
+        point = point + step*direction
+        points.append(point.copy())
+    return np.array(points)
+
+full_path = newton_path(damped=False, n=2)
+damped_path = newton_path(damped=True, n=5)
+fig, (ax_map, ax_line) = plt.subplots(2, 1, figsize=(6.5, 9))
+u, v = np.meshgrid(np.linspace(-.1, 1.2, 180), np.linspace(-.2, 1.2, 180))
+q_grid = (1-u)**2 + 10*(v-u*u)**2
+ax_map.contour(u, v, q_grid,
+               levels=[.001, .01, .05, .1, .25, .5, 1, 2, 5, 10],
+               colors='#adb5bd', linewidths=.8)
+for name, points, color in [('full Newton', full_path, '#b5483f'),
+                            ('Armijo-dempet', damped_path, '#1665ad')]:
+    ax_map.plot(points[:, 0], points[:, 1], 'o-', color=color,
+                markersize=4, linewidth=1.5, label=name)
+ax_map.plot(0, 0, 'ks', markersize=6, label='start k=0')
+ax_map.plot(1, 1, 'k*', markersize=11, label='q=0')
+ax_map.annotate('full: k=1, q=10', (1, 0), xytext=(-130, 45),
+                textcoords='offset points', color='#92392f', fontsize=8,
+                arrowprops={'arrowstyle': '-', 'color': '#92392f'})
+ax_map.annotate('dempet: k=1, q=0.875', (.5, 0), xytext=(5, -29),
+                textcoords='offset points', color='#14517f', fontsize=8,
+                arrowprops={'arrowstyle': '-', 'color': '#14517f'})
+ax_map.set(xlim=(-.1, 1.2), ylim=(-.2, 1.2), xlabel='u', ylabel='v',
+           title='Baner over nivåkurvene til faktisk q')
+ax_map.set_aspect('equal'); ax_map.legend(fontsize=8, loc='upper left')
+
+alpha_grid = np.linspace(0, 1.1, 180)
+actual = np.array([valley(x+t*p) for t in alpha_grid])
+model = valley(x) + alpha_grid*(g @ p) + .5*alpha_grid**2*(p @ H @ p)
+ax_line.plot(alpha_grid, actual, color='#34495e', label='faktisk q(x+αp)')
+ax_line.plot(alpha_grid, model, '--', color='#9262a4',
+             label='lokal modell mₓ(αp)')
+ax_line.plot([a, 1], [valley(x+a*p), valley(x+p)], 'ko', markersize=4)
+ax_line.set(xlabel='Faktor α langs første Newton-retning',
+            ylabel='Verdi', title='Modellen undervurderer hele steget')
+ax_line.legend(fontsize=8)
+fig.tight_layout(); plt.show()
 ```
 
 Her er $H=\operatorname{diag}(2,20)$ og $p=(1,0)$, men det hele
 steget går fra $q=1$ til $q=10$. Linjesøket godtar $\alpha=1/2$;
 den nye verdien er $q(0.5,0)=0.875$. SPD gjør retningen fallende
-*nær startpunktet*, ikke nødvendigvis på hele veien.
+*nær startpunktet*, ikke nødvendigvis på hele veien. I øvre figur går
+full Newton først til modellens foreslåtte bunn $(1,0)$ og øker $q$;
+neste steg når $(1,1)$. Den dempede banen avviser første fullsteg,
+velger $(0.5,0)$ og senker $q$ videre i fem aksepterte steg. I nedre
+figur er første kvadratiske modell $m_x(\alpha p)=(1-\alpha)^2$,
+mens den faktiske verdien langs samme linje er
+$q(\alpha,0)=(1-\alpha)^2+10\alpha^4$. Differansen kommer fra
+den bøyde dalen som andreordensmodellen ved start ikke fanger opp.
+Krumning velger retningen; demping velger hvor langt vi følger den.
 
-Nær et stasjonært punkt med invertibel Hessian og lokalt Lipschitz-
-kontinuerlig Hessian får **rene Newton-steg** lokal kvadratisk
-konvergens: feilen i neste steg er høyst en konstant ganger
-kvadratet av den nåværende feilen. Hvis Hessianen er SPD der,
-er punktet et strengt lokalt minimum. For å bruke denne garantien
-direkte på vår sikrede metode må linjesøket etter hvert godta
-$\alpha=1$ **og** regulariseringen bli inaktiv ($\lambda=0$).
-En fast positiv regularisering kan gjøre sluttfasen tregere.
+En Hessian er **lokalt Lipschitz-kontinuerlig** nær $x_*$ hvis den ikke
+endrer seg raskere enn en fast konstant ganger avstanden: det finnes
+$L$ slik at $\|H(x)-H(y)\|\le L\|x-y\|$ for nærliggende $x,y$.
+Når $x_*$ er stasjonært, $H(x_*)$ er invertibel, Hessianen har denne
+egenskapen og starten er tilstrekkelig nær $x_*$, får **rene
+Newton-steg** lokal kvadratisk konvergens: feilen i neste steg er
+høyst en konstant ganger kvadratet av den nåværende feilen.
+Hvis Hessianen er SPD ved $x_*$, er punktet et strengt lokalt
+minimum. For å bruke samme lokale garanti på vår sikrede metode
+må linjesøket etter hvert godta $\alpha=1$ **og** regulariseringen
+bli inaktiv ($\lambda=0$). En fast positiv regularisering kan
+gjøre sluttfasen tregere.
 
 <details class="reading-step"><summary>Gå i dybden: lokal fart og begrensninger</summary>
 
@@ -220,13 +316,19 @@ steglengde håndterer hver for seg?
 
 <div id="uke10-scipy"></div>
 
-SciPy har flere metoder i `scipy.optimize.minimize`. `BFGS` bygger
-opp en krumningsmodell fra gradienter, mens `Newton-CG` kan bruke
-vår Hessian. De implementerer mer enn de små forsøkene over; de er
-ikke identiske med vår eksplisitte SPD-regularisering. Fra samme
-start i den bøyde dalen: **forutsi** om færrest iterasjoner også
-betyr minst arbeid. Kjør og les objektivverdi, gradientnorm og
-funksjons-/gradient-/Hessian-evalueringer i tillegg til status.
+SciPy-rutinen `minimize` fra [uke 8](uke8.qmd#uke8-scipy) tar en
+mål-funksjon av vektoren $x$, startpunktet `x0` og en valgt metode.
+`jac=valley_grad` gir den analytiske gradientfunksjonen (SciPy kaller
+argumentet `jac`), og `hess=valley_hess` gir Hessianen når metoden
+trenger den. `BFGS` bygger en tilnærming til krumning fra endringer i
+gradienten, så vi slipper å gi Hessianen. `Newton-CG` bruker Hessianen
+til å beregne en Newton-liknende retning ved en indre iterasjon, og
+kan bruke et linjesøk for steget. De implementerer mer enn forsøkene
+over; ingen av dem er identisk med vår eksplisitte SPD-regularisering.
+Fra samme start i den bøyde dalen: **forutsi** om færrest ytre
+iterasjoner også betyr minst arbeid. Vi bruker `options={'maxiter':
+100}` som øvre grense og leser både verdi, gradient og antall
+funksjons-/gradient-/Hessian-evalueringer.
 
 ```{pyodide-python}
 #| label: week10-scipy-compare
@@ -248,12 +350,25 @@ beskriver solverens stoppvilkår, ikke et bevis for globalt minimum.
 Her kjenner vi global fasit separat fordi $q$ er en sum av
 ikke-negative ledd og når null i $(1,1)$.
 
+**SciPy-huskelapp for dette forsøket.**
+
+| Del | Bruk her |
+|:--|:--|
+| Import og kall | `from scipy.optimize import minimize` (gjort i oppsettet); `minimize(fun, x0, jac=grad, method='BFGS')` tar mål, start og gradient. |
+| Krumningsmetode | `method='Newton-CG'` med `hess=H` bruker også Hessianen. |
+| Stoppvalg | `options={'maxiter': 100}` begrenser ytre iterasjoner i koden. `gtol` er en valgfri gradientnormtoleranse for BFGS, mens `xtol` er en valgfri relativ løsningstoleranse for Newton-CG; de er ikke satt i dette forsøket. |
+| Resultat | `res.x` er punktet, `res.fun` verdien, `res.success` rutines stoppstatus, `res.nit` ytre iterasjoner. `res.nfev`, `res.njev`, `res.nhev` teller mål-, gradient- og Hessian-kall når feltene finnes. |
+
+Evaluer selv $\|\nabla f(\texttt{res.x})\|$ og spør hva som eventuelt
+beviser globalitet. `np.linalg.solve(H, -g)` i de små forsøkene løser
+$Hp=-g$ direkte; `minimize` håndterer en hel serie slike oppdateringer.
+
 Når vi legger til lineære bibetingelser og et lineært mål, får vi
 et annet slags problem. Da ligger optimum ofte på randen, og
 $\nabla f=0$ er ikke lenger kontrollen vi skal bruke. Dette er
 overgangen til [lineær optimering i uke 11](uke11.qmd).
 
-## 10.5 Oppgaver, prosjekt og kilder
+## 10.5 Oppgaver og prosjekt
 
 <div id="uke10-oppgaver"></div>
 
@@ -346,13 +461,5 @@ $\nabla f\cdot p=$ __[-9/4]
 ```
 
 Arbeid videre med [prosjekt 10: startpunkt, skala og Newton](project_week10.qmd).
-
-**Grunnlag i kalenderuke 43 (2025):** Gjøvik: [Newtons flervariabel
-metode](https://wiki.math.ntnu.no/_media/imax3011/2025h/newtons_flervariabel_handout.pdf)
-og [Newtons metode i optimering](https://wiki.math.ntnu.no/_media/imax3011/2025h/numeriske_metoder_-_newtons_metode.pdf).
-Trondheim: [forelesning 19](https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning19.pdf)
-og [forelesning 20](https://wiki.math.ntnu.no/_media/imax3011/2025h/imat3011-forelesning20.pdf).
-De siste forelesningssidene starter lineær optimering; vi bruker
-overgangen her og arbeider med selve metoden i uke 11.
 
 :::
