@@ -4529,6 +4529,7 @@ Gå i dybden
 </div>
 <section id="eksperiment-1-hvor-lite-trenger-vi" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-1-hvor-lite-trenger-vi">Eksperiment 1 – hvor lite trenger vi?</h3>
+<p>Her bygger vi opp det samme bildet med stadig flere SVD-mønstre. Hvert mønster bidrar til mange piksler samtidig, så antallet mønstre sier noe om hvor mye informasjon vi beholder. Forsøket gir oss et konkret spørsmål å ta med videre: Hvorfor kan noen få bidrag gjengi hovedtrekkene i et bilde, mens små detaljer krever flere?</p>
 <p>Kjør cellen og se samme bilde med 1, 5 og 20 <strong>komponenter</strong>, altså byggemønstre som legges sammen. Bytt deretter ett av tallene og prøv igjen. Hvilke detaljer kan dere gjenkjenne med få komponenter, og hvilke krever flere?</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -4562,13 +4563,14 @@ Gå i dybden
 </div>
 <section id="eksperiment-2-følg-en-retning-gjennom-transformasjonen" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-2-følg-en-retning-gjennom-transformasjonen">Eksperiment 2 – følg en retning gjennom transformasjonen</h3>
-<p>I forsøket nedenfor er alle startpunktene på en <strong>enhetssirkel</strong>: de representerer vektorer med lengde 1. Velg <strong>Ellipse</strong> og flytt den rosa prikken rundt sirkelen i rute 1. Følg den rosa vektoren helt til rute 4. Retningsskyverne kan også brukes med tastaturet.</p>
+<p>En matrise sender hver startvektor til en ny vektor. Her lar vi alle startvektorene ha lengde 1, slik at forskjeller i resultatlengde bare skyldes matrisen og retningen vi velger. Sirkelen blir en ellipse, og halvaksene gjør største og minste strekk synlige. Det gir en geometrisk inngang til både singulærverdier og tap av informasjon.</p>
+<p>Startpunktene ligger på en <strong>enhetssirkel</strong>. Velg <strong>Ellipse</strong> og flytt den rosa prikken rundt sirkelen i rute 1. Følg den rosa vektoren helt til rute 4. Retningsskyverne kan også brukes med tastaturet.</p>
 <ul>
 <li>I hvilke startretninger blir resultatvektoren lengst og kortest?</li>
 <li>Velg <strong>Smal ellipse</strong>. Hva blir vanskeligere å skille i resultatet?</li>
 <li>Velg <strong>Rangtap</strong>. Kan ulike startvektorer nå gi samme resultat?</li>
 </ul>
-<p>Se først på rute 1 og 4. De to mellomrutene undersøker vi i neste fane. En <strong>dreiing</strong> snur alle retninger like mye; en <strong>speiling</strong> vender orienteringen som i et speil. Begge bevarer lengder og vinkler.</p>
+<p>Se først på rute 1 og 4. De blå og fiolette pilene er merket <span class="math inline">\(v_1\)</span>, <span class="math inline">\(v_2\)</span> ved starten og <span class="math inline">\(\sigma_1u_1\)</span>, <span class="math inline">\(\sigma_2u_2\)</span> ved resultatet. Matrisene under diagrammet oppdateres når du flytter skyverne. De to mellomrutene og faktorene undersøker vi i neste fane. En <strong>dreiing</strong> snur alle retninger like mye; en <strong>speiling</strong> vender orienteringen som i et speil. Begge bevarer lengder og vinkler.</p>
 <iframe src="../assets/svd-visualizer.html" title="Interaktivt SVD-forsøk: følg retninger fra sirkel til ellipse" loading="lazy" style="width:100%;height:920px;border:1px solid #d4e0e7;border-radius:6px;">
 </iframe>
 <p><a href="../assets/svd-visualizer.html" target="_blank" rel="noopener">Åpne forsøket i eget vindu</a>.</p>
@@ -4589,7 +4591,7 @@ Gå i dybden
 <p><span class="math display">\[Ax=(2b,a)^T,\qquad \|Ax\|_2^2=4b^2+a^2=1+3b^2.\]</span></p>
 <p>Symbolet <span class="math inline">\(\|x\|_2\)</span> er vektorens vanlige euklidske lengde, <span class="math inline">\(\sqrt{x_1^2+\cdots+x_n^2}\)</span>. Resultatlengden ligger mellom 1 og 2. Setter vi nedre venstre matriseelement til <span class="math inline">\(s\in[0,1]\)</span>, blir <span class="math inline">\(\|Ax\|_2^2=4b^2+s^2a^2\)</span>. Minste strekkfaktor er da <span class="math inline">\(s\)</span>. Ved <span class="math inline">\(s=0\)</span> er alle vektorer langs <span class="math inline">\(e_1\)</span> i nullrommet, og ellipsen blir et linjestykke.</p>
 <p>Når strekkfaktorene er like, finnes flere mulige ortonormale singulærvektorbasiser. Retninger kan derfor skifte brått i en visualisering selv om transformasjonen endres lite. Ved <span class="math inline">\(\sigma_i=0\)</span> bestemmer <span class="math inline">\(Av_i=0\)</span> ingen bestemt <span class="math inline">\(u_i\)</span>; vi fullfører resultatbasis med en vinkelrett enhetsvektor.</p>
-<p>Forsøket er tilpasset fra <a href="https://andreyac.folk.ntnu.no/svd_complete.html">den opprinnelige SVD-demoen</a>. Originalen viser også de numeriske faktorene og produkter med basisvektorene.</p>
+<p>Forsøket er tilpasset fra <a href="https://andreyac.folk.ntnu.no/svd_complete.html">den opprinnelige SVD-demoen</a>. Under diagrammet kan du lese faktorene <span class="math inline">\(A=U\Sigma V^T\)</span>, basisvektorene i <span class="math inline">\(V\)</span> og koordinatene til de to valgte vektorene i hvert trinn.</p>
 </section>
 </div>
 <div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
@@ -4598,7 +4600,9 @@ Gå i dybden
 </div>
 <section id="eksperiment-3-hvor-endres-lengden" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-3-hvor-endres-lengden">Eksperiment 3 – hvor endres lengden?</h3>
+<p>Nå undersøker vi mellomtrinnene i den samme transformasjonen. SVD deler matriseproduktet i to koordinatskift og ett strekk langs aksene. Ved å følge én vektor og dens tallverdier gjennom alle tre operasjonene kan vi se hva hver faktor gjør. Målet er å forstå hvorfor produktet <span class="math inline">\(U\Sigma V^T\)</span> beskriver akkurat samme transformasjon som <span class="math inline">\(A\)</span>.</p>
 <p>Gå tilbake til forsøket, velg <strong>Skråstilling</strong>, og følg én farge gjennom <strong>alle fire rutene</strong>. Skråstillingen forskyver punkter horisontalt med en avstand som avhenger av høyden. Mellom hvilke ruter endres vektorens lengde? Hva skjer med den blå og den fiolette retningen når de uttrykkes i nye koordinater? Prøv deretter et negativt matriseelement.</p>
+<p>Velg så <strong>Ellipse</strong>, og sett den rosa retningen til <span class="math inline">\(0^\circ\)</span>, altså <span class="math inline">\(x=(1,0)^T\)</span>. Bruk matrisene under diagrammet til å regne <span class="math inline">\(V^Tx\)</span>, deretter <span class="math inline">\(\Sigma(V^Tx)\)</span> og til slutt <span class="math inline">\(U(\Sigma V^Tx)\)</span>. Sammenlign med tallene i raden <strong>Rosa</strong> og med direkte beregning av <span class="math inline">\(Ax\)</span>. SVD-basisvektorene kan ha andre fortegn enn dem vi velger i håndregningen; bruk faktorene som faktisk vises. Sluttresultatet skal være det samme.</p>
 <p><strong>Snakk sammen:</strong> Hvordan kan en transformasjon som både endrer vinkler og lengder settes sammen av noen trinn som bevarer begge deler, og ett som strekker langs aksene?</p>
 </section>
 <section id="svd-er-et-valg-av-koordinater-på-hver-side" class="level3">
@@ -4732,6 +4736,7 @@ Ax=b\quad\Longleftrightarrow\quad
 </section>
 <section id="eksperiment-4-samme-dataendring-to-utfall" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-4-samme-dataendring-to-utfall">Eksperiment 4 – samme dataendring, to utfall</h3>
+<p>Vi undersøker hvor mye retningen til en datafeil betyr når vi løser et likningssystem. Matrisen og den opprinnelige løsningen holdes faste; bare retningen til en like stor endring i høyresiden varierer. Sammenligningen viser hvorfor god tilpasning til målte data ikke alene sikrer riktige verdier for de ukjente. Det er skillet mellom residual og løsningsfeil fra uke 6, nå forklart med singulærverdier.</p>
 <p>Kjør forsøket. Vi velger en kjent løsning, beregner tilhørende data, og endrer én datakomponent om gangen med samme lille beløp. <strong>Gjett først:</strong> Blir løsningsendringen like stor i begge tilfeller?</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -4787,6 +4792,7 @@ Gå i dybden: nesten like kolonner og polynomtilpasning fra uke 4
 </div>
 <section id="eksperiment-5-mer-detalj-flere-tall" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-5-mer-detalj-flere-tall">Eksperiment 5 – mer detalj, flere tall</h3>
+<p>Vi går tilbake til bildet og setter tall på avveiningen mellom lagring og nøyaktighet. Flere SVD-ledd krever flere tall i faktorene og gir mindre samlet pikselfeil, men forbedringen trenger ikke være like stor for hvert nytt ledd. Ved å sammenligne bildet, feilnormen og antallet lagrede tall får vi et grunnlag for å velge hvor mange ledd som er verdt å beholde.</p>
 <p>Kjør cellen med ulike verdier av <code>k</code>. Den viser bildet, antallet tall i den lagrede faktorrepresentasjonen og en samlet pikselfeil. <strong>Gjett først:</strong> Vil dobbelt så mange komponenter omtrent halvere feilen?</p>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
@@ -4847,6 +4853,7 @@ Gå i dybden: feilformelen, ortogonalitet og lagring
 </div>
 <section id="eksperiment-6-samme-budsjett-ulik-informasjon" class="level3">
 <h3 class="anchored" data-anchor-id="eksperiment-6-samme-budsjett-ulik-informasjon">Eksperiment 6 – samme budsjett, ulik informasjon</h3>
+<p>En metode som fungerer godt på ett bilde, trenger ikke fungere like godt på et annet. Her får fire like store bilder det samme lagringsbudsjettet, slik at forskjellen ligger i bildenes mønstre. Forsøket lar oss undersøke når lav rang er en nyttig forenkling, og når den mister informasjon vi vil bevare. Dette er vurderingen dere skal gjøre i ukens prosjekt.</p>
 <p>Se de fire bildene og ranger dem etter hvor godt dere tror lav rang vil fungere. Kjør så sammenligningen. Koden velger samme antall komponenter for alle bildene slik at faktorene krever høyst <strong>25 % så mange tall</strong> som de opprinnelige bildematrisene.</p>
 <div id="qpyodide-insertion-location-8"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
