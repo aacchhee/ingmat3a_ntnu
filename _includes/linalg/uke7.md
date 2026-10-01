@@ -56,6 +56,12 @@ mønstre som bidrar mest i en bildematrise.
 
 ### Eksperiment 1 – hvor lite trenger vi?
 
+Her bygger vi opp det samme bildet med stadig flere SVD-mønstre. Hvert
+mønster bidrar til mange piksler samtidig, så antallet mønstre sier noe
+om hvor mye informasjon vi beholder. Forsøket gir oss et konkret spørsmål
+å ta med videre: Hvorfor kan noen få bidrag gjengi hovedtrekkene i et
+bilde, mens små detaljer krever flere?
+
 Kjør cellen og se samme bilde med 1, 5 og 20 **komponenter**, altså
 byggemønstre som legges sammen. Bytt deretter ett av tallene og prøv igjen.
 Hvilke detaljer kan dere gjenkjenne med få komponenter, og hvilke krever flere?
@@ -164,8 +170,13 @@ $[0,1]$, men feilberegningene bruker tallene uten klipping.
 
 ### Eksperiment 2 – følg en retning gjennom transformasjonen
 
-I forsøket nedenfor er alle startpunktene på en **enhetssirkel**: de
-representerer vektorer med lengde 1. Velg **Ellipse** og flytt den rosa
+En matrise sender hver startvektor til en ny vektor. Her lar vi alle
+startvektorene ha lengde 1, slik at forskjeller i resultatlengde bare
+skyldes matrisen og retningen vi velger. Sirkelen blir en ellipse, og
+halvaksene gjør største og minste strekk synlige. Det gir en geometrisk
+inngang til både singulærverdier og tap av informasjon.
+
+Startpunktene ligger på en **enhetssirkel**. Velg **Ellipse** og flytt den rosa
 prikken rundt sirkelen i rute 1. Følg den rosa vektoren helt til rute 4.
 Retningsskyverne kan også brukes med tastaturet.
 
@@ -173,7 +184,10 @@ Retningsskyverne kan også brukes med tastaturet.
 - Velg **Smal ellipse**. Hva blir vanskeligere å skille i resultatet?
 - Velg **Rangtap**. Kan ulike startvektorer nå gi samme resultat?
 
-Se først på rute 1 og 4. De to mellomrutene undersøker vi i neste fane.
+Se først på rute 1 og 4. De blå og fiolette pilene er merket $v_1$,
+$v_2$ ved starten og $\sigma_1u_1$, $\sigma_2u_2$ ved resultatet.
+Matrisene under diagrammet oppdateres når du flytter skyverne.
+De to mellomrutene og faktorene undersøker vi i neste fane.
 En **dreiing** snur alle retninger like mye; en **speiling** vender
 orienteringen som i et speil. Begge bevarer lengder og vinkler.
 
@@ -233,7 +247,8 @@ $Av_i=0$ ingen bestemt $u_i$; vi fullfører resultatbasis med en
 vinkelrett enhetsvektor.
 
 Forsøket er tilpasset fra [den opprinnelige SVD-demoen](https://andreyac.folk.ntnu.no/svd_complete.html).
-Originalen viser også de numeriske faktorene og produkter med basisvektorene.
+Under diagrammet kan du lese faktorene $A=U\Sigma V^T$, basisvektorene
+i $V$ og koordinatene til de to valgte vektorene i hvert trinn.
 
 
 ## 7.3 To basiser, én enkel operasjon
@@ -242,11 +257,24 @@ Originalen viser også de numeriske faktorene og produkter med basisvektorene.
 
 ### Eksperiment 3 – hvor endres lengden?
 
+Nå undersøker vi mellomtrinnene i den samme transformasjonen. SVD deler
+matriseproduktet i to koordinatskift og ett strekk langs aksene. Ved å
+følge én vektor og dens tallverdier gjennom alle tre operasjonene kan vi
+se hva hver faktor gjør. Målet er å forstå hvorfor produktet
+$U\Sigma V^T$ beskriver akkurat samme transformasjon som $A$.
+
 Gå tilbake til forsøket, velg **Skråstilling**, og følg én farge gjennom
 **alle fire rutene**. Skråstillingen forskyver punkter horisontalt med
 en avstand som avhenger av høyden. Mellom hvilke ruter endres vektorens lengde?
 Hva skjer med den blå og den fiolette retningen når de uttrykkes i
 nye koordinater? Prøv deretter et negativt matriseelement.
+
+Velg så **Ellipse**, og sett den rosa retningen til $0^\circ$, altså
+$x=(1,0)^T$. Bruk matrisene under diagrammet til å regne
+$V^Tx$, deretter $\Sigma(V^Tx)$ og til slutt $U(\Sigma V^Tx)$.
+Sammenlign med tallene i raden **Rosa** og med direkte beregning av $Ax$.
+SVD-basisvektorene kan ha andre fortegn enn dem vi velger i håndregningen;
+bruk faktorene som faktisk vises. Sluttresultatet skal være det samme.
 
 **Snakk sammen:** Hvordan kan en transformasjon som både endrer vinkler
 og lengder settes sammen av noen trinn som bevarer begge deler,
@@ -460,6 +488,13 @@ målefeil dersom de havner i den følsomme retningen.
 
 ### Eksperiment 4 – samme dataendring, to utfall
 
+Vi undersøker hvor mye retningen til en datafeil betyr når vi løser et
+likningssystem. Matrisen og den opprinnelige løsningen holdes faste;
+bare retningen til en like stor endring i høyresiden varierer.
+Sammenligningen viser hvorfor god tilpasning til målte data ikke alene
+sikrer riktige verdier for de ukjente. Det er skillet mellom residual
+og løsningsfeil fra uke 6, nå forklart med singulærverdier.
+
 Kjør forsøket. Vi velger en kjent løsning, beregner tilhørende data, og endrer
 én datakomponent om gangen med samme lille beløp. **Gjett først:**
 Blir løsningsendringen like stor i begge tilfeller?
@@ -623,6 +658,12 @@ til å finne den korteste løsningen blant dem som passer dataene best.
 
 ### Eksperiment 5 – mer detalj, flere tall
 
+Vi går tilbake til bildet og setter tall på avveiningen mellom lagring
+og nøyaktighet. Flere SVD-ledd krever flere tall i faktorene og gir mindre
+samlet pikselfeil, men forbedringen trenger ikke være like stor for hvert
+nytt ledd. Ved å sammenligne bildet, feilnormen og antallet lagrede tall
+får vi et grunnlag for å velge hvor mange ledd som er verdt å beholde.
+
 Kjør cellen med ulike verdier av `k`. Den viser bildet, antallet tall i
 den lagrede faktorrepresentasjonen og en samlet pikselfeil.
 **Gjett først:** Vil dobbelt så mange komponenter omtrent halvere feilen?
@@ -769,6 +810,12 @@ Denne opptellingen er ikke en sammenligning med PNG eller JPEG.
 <div id="uke7-prosjekt"></div>
 
 ### Eksperiment 6 – samme budsjett, ulik informasjon
+
+En metode som fungerer godt på ett bilde, trenger ikke fungere like godt
+på et annet. Her får fire like store bilder det samme lagringsbudsjettet,
+slik at forskjellen ligger i bildenes mønstre. Forsøket lar oss undersøke
+når lav rang er en nyttig forenkling, og når den mister informasjon vi
+vil bevare. Dette er vurderingen dere skal gjøre i ukens prosjekt.
 
 Se de fire bildene og ranger dem etter hvor godt dere tror lav rang vil
 fungere. Kjør så sammenligningen. Koden velger samme antall komponenter
