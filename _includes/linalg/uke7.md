@@ -36,7 +36,7 @@ rekonstruksjon følsom. Selve SVD-beregningen gjør vi med et bibliotek.
 ### Dette bygger vi videre på
 
 I [uke 6](uke6.qmd#uke6-residual) så vi at en liten residual ikke alltid
-betyr en liten løsningsfeil. Forklaringen var at matrisen kan strekke
+betyr en liten løsningsfeil. Forklaringen var at den lineære transformasjonen kan strekke
 ulike retninger svært forskjellig. Denne uken finner vi nettopp disse
 retningene og strekkfaktorene. Det samme verktøyet forteller hvilke
 mønstre som bidrar mest i en bildematrise.
@@ -54,137 +54,161 @@ mønstre som bidrar mest i en bildematrise.
 
 <div id="uke7-bilde"></div>
 
+### Hvordan kan vi bygge et bilde av enklere bilder?
+
+Et gråtonebilde kan lagres som en tabell med ett tall for hver piksel.
+Tallet angir hvor lyst det er akkurat der. I [uke 4](uke4.qmd#uke4-monster)
+satte vi sammen små bilder ved å legge sammen mønstre. Nå skal vi gjøre
+det samme med et større bilde: først et grovt bidrag, så flere bidrag
+som til sammen gjengir stadig mer av originalen.
+
+Et **mønster** betyr her en hel tabell med bidrag til pikslene.
+Når vi legger sammen to mønstre, legger vi sammen tallene på tilsvarende
+plasser. Ett mønster kan for eksempel gjøre et bredt område lysere,
+mens et annet framhever en kontrast. Mønstrene kan ha både positive og
+negative tall, fordi et bidrag også kan trekke lysstyrke fra summen.
+
+Metoden vi bruker til å finne slike bidrag, heter **singulærverdidekomposisjon**,
+forkortet **SVD**. Vi skal bygge opp matematikken bak den gjennom uken.
+Foreløpig får vi bidragene ferdig beregnet. Hvert bidrag kaller vi en
+**komponent**. Det første forsøket viser hva vi får igjen når vi beholder
+bare noen få av dem. Målet er å oppdage hva som kommer tidlig tilbake i
+bildet, og hva som krever flere bidrag.
+
 ### Eksperiment 1 – hvor lite trenger vi?
 
-Her bygger vi opp det samme bildet med stadig flere SVD-mønstre. Hvert
-mønster bidrar til mange piksler samtidig, så antallet mønstre sier noe
-om hvor mye informasjon vi beholder. Forsøket gir oss et konkret spørsmål
-å ta med videre: Hvorfor kan noen få bidrag gjengi hovedtrekkene i et
-bilde, mens små detaljer krever flere?
-
-Kjør cellen og se samme bilde med 1, 5 og 20 **komponenter**, altså
-byggemønstre som legges sammen. Bytt deretter ett av tallene og prøv igjen.
-Hvilke detaljer kan dere gjenkjenne med få komponenter, og hvilke krever flere?
+- Kjør cellen og sammenlign originalen med summene av 1, 5 og 20 komponenter.
+- Velg én detalj, for eksempel øynene eller hårfestet. Når blir den synlig?
+- Bytt ett av tallene, og undersøk om flere komponenter hjelper akkurat der.
 
 ```{pyodide-python}
 #| label: week7-first-image
-# rank_image beholder de k første SVD-leddene i bildet.
-# Se etter hvilke detaljer som forsvinner først; få ledd trenger ikke bevare alt viktig.
+# Hjelperen finner bidragene og legger sammen de k første.
+# Her undersøker vi resultatet; oppskriften bak bidragene kommer senere.
 
 show_images({'original': portrait, **{f'{k} komponenter': rank_image(portrait,k) for k in (1,5,20)}})
 ```
 
-**Snakk sammen:** Hvilken detalj kommer tilbake først? Hva er fortsatt
-utydelig? Ville det samme antallet komponenter vært nok til en diagonal
-strek eller tilfeldig støy?
+**Hva viser forsøket?** Noen hovedtrekk kan være synlige lenge før
+alle detaljene er tilbake. Vi kan derfor spørre hvor få komponenter vi
+trenger for et bestemt formål. Senere skal vi også måle hvor stor tallfeil
+forenklingen gir.
 
-### Fra vektorer til bildemønstre
+### Hvordan lages én byggekloss?
 
-I tidligere uker skrev vi en vektor som en sum av **basisvektorer** med
-**koordinater** som vekter. Nå kan vi tenke tilsvarende om et bilde:
-vi legger sammen faste bildemønstre, med ett tall som vekt for hvert mønster.
-Vi skifter dermed fra «hva er lysstyrken i hver piksel?» til
-«hvor mye trenger vi av hvert mønster?».
+Hver av komponentene over bygges av to lister med tall. Én liste beskriver
+variasjon nedover i bildet, og én beskriver variasjon bortover.
+Vi kaller dem en **loddrett profil** og en **vannrett profil**.
+En verdi i bildemønsteret blir produktet av ett tall fra hver profil.
+La oss først regne på to korte lister, slik at vi ser hele oppskriften.
 
-SVD finner mønstre som er tilpasset akkurat dette bildet. Hvert mønster
-bygges av én loddrett og én vannrett profil. Den vannrette profilen bestemmer
-hvor sterkt den samme loddrette profilen skal gjentas i hver kolonne.
-Et slikt mønster har **rang 1**: alle kolonnene ligger langs én og samme
-vektorretning. Den første komponenten er derfor et helt bildemønster,
-ikke én piksel eller én bildeflate som er klippet ut.
+::: {.callout-note title="Håndeksempel: to profiler gir tre kolonner"}
 
-Når vi beholder få komponenter, bruker vi færre av disse mønstrene.
-Noen lysstyrkeforskjeller bevares godt, mens andre blir borte.
-Mønstrene er en slags bildebyggeklosser; vi skal se både hvordan de lages
-og hvorfor denne forbindelsen til basis er nyttig.
+**Utgangspunkt.** Vi velger profilene
+$u=(1,2)^T$ og $v=(1,0,-1)^T$. Målet er å bygge en tabell med to rader
+og tre kolonner.
 
-### Én byggekloss, regnet for hånd
+**Prøv selv.** Lag kolonnene $1u$, $0u$ og $-1u$. Hvor mange
+uavhengige kolonner får du?
 
-Bildet er en $96\times96$-matrise $A$. Hvert element er en lysstyrke mellom
-0 og 1. En enkelt komponent har formen $\sigma_i u_i v_i^T$:
-$u_i$ er en kolonnevektor med den loddrette profilen, $v_i^T$ en radvektor
-med den vannrette, og $\sigma_i$ er vekten. Hvordan disse profilene og vektene henger sammen med geometrien,
-undersøker vi i 7.2–7.3.
+**Regnegangen.** Vi legger kolonnene ved siden av hverandre:
 
-Produktet $u_i v_i^T$ kalles et **ytreprodukt**. Element $(j,\ell)$ er
-$(u_i)_j(v_i)_\ell$. Dermed er kolonne $\ell$ lik $(v_i)_\ell u_i$,
-og en ikke-null slik matrise har rang 1.
+$$uv^T=\begin{bmatrix}1\\2\end{bmatrix}
+\begin{bmatrix}1&0&-1\end{bmatrix}
+=\begin{bmatrix}1&0&-1\\2&0&-2\end{bmatrix}.$$
 
-**Prøv selv:** Bruk $u=(1,2)^T$ og $v=(1,0,-1)^T$.
-Skriv de tre kolonnene i $uv^T$, og forklar hvorfor matrisen har rang 1.
+- Første tall i den vannrette profilen er 1: første kolonne er $u$.
+- Andre tall er 0: andre kolonne blir null.
+- Tredje tall er $-1$: tredje kolonne er $-u$.
 
-**Regnegangen:** Kolonnene er $u$, nullvektoren og $-u$:
+**Dette tar vi med oss.** Alle kolonnene ligger langs samme vektorretning.
+Tabellen har derfor rang 1, slik vi definerte rang i uke 3.
+Produktet $uv^T$ kalles et **ytreprodukt**. Det lager en hel tabell
+av to profiler.
 
-$$uv^T=\begin{bmatrix}1&0&-1\\2&0&-2\end{bmatrix}.$$
+:::
 
-**Hva forklarer dette?** I [uke 3](uke3.qmd#uke3-del3) telte vi
-uavhengige kolonner for å finne rang. Her er andre kolonne null og tredje
-kolonne minus den første. Kolonnerommet er derfor linjen spent ut av
-$(1,2)^T$, selv om matrisen har seks elementer. Vi kan lagre de to profilene
-og bygge alle seks elementene fra dem.
+### Se profilene og det ferdige bidraget
 
-Disse profilene er ikke normaliserte. Hvis vi vil skrive akkurat dette
-produktet som ett SVD-ledd, bruker vi enhetsvektorene
-$\widehat u=u/\sqrt5$ og $\widehat v=v/\sqrt2$. Da blir
-$uv^T=\sqrt{10}\,\widehat u\widehat v^T$: lengdene flyttes inn i vekten.
+Nå bruker vi samme oppskrift på én av komponentene i portrettet.
+Profilene er lengre, men hver piksel beregnes fortsatt ved å gange
+tilsvarende profiltall. En ekstra vekt bestemmer hvor sterkt bidraget
+skal inngå i bildet. I koden heter vekten `s_img[i]`; hvorfor nettopp
+disse vektene og profilene brukes, forklarer vi i 7.3 og 7.5.
 
-I et faktisk bilde kan både
-profiler og komponenter ha negative elementer. De er bidrag til summen,
-og trenger ikke hver for seg være vanlige gråtonebilder.
+Les figuren i denne rekkefølgen:
+
+- **Øverst til venstre:** Den loddrette profilen har ett tall for hver rad.
+  Se etter rader der verdien er positiv, negativ eller nær null.
+- **Øverst til høyre:** Den vannrette profilen har ett tall for hver kolonne.
+  Den bestemmer hvor mye av den loddrette profilen hver kolonne får.
+- **Under:** Det ferdige bidraget er produktet av profilene, ganget med vekten.
+  Rødt betyr positivt bidrag, blått negativt, og hvitt omtrent null.
+  Se etter hvordan skifte av fortegn i en profil gir skifte av farge i bildet.
+
+Kjør cellen med `i = 1`, og prøv så `i = 2`. Dette viser ett bidrag om
+gangen, ikke summen av de første bidragene som i eksperiment 1.
 
 ```{pyodide-python}
 #| label: week7-building-block
-# Ett SVD-ledd er en loddrett profil ganger en vannrett profil, skalert med sigma_i.
-# Indekser starter på 0 i Python; i=1 velger derfor det andre leddet.
-# Fargene viser positive og negative bidrag, ikke et ferdig gråtonebilde.
+# Ett bidrag bygges av to profiler og én vekt.
+# Python teller fra 0; i=1 velger det andre bidraget.
 
 U_img,s_img,Vt_img = np.linalg.svd(portrait,full_matrices=False)
-i = 1  # 0 er første komponent; prøv også 2 og 3.
-# Ytreproduktet lager én verdi per piksel fra de to endimensjonale profilene.
+i = 1
 component = s_img[i]*np.outer(U_img[:,i],Vt_img[i,:])
-fig,ax = plt.subplots(1,3,figsize=(10,3))
-ax[0].plot(U_img[:,i]); ax[0].set_title('Loddrett profil')
-ax[1].plot(Vt_img[i,:]); ax[1].set_title('Vannrett profil')
+fig = plt.figure(figsize=(6.4,6.2), layout='constrained')
+grid = fig.add_gridspec(2,2, height_ratios=[1,1.35])
+ax_u = fig.add_subplot(grid[0,0])
+ax_v = fig.add_subplot(grid[0,1])
+ax_result = fig.add_subplot(grid[1,:])
+ax_u.plot(U_img[:,i]); ax_u.axhline(0,color='gray',linewidth=.6)
+ax_u.set_title('1. Loddrett profil'); ax_u.set_xlabel('Radnummer')
+ax_v.plot(Vt_img[i,:]); ax_v.axhline(0,color='gray',linewidth=.6)
+ax_v.set_title('2. Vannrett profil'); ax_v.set_xlabel('Kolonnenummer')
 limit = np.max(np.abs(component))
-ax[2].imshow(component,cmap='RdBu_r',vmin=-limit,vmax=limit)
-ax[2].set_title('Produkt × vekt'); ax[2].axis('off')
-plt.tight_layout(); plt.show()
+ax_result.imshow(component,cmap='RdBu_r',vmin=-limit,vmax=limit)
+ax_result.set_title('3. Bidraget: profiler ganget sammen, deretter vektet')
+ax_result.axis('off')
+plt.show()
 ```
 
-En presisering av basisbildet: med ortonormale basiser $u_1,\ldots,u_m$
-og $v_1,\ldots,v_n$ utgjør **alle** $mn$ matriser $u_i v_j^T$ en basis
-for rommet av $m\times n$-matriser. SVD velger basisene slik at akkurat
-$A$ bare trenger de diagonale mønstrene $u_i v_i^T$. Disse alene er vanligvis
-ikke en basis for alle bilder. Vi kommer tilbake til ortogonalitet mellom
-bildemønstre i 7.5.
-
-Portrett: [NTNU, mm.gif](https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif),
-tilpasset til $96\times96$ gråtoner. Vi sentrerer ikke bildet.
-Alle gråtonebilder vises med samme skala; visningen metter verdier utenfor
-$[0,1]$, men feilberegningene bruker tallene uten klipping.
-
+**Dette tar vi med oss.** En komponent er et mønster som dekker hele
+bildet. To profiler og en vekt er nok til å beskrive det. I 7.5 setter
+vi flere slike komponenter sammen igjen; først undersøker vi geometrien
+som forklarer hvor profilene og vektene kommer fra.
 
 ## 7.2 Fra sirkel til ellipse
 
 <div id="uke7-geometri"></div>
 
-### Eksperiment 2 – følg en retning gjennom transformasjonen
+### Hva gjør transformasjonen med like lange vektorer?
 
-En matrise sender hver startvektor til en ny vektor. Her lar vi alle
-startvektorene ha lengde 1, slik at forskjeller i resultatlengde bare
-skyldes matrisen og retningen vi velger. Sirkelen blir en ellipse, og
+En lineær transformasjon $T$ knytter hver startvektor $x$ til en
+resultatvektor $T(x)$. Når vi har valgt koordinater, kan vi regne ut
+resultatet med en matrise $A$: vi skriver **$T(x)=Ax$**.
+Transformasjonen er selve avbildningen; matrisen inneholder tallene vi
+bruker til å beregne den.
+
+Her lar vi alle startvektorene ha lengde 1, slik at forskjeller i
+resultatlengde bare skyldes transformasjonen og retningen vi velger. Sirkelen blir en ellipse, og
 halvaksene gjør største og minste strekk synlige. Det gir en geometrisk
 inngang til både singulærverdier og tap av informasjon.
 
+### Eksperiment 2 – følg en retning gjennom transformasjonen
+
 Startpunktene ligger på en **enhetssirkel**. Velg **Ellipse** og flytt den rosa
-prikken rundt sirkelen i rute 1. Følg den rosa vektoren helt til rute 4.
+prikken rundt sirkelen i rute 1 **øverst til venstre**. Sammenlign med
+resultatet i rute 4 **øverst til høyre**.
 Retningsskyverne kan også brukes med tastaturet.
 
 - I hvilke startretninger blir resultatvektoren lengst og kortest?
 - Velg **Smal ellipse**. Hva blir vanskeligere å skille i resultatet?
 - Velg **Rangtap**. Kan ulike startvektorer nå gi samme resultat?
 
-Se først på rute 1 og 4. De blå og fiolette pilene er merket $v_1$,
+Arbeidsrekkefølgen er **1 → 2 → 3 → 4**: øverst til venstre, ned til
+venstre, bort til høyre og opp til høyre. Se først bare på start og slutt,
+altså rute 1 og 4. De blå og fiolette pilene er merket $v_1$,
 $v_2$ ved starten og $\sigma_1u_1$, $\sigma_2u_2$ ved resultatet.
 Matrisene under diagrammet oppdateres når du flytter skyverne.
 De to mellomrutene og faktorene undersøker vi i neste fane.
@@ -216,46 +240,92 @@ null forsvinner all informasjon om den startkomponenten: dette er **nullrommet**
 fra uke 3. Lengde og vinkel trenger ikke bevares av hele transformasjonen,
 selv om dreie- og speiltrinnene bevarer begge deler.
 
-### Finn største og minste strekk for hånd
+### Fra det vi ser, til noe vi kan regne ut
 
-Eksempelet **Ellipse** bruker
+I appletens eksempel **Ellipse** blir noen enhetsvektorer lengre enn
+andre. Vi skal nå finne yttergrensene med vanlig matrisemultiplikasjon.
+Det gir en kontroll av figuren, og viser hvorfor akkurat 2 og 1 er
+singulærverdiene i dette eksempelet.
 
-$$A=\begin{bmatrix}0&2\\1&0\end{bmatrix}.$$
+::: {.callout-note title="Håndeksempel: størst og minst strekk"}
 
-Beregn først $Ax$ for $x=e_1$, $e_2$ og $(1,1)^T/\sqrt2$. Her er
-$e_1=(1,0)^T$ og $e_2=(0,1)^T$ standardbasisvektorene. Alle tre har lengde 1.
-Hvilket resultat blir lengst? Forklar så hvorfor ingen annen enhetsvektor
-kan gi større lengde enn 2 eller mindre enn 1.
+**Utgangspunkt.** Transformasjonen er
 
-**Regnegangen:** $Ae_1=e_2$, $Ae_2=2e_1$ og
-$A(1,1)^T/\sqrt2=(2,1)^T/\sqrt2$, med lengder $1$, $2$ og $\sqrt{5/2}$.
-For en generell enhetsvektor $x=(a,b)^T$ har vi $a^2+b^2=1$, så
+$$T(x)=Ax,\qquad A=\begin{bmatrix}0&2\\1&0\end{bmatrix}.$$
 
-$$Ax=(2b,a)^T,\qquad \|Ax\|_2^2=4b^2+a^2=1+3b^2.$$
+Vi sammenligner bare startvektorer med lengde 1. Ellers kunne vi få et
+større resultat bare ved å velge en lengre startvektor.
 
-Symbolet $\|x\|_2$ er vektorens vanlige euklidske lengde,
-$\sqrt{x_1^2+\cdots+x_n^2}$. Resultatlengden ligger mellom 1 og 2.
-Setter vi nedre venstre matriseelement til $s\in[0,1]$, blir
-$\|Ax\|_2^2=4b^2+s^2a^2$. Minste strekkfaktor er da $s$.
-Ved $s=0$ er alle vektorer langs $e_1$ i nullrommet, og ellipsen
-blir et linjestykke.
+**Prøv selv.** Regn ut $T(e_1)$ og $T(e_2)$, der $e_1=(1,0)^T$ og
+$e_2=(0,1)^T$. Hvilken av disse to vektorene blir strukket mest?
 
-Når strekkfaktorene er like, finnes flere mulige ortonormale
-singulærvektorbasiser. Retninger kan derfor skifte brått i en visualisering
-selv om transformasjonen endres lite. Ved $\sigma_i=0$ bestemmer
-$Av_i=0$ ingen bestemt $u_i$; vi fullfører resultatbasis med en
-vinkelrett enhetsvektor.
+**Regnegangen.**
+
+- Langs første koordinatakse får vi $T(e_1)=(0,1)^T$. Lengden er 1.
+- Langs andre koordinatakse får vi $T(e_2)=(2,0)^T$. Lengden er 2.
+- Mellom aksene kan vi velge $x=(1,1)^T/\sqrt2$. Da er
+  $T(x)=(2,1)^T/\sqrt2$, med lengde $\sqrt{5/2}\approx1.58$.
+  Dette ligger mellom de to første lengdene.
+
+**Kan en annen retning gi noe utenfor intervallet?** Skriv en vilkårlig
+enhetsvektor som $x=(a,b)^T$. Da er $a^2+b^2=1$, og
+
+$$T(x)=(2b,a)^T,\qquad
+\|T(x)\|_2^2=4b^2+a^2=1+3b^2.$$
+
+Siden $0\leq b^2\leq1$, ligger lengden i andre potens mellom 1 og 4.
+Selve lengden ligger derfor mellom 1 og 2. Her betyr $\|\cdot\|_2$
+vanlig euklidsk lengde, som i uke 6.
+
+**Dette tar vi med oss.** Største strekk er 2 og oppnås langs $e_2$.
+Minste strekk er 1 og oppnås langs $e_1$. Dermed er
+$\sigma_1=2$ og $\sigma_2=1$.
+
+:::
+
+### Hva endres når ellipsen blir smalere?
+
+Behold 2 øverst til høyre i $A$, men bytt 1 nederst til venstre med
+et tall $s$ mellom 0 og 1. Da får vi $T_s(a,b)=(2b,sa)$.
+
+- For $s=1$ har vi eksempelet vi nettopp regnet på.
+- For $s=0.2$ blir resultatet av $e_1$ bare $0.2e_2$.
+  Minste strekk er nå $0.2$, mens største strekk fortsatt er 2.
+- For $s=0$ får alle vektorer langs $e_1$ resultatet null.
+  Ellipsen blir et linjestykke, og nullrommet er ikke lenger bare nullvektoren.
+
+Forskjellen mellom en liten positiv verdi og null blir viktig når vi
+skal rekonstruere startvektoren i 7.4.
+
+<details class="reading-step">
+<summary>Gå i dybden: hvorfor kan pilene ha ulike fortegn?</summary>
+
+Hvis $Av_i=\sigma_i u_i$, gjelder også $A(-v_i)=\sigma_i(-u_i)$.
+Vi kan altså snu begge basisvektorene i et par uten å endre transformasjonen.
+Appletens valg for **Ellipse** er $v_1=e_2$, $v_2=e_1$ og $U=I$.
+Da bytter koordinatskiftet $V^T$ om aksene, strekket endrer lengden langs
+første akse, og siste trinn lar alle vektorer stå i ro.
+
+Mellom **rute 2 og 3** multipliseres koordinatene med ikke-negative
+singulærverdier. Den fiolette aksepilen kan derfor bli kortere eller
+forsvinne, men den skal ikke snu. Mellom **rute 3 og 4** kan den
+siste ortogonale transformasjonen derimot dreie eller speile pilene.
+For **Ellipse** skjer ingen slik endring fordi $U=I$.
+
+Ved like singulærverdier kan flere basisvalg være like gode. Ved en
+singulærverdi lik null bestemmer ikke $Av_i=0$ retningen til $u_i$;
+vi fullfører med en ortogonal enhetsvektor. Faktorene kan derfor endre
+utseende selv om transformasjonen endres lite.
+
+</details>
 
 Forsøket er tilpasset fra [den opprinnelige SVD-demoen](https://andreyac.folk.ntnu.no/svd_complete.html).
-Under diagrammet kan du lese faktorene $A=U\Sigma V^T$, basisvektorene
-i $V$ og koordinatene til de to valgte vektorene i hvert trinn.
-
 
 ## 7.3 To basiser, én enkel operasjon
 
 <div id="uke7-svd"></div>
 
-### Eksperiment 3 – hvor endres lengden?
+### Del transformasjonen i forståelige trinn
 
 Nå undersøker vi mellomtrinnene i den samme transformasjonen. SVD deler
 matriseproduktet i to koordinatskift og ett strekk langs aksene. Ved å
@@ -263,8 +333,10 @@ følge én vektor og dens tallverdier gjennom alle tre operasjonene kan vi
 se hva hver faktor gjør. Målet er å forstå hvorfor produktet
 $U\Sigma V^T$ beskriver akkurat samme transformasjon som $A$.
 
-Gå tilbake til forsøket, velg **Skråstilling**, og følg én farge gjennom
-**alle fire rutene**. Skråstillingen forskyver punkter horisontalt med
+### Eksperiment 3 – hvor endres lengden?
+
+Åpne [appleten fra 7.2](#uke7-geometri), velg **Skråstilling**, og følg
+én farge i rekkefølgen **1 → 2 → 3 → 4** (ned, høyre, opp). Skråstillingen forskyver punkter horisontalt med
 en avstand som avhenger av høyden. Mellom hvilke ruter endres vektorens lengde?
 Hva skjer med den blå og den fiolette retningen når de uttrykkes i
 nye koordinater? Prøv deretter et negativt matriseelement.
@@ -273,8 +345,8 @@ Velg så **Ellipse**, og sett den rosa retningen til $0^\circ$, altså
 $x=(1,0)^T$. Bruk matrisene under diagrammet til å regne
 $V^Tx$, deretter $\Sigma(V^Tx)$ og til slutt $U(\Sigma V^Tx)$.
 Sammenlign med tallene i raden **Rosa** og med direkte beregning av $Ax$.
-SVD-basisvektorene kan ha andre fortegn enn dem vi velger i håndregningen;
-bruk faktorene som faktisk vises. Sluttresultatet skal være det samme.
+For **Ellipse** bruker appleten samme basisvalg som håndregningen nedenfor.
+Kontroller særlig at siste trinn ikke endrer vektoren: her er $U=I$.
 
 **Snakk sammen:** Hvordan kan en transformasjon som både endrer vinkler
 og lengder settes sammen av noen trinn som bevarer begge deler,
@@ -328,7 +400,12 @@ har forskjellig dimensjon.
 
 ### De tre trinnene for hånd
 
-Bruk $A=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ og $x=(3,4)^T$.
+Vi kontrollerer nå hele oppskriften på én bestemt vektor. Eksempelet
+bruker samme faktorer som appletens valg **Ellipse**.
+
+::: {.callout-note title="Håndeksempel: fra x til T(x) i tre trinn"}
+
+**Utgangspunkt.** Bruk $A=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ og $x=(3,4)^T$.
 Velg $v_1=e_2$, $v_2=e_1$, $u_1=e_1$ og $u_2=e_2$.
 Skriv først $x$ i $v$-basisen, skaler koordinatene med 2 og 1, og bygg
 resultatet i $u$-basisen. Kontroller med direkte matrisemultiplikasjon.
@@ -345,6 +422,13 @@ $$x\ \xrightarrow{V^T}\ \begin{bmatrix}4\\3\end{bmatrix}
 \ \xrightarrow{\Sigma}\ \begin{bmatrix}8\\3\end{bmatrix}
 \ \xrightarrow{U}\ Ax.$$
 
+**Dette tar vi med oss.** Vi får $(8,3)^T$, akkurat som ved direkte
+beregning av $T(x)=Ax$. Mellomtrinnene forklarer hvordan resultatet bygges opp.
+
+:::
+
+### Når start og resultat har ulik dimensjon
+
 For en full SVD av en $m\times n$-matrise er $U$ av størrelse
 $m\times m$, $V$ er $n\times n$, og $\Sigma$ er $m\times n$.
 Vi har $U^TU=I_m$ og $V^TV=I_n$, der $I_m$ og $I_n$ er identitetsmatriser.
@@ -352,15 +436,13 @@ Dette er grunnen til at koordinatskiftene bevarer indreprodukt og lengde.
 De $p=\min(m,n)$ diagonalverdiene ordnes
 $\sigma_1\geq\cdots\geq\sigma_p\geq0$.
 
-
 ### Hvorfor bruker vi ikke bare egenverdiene fra uke 5?
 
 En egenvektor oppfyller $Av=\lambda v$ og beholder linjen sin.
 Singulærvektorer beskriver i stedet et par retninger:
 $Av_i=\sigma_i u_i$. Startretningen og resultatretningen trenger ikke
-være den samme. Dermed kan vi også beskrive en matrise som sender
-vektorer fra $\mathbb R^3$ til $\mathbb R^2$, der en egenverdilikning
-for selve matrisen ikke gir mening.
+være den samme. Dermed kan vi også beskrive en lineær transformasjon fra $\mathbb R^3$ til $\mathbb R^2$, der en egenverdilikning
+for en rektangulær matrise ikke gir mening.
 
 For eksempelet vårt er
 
@@ -414,79 +496,137 @@ minste strekk når $A$ har full kolonnerang.
 
 </details>
 
-### Hva forteller SVD om rommene fra uke 3?
+### Hvilke opplysninger kan vi finne igjen?
 
-La $r$ være antallet positive singulærverdier. **Rangen** er antallet
-uavhengige resultatretninger, **kolonnerommet** er alle mulige resultater
-$Ax$, og **nullrommet** er startvektorene som gir $Ax=0$. SVD gir
+I uke 3 skilte vi mellom resultatene som er mulige (**kolonnerommet**)
+og startvektorene som gir null (**nullrommet**). SVD gjør disse rommene
+synlige: et positivt strekk beholder en startkomponent, mens et nullstrekk
+fjerner den. Vi begynner med et eksempel der dette kan leses rett av.
 
-$$\operatorname{rank}(A)=r,\qquad
-\operatorname{Col}(A)=\operatorname{span}(u_1,\ldots,u_r),\qquad
-\operatorname{Null}(A)=\operatorname{span}(v_{r+1},\ldots,v_n).$$
+::: {.callout-note title="Håndeksempel: tre startkoordinater, én synlig komponent"}
+
+**Utgangspunkt.** Vi har en transformasjon fra $\mathbb R^3$ til
+$\mathbb R^2$:
+
+$$T(x)=Bx,\qquad B=\begin{bmatrix}2&0&0\\0&0&0\end{bmatrix},
+\qquad T(x_1,x_2,x_3)=\begin{bmatrix}2x_1\\0\end{bmatrix}.$$
+
+**Prøv selv.** Sammenlign resultatene av $(1,0,0)^T$ og $(1,2,-3)^T$.
+Hvilke koordinater kan du endre uten at resultatet endres?
+
+**Regnegangen.** Begge startvektorene gir $(2,0)^T$.
+
+- **Hva kan resultatet være?** Andre resultatkoordinat er alltid null.
+  Alle mulige resultater ligger derfor på linjen spent ut av $(1,0)^T$.
+  Dette er kolonnerommet, som har dimensjon 1. Derfor er rangen 1.
+- **Når blir resultatet null?** Akkurat når $x_1=0$.
+  Både $x_2$ og $x_3$ kan velges fritt. Nullrommet er derfor planet
+  spent ut av $(0,1,0)^T$ og $(0,0,1)^T$, og har dimensjon 2.
+- **Hva sier SVD?** Her kan vi velge $U=I_2$, $V=I_3$ og $\Sigma=B$.
+  Første koordinat ganges med 2. De to andre startkoordinatene bidrar
+  ikke til resultatet. Rangsatsen blir $1+2=3$.
+
+**Dette tar vi med oss.** Vi kan finne $x_1$ fra resultatet, men får ingen
+opplysninger om $x_2$ og $x_3$. Merk at $\Sigma$ har bare to diagonalplasser,
+selv om startrommet har tre dimensjoner. Nullrommet har derfor to dimensjoner,
+selv om listen med singulærverdier bare inneholder én null.
+
+:::
+
+### Les rommene av en full SVD
+
+La $r$ være antallet positive singulærverdier. Den samme tankegangen gir:
+
+- **Rang:** De $r$ positive strekkfaktorene gir $r$ uavhengige
+  resultatretninger. Derfor er $\operatorname{rank}(A)=r$.
+- **Kolonnerom:** De mulige resultatene er kombinasjoner av
+  $u_1,\ldots,u_r$. Altså
+  $\operatorname{Col}(A)=\operatorname{span}(u_1,\ldots,u_r)$.
+- **Nullrom:** De resterende startretningene gir null.
+  Derfor er $\operatorname{Null}(A)=\operatorname{span}(v_{r+1},\ldots,v_n)$.
 
 Her betyr $\operatorname{span}$ alle lineærkombinasjoner av de oppgitte
-vektorene. I full SVD er de siste $m-r$ kolonnene i $U$ en basis for
-nullrommet til $A^T$. Rangsatsen fra uke 3 blir $r+(n-r)=n$.
+vektorene. Vi har $r$ synlige og $n-r$ usynlige startretninger,
+slik at rang pluss nullromsdimensjon blir $n$, som i uke 3.
 
-**Et lite rektangulært eksempel:** La
+<details class="reading-step">
+<summary>Gå i dybden: full SVD i NumPy og numerisk rang</summary>
 
-$$B=\begin{bmatrix}2&0&0\\0&0&0\end{bmatrix},\qquad
-Bx=\begin{bmatrix}2x_1\\0\end{bmatrix}.$$
+**Full eller redusert SVD.** Python returnerer `U, s, Vt`:
 
-Bare $x_1$ påvirker resultatet. Kolonnerommet er linjen spent ut av
-$(1,0)^T$ i $\mathbb R^2$, mens nullrommet er planet spent ut av
-$(0,1,0)^T$ og $(0,0,1)^T$ i $\mathbb R^3$.
-Her kan vi velge $U=I_2$, $V=I_3$ og $\Sigma=B$.
-De to diagonalverdiene er 2 og 0, men nullrommet har **to** dimensjoner:
-den tredje startkoordinaten forsvinner også. Rangsatsen gir $1+2=3$.
-Dette er forskjellen mellom antall oppførte singulærverdier og antall
-retninger i startrommet.
+- `s` inneholder singulærverdiene i synkende rekkefølge.
+- `Vt` er allerede transponert; høyre singulærvektorer ligger i radene.
+- Med `full_matrices=False` får vi $p=\min(m,n)$ kolonner i `U` og
+  $p$ rader i `Vt`. Dette er nok til å rekonstruere matrisen.
+- For en bred matrise, som $B$ over, mangler da noen nullromsretninger.
+  Bruk full SVD når du trenger en basis for hele nullrommet.
 
-Python returnerer `U, s, Vt`: `s` er listen med singulærverdier,
-og `Vt` er **allerede transponert**. Med `full_matrices=False` får vi
-$p=\min(m,n)$ kolonner i `U` og $p$ rader i `Vt`. Det holder for
-rekonstruksjon, men en bred matrise mangler da noen høyre nullromsretninger.
-Bruk full SVD når du vil finne en basis for hele nullrommet.
+I full SVD gir også de siste $m-r$ kolonnene i $U$ en basis for
+nullrommet til $A^T$. Disse retningene er ortogonale på hele kolonnerommet.
 
-I flyttallsregning bruker vi en terskel i stedet for bare `s > 0`.
-En vanlig terskel er $\tau=\max(m,n)\epsilon\sigma_1$, der $\epsilon$
-er maskinpresisjonen fra uke 1. Antallet verdier over terskelen kalles
-**numerisk rang**. Usikre måledata kan begrunne en større terskel.
-Numerisk rang avhenger av toleransen; eksakt rang teller nøyaktig positive
-singulærverdier.
+**Null i eksakt regning eller nesten null på datamaskinen?**
+I flyttallsregning teller vi verdier over en terskel, ikke bare verdier
+som er strengt positive. En vanlig terskel er
+$\tau=\max(m,n)\epsilon\sigma_1$, der $\epsilon$ er maskinpresisjonen fra
+uke 1. Antallet singulærverdier over terskelen kalles **numerisk rang**.
+Usikre måledata kan begrunne en større terskel. Numerisk rang avhenger
+av toleransen; eksakt rang teller nøyaktig positive singulærverdier.
 
+</details>
 
 ## 7.4 Små datafeil, store løsningsfeil
 
 <div id="uke7-kondisjon"></div>
 
-### Løs baklengs, én koordinat om gangen
+### Fra resultatet tilbake til startvektoren
 
-I [uke 6.3](uke6.qmd#uke6-residual) skilte vi mellom residualen og
-feilen i de ukjente. Nå kan vi se årsaken direkte i to likninger.
-Bytt det nederste venstre elementet i eksempelet vårt fra 1 til $0.02$:
+Så langt har vi beregnet $T(x)=Ax$ når $x$ er kjent. Nå snur vi spørsmålet:
+Vi kjenner resultatet $b$, og vil finne startvektoren $x$ fra $Ax=b$.
+Hvis én retning blir kraftig forkortet av transformasjonen, må vi
+forstørre den igjen når vi regner baklengs. Da forstørres også feil i dataene.
+Det forklarer skillet mellom residual og løsningsfeil fra
+[uke 6.3](uke6.qmd#uke6-residual).
 
-$$A=\begin{bmatrix}0&2\\0.02&0\end{bmatrix},\qquad
-Ax=b\quad\Longleftrightarrow\quad
-2x_2=b_1,\quad 0.02x_1=b_2.$$
+::: {.callout-note title="Håndeksempel: samme datafeil i to forskjellige retninger"}
 
-For $b=(2,0.02)^T$ er løsningen $x=(1,1)^T$.
-**Øk først $b_1$ med $0.01$, og deretter bare $b_2$ med samme beløp.
-Hvilken ukjent endres mest?**
+**Utgangspunkt.** Vi bruker transformasjonen
 
-| Endring i data | Regning | Endring i løsningen |
-|:--|:--|:--|
-| $b_1: 2\to2.01$ | $x_2=2.01/2=1.005$ | $\delta x=(0,0.005)^T$ |
-| $b_2: 0.02\to0.03$ | $x_1=0.03/0.02=1.5$ | $\delta x=(0.5,0)^T$ |
+$$T(x)=Ax,\qquad A=\begin{bmatrix}0&2\\0.02&0\end{bmatrix}.$$
 
-Vi deler på 2 i det første tilfellet og på $0.02$ i det andre.
-Like store dataendringer gir derfor løsningsendringer som skiller med
-en faktor 100. Begge nye løsninger oppfyller sine endrede likninger
-nøyaktig. Det er selve rekonstruksjonen som er følsom, selv med eksakt regning.
-Avrundingsfeil fra [uke 1](page2.qmd) kan forsterkes på samme måte som
-målefeil dersom de havner i den følsomme retningen.
+Dette ligner eksempelet i 7.2, men minste strekk er nå $0.02$.
+Vi velger en kjent startvektor $x_*=(1,1)^T$. Da er det eksakte resultatet
+$b=Ax_*=(2,0.02)^T$. Tenk at $b$ er to måleverdier.
 
-### Eksperiment 4 – samme dataendring, to utfall
+**Hva skal vi undersøke?** Vi gjør to separate forsøk med en målefeil
+på $0.01$. Begge starter med de samme eksakte dataene $b$:
+
+- I første forsøk endres bare første måleverdi: $\widetilde b=(2.01,0.02)^T$.
+- I andre forsøk endres bare andre måleverdi: $\widetilde b=(2,0.03)^T$.
+
+Vi skal finne den nye løsningen $\widetilde x$ i hvert tilfelle og
+sammenligne den med $x_*$. Det andre forsøket fortsetter altså ikke fra det første.
+
+**Regnegangen.** Likningene $A\widetilde x=\widetilde b$ er
+$2\widetilde x_2=\widetilde b_1$ og
+$0.02\widetilde x_1=\widetilde b_2$. Dermed får vi
+
+| Tilfelle | Nye data $\widetilde b$ | Ny løsning $\widetilde x$ | Endring $\widetilde x-x_*$ |
+|:--|:--|:--|:--|
+| Bare første måling endres | $(2.01,0.02)^T$ | $(1,1.005)^T$ | $(0,0.005)^T$ |
+| Bare andre måling endres | $(2,0.03)^T$ | $(1.5,1)^T$ | $(0.5,0)^T$ |
+
+I første tilfelle deler vi målefeilen på 2: $0.01/2=0.005$.
+I andre tilfelle deler vi den på $0.02$: $0.01/0.02=0.5$.
+
+**Dette tar vi med oss.** Like store målefeil gir her løsningsendringer
+som skiller med en faktor 100. Begge nye løsninger passer sine endrede
+data nøyaktig, så $\widetilde b-A\widetilde x=0$. Likevel er den andre
+langt fra den opprinnelige løsningen. En liten residual mot målte data
+kan derfor ikke alene bekrefte at vi har funnet den sanne startvektoren.
+
+:::
+
+### Kontroller de to tilfellene med Python
 
 Vi undersøker hvor mye retningen til en datafeil betyr når vi løser et
 likningssystem. Matrisen og den opprinnelige løsningen holdes faste;
@@ -495,9 +635,11 @@ Sammenligningen viser hvorfor god tilpasning til målte data ikke alene
 sikrer riktige verdier for de ukjente. Det er skillet mellom residual
 og løsningsfeil fra uke 6, nå forklart med singulærverdier.
 
-Kjør forsøket. Vi velger en kjent løsning, beregner tilhørende data, og endrer
-én datakomponent om gangen med samme lille beløp. **Gjett først:**
-Blir løsningsendringen like stor i begge tilfeller?
+### Eksperiment 4 – samme dataendring, to utfall
+
+Kjør cellen og finn igjen begge radene i håndeksempelet.
+Bytt så målefeilen fra `0.01` til `0.001` begge steder. **Gjett først:**
+Hva skjer med de to løsningsendringene og forholdet mellom dem?
 
 ```{pyodide-python}
 #| label: week7-perturbation
@@ -544,22 +686,26 @@ beregnet fra løsningen, $b-A\widehat x$. En liten residual viser god
 tilpasning til disse dataene. Den kan ikke alene vise at den rekonstruerte
 løsningen er nær sannheten når dataene er usikre.
 
-### To forskjellige spørsmål om små tall
+<details class="reading-step">
+<summary>Gå i dybden: følsomhet og konvergens er ulike spørsmål</summary>
 
 I [uke 2](page4.qmd) undersøkte vi om en oppdatering demper forskjeller,
 og i [uke 6.2](uke6.qmd#uke6-fikspunkt) skrev vi feilen i en lineær
-iterasjon som $e_{k+1}=Te_k$. Da spør vi om gjentatte produkter med
-**iterasjonsmatrisen** $T$ gjør feilen mindre.
+iterasjon som $e_{k+1}=Ge_k$. Her kaller vi iterasjonsmatrisen $G$
+for å skille den fra transformasjonen $T$. Da spør vi om gjentatte produkter med
+**iterasjonsmatrisen** $G$ gjør feilen mindre.
 Her spør vi hvor følsom løsningen av **systemmatrisen** $A$ er for datafeil.
 En liten singulærverdi til $A$ betyr at vi må dele på et lite tall når
 vi løser baklengs. Det er ikke en konvergensfaktor for iterasjonen.
 
-SVD gir også $\|Te\|_2\leq\sigma_1(T)\|e\|_2$.
-Hvis $\sigma_1(T)<1$, krymper derfor enhver feil i hvert steg.
-Dette er et tilstrekkelig krav. Kravet $\rho(T)<1$ fra uke 6 er svakere:
+SVD gir også $\|Ge\|_2\leq\sigma_1(G)\|e\|_2$.
+Hvis $\sigma_1(G)<1$, krymper derfor enhver feil i hvert steg.
+Dette er et tilstrekkelig krav. Kravet $\rho(G)<1$ fra uke 6 er svakere:
 iterasjonen kan konvergere selv om noen feil først vokser.
 Vi må altså holde fra hverandre **konvergensen til metoden** og
 **følsomheten til problemet**.
+
+</details>
 
 <details class="reading-step">
 <summary>Gå i dybden: norm, kondisjonstall og håndregning</summary>
@@ -623,7 +769,7 @@ Kjør cellen og sammenlign de to lengdene. Gjenta med punkter over $[-1,1]$.
 
 ```{pyodide-python}
 #| label: week7-polynomial
-# P sender polynomkoeffisienter til verdier i de valgte punktene, som i uke 4.
+# Transformasjonen c -> P @ c gir polynomverdier fra koeffisientene, som i uke 4.
 # Punktene ligger tett rundt 1; ulike koeffisienter kan gi nesten samme verdier.
 # Vi undersøker koeffisientretningen som gir minst endring i verdiene.
 
@@ -656,13 +802,15 @@ til å finne den korteste løsningen blant dem som passer dataene best.
 
 <div id="uke7-rang"></div>
 
-### Eksperiment 5 – mer detalj, flere tall
+### Hvor mye får vi igjen for flere komponenter?
 
 Vi går tilbake til bildet og setter tall på avveiningen mellom lagring
 og nøyaktighet. Flere SVD-ledd krever flere tall i faktorene og gir mindre
 samlet pikselfeil, men forbedringen trenger ikke være like stor for hvert
 nytt ledd. Ved å sammenligne bildet, feilnormen og antallet lagrede tall
 får vi et grunnlag for å velge hvor mange ledd som er verdt å beholde.
+
+### Eksperiment 5 – mer detalj, flere tall
 
 Kjør cellen med ulike verdier av `k`. Den viser bildet, antallet tall i
 den lagrede faktorrepresentasjonen og en samlet pikselfeil.
@@ -696,7 +844,8 @@ Hele bildet og en rekonstruksjon med de $k$ første komponentene er
 $$A=\sum_{i=1}^r\sigma_i u_i v_i^T,\qquad
 A_k=\sum_{i=1}^k\sigma_i u_i v_i^T.$$
 
-Her er $r$ antall positive singulærverdier. Matrisen $A_k$ har rang høyst $k$.
+Her er $r$ antall positive singulærverdier, og vi velger $0\leq k\leq r$
+i denne summen. For $k=0$ er summen nullmatrisen. Matrisen $A_k$ har rang høyst $k$.
 **Rangreduksjon** betyr å erstatte matrisen med en slik representasjon
 med færre uavhengige retninger.
 
@@ -711,7 +860,11 @@ den sier ikke at alle detaljer som er viktige for oss blir bevart.
 
 ### To mønstre og en feil vi kan regne ut på papir
 
-Ta den lille bildematrisen
+Vi vil se nøyaktig hva vi mister når vi beholder bare én komponent.
+
+::: {.callout-note title="Håndeksempel: ett jevnt mønster og én kontrast"}
+
+**Utgangspunkt.** Ta den lille bildematrisen
 
 $$A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
 q_1=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix},\quad
@@ -740,7 +893,8 @@ $$\|A-A_1\|_F=\sqrt{4\cdot0.5^2}=1,\qquad
 
 Den relative feilen er $1/\sqrt{10}\approx0.316$. Den absolutte feilen
 1 er akkurat den utelatte singulærverdien. Med flere utelatte mønstre
-bruker vi Pytagoras, fordi mønstrene er ortogonale:
+bruker vi Pytagoras, fordi mønstrene er ortogonale. Her betyr ortogonale
+at tabellene, skrevet som lange vektorer, har indreprodukt null:
 
 $$\|A-A_k\|_F^2=\sigma_{k+1}^2+\cdots+\sigma_p^2,
 \qquad p=\min(m,n).$$
@@ -750,6 +904,11 @@ legg sammen kvadratene av de vektene vi vil utelate, og sammenlign med
 feilen vi tillater. I dette $2\times2$-eksempelet sparer vi ikke lagring
 med faktorene; eksempelet viser regningen. Lagringsgevinsten kommer først
 når $k(m+n+1)<mn$.
+
+**Dette tar vi med oss.** Det utelatte mønsteret forklarer både den tapte
+kontrasten og den beregnede feilen.
+
+:::
 
 <details class="reading-step">
 <summary>Gå i dybden: feilformelen, ortogonalitet og lagring</summary>
@@ -809,7 +968,7 @@ Denne opptellingen er ikke en sammenligning med PNG eller JPEG.
 
 <div id="uke7-prosjekt"></div>
 
-### Eksperiment 6 – samme budsjett, ulik informasjon
+### Virker samme forenkling like godt på alle bilder?
 
 En metode som fungerer godt på ett bilde, trenger ikke fungere like godt
 på et annet. Her får fire like store bilder det samme lagringsbudsjettet,
@@ -817,8 +976,22 @@ slik at forskjellen ligger i bildenes mønstre. Forsøket lar oss undersøke
 når lav rang er en nyttig forenkling, og når den mister informasjon vi
 vil bevare. Dette er vurderingen dere skal gjøre i ukens prosjekt.
 
-Se de fire bildene og ranger dem etter hvor godt dere tror lav rang vil
-fungere. Kjør så sammenligningen. Koden velger samme antall komponenter
+### Eksperiment 6 – samme budsjett, ulik informasjon
+
+Kjør først cellen som bare viser originalene.
+
+```{pyodide-python}
+#| label: week7-budget-inputs
+# Se originalene før du vurderer hvilke bilder lav rang vil passe for.
+
+images = challenge_images()
+show_images(images)
+```
+
+**Før du går videre:** Ranger bildene etter hvor godt du tror lav rang
+vil fungere, og skriv én begrunnelse. Velg også en detalj du vil bevare.
+
+Kjør deretter sammenligningen nedenfor. Koden velger samme antall komponenter
 for alle bildene slik at faktorene krever høyst **25 % så mange tall**
 som de opprinnelige bildematrisene.
 
@@ -829,7 +1002,6 @@ som de opprinnelige bildematrisene.
 # Undersøk hvorfor samme rang kan gi svært ulikt resultat.
 
 images = challenge_images()
-show_images(images)
 m,n = portrait.shape
 # Heltallsdivisjon runder ned slik at k*(m+n+1) ikke overskrider budsjettet.
 k = int(.25*m*n//(m+n+1))
@@ -884,11 +1056,13 @@ Det er den samme geometrien som i nivåkurvene og gradientmetoden fra uke 6.
 ### Når vi ikke kan bruke en vanlig invers
 
 I [uke 4](uke4.qmd) valgte vi $x$ som minimerer $\|Ax-b\|_2^2$.
-Geometrisk projiserer vi $b$ på kolonnerommet. Men hva om flere $x$ gir
+Det tilpassede resultatet $Ax$ er da projeksjonen av $b$ på kolonnerommet. Men hva om flere $x$ gir
 akkurat den samme beste tilpasningen? Nullrommet fra uke 3 forklarer
 hvorfor det kan skje, og SVD gir oss en enkel måte å velge ett svar på.
 
-Vi bruker den rektangulære matrisen fra 7.3 og velger en høyreside:
+::: {.callout-note title="Håndeksempel: best tilpasning, deretter kortest løsning"}
+
+**Utgangspunkt.** Vi bruker den rektangulære matrisen fra 7.3 og velger en høyreside:
 
 $$B=\begin{bmatrix}2&0&0\\0&0&0\end{bmatrix},\qquad
 b=\begin{bmatrix}6\\4\end{bmatrix}.$$
@@ -912,6 +1086,8 @@ b-Bx^+=\begin{bmatrix}0\\4\end{bmatrix}.$$
 akkurat som i uke 4. Deretter setter vi de frie nullromskomponentene til
 null for å få minst mulig lengde. Den gjenværende residualen er ortogonal
 på kolonnerommet, og $B^T(b-Bx^+)=0$: normallikningene er oppfylt.
+
+:::
 
 ### Samme oppskrift med SVD
 

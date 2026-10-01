@@ -256,7 +256,8 @@ singulærverdikurven alene er ingen garanti for riktig skille mellom signal og s
 
 ### Opplev problemet
 
-Her er matrisen $H$ en **uskarphetsoperator**: $b=Hx_*+\eta$.
+Matrisen $H$ representerer en **uskarphetstransformasjon** $S(x)=Hx$.
+Målingen er $b=Hx_*+\eta$.
 Her er $x_*$ det skarpe signalet, $b$ målingen og $\eta$ målestøy.
 Produktet $Hx_*$ gir et uskarpt signal ved å blande verdier fra naboposisjoner.
 Vi tar SVD av $H$. Små singulærverdier viser signalretninger som blir
@@ -271,7 +272,7 @@ Gjett om en løsning med nesten null residual vil ligne fasiten.
 
 ```{pyodide-python}
 #| label: project7-blur
-# H sender det skarpe signalet til en uskarp måling; observed inneholder også støy.
+# Transformasjonen S(x)=Hx gjør signalet uskarpt; observed inneholder også støy.
 # Direkte løsning forsøker å forklare selv svake og støyfulle måleretninger.
 # Se på både residual og faktisk feil, også når løsningen ser urimelig ut.
 
