@@ -109,7 +109,8 @@ def image_svd_trial(noise_level=.12, seed=23, tau=1.05, image_name='portrett'):
         ax.imshow(M,cmap='gray',vmin=0,vmax=1); ax.set_title(title); ax.axis('off')
     fig.tight_layout(); plt.show()
     return dict(k=k,delta=delta,residuals=residuals,errors=errors,
-                lost_squared=lost,noise_squared=kept,singular_values=s)
+                lost_squared=lost,noise_squared=kept,singular_values=s,
+                C=C,E=E,Y=Y,reconstruction=Yk)
 
 
 def signal_svd_trial(noise_level=.005, seed=17, tau=1.05):
@@ -162,4 +163,5 @@ def signal_svd_trial(noise_level=.005, seed=17, tau=1.05):
     fig.tight_layout(); plt.show()
     return dict(k=k,delta=delta,cap=cap,residuals=residuals,errors=errors,
                 residual_formula=residual_formula,lost_squared=lost,
-                noise_squared=amplified,singular_values=s)
+                noise_squared=amplified,singular_values=s,
+                H=H,b=b,truth=truth,eta=eta,reconstruction=solutions[:,k])
