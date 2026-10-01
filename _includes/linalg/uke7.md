@@ -18,18 +18,37 @@ Geometrien til **lineære transformasjoner** gir inngangen: hva endres,
 hva bevares, og hva kan vi rekonstruere etterpå?
 
 **Forelesning** starter med forsøk og samtale om det vi ser.
-**Gå i dybden** åpner forklaringene, håndregningen og forbindelsene
-som gjør observasjonene til matematikk. Du kan også åpne hver forklaring separat.
+**Gå i dybden** åpner utfyllende oppgaver og mellomregninger. De korte
+håndeksemplene står i selve teksten, slik at du kan følge veien fra
+forsøk til formel også uten å åpne fordypningen.
 
 - [Et bilde med få byggeklosser](#uke7-bilde): en forbindelse til basis og koordinater.
 - [Fra sirkel til ellipse](#uke7-geometri): se hvilke retninger som strekkes.
 - [To basiser](#uke7-svd): forstå singulærverdidekomposisjonen, forkortet SVD.
 - [Usikre data](#uke7-kondisjon): knytt strekk til kondisjonering og residual.
 - [Velg hva som beholdes](#uke7-rang): sammenlign rang, feil og bildedetaljer.
+- [Pseudoinversen](#uke7-pseudoinvers): en valgfri videreføring av minste kvadrater.
 
 Etter uken skal du kunne tolke $Av_i=\sigma_i u_i$, bruke en ferdig beregnet
 SVD til å forenkle en matrise, og forklare hvorfor små singulærverdier gjør
 rekonstruksjon følsom. Selve SVD-beregningen gjør vi med et bibliotek.
+
+### Dette bygger vi videre på
+
+I [uke 6](uke6.qmd#uke6-residual) så vi at en liten residual ikke alltid
+betyr en liten løsningsfeil. Forklaringen var at matrisen kan strekke
+ulike retninger svært forskjellig. Denne uken finner vi nettopp disse
+retningene og strekkfaktorene. Det samme verktøyet forteller hvilke
+mønstre som bidrar mest i en bildematrise.
+
+| Fra tidligere uker | Spørsmålet vi tar med oss |
+|:--|:--|
+| [Uke 1: flyttall og avrunding](page2.qmd) | Hva skjer med små feil når vi deler på et svært lite tall? |
+| [Uke 2: fikspunktiterasjon](page4.qmd) | Er en liten endring i beregningen nok til å stole på svaret? |
+| [Uke 3: basis, kolonnerom og nullrom](uke3.qmd#uke3-del3) | Hvilke deler av startvektoren kan vi finne igjen fra resultatet? |
+| [Uke 4: ortogonalitet og minste kvadrater](uke4.qmd) | Kan gode koordinater gjøre tilpasningen enklere? |
+| [Uke 5: egenverdier](uke5.qmd) | Hvilke spesielle retninger finnes når matrisen også kan være rektangulær? |
+| [Uke 6: norm, residual og kondisjonstall](uke6.qmd#uke6-residual) | Hvordan finner vi største og minste strekk i praksis? |
 
 ## 7.1 Et bilde som en sum av mønstre
 
@@ -73,8 +92,7 @@ Noen lysstyrkeforskjeller bevares godt, mens andre blir borte.
 Mønstrene er en slags bildebyggeklosser; vi skal se både hvordan de lages
 og hvorfor denne forbindelsen til basis er nyttig.
 
-<details class="reading-step">
-<summary>Gå i dybden: se én byggekloss og knytt den til basis</summary>
+### Én byggekloss, regnet for hånd
 
 Bildet er en $96\times96$-matrise $A$. Hvert element er en lysstyrke mellom
 0 og 1. En enkelt komponent har formen $\sigma_i u_i v_i^T$:
@@ -86,14 +104,25 @@ Produktet $u_i v_i^T$ kalles et **ytreprodukt**. Element $(j,\ell)$ er
 $(u_i)_j(v_i)_\ell$. Dermed er kolonne $\ell$ lik $(v_i)_\ell u_i$,
 og en ikke-null slik matrise har rang 1.
 
-Prøv først for hånd med $u=(1,2)^T$ og $v=(1,0,-1)^T$.
+**Prøv selv:** Bruk $u=(1,2)^T$ og $v=(1,0,-1)^T$.
 Skriv de tre kolonnene i $uv^T$, og forklar hvorfor matrisen har rang 1.
 
-**Slik kan du tenke:** Kolonnene er $u$, nullvektoren og $-u$:
+**Regnegangen:** Kolonnene er $u$, nullvektoren og $-u$:
 
 $$uv^T=\begin{bmatrix}1&0&-1\\2&0&-2\end{bmatrix}.$$
 
-Det finnes bare én uavhengig kolonneretning. I et faktisk bilde kan både
+**Hva forklarer dette?** I [uke 3](uke3.qmd#uke3-del3) telte vi
+uavhengige kolonner for å finne rang. Her er andre kolonne null og tredje
+kolonne minus den første. Kolonnerommet er derfor linjen spent ut av
+$(1,2)^T$, selv om matrisen har seks elementer. Vi kan lagre de to profilene
+og bygge alle seks elementene fra dem.
+
+Disse profilene er ikke normaliserte. Hvis vi vil skrive akkurat dette
+produktet som ett SVD-ledd, bruker vi enhetsvektorene
+$\widehat u=u/\sqrt5$ og $\widehat v=v/\sqrt2$. Da blir
+$uv^T=\sqrt{10}\,\widehat u\widehat v^T$: lengdene flyttes inn i vekten.
+
+I et faktisk bilde kan både
 profiler og komponenter ha negative elementer. De er bidrag til summen,
 og trenger ikke hver for seg være vanlige gråtonebilder.
 
@@ -128,7 +157,6 @@ tilpasset til $96\times96$ gråtoner. Vi sentrerer ikke bildet.
 Alle gråtonebilder vises med samme skala; visningen metter verdier utenfor
 $[0,1]$, men feilberegningene bruker tallene uten klipping.
 
-</details>
 
 ## 7.2 Fra sirkel til ellipse
 
@@ -174,8 +202,7 @@ null forsvinner all informasjon om den startkomponenten: dette er **nullrommet**
 fra uke 3. Lengde og vinkel trenger ikke bevares av hele transformasjonen,
 selv om dreie- og speiltrinnene bevarer begge deler.
 
-<details class="reading-step">
-<summary>Gå i dybden: finn største og minste strekk for hånd</summary>
+### Finn største og minste strekk for hånd
 
 Eksempelet **Ellipse** bruker
 
@@ -186,7 +213,7 @@ $e_1=(1,0)^T$ og $e_2=(0,1)^T$ standardbasisvektorene. Alle tre har lengde 1.
 Hvilket resultat blir lengst? Forklar så hvorfor ingen annen enhetsvektor
 kan gi større lengde enn 2 eller mindre enn 1.
 
-**Slik kan du tenke:** $Ae_1=e_2$, $Ae_2=2e_1$ og
+**Regnegangen:** $Ae_1=e_2$, $Ae_2=2e_1$ og
 $A(1,1)^T/\sqrt2=(2,1)^T/\sqrt2$, med lengder $1$, $2$ og $\sqrt{5/2}$.
 For en generell enhetsvektor $x=(a,b)^T$ har vi $a^2+b^2=1$, så
 
@@ -208,7 +235,6 @@ vinkelrett enhetsvektor.
 Forsøket er tilpasset fra [den opprinnelige SVD-demoen](https://andreyac.folk.ntnu.no/svd_complete.html).
 Originalen viser også de numeriske faktorene og produkter med basisvektorene.
 
-</details>
 
 ## 7.3 To basiser, én enkel operasjon
 
@@ -237,6 +263,21 @@ og har lengde 1. Koordinaten langs en slik basisvektor $v_i$ er
 indreproduktet $v_i^Tx$. SVD bruker én ortonormal basis for startvektorene
 og én for resultatvektorene.
 
+La oss først bruke basisideen fra [uke 3](uke3.qmd#uke3-del2).
+For en $2\times2$-matrise kan vi skrive
+
+$$x=(v_1^Tx)v_1+(v_2^Tx)v_2.$$
+
+Hvert indreprodukt er ett tall: hvor mye av $x$ som ligger langs den
+valgte retningen, slik vi målte komponenter i [uke 4](uke4.qmd#uke4-retning).
+Linearitet og $Av_i=\sigma_i u_i$ gir så
+
+$$Ax=(v_1^Tx)Av_1+(v_2^Tx)Av_2
+=\sigma_1(v_1^Tx)u_1+\sigma_2(v_2^Tx)u_2.$$
+
+Vi har dermed funnet en oppskrift: mål to koordinater, gang med hver sin
+strekkfaktor, og legg sammen to bidrag i resultatrommet. Matriseformen
+samler bare denne oppskriften i ett uttrykk.
 **Singulærverdidekomposisjonen**, eller **SVD**, skriver en reell matrise som
 
 $$\boxed{A=U\Sigma V^T}.$$
@@ -257,15 +298,14 @@ Den beskriver den med koordinater som gjør strekk og informasjonstap tydelig.
 Vi kan bruke SVD også når en matrise er rektangulær og start- og resultatrommet
 har forskjellig dimensjon.
 
-<details class="reading-step">
-<summary>Gå i dybden: utfør de tre trinnene for hånd</summary>
+### De tre trinnene for hånd
 
 Bruk $A=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ og $x=(3,4)^T$.
 Velg $v_1=e_2$, $v_2=e_1$, $u_1=e_1$ og $u_2=e_2$.
 Skriv først $x$ i $v$-basisen, skaler koordinatene med 2 og 1, og bygg
 resultatet i $u$-basisen. Kontroller med direkte matrisemultiplikasjon.
 
-**Slik kan du tenke:** $x=4v_1+3v_2$, og derfor
+**Regnegangen:** $x=4v_1+3v_2$, og derfor
 $Ax=8u_1+3u_2=(8,3)^T$. Samlet blir faktorene
 
 $$U=I,\qquad \Sigma=\begin{bmatrix}2&0\\0&1\end{bmatrix},\qquad
@@ -284,7 +324,29 @@ Dette er grunnen til at koordinatskiftene bevarer indreprodukt og lengde.
 De $p=\min(m,n)$ diagonalverdiene ordnes
 $\sigma_1\geq\cdots\geq\sigma_p\geq0$.
 
-</details>
+
+### Hvorfor bruker vi ikke bare egenverdiene fra uke 5?
+
+En egenvektor oppfyller $Av=\lambda v$ og beholder linjen sin.
+Singulærvektorer beskriver i stedet et par retninger:
+$Av_i=\sigma_i u_i$. Startretningen og resultatretningen trenger ikke
+være den samme. Dermed kan vi også beskrive en matrise som sender
+vektorer fra $\mathbb R^3$ til $\mathbb R^2$, der en egenverdilikning
+for selve matrisen ikke gir mening.
+
+For eksempelet vårt er
+
+$$A^TA=\begin{bmatrix}1&0\\0&4\end{bmatrix}.$$
+
+Egenverdiene til $A^TA$ er 1 og 4. Kvadratrøttene gir strekkfaktorene
+1 og 2, og egenvektorene gir startretningene $e_1$ og $e_2$.
+Egenverdiene til $A$ selv er derimot $\pm\sqrt2$.
+**Kontroller dette ved å sette $\det(A-\lambda I)=0$.**
+
+For de symmetriske positivt definite matrisene fra uke 6 er situasjonen
+enklere: da kan vi bruke samme basis på begge sider, og
+$\sigma_i=\lambda_i>0$. Kondisjonstallet fra uke 6 er altså et
+spesialtilfelle av forholdet mellom største og minste singulærverdi.
 
 <details class="reading-step">
 <summary>Gå i dybden: forbindelsen til egenverdier fra uke 5</summary>
@@ -324,8 +386,7 @@ minste strekk når $A$ har full kolonnerang.
 
 </details>
 
-<details class="reading-step">
-<summary>Gå i dybden: rang, kolonnerom, nullrom og NumPy</summary>
+### Hva forteller SVD om rommene fra uke 3?
 
 La $r$ være antallet positive singulærverdier. **Rangen** er antallet
 uavhengige resultatretninger, **kolonnerommet** er alle mulige resultater
@@ -338,6 +399,20 @@ $$\operatorname{rank}(A)=r,\qquad
 Her betyr $\operatorname{span}$ alle lineærkombinasjoner av de oppgitte
 vektorene. I full SVD er de siste $m-r$ kolonnene i $U$ en basis for
 nullrommet til $A^T$. Rangsatsen fra uke 3 blir $r+(n-r)=n$.
+
+**Et lite rektangulært eksempel:** La
+
+$$B=\begin{bmatrix}2&0&0\\0&0&0\end{bmatrix},\qquad
+Bx=\begin{bmatrix}2x_1\\0\end{bmatrix}.$$
+
+Bare $x_1$ påvirker resultatet. Kolonnerommet er linjen spent ut av
+$(1,0)^T$ i $\mathbb R^2$, mens nullrommet er planet spent ut av
+$(0,1,0)^T$ og $(0,0,1)^T$ i $\mathbb R^3$.
+Her kan vi velge $U=I_2$, $V=I_3$ og $\Sigma=B$.
+De to diagonalverdiene er 2 og 0, men nullrommet har **to** dimensjoner:
+den tredje startkoordinaten forsvinner også. Rangsatsen gir $1+2=3$.
+Dette er forskjellen mellom antall oppførte singulærverdier og antall
+retninger i startrommet.
 
 Python returnerer `U, s, Vt`: `s` er listen med singulærverdier,
 og `Vt` er **allerede transponert**. Med `full_matrices=False` får vi
@@ -352,11 +427,36 @@ er maskinpresisjonen fra uke 1. Antallet verdier over terskelen kalles
 Numerisk rang avhenger av toleransen; eksakt rang teller nøyaktig positive
 singulærverdier.
 
-</details>
 
 ## 7.4 Små datafeil, store løsningsfeil
 
 <div id="uke7-kondisjon"></div>
+
+### Løs baklengs, én koordinat om gangen
+
+I [uke 6.3](uke6.qmd#uke6-residual) skilte vi mellom residualen og
+feilen i de ukjente. Nå kan vi se årsaken direkte i to likninger.
+Bytt det nederste venstre elementet i eksempelet vårt fra 1 til $0.02$:
+
+$$A=\begin{bmatrix}0&2\\0.02&0\end{bmatrix},\qquad
+Ax=b\quad\Longleftrightarrow\quad
+2x_2=b_1,\quad 0.02x_1=b_2.$$
+
+For $b=(2,0.02)^T$ er løsningen $x=(1,1)^T$.
+**Øk først $b_1$ med $0.01$, og deretter bare $b_2$ med samme beløp.
+Hvilken ukjent endres mest?**
+
+| Endring i data | Regning | Endring i løsningen |
+|:--|:--|:--|
+| $b_1: 2\to2.01$ | $x_2=2.01/2=1.005$ | $\delta x=(0,0.005)^T$ |
+| $b_2: 0.02\to0.03$ | $x_1=0.03/0.02=1.5$ | $\delta x=(0.5,0)^T$ |
+
+Vi deler på 2 i det første tilfellet og på $0.02$ i det andre.
+Like store dataendringer gir derfor løsningsendringer som skiller med
+en faktor 100. Begge nye løsninger oppfyller sine endrede likninger
+nøyaktig. Det er selve rekonstruksjonen som er følsom, selv med eksakt regning.
+Avrundingsfeil fra [uke 1](page2.qmd) kan forsterkes på samme måte som
+målefeil dersom de havner i den følsomme retningen.
 
 ### Eksperiment 4 – samme dataendring, to utfall
 
@@ -409,6 +509,23 @@ beregnet fra løsningen, $b-A\widehat x$. En liten residual viser god
 tilpasning til disse dataene. Den kan ikke alene vise at den rekonstruerte
 løsningen er nær sannheten når dataene er usikre.
 
+### To forskjellige spørsmål om små tall
+
+I [uke 2](page4.qmd) undersøkte vi om en oppdatering demper forskjeller,
+og i [uke 6.2](uke6.qmd#uke6-fikspunkt) skrev vi feilen i en lineær
+iterasjon som $e_{k+1}=Te_k$. Da spør vi om gjentatte produkter med
+**iterasjonsmatrisen** $T$ gjør feilen mindre.
+Her spør vi hvor følsom løsningen av **systemmatrisen** $A$ er for datafeil.
+En liten singulærverdi til $A$ betyr at vi må dele på et lite tall når
+vi løser baklengs. Det er ikke en konvergensfaktor for iterasjonen.
+
+SVD gir også $\|Te\|_2\leq\sigma_1(T)\|e\|_2$.
+Hvis $\sigma_1(T)<1$, krymper derfor enhver feil i hvert steg.
+Dette er et tilstrekkelig krav. Kravet $\rho(T)<1$ fra uke 6 er svakere:
+iterasjonen kan konvergere selv om noen feil først vokser.
+Vi må altså holde fra hverandre **konvergensen til metoden** og
+**følsomheten til problemet**.
+
 <details class="reading-step">
 <summary>Gå i dybden: norm, kondisjonstall og håndregning</summary>
 
@@ -424,13 +541,12 @@ kondisjonstallet blir
 
 $$\kappa_2(A)=\|A\|_2\|A^{-1}\|_2=\sigma_1/\sigma_n.$$
 
-Regn gjennom de to dataendringene fra forsøket for hånd med $x_*=(1,1)^T$
-og $b=(2,0.02)^T$.
+**Prøv selv:** Forklar håndregningen over med $Av_i=\sigma_i u_i$.
+Hvilken resultatretning $u_i$ tilhører hver av de to dataendringene?
 
-**Slik kan du tenke:** Likningene er $2x_2=b_1$ og $0.02x_1=b_2$.
-En økning på $0.01$ i $b_1$ gir løsningsendringen $(0,0.005)^T$;
-samme økning i $b_2$ gir $(0.5,0)^T$. Generelt, hvis dataendringen
-$\delta b$ ligger langs $u_i$ og har størrelse $\eta$, blir
+**Regnegangen:** Hvis dataendringen $\delta b$ ligger langs $u_i$ og
+har størrelse $\eta$, må endringen i løsningen ligge langs $v_i$.
+Vi deler på strekkfaktoren for å finne størrelsen:
 
 $$\delta b=\eta u_i\quad\Longrightarrow\quad
 \delta x=\frac{\eta}{\sigma_i}v_i.$$
@@ -497,39 +613,9 @@ regningen kan ikke gjenopprette informasjon som målingene ikke gir presist.
 
 </details>
 
-<details class="reading-step">
-<summary>Gå i dybden: minste kvadrater, pseudoinvers og regularisering</summary>
-
-Et **minste-kvadratersproblem** søker $x$ som gjør summen av kvadrerte
-residualkomponenter, $\|Ax-b\|_2^2$, minst mulig. Hvis flere løsninger
-oppnår samme minimum, velger **pseudoinversen** den med minst lengde.
-Pseudoinversen betegnes $A^+$; den er definert også for rektangulære og
-rangdefekte matriser og er lik $A^{-1}$ når inversen finnes.
-
-Sett $z=V^Tx$ og $c=U^Tb$. Ortonormale koordinatskift bevarer lengden, så
-$\|Ax-b\|_2=\|\Sigma z-c\|_2$. La $r$ være antall positive singulærverdier.
-For $i\leq r$ får vi minste residual med $z_i=c_i/\sigma_i$.
-Komponentene $c_{r+1},\ldots,c_m$ ligger utenfor kolonnerommet og kan
-ikke tilpasses. Frie startkoordinater settes til null for minst lengde:
-
-$$x^+=A^+b=\sum_{i=1}^r\frac{u_i^Tb}{\sigma_i}v_i.$$
-
-**Trunkering** betyr å avkorte en sum. En **trunkert SVD-løsning** beholder
-bare leddene med de $k$ største singulærverdiene, der $k<r$.
-Dette er **regularisering**: vi begrenser tillatte løsningskomponenter
-for å få mindre forsterkning av usikre data, selv om datatilpasningen blir
-dårligere. Også virkelig signal langs de utelatte retningene går tapt.
-
-**Prekondisjonering** fra uke 6 omformer likningssystemet for at en
-iterativ metode skal konvergere bedre, mens den søkte eksakte løsningen
-bevares. For en SPD-matrise er singulærverdier og egenverdier de samme;
-et stort forhold gir avlange nivåkurver. Ved symmetrisk prekondisjonering
-med en SPD-matrise $M$ studerer vi $M^{-1/2}AM^{-1/2}$. Her er $M^{1/2}$
-den symmetriske positive definite kvadratroten og $M^{-1/2}$ dens invers.
-Trunkering har et annet mål: å begrense hva vi forsøker å rekonstruere
-fra usikre data.
-
-</details>
+Minste kvadrater fra uke 4 lar oss også behandle data utenfor kolonnerommet.
+I den [valgfrie fanen om pseudoinversen](#uke7-pseudoinvers) bruker vi SVD
+til å finne den korteste løsningen blant dem som passer dataene best.
 
 ## 7.5 Rang som et valg
 
@@ -582,6 +668,48 @@ SVD-rekonstruksjonen er en **beste tilnærming** i Frobeniusnorm blant alle
 matriser med rang høyst $k$. Dette er en presis påstand om samlet tallfeil;
 den sier ikke at alle detaljer som er viktige for oss blir bevart.
 
+### To mønstre og en feil vi kan regne ut på papir
+
+Ta den lille bildematrisen
+
+$$A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
+q_1=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix},\quad
+q_2=\frac1{\sqrt2}\begin{bmatrix}1\\-1\end{bmatrix}.$$
+
+**Kontroller at $Aq_1=3q_1$ og $Aq_2=q_2$.** Vektorene er ortonormale,
+og begge egenverdiene er positive. Vi kan derfor velge $u_i=v_i=q_i$.
+Da er SVD-summen
+
+$$A=3q_1q_1^T+q_2q_2^T
+=\frac32\begin{bmatrix}1&1\\1&1\end{bmatrix}
++\frac12\begin{bmatrix}1&-1\\-1&1\end{bmatrix}.$$
+
+Første mønster er jevnt, mens andre beskriver kontrasten mellom diagonalene.
+Dette ligner mønsterdetektorene fra [uke 4](uke4.qmd#uke4-monster).
+Ved rang 1 beholder vi bare det første mønsteret:
+
+$$A_1=\begin{bmatrix}1.5&1.5\\1.5&1.5\end{bmatrix},\qquad
+A-A_1=\begin{bmatrix}0.5&-0.5\\-0.5&0.5\end{bmatrix}.$$
+
+Vi mister kontrasten, selv om alle fire elementene fortsatt er omtrent
+riktige. Feilen kan regnes uten en datamaskin:
+
+$$\|A-A_1\|_F=\sqrt{4\cdot0.5^2}=1,\qquad
+\|A\|_F=\sqrt{2^2+1^2+1^2+2^2}=\sqrt{10}.$$
+
+Den relative feilen er $1/\sqrt{10}\approx0.316$. Den absolutte feilen
+1 er akkurat den utelatte singulærverdien. Med flere utelatte mønstre
+bruker vi Pytagoras, fordi mønstrene er ortogonale:
+
+$$\|A-A_k\|_F^2=\sigma_{k+1}^2+\cdots+\sigma_p^2,
+\qquad p=\min(m,n).$$
+
+Dette gir en måte å velge $k$ på før vi bygger bildet på nytt:
+legg sammen kvadratene av de vektene vi vil utelate, og sammenlign med
+feilen vi tillater. I dette $2\times2$-eksempelet sparer vi ikke lagring
+med faktorene; eksempelet viser regningen. Lagringsgevinsten kommer først
+når $k(m+n+1)<mn$.
+
 <details class="reading-step">
 <summary>Gå i dybden: feilformelen, ortogonalitet og lagring</summary>
 
@@ -627,7 +755,7 @@ mange tall som kreves for $k$ vektorer $u_i$, $k$ vektorer $v_i$ og
 $k$ singulærverdier. Sammenlign $k=20$ for et $96\times96$-bilde
 med lagring av alle pikslene.
 
-**Slik kan du tenke:** Én komponent trenger $m+n+1$ tall; $k$ komponenter
+**Regnegangen:** Én komponent trenger $m+n+1$ tall; $k$ komponenter
 trenger $k(m+n+1)$. Her blir det 3860 mot 9216 tall. Lagrer vi den
 rekonstruerte matrisen i stedet for faktorene, trenger vi fortsatt $mn$ tall.
 Tall er dessuten ikke bytes: float64-faktorer bruker 8 bytes per tall,
@@ -672,7 +800,7 @@ kreve mange SVD-komponenter. Dette er utgangspunktet for
 <summary>Gå i dybden: regn på budsjettet og den diagonale streken</summary>
 
 Finn største heltall $k$ som oppfyller $k(m+n+1)\leq0.25mn$ for
-$m=n=96$. **Slik kan du tenke:** $0.25\cdot96^2/193\approx11.94$,
+$m=n=96$. **Regnegangen:** $0.25\cdot96^2/193\approx11.94$,
 så $k=11$ er største tillatte rang.
 
 Den diagonale streken er identitetsmatrisen. Alle 96 singulærverdier er 1,
@@ -701,5 +829,94 @@ flate retninger: store endringer i $x$ gir liten endring i modellen.
 Det er den samme geometrien som i nivåkurvene og gradientmetoden fra uke 6.
 
 </details>
+
+## 7.7 Pseudoinversen (valgfritt)
+
+<div id="uke7-pseudoinvers"></div>
+
+### Når vi ikke kan bruke en vanlig invers
+
+I [uke 4](uke4.qmd) valgte vi $x$ som minimerer $\|Ax-b\|_2^2$.
+Geometrisk projiserer vi $b$ på kolonnerommet. Men hva om flere $x$ gir
+akkurat den samme beste tilpasningen? Nullrommet fra uke 3 forklarer
+hvorfor det kan skje, og SVD gir oss en enkel måte å velge ett svar på.
+
+Vi bruker den rektangulære matrisen fra 7.3 og velger en høyreside:
+
+$$B=\begin{bmatrix}2&0&0\\0&0&0\end{bmatrix},\qquad
+b=\begin{bmatrix}6\\4\end{bmatrix}.$$
+
+**Prøv selv:** Kan $Bx=b$ løses nøyaktig? Hvilke $x$ gir minst residual,
+og hvilken av disse vektorene har minst lengde?
+
+**Regnegangen:** Vi skal gjøre
+
+$$\|Bx-b\|_2^2=(2x_1-6)^2+4^2$$
+
+minst mulig. Første ledd blir null når $x_1=3$; andre ledd kan vi ikke
+endre. Alle vektorer $(3,s,t)^T$ gir derfor den samme minste residualen.
+Lengden i andre potens er $9+s^2+t^2$, så den korteste er
+
+$$x^+=\begin{bmatrix}3\\0\\0\end{bmatrix},\qquad
+Bx^+=\begin{bmatrix}6\\0\end{bmatrix},\qquad
+b-Bx^+=\begin{bmatrix}0\\4\end{bmatrix}.$$
+
+**Hva forklarer dette?** Vi projiserer først dataene på kolonnerommet,
+akkurat som i uke 4. Deretter setter vi de frie nullromskomponentene til
+null for å få minst mulig lengde. Den gjenværende residualen er ortogonal
+på kolonnerommet, og $B^T(b-Bx^+)=0$: normallikningene er oppfylt.
+
+### Samme oppskrift med SVD
+
+La $A=U\Sigma V^T$ være en full SVD, og la $r$ være antallet positive
+singulærverdier. Sett $z=V^Tx$ og $c=U^Tb$. Siden ortonormale
+koordinatskift bevarer lengde, får vi
+
+$$\|Ax-b\|_2^2=\|\Sigma z-c\|_2^2
+=\sum_{i=1}^r(\sigma_i z_i-c_i)^2+\sum_{i=r+1}^m c_i^2.$$
+
+Første sum minimeres ved $z_i=c_i/\sigma_i$. Siste sum er bidraget
+utenfor kolonnerommet og kan ikke endres. Koordinatene $z_{r+1},\ldots,z_n$
+påvirker ikke residualen, så vi setter dem til null for å minimere
+$\|x\|_2=\|z\|_2$. Tilbake i de opprinnelige koordinatene blir svaret
+
+$$\boxed{x^+=A^+b=\sum_{i=1}^r\frac{u_i^Tb}{\sigma_i}v_i}.$$
+
+Matrisen $A^+$ kalles **pseudoinversen**. Vi kan skrive
+$A^+=V\Sigma^+U^T$, der $\Sigma^+$ har størrelse $n\times m$:
+bytt hver positiv diagonalverdi i $\Sigma$ med dens inverse, behold
+nullene, og transponer den rektangulære formen. Vi deler aldri på null.
+For eksempelet er
+
+$$B^+=\begin{bmatrix}1/2&0\\0&0\\0&0\end{bmatrix}.$$
+
+Hvis $A$ er kvadratisk og invertibel, er $A^+=A^{-1}$.
+Hvis $A$ har full kolonnerang, gir dette den entydige minste-kvadratersløsningen
+vi fant med QR i uke 4. Ved rangtap velger pseudoinversen den korteste
+blant alle minste-kvadratersløsningene.
+
+### Null og nesten null er forskjellige valg
+
+En positiv singulærverdi inngår i den eksakte pseudoinversen, selv om
+den er svært liten. Divisjonen med denne verdien kan forsterke støy,
+som i 7.4. **Trunkert SVD** beholder bare de $k$ største positive
+singulærverdiene:
+
+$$x_k=\sum_{i=1}^k\frac{u_i^Tb}{\sigma_i}v_i,\qquad k<r.$$
+
+Dette er **regularisering**: vi begrenser løsningen til noen utvalgte
+retninger. Vi kan få mindre støyforsterkning, men mister også virkelig
+signal i retningene vi utelater. $x_k$ trenger derfor ikke være en
+minste-kvadratersløsning for det opprinnelige problemet.
+
+I [prosjekt 6](project_week6.qmd) endret prekondisjonering systemet for
+å hjelpe iterasjonen, samtidig som den eksakte løsningen kunne finnes
+igjen. Trunkering endrer hvilke løsninger vi tillater. Dette skillet
+blir viktig i [prosjekt 7, del B](project_week7.qmd), der vi prøver å
+rekonstruere et signal fra usikre målinger.
+
+I flyttallsregning bruker også `np.linalg.pinv` en terskel og behandler
+svært små singulærverdier som null. En terskel for avrunding fra uke 1
+og en terskel valgt ut fra måleusikkerhet svarer på ulike spørsmål.
 
 :::
