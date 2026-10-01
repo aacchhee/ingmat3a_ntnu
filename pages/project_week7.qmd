@@ -6,4 +6,6 @@ resources:
 
 {{< include ../_includes/linalg/week7_setup.md >}}
 
+{{< include ../_includes/projects/week7_setup.md >}}
+
 {{< include ../_includes/projects/week7_svd.md >}}

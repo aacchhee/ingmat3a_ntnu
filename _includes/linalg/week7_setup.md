@@ -37,7 +37,7 @@ def show_images(images):
         ax.set_title(name); ax.axis('off')
     plt.tight_layout(); plt.show()
 
-# Visningshjelper: behold k SVD-ledd. I prosjektet implementeres egen truncate-funksjon.
+# Visningshjelper: behold k SVD-ledd.
 def rank_image(A, k):
     U, s, Vt = np.linalg.svd(A, full_matrices=False)
     return (U[:, :k]*s[:k]) @ Vt[:k, :]

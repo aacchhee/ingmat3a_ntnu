@@ -1,431 +1,336 @@
-## Oppdrag: behold informasjonen som betyr noe
+## Hvilken informasjon bør vi beholde?
 
-Du skal anbefale en forenkling med singulærverdidekomposisjon (SVD) under et gitt budsjett, og vise
-både hva den lykkes med og når den svikter. Start med en hypotese, gjør
-forsøket, forklar resultatet og knytt det til teorien i [uke 7](uke7.qmd).
+En SVD kan brukes til å forenkle et bilde eller rekonstruere et signal.
+Men hvorfor skulle færre komponenter gi et bedre svar? Og hvilken
+informasjon risikerer vi å fjerne sammen med støyen?
 
-**Alle gjør del 1–3 og velger deretter enten A eller B.** A undersøker
-støyfjerning i bilder. B undersøker inversjon av et uskarpt signal og gir
-en direkte videreføring av residual, feil og kondisjonering fra uke 6.
-Begge er fullverdige valg; du skal ikke gjøre begge.
+**Alle gjør både A og B, i denne rekkefølgen.**
+I hver del skal du regne på et lite eksempel, utlede en feilformel og bruke den til
+å begrunne og undersøke et valg. Hovedarbeidet er matematisk; ferdige
+hjelpere utfører SVD, rekonstruksjon og plotting. Du trenger ikke
+implementere algoritmene eller gjenta bildeforsøkene fra forelesningen.
 
-Ferdige hjelpere
-tar seg av forsøksdata og visning; du implementerer selve **trunkeringen**,
-altså å beholde bare de første leddene i en SVD-sum. I [uke 7.3](uke7.qmd#uke7-svd)
-er $U$ og $V$ de ortonormale basisene på hver side, og singulærverdiene
-er strekkfaktorene, ordnet fra størst til minst.
+| Del | Hovedspørsmål | Matematisk verktøy |
+|:--|:--|:--|
+| A. Støy i et bilde | Når fjerner lav rang støy, og når fjerner den signal? | Ortogonal projeksjon og Frobeniusnorm. |
+| B. Et uskarpt signal | Hvorfor kan bedre tilpasning til data gi dårligere rekonstruksjon? | SVD-koordinater, residual og følsomhet. |
 
-Alle forsøksbilder er klare i siden. Portrett: [NTNU, mm.gif](https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif),
-tilpasset til $96\times96$ gråtoner. De andre bildene lages lokalt.
+Sett av omtrent fire timer; utledningene og sluttvurderingen kan kreve mer tid. A og B bruker samme hovedidé:
+feilen består av informasjon vi forkaster og støy vi slipper gjennom.
+I B blir den beholdte støyen dessuten forsterket av inversjonen.
+Gjør papirregningene før du åpner hvert forsøk.
+For hver del skal det være tydelig hva du påstår, hvilken regning som
+begrunner det, og hva en numerisk kontroll faktisk kan si.
 
-### Kjør her eller i en egen notebook
+### Oppsett og begreper
 
-På denne siden lastes oppsettet automatisk; du trenger ikke åpne forelesningsnotatene.
-For en egen notebook: last ned [oppsettsfilen](../assets/project_week7_setup.py){download="project_week7_setup.py"},
-legg den i samme mappe som notebooken, og kjør følgende i første celle:
+Vi bruker SVD og trunkering fra [uke 7.3–7.5](uke7.qmd#uke7-svd),
+ortogonale projeksjoner fra [uke 4](uke4.qmd) og skillet mellom residual
+og feil fra [uke 6](uke6.qmd#uke6-residual). Singulærverdiene ordnes fra
+størst til minst. Frobeniusnormen er
+$\|M\|_F^2=\sum_{i,j}M_{ij}^2$; for vektorer bruker vi euklidsk norm.
+Du kan bruke teoremet om beste rang-$k$-tilnærming fra notatene uten bevis.
 
-```python
-from project_week7_setup import *
-```
+På nettsiden er oppsettet klart automatisk. I en egen notebook laster du
+ned [oppsettsfilen](../assets/project_week7_setup.py){download="project_week7_setup.py"}
+og kjører `from project_week7_setup import *`. Du trenger NumPy og
+Matplotlib. Kopier forsøkscellene i A3 og B3, og deretter én kontrollcelle fra sluttdelen.
+Ta med oppsettsfilen, og kontroller notebooken med **Restart / Run all**.
+Portrettet er tilpasset fra [NTNUs mm.gif](https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif).
 
-Python-miljøet må ha NumPy og Matplotlib installert. Filen inneholder hjelpefunksjonene
-og forsøksdataene; du trenger ingen nettforbindelse når den er lastet ned.
-Kopier deretter kodecellene fra del 1–3 og **bare den valgte delen A eller B**,
-i rekkefølge, og fullfør de markerte oppgavene.
-Ta med oppsettsfilen ved levering, og kontroller notebooken med **Restart / Run all**.
-Importlinjen over er bare for egen notebook, ikke for cellene på nettsiden.
+## A. Kan færre komponenter gi et bedre bilde?
 
-## 1. Forutsi før du komprimerer
+Vi skriver de tilgjengelige bildedataene som $Y=C+E$, der $C$ er det
+rene bildet og $E$ er støy. En trunkert SVD av **$Y$**, ikke av $C$,
+gir $Y_k$. Vi vil ha liten feil mot $C$, selv om det er $Y$ vi kjenner.
+Fasiten er tilgjengelig i forsøket bare for å undersøke valget etterpå.
 
-```{pyodide-python}
-#| label: project7-inputs
-# Se på originalene før du velger hvilke detaljer rekonstruksjonen må bevare.
-# Alle har samme størrelse; forskjellene ligger i mønstrene, ikke antall piksler.
+### A1. Et lite bilde der vi kan finne alt for hånd
 
-images = challenge_images()
-show_images(images)
-```
+Bruk
 
-1. Ranger bildene etter forventet komprimerbarhet. Skriv begrunnelsen før SVD.
-2. Velg en konkret detalj i portrettet eller teksten som må bevares.
-   Beskriv hvordan du vil avgjøre om den fortsatt er synlig.
-3. Alle bildene er like store. Hvorfor gjør dette sammenligningen enklere?
+$$C=\operatorname{diag}(4,1,0),\qquad
+E=\operatorname{diag}(0,0,\eta),\qquad Y=C+E.$$
 
-**Hva mener vi med komprimerbarhet her?**
+Undersøk først $\eta=1/2$, deretter $\eta=2$. Dette er to separate
+forsøk med samme rene bilde.
 
-Vi spør hvor liten rang vi trenger for å få liten feil og bevare ønsket
-informasjon. Vi undersøker ikke hvor liten en PNG-fil blir. En diagonal
-strek er enkel å beskrive, men det er ikke gitt at den har lav matriserang.
-Noter forventningen også når du er usikker: et avkreftet gjett er et resultat.
+1. Finn singulærverdiene og tilhørende retninger til $Y$ i hvert tilfelle.
+   Husk å sortere dem. Skriv $Y_1$, $Y_2$ og $Y_3$ eksplisitt.
+2. Lag en tabell med $\|Y-Y_k\|_F$ og $\|Y_k-C\|_F$ for $k=1,2,3$.
+   Hvilken rang gir minst feil mot dataene? Hvilken gir minst feil mot
+   det rene bildet?
+3. Vurder påstanden: «Det rene bildet har rang 2, så vi bør beholde to
+   komponenter.» Er rang alene nok til å begrunne dette? Forklar hva som
+   skjer når støybidraget passerer den minste positive singulærverdien til $C$.
+4. Er det alltid slik at feilen mot det rene bildet først synker og så
+   stiger når $k$ øker? Bruk tabellen til å begrunne svaret.
 
+**Ta med videre:** et konkret eksempel som skiller mellom å tilpasse
+oppgitte data og å rekonstruere informasjonen vi ønsker.
 
-## 2. Lag rekonstruksjonen og kontroller den
+### A2. Hvor kommer feilen fra?
 
-NumPy gir `U, s, Vt`, der `s` inneholder singulærverdiene og `Vt` allerede
-er transponert: basisvektorene $v_i^T$ ligger som rader i `Vt`. En komponent er $\sigma_i u_i v_i^T$: ett rang-1-mønster
-med sin vekt.
+La $U_k$ inneholde de $k$ første venstre singulærvektorene til $Y$, og
+sett $P_k=U_kU_k^T$. Fra uke 4 er dette den ortogonale projeksjonen på
+rommet spent ut av disse vektorene. Vi setter $P_0=0$.
 
-Implementer `truncate(U, s, Vt, k)` som bruker de første $k$ komponentene.
-Bruk NumPy-slicing og matrisemultiplikasjon. Den skal også virke for $k=0$
-og $k=\min(m,n)$. Ikke kall `rank_image` i din implementasjon.
+1. Vis at $Y_k=P_kY$, og at
+   $$Y_k-C=-(I-P_k)C+P_kE.$$
+2. Vis at de to matrisene på høyresiden er ortogonale i
+   Frobeniusindreproduktet. Du kan undersøke én kolonne om gangen og
+   bruke at $P_k(I-P_k)=0$. Utled deretter
+   $$\boxed{\|Y_k-C\|_F^2=\|(I-P_k)C\|_F^2+\|P_kE\|_F^2}.$$
+   Hvilket ledd er tapt signal, og hvilket er beholdt støy?
+3. Når vi holder $Y$ og dens valgte SVD fast og øker $k$, blir
+   projeksjonsrommene større. Begrunn at det første leddet ikke øker,
+   mens det andre ikke avtar. Hvorfor betyr ikke dette at summen må
+   avta, eller at den bare kan ha ett minimum?
+4. Bruk formelen på
+   $C=\operatorname{diag}(4,0,0)$ og $E=\operatorname{diag}(\eta,0,0)$
+   med $\eta>0$. Kan rang 1 fjerne denne støyen? Hva er annerledes?
 
-```{pyodide-python}
-#| label: project7-truncate
-# U har venstre basisvektorer i kolonner; Vt har høyre basisvektorer i rader.
-# Funksjonen skal summere de k første rang-1-leddene, også når k er 0.
-# Behold TODO-en som din implementasjonsoppgave; kontrollcellen sjekker resultatet.
+Merk at $P_k$ kommer fra **de støyete dataene** og selv avhenger av $E$.
+Identiteten gjelder likevel for hvert enkelt datasett. Vi antar ikke
+at singulærvektorene til $Y$ og $C$ er like.
 
-# Kjør denne cellen på nytt etter at du har fylt inn funksjonen.
-def truncate(U, s, Vt, k):
-    # TODO: returner en matrise med samme form som U @ diag(s) @ Vt.
-    raise NotImplementedError('Fyll inn trunkert rekonstruksjon')
-```
+### A3. Velg rang uten å bruke det rene bildet
 
-Kjør så kontrollen. Bruk en rektangulær matrise slik at en utilsiktet
-transponering ikke skjules av kvadratiske dimensjoner.
+Anta at vi har en øvre grense $\delta>0$ for $\|E\|_F$. En mulig regel
+er å velge den **minste** rangen $k$ slik at
 
-**Frobeniusnormen** er kvadratroten av summen av alle kvadrerte
-matriseelementer. Den gir en samlet pikselfeil når vi bruker den på
-$A-A_k$. Den **relative** feilen deler dette på størrelsen til originalen.
-Kontrollen sammenligner kvadrert pikselfeil med summen av kvadrerte
-singulærverdier som er utelatt. Dette er feilformelen fra [uke 7.5](uke7.qmd#uke7-rang).
+$$\|Y-Y_k\|_F\leq\tau\delta,\qquad \tau=1.05.$$
 
-```{pyodide-python}
-#| label: project7-check
-# En rektangulær test avslører transponeringsfeil som kan skjules i kvadratiske bilder.
-# Vi tester null ledd, alle ledd og feilformelen for hver mellomliggende rang.
-# allclose/isclose tillater små avrundingsavvik; eksakt likhet er feil krav her.
+Regelen tillater et avvik på størrelse med støyen, i stedet for å kreve
+at rekonstruksjonen passer alle dataene nøyaktig. Dette kalles et
+**diskrepansprinsipp**. Det er en regel vi skal undersøke, ikke en garanti
+for best mulig rekonstruksjon.
 
-test_A = np.array([[1.,2.,0.],[0.,1.,3.]])
-U,s,Vt = np.linalg.svd(test_A,full_matrices=False)
-assert np.allclose(truncate(U,s,Vt,0),np.zeros_like(test_A))
-assert np.allclose(truncate(U,s,Vt,len(s)),test_A)
-for k in range(len(s)+1):
-    observed = np.linalg.norm(test_A-truncate(U,s,Vt,k),'fro')**2
-    assert np.isclose(observed,np.sum(s[k:]**2))
-print('Rekonstruksjon og halefeil stemmer på kontrollmatrisen.')
-```
+1. Skriv regelen med bare singulærverdiene til $Y$. Hvorfor finnes en
+   tillatt rang blant $0,\ldots,\min(m,n)$ i eksakt regning?
 
-Forklar hvorfor kontrollen av feilformelen er mer informativ enn bare
-å se på et bilde. Vis til slutt samme kontroll for ett av forsøksbildene.
+<details>
+<summary>Valgfri fordypning: hva kan regelen garantere?</summary>
 
-**Kontroll mot teori og avrunding**
+Bruk trekantulikheten til å vise at et valgt $Y_k$ oppfyller
+   $$\|Y_k-C\|_F\leq(\tau+1)\delta.$$
+   Garanterer denne grensen at feilen blir mindre enn i $Y$?
+Hvis $\operatorname{rank}(C)\leq r$, bruk beste-tilnærmingsteoremet
+   til å vise at regelen velger $k\leq r$. Hvorfor følger det likevel
+   ikke at $Y_k=C$? Knytt svaret til A2.
 
-For $A_k=\sum_{i=1}^k\sigma_i u_i v_i^T$ er
-$\|A-A_k\|_F^2=\sum_{i>k}\sigma_i^2$. Venstresiden bruker hele
-rekonstruksjonen; høyresiden bruker bare singulærverdiene. Uenighet kan
-avsløre feil indeksering eller feil behandling av `Vt`.
-Ved full rang blir den beregnede feilen vanligvis svært liten, ikke
-nøyaktig null. Bruk toleranse, slik vi gjorde med flyttall i uke 1.
+</details>
 
+**Skriv en forventning før kjøring:** Vil det valgte $Y_k$ få mindre
+feil mot $C$ enn $Y$? Hvilket av de to feilleddene tror du vil dominere?
+Begrunn med A2, og angi ett resultat som ville utfordre forventningen.
 
-## 3. Samme budsjett, fire ulike utfall
-
-Bruk et parameterbudsjett på **25 % av antall piksler**. Hvis vi lagrer
-$U_k$, $s_k$ og $V_k^T$, trenger vi $k(m+n+1)$ tall.
-Finn største heltall $k$ som tilfredsstiller budsjettet og $k\leq\min(m,n)$.
-
-Kjør cellen etter at `truncate` er implementert. Den beregner hver SVD én gang
-og lager figurgrunnlaget. Legg selv til feilberegningen og en resultatoversikt.
-
-```{pyodide-python}
-#| label: project7-budget
-# SVD beregnes én gang per original; samme budsjett bestemmer rang for alle.
-# Hvert ledd koster m+n+1 tall: to basisvektorer og én singulærverdi.
-# Se på hvor raskt singulærverdiene avtar, og sammenhold dette med synlige detaljer.
-
-images = challenge_images()
-factors = {name:np.linalg.svd(A,full_matrices=False) for name,A in images.items()}
-budget = .25
-m,n = next(iter(images.values())).shape
-# Velg største heltallsrang innen budsjettet og tilgjengelige SVD-komponenter.
-k_budget = min(m,n,int(budget*m*n//(m+n+1)))
-print('Rang under budsjettet:',k_budget)
-reconstructed = {name:truncate(*factors[name],k_budget) for name in images}
-show_images(reconstructed)
-plt.figure(figsize=(7,4))
-for name,(U,s,Vt) in factors.items():
-    # Del på største singulærverdi for å sammenligne avtakning; gulvet er bare visuelt.
-    plt.semilogy(np.arange(1,len(s)+1),np.maximum(s/s[0],1e-16),label=name)
-plt.xlabel('Komponent i'); plt.ylabel('σᵢ / σ₁ (visningsgulv 10⁻¹⁶)')
-plt.legend(); plt.grid(); plt.show()
-```
-
-Lever en tabell med bilde, valgt rang, parameterandel og relativ
-Frobeniusfeil $\|A-A_k\|_F/\|A\|_F$. Sammenlign med hypotesen i del 1.
-
-- Undersøk også rangene $1,5,10,20,40,96$ for bildet med din valgte detalj.
-  Hvilken er den minste **av disse prøvde rangene** som bevarer detaljen?
-  Ligger den innenfor budsjettet?
-- Finn ett tydelig eksempel der metoden virker dårlig. Bruk singulærverdiene
-  til å forklare det, og kommenter hvorfor visuell enkelhet kan villede.
-- Beregn både parameterandel og byteandel hvis originalen er 8-bit og
-  faktorene lagres som float64. Er det fortsatt en lagringsgevinst?
-  Ikke ta med filformatkomprimering i denne sammenligningen.
-
-**Fra tall til en anbefaling**
-
-Parameterandelen er $k(m+n+1)/(mn)$. Byteandelen i den beskrevne modellen er
-$8k(m+n+1)/(mn)$, før eventuell metadata. Et budsjett på 25 % av antall tall
-kan altså bruke mer plass enn det opprinnelige 8-bitsbildet.
-Du kan diskutere float32 eller kvantisering, men trenger ikke implementere det.
-
-Lav Frobeniusfeil er en samlet pikselfeil. Den sier ikke direkte at en liten
-bokstavdetalj eller ansiktsdetalj er bevart. Bruk derfor både tall og den
-konkrete detaljen fra del 1. Ikke klipp rekonstruksjonen før feilberegning:
-da undersøker du en annen tilnærming enn den som feilformelen beskriver.
-
-
-## Velg A: kan færre komponenter gi et bedre bilde?
-
-### Opplev problemet
-
-Vi kjenner et rent bilde og legger til kontrollert støy. Før kjøring:
-Vil beste rang være den samme hvis vi beregner feilen mot det støyete bildet som
-hvis vi beregner feilen mot det rene? Hvorfor?
+Hjelperen nedenfor bruker et $96\times96$-portrett og uavhengige normale
+støyverdier med standardavvik `noise_level`. I dette kontrollerte forsøket
+settes $\delta=\|E\|_F$. Støynormen brukes til rangvalget; det rene bildet
+brukes bare til feilanalysen. Regelen søker alle ranger, også null.
 
 ```{pyodide-python}
-#| label: project7-denoise
-# SVD beregnes av det støyete bildet, altså dataene vi faktisk ville hatt.
-# Det rene bildet er bare fasit for å undersøke metoden i dette forsøket.
-# Bruk samme støyrealisasjon for alle ranger, slik at bare rangvalget endres.
-
-clean_image = challenge_images()['portrett']  # Bytt senere til 'diagonal'.
-noise_level = .12
-noise_seed = 23  # Første forsøk brukes til å velge rang, ikke som sluttkontroll.
-noisy_image = clean_image + noise_level*np.random.default_rng(noise_seed).standard_normal(clean_image.shape)
-show_images({'rent':clean_image,'med støy':noisy_image})
-U_noise,s_noise,Vt_noise = np.linalg.svd(noisy_image,full_matrices=False)
-ranks = sorted(set([1,3,5,10,15,20,30,50,70,96,k_budget]))
-fits = [truncate(U_noise,s_noise,Vt_noise,k) for k in ranks]
-# Sammenlign disse to feildefinisjonene før du tegner kurvene.
-error_to_data = [np.linalg.norm(B-noisy_image,'fro')/np.linalg.norm(noisy_image,'fro') for B in fits]
-error_to_clean = [np.linalg.norm(B-clean_image,'fro')/np.linalg.norm(clean_image,'fro') for B in fits]
+#| label: project7-image-first
+result_A = image_svd_trial(noise_level=.12, seed=23, tau=1.05)
 ```
+
+Hjelperen viser dataavvik, feil mot fasit, tapt signal og beholdt støy.
+Den markerer rangen fra regelen og skriver ut de to leddene i A2.
+
+- Kontroller at feilidentiteten stemmer numerisk ved den valgte rangen.
+- Sammenlign valgt rekonstruksjon med det ubehandlede støybildet.
+  Forklar forskjellen med de to feilleddene, ikke bare med utseendet.
+- Hvor langt er regelen fra den beste rangen for akkurat denne fasiten?
+  Dette siste valget er en etterpå-vurdering og kan ikke brukes i neste forsøk.
+
+**Ta med videre til B:** Feilen deles i to ortogonale bidrag. Hvilken
+endring forventer du i denne oppdelingen når vi i tillegg må dele på
+singulærverdiene for å finne signalet?
+
+## B. Kan vi gjøre et uskarpt signal skarpt igjen?
+
+En lineær transformasjon $T(x)=Hx$ gjør signalet uskarpt. Dataene er
+$b=Hx_*+\eta$, der $x_*$ er signalet vi vil finne og $\eta$ er støy.
+Små singulærverdier betyr at noen signalretninger blir svært svake i dataene.
+Vi undersøker hva som skjer når vi lar være å invertere disse retningene.
+
+### B1. To ukjente og to forskjellige feil
+
+Bruk
+
+$$H=\begin{bmatrix}1&0\\0&\varepsilon\end{bmatrix},\quad
+x_*=\begin{bmatrix}1\\1\end{bmatrix},\quad
+\eta=\begin{bmatrix}0\\d\end{bmatrix},\quad
+b=Hx_*+\eta,\qquad 0<\varepsilon<1.$$
+
+1. Finn løsningen $x_{\mathrm{full}}$ av $Hx=b$ og den trunkerte
+   løsningen $x_1$ som bare bruker den største singulærverdien.
+2. Finn residualnormen $\|b-Hx\|_2$ og rekonstruksjonsfeilen
+   $\|x-x_*\|_2$ for begge. Når er trunkering bedre enn full inversjon?
+   Gi en betingelse uttrykt med $|d|$ og $\varepsilon$.
+3. Regn ut tallene for $\varepsilon=0.01$, først med $d=0.002$ og så
+   med $d=0.02$. Forklar hvorfor minst residual ikke alltid gir best signal.
+
+
+Med fast $H$ er residualnormen **absolutt bakoverfeil for systemet
+$Hx=b$**. Rekonstruksjonsfeilen her er avstanden til $x_*$, løsningen
+for dataene **uten støy**. Den er ikke foroverfeilen mot den eksakte
+løsningen av det støyete systemet. Forklar dette skillet med B1.
+
+### B2. Del feilen i tapt signal og forsterket støy
+
+Anta i denne papirregningen at $H$ er en invertibel $n\times n$-matrise
+med SVD $H=U\Sigma V^T$ og $\sigma_1\geq\cdots\geq\sigma_n>0$.
+Skriv
+
+$$a_i=v_i^Tx_*,\qquad e_i=u_i^T\eta,\qquad
+\beta_i=u_i^Tb.$$
+
+Vi bruker den trunkerte løsningen
+
+$$x_k=\sum_{i=1}^k\frac{\beta_i}{\sigma_i}v_i,
+\qquad 0\leq k\leq n,$$
+
+med $x_0=0$. Dette er formelen fra [uke 7.7](uke7.qmd#uke7-pseudoinvers);
+du trenger ikke lese hele den valgfrie fanen for å bruke den her.
+
+1. Vis at $\beta_i=\sigma_i a_i+e_i$. Skriv så $x_k-x_*$ som en sum
+   langs $v_i$ og utled med Pytagoras
+   $$\boxed{\|x_k-x_*\|_2^2=
+   \sum_{i=1}^k\frac{e_i^2}{\sigma_i^2}+\sum_{i=k+1}^n a_i^2}.$$
+2. Utled også
+   $$\boxed{\|b-Hx_k\|_2^2=\sum_{i=k+1}^n\beta_i^2}.$$
+   Hvorfor avtar residualnormen når vi beholder flere retninger,
+   mens rekonstruksjonsfeilen kan øke?
+3. Finn betingelsen for at det å ta med retning $k+1$ **reduserer**
+   rekonstruksjonsfeilen. Hvilke størrelser i betingelsen kjenner vi
+   ikke i et problem uten fasit? Kontroller resultatet mot B1.
+<details>
+<summary>Valgfri fordypning: en grense for støyforsterkningen</summary>
+
+Vis for $k\geq1$ at
+
+$$\|x_k-x_*\|_2^2\leq
+\frac{\|\eta\|_2^2}{\sigma_k^2}+\sum_{i=k+1}^n a_i^2.$$
+
+Hva vinner vi ved å kutte før de minste singulærverdiene, og hvorfor
+er det ikke uten kostnad?
+
+</details>
+
+### B3. Velg hvor inversjonen skal stoppe
+
+Anta at vi kjenner en øvre grense $\delta>0$ for $\|\eta\|_2$.
+Velg den minste $k$ slik at
+
+$$\|b-Hx_k\|_2\leq\tau\delta,\qquad\tau=1.05.$$
+
+Dette er samme **diskrepansprinsipp** som i A3, nå brukt på residualen
+i et likningssystem. Vi krever ikke at rekonstruksjonen forklarer all støyen.
+
+1. Bruk B2 til å skrive regelen med datakoordinatene $\beta_i$.
+   Hvorfor kan rangvalget gjøres uten å kjenne $x_*$?
+2. Finn rangen regelen velger i begge talltilfellene i B1, med
+   $\delta=|d|$. Gir den best rekonstruksjon i begge? Hva forteller det
+   om forskjellen mellom en begrunnet regel og et optimalt valg?
+
+<details>
+<summary>Valgfri fordypning: hvor sterk er en garanti fra residualen?</summary>
+
+For et valgt $x_k$, bruk trekantulikheten og
+   $\|Hz\|_2\geq\sigma_n\|z\|_2$ til å vise
+   $$\|x_k-x_*\|_2\leq\frac{(\tau+1)\delta}{\sigma_n}.$$
+   Hvorfor kan denne garantien være lite nyttig? Hva viser den om
+   begrensningen ved å vurdere rekonstruksjonen bare gjennom residualen?
+
+</details>
+
+**Skriv en forventning før kjøring:** Hvordan vil feilen endres hvis vi
+beholder langt flere retninger enn regelen velger? Bruk B2 til å begrunne
+svaret, og angi hva som ville utfordre forventningen.
+
+Forsøket bruker 80 signalverdier. Hver rad i $H$ er et normalisert
+Gauss-filter som blander nærliggende verdier; matrisen er sterkt
+illkondisjonert. Hjelperen bruker $\delta=\|\eta\|_2$ fra den kontrollerte
+støyen. Som i A er støynormen oppgitt forsøksinformasjon, ikke noe vi
+vanligvis kan beregne fra $b$ alene.
 
 ```{pyodide-python}
-#| label: project7-denoise-plot
-# Datafeil beskriver tilpasning til støyete data; fasitfeil beskriver gjenfinning av signalet.
-# Rangen valgt med fasit er best blant de prøvde rangene på dette forsøket.
-# Den er ikke en ferdig regel for nye data uten fasit; test valget med et nytt frø.
-
-plt.figure()
-plt.plot(ranks,error_to_data,'o-',label='mot støyete data')
-plt.plot(ranks,error_to_clean,'o-',label='mot kjent rent bilde')
-plt.xlabel('Rang'); plt.ylabel('Relativ Frobeniusfeil'); plt.legend(); plt.grid(); plt.show()
-# Dette valget bruker fasiten; skill det fra en rangregel som må fungere uten fasit.
-best = int(np.argmin(error_to_clean))
-show_images({'rent':clean_image,'med støy':noisy_image,f'rang {ranks[best]}':fits[best]})
+#| label: project7-signal-first
+result_B = signal_svd_trial(noise_level=.005, seed=17, tau=1.05)
 ```
 
-1. Forklar forskjellen på feilkurvene. Hvorfor er full rang best mot dataene?
-2. Sammenlign beste prøvde rang med full rang og budsjettets `k_budget`.
-   Valget som bruker kjent fasit er en **etterpå-vurdering**, ikke en test av
-   hvordan rangvalget vil virke på nye data.
-3. Formuler en egen påstand om hvilken detalj eller feilforbedring du forventer.
-   Velg en rang eller en presis rangregel, og skriv hva som ville tale mot
-   påstanden. **Lås valget før neste støyrealisasjon.**
-4. Lag ny støy med et annet frø, men samme rene bilde og støynivå. Bruk det
-   låste valget på de nye dataene. Sammenlign med det ubehandlede støybildet,
-   og beregn relativ feil mot fasiten og undersøk den detaljen du valgte. Ikke
-   velg ny rang ved å se på fasitfeilene for de nye dataene.
-5. Bruk diagonalbildet som en strukturell utfordring til forklaringen.
-   En enkelt rekonstruksjon er nok; du trenger ikke gjenta hele rangsøket.
-   Hva kan denne undersøkelsen si, og hva kan den ikke si om andre bilder?
+I flyttallsregning søker hjelperen bare blant retninger med
+$\sigma_i>n\epsilon_{\mathrm{mach}}\sigma_1$. Her er
+$\epsilon_{\mathrm{mach}}$ maskinpresisjonen fra uke 1, ikke
+$\varepsilon$ i B1. Hvis ingen tillatt rang oppfyller kravet, meldes
+nettopp det. Det skal ikke tolkes som et vellykket rangvalg.
 
-Du designer kriteriet og begrunner rangvalget; et rangnummer alene er ikke
-resultatet. Vis om påstanden overlever kontrollen, også dersom den feiler.
-Én ny støyrealisasjon er en uavhengig kontroll av dette forsøket, ikke bevis for
-at rangvalget vanligvis er godt. Flere frø er valgfritt hvis du vil undersøke variasjonen.
+- Sammenlign regelen med den på forhånd valgte referansen $k=5$.
+  Vis både residual og rekonstruksjonsfeil. Forklar med B2.
+- Kontroller feil- og residualidentitetene ved den valgte rangen.
+  Hjelperen skriver ut begge sider; små avrundingsavvik er forventet.
+- Finn beste rang mot fasiten blant de numerisk tillatte rangene.
+  Hvorfor kan dette etterpå-valget ikke brukes som en regel uten fasit?
+  Hvorfor bør vi ikke tolke de minste beregnede singulærverdiene som eksakte?
 
-**Støyreduksjon er en hypotese om signalet**
+## Samle trådene og kontroller én konklusjon
 
-Mot det støyete bildet synker feilen når flere komponenter beholdes.
-Mot det rene bildet kan den først synke og så stige: flere komponenter
-kan også tilpasse støy. Dette hjelper når signalet kan beskrives med få
-store komponenter og støyen fordeles annerledes. Det gjelder ikke automatisk
-for alle bilder; diagonalbildet utfordrer nettopp denne antakelsen.
+Du har nå undersøkt **begge** problemene. Sammenlign feilformlene fra
+A2 og B2: Hvorfor kan vi omtale begge som «tapt signal og beholdt støy»,
+og hvorfor er små singulærverdier en ekstra utfordring i B?
+Sammenlign også med prekondisjonering fra uke 6: bevarer trunkering
+den eksakte løsningen på samme måte som et invertibelt koordinatskifte?
 
-Med kjent fasit kan vi velge beste prøvde rang i ettertid. Uten fasit kan vi
-for eksempel bruke uavhengige data for det samme underliggende signalet til validering, eller et anslag
-for støynivå og en eksplisitt regel for tillatt datafeil. En knekk i
-singulærverdikurven alene er ingen garanti for riktig skille mellom signal og støy.
+Velg deretter **én av konklusjonene dine** fra A eller B for en kontroll
+med ny støy. Dette valget gjelder bare kontrollforsøket; begge hoveddelene
+er obligatoriske. Behold signal/bilde, støynivå og $\tau$. Skriv hva du
+forventer før kjøring, og bruk samme regel, ikke den fasitvalgte rangen.
+Den valgte rangen kan endre seg når dataene endres.
 
-
-## Velg B: kan vi gjøre et uskarpt signal skarpt igjen?
-
-### Opplev problemet
-
-Matrisen $H$ representerer en **uskarphetstransformasjon** $S(x)=Hx$.
-De oppgitte dataene er $b=Hx_*+\eta$.
-Her er $x_*$ det skarpe signalet, $b$ de oppgitte dataene og $\eta$ støy.
-Produktet $Hx_*$ gir et uskarpt signal ved å blande verdier fra naboposisjoner.
-Vi tar SVD av $H$. Små singulærverdier viser signalretninger som blir
-svært svake etter denne transformasjonen.
-
-Forsøket gir en kjent fasit, et normalisert Gauss-filter og fast tilfeldig
-støy. **Residualen** $b-Hx$ angir avviket mot de observerte dataene;
-**løsningsfeilen** $x-x_*$ angir avviket mot det kjente skarpe signalet.
-**Kondisjonstallet** er forholdet mellom største og minste singulærverdi;
-et stort forhold betyr at inversjon kan forsterke relative datafeil mye.
-Gjett om en løsning med nesten null residual vil ligne fasiten.
+For å kontrollere konklusjonen fra A, kjør:
 
 ```{pyodide-python}
-#| label: project7-blur
-# Transformasjonen S(x)=Hx gjør signalet uskarpt; observed inneholder også støy.
-# Direkte løsning forsøker å forklare selv svake og støyfulle dataretninger.
-# Se på både residual og faktisk feil, også når løsningen ser urimelig ut.
-
-position,H,truth,clean_data,observed = blur_problem()
-U_h,s_h,Vt_h = np.linalg.svd(H,full_matrices=False)
-# For invertibel H er dette sigma_max/sigma_min; svært små verdier er avrundingsfølsomme.
-print('Kondisjonstall:',s_h[0]/s_h[-1])
-try:
-    # Løs mot dataene, inkludert støyen; en liten residual er derfor ikke nok.
-    direct = np.linalg.solve(H,observed)
-except np.linalg.LinAlgError:
-    direct = None
-    print('Direkte løsning stoppet: matrisen oppfattes som singulær.')
-fig,ax = plt.subplots(1,2,figsize=(10,3))
-ax[0].plot(position,truth,label='fasit')
-ax[0].plot(position,observed,label='data med støy'); ax[0].legend()
-if direct is not None:
-    ax[1].plot(position,direct,label='direkte løsning'); ax[1].legend()
-    print('Relativ residual:',np.linalg.norm(H@direct-observed)/np.linalg.norm(observed))
-    print('Relativ feil:',np.linalg.norm(direct-truth)/np.linalg.norm(truth))
-for axis in ax: axis.set_xlabel('Posisjon')
-plt.tight_layout(); plt.show()
+#| label: project7-image-check
+check_A = image_svd_trial(noise_level=.12, seed=24, tau=1.05)
 ```
 
-### Forklar og bygg en mer forsiktig inversjon
-
-Finn først datakoordinaten $u_i^Tb$ langs $u_i$ ved hjelp av indreproduktet.
-Dette er en ortogonal projeksjon fra uke 4. Rekonstruksjon av komponenten deler
-på $\sigma_i$. Derfor kan små dataforstyrrelser gi store signalutslag:
-
-$$x_k=\sum_{i=1}^k\frac{u_i^Tb}{\sigma_i}v_i.$$
-
-Implementer denne regelen. Her betyr `k` hvor mange **operatorretninger**
-vi bruker i inversjonen; det er ikke bildets komprimeringsrang fra del 3.
-Behold bare ledd med positiv singulærverdi: nullverdier skal aldri inverteres.
-Bruk faktorene direkte, uten å bygge en full inversmatrise.
+For å kontrollere konklusjonen fra B, kjør i stedet:
 
 ```{pyodide-python}
-#| label: project7-tsvd
-# Først beregnes koordinatene til b i basisen av venstre singulærvektorer, så oppheves de beholdte strekkfaktorene.
-# Til slutt bygges løsningen i høyre singularvektorer; de utelatte bidragene settes til null.
-# k teller operatorretninger, og null singulærverdier skal aldri inverteres.
-
-# Kjør cellen på nytt etter at du har fylt inn funksjonen.
-def tsvd(U,s,Vt,b,k):
-    # TODO: projiser b, del på de beholdte singulærverdiene, rekonstruer.
-    raise NotImplementedError('Fyll inn trunkert inversjon')
+#| label: project7-signal-check
+check_B = signal_svd_trial(noise_level=.005, seed=18, tau=1.05)
 ```
 
-**Kontroller funksjonen før uskarphetsforsøket.** Her er fasiten kjent uten
-å bruke en annen SVD-rutine til å finne svaret. Matrisen er rektangulær;
-den tredje koordinaten er i nullrommet og settes til null i løsningen med minst euklidsk lengde.
+Sammenlign med første kjøring av **samme** problem og samme referanse.
+Skill mellom det feilformlene beviser og det forsøkene støtter.
+Hva trenger vi å vite om støyen for å bruke regelen uten fasit?
 
-```{pyodide-python}
-#| label: project7-tsvd-check
-# Her kjenner vi svaret direkte fra 4*x1=8 og 2*x2=6.
-# Tredje koordinat påvirker ikke dataene og skal settes til 0 i denne løsningen.
-# Testen skiller dermed mellom datarommet og løsningsrommet.
+**Valgfri fordypning — velg etter interesse:**
 
-H_check = np.array([[4.,0.,0.],[0.,2.,0.]])
-U_check,s_check,Vt_check = np.linalg.svd(H_check,full_matrices=False)
-b_check = np.array([8.,6.])
-assert np.allclose(tsvd(U_check,s_check,Vt_check,b_check,0),[0.,0.,0.])
-assert np.allclose(tsvd(U_check,s_check,Vt_check,b_check,1),[2.,0.,0.])
-assert np.allclose(tsvd(U_check,s_check,Vt_check,b_check,2),[2.,3.,0.])
-print('Null rang, én komponent og rektangulær inversjon er kontrollert.')
-```
+- I A: Prøv `image_name='diagonal'`. Forklar forskjellen fra portrettet
+  med A1–A2 og singulærverdiene til identitetsmatrisen.
+- I B: Hold $\|\eta\|_2=\delta$ fast, men legg all støyen langs én
+  $u_i$. Sammenlign en stor og en liten singulærverdi. Forutsi feilene
+  med B2 før du eventuelt lager en numerisk kontroll.
 
-```{pyodide-python}
-#| label: project7-blur-compare
-# Alle rangvalg bruker samme data; bare antall beholdte retninger endres.
-# Sammenlign hvor godt vi passer dataene med hvor godt vi gjenfinner fasiten.
-# Fasitvalgt rang er en laboratoriekontroll; din regel må også prøves på nye data.
+## Det du leverer
 
-noise_level = .005
-noise_seed = 17
-position,H,truth,clean_data,observed = blur_problem(noise_level=noise_level,seed=noise_seed)
-# Alle metodene bruker akkurat samme observed, også når parametrene endres.
-try:
-    # Løs mot dataene, inkludert støyen; en liten residual er derfor ikke nok.
-    direct = np.linalg.solve(H,observed)
-    print('Direkte: relativ residual',np.linalg.norm(H@direct-observed)/np.linalg.norm(observed),
-          'relativ feil',np.linalg.norm(direct-truth)/np.linalg.norm(truth))
-except np.linalg.LinAlgError:
-    direct = None
-    print('Direkte løsning stoppet: numerisk singulært system.')
-U_h,s_h,Vt_h = np.linalg.svd(H,full_matrices=False)
-trial_ranks = [2,5,10,15,20,25,30,40]
-solutions = [tsvd(U_h,s_h,Vt_h,observed,k) for k in trial_ranks]
-residuals = [np.linalg.norm(H@x-observed)/np.linalg.norm(observed) for x in solutions]
-errors = [np.linalg.norm(x-truth)/np.linalg.norm(truth) for x in solutions]
-fig,ax = plt.subplots(1,2,figsize=(10,3))
-ax[0].semilogy(trial_ranks,residuals,'o-',label='relativ residual')
-ax[0].semilogy(trial_ranks,errors,'o-',label='relativ feil')
-ax[0].set_xlabel('Antall beholdte retninger'); ax[0].legend(); ax[0].grid()
-# Beste prøvde rang for denne fasiten og denne støyen, ikke nødvendigvis for nye data.
-best = int(np.argmin(errors))
-ax[1].plot(position,truth,label='fasit')
-ax[1].plot(position,solutions[best],label=f'rang {trial_ranks[best]}')
-ax[1].set_xlabel('Posisjon'); ax[1].legend(); plt.tight_layout(); plt.show()
-```
+Lever **både A og B**, og én kontroll på nye data, med:
 
-1. Bruk det første forsøket til å sammenligne direkte løsning, svært liten
-   rang og beste prøvde rang. Vis residual og feil. Forklar hvorfor liten
-   residual alene ikke er en god beslutningsregel her.
-2. Formuler en egen kvalitetspåstand og velg en rang eller presis rangregel.
-   Angi hva som ville tale mot påstanden, og lås valget før kontrollen.
-3. Design én ny kontroll: **enten** nytt støymønster ved samme nivå (endre
-   `noise_seed`), **eller** nytt støynivå med samme mønster (behold frøet).
-   Begrunn hvilken antakelse kontrollen utfordrer. Bruk den låste rangen/reglen;
-   ikke velg på nytt med `argmin(errors)` på de nye dataene. Det store rangsøket
-   er bare for det første forsøket.
-4. Beregn både direkte løsning og TSVD fra samme nye `observed`. Sammenlign
-   også med én på forhånd valgt, liten referanserang. Vis om påstanden holder,
-   og knytt resultatet til $\delta b=\eta u_i\Rightarrow\delta x=(\eta/\sigma_i)v_i$.
-   Et negativt resultat skal forklares, ikke fjernes fra rapporten.
-5. Forklar forskjellen mellom trunkering og prekondisjonering fra uke 6.
-   Hva mister vi ved å utelate retninger, og hva kan én kontroll ikke si om
-   andre signaler eller lineære transformasjoner?
+- håndregningene, tabellen fra det lille eksempelet og de etterspurte
+  utledningene; vis mellomsteg og hvilke forutsetninger du bruker;
+- forventningene før forsøkene i A og B og før kontrollen, med et mulig motfunn;
+- en liten tabell for hvert hovedforsøk: valgt rang, dataavvik/residual
+  og rekonstruksjonsfeil, sammen med referansen; legg kontrollen til
+  tabellen for den delen du kontrollerte;
+- forklaring til høyst tre utvalgte figurer, og koden som gjenskaper forsøket;
+  de øvrige automatiske kontrollplottene kan stå i notebooken;
+- en avsluttende vurdering på **200–350 ord**: hva har A og B til felles,
+  hvorfor er inversjon mer følsom, og hva kan du konkludere med uten fasit?
 
-Her bestemmer du hvilke retninger inversjonen får bruke. **25 %-budsjettet
-fra bildedelen gjelder ikke denne operatoren**; dette er et valg av
-regularisering, altså en begrensning som demper støyforsterkning.
-
-**Hvorfor dette forsøket kan feile spektakulært**
-
-Utglattende transformasjoner gjør enkelte signalretninger svært svake. Det konstruerte
-$H$ er så dårlig kondisjonert at de aller minste beregnede singulærverdiene
-ikke bør tolkes som nøyaktige fysiske størrelser. Direkte løsning brukes
-som et bevisst feilforsøk. En beregning kan stoppe, eller gi enorme verdier.
-Begge deler er relevante observasjoner, ikke noe du skal skjule.
-
-Trunkert SVD, forkortet TSVD, begrenser støyforsterkning ved å forkaste retninger. Men også fasitens
-komponenter i disse retningene forsvinner. For liten rang gir derfor en
-for enkel løsning. Rangvalget balanserer tapt signal mot forsterket støy.
-En kjent fasit lar oss beregne dette i laboratoriet; reelle data krever et
-begrunnet valg uten tilgang til sann løsning.
-
-
-## Levering
-
-Lever en kjørbar notebook eller tilsvarende kode med figurer, og en kort
-rapport på omtrent **400–600 ord**, utenom bildetekster og tabeller:
-
-- Hypotesen fra del 1 og budsjettabellen for alle fire bilder.
-- Ett original/rekonstruksjon-par med den viktige detaljen tydelig beskrevet.
-- Feilkurvene fra første forsøk, din forhåndsformulerte påstand og
-  rang/rangregel, samt kontrollen på nye data fra **én** av A eller B.
-- En anbefaling med valgt rang, begrunnelse, og ett dokumentert tilfelle der
-  metoden ikke bevarer det du ønsker.
-
-Knytt forklaringen eksplisitt til minst to tidligere temaer, for eksempel
-ortogonale koordinater og rang, eller kondisjonering og residual.
-Skill mellom data brukt til å velge rang og data brukt til å vurdere valget.
-Resultatene skal kunne gjenskapes med oppgitte frø og parametere. Vi vurderer
-særlig om du skiller mellom **å passe data, bevare informasjon og spare lagring**.
+Papirregninger kan leveres som leselige bilder i notebooken eller i en
+separat PDF. Tekstmengden gjelder bare sluttvurderingen. Du vurderes først
+og fremst på matematisk begrunnelse, skillet mellom ulike feil og en
+konklusjon som ikke sier mer enn argumentene og forsøkene støtter.

@@ -12,8 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def export_week(week):
     sources = [ROOT / f'_includes/linalg/week{week}_setup.md']
-    if week == 6:
-        sources.append(ROOT / '_includes/projects/week6_setup.md')
+    sources.append(ROOT / f'_includes/projects/week{week}_setup.md')
     blocks = []
     for source in sources:
         blocks.extend(re.findall(r'```\{pyodide-python\}\n(.*?)```', source.read_text(), re.S))
