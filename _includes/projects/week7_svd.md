@@ -6,9 +6,11 @@ informasjon risikerer vi å fjerne sammen med støyen?
 
 **Alle gjør både A og B, i denne rekkefølgen.**
 I hver del skal du regne på et lite eksempel, utlede en feilformel og bruke den til
-å begrunne og undersøke et valg. Hovedarbeidet er matematisk; ferdige
-hjelpere utfører SVD, rekonstruksjon og plotting. Du trenger ikke
-implementere algoritmene eller gjenta bildeforsøkene fra forelesningen.
+å begrunne og undersøke et valg. **Hver del har to parallelle spor:
+matematisk utledning og numerisk kontroll med egen kode.** Du bruker
+NumPy til selve SVD-beregningen, men skriver rekonstruksjonen, feilkontrollene
+og rangvalget selv. Ferdige hjelpere gir forsøksdata og figurer som du
+kan sammenligne med.
 
 | Del | Hovedspørsmål | Matematisk verktøy |
 |:--|:--|:--|
@@ -34,7 +36,8 @@ Du kan bruke teoremet om beste rang-$k$-tilnærming fra notatene uten bevis.
 På nettsiden er oppsettet klart automatisk. I en egen notebook laster du
 ned [oppsettsfilen](../assets/project_week7_setup.py){download="project_week7_setup.py"}
 og kjører `from project_week7_setup import *`. Du trenger NumPy og
-Matplotlib. Kopier forsøkscellene i A3 og B3, og deretter én kontrollcelle fra sluttdelen.
+Matplotlib. Kopier kodemalene og forsøkscellene i rekkefølge, og legg inn egne
+kontrollceller der oppgavene ber om det. Avslutt med én kontrollcelle fra sluttdelen.
 Ta med oppsettsfilen, og kontroller notebooken med **Restart / Run all**.
 Portrettet er tilpasset fra [NTNUs mm.gif](https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif).
 
@@ -66,6 +69,28 @@ forsøk med samme rene bilde.
 4. Er det alltid slik at feilen mot det rene bildet først synker og så
    stiger når $k$ øker? Bruk tabellen til å begrunne svaret.
 
+#### Kodespor A1: bygg samme tabell med SVD
+
+Fullfør funksjonen nedenfor med produktet av de første $k$ SVD-leddene.
+Bruk `@` til matrisemultiplikasjon; `s` er en vektor, ikke en diagonalmatrise.
+Funksjonen skal også gi nullmatrisen for $k=0$.
+
+```{pyodide-python}
+#| label: project7-student-image
+def svd_image(Y, k):
+    U, s, Vt = np.linalg.svd(Y, full_matrices=False)
+    # TODO: returner summen av de k første SVD-leddene.
+    raise NotImplementedError('Fullfør rang-k-rekonstruksjonen')
+```
+
+- Skriv en løkke over de to verdiene av $\eta$ og $k=0,1,2,3$.
+  Beregn de to feilnormene direkte fra matrisene, og sammenlign med
+  håndtabellen. Kontroller også null rang og full rekonstruksjon med `np.allclose`.
+- Prøv deretter $\eta=0.8$ og $\eta=1.2$. **Forutsi først** hvilken
+  retning som blir med i $Y_2$. Bekrefter koden forklaringen fra papirregningen?
+- Sammenlign rekonstruksjoner, ikke fortegnene til enkeltstående
+  singulærvektorer: begge vektorene i et SVD-par kan skifte fortegn.
+
 **Ta med videre:** et konkret eksempel som skiller mellom å tilpasse
 oppgitte data og å rekonstruere informasjonen vi ønsker.
 
@@ -93,6 +118,25 @@ rommet spent ut av disse vektorene. Vi setter $P_0=0$.
 Merk at $P_k$ kommer fra **de støyete dataene** og selv avhenger av $E$.
 Identiteten gjelder likevel for hvert enkelt datasett. Vi antar ikke
 at singulærvektorene til $Y$ og $C$ er like.
+
+#### Kodespor A2: to uavhengige beregninger av samme feil
+
+Skriv en kontrollcelle som beregner $P_k$ fra en SVD av $Y=C+E$.
+Beregn venstresiden i feilidentiteten med din `svd_image`, og høyresiden
+med matriseproduktene $(I-P_k)C$ og $P_kE$. Kontroller også indreproduktet
+med `np.sum(((I-Pk) @ C) * (Pk @ E))`. Hvorfor skal det være nær null?
+
+Bruk først A1 og deretter dette rektangulære eksempelet, slik at
+kontrollen ikke bare virker for diagonalmatriser:
+
+$$C=\begin{bmatrix}1&2\\2&4\\-1&-2\end{bmatrix},\qquad
+E=\begin{bmatrix}0&0.1\\-0.2&0\\0.1&-0.1\end{bmatrix}.$$
+
+Prøv alle tillatte $k$, også null. Identitetsmatrisen $I$ skal ha like
+mange rader som $C$. Bruk `np.isclose` med `rtol=1e-10, atol=1e-12`
+for disse små eksemplene, og rapporter største absolutte avvik mellom
+feilformelens to sider. Forklar hvorfor dette er en kontroll av koden
+og regningen, men ikke et bevis for alle matriser.
 
 ### A3. Velg rang uten å bruke det rene bildet
 
@@ -125,6 +169,20 @@ Hvis $\operatorname{rank}(C)\leq r$, bruk beste-tilnærmingsteoremet
 feil mot $C$ enn $Y$? Hvilket av de to feilleddene tror du vil dominere?
 Begrunn med A2, og angi ett resultat som ville utfordre forventningen.
 
+#### Kodespor A3: implementer beslutningsregelen
+
+Skriv `choose_rank(residuals, delta, tau=1.05)`. Element `residuals[k]`
+er dataavviket ved rang $k$, inkludert rang null. Returner første indeks
+som oppfyller kravet, eller `None` hvis ingen gjør det. Funksjonen skal
+ikke ha tilgang til det rene bildet eller feilene mot fasiten.
+
+Begrunn først svarene, og kontroller deretter disse tre tilfellene med
+$\delta=1$ og $\tau=1.05$:
+
+- `[3., 1., 0.]`: én rang er den første tillatte;
+- `[.5, .2, 0.]`: allerede null rang oppfyller kravet;
+- `[3., 2.]`: ingen av de oppgitte rangene er tillatt.
+
 Hjelperen nedenfor bruker et $96\times96$-portrett og uavhengige normale
 støyverdier med standardavvik `noise_level`. I dette kontrollerte forsøket
 settes $\delta=\|E\|_F$. Støynormen brukes til rangvalget; det rene bildet
@@ -138,7 +196,13 @@ result_A = image_svd_trial(noise_level=.12, seed=23, tau=1.05)
 Hjelperen viser dataavvik, feil mot fasit, tapt signal og beholdt støy.
 Den markerer rangen fra regelen og skriver ut de to leddene i A2.
 
-- Kontroller at feilidentiteten stemmer numerisk ved den valgte rangen.
+- Beregn selv hele listen med dataavvik fra `result_A['singular_values']`
+  ved hjelp av halefeilformelen. Bruk `choose_rank` og sammenlign med
+  `result_A['k']`. Kontroller også at rangen rett før ikke er tillatt,
+  hvis den valgte rangen er positiv.
+- Bruk din `svd_image` på `result_A['Y']` ved den valgte rangen.
+  Kontroller rekonstruksjonen mot `result_A['reconstruction']`, og gjenta
+  A2-kontrollen med `result_A['C']` og `result_A['E']`.
 - Sammenlign valgt rekonstruksjon med det ubehandlede støybildet.
   Forklar forskjellen med de to feilleddene, ikke bare med utseendet.
 - Hvor langt er regelen fra den beste rangen for akkurat denne fasiten?
@@ -177,6 +241,35 @@ Med fast $H$ er residualnormen **absolutt bakoverfeil for systemet
 $Hx=b$**. Rekonstruksjonsfeilen her er avstanden til $x_*$, løsningen
 for dataene **uten støy**. Den er ikke foroverfeilen mot den eksakte
 løsningen av det støyete systemet. Forklar dette skillet med B1.
+
+#### Kodespor B1: implementer den trunkerte inversjonen
+
+Fullfør funksjonen fra SVD-formelen som kommer i B2. Projiser $b$ på de
+beholdte venstre singulærvektorene, del koordinatene på singulærverdiene,
+og bygg løsningen med høyre singulærvektorer. Ikke bruk `inv`, `solve`
+eller `pinv` inne i funksjonen. Numerisk ubrukelige retninger avvises
+av den ferdige kontrollen.
+
+```{pyodide-python}
+#| label: project7-student-inverse
+def svd_solve(H, b, k):
+    U, s, Vt = np.linalg.svd(H, full_matrices=False)
+    cutoff = max(H.shape)*np.finfo(float).eps*s[0]
+    if not 0 <= k <= np.count_nonzero(s > cutoff):
+        raise ValueError('Velg en rang innenfor den numeriske grensen')
+    # TODO: beregn de k datakoordinatene og rekonstruer løsningen.
+    raise NotImplementedError('Fullfør trunkert inversjon')
+```
+
+Lag samme tabell som i B1 for begge verdiene av $d$ og $k=0,1,2$.
+Kontroller full løsning også med `np.linalg.solve(H,b)` på denne lille,
+moderat kondisjonerte matrisen. Bruk `np.allclose` til å sammenligne
+vektorer, og beregn residualene direkte som `b-H@x`.
+
+Hold så $d=0.002$ fast og varier $\varepsilon$ over
+`[.1, .01, .002, .001]`. Tegn rekonstruksjonsfeilen for $k=1$ og $k=2$
+mot $\varepsilon$ med logaritmisk vannrett akse. Merk punktet der de to
+feilene er like. Stemmer overgangen med betingelsen du utledet?
 
 ### B2. Del feilen i tapt signal og forsterket støy
 
@@ -218,6 +311,24 @@ Hva vinner vi ved å kutte før de minste singulærverdiene, og hvorfor
 er det ikke uten kostnad?
 
 </details>
+
+#### Kodespor B2: kontroller formlene uten spesielle koordinatakser
+
+Bruk en dreining på $\theta=\pi/6$,
+
+$$Q=\begin{bmatrix}\cos\theta&-\sin\theta\\
+\sin\theta&\cos\theta\end{bmatrix},\qquad
+H=Q\operatorname{diag}(1,0.01)Q^T,$$
+
+med $x_*=(1,1)^T$ og $\eta=(0,0.02)^T$. Beregn $b=Hx_*+\eta$.
+
+- Finn $a_i,e_i,\beta_i$ fra **samme** numeriske SVD av $H$.
+- For $k=0,1,2$, beregn løsningen med `svd_solve` og sammenlign direkte
+  feil og residual med de to koordinatformlene i B2. Bruk samme toleranser
+  som i A2 og rapporter avvikene.
+- Kontroller også fortegnet til endringen i kvadrert feil når du går
+  fra $k$ til $k+1$, mot betingelsen i B2.3. Hvorfor er denne kontrollen
+  mer opplysende enn bare at programmet kjører?
 
 ### B3. Velg hvor inversjonen skal stoppe
 
@@ -269,8 +380,14 @@ nettopp det. Det skal ikke tolkes som et vellykket rangvalg.
 
 - Sammenlign regelen med den på forhånd valgte referansen $k=5$.
   Vis både residual og rekonstruksjonsfeil. Forklar med B2.
-- Kontroller feil- og residualidentitetene ved den valgte rangen.
-  Hjelperen skriver ut begge sider; små avrundingsavvik er forventet.
+- **Bruk egen kode:** Beregn datakoordinatene fra en SVD av
+  `result_B['H']` og `result_B['b']`. Bygg residualnormene med formelen
+  i B2, for $k=0,\ldots,$ `result_B['cap']`. Bruk samme `choose_rank`
+  som i A, og kontroller rangen mot `result_B['k']`.
+- Bruk `svd_solve` ved den valgte rangen, sammenlign med
+  `result_B['reconstruction']`, og kontroller feil og residual direkte.
+  Fasiten er `result_B['truth']`. Hjelperens utskrift er en referanse
+  for din beregning, ikke en erstatning for kontrollen.
 - Finn beste rang mot fasiten blant de numerisk tillatte rangene.
   Hvorfor kan dette etterpå-valget ikke brukes som en regel uten fasit?
   Hvorfor bør vi ikke tolke de minste beregnede singulærverdiene som eksakte?
@@ -303,7 +420,9 @@ For å kontrollere konklusjonen fra B, kjør i stedet:
 check_B = signal_svd_trial(noise_level=.005, seed=18, tau=1.05)
 ```
 
-Sammenlign med første kjøring av **samme** problem og samme referanse.
+Gjenta din egen rangberegning og rekonstruksjonskontroll på de nye
+dataene som kontrollhjelperen returnerer. Sammenlign deretter med
+første kjøring av **samme** problem og samme referanse.
 Skill mellom det feilformlene beviser og det forsøkene støtter.
 Hva trenger vi å vite om støyen for å bruke regelen uten fasit?
 
@@ -321,6 +440,8 @@ Lever **både A og B**, og én kontroll på nye data, med:
 
 - håndregningene, tabellen fra det lille eksempelet og de etterspurte
   utledningene; vis mellomsteg og hvilke forutsetninger du bruker;
+- egen kode for `svd_image`, `svd_solve` og `choose_rank`, med
+  kontrolltabellene, parameterundersøkelsen i B1 og avvikene fra identitetene;
 - forventningene før forsøkene i A og B og før kontrollen, med et mulig motfunn;
 - en liten tabell for hvert hovedforsøk: valgt rang, dataavvik/residual
   og rekonstruksjonsfeil, sammen med referansen; legg kontrollen til
@@ -332,5 +453,6 @@ Lever **både A og B**, og én kontroll på nye data, med:
 
 Papirregninger kan leveres som leselige bilder i notebooken eller i en
 separat PDF. Tekstmengden gjelder bare sluttvurderingen. Du vurderes først
-og fremst på matematisk begrunnelse, skillet mellom ulike feil og en
+og fremst på koblingen mellom utledning og egen numerisk kontroll,
+skillet mellom ulike feil og en
 konklusjon som ikke sier mer enn argumentene og forsøkene støtter.
