@@ -181,8 +181,8 @@ da undersøker du en annen tilnærming enn den som feilformelen beskriver.
 ### Opplev problemet
 
 Vi kjenner et rent bilde og legger til kontrollert støy. Før kjøring:
-Vil beste rang være den samme hvis vi måler mot det støyete bildet som
-hvis vi måler mot det rene? Hvorfor?
+Vil beste rang være den samme hvis vi beregner feilen mot det støyete bildet som
+hvis vi beregner feilen mot det rene? Hvorfor?
 
 ```{pyodide-python}
 #| label: project7-denoise
@@ -205,7 +205,7 @@ error_to_clean = [np.linalg.norm(B-clean_image,'fro')/np.linalg.norm(clean_image
 
 ```{pyodide-python}
 #| label: project7-denoise-plot
-# Datafeil måler tilpasning til støyete målinger; fasitfeil måler gjenfinning av signalet.
+# Datafeil beskriver tilpasning til støyete data; fasitfeil beskriver gjenfinning av signalet.
 # Rangen valgt med fasit er best blant de prøvde rangene på dette forsøket.
 # Den er ikke en ferdig regel for nye data uten fasit; test valget med et nytt frø.
 
@@ -221,21 +221,21 @@ show_images({'rent':clean_image,'med støy':noisy_image,f'rang {ranks[best]}':fi
 1. Forklar forskjellen på feilkurvene. Hvorfor er full rang best mot dataene?
 2. Sammenlign beste prøvde rang med full rang og budsjettets `k_budget`.
    Valget som bruker kjent fasit er en **etterpå-vurdering**, ikke en test av
-   hvordan rangvalget vil virke på nye målinger.
+   hvordan rangvalget vil virke på nye data.
 3. Formuler en egen påstand om hvilken detalj eller feilforbedring du forventer.
    Velg en rang eller en presis rangregel, og skriv hva som ville tale mot
-   påstanden. **Lås valget før neste støymåling.**
+   påstanden. **Lås valget før neste støyrealisasjon.**
 4. Lag ny støy med et annet frø, men samme rene bilde og støynivå. Bruk det
    låste valget på de nye dataene. Sammenlign med det ubehandlede støybildet,
-   og mål både relativ feil mot fasiten og den detaljen du valgte. Ikke
-   velg ny rang ved å se på fasitfeilene for den nye målingen.
+   og beregn relativ feil mot fasiten og undersøk den detaljen du valgte. Ikke
+   velg ny rang ved å se på fasitfeilene for de nye dataene.
 5. Bruk diagonalbildet som en strukturell utfordring til forklaringen.
    En enkelt rekonstruksjon er nok; du trenger ikke gjenta hele rangsøket.
    Hva kan denne undersøkelsen si, og hva kan den ikke si om andre bilder?
 
 Du designer kriteriet og begrunner rangvalget; et rangnummer alene er ikke
 resultatet. Vis om påstanden overlever kontrollen, også dersom den feiler.
-Én ny støymåling er en uavhengig kontroll av dette forsøket, ikke bevis for
+Én ny støyrealisasjon er en uavhengig kontroll av dette forsøket, ikke bevis for
 at rangvalget vanligvis er godt. Flere frø er valgfritt hvis du vil undersøke variasjonen.
 
 **Støyreduksjon er en hypotese om signalet**
@@ -247,7 +247,7 @@ store komponenter og støyen fordeles annerledes. Det gjelder ikke automatisk
 for alle bilder; diagonalbildet utfordrer nettopp denne antakelsen.
 
 Med kjent fasit kan vi velge beste prøvde rang i ettertid. Uten fasit kan vi
-for eksempel bruke en uavhengig gjentatt måling til validering, eller et anslag
+for eksempel bruke uavhengige data for det samme underliggende signalet til validering, eller et anslag
 for støynivå og en eksplisitt regel for tillatt datafeil. En knekk i
 singulærverdikurven alene er ingen garanti for riktig skille mellom signal og støy.
 
@@ -257,15 +257,15 @@ singulærverdikurven alene er ingen garanti for riktig skille mellom signal og s
 ### Opplev problemet
 
 Matrisen $H$ representerer en **uskarphetstransformasjon** $S(x)=Hx$.
-Målingen er $b=Hx_*+\eta$.
-Her er $x_*$ det skarpe signalet, $b$ målingen og $\eta$ målestøy.
+De oppgitte dataene er $b=Hx_*+\eta$.
+Her er $x_*$ det skarpe signalet, $b$ de oppgitte dataene og $\eta$ støy.
 Produktet $Hx_*$ gir et uskarpt signal ved å blande verdier fra naboposisjoner.
 Vi tar SVD av $H$. Små singulærverdier viser signalretninger som blir
 svært svake etter denne transformasjonen.
 
 Forsøket gir en kjent fasit, et normalisert Gauss-filter og fast tilfeldig
-målestøy. **Residualen** $b-Hx$ måler avviket mot de observerte dataene;
-**løsningsfeilen** $x-x_*$ måler avviket mot det kjente skarpe signalet.
+støy. **Residualen** $b-Hx$ angir avviket mot de observerte dataene;
+**løsningsfeilen** $x-x_*$ angir avviket mot det kjente skarpe signalet.
 **Kondisjonstallet** er forholdet mellom største og minste singulærverdi;
 et stort forhold betyr at inversjon kan forsterke relative datafeil mye.
 Gjett om en løsning med nesten null residual vil ligne fasiten.
@@ -273,7 +273,7 @@ Gjett om en løsning med nesten null residual vil ligne fasiten.
 ```{pyodide-python}
 #| label: project7-blur
 # Transformasjonen S(x)=Hx gjør signalet uskarpt; observed inneholder også støy.
-# Direkte løsning forsøker å forklare selv svake og støyfulle måleretninger.
+# Direkte løsning forsøker å forklare selv svake og støyfulle dataretninger.
 # Se på både residual og faktisk feil, også når løsningen ser urimelig ut.
 
 position,H,truth,clean_data,observed = blur_problem()
@@ -281,14 +281,14 @@ U_h,s_h,Vt_h = np.linalg.svd(H,full_matrices=False)
 # For invertibel H er dette sigma_max/sigma_min; svært små verdier er avrundingsfølsomme.
 print('Kondisjonstall:',s_h[0]/s_h[-1])
 try:
-    # Løs mot målingene, inkludert støyen; en liten residual er derfor ikke nok.
+    # Løs mot dataene, inkludert støyen; en liten residual er derfor ikke nok.
     direct = np.linalg.solve(H,observed)
 except np.linalg.LinAlgError:
     direct = None
     print('Direkte løsning stoppet: matrisen oppfattes som singulær.')
 fig,ax = plt.subplots(1,2,figsize=(10,3))
 ax[0].plot(position,truth,label='fasit')
-ax[0].plot(position,observed,label='måling'); ax[0].legend()
+ax[0].plot(position,observed,label='data med støy'); ax[0].legend()
 if direct is not None:
     ax[1].plot(position,direct,label='direkte løsning'); ax[1].legend()
     print('Relativ residual:',np.linalg.norm(H@direct-observed)/np.linalg.norm(observed))
@@ -301,7 +301,7 @@ plt.tight_layout(); plt.show()
 
 Finn først datakoordinaten $u_i^Tb$ langs $u_i$ ved hjelp av indreproduktet.
 Dette er en ortogonal projeksjon fra uke 4. Rekonstruksjon av komponenten deler
-på $\sigma_i$. Derfor kan små målefeil gi store signalutslag:
+på $\sigma_i$. Derfor kan små dataforstyrrelser gi store signalutslag:
 
 $$x_k=\sum_{i=1}^k\frac{u_i^Tb}{\sigma_i}v_i.$$
 
@@ -312,7 +312,7 @@ Bruk faktorene direkte, uten å bygge en full inversmatrise.
 
 ```{pyodide-python}
 #| label: project7-tsvd
-# Først måles b langs venstre singularvektorer, så oppheves de beholdte strekkfaktorene.
+# Først beregnes koordinatene til b i basisen av venstre singulærvektorer, så oppheves de beholdte strekkfaktorene.
 # Til slutt bygges løsningen i høyre singularvektorer; de utelatte bidragene settes til null.
 # k teller operatorretninger, og null singulærverdier skal aldri inverteres.
 
@@ -343,8 +343,8 @@ print('Null rang, én komponent og rektangulær inversjon er kontrollert.')
 
 ```{pyodide-python}
 #| label: project7-blur-compare
-# Alle rangvalg bruker samme måling; bare antall beholdte retninger endres.
-# Sammenlign hvor godt vi passer målingen med hvor godt vi gjenfinner fasiten.
+# Alle rangvalg bruker samme data; bare antall beholdte retninger endres.
+# Sammenlign hvor godt vi passer dataene med hvor godt vi gjenfinner fasiten.
 # Fasitvalgt rang er en laboratoriekontroll; din regel må også prøves på nye data.
 
 noise_level = .005
@@ -352,7 +352,7 @@ noise_seed = 17
 position,H,truth,clean_data,observed = blur_problem(noise_level=noise_level,seed=noise_seed)
 # Alle metodene bruker akkurat samme observed, også når parametrene endres.
 try:
-    # Løs mot målingene, inkludert støyen; en liten residual er derfor ikke nok.
+    # Løs mot dataene, inkludert støyen; en liten residual er derfor ikke nok.
     direct = np.linalg.solve(H,observed)
     print('Direkte: relativ residual',np.linalg.norm(H@direct-observed)/np.linalg.norm(observed),
           'relativ feil',np.linalg.norm(direct-truth)/np.linalg.norm(truth))
@@ -391,7 +391,7 @@ ax[1].set_xlabel('Posisjon'); ax[1].legend(); plt.tight_layout(); plt.show()
    Et negativt resultat skal forklares, ikke fjernes fra rapporten.
 5. Forklar forskjellen mellom trunkering og prekondisjonering fra uke 6.
    Hva mister vi ved å utelate retninger, og hva kan én kontroll ikke si om
-   andre signaler eller måleoperatorer?
+   andre signaler eller lineære transformasjoner?
 
 Her bestemmer du hvilke retninger inversjonen får bruke. **25 %-budsjettet
 fra bildedelen gjelder ikke denne operatoren**; dette er et valg av
@@ -399,7 +399,7 @@ regularisering, altså en begrensning som demper støyforsterkning.
 
 **Hvorfor dette forsøket kan feile spektakulært**
 
-Glattende målinger gjør enkelte signalretninger svært svake. Det konstruerte
+Utglattende transformasjoner gjør enkelte signalretninger svært svake. Det konstruerte
 $H$ er så dårlig kondisjonert at de aller minste beregnede singulærverdiene
 ikke bør tolkes som nøyaktige fysiske størrelser. Direkte løsning brukes
 som et bevisst feilforsøk. En beregning kan stoppe, eller gi enorme verdier.
@@ -408,7 +408,7 @@ Begge deler er relevante observasjoner, ikke noe du skal skjule.
 Trunkert SVD, forkortet TSVD, begrenser støyforsterkning ved å forkaste retninger. Men også fasitens
 komponenter i disse retningene forsvinner. For liten rang gir derfor en
 for enkel løsning. Rangvalget balanserer tapt signal mot forsterket støy.
-En kjent fasit lar oss måle dette i laboratoriet; reelle data krever et
+En kjent fasit lar oss beregne dette i laboratoriet; reelle data krever et
 begrunnet valg uten tilgang til sann løsning.
 
 

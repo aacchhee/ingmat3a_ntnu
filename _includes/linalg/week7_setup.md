@@ -3,7 +3,7 @@
 #| autorun: true
 #| context: setup
 # Ferdige forsøksdata og visningshjelpere til SVD-uken.
-# Bildedata lastes lokalt; selve matematikken ligger i SVD, trunkering og måleoperatoren.
+# Bildedata lastes lokalt; selve matematikken ligger i SVD, trunkering og uskarphetstransformasjonen.
 # Du trenger ikke endre det kodede portrettet for å undersøke de matematiske valgene.
 
 import numpy as np
@@ -47,11 +47,11 @@ def blur_problem(noise_level=.005, seed=17):
     n = 80
     t = np.linspace(0, 1, n)
     truth = ((t>.2)&(t<.4)).astype(float) + .6*np.exp(-((t-.72)/.06)**2)
-    # Hver rad beskriver hvordan en måling blander signalverdier fra nærliggende posisjoner.
+    # Hver rad beskriver hvordan én resultatkoordinat beregnes fra signalverdier i nærliggende posisjoner.
     H = np.exp(-.5*((t[:,None]-t[None,:])/.035)**2)
     # Radsum 1 gjør at et konstant signal forblir konstant etter glatting.
     H /= H.sum(axis=1, keepdims=True)
-    # Dette er feilfrie målinger; støyen legges til etter at signalet er glattet.
+    # Dette er data uten støy; støyen legges til etter at signalet er glattet.
     clean = H @ truth
     observed = clean + noise_level*np.random.default_rng(seed).standard_normal(n)
     return t, H, truth, clean, observed
