@@ -78,14 +78,14 @@ Oppgi ett ikke-negativt heltall i hvert felt.
 
 **Antall korrekte desimaler etter iterasjon 5:**
 
-Blå kurve: _[1]<br>
-Oransje kurve: _[5]<br>
+Blå kurve: _[1]
+Oransje kurve: _[5]
 Grønn kurve: _[16]
 
 **Antall nye korrekte desimaler i overgangen fra iterasjon 4 til 5:**
 
-Blå kurve: _[0]<br>
-Oransje kurve: _[1]<br>
+Blå kurve: _[0]
+Oransje kurve: _[1]
 Grønn kurve: _[8]
 ```
 

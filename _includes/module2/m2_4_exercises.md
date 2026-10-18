@@ -92,16 +92,16 @@ Oppgi ett ikke-negativt heltall i hvert felt.
 
 **Første iterasjon på feilplatået:**
 
-binary32: _[4]<br>
+binary32: _[4]
 binary64: _[5]
 
 **Antall korrekte desimaler på platået:**
 
-binary32: _[7]<br>
+binary32: _[7]
 binary64: _[15]
 
 **Iterasjonen der det lagrede skrittet først blir null:**
 
-binary32: _[5]<br>
+binary32: _[5]
 binary64: _[6]
 ```
