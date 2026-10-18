@@ -9,10 +9,11 @@ branch or a commit). This script fetches ctm-assessment at that ref into
 the extensions the package owns in _extensions/ and checks every installed
 file.
 
-    python scripts/setup.py [--review-refs JSON]
+    python scripts/setup.py [--review-refs REFS]
 
---review-refs passes component commits for a coordinated review build, for
-example '{"math-exercise": "<commit>"}'.
+--review-refs passes component commits (full SHAs) for a coordinated review
+build, as JSON ('{"math-exercise": "<sha>"}') or as NAME=SHA[,NAME=SHA]; use the
+second form in Windows PowerShell 5.1, which strips the JSON's inner quotes.
 """
 from __future__ import annotations
 
@@ -75,7 +76,7 @@ def fetch(package: dict[str, str], target: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--review-refs", default="{}", help="JSON map of component commits for a review build")
+    parser.add_argument("--review-refs", default="{}", help="component commits for a review build: JSON or NAME=SHA[,NAME=SHA]")
     args = parser.parse_args()
 
     project_root = Path(__file__).resolve().parent.parent
@@ -93,12 +94,15 @@ def main() -> None:
     except subprocess.CalledProcessError:
         sys.exit(f"\nERROR: could not fetch ctm-assessment at {package['ref']} from {package['repo']}.\n")
 
-    run(
-        sys.executable,
-        str(checkout / "scripts" / "install-project.py"),
-        "--project", str(project_root),
-        "--review-refs", args.review_refs,
-    )
+    try:
+        run(
+            sys.executable,
+            str(checkout / "scripts" / "install-project.py"),
+            "--project", str(project_root),
+            "--review-refs", args.review_refs,
+        )
+    except subprocess.CalledProcessError:
+        sys.exit(1)  # the installer has printed the reason
 
     print("\nInstalled Quarto extensions:")
     run("quarto", "list", "extensions", cwd=project_root)
