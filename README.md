@@ -36,17 +36,24 @@ Keep this separation when adding material. Put shared imports and definitions in
 
 ## Local preview
 
-Install Quarto and the extensions required by `_quarto.yml`, then run:
+Install Quarto (1.8.27 or later), Git and Python with PyYAML. Install the
+[CTM Assessment](https://github.com/Erasmus-CTM/ctm-assessment) package, which
+bundles all interactive components, then preview:
 
 ```bash
+python scripts/setup.py
 quarto preview
 ```
+
+`quarto-extensions.yml` sets which ctm-assessment branch or commit is
+installed. The component commits used are recorded in
+`.private-extensions/resolved-repos.json`.
 
 The Python cells use Pyodide and run in the browser. Cells on one page share a Python environment; different pages do not. Each teaching page therefore includes a hidden setup cell with the definitions that its examples require.
 
 ## Automatic exercise feedback
 
-The `math-exercise` and `py-exercise` extensions provide optional model-generated feedback. Students configure the endpoint, model, and API key from the feedback settings in the rendered page. The student-facing setup and usage guide is on the IDE page.
+The shared `ai-feedback` component of CTM Assessment provides optional model-generated feedback for mathematics exercises, Python exercises and Python cells. Students configure the endpoint, model, and API key from the feedback settings in the rendered page. The student-facing setup and usage guide is on the IDE page.
 
 ### Levelled mathematics feedback
 
