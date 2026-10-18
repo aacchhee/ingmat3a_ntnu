@@ -53,7 +53,7 @@ The Python cells use Pyodide and run in the browser. Cells on one page share a P
 
 ## Automatic exercise feedback
 
-The shared `ai-feedback` component of CTM Assessment provides optional model-generated feedback for mathematics exercises, Python exercises and Python cells. Students configure the endpoint, model, and API key from the feedback settings in the rendered page. The student-facing setup and usage guide is on the IDE page.
+The shared `ai-feedback` component of CTM Assessment provides optional model-generated feedback for mathematics exercises and Python cells. Python exercises (`py-exercise`) are graded by their tests and have no AI feedback. Students configure the endpoint, model, and API key from the feedback settings in the rendered page. The student-facing setup and usage guide is on the IDE page.
 
 ### Levelled mathematics feedback
 
