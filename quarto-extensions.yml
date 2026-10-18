@@ -3,10 +3,9 @@
 # (ctm-assessment's integration/feedback/repos.json). Install with
 # `python scripts/setup.py`.
 #
-# ref: a ctm-assessment branch or commit. This commit is the October 2026
-# audit build (pull request Erasmus-CTM/ctm-assessment#11); set it to `main`
-# once that pull request is merged.
+# ref: a ctm-assessment branch or commit. `main` follows the tested package;
+# a commit or release tag pins it, for example for a semester.
 plugins:
   - name: ctm-assessment
     repo: https://github.com/Erasmus-CTM/ctm-assessment.git
-    ref: 5bdd9a79465be062c75f34aa13cfad9669469de2
+    ref: main
