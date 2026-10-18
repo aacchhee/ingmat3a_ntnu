@@ -2688,7 +2688,8 @@ Oppgave 1–3 er hovedløpet; 4–6 undersøker numeriske feil og hva «god løs
 betyr. Beregn omtrent 2–3 timer for hele settet. Alle nødvendige data er
 oppgitt her, og hver kodeoppgave importerer sine egne biblioteker.
 
-I matematikkfeltene kan du skrive for eksempel `sqrt(2)` og `1/sqrt(3)`.
+Svar eksakt i matematikkfeltene, for eksempel `sqrt(2)` og `1/sqrt(3)`;
+et avrundet desimaltall som 1.414 godtas ikke.
 Kodeoppgavene kontrollerer funksjonen du skriver på flere datasett.
 De åpne forklaringene skriver du i egne notater; de vurderes ikke automatisk.
 Et grønt resultat erstatter derfor ikke begrunnelsen.
