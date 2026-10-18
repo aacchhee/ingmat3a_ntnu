@@ -3056,7 +3056,7 @@ før den spenner ut hele rommet.
 #| context: week3-paper-assessment-context
 #| checker: |
 #|   def check(response, symbols):
-#|       values = response["expressions"]
+#|       values = response["expressions"][:9]  # R; the pivot cells follow
 #|       R = Matrix(3, 3, values)
 #|       P = response["inputs"]["PBstep"]["matrix"]
 #|       submitted_pivots = list(P)
@@ -3240,7 +3240,7 @@ inputdimensjon _[3] $=$ rang _[2] $+$ nullitet _[1]
 #| context: week3-paper-assessment-context
 #| checker: |
 #|   def check(response, symbols):
-#|       values = response["expressions"]
+#|       values = response["expressions"][:6]  # R; the pivot cells follow
 #|       R = Matrix(2, 3, values)
 #|       P = response["inputs"]["PCstep"]["matrix"]
 #|       submitted_pivots = list(P)
