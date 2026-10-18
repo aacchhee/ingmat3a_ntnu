@@ -4,10 +4,7 @@ project:
 lang: nb
 
 filters:
-  - pyodide-interaktiv
-  - jsxgraph
-  - math-exercise
-  - py-exercise
+  - ctm-assessment
 
 website:
   title: "Matematikk 3A"
