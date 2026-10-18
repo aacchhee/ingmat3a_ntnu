@@ -9,10 +9,10 @@ Mini-IDE-en kjører Python lokalt i nettleseren ved hjelp av [Pyodide](https://p
 ### Kom raskt i gang
 
 1. Skriv eller endre kode i et kodevindu.
-2. Velg **Run Code** for å kjøre vinduet.
+2. Velg **Kjør koden** for å kjøre vinduet.
 3. Les utskrift, feilmeldinger og figurer under kodevinduet.
-4. Velg **+ Code block** når du vil ha et tomt arbeidsvindu.
-5. Bruk **Restart** hvis du vil nullstille Python-miljøet på siden.
+4. Velg **+ Kodeblokk** når du vil ha et tomt arbeidsvindu.
+5. Last inn siden på nytt hvis du vil nullstille Python-miljøet på siden. (Knappen **↻ Tilbakestill** setter koden i vinduet tilbake til den opprinnelige, den nullstiller ikke Python.)
 
 Prøv gjerne dette eksemplet:
 
@@ -40,7 +40,7 @@ plt.show()
 
 Alle kodevinduer på **samme side** deler variabler, funksjoner og importer. Kjør derfor celler i naturlig rekkefølge når en celle bygger på en tidligere celle. (En **side** i konteksten av denne ressursen er en HTML-side. Hver pensumuke ligger på egen side med alle sine faner og underfaner.)
 
-Python-miljøet deles ikke mellom ulike sider, og det opprettes på nytt når du laster inn siden eller velger **Restart**. Hver ukeside har en skjult oppstartscelle som laster inn nødvendige biblioteker og felles definisjoner. Hvis du senere kjører en synlig, endret versjon av en funksjon, brukes den endrede versjonen resten av økten.
+Python-miljøet deles ikke mellom ulike sider, og det opprettes på nytt når du laster inn siden på nytt eller stopper en kjøring med **Stopp**. Hver ukeside har en skjult oppstartscelle som laster inn nødvendige biblioteker og felles definisjoner. Hvis du senere kjører en synlig, endret versjon av en funksjon, brukes den endrede versjonen resten av økten.
 
 ::: {.callout-warning title="Ta vare på arbeidet ditt"}
 
@@ -52,8 +52,8 @@ Koden lagres ikke automatisk. Kopier kode du vil beholde til en lokal fil, VS Co
 - Les den siste linjen i feilmeldingen først; den beskriver ofte hovedproblemet.
 - Kontroller at cellene som definerer variabler og funksjoner, er kjørt.
 - Kjør cellen på nytt etter at du har rettet koden.
-- Få evt KI-hjelp ved å trykke på **Tilbakemelding**-knappen.
-- Velg **Restart** og kjør nødvendige celler på nytt hvis miljøet har fått en uklar tilstand.
+- Få evt. KI-hjelp ved å trykke på **Tilbakemelding**-knappen.
+- Last inn siden på nytt og kjør nødvendige celler på nytt hvis miljøet har fått en uklar tilstand.
 - Last inn hele nettsiden på nytt hvis knappene eller Python-miljøet har stoppet.
 
 ## README
@@ -62,7 +62,7 @@ Koden lagres ikke automatisk. Kopier kode du vil beholde til en lokal fil, VS Co
 
 #### Hvordan få KI-tilbakemeldingen?
 
-Kode- og matematikkoppgaver kan ha en **Tilbakemelding**-knapp. Når du trykker på denne knappen, så sendes ditt input til en LLM som skal først trekke fram det som allerede er riktig, før den peker mot det neste du bør undersøke. 
+Kode- og matematikkoppgaver kan ha en **Tilbakemelding**-knapp. Når du trykker på denne knappen, så sendes ditt input til en LLM som først skal trekke fram det som allerede er riktig, før den peker mot det neste du bør undersøke. 
 
 I matematikkoppgavene blir hjelpen gradvis tydeligere:
 
