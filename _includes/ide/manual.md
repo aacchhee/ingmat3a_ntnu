@@ -52,7 +52,7 @@ Koden lagres ikke automatisk. Kopier kode du vil beholde til en lokal fil, VS Co
 - Les den siste linjen i feilmeldingen først; den beskriver ofte hovedproblemet.
 - Kontroller at cellene som definerer variabler og funksjoner, er kjørt.
 - Kjør cellen på nytt etter at du har rettet koden.
-- Få evt KI-hjelp ved å trykke på Feedback-knappen.
+- Få evt KI-hjelp ved å trykke på **Tilbakemelding**-knappen.
 - Velg **Restart** og kjør nødvendige celler på nytt hvis miljøet har fått en uklar tilstand.
 - Last inn hele nettsiden på nytt hvis knappene eller Python-miljøet har stoppet.
 
@@ -62,7 +62,7 @@ Koden lagres ikke automatisk. Kopier kode du vil beholde til en lokal fil, VS Co
 
 #### Hvordan få KI-tilbakemeldingen?
 
-Kode- og matematikkoppgaver kan ha en **Feedback**-knapp. Når du trykker på denne knappen, så sendes ditt input til en LLM som skal først trekke fram det som allerede er riktig, før den peker mot det neste du bør undersøke. 
+Kode- og matematikkoppgaver kan ha en **Tilbakemelding**-knapp. Når du trykker på denne knappen, så sendes ditt input til en LLM som skal først trekke fram det som allerede er riktig, før den peker mot det neste du bør undersøke. 
 
 I matematikkoppgavene blir hjelpen gradvis tydeligere:
 
@@ -79,15 +79,18 @@ Tilbakemeldingen bruker språkmodeller på NTNUs HPC-infrastruktur (IDUN) og kre
 
 Når du har fått nøkkelen:
 
-1. Trykk på **tannhjulikonet** ved tilbakemeldingsknappen.
-2. Fyll inn base-URL og modell slik IDUN-dokumentasjonen angir.
-3. Lim inn nøkkelen i **API key** og lagre.
-4. Velg modellen. (Prøv først uten reasoning, feks Kimi2.6-instant.) Lagre.
-4. Send inn et svar med **Check**, og velg deretter **Feedback**.
+1. Trykk på **tannhjulikonet** (⚙) ved knappen **Tilbakemelding**. Da åpnes **Innstillinger for KI**.
+2. Velg **Direkte API** under **Modus**. Med standardvalget **Kopier instruksjon** sendes ingenting; du får i stedet en instruksjon som du selv kan lime inn i en KI-chat.
+3. Fyll inn **API-adresse** (base-URL-en) slik IDUN-dokumentasjonen angir, og lim inn nøkkelen i **Personlig API-nøkkel**.
+4. Trykk **Hent modeller** og velg en modell, eller skriv navnet i **Modell**. Prøv først en modell uten reasoning, f.eks. Kimi2.6-instant.
+5. Velg **Lagring**: **Husk på denne enheten** på din egen datamaskin, **Denne fanen** på en delt datamaskin. Trykk **Lagre innstillinger**.
+6. Skriv et svar, trykk **Sjekk**, og trykk deretter **Tilbakemelding**. I Python-cellene trykker du **Tilbakemelding** ved kodevinduet.
+
+Innstillingene gjelder for alle oppgaver og Python-celler på nettstedet. Har du lagret innstillinger i den tidligere versjonen av nettstedet, viser dialogen en knapp **Bruk lagrede innstillinger fra …** som fyller inn feltene; trykk deretter **Lagre innstillinger**.
 
 ::: {.callout-important title="Beskytt API-nøkkelen"}
 
-Ikke skriv nøkkelen i Python-kode, del den med andre eller legg den i Git. Fjern den når du er ferdig hvis du bruker en delt datamaskin.
+Ikke skriv nøkkelen i Python-kode, del den med andre eller legg den i Git. På en delt datamaskin velger du **Denne fanen** under **Lagring**; da huskes nøkkelen bare i denne fanen.
 :::
 
 #### Få mest mulig ut av tilbakemeldingen
