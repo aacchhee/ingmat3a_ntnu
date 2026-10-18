@@ -974,7 +974,7 @@ board.create('text',[14.55,imageY+0.92,function(){
 }],{
   anchorX:'middle',anchorY:'middle',fontSize:10,fixed:true
 });
-board.create('text',[14.55,imageY-0.38,'$1\\times1$-output'],{
+board.create('text',[14.55,imageY-0.38,'1×1-output'],{
   anchorX:'middle',fontSize:10,fixed:true
 });
 ```
@@ -1216,7 +1216,7 @@ patternSquare(14.15,imageY+0.52,0.80,patternAverage,'#333333');
 board.create('text',[14.55,imageY+1.75,'GJENNOMSNITT'],{
   anchorX:'middle',fontSize:11,cssStyle:'font-weight:600',fixed:true
 });
-board.create('text',[14.55,imageY-0.38,'$1\\times1$-output'],{
+board.create('text',[14.55,imageY-0.38,'1×1-output'],{
   anchorX:'middle',fontSize:10,fixed:true
 });
 ```
