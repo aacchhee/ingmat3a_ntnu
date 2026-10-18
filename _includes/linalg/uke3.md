@@ -2839,14 +2839,14 @@ Dermed er de to viste vektorene en basis for nullrommet. Koden kontrollerer båd
 #| label: week3-null-space-basis-matrix
 #| autorun: true
 
-# z1 og z2 kommer fra håndregningen. Z samler dem som kolonner slik at
-# A @ Z kontrollerer begge nullromsligningene samtidig.
+# z1 og z2 kommer fra håndregningen. Z_A samler dem som kolonner slik at
+# A @ Z_A kontrollerer begge nullromsligningene samtidig.
 z1=np.array([2.,-1.,1.,0.])
 z2=np.array([1.,-1.,0.,1.])
-Z=np.column_stack([z1,z2])
+Z_A=np.column_stack([z1,z2])
 
-print("A ganger nullromsbasisen:\n",A@Z)
-print("Rang av basisvektorene:",np.linalg.matrix_rank(Z))
+print("A ganger nullromsbasisen:\n",A@Z_A)
+print("Rang av basisvektorene:",np.linalg.matrix_rank(Z_A))
 
 rng=np.random.default_rng(31)
 s,t=rng.normal(size=2)
@@ -2885,7 +2885,7 @@ Rangen kommer fra de to pivotene. Nulliteten kommer **uavhengig** fra nullromsbe
 # Antall pivotkolonner gir rang; antall kolonner i nullromsbasisen gir
 # nullitet. A.shape[1] er inputdimensjonen n.
 rank_A=len(pivot_columns)
-nullity_A=Z.shape[1]
+nullity_A=Z_A.shape[1]
 print(f"{A.shape[1]} = {rank_A} + {nullity_A}")
 print("Stemmer rang–nullitet?",A.shape[1]==rank_A+nullity_A)
 ```
