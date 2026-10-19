@@ -279,7 +279,7 @@ symmetrisk, så fra [uke 5](uke5.qmd#uke5-basis) har den ortogonale egenvektorer
 med egenverdier $\lambda_1\le\lambda_2$, og langs $v_i$ er krumningen
 $v_i^TH_*v_i=\lambda_i$. Bruker vi egenvektorene som nye akser, blir skålen
 diagonal, med egenverdiene som krumninger. Derfor gjelder de samme to formlene, med
-$\lambda_i$ lik egenverdiene til $H_*$. Når $H_*$ er positiv definit (alle
+$\lambda_i$ lik egenverdiene til $H_*$. Når $H_*$ er positiv definitt (alle
 $\lambda_i>0$, som i $(3,2)$), konvergerer metoden lokalt nøyaktig når
 $\alpha<2/\lambda_{\max}$.
 

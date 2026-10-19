@@ -17,7 +17,7 @@ gjøre enkelte forskjeller nesten usynlige. SVD hjelper oss å forklare begge de
 Geometrien til **lineære transformasjoner** gir inngangen: hva endres,
 hva bevares, og hva kan vi rekonstruere etterpå?
 
-I uke 6 arbeidet vi særlig med **symmetriske positivt definite matriser**
+I uke 6 arbeidet vi særlig med **symmetriske positivt definitte matriser**
 da vi undersøkte nivåkurver og konjugert gradient. En reell symmetrisk
 matrise har en ortonormal basis av egenvektorer. Det kan vi ikke regne med
 for en generell kvadratisk matrise: den kan mangle en full basis av
@@ -592,7 +592,7 @@ Egenverdiene til $A^TA$ er 1 og 4. Kvadratrøttene gir strekkfaktorene
 Egenverdiene til $A$ selv er derimot $\pm\sqrt2$.
 **Kontroller dette ved å sette $\det(A-\lambda I)=0$.**
 
-For de symmetriske positivt definite matrisene fra uke 6 er situasjonen
+For de symmetriske positivt definitte matrisene fra uke 6 er situasjonen
 enklere: da kan vi bruke samme basis på begge sider, og
 $\sigma_i=\lambda_i>0$. Kondisjonstallet fra uke 6 er altså et
 spesialtilfelle av forholdet mellom største og minste singulærverdi.

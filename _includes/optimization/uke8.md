@@ -761,10 +761,10 @@ litt ut fra $z$ i retningen $p$:
 
 | $p^TH(z)p$ for alle $p\ne0$ | Navn på $H$ | Type stasjonært punkt |
 |:--|:--|:--|
-| alltid $>0$ | positiv definit | strengt lokalt minimum |
-| alltid $<0$ | negativ definit | strengt lokalt maksimum |
+| alltid $>0$ | positiv definitt | strengt lokalt minimum |
+| alltid $<0$ | negativ definitt | strengt lokalt maksimum |
 | $>0$ for noen $p$, $<0$ for andre | indefinit | sadelpunkt |
-| $\ge0$ (eller $\le0$), men $=0$ for en $p\ne0$ | semidefinit | testen avgjør ikke |
+| $\ge0$ (eller $\le0$), men $=0$ for en $p\ne0$ | semidefinitt | testen avgjør ikke |
 
 Tabellen sier at fortegnet til $p^THp$ avgjør typen. Figuren viser hvordan
 et minimum og et sadelpunkt ser ut for eksempelfunksjonen. Til venstre ser
@@ -1278,8 +1278,8 @@ eller på et åpent, konvekst område:
 
 | Hessianen i **alle** punkter | Egenverdier | Konklusjon |
 |:--|:--|:--|
-| positiv semidefinit: $p^THp\ge0$ for alle $p$ | ingen negative | $f$ er konveks |
-| positiv definit: $p^THp>0$ for alle $p\ne0$ | alle positive | $f$ er strengt konveks |
+| positiv semidefinitt: $p^THp\ge0$ for alle $p$ | ingen negative | $f$ er konveks |
+| positiv definitt: $p^THp>0$ for alle $p\ne0$ | alle positive | $f$ er strengt konveks |
 
 Legg merke til forskjellen fra 8.3: der så vi på Hessianen i **ett**
 punkt. Her må testen gjelde **overalt**.
@@ -1304,12 +1304,12 @@ $p\ne0$, og finn minimumspunktet.
   $H=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ i **alle** punkter.
 - Krumningen i retningen $p$:
   $p^THp=2p_1^2+2p_1p_2+2p_2^2=(p_1+p_2)^2+p_1^2+p_2^2$. Det er en sum av
-  kvadrater, og den er null bare for $p=0$. Altså er $H$ positiv definit
+  kvadrater, og den er null bare for $p=0$. Altså er $H$ positiv definitt
   overalt, og $f$ er **strengt konveks** på hele planet.
 - $\nabla f=0$: $2x+y=0$ og $x+2y=0$. Den første gir $y=-2x$, og da gir
   den andre $x-4x=0$, så $x=y=0$.
 
-Origo er et lokalt minimum (positiv definit $H$). Setningen over gjør det
+Origo er et lokalt minimum (positiv definitt $H$). Setningen over gjør det
 **globalt**, og streng konveksitet gjør det til det **eneste**
 minimumspunktet.
 
@@ -1322,7 +1322,7 @@ $p^THp>0$ én gang. Da er det lokale svaret også det globale.
 $S(c_0,c_1)=\sum_i(b_i-c_0-c_1t_i)^2$ et andregradspolynom i $c_0$ og
 $c_1$, så Hessianen er den samme i alle punkter. Med $t=(-1,0,1,2)$ er den
 $\begin{bmatrix}8&4\\4&12\end{bmatrix}$, med $\det H=96-16=80>0$ og
-$S_{c_0c_0}=8>0$. Den er positiv definit overalt, så $S$ er strengt konveks.
+$S_{c_0c_0}=8>0$. Den er positiv definitt overalt, så $S$ er strengt konveks.
 Minimumspunktet finnes (vi fant det i uke 4), og det er det eneste. Derfor
 må alle søkene ende i det samme punktet. For svingningen viste midtpunktet
 et brudd på konveksiteten, og et søk kan bli stående i en dårlig dal.
@@ -1359,7 +1359,7 @@ $x>\tfrac12$, $y>\tfrac12$. Der er $f_{xx}=6x>3>0$, og
 $$\det H=f_{xx}f_{yy}-f_{xy}^2=6x\cdot6y-(-3)^2=36xy-9>0,$$
 
 fordi $xy>\tfrac12\cdot\tfrac12=\tfrac14$ gir $36xy>9$. Hessianen er
-positiv definit i hele området, så $f$ er strengt konveks **der**. Punktet
+positiv definitt i hele området, så $f$ er strengt konveks **der**. Punktet
 $(1,1)$ ligger i området og er et lokalt minimum, så setningen om lokalt og
 globalt gjør det til det eneste minimumspunktet i området. Utenfor området
 gjelder ikke garantien: der synker $f$ mot $-\infty$ langs $y=x$.

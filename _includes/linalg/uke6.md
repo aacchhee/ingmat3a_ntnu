@@ -985,7 +985,7 @@ Vi bruker her **symmetrisk positivt definitte (SPD)** matriser:
 $$A^T=A,\qquad z^TAz>0\quad\text{for alle }z\ne0.$$
 
 Symmetrien gjør at kryssleddene fra hver side av diagonalen passer
-sammen. Positiv definitet betyr at det kvadratiske bidraget er positivt i enhver
+sammen. Positiv definitthet betyr at det kvadratiske bidraget er positivt i enhver
 ikke-null retning. Kvadratfullføringen ovenfor viser at matrisen vår
 har nettopp denne egenskapen.
 
@@ -1000,7 +1000,7 @@ Her er $L$ nedre triangulær, altså null over diagonalen.
 I [uke 10](uke10.qmd#uke10-cholesky) regner vi gjennom denne metoden
 og bruker den til å finne Newton-retninger.
 
-En symmetrisk matrise er positivt definit akkurat når alle egenverdiene er
+En symmetrisk matrise er positivt definitt akkurat når alle egenverdiene er
 positive (begrunnelsen, med spektralteoremet fra uke 5, står i
 «Gå i dybden»). Egenverdiene er da strekkfaktorene, så for SPD er
 $\kappa_2(A)=\lambda_{\max}/\lambda_{\min}$: stor forskjell mellom
@@ -1058,13 +1058,13 @@ For $c=-7.5$ består nivåmengden bare av minimumpunktet, og for
 $c<-7.5$ er den tom. Kryssleddet gjør at ellipsenes hovedakser ikke
 følger koordinataksene.
 
-**Positiv definitet og egenverdier**
+**Positiv definitthet og egenverdier**
 
 Fra [uke 5](uke5.qmd#uke5-basis) («Gå i dybden» om spektralteoremet) har vi
 $z^TAz=\sum_i\lambda_ic_i^2$ for en symmetrisk matrise, der $c_i$ er
 koordinatene til $z$ i en ortonormal egenvektorbasis $q_1,\ldots,q_n$. Er
-alle $\lambda_i>0$, er $A$ positivt definit. Omvendt gir $z=q_i$ at
-$q_i^TAq_i=\lambda_i$, så positiv definitet krever $\lambda_i>0$.
+alle $\lambda_i>0$, er $A$ positivt definitt. Omvendt gir $z=q_i$ at
+$q_i^TAq_i=\lambda_i$, så positiv definitthet krever $\lambda_i>0$.
 
 Forutsetningen betyr noe. For $A_b$ fra 6.2 så vi i hovedteksten at
 $z^TA_bz<0$ for $z=(1,-1)^T$, selv om diagonalen er positiv. Den tilhørende
@@ -1145,7 +1145,7 @@ linje.
    og gjør ett GS-sveip fra null ved å minimere i $u$, deretter $v$,
    deretter $w$.
 4. Utled $\phi(x)-\phi(x_*)=\tfrac12(x-x_*)^TA(x-x_*)$ for SPD.
-   Hvor bruker dere symmetrien, og hvor bruker dere positiv definitet?
+   Hvor bruker dere symmetrien, og hvor bruker dere positiv definitthet?
 
 **Regnegangen – det fullstendige $3\times3$-eksemplet**
 
@@ -1248,7 +1248,7 @@ $$
 \end{aligned}
 $$
 
-Siste likhet bruker $Ax_*=b$. Positiv definitet gjør at det siste
+Siste likhet bruker $Ax_*=b$. Positiv definitthet gjør at det siste
 leddet er strengt positivt når $e\ne0$. Det beviser minimeringen.
 Med egenverdidekomposisjonen $A=Q\Lambda Q^T$ og $y=Q^Te$ blir
 
@@ -2161,7 +2161,7 @@ $x_*=$ vec[2,-1]
 ```
 
 **Forklar i egne notater:** Hvorfor er dette punktet minimum for
-$\phi$? Begrunn at $A$ er positivt definit, for eksempel med egenverdiene.
+$\phi$? Begrunn at $A$ er positivt definitt, for eksempel med egenverdiene.
 At gradienten er null, er ikke alene nok til å avgjøre dette.
 
 <div id="uke6-ov-linjesok"></div>

@@ -768,7 +768,7 @@ try:
     np.linalg.cholesky(K)
     print('Cholesky lyktes')
 except np.linalg.LinAlgError:
-    print('Cholesky feilet: K er ikke positiv definit')
+    print('Cholesky feilet: K er ikke positiv definitt')
 ```
 
 **Hva viser forsøket?** Løsningen er $(1,1,-2)$, som for hånd i 12.2.
@@ -827,7 +827,7 @@ setter vi inn i $f=\tfrac12z^TQz-b^Tz$ (som i neste boks). Utvidelsen av
 $\tfrac12(z_0+Zt)^TQ(z_0+Zt)-b^T(z_0+Zt)$ gir
 $$f(z_0+Zt)=\tfrac12t^T(Z^TQZ)t+t^TZ^T(Qz_0-b)+f(z_0),$$
 som vi minimerer uten krav. Matrisen $Z^TQZ$ er SPD når $Q$ er positiv
-definit på nullrommet, og da virker både Cholesky og CG igjen.
+definitt på nullrommet, og da virker både Cholesky og CG igjen.
 
 </details>
 
@@ -840,8 +840,8 @@ $\nabla f=Qz-b$, og Lagranges likninger blir
 $$\begin{bmatrix}Q&C^T\\C&0\end{bmatrix}
 \begin{bmatrix}z\\\lambda\end{bmatrix}=\begin{bmatrix}b\\d\end{bmatrix}.$$
 
-Hvis $C$ har $m$ uavhengige rader og $Q$ er positiv definit på nullrommet
-til $C$, er matrisen invertibel. Den er likevel aldri positiv definit: for
+Hvis $C$ har $m$ uavhengige rader og $Q$ er positiv definitt på nullrommet
+til $C$, er matrisen invertibel. Den er likevel aldri positiv definitt: for
 $v=(0,w)$ er $v^TKv=0$. (Man kan vise at den har nøyaktig $m$ negative
 egenverdier; i eksperiment 4 var $m=1$.)
 

@@ -45,7 +45,7 @@ Flere regneoppgaver står i 10.5 og kodeoppgavene i 10.6.
 | [Uke 2: fikspunktiterasjon](page4.qmd) | Hvorfor var den tredje omskrivingen så mye raskere enn de andre? |
 | [Prosjekt 2: Newtonfraktaler](project_week2.qmd) | Hvilket nullpunkt finner Newton fra en gitt start? |
 | [Uke 8: gradient og Hessian](uke8.qmd#uke8-hessian) | Hvordan ser Taylor-tilnærmingen av andre orden ut? |
-| [Uke 6: SPD-matriser](uke6.qmd#uke6-energi) | Hva betyr det at en symmetrisk matrise er positiv definit? |
+| [Uke 6: SPD-matriser](uke6.qmd#uke6-energi) | Hva betyr det at en symmetrisk matrise er positiv definitt? |
 | [Uke 9: Armijo](uke9.qmd#uke9-linjesok) | Hvordan godtar eller halverer vi et steg? |
 
 ### Læringsmål
