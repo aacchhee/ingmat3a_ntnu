@@ -78,6 +78,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -216,7 +245,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./pages/uke10.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Uke 10 – Newtons metode</span></a>
+ <span class="menu-text">Uke 10 – Newtons metode og Gauss–Newton</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -287,13 +316,13 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./pages/project_week10.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Prosjekt 10 – Newton, startpunkt og skala</span></a>
+ <span class="menu-text">Prosjekt 10 – Hvor er jeg? Posisjon fra avstander</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./pages/project_week11.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Prosjekt 11 – Produksjonsplan og ressurspriser</span></a>
+ <span class="menu-text">Prosjekt 11 – Hvorfor koster strømmen det den koster?</span></a>
   </div>
 </li>
       </ul>
@@ -425,8 +454,8 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke8.html">Uke 8</a></td>
-<td style="text-align: left;"><strong>Hva bør et verksted bygge og reparere for å tjene mest når både tid og deler er begrenset?</strong></td>
-<td style="text-align: left;">Målfunksjon, tillatt område og lokale og globale ekstremalpunkter. Gradient og Hessian brukes til å undersøke kandidater; kompakthet gir eksistens og konveksitet gir globale garantier. Vi introduserer SciPys <code>minimize</code>.</td>
+<td style="text-align: left;"><strong>Når finnes det en beste tilpasning, og når kan vi stole på at en løser har funnet den?</strong></td>
+<td style="text-align: left;">Infimum og minimum, minimerende følger, kompakthet og ekstremalverdisetningen. Konvekse funksjoner og mengder: lokalt minimum er globalt, og testen <span class="math inline">\(p^THp\ge 0\)</span> langs linjer avgjør konveksitet. Flate daler henger sammen med nullrommet fra lineær algebra.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke9.html">Uke 9</a></td>
@@ -436,12 +465,12 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke10.html">Uke 10</a></td>
 <td style="text-align: left;"><strong>Kan vi finne bunnen av en dal raskere ved å bruke både hvor bratt bakken er og hvordan helningen endrer seg?</strong></td>
-<td style="text-align: left;">Newtons metode og lokale kvadratiske modeller. Cholesky-faktorisering løser SPD-systemet som gir Newton-retningen; CG er et iterativt alternativ. Negativ krumning, regularisering og demping forklarer hvorfor retning og steglengde må kontrolleres. Vi sammenligner med SciPy.</td>
+<td style="text-align: left;">Newtons metode som lokal kvadratisk modell: kvadratisk konvergens og uavhengighet av skala. Cholesky løser Newton-systemet og avslører negativ krumning; en forskyvning <span class="math inline">\(\mu I\)</span> og Armijo gjør metoden trygg. Gauss–Newton og Levenberg–Marquardt for ikke-lineære minste kvadrater.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke11.html">Uke 11</a></td>
 <td style="text-align: left;"><strong>Et verksted lager to produkter med de samme maskinene. Hva bør det produsere, og hvor mye er én ekstra maskintime verdt?</strong></td>
-<td style="text-align: left;">Lineær programmering, tillatte hjørnepunkter og slakk. Dualitet og komplementær slakkhet gir optimalitetskontroller; ressurspriser beskriver verdien av små kapasitetsendringer. En produksjonsmodell løses med SciPys <code>linprog</code>.</td>
+<td style="text-align: left;">Lineær programmering: tillatt område, hjørner som likningssystemer og hvorfor det holder å lete i hjørnene (konveksitet og kompakthet fra uke 8). Dualitet og komplementær slakk gir sertifikater for optimalitet; dualvariablene er priser på små kapasitetsendringer. Modellene løses med SciPys <code>linprog</code>.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke12.html">Uke 12</a></td>

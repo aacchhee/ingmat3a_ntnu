@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Prosjekt 10 – Newton, startpunkt og skala – Matematikk 3A</title>
+<title>Prosjekt 10 – Hvor er jeg? Posisjon fra avstander – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -25,6 +25,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -1094,7 +1129,7 @@ globalThis.qpyodideCanvasBackend = "webagg";
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import minimize\n\n# Prosjektets mål er q(u,v)=(1-u)^2+10(v-u^2)^2. z=(s*u,v).\ndef p10_q(x):\n    u,v = x\n    return (1-u)**2 + 10*(v-u*u)**2\n\ndef p10_g(x):\n    u,v = x\n    return np.array([2*(u-1)-40*u*(v-u*u),20*(v-u*u)])\n\ndef p10_h(x):\n    u,v = x\n    return np.array([[2-40*v+120*u*u,-40*u],[-40*u,20.]])\n\ndef p10_scaled(s):\n    if s <= 0:\n        raise ValueError('Skala s må være positiv')\n    d = np.array([s,1.]);\n    return (lambda z: p10_q(z/d),\n            lambda z: p10_g(z/d)/d,\n            lambda z: p10_h(z/d)/d[:,None]/d[None,:])\n\ndef p10_armijo(f, z, g, p, max_halvings=35):\n    slope = float(g @ p)\n    if not np.isfinite(slope) or slope >= 0:\n        raise ValueError('Ikke en nedgangsretning')\n    baseline = f(z)\n    alpha = 1.\n    for j in range(max_halvings+1):\n        if f(z+alpha*p) <= baseline+1e-4*alpha*slope:\n            return alpha,j+2  # Én evaluering av baseline og j+1 prøvepunkter.\n        alpha *= .5\n    raise RuntimeError('Linjesøket nådde grensen')\n\ndef p10_trace(s, x0, method, max_steps=80, tol=1e-6):\n    \"\"\"Sammenlign med kontroll av gradient i de opprinnelige variablene.\"\"\"\n    f,g,h = p10_scaled(s)\n    d = np.array([s,1.]); z = d*np.asarray(x0,float)\n    path = [z/d]; alphas=[]; shifts=[]; f_calls=0\n    for k in range(max_steps):\n        gx = p10_g(z/d)\n        if np.linalg.norm(gx) < tol:\n            break\n        gz = g(z)\n        if method == 'gradient':\n            p = -gz; shift=0.\n        elif method == 'newton':\n            Hz = h(z)\n            shift = max(0., .25-np.linalg.eigvalsh(Hz)[0])\n            p = np.linalg.solve(Hz+shift*np.eye(2),-gz)\n        else:\n            raise ValueError('Velg gradient eller newton')\n        alpha, calls = p10_armijo(f,z,gz,p)\n        f_calls += calls\n        z = z+alpha*p\n        path.append(z/d); alphas.append(alpha); shifts.append(shift)\n    x = z/d\n    return {'x':x,'path':np.array(path),'steps':len(path)-1,\n            'f_calls':f_calls,'gradnorm':np.linalg.norm(p10_g(x)),\n            'value':p10_q(x),'alphas':np.array(alphas),\n            'shifts':np.array(shifts),'converged':np.linalg.norm(p10_g(x))<tol}\n\ndef p10_report(s, x0):\n    for name in ('gradient','newton'):\n        out = p10_trace(s,x0,name)\n        print(f'{name:8} steg={out[\"steps\"]:2d} f-prøver={out[\"f_calls\"]:3d} '\n              f'q={out[\"value\"]:.3e} ||g_x||={out[\"gradnorm\"]:.3e} '\n              f'fullførte={out[\"converged\"]}')\n        print('         x =',np.round(out['x'],6),\n              'hele steg =',int(np.sum(out['alphas']==1.)),\n              'regulariserte =',int(np.sum(out['shifts']>0)))\n\ndef p10_plot(runs):\n    fig,axs=plt.subplots(2,1,figsize=(7,8))\n    for name,out in runs.items():\n        xs=out['path']\n        axs[0].semilogy(np.arange(len(xs)),\n                       np.maximum([p10_q(x) for x in xs],1e-16),label=name)\n        axs[1].semilogy(np.arange(len(xs)),\n                       np.maximum([np.linalg.norm(p10_g(x)) for x in xs],1e-16),label=name)\n    axs[0].set(ylabel='Målfunksjon q(x)')\n    axs[1].set(xlabel='Godkjente steg',ylabel='Gradientnorm i x')\n    for ax in axs: ax.legend()\n    fig.tight_layout();plt.show()","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week10-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week10-setup","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"x0 = np.array([0.,0.])\ng0, H0 = p10_g(x0), p10_h(x0)\np0 = np.linalg.solve(H0,-g0)\nmodel = p10_q(x0)+g0@p0+.5*p0@H0@p0\nprint('Gradient:',g0,'Hessian:\\n',H0)\nprint('Retning:',p0,'modell:',model,'faktisk:',p10_q(x0+p0))","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"1. Modellen og den første forutsigelsen\nVi søker minimum av\n\\[q(u,v)=(1-u)^2+10(v-u^2)^2.\\]\nFordi begge kvadrater er ikke-negative og begge blir null når \\((u,v)=(1,1)\\), kjenner vi et globalt minimum med verdi null. Derivasjon og iterasjon er likevel interessante: fra et gitt startpunkt kan veien dit være vanskelig. Ingen andre lokale minima trenger antas for oppgavene nedenfor.\nRegn før du kjører: Finn \\(\\nabla q\\) og \\(H_q\\) symbolsk. Finn gradienten og Hessianen i \\((0,0)\\). Løs \\(H_q(0,0)p=-\\nabla q(0,0)\\) uten å danne inversen. Beregn deretter både modellens prediksjon \\(m(p)=q(0,0)+g^Tp+\\tfrac12p^THp\\) og den faktiske verdien \\(q(p)\\). Forklar hvor de to verdiene skiller lag."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week10-model-check","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week10-model-check","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for start in ([-1.2,1.], [0.,0.], [2.,2.]):\n    print('\\nStart x =',start,'; skala s = 1')\n    p10_report(1.,start)","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"2. Startpunktet\nBruk startpunktene \\((-1.2,1)\\), \\((0,0)\\) og \\((2,2)\\) i de opprinnelige \\((u,v)\\)-koordinatene. Forutsi hvilken start som krever flest godkjente Newton-steg og hvilken som krever mest linjesøkarbeid. Tror du gradientmetoden når stoppkravet fra noen av startene innen budsjettet, og i så fall fra hvilken først? Skriv argumentet ditt ut fra gradient og Hessian i minst to startpunkter.\nStoppkravet i koden er \\(\\|\\nabla q(x)\\|_2<10^{-6}\\); en metode får høyst 80 godkjente steg. f-prøver teller evalueringer av målet i linjesøket, men ikke gradient-, Hessian- eller lineærsystemarbeid. En utskrift fullførte=False betyr bare at metoden ikke nådde akkurat dette kravet innen budsjettet."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week10-starts","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week10-starts","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"start = [0.,0.]  # Endre til ett annet startpunkt når du har tolket figuren.\nruns = {name:p10_trace(1.,start,name)\n        for name in ('gradient','newton')}\np10_plot(runs)","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"2. Startpunktet\nBruk startpunktene \\((-1.2,1)\\), \\((0,0)\\) og \\((2,2)\\) i de opprinnelige \\((u,v)\\)-koordinatene. Forutsi hvilken start som krever flest godkjente Newton-steg og hvilken som krever mest linjesøkarbeid. Tror du gradientmetoden når stoppkravet fra noen av startene innen budsjettet, og i så fall fra hvilken først? Skriv argumentet ditt ut fra gradient og Hessian i minst to startpunkter.\nStoppkravet i koden er \\(\\|\\nabla q(x)\\|_2<10^{-6}\\); en metode får høyst 80 godkjente steg. f-prøver teller evalueringer av målet i linjesøket, men ikke gradient-, Hessian- eller lineærsystemarbeid. En utskrift fullførte=False betyr bare at metoden ikke nådde akkurat dette kravet innen budsjettet.\nVelg nå to av startene som gir mest interessant forskjell og tegn for begge metoder. De to grafene ligger under hverandre: øverst \\(q(x)\\), nederst gradientnorm målt i de opprinnelige koordinatene. Den horisontale aksen er antall godkjente steg."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week10-start-plot","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week10-start-plot","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"s = 10.\nx = np.array([.2,.2])  # Bruk et punkt der begge gradientledd kan være ulike null.\nd = np.array([s,1.]); z = d*x\nQ,G,H = p10_scaled(s)\nprint('q(x), Q(z):',p10_q(x),Q(z))\nprint('g i x og z:',p10_g(x),G(z))\nprint('H i x og z:\\n',p10_h(x),'\\n',H(z))\nprint('Egenverdier i z:',np.linalg.eigvalsh(H(z)))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3. Skala: samme punkter, en annen beskrivelse\nBytt variabler til \\(z=(s u,v)^T\\), med \\(s>0\\). Sett \\(D=\\operatorname{diag}(s,1)\\), slik at \\(z=Dx\\) og \\(x=D^{-1}z\\). Målet i de nye koordinatene er \\(Q_s(z)=q(D^{-1}z)\\).\nUtled på papir: Bruk kjerneregelen til å finne \\(\\nabla_zQ_s\\) og \\(H_zQ_s\\) uttrykt ved \\(\\nabla_xq\\), \\(H_xq\\) og \\(D\\). Bruk så \\(s=10\\) og \\(x=(0,0)\\) til å beregne begge nye størrelsene numerisk for hånd. Hva er løsningen \\(x_*=(1,1)\\) i \\(z\\)-koordinater? Samme fysiske punkt har samme verdi av målet i begge koordinater, men normen til gradienten avhenger av koordinatenes enheter."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week10-chain-rule-check","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week10-chain-rule-check","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"x = np.array([0.,0.]);s = 10.;d=np.array([s,1.]);z=d*x\nQ,G,H = p10_scaled(s)\npx = np.linalg.solve(p10_h(x),-p10_g(x))\npz = np.linalg.solve(H(z),-G(z))\nprint('p i x:',px,'omregnet p i z:',d*px,'direkte p i z:',pz)\nprint('Faktisk objektiv etter helt steg:',p10_q(x+px),Q(z+pz))","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3. Skala: samme punkter, en annen beskrivelse\nBytt variabler til \\(z=(s u,v)^T\\), med \\(s>0\\). Sett \\(D=\\operatorname{diag}(s,1)\\), slik at \\(z=Dx\\) og \\(x=D^{-1}z\\). Målet i de nye koordinatene er \\(Q_s(z)=q(D^{-1}z)\\).\nUtled på papir: Bruk kjerneregelen til å finne \\(\\nabla_zQ_s\\) og \\(H_zQ_s\\) uttrykt ved \\(\\nabla_xq\\), \\(H_xq\\) og \\(D\\). Bruk så \\(s=10\\) og \\(x=(0,0)\\) til å beregne begge nye størrelsene numerisk for hånd. Hva er løsningen \\(x_*=(1,1)\\) i \\(z\\)-koordinater? Samme fysiske punkt har samme verdi av målet i begge koordinater, men normen til gradienten avhenger av koordinatenes enheter.\nSe først på et rent Newton-steg når Hessianen er invertibel. Sett \\(p_x=-H_x^{-1}g_x\\) i symbolsk betydning og løs tilsvarende system i \\(z\\) med np.linalg.solve i beregningen. Vis algebraisk at \\(p_z=Dp_x\\). Den uregulariserte retningen og et helt steg beskriver altså samme punkt, hvis vi transformerer begge riktig. Gjelder dette også retningen \\(-g\\), eller regelen \\(H+\\lambda I\\) med en fast terskel \\(0.25\\)? Begrunn matematisk."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week10-step-invariance","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week10-step-invariance","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for s in (1.,10.):\n    print('\\nSamme fysiske start x=(0,0), skala s =',s)\n    p10_report(s,[0.,0.])","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3. Skala: samme punkter, en annen beskrivelse\nBytt variabler til \\(z=(s u,v)^T\\), med \\(s>0\\). Sett \\(D=\\operatorname{diag}(s,1)\\), slik at \\(z=Dx\\) og \\(x=D^{-1}z\\). Målet i de nye koordinatene er \\(Q_s(z)=q(D^{-1}z)\\).\nUtled på papir: Bruk kjerneregelen til å finne \\(\\nabla_zQ_s\\) og \\(H_zQ_s\\) uttrykt ved \\(\\nabla_xq\\), \\(H_xq\\) og \\(D\\). Bruk så \\(s=10\\) og \\(x=(0,0)\\) til å beregne begge nye størrelsene numerisk for hånd. Hva er løsningen \\(x_*=(1,1)\\) i \\(z\\)-koordinater? Samme fysiske punkt har samme verdi av målet i begge koordinater, men normen til gradienten avhenger av koordinatenes enheter.\nSe først på et rent Newton-steg når Hessianen er invertibel. Sett \\(p_x=-H_x^{-1}g_x\\) i symbolsk betydning og løs tilsvarende system i \\(z\\) med np.linalg.solve i beregningen. Vis algebraisk at \\(p_z=Dp_x\\). Den uregulariserte retningen og et helt steg beskriver altså samme punkt, hvis vi transformerer begge riktig. Gjelder dette også retningen \\(-g\\), eller regelen \\(H+\\lambda I\\) med en fast terskel \\(0.25\\)? Begrunn matematisk.\nKjør deretter de faktiske, sikrede metodene på samme startpunkt \\(x_0=(0,0)\\), med \\(s=1\\) og \\(s=10\\). Forutsi før kjøring: Hvis terskelen \\(0.25\\) måles i \\(z\\), hvordan kan denne terskelen endre Newton-metoden når vi endrer \\(s\\)? Sammenlign regulariserte, steg og sluttgradient i \\(x\\), ikke bare fullførte."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week10-scaling","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week10-scaling","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for s in (1.,10.):\n    d = np.array([s,1.]); x0 = np.array([0.,0.]); z0 = d*x0\n    f,g,h = p10_scaled(s)\n    print('\\nSkala:',s)\n    for method in ('BFGS','Newton-CG'):\n        kw = {'hess':h} if method == 'Newton-CG' else {}\n        result = minimize(f,z0,jac=g,method=method,\n                          options={'maxiter':100},**kw)\n        x = result.x/d\n        print(method,'status=',result.success,'iter=',result.nit,\n              'f/g/H-kall=',result.nfev,result.njev,getattr(result,'nhev',0))\n        print(' x=',np.round(x,7),'q=',f'{p10_q(x):.3e}',\n              '||grad_x||=',f'{np.linalg.norm(p10_g(x)):.3e}',\n              'vårt stoppkrav=',np.linalg.norm(p10_g(x))<1e-6)","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"4. Hva sier en solverstatus?\nVi sammenligner med scipy.optimize.minimize: BFGS trenger mål og gradient; Newton-CG får dessuten Hessianen. Begge kjøres fra det samme fysiske \\(x_0=(0,0)\\), men deres interne stoppregler er ikke prosjektets \\(\\|\\nabla_xq\\|<10^{-6}\\). Newton-CG er dessuten ikke vår eksplisitt regulariserte metode.\nForutsi: Vil antall rapporterte solveriterasjoner alene gi samme rangering som f-prøver? Hvilken kontroll må oversettes tilbake til \\(x\\) når \\(s=10\\)?"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week10-scipy","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week10-scipy","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"# Ferdige data og hjelpere til prosjekt 10. Hjelperne bruker sine egne\n# formler, ikke din kode, slik at de kan brukes som uavhengig kontroll.\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# Hallen er 10 m x 8 m. Rad i er koordinatene (meter) til anker i.\nhall = np.array([[0., 0.], [10., 0.], [10., 8.], [0., 8.]])\nz_true = np.array([3., 5.])                       # fasit, bare for kontroll\nd_exact = np.linalg.norm(z_true - hall, axis=1)   # avstander uten målefeil\nd_noisy = d_exact + np.array([.3, -.4, .5, -.2])  # målefeil på noen desimeter\nd_bad = d_exact + np.array([0., 0., 3., 0.])      # anker 3 måler 3 m for langt\n\n# Fire ankre langs én vegg, nesten på en rett linje (del 4).\nwall = np.array([[0., 0.], [4., .1], [7., -.1], [10., 0.]])\nz_true_wall = np.array([6., 3.])\nd_wall = np.linalg.norm(z_true_wall - wall, axis=1)\n\n\ndef _res(z, B, d):\n    return np.linalg.norm(z - B, axis=1) - d\n\n\ndef _jac(z, B):\n    D = z - B\n    return D/np.linalg.norm(D, axis=1)[:, None]\n\n\ndef dropped_part(z, B, d):\n    \"\"\"Den delen av Hessianen som Gauss-Newton dropper (2 x 2-matrise).\"\"\"\n    D = z - B\n    n = np.linalg.norm(D, axis=1)\n    r, U = n - d, D/n[:, None]\n    return sum(r[i]*(np.eye(2) - np.outer(U[i], U[i]))/n[i] for i in range(len(d)))\n\n\ndef newton_position(z0, B, d, steps=8):\n    \"\"\"Rene Newton-steg for F(z) = 1/2 ||r(z)||^2. Returnerer alle punkter.\"\"\"\n    z = np.array(z0, float)\n    points = [z.copy()]\n    for _ in range(steps):\n        J, r = _jac(z, B), _res(z, B, d)\n        H = J.T @ J + dropped_part(z, B, d)\n        z = z + np.linalg.solve(H, -J.T @ r)\n        points.append(z.copy())\n    return np.array(points)\n\n\ndef lm_adaptive(z0, B, d, mu=1., steps=60):\n    \"\"\"Levenberg-Marquardt med tilpasset mu.\n\n    Løs (J^T J + mu I) p = -J^T r. Hvis F synker, godta steget og del mu\n    på 10; ellers forkast steget og gang mu med 10.\n    \"\"\"\n    F = lambda z: .5*np.sum(_res(z, B, d)**2)\n    z = np.array(z0, float)\n    points = [z.copy()]\n    for _ in range(steps):\n        J, r = _jac(z, B), _res(z, B, d)\n        p = np.linalg.solve(J.T @ J + mu*np.eye(2), -J.T @ r)\n        if np.linalg.norm(p) < 1e-12:\n            break\n        if F(z + p) < F(z):\n            z, mu = z + p, mu/10\n            points.append(z.copy())\n        else:\n            mu *= 10\n    return np.array(points)\n\n\ndef show_hall(B, d=None, paths=(), labels=(), true=None, box=(-2, 12, -6, 10)):\n    \"\"\"Tegn ankrene, eventuelt nivåkurver for ||r(z)||, baner og fasit.\"\"\"\n    fig, ax = plt.subplots(figsize=(6, 5))\n    if d is not None:\n        X, Y = np.meshgrid(np.linspace(box[0], box[1], 200),\n                           np.linspace(box[2], box[3], 200))\n        P = np.stack([X.ravel(), Y.ravel()], axis=1)\n        R = np.sqrt(sum((np.hypot(P[:, 0]-b[0], P[:, 1]-b[1]) - di)**2\n                        for b, di in zip(B, d))).reshape(X.shape)\n        cs = ax.contour(X, Y, R, levels=[.25, .5, 1, 2, 3, 4, 6],\n                        colors='#adb5bd', linewidths=.8)\n        ax.clabel(cs, fontsize=7)\n    ax.plot(B[:, 0], B[:, 1], 'ks', markersize=7, label='ankre')\n    for path, label in zip(paths, labels):\n        path = np.asarray(path)\n        ax.plot(path[:, 0], path[:, 1], 'o-', markersize=3, label=label)\n    if true is not None:\n        ax.plot(*true, 'k*', markersize=12, label='fasit')\n    ax.set(xlim=box[:2], ylim=box[2:], xlabel='x (m)', ylabel='y (m)')\n    ax.set_aspect('equal'); ax.legend(fontsize=8); plt.show()\n\n\ndef show_ellipse(estimates, center, J, sigma):\n    \"\"\"Monte Carlo-punkter og ellipsen med halvakser 2 sigma/sigma_i langs v_i.\"\"\"\n    U, s, Vt = np.linalg.svd(J)\n    t = np.linspace(0, 2*np.pi, 200)\n    ellipse = center[:, None] + Vt.T @ np.vstack([2*sigma/s[0]*np.cos(t),\n                                                  2*sigma/s[1]*np.sin(t)])\n    fig, ax = plt.subplots(figsize=(5, 5))\n    ax.plot(estimates[:, 0], estimates[:, 1], '.', alpha=.4, label='Monte Carlo')\n    ax.plot(ellipse[0], ellipse[1], 'r-', label='2 standardavvik fra SVD')\n    for i in range(2):\n        ax.annotate('', center + 2*sigma/s[i]*Vt[i], center,\n                    arrowprops={'arrowstyle': '->', 'color': 'k'})\n    ax.plot(*center, 'k*', markersize=10)\n    ax.set(xlabel='x (m)', ylabel='y (m)'); ax.set_aspect('equal')\n    ax.legend(fontsize=8); plt.show()","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week10-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week10-setup","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def residual(z, B, d):\n    # TODO: avstanden fra z til hvert anker minus målt avstand (én verdi per anker).\n    raise NotImplementedError('Fullfør residual')\n\ndef jacobian(z, B):\n    # TODO: rad i er enhetsvektoren fra anker i til z.\n    # Tips: D = z - B har én rad per anker. Start med J = np.zeros_like(D),\n    # og del hver rad D[i] på lengden sin i en løkke over i.\n    raise NotImplementedError('Fullfør jacobian')\n\nprint('Rad for anker (0,0) og z=(3,4):', jacobian(np.array([3., 4.]), np.array([[0., 0.]])),\n      ' forventet [[0.6 0.8]]')\nprint('Residual i fasiten med eksakte data:', residual(z_true, hall, d_exact), ' forventet nuller')","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Kodespor 1: residual, Jacobimatrise og Gauss–Newton\nB er en matrise med ett anker per rad, og d er vektoren med målte avstander. Bruk np.linalg.norm(..., axis=1) for å få én avstand per rad."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project10-residual","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project10-residual","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def gn_step(z, B, d):\n    # TODO: løs min ||J p + r|| med np.linalg.lstsq og returner p.\n    raise NotImplementedError('Fullfør gn_step')\n\ndef gauss_newton(z0, B, d, steps=10):\n    z = np.array(z0, float)\n    points = [z.copy()]\n    for k in range(steps):\n        # TODO: ta ett Gauss-Newton-steg og legg det nye punktet i listen.\n        raise NotImplementedError('Fullfør løkken')\n    return np.array(points)\n\npath = gauss_newton([5., 4.], hall, d_exact, steps=6)\nfor k, z in enumerate(path):\n    print(f'k = {k}: z = {z.round(6)},  avstand til fasit = {np.linalg.norm(z - z_true):.1e}')\nshow_hall(hall, d_exact, [path], ['Gauss-Newton'], true=z_true)","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Kodespor 1: residual, Jacobimatrise og Gauss–Newton\nB er en matrise med ett anker per rad, og d er vektoren med målte avstander. Bruk np.linalg.norm(..., axis=1) for å få én avstand per rad.\nFullfør så steget og løkken. Funksjonen skal returnere alle punktene, slik at vi kan måle feilen i hvert steg."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project10-gauss-newton","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project10-gauss-newton","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for name, d in [('eksakte', d_exact), ('støy', d_noisy), ('feil måling', d_bad)]:\n    path = gauss_newton([5., 4.], hall, d, steps=12)\n    z_end = path[-1]\n    print(f'{name}: z = {z_end.round(3)}, ||r|| = {np.linalg.norm(residual(z_end, hall, d)):.3f}')\n    # TODO: e = avstandene fra hvert punkt i path til z_end; ratios = e[k+1]/e[k] for k = 0, ..., 6.\n    e = None\n    ratios = None\n    print('   Gauss-Newton, e_k:', np.array2string(e[:7], precision=1))\n    print('   forhold e_k+1/e_k:', np.round(ratios, 3))\n    newton = newton_position([5., 4.], hall, d)\n    print('   Newton, e_k:      ', np.array2string(np.linalg.norm(newton - newton[-1], axis=1)[:6], precision=1))","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"2. Like rask som Newton?\nVi har tre datasett fra samme posisjon \\((3,5)\\):\nDatasettHva er galt med målingene?d_exactingentingd_noisymålefeil på \\(0.3,\\ -0.4,\\ 0.5,\\ -0.2\\) md_badanker 3 måler 3 m for langt, de andre er eksakte\nSkriv en forventning før du kjører: I hvilke tilfeller tror du Gauss–Newton konvergerer kvadratisk, som Newton? Begrunn med hvilket ledd som droppes og hvor stort det er nær løsningen.\nFyll inn de to linjene som regner ut forholdene \\(e_{k+1}/e_k\\), der \\(e_k=\\|z_k-z_\\infty\\|\\) og \\(z_\\infty\\) er siste punkt."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project10-rates","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project10-rates","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for name, d in [('støy', d_noisy), ('feil måling', d_bad)]:\n    z_end = gauss_newton([5., 4.], hall, d, steps=30)[-1]\n    J = jacobian(z_end, hall)\n    M = -np.linalg.solve(J.T @ J, dropped_part(z_end, hall, d))\n    print(f'{name}: forutsagt faktor = {max(abs(np.linalg.eigvals(M))):.3f}')","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Forutsi faktoren\nKall delen som Gauss–Newton dropper, for \\(Q\\). Hjelperen dropped_part(z, B, d) regner den ut. La \\(e_k=z_k-z_\\infty\\) være feilen.\nI \\(z_\\infty\\) er gradienten null, og Hessianen der er \\(J^TJ+Q\\). Nær løsningen gir Taylor (som i uke 8) derfor \\(J^Tr\\approx(J^TJ+Q)\\,e_k\\). Gauss–Newton tar steget \\(p=-(J^TJ)^{-1}J^Tr\\). Fullfør regningen (første linje er gitt): \\[e_{k+1}=e_k+p\\approx e_k-(J^TJ)^{-1}(J^TJ+Q)\\,e_k=\\ \\ldots\\]\nDu skal komme fram til \\(e_{k+1}\\approx M e_k\\) med \\(M=-(J^TJ)^{-1}Q\\). Dette er en fikspunktiterasjon som i uke 2, og faktoren er spektralradiusen til \\(M\\), som i uke 6. Hva blir \\(M\\) når alle residualene er null?\nCellen regner ut spektralradiusen i det siste punktet:"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project10-predict","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project10-predict","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"sigma = .05\nJ = jacobian(z_true, hall)\nU, s, Vt = np.linalg.svd(J)\nprint('singulærverdier:', s.round(3), ' forutsagt standardavvik:', (sigma/s).round(3))\n\ndef monte_carlo(z_center, B, sigma, n=300, seed=1):\n    rng = np.random.default_rng(seed)\n    d0 = np.linalg.norm(z_center - B, axis=1)\n    estimates = []\n    for k in range(n):\n        # TODO: lag målinger d0 + sigma*rng.standard_normal(len(B)),\n        # kjør gauss_newton fra z_center med steps=6 og lagre siste punkt.\n        raise NotImplementedError('Fullfør Monte Carlo-løkken')\n    return np.array(estimates)\n\nestimates = monte_carlo(z_true, hall, sigma)\nmeasured = np.std((estimates - z_true) @ Vt.T, axis=0)\nprint('målt standardavvik langs v1, v2:', measured.round(3))\nshow_ellipse(estimates, z_true, J, sigma)","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3. Hvor presist vet vi hvor vi er?\nAnta at hver måling har en tilfeldig feil med standardavvik \\(\\sigma\\), uavhengig av de andre. Da spres posisjonsanslaget rundt den riktige posisjonen.\nRegelen (gitt): Spredningen danner en ellipse. Halvaksene peker langs de høyre singulærvektorene \\(v_1,v_2\\) til \\(J\\), og standardavviket langs \\(v_i\\) er \\(\\sigma/\\sigma_i\\). En liten singulærverdi gir altså stor usikkerhet i sin retning.\nRegn ut SVD av \\(J\\) i \\((3,5)\\) og forutsi de to standardavvikene for \\(\\sigma=0.05\\) m.\nSkriv en Monte Carlo-løkke: gjenta forsøket mange ganger med nye tilfeldige målefeil, og se hvor anslagene havner."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project10-monte-carlo","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project10-monte-carlo","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"print('    R   sigma(J)        forutsagt std    Monte Carlo std')\nfor R in [0, 20, 50, 100]:\n    z_far = np.array([5. + R, 4.])\n    J = jacobian(z_far, hall)\n    U, s, Vt = np.linalg.svd(J)\n    est = monte_carlo(z_far, hall, sigma)\n    measured = np.std((est - z_far) @ Vt.T, axis=0)\n    print(f'{R:5d}   {s.round(3)}   {(sigma/s).round(3)}   {measured.round(3)}')","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Gå ut av hallen\nFlytt taggen bort fra hallen langs linjen \\(y=4\\), til punktene \\((5+R,\\,4)\\).\nForutsi først: Hvilken av de to usikkerhetene vokser, og hvilken holder seg? Tenk på hvordan ankrene ser ut sett fra langt unna."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project10-far-away","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project10-far-away","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for start in ([5., 4.], [5., -4.]):\n    path = gauss_newton(start, wall, d_wall, steps=15)\n    z_end = path[-1]\n    r = residual(z_end, wall, d_wall)\n    J = jacobian(z_end, wall)\n    print(f'start {start}: slutt {z_end.round(4)}, ||r|| = {np.linalg.norm(r):.3f}, '\n          f'||J^T r|| = {np.linalg.norm(J.T @ r):.1e}')\nshow_hall(wall, d_wall, [gauss_newton(s, wall, d_wall, 15) for s in ([5., 4.], [5., -4.])],\n          ['start (5, 4)', 'start (5, -4)'], true=z_true_wall)","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"4. Konvergert, men feil?\nNå står ankrene langs én vegg, nesten på en rett linje:\n\\[b_1=(0,0),\\quad b_2=(4,\\,0.1),\\quad b_3=(7,\\,-0.1),\\quad b_4=(10,0).\\]\nTaggen står i \\((6,3)\\), og målingene er eksakte (wall, d_wall)."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project10-wall","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project10-wall","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def lm_step(z, B, d, mu):\n    J, r = jacobian(z, B), residual(z, B, d)\n    # TODO: løs (J^T J + mu I) p = -J^T r og returner p.\n    raise NotImplementedError('Fullfør lm_step')\n\nz0 = np.array([5., 0.])\nprint('singulærverdier av J i (5,0):', np.linalg.svd(jacobian(z0, wall), compute_uv=False).round(3))\nprint(f'Gauss-Newton: første steg er {np.linalg.norm(gn_step(z0, wall, d_wall)):.1f} m langt')\nfor mu in [.1, 1., 10.]:\n    p = lm_step(z0, wall, d_wall, mu)\n    print(f'LM, mu = {mu:4}: første steg er {np.linalg.norm(p):.2f} m langt, til {(z0 + p).round(3)}')\nlm_path = lm_adaptive(z0, wall, d_wall)\nprint('LM med tilpasset mu ender i', lm_path[-1].round(4))","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Start på veggen: Levenberg–Marquardt\nStart nå i \\((5,0)\\), på linjen gjennom ankrene. Da peker alle radene i \\(J\\) nesten langs veggen.\nFullfør Levenberg–Marquardt-steget \\((J^TJ+\\mu I)p=-J^Tr\\) med én linje, og sammenlign med Gauss–Newton:"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project10-lm","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project10-lm","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4034,7 +4069,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week10.html">Prosjekt 10 – Newton, startpunkt og skala</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week10.html">Prosjekt 10 – Hvor er jeg? Posisjon fra avstander</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -4159,7 +4194,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/uke10.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Uke 10 – Newtons metode</span></a>
+ <span class="menu-text">Uke 10 – Newtons metode og Gauss–Newton</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4230,13 +4265,13 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week10.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Prosjekt 10 – Newton, startpunkt og skala</span></a>
+ <span class="menu-text">Prosjekt 10 – Hvor er jeg? Posisjon fra avstander</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Prosjekt 11 – Produksjonsplan og ressurspriser</span></a>
+ <span class="menu-text">Prosjekt 11 – Hvorfor koster strømmen det den koster?</span></a>
   </div>
 </li>
       </ul>
@@ -4280,9 +4315,9 @@ window.Quarto = {
   });
 </script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week10.html">Prosjekt 10 – Newton, startpunkt og skala</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week10.html">Prosjekt 10 – Hvor er jeg? Posisjon fra avstander</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Prosjekt 10 – Newton, startpunkt og skala</h1>
+<h1 class="title">Prosjekt 10 – Hvor er jeg? Posisjon fra avstander</h1>
 </div>
 
 
@@ -4301,10 +4336,15 @@ window.Quarto = {
 
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<section id="når-er-newton-rask-og-når-blir-et-steg-dyrt" class="level2">
-<h2 class="anchored" data-anchor-id="når-er-newton-rask-og-når-blir-et-steg-dyrt">Når er Newton rask, og når blir et steg dyrt?</h2>
-<p>I <a href="../pages/uke10.html">uke 10</a> så vi at Newton bruker Hessianen i et lokalt kvadratisk bilde. Et helt steg kan likevel være for langt, og regularisering av Hessianen kan forandre retningen. Her undersøker vi tre spørsmål med <strong>samme funksjon</strong>: Hva betyr startpunktet? Hva gjør en endring av koordinatenes skala? Og hvor mye kan vi slutte fra en solverstatus?</p>
-<p>Dette er et prosjekt for omtrent 3–4 timers arbeid. Tyngden ligger i utregning, forutsigelser og vurdering av data; ferdige funksjoner utfører de repetitive iterasjonene. Skriv svarene i egne notater og ta med tabeller/figurer fra siden. Alle kodecellene under kjøres direkte med pyodide-interaktiv. Start øverst og kjør i rekkefølge; oppsettet er allerede lastet på denne prosjektsiden. Du kan også valgfritt hente <a href="../assets/project_week10.py" download="project_week10.py">én selvstendig .py-fil</a> for arbeid i en editor. Hele prosjektet kan gjøres her på siden.</p>
+<section id="hvor-er-jeg" class="level2">
+<h2 class="anchored" data-anchor-id="hvor-er-jeg">Hvor er jeg?</h2>
+<p>En mobil i en hall, en drone i et lager eller en GPS-mottaker vet ikke hvor den er. Den kan bare måle <strong>avstander</strong> til noen faste punkter med kjent plassering, kalt <strong>ankre</strong>. Fra fire unøyaktige avstander skal vi finne to koordinater. Det er et ikke-lineært minste kvadraters problem, og i uke 10 så vi metoden som passer: <strong>Gauss–Newton</strong>.</p>
+<p>Gauss–Newton er Newtons metode med ett ledd kastet bort. Prosjektet handler om tre spørsmål:</p>
+<ul>
+<li>Når koster det ingenting å kaste bort leddet, og når koster det mye?</li>
+<li>Hva forteller singulærverdiene til Jacobimatrisen om hvor presist vi vet hvor vi er?</li>
+<li>Kan metoden konvergere pent og likevel gi feil svar?</li>
+</ul>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -4314,78 +4354,249 @@ window.Quarto = {
 <thead>
 <tr class="header">
 <th style="text-align: left;">Del</th>
-<th style="text-align: left;">Undersøkelse</th>
-<th style="text-align: left;">Leveranse</th>
+<th style="text-align: left;">Spørsmålet vi arbeider med</th>
+<th style="text-align: left;">Det du tar med videre</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">Deriver og undersøk modellen</td>
-<td style="text-align: left;">Gradient, Hessian og ett håndregnet steg.</td>
+<td style="text-align: left;">1. Modell og første steg</td>
+<td style="text-align: left;">Hvordan blir et Gauss–Newton-steg et minste kvadraters problem?</td>
+<td style="text-align: left;"><span class="math inline">\(J\)</span> for hånd og din egen Gauss–Newton-kode.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">Bytt startpunkt, behold skala</td>
-<td style="text-align: left;">Forutsigelse, tabell og forklaring av to baner.</td>
+<td style="text-align: left;">2. Like rask som Newton?</td>
+<td style="text-align: left;">Hva koster det droppede leddet?</td>
+<td style="text-align: left;">Målt og forutsagt konvergensfaktor.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">Bytt koordinatskala, behold mål</td>
-<td style="text-align: left;">Kjederegel, test av invarians og sammenligning.</td>
+<td style="text-align: left;">3. Hvor presist?</td>
+<td style="text-align: left;">Hva sier SVD om usikkerheten?</td>
+<td style="text-align: left;">Ellipse mot Monte Carlo; hva skjer langt unna.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">Kontroller solverkriterier</td>
-<td style="text-align: left;">Sammenligning med SciPy og en avgrenset konklusjon.</td>
+<td style="text-align: left;">4. Konvergert, men feil?</td>
+<td style="text-align: left;">Kan residualen avsløre et falskt minimum?</td>
+<td style="text-align: left;">En diagnose og Levenberg–Marquardt.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5. Din påstand</td>
+<td style="text-align: left;">Hvor langt holder forklaringen?</td>
+<td style="text-align: left;">Én forutsigelse og én kontroll.</td>
 </tr>
 </tbody>
 </table>
-<section id="modellen-og-den-første-forutsigelsen" class="level3">
-<h3 class="anchored" data-anchor-id="modellen-og-den-første-forutsigelsen">1. Modellen og den første forutsigelsen</h3>
-<p>Vi søker minimum av</p>
-<p><span class="math display">\[q(u,v)=(1-u)^2+10(v-u^2)^2.\]</span></p>
-<p>Fordi begge kvadrater er ikke-negative og begge blir null når <span class="math inline">\((u,v)=(1,1)\)</span>, kjenner vi et globalt minimum med verdi null. Derivasjon og iterasjon er likevel interessante: fra et gitt startpunkt kan veien dit være vanskelig. Ingen andre lokale minima trenger antas for oppgavene nedenfor.</p>
-<p><strong>Regn før du kjører:</strong> Finn <span class="math inline">\(\nabla q\)</span> og <span class="math inline">\(H_q\)</span> symbolsk. Finn gradienten og Hessianen i <span class="math inline">\((0,0)\)</span>. Løs <span class="math inline">\(H_q(0,0)p=-\nabla q(0,0)\)</span> uten å danne inversen. Beregn deretter både modellens prediksjon <span class="math inline">\(m(p)=q(0,0)+g^Tp+\tfrac12p^THp\)</span> og den faktiske verdien <span class="math inline">\(q(p)\)</span>. Forklar hvor de to verdiene skiller lag.</p>
+<p>Sett av 3–4 timer. Gjør papirregningen før du åpner hver kodecelle, og skriv en kort forventning før hvert forsøk. Dataene er simulert, så vi kjenner den riktige posisjonen. Den brukes bare til kontroll.</p>
+<section id="det-vi-trenger-fra-tidligere-uker" class="level3">
+<h3 class="anchored" data-anchor-id="det-vi-trenger-fra-tidligere-uker">Det vi trenger fra tidligere uker</h3>
+<ul>
+<li><strong>Newton og Gauss–Newton</strong> (<a href="../pages/uke10.html#uke10-gauss-newton">uke 10.5</a>): for <span class="math inline">\(F(z)=\tfrac12\|r(z)\|^2\)</span> er gradienten <span class="math inline">\(J^Tr\)</span>. Gauss–Newton løser <span class="math inline">\(\min_p\|Jp+r\|\)</span> i hvert steg.</li>
+<li><strong>Minste kvadrater</strong> (<a href="../pages/uke4.html#uke4-mk">uke 4</a>): <code>np.linalg.lstsq(J, -r, rcond=None)[0]</code> løser <span class="math inline">\(\min_p\|Jp+r\|\)</span> med en ortogonal metode, uten å danne <span class="math inline">\(J^TJ\)</span>.</li>
+<li><strong>Konvergensfaktor</strong> (<a href="../pages/page4.html">uke 2</a>): en iterasjon er lineær med faktor <span class="math inline">\(c\)</span> når <span class="math inline">\(e_{k+1}\approx c\,e_k\)</span>, og kvadratisk når <span class="math inline">\(e_{k+1}\approx Ce_k^2\)</span>.</li>
+<li><strong>Spektralradius</strong> (<a href="../pages/uke6.html#uke6-fikspunkt">uke 6</a>): når feilen ganges med en matrise <span class="math inline">\(M\)</span> i hvert steg, er faktoren den største <span class="math inline">\(|\lambda|\)</span> for <span class="math inline">\(M\)</span>.</li>
+<li><strong>SVD</strong> (<a href="../pages/uke7.html#uke7-svd">uke 7</a>): <span class="math inline">\(J=U\Sigma V^T\)</span>; <span class="math inline">\(\sigma_1\ge\sigma_2\)</span> er største og minste strekk, langs <span class="math inline">\(v_1\)</span> og <span class="math inline">\(v_2\)</span>.</li>
+<li><strong>Forskyvningen <span class="math inline">\(\mu I\)</span></strong> (<a href="../pages/uke10.html#uke10-gauss-newton">uke 10.5</a>): <span class="math inline">\((J^TJ+\mu I)p=-J^Tr\)</span> er Levenberg–Marquardt.</li>
+</ul>
+</section>
+<section id="kjøring-på-siden-eller-i-egen-notebook" class="level3">
+<h3 class="anchored" data-anchor-id="kjøring-på-siden-eller-i-egen-notebook">Kjøring på siden eller i egen notebook</h3>
+<p>Oppsettet på siden lastes automatisk. Det inneholder dataene, en ferdig Newton-metode, en ferdig Levenberg–Marquardt med tilpasset <span class="math inline">\(\mu\)</span> og to tegnehjelpere. Hjelperne bruker egne formler, ikke din kode, slik at de kan kontrollere den.</p>
+<details>
+<summary>
+Egen notebook: last ned oppsettet og kom i gang
+</summary>
+<p>Last ned <a href="../assets/project_week10_setup.py" download="project_week10_setup.py">project_week10_setup.py</a> og legg filen ved siden av notebooken. Kjør først</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-ai-feedback-context="Kjøring på siden eller i egen notebook
+Oppsettet på siden lastes automatisk. Det inneholder dataene, en ferdig Newton-metode, en ferdig Levenberg–Marquardt med tilpasset \(\mu\) og to tegnehjelpere. Hjelperne bruker egne formler, ikke din kode, slik at de kan kontrollere den.
+Egen notebook: last ned oppsettet og kom i gang
+Last ned project_week10_setup.py og legg filen ved siden av notebooken. Kjør først"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> project_week10_setup <span class="im">import</span> <span class="op">*</span></span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Du trenger NumPy og Matplotlib. Kopier deretter cellene fra prosjektet i rekkefølge. Hele notebooken skal kunne kjøres med <strong>Restart / Run all</strong>. Ta med oppsettsfilen ved levering.</p>
+</details>
+</section>
+</section>
+<section id="modell-jacobimatrise-og-første-steg" class="level2">
+<h2 class="anchored" data-anchor-id="modell-jacobimatrise-og-første-steg">1. Modell, Jacobimatrise og første steg</h2>
+<p>Hallen er 10 m × 8 m, med ett anker i hvert hjørne:</p>
+<p><span class="math display">\[b_1=(0,0),\quad b_2=(10,0),\quad b_3=(10,8),\quad b_4=(0,8).\]</span></p>
+<p>Den ukjente posisjonen er <span class="math inline">\(z=(x,y)\)</span>. Anker <span class="math inline">\(i\)</span> måler avstanden <span class="math inline">\(d_i\)</span>. Hvis målingen var perfekt, ville <span class="math inline">\(\|z-b_i\|=d_i\)</span>. Vi samler avvikene i <strong>residualvektoren</strong></p>
+<p><span class="math display">\[r_i(z)=\|z-b_i\|-d_i=\sqrt{(x-b_{i1})^2+(y-b_{i2})^2}-d_i,
+\qquad i=1,\ldots,4,\]</span></p>
+<p>og minimerer <span class="math inline">\(F(z)=\tfrac12\sum_i r_i(z)^2\)</span>. Det er fire likninger og to ukjente, så med målefeil kan vi ikke få alle residualene lik null.</p>
+<section id="a.-en-rad-i-j-papir" class="level3">
+<h3 class="anchored" data-anchor-id="a.-en-rad-i-j-papir">1a. En rad i <span class="math inline">\(J\)</span> (papir)</h3>
+<p>Rad <span class="math inline">\(i\)</span> i Jacobimatrisen <span class="math inline">\(J\)</span> er gradienten til <span class="math inline">\(r_i\)</span>.</p>
+<ol type="1">
+<li>Fullfør regningen. Første linje er gitt: <span class="math display">\[\frac{\partial r_i}{\partial x}
+=\frac{1}{2\sqrt{(x-b_{i1})^2+(y-b_{i2})^2}}\cdot2(x-b_{i1})=\ \ldots\]</span> Gjør det samme for <span class="math inline">\(\partial r_i/\partial y\)</span>, og skriv raden med <span class="math inline">\(z-b_i\)</span> og <span class="math inline">\(\|z-b_i\|\)</span>.</li>
+<li>Lite talleksempel: anker <span class="math inline">\((0,0)\)</span> og <span class="math inline">\(z=(3,4)\)</span>. Finn raden. Tegn ankeret, punktet og raden som en pil. Hvilken vei peker pilen, og hvor lang er den?</li>
+<li>Forklar med ord: hvis vi flytter <span class="math inline">\(z\)</span> et lite stykke <span class="math inline">\(p\)</span>, hvor mye endres avstanden til ankeret? Hvorfor endres den ikke når <span class="math inline">\(p\)</span> står vinkelrett på pilen?</li>
+</ol>
+<details>
+<summary>
+Regnehjelp: raden i talleksempelet
+</summary>
+<p><span class="math inline">\(\|z-b_1\|=\sqrt{3^2+4^2}=5\)</span>, så raden er <span class="math inline">\((3,4)/5=(0.6,\,0.8)\)</span>. Den peker fra ankeret mot <span class="math inline">\(z\)</span> og har lengde 1. Generelt er rad <span class="math inline">\(i\)</span> <strong>enhetsvektoren fra anker <span class="math inline">\(i\)</span> til <span class="math inline">\(z\)</span></strong>. En liten flytting <span class="math inline">\(p\)</span> endrer avstanden med omtrent (rad)<span class="math inline">\(\cdot p\)</span>: bare komponenten mot eller fra ankeret teller.</p>
+</details>
+</section>
+<section id="b.-gaussnewton-steget-papir" class="level3">
+<h3 class="anchored" data-anchor-id="b.-gaussnewton-steget-papir">1b. Gauss–Newton-steget (papir)</h3>
+<p>Hessianen til <span class="math inline">\(F\)</span> består av to deler: <span class="math inline">\(J^TJ\)</span> og en del der hvert ledd er ganget med en residual <span class="math inline">\(r_i\)</span>. <strong>Gauss–Newton dropper delen som er ganget med residualene.</strong> Steget <span class="math inline">\(p\)</span> løser da</p>
+<p><span class="math display">\[J^TJ\,p=-J^Tr.\]</span></p>
+<p>Vis at dette er normallikningene for <span class="math inline">\(\min_p\|Jp+r\|\)</span>. Første linje er gitt: <span class="math display">\[\|Jp+r\|^2=p^TJ^TJp+2p^TJ^Tr+r^Tr.\]</span> Sett gradienten med hensyn på <span class="math inline">\(p\)</span> lik null.</p>
+<p><strong>Ta med videre:</strong> En rad i <span class="math inline">\(J\)</span> er en enhetsvektor fra et anker, og et Gauss–Newton-steg er ett lineært minste kvadraters problem. Vi løser det med <code>lstsq</code>, en ortogonal metode som QR i uke 4, og ikke via normallikningene: <span class="math inline">\(J^TJ\)</span> har kvadrert kondisjonstall (uke 7 og prosjekt 4, del 6).</p>
+</section>
+<section id="kodespor-1-residual-jacobimatrise-og-gaussnewton" class="level3">
+<h3 class="anchored" data-anchor-id="kodespor-1-residual-jacobimatrise-og-gaussnewton">Kodespor 1: residual, Jacobimatrise og Gauss–Newton</h3>
+<p><code>B</code> er en matrise med ett anker per rad, og <code>d</code> er vektoren med målte avstander. Bruk <code>np.linalg.norm(..., axis=1)</code> for å få én avstand per rad.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>I resten av prosjektet bruker den ferdige Newton-rutinen en nedgangsretning fra <span class="math inline">\(H+\lambda I\)</span>, med minste egenverdi minst <span class="math inline">\(0.25\)</span>, og et Armijo-linjesøk som halverer <span class="math inline">\(\alpha\)</span> fra 1. Gradientmetoden bruker <span class="math inline">\(p=-g\)</span> med samme linjesøk. Dette er en konkret sammenligning, ikke en optimal implementasjon av noen av metodene.</p>
-</section>
-<section id="startpunktet" class="level3">
-<h3 class="anchored" data-anchor-id="startpunktet">2. Startpunktet</h3>
-<p>Bruk startpunktene <span class="math inline">\((-1.2,1)\)</span>, <span class="math inline">\((0,0)\)</span> og <span class="math inline">\((2,2)\)</span> i de opprinnelige <span class="math inline">\((u,v)\)</span>-koordinatene. <strong>Forutsi</strong> hvilken start som krever flest godkjente Newton-steg og hvilken som krever mest linjesøkarbeid. Tror du gradientmetoden når stoppkravet fra noen av startene innen budsjettet, og i så fall fra hvilken først? Skriv argumentet ditt ut fra gradient og Hessian i minst to startpunkter.</p>
-<p>Stoppkravet i koden er <span class="math inline">\(\|\nabla q(x)\|_2&lt;10^{-6}\)</span>; en metode får høyst 80 godkjente steg. <code>f-prøver</code> teller evalueringer av målet i linjesøket, men <strong>ikke</strong> gradient-, Hessian- eller lineærsystemarbeid. En utskrift <code>fullførte=False</code> betyr bare at metoden ikke nådde akkurat dette kravet innen budsjettet.</p>
+<p>Fullfør så steget og løkken. Funksjonen skal returnere alle punktene, slik at vi kan måle feilen i hvert steg.</p>
 <div id="qpyodide-insertion-location-3"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Velg nå <strong>to</strong> av startene som gir mest interessant forskjell og tegn for begge metoder. De to grafene ligger under hverandre: øverst <span class="math inline">\(q(x)\)</span>, nederst gradientnorm målt i de opprinnelige koordinatene. Den horisontale aksen er antall <strong>godkjente steg</strong>.</p>
+<p>Med eksakte data skal du nå <span class="math inline">\((3,5)\)</span> fra midten av hallen. Avstandene til fasiten skal være omtrent <span class="math inline">\(2.2,\ 4.5\cdot10^{-2},\ 5.9\cdot10^{-5},\
+6.5\cdot10^{-11}\)</span> og så null. Nivåkurvene viser <span class="math inline">\(\|r(z)\|\)</span>.</p>
+</section>
+</section>
+<section id="like-rask-som-newton" class="level2">
+<h2 class="anchored" data-anchor-id="like-rask-som-newton">2. Like rask som Newton?</h2>
+<p>Vi har tre datasett fra samme posisjon <span class="math inline">\((3,5)\)</span>:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Datasett</th>
+<th style="text-align: left;">Hva er galt med målingene?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>d_exact</code></td>
+<td style="text-align: left;">ingenting</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d_noisy</code></td>
+<td style="text-align: left;">målefeil på <span class="math inline">\(0.3,\ -0.4,\ 0.5,\ -0.2\)</span> m</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d_bad</code></td>
+<td style="text-align: left;">anker 3 måler 3 m for langt, de andre er eksakte</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Skriv en forventning før du kjører:</strong> I hvilke tilfeller tror du Gauss–Newton konvergerer kvadratisk, som Newton? Begrunn med hvilket ledd som droppes og hvor stort det er nær løsningen.</p>
+<p>Fyll inn de to linjene som regner ut forholdene <span class="math inline">\(e_{k+1}/e_k\)</span>, der <span class="math inline">\(e_k=\|z_k-z_\infty\|\)</span> og <span class="math inline">\(z_\infty\)</span> er siste punkt.</p>
 <div id="qpyodide-insertion-location-4"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Analyser:</strong> Gir et raskt fall i <span class="math inline">\(q\)</span> automatisk en liten gradient? Hvilken metode bruker Hessian-løsninger, og hvorfor kan ikke antall godkjente steg alene kalles beregningstid? Påpek minst én begrensning ved denne kostnadstabellen.</p>
-</section>
-<section id="skala-samme-punkter-en-annen-beskrivelse" class="level3">
-<h3 class="anchored" data-anchor-id="skala-samme-punkter-en-annen-beskrivelse">3. Skala: samme punkter, en annen beskrivelse</h3>
-<p>Bytt variabler til <span class="math inline">\(z=(s u,v)^T\)</span>, med <span class="math inline">\(s&gt;0\)</span>. Sett <span class="math inline">\(D=\operatorname{diag}(s,1)\)</span>, slik at <span class="math inline">\(z=Dx\)</span> og <span class="math inline">\(x=D^{-1}z\)</span>. Målet i de nye koordinatene er <span class="math inline">\(Q_s(z)=q(D^{-1}z)\)</span>.</p>
-<p><strong>Utled på papir:</strong> Bruk kjerneregelen til å finne <span class="math inline">\(\nabla_zQ_s\)</span> og <span class="math inline">\(H_zQ_s\)</span> uttrykt ved <span class="math inline">\(\nabla_xq\)</span>, <span class="math inline">\(H_xq\)</span> og <span class="math inline">\(D\)</span>. Bruk så <span class="math inline">\(s=10\)</span> og <span class="math inline">\(x=(0,0)\)</span> til å beregne begge nye størrelsene numerisk for hånd. Hva er løsningen <span class="math inline">\(x_*=(1,1)\)</span> i <span class="math inline">\(z\)</span>-koordinater? Samme fysiske punkt har samme verdi av målet i begge koordinater, men normen til gradienten avhenger av koordinatenes enheter.</p>
+<p>Du skal se at Newton konvergerer kvadratisk i alle tre tilfellene. Gauss–Newton gjør det bare med eksakte data. Med støy er forholdet omtrent konstant, rundt <span class="math inline">\(0.05\)</span>, og med den feile målingen rundt <span class="math inline">\(0.19\)</span>: <strong>lineær konvergens</strong>. Residualnormen ved løsningen er <span class="math inline">\(0\)</span>, <span class="math inline">\(0.730\)</span> og <span class="math inline">\(2.085\)</span>. Med eksakte data blir <span class="math inline">\(e_k\)</span> null etter fire steg; forholdene blir da <code>nan</code> (0/0), og dem kan du se bort fra. Før det krymper selve forholdet fra steg til steg: det er kjennetegnet på kvadratisk konvergens.</p>
+<section id="forutsi-faktoren" class="level3">
+<h3 class="anchored" data-anchor-id="forutsi-faktoren">Forutsi faktoren</h3>
+<p>Kall delen som Gauss–Newton dropper, for <span class="math inline">\(Q\)</span>. Hjelperen <code>dropped_part(z, B, d)</code> regner den ut. La <span class="math inline">\(e_k=z_k-z_\infty\)</span> være feilen.</p>
+<ol type="1">
+<li>I <span class="math inline">\(z_\infty\)</span> er gradienten null, og Hessianen der er <span class="math inline">\(J^TJ+Q\)</span>. Nær løsningen gir Taylor (som i uke 8) derfor <span class="math inline">\(J^Tr\approx(J^TJ+Q)\,e_k\)</span>. Gauss–Newton tar steget <span class="math inline">\(p=-(J^TJ)^{-1}J^Tr\)</span>. Fullfør regningen (første linje er gitt): <span class="math display">\[e_{k+1}=e_k+p\approx e_k-(J^TJ)^{-1}(J^TJ+Q)\,e_k=\ \ldots\]</span></li>
+<li>Du skal komme fram til <span class="math inline">\(e_{k+1}\approx M e_k\)</span> med <span class="math inline">\(M=-(J^TJ)^{-1}Q\)</span>. Dette er en fikspunktiterasjon som i uke 2, og faktoren er spektralradiusen til <span class="math inline">\(M\)</span>, som i uke 6. Hva blir <span class="math inline">\(M\)</span> når alle residualene er null?</li>
+</ol>
+<p>Cellen regner ut spektralradiusen i det siste punktet:</p>
 <div id="qpyodide-insertion-location-5"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Se først på et rent Newton-steg <strong>når Hessianen er invertibel</strong>. Sett <span class="math inline">\(p_x=-H_x^{-1}g_x\)</span> i symbolsk betydning og løs tilsvarende system i <span class="math inline">\(z\)</span> med <code>np.linalg.solve</code> i beregningen. Vis algebraisk at <span class="math inline">\(p_z=Dp_x\)</span>. Den uregulariserte retningen og et helt steg beskriver altså samme punkt, hvis vi transformerer begge riktig. Gjelder dette også retningen <span class="math inline">\(-g\)</span>, eller regelen <span class="math inline">\(H+\lambda I\)</span> med en fast terskel <span class="math inline">\(0.25\)</span>? Begrunn matematisk.</p>
+<p>Sammenlign med de målte forholdene. Du skal få <span class="math inline">\(0.048\)</span> og <span class="math inline">\(0.192\)</span>.</p>
+<p><strong>Ta med videre:</strong> Gauss–Newton er Newton nøyaktig når residualen er null. Prisen for det droppede leddet vokser med residualen, og vi kan forutsi den som en spektralradius.</p>
+</section>
+</section>
+<section id="hvor-presist-vet-vi-hvor-vi-er" class="level2">
+<h2 class="anchored" data-anchor-id="hvor-presist-vet-vi-hvor-vi-er">3. Hvor presist vet vi hvor vi er?</h2>
+<p>Anta at hver måling har en tilfeldig feil med standardavvik <span class="math inline">\(\sigma\)</span>, uavhengig av de andre. Da spres posisjonsanslaget rundt den riktige posisjonen.</p>
+<p><strong>Regelen (gitt):</strong> Spredningen danner en ellipse. Halvaksene peker langs de høyre singulærvektorene <span class="math inline">\(v_1,v_2\)</span> til <span class="math inline">\(J\)</span>, og standardavviket langs <span class="math inline">\(v_i\)</span> er <span class="math inline">\(\sigma/\sigma_i\)</span>. En liten singulærverdi gir altså stor usikkerhet i sin retning.</p>
+<ol type="1">
+<li>Regn ut SVD av <span class="math inline">\(J\)</span> i <span class="math inline">\((3,5)\)</span> og forutsi de to standardavvikene for <span class="math inline">\(\sigma=0.05\)</span> m.</li>
+<li>Skriv en <strong>Monte Carlo</strong>-løkke: gjenta forsøket mange ganger med nye tilfeldige målefeil, og se hvor anslagene havner.</li>
+</ol>
 <div id="qpyodide-insertion-location-6"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Kjør deretter de faktiske, sikrede metodene på <em>samme startpunkt</em> <span class="math inline">\(x_0=(0,0)\)</span>, med <span class="math inline">\(s=1\)</span> og <span class="math inline">\(s=10\)</span>. <strong>Forutsi før kjøring:</strong> Hvis terskelen <span class="math inline">\(0.25\)</span> måles i <span class="math inline">\(z\)</span>, hvordan kan denne terskelen endre Newton-metoden når vi endrer <span class="math inline">\(s\)</span>? Sammenlign <code>regulariserte</code>, steg og sluttgradient i <span class="math inline">\(x\)</span>, ikke bare <code>fullførte</code>.</p>
+<p><code>(estimates - z_true) @ Vt.T</code> gir koordinatene til hvert avvik langs <span class="math inline">\(v_1\)</span> og <span class="math inline">\(v_2\)</span>. Forventet: omtrent <span class="math inline">\(0.033\)</span> og <span class="math inline">\(0.039\)</span> m fra SVD, og tall innen noen prosent av dette fra Monte Carlo.</p>
+<section id="gå-ut-av-hallen" class="level3">
+<h3 class="anchored" data-anchor-id="gå-ut-av-hallen">Gå ut av hallen</h3>
+<p>Flytt taggen bort fra hallen langs linjen <span class="math inline">\(y=4\)</span>, til punktene <span class="math inline">\((5+R,\,4)\)</span>.</p>
+<p><strong>Forutsi først:</strong> Hvilken av de to usikkerhetene vokser, og hvilken holder seg? Tenk på hvordan ankrene ser ut sett fra langt unna.</p>
 <div id="qpyodide-insertion-location-7"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Din kontrollerte variant:</strong> Endre bare én faktor: velg en tredje skala <span class="math inline">\(s\)</span> mellom 1 og 10 eller et annet startpunkt fra del 2. Formuler på forhånd hva du forventer, kjør med nøyaktig samme stoppkrav og budsjett, og forklar hvorfor observasjonen støtter eller motsier forutsigelsen. En eventuell manglende konvergens innen 80 steg er også et resultat som må beskrives ærlig.</p>
+<p>Usikkerheten langs <span class="math inline">\(v_1\)</span> (her retningen mot hallen, <span class="math inline">\(x\)</span>) synker mot <span class="math inline">\(0.025\)</span> m, mens usikkerheten langs <span class="math inline">\(v_2\)</span> (på tvers, <span class="math inline">\(y\)</span>) vokser omtrent proporsjonalt med avstanden: forutsagt <span class="math inline">\(0.117\)</span>, <span class="math inline">\(0.309\)</span> og <span class="math inline">\(0.623\)</span> m for <span class="math inline">\(R=20,50,100\)</span>. Monte Carlo med 300 gjentakelser treffer innen omtrent 5–10 %.</p>
+<ol type="1">
+<li>Langt unna peker alle radene i <span class="math inline">\(J\)</span> nesten i samme retning <span class="math inline">\(u\)</span>. Bruk det til å forklare at <span class="math inline">\(\sigma_1\to2\)</span>. (Hint: <span class="math inline">\(J\approx\mathbf 1u^T\)</span>, der <span class="math inline">\(\mathbf 1\)</span> er vektoren med fire enere.)</li>
+<li>Forklar med ord hvorfor <span class="math inline">\(\sigma_2\to0\)</span>, og hvorfor det gir stor usikkerhet på tvers.</li>
+</ol>
+<details>
+<summary>
+Regnehjelp: singulærverdiene langt unna
+</summary>
+<p>Med <span class="math inline">\(J\approx\mathbf 1u^T\)</span> og <span class="math inline">\(\|u\|=1\)</span> er <span class="math inline">\(J^TJ\approx u\,\mathbf 1^T\mathbf 1\,u^T=4\,uu^T\)</span>. Denne matrisen har egenverdien <span class="math inline">\(4\)</span> langs <span class="math inline">\(u\)</span> og <span class="math inline">\(0\)</span> på tvers, så <span class="math inline">\(\sigma_1\approx\sqrt4=2\)</span> og <span class="math inline">\(\sigma_2\approx0\)</span>. Avstandsmålingene sier altså nesten bare noe om avstanden langs <span class="math inline">\(u\)</span>, ikke om posisjonen på tvers.</p>
+</details>
+<p><strong>Ta med videre:</strong> Singulærverdiene til <span class="math inline">\(J\)</span> måler hvor godt målingene skiller ulike retninger. Ankre som ses i nesten samme retning, gir en nesten rangmangelfull <span class="math inline">\(J\)</span>.</p>
 </section>
-<section id="hva-sier-en-solverstatus" class="level3">
-<h3 class="anchored" data-anchor-id="hva-sier-en-solverstatus">4. Hva sier en solverstatus?</h3>
-<p>Vi sammenligner med <code>scipy.optimize.minimize</code>: <code>BFGS</code> trenger mål og gradient; <code>Newton-CG</code> får dessuten Hessianen. Begge kjøres fra det samme <strong>fysiske</strong> <span class="math inline">\(x_0=(0,0)\)</span>, men deres interne stoppregler er ikke prosjektets <span class="math inline">\(\|\nabla_xq\|&lt;10^{-6}\)</span>. <code>Newton-CG</code> er dessuten ikke vår eksplisitt regulariserte metode.</p>
-<p><strong>Forutsi:</strong> Vil antall rapporterte solveriterasjoner alene gi samme rangering som <code>f-prøver</code>? Hvilken kontroll må oversettes tilbake til <span class="math inline">\(x\)</span> når <span class="math inline">\(s=10\)</span>?</p>
+</section>
+<section id="konvergert-men-feil" class="level2">
+<h2 class="anchored" data-anchor-id="konvergert-men-feil">4. Konvergert, men feil?</h2>
+<p>Nå står ankrene langs én vegg, nesten på en rett linje:</p>
+<p><span class="math display">\[b_1=(0,0),\quad b_2=(4,\,0.1),\quad b_3=(7,\,-0.1),\quad b_4=(10,0).\]</span></p>
+<p>Taggen står i <span class="math inline">\((6,3)\)</span>, og målingene er <strong>eksakte</strong> (<code>wall</code>, <code>d_wall</code>).</p>
 <div id="qpyodide-insertion-location-8"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Skriv en kort rapport (omtrent én side pluss regning og figurer): Hva ble bekreftet eller avkreftet i forutsigelsene? Hvilke transformasjoner bevarer målet og et eksakt Newton-steg? Hvorfor endrer den valgte sikringsregelen oppførsel med skala? Oppgi faktiske <span class="math inline">\(q\)</span>, gradientnormer, status og budsjett når du sammenligner. Det kjente globale minimumet i <strong>dette</strong> eksemplet gjør en kvalitetskontroll mulig; et solverflagg ville ikke gitt den kunnskapen alene for en ukjent funksjon.</p>
-
-
+<p>Fra <span class="math inline">\((5,4)\)</span> finner vi <span class="math inline">\((6,3)\)</span>. Fra <span class="math inline">\((5,-4)\)</span> ender vi i <span class="math inline">\((5.92,\,-3.02)\)</span>. Der er gradienten <span class="math inline">\(J^Tr\)</span> null i flyttall, så metoden har konvergert, men <strong>residualnormen er <span class="math inline">\(0.224\)</span> m med eksakte data</strong>.</p>
+<ol type="1">
+<li>Bruk nivåkurvene til å forklare hva punktet <span class="math inline">\((5.92,-3.02)\)</span> er, og hvorfor det ligger nær speilbildet <span class="math inline">\((6,-3)\)</span> av den riktige posisjonen. Hvorfor kan gradient null ikke skille det fra det riktige punktet? Knytt svaret til uke 8: er <span class="math inline">\(F\)</span> konveks?</li>
+<li><strong>Modellkontroll.</strong> Med <span class="math inline">\(m\)</span> målinger, <span class="math inline">\(n=2\)</span> ukjente og målefeil med standardavvik <span class="math inline">\(\sigma\)</span> forventer vi <span class="math inline">\(\|r\|\approx\sigma\sqrt{m-n}\)</span> i den beste tilpasningen når modellen er riktig. Hva gir det for <span class="math inline">\(\sigma=0.05\)</span>? Hva betyr da <span class="math inline">\(\|r\|=0.224\)</span>?</li>
+</ol>
+<section id="start-på-veggen-levenbergmarquardt" class="level3">
+<h3 class="anchored" data-anchor-id="start-på-veggen-levenbergmarquardt">Start på veggen: Levenberg–Marquardt</h3>
+<p>Start nå i <span class="math inline">\((5,0)\)</span>, på linjen gjennom ankrene. Da peker alle radene i <span class="math inline">\(J\)</span> nesten langs veggen.</p>
+<p>Fullfør Levenberg–Marquardt-steget <span class="math inline">\((J^TJ+\mu I)p=-J^Tr\)</span> med én linje, og sammenlign med Gauss–Newton:</p>
+<div id="qpyodide-insertion-location-9"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Du skal få <span class="math inline">\(\sigma_2\approx0.08\)</span> og et første Gauss–Newton-steg på <span class="math inline">\(11.3\)</span> m, langt utenfor hallen. Levenberg–Marquardt gir <span class="math inline">\(1.02\)</span>, <span class="math inline">\(0.60\)</span> og <span class="math inline">\(0.21\)</span> m for <span class="math inline">\(\mu=0.1,1,10\)</span>. Hjelperen <code>lm_adaptive</code> godtar et steg og deler <span class="math inline">\(\mu\)</span> på 10 når <span class="math inline">\(F\)</span> synker, og ganger <span class="math inline">\(\mu\)</span> med 10 ellers.</p>
+<ol type="1">
+<li>Forklar med singulærverdiene hvorfor Gauss–Newton-steget blir så langt. Hvorfor gjør <span class="math inline">\(+\mu I\)</span> steget kortere? (Hint: hva skjer med egenverdiene til <span class="math inline">\(J^TJ\)</span>?)</li>
+<li><code>lm_adaptive</code> ender likevel i <span class="math inline">\((5.92,-3.02)\)</span>. Hva fikser Levenberg–Marquardt, og hva fikser metoden ikke?</li>
+</ol>
+<p><strong>Ta med videre:</strong> Residualen kan avsløre et falskt minimum som gradienten ikke ser. Levenberg–Marquardt gjør stegene trygge, men gjør ikke problemet konvekst.</p>
 </section>
+</section>
+<section id="din-påstand" class="level2">
+<h2 class="anchored" data-anchor-id="din-påstand">5. Din påstand</h2>
+<p>Velg <strong>én</strong> av veiene nedenfor. Skriv påstanden og forutsigelsen <strong>før</strong> du kjører, helst med singulærverdiene til <span class="math inline">\(J\)</span>. Kontroller deretter med Monte Carlo eller med Gauss–Newton fra flere starter.</p>
+<ul>
+<li><strong>Et femte anker.</strong> Hvor i eller ved hallen bør et femte anker stå for å krympe ellipsen mest for en tag i <span class="math inline">\((3,5)\)</span>? Lag <code>B5 = np.vstack([hall, [x5, y5]])</code>.</li>
+<li><strong>Ankre nøyaktig på én linje.</strong> Sett alle fire ankrene på <span class="math inline">\(y=0\)</span>. Hva skjer med speilpunktet nå? Kan noen metode avgjøre hvilken side taggen er på?</li>
+<li><strong>Finn den feile målingen.</strong> Se på residualvektoren i løsningen for <code>d_bad</code>. Peker den ut anker 3? Prøv å fjerne ett anker om gangen og sammenlign <span class="math inline">\(\|r\|\)</span> med modellkontrollen fra del 4.</li>
+</ul>
+<p>Hold alt annet fast, og endre én ting. Avgrens konklusjonen til det du faktisk har undersøkt, og vis også et eventuelt motfunn.</p>
+</section>
+<section id="spørsmål-du-skal-kunne-svare-på" class="level2">
+<h2 class="anchored" data-anchor-id="spørsmål-du-skal-kunne-svare-på">Spørsmål du skal kunne svare på</h2>
+<ol type="1">
+<li>Hva betyr en rad i Jacobimatrisen geometrisk?</li>
+<li>Hvorfor er et Gauss–Newton-steg et minste kvadraters problem, og hvorfor løser vi det med <code>lstsq</code>?</li>
+<li>Når konvergerer Gauss–Newton like raskt som Newton, og hvorfor?</li>
+<li>Hvordan forutsier du konvergensfaktoren, og stemte forutsigelsen?</li>
+<li>Hva forteller singulærverdiene til <span class="math inline">\(J\)</span> om usikkerheten i posisjonen?</li>
+<li>Hvorfor blir posisjonen usikker på tvers når taggen er langt unna?</li>
+<li>Hvordan kan residualen avsløre et falskt minimum?</li>
+<li>Hva gjør Levenberg–Marquardt, og hva gjør metoden ikke?</li>
+<li><em>(valgfri fordypning)</em> Hvor bør et femte anker stå?</li>
+<li><em>(valgfri fordypning)</em> Hva skjer når alle ankrene står på én linje?</li>
+</ol>
+</section>
+<section id="det-du-leverer" class="level2">
+<h2 class="anchored" data-anchor-id="det-du-leverer">Det du leverer</h2>
+<p>Lever én kjørbar notebook eller Quarto-side med:</p>
+<ul>
+<li>papirregningene fra 1a, 1b og utledningen av <span class="math inline">\(M\)</span> i del 2;</li>
+<li>din kode for <code>residual</code>, <code>jacobian</code>, <code>gn_step</code>, <code>gauss_newton</code>, <code>monte_carlo</code> og <code>lm_step</code>;</li>
+<li>konvergenstabellen fra del 2 med målte og forutsagte faktorer;</li>
+<li>én ellipsefigur (SVD mot Monte Carlo) og tabellen fra «Gå ut av hallen»;</li>
+<li>diagnosen av det falske minimumet i del 4;</li>
+<li>forutsigelse, kontroll og konklusjon for din påstand i del 5.</li>
+</ul>
+<p>Skriv i tillegg en vurdering på <strong>300–500 ord</strong>: når er Gauss–Newton like god som Newton, hva bestemmer hvor presist vi vet posisjonen, og hvordan oppdager du at et konvergert svar er feil? Papirregninger kan leveres som leselige bilder i notebooken eller i en egen PDF.</p>
+
+
 </section>
 
 </main> <!-- /main -->
