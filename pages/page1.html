@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -42,10 +42,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-5337165f197680d68c11b8afac1372bd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/ai-feedback-0.8.1/feedback-core.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.8.1/feedback-dom.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.8.1/ai-feedback.js"></script>
+<link href="../site_libs/quarto-contrib/ai-feedback-0.8.1/ai-feedback.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -74,7 +78,7 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <script src="../coi-serviceworker.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/editor/editor.main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.46/min/vs/editor/editor.main.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" defer="" crossorigin="anonymous"></script>
   
 <style type="text/css">
@@ -87,7 +91,9 @@ ul.task-list li input[type="checkbox"] {
 /* ---------------------------------------------------------------------- */
 /* Editor & console                                                       */
 
-.monaco-editor pre {
+/* Scoped to this extension's editors: other Monaco editors on the page
+   (py-exercise) keep their own look. */
+.qpyodide-editor .monaco-editor pre {
   background-color: unset !important;
 }
 
@@ -130,6 +136,20 @@ ul.task-list li input[type="checkbox"] {
   align-self: center;
 }
 
+.qpyodide-storage-status {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  align-self: center;
+}
+
+/* "Savable" state: nothing saved yet, but this cell would persist if the
+ * reader typed right now -- deliberately fainter than Saved/Restored so it
+ * reads as a passive hint, not an active confirmation. */
+.qpyodide-storage-status.qpyodide-storage-status-savable {
+  opacity: 0.45;
+  font-style: italic;
+}
+
 /* Extra code block ("+ Code block") */
 .qpyodide-extra-codeblock {
   margin-top: 1rem;
@@ -142,14 +162,16 @@ ul.task-list li input[type="checkbox"] {
   background-color: var(--bs-tertiary-bg, #eeeeee);
   display: inline-block;
   font-weight: 400;
-  line-height: 1;
   text-decoration: none;
   text-align: center;
   color: var(--bs-body-color, #000);
   border: 1px solid var(--bs-border-color, #dee2e6);
-  padding: 0.375rem 0.75rem;
-  font-size: .9rem;
-  border-radius: 0.25rem;
+  /* Common CTM button size, shared by all CTM components; set the
+     --ctm-button-* variables in your CSS or theme to change all of them. */
+  font-size: var(--ctm-button-font-size, .875rem);
+  padding: var(--ctm-button-padding-y, .375rem) var(--ctm-button-padding-x, .75rem);
+  line-height: var(--ctm-button-line-height, 1.5);
+  border-radius: var(--ctm-button-radius, var(--bs-border-radius, .375rem));
   transition: color .15s ease-in-out, background-color .15s ease-in-out,
               border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
@@ -170,7 +192,9 @@ fieldset:disabled .qpyodide-button {
 .qpyodide-button-reset,
 .qpyodide-button-copy,
 .qpyodide-button-feedback,
-.qpyodide-button-codeblock {
+.qpyodide-button-codeblock,
+.qpyodide-button-clear-saved,
+.qpyodide-button-save-cell {
   color: var(--bs-body-color, #555);
   opacity: 0.75;
 }
@@ -232,7 +256,7 @@ fieldset:disabled .qpyodide-button {
 /* ---------------------------------------------------------------------- */
 /* AI feedback                                                            */
 
-.qpyodide-output-feedback-area.has-content {
+.qpyodide-output-feedback-area:not(:empty) {
   background-color: var(--bs-warning-bg-subtle, #ffe9d6);
   color: var(--bs-body-color, #000);
   border: 1px solid var(--bs-border-color, #e0c5a8);
@@ -274,6 +298,40 @@ fieldset:disabled .qpyodide-button {
 }
 
 /* ---------------------------------------------------------------------- */
+/* Local-storage autosave checkboxes (inside the settings gear panel)     */
+
+.qpyodide-storage-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Autosave-mode radios nested under the master "save in this browser"
+ * checkbox -- indented to read as sub-options, dimmed (not hidden) while
+ * the master is off so the reader's last choice stays visible. */
+.qpyodide-storage-mode-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-left: 1.4rem;
+}
+
+.qpyodide-storage-mode-group-disabled {
+  opacity: 0.55;
+}
+
+.qpyodide-storage-mode-group-disabled .qpyodide-storage-toggle-label {
+  cursor: default;
+}
+
+.qpyodide-storage-delete-btn {
+  align-self: flex-start;
+  margin-top: 0.15rem;
+}
+
+/* ---------------------------------------------------------------------- */
 /* Settings panel (set up AI feedback)                                    */
 
 #qpyodide-status-message-area {
@@ -299,6 +357,19 @@ fieldset:disabled .qpyodide-button {
   background-color: var(--bs-tertiary-bg, #f8f9fa);
   border: 1px solid var(--bs-border-color, #dee2e6);
   border-radius: 0.5rem;
+}
+
+.qpyodide-storage-settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.qpyodide-feedback-panel hr {
+  margin: 0.75rem 0;
+  border-color: var(--bs-border-color, #dee2e6);
+  opacity: 1;
 }
 
 .qpyodide-feedback-field {
@@ -463,6 +534,10 @@ body.quarto-dark .qpyodide-readonly-label {
   font-weight: 600;
 }
 
+body.quarto-dark .qpyodide-storage-status {
+  color: var(--bs-emphasis-color, #ffffff);
+}
+
 body.quarto-dark .qpyodide-toolbar-readonly {
   background-color: var(--bs-secondary-bg, #343a40);
   color: var(--bs-body-color, #dee2e6);
@@ -483,7 +558,9 @@ body.quarto-dark .qpyodide-button:hover {
 body.quarto-dark .qpyodide-button-reset,
 body.quarto-dark .qpyodide-button-copy,
 body.quarto-dark .qpyodide-button-feedback,
-body.quarto-dark .qpyodide-button-codeblock {
+body.quarto-dark .qpyodide-button-codeblock,
+body.quarto-dark .qpyodide-button-clear-saved,
+body.quarto-dark .qpyodide-button-save-cell {
   color: var(--bs-body-color, #dee2e6);
   opacity: 0.75;
 }
@@ -547,9 +624,12 @@ body.quarto-dark .qpyodide-terminal code {
    unreadable. Since WE trigger this sync, this side effect outside our
    own elements is our responsibility too. `:not(pre) > code` leaves real
    code blocks (<pre><code class="sourceCode">, with their own syntax
-   highlighting) untouched. */
+   highlighting) untouched.
+   Colour: NOT the body text colour, otherwise inline code is no longer
+   distinguishable from the surrounding text. Default is Bootstrap's dark-mode
+   code colour; a theme can override it via --qpyodide-inline-code-color. */
 body.quarto-dark :not(pre) > code {
-  color: var(--bs-body-color, #dee2e6) !important;
+  color: var(--qpyodide-inline-code-color, #e685b5) !important;
   background-color: var(--bs-tertiary-bg, #2b3035) !important;
 }
 
@@ -557,7 +637,7 @@ body.quarto-dark .qpyodide-output-graph-area.has-content {
   border-color: var(--bs-border-color, #495057);
 }
 
-body.quarto-dark .qpyodide-output-feedback-area.has-content {
+body.quarto-dark .qpyodide-output-feedback-area:not(:empty) {
   background-color: var(--bs-warning-bg-subtle, #2d2000);
   border-color: var(--bs-warning-border-subtle, #6c5000);
   color: var(--bs-body-color, #dee2e6);
@@ -592,6 +672,9 @@ body.quarto-dark .qpyodide-feedback-help {
     color: var(--bs-emphasis-color, #ffffff);
     font-weight: 600;
   }
+  body:not(.quarto-light) .qpyodide-storage-status {
+    color: var(--bs-emphasis-color, #ffffff);
+  }
   body:not(.quarto-light) .qpyodide-toolbar-readonly {
     background-color: var(--bs-secondary-bg, #343a40);
     color: var(--bs-body-color, #dee2e6);
@@ -609,7 +692,9 @@ body.quarto-dark .qpyodide-feedback-help {
   body:not(.quarto-light) .qpyodide-button-reset,
   body:not(.quarto-light) .qpyodide-button-copy,
   body:not(.quarto-light) .qpyodide-button-feedback,
-  body:not(.quarto-light) .qpyodide-button-codeblock {
+  body:not(.quarto-light) .qpyodide-button-codeblock,
+  body:not(.quarto-light) .qpyodide-button-clear-saved,
+  body:not(.quarto-light) .qpyodide-button-save-cell {
     color: var(--bs-body-color, #dee2e6);
     opacity: 0.75;
   }
@@ -645,7 +730,7 @@ body.quarto-dark .qpyodide-feedback-help {
   body:not(.quarto-light) .qpyodide-output-graph-area.has-content {
     border-color: var(--bs-border-color, #495057);
   }
-  body:not(.quarto-light) .qpyodide-output-feedback-area.has-content {
+  body:not(.quarto-light) .qpyodide-output-feedback-area:not(:empty) {
     background-color: var(--bs-warning-bg-subtle, #2d2000);
     border-color: var(--bs-warning-border-subtle, #6c5000);
     color: var(--bs-body-color, #dee2e6);
@@ -895,6 +980,36 @@ body.quarto-dark .qpyodide-input-echo {
   display: none;
 }
 
+/* Pyodide below 0.28 (pinned via `pyodide: base-url:`): matplotlib-pyodide's
+   html5_canvas_backend, as in 1.6/1.7. See qpyodide-canvas-plots.js.
+   Its "window title" row ("Figure 1", ...) has no class of its own, only an
+   ID ending in "top" (FigureCanvasWasm.show()). */
+.qpyodide-canvas-legacy div[id$="top"] {
+  display: none;
+}
+
+/* Pan and zoom are toggles, but that backend renders no pressed state, so
+   the prelude keeps this class in sync with NavigationToolbar2.mode. The
+   :hover twin is needed because matplotlib-pyodide injects its own
+   `button.matplotlib-toolbar-button:hover` rule into <head> at runtime,
+   after this file, which would otherwise win on equal specificity. */
+button.matplotlib-toolbar-button.qpyodide-toolbar-button-active,
+button.matplotlib-toolbar-button.qpyodide-toolbar-button-active:hover {
+  color: #fff;
+  background: var(--bs-primary, #2780e3);
+  border-color: var(--bs-primary, #2780e3);
+}
+
+.qpyodide-editor-toolbar .qpyodide-feedback-gear {
+  margin: 0;
+  font-size: var(--ctm-button-font-size, .875rem);
+  padding: var(--ctm-button-padding-y, .375rem) var(--ctm-button-padding-x, .75rem);
+  line-height: var(--ctm-button-line-height, 1.5);
+}
+
+/* Runtime status spans the complete header grid. */
+#qpyodide-status-message-area { grid-column: 1 / -1; }
+
 .qpyodide-canvas-figure > div {
   margin-inline: auto;
 }
@@ -965,6 +1080,13 @@ globalThis.qpyodideCustomizedPyodideOptions = {
   }
 }
 
+// Interactive plot backend ----
+//
+// "webagg" (Pyodide 0.28+), "html5-canvas" (an older Pyodide pinned via
+// `pyodide: base-url:`) or "auto" (the base URL names no version; decided
+// from the loaded Pyodide). See qpyodide-canvas-plots.js.
+globalThis.qpyodideCanvasBackend = "webagg";
+
 // UI language for this render pass ----
 //
 // Set by the Lua filter from `pyodide: lang:` or Quartos own `lang:`.
@@ -972,7 +1094,7 @@ globalThis.qpyodideCustomizedPyodideOptions = {
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"\nimport numpy as np\nimport matplotlib.pyplot as plt","id":1,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.close(\"all\")\n\nx = np.linspace(0, 2*np.pi, 200)\ny = np.sin(x)\n\nfig = plt.figure()\nax = fig.add_subplot(111)\nax.plot(x, y)\nax.set_xlabel(\"x\")\nax.set_ylabel(\"sin(x)\")\nax.set_title(\"En enkel sinuskurve\")\nax.grid(True)\n\nplt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"\nimport numpy as np\nimport matplotlib.pyplot as plt","id":1,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.close(\"all\")\n\nx = np.linspace(0, 2*np.pi, 200)\ny = np.sin(x)\n\nfig = plt.figure()\nax = fig.add_subplot(111)\nax.plot(x, y)\nax.set_xlabel(\"x\")\nax.set_ylabel(\"sin(x)\")\nax.set_title(\"En enkel sinuskurve\")\nax.grid(True)\n\nplt.show()","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Kom raskt i gang\nSkriv eller endre kode i et kodevindu.\nVelg Kjør koden for å kjøre vinduet.\nLes utskrift, feilmeldinger og figurer under kodevinduet.\nVelg + Kodeblokk når du vil ha et tomt arbeidsvindu.\nLast inn siden på nytt hvis du vil nullstille Python-miljøet på siden. (Knappen ↻ Tilbakestill setter koden i vinduet tilbake til den opprinnelige, den nullstiller ikke Python.)\nPrøv gjerne dette eksemplet:"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -987,6 +1109,286 @@ globalThis.qpyodideFeedbackOptions = {
   storage: "local",
   hints: true
 };
+
+// Local-storage autosave feature settings ----
+//
+// enabled : document-wide default (`pyodide: local-storage: true`); a
+//           cell's own `#| local-storage: true/false` overrides this.
+// epoch   : "" (off) unless `pyodide: local-storage-epoch:` was set. When
+//           non-empty, it's folded into every saved-code storage key, so
+//           re-rendering with a new epoch value makes every previously
+//           saved answer on this page unreachable -- an exam-room "next
+//           group gets a clean slate" reset. See qpyodide-storage.js.
+globalThis.qpyodideLocalStorageOptions = {
+  enabled: false,
+  epoch: ""
+};
+
+</script>
+<script type="module">
+// qpyodide-storage.js – localStorage autosave for editable Pyodide cells
+//
+// Opt-in via `pyodide: local-storage: true` (document YAML, see
+// globalThis.qpyodideLocalStorageOptions in qpyodide-document-settings.js)
+// or a per-cell `#| local-storage: true/false` override. When enabled for a
+// cell:
+//   - code typed into its editor is autosaved to localStorage (debounced),
+//     keyed by page path + a stable cell identity
+//   - on page load, saved code (if any) replaces the cell's original code
+//     in the editor -- but is NEVER executed automatically
+// Only source code is persisted -- never output or Python state, so nothing
+// here needs to serialize arbitrary interpreter state.
+//
+// Cell identity (stable across reorders where possible), resolved once per
+// page load from the full cellDetails list (document order):
+//   1. explicit `#| label: ...`          -- stable across content edits
+//   2. hash of the cell's original code  -- stable when cells move, not
+//                                           when their original code changes
+//   3. occurrence number appended to #2 when identical original code
+//      appears more than once on the page (last-resort disambiguation)
+// Numeric position is deliberately never used alone: inserting a cell
+// earlier on the page would shift every later position and restore code
+// into the wrong editor.
+//
+// Independent of the document/cell settings above, a student can switch
+// autosave off for themselves on this device -- a checkbox built by
+// qpyodide-storage-settings.js into its settings gear (isUserDisabled/setUserDisabled
+// below; this module owns no UI of its own). That preference is a hard
+// override: it wins even over a cell's own `#| local-storage: true`, applies
+// to every page on this site (not namespaced by path, unlike the saved code
+// itself -- it's a device-wide "leave nothing behind here" switch), and
+// persists until the student flips it back on.
+//
+// Turning it off never discards code already saved, and turning it back on
+// never needs a reload: cellEnabled() re-reads the preference fresh on every
+// call (see EditorUnit.scheduleSave() in qpyodide-cell-classes.js, which
+// re-checks right before it actually writes), and restoring previously
+// saved code into an editor never depended on this preference in the first
+// place -- only load() below, which only depends on the identity resolved.
+
+globalThis.qpyodideStorage = (function () {
+  const STORAGE_PREFIX = "qpyodide:code:";
+  // Deliberately NOT namespaced by page path: device-wide preferences, so
+  // setting them on one page carries over to every other page of the course.
+  const USER_DISABLED_KEY = "qpyodide:local-storage-user-disabled";
+  // Manual-save mode: off (autosave-as-you-type) by default; when on, each
+  // cell shows an explicit Save button instead and autosave never fires
+  // (see EditorUnit.scheduleSave() in qpyodide-cell-classes.js).
+  const MANUAL_MODE_KEY = "qpyodide:local-storage-manual-mode";
+
+  // Small, fast, non-cryptographic string hash (djb2) -- collisions are
+  // harmless here (worst case: two cells briefly share a save slot until
+  // one gets a `#| label:`), so this doesn't need to be cryptographically
+  // strong, just stable and cheap.
+  function djb2(str) {
+    let hash = 5381;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash * 33) ^ str.charCodeAt(i)) >>> 0;
+    }
+    return hash.toString(36);
+  }
+
+  // Same rule as qpyodideCreateCell() in qpyodide-cell-classes.js: every
+  // context except "output"/"setup" -- including the empty default that
+  // `main` uses since the echo/include mapping -- becomes an InteractiveCell.
+  function isInteractive(options) {
+    const context = (options && options.context) || "";
+    return context !== "output" && context !== "setup";
+  }
+
+  function computeIdentities(cellDetails) {
+    const seenHashes = Object.create(null);
+    const identities = Object.create(null);
+
+    (cellDetails || []).forEach((entry) => {
+      // Only editable, interactive cells ever get a code editor a student
+      // can type into -- output/setup cells have nothing to restore.
+      if (!isInteractive(entry.options)) return;
+
+      const label = (entry.options.label || "").trim();
+      if (label) {
+        identities[entry.id] = "label:" + label;
+        return;
+      }
+
+      const hash = djb2(entry.code || "");
+      const occurrence = (seenHashes[hash] = (seenHashes[hash] || 0) + 1);
+      identities[entry.id] = occurrence === 1
+        ? "hash:" + hash
+        : "hash:" + hash + ":" + occurrence;
+    });
+
+    return identities;
+  }
+
+  function storageKey(identity) {
+    // Keeps Week 1 / Week 2 / IDE page etc. separate: each lives at its own
+    // path, so each gets its own slice of localStorage.
+    //
+    // The epoch (off by default -- see `pyodide: local-storage-epoch:` in
+    // qpyodide.lua) is folded in first: when set, a key built under the
+    // current epoch can never match anything saved under a previous one, so
+    // load()/hasSaved() simply find nothing -- functionally identical to
+    // the old save having been cleared, without this module ever having to
+    // find and delete the actual old entries (they just become permanently
+    // unreachable bytes; harmless, and never surfaced back to a reader).
+    const epoch = globalThis.qpyodideLocalStorageOptions?.epoch || "";
+    const epochPart = epoch ? "epoch:" + epoch + ":" : "";
+    return STORAGE_PREFIX + epochPart + location.pathname + ":" + identity;
+  }
+
+  // localStorage can throw (private browsing, disabled storage, quota) --
+  // that must never break the page, only silently skip persistence.
+  function safeGet(key) {
+    try { return window.localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function safeSet(key, value) {
+    try { window.localStorage.setItem(key, value); return true; } catch (e) { return false; }
+  }
+  function safeRemove(key) {
+    try { window.localStorage.removeItem(key); } catch (e) { /* ignore */ }
+  }
+
+  function isUserDisabled() {
+    return safeGet(USER_DISABLED_KEY) === "1";
+  }
+  function setUserDisabled(disabled) {
+    if (disabled) safeSet(USER_DISABLED_KEY, "1");
+    else safeRemove(USER_DISABLED_KEY);
+  }
+
+  function isManualMode() {
+    return safeGet(MANUAL_MODE_KEY) === "1";
+  }
+  function setManualMode(manual) {
+    if (manual) safeSet(MANUAL_MODE_KEY, "1");
+    else safeRemove(MANUAL_MODE_KEY);
+  }
+
+  const docEnabled = !!globalThis.qpyodideLocalStorageOptions?.enabled;
+  const identities = computeIdentities(globalThis.qpyodideCellDetails);
+
+  // Whether the toggle is worth showing at all: only if the feature could
+  // possibly apply to some cell on this page (document default, or at least
+  // one cell opting in on its own even though the document default is off).
+  const anyEnabled = docEnabled || (globalThis.qpyodideCellDetails || []).some(
+    (entry) => isInteractive(entry.options) &&
+      entry.options["local-storage"] === "true"
+  );
+
+  return {
+    // Whether ANY cell can use local storage at all this document. Individual
+    // cells still need cellEnabled() -- a cell's own `#| local-storage:`
+    // overrides this document default either way.
+    docEnabled,
+
+    // Identities are normally all resolved up front from the document's
+    // static cellDetails (see computeIdentities() above) -- but a "+ Code
+    // block" editor doesn't exist yet at that point (it's created later, in
+    // the browser). registerIdentity() lets qpyodide-cell-classes.js give
+    // such a dynamically-created cell an identity of its own on the fly, so
+    // it can use load()/save()/clear()/hasSaved() below exactly like any
+    // other cell. identityFor() looks up an already-resolved identity (e.g.
+    // a "+ Code block" button asking for its own parent cell's identity, to
+    // derive a stable "extra:<parent identity>" identity for itself).
+    registerIdentity(cellId, identity) {
+      identities[cellId] = identity;
+    },
+    identityFor(cellId) {
+      return identities[cellId] || null;
+    },
+
+    // Whether the settings gear needs an autosave section at all: only if
+    // the feature could possibly apply to some cell on this page (document
+    // default, or at least one cell opting in on its own even though the
+    // document default is off). Read by qpyodide-feedback.js to decide
+    // whether to build the gear even when AI feedback itself is disabled.
+    anyEnabled,
+
+    // The student's own device-wide preferences (see the file header
+    // comment and MANUAL_MODE_KEY above). Read/written by the checkboxes
+    // qpyodide-feedback.js builds into its settings panel.
+    isUserDisabled,
+    setUserDisabled,
+    isManualMode,
+    setManualMode,
+
+    // Cascading precedence, same pattern as `pdf-fallback`/`*-autoexec`,
+    // with the student's own device-wide preference as the final override.
+    // Re-reads isUserDisabled() fresh every call -- never cache this.
+    cellEnabled(options) {
+      if (isUserDisabled()) return false;
+      const override = options["local-storage"];
+      if (override === "true") return true;
+      if (override === "false") return false;
+      return docEnabled;
+    },
+
+    load(cellId) {
+      const identity = identities[cellId];
+      if (!identity) return null;
+      return safeGet(storageKey(identity));
+    },
+
+    save(cellId, code) {
+      const identity = identities[cellId];
+      if (!identity) return false;
+      return safeSet(storageKey(identity), code);
+    },
+
+    clear(cellId) {
+      const identity = identities[cellId];
+      if (!identity) return;
+      safeRemove(storageKey(identity));
+    },
+
+    hasSaved(cellId) {
+      const identity = identities[cellId];
+      if (!identity) return false;
+      return safeGet(storageKey(identity)) !== null;
+    },
+
+    // Wipes every locally-saved cell across every page on this site (not
+    // just the current page/epoch) -- the device-wide cleanup a student
+    // uses e.g. before handing back a shared/loaner machine. Never touches
+    // the two device-wide preference keys above (those are settings, not
+    // saved code). Returns the number of entries removed.
+    clearAll() {
+      let keys;
+      try {
+        keys = Object.keys(window.localStorage);
+      } catch (e) {
+        return 0;
+      }
+      const toRemove = keys.filter((key) => key.indexOf(STORAGE_PREFIX) === 0);
+      toRemove.forEach(safeRemove);
+      return toRemove.length;
+    },
+
+    // Wipes only the entries saved for the current page (any epoch), for a
+    // reader who wants a fresh start here without touching their saved code
+    // on other pages of the same project. Matches on ":" + pathname + ":"
+    // rather than parsing the key apart -- storageKey() deliberately keeps
+    // epoch and identity unparsed since either can itself contain colons
+    // (see storageKey() above), but a URL pathname does not, so it can
+    // still be found as an exact colon-delimited segment. Returns the
+    // number of entries removed.
+    clearPage() {
+      let keys;
+      try {
+        keys = Object.keys(window.localStorage);
+      } catch (e) {
+        return 0;
+      }
+      const marker = ":" + location.pathname + ":";
+      const toRemove = keys.filter((key) =>
+        key.indexOf(STORAGE_PREFIX) === 0 && key.indexOf(marker) !== -1
+      );
+      toRemove.forEach(safeRemove);
+      return toRemove.length;
+    }
+  };
+})();
 
 </script>
 <script type="module">
@@ -1016,6 +1418,12 @@ globalThis.qpyodideLocales = {
     labelReadOnly:       "Read-only",
     labelEditable:       "Editable",
     resetTitle:          "Reset",
+    clearSavedTitle:     "Clear saved code for this cell",
+    storageSavedStatus:  "💾 Saved",
+    storageRestoredStatus: "💾 Restored",
+    storageSavableStatus: "💾 Savable",
+    storageSavableTitle: "This cell's code will be saved to this browser as you type",
+    resetConfirm:        "This discards your current code and restores the original version. Continue?",
     copyTitle:           "Copy code",
     feedbackTitle:       "AI feedback on the current code",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Feedback',
@@ -1064,6 +1472,26 @@ globalThis.qpyodideLocales = {
     loadingPython:       "🟡 Python (Pyodide) is loading …",
     engineReady:         "🟢 Ready!",
     engineFailed:        function (msg) { return "🔴 Python could not be loaded: " + msg; },
+    storageToggleLabel:  "Save code in this browser",
+    storageToggleTitle:  "When off, your code is never saved to this browser. Already-saved code stays until you clear it per cell or use the delete buttons below.",
+    storageModeAutoLabel: "Automatically save while typing",
+    storageModeAutoTitle: "Every change is saved automatically a moment after you stop typing.",
+    storageModeManualLabel: "Only save cells where I click Save",
+    storageModeManualTitle: "Nothing is saved automatically; each cell gets its own Save button instead.",
+    saveCellTitle:       "Save the code changes in this cell locally",
+    deleteThisPageSavesLabel: "Delete saved code on this page",
+    deleteThisPageSavesTitle: "Delete all code saved locally in this browser for this page only",
+    deleteThisPageSavesConfirm:
+      "This permanently deletes all code saved locally in this browser for " +
+      "this page, and resets every cell on this page back to its " +
+      "original code. This cannot be undone. Continue?",
+    deleteAllSavesLabel: "Delete all saved code in this project",
+    deleteAllSavesTitle: "Delete all code saved locally in this browser, across every page of this project",
+    deleteAllSavesConfirm:
+      "This permanently deletes all code saved locally in this browser, " +
+      "across every page of this project, and resets every cell on this page " +
+      "back to its original code. This cannot be undone. Continue?",
+    settingsTitleStorageOnly: "Local autosave settings",
     // Worker messages: run in the Web Worker, passed there via the init
     // config (the worker doesn't see QP_L).
     workerLoading:       "Python (Pyodide) is loading in the background …",
@@ -1149,97 +1577,6 @@ globalThis.qpyodideLocales = {
     canvasRenderFailed:  "This figure cannot be shown interactively – showing the image instead.",
     canvasBarValueLabel: "Value",
 
-    // --- AI prompts ------------------------------------------------------------
-    // The length limit (~250 words) must be kept in EVERY language,
-    // otherwise feedback gets cut off mid-sentence again.
-    systemPrompt:
-      "You are a patient programming tutor for Python beginners. " +
-      "You receive the code from an interactive exercise cell together with the output " +
-      "of the Python interpreter. Give constructive feedback in English, without " +
-      "asking any questions back. Never state a complete finished solution as " +
-      "code; instead guide the person towards their own understanding. " +
-      "Keep it compact: at most about 250 words, so your answer stays " +
-      "complete and is not cut off mid-sentence. " +
-      "Structure your feedback like this:\n" +
-      "Errors (syntax/runtime):\n" +
-      "Strengths of the code:\n" +
-      "Possible improvements:",
-
-    hintInstructions: {
-      1: "Hint level 1: Give only a gentle nudge. Indicate WHERE the problem might be, but not why.",
-      2: "Hint level 2: Explain more concretely WHAT the problem is and why it occurs – but still without a solution path.",
-      3: "Hint level 3: Describe the complete solution path step by step in words (still without finished solution code)."
-    },
-
-    promptCodeIntro:   "Here is the source code from the exercise cell:",
-    promptOutputIntro: "And here is the output of the Python interpreter (including any error messages):",
-    promptNoOutput:    "(no output)",
-
-    // --- Feedback output -------------------------------------------------------
-    feedbackHeader:      "AI feedback",
-    feedbackHintLevel:   function (level) { return " – hint level " + level; },
-    feedbackErrorHeader: "Feedback failed: ",
-    feedbackBusy:        '<i class="fa-solid fa-spinner fa-spin"></i> Feedback …',
-    copyPromptHeader:    "💡 Prompt created – copy it into ChatGPT, Claude etc.:",
-    copyPromptBtn:       "📋 Copy prompt",
-    copyPromptDone:      "✅ Copied!",
-    errNoContent:        "The API response contains no feedback text (field choices[0].message.content is missing).",
-    errTokenRejected:    "The API rejected the request repeatedly (token parameter).",
-    errConfigMissing:
-      "Please set up your AI feedback first – using the button right here, " +
-      "or the ⚙ icon above – and enter a base URL and a model " +
-      "(or choose the \"copy prompt\" mode).",
-
-    // --- Settings panel ---------------------------------------------------------
-    gearTitle:           "Set up AI feedback",
-    presetPlaceholder:   "– choose a template or fill in yourself –",
-    presetCerebras:      "Cerebras (free tier)",
-    presetOpenrouter:    "OpenRouter (free models · shared limit)",
-    presetOpenai:        "OpenAI (paid)",
-    presetOllama:        "Ollama (local, no key)",
-    phBaseUrl:           "e.g. https://api.cerebras.ai/v1",
-    phApiKey:            "API key (stays local in the browser)",
-    phModel:             "e.g. gpt-oss-120b",
-    modeApi:             "Direct API (API key required)",
-    modeCopy:            "Copy prompt (no API key)",
-    fieldPreset:         "Provider template",
-    fieldBaseUrl:        "Base URL",
-    fieldApiKey:         "API key",
-    fieldModel:          "Model",
-    fieldMode:           "Feedback mode",
-    saveBtn:             "Save",
-    saveDone:            "✓ saved",
-    infoBtn:             "ℹ️ How do I get credentials?",
-
-    // --- Model fetch -------------------------------------------------------
-    fetchModelsBtn:      '<i class="fa-solid fa-magnifying-glass"></i> Fetch models',
-    fetchModelsBusy:     '<i class="fa-solid fa-spinner fa-spin"></i> loading …',
-    freeOnlyLabel:       " show free models only",
-    modelChoose:         function (count) { return "– choose model (" + count + " found) –"; },
-    modelSuffixFree:     " – free",
-    modelSuffixPaid:     " – paid!",
-    modelListInfoPricing:   "Choose a model – it will be copied into the model field.",
-    modelListInfoNoPricing:
-      "⚠️ This provider gives no pricing info. Check on the " +
-      "provider page whether the model is free before using it.",
-    errNeedBaseUrl:      "Please enter a base URL first (or choose a provider template).",
-    errNoModels:         "The response contained no models.",
-    errModelListFailed:  function (msg) { return "Model list could not be loaded: " + msg; },
-    modelHintKeyNeeded:  function (url) {
-      return 'API key required to fetch models. <a href="' + url +
-        '" target="_blank" rel="noopener">Available models at the provider &rarr;</a>';
-    },
-
-    helpBox:
-      '<b>Set up AI access – works with any OpenAI-compatible API.</b><br>' +
-      'You need three things: a <b>base URL</b>, an <b>API key</b> and a <b>model</b>.<br><br>' +
-      '<b>Providers with a free quota (examples):</b><br>' +
-      '&bull; <b>OpenRouter</b> – base URL <code>https://openrouter.ai/api/v1</code>, key: <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>; free models end in <code>:free</code> (<a href="https://openrouter.ai/models?max_price=0" target="_blank" rel="noopener">list</a>), e.g. <code>meta-llama/llama-3.3-70b-instruct:free</code><br>' +
-      '&bull; <b>Cerebras</b> – base URL <code>https://api.cerebras.ai/v1</code>, key: <a href="https://cloud.cerebras.ai" target="_blank" rel="noopener">cloud.cerebras.ai</a>; model e.g. <code>gpt-oss-120b</code><br>' +
-      '&bull; <b>OpenAI</b> – base URL <code>https://api.openai.com/v1</code>; model e.g. <code>gpt-4o-mini</code> (paid)<br>' +
-      '&bull; <b>Ollama (local)</b> – base URL <code>http://localhost:11434/v1</code>, no key needed; name of the local model<br>' +
-      '<br>You find the exact model name in the model list of the respective provider.<br>' +
-      '<i>All entries stay exclusively local in your browser.</i>'
   },
 
   // =========================================================================
@@ -1253,6 +1590,12 @@ globalThis.qpyodideLocales = {
     labelReadOnly:       "Schreibgeschützt",
     labelEditable:       "Editierbar",
     resetTitle:          "Zurücksetzen",
+    clearSavedTitle:     "Gespeicherten Code für diese Zelle löschen",
+    storageSavedStatus:  "💾 Gespeichert",
+    storageRestoredStatus: "💾 Wiederhergestellt",
+    storageSavableStatus: "💾 Speicherbar",
+    storageSavableTitle: "Der Code dieser Zelle wird beim Tippen in diesem Browser gespeichert",
+    resetConfirm:        "Dadurch geht dein aktueller Code verloren und die Originalversion wird wiederhergestellt. Fortfahren?",
     copyTitle:           "Code kopieren",
     feedbackTitle:       "KI-Feedback zum aktuellen Code",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Feedback',
@@ -1301,6 +1644,26 @@ globalThis.qpyodideLocales = {
     loadingPython:       "🟡 Python (Pyodide) wird geladen …",
     engineReady:         "🟢 Bereit!",
     engineFailed:        function (msg) { return "🔴 Python konnte nicht geladen werden: " + msg; },
+    storageToggleLabel:  "Code in diesem Browser speichern",
+    storageToggleTitle:  "Wenn deaktiviert, wird dein Code nicht mehr in diesem Browser gespeichert. Bereits gespeicherter Code bleibt bestehen, bis du ihn pro Zelle oder über die Löschen-Schaltflächen unten entfernst.",
+    storageModeAutoLabel: "Automatisch beim Tippen speichern",
+    storageModeAutoTitle: "Jede Änderung wird kurz nachdem du aufhörst zu tippen automatisch gespeichert.",
+    storageModeManualLabel: "Nur speichern, wenn ich auf Speichern klicke",
+    storageModeManualTitle: "Es wird nichts automatisch gespeichert; stattdessen erhält jede Zelle einen eigenen Speichern-Button.",
+    saveCellTitle:       "Code-Änderungen dieser Zelle lokal speichern",
+    deleteThisPageSavesLabel: "Gespeicherten Code auf dieser Seite löschen",
+    deleteThisPageSavesTitle: "Löscht allen lokal in diesem Browser gespeicherten Code nur für diese Seite",
+    deleteThisPageSavesConfirm:
+      "Dadurch wird der gesamte lokal in diesem Browser gespeicherte Code für " +
+      "diese Seite dauerhaft gelöscht, und jede Zelle auf dieser Seite wird auf " +
+      "ihren ursprünglichen Code zurückgesetzt. Das kann nicht rückgängig gemacht werden. Fortfahren?",
+    deleteAllSavesLabel: "Alle gespeicherten Codes in diesem Projekt löschen",
+    deleteAllSavesTitle: "Löscht allen lokal in diesem Browser gespeicherten Code, auf allen Seiten dieses Projekts",
+    deleteAllSavesConfirm:
+      "Dadurch wird der gesamte lokal in diesem Browser gespeicherte Code auf " +
+      "allen Seiten dieses Projekts dauerhaft gelöscht, und jede Zelle auf dieser Seite wird auf " +
+      "ihren ursprünglichen Code zurückgesetzt. Das kann nicht rückgängig gemacht werden. Fortfahren?",
+    settingsTitleStorageOnly: "Einstellungen für lokales Speichern",
     // Worker messages: run in the Web Worker, passed there via the init
     // config (the worker doesn't see QP_L).
     workerLoading:       "Python (Pyodide) wird im Hintergrund geladen …",
@@ -1387,97 +1750,6 @@ globalThis.qpyodideLocales = {
     canvasRenderFailed:  "Diese Figur lässt sich nicht interaktiv anzeigen – es bleibt beim Bild.",
     canvasBarValueLabel: "Wert",
 
-    // --- AI prompts ------------------------------------------------------------
-    // The length limit (~250 words) must be kept in EVERY language,
-    // otherwise feedback gets cut off mid-sentence again.
-    systemPrompt:
-      "Du bist ein geduldiger Programmier-Tutor für Python-Anfänger. " +
-      "Du bekommst den Code aus einer interaktiven Übungszelle sowie die Ausgabe " +
-      "des Python-Interpreters. Gib konstruktives Feedback auf Deutsch, ohne " +
-      "Rückfragen zu stellen. Nenne niemals eine komplette fertige Lösung als " +
-      "Code, sondern führe die Person zum eigenen Verständnis. " +
-      "Fasse dich kompakt: höchstens etwa 250 Wörter, damit deine Antwort " +
-      "vollständig bleibt und nicht mitten im Satz abgeschnitten wird. " +
-      "Gliedere dein Feedback so:\n" +
-      "Fehler (Syntax/Laufzeit):\n" +
-      "Stärken des Codes:\n" +
-      "Mögliche Verbesserungen:",
-
-    hintInstructions: {
-      1: "Hinweis-Stufe 1: Gib nur einen sanften Denkanstoß. Deute an, WO das Problem liegen könnte, aber nicht warum.",
-      2: "Hinweis-Stufe 2: Erkläre konkreter, WAS das Problem ist und warum es auftritt – aber noch ohne Lösungsweg.",
-      3: "Hinweis-Stufe 3: Beschreibe den vollständigen Lösungsweg Schritt für Schritt in Worten (weiterhin ohne fertigen Lösungscode)."
-    },
-
-    promptCodeIntro:   "Hier ist der Quellcode aus der Übungszelle:",
-    promptOutputIntro: "Und hier die Ausgabe des Python-Interpreters (inkl. eventueller Fehlermeldungen):",
-    promptNoOutput:    "(keine Ausgabe)",
-
-    // --- Feedback output -------------------------------------------------------
-    feedbackHeader:      "KI-Feedback",
-    feedbackHintLevel:   function (level) { return " – Hinweis-Stufe " + level; },
-    feedbackErrorHeader: "Feedback fehlgeschlagen: ",
-    feedbackBusy:        '<i class="fa-solid fa-spinner fa-spin"></i> Feedback …',
-    copyPromptHeader:    "💡 Prompt erzeugt – kopiere ihn in ChatGPT, Claude o. Ä.:",
-    copyPromptBtn:       "📋 Prompt kopieren",
-    copyPromptDone:      "✅ Kopiert!",
-    errNoContent:        "Die API-Antwort enthält keinen Feedback-Text (Feld choices[0].message.content fehlt).",
-    errTokenRejected:    "Die API hat die Anfrage wiederholt abgelehnt (Token-Parameter).",
-    errConfigMissing:
-      "Bitte richte zuerst dein KI-Feedback ein – über den Button hier oder " +
-      "das ⚙-Symbol oben – und gib Base URL sowie Modell an " +
-      "(oder wähle den Modus „Prompt kopieren“).",
-
-    // --- Settings panel ---------------------------------------------------------
-    gearTitle:           "KI-Feedback einrichten",
-    presetPlaceholder:   "– Vorlage wählen oder selbst eintragen –",
-    presetCerebras:      "Cerebras (Gratis-Tier)",
-    presetOpenrouter:    "OpenRouter (Gratis-Modelle · geteiltes Limit)",
-    presetOpenai:        "OpenAI (kostenpflichtig)",
-    presetOllama:        "Ollama (lokal, kein Key)",
-    phBaseUrl:           "z. B. https://api.cerebras.ai/v1",
-    phApiKey:            "API Key (bleibt lokal im Browser)",
-    phModel:             "z. B. gpt-oss-120b",
-    modeApi:             "Direkt-API (API-Key nötig)",
-    modeCopy:            "Prompt kopieren (ohne API-Key)",
-    fieldPreset:         "Anbieter-Vorlage",
-    fieldBaseUrl:        "Base URL",
-    fieldApiKey:         "API Key",
-    fieldModel:          "Modell",
-    fieldMode:           "Feedback-Modus",
-    saveBtn:             "Speichern",
-    saveDone:            "✓ gespeichert",
-    infoBtn:             "ℹ️ Wie komme ich an Zugangsdaten?",
-
-    // --- Model fetch -------------------------------------------------------
-    fetchModelsBtn:      '<i class="fa-solid fa-magnifying-glass"></i> Modelle abrufen',
-    fetchModelsBusy:     '<i class="fa-solid fa-spinner fa-spin"></i> lädt …',
-    freeOnlyLabel:       " nur kostenlose Modelle anzeigen",
-    modelChoose:         function (count) { return "– Modell wählen (" + count + " gefunden) –"; },
-    modelSuffixFree:     " – gratis",
-    modelSuffixPaid:     " – kostenpflichtig!",
-    modelListInfoPricing:   "Wähle ein Modell – es wird ins Modell-Feld übernommen.",
-    modelListInfoNoPricing:
-      "⚠️ Dieser Anbieter liefert keine Preisinfo. Prüfe auf der " +
-      "Anbieterseite, ob das Modell kostenlos ist, bevor du es nutzt.",
-    errNeedBaseUrl:      "Bitte zuerst eine Base URL eingeben (oder eine Anbieter-Vorlage wählen).",
-    errNoModels:         "Die Antwort enthielt keine Modelle.",
-    errModelListFailed:  function (msg) { return "Modell-Liste konnte nicht geladen werden: " + msg; },
-    modelHintKeyNeeded:  function (url) {
-      return 'API-Key nötig für Modellabruf. <a href="' + url +
-        '" target="_blank" rel="noopener">Verfügbare Modelle beim Anbieter &rarr;</a>';
-    },
-
-    helpBox:
-      '<b>KI-Zugang einrichten – funktioniert mit jeder OpenAI-kompatiblen API.</b><br>' +
-      'Du brauchst drei Angaben: <b>Base URL</b>, <b>API Key</b> und ein <b>Modell</b>.<br><br>' +
-      '<b>Anbieter mit kostenlosem Kontingent (Beispiele):</b><br>' +
-      '&bull; <b>OpenRouter</b> – Base URL <code>https://openrouter.ai/api/v1</code>, Key: <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>; Gratis-Modelle enden auf <code>:free</code> (<a href="https://openrouter.ai/models?max_price=0" target="_blank" rel="noopener">Liste</a>), z. B. <code>meta-llama/llama-3.3-70b-instruct:free</code><br>' +
-      '&bull; <b>Cerebras</b> – Base URL <code>https://api.cerebras.ai/v1</code>, Key: <a href="https://cloud.cerebras.ai" target="_blank" rel="noopener">cloud.cerebras.ai</a>; Modell z. B. <code>gpt-oss-120b</code><br>' +
-      '&bull; <b>OpenAI</b> – Base URL <code>https://api.openai.com/v1</code>; Modell z. B. <code>gpt-4o-mini</code> (kostenpflichtig)<br>' +
-      '&bull; <b>Ollama (lokal)</b> – Base URL <code>http://localhost:11434/v1</code>, kein Key nötig; Modellname des lokalen Modells<br>' +
-      '<br>Den exakten Modellnamen findest du in der Modell-Liste des jeweiligen Anbieters.<br>' +
-      '<i>Alle Eingaben bleiben ausschließlich lokal in deinem Browser.</i>'
   },
 
   // =========================================================================
@@ -1491,6 +1763,12 @@ globalThis.qpyodideLocales = {
     labelReadOnly:       "Skrivskyddad",
     labelEditable:       "Redigerbar",
     resetTitle:          "Återställ",
+    clearSavedTitle:     "Ta bort sparad kod för den här cellen",
+    storageSavedStatus:  "💾 Sparad",
+    storageRestoredStatus: "💾 Återställd",
+    storageSavableStatus: "💾 Kan sparas",
+    storageSavableTitle: "Koden i den här cellen sparas i den här webbläsaren medan du skriver",
+    resetConfirm:        "Detta tar bort din nuvarande kod och återställer originalversionen. Fortsätta?",
     copyTitle:           "Kopiera koden",
     feedbackTitle:       "AI-feedback på den aktuella koden",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Feedback',
@@ -1539,6 +1817,26 @@ globalThis.qpyodideLocales = {
     loadingPython:       "🟡 Python (Pyodide) laddas …",
     engineReady:         "🟢 Klart!",
     engineFailed:        function (msg) { return "🔴 Python kunde inte laddas: " + msg; },
+    storageToggleLabel:  "Spara kod i den här webbläsaren",
+    storageToggleTitle:  "Om avstängd sparas din kod inte längre i den här webbläsaren. Redan sparad kod finns kvar tills du rensar den per cell eller via knapparna för att ta bort sparad kod nedan.",
+    storageModeAutoLabel: "Spara automatiskt medan jag skriver",
+    storageModeAutoTitle: "Varje ändring sparas automatiskt strax efter att du slutar skriva.",
+    storageModeManualLabel: "Spara bara när jag klickar på Spara",
+    storageModeManualTitle: "Inget sparas automatiskt; varje cell får istället en egen Spara-knapp.",
+    saveCellTitle:       "Spara kodändringarna i den här cellen lokalt",
+    deleteThisPageSavesLabel: "Ta bort sparad kod på den här sidan",
+    deleteThisPageSavesTitle: "Tar bort all lokalt sparad kod i den här webbläsaren, endast för den här sidan",
+    deleteThisPageSavesConfirm:
+      "Detta tar permanent bort all kod som sparats lokalt i den här webbläsaren " +
+      "för den här sidan, och återställer varje cell på den här sidan till sin " +
+      "ursprungliga kod. Det går inte att ångra. Fortsätta?",
+    deleteAllSavesLabel: "Ta bort all sparad kod i det här projektet",
+    deleteAllSavesTitle: "Tar bort all lokalt sparad kod i den här webbläsaren, på alla sidor i det här projektet",
+    deleteAllSavesConfirm:
+      "Detta tar permanent bort all kod som sparats lokalt i den här webbläsaren, " +
+      "på alla sidor i det här projektet, och återställer varje cell på den här sidan till sin " +
+      "ursprungliga kod. Det går inte att ångra. Fortsätta?",
+    settingsTitleStorageOnly: "Inställningar för lokal sparning",
     // Worker messages: run in the Web Worker, passed there via the init
     // config (the worker doesn't see QP_L).
     workerLoading:       "Python (Pyodide) laddas i bakgrunden …",
@@ -1625,97 +1923,6 @@ globalThis.qpyodideLocales = {
     canvasRenderFailed:  "Den här figuren kan inte visas interaktivt – bilden visas i stället.",
     canvasBarValueLabel: "Värde",
 
-    // --- AI prompts ------------------------------------------------------------
-    // The length limit (~250 words) must be kept in EVERY language,
-    // otherwise feedback gets cut off mid-sentence again.
-    systemPrompt:
-      "Du är en tålmodig programmeringshandledare för nybörjare i Python. " +
-      "Du får koden från en interaktiv övningscell samt utskriften från " +
-      "Python-tolken. Ge konstruktiv feedback på svenska, utan att ställa " +
-      "motfrågor. Ge aldrig en komplett färdig lösning som kod, utan led " +
-      "personen fram till egen förståelse. " +
-      "Fatta dig kort: högst omkring 250 ord, så att ditt svar förblir " +
-      "fullständigt och inte klipps av mitt i en mening. " +
-      "Strukturera din feedback så här:\n" +
-      "Fel (syntax/körning):\n" +
-      "Kodens styrkor:\n" +
-      "Möjliga förbättringar:",
-
-    hintInstructions: {
-      1: "Ledtrådsnivå 1: Ge bara en försiktig tankeställare. Antyd VAR problemet kan ligga, men inte varför.",
-      2: "Ledtrådsnivå 2: Förklara mer konkret VAD problemet är och varför det uppstår – men ännu utan lösning.",
-      3: "Ledtrådsnivå 3: Beskriv hela lösningsvägen steg för steg i ord (fortfarande utan färdig lösningskod)."
-    },
-
-    promptCodeIntro:   "Här är källkoden från övningscellen:",
-    promptOutputIntro: "Och här är utskriften från Python-tolken (inklusive eventuella felmeddelanden):",
-    promptNoOutput:    "(ingen utskrift)",
-
-    // --- Feedback output -------------------------------------------------------
-    feedbackHeader:      "AI-feedback",
-    feedbackHintLevel:   function (level) { return " – ledtrådsnivå " + level; },
-    feedbackErrorHeader: "Feedbacken misslyckades: ",
-    feedbackBusy:        '<i class="fa-solid fa-spinner fa-spin"></i> Feedback …',
-    copyPromptHeader:    "💡 Prompt skapad – kopiera den till ChatGPT, Claude eller liknande:",
-    copyPromptBtn:       "📋 Kopiera prompten",
-    copyPromptDone:      "✅ Kopierad!",
-    errNoContent:        "API-svaret innehåller ingen feedbacktext (fältet choices[0].message.content saknas).",
-    errTokenRejected:    "API:et avvisade förfrågan upprepade gånger (token-parameter).",
-    errConfigMissing:
-      "Ställ först in din AI-feedback – med knappen här eller ⚙-symbolen " +
-      "ovan – och ange Base URL samt modell " +
-      "(eller välj läget ”Kopiera prompten”).",
-
-    // --- Settings panel ---------------------------------------------------------
-    gearTitle:           "Ställ in AI-feedback",
-    presetPlaceholder:   "– välj en mall eller fyll i själv –",
-    presetCerebras:      "Cerebras (gratisnivå)",
-    presetOpenrouter:    "OpenRouter (gratismodeller · delad gräns)",
-    presetOpenai:        "OpenAI (avgiftsbelagt)",
-    presetOllama:        "Ollama (lokalt, ingen nyckel)",
-    phBaseUrl:           "t.ex. https://api.cerebras.ai/v1",
-    phApiKey:            "API-nyckel (stannar lokalt i webbläsaren)",
-    phModel:             "t.ex. gpt-oss-120b",
-    modeApi:             "Direkt-API (API-nyckel krävs)",
-    modeCopy:            "Kopiera prompten (utan API-nyckel)",
-    fieldPreset:         "Leverantörsmall",
-    fieldBaseUrl:        "Base URL",
-    fieldApiKey:         "API-nyckel",
-    fieldModel:          "Modell",
-    fieldMode:           "Feedbackläge",
-    saveBtn:             "Spara",
-    saveDone:            "✓ sparat",
-    infoBtn:             "ℹ️ Hur får jag åtkomstuppgifter?",
-
-    // --- Model fetch -------------------------------------------------------
-    fetchModelsBtn:      '<i class="fa-solid fa-magnifying-glass"></i> Hämta modeller',
-    fetchModelsBusy:     '<i class="fa-solid fa-spinner fa-spin"></i> laddar …',
-    freeOnlyLabel:       " visa bara kostnadsfria modeller",
-    modelChoose:         function (count) { return "– välj modell (" + count + " hittade) –"; },
-    modelSuffixFree:     " – gratis",
-    modelSuffixPaid:     " – avgiftsbelagd!",
-    modelListInfoPricing:   "Välj en modell – den förs in i modellfältet.",
-    modelListInfoNoPricing:
-      "⚠️ Den här leverantören lämnar ingen prisinformation. Kontrollera på " +
-      "leverantörens sida om modellen är kostnadsfri innan du använder den.",
-    errNeedBaseUrl:      "Ange först en Base URL (eller välj en leverantörsmall).",
-    errNoModels:         "Svaret innehöll inga modeller.",
-    errModelListFailed:  function (msg) { return "Modellistan kunde inte laddas: " + msg; },
-    modelHintKeyNeeded:  function (url) {
-      return 'API-nyckel krävs för att hämta modeller. <a href="' + url +
-        '" target="_blank" rel="noopener">Tillgängliga modeller hos leverantören &rarr;</a>';
-    },
-
-    helpBox:
-      '<b>Ställ in AI-åtkomst – fungerar med alla OpenAI-kompatibla API:er.</b><br>' +
-      'Du behöver tre uppgifter: <b>Base URL</b>, <b>API-nyckel</b> och en <b>modell</b>.<br><br>' +
-      '<b>Leverantörer med kostnadsfri kvot (exempel):</b><br>' +
-      '&bull; <b>OpenRouter</b> – Base URL <code>https://openrouter.ai/api/v1</code>, nyckel: <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>; gratismodeller slutar på <code>:free</code> (<a href="https://openrouter.ai/models?max_price=0" target="_blank" rel="noopener">lista</a>), t.ex. <code>meta-llama/llama-3.3-70b-instruct:free</code><br>' +
-      '&bull; <b>Cerebras</b> – Base URL <code>https://api.cerebras.ai/v1</code>, nyckel: <a href="https://cloud.cerebras.ai" target="_blank" rel="noopener">cloud.cerebras.ai</a>; modell t.ex. <code>gpt-oss-120b</code><br>' +
-      '&bull; <b>OpenAI</b> – Base URL <code>https://api.openai.com/v1</code>; modell t.ex. <code>gpt-4o-mini</code> (avgiftsbelagd)<br>' +
-      '&bull; <b>Ollama (lokalt)</b> – Base URL <code>http://localhost:11434/v1</code>, ingen nyckel behövs; namnet på den lokala modellen<br>' +
-      '<br>Det exakta modellnamnet hittar du i respektive leverantörs modellista.<br>' +
-      '<i>Alla uppgifter stannar uteslutande lokalt i din webbläsare.</i>'
   },
 
   // =========================================================================
@@ -1729,6 +1936,12 @@ globalThis.qpyodideLocales = {
     labelReadOnly:       "Skrivebeskyttet",
     labelEditable:       "Redigerbar",
     resetTitle:          "Tilbakestill",
+    clearSavedTitle:     "Slett lagret kode for denne cellen",
+    storageSavedStatus:  "💾 Lagret",
+    storageRestoredStatus: "💾 Gjenopprettet",
+    storageSavableStatus: "💾 Kan lagres",
+    storageSavableTitle: "Koden i denne cellen lagres i denne nettleseren mens du skriver",
+    resetConfirm:        "Dette fjerner koden din og gjenoppretter originalversjonen. Fortsette?",
     copyTitle:           "Kopier koden",
     feedbackTitle:       "KI-tilbakemelding på den gjeldende koden",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Tilbakemelding',
@@ -1777,6 +1990,26 @@ globalThis.qpyodideLocales = {
     loadingPython:       "🟡 Python (Pyodide) lastes …",
     engineReady:         "🟢 Klar!",
     engineFailed:        function (msg) { return "🔴 Python kunne ikke lastes: " + msg; },
+    storageToggleLabel:  "Lagre kode i denne nettleseren",
+    storageToggleTitle:  "Når av lagres ikke koden din lenger i denne nettleseren. Allerede lagret kode blir liggende til du sletter den per celle eller via slett-knappene nedenfor.",
+    storageModeAutoLabel: "Lagre automatisk mens jeg skriver",
+    storageModeAutoTitle: "Hver endring lagres automatisk et lite øyeblikk etter at du slutter å skrive.",
+    storageModeManualLabel: "Lagre bare når jeg klikker Lagre",
+    storageModeManualTitle: "Ingenting lagres automatisk; hver celle får i stedet sin egen Lagre-knapp.",
+    saveCellTitle:       "Lagre kodeendringene i denne cellen lokalt",
+    deleteThisPageSavesLabel: "Slett lagret kode på denne siden",
+    deleteThisPageSavesTitle: "Sletter all lokalt lagret kode i denne nettleseren, kun for denne siden",
+    deleteThisPageSavesConfirm:
+      "Dette sletter permanent all kode som er lagret lokalt i denne nettleseren " +
+      "for denne siden, og tilbakestiller hver celle på denne siden til den " +
+      "opprinnelige koden. Dette kan ikke angres. Fortsette?",
+    deleteAllSavesLabel: "Slett all lagret kode i dette prosjektet",
+    deleteAllSavesTitle: "Sletter all lokalt lagret kode i denne nettleseren, på alle sider i dette prosjektet",
+    deleteAllSavesConfirm:
+      "Dette sletter permanent all kode som er lagret lokalt i denne nettleseren, " +
+      "på alle sider i dette prosjektet, og tilbakestiller hver celle på denne siden til den " +
+      "opprinnelige koden. Dette kan ikke angres. Fortsette?",
+    settingsTitleStorageOnly: "Innstillinger for lokal lagring",
     // Worker messages: run in the Web Worker, passed there via the init
     // config (the worker doesn't see QP_L).
     workerLoading:       "Python (Pyodide) lastes i bakgrunnen …",
@@ -1863,97 +2096,6 @@ globalThis.qpyodideLocales = {
     canvasRenderFailed:  "Denne figuren kan ikke vises interaktivt – bildet vises i stedet.",
     canvasBarValueLabel: "Verdi",
 
-    // --- AI prompts ------------------------------------------------------------
-    // The length limit (~250 words) must be kept in EVERY language,
-    // otherwise feedback gets cut off mid-sentence again.
-    systemPrompt:
-      "Du er en tålmodig programmeringsveileder for nybegynnere i Python. " +
-      "Du får koden fra en interaktiv øvingscelle samt utskriften fra " +
-      "Python-tolkeren. Gi konstruktiv tilbakemelding på norsk, uten å stille " +
-      "motspørsmål. Oppgi aldri en komplett ferdig løsning som kode, men led " +
-      "personen fram til egen forståelse. " +
-      "Vær kortfattet: høyst omtrent 250 ord, slik at svaret ditt forblir " +
-      "fullstendig og ikke blir kuttet midt i en setning. " +
-      "Strukturer tilbakemeldingen slik:\n" +
-      "Feil (syntaks/kjøretid):\n" +
-      "Kodens styrker:\n" +
-      "Mulige forbedringer:",
-
-    hintInstructions: {
-      1: "Hintnivå 1: Gi bare et forsiktig puff i riktig retning. Antyd HVOR problemet kan ligge, men ikke hvorfor.",
-      2: "Hintnivå 2: Forklar mer konkret HVA problemet er og hvorfor det oppstår – men fortsatt uten løsning.",
-      3: "Hintnivå 3: Beskriv hele løsningsveien steg for steg med ord (fortsatt uten ferdig løsningskode)."
-    },
-
-    promptCodeIntro:   "Her er kildekoden fra øvingscellen:",
-    promptOutputIntro: "Og her er utskriften fra Python-tolkeren (inkludert eventuelle feilmeldinger):",
-    promptNoOutput:    "(ingen utskrift)",
-
-    // --- Feedback output -------------------------------------------------------
-    feedbackHeader:      "KI-tilbakemelding",
-    feedbackHintLevel:   function (level) { return " – hintnivå " + level; },
-    feedbackErrorHeader: "Tilbakemeldingen mislyktes: ",
-    feedbackBusy:        '<i class="fa-solid fa-spinner fa-spin"></i> Tilbakemelding …',
-    copyPromptHeader:    "💡 Prompt laget – kopier den inn i ChatGPT, Claude eller lignende:",
-    copyPromptBtn:       "📋 Kopier prompten",
-    copyPromptDone:      "✅ Kopiert!",
-    errNoContent:        "API-svaret inneholder ingen tilbakemeldingstekst (feltet choices[0].message.content mangler).",
-    errTokenRejected:    "API-et avviste forespørselen gjentatte ganger (token-parameter).",
-    errConfigMissing:
-      "Sett først opp AI-tilbakemeldingen din – med knappen her eller " +
-      "⚙-symbolet ovenfor – og oppgi Base URL og modell " +
-      "(eller velg modusen «Kopier prompten»).",
-
-    // --- Settings panel ---------------------------------------------------------
-    gearTitle:           "Sett opp KI-tilbakemelding",
-    presetPlaceholder:   "– velg en mal eller fyll inn selv –",
-    presetCerebras:      "Cerebras (gratisnivå)",
-    presetOpenrouter:    "OpenRouter (gratismodeller · delt grense)",
-    presetOpenai:        "OpenAI (betalt)",
-    presetOllama:        "Ollama (lokalt, ingen nøkkel)",
-    phBaseUrl:           "f.eks. https://api.cerebras.ai/v1",
-    phApiKey:            "API-nøkkel (blir lokalt i nettleseren)",
-    phModel:             "f.eks. gpt-oss-120b",
-    modeApi:             "Direkte-API (API-nøkkel kreves)",
-    modeCopy:            "Kopier prompten (uten API-nøkkel)",
-    fieldPreset:         "Leverandørmal",
-    fieldBaseUrl:        "Base URL",
-    fieldApiKey:         "API-nøkkel",
-    fieldModel:          "Modell",
-    fieldMode:           "Tilbakemeldingsmodus",
-    saveBtn:             "Lagre",
-    saveDone:            "✓ lagret",
-    infoBtn:             "ℹ️ Hvordan får jeg tilgangsdata?",
-
-    // --- Model fetch -------------------------------------------------------
-    fetchModelsBtn:      '<i class="fa-solid fa-magnifying-glass"></i> Hent modeller',
-    fetchModelsBusy:     '<i class="fa-solid fa-spinner fa-spin"></i> laster …',
-    freeOnlyLabel:       " vis bare gratis modeller",
-    modelChoose:         function (count) { return "– velg modell (" + count + " funnet) –"; },
-    modelSuffixFree:     " – gratis",
-    modelSuffixPaid:     " – betalt!",
-    modelListInfoPricing:   "Velg en modell – den settes inn i modellfeltet.",
-    modelListInfoNoPricing:
-      "⚠️ Denne leverandøren oppgir ingen prisinformasjon. Sjekk på " +
-      "leverandørens side om modellen er gratis før du bruker den.",
-    errNeedBaseUrl:      "Oppgi først en Base URL (eller velg en leverandørmal).",
-    errNoModels:         "Svaret inneholdt ingen modeller.",
-    errModelListFailed:  function (msg) { return "Modellisten kunne ikke lastes: " + msg; },
-    modelHintKeyNeeded:  function (url) {
-      return 'API-nøkkel kreves for å hente modeller. <a href="' + url +
-        '" target="_blank" rel="noopener">Tilgjengelige modeller hos leverandøren &rarr;</a>';
-    },
-
-    helpBox:
-      '<b>Sett opp KI-tilgang – virker med alle OpenAI-kompatible API-er.</b><br>' +
-      'Du trenger tre opplysninger: <b>Base URL</b>, <b>API-nøkkel</b> og en <b>modell</b>.<br><br>' +
-      '<b>Leverandører med gratis kvote (eksempler):</b><br>' +
-      '&bull; <b>OpenRouter</b> – Base URL <code>https://openrouter.ai/api/v1</code>, nøkkel: <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>; gratismodeller slutter på <code>:free</code> (<a href="https://openrouter.ai/models?max_price=0" target="_blank" rel="noopener">liste</a>), f.eks. <code>meta-llama/llama-3.3-70b-instruct:free</code><br>' +
-      '&bull; <b>Cerebras</b> – Base URL <code>https://api.cerebras.ai/v1</code>, nøkkel: <a href="https://cloud.cerebras.ai" target="_blank" rel="noopener">cloud.cerebras.ai</a>; modell f.eks. <code>gpt-oss-120b</code><br>' +
-      '&bull; <b>OpenAI</b> – Base URL <code>https://api.openai.com/v1</code>; modell f.eks. <code>gpt-4o-mini</code> (betalt)<br>' +
-      '&bull; <b>Ollama (lokalt)</b> – Base URL <code>http://localhost:11434/v1</code>, ingen nøkkel nødvendig; navnet på den lokale modellen<br>' +
-      '<br>Det nøyaktige modellnavnet finner du i modellisten til den enkelte leverandøren.<br>' +
-      '<i>Alle opplysninger blir utelukkende lokalt i nettleseren din.</i>'
   },
 
   // =========================================================================
@@ -1967,6 +2109,12 @@ globalThis.qpyodideLocales = {
     labelReadOnly:       "Skrivebeskyttet",
     labelEditable:       "Redigerbar",
     resetTitle:          "Nulstil",
+    clearSavedTitle:     "Ryd gemt kode for denne celle",
+    storageSavedStatus:  "💾 Gemt",
+    storageRestoredStatus: "💾 Gendannet",
+    storageSavableStatus: "💾 Kan gemmes",
+    storageSavableTitle: "Koden i denne celle gemmes i denne browser, mens du skriver",
+    resetConfirm:        "Dette fjerner din nuværende kode og gendanner originalversionen. Fortsæt?",
     copyTitle:           "Kopiér koden",
     feedbackTitle:       "AI-feedback på den aktuelle kode",
     feedbackLabel:       '<i class="fa-regular fa-comment-dots"></i> Feedback',
@@ -2015,6 +2163,26 @@ globalThis.qpyodideLocales = {
     loadingPython:       "🟡 Python (Pyodide) indlæses …",
     engineReady:         "🟢 Klar!",
     engineFailed:        function (msg) { return "🔴 Python kunne ikke indlæses: " + msg; },
+    storageToggleLabel:  "Gem kode i denne browser",
+    storageToggleTitle:  "Når slået fra, gemmes din kode ikke længere i denne browser. Allerede gemt kode forbliver, indtil du rydder den pr. celle eller via slet-knapperne nedenfor.",
+    storageModeAutoLabel: "Gem automatisk, mens jeg skriver",
+    storageModeAutoTitle: "Hver ændring gemmes automatisk et øjeblik efter, du holder op med at skrive.",
+    storageModeManualLabel: "Gem kun, når jeg klikker Gem",
+    storageModeManualTitle: "Intet gemmes automatisk; hver celle får i stedet sin egen Gem-knap.",
+    saveCellTitle:       "Gem kodeændringerne i denne celle lokalt",
+    deleteThisPageSavesLabel: "Slet gemt kode på denne side",
+    deleteThisPageSavesTitle: "Sletter al lokalt gemt kode i denne browser, kun for denne side",
+    deleteThisPageSavesConfirm:
+      "Dette sletter permanent al kode, der er gemt lokalt i denne browser " +
+      "for denne side, og nulstiller hver celle på denne side til dens " +
+      "oprindelige kode. Dette kan ikke fortrydes. Fortsæt?",
+    deleteAllSavesLabel: "Slet al gemt kode i dette projekt",
+    deleteAllSavesTitle: "Sletter al lokalt gemt kode i denne browser, på alle sider i dette projekt",
+    deleteAllSavesConfirm:
+      "Dette sletter permanent al kode, der er gemt lokalt i denne browser, " +
+      "på alle sider i dette projekt, og nulstiller hver celle på denne side til dens " +
+      "oprindelige kode. Dette kan ikke fortrydes. Fortsæt?",
+    settingsTitleStorageOnly: "Indstillinger for lokal lagring",
     // Worker messages: run in the Web Worker, passed there via the init
     // config (the worker doesn't see QP_L).
     workerLoading:       "Python (Pyodide) indlæses i baggrunden …",
@@ -2101,97 +2269,6 @@ globalThis.qpyodideLocales = {
     canvasRenderFailed:  "Denne figur kan ikke vises interaktivt – billedet vises i stedet.",
     canvasBarValueLabel: "Værdi",
 
-    // --- AI prompts ------------------------------------------------------------
-    // The length limit (~250 words) must be kept in EVERY language,
-    // otherwise feedback gets cut off mid-sentence again.
-    systemPrompt:
-      "Du er en tålmodig programmeringsvejleder for begyndere i Python. " +
-      "Du får koden fra en interaktiv øvelsescelle samt udskriften fra " +
-      "Python-fortolkeren. Giv konstruktiv feedback på dansk, uden at stille " +
-      "modspørgsmål. Angiv aldrig en komplet færdig løsning som kode, men led " +
-      "personen frem til sin egen forståelse. " +
-      "Fat dig i korthed: højst omkring 250 ord, så dit svar forbliver " +
-      "fuldstændigt og ikke bliver afbrudt midt i en sætning. " +
-      "Strukturér din feedback sådan:\n" +
-      "Fejl (syntaks/kørsel):\n" +
-      "Kodens styrker:\n" +
-      "Mulige forbedringer:",
-
-    hintInstructions: {
-      1: "Hintniveau 1: Giv kun et forsigtigt puf i den rigtige retning. Antyd HVOR problemet kan ligge, men ikke hvorfor.",
-      2: "Hintniveau 2: Forklar mere konkret HVAD problemet er, og hvorfor det opstår – men stadig uden en løsning.",
-      3: "Hintniveau 3: Beskriv hele løsningsvejen trin for trin med ord (stadig uden færdig løsningskode)."
-    },
-
-    promptCodeIntro:   "Her er kildekoden fra øvelsescellen:",
-    promptOutputIntro: "Og her er udskriften fra Python-fortolkeren (inklusive eventuelle fejlmeddelelser):",
-    promptNoOutput:    "(ingen udskrift)",
-
-    // --- Feedback output -------------------------------------------------------
-    feedbackHeader:      "AI-feedback",
-    feedbackHintLevel:   function (level) { return " – hintniveau " + level; },
-    feedbackErrorHeader: "Feedbacken mislykkedes: ",
-    feedbackBusy:        '<i class="fa-solid fa-spinner fa-spin"></i> Feedback …',
-    copyPromptHeader:    "💡 Prompt oprettet – kopiér den ind i ChatGPT, Claude eller lignende:",
-    copyPromptBtn:       "📋 Kopiér prompten",
-    copyPromptDone:      "✅ Kopieret!",
-    errNoContent:        "API-svaret indeholder ingen feedbacktekst (feltet choices[0].message.content mangler).",
-    errTokenRejected:    "API-et afviste anmodningen gentagne gange (token-parameter).",
-    errConfigMissing:
-      "Opsæt først din AI-feedback – med knappen her eller ⚙-symbolet " +
-      "ovenfor – og angiv Base URL samt model " +
-      "(eller vælg tilstanden »Kopiér prompten«).",
-
-    // --- Settings panel ---------------------------------------------------------
-    gearTitle:           "Opsæt AI-feedback",
-    presetPlaceholder:   "– vælg en skabelon, eller udfyld selv –",
-    presetCerebras:      "Cerebras (gratis niveau)",
-    presetOpenrouter:    "OpenRouter (gratis modeller · delt grænse)",
-    presetOpenai:        "OpenAI (betalt)",
-    presetOllama:        "Ollama (lokalt, ingen nøgle)",
-    phBaseUrl:           "f.eks. https://api.cerebras.ai/v1",
-    phApiKey:            "API-nøgle (forbliver lokalt i browseren)",
-    phModel:             "f.eks. gpt-oss-120b",
-    modeApi:             "Direkte API (API-nøgle påkrævet)",
-    modeCopy:            "Kopiér prompten (uden API-nøgle)",
-    fieldPreset:         "Udbyderskabelon",
-    fieldBaseUrl:        "Base URL",
-    fieldApiKey:         "API-nøgle",
-    fieldModel:          "Model",
-    fieldMode:           "Feedbacktilstand",
-    saveBtn:             "Gem",
-    saveDone:            "✓ gemt",
-    infoBtn:             "ℹ️ Hvordan får jeg adgangsoplysninger?",
-
-    // --- Model fetch -------------------------------------------------------
-    fetchModelsBtn:      '<i class="fa-solid fa-magnifying-glass"></i> Hent modeller',
-    fetchModelsBusy:     '<i class="fa-solid fa-spinner fa-spin"></i> indlæser …',
-    freeOnlyLabel:       " vis kun gratis modeller",
-    modelChoose:         function (count) { return "– vælg model (" + count + " fundet) –"; },
-    modelSuffixFree:     " – gratis",
-    modelSuffixPaid:     " – betalt!",
-    modelListInfoPricing:   "Vælg en model – den indsættes i modelfeltet.",
-    modelListInfoNoPricing:
-      "⚠️ Denne udbyder angiver ingen prisoplysninger. Kontrollér på " +
-      "udbyderens side, om modellen er gratis, før du bruger den.",
-    errNeedBaseUrl:      "Angiv først en Base URL (eller vælg en udbyderskabelon).",
-    errNoModels:         "Svaret indeholdt ingen modeller.",
-    errModelListFailed:  function (msg) { return "Modellisten kunne ikke indlæses: " + msg; },
-    modelHintKeyNeeded:  function (url) {
-      return 'API-nøgle påkrævet for at hente modeller. <a href="' + url +
-        '" target="_blank" rel="noopener">Tilgængelige modeller hos udbyderen &rarr;</a>';
-    },
-
-    helpBox:
-      '<b>Opsæt AI-adgang – virker med alle OpenAI-kompatible API-er.</b><br>' +
-      'Du skal bruge tre oplysninger: <b>Base URL</b>, <b>API-nøgle</b> og en <b>model</b>.<br><br>' +
-      '<b>Udbydere med gratis kvote (eksempler):</b><br>' +
-      '&bull; <b>OpenRouter</b> – Base URL <code>https://openrouter.ai/api/v1</code>, nøgle: <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>; gratis modeller slutter på <code>:free</code> (<a href="https://openrouter.ai/models?max_price=0" target="_blank" rel="noopener">liste</a>), f.eks. <code>meta-llama/llama-3.3-70b-instruct:free</code><br>' +
-      '&bull; <b>Cerebras</b> – Base URL <code>https://api.cerebras.ai/v1</code>, nøgle: <a href="https://cloud.cerebras.ai" target="_blank" rel="noopener">cloud.cerebras.ai</a>; model f.eks. <code>gpt-oss-120b</code><br>' +
-      '&bull; <b>OpenAI</b> – Base URL <code>https://api.openai.com/v1</code>; model f.eks. <code>gpt-4o-mini</code> (betalt)<br>' +
-      '&bull; <b>Ollama (lokalt)</b> – Base URL <code>http://localhost:11434/v1</code>, ingen nøgle nødvendig; navnet på den lokale model<br>' +
-      '<br>Det nøjagtige modelnavn finder du i den enkelte udbyders modelliste.<br>' +
-      '<i>Alle oplysninger forbliver udelukkende lokalt i din browser.</i>'
   }
 };
 
@@ -2307,9 +2384,7 @@ globalThis.qpyodideSetInteractiveButtonState = function(buttonText, enableCodeBu
     btn.disabled = !enableCodeButton ||
       (btn.dataset.needsInput === "1" && !globalThis.qpyodideInputAvailable());
   });
-  document.querySelectorAll(".qpyodide-button-feedback").forEach((btn) => {
-    btn.disabled = !enableCodeButton;
-  });
+  // Feedback and its cancellation lifecycle are independent of Python startup.
 }
 
 // Update the status message in non-interactive (output/setup) cells
@@ -2411,698 +2486,190 @@ qpyodideDisplayStartupMessage(qpyodideShowStartupMessage);
 
 </script>
 <script type="module">
-// qpyodide-feedback.js – AI feedback module (ONE implementation for all cells)
-//
-// Provides `globalThis.qpyodideFeedback`:
-//   attach(unit)     – wires up the feedback button of an editor unit;
-//                      `unit` provides { uid, feedbackButton, feedbackDiv,
-//                      getCode(), runForOutput() }
-//   buildSettingsUI()– builds the (collapsible) settings panel
-//
-// Provider-neutral: any OpenAI-compatible endpoint works via
-// POST {baseUrl}/chat/completions with a bearer key and a freely chosen
-// model (OpenRouter, Cerebras, Groq, OpenAI, Ollama, …). NOTHING is
-// guessed – in particular no model lookup via GET /models.
-//
-// Two modes:
-//   "api"  – direct API call (default)
-//   "copy" – generates a copyable prompt including the system prompt for
-//            ChatGPT/Claude & co. (no API key needed)
-//
-// Configuration is stored, depending on the choice, in localStorage
-// (persistent) or sessionStorage (per tab) – exclusively in the user's browser.
-
-const qfOptions = globalThis.qpyodideFeedbackOptions ?? { enabled: false, storage: "local", hints: true };
-
-const QF_STORAGE_KEY = "qpyodide-feedback-config";
-
-// ---------------------------------------------------------------------------
-// Load/save configuration
-// ---------------------------------------------------------------------------
-
-function qfLoadConfig() {
-  for (const store of [localStorage, sessionStorage]) {
-    try {
-      const raw = store.getItem(QF_STORAGE_KEY);
-      if (raw) {
-        const cfg = JSON.parse(raw);
-        cfg.storage = (store === localStorage) ? "local" : "session";
-        return cfg;
+// Pyodide domain adapter. Shared runtime owns settings, transport and rendering.
+(function (root) {
+  'use strict';
+  const options = root.qpyodideFeedbackOptions || {enabled: false, hints: true};
+  // Legacy document storage is a default only; explicit shared settings win.
+  root.__aiFeedbackConfig = {storage: options.storage || 'local', ...root.__aiFeedbackConfig};
+  const F = root.AIFeedback;
+  const language = root.qpyodideLocales?.[root.qpyodideLang] ? root.qpyodideLang : 'en';
+  const uiLanguage = language === 'no' ? 'nb' : language;
+  root.qpyodideFeedback = {
+    enabled: !!options.enabled,
+    openSettings: () => F?.openSettings(),
+    attach(unit) {
+      if (!this.enabled || !unit.feedbackButton) return null;
+      const version = F && String(F.version).split('.').map(Number);
+      const output = unit.feedbackDiv;
+      output.classList.add('ai-feedback-output');
+      output.setAttribute('aria-live', 'polite');
+      if (!version || !(version[0] > 0 || version[1] >= 5)) {
+        unit.feedbackButton.disabled = true;
+        output.textContent = 'Pyodide feedback requires ai-feedback 0.5.0 or later. Update the installed extension and render again. Run remains available.';
+        return null;
       }
-    } catch (e) { /* broken JSON or blocked storage -> ignore */ }
-  }
-  return { baseUrl: "", apiKey: "", model: "", mode: "api", storage: qfOptions.storage || "local" };
-}
-
-function qfSaveConfig(cfg) {
-  const target = (cfg.storage === "session") ? sessionStorage : localStorage;
-  const other  = (cfg.storage === "session") ? localStorage : sessionStorage;
-  try {
-    target.setItem(QF_STORAGE_KEY, JSON.stringify(cfg));
-    other.removeItem(QF_STORAGE_KEY);
-  } catch (e) {
-    console.warn("qpyodide-feedback: failed to save configuration", e);
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Prompts
-// ---------------------------------------------------------------------------
-
-// Prompts come from the locale table (qpyodide-locales.js), so the tutor
-// responds in the page's language.
-const QF_SYSTEM_PROMPT = QP_L.systemPrompt;
-
-// Extra instruction per hint level (rises with the click count per cell)
-const QF_HINT_INSTRUCTIONS = QP_L.hintInstructions;
-
-function qfBuildUserPrompt(code, output, hintLevel) {
-  let prompt =
-    QP_L.promptCodeIntro + "\n```python\n" + code + "\n```\n\n" +
-    QP_L.promptOutputIntro + "\n```\n" +
-    (output && output.trim() ? output : QP_L.promptNoOutput) + "\n```";
-  if (hintLevel > 0) {
-    prompt += "\n\n" + (QF_HINT_INSTRUCTIONS[Math.min(hintLevel, 3)]);
-  }
-  return prompt;
-}
-
-// ---------------------------------------------------------------------------
-// API call (OpenAI-compatible)
-// ---------------------------------------------------------------------------
-
-async function qfRequestFeedback(cfg, messages) {
-  const endpoint = cfg.baseUrl.replace(/\/+$/, "") + "/chat/completions";
-
-  const headers = { "Content-Type": "application/json" };
-  if (cfg.apiKey) {
-    headers["Authorization"] = `Bearer ${cfg.apiKey}`;
-  }
-
-  // Token limit is just a generous safety net against runaway output –
-  // the actual length limit lives in the system prompt (~250 words).
-  // This means feedback no longer gets cut off mid-sentence.
-  // Modern approach: set both token fields; some providers reject one – in
-  // that case, retry once without the rejected field.
-  let body = {
-    model: cfg.model,
-    messages: messages,
-    max_tokens: 2000,
-    max_completion_tokens: 2000
-  };
-
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(body)
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => "");
-      // Remove the rejected token field and retry
-      if (response.status === 400 && "max_completion_tokens" in body && /max_completion_tokens/.test(errorText)) {
-        delete body.max_completion_tokens;
-        continue;
-      }
-      if (response.status === 400 && "max_tokens" in body && /max_tokens/.test(errorText)) {
-        delete body.max_tokens;
-        continue;
-      }
-      throw new Error(`HTTP ${response.status} ${response.statusText}\n${errorText.slice(0, 600)}`);
-    }
-
-    const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
-    if (!content) {
-      throw new Error(QP_L.errNoContent);
-    }
-    return content;
-  }
-  throw new Error(QP_L.errTokenRejected);
-}
-
-// ---------------------------------------------------------------------------
-// Fetch model list (explicit click in the panel – no silent guessing)
-// ---------------------------------------------------------------------------
-
-// Is a model free? true/false, or null if the provider doesn't supply
-// pricing info (e.g. Groq, Cerebras, Ollama).
-function qfIsFreeModel(model) {
-  if (typeof model.id === "string" && model.id.endsWith(":free")) return true;
-  const pricing = model.pricing;
-  if (pricing && ("prompt" in pricing || "completion" in pricing)) {
-    return Number(pricing.prompt ?? 0) === 0 && Number(pricing.completion ?? 0) === 0;
-  }
-  return null;
-}
-
-async function qfFetchModels(baseUrl, apiKey) {
-  const endpoint = baseUrl.replace(/\/+$/, "") + "/models";
-  const headers = {};
-  if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
-
-  const response = await fetch(endpoint, { headers });
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => "");
-    throw new Error(`HTTP ${response.status} ${response.statusText}\n${errorText.slice(0, 300)}`);
-  }
-
-  const data = await response.json();
-  const list = Array.isArray(data.data) ? data.data
-             : Array.isArray(data.models) ? data.models
-             : [];
-  return list
-    .map((model) => ({ id: model.id || model.name, free: qfIsFreeModel(model) }))
-    .filter((model) => typeof model.id === "string" && model.id);
-}
-
-// ---------------------------------------------------------------------------
-// Rendering (safe: model output is escaped, then mini-Markdown)
-// ---------------------------------------------------------------------------
-
-function qfEscapeHtml(text) {
-  return text
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-}
-
-// Very small Markdown subset: ```code blocks```, `inline code`, **bold**
-function qfRenderMarkdownLite(text) {
-  const parts = text.split(/```(?:[a-zA-Z0-9_-]*\n)?/);
-  let html = "";
-  for (let i = 0; i < parts.length; i++) {
-    if (i % 2 === 1) {
-      // Content between ``` fences
-      html += "<pre class='qpyodide-feedback-code'><code>" + qfEscapeHtml(parts[i]) + "</code></pre>";
-    } else {
-      let chunk = qfEscapeHtml(parts[i]);
-      chunk = chunk.replace(/`([^`\n]+)`/g, "<code>$1</code>");
-      chunk = chunk.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
-      chunk = chunk.replace(/\n/g, "<br>");
-      html += chunk;
-    }
-  }
-  return html;
-}
-
-// The settings panel can be living inside `targetDiv` (qfOpenSettingsNear
-// moved it there earlier); wiping innerHTML would silently detach it. Move
-// it back home first so it's never lost, just relocated.
-function qfClearTargetDiv(targetDiv) {
-  if (qfUi.panel && qfUi.homeParent && targetDiv.contains(qfUi.panel)) {
-    qfUi.homeParent.appendChild(qfUi.panel);
-  }
-  targetDiv.innerHTML = "";
-}
-
-function qfRenderFeedback(targetDiv, feedbackText, hintLevel) {
-  qfClearTargetDiv(targetDiv);
-
-  const header = document.createElement("div");
-  header.className = "qpyodide-feedback-header";
-  header.textContent = QP_L.feedbackHeader +
-    (hintLevel > 0 ? QP_L.feedbackHintLevel(Math.min(hintLevel, 3)) : "") + ":";
-  targetDiv.appendChild(header);
-
-  const bodyDiv = document.createElement("div");
-  bodyDiv.className = "qpyodide-feedback-body";
-  bodyDiv.innerHTML = qfRenderMarkdownLite(feedbackText);
-  targetDiv.appendChild(bodyDiv);
-
-  targetDiv.classList.add("has-content");
-}
-
-// `showSettingsLink`: adds a button that relocates the settings panel
-// right into `targetDiv` instead of making the reader hunt for the gear
-// icon at the top of the page - used for the "not configured yet" error.
-function qfRenderError(targetDiv, message, { showSettingsLink = false } = {}) {
-  qfClearTargetDiv(targetDiv);
-
-  const box = document.createElement("div");
-  box.className = "qpyodide-feedback-error";
-  const header = document.createElement("strong");
-  header.textContent = QP_L.feedbackErrorHeader;
-  const text = document.createElement("span");
-  text.textContent = message;
-  box.appendChild(header);
-  box.appendChild(text);
-
-  if (showSettingsLink) {
-    const gearBtn = document.createElement("button");
-    gearBtn.type = "button";
-    gearBtn.className = "btn btn-light btn-sm qpyodide-button qpyodide-feedback-error-gear";
-    gearBtn.innerHTML = '<i class="fa-solid fa-gear"></i> ' + QP_L.gearTitle;
-    // Moves the settings panel right into this cell's feedback area
-    // (appended after `box` below) instead of sending the reader to the
-    // top of the page.
-    gearBtn.onclick = () => qfOpenSettingsNear(targetDiv);
-    box.appendChild(gearBtn);
-  }
-
-  targetDiv.appendChild(box);
-
-  targetDiv.classList.add("has-content");
-}
-
-// Box with a copyable prompt ("Copy prompt" mode, including the system prompt)
-function qfRenderCopyPrompt(targetDiv, promptText) {
-  qfClearTargetDiv(targetDiv);
-
-  const header = document.createElement("div");
-  header.className = "qpyodide-feedback-header";
-  header.textContent = QP_L.copyPromptHeader;
-  targetDiv.appendChild(header);
-
-  const pre = document.createElement("pre");
-  pre.className = "qpyodide-feedback-code qpyodide-feedback-copyprompt";
-  pre.textContent = promptText;
-  targetDiv.appendChild(pre);
-
-  const copyBtn = document.createElement("button");
-  copyBtn.className = "btn btn-default qpyodide-button";
-  copyBtn.type = "button";
-  copyBtn.textContent = QP_L.copyPromptBtn;
-  copyBtn.onclick = function() {
-    navigator.clipboard.writeText(promptText).then(function() {
-      copyBtn.textContent = QP_L.copyPromptDone;
-      setTimeout(function() { copyBtn.textContent = QP_L.copyPromptBtn; }, 2000);
-    });
-  };
-  targetDiv.appendChild(copyBtn);
-
-  targetDiv.classList.add("has-content");
-}
-
-// ---------------------------------------------------------------------------
-// Settings panel
-// ---------------------------------------------------------------------------
-
-const qfUi = {};   // references to the panel's UI elements
-
-function qfMakeField(labelText, input) {
-  // <div> instead of <label> avoids the double-click issue on <select> wrappers
-  const wrapper = document.createElement("div");
-  wrapper.className = "qpyodide-feedback-field";
-  const span = document.createElement("span");
-  span.textContent = labelText;
-  wrapper.appendChild(span);
-  wrapper.appendChild(input);
-  return wrapper;
-}
-
-function qfBuildHelpBox() {
-  const helpDiv = document.createElement("div");
-  helpDiv.className = "qpyodide-feedback-help";
-  helpDiv.style.display = "none";
-  helpDiv.innerHTML = QP_L.helpBox;
-  return helpDiv;
-}
-
-// Provider presets: fill in base URL + example model with a click, so
-// beginners don't have to type anything themselves. The key comes from the user.
-const QF_PROVIDER_PRESETS = {
-  cerebras:   { label: QP_L.presetCerebras,   baseUrl: "https://api.cerebras.ai/v1",  model: "gpt-oss-120b",                          modelsUrl: "https://inference-docs.cerebras.ai/models/overview" },
-  openrouter: { label: QP_L.presetOpenrouter, baseUrl: "https://openrouter.ai/api/v1", model: "meta-llama/llama-3.3-70b-instruct:free", modelsUrl: "https://openrouter.ai/models?max_price=0" },
-  openai:     { label: QP_L.presetOpenai,     baseUrl: "https://api.openai.com/v1",    model: "gpt-4o-mini",                           modelsUrl: "https://platform.openai.com/docs/models" },
-  ollama:     { label: QP_L.presetOllama,     baseUrl: "http://localhost:11434/v1",    model: "" }
-};
-
-function qfBuildSettingsUI() {
-  const cfg = qfLoadConfig();
-
-  const toggleBtn = document.createElement("button");
-  toggleBtn.type = "button";
-  toggleBtn.className = "btn btn-light btn-sm qpyodide-button qpyodide-feedback-toggle";
-  toggleBtn.innerHTML = '<i class="fa-solid fa-gear"></i>';
-  toggleBtn.title = QP_L.gearTitle;
-
-  const statusSpan = document.createElement("span");
-  statusSpan.className = "qpyodide-feedback-settings-status";
-
-  const panel = document.createElement("div");
-  panel.className = "qpyodide-feedback-panel";
-
-  // Provider preset (fills in base URL + example model)
-  const presetSelect = document.createElement("select");
-  presetSelect.add(new Option(QP_L.presetPlaceholder, ""));
-  for (const [key, preset] of Object.entries(QF_PROVIDER_PRESETS)) {
-    presetSelect.add(new Option(preset.label, key));
-  }
-
-  // Input fields
-  const baseUrlInput = document.createElement("input");
-  baseUrlInput.type = "text";
-  baseUrlInput.placeholder = QP_L.phBaseUrl;
-  baseUrlInput.value = cfg.baseUrl || "";
-  baseUrlInput.autocomplete = "off";
-
-  const apiKeyInput = document.createElement("input");
-  apiKeyInput.type = "password";
-  apiKeyInput.placeholder = QP_L.phApiKey;
-  apiKeyInput.value = cfg.apiKey || "";
-  apiKeyInput.autocomplete = "off";
-
-  const modelInput = document.createElement("input");
-  modelInput.type = "text";
-  modelInput.placeholder = QP_L.phModel;
-  modelInput.value = cfg.model || "";
-  modelInput.autocomplete = "off";
-
-  const modeSelect = document.createElement("select");
-  const optApi = new Option(QP_L.modeApi, "api");
-  const optCopy = new Option(QP_L.modeCopy, "copy");
-  modeSelect.add(optApi);
-  modeSelect.add(optCopy);
-  modeSelect.value = cfg.mode || "api";
-
-
-  presetSelect.onchange = () => {
-    const preset = QF_PROVIDER_PRESETS[presetSelect.value];
-    if (preset) {
-      baseUrlInput.value = preset.baseUrl;
-      modelInput.value = "";
-      modelHintEl.style.display = "none";
-      modelHintEl.innerHTML = "";
-      doFetchModels(true);
-    }
-  };
-
-  // "Fetch models": queries {baseUrl}/models and shows a picker list,
-  // filtered to free models by default (so nobody accidentally spends money).
-  const fetchModelsBtn = document.createElement("button");
-  fetchModelsBtn.type = "button";
-  fetchModelsBtn.className = "btn btn-light btn-sm qpyodide-button";
-  fetchModelsBtn.innerHTML = QP_L.fetchModelsBtn;
-
-  const modelRow = document.createElement("div");
-  modelRow.className = "qpyodide-feedback-inputrow";
-  modelRow.appendChild(modelInput);
-  modelRow.appendChild(fetchModelsBtn);
-
-  const modelHintEl = document.createElement("div");
-  modelHintEl.style.cssText = "font-size:0.85em;color:#888;margin-top:3px;display:none";
-
-  const modelListDiv = document.createElement("div");
-  modelListDiv.className = "qpyodide-feedback-modellist";
-  modelListDiv.style.display = "none";
-
-  const modelListInfo = document.createElement("div");
-  modelListInfo.className = "qpyodide-feedback-modellist-info";
-
-  const freeOnlyLabel = document.createElement("label");
-  const freeOnlyCheckbox = document.createElement("input");
-  freeOnlyCheckbox.type = "checkbox";
-  freeOnlyCheckbox.checked = true;
-  freeOnlyLabel.appendChild(freeOnlyCheckbox);
-  freeOnlyLabel.appendChild(document.createTextNode(QP_L.freeOnlyLabel));
-
-  const modelPicker = document.createElement("select");
-
-  modelListDiv.appendChild(modelListInfo);
-  modelListDiv.appendChild(freeOnlyLabel);
-  modelListDiv.appendChild(modelPicker);
-
-  let fetchedModels = [];
-
-  function renderModelList() {
-    const hasPricingInfo = fetchedModels.some((model) => model.free !== null);
-    freeOnlyLabel.style.display = hasPricingInfo ? "block" : "none";
-
-    let models = fetchedModels;
-    if (hasPricingInfo && freeOnlyCheckbox.checked) {
-      models = models.filter((model) => model.free === true);
-    }
-    // Free ones first, then alphabetically
-    models = models.slice().sort((a, b) =>
-      (b.free === true) - (a.free === true) || a.id.localeCompare(b.id)
-    );
-
-    modelPicker.innerHTML = "";
-    modelPicker.style.display = "";
-    modelPicker.add(new Option(QP_L.modelChoose(models.length), ""));
-    models.forEach((model) => {
-      const suffix = model.free === true ? QP_L.modelSuffixFree
-                   : model.free === false ? QP_L.modelSuffixPaid
-                   : "";
-      modelPicker.add(new Option(model.id + suffix, model.id));
-    });
-
-    modelListInfo.textContent = hasPricingInfo
-      ? QP_L.modelListInfoPricing
-      : QP_L.modelListInfoNoPricing;
-    modelListDiv.style.display = "block";
-  }
-
-  freeOnlyCheckbox.onchange = renderModelList;
-
-  modelPicker.onchange = () => {
-    if (modelPicker.value) {
-      modelInput.value = modelPicker.value;
-    }
-  };
-
-  // Fetch models – via button (isAuto=false) or automatically after
-  // choosing a preset (isAuto=true). The auto-fetch often fails without a
-  // key/due to CORS; in that case the pre-filled example model stays as a
-  // fallback and the message stays gentle instead of a red error.
-  async function doFetchModels(isAuto) {
-    const baseUrl = baseUrlInput.value.trim();
-    if (!baseUrl) {
-      if (isAuto) return;
-      modelListInfo.textContent = QP_L.errNeedBaseUrl;
-      freeOnlyLabel.style.display = "none";
-      modelPicker.innerHTML = "";
-      modelPicker.style.display = "none";
-      modelListDiv.style.display = "block";
-      return;
-    }
-
-    const originalLabel = fetchModelsBtn.innerHTML;
-    fetchModelsBtn.disabled = true;
-    fetchModelsBtn.innerHTML = QP_L.fetchModelsBusy;
-    try {
-      fetchedModels = await qfFetchModels(baseUrl, apiKeyInput.value.trim());
-      if (fetchedModels.length === 0) {
-        throw new Error(QP_L.errNoModels);
-      }
-      const freeOnes = fetchedModels.filter((m) => m.free === true);
-      const pool = freeOnes.length > 0 ? freeOnes : fetchedModels;
-      modelInput.value = pool[Math.floor(Math.random() * pool.length)].id;
-      modelHintEl.style.display = "none";
-      modelHintEl.innerHTML = "";
-      renderModelList();
-    } catch (error) {
-      if (isAuto) {
-        const preset = QF_PROVIDER_PRESETS[presetSelect.value];
-        if (preset?.modelsUrl) {
-          modelHintEl.innerHTML = QP_L.modelHintKeyNeeded(preset.modelsUrl);
-          modelHintEl.style.display = "";
+      unit.feedbackButton.disabled = false; // Feedback needs no Python runtime.
+      const gear = F.settingsButton(uiLanguage);
+      gear.classList.add('qpyodide-feedback-gear');
+      unit.feedbackButton.after(gear);
+      return F.attach({integration: 'pyodide-interaktiv', policySelection: unit.options?.policySelection, policyDefaults: options.hints ? {} : {steps: []}, id: 'pyodide-' + unit.uid, button: unit.feedbackButton, output,
+        uiLanguage,
+        getRequest() {
+          const code = unit.getCode();
+          const materials = F.contextMaterials(unit.options?.feedbackContext || {
+            mode: unit.options?.['feedback-context'] === 'none' ? 'none' : unit.options?.['feedback-context'] ? 'explicit' : 'auto',
+            refs: unit.options?.['feedback-context'] || ''
+          });
+          return {profile: 'python',
+            task: unit.options?.task || 'Review the learner’s current Python program against its visible code and comments. No separate assignment was supplied; do not invent requirements.',
+            materials, responses: [{id: 'code', format: 'code', language: 'python', value: code}],
+            evidence: unit.getEvidence(), _revision: unit.getRevision(),
+
+            feedback: {language: language === 'no' ? 'nb' : language,
+              mode: 'review'}
+          };
         }
-        return;
-      }
-      modelListInfo.textContent = QP_L.errModelListFailed(error.message || error);
-      freeOnlyLabel.style.display = "none";
-      modelPicker.innerHTML = "";
-      modelPicker.style.display = "none";
-      modelListDiv.style.display = "block";
-    } finally {
-      fetchModelsBtn.disabled = false;
-      fetchModelsBtn.innerHTML = originalLabel;
-    }
-  }
-
-  fetchModelsBtn.onclick = () => doFetchModels(false);
-
-  panel.appendChild(qfMakeField(QP_L.fieldPreset, presetSelect));
-  panel.appendChild(qfMakeField(QP_L.fieldBaseUrl, baseUrlInput));
-  panel.appendChild(qfMakeField(QP_L.fieldApiKey, apiKeyInput));
-  panel.appendChild(qfMakeField(QP_L.fieldModel, modelRow));
-  panel.appendChild(modelHintEl);
-  panel.appendChild(modelListDiv);
-  panel.appendChild(qfMakeField(QP_L.fieldMode, modeSelect));
-
-  // Action row: save + help
-  const actionRow = document.createElement("div");
-  actionRow.className = "qpyodide-feedback-actions";
-
-  const saveBtn = document.createElement("button");
-  saveBtn.type = "button";
-  saveBtn.className = "btn btn-default qpyodide-button";
-  saveBtn.textContent = QP_L.saveBtn;
-
-  const infoBtn = document.createElement("button");
-  infoBtn.type = "button";
-  infoBtn.className = "btn btn-light btn-sm qpyodide-button";
-  infoBtn.textContent = QP_L.infoBtn;
-
-  actionRow.appendChild(saveBtn);
-  actionRow.appendChild(infoBtn);
-  panel.appendChild(actionRow);
-
-  const helpDiv = qfBuildHelpBox();
-  panel.appendChild(helpDiv);
-
-  // Behavior
-  function setCollapsed(collapsed) {
-    panel.style.display = collapsed ? "none" : "block";
-  }
-
-  // The panel can be relocated next to a cell's "not configured" error (see
-  // qfOpenSettingsNear below); the header gear reclaims it back here rather
-  // than blindly toggling whatever display state it was left in there.
-  toggleBtn.onclick = () => {
-    if (panel.parentElement !== qfUi.homeParent) {
-      qfUi.homeParent.appendChild(panel);
-      setCollapsed(false);
-    } else {
-      setCollapsed(panel.style.display !== "none");
+      });
     }
   };
-  infoBtn.onclick = () => {
-    helpDiv.style.display = (helpDiv.style.display === "none") ? "block" : "none";
+})(globalThis);
+
+</script>
+<script type="module">
+// Preserve upstream local autosave controls alongside the shared feedback dialog.
+(function(root) {
+  'use strict';
+  if (!root.qpyodideStorage?.anyEnabled) return;
+  const QP_L=root.QP_L;
+function buildStorageSection() {
+  const section = document.createElement("div");
+  section.className = "qpyodide-storage-settings-section";
+
+  const enableLabel = document.createElement("label");
+  enableLabel.className = "qpyodide-storage-toggle-label";
+  enableLabel.title = QP_L.storageToggleTitle;
+  const enableCheckbox = document.createElement("input");
+  enableCheckbox.type = "checkbox";
+  enableCheckbox.checked = !globalThis.qpyodideStorage.isUserDisabled();
+  enableLabel.appendChild(enableCheckbox);
+  enableLabel.appendChild(document.createTextNode(QP_L.storageToggleLabel));
+  section.appendChild(enableLabel);
+
+  // Nested under the master checkbox: which cells actually get saved while
+  // it's on. Disabled (not hidden) while the master is off, so the reader's
+  // last choice stays visible instead of disappearing.
+  const modeGroup = document.createElement("div");
+  modeGroup.className = "qpyodide-storage-mode-group";
+
+  const autoLabel = document.createElement("label");
+  autoLabel.className = "qpyodide-storage-toggle-label";
+  autoLabel.title = QP_L.storageModeAutoTitle;
+  const autoRadio = document.createElement("input");
+  autoRadio.type = "radio";
+  autoRadio.name = "qpyodide-storage-mode";
+  autoRadio.checked = !globalThis.qpyodideStorage.isManualMode();
+  autoLabel.appendChild(autoRadio);
+  autoLabel.appendChild(document.createTextNode(QP_L.storageModeAutoLabel));
+  modeGroup.appendChild(autoLabel);
+
+  const manualLabel = document.createElement("label");
+  manualLabel.className = "qpyodide-storage-toggle-label";
+  manualLabel.title = QP_L.storageModeManualTitle;
+  const manualRadio = document.createElement("input");
+  manualRadio.type = "radio";
+  manualRadio.name = "qpyodide-storage-mode";
+  manualRadio.checked = globalThis.qpyodideStorage.isManualMode();
+  manualLabel.appendChild(manualRadio);
+  manualLabel.appendChild(document.createTextNode(QP_L.storageModeManualLabel));
+  modeGroup.appendChild(manualLabel);
+
+  section.appendChild(modeGroup);
+
+  function applyEnabledState() {
+    const enabled = enableCheckbox.checked;
+    autoRadio.disabled = !enabled;
+    manualRadio.disabled = !enabled;
+    modeGroup.classList.toggle("qpyodide-storage-mode-group-disabled", !enabled);
+  }
+  applyEnabledState();
+
+  enableCheckbox.addEventListener("change", () => {
+    globalThis.qpyodideStorage.setUserDisabled(!enableCheckbox.checked);
+    applyEnabledState();
+    globalThis.qpyodideRefreshStorageUI?.();
+  });
+  autoRadio.addEventListener("change", () => {
+    if (!autoRadio.checked) return;
+    globalThis.qpyodideStorage.setManualMode(false);
+    globalThis.qpyodideRefreshStorageUI?.();
+  });
+  manualRadio.addEventListener("change", () => {
+    if (!manualRadio.checked) return;
+    globalThis.qpyodideStorage.setManualMode(true);
+    globalThis.qpyodideRefreshStorageUI?.();
+  });
+
+  // Two delete scopes, least-destructive first: this page only, then the
+  // whole project (every page on this site). Both reset every currently
+  // open cell's editor back to its original code afterward -- otherwise the
+  // edited-but-now-unsaved text would just get saved right back on the next
+  // keystroke. See qpyodide-cell-classes.js.
+  const deletePageBtn = document.createElement("button");
+  deletePageBtn.type = "button";
+  deletePageBtn.className = "btn btn-light btn-sm qpyodide-button qpyodide-storage-delete-btn";
+  deletePageBtn.title = QP_L.deleteThisPageSavesTitle;
+  deletePageBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> ' + QP_L.deleteThisPageSavesLabel;
+  deletePageBtn.onclick = () => {
+    if (!window.confirm(QP_L.deleteThisPageSavesConfirm)) return;
+    globalThis.qpyodideStorage.clearPage();
+    globalThis.qpyodideResetAllStorageUnits?.();
   };
+  section.appendChild(deletePageBtn);
 
-  saveBtn.onclick = () => {
-    const newCfg = {
-      baseUrl: baseUrlInput.value.trim(),
-      apiKey: apiKeyInput.value.trim(),
-      model: modelInput.value.trim(),
-      mode: modeSelect.value,
-      storage: "local"
-    };
-    qfSaveConfig(newCfg);
-    statusSpan.textContent = QP_L.saveDone;
-    setTimeout(() => { statusSpan.textContent = ""; }, 3000);
-    // Auto-collapse after saving
-    setCollapsed(true);
+  const deleteAllBtn = document.createElement("button");
+  deleteAllBtn.type = "button";
+  deleteAllBtn.className = "btn btn-light btn-sm qpyodide-button qpyodide-storage-delete-btn";
+  deleteAllBtn.title = QP_L.deleteAllSavesTitle;
+  deleteAllBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> ' + QP_L.deleteAllSavesLabel;
+  deleteAllBtn.onclick = () => {
+    if (!window.confirm(QP_L.deleteAllSavesConfirm)) return;
+    globalThis.qpyodideStorage.clearAll();
+    globalThis.qpyodideResetAllStorageUnits?.();
   };
+  section.appendChild(deleteAllBtn);
 
-  // Always start collapsed – the panel only opens via the gear icon.
-  setCollapsed(true);
+  return section;
+}
 
-  qfUi.panel = panel;
-  qfUi.setCollapsed = setCollapsed;
-
-  // Line up the toggle button and status span to the right of the status row
-  const rightArea = document.getElementById("qpyodide-status-right");
-  if (rightArea) {
-    rightArea.appendChild(toggleBtn);
-    rightArea.appendChild(statusSpan);
+  const F=root.AIFeedback;
+  let dialog,open;
+  if (F?.buildSettings) {
+    dialog=F.buildSettings();
+    open=()=>F.openSettings();
   } else {
-    // Fallback: before the first Pyodide cell
-    const firstCell = document.querySelector('[id^="qpyodide-insertion-location-"]');
-    const wrap = document.createElement("div");
-    wrap.appendChild(toggleBtn);
-    wrap.appendChild(statusSpan);
-    firstCell
-      ? firstCell.parentNode.insertBefore(wrap, firstCell)
-      : document.body.prepend(wrap);
+    dialog=document.createElement('dialog');
+    dialog.className='qpyodide-storage-settings';
+    const title=document.createElement('h2');title.textContent=QP_L.settingsTitleStorageOnly;
+    const close=document.createElement('button');close.type='button';close.textContent='×';
+    close.setAttribute('aria-label',QP_L.closeBtn || 'Close');close.onclick=()=>dialog.close ? dialog.close() : dialog.removeAttribute('open');
+    dialog.append(title,close);document.body.append(dialog);
+    open=()=>dialog.showModal ? dialog.showModal() : dialog.setAttribute('open','');
   }
-
-  // Attach the settings panel below the status row. Its parent here is
-  // also the panel's "home": qfOpenSettingsNear() can relocate the panel
-  // next to a cell's error, and the header gear (above) moves it back here.
-  const panelsArea = document.getElementById("qpyodide-status-panels");
-  const statusArea = document.getElementById("qpyodide-status-message-area");
-  qfUi.homeParent = panelsArea ?? statusArea ?? document.body;
-  qfUi.homeParent.appendChild(panel);
-}
-
-// Moves the (single, shared) settings panel right next to `container` and
-// opens it there - called from the "not configured yet" error box so the
-// reader can fix it on the spot instead of hunting for the gear icon at
-// the top of the page. The header gear (qfBuildSettingsUI above) moves the
-// panel back to its home position when clicked.
-function qfOpenSettingsNear(container) {
-  if (!qfUi.panel || !container) return;
-  container.appendChild(qfUi.panel);
-  if (qfUi.setCollapsed) qfUi.setCollapsed(false);
-}
-
-// ---------------------------------------------------------------------------
-// Click handler (wired up by the cell classes via attach())
-// ---------------------------------------------------------------------------
-
-// Click counter per editor unit for progressive hints
-const qfClickCounts = new Map();
-
-async function qfGiveFeedback(unit) {
-  const button = unit.feedbackButton;
-  const targetDiv = unit.feedbackDiv;
-  if (!button || !targetDiv || button.dataset.qfBusy === "1") return;
-
-  const cfg = qfLoadConfig();
-
-  // Determine hint level (0 = feature disabled)
-  let hintLevel = 0;
-  if (qfOptions.hints) {
-    hintLevel = Math.min((qfClickCounts.get(unit.uid) || 0) + 1, 3);
-    qfClickCounts.set(unit.uid, hintLevel);
+  const section=buildStorageSection();
+  const heading=document.createElement('h3');heading.textContent=QP_L.settingsTitleStorageOnly;
+  section.prepend(heading);dialog.append(document.createElement('hr'),section);
+  const gear=document.createElement('button');gear.type='button';
+  gear.className='btn btn-light btn-sm qpyodide-button qpyodide-storage-gear';
+  gear.textContent='⚙';gear.title=QP_L.settingsTitleStorageOnly;gear.setAttribute('aria-label',gear.title);
+  gear.onclick=open;
+  const anchor=document.getElementById('qpyodide-status-right');
+  if(anchor) anchor.append(gear);
+  else {
+    const first=document.querySelector('[id^="qpyodide-insertion-location-"]');
+    if(first) first.before(gear);else document.body.prepend(gear);
   }
-
-  const originalLabel = button.innerHTML;
-  button.dataset.qfBusy = "1";
-  button.disabled = true;
-  button.innerHTML = QP_L.feedbackBusy;
-
-  try {
-    // Run the code to give the model the interpreter output too
-    const code = unit.getCode();
-    const output = await unit.runForOutput();
-
-    if (cfg.mode === "copy") {
-      const fullPrompt = QF_SYSTEM_PROMPT + "\n\n" + qfBuildUserPrompt(code, output, hintLevel);
-      qfRenderCopyPrompt(targetDiv, fullPrompt);
-      return;
-    }
-
-    // Direct API: check configuration (key is optional, e.g. for Ollama)
-    if (!cfg.baseUrl || !cfg.model) {
-      // The error's own ⚙ button (qfOpenSettingsNear) moves the settings
-      // panel right here on demand - nothing to pre-open before that.
-      qfRenderError(targetDiv, QP_L.errConfigMissing, { showSettingsLink: true });
-      return;
-    }
-
-    const messages = [
-      { role: "system", content: QF_SYSTEM_PROMPT },
-      { role: "user", content: qfBuildUserPrompt(code, output, hintLevel) }
-    ];
-
-    const feedback = await qfRequestFeedback(cfg, messages);
-    qfRenderFeedback(targetDiv, feedback, hintLevel);
-
-  } catch (error) {
-    qfRenderError(targetDiv, error.message || String(error));
-  } finally {
-    button.dataset.qfBusy = "0";
-    button.disabled = false;
-    button.innerHTML = originalLabel;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Public interface
-// ---------------------------------------------------------------------------
-
-globalThis.qpyodideFeedback = {
-  enabled: !!qfOptions.enabled,
-
-  /** Wires up the feedback button of an editor unit. */
-  attach(unit) {
-    if (!this.enabled || !unit.feedbackButton) return;
-    unit.feedbackButton.onclick = () => qfGiveFeedback(unit);
-  },
-
-  /** Opens and scrolls to the settings panel. */
-  openSettings: qfOpenSettingsNear
-};
-
-// Build the settings panel (modules are deferred, so the DOM is ready)
-if (qfOptions.enabled) {
-  qfBuildSettingsUI();
-}
+})(globalThis);
 
 </script>
 <script type="module">
@@ -3450,8 +3017,7 @@ async function runPythonRaw(code) {
   return result;
 }
 
-self.onmessage = async function(event) {
-  const msg = event.data;
+async function handleMessage(msg) {
   try {
     let value = true;
     switch (msg.type) {
@@ -3487,6 +3053,20 @@ self.onmessage = async function(event) {
   } catch (err) {
     self.postMessage({ type: "error", id: msg.id, message: String((err && err.message) || err) });
   }
+}
+
+// Python has one interpreter and one output capture. Serialize mutations so a
+// checker from another extension cannot enter a document cell's stdout evidence.
+// Input/interrupt buffers are control messages, independent of this queue.
+let commandQueue = Promise.resolve();
+self.onmessage = function(event) {
+  const msg = event.data;
+  if (msg.type === "setInterrupt" || msg.type === "setInputBuffers") {
+    return handleMessage(msg);
+  }
+  const pending = commandQueue.then(() => handleMessage(msg));
+  commandQueue = pending.catch(() => {});
+  return pending;
 };
 `;
 
@@ -3584,6 +3164,7 @@ function qpyodideBootPyodideWorker() {
      * boot a fresh runtime (startup cells run again).
      */
     restart(reason) {
+      window.dispatchEvent(new Event("qpyodide-runtime-restart"));
       worker.terminate();
       const error = new Error(reason || "Python was restarted.");
       for (const entry of pending.values()) entry.reject(error);
@@ -3677,6 +3258,10 @@ globalThis._qpyodideGetInstance = function() {
 // by contrast, needs the browser DOM and therefore runs in a second Pyodide
 // instance on the main thread.
 //
+// WebAgg needs Pyodide 0.28 or later (the default). A project that pins an
+// older Pyodide via `pyodide: base-url:` keeps the html5_canvas_backend path
+// of pyodide-interaktiv 1.6/1.7 instead; see QPC_PY_BACKEND_HTML5_CANVAS.
+//
 // The interactive plot pipeline:
 //   1. The worker computes as before and additionally sends each open
 //      figure along as `pickle` bytes (Base64) with the PNG.
@@ -3724,6 +3309,12 @@ globalThis.qpyodideCanvasPlots = {
   // "idle" | "booting" | "ready" | "failed"
   status: "idle",
 
+  // Plot backend: "webagg" (Pyodide 0.28+) or "html5-canvas" (older Pyodide,
+  // pinned via `pyodide: base-url:`). Starts as what the Lua filter derived
+  // from the base URL ("auto" if the URL names no version) and is settled
+  // from the loaded Pyodide's own version once the instance is up.
+  backend: globalThis.qpyodideCanvasBackend || "auto",
+
   // Timing measurements for diagnostics in the browser console
   bootSeconds: null,
   renderSeconds: [],
@@ -3734,23 +3325,249 @@ globalThis.qpyodideCanvasPlots = {
 };
 
 // Python side of the second instance: enable the interactive backend and
-// define a restorer for the pickle bytes coming from the worker.
-const QPC_PY_SETUP = [
+// define a restorer for the pickle bytes coming from the worker. Assembled by
+// qpyodideCanvasSetup() from a header, one backend prelude and a shared part.
+const QPC_PY_HEADER = [
   "import base64, pickle",
   "import numpy as np",
   "import matplotlib",
-  "",
+  ""
+];
+
+// Pyodide 0.28 or later: Matplotlib's own WebAgg backend, patched by Pyodide.
+const QPC_PY_BACKEND_WEBAGG = [
   "# Pyodide 0.28+ patches Matplotlib's maintained WebAgg backend so it talks",
   "# directly to an in-page JavaScript client instead of a Tornado server.",
   "# It also honours document.pyodideMplTarget, which the JavaScript side sets",
   "# to the output element belonging to the cell currently being upgraded.",
   "matplotlib.use('webagg', force=True)",
   "import matplotlib.backends.backend_webagg as _qpc_webagg",
+  "",
+  "def _qpc_new_manager(num, fig):",
+  "    return _qpc_webagg.new_figure_manager_given_figure(num, fig)",
+  "",
+  "def _qpc_after_show(fig):",
+  "    pass      # WebAgg owns its event wiring and toolbar lifecycle",
+  ""
+];
+
+// Pyodide below 0.28 (pyodide-interaktiv 1.6/1.7 behaviour, kept unchanged for
+// projects that pin such a version via `pyodide: base-url:`). Without Pyodide
+// 0.28's patch, WebAgg needs a Tornado server, which Pyodide does not ship, so
+// these versions use matplotlib-pyodide's html5_canvas_backend instead.
+// In matplotlib-pyodide 0.2.3 (what Pyodide 0.27.2 ships), its interactive
+// layer is disabled upstream: the canvas classes are commented out of the
+// export block, canvas.manager_class is never set (which decides the manager
+// since matplotlib 3.6), and the mouse/keyboard listeners are commented out
+// because they call event methods matplotlib 3.8 removed. This prelude
+// restores all three, and builds a toolbar that survives Font Awesome's JS kit.
+// Frozen: new plot features go to the WebAgg path.
+const QPC_PY_BACKEND_HTML5_CANVAS = [
+  "# --- 1. Re-enable the HTML5 canvas backend --------------------------------",
+  "# In matplotlib-pyodide 0.2.3 (Pyodide 0.27.2), the HTML5 classes are",
+  "# commented out in the export block of html5_canvas_backend.py:",
+  "#     # FigureCanvas = FigureCanvasHTMLCanvas",
+  "#     FigureCanvas = FigureCanvasAggWasm",
+  "# Active is therefore the Agg variant, which only blits finished Agg pixels",
+  "# onto the canvas - i.e. exactly the same pixels as our worker PNG. The",
+  "# actual vector renderer (RendererHTMLCanvas) is never used. It was active",
+  "# in v0.2.0; the changelog says nothing about the removal. We reset it.",
+  "import matplotlib_pyodide.html5_canvas_backend as _qpc_h5",
+  "_qpc_h5._BackendHTMLCanvas.FigureCanvas  = _qpc_h5.FigureCanvasHTMLCanvas",
+  "_qpc_h5._BackendHTMLCanvas.FigureManager = _qpc_h5.FigureManagerHTMLCanvas",
+  "_qpc_h5.FigureCanvas  = _qpc_h5.FigureCanvasHTMLCanvas",
+  "_qpc_h5.FigureManager = _qpc_h5.FigureManagerHTMLCanvas",
+  "# Since matplotlib 3.6, canvas.manager_class decides which manager gets",
+  "# created; _Backend.FigureManager is no longer used. matplotlib-pyodide",
+  "# never sets manager_class - so otherwise only a bare FigureManagerBase is",
+  "# created, which doesn't build a toolbar, canvas.toolbar stays None, and",
+  "# show() silently skips the toolbar. The coordinate display also depends",
+  "# on this: NavigationToolbar2.__init__ sets canvas.toolbar and connects",
+  "# mouse_move, which writes the x/y values into the toolbar.",
+  "_qpc_h5.FigureCanvasHTMLCanvas.manager_class = _qpc_h5.FigureManagerHTMLCanvas",
+  "matplotlib.use('module://matplotlib_pyodide.html5_canvas_backend', force=True)",
+  "",
+  "# --- 2. Reconnect mouse and keyboard events --------------------------------",
+  "# In browser_backend.py, the add_event_listener lines for the rubberband",
+  "# canvas are commented out. The handlers that are there call",
+  "# canvas.motion_notify_event() / button_press_event() - methods that",
+  "# matplotlib removed in 3.8 (Pyodide 0.27.2 ships 3.8.4). That's presumably",
+  "# why they got commented out. So here are our own handlers using the",
+  "# current event API: Event(...)._process().",
+  "from matplotlib.backend_bases import KeyEvent, MouseEvent",
+  "from pyodide.ffi import create_proxy",
+  "",
+  "# Convert mouse coordinates ourselves. The original takes event.offsetX",
+  "# against the logical figure size and ignores devicePixelRatio as well as",
+  "# any CSS scaling of the canvas - the displayed x/y values would then be",
+  "# wrong under Windows scaling != 100% or when shrunk via max-width.",
+  "# Using getBoundingClientRect, it's correct in every case.",
+  "def _qpc_convert_mouse_event(self, event):",
+  "    width, height = self.get_width_height()",
+  "    rect = self.get_element('rubberband').getBoundingClientRect()",
+  "    sx = width / rect.width if rect.width else 1.0",
+  "    sy = height / rect.height if rect.height else 1.0",
+  "    x = (event.clientX - rect.left) * sx",
+  "    y = height - (event.clientY - rect.top) * sy",
+  "    button = event.button + 1",
+  "    if button == 3:",
+  "        event.preventDefault()",
+  "        event.stopPropagation()",
+  "    if button == 2:",
+  "        button = 3",
+  "    return x, y, button",
+  "",
+  "_qpc_h5.FigureCanvasHTMLCanvas._convert_mouse_event = _qpc_convert_mouse_event",
+  "",
+  "# Keep the event proxies alive: otherwise Pyodide frees them and the",
+  "# listener calls into nothing. Figures are kept alive in _qpc_keep (shared",
+  "# part): this backend's DOM ids are hex(id(canvas)), and CPython reuses the",
+  "# id() of a freed object - a new figure could otherwise get the id of an",
+  "# older, still-visible one and draw into its canvas.",
+  "_qpc_proxies = []",
+  "",
+  "def _qpc_wire_events(canvas):",
+  "    # The rubberband canvas sits on top and receives the events.",
+  "    rb = canvas.get_element('rubberband')",
+  "    if rb is None:",
+  "        return",
+  "",
+  "    def on_move(event):",
+  "        x, y, button = canvas._convert_mouse_event(event)",
+  "        MouseEvent('motion_notify_event', canvas, x, y, guiEvent=event)._process()",
+  "",
+  "    def on_down(event):",
+  "        x, y, button = canvas._convert_mouse_event(event)",
+  "        MouseEvent('button_press_event', canvas, x, y, button, guiEvent=event)._process()",
+  "",
+  "    def on_up(event):",
+  "        x, y, button = canvas._convert_mouse_event(event)",
+  "        MouseEvent('button_release_event', canvas, x, y, button, guiEvent=event)._process()",
+  "",
+  "    def on_enter(event):",
+  "        rb.focus()   # keyboard focus, so shortcuts like 'p' and 'o' work",
+  "",
+  "    def on_leave(event):",
+  "        rb.blur()",
+  "",
+  "    def on_keydown(event):",
+  "        KeyEvent('key_press_event', canvas,",
+  "                 canvas._convert_key_event(event), guiEvent=event)._process()",
+  "",
+  "    def on_keyup(event):",
+  "        KeyEvent('key_release_event', canvas,",
+  "                 canvas._convert_key_event(event), guiEvent=event)._process()",
+  "",
+  "    for name, handler in (('mousemove', on_move), ('mousedown', on_down),",
+  "                          ('mouseup', on_up), ('mouseenter', on_enter),",
+  "                          ('mouseleave', on_leave), ('keydown', on_keydown),",
+  "                          ('keyup', on_keyup)):",
+  "        proxy = create_proxy(handler)",
+  "        _qpc_proxies.append(proxy)",
+  "        rb.addEventListener(name, proxy)",
+  "",
+  "# --- 3. Font Awesome-safe toolbar buttons ----------------------------------",
+  "# matplotlib-pyodide puts the `fa`/`fa-<name>` icon classes directly onto the",
+  "# toolbar's <button> elements. This extension loads Font Awesome's JS build",
+  "# (the CSS build pulls webfonts that no `embed-resources` pass can inline),",
+  "# and that build REPLACES every element carrying an `fa` class with an inline",
+  "# <svg>, keeping the original only as an HTML comment. The icon still shows,",
+  "# but the button - and with it the click listener and the `:hover` rule - is",
+  "# gone: a toolbar that looks right and does nothing at all.",
+  "# So build the same toolbar here with the icon classes on a nested <i>:",
+  "# Font Awesome swaps that <i> for its <svg> and leaves the <button> alone.",
+  "from js import document as _qpc_document",
+  "from matplotlib_pyodide.browser_backend import _FONTAWESOME_ICONS, FILE_TYPES",
+  "from pyodide.ffi.wrappers import add_event_listener",
+  "",
+  "def _qpc_toolbar_get_element(self):",
+  "    div = _qpc_document.createElement('span')",
+  "    self._qpc_mode_buttons = {}",
+  "",
+  "    def add_spacer():",
+  "        span = _qpc_document.createElement('span')",
+  "        span.style.minWidth = '16px'",
+  "        span.textContent = chr(160)",
+  "        div.appendChild(span)",
+  "",
+  "    for _text, _tooltip, image_file, name_of_method in self.toolitems:",
+  "        if image_file not in _FONTAWESOME_ICONS:",
+  "            continue",
+  "        if image_file is None:",
+  "            add_spacer()",
+  "            continue",
+  "        button = _qpc_document.createElement('button')",
+  "        button.classList.add('matplotlib-toolbar-button')",
+  "        icon = _qpc_document.createElement('i')",
+  "        icon.classList.add('fa')",
+  "        icon.classList.add(_FONTAWESOME_ICONS[image_file])",
+  "        button.appendChild(icon)",
+  "        add_event_listener(button, 'click', getattr(self, name_of_method))",
+  "        if name_of_method in ('pan', 'zoom'):",
+  "            self._qpc_mode_buttons[name_of_method] = button",
+  "        div.appendChild(button)",
+  "",
+  "    # The download buttons show their format as text, no icon - the bare",
+  "    # `fa` class upstream also puts on them would only make Font Awesome",
+  "    # try to convert them too.",
+  "    for _fmt, _mimetype in sorted(FILE_TYPES.items()):",
+  "        button = _qpc_document.createElement('button')",
+  "        button.classList.add('matplotlib-toolbar-button')",
+  "        button.textContent = _fmt",
+  "        button.id = 'text'",
+  "        add_event_listener(button, 'click', self.ondownload)",
+  "        div.appendChild(button)",
+  "",
+  "    return div",
+  "",
+  "_qpc_h5.NavigationToolbar2HTMLCanvas.get_element = _qpc_toolbar_get_element",
+  "",
+  "# Pan and zoom are toggles, but no browser backend renders that state, so",
+  "# both buttons look the same whether the mode is on or off - there is no",
+  "# way to see whether dragging will move the plot or do nothing. Mark the",
+  "# active one with a class and let the stylesheet colour it. Wrapping the",
+  "# two methods (rather than the click handlers) also covers matplotlib's",
+  "# own 'p'/'o' keyboard shortcuts, which toggle the very same modes.",
+  "_QPC_ACTIVE_CLASS = 'qpyodide-toolbar-button-active'",
+  "_QPC_MODE_OWNER = {'pan/zoom': 'pan', 'zoom rect': 'zoom'}",
+  "",
+  "def _qpc_sync_mode_buttons(self):",
+  "    buttons = getattr(self, '_qpc_mode_buttons', None)",
+  "    if not buttons:",
+  "        return",
+  "    active = _QPC_MODE_OWNER.get(self.mode.value)",
+  "    for name, button in buttons.items():",
+  "        if name == active:",
+  "            button.classList.add(_QPC_ACTIVE_CLASS)",
+  "        else:",
+  "            button.classList.remove(_QPC_ACTIVE_CLASS)",
+  "",
+  "def _qpc_mode_toggle(method_name):",
+  "    original = getattr(_qpc_h5.NavigationToolbar2HTMLCanvas, method_name)",
+  "    def toggle(self, *args):",
+  "        original(self, *args)",
+  "        _qpc_sync_mode_buttons(self)",
+  "    setattr(_qpc_h5.NavigationToolbar2HTMLCanvas, method_name, toggle)",
+  "",
+  "for _qpc_name in ('pan', 'zoom'):",
+  "    _qpc_mode_toggle(_qpc_name)",
+  "",
+  "def _qpc_new_manager(num, fig):",
+  "    return plt._backend_mod.new_figure_manager_given_figure(num, fig)",
+  "",
+  "def _qpc_after_show(fig):",
+  "    _qpc_wire_events(fig.canvas)",
+  ""
+];
+
+// Shared by both backends. Each backend prelude defines _qpc_new_manager()
+// and _qpc_after_show().
+const QPC_PY_COMMON = [
   "from matplotlib import pyplot as plt",
   "import matplotlib._pylab_helpers as _qpc_helpers",
   "",
   "# Keep figures and cursor callbacks alive after they leave pyplot's global",
-  "# registry. WebAgg owns its event wiring and toolbar lifecycle.",
+  "# registry.",
   "_qpc_keep = []",
   "",
   "# --- Snapping cursor -------------------------------------------------------",
@@ -3917,7 +3734,7 @@ const QPC_PY_SETUP = [
   "    if not _qpc_helpers.Gcf.figs:",
   "        # The figure wasn't registered with pyplot in the worker (e.g.",
   "        # created directly via Figure()) -> create the manager ourselves.",
-  "        mgr = _qpc_webagg.new_figure_manager_given_figure(len(_qpc_keep) + 1, fig)",
+  "        mgr = _qpc_new_manager(len(_qpc_keep) + 1, fig)",
   "        _qpc_helpers.Gcf._set_new_active_manager(mgr)",
   "    # The worker PNG is created with bbox_inches='tight' - there, the image",
   "    # area grows around the labels. The canvas, by contrast, renders exactly",
@@ -3935,6 +3752,7 @@ const QPC_PY_SETUP = [
   "        _qpc_attach_snap(fig)",
   "    plt.show()",
   "    _qpc_keep.append(fig)",
+  "    _qpc_after_show(fig)",
   "    return True",
   "",
   "def _qpc_redraw(count):",
@@ -3943,7 +3761,29 @@ const QPC_PY_SETUP = [
   "        if hasattr(item, 'canvas'):",
   "            item.canvas.draw()",
   "    return True"
-].join("\n");
+];
+
+const QPC_PY_BACKENDS = {
+  "webagg": QPC_PY_BACKEND_WEBAGG,
+  "html5-canvas": QPC_PY_BACKEND_HTML5_CANVAS
+};
+
+/**
+ * Picks the plot backend for the Pyodide that actually loaded. WebAgg needs
+ * the browser patch that Pyodide ships from 0.28 on; older releases get the
+ * html5_canvas_backend path of pyodide-interaktiv 1.6/1.7. `configured` is
+ * what the Lua filter derived from `pyodide: base-url:` (globalThis.
+ * qpyodideCanvasBackend); it only decides when the version is unknown.
+ */
+function qpyodideCanvasBackendFor(version, configured) {
+  const m = /^(\d+)\.(\d+)/.exec(String(version || ""));
+  if (m) return (Number(m[1]) === 0 && Number(m[2]) < 28) ? "html5-canvas" : "webagg";
+  return Object.hasOwn(QPC_PY_BACKENDS, configured) ? configured : "webagg";
+}
+
+function qpyodideCanvasSetup(backend) {
+  return [...QPC_PY_HEADER, ...QPC_PY_BACKENDS[backend], ...QPC_PY_COMMON].join("\n");
+}
 
 // ---------------------------------------------------------------------------
 // Load the second Pyodide instance (main thread)
@@ -3976,13 +3816,15 @@ function qpyodideCanvasEngine() {
     });
 
     await py.loadPackage("matplotlib");
-    await py.runPythonAsync(QPC_PY_SETUP);
+    state.backend = qpyodideCanvasBackendFor(py.version, state.backend);
+    await py.runPythonAsync(qpyodideCanvasSetup(state.backend));
 
     state.pyodide = py;
     state.status = "ready";
     state.bootSeconds = (performance.now() - started) / 1000;
     console.log(
-      "qpyodide: second Pyodide instance (canvas plots) ready after " +
+      "qpyodide: second Pyodide instance (canvas plots, " + state.backend +
+      " on Pyodide " + py.version + ") ready after " +
       state.bootSeconds.toFixed(1) + "s" + qpyodideCanvasMemoryNote()
     );
     return py;
@@ -4096,6 +3938,9 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
   // not layout.
   const figure = document.createElement("figure");
   figure.className = "qpyodide-canvas-figure";
+  if (globalThis.qpyodideCanvasPlots.backend === "html5-canvas") {
+    figure.classList.add("qpyodide-canvas-legacy");
+  }
   figure.hidden = true;
   targetDiv.appendChild(figure);
 
@@ -4392,17 +4237,19 @@ globalThis.qpyodideCanvasUpgrade = async function (targetDiv, pickles, options) 
     
 <!-- main -->
 <main class="content" id="quarto-document-content">
-<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/loader.js"></script>
+<script>window.__aiFeedbackPolicies = {"layers":[],"pageLayers":[]};</script>
+<script>window.__aiFeedbackConfig = {"baseUrl":"","mode":"copy","model":""};</script>
+<script>window.__mathExerciseConfig = {"lang":"nb","stopAfter":20};</script>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46/min/vs/loader.js"></script>
 <script type="module" id="qpyodide-monaco-editor-init">
 
   // Configure the Monaco Editor's loader
   require.config({
     paths: {
-      'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs'
+      'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46/min/vs'
     }
   });
 </script>
-<script>window.__mathExerciseConfig = {"lang":"nb"};</script>
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -4444,10 +4291,10 @@ to use immediately after the page has loaded or the Python environment restarts.
 <h3 class="anchored" data-anchor-id="kom-raskt-i-gang">Kom raskt i gang</h3>
 <ol type="1">
 <li>Skriv eller endre kode i et kodevindu.</li>
-<li>Velg <strong>Run Code</strong> for å kjøre vinduet.</li>
+<li>Velg <strong>Kjør koden</strong> for å kjøre vinduet.</li>
 <li>Les utskrift, feilmeldinger og figurer under kodevinduet.</li>
-<li>Velg <strong>+ Code block</strong> når du vil ha et tomt arbeidsvindu.</li>
-<li>Bruk <strong>Restart</strong> hvis du vil nullstille Python-miljøet på siden.</li>
+<li>Velg <strong>+ Kodeblokk</strong> når du vil ha et tomt arbeidsvindu.</li>
+<li>Last inn siden på nytt hvis du vil nullstille Python-miljøet på siden. (Knappen <strong>↻ Tilbakestill</strong> setter koden i vinduet tilbake til den opprinnelige, den nullstiller ikke Python.)</li>
 </ol>
 <p>Prøv gjerne dette eksemplet:</p>
 <div id="qpyodide-insertion-location-2"></div>
@@ -4456,7 +4303,7 @@ to use immediately after the page has loaded or the Python environment restarts.
 <section id="slik-fungerer-arbeidsmiljøet" class="level3">
 <h3 class="anchored" data-anchor-id="slik-fungerer-arbeidsmiljøet">Slik fungerer arbeidsmiljøet</h3>
 <p>Alle kodevinduer på <strong>samme side</strong> deler variabler, funksjoner og importer. Kjør derfor celler i naturlig rekkefølge når en celle bygger på en tidligere celle. (En <strong>side</strong> i konteksten av denne ressursen er en HTML-side. Hver pensumuke ligger på egen side med alle sine faner og underfaner.)</p>
-<p>Python-miljøet deles ikke mellom ulike sider, og det opprettes på nytt når du laster inn siden eller velger <strong>Restart</strong>. Hver ukeside har en skjult oppstartscelle som laster inn nødvendige biblioteker og felles definisjoner. Hvis du senere kjører en synlig, endret versjon av en funksjon, brukes den endrede versjonen resten av økten.</p>
+<p>Python-miljøet deles ikke mellom ulike sider, og det opprettes på nytt når du laster inn siden på nytt eller stopper en kjøring med <strong>Stopp</strong>. Hver ukeside har en skjult oppstartscelle som laster inn nødvendige biblioteker og felles definisjoner. Hvis du senere kjører en synlig, endret versjon av en funksjon, brukes den endrede versjonen resten av økten.</p>
 <div class="callout callout-style-default callout-warning callout-titled" title="Ta vare på arbeidet ditt">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4477,8 +4324,8 @@ to use immediately after the page has loaded or the Python environment restarts.
 <li>Les den siste linjen i feilmeldingen først; den beskriver ofte hovedproblemet.</li>
 <li>Kontroller at cellene som definerer variabler og funksjoner, er kjørt.</li>
 <li>Kjør cellen på nytt etter at du har rettet koden.</li>
-<li>Få evt KI-hjelp ved å trykke på Feedback-knappen.</li>
-<li>Velg <strong>Restart</strong> og kjør nødvendige celler på nytt hvis miljøet har fått en uklar tilstand.</li>
+<li>Få evt. KI-hjelp ved å trykke på <strong>Tilbakemelding</strong>-knappen.</li>
+<li>Last inn siden på nytt og kjør nødvendige celler på nytt hvis miljøet har fått en uklar tilstand.</li>
 <li>Last inn hele nettsiden på nytt hvis knappene eller Python-miljøet har stoppet.</li>
 </ul>
 </section>
@@ -4488,7 +4335,7 @@ to use immediately after the page has loaded or the Python environment restarts.
 <h3 class="anchored" data-anchor-id="ki-feedback">KI-feedback</h3>
 <section id="hvordan-få-ki-tilbakemeldingen" class="level4">
 <h4 class="anchored" data-anchor-id="hvordan-få-ki-tilbakemeldingen">Hvordan få KI-tilbakemeldingen?</h4>
-<p>Kode- og matematikkoppgaver kan ha en <strong>Feedback</strong>-knapp. Når du trykker på denne knappen, så sendes ditt input til en LLM som skal først trekke fram det som allerede er riktig, før den peker mot det neste du bør undersøke.</p>
+<p>Kode- og matematikkoppgaver kan ha en <strong>Tilbakemelding</strong>-knapp. Når du trykker på denne knappen, så sendes ditt input til en LLM som først skal trekke fram det som allerede er riktig, før den peker mot det neste du bør undersøke.</p>
 <p>I matematikkoppgavene blir hjelpen gradvis tydeligere:</p>
 <ol type="1">
 <li><strong>Lite hint:</strong> et spørsmål eller et tips som hjelper deg å finne neste steg.</li>
@@ -4503,12 +4350,14 @@ to use immediately after the page has loaded or the Python environment restarts.
 <p>Tilbakemeldingen bruker språkmodeller på NTNUs HPC-infrastruktur (IDUN) og krever en personlig API-nøkkel. Se <a href="https://www.hpc.ntnu.no/idun/documentation/ai-coding-assistant-and-large-language-models-llms-on-idun/">LLM API service and gpt.ntnu.no – IDUN documentation</a> for tilgang og oppdaterte tjenesteinnstillinger.</p>
 <p>Når du har fått nøkkelen:</p>
 <ol type="1">
-<li>Trykk på <strong>tannhjulikonet</strong> ved tilbakemeldingsknappen.</li>
-<li>Fyll inn base-URL og modell slik IDUN-dokumentasjonen angir.</li>
-<li>Lim inn nøkkelen i <strong>API key</strong> og lagre.</li>
-<li>Velg modellen. (Prøv først uten reasoning, feks Kimi2.6-instant.) Lagre.</li>
-<li>Send inn et svar med <strong>Check</strong>, og velg deretter <strong>Feedback</strong>.</li>
+<li>Trykk på <strong>tannhjulikonet</strong> (⚙) ved knappen <strong>Tilbakemelding</strong>. Da åpnes <strong>Innstillinger for KI</strong>.</li>
+<li>Velg <strong>Direkte API</strong> under <strong>Modus</strong>. Med standardvalget <strong>Kopier instruksjon</strong> sendes ingenting; du får i stedet en instruksjon som du selv kan lime inn i en KI-chat.</li>
+<li>Fyll inn <strong>API-adresse</strong> (base-URL-en) slik IDUN-dokumentasjonen angir, og lim inn nøkkelen i <strong>Personlig API-nøkkel</strong>.</li>
+<li>Trykk <strong>Hent modeller</strong> og velg en modell, eller skriv navnet i <strong>Modell</strong>. Prøv først en modell uten reasoning, f.eks. Kimi2.6-instant.</li>
+<li>Velg <strong>Lagring</strong>: <strong>Husk på denne enheten</strong> på din egen datamaskin, <strong>Denne fanen</strong> på en delt datamaskin. Trykk <strong>Lagre innstillinger</strong>.</li>
+<li>Skriv et svar, trykk <strong>Sjekk</strong>, og trykk deretter <strong>Tilbakemelding</strong>. I Python-cellene trykker du <strong>Tilbakemelding</strong> ved kodevinduet.</li>
 </ol>
+<p>Innstillingene gjelder for alle oppgaver og Python-celler på nettstedet. Har du lagret innstillinger i den tidligere versjonen av nettstedet, viser dialogen en knapp <strong>Bruk lagrede innstillinger fra …</strong> som fyller inn feltene; trykk deretter <strong>Lagre innstillinger</strong>.</p>
 <div class="callout callout-style-default callout-important callout-titled" title="Beskytt API-nøkkelen">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4519,7 +4368,7 @@ to use immediately after the page has loaded or the Python environment restarts.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Ikke skriv nøkkelen i Python-kode, del den med andre eller legg den i Git. Fjern den når du er ferdig hvis du bruker en delt datamaskin.</p>
+<p>Ikke skriv nøkkelen i Python-kode, del den med andre eller legg den i Git. På en delt datamaskin velger du <strong>Denne fanen</strong> under <strong>Lagring</strong>; da huskes nøkkelen bare i denne fanen.</p>
 </div>
 </div>
 </section>
@@ -5187,6 +5036,32 @@ qpyodideSyncBsTheme();
 // because Python runs in the Web Worker.
 let qpyodideExecutionBusy = false;
 
+// Every EditorUnit capable of local-storage autosave registers itself here
+// so the settings gear (qpyodide-storage-settings.js) can refresh their save-button/
+// autosave-mode UI live, without a page reload, after the reader flips the
+// "autosave to this browser" or "manual save per cell" checkbox.
+const qpyodideStorageUnits = [];
+globalThis.qpyodideRefreshStorageUI = function () {
+  qpyodideStorageUnits.forEach((unit) => unit.refreshStorageUI());
+};
+// Called by both delete buttons in the settings gear (this page's saves via
+// qpyodideStorage.clearPage(), or the whole project's via .clearAll()):
+// puts every currently mounted, storage-capable cell's editor back to its
+// original code (otherwise an already-restored or already-edited editor
+// would keep showing the now-deleted content, and the very next keystroke
+// would just save it right back -- see EditorUnit.resetEditorToOriginal())
+// and re-derives each cell's status label/clear button from (now-empty)
+// storage. Both scopes always include every cell mounted on the current
+// page, so the same reset applies after either one.
+globalThis.qpyodideResetAllStorageUnits = function () {
+  qpyodideStorageUnits.forEach((unit) => {
+    unit.feedbackHandle?.reset();
+    unit.invalidateFeedback();
+    unit.resetEditorToOriginal();
+    unit.updateStorageStatus(false);
+  });
+};
+
 // Detects input() calls in the code (same heuristic as runForOutput()).
 function qpyodideCodeHasInput(code) {
   return /\binput\s*\(/.test(code || "");
@@ -5366,7 +5241,29 @@ class EditorUnit {
     this.editor = null;
     this.isReadOnly = options["read-only"] === "true";
     this.lastRunCode = null;   // code state of the last run
-    this.lastOutput = null;    // text output of the last run (for the feedback cache)
+    this.lastOutput = null;    // retained execution result for existing callers
+    this.feedbackRevision = 0;
+    this.outputRevision = 0;
+    this.feedbackEvidence = null;
+    this.feedbackHandle = null;
+
+    // Local-storage autosave: whether this cell could EVER use storage at
+    // all -- editable, and not permanently opted out via the course
+    // author's own `#| local-storage: false`. This is fixed for the cell's
+    // lifetime and gates whether any storage DOM/listeners get built at
+    // all. It's deliberately independent of the document default, the
+    // reader's device-wide toggle, and manual-save mode -- those can all
+    // change live (see cellEnabled()/isManualMode(), always re-read fresh,
+    // never cached) without needing a page reload; see refreshStorageUI().
+    this.storageCapable = !this.isReadOnly && !!globalThis.qpyodideStorage &&
+      this.options["local-storage"] !== "false";
+    // Restoring previously saved code is NOT gated by whether saving is
+    // CURRENTLY allowed (doc default / reader toggle can be off right now)
+    // -- if something was saved while it WAS allowed, it must still show up
+    // here; otherwise turning the reader toggle off would look like it
+    // silently deleted the student's own code.
+    this.savedCode = this.storageCapable ? globalThis.qpyodideStorage.load(this.uid) : null;
+    this.saveTimer = null;
 
     this.buildDom();
     this.initMonaco();
@@ -5386,9 +5283,6 @@ class EditorUnit {
     const leftButtonsDiv = document.createElement("div");
     leftButtonsDiv.className = "qpyodide-editor-toolbar-left-buttons";
 
-    const middleToolBarDiv = document.createElement("div");
-    middleToolBarDiv.className = "qpyodide-editor-toolbar-middle";
-
     const rightButtonsDiv = document.createElement("div");
     rightButtonsDiv.className = "qpyodide-editor-toolbar-right-buttons";
 
@@ -5407,12 +5301,49 @@ class EditorUnit {
     }
     leftButtonsDiv.appendChild(this.runButton);
 
-    // Editable/read-only label
+    // Editable/read-only label -- left-oriented, next to the Run button.
     const readOnlyLabel = document.createElement("label");
     readOnlyLabel.className = "qpyodide-label qpyodide-readonly-label";
     readOnlyLabel.id = `qpyodide-readonly-label-${uid}`;
     readOnlyLabel.textContent = this.isReadOnly ? QP_L.labelReadOnly : QP_L.labelEditable;
-    middleToolBarDiv.appendChild(readOnlyLabel);
+    leftButtonsDiv.appendChild(readOnlyLabel);
+
+    // Local-storage status label + "save now"/"clear saved code" controls
+    // (only for cells that could ever use storage -- see storageCapable).
+    // Visibility of each is refreshed live (refreshStorageUI()), never
+    // fixed at construction time. Status label is right-oriented, ahead of
+    // the action buttons it describes.
+    this.storageStatusLabel = null;
+    this.saveButton = null;
+    this.clearSavedButton = null;
+    if (this.storageCapable) {
+      this.storageStatusLabel = document.createElement("span");
+      this.storageStatusLabel.className = "qpyodide-label qpyodide-storage-status";
+      this.storageStatusLabel.hidden = true;
+      rightButtonsDiv.appendChild(this.storageStatusLabel);
+
+      // Manual-save mode only (see refreshStorageUI): the reader has to
+      // click this explicitly instead of autosave saving as they type.
+      this.saveButton = document.createElement("button");
+      this.saveButton.className = "btn btn-light btn-xs qpyodide-button qpyodide-button-save-cell";
+      this.saveButton.type = "button";
+      this.saveButton.id = `qpyodide-button-save-cell-${uid}`;
+      this.saveButton.title = QP_L.saveCellTitle;
+      this.saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i>';
+      this.saveButton.hidden = true;
+      rightButtonsDiv.appendChild(this.saveButton);
+
+      this.clearSavedButton = document.createElement("button");
+      this.clearSavedButton.className = "btn btn-light btn-xs qpyodide-button qpyodide-button-clear-saved";
+      this.clearSavedButton.type = "button";
+      this.clearSavedButton.id = `qpyodide-button-clear-saved-${uid}`;
+      this.clearSavedButton.title = QP_L.clearSavedTitle;
+      this.clearSavedButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+      this.clearSavedButton.hidden = true;
+      rightButtonsDiv.appendChild(this.clearSavedButton);
+
+      qpyodideStorageUnits.push(this);
+    }
 
     // Reset button
     this.resetButton = document.createElement("button");
@@ -5441,12 +5372,11 @@ class EditorUnit {
       this.feedbackButton.id = `qpyodide-button-feedback-${uid}`;
       this.feedbackButton.title = QP_L.feedbackTitle;
       this.feedbackButton.innerHTML = QP_L.feedbackLabel;
-      this.feedbackButton.disabled = !globalThis.mainPyodide;
+      this.feedbackButton.disabled = false;
       rightButtonsDiv.appendChild(this.feedbackButton);
     }
 
     this.toolbarDiv.appendChild(leftButtonsDiv);
-    this.toolbarDiv.appendChild(middleToolBarDiv);
     this.toolbarDiv.appendChild(rightButtonsDiv);
 
     // Console: editor + text output + feedback output
@@ -5496,6 +5426,147 @@ class EditorUnit {
     // First gate check based on the initial code (the editor doesn't exist
     // yet; getCode() falls back to this.code).
     this.updateInputGate();
+
+    // Reflect whether restored/saved code already exists for this cell, and
+    // set the save/clear buttons' initial visibility (autosave vs. manual
+    // mode, current enablement).
+    this.updateStorageStatus(this.savedCode != null);
+    this.refreshStorageUI();
+  }
+
+  /** Updates the "saved"/"restored"/"savable" status label. Pass
+   *  justRestored=true right after a fresh page load that restored
+   *  previously saved code, to show that fact once instead of the generic
+   *  "saved" wording. Sets `display` directly (not just the `hidden`
+   *  attribute) so this can never be left visible by a stray CSS rule
+   *  elsewhere overriding `[hidden]`.
+   *
+   *  A cell with nothing saved YET still gets a faint "Savable" marker
+   *  whenever it actually would persist if the student typed right now
+   *  (live cascading precedence: doc default + this cell's own override +
+   *  the reader's own toggle, via cellEnabled()) -- otherwise cascading
+   *  options were only ever visible after the fact, once something had
+   *  already been saved, which made it impossible to tell which cells on
+   *  an untouched page were live vs. structurally incapable (read-only /
+   *  `#| local-storage: false`) vs. capable-but-currently-disabled (doc
+   *  default off, no cell override). This is the ONE label state that
+   *  depends on cellEnabled() (live) rather than meaningfullySaved
+   *  (persisted) -- so, unlike the other two, it must disappear/reappear
+   *  live whenever the reader's own toggle changes, even with nothing ever
+   *  saved.
+   *
+   *  A stored entry that's byte-identical to the original code (the
+   *  student saved, then edited back to exactly the original -- or a
+   *  reload just re-loaded a save that never actually differed) is treated
+   *  as NOT meaningfully saved: "Restored"/"Saved" would be describing a
+   *  distinction that doesn't exist, and previously the only way to clear
+   *  that stuck label was the per-cell trash-can button even though
+   *  nothing was actually being restored differently from the original.
+   *  Checked against both the live editor content and the raw stored
+   *  string, since the editor may not exist yet (this runs once
+   *  synchronously before Monaco's async `require()` resolves) and manual-
+   *  save mode can leave them out of sync. */
+  updateStorageStatus(justRestored) {
+    if (!this.storageStatusLabel) return;
+    const stored = globalThis.qpyodideStorage.load(this.uid);
+    const live = this.editor ? this.editor.getValue() : stored;
+    const original = this.code;
+    const meaningfullySaved = stored !== null && stored !== original && live !== original;
+    const savableNow = !meaningfullySaved && globalThis.qpyodideStorage.cellEnabled(this.options);
+    const visible = meaningfullySaved || savableNow;
+    this.storageStatusLabel.hidden = !visible;
+    this.storageStatusLabel.style.display = visible ? "" : "none";
+    this.storageStatusLabel.classList.toggle("qpyodide-storage-status-savable", savableNow);
+    this.storageStatusLabel.title = savableNow ? QP_L.storageSavableTitle : "";
+    this.storageStatusLabel.textContent = meaningfullySaved
+      ? (justRestored ? QP_L.storageRestoredStatus : QP_L.storageSavedStatus)
+      : (savableNow ? QP_L.storageSavableStatus : "");
+    if (this.clearSavedButton) this.clearSavedButton.hidden = !meaningfullySaved;
+    // Tracks whether the label is currently showing "Restored" specifically
+    // -- onFirstEditAfterRestore() below watches this to flip it to
+    // "Saved" the moment the restored text gets overwritten, since
+    // "Restored" would otherwise keep describing content that no longer
+    // matches what was actually restored.
+    this.showingRestored = meaningfullySaved && !!justRestored;
+  }
+
+  /** Called on every editor content change. The "Restored" status only
+   *  ever describes the code exactly as it was loaded from storage; once
+   *  the student changes so much as one character, it stops being
+   *  accurate and must switch to the generic "Saved" wording right away --
+   *  independent of whether an actual write has happened yet (autosave is
+   *  debounced, and manual-save mode may not write until much later). The
+   *  underlying saved copy is untouched either way; only the label. */
+  onFirstEditAfterRestore() {
+    if (!this.showingRestored) return;
+    this.updateStorageStatus(false);
+  }
+
+  /** Puts the editor's content back to the cell's original code and clears
+   *  run state -- everything the Reset button does EXCEPT touching
+   *  localStorage or asking for confirmation (callers decide both: the
+   *  Reset button confirms per-cell and clears its own storage entry; the
+   *  "delete all local saves" bulk action in the settings gear already
+   *  confirmed once and clears storage for every cell in one call, then
+   *  uses this to also put every currently open editor back in sync --
+   *  otherwise the (now storage-less) edited text would just get saved
+   *  right back on the next keystroke, silently undoing the deletion. */
+  resetEditorToOriginal() {
+    if (this.editor) {
+      this.editor.setValue(this.editor.__qpyodideinitialCode);
+      // setValue() above fires onDidChangeModelContent synchronously, which
+      // includes scheduleSave() -- left alone, that would debounce-save the
+      // (unchanged) original code right back ~500ms later, silently
+      // reviving the "Saved"/🗑 UI on a cell nothing actually changed in.
+      // Both callers (Reset button, "delete all local saves") already
+      // handle storage themselves right after this returns, so that
+      // scheduled write must never be allowed to fire.
+      clearTimeout(this.saveTimer);
+      this.saveTimer = null;
+    }
+    this.lastRunCode = null;
+    this.lastOutput = null;
+    [this.outputCodeDiv, this.outputFeedbackDiv, this.outputGraphDiv].forEach((div) => {
+      if (div.classList.contains("has-content")) {
+        div.innerHTML = "";
+        div.classList.remove("has-content");
+      }
+    });
+  }
+
+  /** Re-derives everything that can change live without a page reload: the
+   *  manual Save button's visibility, and (via updateStorageStatus()) the
+   *  "Savable" indicator, from the reader's device-wide autosave toggle and
+   *  manual-save mode. Called once at construction and again by
+   *  qpyodideRefreshStorageUI() (wired to both settings-gear checkboxes in
+   *  qpyodide-feedback.js). Passes through the CURRENT showingRestored
+   *  rather than recomputing it, so merely flipping a setting can never by
+   *  itself turn a "Restored" label into "Saved" -- only actually editing
+   *  the cell does that (see onFirstEditAfterRestore()). */
+  refreshStorageUI() {
+    if (!this.storageCapable) return;
+    if (this.saveButton) {
+      const manual = globalThis.qpyodideStorage.isManualMode();
+      const persistable = globalThis.qpyodideStorage.cellEnabled(this.options);
+      this.saveButton.hidden = !(manual && persistable);
+    }
+    this.updateStorageStatus(this.showingRestored);
+  }
+
+  /** Debounced autosave: schedules a save a moment after the last
+   *  keystroke instead of on every single content change. Re-checks live
+   *  state right before actually writing (not just when scheduled), and
+   *  never fires at all in manual-save mode -- there, only the Save button
+   *  (see wireButtons()) writes. */
+  scheduleSave() {
+    if (!this.storageCapable) return;
+    if (globalThis.qpyodideStorage.isManualMode()) return;
+    clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => {
+      if (!globalThis.qpyodideStorage.cellEnabled(this.options)) return;
+      globalThis.qpyodideStorage.save(this.uid, this.getCode());
+      this.updateStorageStatus(false);
+    }, 500);
   }
 
   /** Creates the Monaco editor (height, EOL, keyboard shortcuts). */
@@ -5504,7 +5575,10 @@ class EditorUnit {
 
     require(["vs/editor/editor.main"], function () {
       thiz.editor = monaco.editor.create(thiz.editorDiv, {
-        value: thiz.code,
+        // Restored, saved code (if any) takes the editor's initial value --
+        // the original course code stays available via __qpyodideinitialCode
+        // below for the Reset button. Never auto-run either way.
+        value: thiz.savedCode != null ? thiz.savedCode : thiz.code,
         language: "python",
         theme: qpyodideMonacoTheme(),
         automaticLayout: true,           // Works wonderfully with RevealJS
@@ -5541,11 +5615,16 @@ class EditorUnit {
       // Keyboard shortcuts must be re-registered per editor on focus change
       // (Monaco regression since 0.32.0):
       // https://github.com/microsoft/monaco-editor/issues/2947
+      // addCommand registers a page-wide keybinding; the context key limits it
+      // to this extension's editors, so other Monaco editors on the page (for
+      // example py-exercise) keep their own keys.
+      const shortcutContext = typeof thiz.editor.createContextKey === 'function'
+        ? (thiz.editor.createContextKey('qpyodideCellEditor', true), 'qpyodideCellEditor') : undefined;
       const addPyodideKeyboardShortCutCommands = () => {
         // Shift+Enter: run the entire cell content
         thiz.editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
           thiz.runCode(thiz.editor.getValue());
-        });
+        }, shortcutContext);
 
         // Ctrl/Cmd+Enter: run the selection (or the current line)
         thiz.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
@@ -5571,13 +5650,17 @@ class EditorUnit {
           } else {
             thiz.runCode(selectedText);
           }
-        });
+        }, shortcutContext);
       };
 
       thiz.editor.onDidFocusEditorText(addPyodideKeyboardShortCutCommands);
       thiz.editor.onDidContentSizeChange(updateHeight);
       // Code changes can add/remove input() -> re-evaluate the gate
-      thiz.editor.onDidChangeModelContent(() => thiz.updateInputGate());
+      thiz.editor.onDidChangeModelContent(() => { thiz.invalidateFeedback({preserveRunOutput: true}); thiz.updateInputGate(); });
+      // Autosave to localStorage (debounced), only for opted-in cells
+      thiz.editor.onDidChangeModelContent(() => thiz.scheduleSave());
+      // "Restored" must stop describing the content the instant it's edited
+      thiz.editor.onDidChangeModelContent(() => thiz.onFirstEditAfterRestore());
       updateHeight();
       thiz.updateInputGate();
     });
@@ -5595,35 +5678,77 @@ class EditorUnit {
 
     this.resetButton.onclick = () => {
       if (thiz.editor) {
-        thiz.editor.setValue(thiz.editor.__qpyodideinitialCode);
-      }
-      thiz.lastRunCode = null;
-      thiz.lastOutput = null;
-      [thiz.outputCodeDiv, thiz.outputFeedbackDiv, thiz.outputGraphDiv].forEach((div) => {
-        if (div.classList.contains("has-content")) {
-          div.innerHTML = "";
-          div.classList.remove("has-content");
+        // Only nag with a confirmation when Reset would actually discard
+        // something -- code already matching the original is a no-op.
+        if (thiz.getCode() !== thiz.editor.__qpyodideinitialCode &&
+            !window.confirm(QP_L.resetConfirm)) {
+          return;
         }
-      });
+      }
+      thiz.feedbackHandle?.reset();
+      thiz.invalidateFeedback();
+      thiz.resetEditorToOriginal();
+      if (thiz.storageCapable) {
+        globalThis.qpyodideStorage.clear(thiz.uid);
+        thiz.updateStorageStatus(false);
+      }
     };
+
+    // Manual-save mode only: writes immediately, bypassing the debounce
+    // (and bypassing manual-mode's own "autosave never fires" rule in
+    // scheduleSave() -- this button IS the save action in that mode).
+    if (this.saveButton) {
+      this.saveButton.onclick = () => {
+        globalThis.qpyodideStorage.save(thiz.uid, thiz.getCode());
+        thiz.updateStorageStatus(false);
+      };
+    }
+
+    // "Clear saved code": drops the localStorage backup without touching
+    // whatever is currently in the editor (e.g. before leaving a shared
+    // computer, without losing the in-progress edit view).
+    if (this.clearSavedButton) {
+      this.clearSavedButton.onclick = () => {
+        globalThis.qpyodideStorage.clear(thiz.uid);
+        thiz.updateStorageStatus(false);
+      };
+    }
 
     // AI feedback: all of its logic lives in qpyodide-feedback.js
     if (this.feedbackButton) {
-      qpyodideFeedback.attach({
+      this.feedbackHandle = qpyodideFeedback.attach({
         uid: this.uid,
         feedbackButton: this.feedbackButton,
         feedbackDiv: this.outputFeedbackDiv,
         getCode: () => thiz.getCode(),
-        runForOutput: () => thiz.runForOutput()
+        options: this.options,
+        getEvidence: () => thiz.getFeedbackEvidence(),
+        getRevision: () => thiz.feedbackRevision
       });
     }
 
     // Keep the input() gate current: on state changes (input() checked/enabled)
     // and once as soon as the Pyodide runtime is ready.
+    window.addEventListener("qpyodide-runtime-restart", () => thiz.invalidateFeedback({preserveRunOutput: true}));
     window.addEventListener("qpyodide-input-state", () => thiz.updateInputGate());
     if (globalThis.qpyodideReady) {
       globalThis.qpyodideReady.then(() => thiz.updateInputGate()).catch(() => {});
     }
+  }
+
+  invalidateFeedback({preserveRunOutput = false} = {}) {
+    this.feedbackRevision++;
+    if (!preserveRunOutput) this.outputRevision++;
+    this.lastRunCode = null;
+    this.lastOutput = null;
+    this.feedbackEvidence = null;
+    this.feedbackHandle?.cancel({clearOutput: true});
+  }
+
+  getFeedbackEvidence() {
+    const cached = this.feedbackEvidence;
+    return cached && cached.revision === this.feedbackRevision && cached.code === this.getCode()
+      ? cached.evidence.map(item => ({...item})) : [];
   }
 
   /** Gets the editor's current code (fallback: initial code). */
@@ -5688,6 +5813,11 @@ class EditorUnit {
    */
   async runCode(code) {
     if (qpyodideExecutionBusy) return "";
+    this.feedbackHandle?.reset('run');
+    this.invalidateFeedback();
+    const revision = this.feedbackRevision;
+    const outputRevision = this.outputRevision;
+    let evidence = [];
     qpyodideExecutionBusy = true;
     qpyodideSetRunButtonsEnabled(false);
 
@@ -5779,6 +5909,11 @@ class EditorUnit {
         code, globalThis.qpyodideCanvasWanted?.(this.options)
       );
       text = result.text;
+      if (outputRevision !== this.outputRevision) return text;
+      const stdout = result.entries.filter(entry => entry.type === 'stdout').map(entry => entry.message).join('\n');
+      const hasError = result.entries.some(entry => entry.type === 'stderr');
+      evidence = [{label: 'Prior execution', text: hasError ? 'The run reported an error. Raw error details are omitted.' : 'The run completed.'}];
+      if (stdout) evidence.push({label: 'Learner stdout', text: stdout.length > 8000 ? stdout.slice(0, 8000) + '\n[Output truncated]' : stdout});
 
       // Append HTML return value (e.g. animation) and graphics
       if (result.html) qpyodideRenderHtmlOutput(this.outputCodeDiv, result.html);
@@ -5791,6 +5926,8 @@ class EditorUnit {
       }
     } catch (err) {
       // Hard abort (worker restart) or worker crash
+      evidence = [];
+      if (outputRevision !== this.outputRevision) return '';
       text = String((err && err.message) || err);
       terminalDiv.querySelectorAll(".qpyodide-input-row").forEach((r) => r.remove());
       const errCode = document.createElement("code");
@@ -5807,8 +5944,11 @@ class EditorUnit {
       qpyodideExecutionBusy = false;
       qpyodideSetRunButtonsEnabled(true);
     }
-    this.lastRunCode = code;
-    this.lastOutput  = text;
+    if (revision === this.feedbackRevision && code === this.getCode()) {
+      this.lastRunCode = code;
+      this.lastOutput = text;
+      this.feedbackEvidence = {code, revision, evidence};
+    }
     return text;
   }
 
@@ -5992,21 +6132,48 @@ class InteractiveCell extends BaseCell {
       .appendChild(addCodeBlockButton);
 
     const thiz = this;
-    addCodeBlockButton.onclick = function () {
+    // At most one extra block ever exists per cell (the button disables
+    // itself below after first use), so its identity can be a fixed
+    // "extra:<parent identity>" -- no occurrence counter needed, unlike
+    // computeIdentities()'s handling of duplicate original code. Registered
+    // up front (before the block itself exists) so it's available both to
+    // the click handler below and to the auto-restore check right after.
+    const storage = globalThis.qpyodideStorage;
+    const extraUid = `${this.id}.2`;
+    const parentIdentity = storage?.identityFor(this.primaryUnit.uid);
+    if (parentIdentity) {
+      storage.registerIdentity(extraUid, "extra:" + parentIdentity);
+    }
+
+    function addExtraCodeBlock() {
       const extraHost = document.createElement("div");
       extraHost.className = "qpyodide-extra-codeblock";
       details.appendChild(extraHost);
 
       const extraOptions = { ...thiz.options, "read-only": "false", "autorun": "" };
       thiz.units.push(new EditorUnit({
-        uid: `${thiz.id}.${thiz.units.length + 1}`,
-        code: "",
+        uid: extraUid,
+        code: "",   // the extra block's "original" is always empty
         options: extraOptions,
         hostDiv: extraHost
       }));
 
       addCodeBlockButton.disabled = true;
-    };
+    }
+
+    addCodeBlockButton.onclick = addExtraCodeBlock;
+
+    // A previous visit may have saved code into this cell's extra block --
+    // recreate it right away with that code showing, same "restored, never
+    // auto-run" rule as every other cell (EditorUnit's own constructor
+    // does the actual restore, via the identity registered above). Guarded
+    // by the same condition EditorUnit itself uses for storageCapable, so
+    // a cell later opted out via `#| local-storage: false` never grows a
+    // phantom empty block just because an old save still exists for it.
+    if (parentIdentity && this.options["local-storage"] !== "false" &&
+        storage.hasSaved(extraUid)) {
+      addExtraCodeBlock();
+    }
 
     mainDiv.appendChild(details);
     this.insertionLocation.appendChild(mainDiv);
