@@ -45,7 +45,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-0e53955fafe0ce48d7f15f4d9f72b5a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5337165f197680d68c11b8afac1372bd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-core.js"></script>
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-dom.js"></script>
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.js"></script>
@@ -4928,10 +4928,10 @@ x\text{ minimerer }\phi(x)=\tfrac12x^TAx-b^Tx.}\]</span></p>
 <h3 class="anchored" data-anchor-id="hvilke-matriser-gir-en-skål-med-én-bunn">Hvilke matriser gir en skål med én bunn?</h3>
 <p>Vi bruker her <strong>symmetrisk positivt definitte (SPD)</strong> matriser:</p>
 <p><span class="math display">\[A^T=A,\qquad z^TAz&gt;0\quad\text{for alle }z\ne0.\]</span></p>
-<p>Symmetrien gjør at kryssleddene fra hver side av diagonalen passer sammen. Positiv definitet betyr at det kvadratiske bidraget er positivt i enhver ikke-null retning. Kvadratfullføringen ovenfor viser at matrisen vår har nettopp denne egenskapen.</p>
+<p>Symmetrien gjør at kryssleddene fra hver side av diagonalen passer sammen. Positiv definitthet betyr at det kvadratiske bidraget er positivt i enhver ikke-null retning. Kvadratfullføringen ovenfor viser at matrisen vår har nettopp denne egenskapen.</p>
 <p><strong>Hva får vi igjen for denne forutsetningen?</strong> For enhver SPD-matrise finnes nøyaktig én løsning av <span class="math inline">\(Ax=b\)</span>, og den er det eneste punktet der <span class="math inline">\(\phi\)</span> er minst. Beviset og et eksempel med tre ukjente står i «Gå i dybden».</p>
 <p>Et SPD-system kan også løses direkte med <strong>Cholesky-faktorisering</strong>: vi skriver <span class="math inline">\(A=LL^T\)</span> og løser først <span class="math inline">\(Ly=b\)</span>, så <span class="math inline">\(L^Tx=y\)</span>. Her er <span class="math inline">\(L\)</span> nedre triangulær, altså null over diagonalen. (Dette er en annen matrise enn den strengt nedre delen <span class="math inline">\(L\)</span> av <span class="math inline">\(A\)</span> fra 6.1.) I <a href="../pages/uke10.html#uke10-cholesky">uke 10</a> regner vi gjennom denne metoden og bruker den til å finne Newton-retninger.</p>
-<p>En symmetrisk matrise er positivt definit akkurat når alle egenverdiene er positive (begrunnelsen, med spektralteoremet fra uke 5, står i «Gå i dybden»). Egenverdiene er da strekkfaktorene, så for SPD er <span class="math inline">\(\kappa_2(A)=\lambda_{\max}/\lambda_{\min}\)</span>: stor forskjell mellom egenverdiene gir en skål som er bratt i én retning og slak i en annen. Matrisen <span class="math inline">\(A_b\)</span> fra 6.2 er ikke SPD: <span class="math inline">\(z^TA_bz=-2\)</span> for <span class="math inline">\(z=(1,-1)^T\)</span>.</p>
+<p>En symmetrisk matrise er positivt definitt akkurat når alle egenverdiene er positive (begrunnelsen, med spektralteoremet fra uke 5, står i «Gå i dybden»). Egenverdiene er da strekkfaktorene, så for SPD er <span class="math inline">\(\kappa_2(A)=\lambda_{\max}/\lambda_{\min}\)</span>: stor forskjell mellom egenverdiene gir en skål som er bratt i én retning og slak i en annen. Matrisen <span class="math inline">\(A_b\)</span> fra 6.2 er ikke SPD: <span class="math inline">\(z^TA_bz=-2\)</span> for <span class="math inline">\(z=(1,-1)^T\)</span>.</p>
 </section>
 <section id="hvorfor-er-gs-minimering-langs-én-retning" class="level3">
 <h3 class="anchored" data-anchor-id="hvorfor-er-gs-minimering-langs-én-retning">Hvorfor er GS minimering langs én retning?</h3>
@@ -4953,8 +4953,8 @@ Gå i dybden: nivåkurver, hele GS-sveipet, tre ukjente og den generelle minimer
 <p>For funksjonen vår er dette en <strong>nivåkurve</strong> når <span class="math inline">\(c&gt;-7.5\)</span>. Følg én kurve, og høyden endrer seg ikke. Geometrisk skjærer vi skålen med planet <span class="math inline">\(z=c\)</span> og tegner skjæringskurven sett ovenfra. Høyden <span class="math inline">\(c\)</span> står som merking på kurven. Setter vi inn uttrykket rundt minimumet, får vi</p>
 <p><span class="math display">\[\tfrac32(u-1)^2+(u-1)(v-2)+(v-2)^2=c+\tfrac{15}{2}.\]</span></p>
 <p>Dette er ellipser med sentrum <span class="math inline">\((1,2)\)</span> når høyresiden er positiv. For <span class="math inline">\(c=-7.5\)</span> består nivåmengden bare av minimumpunktet, og for <span class="math inline">\(c&lt;-7.5\)</span> er den tom. Kryssleddet gjør at ellipsenes hovedakser ikke følger koordinataksene.</p>
-<p><strong>Positiv definitet og egenverdier</strong></p>
-<p>Fra <a href="../pages/uke5.html#uke5-basis">uke 5</a> («Gå i dybden» om spektralteoremet) har vi <span class="math inline">\(z^TAz=\sum_i\lambda_ic_i^2\)</span> for en symmetrisk matrise, der <span class="math inline">\(c_i\)</span> er koordinatene til <span class="math inline">\(z\)</span> i en ortonormal egenvektorbasis <span class="math inline">\(q_1,\ldots,q_n\)</span>. Er alle <span class="math inline">\(\lambda_i&gt;0\)</span>, er <span class="math inline">\(A\)</span> positivt definit. Omvendt gir <span class="math inline">\(z=q_i\)</span> at <span class="math inline">\(q_i^TAq_i=\lambda_i\)</span>, så positiv definitet krever <span class="math inline">\(\lambda_i&gt;0\)</span>.</p>
+<p><strong>Positiv definitthet og egenverdier</strong></p>
+<p>Fra <a href="../pages/uke5.html#uke5-basis">uke 5</a> («Gå i dybden» om spektralteoremet) har vi <span class="math inline">\(z^TAz=\sum_i\lambda_ic_i^2\)</span> for en symmetrisk matrise, der <span class="math inline">\(c_i\)</span> er koordinatene til <span class="math inline">\(z\)</span> i en ortonormal egenvektorbasis <span class="math inline">\(q_1,\ldots,q_n\)</span>. Er alle <span class="math inline">\(\lambda_i&gt;0\)</span>, er <span class="math inline">\(A\)</span> positivt definitt. Omvendt gir <span class="math inline">\(z=q_i\)</span> at <span class="math inline">\(q_i^TAq_i=\lambda_i\)</span>, så positiv definitthet krever <span class="math inline">\(\lambda_i&gt;0\)</span>.</p>
 <p>Forutsetningen betyr noe. For <span class="math inline">\(A_b\)</span> fra 6.2 så vi i hovedteksten at <span class="math inline">\(z^TA_bz&lt;0\)</span> for <span class="math inline">\(z=(1,-1)^T\)</span>, selv om diagonalen er positiv. Den tilhørende funksjonen har ikke en skål med én bunn. Vi kan derfor ikke tolke ethvert lineært system som minimering av denne <span class="math inline">\(\phi\)</span>.</p>
 <p><strong>Andre halvdel av GS-sveipet</strong></p>
 <p>Vi holder <strong>den nye</strong> <span class="math inline">\(u=u_{k+1}\)</span> fast og minimerer langs den vertikale linjen:</p>
@@ -5005,7 +5005,7 @@ h'(v)=u_{k+1}+2v-5=0
 <li>La <span class="math display">\[A=\begin{bmatrix}4&amp;1&amp;0\\1&amp;3&amp;1\\0&amp;1&amp;2\end{bmatrix},\qquad
 b=\begin{bmatrix}6\\10\\8\end{bmatrix},\qquad x=(u,v,w)^T.\]</span> Skriv <span class="math inline">\(\phi(u,v,w)=\tfrac12x^TAx-b^Tx\)</span> uten matriseprodukter. Hvilke kryssledd finnes, og hvorfor mangler <span class="math inline">\(uw\)</span>?</li>
 <li>Kontroller at <span class="math inline">\(x_*=(1,2,3)^T\)</span> løser systemet. Finn <span class="math inline">\(\phi(x_*)\)</span>, og gjør ett GS-sveip fra null ved å minimere i <span class="math inline">\(u\)</span>, deretter <span class="math inline">\(v\)</span>, deretter <span class="math inline">\(w\)</span>.</li>
-<li>Utled <span class="math inline">\(\phi(x)-\phi(x_*)=\tfrac12(x-x_*)^TA(x-x_*)\)</span> for SPD. Hvor bruker dere symmetrien, og hvor bruker dere positiv definitet?</li>
+<li>Utled <span class="math inline">\(\phi(x)-\phi(x_*)=\tfrac12(x-x_*)^TA(x-x_*)\)</span> for SPD. Hvor bruker dere symmetrien, og hvor bruker dere positiv definitthet?</li>
 </ol>
 <p><strong>Regnegangen – det fullstendige <span class="math inline">\(3\times3\)</span>-eksemplet</strong></p>
 <p>Matriseproduktet gir</p>
@@ -5054,7 +5054,7 @@ v+2w-8=0&amp;\quad\Longrightarrow\quad w_{k+1}=(8-v_{k+1})/2.
 &amp;=\phi(x_*)+\tfrac12e^TAe.
 \end{aligned}
 \]</span></p>
-<p>Siste likhet bruker <span class="math inline">\(Ax_*=b\)</span>. Positiv definitet gjør at det siste leddet er strengt positivt når <span class="math inline">\(e\ne0\)</span>. Det beviser minimeringen. Med egenverdidekomposisjonen <span class="math inline">\(A=Q\Lambda Q^T\)</span> og <span class="math inline">\(y=Q^Te\)</span> blir</p>
+<p>Siste likhet bruker <span class="math inline">\(Ax_*=b\)</span>. Positiv definitthet gjør at det siste leddet er strengt positivt når <span class="math inline">\(e\ne0\)</span>. Det beviser minimeringen. Med egenverdidekomposisjonen <span class="math inline">\(A=Q\Lambda Q^T\)</span> og <span class="math inline">\(y=Q^Te\)</span> blir</p>
 <p><span class="math display">\[\phi(x)-\phi(x_*)=\tfrac12\sum_i\lambda_i y_i^2.\]</span></p>
 <p>Egenvektorene gir hovedretningene til ellipsene eller ellipsoidene. En liten positiv egenverdi betyr at funksjonen stiger langsomt i den retningen; en stor egenverdi betyr rask stigning. Dette forklarer hvorfor forholdet mellom egenverdiene påvirker formen på skålen i 6.5.</p>
 <p>Til slutt kan vi utlede GS-korreksjonen i alle dimensjoner. La <span class="math inline">\(e_i\)</span> være vektoren med <span class="math inline">\(1\)</span> på plass <span class="math inline">\(i\)</span> og <span class="math inline">\(0\)</span> ellers, og la <span class="math inline">\(x\)</span> være det <strong>gjeldende</strong> forslaget, inkludert koordinatene som allerede er oppdatert. Langs linjen <span class="math inline">\(x+t e_i\)</span> er</p>
@@ -5617,7 +5617,7 @@ Relativ bakoverfeil, \(\lVert r\rVert_2/\lVert b\rVert_2=\) <input type="text" i
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<p><strong>Forklar i egne notater:</strong> Hvorfor er dette punktet minimum for <span class="math inline">\(\phi\)</span>? Begrunn at <span class="math inline">\(A\)</span> er positivt definit, for eksempel med egenverdiene. At gradienten er null, er ikke alene nok til å avgjøre dette.</p>
+<p><strong>Forklar i egne notater:</strong> Hvorfor er dette punktet minimum for <span class="math inline">\(\phi\)</span>? Begrunn at <span class="math inline">\(A\)</span> er positivt definitt, for eksempel med egenverdiene. At gradienten er null, er ikke alene nok til å avgjøre dette.</p>
 <div id="uke6-ov-linjesok">
 
 </div>
