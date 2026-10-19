@@ -59,17 +59,70 @@ def armijo_gd(X, grad, max_steps=2000, tol=1e-6, yy=damage):
     return beta, k, extra
 
 
+def _data_axes(ax, yy=damage):
+    """Tegner oppskytingene som punkter i høyde 0 og 1 (litt spredt så like punkter synes)."""
+    ax.plot(temps, yy + np.linspace(-.02, .02, temps.size), 'ko', markersize=4,
+            label='oppskytinger (0 = ingen skade, 1 = skade)')
+    ax.set(xlabel='temperatur T (°F)')
+
+
+def show_line_fit(line):
+    """Data og minste kvadraters linje line[0] + line[1] T, med områdene der linjen
+    gir verdier under 0 eller over 1."""
+    T = np.linspace(25, 85, 300)
+    v = line[0] + line[1]*T
+    fig, ax = plt.subplots(figsize=(6.5, 4))
+    _data_axes(ax)
+    ax.plot(T, v, label='rett linje (minste kvadrater)')
+    ax.fill_between(T, v, 1, where=v > 1, color='#b5483f', alpha=.25, label='over 1')
+    ax.fill_between(T, v, 0, where=v < 0, color='#b5483f', alpha=.5, label='under 0')
+    ax.axhline(0, color='gray', lw=.8); ax.axhline(1, color='gray', lw=.8)
+    ax.set(ylabel='«sannsynlighet» for skade', ylim=(-.25, 1.9))
+    ax.legend(fontsize=8, loc='upper right'); plt.show()
+
+
+def show_curves(betas, labels):
+    """Data og S-kurvene p(T) = sigma(beta0 + beta1 T), med terskelen der p = 1/2."""
+    T = np.linspace(40, 90, 300)
+    fig, ax = plt.subplots(figsize=(6.5, 4))
+    _data_axes(ax)
+    for beta, label in zip(betas, labels):
+        ax.plot(T, sigma(beta[0] + beta[1]*T), label=label)
+    ax.axhline(.5, color='gray', lw=.8, ls=':')
+    ax.axvline(-betas[0][0]/betas[0][1], color='gray', lw=.8, ls='--', label='terskel, p = 1/2')
+    ax.set(ylabel='p(T)', ylim=(-.08, 1.08)); ax.legend(fontsize=8, loc='center left'); plt.show()
+
+
 def show_fit(beta_F, label='tilpasset modell'):
     """Data og sannsynlighetskurven p(T) = sigma(beta0 + beta1 T), T i °F."""
     T = np.linspace(25, 85, 300)
     fig, ax = plt.subplots(figsize=(6.5, 4))
-    ax.plot(temps, damage + np.linspace(-.02, .02, temps.size), 'ko',
-            markersize=4, label='oppskytinger (0 = ingen skade, 1 = skade)')
+    _data_axes(ax)
     ax.plot(T, sigma(beta_F[0] + beta_F[1]*T), label=label)
     ax.axvspan(temps.min(), temps.max(), color='#e8eef5', label='temperaturer i dataene')
     ax.axvline(31, color='#b5483f', linestyle='--', label='31 °F')
-    ax.set(xlabel='temperatur T (°F)', ylabel='p(T)', ylim=(-.08, 1.08))
+    ax.set(ylabel='p(T)', ylim=(-.08, 1.08))
     ax.legend(fontsize=8, loc='center left'); plt.show()
+
+
+def show_cycles(paths, beta_min):
+    """De siste 200 punktene for hver steglengde, i (beta0'', beta1'')-planet.
+    paths: {alpha: array med alle punktene}."""
+    fig, ax = plt.subplots(figsize=(6, 5))
+    for alpha, path in paths.items():
+        ax.plot(path[-200:, 0], path[-200:, 1], '.', markersize=5, label=f'α = {alpha}, siste 200')
+    ax.plot(*beta_min, 'k*', markersize=12, label='minimum')
+    ax.set(xlabel='β₀″', ylabel='β₁″'); ax.legend(); plt.show()
+
+
+def show_separation(history):
+    """|beta|, L og |grad L| mot steg k i log-log-skala. history: liste med (k, |beta|, L, |grad L|)."""
+    h = np.array(history)
+    fig, ax = plt.subplots(figsize=(6.5, 4))
+    ax.loglog(h[:, 0], h[:, 1], label='|β|')
+    ax.loglog(h[:, 0], h[:, 2], label='L(β)')
+    ax.loglog(h[:, 0], h[:, 3], label='|∇L(β)|')
+    ax.set(xlabel='steg k'); ax.legend(); plt.show()
 
 
 # Ferdige datamatriser, slik at cellene virker i hvilken som helst rekkefølge.
@@ -82,4 +135,5 @@ X_raw = designs['rå T']
 X_c = designs['sentrert T - 70']
 X_std = designs['standardisert (T - m)/d']
 alpha_raw = 4/np.linalg.svd(X_raw, compute_uv=False)[0]**2   # trygt steg 4/σ1²
+alpha_c = 4/np.linalg.svd(X_c, compute_uv=False)[0]**2
 ```
