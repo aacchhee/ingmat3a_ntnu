@@ -51,7 +51,7 @@ website:
             file: pages/uke10.qmd
           - text: "Uke 11 – lineær programmering"
             file: pages/uke11.qmd
-          - text: "Uke 12 – optimering med bibetingelser"
+          - text: "Uke 12 – optimering med likhetsbetingelser og Lagranges metode"
             file: pages/uke12.qmd
 
       - section: "Projects"
@@ -66,6 +66,7 @@ website:
           - pages/project_week9.qmd
           - pages/project_week10.qmd
           - pages/project_week11.qmd
+          - pages/project_week12.qmd
 
       - section: "Eksamensoppgaver"
         contents:
