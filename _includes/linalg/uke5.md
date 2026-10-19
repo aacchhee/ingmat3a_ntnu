@@ -10,77 +10,60 @@
 
 <div id="uke5-start"></div>
 
-Hva skjer hvis vi gjentar den samme lineære transformasjonen på en vektor mange ganger?
-Og kan den samme regneoperasjonen brukes til å rangere nettsider?
+### Ukens spørsmål: hva overlever når vi ganger med den samme matrisen om og om igjen?
 
-Eksperimentene gir observasjoner å diskutere. Vi formulerer hypoteser,
-skriver dem som algebra og undersøker hvilke betingelser de trenger.
+Tenk deg at du bruker den samme lineære transformasjonen på en vektor, igjen
+og igjen. Vektoren blir kanskje lengre, men hva skjer med *retningen*?
+Denne uken oppdager vi at noen helt spesielle retninger, egenvektorene,
+tar over. Og vi skal se at akkurat den samme ideen kan rangere nettsider ut
+fra lenkene mellom dem. Det er ideen bak Googles PageRank.
 
+- [En retning vokser fram](#uke5-erfaring): et forsøk der du ser én retning ta over.
+- [Finn de spesielle retningene](#uke5-egen): egenverdier og egenvektorer, regnet for hånd.
+- [Basis og gjentakelse](#uke5-basis): hvorfor den største egenverdien vinner, og spektralteoremet.
+- [Potensmetoden](#uke5-potens): en algoritme som finner den dominerende retningen, og Rayleigh-kvotienten.
+- [PageRank](#uke5-nett) og [en felle og en utvei](#uke5-google): rangering som gjentatt matrisemultiplikasjon.
 
-
-**Undersøk, diskuter og begrunn.** Bruk figurene og de korte kodeforsøkene.
-Under **Gå i dybden** finner du håndregning, begrunnelser og flere spørsmål.
-
-Vi skal oppdage spesielle retninger, forklare hvorfor noen bidrag tar over,
-og bruke den samme ideen til å rangere nettsider etter besøk.
+Etter uken skal du kunne forklare gjentatt multiplikasjon med bidrag langs
+egenvektorer, bruke potensmetoden og Rayleigh-kvotienten, og regne ut en
+PageRank-fordeling for et lite nettverk.
 
 ### To deler: hente fram og bygge videre
 
 | Matematikk 1 – dette henter vi fram | Matematikk 3A – dette bygger vi nå |
 |---|---|
-| Løse lineære likningssystemer; finne egenverdier og egenvektorer. Repetisjon i 5.2. | Forklare gjentatt multiplikasjon med bidrag langs egenvektorer, og undersøke når én retning dominerer. Forsøk i 5.1, teori i 5.3–5.4. |
+| Løse lineære likningssystemer; finne egenverdier og egenvektorer. Håndregning i 5.2. | Forklare gjentatt multiplikasjon med bidrag langs egenvektorer, og undersøke når én retning dominerer. Forsøk i 5.1, teori i 5.3–5.4. |
 | Bruke $(A-\lambda I)v=0$ til å finne alle egenvektorene til en egenverdi. | Knytte egenvektorbasis til tidligere arbeid med basis og ortogonalitet, og bruke dette i potensmetoden og PageRank (5.3–5.6). |
 
-Du trenger ikke huske regneoppskriftene før første forsøk. I **Gå i dybden**
-henter vi dem fram trinn for trinn. Oppgavene i **5.8 Hovedløp** bruker ukens
+Du trenger ikke huske regneoppskriftene før første forsøk. Vi henter dem
+fram i håndeksempelet i 5.2. Oppgavene i **5.8 Hovedløp** bruker ukens
 nye ideer. **5.7 Støtteløp** gir repetisjon av lineære systemer, egenverdier og
 egenvektorer ved behov. Du trenger ikke gjøre hele støtteløpet før hovedløpet.
-
-```{pyodide-python}
-#| label: week5-setup
-#| autorun: true
-#| context: setup
-# NumPy gir oss vektorer og matriser; Matplotlib tegner resultatene.
-# Oppsettet kjøres automatisk og brukes av forsøkene i denne uken.
-
-import numpy as np
-import matplotlib.pyplot as plt
-```
 
 ## 5.1 En retning vokser fram
 
 <div id="uke5-erfaring"></div>
 
-**Matematikk 3A: et nytt spørsmål.** Vi bruker et forsøk til å vekke til live
-begrepene fra Matematikk 1; repetisjonen kommer i 5.2.
+Vi starter med et forsøk, ikke med en definisjon. Matrisen
+
+$$A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$$
+
+beskriver en lineær transformasjon $T(x)=Ax$ av planet. Hva skjer hvis vi
+bruker den samme transformasjonen igjen og igjen på en startvektor?
+
+Lengden vokser fort, så figuren deler på lengden etter hvert steg.
+Å **normalisere** betyr å dele en vektor på lengden sin, slik at den får
+lengde én. Da ser vi bare retningen. Den oransje pilen er startvektoren
+$x_0$, den blå er vektoren $x_k$ etter $k$ steg. Målet er å finne ut om
+ulike startvektorer ender i samme retning, og om noen retninger aldri
+endrer seg i det hele tatt.
 
 ### Eksperiment 1 – hvilken retning blir igjen?
 
-Vi gjentar transformasjonen $T(x)=Ax$, representert i standardbasisen ved
-
-$$A=\begin{bmatrix}2&1\\1&2\end{bmatrix}.$$
-
-**Spørsmålet er om iterasjonsfølgene fra ulike startvektorer nærmer seg samme linje.**
-Et klikk bruker transformasjonen én gang og setter deretter vektorlengden til én.
-Dermed kan vi følge retningen uten at voksende lengder tar vektoren ut av figuren.
-Undersøk både startvektorer som gir endret retning under iterasjonen,
-og egenvektorer der alle itererte vektorer forblir på samme linje:
-
-1. Velg **(1, 0)**. Gjett hvilken linje den blå vektoren vil nærme seg.
-   Trykk **Ett steg** fem ganger og noter om koordinatene nærmer seg hverandre.
-2. Velg **(−1, 0)** og gjenta. Er det samme linje? Samme orientering?
-3. Velg **(1, 1)** og deretter **(1, −1)**. Gjør tre steg fra hver startvektor.
-   Endres retningen? Skriv én observasjon for hver start.
-4. Prøv også **(0, 1)** og **(1, −0.9)**. Det siste valget ligger nær den
-   spesielle retningen $(1,-1)^T$. Dra deretter til en egen startvektor.
-
-Startvalgene angir retninger. Å **normalisere** betyr her å dele på lengden,
-slik at vektoren får lengde én. Den oransje
-vektoren viser startvektoren $x_0$; den blå viser den normaliserte vektoren $x_k$. Hvert klikk
-regner ut $Ax$ og deler på lengden til svaret. Vi bruker ingen
-normalisering av enkeltkoordinater. Formelen ved det blå endepunktet viser
-hvilket produkt retningen kommer fra, og at lengden er normalisert til én.
-Den oransje ringen kan dras også når den ligger rundt det blå endepunktet.
+- Velg **(1, 0)** og trykk **Ett steg** fem ganger. Hvilken linje nærmer den blå pilen seg?
+- Velg **(−1, 0)** og deretter **(0, 1)**. Samme linje? Samme orientering?
+- Velg **(1, 1)** og **(1, −1)**. Endres retningen i det hele tatt?
+  Prøv til slutt **(1, −0.9)**, som ligger nær $(1,-1)$.
 
 ```{.jsxgraph width="680" height="650" style="width:100%;max-width:680px;height:650px;border:0;"}
 // The extension isolates this document in a sandboxed iframe. Keep both
@@ -247,11 +230,13 @@ window.addEventListener('pageshow', resizeGraph);
 updateReadout(); resizeGraph();
 ```
 
-### Hva la du merke til?
-
-For mange startvektorer nærmer følgen av normaliserte vektorer $x_k$ seg samme
-**linje** når transformasjonen gjentas, men grensevektorene kan ha motsatt orientering.
-Med startvektor langs $(1,1)^T$ eller $(1,-1)^T$ er retningen uendret gjennom iterasjonen. Vi skal undersøke hvordan transformasjonen virker langs disse linjene.
+**Hva viser forsøket?** For mange startvektorer nærmer de normaliserte
+vektorene $x_k$ seg samme **linje**, gjennom $(1,1)^T$. Fra $(1,0)$ og
+$(-1,0)$ havner pilen på samme linje, men med motsatt orientering.
+Med startvektor langs $(1,1)^T$ eller $(1,-1)^T$ endres retningen ikke i
+det hele tatt. Fra $(1,-0.9)$, som ligger nær $(1,-1)^T$, drar pilen
+likevel bort og ender også på linjen gjennom $(1,1)^T$. Nå undersøker vi hva
+transformasjonen gjør langs disse to spesielle linjene.
 
 Vi samler multiplikasjon og normalisering i én oppdateringsregel:
 
@@ -260,23 +245,19 @@ $$F(x)=\frac{Ax}{\lVert Ax\rVert_2},\qquad x_{k+1}=F(x_k).$$
 Her er $\lVert x\rVert_2$ vektorens vanlige lengde, og $k$ teller stegene.
 Regelen er definert når $Ax\ne0$.
 
-**Kjenner dere igjen formen fra [uke 2](page4.qmd)?**
-Da sendte vi et tall inn i en regel og brukte svaret som neste verdi.
-Hva er likt nå, og hva er annerledes? Hvilken likning må en vektor
-oppfylle hvis neste steg skal gi akkurat samme vektor?
-
-Etter $k$ steg kan vi også skrive
-
-$$x_k=\frac{A^kx_0}{\lVert A^kx_0\rVert_2}.$$
-
-Vi setter $A^0=I$, der $I$ representerer identitetstransformasjonen
-$x\mapsto x$. Startvektoren i figuren er normalisert til lengde én.
+Etter $k$ steg er $x_k=A^kx_0/\lVert A^kx_0\rVert_2$, med $A^0=I$:
+normaliseringene underveis forkortes bort (se fordypningen under).
 
 **Diskuter:** Hvorfor kan vi miste informasjon om lengde og likevel se
 hvilken retning som dominerer etter gjentatt transformasjon? Hva skiller de to spesielle startvektorene?
 
 <details class="reading-step">
 <summary>Gå i dybden: skaler uten å dreie</summary>
+
+**Kjenner dere igjen formen fra [uke 2](page4.qmd#fikspunkt-og-konvergens)?**
+Da sendte vi et tall inn i en regel og brukte svaret som neste verdi.
+Hva er likt nå, og hva er annerledes? Hvilken likning må en vektor
+oppfylle hvis neste steg skal gi akkurat samme vektor? Vi svarer i 5.4.
 
 For startvektoren $(1,0)^T$ er første steg helt konkret
 
@@ -329,7 +310,7 @@ observasjonen om linjen $x_2=x_1$, som vi forklarer i 5.2–5.3.
 <div id="uke5-egen"></div>
 
 **Matematikk 1: hent fram egenverdier og egenvektorer.** Her repeterer vi
-betydningen og regnemetoden; du finner full håndregning under «Gå i dybden».
+betydningen og regnemetoden, med full håndregning i håndeksempelet.
 
 ### Fra geometrisk observasjon til algebra
 
@@ -360,13 +341,8 @@ $$Av=\lambda v$$
 kalles en **egenvektor**. Tallet $\lambda$ er dens **egenverdi**.
 For $\lambda\ne0$ blir vektoren på samme linje. Negativ $\lambda$ snur vektoren;
 $\lambda=0$ sender den til null. Alle ikke-null multipler av $v$ er også
-egenvektorer med samme egenverdi. Nullvektoren er utelatt fordi $A0=\lambda0$
-gjelder for alle $\lambda$ og derfor ikke identifiserer noen spesiell retning.
-
-Samlingen av egenverdier kalles matrisens **spektrum**.
-Ordet **spektral** betyr at vi beskriver noe ved hjelp av disse egenverdiene.
-For $A$ er spekteret $\{3,1\}$.
-Fortegn forteller om orientering, og absoluttverdi forteller om lengdeskalering.
+egenvektorer med samme egenverdi. Samlingen av egenverdier kalles
+matrisens **spektrum**; for $A$ er spekteret $\{3,1\}$.
 
 For en bestemt egenverdi $\lambda$ samler vi **alle** vektorer som oppfyller
 likningen i **egenrommet**
@@ -376,99 +352,63 @@ $$E_\lambda=\{v:Av=\lambda v\}=\operatorname{Null}(A-\lambda I).$$
 Det er et underrom og inneholder også nullvektoren. De øvrige vektorene i
 rommet er egenvektorer. Her er $E_3=\operatorname{span}\{(1,1)^T\}$ og
 $E_1=\operatorname{span}\{(1,-1)^T\}$: to linjer gjennom origo.
-Et egenrom kan også ha høyere dimensjon; for identitetsmatrisen er hele
-rommet egenrommet til egenverdien 1.
 
-<details class="reading-step">
-<summary>Gå i dybden: finn egenverdier og egenrom for hånd</summary>
+Men så langt har vi bare *sjekket* retninger vi så i figuren. Hvordan
+finner vi egenverdiene og egenvektorene når vi ikke har en figur å gjette ut fra?
 
-**Undersøk de observerte retningene for hånd.**
+::: {.callout-note title="Håndeksempel: finn egenverdiene og egenvektorene uten å gjette"}
 
-Vi sammenligner to transformasjoner på de samme to retningene fra figuren.
-Den første, $T(x)=Ax$, er den vi allerede har undersøkt. Den andre,
-$R(x)=Bx$, bytter koordinatene: $R(x_1,x_2)=(x_2,x_1)$.
-Vi innfører $B$ for å undersøke om en egenretning også kan få motsatt orientering.
-Begge matrisene er gitt i standardbasisen.
+**Utgangspunkt.** I figuren fant vi retningene $(1,1)^T$ og $(1,-1)^T$ ved
+å prøve. Nå finner vi dem med regning for $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
 
-$A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
-B=\begin{bmatrix}0&1\\1&0\end{bmatrix},\qquad
-v=\begin{bmatrix}1\\1\end{bmatrix},\quad
-w=\begin{bmatrix}1\\-1\end{bmatrix}.$$
+**Prøv selv.** Skriv $Av=\lambda v$ som $(A-\lambda I)v=0$. Når kan et
+slikt system ha en løsning $v\ne0$?
 
-1. Beregn $Av$ og $Aw$ med rad-ganger-kolonne-regelen.
-2. Beregn $Bv$ og $Bw$ på samme måte.
-3. Skriv hvert svar som et tall ganger startvektoren:
-   $Av=\square v$, $Aw=\square w$, $Bv=\square v$, $Bw=\square w$.
-4. Noter hvilke produkter som endrer lengden, og hvilket som snur
-   orienteringen. **Ikke normaliser i dette forsøket.**
-
-**Slik kan du tenke**
+**Regnegangen.** Siden $Iv=v$, er $Av=\lambda v$ det samme som
+$Av-\lambda Iv=0$, altså $(A-\lambda I)v=0$. Vi vil ha $v\ne0$. Da må
+$A-\lambda I$ være singulær, for ellers kunne vi gange med inversen og få
+$v=0$. For en $2\times2$-matrise er $\det\begin{bmatrix}a&b\\c&d\end{bmatrix}=ad-bc$, så
 
 $$\begin{aligned}
-Av&=\begin{bmatrix}2\cdot1+1\cdot1\\1\cdot1+2\cdot1\end{bmatrix}
-=\begin{bmatrix}3\\3\end{bmatrix}=3v,
-& Aw&=\begin{bmatrix}2-1\\1-2\end{bmatrix}
-=\begin{bmatrix}1\\-1\end{bmatrix}=w,\\
-Bv&=\begin{bmatrix}1\\1\end{bmatrix}=v,
-& Bw&=\begin{bmatrix}-1\\1\end{bmatrix}=-w.
-\end{aligned}$$
-
-Transformasjonen $x\mapsto Ax$ tredobler lengden langs $v$ og lar $w$ være uendret.
-Transformasjonen $x\mapsto Bx$ bytter koordinatene. For $w$ betyr dette en fortegnsendring,
-men vektoren ligger fortsatt på samme linje gjennom origo.
-
-**Hvordan finner vi dem uten å gjette?**
-
-Vi vil finne et tall og en ikke-null vektor som oppfyller samme mønster.
-Siden $Iv=v$, får vi
-
-$$Av=\lambda v
-\quad\Longleftrightarrow\quad
-Av-\lambda Iv=0
-\quad\Longleftrightarrow\quad
-(A-\lambda I)v=0.$$
-
-Vi trenger en ikke-null løsning. Derfor må $A-\lambda I$ være singulær:
-
-$$\det(A-\lambda I)=0.$$
-
-For $A$ fra forsøket viser vi begge regnetrinnene: først tallene, så vektorene.
-
-$$A-\lambda I=\begin{bmatrix}2-\lambda&1\\1&2-\lambda\end{bmatrix},$$
-
-$$\begin{aligned}
-\det(A-\lambda I)&=(2-\lambda)(2-\lambda)-1\cdot1\\
+\det(A-\lambda I)=\det\begin{bmatrix}2-\lambda&1\\1&2-\lambda\end{bmatrix}
+&=(2-\lambda)^2-1\\
 &=\lambda^2-4\lambda+3=(\lambda-3)(\lambda-1)=0.
 \end{aligned}$$
 
-Dermed er $\lambda=3$ eller $\lambda=1$. Sett inn én verdi om gangen:
+Egenverdiene er altså $\lambda=3$ og $\lambda=1$. Vi setter inn én om gangen:
 
-$$\begin{aligned}
-\lambda=3:\quad
-\begin{bmatrix}-1&1\\1&-1\end{bmatrix}
-\begin{bmatrix}v_1\\v_2\end{bmatrix}=0
-&\ \Longrightarrow\ v_2=v_1
-\ \Longrightarrow\ v=t\begin{bmatrix}1\\1\end{bmatrix},\\
-\lambda=1:\quad
-\begin{bmatrix}1&1\\1&1\end{bmatrix}
-\begin{bmatrix}v_1\\v_2\end{bmatrix}=0
-&\ \Longrightarrow\ v_2=-v_1
-\ \Longrightarrow\ v=t\begin{bmatrix}1\\-1\end{bmatrix}.
-\end{aligned}$$
+- $\lambda=3$: $\begin{bmatrix}-1&1\\1&-1\end{bmatrix}\begin{bmatrix}v_1\\v_2\end{bmatrix}=0$
+  gir $-v_1+v_2=0$, altså $v_2=v_1$ og $v=t(1,1)^T$.
+- $\lambda=1$: $\begin{bmatrix}1&1\\1&1\end{bmatrix}\begin{bmatrix}v_1\\v_2\end{bmatrix}=0$
+  gir $v_1+v_2=0$, altså $v_2=-v_1$ og $v=t(1,-1)^T$.
 
-Her er $t$ fritt. **Egenrommet** er hele nullrommet til $A-\lambda I$,
-inkludert $t=0$. **Egenvektorene** er løsningene med $t\ne0$.
-Dermed har vi funnet igjen de to retningene fra forsøket uten å gjette dem.
+Kontroll: $A(1,1)^T=(3,3)^T=3(1,1)^T$ og $A(1,-1)^T=(1,-1)^T$.
 
+**Dette tar vi med oss.** $\lambda$ er en egenverdi akkurat når $A-\lambda I$
+er singulær, altså når $\det(A-\lambda I)=0$. Er $\lambda$ *ikke* en
+egenverdi, er $A-\lambda I$ invertibel. Egenrommet er nullrommet til
+$A-\lambda I$ fra [uke 3](uke3.qmd#uke3-del3). Den samme regningen bruker vi på Hessianer i uke 8 og 9.
+
+:::
+
+**Øv på dette:** [egenverdier og egenvektorer for hånd](#uke5-oppg-egen) i støtteløpet.
+
+<details class="reading-step">
+<summary>Gå i dybden: flere detaljer i håndregningen</summary>
+
+**Hvorfor utelates nullvektoren?** $A0=\lambda0$ gjelder for alle $\lambda$,
+så nullvektoren identifiserer ingen spesiell retning. Ordet **spektral**
+betyr at vi beskriver noe ved hjelp av egenverdiene. Fortegnet til en
+egenverdi forteller om orientering, og absoluttverdien om lengdeskalering.
+Et egenrom kan også ha høyere dimensjon; for identitetsmatrisen er hele
+rommet egenrommet til egenverdien 1.
 
 **Hvorfor singulær?** Hvis $A-\lambda I$ var invertibel, kunne vi multiplisere
 $(A-\lambda I)v=0$ med inversen og få $v=0$. Vi leter etter $v\ne0$.
 Derfor må matrisen være singulær, det vil si at kolonnene er lineært avhengige
-og at determinanten er null. Dette knytter egenverdiberegningen til nullrom i uke 3.
+og at determinanten er null. Dette knytter egenverdiberegningen til nullrom i [uke 3](uke3.qmd#uke3-del3).
 
-For en $2\times2$-matrise er
-$\det\begin{bmatrix}a&b\\c&d\end{bmatrix}=ad-bc$.
-I vårt eksempel er $a=d=2-\lambda$ og $b=c=1$. Utvid kvadratet:
+**Utvid kvadratet.** I eksemplet er $a=d=2-\lambda$ og $b=c=1$:
 
 $$(2-\lambda)^2-1=4-4\lambda+\lambda^2-1
 =\lambda^2-4\lambda+3.$$
@@ -488,6 +428,8 @@ En basis for egenrommet er $\{(1,1)^T\}$; egenrommet har dimensjon én.
 Med $v_1=t$ blir $v_2=-t$, så løsningen er $t(1,-1)^T$.
 Også dette egenrommet har dimensjon én.
 
+Her er $t$ fritt. **Egenrommet** er hele nullrommet til $A-\lambda I$,
+inkludert $t=0$. **Egenvektorene** er løsningene med $t\ne0$.
 Velger du $t=2$, er $(2,2)^T$ en like god egenvektor for $3$ som $(1,1)^T$.
 Velger du $t=1/\sqrt2$, får du en egenvektor med lengde én.
 Normalisering velger en representant; den endrer ikke egenverdien.
@@ -495,6 +437,60 @@ Kontroller alltid svaret i den opprinnelige likningen $Av=\lambda v$.
 
 På store matriser bruker vi numeriske algoritmer fremfor å utvide store
 determinantpolynomer. Håndregningen her forklarer hva algoritmene leter etter.
+
+</details>
+
+<details class="reading-step">
+<summary>Gå i dybden: koordinatbyttet – Bx = x, Bx = −x eller en ny linje?</summary>
+
+**Kan samme transformasjon la én vektor være uendret, snu en annen og
+sende en tredje til en annen linje?** Undersøk koordinatbyttet
+$R(x_1,x_2)=(x_2,x_1)$, representert ved
+$B=\begin{bmatrix}0&1\\1&0\end{bmatrix}$, og sammenlign med $A$.
+Målet er å skille mellom **positiv egenverdi, negativ egenverdi og en
+startvektor som ikke er en egenvektor**.
+
+**Først for hånd**, med $v=(1,1)^T$ og $w=(1,-1)^T$. Skriv hvert svar som
+et tall ganger startvektoren. Ikke normaliser.
+
+$$\begin{aligned}
+Av&=\begin{bmatrix}2\cdot1+1\cdot1\\1\cdot1+2\cdot1\end{bmatrix}
+=\begin{bmatrix}3\\3\end{bmatrix}=3v,
+& Aw&=\begin{bmatrix}2-1\\1-2\end{bmatrix}
+=\begin{bmatrix}1\\-1\end{bmatrix}=w,\\
+Bv&=\begin{bmatrix}1\\1\end{bmatrix}=v,
+& Bw&=\begin{bmatrix}-1\\1\end{bmatrix}=-w.
+\end{aligned}$$
+
+Transformasjonen $x\mapsto Ax$ tredobler lengden langs $v$ og lar $w$ være uendret.
+Transformasjonen $x\mapsto Bx$ bytter koordinatene. For $w$ betyr dette en fortegnsendring,
+men vektoren ligger fortsatt på samme linje gjennom origo: egenverdien er $-1$.
+
+**Så med figuren.** For hver startvektor: forutsi først hvor $Bx$ ligger,
+og bruk deretter figuren som kontroll.
+
+1. Sett `start = [1., -1.]`. Er $Bx=x$, $Bx=-x$ eller ingen av delene?
+   Ligger $Ax$ på samme linje som $Bx$, og peker de samme vei?
+2. Sett `start = [1., 1.]`. Hvilket tall $\lambda$ oppfyller $Bx=\lambda x$?
+3. Sett `start = [1., 0.]`. Finnes det noe tall $\lambda$ slik at
+   $Bx=\lambda x$? Begrunn svaret med koordinatene, ikke bare med tegningen.
+
+Cellen tegner startvektoren og resultatet for begge matrisene, uten
+normalisering, slik at både lengde og orientering er synlige.
+
+```{pyodide-python}
+#| label: week5-directions
+# Endre bare startvektoren: blir resultatet på samme linje, og endres lengde eller fortegn?
+
+A = np.array([[2., 1.], [1., 2.]])
+B = np.array([[0., 1.], [1., 0.]])
+start = np.array([1., -1.])  # Prøv også [1., 1.] og [1., 0.].
+print("Ax =", A @ start, "  Bx =", B @ start)
+plot_before_after({"A": A, "B": B}, start)
+```
+
+**Formuler konklusjonen:** Hva skiller det å snu orienteringen på samme
+linje fra det å sende vektoren til en annen linje?
 
 </details>
 
@@ -540,55 +536,6 @@ egenvektorer til ulike egenverdier.
 
 </details>
 
-<details class="reading-step">
-<summary>Gå i dybden: når gir koordinatbyttet Bx = x, Bx = −x eller en ny linje?</summary>
-
-**Kan samme transformasjon la én vektor være uendret, snu en annen og
-sende en tredje til en annen linje?** Undersøk koordinatbyttet
-$R(x_1,x_2)=(x_2,x_1)$, representert ved
-$B=\begin{bmatrix}0&1\\1&0\end{bmatrix}$.
-Målet er å skille mellom **positiv egenverdi, negativ egenverdi og en
-startvektor som ikke er en egenvektor**.
-
-Plottet sammenligner $R(x)=Bx$ med den kjente transformasjonen $T(x)=Ax$,
-der $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
-For hver startvektor: forutsi først hvor resultatet av koordinatbyttet ligger,
-og bruk deretter figuren som kontroll.
-
-1. Sett `start = [1., -1.]`. Er $Bx=x$, $Bx=-x$ eller ingen av delene?
-   Ligger $Ax$ på samme linje som $Bx$, og peker de samme vei?
-2. Sett `start = [1., 1.]`. Gjør koordinatbyttet nå det samme som i første tilfelle?
-   Hvilket tall $\lambda$ oppfyller $Bx=\lambda x$?
-3. Sett `start = [1., 0.]`. Finnes det noe tall $\lambda$ slik at
-   $Bx=\lambda x$? Begrunn svaret med koordinatene, ikke bare med tegningen.
-
-**Formuler konklusjonen:** Hva skiller det å snu orienteringen på samme
-linje fra det å sende vektoren til en annen linje?
-Plottet bruker ingen normalisering; både lengde og orientering er synlige.
-
-```{pyodide-python}
-#| label: week5-directions
-# Vi sammenligner én transformasjon med startvektoren, uten normalisering.
-# Endre bare startvektoren: blir resultatet på samme linje, og endres lengde eller fortegn?
-
-A = np.array([[2., 1.], [1., 2.]])
-B = np.array([[0., 1.], [1., 0.]])
-start = np.array([1., -1.])  # Prøv også [1., 1.] og [1., 0.].
-fig, axes = plt.subplots(1, 2, figsize=(7, 3))
-for ax, M, name in zip(axes, [A, B], ["A", "B"]):
-    for vector, color, label in [(start, "#a04a00", "Før"), (M @ start, "#1565c0", "Etter")]:
-        ax.quiver(0, 0, *vector, angles="xy", scale_units="xy", scale=1,
-                  color=color, alpha=.7, label=label)
-    ax.set(xlim=(-3.5, 3.5), ylim=(-3.5, 3.5), title=name, xlabel="Første koordinat", ylabel="Andre koordinat")
-    ax.set_aspect("equal")
-    ax.grid()
-    ax.legend()
-plt.tight_layout()
-plt.show()
-```
-
-</details>
-
 ## 5.3 Basis og gjentakelse
 
 <div id="uke5-basis"></div>
@@ -600,10 +547,7 @@ vektorene $x_k$ seg linjen gjennom $(1,1)^T$.
 I 5.2 fant vi de to egenretningene. Nå bruker vi dem til å dele startvektoren
 i to bidrag og følge hvert bidrag når transformasjonen gjentas.
 
-### Eksperiment 2 – hvilken del tar over?
-
-For $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ bruker vi
-$v_1=(1,1)^T$ og $v_2=(1,-1)^T$. Startvektoren kan bygges slik:
+Med $v_1=(1,1)^T$ og $v_2=(1,-1)^T$ kan startvektoren bygges slik:
 
 $$x_0=\begin{bmatrix}1\\0\end{bmatrix}
 ={\color{#1565c0}\underbrace{\tfrac12\begin{bmatrix}1\\1\end{bmatrix}}_{c_1v_1}}
@@ -616,9 +560,8 @@ $${\color{#1565c0}b_1(k)=c_1\,3^k v_1},\qquad
 A^kx_0=b_1(k)+b_2(k).$$
 
 Ved hvert steg tredobles lengden til $b_1(k)$, mens $b_2(k)$ beholder lengden.
-**Hvordan endres bidragenes relative størrelse under gjentatt transformasjon?**
-
-Kurvene viser hver sin andel av summen av bidragenes lengder:
+For å se hvilket bidrag som bestemmer retningen, regner cellen ut hvor stor
+**andel** hvert bidrag har av summen av de to lengdene:
 
 $${\color{#1565c0}a_1(k)=
 \frac{\lVert b_1(k)\rVert_2}{\lVert b_1(k)\rVert_2+\lVert b_2(k)\rVert_2}},
@@ -626,42 +569,38 @@ $${\color{#1565c0}a_1(k)=
 {\color{#a04a00}a_2(k)=
 \frac{\lVert b_2(k)\rVert_2}{\lVert b_1(k)\rVert_2+\lVert b_2(k)\rVert_2}}.$$
 
-Nevneren er summen av **bidragenes lengder**, ikke lengden av summen
-$b_1(k)+b_2(k)$. For $c_1=c_2=1/2$ er $a_1(0)=a_2(0)=1/2$.
-For alle $k$ er $a_1(k)+a_2(k)=1$. Vannrett akse viser $k$;
-blå kurve viser $a_1(k)$ og oransje viser $a_2(k)$.
+Nevneren er summen av de to lengdene, ikke lengden av summen $b_1(k)+b_2(k)$.
+For $c_1=c_2=1/2$ starter begge andelene på $1/2$, og de summerer alltid til 1.
+Målet er å se hvilket av de to bidragene som tar over, og om det andre
+bidraget virkelig forsvinner.
 
-1. Kjør med `c1 = c2 = 0.5`. Blir det oransje bidraget kortere,
-   eller blir det bare mindre sammenlignet med det blå?
-2. Sett deretter `c1 = 0.0` og behold `c2 = 0.5`.
-   Nå er koeffisienten til $v_1$ i startvektoren null. Kan $b_1(k)$ bli ulik null under iterasjonen?
+### Eksperiment 2 – hvilken del tar over?
+
+- Kjør med `c1 = c2 = 0.5`. Blir det oransje bidraget kortere,
+  eller blir det bare mindre sammenlignet med det blå?
+- Sett deretter `c1 = 0.0` og behold `c2 = 0.5`.
+  Nå mangler bidraget langs $v_1$ i startvektoren. Kan $b_1(k)$ bli ulik null?
 
 ```{pyodide-python}
 #| label: week5-contributions
-# Følg bidragene langs to egenvektorer hver for seg.
-# Endre c1 og c2, og forutsi kurvene før du kjører.
-# En mindre ANDEL betyr ikke nødvendigvis at bidragets lengde avtar.
+# Lengdene av b1(k) og b2(k), delt på den felles lengden sqrt(2) til v1 og v2.
+# Forutsi kurvene før du kjører.
 
 c1, c2 = 0.5, 0.5
 steps = np.arange(7)
-if c1 == 0 and c2 == 0:
-    raise ValueError('Velg minst ett bidrag ulik null')
-# v1 og v2 har samme lengde sqrt(2); den forkortes bort i andelene.
-# Absoluttverdien brukes fordi vi sammenligner lengder, ikke fortegn.
 first = abs(c1) * 3.**steps
 second = abs(c2) * 1.**steps
-plt.figure()
-plt.plot(steps, first/(first+second), "o-", color="#1565c0", label="λ₁ = 3: andel langs (1, 1)")
-plt.plot(steps, second/(first+second), "o-", color="#a04a00", label="λ₂ = 1: andel langs (1, −1)")
-plt.xlabel("Antall multiplikasjoner")
-plt.ylabel("Andel av de to bidragenes lengder")
-plt.legend()
-plt.show()
+shares = np.column_stack([first, second]) / (first + second)[:, None]
+print("Lengden av b₂(k)/√2:", second)
+print("Andelen a₂(k):     ", np.round(shares[:, 1], 4))
+plot_shares(steps, {"λ₁ = 3, λ₂ = 1": shares})
 ```
 
-En del kan bestå i absolutte tall og likevel miste betydning for retningen.
-Hvis koeffisienten langs egenvektoren med størst egenverdi i absoluttverdi
-er null i startvektoren, forblir dette bidraget null under iterasjonen i eksakt regning. **Diskuter:** Hvordan avhenger iterasjonsfølgen av transformasjonen og startvektoren?
+**Hva viser forsøket?** Den oransje *andelen* går mot null, men den oransje
+*lengden* er hele tiden den samme. Bidraget langs $(1,-1)^T$ forsvinner
+altså ikke. Det blir bare lite sammenlignet med bidraget langs $(1,1)^T$,
+som tredobles i hvert steg. Er $c_1=0$, forblir det blå bidraget null:
+uten et bidrag langs den dominante egenvektoren fra start kan det ikke vokse fram.
 
 ### Skriv observasjonen som algebra
 
@@ -675,12 +614,11 @@ A^2x_0&=\tfrac12{\color{#1565c0}3^2}\,v_1+\tfrac12{\color{#a04a00}1^2}\,v_2=(5,4
 A^3x_0&=\tfrac12{\color{#1565c0}3^3}\,v_1+\tfrac12{\color{#a04a00}1^3}\,v_2=(14,13)^T.
 \end{aligned}$$
 
-Dette forklarer kurvene: den oransje lengden er konstant, mens den blå
-vokser. At en andel nærmer seg null, betyr altså ikke at selve bidraget blir null.
+Den oransje koeffisienten er hele tiden $\tfrac12$, mens den blå tredobles.
 
 ### Fra dette eksemplet til teorien
 
-En **basis** lar oss skrive enhver vektor entydig som en sum av bidrag
+En **basis** ([uke 3](uke3.qmd#uke3-del2)) lar oss skrive enhver vektor entydig som en sum av bidrag
 langs basisvektorene. Hvis egenvektorene $v_1,\ldots,v_n$ er en basis,
 og $c_i$ er startvektorens koeffisient i retning $v_i$, får vi
 
@@ -696,30 +634,9 @@ forklarer farten etter mange steg: nær én betyr langsom utskilling.
 <details class="reading-step">
 <summary>Gå i dybden: hvorfor kan vi behandle bidragene hver for seg?</summary>
 
-**Følg to bidrag for hånd.**
-
-Bruk $A$ fra 5.1. Start med
-
-$$x_0=\begin{bmatrix}1\\0\end{bmatrix}
-=\tfrac12\begin{bmatrix}1\\1\end{bmatrix}
-+\tfrac12\begin{bmatrix}1\\-1\end{bmatrix}.$$
-
-**Før du leser videre:** Bruk resultatene $Av_1=3v_1$ og $Av_2=v_2$ fra
-5.2, med $v_1=(1,1)^T$ og $v_2=(1,-1)^T$.
-Skriv $Ax_0$, $A^2x_0$ og $A^3x_0$ som summer av disse to vektorene.
-Noter forholdet mellom den andre og den første koeffisienten.
-
-**Slik kan du tenke:** Bruk $Av_1=3v_1$ og $Av_2=1v_2$ på hvert ledd.
-Fargene er de samme som i plottet:
-
-$$\begin{aligned}
-Ax_0&=\tfrac12Av_1+\tfrac12Av_2
-=\tfrac12{\color{#1565c0}3}\,v_1+\tfrac12{\color{#a04a00}1}\,v_2,\\
-A^2x_0&=\tfrac12{\color{#1565c0}3^2}\,v_1+\tfrac12{\color{#a04a00}1^2}\,v_2,\\
-A^3x_0&=\tfrac12{\color{#1565c0}3^3}\,v_1+\tfrac12{\color{#a04a00}1^3}\,v_2.
-\end{aligned}$$
-
-Etter $k$ steg er
+Over skrev vi $Ax_0$, $A^2x_0$ og $A^3x_0$ som summer langs $v_1=(1,1)^T$ og
+$v_2=(1,-1)^T$: i hvert steg får hvert bidrag en ny faktor, $3$ langs $v_1$ og
+$1$ langs $v_2$. Etter $k$ steg er
 
 $$A^kx_0=\tfrac12{\color{#1565c0}3^k}\begin{bmatrix}1\\1\end{bmatrix}
 +\tfrac12{\color{#a04a00}1^k}\begin{bmatrix}1\\-1\end{bmatrix}.$$
@@ -780,17 +697,13 @@ kan veksle mellom motsatte orienteringer.
 
 ### Fra projeksjon i uke 4 til egenvektorbidrag
 
-I [uke 4.2](uke4.qmd) fant vi den ortogonale projeksjonen av en vektor $x$
+I [uke 4.2](uke4.qmd#uke4-projeksjon) fant vi den ortogonale projeksjonen av en vektor $x$
 på en linje med enhetsvektor $q$. Vi skilte mellom **ett tall** og **en vektor**:
 
 $$\underbrace{c=q^Tx}_{\text{koordinaten langs }q},\qquad
 \underbrace{p=(q^Tx)q=cq}_{\text{projeksjonen på linjen gjennom }q}.$$
 
-Koordinaten $c$ kan være negativ; fortegnet angir orientering langs $q$.
-Projeksjonsvektoren $p$ er bidraget til $x$ langs denne linjen.
-
-Her bruker vi de samme projeksjonene på de to egenretningene. Vi normaliserer
-egenvektorene fra eksperimentet:
+Nå bruker vi de samme projeksjonene på de to normaliserte egenretningene:
 
 $${\color{#1565c0}q_1=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix}},
 \qquad
@@ -808,6 +721,24 @@ skaleres derfor hvert projeksjonsbidrag med sin egenverdi:
 
 $$Ax={\color{#1565c0}3(q_1^Tx)q_1}
    +{\color{#a04a00}1(q_2^Tx)q_2}.$$
+
+Figuren viser dette for $x=(1,0)^T$. Til venstre er $x$ summen av de to
+projeksjonene. Til høyre er det blå bidraget tredoblet og det oransje
+uendret, og summen er $Ax=(2,1)^T$. Cellen regner ut koordinatene
+$q_1^Tx$ og $q_2^Tx$ og kontrollerer summen mot $Ax$.
+
+```{pyodide-python}
+#| label: week5-eigen-split
+# Del x i bidrag langs q1 og q2, skaler hvert bidrag med sin egenverdi, og legg sammen.
+A = np.array([[2., 1.], [1., 2.]])
+q1 = np.array([1., 1.]) / np.sqrt(2)
+q2 = np.array([1., -1.]) / np.sqrt(2)
+x = np.array([1., 0.])            # Prøv også [0., 1.] eller [1., -1.].
+c1, c2 = q1 @ x, q2 @ x
+print("koordinatene:", c1, c2)
+print("3*c1*q1 + 1*c2*q2 =", 3*c1*q1 + 1*c2*q2, "  A @ x =", A @ x)
+show_eigen_split(A, x)
+```
 
 **Diskuter:** Hvis projeksjonen av startvektoren på linjen gjennom $q_1$
 er null, kan gjentatt anvendelse av $T$ gi et bidrag langs denne linjen?
@@ -828,17 +759,32 @@ Ax=\sum_{i=1}^n\lambda_i(q_i^Tx)q_i.$$
 Faktoriseringen uttrykker akkurat oppdelingen vi nettopp brukte:
 $Q^Tx$ gir koordinatene, $\Lambda(Q^Tx)$ gir de skalerte koordinatene,
 og multiplikasjon med $Q$ gir summen av de skalerte egenvektorbidragene.
-Navnet **spektral** viser til spekteret, samlingen av egenverdier.
 
-I uke 4 kunne $Q$ inneholde en basis for bare et underrom; da var $QQ^Tx$
-projeksjonen på dette underrommet. **Her er basisen fullstendig**, så
-$QQ^Tx=x$ for alle $x$ og $QQ^T=I$.
+Hvorfor står egenvektorene vinkelrett? Med $A^T=A$ gir en regning på fire
+linjer $(\lambda-\mu)v^Tw=0$, så egenvektorer til ulike egenverdier er
+ortogonale (se fordypningen under). At det alltid finnes nok egenvektorer
+til en hel basis, tar vi som et kjent resultat.
+
+**En følge vi bruker i uke 6 og 9.** Skriver vi $x=\sum_ic_iq_i$ i
+egenvektorbasisen, er $Ax=\sum_i\lambda_ic_iq_i$. Siden $q_i^Tq_j$ er 1 når
+$i=j$ og 0 ellers, blir $x^TAx=\sum_i\lambda_ic_i^2$. Derfor er $A$
+**positivt definitt**, altså $x^TAx>0$ for alle $x\ne0$, akkurat når alle
+egenverdiene er positive. Og for alle $x$ er
+$x^TAx\ge\lambda_{\min}\lVert x\rVert_2^2$, der $\lambda_{\min}$ er den
+minste egenverdien. Regningen står i fordypningen under, trinn 4.
+
+**Øv på dette:** [koordinater i en egenvektorbasis](#uke5-oppg-koordinater)
+og [gjentatt transformasjon i en egenvektorbasis](#uke5-oppg-potenser).
 
 <details class="reading-step">
 <summary>Gå i dybden: fra projeksjonskoordinater til spektralteoremet</summary>
 
 Vi følger ett eksempel hele veien: $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ og
 $x=(1,0)^T$. Deretter undersøker vi hva symmetrien garanterer generelt.
+
+I uke 4 kunne $Q$ inneholde en basis for bare et underrom; da var $QQ^Tx$
+projeksjonen på dette underrommet. **Her er basisen fullstendig**, så
+$QQ^Tx=x$ for alle $x$ og $QQ^T=I$.
 
 **1. Finn koordinatene med projeksjon fra uke 4**
 
@@ -886,22 +832,32 @@ $$\begin{aligned}
 Dermed er $(\lambda-\mu)v^Tw=0$. **Ulike egenverdier gir derfor
 ortogonale egenvektorer når $A$ er reell og symmetrisk.**
 
-Innenfor samme egenrom kan vi bruke Gram–Schmidt fra uke 4; alle
+Innenfor samme egenrom kan vi bruke [Gram–Schmidt fra uke 4](uke4.qmd#uke4-gs); alle
 lineærkombinasjonene forblir i egenrommet. Spektralteoremet sier i tillegg
 at det finnes nok egenvektorer til en basis for hele rommet.
 Dette siste utsagnet er ikke bevist av regningen ovenfor.
 
-**4. En følge vi bruker i uke 6**
+**4. En følge vi bruker i uke 6 og 9**
 
 For en reell symmetrisk matrise skriver vi $x=Qc$, der $c=Q^Tx$. Da gir
 $Q^TQ=I$ og $A=Q\Lambda Q^T$ at
 
-$$x^TAx=c^T\Lambda c=\sum_i\lambda_i c_i^2.$$
+$$x^TAx=c^TQ^TQ\Lambda Q^TQc=c^T\Lambda c=\sum_i\lambda_i c_i^2.$$
 
 Er alle egenverdiene positive, er summen positiv for enhver $x\ne0$,
-fordi minst én koordinat $c_i$ da er ulik null. Dette kalles
-**positiv definitet**. I uke 6 bruker vi egenskapen til å knytte
-løsningen av et lineært system til et entydig minimum.
+fordi minst én koordinat $c_i$ da er ulik null. Matrisen kalles da
+**positivt definitt**. Omvendt gir $x=q_i$ at $c=e_i$ og $x^TAx=\lambda_i$,
+så positivt definitt krever at alle $\lambda_i>0$. Dermed er en reell
+symmetrisk matrise positivt definitt **akkurat når** alle egenverdiene er positive.
+
+Siden $Q^TQ=I$, er $\sum_ic_i^2=\lVert c\rVert_2^2=c^TQ^TQc=\lVert x\rVert_2^2$.
+Hvert ledd ligger mellom $\lambda_{\min}c_i^2$ og $\lambda_{\max}c_i^2$, så
+
+$$\lambda_{\min}\lVert x\rVert_2^2\le x^TAx\le\lambda_{\max}\lVert x\rVert_2^2.$$
+
+I uke 6 bruker vi egenskapen til å knytte løsningen av et lineært system
+til et entydig minimum, og i uke 9 til å vise at en kvadratisk funksjon vokser
+langt ute.
 
 </details>
 
@@ -909,67 +865,53 @@ løsningen av et lineært system til et entydig minimum.
 
 <div id="uke5-potens"></div>
 
+I denne fanen møter du eksperiment 3 om farten, potensmetoden med
+Rayleigh-kvotienten, og eksperiment 4. Tilfelle 2 og 3 i eksperiment 4 er
+**fortegnsforsøket** som prosjekt 5 viser til.
+
+I eksperiment 2 vant bidraget med egenverdi 3 fordi det ble tredoblet i
+hvert steg, mens det andre bare ble ganget med 1. Men hva om de to
+egenverdiene ligger nær hverandre? Da vokser begge bidragene nesten like fort.
+
+Vi beholder egenvektorene fra 5.3 og bytter bare ut den minste egenverdien,
+$\mu$. Transformasjonen er $A_\mu=Q\operatorname{diag}(3,\mu)Q^T$, der
+kolonnene i $Q$ er de ortonormale egenvektorene $q_1,q_2$. Vi sammenligner
+$\mu=1$ og $\mu=2.9$, begge fra startvektoren $x_0=(1,0)^T$. Cellen regner ut
+de samme andelene $a_1(k)$ og $a_2(k)$ som i eksperiment 2. Blå er $a_1$,
+oransje er $a_2$; heltrukket er $\mu=1$ og stiplet er $\mu=2.9$.
+Målet er å se hva som bestemmer *farten* når én retning tar over.
+
 ### Eksperiment 3 – hva bestemmer farten?
 
-**Hvor raskt øker andelen langs egenvektoren med størst egenverdi?**
-Vi beholder egenvektorene fra eksperiment 2 og sammenligner
-$A_\mu=Q\operatorname{diag}(3,\mu)Q^T$ for $\mu=1$ og $\mu=2.9$.
-Kolonnene i $Q$ er de ortonormale egenvektorene fra 5.3.
-Startvektoren er $x_0=(1,0)^T$ i begge iterasjonsfølgene.
-
-Vi bruker **de samme andelene som i eksperiment 2**:
-
-$$a_i(k)=\frac{\lVert b_i(k)\rVert_2}
-{\lVert b_1(k)\rVert_2+\lVert b_2(k)\rVert_2},\qquad i=1,2.$$
-
-Her er $b_1(k)$ bidraget langs $q_1$ med egenverdi 3, og $b_2(k)$
-bidraget langs $q_2$ med egenverdi $\mu$. Figuren har fire kurver:
-
-- **Blå:** $a_1(k)$. **Oransje:** $a_2(k)$.
-- **Heltrukket:** $\mu=1$. **Stiplet:** $\mu=2.9$.
-
-1. Forutsi hvilket kurvepar som raskest nærmer seg andelene 1 og 0.
-2. Kjør cellen. Sammenlign de to oransje kurvene etter 10 steg.
-3. Omtrent hvor mange steg kreves før hver oransje kurve kommer under 0.1?
-   Hva sier forskjellen om effekten av nesten like egenverdier?
+- Forutsi hvilket kurvepar som raskest nærmer seg andelene 1 og 0.
+- Kjør cellen og sammenlign de to oransje kurvene etter 10 steg.
+- Omtrent hvor mange steg trengs før hver oransje kurve kommer under 0.1?
 
 ```{pyodide-python}
 #| label: week5-speed
-# Samme andelsmål og farger som i eksperiment 2.
-# Linjestilen skiller transformasjonene; fargen skiller egenvektorbidragene.
-# Begge iterasjonsfølgene bruker samme startvektor og 80 multiplikasjoner.
-
-Q = np.array([[1., 1.], [1., -1.]]) / np.sqrt(2)
+# Samme andelsmål og farger som i eksperiment 2; bare mu varierer.
+Q = np.array([[1., 1.], [1., -1.]]) / np.sqrt(2)   # kolonnene q1 og q2
 steps = np.arange(81)
-fig, ax = plt.subplots()
-for mu, style in [(1., '-'), (2.9, '--')]:
+curves = {}
+for mu in [1., 2.9]:
     A = Q @ np.diag([3., mu]) @ Q.T
     x = np.array([1., 0.])
     shares = []
     for k in steps:
-        # Indreproduktene gir koordinatene i den ortonormale egenvektorbasisen.
-        c = Q.T @ x
-        # q1 og q2 har lengde 1, så |c_i| er lengden av bidraget c_i*q_i.
-        lengths = np.abs(c)
+        lengths = np.abs(Q.T @ x)     # |q_i^T x| er lengden av bidraget langs q_i
         shares.append(lengths / lengths.sum())
-        if k < steps[-1]:
-            x = A @ x
-            # Felles normalisering endrer ikke andelene av bidragenes lengder.
-            x = x / np.linalg.norm(x)
-    shares = np.array(shares)
-    ax.plot(steps, shares[:, 0], color='#1565c0', linestyle=style,
-            marker='o', markevery=5, markersize=3, label=f'a₁: λ₁ = 3, μ = {mu}')
-    ax.plot(steps, shares[:, 1], color='#a04a00', linestyle=style,
-            marker='o', markevery=5, markersize=3, label=f'a₂: λ₂ = μ = {mu}')
-ax.set(xlabel='Antall multiplikasjoner', ylabel='Andel av de to bidragenes lengder',
-       ylim=(-0.03, 1.03), title='Samme startvektor, ulik avstand mellom egenverdiene')
-ax.legend()
-plt.show()
+        x = A @ x
+        x = x / np.linalg.norm(x)     # felles normalisering endrer ikke andelene
+    curves[f"μ = {mu}"] = shares
+    print(f"μ = {mu}: a₂ etter 10 steg =", shares[10][1])
+plot_shares(steps, curves, title='Samme startvektor, ulik avstand mellom egenverdiene')
 ```
 
-For $\mu=1$ øker den blå andelen raskt mot 1. For $\mu=2.9$ endres
-andelene langsommere: begge bidragene vokser nesten like mye ved hvert steg.
-Det er **forholdet mellom egenverdiene**, $\mu/3$, som bestemmer farten.
+**Hva viser forsøket?** For $\mu=1$ er den oransje andelen nesten borte
+etter 10 steg, mens den for $\mu=2.9$ fortsatt er over 0.4. Når $\mu$ ligger
+nær 3, vokser begge bidragene nesten like mye ved hvert steg, og det tar
+lang tid før det ene tar over. Det er **forholdet mellom egenverdiene**,
+$\mu/3$, som bestemmer farten.
 
 <details class="reading-step">
 <summary>Gå i dybden: knytt andelskurvene til egenverdiene</summary>
@@ -977,28 +919,29 @@ Det er **forholdet mellom egenverdiene**, $\mu/3$, som bestemmer farten.
 Startvektoren har like store koordinater langs $q_1$ og $q_2$.
 Etter $k$ multiplikasjoner er forholdet mellom bidragenes lengder derfor
 
-$$r_k=\frac{\lVert b_2(k)\rVert_2}{\lVert b_1(k)\rVert_2}
+$$R_k=\frac{\lVert b_2(k)\rVert_2}{\lVert b_1(k)\rVert_2}
 =\left(\frac{|\mu|}{3}\right)^k.$$
 
-Forholdet $r_k$ og andelen $a_2(k)$ er ulike størrelser. Del teller og
+Forholdet $R_k$ og andelen $a_2(k)$ er ulike størrelser. Del teller og
 nevner i andelsformelen på $\lVert b_1(k)\rVert_2$:
 
-$${\color{#1565c0}a_1(k)=\frac{1}{1+r_k}},\qquad
-{\color{#a04a00}a_2(k)=\frac{r_k}{1+r_k}}.$$
+$${\color{#1565c0}a_1(k)=\frac{1}{1+R_k}},\qquad
+{\color{#a04a00}a_2(k)=\frac{R_k}{1+R_k}}.$$
 
 Ved $k=0$ er begge andelene $1/2$. Etter 10 steg er den oransje andelen
 omtrent $0.0000169$ for $\mu=1$, men $0.416$ for $\mu=2.9$.
 
 For å få $a_2(k)<0.1$ må
 
-$$\frac{r_k}{1+r_k}<0.1\quad\Longleftrightarrow\quad r_k<\frac19.$$
+$$\frac{R_k}{1+R_k}<0.1\quad\Longleftrightarrow\quad R_k<\frac19.$$
 
-Dette gir 3 steg for $\mu=1$ og 65 steg for $\mu=2.9$.
-Kontroller med potensuttrykket for $r_k$.
+Dette gir 3 steg for $\mu=1$ og 65 steg for $\mu=2.9$. For $\mu=1$ er
+andelen nøyaktig 0.1 ved $k=2$, så kurven berører grensen allerede der.
+Kontroller med potensuttrykket for $R_k$.
 
-Dette minner om [konvergensfarten i uke 2.2–2.3](page4.qmd#lokalt-globalt-og-raskt):
+Dette minner om [konvergensfarten i uke 2.2–2.3](page4.qmd#uke2-helning):
 der ble en liten feil omtrent ganget med $|g'(r)|$ ved hvert steg.
-Her gjelder den eksakte skaleringen $r_{k+1}=(|\mu|/3)r_k$ for forholdet
+Her gjelder den eksakte skaleringen $R_{k+1}=(|\mu|/3)R_k$ for forholdet
 mellom bidragene. En faktor nær én gir langsom endring i begge tilfeller.
 
 I koden beregner vi koordinatene fra de itererte vektorene, ikke direkte
@@ -1029,28 +972,17 @@ $$y_k=Ax_k,\qquad x_{k+1}=\frac{y_k}{\lVert y_k\rVert_2}.$$
 ### Potensmetoden som fikspunktiterasjon
 
 I [uke 2.1](page4.qmd#fikspunkt-og-konvergens) brukte vi
-$x_{k+1}=g(x_k)$ for å nærme oss et tall $r$ som oppfyller $g(r)=r$.
-Oppdateringen fra 5.1 har samme form, men nå er $x_k$ en vektor:
-$x_{k+1}=F(x_k)$ med $F(x)=Ax/\lVert Ax\rVert_2$.
-Potensmetoden er altså en **fikspunktiterasjon**. Et **fikspunkt**
-$x_*$ oppfyller $F(x_*)=x_*$.
+$x_{k+1}=g(x_k)$ for å nærme oss et tall $r$ med $g(r)=r$.
+Oppdateringen $x_{k+1}=F(x_k)$ med $F(x)=Ax/\lVert Ax\rVert_2$ fra 5.1
+har samme form, bare for vektorer: potensmetoden er en **fikspunktiterasjon**.
+Et **fikspunkt** $F(x_*)=x_*$ betyr
 
-Normaliseringen gjør $F$ til en ikke-lineær avbildning, selv om
-$x\mapsto Ax$ er lineær.
+$$Ax_*=\lVert Ax_*\rVert_2\,x_*,$$
 
-**Hvilke vektorer blir stående uendret?** Hvis $F(x_*)=x_*$, så
+altså at $x_*$ er en enhetsegenvektor med **positiv** egenverdi. Om
+følgen nærmer seg et fikspunkt, avgjør egenverdiene og bidragene i startvektoren.
 
-$$Ax_*=\lVert Ax_*\rVert_2\,x_*.$$
-
-Et fikspunkt er altså en enhetsvektor som er egenvektor til en **positiv**
-egenverdi. Omvendt er enhver slik egenvektor et fikspunkt.
-Det betyr ikke at alle startvektorer nærmer seg det:
-egenverdiene og bidragene i startvektoren avgjør utviklingen.
-
-For en enhetsegenvektor $v$ med negativ egenverdi er $F(v)=-v$ og
-$F(-v)=v$. Iterasjonen veksler da mellom to vektorer på samme linje.
-Linjen er uendret, men vektoren er ikke et fikspunkt.
-Dette er en av situasjonene vi undersøker i eksperiment 4.
+<div id="uke5-rayleigh"></div>
 
 ### Fra projeksjon til et anslag for egenverdien
 
@@ -1059,29 +991,55 @@ også en skalering: **hvilket tall $t$ gjør $tx$ til den beste tilnærmingen
 til $Ax$?** Vi søker altså den ortogonale projeksjonen av $Ax$ på linjen
 $\operatorname{span}\{x\}$, ikke på en av koordinataksene.
 
-Fra uke 4: For $x\ne0$ er projeksjonen av en vektor $b$ på denne linjen
-$\frac{x^Tb}{x^Tx}x$. **Indreproduktet** $x^Tb=\sum_i x_i b_i$ gir telleren;
-nevneren $x^Tx=\|x\|_2^2$ korrigerer for lengden til $x$.
-Med $b=Ax$ blir projeksjonen $\rho(x)x$, der
+Fra [uke 4](uke4.qmd#uke4-projeksjon) er projeksjonen av en vektor $b$ på linjen gjennom $x\ne0$
+lik $\frac{x^Tb}{x^Tx}x$. Med $b=Ax$ blir projeksjonen $\rho(x)x$, der
 
 $$\rho(x)=\frac{x^TAx}{x^Tx},\qquad r=Ax-\rho(x)x,\qquad x^Tr=0.$$
 
 $\rho$ kalles **Rayleigh-kvotienten** og er koeffisienten som minimerer
 $\|Ax-tx\|_2$ over alle tall $t$. **Egenresidualen** $r$ er den delen av
 $Ax$ som står vinkelrett på $x$ og derfor ikke kan beskrives som en skalering
-av $x$. Geometrien gir projeksjonen; algebraen gir en formel vi kan beregne.
+av $x$.
 
-For $x=(1,0)^T$ og matrisen fra 5.1 er $Ax=(2,1)^T$.
-Projeksjonen på førsteaksen er $(2,0)^T=2x$, så $\rho=2$ og $r=(0,1)^T$.
-Det gjenstår et bidrag på tvers: $x$ er ikke en egenvektor.
-For $x=(1,1)^T/\sqrt2$ ligger hele $Ax$ på samme linje: $\rho=3$ og $r=0$.
+::: {.callout-note title="Håndeksempel: skalering og rest før og etter ett steg"}
 
-I [uke 2.4](page4.qmd#feil-residual-og-toleranse) målte vi
-fikspunktresidualen $g(x)-x$. Her måler vi **egenresidualen**
-$Ax-\rho x$, som kontrollerer en annen likning.
-For en enhetsegenvektor $v$ med negativ egenverdi er egenresidualen null,
-mens fikspunktresidualen er $F(v)-v=-2v$. Derfor kan potensmetoden
-ha funnet en egenvektor selv om neste normaliserte vektor har motsatt fortegn.
+**Utgangspunkt.** $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$. Vi sammenligner
+startvektoren $x_0=(1,0)^T$ med første normaliserte steg $x_1=(2,1)^T/\sqrt5$ fra 5.1.
+
+**Prøv selv.** Regn ut $Ax_0$, $\rho(x_0)$ og $r_0$ før du leser videre.
+
+**Regnegangen.** Begge vektorene har lengde én, så $\rho=x^TAx$.
+
+- $x_0$: $Ax_0=(2,1)^T$ og $\rho=x_0^TAx_0=1\cdot2+0\cdot1=2$.
+  Resten er $r_0=(2,1)^T-2(1,0)^T=(0,1)^T$, med $\lVert r_0\rVert_2=1$.
+- $x_1$: $Ax_1=\dfrac1{\sqrt5}\begin{bmatrix}2\cdot2+1\\2+2\cdot1\end{bmatrix}=\dfrac{(5,4)^T}{\sqrt5}$ og
+  $\rho=x_1^TAx_1=\dfrac{2\cdot5+1\cdot4}{5}=\dfrac{14}{5}$.
+  Resten er
+  $$r_1=Ax_1-\tfrac{14}{5}x_1=\frac1{5\sqrt5}\Bigl(\begin{bmatrix}25\\20\end{bmatrix}-\begin{bmatrix}28\\14\end{bmatrix}\Bigr)
+  =\frac1{5\sqrt5}\begin{bmatrix}-3\\6\end{bmatrix},$$
+  med $\lVert r_1\rVert_2=\dfrac{\sqrt{9+36}}{5\sqrt5}=\dfrac{\sqrt{45}}{5\sqrt5}=\dfrac35$.
+- Kontroll: $x_1^Tr_1=\tfrac1{25}\bigl(2\cdot(-3)+1\cdot6\bigr)=0$. Resten står vinkelrett på $x_1$.
+
+**Dette tar vi med oss.** Etter ett steg er $\rho$ nærmere egenverdien 3
+(fra 2 til 2.8), og resten har krympet fra 1 til 3/5. For
+$x=(1,1)^T/\sqrt2$ er $\rho=3$ og $r=0$: da er $x$ en egenvektor.
+
+:::
+
+Figuren viser projeksjonen av $Ax$ på linjen gjennom $x$: den grønne pilen
+er $\rho x$, og den stiplede er resten $r$, som står vinkelrett på $x$.
+Cellen regner ut $\rho$ og $r$ for $x_0$ fra håndeksempelet.
+
+```{pyodide-python}
+#| label: week5-rayleigh
+# Rayleigh-kvotienten og egenresidualen for én vektor x.
+A = np.array([[2., 1.], [1., 2.]])
+x = np.array([1., 0.])            # Prøv også [2., 1.] og [1., 1.].
+rho = (x @ A @ x) / (x @ x)
+r = A @ x - rho * x
+print("ρ =", rho, "  r =", r, "  xᵀr =", x @ r)
+show_rayleigh(A, x)
+```
 
 **Hva forteller kontrollen?** Liten $\|r\|_2$ betyr at egenvektorlikningen
 nesten er oppfylt. Det sier ikke at vi har funnet den dominante egenverdien:
@@ -1092,17 +1050,8 @@ startvektoren, utviklingen i forsøket og residualen når vi vurderer resultatet
 <summary>Gå i dybden: hvorfor akkurat denne kvotienten?</summary>
 
 Vi prøver å beskrive $Ax$ ved én vektor $\rho x$ på linjen gjennom $x$.
-Projeksjonsregelen fra uke 4 gir koeffisienten
-$\rho=x^T(Ax)/(x^Tx)$. Resten er ortogonal på $x$.
-For en enhetsvektor blir dette $\rho=x^TAx$.
-
-En liten residual viser at likningen nesten er oppfylt. Den beviser ikke
-at vi har funnet den dominante egenverdien. For en generell matrise gir den
-heller ikke alene en garanti for at vektoren ligger nær en bestemt eksakt
-egenvektor. Derfor undersøker vi også startvektor og forventet spekter.
-
 Projeksjonskoeffisienten minimerer $\lVert Ax-tx\rVert_2$ over tall $t$.
-Vi kan også finne den ved ortogonalitetskravet fra uke 4:
+Vi kan også finne den ved ortogonalitetskravet fra [uke 4](uke4.qmd#uke4-projeksjon):
 
 $$x^T(Ax-\rho x)=0
 \quad\Longrightarrow\quad
@@ -1110,30 +1059,28 @@ x^TAx-\rho x^Tx=0
 \quad\Longrightarrow\quad
 \rho=\frac{x^TAx}{x^Tx}.$$
 
-For $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ og $x=(1,0)^T$ er
-$Ax=(2,1)^T$, $\rho=2$ og $r=(0,1)^T$. Transformasjonen gir altså også et
-bidrag på tvers av den valgte retningen; den er ennå ingen egenretning.
-For $x=(1,1)^T/\sqrt2$ blir derimot $\rho=3$ og $r=0$.
+For en enhetsvektor blir dette $\rho=x^TAx$. For en generell matrise gir
+en liten residual heller ikke alene en garanti for at vektoren ligger nær en
+bestemt eksakt egenvektor.
+
+**Fikspunkt.** Normaliseringen gjør $F$ til en ikke-lineær avbildning,
+selv om $x\mapsto Ax$ er lineær. I 5.4 så vi at et fikspunkt er en
+enhetsegenvektor med positiv egenverdi. Omvendt er enhver enhetsegenvektor med
+positiv egenverdi $\lambda$ et fikspunkt, fordi $F(v)=\lambda v/\lambda=v$.
+
+**Fikspunktresidual og egenresidual er ulike.** I
+[uke 2.4](page4.qmd#uke2-residual) målte vi
+fikspunktresidualen $g(x)-x$. Her måler vi egenresidualen
+$Ax-\rho x$, som kontrollerer en annen likning.
+For en enhetsegenvektor $v$ med negativ egenverdi er $F(v)=-v$ og
+$F(-v)=v$. Iterasjonen veksler da mellom to vektorer på samme linje:
+linjen er uendret, men vektoren er ikke et fikspunkt.
+Egenresidualen er null, mens fikspunktresidualen er $F(v)-v=-2v$.
+Derfor kan potensmetoden ha funnet en egenvektor selv om neste normaliserte
+vektor har motsatt fortegn. Dette ser vi i eksperiment 4.
 
 En residual er en vektor; residualnormen er ett tall. I koden lagrer vi
 både $\rho$ og residualnormen, ikke hele residualvektoren.
-
-</details>
-
-<details class="reading-step">
-<summary>Gå i dybden: beregn skaleringen og det som blir igjen</summary>
-
-**Gjenta for hånd:** Bruk første normaliserte steg $x=(2,1)^T/\sqrt5$ fra 5.1.
-Beregn først $Ax$, deretter $\rho$ og $r$. Sammenlign med
-
-$$Ax=\frac1{\sqrt5}\begin{bmatrix}5\\4\end{bmatrix},\qquad
-\rho=\frac{2\cdot5+1\cdot4}{5}=\frac{14}{5},$$
-
-$$r=\frac1{5\sqrt5}\begin{bmatrix}-3\\6\end{bmatrix},\qquad
-\lVert r\rVert_2=\frac35.$$
-
-Retningen er ennå ikke en egenretning, men residualnormen har falt fra $1$ ved
-$k=0$ til $3/5$ etter ett steg.
 
 </details>
 
@@ -1148,18 +1095,11 @@ Rayleigh-kvotient, residual og en øvre grense for antall steg.
 #| autorun: true
 # Potensmetoden følger en retning; normalisering hindrer at lengden vokser ukontrollert.
 # Rayleigh-kvotienten anslår egenverdien, mens egenresidualen kontrollerer Av ≈ rho*v.
-# En liten egenresidual sier ikke at vi har funnet den største egenverdien.
 
 # Definer funksjonen som brukes i de korte forsøkene nedenfor.
 def power_iteration(A, x0, tol=1e-10, max_steps=500):
     A = np.asarray(A, dtype=float)
-    x = np.array(x0, dtype=float, copy=True)
-    if A.ndim != 2 or A.shape[0] != A.shape[1] or x.shape != (A.shape[0],):
-        raise ValueError("A må være kvadratisk og x0 ha riktig lengde")
-    if not np.all(np.isfinite(A)) or not np.all(np.isfinite(x)):
-        raise ValueError("Bruk endelige tall")
-    if np.linalg.norm(x) == 0 or tol <= 0 or max_steps < 1:
-        raise ValueError("Bruk x0 ≠ 0, positiv toleranse og minst ett steg")
+    x = np.array(x0, dtype=float)
     x /= np.linalg.norm(x)
     # Skaler stoppkravet med matrisens størrelse; tol er ikke en absolutt feilgrense for rho.
     scale = np.linalg.norm(A, 'fro')
@@ -1187,45 +1127,41 @@ Vi lagrer kontrollene **før** neste oppdatering. Derfor gjelder siste rad i
 `history` akkurat den vektoren funksjonen returnerer.
 
 `scale` er $\lVert A\rVert_F$, **Frobeniusnormen**: kvadratroten av summen av
-alle kvadrerte matriseelementer. Stoppkravet er
+alle kvadrerte matriseelementer. **Toleransen** `tol` angir hvor liten relativ
+residual vi krever: stoppkravet er
 $\lVert r\rVert_2/\lVert A\rVert_F\le\text{tol}$ for $A\ne0$.
 En felles skalering av $A$ skalerer både teller og nevner like mye.
 `max_steps` hindrer at et ikke-konvergerende forsøk fortsetter uten grense.
 
 Hvis $Ax=0$, er $x$ allerede en egenvektor for null, men vi kan ikke utføre
 neste normalisering. Meldingen forklarer dette særtilfellet.
-«Liten egenresidual» betyr at likningen er godt oppfylt; funksjonen lover
-ikke at det er den dominante egenverdien som er funnet.
 
 </details>
 
+Nå prøver vi potensmetoden på matrisen fra 5.1, med startvektoren $(1,0)^T$.
+Funksjonen `power_iteration` er skrevet ferdig i fordypningen over og er
+allerede lastet inn. Den gjør nøyaktig stegene i pseudokoden og stopper når
+egenresidualen er liten. Kjør cellen og sammenlign $\rho$ med egenverdien 3 fra 5.2.
+
 ```{pyodide-python}
 #| label: week5-power-demo
-# Funksjonen fra forrige celle returnerer både et forslag og en kontroll.
-# Les status sammen med rho og siste residual; ikke vurder bare vektoren x.
-
+# Funksjonen returnerer både et forslag (x, rho) og en kontroll (status, residual).
 A = np.array([[2., 1.], [1., 2.]])
 x, rho, history, status = power_iteration(A, [1., 0.])
 print(status, "ρ =", rho, "x =", x)
 print("egenresidual:", history[-1, 1])
 ```
 
-Den valgte **toleransen** $\text{tol}$ angir hvor liten relativ residual vi
-krever før vi stopper. Vi sammenligner residualnormen med
-$\text{tol}\,\lVert A\rVert_F$ fordi $x$ har
-lengde én. Frobeniusnormen er kvadratroten av summen av de kvadrerte
-matriseelementene. Dette gjør testen uavhengig av en felles skalering av $A$.
+Potensmetoden virket fint i eksperiment 3 og her. Men den bygger på to
+forutsetninger: én egenverdi er størst i absoluttverdi, og startvektoren
+har et bidrag langs den tilhørende egenvektoren. Nå bryter vi
+forutsetningene én om gangen, med enkle matriser der vi kan regne alt for hånd.
+I alle fire tilfellene bruker vi samme oppdatering
+$x_{k+1}=Ax_k/\lVert Ax_k\rVert_2$. Målet er å se at «retningen
+stabiliseres», «vi har funnet en egenvektor» og «vi har funnet den største
+egenverdien» er tre forskjellige påstander.
 
 ### Eksperiment 4 – når stabiliseres ikke retningen?
-
-I eksperiment 3 var én egenverdi størst i absoluttverdi, og startvektoren
-hadde et bidrag langs den tilhørende egenvektoren. Nå undersøker vi hva
-som skjer når et slikt bidrag mangler, når fortegnet skifter, eller når
-ingen egenretning får større relativ vekt.
-
-I alle fire tilfellene bruker vi samme oppdatering:
-
-$$x_{k+1}=\frac{Ax_k}{\lVert Ax_k\rVert_2}.$$
 
 | Tilfelle | Matrise for transformasjonen | Startvektor før normalisering | Spørsmål før kjøring |
 |---|---|---|---|
@@ -1234,88 +1170,74 @@ $$x_{k+1}=\frac{Ax_k}{\lVert Ax_k\rVert_2}.$$
 | Like store absoluttverdier | $\operatorname{diag}(1,-1)$ | $(1,1)^T$ | Kan ett av de to bidragene dominere det andre? |
 | Rotasjon | $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ | $(1,0)^T$ | Hva skjer når en kvart omdreining gjentas? |
 
-**Slik leser du figurene:** Hvert punkt er endepunktet til en normalisert
-vektor $x_k$. Aksene viser koordinatene, ikke antall steg.
-Strekene forbinder påfølgende punkter; de viser ikke en kontinuerlig bevegelse.
-Figuren viser $x_0,\ldots,x_6$. Punkter som er like, ligger oppå hverandre.
+- Forutsi: hvilket tilfelle gir samme vektor ved hvert steg?
+- Hvilket nærmer seg én linje uten å nærme seg én bestemt enhetsvektor?
+- Hvilke gir en gjentakende syklus? Kjør og sammenlign.
 
-**Forutsi, og kjør:** Hvilket tilfelle gir samme vektor ved hvert steg?
-Hvilket nærmer seg én linje uten å nærme seg én bestemt enhetsvektor?
-Hvilke gir en gjentakende syklus?
-
-Utskriften kommer fra en **egen kjøring av potensmetoden** med inntil 100 steg.
-Den stopper når egenresidualen er liten nok, eller når steggrensen nås.
-Derfor kan den rapportere et annet antall steg enn de seks som tegnes.
+Hvert punkt i figuren er endepunktet til en normalisert vektor $x_k$,
+for $k=0,\ldots,6$; strekene forbinder påfølgende punkter, og like punkter
+ligger oppå hverandre.
+Utskriften kommer fra en egen kjøring av `power_iteration` med inntil 100 steg,
+så den kan rapportere et annet antall steg enn de seks som tegnes.
 
 ```{pyodide-python}
 #| label: week5-failures
-# De fire tilfellene utfordrer forskjellige forutsetninger for potensmetoden.
-# Forutsi først om retningen stabiliseres, skifter fortegn eller roterer.
-# Sammenhold banen med status og egenresidual: de svarer på ulike spørsmål.
-
+# Fire tilfeller som utfordrer forutsetningene for potensmetoden.
 cases = [
     ("Manglende dominant bidrag", np.diag([3., 1.]), [0., 1.]),
     ("Negativ dominant", np.diag([-3., 1.]), [1., 1.]),
     ("Lik absoluttverdi", np.diag([1., -1.]), [1., 1.]),
     ("Rotasjon", np.array([[0., -1.], [1., 0.]]), [1., 0.]),
 ]
-fig, axes = plt.subplots(2, 2, figsize=(8, 6))
-for ax, (name, A, start) in zip(axes.flat, cases):
+orbits = {}
+for name, A, start in cases:
     x = np.array(start) / np.linalg.norm(start)
-    points = [x.copy()]
+    points = [x]
     for k in range(6):
         x = A @ x
-        x /= np.linalg.norm(x)
-        points.append(x.copy())
-    points = np.array(points)
-    ax.plot(points[:, 0], points[:, 1], 'o-')
-    ax.set(title=name, xlabel="x₁", ylabel="x₂", xlim=(-1.2, 1.2), ylim=(-1.2, 1.2))
-    ax.set_aspect('equal')
+        x = x / np.linalg.norm(x)
+        points.append(x)
+    orbits[name] = points
     _, rho, h, status = power_iteration(A, start, max_steps=100)
     print(name, ":", status, "; steg =", len(h)-1, "; ρ =", rho, "; residual =", h[-1, 1])
-fig.tight_layout()
-plt.show()
+plot_orbits(orbits)
 ```
 
-**1. Manglende dominant bidrag: riktig egenvektor, men feil egenverdi for målet vårt**
+**Hva viser forsøket?** Hvert tilfelle bryter en annen forutsetning.
 
+**1. Manglende dominant bidrag: riktig egenvektor, men feil egenverdi for målet vårt.**
 Fra $x_0=(0,1)^T$ er $Ax_0=x_0$. Første koordinat forblir null, så
 iterasjonen kan ikke utvikle et bidrag langs egenvektoren til egenverdi 3.
 Den returnerer egenverdi 1 med residual null. Kontrollen bekrefter et
 egenpar, men bekrefter ikke at egenverdien er størst i absoluttverdi.
 
-**2. Negativ dominant egenverdi: linjen stabiliseres, orienteringen veksler**
+**2. Negativ dominant egenverdi: linjen stabiliseres, orienteringen veksler.**
+Før normalisering er $A^k(1,1)^T=((-3)^k,1)^T$. Første koordinat dominerer
+og skifter fortegn, så vektorene nærmer seg vekselvis $(1,0)^T$ og
+$(-1,0)^T$ på samme egenlinje. $\rho$ nærmer seg $-3$ og residualen null,
+selv om vektorene ikke konvergerer mot ett punkt.
 
-Før normalisering er $A^k(1,1)^T=((-3)^k,1)^T$.
-Første koordinat dominerer i absoluttverdi og skifter fortegn.
-De normaliserte vektorene nærmer seg derfor vekselvis $(1,0)^T$ og $(-1,0)^T$.
-Begge ligger på samme egenlinje. Rayleigh-kvotienten nærmer seg $-3$,
-og egenresidualen nærmer seg null selv om vektorene ikke konvergerer mot ett punkt.
+**3. Like store absoluttverdier: ingen av bidragene blir dominerende.**
+Vektorene veksler mellom $(1,1)^T/\sqrt2$ og $(1,-1)^T/\sqrt2$: to
+forskjellige linjer. Bidragene beholder lengden; bare fortegnet til det
+andre endres. $\rho=0$ og residualen er 1 (utskriften kan vise et tall
+som 4e-17 for $\rho$; det er 0 pluss avrunding).
 
-**3. Like store absoluttverdier: ingen av bidragene blir dominerende**
+Tilfelle 2 og 3 kaller vi **fortegnsforsøket**: en negativ egenverdi får
+bidraget til å skifte fortegn ved hvert steg. I tilfelle 3 er størrelsen
+$|-1|=1$, så vekslingen fortsetter for alltid. Hva som skjer når den
+negative egenverdien har absoluttverdi mindre enn én, ser du i fordypningen
+om pendling i 5.6 og i prosjekt 5.
 
-Her veksler de normaliserte vektorene mellom
-$(1,1)^T/\sqrt2$ og $(1,-1)^T/\sqrt2$.
-Bidragene beholder samme lengde; bare fortegnet til det andre endres.
-Dette er to forskjellige linjer, ikke motsatt orientering på én linje.
-Rayleigh-kvotienten er 0 og egenresidualens norm er 1.
-
-**4. Rotasjon: ingen reell egenlinje å nærme seg**
-
-Transformasjonen roterer vektoren $90^\circ$ mot klokken ved hvert steg.
-Iterasjonen besøker fire punkter før den gjentas.
-For enhver reell enhetsvektor står $Ax$ vinkelrett på $x$, så
-$\rho=x^TAx=0$ og $\lVert Ax-\rho x\rVert_2=1$.
-Ingen reell ikke-null vektor oppfyller $Ax=\lambda x$.
-
-I [uke 2.3](page4.qmd#lokalt-globalt-og-raskt) så vi at en iterasjon
-kan nærme seg en 2-syklus i stedet for et fikspunkt.
-Tilfelle 2 og 3 viser samme skille for vektorer: to tilstander gjentas
-eller nærmes vekselvis, selv om ett enkelt grensepunkt mangler.
+**4. Rotasjon: ingen reell egenlinje å nærme seg.**
+Hver multiplikasjon dreier vektoren $90^\circ$, så iterasjonen besøker fire
+punkter og starter på nytt. Ingen reell ikke-null vektor oppfyller $Ax=\lambda x$.
 
 **Diskuter:** Hvorfor er det tre forskjellige spørsmål om vektorene
 konvergerer, om linjen de spenner ut stabiliseres, og om vi har funnet
 egenverdien med størst absoluttverdi? Bruk tilfelle 1 og 2 som eksempler.
+
+**Øv på dette:** [ett steg av potensmetoden for hånd, og programmer potensmetoden](#uke5-oppg-potensmetode).
 
 <details class="reading-step">
 <summary>Gå i dybden: beregn forløpene og skill mellom vektor og linje</summary>
@@ -1349,38 +1271,44 @@ $\lVert x_{k+1}-x_k\rVert_2$ går mot 2.
 I tilfelle 3 og 4 er påfølgende vektorer ortogonale, så $d_k=\sqrt2$.
 En liten $d_k$ alene sier likevel ikke hvilken egenverdi vi har funnet.
 
-Rotasjonen gir $(1,0)^T\mapsto(0,1)^T\mapsto(-1,0)^T\mapsto(0,-1)^T$
-og deretter startvektoren igjen. Determinantlikningen er $\lambda^2+1=0$,
+**Rotasjonen.** Den gir $(1,0)^T\mapsto(0,1)^T\mapsto(-1,0)^T\mapsto(0,-1)^T$
+og deretter startvektoren igjen. For enhver reell enhetsvektor står $Ax$
+vinkelrett på $x$, så $\rho=x^TAx=0$ og $\lVert Ax-\rho x\rVert_2=1$.
+Determinantlikningen er $\lambda^2+1=0$,
 som ikke har reelle løsninger. Over komplekse tall er egenverdiene $i$ og $-i$.
+
+**Sykler.** I [uke 2.3](page4.qmd#lokalt-globalt-og-raskt) så vi at en iterasjon
+kan nærme seg en 2-syklus i stedet for et fikspunkt.
+Tilfelle 2 og 3 viser samme skille for vektorer: to tilstander gjentas
+eller nærmes vekselvis, selv om ett enkelt grensepunkt mangler.
 
 Tilfelle 1 beskriver eksakt regning. Avrunding kan i andre beregninger
 tilføre et lite bidrag som mangler matematisk. Her brukes en diagonalmatrise
-og en eksakt nullkoordinat for å isolere mekanismen. Eksperiment 5 undersøker
-hva som skjer når startvektoren får et lite bidrag langs den dominante egenretningen.
+og en eksakt nullkoordinat for å isolere mekanismen. Den neste fordypningen
+undersøker hva som skjer når startvektoren får et lite bidrag langs den
+dominante egenretningen.
 
 </details>
 
-### Eksperiment 5 – kan en liten startforskjell vokse?
+<details class="reading-step">
+<summary>Gå i dybden: kan en liten startforskjell vokse?</summary>
 
-I eksperiment 4 ble iterasjonsfølgen værende langs $(0,1)^T$, selv om
+I tilfelle 1 i eksperiment 4 ble iterasjonsfølgen værende langs $(0,1)^T$, selv om
 egenverdien $3$ tilhører retningen $(1,0)^T$. Startvektoren hadde **nøyaktig null**
 bidrag i denne retningen. **Hvor følsom er denne konklusjonen for en liten endring
 i startvektoren?** Dette er relevant når startdata ikke er helt nøyaktige.
+Målet er å se om en nesten manglende retning oppfører seg som en helt manglende.
 
 Vi bruker fortsatt $A=\operatorname{diag}(3,1)$ og sammenligner startvektorene
 $(0,1)^T$ og $(10^{-12},1)^T$, begge normalisert til lengde én.
-Forskjellen er svært liten. I hver iterasjon beregner vi $Ax_k$ og normaliserer
-resultatet; cellen skriver ut de to vektorene etter 30 steg.
-
-**Undersøk:** Vil de to beregningene fortsatt gi nesten samme vektor etter 30 steg?
-Kjør cellen. Hvilken egenretning ligger hvert resultat nær?
-Prøv deretter 10 og 20 steg: når blir forskjellen tydelig?
+Cellen gjør 30 steg med multiplikasjon og normalisering og skriver ut
+de to vektorene. Vil de fortsatt være nesten like? Prøv deretter 10 og
+20 steg: når blir forskjellen tydelig?
 
 ```{pyodide-python}
 #| label: week5-roundoff
 # Bare første startkoordinat endres; matrisen og antall steg holdes faste.
 # 1e-12 er en bevisst innlagt forstyrrelse, ikke en måling av maskinens avrundingsfeil.
-# Forklar forskjellen ved at det første bidraget får en faktor 3 i hvert steg.
 
 A = np.diag([3., 1.])
 for tiny in [0., 1e-12]:
@@ -1397,29 +1325,17 @@ bidraget skalert med $3$, mens det andre blir skalert med $1$.
 Normaliseringen deler begge koordinatene på samme tall og endrer derfor ikke
 forholdet mellom dem. For startvektoren $(\varepsilon,1)^T$ får vi
 
-$\frac{|(x_k)_1|}{|(x_k)_2|}=3^k|\varepsilon|.$
+$$\frac{|(x_k)_1|}{|(x_k)_2|}=3^k|\varepsilon|.$$
 
+For $\varepsilon=10^{-12}$ og $k=30$ er forholdet
+$3^{30}10^{-12}\approx206$. Den opprinnelig lille delen dominerer.
 Et bidrag som er nøyaktig null, forblir null i dette eksemplet.
 Et lite bidrag som ikke er null, kan etter tilstrekkelig mange steg dominere.
-**Diskuter:** Hvorfor kan normalisering holde lengden lik én uten å hindre
-at en liten endring i startvektoren etter hvert gir en helt annen retning?
 
-Her er $10^{-12}$ en bevisst innlagt forstyrrelse av startdata, ikke en måling
-av maskinavrunding. Avrundingsfeil som oppstår under selve beregningen,
-behandles i «Gå i dybden».
-
-<details class="reading-step">
-<summary>Gå i dybden: skill mellom startfeil og feil i hvert steg</summary>
-
-Uten normalisering blir startvektoren $(\varepsilon,1)^T$ til
-$(3^k\varepsilon,1)^T$. For $\varepsilon=10^{-12}$ og $k=30$ er forholdet
-$3^{30}10^{-12}\approx206$. Den opprinnelig lille delen dominerer.
-Dette forklarer også hvorfor en eksakt manglende egenretning og en nesten
-manglende egenretning kan gi ulike resultater.
-
-For en unormalisert beregning med lokal avrundingsfeil $\delta_k$ i steg $k$,
-skriv $\widehat y_{k+1}=A\widehat y_k+\delta_k$. Feilen mot eksakt regning
-oppfyller da $e_{k+1}=Ae_k+\delta_k$.
+**Startfeil og feil i hvert steg.** Her er $10^{-12}$ en bevisst innlagt
+forstyrrelse av startdata. For en unormalisert beregning med lokal
+avrundingsfeil $\delta_k$ i steg $k$, skriv $\widehat y_{k+1}=A\widehat y_k+\delta_k$.
+Feilen mot eksakt regning oppfyller da $e_{k+1}=Ae_k+\delta_k$.
 Etter $k$ steg blir den
 
 $$e_k=A^ke_0+\sum_{j=0}^{k-1}A^{k-1-j}\delta_j.$$
@@ -1439,9 +1355,8 @@ men fjerner ikke mekanismen med relativ vekst mellom retningene.
 
 **Hvordan kan lenkene fortelle oss hvilke nettsider som er viktige?**
 Vi vil gi hver side et tall og **rangere** sidene fra høyest til lavest verdi.
-En lenke til en side kan tolkes som en anbefaling. Men en lenke fra en side
-som mange besøker, kan sende flere besøk videre enn en lenke fra en side
-som få besøker. Vi ønsker et mål som tar hensyn til hele lenkenettverket.
+En lenke kan tolkes som en anbefaling, men en lenke fra en side mange besøker,
+bør telle mer enn en lenke fra en side få besøker.
 
 **PageRank** bygger på denne ideen. Vi lar en tenkt besøkende følge lenkene
 fra side til side. En side regnes som viktig hvis den besøkende ofte havner der.
@@ -1459,9 +1374,8 @@ Fra B er C det eneste valget. Tallene på pilene er
 **overgangssannsynligheter**: sannsynligheten for neste side, gitt siden
 den besøkende er på nå. Punktenes plassering i tegningen påvirker ikke regelen.
 
-Den besøkende gjentar regelen og holder seg innenfor disse fire sidene.
-En slik tilfeldig følge av besøk kalles en **tilfeldig vandring**
-(*random walk*). A → B → C → D → A er ett mulig forløp.
+En slik tilfeldig følge av besøk, for eksempel A → B → C → D → A,
+kalles en **tilfeldig vandring** (*random walk*).
 
 :::
 ::: {.week5-network-figure}
@@ -1471,28 +1385,25 @@ En slik tilfeldig følge av besøk kalles en **tilfeldig vandring**
 :::
 :::
 
-### Eksperiment 6 – gir ulike startfordelinger samme rangering?
-
 En tilfeldig vandring gir én side ved hvert steg. For å undersøke hvilke
 sider besøksregelen favoriserer, følger vi i stedet
 **sannsynlighetsfordelingen**: fire tall som angir sannsynligheten for å
 være på A, B, C og D etter et bestemt antall steg. Tallene summerer til
 100 %. De beskriver dette tidspunktet, ikke antall besøk samlet over tid.
 
-Figuren beregner fordelingen direkte. **100 % på A** velger A som sikker
-startside; **25 % på hver side** lar startsiden være tilfeldig med lik
-sannsynlighet. Begge valgene starter forsøket på nytt.
-**Beregn ett steg** oppdaterer fordelingen for ett lenkeklikk i modellen.
-**Beregn 20 steg** gjør tjue slike oppdateringer. Knappetrykket styrer
-beregningen; figuren trekker ikke en enkelt besøkendes rute.
+Figuren regner ut fordelingen direkte; den trekker ikke en enkelt
+besøkendes rute. **100 % på A** betyr sikker start på A, og **25 % på hver
+side** betyr tilfeldig startside. **Beregn ett steg** oppdaterer fordelingen
+for ett lenkeklikk. Målet er å se om startsiden betyr noe for rangeringen
+når den besøkende har klikket seg rundt lenge.
 
-1. Velg **100 % på A**. Bruk pilene til å forutsi hvilke sider som er mulige
-   etter ett steg. Trykk **Beregn ett steg**, og undersøk deretter ett steg til.
-2. Start på nytt med **100 % på A** og trykk **Beregn 20 steg**.
-   Hvilke sider ser ut til å få høyest rang?
-3. Gjenta fra **25 % på hver side**. Sammenlign fordelingene, og beregn
-   gjerne flere steg. **Tyder forsøket på at startvalget påvirker
-   rangeringen etter mange steg?**
+### Eksperiment 5 – gir ulike startfordelinger samme rangering?
+
+- Velg **100 % på A**. Forutsi med pilene hvilke sider som er mulige etter
+  ett steg, og trykk **Beregn ett steg** to ganger.
+- Start på nytt med **100 % på A** og trykk **Beregn 20 steg**.
+  Hvilke sider ser ut til å få høyest rang?
+- Gjenta fra **25 % på hver side**. Påvirker startvalget rangeringen etter mange steg?
 
 ```{.jsxgraph width="680" height="550" style="width:100%;max-width:680px;height:550px;border:0;"}
 document.documentElement.lang = 'nb';
@@ -1551,6 +1462,11 @@ if(typeof ResizeObserver!=='undefined'){var observer=new ResizeObserver(resize);
 window.addEventListener('resize',resize);window.addEventListener('pageshow',resize);show();resize();
 ```
 
+**Hva viser forsøket?** Etter 20 steg er fordelingen nesten den samme fra
+begge startene: A og C har omtrent 33.3 %, B og D omtrent 16.7 %.
+Startvalget ser ikke ut til å påvirke rangeringen etter mange steg.
+Nå forklarer vi hvorfor, med en matrise.
+
 ### Fra besøksregelen til et matriseprodukt
 
 Vi samler sannsynlighetene i en kolonnevektor, i rekkefølgen A, B, C, D:
@@ -1580,9 +1496,18 @@ For eksempel mottar A halvparten av bidraget fra C og hele bidraget fra D.
 Bidraget fra en side er proporsjonalt med sannsynligheten for å være der,
 og deles likt mellom sidens utgående lenker.
 
+Tenk på 1000 besøkende som følger regelen samtidig. Er 400 av dem på C, går
+halvparten, altså 200, videre til A og 200 til D. Sannsynlighetene i $p$ kan
+leses som slike andeler, og $Sp$ regner ut de nye andelene.
+
 Alle kolonnene har ikke-negative elementer og sum én.
 En slik matrise kalles **kolonnestokastisk**. Oppdateringen $p\mapsto Sp$
-bevarer summen i $p$. Gjentar vi oppdateringen, får vi $p_k=S^kp_0$: samme gjentatte
+bevarer summen i $p$.
+
+Hvorfor bevares summen? La $\mathbf1=(1,1,1,1)^T$. Summen av elementene i
+$p$ er $\mathbf1^Tp$, og kolonnesum én betyr $\mathbf1^TS=\mathbf1^T$.
+Da er $\mathbf1^T(Sp)=(\mathbf1^TS)p=\mathbf1^Tp=1$. Siden $S$ og $p$ har
+ikke-negative elementer, har også $Sp$ det. Gjentar vi oppdateringen, får vi $p_k=S^kp_0$: samme gjentatte
 matrisemultiplikasjon som tidligere i uken, nå uten normalisering av lengden.
 
 ### Når fordelingen ikke lenger endres
@@ -1599,19 +1524,45 @@ Her møter vi egenvektorene igjen: $p_*$ er en egenvektor med egenverdi
 **1**, skalert til sum én. Iterasjonen $p_{k+1}=Sp_k$ er dermed både
 en fikspunktiterasjon og en variant av potensmetoden fra 5.4.
 Her bevares summen én av besøksregelen, så vi trenger ingen ekstra
-normalisering. For dette nettverket er
+normalisering. Men vi kan også finne $p_*$ direkte, uten å iterere.
 
-$$p_*=(1/3,1/6,1/3,1/6)^T.$$
+::: {.callout-note title="Håndeksempel: den stasjonære fordelingen for fire sider"}
+
+**Utgangspunkt.** Vi leter etter en sannsynlighetsvektor
+$p=(p_A,p_B,p_C,p_D)^T$ med $Sp=p$.
+
+**Prøv selv.** Skriv opp én likning per rad i $S$. Hvilken likning er
+enklest å starte med?
+
+**Regnegangen.** Radene i $S$ gir
+
+$$p_A=\tfrac12p_C+p_D,\quad p_B=\tfrac12p_A,\quad p_C=\tfrac12p_A+p_B,\quad p_D=\tfrac12p_C.$$
+
+- Andre likning: $p_B=\tfrac12p_A$.
+- Sett inn i tredje: $p_C=\tfrac12p_A+\tfrac12p_A=p_A$.
+- Fjerde: $p_D=\tfrac12p_C=\tfrac12p_A$.
+- Første likning stemmer nå av seg selv: $\tfrac12p_A+\tfrac12p_A=p_A$.
+
+Alle løsninger er $t(1,\tfrac12,1,\tfrac12)^T$. Summen er $3t$, så kravet
+«sum én» gir $t=\tfrac13$ og
+
+$$p_*=(1/3,\,1/6,\,1/3,\,1/6)^T.$$
+
+**Dette tar vi med oss.** $Sp=p$ bestemmer en egenretning med egenverdi 1.
+Kravet «sum én» velger den ene vektoren på linjen som er en
+sannsynlighetsfordeling. I prosjekt 5 bygger du $S$ for seks sider på samme måte.
+
+:::
 
 Rangerer vi etter disse sannsynlighetene, deler A og C førsteplassen,
 mens B og D deler neste plass. Den besøkende fortsetter å følge lenker;
 det er sannsynlighetene som er uendret.
 
-Dette gir et presist mål på **viktighet under besøksregelen**.
-Modellen kjenner verken innholdets kvalitet eller hva en bruker søker etter.
-Dessuten sier likningen $Sp_*=p_*$ alene ingenting om hvorvidt alle
-startfordelinger nærmer seg $p_*$. I 5.6 undersøker vi hva lenkeregelen
-kan føre til, og bygger den ferdige PageRank-modellen.
+Dette er et mål på **viktighet under besøksregelen**; modellen kjenner
+ikke innholdet. Og likningen $Sp_*=p_*$ alene sier ikke at alle
+startfordelinger nærmer seg $p_*$. Det undersøker vi i 5.6.
+
+**Øv på dette:** [stasjonære fordelinger for to og tre sider](#uke5-oppg-stasjonaer).
 
 <details class="reading-step">
 <summary>Gå i dybden: fra lenkeklikk til matriseprodukt</summary>
@@ -1647,15 +1598,8 @@ lineær transformasjon fra tidligere uker.
 Til A kommer $\tfrac12\cdot\tfrac14+1\cdot\tfrac14=3/8$.
 Kontroller de andre radene og få $Sp=(3/8,1/8,3/8,1/8)^T$.
 
-For å vise at summen bevares, sett $\mathbf1=(1,1,1,1)^T$.
-Kolonnesummene gir $\mathbf1^TS=\mathbf1^T$, og dermed
-
-$$\mathbf1^T(Sp)=\mathbf1^Tp=1.$$
-
-Ikke-negative elementer i $S$ og $p$ gir også ikke-negative elementer i
-$Sp$. Oppdateringen sender altså sannsynlighetsvektorer til
-sannsynlighetsvektorer. Vi trenger ikke dele på vektorlengden.
-
+Oppdateringen sender altså sannsynlighetsvektorer til
+sannsynlighetsvektorer, som vi viste over. Vi trenger ikke dele på vektorlengden.
 Merk forskjellen på kolonne- og radsummer: $\mathbf1^TS=\mathbf1^T$
 betyr ikke $S\mathbf1=\mathbf1$. Rad A summerer til $3/2$, fordi den
 samler bidrag fra forskjellige avsendere.
@@ -1663,23 +1607,7 @@ samler bidrag fra forskjellige avsendere.
 </details>
 
 <details class="reading-step">
-<summary>Gå i dybden: finn og kontroller den stasjonære fordelingen</summary>
-
-Likningen $Sp=p$ gir
-
-$$\begin{aligned}
-p_A&=p_C/2+p_D, &p_B&=p_A/2,\\
-p_C&=p_A/2+p_B, &p_D&=p_C/2.
-\end{aligned}$$
-
-Sett $p_B=p_A/2$ inn i tredje likning: $p_C=p_A$.
-Da er $p_D=p_A/2$, og løsningene har formen
-$t(1,1/2,1,1/2)^T$. Kravet om sum én gir $3t=1$, så
-
-$$p_*=(1/3,1/6,1/3,1/6)^T.$$
-
-Systemet $(S-I)p=0$ bestemmer en egenretning. Summen én velger den
-vektoren på denne retningen som er en sannsynlighetsfordeling.
+<summary>Gå i dybden: hvorfor har S egenverdi 1, og en kontroll med kode</summary>
 
 Kolonnesummene viser dessuten at $S^T\mathbf1=\mathbf1$.
 Dermed har $S^T$ egenverdi én. En matrise og dens transponerte har samme
@@ -1687,7 +1615,7 @@ karakteristiske polynom $\det(S-\lambda I)$, så også $S$ har egenverdi én.
 Dette argumentet alene sier ikke at $S^kp_0$ konvergerer.
 
 **Kontroller med kode:** Kjør cellen fra begge startfordelingene.
-Sammenlign resultatet med den eksakte løsningen. Utskriften måler
+Sammenlign resultatet med den eksakte løsningen $p_*=(1/3,1/6,1/3,1/6)^T$. Utskriften måler
 største koordinatendring ved neste steg. Hvorfor kan et lite tall
 bekrefte at fordelingen er nesten stasjonær uten å bekrefte at vi la inn
 riktige lenker?
@@ -1715,64 +1643,52 @@ print("Sum:", p.sum(), "største endring ved neste steg:", np.max(abs(S @ p-p)))
 
 <div id="uke5-google"></div>
 
-### Eksperiment 7 – kan én side fange besøkene?
+I 5.5 ga lenkene en fornuftig rangering, og begge startfordelingene vi prøvde, endte likt.
+Men lenkene på ekte nettsider er ikke alltid så snille. **Kan en side få
+høyest verdi bare fordi besøkende ikke kommer seg videre?**
+Vi beholder nettverket fra 5.5, men endrer **bare lenken fra D**:
+D → A blir D → D, så den eneste lenken på D fører tilbake til D selv.
+Det endrer bare én kolonne i $S$. Cellen kjører den samme oppdateringen
+$p_{k+1}=Sp_k$ som før, fra 25 % på hver side, og tegner sannsynligheten
+for hver side mot antall steg. Målet er å se at en fordeling kan være
+stasjonær og likevel gi en rangering vi ikke vil ha.
 
-**Kan en side få høyest verdi bare fordi besøkende ikke kommer seg videre?**
-Behold nettverket fra 5.5, men endre **bare lenken fra D**:
-D → A blir D → D. Å følge den nye lenken fører tilbake til samme side.
+### Eksperiment 6 – kan én side fange besøkene?
 
-**Gjett først:** D har fortsatt bare én innkommende lenke fra en annen side.
-Hvordan tror du sannsynligheten for å være på D vil utvikle seg?
-
-Kjør cellen fra startfordelingen 25 % på hver side.
-Vannrett akse viser antall steg; de fire kurvene viser sannsynligheten
-for å være på hver side ved hvert steg.
-**Sammenlign med gjetningen:** Hvilke veier fører til D, og hvilke fører ut igjen?
-Hva blir rangeringen etter mange steg?
+- Gjett først: D har fortsatt bare én innkommende lenke fra en annen side.
+  Hvordan utvikler sannsynligheten for D seg?
+- Kjør cellen. Hvilke veier fører til D, og hvilke fører ut igjen?
+- Hva blir rangeringen etter mange steg?
 
 ```{pyodide-python}
 #| label: week5-trap
-# Vi endrer bare lenkene UT fra D, altså én kolonne.
-# En besøksandel som kommer til D, kan deretter ikke forlate siden.
-# Følg alle fire andeler: en stabil fordeling trenger ikke gi en nyttig rangering.
-
-# Samme nettverk som i 5.5; tallene gjentas så denne fanen kan kjøres direkte.
-S = np.array([[0., 0., 1/2, 1.],
-              [1/2, 0., 0., 0.],
-              [1/2, 1., 0., 0.],
-              [0., 0., 1/2, 0.]])
-trap = S.copy()
-# Kolonne 3 er D: alle som er på D, går tilbake til D ved neste steg.
-trap[:, 3] = [0., 0., 0., 1.]
+# S_net er lenkematrisen S fra 5.5 (ligger i oppsettet).
+# Vi endrer bare kolonne 3: lenkene UT fra D.
+trap = S_net.copy()
+trap[:, 3] = [0., 0., 0., 1.]   # D lenker bare til seg selv
 p = np.ones(4) / 4
-values = [p.copy()]
+values = [p]
 for k in range(100):
     p = trap @ p
-    # Lagre et eget øyeblikksbilde av fordelingen for hvert steg.
-    values.append(p.copy())
-plt.figure()
-plt.plot(values)
-plt.xlabel("Antall steg")
-plt.ylabel("Sannsynlighet for å være på siden")
-plt.legend(list("ABCD"))
-plt.title("Besøkene slipper ikke ut av D")
-plt.show()
-print(p)
+    values.append(p)
+print("Etter 100 steg (A, B, C, D):", np.round(p, 4))
+plot_history(values, title="Besøkene slipper ikke ut av D")
 ```
 
-D er blitt en **felle**: den besøkende kan komme dit, men lenkene gir
-ingen utvei. Fordelingen nærmer seg $(0,0,0,1)^T$, slik at D får all vekt
-i rangeringen. D kommer øverst fordi siden holder på besøkene.
+**Hva viser forsøket?** D er blitt en **felle**: den besøkende kan komme
+dit, men lenkene gir ingen utvei. Fordelingen nærmer seg $(0,0,0,1)^T$,
+slik at D får all vekt i rangeringen. D kommer øverst fordi siden holder
+på besøkene, ikke fordi mange anbefaler den.
 
 Regningen konvergerer altså til en stasjonær fordeling, men besøksregelen
-gir et lite nyttig mål på viktighet. Kall den endrede overgangsmatrisen
-$S_{\mathrm{felle}}$. Residualen $r=S_{\mathrm{felle}}p-p$ måler endringen
-ved neste steg. En liten residual viser at $p$ omtrent oppfyller modellens
-likning; den kan ikke bekrefte at modellen måler det vi ønsker.
+gir et lite nyttig mål på viktighet. En liten residual $Sp-p$ viser at $p$
+omtrent oppfyller modellens likning; den kan ikke bekrefte at modellen
+måler det vi ønsker.
 
 <details class="reading-step">
 <summary>Gå i dybden: en korrekt løsning for en uheldig besøksregel</summary>
 
+Kall den endrede overgangsmatrisen $S_{\mathrm{felle}}$.
 Endringen D → A til D → D bytter siste kolonne fra $(1,0,0,0)^T$ til
 $(0,0,0,1)^T$. Den nye D-raden gir
 
@@ -1789,8 +1705,6 @@ her finnes et lenkevalg, men det gir ingen utvei.
 
 </details>
 
-### Eksperiment 8 – hva endres når vi kan hoppe ut?
-
 Vi gir den besøkende en ny mulighet. Ved hvert steg velger hen mellom to handlinger:
 
 - Med sannsynlighet $\alpha$ følger hen en lenke etter regelen vi allerede har.
@@ -1802,38 +1716,41 @@ være et lenkeklikk eller et tilfeldig hopp.
 **Dempingsfaktoren** $\alpha$ bestemmer hvor stor vekt lenkene får.
 Når $\alpha=0.85$, er sannsynligheten 85 % for et lenkeklikk og 15 % for et hopp.
 **Hoppfordelingen** $u=(1/4,1/4,1/4,1/4)^T$ beskriver hvor hoppet lander.
+Cellen bruker fellen fra eksperiment 6 og gjør 500 steg med regelen
+$p\mapsto\alpha\,(\text{lenkesteg})+(1-\alpha)u$ for tre verdier av $\alpha$.
+Målet er å se om hoppene gir alle sidene en positiv verdi, og hvor mye
+valget av $\alpha$ betyr.
 
-**Gjett først:** Hvordan vil verdien til D endres når vi gjør hopp vanligere?
-Kjør cellen etter eksperiment 7. Vannrett akse viser nå sidene A–D.
-Hver kurve viser fordelingen etter 500 steg for én verdi av $\alpha$.
-Sammenlign $0.95$, $0.85$ og $0.5$: Hvor stor vekt beholder D, og får
-de andre sidene også positiv sannsynlighet?
+### Eksperiment 7 – hva endres når vi kan hoppe ut?
+
+- Gjett først: hvordan endres verdien til D når vi gjør hopp vanligere?
+- Kjør cellen og sammenlign $\alpha=0.95$, $0.85$ og $0.5$.
+- Hvor stor vekt beholder D, og får de andre sidene positiv sannsynlighet?
 
 ```{pyodide-python}
 #| label: week5-teleport
-# alpha er sannsynligheten for å følge lenker; 1-alpha er sannsynligheten for et hopp.
-# Hoppfordelingen u er fast, mens p er den nåværende besøksfordelingen.
-# Sammenlign den stasjonære sannsynligheten for D når hopp blir vanligere.
-
-# Kjør felleforsøket først. u fordeler de tilfeldige hoppene likt.
-u = np.ones(4) / 4
-fig, ax = plt.subplots()
+# alpha er sannsynligheten for å følge en lenke; 1-alpha er sannsynligheten for et hopp.
+trap = S_net.copy()
+trap[:, 3] = [0., 0., 0., 1.]   # samme felle som i eksperiment 6
+u = np.ones(4) / 4              # hoppene fordeles likt
+results = {}
 for alpha in [0.5, 0.85, 0.95]:
     p = u.copy()
     for k in range(500):
         p = alpha * (trap @ p) + (1-alpha) * u
-    ax.plot(list("ABCD"), p, 'o-', label=f"α = {alpha}")
-ax.set(xlabel="Side", ylabel="Stasjonær sannsynlighet", title="En utvei fra fellen")
-ax.legend()
-plt.show()
+    results[alpha] = p
+    print(f"α = {alpha}: A, B, C, D =", np.round(p, 3))
+plot_distributions(results)
 ```
 
-### Fra den nye regelen til PageRank
+**Hva viser forsøket?** D beholder fortsatt mest, men nå får alle sidene
+positiv sannsynlighet. Jo vanligere hopp, desto mindre vekt på D: omtrent
+0.38 ved $\alpha=0.5$, 0.67 ved $\alpha=0.85$ og 0.86 ved $\alpha=0.95$.
+Rekkefølgen D, C, A, B er den samme for alle tre verdiene her, men på
+andre nettverk kan også rekkefølgen endres: å endre sannsynligheten for
+et hopp er å endre modellen.
 
-Hoppene gir en utvei fra D. Forsøket viser at $\alpha$ påvirker verdiene
-som brukes til rangering, selv om rekkefølgen er den samme her.
-På andre nettverk kan også rekkefølgen endres: å endre sannsynligheten
-for et hopp er å endre modellen.
+### Fra den nye regelen til PageRank
 
 La nå $S$ være lenkematrisen for nettverket vi undersøker; i forsøket
 er det matrisen med fellen på D. For en sannsynlighetsvektor $p_k$ blir
@@ -1842,19 +1759,23 @@ neste fordeling
 $$p_{k+1}=\underbrace{\alpha Sp_k}_{\text{lenkeklikk}}+
 \underbrace{(1-\alpha)u}_{\text{tilfeldige hopp}}.$$
 
-Regelen må også fungere på en side uten utgående lenker, en
-**hengende node**. Der finnes ingen lenke å velge.
-Vi bruker derfor $u$ også når den besøkende er på en slik side og skulle
-ha fulgt en lenke: erstatt nullkolonnen i $S$ med $u$.
-Da er $S$ kolonnestokastisk.
+I prosjekt 5 kaller vi denne oppdateringen $T(p)=\alpha Sp+(1-\alpha)u$.
+Der betyr $T$ altså «ett steg med lenker og hopp», ikke den lineære
+transformasjonen $T(x)=Ax$ fra 5.1.
+
+En side uten utgående lenker, en **hengende node**, får $u$ som sin
+kolonne i $S$, slik at $S$ alltid er kolonnestokastisk (se fordypningen
+«utled Google-matrisen»).
 
 For et nettverk med $n$ sider velger vi en fast hoppfordeling $u$ med $n$
-koordinater og lar $\mathbf1$ være kolonnen med $n$ ettall. Matrisen $u\mathbf1^T$ har hoppfordelingen $u$ i hver kolonne,
-fordi hoppene har samme fordeling fra alle avsendersider.
-Den samlede overgangsmatrisen er derfor
+koordinater og lar $\mathbf1$ være kolonnen med $n$ ettall. Matrisen
+$u\mathbf1^T$ har hoppfordelingen $u$ i hver kolonne, fordi hoppene har
+samme fordeling fra alle avsendersider. Den samlede overgangsmatrisen er derfor
 
 $$G=\alpha S+(1-\alpha)u\mathbf1^T,\qquad p_{k+1}=Gp_k.$$
 
+Fordi $p$ har sum én, er $(u\mathbf1^T)p=u(\mathbf1^Tp)=u$. Derfor gir
+$Gp=\alpha Sp+(1-\alpha)u$ akkurat regelen over.
 $G$ kalles **Google-matrisen**. Dens stasjonære sannsynlighetsvektor
 $p_*$ er **PageRank-vektoren**:
 
@@ -1873,15 +1794,48 @@ at $\sum_i u_i=1$, og at $0<\alpha<1$.
 Da er alle elementene i $G$ positive, og hver kolonne summerer til én.
 **Perron–Frobenius-teoremet** gir da det vi trenger:
 Det finnes nøyaktig én stasjonær sannsynlighetsvektor, alle elementene
-er positive, og $G^kp_0$ konvergerer mot den fra enhver startfordeling $p_0$.
+er positive (fordi $p_*=\alpha Sp_*+(1-\alpha)u$ har hvert element minst
+$(1-\alpha)u_i>0$), og $G^kp_0$ konvergerer mot den fra enhver startfordeling $p_0$.
 Dette krever verken symmetri eller en egenvektorbasis.
 
-Garantien gjelder beregningen under den valgte besøksregelen.
-**Diskuter:** Hva betyr det for målet på viktighet når $\alpha$ senkes?
-Ved $\alpha=0$ velges alle sider etter $u$ allerede i første steg.
-Ved $\alpha=1$ følger vi bare lenker og mister den generelle
-konvergensgarantien. Kan en rangering være entydig og lett å beregne,
+Grunnen er at hvert steg med $G$ krymper avstanden mellom to fordelinger
+med minst faktor $\alpha$, målt i 1-normen $\lVert z\rVert_1=\sum_i|z_i|$
+(se fordypningen «en feilgrense uten en egenvektorbasis»). Da kan to forskjellige startfordelinger ikke
+holde seg fra hverandre, og det finnes bare én stasjonær fordeling.
+
+**Hvor nær er vi?** I 1-normen gjelder feilgrensen
+
+$$\lVert p-p_*\rVert_1\le\frac{\lVert Gp-p\rVert_1}{1-\alpha}.$$
+
+Liten residual gir altså liten feil, men nær $\alpha=1$ må residualen være
+mye mindre. Utledningen står i fordypningen «en feilgrense uten en
+egenvektorbasis». Grensen brukes som stoppkrav i prosjekt 5.
+
+**Diskuter:** Ved $\alpha=0$ velges alle sider etter $u$, og ved $\alpha=1$
+mister vi garantien. Kan en rangering være entydig og lett å beregne,
 men likevel lite relevant for det en bruker leter etter?
+
+### Svaret på ukens spørsmål
+
+Vi spurte hva som overlever når vi ganger med den samme matrisen om og om
+igjen. Nå kan vi svare:
+
+- Skriv startvektoren som en sum av bidrag langs egenvektorene. I hvert
+  steg ganges hvert bidrag med sin egenverdi.
+- Bidraget med størst egenverdi i absoluttverdi vokser raskest i forhold
+  til de andre. Det bestemmer retningen etter mange steg, så sant det var
+  med fra start. Forholdet $|\lambda_2/\lambda_1|$ bestemmer farten.
+- Potensmetoden bruker dette til å finne en egenvektor, og
+  Rayleigh-kvotienten gir egenverdien.
+- I PageRank er det som overlever den stasjonære fordelingen: en
+  egenvektor med egenverdi 1. Tilfeldige hopp gjør at avviket fra den
+  krymper med minst faktor $\alpha$ per steg, så rangeringen blir den
+  samme uansett hvor den besøkende starter.
+
+I [prosjekt 5](project_week5.qmd) undersøker du hvor mye besøksmønsteret
+må endres før to sider bytter plass.
+
+**Øv på dette:** [tilfeldige hopp](#uke5-oppg-hopp), og gå deretter til prosjekt 5.
 
 <details class="reading-step">
 <summary>Gå i dybden: utled Google-matrisen</summary>
@@ -1911,6 +1865,8 @@ $$\sum_i G_{ij}
 =\alpha\underbrace{\sum_i S_{ij}}_{1}
  +(1-\alpha)\underbrace{\sum_i u_i}_{1}=1.$$
 
+På en hengende node finnes ingen lenke å velge. Vi bruker derfor $u$ også
+når den besøkende er på en slik side og skulle ha fulgt en lenke.
 Hvis en hengende node hadde beholdt en nullkolonne i $S$, ville den
 tilsvarende kolonnen i $G$ summert til $1-\alpha$.
 Derfor erstatter vi nullkolonnen med $u$ før vi danner $G$.
@@ -1930,44 +1886,34 @@ ikke lagre den tette matrisen $u\mathbf1^T$.
 <details class="reading-step">
 <summary>Gå i dybden: egenverdier forklarer pendling og avtagende avvik</summary>
 
-La $e_k=p_k-p_*$ være avviket fra den stasjonære fordelingen.
-Trekk oppdateringene fra hverandre:
-
-$$\begin{aligned}
-e_{k+1}
-&=\alpha Sp_k+(1-\alpha)u
-  -\bigl(\alpha Sp_*+(1-\alpha)u\bigr)\\
-&=\alpha S(p_k-p_*)=\alpha Se_k.
-\end{aligned}$$
-
-Begge fordelinger har sum én, så $\mathbf1^Te_k=0$.
-Derfor er også $Ge_k=\alpha Se_k$.
-Et avvik i en egenretning skaleres med den tilhørende egenverdien.
-De øvrige egenverdiene til $G$ har absoluttverdi høyst $\alpha<1$;
-deres bidrag avtar. Normargumentet i neste fordypning gir en feilgrense
-også uten en egenvektorbasis.
-
 Se dette konkret med to sider som bare lenker til hverandre.
 Uten hopp blir fordelingen fra sikker start på første side
 $(1,0)^T,(0,1)^T,(1,0)^T,\ldots$.
 Fordelingen $(1/2,1/2)^T$ er stasjonær, men denne følgen nærmer seg den ikke.
 
-Med jevn hoppfordeling får vi
+Med jevn hoppfordeling og $\alpha=\tfrac12$ (halvparten lenkeklikk,
+halvparten hopp) får vi
 
-$$G=\begin{bmatrix}
-(1-\alpha)/2&(1+\alpha)/2\\
-(1+\alpha)/2&(1-\alpha)/2
-\end{bmatrix}.$$
+$$G=\tfrac12\begin{bmatrix}0&1\\1&0\end{bmatrix}
++\tfrac12\begin{bmatrix}1/2&1/2\\1/2&1/2\end{bmatrix}
+=\begin{bmatrix}1/4&3/4\\3/4&1/4\end{bmatrix}.$$
 
-For $v=(1,1)^T$ og $w=(1,-1)^T$ er $Gv=v$ og $Gw=-\alpha w$.
-Den stasjonære fordelingen er $p_*=v/2$.
-Fra $p_0=(1,0)^T=(v+w)/2$ får vi
+For $v=(1,1)^T$ og $w=(1,-1)^T$ er
 
-$$p_k=\tfrac12v+\tfrac12(-\alpha)^kw.$$
+$$Gv=\begin{bmatrix}1/4+3/4\\3/4+1/4\end{bmatrix}=v,\qquad
+Gw=\begin{bmatrix}1/4-3/4\\3/4-1/4\end{bmatrix}=\begin{bmatrix}-1/2\\1/2\end{bmatrix}=-\tfrac12w.$$
 
-Fortegnet på avviket veksler, men størrelsen avtar med faktor $\alpha$
-per steg når $0<\alpha<1$. Ved $\alpha=1$ fortsetter pendlingen.
-Dette knytter besøksmodellen til fortegnsforsøket i 5.4.
+Den stasjonære fordelingen er $p_*=v/2=(1/2,1/2)^T$.
+Fra $p_0=(1,0)^T=(v+w)/2$ får vi, fordi hvert steg ganger $w$-bidraget med $-\tfrac12$,
+
+$$p_k=\tfrac12v+\tfrac12\bigl(-\tfrac12\bigr)^kw,\qquad
+p_1=\begin{bmatrix}1/4\\3/4\end{bmatrix},\quad
+p_2=\begin{bmatrix}5/8\\3/8\end{bmatrix}.$$
+
+Fortegnet på avviket veksler, men størrelsen halveres i hvert steg.
+Dette knytter besøksmodellen til fortegnsforsøket i 5.4. I prosjekt 5 gjør
+du den samme analysen for en vilkårlig $\alpha$, og undersøker hva som skjer
+når hoppene fjernes.
 
 </details>
 
@@ -1976,7 +1922,7 @@ Dette knytter besøksmodellen til fortegnsforsøket i 5.4.
 
 Vi bruker normen $\lVert z\rVert_1=\sum_i|z_i|$.
 Fordi $S$ har ikke-negative elementer og kolonnesum én, gir
-trekantulikheten
+trekantulikheten $|a+b|\le|a|+|b|$
 
 $$\begin{aligned}
 \lVert Sz\rVert_1
@@ -1985,14 +1931,23 @@ $$\begin{aligned}
 =\lVert z\rVert_1.
 \end{aligned}$$
 
-Sammen med $e_{k+1}=\alpha Se_k$ gir dette
+Hvis $Sz=\lambda z$ med $z\ne0$, gir dette
+$|\lambda|\,\lVert z\rVert_1\le\lVert z\rVert_1$, altså $|\lambda|\le1$:
+egenverdiene til en kolonnestokastisk matrise har absoluttverdi høyst én.
 
-$$\lVert e_k\rVert_1\leq\alpha^k\lVert e_0\rVert_1.$$
+La $z$ være en vektor med sum null, $\mathbf1^Tz=0$, for eksempel
+forskjellen mellom to sannsynlighetsvektorer. Da er
+$(u\mathbf1^T)z=u(\mathbf1^Tz)=0$, så $Gz=\alpha Sz$ og
+
+$$\lVert Gz\rVert_1\le\alpha\lVert z\rVert_1.$$
+
+Ett steg med $G$ krymper altså avstanden mellom to fordelinger med minst
+faktor $\alpha$. Etter $k$ steg er avstanden høyst $\alpha^k$ ganger den opprinnelige.
 
 Vi får også en kontroll som ikke krever at vi kjenner $p_*$.
 La $p$ være en sannsynlighetsvektor, $e=p-p_*$ og $r=Gp-p$.
-Siden $e$ har sum null, er $\lVert Ge\rVert_1\leq\alpha\lVert e\rVert_1$.
-Likningen $e=-r+Ge$ gir derfor
+Siden $Gp_*=p_*$, er $Ge=Gp-p_*=r+e$, altså $e=-r+Ge$.
+Fordi $e$ har sum null, er $\lVert Ge\rVert_1\leq\alpha\lVert e\rVert_1$, og
 
 $$\lVert e\rVert_1\leq\lVert r\rVert_1+\alpha\lVert e\rVert_1
 \quad\Longrightarrow\quad
@@ -2009,7 +1964,7 @@ omtrent $6.67\cdot10^{-8}$ ved $\alpha=0.85$, men $10^{-6}$ ved $\alpha=0.99$.
 
 <div id="uke5-stotte-oppgaver"></div>
 
-Oppgave 1–2 repeterer verktøy fra matematikk 1. Bruk dem som selvtest
+De to oppgavene her repeterer verktøy fra Matematikk 1. Bruk dem som selvtest
 dersom lineære systemer, egenverdier eller egenvektorer ikke sitter friskt.
 Du trenger ikke fullføre støtteløpet dersom forkunnskapene sitter;
 gå da direkte til [5.8 Hovedløp](#uke5-oppgaver).
@@ -2018,15 +1973,13 @@ Arbeid først på papir og bruk svarfeltene til å kontrollere regningen.
 Bruk eksakte tall, for eksempel `3/2` og `sqrt(2)`. Skriftlige begrunnelser
 føres i egne notater.
 
-### Oppgave 1 – koordinater i en annen basis
+<div id="uke5-oppg-koordinater"></div>
 
-Vi har $v_1=(1,1)^T$, $v_2=(1,-1)^T$ og $x=(2,1)^T$.
-Vi skal finne tallene $c_1,c_2$ slik at $x=c_1v_1+c_2v_2$.
+### Koordinater i en egenvektorbasis
 
-**a. Sett opp systemet.** Skriv én likning for hver koordinat.
-**Svar i egne notater:** to lineære likninger med ukjente $c_1,c_2$.
-
-**b. Løs systemet.** Skriv ett reelt tall i hvert felt, ikke en vektor eller en likning.
+Vi har $v_1=(1,1)^T$, $v_2=(1,-1)^T$ og $x=(2,1)^T$, og vil finne tallene
+$c_1,c_2$ slik at $x=c_1v_1+c_2v_2$. Skriv først én likning for hver
+koordinat i egne notater, og løs deretter systemet. Skriv ett tall i hvert felt.
 
 ```{math-exercise}
 #| label: week5-task-coordinates
@@ -2040,32 +1993,25 @@ $c_1=$ __[3/2]
 $c_2=$ __[1/2]
 ```
 
-**c. Kontroller og tolk.** Beregn $c_1v_1+c_2v_2$, og forklar hvorfor
+**Kontroller og tolk:** Beregn $c_1v_1+c_2v_2$, og forklar hvorfor
 $c_1,c_2$ ikke er de samme som standardkoordinatene $2,1$.
-**Svar i egne notater:** én vektorberegning og en kort forklaring.
 
 <details class="learning-hint">
-<summary>Hint til oppgave 1</summary>
+<summary>Hint: koordinater i en egenvektorbasis</summary>
 
 Likningene er $c_1+c_2=2$ og $c_1-c_2=1$. Hva skjer når du legger dem sammen?
 
 </details>
 
-### Oppgave 2 – egenverdier og valgfrie egenvektorer
+<div id="uke5-oppg-egen"></div>
 
-Vi undersøker $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
+### Egenverdier og egenvektorer for hånd
 
-**a. Finn egenverdiene.** Sett opp $\det(A-\lambda I)=0$ og løs likningen.
-**Svar i egne notater:** determinantlikningen med mellomregning.
-
-**b. Finn en egenvektor til hver egenverdi.** Løs $(A-\lambda I)v=0$
-for hver egenverdi. Du velger selv skaleringen: vektorene trenger ikke ha
-lengde én eller første koordinat lik én.
-
-**Svarformat:** to reelle egenverdier i synkende rekkefølge, hver med en
-tilhørende ikke-null vektor i $\mathbb R^2$. Skriv ett tall per felt;
-vektorfeltene står som kolonner. Kontrollen undersøker $Av_i=\lambda_i v_i$
-og godtar alle gyldige skaleringer.
+Vi undersøker $A=\begin{bmatrix}1&2\\2&1\end{bmatrix}$. Sett opp
+$\det(A-\lambda I)=0$ i egne notater og løs likningen. Løs deretter
+$(A-\lambda I)v=0$ for hver egenverdi. Du velger selv skaleringen av
+egenvektorene. Skriv den største egenverdien først; kontrollen sjekker
+bare at $Av=\lambda v$.
 
 ```{math-exercise}
 #| label: week5-task-eigenvectors
@@ -2079,11 +2025,11 @@ og godtar alle gyldige skaleringer.
 #|           return {"score": 0, "feedback": "Fyll inn to egenverdier og to koordinater i hver egenvektor."}
 #|       # Godta eksakte reelle tall, også brøker og røtter, men ikke frie parametre.
 #|       if any(z.free_symbols or z.is_real is not True or z.is_finite is not True for z in values):
-#|           return {"score": 0, "feedback": "Bruk konkrete, endelige reelle tall. Beskriv parameterfamiliene i del c."}
-#|       A = Matrix([[2, 1], [1, 2]])
+#|           return {"score": 0, "feedback": "Bruk konkrete, endelige reelle tall. Beskriv parameterfamiliene i egne notater."}
+#|       A = Matrix([[1, 2], [2, 1]])
 #|       checks = []
 #|       messages = []
-#|       for i, target in enumerate((3, 1)):
+#|       for i, target in enumerate((3, -1)):
 #|           lam = values[3*i]
 #|           v = Matrix(values[3*i+1:3*i+3])
 #|           eigenvalue_ok = simplify(lam-target) == 0
@@ -2101,30 +2047,29 @@ og godtar alle gyldige skaleringer.
 #|               messages.append(f"Par {i+1}: egenverdien og egenvektoren stemmer.")
 #|       return {"score": sum(checks)/4, "show_score": False, "feedback": " ".join(messages)}
 
-For $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$: oppgi $\lambda_1>\lambda_2$
+For $A=\begin{bmatrix}1&2\\2&1\end{bmatrix}$: oppgi $\lambda_1>\lambda_2$
 og ikke-null vektorer som oppfyller $Av_i=\lambda_i v_i$.
 
 Største egenverdi: $\lambda_1=$ __[3]
 
 En tilhørende egenvektor: $v_1=$ vec[1,1]
 
-Minste egenverdi: $\lambda_2=$ __[1]
+Minste egenverdi: $\lambda_2=$ __[-1]
 
 En tilhørende egenvektor: $v_2=$ vec[1,-1]
 ```
 
-**c. Beskriv alle valgene.** Bruk de to egenvektorene dine til å beskrive
-alle egenvektorene til hver egenverdi og de to egenrommene.
-**Svar i egne notater:** to parameterfamilier $t v_i$, med presist vilkår på
-$t\in\mathbb R$ for henholdsvis egenvektorer og egenrom. Forklar hvorfor
-nullvektoren behandles forskjellig.
+**Beskriv alle valgene:** Bruk de to egenvektorene dine til å beskrive
+alle egenvektorene til hver egenverdi og de to egenrommene, som
+parameterfamilier $tv_i$. Hvilket vilkår på $t$ gjelder for egenvektorer,
+og hvilket for egenrom? Hva gjør den negative egenverdien med retningen?
 
 <details class="learning-hint">
-<summary>Hint til oppgave 2</summary>
+<summary>Hint: egenverdier og egenvektorer</summary>
 
-Determinantlikningen er $(2-\lambda)^2-1=0$. Sett hver rot inn i
-$A-\lambda I$ og løs det homogene systemet. Matrisen er singulær,
-så du skal ikke forsøke å invertere den.
+Determinantlikningen er $(1-\lambda)^2-4=0$, altså $1-\lambda=\pm2$.
+Sett hver rot inn i $A-\lambda I$ og løs det homogene systemet. Matrisen
+er singulær, så du skal ikke forsøke å invertere den.
 
 </details>
 
@@ -2132,35 +2077,32 @@ så du skal ikke forsøke å invertere den.
 
 <div id="uke5-oppgaver"></div>
 
-Oppgave 3–6 bruker ukens nye ideer i matematikk 3A: utvikling i en
+Oppgavene her bruker ukens nye ideer i Matematikk 3A: utvikling i en
 egenvektorbasis, potensmetoden og PageRank. Dette er hovedløpet.
 Hvis du trenger repetisjon av lineære systemer, egenverdier eller egenvektorer,
-bruk oppgave 1–2 i [5.7 Støtteløp](#uke5-stotte-oppgaver) og kom tilbake hit.
+bruk [5.7 Støtteløp](#uke5-stotte-oppgaver) og kom tilbake hit.
 
-Hver del angir hva du skal levere: tall i svarfeltene, kode i kodevinduet
+Hver oppgave angir hva du skal levere: tall i svarfeltene, kode i kodevinduet
 eller begrunnelser i egne notater. Bruk eksakte tall i matematikkfeltene,
 for eksempel `3/2` og `sqrt(2)`.
 
-### Oppgave 3 – gjentatt transformasjon i en egenvektorbasis
+<div id="uke5-oppg-potenser"></div>
+
+### Gjentatt transformasjon i en egenvektorbasis
 
 Vi undersøker en ny transformasjon, representert ved
 
 $$B=\begin{bmatrix}2&2\\2&5\end{bmatrix},\qquad x_0=(3,1)^T.$$
 
 Du får oppgitt egenvektorene $w_1=(1,2)^T$ og $w_2=(2,-1)^T$, med
-henholdsvis egenverdiene $6$ og $1$. Her skal du bruke egenvektorbasisen
-til å undersøke gjentatt transformasjon.
-
-**a. Finn et uttrykk for alle steg.** Bestem først $c_1,c_2$ fra
-$x_0=c_1w_1+c_2w_2$. Bruk deretter $B^kx_0=c_1 6^k w_1+c_2 1^k w_2$.
-
-**Svarformat:** de to standardkoordinatene til $B^kx_0$, som uttrykk i
-heltallet $k\geq0$. Skriv ett uttrykk i hvert vektorfelt, uten likhetstegn.
-Bruk for eksempel `6^k` for en potens. Kontrollen godtar algebraisk like uttrykk.
+henholdsvis egenverdiene $6$ og $1$. Bestem først $c_1,c_2$ fra
+$x_0=c_1w_1+c_2w_2$, og bruk deretter $B^kx_0=c_1 6^k w_1+c_2 1^k w_2$.
+Skriv de to standardkoordinatene til $B^kx_0$ som uttrykk i $k$,
+for eksempel med `6^k`.
 
 ```{math-exercise}
 #| label: week5-task-powers-general
-#| caption: a. Vektorformelen for alle steg
+#| caption: Vektorformelen for alle steg
 #| mode: custom
 #| vars: k
 #| field-labels: første koordinat som funksjon av k, andre koordinat som funksjon av k
@@ -2183,8 +2125,17 @@ Bruk for eksempel `6^k` for en potens. Kontrollen godtar algebraisk like uttrykk
 $B^kx_0=$ vec[6^k+2,2*6^k-1]
 ```
 
-**b. Beregn ved $k=3$.** De to første feltene er standardkoordinatene
-til vektoren $B^3x_0$. Det siste feltet er ett ikke-negativt tall:
+<details class="learning-hint">
+<summary>Hint: gjentatt transformasjon i en egenvektorbasis</summary>
+
+Løs $c_1(1,2)^T+c_2(2,-1)^T=(3,1)^T$ koordinat for koordinat. Sett deretter
+$c_1,c_2$ inn i $B^kx_0=c_16^kw_1+c_2w_2$ og les av første og andre koordinat.
+
+</details>
+
+Sett inn $k=3$. De to første feltene under er standardkoordinatene til
+$B^3x_0$. Det siste feltet er ett ikke-negativt tall: lengden av bidraget
+langs $w_2$ delt på lengden av bidraget langs $w_1$,
 
 $$\frac{\lVert c_2 1^3 w_2\rVert_2}{\lVert c_1 6^3 w_1\rVert_2}.$$
 
@@ -2201,17 +2152,16 @@ Lengden av bidraget langs $w_2$, delt på lengden av bidraget langs $w_1$, etter
 __[1/216]
 ```
 
-**c. Forklar retningen.** La $R_k$ være forholdet mellom lengden av
-bidraget langs $w_2$ og lengden av bidraget langs $w_1$:
+La nå $R_k$ være det samme forholdet etter $k$ steg:
 
 $$R_k=\frac{\lVert c_2 1^k w_2\rVert_2}{\lVert c_1 6^k w_1\rVert_2}.$$
 
-**Svarformat:** ett uttrykk i $k$ for $R_k$, ett reelt tall for grenseverdien
-og ett reelt tall for lengden av det andre bidraget. Bruk de samme $c_1,c_2$ som i del a.
+Finn et uttrykk for $R_k$, grenseverdien når $k\to\infty$, og lengden av
+det andre bidraget. Bruk de samme $c_1,c_2$ som over.
 
 ```{math-exercise}
 #| label: week5-task-powers-direction
-#| caption: c. Relativ vekst og grense
+#| caption: Relativ vekst og grense
 #| mode: custom
 #| vars: k
 #| field-labels: forhold Rₖ, grenseverdi for Rₖ, lengde av bidraget langs w₂
@@ -2238,18 +2188,17 @@ $\displaystyle\lim_{k\to\infty}R_k=$ __[0]
 $\lVert c_2 1^k w_2\rVert_2=$ __[sqrt(5)]
 ```
 
-Bruk svarene til å forklare i egne notater hvorfor de normaliserte vektorene
-nærmer seg linjen gjennom $w_1$, selv om det andre bidraget ikke blir kortere.
+**Forklar:** Bruk svarene til å forklare i egne notater hvorfor de
+normaliserte vektorene nærmer seg linjen gjennom $w_1$, selv om det andre
+bidraget ikke blir kortere.
 
-**d. Undersøk to endringer.**
-
-**d1. Velg en annen startvektor.** Finn en ikke-null startvektor som gir
-en iterasjonsfølge som ikke nærmer seg linjen gjennom $w_1$.
-**Svarformat:** to konkrete reelle koordinater. Alle gyldige skaleringer godtas.
+Finn så en ikke-null startvektor som gir en iterasjonsfølge som **ikke**
+nærmer seg linjen gjennom $w_1$. Skriv to konkrete koordinater; alle
+gyldige skaleringer godtas.
 
 ```{math-exercise}
 #| label: week5-task-powers-exception
-#| caption: d1. En startvektor uten dominant bidrag
+#| caption: En startvektor uten dominant bidrag
 #| mode: custom
 #| field-labels: første startkoordinat, andre startkoordinat
 #| checker: |
@@ -2269,16 +2218,14 @@ En startvektor for transformasjonen med matrise $B$: vec[2,-1]
 
 Begrunn i egne notater hvorfor vektoren din har den ønskede egenskapen.
 
-**d2. Endre fortegnet på én egenverdi.** Behold $x_0=(3,1)^T$ og
-basisvektorene, men la den nye transformasjonen ha egenverdiene $6$ og $-1$.
-Kall matrisen $\widetilde B$.
-
-**Svarformat:** de to standardkoordinatene til $\widetilde B^kx_0$
-som uttrykk i heltallet $k\geq0$. Bruk parenteser i `(-1)^k`.
+Til slutt endrer vi fortegnet på én egenverdi. Behold $x_0=(3,1)^T$ og
+basisvektorene, men la den nye transformasjonen $\widetilde B$ ha
+egenverdiene $6$ og $-1$. Skriv de to standardkoordinatene til
+$\widetilde B^kx_0$ som uttrykk i $k$. Bruk parenteser i `(-1)^k`.
 
 ```{math-exercise}
 #| label: week5-task-powers-sign
-#| caption: d2. Vektorformelen med negativ egenverdi
+#| caption: Vektorformelen med negativ egenverdi
 #| mode: custom
 #| vars: k
 #| field-labels: første koordinat som funksjon av k, andre koordinat som funksjon av k
@@ -2301,13 +2248,50 @@ som uttrykk i heltallet $k\geq0$. Bruk parenteser i `(-1)^k`.
 $\widetilde B^kx_0=$ vec[6^k+2*(-1)^k,2*6^k-(-1)^k]
 ```
 
-Hva endres ved fortegnet og lengden til det andre bidraget?
-Sammenlign med del c og begrunn svaret i egne notater.
+**Sammenlign:** Hva endres ved fortegnet og lengden til det andre bidraget?
+Begrunn svaret i egne notater.
 
-### Oppgave 4 – hva kontrollerer en liten egenresidual?
+<div id="uke5-oppg-potensmetode"></div>
 
-**a. Programmer potensmetoden.** Fullfør `power_check`.
-Normaliser startvektoren og utfør deretter nøyaktig `steps` oppdateringer
+### Ett steg av potensmetoden for hånd
+
+Vi bruker $A=\begin{bmatrix}3&1\\1&3\end{bmatrix}$ og startvektoren
+$x_0=(1,0)^T$. Regn ut Rayleigh-kvotienten $\rho(x_0)$ og lengden av
+egenresidualen $r_0=Ax_0-\rho(x_0)x_0$. Gjør så ett steg av potensmetoden,
+$x_1=Ax_0/\lVert Ax_0\rVert_2$, og regn ut det samme for $x_1$.
+Skriv eksakte tall, for eksempel `18/5`.
+
+```{math-exercise}
+#| label: week5-task-power-step
+#| caption: Rayleigh-kvotient og egenresidual før og etter ett steg
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: ρ(x₀), lengden av r₀, ρ(x₁), lengden av r₁
+
+$\rho(x_0)=$ __[3]
+
+$\lVert r_0\rVert_2=$ __[1]
+
+$\rho(x_1)=$ __[18/5]
+
+$\lVert r_1\rVert_2=$ __[4/5]
+```
+
+**Tolk:** Egenverdiene til $A$ er $4$ og $2$. Hvilken av dem nærmer
+$\rho$ seg, og hva skjer med residualen? Kontroller at $x_1^Tr_1=0$.
+
+<details class="learning-hint">
+<summary>Hint: ett steg av potensmetoden</summary>
+
+$Ax_0=(3,1)^T$, så $x_1=(3,1)^T/\sqrt{10}$. Siden $x_1$ har lengde én, er
+$\rho(x_1)=x_1^TAx_1$. Regn ut $Ax_1$ først.
+
+</details>
+
+### Hva kontrollerer en liten egenresidual?
+
+Nå programmerer du potensmetoden. Fullfør `power_check`: normaliser
+startvektoren og utfør deretter nøyaktig `steps` oppdateringer
 $x\leftarrow Ax/\lVert Ax\rVert_2$. Beregn til slutt
 
 $$\rho=\frac{x^TAx}{x^Tx},\qquad r=Ax-\rho x.$$
@@ -2344,41 +2328,65 @@ A = np.diag([5., 2.])
 # Undersøk [1., 1.], [0., 1.] og [1.e-8, 1.] med samme antall steg.
 
 ## TESTS ##
-x, rho, residual = power_check(np.diag([5.,2.]), np.array([0.,3.]), 4)
-assert np.allclose(x, [0,1]) and np.isclose(rho,2) and np.isclose(residual,0), 'En startvektor i det andre egenrommet gir itererte vektorer i samme egenrom.'
-x, rho, residual = power_check(np.diag([5.,2.]), np.array([1.,1.]), 2)
-y = np.array([25.,4.]); y /= np.linalg.norm(y)
-assert np.allclose(x,y), 'Normaliser, og utfør akkurat det oppgitte antallet steg.'
-assert np.isclose(rho, np.dot(y, np.diag([5.,2.])@y)), 'Bruk Rayleigh-kvotienten for siste vektor.'
-assert np.isclose(residual,np.linalg.norm(np.diag([5.,2.])@y-rho*y)), 'Mål egenresidualen, ikke endringen mellom iterasjoner.'
 x, rho, residual = power_check(np.array([[2.,1.],[1.,2.]]), np.array([3.,4.]), 0)
 assert np.allclose(x,[.6,.8]), 'Også startvektoren skal normaliseres når steps er 0.'
-assert np.isclose(rho,2.96) and np.isclose(residual,.28), 'Funksjonen må også virke for en matrise som ikke er diagonal.'
+assert np.isclose(rho,2.96) and np.isclose(residual,.28), 'Bruk Rayleigh-kvotienten og egenresidualen for vektoren x.'
+x, rho, residual = power_check(np.diag([5.,2.]), np.array([1.,1.]), 2)
+assert np.allclose(x, np.array([25.,4.])/np.sqrt(641)), 'Utfør akkurat det oppgitte antallet steg.'
 ```
 
-**b. Sammenlign tre startvektorer.** Bruk $A=\operatorname{diag}(5,2)$ og
-$(1,1)^T$, $(0,1)^T$, $(10^{-8},1)^T$.
-Forutsi hvilke som vil gi tilnærming til egenverdien $5$, og hvilken som vil
-gi raskest tilnærming. Prøv deretter 5, 20 og 40 steg for hver startvektor.
-Legg egne funksjonskall før `## TESTS ##` i kodevinduet.
+**Sammenlign tre startvektorer:** Bruk $A=\operatorname{diag}(5,2)$ og
+$(1,1)^T$, $(0,1)^T$, $(10^{-8},1)^T$. Forutsi hvilke som vil gi
+tilnærming til egenverdien $5$, og hvilken som vil gi raskest tilnærming.
+Prøv deretter 5, 20 og 40 steg for hver startvektor. Legg egne
+funksjonskall før `## TESTS ##` i kodevinduet, og lag en tabell med
+startvektor, antall steg, $\rho$ og residualens lengde.
 
-**Svar:** en tabell med startvektor, antall steg, $\rho$ og residualens lengde.
-
-**c. Tolk kontrollen.** Kan residualen være null når $\rho=2$?
+**Tolk kontrollen:** Kan residualen være null når $\rho=2$?
 Hva bekrefter en null residual, og hva sier den ikke om størrelsen på egenverdien?
 Bruk uttrykket for $A^kx_0$ til å forklare forskjellen mellom startvektorene
-$(0,1)^T$ og $(10^{-8},1)^T$.
-**Svar i egne notater:** én vektorformel og en kort konklusjon.
+$(0,1)^T$ og $(10^{-8},1)^T$, med én vektorformel og en kort konklusjon.
 
-### Oppgave 5 – stasjonær fordeling uten konvergens
+<div id="uke5-oppg-stasjonaer"></div>
+
+### Stasjonær fordeling for tre sider
+
+Tre nettsider lenker slik: A lenker til B og C, B lenker til C, og C
+lenker til A. Den besøkende velger en av lenkene med lik sannsynlighet.
+Skriv overgangsmatrisen $S$ i egne notater, med kolonnene som sidene vi går
+fra og rekkefølgen A, B, C. Regn så ut ett steg fra jevn startfordeling
+$p_0=(1/3,1/3,1/3)^T$, og finn den stasjonære fordelingen $p_*$ med sum én.
+
+```{math-exercise}
+#| label: week5-task-three-pages
+#| caption: Ett steg og den stasjonære fordelingen for tre sider
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: A etter ett steg, B etter ett steg, C etter ett steg, stasjonær andel for A, stasjonær andel for B, stasjonær andel for C
+
+$Sp_0=($ __[1/3] $, $ __[1/6] $, $ __[1/2] $)^T$
+
+$p_*=($ __[2/5] $, $ __[1/5] $, $ __[2/5] $)^T$
+```
+
+**Kontroller:** Har $Sp_0$ sum én? Sett $p_*$ inn i $Sp=p$ og sjekk alle
+tre radene. Hvilken side rangeres lavest, og hvorfor, ut fra lenkene?
+
+<details class="learning-hint">
+<summary>Hint: stasjonær fordeling</summary>
+
+Gå fram som i håndeksempelet i 5.5: skriv én likning per rad i $S$,
+start med den enkleste, og uttrykk alle andelene ved $p_A$. Bruk kravet
+«sum én» til slutt.
+
+</details>
+
+### Stasjonær fordeling uten konvergens
 
 To nettsider lenker bare til hverandre. Overgangsmatrisen er
 $S=\begin{bmatrix}0&1\\1&0\end{bmatrix}$, med kolonner som avsendersider.
-
-**a. Finn den stasjonære fordelingen.** Løs $Sp_*=p_*$ sammen med
-$p_{*,1}+p_{*,2}=1$, og finn begge egenverdiene.
-**Svarformat:** to sannsynligheter mellom 0 og 1 med sum én,
-og ett reelt tall for egenverdien forskjellig fra $1$.
+Løs $Sp_*=p_*$ sammen med $p_{*,1}+p_{*,2}=1$, og finn begge egenverdiene
+til $S$. Skriv de to sannsynlighetene og egenverdien som ikke er $1$.
 
 ```{math-exercise}
 #| label: week5-task-stationary-cycle
@@ -2392,30 +2400,41 @@ $p_*=($ __[1/2] $, $ __[1/2] $)^T$
 Egenverdien forskjellig fra $1$ er __[-1]
 ```
 
-**b. Følg to startfordelinger.** Finn $p_0,p_1,p_2,p_3$ både når
+**Følg to startfordelinger:** Finn $p_0,p_1,p_2,p_3$ både når
 $p_0=(1,0)^T$ og når $p_0=p_*$.
-**Svar i egne notater:** to følger med fire vektorer hver.
 
-**c. Forklar forskjellen.** Bruk den andre egenverdien til å forklare
-hvorfor en entydig stasjonær fordeling ikke sikrer konvergens fra enhver startfordeling.
-**Svar i egne notater:** en kort begrunnelse knyttet til vektorene i del b.
+**Forklar forskjellen:** Bruk den andre egenverdien til å forklare
+hvorfor en entydig stasjonær fordeling ikke sikrer konvergens fra enhver
+startfordeling. Knytt forklaringen til vektorene du fant.
 
-### Oppgave 6 – tilfeldige hopp endrer både forløp og rangering
+<details class="learning-hint">
+<summary>Hint: stasjonær fordeling uten konvergens</summary>
+
+Skriv $Sp=p$ som to likninger, én per rad. Egenverdiene finner du fra
+$\det(S-\lambda I)=\lambda^2-1=0$. For følgene: $S$ bytter de to koordinatene,
+så bruk den regelen tre ganger.
+
+</details>
+
+<div id="uke5-oppg-hopp"></div>
+
+### Tilfeldige hopp endrer forløp og rangering
 
 Vi følger lenkene med sannsynlighet $\alpha$ og velger ellers neste side
 etter en fast sannsynlighetsvektor $u$. Oppdateringen er
-$p_{k+1}=\alpha Sp_k+(1-\alpha)u$.
-
-**a. Programmer ett steg.** Fullfør `visit_step`.
+$p_{k+1}=\alpha Sp_k+(1-\alpha)u$. Fullfør `visit_step`, som gjør
+**ett** slikt steg.
 
 | Navn | Type og betydning |
 |---|---|
 | `S` | NumPy-matrise med form `(n, n)`, ikke-negative elementer og kolonnesum én |
-| `p`, `u` | NumPy-vektorer med form `(n,)`, ikke-negative elementer og sum én |
 | `alpha` | Reelt skalar med $0\leq\alpha<1$ |
+| `u`, `p` | NumPy-vektorer med form `(n,)`, ikke-negative elementer og sum én |
 | Returverdi | NumPy-vektor med form `(n,)`: fordelingen etter **ett** steg |
 
-Funksjonen skal returnere vektoren, ikke skrive den ut eller returnere flere verdier.
+Bruk nøyaktig denne rekkefølgen på argumentene: samme funksjon bruker du i
+prosjekt 5, del 2. Funksjonen skal returnere vektoren, ikke skrive den ut
+eller returnere flere verdier.
 
 ```{py-exercise}
 #| label: week5-task-teleportation
@@ -2426,7 +2445,7 @@ Funksjonen skal returnere vektoren, ikke skrive den ut eller returnere flere ver
 
 import numpy as np
 
-def visit_step(S, p, alpha, u):
+def visit_step(S, alpha, u, p):
     # Returner fordelingen etter ett steg med teleportering.
     return None
 
@@ -2437,35 +2456,55 @@ p = np.array([1.,0.])
 
 ## TESTS ##
 S2 = np.array([[0.,1.],[1.,0.]])
-out = visit_step(S2, np.array([1.,0.]), .8, np.array([.5,.5]))
+out = visit_step(S2, .8, np.array([.5,.5]), np.array([1.,0.]))
 assert np.allclose(out,[.1,.9]), 'Bland lenkesteget med den faste fordelingen u.'
-assert np.allclose(visit_step(S2,np.array([.3,.7]),0,np.array([.8,.2])),[.8,.2]), 'Ved alpha=0 bestemmer u hele neste fordeling.'
 S3 = np.array([[0.,0.,1.],[1.,0.,0.],[0.,1.,0.]])
-out = visit_step(S3,np.array([1.,0.,0.]),.6,np.array([.5,.25,.25]))
+out = visit_step(S3, .6, np.array([.5,.25,.25]), np.array([1.,0.,0.]))
 assert np.allclose(out,[.2,.7,.1]), 'Bruk kolonner som avsendere; funksjonen skal også virke for tre sider.'
-assert np.isclose(np.sum(out),1) and np.all(np.asarray(out)>=0), 'Resultatet skal være en sannsynlighetsvektor.'
 ```
 
-**b. Undersøk farten.** Bruk $S=\begin{bmatrix}0&1\\1&0\end{bmatrix}$,
-$u=(1/2,1/2)^T$ og $p_0=(1,0)^T$. Velg to verdier $0<\alpha<1$ som
-du tror vil gi tydelig forskjellig konvergensfart. Bruk samme startfordeling
-og antall steg i begge forsøk.
+**Undersøk farten:** Bruk $S=\begin{bmatrix}0&1\\1&0\end{bmatrix}$,
+$u=(1/2,1/2)^T$ og $p_0=(1,0)^T$. Velg to verdier $0<\alpha<1$ som du tror
+vil gi tydelig forskjellig konvergensfart, med samme startfordeling og
+antall steg i begge forsøk. Lag ett plott av $\lVert p_k-u\rVert_2$ mot $k$
+med én merket kurve for hver verdi av $\alpha$, og sammenlign med
+forventningen din. Legg forsøkskoden før `## TESTS ##`.
 
-**Svar:** ett plott av $\lVert p_k-u\rVert_2$ mot $k$ med én merket kurve
-for hver verdi av $\alpha$, og en kort sammenligning med forventningen din.
-Legg forsøkskoden før `## TESTS ##`.
+Nå bytter vi til en skjev hoppfordeling $u=(0.8,\,0.2)^T$ og $\alpha=\tfrac12$,
+fortsatt med de to sidene som lenker til hverandre. Finn den stasjonære
+fordelingen $p_*$ ved å løse $p_*=\tfrac12Sp_*+\tfrac12u$ for hånd.
+Skriv deretter avviket $e_k=p_k-p_*$ som et tall ganger $(1,-1)^T$, og finn
+tallet som dette tallet ganges med i hvert steg.
 
-**c. Begrunn observasjonen.** Skriv avviket $p_k-u$ som et tall ganger
-$(1,-1)^T$. Vis hvordan dette tallet endres ved ett steg.
-**Svar i egne notater:** en formel i $k$ og $\alpha$ og en forklaring av
-både fortegnet og konvergensfarten.
+```{math-exercise}
+#| label: week5-task-skewed-jump
+#| caption: Stasjonær fordeling og avviksfaktor med skjeve hopp
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første stasjonære andel, andre stasjonære andel, faktor per steg for avviket
 
-**d. Skill regnefart fra modellvalg.** Forklar hva en lavere $\alpha$ betyr
-for vekten på lenkene. I dette symmetriske eksemplet er den stasjonære
-fordelingen $u$ for alle $0\leq\alpha<1$. Hvorfor betyr ikke dette at
-rangeringen på andre nettverk er uavhengig av $\alpha$? Bruk fellen i 5.6
-som sammenligningsgrunnlag.
-**Svar i egne notater:** en kort forklaring med henvisning til besøksregelen.
+$p_*=($ __[3/5] $, $ __[2/5] $)^T$
+
+Avviket ganges i hvert steg med __[-1/2]
+```
+
+**Begrunn:** Skriv $e_k$ som en formel i $k$ når $p_0=(1,0)^T$, og forklar
+både fortegnet og farten. Hvorfor er $p_*$ ikke lik $u$ her?
+
+<details class="learning-hint">
+<summary>Hint: skjeve hopp</summary>
+
+Med $S=\begin{bmatrix}0&1\\1&0\end{bmatrix}$ blir $p_*=\tfrac12Sp_*+\tfrac12u$ til de
+to likningene $p_1=\tfrac12p_2+0.4$ og $p_2=\tfrac12p_1+0.1$. Regn så ut $p_1$ og
+$p_2$ fra $p_0=(1,0)^T$ og sammenlign avvikene $e_0,e_1,e_2$.
+
+</details>
+
+**Skill regnefart fra modellvalg:** Forklar hva en lavere $\alpha$ betyr
+for vekten på lenkene. I det symmetriske eksemplet med $u=(1/2,1/2)^T$ er
+den stasjonære fordelingen $u$ for alle $0\leq\alpha<1$. Hvorfor betyr ikke
+dette at rangeringen på andre nettverk er uavhengig av $\alpha$? Bruk
+fellen i 5.6 som sammenligningsgrunnlag.
 
 I [prosjekt 5](project_week5.qmd) bruker du dette til en egen undersøkelse
 av rangering. Skill mellom tre spørsmål: Oppfyller svaret likningen?
