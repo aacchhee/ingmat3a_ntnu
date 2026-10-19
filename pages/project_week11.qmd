@@ -1,9 +1,9 @@
 ---
-title: "Prosjekt 11 – Produksjonsplan og ressurspriser"
+title: "Prosjekt 11 – Hvorfor koster strømmen det den koster?"
 resources:
-  - ../assets/project_week11.py
+  - ../assets/project_week11_setup.py
 ---
 
 {{< include ../_includes/projects/week11_setup.md >}}
 
-{{< include ../_includes/projects/week11_linear_programming.md >}}
+{{< include ../_includes/projects/week11_power_market.md >}}
