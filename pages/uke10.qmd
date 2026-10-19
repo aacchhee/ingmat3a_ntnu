@@ -1,5 +1,5 @@
 ---
-title: "Uke 10 – Newtons metode for optimering"
+title: "Uke 10 – Newtons metode og Gauss–Newton"
 ---
 
 {{< include ../_includes/optimization/week10_setup.md >}}
