@@ -8,4 +8,6 @@
 plugins:
   - name: ctm-assessment
     repo: https://github.com/Erasmus-CTM/ctm-assessment.git
-    ref: main
+    # Pinned during the step-4 migration of CTM Assessment (reveal blocks,
+    # modes, tab links, autosave); the course's migration PR sets it back to main.
+    ref: 9ed46a449f41518d98fbd1b0964f6b3dce1ba0d7
