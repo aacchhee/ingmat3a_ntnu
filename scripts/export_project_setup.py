@@ -1,18 +1,22 @@
 """Export browser setup includes for use beside a downloaded notebook.
 
 Run after editing a lecture or project setup include. Use --week 6 to
-export only week 6; without arguments both week 6 and week 7 are exported.
+export only week 6; without arguments all weeks with a project setup are exported.
+A project uses the lecture setup in _includes/linalg/ when it exists (weeks 6–7);
+later projects are self-contained.
 """
 from pathlib import Path
 import argparse
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
+WEEKS = (6, 7, 9, 10, 11, 12)
 
 
 def export_week(week):
-    sources = [ROOT / f'_includes/linalg/week{week}_setup.md']
-    sources.append(ROOT / f'_includes/projects/week{week}_setup.md')
+    candidates = [ROOT / f'_includes/linalg/week{week}_setup.md',
+                  ROOT / f'_includes/projects/week{week}_setup.md']
+    sources = [source for source in candidates if source.exists()]
     blocks = []
     for source in sources:
         blocks.extend(re.findall(r'```\{pyodide-python\}\n(.*?)```', source.read_text(), re.S))
@@ -28,7 +32,8 @@ def export_week(week):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--week', type=int, choices=(6, 7))
+    parser.add_argument('--week', type=int, choices=WEEKS)
     args = parser.parse_args()
-    for week in ((args.week,) if args.week else (6, 7)):
-        export_week(week)
+    for week in ((args.week,) if args.week else WEEKS):
+        if (ROOT / f'_includes/projects/week{week}_setup.md').exists():
+            export_week(week)
