@@ -62,7 +62,7 @@ kodeoppgavene i 12.7.
 |:--|:--|
 | [Uke 3: nullrom](uke3.qmd#uke3-del3) | Hvilke retninger endrer ikke $Cz$? |
 | [Uke 4: komponent langs en retning](uke4.qmd#uke4-retning) | Hvilken enhetsretning gir størst komponent? |
-| [Uke 5: Rayleigh-kvotienten](uke5.qmd#uke5-potens) | Hva er størst mulig $z^TAz$ når $\lVert z\rVert_2=1$? |
+| [Uke 5: Rayleigh-kvotienten](uke5.qmd#uke5-rayleigh) | Hva er størst mulig $z^TAz$ når $\lVert z\rVert_2=1$? |
 | [Uke 6: CG](uke6.qmd#uke6-cg) og [uke 10: Cholesky](uke10.qmd#uke10-cholesky) | Hva krever metodene av matrisen? |
 | [Uke 7: største strekk](uke7.qmd#uke7-geometri) og [pseudoinvers](uke7.qmd#uke7-pseudoinvers) | Hvorfor er $\sigma_1$ det største strekket? |
 | [Uke 8: kompakthet](uke8.qmd#uke8-kompakt) | Finnes et maksimum på en kurve? |
@@ -658,7 +658,7 @@ $z^TAz=-\lambda\,z^Tz=-\lambda$. Egenverdiene til $A$ er $\pm\tfrac12$, med
 egenvektorer langs $(1,1)$ og $(1,-1)$. Det er akkurat tabellen i 12.3:
 $\lambda=-\tfrac12$ gir maksimum $\tfrac12$, og $\lambda=\tfrac12$ gir
 minimum $-\tfrac12$. På enhetssirkelen er $z^TAz$ Rayleigh-kvotienten fra
-[uke 5](uke5.qmd#uke5-potens), og vi har vist:
+[uke 5](uke5.qmd#uke5-rayleigh), og vi har vist:
 
 > **Største og minste verdi av $z^TAz$ når $\lVert z\rVert_2=1$ er største og
 > minste egenverdi av $A$.**

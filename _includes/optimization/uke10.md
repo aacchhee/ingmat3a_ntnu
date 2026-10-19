@@ -78,8 +78,9 @@ beste faste steget. Gradienten sier hvor bratt det er akkurat her, men
 ingenting om hvordan bakken bøyer seg litt lenger borte.
 
 Nå tar vi også med krumningen, altså Hessianen. Metoden som gjør det, heter
-**Newtons metode**, og du har faktisk brukt den før: i uke 2, uten at vi
-kalte den det. I 10.1 bygger vi oppskriften i tre rolige trinn: først for
+**Newtons metode**, og du har møtt den før: i uke 2 for $\sqrt2$ og i
+prosjekt 2. En av omskrivingene fra uke 2 var også Newton, uten at vi sa
+det. I 10.1 bygger vi oppskriften i tre rolige trinn: først for
 én likning, så for minimering i én variabel, og til slutt i to variabler.
 Til slutt tar vi ett Newton-steg for hånd på Himmelblaus funksjon. Hvor
 rask metoden er, ser vi i 10.2.
