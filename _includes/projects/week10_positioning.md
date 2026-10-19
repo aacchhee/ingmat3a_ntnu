@@ -49,7 +49,7 @@ brukes bare til kontroll.
   $F(z+\alpha p)\le F(z)+10^{-4}\alpha\,g^Tp$.
 - **Minste kvadrater** ([uke 4](uke4.qmd#uke4-mk)): i løsningen av
   $\min_c\|Ac-b\|$ står residualen $b-Ac$ vinkelrett på alle kolonnene,
-  $A^T(b-Ac)=0$. Det er **normallikningene** $A^TAc=A^Tb$ (uke 7). I praksis
+  $A^T(b-Ac)=0$. Det er **normallikningene** $A^TAc=A^Tb$ ([uke 4](uke4.qmd#uke4-normal)). I praksis
   løser vi med QR eller `np.linalg.lstsq(A, b, rcond=None)[0]`, som ikke
   danner $A^TA$.
 - **Konvergensfaktor** ([uke 2](page4.qmd#uke2-konvergensfart)): en

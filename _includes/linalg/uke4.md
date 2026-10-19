@@ -2337,10 +2337,50 @@ vises som loddrette avvik i figuren. At $Q^Tr_*=0$, gjelder
 vektorene med fire koordinater, én for hver måling; det betyr
 ikke at de røde segmentene står vinkelrett på den tegnede linjen.
 
+<div id="uke4-normal"></div>
+
+#### Normallikningene: den samme betingelsen uten $Q$
+
+Betingelsen $Q^Tr_*=0$ sier at residualen står vinkelrett på alle mulige
+modellvektorer. Vi kan skrive den uten $Q$. Siden $A=QR$, er
+$A^T=R^TQ^T$, og derfor
+
+$$A^Tr_*=R^T\bigl(Q^Tr_*\bigr)=R^T\,0=0.$$
+
+Residualen står altså vinkelrett på hver kolonne i $A$. Setter vi inn
+$r_*=b-Ac_*$, får vi **residualbetingelsen** og **normallikningene**:
+
+$$A^T(b-Ac_*)=0
+\qquad\Longleftrightarrow\qquad
+\boxed{A^TA\,c_*=A^Tb}.$$
+
+For linjen vår er kolonnene i $A$ lik $(1,1,1,1)$ og $(-1,0,1,2)$.
+Hvert element i $A^TA$ og $A^Tb$ er et indreprodukt:
+
+$$A^TA=\begin{bmatrix}1+1+1+1 & -1+0+1+2\\ -1+0+1+2 & 1+0+1+4\end{bmatrix}
+=\begin{bmatrix}4&2\\2&6\end{bmatrix},
+\qquad
+A^Tb=\begin{bmatrix}0.2+0.9+2.1+2.8\\ -0.2+0+2.1+5.6\end{bmatrix}
+=\begin{bmatrix}6\\7.5\end{bmatrix}.$$
+
+Den første likningen, $4c_0+2c_1=6$, gir $c_0=1.5-0.5c_1$. Innsatt i den
+andre, $2c_0+6c_1=7.5$, får vi $3-c_1+6c_1=7.5$, altså $c_1=0.90$ og
+$c_0=1.05$: den samme linjen som med QR. Kontroll med residualen fra over:
+
+$$A^Tr_*=\begin{bmatrix}0.05-0.15+0.15-0.05\\ -0.05+0+0.15-0.10\end{bmatrix}
+=\begin{bmatrix}0\\0\end{bmatrix}.$$
+
+Hvorfor bruker vi da QR? Normallikningene er korte å skrive opp, men når
+kolonnene i $A$ nesten er avhengige, blir $A^TA$ svært følsom for
+avrunding. I prosjekt 4, del 6, undersøker du hva som skjer da, og i
+uke 7 ser du forklaringen med singulærverdiene. QR arbeider direkte med
+$A$ og unngår å danne $A^TA$.
+
 #### Gjenta forsøket i Python
 
 Koden følger de samme trinnene: beregn QR, projiser målingene,
-løs for linjekoeffisientene og beregn residualen.
+løs for linjekoeffisientene og beregn residualen. Til slutt løser vi
+normallikningene som en kontroll; de skal gi de samme koeffisientene.
 NumPys QR kan velge andre fortegn på kolonner i $Q$ og tilhørende
 rader i $R$; modellverdiene og linjen blir de samme.
 
@@ -2370,6 +2410,9 @@ print("kvadratsum:", r @ r)
 # Begge kontrollene skal gi omtrent null, med små avrundingsavvik.
 print("Ac - Qd =", fitted - projected)
 print("Q^T r =", Q.T @ r)
+# Normallikningene A^T A c = A^T b gir de samme koeffisientene her.
+c_ne = np.linalg.solve(A.T @ A, A.T @ b)
+print("normallikningene:", c_ne)
 
 grid = np.linspace(-1.2, 2.2, 200)
 plt.scatter(t, b, color="black", label="målinger")
