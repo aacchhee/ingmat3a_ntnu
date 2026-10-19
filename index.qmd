@@ -13,7 +13,7 @@ kontrollere metodene. Klikk på uken for å åpne undervisningssiden.
 
 | Uke | Spørsmålet vi starter med | Matematisk innhold og anvendelser |
 |:---|:---|:---|
-| [Uke 1](pages/page2.qmd) | **Hvordan kan vi regne raskere, og hvorfor blir ikke 0,1 + 0,2 alltid nøyaktig 0,3 på en datamaskin?** | Du lærer å måle hvor stor en feil er, og ser at en lur regnerekkefølge (Horners metode) gjør polynomer mye raskere å regne ut. Datamaskinen lagrer tall med et begrenset antall binære sifre; du finner ut når avrundingen ødelegger et resultat, og i prosjektet prøver du å lure en vanlig summering til å regne feil. |
+| [Uke 1](pages/page2.qmd) | **Hvordan kan vi regne raskere, og hvorfor blir ikke 0,1 + 0,2 nøyaktig 0,3 på en datamaskin?** | Du lærer å måle hvor stor en feil er, og ser at en lur regnerekkefølge (Horners metode) gjør polynomer mye raskere å regne ut. Datamaskinen lagrer tall med et begrenset antall binære sifre; du finner ut når avrundingen ødelegger et resultat, og i prosjektet prøver du å lure en vanlig summering til å regne feil. |
 | [Uke 2](pages/page4.qmd) | **Kan vi finne kvadratroten av 2 ved å gjenta en enkel regneregel – og hvordan vet vi når svaret er nøyaktig nok?** | Mange likninger løses best ved å starte med et anslag og forbedre det steg for steg, og du lærer å se om en slik gjentakelse nærmer seg svaret, hvor fort det går og når det er trygt å stoppe. I prosjektet tegner du fargekart over hvilken løsning Newtons metode finner fra ulike startpunkter. |
 
 ## Numerisk lineær algebra
