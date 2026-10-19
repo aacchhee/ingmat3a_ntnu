@@ -2,7 +2,7 @@
 #| label: project-week12-setup
 #| autorun: true
 #| context: setup
-# Ferdige verktøy for kjettingen. Begrensningsfunksjonen h og straffefunksjonen
+# Ferdige verktøy for kjettingen. Kravfunksjonen h og straffefunksjonen
 # skriver du selv i prosjektet.
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,7 +37,7 @@ def directions(z):
 
 
 def jac_links(z, *args):
-    """Jacobianen til h: raden for ledd i har -u_i på plassene til p_(i-1) og u_i på plassene til p_i."""
+    """Jacobimatrisen til h: raden for ledd i har -u_i på plassene til p_(i-1) og u_i på plassene til p_i."""
     U = directions(z)
     n = len(U)
     J = np.zeros((n, 2*(n-1)))
@@ -82,6 +82,23 @@ def plot_chain(*shapes, labels=None):
     ax.set(xlabel='x (m)', ylabel='y (m)')
     ax.set_aspect('equal')
     ax.grid(alpha=.3)
+    if labels is not None:
+        ax.legend()
+    plt.show()
+
+
+def plot_constraint_circles(centres, radius, candidates, labels=None):
+    """Tegn kravsirklene rundt endene, og hver kandidat som en kjetting fra ende til kandidat til ende."""
+    t = np.linspace(0, 2*np.pi, 300)
+    fig, ax = plt.subplots(figsize=(6, 4.5))
+    for c in centres:
+        ax.plot(c[0] + radius*np.cos(t), c[1] + radius*np.sin(t), color='0.7')
+    for k, p in enumerate(candidates):
+        P = np.vstack([centres[0], p, centres[1]])
+        ax.plot(P[:, 0], P[:, 1], 'o-' if k == 0 else 'o--',
+                label=None if labels is None else labels[k])
+    ax.set(xlabel='x (m)', ylabel='y (m)')
+    ax.set_aspect('equal')
     if labels is not None:
         ax.legend()
     plt.show()

@@ -1,9 +1,11 @@
 ## Hva betyr en Lagrangemultiplikator?
 
-En kjetting henger mellom to kroker. Hvorfor får den akkurat den formen?
-Svaret er et optimeringsproblem med **likhetskrav**, temaet i
-[uke 12](uke12.qmd): kjettingen henger så lavt som mulig, men hvert ledd har
-fast lengde. Vi skal bruke dette problemet til å svare på to spørsmål:
+Heng en kjetting mellom to kroker, og den finner formen sin helt av seg selv.
+Men hvorfor akkurat den formen? Svaret er et optimeringsproblem med
+**likhetskrav**, temaet i [uke 12](uke12.qmd): kjettingen henger så lavt den
+kan, men hvert ledd har fast lengde. Det er nøyaktig den typen problem
+Lagranges metode er laget for. Vi skal bruke kjettingen til å svare på to
+spørsmål:
 
 - **Hva betyr Lagrangemultiplikatorene?** Her viser de seg å være kreftene som
   strekker hvert ledd, og samtidig en pris, som dualprisene i
@@ -13,8 +15,10 @@ fast lengde. Vi skal bruke dette problemet til å svare på to spørsmål:
   et bedre svar, men et vanskeligere problem.
 
 Du regner ett leddpunkt for hånd, skriver fire korte kodebiter, og bruker
-ferdige celler for SLSQP, BFGS og figurer. Sett av 3–4 timer. Skriv en kort
-forventning før hvert forsøk, og sammenlign med det du får.
+ferdige celler for SLSQP, BFGS og figurer. Sett av omtrent 4–6 timer. Skriv
+en kort forventning før hvert forsøk, og sammenlign med det du får. Det er
+helt i orden å bomme: en forventning som ikke stemmer, er ofte der du lærer
+mest.
 
 ### En vei gjennom prosjektet
 
@@ -26,57 +30,256 @@ forventning før hvert forsøk, og sammenlign med det du får.
 | 4. Fjærer i stedet for ledd | Hvor stive må fjærene være, og hva koster det? | Straffetabellen og kondisjonstallet. |
 | 5. Din undersøkelse | Holder forklaringen når vi endrer kjettingen? | Forutsigelse og kontroll. |
 
-### Fra fysikk til matematikk
+### Først et bilde: en kjetting med tre ledd
 
-Vi bruker bare tre ideer fra skolefysikken: potensiell energi er vekt ganger
-høyde, krefter legges sammen som vektorer, og en fjærkraft er stivhet ganger
-forlengelse. Hvert fysisk ord på denne siden betyr nøyaktig det som står i
-høyre kolonne, og det er matematikken du arbeider med.
+Før vi skriver en eneste formel, leker vi litt. Appleten viser en liten
+kjetting med tre ledd. Endene $p_0$ og $p_3$ sitter fast i to kroker, 4 m fra
+hverandre. Leddene er $1.5$ m, $2$ m og $1.5$ m lange, og i hvert av de to
+frie leddpunktene $p_1$ og $p_2$ henger en vekt på $1$ N.
 
-| Fysisk ord | Matematikk |
-|:--|:--|
-| leddpunkt $j$ | punktet $p_j=(x_j,y_j)$. Endene $p_0=(0,0)$ og $p_{10}=(4,0)$ ligger fast. De ukjente er $z=(x_1,y_1,\ldots,x_9,y_9)$, 18 tall. |
-| vekt | hvert fritt leddpunkt har vekt $w=1$ N. Leddene selv regnes som vektløse. |
-| potensiell energi | målfunksjonen $E(z)=w\,(y_1+\cdots+y_9)$: summen av høydene, ganget med $w$. |
-| stivt ledd $i$ | kravet $h_i(z)=\lVert p_i-p_{i-1}\rVert_2-\ell=0$, for $i=1,\ldots,10$, med $\ell=0.5$ m. |
-| retningen til ledd $i$ | enhetsvektoren $u_i=(p_i-p_{i-1})/\lVert p_i-p_{i-1}\rVert_2=(\cos\theta_i,\sin\theta_i)$. |
-| strekkraften i ledd $i$ | **navnet på multiplikatoren $\lambda_i$**. |
-| kraftbalanse i leddpunkt $j$ | **Lagranges likning for $p_j$**, med alle fortegn snudd (del 1 og 2). |
-| fjær med stivhet $\mu$ | straffeleddet $\tfrac\mu2h_i(z)^2$ (del 4). |
-| forlengelse av en fjær | tallet $h_i(z)$ når kravet ikke er oppfylt nøyaktig. |
+Dra i $p_1$ eller $p_2$. Leddene kan ikke strekkes, så $p_1$ kan bare gli
+langs den lyseblå sirkelbuen rundt $p_0$, og $p_2$ langs buen rundt $p_3$.
+Flytter du det ene punktet, følger det andre med. Øverst ser du energien $E$,
+som her bare er summen av de to høydene (avtale 6 under forklarer hvorfor),
+og vinklene. Den tredje linjen viser at alle leddlengdene står fast.
 
-### Avtaler vi bruker hele veien
+```{.jsxgraph width="620" height="420" style="width:100%;max-width:620px;height:420px;border:0;"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [-0.6, 1.35, 4.6, -2.05], axis: false, keepaspectratio: true,
+  showNavigation: false, showCopyright: false,
+  pan: {enabled:false}, zoom: {enabled:false}
+});
+// Tre ledd med fast lengde mellom de faste endene p0 = (0, 0) og p3 = (4, 0).
+// Hvert fritt leddpunkt p1, p2 har vekten w = 1 N. Kjettingen har én frihetsgrad.
+var span = 4, len = [1.5, 2, 1.5], w = 1, deg = Math.PI/180;
+// Skjæringspunktet mellom sirkelen om c1 (radius r1) og sirkelen om c2 (radius r2)
+// som ligger til høyre for retningen c1 -> c2, altså under linjen fra c1 til c2.
+function meet(c1, r1, c2, r2) {
+  var dx = c2[0]-c1[0], dy = c2[1]-c1[1], d = Math.sqrt(dx*dx + dy*dy);
+  var s = (r1*r1 - r2*r2 + d*d)/(2*d), t = Math.sqrt(Math.max(0, r1*r1 - s*s));
+  return [c1[0] + (s*dx + t*dy)/d, c1[1] + (s*dy - t*dx)/d];
+}
+function joint1(phi) { return [len[0]*Math.cos(phi), len[0]*Math.sin(phi)]; }
+function joint2(p1) { return meet(p1, len[1], [span, 0], len[2]); }
+// Vinkelområdet for ledd 1: fra «ledd 2 og 3 på linje» til «ledd 1 og 2 på linje».
+var phiLo = -Math.acos((len[0]*len[0] + span*span - Math.pow(len[1]+len[2], 2))/(2*len[0]*span));
+var phiHi = -Math.acos((Math.pow(len[0]+len[1], 2) + span*span - len[2]*len[2])/(2*(len[0]+len[1])*span));
+function energyAt(phi) { var p = joint1(phi), q = joint2(p); return w*(p[1] + q[1]); }
+// Likevekt: minst energi. E er unimodal i vinkelen, så gyllent snitt holder.
+function equilibrium() {
+  var a = phiLo, b = phiHi, g = (Math.sqrt(5) - 1)/2;
+  for (var k = 0; k < 80; k++) {
+    var c = b - g*(b - a), d = a + g*(b - a);
+    if (energyAt(c) < energyAt(d)) { b = d; } else { a = c; }
+  }
+  return (a + b)/2;
+}
+var hide = {visible:false, fixed:true};
+var P0 = board.create('point', [0, 0], {name:'p₀', fixed:true, color:'#37474f', size:4,
+  label:{offset:[-22, 12], fontSize:14}});
+var P3 = board.create('point', [span, 0], {name:'p₃', fixed:true, color:'#37474f', size:4,
+  label:{offset:[8, 12], fontSize:14}});
+// Sporene leddpunktene kan gli langs: sirkelbuer, fordi endeleddene har fast lengde.
+var track1 = board.create('arc', [P0, board.create('point', joint1(phiLo), hide),
+  board.create('point', joint1(phiHi), hide)],
+  {strokeColor:'#90caf9', strokeWidth:5, strokeOpacity:0.6, fixed:true, highlight:false});
+var track2 = board.create('arc', [P3, board.create('point', joint2(joint1(phiLo)), hide),
+  board.create('point', joint2(joint1(phiHi)), hide)],
+  {strokeColor:'#90caf9', strokeWidth:5, strokeOpacity:0.6, fixed:true, highlight:false});
+var phiStart = -30*deg, s1 = joint1(phiStart), s2 = joint2(s1);
+var J1 = board.create('glider', [s1[0], s1[1], track1], {name:'p₁', color:'#1565c0', size:6,
+  label:{offset:[-26, -14], fontSize:14}});
+var J2 = board.create('glider', [s2[0], s2[1], track2], {name:'p₂', color:'#1565c0', size:6,
+  label:{offset:[10, -14], fontSize:14}});
+// Drar du i ett leddpunkt, følger det andre med, slik at alle tre lengdene står fast.
+J1.on('drag', function () {
+  J2.setPositionDirectly(JXG.COORDS_BY_USER, joint2([J1.X(), J1.Y()]));
+  board.update();
+});
+J2.on('drag', function () {
+  J1.setPositionDirectly(JXG.COORDS_BY_USER, meet([0, 0], len[0], [J2.X(), J2.Y()], len[1]));
+  board.update();
+});
+function setShape(phi) {
+  var p = joint1(phi);
+  J1.setPositionDirectly(JXG.COORDS_BY_USER, p);
+  J2.setPositionDirectly(JXG.COORDS_BY_USER, joint2(p));
+  board.update();
+}
+var pts = [P0, J1, J2, P3];
+function unit(i) {
+  var dx = pts[i+1].X() - pts[i].X(), dy = pts[i+1].Y() - pts[i].Y(), n = Math.sqrt(dx*dx + dy*dy);
+  return [dx/n, dy/n];
+}
+function linkLength(i) { return Math.hypot(pts[i+1].X() - pts[i].X(), pts[i+1].Y() - pts[i].Y()); }
+function angle(i) { var u = unit(i), a = Math.atan2(u[1], u[0])/deg; return Math.abs(a) < 0.05 ? 0 : a; }
+var sub = ['₁', '₂', '₃'];
+function makeLink(i) {
+  board.create('segment', [pts[i], pts[i+1]], {strokeColor:'#90a4ae', strokeWidth:7,
+    fixed:true, highlight:false});
+  // Enhetsvektoren u_i: lengde 1, fra venstre mot høyre langs leddet.
+  board.create('arrow', [
+    [function () { return pts[i].X(); }, function () { return pts[i].Y(); }],
+    [function () { return pts[i].X() + unit(i)[0]; }, function () { return pts[i].Y() + unit(i)[1]; }]
+  ], {strokeColor:'#c62828', strokeWidth:3, fixed:true, highlight:false});
+  board.create('text', [
+    function () { return pts[i].X() + 0.5*unit(i)[0] + 0.25*unit(i)[1] - 0.08; },
+    function () { return pts[i].Y() + 0.5*unit(i)[1] - 0.25*unit(i)[0] - 0.04; },
+    'u' + sub[i]], {fontSize:15, color:'#c62828', fixed:true, highlight:false});
+}
+for (var i = 0; i < 3; i++) { makeLink(i); }
+// Høyden til hvert fritt leddpunkt, målt fra nullnivået y = 0 (linjen gjennom endene).
+function makeHeight(J, k) {
+  var side = k === 0 ? 1 : -1;   // y1 til høyre for den stiplede linjen, y2 til venstre
+  board.create('segment', [J, [function () { return J.X(); }, 0]],
+    {strokeColor:'#ef6c00', dash:2, strokeWidth:2, fixed:true, highlight:false});
+  board.create('text', [function () { return J.X() + 0.06*side; }, function () { return J.Y()*(k === 0 ? 0.35 : 0.65); },
+    function () { return 'y' + sub[k] + ' = ' + J.Y().toFixed(3); }],
+    {fontSize:13, color:'#ef6c00', fixed:true, highlight:false, anchorX: k === 0 ? 'left' : 'right'});
+}
+makeHeight(J1, 0); makeHeight(J2, 1);
+// Nullnivået: linjen gjennom de to faste endene.
+board.create('line', [P0, P3], {strokeColor:'#78909c', dash:1, strokeWidth:1, fixed:true,
+  highlight:false, straightFirst:true, straightLast:true});
+board.create('text', [0.9, 0.12, 'nullnivå: y = 0'], {fontSize:12, color:'#546e7a', fixed:true});
+// Kreftene i leddpunktene. Tyngden er (0, -w). Ledd i virker på p_i med -lambda_i u_i og
+// på p_(i-1) med +lambda_i u_i. Vi velger lambda_1, lambda_2, lambda_3 slik at summen av
+// kreftene i p1 og p2 blir minst mulig (minste kvadrater, 4 likninger og 3 ukjente).
+function forces() {
+  var u1 = unit(0), u2 = unit(1), u3 = unit(2);
+  var a = u1[0]*u2[0] + u1[1]*u2[1], b = u2[0]*u3[0] + u2[1]*u3[1];
+  var r = [-w*u1[1], 0, w*u3[1]];                 // høyresiden i normallikningene
+  var det = 2 - a*a - b*b;                        // determinanten til [[1,-a,0],[-a,2,-b],[0,-b,1]]
+  var l2 = (r[0]*a + r[1] + r[2]*b)/det;
+  var lam = [r[0] + a*l2, l2, r[2] + b*l2];
+  function sum(j) {                               // summen av kreftene i leddpunkt j = 1, 2
+    var ul = j === 1 ? u1 : u2, ur = j === 1 ? u2 : u3;
+    return [-lam[j-1]*ul[0] + lam[j]*ur[0], -w - lam[j-1]*ul[1] + lam[j]*ur[1]];
+  }
+  return {lam: lam, s1: sum(1), s2: sum(2), u: [u1, u2, u3]};
+}
+var sc = 0.5;                                     // meter per newton i tegningen
+var forceItems = [];
+function forceChain(J, j) {
+  // Pilene legges etter hverandre: tyngde, kraft fra venstre ledd, kraft fra høyre ledd.
+  function tip(k) {
+    var F = forces(), ul = F.u[j-1], ur = F.u[j], x = J.X(), y = J.Y();
+    if (k >= 1) { y -= sc*w; }
+    if (k >= 2) { x -= sc*F.lam[j-1]*ul[0]; y -= sc*F.lam[j-1]*ul[1]; }
+    if (k >= 3) { x += sc*F.lam[j]*ur[0]; y += sc*F.lam[j]*ur[1]; }
+    return [x, y];
+  }
+  var colours = ['#263238', '#7b1fa2', '#7b1fa2'];
+  for (var k = 0; k < 3; k++) {
+    (function (k) {
+      forceItems.push(board.create('arrow', [
+        [function () { return tip(k)[0]; }, function () { return tip(k)[1]; }],
+        [function () { return tip(k+1)[0]; }, function () { return tip(k+1)[1]; }]
+      ], {strokeColor:colours[k], strokeWidth:2.5, fixed:true, highlight:false, visible:false}));
+    })(k);
+  }
+  // Det som mangler for balanse: fra siste pilspiss tilbake til leddpunktet.
+  forceItems.push(board.create('arrow', [
+    [function () { return tip(3)[0]; }, function () { return tip(3)[1]; }],
+    [function () { return J.X(); }, function () { return J.Y(); }]
+  ], {strokeColor:'#d81b60', strokeWidth:3, fixed:true, highlight:false, visible:false,
+       strokeOpacity: function () { var F = forces(), s = j === 1 ? F.s1 : F.s2;
+                                    return Math.hypot(s[0], s[1]) > 1e-3 ? 1 : 0; }}));
+}
+forceChain(J1, 1); forceChain(J2, 2);
+var gapText = board.create('text', [-0.1, 0.40, function () {
+  var F = forces(), g = Math.hypot(F.s1[0], F.s1[1], F.s2[0], F.s2[1]);
+  return 'kraftgap = ' + (g < 5e-4 ? 0 : g).toFixed(3) + ' N';
+}], {fontSize:13, color:'#d81b60', fixed:true, visible:false});
+forceItems.push(gapText);
+board.create('text', [-0.5, 1.30, function () {
+  return 'E = w·(y₁ + y₂) = ' + (w*(J1.Y() + J2.Y())).toFixed(3) + ' J';
+}], {fontSize:14, color:'#1565c0', fixed:true});
+board.create('text', [-0.5, 1.00, function () {
+  return 'θ₁ = ' + angle(0).toFixed(1) + '°,   θ₂ = ' + angle(1).toFixed(1) +
+    '°,   θ₃ = ' + angle(2).toFixed(1) + '°';
+}], {fontSize:14, color:'#c62828', fixed:true});
+board.create('text', [-0.5, 0.70, function () {
+  return 'leddlengder: ' + linkLength(0).toFixed(3) + ', ' + linkLength(1).toFixed(3) + ', ' +
+    linkLength(2).toFixed(3) + ' m';
+}], {fontSize:13, color:'#37474f', fixed:true});
+board.create('button', [-0.5, -1.85, 'vis likevekt', function () { setShape(equilibrium()); }]);
+board.create('button', [1.0, -1.85, 'start på nytt', function () { setShape(phiStart); }]);
+var showForces = board.create('checkbox', [2.6, 0.40, 'vis krefter'], {fixed:true, fontSize:13});
+JXG.addEvent(showForces.rendNodeCheckbox, 'change', function () {
+  var on = this.Value();
+  for (var k = 0; k < forceItems.length; k++) { forceItems[k].setAttribute({visible:on}); }
+  board.update();
+}, showForces);
+```
 
-- **Nummerering.** Ledd $i$ går fra $p_{i-1}$ til $p_i$. Leddpunkt $j$ berører
-  derfor ledd $j$ (til venstre) og ledd $j+1$ (til høyre). I Python er
-  nummereringen én lavere: `lam[0]` er $\lambda_1$, og rad 0 i `directions(z)`
-  er $u_1$.
-- **Retning og vinkel.** $u_i$ peker fra venstre mot høyre. Vinkelen
-  $\theta_i$ måles fra positiv $x$-akse og er **negativ** når leddet går
-  nedover. På venstre halvdel er altså $\sin\theta_i<0$, på høyre halvdel
-  $\sin\theta_i>0$.
-- **Fortegn.** Vi bruker $L=E+\sum_i\lambda_ih_i$ og $h_i=\text{lengde}-\ell$,
-  som i uke 12. Da blir alle $\lambda_i$ positive. Positiv betyr at leddet
-  **trekker** i begge leddpunktene sine: ledd $i$ virker på $p_i$ med kraften
-  $-\lambda_iu_i$ (mot $p_{i-1}$) og på $p_{i-1}$ med $+\lambda_iu_i$ (mot
-  $p_i$), så endene trekkes mot hverandre.
-- **Nullnivå.** Høyder måles fra linjen gjennom endene, så $E$ blir negativ.
-  Bare forskjeller i $E$ betyr noe.
-- **Enheter.** $w$ i N, lengder i m, $E$ i J (= N·m), $\lambda$ i N og $\mu$
-  i N/m.
+Prøv dette:
 
-To regneregler fra flervariabel analyse er gitt:
+1. Dra $p_1$ fram og tilbake langs buen. Hvor blir $E$ minst?
+2. Trykk **vis likevekt**. Hvordan ligger midtleddet nå? Hvorfor er det
+   rimelig at formen er symmetrisk?
+3. Følg de røde pilene. Hvilke vinkler er negative, og hvilke er positive?
+4. Kryss av for **vis krefter**. I hvert leddpunkt står tre piler etter
+   hverandre, én svart og to lilla. Hva skjer med dem i likevekt, og hva
+   skjer når du drar $p_1$ bort fra likevekten?
 
-- gradienten til $\lVert p-q\rVert_2$ med hensyn på $p$ er enhetsvektoren
-  $(p-q)/\lVert p-q\rVert_2$;
-- derfor er $\nabla_{p_i}h_i=u_i$ og $\nabla_{p_{i-1}}h_i=-u_i$, og alle
-  andre deriverte av $h_i$ er null.
+**Hva viser bildet?** Kjettingen henger der energien er minst. I likevekt er
+$p_1=(1,\,-1.118)$ og $p_2=(3,\,-1.118)$, midtleddet er vannrett, og
+$E=-2.236$ J. Alle tre lengdene er de samme hele tiden: det er kravene. Med
+**vis krefter** lukker de tre pilene seg til en trekant i likevekt, og
+kraftgapet er null. Utenfor likevekt mangler det noe, og den rosa pilen viser
+hva. Hva pilene betyr, finner du ut selv i del 1. Resten av prosjektet gjør
+dette bildet til matematikk, med ti ledd i stedet for tre.
+
+### Fra bildet til matematikk, seks avtaler
+
+Alt du så i appleten, har et matematisk navn. Vi går gjennom seks avtaler,
+én om gangen, og hver av dem kan du peke på i bildet. Les dem rolig; de
+gjelder hele veien.
+
+**1. Punktene og leddene har nummer.** I appleten heter punktene
+$p_0,p_1,p_2,p_3$ fra venstre mot høyre. Ledd $i$ går fra $p_{i-1}$ til $p_i$:
+ledd 1 fra $p_0$ til $p_1$, ledd 2 fra $p_1$ til $p_2$, og så videre.
+Leddpunkt $j$ berører derfor ledd $j$ (til venstre) og ledd $j+1$ (til høyre).
+De ukjente er koordinatene til de frie punktene, samlet i én vektor $z$. I
+appleten er $z=(x_1,y_1,x_2,y_2)$.
+
+**2. Et ledd med fast lengde er et krav.** I appleten kunne $p_1$ bare gli
+langs en sirkelbue, fordi avstanden til $p_0$ alltid er $1.5$ m. Matematisk
+blir hvert ledd en likning $h_i(z)=0$, med
+$h_i(z)=\lVert p_i-p_{i-1}\rVert_2-\ell_i$, altså
+$h_i=\text{lengde}-\ell_i$, der $\ell_i$ er lengden ledd $i$ skal ha. Tre
+ledd gir tre krav, $h_1$, $h_2$ og $h_3$. Lengder måles i meter.
+
+**3. Pilen $u_i$ peker fra venstre mot høyre.** De røde pilene er
+enhetsvektorene $u_i=(p_i-p_{i-1})/\lVert p_i-p_{i-1}\rVert_2$. De har lengde
+1, og hver av dem peker langs sitt ledd fra venstre mot høyre, enten leddet
+går opp eller ned.
+
+**4. Vinkelen er negativ når leddet går nedover.** Vi skriver
+$u_i=(\cos\theta_i,\sin\theta_i)$. Vinkelen $\theta_i$ måles fra positiv
+$x$-akse og er **negativ** når leddet går nedover. I likevekten i appleten er
+$\theta_1\approx-48.2^\circ$, $\theta_2=0^\circ$ og $\theta_3\approx48.2^\circ$.
+På venstre halvdel av kjettingen er altså $\sin\theta_i<0$, og på høyre
+halvdel er $\sin\theta_i>0$.
+
+**5. Høyder måles fra linjen gjennom endene.** Den prikkede linjen i appleten
+er nullnivået $y=0$. Alle leddpunktene henger under den, så høydene er
+negative, og $E$ blir negativ. Det gjør ingenting: bare forskjeller i $E$
+betyr noe.
+
+**6. Energi er vekt ganger høyde.** Hvert fritt leddpunkt har vekt $w=1$ N, og
+leddene selv regnes som vektløse. Potensiell energi er vekt ganger høyde, så
+målfunksjonen er summen av høydene ganget med $w$: $E=w\,(y_1+y_2)$ i
+appleten. Med flere ledd summerer vi over alle de frie leddpunktene. $E$
+måles i joule, J = N·m. Å henge «så lavt som mulig» betyr å minimere $E$.
 
 ### Kjøring på siden eller i egen notebook
 
 Oppsettet lastes automatisk på siden. Det inneholder `joints`, `energy`,
-`grad_energy`, `directions`, `jac_links` (Jacobianen til $h$), `flat_start`,
-`penalty_hessian` og `plot_chain`. Kjør cellene i rekkefølge.
+`grad_energy`, `directions`, `jac_links` (Jacobimatrisen til $h$), `flat_start`,
+`penalty_hessian`, `plot_chain` og `plot_constraint_circles`. Kjør cellene i
+rekkefølge.
 
 <details>
 <summary>Egen notebook: last ned oppsettet og kom i gang</summary>
@@ -96,9 +299,14 @@ prosjektet i rekkefølge. Kontroller til slutt notebooken med
 
 ## 1. Ett leddpunkt for hånd
 
-Vi starter med den minste kjettingen: to ledd på $2.5$ m mellom endene
-$p_0=(0,0)$ og $p_2=(4,0)$; bare i denne delen er $p_2$ et endepunkt. Det
-eneste frie leddpunktet er $p=(x,y)$, med vekt $w$.
+Nå regner vi selv, på den minste kjettingen som finnes: to ledd og ett fritt
+punkt. Her kan vi finne alt med blyant, også multiplikatorene, og se hva de
+betyr før datamaskinen tar over. Alt resten av prosjektet bygger på denne
+lille regningen, så ta deg god tid.
+
+Kjettingen har to ledd på $2.5$ m mellom endene $p_0=(0,0)$ og $p_2=(4,0)$;
+bare i denne delen er $p_2$ et endepunkt. Det eneste frie leddpunktet er
+$p=(x,y)$, med vekt $w$.
 
 | Rolle | Uttrykk |
 |:--|:--|
@@ -106,33 +314,63 @@ eneste frie leddpunktet er $p=(x,y)$, med vekt $w$.
 | Mål | Minimer $E=w\,y$ |
 | Krav | $h_1=\lVert p-p_0\rVert_2-2.5=0$ og $h_2=\lVert p_2-p\rVert_2-2.5=0$ |
 
+Hvert krav sier at $p$ ligger på en sirkel med radius $2.5$ m, akkurat som
+sirkelbuene i appleten. Cellen tegner de to kravsirklene rundt endene og de
+to punktene der de skjærer hverandre, og kontrollerer at begge punktene
+ligger $2.5$ m fra begge endene.
+
 ```{pyodide-python}
 #| label: project-week12-one-joint
-t = np.linspace(0, 2*np.pi, 300)
-fig, ax = plt.subplots(figsize=(6, 4.5))
-for c in ([0, 0], [4, 0]):
-    ax.plot(c[0] + 2.5*np.cos(t), c[1] + 2.5*np.sin(t), color='0.7')
-ax.plot([0, 2, 4], [0, -1.5, 0], 'o-', color='tab:blue', label='kandidat (2, -1.5)')
-ax.plot([0, 2, 4], [0, 1.5, 0], 'o--', color='tab:orange', label='kandidat (2, 1.5)')
-ax.set(xlabel='x (m)', ylabel='y (m)'); ax.set_aspect('equal'); ax.legend()
-plt.show()
+centres = np.array([[0., 0.], [4., 0.]])        # p_0 og p_2
+candidates = np.array([[2., -1.5], [2., 1.5]])  # skjæringspunktene mellom sirklene
+for p in candidates:
+    print(p, 'avstand til endene:', np.linalg.norm(p - centres, axis=1))
+plot_constraint_circles(centres, 2.5, candidates, labels=['kandidat (2, -1.5)', 'kandidat (2, 1.5)'])
 ```
 
-1. **Kravene alene.** Hvert krav sier at $p$ ligger på en sirkel med radius
-   $2.5$. Vis med Pytagoras at sirklene skjærer hverandre i $(2,\pm1.5)$. Hvilket
-   av de to tillatte punktene velger målet $E=w\,y$?
+Figuren viser hvor punktet *kan* ligge. Hvor det *vil* ligge, og hvilke
+krefter som holder det der, finner du med de fire punktene under. Først to
+verktøy.
+
+**Fortegnsavtalen.** Vi bruker $L=E+\sum_i\lambda_ih_i$ og
+$h_i=\text{lengde}-\ell_i$, som i uke 12. Lagranges likning er da
+$\nabla E+\sum_i\lambda_i\nabla h_i=0$.
+
+**To regneregler fra flervariabel analyse** er gitt:
+
+- gradienten til $\lVert p-q\rVert_2$ med hensyn på $p$ er enhetsvektoren
+  $(p-q)/\lVert p-q\rVert_2$;
+- derfor er $\nabla_{p_i}h_i=u_i$ og $\nabla_{p_{i-1}}h_i=-u_i$, og alle
+  andre deriverte av $h_i$ er null.
+
+I appleten ser du halvparten av den første regelen: $p_1$ kan bare gli langs
+buen, altså på tvers av $u_1$, og da endres ikke lengden av ledd 1. Et lite
+steg langs $u_1$ ville gjort leddet like mye lengre. Gradienten peker dit
+lengden vokser raskest.
+
+Nå de fire punktene:
+
+1. **Kravene alene.** Vis med Pytagoras at sirklene skjærer hverandre i
+   $(2,\pm1.5)$. Hvilket av de to tillatte punktene velger målet $E=w\,y$?
 2. **Retningene.** Vis at $u_1=(0.8,-0.6)$ og $u_2=(0.8,0.6)$ i det nederste
    punktet. Hva er $\sin\theta_1$ og $\sin\theta_2$?
-3. **Lagranges likning.** Fullfør, med regnereglene over:
+3. **Lagranges likning.** Fyll inn de to parentesene med regnereglene. Her
+   er $p$ sluttpunktet til ledd 1 og startpunktet til ledd 2:
    $$\nabla E+\lambda_1\nabla_ph_1+\lambda_2\nabla_ph_2
-   =\begin{bmatrix}0\\w\end{bmatrix}+\lambda_1u_1-\lambda_2u_2=0.$$
+   =\begin{bmatrix}0\\w\end{bmatrix}+\lambda_1\bigl(\quad\bigr)+\lambda_2\bigl(\quad\bigr)=0.$$
    Skriv $x$-komponenten og $y$-komponenten hver for seg, og løs for
    $\lambda_1$ og $\lambda_2$ med $w=1$ N.
 4. **Det øverste punktet.** Løs den samme likningen i $(2,1.5)$, der
    $u_1=(0.8,0.6)$ og $u_2=(0.8,-0.6)$. Hvilket fortegn får multiplikatorene?
 
+Står du fast i punkt 3, er det helt normalt: skriv først opp vektorene i de
+to parentesene med tall, og legg sammen komponent for komponent.
+
 <details>
 <summary>Regnehjelp: de to komponentene</summary>
+
+Regnereglene gir $\nabla_ph_1=u_1$ og $\nabla_ph_2=-u_2$, så likningen er
+$$\begin{bmatrix}0\\w\end{bmatrix}+\lambda_1u_1-\lambda_2u_2=0.$$
 
 $x$-komponenten er $0.8\lambda_1-0.8\lambda_2=0$, så $\lambda_1=\lambda_2$.
 $y$-komponenten er $w-0.6\lambda_1-0.6\lambda_2=0$, så
@@ -144,33 +382,70 @@ $\lambda_1=\lambda_2\approx-0.833$ N: negativ.
 
 </details>
 
-Først nå kommer fysikken: i mekanikk kalles $\lambda_i$ **strekkraften** i
-ledd $i$. Gang likningen i punkt 3 med $-1$:
+Nå kommer fysikken, og pilene fra appleten. I mekanikk kalles $\lambda_i$
+**strekkraften** i ledd $i$. Gang likningen i punkt 3 med $-1$:
 
 $$\begin{bmatrix}0\\-w\end{bmatrix}-\lambda_1u_1+\lambda_2u_2=0.$$
 
-Her er $(0,-w)$ tyngden, som peker ned. Ledd 1 trekker leddpunktet tilbake
-mot $p_0$, altså i retning $-u_1$, med kraften $\lambda_1$, og ledd 2 trekker
-mot $p_2$, i retning $u_2$, med kraften $\lambda_2$. Summen av kreftene er
-null: det er kraftbalansen. Lagranges likning er altså kraftbalansen med alle
-fortegn snudd, fordi $\nabla E$ peker dit energien *øker*, mens tyngden peker
-dit den *avtar*. I det øverste punktet er multiplikatorene negative: leddene
-skyver i stedet for å trekke, som i en bue. Målet $E$ velger det nederste
-punktet, der begge trekker.
+Her er $(0,-w)$ tyngden, som peker ned (den svarte pilen i appleten). Ledd 1
+trekker leddpunktet tilbake mot $p_0$, altså i retning $-u_1$, med kraften
+$\lambda_1$, og ledd 2 trekker mot $p_2$, i retning $u_2$, med kraften
+$\lambda_2$ (de to lilla pilene). Summen av kreftene er
+null: det er kraftbalansen. Det var dette du så med **vis krefter** i
+appleten: i likevekt lukker de tre pilene seg til en trekant. Lagranges
+likning er altså kraftbalansen med alle fortegn snudd, fordi $\nabla E$
+peker dit energien *øker*, mens tyngden peker dit den *avtar*. I det øverste
+punktet er multiplikatorene negative: leddene skyver i stedet for å trekke,
+som i en bue. Målet $E$ velger det nederste punktet, der begge trekker.
+
+Generelt virker ledd $i$ på $p_i$ med kraften $-\lambda_iu_i$ (mot $p_{i-1}$)
+og på $p_{i-1}$ med $+\lambda_iu_i$ (mot $p_i$). Med $\lambda_i>0$ trekkes
+endene mot hverandre: leddet **trekker**. Strekkreftene måles i newton, N,
+akkurat som $w$.
 
 **Ta med videre:** Multiplikatoren er kraften som skal til for å holde kravet
 oppfylt; positiv betyr trekk, negativ betyr trykk. $x$-komponenten av
 Lagranges likning ga lik vannrett del i begge leddene.
 
+**Ordboken.** Nå som du har sett at en multiplikator er en kraft, kan vi samle
+ordene. Vi bruker bare tre ideer fra skolefysikken: potensiell energi er vekt
+ganger høyde, krefter legges sammen som vektorer, og en fjærkraft er stivhet
+ganger forlengelse. Hvert fysisk ord på siden betyr nøyaktig det som står i
+høyre kolonne, og det er matematikken du arbeider med.
+
+| Fysisk ord | Matematikk |
+|:--|:--|
+| leddpunkt $j$ | punktet $p_j=(x_j,y_j)$; de to endene ligger fast |
+| vekt | $w=1$ N i hvert fritt leddpunkt |
+| potensiell energi | målfunksjonen $E(z)=w\cdot(\text{summen av høydene til de frie leddpunktene})$ |
+| stivt ledd $i$ | kravet $h_i(z)=\lVert p_i-p_{i-1}\rVert_2-\ell_i=0$ |
+| retningen til ledd $i$ | enhetsvektoren $u_i=(\cos\theta_i,\sin\theta_i)$ |
+| strekkraften i ledd $i$ | **navnet på multiplikatoren $\lambda_i$** |
+| kraftbalanse i leddpunkt $j$ | **Lagranges likning for $p_j$**, med alle fortegn snudd (del 1 og 2) |
+| fjær med stivhet $\mu$ | straffeleddet $\tfrac\mu2h_i(z)^2$ (del 4) |
+| forlengelse av en fjær | tallet $h_i(z)$ når kravet ikke er oppfylt nøyaktig (del 4) |
+
 ## 2. Ti ledd med eksakte krav
 
-Nå har vi ti ledd på $\ell=0.5$ m, altså 5 m kjetting over 4 m. Energien og
-Jacobianen er ferdige. Du skriver selve kravfunksjonen.
+Nå blir kjettingen ekte: ti ledd på $\ell=0.5$ m, altså 5 m kjetting over
+4 m, slik at punktene går fra $p_0=(0,0)$ til $p_{10}=(4,0)$. Alle leddene
+har samme lengde, så $\ell_i=\ell$. De ukjente er de ni frie punktene,
+samlet i én vektor $z=(x_1,y_1,\ldots,x_9,y_9)$: 18 tall. Målet er
+$E(z)=w\,(y_1+\cdots+y_9)$. I Python er nummereringen én lavere:
+`lam[0]` er $\lambda_1$, og rad 0 i `directions(z)` er $u_1$.
 
-**Kode 1.** Fullfør `h(z, lengths)`. Den skal returnere de ti tallene
+Med 18 ukjente og ti krav blir håndregning tungvint, så SLSQP tar over
+selve løsningen. Din jobb er å fortelle løseren hva kravene er, og etterpå
+finne ut hva multiplikatorene forteller. Vi går fram i tre små steg: skriv
+kravfunksjonen, løs, og les av multiplikatorene. Energien og Jacobimatrisen
+er ferdige.
+
+**Kode 1.** Uten kravfunksjonen vet ikke SLSQP hva «fast lengde» betyr. Fullfør
+`h(z, lengths)`. Den skal returnere de ti tallene
 $\lVert p_i-p_{i-1}\rVert_2-\ell$. Bruk `joints(z)`, `np.diff(..., axis=0)` og
 `np.linalg.norm(..., axis=1)`. Argumentet `lengths` er $\ell$; det kan være ett
-tall eller ti tall (del 3).
+tall eller ti tall (del 3). Utskriften sammenligner svaret ditt med det
+forventede for startformen.
 
 ```{pyodide-python}
 #| label: project-week12-student-h
@@ -186,8 +461,9 @@ print('forventet: [ 0.1403 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1  0.1403]')
 Kontrollen bruker startformen: ni punkter på linjen $y=-0.5$. Forklar for
 hånd hvorfor første ledd er $0.1403$ for langt og de midterste $0.1$ for korte.
 
-Den ferdige cellen løser problemet med SLSQP fra startformen, med alle ti
-kravene samtidig:
+Når `h` stemmer, kan løseren gjøre jobben. Den ferdige cellen løser
+problemet med SLSQP fra startformen, med alle ti kravene samtidig, og tegner
+startformen og løsningen i samme figur:
 
 ```{pyodide-python}
 #| label: project-week12-exact
@@ -209,11 +485,13 @@ punkt ligger $1.3343$ m under endene.
 
 ### Multiplikatorene fra stasjonaritetskravet
 
-SciPy 1.14 i nettleseren gir ikke multiplikatorene. Nyere SciPy-versjoner gir
-`res.multipliers`, men med motsatt fortegn av vårt. Som i uke 12.5 velger vi
-derfor selv de $\lambda$ som gjør stasjonaritetsfeilen
-$\lVert\nabla E+J^T\lambda\rVert_2$ minst; det virker overalt. Det er et minste kvadraters problem med ti ukjente
-([uke 4](uke4.qmd#uke4-mk)):
+Nå har vi formen, men ikke kreftene. SciPy 1.14 i nettleseren gir ikke
+multiplikatorene, og nyere SciPy-versjoner gir `res.multipliers`, men med
+motsatt fortegn av vårt. Som i uke 12.5 velger vi derfor selv de $\lambda$
+som gjør stasjonaritetsfeilen $\lVert\nabla E+J^T\lambda\rVert_2$ minst; det
+virker overalt. Det er et minste kvadraters problem med ti ukjente
+([uke 4](uke4.qmd#uke4-mk)). Cellen løser det og skriver ut feilen og de ti
+multiplikatorene:
 
 ```{pyodide-python}
 #| label: project-week12-multipliers
@@ -229,7 +507,10 @@ høyre. Alle er positive: hvert ledd trekker.
 
 ### Lagranges likning i ett leddpunkt
 
-Bare $h_j$ og $h_{j+1}$ avhenger av $p_j$. Bruk regnereglene, og fullfør:
+Hvorfor er strekkreftene størst ved endene? For å se det tar vi fram blyanten
+igjen. Det er samme regning som i del 1, bare for et vilkårlig leddpunkt
+$p_j$. Bare $h_j$ og $h_{j+1}$ avhenger av $p_j$. Vis med regnereglene at
+Lagranges likning for $p_j$ blir
 
 $$\nabla_{p_j}E+\lambda_j\nabla_{p_j}h_j+\lambda_{j+1}\nabla_{p_j}h_{j+1}
 =\begin{bmatrix}0\\w\end{bmatrix}+\lambda_ju_j-\lambda_{j+1}u_{j+1}=0.$$
@@ -243,9 +524,12 @@ $$\nabla_{p_j}E+\lambda_j\nabla_{p_j}h_j+\lambda_{j+1}\nabla_{p_j}h_{j+1}
 3. Bruk symmetrien og punkt 2 til å **forutsi** $\lambda_1\sin\theta_1$:
    hvor mye av den totale vekten $9w$ bærer hvert endeledd, og hvilket
    fortegn får tallet når $\sin\theta_1<0$? Forklar med dette hvorfor
-   strekkraften er størst ved endene.
+   strekkraften er størst ved endene. Tips: legg sammen likningene i punkt 2
+   fra $j=1$ til $j=9$. Da kansellerer nesten alt, og bare
+   $\lambda_{10}\sin\theta_{10}-\lambda_1\sin\theta_1$ blir igjen på venstre
+   side.
 
-**Kode 2.** Kontroller punkt 1–3 numerisk. Rad $i$ i `U = directions(z_exact)`
+**Kode 2.** Nå kontrollerer vi punkt 1–3 med tallene fra SLSQP. Rad $i$ i `U = directions(z_exact)`
 er $(\cos\theta_{i+1},\sin\theta_{i+1})$. Skriv linjen for de ti tallene
 $\lambda_i\cos\theta_i$, og sett inn forutsigelsen din. Linjen for de ni
 tallene i punkt 2 er ferdig.
@@ -277,9 +561,15 @@ vannrette delen hører med i leveransen.
 
 ## 3. Multiplikatoren er en pris
 
+Hittil har multiplikatorene vært krefter. Nå skal du se at de samtidig er
+priser: hvor mye lavere henger kjettingen hvis vi gjør ett ledd en bitte liten
+smule lengre? Dette er den samme ideen som i uke 11 og prosjekt 11, bare i en
+helt annen drakt.
+
 I uke 12.2 fant vi $df_*/ds=-\lambda$ når kravet $h=0$ flyttes til $h=s$.
 Her er $h_i=\text{lengde}-\ell_i$. Gjør vi ledd $i$ lengre med $s$ (i koden
-under heter tallet `d`), blir kravet $\text{lengde}-\ell_i=s$. Kjettingen synker, og $E_*$ blir mindre.
+under heter tallet `d`), blir kravet $\text{lengde}-\ell_i=s$. Kjettingen
+synker, og $E_*$ blir mindre.
 Forutsigelsen er
 
 $$\frac{dE_*}{d\ell_i}=-\lambda_i,$$
@@ -291,10 +581,13 @@ lik *pluss* endringen i minste kostnad per MWh mer forbruk. Her skriver vi
 $L=E+\sum_i\lambda_ih_i$, og da er $\lambda_i$ lik *minus* endringen i $E_*$
 per meter mer ledd. Begge sier hvor mye optimal verdi endres per enhet.
 
-**Kode 3.** Gjør ledd 5 (det midterste til venstre, `lengths[4]`) $10^{-4}$ m
-lengre, løs på nytt med `solve_exact(lengths, z_exact)`, og regn ut
-differansekvotienten $(E_*^{\text{ny}}-E_*)/10^{-4}$. Sammenlign med
-`-lam[4]`. *(Valgfritt: gjenta for ledd 1.)*
+**Kode 3.** Nå tester vi forutsigelsen med en differansekvotient, slik vi
+gjorde med prisen i uke 12.2. Gjør ledd 5 (det midterste til venstre,
+`lengths[4]`) $10^{-4}$ m lengre, løs på nytt med
+`solve_exact(lengths, z_exact)`, og regn ut differansekvotienten
+$(E_*^{\text{ny}}-E_*)/10^{-4}$. Starten i `z_exact` gjør at løseren bare
+trenger å justere litt. Sammenlign med `-lam[4]`. *(Valgfritt: gjenta for
+ledd 1.)*
 
 ```{pyodide-python}
 #| label: project-week12-price
@@ -316,6 +609,11 @@ lengde i ledd $i$. Den er størst for endeleddene.
 
 ## 4. Fjærer i stedet for stive ledd
 
+Til nå har leddene vært helt stive, og SLSQP har holdt kravene nøyaktig. Men
+hva om vi slapp kravene og i stedet brukte svært stive fjærer? Da får vi et
+problem uten krav, som BFGS fra uke 8 kan løse. Spørsmålet i denne delen er
+hva det koster: hvor nær kommer vi, og hvor vanskelig blir det?
+
 Nå bytter vi hvert stivt ledd med en fjær med stivhet $\mu$ (N/m; bokstaven
 $\mu$ betyr stivhet her, ikke en pris som i prosjekt 11). Det er
 **straffemetoden**: vi fjerner kravene og legger til et ledd som straffer brudd
@@ -324,9 +622,9 @@ på dem,
 $$F_\mu(z)=E(z)+\frac\mu2\sum_{i=1}^{10}h_i(z)^2.$$
 
 Fysisk er $\tfrac\mu2h_i^2$ energien i en fjær som er forlenget med $h_i$.
-Problemet har ingen krav, så vi kan bruke BFGS, som vi har brukt siden uke 8.
 
-**Utledning.** Fullfør, med kjerneregelen:
+**Utledning.** Deriver ett ledd $\tfrac\mu2h_i(z)^2$ med kjerneregelen, og
+vis at et minimum av $F_\mu$ oppfyller
 
 $$\nabla F_\mu=\nabla E+\sum_{i=1}^{10}(\mu\,h_i)\,\nabla h_i=0.$$
 
@@ -336,7 +634,8 @@ hvor mye endeleddet blir forlenget når $\mu=10^4$ N/m. I fysikk heter
 sammenhengen «fjærkraft = stivhet ganger forlengelse».
 
 **Kode 4.** Skriv `F_mu` på én linje. Gradienten er ferdig. Løkken kjører
-BFGS fra startformen for fire stivheter.
+BFGS fra startformen for fire stivheter og skriver én rad per stivhet, slik at
+du kan se hva som skjer når fjærene blir stivere.
 
 ```{pyodide-python}
 #| label: project-week12-penalty
@@ -383,8 +682,21 @@ $E$ er lineær, så Hessianen til $E$ er null. Hessianen til $F_\mu$ er derfor
 $$\nabla^2F_\mu=\mu J^TJ+\sum_i(\mu h_i)\nabla^2h_i
 \approx\mu J^TJ+\sum_i\lambda_i\nabla^2h_i.$$
 
-$J$ har 10 rader og 18 kolonner. Den ferdige cellen regner ut egenverdiene ved
-$\mu=10^6$ og sammenligner med rangen til $J$.
+<details>
+<summary>Regnehjelp: Hessianen til straffeleddet</summary>
+
+Start med gradienten $\nabla F_\mu=\nabla E+\mu\sum_ih_i\nabla h_i$. Deriver
+ett ledd $h_i\nabla h_i$ en gang til med produktregelen: det gir
+$\nabla h_i\,\nabla h_i^T+h_i\nabla^2h_i$. Summen av $\nabla h_i\nabla h_i^T$
+over $i$ er $J^TJ$, fordi radene i $J$ er $\nabla h_i^T$. Til slutt bruker vi
+at $\mu h_i\approx\lambda_i$ fra tabellen over. Kontroll med én variabel:
+andrederiverten av $\tfrac\mu2h(z)^2$ er $\mu\bigl(h'(z)^2+h(z)h''(z)\bigr)$.
+
+</details>
+
+$J$ har 10 rader og 18 kolonner. Egenverdiene til Hessianen forteller hvor
+smal skålen er, og dermed hvor vanskelig problemet er for BFGS. Den ferdige
+cellen regner dem ut ved $\mu=10^6$ og sammenligner med rangen til $J$.
 
 ```{pyodide-python}
 #| label: project-week12-hessian
@@ -403,8 +715,10 @@ hører til nullrommet fra uke 3, retningene der kjettingen svinger uten å
 endre leddlengdene til første orden. Bruk så uke 6 og 9 til å si hvorfor stor
 $\kappa$ gir mange BFGS-iterasjoner.
 
-**Valgfritt: for stive fjærer.** Med $\mu=10^{10}$ starter vi i den eksakte
-formen, så søket har nesten ingenting å gjøre:
+**Valgfritt: for stive fjærer.** Hva skjer hvis vi går enda lenger? Med
+$\mu=10^{10}$ starter vi i den eksakte formen, så søket har nesten ingenting å
+gjøre. Cellen skriver ut hvor mange steg BFGS tar, anslaget $\mu h_1$ og
+kondisjonstallet:
 
 ```{pyodide-python}
 #| label: project-week12-too-stiff
@@ -434,16 +748,22 @@ $\mu$ ($\kappa\approx1.8\mu$).
 
 ## 5. Din egen undersøkelse
 
-Velg **én** endring. Skriv forutsigelsen før du regner, ut fra
-likningene i del 2–4, og kontroller den med en ny kjøring.
+Nå er det du som bestemmer. Du har likningene fra del 2–4 og cellene som
+løser dem; spørsmålet er om forklaringen holder når vi endrer kjettingen. Velg
+**én** endring. Skriv forutsigelsen før du regner, ut fra likningene i del
+2–4, og kontroller den med en ny kjøring. En forutsigelse som bommer, er like
+verdifull som en som treffer, så lenge du forklarer hvorfor.
 
 - **En lampe.** Heng en lampe på 5 N i leddpunkt 3:
   `loads = np.ones(9); loads[2] += 5`, og bruk `solve_exact(loads=loads)` og
-  `grad_energy(z, loads)` i multiplikatorcellen. Hvilke av likningene i del 2
+  `grad_energy(z, loads)` i multiplikatorcellen. Matematisk endrer lampen bare
+  målfunksjonen: $E=\sum_jw_jy_j$ med $w_3=1+5=6$ N og $w_j=1$ N ellers.
+  Kravene er de samme. Hvilke av likningene i del 2
   endres? Blir den vannrette delen fortsatt lik i alle ledd? Hvor endrer
   $\lambda_i$ seg mest?
 - **Ett elastisk ledd.** La ledd 10 være en ekte fjær med $\mu=20$ N/m, mens de
-  andre er stive. Det gir ni krav og et straffeledd for ledd 10. Forutsi
+  andre er stive. Matematisk fjernes kravet $h_{10}=0$, og målet får leddet
+  $\tfrac{20}2h_{10}^2$. Det gir ni krav og et straffeledd for ledd 10. Forutsi
   forlengelsen fra del 4, og sammenlign. Start med
   `F_el = lambda z: energy(z) + 20/2*h(z)[9]**2`, og gi SLSQP bare de ni
   første kravene: `'fun': lambda z: h(z)[:9]` og
@@ -476,7 +796,7 @@ stemte.
 9. *(valgfri fordypning)* Hvorfor blir anslaget $\mu h_1$ dårligere igjen for
     svært stive fjærer?
 10. *(valgfri fordypning)* Hvordan endres strekkreftene når en lampe henges på
-    ett leddpunkt, og hvilken størrelse endres ikke?
+    ett leddpunkt, og hvilken størrelse er fortsatt lik i alle ledd?
 
 ## Det du leverer
 
