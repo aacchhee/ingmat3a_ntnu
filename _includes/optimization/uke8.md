@@ -92,7 +92,7 @@ kravene, kalles det **tillatte området**; her er
 $D=\{(a,b):b>0\}$, og et punkt i $D$ er **tillatt**.
 
 Forskjellen fra uke 4 er at modellen ikke er lineær i $b$. Vi lar derfor
-`minimize` fra SciPy søke, fra tre ulike startpunkter.
+`minimize` fra SciPy søke fra tre ulike startpunkter.
 
 **Forutsi:** Vil de tre søkene finne samme $a$ og $b$?
 
@@ -553,8 +553,8 @@ $$S(c+sp)=\|r-sAp\|_2^2=\|r\|_2^2-2s\,r^TAp+s^2\|Ap\|_2^2,$$
 så $\varphi''(s)=2\|Ap\|_2^2\ge0$. **Kvadratsummen er derfor alltid
 konveks.** Den er strengt konveks når $Ap\ne0$ for alle $p\ne0$, altså når
 nullrommet til $A$ bare inneholder nullvektoren. Konveksitet, rang og
-nullrom henger sammen. Skålen $\phi$ fra uke 6 er et annet eksempel: der
-er $\varphi''(s)=p^TAp$, som er positiv når $A$ er SPD. Derfor hadde
+nullrom henger sammen. Skålen $\phi$ fra uke 6 er et annet eksempel: langs en linje er den
+andrederiverte $p^TAp$, som er positiv når $A$ er SPD. Derfor hadde
 skålen én bunn.
 
 For en konveks funksjon er dessuten **gradient null nok til å bevise
@@ -611,9 +611,9 @@ ligger langs en linje i retningen $(0,2,-1)$: en endring i denne retningen
 endrer ikke $Ac$. Det er **nullrommet** fra uke 3. Alle punktene på linjen
 er globale minimumspunkter. Pseudoinversen fra den valgfrie
 [fanen 7.7](uke7.qmd#uke7-pseudoinvers) velger det korteste av dem,
-$(1.05,\,0.18,\,0.36)$. Søket fra nullvektoren ender akkurat der: fra $0$
-ligger alle gradientene $-2A^Tr$ i radrommet til $A$, så søket beveger seg
-aldri langs nullrommet.
+$(1.05,\,0.18,\,0.36)$. Søket fra nullvektoren ender akkurat der: alle
+gradientene $-2A^Tr$ står vinkelrett på nullromsretningen $(0,2,-1)$, så
+søket fra $0$ beveger seg aldri langs nullrommet.
 
 **Dette tar vi med oss.** Konveks betyr at alle lokale minimum er globale.
 Strengt konveks betyr i tillegg at det finnes høyst ett minimumspunkt. For
@@ -754,10 +754,10 @@ Hvilken av mengdene kan du dermed bevise at ikke er konveks? Forklar hvorfor én
 #| partial-credit: true
 #| field-labels: q i midtpunktet, gjennomsnitt av endeverdiene
 
-For $q(x)=x^4-2x^2$ bruker du endepunktene $x=-1$ og $z=1$. Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene.
+For $q(x)=x^4-2x^2$ bruker du endepunktene $-1$ og $1$. Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene.
 
-$q((x+z)/2)=$ _[0]
-$(q(x)+q(z))/2=$ _[-1]
+$q(0)=$ _[0]
+$(q(-1)+q(1))/2=$ _[-1]
 
 Hva sier sammenligningen om konveksitet på $\mathbb R$?
 ```
@@ -842,7 +842,7 @@ Finn også det stasjonære punktet og funksjonsverdien der:
 $x_*=$ _[3]
 $q(x_*)=$ _[0]
 
-Bruk $q''(x)$ til å begrunne streng konveksitet. Forklar hvorfor tangentulikheten ved $x_*$ gir et globalt minimum, og hvorfor streng konveksitet gjør det entydig.
+Bruk $q''(x)$ til å begrunne streng konveksitet. Forklar hvorfor tangentulikheten ved $x_*$ (se «Gå i dybden» i 8.4) gir et globalt minimum, og hvorfor streng konveksitet gjør det entydig.
 ```
 
 ## 8.6 Python: SciPy-oppslag og kodeoppgaver
@@ -940,7 +940,7 @@ assert two_searches()[0].fun < 0.05
 assert two_searches()[1].fun > 5
 ```
 
-**Oppgave 3 – kontroller en midtpunktsulikhet.** Skriv `midpoint_gap(f, a, b)`
+**Oppgave 3 – kontroller en midtpunktsulikhet.** Skriv `midpoint_gap(f, x, z)`
 som returnerer $\tfrac12\bigl(f(a)+f(b)\bigr)-f\bigl(\tfrac{a+b}{2}\bigr)$.
 Et negativt svar for ett par punkter viser at $f$ ikke er konveks.
 
@@ -950,7 +950,7 @@ Et negativt svar for ett par punkter viser at $f$ ikke er konveks.
 #| show-test-hints: false
 import numpy as np
 
-def midpoint_gap(f, a, b):
+def midpoint_gap(f, x, z):
     # TODO: Gjennomsnitt av endeverdiene minus verdien i midtpunktet.
     return None
 
@@ -1012,7 +1012,7 @@ I et stasjonært punkt avgjør fortegnet til $h^THh$ typen:
 | positiv definit | alle positive | strengt lokalt minimum |
 | negativ definit | alle negative | strengt lokalt maksimum |
 | indefinit | begge fortegn | sadelpunkt |
-| semidefinit med en null egenverdi | én er null, resten har samme fortegn | testen avgjør ikke |
+| semidefinit med en null egenverdi | minst én er null, de andre har samme fortegn | testen avgjør ikke |
 
 | Funksjon | Hessian i origo | Type |
 |:--|:--|:--|
