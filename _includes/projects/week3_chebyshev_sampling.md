@@ -1,6 +1,6 @@
 # Polynomer i blindsonen
 
-Dette prosjektet er laget for omtrent **4–5 timer selvstendig arbeid**.
+Dette prosjektet er laget for omtrent **4–6 timer selvstendig arbeid**.
 Kodeassistenter er tillatt, men du er ansvarlig for at eksperimentene faktisk
 svarer på de matematiske spørsmålene.
 

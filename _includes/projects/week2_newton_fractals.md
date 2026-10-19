@@ -1,6 +1,6 @@
 # Newtonfraktaler: Hvilken løsning finner iterasjonen?
 
-Dette prosjektet er laget for omtrent **3–4 timer selvstendig arbeid**. Copilot og andre kodeassistenter er tillatt.
+Dette prosjektet er laget for omtrent **4–6 timer selvstendig arbeid**. Copilot og andre kodeassistenter er tillatt.
 
 Når en ligning har flere løsninger, er det ikke nok å spørre om en metode
 konvergerer. Vi må også spørre *hvilken* løsning den finner, hvor raskt den

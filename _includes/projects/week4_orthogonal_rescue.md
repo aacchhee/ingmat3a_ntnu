@@ -1,5 +1,4 @@
-**Arbeidstid:** omtrent **5 timer** for hele prosjektet, eller **3 timer**
-for kjernen alene.
+**Arbeidstid:** omtrent **4–6 timer** for hele prosjektet.
 
 I uke 3 rekonstruerte vi polynomer fra målinger. Nå skal du undersøke
 hva som skjer når målingene inneholder støy, og avgjøre om en beregnet

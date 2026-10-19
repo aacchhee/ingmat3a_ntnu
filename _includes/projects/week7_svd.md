@@ -17,7 +17,7 @@ kan sammenligne med.
 | A. Støy i et bilde | Når fjerner lav rang støy, og når fjerner den signal? | Ortogonal projeksjon og Frobeniusnorm. |
 | B. Et uskarpt signal | Hvorfor kan bedre tilpasning til data gi dårligere rekonstruksjon? | SVD-koordinater, residual og følsomhet. |
 
-Sett av omtrent fire timer; utledningene og sluttvurderingen kan kreve mer tid. A og B bruker samme hovedidé:
+Sett av omtrent 4–6 timer. A og B bruker samme hovedidé:
 feilen består av informasjon vi forkaster og støy vi slipper gjennom.
 I B blir den beholdte støyen dessuten forsterket av inversjonen.
 Gjør papirregningene før du åpner hvert forsøk.

@@ -7,7 +7,7 @@ interesser. **Hvor mye må vi endre besøksmønsteret før to sider bytter plass
 I dette prosjektet skal du først bygge og kontrollere modellen. Deretter bruker
 du lineær algebra til å undersøke et selvvalgt besøksmønster. Koden brukes til
 å regne og kontrollere; de matematiske begrunnelsene er hovedarbeidet.
-Prosjektet er lagt opp til omtrent 3–4 timers arbeid med notatene tilgjengelig.
+Prosjektet er lagt opp til omtrent 4–6 timers arbeid med notatene tilgjengelig.
 
 Du trenger [besøksmodellen i 5.5](uke5.qmd#uke5-nett),
 [PageRank og tilfeldige hopp i 5.6](uke5.qmd#uke5-google) og
