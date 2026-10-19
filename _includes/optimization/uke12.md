@@ -707,7 +707,7 @@ likningene gir kandidater som må klassifiseres.
 #| partial-credit: true
 #| field-labels: normalens x-komponent, normalens y-komponent, tangentens x-komponent, tangentens y-komponent
 
-<strong>1. Tangent og normal.</strong> La $h(x,y)=x^2+4y^2-1$ og $p=(0,1/2)$.
+**1. Tangent og normal.** La $h(x,y)=x^2+4y^2-1$ og $p=(0,1/2)$.
 Finn $\nabla h(p)$ og en enhetstangent med positiv $x$-komponent.
 Kontroller at skalarproduktet av de to vektorene er null.
 
@@ -723,7 +723,7 @@ Enhetstangent $=$ vec[1,0]
 #| partial-credit: true
 #| field-labels: maksimumspunktets x-koordinat, maksimumspunktets y-koordinat, multiplikator ved maksimum
 
-<strong>2. Lagrange på sirkelen.</strong> Maksimer $f(x,y)=x+2y$ med
+**2. Lagrange på sirkelen.** Maksimer $f(x,y)=x+2y$ med
 $h=x^2+y^2-1=0$. Finn maksimumspunktet og multiplikatoren
 for $L=f+\lambda h$. Forklar hvorfor verdien er større enn
 ved det motsatte punktet.
@@ -740,7 +740,7 @@ $\lambda=$ _[-sqrt(5)/2]
 #| partial-credit: true
 #| field-labels: funksjonsverdi, andrederivert langs sirkelen
 
-<strong>3. Kandidat og type.</strong> For $f(x,y)=xy$ på sirkelen, bruk
+**3. Kandidat og type.** For $f(x,y)=xy$ på sirkelen, bruk
 $p=(1,1)/\sqrt2$. Finn verdien og andrederiverten av
 $f(\cos t,\sin t)$ ved $t=\pi/4$. Forklar hvorfor punktet er
 et maksimum langs sirkelen.
@@ -757,13 +757,14 @@ $\frac{d^2}{dt^2}f(\cos t,\sin t)\big|_{t=\pi/4}=$ _[-2]
 #| partial-credit: true
 #| field-labels: betingelsesfeil, stasjonaritetsfeil
 
-<strong>4. Kontroller et numerisk forslag.</strong> I avstandsproblemet er
+**4. Kontroller et numerisk forslag.** I avstandsproblemet er
 $a=(2,1)$, $F(z)=\tfrac12\|z-a\|^2$, $h(z)=\|z\|^2-1$.
 En løser rapporterer $z=(1,0)$ og $\lambda=1/2$.
 Regn ut $|h(z)|$ og $\|\nabla F(z)+\lambda\nabla h(z)\|_2$.
 Hvilken kontroll avslører at dette ikke er et stasjonært punkt?
 
-$|h(z)|=$ _[0] &nbsp; Stasjonaritetsfeil $=$ _[1]
+$|h(z)|=$ _[0]
+Stasjonaritetsfeil $=$ _[1]
 ```
 
 ```{math-exercise}
@@ -773,7 +774,7 @@ $|h(z)|=$ _[0] &nbsp; Stasjonaritetsfeil $=$ _[1]
 #| partial-credit: true
 #| field-labels: punktets x-koordinat, punktets y-koordinat, betingelsesgradientens x-komponent, betingelsesgradientens y-komponent
 
-<strong>5. Degenerert likning.</strong> La $f(x,y)=x+3y$ og
+**5. Degenerert likning.** La $f(x,y)=x+3y$ og
 $h(x,y)=x^2+y^2=0$. Finn det eneste tillatte punktet og
 $\nabla h$ der. Forklar hvorfor ingen multiplikator kan gjøre
 $\nabla f+\lambda\nabla h=0$, selv om punktet er et optimum.
@@ -790,7 +791,7 @@ $\nabla h(0,0)=$ vec[0,0]
 #| partial-credit: true
 #| field-labels: SPD Hessianverdi, minste verdi av L, F i tillatt punkt
 
-<strong>6. En nedre grense.</strong> Bruk $F(z)=\tfrac12\|z-(2,1)\|^2$,
+**6. En nedre grense.** Bruk $F(z)=\tfrac12\|z-(2,1)\|^2$,
 $h(z)=\|z\|^2-1$ og $\lambda=1/2$. Da er
 $L=F+\lambda h$ en kvadratisk funksjon.
 Finn tallet $c$ slik at Hessianen til $L$ er $cI$.
@@ -799,7 +800,8 @@ verdien $F(1,0)$ i ett tillatt punkt. For å avgjøre om nedre grense
 er skarp, sammenlign den med den eksakte minimumsverdien
 $\tfrac12(\sqrt5-1)^2$ fra 12.3. Begrunn i egne notater.
 
-$c=$ _[2] &nbsp; $\min_z L(z,1/2)=$ _[3/4] &nbsp;
+$c=$ _[2]
+$\min_z L(z,1/2)=$ _[3/4]
 $F(1,0)=$ _[1]
 ```
 

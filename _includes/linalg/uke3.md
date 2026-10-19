@@ -974,7 +974,7 @@ board.create('text',[14.55,imageY+0.92,function(){
 }],{
   anchorX:'middle',anchorY:'middle',fontSize:10,fixed:true
 });
-board.create('text',[14.55,imageY-0.38,'$1\\times1$-output'],{
+board.create('text',[14.55,imageY-0.38,'1×1-output'],{
   anchorX:'middle',fontSize:10,fixed:true
 });
 ```
@@ -1216,7 +1216,7 @@ patternSquare(14.15,imageY+0.52,0.80,patternAverage,'#333333');
 board.create('text',[14.55,imageY+1.75,'GJENNOMSNITT'],{
   anchorX:'middle',fontSize:11,cssStyle:'font-weight:600',fixed:true
 });
-board.create('text',[14.55,imageY-0.38,'$1\\times1$-output'],{
+board.create('text',[14.55,imageY-0.38,'1×1-output'],{
   anchorX:'middle',fontSize:10,fixed:true
 });
 ```
@@ -2839,14 +2839,14 @@ Dermed er de to viste vektorene en basis for nullrommet. Koden kontrollerer båd
 #| label: week3-null-space-basis-matrix
 #| autorun: true
 
-# z1 og z2 kommer fra håndregningen. Z samler dem som kolonner slik at
-# A @ Z kontrollerer begge nullromsligningene samtidig.
+# z1 og z2 kommer fra håndregningen. Z_A samler dem som kolonner slik at
+# A @ Z_A kontrollerer begge nullromsligningene samtidig.
 z1=np.array([2.,-1.,1.,0.])
 z2=np.array([1.,-1.,0.,1.])
-Z=np.column_stack([z1,z2])
+Z_A=np.column_stack([z1,z2])
 
-print("A ganger nullromsbasisen:\n",A@Z)
-print("Rang av basisvektorene:",np.linalg.matrix_rank(Z))
+print("A ganger nullromsbasisen:\n",A@Z_A)
+print("Rang av basisvektorene:",np.linalg.matrix_rank(Z_A))
 
 rng=np.random.default_rng(31)
 s,t=rng.normal(size=2)
@@ -2885,7 +2885,7 @@ Rangen kommer fra de to pivotene. Nulliteten kommer **uavhengig** fra nullromsbe
 # Antall pivotkolonner gir rang; antall kolonner i nullromsbasisen gir
 # nullitet. A.shape[1] er inputdimensjonen n.
 rank_A=len(pivot_columns)
-nullity_A=Z.shape[1]
+nullity_A=Z_A.shape[1]
 print(f"{A.shape[1]} = {rank_A} + {nullity_A}")
 print("Stemmer rang–nullitet?",A.shape[1]==rank_A+nullity_A)
 ```
@@ -3056,7 +3056,8 @@ før den spenner ut hele rommet.
 #| context: week3-paper-assessment-context
 #| checker: |
 #|   def check(response, symbols):
-#|       values = response["expressions"]
+#|       # R (the pivot cells follow); 0.5 and 0.0 are exact values here
+#|       values = [nsimplify(v, rational=True) for v in response["expressions"][:9]]
 #|       R = Matrix(3, 3, values)
 #|       P = response["inputs"]["PBstep"]["matrix"]
 #|       submitted_pivots = list(P)
@@ -3240,7 +3241,8 @@ inputdimensjon _[3] $=$ rang _[2] $+$ nullitet _[1]
 #| context: week3-paper-assessment-context
 #| checker: |
 #|   def check(response, symbols):
-#|       values = response["expressions"]
+#|       # R (the pivot cells follow); 0.5 and 0.0 are exact values here
+#|       values = [nsimplify(v, rational=True) for v in response["expressions"][:6]]
 #|       R = Matrix(2, 3, values)
 #|       P = response["inputs"]["PCstep"]["matrix"]
 #|       submitted_pivots = list(P)

@@ -876,7 +876,9 @@ I verkstedet fra 8.1 bruker en ny maskin 10 komponenter og 1 time og gir 500 kr 
 
 Du planlegger $b=6$ nye maskiner og $r=12$ reparasjoner. Beregn ressursbruk og nettooverskudd. Er planen tillatt? Begrunn i egne notater.
 
-Komponenter: _[72] &nbsp; Timer: _[42] &nbsp; Nettooverskudd (kr): _[5350]
+Komponenter: _[72]
+Timer: _[42]
+Nettooverskudd (kr): _[5350]
 ```
 
 **Oppgave 2 – kritisk punkt og krumning.**
@@ -890,7 +892,8 @@ Komponenter: _[72] &nbsp; Timer: _[42] &nbsp; Nettooverskudd (kr): _[5350]
 
 For $h(u,v)=u^2-4v^2$ skal du først kontrollere at gradienten er null i origo. Finn så egenverdiene til Hessianen. Er origo et lokalt minimum, et lokalt maksimum eller et sadelpunkt? Begrunn med verdiene langs de to koordinataksene.
 
-Positiv egenverdi: _[2] &nbsp; Negativ egenverdi: _[-8]
+Positiv egenverdi: _[2]
+Negativ egenverdi: _[-8]
 ```
 
 **Oppgave 3 – grenseverdi eller oppnådd verdi?**
@@ -904,11 +907,13 @@ Positiv egenverdi: _[2] &nbsp; Negativ egenverdi: _[-8]
 
 La $g(x)=x^2$. På det åpne intervallet $(0,2)$ er begge endepunktene utelatt. Finn infimum og supremum. Avgjør om et minimum finnes, både på $(0,2)$ og på $[0,2]$.
 
-Infimum på $(0,2)$: _[0] &nbsp; Supremum på $(0,2)$: _[4]
+Infimum på $(0,2)$: _[0]
+Supremum på $(0,2)$: _[4]
 
-Skriv <strong>1 for ja, 0 for nei</strong> i de neste feltene:
+Skriv **1 for ja, 0 for nei** i de neste feltene:
 
-Minimum finnes på $(0,2)$: _[0] &nbsp; Minimum finnes på $[0,2]$: _[1]
+Minimum finnes på $(0,2)$: _[0]
+Minimum finnes på $[0,2]$: _[1]
 
 Forklar i egne notater hvorfor et finere rutenett ikke endrer svaret på det åpne intervallet. Finnes det et maksimum på hvert av intervallene?
 ```
@@ -922,7 +927,7 @@ Forklar i egne notater hvorfor et finere rutenett ikke endrer svaret på det åp
 #| partial-credit: true
 #| field-labels: A lukket, A begrenset, A kompakt, B lukket, B begrenset, B kompakt, C lukket, C begrenset, C kompakt
 
-Undersøk $A=[-2,3]$, $B=(-2,3]$ og $C=[0,\infty)$. Skriv <strong>1 for ja, 0 for nei</strong>. For hver mengde skal du begrunne i egne notater hvilke endepunkter som er med, og om punktene kan bli vilkårlig store i absoluttverdi.
+Undersøk $A=[-2,3]$, $B=(-2,3]$ og $C=[0,\infty)$. Skriv **1 for ja, 0 for nei**. For hver mengde skal du begrunne i egne notater hvilke endepunkter som er med, og om punktene kan bli vilkårlig store i absoluttverdi.
 
 $A$: lukket _[1], begrenset _[1], kompakt _[1]
 
@@ -942,7 +947,8 @@ $C$: lukket _[1], begrenset _[0], kompakt _[0]
 
 Vi undersøker $f(u,v)=u^2+v^2$ på skiven $D=\{(u,v):u^2+v^2\le4\}$. Kontroller først kravene i ekstremalverdisetningen: er området ikke-tomt og kompakt, og er funksjonen kontinuerlig? Finn så ekstremalverdiene.
 
-Minimumsverdi: _[0] &nbsp; Maksimumsverdi: _[4]
+Minimumsverdi: _[0]
+Maksimumsverdi: _[4]
 
 Minimumspunkt: $u=$ _[0], $v=$ _[0]
 
@@ -962,9 +968,10 @@ Punktene $a=(2,0)$ og $b=(-2,0)$ ligger både på sirkelranden $S=\{(u,v):u^2+v^
 
 $m_1=$ _[0], $m_2=$ _[0]
 
-Skriv <strong>1 for ja, 0 for nei</strong>:
+Skriv **1 for ja, 0 for nei**:
 
-Er $m$ på sirkelranden $S$? _[0] &nbsp; Er $m$ i skiven $D$? _[1]
+Er $m$ på sirkelranden $S$? _[0]
+Er $m$ i skiven $D$? _[1]
 
 Hvilken av mengdene kan du dermed bevise at ikke er konveks? Forklar hvorfor én midtpunktsberegning ikke alene beviser at den andre mengden er konveks. Er begge mengdene kompakte?
 ```
@@ -980,7 +987,8 @@ Hvilken av mengdene kan du dermed bevise at ikke er konveks? Forklar hvorfor én
 
 For $q(x)=x^4-2x^2$ bruker du $a=-1$ og $b=1$. Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene.
 
-$q((a+b)/2)=$ _[0] &nbsp; $(q(a)+q(b))/2=$ _[-1]
+$q((a+b)/2)=$ _[0]
+$(q(a)+q(b))/2=$ _[-1]
 
 Hva sier sammenligningen om konveksitet på $\mathbb R$? Begrunn med ulikheten fra 8.4.
 ```
@@ -1020,7 +1028,8 @@ $q(1)+q'(1)(y-1)=$ __[-4*y+8]
 
 Finn også det stasjonære punktet og funksjonsverdien der:
 
-$x_*=$ _[3] &nbsp; $q(x_*)=$ _[0]
+$x_*=$ _[3]
+$q(x_*)=$ _[0]
 
 Bruk $q''(x)$ til å begrunne streng konveksitet. Forklar deretter hvorfor tangentulikheten ved $x_*$ gir et globalt, entydig minimum.
 ```

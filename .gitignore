@@ -21,11 +21,14 @@ __pycache__/
 
 **/*.quarto_ipynb
 
-c# Private Quarto plugin configuration and sources
+# Private Quarto plugin configuration and sources
 /.private-extensions/
 
 # Installed private extensions
+/_extensions/ctm-assessment/
+/_extensions/ai-feedback/
 /_extensions/pyodide-interaktiv/
 /_extensions/math-exercise/
 /_extensions/jsxgraph/
 /_extensions/py-exercise/
+setup.log

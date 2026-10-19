@@ -499,7 +499,8 @@ For $q(u,v)=(1-u)^2+10(v-u^2)^2$ er $g(0,0)=(-2,0)^T$ og $H(0,0)=\operatorname{d
 
 $p=$ vec[1,0]
 
-$m_{(0,0)}(p)=$ _[0] &nbsp; $q(p)=$ _[10]
+$m_{(0,0)}(p)=$ _[0]
+$q(p)=$ _[10]
 ```
 
 **Oppgave 6 – halvt steg og global grense.**
@@ -515,9 +516,10 @@ Bruk $q(u,v)=(1-u)^2+10(v-u^2)^2$, start $(0,0)$ og retning $p=(1,0)$. Beregn pu
 
 $x_+=$ vec[1/2,0]
 
-$q(x_+)=$ _[7/8] &nbsp; Global minimumsverdi: _[0]
+$q(x_+)=$ _[7/8]
+Global minimumsverdi: _[0]
 
-En numerisk løser rapporterer <code>success=True</code> og liten gradientnorm.
+En numerisk løser rapporterer `success=True` og liten gradientnorm.
 Forklar i egne notater hva dette kontrollerer, og hvilket eget
 argument som viser at verdi 0 er globalt best for akkurat $q$.
 ```
@@ -535,7 +537,9 @@ I de neste tre oppgavene er $H=\begin{bmatrix}9&3\\3&5\end{bmatrix}$ SPD. Som i 
 
 For $H=\begin{bmatrix}9&3\\3&5\end{bmatrix}$, finn $a$, $b$ og $c$ i $H=LL^T$ der $L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$ og $a,c>0$. Svar eksakt.
 
-$a=$ _[3] &nbsp; $b=$ _[1] &nbsp; $c=$ _[2]
+$a=$ _[3]
+$b=$ _[1]
+$c=$ _[2]
 ```
 
 **Oppgave 8 – løs nedre triangulære system.**
@@ -549,7 +553,8 @@ $a=$ _[3] &nbsp; $b=$ _[1] &nbsp; $c=$ _[2]
 
 Bruk $L=\begin{bmatrix}3&0\\1&2\end{bmatrix}$ og $-g=(9,7)^T$. Finn hjelpevektoren $y$ fra $Ly=-g$. Svar eksakt.
 
-$y_1=$ _[3] &nbsp; $y_2=$ _[2]
+$y_1=$ _[3]
+$y_2=$ _[2]
 ```
 
 **Oppgave 9 – løs øvre triangulære system.**
@@ -563,7 +568,8 @@ $y_1=$ _[3] &nbsp; $y_2=$ _[2]
 
 Bruk $L=\begin{bmatrix}3&0\\1&2\end{bmatrix}$ og $y=(3,2)^T$. Finn Newton-retningen $p$ fra $L^Tp=y$. Svar eksakt.
 
-$p_1=$ _[2/3] &nbsp; $p_2=$ _[1]
+$p_1=$ _[2/3]
+$p_2=$ _[1]
 ```
 
 Arbeid videre med [prosjekt 10: startpunkt, skala og Newton](project_week10.qmd).

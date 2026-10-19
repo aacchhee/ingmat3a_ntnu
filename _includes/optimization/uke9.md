@@ -668,7 +668,8 @@ Valgt funksjonsverdi: _[136]
 Et kompassøk står i $(3,2)$ med $\Delta=1/2$. Ingen av de fire
 naboene gir lavere verdi. Oppgi punkt og steg etter regelen fra 9.2.
 
-Nytt punkt: $x=$ _[3], $y=$ _[2] &nbsp; Ny $\Delta=$ _[1/4]
+Nytt punkt: $x=$ _[3], $y=$ _[2]
+Ny $\Delta=$ _[1/4]
 ```
 
 **Oppgave 4 – gradient og første steg.**
@@ -703,9 +704,10 @@ Ved et punkt er $f(z)=10$ og $\nabla f(z)^Tp=-20$.
 Vi prøver $\alpha=1/2$ med Armijo-faktor $10^{-4}$ og
 måler $f(z+\alpha p)=9$. Regn ut høyresiden
 $f(z)+10^{-4}\alpha\nabla f(z)^Tp$ som en brøk.
-Skriv <strong>1 for ja, 0 for nei</strong> om steget godtas.
+Skriv **1 for ja, 0 for nei** om steget godtas.
 
-Høyreside: _[9999/1000] &nbsp; Godtas: _[1]
+Høyreside: _[9999/1000]
+Godtas: _[1]
 ```
 
 **Oppgave 6 – verdi og nedre grense.**
@@ -721,7 +723,8 @@ For $f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2$ på hele planet,
 finn $f(3,2)$ og en global nedre grense som oppnås i dette punktet. Begrunn i egne notater
 hvorfor disse to tallene viser at $(3,2)$ er et globalt minimumspunkt.
 
-$f(3,2)=$ _[0] &nbsp; Nedre grense: _[0]
+$f(3,2)=$ _[0]
+Nedre grense: _[0]
 ```
 
 ## 9.6 Python: prøv søkereglene

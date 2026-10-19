@@ -424,7 +424,8 @@ Verkstedet maksimerer $P=5x+4y$ under $2x+y\le9$, $x+2y\le9$, $x\le4$ og $x,y\ge
 
 Sett $(x,y)=(4,1)$. Finn slakken i de tre begrensningene i oppført rekkefølge og beregn dekningsbidraget. Forklar i egne notater om planen er tillatt og hvilke grenser som er aktive.
 
-Slakk: vec[0,3,0] &nbsp; Dekningsbidrag: _[24]
+Slakk: vec[0,3,0]
+Dekningsbidrag: _[24]
 
 Finn også skjæringen mellom de to timegrensene. Sammenlign bidraget
 der med bidragene i hjørnetabellen i 11.1, og forklar hvilken plan som er best.
@@ -442,7 +443,8 @@ der med bidragene i hjørnetabellen i 11.1, og forklar hvilken plan som er best.
 
 Bruk prisene $(u,v,w)=(2,1,0)$. Finn øvre grense $9u+9v+4w$ og innsatsprisene $2u+v+w$ for A og $u+2v$ for B. Forklar hvorfor en tillatt plan med bidrag lik grensen er optimal.
 
-Øvre grense: _[27] &nbsp; Innsatspriser (A, B): vec[5,4]
+Øvre grense: _[27]
+Innsatspriser (A, B): vec[5,4]
 
 Utled deretter prisene fra planen $(3,3)$ ved hjelp av komplementær
 slakk: hvilken pris må være null, og hvilke to likninger bestemmer
@@ -461,7 +463,8 @@ de andre prisene? Skriv regningen i egne notater.
 
 Øk bare maskintimene fra 9 til 10. Anta at de to timegrensene fortsatt er aktive. Løs grenselikningene, kontroller $x\le4$ og finn det nye dekningsbidraget. Skriv produksjonstallene som brøker.
 
-Plan: vec[11/3,8/3] &nbsp; Dekningsbidrag: _[29]
+Plan: vec[11/3,8/3]
+Dekningsbidrag: _[29]
 ```
 
 **Oppgave 4 – prisen har et gyldighetsområde.**
@@ -490,7 +493,8 @@ $\Delta=$ _[3/2]
 
 Prøv $(u,v,w)=(3,1,0)$. Finn innsatsprisene for A og B og den øvre grensen. Sammenlign med planen $(3,3)$: beviser akkurat dette prisvalget at den er optimal?
 
-Innsatspriser (A, B): vec[7,5] &nbsp; Øvre grense: _[36]
+Innsatspriser (A, B): vec[7,5]
+Øvre grense: _[36]
 ```
 
 **Oppgave 6 – skille mellom ulike utfall.**
@@ -503,9 +507,10 @@ Innsatspriser (A, B): vec[7,5] &nbsp; Øvre grense: _[36]
 #| partial-credit: true
 #| field-labels: motstridende t-krav, t uten øvre grense
 
-Problem I krever $t\ge0$, $t\le1$ og $t\ge2$. Problem II maksimerer $t$ under bare $t\ge0$. Skriv <strong>2</strong> for umulig problem og <strong>3</strong> for ubegrenset mål. Forklar i egne notater hvorfor utfallene er forskjellige.
+Problem I krever $t\ge0$, $t\le1$ og $t\ge2$. Problem II maksimerer $t$ under bare $t\ge0$. Skriv **2** for umulig problem og **3** for ubegrenset mål. Forklar i egne notater hvorfor utfallene er forskjellige.
 
-Problem I: _[2] &nbsp; Problem II: _[3]
+Problem I: _[2]
+Problem II: _[3]
 ```
 
 I [prosjektet](project_week11.qmd) bruker du ressurspriser på et større produksjonsvalg.

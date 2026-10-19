@@ -56,7 +56,7 @@ Bruk det positive fikspunktet. Finn først $r$. Beregn deretter den lokale fakto
 
 Svarformat: Skriv eksakte uttrykk. Bruk `sqrt(2)` for $\sqrt{2}$ og `/` for brøk, for eksempel `sqrt(2)/4`. Desimaltall er ikke nødvendig.
 
-$r=$ _[sqrt(2)]<br>
-$\left|g_{1/4}'(r)\right|=$ _[1-sqrt(2)/2]<br>
+$r=$ _[sqrt(2)]
+$\left|g_{1/4}'(r)\right|=$ _[1-sqrt(2)/2]
 $\lambda=$ _[sqrt(2)/4]
 ```

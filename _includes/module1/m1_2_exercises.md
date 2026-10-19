@@ -119,7 +119,7 @@ Binære sifre: _[1101]
 
 ### Programmering: binært heltall til titallssystemet
 
-Skriv funksjonen uten å bruke `int(bits, 2)`. Gå gjennom sifrene fra venstre mot høyre og bygg opp verdien.
+Skriv funksjonen uten å bruke `int()`. Gå gjennom sifrene fra venstre mot høyre og bygg opp verdien. Tips: For et siffer `b` gir `b == "1"` enten `True`, som regnes som 1, eller `False`, som regnes som 0.
 
 ```{py-exercise}
 #| label: binary-string-to-decimal
