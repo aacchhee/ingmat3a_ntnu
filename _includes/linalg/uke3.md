@@ -1,15 +1,29 @@
+<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
+<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
+<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
+<span role="status" aria-live="polite"></span>
+</div>
+
 :::: {.callout-note}
 ## Slik bruker du siden
 
-Siden har to leseløp. **Hovedløpet** består av en faglig gjennomgang i
-3.1–3.5 og en praktisk del i 3.6. Gå gjennom 3.1–3.5 i vanlig rekkefølge, og
-arbeid deretter med eksperimentene i 3.6 for å bruke begrepene selv.
+**Ukens spørsmål: Hva slags informasjon mister en matrise – og hva kan vi finne igjen?**
 
-**Støtteløpet** er et oppslagsverk dersom Gauss-eliminasjon, pivoter,
-kolonnerom eller nullrom ikke sitter friskt. Matriserepetisjonen står i 3.7,
-og papir- og kontrolloppgavene står i 3.8. Du kan deretter vende tilbake til
-hovedløpet. Du trenger ikke gjennomføre hele støtteløpet dersom
-forkunnskapene sitter.
+Vi følger ett lite eksempel hele uka: Et bilde med 16 piksler gjøres om til et bilde med fire piksler.
+Underveis får ideene navn: lineær transformasjon, basis og koordinater, nullrom og rang. Til slutt bruker vi
+de samme ideene på polynomer. Det er grunnlaget for prosjektet.
+
+**Kort løype**
+
+1. [3.1 To bilder, samme output](#uke3-start): noe går tapt.
+2. [3.2 Fra bilde til vektor og matrise](#uke3-del1): én rad er én måling.
+3. [3.3 Beskriv bilder med forskjellige basiser](#uke3-del2): samme bilde, to oppskrifter.
+4. [3.4 Hva transformasjonen ser og ikke ser](#uke3-del3): nullrom, kolonnerom og rang.
+5. [3.5 Overfør ideene til polynomer](#uke3-del5): grunnlaget for prosjektet.
+
+**Forelesning** viser hovedløpet. **Gå i dybden** åpner mellomregninger, ekstra forsøk og sidespor.
+[3.6](#uke3-del4) er egenarbeid med bildeforsøk og oppgaver. **Støtteløpet** ([3.7](#uke3-stotte-matriser)–3.8)
+er et oppslagsverk dersom Gauss-eliminasjon, pivoter, kolonnerom eller nullrom ikke sitter friskt.
 ::::
 
 :::: {.callout-tip collapse="true"}
@@ -49,7 +63,27 @@ B = np.vstack([r1, r2])       # r1 og r2 blir rader
 ```
 
 Bruk `column_stack` når vektorene er byggesteiner eller basisvektorer. Bruk
-`vstack` når hver vektor beskriver én måling eller én ligning.
+`vstack` når hver vektor beskriver én måling eller én likning.
+
+### Kombiner hvert tall i én liste med hvert tall i en annen
+
+```python
+a = np.array([1.0, 2.0, 3.0])
+b = np.array([10.0, 20.0])
+table = a[:, None] * b[None, :]   # rad i, kolonne j: a[i]*b[j]
+```
+
+`a[:, None]` gjør `a` til en kolonne med form `(3, 1)`, og `b[None, :]` gjør
+`b` til en rad med form `(1, 2)`. NumPy kombinerer da hvert tall i kolonnen
+med hvert tall i raden og lager $3\times2$-tabellen
+`[[10, 20], [20, 40], [30, 60]]`. Det samme virker med `+`, `-` og `**`.
+
+```python
+err = np.array([0.1, -0.5, 0.3])
+i = np.argmax(np.abs(err))   # plassnummeret til det største avviket: 1
+```
+
+`argmax` gir plassen, ikke verdien; selve verdien er `err[i]`, her $-0.5$.
 
 ### Regn med matriser
 
@@ -87,7 +121,7 @@ test = rng.random((2, 2))              # et tilfeldig 2x2-bilde
 Et fast tall i `default_rng(8)` gjør at alle får de samme testdataene. Da kan
 vi gjenta forsøket og sammenligne svar. `np.repeat` brukes senere til å
 kopiere en verdi flere ganger; `np.zeros((m, n))` lager en $m\times n$-matrise
-som studenten kan fylle ut.
+som du kan fylle ut.
 
 Kode merket som **ferdig maskineri** kan brukes uten at du forstår alle
 indeksene og løkkene. Les først kommentarene og spør: Hva er inputen? Hva er
@@ -98,15 +132,24 @@ outputen? Hvilken matematisk påstand skal utskriften eller figuren kontrollere?
 
 ## 3.1 To bilder, samme output {#uke3-start}
 
-En **transformasjon** er her en regel som tar en input og lager en output. Inputen kan være et bilde, en lydfil eller en tabell med målinger; outputen kan være et nytt bilde eller noen få tall som oppsummerer inputen. Vi skriver ofte
+<div id="uke3-start"></div>
+
+Kan et sjakkbrett og en ensfarget grå flate bli helt like når vi gjør bildene mindre? Svaret er ja, og denne uka finner vi ut nøyaktig hvorfor. En **transformasjon** er en regel som tar en input og lager en output,
 
 $$T(\text{input})=\text{output}.$$
 
-Dette er også definisjonen av en **funksjon**: Hver tillatt input får nøyaktig én output. I matematikk er for eksempel $f(t)=t^2$ en funksjon som sender $3$ til $9$. I Python gjør `abs(-3)` inputen `-3` om til outputen `3`. På samme måte tar Python-funksjonen `average_pool(X)` inn et bilde og returnerer et mindre bilde. Her er $X$ navnet på inputbildet, og vi kaller outputbildet $Y$; med symboler skriver vi $Y=T(X)$.
+Det er det samme som en funksjon; ordet **avbildning** brukes også. Her er inputen et bilde $X$ med 16 piksler og outputen et mindre bilde $Y=T(X)$ med fire piksler. Spørsmålet er hvilken informasjon regelen bruker, og om noe går tapt underveis.
 
-Navnet transformasjon sier foreløpig ikke noe mer mystisk enn dette. Det framhever bare at input og output gjerne er vektorer eller bilder, ikke nødvendigvis enkelttall. Det viktige er å spørre konkret: Hvilken informasjon bruker regelen, hvilken informasjon kommer ut, og kan noe gå tapt underveis?
+<details class="reading-step">
+<summary>Gå i dybden: transformasjon, funksjon og Python-funksjon</summary>
 
-Denne uka bruker vi én enkel bildetransformasjon som gjennomgående eksempel. Den gjør et bilde med 16 piksler om til et mindre bilde med fire piksler. Figuren viser hele oppskriften uten matriser eller formler.
+Inputen til en transformasjon kan være et bilde, en lydfil eller en tabell med målinger; outputen kan være et nytt bilde eller noen få tall som oppsummerer inputen. Hver tillatt input får nøyaktig én output, akkurat som for en **funksjon**. I matematikk er for eksempel $f(t)=t^2$ en funksjon som sender $3$ til $9$. I Python gjør `abs(-3)` inputen `-3` om til outputen `3`. På samme måte tar Python-funksjonen `average_pool(X)` inn et bilde og returnerer et mindre bilde.
+
+Navnet transformasjon sier ikke noe mer mystisk enn dette. Det framhever bare at input og output gjerne er vektorer eller bilder, ikke nødvendigvis enkelttall.
+
+</details>
+
+Figuren viser hele oppskriften uten matriser eller formler.
 
 ```{.jsxgraph width="760" height="430"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -204,23 +247,15 @@ board.create('text', [6.35,3.22,'fire piksler'], {
 });
 ```
 
-Fargene og pilene viser hva som hører sammen. De fire pikslene i det blå området samles til den blå outputpikselen, og tilsvarende for de tre andre områdene. I vårt eksempel betyr «samle» at vi tar gjennomsnittet av de fire pikselverdiene. Dermed går vi fra 16 tall til fire tall. Vi begynner med to bilder som ser helt forskjellige ut: et ensfarget bilde og et tydelig sjakkmønster.
+Fargene og pilene viser hva som hører sammen: De fire pikslene i det blå området samles til den blå outputpikselen, og så videre. «Samle» betyr her å ta gjennomsnittet av de fire pikselverdiene, et **blokkgjennomsnitt**. Dermed går vi fra 16 tall til fire tall.
 
-Vi kaller de to store inputbildene $X_1$ og $X_2$. Begge er
-$4\times4$-bilder. Transformasjonen $T$ lager ett mindre bilde fra hvert av
-dem:
+Vi begynner med to $4\times4$-bilder som ser helt forskjellige ut: et ensfarget bilde $X_1$ og et tydelig sjakkmønster $X_2$. Bokstaven $X$ viser alltid til et inputbilde med 16 piksler og $Y$ til et outputbilde med fire piksler:
 
 $$
 Y_1=T(X_1), \qquad Y_2=T(X_2).
 $$
 
-Bokstaven $X$ viser altså alltid til et inputbilde med 16 piksler i dette
-eksempelet, mens $Y$ viser til det tilhørende outputbildet med fire piksler.
-
-Den neste cellen er ferdig maskineri for å vise bilder og beregne de fire
-gjennomsnittene. Du trenger ikke forstå `reshape`-uttrykket ennå; i 3.2 ser
-vi nøye på hvordan et bilde legges over i en vektor. Akkurat nå er spørsmålet
-bare hva transformasjonen beholder, og hva den mister.
+Cellen under lager de to inputbildene og bruker den ferdige funksjonen `average_pool` på hvert av dem. Hvordan den regner ut blokkgjennomsnittene med en matrise, ser vi i 3.2.
 
 ```{pyodide-python}
 #| label: week3-setup
@@ -312,11 +347,8 @@ def show_image_table(rows, row_labels, column_labels, cmap="gray",
 
 def average_pool(X):
     """Fire gjennomsnitt, ett fra hver 2 x 2-blokk."""
-    # asarray gjør inputen til en talltabell; formkontrollen gir en tydelig
-    # feilmelding hvis funksjonen brukes på feil bildestørrelse.
+    # Del 4 x 4-bildet i 2 x 2 blokker og ta gjennomsnittet i hver blokk.
     X = np.asarray(X, dtype=float)
-    if X.shape != (4, 4):
-        raise ValueError("Bildet må ha størrelse 4 x 4.")
     return X.reshape(2, 2, 2, 2).mean(axis=(1, 3))
 
 def pooling_matrix():
@@ -334,6 +366,56 @@ def pooling_matrix():
     return A
 
 A_pool = pooling_matrix()
+
+def show_flattened(X):
+    """Vis et 4 x 4-bilde og de samme 16 tallene lagt radvis i én vektor."""
+    X = np.asarray(X, dtype=float)
+    x = X.reshape(-1)
+    plt.close("all")
+    fig, axes = plt.subplots(1, 2, figsize=(7.0, 1.8),
+                             gridspec_kw={"width_ratios": [1, 3.2]})
+    axes[0].imshow(X, cmap="gray", vmin=0, vmax=1, interpolation="nearest")
+    for r in range(4):
+        for c in range(4):
+            axes[0].text(c, r, f"$x_{{{4*r+c+1}}}$\n{X[r,c]:.1f}",
+                         ha="center", va="center", fontsize=7,
+                         color="white" if X[r, c] < 0.5 else "black")
+    axes[0].set_title("$4\\times4$-bilde", fontsize=9)
+    axes[0].set_xticks([]); axes[0].set_yticks([])
+    axes[1].imshow(x.reshape(1, -1), cmap="gray", vmin=0, vmax=1,
+                   interpolation="nearest", aspect="equal")
+    for j, value in enumerate(x):
+        axes[1].text(j, 0, f"$x_{{{j+1}}}$\n{value:.1f}",
+                     ha="center", va="center", fontsize=6,
+                     color="white" if value < 0.5 else "black")
+    # Røde streker markerer hvor en bilderad slutter og den neste begynner.
+    for boundary in [3.5, 7.5, 11.5]:
+        axes[1].axvline(boundary, color="tab:red", linewidth=2)
+    axes[1].set_title("Radene lagt etter hverandre: en 16-vektor", fontsize=9)
+    axes[1].set_xticks([]); axes[1].set_yticks([])
+    fig.text(0.315, 0.49, "→", ha="center", va="center", fontsize=16)
+    plt.tight_layout(); plt.show()
+
+def show_two_routes(alpha, beta, route_1, route_2):
+    """Vis de to regnerekkefølgene i linearitetsforsøket som en bildetabell.
+    route_1 = [alpha*X1, beta*X3, S, R1] og
+    route_2 = [alpha*T(X1), beta*T(X3), R2, R1-R2]."""
+    show_image_table(
+        [route_1, route_2],
+        ["Rute 1\nbland først", "Rute 2\ntransformer først"],
+        ["Bidrag fra $X_1$", "Bidrag fra $X_3$", "Sum", "Resultat / kontroll"],
+        cell_labels=[
+            [f"${alpha:g}X_1$", f"${beta:g}X_3$", "$S$", "$R_1=T(S)$"],
+            [f"${alpha:g}T(X_1)$", f"${beta:g}T(X_3)$", "$R_2$", "$R_1-R_2$"]
+        ],
+        # Forskjellen vises med rød–blå skala; hvitt betyr 0.
+        cell_styles=[
+            [{}, {}, {}, {}],
+            [{}, {}, {}, {"cmap": "coolwarm", "vmin": -1e-12, "vmax": 1e-12}]
+        ],
+        operators=[["+", "=", "$T$ →"], ["+", "=", ""]],
+        vmin=0, vmax=1, figsize=(10.0, 4.6)
+    )
 ```
 
 ```{pyodide-python}
@@ -364,7 +446,7 @@ show_image_table(
 
 Inputbildene i venstre kolonne er tydelig forskjellige, mens outputbildene i
 høyre kolonne er like. For å undersøke dette uten å stole bare på øynene
-beregner vi to forskjellsmatriser:
+beregner vi to forskjellsmatriser, piksel for piksel:
 
 $$
 D_{\text{input}}=X_1-X_2,
@@ -372,18 +454,15 @@ D_{\text{input}}=X_1-X_2,
 D_{\text{output}}=Y_1-Y_2.
 $$
 
-Subtraksjonen utføres på pikselverdiene: Hvert tall i den første matrisen er
-forskjellen mellom to piksler på samme plass i $X_1$ og $X_2$, og tilsvarende
-for $Y_1$ og $Y_2$.
+Hvis to bilder er like, er forskjellen 0 på hver pikselplass. Da får vi
+**nullbildet**, altså en matrise der alle pikselverdiene er 0.
 
-### Ett tall for størrelsen på en forskjell
+<details class="reading-step">
+<summary>Gå i dybden: forskjellsbildet piksel for piksel</summary>
 
 Forskjellsmatrisene forteller både **hvor** bildene er forskjellige, og i
-hvilken retning pikselverdiene har endret seg. Hvis to bilder er like, er
-forskjellen 0 på hver eneste pikselplass. Da får vi **nullbildet**, altså en
-matrise der alle pikselverdiene er 0.
-
-Tabellen nedenfor skal leses rad for rad og kolonne for kolonne:
+hvilken retning pikselverdiene har endret seg. Tabellen nedenfor skal leses
+rad for rad og kolonne for kolonne:
 
 - Øverste rad viser de beregnede forskjellene. Venstre kolonne sammenligner
   de to $4\times4$-inputene, mens høyre kolonne sammenligner de to
@@ -394,6 +473,8 @@ Tabellen nedenfor skal leses rad for rad og kolonne for kolonne:
 - Rødt betyr positiv forskjell, blått betyr negativ forskjell og hvitt betyr
   0. Størrelsen på hver rute følger antallet piksler, så et $2\times2$-bilde
   har halvparten av sidelengden til et $4\times4$-bilde.
+
+Cellen regner ut de to forskjellene og tegner dem over hvert sitt nullbilde.
 
 ```{pyodide-python}
 #| label: week3-difference-and-zero-images
@@ -422,10 +503,14 @@ på alle 16 pikselplasser. Feltet øverst til høyre er helt hvitt og ser ut som
 nullbildet under: $Y_1-Y_2$ er 0 på alle fire plasser, så outputbildene er
 like.
 
-Figuren gir detaljene, men senere trenger vi også ett tall som kan svare på
-spørsmålet «hvor stor er forskjellen totalt?». Vi kan ikke bare summere
-verdiene i forskjellsmatrisen. Her ville åtte forekomster av $+0.4$ og åtte
-forekomster av $-0.4$ oppheve hverandre og gi summen 0, selv om bildene er
+</details>
+
+### Ett tall for størrelsen på en forskjell
+
+Vi vil ha ett tall som svarer på spørsmålet «hvor stor er forskjellen
+totalt?». Vi kan ikke bare summere verdiene i forskjellsmatrisen. I
+$D_{\text{input}}$ er åtte verdier $0.5-0.1=+0.4$ og åtte verdier
+$0.5-0.9=-0.4$. De opphever hverandre og gir summen 0, selv om bildene er
 forskjellige overalt.
 
 Vi kvadrerer derfor alle verdiene i forskjellsbildet, summerer dem og tar kvadratroten. For et bilde $D$ blir dette
@@ -436,19 +521,21 @@ $$
 
 Kvadreringen gjør alle bidragene ikke-negative, slik at positive og negative
 forskjeller ikke kan kansellere hverandre. Tallet $\lVert D\rVert$ kalles
-**normen** til $D$. Her kan vi lese det som den numeriske avstanden fra $D$
-til nullbildet. Normen er 0 nøyaktig når alle pikselforskjellene er 0.
-Dermed måler $\lVert X_1-X_2\rVert$ den samlede pikselforskjellen mellom de to
-inputbildene. Dette er en numerisk avstand mellom pikselverdier, ikke
-nødvendigvis et mål på hvor forskjellige bilder oppleves av et menneske.
+**normen** til $D$: den numeriske avstanden fra $D$ til nullbildet. Normen er
+0 nøyaktig når alle pikselforskjellene er 0. Det er en avstand mellom
+pikselverdier, ikke nødvendigvis et mål på hvor forskjellige bildene oppleves
+av et menneske.
 
-NumPy beregner denne normen med `np.linalg.norm`. Den samme regelen virker for en vektor: Da summerer vi kvadratene av komponentene i stedet for pikslene.
+For en vektor summerer vi kvadratene av komponentene på samme måte. Cellen regner ut normen av inputforskjellen, først rett fra formelen og så med `np.linalg.norm`, og deretter normen av outputforskjellen.
 
 ```{pyodide-python}
 #| label: week3-first-norm
 #| autorun: true
 
-# Første linje er definisjonen på normen skrevet direkte i NumPy.
+# Forskjellene fra formelen over, piksel for piksel.
+D_input=X1-X2
+D_output=Y1-Y2
+# Neste linje er definisjonen på normen skrevet direkte i NumPy.
 # Deretter bruker vi den ferdige norm-funksjonen som kontroll.
 input_norm_by_formula=np.sqrt(np.sum(D_input**2))
 
@@ -457,11 +544,11 @@ print("Inputforskjell med np.linalg.norm:   ",np.linalg.norm(D_input))
 print("Outputforskjell med np.linalg.norm:  ",np.linalg.norm(D_output))
 ```
 
-De 16 inputforskjellene har alle absoluttverdi $0.4$. Derfor blir normen
-$\sqrt{16\cdot0.4^2}=1.6$. De to første utskriftene viser det samme tallet:
-først beregnet direkte fra formelen og deretter med NumPy. Outputforskjellen
-har norm 0 og er derfor nøyaktig nullbildet. Senere vil avrundingsfeil ofte
-gi svært små normer i stedet for nøyaktig 0; da leser vi resultatet som
+De 16 inputforskjellene har alle absoluttverdi $0.4$, så normen er
+$\sqrt{16\cdot0.4^2}=1.6$. De to første utskriftene viser $1.6$; den ene kan
+få en avrundingsrest langt ute i desimalene, for eksempel
+`1.6000000000000005`. Outputforskjellen har norm 0. Senere gir avrundingsfeil
+ofte svært små normer i stedet for nøyaktig 0; da leser vi resultatet som
 «numerisk nær null».
 
 ::: {.callout-important}
@@ -471,6 +558,11 @@ Bildene er forskjellige, men transformasjonen gir samme output. Den bevarer gjen
 :::
 
 Transformasjonen arbeider blokk for blokk. I øvre venstre blokk i `X2` er pikselverdiene $0.1,0.9,0.9,0.1$. Summen er 2, og gjennomsnittet er derfor $2/4=0.5$. Det samme skjer i de tre andre blokkene. I `X1` er hver piksel allerede $0.5$, så også der blir alle fire blokkgjennomsnittene $0.5$.
+
+<details class="reading-step">
+<summary>Gå i dybden: de fire blokkene i sjakkbildet</summary>
+
+Cellen klipper de fire $2\times2$-blokkene ut av `X2` og skriver blokkgjennomsnittet over hver av dem.
 
 ```{pyodide-python}
 #| label: week3-four-blocks
@@ -494,61 +586,40 @@ show_images(blocks,
 
 Figuren viser de fire delene som ble klippet ut av `X2`, i samme leseretning som outputbildet: først øvre rad fra venstre mot høyre, deretter nedre rad. Ordet «gjennomsnitt» over hvert delbilde er tallet som plasseres i den tilsvarende outputpikselen. Alle fire tallene er $0.5$, og outputen blir derfor et ensfarget $2\times2$-bilde.
 
-Dette er ikke en avrundingsfeil. Gjennomsnittene er matematisk like. Det er selve transformasjonen som ikke registrerer forskjellen mellom et jevnt felt og variasjoner med samme sum. Transformasjonen er altså mange-til-én: flere forskjellige inputbilder kan havne på samme output.
+</details>
 
-Senere skal vi undersøke to viktige egenskaper ved transformasjoner:
+Dette er ikke en avrundingsfeil: Gjennomsnittene er matematisk like. Transformasjonen er **mange-til-én**: flere forskjellige inputbilder kan havne på samme output, så fra outputen alene kan vi ikke avgjøre hvilket bilde som var input.
+
+Resten av uka undersøker vi to egenskaper ved transformasjoner:
 
 1. **Hva skjer når inputbilder skaleres og legges sammen?** Dette leder til lineære transformasjoner.
 2. **Hvilke endringer i inputen blir usynlige i outputen?** Dette leder til nullrom, rang og dimensjon.
 
-Fra outputen alene kan vi derfor ikke avgjøre hvilket bilde som var input. Før vi gir dette et matematisk navn, kan du prøve å endre `X2` uten å endre gjennomsnittet i noen blokk. Hvilke endringer ser ut til å være tillatt?
+Før vi gir dette et matematisk navn, kan du prøve å endre `X2` uten å endre gjennomsnittet i noen blokk. Hvilke endringer ser ut til å være tillatt?
 
 ## 3.2 Fra bilde til vektor og matrise {#uke3-del1}
 
-Et bilde vises som en todimensjonal rute, men pikselverdiene kan også legges etter hverandre i en liste. NumPy-funksjonen `reshape(-1)` leser først øverste rad fra venstre mot høyre, deretter neste rad, og fortsetter til alle 16 pikslene er plassert i én vektor.
+<div id="uke3-del1"></div>
+
+Pikselverdiene i et bilde kan også legges etter hverandre i en liste. NumPy-funksjonen `reshape(-1)` leser øverste rad fra venstre mot høyre, deretter neste rad, og så videre. Cellen gjør dette med sjakkbildet `X2` og tegner bildet og vektoren ved siden av hverandre.
 
 ```{pyodide-python}
 #| label: week3-flatten-picture
 #| autorun: true
 
-# reshape(-1) leser radene etter hverandre. Resten av cellen er ferdig
-# plottemaskineri som viser at ingen tall endres eller forsvinner.
+# reshape(-1) leser radene etter hverandre: 16 tall, ingen endret eller borte.
 x2=X2.reshape(-1)
-fig,axes=plt.subplots(1,2,figsize=(7.0,1.8),
-                      gridspec_kw={"width_ratios":[1,3.2]})
-
-axes[0].imshow(X2,cmap="gray",vmin=0,vmax=1,interpolation="nearest")
-for r in range(4):
-    for c in range(4):
-        axes[0].text(c,r,f"$x_{{{4*r+c+1}}}$\n{X2[r,c]:.1f}",
-                     ha="center",va="center",fontsize=7,
-                     color="white" if X2[r,c]<0.5 else "black")
-axes[0].set_title("$4\\times4$-bilde",fontsize=9)
-axes[0].set_xticks([]); axes[0].set_yticks([])
-
-axes[1].imshow(x2.reshape(1,-1),cmap="gray",vmin=0,vmax=1,
-               interpolation="nearest",aspect="equal")
-for j,value in enumerate(x2):
-    axes[1].text(j,0,f"$x_{{{j+1}}}$\n{value:.1f}",
-                 ha="center",va="center",fontsize=6,
-                 color="white" if value<0.5 else "black")
-for boundary in [3.5,7.5,11.5]:
-    axes[1].axvline(boundary,color="tab:red",linewidth=2)
-axes[1].set_title("Radene lagt etter hverandre: en 16-vektor",fontsize=9)
-axes[1].set_xticks([]); axes[1].set_yticks([])
-fig.text(0.315,0.49,"→",ha="center",va="center",fontsize=16)
-plt.tight_layout(); plt.show()
+print(x2)
+show_flattened(X2)
 ```
 
-Venstre del av figuren viser pikselnumrene på de opprinnelige plassene. Høyre del viser nøyaktig de samme tallene i én rad. De røde strekene markerer hvor en rad fra bildet slutter og den neste begynner. Vektoren er derfor ikke et nytt bilde og ingen informasjon er borte; vi har bare valgt en nummerering som gjør at vanlig matrise-vektor-multiplikasjon kan brukes.
-
-Husk transformasjonen fra 3.1: Den tok et stort bilde som input og ga et mindre bilde som output. Nå beskriver vi de to bildene som vektorer, men selve input–output-regelen er fortsatt den samme.
+Figuren viser de samme 16 tallene to ganger; de røde strekene markerer hvor en bilderad slutter. Ingen informasjon er borte. Vi har bare valgt en nummerering som gjør at vanlig matrise-vektor-multiplikasjon kan brukes.
 
 Et $4\times4$-bilde beskrives dermed med 16 koordinater og kan behandles som en vektor $x\in\mathbb R^{16}$. Bildetransformasjonen fra 3.1 kan nå skrives
 
 $$y=Ax,$$
 
-der $A$ har fire rader og seksten kolonner. Hver rad i $A$ lager én av de fire outputverdiene. Hver kolonne svarer til én av de 16 inputpikslene.
+der $A$ har fire rader og seksten kolonner. Hver rad i $A$ lager én av de fire outputverdiene. Hver kolonne svarer til én av de 16 inputpikslene og samler virkningen den pikselen har på alle fire målingene.
 
 ### Slik konstruerer vi matrisen fra en regel
 
@@ -569,10 +640,9 @@ $$\begin{bmatrix}
 \end{bmatrix}.$$
 
 Andre rad bygges fra øvre høyre blokk, tredje rad fra nedre venstre og
-fjerde rad fra nedre høyre. Dermed betyr en rad alltid **én måling**, mens
-kolonne $j$ samler virkningen inputverdi $x_j$ har på alle målingene. Dette
-er den generelle konstruksjonen for enhver lineær transformasjon som er gitt
-ved formler eller målinger.
+fjerde rad fra nedre høyre. En rad i $A$ er altså alltid **én måling**, og
+slik bygger vi matrisen for enhver lineær transformasjon som er gitt ved
+formler eller målinger.
 
 Det er nyttig å holde de to sidene fra hverandre:
 
@@ -582,7 +652,13 @@ $$
 \underbrace{\mathbb R^4}_{\text{outputrom: små bilder}}.
 $$
 
-På venstre side av pilen står inputen $x$ med 16 pikselverdier. På høyre side står outputen $y$ med fire blokkgjennomsnitt. Matrisen $A$ er oppskriften som lager disse fire tallene fra de seksten. Input og output har derfor forskjellige roller og forskjellig lengde; vi holder dem på hver sin side av pilen.
+På venstre side av pilen står inputen $x$ med 16 pikselverdier, på høyre side
+outputen $y$ med fire blokkgjennomsnitt. Inputrommet kalles også
+**definisjonsrommet**, og outputrommet, der alle outputene ligger, kalles også
+**verdirommet**.
+
+Den ferdige matrisen `A_pool` er bygd nøyaktig slik, rad for rad. Cellen
+gjør de to bildene fra 3.1 om til vektorer og regner ut $Ax$ for hvert av dem.
 
 ```{pyodide-python}
 #| label: week3-pooling-as-matrix
@@ -599,7 +675,7 @@ print("A @ x1 =", y1)
 print("A @ x2 =", y2)
 ```
 
-Neste figur viser produktet i vanlig oppsett: en $4\times16$-matrise ganger en vertikal 16-vektor gir en vertikal 4-vektor. Samme farge brukes på et bildeområde, de tilhørende inputverdiene, matrisraden som samler dem og outputverdien de ender i.
+Neste figur viser produktet: en $4\times16$-matrise ganger en 16-vektor gir en 4-vektor. Samme farge brukes på et bildeområde, inputverdiene, matrisraden og outputverdien.
 
 ```{.jsxgraph width="760" height="390"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -709,75 +785,42 @@ for (var p=0; p<4; p++) {
 }
 ```
 
-Les én farge om gangen. Den blå matrisraden har fire ruter med $1/4$. De fire blå tallene i inputvektoren kommer fra øvre venstre bildeområde. Når rad og vektor multipliseres, blir disse fire verdiene ganget med $1/4$ og lagt sammen. Resultatet blir den blå verdien øverst i outputvektoren. De hvite nullrutene betyr at de øvrige inputverdiene ikke bidrar til akkurat denne outputen.
+Les én farge om gangen. Den blå matrisraden har fire ruter med $1/4$ der de fire blå inputverdiene står, og nuller ellers. Rad ganger vektor gir derfor $1/4$ av summen av de fire blå verdiene: den blå outputverdien.
 
-De gule, grønne og lilla radene gjør det samme for de tre andre bildeområdene. Matrise-vektorproduktet kan derfor leses som fire parallelle oppskrifter: **én matrisrad gir én verdi i outputvektoren**. Til slutt ordnes de fire outputverdiene som et $2\times2$-bilde. Figuren bruker sjakkbildet fra 3.1, så alle fire gjennomsnittene blir $0.5$.
+De andre fargene gjør det samme for sine områder: **én matrisrad gir én verdi i outputvektoren**. Med sjakkbildet blir alle fire gjennomsnittene $0.5$.
 
-### Et eksperiment med skalering og addisjon
+### Skalering og addisjon
 
-Tenk deg at et grafikkprogram bygger et stort bilde av flere lag. Ett lag kan
-være en jevn bakgrunn, et annet en tekstur, og andre kan inneholde kanter eller
-små detaljer. Koeffisienten foran hvert lag bestemmer hvor sterkt laget skal
-bidra. Addisjon setter de skalerte lagene sammen, piksel for piksel, til ett
-ferdig bilde.
-
-Nå skal programmet også lage et lite forhåndsvisningsbilde. Da finnes det to
-naturlige arbeidsmåter:
+Tenk deg at et grafikkprogram bygger et stort bilde av flere lag, for
+eksempel en jevn bakgrunn og en tekstur. Koeffisienten foran hvert lag
+bestemmer hvor sterkt laget skal bidra, og lagene legges sammen piksel for
+piksel. Nå skal programmet også lage et lite forhåndsvisningsbilde. Da finnes
+det to naturlige arbeidsmåter:
 
 1. Sett sammen lagene i full størrelse, og bruk deretter transformasjonen $T$
    til å lage det lille bildet.
 2. Bruk $T$ på hvert lag først, og sett deretter sammen de små resultatene.
 
-Her er $T$ den samme transformasjonen som tidligere på siden, altså den som
-beregner blokkgjennomsnitt. Når bildene skrives som vektorer, beskrives den
-samme regelen av matrisen $A$ i uttrykket $y=Ax$.
+Her er $T$ blokkgjennomsnittet, altså $y=Ax$. Det er ikke opplagt at de to
+arbeidsmåtene gir samme svar. Hvis de gjør det, kan hvert lag behandles for
+seg uten at sluttresultatet endres.
 
-Det er ikke opplagt at disse arbeidsmåtene gir samme svar for enhver
-transformasjon. Hvis de gjør det, kan hvert lag behandles for seg uten at
-sluttresultatet endres. Det er nettopp denne egenskapen eksperimentet skal
-undersøke.
-
-Vi bruker det jevne bildet $X_1$ som et enkelt bakgrunnslag og lager et nytt,
-vilkårlig bilde $X_3$ som et teksturlag. Bidragene er $0.6X_1$ og $0.4X_3$,
-så det sammensatte $4\times4$-bildet er
+Vi bruker det jevne bildet $X_1$ som bakgrunnslag og et tilfeldig bilde $X_3$
+som teksturlag. Med bidragene $0.6X_1$ og $0.4X_3$ gir de to rutene
 
 $$
-M=0.6X_1+0.4X_3.
+R_1=T(0.6X_1+0.4X_3)
+\qquad\text{og}\qquad
+R_2=0.6\,T(X_1)+0.4\,T(X_3).
 $$
 
-De to rutene gir resultatene
+Cellen lager $X_3$, regner ut begge rutene og tegner dem i hver sin rad.
+Målet er å se om forskjellen $R_1-R_2$ blir nullbildet.
 
-$$
-R_1=T(M)=T(0.6X_1+0.4X_3)
-$$
+### Eksperiment – bland først eller transformer først?
 
-og
-
-$$
-R_2=0.6T(X_1)+0.4T(X_3).
-$$
-
-Aktiviteten sammenligner $R_1$ og $R_2$ både som bilder og med
-forskjellen $R_1-R_2$. Hvis forskjellen er nullbildet, traff de to rutene
-samme output i dette forsøket. Etterpå bruker vi selve oppskriften for
-blokkgjennomsnitt til å avgjøre om likheten gjelder generelt.
-
-::: {.callout-note}
-### Fra byggesteiner til bildekompresjon
-
-Valget av byggesteiner kan få praktisk betydning. Vanlige bilder inneholder ofte store jevne områder, langsomme overganger, kanter og gjentatte mønstre. Hvis byggesteinene passer til denne strukturen, kan bildet kanskje beskrives godt med noen få store koeffisienter og mange små.
-
-Da kan de minste bidragene lagres mindre nøyaktig eller utelates. En mulig kompresjonsalgoritme får dermed denne formen:
-
-1. Del bildet opp i egnede mønsterbyggesteiner.
-2. Finn styrken til hver byggestein.
-3. Behold de viktigste bidragene.
-4. Rekonstruer et bilde som ligner originalen.
-
-I **uke 7** skal vi bruke singulærverdifaktorisering (SVD) til å konstruere en faktisk algoritme for bildekompresjon. Da arbeider vi med større bilder og beholder de delene som beskriver mest av strukturen i bildet.
-
-I uke 3 er målet mindre, men grunnleggende: Vi analyserer små $2\times2$- og $4\times4$-bilder der alle byggesteiner, koeffisienter og transformasjoner kan sees direkte. De små bildeblokkene fungerer som en oversiktlig modell for ideene som senere skaleres opp i SVD-algoritmen.
-:::
+- Kjør cellen og sammenlign $R_1$ og $R_2$.
+- Bytt `alpha`, `beta` eller frøet i `default_rng(3)`, og kjør igjen.
 
 ```{pyodide-python}
 #| label: week3-check-linearity
@@ -788,60 +831,61 @@ X3=rng.random((4,4))
 alpha,beta=0.6,0.4
 scaled_X1=alpha*X1
 scaled_X3=beta*X3
-mixed_input=scaled_X1+scaled_X3
+S=scaled_X1+scaled_X3           # det sammensatte 4 x 4-bildet
 
 # Rute 1: bland de store bildene først, transformer etterpå.
-R1=average_pool(mixed_input)
+R1=average_pool(S)
 # Rute 2: transformer først, bland de små outputbildene etterpå.
 scaled_Y1=alpha*average_pool(X1)
 scaled_Y3=beta*average_pool(X3)
 R2=scaled_Y1+scaled_Y3
 difference=R1-R2
 
-show_image_table(
-    [[scaled_X1,scaled_X3,mixed_input,R1],
-     [scaled_Y1,scaled_Y3,R2,difference]],
-    ["Rute 1\nbland først","Rute 2\ntransformer først"],
-    ["Bidrag fra $X_1$","Bidrag fra $X_3$","Sum","Resultat / kontroll"],
-    cell_labels=[
-        ["$0.6X_1$","$0.4X_3$","$M$","$R_1=T(M)$"],
-        ["$0.6T(X_1)$","$0.4T(X_3)$","$R_2$","$R_1-R_2$"]
-    ],
-    cell_styles=[
-        [{},{},{},{}],
-        [{},{},{},{"cmap":"coolwarm","vmin":-1e-12,"vmax":1e-12}]
-    ],
-    operators=[["+","=","$T$ →"],
-               ["+","=",""]],
-    vmin=0,vmax=1,figsize=(10.0,4.6)
-)
+show_two_routes(alpha,beta,[scaled_X1,scaled_X3,S,R1],
+                [scaled_Y1,scaled_Y3,R2,difference])
 print("Normen til R1-R2:",np.linalg.norm(difference))
 ```
 
+**Hva viser forsøket?** De to rutene gir samme småbilde: Forskjellen $R_1-R_2$
+er hvit (hvitt betyr 0) og har norm 0. Ett forsøk er likevel ikke et bevis, så vi ser på selve
+regelen.
+
+<details class="reading-step">
+<summary>Gå i dybden: slik leser du tabellen</summary>
+
 Les tabellen fra venstre mot høyre. I øverste rad har de tre første bildene
-størrelse $4\times4$: De to skalerte lagene legges sammen til $M$, som så
-transformeres til det mindre resultatet $R_1$. I nederste rad er
-transformasjonen allerede brukt på hvert lag. Derfor er alle bildene
-$2\times2$, og de to første legges sammen til $R_2$. Bildene er plassert med
-samme fysiske størrelse per piksel; et $2\times2$-bilde har derfor
-halvparten av sidelengden til et $4\times4$-bilde.
+størrelse $4\times4$: De to skalerte lagene legges sammen til
+$S=0.6X_1+0.4X_3$, som så transformeres til det mindre resultatet $R_1$. I
+nederste rad er transformasjonen allerede brukt på hvert lag. Derfor er alle
+bildene $2\times2$, og de to første legges sammen til $R_2$. Feltet nederst
+til høyre viser $R_1-R_2$ med samme rød–blå skala som i 3.1. Det er hvitt
+fordi alle fire forskjellene er 0.
 
-Feltet nederst til høyre viser $R_1-R_2$ med samme rød–blå skala som i 3.1.
-Det er hvitt fordi alle fire forskjellene er 0. Normen som skrives ut under
-figuren er også 0. De to regnerekkefølgene gir dermed samme småbilde i dette
-eksperimentet.
+</details>
 
-Ett eksperiment er ikke et bevis for alle bilder. Her kan vi imidlertid se
-hvorfor likheten gjelder generelt: Hver outputpiksel er summen av fire
-inputverdier, alle ganget med $1/4$. Både skaleringen og addisjonen kan derfor
-flyttes inn eller ut av denne summen. Det gir den sentrale regneregelen for en
-**lineær transformasjon**:
+Hver outputpiksel er summen av fire inputverdier, alle ganget med $1/4$. For
+øvre venstre outputpiksel og to inputvektorer $x$ og $z$ er
+
+$$
+\begin{aligned}
+&\tfrac14\big((\alpha x_1+\beta z_1)+(\alpha x_2+\beta z_2)+(\alpha x_5+\beta z_5)+(\alpha x_6+\beta z_6)\big)\\
+&\qquad=\alpha\cdot\tfrac14(x_1+x_2+x_5+x_6)+\beta\cdot\tfrac14(z_1+z_2+z_5+z_6).
+\end{aligned}
+$$
+
+Vi har bare sortert leddene: Både skaleringen og addisjonen kan flyttes inn
+eller ut av summen. Det samme gjelder de tre andre outputpikslene. Det gir den
+sentrale regneregelen for en **lineær transformasjon**:
 
 $$A(\alpha x+\beta z)=\alpha Ax+\beta Az.$$
 
-Her står $x$ og $z$ for to vilkårlige inputvektorer, mens $\alpha$ og $\beta$ er vilkårlige tall. Regelen rommer to egenskaper samtidig: skalering kan flyttes gjennom transformasjonen, og addisjon kan flyttes gjennom transformasjonen.
+Her er $x$ og $z$ vilkårlige inputvektorer og $\alpha,\beta$ vilkårlige tall: Både skalering og addisjon kan flyttes gjennom transformasjonen.
 
-Dette er sentralt fordi vi senere kan forstå en komplisert input ved å dele den i enkle byggesteiner. Hvis $x=c_1b_1+\cdots+c_kb_k$, trenger vi ikke analysere hele $x$ på nytt:
+Et uttrykk som $c_1b_1+\cdots+c_kb_k$ kalles en **lineærkombinasjon** av
+$b_1,\ldots,b_k$: Vi skalerer hver byggestein og legger sammen. Linearitet er
+sentralt fordi vi kan forstå en komplisert input ved å dele den i enkle
+byggesteiner. Hvis $x=c_1b_1+\cdots+c_kb_k$, trenger vi ikke analysere hele
+$x$ på nytt:
 
 $$Ax=c_1Ab_1+\cdots+c_kAb_k.$$
 
@@ -851,11 +895,9 @@ Vi kan altså finne hva transformasjonen gjør med hver byggestein én gang og d
 
 <div id="uke3-del2"></div>
 
-Vi skal nå finne et systematisk språk for «byggesteiner». Vi begynner fortsatt med bilder, ikke med en abstrakt definisjon.
+Vi skal nå finne et systematisk språk for «byggesteiner». Tenk på et tomt $2\times2$-bilde og fire skyveknapper, én for hver piksel.
 
-Tenk på et tomt $2\times2$-bilde. Vi ønsker fire skyveknapper som kan lage et hvilket som helst slikt bilde. En naturlig idé er å la hver skyveknapp styre én piksel.
-
-Dra i skyveknappene i appleten. Hver knapp endrer styrken til ett lite byggesteinsbilde. De fire delbildene nederst legges sammen piksel for piksel, og resultatet vises til høyre. Prøv spesielt å lage et helt svart bilde, et ensfarget grått bilde og et bilde med fire forskjellige gråtoner.
+Dra i skyveknappene. Hver knapp skalerer ett lite byggesteinsbilde, og de fire delbildene legges sammen til bildet til høyre. Prøv å lage et helt svart bilde, et ensfarget grått bilde og et bilde med fire forskjellige gråtoner.
 
 ```{.jsxgraph width="760" height="430"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -983,13 +1025,19 @@ board.create('text',[14.55,imageY-0.38,'1×1-output'],{
 
 Appleten antyder to viktige egenskaper før vi bruker matematisk terminologi. Alle $2\times2$-bilder med pikselverdier mellom 0 og 1 kan lages ved å velge de fire kontrollene. Samtidig har hvert ferdig bilde bare én innstilling av kontrollene: Pikselverdiene bestemmer skyveknappene.
 
-Ruten lengst til høyre bruker samme gråskala som Python-figurene: 0 er svart
-og 1 er hvitt. Den viser det aritmetiske gjennomsnittet av de fire pikslene i
-summen. Endre én skyveknapp og legg merke til at én pikselendring på
-$\Delta$ endrer gjennomsnittet med $\Delta/4$. Denne $2\times2\to1\times1$-
-regelen blir den lille transformasjonen i 3.4.
+Ruten lengst til høyre viser blokkgjennomsnittet (0 er svart, 1 er hvitt). Én pikselendring på $\Delta$ endrer det med $\Delta/4$; denne regelen blir den lille transformasjonen i 3.4.
 
-Nå gjentar vi det samme eksperimentet i NumPy. De fire første bildene har verdi 1 i hver sin piksel og 0 i de andre. Deretter blir hvert bilde ganget med ønsket pikselverdi, og de fire delbildene legges sammen.
+Byggesteinsbildet $E_k$ har verdien 1 i piksel $k$ og 0 i de tre andre
+pikslene. Startinnstillingen i appleten lager derfor bildet
+
+$$X=\begin{bmatrix}0.2&0.7\\0.4&0.9\end{bmatrix}=0.2E_1+0.7E_2+0.4E_3+0.9E_4.$$
+
+For eksempel bidrar $0.7E_2$ bare med $0.7$ i øvre høyre piksel, så hver piksel kan stilles inn uavhengig.
+
+<details class="reading-step">
+<summary>Gå i dybden: pikselbasisen i NumPy</summary>
+
+Her gjentar vi appleten i NumPy. De fire første bildene har verdi 1 i hver sin piksel og 0 i de andre. Deretter blir hvert bilde ganget med ønsket pikselverdi, og de fire delbildene legges sammen.
 
 ```{pyodide-python}
 #| label: week3-pixel-basis
@@ -1013,51 +1061,47 @@ show_images(components+[X],
     cols=5,vmin=0,vmax=1,figsize=(7.0,1.7))
 ```
 
-$$X=0.2E_1+0.7E_2+0.4E_3+0.9E_4.$$
+</details>
 
-For eksempel bidrar $0.7E_2$ bare med verdien $0.7$ i øvre høyre piksel. Siden ingen av de andre tre delbildene påvirker denne pikselen, blir øvre høyre piksel i summen også $0.7$. Slik kan hver av de fire pikslene stilles inn uavhengig.
+De fire tallene foran byggesteinene kalles **koordinater i denne beskrivelsen**. Her er de nøyaktig de fire pikselverdiene i $X$.
 
-De fire tallene foran byggesteinene kalles **koordinater i denne beskrivelsen**. Her er de nøyaktig de fire pikselverdiene i $X$. Før vi gir hele byggesteinsystemet et matematisk navn, undersøker vi to mulige problemer: for få byggesteiner og overflødige byggesteiner.
+Er fire knapper akkurat riktig antall? Vi prøver to endringer: Først fjerner
+vi $E_4$, så legger vi til $E_5=E_1+E_2$, som er bygd av to andre. Cellen gjør
+begge forsøkene, ett i hver rad. Målet er å se hva som skjer med egenskapene
+«alle bilder kan lages» og «oppskriften er entydig».
 
-### Eksperiment: Ta bort én byggestein
+### Eksperiment – for få eller for mange byggesteiner?
 
-Vi forsøker å lage det samme målbildet uten $E_4$. De tre første pikslene kan fortsatt stilles inn, men ingen kombinasjon av $E_1,E_2,E_3$ kan påvirke pikselen nederst til høyre.
+- Kjør cellen og se hva som mangler når $E_4$ er borte (øverste rad).
+- Sammenlign de to oppskriftene med $E_5=E_1+E_2$ (nederste rad).
+- Bytt $E_5$ med for eksempel $E_3+E_4$, og endre `recipe_1` slik at den lager
+  det samme bildet med bare $E_1,\ldots,E_4$.
 
 ```{pyodide-python}
 #| label: week3-missing-and-redundant
 #| autorun: true
 
-# Vi fjerner E4 med vilje. Forskjellsbildet viser hvilken del av målbildet
-# de tre gjenværende byggesteinene ikke kan lage.
+# E1, ..., E4, målbildet X og coefficients kommer fra «Gå i dybden: pikselbasisen i NumPy».
+# Forsøk 1: Vi fjerner E4 med vilje og ser hva som mangler i målbildet X.
 X_without_E4=coefficients[0]*E1+coefficients[1]*E2+coefficients[2]*E3
-difference=X-X_without_E4
-show_images([X,X_without_E4,difference,E4],
-    ["Målbildet","Uten $E_4$","Det som mangler","$E_4$"],
-    cols=4,vmin=0,vmax=1,figsize=(6.8,1.8))
-```
-
-Resultatet viser mer enn at akkurat vårt forsøk mislyktes: Nedre høyre piksel er null i hver av de tre tilgjengelige byggesteinene, og blir derfor null i enhver lineærkombinasjon av dem. $E_4$ tilfører en mulighet de andre ikke har.
-
-### Eksperiment: Legg til en overflødig byggestein
-
-Nå legger vi til $E_5=E_1+E_2$. Figuren viser at $E_5$ ikke gir en ny type bilde; den samme effekten kunne allerede lages med de gamle byggesteinene.
-
-```{pyodide-python}
-#| label: week3-redundant-building-block
-#| autorun: true
-
-# E5 er konstruert av to gamle byggesteiner og tilfører derfor ingen ny
-# retning. De to oppskriftene under skal gi samme bilde.
+# Forsøk 2: E5 er bygd av to gamle byggesteiner. To ulike oppskrifter.
 E5=E1+E2
 recipe_1=1*E1+1*E2+0*E5
 recipe_2=0*E1+0*E2+1*E5
-show_images([E1,E2,E5,recipe_1,recipe_2,recipe_1-recipe_2],
-    ["$E_1$","$E_2$","$E_5$",
-     "Oppskrift 1","Oppskrift 2","Forskjell"],
-    cols=3,vmin=0,vmax=1,figsize=(5.4,3.6))
+show_images([X,X_without_E4,X-X_without_E4,E4,
+             E5,recipe_1,recipe_2,recipe_1-recipe_2],
+    ["Målbildet","Uten $E_4$","Det som mangler","$E_4$",
+     "$E_5=E_1+E_2$","Oppskrift 1","Oppskrift 2","Forskjell"],
+    cols=4,vmin=0,vmax=1,figsize=(6.8,3.6))
 ```
 
-Øverste rad viser at $E_5$ allerede er summen av de to første byggesteinene. Nederste rad viser konsekvensen: Oppskrift 1 bruker ett eksemplar av $E_1$ og $E_2$, mens oppskrift 2 bruker ett eksemplar av $E_5$. Forskjellsbildet er null overalt. De to oppskriftene bruker altså forskjellige koeffisienter, men gir samme bilde, så beskrivelsen er ikke lenger entydig.
+**Hva viser forsøket?** Uten $E_4$ er nedre høyre piksel null i enhver
+lineærkombinasjon, så ikke alle bilder kan lages. Med $E_5$ i tillegg gir to
+forskjellige oppskrifter samme bilde, så oppskriften er ikke entydig. Det
+hjelper ikke å bytte ut $E_5$: De fire pikselbildene lager allerede alle
+$2\times2$-bilder, så enhver femte byggestein kan bygges av dem, og da finnes
+det alltid to oppskrifter. En basis er akkurat nok, uten hull og uten
+overflødige byggesteiner.
 
 ::: {.callout-tip}
 ### Fra eksperiment til begreper
@@ -1067,23 +1111,34 @@ show_images([E1,E2,E5,recipe_1,recipe_2,recipe_1-recipe_2],
 - En **basis** er et sett byggesteiner som både spenner ut hele samlingen og er lineært uavhengig: nok byggesteiner, men ingen overflødige.
 :::
 
-Et vanlig gråtonebilde har pikselverdier mellom 0 og 1: 0 er svart og 1 er hvitt. Slike $2\times2$-bilder ligger i $[0,1]^{2\times2}$. Men når vi trekker fra bilder eller skalerer mønstre, kan mellomresultatene bli negative eller større enn 1. Derfor bruker vi den større samlingen
+Når vi trekker fra bilder eller skalerer mønstre, kan pikselverdiene bli
+negative eller større enn 1. Derfor regner vi i samlingen
 
 $$\mathbb R^{2\times2},$$
 
-som betyr «fire reelle tall ordnet som to rader og to kolonner». Elementene i denne samlingen kan regnes med som bilder, forskjellsbilder eller mønstre, selv om ikke alle kan vises direkte som vanlige gråtonebilder. Det er $\mathbb R^{2\times2}$ som er et vektorrom; $[0,1]^{2\times2}$ er bare delen som består av gyldige gråtonebilder.
+som betyr «fire reelle tall ordnet som to rader og to kolonner». Den er et
+**vektorrom**: Objektene kan legges sammen og ganges med tall, og disse
+operasjonene følger de vanlige regnereglene. Et vektorrom trenger altså ikke
+å bestå av piler eller tallkolonner.
+
+<details class="reading-step">
+<summary>Gå i dybden: gyldige gråtonebilder og hele vektorrommet</summary>
+
+Et vanlig gråtonebilde har pikselverdier mellom 0 og 1: 0 er svart og 1 er hvitt. Slike $2\times2$-bilder ligger i $[0,1]^{2\times2}$. Elementene i $\mathbb R^{2\times2}$ kan regnes med som bilder, forskjellsbilder eller mønstre, selv om ikke alle kan vises direkte som vanlige gråtonebilder. Det er $\mathbb R^{2\times2}$ som er et vektorrom; $[0,1]^{2\times2}$ er bare delen som består av gyldige gråtonebilder. For eksempel ligger $E_1$ i $[0,1]^{2\times2}$, men $-E_1$ gjør det ikke.
+
+</details>
 
 $E_1,E_2,E_3,E_4$ danner en basis for $\mathbb R^{2\times2}$. **Dimensjonen** er antallet byggesteiner i en basis, altså
 
 $$\dim(\mathbb R^{2\times2})=4.$$
 
-Dimensjon teller antallet uavhengige tall som trengs for å beskrive et vilkårlig bilde i samlingen. Den handler ikke om at bildet ser todimensjonalt ut på skjermen. Et $4\times4$-bilde har tilsvarende 16 fritt valgbare pikselverdier og ligger i et rom med dimensjon 16.
+Dimensjon teller hvor mange uavhengige tall som trengs for å beskrive et bilde; det har ingenting med at bildet ser todimensjonalt ut å gjøre. Et $4\times4$-bilde ligger i et rom med dimensjon 16.
 
 ### Bytt fra pikselbasis til mønsterbasis
 
-Pikselbyggesteinene er enkle, men koordinatene sier bare hvor lyse de fire pikslene er. Vi prøver nå fire andre byggesteiner. I figurene betyr rødt positive verdier og blått negative verdier; hvitt ligger nær null. Negative tall er ikke «negativt lys», men beskriver at et mønster trekkes fra når bilder kombineres.
+Pikselkoordinatene sier bare hvor lyse de fire pikslene er. Vi prøver nå fire andre byggesteiner. I figurene betyr rødt positive verdier, blått negative verdier og hvitt null. Negative tall betyr at et mønster trekkes fra.
 
-Appleten har samme oppbygning som pikselbasis-appleten tidligere i denne delen, men skyveknappene styrer nå fire mønstre. Knappene går fra $-1$ til $1$: En positiv koeffisient legger til mønsteret, mens en negativ koeffisient legger til mønsteret med motsatte fortegn. Tallet i hver piksel viser det faktiske bidraget; fargen viser fortegnet og omtrent hvor stort bidraget er.
+Appleten er bygd som pikselappleten, men skyveknappene styrer nå fire mønstre og går fra $-1$ til $1$. En negativ koeffisient legger til mønsteret med motsatte fortegn. Tallet i hver piksel viser det faktiske bidraget.
 
 ```{.jsxgraph width="760" height="430"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -1223,15 +1278,11 @@ board.create('text',[14.55,imageY-0.38,'1×1-output'],{
 });
 ```
 
-Startinnstillingen lager det samme bildet som med pikselbasisen, men tallene på skyveknappene er nå annerledes: lysnivå $0.55$, venstre–høyre-kontrast $-0.25$, topp–bunn-kontrast $-0.10$ og ingen sjakkmønsterkontrast. Prøv å endre én kontroll om gangen og beskriv den synlige endringen i summen.
+Startinnstillingen lager samme bilde som før, men med andre tall: lysnivå $0.55$, venstre–høyre $-0.25$, topp–bunn $-0.10$ og sjakkmønster $0$. Legg merke til at kontrastkontrollene endrer bildet, men ikke blokkgjennomsnittet; det forklarer vi i 3.4. Lysnivåkontrollen endrer derimot alle fire pikselverdiene og gjennomsnittet med samme beløp.
 
-Ruten lengst til høyre viser det aritmetiske gjennomsnittet av de fire
-pikselverdiene i sum-bildet. Endre først bare kontrastkontrollene: Bildet
-endres, men gjennomsnittet gjør ikke det. Endre deretter lysnivåkontrollen:
-Både alle fire pikselverdiene og gjennomsnittet endres med samme beløp. Dette
-eksperimentet blir forklart med nullrom i 3.4.
-
-Nå konstruerer vi de samme fire mønstrene i NumPy.
+Cellen lager de samme fire mønstrene i NumPy. Vi bruker dem resten av uka, og
+pikslene står i samme rekkefølge som før: øvre rad fra venstre mot høyre,
+deretter nedre rad.
 
 ```{pyodide-python}
 #| label: week3-pattern-basis
@@ -1252,9 +1303,9 @@ show_images(pattern_basis,pattern_names,cols=4,
 
 `Lysnivå` har samme fortegn overalt og gjør hele bildet lysere eller mørkere. `Venstre–høyre` øker venstre kolonne samtidig som høyre kolonne minker. `Topp–bunn` sammenligner øvre og nedre rad. `Sjakkmønster` skiller de to diagonalene. De tre siste har to $+1$ og to $-1$, så summen deres er null.
 
-Disse mønstrene virker meningsfulle, men det er ikke nok til å kalle dem en basis. Vi må undersøke de samme to spørsmålene som for pikselbasisen: Kan de bygge alle målbilder, og er oppskriften entydig?
+Er de fire mønstrene en basis? Vi må svare på de samme to spørsmålene som for pikselbasisen: Kan de bygge alle målbilder, og er oppskriften entydig?
 
-### Fra en oppskrift til ligningen $Pc=t$
+### Fra en oppskrift til likningen $Pc=t$
 
 Først tar vi en mindre versjon med bare to byggesteiner. La
 
@@ -1277,7 +1328,8 @@ $$
 \underbrace{\begin{bmatrix}2\\0\end{bmatrix}}_{t}.
 $$
 
-Radene sier $c_1+c_2=2$ og $c_1-c_2=0$, så $c_1=c_2=1$.
+Radene sier $c_1+c_2=2$ og $c_1-c_2=0$. Legger vi sammen de to likningene,
+får vi $2c_1=2$, altså $c_1=1$; den andre likningen gir da $c_2=c_1=1$.
 Kontrollen er framoverregningen
 $1b_1+1b_2=[2,0]^T$. Dette lille eksemplet viser hele mekanismen:
 $P$ inneholder kjente byggesteiner, $t$ er det kjente målet, og $c$ er den
@@ -1327,13 +1379,21 @@ $$
 \underbrace{t}_{\substack{\text{kjente målpiksler}\\4\times1}}.
 $$
 
-For dette målet er løsningen
+Systemet $Pc=t$ er fire likninger:
 
-$$c=\begin{bmatrix}0.55\\-0.25\\-0.10\\0\end{bmatrix}.$$
+$$\begin{aligned}c_M+c_H+c_V+c_D&=0.2,\\ c_M-c_H+c_V-c_D&=0.7,\\ c_M+c_H-c_V-c_D&=0.4,\\
+c_M-c_H-c_V+c_D&=0.9.\end{aligned}$$
 
-Tallene er de samme som startverdiene i appleten. Framoverkontrollen $Pc=t$
-sier at disse fire styrkene faktisk rekonstruerer pikslene
-$0.2,0.7,0.4,0.9$ i riktig rekkefølge.
+Mønstrene er laget slik at vi kan legge sammen og trekke fra hele likninger.
+Legger vi sammen alle fire, faller $c_H$, $c_V$ og $c_D$ bort:
+$4c_M=0.2+0.7+0.4+0.9=2.2$, så $c_M=0.55$. Med fortegnene $+,-,+,-$ blir bare
+$c_H$ igjen: $4c_H=0.2-0.7+0.4-0.9=-1.0$, så $c_H=-0.25$. På samme måte gir
+$+,+,-,-$ og $+,-,-,+$
+
+$$4c_V=0.2+0.7-0.4-0.9=-0.4,\quad c_V=-0.10,\qquad 4c_D=0.2-0.7-0.4+0.9=0,\quad c_D=0.$$
+
+Tallene er de samme som startverdiene i appleten. Kontroll av første likning:
+$0.55-0.25-0.10+0=0.20$.
 
 Det er viktig å skille de to retningene:
 
@@ -1345,67 +1405,28 @@ Det er viktig å skille de to retningene:
 En løsning finnes for hvert målbilde akkurat når kolonnene i $P$ spenner ut
 hele bilderommet. Løsningen er entydig akkurat når kolonnene er lineært
 uavhengige. Derfor gir en basis nøyaktig én koeffisientvektor $c$ for hvert
-mål $t$.
+mål $t$, og hver $c$ gir nøyaktig ett bilde $Pc$: Basisen fungerer som et
+koordinatsystem.
 
 ::: {.callout-tip}
 ### Samme reverse engineering i ukeprosjektet
 
-I prosjektet **Polynomer i blindsonen** møter du den samme regnestrukturen med
-andre objekter. Der er de kjente dataene målte polynomverdier
-$p(x_0),\ldots,p(x_n)$. Hver matriskolonne inneholder verdiene til én valgt
-polynombasisfunksjon i disse punktene, og den ukjente vektoren inneholder
-polynomkoeffisientene. Her rekonstruerer vi et bilde fra målpiksler; i
-prosjektet rekonstruerer vi et polynom fra avlesninger. I begge tilfeller er
-reverse engineering å løse et lineært system for koeffisientene og deretter
-kontrollere at de faktisk gjenskaper de kjente dataene.
+I prosjektet [Polynomer i blindsonen](project_week3.qmd) er de kjente dataene
+polynomverdier $p(x_0),\ldots,p(x_n)$, og de ukjente er polynomkoeffisientene.
+Reverse engineering er det samme: løs et lineært system for koeffisientene, og
+kontroller at de gjenskaper dataene.
 :::
 
-Koden nedenfor gjentar det konkrete regnestykket. `column_stack` bygger $P$
-av de fire mønsterkolonnene, `solve` finner $c$, og `P @ c` regner framover
-igjen. Den siste kontrollen er viktig: En beregnet koeffisientvektor er bare
-et gyldig svar dersom den faktisk bygger målet.
+Cellen gjentar regnestykket: `column_stack` bygger $P$, `matrix_rank` teller pivotene, `solve` finner $c$, og `P @ c` kontrollerer at oppskriften faktisk bygger målet.
 
 ```{pyodide-python}
-#| label: week3-test-pattern-building-blocks
+#| label: week3-change-basis
 #| autorun: true
 
 # reshape(-1) gjør hvert 2 x 2-mønster til en 4-vektor.
 # column_stack setter de fire byggesteinene som kolonner i P.
 P=np.column_stack([pattern.reshape(-1) for pattern in pattern_basis])
 print("Rang av P:",np.linalg.matrix_rank(P))
-
-# Reverse engineering av det konkrete bildet X.
-t=X.reshape(-1)
-c_test=np.linalg.solve(P,t)
-reconstructed_vector=P@c_test
-
-print("Målvektor t:       ",t)
-print("Funnet oppskrift c:",c_test)
-print("Kontroll P @ c:    ",reconstructed_vector)
-print("Rekonstruksjonsfeil:",np.linalg.norm(reconstructed_vector-t))
-```
-
-Rangutskriften er 4. Det betyr at alle fire kolonnene er pivotkolonner etter
-Gauss-eliminasjon, så ingen mønsterkolonne kan bygges av de andre. De fire
-mønstrene er dermed lineært uavhengige. Siden rommet
-$\mathbb R^{2\times2}$ har dimensjon 4, danner fire uavhengige mønstre en
-basis. Det samme kan kontrolleres ved å radredusere $P$; `matrix_rank` gir
-bare den numeriske kontrollen.
-
-Utskriften viser først den kjente målvektoren, deretter den funne oppskriften
-$[0.55,-0.25,-0.10,0]^T$, og til slutt de fire rekonstruerte pikselverdiene.
-Rekonstruksjonsfeilen er null eller på størrelse med avrundingsfeil.
-
-Rang 4 viser at reverse engineering ikke bare lykkes for dette eksemplet.
-Mønsterkolonnene danner et koordinatsystem: Hvert $2\times2$-bilde bestemmer
-nøyaktig én vektor $c$, og hver slik vektor bestemmer nøyaktig ett bilde
-$Pc$.
-
-Vi ser nærmere på koordinatene til bildet $X$ fra pikselbasis-eksemplet tidligere i denne delen.
-
-```{pyodide-python}
-#| label: week3-change-basis
-#| autorun: true
 
 # X er kjent; c er den ukjente oppskriften i mønsterbasisen.
 c=np.linalg.solve(P,X.reshape(-1))
@@ -1422,9 +1443,11 @@ print("Mønsterkoordinater:",c)
 print("Rekonstruksjonsfeil:",np.linalg.norm(reconstructed-X))
 ```
 
-De fire første delbildene i figuren er koeffisienten ganget med det navngitte mønsteret. Det siste bildet er summen deres. Noen delbilder inneholder negative verdier, men summen rekonstruerer det opprinnelige bildet med vanlige pikselverdier.
+Rangutskriften er 4: Alle fire kolonnene er pivotkolonner (pivoter repeteres i [3.7](#uke3-stotte-matriser)), så ingen mønsterkolonne kan bygges av de andre. Fire uavhengige mønstre i rommet $\mathbb R^{2\times2}$, som har dimensjon 4, danner en basis. Mønsterkoordinatene er $[0.55,-0.25,-0.10,0]^T$ som i håndregningen, og summen av delbildene rekonstruerer $X$ (feilen er null eller på størrelse med avrundingsfeil).
 
-Pikselbasisen beskriver bildet med fire lokale lysverdier. Mønsterbasisen beskriver det samme bildet som samlet lysnivå pluss tre typer kontrast. Bildet er uendret, men koordinatene har fått en annen betydning. Dette er et **basisskifte**: samme objekt, ny oppskrift.
+Pikselbasisen beskriver bildet med fire lokale lysverdier; mønsterbasisen
+beskriver det samme bildet som lysnivå pluss tre kontraster. Dette er et
+**basisskifte**: samme objekt, ny oppskrift.
 
 ::: {.callout-note}
 ### Hvorfor bytte basis?
@@ -1432,21 +1455,34 @@ Pikselbasisen beskriver bildet med fire lokale lysverdier. Mønsterbasisen beskr
 En basis er ikke bare et sett som tilfredsstiller en definisjon. Et godt valg av basis kan skille egenskaper vi vil bevare fra egenskaper en transformasjon fjerner. Det er nettopp det som skjer i neste eksperiment.
 :::
 
+<details class="reading-step">
+<summary>Gå i dybden: fra byggesteiner til bildekompresjon</summary>
+
+Valget av byggesteiner kan få praktisk betydning. Vanlige bilder inneholder ofte store jevne områder, langsomme overganger, kanter og gjentatte mønstre. Hvis byggesteinene passer til denne strukturen, kan bildet kanskje beskrives godt med noen få store koeffisienter og mange små.
+
+Da kan de minste bidragene lagres mindre nøyaktig eller utelates. En mulig kompresjonsalgoritme får dermed denne formen:
+
+1. Del bildet opp i egnede mønsterbyggesteiner.
+2. Finn styrken til hver byggestein.
+3. Behold de viktigste bidragene.
+4. Rekonstruer et bilde som ligner originalen.
+
+I [uke 7](uke7.qmd#uke7-bilde) skal vi bruke singulærverdifaktorisering (SVD) til å konstruere en faktisk algoritme for bildekompresjon. Da arbeider vi med større bilder og beholder de delene som beskriver mest av strukturen i bildet.
+
+I uke 3 er målet mindre, men grunnleggende: Vi analyserer små $2\times2$- og $4\times4$-bilder der alle byggesteiner, koeffisienter og transformasjoner kan sees direkte. De små bildeblokkene fungerer som en oversiktlig modell for ideene som senere skaleres opp i SVD-algoritmen.
+
+</details>
+
 ## 3.4 Hva transformasjonen ser og ikke ser {#uke3-del3}
 
 <div id="uke3-del3"></div>
 
-I 3.1 så vi informasjonstapet, i 3.2 bygde vi en matrise for regelen, og i
-3.3 lærte vi å beskrive bilder med byggesteiner. Nå bruker vi de tre ideene
-til å besvare to spørsmål:
+Nå bruker vi matrisen og byggesteinene til å besvare to spørsmål:
 
 1. Hvilke inputendringer gir output null? Svaret er nullrommet.
 2. Hvor mange outputverdier kan styres uavhengig? Svaret er rangen.
 
-Vi løser først problemet for **én** $2\times2$-blokk og bruker deretter
-nøyaktig samme argument fire ganger for hele $4\times4$-bildet. Dette er
-broen fra den lille transformasjonen $4\to1$ til den store transformasjonen
-$16\to4$.
+Vi løser først problemet for **én** $2\times2$-blokk og bruker deretter samme argument fire ganger for hele $4\times4$-bildet.
 
 ### Én blokk: transformasjonen $4\to1$
 
@@ -1456,13 +1492,9 @@ $u=[u_1,u_2,u_3,u_4]^T$. Gjennomsnittet er
 $$G(u)=\frac14(u_1+u_2+u_3+u_4)
 =\underbrace{\begin{bmatrix}\frac14&\frac14&\frac14&\frac14\end{bmatrix}}_{B}u.$$
 
-Her betyr «gjennomsnitt» alltid det aritmetiske gjennomsnittet av **disse
-fire pikselverdiene i denne ene blokken**. Den lille transformasjonsmatrisen
-er altså raden $B$. Oppskriften fra 3.2
-gir dette direkte: én output betyr én rad; koeffisienten til hver av de fire
-inputverdiene er $1/4$. Nå lar vi $G$ virke på de fire
-mønsterbyggesteinene fra 3.3. Fordi $G$ er lineær, forteller resultatene også
-hva som skjer med enhver kombinasjon av dem.
+Én output gir én rad, som i 3.2. Cellen sender de fire mønstrene fra 3.3
+gjennom $G$, én om gangen. Fordi $G$ er lineær, forteller resultatene også hva
+som skjer med enhver kombinasjon av dem.
 
 ```{pyodide-python}
 #| label: week3-average-patterns
@@ -1485,31 +1517,23 @@ for name,pattern in zip(pattern_names,pattern_basis):
     print(f"{name:16s} -> gjennomsnitt {np.mean(pattern): .1f}")
 ```
 
-Hver kolonne i tabellen er ett forsøk. Øverst står en blokk med fire
-pikselverdier;
-rett under står den tilhørende $1\times1$-outputen. Alle piksler har samme
-fysiske størrelse, så outputruten har halvparten av sidelengden til
-inputblokken. Lysnivåbildet har fire enere, så gjennomsnittet av de fire
-pikselverdiene er 1. Hvert kontrastbilde har to enere og to minusenere;
-summen av de fire pikselverdiene er 0, og blokkens gjennomsnitt er derfor 0.
+Hver kolonne i tabellen er ett forsøk: øverst en blokk med fire
+pikselverdier, rett under den tilhørende $1\times1$-outputen. Lysnivåbildet
+har fire enere, så gjennomsnittet er 1. Hvert kontrastbilde har to enere og
+to minusenere; summen er 0, og gjennomsnittet er derfor 0.
 
 Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer
-lysnivåretningen, men sender hver kontrastretning til null. En vilkårlig
-kombinasjon av kontrastbildene har også aritmetisk gjennomsnitt 0 over sine
-fire pikselverdier, fordi lineariteten fra 3.2 lar oss kombinere de tre
-nullresultatene.
+lysnivåretningen, men sender hver kontrastretning til null. Linearitet fra 3.2
+gir at enhver kombinasjon av kontrastbildene også har gjennomsnitt 0.
 
 ::: {.callout-important}
 ### Den lille transformasjonens nullrom og rang
 
-Kontrastmønstrene er endringer vi kan legge til en $2\times2$-blokk uten å
-endre gjennomsnittet av blokkens fire pikselverdier. De tre mønstrene
-$H,V,D$ er lineært uavhengige, og alle har
-sum null. De danner derfor tre uavhengige retninger i nullrommet. Når tre av
-fire pikselverdier er valgt i et bilde med sum null, er den siste bestemt.
-Nullrommet har dermed dimensjon 3. Den ene gjennomsnittsverdien kan velges
-fritt, så $B$ har rang 1. Her er den ene outputverdien nettopp gjennomsnittet
-av de fire pikslene. For den lille transformasjonen får vi regnskapet
+Kontrastmønstrene $H,V,D$ kan legges til en blokk uten å endre
+gjennomsnittet. De er lineært uavhengige og har sum null: tre uavhengige
+retninger i nullrommet. Når tre av fire pikselverdier er valgt i en blokk med
+sum null, er den siste bestemt, så nullrommet har dimensjon 3. Den ene
+gjennomsnittsverdien kan velges fritt, så $B$ har rang 1. Regnskapet er
 
 $$4=\operatorname{rank}(B)+\dim N(B)=1+3.$$
 
@@ -1519,25 +1543,27 @@ Fra tidligere lineær algebra kjenner vi nullrommet som løsningene av et homoge
 
 $$N(A)=\{z\in\mathbb R^n:Az=0\}\subseteq\mathbb R^n.$$
 
-Nullrommet ligger altså i **inputrommet**. Vektorene der har like mange komponenter som en input, ikke som en output. For gjennomsnittet av én $2\times2$-blokk er inputen et bilde med fire tall, mens outputen bare er ett tall. Derfor ligger nullrommet i $\mathbb R^4$, og
+Nullrommet kalles også **kjernen** til $A$, og mange bøker skriver $\ker A$ i
+stedet for $N(A)$.
 
-$$N(G)=\operatorname{span}\{H,V,D\}.$$
+Nullrommet ligger i **inputrommet**: Vektorene der har like mange komponenter som en input. For én blokk ligger det i $\mathbb R^4$, og med mønstrene skrevet som 4-vektorer er
 
-Her er nullrommet nettopp alle $2\times2$-blokker der summen av de fire
-pikselverdiene, og dermed deres aritmetiske gjennomsnitt, er null. De tre
-uavhengige byggesteinene $H,V,D$ spenner ut denne samlingen, så de danner en
-basis og nullrommet har dimensjon 3. Nullrommet er altså ikke bare selve
-nullbildet; det kan inneholde mange ikke-null inputblokker som denne ene
-blokkmålingen ikke registrerer.
+$$N(B)=\operatorname{span}\{H,V,D\}.$$
+
+Nullrommet er altså ikke bare selve nullbildet; det inneholder mange ikke-null
+blokker som denne ene blokkmålingen ikke registrerer.
 
 Dette forklarer åpningsproblemet for én blokk. Hvis $G(u_1)=G(u_2)$, har to
-blokker samme aritmetiske gjennomsnitt av sine fire pikselverdier. Vi kan
-trekke den ene outputen fra den andre, og linearitet gir
-$G(u_1-u_2)=0$. Forskjellsblokken $u_1-u_2$ ligger derfor i nullrommet til
-$G$. Omvendt kan vi legge enhver nullromsendring til en blokk uten å endre
-den ene outputverdien:
+blokker samme blokkgjennomsnitt. Vi kan trekke den ene outputen fra den andre,
+og linearitet gir $G(u_1-u_2)=0$. Forskjellsblokken $u_1-u_2$ ligger derfor i
+nullrommet. Omvendt kan vi legge enhver nullromsendring til en blokk uten å
+endre den ene outputverdien:
 
 $$G(u_1)=G(u_2)\quad\Longleftrightarrow\quad G(u_1-u_2)=0.$$
+
+Vi går nå langs én usynlig retning. Cellen starter med et jevnt grått bilde og
+legger til $t$ ganger sjakkmønsteret for fem verdier av $t$. Hvis
+sjakkmønsteret virkelig ligger i nullrommet, skal gjennomsnittet stå stille.
 
 ```{pyodide-python}
 #| label: week3-family-same-average
@@ -1554,25 +1580,19 @@ show_images(family,
     cols=5,vmin=0,vmax=1,figsize=(7.0,1.7))
 ```
 
-Det midterste bildet har $t=0$ og er ensfarget. Negative og positive verdier
-av $t$ legger til sjakkmønsteret med motsatt fortegn. Titlene viser at
-gjennomsnittet av de fire pikselverdiene forblir $0.50$ i alle fem blokker,
-selv om kontrasten blir sterkere mot begge ender.
-
-Når $t$ endres, flytter vi oss gjennom forskjellige blokker langs
-kontrastretningen $D$. Pikslene endres, men det aritmetiske gjennomsnittet av
-de fire pikselverdiene står stille. Nullrommet beskriver derfor alle
-forskjeller mellom inputblokker som denne målingen ikke kan oppdage.
+Pikslene endres med $t$, men titlene viser at gjennomsnittet står på $0.50$ i
+alle fem blokker. Nullrommet beskriver alle forskjeller mellom inputblokker som
+målingen ikke kan oppdage.
 
 ### Fire blokker: transformasjonen $16\to4$
 
-Vi går tilbake fra én $2\times2$-blokk til hele $4\times4$-bildet.
-Transformasjonen gjør ikke noe nytt: Den bruker den samme raden $B$ på fire
-forskjellige blokker og lager ett blokkgjennomsnitt fra hver. Den tar altså
-ikke gjennomsnittet av alle 16 piksler samlet. Når pikslene nummereres radvis
-som i 3.2, plasseres de
-fire kopiene av vektene i de kolonnene som hører til hver blokk. Slik får vi
-den store matrisen $A_{\mathrm{pool}}\in\mathbb R^{4\times16}$.
+For hele $4\times4$-bildet bruker $A_{\mathrm{pool}}\in\mathbb R^{4\times16}$ den samme raden $B$ på fire blokker og lager ett blokkgjennomsnitt fra hver. Den tar altså ikke gjennomsnittet av alle 16 piksler samlet.
+
+Vi gjentar argumentet i hver blokk: $4\cdot3=12$
+usynlige og $4\cdot1=4$ synlige retninger.
+
+<details class="reading-step">
+<summary>Gå i dybden: alle tolv usynlige mønstre</summary>
 
 Den presise overføringen er:
 
@@ -1612,11 +1632,11 @@ show_images(null_basis,null_titles,cols=4,cmap="coolwarm",
             vmin=-1,vmax=1,figsize=(6.8,5.2))
 ```
 
-Hvert bilde endrer bare to eller fire piksler innenfor én blokk. Positive og
-negative bidrag opphever hverandre, så summen og det aritmetiske
-gjennomsnittet av de fire pikselendringene i blokken er null. De tre andre
-blokkene er allerede null. Dermed må alle fire blokkgjennomsnittene, og altså
-hele outputbildet, bli null for hvert av de tolv inputbildene.
+Hvert bilde endrer bare de fire pikslene i én blokk. Positive og
+negative bidrag opphever hverandre, så blokkgjennomsnittet av endringene er
+null. De tre andre blokkene er allerede null. Dermed må alle fire
+blokkgjennomsnittene, og altså hele outputbildet, bli null for hvert av de
+tolv inputbildene.
 
 Neste celle kontrollerer dette numerisk. Deretter velger den tolv tilfeldige koeffisienter, skalerer hvert kontrastbilde og legger alle sammen. Det sammensatte inputbildet ser uregelmessig ut, men hver blokk har fortsatt sum null.
 
@@ -1643,44 +1663,47 @@ show_image_table(
 )
 ```
 
-For hvert mønster er $Az$ et $2\times2$-outputbilde. Utskriften $\lVert Az\rVert$ måler avstanden fra denne outputen til nullbildet. Verdier på størrelse med avrundingsfeilen betyr at mønsteret forsvinner numerisk i transformasjonen.
-
-Hvis $Az_1=0$ og $Az_2=0$, gir linearitet
-
-$$A(\alpha z_1+\beta z_2)=0.$$
+For hvert mønster er $Az$ et $2\times2$-outputbilde. Utskriften $\lVert Az\rVert$ måler avstanden fra denne outputen til nullbildet. Verdiene er 0 (eller på størrelse med avrundingsfeil), så mønsteret forsvinner i transformasjonen.
 
 Venstre felt i tabellen viser kombinasjonen av de tolv mønstrene. Høyre felt
-viser den proporsjonalt mindre outputen etter blokkgjennomsnitt. Den er null i
-alle fire posisjoner. Koden gjør dermed to observasjoner: Hver lokal kontrast
-gir output null, og en tilfeldig lineærkombinasjon av dem gir fremdeles output
-null. Grunnen er linearitet, ikke at vi var heldige med koeffisientene.
+viser den mindre outputen etter blokkgjennomsnitt. Den er null i alle fire
+posisjoner. Koden gjør dermed to observasjoner: Hver lokal kontrast gir output
+null, og en tilfeldig lineærkombinasjon av dem gir fremdeles output null.
+Grunnen er linearitet, ikke at vi var heldige med koeffisientene.
 
+De tolv byggesteinene påvirker enten forskjellige blokker eller forskjellige
+kontraster i samme blokk. Ingen av dem kan fjernes uten at vi mister en mulig
+lokal endring. Samtidig kan ethvert bilde der hver blokk har sum null bygges
+av dem, blokk for blokk.
+
+</details>
+
+Hvis $Az_1=0$ og $Az_2=0$, er også $A(\alpha z_1+\beta z_2)=\alpha Az_1+\beta Az_2=0$.
 Nullrommet er altså en samling der vi kan addere bilder og multiplisere dem med tall uten å forlate samlingen. En slik lineær samling inni et større rom kalles et **underrom**. Vi trenger ingen nye regneregler; ordet beskriver bare at lineærkombinasjoner blir værende i samlingen.
 
-De tolv viste byggesteinene påvirker enten forskjellige blokker eller
-forskjellige kontraster i samme blokk. Ingen av dem kan fjernes uten at vi
-mister en mulig lokal endring. Samtidig kan ethvert bilde der hver blokk har
-sum null bygges av dem, blokk for blokk. De danner derfor en basis for
-nullrommet, som har dimensjon 12.
+De tolv lokale kontrastene (tre i hver blokk) danner en basis for nullrommet
+til $A_{\mathrm{pool}}$, som derfor har dimensjon 12.
 
 ### Matrisekolonnene og rangen
 
-Vi har funnet nullrommet ved å spørre hva som forsvinner. Nå finner vi rangen
-ved å spørre hva som kan produseres. Her bruker vi den andre generelle måten
-å konstruere en transformasjonsmatrise på:
+Nå finner vi rangen ved å spørre hva som kan produseres. Da bruker vi en annen måte å bygge en matrise på:
 
 > Kolonne $j$ er outputen når input er $e_j$, altså når inputverdi $j$ er 1
 > og alle andre inputverdier er 0.
+
+<details class="reading-step">
+<summary>Gå i dybden: to måter å bygge matrisen på</summary>
 
 For en regel som er oppgitt med outputformler, er radmetoden fra 3.2 raskest.
 For en ukjent regel vi kan teste — et typisk reverse-engineering-problem —
 kan vi sende inn $e_1,e_2,\ldots,e_n$ og samle de observerte outputene som
 kolonner. De to metodene bygger den samme matrisen.
 
-Vi begynner derfor med det enkleste mulige inputbildet: én piksel er 1, og
-alle andre er 0. Kall dette **å slå på én piksel**. Klikk på en inputpiksel
-i figuren. Outputbildet til høyre viser hva transformasjonen gjør med akkurat
-denne inputen. **Hvilke $2\times2$-bilder kan transformasjonen produsere?**
+</details>
+
+Klikk på en inputpiksel i figuren: Den pikselen er 1 og alle andre 0, vi
+**slår på én piksel**. Outputbildet til høyre viser hva transformasjonen gjør.
+**Hvilke $2\times2$-bilder kan transformasjonen produsere?**
 
 ```{.jsxgraph width="760" height="430"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -1787,13 +1810,12 @@ board.create('text',[7.55,1.15,'Én piksel med verdi 1 gir gjennomsnitt 1/4 i si
 });
 ```
 
-De fire fargene deler inputbildet i fire blokker. Alle piksler med samme
-farge peker mot samme felt i outputbildet. Når bare én piksel har verdien 1,
-er gjennomsnittet av de fire pikslene i akkurat den blokken $1/4$; de andre
-tre blokkene består av nuller og får blokkgjennomsnitt 0. Prøv flere piksler
-med samme farge. Pikselnummeret endrer seg, men outputen gjør ikke det.
+Alle piksler med samme farge peker mot samme felt: Én påslått piksel gir blokkgjennomsnitt $1/4$ i sin blokk og 0 i de andre. Prøv flere piksler med samme farge; outputen endrer seg ikke.
 
 Her kommer forbindelsen til matrisen: **Kolonne $j$ i $A$ er outputen vi får når bare inputpiksel $j$ er slått på.** Fire piksler som gir samme output, gir derfor fire identiske kolonner. Figuren viser på denne måten fire grupper av like kolonner, én gruppe for hver farge.
+
+<details class="reading-step">
+<summary>Gå i dybden: kolonnene som bilder</summary>
 
 La $f_1,f_2,f_3,f_4$ være pikselbasisen i outputrommet
 $\mathbb R^4$. Forsøkene gir konkret
@@ -1832,18 +1854,23 @@ grupper. Innenfor hver gruppe er outputbildene identiske. Derfor gir flere
 kolonner i samme gruppe ingen ny måte å endre outputen på. Mellom gruppene
 flytter den eneste ikke-null outputpikselen seg til en ny plass.
 
+</details>
+
 Velg én representant fra hver gruppe, for eksempel kolonne 1, 3, 9 og 11.
-De er henholdsvis $\tfrac14f_1,\tfrac14f_2,\tfrac14f_3$ og
-$\tfrac14f_4$. Ingen av dem kan bygges av de tre andre, fordi hver har sin
-ikke-null verdi på en egen outputplass. De fire representantene er derfor
-lineært uavhengige.
+Hver av dem har verdien $1/4$ på én outputplass og 0 på de tre andre, og
+plassene er forskjellige. Ingen av dem kan derfor bygges av de tre andre: De
+fire representantene er lineært uavhengige.
 
 De spenner også ut hele outputrommet. For å lage en ønsket output
 $y=[y_1,y_2,y_3,y_4]^T$ kan vi for eksempel sette inputpikslene 1, 3, 9 og
-11 lik $4y_1,4y_2,4y_3,4y_4$ og la alle andre inputpiksler være null. En
-annen, mer bildelik oppskrift er å fylle hver blokk med den ønskede
-outputverdien. Koden nedenfor bruker den siste oppskriften og kontrollerer den
-på fire målbilder.
+11 lik $4y_1,4y_2,4y_3,4y_4$ og la alle andre inputpiksler være null.
+
+<details class="reading-step">
+<summary>Gå i dybden: en oppskrift for enhver output</summary>
+
+En annen, mer bildelik oppskrift er å fylle hver blokk med den ønskede
+outputverdien. Koden nedenfor bruker denne oppskriften og kontrollerer den
+på fire tilfeldige målbilder.
 
 ```{pyodide-python}
 #| label: week3-build-arbitrary-output
@@ -1877,34 +1904,32 @@ print("Største feil:",max(np.linalg.norm(out-Yi)
 
 Les hver forsøksrad fra venstre mot høyre. Først vises et konstruert
 $4\times4$-inputbilde. I midten står $2\times2$-outputen vi ba om, og til
-høyre står $2\times2$-outputen transformasjonen faktisk beregnet. Samme
-fysiske pikselstørrelse brukes i alle tre kolonner, så de to outputbildene har
-halvparten av sidelengden til inputbildet. De to små bildene er identiske i
-alle fire forsøk.
+høyre står $2\times2$-outputen transformasjonen faktisk beregnet. De to små
+bildene er identiske i alle fire forsøk.
 
 Målbildene ble valgt tilfeldig, men den samme oppskriften virker for alle
 $2\times2$-bilder: kopier hver ønsket outputverdi inn i alle fire pikslene i
-den tilsvarende inputblokken. Det aritmetiske gjennomsnittet av fire like
-verdier er denne verdien selv. Feilen er derfor nøyaktig null, bortsett fra
-eventuell avrunding. Transformasjonen kan altså produsere alle vektorer i
+den tilsvarende inputblokken. Gjennomsnittet av fire like verdier er denne
+verdien selv. Feilen er derfor nøyaktig null, bortsett fra eventuell
+avrunding. Transformasjonen kan altså produsere alle vektorer i
 $\mathbb R^4$.
+
+</details>
 
 Fra tidligere kjenner vi samlingen av alle outputvektorer en matrise kan produsere som **kolonnerommet**. For hele bildereduksjonen skriver vi
 
 $$\operatorname{Col}(A_{\mathrm{pool}})
 =\{A_{\mathrm{pool}}x:x\in\mathbb R^{16}\}\subseteq\mathbb R^4.$$
 
-Kolonnerommet ligger altså i **outputrommet**. Vektorene i nullrommet har 16 komponenter; vektorene i kolonnerommet har fire. De to rommene kan derfor ha forskjellige dimensjoner og består i dette eksemplet ikke engang av like lange vektorer.
+Kolonnerommet ligger i **outputrommet** og består av 4-vektorer, mens nullrommet består av 16-vektorer.
 
 Navnet kan nå leses direkte fra eksperimentet. Hvis $a_j$ er kolonne $j$ i $A_{\mathrm{pool}}$, er
 
 $$A_{\mathrm{pool}}x=x_1a_1+\cdots+x_{16}a_{16}.$$
 
-Formelen sier at inputverdien $x_j$ skalerer kolonnebildet $a_j$, og at de 16 skalerte bidragene legges sammen. Alle outputer bygges dermed som lineærkombinasjoner av kolonnebildene. Dette er den samme byggesteinsideen som for basisbilder, men nå er byggesteinene bestemt av transformasjonsmatrisen.
+Inputverdien $x_j$ skalerer kolonnen $a_j$, og bidragene legges sammen: Alle outputer er lineærkombinasjoner av kolonnene.
 
-I vårt eksempel holder det derfor å beholde pivotkolonnene 1, 3, 9 og 11:
-én fra hver gruppe. De bygger alle mulige outputbilder, og ingen av de fire
-kan fjernes. De andre tolv kolonnene er kopier av virkninger vi allerede har.
+Her holder det å beholde kolonnene 1, 3, 9 og 11, én fra hver gruppe; de andre tolv er kopier.
 
 **Rangen** er dimensjonen til kolonnerommet:
 
@@ -1917,12 +1942,17 @@ Rangen er derfor 4 av tre likeverdige grunner:
 2. Disse fire kolonnene spenner ut hele det firedimensjonale outputrommet.
 3. Gauss-eliminasjon gir fire pivoter, én for hver kolonnegruppe.
 
-Rangen teller altså ikke antallet kolonner (det er 16) og heller ikke bare
-antallet outputplasser (det er 4). Den teller antallet uavhengige
-outputretninger som matrisekolonnene faktisk kan bygge. Her kan de fire
-blokkgjennomsnittene velges fritt, så tallet er 4. For en annen $4\times16$-
-matrise kunne rangen vært mindre dersom noen outputmålinger var avhengige av
-de andre.
+Rangen teller verken kolonnene (16) eller outputplassene (4), men de
+uavhengige outputretningene kolonnene kan bygge. Den kan aldri bli større enn
+antallet kolonner eller antallet rader: Hver pivot trenger sin egen kolonne og
+sin egen rad. For en annen $4\times16$-matrise kunne rangen vært mindre dersom
+noen målinger var avhengige av de andre.
+
+<details class="reading-step">
+<summary>Gå i dybden: NumPy teller det samme</summary>
+
+Til slutt lar vi NumPy telle det samme. `matrix_rank` er bare en kontroll;
+begrunnelsen er de fire uavhengige kolonnene over.
 
 ```{pyodide-python}
 #| label: week3-rank-check
@@ -1934,13 +1964,17 @@ print("Outputverdier:",A_pool.shape[0])
 print("Numerisk rang:",np.linalg.matrix_rank(A_pool))
 ```
 
-:::: {.callout-note collapse="true"}
-### Valgfri utvidelse: En overflødig femte måling
+</details>
+
+<details class="reading-step">
+<summary>Gå i dybden: en overflødig femte måling</summary>
 
 Her kan du kontrollere at flere outputtall ikke nødvendigvis betyr mer
 informasjon. Vi legger til gjennomsnittet av alle de 16 inputpikslene som en
 femte måling. Den nye outputverdien ser først ut som ny informasjon, men den
-kan beregnes fra de fire blokkgjennomsnittene.
+kan beregnes fra de fire blokkgjennomsnittene. Cellen regner ut de fem
+målingene for et tilfeldig bilde og sammenligner rangen med og uten den nye
+raden.
 
 ```{pyodide-python}
 #| label: week3-redundant-output
@@ -1949,6 +1983,7 @@ kan beregnes fra de fire blokkgjennomsnittene.
 # vstack legger til én ny måling som femte rad. Den nye raden er
 # gjennomsnittet av de fire gamle radene og kan derfor ikke øke rangen.
 A_five=np.vstack([A_pool,np.ones(16)/16])
+rng=np.random.default_rng(5)
 X_test=rng.random((4,4))
 y=A_five@X_test.reshape(-1)
 print("Fem outputverdier:",y)
@@ -1958,19 +1993,23 @@ print("Rang med fire outputer:",np.linalg.matrix_rank(A_pool))
 print("Rang med fem outputer:",np.linalg.matrix_rank(A_five))
 ```
 
-Utskriften viser at den femte outputverdien er nøyaktig gjennomsnittet av de
-fire første. Matrisen har nå fem rader, men den femte målingen gir ingen ny
+Utskriften viser at den femte outputverdien er gjennomsnittet av de fire
+første; noen ganger skiller tallene seg bare med en avrundingsrest i siste
+desimal. Matrisen har nå fem rader, men den femte målingen gir ingen ny
 justeringsmulighet og ingen ny informasjon om inputen. Den er bestemt av de
-fire andre, så rangen er fortsatt 4.
+fire andre, så rangen er fortsatt 4. Det samme skjer i prosjektet når et
+avlesningspunkt gjentas: Den nye raden er en kopi av en gammel og kan ikke øke
+rangen.
 
-::::
+</details>
 
-:::: {.callout-note collapse="true"}
-### Valgfri visualisering: Seksten knapper, men bare fire når fram
+### Seksten knapper, men bare fire når fram
 
-Vi startet med 16 uavhengige pikselverdier. Nå beskriver vi det samme inputbildet med mer passende skyveknapper. Fire fargede knapper styrer blokkgjennomsnittene. Tolv grå knapper styrer kontraster inne i blokkene uten å endre gjennomsnittene.
-
-Prøv begge typer i figuren. De fargede knappene endrer outputen. De grå kan flyttes, men outputen står stille.
+Nå beskriver vi det samme inputbildet med 16 nye skyveknapper: fire fargede
+for blokkgjennomsnittene og tolv grå for kontrastene inne i blokkene (c1–c3
+hører til øvre venstre blokk, c4–c6 til øvre høyre, c7–c9 til nedre venstre og
+c10–c12 til nedre høyre). Prøv begge typer: De fargede endrer både inputbildet
+og outputen, de grå endrer bare inputbildet.
 
 ```{.jsxgraph width="760" height="440"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -2024,7 +2063,7 @@ for (let k=0;k<12;k++) {
     anchorY:'middle',fontSize:9,color:'#777777',fixed:true
   });
   contrastControls.push(board.create('slider',
-    [[x0+0.34,y],[x0+1.38,y],[-1,0,1]],{
+    [[x0+0.34,y],[x0+1.16,y],[-1,0,1]],{
       name:'',snapWidth:0.1,precision:1,
       strokeColor:'#777777',fillColor:'#777777',
       highline:{strokeColor:'#777777'},
@@ -2033,6 +2072,29 @@ for (let k=0;k<12;k++) {
       glider:{size:2,strokeColor:'#666666',fillColor:'#aaaaaa'}
     }));
 }
+
+// Inputbildet: pikselverdi = blokkgjennomsnitt + 1/4 · (kontraster · mønstre).
+// Kontrast k hører til blokk floor(k/3) og mønster k%3 (H, V, D fra 3.3).
+var patternRows=[[1,-1,1,-1],[1,1,-1,-1],[1,-1,-1,1]];
+function inputValue(block,pos){
+  var v=meanControls[block].Value();
+  for (var j=0;j<3;j++) v+=0.25*contrastControls[3*block+j].Value()*patternRows[j][pos];
+  return Math.max(0,Math.min(1,v));
+}
+function grayFill(v){var l=Math.round(255*v); return 'rgb('+l+','+l+','+l+')';}
+var px=0.5, ix=6.35, iy=3.55;
+for (let r=0;r<4;r++) for (let c=0;c<4;c++) {
+  let block=(r<2?0:2)+(c<2?0:1), pos=2*(r%2)+(c%2);
+  let x0=ix+c*px, y0=iy+(3-r)*px;
+  board.create('polygon',[[x0,y0],[x0+px,y0],[x0+px,y0+px],[x0,y0+px]],{
+    fillColor:function(){return grayFill(inputValue(block,pos));},fillOpacity:1,
+    vertices:{visible:false},
+    borders:{strokeColor:controlColors[block],strokeWidth:1,fixed:true,highlight:false},
+    fixed:true,highlight:false});
+}
+board.create('text',[ix+2*px,iy+4*px+0.25,'inputbildet'],{
+  anchorX:'middle',fontSize:11,fixed:true
+});
 
 board.create('arrow',[[5.75,6.55],[8.65,6.55]],{
   strokeColor:'#333333',strokeWidth:3,fixed:true,highlight:false
@@ -2089,25 +2151,10 @@ board.create('text',[7.60,0.75,'Én uavhengig knapp = én retning'],{
 });
 ```
 
-Dette er ikke 16 nye størrelser; det er en ny beskrivelse av de samme 16
-inputmulighetene. Å bevege én knapp mens de andre står stille, kaller vi å
-bevege oss i én **retning**.
-
-::::
-
-Vi kan nå oppsummere de 16 inputmulighetene, også uten å bruke den valgfrie
-visualiseringen:
-
-- De tolv kontrastmønstrene vi fant tidligere, gir tolv uavhengige
-  inputretninger som sendes til nullbildet. De danner en basis for
-  nullrommet. I den valgfrie visualiseringen er dette de grå knappene.
-- De fire blokkgjennomsnittene kan endres uavhengig og gir fire uavhengige
-  outputretninger. De danner en basis for kolonnerommet. I visualiseringen
-  er dette de fargede knappene.
-
-Flere forskjellige pikselendringer kan gi samme endring i outputen. Derfor teller rangen ikke konkrete inputendringer. Den teller hvor mange outputverdier som kan stilles uavhengig. I dette eksemplet er det fire.
-
-De synlige og usynlige knappene gjør sammen rede for alle 16 inputmulighetene:
+Å bevege én knapp mens de andre står stille, kaller vi å bevege oss i én
+**retning**. De tolv grå knappene er de tolv kontrastene, en basis for
+nullrommet. De fire fargede gir en basis for kolonnerommet. Sammen gjør de
+rede for alle 16 inputmulighetene:
 
 $$16=4+12.$$
 
@@ -2115,13 +2162,19 @@ For en matrise med $n$ kolonner sier **rang-nullitet** at
 
 $$n=\operatorname{rank}(A)+\dim N(A).$$
 
-::: {.callout-note}
-### Tolkning
+Prosjektet skriver det samme med kjernen og det norske ordet rang:
+$\dim(\ker A)+\operatorname{rang}(A)=n$.
 
-- **Nulliteten 12** teller de uavhengige inputretningene som sendes til null.
-- **Rangen 4** teller de uavhengige outputretningene inputen kan produsere.
-- Rangen og nulliteten teller forskjellige typer retninger i forskjellige rom, men til sammen gjør tallene rede for alle 16 inputdimensjonene.
-:::
+**Svar på ukens spørsmål.** Blokkgjennomsnittet mister nøyaktig det som ligger i nullrommet: de tolv
+kontrastene inne i blokkene. Det den beholder, telles av rangen: fire uavhengige blokkgjennomsnitt. Regnskapet
+$16=4+12$ er fullstendig. Nulliteten 12 teller inputretninger som sendes til null, og rangen 4 teller
+outputretninger som kan lages: to forskjellige typer retninger i to forskjellige rom, som til sammen gjør rede for
+alle 16 inputdimensjonene. To inputer gir samme output akkurat når forskjellen deres ligger i nullrommet. Hvis
+nullrommet bare inneholder nullvektoren, går ingenting tapt, og inputen kan finnes igjen fra outputen. Det er
+dette du bruker i prosjektet når du skal finne et polynom igjen fra noen få avlesninger.
+
+Vil du øve på rang og nullrom med papir og blyant? Se
+[selvtesten i 3.8](#uke3-stotte-oppgaver).
 
 ## 3.5 Overfør ideene til polynomer {#uke3-del5}
 
@@ -2139,9 +2192,9 @@ begrepene på polynomer. Dette er overgangen til ukeprosjektet.
 | En usynlig bildeendring | Et polynom som er null i avlesningspunktene |
 | Rekonstruksjon fra output | Reverse engineering fra polynomverdier |
 
-Et vektorrom trenger ikke å bestå av piler eller tallkolonner. Det avgjørende
-er at objektene kan legges sammen og ganges med tall, og at disse operasjonene
-følger de vanlige regnereglene. Polynomer er et viktig eksempel.
+I 3.3 så vi at et vektorrom ikke trenger å bestå av piler eller tallkolonner:
+Objektene må kunne legges sammen og ganges med tall, med de vanlige
+regnereglene. Polynomer er et viktig eksempel.
 
 ### Polynomer som vektorer
 
@@ -2163,26 +2216,12 @@ så er
 $$
 p+q=4+x+x^2,
 \qquad
-2p-q=-1+5x-x^2.
+2p-q=(2+4x)-(3-x+x^2)=-1+5x-x^2.
 $$
 
-Et uttrykk som $2p-q$ kalles en **lineærkombinasjon** av $p$ og $q$: Vi
-ganger hvert polynom med et tall og legger resultatene sammen. Dette er samme
-type regning som når vi lager en lineærkombinasjon av tallkolonner.
-
-```{math-exercise}
-#| label: week3-polynomial-arithmetic
-#| caption: Regn med polynomer
-#| vars: x
-#| partial-credit: true
-#| field-labels: p + q, 2p − q
-
-La $p(x)=1+2x$ og $q(x)=3-x+x^2$. Regn ut og samle ledd med samme potens:
-
-$(p+q)(x)=$ __[4+x+x^2]
-
-$(2p-q)(x)=$ __[-1+5*x-x^2]
-```
+Et uttrykk som $2p-q$ er en **lineærkombinasjon** av $p$ og $q$, akkurat som
+for bilder i 3.2: Vi ganger hvert polynom med et tall og legger resultatene
+sammen.
 
 ### Fra polynom til tallkolonne
 
@@ -2211,263 +2250,143 @@ at dette er den eneste mulige basisen.
 
 Rekkefølgen bestemmer hvor tallene skal stå: konstantleddet øverst, deretter
 koeffisienten til $x$, så koeffisienten til $x^2$. Hvis en potens mangler, er
-koeffisienten null.
+koeffisienten null. Vi kan også gå motsatt vei: Koordinatvektoren forteller
+hvilke tall som skal stå foran $1$, $x$ og $x^2$.
 
-```{math-exercise}
-#| label: week3-polynomial-coefficients
-#| caption: Les av koeffisientene
-#| partial-credit: true
-
-Skriv koordinatvektoren til $p(x)=4-2x+3x^2$ i basisen $(1,x,x^2)$:
-
-$[p]_{(1,x,x^2)}=$ vec[4,-2,3]
-```
-
-Vi kan også gå motsatt vei. Koordinatvektoren forteller hvilke tall som skal
-stå foran $1$, $x$ og $x^2$.
-
-```{math-exercise}
-#| label: week3-polynomial-from-coordinates
-#| caption: Bygg polynomet fra koordinatene
-#| vars: x
-
-Et polynom har koordinatvektoren
-$[r]_{(1,x,x^2)}=\begin{bmatrix}-1\\2\\3\end{bmatrix}$.
-Skriv polynomet:
-
-$r(x)=$ __[-1+2*x+3*x^2]
-```
+Øv på dette: [polynomregning og koordinater](#uke3-ov-polynomer).
 
 ### Hva gjør en samling til en basis?
 
-At noen polynomer **spenner ut** et rom, betyr uformelt at hvert polynom i
-rommet kan bygges ved å skalere og legge sammen de valgte polynomene. Med
-andre ord kan hvert polynom skrives som en lineærkombinasjon av dem.
-
-En basis må oppfylle to krav:
-
-1. **Ingen hull:** Alle polynomene i rommet kan bygges som en
-   lineærkombinasjon av basispolynomene.
-2. **Ingen overflødige byggesteiner:** Ingen av basispolynomene kan bygges av
-   de andre. Dette kalles lineær uavhengighet.
-
-Samlingen $(1,x,x^2)$ er derfor en basis for $\mathcal P_2$. Samlingen
+Kravene er de samme som for bilder i 3.3: En basis **spenner ut** rommet
+(ingen hull: hvert polynom er en lineærkombinasjon av basispolynomene) og er
+**lineært uavhengig** (ingen overflødige byggesteiner). Samlingen $(1,x,x^2)$ er en basis for $\mathcal P_2$. Samlingen
 $(1,x,1+x)$ er ikke en basis for $\mathcal P_2$: Den mangler en byggestein
 for $x^2$, og dessuten er $1+x$ summen av de to første polynomene.
 
-En basis behøver ikke bestå av bare enkeltpotenser. Også
+Slike påstander kan vi kontrollere med en matrise. Skriv hvert polynom som en
+koeffisientkolonne i basisen $(1,x,x^2)$, og sett kolonnene ved siden av
+hverandre:
+
+$$\underbrace{\begin{bmatrix}1&0&1\\0&1&1\\0&0&0\end{bmatrix}}_{(1,\;x,\;1+x)}
+\qquad
+\underbrace{\begin{bmatrix}1&0&0\\1&1&0\\0&0&1\end{bmatrix}}_{(1+x,\;x,\;x^2)}.$$
+
+Trappeform og pivoter repeteres i [3.7](#uke3-stotte-matriser).
+Den første matrisen står allerede på trappeform. Den har to pivoter, så rangen
+er 2: Tredje kolonne er overflødig ($1+x=1\cdot1+1\cdot x$), og nederste rad
+er null, så ingen kombinasjon gir $x^2$. I den andre matrisen trekker vi rad 1
+fra rad 2 og får
+
+$$\begin{bmatrix}1&0&0\\0&1&0\\0&0&1\end{bmatrix}.$$
+
+Det er tre pivoter, så rangen er 3. Kaller vi den andre matrisen $Q$, er
+koeffisientkolonnen til kombinasjonen $b_1(1+x)+b_2x+b_3x^2$ nettopp $Qb$.
+Kombinasjonen er **nullpolynomet** akkurat når $Qb=0$. Alle tre kolonnene har
+en pivot, så systemet har ingen frie variabler, og $b=0$ er eneste løsning: De
+tre polynomene er lineært uavhengige. Denne kontrollen kaller vi en
+**rangtest**.
+
+Rommet $\mathcal P_n$ har basisen $(1,x,\ldots,x^n)$ med $n+1$ polynomer, så
+$\dim\mathcal P_n=n+1$. Tre uavhengige polynomer i $\mathcal P_2$, som har
+dimensjon 3, danner derfor en basis.
+
+Altså er også
 
 $$\mathcal B=(1+x,\ x,\ x^2)$$
 
-er en basis for $\mathcal P_2$. For eksempel kan samme polynom skrives
+en basis for $\mathcal P_2$. Hvilke koordinater har $2-x+3x^2$ i denne
+basisen? Vi søker $c_1,c_2,c_3$ med $c_1(1+x)+c_2x+c_3x^2=2-x+3x^2$. Venstre
+side er $c_1+(c_1+c_2)x+c_3x^2$. Vi sammenligner koeffisientene til $1$, $x$
+og $x^2$: $c_1=2$, $c_1+c_2=-1$ og $c_3=3$. Dermed er $c_2=-3$, og
 
-$$2-x+3x^2=2(1+x)-3x+3x^2,$$
+$$2-x+3x^2=2(1+x)-3x+3x^2,\qquad [\,2-x+3x^2\,]_{\mathcal B}=\begin{bmatrix}2\\-3\\3\end{bmatrix}.$$
 
-så koordinatene i denne basisen er $(2,-3,3)^T$.
+Samme polynom har altså koordinatene $(2,-1,3)$ i potensbasisen og
+$(2,-3,3)$ i basisen $\mathcal B$.
 
-```{math-exercise}
-#| label: week3-polynomial-simple-change-basis
-#| caption: Koordinater i en annen basis
-#| partial-credit: true
+Øv på dette: [rangtest, basis og koordinater](#uke3-ov-basis).
 
-La $\mathcal B=(1+x,x,x^2)$. Finn koordinatvektoren til
-$s(x)=5+2x-x^2$ i denne basisen:
+En samling polynomer som tåler addisjon og multiplikasjon med tall, er et
+**underrom** av $\mathcal P_n$, akkurat som nullrommet i 3.4. Mengden av alle
+lineærkombinasjoner av noen polynomer, $\operatorname{Span}(p_1,\ldots,p_k)$,
+er et slikt underrom. Øv på dette: [polynomunderrom](#uke3-ov-underrom).
 
-$[s]_{\mathcal B}=$ vec[5,-3,-1]
-```
+### Polynomverdier som målinger
 
-:::: {#week3-polynomial-basis-context .math-exercise-context}
+I bildeeksemplet var hver output en måling, og hver rad i $A$ sa hvilke
+piksler målingen bruker. For et polynom er en naturlig måling å lese av
+verdien i et punkt. Ta $p(x)=a_0+a_1x+a_2x^2$ og les av i $x=-1$, $0$ og $1$:
 
-Et polynom i $\mathcal P_3$ skrives som
-$a_0+a_1x+a_2x^2+a_3x^3$. I en koeffisientmatrise representerer hver kolonne
-ett polynom. Radene inneholder koeffisientene til henholdsvis
-$1,x,x^2,x^3$.
+$$\begin{aligned}
+p(-1)&=a_0-a_1+a_2,\\
+p(0)&=a_0,\\
+p(1)&=a_0+a_1+a_2.
+\end{aligned}$$
 
-En basis består av polynomer som er lineært uavhengige og som spenner ut hele
-det etterspurte rommet. Basisvektorene kan stå i hvilken som helst rekkefølge.
-Røde kolonner er null eller ligger utenfor rommet. Hvis de gyldige kolonnene
-er lineært avhengige, farges hele familien gul. En grønn familie er gyldig og
-uavhengig, men kan fortsatt være for liten til å spenne ut hele rommet.
+Koeffisientene foran $a_0,a_1,a_2$ blir radene, akkurat som i 3.2:
 
-::::
+$$\begin{bmatrix}p(-1)\\p(0)\\p(1)\end{bmatrix}
+=\begin{bmatrix}1&-1&1\\1&0&0\\1&1&1\end{bmatrix}
+\begin{bmatrix}a_0\\a_1\\a_2\end{bmatrix}.$$
 
-### En basis for alle polynomer i P₃
+Hver rad er ett punkt satt inn i $1,x,x^2$. For $p(x)=4-2x+3x^2$ gir
+produktet $[9,4,5]^T$. Kontroll: $p(-1)=4+2+3=9$, $p(0)=4$ og
+$p(1)=4-2+3=5$. Avlesningen er en lineær **avbildning** $E$ fra
+$\mathcal P_2$ til $\mathbb R^3$ (her står $E$ for avlesning, ikke for
+pikselbildene $E_k$ fra 3.3): Definisjonsrommet er $\mathcal P_2$ og
+verdirommet er $\mathbb R^3$. Å gå baklengs, fra de tre
+verdiene til koeffisientene, er å løse dette systemet: reverse engineering
+som i 3.3. Hva må rangen være for at det skal finnes nøyaktig én løsning? Det
+spørsmålet møter du i prosjektet.
 
-I rommet
-
-$$
-\mathcal P_3=\{a_0+a_1x+a_2x^2+a_3x^3:a_i\in\mathbb R\}
-$$
-
-kan vi bruke andre basispolynomer enn $1,x,x^2,x^3$. I svarmatrisen under er
-hver kolonne ett polynom. Du bestemmer selv hvor mange kolonner som trengs.
-
-```{math-exercise}
-#| label: week3-polynomial-p3-basis
-#| caption: En valgfri basis for P₃
-#| mode: custom
-#| context: week3-polynomial-basis-context
-#| checker: |
-#|   def check(response, symbols):
-#|       A = response["inputs"]["P3basis"]["matrix"]
-#|       result = assess_basis(
-#|           A,
-#|           axis="columns",
-#|           target_dimension=4,
-#|           belongs=lambda vector: vector.rows == 4,
-#|           name="P3basis",
-#|           space_name="P3",
-#|       )
-#|       statuses = result["assessment"]["P3basis"]["columns"]
-#|       if result["score"] < 1:
-#|           if "incorrect" in statuses:
-#|               result["feedback"] = "En rød kolonne er null og kan ikke være en basisvektor."
-#|           elif "dependent" in statuses:
-#|               result["feedback"] = "De gule polynomene er lineært avhengige. Behold en uavhengig del og juster familien videre."
-#|           elif statuses:
-#|               result["feedback"] = "De grønne polynomene er uavhengige, men de spenner ennå ikke ut hele P3."
-#|           else:
-#|               result["feedback"] = "Legg inn polynomer som kolonner i koeffisientmatrisen."
-#|       return result
-
-Finn en basis for $\mathcal P_3$. Oppgi ett polynom per kolonne. Radene er
-koeffisientene til henholdsvis $1,x,x^2,x^3$:
-
-$A=$ mat{name=P3basis, rows=4, cols=auto, initial-cols=2, min-cols=0, max-cols=5}
-```
-
-### Polynomer som bare bygger en del av P₃
-
-Vi kan også begynne med noen polynomer og undersøke alle
-lineærkombinasjonene de kan lage. En slik samling kan være mindre enn hele
-$\mathcal P_3$, men fortsatt tåle addisjon og multiplikasjon med tall uten at
-vi forlater samlingen. Da kalles den et **underrom**. Underrommet inneholder
-også nullpolynomet.
-
-La
-
-$$
-\begin{aligned}
-p_1&=1+x, & p_2&=x+x^2,\\
-p_3&=1+x^2+x^3, & p_4&=2-x-x^2+x^3.
-\end{aligned}
-$$
-
-Notasjonen $\operatorname{Span}$ betyr «alle lineærkombinasjoner». Mengden
-
-$$U=\operatorname{Span}(p_1,p_2,p_3,p_4)$$
-
-er derfor alle polynomer som kan bygges av $p_1,p_2,p_3,p_4$. Dette er et
-underrom av $\mathcal P_3$. En basis for $U$ kan bestå av noen av polynomene
-over, eller av andre polynomer som spenner ut nøyaktig det samme rommet.
-
-```{math-exercise}
-#| label: week3-polynomial-subspace-basis
-#| caption: Basis for et polynomunderrom
-#| mode: custom
-#| context: week3-polynomial-basis-context
-#| checker: |
-#|   def check(response, symbols):
-#|       A = response["inputs"]["Ubasis"]["matrix"]
-#|       T = Matrix([
-#|           [1, 0, 1],
-#|           [1, 1, 0],
-#|           [0, 1, 1],
-#|           [0, 0, 1],
-#|       ])
-#|       target_rank = T.rank()
-#|       result = assess_basis(
-#|           A,
-#|           axis="columns",
-#|           target_dimension=target_rank,
-#|           belongs=lambda vector: vector.rows == 4 and T.row_join(vector).rank() == target_rank,
-#|           name="Ubasis",
-#|           space_name="U",
-#|       )
-#|       statuses = result["assessment"]["Ubasis"]["columns"]
-#|       if result["score"] < 1:
-#|           if "incorrect" in statuses:
-#|               result["feedback"] = "En rød kolonne er null eller representerer et polynom utenfor U."
-#|           elif "dependent" in statuses:
-#|               result["feedback"] = "De gule polynomene ligger i U, men familien er lineært avhengig. Behold en uavhengig del og juster familien videre."
-#|           elif statuses:
-#|               result["feedback"] = "De grønne polynomene ligger i U og er uavhengige, men de spenner ennå ikke ut hele U."
-#|           else:
-#|               result["feedback"] = "Legg inn basispolynomer som kolonner i koeffisientmatrisen."
-#|       return result
-
-Finn en basis for $U$. Oppgi ett polynom per kolonne, med koeffisientene til
-$1,x,x^2,x^3$ ovenfra og ned:
-
-$B_U=$ mat{name=Ubasis, rows=4, cols=auto, initial-cols=2, min-cols=0, max-cols=5}
-```
-
-### Koordinater i en mer sammensatt basis
-
-Når basisen skifter, skifter koordinatene, selv om polynomet er det samme. I
-$\mathcal P_2$ bruker vi nå basisen $\mathcal C=(p_1,p_2,p_3)$, der
-
-$$
-p_1=x^2-2,\qquad
-p_2=-x^2+x+2,\qquad
-p_3=3x^2+x-5.
-$$
-
-Å finne $[q]_{\mathcal C}$ betyr å finne tall $c_1,c_2,c_3$ slik at
-
-$$q=c_1p_1+c_2p_2+c_3p_3.$$
-
-Sammenligner vi koeffisientene til $1$, $x$ og $x^2$ på begge sider, får vi
-et vanlig lineært ligningssystem for $c_1,c_2,c_3$.
-
-```{math-exercise}
-#| label: week3-polynomial-coordinates
-#| caption: Koordinater i en polynombasis
-#| partial-credit: true
-
-Finn koordinatvektoren til $q(x)=4x^2+x-7$ i basisen $\mathcal C$:
-
-$[q]_{\mathcal C}=$ mat[1;0;1]
-```
+Øv på dette: [avlesningsmatriser og dimensjon](#uke3-ov-avlesning).
 
 Polynomrom krever altså ingen ny type lineær algebra. Vi bruker de samme
 begrepene som for tallkolonner: lineærkombinasjon, spenn, lineær uavhengighet,
-basis og koordinater.
+basis, koordinater og rang.
 
-I prosjektet **Polynomer i blindsonen** går vi videre fra koeffisienter til
+I prosjektet [Polynomer i blindsonen](project_week3.qmd) går vi videre fra koeffisienter til
 målinger. Vi får verdiene $p(x_0),\ldots,p(x_n)$ og gjør reverse engineering:
 Hvilke koeffisienter kan ha produsert disse verdiene? Bildeeksemplene har
 allerede gitt oss de sentrale spørsmålene: Hvilken basis bruker vi, hvilken
 informasjon mister målingen, og kan små endringer være nesten usynlige?
+Del 2 og finalen i prosjektet handler også om avrundingsfeil og kansellering;
+de repeteres i [uke 1](page2.qmd#uke1-kansellering).
 
+## 3.6 Egenarbeid: bildeforsøk og polynomoppgaver {#uke3-del4}
 
-## 3.6 Praktisk hovedløp: Utforsk bildetransformasjoner selv {#uke3-del4}
+<div id="uke3-del4"></div>
 
-Nå går vi tilbake til bildetransformasjonen fra 3.1–3.4. Denne gangen skal du
-ikke bare følge ferdige eksempler, men selv konstruere, teste og forklare
-transformasjoner. Dette er den praktiske delen av hovedløpet, ikke valgfritt
-støttestoff.
+Denne delen er egenarbeid. Nå går vi tilbake til
+bildetransformasjonen fra 3.1–3.4, og du skal selv konstruere, teste og
+forklare transformasjoner. Oppgavene om polynomer fra 3.5 står
+[til slutt i denne delen](#uke3-ovinger).
 
 Hjelpefunksjonene, transformasjonen og mønsterbildene fra de foregående
 delene er tilgjengelige under. Her skal du endre kode og lete etter mønstre
 selv.
 
-Gjør aktivitet **A og D**, og velg deretter **enten B eller C**. Aktivitet E er
-en valgfri numerisk fordypning. For hvert valgt eksperiment arbeider du i
-denne rekkefølgen:
+Aktivitet **A** og oppgavene i [Øv på polynomer](#uke3-ovinger) anbefales: A
+øver på nullromssteget i prosjektets del 1, og oppgavene øver på rangtesten og
+avlesningsmatrisene. Aktivitet **B–E** er valgfrie; E er en numerisk
+fordypning. For hvert
+valgt eksperiment arbeider du i denne rekkefølgen:
 
 1. Gjett først hva figuren eller outputen vil vise.
 2. Kjør eksperimentet og beskriv det du faktisk ser.
-3. Kontroller observasjonen med et tall, for eksempel en residual eller en rang.
+3. Kontroller observasjonen med et tall, for eksempel en residual
+   ([uke 2](page4.qmd#feil-residual-og-toleranse)) eller en rang.
 4. Forklar til slutt observasjonen med begrepene fra uka.
 
 Startcellene gjør plotting og bokføring, men gir ikke ferdige svar. Et forsøk som ikke virker ved første kjøring kan være nyttig: undersøk forskjellen mellom det du forventet og det koden faktisk produserte.
 
-### Obligatorisk A: Lag et nytt mønster med output null
+### Anbefalt A: Lag et nytt mønster med output null
 
 Endre `Z`. Hver $2\times2$-blokk skal ha gjennomsnitt null, men bruk ikke sjakkmønsteret uendret. Før du kjører cellen, regn ut minst ett blokkgjennomsnitt for hånd. Figuren viser om mønsteret forsvinner, mens normen under figuren måler outputens avstand fra nullbildet.
 
 ```{pyodide-python}
+#| label: week3-activity-a
+
 # Dette er startforslaget, ikke et fasitsvar. Endre minst to av tallene,
 # men pass på at hver 2 x 2-blokk fortsatt har sum null.
 Z=np.array([
@@ -2483,11 +2402,14 @@ print("||A z|| =",np.linalg.norm(A_pool@Z.reshape(-1)))
 
 Legg deretter en liten versjon av mønsteret til et vanlig bilde. Velg størrelsen slik at pikselverdiene fortsatt ligger mellom 0 og 1. Vis originalbildet, det endrede bildet og begge outputene. Forklar både hvorfor inputbildene er forskjellige og hvorfor transformasjonen ikke kan skille dem.
 
-### Valgoppgave B: Hva kan tre byggesteiner lage?
+### Valgfri B: Hva kan tre byggesteiner lage?
 
 Velg tre mønsterbilder og generer åtte tilfeldige lineærkombinasjoner. Se etter en egenskap som går igjen i alle bildene: finnes det for eksempel en symmetri, en fast sum eller en type kontrast som aldri opptrer? Bytt deretter ut én byggestein og se hvilken ny variasjon som blir mulig.
 
 ```{pyodide-python}
+#| label: week3-activity-b
+
+M,H,V,D=pattern_basis   # henter mønstrene fra 3.3 på nytt
 rng=np.random.default_rng(10)
 # Studentvalg: Bytt byggesteiner her. Tre byggesteiner kan høyst gi tre
 # uavhengige retninger i rommet av alle 2 x 2-bilder.
@@ -2503,11 +2425,13 @@ show_images(my_images,[""]*8,cols=4,cmap="coolwarm",vmin=-2,vmax=2)
 
 Forsøk å lage et konkret $2\times2$-målbilde som de tre byggesteinene ikke kan treffe. Dette er den eksperimentelle siden av dimensjon: tre uavhengige justeringsmuligheter kan ikke styre fire uavhengige pikselverdier.
 
-### Valgoppgave C: Lag en annen basis
+### Valgfri C: Lag en annen basis
 
-Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om ligningssystemet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
+Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om likningssystemet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
 
 ```{pyodide-python}
+#| label: week3-activity-c
+
 # Studentvalg: Endre B1, ..., B4 før resten av cellen kjøres.
 B1,B2,B3,B4=E1.copy(),E2.copy(),E3.copy(),E4.copy()
 my_basis=[B1,B2,B3,B4]
@@ -2528,11 +2452,13 @@ else:
     print("Byggesteinene er avhengige. Endre dem og prøv igjen.")
 ```
 
-### Obligatorisk D: Design en ny bildereduksjon
+### Valgfri D: Design en ny bildereduksjon
 
 Lag en lineær transformasjon fra 16 inputpiksler til høyst 6 outputverdier. Hver rad i `A_new` er én måling av bildet. Tegn først hvilke piksler målingen skal bruke, og sett så inn de tilsvarende vektene i raden. Mulige ideer er radgjennomsnitt, kolonnegjennomsnitt, diagonalsummer eller utvalgte piksler.
 
 ```{pyodide-python}
+#| label: week3-activity-d
+
 # Fire rader betyr fire målinger. Endre også antallet rader dersom
 # transformasjonen din skal ha et annet antall outputverdier.
 A_new=np.zeros((4,16))
@@ -2591,19 +2517,301 @@ for exponent in [2,6,10,14,18]:
           "rang float32 =",np.linalg.matrix_rank(A32))
 ```
 
-På papiret er målingene uavhengige for enhver $\varepsilon\neq0$: den lille ekstravekten kan ikke lages ved bare å skalere den første raden. I maskinen kan ekstravekten bli avrundet bort, eller bli vurdert som for liten til å være pålitelig. `matrix_rank` bruker derfor en toleranse og rapporterer en **numerisk rang**. Beskriv når de to tallformatene slutter å skille målingene, og knytt resultatet til feil- og toleransebegrepene fra uke 2.
+På papiret er målingene uavhengige for enhver $\varepsilon\neq0$: den lille ekstravekten kan ikke lages ved bare å skalere den første raden. I maskinen kan ekstravekten bli avrundet bort, eller bli vurdert som for liten til å være pålitelig. `matrix_rank` bruker derfor en toleranse og rapporterer en **numerisk rang**. Beskriv når de to tallformatene slutter å skille målingene, og knytt resultatet til flyttallene fra [uke 1](page2.qmd) og toleransebegrepet fra [uke 2](page4.qmd#feil-residual-og-toleranse).
 
-Trenger du en kort repetisjon av forskjellen på eksakt og numerisk rang, kan
-du åpne underdelen om numerisk rang i 3.7.
+Trenger du en repetisjon av eksakt og numerisk rang, kan du åpne boksen
+«Eksakt og numerisk rang» i [3.7](#uke3-stotte-matriser). I prosjektets del 3
+møter du samme idé: en endring som avlesningene nesten ikke ser.
+
+### Øv på polynomer
+
+<div id="uke3-ovinger"></div>
+
+Oppgavene øver på 3.5. Arbeid på papir først og skriv svarene eksakt, for
+eksempel `1/3` og ikke `0.333`.
+
+#### Polynomer som vektorer
+
+<div id="uke3-ov-polynomer"></div>
+
+Bruk de samme polynomene som i 3.5, $p(x)=1+2x$ og $q(x)=3-x+x^2$, men en
+annen lineærkombinasjon.
+
+```{math-exercise}
+#| label: week3-polynomial-arithmetic
+#| caption: Regn med polynomer
+#| vars: x
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: 3p + q, p − 2q
+
+Regn ut og samle ledd med samme potens:
+
+$(3p+q)(x)=$ __[6+5*x+x^2]
+
+$(p-2q)(x)=$ __[-5+4*x-2*x^2]
+```
+
+Leddene i polynomet under står ikke i samme rekkefølge som basisen
+$(1,x,x^2)$. Pass på hvor hvert tall skal stå.
+
+```{math-exercise}
+#| label: week3-polynomial-coefficients
+#| caption: Les av koeffisientene
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: konstantledd, koeffisient til x, koeffisient til x²
+
+Skriv koordinatvektoren til $u(x)=2x^2-5$ i basisen $(1,x,x^2)$:
+
+$[u]_{(1,x,x^2)}=$ vec[-5,0,2]
+```
+
+Et polynom $r$ har koordinatvektoren
+$[r]_{(1,x,x^2)}=\begin{bmatrix}-1\\2\\3\end{bmatrix}$.
+
+```{math-exercise}
+#| label: week3-polynomial-from-coordinates
+#| caption: Bygg polynomet fra koordinatene
+#| vars: x
+#| mode: equivalent
+#| field-labels: r(x)
+
+Skriv polynomet:
+
+$r(x)=$ __[-1+2*x+3*x^2]
+```
+
+#### Rangtest, basis og koordinater
+
+<div id="uke3-ov-basis"></div>
+
+Polynomene $1+x$, $x+x^2$ og $1-x^2$ ligger i $\mathcal P_2$. Skriv dem som
+kolonner i en koeffisientmatrise og radreduser.
+
+```{math-exercise}
+#| label: week3-polynomial-rank-test
+#| caption: Rangtest for tre polynomer
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: rangen til koeffisientmatrisen, c₁, c₂
+
+Rangen til koeffisientmatrisen er _[2].
+
+Skriv det tredje polynomet som en kombinasjon av de to første,
+$1-x^2=c_1(1+x)+c_2(x+x^2)$:
+
+$c_1=$ _[1] $\qquad c_2=$ _[-1]
+```
+
+Bruk basisen $\mathcal B=(1+x,x,x^2)$ og samme framgangsmåte som for
+$2-x+3x^2$ i 3.5: Sammenlign koeffisientene til $1$, $x$ og $x^2$.
+
+```{math-exercise}
+#| label: week3-polynomial-simple-change-basis
+#| caption: Koordinater i en annen basis
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: koordinat til 1+x, koordinat til x, koordinat til x²
+
+Finn koordinatvektoren til $s(x)=5+2x-x^2$ i basisen $\mathcal B$:
+
+$[s]_{\mathcal B}=$ vec[5,-3,-1]
+```
+
+Når basisen skifter, skifter koordinatene, selv om polynomet er det samme. I
+$\mathcal P_2$ bruker vi nå basisen $\mathcal C=(p_1,p_2,p_3)$, der
+
+$$
+p_1=x^2-2,\qquad
+p_2=-x^2+x+2,\qquad
+p_3=3x^2+x-5.
+$$
+
+Å finne $[q]_{\mathcal C}$ betyr å finne tall $c_1,c_2,c_3$ slik at
+$q=c_1p_1+c_2p_2+c_3p_3$. Sammenligner vi koeffisientene til $1$, $x$ og
+$x^2$ på begge sider, får vi et vanlig lineært likningssystem for
+$c_1,c_2,c_3$.
+
+```{math-exercise}
+#| label: week3-polynomial-coordinates
+#| caption: Koordinater i en polynombasis
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: c₁, c₂, c₃
+
+Finn koordinatvektoren til $q(x)=4x^2+x-7$ i basisen $\mathcal C$:
+
+$[q]_{\mathcal C}=$ mat[1;0;1]
+```
+
+:::: {#week3-polynomial-basis-context .math-exercise-context}
+
+Et polynom i $\mathcal P_3$ skrives som
+$a_0+a_1x+a_2x^2+a_3x^3$. I en koeffisientmatrise representerer hver kolonne
+ett polynom. Radene inneholder koeffisientene til henholdsvis
+$1,x,x^2,x^3$.
+
+En basis består av polynomer som er lineært uavhengige og som spenner ut hele
+det etterspurte rommet. Basisvektorene kan stå i hvilken som helst rekkefølge.
+Røde kolonner er null eller ligger utenfor rommet. Hvis de gyldige kolonnene
+er lineært avhengige, farges hele familien gul. En grønn familie er gyldig og
+uavhengig, men kan fortsatt være for liten til å spenne ut hele rommet.
+
+::::
+
+I rommet
+
+$$
+\mathcal P_3=\{a_0+a_1x+a_2x^2+a_3x^3:a_i\in\mathbb R\}
+$$
+
+kan vi bruke andre basispolynomer enn $1,x,x^2,x^3$. I svarmatrisen under er
+hver kolonne ett polynom. Du bestemmer selv hvor mange kolonner som trengs.
+
+```{math-exercise}
+#| label: week3-polynomial-p3-basis
+#| caption: En valgfri basis for P₃
+#| mode: custom
+#| context: week3-polynomial-basis-context
+#| checker: |
+#|   def check(response, symbols):
+#|       A = response["inputs"]["P3basis"]["matrix"]
+#|       result = assess_basis(
+#|           A,
+#|           axis="columns",
+#|           target_dimension=4,
+#|           belongs=lambda vector: vector.rows == 4,
+#|           name="P3basis",
+#|           space_name="P3",
+#|       )
+#|       statuses = result["assessment"]["P3basis"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null og kan ikke være en basisvektor."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule polynomene er lineært avhengige. Behold en uavhengig del og juster familien videre."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne polynomene er uavhengige, men de spenner ennå ikke ut hele P3."
+#|           else:
+#|               result["feedback"] = "Legg inn polynomer som kolonner i koeffisientmatrisen."
+#|       return result
+
+Finn en basis for $\mathcal P_3$. Oppgi ett polynom per kolonne. Radene er
+koeffisientene til henholdsvis $1,x,x^2,x^3$:
+
+$A=$ mat{name=P3basis, rows=4, cols=auto, initial-cols=2, min-cols=0, max-cols=5}
+```
+
+#### Polynomunderrom
+
+<div id="uke3-ov-underrom"></div>
+
+Vi begynner med noen polynomer og undersøker alle lineærkombinasjonene de kan
+lage. La
+
+$$
+\begin{aligned}
+p_1&=1+x, & p_2&=x+x^2,\\
+p_3&=1+x^2+x^3, & p_4&=2-x-x^2+x^3.
+\end{aligned}
+$$
+
+Notasjonen $\operatorname{Span}$ betyr «alle lineærkombinasjoner». Mengden
+$U=\operatorname{Span}(p_1,p_2,p_3,p_4)$ er derfor alle polynomer som kan
+bygges av $p_1,p_2,p_3,p_4$. Dette er et underrom av $\mathcal P_3$, og det
+inneholder nullpolynomet. En basis for $U$ kan bestå av noen av polynomene
+over, eller av andre polynomer som spenner ut nøyaktig det samme rommet.
+
+```{math-exercise}
+#| label: week3-polynomial-subspace-basis
+#| caption: Basis for et polynomunderrom
+#| mode: custom
+#| context: week3-polynomial-basis-context
+#| checker: |
+#|   def check(response, symbols):
+#|       A = response["inputs"]["Ubasis"]["matrix"]
+#|       T = Matrix([
+#|           [1, 0, 1],
+#|           [1, 1, 0],
+#|           [0, 1, 1],
+#|           [0, 0, 1],
+#|       ])
+#|       target_rank = T.rank()
+#|       result = assess_basis(
+#|           A,
+#|           axis="columns",
+#|           target_dimension=target_rank,
+#|           belongs=lambda vector: vector.rows == 4 and T.row_join(vector).rank() == target_rank,
+#|           name="Ubasis",
+#|           space_name="U",
+#|       )
+#|       statuses = result["assessment"]["Ubasis"]["columns"]
+#|       if result["score"] < 1:
+#|           if "incorrect" in statuses:
+#|               result["feedback"] = "En rød kolonne er null eller representerer et polynom utenfor U."
+#|           elif "dependent" in statuses:
+#|               result["feedback"] = "De gule polynomene ligger i U, men familien er lineært avhengig. Behold en uavhengig del og juster familien videre."
+#|           elif statuses:
+#|               result["feedback"] = "De grønne polynomene ligger i U og er uavhengige, men de spenner ennå ikke ut hele U."
+#|           else:
+#|               result["feedback"] = "Legg inn basispolynomer som kolonner i koeffisientmatrisen."
+#|       return result
+
+Finn en basis for $U$. Oppgi ett polynom per kolonne, med koeffisientene til
+$1,x,x^2,x^3$ ovenfra og ned:
+
+$B_U=$ mat{name=Ubasis, rows=4, cols=auto, initial-cols=2, min-cols=0, max-cols=5}
+```
+
+#### Avlesningsmatriser og dimensjon
+
+<div id="uke3-ov-avlesning"></div>
+
+Et polynom $p(x)=a_0+a_1x+a_2x^2$ i $\mathcal P_2$ leses av i bare to punkter,
+$x=1$ og $x=2$. Avlesningen gir $E(p)=\begin{bmatrix}p(1)\\p(2)\end{bmatrix}$.
+Skriv avlesningsmatrisen $A$ slik at $E(p)=A\begin{bmatrix}a_0\\a_1\\a_2\end{bmatrix}$,
+og bruk rang–nullitet.
+
+```{math-exercise}
+#| label: week3-evaluation-two-points
+#| caption: Avlesning i to punkter
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: a₁₁, a₁₂, a₁₃, a₂₁, a₂₂, a₂₃, rangen til A, dimensjonen til nullrommet
+
+$A=$ mat[1,1,1;1,2,4]
+
+Rangen til $A$ er _[2], og nullrommet har dimensjon _[1].
+```
+
+Dimensjonen til et polynomrom er antallet polynomer i en basis. La
+$U=\{a_0+a_2x^2+a_4x^4\}$ være polynomene i $\mathcal P_4$ som bare har
+partallspotenser.
+
+```{math-exercise}
+#| label: week3-polynomial-dimension
+#| caption: Dimensjonen til et polynomrom
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: dimensjonen til P₄, dimensjonen til U
+
+$\dim\mathcal P_4=$ _[5]
+
+$\dim U=$ _[3]
+```
 
 ## 3.7 Støtteløp: Matriseregning ved behov {#uke3-stotte-matriser}
 
 <div id="uke3-stotte-matriser"></div>
 
-Denne delen repeterer lineær algebra fra tidligere emner. Den er med slik at
-du ikke trenger å finne fram gamle notater. Hvis du allerede kan radredusere
-en matrise, finne pivotkolonner og beregne en basis for nullrommet, trenger du
-ikke lese hele delen. Åpne bare underdelen du vil slå opp.
+Denne delen repeterer radreduksjon fra Matematikk 1: radoperasjoner,
+likningssystemer og Gauss-eliminasjon. Den er med slik at du ikke trenger å
+finne fram gamle notater. Det er en stund siden, så vi forventer ikke at
+framgangsmåten sitter friskt. Regningen vises steg for steg og kobles til
+ordene vi bruker nå: pivot, rang, kolonnerom og nullrom. Kan du allerede
+radredusere en matrise, finne pivotkolonner og beregne en basis for
+nullrommet, kan du nøye deg med å åpne underdelen du vil slå opp.
 
 Bruk spørsmålene som en rask selvtest:
 
@@ -2620,8 +2828,6 @@ Bildene i hovedløpet gjorde begrepene synlige. I støtteløpet legger vi bort
 bildebakgrunnen og regner direkte med én matrise. Målet er å repetere hvordan
 vi finner rang, basis for kolonnerommet og basis for nullrommet — først med
 papir og blyant, deretter med kode som kontroll.
-
-Selve matriseberegningene var pensum i Matematikk 1: radoperasjoner, ligningssystemer og Gauss-eliminasjon. Det er en stund siden, så vi forventer ikke at framgangsmåten sitter friskt. Denne siden repeterer regningen steg for steg og kobler den til ordene vi bruker nå — pivot, rang, kolonnerom og nullrom.
 
 Vi bruker samme matrise gjennom hele eksemplet:
 
@@ -2702,7 +2908,7 @@ $$
 \end{bmatrix}.
 $$
 
-Den siste raden inneholder ingen ny ligning. To rader er igjen, og de ledende oppføringene — **pivotene** — ligger i kolonne 1 og 2. Dermed er rangen 2.
+Den siste raden inneholder ingen ny likning. To rader er igjen, og de ledende oppføringene — **pivotene** — ligger i kolonne 1 og 2. Dermed er rangen 2.
 
 Koden under utfører vanlig framovereliminasjon. Den går fra venstre mot høyre og bruker den første tilgjengelige ikke-null-oppføringen som pivot. Dette er tilstrekkelig for eksemplene våre og følger papirregningen tett.
 
@@ -2830,7 +3036,7 @@ $$\color{#4f8f49}{x_3=s},\qquad \color{#8b5aa7}{x_4=t}.$$
 ::: {.callout-tip}
 #### Fortsett på papir
 
-Løs den andre ligningen for $x_2$, og bruk resultatet i den første ligningen. Samle deretter alle ledd som inneholder $s$, og alle ledd som inneholder $t$.
+Løs den andre likningen for $x_2$, og bruk resultatet i den første likningen. Samle deretter alle ledd som inneholder $s$, og alle ledd som inneholder $t$.
 :::
 
 Resultatet er
@@ -2848,7 +3054,7 @@ Dermed er de to viste vektorene en basis for nullrommet. Koden kontrollerer båd
 #| autorun: true
 
 # z1 og z2 kommer fra håndregningen. Z_A samler dem som kolonner slik at
-# A @ Z_A kontrollerer begge nullromsligningene samtidig.
+# A @ Z_A kontrollerer begge nullromslikningene samtidig.
 z1=np.array([2.,-1.,1.,0.])
 z2=np.array([1.,-1.,0.,1.])
 Z_A=np.column_stack([z1,z2])
@@ -2948,7 +3154,7 @@ Ax=b\text{ har løsning}
 \operatorname{rank}(A)=\operatorname{rank}([A\mid b]).
 $$
 
-Hva gjør vi når en ønsket output som $d$ ikke kan produseres nøyaktig? Det spørsmålet leder direkte til projeksjon og minste kvadraters metode i uke 4.
+Hva gjør vi når en ønsket output som $d$ ikke kan produseres nøyaktig? Det spørsmålet leder direkte til projeksjon og minste kvadraters metode i [uke 4](uke4.qmd#uke4-mk).
 
 ::::
 
@@ -2983,7 +3189,7 @@ Dette er den rene matriseversjonen av åpningsproblemet: Nullrommet beskriver al
 ::::
 
 :::: {.callout-note collapse="true"}
-### Eksakt og numerisk rang {#uke3-numerisk-rang}
+### Eksakt og numerisk rang
 
 Til slutt endrer vi den avhengige tredje raden med et svært lite tall. For enhver $\varepsilon\ne0$ er den perturberte matrisen eksakt sett av rang 3. Numerisk må vi likevel avgjøre om den nye pivoten er stor nok til å skille fra avrundingsfeil.
 
@@ -3008,6 +3214,8 @@ Dette er ikke en motsigelse. **Eksakt rang** gjelder en idealisert matrise med e
 ::::
 
 ## 3.8 Støtteløp: Papir- og kontrolloppgaver {#uke3-stotte-oppgaver}
+
+<div id="uke3-stotte-oppgaver"></div>
 
 Dette er repetisjonsoppgaver, ikke en obligatorisk fortsettelse av
 hovedløpet. Bruk matrisen $B$ som selvtest. Hvis regningen går greit, kan du
@@ -3064,7 +3272,7 @@ før den spenner ut hele rommet.
 #| context: week3-paper-assessment-context
 #| checker: |
 #|   def check(response, symbols):
-#|       # R (the pivot cells follow); 0.5 and 0.0 are exact values here
+#|       # R (the pivot cells follow)
 #|       values = [nsimplify(v, rational=True) for v in response["expressions"][:9]]
 #|       R = Matrix(3, 3, values)
 #|       P = response["inputs"]["PBstep"]["matrix"]
@@ -3249,7 +3457,7 @@ inputdimensjon _[3] $=$ rang _[2] $+$ nullitet _[1]
 #| context: week3-paper-assessment-context
 #| checker: |
 #|   def check(response, symbols):
-#|       # R (the pivot cells follow); 0.5 and 0.0 are exact values here
+#|       # R (the pivot cells follow)
 #|       values = [nsimplify(v, rational=True) for v in response["expressions"][:6]]
 #|       R = Matrix(2, 3, values)
 #|       P = response["inputs"]["PCstep"]["matrix"]
@@ -3488,6 +3696,5 @@ print("Kontroll M @ Z_M:\n",M@Z_M)
 # TODO: Lag rhs_yes som M@x for en selvvalgt x. Lag deretter rhs_no som du
 # mener ligger utenfor kolonnerommet. Sammenlign rang(M) med rang([M | rhs]).
 ```
-
 
 :::
