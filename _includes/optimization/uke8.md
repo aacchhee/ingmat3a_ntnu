@@ -20,7 +20,7 @@ bunnen av en skål. Nå skal vi se på problemer der bunnen ikke er like lett
 å finne, og der et numerisk søk kan gi et svar som ser fornuftig ut, men
 ikke er det beste.
 
-Denne uka handler om to spørsmål som en numerisk metode ikke kan besvare
+Denne uken handler om to spørsmål som en numerisk metode ikke kan besvare
 for oss:
 
 - **Finnes det et beste svar?** En følge av stadig bedre forsøk trenger
@@ -35,6 +35,8 @@ støtteløpet i 8.7, og vi bruker dem når vi trenger dem.
 
 **Forelesning** viser hovedløpet. **Gå i dybden** åpner bevis og
 mellomregninger. Regneoppgavene står i 8.5 og kodeoppgavene i 8.6.
+Denne uken er det ikke noe nytt prosjekt; bruk prosjekttiden til å
+fullføre [prosjekt 7](project_week7.qmd).
 
 ### Kort løype
 
@@ -52,12 +54,12 @@ mellomregninger. Regneoppgavene står i 8.5 og kodeoppgavene i 8.6.
 | [Uke 2: fikspunktiterasjon](page4.qmd) | En følge kan nærme seg noe. Er grensen et tillatt svar? |
 | [Uke 3: nullrom](uke3.qmd#uke3-del3) | Hvilke endringer av inputen merker ikke outputen? |
 | [Uke 4: minste kvadrater](uke4.qmd#uke4-mk) | Hvorfor fant vi alltid én beste linje? |
-| [Uke 5: egenverdier](uke5.qmd) | Hvordan ser vi fortegnet til $h^THh$ i alle retninger? |
+| [Uke 5: egenverdier](uke5.qmd) | Hvordan ser vi fortegnet til $p^THp$ i alle retninger? |
 | [Uke 6: skålen $\phi$](uke6.qmd#uke6-energi) | Hvorfor hadde skålen bare én bunn? |
 
 ### Læringsmål
 
-Etter denne uka skal du kunne
+Etter denne uken skal du kunne
 
 - skille mellom infimum og minimum, og beskrive en minimerende følge,
 - avgjøre om en mengde er lukket, begrenset og kompakt, og bruke
@@ -84,9 +86,13 @@ lading. Vi velger $a$ og $b$ slik at kvadratsummen
 
 $$S(a,b)=\sum_{i=1}^{9}\bigl(y_i-m(t_i)\bigr)^2$$
 
-blir så liten som mulig, akkurat som i uke 4. Forskjellen er at modellen
-ikke er lineær i $b$. Vi lar derfor `minimize` fra SciPy søke, fra tre
-ulike startpunkter.
+blir så liten som mulig, akkurat som i uke 4. Kurven skal flate ut, så vi
+krever $b>0$; $a$ kan være et hvilket som helst tall. Valgene som oppfyller
+kravene, kalles det **tillatte området**; her er
+$D=\{(a,b):b>0\}$, og et punkt i $D$ er **tillatt**.
+
+Forskjellen fra uke 4 er at modellen ikke er lineær i $b$. Vi lar derfor
+`minimize` fra SciPy søke, fra tre ulike startpunkter.
 
 **Forutsi:** Vil de tre søkene finne samme $a$ og $b$?
 
@@ -107,10 +113,10 @@ for start in ([1., 1.], [5., .1], [2., .5]):
           f'a*b = {a*b:.3f}, S = {r.fun:.1e}, success = {r.success}')
 ```
 
-**Hva viser forsøket?** Alle tre søkene gir opp (`success = False`) etter
-det største antallet steg SciPy tillater. De ender med svært store $a$
-(omtrent 240–260), svært små $b$ (omtrent 0.002) og forskjellige tall.
-Produktet $ab$ er derimot omtrent 0.50 hver gang, og $S$ er nesten null.
+**Hva viser forsøket?** Ingen av søkene melder suksess (`success = False`).
+De ender med svært store $a$ (flere hundre), svært små $b$ (omtrent 0.002)
+og ulike sluttpunkter. Produktet $ab$ er derimot omtrent 0.50 hver gang,
+og $S$ er nesten null.
 
 ### Sett ord på det du ser
 
@@ -123,9 +129,9 @@ for b in [1, .1, .01, .001]:
 ```
 
 Verdiene blir $6.0,\ 0.27,\ 3.3\cdot10^{-3},\ 3.4\cdot10^{-5}$. Vi kan
-altså gjøre $S$ så liten vi vil. Likevel finnes det ingen $(a,b)$ med
-$S(a,b)=0$: modellkurven $a(1-e^{-bt})$ er aldri en rett linje, mens
-dataene er det. Søket blir aldri ferdig fordi det ikke finnes noe sted å
+altså gjøre $S$ så liten vi vil. Likevel finnes det ingen tillatt $(a,b)$ med
+$S(a,b)=0$: modellkurven $a(1-e^{-bt})$ krummer når $a\ne0$, og er
+nullinjen når $a=0$. Den er aldri linjen $0.5\,t$ som dataene ligger på. Søket blir aldri ferdig fordi det ikke finnes noe sted å
 stoppe.
 
 Når $b$ blir liten og $a=0.5/b$, nærmer modellkurven seg linjen $0.5\,t$.
@@ -144,13 +150,15 @@ $z_*$ med $f(z_*)=\inf f$. Da er $z_*$ et **minimumspunkt** og $f(z_*)$
 og **maksimum** et supremum som oppnås.
 
 En **minimerende følge** er en følge $z_1,z_2,\ldots$ av tillatte punkter
-med $f(z_k)\to\inf f$. Det er nettopp dette et optimeringsprogram lager:
-stadig bedre punkter. Spørsmålet er om følgen har en grense som selv er et
-minimumspunkt.
+med $f(z_k)\to\inf f$. Et optimeringsprogram lager stadig bedre punkter.
+I beste fall er følgen minimerende; den kan også stoppe i en dårlig dal
+(8.3). Spørsmålet her er om en minimerende følge har en grense som selv er
+et minimumspunkt.
 
 I eksperimentet er $\inf S=0$, og punktene $(0.5/b,\,b)$ med $b\to0$ er en
 minimerende følge. Den har ingen grense i planet: $a$ vokser uten grense.
-Derfor finnes ikke noe minimum.
+Det alene viser ikke at minimum mangler, men vi vet at $S>0$ i alle
+tillatte punkter. Verdien $0$ oppnås derfor aldri, og ikke noe minimum finnes.
 
 ::: {.callout-note title="Håndeksempel: tre intervaller, samme funksjon"}
 
@@ -168,7 +176,8 @@ Derfor finnes ikke noe minimum.
 
 På $(0,1]$ er følgen $x_k=1/k$ minimerende, med $g(x_k)\to0$. Grensen $0$
 er ikke med i området. For hver tillatt $x$ er $x/2$ også tillatt og
-bedre; et finere rutenett hjelper ikke.
+bedre. Å prøve flere punkter, for eksempel på et finere rutenett, hjelper
+derfor ikke.
 
 **Dette tar vi med oss.** Funksjonen er den samme i alle radene. Det er
 området som avgjør om minimum finnes.
@@ -189,10 +198,13 @@ Vi har nå sett to måter en minimerende følge kan mislykkes på:
 2. **Grensen mangler.** Følgen $x_k=1/k$ nærmer seg $0$, men $0$ er ikke
    med i $(0,1]$.
 
+Eksperiment 1 viser begge på en gang: $a$ vokser uten grense, og $b$
+nærmer seg $0$, som ikke er tillatt.
+
 Hver av dem gir et krav til området.
 
-En mengde er **begrenset** hvis alle punktene ligger innenfor en endelig
-avstand fra origo. Da kan ingen følge rømme. En mengde er **lukket** hvis
+En mengde er **begrenset** hvis det finnes et tall $R$ slik at alle
+punktene ligger innenfor avstand $R$ fra origo. Da kan ingen følge rømme. En mengde er **lukket** hvis
 den inneholder grensen til hver konvergent følge av punkter fra mengden.
 Da mangler ingen grense. En mengde i $\mathbb R^n$ som er både lukket og
 begrenset, kalles **kompakt**.
@@ -261,10 +273,14 @@ $\nabla f=0$. Dette kommer vi tilbake til i uke 11 og 12.
 
 Hvorfor merket vi ingenting av dette i uke 4? Der var modellen lineær i
 koeffisientene: modellverdiene er $Ac$, og alle mulige modellverdier utgjør
-kolonnerommet til $A$. Den beste tilpasningen er projeksjonen av dataene på
-dette underrommet. **Et underrom er lukket**, så projeksjonen finnes alltid.
-Lineær minste kvadrater har derfor alltid en beste tilpasning, også når
-kolonnene er avhengige; da er den bare ikke entydig (se 8.4).
+kolonnerommet til $A$. Den beste tilpasningen er det punktet i underrommet
+som ligger nærmest dataene. Det finnes alltid: vi trenger bare å lete blant
+modellverdiene som ligger minst like nær dataene som nullvektoren. Den delen
+av underrommet er lukket og begrenset, og avstanden er kontinuerlig, så
+ekstremalverdisetningen gir et nærmeste punkt. Lineær minste kvadrater har
+derfor alltid en beste tilpasning, også når kolonnene er avhengige. Da er
+den beste kurven fortsatt én, men koeffisientene $c$ er ikke entydige
+(se 8.4).
 
 For en ikke-lineær modell er mengden av mulige modellkurver ikke et
 underrom, og den trenger ikke være lukket. I eksperiment 1 nærmet kurvene
@@ -273,10 +289,10 @@ seg en rett linje som ikke selv er en modellkurve.
 ### Eksperiment 3 – dataene avgjør
 
 Ekte målinger har støy. Vi legger litt støy på de ni målingene og spør om
-en beste tilpasning finnes. For en fast $b$ er modellen lineær i $a$, så
-den beste $a$ finner vi med minste kvadrater fra uke 4. Vi tegner den
-minste verdien av $S$ som funksjon av $b$. Når $b\to0$, nærmer verdien seg
-den beste rette linjen gjennom origo, $y\approx c\,t$.
+en beste tilpasning med $b>0$ finnes. For en fast $b$ er modellen lineær i
+$a$, så den beste $a$ finner vi med minste kvadrater fra uke 4. Vi tegner
+den minste verdien av $S$ som funksjon av $b$. Når $b\to0$, nærmer verdien
+seg kvadratsummen for den beste rette linjen gjennom origo, $y\approx c\,t$.
 
 ```{pyodide-python}
 #| label: week8-noisy-data
@@ -297,13 +313,25 @@ ax.legend(); plt.show()
 ```
 
 Den stiplede linjen viser grenseverdien når $b\to0$. For støy nr. 0 og 4
-har kurven en bunn under den stiplede linjen: der finnes en beste $(a,b)$.
-For støy nr. 1 synker kurven hele veien mot $b\to0$: infimum er
+har kurven en bunn under den stiplede linjen: der finnes en beste $(a,b)$
+med $b>0$. For støy nr. 1 synker kurven hele veien mot $b\to0$: infimum er
 grenseverdien, og den oppnås ikke. Endre listen til alle seks støyseriene
-`[0, 1, 2, 3, 4, 5]`: bare to av dem gir en beste tilpasning.
+`[0, 1, 2, 3, 4, 5]`: bare to av dem gir en beste tilpasning med $b>0$.
+
+<details class="reading-step">
+<summary>Gå i dybden: hva om vi også tillater $b<0$?</summary>
+
+Med $b<0$ og $a<0$ krummer modellkurven oppover i stedet for å flate ut.
+Tillater vi det, finnes en beste tilpasning også for de fire andre
+støyseriene. For støy nr. 2 finner BFGS fra startpunktet $(-10,-0.1)$ et
+minimum nær $(a,b)=(-24,-0.02)$, med lavere $S$ enn den beste linjen.
+Hvilke modeller vi tillater, er altså en del av problemet: det tillatte
+området avgjør om minimum finnes.
+
+</details>
 
 **Dette tar vi med oss.** Et program kan ikke se om minimum mangler; det
-lager bare en minimerende følge. Om følgen har en grense, må vi avgjøre
+lager bare en følge av stadig bedre punkter. Om følgen har en grense, må vi avgjøre
 med matematikk: kompakthet, eller en direkte sammenligning som her.
 
 ## 8.3 Mange starter, ett svar?
@@ -347,18 +375,19 @@ def S_wave(z):
     a, w = z
     return np.sum((yf - a*np.exp(-.3*tf)*np.cos(w*tf))**2)
 
-for w0 in [1, 2, 3, 4, 4.5, 5, 6, 7, 8]:
+for w0 in [1, 2, 3, 4, 4.5, 7, 8]:
     r = minimize(S_wave, [1., w0], method='BFGS')
+    # cos er en jevn funksjon: w og -w gir samme kurve, så vi skriver |w|.
     print(f'svingning, start w = {w0:3}: a = {r.x[0]:5.2f}, '
           f'w = {abs(r.x[1]):5.2f}, S = {r.fun:6.3f}, success = {r.success}')
 ```
 
 **Hva viser forsøket?** Alle ni søkene på linjen ender i
-$c=(1.05,\,0.90)$, svaret fra uke 4. For svingningen gir sju starter
+$c=(1.05,\,0.90)$, svaret fra uke 4. For svingningen gir fem starter
 $\omega=2.00$ og $S=0.017$, men starten $\omega=4.5$ gir $\omega=4.31$ og
 $S=5.44$, og starten $\omega=8$ gir $\omega=8.44$ og $S=5.54$. Alle
-søkene melder `success = True`. Programmet kan ikke skille en god dal fra
-en dårlig.
+søkene melder `success = True`. Programmet vet ikke om det finnes en
+bedre dal et annet sted.
 
 ### Sett ord på det du ser: skjær funksjonen langs en linje
 
@@ -374,29 +403,44 @@ $(a,\omega)=(1,2)$ og $(1,4)$.
 For linjen ligger midtpunktet langt **under** gjennomsnittet av
 endeverdiene. For svingningen ligger det **over**: mellom de to punktene
 kommer en «bakketopp». Det er nettopp slike bakketopper som skiller dalene
-i eksperiment 4.
+i eksperiment 4. Figuren viser de to snittene og den rette linjen mellom
+endeverdiene:
+
+```{pyodide-python}
+#| label: week8-chords
+u = np.linspace(0, 1, 101)
+fig, axes = plt.subplots(2, 1, figsize=(6, 6.5))
+for ax, F, P, Q, name in [(axes[0], S_line, [0, 0], [2, 2], 'Linje'),
+                          (axes[1], S_wave, [1, 2], [1, 4], 'Svingning')]:
+    P, Q = np.array(P, float), np.array(Q, float)
+    values = [F((1 - s)*P + s*Q) for s in u]      # funksjonen langs linjestykket
+    ax.plot(u, values, label='funksjonsverdi')
+    ax.plot([0, 1], [F(P), F(Q)], 'r--', label='rett linje mellom endeverdiene')
+    ax.set(title=name, xlabel='posisjon på linjestykket'); ax.legend()
+fig.tight_layout(); plt.show()
+```
 
 ### Konvekse funksjoner og konvekse mengder
 
-En funksjon $f$ er **konveks** hvis verdien mellom to punkter aldri ligger
-over den rette linjen mellom endeverdiene:
+En funksjon $f$ på en mengde $D$ er **konveks** hvis verdien mellom to
+punkter aldri ligger over den rette linjen mellom endeverdiene:
 
-$$f\bigl(ta+(1-t)b\bigr)\le t\,f(a)+(1-t)\,f(b)
-\qquad\text{for alle }a,b\text{ og }0\le t\le1.$$
+$$f\bigl(s\,x+(1-s)\,z\bigr)\le s\,f(x)+(1-s)\,f(z)
+\qquad\text{for alle }x,z\in D\text{ og }0\le s\le1.$$
 
-Når $t$ går fra $0$ til $1$, går $ta+(1-t)b$ langs linjestykket fra $b$
-til $a$. Ved $t=\tfrac12$ sammenligner vi verdien i midtpunktet med
-gjennomsnittet av endeverdiene, som i tabellen. **Ett brudd er nok** til
+Når $s$ går fra $0$ til $1$, går $s\,x+(1-s)\,z$ langs linjestykket fra
+$z$ til $x$. Ved $s=\tfrac12$ sammenligner vi verdien i midtpunktet med
+gjennomsnittet av endeverdiene, som i tabellen og figuren. **Ett brudd er nok** til
 å vise at en funksjon ikke er konveks. Mange vellykkede kontroller beviser
 derimot ikke konveksitet; til det trenger vi et argument som gjelder alle
 punkter (8.4).
 
-Funksjonen er **strengt konveks** hvis ulikheten er streng når $a\ne b$ og
-$0<t<1$.
+Funksjonen er **strengt konveks** hvis ulikheten er streng når $x\ne z$ og
+$0<s<1$.
 
 Definisjonen krever at linjestykket mellom to tillatte punkter selv er
-tillatt. En mengde $D$ er **konveks** hvis $ta+(1-t)b\in D$ for alle
-$a,b\in D$ og $0\le t\le1$:
+tillatt. En mengde $D$ er **konveks** hvis $s\,x+(1-s)\,z\in D$ for alle
+$x,z\in D$ og $0\le s\le1$:
 
 - skiven $u^2+v^2\le1$ er konveks,
 - sirkelen $u^2+v^2=1$ er ikke konveks: $(1,0)$ og $(-1,0)$ er med, men
@@ -412,8 +456,8 @@ men ikke konveks, og hele planet er konvekst, men ikke kompakt.
 også globalt. Hvis funksjonen er strengt konveks, finnes det høyst ett
 minimumspunkt.**
 
-Dette forklarer eksperiment 4: kvadratsummen for linjen er konveks (8.4),
-så alle søk må ende i samme minimum. For svingningen er konveksiteten
+Dette forklarer eksperiment 4: kvadratsummen for linjen er **strengt**
+konveks (8.4), så alle søk må ende i det samme, eneste minimumspunktet. For svingningen er konveksiteten
 brutt, og et søk kan bli stående i en dårlig dal.
 
 «Høyst ett» betyr ikke «ett»: $x^2$ er strengt konveks på $(0,1)$, men har
@@ -423,17 +467,17 @@ streng konveksitet. Still alltid begge spørsmålene.
 <details class="reading-step">
 <summary>Gå i dybden: hvorfor er et lokalt minimum globalt?</summary>
 
-Anta at $x_*$ er et lokalt minimum, men at et tillatt punkt $y$ har
-$f(y)<f(x_*)$. Siden mengden er konveks, er alle punktene
-$x_t=(1-t)x_*+ty$ tillatte. Konveksitet gir for $0<t\le1$
+Anta at $x_*$ er et lokalt minimum, men at et tillatt punkt $z$ har
+$f(z)<f(x_*)$. Siden mengden er konveks, er alle punktene
+$x_s=(1-s)x_*+s\,z$ tillatte. Konveksitet gir for $0<s\le1$
 
-$$f(x_t)\le(1-t)f(x_*)+t\,f(y)<f(x_*).$$
+$$f(x_s)\le(1-s)f(x_*)+s\,f(z)<f(x_*).$$
 
-Ved å velge $t$ liten ligger $x_t$ så nær $x_*$ vi vil, og er likevel
+Ved å velge $s$ liten ligger $x_s$ så nær $x_*$ vi vil, og er likevel
 bedre. Det motsier at $x_*$ er et lokalt minimum.
 
-Hvis $f$ er strengt konveks og har to minimumspunkter $a\ne b$ med samme
-verdi $m$, gir midtpunktet $f\bigl(\tfrac{a+b}2\bigr)<\tfrac12m+\tfrac12m=m$,
+Hvis $f$ er strengt konveks og har to minimumspunkter $x\ne z$ med samme
+verdi $m$, gir midtpunktet $f\bigl(\tfrac{x+z}2\bigr)<\tfrac12m+\tfrac12m=m$,
 som er umulig. Derfor finnes høyst ett minimumspunkt.
 
 </details>
@@ -448,82 +492,93 @@ Definisjonen av konveksitet handler om linjestykker. Vi kan derfor se på
 funksjonen langs én linje om gangen. Velg et punkt $z$ og en retning $p$,
 og sett
 
-$$\varphi(t)=f(z+tp).$$
+$$\varphi(s)=f(z+sp).$$
 
-Fra uke 6 og støtteløpet i 8.7 er $\varphi'(t)=\nabla f(z+tp)^Tp$. Deriverer
+Fra uke 6 og støtteløpet i 8.7 er $\varphi'(s)=\nabla f(z+sp)^Tp$. Deriverer
 vi en gang til, får vi
 
-$$\varphi''(t)=p^T\,H(z+tp)\,p,$$
+$$\varphi''(s)=p^T\,H(z+sp)\,p,$$
 
 der $H$ er Hessianmatrisen. En funksjon av én variabel med
-$\varphi''\ge0$ krummer oppover overalt og er konveks. Det gir testen:
+$\varphi''\ge0$ krummer oppover overalt og er konveks. Det gir testen, på
+hele $\mathbb R^n$ eller på et åpent, konvekst område:
 
 | Hessianen i **alle** punkter | Konklusjon |
 |:--|:--|
 | positiv semidefinit: $p^THp\ge0$ for alle $p$ | $f$ er konveks |
 | positiv definit: $p^THp>0$ for alle $p\ne0$ | $f$ er strengt konveks |
 
-Fra [uke 5](uke5.qmd) vet vi at en symmetrisk matrise er positiv
-(semi)definit akkurat når alle egenverdiene er positive (ikke-negative).
+Testen for streng konveksitet går bare én vei: $x^4$ er strengt konveks,
+selv om den andrederiverte er null i $x=0$. En null egenverdi viser altså
+ikke alene at funksjonen ikke er strengt konveks. Da må vi finne et
+linjestykke der funksjonen ikke krummer, slik som i eksperiment 5.
+
+Fra [uke 6](uke6.qmd#uke6-energi) vet vi at en symmetrisk matrise er
+positiv definit akkurat når alle egenverdiene er positive. Formelen
+$p^THp=\sum_i\lambda_ic_i^2$ fra [uke 5](uke5.qmd), der $c_i$ er
+koordinatene til $p$ i egenvektorbasisen, viser også den semidefinitte
+varianten: $p^THp\ge0$ for alle $p$ akkurat når ingen egenverdi er negativ.
 Legg merke til forskjellen fra den lokale testen i støtteløpet: der ser vi
 på Hessianen i **ett** punkt. Her må testen gjelde **overalt**.
 
 ::: {.callout-note title="Håndeksempel: krumning i tre retninger"}
 
 **Utgangspunkt.** $f(x,y)=x^2+xy+y^2$ har den konstante Hessianen
-$H=\begin{bmatrix}2&1\\1&2\end{bmatrix}$.
+$H=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ (se utregningen i 8.7).
 
 **Prøv selv.** Regn ut $p^THp$ for $p=(1,0)$, $(1,1)$ og $(1,-1)$.
 
 **Regnegangen.** Vi får $2$, $6$ og $2$. Egenverdiene til $H$ er $1$ og
-$3$, med egenvektorer langs $(1,-1)$ og $(1,1)$. For en enhetsvektor $p$
-ligger $p^THp$ alltid mellom $1$ og $3$.
+$3$, med egenvektorer langs $(1,-1)$ og $(1,1)$. For en **enhetsvektor**
+$p$ ligger $p^THp$ alltid mellom $1$ og $3$. Vektorene $(1,1)$ og $(1,-1)$
+har lengde $\sqrt2$, så verdiene $6$ og $2$ er $2\cdot3$ og $2\cdot1$.
 
 **Dette tar vi med oss.** Alle egenverdiene er positive, så $f$ er
-strengt konveks. Fra Matematikk 2 kjenner du kanskje testen
-$f_{xx}f_{yy}-f_{xy}^2>0$ og $f_{xx}>0$. Den er den samme testen:
-$f_{xx}f_{yy}-f_{xy}^2=\det H=\lambda_1\lambda_2$ og
-$f_{xx}+f_{yy}=\lambda_1+\lambda_2$. For flere enn to variabler bruker vi
-egenverdiene.
+strengt konveks. Fra tidligere matematikkemner kjenner du kanskje testen
+$f_{xx}f_{yy}-f_{xy}^2>0$ og $f_{xx}>0$. Den sier det samme:
+$f_{xx}f_{yy}-f_{xy}^2=\det H=\lambda_1\lambda_2>0$ betyr at egenverdiene
+har samme fortegn. Da har også $f_{xx}$ og $f_{yy}$ samme fortegn, og
+$f_{xx}>0$ gir $\lambda_1+\lambda_2=f_{xx}+f_{yy}>0$. Begge egenverdiene er
+altså positive. For flere enn to variabler bruker vi egenverdiene.
 
 :::
 
-### Skålen fra uke 6 og kvadratsummer
+### Kvadratsummer er konvekse
 
-For $\phi(x)=\tfrac12x^TAx-b^Tx$ fra uke 6 er Hessianen $A$ i alle punkter.
-Når $A$ er SPD, er $\phi$ strengt konveks. Det forklarer hvorfor skålen
-hadde én bunn.
+For kvadratsummen $S(c)=\|b-Ac\|_2^2$ fra uke 4 kan vi regne langs en
+linje direkte. Med residualen $r=b-Ac$ er
 
-For kvadratsummen $S(c)=\|b-Ac\|_2^2$ fra uke 4 er Hessianen $2A^TA$, og
+$$S(c+sp)=\|r-sAp\|_2^2=\|r\|_2^2-2s\,r^TAp+s^2\|Ap\|_2^2,$$
 
-$$p^T(2A^TA)p=2\|Ap\|_2^2\ge0.$$
+så $\varphi''(s)=2\|Ap\|_2^2\ge0$. **Kvadratsummen er derfor alltid
+konveks.** Den er strengt konveks når $Ap\ne0$ for alle $p\ne0$, altså når
+nullrommet til $A$ bare inneholder nullvektoren. Konveksitet, rang og
+nullrom henger sammen. Skålen $\phi$ fra uke 6 er et annet eksempel: der
+er $\varphi''(s)=p^TAp$, som er positiv når $A$ er SPD. Derfor hadde
+skålen én bunn.
 
-**Kvadratsummen er derfor alltid konveks.** Den er strengt konveks når
-$Ap\ne0$ for alle $p\ne0$, altså når nullrommet til $A$ bare inneholder
-nullvektoren. Konveksitet, rang og nullrom henger sammen.
+For en konveks funksjon er dessuten **gradient null nok til å bevise
+globalt minimum.** Uten konveksitet kan et punkt med gradient null være en
+dårlig dal eller et sadelpunkt.
 
-### En nedre grense fra tangenten
+<details class="reading-step">
+<summary>Gå i dybden: en nedre grense fra tangenten</summary>
 
 For en deriverbar konveks funksjon ligger tangentplanet under grafen:
 
-$$f(y)\ge f(z)+\nabla f(z)^T(y-z)\qquad\text{for alle }y.$$
+$$f(x)\ge f(z)+\nabla f(z)^T(x-z)\qquad\text{for alle }x.$$
 
-Hvis $\nabla f(z)=0$, sier ulikheten at $f(y)\ge f(z)$ for alle $y$.
-**For en konveks funksjon er gradient null nok til å bevise globalt
-minimum.** Uten konveksitet kan et punkt med gradient null være en dårlig
-dal eller et sadelpunkt.
+Hvis $\nabla f(z)=0$, sier ulikheten at $f(x)\ge f(z)$ for alle $x$. Det er
+argumentet bak setningen over.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvor kommer tangentulikheten fra?</summary>
+Ulikheten kommer fra definisjonen. For $0<s\le1$ gir konveksitet
+$f(z+s(x-z))\le(1-s)f(z)+s\,f(x)$. Trekk fra $f(z)$ og del på $s$:
 
-For $0<t\le1$ gir konveksitet $f(z+t(y-z))\le(1-t)f(z)+tf(y)$. Trekk fra
-$f(z)$ og del på $t$:
+$$\frac{f(z+s(x-z))-f(z)}{s}\le f(x)-f(z).$$
 
-$$\frac{f(z+t(y-z))-f(z)}{t}\le f(y)-f(z).$$
-
-Når $t\to0^+$, går venstresiden mot den retningsderiverte
-$\nabla f(z)^T(y-z)$. Det gir ulikheten. Eksempel: for $f(x)=x^2$ ved
-$z=1$ sier den $y^2\ge2y-1$, som er $(y-1)^2\ge0$.
+Når $s\to0^+$, går venstresiden mot den retningsderiverte
+$\nabla f(z)^T(x-z)$. Eksempel: for $f(x)=x^2$ ved $z=1$ sier ulikheten
+$x^2\ge2x-1$, som er $(x-1)^2\ge0$.
 
 </details>
 
@@ -554,19 +609,21 @@ print('pinv (uke 7.7):', (np.linalg.pinv(A) @ bl).round(3))
 $S=0.05$, samme $c_0=1.05$ og samme $c_1+2c_2=0.90$. Minimumspunktene
 ligger langs en linje i retningen $(0,2,-1)$: en endring i denne retningen
 endrer ikke $Ac$. Det er **nullrommet** fra uke 3. Alle punktene på linjen
-er globale minimumspunkter. Pseudoinversen fra uke 7.7 velger det korteste
-av dem, $(1.05,\,0.18,\,0.36)$. Legg merke til at søket fra nullvektoren
-ender akkurat der.
+er globale minimumspunkter. Pseudoinversen fra den valgfrie
+[fanen 7.7](uke7.qmd#uke7-pseudoinvers) velger det korteste av dem,
+$(1.05,\,0.18,\,0.36)$. Søket fra nullvektoren ender akkurat der: fra $0$
+ligger alle gradientene $-2A^Tr$ i radrommet til $A$, så søket beveger seg
+aldri langs nullrommet.
 
 **Dette tar vi med oss.** Konveks betyr at alle lokale minimum er globale.
-Strengt konveks betyr i tillegg at det bare finnes ett. Forskjellen er
-nullrommet.
+Strengt konveks betyr i tillegg at det finnes høyst ett minimumspunkt. For
+kvadratsummer er forskjellen nullrommet.
 
 ## 8.5 Regneoppgaver
 
 <div id="uke8-oppgaver"></div>
 
-Oppgave 1–4 følger 8.1–8.2, og oppgave 5–10 følger 8.3–8.4. Svar eksakt
+Oppgave 1–5 følger 8.1–8.2, og oppgave 6–11 følger 8.3–8.4. Svar eksakt
 uten avrunding. I uttrykksfeltene bruker du `*` for multiplikasjon og `^`
 for potens. Der det spørres om ja/nei, skriver du **1 for ja, 0 for nei**.
 Begrunnelsene skriver du i egne notater; feltene kontrollerer regningen.
@@ -630,11 +687,30 @@ $B$: lukket _[0], begrenset _[1], kompakt _[0]
 $C$: lukket _[1], begrenset _[0], kompakt _[0]
 ```
 
-**Oppgave 4 – et kompakt område med minimum på randen.**
+**Oppgave 4 – bruk ekstremalverdisetningen.**
+
+```{math-exercise}
+#| label: week8-task-existence-disk
+#| caption: Oppgave 4 – bruk ekstremalverdisetningen
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: minimumsverdi, maksimumsverdi, u i minimumspunktet, v i minimumspunktet
+
+Vi undersøker $f(u,v)=u^2+v^2$ på skiven $D=\{(u,v):u^2+v^2\le4\}$. Kontroller først kravene i ekstremalverdisetningen: er området ikke-tomt og kompakt, og er funksjonen kontinuerlig? Finn så ekstremalverdiene.
+
+Minimumsverdi: _[0]
+Maksimumsverdi: _[4]
+
+Minimumspunkt: $u=$ _[0], $v=$ _[0]
+
+Beskriv alle maksimumspunktene i egne notater. Hvorfor gir ikke setningen et entydig maksimumspunkt her?
+```
+
+**Oppgave 5 – et kompakt område med minimum på randen.**
 
 ```{math-exercise}
 #| label: week8-task-box
-#| caption: Oppgave 4 – minimum på randen
+#| caption: Oppgave 5 – minimum på randen
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: minimumsverdi, a i minimumspunktet, b i minimumspunktet, partiellderivert med hensyn på b
@@ -650,47 +726,47 @@ $\dfrac{\partial f}{\partial b}$ i minimumspunktet: _[1/2]
 Hvorfor kan den partiellderiverte være ulik null i et minimumspunkt?
 ```
 
-**Oppgave 5 – skive og sirkelrand.**
+**Oppgave 6 – skive og sirkelrand.**
 
 ```{math-exercise}
 #| label: week8-task-convex-set
-#| caption: Oppgave 5 – skive og sirkelrand
+#| caption: Oppgave 6 – skive og sirkelrand
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: midtpunktets første koordinat, midtpunktets andre koordinat, midtpunktet på sirkelranden, midtpunktet i skiven
 
-Punktene $a=(2,0)$ og $b=(-2,0)$ ligger både på sirkelranden $S=\{(u,v):u^2+v^2=4\}$ og i skiven $D=\{(u,v):u^2+v^2\le4\}$. Finn midtpunktet $m=(a+b)/2$.
+Punktene $P=(2,0)$ og $Q=(-2,0)$ ligger både på sirkelranden $K=\{(u,v):u^2+v^2=4\}$ og i skiven $D=\{(u,v):u^2+v^2\le4\}$. Finn midtpunktet $m=(P+Q)/2$.
 
 $m_1=$ _[0], $m_2=$ _[0]
 
-Er $m$ på sirkelranden $S$? _[0]
+Er $m$ på sirkelranden $K$? _[0]
 Er $m$ i skiven $D$? _[1]
 
 Hvilken av mengdene kan du dermed bevise at ikke er konveks? Forklar hvorfor én midtpunktsberegning ikke alene beviser at den andre mengden er konveks.
 ```
 
-**Oppgave 6 – ett brudd på konveksitet er nok.**
+**Oppgave 7 – ett brudd på konveksitet er nok.**
 
 ```{math-exercise}
 #| label: week8-task-convex
-#| caption: Oppgave 6 – ett brudd på konveksitet er nok
+#| caption: Oppgave 7 – ett brudd på konveksitet er nok
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: q i midtpunktet, gjennomsnitt av endeverdiene
 
-For $q(x)=x^4-2x^2$ bruker du $a=-1$ og $b=1$. Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene.
+For $q(x)=x^4-2x^2$ bruker du endepunktene $x=-1$ og $z=1$. Regn ut verdien i midtpunktet og gjennomsnittet av endeverdiene.
 
-$q((a+b)/2)=$ _[0]
-$(q(a)+q(b))/2=$ _[-1]
+$q((x+z)/2)=$ _[0]
+$(q(x)+q(z))/2=$ _[-1]
 
 Hva sier sammenligningen om konveksitet på $\mathbb R$?
 ```
 
-**Oppgave 7 – krumning i alle retninger.**
+**Oppgave 8 – krumning i alle retninger.**
 
 ```{math-exercise}
 #| label: week8-task-curvature
-#| caption: Oppgave 7 – krumning i alle retninger
+#| caption: Oppgave 8 – krumning i alle retninger
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: krumning langs (1 -1), krumning langs (1 1), minste egenverdi, største egenverdi, determinant
@@ -707,14 +783,14 @@ $\det H=$ _[3]
 Er $f$ strengt konveks? Begrunn både med egenverdiene og med testen $f_{xx}f_{yy}-f_{xy}^2>0$, $f_{xx}>0$.
 ```
 
-**Oppgave 8 – én bunn eller en hel linje?**
+**Oppgave 9 – én bunn eller en hel linje?**
 
 ```{math-exercise}
 #| label: week8-task-strict-convex
-#| caption: Oppgave 8 – én bunn eller en hel linje?
+#| caption: Oppgave 9 – én bunn eller en hel linje?
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: minste egenverdi til Hf, største egenverdi til Hf, minimumsverdi for f, u ved minimum av g, v ved minimum av g
+#| field-labels: minste egenverdi til Hessianen til f, største egenverdi til Hessianen til f, minimumsverdi for f, u ved minimum av g, v ved minimum av g
 
 Sammenlign $f(u,v)=(u-2)^2$ og $g(u,v)=(u-2)^2+(v+1)^2$ på $\mathbb R^2$.
 
@@ -727,32 +803,33 @@ Minimumspunktet til $g$: $u=$ _[2], $v=$ _[-1]
 Beskriv alle minimumspunktene til $f$. I hvilken retning kan du flytte deg fra et minimumspunkt uten at $f$ endres? Forklar hvorfor begge funksjonene er konvekse, men bare $g$ er strengt konveks.
 ```
 
-**Oppgave 9 – nullrommet gir en flat dal.**
+**Oppgave 10 – nullrommet gir en flat dal.**
 
 ```{math-exercise}
 #| label: week8-task-null-space
-#| caption: Oppgave 9 – nullrommet gir en flat dal
+#| caption: Oppgave 10 – nullrommet gir en flat dal
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: c0, c1 + 2 c2, minste kvadratsum, retning i nullrommet
+#| field-labels: c1 når c2 er null, c2 når c1 er null, d i retningen
 
-I eksperiment 5 er kolonnene $1$, $t$ og $2t$, og dataene er de fire målingene fra uke 4. Bruk at modellen $c_0+c_1t+c_2(2t)=c_0+(c_1+2c_2)t$ bare avhenger av $c_0$ og $c_1+2c_2$, og at den beste linjen fra uke 4 er $1.05+0.90\,t$ med kvadratsum $0.05$.
+I eksperiment 5 er kolonnene $1$, $t$ og $2t$, og dataene er de fire målingene fra uke 4. Modellen $c_0+c_1t+c_2(2t)=c_0+(c_1+2c_2)t$ avhenger bare av $c_0$ og $c_1+2c_2$. Bruk resultatet fra eksperiment 5.
 
-$c_0=$ _[21/20]
-$c_1+2c_2=$ _[9/10]
-Minste kvadratsum: _[1/20]
+Minimumspunktet med $c_2=0$: $c_1=$ _[9/10]
+
+Minimumspunktet med $c_1=0$: $c_2=$ _[9/20]
 
 En retning $(0,2,d)$ som ikke endrer modellen: $d=$ _[-1]
 
-Forklar hvorfor kvadratsummen er konveks, men ikke strengt konveks.
+Forklar hvorfor kvadratsummen er konveks, men ikke strengt konveks. Hvilket av minimumspunktene har kortest lengde?
 ```
 
-**Oppgave 10 – en nedre grense fra tangenten.**
+**Oppgave 11 – en nedre grense fra tangenten.**
 
 ```{math-exercise}
 #| label: week8-task-tangent
-#| caption: Oppgave 10 – en nedre grense fra tangenten
+#| caption: Oppgave 11 – en nedre grense fra tangenten
 #| mode: equivalent
+#| vars: y
 #| partial-credit: true
 #| field-labels: tangentuttrykk i y, stasjonært punkt, minimumsverdi
 
@@ -765,10 +842,10 @@ Finn også det stasjonære punktet og funksjonsverdien der:
 $x_*=$ _[3]
 $q(x_*)=$ _[0]
 
-Bruk $q''(x)$ til å begrunne streng konveksitet. Forklar deretter hvorfor tangentulikheten ved $x_*$ gir et globalt, entydig minimum.
+Bruk $q''(x)$ til å begrunne streng konveksitet. Forklar hvorfor tangentulikheten ved $x_*$ gir et globalt minimum, og hvorfor streng konveksitet gjør det entydig.
 ```
 
-## 8.6 Python: SciPy og egne søk
+## 8.6 Python: SciPy-oppslag og kodeoppgaver
 
 <div id="uke8-python"></div>
 
@@ -920,7 +997,10 @@ $\nabla f=0$. Et punkt med $\nabla f=0$ kalles **stasjonært**. Det er en
 nødvendig betingelse, ikke en tilstrekkelig.
 
 **Hessianmatrisen** $H$ samler de andre partiellderiverte. Den er
-symmetrisk når de andrederiverte er kontinuerlige. Nær et punkt gjelder
+symmetrisk når de andrederiverte er kontinuerlige. For
+$f(x,y)=x^2+xy+y^2$ er $f_x=2x+y$ og $f_y=x+2y$, og derivert en gang til
+får vi $f_{xx}=2$, $f_{xy}=f_{yx}=1$ og $f_{yy}=2$:
+$H=\begin{bmatrix}2&1\\1&2\end{bmatrix}$. Nær et punkt gjelder
 Taylor-tilnærmingen
 
 $$f(z+h)\approx f(z)+\nabla f(z)^Th+\tfrac12h^TH(z)h.$$
@@ -932,7 +1012,7 @@ I et stasjonært punkt avgjør fortegnet til $h^THh$ typen:
 | positiv definit | alle positive | strengt lokalt minimum |
 | negativ definit | alle negative | strengt lokalt maksimum |
 | indefinit | begge fortegn | sadelpunkt |
-| semidefinit med en null egenverdi | | testen avgjør ikke |
+| semidefinit med en null egenverdi | én er null, resten har samme fortegn | testen avgjør ikke |
 
 | Funksjon | Hessian i origo | Type |
 |:--|:--|:--|
@@ -949,7 +1029,7 @@ $[0,1]$ har minimum i $x=0$, der $f'=1$.
 
 ```{math-exercise}
 #| label: week8-task-hessian
-#| caption: Støtteløp – kritisk punkt og krumning
+#| caption: Støtteløp – stasjonært punkt og krumning
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: positiv egenverdi, negativ egenverdi, determinant
