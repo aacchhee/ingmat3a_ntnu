@@ -45,7 +45,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0e53955fafe0ce48d7f15f4d9f72b5a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-5337165f197680d68c11b8afac1372bd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-core.js"></script>
 <script src="site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-dom.js"></script>
 <script src="site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.js"></script>
@@ -403,12 +403,12 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/page2.html">Uke 1</a></td>
 <td style="text-align: left;"><strong>Hvordan kan vi regne raskere, og hvorfor blir ikke 0,1 + 0,2 alltid nøyaktig 0,3 på en datamaskin?</strong></td>
-<td style="text-align: left;">Absolutt og relativ feil, regneoperasjoner og Horners metode. Binære tall, IEEE 754-flyttall, avrunding, maskinepsilon og tap av signifikans. Vi undersøker både beregningskostnad og numerisk stabilitet.</td>
+<td style="text-align: left;">Du lærer å måle hvor stor en feil er, og ser at en lur regnerekkefølge (Horners metode) gjør polynomer mye raskere å regne ut. Datamaskinen lagrer tall med et begrenset antall binære sifre; du finner ut når avrundingen ødelegger et resultat, og i prosjektet prøver du å lure en vanlig summering til å regne feil.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/page4.html">Uke 2</a></td>
 <td style="text-align: left;"><strong>Kan vi finne kvadratroten av 2 ved å gjenta en enkel regneregel – og hvordan vet vi når svaret er nøyaktig nok?</strong></td>
-<td style="text-align: left;">Fikspunktiterasjon, spindelvevplott, lokal og global konvergens og konvergensfart. Feil, residual, skrittlengde og toleranse brukes til å bygge en robust iterasjonsalgoritme. Newtons iterasjon for kvadratrøtter gir et raskt eksempel.</td>
+<td style="text-align: left;">Mange likninger løses best ved å starte med et anslag og forbedre det steg for steg, og du lærer å se om en slik gjentakelse nærmer seg svaret, hvor fort det går og når det er trygt å stoppe. I prosjektet tegner du fargekart over hvilken løsning Newtons metode finner fra ulike startpunkter.</td>
 </tr>
 </tbody>
 </table>
@@ -427,34 +427,34 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke3.html">Uke 3</a></td>
 <td style="text-align: left;"><strong>Kan et bilde av et sjakkbrett og et ensfarget bilde bli helt like når vi gjør dem mindre?</strong></td>
-<td style="text-align: left;">Lineære transformasjoner, vektorrom, basis, koordinater og lineær avhengighet. Kolonnerom, nullrom og rang forklarer hvilken informasjon en bildetransformasjon beholder eller mister. De samme ideene brukes på polynomer.</td>
+<td style="text-align: left;">Du skriver en bildeforminskning som en matrise og finner ut hvilken informasjon som går tapt og hvilken som kan gjenskapes – det er nettopp dette nullrom og rang måler. Ideene virker like godt for polynomer, og i prosjektet ser du at valget av byggesteiner og målepunkter avgjør om du kan finne et polynom igjen fra noen få verdier.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke4.html">Uke 4</a></td>
 <td style="text-align: left;"><strong>Hvordan finner vi den rette linjen som samlet sett ligger nærmest en samling målepunkter?</strong></td>
-<td style="text-align: left;">Indreprodukt, ortogonalitet og projeksjon leder til Gram–Schmidt, QR-faktorisering og minste kvadrater. Vi undersøker nesten avhengige kolonner, tap av ortogonalitet og tilpasning av polynomer til data.</td>
+<td style="text-align: left;">Du lærer å måle hvor mye av en vektor som peker i en gitt retning, og bruker det til å lage vinkelrette retninger og finne linjen eller kurven som passer best til målinger (minste kvadraters metode). I prosjektet tilpasser du kurver til målinger med støy og vurderer om tilpasningen er til å stole på.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke5.html">Uke 5</a></td>
 <td style="text-align: left;"><strong>Hvordan kan lenkene mellom nettsider brukes til å lage en rangering av sidene?</strong></td>
-<td style="text-align: left;">Egenverdier, egenvektorer, diagonalisering og spektralteoremet forklarer gjentatte matriseprodukter. Potensmetoden finner en dominerende retning. PageRank viser hvordan stasjonære fordelinger og tilfeldige hopp kan brukes til å rangere nettsider.</td>
+<td style="text-align: left;">Når vi ganger med den samme matrisen om og om igjen, tar noen spesielle retninger – egenvektorene – over. Du bruker dette til å rangere nettsider ut fra lenkene mellom dem (PageRank), og i prosjektet undersøker du hvor mye besøksmønsteret må endres før to sider bytter plass.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke6.html">Uke 6</a></td>
 <td style="text-align: left;"><strong>Kan vi løse tusenvis av likninger ved å begynne med et grovt svar og forbedre det litt om gangen?</strong></td>
-<td style="text-align: left;">Jacobi, Gauss–Seidel og konvergens. Residual, foroverfeil, bakoverfeil, matrisenorm og kondisjonstall. Vi tolker et SPD-system som et minimumsproblem og bygger bratteste nedstigning, linjesøk og konjugert gradient (CG). Prosjektet undersøker prekondisjonering.</td>
+<td style="text-align: left;">Store likningssystemer løses ofte ved å forbedre et grovt anslag litt om gangen, og du lærer å vurdere hvor nær et anslag er løsningen og hvorfor noen systemer er ekstra følsomme. Når vi ser løsningen som bunnen av en skål, får vi en rask metode (konjugert gradient), og i prosjektet sparer du arbeid ved å skalere om likningene først.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke7.html">Uke 7</a></td>
 <td style="text-align: left;"><strong>Hvor mye kan vi komprimere et bilde før viktige detaljer blir borte?</strong></td>
-<td style="text-align: left;">Singulærverdidekomposisjon (SVD), ortogonale basiser, rang og kondisjonering. Lavrangsapproksimasjoner og feil målt med Frobeniusnorm brukes til bildekompresjon. Pseudoinvers og trunkert SVD knytter minste kvadrater til følsom rekonstruksjon og støyfiltrering.</td>
+<td style="text-align: left;">Et bilde kan skrives som en sum av enkle mønstre, ordnet etter hvor mye de betyr (singulærverdidekomposisjonen, SVD). Ved å beholde bare de viktigste mønstrene kan du komprimere bilder og fjerne støy, og i prosjektet ser du hvorfor det er risikabelt å gjenskape et uskarpt signal fra unøyaktige målinger.</td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="optimering" class="level2">
 <h2 class="anchored" data-anchor-id="optimering">Optimering</h2>
-<p>Vi bygger videre på minimum, gradient og linjesøk fra <a href="./pages/uke6.html">uke 6</a>. Minste kvadraters metode fra <a href="./pages/uke4.html">uke 4</a> og <a href="./pages/uke7.html">uke 7</a> er et eksempel vi kan knytte de nye ideene til.</p>
+<p>Vi bygger videre på minimum, gradient og linjesøk fra <a href="./pages/uke6.html">uke 6</a>. Minste kvadraters metode fra <a href="./pages/uke4.html">uke 4</a> og <a href="./pages/uke7.html">uke 7</a> er et eksempel vi kan knytte de nye ideene til. De to siste ukene handler om optimering med krav: lineær programmering i uke 11 og Lagranges metode i uke 12.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -467,27 +467,27 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke8.html">Uke 8</a></td>
 <td style="text-align: left;"><strong>Når finnes det en beste tilpasning, og når kan vi stole på at en løser har funnet den?</strong></td>
-<td style="text-align: left;">Infimum og minimum, minimerende følger, kompakthet og ekstremalverdisetningen. Hessianen: krumning <span class="math inline">\(p^THp\)</span> langs linjer, minimum eller sadelpunkt. Konvekse funksjoner og mengder: et lokalt minimum er globalt, og <span class="math inline">\(p^THp\ge 0\)</span> overalt avgjør konveksitet.</td>
+<td style="text-align: left;">Før vi lar datamaskinen lete etter et minimum, spør vi om det finnes et beste svar i det hele tatt, og om punktet vi finner, er en bunn eller et sadelpunkt – her hjelper Hessianen, som beskriver krumningen. For konvekse funksjoner, som er formet som en skål, er enhver bunn også den laveste; denne uka er det ikke noe nytt prosjekt.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke9.html">Uke 9</a></td>
 <td style="text-align: left;"><strong>Hvor stort steg kan vi ta nedover, og hvorfor går gradientmetoden noen ganger så sakte?</strong></td>
-<td style="text-align: left;">Gradientmetoden med fast steg som fikspunktiterasjon: kritisk steglengde, konvergensfaktor og kondisjonstallet <span class="math inline">\(\kappa\)</span>. Armijo-testen tilpasser steglengden, og kompassøk klarer seg uten deriverte. Subnivåmengder og koersivitet garanterer at søket ikke forsvinner.</td>
+<td style="text-align: left;">Du går nedover i den bratteste retningen og finner ut hvor langt hvert steg kan være og hvorfor metoden kryper i en smal dal; deretter velger du steget automatisk (Armijo-testen) og leter helt uten deriverte (kompassøk). I prosjektet ser du på data fra Challenger-ulykken hvordan valget av måleskala kan ta søket fra millioner av steg ned til under femti.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke10.html">Uke 10</a></td>
 <td style="text-align: left;"><strong>Kan vi finne bunnen av en dal raskere ved å bruke både hvor bratt bakken er og hvordan helningen endrer seg?</strong></td>
-<td style="text-align: left;">Newtons metode som regelen fra uke 2 og som bunnen av en lokal parabel; sifrene dobles nær løsningen. Newton kan gå mot et sadelpunkt eller et maksimum; Cholesky-forsøket med forskyvning <span class="math inline">\(\mu I\)</span> retter retningen og Armijo lengden.</td>
+<td style="text-align: left;">Newtons metode bruker både helningen og krumningen og kommer svært raskt fram: antall riktige sifre omtrent dobles for hvert steg. Den kan også havne i et sadelpunkt eller et toppunkt, så du lærer en enkel reparasjon som retter opp retningen og korter ned steget, og i prosjektet finner du posisjonen din fra målte avstander, slik en GPS gjør.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke11.html">Uke 11</a></td>
 <td style="text-align: left;"><strong>Et verksted lager to produkter med de samme maskinene. Hva bør det produsere, og hvor mye er én ekstra maskintime verdt?</strong></td>
-<td style="text-align: left;">Lineær programmering: tillatt område, hjørner som likningssystemer og hvorfor det holder å lete i hjørnene (konveksitet og kompakthet fra uke 8). Dualitet og komplementær slakk gir sertifikater for optimalitet; dualvariablene er priser på små kapasitetsendringer. Modellene løses med SciPys <code>linprog</code>.</td>
+<td style="text-align: left;">Du lærer å sette opp et produksjonsproblem med begrensede ressurser (lineær programmering) og ser hvorfor den beste planen ligger i et hjørne av området med tillatte planer. Ressurspriser beviser at planen er best og viser hva én ekstra maskintime er verdt, og i prosjektet bruker du samme idé til å forklare hvorfor strømprisen kan være så forskjellig i ulike deler av landet.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke12.html">Uke 12</a></td>
 <td style="text-align: left;"><strong>Hva erstatter <span class="math inline">\(\nabla f=0\)</span> når svaret må ligge på en kurve?</strong></td>
-<td style="text-align: left;">Likhetsbetingelser, tangent og normal, og Lagranges metode med regularitet. Multiplikatorene som egenverdier (største strekk <span class="math inline">\(\sigma_1\)</span>) og som priser; KKT-systemet er symmetrisk, men ikke positivt definitt. SLSQP-svar kontrolleres mot både bibetingelsen og stasjonaritetskravet.</td>
+<td style="text-align: left;">Når svaret må ligge på en kurve, er det ikke lenger nok å sette gradienten lik null, og Lagranges metode gir likningene som gjelder i stedet. Du lærer å finne og kontrollere slike løsninger både for hånd og med SciPy, og i prosjektet forklarer du formen på en hengende kjetting og ser at multiplikatorene i Lagranges metode er kreftene i leddene.</td>
 </tr>
 </tbody>
 </table>
