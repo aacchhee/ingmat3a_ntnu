@@ -4,7 +4,7 @@
 #| label: week8-setup
 #| autorun: true
 #| context: interactive
-# Felles oppsett for kodeforsøkene i 8.6: vektorregning og figurer.
+# Felles oppsett for forsøkene i 8.1–8.4: vektorregning og figurer.
 import numpy as np
 import matplotlib.pyplot as plt
 # SciPys lokale minimeringsrutine; hvert forsøk oppgir funksjon og startpunkt.

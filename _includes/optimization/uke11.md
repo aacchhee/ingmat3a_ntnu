@@ -12,7 +12,7 @@
 
 ### En produksjonsplan og en garanti
 
-I [uke 8](uke8.qmd#uke8-modell) talte vi opp hele maskiner. Nå lager et verksted produktpartier som kan deles opp: $2.5$ partier er to hele partier og et halvt. Vi tegner de tillatte planene, finner den beste og kontrollerer den med en ressursregning som setter en øvre grense for *alle* planer. Til sist undersøker vi hva mer kapasitet kan være verdt.
+Nå lager et verksted produktpartier som kan deles opp: $2.5$ partier er to hele partier og et halvt. Vi tegner de tillatte planene, finner den beste og kontrollerer den med en ressursregning som setter en øvre grense for *alle* planer. Til sist undersøker vi hva mer kapasitet kan være verdt.
 
 ### Læringsmål
 
@@ -396,7 +396,7 @@ For å finne hele intervallet der gammel pris gir riktig *optimalverdi*, lar vi 
 2. Kontroller de øvrige kravene: $x\ge0$ gir $\Delta\ge-9/2$; $y\ge0$ gir $\Delta\le9$; $x\le4$ gir $\Delta\le3/2$. Felles intervall er $-9/2\le\Delta\le3/2$. Her er også $9+\Delta\ge0$.
 3. Sett planen inn i målet: $5(3+2\Delta/3)+4(3-\Delta/3)=27+2\Delta$. Planen oppnår prisgrensen. Hvis $P_*(\Delta)$ er *størst mulig dekningsbidrag* ved kapasitet $9+\Delta$, er derfor $P_*(\Delta)=27+2\Delta$ i intervallet. For økninger gjelder dette til og med $\Delta=3/2$; etterpå trengs en ny pris.
 
-Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen, slik som i [uke 8](uke8.qmd#uke8-modell). Etter $\Delta=1/2$ er $(10/3,17/6)$ ikke en plan med hele partier.
+Hvis partier måtte være hele, ville den delbare modellen bare gi en øvre grense for heltallsmodellen: den tillater flere planer, så beste verdi kan bare bli større. Etter $\Delta=1/2$ er $(10/3,17/6)$ ikke en plan med hele partier.
 
 </details>
 
