@@ -4,4 +4,6 @@ title: "Uke 6 – iterative metoder for lineære systemer"
 
 {{< include ../_includes/linalg/week6_setup.md >}}
 
+{{< include ../_includes/linalg/week6_lecture_setup.md >}}
+
 {{< include ../_includes/linalg/uke6.md >}}
