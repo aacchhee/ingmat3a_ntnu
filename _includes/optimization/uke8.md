@@ -67,7 +67,7 @@ Etter denne uken skal du kunne
 - skille mellom infimum og minimum, og lage en minimerende følge,
 - avgjøre om en mengde er lukket, begrenset og kompakt, og bruke
   ekstremalverdisetningen,
-- regne ut gradienten og Hessianmatrisen for hånd, og vise at
+- regne ut gradienten og Hessianmatrisen for hånd, og bruke at
   $\varphi(s)=f(z+sp)$ har $\varphi'(0)=\nabla f(z)^Tp$ og
   $\varphi''(0)=p^TH(z)p$,
 - avgjøre om et stasjonært punkt er et minimum, et maksimum eller et
@@ -626,9 +626,21 @@ $$\varphi'(s)=f_x\,p_1+f_y\,p_2=\nabla f(z+sp)^T\,p,$$
 der $f_x$ og $f_y$ regnes ut i punktet $z+sp$. Ved $s=0$ er
 $\varphi'(0)=\nabla f(z)^Tp$, den **retningsderiverte**.
 
-**Den andrederiverte.** Vi deriverer $\varphi'(s)=f_x\,p_1+f_y\,p_2$ én
-gang til. Tallene $p_1,p_2$ er konstanter. Faktorene $f_x$ og $f_y$ er
-selv funksjoner av $x$ og $y$, så vi bruker kjerneregelen på hver av dem:
+**Den andrederiverte.** Vi bruker kjerneregelen én gang til, nå på hver av
+faktorene $f_x$ og $f_y$. Da dukker alle de fire andrederiverte opp, hver
+ganget med to av tallene $p_1,p_2$:
+
+$$\varphi''(s)=f_{xx}p_1^2+2f_{xy}\,p_1p_2+f_{yy}p_2^2=p^T\,H(z+sp)\,p.$$
+
+Det siste likhetstegnet ser du ved å gange ut $p^THp$ med matrisen $H$ fra
+over. Håndeksempelet under kontrollerer formelen på et konkret polynom.
+
+<details class="reading-step">
+<summary>Gå i dybden: den andrederiverte langs linjen, ledd for ledd</summary>
+
+Vi deriverer $\varphi'(s)=f_x\,p_1+f_y\,p_2$ én gang til. Tallene
+$p_1,p_2$ er konstanter. Faktorene $f_x$ og $f_y$ er selv funksjoner av $x$
+og $y$, så vi bruker kjerneregelen på hver av dem:
 
 $$
 \begin{aligned}
@@ -649,6 +661,8 @@ $$
 =p^T\,H(z+sp)\,p.
 \end{aligned}
 $$
+
+</details>
 
 **Krumningen i retningen $p$ er tallet $p^THp$.** Én matrise gir oss den
 andrederiverte langs alle linjer gjennom punktet.
@@ -804,8 +818,20 @@ $p^THp$ som en sum av kvadrater, eller med egenverdier.
 
 Fra [uke 5](uke5.qmd#uke5-basis) vet vi at en symmetrisk matrise har
 ortogonale egenvektorer $v_1,v_2$ med egenverdier $\lambda_1,\lambda_2$. Vi
-velger dem som enhetsvektorer, så $v_1^Tv_1=v_2^Tv_2=1$ og $v_1^Tv_2=0$.
-Skriver vi $p=c_1v_1+c_2v_2$, er $Hp=c_1\lambda_1v_1+c_2\lambda_2v_2$, og
+velger dem som enhetsvektorer og skriver retningen i denne basisen,
+$p=c_1v_1+c_2v_2$. Da blir krumningen en sum av kvadrater med
+egenverdiene som vekter:
+
+$$p^THp=\lambda_1c_1^2+\lambda_2c_2^2.$$
+
+Grunnen er at $H$ bare strekker hver egenretning, og at de to retningene
+står vinkelrett på hverandre, så blandingsleddene forsvinner.
+
+<details class="reading-step">
+<summary>Gå i dybden: krumningen skrevet i egenvektorbasisen</summary>
+
+Enhetsvektorene oppfyller $v_1^Tv_1=v_2^Tv_2=1$ og $v_1^Tv_2=0$. Med
+$p=c_1v_1+c_2v_2$ er $Hp=c_1\lambda_1v_1+c_2\lambda_2v_2$, og
 
 $$
 \begin{aligned}
@@ -814,6 +840,8 @@ p^THp&=(c_1v_1+c_2v_2)^T(c_1\lambda_1v_1+c_2\lambda_2v_2)\\
 &=\lambda_1c_1^2+\lambda_2c_2^2.
 \end{aligned}
 $$
+
+</details>
 
 Er begge egenverdiene positive, er summen positiv for alle $p\ne0$. Har de
 motsatt fortegn, kan vi velge $p=v_1$ eller $p=v_2$ og få hvert av
@@ -1109,23 +1137,124 @@ ett minimumspunkt.
 Bildet bak argumentet: står du i bunnen av en dal, og det finnes et lavere
 punkt et annet sted, så går korden fra deg til det lavere punktet nedover.
 For en konveks funksjon ligger grafen under korden. Da går også grafen
-nedover rett ved siden av deg, og du sto ikke i en bunn likevel. Steg for
-steg:
+nedover rett ved siden av deg, og du sto ikke i en bunn likevel.
 
-1. Anta at $x_*$ er et lokalt minimum, men at et tillatt punkt $z$ har
-   lavere verdi, $f(z)<f(x_*)$.
-2. Mengden er konveks, så alle punktene $x_s=(1-s)\,x_*+s\,z$ med
-   $0\le s\le1$ er tillatte.
+Dette kan du prøve selv i appleten under. Den viser en funksjon av én
+variabel på intervallet $[0,4]$. Det svarte punktet $\hat x$ er et lokalt
+minimum, og den stiplede grå linjen viser høyden $f(\hat x)$.
+
+### Eksperiment 4 – finnes et lavere punkt?
+
+- Dra det fiolette punktet $z$ langs grafen. Klarer du å finne en $z$ som
+  ligger under den stiplede linjen?
+- Korden går fra $\hat x$ til $z$. Dra det oransje punktet $w$ langs korden
+  helt inn mot $\hat x$, eller trykk **w nær x̂**. Den lille loddrette streken
+  i $w$ er grønn når grafen ligger under korden, og rød når den ligger over.
+- Trykk **ikke-konveks f** og gjenta: legg $z$ i dalen til høyre og flytt
+  $w$ inn mot $\hat x$.
+
+Målet er å se hvorfor «konveks» og «et lavere punkt $z$» ikke kan gjelde
+samtidig, og hvor argumentet svikter når funksjonen ikke er konveks.
+
+```{.jsxgraph width="620" height="460" style="width:100%;max-width:620px;height:460px;border:0;"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [-0.5,4.45,4.35,-0.45], axis: true, keepaspectratio: false,
+  showNavigation: false, showCopyright: false,
+  pan: {enabled:false}, zoom: {enabled:false}
+});
+var convex = true;
+var F = function(x){
+  var base = 1 + 0.28*(x - 1.2)*(x - 1.2);
+  return convex ? base : base - 1.4*Math.exp(-(x - 3)*(x - 3)/0.22);
+};
+var xhat = 1.2;
+var findMin = function(){
+  var a = 0.4, b = 2, r = (Math.sqrt(5) - 1)/2;
+  for (var k = 0; k < 60; k++){
+    var c = b - r*(b - a), d = a + r*(b - a);
+    if (F(c) < F(d)) { b = d; } else { a = c; }
+  }
+  xhat = (a + b)/2;
+};
+findMin();
+var fhat = function(){return F(xhat);};
+var graph = board.create('functiongraph',[F,0,4],{
+  strokeColor:'#345f78',strokeWidth:2.5,highlight:false
+});
+board.create('line',[[0,fhat],[1,fhat]],{
+  strokeColor:'#9aa5ad',dash:2,strokeWidth:1.5,fixed:true,highlight:false
+});
+var X = board.create('point',[function(){return xhat;},fhat],{
+  name:'x̂',fixed:true,color:'#222222',size:4,label:{offset:[-6,16]}
+});
+var Z = board.create('glider',[3,F(3),graph],{name:'z',color:'#7846ad',size:5});
+var chord = board.create('segment',[X,Z],{
+  strokeColor:'#b45309',dash:2,strokeWidth:2,fixed:true,highlight:false
+});
+var W = board.create('glider',[1.2 + 0.3*1.8,F(1.2) + 0.3*(F(3) - F(1.2)),chord],{
+  name:'w',color:'#b45309',size:4,label:{offset:[6,-12]}
+});
+var gw = function(){return F(W.X());};
+var below = function(){return gw() <= W.Y() + 1e-9;};
+board.create('segment',[W,[function(){return W.X();},gw]],{
+  strokeColor:function(){return below() ? '#2e7d32' : '#c62828';},
+  strokeWidth:3,fixed:true,highlight:false
+});
+var setMode = function(c){
+  convex = c; findMin(); board.update();
+  Z.moveTo([Z.X(),F(Z.X())]); board.update();
+};
+board.create('text',[0.12,4.2,function(){
+  var d = Z.Y() - fhat();
+  return 'f(z) − f(x̂) = '+d.toFixed(2).replace('-','−')+(d < -1e-9 ? ': z ligger lavere' : ': z ligger ikke lavere');
+}],{fontSize:13,color:'#7846ad',fixed:true});
+board.create('text',[0.12,3.92,function(){
+  return 'i w: korden '+W.Y().toFixed(2)+', grafen '+gw().toFixed(2)+', f(x̂) = '+fhat().toFixed(2);
+}],{fontSize:13,color:'#b45309',fixed:true});
+board.create('text',[0.12,3.64,function(){
+  return below() ? 'grafen ligger under korden' : 'grafen ligger over korden';
+}],{fontSize:13,fixed:true,color:function(){return below() ? '#2e7d32' : '#c62828';}});
+board.create('button',[-0.45,-0.3,'konveks f',function(){setMode(true);}]);
+board.create('button',[0.93,-0.3,'ikke-konveks f',function(){setMode(false);}]);
+board.create('button',[2.8,-0.3,'w nær x̂',function(){
+  var t = 0.03;
+  W.moveTo([xhat + t*(Z.X() - xhat),fhat() + t*(Z.Y() - fhat())]);
+}]);
+```
+
+**Hva viser bildet?** For den konvekse funksjonen finner du ingen $z$ under
+den stiplede linjen, uansett hvor du drar: $f(z)-f(\hat x)$ blir aldri
+negativ. For den ikke-konvekse funksjonen ligger dalen til høyre lavere. Da
+går korden **nedover** fra $\hat x$, og $w$ ligger under $f(\hat x)$ samme
+hvor nær $\hat x$ du flytter det. Hvis grafen hadde ligget under korden,
+slik den gjør for en konveks funksjon, ville den også ligget under
+$f(\hat x)$ rett ved siden av $\hat x$, og $\hat x$ ville ikke vært noen
+bunn. Men nær $\hat x$ er streken rød: grafen stiger over korden før den
+faller ned i den andre dalen. Bakketoppen mellom dalene er nettopp bruddet
+på konveksiteten, og det er derfor et lokalt søk kan bli stående i
+$\hat x$, slik søkene på svingningen ble stående i eksperiment 3.
+
+<details class="reading-step">
+<summary>Gå i dybden: beviset steg for steg</summary>
+
+1. Anta at $\hat x$ er et lokalt minimum, men at et tillatt punkt $z$ har
+   lavere verdi, $f(z)<f(\hat x)$.
+2. Mengden er konveks, så alle punktene $x_s=(1-s)\,\hat x+s\,z$ med
+   $0\le s\le1$ er tillatte. I appleten er $x_s$ førstekoordinaten til $w$.
 3. Konveksitet gir for $0<s\le1$:
-   $f(x_s)\le(1-s)\,f(x_*)+s\,f(z)$.
-4. Høyresiden er $f(x_*)+s\,\bigl(f(z)-f(x_*)\bigr)$, og parentesen er
-   negativ. Altså er $f(x_s)<f(x_*)$ for alle $0<s\le1$.
-5. Når $s$ er liten, ligger $x_s$ så nær $x_*$ vi vil. Det finnes altså
-   bedre punkter vilkårlig nær $x_*$, og det motsier at $x_*$ er et lokalt
-   minimum.
+   $f(x_s)\le(1-s)\,f(\hat x)+s\,f(z)$. Høyresiden er kordens høyde.
+4. Høyresiden er $f(\hat x)+s\,\bigl(f(z)-f(\hat x)\bigr)$, og parentesen
+   er negativ. Altså er $f(x_s)<f(\hat x)$ for alle $0<s\le1$.
+5. Når $s$ er liten, ligger $x_s$ så nær $\hat x$ vi vil. Det finnes altså
+   bedre punkter vilkårlig nær $\hat x$, og det motsier at $\hat x$ er et
+   lokalt minimum.
 
-Derfor finnes ingen slik $z$, og $x_*$ er globalt. For streng konveksitet:
-hvis $x\ne z$ begge var minimumspunkter med verdi $m$, ville midtpunktet gi
+Derfor finnes ingen slik $z$, og $\hat x$ er globalt.
+
+</details>
+
+Entydigheten ved streng konveksitet er én linje: hvis $x\ne z$ begge var
+minimumspunkter med verdi $m$, ville midtpunktet gi
 $f\bigl(\tfrac{x+z}2\bigr)<\tfrac12m+\tfrac12m=m$, som er umulig.
 
 «Høyst ett» betyr ikke «ett»: $x^2$ er strengt konveks på $(0,1)$, men har
@@ -1190,20 +1319,27 @@ $p^THp>0$ én gang. Da er det lokale svaret også det globale.
 :::
 
 **Tilbake til eksperiment 3.** For linjen er
-$S(c_0,c_1)=\sum_i(b_i-c_0-c_1t_i)^2$. Hvert ledd deriveres med
-kjerneregelen:
+$S(c_0,c_1)=\sum_i(b_i-c_0-c_1t_i)^2$ et andregradspolynom i $c_0$ og
+$c_1$, så Hessianen er den samme i alle punkter. Med $t=(-1,0,1,2)$ er den
+$\begin{bmatrix}8&4\\4&12\end{bmatrix}$, med $D=96-16=80>0$ og
+$S_{c_0c_0}=8>0$. Den er positiv definit overalt, så $S$ er strengt konveks.
+Minimumspunktet finnes (vi fant det i uke 4), og det er det eneste. Derfor
+må alle søkene ende i det samme punktet. For svingningen viste midtpunktet
+et brudd på konveksiteten, og et søk kan bli stående i en dårlig dal.
+
+<details class="reading-step">
+<summary>Gå i dybden: Hessianen til kvadratsummen for linjen</summary>
+
+Hvert ledd deriveres med kjerneregelen:
 
 $$\frac{\partial S}{\partial c_0}=-2\sum_i(b_i-c_0-c_1t_i),\qquad
 \frac{\partial S}{\partial c_1}=-2\sum_it_i\,(b_i-c_0-c_1t_i).$$
 
 Én gang til: $S_{c_0c_0}=2\sum_i1=8$, $S_{c_0c_1}=2\sum_it_i=4$ og
 $S_{c_1c_1}=2\sum_it_i^2=12$, siden $t=(-1,0,1,2)$ gir $\sum t_i=2$ og
-$\sum t_i^2=6$. Hessianen er den konstante matrisen
-$\begin{bmatrix}8&4\\4&12\end{bmatrix}$ med $D=96-16=80>0$ og
-$S_{c_0c_0}=8>0$. Den er positiv definit overalt, så $S$ er strengt konveks.
-Minimumspunktet finnes (vi fant det i uke 4), og det er det eneste. Derfor
-må alle søkene ende i det samme punktet. For svingningen viste midtpunktet
-et brudd på konveksiteten, og et søk kan bli stående i en dårlig dal.
+$\sum t_i^2=6$. Ingen av tallene avhenger av $c_0$ eller $c_1$.
+
+</details>
 
 Konveksitet hører alltid til et bestemt område. Funksjonen
 $x^3+y^3-3xy$ fra 8.3 er ikke konveks på hele planet, men den er strengt
