@@ -849,6 +849,8 @@ Vi kan altså finne hva transformasjonen gjør med hver byggestein én gang og d
 
 ## 3.3 Beskriv bilder med forskjellige basiser {#uke3-del2}
 
+<div id="uke3-del2"></div>
+
 Vi skal nå finne et systematisk språk for «byggesteiner». Vi begynner fortsatt med bilder, ikke med en abstrakt definisjon.
 
 Tenk på et tomt $2\times2$-bilde. Vi ønsker fire skyveknapper som kan lage et hvilket som helst slikt bilde. En naturlig idé er å la hver skyveknapp styre én piksel.
@@ -1431,6 +1433,8 @@ En basis er ikke bare et sett som tilfredsstiller en definisjon. Et godt valg av
 :::
 
 ## 3.4 Hva transformasjonen ser og ikke ser {#uke3-del3}
+
+<div id="uke3-del3"></div>
 
 I 3.1 så vi informasjonstapet, i 3.2 bygde vi en matrise for regelen, og i
 3.3 lærte vi å beskrive bilder med byggesteiner. Nå bruker vi de tre ideene
@@ -2121,6 +2125,8 @@ $$n=\operatorname{rank}(A)+\dim N(A).$$
 
 ## 3.5 Overfør ideene til polynomer {#uke3-del5}
 
+<div id="uke3-del5"></div>
+
 Så langt har vektorene vært bilder eller tallkolonner. Nå bruker vi de kjente
 begrepene på polynomer. Dette er overgangen til ukeprosjektet.
 
@@ -2591,6 +2597,8 @@ Trenger du en kort repetisjon av forskjellen på eksakt og numerisk rang, kan
 du åpne underdelen om numerisk rang i 3.7.
 
 ## 3.7 Støtteløp: Matriseregning ved behov {#uke3-stotte-matriser}
+
+<div id="uke3-stotte-matriser"></div>
 
 Denne delen repeterer lineær algebra fra tidligere emner. Den er med slik at
 du ikke trenger å finne fram gamle notater. Hvis du allerede kan radredusere

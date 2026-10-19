@@ -61,7 +61,7 @@ lenker vi til oppgavene som hører til.
 | Fra tidligere uker | Spørsmålet vi tar med oss |
 |:--|:--|
 | [Uke 2: fikspunktiterasjon](page4.qmd) | Når er et fikspunkt attraktivt, og hva er konvergensfaktoren? |
-| [Uke 5: egenverdier](uke5.qmd) | Hvordan virker en symmetrisk matrise på hver egenretning? |
+| [Uke 5: egenverdier](uke5.qmd#uke5-basis) | Hvordan virker en symmetrisk matrise på hver egenretning? |
 | [Uke 6: bratteste nedstigning](uke6.qmd#uke6-retning) | Hvorfor går metoden sakte i en smal skål? |
 | [Uke 8: kompakthet](uke8.qmd#uke8-kompakt) | Når har en følge av punkter en konvergent delfølge? |
 | [Uke 8: tilpasning uten minimum](uke8.qmd#uke8-eksistens) | Hva gjør en søkemetode når minimum ikke finnes? |
@@ -230,7 +230,7 @@ I én variabel finnes altså et perfekt steg, $\alpha=1/\lambda$, som gir
 faktor $0$. I neste fane ser vi at dette ikke går med to krumninger samtidig.
 
 For en vilkårlig glatt $f$ med minimum i $r$ er krumningen $\lambda=f''(r)$.
-Dette er helningsregelen fra [uke 2](page4.qmd): gradientmetoden er
+Dette er helningsregelen fra [uke 2](page4.qmd#uke2-helning): gradientmetoden er
 fikspunktiterasjonen $g(x)=x-\alpha f'(x)$, og $g'(r)=1-\alpha f''(r)$ er
 akkurat faktoren over. Fikspunktet er attraktivt når $|g'(r)|<1$.
 
@@ -275,7 +275,7 @@ S=\max_i|1-\alpha\lambda_i|.}$$
 Nær et minimumspunkt $z_*$ ligner $f$ på en skål med Hessianen $H_*=H(z_*)$
 fra [uke 8.3](uke8.qmd#uke8-hessian). Der så vi at krumningen langs en
 enhetsretning $p$ er $p^TH_*p$. Hessianen er sjelden diagonal. Men den er
-symmetrisk, så fra [uke 5](uke5.qmd) har den ortogonale egenvektorer $v_1,v_2$
+symmetrisk, så fra [uke 5](uke5.qmd#uke5-basis) har den ortogonale egenvektorer $v_1,v_2$
 med egenverdier $\lambda_1\le\lambda_2$, og langs $v_i$ er krumningen
 $v_i^TH_*v_i=\lambda_i$. Bruker vi egenvektorene som nye akser, blir skålen
 diagonal, med egenverdiene som krumninger. Derfor gjelder de samme to formlene, med
@@ -473,9 +473,10 @@ og svaret endres ikke.
 
 </details>
 
-For $H(3,2)$ er $\kappa$ bare $3.2$, så eksperiment 1 gikk raskt. På de smale
-skålene fra [uke 6](uke6.qmd#uke6-retning), med $\kappa=10$, $100$ og $1000$,
-gir regelen $92$, $922$ og $9211$ steg, og gradientmetoden med det beste faste
+For $H(3,2)$ er $\kappa$ bare $3.2$, så eksperiment 1 gikk raskt. På smale
+skåler som i [uke 6](uke6.qmd#uke6-retning), med samme dreining og løsning, men
+med $\kappa=10$, $100$ og $1000$, gir regelen $92$, $922$ og $9211$ steg, og
+gradientmetoden med det beste faste
 steget bruker nøyaktig så mange (fordypningen under kjører forsøket). **Ti
 ganger større kondisjonstall gir ti ganger så mange steg.** Bratteste
 nedstigning med eksakt linjesøk fra uke 6 har i verste fall den samme faktoren;

@@ -2388,6 +2388,8 @@ Som her forutsetter vi at modellkolonnene er lineært uavhengige.
 
 ## 4.6 Polynomer: fra uke 3 til prosjekt 4 {#uke4-polynomer}
 
+<div id="uke4-polynomer"></div>
+
 ### Samme polynom, flere målinger
 
 I [uke 3, del 3.5](uke3.qmd#uke3-del5) brukte vi polynomer som vektorer og

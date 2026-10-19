@@ -47,12 +47,14 @@ brukes bare til kontroll.
 - **Armijo** ([uke 10.4](uke10.qmd#uke10-demping)): prøv
   $\alpha=1,\tfrac12,\tfrac14,\ldots$ og godta den første som gir
   $F(z+\alpha p)\le F(z)+10^{-4}\alpha\,g^Tp$.
-- **Minste kvadrater** ([uke 4](uke4.qmd#uke4-mk)): $\min_c\|Ac-b\|$ løses
-  av normallikningene $A^TAc=A^Tb$, men i praksis med QR eller
-  `np.linalg.lstsq(A, b, rcond=None)[0]`, som ikke danner $A^TA$.
-- **Konvergensfaktor** ([uke 2](page4.qmd#lokalt-globalt-og-raskt)): en
-  iterasjon er lineær med faktor $c$ når $e_{k+1}\approx c\,e_k$ (i uke 2
-  het faktoren $S$), og kvadratisk når $e_{k+1}\approx Ce_k^2$.
+- **Minste kvadrater** ([uke 4](uke4.qmd#uke4-mk)): i løsningen av
+  $\min_c\|Ac-b\|$ står residualen $b-Ac$ vinkelrett på alle kolonnene,
+  $A^T(b-Ac)=0$. Det er **normallikningene** $A^TAc=A^Tb$ (uke 7). I praksis
+  løser vi med QR eller `np.linalg.lstsq(A, b, rcond=None)[0]`, som ikke
+  danner $A^TA$.
+- **Konvergensfaktor** ([uke 2](page4.qmd#uke2-konvergensfart)): en
+  iterasjon er lineær med konvergensfaktor $S$ når $e_{k+1}\approx S\,e_k$
+  (som i uke 2 og 9), og kvadratisk når $e_{k+1}\approx Ce_k^2$.
 - **Spektralradius** ([uke 6](uke6.qmd#uke6-fikspunkt)): når feilen ganges
   med en matrise $M$ i hvert steg, er faktoren den største $|\lambda|$ for $M$.
 - **SVD** ([uke 7](uke7.qmd#uke7-geometri)): $J=U\Sigma V^T$ og
@@ -331,7 +333,7 @@ $4\times2$-matrise. Du skal kjenne igjen $J^Tr$, $J^TJ$ og $Q$ fra 1b.
    Skriv med ord to fordeler: Hva slags deriverte trenger vi ikke lenger?
    Og hva gir $g^Tp=-p^TJ^TJp=-\|Jp\|^2$ fra uke 10.3 om retningen?
 4. **Et minste kvadraters problem.** Sammenlign $J^TJp=-J^Tr$ med
-   normallikningene $A^TAc=A^Tb$ for $\min_c\|Ac-b\|$ fra uke 4. Hva er
+   normallikningene $A^TAc=A^Tb$ for $\min_c\|Ac-b\|$ (uke 4 og 7). Hva er
    «$A$», «$c$» og «$b$» her?
 
 <details>

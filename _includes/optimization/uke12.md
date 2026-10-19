@@ -20,7 +20,7 @@ ulikheter, og løsningen lå i et hjørne. Nå skal et punkt oppfylle en
 tillatt. Et slikt krav kalles en **likhetsbetingelse** eller
 **bibetingelse**; vi sier ofte bare **krav**.
 
-Ukas spørsmål er: **Hva erstatter $\nabla f=0$ når punktet må ligge på en
+Ukens spørsmål er: **Hva erstatter $\nabla f=0$ når punktet må ligge på en
 kurve, og hvordan vet vi at kandidaten vi finner, er den beste?** Vi bygger
 svaret i tre steg, ett om gangen:
 
@@ -64,17 +64,17 @@ kodeoppgavene i 12.7.
 | [Uke 4: komponent langs en retning](uke4.qmd#uke4-retning) | Hvilken enhetsretning gir størst komponent? |
 | [Uke 5: Rayleigh-kvotienten](uke5.qmd#uke5-potens) | Hva er størst mulig $z^TAz$ når $\lVert z\rVert_2=1$? |
 | [Uke 6: CG](uke6.qmd#uke6-cg) og [uke 10: Cholesky](uke10.qmd#uke10-cholesky) | Hva krever metodene av matrisen? |
-| [Uke 7: største strekk og pseudoinvers](uke7.qmd#uke7-geometri) | Hvorfor er $\sigma_1$ det største strekket? |
+| [Uke 7: største strekk](uke7.qmd#uke7-geometri) og [pseudoinvers](uke7.qmd#uke7-pseudoinvers) | Hvorfor er $\sigma_1$ det største strekket? |
 | [Uke 8: kompakthet](uke8.qmd#uke8-kompakt) | Finnes et maksimum på en kurve? |
 | [Uke 11: hva en ekstra enhet er verdt](uke11.qmd#uke11-sensitivitet) | Hva er én enhet mer av en ressurs verdt? |
 
 ### Læringsmål
 
-Etter denne uka skal du kunne
+Etter denne uken skal du kunne
 
 - finne tangent og normal til en regulær likhetsbetingelse i et punkt,
 - sette opp og løse Lagranges likninger for én likhetsbetingelse,
-- tolke en multiplikator som endringen i optimal verdi per enhet endring i kravet,
+- tolke $-\lambda$ som endringen i optimal verdi per enhet vi flytter kravet,
 - skille kandidater fra løsninger ved å sammenligne verdier eller finne en global grense,
 - forklare hvorfor en kvadratisk form på enhetssirkelen gir et egenverdiproblem,
 - sette opp likningssystemet for et kvadratisk mål med lineære krav, og forklare hvorfor
@@ -199,7 +199,7 @@ altså ikke lenger. Men tre ting gjelder fortsatt i det beste punktet:
 - den røde og den grønne pilen er **parallelle**: vinkelen er $0^\circ$.
 
 Et punkt der nivålinjen krysser kurven, kan ikke være best: på den ene siden
-av krysningen ligger tillatte punkter med høyere verdi. Resten av uka handler
+av krysningen ligger tillatte punkter med høyere verdi. Resten av uken handler
 om denne observasjonen.
 
 ### Tangent og normal
@@ -230,7 +230,7 @@ punktet er den null, og i 12.2 regner vi ut punktet eksakt.
 målet langs tangenten være null. Det er det samme som at $\nabla f$ står
 vinkelrett på tangenten, altså parallelt med normalen $\nabla h$. Gradienten
 selv trenger ikke være null, slik den må i et indre ekstremum (se
-[Hessianen i uke 8.3](uke8.qmd#uke8-hessian)).
+[uke 8.3](uke8.qmd#uke8-hessian)).
 
 ## 12.2 Lagranges likninger
 
@@ -688,7 +688,8 @@ i 12.1.
 - Velg en egen symmetrisk matrise, for eksempel `[[2, 1], [1, 2]]`, og
   forutsi berøringspunktene før du kjører.
 
-Cellen regner ut egenverdiene og egenvektorene med `eigh` fra uke 5. Figuren
+Cellen regner ut egenverdiene og egenvektorene med `np.linalg.eigh`, som er
+`eigvalsh` fra uke 8, men som også gir egenvektorene. Figuren
 lages av en ferdig hjelpefunksjon, `plot_quadratic_on_circle(A)`: den tegner
 nivåkurvene til $z^TAz$, enhetssirkelen og egenvektorene.
 
@@ -887,7 +888,8 @@ stasjonaritetsfeilen minst**. Det er minste kvadrater med én ukjent, som i
 
 $$\lambda=-\frac{\nabla F\cdot\nabla h}{\lVert\nabla h\rVert_2^2}.$$
 
-Med flere krav samler vi normalene som kolonner i $J^T$ og løser
+Med flere krav samler vi gradientene $\nabla h_i^T$ som rader i
+**Jacobimatrisen** $J$ (som i prosjekt 10), og løser
 $\min_\lambda\lVert\nabla F+J^T\lambda\rVert_2$ med `np.linalg.lstsq`. Det
 gjør vi i prosjektet. Hvorfor vi ikke bruker SciPys egne multiplikatorer,
 står i [SciPy-oppslaget](#uke12-scipy).
@@ -1061,7 +1063,7 @@ sirkelkravet.
 
 <div id="uke12-avslutning"></div>
 
-Ukas spørsmål var hva som erstatter $\nabla f=0$ når punktet må ligge på en
+Ukens spørsmål var hva som erstatter $\nabla f=0$ når punktet må ligge på en
 kurve. Svaret er Lagranges likninger: $h=0$ og $\nabla f+\lambda\nabla h=0$.
 De gir kandidater, ikke løsninger. Hvilken kandidat som er best, avgjorde vi
 ved å sammenligne verdier eller med en global ulikhet. For kvadratiske mål
@@ -1073,10 +1075,11 @@ nullrom og rang, minste kvadrater, egenverdier, SPD-matriser og CG, og
 singulærverdier. Ukene 8–12 brukte dem på optimering: uke 8 ga eksistens,
 Hessianen og konveksitet, uke 9 og 10 gradient- og Newtonmetoden med
 kondisjonstallet og Cholesky, og uke 11 og 12 multiplikatorer som priser og
-sertifikater. [Tre spørsmål](uke8.qmd#uke8-start) har gått igjen siden
-uke 8: Finnes det et beste svar? Er kandidaten virkelig best? Og hvordan
-kontrollerer vi et tall som en løser gir oss? Denne uka svarte vi med
-Lagranges likninger, en global ulikhet og to kontrollfeil. Den arbeidsmåten
+sertifikater. [Tre spørsmål](uke8.qmd#uke8-start) har fulgt oss siden
+uke 8: Finnes det et beste svar? Hva forteller krumningen? Er kandidaten vi
+fant, den beste? Underveis kom et fjerde til: Hvordan kontrollerer vi et tall
+som en løser gir oss? Denne uken svarte vi med kompakthet, Lagranges
+likninger, en global ulikhet og to kontrollfeil. Den arbeidsmåten
 tar du med deg videre: regn ut et svar, og kontroller det med et argument
 eller en uavhengig test.
 
@@ -1490,7 +1493,8 @@ for start in (np.array([.4, .9]), np.array([1., 0.])):
 
 <div id="uke12-py-kkt"></div>
 
-**KKT-systemet og pseudoinversen.** Minimer
+**KKT-systemet og pseudoinversen.** *Valgfri: bygger på den valgfrie fanen
+[7.7](uke7.qmd#uke7-pseudoinvers).* Minimer
 $\tfrac12\lVert z\rVert_2^2$ når $Cz=d$. Bygg blokkmatrisen
 $K=\begin{bmatrix}I&C^T\\C&0\end{bmatrix}$ med `np.block`, løs
 $K(z,\lambda)^T=(0,d)^T$ og returner bare $z$. Sammenlign etterpå med

@@ -17,7 +17,7 @@ rask. Selv med det beste faste steget krymper feilen bare med en fast
 faktor i hvert steg. Gradienten forteller hvor bratt bakken er, men ikke
 hvordan den krummer.
 
-Denne uka bruker vi også **krumningen**, altså Hessianen. Det gir
+Denne uken bruker vi også **krumningen**, altså Hessianen. Det gir
 **Newtons metode** for optimering. Vi går fire steg og tar oss tid til å
 regne hvert av dem for hånd, linje for linje. På slutten av hvert steg
 lenker vi til regneoppgavene i 10.5 som øver på akkurat det steget.
@@ -50,7 +50,7 @@ Flere regneoppgaver står i 10.5 og kodeoppgavene i 10.6.
 
 ### Læringsmål
 
-Etter denne uka skal du kunne
+Etter denne uken skal du kunne
 
 - utlede Newton-steget som bunnen av den lokale kvadratiske modellen, og
   regne ut ett Newton-steg for hånd for en funksjon av to variabler:
@@ -218,7 +218,9 @@ $$m(p)=f(z_k)+g^Tp+\tfrac12p^THp,$$
 
 der $g=g(z_k)$ og $H=H(z_k)$ er regnet ut i det nåværende punktet, og
 $p=(p_1,p_2)$ er steget. Hvis vektorformen ikke sitter, kan vi skrive
-modellen ut med komponenter. Hessianen er symmetrisk, så $h_{21}=h_{12}$:
+modellen ut med komponenter. Tallene $h_{ij}$ er elementene i $H$ (de har
+ikke noe med likningen $h$ over å gjøre). Hessianen er symmetrisk, så
+$h_{21}=h_{12}$:
 
 $$m(p)=f(z_k)+g_1p_1+g_2p_2+\tfrac12\big(h_{11}p_1^2+2h_{12}p_1p_2+h_{22}p_2^2\big).$$
 
@@ -426,9 +428,9 @@ $$e_{k+1}\approx C\,e_k^2.$$
 
 Med $e_k=10^{-4}$ er $e_k^2=10^{-8}$, og da er $e_{k+1}\approx C\cdot10^{-8}$.
 Kvadratet dobler eksponenten; konstanten $C$ flytter bare sifrene litt.
-Sammenlign med gradientmetoden, der $e_{k+1}\approx c\,e_k$ med en fast
-$c<1$. Det kalles **lineær konvergens**, og da kommer det like mange nye
-sifre i hvert steg.
+Sammenlign med gradientmetoden, der $e_{k+1}\approx S\,e_k$ med en fast
+konvergensfaktor $S<1$, som i uke 2 og 9. Det kalles **lineær konvergens**,
+og da kommer det like mange nye sifre i hvert steg.
 
 For Newton gjelder dette: La $z_*$ være et stasjonært punkt der $H(z_*)$ er
 invertibel, og anta at Hessianen ikke endrer seg for brått nær $z_*$. Da
@@ -438,7 +440,7 @@ oppfyller
 $$e_{k+1}\le C\,e_k^2,\qquad e_k=\|z_k-z_*\|.$$
 
 Dette er **kvadratisk konvergens** fra
-[uke 2](page4.qmd#lokalt-globalt-og-raskt). Vi kontrollerer det i siste
+[uke 2](page4.qmd#uke2-konvergensfart). Vi kontrollerer det i siste
 kolonne av utskriften: forholdet $e_{k+1}/e_k^2$ holder seg mellom $0.3$ og
 $0.6$. Feilen kvadreres altså i hvert steg, ganget med en moderat
 konstant.
@@ -1222,7 +1224,7 @@ Kallene er forklart i SciPy-oppslaget i 10.6.
 
 I [prosjekt 10](project_week10.qmd) bruker du Newton-idéen på et
 tilpasningsproblem: å finne en posisjon fra unøyaktige avstander. I
-[uke 11](uke11.qmd) får vi lineære bibetingelser og ofte et beste punkt på
+[uke 11](uke11.qmd) får vi lineære krav (ulikheter) og ofte et beste punkt på
 randen. Da er gradient null ikke lenger den riktige kontrollen.
 
 ## 10.5 Regneoppgaver

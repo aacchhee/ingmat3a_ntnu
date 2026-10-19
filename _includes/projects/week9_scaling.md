@@ -39,7 +39,7 @@ dataene. Vi tar det i tre små steg.
 
 #### Hvorfor ikke en rett linje?
 
-Det første vi kan prøve, er minste kvadraters metode fra [uke 4](uke4.qmd):
+Det første vi kan prøve, er minste kvadraters metode fra [uke 4](uke4.qmd#uke4-mk):
 tilpass en rett linje $a+bT$ til de 23 punktene $(T_i,y_i)$. Cellen regner ut
 linjen med `np.linalg.lstsq`, skriver ut noen verdier og tegner den.
 
@@ -485,7 +485,7 @@ stedet for metoden.
 Kolonnene i $X$ er $(1,1,\ldots,1)$ og $(T_1,\ldots,T_{23})$. Temperaturene
 ligger mellom 53 og 81, så den andre kolonnen er nesten 70 ganger den første:
 kolonnene er **nesten parallelle**, som de nesten avhengige kolonnene i
-[uke 4](uke4.qmd). Da er den minste singulærverdien liten ([uke 7](uke7.qmd#uke7-svd)).
+[uke 4](uke4.qmd#uke4-nesten). Da er den minste singulærverdien liten ([uke 7](uke7.qmd#uke7-svd)).
 
 Vi prøver to andre beskrivelser av temperaturen:
 

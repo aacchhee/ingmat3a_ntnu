@@ -33,7 +33,7 @@ Svaret kommer i tre steg, og hvert steg er én idé:
 1. [Fra tabell til tillatt område](#uke11-modell): mål, krav og slakk.
 2. [Eksperiment 1: endre bidraget fra B](#uke11-pris): den beste planen hopper mellom hjørner.
 3. [Hvorfor ligger optimum i et hjørne?](#uke11-hvorfor) og [hjørner er kvadratiske likningssystemer](#uke11-hjorner).
-4. [Eksperiment 2: finn planen med `linprog`](#uke11-linprog).
+4. [Eksperiment 2: kontroller hjørnetabellen med `linprog`](#uke11-linprog).
 
 **Idé 2 – priser beviser at planen er best**
 
@@ -654,7 +654,7 @@ Steg 1 bruker at $x,y\ge0$, og steg 2 bruker at $u,v,w\ge0$. Med negative tall v
 
 </details>
 
-Produksjonsproblemet kalles **primalen**. Å velge gyldige priser med lavest mulig øvre grense er **dualen**, og prisene $u,v,w$ kalles også **dualvariabler**. At verdien til enhver tillatt plan er høyst grensen fra ethvert gyldig prisvalg, kalles **svak dualitet**. Når en plan når prisgrensen, gir de to et **optimalitetssertifikat**.
+Produksjonsproblemet kalles **primalen**. Å velge gyldige priser med lavest mulig øvre grense er **dualen**, og prisene $u,v,w$ kalles også **dualvariabler**. At verdien til enhver tillatt plan er høyst grensen fra ethvert gyldig prisvalg, kalles **svak dualitet**. Når en plan når prisgrensen, gir de to et **optimalitetssertifikat**. Det er samme idé som tangentgrensen i [uke 8](uke8.qmd#uke8-tangent): én ulikhet som gjelder alle tillatte punkter, og et punkt som oppfyller den med likhet, er bevist best.
 
 Mer kompakt kan et maksimeringsproblem skrives
 
@@ -866,7 +866,7 @@ Likningene i steg 2 kan skrives som én vektorlikning:
 
 $$u\begin{pmatrix}2\\1\end{pmatrix}+v\begin{pmatrix}1\\2\end{pmatrix}=\begin{pmatrix}5\\4\end{pmatrix}.$$
 
-Venstresiden består av radene til de to aktive grensene, altså normalvektorene til linjene som møtes i $(3,3)$. Høyresiden er gradienten til $P$. Bildet svarer også på spørsmålet fra [uke 8](uke8.qmd#uke8-kompakt): på randen er gradienten ikke null, men en ikke-negativ kombinasjon av normalene til de aktive grensene.
+Venstresiden består av radene til de to aktive grensene, altså normalvektorene til linjene som møtes i $(3,3)$. Høyresiden er gradienten til $P$. Bildet svarer også på spørsmålet fra [uke 8](uke8.qmd#uke8-kompakt): på randen er gradienten ikke null. I et maksimum er den en ikke-negativ kombinasjon av normalene til de aktive grensene; i et minimum, som i uke 8, gjelder det samme for $-\nabla f$.
 
 **Bygger prisene målretningen av normalene til de aktive grensene?** Cellen regner ut $2\cdot(2,1)+1\cdot(1,2)$ og tegner de to vektede normalene etter hverandre fra hjørnet, sammen med gradienten.
 
@@ -877,7 +877,7 @@ print(2*np.array([2, 1]) + 1*np.array([1, 2]))
 show_price_arrows(at=(3, 3), normals=[(2, 1), (1, 2)], prices=[2, 1], gradient=(5, 4))
 ```
 
-Summen er $(5,4)$, og pilene ender i samme punkt som gradienten. **Prisene er vektene som bygger målretningen av normalene til de aktive grensene.** Den inaktive A-grensen er ikke med i summen; den har pris null. I [uke 12](uke12.qmd#uke12-lagrange) ser vi samme bilde for krumme grenser: gradienten til målet er en kombinasjon av gradientene til bibetingelsene, og vektene heter Lagrange-multiplikatorer.
+Summen er $(5,4)$, og pilene ender i samme punkt som gradienten. **Prisene er vektene som bygger målretningen av normalene til de aktive grensene.** Den inaktive A-grensen er ikke med i summen; den har pris null. I [uke 12](uke12.qmd#uke12-lagrange) ser vi samme bilde for krumme grenser: gradienten til målet er en kombinasjon av gradientene til bibetingelsene, og vektene er Lagrangemultiplikatorene, med motsatt fortegn fordi uke 12 skriver $\nabla f+\lambda\nabla h=0$.
 
 En aktiv grense kan likevel ha pris null, som vi ser ved $\Delta=3/2$ i 11.4.
 
@@ -1036,7 +1036,7 @@ Vi spurte hva verkstedet bør produsere, hvordan vi kan vite at planen er best u
 
 En løser som `linprog` gjør de samme stegene for tusenvis av produkter. Statusen, planen og prisene den returnerer, kan vi kontrollere på samme måte.
 
-Ressursprisene er et første eksempel på **multiplikatorer**: tall som veier sammen grensene slik at de gir et bevis, og som samtidig måler hva en litt større kapasitet er verdt. I [uke 12](uke12.qmd#uke12-lagrange) er bibetingelsene krumme likninger, og vi møter Lagrange-multiplikatorer. De er priser på samme måte som dualvariablene her: de måler hva en litt endret bibetingelse er verdt ([uke 12](uke12.qmd#uke12-pris)). Ulikheter med komplementær slakk kommer der bare som valgfri fordypning.
+Ressursprisene er et første eksempel på **multiplikatorer**: tall som veier sammen grensene slik at de gir et bevis, og som samtidig måler hva en litt større kapasitet er verdt. I [uke 12](uke12.qmd#uke12-lagrange) er bibetingelsene krumme likninger, og vi møter Lagrangemultiplikatorer. De er priser på samme måte som dualvariablene her (med fortegnsavtalen i uke 12 er prisen $-\lambda$): de måler hva en litt endret bibetingelse er verdt ([uke 12](uke12.qmd#uke12-pris)). Ulikheter med komplementær slakk kommer der bare som valgfri fordypning.
 
 ## 11.5 Regneoppgaver
 

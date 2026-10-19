@@ -1,4 +1,4 @@
-## Hva betyr en Lagrangemultiplikator?
+## Kjettingen som henger
 
 Heng en kjetting mellom to kroker, og den finner formen sin helt av seg selv.
 Men hvorfor akkurat den formen? Svaret er et optimeringsproblem med
@@ -440,7 +440,7 @@ finne ut hva multiplikatorene forteller. Vi går fram i tre små steg: skriv
 kravfunksjonen, løs, og les av multiplikatorene. Energien og Jacobimatrisen
 er ferdige.
 
-**Kode 1.** Uten kravfunksjonen vet ikke SLSQP hva «fast lengde» betyr. Fullfør
+**Kodespor 1.** Uten kravfunksjonen vet ikke SLSQP hva «fast lengde» betyr. Fullfør
 `h(z, lengths)`. Den skal returnere de ti tallene
 $\lVert p_i-p_{i-1}\rVert_2-\ell$. Bruk `joints(z)`, `np.diff(..., axis=0)` og
 `np.linalg.norm(..., axis=1)`. Argumentet `lengths` er $\ell$; det kan være ett
@@ -529,7 +529,7 @@ $$\nabla_{p_j}E+\lambda_j\nabla_{p_j}h_j+\lambda_{j+1}\nabla_{p_j}h_{j+1}
    $\lambda_{10}\sin\theta_{10}-\lambda_1\sin\theta_1$ blir igjen på venstre
    side.
 
-**Kode 2.** Nå kontrollerer vi punkt 1–3 med tallene fra SLSQP. Rad $i$ i `U = directions(z_exact)`
+**Kodespor 2.** Nå kontrollerer vi punkt 1–3 med tallene fra SLSQP. Rad $i$ i `U = directions(z_exact)`
 er $(\cos\theta_{i+1},\sin\theta_{i+1})$. Skriv linjen for de ti tallene
 $\lambda_i\cos\theta_i$, og sett inn forutsigelsen din. Linjen for de ni
 tallene i punkt 2 er ferdig.
@@ -581,7 +581,7 @@ lik *pluss* endringen i minste kostnad per MWh mer forbruk. Her skriver vi
 $L=E+\sum_i\lambda_ih_i$, og da er $\lambda_i$ lik *minus* endringen i $E_*$
 per meter mer ledd. Begge sier hvor mye optimal verdi endres per enhet.
 
-**Kode 3.** Nå tester vi forutsigelsen med en differansekvotient, slik vi
+**Kodespor 3.** Nå tester vi forutsigelsen med en differansekvotient, slik vi
 gjorde med prisen i uke 12.2. Gjør ledd 5 (det midterste til venstre,
 `lengths[4]`) $10^{-4}$ m lengre, løs på nytt med
 `solve_exact(lengths, z_exact)`, og regn ut differansekvotienten
@@ -633,7 +633,7 @@ Hvilket tall spiller rollen til $\lambda_i$? Bruk svaret til å forutsi omtrent
 hvor mye endeleddet blir forlenget når $\mu=10^4$ N/m. I fysikk heter
 sammenhengen «fjærkraft = stivhet ganger forlengelse».
 
-**Kode 4.** Skriv `F_mu` på én linje. Gradienten er ferdig. Løkken kjører
+**Kodespor 4.** Skriv `F_mu` på én linje. Gradienten er ferdig. Løkken kjører
 BFGS fra startformen for fire stivheter og skriver én rad per stivhet, slik at
 du kan se hva som skjer når fjærene blir stivere.
 
@@ -712,8 +712,9 @@ print('kappa =', f'{ev[-1]/ev[0]:.2e}', '  kappa/mu =', round(ev[-1]/ev[0]/mu, 3
 Cellen gir 10 egenverdier over 1000 og 8 små (den minste $2.166$), og
 $\kappa\approx1.775\,\mu$. Forklar de 10 store med rangen til $J$: de 8 små
 hører til nullrommet fra uke 3, retningene der kjettingen svinger uten å
-endre leddlengdene til første orden. Bruk så uke 6 og 9 til å si hvorfor stor
-$\kappa$ gir mange BFGS-iterasjoner.
+endre leddlengdene til første orden. Bruk så uke 9 til å forklare hvorfor en
+metode som starter som gradientmetoden og må lære krumningen underveis (BFGS),
+trenger mange iterasjoner når $\kappa$ er stor.
 
 **Valgfritt: for stive fjærer.** Hva skjer hvis vi går enda lenger? Med
 $\mu=10^{10}$ starter vi i den eksakte formen, så søket har nesten ingenting å

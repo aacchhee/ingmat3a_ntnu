@@ -47,7 +47,7 @@ prosjekt; bruk prosjekttiden til å fullføre [prosjekt 7](project_week7.qmd).
 1. [Et søk som aldri blir ferdig](#uke8-eksistens): infimum, minimum og minimerende følger.
 2. [Kompakthet gir et minimum](#uke8-kompakt): lukket, begrenset og ekstremalverdisetningen.
 3. [Hessianen](#uke8-hessian): krumning langs en linje, minimum eller sadelpunkt.
-4. [Mange starter, ett svar?](#uke8-lokalt): konvekse funksjoner og mengder, lokalt blir globalt.
+4. [Konveksitet: når lokalt er globalt](#uke8-lokalt): mange starter, konvekse funksjoner og mengder, lokalt blir globalt.
 5. [Konveksitet fra Hessianen](#uke8-konveks-test): $p^THp\ge0$ i alle punkter.
 
 ### Dette bygger vi videre på
@@ -1321,7 +1321,7 @@ $p^THp>0$ én gang. Da er det lokale svaret også det globale.
 **Tilbake til eksperiment 3.** For linjen er
 $S(c_0,c_1)=\sum_i(b_i-c_0-c_1t_i)^2$ et andregradspolynom i $c_0$ og
 $c_1$, så Hessianen er den samme i alle punkter. Med $t=(-1,0,1,2)$ er den
-$\begin{bmatrix}8&4\\4&12\end{bmatrix}$, med $D=96-16=80>0$ og
+$\begin{bmatrix}8&4\\4&12\end{bmatrix}$, med $\det H=96-16=80>0$ og
 $S_{c_0c_0}=8>0$. Den er positiv definit overalt, så $S$ er strengt konveks.
 Minimumspunktet finnes (vi fant det i uke 4), og det er det eneste. Derfor
 må alle søkene ende i det samme punktet. For svingningen viste midtpunktet
@@ -1356,7 +1356,7 @@ midtpunktet gir $f(0,0)=0>-3$. Grafen stikker over korden.
 **Strengt konveks på et område.** Se på det åpne, konvekse området
 $x>\tfrac12$, $y>\tfrac12$. Der er $f_{xx}=6x>3>0$, og
 
-$$D=f_{xx}f_{yy}-f_{xy}^2=6x\cdot6y-(-3)^2=36xy-9>0,$$
+$$\det H=f_{xx}f_{yy}-f_{xy}^2=6x\cdot6y-(-3)^2=36xy-9>0,$$
 
 fordi $xy>\tfrac12\cdot\tfrac12=\tfrac14$ gir $36xy>9$. Hessianen er
 positiv definit i hele området, så $f$ er strengt konveks **der**. Punktet
