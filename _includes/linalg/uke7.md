@@ -37,13 +37,16 @@ forsøk til formel også uten å åpne fordypningen.
 - [Et bilde med få byggeklosser](#uke7-bilde): en forbindelse til basis og koordinater.
 - [Fra sirkel til ellipse](#uke7-geometri): se hvilke retninger som strekkes.
 - [To basiser](#uke7-svd): forstå singulærverdidekomposisjonen, forkortet SVD.
-- [Usikre data](#uke7-kondisjon): knytt strekk til kondisjonering og residual.
+- [Usikre data](#uke7-kondisjon): løs likninger i SVD-koordinater, og se hvorfor små strekk forsterker feil.
 - [Velg hva som beholdes](#uke7-rang): sammenlign rang, feil og bildedetaljer.
+- [Data med støy](#uke7-prosjekt): se når færre komponenter gir et bedre bilde.
 - [Pseudoinversen](#uke7-pseudoinvers): en valgfri videreføring av minste kvadrater.
+- [Oppgaver](#uke7-oppgaver): øv på regningene du trenger i prosjektet.
 
 Etter uken skal du kunne tolke $Av_i=\sigma_i u_i$, bruke en ferdig beregnet
-SVD til å forenkle en matrise, og forklare hvorfor små singulærverdier gjør
-rekonstruksjon følsom. Selve SVD-beregningen gjør vi med et bibliotek.
+SVD til å forenkle en matrise, løse $Ax=b$ i SVD-koordinater og forklare
+hvorfor små singulærverdier gjør rekonstruksjon følsom, og hvorfor det
+noen ganger lønner seg å kutte dem. Selve SVD-beregningen gjør vi med et bibliotek.
 
 ### Dette bygger vi videre på
 
@@ -53,14 +56,19 @@ ulike retninger svært forskjellig. Denne uken finner vi nettopp disse
 retningene og strekkfaktorene. Det samme verktøyet forteller hvilke
 mønstre som bidrar mest i en bildematrise.
 
+<details class="reading-step">
+<summary>Gå i dybden: spørsmål fra tidligere uker</summary>
+
 | Fra tidligere uker | Spørsmålet vi tar med oss |
 |:--|:--|
-| [Uke 1: flyttall og avrunding](page2.qmd) | Hva skjer med små feil når vi deler på et svært lite tall? |
+| [Uke 1: flyttall og avrunding](page2.qmd) | Hvor små er avrundingsfeilene, og når kan de bli store i svaret? |
 | [Uke 2: fikspunktiterasjon](page4.qmd) | Er en liten endring i beregningen nok til å stole på svaret? |
 | [Uke 3: basis, kolonnerom og nullrom](uke3.qmd#uke3-del3) | Hvilke deler av startvektoren kan vi finne igjen fra resultatet? |
 | [Uke 4: ortogonalitet og minste kvadrater](uke4.qmd) | Kan gode koordinater gjøre tilpasningen enklere? |
 | [Uke 5: egenverdier](uke5.qmd) | Hvilke spesielle retninger finnes når matrisen også kan være rektangulær? |
 | [Uke 6: norm, residual og kondisjonstall](uke6.qmd#uke6-residual) | Hvordan finner vi største og minste strekk i praksis? |
+
+</details>
 
 ## 7.1 Et bilde som en sum av mønstre
 
@@ -148,6 +156,13 @@ tilsvarende profiltall. En ekstra vekt bestemmer hvor sterkt bidraget
 skal inngå i bildet. I koden heter vekten `s_img[i]`; hvorfor nettopp
 disse vektene og profilene brukes, forklarer vi i 7.3 og 7.5.
 
+Øverst i figuren ser du de to profilene, under ser du bidraget: rødt er
+positivt, blått negativt. De svarte markeringene følger rad 25 og kolonne 50,
+og cellen skriver ut produktet for akkurat den pikselen.
+
+<details class="reading-step">
+<summary>Gå i dybden: slik leser du figuren</summary>
+
 Les figuren i denne rekkefølgen:
 
 - **Øverst til venstre:** Den loddrette profilen har ett tall for hver rad.
@@ -156,47 +171,29 @@ Les figuren i denne rekkefølgen:
   Den bestemmer hvor mye av den loddrette profilen hver kolonne får.
 - **Under:** Det ferdige bidraget er produktet av profilene, ganget med vekten.
   Rødt betyr positivt bidrag, blått negativt, og hvitt omtrent null.
-  Fargeskalaen til høyre viser tallverdiene og hvor null ligger.
   Radnummeret øker nedover; kolonnenummeret øker mot høyre, som i bildet.
 
-De svarte markeringene følger rad 25 og kolonne 50 fra profilene til
-den tilsvarende pikselen. Begge profilene har positive og negative verdier
-på den loddrette aksen. Like fortegn gir et positivt produkt, ulike
-fortegn et negativt. Vekten er ikke-negativ og endrer derfor ikke fortegnet.
+Fargeskalaen til høyre viser tallverdiene og hvor null ligger.
+Begge profilene har positive og negative verdier på den loddrette aksen.
+Like fortegn gir et positivt produkt, ulike fortegn et negativt. Vekten er
+ikke-negativ og endrer derfor ikke fortegnet. Kontroller dette med de tre
+tallene cellen skriver ut for rad 25 og kolonne 50.
+
+</details>
 
 Kjør cellen med `i = 1`, og prøv så `i = 2`. Dette viser ett bidrag om
 gangen, ikke summen av de første bidragene som i eksperiment 1.
 
 ```{pyodide-python}
 #| label: week7-building-block
-# Ett bidrag bygges av to profiler og én vekt.
+# Ett bidrag bygges av to profiler og én vekt; hjelperen tegner de tre delene.
 # Python teller fra 0; i=1 velger det andre bidraget.
 
 U_img,s_img,Vt_img = np.linalg.svd(portrait,full_matrices=False)
 i = 1
 component = s_img[i]*np.outer(U_img[:,i],Vt_img[i,:])
-fig = plt.figure(figsize=(6.4,7.0), layout='constrained')
-grid = fig.add_gridspec(2,2, height_ratios=[1,1.35])
-ax_u = fig.add_subplot(grid[0,0])
-ax_v = fig.add_subplot(grid[0,1])
-ax_result = fig.add_subplot(grid[1,:])
-ax_u.plot(U_img[:,i]); ax_u.axhline(0,color='gray',linewidth=.6)
-ax_u.set_title('1. Loddrett profil'); ax_u.set_xlabel('Radnummer')
-ax_v.plot(Vt_img[i,:]); ax_v.axhline(0,color='gray',linewidth=.6)
-ax_v.set_title('2. Vannrett profil'); ax_v.set_xlabel('Kolonnenummer')
-limit = np.max(np.abs(component))
-im = ax_result.imshow(component,cmap='RdBu_r',vmin=-limit,vmax=limit,origin='upper')
-ax_result.set_title('3. Bidraget fra de to profilene')
-ticks = [0,20,40,60,80,95]
-ax_u.set_xticks(ticks); ax_v.set_xticks(ticks)
-ax_result.set_xticks(ticks); ax_result.set_yticks(ticks)
-ax_result.set_xlabel('Kolonnenummer'); ax_result.set_ylabel('Radnummer')
-fig.colorbar(im,ax=ax_result,shrink=.85,label='Pikselbidrag (negativt / positivt)')
-# Følg én rad og én kolonne fra profilene til den tilsvarende pikselen.
 row,col = 25,50
-ax_u.plot(row,U_img[row,i],'ko'); ax_v.plot(col,Vt_img[i,col],'ko')
-ax_result.plot(col,row,'ko',markersize=5,markerfacecolor='none')
-plt.show()
+show_component(U_img,s_img,Vt_img,i,row,col)
 print(f'Rad {row}, kolonne {col}:')
 print(f'{s_img[i]:.5f} * {U_img[row,i]:.5f} * {Vt_img[i,col]:.5f} = {component[row,col]:.5f}')
 ```
@@ -223,25 +220,26 @@ resultatlengde bare skyldes transformasjonen og retningen vi velger. Sirkelen bl
 halvaksene gjør største og minste strekk synlige. Det gir en geometrisk
 inngang til både singulærverdier og tap av informasjon.
 
-### Eksperiment 2 – følg en retning gjennom transformasjonen
-
-Startpunktene ligger på en **enhetssirkel**. Velg **Ellipse** og flytt den rosa
-prikken rundt sirkelen i rute 1 **øverst til venstre**. Sammenlign med
-resultatet i rute 4 **øverst til høyre**.
-Retningsskyverne kan også brukes med tastaturet.
-
-- I hvilke startretninger blir resultatvektoren lengst og kortest?
-- Velg **Smal ellipse**. Hva blir vanskeligere å skille i resultatet?
-- Velg **Rangtap**. Kan ulike startvektorer nå gi samme resultat?
-
+Appleten under har fire ruter. Startpunktene ligger på en **enhetssirkel**
+i rute 1 **øverst til venstre**, og resultatet står i rute 4 **øverst til høyre**.
 Arbeidsrekkefølgen er **1 → 2 → 3 → 4**: øverst til venstre, ned til
 venstre, bort til høyre og opp til høyre. Se først bare på start og slutt,
 altså rute 1 og 4. De blå og fiolette pilene er merket $v_1$,
 $v_2$ ved starten og $\sigma_1u_1$, $\sigma_2u_2$ ved resultatet.
-Matrisene under diagrammet oppdateres når du flytter skyverne.
+Matrisene under diagrammet oppdateres når du flytter skyverne, og
+retningsskyverne kan også brukes med tastaturet.
 De to mellomrutene og faktorene undersøker vi i neste fane.
 En **dreiing** snur alle retninger like mye; en **speiling** vender
 orienteringen som i et speil. Begge bevarer lengder og vinkler.
+Målet er å finne startretningene som gir lengst og kortest resultat, og
+å se hva som skjer når den korteste blir null.
+
+### Eksperiment 2 – følg en retning gjennom transformasjonen
+
+- Velg **Ellipse** og flytt den rosa prikken rundt sirkelen i rute 1.
+  I hvilke startretninger blir resultatvektoren i rute 4 lengst og kortest?
+- Velg **Smal ellipse**. Hva blir vanskeligere å skille i resultatet?
+- Velg **Rangtap**. Kan ulike startvektorer nå gi samme resultat?
 
 <iframe src="../assets/svd-visualizer.html" title="Interaktivt SVD-forsøk: følg retninger fra sirkel til ellipse" loading="lazy" style="width:100%;height:920px;border:1px solid #d4e0e7;border-radius:6px;"></iframe>
 
@@ -282,10 +280,9 @@ singulærverdiene i dette eksempelet.
 $$T(x)=Ax,\qquad A=\begin{bmatrix}0&2\\1&0\end{bmatrix}.$$
 
 Vi sammenligner bare startvektorer med lengde 1. Ellers kunne vi få et
-større resultat bare ved å velge en lengre startvektor.
-
-**Prøv selv.** Regn ut $T(e_1)$ og $T(e_2)$, der $e_1=(1,0)^T$ og
-$e_2=(0,1)^T$. Hvilken av disse to vektorene blir strukket mest?
+større resultat bare ved å velge en lengre startvektor. Appleten viste
+de to aksene; nå regner vi dem ut og kontrollerer at ingen annen retning
+gir mer eller mindre.
 
 **Regnegangen.**
 
@@ -311,7 +308,8 @@ $\sigma_1=2$ og $\sigma_2=1$.
 
 :::
 
-### Hva endres når ellipsen blir smalere?
+<details class="reading-step">
+<summary>Gå i dybden: hva endres når ellipsen blir smalere?</summary>
 
 Behold 2 øverst til høyre i $A$, men bytt 1 nederst til venstre med
 et tall $s$ mellom 0 og 1. Da får vi $T_s(a,b)=(2b,sa)$.
@@ -367,6 +365,8 @@ en kan bli kraftig forkortet. For $s=0$ forsvinner hele retningen langs
 $e_1$. Forskjellen mellom en liten positiv verdi og null blir viktig når vi
 skal rekonstruere startvektoren i 7.4.
 
+</details>
+
 <details class="reading-step">
 <summary>Gå i dybden: hvorfor kan pilene ha ulike fortegn?</summary>
 
@@ -405,22 +405,36 @@ $U\Sigma V^T$ beskriver akkurat samme transformasjon som $A$.
 
 ### Eksperiment 3 – hvor endres lengden?
 
-Åpne [appleten fra 7.2](#uke7-geometri), velg **Skråstilling**, og følg
-én farge i rekkefølgen **1 → 2 → 3 → 4** (ned, høyre, opp). Skråstillingen forskyver punkter horisontalt med
-en avstand som avhenger av høyden. Mellom hvilke ruter endres vektorens lengde?
-Hva skjer med den blå og den fiolette retningen når de uttrykkes i
-nye koordinater? Prøv deretter et negativt matriseelement.
+- Åpne [appleten fra 7.2](#uke7-geometri), velg **Skråstilling**, og følg
+  én farge i rekkefølgen **1 → 2 → 3 → 4** (ned, høyre, opp).
+  Skråstillingen forskyver punkter horisontalt med en avstand som avhenger
+  av høyden.
+- Mellom hvilke ruter endres vektorens lengde? Mellom hvilke ruter endres
+  bare retningen?
 
-Velg så **Ellipse**, og sett den rosa retningen til $0^\circ$, altså
-$x=(1,0)^T$. Bruk matrisene under diagrammet til å regne
+**Snakk sammen:** Hvordan kan en transformasjon som både endrer vinkler
+og lengder settes sammen av noen trinn som bevarer begge deler,
+og ett som strekker langs aksene?
+
+**Hva viser forsøket?** Lengden endres bare mellom rute 2 og 3, i strekket
+$\Sigma$. De to andre trinnene dreier eller speiler. Det er dette vi nå
+skriver som et matriseprodukt.
+
+<details class="reading-step">
+<summary>Gå i dybden: regn de tre trinnene med tallene i appleten</summary>
+
+Bli i **Skråstilling**. Hva skjer med den blå og den fiolette retningen
+når de uttrykkes i nye koordinater? Prøv deretter et negativt matriseelement.
+
+Velg så **Ellipse**, og følg den rosa retningen på samme måte. Endres
+lengden mellom de samme rutene? Sett deretter den rosa retningen til
+$0^\circ$, altså $x=(1,0)^T$. Bruk matrisene under diagrammet til å regne
 $V^Tx$, deretter $\Sigma(V^Tx)$ og til slutt $U(\Sigma V^Tx)$.
 Sammenlign med tallene i raden **Rosa** og med direkte beregning av $Ax$.
 For **Ellipse** bruker appleten samme basisvalg som håndregningen nedenfor.
 Kontroller særlig at siste trinn ikke endrer vektoren: her er $U=I$.
 
-**Snakk sammen:** Hvordan kan en transformasjon som både endrer vinkler
-og lengder settes sammen av noen trinn som bevarer begge deler,
-og ett som strekker langs aksene?
+</details>
 
 ### SVD er et valg av koordinater på hver side
 
@@ -527,15 +541,49 @@ Dette er grunnen til at koordinatskiftene bevarer indreprodukt og lengde.
 De $p=\min(m,n)$ diagonalverdiene ordnes
 $\sigma_1\geq\cdots\geq\sigma_p\geq0$.
 
+### SVD lest fra resultatsiden
+
+Ganger vi $A=U\Sigma V^T$ med $U^T$ fra venstre, får vi $U^TA=\Sigma V^T$,
+fordi $U^TU=I$. Rad for rad står det
+
+$$\boxed{u_i^TA=\sigma_i v_i^T},\qquad i=1,\ldots,p.$$
+
+Det er den samme koblingen som $Av_i=\sigma_iu_i$, men lest fra
+resultatsiden. I eksempelet over er
+$u_1^TA=(1,0)A=(0,2)=2e_2^T=\sigma_1v_1^T$.
+Denne formen bruker vi når vi løser likninger med SVD i 7.4.
+
+**Øv på dette:** [SVD fra resultatsiden og som projeksjon](#uke7-oppg-projeksjon) i 7.8.
+
+**Diagonalmatriser.** For en diagonalmatrise med ikke-negative tall på
+diagonalen kan vi lese SVD rett av. Singulærverdiene er diagonaltallene
+sortert fra størst til minst, og $u_i=v_i$ er enhetsvektoren $e_j$ der
+tallet står. For $D=\operatorname{diag}(1,3)$ er $\sigma_1=3$ med
+$u_1=v_1=e_2$, og $\sigma_2=1$ med $u_2=v_2=e_1$. Rekkefølgen betyr noe:
+når vi i 7.5 beholder bare den første komponenten, får vi
+$D_1=\operatorname{diag}(0,3)$, som beholder tallet 3, ikke tallet 1.
+
+**Øv på dette:** [SVD av diagonalmatriser](#uke7-oppg-diagonal) i 7.8.
+
 ### Hvorfor bruker vi ikke bare egenverdiene fra uke 5?
 
-En egenvektor oppfyller $Av=\lambda v$ og beholder linjen sin.
-Singulærvektorer beskriver i stedet et par retninger:
-$Av_i=\sigma_i u_i$. Startretningen og resultatretningen trenger ikke
-være den samme. Dermed kan vi også beskrive en lineær transformasjon fra $\mathbb R^3$ til $\mathbb R^2$, der en egenverdilikning
-for en rektangulær matrise ikke gir mening.
+Som vi så i 7.0, finnes det ikke alltid en full basis av egenvektorer.
+SVD finnes derimot for **alle** matriser, også rektangulære og rangdefekte.
+Grunnen er at $A^TA$ alltid er symmetrisk med ikke-negative egenverdier,
+slik at den har en ortonormal egenvektorbasis $v_i$ med
+$\sigma_i=\sqrt{\lambda_i}$.
 
-For eksempelet vårt er
+<details class="reading-step">
+<summary>Gå i dybden: hvorfor finnes SVD alltid?</summary>
+
+**Egenvektorer og singulærvektorer.** En egenvektor oppfyller $Av=\lambda v$
+og beholder linjen sin. Singulærvektorer beskriver i stedet et par retninger:
+$Av_i=\sigma_i u_i$. Startretningen og resultatretningen trenger ikke
+være den samme. Dermed kan vi også beskrive en lineær transformasjon fra
+$\mathbb R^3$ til $\mathbb R^2$, der en egenverdilikning for en rektangulær
+matrise ikke gir mening.
+
+**Et eksempel.** For $A=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ fra håndeksempelet er
 
 $$A^TA=\begin{bmatrix}1&0\\0&4\end{bmatrix}.$$
 
@@ -549,9 +597,7 @@ enklere: da kan vi bruke samme basis på begge sider, og
 $\sigma_i=\lambda_i>0$. Kondisjonstallet fra uke 6 er altså et
 spesialtilfelle av forholdet mellom største og minste singulærverdi.
 
-### Hvorfor finnes SVD alltid?
-
-Vi kan ikke alltid finne en egenvektorbasis for $A$, men vi kan gjøre det
+**Det generelle argumentet.** Vi kan ikke alltid finne en egenvektorbasis for $A$, men vi kan gjøre det
 for **$A^TA$**. Denne matrisen er symmetrisk, og
 
 $$x^TA^TAx=\|Ax\|_2^2\geq0.$$
@@ -574,10 +620,7 @@ $A=U\Sigma V^T$. For en $m\times n$-matrise har $\Sigma$ størrelse
 $m\times n$; hvis $n>m$, gir de ekstra egenvektorene til $A^TA$
 nullromsretninger. Slik får også rektangulære og rangdefekte matriser en SVD.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor er de nye resultatvektorene ortonormale?</summary>
-
-For positive $\sigma_i$ og $\sigma_j$ bruker vi
+**Hvorfor er de nye resultatvektorene ortonormale?** For positive $\sigma_i$ og $\sigma_j$ bruker vi
 $A^TAv_j=\sigma_j^2v_j$:
 
 $$u_i^Tu_j=\frac{(Av_i)^T(Av_j)}{\sigma_i\sigma_j}
@@ -591,12 +634,18 @@ er ortogonale. Dermed har de nye vektorene lengde 1 og er parvis ortogonale.
 
 ### Hvordan beregnes SVD i praksis?
 
+I praksis bruker vi `U, s, Vt = np.linalg.svd(A, full_matrices=False)`.
+Biblioteket danner ikke $A^TA$, fordi $\kappa_2(A^TA)=\kappa_2(A)^2$ kan
+gjøre små singulærverdier unøyaktige.
+
+<details class="reading-step">
+<summary>Gå i dybden: hvordan regner biblioteket ut SVD?</summary>
+
 $A^TA$ forklarer **hvorfor** SVD finnes, men er vanligvis ikke veien vi
 bruker i flyttallsregning. Når $A$ har full kolonnerang, er
 $\kappa_2(A^TA)=\kappa_2(A)^2$. Å danne produktet kan derfor gjøre små
 singulærverdier vanskeligere å beregne nøyaktig.
 
-I praksis bruker vi `U, s, Vt = np.linalg.svd(A, full_matrices=False)`.
 Numeriske biblioteker forenkler først $A$ med ortogonale transformasjoner
 til **bidiagonal form**: bare hoveddiagonalen og én nabodiagonal kan
 inneholde tall forskjellig fra null. Deretter finnes singulærverdiene
@@ -619,7 +668,17 @@ og kontrollerer at faktorene rekonstruerer $A$.
 For flere detaljer: [LAPACKs beskrivelse av SVD](https://www.netlib.org/lapack/lug/node53.html)
 og [NumPys dokumentasjon](https://numpy.org/doc/stable/reference/generated/numpy.linalg.svd.html).
 
+</details>
+
 ### Hvilke opplysninger kan vi finne igjen?
+
+La $r$ være antallet positive singulærverdier. Et positivt strekk beholder
+en startkomponent, mens et nullstrekk fjerner den. De $r$ positive
+strekkfaktorene gir $r$ uavhengige resultatretninger, og derfor er
+$\operatorname{rank}(A)=r$.
+
+<details class="reading-step">
+<summary>Gå i dybden: kolonnerom og nullrom fra SVD</summary>
 
 I uke 3 skilte vi mellom resultatene som er mulige (**kolonnerommet**)
 og startvektorene som gir null (**nullrommet**). SVD gjør disse rommene
@@ -656,9 +715,7 @@ selv om listen med singulærverdier bare inneholder én null.
 
 :::
 
-### Les rommene av en full SVD
-
-La $r$ være antallet positive singulærverdier. Den samme tankegangen gir:
+**Les rommene av en full SVD.** Den samme tankegangen gir:
 
 - **Rang:** De $r$ positive strekkfaktorene gir $r$ uavhengige
   resultatretninger. Derfor er $\operatorname{rank}(A)=r$.
@@ -671,6 +728,8 @@ La $r$ være antallet positive singulærverdier. Den samme tankegangen gir:
 Her betyr $\operatorname{span}$ alle lineærkombinasjoner av de oppgitte
 vektorene. Vi har $r$ synlige og $n-r$ usynlige startretninger,
 slik at rang pluss nullromsdimensjon blir $n$, som i uke 3.
+
+</details>
 
 <details class="reading-step">
 <summary>Gå i dybden: full SVD i NumPy og numerisk rang</summary>
@@ -690,7 +749,7 @@ nullrommet til $A^T$. Disse retningene er ortogonale på hele kolonnerommet.
 **Null i eksakt regning eller nesten null på datamaskinen?**
 I flyttallsregning teller vi verdier over en terskel, ikke bare verdier
 som er strengt positive. En vanlig terskel er
-$\tau=\max(m,n)\epsilon\sigma_1$, der $\epsilon$ er maskinpresisjonen fra
+$\tau=\max(m,n)\epsilon\sigma_1$, der $\epsilon$ er maskinepsilon fra
 uke 1. Antallet singulærverdier over terskelen kalles **numerisk rang**.
 Usikre data kan begrunne en større terskel. Numerisk rang avhenger
 av toleransen; eksakt rang teller nøyaktig positive singulærverdier.
@@ -711,14 +770,26 @@ I [uke 6.3](uke6.qmd#uke6-residual) skilte vi mellom to spørsmål:
 - **Bakoverfeil:** Hvor mye må vi endre problemet for at $\widehat x$ skal
   være en eksakt løsning?
 
-Vi holder $A$ fast og tillater bare endring i høyresiden. Med
-residualen $r=b-A\widehat x$ får vi
+Vi holder $A$ fast og endrer bare høyresiden. Med residualen
+$r=b-A\widehat x$ er $A\widehat x=b+\delta b$ med $\delta b=-r$, så
+**absolutt bakoverfeil med fast $A$** er $\|r\|_2$. SVD skal forklare
+hvorfor samme bakoverfeil kan gi svært forskjellig foroverfeil.
 
-$$A\widehat x=b-r=b+\delta b,\qquad \delta b=-r.$$
+### Løs baklengs med SVD
 
-Den nødvendige endringen er entydig. **Absolutt bakoverfeil med fast $A$**
-er derfor $\|r\|_2=\|\delta b\|_2$. SVD skal forklare hvorfor samme
-bakoverfeil kan gi svært forskjellig foroverfeil.
+La $A$ være en invertibel $n\times n$-matrise, slik at alle $\sigma_i>0$.
+I 7.3 så vi at $u_i^TA=\sigma_iv_i^T$. Hvis $Ax=b$, ganger vi med $u_i^T$
+fra venstre og får $u_i^Tb=\sigma_i\,(v_i^Tx)$. Koordinaten til løsningen
+langs $v_i$ er altså datakoordinaten langs $u_i$ delt på $\sigma_i$.
+Setter vi disse koordinatene inn i $x=(v_1^Tx)v_1+\cdots+(v_n^Tx)v_n$
+fra 7.3, får vi
+
+$$\boxed{x=\sum_{i=1}^n\frac{u_i^Tb}{\sigma_i}\,v_i}.$$
+
+Vi projiserer dataene på $u_i$, deler på strekkfaktoren og bygger løsningen
+med $v_i$. Det er de tre trinnene fra 7.3, hvert av dem snudd, i motsatt
+rekkefølge. En datafeil langs $u_i$ blir dermed delt på $\sigma_i$, og er
+$\sigma_i$ liten, blir feilen stor.
 
 ::: {.callout-note title="Håndeksempel: samme bakoverfeil, ulik foroverfeil"}
 
@@ -733,87 +804,133 @@ For å lage dem velger vi to endringer i høyresiden, begge med lengde $0.01$:
 $\delta b^{(1)}=(0.01,0)^T$ og $\delta b^{(2)}=(0,0.01)^T$.
 I hvert tilfelle finner vi $\widehat x$ fra $A\widehat x=b+\delta b$.
 
-**Regnegangen.** De to likningene gir
-$\widehat x_2=(b_1+\delta b_1)/2$ og
-$\widehat x_1=(b_2+\delta b_2)/0.02$.
+**Regnegangen.** Her er $Av_1=\sigma_1u_1$ med $v_1=e_2$, $u_1=e_1$,
+$\sigma_1=2$, og $Av_2=\sigma_2u_2$ med $v_2=e_1$, $u_2=e_2$, $\sigma_2=0.02$.
+
+- Den første endringen, $(0.01,0)^T=0.01\,u_1$, ligger langs $u_1$.
+  Vi deler på $\sigma_1=2$: løsningen endres med $0.005\,v_1$.
+- Den andre endringen, $(0,0.01)^T=0.01\,u_2$, ligger langs $u_2$.
+  Vi deler på $\sigma_2=0.02$: løsningen endres med $0.5\,v_2$.
+
+Det samme ser vi direkte fra de to likningene: andre koordinat i
+$\widehat x$ er $(b_1+\delta b_1)/2$, og første er $(b_2+\delta b_2)/0.02$.
 
 | Endring som gjør svaret eksakt | Omtrentlig svar $\widehat x$ | Residual mot opprinnelig $b$ | Foroverfeil $\|\widehat x-x_*\|_2$ |
 |:--|:--|:--|:--|
 | $(0.01,0)^T$ | $(1,1.005)^T$ | $(-0.01,0)^T$ | $0.005$ |
 | $(0,0.01)^T$ | $(1.5,1)^T$ | $(0,-0.01)^T$ | $0.5$ |
 
-Begge residualene har lengde $0.01$, så bakoverfeilen er den samme.
-Men i første tilfelle er løsningsendringen $0.01/2=0.005$, og i andre
-$0.01/0.02=0.5$.
+Begge residualene har lengde $0.01$, så bakoverfeilen er den samme, men
+foroverfeilene skiller med en faktor $100=\sigma_1/\sigma_2$.
 
-**Dette tar vi med oss.** Foroverfeilene skiller med en faktor 100,
-selv om bakoverfeilene er like. Begge svar er eksakte for et nærliggende
-system, men de er ikke like gode svar på det opprinnelige systemet.
-Det er retningen til bakoverfeilen, sammen med strekkfaktorene, som
-forklarer forskjellen.
+**Dette tar vi med oss.** Begge svar er eksakte for et nærliggende system,
+men retningen til datafeilen, sammen med strekkfaktorene, avgjør hvor stor
+foroverfeilen blir.
 
 :::
 
-### Kontroller sammenhengen med Python
-
-Vi gjentar håndeksempelet og beregner begge feilene mot det opprinnelige
-systemet. Koden konstruerer to omtrentlige svar slik at vi kjenner
-endringen i høyresiden på forhånd. Dermed kan vi kontrollere både
-fortegnet $r=-\delta b$ og størrelsen på foroverfeilen.
+Nå regner vi det samme på datamaskinen. Cellen bygger de to omtrentlige
+svarene i SVD-koordinater og måler begge feilene mot det opprinnelige
+systemet. NumPy kan snu fortegnet på et par $(u_i,v_i)$, men hvert bidrag
+$(u_i^T(b+\delta b)/\sigma_i)\,v_i$ blir det samme. Derfor skriver cellen ut
+bidragene, ikke koordinatene. Målet er å se om forholdet 100 mellom
+foroverfeilene avhenger av hvor stor datafeilen er.
 
 ### Eksperiment 4 – samme bakoverfeil, to utfall
 
-Kjør cellen og finn igjen tallene i tabellen. Bytt så `eta` fra `0.01`
-til `0.001`. **Gjett først:** Hva skjer med de to feilene og forholdet
-mellom foroverfeilene?
+- Kjør cellen og finn igjen tallene i tabellen.
+- **Gjett først:** Hva skjer med de to feilene og forholdet mellom
+  foroverfeilene når `eta` byttes fra `0.01` til `0.001`? Bytt og kontroller.
 
 ```{pyodide-python}
 #| label: week7-perturbation
 # A og b definerer det opprinnelige systemet i begge tilfeller.
-# Vi konstruerer x_hat som eksakt løsning av et litt endret system.
+# Svaret bygges i SVD-koordinater: projiser på u_i, del på sigma_i, bygg med v_i.
 
 A = np.array([[0.,2.],[.02,0.]])
 x_true = np.ones(2)
 b = A @ x_true
+U,s,Vt = np.linalg.svd(A)
 eta = .01
 for db in (np.array([eta,0]), np.array([0,eta])):
-    x_hat = np.linalg.solve(A,b+db)
-    residual = b-A@x_hat
-    print('Endring i høyresiden:',db)
-    print('Residual mot opprinnelig b:',residual)
-    print('Absolutt bakoverfeil med fast A:',np.linalg.norm(residual))
-    print('Absolutt foroverfeil:',np.linalg.norm(x_hat-x_true))
+    beta = U.T @ (b+db)                     # datakoordinater langs u_1 og u_2
+    parts = [beta[i]/s[i]*Vt[i] for i in range(2)]
+    x_hat = parts[0] + parts[1]
+    print('Endring i høyresiden:', db)
+    print('  bidrag langs v_1:', parts[0], '  bidrag langs v_2:', parts[1])
+    print('  x_hat:', x_hat, '  samme som solve:', np.allclose(x_hat, np.linalg.solve(A,b+db)))
+    print(f'  bakoverfeil (residual mot b): {np.linalg.norm(b-A@x_hat):.3g}'
+          f'   foroverfeil: {np.linalg.norm(x_hat-x_true):.3g}')
 ```
 
-**Konklusjon.** Når `eta` deles på 10, deles begge typer feil på 10.
-Forholdet mellom de to foroverfeilene er fortsatt 100. Liten bakoverfeil
-betyr at svaret passer et nærliggende problem; det er ingen garanti for
-liten foroverfeil når problemet er dårlig kondisjonert.
+**Hva viser forsøket?** Summen av bidragene er løsningen fra `solve`. En
+feil langs $u_1$ deles på 2, en feil langs $u_2$ deles på 0.02. Når `eta`
+deles på 10, deles begge typer feil på 10, og forholdet mellom de to
+foroverfeilene er fortsatt 100. Liten bakoverfeil betyr at svaret passer
+et nærliggende problem; det er ingen garanti for liten foroverfeil når
+problemet er dårlig kondisjonert.
+
+**To referanser for feil.** I eksperimentet var $b$ de riktige dataene, og
+feilen laget vi selv. I praksis kjenner vi bare de målte dataene
+$\tilde b=b+\delta b$ og løser $A\widehat x=\tilde b$. Mot **dette**
+systemet er $\widehat x$ eksakt: residualen $\tilde b-A\widehat x$ er null.
+Det vi egentlig vil vite, er hvor langt $\widehat x$ er fra løsningen $x_*$
+for dataene **uten** feil. Den avstanden kaller vi **rekonstruksjonsfeil**.
+I eksperiment 4 er den $0.005$ og $0.5$, de samme tallene som cellen kalte
+foroverfeil: der regnet vi det opprinnelige systemet som det riktige.
+Skillet mellom feil mot systemet vi løser og feil mot det vi vil finne,
+kommer igjen i [prosjekt 7, del B](project_week7.qmd).
+
+### Kan det lønne seg å kaste en retning?
+
+Retningen $u_2$ forsterker datafeil hundre ganger mer enn $u_1$. Da kan vi
+la være å bruke den. Vi regner ut hva vi vinner, og hva vi taper.
+
+::: {.callout-note title="Håndeksempel: dropp den svake retningen"}
+
+**Utgangspunkt.** Vi bruker samme $A$ og $x_*$ som over, med den andre
+endringen. De målte dataene er da $\tilde b=(2,\,0.03)^T$, altså
+$u_1^T\tilde b=2$ og $u_2^T\tilde b=0.03$. Full løsning er
+$\widehat x=(1.5,\,1)^T$ fra tabellen over.
+
+**Prøv selv.** Behold bare første ledd i summen for $x$. Hvor stor blir
+rekonstruksjonsfeilen, og hvor stor blir residualen? Gjenta med endringen
+$(0,0.03)^T$. Hvilken løsning er best nå?
+
+**Regnegangen.** Med bare første ledd får vi $x_1=\tfrac{2}{2}v_1=(0,1)^T$.
+Rekonstruksjonsfeilen mot $x_*=(1,1)^T$ er $1$: vi har mistet hele den
+riktige delen langs $v_2$. Residualen er $\tilde b-Ax_1=(0,\,0.03)^T$,
+nøyaktig den datakoordinaten vi lot være å bruke. Den fulle løsningen, med
+feil $0.5$, er altså bedre her: det lønner seg å ta med begge retningene.
+
+**Dette tar vi med oss.** Å kutte en retning bytter **forsterket støy** mot
+**tapt signal**. Å beholde bare de $k$ største singulærverdiene kalles
+**trunkert SVD**. I [prosjekt 7, del B](project_week7.qmd) finner du ut når
+byttet lønner seg.
+
+**Øv på dette:** [løs og trunker i SVD-koordinater](#uke7-oppg-losning) i 7.8.
+
+:::
+
+<details class="reading-step">
+<summary>Gå i dybden: svaret for endringen (0, 0.03)</summary>
+
+Med endringen $(0,0.03)^T$ er $\tilde b=(2,\,0.05)^T$. Full løsning gir
+$\widehat x=\tfrac22v_1+\tfrac{0.05}{0.02}v_2=(2.5,\,1)^T$, med
+rekonstruksjonsfeil $\|(1.5,\,0)^T\|_2=1.5$ mot $x_*$. Den trunkerte
+løsningen er fortsatt $x_1=(0,1)^T$ med feil 1. Nå er datafeilen langs
+$u_2$ så stor at det lønner seg å kaste retningen.
+
+</details>
 
 ### Svak informasjon er vanskelig å rekonstruere
 
-I én retning er strekkfaktoren 2; i den andre er den bare 0.02.
-Når vi rekonstruerer startvektoren, deler vi på strekkfaktorene. En liten
-strekkfaktor betyr dermed stor forsterkning av datafeil langs den
-tilhørende resultatretningen. Vi kaller et problem **dårlig kondisjonert**
-når små relative dataendringer kan gi store relative løsningsendringer.
-
-**2-normen** er vektorens vanlige euklidske lengde, altså kvadratroten
-av summen av de kvadrerte koordinatene. For en invertibel, kvadratisk
-matrise angir **kondisjonstallet i 2-norm**
-forholdet mellom største og minste strekk:
-
-$$\boxed{\kappa_2(A)=\frac{\sigma_1}{\sigma_n}}.$$
-
-Her er $n$ antall kolonner, og $\sigma_n>0$ er den minste singulærverdien.
-I forsøket er forholdet 100. En relativ feil betyr feilens størrelse delt
-på lengden til referansevektoren. Kondisjonstallet gir en
-øvre grense for hvor mye en relativ datafeil kan forsterkes når bare
-høyresiden endres. Retningen betyr noe; ikke alle feil forsterkes like mye.
-
-**Residualen** fra uke 6 er avviket mellom de oppgitte dataene og dataene
-beregnet fra løsningen, $b-A\widehat x$. Residualnormen er den absolutte bakoverfeilen når $A$ holdes fast.
-Den kan ikke alene vise at foroverfeilen er liten.
+Når vi løser baklengs, deler vi på strekkfaktorene, og en liten
+strekkfaktor forsterker datafeil langs sin resultatretning. Vi kaller et
+problem **dårlig kondisjonert** (også kalt **illkondisjonert**) når små
+relative dataendringer kan gi store relative løsningsendringer.
+Kondisjonstallet fra uke 6 er forholdet mellom største og minste strekk,
+$\kappa_2(A)=\sigma_1/\sigma_n$, her 100.
 
 <details class="reading-step">
 <summary>Gå i dybden: følsomhet og konvergens er ulike spørsmål</summary>
@@ -846,20 +963,18 @@ matrisens 2-norm, er den største lengden av $Ax$ når $x$ har lengde 1:
 $$\|A\|_2=\max_{\|x\|_2=1}\|Ax\|_2=\sigma_1.$$
 
 Den angir altså største strekk. For invertibel $A$ er
-$\|A^{-1}\|_2=1/\sigma_n$, slik at den vanlige normdefinisjonen av
-kondisjonstallet blir
+$\|A^{-1}\|_2=1/\sigma_n$, slik at **kondisjonstallet i 2-norm** for en
+invertibel, kvadratisk matrise er forholdet mellom største og minste strekk:
 
-$$\kappa_2(A)=\|A\|_2\|A^{-1}\|_2=\sigma_1/\sigma_n.$$
+$$\boxed{\kappa_2(A)=\|A\|_2\|A^{-1}\|_2=\frac{\sigma_1}{\sigma_n}}.$$
 
-**Prøv selv:** Forklar håndregningen over med $Av_i=\sigma_i u_i$.
-Hvilken resultatretning $u_i$ tilhører hver av de to dataendringene?
+Her er $n$ antall kolonner, og $\sigma_n>0$ er den minste singulærverdien.
+En relativ feil betyr feilens størrelse delt på lengden til
+referansevektoren. Grensen nedenfor gjelder når bare høyresiden endres.
 
-**Regnegangen:** Hvis dataendringen $\delta b$ ligger langs $u_i$ og
-har størrelse $\eta$, må endringen i løsningen ligge langs $v_i$.
-Vi deler på strekkfaktoren for å finne størrelsen:
-
-$$\delta b=\eta u_i\quad\Longrightarrow\quad
-\delta x=\frac{\eta}{\sigma_i}v_i.$$
+**Residualen** fra uke 6 er avviket mellom de oppgitte dataene og dataene
+beregnet fra løsningen, $b-A\widehat x$. Residualnormen er den absolutte
+bakoverfeilen når $A$ holdes fast. Den kan ikke alene vise at foroverfeilen er liten.
 
 For $Ax=b\ne0$ og $A(x+\delta x)=b+\delta b$ er
 $\delta x=A^{-1}\delta b$. Bruk definisjonen av matrisenormen til å få
@@ -868,6 +983,10 @@ $\|b\|_2\leq\|A\|_2\|x\|_2$. Sammen gir disse
 
 $$\frac{\|\delta x\|_2}{\|x\|_2}
 \leq\kappa_2(A)\frac{\|\delta b\|_2}{\|b\|_2}.$$
+
+Kondisjonstallet gir altså en øvre grense for hvor mye en relativ datafeil
+kan forsterkes; retningen til feilen avgjør hvor mye den faktisk forsterkes.
+I eksperiment 4 er forholdet 100.
 
 For en beregnet $\widehat x$, sett $r=b-A\widehat x$ og $e=x-\widehat x$.
 Da er $Ae=r$ og $\|e\|_2\leq\|r\|_2/\sigma_n$. Dette gjelder mot
@@ -907,7 +1026,7 @@ nodes = np.linspace(.95,1.05,12)
 # Kolonnene er 1, t, t², t³ evaluert i nodes: P @ c gir polynomverdiene.
 P = np.vander(nodes,4,increasing=True)
 U,s,Vt = np.linalg.svd(P,full_matrices=False)
-# Siste rad er høyre singularvektor for minste singulærverdi; lengden er 1.
+# Siste rad er høyre singulærvektor for minste singulærverdi; lengden er 1.
 dc = Vt[-1]
 print('Koeffisientendring:',np.linalg.norm(dc))
 print('Endring i modellverdier:',np.linalg.norm(P@dc))
@@ -946,18 +1065,25 @@ Vi undersøker tre ting:
   $n$ tall i en rad av $V^T$ og én singulærverdi. Faktorene krever dermed
   $k(m+n+1)$ tall, mot $mn$ i originalbildet. Vi teller tall, ikke filstørrelse.
 - **Relativ pikselfeil:** Vi kvadrerer alle forskjellene mellom $A_k$ og
-  $A$, summerer og tar kvadratroten. Dette er $\|A-A_k\|_F$.
+  $A$, summerer og tar kvadratroten. Dette er **Frobeniusnormen**
+  $\|A-A_k\|_F$: størrelsen til matrisen som om alle elementene var lagt
+  i én lang vektor.
   Delt på $\|A\|_F$ gir det en relativ feil. Koden viser den i prosent;
   for eksempel betyr 5 % at feilnormen er $0.05$ ganger originalens norm.
   Det betyr ikke at akkurat 5 % av pikslene er feil.
+
+I koden bygger `(U[:,:k]*s[:k]) @ Vt[:k,:]` hele summen på én gang: `*`
+ganger kolonne $i$ i $U$ med $\sigma_i$, og `@` legger sammen de $k$
+produktene «kolonne ganger rad». Cellen tegner også alle singulærverdiene.
+Målet er å finne ut om hver ny komponent gir like mye igjen.
 
 ### Eksperiment 5 – mer detalj, flere tall
 
 1. **Gjett først:** Dobles antallet lagrede tall når vi dobler $k$?
    Må den relative feilen samtidig halveres?
 2. Kjør cellen. Tabellen sammenligner $k=5,10,20,40$ på samme bilde.
-3. Sett `k_vis` til en av disse verdiene for å undersøke bildet nærmere.
-   Sammenlign både tallene og den valgte detaljen.
+3. Se på figuren av singulærverdiene. Hvor store er vektene vi kaster
+   når vi beholder `k_vis` komponenter?
 
 ```{pyodide-python}
 #| label: week7-tail
@@ -976,6 +1102,7 @@ for k in (5,10,20,40):
 k_vis = 20
 Ak_vis = (U[:,:k_vis]*s[:k_vis]) @ Vt[:k_vis,:]
 show_images({'original':A,f'{k_vis} komponenter':Ak_vis})
+show_singular_values({'portrett': s}, k=k_vis)
 ```
 
 ### Hva kan vi konkludere med?
@@ -994,6 +1121,8 @@ For dette portrettet gir kjøringen omtrent:
 - Feilen synker, men ikke med en fast faktor. Fra 5 til 10 komponenter
   blir den ikke halvert. Det er størrelsen på de utelatte bidragene
   som bestemmer hva vi vinner, ikke bare antallet vi beholder.
+  Figuren viser hvorfor: $\sigma_1\approx72$, mens $\sigma_{21}\approx0.95$,
+  så de første komponentene bærer det meste.
 - Med 20 komponenter bruker vi 3860 tall mot originalens 9216,
   og den relative feilen er omtrent 3.71 %. Om dette er godt nok,
   avhenger også av hvilken bildedetalj vi trenger.
@@ -1015,11 +1144,6 @@ Her er $r$ antall positive singulærverdier, og vi velger $0\leq k\leq r$
 i denne summen. For $k=0$ er summen nullmatrisen. Matrisen $A_k$ har rang høyst $k$.
 **Rangreduksjon** betyr å erstatte matrisen med en slik representasjon
 med færre uavhengige retninger.
-
-**Frobeniusnormen** angir størrelsen til en matrise som om alle elementene
-var lagt i én lang vektor: kvadrer elementene, summer og ta kvadratroten.
-Dermed er $\|A-A_k\|_F$ en samlet pikselfeil, mens
-$\|A-A_k\|_F/\|A\|_F$ er den relative feilen fra forsøket.
 
 SVD-rekonstruksjonen er en **beste tilnærming** i Frobeniusnorm blant alle
 matriser med rang høyst $k$. Dette er en presis påstand om samlet tallfeil;
@@ -1052,6 +1176,10 @@ Ved rang 1 beholder vi bare det første mønsteret:
 $$A_1=\begin{bmatrix}1.5&1.5\\1.5&1.5\end{bmatrix},\qquad
 A-A_1=\begin{bmatrix}0.5&-0.5\\-0.5&0.5\end{bmatrix}.$$
 
+Legg merke til at $A_1=q_1(q_1^TA)$: hver kolonne i $A$ projiseres på
+$q_1$, som i [uke 4](uke4.qmd#uke4-projeksjon). Rang-$k$-tilnærmingen
+projiserer altså kolonnene i $A$ på de $k$ første $u$-retningene.
+
 Vi mister kontrasten, selv om alle fire elementene fortsatt er omtrent
 riktige. Feilen kan regnes uten en datamaskin:
 
@@ -1066,6 +1194,9 @@ at tabellene, skrevet som lange vektorer, har indreprodukt null:
 $$\|A-A_k\|_F^2=\sigma_{k+1}^2+\cdots+\sigma_p^2,
 \qquad p=\min(m,n).$$
 
+Vi kaller dette **halefeilformelen**: feilen kommer bare fra «halen»
+$\sigma_{k+1},\ldots,\sigma_p$ av singulærverdiene.
+
 Dette gir en måte å velge $k$ på før vi bygger bildet på nytt:
 legg sammen kvadratene av de vektene vi vil utelate, og sammenlign med
 feilen vi tillater. I dette $2\times2$-eksempelet sparer vi ikke lagring
@@ -1077,13 +1208,66 @@ kontrasten og den beregnede feilen.
 
 :::
 
+### Feilen uten å bygge bildet
+
+Formelen gir feilen uten at vi bygger et eneste bilde. Cellen regner ut
+$\|A-A_k\|_F/\|A\|_F$ fra singulærverdiene for noen få $k$ og sammenligner
+med tabellen fra eksperiment 5. Vi tar også med $k=15$ og $k=16$, der feilen
+passerer 5 %.
+
+```{pyodide-python}
+#| label: week7-tail-list
+# Relativ feil fra de utelatte singulærverdiene alene, uten å bygge et eneste bilde.
+
+A = portrait
+s = np.linalg.svd(A, compute_uv=False)
+for k in (5,10,15,16,20,40):
+    tail = np.sqrt(np.sum(s[k:]**2))          # ||A-A_k||_F fra de utelatte singulærverdiene
+    print(f'k = {k:2d}: relativ feil fra singulærverdiene {100*tail/np.linalg.norm(A,"fro"):6.2f} %')
+```
+
+**Hva viser cellen?** Singulærverdiene alene gir de samme prosentene som
+tabellen i eksperiment 5. Ved $k=15$ er feilen 5.11 %, ved $k=16$ er den
+4.78 %, så 16 er den minste rangen med relativ feil høyst 5 %. Dermed kan vi
+velge $k$ før vi bygger bildet.
+
+**Øv på dette:** [halefeil og minste tillatte rang](#uke7-oppg-hale) og
+[velg rang fra singulærverdiene i Python](#uke7-kode-rang).
+
+<details class="reading-step">
+<summary>Gå i dybden: lengder i en ortonormal basis</summary>
+
+Hvis $q_1,\ldots,q_n$ er en ortonormal basis og $x=c_1q_1+\cdots+c_nq_n$, er
+
+$$\|x\|_2^2=x^Tx=\sum_{i,j}c_ic_j\,q_i^Tq_j=c_1^2+\cdots+c_n^2,$$
+
+fordi $q_i^Tq_j$ er 1 når $i=j$ og 0 ellers. Dette er Pytagoras fra uke 4,
+nå i mange dimensjoner.
+
+**Eksempel.** $x=(3,1)^T$, $q_1=(1,1)^T/\sqrt2$, $q_2=(1,-1)^T/\sqrt2$. Da er
+$c_1=4/\sqrt2=2\sqrt2$ og $c_2=2/\sqrt2=\sqrt2$, og
+$c_1^2+c_2^2=8+2=10=3^2+1^2$.
+
+**Projeksjon på de $k$ første retningene.** Med $c_i=q_i^Tx$ er
+$p_k=c_1q_1+\cdots+c_kq_k=P_kx$ projeksjonen fra uke 4, der $P_k=Q_kQ_k^T$
+og $Q_k=[q_1\ \cdots\ q_k]$. Da er $\|p_k\|_2^2=c_1^2+\cdots+c_k^2$ og
+$\|x-p_k\|_2^2=c_{k+1}^2+\cdots+c_n^2$. Når $k$ øker med 1, får den første
+summen ett ikke-negativt ledd til, og den andre mister ett. Den projiserte
+delen kan derfor ikke bli mindre, og resten kan ikke bli større. Å projisere
+to ganger endrer ingenting: $P_kP_k=Q_k(Q_k^TQ_k)Q_k^T=P_k$, altså
+$P_k(I-P_k)=0$.
+
+</details>
+
 <details class="reading-step">
 <summary>Gå i dybden: feilformelen, ortogonalitet og lagring</summary>
 
 For en matrise $B$ er $\|B\|_F^2=\sum_{i,j}B_{ij}^2$.
 Vi kan også definere **Frobeniusindreproduktet** som
 $\langle B,C\rangle_F=\sum_{i,j}B_{ij}C_{ij}$: gang sammen tilsvarende
-elementer og summer. Det gjør basisideen fra 7.1 presis.
+elementer og summer. Det gjør basisideen fra 7.1 presis. Vi kan også regne
+det kolonne for kolonne: $\langle B,C\rangle_F=\sum_j b_j^Tc_j$, der $b_j$
+og $c_j$ er kolonne $j$ i $B$ og $C$.
 
 Rang-1-mønstrene $u_i v_i^T$ er ortonormale for dette indreproduktet:
 
@@ -1096,7 +1280,8 @@ kvadrert feil som summen av de utelatte vektene i andre potens:
 $$\boxed{\|A-A_k\|_F^2=\sum_{i=k+1}^{p}\sigma_i^2},
 \qquad p=\min(m,n).$$
 
-Kontroller formelen med cellen. Den er uavhengig av forrige celles tilstand.
+Kontroller formelen med cellen. De to tallene regnes ut på helt forskjellige
+måter, men skal bli like.
 
 ```{pyodide-python}
 #| label: week7-tail-check
@@ -1106,7 +1291,6 @@ Kontroller formelen med cellen. Den er uavhengig av forrige celles tilstand.
 A = portrait
 U,s,Vt = np.linalg.svd(A,full_matrices=False)
 k = 20
-# * skalerer hver U-kolonne; @ summerer de k vektede rang-1-bidragene.
 Ak = (U[:,:k]*s[:k]) @ Vt[:k,:]
 print('Direkte feil²:',np.linalg.norm(A-Ak,'fro')**2)
 print('Sum av utelatte vekter²:',np.sum(s[k:]**2))
@@ -1135,15 +1319,86 @@ Denne opptellingen er ikke en sammenligning med PNG eller JPEG.
 
 <div id="uke7-prosjekt"></div>
 
-### Virker samme forenkling like godt på alle bilder?
+### Hva om dataene har støy?
+
+Så langt har vi forenklet et bilde vi stolte på. Feilen målte vi mot det
+samme bildet, og den ble mindre for hver komponent vi tok med. Ofte er
+dataene ikke helt riktige: hver piksel har fått en liten, tilfeldig feil,
+**støy**. Vi skriver dataene som $Y=C+E$, der $C$ er det rene bildet og
+$E$ er støyen. Vi kjenner bare $Y$.
+
+Da kan vi måle på to måter. **Avviket mot dataene** $\|Y-Y_k\|_F$ sier
+hvor godt $Y_k$ passer det vi har målt. **Feilen mot det rene bildet**
+$\|Y_k-C\|_F$ sier hvor nær vi er det vi egentlig vil ha. I forsøket
+kjenner vi $C$, slik at vi kan sammenligne. Det rene bildet brukes bare
+til å vurdere resultatet, aldri til å lage $Y_k$. Cellen bruker den samme
+trunkeringen som før, nå på $Y$, og tegner singulærverdiene til $C$ og $Y$.
+Målet er å se om feilen mot det rene bildet også blir mindre for hver komponent.
+
+### Eksperiment 6 – færre komponenter, mindre støy?
+
+- **Gjett først:** Hvilken kolonne blir 0 ved $k=96$? Synker begge
+  kolonnene hele veien?
+- Kjør cellen, og finn den $k$ i tabellen som gir minst feil mot det rene bildet.
+- Bytt støynivået `0.1` til `0.05` eller `0.2`, og undersøk hvor minimum flytter seg.
+
+```{pyodide-python}
+#| label: week7-noise
+# Data = rent bilde + støy. Vi trunkerer dataene Y og måler mot to referanser.
+# I virkeligheten kjenner vi ikke C; her gjør vi det, slik at vi kan se hva trunkeringen gjør.
+
+C = portrait
+Y = C + .1*np.random.default_rng(3).standard_normal(C.shape)
+print(' k   avvik mot dataene Y   feil mot rent bilde C')
+for k in (5,10,20,40,96):
+    Yk = rank_image(Y,k)
+    print(f'{k:2d}   {100*np.linalg.norm(Y-Yk)/np.linalg.norm(Y):12.2f} %   {100*np.linalg.norm(Yk-C)/np.linalg.norm(C):14.2f} %')
+show_images({'rent bilde C': C, 'data Y': Y, '15 komponenter av Y': rank_image(Y,15)})
+show_singular_values({'rent bilde C': np.linalg.svd(C,compute_uv=False), 'data Y': np.linalg.svd(Y,compute_uv=False)})
+```
+
+**Hva viser forsøket?** Avviket mot dataene synker fra omtrent 17 % til
+0 %. Feilen mot det rene bildet er minst rundt $k=10$–$20$, omtrent 9.5 %,
+og vokser igjen til nesten 13 % når alle komponentene er med: da har vi
+tatt med all støyen også. Singulærverdiene forklarer det. De første til $Y$
+ligner dem til $C$, men etter de første 10–15 ligger singulærverdiene til
+$Y$ klart over dem til $C$ og avtar langsomt. Der beskriver komponentene
+stort sett støy. Færre komponenter kan altså gi et **bedre** bilde. Med
+mindre støy flytter minimum mot større $k$, med mer støy mot mindre $k$.
+I [prosjekt 7](project_week7.qmd) forklarer du dette med en feilformel og
+velger $k$ uten å kjenne $C$.
+
+**Øv på dette:** [data med støy](#uke7-oppg-stoy) i 7.8.
+
+<details class="reading-step">
+<summary>Gå i dybden: rent bilde pluss støy for hånd</summary>
+
+Ta $C=\begin{bmatrix}0&0\\0&3\end{bmatrix}$ og
+$E=\begin{bmatrix}0.5&0\\0&0\end{bmatrix}$, slik at
+$Y=\begin{bmatrix}0.5&0\\0&3\end{bmatrix}$.
+Sorter: $\sigma_1=3$ med $u_1=v_1=e_2$, og $\sigma_2=0.5$ med $u_2=v_2=e_1$.
+Da er $Y_1=\begin{bmatrix}0&0\\0&3\end{bmatrix}=C$.
+
+| $k$ | $\|Y-Y_k\|_F$ | $\|Y_k-C\|_F$ |
+|--:|--:|--:|
+| 0 | $\sqrt{9.25}\approx3.04$ | 3 |
+| 1 | 0.5 | 0 |
+| 2 | 0 | 0.5 |
+
+Avviket mot dataene synker hele veien; feilen mot det rene bildet er minst
+ved $k=1$. Her lå støyen i en retning der det rene bildet var null, og det
+er ikke alltid slik.
+
+</details>
+
+<details class="reading-step">
+<summary>Gå i dybden: samme budsjett, fire bilder</summary>
 
 En metode som fungerer godt på ett bilde, trenger ikke fungere like godt
 på et annet. Her får fire like store bilder det samme lagringsbudsjettet,
 slik at forskjellen ligger i bildenes mønstre. Forsøket lar oss undersøke
 når lav rang er en nyttig forenkling, og når den mister informasjon vi
-vil bevare. Dette er vurderingen dere skal gjøre i ukens prosjekt.
-
-### Eksperiment 6 – samme budsjett, ulik informasjon
+vil bevare.
 
 Kjør først cellen som bare viser originalene.
 
@@ -1179,8 +1434,9 @@ show_images({name:rank_image(A,k) for name,A in images.items()})
 **Snakk sammen:** Hvilken forventning ble utfordret? Velg én detalj som
 må bevares i et av bildene. Er liten samlet pikselfeil nok til å sikre det?
 Forklar hvorfor et bilde kan være enkelt å beskrive med ord og likevel
-kreve mange SVD-komponenter. Dette er utgangspunktet for
-[prosjekt 7](project_week7.qmd).
+kreve mange SVD-komponenter.
+
+</details>
 
 <details class="reading-step">
 <summary>Gå i dybden: regn på budsjettet og den diagonale streken</summary>
@@ -1199,6 +1455,19 @@ enn de andre. SVD-forenkling utnytter bestemte lineære sammenhenger mellom
 rader og kolonner, ikke enhver form for visuell enkelhet.
 
 </details>
+
+### Svar på ukens spørsmål
+
+Vi startet med spørsmålet **Hvilken informasjon bevares når vi forenkler?**
+SVD skriver matrisen som en sum av rang-1-mønstre $\sigma_iu_iv_i^T$,
+ordnet etter vekt. Når vi beholder de $k$ første, bevarer vi retningene med
+størst strekk, og vi vet nøyaktig hvor mye vi mister:
+$\|A-A_k\|_F^2=\sigma_{k+1}^2+\cdots+\sigma_p^2$. Det vi kaster, er de
+svake retningene. Det kan være detaljer vi ønsker å beholde, men det kan
+også være støy (eksperiment 6). Når vi løser likninger, er de svake
+retningene også de farlige: der deler vi på små $\sigma_i$ og forsterker
+datafeil (7.4). Hva som er «godt nok», avhenger derfor av hva vi vil
+bevare, og hvor mye vi stoler på dataene.
 
 <details class="reading-step">
 <summary>Gå i dybden: samle trådene og se fram mot optimering</summary>
@@ -1229,7 +1498,7 @@ hvorfor det kan skje, og SVD gir oss en enkel måte å velge ett svar på.
 
 ::: {.callout-note title="Håndeksempel: best tilpasning, deretter kortest løsning"}
 
-**Utgangspunkt.** Vi bruker den rektangulære matrisen fra 7.3 og velger en høyreside:
+**Utgangspunkt.** Vi bruker den rektangulære matrisen $B$ fra fordypningen i 7.3 og velger en høyreside:
 
 $$B=\begin{bmatrix}2&0&0\\0&0&0\end{bmatrix},\qquad
 b=\begin{bmatrix}6\\4\end{bmatrix}.$$
@@ -1269,6 +1538,7 @@ Første sum minimeres ved $z_i=c_i/\sigma_i$. Siste sum er bidraget
 utenfor kolonnerommet og kan ikke endres. Koordinatene $z_{r+1},\ldots,z_n$
 påvirker ikke residualen, så vi setter dem til null for å minimere
 $\|x\|_2=\|z\|_2$. Tilbake i de opprinnelige koordinatene blir svaret
+den samme oppskriften som i [7.4](#uke7-kondisjon), men summen stopper ved $r$:
 
 $$\boxed{x^+=A^+b=\sum_{i=1}^r\frac{u_i^Tb}{\sigma_i}v_i}.$$
 
@@ -1288,25 +1558,189 @@ blant alle minste-kvadratersløsningene.
 ### Null og nesten null er forskjellige valg
 
 En positiv singulærverdi inngår i den eksakte pseudoinversen, selv om
-den er svært liten. Divisjonen med denne verdien kan forsterke støy,
-som i 7.4. **Trunkert SVD** beholder bare de $k$ største positive
-singulærverdiene:
+den er svært liten, og divisjonen kan forsterke støy. Som i
+[7.4](#uke7-kondisjon) kan vi i stedet stoppe summen tidligere, med
+**trunkert SVD**:
 
 $$x_k=\sum_{i=1}^k\frac{u_i^Tb}{\sigma_i}v_i,\qquad k<r.$$
 
 Dette er **regularisering**: vi begrenser løsningen til noen utvalgte
-retninger. Vi kan få mindre støyforsterkning, men mister også virkelig
-signal i retningene vi utelater. $x_k$ trenger derfor ikke være en
-minste-kvadratersløsning for det opprinnelige problemet.
-
-I [prosjekt 6](project_week6.qmd) endret prekondisjonering systemet for
-å hjelpe iterasjonen, samtidig som den eksakte løsningen kunne finnes
-igjen. Trunkering endrer hvilke løsninger vi tillater. Dette skillet
-blir viktig i [prosjekt 7, del B](project_week7.qmd), der vi prøver å
-rekonstruere et signal fra usikre data.
+retninger, får mindre støyforsterkning, men mister signal i retningene vi
+utelater. $x_k$ trenger derfor ikke være en minste-kvadratersløsning for
+det opprinnelige problemet. I motsetning til prekondisjoneringen i
+[prosjekt 6](project_week6.qmd) endrer trunkering hvilke løsninger vi
+tillater; det skillet bruker du i [prosjekt 7, del B](project_week7.qmd).
 
 I flyttallsregning bruker også `np.linalg.pinv` en terskel og behandler
 svært små singulærverdier som null. En terskel for avrunding fra uke 1
 og en terskel valgt ut fra usikkerhet i dataene svarer på ulike spørsmål.
+
+## 7.8 Oppgaver
+
+<div id="uke7-oppgaver"></div>
+
+Oppgavene øver på regningene du trenger i prosjekt 7, sortert etter de
+samme ideene som forelesningen. Arbeid på papir først. Svar eksakt uten
+avrunding, for eksempel `sqrt(5)` eller `3/2`. Vektorer skriver du én
+koordinat i hvert felt. Begrunnelsene skriver du i egne notater; feltene
+kontrollerer bare regningen.
+
+<div id="uke7-oppg-diagonal"></div>
+
+### SVD av diagonalmatriser
+
+Matrisen $D=\operatorname{diag}(2,5,1)$ har positive tall på diagonalen.
+Sorter dem, og finn enhetsvektoren som hører til den største
+singulærverdien. Velg fortegnet slik at ingen koordinat i $v_1$ er
+negativ. Bygg så $D_1$ og $D_2$, og regn ut feilene med halefeilformelen fra 7.5.
+
+```{math-exercise}
+#| label: week7-task-diagonal
+#| caption: Sorter, behold og mål feilen
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: σ₁, σ₂, σ₃, v₁ første koordinat, v₁ andre koordinat, v₁ tredje koordinat, feil ved rang 1, feil ved rang 2
+
+$\sigma_1=$ _[5], $\sigma_2=$ _[2], $\sigma_3=$ _[1]
+
+$v_1=$ vec[0,1,0]
+
+$\|D-D_1\|_F=$ _[sqrt(5)]
+
+$\|D-D_2\|_F=$ _[1]
+```
+
+**Forklar:** Hvorfor er $D_1$ ikke $\operatorname{diag}(2,0,0)$?
+
+<div id="uke7-oppg-projeksjon"></div>
+
+### SVD fra resultatsiden og som projeksjon
+
+La $A=\begin{bmatrix}3&1\\1&3\end{bmatrix}$ og $u_1=v_1=(1,1)^T/\sqrt2$
+med $\sigma_1=4$. Regn ut raden $u_1^TA$ og sammenlign med
+$\sigma_1v_1^T$. Bygg deretter $P_1=u_1u_1^T$ og produktet $P_1A$.
+
+```{math-exercise}
+#| label: week7-task-left-projection
+#| caption: Raden u₁ᵀA og projeksjonen P₁A
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første tall i u₁ᵀA, andre tall i u₁ᵀA, element (1 1) i P₁A, element (1 2) i P₁A, feil ved rang 1
+
+$u_1^TA=($ _[2*sqrt(2)] $,$ _[2*sqrt(2)] $)$
+
+$P_1A$: element $(1,1)$ er _[2], element $(1,2)$ er _[2]
+
+$\|A-P_1A\|_F=$ _[2]
+```
+
+**Forklar:** Hvorfor er $\lVert A-P_1A\rVert_F$ lik den andre singulærverdien?
+
+<div id="uke7-oppg-losning"></div>
+
+### Løs og trunker i SVD-koordinater
+
+Vi bruker matrisen fra 7.3, $A=\begin{bmatrix}0&2\\1&0\end{bmatrix}$, med
+$U=I$, $\Sigma=\operatorname{diag}(2,1)$, $v_1=e_2$ og $v_2=e_1$.
+Høyresiden er $b=(4,3)^T$. Finn datakoordinatene $u_i^Tb$, del på
+$\sigma_i$ og bygg løsningen med $v_i$, som i 7.4. Behold så bare den
+første retningen.
+
+```{math-exercise}
+#| label: week7-task-svd-solve
+#| caption: Projiser, del og bygg
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: x første koordinat, x andre koordinat, x₁ første koordinat, x₁ andre koordinat, residualnorm for x₁
+
+Full løsning: $x=$ vec[3,2]
+
+Bare første retning: $x_1=$ vec[0,2]
+
+$\|b-Ax_1\|_2=$ _[3]
+```
+
+**Forklar:** Hvilken datakoordinat er residualen for $x_1$ lik? Kontroller at $Ax=b$.
+
+<div id="uke7-oppg-hale"></div>
+
+### Hvor mange komponenter trenger vi?
+
+En $4\times4$-bildematrise har singulærverdiene $6,3,2,1$. Bruk
+halefeilformelen fra 7.5. Finn feilen ved rang 1 og 2, og den minste
+rangen $k$ som gir $\|A-A_k\|_F\leq2.5$.
+
+```{math-exercise}
+#| label: week7-task-tail
+#| caption: Halefeil og minste tillatte rang
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: feil ved rang 1, feil ved rang 2, minste tillatte rang
+
+$\|A-A_1\|_F=$ _[sqrt(14)]
+
+$\|A-A_2\|_F=$ _[sqrt(5)]
+
+Minste $k$: _[2]
+```
+
+**Forklar:** Hvor stor er den relative feilen ved $k=2$?
+
+<div id="uke7-kode-rang"></div>
+
+Skriv `rank_for_error(s, max_rel)`. Listen `s` inneholder
+singulærverdiene i synkende rekkefølge. Returner den minste $k$ slik at
+den relative feilen $\|A-A_k\|_F/\|A\|_F$ er høyst `max_rel`. Bruk
+halefeilformelen; du trenger ikke matrisen. Prøv $k=0,1,2,\ldots$ i en
+vanlig løkke.
+
+```{py-exercise}
+#| label: week7-python-rank-for-error
+#| caption: Velg rang fra singulærverdiene
+#| show-test-hints: false
+import numpy as np
+
+def rank_for_error(s, max_rel):
+    s = np.asarray(s, dtype=float)
+    # TODO: regn ut halefeilen for k = 0, 1, ..., len(s) og returner første k som er liten nok.
+    return None
+
+## TESTS ##
+assert rank_for_error([6., 3., 2., 1.], 0.55) == 1
+assert rank_for_error([6., 3., 2., 1.], 0.5) == 2
+assert rank_for_error([6., 3., 2., 1.], 0.0) == 4
+assert rank_for_error([4., 3.], 1.0) == 0
+```
+
+**Forklar:** Hvorfor finnes det alltid en $k$ som oppfyller kravet når
+`max_rel` er ikke-negativ?
+
+<div id="uke7-oppg-stoy"></div>
+
+### Data med støy
+
+Et lite rent bilde er $C=\operatorname{diag}(6,2)$, og støyen er
+$E=\operatorname{diag}(0,1)$, slik at dataene er $Y=C+E$. Finn SVD av
+$Y$ ved å sortere diagonaltallene, og bygg $Y_1$. Regn ut avviket mot
+dataene og feilen mot det rene bildet for rang 1 og 2, som i eksperiment 6.
+
+```{math-exercise}
+#| label: week7-task-noise
+#| caption: Avvik mot data og feil mot rent bilde
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: avvik mot data ved rang 1, feil mot rent bilde ved rang 1, feil mot rent bilde ved rang 2, rangen med minst feil mot rent bilde
+
+$\|Y-Y_1\|_F=$ _[3]
+
+$\|Y_1-C\|_F=$ _[2]
+
+$\|Y_2-C\|_F=$ _[1]
+
+Rangen med minst feil mot det rene bildet: _[2]
+```
+
+**Forklar:** Sammenlign med håndeksempelet i fordypningen til eksperiment 6.
+Hvorfor hjelper det ikke å kutte den svake retningen her?
 
 :::
