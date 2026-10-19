@@ -47,7 +47,7 @@ website:
             file: pages/uke8.qmd
           - text: "Uke 9 – gradientmetoden og søk uten deriverte"
             file: pages/uke9.qmd
-          - text: "Uke 10 – Newtons metode og Gauss–Newton"
+          - text: "Uke 10 – Newtons metode"
             file: pages/uke10.qmd
           - text: "Uke 11 – lineær programmering"
             file: pages/uke11.qmd

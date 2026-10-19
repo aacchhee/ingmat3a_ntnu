@@ -12,35 +12,31 @@
 
 ### Fra helning til krumning
 
-I [uke 9](uke9.qmd) så vi at gradientmetoden med fast steg er en
-fikspunktiterasjon. Nær et minimum ganges feilen med
-$1-\alpha\lambda_i$ langs hver egenretning til Hessianen, steget må
-oppfylle $\alpha<2/\lambda_{\max}$, og selv det beste faste steget gir
-bare faktoren $(\kappa-1)/(\kappa+1)$ per steg. Armijo-testen gjorde
-steget trygt, men ikke raskere.
+I [uke 9](uke9.qmd) gjorde Armijo-testen gradientmetoden trygg, men ikke
+rask. Selv med det beste faste steget krymper feilen bare med en fast
+faktor i hvert steg. Gradienten forteller hvor bratt bakken er, men ikke
+hvordan den krummer.
 
-Denne uka bruker vi **krumningen**, altså Hessianen, til å velge både
-retning og lengde. Det gir **Newtons metode** for optimering. Du har
-allerede brukt den: den raskeste omskrivingen i uke 2 var Newton, uten at
-vi sa det. Vi skal se hvorfor metoden er så rask, hvorfor den ikke bryr
-seg om hvilke enheter vi måler i, og hva et steg koster. Deretter ser vi
-hva som går galt når den lokale modellen lyver, og hvordan Cholesky og
-Armijo sikrer metoden. Til slutt blir Newton til Gauss–Newton for
-minste kvadrater.
+Denne uka bruker vi også **krumningen**, altså Hessianen. Det gir
+**Newtons metode** for optimering. Vi går fire steg og tar oss tid til å
+regne hvert av dem for hånd, linje for linje. På slutten av hvert steg
+lenker vi til regneoppgavene i 10.5 som øver på akkurat det steget.
 
-**Forelesning** viser hovedløpet. **Gå i dybden** åpner bevis, Newton med
-CG inni steget og sammenligningen med SciPy. Regneoppgavene står i 10.6 og
-kodeoppgavene i 10.7.
+**Forelesning** viser hovedløpet. **Gå i dybden** åpner beviset for at
+sifrene dobles, hva som skjer når vi bytter enheter, hvordan Cholesky løser
+Newton-systemet, hva et Newton-steg koster, og en sammenligning med SciPy.
+Flere regneoppgaver står i 10.5 og kodeoppgavene i 10.6.
 
 ### Kort løype
 
-1. [Sifrene dobles](#uke10-newton): Newton mot gradientmetoden.
-2. [Uke 2 var Newton](#uke10-likning): den lokale kvadratiske modellen og $Hp=-g$.
-3. [Riktig skala gratis](#uke10-skala): kvadratisk konvergens og enheter.
-4. [Hva koster et steg?](#uke10-cholesky): Cholesky løser Newton-systemet.
-5. [Når modellen lyver](#uke10-stasjonaer): sadelpunkter og maksimum.
-6. [Sikre retning og lengde](#uke10-demping): Cholesky-forsøket og Armijo.
-7. [Gauss–Newton](#uke10-gauss-newton): Newton for minste kvadrater og Levenberg–Marquardt.
+1. [Newton er regelen fra uke 2](#uke10-newton): den lokale kvadratiske
+   modellen og Newton-likningen $Hp=-g$.
+2. [Sifrene dobles](#uke10-kvadratisk): Newton mot gradientmetoden, og
+   kvadratisk konvergens i en feiltabell.
+3. [Newton kan gå til feil punkt](#uke10-stasjonaer): sadelpunkter,
+   maksimum og steg som går oppover.
+4. [Reparasjonen](#uke10-demping): Cholesky-forsøket retter retningen,
+   Armijo kontrollerer lengden.
 
 ### Dette bygger vi videre på
 
@@ -48,51 +44,310 @@ kodeoppgavene i 10.7.
 |:--|:--|
 | [Uke 2: fikspunktiterasjon](page4.qmd) | Hvorfor var den tredje omskrivingen så mye raskere enn de andre? |
 | [Prosjekt 2: Newtonfraktaler](project_week2.qmd) | Hvilket nullpunkt finner Newton fra en gitt start? |
-| [Uke 4: minste kvadrater](uke4.qmd#uke4-mk) | Hvordan løser vi $\min\|Ap-b\|$ med QR? |
-| [Uke 6: CG og SPD](uke6.qmd#uke6-cg) | Hvordan løser vi et SPD-system, direkte eller iterativt? |
-| [Prosjekt 6: prekondisjonering](project_week6.qmd) | Hvilken skala gjør en skål rund? |
-| [Uke 9: fast steg og Armijo](uke9.qmd) | Hvorfor er gradientmetoden treg, og hvordan sikrer vi et steg? |
+| [Uke 8: gradient og Hessian](uke8.qmd#uke8-hessian) | Hvordan ser Taylor-tilnærmingen av andre orden ut? |
+| [Uke 6: SPD-matriser](uke6.qmd#uke6-energi) | Hva betyr det at en symmetrisk matrise er positiv definit? |
+| [Uke 9: Armijo](uke9.qmd#uke9-linjesok) | Hvordan godtar eller halverer vi et steg? |
 
 ### Læringsmål
 
 Etter denne uka skal du kunne
 
-- utlede Newton-steget som minimum av den lokale kvadratiske modellen og
-  løse $Hp=-g$, også med Cholesky-faktorisering,
-- kjenne igjen kvadratisk konvergens i en feiltabell og forklare
-  forskjellen fra den lineære faktoren i uke 9,
-- forklare hvorfor Newton-steget ikke avhenger av enhetene, mens
-  gradientretningen gjør det,
-- bruke $g^Tp=-p^THp$ til å forklare når Newton-retningen peker oppover,
-  og sikre metoden med et Cholesky-forsøk for $H+\mu I$ og Armijo-demping,
-- sette opp et Gauss–Newton-steg som et minste kvadraters problem.
+- utlede Newton-steget som bunnen av den lokale kvadratiske modellen, og
+  regne ut ett Newton-steg for hånd for en funksjon av to variabler:
+  gradient, Hessian, et $2\times2$-system og det nye punktet,
+- kjenne igjen kvadratisk konvergens i en feiltabell ved at antall riktige
+  sifre omtrent dobles, og forklare forskjellen fra den faste faktoren i uke 9,
+- bruke $g^Tp=-p^THp$ til å forklare når Newton-retningen peker oppover, og
+  hvorfor ren Newton kan ende i et sadelpunkt eller et maksimum,
+- teste om en $2\times2$-matrise er SPD med Cholesky, og sikre Newton med et
+  Cholesky-forsøk for $H+\mu I$ og Armijo-halvering.
 
-## 10.1 Sifrene dobles
+## 10.1 Newton er regelen fra uke 2
 
 <div id="uke10-newton"></div>
 
-### Eksperiment 1 – to metoder fra samme start
+### Kan krumningen gjøre søket raskere?
 
-Vi bruker Himmelblaus funksjon fra uke 9,
+I uke 9 lette vi etter bunnen av Himmelblaus funksjon
 
-$$f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2,$$
+$$f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2$$
 
-med minimumet $(3,2)$. Fra start i $(2.5,\,2.5)$ sammenligner vi to
-metoder:
+med gradientmetoden. Den gikk trygt nedover, men sakte: nær minimumet
+$(3,2)$ ble feilen bare ganget med omtrent $0.52$ i hvert steg, selv med det
+beste faste steget. Gradienten sier hvor bratt det er akkurat her, men
+ingenting om hvordan bakken bøyer seg litt lenger borte.
 
-- **gradientmetoden** med det beste faste steget fra uke 9,
-  $\alpha=2/(\lambda_{\min}+\lambda_{\max})$, der $\lambda_i$ er
-  egenverdiene til Hessianen i $(3,2)$;
-- **Newtons metode**, som du snart skal se oppskriften på.
+Nå tar vi også med krumningen, altså Hessianen. Metoden som gjør det, heter
+**Newtons metode**, og du har faktisk brukt den før: i uke 2, uten at vi
+kalte den det. I 10.1 bygger vi oppskriften i tre rolige trinn: først for
+én likning, så for minimering i én variabel, og til slutt i to variabler.
+Til slutt tar vi ett Newton-steg for hånd på Himmelblaus funksjon. Hvor
+rask metoden er, ser vi i 10.2.
 
-Vi måler avstanden $e_k=\|z_k-(3,2)\|$ etter $k$ steg.
+### Uke 2 var Newton
 
-**Forutsi:** Uke 9 ga faktoren $(\kappa-1)/(\kappa+1)\approx0.52$ for
-gradientmetoden. Hvor stor tror du feilen er etter fem steg, når den
-starter på $0.71$?
+<div id="uke10-likning"></div>
+
+I uke 2 løste vi likningen
+
+$$h(x)=x^3+x-1=0.$$
+
+Den har én reell løsning, $r\approx0.6823$. Vi prøvde tre omskrivinger
+$x=g(x)$, og den tredje,
+
+$$g_3(x)=\frac{2x^3+1}{3x^2+1},$$
+
+var langt raskest. Nå skal vi se hvor den kom fra.
+
+**Idéen i én variabel.** Vi kan ikke løse $h(x)=0$ direkte. Men nær en
+gjetning $x_k$ ligner grafen til $h$ på tangentlinjen, og nullpunktet til en
+rett linje kan vi alltid finne. Tangentlinjen i $x_k$ er
+
+$$y=h(x_k)+h'(x_k)(x-x_k).$$
+
+Vi setter $y=0$ og løser for $x$, ett trinn om gangen:
+
+$$0=h(x_k)+h'(x_k)(x-x_k)
+\quad\Longrightarrow\quad
+x-x_k=-\frac{h(x_k)}{h'(x_k)}
+\quad\Longrightarrow\quad
+x=x_k-\frac{h(x_k)}{h'(x_k)}.$$
+
+Dette nullpunktet blir neste gjetning $x_{k+1}$. Det er **Newtons metode**
+for en likning.
+
+**Regelen for vår likning.** Vi setter inn $h$ og forenkler:
+
+1. Deriver: $h'(x)=3x^2+1$.
+2. Sett inn: $x-\dfrac{h(x)}{h'(x)}=x-\dfrac{x^3+x-1}{3x^2+1}$.
+3. Skriv $x$ med samme nevner, $x=\dfrac{x(3x^2+1)}{3x^2+1}$, og trekk fra:
+   $$x-\frac{x^3+x-1}{3x^2+1}=\frac{x(3x^2+1)-(x^3+x-1)}{3x^2+1}.$$
+4. Gang ut telleren: $x(3x^2+1)=3x^3+x$, så telleren er
+   $3x^3+x-x^3-x+1=2x^3+1$.
+5. Altså er $x-\dfrac{h(x)}{h'(x)}=\dfrac{2x^3+1}{3x^2+1}=g_3(x)$.
+
+**$g_3$ var Newtons metode.** Vi regner de to første iterasjonene fra
+$x_0=0.5$, som i uke 2:
+
+$$x_1=g_3(0.5)=\frac{2\cdot0.125+1}{3\cdot0.25+1}=\frac{1.25}{1.75}=\frac57\approx0.7143,$$
+
+$$x_2=g_3\!\left(\tfrac57\right)
+=\frac{2\cdot\frac{125}{343}+1}{3\cdot\frac{25}{49}+1}
+=\frac{593/343}{124/49}
+=\frac{593\cdot49}{343\cdot124}
+=\frac{593}{868}\approx0.6832.$$
+
+Cellen fortsetter iterasjonen fra $x_0=0.5$ og skriver ut feilen $|x_k-r|$
+etter hvert steg. Slik ser vi hvor raskt $g_3$ nærmer seg løsningen, og
+tallene bruker vi igjen i 10.2.
+
+```{pyodide-python}
+#| label: week10-week2-table
+r = 0.6823278038280193          # løsningen fra uke 2
+x = 0.5
+print(' k   x_k            feil |x_k - r|')
+for k in range(6):
+    print(f'{k:2d}   {x:.10f}   {abs(x - r):.1e}')
+    x = (2*x**3 + 1)/(3*x**2 + 1)
+```
+
+Feilene er $0.18$, $0.032$, $8.5\cdot10^{-4}$, $6.2\cdot10^{-7}$,
+$3.3\cdot10^{-13}$ og til slutt null i flyttall. Legg merke til
+eksponentene; vi kommer tilbake til dem i 10.2.
+
+### Newton for minimering: der den deriverte er null
+
+For å minimere en funksjon $f$ av én variabel leter vi etter et punkt der
+$f'(x)=0$. Det er også en likning, så vi bruker Newton på den. Vi setter
+altså $h=f'$, og da er $h'=f''$:
+
+$$x_{k+1}=x_k-\frac{f'(x_k)}{f''(x_k)}.$$
+
+Likningen fra uke 2 var faktisk et minimeringsproblem i forkledning. Ta
+
+$$f(x)=\tfrac14x^4+\tfrac12x^2-x.$$
+
+Vi deriverer ledd for ledd: $f'(x)=x^3+x-1$ og $f''(x)=3x^2+1$. Siden
+$f''(x)>0$ for alle $x$, krummer $f$ oppover overalt. Funksjonen er konveks
+(uke 8), og det eneste stasjonære punktet $r$ er minimumet. **Newton for å
+minimere $f$ er nøyaktig $g_3$.**
+
+**Det samme steget fra en modell.** Det finnes en annen måte å se steget på,
+og den virker også i flere variabler. Nær $x_k$ erstatter vi $f$ med den
+parabelen som har samme verdi, samme helning og samme krumning som $f$ i
+$x_k$. Det er Taylor-polynomet av andre grad, skrevet med steget
+$p=x-x_k$:
+
+$$m(p)=f(x_k)+f'(x_k)\,p+\tfrac12f''(x_k)\,p^2.$$
+
+Når $f''(x_k)>0$, har parabelen et bunnpunkt. Vi finner det ved å derivere
+med hensyn på $p$ og sette lik null:
+
+$$m'(p)=f'(x_k)+f''(x_k)\,p=0
+\quad\Longrightarrow\quad
+p=-\frac{f'(x_k)}{f''(x_k)}.$$
+
+Det er Newton-steget. **Newton går til bunnen av den lokale parabelen.**
+Kontroll med tallene over: i $x_0=0.5$ er $f'(0.5)=0.125+0.5-1=-0.375$ og
+$f''(0.5)=0.75+1=1.75$. Da er $p=0.375/1.75=3/14\approx0.2143$, og
+$x_1=0.5+3/14=5/7$, som før.
+
+La oss se dette som et bilde. Cellen tegner $f$ og parabelen $m$ rundt
+$x_0=0.5$, og en trekant der parabelen har bunnen sin. Det er punktet
+Newton hopper til.
+
+```{pyodide-python}
+#| label: week10-model-1d
+# f fra uke 2, parabelen i x0 = 0.5 og bunnen av parabelen (Newton-punktet x1).
+show_model(lambda x: x**4/4 + x**2/2 - x, lambda x: x**3 + x - 1,
+           lambda x: 3*x**2 + 1, x0=.5, xlim=(-.5, 1.5))
+```
+
+**Hva viser bildet?** Nær $x_0$ ligger parabelen nesten oppå $f$. Bunnen av
+parabelen, $x_1=5/7\approx0.714$, ligger derfor nær bunnen av $f$ i
+$r\approx0.682$. I $x_1$ tegner vi en ny parabel, og slik fortsetter vi.
+
+### Flere variabler: Newton-likningen
+
+I to variabler skriver vi punktet som $z=(x,y)$. Vi bytter $f'$ med
+gradienten $g=\nabla f$ og $f''$ med Hessianen $H$ fra
+[uke 8.3](uke8.qmd#uke8-hessian). Parabelen blir den
+kvadratiske modellen
+
+$$m(p)=f(z_k)+g^Tp+\tfrac12p^THp,$$
+
+der $g=g(z_k)$ og $H=H(z_k)$ er regnet ut i det nåværende punktet, og
+$p=(p_1,p_2)$ er steget. Hvis vektorformen ikke sitter, kan vi skrive
+modellen ut med komponenter. Hessianen er symmetrisk, så $h_{21}=h_{12}$:
+
+$$m(p)=f(z_k)+g_1p_1+g_2p_2+\tfrac12\big(h_{11}p_1^2+2h_{12}p_1p_2+h_{22}p_2^2\big).$$
+
+Bunnen av modellen ligger der begge partiellderiverte er null:
+
+$$\frac{\partial m}{\partial p_1}=g_1+h_{11}p_1+h_{12}p_2=0,\qquad
+\frac{\partial m}{\partial p_2}=g_2+h_{12}p_1+h_{22}p_2=0.$$
+
+Som matriselikning er dette $g+Hp=0$. Det gir **Newton-likningen**
+
+$$\boxed{H(z_k)\,p_k=-g(z_k),\qquad z_{k+1}=z_k+p_k.}$$
+
+I hvert steg løser vi altså ett lineært system, med to variabler et
+$2\times2$-system. Når $H$ er SPD, er modellen en skål, og $p_k$ er bunnen
+av skålen. Hva som skjer når $H$ ikke er SPD, ser vi i 10.3. For en
+kvadratisk funksjon med SPD-Hessian er modellen lik funksjonen, og da
+treffer ett steg minimumet; det regner du på i 10.5.
+
+::: {.callout-note title="Håndeksempel: ett Newton-steg fra (2.5, 2.5)"}
+
+**Utgangspunkt.** Himmelblaus funksjon
+$f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2$ og startpunktet $z_0=(2.5,\,2.5)$. Vi
+kaller de to parentesene $a=x^2+y-11$ og $b=x+y^2-7$ (i uke 9 het de $u$ og
+$w$), slik at $f=a^2+b^2$.
+
+**Prøv selv.** Regn ut $g$ og $H$ i $z_0$, løs $Hp=-g$ og finn $z_1$. Blir
+$f(z_1)$ mindre enn $f(z_0)$?
+
+**Regnegangen.**
+
+1. **Gradienten** fant vi i [uke 9](uke9.qmd#uke9-gradient) med
+   kjerneregelen:
+   $$f_x=4xa+2b,\qquad f_y=2a+4yb.$$
+2. **Hessianen.** Vi deriverer gradienten en gang til med produktregelen.
+   Vi trenger $\partial a/\partial x=2x$, $\partial a/\partial y=1$,
+   $\partial b/\partial x=1$ og $\partial b/\partial y=2y$:
+   $$\begin{aligned}
+   f_{xx}&=\tfrac{\partial}{\partial x}(4xa+2b)=4a+4x\cdot2x+2=4a+8x^2+2,\\
+   f_{xy}&=\tfrac{\partial}{\partial y}(4xa+2b)=4x\cdot1+2\cdot2y=4x+4y,\\
+   f_{yy}&=\tfrac{\partial}{\partial y}(2a+4yb)=2+4b+4y\cdot2y=4b+8y^2+2.
+   \end{aligned}$$
+   Kontroll: $\tfrac{\partial}{\partial x}(2a+4yb)=4x+4y$ er også $f_{xy}$.
+   Ganget ut er $f_{xx}=12x^2+4y-42$ og $f_{yy}=12y^2+4x-26$, som Hessianen
+   i uke 9.
+3. **Sett inn $z_0=(2.5,\,2.5)$.** Først
+   $a=6.25+2.5-11=-2.25$ og $b=2.5+6.25-7=1.75$, så
+   $f(z_0)=5.0625+3.0625=8.125$. Deretter
+   $$\begin{aligned}
+   g_1&=4\cdot2.5\cdot(-2.25)+2\cdot1.75=-22.5+3.5=-19,\\
+   g_2&=2\cdot(-2.25)+4\cdot2.5\cdot1.75=-4.5+17.5=13,\\
+   h_{11}&=4\cdot(-2.25)+8\cdot6.25+2=-9+50+2=43,\\
+   h_{12}&=4\cdot2.5+4\cdot2.5=20,\\
+   h_{22}&=4\cdot1.75+8\cdot6.25+2=7+50+2=59.
+   \end{aligned}$$
+4. **Newton-likningen** $Hp=-g$ er
+   $$43p_1+20p_2=19\quad\text{(I)},\qquad 20p_1+59p_2=-13\quad\text{(II)}.$$
+5. **Løs systemet.** Fra (I) er $p_1=(19-20p_2)/43$. Sett inn i (II) og
+   gang hele likningen med $43$:
+   $$\begin{aligned}
+   20(19-20p_2)+43\cdot59\,p_2&=-13\cdot43,\\
+   380-400p_2+2537p_2&=-559,\\
+   2137p_2&=-939,
+   \end{aligned}$$
+   så $p_2=-939/2137\approx-0.4394$. Da er
+   $p_1=(19+20\cdot0.4394)/43=27.788/43\approx0.6462$.
+   Kontroll i (II): $20\cdot0.6462+59\cdot(-0.4394)=12.924-25.925\approx-13.00$.
+6. **Nytt punkt.** $z_1=(2.5+0.6462,\ 2.5-0.4394)=(3.1462,\ 2.0606)$.
+7. **Kontroll av $f$.** Med flere desimaler er $z_1\approx(3.14623,\,2.06060)$.
+   Her er $3.14623^2\approx9.8988$, så $a\approx9.8988+2.0606-11=0.9594$, og
+   $2.0606^2\approx4.2461$, så $b\approx3.1462+4.2461-7=0.3923$. Dermed er
+   $f(z_1)\approx0.9594^2+0.3923^2\approx0.9204+0.1539=1.074$. Verdien falt
+   fra $8.125$. Avstanden til minimumet $(3,2)$ krympet fra
+   $\sqrt{0.5^2+0.5^2}\approx0.71$ til $\sqrt{0.1462^2+0.0606^2}\approx0.16$.
+
+**Dette tar vi med oss.** Ett Newton-steg er: regn ut $g$ og $H$, løs ett
+lineært system, flytt. Modellen er bare lokal, så i $z_1$ må vi regne ut ny
+$g$ og ny $H$ og løse et nytt system.
+
+:::
+
+Cellen kontrollerer håndregningen. I Python løser `np.linalg.solve(H, -g)`
+systemet i trinn 5 uten å regne ut en invers matrise; det øver du på i
+kodeoppgavene i 10.6.
+
+```{pyodide-python}
+#| label: week10-hand-step
+z0 = np.array([2.5, 2.5])
+g, H = himmel_grad(z0), himmel_hess(z0)
+p = np.linalg.solve(H, -g)
+z1 = z0 + p
+print('g =', g, '  H =', H.tolist())
+print('p =', p.round(4), '  z1 =', z1.round(4))
+print(f'f(z0) = {himmel(z0):.3f},  f(z1) = {himmel(z1):.4f}')
+print(f'avstand til (3,2): {np.linalg.norm(z1 - [3, 2]):.3f},  g·p = {g @ p:.2f}')
+```
+
+**Øv på dette:** [Newton-regelen fra uke 2](#uke10-ov-uke2), [ett Newton-steg for hånd](#uke10-ov-handsteg) og [ett steg treffer for en kvadratisk funksjon](#uke10-ov-kvadratisk).
+
+## 10.2 Sifrene dobles
+
+<div id="uke10-kvadratisk"></div>
+
+### Hvor rask er Newton?
+
+I 10.1 tok vi ett Newton-steg for hånd fra $(2.5,\,2.5)$, og avstanden til
+minimumet $(3,2)$ krympet fra $0.71$ til $0.16$. Nå lar vi cellen ta flere
+slike steg, og vi lar gradientmetoden fra uke 9 starte i samme punkt. For
+begge metodene måler vi avstanden $e_k=\|z_k-(3,2)\|$, der $z_k$ er punktet etter
+$k$ steg. Gradientmetoden får det beste faste steget fra uke 9,
+$\alpha=2/(\lambda_{\min}+\lambda_{\max})$, der $\lambda_i$ er
+egenverdiene til Hessianen i $(3,2)$.
+
+Cellen tar Newton-stegene med `np.linalg.solve(H, -g)`, akkurat slik vi
+kontrollerte håndeksemplet. Målet er å se hvor mye raskere et søk blir når
+det også bruker krumningen, og å få en feiltabell vi kan tolke.
+
+### Eksperiment 1 – Newton og gradientmetoden fra samme start
+
+- Forutsi først: feilen starter på $0.71$, og gradientmetoden ganger den med
+  omtrent $0.52$ per steg. Hvor stor er feilen etter fem steg?
+- Kjør cellen og sammenlign de to kolonnene i tabellen.
+- Se på plottet: hvilken kurve er en rett linje, og hvilken bøyer nedover?
+- Bytt startpunktet til $(3.5,\,1.5)$ og undersøk om Newton fortsatt er
+  like rask.
 
 ```{pyodide-python}
 #| label: week10-newton-vs-gradient
+# Fem steg med Newton (oppskriften fra 10.1) og med gradientmetoden fra uke 9.
+# Utskriften viser avstanden til minimumet (3, 2) etter hvert steg.
 z_min = np.array([3., 2.])
 lam = np.linalg.eigvalsh(himmel_hess(z_min))
 alpha = 2/(lam[0] + lam[1])
@@ -108,112 +363,28 @@ for k in range(6):
 print(' k   Newton      gradient')
 for k in range(6):
     print(f'{k:2d}   {e_newton[k]:.1e}    {e_grad[k]:.1e}')
-
-fig, ax = plt.subplots(figsize=(6.5, 3.8))
-ax.semilogy(range(5), e_newton[:5], 'o-', label='Newton')
-ax.semilogy(range(6), e_grad, 's-', label='gradient, beste faste steg')
-ax.set(xlabel='steg k', ylabel='feil $e_k$ (logaritmisk)')
-ax.legend(); ax.grid(alpha=.3); plt.show()
+plot_errors({'Newton': e_newton, 'gradient, beste faste steg': e_grad})
 ```
-
-**Hva viser forsøket?**
 
 | $k$ | 0 | 1 | 2 | 3 | 4 | 5 |
 |:--|--:|--:|--:|--:|--:|--:|
 | Newton | 0.71 | 0.16 | $1.0\cdot10^{-2}$ | $6.3\cdot10^{-5}$ | $1.6\cdot10^{-9}$ | 0 |
 | gradient | 0.71 | 0.30 | 0.13 | 0.065 | 0.033 | 0.017 |
 
-Gradientmetoden halverer omtrent feilen i hvert steg, slik uke 9
-forutsa; etter fem steg er den fortsatt over $10^{-2}$. For Newton
-**dobles eksponenten**: $10^{-2}$, $10^{-5}$, $10^{-9}$. Etter fem steg er
-feilen null i flyttall. I plottet er gradientkurven en rett linje, mens
-Newton-kurven bøyer stadig brattere nedover.
+**Hva viser forsøket?** Det første Newton-steget, til $0.16$, er
+håndeksemplet fra 10.1. Gradientmetoden halverer omtrent feilen i hvert
+steg, slik uke 9 forutsa, og etter fem steg er feilen fortsatt over
+$10^{-2}$. Faktoren $0.52$ gir forutsigelsen $0.71\cdot0.52^5\approx0.03$;
+tabellen viser $0.017$, altså samme størrelsesorden. Newton har feilen null
+i flyttall etter fem steg. Resten av 10.2 handler om hvorfor feilen faller
+så brått.
 
-### Uke 2 var Newton
+### Tell sifrene
 
-<div id="uke10-likning"></div>
-
-En slik tabell har du sett før. I uke 2 løste vi $x^3+x-1=0$ med tre
-omskrivinger, og den tredje,
-
-$$g_3(x)=\frac{2x^3+1}{3x^2+1},$$
-
-var langt raskest, med $g_3'(r)=0$. Skriv Newtons metode for
-$h(x)=x^3+x-1$ på én brøk:
-
-$$x-\frac{h(x)}{h'(x)}=x-\frac{x^3+x-1}{3x^2+1}
-=\frac{x(3x^2+1)-(x^3+x-1)}{3x^2+1}=\frac{2x^3+1}{3x^2+1}.$$
-
-**$g_3$ var Newtons metode.** Derfor var den lineære faktoren null, og
-derfor doblet sifrene seg, akkurat som i
-[2.3](page4.qmd#lokalt-globalt-og-raskt) og i prosjekt 2.
-
-### Newton for minimering: minimer den lokale modellen
-
-For å minimere en funksjon $f$ av én variabel søker vi $f'(x)=0$. Newton
-på denne likningen gir
-
-$$x_{k+1}=x_k-\frac{f'(x_k)}{f''(x_k)}.$$
-
-Det samme steget får vi ved å minimere den lokale kvadratiske modellen
-$f(x_k)+f'(x_k)p+\tfrac12f''(x_k)p^2$: den deriverte med hensyn på $p$
-er $f'(x_k)+f''(x_k)p$, og den er null for $p=-f'(x_k)/f''(x_k)$.
-
-I flere variabler er $g=\nabla f$ gradienten og $H$ Hessianen, og
-modellen fra [støtteløpet i uke 8](uke8.qmd#uke8-hessian) er
-
-$$m_x(p)=f(x)+g(x)^Tp+\tfrac12p^TH(x)p.$$
-
-Modellens gradient med hensyn på $p$ er $g(x)+H(x)p$. Når den settes
-lik null, får vi **Newton-likningen**
-
-$$\boxed{H(x_k)\,p_k=-g(x_k),\qquad x_{k+1}=x_k+p_k.}$$
-
-Den har en entydig løsning når $H$ er invertibel. Når $H$ i tillegg er
-SPD, er $p_k$ det entydige minimumet av modellen. For en kvadratisk
-funksjon er modellen eksakt, og da treffer ett steg:
-
-::: {.callout-note title="Håndeksempel: ett Newton-steg i skålen fra uke 6"}
-
-**Utgangspunkt.** $\phi(x)=\tfrac12x^TAx-b^Tx$ med
-$A=\begin{bmatrix}3&1\\1&2\end{bmatrix}$ og $b=(5,5)^T$. Her er
-$g(x)=Ax-b$ og $H=A$ i alle punkter. Start i $x_0=(-2,3)^T$.
-
-**Prøv selv.** Finn $g(x_0)$, løs $Ap=-g(x_0)$ og regn ut $x_1=x_0+p$.
-
-**Regnegangen.**
-
-1. $g(x_0)=(-8,-1)^T$, så systemet er $3p_1+p_2=8$ og $p_1+2p_2=1$.
-2. Første likning gir $p_2=8-3p_1$. Innsatt: $p_1+2(8-3p_1)=1$, så
-   $p_1=3$ og $p_2=-1$.
-3. $x_1=(-2,3)^T+(3,-1)^T=(1,2)^T$, og $Ax_1-b=0$.
-
-**Dette tar vi med oss.** Fra ethvert startpunkt er
-$g(x+p)=g(x)+Ap=0$. For en ikke-kvadratisk funksjon er modellen bare
-lokal; da må vi regne ut en ny $H$ og en ny retning i hvert punkt.
-
-:::
-
-I Python løser `np.linalg.solve(A, -g)` systemet uten å regne ut en invers
-matrise. Det øver du på i kodeoppgave 1 i 10.7.
-
-## 10.2 Riktig skala gratis
-
-<div id="uke10-skala"></div>
-
-### Lokal kvadratisk konvergens
-
-Tabellen i 10.1 er ikke et lykketreff. La $x_*$ være et stasjonært punkt
-der $H(x_*)$ er invertibel, og anta at Hessianen ikke endrer seg for brått
-nær $x_*$. Da finnes en konstant $C$ slik at rene Newton-steg fra en start
-nær nok $x_*$ oppfyller
-
-$$e_{k+1}\le C\,e_k^2,\qquad e_k=\|x_k-x_*\|.$$
-
-Dette er **kvadratisk konvergens** fra
-[uke 2](page4.qmd#lokalt-globalt-og-raskt): når feilen er $10^{-3}$, blir
-neste feil omtrent $C\cdot10^{-6}$. Vi kan kontrollere
-påstanden i tabellen fra 10.1 ved å se på forholdet $e_{k+1}/e_k^2$:
+Se igjen på Newton-raden i tabellen over. Et praktisk mål
+på hvor mange riktige sifre vi har, er $-\log_{10}e_k$: feilen $10^{-3}$
+betyr omtrent tre riktige desimaler. Cellen regner det ut for hvert steg,
+og i siste kolonne forholdet $e_{k+1}/e_k^2$, som vi forklarer like under.
 
 ```{pyodide-python}
 #| label: week10-quadratic-ratio
@@ -221,155 +392,488 @@ z_min = np.array([3., 2.]); z = np.array([2.5, 2.5]); e = []
 for k in range(5):
     e.append(np.linalg.norm(z - z_min))
     z = z + np.linalg.solve(himmel_hess(z), -himmel_grad(z))
-for k in range(4):
-    print(f'k = {k}: e_k+1 / e_k^2 = {e[k+1]/e[k]**2:.2f}')
+print(' k   e_k       riktige sifre   e_k+1 / e_k^2')
+for k in range(5):
+    ratio = f'{e[k+1]/e[k]**2:.2f}' if k < 4 else ''
+    print(f'{k:2d}   {e[k]:.1e}   {-np.log10(e[k]):5.1f}           {ratio}')
 ```
 
-Forholdet holder seg mellom 0.3 og 0.6. Feilen kvadreres altså i hvert
-steg, ganget med en moderat konstant. Legg merke til at setningen sier
-**stasjonært punkt**, ikke minimum. Det kommer vi tilbake til i 10.4.
+| $k$ | 0 | 1 | 2 | 3 | 4 |
+|:--|--:|--:|--:|--:|--:|
+| $e_k$ | 0.71 | 0.16 | $1.0\cdot10^{-2}$ | $6.3\cdot10^{-5}$ | $1.6\cdot10^{-9}$ |
+| riktige sifre $\approx-\log_{10}e_k$ | 0.2 | 0.8 | 2.0 | 4.2 | 8.8 |
+
+Fra steg 1 er antall riktige sifre omtrent $1,\ 2,\ 4,\ 8$: **sifrene
+dobles i hvert steg**. Samme mønster står i tabellen fra uke 2 i 10.1:
+eksponentene er $10^{-2}$, $10^{-4}$, $10^{-7}$ og $10^{-13}$.
+
+Gradientmetoden halverer feilen i hvert steg. Å halvere gir bare
+$\log_{10}2\approx0.3$ nye sifre per steg, så ti steg gir omtrent tre
+sifre, uansett hvor nær vi er.
+
+I uke 9 var det kondisjonstallet $\kappa$ som bestemte farten. Nær
+minimumet spiller $\kappa$ ingen rolle for Newton: metoden bruker hele
+Hessianen som målestokk, og bytter vi enheter, får vi nøyaktig det samme
+steget. Det regner vi ut i to «Gå i dybden»-bokser: om enheter lenger ned
+i 10.2, og om koordinatene der $H=I$ i 10.4.
+
+### Hvorfor dobles sifrene?
+
+Anta at neste feil er omtrent en konstant ganger **kvadratet** av forrige
+feil:
+
+$$e_{k+1}\approx C\,e_k^2.$$
+
+Med $e_k=10^{-4}$ er $e_k^2=10^{-8}$, og da er $e_{k+1}\approx C\cdot10^{-8}$.
+Kvadratet dobler eksponenten; konstanten $C$ flytter bare sifrene litt.
+Sammenlign med gradientmetoden, der $e_{k+1}\approx c\,e_k$ med en fast
+$c<1$. Det kalles **lineær konvergens**, og da kommer det like mange nye
+sifre i hvert steg.
+
+For Newton gjelder dette: La $z_*$ være et stasjonært punkt der $H(z_*)$ er
+invertibel, og anta at Hessianen ikke endrer seg for brått nær $z_*$. Da
+finnes en konstant $C$ slik at rene Newton-steg fra en start nær nok $z_*$
+oppfyller
+
+$$e_{k+1}\le C\,e_k^2,\qquad e_k=\|z_k-z_*\|.$$
+
+Dette er **kvadratisk konvergens** fra
+[uke 2](page4.qmd#lokalt-globalt-og-raskt). Vi kontrollerer det i siste
+kolonne av utskriften: forholdet $e_{k+1}/e_k^2$ holder seg mellom $0.3$ og
+$0.6$. Feilen kvadreres altså i hvert steg, ganget med en moderat
+konstant.
+
+Legg merke til at setningen sier **stasjonært punkt**, ikke minimum. Det
+kommer vi tilbake til i 10.3.
 
 <details class="reading-step">
 <summary>Gå i dybden: hvor kommer $e_{k+1}\le Ce_k^2$ fra?</summary>
 
-Se på én variabel, med $f'(x_*)=0$ og $f''(x_*)\ne0$. Taylor for $f'$
-rundt $x_k$ gir, for en $\xi$ mellom $x_k$ og $x_*$,
+Vi ser på én variabel. La $x_*$ være et stasjonært punkt, $f'(x_*)=0$, med
+$f''(x_*)\ne0$, og la $e_k=x_k-x_*$ (med fortegn).
 
-$$0=f'(x_*)=f'(x_k)+f''(x_k)(x_*-x_k)+\tfrac12f'''(\xi)(x_*-x_k)^2.$$
+1. Taylors formel med restledd for funksjonen $f'$ rundt $x_k$ gir, for en
+   $\xi$ mellom $x_k$ og $x_*$,
+   $$f'(x_*)=f'(x_k)+f''(x_k)(x_*-x_k)+\tfrac12f'''(\xi)(x_*-x_k)^2.$$
+2. Venstresiden er null, og $x_*-x_k=-e_k$:
+   $$0=f'(x_k)-f''(x_k)\,e_k+\tfrac12f'''(\xi)\,e_k^2.$$
+3. Del på $f''(x_k)$, som ikke er null nær $x_*$:
+   $$0=\frac{f'(x_k)}{f''(x_k)}-e_k+\frac{f'''(\xi)}{2f''(x_k)}\,e_k^2.$$
+4. Newton-steget $x_{k+1}=x_k-f'(x_k)/f''(x_k)$ betyr at
+   $f'(x_k)/f''(x_k)=x_k-x_{k+1}$. Sett inn, og skriv $e_k=x_k-x_*$:
+   $$0=(x_k-x_{k+1})-(x_k-x_*)+\frac{f'''(\xi)}{2f''(x_k)}\,e_k^2
+   =-(x_{k+1}-x_*)+\frac{f'''(\xi)}{2f''(x_k)}\,e_k^2.$$
+5. Siden $x_{k+1}-x_*=e_{k+1}$, står det
+   $$e_{k+1}=\frac{f'''(\xi)}{2f''(x_k)}\,e_k^2.$$
+6. Ta absoluttverdi. Nær $x_*$ er $\xi\approx x_*$ og
+   $f''(x_k)\approx f''(x_*)$, så
+   $$|e_{k+1}|\approx C\,|e_k|^2,\qquad C=\left|\frac{f'''(x_*)}{2f''(x_*)}\right|.$$
 
-Del på $f''(x_k)$ og bruk $x_{k+1}=x_k-f'(x_k)/f''(x_k)$:
+**Kontroll med uke 2.** For $f(x)=\tfrac14x^4+\tfrac12x^2-x$ er
+$f''(x)=3x^2+1$ og $f'''(x)=6x$. Da er
 
-$$x_{k+1}-x_*=\frac{f'''(\xi)}{2f''(x_k)}\,(x_k-x_*)^2.$$
+$$C=\frac{6r}{2(3r^2+1)}=\frac{3r}{3r^2+1}
+\approx\frac{2.0470}{2.3967}\approx0.854.$$
 
-Nær $x_*$ er $f''(x_k)\approx f''(x_*)\ne0$, så $C\approx|f'''(x_*)/(2f''(x_*))|$.
-Kravet «Hessianen endrer seg ikke for brått» erstatter $f'''$ i flere
-variabler: man krever $\|H(x)-H(y)\|\le M\|x-y\|$ nær $x_*$
-(lokalt Lipschitz-kontinuerlig). For et system $g(x)=0$ bruker Newton
-**Jacobimatrisen** $(J_g)_{ij}=\partial g_i/\partial x_j$, og for
-$g=\nabla f$ er $J_g=H$. Newton for minimering er derfor Newton for
-likningssystemet $\nabla f=0$.
+Cellen regner ut forholdet $e_{k+1}/e_k^2$ for iterasjonen fra uke 2 og
+sammenligner det med $C$. Stemmer utledningen, skal forholdene nærme seg $C$.
+
+```{pyodide-python}
+#| label: week10-taylor-check
+r = 0.6823278038280193
+x, e = 0.5, []
+for k in range(5):
+    e.append(abs(x - r))
+    x = (2*x**3 + 1)/(3*x**2 + 1)
+print('e_k+1 / e_k^2:', [round(e[k+1]/e[k]**2, 3) for k in range(3)])
+print(f'C = 3r/(3r^2+1) = {3*r/(3*r*r + 1):.3f}')
+```
+
+Forholdene $0.961$, $0.834$ og $0.854$ nærmer seg $C\approx0.854$.
+
+**Flere variabler.** Samme regning går gjennom med Taylor for gradienten.
+Kravet «Hessianen endrer seg ikke for brått» erstatter $f'''$: man krever
+$\|H(z)-H(w)\|\le M\|z-w\|$ nær $z_*$ (lokalt Lipschitz-kontinuerlig). For
+et likningssystem $G(z)=0$ bruker Newton **Jacobimatrisen**
+$(J_G)_{ij}=\partial G_i/\partial z_j$, og for $G=\nabla f$ er $J_G=H$.
+Newton for minimering er derfor Newton for likningssystemet $\nabla f=0$.
 
 </details>
 
-### Bytt enhet: hva skjer med steget?
+<details class="reading-step">
+<summary>Gå i dybden: Newton bryr seg ikke om enhetene</summary>
 
+<div id="uke10-skala"></div>
+
+En grunn til at Newton er så rask, er at metoden selv velger riktig skala.
 Anta at vi måler den første koordinaten i desimeter i stedet for meter,
-mens den andre beholdes. Et punkt $x$ med to koordinater får da de nye
-koordinatene
+mens den andre beholdes. Punktet $z=(x,y)$ får de nye koordinatene
 
-$$\tilde x=Dx,\qquad D=\begin{bmatrix}10&0\\0&1\end{bmatrix},$$
+$$\tilde z=Dz,\qquad D=\begin{bmatrix}10&0\\0&1\end{bmatrix},$$
 
-og funksjonen i de nye koordinatene er $\tilde f(\tilde x)=f(D^{-1}\tilde x)$.
-Det er samme funksjon og samme minimum, bare med nye tall på aksene.
-Kjerneregelen gir, for en invertibel matrise $D$,
+og funksjonen i de nye koordinatene er
+$\tilde f(\tilde z)=f(D^{-1}\tilde z)=f(\tilde z_1/10,\ \tilde z_2)$. Det er
+samme funksjon og samme minimum, bare med nye tall på aksene.
+
+**Gradient og Hessian i nye enheter.** Med $x=\tilde z_1/10$ og $y=\tilde z_2$
+gir kjerneregelen
+
+$$\frac{\partial\tilde f}{\partial\tilde z_1}=f_x\cdot\frac{1}{10},\qquad
+\frac{\partial\tilde f}{\partial\tilde z_2}=f_y,$$
+
+og en gang til
+
+$$\frac{\partial^2\tilde f}{\partial\tilde z_1^2}=\frac{f_{xx}}{100},\qquad
+\frac{\partial^2\tilde f}{\partial\tilde z_1\partial\tilde z_2}=\frac{f_{xy}}{10},\qquad
+\frac{\partial^2\tilde f}{\partial\tilde z_2^2}=f_{yy}.$$
+
+På matriseform er det $\tilde g=D^{-1}g$ og $\tilde H=D^{-1}HD^{-1}$.
+
+**Den generelle regelen.** Senere trenger vi en $D$ som ikke er diagonal, så
+vi gjør regningen for en vilkårlig invertibel $D$. Nå er $z=D^{-1}\tilde z$,
+altså $z_i=\sum_j(D^{-1})_{ij}\tilde z_j$ og
+$\partial z_i/\partial\tilde z_j=(D^{-1})_{ij}$. Kjerneregelen gir
+
+$$\frac{\partial\tilde f}{\partial\tilde z_j}
+=\sum_i\frac{\partial f}{\partial z_i}\,\frac{\partial z_i}{\partial\tilde z_j}
+=\sum_i(D^{-1})_{ij}\,g_i=\big(D^{-T}g\big)_j.$$
+
+Deriverer vi dette en gang til med hensyn på $\tilde z_l$, på samme måte,
+får vi $\sum_{i,k}(D^{-1})_{ij}\,h_{ik}\,(D^{-1})_{kl}$, som er element
+$(j,l)$ i $D^{-T}HD^{-1}$. Altså er
 
 $$\tilde g=D^{-T}g,\qquad \tilde H=D^{-T}HD^{-1}.$$
 
-Her er $D$ diagonal, så $D^{-T}=D^{-1}$.
+For en diagonal $D$ er $D^{-T}=D^{-1}$, og vi får formlene over igjen.
 
-- **Newton i $\tilde x$:** $\tilde p=-\tilde H^{-1}\tilde g
-  =-DH^{-1}D^TD^{-T}g=D\,p$, der $p$ er Newton-steget i $x$.
-  Steget i $\tilde x$ er nøyaktig steget i $x$, omregnet til de nye
-  enhetene. Vi havner i **samme punkt**.
-- **Gradientretning i $\tilde x$:** $-\tilde g=-D^{-1}g$. Omregnet til $x$
-  er det $-D^{-2}g$, som peker i en annen retning enn $-g$.
+**Tallene fra 10.1.** I $z_0=(2.5,\,2.5)$ var $g=(-19,13)^T$ og
+$H=\begin{bmatrix}43&20\\20&59\end{bmatrix}$. I desimeter blir
+
+$$\tilde g=\begin{bmatrix}-1.9\\13\end{bmatrix},\qquad
+\tilde H=\begin{bmatrix}43/100&20/10\\20/10&59\end{bmatrix}
+=\begin{bmatrix}0.43&2\\2&59\end{bmatrix}.$$
+
+Newton-likningen $\tilde H\tilde p=-\tilde g$ er
+$0.43\tilde p_1+2\tilde p_2=1.9$ og $2\tilde p_1+59\tilde p_2=-13$.
+Prøv $\tilde p=(6.462,\,-0.4394)$: $0.43\cdot6.462+2\cdot(-0.4394)=2.779-0.879=1.900$
+og $2\cdot6.462+59\cdot(-0.4394)=12.924-25.925\approx-13.00$. Det stemmer. Og
+$Dp=(10\cdot0.6462,\ -0.4394)=(6.462,\,-0.4394)$: **steget i desimeter er
+nøyaktig steget i meter, omregnet.** Vi havner i samme punkt.
+
+**Hvorfor gjelder det alltid?** Med regelen $(ABC)^{-1}=C^{-1}B^{-1}A^{-1}$ er
+$(D^{-T}HD^{-1})^{-1}=DH^{-1}D^T$. Da er
+
+$$\tilde p=-\tilde H^{-1}\tilde g=-DH^{-1}D^T\,D^{-T}g=-DH^{-1}g=D\,p.$$
+
+**Gradientretningen oppfører seg annerledes.** I desimeter er
+$-\tilde g=(1.9,\,-13)$. Den negative gradienten fra meter, omregnet til
+desimeter, er $D(-g)=(190,\,-13)$. De to peker i helt forskjellige retninger.
+
+Cellen regner ut Newton-steget og den negative gradienten i begge
+enhetssystemene og tegner dem over nivåkurvene. Slik ser vi hvilken av de to
+retningene som peker mot samme punkt etter enhetsbyttet.
 
 ```{pyodide-python}
 #| label: week10-invariance
 D = np.diag([10., 1.]); Dinv = np.linalg.inv(D)
-x = np.array([2.5, 2.5])
-g, H = himmel_grad(x), himmel_hess(x)
-p = np.linalg.solve(H, -g)                                # Newton i x
-p_new = np.linalg.solve(Dinv @ H @ Dinv, -(Dinv @ g))     # Newton i nye koordinater
+z = np.array([2.5, 2.5])
+g, H = himmel_grad(z), himmel_hess(z)
+p = np.linalg.solve(H, -g)                                # Newton i meter
+p_new = np.linalg.solve(Dinv @ H @ Dinv, -(Dinv @ g))     # Newton i desimeter
 print('Newton:   D p =', (D @ p).round(2), '    p i nye koordinater =', p_new.round(2))
 print('Gradient: D(-g) =', D @ (-g), '  -g i nye koordinater =', -(Dinv @ g))
-
-# Tegn begge koordinatsystemene med Newton-steget og gradientretningen.
-fig, axes = plt.subplots(1, 2, figsize=(9, 4))
-s = np.linspace(1.8, 3.6, 120); t = np.linspace(1.5, 3.2, 120)
-X, Y = np.meshgrid(s, t)
-F = (X*X + Y - 11)**2 + (X + Y*Y - 7)**2
-for ax, scale, name, newton, grad in [
-        (axes[0], 1, 'første koordinat (meter)', p, -g),
-        (axes[1], 10, 'første koordinat (desimeter)', p_new, -(Dinv @ g))]:
-    ax.contour(scale*X, Y, F, levels=[.5, 2, 5, 10, 20, 40, 60],
-               colors='#adb5bd', linewidths=.8)
-    start = np.array([scale*2.5, 2.5])
-    ax.annotate('', start + newton, start,
-                arrowprops={'arrowstyle': '->', 'color': '#1665ad', 'lw': 2})
-    shown = np.array([scale, 1.])    # rød pil med samme synlige lengde som den blå
-    unit = grad/np.linalg.norm(grad/shown)*np.linalg.norm(newton/shown)
-    ax.annotate('', start + unit, start,
-                arrowprops={'arrowstyle': '->', 'color': '#b5483f', 'lw': 2, 'ls': '--'})
-    ax.plot(scale*3, 2, 'k*', markersize=10)
-    ax.set(xlabel=name, ylabel='andre koordinat',
-           title='blå: Newton, rød stiplet: gradientretning')
-fig.tight_layout(); plt.show()
+show_units(p, -g, p_new, -(Dinv @ g))
 ```
 
-Begge Newton-stegene er $(6.46,\,-0.44)$ i de nye enhetene. Gradientretningen
-derimot gir $(190,\,-13)$ når vi regner om fra $x$, men $(1.9,\,-13)$ når vi
-regner direkte i $\tilde x$. I figuren peker den blå pilen på samme sted i
-begge bildene. I meter peker gradientretningen her tilfeldigvis nesten samme
-vei som Newton-steget, så den stiplede røde pilen ligger oppå den blå. I
-desimeter peker den nesten rett ned, bort fra minimumet. Newtons metode er
-**affint invariant**: den svarer det samme uansett hvilke enheter vi velger.
-Gradientmetoden er det ikke.
+I figuren ender den blå pilen i samme punkt i begge bildene. I meter peker
+gradientretningen her tilfeldigvis nesten samme vei som Newton-steget, så
+den stiplede røde pilen ligger oppå den blå. I desimeter peker den nesten
+rett ned, langt fra retningen mot minimumet. Newtons metode er **affint invariant**: den
+svarer det samme uansett hvilke enheter vi velger. Gradientmetoden er det
+ikke.
 
-### Newton er gradientmetoden i koordinatene der $H=I$
+**Øv på dette:** [samme steg i nye enheter](#uke10-ov-enheter).
 
-Hvis $H$ er SPD, kan vi skrive $H=LL^T$ (Cholesky, se 10.3) og velge de
-spesielle koordinatene $\tilde x=L^Tx$. Med $D=L^T$ gir regelen over
+</details>
 
-$$\tilde H=L^{-1}HL^{-T}=I.$$
+**Øv på dette:** [feilen kvadreres](#uke10-ov-sifre).
 
-I disse koordinatene er skålen rund: alle egenverdier er 1, og $\kappa=1$.
-Faktoren $(\kappa-1)/(\kappa+1)$ fra uke 9 blir **null**, og et
-gradientsteg med $\alpha=1$ i $\tilde x$ er nøyaktig Newton-steget i $x$.
+## 10.3 Newton kan gå til feil punkt
 
-I [prosjekt 6](project_week6.qmd) skalerte vi med diagonalen av matrisen
-og fikk en rundere skål. Newton bruker **hele** Hessianen som skala: det er
-den ideelle prekondisjoneringen. Prisen er at $H$ endrer seg fra punkt til
-punkt, så vi må finne nye koordinater og løse et nytt system i hvert steg.
+<div id="uke10-stasjonaer"></div>
 
-## 10.3 Hva koster et Newton-steg?
+### Finner Newton alltid et minimum?
 
-### Cholesky løser Newton-systemet når Hessianen er SPD
+I 10.1 og 10.2 startet vi nær minimumet $(3,2)$, og Newton var svært rask.
+Men setningen i 10.2 lovet bare at Newton finner et **stasjonært punkt**,
+altså et punkt der $\nabla f=0$. Himmelblaus funksjon har ni slike punkter:
+fire minima, fire sadelpunkter og ett maksimum.
 
-<div id="uke10-cholesky"></div>
+Bildet vi skal lage, er ikke nytt: i prosjekt 2 fargela du startpunkter
+etter hvilket nullpunkt Newton fant. Nå gjør vi det samme for Newton på
+likningen $\nabla f=0$, fra $81\times81$ starter i $[-5,5]^2$. Hjelperen
+`newton_basins` tar opptil 80 rene Newton-steg fra hver start og
+klassifiserer sluttpunktet med gradienten og Hessianen, som i uke 8.
+Hvorfor fordelingen blir som den blir, forklarer vi etter forsøket.
 
-For en SPD-matrise $H$ finnes **Cholesky-faktoriseringen** $H=LL^T$, der
-$L$ er nedre triangulær med positive diagonalelementer. Dette ble lovet i
-[uke 6](uke6.qmd#uke6-energi). Newton-systemet $Hp=-g$ deles i to enkle
-systemer:
+Målet er å se hvor ofte ren Newton ender i et punkt vi ikke ville ha: et
+sadelpunkt eller et maksimum.
 
-$$Ly=-g,\qquad L^Tp=y.$$
+### Eksperiment 2 – Newton fra mange starter (tilbakeblikk på prosjekt 2)
 
-$y$ er en hjelpevektor, ikke et nytt punkt. Vi finner $y$ ovenfra og ned,
-og deretter $p$ nedenfra og opp.
+- Forutsi: hvor stor andel av startene tror du ender i et minimum?
+- Kjør cellen og les av antallet for hver type sluttpunkt.
+- Finn et område i bildet der nabostarter ender i ulike typer punkter.
+- Bytt til et finere gitter, `newton_basins(safe=False, n=161)`, og undersøk
+  om andelene endrer seg.
 
-::: {.callout-note title="Håndeksempel: Cholesky og to triangulære systemer"}
+```{pyodide-python}
+#| label: week10-basins-pure
+# Rene Newton-steg fra 81 x 81 starter; fargen viser typen sluttpunkt.
+X0, Y0, kind = newton_basins(safe=False)
+for k, name in [(0, 'minimum'), (1, 'sadelpunkt'), (2, 'maksimum'), (-1, 'ikke konvergert')]:
+    n = np.sum(kind == k)
+    print(f'{name:16s}: {n:5d} starter ({100*n/kind.size:.0f} %)')
+show_basins(X0, Y0, kind)
+```
 
-**Utgangspunkt.** $H=\begin{bmatrix}4&2\\2&3\end{bmatrix}$ og
-$g=(-6,-5)^T$, så høyresiden er $-g=(6,5)^T$.
+| Sluttpunkt | Antall starter | Andel |
+|:--|--:|--:|
+| et av de fire minimumene | 3826 | 58 % |
+| et av de fire sadelpunktene | 2336 | 36 % |
+| maksimumet $(-0.27,-0.92)$, med $f=181.6$ | 399 | 6 % |
 
-**Prøv selv.** Skriv $L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$ med $a,c>0$,
-og sammenlign $LL^T$ med $H$ ett element om gangen.
+**Hva viser forsøket?** Bare 58 % av startene ender i et minimum. Ren
+Newton finner alle typene stasjonære punkter, også maksimumet. Det er ikke
+en feil i programmet. Newton løser likningen $\nabla f=0$, og den spør ikke om punktet er et minimum. Setningen om kvadratisk
+konvergens i 10.2 gjelder like godt nær et sadelpunkt eller et maksimum.
+En liten gradient alene kan derfor ikke skille et minimum fra et
+sadelpunkt; til det trenger vi krumningen, som i uke 8.
+
+### Når peker Newton-retningen nedover?
+
+Fra [støtteløpet i uke 8](uke8.qmd#uke8-gradient) vet vi at et lite steg
+$\alpha p$ endrer $f$ med omtrent $\alpha\,g^Tp$. Retningen $p$ peker
+altså **nedover** når den retningsderiverte $g^Tp$ er negativ.
+
+For Newton-retningen kan vi regne ut fortegnet. Vi starter med
+Newton-likningen og ganger begge sider fra venstre med radvektoren $p^T$:
+
+$$Hp=-g\quad\Longrightarrow\quad p^THp=-p^Tg.$$
+
+Tallet $p^Tg=p_1g_1+p_2g_2$ er det samme som $g^Tp$. Derfor er
+
+$$g^Tp=-p^THp.$$
+
+**Newton-retningen peker nedover akkurat når $p^THp>0$.** Hvis $H$ er SPD,
+er det alltid oppfylt. I håndeksemplet i 10.1 var $g^Tp=-17.99<0$. Hvis
+$H$ har en negativ egenverdi, kan Newton-retningen peke **oppover**. Det
+ser vi i et lite eksempel.
+
+::: {.callout-note title="Håndeksempel: et Newton-steg som går oppover"}
+
+**Utgangspunkt.** Dobbeltbrønnen $f(u,v)=(u^2-1)^2+\tfrac12v^2$ har to
+globale minima, $(\pm1,0)$, der $f=0$. Vi står i $z=(0.2,\,0)$.
+
+**Prøv selv.** Finn $g$ og $H$ i $z$, løs $Hp=-g$ og avgjør fortegnet til
+$g^Tp$.
 
 **Regnegangen.**
 
-1. $LL^T=\begin{bmatrix}a^2&ab\\ab&b^2+c^2\end{bmatrix}$. Fra $a^2=4$ får
-   vi $a=2$, fra $ab=2$ får vi $b=1$, og fra $b^2+c^2=3$ får vi $c=\sqrt2$.
-2. $Ly=(6,5)^T$ ovenfra og ned: $2y_1=6$ gir $y_1=3$, og
-   $3+\sqrt2\,y_2=5$ gir $y_2=\sqrt2$.
-3. $L^Tp=y$ nedenfra og opp: $\sqrt2\,p_2=\sqrt2$ gir $p_2=1$, og
-   $2p_1+1=3$ gir $p_1=1$. Kontroll: $Hp=(6,5)^T=-g$.
+1. **Deriver.** $f_u=2(u^2-1)\cdot2u=4u(u^2-1)$ og $f_v=v$. En gang til:
+   $f_{uu}=\tfrac{\partial}{\partial u}(4u^3-4u)=12u^2-4$, $f_{uv}=0$ og
+   $f_{vv}=1$. Altså
+   $$g(u,v)=\begin{bmatrix}4u(u^2-1)\\v\end{bmatrix},\qquad
+   H(u,v)=\begin{bmatrix}12u^2-4&0\\0&1\end{bmatrix}.$$
+2. **Origo først.** I $(0,0)$ er $g=0$ og $H=\operatorname{diag}(-4,1)$, med én
+   negativ og én positiv egenverdi: et **sadelpunkt** (uke 8). Langs $u$ er
+   $f(t,0)=1-2t^2+t^4<1$ for små $t\ne0$, og langs $v$ er
+   $f(0,t)=1+t^2/2>1$.
+3. **Sett inn $z=(0.2,\,0)$.** Her er $u^2=0.04$ og $u^2-1=-0.96$, så
+   $$g_1=4\cdot0.2\cdot(-0.96)=-0.768,\quad g_2=0,\quad
+   h_{11}=12\cdot0.04-4=-3.52,\quad h_{22}=1.$$
+4. **Newton-likningen.** Matrisen er diagonal, så likningene står hver for seg:
+   $-3.52\,p_1=0.768$ gir $p_1=-0.768/3.52\approx-0.2182$, og $1\cdot p_2=0$
+   gir $p_2=0$.
+5. **Fortegnet.** $p^THp=-3.52\cdot(-0.2182)^2\approx-3.52\cdot0.0476\approx-0.1676$,
+   så $g^Tp=-p^THp\approx0.1676>0$. Direkte:
+   $g^Tp=(-0.768)(-0.2182)\approx0.1676$. **Retningen peker oppover.**
+6. **Funksjonsverdiene.** $f(0.2,0)=(0.04-1)^2=0.9216$. Etter et helt steg
+   står vi i $(0.2-0.2182,\ 0)=(-0.0182,\ 0)$, der
+   $f\approx(0.0003-1)^2\approx0.9993$. Verdien økte.
 
-**Dette tar vi med oss.** Hvert trinn krever en kvadratrot av et positivt
-tall: $a^2=4>0$ og $c^2=3-b^2=2>0$. Hvis et slikt tall blir null eller
-negativt, stopper faktoriseringen. Det bruker vi i 10.5.
+**Dette tar vi med oss.** Langs $u$ krummer $f$ nedover i $z$, fordi
+$h_{11}<0$. Modellen langs $u$ er da en parabel som åpner nedover, og dens
+eneste stasjonære punkt er **toppen**. Newton går til toppen av
+modellbakken, mot sadelpunktet i origo. Uten krumningen kan vi altså ikke
+vite om Newton-retningen fører mot et minimum.
 
 :::
+
+Cellen kontrollerer håndregningen. Den skriver ut egenverdiene til $H$,
+Newton-retningen, $g^Tp$ og verdien av $f$ før og etter et helt steg.
+
+```{pyodide-python}
+#| label: week10-ascent
+z = np.array([.2, 0.])
+g, H = well_grad(z), well_hess(z)
+p = np.linalg.solve(H, -g)
+print('I (0.2, 0): egenverdier H =', np.linalg.eigvalsh(H))
+print(f'Newton-retning p = {p.round(4) + 0.}, g·p = {g @ p:.4f}')
+print(f'f før = {well(z):.4f}, f etter helt steg = {well(z + p):.4f}')
+```
+
+Hvorfor går steget feil vei? Langs linjen $v=0$ er dobbeltbrønnen bare
+$(u^2-1)^2$. Cellen tegner denne kurven og Newton-parabelen i $u=0.2$, på
+samme måte som bildet i 10.1.
+
+```{pyodide-python}
+#| label: week10-model-saddle
+# Dobbeltbrønnen langs v = 0 og parabelen i u = 0.2; trekanten er Newton-punktet.
+show_model(lambda u: (u*u - 1)**2, lambda u: 4*u*(u*u - 1),
+           lambda u: 12*u*u - 4, x0=.2, xlim=(-1.5, 2.), name='u')
+```
+
+**Hva viser bildet?** Parabelen åpner nedover, fordi krumningen
+$h_{11}=-3.52$ er negativ. Newton går til toppen av parabelen, i
+$u\approx-0.018$, nesten rett til sadelpunktet i origo. De to minimumene, i
+$u=\pm1$, ligger lenger borte, og dem ser ikke parabelen.
+
+**Øv på dette:** [et sadelpunkt i en annen funksjon](#uke10-ov-sadel) og [negativ krumning i et annet punkt](#uke10-ov-retning).
+
+## 10.4 Reparasjonen: Cholesky-forsøket og Armijo
+
+<div id="uke10-demping"></div>
+
+To ting kan gå galt i et Newton-steg. **Retningen** kan peke oppover, slik
+vi nettopp så, og **lengden** kan være for lang. Vi retter dem i den
+rekkefølgen: først sørger vi for at retningen peker nedover, så velger vi
+lengden. Til det første trenger vi en billig test på om $H$ er SPD.
+
+### Cholesky: en SPD-test ved faktorisering
+
+<div id="uke10-cholesky"></div>
+
+I uke 8 avgjorde vi definitthet med egenverdiene. For store matriser er
+egenverdier dyre å regne ut. **Cholesky-faktoriseringen**, som ble lovet i
+[uke 6](uke6.qmd#uke6-energi), gir en billigere test: vi prøver å skrive
+
+$$H=LL^T,$$
+
+der $L$ er nedre triangulær med positive diagonalelementer. En symmetrisk
+matrise har en slik faktorisering **nøyaktig når den er SPD**. Vi prøver
+derfor bare: lykkes faktoriseringen, er $H$ SPD; stopper den, er $H$ ikke
+SPD.
+
+**Hvordan finner vi $L$ for en $2\times2$-matrise?** Skriv
+$L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$ med $a,c>0$. Da er
+
+$$LL^T=\begin{bmatrix}a&0\\b&c\end{bmatrix}\begin{bmatrix}a&b\\0&c\end{bmatrix}
+=\begin{bmatrix}a^2&ab\\ab&b^2+c^2\end{bmatrix}.$$
+
+Vi sammenligner med $H=\begin{bmatrix}h_{11}&h_{12}\\h_{12}&h_{22}\end{bmatrix}$
+ett element om gangen:
+
+1. $a^2=h_{11}$. Vi trenger $h_{11}>0$ for å ta kvadratroten, $a=\sqrt{h_{11}}$.
+2. $ab=h_{12}$ gir $b=h_{12}/a$.
+3. $b^2+c^2=h_{22}$ gir $c^2=h_{22}-b^2$. Vi trenger $c^2>0$, og da er $c=\sqrt{c^2}$.
+
+De to tallene vi tar kvadratroten av, $a^2$ og $c^2$, kalles **pivotene**.
+Cholesky lykkes nøyaktig når begge pivotene er positive. Er én av dem null
+eller negativ, stopper faktoriseringen.
+
+Hvorfor er dette det samme som SPD? Med $b=h_{12}/a$ og $a^2=h_{11}$ er
+
+$$c^2=h_{22}-\frac{h_{12}^2}{h_{11}}=\frac{h_{11}h_{22}-h_{12}^2}{h_{11}}=\frac{\det H}{h_{11}}.$$
+
+Begge pivotene er altså positive nøyaktig når $h_{11}>0$ og $\det H>0$.
+Det er testen $f_{xx}>0$ og $f_{xx}f_{yy}-f_{xy}^2>0$ fra
+[uke 8.3](uke8.qmd#uke8-hessian), som sier at begge egenverdiene er
+positive.
+
+::: {.callout-note title="Håndeksempel: tre matriser, tre Cholesky-forsøk"}
+
+**Utgangspunkt.** Tre symmetriske matriser:
+$H_A=\begin{bmatrix}4&2\\2&3\end{bmatrix}$, Hessianen
+$H_B=\begin{bmatrix}43&20\\20&59\end{bmatrix}$ fra håndeksemplet i 10.1, og
+Hessianen $H_C=\begin{bmatrix}-3.52&0\\0&1\end{bmatrix}$ i dobbeltbrønnen
+fra 10.3.
+
+**Prøv selv.** Regn ut $a^2$, $b$ og $c^2$ for hver matrise. Hvilke er SPD?
+
+**Regnegangen.**
+
+1. $H_A$: $a^2=4$, så $a=2$. Deretter $b=2/2=1$ og $c^2=3-1^2=2>0$, så
+   $c=\sqrt2$. Begge pivotene er positive: $H_A$ er SPD, og
+   $L=\begin{bmatrix}2&0\\1&\sqrt2\end{bmatrix}$.
+2. $H_B$: $a^2=43$, $b=20/\sqrt{43}$, $b^2=400/43\approx9.30$ og
+   $c^2=59-400/43=2137/43\approx49.70>0$. $H_B$ er SPD. Derfor var
+   $g^Tp<0$ i 10.1: Newton-steget der måtte peke nedover.
+3. $H_C$: $a^2=-3.52<0$. Faktoriseringen **stopper i første pivot**, og
+   $H_C$ er ikke SPD.
+
+**Dette tar vi med oss.** Cholesky avgjør SPD med noen få multiplikasjoner
+og kvadratrøtter, uten egenverdier.
+
+:::
+
+`np.linalg.cholesky` gjør det samme for oss. Den kaster
+`np.linalg.LinAlgError` når en pivot ikke er positiv. Cellen skriver ut
+pivotene, som er kvadratene av diagonalelementene i $L$:
+
+```{pyodide-python}
+#| label: week10-cholesky-test
+for name, H in [('H_A', [[4., 2.], [2., 3.]]),
+                ('H_B', himmel_hess(np.array([2.5, 2.5]))),
+                ('H_C', well_hess(np.array([.2, 0.])))]:
+    try:
+        L = np.linalg.cholesky(np.array(H))
+        print(f'{name}: Cholesky lykkes, pivoter = {(np.diag(L)**2).round(2)}')
+    except np.linalg.LinAlgError:
+        print(f'{name}: Cholesky stopper, matrisen er ikke SPD')
+```
+
+Når Cholesky lykkes, kan vi også bruke $L$ til å løse $Hp=-g$ med to enkle
+triangulære systemer. Det står regnet ut i «Gå i dybden» nedenfor. I
+hovedløpet trenger vi bare testen.
+
+**Øv på dette:** [finn Cholesky-faktoren](#uke10-ov-cholesky-faktor).
+
+<details class="reading-step">
+<summary>Gå i dybden: løs Newton-systemet med Cholesky, og koordinatene der $H=I$</summary>
+
+Når $H=LL^T$, deler vi $Hp=-g$ i to. Kall $y=L^Tp$ (en hjelpevektor, ikke et
+nytt punkt). Da er $Hp=L(L^Tp)=Ly$, og systemet blir
+
+$$Ly=-g,\qquad L^Tp=y.$$
+
+Vi finner $y$ ovenfra og ned, og deretter $p$ nedenfra og opp.
+
+::: {.callout-note title="Håndeksempel: Cholesky og to triangulære systemer"}
+
+**Utgangspunkt.** $H_A=\begin{bmatrix}4&2\\2&3\end{bmatrix}$ med
+$L=\begin{bmatrix}2&0\\1&\sqrt2\end{bmatrix}$ fra håndeksemplet over, og
+$g=(-6,-5)^T$, så høyresiden er $-g=(6,5)^T$.
+
+**Prøv selv.** Løs $Ly=(6,5)^T$ og deretter $L^Tp=y$.
+
+**Regnegangen.**
+
+1. $Ly=(6,5)^T$ ovenfra og ned: første rad er $2y_1=6$, så $y_1=3$. Andre rad
+   er $1\cdot y_1+\sqrt2\,y_2=5$, altså $3+\sqrt2\,y_2=5$ og
+   $y_2=2/\sqrt2=\sqrt2$.
+2. $L^Tp=y$ nedenfra og opp, med $L^T=\begin{bmatrix}2&1\\0&\sqrt2\end{bmatrix}$:
+   andre rad er $\sqrt2\,p_2=\sqrt2$, så $p_2=1$. Første rad er $2p_1+p_2=3$,
+   så $2p_1=2$ og $p_1=1$.
+3. Kontroll: $Hp=(4+2,\ 2+3)^T=(6,5)^T=-g$.
+
+**Dette tar vi med oss.** Hvert triangulært system løses ved innsetting, én
+ukjent om gangen.
+
+:::
+
+Cellen gjør de samme to trinnene med NumPy: først Cholesky-faktoren, så de
+to triangulære systemene. Til slutt kontrollerer den at $Hp=-g$.
 
 ```{pyodide-python}
 #| label: week10-cholesky-solve
@@ -386,25 +890,66 @@ print('y =', y, ' p =', p, ' kontroll H p =', H @ p)
 I større programmer kan `scipy.linalg.solve_triangular` utnytte at
 faktorene er triangulære.
 
-**Kostnad.** Cholesky av en $n\times n$-matrise krever omtrent $n^3/3$
-regneoperasjoner, mens et gradientsteg koster omtrent $n$ operasjoner i
-tillegg til selve gradienten. Ett Newton-steg er altså mye dyrere enn ett
-gradientsteg, men Newton trenger langt færre steg; for små $n$, som i 10.1,
-lønner det seg. For store $n$ løser vi heller systemet iterativt, for
-eksempel med CG fra uke 6.
+**Koordinatene der $H=I$.** Velg de nye koordinatene $\tilde z=L^Tz$. Det er
+regelen fra «Gå i dybden» om enheter i 10.2 med $D=L^T$, så
+
+$$\tilde H=D^{-T}HD^{-1}=L^{-1}H\,L^{-T}=L^{-1}LL^TL^{-T}=I\cdot I=I.$$
+
+Med tall: $L^{-1}=\begin{bmatrix}1/2&0\\-1/(2\sqrt2)&1/\sqrt2\end{bmatrix}$
+(kontroller at $LL^{-1}=I$). Rad for rad er
+
+$$L^{-1}H_A=\begin{bmatrix}\tfrac12\cdot4&\tfrac12\cdot2\\
+-\tfrac{4}{2\sqrt2}+\tfrac{2}{\sqrt2}&-\tfrac{2}{2\sqrt2}+\tfrac{3}{\sqrt2}\end{bmatrix}
+=\begin{bmatrix}2&1\\0&\sqrt2\end{bmatrix}=L^T,$$
+
+og dermed $\tilde H=(L^{-1}H_A)L^{-T}=L^TL^{-T}=I$. I disse koordinatene er
+skålen rund: alle egenverdier er 1, og $\kappa=1$. Faktoren
+$(\kappa-1)/(\kappa+1)$ fra uke 9 blir **null**.
+
+Et gradientsteg med $\alpha=1$ i $\tilde z$ er $-\tilde g=-L^{-1}g=L^{-1}(-g)$.
+Det er nøyaktig hjelpevektoren $y=(3,\sqrt2)^T$ over. Regnet tilbake til $z$
+blir steget $L^{-T}y=p=(1,1)^T$, altså Newton-steget. **Newton er
+gradientmetoden i koordinatene der $H=I$.** I
+[prosjekt 6](project_week6.qmd) skalerte vi med diagonalen av matrisen og
+fikk en rundere skål. Newton bruker hele Hessianen som skala: det er den
+ideelle prekondisjoneringen. Prisen er at $H$ endrer seg fra punkt til
+punkt, så vi må finne nye koordinater og løse et nytt system i hvert steg.
+
+**Øv på dette:** [to triangulære systemer](#uke10-ov-triangulaer).
+
+</details>
 
 <details class="reading-step">
-<summary>Gå i dybden: Newton utenpå, CG inni</summary>
+<summary>Gå i dybden: hva koster et Newton-steg? Newton utenpå, CG inni</summary>
+
+Cholesky av en $n\times n$-matrise krever omtrent $n^3/3$ regneoperasjoner,
+mens et gradientsteg koster omtrent $n$ operasjoner i tillegg til selve
+gradienten. For $n=1000$ er det omtrent $1000^3/3\approx3.3\cdot10^8$
+operasjoner for Cholesky, mot omtrent $10^3$ for selve gradientsteget. Ett
+Newton-steg er altså mye dyrere enn ett gradientsteg.
+
+Til gjengjeld trenger Newton langt færre steg. I eksperiment 1 startet vi
+med feilen $0.71$. For å få den ned til $10^{-9}$ med faktoren $0.52$
+trenger gradientmetoden $0.71\cdot0.52^k\le10^{-9}$, altså
+
+$$k\ge\frac{\ln(10^{-9}/0.71)}{\ln0.52}\approx\frac{-20.38}{-0.654}\approx31.2,$$
+
+det vil si 32 steg. Newton var nesten der etter fire steg. For små $n$, som
+i eksperiment 1, lønner Newton seg derfor. For store $n$ løser vi heller
+Newton-systemet iterativt, for eksempel med CG fra uke 6.
 
 I [uke 6](uke6.qmd#uke6-cg) løste CG $Az=b$ for SPD $A$ ved å minimere
 $\tfrac12z^TAz-b^Tz$. På hvert ytre Newton-steg får vi et *nytt* system
-$H(x_k)p_k=-g(x_k)$. Med $A=H(x_k)$, $z=p_k$ og $b=-g(x_k)$ minimerer CG
-nettopp den lokale modellen $m_{x_k}(p)$, bortsett fra konstantleddet.
+$H(z_k)p_k=-g(z_k)$. Med $A=H(z_k)$, ukjent $p_k$ og høyreside $-g(z_k)$
+minimerer CG nettopp den lokale modellen $m(p)$, bortsett fra
+konstantleddet. Med $b=-g$ er nemlig
 
-| Nivå | Hva endres? | I skålen fra 10.1, start $x_0=(-2,3)^T$ |
+$$\tfrac12p^THp-b^Tp=\tfrac12p^THp+g^Tp=m(p)-f(z_k).$$
+
+| Nivå | Hva endres? | Med $H_A$ og $g=(-6,-5)^T$ fra håndeksemplet |
 |:--|:--|:--|
-| Indre CG | Anslaget på $p$ i $Ap=(8,1)^T$. | Fra $p=0$ finner eksakt CG $p=(3,-1)^T$ på høyst to indre iterasjoner. |
-| Ytre Newton | Punktet $x$ etter at retningen er funnet. | Én oppdatering gir $x_1=x_0+p=(1,2)^T$. |
+| Indre CG | Anslaget på $p$ i $H_Ap=(6,5)^T$. | Fra $p=0$ finner eksakt CG $p=(1,1)^T$ på høyst to indre iterasjoner. |
+| Ytre Newton | Punktet etter at retningen er funnet. | Én oppdatering flytter punktet med $(1,1)^T$. |
 
 Cholesky og CG er altså to måter å løse det samme indre SPD-systemet på.
 **Vanlig CG krever SPD**; at $H$ er invertibel er ikke nok. Stopper vi CG
@@ -412,241 +957,234 @@ tidlig, får vi en tilnærmet Newton-retning.
 
 </details>
 
-## 10.4 Når modellen lyver: feil punkt
+### Rett retningen: Cholesky-forsøket med $\mu I$
 
-<div id="uke10-stasjonaer"></div>
+Når $H$ ikke er SPD, erstatter vi $H$ med $H+\mu I$ for et tall $\mu\ge0$.
+Hvorfor hjelper det? Hvis $Hv=\lambda v$, er
+$(H+\mu I)v=\lambda v+\mu v=(\lambda+\mu)v$: hver egenverdi øker med $\mu$.
+For stor nok $\mu$ er alle positive, og matrisen er SPD. Løser vi så
+$(H+\mu I)p=-g$, gir samme regning som i 10.3
 
-### Eksperiment 2 – Newton fra mange starter (tilbakeblikk på prosjekt 2)
+$$g^Tp=-p^T(H+\mu I)p<0,$$
 
-Bildet nedenfor er ikke nytt: i prosjekt 2 fargela du startpunkter etter
-hvilket nullpunkt Newton fant. Vi gjør det samme for Newton på
-$\nabla f=0$ for Himmelblaus funksjon, fra $81\times81$ starter i
-$[-5,5]^2$. Det som er nytt, er spørsmålet: **hva slags** stasjonært punkt
-ender vi i?
-
-```{pyodide-python}
-#| label: week10-basins-pure
-from matplotlib.colors import ListedColormap
-X0, Y0, kind = newton_basins(safe=False)
-for k, name in [(0, 'minimum'), (1, 'sadelpunkt'), (2, 'maksimum'), (-1, 'ikke konvergert')]:
-    n = np.sum(kind == k)
-    print(f'{name:16s}: {n:5d} starter ({100*n/kind.size:.0f} %)')
-fig, ax = plt.subplots(figsize=(5.5, 5))
-ax.pcolormesh(X0, Y0, kind, cmap=ListedColormap(['#1665ad', '#e8a33d', '#b5483f']),
-              vmin=0, vmax=2, shading='nearest')
-ax.set(xlabel='x₀', ylabel='y₀', title='blå: minimum, oransje: sadel, rød: maksimum')
-ax.set_aspect('equal'); plt.show()
-```
-
-| Sluttpunkt | Antall starter | Andel |
-|:--|--:|--:|
-| et av de fire minimumene | 3826 | 58 % |
-| et av de fire sadelpunktene | 2336 | 36 % |
-| maksimumet $(-0.27,-0.92)$, med $f=181.6$ | 399 | 6 % |
-
-Himmelblau har ni stasjonære punkter, og ren Newton finner alle typene.
-Det er ikke en feil i programmet: Newton løser $\nabla f=0$, og
-setningen om kvadratisk konvergens i 10.2 gjelder like godt nær et
-sadelpunkt eller et maksimum. En liten gradientnorm alene kan derfor ikke
-skille et minimum fra et sadelpunkt; til det trenger vi krumningen, som i
-uke 8.
-
-### Når peker Newton-retningen nedover?
-
-Fra $Hp=-g$ får vi
-
-$$g^Tp=-p^THp.$$
-
-Den retningsderiverte $g^Tp$ er negativ, altså en nedgangsretning, akkurat
-når $p^THp>0$. Hvis $H$ er SPD, er det alltid oppfylt. Hvis $H$ har en
-negativ egenverdi, kan Newton-retningen peke **oppover**.
-
-Studer **dobbeltbrønnen** $f(u,v)=(u^2-1)^2+v^2/2$, med globale minima
-$(\pm1,0)$ og
-
-$$g(u,v)=\begin{bmatrix}4u(u^2-1)\\v\end{bmatrix},\qquad
-H(u,v)=\begin{bmatrix}12u^2-4&0\\0&1\end{bmatrix}.$$
-
-- I origo er $g=0$ og $H=\operatorname{diag}(-4,1)$: langs $u$ er
-  $f(t,0)=1-2t^2+t^4<1$, langs $v$ er $f(0,t)=1+t^2/2>1$. Origo er et
-  **sadelpunkt**.
-- I $(0.2,0)$ er $g=(-0.768,0)^T$ og $H=\operatorname{diag}(-3.52,1)$.
-  Newton gir $p\approx(-0.218,0)^T$, og $g^Tp\approx0.168>0$: retningen
-  peker oppover, mot sadelpunktet.
-
-```{pyodide-python}
-#| label: week10-ascent
-x = np.array([.2, 0.])
-g, H = well_grad(x), well_hess(x)
-p = np.linalg.solve(H, -g)
-print('I (0.2, 0): egenverdier H =', np.linalg.eigvalsh(H))
-print(f'Newton-retning p = {p.round(4) + 0.}, g·p = {g @ p:.4f}')
-print(f'f før = {well(x):.4f}, f etter helt steg = {well(x + p):.4f}')
-```
-
-Ett helt steg øker $f$ fra $0.9216$ til omtrent $0.9993$. Uten krumningen
-kan vi altså ikke vite om Newton-retningen fører mot et minimum.
-
-## 10.5 Sikre retningen og lengden
-
-<div id="uke10-demping"></div>
-
-### Rett retningen: prøv Cholesky
-
-Vi erstatter $H$ med $H+\mu I$, der $\mu\ge0$. Hver egenverdi øker med
-$\mu$, så for stor nok $\mu$ blir matrisen SPD. Men hvor stor? Vi trenger
-ikke regne ut egenverdiene. **Vi prøver Cholesky:** start med $\mu=0$, og
-så lenge faktoriseringen stopper, sett $\mu\leftarrow\max(2\mu,\,0.5)$.
+så retningen peker nedover. Men hvor stor må $\mu$ være? Vi trenger ikke
+egenverdiene. **Vi prøver Cholesky:** start med $\mu=0$, og så lenge
+faktoriseringen stopper, sett $\mu\leftarrow\max(2\mu,\,0.5)$. Listen blir
+$\mu=0,\ 0.5,\ 1,\ 2,\ 4,\ldots$
 
 ::: {.callout-note title="Håndeksempel: Cholesky-forsøket i dobbeltbrønnen"}
 
-**Utgangspunkt.** I $(0.2,0)$ er $H=\operatorname{diag}(-3.52,1)$ og
-$g=(-0.768,0)^T$. Vi prøver $\mu=0,\ 0.5,\ 1,\ 2,\ 4,\ldots$
+**Utgangspunkt.** I $z=(0.2,\,0)$ er $H=\operatorname{diag}(-3.52,\,1)$ og
+$g=(-0.768,\,0)^T$, fra 10.3.
 
-**Prøv selv.** Første steg i Cholesky er $a^2=h_{11}+\mu$. For hvilke
-$\mu$ på listen er dette positivt?
+**Prøv selv.** For $H+\mu I$ er første pivot $a^2=-3.52+\mu$. For hvilke
+$\mu$ på listen er den positiv?
 
 **Regnegangen.**
 
-1. $a^2=-3.52+\mu$ er negativ for $\mu=0,\ 0.5,\ 1,\ 2$. Faktoriseringen
-   stopper i første trinn.
-2. For $\mu=4$ er $a^2=0.48$ og $c^2=1+4=5$. Faktoriseringen lykkes.
-3. Løs $(H+4I)p=-g$: $0.48\,p_1=0.768$ gir $p=(1.6,\,0)^T$, og
-   $g^Tp=-0.768\cdot1.6\approx-1.23<0$.
+1. Her er $h_{12}=0$, så $b=0$ og andre pivot er $c^2=1+\mu$. Vi prøver
+   listen:
 
-**Dette tar vi med oss.** Cholesky gjør to jobber på én gang: den løser
-systemet, og den **tester om matrisen er SPD**. I uke 8 avgjorde vi
-definitthet med egenverdiene; for store matriser er Cholesky-forsøket den
-praktiske testen, og den er langt billigere enn å regne ut egenverdiene.
+   | $\mu$ | $a^2=-3.52+\mu$ | $c^2=1+\mu$ | Cholesky |
+   |:--|--:|--:|:--|
+   | $0$ | $-3.52$ | – | stopper |
+   | $0.5$ | $-3.02$ | – | stopper |
+   | $1$ | $-2.52$ | – | stopper |
+   | $2$ | $-1.52$ | – | stopper |
+   | $4$ | $0.48$ | $5$ | lykkes |
+
+2. Løs $(H+4I)p=-g$, altså
+   $\begin{bmatrix}0.48&0\\0&5\end{bmatrix}p=\begin{bmatrix}0.768\\0\end{bmatrix}$:
+   $0.48\,p_1=0.768$ gir $p_1=0.768/0.48=1.6$, og $5p_2=0$ gir $p_2=0$.
+3. Fortegnet: $g^Tp=-0.768\cdot1.6=-1.2288<0$. Retningen peker nå nedover,
+   mot minimumet $(1,0)$ i stedet for mot sadelpunktet.
+
+**Dette tar vi med oss.** Cholesky gjør to jobber på én gang: den tester om
+matrisen er SPD, og når den lykkes, gir den faktoren $L$, som vi løser
+systemet med (to triangulære systemer, se «Gå i dybden» over). Når $H$
+allerede er SPD, godtas $\mu=0$, og vi beholder det rene Newton-steget.
 
 :::
 
+Cellen gjør Cholesky-forsøket med listen $\mu=0,\,0.5,\,1,\,2,\,4$ og skriver
+ut første pivot hver gang faktoriseringen stopper. Når den lykkes, løser den
+$(H+\mu I)p=-g$ med faktoren $L$ og kontrollerer fortegnet til $g^Tp$.
+
 ```{pyodide-python}
 #| label: week10-cholesky-shift
-x = np.array([.2, 0.])
-g, H = well_grad(x), well_hess(x)
+z = np.array([.2, 0.])
+g, H = well_grad(z), well_hess(z)
 mu = 0.
 while True:
     try:
         L = np.linalg.cholesky(H + mu*np.eye(2))
         break
     except np.linalg.LinAlgError:
-        print(f'mu = {mu}: Cholesky stopper')
+        print(f'mu = {mu}: første pivot {H[0, 0] + mu:.2f}, Cholesky stopper')
         mu = max(2*mu, .5)
-p = np.linalg.solve(L.T, np.linalg.solve(L, -g))
-print(f'mu = {mu}: Cholesky lykkes, p = {p + 0.}, g·p = {g @ p:.4f}')
+p = np.linalg.solve(L.T, np.linalg.solve(L, -g))   # to triangulære systemer med L
+print(f'mu = {mu}: pivoter {(np.diag(L)**2).round(2)}, p = {p + 0.}, g·p = {g @ p:.4f}')
 ```
+
+**Øv på dette:** [når Cholesky stopper](#uke10-ov-cholesky-test) og [Cholesky-forsøket i et annet punkt](#uke10-ov-forskyvning).
 
 ### Kontroller lengden: Armijo
 
-Retningen peker nå nedover, men et helt steg kan likevel være for langt.
-Vi bruker [Armijo-testen fra uke 9](uke9.qmd#uke9-linjesok): prøv
+Retningen peker nå nedover. Men er steget riktig langt? Cellen tegner
+kurven langs $v=0$ igjen, nå med parabelen for $H+4I$, slik at vi ser hvor
+et helt steg havner.
+
+```{pyodide-python}
+#| label: week10-model-shift
+# Samme kurve som i 10.3, nå med parabelen for H + 4I i u = 0.2.
+show_model(lambda u: (u*u - 1)**2, lambda u: 4*u*(u*u - 1),
+           lambda u: 12*u*u - 4, x0=.2, mu=4., xlim=(-1.5, 2.), name='u')
+```
+
+**Hva viser bildet?** Med $\mu=4$ er krumningen $-3.52+4=0.48>0$, så
+parabelen åpner oppover og har en bunn. Men bunnen ligger i $u=1.8$, langt
+forbi minimumet i $u=1$, og der er $f$ over 5. Retningen er riktig, men
+steget er for langt.
+
+Det er jobben til [Armijo-testen fra uke 9](uke9.qmd#uke9-linjesok): prøv
 $\alpha=1,\tfrac12,\tfrac14,\ldots$ og godta den første som gir
 
-$$f(x+\alpha p)\le f(x)+10^{-4}\,\alpha\,g^Tp.$$
+$$f(z+\alpha p)\le f(z)+10^{-4}\,\alpha\,g^Tp.$$
+
+I uke 9 var $p=-\nabla f$. Nå er $p$ den rettede Newton-retningen. Testen
+er den samme; bare helningen $g^Tp$ er en annen. Her er $f(z)=0.9216$ og
+$g^Tp=-1.2288$:
+
+| $\alpha$ | $z+\alpha p$ | $f(z+\alpha p)$ | Armijo-grense $0.9216+10^{-4}\alpha\cdot(-1.2288)$ | resultat |
+|:--|:--|--:|--:|:--|
+| $1$ | $(0.2+1.6,\ 0)=(1.8,\ 0)$ | $(3.24-1)^2=2.24^2=5.0176$ | $0.9216-0.00012288\approx0.92148$ | avvis |
+| $1/2$ | $(0.2+0.8,\ 0)=(1,\ 0)$ | $(1-1)^2=0$ | $0.9216-0.00006144\approx0.92154$ | godta |
+
+Cellen regner ut tallene i tabellen og lar så hjelperen `armijo` gjøre
+halveringen selv. Begge veier skal gi $\alpha=1/2$.
 
 ```{pyodide-python}
 #| label: week10-regularized-step
-x = np.array([.2, 0.])
-g = well_grad(x)
+z = np.array([.2, 0.])
+g = well_grad(z)
 p = np.array([1.6, 0.])          # retningen fra Cholesky-forsøket
-print(f'f(x) = {well(x):.4f}')
+print(f'f(z) = {well(z):.4f},  g·p = {g @ p:.4f}')
 for a in [1., .5]:
-    print(f'alpha = {a}: x + alpha p = {x + a*p}, f = {well(x + a*p):.4f}')
-a, halvings = armijo(well, g, x, p)
+    print(f'alpha = {a}: z + alpha p = {z + a*p}, f = {well(z + a*p):.4f}, '
+          f'grense = {well(z) + 1e-4*a*(g @ p):.5f}')
+a, halvings = armijo(well, g, z, p)
 print('Armijo godtar alpha =', a, 'etter', halvings, 'halvering')
 ```
 
-Hele steget går til $(1.8,0)$, der $f=5.0176$, og avvises. Halvt steg
-går til $(1,0)$, der $f=0$: et globalt minimum. Her treffer halvt steg
-tilfeldigvis minimumet nøyaktig; vanligvis trengs flere steg.
-Regulariseringen endret **retningen**, dempingen bestemte **lengden**.
+Hele steget avvises, og halvt steg godtas. Her treffer halvt steg
+tilfeldigvis minimumet $(1,0)$ nøyaktig; vanligvis trengs flere steg.
+**Forskyvningen endret retningen, Armijo bestemte lengden.** Armijo trengs
+også når $H$ er SPD, fordi modellen kan undervurdere funksjonen; det står
+i «Gå i dybden» like under.
 
-Et helt steg kan svikte også når $H$ er SPD. Ta den **bøyde dalen**
+**Øv på dette:** [Armijo i dobbeltbrønnen](#uke10-ov-armijo).
+
+<details class="reading-step">
+<summary>Gå i dybden: et helt steg kan svikte også når $H$ er SPD</summary>
+
+Ta den **bøyde dalen**
 
 $$q(u,v)=(1-u)^2+10(v-u^2)^2,$$
 
-med globalt minimum $q(1,1)=0$ og
+med globalt minimum $q(1,1)=0$. Med kjerneregelen er
 
 $$g(u,v)=\begin{bmatrix}2(u-1)-40u(v-u^2)\\20(v-u^2)\end{bmatrix},\qquad
 H(u,v)=\begin{bmatrix}2-40v+120u^2&-40u\\-40u&20\end{bmatrix}.$$
 
-I $(0,0)$ er $g=(-2,0)^T$ og $H=\operatorname{diag}(2,20)$, altså SPD, og
-Newton gir $p=(1,0)^T$. Langs denne retningen skiller modell og funksjon lag:
+1. I $(0,0)$ er $g=(2(0-1)-0,\ 20\cdot0)^T=(-2,0)^T$ og
+   $H=\begin{bmatrix}2&0\\0&20\end{bmatrix}$. Pivotene er $2$ og $20$, så $H$
+   er SPD.
+2. Newton: $2p_1=2$ og $20p_2=0$, så $p=(1,0)^T$, og $g^Tp=-2<0$.
+3. Langs $\alpha p$ står vi i $(\alpha,0)$. Den faktiske verdien er
+   $q(\alpha,0)=(1-\alpha)^2+10(0-\alpha^2)^2=(1-\alpha)^2+10\alpha^4$.
+4. Modellen er
+   $m(\alpha p)=q(0,0)+\alpha\,g^Tp+\tfrac12\alpha^2p^THp=1-2\alpha+\tfrac12\alpha^2\cdot2=(1-\alpha)^2$.
 
-| Faktor $\alpha$ | Modellen $m_x(\alpha p)=(1-\alpha)^2$ | Faktisk $q(x+\alpha p)=(1-\alpha)^2+10\alpha^4$ |
+| Faktor $\alpha$ | Modellen $(1-\alpha)^2$ | Faktisk $(1-\alpha)^2+10\alpha^4$ |
 |:--|--:|--:|
 | $0$ | $1$ | $1$ |
 | $1$ | $0$ | $10$ |
-| $1/2$ | $1/4$ | $7/8=0.875$ |
+| $1/2$ | $1/4$ | $1/4+10/16=7/8=0.875$ |
 
 Hele steget øker verdien fra 1 til 10; halvt steg senker den til $0.875$
 og godtas av Armijo. Leddet $10\alpha^4$ fanger ikke modellen opp.
 
+Cellen kontrollerer tabellen med Armijo-hjelperen og tegner to bilder:
+banene til fullt og dempet Newton over nivåkurvene, og $q$ sammen med
+modellen langs den første Newton-retningen.
+
 ```{pyodide-python}
 #| label: week10-backtrack-positive-hess
-x = np.array([0., 0.])
-g, H = valley_grad(x), valley_hess(x)
+z = np.array([0., 0.])
+g, H = valley_grad(z), valley_hess(z)
 p = np.linalg.solve(H, -g)
-a, halvings = armijo(valley, g, x, p)
+a, halvings = armijo(valley, g, z, p)
 print('H-egenverdier =', np.linalg.eigvalsh(H), ' p =', p)
-print('Fullt steg: q =', valley(x + p), ' Armijo: alpha =', a, ', q =', valley(x + a*p))
-
-def newton_path(damped, n):
-    point = np.array([0., 0.]); points = [point.copy()]
-    for _ in range(n):
-        grad, hess = valley_grad(point), valley_hess(point)
-        direction = np.linalg.solve(hess, -grad)
-        step = armijo(valley, grad, point, direction)[0] if damped else 1.
-        point = point + step*direction
-        points.append(point.copy())
-    return np.array(points)
-
-full_path, damped_path = newton_path(False, 2), newton_path(True, 5)
-fig, (ax_map, ax_line) = plt.subplots(1, 2, figsize=(10, 4.3))
-u, v = np.meshgrid(np.linspace(-.1, 1.2, 180), np.linspace(-.2, 1.2, 180))
-ax_map.contour(u, v, (1-u)**2 + 10*(v-u*u)**2,
-               levels=[.001, .01, .05, .1, .25, .5, 1, 2, 5, 10],
-               colors='#adb5bd', linewidths=.8)
-for name, points, color in [('fullt Newton', full_path, '#b5483f'),
-                            ('Armijo-dempet', damped_path, '#1665ad')]:
-    ax_map.plot(points[:, 0], points[:, 1], 'o-', color=color, markersize=4, label=name)
-ax_map.plot(1, 1, 'k*', markersize=11, label='q = 0')
-ax_map.set(xlabel='u', ylabel='v', title='Baner over nivåkurvene til q')
-ax_map.set_aspect('equal'); ax_map.legend(fontsize=8, loc='upper left')
-alpha_grid = np.linspace(0, 1.1, 180)
-ax_line.plot(alpha_grid, [valley(x + t*p) for t in alpha_grid], label='faktisk q(x+αp)')
-ax_line.plot(alpha_grid, (1 - alpha_grid)**2, '--', label='lokal modell')
-ax_line.set(xlabel='α langs første Newton-retning', ylabel='verdi',
-            title='Modellen undervurderer hele steget')
-ax_line.legend(fontsize=8); fig.tight_layout(); plt.show()
+print('Fullt steg: q =', valley(z + p), ' Armijo: alpha =', a, ', q =', valley(z + a*p))
+show_valley(z, p)     # baner over nivåkurvene, og q mot modellen langs p
 ```
 
 Fullt Newton går først til $(1,0)$, der $q=10$, og deretter til $(1,1)$.
 Den dempede banen senker verdien allerede i første steg. SPD sikrer
 nedgang for *tilstrekkelig små* steg, ikke for hvert helt steg.
 
-### Resultat – sikret Newton fra de samme startene
+**Øv på dette:** [modell og virkelig verdi i den bøyde dalen](#uke10-ov-dalen).
 
-Nå kjører vi Eksperiment 2 på nytt, men med begge sikringene: Cholesky-forsøket
-for $\mu$ og Armijo-demping.
+</details>
+
+### Hjelper reparasjonen i hele bildet?
+
+I eksperiment 2 endte 42 % av startene i et sadelpunkt eller i
+maksimumet. Siden da har vi rettet ett enkelt steg i dobbeltbrønnen: først
+retningen med Cholesky-forsøket, så lengden med Armijo. Nå setter vi de to
+reparasjonene sammen til den **sikrede Newton-metoden**. I hvert steg:
+
+1. regn ut $g$ og $H$ i punktet;
+2. finn $\mu$ med Cholesky-forsøket ($\mu=0,\ 0.5,\ 1,\ 2,\ldots$);
+3. løs $(H+\mu I)p=-g$;
+4. velg $\alpha$ med Armijo-halvering ($\alpha=1,\ \tfrac12,\ \tfrac14,\ldots$);
+5. flytt til $z+\alpha p$.
+
+Hjelperen `newton_basins(safe=True)` gjør nettopp dette fra de samme
+$81\times81$ startene som i eksperiment 2. Med `which=True` forteller den
+også hvilket av de fire minimumene hver start ender i, og bildet farger
+startene etter det. Målet er å se om de to reparasjonene er nok til at hver
+start ender i et minimum, og i hvilket.
+
+### Eksperiment 3 – sikret Newton fra de samme startene
+
+- Forutsi: hvor mange starter ender nå i et sadelpunkt eller i maksimumet?
+- Kjør cellen og sammenlign antallene med tabellen fra eksperiment 2.
+- Se på bildet: ender en start alltid i minimumet som ligger nærmest?
 
 ```{pyodide-python}
 #| label: week10-basins-safe
-X0, Y0, kind_safe = newton_basins(safe=True)
+# Samme 81 x 81 starter som i eksperiment 2, nå med Cholesky-forsøk og Armijo.
+X0, Y0, kind_safe, which = newton_basins(safe=True, which=True)
 for k, name in [(0, 'minimum'), (1, 'sadelpunkt'), (2, 'maksimum'), (-1, 'ikke konvergert')]:
     print(f'{name:16s}: {np.sum(kind_safe == k):5d} starter')
+show_minima(X0, Y0, which)
 ```
 
-**Alle 6561 startene ender i et minimum.** Armijo godtar bare steg som
-senker $f$, og etter Cholesky-forsøket peker retningen alltid nedover.
+**Hva viser forsøket?** **Alle 6561 startene ender i et minimum,** ingen i
+et sadelpunkt eller i maksimumet. Armijo godtar bare steg som senker $f$, og etter Cholesky-forsøket peker retningen alltid nedover.
 Derfor kan metoden ikke ende i maksimumet, og nær et sadelpunkt fører den
 negative krumningen den videre nedover. Bare helt spesielle starter kan
 ende i et sadelpunkt; ingen av de 6561 gjorde det. Nær et minimum er $H$
 SPD, så $\mu=0$ og $\alpha=1$ godtas: sikringen slår seg av, og den
 kvadratiske farten fra 10.2 beholdes.
-Hvilket av de fire minimumene vi ender i, avhenger fortsatt av starten:
-sikringen gir et minimum, ikke det globale.
+
+Bildet viser at hvilket av de fire minimumene vi ender i, fortsatt avhenger
+av starten. De fleste startene ender i minimumet som ligger nærmest, men
+ikke alle: starten $(2,\,0)$ ligger nærmest $(3,2)$, men ligger i det
+lilla området og ender i $(3.58,\,-1.85)$. Sikringen gir et minimum, men vi kan ikke velge hvilket.
+Her har alle fire minimumene $f=0$, men i andre problemer kan et lokalt
+minimum være mye dårligere enn det globale.
 
 <details class="reading-step">
 <summary>Gå i dybden: sammenlign med SciPy</summary>
@@ -655,10 +1193,13 @@ sikringen gir et minimum, ikke det globale.
 
 SciPys `minimize` fra [uke 8](uke8.qmd#uke8-scipy) kan gjøre hele søket for
 den bøyde dalen. `Newton-CG` bruker Hessianen og løser hvert Newton-system
-med en indre CG-iterasjon, som i 10.3. `BFGS` regner aldri ut $H$; den
-bygger en tilnærmet Hessian fra hvordan gradienten endrer seg fra steg til
-steg. Det gjør hvert steg billigere, mens farten nær minimum likevel er
-nesten like god.
+med en indre CG-iterasjon, som i «Gå i dybden» om kostnaden over. `BFGS`
+regner aldri ut $H$; den bygger en tilnærmet Hessian fra hvordan gradienten
+endrer seg fra steg til steg. Det gjør hvert steg billigere, mens farten
+nær minimum likevel er nesten like god.
+
+Cellen kjører begge metodene fra $(0,0)$ og skriver ut antall ytre
+iterasjoner, sluttpunktet, $q$ og gradientnormen.
 
 ```{pyodide-python}
 #| label: week10-scipy-compare
@@ -675,329 +1216,400 @@ betyr at metodens egne stoppkrav ble møtt, ikke at et globalt minimum er
 bevist; det viser vi separat ved at $q$ er en sum av kvadrater og
 $q(1,1)=0$. Færre ytre iterasjoner er heller ikke nødvendigvis mindre
 arbeid, siden Hessian, gradient og indre løsninger koster forskjellig.
-Kallene er forklart i SciPy-oppslaget i 10.7.
+Kallene er forklart i SciPy-oppslaget i 10.6.
 
 </details>
 
-### Gauss–Newton: Newton for minste kvadrater
+I [prosjekt 10](project_week10.qmd) bruker du Newton-idéen på et
+tilpasningsproblem: å finne en posisjon fra unøyaktige avstander. I
+[uke 11](uke11.qmd) får vi lineære bibetingelser og ofte et beste punkt på
+randen. Da er gradient null ikke lenger den riktige kontrollen.
 
-<div id="uke10-gauss-newton"></div>
-
-Mange optimeringsproblemer er tilpasninger, som i uke 4 og uke 8. Med
-vektoren $z$ av ukjente parametre minimerer vi
-
-$$F(z)=\tfrac12\|r(z)\|^2=\tfrac12\sum_{i=1}^m r_i(z)^2,$$
-
-der $r_i$ er avviket mellom modell og måling nummer $i$. La $J$ være
-**Jacobimatrisen** til $r$: rad $i$ er gradienten til $r_i$. Da er
-
-$$\nabla F=J^Tr,\qquad
-\nabla^2F=J^TJ+\sum_{i=1}^m r_i\,\nabla^2r_i.$$
-
-**Gauss–Newton** dropper summen, som er ganget med residualene og er liten
-når modellen passer godt. Steget løser da $J^TJp=-J^Tr$. Det er
-normallikningene for
-
-$$\min_p\ \|Jp+r\|,$$
-
-altså et lineært minste kvadraters problem fra
-[uke 4](uke4.qmd#uke4-mk), som vi løser med QR eller `np.linalg.lstsq`.
-Vi trenger ingen andrederiverte av modellen. Siden
-$g^Tp=-\|Jp\|^2\le0$, peker steget aldri oppover, i motsetning til
-Newton-retningen i 10.4.
-
-Prøv det på svingningen fra uke 8, $y\approx a\,e^{-0.3t}\cos(\omega t)$,
-fra start $(a,\omega)=(1,\,2.3)$:
-
-```{pyodide-python}
-#| label: week10-gauss-newton
-tf = np.linspace(0, 6, 40)
-yf = np.exp(-.3*tf)*np.cos(2*tf) + np.random.default_rng(8).normal(0, .02, tf.size)
-def r_wave(z):
-    a, w = z
-    return a*np.exp(-.3*tf)*np.cos(w*tf) - yf
-def J_wave(z):
-    a, w = z
-    e = np.exp(-.3*tf)
-    return np.column_stack([e*np.cos(w*tf), -a*tf*e*np.sin(w*tf)])
-
-z = np.array([1., 2.3])
-for k in range(1, 6):
-    p = np.linalg.lstsq(J_wave(z), -r_wave(z), rcond=None)[0]   # uke 4
-    z = z + p
-    print(f'steg {k}: a = {z[0]:.4f}, omega = {z[1]:.4f}, S = {np.sum(r_wave(z)**2):.5f}')
-```
-
-Etter tre–fire steg står $a=0.973$, $\omega=2.005$ og $S=0.017$ stille.
-Det er den gode dalen fra uke 8. Hvert steg var ett minste kvadraters
-problem.
-
-Hvis $J$ er nesten singulær, kan steget bli svært langt. Da bruker vi samme
-forskyvning som for $H$ over og løser $(J^TJ+\mu I)p=-J^Tr$. Dette er
-**Levenberg–Marquardt**; i litteraturen kalles $\mu$ ofte $\lambda$. I
-[prosjekt 10](project_week10.qmd) undersøker du hva det koster å droppe
-leddet med residualene, og hva singulærverdiene til $J$ forteller.
-
-I [uke 11](uke11.qmd) får vi lineære bibetingelser og ofte et beste punkt
-på randen. Da er gradient null ikke lenger den riktige kontrollen.
-
-## 10.6 Regneoppgaver
+## 10.5 Regneoppgaver
 
 <div id="uke10-oppgaver"></div>
 
-Oppgave 1–2 følger 10.1, oppgave 3 følger 10.2, oppgave 4–5 Cholesky i
-10.3, oppgave 6–7 dobbeltbrønnen i 10.4, oppgave 8–11 sikringene i 10.5 og
-oppgave 12 Gauss–Newton i 10.5.
-Svar eksakt der det står «eksakt». I uttrykksfeltene bruker du `*` for
-multiplikasjon og `^` for potens. For vektorer fyller du inn én verdi i
-hvert komponentfelt. Begrunn klassifiseringene i egne notater; feltene
-kontrollerer regningen. Kodeoppgavene står i 10.7.
+Oppgavene er ordnet etter de fire stegene i hovedløpet, og til slutt
+kommer tre oppgaver til «Gå i dybden». Svar eksakt der det står «eksakt».
+I uttrykksfeltene bruker du `*` for multiplikasjon og `^` for potens. For vektorer fyller du inn én
+verdi i hvert komponentfelt. Begrunn klassifiseringene i egne notater;
+feltene kontrollerer regningen. Kodeoppgavene står i 10.6.
 
-**Oppgave 1 – uke 2 var Newton.**
+### Steg 1: Newton er regelen fra uke 2
+
+<div id="uke10-ov-uke2"></div>
+
+#### Newton-regelen fra uke 2
+
+I uke 2 løste vi $h(x)=x^3+x-1=0$. Skriv Newton-iterasjonen $x-h(x)/h'(x)$
+som én brøk (prøv uten å se tilbake i 10.1), og avgjør hvilken av omskrivingene $g_1$, $g_2$, $g_3$ fra uke 2
+den er. Vi vil så minimere $f(x)=x^4/4-x$. Skriv Newton-regelen
+$x-f'(x)/f''(x)$ som et uttrykk i $x$, og regn ut første iterasjon fra
+$x_0=2$. Svar eksakt.
 
 ```{math-exercise}
 #| label: week10-task-week2-newton
-#| caption: Oppgave 1 – uke 2 var Newton
+#| caption: To Newton-regler og én iterasjon
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: Newton-iterasjonen som én brøk, Newton-regelen for f'=0, x1
 
-I uke 2 løste vi $h(x)=x^3+x-1=0$. Skriv Newton-iterasjonen $x-h(x)/h'(x)$ som én brøk. Hvilken av omskrivingene $g_1$, $g_2$, $g_3$ fra uke 2 er dette?
-
 $x-\dfrac{h(x)}{h'(x)}=$ __[(2*x^3+1)/(3*x^2+1)]
-
-Vi vil minimere $f(x)=x^4/4-x$. Skriv Newton-regelen $x-f'(x)/f''(x)$ som et uttrykk i $x$, og regn ut første iterasjon fra $x_0=2$. Svar eksakt.
 
 $x-\dfrac{f'(x)}{f''(x)}=$ __[x-(x^3-1)/(3*x^2)]
 
 $x_1=$ _[17/12]
-
-Feilene $|x_k-1|$ for $k=0,\ldots,5$ er $1,\ 0.42,\ 0.11,\ 1.1\cdot10^{-2},\ 1.1\cdot10^{-4},\ 1.2\cdot10^{-8}$. Hvor mange korrekte desimaler har du etter hvert steg?
 ```
 
-**Oppgave 2 – ett Newton-steg i skålen fra uke 6.**
+Feilene $|x_k-1|$ for minimeringen er $1,\ 0.42,\ 0.11,\ 1.1\cdot10^{-2},\
+1.1\cdot10^{-4},\ 1.2\cdot10^{-8}$ for $k=0,\ldots,5$. Hvor mange riktige
+desimaler har du etter hvert steg?
+
+<div id="uke10-ov-handsteg"></div>
+
+#### Ett Newton-steg for hånd
+
+Ta $f(x,y)=\tfrac14x^4+2xy+y^2$ og startpunktet $z_0=(1,1)$. Gjør de samme
+trinnene som i håndeksemplet i 10.1: finn gradienten og Hessianen generelt, sett
+inn $z_0$, løs $2\times2$-systemet $Hp=-g$ med innsetting, og regn ut
+$f(z_1)$ for $z_1=z_0+p$. Svar eksakt.
+
+```{math-exercise}
+#| label: week10-task-hand-step
+#| caption: Gradient, Hessian og steget fra (1, 1)
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første komponent av g, andre komponent av g, h11, h12, h22, første komponent av p, andre komponent av p, f etter steget
+
+$g(z_0)=$ vec[3,4]
+
+$h_{11}=$ _[3], $h_{12}=$ _[2], $h_{22}=$ _[2]
+
+$p=$ vec[1,-3]
+
+$f(z_1)=$ _[0]
+```
+
+Sammenlign med $f(z_0)$. Er $z_1$ minimumet? Kontroller ved å regne ut
+gradienten i $z_1$.
+
+<div id="uke10-ov-kvadratisk"></div>
+
+#### Ett steg treffer for en kvadratisk funksjon
+
+Bruk $A=\begin{bmatrix}3&1\\1&2\end{bmatrix}$, $b=(5,5)^T$ og
+$\phi(x)=\tfrac12x^TAx-b^Tx$ fra uke 6. Her er $\nabla\phi(x)=Ax-b$ og
+Hessianen er $A$ i alle punkter. Start i $x_0=(0,0)^T$, løs
+$Ap=-\nabla\phi(x_0)$ og finn punktet etter ett Newton-steg. Svar eksakt.
 
 ```{math-exercise}
 #| label: week10-task-quadratic
-#| caption: Oppgave 2 – ett Newton-steg
+#| caption: Newton-steget i skålen fra uke 6
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: p første komponent, p andre komponent, x1 første komponent, x1 andre komponent
-
-Bruk $A=\begin{bmatrix}3&1\\1&2\end{bmatrix}$, $b=(5,5)^T$ og $\phi(x)=\tfrac12x^TAx-b^Tx$. Fra $x_0=(0,0)^T$: løs $Ap=-\nabla\phi(x_0)$ og finn punktet etter ett steg. Svar eksakt.
+#| field-labels: første komponent av p, andre komponent av p, første komponent av x1, andre komponent av x1
 
 $p=$ vec[1,2]
 
 $x_1=$ vec[1,2]
 ```
 
-**Oppgave 3 – samme steg i nye enheter.**
+Kontroller at $\nabla\phi(x_1)=0$. Forklar med modellen $m(p)$ hvorfor ett
+steg er nok for en kvadratisk funksjon, uansett startpunkt.
+
+### Steg 2: sifrene dobles
+
+<div id="uke10-ov-sifre"></div>
+
+#### Feilen kvadreres
+
+Anta at en metode oppfyller $e_{k+1}=C\,e_k^2$ med $C=1/2$, og at
+$e_0=1/10$. Regn ut $e_1$, $e_2$ og $e_3$ eksakt. En annen metode halverer
+feilen i hvert steg, $e_k=\tfrac1{10}\left(\tfrac12\right)^k$. Finn det
+minste antallet steg $k$ som gir en feil som ikke er større enn $e_3$.
 
 ```{math-exercise}
-#| label: week10-task-invariance
-#| caption: Oppgave 3 – Newton og gradient i nye koordinater
+#| label: week10-task-digits
+#| caption: Tre kvadratiske steg mot mange halveringer
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: Newton-retning første komponent, Newton-retning andre komponent, minus gradient første komponent, minus gradient andre komponent, minus gradient i z første komponent, minus gradient i z andre komponent, steglengde i z
+#| field-labels: e1, e2, e3, antall halveringer
 
-La $f(u,v)=u^2+100v^2$ og $x=(1,1)^T$. Finn Newton-retningen $p$ og den negative gradienten $-\nabla f$ i $x$.
+$e_1=$ _[1/200]
 
-$p=$ vec[-1,-1]
+$e_2=$ _[1/80000]
 
-$-\nabla f(x)=$ vec[-2,-200]
+$e_3=$ _[1/12800000000]
 
-Bytt til koordinatene $z=(u,\,10v)$, slik at $x$ svarer til $z=(1,10)$. Skriv $f$ som funksjon av $z$, og finn den negative gradienten med hensyn på $z$. Finn også steglengden $\alpha$ som gjør at $z+\alpha(-\nabla_z f)$ er minimumspunktet.
-
-$-\nabla_z f=$ vec[-2,-20]
-
-$\alpha=$ _[1/2]
-
-Regn retningen $-\nabla_z f$ om til $(u,v)$-koordinater. Er den parallell med $p$ eller med $-\nabla f$? Hva sier det om hvilke koordinater som er «riktige» for gradientmetoden her?
+$k=$ _[31]
 ```
 
-I oppgave 4 og 5 er $H=\begin{bmatrix}9&3\\3&5\end{bmatrix}$ SPD, og vi
-skriver $H=LL^T$ med $L$ nedre triangulær med positiv diagonal, som i 10.3.
+Skriv $e_1$, $e_2$ og $e_3$ som desimaltall. Hvor mange riktige sifre gir
+hvert steg? Hvorfor trenger halveringen så mange flere steg?
 
-**Oppgave 4 – finn Cholesky-faktoren.**
+### Steg 3: Newton kan gå til feil punkt
 
-```{math-exercise}
-#| label: week10-task-cholesky-factor
-#| caption: Oppgave 4 – Cholesky-faktor
-#| mode: equivalent
-#| partial-credit: true
-#| field-labels: Første diagonalelement, Nedre element, Andre diagonalelement
+<div id="uke10-ov-sadel"></div>
 
-For $H=\begin{bmatrix}9&3\\3&5\end{bmatrix}$, finn $a$, $b$ og $c$ i $H=LL^T$ der $L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$ og $a,c>0$. Svar eksakt.
+#### Et sadelpunkt i en annen funksjon
 
-$a=$ _[3]
-$b=$ _[1]
-$c=$ _[2]
-```
-
-**Oppgave 5 – to triangulære systemer.**
-
-```{math-exercise}
-#| label: week10-task-cholesky-solves
-#| caption: Oppgave 5 – hjelpevektor og Newton-retning
-#| mode: equivalent
-#| partial-credit: true
-#| field-labels: Første komponent av y, Andre komponent av y, Første komponent av p, Andre komponent av p
-
-Bruk faktoren $L$ fra oppgave 4 og høyresiden $-g=(9,7)^T$. Løs først $Ly=-g$ ovenfra og ned, og deretter $L^Tp=y$ nedenfra og opp. Svar eksakt.
-
-$y_1=$ _[3]
-$y_2=$ _[2]
-
-$p_1=$ _[2/3]
-$p_2=$ _[1]
-
-Kontroller svaret ved å regne ut $Hp$.
-```
-
-**Oppgave 6 – sadelpunktet i dobbeltbrønnen.**
+Funksjonen $f(u,v)=(u^2-1)^2+(v^2-1)^2$ er to dobbeltbrønner lagt sammen,
+én i hver retning. Regn ut gradienten i punktet $(1,0)$ og Hessianens
+egenverdier der, i stigende rekkefølge. Svar eksakt.
 
 ```{math-exercise}
 #| label: week10-task-saddle
-#| caption: Oppgave 6 – sadelpunkt
+#| caption: Gradient og egenverdier i punktet (1, 0)
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: Gradient første komponent, Gradient andre komponent, Minste egenverdi, Største egenverdi
+#| field-labels: første komponent av gradienten, andre komponent av gradienten, minste egenverdi, største egenverdi
 
-For $f(u,v)=(u^2-1)^2+v^2/2$, beregn gradienten i $(0,0)$ og Hessianens egenverdier der i stigende rekkefølge. Svar eksakt. Hvorfor er punktet ikke et minimum?
+$\nabla f(1,0)=$ vec[0,0]
 
-$\nabla f(0,0)=$ vec[0,0]
-
-$\lambda_{\min}=$ _[-4], $\lambda_{\max}=$ _[1]
+$\lambda_{\min}=$ _[-4], $\lambda_{\max}=$ _[8]
 ```
 
-**Oppgave 7 – Newton-retning med negativ krumning.**
+Hvorfor er punktet ikke et minimum? I hvilken retning går $f$ nedover? Hvor
+går et rent Newton-steg fra dette punktet?
+
+<div id="uke10-ov-retning"></div>
+
+#### Negativ krumning i et annet punkt
+
+Bruk dobbeltbrønnen $f(u,v)=(u^2-1)^2+\tfrac12v^2$ i punktet $z=(1/2,\,0)$.
+Regn ut $g$ og $H$ med formlene i håndeksemplet i 10.3, løs $Hp=-g$, og regn ut
+både $p^THp$ og $g^Tp$. Svar eksakt.
 
 ```{math-exercise}
 #| label: week10-task-direction
-#| caption: Oppgave 7 – retningsderivert
+#| caption: Newton-retning, krumning og retningsderivert
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: Første komponent av p, Andre komponent av p, g prikk p
-
-For dobbeltbrønnen over: start i $(1/2,0)$ og løs $Hp=-g$ eksakt. Beregn $g^Tp$. Betyr fortegnet nedgang eller oppgang for små positive steg?
+#| field-labels: første komponent av p, andre komponent av p, p transponert H p, g prikk p
 
 $p=$ vec[-3/2,0]
+
+$p^THp=$ _[-9/4]
 
 $g^Tp=$ _[9/4]
 ```
 
-**Oppgave 8 – Cholesky som test.**
+Betyr fortegnet til $g^Tp$ nedgang eller oppgang for små positive steg?
+Regn også ut $f(z+p)$. Et helt steg havner her tilfeldigvis nøyaktig i det
+andre minimumet, $(-1,0)$. Forklar hvorfor det ikke motsier at retningen
+peker oppover. (Hint: se på $f(z+tp)$ for små $t>0$.)
+
+### Steg 4: Cholesky-forsøket og Armijo
+
+<div id="uke10-ov-cholesky-faktor"></div>
+
+#### Finn Cholesky-faktoren
+
+Matrisen $H=\begin{bmatrix}9&3\\3&5\end{bmatrix}$ er SPD. Skriv $H=LL^T$ med
+$L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$ og $a,c>0$, og finn $a$, $b$ og $c$
+ved å sammenligne $LL^T$ med $H$ ett element om gangen, som i 10.4. Svar
+eksakt.
+
+```{math-exercise}
+#| label: week10-task-cholesky-factor
+#| caption: Elementene i den nedre triangulære faktoren
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første diagonalelement a, nedre element b, andre diagonalelement c
+
+$a=$ _[3]
+
+$b=$ _[1]
+
+$c=$ _[2]
+```
+
+Hva er de to pivotene? Kontroller at $c^2=\det H/h_{11}$.
+
+<div id="uke10-ov-cholesky-test"></div>
+
+#### Når Cholesky stopper
+
+Prøv Cholesky på $H=\begin{bmatrix}1&2\\2&2\end{bmatrix}$ med
+$L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$. Regn ut $a^2$, deretter $b$, og til
+slutt tallet som skal bli $c^2$. Regn også ut $\det H$. Gjenta deretter
+regningen for $H+\mu I$ med $\mu=0.5$ og $\mu=1$, og finn hvilken $\mu$ i
+listen $0,\,0.5,\,1,\,2,\ldots$ Cholesky-forsøket godtar først. Svar eksakt.
 
 ```{math-exercise}
 #| label: week10-task-cholesky-test
-#| caption: Oppgave 8 – stopper Cholesky?
+#| caption: Pivoter, determinant og første godkjente forskyvning
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: a i andre potens, b, c i andre potens, determinant, første mu som godtas
 
-Prøv Cholesky på $H=\begin{bmatrix}1&2\\2&2\end{bmatrix}$ med $L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$. Regn ut $a^2$, deretter $b$, og til slutt det tallet som skal bli $c^2$. Svar eksakt.
-
 $a^2=$ _[1]
+
 $b=$ _[2]
+
 $c^2=$ _[-2]
 
 $\det H=$ _[-2]
 
-Gjenta regningen for $H+\mu I$ med $\mu=0.5$ og $\mu=1$. Hvilken $\mu$ i listen $0,\,0.5,\,1,\,2,\ldots$ godtar Cholesky-forsøket først?
-
 $\mu=$ _[1]
-
-Hva forteller fortegnet til $c^2$ om egenverdiene til $H$? Vis at $c^2=\det H/a^2$ for en $2\times2$-matrise.
 ```
 
-**Oppgave 9 – Cholesky-forsøket retter retningen.**
+Hva forteller fortegnet til $c^2$ om egenverdiene til $H$?
+
+<div id="uke10-ov-forskyvning"></div>
+
+#### Cholesky-forsøket i et annet punkt
+
+Bruk dobbeltbrønnen i punktet $z=(1/2,\,0)$ igjen, med $g$ og $H$ fra oppgaven
+«Negativ krumning i et annet punkt». Prøv Cholesky på $H+\mu I$ med
+$\mu=0,\,0.5,\,1,\,2,\ldots$ og skriv ned første pivot for hver $\mu$. En
+pivot som er nøyaktig null, godtas ikke. Løs så $(H+\mu I)p=-g$ med den
+første $\mu$ som virker, og regn ut $g^Tp$. Svar eksakt.
 
 ```{math-exercise}
 #| label: week10-task-regularize
-#| caption: Oppgave 9 – regularisert retning
+#| caption: Første godkjente forskyvning og den nye retningen
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: Første mu som godtas, Første komponent av p, Andre komponent av p, g prikk p
-
-I dobbeltbrønnen i punktet $(1/2,0)$ prøver vi Cholesky på $H+\mu I$ med $\mu=0,\,0.5,\,1,\,2,\ldots$ Hvilken $\mu$ godtas først? Løs så $(H+\mu I)p=-g$ og beregn $g^Tp$. Svar eksakt.
+#| field-labels: første mu som godtas, første komponent av p, andre komponent av p, g prikk p
 
 $\mu=$ _[2]
 
 $p=$ vec[3/2,0]
 
 $g^Tp=$ _[-9/4]
-
-Forklar hvorfor et lite positivt steg langs $p$ nå gir nedgang.
 ```
 
-**Oppgave 10 – modellen i den bøyde dalen.**
+Forklar hvorfor et lite positivt steg langs $p$ nå gir nedgang.
+
+<div id="uke10-ov-armijo"></div>
+
+#### Armijo i dobbeltbrønnen
+
+Fortsett oppgaven over: i $z=(1/2,\,0)$ bruker du retningen $p$ og tallet
+$g^Tp$ som du fant med Cholesky-forsøket. Regn ut $f(z)$, verdien
+etter et helt steg $f(z+p)$ og verdien etter et halvt steg $f(z+p/2)$. Regn
+også ut Armijo-grensen $f(z)+10^{-4}\cdot\tfrac12\cdot g^Tp$ for $\alpha=1/2$,
+og avgjør hvilken $\alpha$ Armijo godtar. Svar eksakt.
+
+```{math-exercise}
+#| label: week10-task-armijo-well
+#| caption: Helt og halvt steg langs den rettede retningen
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: f i z, f etter helt steg, f etter halvt steg, Armijo-grensen for halvt steg, godkjent alpha
+
+$f(z)=$ _[9/16]
+
+$f(z+p)=$ _[9]
+
+$f(z+p/2)=$ _[81/256]
+
+Armijo-grensen: _[44991/80000]
+
+$\alpha=$ _[1/2]
+```
+
+Hvorfor ble $\alpha=1$ avvist, selv om retningen peker nedover?
+
+### Til «Gå i dybden»
+
+<div id="uke10-ov-enheter"></div>
+
+#### Samme steg i nye enheter
+
+Denne oppgaven hører til «Gå i dybden» om enheter i 10.2. La
+$f(u,v)=u^2+100v^2$ og $z=(1,1)$. Finn Newton-retningen $p$ og den negative
+gradienten $-g$ i $z$. Bytt så til de nye koordinatene $\tilde z=(u,\,10v)$,
+slik at punktet blir $\tilde z=(1,10)$. Skriv $f$ som funksjon av $\tilde z$,
+finn den negative gradienten $-\tilde g$ i de nye koordinatene, og
+steglengden $\alpha$ som gjør at $\tilde z+\alpha(-\tilde g)$ er
+minimumspunktet.
+
+```{math-exercise}
+#| label: week10-task-invariance
+#| caption: Newton-retning og gradient i to koordinatsystemer
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første komponent av Newton-retningen, andre komponent av Newton-retningen, første komponent av minus gradienten, andre komponent av minus gradienten, første komponent av minus gradienten i nye koordinater, andre komponent av minus gradienten i nye koordinater, steglengde i nye koordinater
+
+$p=$ vec[-1,-1]
+
+$-g=$ vec[-2,-200]
+
+$-\tilde g=$ vec[-2,-20]
+
+$\alpha=$ _[1/2]
+```
+
+Regn retningen $-\tilde g$ om til $(u,v)$-koordinater. Er den parallell med
+$p$ eller med $-g$? Hva sier det om hvilke koordinater som er
+«riktige» for gradientmetoden her?
+
+<div id="uke10-ov-triangulaer"></div>
+
+#### To triangulære systemer
+
+Denne oppgaven hører til «Gå i dybden» om å løse Newton-systemet med
+Cholesky i 10.4. Bruk faktoren $L$ for $H=\begin{bmatrix}9&3\\3&5\end{bmatrix}$
+fra oppgaven «Finn Cholesky-faktoren» og høyresiden $-g=(9,7)^T$. Løs først
+$Ly=-g$ ovenfra og ned, og deretter $L^Tp=y$ nedenfra og opp. Svar eksakt.
+
+```{math-exercise}
+#| label: week10-task-cholesky-solves
+#| caption: Hjelpevektor og Newton-retning
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: første komponent av y, andre komponent av y, første komponent av p, andre komponent av p
+
+$y_1=$ _[3]
+
+$y_2=$ _[2]
+
+$p_1=$ _[2/3]
+
+$p_2=$ _[1]
+```
+
+Kontroller svaret ved å regne ut $Hp$.
+
+<div id="uke10-ov-dalen"></div>
+
+#### Modell og virkelig verdi i den bøyde dalen
+
+Denne oppgaven hører til «Gå i dybden» om den bøyde dalen i 10.4. Vi gjør
+dalen litt slakere: $q(u,v)=(1-u)^2+5(v-u^2)^2$. Regn ut $g(0,0)$ og
+$H(0,0)$ (du skal få $g=(-2,0)^T$ og $H=\operatorname{diag}(2,10)$). Finn så
+$p$ fra $Hp=-g$, modellverdien
+$m(p)=q(0,0)+g^Tp+\tfrac12p^THp$, den faktiske verdien $q((0,0)+p)$ og
+verdien etter et halvt steg, $q((0,0)+p/2)$. Svar eksakt.
 
 ```{math-exercise}
 #| label: week10-task-valley
-#| caption: Oppgave 10 – modell og virkelig verdi
+#| caption: Modellen lover mer enn funksjonen gir
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: Newton-retning første komponent, Newton-retning andre komponent, modell ved fullt steg, faktisk verdi ved fullt steg
-
-For $q(u,v)=(1-u)^2+10(v-u^2)^2$ er $g(0,0)=(-2,0)^T$ og $H(0,0)=\operatorname{diag}(2,20)$. Finn $p$ fra $Hp=-g$, modellverdien $m_{(0,0)}(p)=q(0,0)+g^Tp+\tfrac12p^THp$, og den faktiske verdien $q((0,0)+p)$. Svar eksakt.
+#| field-labels: første komponent av Newton-retningen, andre komponent av Newton-retningen, modellverdi ved fullt steg, faktisk verdi ved fullt steg, faktisk verdi ved halvt steg
 
 $p=$ vec[1,0]
 
-$m_{(0,0)}(p)=$ _[0]
-$q(p)=$ _[10]
+$m(p)=$ _[0]
+
+$q(p)=$ _[5]
+
+$q(p/2)=$ _[9/16]
 ```
 
-**Oppgave 11 – halvt steg og Armijo.**
-
-```{math-exercise}
-#| label: week10-task-half-step
-#| caption: Oppgave 11 – dempet steg
-#| mode: equivalent
-#| partial-credit: true
-#| field-labels: Halvt steg første koordinat, Halvt steg andre koordinat, Funksjonsverdien etter halvt steg, Armijo-grensen
-
-Bruk $q(u,v)=(1-u)^2+10(v-u^2)^2$, start $(0,0)$, retning $p=(1,0)$ og $g=(-2,0)^T$. Beregn punktet og funksjonsverdien for $\alpha=1/2$, og høyresiden $q(0,0)+10^{-4}\alpha\,g^Tp$ i Armijo-testen. Svar eksakt.
-
-$x_+=$ vec[1/2,0]
-
-$q(x_+)=$ _[7/8]
-
-Armijo-grensen: _[9999/10000]
-
-Godtas $\alpha=1/2$? Hvorfor ble $\alpha=1$ avvist?
-```
-
-**Oppgave 12 – Gauss–Newton eller Newton?**
-
-```{math-exercise}
-#| label: week10-task-gauss-newton
-#| caption: Oppgave 12 – Gauss–Newton-steg og Newton-steg
-#| mode: equivalent
-#| partial-credit: true
-#| field-labels: J transponert r, J transponert J, Gauss-Newton-steget, andrederivert av F, Newton-steget
-
-Én ukjent $c$ og to residualer: $r_1(c)=c-1$ og $r_2(c)=c^2-4$. Vi minimerer $F(c)=\tfrac12\big(r_1(c)^2+r_2(c)^2\big)$. Her er $J$ en kolonne med de to tallene $r_1'(c)$ og $r_2'(c)$. Regn i $c=1$, og svar eksakt.
-
-$J^Tr=$ _[-6]
-
-$J^TJ=$ _[5]
-
-Gauss–Newton-steget $p=-J^Tr/(J^TJ)$: _[6/5]
-
-$F''(1)=J^TJ+r_1r_1''+r_2r_2''=$ _[-1]
-
-Newton-steget $p=-F'(1)/F''(1)$, der $F'(1)=J^Tr$: _[-6]
-
-Hvilket av de to stegene peker nedover, altså gir $F'(1)\,p<0$? Forklar med fortegnet til $F''(1)$ og til $J^TJ$, og knytt svaret til 10.4.
-```
+Hvilket ledd i $q$ fanger ikke modellen opp? Godtar Armijo $\alpha=1/2$?
+Sammenlign med tallene for den brattere dalen i «Gå i dybden».
 
 Arbeid videre med [prosjekt 10: posisjon fra avstander](project_week10.qmd).
 
-## 10.7 Python: prøv stegene selv
+## 10.6 Python: prøv stegene selv
 
 <div id="uke10-python"></div>
 
-Sammenligningen med SciPy i 10.5 (Gå i dybden) bruker `minimize`.
+Sammenligningen med SciPy i «Gå i dybden» i 10.4 bruker `minimize`.
 Oppslagsboksen samler det du trenger å vite om kallet og resultatet.
 
 <details>
@@ -1015,17 +1627,18 @@ Oppslagsboksen samler det du trenger å vite om kallet og resultatet.
 
 </details>
 
-Fullfør fire korte funksjoner. Hver oppgave har egne importer og
-definisjoner og kan kjøres uavhengig av cellene over. `TODO` markerer det
-du skal fylle inn. Kontrollene prøver flere inndata uten å vise
-løsningskoden.
+Fullfør fire korte funksjoner til stegene i hovedløpet. Hver oppgave
+har egne importer og definisjoner og kan kjøres uavhengig av cellene over.
+`TODO` markerer det du skal fylle inn. Kontrollene prøver flere inndata uten
+å vise løsningskoden.
 
-**Oppgave 1 – løs Newton-systemet.** Funksjonen skal returnere retningen
-$p$ for den kvadratiske skålen med Hessian $A$, for et vilkårlig punkt `x`.
+Den første funksjonen skal returnere Newton-retningen $p$ for den
+kvadratiske skålen $\phi(x)=\tfrac12x^TAx-b^Tx$, med Hessian $A$, i et
+vilkårlig punkt `x`.
 
 ```{py-exercise}
 #| label: week10-python-quadratic
-#| caption: Newton-retning i den kvadratiske skålen
+#| caption: Løs Newton-systemet uten invers matrise
 #| show-test-hints: false
 import numpy as np
 
@@ -1044,15 +1657,14 @@ assert np.allclose(newton_direction(np.array([0., 0.])), [1., 2.])
 assert np.allclose(newton_direction(np.array([1., 2.])), [0., 0.])
 ```
 
-**Oppgave 2 – test krumningen med Cholesky.** Funksjonen skal returnere
-`True` når dobbeltbrønnens Hessian ved `x` er SPD, og `False` ellers.
-Bruk `np.linalg.cholesky` i en `try`-blokk: den kaster
-`np.linalg.LinAlgError` når matrisen ikke er SPD. (For en matrise som er
-nøyaktig singulær, kan avrundingen avgjøre utfallet; det skjer ikke her.)
+Den andre funksjonen skal returnere `True` når dobbeltbrønnens Hessian i `x`
+er SPD, og `False` ellers. Bruk `np.linalg.cholesky` i en `try`-blokk: den
+kaster `np.linalg.LinAlgError` når matrisen ikke er SPD. (For en matrise som
+er nøyaktig singulær, kan avrundingen avgjøre utfallet; det skjer ikke her.)
 
 ```{py-exercise}
 #| label: week10-python-curvature
-#| caption: Er Hessianen SPD?
+#| caption: SPD-test med Cholesky
 #| show-test-hints: false
 import numpy as np
 
@@ -1073,22 +1685,50 @@ assert not positive_curvature(np.array([0., 0.]))
 assert not positive_curvature(np.array([.5, 0.]))
 ```
 
-**Oppgave 3 – velg mellom tre steglengder.** Bruk den bøyde dalen med et
-oppgitt punkt `x`, en retning `p` og gradient `g`. Prøv `1`, `1/2` og `1/4`
-i den rekkefølgen, og returner første faktor som oppfyller Armijo-ulikheten
-med $c=10^{-4}$.
+Den tredje funksjonen skriver løkken fra Cholesky-forsøket i 10.4: start med
+`mu = 0`; så lenge `np.linalg.cholesky(H + mu*I)` kaster
+`np.linalg.LinAlgError`, sett `mu = max(2*mu, 0.5)`. Returner den første
+`mu` som virker. Løkken har et fast antall forsøk, slik at den alltid
+stopper, også om noe er galt.
 
 ```{py-exercise}
-#| label: week10-python-armijo
-#| caption: Velg første godkjente steglengde
+#| label: week10-python-shift
+#| caption: Finn forskyvningen med Cholesky-forsøket
 #| show-test-hints: false
 import numpy as np
 
-def valley(x):
-    u, v = x
-    return (1-u)**2 + 10*(v-u*u)**2
+def cholesky_shift(H):
+    I = np.eye(len(H))
+    mu = 0.
+    for attempt in range(60):
+        # TODO: Prøv np.linalg.cholesky(H + mu*I). Lykkes den, returner mu.
+        # Kaster den np.linalg.LinAlgError, sett mu = max(2*mu, 0.5).
+        pass
+    return mu
 
-def first_accepted(x, p, g):
+## TESTS ##
+assert cholesky_shift(np.diag([-3.52, 1.])) == 4.
+assert cholesky_shift(np.diag([8., 1.])) == 0.
+assert cholesky_shift(np.array([[1., 2.], [2., 2.]])) == 1.
+assert cholesky_shift(np.diag([-1., 1.])) == 2.
+```
+
+Den fjerde funksjonen velger steglengde i dobbeltbrønnen. Med et punkt `z`,
+en retning `p` og gradienten `g` i `z` skal den prøve `1`, `1/2` og `1/4` i
+den rekkefølgen, og returnere første faktor som oppfyller Armijo-ulikheten
+med $c=10^{-4}$. Hvis ingen av de tre godtas, returnerer den `None`.
+
+```{py-exercise}
+#| label: week10-python-armijo
+#| caption: Første godkjente steglengde
+#| show-test-hints: false
+import numpy as np
+
+def well(z):
+    u, v = z
+    return (u*u - 1)**2 + .5*v*v
+
+def first_accepted(z, p, g):
     c = 1e-4
     for alpha in (1., .5, .25):
         # TODO: Erstatt False med Armijo-testen for dette alpha.
@@ -1097,36 +1737,14 @@ def first_accepted(x, p, g):
     return None
 
 ## TESTS ##
-assert first_accepted(np.array([0., 0.]), np.array([1., 0.]),
-                      np.array([-2., 0.])) == .5
-assert first_accepted(np.array([1., 0.]), np.array([0., 1.]),
-                      np.array([40., -20.])) == 1.
-assert first_accepted(np.array([0., 0.]), np.array([.1, 0.]),
-                      np.array([-2., 0.])) == 1.
-```
-
-**Oppgave 4 – Cholesky-forsøket.** Skriv løkken fra 10.5: start med
-`mu = 0`; så lenge `np.linalg.cholesky(H + mu*I)` kaster
-`np.linalg.LinAlgError`, sett `mu = max(2*mu, 0.5)`. Returner den første
-`mu` som virker.
-
-```{py-exercise}
-#| label: week10-python-shift
-#| caption: Finn forskyvningen med Cholesky
-#| show-test-hints: false
-import numpy as np
-
-def cholesky_shift(H):
-    I = np.eye(len(H))
-    mu = 0.
-    # TODO: Prøv Cholesky på H + mu*I, og doble mu (minst 0.5) til det lykkes.
-    return mu
-
-## TESTS ##
-assert cholesky_shift(np.diag([-3.52, 1.])) == 4.
-assert cholesky_shift(np.diag([8., 1.])) == 0.
-assert cholesky_shift(np.array([[1., 2.], [2., 2.]])) == 1.
-assert cholesky_shift(np.diag([-1., 1.])) == 2.
+assert first_accepted(np.array([.2, 0.]), np.array([1.6, 0.]),
+                      np.array([-.768, 0.])) == .5
+assert first_accepted(np.array([1., 1.]), np.array([0., -1.]),
+                      np.array([0., 1.])) == 1.
+assert first_accepted(np.array([.2, 0.]), np.array([3.2, 0.]),
+                      np.array([-.768, 0.])) == .25
+assert first_accepted(np.array([.2, 0.]), np.array([10., 0.]),
+                      np.array([-.768, 0.])) is None
 ```
 
 :::

@@ -47,28 +47,6 @@ def newton_position(z0, B, d, steps=8):
     return np.array(points)
 
 
-def lm_adaptive(z0, B, d, mu=1., steps=60):
-    """Levenberg-Marquardt med tilpasset mu.
-
-    Løs (J^T J + mu I) p = -J^T r. Hvis F synker, godta steget og del mu
-    på 10; ellers forkast steget og gang mu med 10.
-    """
-    F = lambda z: .5*np.sum(_res(z, B, d)**2)
-    z = np.array(z0, float)
-    points = [z.copy()]
-    for _ in range(steps):
-        J, r = _jac(z, B), _res(z, B, d)
-        p = np.linalg.solve(J.T @ J + mu*np.eye(2), -J.T @ r)
-        if np.linalg.norm(p) < 1e-12:
-            break
-        if F(z + p) < F(z):
-            z, mu = z + p, mu/10
-            points.append(z.copy())
-        else:
-            mu *= 10
-    return np.array(points)
-
-
 def show_hall(B, d=None, paths=(), labels=(), true=None, box=(-2, 12, -6, 10)):
     """Tegn ankrene, eventuelt nivåkurver for ||r(z)||, baner og fasit."""
     fig, ax = plt.subplots(figsize=(6, 5))
@@ -91,18 +69,28 @@ def show_hall(B, d=None, paths=(), labels=(), true=None, box=(-2, 12, -6, 10)):
     ax.set_aspect('equal'); ax.legend(fontsize=8); plt.show()
 
 
-def show_ellipse(estimates, center, J, sigma):
-    """Monte Carlo-punkter og ellipsen med halvakser 2 sigma/sigma_i langs v_i."""
-    U, s, Vt = np.linalg.svd(J)
+def show_moves(center, J, eps, groups):
+    """Flyttinger av anslaget (punkter) og ellipsen med halvakser eps/sigma_i langs v_i.
+    groups er en ordbok {navn: liste med flyttinger dz}."""
+    U, s, Vt = np.linalg.svd(J, full_matrices=False)
+    for i in range(2):                  # fortegnet er fritt: gjør største komponent i v_i positiv
+        if Vt[i, np.argmax(abs(Vt[i]))] < 0:
+            Vt[i] = -Vt[i]
     t = np.linspace(0, 2*np.pi, 200)
-    ellipse = center[:, None] + Vt.T @ np.vstack([2*sigma/s[0]*np.cos(t),
-                                                  2*sigma/s[1]*np.sin(t)])
-    fig, ax = plt.subplots(figsize=(5, 5))
-    ax.plot(estimates[:, 0], estimates[:, 1], '.', alpha=.4, label='Monte Carlo')
-    ax.plot(ellipse[0], ellipse[1], 'r-', label='2 standardavvik fra SVD')
+    ellipse = center[:, None] + Vt.T @ np.vstack([eps/s[0]*np.cos(t), eps/s[1]*np.sin(t)])
+    fig, ax = plt.subplots(figsize=(5, 5.8))
+    ax.plot(ellipse[0], ellipse[1], 'r-', label='ellipse fra SVD')
+    for label, moves in groups.items():
+        P = center + np.asarray(moves)
+        ax.plot(P[:, 0], P[:, 1], 'o', markersize=4, label=label)
     for i in range(2):
-        ax.annotate('', center + 2*sigma/s[i]*Vt[i], center,
-                    arrowprops={'arrowstyle': '->', 'color': 'k'})
+        tip = center + eps/s[i]*Vt[i]
+        ax.annotate('', tip, center, arrowprops={'arrowstyle': '->', 'color': 'k'})
+        ax.text(*(center + 1.15*eps/s[i]*Vt[i]), f'$v_{i+1}$', ha='center', va='center')
     ax.plot(*center, 'k*', markersize=10)
-    ax.set(xlabel='x (m)', ylabel='y (m)'); ax.set_aspect('equal')
-    ax.legend(fontsize=8); plt.show()
+    w = 1.3*eps/s[1]
+    ax.set(xlim=(center[0] - w, center[0] + w), ylim=(center[1] - w, center[1] + w),
+           xlabel='x (m)', ylabel='y (m)')
+    ax.set_aspect('equal')
+    ax.legend(fontsize=8, loc='upper center', bbox_to_anchor=(.5, -.13))
+    fig.tight_layout(); plt.show()
