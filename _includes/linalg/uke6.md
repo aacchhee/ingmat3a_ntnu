@@ -534,7 +534,7 @@ ganges med $10^{-4}$ når vi setter svaret inn i andre likning.
 Det andre svaret bommer bare med $0.01$ i første koordinat, der
 koeffisienten er $1$. **Svaret med minst residual har altså størst
 foroverfeil.** Dette ligner den flate funksjonsgrafen i
-[uke 2](page4.qmd#feil-residual-og-toleranse): stor avstand til løsningen
+[uke 2](page4.qmd#uke2-flat-graf): stor avstand til løsningen
 kan gi en liten residual.
 
 ### Bakoverfeil: hvor mye må høyresiden endres?
