@@ -45,7 +45,7 @@ website:
         contents:
           - text: "Uke 8 – introduksjon til optimering"
             file: pages/uke8.qmd
-          - text: "Uke 9 – søk uten deriverte og gradientmetoden"
+          - text: "Uke 9 – gradientmetoden og søk uten deriverte"
             file: pages/uke9.qmd
           - text: "Uke 10 – Newtons metode og Gauss–Newton"
             file: pages/uke10.qmd
@@ -63,6 +63,7 @@ website:
           - pages/project_week5.qmd
           - pages/project_week6.qmd
           - pages/project_week7.qmd
+          - pages/project_week9.qmd
           - pages/project_week10.qmd
           - pages/project_week11.qmd
 
