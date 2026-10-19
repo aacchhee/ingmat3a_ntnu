@@ -27,6 +27,7 @@ __pycache__/
 # Installed private extensions
 /_extensions/ctm-assessment/
 /_extensions/ai-feedback/
+/_extensions/ctm-libs/
 /_extensions/pyodide-interaktiv/
 /_extensions/math-exercise/
 /_extensions/jsxgraph/
