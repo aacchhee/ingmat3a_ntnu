@@ -4337,7 +4337,7 @@ window.Quarto = {
 <p>Vi vil vite hvordan sjansen for skade avhenger av temperaturen. Men hver oppskyting gir bare svaret 0 eller 1, aldri en sannsynlighet. Vi trenger derfor to ting: en <strong>kurve</strong> <span class="math inline">\(p(T)\)</span> som gir sannsynligheten for skade ved temperaturen <span class="math inline">\(T\)</span>, og en <strong>regel</strong> som sier hvilken kurve som passer best med dataene. Vi tar det i tre små steg.</p>
 <section id="hvorfor-ikke-en-rett-linje" class="level4">
 <h4 class="anchored" data-anchor-id="hvorfor-ikke-en-rett-linje">Hvorfor ikke en rett linje?</h4>
-<p>Det første vi kan prøve, er minste kvadraters metode fra <a href="../pages/uke4.html">uke 4</a>: tilpass en rett linje <span class="math inline">\(a+bT\)</span> til de 23 punktene <span class="math inline">\((T_i,y_i)\)</span>. Cellen regner ut linjen med <code>np.linalg.lstsq</code>, skriver ut noen verdier og tegner den.</p>
+<p>Det første vi kan prøve, er minste kvadraters metode fra <a href="../pages/uke4.html#uke4-mk">uke 4</a>: tilpass en rett linje <span class="math inline">\(a+bT\)</span> til de 23 punktene <span class="math inline">\((T_i,y_i)\)</span>. Cellen regner ut linjen med <code>np.linalg.lstsq</code>, skriver ut noen verdier og tegner den.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Linjen synker med temperaturen, slik vi venter. Men den er 0 ved 77.7 °F og negativ for varmere oppskytinger: ved 81 °F gir den <span class="math inline">\(-0.123\)</span>, og tre av oppskytingene (78, 79 og 81 °F) får en negativ «sannsynlighet». I den andre enden er linjen 1 ved 51.0 °F, og ved 31 °F gir den 1.746. En sannsynlighet må ligge mellom 0 og 1. Vi trenger en kurve som flater ut mot 1 for kalde og mot 0 for varme oppskytinger.</p>
@@ -4621,7 +4621,7 @@ Regnehjelp: hvor regelen kommer fra
 <p>Del 2 endte med en diagnose: <a href="../pages/uke9.html#uke9-kondisjon">kondisjonstallet</a> er enormt. Vi kan ikke endre dataene, men vi kan endre <em>hvordan vi skriver</em> temperaturen. Som i <a href="../pages/project_week6.html">prosjekt 6</a> endrer vi koordinatene i stedet for metoden.</p>
 <section id="hvorfor-er-kondisjonstallet-så-stort" class="level3">
 <h3 class="anchored" data-anchor-id="hvorfor-er-kondisjonstallet-så-stort">Hvorfor er kondisjonstallet så stort?</h3>
-<p>Kolonnene i <span class="math inline">\(X\)</span> er <span class="math inline">\((1,1,\ldots,1)\)</span> og <span class="math inline">\((T_1,\ldots,T_{23})\)</span>. Temperaturene ligger mellom 53 og 81, så den andre kolonnen er nesten 70 ganger den første: kolonnene er <strong>nesten parallelle</strong>, som de nesten avhengige kolonnene i <a href="../pages/uke4.html">uke 4</a>. Da er den minste singulærverdien liten (<a href="../pages/uke7.html#uke7-svd">uke 7</a>).</p>
+<p>Kolonnene i <span class="math inline">\(X\)</span> er <span class="math inline">\((1,1,\ldots,1)\)</span> og <span class="math inline">\((T_1,\ldots,T_{23})\)</span>. Temperaturene ligger mellom 53 og 81, så den andre kolonnen er nesten 70 ganger den første: kolonnene er <strong>nesten parallelle</strong>, som de nesten avhengige kolonnene i <a href="../pages/uke4.html#uke4-nesten">uke 4</a>. Da er den minste singulærverdien liten (<a href="../pages/uke7.html#uke7-svd">uke 7</a>).</p>
 <p>Vi prøver to andre beskrivelser av temperaturen:</p>
 <ul>
 <li><strong>sentrert:</strong> <span class="math inline">\(T-70\)</span>,</li>

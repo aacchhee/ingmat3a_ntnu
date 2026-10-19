@@ -4343,7 +4343,7 @@ Gå i dybden
 <section id="fra-helning-til-krumning" class="level3">
 <h3 class="anchored" data-anchor-id="fra-helning-til-krumning">Fra helning til krumning</h3>
 <p>I <a href="../pages/uke9.html">uke 9</a> gjorde Armijo-testen gradientmetoden trygg, men ikke rask. Selv med det beste faste steget krymper feilen bare med en fast faktor i hvert steg. Gradienten forteller hvor bratt bakken er, men ikke hvordan den krummer.</p>
-<p>Denne uka bruker vi også <strong>krumningen</strong>, altså Hessianen. Det gir <strong>Newtons metode</strong> for optimering. Vi går fire steg og tar oss tid til å regne hvert av dem for hånd, linje for linje. På slutten av hvert steg lenker vi til regneoppgavene i 10.5 som øver på akkurat det steget.</p>
+<p>Denne uken bruker vi også <strong>krumningen</strong>, altså Hessianen. Det gir <strong>Newtons metode</strong> for optimering. Vi går fire steg og tar oss tid til å regne hvert av dem for hånd, linje for linje. På slutten av hvert steg lenker vi til regneoppgavene i 10.5 som øver på akkurat det steget.</p>
 <p><strong>Forelesning</strong> viser hovedløpet. <strong>Gå i dybden</strong> åpner beviset for at sifrene dobles, hva som skjer når vi bytter enheter, hvordan Cholesky løser Newton-systemet, hva et Newton-steg koster, og en sammenligning med SciPy. Flere regneoppgaver står i 10.5 og kodeoppgavene i 10.6.</p>
 </section>
 <section id="kort-løype" class="level3">
@@ -4390,7 +4390,7 @@ Gå i dybden
 </section>
 <section id="læringsmål" class="level3">
 <h3 class="anchored" data-anchor-id="læringsmål">Læringsmål</h3>
-<p>Etter denne uka skal du kunne</p>
+<p>Etter denne uken skal du kunne</p>
 <ul>
 <li>utlede Newton-steget som bunnen av den lokale kvadratiske modellen, og regne ut ett Newton-steg for hånd for en funksjon av to variabler: gradient, Hessian, et <span class="math inline">\(2\times2\)</span>-system og det nye punktet,</li>
 <li>kjenne igjen kvadratisk konvergens i en feiltabell ved at antall riktige sifre omtrent dobles, og forklare forskjellen fra den faste faktoren i uke 9,</li>
@@ -4472,7 +4472,7 @@ p=-\frac{f'(x_k)}{f''(x_k)}.\]</span></p>
 <h3 class="anchored" data-anchor-id="flere-variabler-newton-likningen">Flere variabler: Newton-likningen</h3>
 <p>I to variabler skriver vi punktet som <span class="math inline">\(z=(x,y)\)</span>. Vi bytter <span class="math inline">\(f'\)</span> med gradienten <span class="math inline">\(g=\nabla f\)</span> og <span class="math inline">\(f''\)</span> med Hessianen <span class="math inline">\(H\)</span> fra <a href="../pages/uke8.html#uke8-hessian">uke 8.3</a>. Parabelen blir den kvadratiske modellen</p>
 <p><span class="math display">\[m(p)=f(z_k)+g^Tp+\tfrac12p^THp,\]</span></p>
-<p>der <span class="math inline">\(g=g(z_k)\)</span> og <span class="math inline">\(H=H(z_k)\)</span> er regnet ut i det nåværende punktet, og <span class="math inline">\(p=(p_1,p_2)\)</span> er steget. Hvis vektorformen ikke sitter, kan vi skrive modellen ut med komponenter. Hessianen er symmetrisk, så <span class="math inline">\(h_{21}=h_{12}\)</span>:</p>
+<p>der <span class="math inline">\(g=g(z_k)\)</span> og <span class="math inline">\(H=H(z_k)\)</span> er regnet ut i det nåværende punktet, og <span class="math inline">\(p=(p_1,p_2)\)</span> er steget. Hvis vektorformen ikke sitter, kan vi skrive modellen ut med komponenter. Tallene <span class="math inline">\(h_{ij}\)</span> er elementene i <span class="math inline">\(H\)</span> (de har ikke noe med likningen <span class="math inline">\(h\)</span> over å gjøre). Hessianen er symmetrisk, så <span class="math inline">\(h_{21}=h_{12}\)</span>:</p>
 <p><span class="math display">\[m(p)=f(z_k)+g_1p_1+g_2p_2+\tfrac12\big(h_{11}p_1^2+2h_{12}p_1p_2+h_{22}p_2^2\big).\]</span></p>
 <p>Bunnen av modellen ligger der begge partiellderiverte er null:</p>
 <p><span class="math display">\[\frac{\partial m}{\partial p_1}=g_1+h_{11}p_1+h_{12}p_2=0,\qquad
@@ -4639,10 +4639,10 @@ h_{22}&amp;=4\cdot1.75+8\cdot6.25+2=7+50+2=59.
 <h3 class="anchored" data-anchor-id="hvorfor-dobles-sifrene">Hvorfor dobles sifrene?</h3>
 <p>Anta at neste feil er omtrent en konstant ganger <strong>kvadratet</strong> av forrige feil:</p>
 <p><span class="math display">\[e_{k+1}\approx C\,e_k^2.\]</span></p>
-<p>Med <span class="math inline">\(e_k=10^{-4}\)</span> er <span class="math inline">\(e_k^2=10^{-8}\)</span>, og da er <span class="math inline">\(e_{k+1}\approx C\cdot10^{-8}\)</span>. Kvadratet dobler eksponenten; konstanten <span class="math inline">\(C\)</span> flytter bare sifrene litt. Sammenlign med gradientmetoden, der <span class="math inline">\(e_{k+1}\approx c\,e_k\)</span> med en fast <span class="math inline">\(c&lt;1\)</span>. Det kalles <strong>lineær konvergens</strong>, og da kommer det like mange nye sifre i hvert steg.</p>
+<p>Med <span class="math inline">\(e_k=10^{-4}\)</span> er <span class="math inline">\(e_k^2=10^{-8}\)</span>, og da er <span class="math inline">\(e_{k+1}\approx C\cdot10^{-8}\)</span>. Kvadratet dobler eksponenten; konstanten <span class="math inline">\(C\)</span> flytter bare sifrene litt. Sammenlign med gradientmetoden, der <span class="math inline">\(e_{k+1}\approx S\,e_k\)</span> med en fast konvergensfaktor <span class="math inline">\(S&lt;1\)</span>, som i uke 2 og 9. Det kalles <strong>lineær konvergens</strong>, og da kommer det like mange nye sifre i hvert steg.</p>
 <p>For Newton gjelder dette: La <span class="math inline">\(z_*\)</span> være et stasjonært punkt der <span class="math inline">\(H(z_*)\)</span> er invertibel, og anta at Hessianen ikke endrer seg for brått nær <span class="math inline">\(z_*\)</span>. Da finnes en konstant <span class="math inline">\(C\)</span> slik at rene Newton-steg fra en start nær nok <span class="math inline">\(z_*\)</span> oppfyller</p>
 <p><span class="math display">\[e_{k+1}\le C\,e_k^2,\qquad e_k=\|z_k-z_*\|.\]</span></p>
-<p>Dette er <strong>kvadratisk konvergens</strong> fra <a href="../pages/page4.html#lokalt-globalt-og-raskt">uke 2</a>. Vi kontrollerer det i siste kolonne av utskriften: forholdet <span class="math inline">\(e_{k+1}/e_k^2\)</span> holder seg mellom <span class="math inline">\(0.3\)</span> og <span class="math inline">\(0.6\)</span>. Feilen kvadreres altså i hvert steg, ganget med en moderat konstant.</p>
+<p>Dette er <strong>kvadratisk konvergens</strong> fra <a href="../pages/page4.html#uke2-konvergensfart">uke 2</a>. Vi kontrollerer det i siste kolonne av utskriften: forholdet <span class="math inline">\(e_{k+1}/e_k^2\)</span> holder seg mellom <span class="math inline">\(0.3\)</span> og <span class="math inline">\(0.6\)</span>. Feilen kvadreres altså i hvert steg, ganget med en moderat konstant.</p>
 <p>Legg merke til at setningen sier <strong>stasjonært punkt</strong>, ikke minimum. Det kommer vi tilbake til i 10.3.</p>
 <details class="reading-step">
 <summary>
@@ -5145,7 +5145,7 @@ Gå i dybden: sammenlign med SciPy
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <p>Begge ender nær <span class="math inline">\((1,1)\)</span> med liten verdi og gradientnorm. <code>success = True</code> betyr at metodens egne stoppkrav ble møtt, ikke at et globalt minimum er bevist; det viser vi separat ved at <span class="math inline">\(q\)</span> er en sum av kvadrater og <span class="math inline">\(q(1,1)=0\)</span>. Færre ytre iterasjoner er heller ikke nødvendigvis mindre arbeid, siden Hessian, gradient og indre løsninger koster forskjellig. Kallene er forklart i SciPy-oppslaget i 10.6.</p>
 </details>
-<p>I <a href="../pages/project_week10.html">prosjekt 10</a> bruker du Newton-idéen på et tilpasningsproblem: å finne en posisjon fra unøyaktige avstander. I <a href="../pages/uke11.html">uke 11</a> får vi lineære bibetingelser og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige kontrollen.</p>
+<p>I <a href="../pages/project_week10.html">prosjekt 10</a> bruker du Newton-idéen på et tilpasningsproblem: å finne en posisjon fra unøyaktige avstander. I <a href="../pages/uke11.html">uke 11</a> får vi lineære krav (ulikheter) og ofte et beste punkt på randen. Da er gradient null ikke lenger den riktige kontrollen.</p>
 </section>
 </div>
 <div id="tabset-1-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-6-tab">
