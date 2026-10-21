@@ -9,16 +9,16 @@ Etterpå undersøker du hva løserens svar forteller:
 
 Du får gradienter, Jacobimatriser og løserne ferdig. Arbeidet er å skrive
 tre korte kodeuttrykk, lese utskriftene og begrunne konklusjonene dine.
-Sett av omtrent **3–4 timer**, inkludert den korte undersøkelsen til slutt.
+Sett av omtrent **4–6 timer**, inkludert den korte undersøkelsen til slutt.
 Skriv en forventning før et forsøk; sammenlign den med det du faktisk ser.
 
-| Del | Hovedarbeid | Omtrent tid |
-|:--|:--|--:|
-| Bildet og modellen | Bli kjent med punkter, lengder og energi | 20 min |
-| 1. Finn og kontroller formen | Kravfunksjon, dimensjoner og løserens svar | 40 min |
-| 2. Les multiplikatorene | Kraftbalanse og en liten lengdeendring | 45 min |
-| 3. Bytt ledd med fjærer | Straffefeil, kondisjon og solvermeldinger | 50 min |
-| 4. En lampe på kjettingen | Ett eget forsøk og kort rapport | 40 min |
+| Del | Hovedarbeid |
+|:--|:-- |
+| Bildet og modellen | Bli kjent med punkter, lengder og energi |
+| 1. Finn og kontroller formen | Kravfunksjon, dimensjoner og løserens svar |
+| 2. Les multiplikatorene | Kraftbalanse og en liten lengdeendring |
+| 3. Bytt ledd med fjærer | Straffefeil, kondisjon og solvermeldinger |
+| 4. En lampe på kjettingen | Ett eget forsøk og kort rapport |
 
 ### Bakgrunn: bildet og den ferdige fysiske modellen
 
