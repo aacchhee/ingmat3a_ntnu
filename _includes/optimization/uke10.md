@@ -273,25 +273,17 @@ $f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2$ og startpunktet $z_0=(2.5,\,2.5)$. Vi
 kaller de to parentesene $a=x^2+y-11$ og $b=x+y^2-7$ (i uke 9 het de $u$ og
 $w$), slik at $f=a^2+b^2$.
 
-**Prøv selv.** Regn ut $g$ og $H$ i $z_0$, løs $Hp=-g$ og finn $z_1$. Blir
-$f(z_1)$ mindre enn $f(z_0)$?
+**Prøv selv.** Bruk de oppgitte formlene til å regne ut $g$ og $H$ i $z_0$.
+Løs $Hp=-g$ og finn $z_1$. Blir $f(z_1)$ mindre enn $f(z_0)$?
 
 **Regnegangen.**
 
-1. **Gradienten** fant vi i [uke 9](uke9.qmd#uke9-gradient) med
-   kjerneregelen:
-   $$f_x=4xa+2b,\qquad f_y=2a+4yb.$$
-2. **Hessianen.** Vi deriverer gradienten en gang til med produktregelen.
-   Vi trenger $\partial a/\partial x=2x$, $\partial a/\partial y=1$,
-   $\partial b/\partial x=1$ og $\partial b/\partial y=2y$:
-   $$\begin{aligned}
-   f_{xx}&=\tfrac{\partial}{\partial x}(4xa+2b)=4a+4x\cdot2x+2=4a+8x^2+2,\\
-   f_{xy}&=\tfrac{\partial}{\partial y}(4xa+2b)=4x\cdot1+2\cdot2y=4x+4y,\\
-   f_{yy}&=\tfrac{\partial}{\partial y}(2a+4yb)=2+4b+4y\cdot2y=4b+8y^2+2.
-   \end{aligned}$$
-   Kontroll: $\tfrac{\partial}{\partial x}(2a+4yb)=4x+4y$ er også $f_{xy}$.
-   Ganget ut er $f_{xx}=12x^2+4y-42$ og $f_{yy}=12y^2+4x-26$, som Hessianen
-   i uke 9.
+1. **Gradienten er gitt:**
+   $$g=\begin{bmatrix}4xa+2b\\2a+4yb\end{bmatrix}.$$
+2. **Hessianen er gitt:**
+   $$H=\begin{bmatrix}4a+8x^2+2&4x+4y\\4x+4y&4b+8y^2+2\end{bmatrix}.$$
+   Her bruker vi formlene til å bygge og løse Newton-systemet; du trenger
+   ikke derivere dem.
 3. **Sett inn $z_0=(2.5,\,2.5)$.** Først
    $a=6.25+2.5-11=-2.25$ og $b=2.5+6.25-7=1.75$, så
    $f(z_0)=5.0625+3.0625=8.125$. Deretter
@@ -753,14 +745,12 @@ Det siste ser vi i et lite eksempel.
 **Utgangspunkt.** Dobbeltbrønnen $f(u,v)=(u^2-1)^2+\tfrac12v^2$ har to
 globale minima, $(\pm1,0)$, der $f=0$. Vi står i $z=(0.2,\,0)$.
 
-**Prøv selv.** Finn $g$ og $H$ i $z$, løs $Hp=-g$ og avgjør fortegnet til
-$g^Tp$.
+**Prøv selv.** Bruk de oppgitte formlene til å regne ut $g$ og $H$ i $z$.
+Løs $Hp=-g$ og avgjør fortegnet til $g^Tp$.
 
 **Regnegangen.**
 
-1. **Deriver.** $f_u=2(u^2-1)\cdot2u=4u(u^2-1)$ og $f_v=v$. En gang til:
-   $f_{uu}=\tfrac{\partial}{\partial u}(4u^3-4u)=12u^2-4$, $f_{uv}=0$ og
-   $f_{vv}=1$. Altså
+1. **Gradienten og Hessianen er gitt:**
    $$g(u,v)=\begin{bmatrix}4u(u^2-1)\\v\end{bmatrix},\qquad
    H(u,v)=\begin{bmatrix}12u^2-4&0\\0&1\end{bmatrix}.$$
 2. **Origo først.** I $(0,0)$ er $g=0$ og $H=\operatorname{diag}(-4,1)$, med én
@@ -1748,8 +1738,8 @@ Kontroller svaret ved å regne ut $Hp$.
 Denne oppgaven hører til «Gå i dybden» om den bøyde dalen i 10.4. Vi gjør
 dalen litt slakere: $q(u,v)=(1-u)^2+5(v-u^2)^2$. Svar eksakt.
 
-1. **Deriver:** regn ut $g(0,0)$ og $H(0,0)$ (du skal få $g=(-2,0)^T$ og
-   $H=\operatorname{diag}(2,10)$).
+1. **Bruk de oppgitte verdiene:** $g(0,0)=(-2,0)^T$ og
+   $H(0,0)=\operatorname{diag}(2,10)$.
 2. **Løs:** finn $p$ fra $Hp=-g$.
 3. **Sammenlign:** finn modellverdien $m(p)=q(0,0)+g^Tp+\tfrac12p^THp$,
    den faktiske verdien $q((0,0)+p)$ og verdien etter et halvt steg,
