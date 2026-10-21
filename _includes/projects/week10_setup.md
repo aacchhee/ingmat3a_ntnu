@@ -2,8 +2,8 @@
 #| label: project-week10-setup
 #| autorun: true
 #| context: setup
-# Ferdige data og hjelpere til prosjekt 10. Hjelperne bruker sine egne
-# formler, ikke din kode, slik at de kan brukes som uavhengig kontroll.
+# Ferdige data og hjelpere til prosjekt 10. Newton-hjelperen bruker
+# residualen og Jacobimatrisen du skriver i del 1.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -20,30 +20,20 @@ z_true_wall = np.array([6., 3.])
 d_wall = np.linalg.norm(z_true_wall - wall, axis=1)
 
 
-def _res(z, B, d):
-    return np.linalg.norm(z - B, axis=1) - d
-
-
-def _jac(z, B):
-    D = z - B
-    return D/np.linalg.norm(D, axis=1)[:, None]
-
-
-def dropped_part(z, B, d):
+def dropped_part(z, B, r, J):
     """Den delen av Hessianen som Gauss-Newton dropper (2 x 2-matrise)."""
     D = z - B
     n = np.linalg.norm(D, axis=1)
-    r, U = n - d, D/n[:, None]
-    return sum(r[i]*(np.eye(2) - np.outer(U[i], U[i]))/n[i] for i in range(len(d)))
+    return sum(r[i]*(np.eye(2) - np.outer(J[i], J[i]))/n[i] for i in range(len(r)))
 
 
-def newton_position(z0, B, d, steps=8):
+def newton_position(z0, B, d, residual, jacobian, steps=8):
     """Rene Newton-steg for F(z) = 1/2 ||r(z)||^2. Returnerer alle punkter."""
     z = np.array(z0, float)
     points = [z.copy()]
     for _ in range(steps):
-        J, r = _jac(z, B), _res(z, B, d)
-        H = J.T @ J + dropped_part(z, B, d)
+        J, r = jacobian(z, B), residual(z, B, d)
+        H = J.T @ J + dropped_part(z, B, r, J)
         z = z + np.linalg.solve(H, -J.T @ r)
         points.append(z.copy())
     return np.array(points)

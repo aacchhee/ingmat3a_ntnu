@@ -65,7 +65,8 @@ brukes bare til kontroll.
 
 Oppsettet på siden lastes automatisk. Det inneholder dataene, en ferdig
 Newton-metode og to tegnehjelpere, `show_hall` og `show_moves`. Hjelperne
-bruker egne formler, ikke din kode, slik at de kan kontrollere den.
+tegner resultatene; Newton-metoden bruker dine funksjoner `residual` og
+`jacobian` fra del 1. Kontroller derfor først disse mot tallene i kodespor 1.
 
 <details>
 <summary>Egen notebook: last ned oppsettet og kom i gang</summary>
@@ -482,6 +483,8 @@ koster. Vi har tre datasett fra samme posisjon $(3,5)$:
 
 Cellen kjører din Gauss–Newton og den ferdige Newton-metoden
 `newton_position` (som bruker hele Hessianen $J^TJ+Q$) fra samme start.
+Begge metodene bruker dine funksjoner `residual` og `jacobian`; sammenligningen
+er derfor ikke en uavhengig kontroll av disse to funksjonene.
 For å se farten måler vi forholdet $e_{k+1}/e_k$, der $e_k=\|z_k-z_\infty\|$
 og $z_\infty$ er siste punkt: et omtrent fast forhold betyr lineær
 konvergens, og et forhold som krymper mot null betyr raskere konvergens.
@@ -508,7 +511,7 @@ for name, d in [('eksakte', d_exact), ('små feil', d_noisy), ('feil måling', d
     ratios = None
     print('   Gauss-Newton, e_k:', np.array2string(e[:7], precision=1))
     print('   forhold e_k+1/e_k:', np.round(ratios, 3))
-    newton = newton_position([5., 4.], hall, d)
+    newton = newton_position([5., 4.], hall, d, residual, jacobian)
     print('   Newton, e_k:      ', np.array2string(np.linalg.norm(newton - newton[-1], axis=1)[:6], precision=1))
 ```
 
@@ -534,7 +537,8 @@ $e_k=z_k-z_\infty$ være feilen som vektor. Da er
 $$e_{k+1}\approx M\,e_k,\qquad M=-(J^TJ)^{-1}Q,$$
 
 der $J$ og $Q$ er regnet ut i løsningen $z_\infty$. Hjelperen
-`dropped_part(z, B, d)` regner ut $Q$. Feilen ganges altså med den samme
+`dropped_part(z, B, r, J)` regner ut $Q$ fra residualvektoren $r$ og
+Jacobimatrisen $J$ som du har beregnet. Feilen ganges altså med den samme
 matrisen i hvert steg. Det er en fikspunktiterasjon som i uke 2, og
 faktoren er spektralradiusen til $M$, som i uke 6. Vi tar regelen som gitt
 og kontrollerer den med tall.
@@ -574,7 +578,8 @@ sammenligne forutsigelsen med de målte forholdene.
 for name, d in [('små feil', d_noisy), ('feil måling', d_bad)]:
     z_end = gauss_newton([5., 4.], hall, d, steps=30)[-1]
     J = jacobian(z_end, hall)
-    M = -np.linalg.solve(J.T @ J, dropped_part(z_end, hall, d))
+    r = residual(z_end, hall, d)
+    M = -np.linalg.solve(J.T @ J, dropped_part(z_end, hall, r, J))
     print(f'{name}: forutsagt faktor = {max(abs(np.linalg.eigvals(M))):.3f}')
 ```
 
