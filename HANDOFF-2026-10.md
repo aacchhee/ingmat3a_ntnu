@@ -2,8 +2,8 @@
 
 ## aacchhee/ingmat3a_ntnu — main 150a542, pinned to ctm-assessment 9ed46a4
 
-- AC and other agents work on `linalg-branch` (31 commits ahead at hand-off). **Do not touch it.** The migration starts only after AC says `linalg-branch` is merged into `main`.
-- Migration set (like ctm-demo's): first commit sets `ref: main` in `quarto-extensions.yml`; run the converter (ctm-assessment `build-course.py --convert`), review every construct by hand, add `/_extensions/ctm-checkers/` to `.gitignore` (G1); build 0 warnings; compare old vs new rendered (0 unexplained) and in the browser (3 engines, sharded); AC's acceptance: "Gå i dybden" blocks look good and the lecture/learning (forelesning/læring) buttons work — screenshots at desktop and 390 px. Hand-written anchors that repeat tab-heading ids are removed by the converter (S3).
+- ingmat3a is STAGED for migration (21 Oct, 19:50): AC merged `linalg-branch` into ingmat3a main (a0a34ee, PR #15); main builds green on the old pin 9ed46a4. Branch `consolidation/2026-10-step4-migration` (commit 5ad31ab) holds the first commit: `ref: main` in quarto-extensions.yml and `/_extensions/ctm-checkers/` in .gitignore (G1). No PR yet. Do the migration on that branch AFTER AC has merged the step-4 final set (ctm-libs #30, then ctm-assessment #24), which adds the callout fix and the dropped-construct check the migration relies on.
+- Migration set (like ctm-demo's): first commit (done: `ref: main`, G1) on `consolidation/2026-10-step4-migration`; run the converter (ctm-assessment `build-course.py --convert`), review every construct by hand, add `/_extensions/ctm-checkers/` to `.gitignore` (G1); build 0 warnings; compare old vs new rendered (0 unexplained) and in the browser (3 engines, sharded); AC's acceptance: "Gå i dybden" blocks look good and the lecture/learning (forelesning/læring) buttons work — screenshots at desktop and 390 px. Hand-written anchors that repeat tab-heading ids are removed by the converter (S3).
 - Course facts: Python cells via pyodide-interaktiv, math-exercise, py-exercise, JSXGraph boards in tabs/reveals. Exam use is planned (step 5).
 
 ---
@@ -19,7 +19,7 @@ This file hands the remaining work to another agent (e.g. Codex). Published desi
 | 1 ctm-libs (shared library, ai-feedback renamed) | merged |
 | 2 ctm-checkers (all checker Python in one place) | merged; STACK fix chain in progress (S-01, S-02, S-13 merged; S-07/S-05/S-10/S-11 in progress) |
 | 3 pyodide-interaktiv onto ctm-libs | merged (ctm-libs #27, math-exercise #26, py-exercise #9, pyodide-interaktiv #5, ctm-assessment #22); alias removal L3x/U3c not started |
-| 4 UI (reveals, modes, tab links, autosave) | phase A merged; ctm-demo migrated; final set open (ctm-libs #30 + ctm-assessment #24); ingmat3a migration waits for AC to merge `linalg-branch` into ingmat3a `main`; phases B (store/progress/quizzes/export) and C (languages) not started |
+| 4 UI (reveals, modes, tab links, autosave) | phase A merged; ctm-demo migrated; final set open (ctm-libs #30 + ctm-assessment #24); ingmat3a is staged for migration (linalg-branch merged; branch `consolidation/2026-10-step4-migration`); phases B (store/progress/quizzes/export) and C (languages) not started |
 | 5 runtime + offline/exam build | designed and approved (`ctm-assessment` `docs/consolidation/2026-10-step5-offline-exam.md`), not started; December exam is a target, not a constraint |
 | 6 stack-sympy onto shared runtime, packaged | not started |
 | 7 grading options | not started |
