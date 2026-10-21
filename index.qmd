@@ -36,9 +36,22 @@ De to siste ukene handler om optimering med krav: lineær programmering i uke 11
 | Uke | Spørsmålet vi starter med | Matematisk innhold og anvendelser |
 |:---|:---|:---|
 | [Uke 8](pages/uke8.qmd) | **Når finnes det en beste tilpasning, og når kan vi stole på at en løser har funnet den?** | Før vi lar datamaskinen lete etter et minimum, spør vi om det finnes et beste svar i det hele tatt, og om punktet vi finner, er en bunn eller et sadelpunkt – her hjelper Hessianen, som beskriver krumningen. For konvekse funksjoner, som er formet som en skål, er enhver bunn også den laveste; denne uka er det ikke noe nytt prosjekt. |
-| [Uke 9](pages/uke9.qmd) | **Hvor stort steg kan vi ta nedover, og hvorfor går gradientmetoden noen ganger så sakte?** | Du går nedover i den bratteste retningen og finner ut hvor langt hvert steg kan være og hvorfor metoden kryper i en smal dal; deretter velger du steget automatisk (Armijo-testen) og leter helt uten deriverte (kompassøk). I prosjektet ser du på data fra Challenger-ulykken hvordan valget av måleskala kan ta søket fra millioner av steg ned til under femti. |
+| [Uke 9](pages/uke9.qmd) | **Hvor stort steg kan vi ta nedover, og hvorfor går gradientmetoden noen ganger så sakte?** | Du går nedover i den bratteste retningen og finner ut hvor langt hvert steg kan være og hvorfor metoden kryper i en smal dal; deretter velger du steget automatisk (Armijo-testen) og leter helt uten deriverte (kompassøk). I prosjektet bruker du Challenger-data til å undersøke hvordan koordinatvalg påvirker farten, og hva et automatisk steg kan og ikke kan rette opp. |
 | [Uke 10](pages/uke10.qmd) | **Kan vi finne bunnen av en dal raskere ved å bruke både hvor bratt bakken er og hvordan helningen endrer seg?** | Newtons metode bruker både helningen og krumningen og kommer svært raskt fram: antall riktige sifre omtrent dobles for hvert steg. Den kan også havne i et sadelpunkt eller et toppunkt, så du lærer en enkel reparasjon som retter opp retningen og korter ned steget, og i prosjektet finner du posisjonen din fra målte avstander, slik en GPS gjør. |
 | [Uke 11](pages/uke11.qmd) | **Et verksted lager to produkter med de samme maskinene. Hva bør det produsere, og hvor mye er én ekstra maskintime verdt?** | Du lærer å sette opp et produksjonsproblem med begrensede ressurser (lineær programmering) og ser hvorfor den beste planen ligger i et hjørne av området med tillatte planer. Ressurspriser beviser at planen er best og viser hva én ekstra maskintime er verdt, og i prosjektet bruker du samme idé til å forklare hvorfor strømprisen kan være så forskjellig i ulike deler av landet. |
 | [Uke 12](pages/uke12.qmd) | **Hva erstatter $\nabla f=0$ når svaret må ligge på en kurve?** | Når svaret må ligge på en kurve, er det ikke lenger nok å sette gradienten lik null, og Lagranges metode gir likningene som gjelder i stedet. Du lærer å finne og kontrollere slike løsninger både for hånd og med SciPy, og i prosjektet forklarer du formen på en hengende kjetting og ser at multiplikatorene i Lagranges metode er kreftene i leddene. |
 
 :::
+
+## Prosjekter i optimering
+
+Hvert prosjekt skiller en kort, gitt innføring i anvendelsen fra arbeidet
+med numeriske metoder og lineær algebra. Formlene du trenger, er oppgitt;
+du bruker kode, små matriseeksempler og egne resultater til å trekke konklusjoner.
+
+| Prosjekt | Bakgrunn du får | Det du undersøker |
+|:--|:--|:--|
+| [Prosjekt 9](pages/project_week9.qmd) | En kort innføring i statistikk | Kondisjon, steglengde og arbeidsmengden med Armijo |
+| [Prosjekt 10](pages/project_week10.qmd) | Avstander og ferdige formler | Gauss–Newton, følsomhet og om et konvergert svar er troverdig |
+| [Prosjekt 11](pages/project_week11.qmd) | Begreper og en enkel modell | Produksjonsplan, ressurspriser og grensene for lokale anslag |
+| [Prosjekt 12](pages/project_week12.qmd) | Den fysiske modellen og formlene | Kravbrudd, multiplikatorer og straffemetodens kondisjon |
