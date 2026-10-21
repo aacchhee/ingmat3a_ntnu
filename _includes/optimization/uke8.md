@@ -744,13 +744,14 @@ $$
 **Krumningen i retningen $p$ er tallet $p^THp$.** Én matrise gir oss den
 andrederiverte langs alle linjer gjennom punktet.
 
-::: {.callout-note title="Håndeksempel: kontroller formlene ved å gange ut"}
+::: {.callout-note title="Håndeksempel: helning og krumning fra matriseprodukter"}
 
 **Utgangspunkt.** $f(x,y)=x^3+y^3-3xy$, punktet $z=(2,1)$ og retningen
 $p=(1,1)$.
 
-**Prøv selv.** Regn ut $\nabla f(z)^Tp$ og $p^TH(z)p$. Skriv deretter
-$\varphi(s)=f(2+s,\,1+s)$ som et polynom i $s$, og sammenlign.
+**Prøv selv.** Bruk gradienten og Hessianen nedenfor til å regne ut
+$\nabla f(z)^Tp$ og $p^TH(z)p$. Hva forteller de to fortegnene om
+helningen og krumningen langs linjen?
 
 **Regnegangen.** Først formlene:
 
@@ -759,20 +760,9 @@ $\varphi(s)=f(2+s,\,1+s)$ som et polynom i $s$, og sammenlign.
 - $H(2,1)=\begin{bmatrix}12&-3\\-3&6\end{bmatrix}$, så
   $Hp=(12-3,\ -3+6)=(9,3)$ og $p^THp=9+3=12$.
 
-Så direkte. Vi ganger ut hvert ledd:
-
-$$
-\begin{aligned}
-(2+s)^3&=8+12s+6s^2+s^3,\\
-(1+s)^3&=1+3s+3s^2+s^3,\\
--3(2+s)(1+s)&=-6-9s-3s^2.
-\end{aligned}
-$$
-
-1. **Legg sammen:** Summen er $\varphi(s)=3+6s+6s^2+2s^3$.
-2. **Deriver:** Da er $\varphi'(s)=6+12s+6s^2$ og $\varphi''(s)=12+12s$.
-3. **Sett inn null:** $\varphi'(0)=6$ og $\varphi''(0)=12$. Begge stemmer
-   med formlene.
+Til sammenligning er de ferdig beregnede linjederiverte
+$\varphi'(0)=6$ og $\varphi''(0)=12$. De stemmer med de to
+matriseproduktene; du trenger ikke utvide og derivere polynomet for å finne dem.
 
 **Dette tar vi med oss.** $\varphi'(0)=\nabla f(z)^Tp$ og
 $\varphi''(0)=p^TH(z)p$. Vi trenger ikke gange ut $\varphi$ hver gang; to
