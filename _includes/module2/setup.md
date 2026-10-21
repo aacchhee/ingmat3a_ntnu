@@ -231,23 +231,34 @@ def fixed_point(g, x0, f=None, atol=1e-10, rtol=1e-10, maxiter=100):
     history = [x]
     steps = []
     residual = lambda value: abs(f(value)) if f is not None else abs(g(value)-value)
-    residuals = [residual(x)]
+    residuals = [math.nan]
 
     def result(value, converged, reason, iterations):
         return {"x": value, "converged": converged, "reason": reason,
                 "iterations": iterations, "history": np.array(history),
                 "steps": np.array(steps), "residuals": np.array(residuals)}
 
+    try:
+        residuals[0] = residual(x)
+    except (ArithmeticError, ValueError) as error:
+        return result(x, False, "regnefeil: " + str(error), 0)
+    if not (math.isfinite(x) and math.isfinite(residuals[0])):
+        return result(x, False, "ikke-endelig verdi", 0)
+
     for iteration in range(1, maxiter + 1):
-        x_new = g(x)
+        try:
+            x_new = g(x)
+            step = abs(x_new - x)
+            new_residual = residual(x_new)
+        except (ArithmeticError, ValueError) as error:
+            return result(x, False, "regnefeil: " + str(error), iteration - 1)
 
-        if not math.isfinite(x_new):
-            return result(x_new, False, "ikke-endelig verdi", iteration)
+        if not all(math.isfinite(v) for v in (x_new, step, new_residual)):
+            return result(x, False, "ikke-endelig verdi", iteration - 1)
 
-        step = abs(x_new - x)
         history.append(x_new)
         steps.append(step)
-        residuals.append(residual(x_new))
+        residuals.append(new_residual)
 
         tolerance = atol + rtol*abs(x_new)
         if step <= tolerance:
