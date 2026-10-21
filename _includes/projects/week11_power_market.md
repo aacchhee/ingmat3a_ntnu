@@ -22,15 +22,15 @@ forutsi den faktiske strømprisen.
 
 ### En vei gjennom prosjektet
 
-| Del | Det du undersøker | Omtrent tid |
-|:--|:--|--:|
-| 1 | Les produksjon, pris og gjennomsnitt fra løseren. | 35–45 min |
-| 2 | Kontroller prisene med små endringer og les slakk. | 25–35 min |
-| 3 | Sammenlign prisene på hver side av en linje. | 40–50 min |
-| 4 | Bygg én matrisrad og undersøk vannverdien. | 40–50 min |
-| 5 og levering | Test ett lokalt prisanslag og samle konklusjonene. | 40–50 min |
+| Del | Det du undersøker |
+|:--|:-- |
+| 1 | Les produksjon, pris og gjennomsnitt fra løseren. |
+| 2 | Kontroller prisene med små endringer og les slakk. |
+| 3 | Sammenlign prisene på hver side av en linje. |
+| 4 | Bygg én matrisrad og undersøk vannverdien. |
+| 5 og levering | Test ett lokalt prisanslag og samle konklusjonene. |
 
-Sett av omtrent **3–4 timer**. Du skriver to korte funksjoner; resten av
+Sett av omtrent **4–6 timer**. Du skriver to korte funksjoner; resten av
 arbeidet er å velge forsøk, lese utskrifter og begrunne konklusjoner.
 Skriv en kort forventning før hver sammenligning. Du skal ikke utlede
 pristeorien på nytt.
