@@ -1,895 +1,471 @@
 ## Når skalaen bestemmer farten
 
-Samme modell, samme data og samme metode. Likevel trenger gradientmetoden
-titalls millioner steg i én beskrivelse av problemet og under femti i en annen.
-**Hvorfor?** I dette prosjektet bruker du teorien fra uke 9 på ekte data:
-kritisk steg, konvergensfaktor og kondisjonstall fra del A, Armijo fra del B
-og garantien med subnivåmengder og koersivitet fra del D.
+Samme data og samme gradientmetode kan gi svært ulik arbeidsmengde.
+**Hva skyldes skalaen på variablene, og hva kan Armijo-søk hjelpe med?**
+Du undersøker dette med en sannsynlighetsmodell for O-ringskade før
+Challenger-ulykken.
 
-Funksjonen vi skal minimere, kommer fra statistikk. Du trenger ingen
-forkunnskaper der: vi bygger den opp fra en figur, to oppskytinger og en
-kalkulator før vi begynner å optimere.
+Du får de nødvendige deriverte og en ferdig Armijo-metode. Du skriver en
+kort gradientfunksjon og en gradientløkke. Hovedarbeidet er å sammenligne
+kjøringer, lese tall og figurer og begrunne konklusjonene dine.
 
-### Dataene
+## Før prosjektarbeidet: en kort innføring i statistikken
 
-Natten før romfergen Challenger ble skutt opp 28. januar 1986, ble det
-diskutert om kulde kunne svekke O-ringene som tetter skjøtene i
-rakettmotorene. Romfergen brøt sammen 73 sekunder etter oppskytingen, og alle
-sju om bord omkom. Romfergene hadde hatt 24 oppskytinger før denne. Etter
-ulykken analyserte Dalal, Fowlkes og Hoadley (1989, *Journal of the American
-Statistical Association* 84, s. 945–957) dataene fra de 23 av disse
-oppskytingene der rakettmotorene ble berget og O-ringene kunne undersøkes. For
-hver oppskyting har vi
+**Dette er bakgrunn, ikke en egen innleveringsdel.** Bruk omtrent 20–30
+minutter på å lese og kjøre eksemplene. Du trenger ingen statistikk fra før.
+Selve optimeringsarbeidet begynner i [del 1](#project9-start).
 
-- temperaturen $T_i$ ved oppskytingen, i °F (fra 53 til 81),
-- $y_i=1$ hvis minst én O-ring viste varmeskade, ellers $y_i=0$
-  (7 av 23 oppskytinger hadde skade).
+### Data og en kurve mellom 0 og 1
 
-I analysen deres er temperaturen ved Challenger-oppskytingen oppgitt til
-31 °F, altså 22 °F under den laveste temperaturen i dataene. Vi kommer tilbake
-til hva modellen kan og ikke kan si om det.
+Vi har temperatur og O-ringskade fra 23 romfergeoppskytinger før Challenger:
 
-### Fra ja/nei-data til en sannsynlighetskurve
+- `temps` inneholder temperaturene $T_i$, fra 53 til 81 °F.
+- `damage` inneholder $y_i=1$ ved skade og $y_i=0$ ellers.
+- Sju av de 23 oppskytingene hadde skade. Dataene er fra Dalal, Fowlkes og
+  Hoadley (1989, *Journal of the American Statistical Association* 84,
+  s. 945–957), for oppskytingene der motorene kunne undersøkes.
 
-Vi vil vite hvordan sjansen for skade avhenger av temperaturen. Men hver
-oppskyting gir bare svaret 0 eller 1, aldri en sannsynlighet. Vi trenger derfor
-to ting: en **kurve** $p(T)$ som gir sannsynligheten for skade ved
-temperaturen $T$, og en **regel** som sier hvilken kurve som passer best med
-dataene. Vi tar det i tre små steg.
+Challenger ble skutt opp ved 31 °F, under temperaturene i dette datasettet.
+Vi må skille mellom det en tilpasset modell sier og det dataene støtter.
 
-#### Hvorfor ikke en rett linje?
+En rett linje kan gi verdier utenfor $[0,1]$. Derfor bruker vi en S-kurve:
 
-Det første vi kan prøve, er minste kvadraters metode fra [uke 4](uke4.qmd#uke4-mk):
-tilpass en rett linje $a+bT$ til de 23 punktene $(T_i,y_i)$. Cellen regner ut
-linjen med `np.linalg.lstsq`, skriver ut noen verdier og tegner den.
+$$p(T)=\sigma(\beta_0+\beta_1T),\qquad
+\sigma(s)=\frac{1}{1+e^{-s}}.$$
+
+Her er $p(T)$ modellens sannsynlighet for skade ved temperatur $T$.
+
+- **Terskel:** Når $\beta_1\ne0$, er $p(T)=1/2$ ved $T=-\beta_0/\beta_1$.
+- **Retning og bratthet:** Negativ $\beta_1$ gir mindre $p$ når temperaturen
+  øker. Større $|\beta_1|$ gir en brattere overgang.
+
+Den første cellen viser hvorfor den rette linjen ikke kan brukes som
+sannsynlighetskurve.
 
 ```{pyodide-python}
 #| label: project9-line
-# Minste kvadraters linje a + b·T gjennom 0/1-dataene (uke 4).
 line = np.linalg.lstsq(design(temps), damage, rcond=None)[0]
-a, b = line
-print(f'linjen: {a:.3f} + ({b:.4f})·T')
-print(f'linjen er 0 ved T = {-a/b:.1f} °F og 1 ved T = {(1 - a)/b:.1f} °F')
 for T in [31, 53, 81]:
-    print(f'«sannsynlighet» ved {T} °F: {a + b*T:.3f}')
+    print(f'rett linje ved {T} °F: {line[0] + line[1]*T:.3f}')
 show_line_fit(line)
 ```
 
-Linjen synker med temperaturen, slik vi venter. Men den er 0 ved 77.7 °F og
-negativ for varmere oppskytinger: ved 81 °F gir den $-0.123$, og tre av
-oppskytingene (78, 79 og 81 °F) får en negativ «sannsynlighet». I den andre
-enden er linjen 1 ved 51.0 °F, og ved 31 °F gir den 1.746. En sannsynlighet må
-ligge mellom 0 og 1. Vi trenger en kurve som flater ut mot 1 for kalde og mot 0
-for varme oppskytinger.
-
-#### S-kurven og hva parameterne betyr
-
-Den **logistiske funksjonen**
-
-$$\sigma(s)=\frac{1}{1+e^{-s}}$$
-
-gjør nettopp det. Den er nær 1 for store positive $s$, nær 0 for store
-negative $s$, og $\sigma(0)=\tfrac12$. Noen små tall: $\sigma(1)\approx0.731$,
-$\sigma(2)\approx0.881$ og $\sigma(4)\approx0.982$. Kurven er symmetrisk:
-$\sigma(-s)=1-\sigma(s)$, så $\sigma(-2)\approx0.119$. Vi lar $s$ avhenge
-lineært av temperaturen:
-
-$$p(T)=\sigma(\beta_0+\beta_1T).$$
-
-De to tallene $\beta_0$ og $\beta_1$ har en enkel betydning:
-
-- **Terskelen.** $p(T)=\tfrac12$ nøyaktig når $\beta_0+\beta_1T=0$, altså ved
-  $T=-\beta_0/\beta_1$. Med negativ $\beta_1$ er skade mest sannsynlig når det
-  er kaldere enn terskelen.
-- **Brattheten.** $\beta_1$ sier hvor mye $s$ endres per grad. Negativ
-  $\beta_1$ betyr at $p$ synker når det blir varmere. Jo større $|\beta_1|$,
-  desto brattere er overgangen fra «nesten sikkert skade» til «nesten sikkert
-  ikke».
-
-Cellen tegner kurven med fasiten $\beta_0=15.0429$, $\beta_1=-0.23216$, som du
-skal finne med gradientmetoden senere, og en kurve der begge tallene er
-halvert.
+Den neste viser en logistisk referansekurve og en slakere kurve med samme
+terskel. Referansekoeffisientene `beta_oracle` er gitt for å kontrollere
+optimeringen senere; du skal ikke finne dem i innføringen.
 
 ```{pyodide-python}
 #| label: project9-s-curve
-# To S-kurver: fasiten og en kurve med halvparten så store koeffisienter.
-for name, beta in [('fasit', beta_oracle), ('halve koeffisienter', beta_oracle/2)]:
-    print(f'{name:<20} terskel -β0/β1 = {-beta[0]/beta[1]:.1f} °F,  '
-          f'p(53) = {sigma(beta[0] + beta[1]*53):.2f},  p(75) = {sigma(beta[0] + beta[1]*75):.2f}')
-show_curves([beta_oracle, beta_oracle/2], ['fasit', 'halve koeffisienter'])
+for name, beta in [('referanse', beta_oracle), ('halverte tall', beta_oracle/2)]:
+    print(name, 'terskel:', -beta[0]/beta[1],
+          'p(53):', sigma(beta[0] + beta[1]*53))
+show_curves([beta_oracle, beta_oracle/2], ['referanse', 'halverte tall'])
 ```
 
-Begge kurvene har terskelen 64.8 °F, for å halvere begge tallene endrer ikke
-forholdet $-\beta_0/\beta_1$. Men den halverte kurven er slakere: ved 53 °F gir
-den 0.80 i stedet for 0.94, og ved 75 °F 0.23 i stedet for 0.09. Hvordan ville
-kurven sett ut med $\beta_1=0$? Og med $\beta_1>0$?
+### Hva betyr «kurven passer»?
 
-#### Hvilken kurve passer best? To oppskytinger
+En oppskyting med skade bør få stor $p_i=p(T_i)$; en uten skade bør få
+stor $1-p_i$. Vi antar at utfallene fra ulike oppskytinger er uavhengige.
+Da måler produktet av disse faktorene hvor sannsynlige de observerte
+utfallene er under modellen.
 
-Hvert valg av $(\beta_0,\beta_1)$ gir en kurve. Statistikkens svar på hvilken
-som er best: **velg kurven som gjør det som faktisk skjedde, mest
-sannsynlig.** Det kalles *sannsynlighetsmaksimering* (engelsk *maximum
-likelihood*). Vi prøver ideen på bare to av oppskytingene:
+<div id="project9-two-launches"></div>
 
-- oppskyting 1 ved 58 °F, **med** skade,
-- oppskyting 2 ved 78 °F, **uten** skade.
-
-Med en kurve $p(T)$ er sannsynligheten for skade ved 58 °F lik
-$p_1=p(58)$, og sannsynligheten for *ingen* skade ved 78 °F er $1-p_2$, der
-$p_2=p(78)$. Vi antar at oppskytingene ikke påvirker hverandre. Da er
-sannsynligheten for begge utfallene produktet $p_1\cdot(1-p_2)$, akkurat som
-for to myntkast: sannsynligheten for kron to ganger er
-$\tfrac12\cdot\tfrac12=\tfrac14$. Vi
-sammenligner to kandidater, begge med terskel 68 °F:
-
-- **A:** $\beta_0=13.6$, $\beta_1=-0.2$,
-- **B:** $\beta_0=6.8$, $\beta_1=-0.1$ (halvparten så bratt).
-
-1. For A er $s=13.6-0.2\cdot58=2$ ved 58 °F og $s=13.6-0.2\cdot78=-2$ ved
-   78 °F. Fullfør:
-   $$p_1\cdot(1-p_2)=\sigma(2)\cdot\bigl(1-\sigma(-2)\bigr)=\ \ldots$$
-2. Gjør det samme for B. Hvilken kandidat passer best med de to
-   oppskytingene?
-3. **Forutsi, og regn så:** Hva får du med en kurve som er dobbelt så bratt
-   som A, altså $\beta=(27.2,\,-0.4)$?
-
-<details>
-<summary>Regnehjelp: sannsynlighetene for A og B</summary>
-
-For A er $p_1=\sigma(2)$. Symmetrien $\sigma(-s)=1-\sigma(s)$ gir
-$1-p_2=1-\sigma(-2)=\sigma(2)$, så produktet er $\sigma(2)^2$. Tallet
-$\sigma(2)\approx0.881$ står i avsnittet om S-kurven.
-
-For B er $s=6.8-0.1\cdot58=1$ og $s=6.8-0.1\cdot78=-1$, så produktet er
-$\sigma(1)^2$. For den dobbelt så bratte kurven er $s=\pm4$, og produktet er
-$\sigma(4)^2$. Den kurven som gir det største produktet, passer best.
-
-</details>
-
-```{math-exercise}
-#| label: project9-two-launches
-#| caption: Sannsynligheten for det vi så, for tre kurver
-#| mode: numeric
-#| tolerance: 1%
-#| partial-credit: true
-#| field-labels: sannsynlighet med A, sannsynlighet med B, sannsynlighet med dobbelt så bratt A
-Oppgi $p_1\cdot(1-p_2)$ med tre desimaler.
-
-A: _[0.776]
-
-B: _[0.534]
-
-$\beta=(27.2,\,-0.4)$: _[0.964]
-```
-
-Med bare disse to oppskytingene blir en brattere kurve med terskel mellom 58 og
-78 °F *alltid* bedre. Med alle 23 oppskytingene er det ikke slik, for der
-overlapper utfallene: det er skade ved 75 °F og ingen skade ved 66 °F. En for
-bratt kurve tar da svært feil om noen av oppskytingene. Hva som skjer når
-utfallene *ikke* overlapper, er temaet i del 5.
-
-#### Fra produkt til sum: hvorfor logaritmen?
-
-Med alle 23 oppskytingene er sannsynligheten for det vi så et produkt av 23
-faktorer: $p_i$ for hver oppskyting med skade og $1-p_i$ for hver uten. Et
-produkt av 23 tall mellom 0 og 1 blir svært lite. For $\beta=0$ er alle
-$p_i=\tfrac12$, og produktet er $(\tfrac12)^{23}\approx1.2\cdot10^{-7}$.
-Produkter er dessuten tungvinte å derivere. Logaritmen løser begge problemene:
-
-- logaritmen av et produkt er summen av logaritmene,
-- logaritmen er voksende, så den kurven som gjør produktet størst, gjør også
-  $\log(\text{produktet})$ størst, og dermed $-\log(\text{produktet})$ minst.
-
-Her og i resten av prosjektet er $\log$ den naturlige logaritmen ($\ln$ på
-kalkulatoren, `np.log` i Python).
-
-I stedet for å maksimere produktet **minimerer vi summen av $-\log$ av
-faktorene**. For de to oppskytingene over er $-\log0.776\approx0.254$ for A
-og $-\log0.534\approx0.627$ for B: minst er best.
-
-Cellen kontrollerer først håndregningen din for de to oppskytingene: den
-skriver ut $p_1$, $1-p_2$, produktet og $-\log$ for A og B. Legg selv til den
-dobbelt så bratte kurven som en tredje kandidat i listen. Deretter gjør cellen
-det samme for alle 23 oppskytingene, for $\beta=0$ og for fasiten.
+For skade ved 58 °F og ingen skade ved 78 °F er produktet
+$p(58)(1-p(78))$. Cellen sammenligner to kurver. Du trenger ikke regne
+sannsynlighetene for hånd.
 
 ```{pyodide-python}
 #| label: project9-product
-T2 = np.array([58., 78.])          # skade ved 58 °F, ingen skade ved 78 °F
-for name, beta in [('A', np.array([13.6, -0.2])), ('B', np.array([6.8, -0.1]))]:
-    p = sigma(beta[0] + beta[1]*T2)
-    prob = p[0]*(1 - p[1])
-    print(f'{name}: p1 = {p[0]:.3f}, 1 - p2 = {1 - p[1]:.3f}, '
-          f'p1·(1 - p2) = {prob:.3f}, -log = {-np.log(prob):.3f}')
-# Alle 23 utfall: produktet av faktorene og summen av -log, for β = 0 og for fasiten.
-for name, beta in [('β = 0', np.zeros(2)), ('fasit', beta_oracle)]:
-    p = sigma(design(temps) @ beta)
-    factors = np.where(damage == 1, p, 1 - p)      # p_i ved skade, 1 - p_i ellers
-    print(f'{name:<6} produkt = {np.prod(factors):.2e},  sum av -log = {-np.sum(np.log(factors)):.3f}')
+for name, beta in [('A', np.array([13.6, -0.2])),
+                   ('B', np.array([6.8, -0.1]))]:
+    p = sigma(beta[0] + beta[1]*np.array([58., 78.]))
+    probability = p[0]*(1-p[1])
+    print(name, 'produkt:', probability, 'minus log:', -np.log(probability))
 ```
 
-Fasiten gjør dataene mer enn 300 ganger så sannsynlige som $\beta=0$
-(produktet $3.88\cdot10^{-5}$ mot $1.19\cdot10^{-7}$), og summen av $-\log$
-synker fra 15.942 til 10.158.
+Størst produkt er best. I stedet for å maksimere et lite produkt
+minimerer vi **summen av minus logaritmen til faktorene**. Det gir samme
+beste kurve. Tapet som brukes videre, er ferdig skrevet som
 
-**Ta med videre:** Modellen er $p(T)=\sigma(\beta_0+\beta_1T)$, med terskel
-$-\beta_0/\beta_1$ og bratthet $\beta_1$. Den beste kurven gjør dataene mest
-sannsynlige, og det betyr at den minimerer summen av $-\log$ av faktorene.
+$$L(\beta)=\sum_{i=1}^{23}\left(\log(1+e^{s_i})-y_i s_i\right),
+\qquad s_i=\beta_0+\beta_1T_i.$$
 
-### Modellen som et optimeringsproblem
+Dette heter **logistisk regresjon**. I Python bruker `loss` en numerisk
+stabil måte å beregne denne summen på. Lavere $L$ betyr bedre tilpasning
+etter denne regelen; det sier ikke alene hvor godt modellen virker
+utenfor dataene.
 
-Skriv $s_i=\beta_0+\beta_1T_i$ og $p_i=\sigma(s_i)$. Fra forrige avsnitt
-bidrar
+**Ta med videre:** To parametre bestemmer en sannsynlighetskurve. Vi
+finner dem ved å minimere en gitt funksjon $L$ av to variabler.
 
-- en oppskyting med skade ($y_i=1$) med $-\log p_i$, som er lite når $p_i$ er nær 1,
-- en oppskyting uten skade ($y_i=0$) med $-\log(1-p_i)$, som er lite når $p_i$ er nær 0.
+### Oppsett og arbeidsplan
 
-Begge tilfellene kan skrives som ett uttrykk, og vi minimerer
+På nettsiden er data, `sigma`, `design`, `loss`, `hessian`, `armijo_gd` og
+figurhjelperne klare automatisk. Dine to funksjoner `grad` og `gd` må kjøres
+igjen hvis siden lastes på nytt.
 
-$$L(\beta)=\sum_{i=1}^{23}\Bigl(\log\bigl(1+e^{s_i}\bigr)-y_is_i\Bigr)$$
-
-over hele planet $\beta\in\mathbb R^2$. (Kontroll: for $y_i=1$ er
-$-\log p_i=\log(1+e^{-s_i})=\log(1+e^{s_i})-s_i$, og for $y_i=0$ er
-$-\log(1-p_i)=\log(1+e^{s_i})$.) Dette kalles **logistisk regresjon**.
-Med matrisen $X$ med radene $(1,T_i)$ er $s=X\beta$. **Lite talleksempel:** for
-$\beta=0$ er alle $p_i=\tfrac12$, hvert ledd er $\log2$, og
-$L(0)=23\log2\approx15.94$, samme tall som cellen over.
-
-**Fasiten.** Koeffisientene som gjør dataene mest sannsynlige, er
-$\beta_0=15.0429$ og $\beta_1=-0.23216$. Dataene er en øvelse i Agresti,
-*An Introduction to Categorical Data Analysis* (2. utg., 2007, s. 123–124).
-Enhver statistikkpakke gir de samme koeffisientene, og vi har kontrollert dem med
-Newtons metode. De ligger i oppsettet som `beta_oracle`. Vi bruker dem bare til
-å kontrollere metoden.
-
-| Del | Spørsmål | Det du tar med videre |
-|:--|:--|:--|
-| Innledning | Hvorfor en S-kurve, og hva er «best»? | Terskel, bratthet og summen av $-\log$ |
-| 1 | Gradient, Hessian og et trygt steg | $\nabla L$, din `grad` og steget $4/\sigma_1^2$ |
-| 2 | Første kjøring med rå temperaturer | Din `gd`, en forutsigelse fra egenverdiene |
-| 3 | Sentrer og skaler | Samme modell i nye koordinater; tabell med steg |
-| 4 | For store og tilpassede steg | Kritisk steg, 2-syklus, Armijo |
-| 5 | Utforskende sluttoppgave: når ingen beste modell finnes | Gradient mot null uten minimum |
-
-Sett av omtrent 4–6 timer. Skriv en kort forventning før hvert forsøk.
-
-### Kjøring på siden eller i egen notebook
-
-På nettsiden lastes oppsettet automatisk. Det inneholder dataene `temps` og
-`damage`, `design(t)` (matrisen $X$), `sigma`, `loss(X, beta)`,
-`hessian(X, beta)`, Armijo-metoden `armijo_gd`, de ferdige datamatrisene og de
-trygge stegene, og figurhjelperne. Laster du
-siden på nytt, må du kjøre cellene der du skrev `grad`, `gd` og
-`predict_steps`, og cellen med `beta_star` i del 3, på nytt før du fortsetter.
-I en egen notebook laster du ned
+I egen notebook: last ned
 [oppsettsfilen](../assets/project_week9_setup.py){download="project_week9_setup.py"}
-og kjører `from project_week9_setup import *`. Du trenger NumPy og
-Matplotlib. Kopier cellene i rekkefølge, og kontroller notebooken med
+og kjør `from project_week9_setup import *`. Du trenger NumPy og
+Matplotlib. Kopier cellene i rekkefølge, og kontroller med
 **Restart / Run all** før levering.
 
-## 1. Gradient, Hessian og et trygt steg
+| Del | Arbeidet ditt | Omtrent tid |
+|:--|:--|:--|
+| Innføring | Les og kjør statistikkeksemplene; ingen egen levering | 20–30 min |
+| 1 | Koble summer til matriseprodukt og fullfør to korte funksjoner | 35–45 min |
+| 2 | Sammenlign tre koordinatvalg og forklar forskjellene | 40–50 min |
+| 3 | Undersøk steglengde og Armijo med dine egne utskrifter | 40–50 min |
+| 4 | En kort sluttundersøkelse av stoppkravet | 25–35 min |
+| Levering | Samle utvalgte resultater og korte konklusjoner | 20–30 min |
 
-Nå har vi en funksjon $L$ av to variabler, $\beta_0$ og $\beta_1$, som skal
-minimeres. Gradientmetoden fra uke 9 trenger to ting: gradienten, som gir
-retningen, og et steg som ikke er for stort. For steget trenger vi et anslag
-for krumningen, altså Hessianen. Begge kan vi finne for hånd. Målet med denne
-delen er en egen `grad`-funksjon og et steg vi *vet* er trygt.
+Regn med omtrent 3–4 timer inkludert innføringen. Skriv en kort
+forventning før forsøkene og bruk resultatene som grunnlag for svaret.
 
-### Utled gradienten
+<div id="project9-start"></div>
 
-Du trenger én regel: $\dfrac{d}{ds}\log(1+e^s)=\dfrac{e^s}{1+e^s}=\sigma(s)$.
+## 1. Her begynner prosjektet: fra formel til metode
 
-1. Vis at det $i$-te leddet i $L$ har derivert $p_i-y_i$ med hensyn på $s_i$.
-2. Bruk kjerneregelen med $\partial s_i/\partial\beta_0=1$ og
-   $\partial s_i/\partial\beta_1=T_i$. Fullfør:
-   $$\frac{\partial L}{\partial\beta_0}=\sum_{i}(p_i-y_i),\qquad
-   \frac{\partial L}{\partial\beta_1}=\ \ldots$$
-3. Skriv svaret som én matriseformel med $X$, $p$ og $y$.
-4. Regn ut $\nabla L(0)$ for hånd. Du trenger at 7 av 23 oppskytinger hadde
-   skade, at summen av alle temperaturene er 1600, og at summen av temperaturene
-   ved de 7 skadene er 446.
+Vi bruker matrisen $X$ med rad $i$ lik $(1,T_i)$ og vektorene
+$\beta=(\beta_0,\beta_1)^T$, $y=(y_1,\ldots,y_{23})^T$.
+Da er $s=X\beta$ og $p=\sigma(s)$, der $\sigma$ brukes på hvert element.
 
-<details>
-<summary>Regnehjelp: fra ledd til matriseformel</summary>
+De analytiske deriverte er gitt:
 
-Leddet er $\log(1+e^{s_i})-y_is_i$, så den deriverte med hensyn på $s_i$ er
-$\sigma(s_i)-y_i=p_i-y_i$. Kjerneregelen gir
-$\partial L/\partial\beta_1=\sum_iT_i(p_i-y_i)$. De to summene er de to
-komponentene i $X^T(p-y)$, fordi kolonnene i $X$ er ettallene og temperaturene:
+$$\nabla L(\beta)=
+\begin{bmatrix}
+\sum_i(p_i-y_i)\\
+\sum_i T_i(p_i-y_i)
+\end{bmatrix}
+=X^T(p-y),\qquad
+H(\beta)=X^TWX,\quad W=\operatorname{diag}(p_i(1-p_i)).$$
 
-$$\nabla L(\beta)=X^T\bigl(p-y\bigr),\qquad p=\sigma(X\beta).$$
+Du skal **bruke** disse uttrykkene, ikke derivere dem.
+$H$ er positiv semidefinit, så $L$ er konveks. `hessian` er allerede gitt.
 
-Tolkning: $p_i-y_i$ er feilen i den forutsagte sannsynligheten for
-oppskyting $i$. For $\beta=0$ er $p_i-y_i=\tfrac12-y_i$. Da er
-$\sum_i(\tfrac12-y_i)=\tfrac{23}{2}-(\text{antall skader})$ og
-$\sum_iT_i(\tfrac12-y_i)=\tfrac12\sum_iT_i-(\text{summen av temperaturene ved skadene})$.
+**a. Les matriseproduktet.** Oppgi dimensjonene til $X$, $p-y$ og
+$X^T(p-y)$. Forklar kort hvorfor de to radene i produktet blir summene
+over. Dette er samme kobling mellom rader og enkeltuttrykk som i uke 3.
 
-</details>
-
-```{math-exercise}
-#| label: project9-gradient-zero
-#| caption: Gradienten i origo
-#| mode: equivalent
-#| partial-credit: true
-#| field-labels: første komponent, andre komponent
-Regn ut $\nabla L(0)$ for de 23 oppskytingene.
-
-$\nabla L(0)=$ vec[9/2, 354]
-```
-
-**Kodespor 1.** Skriv gradienten som én linje. `yy` er utfallene; vi bruker
-andre utfall i del 5.
+**b. Fullfør gradienten.** Bruk `X.T` for transponering og `@` for
+matrise–vektor-produkt. Argumentet `yy` lar oss undersøke andre utfall i
+sluttdelen.
 
 ```{pyodide-python}
 #| label: project9-grad
 def grad(X, beta, yy=damage):
-    # TODO: én linje, X^T (p - y) med p = sigma(X beta).
-    raise NotImplementedError('Skriv gradienten')
+    # TODO: returner X^T(p-y), der p = sigma(X beta).
+    raise NotImplementedError('Skriv matriseproduktet')
 ```
 
-### Hessianen og et trygt steg
+<div id="project9-gradient-zero"></div>
+<div id="project9-safe-step"></div>
 
-Deriverer vi en gang til, får vi Hessianen. Regelen
-$\sigma'(s)=\sigma(s)\bigl(1-\sigma(s)\bigr)$ gir at $p_i-y_i$ har derivert
-$p_i(1-p_i)$ med hensyn på $s_i$, og kjerneregelen som i punkt 2 gir
+En ferdig regel fra krumningsgrensen er
 
-$$H(\beta)=X^TWX,\qquad W=\operatorname{diag}\bigl(p_i(1-p_i)\bigr).$$
+$$\alpha=\frac{4}{\sigma_1(X)^2},$$
 
-Den er positiv semidefinit: $v^THv=\sum_ip_i(1-p_i)\,(Xv)_i^2\ge0$. Altså er $L$
-konveks ([uke 8](uke8.qmd#uke8-konveks-test)).
+der $\sigma_1(X)$ er største singulærverdi, ikke den logistiske
+funksjonen. Dette er et trygt fast steg: i eksakt regning synker $L$
+når gradienten ikke er null. Du trenger ikke utlede grensen.
 
-Hver vekt $p_i(1-p_i)$ er høyst $\tfrac14$. Fra [uke 7](uke7.qmd#uke7-svd) er
-$\|Xv\|_2\le\sigma_1\|v\|_2$, der $\sigma_1$ er største singulærverdi til $X$.
-($\sigma$ uten indeks er fortsatt den logistiske funksjonen; $\sigma_1$ og
-$\sigma_2$ er singulærverdiene, som i uke 7.) Krumningen er derfor aldri større
-enn $\sigma_1^2/4$, i noen retning og i noe punkt. Det gir en **regel** vi
-bruker hele prosjektet:
-
-> **Trygt fast steg:** $\alpha=4/\sigma_1^2$. Med dette steget synker $L$ i
-> hvert eneste steg, uansett hvor vi starter.
-
-Sammenlign med [uke 9, del A](uke9.qmd#uke9-stabilitet):
-$\alpha_{\text{krit}}=2/\lambda_{\max}(H_*)$ gjelder bare nær minimumet, og vi
-må kjenne minimumet for å regne den ut. Regelen her er global og bruker bare
-dataene. Med den største krumningen $\sigma_1^2/4$ ville grensen $2/(\text{største
-krumning})$ gitt $8/\sigma_1^2$; vi bruker halvparten, for da gir hvert steg en
-nedgang på minst $\tfrac{\alpha}{2}\|\nabla L\|_2^2$. Cellen regner ut steget og
-kontrollerer gradienten din mot håndregningen.
+Cellen kontrollerer gradienten din i ett punkt og beregner det trygge
+steget. Bruk utskriften til å finne en eventuell feil før du fortsetter.
 
 ```{pyodide-python}
 #| label: project9-grad-check
-X_raw = design(temps)          # X_raw og alpha_raw står også i oppsettet
 sv = np.linalg.svd(X_raw, compute_uv=False)
-alpha_raw = 4/sv[0]**2
-print('singulærverdier til X:', sv, ' trygt steg 4/σ1² =', alpha_raw)
-print('din ∇L(0):      ', grad(X_raw, np.zeros(2)))
-print('forventet ∇L(0):', np.array([4.5, 354.]))
+print('dimensjon X:', X_raw.shape, 'singulærverdier:', sv)
+print('din gradient i 0:', grad(X_raw, np.zeros(2)))
+print('kontrollverdi:    ', np.array([4.5, 354.]))
+print('trygt steg:', 4/sv[0]**2)
 ```
 
-```{math-exercise}
-#| label: project9-safe-step
-#| caption: Største singulærverdi og trygt steg
-#| mode: numeric
-#| tolerance: 1%
-#| partial-credit: true
-#| field-labels: største singulærverdi, trygt steg
-Oppgi $\sigma_1$ for $X$ med rå temperaturer og det trygge steget $4/\sigma_1^2$
-(tre gjeldende siffer, for eksempel `3.21e-4`).
-
-$\sigma_1=$ _[335.295]
-
-$\alpha=$ _[3.558e-5]
-```
-
-**Ta med videre:** $\nabla L=X^T(p-y)$, $L$ er konveks, og $\alpha=4/\sigma_1^2$
-er et trygt fast steg.
-
-## 2. Første kjøring med rå temperaturer
-
-Nå har vi alt gradientmetoden trenger: retningen $-\nabla L$ og et trygt steg.
-Vi starter i $\beta=0$, altså kurven som sier $p=\tfrac12$ ved alle
-temperaturer, og lar metoden forbedre kurven steg for steg. Du skriver løkken
-selv. Målet er å se hvor langt metoden kommer, og så forklare farten med
-konvergensfaktoren fra uke 9.
-
-**Forutsi før du koder:** Hvor mange steg trenger gradientmetoden med det
-trygge steget, fra $\beta=0$, før $\|\nabla L\|_2<10^{-6}$? Skriv et tall.
-
-**Kodespor 2.** Fullfør gradientmetoden med stoppregel og stegteller.
-Stopp når $\|\nabla L\|_2<$ `tol` eller når `max_steps` steg er brukt.
+**c. Fullfør løkken.** Gradientmetoden er
+$\beta_{k+1}=\beta_k-\alpha\nabla L(\beta_k)$.
+Stopp på gradientnorm `tol` eller når `max_steps` er brukt.
+Returner både sluttpunkt og antall utførte steg.
 
 ```{pyodide-python}
 #| label: project9-gd
-def gd(X, alpha, tol=1e-6, max_steps=20000, yy=damage):
+def gd(X, alpha, tol=1e-6, max_steps=2000, yy=damage):
     beta = np.zeros(2)
     k = 0
-    # TODO: så lenge |∇L(beta)| >= tol og k < max_steps:
-    #       beta <- beta - alpha * grad(X, beta, yy), og øk k med 1.
-    raise NotImplementedError('Skriv løkken')
+    # TODO: gjenta oppdateringen mens gradientnormen >= tol og k < max_steps.
+    raise NotImplementedError('Skriv gradientløkken')
     return beta, k
 ```
 
-Cellen kjører din `gd` først i 5 steg og så med et tak på 20 000 steg, og
-sammenligner med fasiten. Den tar noen sekunder.
+Cellen prøver fem steg og deretter et begrenset budsjett. `stoppkrav`
+må være sann før vi sier at metoden nådde den valgte toleransen.
 
 ```{pyodide-python}
 #| label: project9-raw-run
-for steps in [5, 20000]:
-    beta, k = gd(X_raw, alpha_raw, max_steps=steps)
-    print(f'etter {k:5} steg: beta = {beta.round(4)}, '
-          f'|∇L| = {np.linalg.norm(grad(X_raw, beta)):.4f}, L = {loss(X_raw, beta):.3f}')
-print(f'fasit:               beta = {beta_oracle}, L = {loss(X_raw, beta_oracle):.3f}')
+for budget in [5, 2000]:
+    beta, k = gd(X_raw, alpha_raw, max_steps=budget)
+    norm = np.linalg.norm(grad(X_raw, beta))
+    print('budsjett:', budget, 'steg:', k, 'beta:', beta.round(4),
+          '|gradient|:', norm, 'L:', loss(X_raw, beta), 'stoppkrav:', norm < 1e-6)
+print('referanse beta:', beta_oracle, 'L:', loss(X_raw, beta_oracle))
 ```
 
-Etter de første få stegene er $\|\nabla L\|_2\approx0.55$. Etter 20 000 steg er
-den fortsatt omtrent $0.53$, og $\beta_0$ har bare kommet fra 0 til omtrent
-$0.38$ (fasiten er 15.04). Metoden går i riktig retning, men ekstremt sakte.
+**Les resultatet:** Går $L$ ned? Er lavere $L$ det samme som at
+stoppkravet er nådd? Bruk både `beta` og gradientnormen i svaret.
 
-### Forklar med uke 9
+## 2. Samme modell i bedre koordinater?
 
-Er metoden bare uheldig, eller kunne vi ha forutsagt dette? Fra
-[uke 9, del A](uke9.qmd#uke9-stabilitet) er konvergensfaktoren
-$S=\max_i|1-\alpha\lambda_i|$, der $\lambda_i$ er egenverdiene til Hessianen i
-minimumet. Gradienten krymper til slutt med omtrent faktoren $S$ per steg. I ord:
+Den andre kolonnen i $X$ er nesten 70 ganger den første. Vi endrer ikke
+målingene, men hvordan temperaturene beskrives:
 
-> **antall steg** $\approx$ ln(toleransen / startgradientens norm) delt på ln $S$.
+| Navn | Temperaturkoordinat $t$ | Parametre $\gamma$ som gir samme kurve |
+|:--|:--|:--|
+| Rå | $T$ | $(\beta_0,\beta_1)$ |
+| Sentrert | $T-70$ | $(\beta_0+70\beta_1,\beta_1)$ |
+| Standardisert | $(T-m)/d$ | $(\beta_0+m\beta_1,d\beta_1)$ |
 
-Talleksempel: med $S=0.5$, startnorm $1$ og toleranse $10^{-6}$ blir det
-$\ln(10^{-6})/\ln0.5\approx20$ steg.
+Her er $m=$ `temps.mean()` gjennomsnittet og $d=$ `temps.std()`
+standardavviket, et mål på spredningen. Omregningene er gitt. De
+bevarer $\gamma_0+\gamma_1t=\beta_0+\beta_1T$ for hver temperatur.
 
-<details>
-<summary>Regnehjelp: hvor regelen kommer fra</summary>
+**a. Forutsi.** Hvilket koordinatvalg tror du gir færrest steg? Knytt
+forventningen til forholdet mellom de to singulærverdiene.
 
-Krymper gradientnormen med faktoren $S$ per steg, er den
-$S^k\cdot(\text{startnorm})$ etter $k$ steg. Vi stopper når dette er lik
-toleransen. Ta logaritmen på begge sider:
-$k\ln S+\ln(\text{startnorm})=\ln(\text{toleransen})$, altså
-$k=\ln(\text{toleransen}/\text{startnorm})/\ln S$. Begge logaritmene er
-negative, så $k$ blir positiv. Når $S$ er nær 1, er $\ln S$ nær 0, og $k$
-blir svært stor.
-
-</details>
-
-**Kodespor 3.** Fullfør forutsigelsen (to–tre linjer). Vi bruker fasiten som
-minimumspunkt. Etter funksjonen skriver cellen ut egenverdiene,
-kondisjonstallet og forutsigelsen for rå data.
-
-```{pyodide-python}
-#| label: project9-predict
-def predict_steps(X, alpha, beta_star, tol=1e-6):
-    lam = np.linalg.eigvalsh(hessian(X, beta_star))
-    # TODO: S = største |1 - alpha*lambda_i|, og antall steg etter regelen over.
-    #       Startnormen er |∇L(0)|, altså np.linalg.norm(grad(X, np.zeros(2))).
-    raise NotImplementedError('Skriv forutsigelsen')
-
-lam = np.linalg.eigvalsh(hessian(X_raw, beta_oracle))
-print('egenverdier til H*:', lam, ' kondisjonstall:', lam[1]/lam[0])
-print('forutsagt antall steg:', predict_steps(X_raw, alpha_raw, beta_oracle))
-```
-
-Kondisjonstallet til $H_*$ er omtrent $8.3\cdot10^5$, og forutsigelsen er
-omtrent $3\cdot10^7$ steg. Hvilken egenverdi bestemmer $S$ her? Sammenlign med
-din forventning, og med de 20 000 stegene du faktisk kjørte.
-
-**Ta med videre:** Metoden er stabil (steget er trygt), men kondisjonstallet
-gjør den håpløst langsom.
-
-## 3. Sentrer og skaler: samme modell i nye koordinater
-
-Del 2 endte med en diagnose: [kondisjonstallet](uke9.qmd#uke9-kondisjon) er
-enormt. Vi kan ikke endre dataene, men vi kan endre *hvordan vi skriver*
-temperaturen. Som i [prosjekt 6](project_week6.qmd) endrer vi koordinatene i
-stedet for metoden.
-
-### Hvorfor er kondisjonstallet så stort?
-
-Kolonnene i $X$ er $(1,1,\ldots,1)$ og $(T_1,\ldots,T_{23})$. Temperaturene
-ligger mellom 53 og 81, så den andre kolonnen er nesten 70 ganger den første:
-kolonnene er **nesten parallelle**, som de nesten avhengige kolonnene i
-[uke 4](uke4.qmd#uke4-nesten). Da er den minste singulærverdien liten ([uke 7](uke7.qmd#uke7-svd)).
-
-Vi prøver to andre beskrivelser av temperaturen:
-
-- **sentrert:** $T-70$,
-- **standardisert:** $(T-m)/d$, der $m\approx69.57$ er gjennomsnittet og
-  $d\approx6.90$ standardavviket, et mål for hvor mye temperaturene sprer seg
-  rundt $m$ (`temps.mean()` og `temps.std()`).
-
-**Forutsi:** Hva skjer med singulærverdiene og forholdet $\sigma_1/\sigma_2$?
-
-Cellen lager de tre matrisene $X$ og skriver ut singulærverdiene, så du kan
-sjekke forutsigelsen.
+Cellen bygger matrisene og skriver ut singulærverdier og forholdet.
+Finn forskjellen i tallene selv; ikke se bare på størrelsen til hver verdi.
 
 ```{pyodide-python}
 #| label: project9-singular
-# De samme tre matrisene står også i oppsettet.
 m, d = temps.mean(), temps.std()
 designs = {'rå T': design(temps),
-           'sentrert T - 70': design(temps - 70),
-           'standardisert (T - m)/d': design((temps - m)/d)}
+           'sentrert T - 70': design(temps-70),
+           'standardisert (T - m)/d': design((temps-m)/d)}
 for name, X in designs.items():
     sv = np.linalg.svd(X, compute_uv=False)
-    print(f'{name:<24} singulærverdier {sv.round(3)}, σ1/σ2 = {sv[0]/sv[1]:.3g}')
+    print(name, 'singulærverdier:', sv.round(3), 'forhold:', sv[0]/sv[1])
 ```
 
-For rå temperaturer er $\sigma_1=335$ og $\sigma_2=0.47$. Sentrering gir
-$\sigma_1=33.2$ og $\sigma_2=4.79$, og standardisering gir to like
-singulærverdier.
+<div id="project9-centred"></div>
 
-### Samme modell, nye koordinater
+**b. Kjør og sammenlign.** Tabellen under bruker din `gd` med samme start,
+toleranse og tak på antall steg. Den oppgir også kondisjonstallet til
+Hessianen ved referanseløsningen og faktoren fra uke 9:
 
-Før vi kjører, må vi vite hva fasiten er i de nye koordinatene. Ellers kan vi
-ikke regne ut Hessianen i minimumet. Modellen er den samme hvis den gir samme
-$s$ for hver temperatur:
+$$S=\max_i|1-\alpha\lambda_i(H_*)|.$$
 
-$$\beta_0+\beta_1T=\beta_0'+\beta_1'(T-70)\quad\text{for alle }T.$$
+Dette er en **lokal modell** for farten nær minimumet, ikke en garanti
+for antall steg fra startpunktet. En faktor nær 1 betyr langsom framgang.
 
-1. Finn $\beta_0'$ og $\beta_1'$ uttrykt med $\beta_0$ og $\beta_1$. Første linje:
-   $\beta_0'+\beta_1'(T-70)=(\beta_0'-70\beta_1')+\beta_1'T$.
-2. For $(T-m)/d$ står overgangen til $\beta_0''$ og $\beta_1''$ i regnehjelpen
-   under. Gå gjennom den, og kontroller at den har samme form som svaret ditt i
-   punkt 1.
-3. Forklar hvorfor $L$ har samme minsteverdi i alle tre koordinatsystemene,
-   men ikke samme Hessian.
-
-<details>
-<summary>Regnehjelp: overgangen for standardisering</summary>
-
-$\beta_0''+\beta_1''\dfrac{T-m}{d}=\Bigl(\beta_0''-\dfrac{\beta_1''m}{d}\Bigr)+\dfrac{\beta_1''}{d}T$.
-Sammenlign koeffisientene: $\beta_1=\beta_1''/d$ og
-$\beta_0=\beta_0''-\beta_1''m/d$. Motsatt vei: $\beta_1''=d\beta_1$ og
-$\beta_0''=\beta_0+m\beta_1$.
-
-</details>
-
-**Kodespor 4.** Legg inn fasiten i de nye koordinatene, og kjør hele
-sammenligningen. Cellen bruker din `gd` og din `predict_steps`.
+Cellen beregner omregningen og diagnostikken ferdig. Skriv selv en kort
+sammenligning av faktisk arbeid og forventet lokal fart.
 
 ```{pyodide-python}
 #| label: project9-three-runs
 b0, b1 = beta_oracle
-# TODO: fasiten i nye koordinater, med overgangene du utledet.
 beta_star = {'rå T': beta_oracle,
-             'sentrert T - 70': None,
-             'standardisert (T - m)/d': None}
-
-print(f'{"Data":<24} {"α = 4/σ1²":>9} {"λmin(H*)":>9} {"λmax(H*)":>9} {"κ(H*)":>9} '
-      f'{"forutsagt":>9} {"observert":>9}')
+             'sentrert T - 70': np.array([b0+70*b1, b1]),
+             'standardisert (T - m)/d': np.array([b0+m*b1, d*b1])}
 for name, X in designs.items():
     alpha = 4/np.linalg.svd(X, compute_uv=False)[0]**2
     lam = np.linalg.eigvalsh(hessian(X, beta_star[name]))
-    beta, k = gd(X, alpha)
-    print(f'{name:<24} {alpha:>9.3g} {lam[0]:>9.4g} {lam[1]:>9.4g} {lam[1]/lam[0]:>9.3g} '
-          f'{predict_steps(X, alpha, beta_star[name]):>9.3g} {k:>9}')
-    if name == 'sentrert T - 70':
-        beta_c = beta
-    if name == 'standardisert (T - m)/d':
-        beta_s = beta
-print('sentrert, regnet tilbake:      ', beta_c[0] - 70*beta_c[1], beta_c[1])
-print('standardisert, regnet tilbake: ', beta_s[0] - beta_s[1]*m/d, beta_s[1]/d)
+    beta, k = gd(X, alpha, max_steps=2000)
+    norm = np.linalg.norm(grad(X, beta))
+    print(name, 'steg:', k, 'stoppkrav:', norm < 1e-6,
+          'kondisjon H*:', lam[-1]/lam[0], 'lokal faktor S:',
+          np.max(np.abs(1-alpha*lam)), 'L:', loss(X, beta))
 ```
 
-Rå temperaturer når ikke toleransen innen 20 000 steg. Sentrerte temperaturer
-trenger 1433 steg (forutsagt omtrent 1700), og standardiserte bare 42
-(forutsagt omtrent 48). Begge gir tilbake fasiten $(15.0429,\,-0.2322)$.
-Forutsigelsen er litt for høy. Den bruker Hessianen i minimumet for hele
-kjøringen, men i starten er alle $p_i=\tfrac12$, og vektene
-$p_i(1-p_i)=\tfrac14$ er så store som mulig. Krumningen er derfor større der
-enn i minimumet, og de første stegene går raskere enn faktoren $S$ sier. Mot
-slutten krymper gradienten med nøyaktig faktoren $S$ per steg.
+<div id="project9-predict"></div>
 
-```{math-exercise}
-#| label: project9-centred
-#| caption: Sentrert modell
-#| mode: numeric
-#| tolerance: 1%
-#| partial-credit: true
-#| field-labels: beta0 etter sentrering, kondisjonstall til H* sentrert
-Bruk fasiten $\beta_0=15.0429$, $\beta_1=-0.23216$. Finn $\beta_0'$ i den
-sentrerte modellen, og oppgi kondisjonstallet til Hessianen i minimumet for
-sentrerte data fra kjøringen.
+- Hvilke kjøringer nådde toleransen? En avbrutt kjøring teller ikke som en
+  rask løsning.
+- Sammenlign kondisjonstall, $S$ og observerte steg. Hva er bevart ved
+  koordinatskiftet, og hva er endret?
+- Velg sentrering. Sett den gitte $\gamma$ inn i $\gamma_0+\gamma_1(T-70)$
+  og forenkle til $\beta_0+\beta_1T$. To korte linjer er nok.
 
-$\beta_0'=$ _[-1.2083]
+**c. Tolk modellen med forbehold.** Vi kan regne tilbake fra
+standardiserte koordinater med
+$\beta_1=\gamma_1/d$, $\beta_0=\gamma_0-m\gamma_1/d$.
 
-$\kappa(H_*)=$ _[35.29]
-```
-
-### Hva sier modellen om 31 °F?
-
-Nå som vi har modellen, kan vi stille spørsmålet fra natten før oppskytingen.
-Cellen regner ut $p(T)$ ved tre temperaturer og tegner kurven sammen med
-dataene.
+Cellen bruker din løsning, regner den tilbake og viser kurven ved og
+utenfor temperaturene i dataene.
 
 ```{pyodide-python}
 #| label: project9-launch-day
-beta_F = beta_oracle      # det samme som din standardiserte løsning regnet tilbake
+alpha_std = 4/np.linalg.svd(X_std, compute_uv=False)[0]**2
+gamma, k = gd(X_std, alpha_std)
+beta_F = np.array([gamma[0]-m*gamma[1]/d, gamma[1]/d])
 for T in [31, 53, 70]:
-    print(f'p({T} °F) = {sigma(beta_F[0] + beta_F[1]*T):.4f}')
+    print(f'p({T} °F) = {sigma(beta_F[0]+beta_F[1]*T):.4f}')
 show_fit(beta_F)
 ```
 
-Modellen gir $p(31\text{ °F})\approx0.9996$, mot $0.94$ ved 53 °F og $0.23$ ved
-70 °F. Men 31 °F ligger langt utenfor temperaturene i dataene (det skraverte
-området). Der finnes ingen observasjoner som kan bekrefte at kurven har riktig
-form. Tallet viser hva **denne modellen** forutsier; det er ikke en målt
-sannsynlighet.
+Hvilke av de tre temperaturene ligger utenfor observasjonene?
+Forklar hvorfor et tall nær 1 fra modellen ikke er en målt sannsynlighet.
+Dette forbeholdet skal være med i konklusjonen din.
 
-**Ta med videre:** Å sentrere eller standardisere er et invertibelt
-koordinatskifte. Løsningen er den samme, men Hessianen og dermed farten endres.
-Det er prekondisjonering fra [prosjekt 6](project_week6.qmd), gjort som én
-linje med data. I [uke 10](uke10.qmd) møter vi en metode som ikke bryr seg om
-slike koordinatskifter.
+## 3. Steglengde: stabilitet, fart og arbeidsmengde
 
-## 4. For store steg og tilpassede steg
+Et trygt steg trenger ikke være det raskeste. Nær minimumet gir
+$2/\lambda_{\max}(H_*)$ den lokale kritiske grensen fra
+[uke 9](uke9.qmd#uke9-stabilitet). Den sier ikke hva en vilkårlig
+start vil gjøre langt fra minimumet.
 
-Det trygge steget er forsiktig. To spørsmål ligger da nær: kan vi bare ta
-større steg, og kan Armijo-søket fra [uke 9, del B](uke9.qmd#uke9-linjesok)
-velge steget for oss? Vi bruker standardiserte data, der vi kjenner
-egenverdiene fra tabellen i del 3.
+<div id="project9-critical"></div>
 
-### Over det kritiske steget
+**a. Forutsi og undersøk.** Sammenlign $\alpha=0.55$, $0.6$ og $1.5$
+med grensen. Tror du større steg alltid betyr mindre arbeid?
 
-Regn ut $\alpha_{\text{krit}}=2/\lambda_{\max}(H_*)$ med $\lambda_{\max}(H_*)$
-for standardiserte data fra tabellen i del 3.
-
-```{math-exercise}
-#| label: project9-critical
-#| caption: Kritisk steg for standardiserte data
-#| mode: numeric
-#| tolerance: 1%
-#| field-labels: kritisk steg
-$\alpha_{\text{krit}}=$ _[0.5547]
-```
-
-**Forutsi:** Hva skjer med $\alpha=0.55$, $0.6$ og $1.5$? I eksperiment 1 i
-uke 9 eksploderte gradientmetoden på Himmelblaus funksjon med for stort steg.
-
-Cellen kjører 3000 steg med hver steglengde, skriver ut de to siste punktene og
-tegner de siste 200 punktene.
+Cellen beregner grensen, kjører 1000 steg og viser de siste punktene.
+Den trygge steglengden prøves også med stoppregel.
 
 ```{pyodide-python}
 #| label: project9-too-large
+b0, b1 = beta_oracle
+reference_std = np.array([b0+m*b1, d*b1])
+lam = np.linalg.eigvalsh(hessian(X_std, reference_std))
+print('lokal kritisk grense:', 2/lam[-1])
 paths = {}
 for alpha in [0.55, 0.6, 1.5]:
     beta = np.zeros(2)
-    path = [beta]
-    for k in range(3000):
-        beta = beta - alpha*grad(X_std, beta)
-        path.append(beta)
+    path = [beta.copy()]
+    for k in range(1000):
+        beta = beta-alpha*grad(X_std, beta)
+        path.append(beta.copy())
     paths[alpha] = np.array(path)
-    print(f'α = {alpha}: siste to punkter {path[-2].round(3)} og {path[-1].round(3)}, '
-          f'største |β| underveis {np.abs(paths[alpha]).max():.1f}')
-show_cycles(paths, beta_star['standardisert (T - m)/d'])
-print('steg med α = 0.55:', gd(X_std, 0.55)[1])
+    print('alpha:', alpha, 'siste punkter:', path[-2].round(3), path[-1].round(3),
+          'gradientnorm:', np.linalg.norm(grad(X_std, beta)))
+show_cycles(paths, reference_std)
+alpha_std = 4/np.linalg.svd(X_std, compute_uv=False)[0]**2
+for alpha in [alpha_std, 0.55]:
+    beta, k = gd(X_std, alpha)
+    print('fast alpha:', alpha, 'steg:', k,
+          'stoppkrav:', np.linalg.norm(grad(X_std, beta)) < 1e-6)
 ```
 
-Med $\alpha=0.55$ konvergerer metoden. Med $\alpha=0.6$ veksler den for alltid
-mellom to punkter, en **2-syklus** som i uke 2 og uke 9. Med $\alpha=1.5$ hopper
-den rundt mellom et dusin punkter langt fra minimumet, men $|\beta|$ holder seg
-under 12 i alle de 3000 stegene. Legg også merke til at
-$\alpha=0.55$ trenger 641 steg, mot 42 med det trygge steget $0.174$.
-
-Hvorfor er et steg like under $\alpha_{\text{krit}}$ så langsomt? Se på faktoren
-$1-\alpha\lambda_{\max}$ når $\alpha$ er nær $\alpha_{\text{krit}}$.
-
-<details>
-<summary>Regnehjelp: faktoren nær det kritiske steget</summary>
-
-Regn ut $1-\alpha\lambda_{\max}$ for $\alpha=0.55$ med $\lambda_{\max}$ fra
-tabellen i del 3. Hva er faktoren ved $\alpha=\alpha_{\text{krit}}$? Regn så ut
-$S=\max_i|1-\alpha\lambda_i|$ for det trygge steget $\alpha\approx0.174$, der
-begge egenverdiene er med. Hva betyr en faktor nær $-1$ for gradienten i den
-bratte egenretningen?
-
-</details>
+Beskriv forskjellen mellom konvergens, veksling mellom punkter og en
+kjøring som fremdeles er langt fra stoppkravet. Bruk også $S$ fra del 2
+til å forklare hvorfor et steg rett under grensen kan være langsomt.
+Et endelig forsøk alene beviser ikke hvordan alle senere steg blir.
 
 ### Armijo: løser et tilpasset steg problemet?
 
-**Forutsi:** Armijo-søket fra del B i uke 9 velger steget selv. Blir rå temperaturer
-da raske? Blir standardiserte data enda raskere?
+Armijo starter med $\alpha=1$ og halverer til tapet synker nok.
+`armijo_gd` er gitt. **Forutsi:** Vil dette fjerne forskjellen mellom
+rå og standardiserte temperaturer?
 
-Cellen kjører `armijo_gd` med din `grad` i høyst 2000 steg på begge datasettene,
-og teller de ekstra funksjonsverdiene som halveringene koster.
+Cellen kjører din gradient med to metoder på de samme dataene. Den teller
+iterasjoner og de ekstra prøvepunktene Armijo avviser. Med implementasjonen
+her bruker Armijo $2k+$ `extra` tapsberegninger: én nåverdi og én godtatt
+prøve per steg, i tillegg til de avviste prøvene. Sluttkontrollen i
+utskriften er ikke med. Fast steg bruker ingen tapsberegning i løkken.
 
 ```{pyodide-python}
 #| label: project9-armijo
+budget = 2000                 # du kan prøve 4000; ikke bruk millionkjøringer
 for name in ['rå T', 'standardisert (T - m)/d']:
-    beta, k, extra = armijo_gd(designs[name], grad, max_steps=2000)
-    print(f'{name:<24} steg: {k:5}, ekstra funksjonsverdier: {extra:6}, '
-          f'beta = {beta.round(4)}, |∇L| = {np.linalg.norm(grad(designs[name], beta)):.2e}')
+    X = designs[name]
+    alpha = 4/np.linalg.svd(X, compute_uv=False)[0]**2
+    fixed, k_fixed = gd(X, alpha, max_steps=budget)
+    adaptive, k, extra = armijo_gd(X, grad, max_steps=budget)
+    print(name)
+    for method, beta, steps, evaluations in [
+            ('fast', fixed, k_fixed, 0), ('Armijo', adaptive, k, 2*k+extra)]:
+        norm = np.linalg.norm(grad(X, beta))
+        print(method, 'steg:', steps, 'L-beregninger i metoden:', evaluations,
+              'L:', loss(X, beta), '|gradient|:', norm, 'stoppkrav:', norm < 1e-6)
 ```
 
-På rå data er $\beta_0$ bare omtrent $0.12$ etter 2000 Armijo-steg, og
-$\|\nabla L\|_2$ er omtrent 1. En lengre kjøring utenfor nettleseren kom til
-$\beta_0\approx15.01$ etter to millioner Armijo-steg og nesten 26 millioner
-ekstra funksjonsverdier, men nådde fortsatt ikke toleransen. På standardiserte data
-trenger Armijo 67 steg, mot 42 med det faste trygge steget. Forklar med del B i
-uke 9: hva garanterer Armijo, og hva gjør det ikke?
+**b. Konkluder fra din tabell.**
 
-**Ta med videre:** Armijo fikser stabiliteten, ikke kondisjonstallet.
+- Hvilken kombinasjon av koordinater og metode når toleransen?
+- Hva koster halveringene? Er færre iterasjoner alene en rettferdig
+  sammenligning?
+- Gjenta med `budget = 4000` bare for de rå dataene. Hva støtter dette
+  forsøket om Armijo, og hva kan det ikke si om framtidige iterasjoner?
+- Bruk [Armijo-garantien](uke9.qmd#uke9-linjesok) og kondisjonstallene
+  til å skille mellom å sikre nedgang og å få rask konvergens.
 
-## 5. Utforskende sluttoppgave: når ingen beste modell finnes
+## 4. Sluttundersøkelse: liten gradient, men hvilken løsning?
 
-Med to oppskytinger i innledningen ble en brattere kurve alltid bedre. Med de
-ekte dataene skjer ikke det, fordi utfallene overlapper: det er skade ved
-75 °F og ingen skade ved 66–73 °F. Men hva om de *ikke* hadde overlappet? Da
-kunne utfallene **skilles** av en terskeltemperatur: skade under terskelen,
-ingen skade over. I denne delen lager du et slikt datasett ved å endre ett
-eneste utfall, og ser hva gradientmetoden gjør. Du trenger
-[del D i uke 9](uke9.qmd#uke9-garanti): subnivåmengder, koersivitet og
-eksperiment 5, søket som aldri kommer fram.
+Hva om alle skader lå under én temperatur og alle skadefrie oppskytinger
+over? Da kan en stadig brattere S-kurve passe bedre. Dette kalles
+**full separasjon**. Vi lager et tenkt datasett med skade akkurat når
+$T<65$; vi endrer ikke de virkelige dataene.
 
-Cellen under starter fra et **tenkt datasett** der de to skadene ved 70 °F er
-gjort om til «ingen skade». Da er det skade ved 53, 57, 58, 63 og 75 °F, og
-oppskytingen ved 75 °F er den eneste skaden over 65 °F. Cellen kjører
-gradientmetoden med sentrerte data og det trygge steget i 10 000 steg, og
-skriver ut $\|\beta\|_2$, $L$, $\|\nabla L\|_2$ og terskelen
-$T=70-\beta_0'/\beta_1'$ (der $p=\tfrac12$) underveis. Målet er å se at én
-enkelt oppskyting avgjør om det finnes en beste modell.
-
-### Forutsi, endre én verdi og fyll ut tabellen
-
-1. Kjør cellen uendret. Konvergerer metoden? Noter $\beta$, $L$ og terskelen
-   etter 10 000 steg.
-2. **Forutsi:** Nå gjør du om skaden ved 75 °F til «ingen skade». Da skiller
-   terskelen 65 °F utfallene helt. Hva tror du skjer med $\|\beta\|_2$, $L$ og
-   $\|\nabla L\|_2$? Skriv svaret ned før du kjører.
-3. Endre den ene verdien på TODO-linjen (gjør det som linjen over, men for
-   75 °F), og kjør cellen på nytt. Fyll ut tabellen.
-
-Du bruker den samme cellen i punkt 1 og punkt 3; bare TODO-linjen endres.
-Figuren viser $\|\beta\|_2$, $L$ og $\|\nabla L\|_2$ for alle stegene.
+Sammenlign de virkelige og de tenkte utfallene med samme sentrerte
+datamatrise og samme trygge steg. Cellen viser tap, gradientnorm og
+parameterstørrelse ved tre tidspunkter.
 
 ```{pyodide-python}
 #| label: project9-separable
-# Tenkt datasett: de to skadene ved 70 °F er gjort om til «ingen skade».
-tenkt = damage.copy()
-tenkt[(temps == 70) & (damage == 1)] = 0
-# TODO (punkt 3): gjør om skaden ved 75 °F til 0 på samme måte.
-
-print('skade ved', temps[tenkt == 1], '°F')
-beta, history = np.zeros(2), []
-for k in range(1, 10001):
-    beta = beta - alpha_c*grad(X_c, beta, tenkt)          # sentrerte data, trygt steg
-    if k % 10 == 0:
-        history.append((k, np.linalg.norm(beta), loss(X_c, beta, tenkt),
-                        np.linalg.norm(grad(X_c, beta, tenkt))))
-    if k in (100, 1000, 10000):
-        print(f'k = {k:5}: |β| = {history[-1][1]:.3g}, L = {history[-1][2]:.3g}, '
-              f'|∇L| = {history[-1][3]:.2g}, terskel = {70 - beta[0]/beta[1]:.2f} °F')
-show_separation(history)
+for name, yy in [('virkelige', damage), ('skilte', (temps < 65).astype(float))]:
+    beta = np.zeros(2)
+    for k in range(1, 10001):
+        beta = beta-alpha_c*grad(X_c, beta, yy)
+        if k in [100, 1000, 10000]:
+            print(name, 'steg:', k, '|beta|:', np.linalg.norm(beta),
+                  'L:', loss(X_c, beta, yy),
+                  '|gradient|:', np.linalg.norm(grad(X_c, beta, yy)))
 ```
 
-| $k$ | $10^2$ | $10^3$ | $10^4$ |
-|:--|--:|--:|--:|
-| $\|\beta\|_2$ | | | |
-| $L$ | | | |
-| $\|\nabla L\|_2$ | | | |
-| terskel (°F) | | | |
+<div id="project9-separated-terms"></div>
 
-Uendret konvergerer metoden: etter 10 000 steg er $\|\beta\|_2\approx2.24$,
-$L\approx6.86$, gradienten er praktisk talt null (under $10^{-12}$), og
-terskelen er 63.05 °F. Etter endringen ser du noe helt annet. En lengre kjøring
-utenfor nettleseren gir:
+En gitt matematisk egenskap forklarer hva vi må se etter: For full
+separasjon er infimum av $L$ lik 0, men ingen endelig parametervektor
+oppnår det. Her er én familie som nærmer seg dette infimumet:
 
-| $k$ | $10^5$ | $10^6$ |
-|:--|--:|--:|
-| $\|\beta\|_2$ | 15.8 | 23.6 |
-| $L$ | 0.031 | 0.0036 |
-| $\|\nabla L\|_2$ | 0.0088 | 0.00097 |
-| terskel (°F) | 64.57 | 64.56 |
+$$p(T)=\sigma(c(65-T)),\qquad
+\gamma=(-5c,-c)^T\quad\text{i sentrerte koordinater}.$$
 
-### Hvorfor kan $L$ komme så nær 0?
-
-Velg terskelen 65 °F og en bratthet $c>0$, og se på kurvene
-$p(T)=\sigma\bigl(c\,(65-T)\bigr)$. Alle har terskel 65 °F, og større $c$ gir
-brattere kurve. I sentrerte koordinater er $c(65-T)=-5c-c\,(T-70)$, altså
-$\beta_0'=-5c$ og $\beta_1'=-c$.
-
-4. Oppskytingen med skade ved 58 °F har $s=c\,(65-58)=7c$, så leddet i $L$ er
-   $-\log p=\log(1+e^{-7c})$. Fullfør: når $c\to\infty$, går $e^{-7c}\to\ \ldots$,
-   og leddet går mot $\ldots$
-5. Forklar med ord hvorfor *alle* 23 leddene går mot 0 når $c\to\infty$, mens
-   hvert ledd er positivt for hver $\beta$. Se for eksempel på oppskytingen uten
-   skade ved 78 °F, der $s=c\,(65-78)=-13c$ og leddet er $\log(1+e^{s})$. Hva er
-   infimum av $L$, og oppnås det ([uke 8](uke8.qmd#uke8-eksistens))?
-6. Gradienten er $X^T(p-y)$. Hva skjer med hver $p_i-y_i$ langs disse kurvene,
-   og hvorfor går $\|\nabla L\|_2$ mot null selv om $\beta$ ikke konvergerer?
-
-```{math-exercise}
-#| label: project9-separated-terms
-#| caption: To ledd i tapet langs kurvene med terskel 65 °F
-#| mode: numeric
-#| tolerance: 1%
-#| partial-credit: true
-#| field-labels: leddet ved 58 °F for c = 1, leddet ved 66 °F for c = 10
-Oppgi leddene med tre gjeldende siffer (for eksempel `1.23e-4`). Oppskytingen
-ved 66 °F er uten skade.
-
-58 °F, $c=1$: _[9.115e-4]
-
-66 °F, $c=10$: _[4.540e-5]
-```
-
-<details>
-<summary>Regnehjelp: leddene langs kurvene</summary>
-
-Ved 58 °F er leddet $\log(1+e^{-7c})$: regn ut $e^{-7}$, legg til 1 og ta
-$\ln$. For små $x$ er $\log(1+x)\approx x$, så leddet er omtrent $e^{-7c}$. Ved
-66 °F er $s=c\,(65-66)=-c$, og leddet er $\log(1+e^{-c})$. Oppskytingen
-nærmest terskelen er den som går tregest mot null.
-
-</details>
-
-Cellen regner ut hele $L$ langs kurvene for det skilte datasettet, slik at du
-ser hvordan $L$ og $\|\beta\|_2$ endres når $c$ vokser.
+Du skal ikke bevise egenskapen eller derivere familien. Cellen lar deg
+undersøke den direkte, uten en lang gradientkjøring.
 
 ```{pyodide-python}
 #| label: project9-ray
-skilt = (temps < 65).astype(float)       # skade under 65 °F, ingen over: datasettet fra punkt 3
-for c in [0, 1, 2, 5, 10]:
-    beta_ray = np.array([-5.*c, -c])      # β0' = -5c, β1' = -c i sentrerte koordinater
-    print(f'c = {c:2}: |β| = {np.linalg.norm(beta_ray):5.1f},  L = {loss(X_c, beta_ray, skilt):.2e}')
+skilt = (temps < 65).astype(float)
+for c in [1, 2, 5, 10]:
+    gamma = np.array([-5.*c, -c])
+    print('c:', c, '|gamma|:', np.linalg.norm(gamma), 'L:', loss(X_c, gamma, skilt),
+          '|gradient|:', np.linalg.norm(grad(X_c, gamma, skilt)))
 ```
 
-$L$ synker fra $L(0)\approx15.94$ til $0.917$ for $c=1$, $0.203$ for $c=2$ og
-$4.54\cdot10^{-5}$ for $c=10$, mens $\|\beta\|_2$ vokser fra 0 til 51.
+Skriv én kort konklusjon med tall fra begge utskriftene:
 
-### Koble til del D i uke 9
-
-7. **Subnivåmengden og garantien.** Forklar med cellen over hvorfor alle
-   punktene $\beta'=(-5c,\,-c)$ med $c\ge0$ ligger i subnivåmengden
-   $\{\beta: L(\beta)\le L(0)\}$. Er mengden begrenset, og er $L$ koersiv for
-   det skilte datasettet? Hvilken del av garantien i del D faller da bort, og
-   hvor ser du det i tabellen? Sammenlign med eksperiment 5 i uke 9: hva ville en
-   stoppregel som $\|\nabla L\|_2<0.1$ ha meldt?
-8. Terskelen holder seg nær 64.5–64.6 °F selv om $\beta$ ikke konvergerer.
-   Hvorfor kan terskelen være nyttig selv om $\beta$ ikke er det?
-
-**Ta med videre:** En gradient nær null betyr ikke at et minimum er funnet.
-Uten koersivitet kan iteratene rømme langs en ubegrenset subnivåmengde, og
-med de ekte dataene er det én enkelt oppskyting som hindrer det.
+1. Hvordan skiller parameterstørrelse, tap og gradientnorm seg i de to
+   datasettene?
+2. Ville «gradienten er liten» alene ha vært et godt belegg for et funnet
+   minimum i det skilte datasettet?
+3. Bruk den gitte familien til å beskrive en ubegrenset subnivåmengde.
+   Hvilken forutsetning i [garantien fra uke 9](uke9.qmd#uke9-garanti)
+   mangler? Du kan bruke den oppgitte matematiske egenskapen uten bevis.
 
 ## Spørsmål du skal kunne svare på
 
-1. Hvorfor passer ikke en rett linje for 0/1-data, og hva betyr $\beta_0$ og
-   $\beta_1$ i S-kurven (terskel og bratthet)?
-2. Hva betyr det at én kurve passer bedre enn en annen, og hvorfor minimerer vi
-   summen av $-\log$ i stedet for å maksimere produktet av sannsynlighetene?
-3. Hvordan er gradienten til $L$ bygd opp, og hva betyr $p_i-y_i$?
-4. Hvorfor gir et for stort fast steg ingen konvergens, og hvordan finner du
-   grensen fra Hessianen?
-5. Hvorfor trenger de rå temperaturene millioner av steg, og hva forteller
-   singulærverdiene til $X$ om det?
-6. Hvorfor er den sentrerte og den rå modellen samme modell, og hva er det som endres?
-7. Hva gjør Armijo-søket, og hva gjør det ikke?
-8. Hvorfor finnes ingen beste modell når utfallene kan skilles av en terskel,
-   hvorfor går gradienten likevel mot null, og hva sier subnivåmengden om det?
-9. *(valgfri fordypning)* Bruk $|p_i-y_i|\le1$ til å vise at
-   $\|\nabla L\|_2\le\sigma_1\sqrt{23}$ for alle $\beta$. Hvor langt kan ett steg
-   da flytte $\beta$, og hvorfor eksploderer ikke metoden med for store steg,
-   slik den gjorde på Himmelblaus funksjon i uke 9?
-10. *(valgfri fordypning)* Vis at $L$ er koersiv for de ekte dataene. Tips: ta
-    en retning $v\ne0$ og la $\beta=cv$ med $c\to\infty$. Bruk oppskytingene ved
-    53 og 81 °F når $v_1>0$, og ved 66 og 75 °F når $v_1<0$, og finn et ledd som
-    vokser mot uendelig. Hva skjer når $v_1=0$? Fordi $L$ er konveks (del 1),
-    holder det å se på slike stråler ut fra origo.
+Disse er repetisjon, ikke en ekstra innlevering.
+
+1. Hva er data, parametre og tapsfunksjon i dette prosjektet?
+2. Hvordan kan samme gradient skrives med to summer og ett matriseprodukt?
+3. Hva bevarer sentrering og standardisering, og hva kan de endre?
+4. Hva forteller egenverdiene om det lokale gradientforløpet?
+5. Hvorfor er ikke et større fast steg alltid raskere?
+6. Hva sikrer Armijo, og hva forteller egen utskrift om arbeidsmengden?
+7. Hvorfor må en stoppmelding tolkes sammen med egenskapene til problemet?
 
 ## Det du leverer
 
 Lever én kjørbar notebook eller Quarto-side med:
 
-- regningen med de to oppskytingene (A, B og den dobbelt så bratte kurven) og
-  et par setninger om hvorfor vi minimerer summen av $-\log$;
-- utledningen av $\nabla L$ og $\nabla L(0)$, overgangene mellom koordinatene og
-  begrunnelsen for farten nær det kritiske steget i del 4;
-- din `grad`, `gd` og `predict_steps`, med kontrollutskriftene;
-- tabellen fra del 3: steg, $\kappa(H_*)$, forutsagt og observert antall steg
-  for rå, sentrerte og standardiserte data;
-- $p(31\text{ °F})$ med en setning om hvorfor tallet ikke kan stoles på uten forbehold;
-- del 5: forutsigelsen, den utfylte tabellen, figuren med en forklaring av hver
-  kurve, svarene på punkt 4–6 og koblingen til subnivåmengder og koersivitet
-  (punkt 7–8).
+- dine to funksjoner `grad` og `gd`, dimensjonene og den korte
+  sammenhengen mellom summer og matriseprodukt fra del 1;
+- tabellen for de tre koordinatvalgene, én figur av den tilpassede kurven
+  og forbeholdet om temperaturer utenfor dataene;
+- utvalgte utskrifter fra faste steg og Armijo, med en sammenligning av
+  stoppstatus, steg og tapsberegninger;
+- den korte konklusjonen fra sluttundersøkelsen.
 
-Skriv i tillegg en analyse på **200–350 ord** som svarer på hovedspørsmålet:
-hvorfor bestemmer skalaen farten, og hva kan og kan ikke et tilpasset steg gjøre
-med det? Utregningene og koden kommer utenom tekstmengden.
+Samle konklusjonene i omtrent **200–300 ord**, med tall som støtter dem.
+Du trenger ikke levere innføringseksemplene, håndderivasjoner eller en
+ekstra besvarelse av repetisjonsspørsmålene. Ta med oppsettsfilen hvis du
+leverer notebook, og kontroller at alt kjører fra en ny start.
