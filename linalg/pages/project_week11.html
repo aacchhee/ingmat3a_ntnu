@@ -80,7 +80,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-0e53955fafe0ce48d7f15f4d9f72b5a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5337165f197680d68c11b8afac1372bd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-core.js"></script>
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-dom.js"></script>
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.js"></script>
@@ -1129,7 +1129,7 @@ globalThis.qpyodideCanvasBackend = "webagg";
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"# Grunndata og hjelpere for prosjektet. Alle tall er oppdiktede og forenklede.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import linprog\n\n# Ett prisområde (del 1-2): kostnad i kr/MWh og kapasitet i MW.\nplant_names = ['vind', 'vannkraft', 'import', 'gass']\ncost = np.array([0., 10., 40., 70.])\ncapacity = np.array([30., 50., 30., 40.])\n\n# Tre timer (del 4): forbruk og tilgjengelig vind i hver time (MW),\n# og vannmengden som vannkraften kan bruke til sammen (MWh).\ndemand3 = np.array([60., 95., 120.])\nwind3 = np.array([30., 10., 20.])\nwater = 120.\n\n\n# Samme funksjon som i del 1b, slik at senere celler virker etter ny innlasting.\ndef one_zone(D):\n    return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],\n                   bounds=list(zip(np.zeros(4), capacity)), method=\"highs\")\n\n\n# Samme funksjon som i del 3b. Variabler: vind N, vannkraft N, import S, gass S, flyt f.\ndef two_zones(L, wind_north=20.):\n    c = np.array([0., 10., 40., 70., 0.])\n    A_eq = np.array([[1., 1., 0., 0., -1.],\n                     [0., 0., 1., 1., 1.]])\n    bounds = [(0, wind_north), (0, 80), (0, 30), (0, 80), (-L, L)]\n    return linprog(c, A_eq=A_eq, b_eq=[30., 80.], bounds=bounds, method=\"highs\")\n\n\n# Samme tre-timersmodell som i del 4, men med tom vannrad (den fyller du inn der).\ndef _three_hours():\n    c3 = np.tile(cost, 3)\n    bounds3 = []\n    for h in range(3):\n        bounds3 += [(0, wind3[h]), (0, 50.), (0, 30.), (0, 40.)]\n    A_eq3 = np.zeros((3, 12))\n    for h in range(3):\n        A_eq3[h, 4*h:4*h + 4] = 1\n    return c3, bounds3, A_eq3\n\n\nc3, bounds3, A_eq3 = _three_hours()\nA_water = np.zeros((1, 12))\n\n\ndef water_row_ok(A_water):\n    \"\"\"Varsler hvis vannraden fra 4a ennå bare består av nuller.\"\"\"\n    if not np.any(A_water):\n        print(\"Obs: vannraden er tom. Kjør cellen i 4a med vannraden din først.\")\n        return False\n    return True\n\n\ndef with_battery(power, A_water, W=water):\n    \"\"\"Tre-timersmodellen med vannraden din og et batteri (del 5).\n    Variabler: (vind, vann, import, gass) for hver time, lading l1-l3, utlading u1-u3.\n    Lading er ekstra forbruk, utlading ekstra produksjon. Lagret mengde etter\n    time h er (l1 - u1) + ... + (lh - uh), mellom 0 og power MWh, og 0 etter time 3.\n    power = 0 gir modellen uten batteri.\"\"\"\n    water_row_ok(A_water)\n    c = np.r_[np.tile(cost, 3), np.zeros(6)]\n    bounds = []\n    for h in range(3):\n        bounds += [(0, wind3[h]), (0, 50.), (0, 30.), (0, 40.)]\n    bounds += [(0, power)]*6\n    A_eq = np.zeros((3, 18))\n    for h in range(3):\n        A_eq[h, 4*h:4*h + 4] = 1\n        A_eq[h, 12 + h], A_eq[h, 15 + h] = -1, 1\n    rows = [np.r_[np.ravel(A_water), np.zeros(6)]]\n    rhs = [W]\n    for h in range(3):\n        upto = (np.arange(3) <= h)*1.\n        level = np.r_[np.zeros(12), upto, -upto]\n        rows += [level, -level]\n        rhs += [power, 0.]\n    rows.append(np.r_[np.zeros(12), np.ones(3), -np.ones(3)])\n    rhs.append(0.)\n    return linprog(c, A_ub=np.array(rows), b_ub=rhs, A_eq=A_eq, b_eq=demand3,\n                   bounds=bounds, method=\"highs\")\n\n\n# Tegnehjelpere: de tegner bare tall som allerede er regnet ut.\ndef show_merit_order(cost, capacity, D, names=plant_names):\n    \"\"\"Tilbudstrappen: hvert kraftverk er en blokk med bredde = kapasitet og\n    høyde = kostnad, sortert billigst først. Den røde linjen er forbruket D.\"\"\"\n    fig, ax = plt.subplots(figsize=(7, 3.5), layout=\"constrained\")\n    left = 0.\n    for i in np.argsort(cost, kind=\"stable\"):\n        ax.bar(left, max(cost[i], 1.5), width=capacity[i], align=\"edge\",\n               alpha=.6, edgecolor=\"k\")\n        ax.text(left + capacity[i]/2, max(cost[i], 1.5) + 2,\n                f\"{names[i]}\\n{cost[i]:g} kr\", ha=\"center\", va=\"bottom\", fontsize=8)\n        left += capacity[i]\n    ax.axvline(D, color=\"tab:red\", lw=2)\n    ax.text(D, 92, f\" D = {D:g} MW\", color=\"tab:red\", va=\"top\")\n    ax.set(xlim=(0, left), ylim=(0, 95), ylabel=\"kostnad (kr/MWh)\",\n           xlabel=\"samlet kapasitet, billigste først (MW)\")\n    plt.show()\n\n\ndef show_steps(x, steps, smooth=None, xlabel=\"\", ylabel=\"kr/MWh\",\n               labels=(\"Pris (dual)\", \"Gjennomsnittskostnad\")):\n    \"\"\"Trappekurve (dualverdier) og eventuelt en glatt kurve i samme figur.\"\"\"\n    fig, ax = plt.subplots(figsize=(7, 4), layout=\"constrained\")\n    ax.step(x, steps, where=\"mid\", label=labels[0])\n    if smooth is not None:\n        ax.plot(x, smooth, label=labels[1])\n        ax.legend()\n    ax.set(xlabel=xlabel, ylabel=ylabel)\n    ax.grid(alpha=.3)\n    plt.show()\n\n\ndef show_two_zones(res, L):\n    \"\"\"Nord og sør som to bokser med produksjon og pris, og linjen som en pil.\"\"\"\n    x, (pN, pS), f = res.x, res.eqlin.marginals, res.x[4]\n    fig, ax = plt.subplots(figsize=(7, 2.8), layout=\"constrained\")\n    boxes = [(0.02, \"NORD (forbruk 30 MW)\", [(\"vind\", x[0]), (\"vannkraft\", x[1])], pN),\n             (0.62, \"SØR (forbruk 80 MW)\", [(\"import\", x[2]), (\"gass\", x[3])], pS)]\n    for x0, title, plants, price in boxes:\n        ax.add_patch(plt.Rectangle((x0, .08), .36, .84, fill=False, lw=1.5))\n        lines = [title] + [f\"{n}: {v:g} MW\" for n, v in plants] + [f\"pris: {price + 0:g} kr/MWh\"]\n        ax.text(x0 + .18, .5, \"\\n\".join(lines), ha=\"center\", va=\"center\", fontsize=9)\n    full = \"full\" if abs(f) >= L - 1e-9 else \"ikke full\"\n    ax.annotate(\"\", xy=(.61, .5), xytext=(.39, .5),\n                arrowprops=dict(arrowstyle=\"->\", lw=2 + 3*(full == \"full\"),\n                                color=\"tab:red\" if full == \"full\" else \"tab:blue\"))\n    ax.text(.5, .62, f\"f = {f + 0:g} MW\\nL = {L:g} MW ({full})\", ha=\"center\", fontsize=9)\n    ax.set(xlim=(0, 1), ylim=(0, 1))\n    ax.axis(\"off\")\n    plt.show()","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week11-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week11-setup","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"# Hver blokk er ett kraftverk: bredden er kapasiteten, høyden er kostnaden.\nshow_merit_order(cost, capacity, D=60)   # bytt til 90 og 130","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"1a. Løs for hånd\nHvis du skulle dekke forbruket så billig som mulig, ville du brukt det billigste kraftverket først, så det nest billigste, og så videre. Det kaller vi billigste først. Cellen tegner kraftverkene som en trapp, slik at du kan se regelen før du regner."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-merit-order","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-merit-order","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def one_zone(D):\n    # Minimer kostnad slik at produksjonen dekker D og ingen går over kapasitet.\n    return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],\n                   bounds=list(zip(np.zeros(4), capacity)), method=\"highs\")\n\nD = 60   # endre til 90 og 130\nres = one_zone(D)\nprint(\"status:\", res.status)\nfor name, x in zip(plant_names, res.x):\n    print(f\"{name:<10}{x:6.1f} MW\")\nprint(f\"samlet kostnad {res.fun:g} kr, gjennomsnitt {res.fun/D:.1f} kr/MWh\")\nprint(f\"pris (dual til forbrukslikningen): {res.eqlin.marginals[0] + 0:g} kr/MWh\")","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"1b. Kontroller med linprog\nTabellen din bygger på regelen «billigste først». Nå lar vi linprog løse den samme LP-en uten å vite om regelen. Funksjonen one_zone(D) sender kostnadene som mål, forbrukslikningen som A_eq og b_eq, og kapasitetene som bounds.\nI tillegg til planen skriver cellen ut res.eqlin.marginals[0]. Det er dualvariabelen til forbrukslikningen: tallet SciPy regner ut for å vise at planen er best. Vi kaller den prisen allerede nå. I del 2 viser du at navnet er fortjent. SciPy gir alle slike marginaler på samme måte: som den lokale endringen i res.fun når en høyreside eller en grense økes med én enhet. Her øker kostnaden når forbruket øker, så tallet er positivt. Målet er å kontrollere tabellen din og se hvilket tall i tabellen dualvariabelen er lik."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-one-zone","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-one-zone","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"Ds = np.arange(0.5, 150, 1.0)   # halve tall: ingen D ligger på et trinn\nprices = np.zeros(len(Ds))\naverages = np.zeros(len(Ds))\nfor i, D in enumerate(Ds):\n    res = one_zone(D)\n    # TODO: lagre prisen og gjennomsnittskostnaden for denne D.\n\nshow_steps(Ds, prices, averages, xlabel=\"Forbruk D (MW)\")","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"1c. Prisen som funksjon av forbruket\nTre forbruk viser ikke hele bildet. Nå løser vi problemet for 150 forbruk og ser hvordan prisen endrer seg når \\(D\\) vokser. Du skriver de to linjene som lagrer prisen og gjennomsnittet. Hjelperen show_steps tegner figuren når arrayene er fylt.\nVi bruker halve tall \\(D=0.5,1.5,\\ldots,149.5\\), slik at ingen \\(D\\) havner nøyaktig på et trappetrinn (der er prisen ikke entydig, se spørsmål 3)."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-price-steps","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-price-steps","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for D in (60, 90, 130):\n    extra = one_zone(D + 1).fun - one_zone(D).fun\n    print(f\"D = {D}: kostnad(D+1) - kostnad(D) = {extra:g},\"\n          f\" dual = {one_zone(D).eqlin.marginals[0]:g}\")","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"2a. Prisen er det én MW til koster\nPåstanden fra innledningen er at prisen er den deriverte av minste kostnad med hensyn på \\(D\\). En derivert kan vi anslå med en differanse: løs problemet for \\(D\\) og for \\(D+1\\), og trekk fra. Cellen gjør dette for de tre forbrukene fra tabellen og skriver dualvariabelen ved siden av, slik at du kan sammenligne."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-finite-difference","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-finite-difference","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"res = one_zone(100)\nprice = res.eqlin.marginals[0]\nprint(f\"pris {price:g} kr/MWh\")\nprint(\"kraftverk  produksjon  pris-kostnad  verdi av mer kapasitet\")\nfor name, x, c, m in zip(plant_names, res.x, cost, res.upper.marginals):\n    # TODO: skriv ut navn, produksjon, pris minus kostnad og -m + 0 på én linje.\n    pass","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"2c. Komplementær slakk i ord\nI 2b fikk de fulle kraftverkene en kapasitetsverdi, mens de andre fikk null. Det er komplementær slakk: en grense som ikke er nådd, har pris null. For kraftverkene gir det tre enkle regler, én for hver tilstand:\net kraftverk som produserer mellom 0 og kapasiteten, har kostnad lik prisen (det er det marginale kraftverket);\net kraftverk på full kapasitet har kostnad høyst lik prisen, og sitter igjen med pris minus kostnad per MWh;\net kraftverk som står, har kostnad minst lik prisen.\nSciPy gir kapasitetsverdiene i res.upper.marginals, men med minus foran: mer kapasitet kan bare gjøre det billigere, så marginalen er negativ eller null. Verdien av én MW mer kapasitet er derfor -res.upper.marginals.\nNå kontrollerer du reglene for \\(D=100\\), der alle tre tilstandene finnes. Cellen løser problemet og skriver overskriften. Du fyller ut linjen i løkken. (Skriv -m + 0, så slipper du utskriften -0.)"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-slackness","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-slackness","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def two_zones(L, wind_north=20.):\n    # Variabler: vind N, vannkraft N, import S, gass S, flyt f fra N til S.\n    c = np.array([0., 10., 40., 70., 0.])\n    A_eq = np.array([[1., 1., 0., 0., -1.],    # nord: produksjon - eksport = 30\n                     [0., 0., 1., 1., 1.]])    # sør: produksjon + import = 80\n    bounds = [(0, wind_north), (0, 80), (0, 30), (0, 80), (-L, L)]\n    return linprog(c, A_eq=A_eq, b_eq=[30., 80.], bounds=bounds, method=\"highs\")\n\nprint(\"   L  kostnad  pris N  pris S  flyt  linjeverdi\")\nfor L in (0, 20, 40, 60, 100):\n    res = two_zones(L)\n    pN, pS = res.eqlin.marginals\n    print(f\"{L:4}{res.fun:9g}{pN:8g}{pS:8g}{res.x[4] + 0:6g}\"\n          f\"{-res.upper.marginals[4] + 0:12g}\")","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3b. Kjør og les prisene\nNå lar vi linprog løse modellen for fem linjekapasiteter. Den femte variabelen er flyten \\(f\\), med kostnad 0 og grensene \\(-L\\le f\\le L\\). Den står med \\(-1\\) i nordlikningen og \\(+1\\) i sørlikningen, akkurat som i likningene over. Den siste kolonnen er linjeverdien: hvor mye billigere det blir per MW ekstra linjekapasitet (minus marginalen til grensen \\(f\\le L\\))."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-two-zones","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-two-zones","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"L = 40   # prøv også 41 og 100\nshow_two_zones(two_zones(L), L)","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3c. Hva er én MW mer linjekapasitet verdt?\nVed \\(L=40\\) er linjen full, og prisen er 10 kr i nord og 70 kr i sør. Tenk deg at linjen blir litt sterkere, så den tåler 41 MW i stedet for 40: hva endrer seg da i den billigste planen?\nCellen tegner den billigste planen ved \\(L=40\\), slik at du ser hvilke kraftverk som går, og hvor mye."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-line-picture","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-line-picture","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"c3 = np.tile(cost, 3)\nbounds3 = []\nfor h in range(3):\n    bounds3 += [(0, wind3[h]), (0, 50.), (0, 30.), (0, 40.)]\nA_eq3 = np.zeros((3, 12))\nfor h in range(3):\n    A_eq3[h, 4*h:4*h + 4] = 1        # produksjon i time h = forbruk i time h\n\nA_water = np.zeros((1, 12))\n# TODO: sett 1 på plassene til vannkraft i hver time (nr. 2 i hver gruppe på fire).\n\nres3 = linprog(c3, A_ub=A_water, b_ub=[water], A_eq=A_eq3, b_eq=demand3,\n               bounds=bounds3, method=\"highs\")\nprint(\"status:\", res3.status, \"  samlet kostnad:\", res3.fun)\nprint(\"time   vind  vann  import  gass   pris\")\nfor h in range(3):\n    print(f\"{h + 1:4}\", *[f\"{v:6g}\" for v in res3.x[4*h:4*h + 4]],\n          f\"{res3.eqlin.marginals[h]:6g}\")\nprint(\"vann brukt:\", (A_water @ res3.x)[0], \"av\", water, \"MWh\")\nprint(\"vannverdi (kr/MWh):\", -res3.ineqlin.marginals[0] + 0)","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"4a. Bygg vannraden\nModellen har 12 variabler, i grupper på fire: plass 0–3 er time 1, plass 4–7 er time 2 og plass 8–11 er time 3. I hver gruppe står vind først, så vannkraft, import og gass. Cellen bygger målet, grensene og de tre forbrukslikningene. Du fyller inn vannraden, slik at A_water @ x blir den samlede vannbruken."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-hydro","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-hydro","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"water_row_ok(A_water)            # varsler hvis vannraden fra 4a ikke er fylt inn\nWs = np.arange(50.5, 160, 1.0)   # halve tall: ingen W ligger på et trinn\nvalues = np.zeros(len(Ws))\nfor i, W in enumerate(Ws):\n    r = linprog(c3, A_ub=A_water, b_ub=[W], A_eq=A_eq3, b_eq=demand3,\n                bounds=bounds3, method=\"highs\")\n    # TODO: lagre vannverdien (minus marginalen til vannraden) for denne W.\n\nshow_steps(Ws, values, xlabel=\"Vannmengde W (MWh)\", ylabel=\"Vannverdi (kr/MWh)\")","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"4b. Vannverdien som funksjon av vannmengden\nVannverdien 30 kr gjelder for 120 MWh vann. Med mer vann erstatter vannet etter hvert billigere kraftverk, og med mindre vann må det dekke dyrere timer. Cellen løser tre-timersmodellen for mange vannmengder \\(W\\), med vannraden din, så kjør cellen i 4a først. Du fyller inn én linje som lagrer vannverdien for hver \\(W\\). Vi bruker igjen halve tall, slik at ingen \\(W\\) havner på et trinn."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-water-steps","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-water-steps","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"base = with_battery(0., A_water)\nfor power in (10,):     # legg til en større verdi\n    r = with_battery(power, A_water)\n    print(f\"batteri {power} MW: kostnad {r.fun:g} (uten: {base.fun:g}),\"\n          f\" priser {r.eqlin.marginals}\")","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Velg ett av tiltakene under. Skriv først ned hva dualvariablene forutsier om endringen i samlet kostnad og priser. Løs deretter den nye modellen og sammenlign. Undersøk to størrelser av tiltaket: én der du tror anslaget holder, og én der du tror det bryter sammen.\nBatteri i tre-timersmodellen. Et batteri kan lade i en billig time og lade ut i en dyr. Hva er én MWh flyttet fra en billig til en dyr time verdt ifølge prisene i 4a?\nMer vind i nord. Øk vindkapasiteten i nord fra 20 til 40 MW med two_zones(40, wind_north=40). Bruk verdien av mer vind, -two_zones(40).upper.marginals[0].\nDobbel linje. Øk \\(L\\) fra 40 til 80. Bruk linjeverdien ved \\(L=40\\).\nBatteriet som matematikk. Batteriet gir seks nye variabler: lading \\(\\ell_h\\) og utlading \\(u_h\\) i time \\(h=1,2,3\\), med \\(0\\le\\ell_h\\le\\) power og \\(0\\le u_h\\le\\) power. Lading er ekstra forbruk og utlading ekstra produksjon, så forbrukslikningen i time \\(h\\) blir\n\\[\\text{produksjon i time }h-\\ell_h+u_h=D_h.\\]\nLagret mengde etter time \\(h\\) er \\(s_h=(\\ell_1-u_1)+\\dots+(\\ell_h-u_h)\\). Den må ligge mellom 0 og power MWh. Batteriet starter tomt og må slutte tomt: \\(s_3=0\\). Det har ingen tap.\nDen ferdige funksjonen with_battery(power, A_water) løser denne utvidede modellen med vannraden din fra 4a, så kjør den cellen først. Cellen under sammenligner modellen med og uten batteri (power=0)."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-battery","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-battery","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"# Grunndata og hjelpere for prosjektet. Alle tall er oppdiktede og forenklede.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import linprog\n\n# Ett prisområde (del 1-2): kostnad i kr/MWh og kapasitet i MW.\nplant_names = ['vind', 'vannkraft', 'import', 'gass']\ncost = np.array([0., 10., 40., 70.])\ncapacity = np.array([30., 50., 30., 40.])\n\n# Tre timer (del 4): forbruk og tilgjengelig vind i hver time (MW),\n# og vannmengden som vannkraften kan bruke til sammen (MWh).\ndemand3 = np.array([60., 95., 120.])\nwind3 = np.array([30., 10., 20.])\nwater = 120.\n\n\n# Samme funksjon som i del 1b, slik at senere celler virker etter ny innlasting.\ndef one_zone(D):\n    return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],\n                   bounds=list(zip(np.zeros(4), capacity)), method=\"highs\")\n\n\n# Samme funksjon som i del 3b. Variabler: vind N, vannkraft N, import S, gass S, flyt f.\ndef two_zones(L, wind_north=20.):\n    c = np.array([0., 10., 40., 70., 0.])\n    A_eq = np.array([[1., 1., 0., 0., -1.],\n                     [0., 0., 1., 1., 1.]])\n    bounds = [(0, wind_north), (0, 80), (0, 30), (0, 80), (-L, L)]\n    return linprog(c, A_eq=A_eq, b_eq=[30., 80.], bounds=bounds, method=\"highs\")\n\n\n# Ferdig tre-timersmodell (del 4); vannraden skriver du selv i prosjektet.\ndef _three_hours():\n    c3 = np.tile(cost, 3)\n    bounds3 = []\n    for h in range(3):\n        bounds3 += [(0, wind3[h]), (0, 50.), (0, 30.), (0, 40.)]\n    A_eq3 = np.zeros((3, 12))\n    for h in range(3):\n        A_eq3[h, 4*h:4*h + 4] = 1\n    return c3, bounds3, A_eq3\n\n\nc3, bounds3, A_eq3 = _three_hours()\n# Tegnehjelpere: de tegner bare tall som allerede er regnet ut.\ndef show_merit_order(cost, capacity, D, names=plant_names):\n    \"\"\"Tilbudstrappen: hvert kraftverk er en blokk med bredde = kapasitet og\n    høyde = kostnad, sortert billigst først. Den røde linjen er forbruket D.\"\"\"\n    fig, ax = plt.subplots(figsize=(7, 3.5), layout=\"constrained\")\n    left = 0.\n    for i in np.argsort(cost, kind=\"stable\"):\n        ax.bar(left, max(cost[i], 1.5), width=capacity[i], align=\"edge\",\n               alpha=.6, edgecolor=\"k\")\n        ax.text(left + capacity[i]/2, max(cost[i], 1.5) + 2,\n                f\"{names[i]}\\n{cost[i]:g} kr\", ha=\"center\", va=\"bottom\", fontsize=8)\n        left += capacity[i]\n    ax.axvline(D, color=\"tab:red\", lw=2)\n    ax.text(D, 92, f\" D = {D:g} MW\", color=\"tab:red\", va=\"top\")\n    ax.set(xlim=(0, left), ylim=(0, 95), ylabel=\"kostnad (kr/MWh)\",\n           xlabel=\"samlet kapasitet, billigste først (MW)\")\n    plt.show()\n\n\ndef show_steps(x, steps, smooth=None, xlabel=\"\", ylabel=\"kr/MWh\",\n               labels=(\"Pris (dual)\", \"Gjennomsnittskostnad\")):\n    \"\"\"Trappekurve (dualverdier) og eventuelt en glatt kurve i samme figur.\"\"\"\n    fig, ax = plt.subplots(figsize=(7, 4), layout=\"constrained\")\n    ax.step(x, steps, where=\"mid\", label=labels[0])\n    if smooth is not None:\n        ax.plot(x, smooth, label=labels[1])\n        ax.legend()\n    ax.set(xlabel=xlabel, ylabel=ylabel)\n    ax.grid(alpha=.3)\n    plt.show()\n\n\ndef show_two_zones(res, L):\n    \"\"\"Nord og sør som to bokser med produksjon og pris, og linjen som en pil.\"\"\"\n    x, (pN, pS), f = res.x, res.eqlin.marginals, res.x[4]\n    fig, ax = plt.subplots(figsize=(7, 2.8), layout=\"constrained\")\n    boxes = [(0.02, \"NORD (forbruk 30 MW)\", [(\"vind\", x[0]), (\"vannkraft\", x[1])], pN),\n             (0.62, \"SØR (forbruk 80 MW)\", [(\"import\", x[2]), (\"gass\", x[3])], pS)]\n    for x0, title, plants, price in boxes:\n        ax.add_patch(plt.Rectangle((x0, .08), .36, .84, fill=False, lw=1.5))\n        lines = [title] + [f\"{n}: {v:g} MW\" for n, v in plants] + [f\"pris: {price + 0:g} kr/MWh\"]\n        ax.text(x0 + .18, .5, \"\\n\".join(lines), ha=\"center\", va=\"center\", fontsize=9)\n    full = \"full\" if abs(f) >= L - 1e-9 else \"ikke full\"\n    ax.annotate(\"\", xy=(.61, .5), xytext=(.39, .5),\n                arrowprops=dict(arrowstyle=\"->\", lw=2 + 3*(full == \"full\"),\n                                color=\"tab:red\" if full == \"full\" else \"tab:blue\"))\n    ax.text(.5, .62, f\"f = {f + 0:g} MW\\nL = {L:g} MW ({full})\", ha=\"center\", fontsize=9)\n    ax.set(xlim=(0, 1), ylim=(0, 1))\n    ax.axis(\"off\")\n    plt.show()","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week11-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week11-setup","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"show_merit_order(cost, capacity, D=90)","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Se planen før du leser tallene\nFiguren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet, og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes ved D=90. Kjør så figuren; du trenger ingen full håndtabell."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-merit-order","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-merit-order","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def one_zone(D):\n    return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],\n                   bounds=list(zip(np.zeros(4), capacity)), method=\"highs\")\n\nD = 90\nres = one_zone(D)\nprint(\"status:\", res.status)\nfor name, x in zip(plant_names, res.x):\n    print(f\"{name:<10}{x:6.1f} MW\")\nprint(f\"kostnad {res.fun:g} kr, gjennomsnitt {res.fun/D:.2f} kr/MWh\")\nprint(f\"pris {res.eqlin.marginals[0] + 0:g} kr/MWh\")\nprint(\"avvik i forbrukslikningen:\", res.eqlin.residual)","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Se planen før du leser tallene\nFiguren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet, og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes ved D=90. Kjør så figuren; du trenger ingen full håndtabell.\nEt kraftverk som kan skrus litt opp eller ned i den beste planen, er marginalt. Det ligger mellom null og full kapasitet. Nå sammenligner du prisen med både dette kraftverkets kostnad og gjennomsnittskostnaden.\nCellen viser modellen som sendes til linprog og skriver ut løsningen. Bytt D mellom 60, 90 og 130; noter én linje med produksjon, pris og gjennomsnitt for hvert forbruk."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-one-zone","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-one-zone","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def read_market(res, D):\n    # TODO: returner prisen og gjennomsnittskostnaden.\n    return None","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Fra tre kjøringer til en pristrapp\nNå ser vi på flere forbruk. Kodespor 1: Fullfør read_market slik at den returnerer paret (pris, gjennomsnittskostnad) fra et vellykket resultat og forbruket D. Du trenger bare opplysningene i tabellen over."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-read-market","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-read-market","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"Ds = np.arange(0.5, 150, 1.0)\nprices = np.zeros(len(Ds))\naverages = np.zeros(len(Ds))\nfor i, D in enumerate(Ds):\n    prices[i], averages[i] = read_market(one_zone(D), D)\nshow_steps(Ds, prices, averages, xlabel=\"Forbruk D (MW)\")","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Fra tre kjøringer til en pristrapp\nNå ser vi på flere forbruk. Kodespor 1: Fullfør read_market slik at den returnerer paret (pris, gjennomsnittskostnad) fra et vellykket resultat og forbruket D. Du trenger bare opplysningene i tabellen over.\nLøkken bruker funksjonen din til å tegne begge kurvene. Halve forbrukstall unngår punkter der prisen kan ha to ulike ensidige verdier."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-price-steps","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-price-steps","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"print(\" D   pris   kostnad ved 1 MW mer   spart ved 1 MW mindre\")\nfor D in (60, 80, 90):\n    r = one_zone(D)\n    more = one_zone(D + 1).fun - r.fun\n    less = r.fun - one_zone(D - 1).fun\n    print(f\"{D:3}{r.eqlin.marginals[0]:7g}{more:22g}{less:24g}\")","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"2. Kontroller prisen og kapasiteten\nEn marginal er et lokalt anslag, ikke et løfte for enhver endring. Den oppgitte prisen \\(\\lambda\\) gir anslaget\n\\[C(D+\\Delta D)\\approx C(D)+\\lambda\\Delta D,\\]\nder \\(C(D)\\) er den laveste kostnaden. Inne i ett rett kurvestykke er anslaget eksakt. Ved et knekkpunkt kan det være ulike endringsrater på hver side; én rapportert dualverdi trenger ikke passe begge veier.\nCellen sammenligner prisen med kostnadsendringen ved én MW mer og én MW mindre. Forutsi først hvilket av de tre forbrukene som skiller seg ut."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-finite-difference","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-finite-difference","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"D = 100\nres = one_zone(D)\nprice = res.eqlin.marginals[0]\nmu = -res.upper.marginals\nprint(\"kraftverk   produksjon   ledig kapasitet   kapasitetsverdi\")\nfor name, x, slack, value in zip(plant_names, res.x, res.upper.residual, mu):\n    print(f\"{name:<12}{x:10g}{slack:18g}{value + 0:19g}\")\nprint(\"pris:\", price, \"  kostnad:\", res.fun, \"  prisgrense:\", price*D - mu @ capacity)","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Komplementær slakk fra utskriften\nFra uke 11.3 har vi disse reglene:\nKraftverkets tilstandForhold mellom kostnad \\(c_i\\) og pris \\(\\lambda\\)Mellom null og kapasitet\\(c_i=\\lambda\\)Full kapasitet\\(c_i\\le\\lambda\\)Ingen produksjon\\(c_i\\ge\\lambda\\)\nFor denne modellen er kapasitetsverdien \\(\\mu_i=-\\)res.upper.marginals[i]. Prisene gir dessuten en nedre kostnadsgrense \\(\\lambda D-\\mu^Tk\\), med \\(\\mu\\ge0\\) og \\(\\lambda\\mathbf1-\\mu\\le c\\). Du får denne sammenhengen ferdig; oppgaven er å lese og kontrollere tallene.\nCellen skriver ut produksjon, ledig kapasitet og kapasitetsverdi. Sammenlign også prisgrensen med kostnaden fra løseren."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-slackness","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-slackness","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"print(\"  L   kostnad   pris N   pris S   flyt   ledig mot sør   linjeverdi\")\nfor L in (20, 40, 55, 70, 100):\n    r = two_zones(L)\n    pN, pS = r.eqlin.marginals\n    value = r.lower.marginals[4] - r.upper.marginals[4]\n    print(f\"{L:3}{r.fun:10g}{pN:9g}{pS:9g}{r.x[4] + 0:7g}\"\n          f\"{r.upper.residual[4]:16g}{value + 0:13g}\")","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3. To områder og en linje\nNå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er verdt å bygge en litt sterkere linje.\nOmrådeKraftverk (kostnad, kapasitet)Forbruk (MW)Nordvind (0 kr, 20 MW), vannkraft (10 kr, 80 MW)30Sørimport (40 kr, 30 MW), gass (70 kr, 80 MW)80\nFlyten \\(f\\) er positiv fra nord til sør og har grensene \\(-L\\le f\\le L\\). Med rekkefølgen (vind N, vann N, import S, gass S, f) er balansene\n\\[\\begin{pmatrix}1&1&0&0&-1\\\\0&0&1&1&1\\end{pmatrix}x\n=\\begin{pmatrix}30\\\\80\\end{pmatrix}.\\]\nLes en matrisrad: Skriv de to radene som hver sin sum. Forklar hvorfor \\(f\\) har ulikt fortegn, og hvorfor summen av radene fjerner flyten.\nForutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet. Cellen løser samme modell for flere L og viser også den lokale verdien av mer kapasitet. For L>0 økes begge grensene (-L, L) når linjen utvides, så verdien er lower.marginals[4] - upper.marginals[4]."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-two-zones","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-two-zones","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"L = 40\nshow_two_zones(two_zones(L), L)","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3. To områder og en linje\nNå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er verdt å bygge en litt sterkere linje.\nOmrådeKraftverk (kostnad, kapasitet)Forbruk (MW)Nordvind (0 kr, 20 MW), vannkraft (10 kr, 80 MW)30Sørimport (40 kr, 30 MW), gass (70 kr, 80 MW)80\nFlyten \\(f\\) er positiv fra nord til sør og har grensene \\(-L\\le f\\le L\\). Med rekkefølgen (vind N, vann N, import S, gass S, f) er balansene\n\\[\\begin{pmatrix}1&1&0&0&-1\\\\0&0&1&1&1\\end{pmatrix}x\n=\\begin{pmatrix}30\\\\80\\end{pmatrix}.\\]\nLes en matrisrad: Skriv de to radene som hver sin sum. Forklar hvorfor \\(f\\) har ulikt fortegn, og hvorfor summen av radene fjerner flyten.\nForutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet. Cellen løser samme modell for flere L og viser også den lokale verdien av mer kapasitet. For L>0 økes begge grensene (-L, L) når linjen utvides, så verdien er lower.marginals[4] - upper.marginals[4].\nLes og konkluder: Sammenlign L=40, 55 og 100. Når er prisene like, og når er linjen full mot sør? Forklar prisen i nord ved L=100 ved å se på hvor en ekstra MW til forbruket i nord måtte komme fra.\nVil du se planen som et bilde, velger du en av kjøringene. Figuren viser hvilke kraftverk som produserer på hver side av linjen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-line-picture","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-line-picture","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for L, extra in ((40, 1), (40, 40), (70, 1)):\n    base = two_zones(L)\n    value = base.lower.marginals[4] - base.upper.marginals[4]\n    changed = two_zones(L + extra)\n    print(f\"L={L}, ekstra={extra}: anslått spart {value*extra:g}, \"\n          f\"faktisk spart {base.fun - changed.fun:g}, ny plan {changed.x}\")","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Hvor lenge virker linjeverdien?\nDu får prisreglene ferdig for denne tapsfrie modellen:\nFull mot sør, \\(f=L>0\\): Linjeverdien er \\(\\lambda_S-\\lambda_N\\).\nLedig begge veier, \\(-L<f<L\\): Linjeverdien er null og prisene er like.\nVed et knekkpunkt: En full linje kan ha verdi null. At linjen er full, er ikke alene nok til å vite at mer kapasitet senker kostnaden.\nEn lokal verdi gjelder bare mens de samme begrensningene bestemmer kostnadsendringen. Nå tester du både en liten og en større utvidelse fra L=40, og én ekstra MW fra L=70. Formuleringen er en forutsigelse som skal sammenlignes med nye løsninger, ikke en håndutledning."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-line-change","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-line-change","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def make_water_row():\n    row = np.zeros((1, 12))\n    # TODO: sett 1 på plassene til vannkraft; behold 0 ellers.\n    return row\n\nexample = np.array([0., 2., 0., 0., 0., 3., 0., 0., 0., 5., 0., 0.])\nprint(\"vannmengde fra din rad:\", (make_water_row() @ example)[0])\nprint(\"forventet vannmengde: 10 MWh\")","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Bygg én rad i modellen\nVariablene kommer i tre grupper: (vind, vann, import, gass) for hver time. Vannkravet er\n\\[x_{\\text{vann},1}+x_{\\text{vann},2}+x_{\\text{vann},3}\\le120.\\]\nKodespor 2: Fullfør make_water_row slik at den returnerer en (1, 12)-matrise som velger ut akkurat de tre vannvariablene. Forklar hvordan A_water @ x da blir summen over de tre timene. Dette er den samme koblingen mellom en sum og en matrisrad som i del 1. Kontrollen bruker 2, 3 og 5 MWh vann i de tre timene; summen skal bli 10 MWh. Rett raden før du løser modellen dersom kontrollen ikke stemmer."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-water-row","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-water-row","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"A_water = make_water_row()\nres3 = linprog(c3, A_ub=A_water, b_ub=[water], A_eq=A_eq3, b_eq=demand3,\n               bounds=bounds3, method=\"highs\")\nprint(\"status:\", res3.status, \"  kostnad:\", res3.fun)\nprint(\"time   vind  vann  import  gass   pris\")\nfor h in range(3):\n    print(f\"{h + 1:4}\", *[f\"{v:6g}\" for v in res3.x[4*h:4*h + 4]],\n          f\"{res3.eqlin.marginals[h]:6g}\")\nprint(\"vann brukt:\", (A_water @ res3.x)[0], \"av\", water)\nprint(\"ledig vann:\", res3.ineqlin.residual[0])\nprint(\"vannverdi:\", -res3.ineqlin.marginals[0] + 0, \"kr/MWh\")","id":12,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Bygg én rad i modellen\nVariablene kommer i tre grupper: (vind, vann, import, gass) for hver time. Vannkravet er\n\\[x_{\\text{vann},1}+x_{\\text{vann},2}+x_{\\text{vann},3}\\le120.\\]\nKodespor 2: Fullfør make_water_row slik at den returnerer en (1, 12)-matrise som velger ut akkurat de tre vannvariablene. Forklar hvordan A_water @ x da blir summen over de tre timene. Dette er den samme koblingen mellom en sum og en matrisrad som i del 1. Kontrollen bruker 2, 3 og 5 MWh vann i de tre timene; summen skal bli 10 MWh. Rett raden før du løser modellen dersom kontrollen ikke stemmer.\nResten av tre-timersmodellen er gitt i oppsettet: A_eq3 har én forbrukslikning per time. Cellen bruker vannraden din og skriver ut planen, prisene og vannverdien, altså spart kostnad per MWh ekstra vann."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-hydro","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-hydro","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"A_water = make_water_row()\nWs = np.arange(50.5, 160, 1.0)\nvalues = []\nfor W in Ws:\n    r = linprog(c3, A_ub=A_water, b_ub=[W], A_eq=A_eq3, b_eq=demand3,\n                bounds=bounds3, method=\"highs\")\n    values.append(-r.ineqlin.marginals[0])\nshow_steps(Ws, values, xlabel=\"Vannmengde W (MWh)\", ylabel=\"Vannverdi (kr/MWh)\")\nfor W in (40, 120, 121, 140):\n    r = linprog(c3, A_ub=A_water, b_ub=[W], A_eq=A_eq3, b_eq=demand3,\n                bounds=bounds3, method=\"highs\")\n    if r.success:\n        print(f\"W={W}: kostnad {r.fun:g}, ledig vann {r.ineqlin.residual[0]:g}, \"\n              f\"vannverdi {-r.ineqlin.marginals[0] + 0:g}\")\n    else:\n        print(f\"W={W}: status {r.status}, ingen tillatt plan\")","id":13,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Når slutter vannet å være knapt?\nDen neste cellen gjentar løsningen for flere vannmengder og kontrollerer én liten økning fra 120 MWh. Forutsi først om mer vann alltid har samme verdi."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-water-steps","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-water-steps","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4350,16 +4350,17 @@ window.Quarto = {
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <section id="hvorfor-koster-strømmen-det-den-koster" class="level2">
 <h2 class="anchored" data-anchor-id="hvorfor-koster-strømmen-det-den-koster">Hvorfor koster strømmen det den koster?</h2>
-<p>Du har kanskje sett at strømprisen i Sør-Norge kan være mange ganger så høy som i Midt-Norge i samme time. Noen dager er prisen nesten null, andre dager er den høy. I dette prosjektet finner du ut hvor disse tallene kommer fra. Svaret er mer matematisk enn du kanskje tror: prisene er <strong>dualvariabler</strong> i et lineært program, akkurat som ressursprisene i verkstedet fra <a href="../pages/uke11.html#uke11-dual">uke 11</a>.</p>
-<p>Slik virker strømmarkedet i vår forenklede versjon. Hver time oppgir hvert kraftverk hva det koster å produsere én MWh til. Markedet velger den billigste kombinasjonen av kraftverk som dekker forbruket. Det er et minimeringsproblem, et LP. Etterpå får alle kraftverkene i området <strong>samme pris</strong> for hver MWh de leverer. Tre ting ved dette virker rart:</p>
+<p>Du har kanskje sett at strømprisen kan være forskjellig i to deler av landet i samme time. Her bygger vi et lite kraftmarked og bruker <code>linprog</code> til å undersøke tre spørsmål:</p>
 <ul>
-<li>Alle får betalt prisen til det dyreste kraftverket som er i drift, selv når nesten all kraften er billig.</li>
-<li>To deler av landet kan ha ulik pris i samme time.</li>
-<li>Vann i et magasin har en pris, selv om regnet er gratis.</li>
+<li>Hvilket kraftverk bestemmer prisen når forbruket øker litt?</li>
+<li>Når kan en overføringslinje gi ulike priser i to områder?</li>
+<li>Hvorfor har vannet i et magasin verdi selv om regnet er gratis?</li>
 </ul>
-<p>Når du er ferdig, kan du forklare alle tre med dine egne tall.</p>
-<p><strong>Du trenger ingen økonomi.</strong> I hele prosjektet betyr <em>prisen</em> i et område ett bestemt tall som vi kan regne ut: <strong>prisen er hvor mye den billigste samlede kostnaden øker når forbruket øker med 1 MW.</strong> Det er en derivert: endringen i minste kostnad per MW ekstra forbruk. (På et trappetrinn finnes det to slike tall, ett for mer og ett for mindre forbruk. Det ser du i 1c.) I del 1 og 2 ser du at tallet er dualvariabelen til likningen «produksjon = forbruk».</p>
-<p><strong>Alle tall i prosjektet er oppdiktede og sterkt forenklede.</strong> Ekte kraftverk oppgir priser i mange trinn, og det finnes tap i nettet, kostnader ved å starte og stoppe kraftverk og usikkerhet om vær og forbruk. Vi antar dessuten at forbruket er fast (det reagerer ikke på prisen), og at kraftverkene oppgir de virkelige kostnadene sine. Modellen beholder bare det som trengs for å se matematikken. I Norge settes prisen oftest av vannverdien (del 4), ikke av gass.</p>
+<section id="bakgrunn-slik-leser-vi-energimodellen" class="level3">
+<h3 class="anchored" data-anchor-id="bakgrunn-slik-leser-vi-energimodellen">Bakgrunn: slik leser vi energimodellen</h3>
+<p>Dette er en kort orientering, ikke en egen oppgavedel. Du trenger ingen økonomi. Vi bruker <strong>pris</strong> om endringen i den laveste samlede kostnaden per MW ekstra forbruk. En produksjon på 1 MW i én time gir 1 MWh energi. En <strong>dualvariabel</strong> er tallet løseren gir for denne lokale endringen, slik som ressursprisene i <a href="../pages/uke11.html#uke11-dual">uke 11</a>. Ved et knekkpunkt kan endringen være ulik på hver side.</p>
+<p>Alle tall er oppdiktede. Vi antar fast forbruk, kjente kostnader, ingen tap i nettet og delbar produksjon. Modellen skal forklare sammenhenger, ikke forutsi den faktiske strømprisen.</p>
+</section>
 <section id="en-vei-gjennom-prosjektet" class="level3">
 <h3 class="anchored" data-anchor-id="en-vei-gjennom-prosjektet">En vei gjennom prosjektet</h3>
 <table class="caption-top table">
@@ -4371,69 +4372,101 @@ window.Quarto = {
 <thead>
 <tr class="header">
 <th style="text-align: left;">Del</th>
-<th style="text-align: left;">Spørsmålet</th>
-<th style="text-align: left;">Det du tar med videre</th>
+<th style="text-align: left;">Det du undersøker</th>
+<th style="text-align: right;">Omtrent tid</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">1. Ett prisområde</td>
-<td style="text-align: left;">Hvilke kraftverk produserer, og hva blir prisen?</td>
-<td style="text-align: left;">En håndløsning, <code>linprog</code> og en pristrapp.</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Les produksjon, pris og gjennomsnitt fra løseren.</td>
+<td style="text-align: right;">35–45 min</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2. Prisen er en dualvariabel</td>
-<td style="text-align: left;">Hvorfor er prisen kostnaden til det marginale kraftverket?</td>
-<td style="text-align: left;">En kontroll med to løsninger, et prisbevis og komplementær slakk i ord.</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Kontroller prisene med små endringer og les slakk.</td>
+<td style="text-align: right;">25–35 min</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">3. To områder og en linje</td>
-<td style="text-align: left;">Når får to områder ulik pris?</td>
-<td style="text-align: left;">Hva én MW mer linje er verdt, og hvorfor.</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Sammenlign prisene på hver side av en linje.</td>
+<td style="text-align: right;">40–50 min</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">4. Vannkraft med lite vann</td>
-<td style="text-align: left;">Hva er vannet verdt?</td>
-<td style="text-align: left;">Vannverdien som dualvariabel.</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Bygg én matrisrad og undersøk vannverdien.</td>
+<td style="text-align: right;">40–50 min</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">5. Din undersøkelse</td>
-<td style="text-align: left;">Kan dualvariablene forutsi et tiltak?</td>
-<td style="text-align: left;">En forutsigelse, en kontroll og grensen for anslaget.</td>
+<td style="text-align: left;">5 og levering</td>
+<td style="text-align: left;">Test ett lokalt prisanslag og samle konklusjonene.</td>
+<td style="text-align: right;">40–50 min</td>
 </tr>
 </tbody>
 </table>
-<p>Sett av omtrent 4–6 timer. Gjør papirregningene før du kjører koden, og skriv ned en forventning før hvert forsøk. Det gjør ingenting om forventningen er feil. Det er ofte der du lærer mest.</p>
+<p>Sett av omtrent <strong>3–4 timer</strong>. Du skriver to korte funksjoner; resten av arbeidet er å velge forsøk, lese utskrifter og begrunne konklusjoner. Skriv en kort forventning før hver sammenligning. Du skal ikke utlede pristeorien på nytt.</p>
 </section>
-<section id="det-vi-trenger-fra-uke-11" class="level3">
-<h3 class="anchored" data-anchor-id="det-vi-trenger-fra-uke-11">Det vi trenger fra uke 11</h3>
-<p>Vi bruker tre ideer fra verkstedet. Her er de i ord:</p>
-<ul>
-<li><strong>Den beste planen ligger i et hjørne.</strong> I et LP er målet og kravene lineære. Når det finnes tillatte planer og området er begrenset, ligger en beste plan i et hjørne. Et hjørne er et punkt der like mange grenser er nådd (<strong>aktive</strong>) som det er ukjente (<a href="../pages/uke11.html#uke11-hjorner">11.1</a>).</li>
-<li><strong>Priser kan bevise at en plan er best.</strong> Hver grense kan få en pris (en dualvariabel). I verkstedet ga prisene en øvre grense for dekningsbidraget. Da en plan nådde grensen, var den bevist best (<a href="../pages/uke11.html#uke11-dual">11.3</a>). En grense som ikke er nådd, har pris null: det er <strong>komplementær slakk</strong> (<a href="../pages/uke11.html#uke11-slakk">11.3</a>).</li>
-<li><strong>En pris gjelder lokalt.</strong> Prisen sier hva én enhet mer er verdt, men bare så lenge de samme grensene er aktive (<a href="../pages/uke11.html#uke11-sensitivitet">11.4</a>).</li>
-</ul>
-<p><strong>Enheter.</strong> Effekt måles i MW og energi i MWh. Vi ser på én time om gangen, så 1 MW i én time er 1 MWh. Kostnader og priser er i kr per MWh.</p>
-</section>
-<section id="kjøring-på-siden-eller-i-egen-notebook" class="level3">
-<h3 class="anchored" data-anchor-id="kjøring-på-siden-eller-i-egen-notebook">Kjøring på siden eller i egen notebook</h3>
-<p>Dataene og noen tegnehjelpere lastes automatisk på siden. Kjør cellene i rekkefølge innenfor hver del.</p>
+<section id="oppsett-og-begreper" class="level3">
+<h3 class="anchored" data-anchor-id="oppsett-og-begreper">Oppsett og begreper</h3>
+<p>På nettsiden er data, <code>one_zone</code>, <code>two_zones</code> og figurhjelpere klare. Studentfunksjonene <code>read_market</code> og <code>make_water_row</code> må du kjøre igjen etter at siden lastes på nytt. Hver forsøkscelle kan ellers kjøres med oppsettet uten at tidligere forsøksceller er kjørt.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Les i resultatet</th>
+<th style="text-align: left;">Betydning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>res.status</code>, <code>res.success</code></td>
+<td style="text-align: left;">Sjekk utfallet først: 0 er vellykket, 2 betyr umulige krav.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>res.x</code>, <code>res.fun</code></td>
+<td style="text-align: left;">Produksjonsplan og laveste samlede kostnad.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>res.eqlin.marginals</code></td>
+<td style="text-align: left;">Lokal kostnadsendring per ekstra enhet på likningshøyresiden.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>res.upper.residual</code></td>
+<td style="text-align: left;">Ledig kapasitet: øvre grense minus produksjon.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>-res.upper.marginals</code></td>
+<td style="text-align: left;">Verdien av litt mer kapasitet.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>-res.ineqlin.marginals</code></td>
+<td style="text-align: left;">Verdien av litt mer på en øvre ressursgrense.</td>
+</tr>
+</tbody>
+</table>
+<p>En grense med null slakk er <strong>aktiv</strong>. En grense med ledig kapasitet har verdi null. En aktiv grense kan også ha verdi null. Marginalene er lokale: ved større endringer må du løse modellen igjen (<a href="../pages/uke11.html#uke11-sensitivitet">uke 11.4</a>).</p>
 <details>
 <summary>
 Egen notebook: last ned oppsettet og kom i gang
 </summary>
-<p>Last ned <a href="../assets/project_week11_setup.py" download="project_week11_setup.py">project_week11_setup.py</a> og legg filen ved siden av notebooken. Kjør først</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-ai-feedback-context="Kjøring på siden eller i egen notebook
-Dataene og noen tegnehjelpere lastes automatisk på siden. Kjør cellene i rekkefølge innenfor hver del.
+<p>Last ned <a href="../assets/project_week11_setup.py" download="project_week11_setup.py">project_week11_setup.py</a> og legg den ved siden av notebooken. Kjør først</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-ai-feedback-context="Oppsett og begreper
+På nettsiden er data, one_zone, two_zones og figurhjelpere klare. Studentfunksjonene read_market og make_water_row må du kjøre igjen etter at siden lastes på nytt. Hver forsøkscelle kan ellers kjøres med oppsettet uten at tidligere forsøksceller er kjørt.
+Les i resultatetBetydningres.status, res.successSjekk utfallet først: 0 er vellykket, 2 betyr umulige krav.res.x, res.funProduksjonsplan og laveste samlede kostnad.res.eqlin.marginalsLokal kostnadsendring per ekstra enhet på likningshøyresiden.res.upper.residualLedig kapasitet: øvre grense minus produksjon.-res.upper.marginalsVerdien av litt mer kapasitet.-res.ineqlin.marginalsVerdien av litt mer på en øvre ressursgrense.
+En grense med null slakk er aktiv. En grense med ledig kapasitet har verdi null. En aktiv grense kan også ha verdi null. Marginalene er lokale: ved større endringer må du løse modellen igjen (uke 11.4).
 Egen notebook: last ned oppsettet og kom i gang
-Last ned project_week11_setup.py og legg filen ved siden av notebooken. Kjør først"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> project_week11_setup <span class="im">import</span> <span class="op">*</span></span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Miljøet trenger NumPy, SciPy og Matplotlib. Filen inneholder dataene, funksjonene <code>one_zone</code> og <code>two_zones</code>, batterimodellen <code>with_battery</code>, kontrollen <code>water_row_ok</code> og tegnehjelperne <code>show_merit_order</code>, <code>show_steps</code> og <code>show_two_zones</code>. Kopier deretter kodecellene fra prosjektet i rekkefølge. Kontroller til slutt notebooken med <strong>Restart / Run all</strong>, og ta med oppsettsfilen ved levering.</p>
+Last ned project_week11_setup.py og legg den ved siden av notebooken. Kjør først"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> project_week11_setup <span class="im">import</span> <span class="op">*</span></span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Du trenger NumPy, SciPy og Matplotlib. Oppsettet gir data og ferdige modell- og figurhjelpere. De to studentfunksjonene skriver du selv. Kopier cellene i rekkefølge og kontroller med <strong>Restart / Run all</strong> før levering. Ta med oppsettsfilen.</p>
 </details>
+<p><strong>Her begynner prosjektarbeidet.</strong> Fra nå av bruker du lineær algebra, løserresultater og egne sammenligninger.</p>
 </section>
 </section>
-<section id="ett-prisområde-billigste-først" class="level2">
-<h2 class="anchored" data-anchor-id="ett-prisområde-billigste-først">1. Ett prisområde: billigste først</h2>
-<p>Vi begynner med det enkleste markedet vi kan tenke oss: ett område, én time og fire kraftverk. Her kan du finne den billigste planen for hånd. Det er nyttig, for da vet du hva svaret skal bli når datamaskinen regner. Målet er å se at prisen og gjennomsnittskostnaden er to forskjellige tall, og å gjette hvorfor alle får betalt prisen.</p>
+<section id="ett-prisområde-les-markedet" class="level2">
+<h2 class="anchored" data-anchor-id="ett-prisområde-les-markedet">1. Ett prisområde: les markedet</h2>
+<p>Først har vi ett område, én time og fire kraftverk. Markedet skal dekke forbruket så billig som mulig. Hvert kraftverk oppgir en kostnad og hvor mye det kan levere, <strong>kapasiteten</strong>.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4465,303 +4498,130 @@ Last ned project_week11_setup.py og legg filen ved siden av notebooken. Kjør f�
 </tr>
 </tbody>
 </table>
-<p><strong>Kapasiteten</strong> er det mest kraftverket kan levere. <em>Import</em> er strøm vi kjøper fra utlandet. Her behandler vi den som et kraftverk som koster 40 kr per MWh og kan levere høyst 30 MW. La <span class="math inline">\(x_1,\ldots,x_4\)</span> være produksjonen fra vind, vannkraft, import og gass, og la <span class="math inline">\(D\)</span> være forbruket i MW. Markedet løser</p>
-<p><span class="math display">\[\min\;0x_1+10x_2+40x_3+70x_4\quad\text{slik at}\quad x_1+x_2+x_3+x_4=D,\qquad 0\le x_i\le k_i.\]</span></p>
-<p>Med ord: gjør samlet kostnad minst mulig, dekk forbruket nøyaktig, og hold hvert kraftverk innenfor kapasiteten. Likningen <span class="math inline">\(x_1+x_2+x_3+x_4=D\)</span> kaller vi <strong>forbrukslikningen</strong>.</p>
-<section id="a.-løs-for-hånd" class="level3">
-<h3 class="anchored" data-anchor-id="a.-løs-for-hånd">1a. Løs for hånd</h3>
-<p>Hvis du skulle dekke forbruket så billig som mulig, ville du brukt det billigste kraftverket først, så det nest billigste, og så videre. Det kaller vi <strong>billigste først</strong>. Cellen tegner kraftverkene som en trapp, slik at du kan se regelen før du regner.</p>
+<p>Import behandles som et kraftverk. Med produksjonsvektor <span class="math inline">\(x=(x_1,x_2,x_3,x_4)^T\)</span> og forbruk <span class="math inline">\(D\)</span> er modellen</p>
+<p><span class="math display">\[\min c^Tx\quad\text{slik at}\quad
+\mathbf1^Tx=D,\qquad 0\le x_i\le k_i.\]</span></p>
+<p><strong>Koble sum og vektor:</strong> Skriv <span class="math inline">\(c^Tx\)</span> som en sum med de fire kostnadene. Hvilken rad i <code>A_eq</code> uttrykker at all produksjon til sammen skal bli <span class="math inline">\(D\)</span>? Dette er samme rad-for-rad-tenkning som i <a href="../pages/uke3.html">uke 3</a>.</p>
+<section id="se-planen-før-du-leser-tallene" class="level3">
+<h3 class="anchored" data-anchor-id="se-planen-før-du-leser-tallene">Se planen før du leser tallene</h3>
+<p>Figuren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet, og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes ved <code>D=90</code>. Kjør så figuren; du trenger ingen full håndtabell.</p>
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Alt til venstre for den røde linjen er i drift. For <span class="math inline">\(D=60\)</span> gir vind 30 MW gratis, og de siste 30 MW kommer fra vannkraft til 10 kr. Samlet kostnad er <span class="math inline">\(30\cdot0+30\cdot10=300\)</span> kr, og gjennomsnittet er <span class="math inline">\(300/60=5\)</span> kr per MWh. Vannkraft er i bruk, men ikke full. Et slikt kraftverk kaller vi <strong>marginalt</strong>: det er dette kraftverket som skrus opp eller ned når forbruket endrer seg litt. Det marginale kraftverket står der den røde linjen skjærer en blokk.</p>
-<p>Fyll ut tabellen for <span class="math inline">\(D=90\)</span> og <span class="math inline">\(D=130\)</span>. Bytt gjerne <code>D</code> i cellen først. Første rad er gitt.</p>
+<p>Et kraftverk som kan skrus litt opp eller ned i den beste planen, er <strong>marginalt</strong>. Det ligger mellom null og full kapasitet. Nå sammenligner du prisen med både dette kraftverkets kostnad og gjennomsnittskostnaden.</p>
+<p>Cellen viser modellen som sendes til <code>linprog</code> og skriver ut løsningen. Bytt <code>D</code> mellom 60, 90 og 130; noter én linje med produksjon, pris og gjennomsnitt for hvert forbruk.</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>En kort håndsjekk:</strong> For <span class="math inline">\(D=90\)</span> skal du bruke billigste kraftverk først. Finn produksjonsvektoren og regn ut kostnaden med <span class="math inline">\(c^Tx\)</span>. Hvis forbruket øker fra 90 til 91, hvilket kraftverk justeres, og hvor mye koster det? Sammenlign med utskriften. Du trenger bare denne ene håndsjekken.</p>
+<p><strong>Les og konkluder:</strong> Hvilket kraftverk er marginalt i hver kjøring? Sammenlign kostnaden til dette kraftverket med prisen og gjennomsnittet. Bruk utskriften til å forklare hvorfor pris og gjennomsnitt er ulike tall.</p>
+</section>
+<section id="fra-tre-kjøringer-til-en-pristrapp" class="level3">
+<h3 class="anchored" data-anchor-id="fra-tre-kjøringer-til-en-pristrapp">Fra tre kjøringer til en pristrapp</h3>
+<p>Nå ser vi på flere forbruk. <strong>Kodespor 1:</strong> Fullfør <code>read_market</code> slik at den returnerer paret <code>(pris, gjennomsnittskostnad)</code> fra et vellykket resultat og forbruket <code>D</code>. Du trenger bare opplysningene i tabellen over.</p>
+<div id="qpyodide-insertion-location-4"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Løkken bruker funksjonen din til å tegne begge kurvene. Halve forbrukstall unngår punkter der prisen kan ha to ulike ensidige verdier.</p>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Finn de tre indre trinnene i prisen. Koble hvert trinn til kapasitetene i kraftverkstabellen. Hvorfor trenger ikke gjennomsnittet å hoppe når det marginale kraftverket byttes?</p>
+</section>
+</section>
+<section id="kontroller-prisen-og-kapasiteten" class="level2">
+<h2 class="anchored" data-anchor-id="kontroller-prisen-og-kapasiteten">2. Kontroller prisen og kapasiteten</h2>
+<p>En marginal er et <strong>lokalt anslag</strong>, ikke et løfte for enhver endring. Den oppgitte prisen <span class="math inline">\(\lambda\)</span> gir anslaget</p>
+<p><span class="math display">\[C(D+\Delta D)\approx C(D)+\lambda\Delta D,\]</span></p>
+<p>der <span class="math inline">\(C(D)\)</span> er den laveste kostnaden. Inne i ett rett kurvestykke er anslaget eksakt. Ved et knekkpunkt kan det være ulike endringsrater på hver side; én rapportert dualverdi trenger ikke passe begge veier.</p>
+<p>Cellen sammenligner prisen med kostnadsendringen ved én MW mer og én MW mindre. Forutsi først hvilket av de tre forbrukene som skiller seg ut.</p>
+<div id="qpyodide-insertion-location-6"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Hvor er én pris nok til å beskrive begge endringene? Hvorfor er <code>D=80</code> annerledes? Bruk hvilke kraftverk som kan justeres, ikke en ny derivasjon. En annen løserversjon kan velge en annen gyldig dualverdi akkurat på trinnet; de to endelige kostnadsendringene er kontrollen din.</p>
+<section id="komplementær-slakk-fra-utskriften" class="level3">
+<h3 class="anchored" data-anchor-id="komplementær-slakk-fra-utskriften">Komplementær slakk fra utskriften</h3>
+<p>Fra <a href="../pages/uke11.html#uke11-slakk">uke 11.3</a> har vi disse reglene:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 12%">
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: right;"><span class="math inline">\(D\)</span></th>
-<th style="text-align: right;">vind</th>
-<th style="text-align: right;">vannkraft</th>
-<th style="text-align: right;">import</th>
-<th style="text-align: right;">gass</th>
-<th style="text-align: right;">samlet kostnad</th>
-<th style="text-align: left;">marginalt kraftverk</th>
-<th style="text-align: right;">gjennomsnitt per MWh</th>
+<th style="text-align: left;">Kraftverkets tilstand</th>
+<th style="text-align: left;">Forhold mellom kostnad <span class="math inline">\(c_i\)</span> og pris <span class="math inline">\(\lambda\)</span></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">60</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">300</td>
-<td style="text-align: left;">vannkraft</td>
-<td style="text-align: right;">5.0</td>
+<td style="text-align: left;">Mellom null og kapasitet</td>
+<td style="text-align: left;"><span class="math inline">\(c_i=\lambda\)</span></td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">90</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: left;"></td>
-<td style="text-align: right;"></td>
+<td style="text-align: left;">Full kapasitet</td>
+<td style="text-align: left;"><span class="math inline">\(c_i\le\lambda\)</span></td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">130</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: left;"></td>
-<td style="text-align: right;"></td>
+<td style="text-align: left;">Ingen produksjon</td>
+<td style="text-align: left;"><span class="math inline">\(c_i\ge\lambda\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>Hvorfor er løsningen et hjørne i betydningen fra uke 11? Tell de aktive grensene for <span class="math inline">\(D=90\)</span>.</p>
-<details>
-<summary>
-Regnehjelp: hvorfor er dette et hjørne?
-</summary>
-<p>I verkstedet hadde vi to ukjente, og et hjørne var to aktive grenser. Her har vi fire ukjente, så et hjørne er fire aktive grenser. For <span class="math inline">\(D=90\)</span> er planen <span class="math inline">\((30,50,10,0)\)</span>:</p>
-<ul>
-<li>vind er full: <span class="math inline">\(x_1=30\)</span> (aktiv kapasitetsgrense),</li>
-<li>vannkraft er full: <span class="math inline">\(x_2=50\)</span> (aktiv kapasitetsgrense),</li>
-<li>gass står: <span class="math inline">\(x_4=0\)</span> (aktiv nullgrense),</li>
-<li>og forbrukslikningen <span class="math inline">\(x_1+x_2+x_3+x_4=90\)</span> er alltid aktiv.</li>
-</ul>
-<p>Det er fire aktive grenser. De bestemmer import: <span class="math inline">\(x_3=90-30-50-0=10\)</span>. Import er det eneste kraftverket som ligger strengt mellom grensene sine. Det er det marginale kraftverket.</p>
-</details>
-</section>
-<section id="b.-kontroller-med-linprog" class="level3">
-<h3 class="anchored" data-anchor-id="b.-kontroller-med-linprog">1b. Kontroller med <code>linprog</code></h3>
-<p>Tabellen din bygger på regelen «billigste først». Nå lar vi <code>linprog</code> løse den samme LP-en uten å vite om regelen. Funksjonen <code>one_zone(D)</code> sender kostnadene som mål, forbrukslikningen som <code>A_eq</code> og <code>b_eq</code>, og kapasitetene som <code>bounds</code>.</p>
-<p>I tillegg til planen skriver cellen ut <code>res.eqlin.marginals[0]</code>. Det er <strong>dualvariabelen til forbrukslikningen</strong>: tallet SciPy regner ut for å vise at planen er best. Vi kaller den <em>prisen</em> allerede nå. I del 2 viser du at navnet er fortjent. SciPy gir alle slike marginaler på samme måte: som den lokale endringen i <code>res.fun</code> når en høyreside eller en grense økes med én enhet. Her øker kostnaden når forbruket øker, så tallet er positivt. Målet er å kontrollere tabellen din og se hvilket tall i tabellen dualvariabelen er lik.</p>
-<div id="qpyodide-insertion-location-3"></div>
+<p>For denne modellen er kapasitetsverdien <span class="math inline">\(\mu_i=-\)</span><code>res.upper.marginals[i]</code>. Prisene gir dessuten en nedre kostnadsgrense <span class="math inline">\(\lambda D-\mu^Tk\)</span>, med <span class="math inline">\(\mu\ge0\)</span> og <span class="math inline">\(\lambda\mathbf1-\mu\le c\)</span>. Du får denne sammenhengen ferdig; oppgaven er å lese og kontrollere tallene.</p>
+<p>Cellen skriver ut produksjon, ledig kapasitet og kapasitetsverdi. Sammenlign også prisgrensen med kostnaden fra løseren.</p>
+<div id="qpyodide-insertion-location-7"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<ul>
-<li>Kjør for <span class="math inline">\(D=60\)</span>, <span class="math inline">\(90\)</span> og <span class="math inline">\(130\)</span>. Stemmer planene med tabellen din?</li>
-<li>Hvilket kraftverk har samme kostnad som prisen hver gang?</li>
-<li>Se på <span class="math inline">\(D=130\)</span>: hvor stor er prisen, og hvor stor er gjennomsnittet? Alle kraftverkene får prisen for hver MWh de leverer. Hvorfor bestemmes prisen av det dyreste kraftverket i drift, og ikke av gjennomsnittet? Del 2 gir svaret. Skriv ned din egen gjetning nå.</li>
-</ul>
-</section>
-<section id="c.-prisen-som-funksjon-av-forbruket" class="level3">
-<h3 class="anchored" data-anchor-id="c.-prisen-som-funksjon-av-forbruket">1c. Prisen som funksjon av forbruket</h3>
-<p>Tre forbruk viser ikke hele bildet. Nå løser vi problemet for 150 forbruk og ser hvordan prisen endrer seg når <span class="math inline">\(D\)</span> vokser. Du skriver de to linjene som lagrer prisen og gjennomsnittet. Hjelperen <code>show_steps</code> tegner figuren når arrayene er fylt.</p>
-<p>Vi bruker halve tall <span class="math inline">\(D=0.5,1.5,\ldots,149.5\)</span>, slik at ingen <span class="math inline">\(D\)</span> havner nøyaktig på et trappetrinn (der er prisen ikke entydig, se spørsmål 3).</p>
-<div id="qpyodide-insertion-location-4"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<ol type="1">
-<li>Prisen blir en <strong>trappefunksjon</strong>. Ved hvilke <span class="math inline">\(D\)</span> kommer trinnene, og hvorfor akkurat der? Tips: legg sammen kapasitetene i rekkefølge, billigste først. (I 11.1 hoppet planen når et bidrag endret seg. Her hopper prisen når forbruket endres.)</li>
-<li>Hvorfor er gjennomsnittskostnaden en sammenhengende kurve, mens prisen hopper?</li>
-<li>På et trinn, for eksempel <span class="math inline">\(D=80\)</span>, er vind og vannkraft akkurat fulle og ingen andre i drift. Hva koster én MW mer, og hva sparer du på én MW mindre? Hvorfor finnes det ikke ett enkelt tall for prisen akkurat der?</li>
-</ol>
-<p><strong>Ta med videre:</strong> Tabellen for tre forbruk og pristrappen. Prisen er kostnaden til det marginale kraftverket. Gjennomsnittet er noe annet.</p>
+<p><strong>Les og konkluder:</strong> Finn ett kraftverk i hver tilstand og kontroller reglene. Hvem har verdi av mer kapasitet, og hvilken produksjon ville den ekstra kapasiteten erstatte? Hvorfor er ledig kapasitet og en pris på null to forskjellige opplysninger?</p>
 </section>
 </section>
-<section id="prisen-er-en-dualvariabel" class="level2">
-<h2 class="anchored" data-anchor-id="prisen-er-en-dualvariabel">2. Prisen er en dualvariabel</h2>
-<p>I del 1 kalte vi tallet <code>res.eqlin.marginals[0]</code> for prisen. Men hvorfor skulle et tall fra et minimeringsproblem være prisen alle får betalt? I denne delen ser du på det samme tallet på tre måter: som det én MW til koster (2a), som en del av et bevis for at planen er billigst (2b), og gjennom komplementær slakk (2c). Målet er at du kan forklare prisen uten å kjøre kode.</p>
-<section id="a.-prisen-er-det-én-mw-til-koster" class="level3">
-<h3 class="anchored" data-anchor-id="a.-prisen-er-det-én-mw-til-koster">2a. Prisen er det én MW til koster</h3>
-<p>Påstanden fra innledningen er at prisen er den deriverte av minste kostnad med hensyn på <span class="math inline">\(D\)</span>. En derivert kan vi anslå med en differanse: løs problemet for <span class="math inline">\(D\)</span> og for <span class="math inline">\(D+1\)</span>, og trekk fra. Cellen gjør dette for de tre forbrukene fra tabellen og skriver dualvariabelen ved siden av, slik at du kan sammenligne.</p>
-<div id="qpyodide-insertion-location-5"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Når du kjører cellen, ser du at tallene er like. Dualvariabelen er altså en derivert: en <em>lokal</em> endringsrate. Inni et trappetrinn er den lik endringen ved 1 MW mer. Akkurat på et trinn, som <span class="math inline">\(D=80\)</span>, gjelder den bare på den ene siden (spørsmål 3 i 1c).</p>
-<p>Men hvorfor er tallene like? Fullfør begrunnelsen for <span class="math inline">\(D=90\)</span> på papir. Første linje er gitt.</p>
-<ol type="1">
-<li>Ved <span class="math inline">\(D=90\)</span> er vind og vannkraft fulle, import produserer 10 av 30 MW, og gass står.</li>
-<li>Én MW til kan ikke komme fra vind eller vannkraft fordi …</li>
-<li>Den billigste kilden med ledig kapasitet er … med kostnad … kr/MWh.</li>
-<li>Ved én MW <em>mindre</em> skrur vi ned det dyreste kraftverket som er i drift, altså … , og sparer … kr.</li>
-<li>Derfor er prisen … kr/MWh, og den bestemmes av det marginale kraftverket.</li>
-</ol>
-</section>
-<section id="b.-et-prisbevis" class="level3">
-<h3 class="anchored" data-anchor-id="b.-et-prisbevis">2b. Et prisbevis</h3>
-<p>Hvordan kan du overbevise noen om at 900 kr er den billigste måten å dekke 90 MW på, uten å prøve alle planer? I uke 11 brukte vi priser til å lage et slikt bevis. Der maksimerte vi og fikk en <em>øvre</em> grense. Nå minimerer vi, så vi leter etter en <em>nedre</em> grense for kostnaden.</p>
-<p>Tenk deg at hver MWh får prisen <span class="math inline">\(\lambda=40\)</span> kr («lambda»), slik du fant i 2a. Kraftverk som er fulle, får mer enn de koster: vind sitter igjen med <span class="math inline">\(40-0=40\)</span> kr per MWh, og vannkraft med <span class="math inline">\(40-10=30\)</span> kr. Dette overskuddet kaller vi <strong>verdien av kapasiteten</strong> og skriver <span class="math inline">\(\mu_i\)</span> («my»). Én MW mer vindkapasitet ville vært verdt 40 kr: den erstatter 1 MW import, så kostnaden faller med <span class="math inline">\(40-0=40\)</span> kr. Én MW mer vannkraft erstatter også import, men koster 10 kr selv, så den er verdt <span class="math inline">\(40-10=30\)</span> kr. Import og gass er ikke fulle, så mer kapasitet er ikke verdt noe for dem. Prisene er altså <span class="math inline">\(\lambda=40\)</span> og <span class="math inline">\(\mu=(40,\,30,\,0,\,0)\)</span>.</p>
-<p>Prisene er <strong>gyldige</strong> hvis verdien av kapasitet aldri er negativ, <span class="math inline">\(\mu_i\ge0\)</span>, og hvis dette gjelder for hvert kraftverk:</p>
-<p><span class="math display">\[\lambda-\mu_i\le c_i.\]</span></p>
-<p>Med ord: mer kapasitet er verdt null eller mer, og prisen minus verdien av kapasiteten er høyst kostnaden. Med gyldige priser er tallet <span class="math inline">\(\lambda D-\sum_i\mu_ik_i\)</span> en nedre grense: ingen plan kan koste mindre. Her er <span class="math inline">\(k_i\)</span> kapasiteten fra tabellen.</p>
-<ol type="1">
-<li>Kontroller begge reglene for alle fire kraftverk. Vind er gjort: <span class="math inline">\(\mu_1=40\ge0\)</span> og <span class="math inline">\(40-40=0\le0\)</span>.</li>
-<li>Regn ut den nedre grensen <span class="math inline">\(40\cdot90-(40\cdot30+30\cdot50)\)</span> og sammenlign med kostnaden i tabellen fra 1a. Hva har du bevist?</li>
-</ol>
-<details>
-<summary>
-Regnehjelp: hvorfor er dette en nedre grense?
-</summary>
-<p>Ta en hvilken som helst plan <span class="math inline">\((x_1,x_2,x_3,x_4)\)</span> som dekker 90 MW og holder kapasitetene. Regelen <span class="math inline">\(c_i\ge\lambda-\mu_i\)</span> gir <span class="math inline">\(c_1\ge40-40=0\)</span>, <span class="math inline">\(c_2\ge40-30=10\)</span>, <span class="math inline">\(c_3\ge40-0=40\)</span> og <span class="math inline">\(c_4\ge40-0=40\)</span>. Siden alle <span class="math inline">\(x_i\ge0\)</span>, kan vi gange ledd for ledd:</p>
-<p><span class="math display">\[0x_1+10x_2+40x_3+70x_4\ \ge\ 0x_1+10x_2+40x_3+40x_4.\]</span></p>
-<p>Høyresiden kan skrives som <span class="math inline">\(40(x_1+x_2+x_3+x_4)-40x_1-30x_2=40\cdot90-40x_1-30x_2\)</span>. Kapasitetene gir <span class="math inline">\(x_1\le30\)</span> og <span class="math inline">\(x_2\le50\)</span>. Her bruker vi at verdiene 40 og 30 er positive: <span class="math inline">\(x_1\le30\)</span> ganget med 40 gir <span class="math inline">\(-40x_1\ge-1200\)</span>, og på samme måte er <span class="math inline">\(-30x_2\ge-1500\)</span>. Med en negativ kapasitetsverdi ville ulikheten snudd, og da var tallet ingen nedre grense. Dermed er</p>
-<p><span class="math display">\[\text{kostnad}\ \ge\ 3600-40\cdot30-30\cdot50=3600-1200-1500=900.\]</span></p>
-<p>Ingen plan kan altså koste mindre enn 900 kr, og planen fra 1a koster nøyaktig 900. Da er den bevist billigst. Med symboler er dette <span class="math inline">\(\sum_ic_ix_i\ge\lambda D-\sum_i\mu_ik_i\)</span>, den samme vektede ulikheten som i uke 11, nå for et minimeringsproblem.</p>
-<p>Én forskjell fra verkstedet: forbrukskravet er en likning, ikke en ulikhet. Derfor har <span class="math inline">\(\lambda\)</span> ikke noe fortegnskrav (se <em>Gå i dybden: andre fortegn i primalen</em> i <a href="../pages/uke11.html#uke11-fortegn">11.3</a>). Her blir den likevel positiv.</p>
-</details>
-</section>
-<section id="c.-komplementær-slakk-i-ord" class="level3">
-<h3 class="anchored" data-anchor-id="c.-komplementær-slakk-i-ord">2c. Komplementær slakk i ord</h3>
-<p>I 2b fikk de fulle kraftverkene en kapasitetsverdi, mens de andre fikk null. Det er komplementær slakk: en grense som ikke er nådd, har pris null. For kraftverkene gir det tre enkle regler, én for hver tilstand:</p>
-<ul>
-<li>et kraftverk som produserer <strong>mellom</strong> 0 og kapasiteten, har kostnad lik prisen (det er det marginale kraftverket);</li>
-<li>et kraftverk på <strong>full</strong> kapasitet har kostnad høyst lik prisen, og sitter igjen med pris minus kostnad per MWh;</li>
-<li>et kraftverk som <strong>står</strong>, har kostnad minst lik prisen.</li>
-</ul>
-<p>SciPy gir kapasitetsverdiene i <code>res.upper.marginals</code>, men med minus foran: mer kapasitet kan bare gjøre det billigere, så marginalen er negativ eller null. <strong>Verdien</strong> av én MW mer kapasitet er derfor <code>-res.upper.marginals</code>.</p>
-<p>Nå kontrollerer du reglene for <span class="math inline">\(D=100\)</span>, der alle tre tilstandene finnes. Cellen løser problemet og skriver overskriften. Du fyller ut linjen i løkken. (Skriv <code>-m + 0</code>, så slipper du utskriften <code>-0</code>.)</p>
-<div id="qpyodide-insertion-location-6"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Lag en tabell med kolonnene kraftverk, produksjon, tilstand (står / mellom / full), pris minus kostnad og verdi av mer kapasitet. Første rad er vind: 30, full, 40, 40.</p>
-<ol type="1">
-<li>Kontroller de tre reglene. For hvilke kraftverk er verdien av mer kapasitet lik pris minus kostnad? Hva betyr tallet for vind og vannkraft i kroner?</li>
-<li>For gass er pris minus kostnad negativ, men verdien av mer kapasitet er 0. Hvorfor kan verdien av mer kapasitet aldri bli negativ?</li>
-<li>Hvorfor kan ikke et kraftverk som står, ha kostnad lavere enn prisen i en billigste plan? (Tenk: hva ville skjedd om vi byttet litt fra det marginale kraftverket til dette?)</li>
-</ol>
-<p><strong>Ta med videre:</strong> Prisen er dualvariabelen til forbrukslikningen og lik kostnaden til det marginale kraftverket. Et fullt kraftverk sitter igjen med pris minus kostnad per MWh, og det er nettopp verdien av én MW mer av kapasiteten.</p>
-</section>
-</section>
-<section id="to-prisområder-og-en-linje" class="level2">
-<h2 class="anchored" data-anchor-id="to-prisområder-og-en-linje">3. To prisområder og en linje</h2>
-<p>Hittil har hele markedet hatt én pris. I Norge er landet delt i fem prisområder, og prisen i sør kan være mye høyere enn i nord i samme time. Hvordan kan det skje, når strømmen kan sendes gjennom ledninger? Svaret er at ledningene har en grense for hvor mye de kan føre.</p>
-<p>Vi deler markedet i to: nord med billig vind og vannkraft, sør med dyrere import og gass, og en overføringslinje mellom dem. Målet er å finne ut når de to områdene får ulik pris, og hva én MW mer linjekapasitet er verdt.</p>
+<section id="to-områder-og-en-linje" class="level2">
+<h2 class="anchored" data-anchor-id="to-områder-og-en-linje">3. To områder og en linje</h2>
+<p>Nå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er verdt å bygge en litt sterkere linje.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Område</th>
 <th style="text-align: left;">Kraftverk (kostnad, kapasitet)</th>
-<th style="text-align: right;">Forbruk</th>
+<th style="text-align: right;">Forbruk (MW)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Nord</td>
 <td style="text-align: left;">vind (0 kr, 20 MW), vannkraft (10 kr, 80 MW)</td>
-<td style="text-align: right;">30 MW</td>
+<td style="text-align: right;">30</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Sør</td>
 <td style="text-align: left;">import (40 kr, 30 MW), gass (70 kr, 80 MW)</td>
-<td style="text-align: right;">80 MW</td>
+<td style="text-align: right;">80</td>
 </tr>
 </tbody>
 </table>
-<p>Linjen fører <span class="math inline">\(f\)</span> MW fra nord til sør. Linjens <strong>kapasitet</strong> <span class="math inline">\(L\)</span> er det mest den tåler i hver retning: <span class="math inline">\(-L\le f\le L\)</span>. Negativ <span class="math inline">\(f\)</span> betyr at strømmen går nordover. Hvert område får sin egen forbrukslikning. I nord skal produksjonen minus det som sendes sørover dekke forbruket. I sør skal produksjonen pluss det som kommer nordfra dekke forbruket:</p>
-<p><span class="math display">\[\text{nord: }x_{\text{vind}}+x_{\text{vann}}-f=30,\qquad
-\text{sør: }x_{\text{import}}+x_{\text{gass}}+f=80.\]</span></p>
-<p>Hver likning har sin egen dualvariabel. Vi kaller dem <span class="math inline">\(\lambda_N\)</span> (<strong>prisen i nord</strong>) og <span class="math inline">\(\lambda_S\)</span> (<strong>prisen i sør</strong>). Akkurat som i del 1 er <span class="math inline">\(\lambda_N\)</span> hvor mye den billigste samlede kostnaden øker når forbruket i nord øker med 1 MW.</p>
-<section id="a.-forutsi-før-du-kjører" class="level3">
-<h3 class="anchored" data-anchor-id="a.-forutsi-før-du-kjører">3a. Forutsi før du kjører</h3>
-<ol type="1">
-<li>Uten linje (<span class="math inline">\(L=0\)</span>) er hvert område et lite marked som i del 1. Finn prisen i nord, prisen i sør og samlet kostnad med «billigste først» i hvert område.</li>
-<li>Hvor mye kan nord eksportere i høyden? Hva tror du skjer med prisene når <span class="math inline">\(L\)</span> er mye større enn dette?</li>
-</ol>
-</section>
-<section id="b.-kjør-og-les-prisene" class="level3">
-<h3 class="anchored" data-anchor-id="b.-kjør-og-les-prisene">3b. Kjør og les prisene</h3>
-<p>Nå lar vi <code>linprog</code> løse modellen for fem linjekapasiteter. Den femte variabelen er flyten <span class="math inline">\(f\)</span>, med kostnad 0 og grensene <span class="math inline">\(-L\le f\le L\)</span>. Den står med <span class="math inline">\(-1\)</span> i nordlikningen og <span class="math inline">\(+1\)</span> i sørlikningen, akkurat som i likningene over. Den siste kolonnen er <strong>linjeverdien</strong>: hvor mye billigere det blir per MW ekstra linjekapasitet (minus marginalen til grensen <span class="math inline">\(f\le L\)</span>).</p>
-<div id="qpyodide-insertion-location-7"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Sammenlign først med forutsigelsene dine fra 3a.</p>
-<ol type="1">
-<li>For hvilke <span class="math inline">\(L\)</span> er linjen full (<span class="math inline">\(f=L\)</span>)? Når er prisene ulike, og når er de like?</li>
-<li>Ved <span class="math inline">\(L=100\)</span> er prisen i nord 40 kr/MWh, selv om alle kraftverkene i nord koster høyst 10 kr. Hvordan kan det skje? Tips: er det ledig kapasitet i nord? Hvor må én MW mer forbruk i nord da komme fra?</li>
-</ol>
-</section>
-<section id="c.-hva-er-én-mw-mer-linjekapasitet-verdt" class="level3">
-<h3 class="anchored" data-anchor-id="c.-hva-er-én-mw-mer-linjekapasitet-verdt">3c. Hva er én MW mer linjekapasitet verdt?</h3>
-<p>Ved <span class="math inline">\(L=40\)</span> er linjen full, og prisen er 10 kr i nord og 70 kr i sør. Tenk deg at linjen blir litt sterkere, så den tåler 41 MW i stedet for 40: hva endrer seg da i den billigste planen?</p>
-<p>Cellen tegner den billigste planen ved <span class="math inline">\(L=40\)</span>, slik at du ser hvilke kraftverk som går, og hvor mye.</p>
+<p>Flyten <span class="math inline">\(f\)</span> er positiv fra nord til sør og har grensene <span class="math inline">\(-L\le f\le L\)</span>. Med rekkefølgen <code>(vind N, vann N, import S, gass S, f)</code> er balansene</p>
+<p><span class="math display">\[\begin{pmatrix}1&amp;1&amp;0&amp;0&amp;-1\\0&amp;0&amp;1&amp;1&amp;1\end{pmatrix}x
+=\begin{pmatrix}30\\80\end{pmatrix}.\]</span></p>
+<p><strong>Les en matrisrad:</strong> Skriv de to radene som hver sin sum. Forklar hvorfor <span class="math inline">\(f\)</span> har ulikt fortegn, og hvorfor summen av radene fjerner flyten.</p>
+<p>Forutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet. Cellen løser samme modell for flere <code>L</code> og viser også den lokale verdien av mer kapasitet. For <code>L&gt;0</code> økes begge grensene <code>(-L, L)</code> når linjen utvides, så verdien er <code>lower.marginals[4] - upper.marginals[4]</code>.</p>
 <div id="qpyodide-insertion-location-8"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Fullfør regningen på papir. Første linje er gitt.</p>
-<ol type="1">
-<li>Ved <span class="math inline">\(L=40\)</span> produserer nord <span class="math inline">\(30+40=70\)</span> MW: vind 20 og vannkraft 50. Sør trenger <span class="math inline">\(80-40=40\)</span> MW: import 30 og gass 10. Samlet kostnad er 2400 kr.</li>
-<li>Med <span class="math inline">\(L=41\)</span> sender vi 1 MW mer sørover. Vinden i nord er full, så det er … som produserer 1 MW mer. Det koster … kr.</li>
-<li>Sør trenger nå 1 MW mindre. Det dyreste kraftverket som er i drift der, er …, så vi skrur det ned og sparer … kr.</li>
-<li>Til sammen faller kostnaden med … − … = … kr. Linjeverdien i tabellen fra 3b er … kr.</li>
-</ol>
-<details>
-<summary>
-Regnehjelp: hele regningen for <span class="math inline">\(L=40\)</span> og <span class="math inline">\(L=41\)</span>
-</summary>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: right;">vind N</th>
-<th style="text-align: right;">vannkraft N</th>
-<th style="text-align: right;">import S</th>
-<th style="text-align: right;">gass S</th>
-<th style="text-align: right;">kostnad</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><span class="math inline">\(L=40\)</span></td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">50</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;"><span class="math inline">\(500+1200+700=2400\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><span class="math inline">\(L=41\)</span></td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">51</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;"><span class="math inline">\(510+1200+630=2340\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>Vannkraften i nord øker med 1 MW og koster 10 kr mer. Gassen i sør minker med 1 MW og sparer 70 kr. Kostnaden faller med <span class="math inline">\(70-10=60\)</span> kr. Det er linjeverdien 60 i tabellen.</p>
-</details>
-<p><strong>Fra tall til regel.</strong> Se på de to tallene du brukte. 10 kr er prisen i nord: så mye koster det å produsere 1 MW mer der. 70 kr er prisen i sør: så mye sparer vi når sør trenger 1 MW mindre. Én MW mer over linjen betyr nettopp 1 MW mer produksjon i nord og 1 MW mindre i sør. Derfor er én MW mer på en full linje verdt <strong>prisen i sør minus prisen i nord</strong>. (Du kan også tenke deg at du eier linjen: du kjøper 1 MWh i nord for 10 kr og selger den i sør for 70 kr.)</p>
-<p>Hva om linjen <em>ikke</em> er full, som ved <span class="math inline">\(L=100\)</span>? Da hjelper det ingenting å gjøre den sterkere, så linjeverdien er 0. Og prisene må være like. Hvis sør var dyrere enn nord, kunne vi sendt litt mer strøm gjennom den ledige kapasiteten og spart penger. Da var ikke planen den billigste.</p>
-<p>Med symboler: kall linjeverdien <span class="math inline">\(\mu_L\)</span>, i kr per MW linjekapasitet. Husk at <span class="math inline">\(\lambda_N\)</span> er prisen i nord og <span class="math inline">\(\lambda_S\)</span> prisen i sør. Da er</p>
-<p>Når linjen er full i retning nord–sør, <span class="math inline">\(f=L\)</span>, er</p>
-<p><span class="math inline">\(\mu_L=\lambda_S-\lambda_N.\)</span></p>
-<p>Når linjen har ledig kapasitet, <span class="math inline">\(-L&lt;f&lt;L\)</span>, er</p>
-<p><span class="math inline">\(\mu_L=0,\qquad \lambda_S=\lambda_N.\)</span></p>
-<p>Dette er de samme reglene som for kraftverkene i 2c. Linjen er som et kraftverk med kostnad 0 som får prisforskjellen <span class="math inline">\(\lambda_S-\lambda_N\)</span> for hver MW. Er den full, er verdien av mer kapasitet lik «pris minus kostnad». Er den ikke full, er den «mellom», og da må «prisen» være lik kostnaden 0.</p>
-<ol start="5" type="1">
-<li>Kontroller regelen med tabellen fra 3b for <span class="math inline">\(L=60\)</span> og <span class="math inline">\(L=100\)</span>. Er linjen full? Stemmer linjeverdien med prisforskjellen?</li>
-</ol>
-<p>En full linje kan være en <strong>flaskehals</strong>: den kan hindre billigere strøm i å nå fram og dermed gi ulike priser. Men at linjen er full, er ikke alene nok til å vite at mer kapasitet har verdi.</p>
-</section>
-<section id="d.-hvor-lenge-gjelder-linjeverdien" class="level3">
-<h3 class="anchored" data-anchor-id="d.-hvor-lenge-gjelder-linjeverdien">3d. Hvor lenge gjelder linjeverdien?</h3>
-<p>Linjeverdien 60 kr bygger på at hver ekstra MW over linjen erstatter gass i sør. Ved <span class="math inline">\(L=40\)</span> går gassen med bare 10 MW. Hva skjer når gassen er borte, og hva skjer når nord ikke har mer å sende? Endre listen i cellen i 3b til <span class="math inline">\(L=45,55,75\)</span>, og skriv også ut produksjonen <code>res.x</code> i løkken.</p>
+<p><strong>Les og konkluder:</strong> Sammenlign <code>L=40</code>, <code>55</code> og <code>100</code>. Når er prisene like, og når er linjen full mot sør? Forklar prisen i nord ved <code>L=100</code> ved å se på hvor en ekstra MW til forbruket i nord måtte komme fra.</p>
+<p>Vil du se planen som et bilde, velger du en av kjøringene. Figuren viser hvilke kraftverk som produserer på hver side av linjen.</p>
+<div id="qpyodide-insertion-location-9"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<section id="hvor-lenge-virker-linjeverdien" class="level3">
+<h3 class="anchored" data-anchor-id="hvor-lenge-virker-linjeverdien">Hvor lenge virker linjeverdien?</h3>
+<p>Du får prisreglene ferdig for denne tapsfrie modellen:</p>
 <ul>
-<li>Les linjeverdien for de tre <span class="math inline">\(L\)</span>. Den endrer seg ved <span class="math inline">\(L=50\)</span> og ved <span class="math inline">\(L=70\)</span>. Hvilket kraftverk skifter rolle der, og hvordan forklarer regelen fra 3c de nye verdiene?</li>
+<li><strong>Full mot sør, <span class="math inline">\(f=L&gt;0\)</span>:</strong> Linjeverdien er <span class="math inline">\(\lambda_S-\lambda_N\)</span>.</li>
+<li><strong>Ledig begge veier, <span class="math inline">\(-L&lt;f&lt;L\)</span>:</strong> Linjeverdien er null og prisene er like.</li>
+<li><strong>Ved et knekkpunkt:</strong> En full linje kan ha verdi null. At linjen er full, er ikke alene nok til å vite at mer kapasitet senker kostnaden.</li>
 </ul>
-<details>
-<summary>
-Regnehjelp: <span class="math inline">\(L=55\)</span>
-</summary>
-<p>Sør trenger <span class="math inline">\(80-55=25\)</span> MW. Det dekker import alene, så gassen står, og import er det marginale kraftverket i sør. Prisen i sør er derfor 40 kr. Nord produserer <span class="math inline">\(30+55=85\)</span> MW: vind 20 og vannkraft 65, så prisen i nord er fortsatt 10 kr. Linjen er full, og linjeverdien er <span class="math inline">\(40-10=30\)</span> kr. Én MW mer på linjen erstatter nå import (40 kr), ikke gass (70 kr).</p>
-</details>
-<p><strong>Ta med videre:</strong> En full linje kan gi ulike priser. Når mer linjekapasitet senker kostnaden, er verdien lik prisforskjellen så lenge de samme begrensningene bestemmer løsningen. Ved et knekkpunkt kan linjen være full selv om én ekstra MW ikke gir noen besparelse. Her er kostnaden 1200 kr både ved <span class="math inline">\(L=70\)</span> og <span class="math inline">\(L=71\)</span>, selv om flyten ved <span class="math inline">\(L=70\)</span> fyller linjen.</p>
+<p>En lokal verdi gjelder bare mens de samme begrensningene bestemmer kostnadsendringen. Nå tester du både en liten og en større utvidelse fra <code>L=40</code>, og én ekstra MW fra <code>L=70</code>. Formuleringen er en forutsigelse som skal sammenlignes med nye løsninger, ikke en håndutledning.</p>
+<div id="qpyodide-insertion-location-10"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Hvor virker anslaget, og hvor gjør det ikke det? Bruk produksjonsplanene til å peke på hvilken grense som skifter rolle. Sammenlign særskilt <code>L=70</code> med én ekstra MW: er «full» det samme som «verdifull å utvide»?</p>
 </section>
 </section>
 <section id="vannkraft-med-begrenset-vann" class="level2">
 <h2 class="anchored" data-anchor-id="vannkraft-med-begrenset-vann">4. Vannkraft med begrenset vann</h2>
-<p>Nå kommer vi til det som oftest setter prisen i Norge: vannet i magasinene. Regnet er gratis, men vannet er begrenset. En MWh vann du bruker nå, kan du ikke bruke i en dyrere time senere. Derfor har vannet en verdi, selv om det ikke koster noe å få det.</p>
-<p>Vi går tilbake til ett område, men ser på tre timer samtidig, slik at det lønner seg å planlegge. Kostnader og kapasiteter er som i del 1, men vinden varierer, og vannkraften har bare <strong>120 MWh vann til sammen</strong> for de tre timene. Vannkraftens kostnad på 10 kr er drift og vedlikehold. Vannet selv er gratis.</p>
+<p>En MWh vann brukt nå kan ikke brukes i en dyrere time senere. Vi ser derfor på tre timer samtidig. Kraftverkene har kostnadene fra del 1; vind varierer, og vannkraften kan levere høyst 50 MW per time og bruke høyst <strong>120 MWh vann til sammen</strong>.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4773,135 +4633,81 @@ Regnehjelp: <span class="math inline">\(L=55\)</span>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">forbruk (MW)</td>
+<td style="text-align: left;">Forbruk (MW)</td>
 <td style="text-align: right;">60</td>
 <td style="text-align: right;">95</td>
 <td style="text-align: right;">120</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">tilgjengelig vind (MW)</td>
+<td style="text-align: left;">Tilgjengelig vind (MW)</td>
 <td style="text-align: right;">30</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: right;">20</td>
 </tr>
 </tbody>
 </table>
-<p>Vannkraften kan levere høyst 50 MW i hver time. Uten vannbegrensningen ville den brukt <span class="math inline">\(30+50+50=130\)</span> MWh: i time 1 trengs bare 30 MW etter vinden. Med 120 MWh mangler det altså 10 MWh. Kravet blir</p>
+<section id="bygg-én-rad-i-modellen" class="level3">
+<h3 class="anchored" data-anchor-id="bygg-én-rad-i-modellen">Bygg én rad i modellen</h3>
+<p>Variablene kommer i tre grupper: <code>(vind, vann, import, gass)</code> for hver time. Vannkravet er</p>
 <p><span class="math display">\[x_{\text{vann},1}+x_{\text{vann},2}+x_{\text{vann},3}\le120.\]</span></p>
-<p><strong>Vannverdien</strong> er, som prisen, et tall vi kan regne ut: hvor mye den billigste samlede kostnaden synker hvis vannkraften får 1 MWh mer vann. Det er dualvariabelen til vannkravet. Målet er å forutsi vannverdien for hånd, kontrollere den med <code>linprog</code> og se når den endrer seg.</p>
-<p><strong>Forutsi:</strong> I hvilke timer bør det knappe vannet brukes? Begrunn med hvilket kraftverk én MWh vann ville erstatte i hver time (det dyreste som ellers må gå).</p>
-<details>
-<summary>
-Regnehjelp: hva erstatter én MWh vann?
-</summary>
-<p>Uten vannbegrensningen er planen slik:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Time</th>
-<th style="text-align: right;">vind</th>
-<th style="text-align: right;">vann</th>
-<th style="text-align: right;">import</th>
-<th style="text-align: right;">gass</th>
-<th style="text-align: left;">dyreste i drift</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">vannkraft</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">50</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">gass</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">50</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: left;">gass</td>
-</tr>
-</tbody>
-</table>
-<p>Tar vi bort 1 MWh vann i time 1, må import ta over: det koster <span class="math inline">\(40-10=30\)</span> kr mer. I time 2 og 3 må gass ta over: det koster <span class="math inline">\(70-10=60\)</span> kr mer. De 10 MWh som mangler, tas derfor fra time 1. Der erstatter de import, og hver MWh vann er verdt 30 kr.</p>
-</details>
-<section id="a.-bygg-vannraden" class="level3">
-<h3 class="anchored" data-anchor-id="a.-bygg-vannraden">4a. Bygg vannraden</h3>
-<p>Modellen har 12 variabler, i grupper på fire: plass 0–3 er time 1, plass 4–7 er time 2 og plass 8–11 er time 3. I hver gruppe står vind først, så vannkraft, import og gass. Cellen bygger målet, grensene og de tre forbrukslikningene. <strong>Du fyller inn vannraden</strong>, slik at <code>A_water @ x</code> blir den samlede vannbruken.</p>
-<div id="qpyodide-insertion-location-9"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Vannverdien er <code>-res3.ineqlin.marginals[0]</code>. Minus foran har samme grunn som i 2c: mer vann kan bare gjøre det billigere. Når vannraden er riktig, bruker modellen 120 MWh, prisene blir 40, 70 og 70 kr, og vannverdien blir 30 kr/MWh. Stemmer det med forutsigelsen din?</p>
-<ol type="1">
-<li>Tenk på vannverdien som en ekstra kostnad for vannkraften. Å bruke 1 MWh vann nå koster 10 kr i drift, <em>og</em> vannet kan ikke brukes i en annen time. I time 1 er vannkraften verken full eller avslått, så det må lønne seg akkurat like mye å bruke vannet som å spare det: <span class="math inline">\(10+\text{vannverdi}=\text{pris i time 1}\)</span>. Kontroller: <span class="math inline">\(10+30=\;…\)</span> . Hva gjelder i time 2 og 3, der vannkraften går for fullt? (Bruk reglene fra 2c.)</li>
-<li>Hvis du fikk 1 MWh vann til: i hvilken time ville det blitt brukt, hva ville det erstattet, og hva sparer det? Kontroller med <code>water + 1</code>.</li>
-</ol>
-</section>
-<section id="b.-vannverdien-som-funksjon-av-vannmengden" class="level3">
-<h3 class="anchored" data-anchor-id="b.-vannverdien-som-funksjon-av-vannmengden">4b. Vannverdien som funksjon av vannmengden</h3>
-<p>Vannverdien 30 kr gjelder for 120 MWh vann. Med mer vann erstatter vannet etter hvert billigere kraftverk, og med mindre vann må det dekke dyrere timer. Cellen løser tre-timersmodellen for mange vannmengder <span class="math inline">\(W\)</span>, med vannraden din, så kjør cellen i 4a først. Du fyller inn én linje som lagrer vannverdien for hver <span class="math inline">\(W\)</span>. Vi bruker igjen halve tall, slik at ingen <span class="math inline">\(W\)</span> havner på et trinn.</p>
-<div id="qpyodide-insertion-location-10"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<ul>
-<li>Hvor er trinnene i vannverdien, og hva erstatter vannet på hvert trinn?</li>
-<li>Løs én gang med 40 MWh og les <code>status</code>. Hvorfor finnes det ingen plan?</li>
-</ul>
-<p><strong>Ta med videre:</strong> Vannverdien er dualvariabelen til vannkravet. Den er prisen i timen der vannet er marginalt, minus vannkraftens egen kostnad. Når vannkraften er marginal, er prisen 10 kr pluss vannverdien. Derfor settes prisen i Norge ofte av vannverdien.</p>
-</section>
-</section>
-<section id="din-undersøkelse-forutsi-med-dualvariabler" class="level2">
-<h2 class="anchored" data-anchor-id="din-undersøkelse-forutsi-med-dualvariabler">5. Din undersøkelse: forutsi med dualvariabler</h2>
-<p>Nå har du sett tre slags dualvariabler: prisen, linjeverdien og vannverdien. Alle sier hva én enhet mer er verdt. Det er fristende å bruke dem som en snarvei: «linjeverdien er 60 kr, så 40 MW mer linje sparer 2400 kr». Men fra 3d vet du at en dualverdi bare gjelder til en annen grense blir aktiv. I denne delen undersøker du selv hvor langt snarveien holder. Målet er en forutsigelse, en kontroll og en forklaring av hvor anslaget slutter å gjelde.</p>
-<p>Slik kan en forutsigelse se ut, med vannet fra del 4: «Vannverdien er 30 kr/MWh. Med 5 MWh mer vann (125 MWh) venter jeg at kostnaden faller med <span class="math inline">\(5\cdot30=150\)</span> kr, fra 5750 til 5600 kr. Med 20 MWh mer tror jeg anslaget svikter, fordi vannverdien bare gjelder opp til 130 MWh (4b).»</p>
-<p>Velg <strong>ett</strong> av tiltakene under. Skriv først ned hva dualvariablene forutsier om endringen i samlet kostnad og priser. Løs deretter den nye modellen og sammenlign. Undersøk to størrelser av tiltaket: én der du tror anslaget holder, og én der du tror det bryter sammen.</p>
-<ul>
-<li><strong>Batteri i tre-timersmodellen.</strong> Et batteri kan lade i en billig time og lade ut i en dyr. Hva er én MWh flyttet fra en billig til en dyr time verdt ifølge prisene i 4a?</li>
-<li><strong>Mer vind i nord.</strong> Øk vindkapasiteten i nord fra 20 til 40 MW med <code>two_zones(40, wind_north=40)</code>. Bruk verdien av mer vind, <code>-two_zones(40).upper.marginals[0]</code>.</li>
-<li><strong>Dobbel linje.</strong> Øk <span class="math inline">\(L\)</span> fra 40 til 80. Bruk linjeverdien ved <span class="math inline">\(L=40\)</span>.</li>
-</ul>
-<p><strong>Batteriet som matematikk.</strong> Batteriet gir seks nye variabler: lading <span class="math inline">\(\ell_h\)</span> og utlading <span class="math inline">\(u_h\)</span> i time <span class="math inline">\(h=1,2,3\)</span>, med <span class="math inline">\(0\le\ell_h\le\)</span> <code>power</code> og <span class="math inline">\(0\le u_h\le\)</span> <code>power</code>. Lading er ekstra forbruk og utlading ekstra produksjon, så forbrukslikningen i time <span class="math inline">\(h\)</span> blir</p>
-<p><span class="math display">\[\text{produksjon i time }h-\ell_h+u_h=D_h.\]</span></p>
-<p>Lagret mengde etter time <span class="math inline">\(h\)</span> er <span class="math inline">\(s_h=(\ell_1-u_1)+\dots+(\ell_h-u_h)\)</span>. Den må ligge mellom 0 og <code>power</code> MWh. Batteriet starter tomt og må slutte tomt: <span class="math inline">\(s_3=0\)</span>. Det har ingen tap.</p>
-<p>Den ferdige funksjonen <code>with_battery(power, A_water)</code> løser denne utvidede modellen med vannraden din fra 4a, så kjør den cellen først. Cellen under sammenligner modellen med og uten batteri (<code>power=0</code>).</p>
+<p><strong>Kodespor 2:</strong> Fullfør <code>make_water_row</code> slik at den returnerer en <code>(1, 12)</code>-matrise som velger ut akkurat de tre vannvariablene. Forklar hvordan <code>A_water @ x</code> da blir summen over de tre timene. Dette er den samme koblingen mellom en sum og en matrisrad som i del 1. Kontrollen bruker 2, 3 og 5 MWh vann i de tre timene; summen skal bli 10 MWh. Rett raden før du løser modellen dersom kontrollen ikke stemmer.</p>
 <div id="qpyodide-insertion-location-11"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Forklar hvor anslaget holder og hvor det bryter sammen. Hvilken grense blir aktiv, og hvordan henger det sammen med at en pris bare gjelder lokalt (<a href="../pages/uke11.html#uke11-sensitivitet">uke 11.4</a>)?</p>
+<p>Resten av tre-timersmodellen er gitt i oppsettet: <code>A_eq3</code> har én forbrukslikning per time. Cellen bruker vannraden din og skriver ut planen, prisene og <strong>vannverdien</strong>, altså spart kostnad per MWh ekstra vann.</p>
+<div id="qpyodide-insertion-location-12"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> I hvilken time kunne vannkraften bruke litt mer vann uten å nå 50 MW-grensen? Hvilket annet kraftverk ville den erstatte? Bruk kostnadsforskjellen til å tolke vannverdien i utskriften. Sammenlign også <code>10 + vannverdi</code> med prisene; hva endres når vannkraften går for fullt?</p>
+</section>
+<section id="når-slutter-vannet-å-være-knapt" class="level3">
+<h3 class="anchored" data-anchor-id="når-slutter-vannet-å-være-knapt">Når slutter vannet å være knapt?</h3>
+<p>Den neste cellen gjentar løsningen for flere vannmengder og kontrollerer én liten økning fra 120 MWh. Forutsi først om mer vann alltid har samme verdi.</p>
+<div id="qpyodide-insertion-location-13"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Kontroller vannverdien ved 120 MWh mot besparelsen ved 121 MWh. Finn trinnene i figuren og forklar ett av dem med hvilket kraftverk vannet erstatter. Bruk utskriften til å skille mellom «vann har verdi null» og «det finnes ingen tillatt plan».</p>
+</section>
+</section>
+<section id="din-undersøkelse-bruk-et-lokalt-prisanslag" class="level2">
+<h2 class="anchored" data-anchor-id="din-undersøkelse-bruk-et-lokalt-prisanslag">5. Din undersøkelse: bruk et lokalt prisanslag</h2>
+<p>Du har undersøkt både linje- og vannverdier. Nå velger du <strong>ett</strong> tiltak og tester hvor langt en forutsigelse med startmodellens dualverdi holder. Du trenger ikke bygge en ny modell.</p>
+<ul>
+<li><strong>Mer vind i nord:</strong> Bruk <code>two_zones(40, wind_north=20 + delta)</code> og vindverdien <code>-two_zones(40).upper.marginals[0]</code> fra startmodellen.</li>
+<li><strong>Mer vann:</strong> Bruk tre-timersmodellen, vannraden din og startmodellens vannverdi ved 120 MWh.</li>
+</ul>
+<p>Gjør én liten og én større endring. Du velger størrelsene; målet er å finne både et tilfelle der anslaget virker og et der en annen grense tar over.</p>
+<ol type="1">
+<li>Skriv forventet besparelse som <code>dualverdi * endring</code> før du løser på nytt.</li>
+<li>Skriv ut faktisk besparelse og produksjonsplan for hver endring.</li>
+<li>Forklar med tallene hvilken grense som gjør det store anslaget mindre presist. Hvis anslaget fortsatt virker, velg en større endring.</li>
+</ol>
+<p><strong>Ta med videre:</strong> Et lokalt anslag er nyttig fordi det sparer ny regning for små endringer. En ny løsning og dens slakk viser når du trenger et nytt anslag. Skill mellom det prisregelen sier under sine forutsetninger og det dine konkrete forsøk viser.</p>
+<div id="project11-battery">
+
+</div>
 </section>
 <section id="spørsmål-du-skal-kunne-svare-på" class="level2">
 <h2 class="anchored" data-anchor-id="spørsmål-du-skal-kunne-svare-på">Spørsmål du skal kunne svare på</h2>
+<p>Disse spørsmålene samler ideene; de er ikke en ekstra innleveringsdel.</p>
 <ol type="1">
-<li>Hvorfor bestemmes prisen av det dyreste kraftverket som er i drift, og ikke av gjennomsnittskostnaden?</li>
-<li>Hva betyr dualvariabelen til forbrukslikningen, og hvordan kontrollerer du den med to løsninger?</li>
-<li>Hvilke kraftverk har kostnad lik prisen, og hva sier komplementær slakk om de andre?</li>
-<li>Hvorfor blir prisen en trappefunksjon av forbruket?</li>
-<li>Når får to områder ulik pris, og hva er én ekstra MW linjekapasitet verdt?</li>
-<li>Hva er vannverdien, og hvorfor brukes vannet i de dyreste timene?</li>
-<li>Hvordan ser du i resultatet fra <code>linprog</code> om en grense er aktiv?</li>
-<li>Hva forteller en dualverdi <em>ikke</em>? Hvorfor gjelder den bare innenfor et intervall?</li>
-<li><em>(valgfri fordypning)</em> Ved <span class="math inline">\(D=80\)</span> koster én MW mer 40 kr, mens én MW mindre sparer 10 kr. <code>linprog</code> rapporterer 10. Vis at hver pris <span class="math inline">\(\lambda\)</span> mellom 10 og 40 gir et gyldig prisbevis med samme nedre grense 500 kr, og forklar hvorfor en løser bare kan rapportere én av dem.</li>
-<li><em>(valgfri fordypning)</em> Hvordan endrer et batteri prisene i de tre timene, og hvorfor gir et batteri større enn 20 MW ingen ekstra besparelse? Hvilken grense blir aktiv?</li>
+<li>Hvordan leser du kostnad og forbrukskrav fra vektorer og matrisrader?</li>
+<li>Hvorfor er gjennomsnittskostnad og pris forskjellige tall?</li>
+<li>Hvordan kontrollerer du en marginal med to nye kostnadsverdier?</li>
+<li>Hva forteller ledig kapasitet og kapasitetsverdi om et kraftverk?</li>
+<li>Når kan en full linje ha verdi null, og når er linjeverdien prisforskjellen?</li>
+<li>Hva betyr vannverdien, og hvordan ser du hvilken time som kan bruke mer vann?</li>
+<li>Hvorfor må et lokalt prisanslag kontrolleres ved en større endring?</li>
 </ol>
 </section>
 <section id="det-du-leverer" class="level2">
 <h2 class="anchored" data-anchor-id="det-du-leverer">Det du leverer</h2>
-<p>Lever én kjørbar notebook eller Quarto-side med:</p>
+<p>Lever én kjørbar notebook eller Quarto-side med de to studentfunksjonene, oppsettsfilen og disse resultatene:</p>
 <ul>
-<li>tabellen fra 1a, pristrappen fra 1c og de utfylte begrunnelsene i 2a, 2b og 3c;</li>
-<li>tabellen med komplementær slakk for <span class="math inline">\(D=100\)</span>;</li>
-<li>tabellen over linjekapasitet, forklaringen av prisen i nord ved <span class="math inline">\(L=100\)</span> og rollebyttene ved <span class="math inline">\(L=50\)</span> og <span class="math inline">\(L=70\)</span>;</li>
-<li>den utfylte vannraden, kontrollen av vannverdien og figuren av vannverdien;</li>
-<li>din undersøkelse fra del 5: forutsigelse, resultat og hvor anslaget holder.</li>
+<li>pristrappen og en kort forklaring av pris mot gjennomsnitt;</li>
+<li>kontrollen ved <code>D=80</code> og ett eksempel på komplementær slakk;</li>
+<li>sammenligningen av linjeutvidelsene fra del 3, med forklaring av rollebyttet;</li>
+<li>vannraden, figuren av vannverdi og kontrollen med 1 MWh ekstra vann;</li>
+<li>din undersøkelse fra del 5: forventning, faktisk endring og en avgrenset konklusjon.</li>
 </ul>
-<p>Skriv i tillegg en analyse på <strong>300–500 ord</strong> som svarer på de tre spørsmålene i innledningen med dine egne tall. Skill mellom det dualvariablene forutsier lokalt og det du har kontrollert med nye løsninger.</p>
+<p>Bruk omtrent <strong>150–250 ord til sammen</strong> på konklusjonene, gjerne ved siden av de tilhørende utskriftene. Du trenger ikke i tillegg en samlet rapport eller svar på alle repetisjonsspørsmålene.</p>
 
 
 </section>
