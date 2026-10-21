@@ -1,775 +1,298 @@
 ## Hvor er jeg?
 
-En mobil i en hall, en drone i et lager eller en GPS-mottaker vet ikke
-hvor den er. Den kan bare måle **avstander** til noen faste punkter med
-kjent plassering, kalt **ankre**. Enheten vi leter etter, kaller vi
-**taggen** (fra engelsk *tag*, en liten radiobrikke). Fra fire unøyaktige
-avstander skal vi finne to koordinater. Det er et ikke-lineært minste
-kvadraters problem: fire likninger, to ukjente, og ingen posisjon passer
-alle målingene nøyaktig.
+En mobil i en hall kan måle avstander til faste punkter med kjent
+plassering, kalt **ankre**. Enheten vi leter etter, kaller vi **taggen**:
+en liten radiobrikke. Fire unøyaktige avstander skal gi oss to koordinater.
+Ingen posisjon passer nødvendigvis alle målingene nøyaktig.
 
-I uke 10 brukte vi Newtons metode på én funksjon om gangen. Her er
-funksjonen en kvadratsum, og da kan Newtons metode forenkles. I del 1
-utleder du selv forenklingen, **Gauss–Newton**: Newtons metode med ett
-ledd kastet bort. Resten av prosjektet bygger på den og handler om tre
-spørsmål:
+Vi bruker **Gauss–Newton**, en variant av Newtons metode for minste
+kvadrater. Formlene for de deriverte får du ferdig. Arbeidet ditt er å
+sette sammen metoden med lineær algebra, kjøre forsøk og begrunne hva
+utskriftene og figurene forteller:
 
-- Når koster det ingenting å kaste bort leddet, og når koster det mye?
-- Hvor langt kan en liten målefeil flytte posisjonen vi regner ut, og hva
-  har singulærverdiene til Jacobimatrisen med det å gjøre?
-- Kan metoden konvergere pent og likevel gi feil svar?
+- Når er Gauss–Newton omtrent like rask som Newton?
+- Hvordan bestemmer plasseringen av ankrene hvor presist vi finner taggen?
+- Hvordan kan en metode konvergere pent og likevel gi et galt svar?
 
-| Del | Spørsmålet vi arbeider med | Det du tar med videre | Sett av |
-|:--|:--|:--|--:|
-| 1. Fra Newton til Gauss–Newton | Hvordan blir et Newton-steg for en kvadratsum et minste kvadraters problem? | Jacobimatrisen, ett steg for hånd og din egen Gauss–Newton-kode. | 80 min |
-| 2. Like rask som Newton? | Hva koster det droppede leddet? | Målt og forutsagt konvergensfaktor. | 30 min |
-| 3. Hvor presist? | Hvor langt flytter en målefeil anslaget? | Formelen for flyttingen og ellipsen fra SVD; hva som skjer langt unna. | 60 min |
-| 4. Konvergert, men feil? | Kan residualen avsløre et falskt minimum? | En diagnose, et for langt steg og Armijo. | 35 min |
-| 5. Din påstand | Hvor langt holder forklaringen? | Én forutsigelse og én kontroll. | 30 min |
+### En vei gjennom prosjektet
 
-Sett av omtrent 4–6 timer i alt: snaut fire timer til delene i tabellen,
-ti minutter til oppsettet og en halvtime til den skriftlige vurderingen.
-Tar papirregningen lengre tid, er det helt vanlig. Gjør papirregningen
-før du åpner hver kodecelle, og skriv en kort forventning før hvert
-forsøk. Dataene er laget med en kjent posisjon, så vi vet fasiten. Den
-brukes bare til kontroll.
+| Del | Arbeidet ditt | Sett av |
+|:--|:--|--:|
+| Bakgrunn | Bli kjent med avstandsmålingene og den gitte modellen. | 10–15 min |
+| 1. Fra modell til metode | Les vektorer og matriser; fullfør ett Gauss–Newton-steg. | 35–45 min |
+| 2. Les konvergensen | Sammenlign feil og faktorer med tre typer målinger. | 25–35 min |
+| 3. Les følsomheten | Undersøk målefeil og forklar geometrien med SVD. | 40–50 min |
+| 4. Konvergert, men feil? | Les diagnosene og fullfør en kort Armijo-løkke. | 35–45 min |
+| 5. Din påstand | Gjør ett kontrollert forsøk og trekk en avgrenset konklusjon. | 20–25 min |
+
+Sett av omtrent **3–4 timer**, inkludert oppsett og en kort oppsummering.
+Skriv en forventning før et forsøk, kjør det, og vis til konkrete tall når
+du konkluderer. Du skal ikke levere utledninger av deriverte.
 
 ### Det vi trenger fra tidligere uker
 
-- **Newtons metode** ([uke 10.1](uke10.qmd#uke10-newton)): Newton-steget
-  $p$ løser $Hp=-g$, der $g$ er gradienten og $H$ Hessianen.
-- **Når peker et steg nedover?** ([uke 10.3](uke10.qmd#uke10-stasjonaer)):
-  fra $Hp=-g$ følger $g^Tp=-p^THp$, så steget peker nedover når
-  $p^THp>0$.
-- **Cholesky-forsøket** ([uke 10.4](uke10.qmd#uke10-demping)): stopper
-  Cholesky-faktoriseringen av $H$, prøver vi $H+\mu I$ med
-  $\mu=0.5,1,2,\ldots$ til den lykkes. Da peker steget nedover.
-- **Armijo** ([uke 10.4](uke10.qmd#uke10-demping)): prøv
-  $\alpha=1,\tfrac12,\tfrac14,\ldots$ og godta den første som gir
-  $F(z+\alpha p)\le F(z)+10^{-4}\alpha\,g^Tp$.
-- **Minste kvadrater** ([uke 4](uke4.qmd#uke4-mk)): i løsningen av
-  $\min_c\|Ac-b\|$ står residualen $b-Ac$ vinkelrett på alle kolonnene,
-  $A^T(b-Ac)=0$. Det er **normallikningene** $A^TAc=A^Tb$ ([uke 4](uke4.qmd#uke4-normal)). I praksis
-  løser vi med QR eller `np.linalg.lstsq(A, b, rcond=None)[0]`, som ikke
-  danner $A^TA$.
-- **Konvergensfaktor** ([uke 2](page4.qmd#uke2-konvergensfart)): en
-  iterasjon er lineær med konvergensfaktor $S$ når $e_{k+1}\approx S\,e_k$
-  (som i uke 2 og 9), og kvadratisk når $e_{k+1}\approx Ce_k^2$.
-- **Spektralradius** ([uke 6](uke6.qmd#uke6-fikspunkt)): når feilen ganges
-  med en matrise $M$ i hvert steg, er faktoren den største $|\lambda|$ for $M$.
-- **SVD** ([uke 7](uke7.qmd#uke7-geometri)): $J=U\Sigma V^T$ og
-  $Jv_i=\sigma_iu_i$. Enhetssirkelen blir en ellipse; $\sigma_1\ge\sigma_2$
-  er største og minste strekk, langs $v_1$ og $v_2$.
+- **Minste kvadrater** ([uke 4](uke4.qmd#uke4-mk)):
+  `np.linalg.lstsq(A, b, rcond=None)[0]` finner vektoren som gjør
+  $\|Ac-b\|$ minst. Vi unngår å danne $A^TA$, som har kvadrert
+  kondisjonstall når $A$ har full kolonnerang.
+- **Newton** ([uke 10.1](uke10.qmd#uke10-newton)): steget løser $Hp=-g$.
+- **Konvergensfart** ([uke 2](page4.qmd#uke2-konvergensfart)):
+  et omtrent fast forhold $e_{k+1}/e_k$ betyr lineær konvergens; ved
+  kvadratisk konvergens blir forholdet stadig mindre nær løsningen.
+- **SVD** ([uke 7](uke7.qmd#uke7-geometri)): $Jv_i=\sigma_i u_i$.
+  Små singulærverdier betyr at noen retninger er vanskelige å skille.
+- **Armijo** ([uke 10.4](uke10.qmd#uke10-demping)):
+  halver steget til funksjonsverdien har sunket nok.
 
 ### Kjøring på siden eller i egen notebook
 
-Oppsettet på siden lastes automatisk. Det inneholder dataene, en ferdig
-Newton-metode og to tegnehjelpere, `show_hall` og `show_moves`. Hjelperne
-tegner resultatene; Newton-metoden bruker dine funksjoner `residual` og
-`jacobian` fra del 1. Kontroller derfor først disse mot tallene i kodespor 1.
+På nettsiden lastes dataene og hjelpefunksjonene automatisk. Du får
+`residual`, `jacobian`, `move`, en Newton-metode og figurhjelperne
+`show_hall` og `show_moves`. Du skriver selv `gn_step` og `armijo_step`;
+den korte Gauss–Newton-løkken står ferdig på siden. Etter ny lasting må du
+kjøre cellene med disse funksjonene igjen før du fortsetter.
 
 <details>
 <summary>Egen notebook: last ned oppsettet og kom i gang</summary>
 
 Last ned [project_week10_setup.py](../assets/project_week10_setup.py){download="project_week10_setup.py"}
-og legg filen ved siden av notebooken. Kjør først
+og legg den ved siden av notebooken. Start med
 
 ```python
 from project_week10_setup import *
 ```
 
-Du trenger NumPy og Matplotlib. Kopier deretter cellene fra prosjektet i
-rekkefølge. Hele notebooken skal kunne kjøres med **Restart / Run all**.
-Ta med oppsettsfilen ved levering. De to appene i 1b og 3b virker bare
-på nettsiden.
+Du trenger NumPy og Matplotlib. Kopier cellene i rekkefølge og kontroller
+med **Restart / Run all** før levering. Ta med oppsettsfilen.
+SVD-appen i del 3 virker bare på nettsiden; Python-figuren viser samme idé.
 
 </details>
 
-## 1. Fra Newton til Gauss–Newton
+## Bakgrunn: avstandsmålingene og modellen (gitt)
 
-Først setter vi opp problemet og finner metoden. Hallen er 10 m × 8 m, med
-ett anker i hvert hjørne:
+Dette avsnittet gir bakgrunnen for posisjonsmålingen. Du skal bruke den
+ferdige modellen, ikke utlede en fysisk modell for radiosignaler.
+
+Hallen er 10 m × 8 m, med ett anker i hvert hjørne:
 
 $$b_1=(0,0),\quad b_2=(10,0),\quad b_3=(10,8),\quad b_4=(0,8).$$
 
-Den ukjente posisjonen er $z=(x,y)$. Anker $i$ måler avstanden $d_i$. Hvis
-målingen var perfekt, ville $\|z-b_i\|=d_i$. Vi samler avvikene i
-**residualvektoren**
+Posisjonen er $z=(x,y)$, og anker $i$ måler avstanden $d_i$.
+**Residualen** er beregnet avstand minus målt avstand. Vi samler fire
+slike tall i en vektor og minimerer kvadratsummen:
 
-$$r_i(z)=\|z-b_i\|-d_i=\sqrt{(x-b_{i1})^2+(y-b_{i2})^2}-d_i,
-\qquad i=1,\ldots,4,$$
+$$r_i(z)=\|z-b_i\|-d_i,\qquad
+r(z)=\begin{bmatrix}r_1(z)\\r_2(z)\\r_3(z)\\r_4(z)\end{bmatrix},\qquad
+F(z)=\tfrac12\sum_{i=1}^4r_i(z)^2=\tfrac12r(z)^Tr(z).$$
 
-og minimerer kvadratsummen
+Oppsettet inneholder `hall` med ett anker per rad og tre målevektorer
+fra en kjent posisjon `z_true`. Fasiten brukes bare til å undersøke
+metodene. I praksis kjenner vi målingene, men ikke posisjonen.
 
-$$F(z)=\tfrac12\sum_{i=1}^4 r_i(z)^2.$$
+## 1. Fra Newton til Gauss–Newton
 
-Det er fire likninger og to ukjente, så med målefeil kan vi ikke få alle
-residualene lik null. Vi kunne brukt Newtons metode fra uke 10 direkte på
-$F$. Men for en kvadratsum har gradienten og Hessianen en spesiell form,
-og den gir en enklere metode. Vi tar det i fire små steg. Først får du et
-nytt verktøy, Jacobimatrisen (1a). Så regner vi ett Newton-steg der alt er
-tall, med bare én ukjent (1b). Deretter gjør vi det samme med to ukjente og
-finner Gauss–Newton (1c). Til slutt ser vi hva radene i $J$ betyr i hallen
-(1d). Målet med del 1 er at du forstår hvor metoden kommer fra, har regnet
-ett steg for hånd og ender med en kode du stoler på.
+**Her begynner prosjektarbeidet i numeriske metoder og lineær algebra.**
+Vi bruker den gitte modellen til å beregne posisjonen. Først trenger vi
+en matrise som kobler en liten flytting til endringer i avstandene.
 
-### 1a. Et nytt verktøy: Jacobimatrisen (papir)
+### Jacobimatrisen: fire avstandsendringer fra én flytting
 
-Residualen $r(z)$ er ikke én funksjon, men fire, alle av de to variablene
-$x$ og $y$. Fra [uke 8](uke8.qmd#uke8-gradient) kjenner du gradienten, som
-samler de partielle deriverte av én funksjon. Har vi flere funksjoner,
-legger vi gradientene deres som rader i en matrise. Den kalles
-**Jacobimatrisen** $J$ (også kalt Jacobianen): element $(i,j)$ er den
-partielle deriverte av $r_i$ med hensyn på variabel $j$, så rad $i$ er
-gradienten til $r_i$, $(\partial r_i/\partial x,\ \partial r_i/\partial y)$.
-Med fire ankre og to ukjente er $J$ en $4\times2$-matrise.
+**Jacobimatrisen** $J$ samler de deriverte av residualene. Du får formelen:
 
-$J$ spiller samme rolle som den deriverte i én variabel. I
-[uke 8](uke8.qmd#uke8-gradient) så vi at et lite steg $p$ endrer en
-funksjon med omtrent gradienten prikket med $p$. Bruker vi det på hver
-komponent, får vi
+$$\text{rad }i\text{ i }J(z)=\frac{(z-b_i)^T}{\|z-b_i\|},\qquad z\ne b_i.$$
 
-$$r(z+p)\approx r(z)+J\,p.$$
+Raden er en enhetsvektor fra ankeret mot taggen. For et lite steg $p$ er
 
-**Lite talleksempel.** Ta to funksjoner $r_1(x,y)=x^2-y$ og
-$r_2(x,y)=3x+y^2$ i punktet $z=(1,2)$. Skriv opp $J$ med symboler, sett inn
-punktet, og bruk $r(z+p)\approx r(z)+Jp$ med $p=(0.1,\,0)$ til å anslå
-$r(1.1,\,2)$. Sammenlign med den eksakte verdien.
+$$r(z+p)\approx r(z)+J(z)p.$$
 
-<details>
-<summary>Regnehjelp: Jacobimatrisen i talleksempelet</summary>
+For eksempel er raden $(0.6,0.8)$ når ankeret er $(0,0)$ og taggen er
+$(3,4)$. En flytting $p=(0.1,0)$ endrer da avstanden med omtrent
+$0.6\cdot0.1+0.8\cdot0=0.06$ m.
 
-Rad 1 er gradienten til $r_1=x^2-y$, altså $(2x,\,-1)$, og rad 2 er
-gradienten til $r_2=3x+y^2$, altså $(3,\,2y)$. I $(1,2)$ er
+**Koble sammen skrivemåtene:**
 
-$$J=\begin{bmatrix}2x&-1\\3&2y\end{bmatrix}=\begin{bmatrix}2&-1\\3&4\end{bmatrix},\qquad
-r(1,2)=\begin{bmatrix}1-2\\3+4\end{bmatrix}=\begin{bmatrix}-1\\7\end{bmatrix}.$$
+1. Hvilke størrelser har $r$, $J$, $p$ og $Jp$ med fire ankre?
+2. Skriv første komponent av $Jp$ som en sum. Hva skjer med denne
+   avstanden dersom $p$ står vinkelrett på første rad i $J$?
+3. Hvorfor er $\tfrac12r^Tr$ det samme tallet som kvadratsummen over?
 
-Med $p=(0.1,\,0)$ er $Jp=(2\cdot0.1,\ 3\cdot0.1)=(0.2,\,0.3)$, så
-$r(1.1,\,2)\approx(-1+0.2,\ 7+0.3)=(-0.8,\ 7.3)$. Eksakt er
-$r(1.1,\,2)=(1.21-2,\ 3.3+4)=(-0.79,\ 7.3)$. Anslaget bommer bare med
-$0.01$ i første komponent, som er leddet $0.1^2$ som den lineære
-tilnærmingen ikke tar med.
-
-</details>
-
-**Ta med videre:** Rad $i$ i $J$ er gradienten til $r_i$, og $Jp$ er
-omtrent endringen i alle residualene når vi flytter oss $p$. Radene i $J$
-for hallen regner du ut i 1d.
-
-### 1b. Ett Newton-steg med tall: én ukjent (papir)
-
-Før vi går til hallen, regner vi ett steg der alt er tall. Da ser vi
-tydelig hvilket ledd Gauss–Newton dropper, og hvor lite det er. Taggen
-ligger på gulvet, på linjen $y=0$, så bare $x$ er ukjent. Ankrene henger i
-$(0,4)$ og $(7,3)$ og måler $d_1=5.6$ og $d_2=4.4$. Skriv anker $i$ som
-$(a_i,h_i)$. Avstanden til det er $\rho_i=\sqrt{(x-a_i)^2+h_i^2}$,
-residualen er $r_i=\rho_i-d_i$, og vi minimerer
-$F(x)=\tfrac12(r_1^2+r_2^2)$. Start i $x_0=3$.
-
-1. Regn ut avstandene $\rho_i$ og residualene $r_i$ i $x_0$.
-2. Med én ukjent er $J$ en kolonne med de to tallene
-   $r_i'(x_0)=(x_0-a_i)/\rho_i$. Regn ut $J$.
-3. **Den deriverte av $F$.** Bruk kjerneregelen. Første linje er gitt:
-   $$F'(x)=\tfrac12\bigl(2r_1r_1'+2r_2r_2'\bigr)=\ \ldots$$
-   Forklar at dette er $J^Tr$, og regn ut tallet i $x_0$.
-4. **Den andrederiverte.** Deriver en gang til med produktregelen.
-   Første linje er gitt:
-   $$F''(x)=\bigl(r_1'r_1'+r_2'r_2'\bigr)+\bigl(r_1r_1''+r_2r_2''\bigr).$$
-   Den første parentesen er $J^TJ$. Den andre kaller vi $Q$: der er hvert
-   ledd **ganget med en residual**. Regn ut $J^TJ$ og $Q$ i $x_0$, med
-   $r_i''=h_i^2/\rho_i^3$ (gitt).
-5. **Newton og Gauss–Newton.** Newton-steget fra uke 10 er
-   $p=-F'/F''=-J^Tr/(J^TJ+Q)$. Hvor havner $x_1$? Hvor havner det hvis vi
-   dropper $Q$ og tar $p=-J^Tr/(J^TJ)$? Hvor stor er forskjellen, og
-   hvorfor er den liten her?
-
-<details>
-<summary>Regnehjelp: talleksempelet</summary>
-
-$\rho_1=\sqrt{3^2+4^2}=5$ og $\rho_2=\sqrt{(3-7)^2+3^2}=\sqrt{16+9}=5$.
-Residualene er $r=(5-5.6,\ 5-4.4)=(-0.6,\ 0.6)$, og
-
-$$J=\begin{bmatrix}3/5\\-4/5\end{bmatrix}=\begin{bmatrix}0.6\\-0.8\end{bmatrix}.$$
-
-**Den deriverte.** $F'=r_1r_1'+r_2r_2'$ er $J$ prikket med $r$, altså
-$J^Tr=0.6\cdot(-0.6)+(-0.8)\cdot0.6=-0.36-0.48=-0.84$.
-
-**Den andrederiverte.** $J^TJ=0.6^2+0.8^2=0.36+0.64=1$. Videre er
-$r_1''=16/125=0.128$ og $r_2''=9/125=0.072$, så
-$Q=-0.6\cdot0.128+0.6\cdot0.072=-0.0768+0.0432=-0.0336$. Det er bare
-omtrent 3 % av $J^TJ=1$, fordi residualene $\pm0.6$ er små.
-
-**Stegene.** Newton gir $p=0.84/(1-0.0336)\approx0.869$, så
-$x_1\approx3.869$. Uten $Q$ blir $p=0.84/1=0.84$ og $x_1=3.84$.
-Residualnormen faller fra $0.85$ til $0.070$, og videre steg ender i
-$x\approx3.847$. De to stegene er nesten like. Her lander steget uten $Q$
-til og med litt nærmere minimumet.
-
-</details>
-
-**Se det i en app.** Newton går til bunnen av den lokale parabelen, som i
-uke 10.1. Dropper vi $Q$, får vi en annen parabel: samme verdi og samme
-helning i $x_0$, men krumningen $J^TJ$ i stedet for $J^TJ+Q$. Appen tegner
-$F$ og begge parablene, og trekantene viser bunnene deres. Dra $x_0$ langs
-aksen og se hvor trekantene havner. Flytt så skyveren $e$. Den legger like
-mye til begge målingene, slik at de ikke lenger passer sammen og
-residualene blir store. Følg med på $Q$ og på avstanden mellom trekantene.
-
-```{.jsxgraph width="620" height="440" style="width:100%;max-width:620px;height:440px;border:0;"}
-var board = JXG.JSXGraph.initBoard(BOARDID, {
-  boundingbox: [1.15, 4.7, 6.8, -1.2], axis: false, keepaspectratio: false,
-  showNavigation: false, showCopyright: false,
-  pan: {enabled:false}, zoom: {enabled:false}
-});
-board.create('axis', [[0, 0], [1, 0]], {name:'x', withLabel:true,
-  label:{position:'rt', offset:[-12, -14], fontSize:13}, ticks:{drawZero:false}});
-// Talleksempelet: taggen på linjen y = 0, ankre i (0, 4) og (7, 3), målt d = (5.6, 4.4).
-// Skyveren e legger like mye til begge målingene, så de ikke lenger passer sammen.
-var a = [0, 7], h = [4, 3], d0 = [5.6, 4.4];
-var e = board.create('slider', [[1.6, -0.6], [3.4, -0.6], [-1, 0, 1]], {
-  name:'e', snapWidth:0.1, precision:1, withLabel:true
-});
-board.create('text', [1.45, -0.98, 'e: ekstra feil i begge målingene (m)'],
-  {fontSize:12, color:'#37474f', fixed:true, anchorY:'middle'});
-function parts(x) {             // residualer r, J og det droppede leddet Q i punktet x
-  var r = [], J = [], Q = 0;
-  for (var i = 0; i < 2; i++) {
-    var rho = Math.sqrt((x - a[i])*(x - a[i]) + h[i]*h[i]);
-    r.push(rho - d0[i] - e.Value());
-    J.push((x - a[i])/rho);
-    Q += r[i]*h[i]*h[i]/(rho*rho*rho);
-  }
-  return {r: r, Jr: J[0]*r[0] + J[1]*r[1], JJ: J[0]*J[0] + J[1]*J[1], Q: Q};
-}
-function F(x) { var p = parts(x); return 0.5*(p.r[0]*p.r[0] + p.r[1]*p.r[1]); }
-function xmin() {               // minimumet av F: mange Gauss-Newton-steg
-  var x = 3;
-  for (var k = 0; k < 60; k++) { var p = parts(x); x -= p.Jr/p.JJ; }
-  return x;
-}
-var track = board.create('segment', [[1.5, 0], [6.5, 0]], {visible:false, fixed:true});
-var X0 = board.create('glider', [3, 0, track], {name:'x₀', size:5, color:'#212121',
-  label:{offset:[-6, -16], fontSize:14}});
-function model(curv) {          // parabel med samme verdi og helning som F i x0
-  return function (x) {
-    var x0 = X0.X(), p = parts(x0), t = x - x0;
-    return F(x0) + p.Jr*t + 0.5*curv(p)*t*t;
-  };
-}
-var gn = function (p) { return p.JJ; }, nt = function (p) { return p.JJ + p.Q; };
-board.create('functiongraph', [F, 1.3, 6.7], {strokeColor:'#345f78', strokeWidth:3, highlight:false});
-board.create('functiongraph', [model(gn), 1.3, 6.7],
-  {strokeColor:'#1565c0', strokeWidth:2, dash:2, highlight:false});
-board.create('functiongraph', [model(nt), 1.3, 6.7],
-  {strokeColor:'#ef6c00', strokeWidth:2, dash:1, highlight:false});
-function bottom(curv) {         // bunnen av parabelen: x0 + steget
-  return function () { var p = parts(X0.X()); return X0.X() - p.Jr/curv(p); };
-}
-function bottomPoint(curv, color) {
-  var bx = bottom(curv);
-  board.create('point', [bx, function () { return model(curv)(bx()); }],
-    {name:'', face:'triangleup', size:6, strokeColor:color, fillColor:color, fixed:true, highlight:false});
-  board.create('segment', [[bx, 0], [bx, function () { return model(curv)(bx()); }]],
-    {strokeColor:color, dash:1, strokeWidth:1, fixed:true, highlight:false});
-}
-bottomPoint(gn, '#1565c0'); bottomPoint(nt, '#ef6c00');
-board.create('point', [xmin, function () { return F(xmin()); }],
-  {name:'', face:'x', size:5, strokeColor:'#212121', strokeWidth:2, fixed:true, highlight:false});
-board.create('point', [function () { return X0.X(); }, function () { return F(X0.X()); }],
-  {name:'', size:3, color:'#212121', fixed:true, highlight:false});
-board.create('text', [1.45, 4.45, function () {
-  var p = parts(X0.X());
-  return 'x₀ = ' + X0.X().toFixed(2) + ':  r = (' + p.r[0].toFixed(2) + ', ' + p.r[1].toFixed(2) + ')';
-}], {fontSize:13, color:'#212121', cssStyle:'background-color:rgba(255,255,255,0.85);', highlight:false, fixed:true});
-board.create('text', [1.45, 4.17, function () {
-  var p = parts(X0.X());
-  return 'Jᵀr = ' + p.Jr.toFixed(3) + ',  JᵀJ = ' + p.JJ.toFixed(3) + ',  Q = ' + p.Q.toFixed(3);
-}], {fontSize:13, color:'#212121', cssStyle:'background-color:rgba(255,255,255,0.85);', highlight:false, fixed:true});
-board.create('text', [1.45, 3.89, function () {
-  return 'Gauss–Newton (krumning JᵀJ): x₁ = ' + bottom(gn)().toFixed(3);
-}], {fontSize:13, color:'#1565c0', cssStyle:'background-color:rgba(255,255,255,0.85);', highlight:false, fixed:true});
-board.create('text', [1.45, 3.61, function () {
-  return 'Newton (krumning JᵀJ + Q): x₁ = ' + bottom(nt)().toFixed(3);
-}], {fontSize:13, color:'#ef6c00', cssStyle:'background-color:rgba(255,255,255,0.85);', highlight:false, fixed:true});
-board.create('text', [1.45, 3.33, function () {
-  return 'minimum av F (×): x = ' + xmin().toFixed(3);
-}], {fontSize:13, color:'#212121', cssStyle:'background-color:rgba(255,255,255,0.85);', highlight:false, fixed:true});
-```
-
-**Hva viser bildet?** Med de opprinnelige målingene, $e=0$, ligger de to
-parablene nesten oppå hverandre. Trekantene havner i $3.840$ og $3.869$,
-tett ved minimumet i $3.847$. Gjør du $e$ større, blir residualene større,
-og $Q$ vokser med dem. Med $e=1$ og $x_0=3$ er $Q=-0.234$. Da stopper
-Gauss–Newton-steget i $3.640$, mens Newton-steget når $3.835$, nær
-minimumet i $3.808$. Det droppede leddet er altså lite akkurat når
-residualene er små. Det kommer vi tilbake til i del 2.
-
-**Ta med videre:** For $F=\tfrac12(r_1^2+r_2^2)$ er $F'=J^Tr$ og
-$F''=J^TJ+Q$, der $Q$ er ganget med residualene. Å droppe $Q$ endrer
-steget lite når residualene er små.
-
-### 1c. Det samme med to ukjente: Gauss–Newton (papir)
-
-Nå gjør vi det samme i hallen, med to ukjente og fire ankre. Regningen er
-den samme som i 1b, bare med partielle deriverte, og $J$ er en
-$4\times2$-matrise. Du skal kjenne igjen $J^Tr$, $J^TJ$ og $Q$ fra 1b.
-
-1. **Gradienten.** Deriver $F$ med kjerneregelen. Første linje er gitt:
-   $$\frac{\partial F}{\partial x}=\tfrac12\sum_i 2\,r_i\,\frac{\partial r_i}{\partial x}=\ \ldots$$
-   Gjør det samme for $\partial F/\partial y$. Forklar at de to tallene er
-   komponentene i $J^Tr$. (Hint: komponent 1 i $J^Tr$ er kolonne 1 i $J$
-   prikket med $r$.)
-2. **Hessianen.** Deriver $\partial F/\partial x$ en gang til med
-   produktregelen. Første linje er gitt:
-   $$\frac{\partial^2F}{\partial x^2}=\sum_i\left(\frac{\partial r_i}{\partial x}\cdot\frac{\partial r_i}{\partial x}+r_i\,\frac{\partial^2 r_i}{\partial x^2}\right).$$
-   Skriv tilsvarende uttrykk for $\partial^2F/\partial x\,\partial y$ og
-   $\partial^2F/\partial y^2$. Som i 1b består hvert av to deler. Forklar at
-   delene uten $r_i$ foran er elementene i $J^TJ$. Resten kaller vi $Q$,
-   og Hessianen er altså $J^TJ+Q$.
-3. **Dropp $Q$.** Nær en god løsning passer målingene nesten, så alle $r_i$
-   er små, og $Q$ er liten sammenlignet med $J^TJ$, slik vi så i 1b.
-   **Gauss–Newton** bytter derfor Hessianen med $J^TJ$ i Newton-likningen:
-   $$J^TJ\,p=-J^Tr.$$
-   Skriv med ord to fordeler: Hva slags deriverte trenger vi ikke lenger?
-   Og hva gir $g^Tp=-p^TJ^TJp=-\|Jp\|^2$ fra uke 10.3 om retningen?
-4. **Et minste kvadraters problem.** Sammenlign $J^TJp=-J^Tr$ med
-   normallikningene $A^TAc=A^Tb$ for $\min_c\|Ac-b\|$ (uke 4 og 7). Hva er
-   «$A$», «$c$» og «$b$» her?
-
-<details>
-<summary>Regnehjelp: gradient, Hessian og minste kvadrater</summary>
-
-**Gradienten.** $\partial F/\partial x=\sum_i r_i\,\partial r_i/\partial x$ og
-$\partial F/\partial y=\sum_i r_i\,\partial r_i/\partial y$. Kolonne 1 i $J$
-inneholder alle $\partial r_i/\partial x$, så komponent 1 i $J^Tr$ er
-nettopp $\sum_i(\partial r_i/\partial x)\,r_i$. Altså $\nabla F=J^Tr$.
-
-**Hessianen.** For eksempel er
-$$\frac{\partial^2F}{\partial x\,\partial y}=\sum_i\left(\frac{\partial r_i}{\partial x}\,\frac{\partial r_i}{\partial y}+r_i\,\frac{\partial^2r_i}{\partial x\,\partial y}\right).$$
-Den første summen er element $(1,2)$ i $J^TJ$, altså kolonne 1 prikket med
-kolonne 2. Den andre summen er element $(1,2)$ i
-$Q=\sum_i r_i\cdot(\text{Hessianen til }r_i)$.
-
-**Fordelene.** Vi trenger bare førstederiverte av $r_i$. Og siden
-$p^TJ^TJp=\|Jp\|^2\ge0$, er $g^Tp\le0$: et Gauss–Newton-steg peker aldri
-oppover, slik et Newton-steg kan gjøre (uke 10.3).
-
-**Minste kvadrater.** Med $A=J$, ukjent $c=p$ og høyreside $b=-r$ er
-normallikningene nettopp $J^TJp=-J^Tr$. Hvert Gauss–Newton-steg løser
-altså $\min_p\|Jp+r\|$: det finner steget $p$ som gjør den lineære
-tilnærmingen $r(z+p)\approx r(z)+Jp$ fra 1a så liten som mulig.
-
-</details>
-
-**Ta med videre:** For $F=\tfrac12\|r\|^2$ er gradienten $J^Tr$ og
-Hessianen $J^TJ+Q$, der $Q$ er ganget med residualene. Gauss–Newton dropper
-$Q$, og da blir hvert steg ett lineært minste kvadraters problem
-$\min_p\|Jp+r\|$. Det koster lite når residualene er små. I del 2 måler vi
-hva det koster når de ikke er det.
-
-### 1d. En rad i $J$ (papir)
-
-Utledningen i 1c gjelder for alle residualer. For å regne trenger vi nå
-selve radene i $J$ for hallen, med to ukjente. Det viser seg at de har en
-enkel geometrisk betydning, som vi bruker igjen i del 3 og 4.
-
-1. Fullfør regningen. Første linje er gitt:
-   $$\frac{\partial r_i}{\partial x}
-   =\frac{1}{2\sqrt{(x-b_{i1})^2+(y-b_{i2})^2}}\cdot2(x-b_{i1})=\ \ldots$$
-   Gjør det samme for $\partial r_i/\partial y$, og skriv raden med
-   $z-b_i$ og $\|z-b_i\|$.
-2. Lite talleksempel: anker $(0,0)$ og $z=(3,4)$. Finn raden. Tegn ankeret,
-   punktet og raden som en pil. Hvilken vei peker pilen, og hvor lang er den?
-3. Forklar med ord: hvis vi flytter $z$ et lite stykke $p$, hvor mye endres
-   avstanden til ankeret? Hvorfor endres den ikke når $p$ står vinkelrett
-   på pilen?
-
-<details>
-<summary>Regnehjelp: raden og talleksempelet</summary>
-
-Den deriverte av $\sqrt{u}$ er $1/(2\sqrt u)$, og den indre deriverte av
-$u=(x-b_{i1})^2+(y-b_{i2})^2$ med hensyn på $x$ er $2(x-b_{i1})$. Toerne
-forkortes:
-
-$$\frac{\partial r_i}{\partial x}=\frac{x-b_{i1}}{\|z-b_i\|},\qquad
-\frac{\partial r_i}{\partial y}=\frac{y-b_{i2}}{\|z-b_i\|},\qquad
-\text{rad } i=\frac{(z-b_i)^T}{\|z-b_i\|}.$$
-
-($d_i$ er et fast tall og forsvinner når vi deriverer.) I talleksempelet er
-$\|z-b_1\|=\sqrt{3^2+4^2}=5$, så raden er $(3,4)/5=(0.6,\,0.8)$. Den peker
-fra ankeret mot $z$ og har lengde 1. Generelt er rad $i$ **enhetsvektoren
-fra anker $i$ til $z$**. En liten flytting $p$ endrer avstanden med omtrent
-(rad)$\cdot p$: bare komponenten mot eller fra ankeret teller.
-
-</details>
-
-**Ta med videre:** En rad i $J$ er en enhetsvektor fra et anker, og $Jp$
-er vektoren med de fire avstandsendringene når vi flytter oss $p$. Vi løser
-hvert Gauss–Newton-steg med `lstsq`, en ortogonal metode som QR i uke 4, og
-ikke via normallikningene: $J^TJ$ har kvadrert kondisjonstall (uke 7 og
-prosjekt 4, del 6).
-
-### Kodespor 1: residual, Jacobimatrise og Gauss–Newton
-
-Nå gjør vi papirregningen om til kode. Vi trenger tre byggesteiner:
-residualvektoren, Jacobimatrisen og ett Gauss–Newton-steg. Den første
-cellen kontrollerer de to første mot talleksempelet i 1d og mot den riktige
-posisjonen, der alle residualene skal være null med eksakte data. Målet er
-å ha en Gauss–Newton-metode du stoler på før vi bruker den i del 2–4.
-
-`B` er en matrise med ett anker per rad, og `d` er vektoren med målte
-avstander. Bruk `np.linalg.norm(..., axis=1)` for å få én avstand per rad.
-Cellen under definerer de to funksjonene og skriver ut to kontroller, slik
-at du ser med en gang om de regner riktig.
+Vi kan kontrollere forståelsen uten å derivere. Cellen viser matrisen,
+en liten flytting og både anslåtte og faktiske avstandsendringer.
 
 ```{pyodide-python}
 #| label: project10-residual
-def residual(z, B, d):
-    # TODO: avstanden fra z til hvert anker minus målt avstand (én verdi per anker).
-    raise NotImplementedError('Fullfør residual')
-
-def jacobian(z, B):
-    # TODO: rad i er enhetsvektoren fra anker i til z.
-    # Tips: D = z - B har én rad per anker. Start med J = np.zeros_like(D),
-    # og del hver rad D[i] på lengden sin i en løkke over i.
-    raise NotImplementedError('Fullfør jacobian')
-
-print('Rad for anker (0,0) og z=(3,4):', jacobian(np.array([3., 4.]), np.array([[0., 0.]])),
-      ' forventet [[0.6 0.8]]')
-print('Residual i fasiten med eksakte data:', residual(z_true, hall, d_exact), ' forventet nuller')
+z0 = np.array([5., 4.])
+p = np.array([.1, 0.])
+J = jacobian(z0, hall)
+print('J =\n', J.round(3), '  form:', J.shape)
+print('J @ p:          ', (J @ p).round(5))
+print('faktisk endring:', (residual(z0 + p, hall, d_exact) - residual(z0, hall, d_exact)).round(5))
+print('residual i fasiten:', residual(z_true, hall, d_exact))
 ```
 
-Fullfør så steget fra 1c og løkken. Funksjonen skal returnere alle punktene,
-slik at vi kan måle feilen i hvert steg. Cellen kjører deretter seks steg
-med eksakte data fra midten av hallen og tegner banen.
+Sammenlign anslag og faktisk endring. Blir samsvaret bedre eller dårligere
+når du endrer første komponent i $p$ fra $0.1$ til $0.01$?
+
+### Ett lineært minste kvadraters problem per steg
+
+Gauss–Newton velger $p$ slik at den lineære modellen passer best:
+
+$$\min_p\|Jp+r\|=\min_p\|Jp-(-r)\|.$$
+
+Dette er minste kvadrater fra uke 4, med $A=J$, ukjent $p$ og høyreside
+$-r$. Normallikningene er $J^TJp=-J^Tr$, men du skal løse med `lstsq`.
+
+**Kodespor 1:** Fullfør `gn_step`. Løkken som bruker steget, er gitt.
+Cellen prøver metoden fra midten av hallen med eksakte målinger og skriver
+ut feilen etter hvert steg. Fasiten brukes bare til kontroll.
 
 ```{pyodide-python}
 #| label: project10-gauss-newton
 def gn_step(z, B, d):
-    # TODO: løs min ||J p + r|| med np.linalg.lstsq og returner p.
+    J, r = jacobian(z, B), residual(z, B, d)
+    # TODO: returner p som løser min ||J p - (-r)|| med np.linalg.lstsq.
     raise NotImplementedError('Fullfør gn_step')
 
 def gauss_newton(z0, B, d, steps=10):
     z = np.array(z0, float)
     points = [z.copy()]
     for k in range(steps):
-        # TODO: ta ett Gauss-Newton-steg og legg det nye punktet i listen.
-        raise NotImplementedError('Fullfør løkken')
+        z = z + gn_step(z, B, d)
+        points.append(z.copy())
     return np.array(points)
 
 path = gauss_newton([5., 4.], hall, d_exact, steps=6)
 for k, z in enumerate(path):
-    print(f'k = {k}: z = {z.round(6)},  avstand til fasit = {np.linalg.norm(z - z_true):.1e}')
-show_hall(hall, d_exact, [path], ['Gauss-Newton'], true=z_true)
+    print(f'k = {k}: z = {z.round(6)}, feil mot fasit = {np.linalg.norm(z - z_true):.1e}')
+show_hall(hall, d_exact, [path], ['Gauss–Newton'], true=z_true)
 ```
 
-Med eksakte data skal du nå $(3,5)$ fra midten av hallen. Avstandene til
-fasiten skal være omtrent $2.2,\ 4.5\cdot10^{-2},\ 5.9\cdot10^{-5},\
-6.5\cdot10^{-11}$ og så null. Nivåkurvene viser $\|r(z)\|$.
+Les feiltabellen: på hvilket steg er avstanden til fasiten mindre enn
+$10^{-4}$ m? Finn også et tegn på at feilen synker raskere enn med en fast
+faktor. Kontrollen med forventet posisjon $(3,5)$ er viktig før del 2.
+
+**Ta med videre:** Ett ikke-lineært problem blir en serie lineære minste
+kvadraters problemer. $Jp$ kobler en flytting i planet til endringer i
+alle fire målte avstander.
 
 ## 2. Like rask som Newton?
 
-Gauss–Newton virker. I 1b og 1c droppet vi $Q$ fordi residualene er små nær
-løsningen, og med eksakte data var de null. Men ekte målinger har feil,
-og da blir residualene ikke null i løsningen. Nå undersøker vi hva det
-koster. Vi har tre datasett fra samme posisjon $(3,5)$:
+Vi beholder ankrene og den kjente posisjonen, men endrer målingene:
 
-| Datasett | Hva er galt med målingene? |
+| Datasett | Målefeil i de fire avstandene |
 |:--|:--|
-| `d_exact` | ingenting |
-| `d_noisy` | små målefeil: $0.3,\ -0.4,\ 0.5,\ -0.2$ m |
-| `d_bad` | anker 3 måler 3 m for langt, de andre er eksakte |
+| `d_exact` | Ingen |
+| `d_noisy` | $(0.3,-0.4,0.5,-0.2)$ m |
+| `d_bad` | $(0,0,3,0)$ m |
 
-Cellen kjører din Gauss–Newton og den ferdige Newton-metoden
-`newton_position` (som bruker hele Hessianen $J^TJ+Q$) fra samme start.
-Begge metodene bruker dine funksjoner `residual` og `jacobian`; sammenligningen
-er derfor ikke en uavhengig kontroll av disse to funksjonene.
-For å se farten måler vi forholdet $e_{k+1}/e_k$, der $e_k=\|z_k-z_\infty\|$
-og $z_\infty$ er siste punkt: et omtrent fast forhold betyr lineær
-konvergens, og et forhold som krymper mot null betyr raskere konvergens.
-Målet er å finne ut når det droppede leddet gjør Gauss–Newton tregere enn
-Newton.
+Her er det matematiske resultatet du trenger, ferdig beregnet:
 
-**Skriv en forventning før du kjører:** I hvilke tilfeller tror du
-Gauss–Newton konvergerer kvadratisk, som Newton? Begrunn med hvilket ledd
-som droppes og hvor stort det er nær løsningen.
+$$g=J^Tr,\qquad H=J^TJ+Q.$$
 
-Fyll inn de to linjene som regner ut avstandene og forholdene. Cellen
-kjører så begge metodene på de tre datasettene og skriver ut feilene side om
-side, slik at du kan se farten direkte.
+Newton bruker hele Hessianen $H$. Gauss–Newton bruker bare $J^TJ$.
+Hjelperen `dropped_part` beregner $Q$; hvert bidrag til denne matrisen er
+ganget med en residual. Når alle residualene er null, er derfor $Q=0$.
+Store residualer kan gjøre forskjellen mellom metodene viktig.
+
+Nær en regulær løsning med full kolonnerang i $J$ er Gauss–Newton-feilen
+omtrent en matrise ganger forrige feil:
+
+$$e_{k+1}\approx M e_k,\qquad M=-(J^TJ)^{-1}Q.$$
+
+Her er $e_k$ en **feilvektor**. Den forutsagte lokale faktoren er største
+absoluttverdi av egenverdiene til $M$ ([uke 6](uke6.qmd#uke6-fikspunkt)).
+Når residualene er null og løsningen er regulær, får vi den raske lokale,
+kvadratiske konvergensen. Dette er en lokal forklaring, ingen garanti fra
+alle startpunkter.
+
+**Forutsi:** I hvilket datasett venter du at Gauss–Newton og Newton har
+mest lik fart? Kjør så cellen. Den skriver både feilnormer og forhold
+mellom etterfølgende feilnormer. Forhold under avrundingsnivå er markert
+med `nan` og skal ikke brukes til å vurdere farten.
 
 ```{pyodide-python}
 #| label: project10-rates
 for name, d in [('eksakte', d_exact), ('små feil', d_noisy), ('feil måling', d_bad)]:
-    path = gauss_newton([5., 4.], hall, d, steps=12)
+    path = gauss_newton([5., 4.], hall, d, steps=20)
     z_end = path[-1]
-    print(f'{name}: z = {z_end.round(3)}, ||r|| = {np.linalg.norm(residual(z_end, hall, d)):.3f}')
-    # TODO: e = avstandene fra hvert punkt i path til z_end, som en NumPy-vektor
-    # (se Newton-linjen nederst i cellen); ratios = e[k+1]/e[k] for k = 0, ..., 6.
-    e = None
-    ratios = None
-    print('   Gauss-Newton, e_k:', np.array2string(e[:7], precision=1))
-    print('   forhold e_k+1/e_k:', np.round(ratios, 3))
+    e = np.linalg.norm(path - z_end, axis=1)
+    ratios = np.divide(e[1:7], e[:6], out=np.full(6, np.nan), where=e[:6] > 1e-10)
     newton = newton_position([5., 4.], hall, d, residual, jacobian)
-    print('   Newton, e_k:      ', np.array2string(np.linalg.norm(newton - newton[-1], axis=1)[:6], precision=1))
-```
-
-Du skal se at Newton konvergerer kvadratisk i alle tre tilfellene. Gauss–Newton
-gjør det bare med eksakte data. Med de små målefeilene er forholdet omtrent
-konstant, rundt $0.05$, og med den feile målingen rundt $0.19$: **lineær
-konvergens**. Residualnormen ved løsningen er $0$, $0.730$ og $2.085$. Med
-eksakte data blir $e_k$ null etter fire steg; forholdene blir da `nan`
-(0/0), og dem kan du se bort fra. NumPy skriver også en advarsel
-(`RuntimeWarning`) om 0/0; den er ufarlig. Før det krymper selve forholdet
-fra steg til steg: det er kjennetegnet på kvadratisk konvergens.
-
-### Forutsi faktoren
-
-Tallene $0.05$ og $0.19$ er målt. Kan vi forutsi dem før vi kjører? Det
-ville vise at vi forstår *hvorfor* Gauss–Newton blir lineær.
-
-Tenk tilbake på appen i 1b. Newton bruker krumningen $J^TJ+Q$, Gauss–Newton
-bare $J^TJ$. Derfor bommer hvert Gauss–Newton-steg litt, og nær løsningen
-er bommen proporsjonal med feilen vi har igjen. Det gir en enkel regel. La
-$e_k=z_k-z_\infty$ være feilen som vektor. Da er
-
-$$e_{k+1}\approx M\,e_k,\qquad M=-(J^TJ)^{-1}Q,$$
-
-der $J$ og $Q$ er regnet ut i løsningen $z_\infty$. Hjelperen
-`dropped_part(z, B, r, J)` regner ut $Q$ fra residualvektoren $r$ og
-Jacobimatrisen $J$ som du har beregnet. Feilen ganges altså med den samme
-matrisen i hvert steg. Det er en fikspunktiterasjon som i uke 2, og
-faktoren er spektralradiusen til $M$, som i uke 6. Vi tar regelen som gitt
-og kontrollerer den med tall.
-
-1. Hva blir $M$ når alle residualene er null? Hva sier det om farten med
-   eksakte data?
-2. Med én ukjent er $M=-Q/(J^TJ)$ bare et tall. Kontroller regelen på
-   talleksempelet fra 1b. I løsningen $x\approx3.847$ er $J^TJ\approx1.005$
-   og $Q\approx-0.0099$. Regn ut $M$. Sammenlign med forholdet $e_2/e_1$,
-   der $e_1=3.847-3.84\approx0.0072$ og $e_2\approx7.1\cdot10^{-5}$ er
-   feilene etter ett og to Gauss–Newton-steg.
-3. Forklar med ord hvorfor faktoren blir større når residualene blir
-   større. (Hint: hva står foran hvert ledd i $Q$?)
-
-<details>
-<summary>Regnehjelp: regelen med tall</summary>
-
-**Punkt 1.** Når alle residualene er null, er $Q=0$ og $M=0$. Feilen
-forsvinner da i første orden, og det som er igjen, er mye mindre. Det er
-den kvadratiske konvergensen vi så med eksakte data.
-
-**Punkt 2.** $M=-Q/(J^TJ)\approx0.0099/1.005\approx0.0099$. Forholdet er
-$e_2/e_1\approx7.1\cdot10^{-5}/0.0072\approx0.0099$. Regelen stemmer.
-
-**Punkt 3.** Hvert ledd i $Q$ er ganget med en residual $r_i$. Store
-residualer gir en stor $Q$, og dermed en stor $M$. Det så du også i appen i
-1b: med større $e$ kom de to parablene lenger fra hverandre.
-
-</details>
-
-Nå kan vi sette tall på $M$. Cellen regner ut spektralradiusen til $M$ i
-det siste punktet for de to datasettene med feil, slik at vi kan
-sammenligne forutsigelsen med de målte forholdene.
-
-```{pyodide-python}
-#| label: project10-predict
-for name, d in [('små feil', d_noisy), ('feil måling', d_bad)]:
-    z_end = gauss_newton([5., 4.], hall, d, steps=30)[-1]
-    J = jacobian(z_end, hall)
-    r = residual(z_end, hall, d)
+    J, r = jacobian(z_end, hall), residual(z_end, hall, d)
     M = -np.linalg.solve(J.T @ J, dropped_part(z_end, hall, r, J))
-    print(f'{name}: forutsagt faktor = {max(abs(np.linalg.eigvals(M))):.3f}')
+    print(f'{name}: slutt {z_end.round(3)}, ||r|| = {np.linalg.norm(r):.3f}')
+    print('  GN feil:     ', np.array2string(e[:7], precision=1))
+    print('  GN forhold:  ', ratios.round(3))
+    print('  Newton feil: ', np.array2string(np.linalg.norm(newton-newton[-1], axis=1)[:6], precision=1))
+    print(f'  forutsagt GN-faktor: {max(abs(np.linalg.eigvals(M))):.3f}')
 ```
 
-Sammenlign med de målte forholdene. Du skal få $0.048$ og $0.192$.
-
-**Ta med videre:** Gauss–Newton er like rask som Newton når residualene i
-løsningen er null. Prisen for det droppede leddet vokser med residualen, og
-vi kan forutsi den som en spektralradius.
+**Les og konkluder:** Lag tre korte rader i en tabell: residualnorm,
+observert konvergenstype og forutsagt faktor. Hvilke feilforhold støtter
+konklusjonen din? Bruk også forskjellen mellom $J^TJ$ og $J^TJ+Q$ i
+forklaringen. En stor residual og langsom konvergens er ulike ting:
+rapporter begge, og ikke bruk bare antall steg som diagnose.
 
 ## 3. Hvor presist vet vi hvor vi er?
 
-Til nå har vi spurt hvor raskt metoden finner løsningen. Nå spør vi hvor
-god selve løsningen er. Hver avstandsmåling har en liten feil, gjerne noen
-centimeter, og vi vet ikke hvor stor den er. Men vi kan stille et
-konkret spørsmål: **hvis anker 1 måler 10 cm for langt, hvor langt og i
-hvilken retning flytter det posisjonen vi regner ut?** Kan vi svare på
-det for hver tenkelig målefeil, vet vi hvor presist posisjonen er
-bestemt.
+En rask metode kan finne en usikker posisjon. Vi undersøker derfor hva
+som skjer når de målte avstandene endres litt, fra $d$ til $d+\delta d$.
+Vi starter ved en løsning med eksakte data og full kolonnerang i $J$.
+Den **lineære følsomhetsmodellen** er gitt ved
 
-Vi trenger ingen nye verktøy. Minste kvadrater fra uke 4 gir en formel for
-flyttingen, og SVD fra uke 7 sier hvilken målefeil som flytter mest. Målet
-med del 3 er å finne den største mulige flyttingen for en målefeil av gitt
-størrelse, uten å prøve ut alle feil, og å se hvordan plasseringen av
-ankrene bestemmer den.
+$$\delta z_{\mathrm{lin}}=\underset{w}{\operatorname{argmin}}\,
+\|Jw-\delta d\|.$$
 
-### 3a. Hvor flytter en målefeil anslaget? (papir)
+Det er den flyttingen som forklarer måleendringene best. Hjelperen
+`move(J, delta_d)` bruker `lstsq` til denne beregningen. Den er en lokal
+tilnærming, ikke en eksakt regel for store målefeil.
 
-Taggen står i den riktige posisjonen $z_*$, og med eksakte avstander $d$
-er alle residualene null der. Så endres de målte avstandene litt, fra $d$
-til $d+\delta d$. For eksempel betyr $\delta d=(0.1,\,0,\,0,\,0)$ at anker 1
-måler 10 cm for langt. Løsningen flytter seg til $z_*+\delta z$, og vi vil
-finne $\delta z$.
+### Én feil eller samme feil i alle målingene?
 
-**Idéen:** start i den gamle løsningen $z_*$ og ta ett Gauss–Newton-steg
-med de nye målingene. Residualene blir små, og da er Gauss–Newton svært
-rask (del 2), så ett steg kommer nesten hele veien.
+Midt i hallen peker rad 1 og rad 3 i $J$ i motsatte retninger. Det samme
+gjør rad 2 og rad 4. Derfor er $J^T(1,1,1,1)^T=0$: like store feil i alle
+fire avstander har ingen del langs kolonnene i $J$. De gir ingen flytting
+i den lineære modellen der. Dette er en symmetri vi kan undersøke.
 
-1. **Den nye residualen i $z_*$.** Fullfør (første linje er gitt):
-   $$r_i^{\text{ny}}(z_*)=\|z_*-b_i\|-(d_i+\delta d_i)=r_i(z_*)-\delta d_i=\ \ldots$$
-   Bruk at $r(z_*)=0$.
-2. **Steget.** Sett $r^{\text{ny}}$ inn i Gauss–Newton-likningen
-   $J^TJ\,\delta z=-J^Tr^{\text{ny}}$ fra 1c, og vis at
-   $$J^TJ\,\delta z=J^T\delta d.$$
-   Dette er normallikningene for $\min_{\delta z}\|J\,\delta z-\delta d\|$.
-   Forklar med 1d hva det betyr: $J\,\delta z$ er de fire
-   avstandsendringene når vi flytter oss $\delta z$. Hvilken flytting
-   velger minste kvadrater da?
-3. **Talleksempel midt i hallen.** La $z_*=(5,4)$. Enhetsvektorene fra
-   ankrene til $z_*$ gir
-   $$J=\frac{1}{\sqrt{41}}\begin{bmatrix}5&4\\-5&4\\-5&-4\\5&-4\end{bmatrix}.$$
-   Regn ut $J^TJ$. Finn så $\delta z$ når
-   (a) anker 1 måler 10 cm for langt, $\delta d=(0.1,\,0,\,0,\,0)$, og
-   (b) alle fire måler 10 cm for langt, $\delta d=(0.1,\,0.1,\,0.1,\,0.1)$.
-   Hvilken vei flytter anslaget seg i (a)? Forklar med ord svaret i (b).
-
-<details>
-<summary>Regnehjelp: flyttingen og talleksempelet</summary>
-
-**Steget.** Med $r(z_*)=0$ er $r^{\text{ny}}(z_*)=-\delta d$. Da er
-$-J^Tr^{\text{ny}}=J^T\delta d$, så $J^TJ\,\delta z=J^T\delta d$. Det er uke 4
-med $A=J$, ukjent $c=\delta z$ og høyreside $b=\delta d$. Minste kvadrater
-velger altså **den flyttingen som forklarer målefeilene best**: den
-flyttingen som gir avstandsendringer $J\,\delta z$ så nær $\delta d$ som mulig.
-
-**$J^TJ$.** Element $(1,1)$ er kolonne 1 prikket med seg selv,
-$(25+25+25+25)/41=100/41$. Element $(1,2)$ er
-$(5\cdot4-5\cdot4+5\cdot4-5\cdot4)/41=0$, og element $(2,2)$ er
-$(16+16+16+16)/41=64/41$. Altså
-$$J^TJ=\frac{1}{41}\begin{bmatrix}100&0\\0&64\end{bmatrix}.$$
-
-**(a)** $J^T\delta d=0.1\cdot(\text{rad }1)^T=\dfrac{0.1}{\sqrt{41}}(5,\,4)$.
-Matrisen er diagonal, så vi deler komponent for komponent:
-$$\delta z=\Bigl(\frac{41}{100}\cdot\frac{0.5}{\sqrt{41}},\ \frac{41}{64}\cdot\frac{0.4}{\sqrt{41}}\Bigr)
-=\Bigl(\frac{0.5\sqrt{41}}{100},\ \frac{0.4\sqrt{41}}{64}\Bigr)\approx(0.0320,\ 0.0400).$$
-Anslaget flytter seg omtrent 5 cm bort fra anker 1, litt skjevt: mer i
-$y$ enn i $x$. Avstanden til anker 1 øker med
-(rad 1)$\cdot\delta z=(5\cdot0.032+4\cdot0.040)/\sqrt{41}\approx0.05$, altså
-halvparten av feilen. Resten blir igjen i residualen.
-
-**(b)** $J^T\delta d=0.1\cdot(\text{summen av radene})^T=0.1\cdot(5-5-5+5,\
-4+4-4-4)/\sqrt{41}=(0,0)$, så $\delta z=0$. Rad 1 og rad 3 er motsatte
-vektorer, og det samme gjelder rad 2 og 4. En liten flytting endrer derfor
-avstandene til to motsatte hjørner like mye, men med motsatt fortegn, og
-summen av de fire endringene er null. Ingen liten flytting kan forklare at
-alle fire er like mye for lange, så feilen blir værende i residualen.
-
-</details>
-
-**Ta med videre:** En liten målefeil $\delta d$ flytter anslaget med
-$\delta z$, der $J^TJ\,\delta z=J^T\delta d$: flyttingen som forklarer
-målefeilene best. Noen målefeil flytter anslaget, andre blir bare
-liggende i residualen.
-
-### Kodespor 2: kontroller formelen
-
-Formelen bygger på ett Gauss–Newton-steg. Er det nok? Vi kontrollerer den
-ved å kjøre hele Gauss–Newton på nytt med de endrede målingene og
-sammenligne. Du skriver formelen som én linje, på samme måte som `gn_step`.
-Målet er å se at formelen stemmer så godt at vi kan bruke den i resten av
-del 3 i stedet for å regne alt på nytt.
-
-- Fullfør `move` og kjør cellen. Stemmer den første linjen med (a) i 3a?
-- Bytt `z_c` til `z_true`, altså $(3,5)$, og kjør igjen. Flytter «alle
-  fire for lange» fortsatt ingenting? Hvorfor ikke?
-
-Cellen regner ut flyttingen med formelen og med hele Gauss–Newton for hver
-av de fire ett-anker-feilene, og til slutt for «alle fire for lange».
+Cellen sammenligner den lineære modellen med en ny Gauss–Newton-løsning.
+Kjør først midt i hallen. Bytt så `z_c` til `z_true`, altså $(3,5)$.
 
 ```{pyodide-python}
 #| label: project10-moves
-def move(J, delta_d):
-    # TODO: løs min ||J dz - delta_d|| med np.linalg.lstsq og returner dz.
-    raise NotImplementedError('Fullfør move')
-
-z_c = np.array([5., 4.])                     # midt i hallen
-d_c = np.linalg.norm(z_c - hall, axis=1)     # eksakte avstander derfra
+z_c = np.array([5., 4.])
+d_c = np.linalg.norm(z_c - hall, axis=1)
 J = jacobian(z_c, hall)
-for i in range(4):
-    delta_d = np.zeros(4); delta_d[i] = .1   # anker i+1 måler 10 cm for langt
-    full = gauss_newton(z_c, hall, d_c + delta_d, steps=5)[-1] - z_c
-    print(f'anker {i+1}: formel {move(J, delta_d).round(4)},  Gauss-Newton på nytt {full.round(4)}')
-print('alle fire 10 cm for lange:', move(J, .1*np.ones(4)).round(4) + 0.)
+for label, delta_d in [('anker 1 +10 cm', np.array([.1, 0., 0., 0.])),
+                       ('alle fire +10 cm', .1*np.ones(4))]:
+    linear = move(J, delta_d)
+    full = gauss_newton(z_c, hall, d_c + delta_d, steps=8)[-1] - z_c
+    print(f'{label}: lineær {linear.round(4)}, ny løsning {full.round(4)}')
 ```
 
-Midt i hallen skal du få $(0.032,\,0.040)$ for anker 1 fra begge
-metodene; Gauss–Newton på nytt gir $0.0401$ i andre komponent.
-Flyttingene for de andre ankrene er speilbilder av denne, og «alle fire
-for lange» gir $(0,0)$. I $(3,5)$ gir den siste linjen
-$(-0.0212,\,0.0175)$.
+Hvor godt stemmer tilnærmingen? Forklar hvorfor svaret for «alle fire»
+kan endres når taggen flyttes fra midten. Halver målefeilen i ett av
+tilfellene og kontroller om avviket mellom modell og ny løsning blir mindre.
 
-### 3b. Verste fall: ellipsen fra SVD
+### SVD viser den mest følsomme retningen
 
-Vi har prøvd noen få målefeil. Men målefeilen er ukjent og kan være en
-hvilken som helst vektor i $\mathbb R^4$. Vi spør derfor: **av alle
-målefeil med lengde $\varepsilon$, hvilken flytter anslaget mest, og hvor
-langt?** Her svarer SVD fra uke 7. Der så vi at $J$ sender enhetssirkelen
-til en ellipse, med $Jv_i=\sigma_iu_i$. Høyre singulærvektorer $v_1,v_2$
-er retninger vi kan flytte oss i (i planet), og venstre singulærvektorer
-$u_1,u_2$ er mønstre av avstandsendringer (i $\mathbb R^4$).
+Fra [uke 7](uke7.qmd#uke7-geometri) er $Jv_i=\sigma_i u_i$.
+Hvis målefeilen er $\delta d=\varepsilon u_i$, gir regelen
+$\delta z_{\mathrm{lin}}=(\varepsilon/\sigma_i)v_i$.
+Du kan kontrollere den med én linje matrisealgebra:
 
-1. **Målefeilen $\varepsilon u_i$.** Anta at $\delta d=\varepsilon u_i$. Vis
-   at flyttingen $\delta z=\varepsilon v_i/\sigma_i$ forklarer målefeilen
-   nøyaktig. Første linje er gitt:
-   $$J\Bigl(\frac{\varepsilon}{\sigma_i}v_i\Bigr)=\frac{\varepsilon}{\sigma_i}Jv_i=\ \ldots$$
-   Residualen $J\,\delta z-\delta d$ blir null, så ingen flytting kan gjøre
-   det bedre: dette er minste kvadraters løsning. Hvor langt flytter anslaget seg?
-2. **Tolk.** For å endre avstandene med mønsteret $u_2$ må vi flytte oss
-   $\varepsilon/\sigma_2$ langs $v_2$. Forklar med ord hvorfor en liten
-   $\sigma_2$ betyr at en liten målefeil kan flytte anslaget langt.
-3. **Regelen (gitt).** Alle målefeil med lengde $\varepsilon$ flytter
-   anslaget til et punkt **inne i ellipsen** med halvakser
-   $\varepsilon/\sigma_1$ langs $v_1$ og $\varepsilon/\sigma_2$ langs $v_2$.
-   Målefeil som er kombinasjoner av $u_1$ og $u_2$, havner på kanten.
-   Den største mulige flyttingen er altså $\varepsilon/\sigma_2$. Appen
-   under viser hvorfor.
-4. **Midt i hallen.** Bruk $J^TJ$ fra 3a. Den er diagonal, så egenverdiene
-   er diagonalelementene, og $\sigma_i$ er kvadratroten av dem. Finn
-   $\sigma_1$, $\sigma_2$, $v_1$, $v_2$ og halvaksene for
-   $\varepsilon=0.1$ m. Ligger flyttingen fra (a) i 3a inne i ellipsen?
+$$J\left(\frac{\varepsilon}{\sigma_i}v_i\right)
+=\frac{\varepsilon}{\sigma_i}Jv_i=\varepsilon u_i.$$
 
-<details>
-<summary>Regnehjelp: verste fall og ellipsen</summary>
+Vi gir også regelen for alle retninger: målefeil med
+$\|\delta d\|\le\varepsilon$ gir lineære flyttinger inne i ellipsen med
+halvakser $\varepsilon/\sigma_1$ og $\varepsilon/\sigma_2$, langs $v_1$ og
+$v_2$. Største lineære flytting er $\varepsilon/\sigma_2$.
+Dette er en følsomhetsellipse, ikke et statistisk konfidensområde.
 
-**Punkt 1.** $\frac{\varepsilon}{\sigma_i}Jv_i=\frac{\varepsilon}{\sigma_i}\sigma_iu_i=\varepsilon u_i=\delta d$.
-Flyttingen har lengde $\varepsilon/\sigma_i$, fordi $\|v_i\|=1$.
-
-**Hvorfor en ellipse?** Den delen av målefeilen som ikke er en
-kombinasjon av $u_1$ og $u_2$, flytter ingenting, akkurat som «alle fire
-for lange» midt i hallen. Appen under viser resten.
-
-**Midt i hallen** er egenverdiene $100/41$ og $64/41$, så
-$\sigma_1=10/\sqrt{41}\approx1.562$ langs $v_1=(1,0)$ og
-$\sigma_2=8/\sqrt{41}\approx1.249$ langs $v_2=(0,1)$. (Fortegnet på en
-singulærvektor er fritt: $-v_i$ og $-u_i$ passer like godt. Her, i appen og
-i figuren velger vi det som gjør største komponent positiv.) Halvaksene er
-$0.1/1.562\approx0.064$ m i $x$-retning og $0.1/1.249\approx0.080$ m i
-$y$-retning. Flyttingen $(0.032,\,0.040)$ har lengde $0.051$ og ligger
-inne i ellipsen: $(0.032/0.064)^2+(0.040/0.080)^2=0.25+0.25=0.5<1$.
-
-</details>
-
-**Se regelen i en app.** Til venstre er målefeilen $\delta d$. Vi tegner
-bare delen langs $u_1$ og $u_2$, altså tallene $c_1$ og $c_2$ i
-$\delta d=c_1u_1+c_2u_2+\ldots$, for resten flytter ingenting. Skiven har
-radius $\varepsilon=10$ cm. Til høyre er flyttingen
-$\delta z=c_1v_1/\sigma_1+c_2v_2/\sigma_2$ og ellipsen fra regelen. Dra det
-oransje punktet rundt kanten av skiven og se hvor $\delta z$ går. Dra det
-så inn mot midten. De blå punktene er de åtte målefeilene «ett anker
-$\pm10$ cm». Dra til slutt taggen i kartet nederst, for eksempel til
-$(3,5)$ eller langt ut av hallen til høyre.
+I appen er målefeilen til venstre og flyttingen til høyre. Dra det
+oransje punktet rundt og inn i skiven, og flytt så taggen i kartet nederst.
+De blå punktene viser én målefeil om gangen. Bruk appen til å forutsi
+hvilken retning taggen er mest usikker i; Python-forsøket under gir tallene.
 
 ```{.jsxgraph width="620" height="460" style="width:100%;max-width:620px;height:460px;border:0;"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -895,28 +418,8 @@ board.create('text', [0.1, 1.55, function () {
 }], {fontSize:12, color:'#37474f', cssStyle:'background-color:rgba(255,255,255,0.85);', highlight:false, fixed:true});
 ```
 
-**Hva viser bildet?** Når $\delta d$ går rundt kanten av skiven, går
-$\delta z$ rundt ellipsen, og inne i skiven havner $\delta z$ inne i
-ellipsen. Den lengste flyttingen får vi når $\delta d$ peker langs $u_2$:
-midt i hallen er den $\varepsilon/\sigma_2=0.080$ m. De blå punktene ligger
-inne i skiven, fordi en ett-anker-feil også har en del som ikke er en
-kombinasjon av $u_1$ og $u_2$, og den delen flytter ingenting. Derfor
-havner de inne i ellipsen. I $(3,5)$ er ellipsen dreid. Når taggen går ut
-av hallen, blir den lang og smal på tvers, og det ser vi nærmere på i «Gå
-ut av hallen».
-
-Nå kontrollerer vi regelen med din egen `move` for to grupper av
-målefeil, alle med lengde $\varepsilon=0.1$: ett anker om gangen med
-$\pm10$ cm, og 24 målefeil $\varepsilon(\cos t\,u_1+\sin t\,u_2)$ med lik
-avstand rundt en sirkel. Hjelperen `show_moves` tegner flyttingene og
-ellipsen fra SVD.
-
-- Forutsi ut fra appen: hvilken gruppe havner på kanten av ellipsen, og
-  hvilken inne i?
-- Kjør cellen. Bytt så `z_c` til `z_true` igjen: hva skjer med aksene?
-
-Cellen skriver først ut singulærverdiene og lengden av den verste
-flyttingen, og tegner så alle flyttingene sammen med ellipsen.
+Cellen viser halvaksene og kontrollerer den mest følsomme retningen med
+`move`. Figuren tegner også flyttingene fra feil i ett anker om gangen.
 
 ```{pyodide-python}
 #| label: project10-ellipse
@@ -925,274 +428,171 @@ z_c = np.array([5., 4.])
 J = jacobian(z_c, hall)
 U, s, Vt = np.linalg.svd(J, full_matrices=False)
 print('singulærverdier:', s.round(4), '  halvakser eps/sigma:', (eps/s).round(4))
-worst = move(J, eps*U[:, 1])
-print(f'flyttingen for målefeilen eps*u2 har lengde {np.linalg.norm(worst):.4f}')
+print('mest følsomme retning v2:', Vt[1].round(3))
+print('lengde med delta_d = eps*u2:', np.linalg.norm(move(J, eps*U[:, 1])))
 one_anchor = [move(J, sign*eps*e) for e in np.eye(4) for sign in (1, -1)]
-circle = [move(J, eps*(np.cos(t)*U[:, 0] + np.sin(t)*U[:, 1])) for t in np.linspace(0, 2*np.pi, 25)]
-show_moves(z_c, J, eps, {'ett anker ±10 cm': one_anchor, 'eps (cos t u1 + sin t u2)': circle})
+show_moves(z_c, J, eps, {'ett anker ±10 cm': one_anchor})
 ```
 
-Midt i hallen er singulærverdiene $1.5617$ og $1.2494$, halvaksene
-$0.064$ og $0.080$ m, og den verste målefeilen flytter anslaget
-$0.0800$ m. Sirkelgruppen ligger på ellipsen, og ett-anker-gruppen ligger
-inne i den. (Midt i hallen gir $+10$ cm i anker 1 og $-10$ cm i anker 3
-samme flytting, så du ser bare fire blå punkter.) I $(3,5)$ er halvaksene
-$0.0656$ og $0.0772$ m, og ellipsen er dreid: $v_1$ og $v_2$ følger ikke
-lenger aksene.
+**Les og forklar:** Hvilken av halvaksene er lengst, og hvilken retning
+har den? Finn igjen $\varepsilon/\sigma_2$ i utskriften. Hvorfor kan en
+liten singulærverdi gi stor posisjonsfeil selv om målefeilen er liten?
+Fortegnet på $v_2$ er fritt; det er aksen, ikke pilens fortegn, som teller.
 
 ### Gå ut av hallen
 
-I hallen ser taggen ankrene i fire ganske forskjellige retninger, og
-ellipsen er nesten rund. Hva skjer når den ikke gjør det? Vi flytter
-taggen bort fra hallen langs linjen $y=4$, til punktene $(5+R,\,4)$. Da
-ligger ankrene etter hvert nesten i samme retning sett fra taggen. Målet er
-å se hvordan retningene til ankrene styrer presisjonen.
+Vi flytter taggen fra midten av hallen langs linjen $y=4$. Langt unna ser
+taggen alle ankrene i nesten samme retning. **Forutsi:** blir det lettest
+å skille flyttinger langs eller på tvers av denne retningen?
 
-**Forutsi først:** Hvilken halvakse vokser, og hvilken holder seg? Tenk på
-hvordan ankrene ser ut sett fra langt unna.
-
-Cellen gjentar regningen fra 3b for fire avstander $R$, én rad per
-avstand: singulærverdiene, den største mulige flyttingen
-$\varepsilon/\sigma_2$, flyttingen når anker 1 måler 10 cm for langt (fra
-formelen og fra Gauss–Newton på nytt) og når alle fire gjør det.
+Cellen sammenligner fire avstander fra midten. Les både singulærverdiene
+og den største lineære flyttingen for en målefeil med norm $0.1$ m.
 
 ```{pyodide-python}
 #| label: project10-far-away
 eps = .1
-print('    R   sigma_1  sigma_2   eps/sigma_2   anker 1 +10 cm: formel (GN på nytt)   alle fire +10 cm')
+print(' R     sigma_1  sigma_2  største lineære flytting (m)')
 for R in [0, 20, 50, 100]:
     z_far = np.array([5. + R, 4.])
-    d_far = np.linalg.norm(z_far - hall, axis=1)
-    J = jacobian(z_far, hall)
-    s = np.linalg.svd(J, compute_uv=False)
-    delta_d = np.array([eps, 0., 0., 0.])
-    full = gauss_newton(z_far, hall, d_far + delta_d, steps=8)[-1] - z_far
-    print(f'{R:5d}   {s[0]:.3f}    {s[1]:.3f}     {eps/s[1]:.3f}        '
-          f'{move(J, delta_d).round(3)} ({full.round(3)})   {move(J, eps*np.ones(4)).round(3) + 0.}')
+    s = np.linalg.svd(jacobian(z_far, hall), compute_uv=False)
+    print(f'{R:3d}     {s[0]:.3f}    {s[1]:.3f}          {eps/s[1]:.3f}')
 ```
 
-Den største flyttingen $\varepsilon/\sigma_2$ vokser omtrent proporsjonalt
-med avstanden: $0.080$, $0.234$, $0.618$ og $1.246$ m for $R=0,20,50,100$.
-Langt unna flytter en feil på 10 cm i anker 1 anslaget omtrent $0.59$ m
-på tvers ($y$), mens 10 cm for mye i alle fire flytter det omtrent
-$0.10$ m mot eller fra hallen ($x$). Formelen og Gauss–Newton på nytt
-stemmer på noen millimeter også her.
+Skriv én konklusjon om geometrien og én om tallene. Knytt den mest
+usikre retningen til at $J$ blir nesten rangmangelfull. Det holder å bruke
+vektorer, singulærverdier og figuren; ingen grenseverdiutledning kreves.
 
-1. Forklar med ord hvorfor $\sigma_2\to0$, og hvorfor det gir stor
-   usikkerhet på tvers. Bruk 1d: hvor mye endres avstandene når taggen
-   flytter seg litt på tvers av retningen til ankrene?
-2. *(valgfri fordypning)* Langt unna peker alle radene i $J$ nesten i samme
-   retning. Kall den $a$, med $\|a\|=1$. Bruk det til å forklare at
-   $\sigma_1\to2$. (Hint: $J\approx\mathbf 1a^T$, der $\mathbf 1$ er
-   vektoren med fire enere.)
-
-<details>
-<summary>Regnehjelp: singulærverdiene langt unna</summary>
-
-En flytting på tvers står nesten vinkelrett på alle radene, så den endrer
-nesten ingen avstand. Da kan en liten målefeil bare forklares med en stor
-flytting på tvers, og det er det en liten $\sigma_2$ betyr.
-Avstandsmålingene sier altså nesten bare noe om avstanden til hallen, ikke
-om posisjonen på tvers.
-
-*Valgfri del.* Med $J\approx\mathbf 1a^T$ er
-$J^TJ\approx a\,\mathbf 1^T\mathbf 1\,a^T=4\,aa^T$. Denne matrisen har
-egenverdien $4$ langs $a$ (så $v_1\approx a$) og $0$ på tvers, så
-$\sigma_1\approx\sqrt4=2$ og $\sigma_2\approx0$.
-
-</details>
-
-**Ta med videre:** En målefeil med lengde $\varepsilon$ flytter anslaget
-høyst $\varepsilon/\sigma_2$, langs $v_2$. Singulærverdiene til $J$ måler
-hvor godt målingene skiller ulike retninger, og ankre som ses i nesten
-samme retning, gir en nesten rangmangelfull $J$ og en lang, smal ellipse.
+**Ta med videre:** Singulærverdiene måler hvor godt avstandene skiller
+ulike flyttinger. God konvergens gjør ikke geometrien mer informativ.
 
 ## 4. Konvergert, men feil?
 
-I del 3 så vi at ankre i nesten samme retning gir dårlig presisjon på
-tvers. Nå tar vi det et steg videre og setter ankrene nesten på en rett
-linje, langs én vegg:
+Nå står ankrene nesten på en rett linje langs en vegg:
 
-$$b_1=(0,0),\quad b_2=(4,\,0.1),\quad b_3=(7,\,-0.1),\quad b_4=(10,0).$$
+$$b_1=(0,0),\quad b_2=(4,0.1),\quad b_3=(7,-0.1),\quad b_4=(10,0).$$
 
-Taggen står i $(6,3)$, og målingene er **eksakte** (`wall`, `d_wall`). Ut
-fra avstandene alene er speilbildet av taggen i veggen nesten like godt
-som den riktige posisjonen. Cellen kjører Gauss–Newton fra ett punkt på hver side
-av veggen og skriver ut sluttpunktet, residualnormen og gradientnormen
-$\|J^Tr\|$. Målet er å finne ut om gradienten eller residualen avslører et
-galt svar.
+Taggen står i $(6,3)$, og `d_wall` er eksakte målinger. Fra avstandene
+alene kan et punkt på den andre siden av veggen se nesten like godt ut.
+**Forutsi:** Hva vil liten gradient fortelle oss, og hva vil den ikke
+fortelle oss?
+
+Cellen bruker to starter og skriver ut sluttpunkt, residualnorm og
+gradientnorm. Nivåkurvene hjelper deg å tolke forskjellen.
 
 ```{pyodide-python}
 #| label: project10-wall
-for start in ([5., 4.], [5., -4.]):
-    path = gauss_newton(start, wall, d_wall, steps=15)
+starts = ([5., 4.], [5., -4.])
+paths = [gauss_newton(start, wall, d_wall, steps=15) for start in starts]
+for start, path in zip(starts, paths):
     z_end = path[-1]
-    r = residual(z_end, wall, d_wall)
-    J = jacobian(z_end, wall)
+    r, J = residual(z_end, wall, d_wall), jacobian(z_end, wall)
     print(f'start {start}: slutt {z_end.round(4)}, ||r|| = {np.linalg.norm(r):.3f}, '
           f'||J^T r|| = {np.linalg.norm(J.T @ r):.1e}')
-show_hall(wall, d_wall, [gauss_newton(s, wall, d_wall, 15) for s in ([5., 4.], [5., -4.])],
-          ['start (5, 4)', 'start (5, -4)'], true=z_true_wall)
+show_hall(wall, d_wall, paths, ['start (5,4)', 'start (5,-4)'], true=z_true_wall)
 ```
 
-Fra $(5,4)$ finner vi $(6,3)$. Fra $(5,-4)$ ender vi i $(5.92,\,-3.02)$.
-Der er gradienten $J^Tr$ null i flyttall, så metoden har konvergert, men
-**residualnormen er $0.224$ m med eksakte data**.
+**Les og konkluder:** Hvilken start gir riktig posisjon? Kan gradientnormen
+alene avsløre det andre svaret? Bruk både residualen og figuren.
 
-1. Bruk nivåkurvene til å forklare hva punktet $(5.92,-3.02)$ er, og
-   hvorfor det ligger nær speilbildet $(6,-3)$ av den riktige posisjonen.
-   Hvorfor kan gradient null ikke skille det fra det riktige punktet? Knytt
-   svaret til [uke 8.4](uke8.qmd#uke8-lokalt): er $F$ konveks?
-2. **Modellkontroll uten fasit.** I praksis kjenner vi ikke fasiten. Anta
-   at hver av de $m=4$ målingene er høyst $\varepsilon$ feil. I den
-   riktige posisjonen er residualen $r=-\delta d$ (som i 3a), så der er
-   $\|r\|\le\sqrt{4\varepsilon^2}=2\varepsilon$. Den beste tilpasningen har
-   en residual som er høyst like stor, for den minimerer jo $\|r\|$. Hva
-   er grensen for $\varepsilon=0.05$ m? Hva betyr da $\|r\|=0.224$? Kan en
-   residual over grensen ha en annen forklaring enn et falskt minimum? Og
-   beviser en residual under grensen at svaret er riktig?
+I praksis kjenner vi ikke fasiten. Her får du en modellkontroll: hvis
+hver av $m$ målinger er høyst $\varepsilon$ feil, finnes en posisjon med
+$\|r\|\le\sqrt m\,\varepsilon$. Et globalt minste kvadraters minimum har
+minst like liten residual. For fire målinger med høyst $0.05$ m feil er
+grensen $0.10$ m.
 
-### Start på veggen: et steg som blir for langt
+Sammenlign grensen med begge utskriftene. En residual over grensen betyr
+at svaret eller antakelsen om målefeil ikke holder. En residual under
+grensen beviser heller ikke at posisjonen er entydig eller riktig.
 
-Hva skjer hvis vi starter **på** linjen gjennom ankrene, i $(5,0)$? Da peker
-alle radene i $J$ nesten langs veggen, og $J$ er nesten rangmangelfull, som
-langt unna hallen i del 3. Cellen skriver ut singulærverdiene til $J$ og
-lengden av det første Gauss–Newton-steget. Målet er å se hvordan en liten
-singulærverdi gir et svært langt steg, og å reparere det med Armijo fra
-uke 10.4.
+### Start på veggen: kontroller lengden med Armijo
 
-```{pyodide-python}
-#| label: project10-wall-start
-z0 = np.array([5., 0.])
-print('singulærverdier av J i (5,0):', np.linalg.svd(jacobian(z0, wall), compute_uv=False).round(3))
-p = gn_step(z0, wall, d_wall)
-print(f'Gauss-Newton: første steg er {np.linalg.norm(p):.1f} m langt, til {(z0 + p).round(2)}')
-```
+Start i $(5,0)$. Retningene til ankrene ligger da nesten langs veggen,
+og en liten singulærverdi kan gi et langt Gauss–Newton-steg.
+Retningen er likevel en nedstigningsretning når gradienten ikke er null:
+fra normallikningene får vi den korte matriseidentiteten
 
-Du skal få $\sigma_2\approx0.08$ og et første steg på $11.3$ m, til et
-punkt langt ute på feil side av veggen.
+$$g^Tp=-p^TJ^TJp=-\|Jp\|^2<0.$$
 
-1. Forklar med singulærverdiene hvorfor steget blir så langt. (Hint:
-   egenverdiene til $J^TJ$ er $\sigma_1^2$ og $\sigma_2^2$. Hva skjer når vi
-   løser et system med en matrise som har egenverdien $\sigma_2^2\approx0.007$?)
-2. Hvilken av sikringene fra [uke 10.4](uke10.qmd#uke10-demping) trengs
-   her: Cholesky-forsøket for retningen eller Armijo for lengden? Begrunn
-   med punkt 3 i 1c: $p^TJ^TJp=\|Jp\|^2\ge0$.
+Vi trenger derfor å kontrollere **lengden**. Armijo prøver
+$\alpha=1,1/2,1/4,\ldots$ til
 
-<details>
-<summary>Regnehjelp: hvorfor steget blir langt, og hvilken sikring</summary>
+$$F(z+\alpha p)\le F(z)+10^{-4}\alpha g^Tp.$$
 
-Skriv $-J^Tr$ i egenvektorene til $J^TJ$, som er $v_1$ og $v_2$. Å løse
-$J^TJp=-J^Tr$ betyr å dele komponenten langs $v_i$ på $\sigma_i^2$. Å dele
-på $0.007$ er å gange med omtrent $150$, så selv en liten komponent langs
-$v_2$ (på tvers av veggen) gir et svært langt steg.
-
-Retningen er ikke problemet: $g^Tp=-\|Jp\|^2\le0$, så Gauss–Newton-steget
-peker aldri oppover, og Cholesky-forsøket ville godta $\mu=0$. Det er
-**lengden** som er gal, og den kontrollerer Armijo.
-
-</details>
-
-Fullfør Armijo-løkken i `armijo_step`: halver `alpha` så lenge testen fra
-uke 10.4 ikke holder. Cellen bruker den først på det lange steget fra
-$(5,0)$, og tar så ti sikrede steg.
+**Kodespor 2:** Fullfør halveringsløkken. Cellen viser det første steget
+og tar deretter ti sikrede steg. Bruk funksjonsverdiene til å avgjøre om
+halveringen hjelper; bruk residualen til å vurdere sluttpunktet.
 
 ```{pyodide-python}
 #| label: project10-armijo
 def armijo_step(z, B, d):
     p = gn_step(z, B, d)
     F = lambda w: .5*np.sum(residual(w, B, d)**2)
-    slope = (jacobian(z, B).T @ residual(z, B, d)) @ p      # g^T p
+    slope = (jacobian(z, B).T @ residual(z, B, d)) @ p
     alpha = 1.
-    # TODO: halver alpha så lenge F(z + alpha p) > F(z) + 1e-4 alpha g^T p.
+    # TODO: så lenge Armijo-testen ikke holder, halver alpha.
     raise NotImplementedError('Fullfør Armijo-løkken')
     return alpha, p
 
-z0 = np.array([5., 0.])                                     # starten på veggen, som over
+z0 = np.array([5., 0.])
 F = lambda w: .5*np.sum(residual(w, wall, d_wall)**2)
+p = gn_step(z0, wall, d_wall)
+print('singulærverdier i starten:', np.linalg.svd(jacobian(z0, wall), compute_uv=False).round(3))
+print(f'helt steg: lengde {np.linalg.norm(p):.2f} m, F før {F(z0):.2f}, F etter {F(z0+p):.2f}')
 alpha, p = armijo_step(z0, wall, d_wall)
-print(f'F(z0) = {F(z0):.2f}, helt steg: F = {F(z0 + p):.1f}; Armijo godtar alpha = {alpha}, '
-      f'F = {F(z0 + alpha*p):.2f} i {(z0 + alpha*p).round(2)}')
+print(f'godtatt alpha = {alpha}, F etter = {F(z0+alpha*p):.2f}')
 z = z0.copy()
 for k in range(10):
     alpha, p = armijo_step(z, wall, d_wall)
     z = z + alpha*p
-print(f'sikret Gauss-Newton fra (5,0) ender i {z.round(4)}, ||r|| = {np.linalg.norm(residual(z, wall, d_wall)):.3f}')
+print(f'slutt {z.round(4)}, ||r|| = {np.linalg.norm(residual(z, wall, d_wall)):.3f}')
 ```
 
-Du skal få $F(z_0)=5.42$. Det hele steget gir $F=107.4$, og Armijo godtar
-$\alpha=0.25$ med $F=0.71$ i $(5.08,\,-2.83)$. Videre steg ender i
-$(5.9162,\,-3.0193)$ med $\|r\|=0.224$: det falske minimumet fra starten
-av del 4. **Armijo bestemmer hvor langt vi går, ikke hvilket minimum vi
-ender i.** Det sikrede steget lander på feil side av veggen, og derfra
-fører metoden oss pent til speilpunktet.
+Sammenlign helt og halvert steg: hva løste Armijo, og hvilket problem fra
+forsøket med to starter står igjen? Foreslå én praktisk kontroll når du
+ikke kjenner fasiten. Begrunn med tall fra utskriftene, ikke bare med
+at metoden har «konvergert».
 
-3. Armijo gjorde steget trygt. Hvorfor fant metoden likevel ikke $(6,3)$?
-   Hva ville du gjøre for å finne den riktige posisjonen, når du ikke
-   kjenner fasiten?
-
-**Ta med videre:** Residualen kan avsløre et falskt minimum som gradienten
-ikke ser. En nesten rangmangelfull $J$ gir både stor usikkerhet og svært
-lange steg. Gauss–Newton-retningen peker alltid nedover, så Armijo er den
-sikringen som trengs; den gjør stegene trygge, men gjør ikke problemet
-konvekst.
+**Ta med videre:** Steglengde, konvergens, målefeil og entydighet er
+forskjellige spørsmål. Ingen enkelt liten norm svarer på dem alle.
 
 ## 5. Din påstand
 
-Nå har du verktøyene: Gauss–Newton, formelen for flyttingen, ellipsen fra
-SVD og modellkontrollen. Velg **én** av veiene nedenfor. Skriv påstanden
-og forutsigelsen **før** du kjører, helst med singulærverdiene til $J$.
-Kontroller deretter med `move` og `show_moves`, med Gauss–Newton på nytt,
-eller med Gauss–Newton fra flere starter.
+Velg **én** av undersøkelsene. Hold alt annet fast, skriv én forutsigelse,
+og bruk et lite kontrollert forsøk til å undersøke den.
 
-- **Et femte anker.** Hvor i eller ved hallen bør et femte anker stå for å
-  gjøre den største mulige flyttingen $\varepsilon/\sigma_2$ minst mulig
-  for en tag i $(3,5)$? Lag `B5 = np.vstack([hall, [x5, y5]])`.
-- **Ankre nøyaktig på én linje.** Sett alle fire ankrene på $y=0$. Hva skjer
-  med speilpunktet nå? Kan noen metode avgjøre hvilken side taggen er på?
-- **Finn den feile målingen.** Se på residualvektoren i løsningen for
-  `d_bad`. Peker den ut anker 3? Prøv å fjerne ett anker om gangen og
-  sammenlign $\|r\|$ med modellkontrollen fra del 4 (nå med $m=3$).
+- **Et femte anker:** Sammenlign to plasseringer av et nytt anker for en
+  tagg i $(3,5)$. Lag `B5 = np.vstack([hall, [x5, y5]])` og sammenlign
+  $\sigma_2$ og største lineære flytting $\varepsilon/\sigma_2$.
+- **Ankre nøyaktig på én linje:** Sett alle ankre på $y=0$, lag eksakte
+  avstander fra $(6,3)$, og prøv én start på hver side. Kan avstandene
+  alene avgjøre hvilken side taggen er på?
 
-Hold alt annet fast, og endre én ting. Avgrens konklusjonen til det du faktisk
-har undersøkt, og vis også et eventuelt motfunn.
+Vis ett resultat som støtter eller utfordrer forventningen. Avgrens
+konklusjonen til forsøket og den matematiske modellen du har brukt.
 
 ## Spørsmål du skal kunne svare på
 
-1. Hva er gradienten og Hessianen til $F=\tfrac12\|r\|^2$, og hvilket ledd
-   dropper Gauss–Newton?
-2. Hvorfor er et Gauss–Newton-steg et minste kvadraters problem, og hvorfor
-   løser vi det med `lstsq`?
-3. Hva er Jacobimatrisen, og hva betyr en rad i den geometrisk?
-4. Når konvergerer Gauss–Newton like raskt som Newton, og hvorfor?
-5. Hvordan forutsier du konvergensfaktoren, og stemte forutsigelsen?
-6. Hvordan flytter en liten målefeil $\delta d$ anslaget, og hvorfor
-   flytter «alle fire 10 cm for lange» ingenting midt i hallen?
-7. Hvor langt kan en målefeil med lengde $\varepsilon$ flytte anslaget, i
-   hvilken retning, og hvorfor blir posisjonen usikker på tvers langt unna?
-8. Hvordan kan residualen avsløre et falskt minimum, og hvorfor trenger
-   Gauss–Newton Armijo, men ikke Cholesky-forsøket?
-9. *(valgfri fordypning)* Hvor bør et femte anker stå?
-10. *(valgfri fordypning)* Hva skjer når alle ankrene står på én linje?
+Disse spørsmålene er til egenkontroll, ikke en ekstra rapport.
+
+1. Hva betyr én komponent av $r$, én rad i $J$ og produktet $Jp$?
+2. Hvorfor kan Gauss–Newton-steget regnes med `lstsq`?
+3. Hva viser feilforholdene om konvergensfarten, og hvilken rolle har $Q$?
+4. Hva kan den lineære følsomhetsmodellen si, og når er den bare en tilnærming?
+5. Hvordan gir en liten $\sigma_2$ en stor usikker retning?
+6. Hva kan residualnormen fortelle som gradientnormen ikke forteller?
+7. Hva reparerer Armijo, og hvorfor avgjør det ikke hvilket minimum vi finner?
 
 ## Det du leverer
 
 Lever én kjørbar notebook eller Quarto-side med:
 
-- papirregningene fra 1a–1d (Jacobi-eksempelet, talleksempelet med én
-  ukjent, gradienten og Hessianen med to ukjente og raden i $J$), kontrollen
-  av regelen for $M$ på talleksempelet i del 2, og 3a–3b (flyttingen,
-  talleksempelet midt i hallen og ellipsen);
-- din kode for `residual`, `jacobian`, `gn_step`, `gauss_newton`, `move`
-  og Armijo-løkken;
-- konvergenstabellen fra del 2 med målte og forutsagte faktorer;
-- ellipsefiguren fra 3b, tabellen fra «Gå ut av hallen» og forklaringen av
-  hvorfor $\sigma_2\to0$ langt unna;
-- diagnosen av det falske minimumet, forklaringen av det lange steget og
-  resultatet av Armijo i del 4;
-- forutsigelse, kontroll og konklusjon for din påstand i del 5.
+- din `gn_step` og `armijo_step`, samt den korte koblingen mellom
+  komponenter, vektorer og matriser fra del 1;
+- konvergenstabellen fra del 2 og én figur/tabell fra følsomhetsforsøkene;
+- diagnosen fra del 4, med konkrete residualer og resultatet av Armijo;
+- forutsigelse, kontroll og avgrenset konklusjon fra **én** undersøkelse i del 5.
 
-Skriv i tillegg en vurdering på **300–500 ord**: når er Gauss–Newton like
-god som Newton, hva bestemmer hvor presist vi vet posisjonen, og hvordan
-oppdager du at et konvergert svar er feil? Papirregninger kan leveres som
-leselige bilder i notebooken eller i en egen PDF.
+Forklaringene kan stå rett ved utskriftene. Avslutt med **150–250 ord**
+om hva som bestemmer fart, presisjon og troverdighet. Du vurderes på
+hvordan du bruker lineær algebra og egne beregninger til å begrunne
+konklusjonene. Formler for deriverte skal ikke utledes eller leveres.

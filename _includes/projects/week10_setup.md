@@ -2,8 +2,8 @@
 #| label: project-week10-setup
 #| autorun: true
 #| context: setup
-# Ferdige data og hjelpere til prosjekt 10. Newton-hjelperen bruker
-# residualen og Jacobimatrisen du skriver i del 1.
+# Ferdige data, avstandsmodell og hjelpere til prosjekt 10.
+# Deriverte og følsomhetsformel er gitt; Gauss-Newton-steget og Armijo-løkken skrives på siden.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -18,6 +18,22 @@ d_bad = d_exact + np.array([0., 0., 3., 0.])      # anker 3 måler 3 m for langt
 wall = np.array([[0., 0.], [4., .1], [7., -.1], [10., 0.]])
 z_true_wall = np.array([6., 3.])
 d_wall = np.linalg.norm(z_true_wall - wall, axis=1)
+
+
+def residual(z, B, d):
+    """Beregnet avstand minus målt avstand, én komponent per anker."""
+    return np.linalg.norm(np.asarray(z, float) - B, axis=1) - d
+
+
+def jacobian(z, B):
+    """Gitt formel: rad i er enhetsvektoren fra anker i til z (z ulik alle ankre)."""
+    D = np.asarray(z, float) - B
+    return D / np.linalg.norm(D, axis=1)[:, None]
+
+
+def move(J, delta_d):
+    """Lineær følsomhet: minste kvadraters løsning av J dz = delta_d."""
+    return np.linalg.lstsq(J, delta_d, rcond=None)[0]
 
 
 def dropped_part(z, B, r, J):
