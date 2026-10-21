@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Prosjekt 11 – Hvorfor koster strømmen det den koster? – Matematikk 3A</title>
+<title>Prosjekt 9 – Når skalaen bestemmer farten – Matematikk 3A</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -25,41 +25,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -1129,7 +1094,7 @@ globalThis.qpyodideCanvasBackend = "webagg";
 globalThis.qpyodideLang = "nb";
 
 // Store cell data
-globalThis.qpyodideCellDetails = [{"code":"# Grunndata og hjelpere for prosjektet. Alle tall er oppdiktede og forenklede.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import linprog\n\n# Ett prisområde (del 1-2): kostnad i kr/MWh og kapasitet i MW.\nplant_names = ['vind', 'vannkraft', 'import', 'gass']\ncost = np.array([0., 10., 40., 70.])\ncapacity = np.array([30., 50., 30., 40.])\n\n# Tre timer (del 4): forbruk og tilgjengelig vind i hver time (MW),\n# og vannmengden som vannkraften kan bruke til sammen (MWh).\ndemand3 = np.array([60., 95., 120.])\nwind3 = np.array([30., 10., 20.])\nwater = 120.\n\n\n# Samme funksjon som i del 1b, slik at senere celler virker etter ny innlasting.\ndef one_zone(D):\n    return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],\n                   bounds=list(zip(np.zeros(4), capacity)), method=\"highs\")\n\n\n# Samme funksjon som i del 3b. Variabler: vind N, vannkraft N, import S, gass S, flyt f.\ndef two_zones(L, wind_north=20.):\n    c = np.array([0., 10., 40., 70., 0.])\n    A_eq = np.array([[1., 1., 0., 0., -1.],\n                     [0., 0., 1., 1., 1.]])\n    bounds = [(0, wind_north), (0, 80), (0, 30), (0, 80), (-L, L)]\n    return linprog(c, A_eq=A_eq, b_eq=[30., 80.], bounds=bounds, method=\"highs\")\n\n\n# Ferdig tre-timersmodell (del 4); vannraden skriver du selv i prosjektet.\ndef _three_hours():\n    c3 = np.tile(cost, 3)\n    bounds3 = []\n    for h in range(3):\n        bounds3 += [(0, wind3[h]), (0, 50.), (0, 30.), (0, 40.)]\n    A_eq3 = np.zeros((3, 12))\n    for h in range(3):\n        A_eq3[h, 4*h:4*h + 4] = 1\n    return c3, bounds3, A_eq3\n\n\nc3, bounds3, A_eq3 = _three_hours()\n# Tegnehjelpere: de tegner bare tall som allerede er regnet ut.\ndef show_merit_order(cost, capacity, D, names=plant_names):\n    \"\"\"Tilbudstrappen: hvert kraftverk er en blokk med bredde = kapasitet og\n    høyde = kostnad, sortert billigst først. Den røde linjen er forbruket D.\"\"\"\n    fig, ax = plt.subplots(figsize=(7, 3.5), layout=\"constrained\")\n    left = 0.\n    for i in np.argsort(cost, kind=\"stable\"):\n        ax.bar(left, max(cost[i], 1.5), width=capacity[i], align=\"edge\",\n               alpha=.6, edgecolor=\"k\")\n        ax.text(left + capacity[i]/2, max(cost[i], 1.5) + 2,\n                f\"{names[i]}\\n{cost[i]:g} kr\", ha=\"center\", va=\"bottom\", fontsize=8)\n        left += capacity[i]\n    ax.axvline(D, color=\"tab:red\", lw=2)\n    ax.text(D, 92, f\" D = {D:g} MW\", color=\"tab:red\", va=\"top\")\n    ax.set(xlim=(0, left), ylim=(0, 95), ylabel=\"kostnad (kr/MWh)\",\n           xlabel=\"samlet kapasitet, billigste først (MW)\")\n    plt.show()\n\n\ndef show_steps(x, steps, smooth=None, xlabel=\"\", ylabel=\"kr/MWh\",\n               labels=(\"Pris (dual)\", \"Gjennomsnittskostnad\")):\n    \"\"\"Trappekurve (dualverdier) og eventuelt en glatt kurve i samme figur.\"\"\"\n    fig, ax = plt.subplots(figsize=(7, 4), layout=\"constrained\")\n    ax.step(x, steps, where=\"mid\", label=labels[0])\n    if smooth is not None:\n        ax.plot(x, smooth, label=labels[1])\n        ax.legend()\n    ax.set(xlabel=xlabel, ylabel=ylabel)\n    ax.grid(alpha=.3)\n    plt.show()\n\n\ndef show_two_zones(res, L):\n    \"\"\"Nord og sør som to bokser med produksjon og pris, og linjen som en pil.\"\"\"\n    x, (pN, pS), f = res.x, res.eqlin.marginals, res.x[4]\n    fig, ax = plt.subplots(figsize=(7, 2.8), layout=\"constrained\")\n    boxes = [(0.02, \"NORD (forbruk 30 MW)\", [(\"vind\", x[0]), (\"vannkraft\", x[1])], pN),\n             (0.62, \"SØR (forbruk 80 MW)\", [(\"import\", x[2]), (\"gass\", x[3])], pS)]\n    for x0, title, plants, price in boxes:\n        ax.add_patch(plt.Rectangle((x0, .08), .36, .84, fill=False, lw=1.5))\n        lines = [title] + [f\"{n}: {v:g} MW\" for n, v in plants] + [f\"pris: {price + 0:g} kr/MWh\"]\n        ax.text(x0 + .18, .5, \"\\n\".join(lines), ha=\"center\", va=\"center\", fontsize=9)\n    full = \"full\" if abs(f) >= L - 1e-9 else \"ikke full\"\n    ax.annotate(\"\", xy=(.61, .5), xytext=(.39, .5),\n                arrowprops=dict(arrowstyle=\"->\", lw=2 + 3*(full == \"full\"),\n                                color=\"tab:red\" if full == \"full\" else \"tab:blue\"))\n    ax.text(.5, .62, f\"f = {f + 0:g} MW\\nL = {L:g} MW ({full})\", ha=\"center\", fontsize=9)\n    ax.set(xlim=(0, 1), ylim=(0, 1))\n    ax.axis(\"off\")\n    plt.show()","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week11-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week11-setup","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"show_merit_order(cost, capacity, D=90)","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Se planen før du leser tallene\nFiguren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet, og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes ved D=90. Kjør så figuren; du trenger ingen full håndtabell."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-merit-order","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-merit-order","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def one_zone(D):\n    return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],\n                   bounds=list(zip(np.zeros(4), capacity)), method=\"highs\")\n\nD = 90\nres = one_zone(D)\nprint(\"status:\", res.status)\nfor name, x in zip(plant_names, res.x):\n    print(f\"{name:<10}{x:6.1f} MW\")\nprint(f\"kostnad {res.fun:g} kr, gjennomsnitt {res.fun/D:.2f} kr/MWh\")\nprint(f\"pris {res.eqlin.marginals[0] + 0:g} kr/MWh\")\nprint(\"avvik i forbrukslikningen:\", res.eqlin.residual)","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Se planen før du leser tallene\nFiguren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet, og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes ved D=90. Kjør så figuren; du trenger ingen full håndtabell.\nEt kraftverk som kan skrus litt opp eller ned i den beste planen, er marginalt. Det ligger mellom null og full kapasitet. Nå sammenligner du prisen med både dette kraftverkets kostnad og gjennomsnittskostnaden.\nCellen viser modellen som sendes til linprog og skriver ut løsningen. Bytt D mellom 60, 90 og 130; noter én linje med produksjon, pris og gjennomsnitt for hvert forbruk."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-one-zone","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-one-zone","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def read_market(res, D):\n    # TODO: returner prisen og gjennomsnittskostnaden.\n    return None","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Fra tre kjøringer til en pristrapp\nNå ser vi på flere forbruk. Kodespor 1: Fullfør read_market slik at den returnerer paret (pris, gjennomsnittskostnad) fra et vellykket resultat og forbruket D. Du trenger bare opplysningene i tabellen over."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-read-market","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-read-market","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"Ds = np.arange(0.5, 150, 1.0)\nprices = np.zeros(len(Ds))\naverages = np.zeros(len(Ds))\nfor i, D in enumerate(Ds):\n    prices[i], averages[i] = read_market(one_zone(D), D)\nshow_steps(Ds, prices, averages, xlabel=\"Forbruk D (MW)\")","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Fra tre kjøringer til en pristrapp\nNå ser vi på flere forbruk. Kodespor 1: Fullfør read_market slik at den returnerer paret (pris, gjennomsnittskostnad) fra et vellykket resultat og forbruket D. Du trenger bare opplysningene i tabellen over.\nLøkken bruker funksjonen din til å tegne begge kurvene. Halve forbrukstall unngår punkter der prisen kan ha to ulike ensidige verdier."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-price-steps","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-price-steps","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"print(\" D   pris   kostnad ved 1 MW mer   spart ved 1 MW mindre\")\nfor D in (60, 80, 90):\n    r = one_zone(D)\n    more = one_zone(D + 1).fun - r.fun\n    less = r.fun - one_zone(D - 1).fun\n    print(f\"{D:3}{r.eqlin.marginals[0]:7g}{more:22g}{less:24g}\")","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"2. Kontroller prisen og kapasiteten\nEn marginal er et lokalt anslag, ikke et løfte for enhver endring. Den oppgitte prisen \\(\\lambda\\) gir anslaget\n\\[C(D+\\Delta D)\\approx C(D)+\\lambda\\Delta D,\\]\nder \\(C(D)\\) er den laveste kostnaden. Inne i ett rett kurvestykke er anslaget eksakt. Ved et knekkpunkt kan det være ulike endringsrater på hver side; én rapportert dualverdi trenger ikke passe begge veier.\nCellen sammenligner prisen med kostnadsendringen ved én MW mer og én MW mindre. Forutsi først hvilket av de tre forbrukene som skiller seg ut."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-finite-difference","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-finite-difference","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"D = 100\nres = one_zone(D)\nprice = res.eqlin.marginals[0]\nmu = -res.upper.marginals\nprint(\"kraftverk   produksjon   ledig kapasitet   kapasitetsverdi\")\nfor name, x, slack, value in zip(plant_names, res.x, res.upper.residual, mu):\n    print(f\"{name:<12}{x:10g}{slack:18g}{value + 0:19g}\")\nprint(\"pris:\", price, \"  kostnad:\", res.fun, \"  prisgrense:\", price*D - mu @ capacity)","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Komplementær slakk fra utskriften\nFra uke 11.3 har vi disse reglene:\nKraftverkets tilstandForhold mellom kostnad \\(c_i\\) og pris \\(\\lambda\\)Mellom null og kapasitet\\(c_i=\\lambda\\)Full kapasitet\\(c_i\\le\\lambda\\)Ingen produksjon\\(c_i\\ge\\lambda\\)\nFor denne modellen er kapasitetsverdien \\(\\mu_i=-\\)res.upper.marginals[i]. Prisene gir dessuten en nedre kostnadsgrense \\(\\lambda D-\\mu^Tk\\), med \\(\\mu\\ge0\\) og \\(\\lambda\\mathbf1-\\mu\\le c\\). Du får denne sammenhengen ferdig; oppgaven er å lese og kontrollere tallene.\nCellen skriver ut produksjon, ledig kapasitet og kapasitetsverdi. Sammenlign også prisgrensen med kostnaden fra løseren."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-slackness","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-slackness","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"print(\"  L   kostnad   pris N   pris S   flyt   ledig mot sør   linjeverdi\")\nfor L in (20, 40, 55, 70, 100):\n    r = two_zones(L)\n    pN, pS = r.eqlin.marginals\n    value = r.lower.marginals[4] - r.upper.marginals[4]\n    print(f\"{L:3}{r.fun:10g}{pN:9g}{pS:9g}{r.x[4] + 0:7g}\"\n          f\"{r.upper.residual[4]:16g}{value + 0:13g}\")","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3. To områder og en linje\nNå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er verdt å bygge en litt sterkere linje.\nOmrådeKraftverk (kostnad, kapasitet)Forbruk (MW)Nordvind (0 kr, 20 MW), vannkraft (10 kr, 80 MW)30Sørimport (40 kr, 30 MW), gass (70 kr, 80 MW)80\nFlyten \\(f\\) er positiv fra nord til sør og har grensene \\(-L\\le f\\le L\\). Med rekkefølgen (vind N, vann N, import S, gass S, f) er balansene\n\\[\\begin{pmatrix}1&1&0&0&-1\\\\0&0&1&1&1\\end{pmatrix}x\n=\\begin{pmatrix}30\\\\80\\end{pmatrix}.\\]\nLes en matrisrad: Skriv de to radene som hver sin sum. Forklar hvorfor \\(f\\) har ulikt fortegn, og hvorfor summen av radene fjerner flyten.\nForutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet. Cellen løser samme modell for flere L og viser også den lokale verdien av mer kapasitet. For L>0 økes begge grensene (-L, L) når linjen utvides, så verdien er lower.marginals[4] - upper.marginals[4]."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-two-zones","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-two-zones","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"L = 40\nshow_two_zones(two_zones(L), L)","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3. To områder og en linje\nNå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er verdt å bygge en litt sterkere linje.\nOmrådeKraftverk (kostnad, kapasitet)Forbruk (MW)Nordvind (0 kr, 20 MW), vannkraft (10 kr, 80 MW)30Sørimport (40 kr, 30 MW), gass (70 kr, 80 MW)80\nFlyten \\(f\\) er positiv fra nord til sør og har grensene \\(-L\\le f\\le L\\). Med rekkefølgen (vind N, vann N, import S, gass S, f) er balansene\n\\[\\begin{pmatrix}1&1&0&0&-1\\\\0&0&1&1&1\\end{pmatrix}x\n=\\begin{pmatrix}30\\\\80\\end{pmatrix}.\\]\nLes en matrisrad: Skriv de to radene som hver sin sum. Forklar hvorfor \\(f\\) har ulikt fortegn, og hvorfor summen av radene fjerner flyten.\nForutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet. Cellen løser samme modell for flere L og viser også den lokale verdien av mer kapasitet. For L>0 økes begge grensene (-L, L) når linjen utvides, så verdien er lower.marginals[4] - upper.marginals[4].\nLes og konkluder: Sammenlign L=40, 55 og 100. Når er prisene like, og når er linjen full mot sør? Forklar prisen i nord ved L=100 ved å se på hvor en ekstra MW til forbruket i nord måtte komme fra.\nVil du se planen som et bilde, velger du en av kjøringene. Figuren viser hvilke kraftverk som produserer på hver side av linjen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-line-picture","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-line-picture","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for L, extra in ((40, 1), (40, 40), (70, 1)):\n    base = two_zones(L)\n    value = base.lower.marginals[4] - base.upper.marginals[4]\n    changed = two_zones(L + extra)\n    print(f\"L={L}, ekstra={extra}: anslått spart {value*extra:g}, \"\n          f\"faktisk spart {base.fun - changed.fun:g}, ny plan {changed.x}\")","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Hvor lenge virker linjeverdien?\nDu får prisreglene ferdig for denne tapsfrie modellen:\nFull mot sør, \\(f=L>0\\): Linjeverdien er \\(\\lambda_S-\\lambda_N\\).\nLedig begge veier, \\(-L<f<L\\): Linjeverdien er null og prisene er like.\nVed et knekkpunkt: En full linje kan ha verdi null. At linjen er full, er ikke alene nok til å vite at mer kapasitet senker kostnaden.\nEn lokal verdi gjelder bare mens de samme begrensningene bestemmer kostnadsendringen. Nå tester du både en liten og en større utvidelse fra L=40, og én ekstra MW fra L=70. Formuleringen er en forutsigelse som skal sammenlignes med nye løsninger, ikke en håndutledning."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-line-change","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-line-change","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def make_water_row():\n    row = np.zeros((1, 12))\n    # TODO: sett 1 på plassene til vannkraft; behold 0 ellers.\n    return row\n\nexample = np.array([0., 2., 0., 0., 0., 3., 0., 0., 0., 5., 0., 0.])\nprint(\"vannmengde fra din rad:\", (make_water_row() @ example)[0])\nprint(\"forventet vannmengde: 10 MWh\")","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Bygg én rad i modellen\nVariablene kommer i tre grupper: (vind, vann, import, gass) for hver time. Vannkravet er\n\\[x_{\\text{vann},1}+x_{\\text{vann},2}+x_{\\text{vann},3}\\le120.\\]\nKodespor 2: Fullfør make_water_row slik at den returnerer en (1, 12)-matrise som velger ut akkurat de tre vannvariablene. Forklar hvordan A_water @ x da blir summen over de tre timene. Dette er den samme koblingen mellom en sum og en matrisrad som i del 1. Kontrollen bruker 2, 3 og 5 MWh vann i de tre timene; summen skal bli 10 MWh. Rett raden før du løser modellen dersom kontrollen ikke stemmer."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-water-row","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-water-row","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"A_water = make_water_row()\nres3 = linprog(c3, A_ub=A_water, b_ub=[water], A_eq=A_eq3, b_eq=demand3,\n               bounds=bounds3, method=\"highs\")\nprint(\"status:\", res3.status, \"  kostnad:\", res3.fun)\nprint(\"time   vind  vann  import  gass   pris\")\nfor h in range(3):\n    print(f\"{h + 1:4}\", *[f\"{v:6g}\" for v in res3.x[4*h:4*h + 4]],\n          f\"{res3.eqlin.marginals[h]:6g}\")\nprint(\"vann brukt:\", (A_water @ res3.x)[0], \"av\", water)\nprint(\"ledig vann:\", res3.ineqlin.residual[0])\nprint(\"vannverdi:\", -res3.ineqlin.marginals[0] + 0, \"kr/MWh\")","id":12,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Bygg én rad i modellen\nVariablene kommer i tre grupper: (vind, vann, import, gass) for hver time. Vannkravet er\n\\[x_{\\text{vann},1}+x_{\\text{vann},2}+x_{\\text{vann},3}\\le120.\\]\nKodespor 2: Fullfør make_water_row slik at den returnerer en (1, 12)-matrise som velger ut akkurat de tre vannvariablene. Forklar hvordan A_water @ x da blir summen over de tre timene. Dette er den samme koblingen mellom en sum og en matrisrad som i del 1. Kontrollen bruker 2, 3 og 5 MWh vann i de tre timene; summen skal bli 10 MWh. Rett raden før du løser modellen dersom kontrollen ikke stemmer.\nResten av tre-timersmodellen er gitt i oppsettet: A_eq3 har én forbrukslikning per time. Cellen bruker vannraden din og skriver ut planen, prisene og vannverdien, altså spart kostnad per MWh ekstra vann."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-hydro","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-hydro","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"A_water = make_water_row()\nWs = np.arange(50.5, 160, 1.0)\nvalues = []\nfor W in Ws:\n    r = linprog(c3, A_ub=A_water, b_ub=[W], A_eq=A_eq3, b_eq=demand3,\n                bounds=bounds3, method=\"highs\")\n    values.append(-r.ineqlin.marginals[0])\nshow_steps(Ws, values, xlabel=\"Vannmengde W (MWh)\", ylabel=\"Vannverdi (kr/MWh)\")\nfor W in (40, 120, 121, 140):\n    r = linprog(c3, A_ub=A_water, b_ub=[W], A_eq=A_eq3, b_eq=demand3,\n                bounds=bounds3, method=\"highs\")\n    if r.success:\n        print(f\"W={W}: kostnad {r.fun:g}, ledig vann {r.ineqlin.residual[0]:g}, \"\n              f\"vannverdi {-r.ineqlin.marginals[0] + 0:g}\")\n    else:\n        print(f\"W={W}: status {r.status}, ingen tillatt plan\")","id":13,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Når slutter vannet å være knapt?\nDen neste cellen gjentar løsningen for flere vannmengder og kontrollerer én liten økning fra 120 MWh. Forutsi først om mer vann alltid har samme verdi."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-water-steps","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-water-steps","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}}];
+globalThis.qpyodideCellDetails = [{"code":"# Prosjektverktøy for prosjekt 9: data, tapsfunksjon, Hessian og figurer.\n# Gradienten og gradientmetoden skriver du selv i prosjektet.\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# 23 oppskytinger før Challenger (Dalal, Fowlkes & Hoadley 1989, tabell 1).\n# temps: temperatur ved oppskyting i °F. damage: 1 hvis minst én O-ring viste varmeskade.\ntemps = np.array([66, 70, 69, 68, 67, 72, 73, 70, 57, 63, 70, 78,\n                  67, 53, 67, 75, 70, 81, 76, 79, 75, 76, 58.])\ndamage = np.array([0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,\n                   0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1.])\n\n# Publiserte koeffisienter for modellen med temperatur i °F (fasit).\nbeta_oracle = np.array([15.0429, -0.23216])\n\n\ndef design(t):\n    \"\"\"Matrisen X med en kolonne med ettall og en kolonne med temperaturene t.\"\"\"\n    t = np.asarray(t, float)\n    return np.column_stack([np.ones_like(t), t])\n\n\ndef sigma(s):\n    \"\"\"Den logistiske funksjonen 1/(1 + e^(-s)).\"\"\"\n    return 1/(1 + np.exp(-s))\n\n\ndef loss(X, beta, yy=damage):\n    \"\"\"L(beta) = sum log(1 + e^s_i) - y_i s_i med s = X beta.\"\"\"\n    s = X @ beta\n    return np.sum(np.logaddexp(0, s) - yy*s)\n\n\ndef hessian(X, beta):\n    \"\"\"H = X^T W X med W = diag(p_i (1 - p_i)).\"\"\"\n    p = sigma(X @ beta)\n    return X.T @ (X * (p*(1 - p))[:, None])\n\n\ndef armijo_gd(X, grad, max_steps=2000, tol=1e-6, yy=damage):\n    \"\"\"Gradientmetoden med Armijo-søk fra uke 9: start med alpha = 1 og halver.\n    grad er din egen funksjon grad(X, beta, yy). Returnerer beta, steg og\n    antall ekstra funksjonsverdier brukt på halveringer.\"\"\"\n    beta, k, extra = np.zeros(2), 0, 0\n    while k < max_steps:\n        g = grad(X, beta, yy)\n        if np.linalg.norm(g) < tol:\n            break\n        alpha, L0 = 1., loss(X, beta, yy)\n        while loss(X, beta - alpha*g, yy) > L0 - 1e-4*alpha*(g @ g):\n            alpha /= 2\n            extra += 1\n        beta = beta - alpha*g\n        k += 1\n    return beta, k, extra\n\n\ndef _data_axes(ax, yy=damage):\n    \"\"\"Tegner oppskytingene som punkter i høyde 0 og 1 (litt spredt så like punkter synes).\"\"\"\n    ax.plot(temps, yy + np.linspace(-.02, .02, temps.size), 'ko', markersize=4,\n            label='oppskytinger (0 = ingen skade, 1 = skade)')\n    ax.set(xlabel='temperatur T (°F)')\n\n\ndef show_line_fit(line):\n    \"\"\"Data og minste kvadraters linje line[0] + line[1] T, med områdene der linjen\n    gir verdier under 0 eller over 1.\"\"\"\n    T = np.linspace(25, 85, 300)\n    v = line[0] + line[1]*T\n    fig, ax = plt.subplots(figsize=(6.5, 4))\n    _data_axes(ax)\n    ax.plot(T, v, label='rett linje (minste kvadrater)')\n    ax.fill_between(T, v, 1, where=v > 1, color='#b5483f', alpha=.25, label='over 1')\n    ax.fill_between(T, v, 0, where=v < 0, color='#b5483f', alpha=.5, label='under 0')\n    ax.axhline(0, color='gray', lw=.8); ax.axhline(1, color='gray', lw=.8)\n    ax.set(ylabel='«sannsynlighet» for skade', ylim=(-.25, 1.9))\n    ax.legend(fontsize=8, loc='upper right'); plt.show()\n\n\ndef show_curves(betas, labels):\n    \"\"\"Data og S-kurvene p(T) = sigma(beta0 + beta1 T), med terskelen der p = 1/2.\"\"\"\n    T = np.linspace(40, 90, 300)\n    fig, ax = plt.subplots(figsize=(6.5, 4))\n    _data_axes(ax)\n    for beta, label in zip(betas, labels):\n        ax.plot(T, sigma(beta[0] + beta[1]*T), label=label)\n    ax.axhline(.5, color='gray', lw=.8, ls=':')\n    ax.axvline(-betas[0][0]/betas[0][1], color='gray', lw=.8, ls='--', label='terskel, p = 1/2')\n    ax.set(ylabel='p(T)', ylim=(-.08, 1.08)); ax.legend(fontsize=8, loc='center left'); plt.show()\n\n\ndef show_fit(beta_F, label='tilpasset modell'):\n    \"\"\"Data og sannsynlighetskurven p(T) = sigma(beta0 + beta1 T), T i °F.\"\"\"\n    T = np.linspace(25, 85, 300)\n    fig, ax = plt.subplots(figsize=(6.5, 4))\n    _data_axes(ax)\n    ax.plot(T, sigma(beta_F[0] + beta_F[1]*T), label=label)\n    ax.axvspan(temps.min(), temps.max(), color='#e8eef5', label='temperaturer i dataene')\n    ax.axvline(31, color='#b5483f', linestyle='--', label='31 °F')\n    ax.set(ylabel='p(T)', ylim=(-.08, 1.08))\n    ax.legend(fontsize=8, loc='center left'); plt.show()\n\n\ndef show_cycles(paths, beta_min):\n    \"\"\"De siste 200 punktene for hver steglengde, i (beta0'', beta1'')-planet.\n    paths: {alpha: array med alle punktene}.\"\"\"\n    fig, ax = plt.subplots(figsize=(6, 5))\n    for alpha, path in paths.items():\n        ax.plot(path[-200:, 0], path[-200:, 1], '.', markersize=5, label=f'α = {alpha}, siste 200')\n    ax.plot(*beta_min, 'k*', markersize=12, label='minimum')\n    ax.set(xlabel='β₀″', ylabel='β₁″'); ax.legend(); plt.show()\n\n\ndef show_separation(history):\n    \"\"\"|beta|, L og |grad L| mot steg k i log-log-skala. history: liste med (k, |beta|, L, |grad L|).\"\"\"\n    h = np.array(history)\n    fig, ax = plt.subplots(figsize=(6.5, 4))\n    ax.loglog(h[:, 0], h[:, 1], label='|β|')\n    ax.loglog(h[:, 0], h[:, 2], label='L(β)')\n    ax.loglog(h[:, 0], h[:, 3], label='|∇L(β)|')\n    ax.set(xlabel='steg k'); ax.legend(); plt.show()\n\n\n# Ferdige datamatriser, slik at cellene virker i hvilken som helst rekkefølge.\n# De samme lages i prosjektet der de brukes første gang (del 1 og del 3).\nm, d = temps.mean(), temps.std()          # gjennomsnitt og standardavvik\ndesigns = {'rå T': design(temps),\n           'sentrert T - 70': design(temps - 70),\n           'standardisert (T - m)/d': design((temps - m)/d)}\nX_raw = designs['rå T']\nX_c = designs['sentrert T - 70']\nX_std = designs['standardisert (T - m)/d']\nalpha_raw = 4/np.linalg.svd(X_raw, compute_uv=False)[0]**2   # trygt steg 4/σ1²\nalpha_c = 4/np.linalg.svd(X_c, compute_uv=False)[0]**2","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week9-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week9-setup","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"line = np.linalg.lstsq(design(temps), damage, rcond=None)[0]\nfor T in [31, 53, 81]:\n    print(f'rett linje ved {T} °F: {line[0] + line[1]*T:.3f}')\nshow_line_fit(line)","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Data og en kurve mellom 0 og 1\nVi har temperatur og O-ringskade fra 23 romfergeoppskytinger før Challenger:\ntemps inneholder temperaturene \\(T_i\\), fra 53 til 81 °F.\ndamage inneholder \\(y_i=1\\) ved skade og \\(y_i=0\\) ellers.\nSju av de 23 oppskytingene hadde skade. Dataene er fra Dalal, Fowlkes og Hoadley (1989, Journal of the American Statistical Association 84,\n945–957), for oppskytingene der motorene kunne undersøkes.\nChallenger ble skutt opp ved 31 °F, under temperaturene i dette datasettet. Vi må skille mellom det en tilpasset modell sier og det dataene støtter.\nEn rett linje kan gi verdier utenfor \\([0,1]\\). Derfor bruker vi en S-kurve:\n\\[p(T)=\\sigma(\\beta_0+\\beta_1T),\\qquad\n\\sigma(s)=\\frac{1}{1+e^{-s}}.\\]\nHer er \\(p(T)\\) modellens sannsynlighet for skade ved temperatur \\(T\\).\nTerskel: Når \\(\\beta_1\\ne0\\), er \\(p(T)=1/2\\) ved \\(T=-\\beta_0/\\beta_1\\).\nRetning og bratthet: Negativ \\(\\beta_1\\) gir mindre \\(p\\) når temperaturen øker. Større \\(|\\beta_1|\\) gir en brattere overgang.\nDen første cellen viser hvorfor den rette linjen ikke kan brukes som sannsynlighetskurve."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-line","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-line","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for name, beta in [('referanse', beta_oracle), ('halverte tall', beta_oracle/2)]:\n    print(name, 'terskel:', -beta[0]/beta[1],\n          'p(53):', sigma(beta[0] + beta[1]*53))\nshow_curves([beta_oracle, beta_oracle/2], ['referanse', 'halverte tall'])","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Data og en kurve mellom 0 og 1\nVi har temperatur og O-ringskade fra 23 romfergeoppskytinger før Challenger:\ntemps inneholder temperaturene \\(T_i\\), fra 53 til 81 °F.\ndamage inneholder \\(y_i=1\\) ved skade og \\(y_i=0\\) ellers.\nSju av de 23 oppskytingene hadde skade. Dataene er fra Dalal, Fowlkes og Hoadley (1989, Journal of the American Statistical Association 84,\n945–957), for oppskytingene der motorene kunne undersøkes.\nChallenger ble skutt opp ved 31 °F, under temperaturene i dette datasettet. Vi må skille mellom det en tilpasset modell sier og det dataene støtter.\nEn rett linje kan gi verdier utenfor \\([0,1]\\). Derfor bruker vi en S-kurve:\n\\[p(T)=\\sigma(\\beta_0+\\beta_1T),\\qquad\n\\sigma(s)=\\frac{1}{1+e^{-s}}.\\]\nHer er \\(p(T)\\) modellens sannsynlighet for skade ved temperatur \\(T\\).\nTerskel: Når \\(\\beta_1\\ne0\\), er \\(p(T)=1/2\\) ved \\(T=-\\beta_0/\\beta_1\\).\nRetning og bratthet: Negativ \\(\\beta_1\\) gir mindre \\(p\\) når temperaturen øker. Større \\(|\\beta_1|\\) gir en brattere overgang.\nDen første cellen viser hvorfor den rette linjen ikke kan brukes som sannsynlighetskurve.\nDen neste viser en logistisk referansekurve og en slakere kurve med samme terskel. Referansekoeffisientene beta_oracle er gitt for å kontrollere optimeringen senere; du skal ikke finne dem i innføringen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-s-curve","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-s-curve","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for name, beta in [('A', np.array([13.6, -0.2])),\n                   ('B', np.array([6.8, -0.1]))]:\n    p = sigma(beta[0] + beta[1]*np.array([58., 78.]))\n    probability = p[0]*(1-p[1])\n    print(name, 'produkt:', probability, 'minus log:', -np.log(probability))","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Hva betyr «kurven passer»?\nEn oppskyting med skade bør få stor \\(p_i=p(T_i)\\); en uten skade bør få stor \\(1-p_i\\). Vi antar at utfallene fra ulike oppskytinger er uavhengige. Da måler produktet av disse faktorene hvor sannsynlige de observerte utfallene er under modellen.\nFor skade ved 58 °F og ingen skade ved 78 °F er produktet \\(p(58)(1-p(78))\\). Cellen sammenligner to kurver. Du trenger ikke regne sannsynlighetene for hånd."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-product","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-product","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def grad(X, beta, yy=damage):\n    # TODO: returner X^T(p-y), der p = sigma(X beta).\n    raise NotImplementedError('Skriv matriseproduktet')","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"1. Her begynner prosjektet: fra formel til metode\nVi bruker matrisen \\(X\\) med rad \\(i\\) lik \\((1,T_i)\\) og vektorene \\(\\beta=(\\beta_0,\\beta_1)^T\\), \\(y=(y_1,\\ldots,y_{23})^T\\). Da er \\(s=X\\beta\\) og \\(p=\\sigma(s)\\), der \\(\\sigma\\) brukes på hvert element.\nDe analytiske deriverte er gitt:\n\\[\\nabla L(\\beta)=\n\\begin{bmatrix}\n\\sum_i(p_i-y_i)\\\\\n\\sum_i T_i(p_i-y_i)\n\\end{bmatrix}\n=X^T(p-y),\\qquad\nH(\\beta)=X^TWX,\\quad W=\\operatorname{diag}(p_i(1-p_i)).\\]\nDu skal bruke disse uttrykkene, ikke derivere dem. \\(H\\) er positiv semidefinit, så \\(L\\) er konveks. hessian er allerede gitt.\na. Les matriseproduktet. Oppgi dimensjonene til \\(X\\), \\(p-y\\) og \\(X^T(p-y)\\). Forklar kort hvorfor de to radene i produktet blir summene over. Dette er samme kobling mellom rader og enkeltuttrykk som i uke 3.\nb. Fullfør gradienten. Bruk X.T for transponering og @ for matrise–vektor-produkt. Argumentet yy lar oss undersøke andre utfall i sluttdelen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-grad","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-grad","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"sv = np.linalg.svd(X_raw, compute_uv=False)\nprint('dimensjon X:', X_raw.shape, 'singulærverdier:', sv)\nprint('din gradient i 0:', grad(X_raw, np.zeros(2)))\nprint('kontrollverdi:    ', np.array([4.5, 354.]))\nprint('trygt steg:', 4/sv[0]**2)","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"1. Her begynner prosjektet: fra formel til metode\nVi bruker matrisen \\(X\\) med rad \\(i\\) lik \\((1,T_i)\\) og vektorene \\(\\beta=(\\beta_0,\\beta_1)^T\\), \\(y=(y_1,\\ldots,y_{23})^T\\). Da er \\(s=X\\beta\\) og \\(p=\\sigma(s)\\), der \\(\\sigma\\) brukes på hvert element.\nDe analytiske deriverte er gitt:\n\\[\\nabla L(\\beta)=\n\\begin{bmatrix}\n\\sum_i(p_i-y_i)\\\\\n\\sum_i T_i(p_i-y_i)\n\\end{bmatrix}\n=X^T(p-y),\\qquad\nH(\\beta)=X^TWX,\\quad W=\\operatorname{diag}(p_i(1-p_i)).\\]\nDu skal bruke disse uttrykkene, ikke derivere dem. \\(H\\) er positiv semidefinit, så \\(L\\) er konveks. hessian er allerede gitt.\na. Les matriseproduktet. Oppgi dimensjonene til \\(X\\), \\(p-y\\) og \\(X^T(p-y)\\). Forklar kort hvorfor de to radene i produktet blir summene over. Dette er samme kobling mellom rader og enkeltuttrykk som i uke 3.\nb. Fullfør gradienten. Bruk X.T for transponering og @ for matrise–vektor-produkt. Argumentet yy lar oss undersøke andre utfall i sluttdelen.\nEn ferdig regel fra krumningsgrensen er\n\\[\\alpha=\\frac{4}{\\sigma_1(X)^2},\\]\nder \\(\\sigma_1(X)\\) er største singulærverdi, ikke den logistiske funksjonen. Dette er et trygt fast steg: i eksakt regning synker \\(L\\) når gradienten ikke er null. Du trenger ikke utlede grensen.\nCellen kontrollerer gradienten din i ett punkt og beregner det trygge steget. Bruk utskriften til å finne en eventuell feil før du fortsetter."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-grad-check","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-grad-check","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"def gd(X, alpha, tol=1e-6, max_steps=2000, yy=damage):\n    beta = np.zeros(2)\n    k = 0\n    # TODO: gjenta oppdateringen mens gradientnormen >= tol og k < max_steps.\n    raise NotImplementedError('Skriv gradientløkken')\n    return beta, k","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Vi bruker matrisen \\(X\\) med rad \\(i\\) lik \\((1,T_i)\\) og vektorene \\(\\beta=(\\beta_0,\\beta_1)^T\\), \\(y=(y_1,\\ldots,y_{23})^T\\). Da er \\(s=X\\beta\\) og \\(p=\\sigma(s)\\), der \\(\\sigma\\) brukes på hvert element.\nDe analytiske deriverte er gitt:\n\\[\\nabla L(\\beta)=\n\\begin{bmatrix}\n\\sum_i(p_i-y_i)\\\\\n\\sum_i T_i(p_i-y_i)\n\\end{bmatrix}\n=X^T(p-y),\\qquad\nH(\\beta)=X^TWX,\\quad W=\\operatorname{diag}(p_i(1-p_i)).\\]\nDu skal bruke disse uttrykkene, ikke derivere dem. \\(H\\) er positiv semidefinit, så \\(L\\) er konveks. hessian er allerede gitt.\na. Les matriseproduktet. Oppgi dimensjonene til \\(X\\), \\(p-y\\) og \\(X^T(p-y)\\). Forklar kort hvorfor de to radene i produktet blir summene over. Dette er samme kobling mellom rader og enkeltuttrykk som i uke 3.\nb. Fullfør gradienten. Bruk X.T for transponering og @ for matrise–vektor-produkt. Argumentet yy lar oss undersøke andre utfall i sluttdelen.\nEn ferdig regel fra krumningsgrensen er\n\\[\\alpha=\\frac{4}{\\sigma_1(X)^2},\\]\nder \\(\\sigma_1(X)\\) er største singulærverdi, ikke den logistiske funksjonen. Dette er et trygt fast steg: i eksakt regning synker \\(L\\) når gradienten ikke er null. Du trenger ikke utlede grensen.\nCellen kontrollerer gradienten din i ett punkt og beregner det trygge steget. Bruk utskriften til å finne en eventuell feil før du fortsetter.\nc. Fullfør løkken. Gradientmetoden er \\(\\beta_{k+1}=\\beta_k-\\alpha\\nabla L(\\beta_k)\\). Stopp på gradientnorm tol eller når max_steps er brukt. Returner både sluttpunkt og antall utførte steg."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-gd","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-gd","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for budget in [5, 2000]:\n    beta, k = gd(X_raw, alpha_raw, max_steps=budget)\n    norm = np.linalg.norm(grad(X_raw, beta))\n    print('budsjett:', budget, 'steg:', k, 'beta:', beta.round(4),\n          '|gradient|:', norm, 'L:', loss(X_raw, beta), 'stoppkrav:', norm < 1e-6)\nprint('referanse beta:', beta_oracle, 'L:', loss(X_raw, beta_oracle))","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"De analytiske deriverte er gitt:\n\\[\\nabla L(\\beta)=\n\\begin{bmatrix}\n\\sum_i(p_i-y_i)\\\\\n\\sum_i T_i(p_i-y_i)\n\\end{bmatrix}\n=X^T(p-y),\\qquad\nH(\\beta)=X^TWX,\\quad W=\\operatorname{diag}(p_i(1-p_i)).\\]\nDu skal bruke disse uttrykkene, ikke derivere dem. \\(H\\) er positiv semidefinit, så \\(L\\) er konveks. hessian er allerede gitt.\na. Les matriseproduktet. Oppgi dimensjonene til \\(X\\), \\(p-y\\) og \\(X^T(p-y)\\). Forklar kort hvorfor de to radene i produktet blir summene over. Dette er samme kobling mellom rader og enkeltuttrykk som i uke 3.\nb. Fullfør gradienten. Bruk X.T for transponering og @ for matrise–vektor-produkt. Argumentet yy lar oss undersøke andre utfall i sluttdelen.\nEn ferdig regel fra krumningsgrensen er\n\\[\\alpha=\\frac{4}{\\sigma_1(X)^2},\\]\nder \\(\\sigma_1(X)\\) er største singulærverdi, ikke den logistiske funksjonen. Dette er et trygt fast steg: i eksakt regning synker \\(L\\) når gradienten ikke er null. Du trenger ikke utlede grensen.\nCellen kontrollerer gradienten din i ett punkt og beregner det trygge steget. Bruk utskriften til å finne en eventuell feil før du fortsetter.\nc. Fullfør løkken. Gradientmetoden er \\(\\beta_{k+1}=\\beta_k-\\alpha\\nabla L(\\beta_k)\\). Stopp på gradientnorm tol eller når max_steps er brukt. Returner både sluttpunkt og antall utførte steg.\nCellen prøver fem steg og deretter et begrenset budsjett. stoppkrav må være sann før vi sier at metoden nådde den valgte toleransen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-raw-run","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-raw-run","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"m, d = temps.mean(), temps.std()\ndesigns = {'rå T': design(temps),\n           'sentrert T - 70': design(temps-70),\n           'standardisert (T - m)/d': design((temps-m)/d)}\nfor name, X in designs.items():\n    sv = np.linalg.svd(X, compute_uv=False)\n    print(name, 'singulærverdier:', sv.round(3), 'forhold:', sv[0]/sv[1])","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"2. Samme modell i bedre koordinater?\nDen andre kolonnen i \\(X\\) er nesten 70 ganger den første. Vi endrer ikke målingene, men hvordan temperaturene beskrives:\nNavnTemperaturkoordinat \\(t\\)Parametre \\(\\gamma\\) som gir samme kurveRå\\(T\\)\\((\\beta_0,\\beta_1)\\)Sentrert\\(T-70\\)\\((\\beta_0+70\\beta_1,\\beta_1)\\)Standardisert\\((T-m)/d\\)\\((\\beta_0+m\\beta_1,d\\beta_1)\\)\nHer er \\(m=\\) temps.mean() gjennomsnittet og \\(d=\\) temps.std() standardavviket, et mål på spredningen. Omregningene er gitt. De bevarer \\(\\gamma_0+\\gamma_1t=\\beta_0+\\beta_1T\\) for hver temperatur.\na. Forutsi. Hvilket koordinatvalg tror du gir færrest steg? Knytt forventningen til forholdet mellom de to singulærverdiene.\nCellen bygger matrisene og skriver ut singulærverdier og forholdet. Finn forskjellen i tallene selv; ikke se bare på størrelsen til hver verdi."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-singular","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-singular","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"b0, b1 = beta_oracle\nbeta_star = {'rå T': beta_oracle,\n             'sentrert T - 70': np.array([b0+70*b1, b1]),\n             'standardisert (T - m)/d': np.array([b0+m*b1, d*b1])}\nfor name, X in designs.items():\n    alpha = 4/np.linalg.svd(X, compute_uv=False)[0]**2\n    lam = np.linalg.eigvalsh(hessian(X, beta_star[name]))\n    beta, k = gd(X, alpha, max_steps=2000)\n    norm = np.linalg.norm(grad(X, beta))\n    print(name, 'steg:', k, 'stoppkrav:', norm < 1e-6,\n          'kondisjon H*:', lam[-1]/lam[0], 'lokal faktor S:',\n          np.max(np.abs(1-alpha*lam)), 'L:', loss(X, beta))","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"2. Samme modell i bedre koordinater?\nDen andre kolonnen i \\(X\\) er nesten 70 ganger den første. Vi endrer ikke målingene, men hvordan temperaturene beskrives:\nNavnTemperaturkoordinat \\(t\\)Parametre \\(\\gamma\\) som gir samme kurveRå\\(T\\)\\((\\beta_0,\\beta_1)\\)Sentrert\\(T-70\\)\\((\\beta_0+70\\beta_1,\\beta_1)\\)Standardisert\\((T-m)/d\\)\\((\\beta_0+m\\beta_1,d\\beta_1)\\)\nHer er \\(m=\\) temps.mean() gjennomsnittet og \\(d=\\) temps.std() standardavviket, et mål på spredningen. Omregningene er gitt. De bevarer \\(\\gamma_0+\\gamma_1t=\\beta_0+\\beta_1T\\) for hver temperatur.\na. Forutsi. Hvilket koordinatvalg tror du gir færrest steg? Knytt forventningen til forholdet mellom de to singulærverdiene.\nCellen bygger matrisene og skriver ut singulærverdier og forholdet. Finn forskjellen i tallene selv; ikke se bare på størrelsen til hver verdi.\nb. Kjør og sammenlign. Tabellen under bruker din gd med samme start, toleranse og tak på antall steg. Den oppgir også kondisjonstallet til Hessianen ved referanseløsningen og faktoren fra uke 9:\n\\[S=\\max_i|1-\\alpha\\lambda_i(H_*)|.\\]\nDette er en lokal modell for farten nær minimumet, ikke en garanti for antall steg fra startpunktet. En faktor nær 1 betyr langsom framgang.\nCellen beregner omregningen og diagnostikken ferdig. Skriv selv en kort sammenligning av faktisk arbeid og forventet lokal fart."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-three-runs","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-three-runs","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"alpha_std = 4/np.linalg.svd(X_std, compute_uv=False)[0]**2\ngamma, k = gd(X_std, alpha_std)\nbeta_F = np.array([gamma[0]-m*gamma[1]/d, gamma[1]/d])\nfor T in [31, 53, 70]:\n    print(f'p({T} °F) = {sigma(beta_F[0]+beta_F[1]*T):.4f}')\nshow_fit(beta_F)","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"a. Forutsi. Hvilket koordinatvalg tror du gir færrest steg? Knytt forventningen til forholdet mellom de to singulærverdiene.\nCellen bygger matrisene og skriver ut singulærverdier og forholdet. Finn forskjellen i tallene selv; ikke se bare på størrelsen til hver verdi.\nb. Kjør og sammenlign. Tabellen under bruker din gd med samme start, toleranse og tak på antall steg. Den oppgir også kondisjonstallet til Hessianen ved referanseløsningen og faktoren fra uke 9:\n\\[S=\\max_i|1-\\alpha\\lambda_i(H_*)|.\\]\nDette er en lokal modell for farten nær minimumet, ikke en garanti for antall steg fra startpunktet. En faktor nær 1 betyr langsom framgang.\nCellen beregner omregningen og diagnostikken ferdig. Skriv selv en kort sammenligning av faktisk arbeid og forventet lokal fart.\nHvilke kjøringer nådde toleransen? En avbrutt kjøring teller ikke som en rask løsning.\nSammenlign kondisjonstall, \\(S\\) og observerte steg. Hva er bevart ved koordinatskiftet, og hva er endret?\nVelg sentrering. Sett den gitte \\(\\gamma\\) inn i \\(\\gamma_0+\\gamma_1(T-70)\\) og forenkle til \\(\\beta_0+\\beta_1T\\). To korte linjer er nok.\nc. Tolk modellen med forbehold. Vi kan regne tilbake fra standardiserte koordinater med \\(\\beta_1=\\gamma_1/d\\), \\(\\beta_0=\\gamma_0-m\\gamma_1/d\\).\nCellen bruker din løsning, regner den tilbake og viser kurven ved og utenfor temperaturene i dataene."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-launch-day","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-launch-day","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"b0, b1 = beta_oracle\nreference_std = np.array([b0+m*b1, d*b1])\nlam = np.linalg.eigvalsh(hessian(X_std, reference_std))\nprint('lokal kritisk grense:', 2/lam[-1])\npaths = {}\nfor alpha in [0.55, 0.6, 1.5]:\n    beta = np.zeros(2)\n    path = [beta.copy()]\n    for k in range(1000):\n        beta = beta-alpha*grad(X_std, beta)\n        path.append(beta.copy())\n    paths[alpha] = np.array(path)\n    print('alpha:', alpha, 'siste punkter:', path[-2].round(3), path[-1].round(3),\n          'gradientnorm:', np.linalg.norm(grad(X_std, beta)))\nshow_cycles(paths, reference_std)\nalpha_std = 4/np.linalg.svd(X_std, compute_uv=False)[0]**2\nfor alpha in [alpha_std, 0.55]:\n    beta, k = gd(X_std, alpha)\n    print('fast alpha:', alpha, 'steg:', k,\n          'stoppkrav:', np.linalg.norm(grad(X_std, beta)) < 1e-6)","id":12,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"3. Steglengde: stabilitet, fart og arbeidsmengde\nEt trygt steg trenger ikke være det raskeste. Nær minimumet gir \\(2/\\lambda_{\\max}(H_*)\\) den lokale kritiske grensen fra uke 9. Den sier ikke hva en vilkårlig start vil gjøre langt fra minimumet.\na. Forutsi og undersøk. Sammenlign \\(\\alpha=0.55\\), \\(0.6\\) og \\(1.5\\) med grensen. Tror du større steg alltid betyr mindre arbeid?\nCellen beregner grensen, kjører 1000 steg og viser de siste punktene. Den trygge steglengden prøves også med stoppregel."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-too-large","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-too-large","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"budget = 2000                 # du kan prøve 4000; ikke bruk millionkjøringer\nfor name in ['rå T', 'standardisert (T - m)/d']:\n    X = designs[name]\n    alpha = 4/np.linalg.svd(X, compute_uv=False)[0]**2\n    fixed, k_fixed = gd(X, alpha, max_steps=budget)\n    adaptive, k, extra = armijo_gd(X, grad, max_steps=budget)\n    print(name)\n    for method, beta, steps, evaluations in [\n            ('fast', fixed, k_fixed, 0), ('Armijo', adaptive, k, 2*k+extra)]:\n        norm = np.linalg.norm(grad(X, beta))\n        print(method, 'steg:', steps, 'L-beregninger i metoden:', evaluations,\n              'L:', loss(X, beta), '|gradient|:', norm, 'stoppkrav:', norm < 1e-6)","id":13,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Armijo: løser et tilpasset steg problemet?\nArmijo starter med \\(\\alpha=1\\) og halverer til tapet synker nok. armijo_gd er gitt. Forutsi: Vil dette fjerne forskjellen mellom rå og standardiserte temperaturer?\nCellen kjører din gradient med to metoder på de samme dataene. Den teller iterasjoner og de ekstra prøvepunktene Armijo avviser. Med implementasjonen her bruker Armijo \\(2k+\\) extra tapsberegninger: én nåverdi og én godtatt prøve per steg, i tillegg til de avviste prøvene. Sluttkontrollen i utskriften er ikke med. Fast steg bruker ingen tapsberegning i løkken."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-armijo","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-armijo","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"for name, yy in [('virkelige', damage), ('skilte', (temps < 65).astype(float))]:\n    beta = np.zeros(2)\n    for k in range(1, 10001):\n        beta = beta-alpha_c*grad(X_c, beta, yy)\n        if k in [100, 1000, 10000]:\n            print(name, 'steg:', k, '|beta|:', np.linalg.norm(beta),\n                  'L:', loss(X_c, beta, yy),\n                  '|gradient|:', np.linalg.norm(grad(X_c, beta, yy)))","id":14,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"4. Sluttundersøkelse: liten gradient, men hvilken løsning?\nHva om alle skader lå under én temperatur og alle skadefrie oppskytinger over? Da kan en stadig brattere S-kurve passe bedre. Dette kalles full separasjon. Vi lager et tenkt datasett med skade akkurat når \\(T<65\\); vi endrer ikke de virkelige dataene.\nSammenlign de virkelige og de tenkte utfallene med samme sentrerte datamatrise og samme trygge steg. Cellen viser tap, gradientnorm og parameterstørrelse ved tre tidspunkter."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-separable","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-separable","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}},{"code":"skilt = (temps < 65).astype(float)\nfor c in [1, 2, 5, 10]:\n    gamma = np.array([-5.*c, -c])\n    print('c:', c, '|gamma|:', np.linalg.norm(gamma), 'L:', loss(X_c, gamma, skilt),\n          '|gradient|:', np.linalg.norm(grad(X_c, gamma, skilt)))","id":15,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"4. Sluttundersøkelse: liten gradient, men hvilken løsning?\nHva om alle skader lå under én temperatur og alle skadefrie oppskytinger over? Da kan en stadig brattere S-kurve passe bedre. Dette kalles full separasjon. Vi lager et tenkt datasett med skade akkurat når \\(T<65\\); vi endrer ikke de virkelige dataene.\nSammenlign de virkelige og de tenkte utfallene med samme sentrerte datamatrise og samme trygge steg. Cellen viser tap, gradientnorm og parameterstørrelse ved tre tidspunkter.\nEn gitt matematisk egenskap forklarer hva vi må se etter: For full separasjon er infimum av \\(L\\) lik 0, men ingen endelig parametervektor oppnår det. Her er én familie som nærmer seg dette infimumet:\n\\[p(T)=\\sigma(c(65-T)),\\qquad\n\\gamma=(-5c,-c)^T\\quad\\text{i sentrerte koordinater}.\\]\nDu skal ikke bevise egenskapen eller derivere familien. Cellen lar deg undersøke den direkte, uten en lang gradientkjøring."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project9-ray","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project9-ray","name":""},"read-only":"false","results":"markup","task":"","warning":"true"}}];
 
 // AI feedback feature settings ----
 //
@@ -4069,7 +4034,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week11.html">Prosjekt 11 – Hvorfor koster strømmen det den koster?</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week9.html">Prosjekt 9 – Når skalaen bestemmer farten</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
@@ -4264,7 +4229,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week9.html" class="sidebar-item-text sidebar-link">
+  <a href="../pages/project_week9.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Prosjekt 9 – Når skalaen bestemmer farten</span></a>
   </div>
 </li>
@@ -4276,7 +4241,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link active">
+  <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Prosjekt 11 – Hvorfor koster strømmen det den koster?</span></a>
   </div>
 </li>
@@ -4327,9 +4292,9 @@ window.Quarto = {
   });
 </script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week11.html">Prosjekt 11 – Hvorfor koster strømmen det den koster?</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week9.html">Prosjekt 9 – Når skalaen bestemmer farten</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Prosjekt 11 – Hvorfor koster strømmen det den koster?</h1>
+<h1 class="title">Prosjekt 9 – Når skalaen bestemmer farten</h1>
 </div>
 
 
@@ -4348,355 +4313,269 @@ window.Quarto = {
 
 <div id="qpyodide-insertion-location-1"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<section id="hvorfor-koster-strømmen-det-den-koster" class="level2">
-<h2 class="anchored" data-anchor-id="hvorfor-koster-strømmen-det-den-koster">Hvorfor koster strømmen det den koster?</h2>
-<p>Du har kanskje sett at strømprisen kan være forskjellig i to deler av landet i samme time. Her bygger vi et lite kraftmarked og bruker <code>linprog</code> til å undersøke tre spørsmål:</p>
-<ul>
-<li>Hvilket kraftverk bestemmer prisen når forbruket øker litt?</li>
-<li>Når kan en overføringslinje gi ulike priser i to områder?</li>
-<li>Hvorfor har vannet i et magasin verdi selv om regnet er gratis?</li>
-</ul>
-<section id="bakgrunn-slik-leser-vi-energimodellen" class="level3">
-<h3 class="anchored" data-anchor-id="bakgrunn-slik-leser-vi-energimodellen">Bakgrunn: slik leser vi energimodellen</h3>
-<p>Dette er en kort orientering, ikke en egen oppgavedel. Du trenger ingen økonomi. Vi bruker <strong>pris</strong> om endringen i den laveste samlede kostnaden per MW ekstra forbruk. En produksjon på 1 MW i én time gir 1 MWh energi. En <strong>dualvariabel</strong> er tallet løseren gir for denne lokale endringen, slik som ressursprisene i <a href="../pages/uke11.html#uke11-dual">uke 11</a>. Ved et knekkpunkt kan endringen være ulik på hver side.</p>
-<p>Alle tall er oppdiktede. Vi antar fast forbruk, kjente kostnader, ingen tap i nettet og delbar produksjon. Modellen skal forklare sammenhenger, ikke forutsi den faktiske strømprisen.</p>
+<section id="når-skalaen-bestemmer-farten" class="level2">
+<h2 class="anchored" data-anchor-id="når-skalaen-bestemmer-farten">Når skalaen bestemmer farten</h2>
+<p>Samme data og samme gradientmetode kan gi svært ulik arbeidsmengde. <strong>Hva skyldes skalaen på variablene, og hva kan Armijo-søk hjelpe med?</strong> Du undersøker dette med en sannsynlighetsmodell for O-ringskade før Challenger-ulykken.</p>
+<p>Du får de nødvendige deriverte og en ferdig Armijo-metode. Du skriver en kort gradientfunksjon og en gradientløkke. Hovedarbeidet er å sammenligne kjøringer, lese tall og figurer og begrunne konklusjonene dine.</p>
 </section>
-<section id="en-vei-gjennom-prosjektet" class="level3">
-<h3 class="anchored" data-anchor-id="en-vei-gjennom-prosjektet">En vei gjennom prosjektet</h3>
+<section id="før-prosjektarbeidet-en-kort-innføring-i-statistikken" class="level2">
+<h2 class="anchored" data-anchor-id="før-prosjektarbeidet-en-kort-innføring-i-statistikken">Før prosjektarbeidet: en kort innføring i statistikken</h2>
+<p><strong>Dette er bakgrunn, ikke en egen innleveringsdel.</strong> Les og kjør eksemplene. Du trenger ingen statistikk fra før. Selve optimeringsarbeidet begynner i <a href="#project9-start">del 1</a>.</p>
+<section id="data-og-en-kurve-mellom-0-og-1" class="level3">
+<h3 class="anchored" data-anchor-id="data-og-en-kurve-mellom-0-og-1">Data og en kurve mellom 0 og 1</h3>
+<p>Vi har temperatur og O-ringskade fra 23 romfergeoppskytinger før Challenger:</p>
+<ul>
+<li><code>temps</code> inneholder temperaturene <span class="math inline">\(T_i\)</span>, fra 53 til 81 °F.</li>
+<li><code>damage</code> inneholder <span class="math inline">\(y_i=1\)</span> ved skade og <span class="math inline">\(y_i=0\)</span> ellers.</li>
+<li>Sju av de 23 oppskytingene hadde skade. Dataene er fra Dalal, Fowlkes og Hoadley (1989, <em>Journal of the American Statistical Association</em> 84,
+<ol start="19" type="a">
+<li>945–957), for oppskytingene der motorene kunne undersøkes.</li>
+</ol></li>
+</ul>
+<p>Challenger ble skutt opp ved 31 °F, under temperaturene i dette datasettet. Vi må skille mellom det en tilpasset modell sier og det dataene støtter.</p>
+<p>En rett linje kan gi verdier utenfor <span class="math inline">\([0,1]\)</span>. Derfor bruker vi en S-kurve:</p>
+<p><span class="math display">\[p(T)=\sigma(\beta_0+\beta_1T),\qquad
+\sigma(s)=\frac{1}{1+e^{-s}}.\]</span></p>
+<p>Her er <span class="math inline">\(p(T)\)</span> modellens sannsynlighet for skade ved temperatur <span class="math inline">\(T\)</span>.</p>
+<ul>
+<li><strong>Terskel:</strong> Når <span class="math inline">\(\beta_1\ne0\)</span>, er <span class="math inline">\(p(T)=1/2\)</span> ved <span class="math inline">\(T=-\beta_0/\beta_1\)</span>.</li>
+<li><strong>Retning og bratthet:</strong> Negativ <span class="math inline">\(\beta_1\)</span> gir mindre <span class="math inline">\(p\)</span> når temperaturen øker. Større <span class="math inline">\(|\beta_1|\)</span> gir en brattere overgang.</li>
+</ul>
+<p>Den første cellen viser hvorfor den rette linjen ikke kan brukes som sannsynlighetskurve.</p>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Den neste viser en logistisk referansekurve og en slakere kurve med samme terskel. Referansekoeffisientene <code>beta_oracle</code> er gitt for å kontrollere optimeringen senere; du skal ikke finne dem i innføringen.</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+</section>
+<section id="hva-betyr-kurven-passer" class="level3">
+<h3 class="anchored" data-anchor-id="hva-betyr-kurven-passer">Hva betyr «kurven passer»?</h3>
+<p>En oppskyting med skade bør få stor <span class="math inline">\(p_i=p(T_i)\)</span>; en uten skade bør få stor <span class="math inline">\(1-p_i\)</span>. Vi antar at utfallene fra ulike oppskytinger er uavhengige. Da måler produktet av disse faktorene hvor sannsynlige de observerte utfallene er under modellen.</p>
+<div id="project9-two-launches">
+
+</div>
+<p>For skade ved 58 °F og ingen skade ved 78 °F er produktet <span class="math inline">\(p(58)(1-p(78))\)</span>. Cellen sammenligner to kurver. Du trenger ikke regne sannsynlighetene for hånd.</p>
+<div id="qpyodide-insertion-location-4"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Størst produkt er best. I stedet for å maksimere et lite produkt minimerer vi <strong>summen av minus logaritmen til faktorene</strong>. Det gir samme beste kurve. Tapet som brukes videre, er ferdig skrevet som</p>
+<p><span class="math display">\[L(\beta)=\sum_{i=1}^{23}\left(\log(1+e^{s_i})-y_i s_i\right),
+\qquad s_i=\beta_0+\beta_1T_i.\]</span></p>
+<p>Dette heter <strong>logistisk regresjon</strong>. I Python bruker <code>loss</code> en numerisk stabil måte å beregne denne summen på. Lavere <span class="math inline">\(L\)</span> betyr bedre tilpasning etter denne regelen; det sier ikke alene hvor godt modellen virker utenfor dataene.</p>
+<p><strong>Ta med videre:</strong> To parametre bestemmer en sannsynlighetskurve. Vi finner dem ved å minimere en gitt funksjon <span class="math inline">\(L\)</span> av to variabler.</p>
+</section>
+<section id="oppsett-og-arbeidsplan" class="level3">
+<h3 class="anchored" data-anchor-id="oppsett-og-arbeidsplan">Oppsett og arbeidsplan</h3>
+<p>På nettsiden er data, <code>sigma</code>, <code>design</code>, <code>loss</code>, <code>hessian</code>, <code>armijo_gd</code> og figurhjelperne klare automatisk. Dine to funksjoner <code>grad</code> og <code>gd</code> må kjøres igjen hvis siden lastes på nytt.</p>
+<p>I egen notebook: last ned <a href="../assets/project_week9_setup.py" download="project_week9_setup.py">oppsettsfilen</a> og kjør <code>from project_week9_setup import *</code>. Du trenger NumPy og Matplotlib. Kopier cellene i rekkefølge, og kontroller med <strong>Restart / Run all</strong> før levering.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Del</th>
-<th style="text-align: left;">Det du undersøker</th>
+<th style="text-align: left;">Arbeidet ditt</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">Innføring</td>
+<td style="text-align: left;">Les og kjør statistikkeksemplene; ingen egen levering</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">1</td>
-<td style="text-align: left;">Les produksjon, pris og gjennomsnitt fra løseren.</td>
+<td style="text-align: left;">Koble summer til matriseprodukt og fullfør to korte funksjoner</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">2</td>
-<td style="text-align: left;">Kontroller prisene med små endringer og les slakk.</td>
+<td style="text-align: left;">Sammenlign tre koordinatvalg og forklar forskjellene</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">3</td>
-<td style="text-align: left;">Sammenlign prisene på hver side av en linje.</td>
+<td style="text-align: left;">Undersøk steglengde og Armijo med dine egne utskrifter</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">4</td>
-<td style="text-align: left;">Bygg én matrisrad og undersøk vannverdien.</td>
+<td style="text-align: left;">En kort sluttundersøkelse av stoppkravet</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">5 og levering</td>
-<td style="text-align: left;">Test ett lokalt prisanslag og samle konklusjonene.</td>
+<tr class="even">
+<td style="text-align: left;">Levering</td>
+<td style="text-align: left;">Samle utvalgte resultater og korte konklusjoner</td>
 </tr>
 </tbody>
 </table>
-<p>Sett av omtrent <strong>4–6 timer</strong>. Du skriver to korte funksjoner; resten av arbeidet er å velge forsøk, lese utskrifter og begrunne konklusjoner. Skriv en kort forventning før hver sammenligning. Du skal ikke utlede pristeorien på nytt.</p>
-</section>
-<section id="oppsett-og-begreper" class="level3">
-<h3 class="anchored" data-anchor-id="oppsett-og-begreper">Oppsett og begreper</h3>
-<p>På nettsiden er data, <code>one_zone</code>, <code>two_zones</code> og figurhjelpere klare. Studentfunksjonene <code>read_market</code> og <code>make_water_row</code> må du kjøre igjen etter at siden lastes på nytt. Hver forsøkscelle kan ellers kjøres med oppsettet uten at tidligere forsøksceller er kjørt.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Les i resultatet</th>
-<th style="text-align: left;">Betydning</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><code>res.status</code>, <code>res.success</code></td>
-<td style="text-align: left;">Sjekk utfallet først: 0 er vellykket, 2 betyr umulige krav.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>res.x</code>, <code>res.fun</code></td>
-<td style="text-align: left;">Produksjonsplan og laveste samlede kostnad.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>res.eqlin.marginals</code></td>
-<td style="text-align: left;">Lokal kostnadsendring per ekstra enhet på likningshøyresiden.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>res.upper.residual</code></td>
-<td style="text-align: left;">Ledig kapasitet: øvre grense minus produksjon.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>-res.upper.marginals</code></td>
-<td style="text-align: left;">Verdien av litt mer kapasitet.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>-res.ineqlin.marginals</code></td>
-<td style="text-align: left;">Verdien av litt mer på en øvre ressursgrense.</td>
-</tr>
-</tbody>
-</table>
-<p>En grense med null slakk er <strong>aktiv</strong>. En grense med ledig kapasitet har verdi null. En aktiv grense kan også ha verdi null. Marginalene er lokale: ved større endringer må du løse modellen igjen (<a href="../pages/uke11.html#uke11-sensitivitet">uke 11.4</a>).</p>
-<details>
-<summary>
-Egen notebook: last ned oppsettet og kom i gang
-</summary>
-<p>Last ned <a href="../assets/project_week11_setup.py" download="project_week11_setup.py">project_week11_setup.py</a> og legg den ved siden av notebooken. Kjør først</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-ai-feedback-context="Oppsett og begreper
-På nettsiden er data, one_zone, two_zones og figurhjelpere klare. Studentfunksjonene read_market og make_water_row må du kjøre igjen etter at siden lastes på nytt. Hver forsøkscelle kan ellers kjøres med oppsettet uten at tidligere forsøksceller er kjørt.
-Les i resultatetBetydningres.status, res.successSjekk utfallet først: 0 er vellykket, 2 betyr umulige krav.res.x, res.funProduksjonsplan og laveste samlede kostnad.res.eqlin.marginalsLokal kostnadsendring per ekstra enhet på likningshøyresiden.res.upper.residualLedig kapasitet: øvre grense minus produksjon.-res.upper.marginalsVerdien av litt mer kapasitet.-res.ineqlin.marginalsVerdien av litt mer på en øvre ressursgrense.
-En grense med null slakk er aktiv. En grense med ledig kapasitet har verdi null. En aktiv grense kan også ha verdi null. Marginalene er lokale: ved større endringer må du løse modellen igjen (uke 11.4).
-Egen notebook: last ned oppsettet og kom i gang
-Last ned project_week11_setup.py og legg den ved siden av notebooken. Kjør først"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> project_week11_setup <span class="im">import</span> <span class="op">*</span></span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Du trenger NumPy, SciPy og Matplotlib. Oppsettet gir data og ferdige modell- og figurhjelpere. De to studentfunksjonene skriver du selv. Kopier cellene i rekkefølge og kontroller med <strong>Restart / Run all</strong> før levering. Ta med oppsettsfilen.</p>
-</details>
-<p><strong>Her begynner prosjektarbeidet.</strong> Fra nå av bruker du lineær algebra, løserresultater og egne sammenligninger.</p>
-</section>
-</section>
-<section id="ett-prisområde-les-markedet" class="level2">
-<h2 class="anchored" data-anchor-id="ett-prisområde-les-markedet">1. Ett prisområde: les markedet</h2>
-<p>Først har vi ett område, én time og fire kraftverk. Markedet skal dekke forbruket så billig som mulig. Hvert kraftverk oppgir en kostnad og hvor mye det kan levere, <strong>kapasiteten</strong>.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Kraftverk</th>
-<th style="text-align: right;">Kostnad <span class="math inline">\(c_i\)</span> (kr/MWh)</th>
-<th style="text-align: right;">Kapasitet <span class="math inline">\(k_i\)</span> (MW)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">vind</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">30</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">vannkraft</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">import</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: right;">30</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">gass</td>
-<td style="text-align: right;">70</td>
-<td style="text-align: right;">40</td>
-</tr>
-</tbody>
-</table>
-<p>Import behandles som et kraftverk. Med produksjonsvektor <span class="math inline">\(x=(x_1,x_2,x_3,x_4)^T\)</span> og forbruk <span class="math inline">\(D\)</span> er modellen</p>
-<p><span class="math display">\[\min c^Tx\quad\text{slik at}\quad
-\mathbf1^Tx=D,\qquad 0\le x_i\le k_i.\]</span></p>
-<p><strong>Koble sum og vektor:</strong> Skriv <span class="math inline">\(c^Tx\)</span> som en sum med de fire kostnadene. Hvilken rad i <code>A_eq</code> uttrykker at all produksjon til sammen skal bli <span class="math inline">\(D\)</span>? Dette er samme rad-for-rad-tenkning som i <a href="../pages/uke3.html">uke 3</a>.</p>
-<section id="se-planen-før-du-leser-tallene" class="level3">
-<h3 class="anchored" data-anchor-id="se-planen-før-du-leser-tallene">Se planen før du leser tallene</h3>
-<p>Figuren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet, og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes ved <code>D=90</code>. Kjør så figuren; du trenger ingen full håndtabell.</p>
-<div id="qpyodide-insertion-location-2"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Et kraftverk som kan skrus litt opp eller ned i den beste planen, er <strong>marginalt</strong>. Det ligger mellom null og full kapasitet. Nå sammenligner du prisen med både dette kraftverkets kostnad og gjennomsnittskostnaden.</p>
-<p>Cellen viser modellen som sendes til <code>linprog</code> og skriver ut løsningen. Bytt <code>D</code> mellom 60, 90 og 130; noter én linje med produksjon, pris og gjennomsnitt for hvert forbruk.</p>
-<div id="qpyodide-insertion-location-3"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>En kort håndsjekk:</strong> For <span class="math inline">\(D=90\)</span> skal du bruke billigste kraftverk først. Finn produksjonsvektoren og regn ut kostnaden med <span class="math inline">\(c^Tx\)</span>. Hvis forbruket øker fra 90 til 91, hvilket kraftverk justeres, og hvor mye koster det? Sammenlign med utskriften. Du trenger bare denne ene håndsjekken.</p>
-<p><strong>Les og konkluder:</strong> Hvilket kraftverk er marginalt i hver kjøring? Sammenlign kostnaden til dette kraftverket med prisen og gjennomsnittet. Bruk utskriften til å forklare hvorfor pris og gjennomsnitt er ulike tall.</p>
-</section>
-<section id="fra-tre-kjøringer-til-en-pristrapp" class="level3">
-<h3 class="anchored" data-anchor-id="fra-tre-kjøringer-til-en-pristrapp">Fra tre kjøringer til en pristrapp</h3>
-<p>Nå ser vi på flere forbruk. <strong>Kodespor 1:</strong> Fullfør <code>read_market</code> slik at den returnerer paret <code>(pris, gjennomsnittskostnad)</code> fra et vellykket resultat og forbruket <code>D</code>. Du trenger bare opplysningene i tabellen over.</p>
-<div id="qpyodide-insertion-location-4"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Løkken bruker funksjonen din til å tegne begge kurvene. Halve forbrukstall unngår punkter der prisen kan ha to ulike ensidige verdier.</p>
-<div id="qpyodide-insertion-location-5"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Les og konkluder:</strong> Finn de tre indre trinnene i prisen. Koble hvert trinn til kapasitetene i kraftverkstabellen. Hvorfor trenger ikke gjennomsnittet å hoppe når det marginale kraftverket byttes?</p>
-</section>
-</section>
-<section id="kontroller-prisen-og-kapasiteten" class="level2">
-<h2 class="anchored" data-anchor-id="kontroller-prisen-og-kapasiteten">2. Kontroller prisen og kapasiteten</h2>
-<p>En marginal er et <strong>lokalt anslag</strong>, ikke et løfte for enhver endring. Den oppgitte prisen <span class="math inline">\(\lambda\)</span> gir anslaget</p>
-<p><span class="math display">\[C(D+\Delta D)\approx C(D)+\lambda\Delta D,\]</span></p>
-<p>der <span class="math inline">\(C(D)\)</span> er den laveste kostnaden. Inne i ett rett kurvestykke er anslaget eksakt. Ved et knekkpunkt kan det være ulike endringsrater på hver side; én rapportert dualverdi trenger ikke passe begge veier.</p>
-<p>Cellen sammenligner prisen med kostnadsendringen ved én MW mer og én MW mindre. Forutsi først hvilket av de tre forbrukene som skiller seg ut.</p>
-<div id="qpyodide-insertion-location-6"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Les og konkluder:</strong> Hvor er én pris nok til å beskrive begge endringene? Hvorfor er <code>D=80</code> annerledes? Bruk hvilke kraftverk som kan justeres, ikke en ny derivasjon. En annen løserversjon kan velge en annen gyldig dualverdi akkurat på trinnet; de to endelige kostnadsendringene er kontrollen din.</p>
-<section id="komplementær-slakk-fra-utskriften" class="level3">
-<h3 class="anchored" data-anchor-id="komplementær-slakk-fra-utskriften">Komplementær slakk fra utskriften</h3>
-<p>Fra <a href="../pages/uke11.html#uke11-slakk">uke 11.3</a> har vi disse reglene:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Kraftverkets tilstand</th>
-<th style="text-align: left;">Forhold mellom kostnad <span class="math inline">\(c_i\)</span> og pris <span class="math inline">\(\lambda\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Mellom null og kapasitet</td>
-<td style="text-align: left;"><span class="math inline">\(c_i=\lambda\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Full kapasitet</td>
-<td style="text-align: left;"><span class="math inline">\(c_i\le\lambda\)</span></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Ingen produksjon</td>
-<td style="text-align: left;"><span class="math inline">\(c_i\ge\lambda\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>For denne modellen er kapasitetsverdien <span class="math inline">\(\mu_i=-\)</span><code>res.upper.marginals[i]</code>. Prisene gir dessuten en nedre kostnadsgrense <span class="math inline">\(\lambda D-\mu^Tk\)</span>, med <span class="math inline">\(\mu\ge0\)</span> og <span class="math inline">\(\lambda\mathbf1-\mu\le c\)</span>. Du får denne sammenhengen ferdig; oppgaven er å lese og kontrollere tallene.</p>
-<p>Cellen skriver ut produksjon, ledig kapasitet og kapasitetsverdi. Sammenlign også prisgrensen med kostnaden fra løseren.</p>
-<div id="qpyodide-insertion-location-7"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Les og konkluder:</strong> Finn ett kraftverk i hver tilstand og kontroller reglene. Hvem har verdi av mer kapasitet, og hvilken produksjon ville den ekstra kapasiteten erstatte? Hvorfor er ledig kapasitet og en pris på null to forskjellige opplysninger?</p>
-</section>
-</section>
-<section id="to-områder-og-en-linje" class="level2">
-<h2 class="anchored" data-anchor-id="to-områder-og-en-linje">3. To områder og en linje</h2>
-<p>Nå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er verdt å bygge en litt sterkere linje.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Område</th>
-<th style="text-align: left;">Kraftverk (kostnad, kapasitet)</th>
-<th style="text-align: right;">Forbruk (MW)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Nord</td>
-<td style="text-align: left;">vind (0 kr, 20 MW), vannkraft (10 kr, 80 MW)</td>
-<td style="text-align: right;">30</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Sør</td>
-<td style="text-align: left;">import (40 kr, 30 MW), gass (70 kr, 80 MW)</td>
-<td style="text-align: right;">80</td>
-</tr>
-</tbody>
-</table>
-<p>Flyten <span class="math inline">\(f\)</span> er positiv fra nord til sør og har grensene <span class="math inline">\(-L\le f\le L\)</span>. Med rekkefølgen <code>(vind N, vann N, import S, gass S, f)</code> er balansene</p>
-<p><span class="math display">\[\begin{pmatrix}1&amp;1&amp;0&amp;0&amp;-1\\0&amp;0&amp;1&amp;1&amp;1\end{pmatrix}x
-=\begin{pmatrix}30\\80\end{pmatrix}.\]</span></p>
-<p><strong>Les en matrisrad:</strong> Skriv de to radene som hver sin sum. Forklar hvorfor <span class="math inline">\(f\)</span> har ulikt fortegn, og hvorfor summen av radene fjerner flyten.</p>
-<p>Forutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet. Cellen løser samme modell for flere <code>L</code> og viser også den lokale verdien av mer kapasitet. For <code>L&gt;0</code> økes begge grensene <code>(-L, L)</code> når linjen utvides, så verdien er <code>lower.marginals[4] - upper.marginals[4]</code>.</p>
-<div id="qpyodide-insertion-location-8"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Les og konkluder:</strong> Sammenlign <code>L=40</code>, <code>55</code> og <code>100</code>. Når er prisene like, og når er linjen full mot sør? Forklar prisen i nord ved <code>L=100</code> ved å se på hvor en ekstra MW til forbruket i nord måtte komme fra.</p>
-<p>Vil du se planen som et bilde, velger du en av kjøringene. Figuren viser hvilke kraftverk som produserer på hver side av linjen.</p>
-<div id="qpyodide-insertion-location-9"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<section id="hvor-lenge-virker-linjeverdien" class="level3">
-<h3 class="anchored" data-anchor-id="hvor-lenge-virker-linjeverdien">Hvor lenge virker linjeverdien?</h3>
-<p>Du får prisreglene ferdig for denne tapsfrie modellen:</p>
-<ul>
-<li><strong>Full mot sør, <span class="math inline">\(f=L&gt;0\)</span>:</strong> Linjeverdien er <span class="math inline">\(\lambda_S-\lambda_N\)</span>.</li>
-<li><strong>Ledig begge veier, <span class="math inline">\(-L&lt;f&lt;L\)</span>:</strong> Linjeverdien er null og prisene er like.</li>
-<li><strong>Ved et knekkpunkt:</strong> En full linje kan ha verdi null. At linjen er full, er ikke alene nok til å vite at mer kapasitet senker kostnaden.</li>
-</ul>
-<p>En lokal verdi gjelder bare mens de samme begrensningene bestemmer kostnadsendringen. Nå tester du både en liten og en større utvidelse fra <code>L=40</code>, og én ekstra MW fra <code>L=70</code>. Formuleringen er en forutsigelse som skal sammenlignes med nye løsninger, ikke en håndutledning.</p>
-<div id="qpyodide-insertion-location-10"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Les og konkluder:</strong> Hvor virker anslaget, og hvor gjør det ikke det? Bruk produksjonsplanene til å peke på hvilken grense som skifter rolle. Sammenlign særskilt <code>L=70</code> med én ekstra MW: er «full» det samme som «verdifull å utvide»?</p>
-</section>
-</section>
-<section id="vannkraft-med-begrenset-vann" class="level2">
-<h2 class="anchored" data-anchor-id="vannkraft-med-begrenset-vann">4. Vannkraft med begrenset vann</h2>
-<p>En MWh vann brukt nå kan ikke brukes i en dyrere time senere. Vi ser derfor på tre timer samtidig. Kraftverkene har kostnadene fra del 1; vind varierer, og vannkraften kan levere høyst 50 MW per time og bruke høyst <strong>120 MWh vann til sammen</strong>.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Time</th>
-<th style="text-align: right;">1</th>
-<th style="text-align: right;">2</th>
-<th style="text-align: right;">3</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Forbruk (MW)</td>
-<td style="text-align: right;">60</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: right;">120</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Tilgjengelig vind (MW)</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">20</td>
-</tr>
-</tbody>
-</table>
-<section id="bygg-én-rad-i-modellen" class="level3">
-<h3 class="anchored" data-anchor-id="bygg-én-rad-i-modellen">Bygg én rad i modellen</h3>
-<p>Variablene kommer i tre grupper: <code>(vind, vann, import, gass)</code> for hver time. Vannkravet er</p>
-<p><span class="math display">\[x_{\text{vann},1}+x_{\text{vann},2}+x_{\text{vann},3}\le120.\]</span></p>
-<p><strong>Kodespor 2:</strong> Fullfør <code>make_water_row</code> slik at den returnerer en <code>(1, 12)</code>-matrise som velger ut akkurat de tre vannvariablene. Forklar hvordan <code>A_water @ x</code> da blir summen over de tre timene. Dette er den samme koblingen mellom en sum og en matrisrad som i del 1. Kontrollen bruker 2, 3 og 5 MWh vann i de tre timene; summen skal bli 10 MWh. Rett raden før du løser modellen dersom kontrollen ikke stemmer.</p>
-<div id="qpyodide-insertion-location-11"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p>Resten av tre-timersmodellen er gitt i oppsettet: <code>A_eq3</code> har én forbrukslikning per time. Cellen bruker vannraden din og skriver ut planen, prisene og <strong>vannverdien</strong>, altså spart kostnad per MWh ekstra vann.</p>
-<div id="qpyodide-insertion-location-12"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Les og konkluder:</strong> I hvilken time kunne vannkraften bruke litt mer vann uten å nå 50 MW-grensen? Hvilket annet kraftverk ville den erstatte? Bruk kostnadsforskjellen til å tolke vannverdien i utskriften. Sammenlign også <code>10 + vannverdi</code> med prisene; hva endres når vannkraften går for fullt?</p>
-</section>
-<section id="når-slutter-vannet-å-være-knapt" class="level3">
-<h3 class="anchored" data-anchor-id="når-slutter-vannet-å-være-knapt">Når slutter vannet å være knapt?</h3>
-<p>Den neste cellen gjentar løsningen for flere vannmengder og kontrollerer én liten økning fra 120 MWh. Forutsi først om mer vann alltid har samme verdi.</p>
-<div id="qpyodide-insertion-location-13"></div>
-<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
-<p><strong>Les og konkluder:</strong> Kontroller vannverdien ved 120 MWh mot besparelsen ved 121 MWh. Finn trinnene i figuren og forklar ett av dem med hvilket kraftverk vannet erstatter. Bruk utskriften til å skille mellom «vann har verdi null» og «det finnes ingen tillatt plan».</p>
-</section>
-</section>
-<section id="din-undersøkelse-bruk-et-lokalt-prisanslag" class="level2">
-<h2 class="anchored" data-anchor-id="din-undersøkelse-bruk-et-lokalt-prisanslag">5. Din undersøkelse: bruk et lokalt prisanslag</h2>
-<p>Du har undersøkt både linje- og vannverdier. Nå velger du <strong>ett</strong> tiltak og tester hvor langt en forutsigelse med startmodellens dualverdi holder. Du trenger ikke bygge en ny modell.</p>
-<ul>
-<li><strong>Mer vind i nord:</strong> Bruk <code>two_zones(40, wind_north=20 + delta)</code> og vindverdien <code>-two_zones(40).upper.marginals[0]</code> fra startmodellen.</li>
-<li><strong>Mer vann:</strong> Bruk tre-timersmodellen, vannraden din og startmodellens vannverdi ved 120 MWh.</li>
-</ul>
-<p>Gjør én liten og én større endring. Du velger størrelsene; målet er å finne både et tilfelle der anslaget virker og et der en annen grense tar over.</p>
-<ol type="1">
-<li>Skriv forventet besparelse som <code>dualverdi * endring</code> før du løser på nytt.</li>
-<li>Skriv ut faktisk besparelse og produksjonsplan for hver endring.</li>
-<li>Forklar med tallene hvilken grense som gjør det store anslaget mindre presist. Hvis anslaget fortsatt virker, velg en større endring.</li>
-</ol>
-<p><strong>Ta med videre:</strong> Et lokalt anslag er nyttig fordi det sparer ny regning for små endringer. En ny løsning og dens slakk viser når du trenger et nytt anslag. Skill mellom det prisregelen sier under sine forutsetninger og det dine konkrete forsøk viser.</p>
-<div id="project11-battery">
+<p>Regn med omtrent 4–6 timer inkludert innføringen. Skriv en kort forventning før forsøkene og bruk resultatene som grunnlag for svaret.</p>
+<div id="project9-start">
 
 </div>
 </section>
+</section>
+<section id="her-begynner-prosjektet-fra-formel-til-metode" class="level2">
+<h2 class="anchored" data-anchor-id="her-begynner-prosjektet-fra-formel-til-metode">1. Her begynner prosjektet: fra formel til metode</h2>
+<p>Vi bruker matrisen <span class="math inline">\(X\)</span> med rad <span class="math inline">\(i\)</span> lik <span class="math inline">\((1,T_i)\)</span> og vektorene <span class="math inline">\(\beta=(\beta_0,\beta_1)^T\)</span>, <span class="math inline">\(y=(y_1,\ldots,y_{23})^T\)</span>. Da er <span class="math inline">\(s=X\beta\)</span> og <span class="math inline">\(p=\sigma(s)\)</span>, der <span class="math inline">\(\sigma\)</span> brukes på hvert element.</p>
+<p>De analytiske deriverte er gitt:</p>
+<p><span class="math display">\[\nabla L(\beta)=
+\begin{bmatrix}
+\sum_i(p_i-y_i)\\
+\sum_i T_i(p_i-y_i)
+\end{bmatrix}
+=X^T(p-y),\qquad
+H(\beta)=X^TWX,\quad W=\operatorname{diag}(p_i(1-p_i)).\]</span></p>
+<p>Du skal <strong>bruke</strong> disse uttrykkene, ikke derivere dem. <span class="math inline">\(H\)</span> er positiv semidefinit, så <span class="math inline">\(L\)</span> er konveks. <code>hessian</code> er allerede gitt.</p>
+<p><strong>a. Les matriseproduktet.</strong> Oppgi dimensjonene til <span class="math inline">\(X\)</span>, <span class="math inline">\(p-y\)</span> og <span class="math inline">\(X^T(p-y)\)</span>. Forklar kort hvorfor de to radene i produktet blir summene over. Dette er samme kobling mellom rader og enkeltuttrykk som i uke 3.</p>
+<p><strong>b. Fullfør gradienten.</strong> Bruk <code>X.T</code> for transponering og <code>@</code> for matrise–vektor-produkt. Argumentet <code>yy</code> lar oss undersøke andre utfall i sluttdelen.</p>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<div id="project9-gradient-zero">
+
+</div>
+<div id="project9-safe-step">
+
+</div>
+<p>En ferdig regel fra krumningsgrensen er</p>
+<p><span class="math display">\[\alpha=\frac{4}{\sigma_1(X)^2},\]</span></p>
+<p>der <span class="math inline">\(\sigma_1(X)\)</span> er største singulærverdi, ikke den logistiske funksjonen. Dette er et trygt fast steg: i eksakt regning synker <span class="math inline">\(L\)</span> når gradienten ikke er null. Du trenger ikke utlede grensen.</p>
+<p>Cellen kontrollerer gradienten din i ett punkt og beregner det trygge steget. Bruk utskriften til å finne en eventuell feil før du fortsetter.</p>
+<div id="qpyodide-insertion-location-6"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>c.&nbsp;Fullfør løkken.</strong> Gradientmetoden er <span class="math inline">\(\beta_{k+1}=\beta_k-\alpha\nabla L(\beta_k)\)</span>. Stopp på gradientnorm <code>tol</code> eller når <code>max_steps</code> er brukt. Returner både sluttpunkt og antall utførte steg.</p>
+<div id="qpyodide-insertion-location-7"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Cellen prøver fem steg og deretter et begrenset budsjett. <code>stoppkrav</code> må være sann før vi sier at metoden nådde den valgte toleransen.</p>
+<div id="qpyodide-insertion-location-8"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les resultatet:</strong> Går <span class="math inline">\(L\)</span> ned? Er lavere <span class="math inline">\(L\)</span> det samme som at stoppkravet er nådd? Bruk både <code>beta</code> og gradientnormen i svaret.</p>
+</section>
+<section id="samme-modell-i-bedre-koordinater" class="level2">
+<h2 class="anchored" data-anchor-id="samme-modell-i-bedre-koordinater">2. Samme modell i bedre koordinater?</h2>
+<p>Den andre kolonnen i <span class="math inline">\(X\)</span> er nesten 70 ganger den første. Vi endrer ikke målingene, men hvordan temperaturene beskrives:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Navn</th>
+<th style="text-align: left;">Temperaturkoordinat <span class="math inline">\(t\)</span></th>
+<th style="text-align: left;">Parametre <span class="math inline">\(\gamma\)</span> som gir samme kurve</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Rå</td>
+<td style="text-align: left;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: left;"><span class="math inline">\((\beta_0,\beta_1)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sentrert</td>
+<td style="text-align: left;"><span class="math inline">\(T-70\)</span></td>
+<td style="text-align: left;"><span class="math inline">\((\beta_0+70\beta_1,\beta_1)\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Standardisert</td>
+<td style="text-align: left;"><span class="math inline">\((T-m)/d\)</span></td>
+<td style="text-align: left;"><span class="math inline">\((\beta_0+m\beta_1,d\beta_1)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Her er <span class="math inline">\(m=\)</span> <code>temps.mean()</code> gjennomsnittet og <span class="math inline">\(d=\)</span> <code>temps.std()</code> standardavviket, et mål på spredningen. Omregningene er gitt. De bevarer <span class="math inline">\(\gamma_0+\gamma_1t=\beta_0+\beta_1T\)</span> for hver temperatur.</p>
+<p><strong>a. Forutsi.</strong> Hvilket koordinatvalg tror du gir færrest steg? Knytt forventningen til forholdet mellom de to singulærverdiene.</p>
+<p>Cellen bygger matrisene og skriver ut singulærverdier og forholdet. Finn forskjellen i tallene selv; ikke se bare på størrelsen til hver verdi.</p>
+<div id="qpyodide-insertion-location-9"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<div id="project9-centred">
+
+</div>
+<p><strong>b. Kjør og sammenlign.</strong> Tabellen under bruker din <code>gd</code> med samme start, toleranse og tak på antall steg. Den oppgir også kondisjonstallet til Hessianen ved referanseløsningen og faktoren fra uke 9:</p>
+<p><span class="math display">\[S=\max_i|1-\alpha\lambda_i(H_*)|.\]</span></p>
+<p>Dette er en <strong>lokal modell</strong> for farten nær minimumet, ikke en garanti for antall steg fra startpunktet. En faktor nær 1 betyr langsom framgang.</p>
+<p>Cellen beregner omregningen og diagnostikken ferdig. Skriv selv en kort sammenligning av faktisk arbeid og forventet lokal fart.</p>
+<div id="qpyodide-insertion-location-10"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<div id="project9-predict">
+
+</div>
+<ul>
+<li>Hvilke kjøringer nådde toleransen? En avbrutt kjøring teller ikke som en rask løsning.</li>
+<li>Sammenlign kondisjonstall, <span class="math inline">\(S\)</span> og observerte steg. Hva er bevart ved koordinatskiftet, og hva er endret?</li>
+<li>Velg sentrering. Sett den gitte <span class="math inline">\(\gamma\)</span> inn i <span class="math inline">\(\gamma_0+\gamma_1(T-70)\)</span> og forenkle til <span class="math inline">\(\beta_0+\beta_1T\)</span>. To korte linjer er nok.</li>
+</ul>
+<p><strong>c.&nbsp;Tolk modellen med forbehold.</strong> Vi kan regne tilbake fra standardiserte koordinater med <span class="math inline">\(\beta_1=\gamma_1/d\)</span>, <span class="math inline">\(\beta_0=\gamma_0-m\gamma_1/d\)</span>.</p>
+<p>Cellen bruker din løsning, regner den tilbake og viser kurven ved og utenfor temperaturene i dataene.</p>
+<div id="qpyodide-insertion-location-11"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Hvilke av de tre temperaturene ligger utenfor observasjonene? Forklar hvorfor et tall nær 1 fra modellen ikke er en målt sannsynlighet. Dette forbeholdet skal være med i konklusjonen din.</p>
+</section>
+<section id="steglengde-stabilitet-fart-og-arbeidsmengde" class="level2">
+<h2 class="anchored" data-anchor-id="steglengde-stabilitet-fart-og-arbeidsmengde">3. Steglengde: stabilitet, fart og arbeidsmengde</h2>
+<p>Et trygt steg trenger ikke være det raskeste. Nær minimumet gir <span class="math inline">\(2/\lambda_{\max}(H_*)\)</span> den lokale kritiske grensen fra <a href="../pages/uke9.html#uke9-stabilitet">uke 9</a>. Den sier ikke hva en vilkårlig start vil gjøre langt fra minimumet.</p>
+<div id="project9-critical">
+
+</div>
+<p><strong>a. Forutsi og undersøk.</strong> Sammenlign <span class="math inline">\(\alpha=0.55\)</span>, <span class="math inline">\(0.6\)</span> og <span class="math inline">\(1.5\)</span> med grensen. Tror du større steg alltid betyr mindre arbeid?</p>
+<p>Cellen beregner grensen, kjører 1000 steg og viser de siste punktene. Den trygge steglengden prøves også med stoppregel.</p>
+<div id="qpyodide-insertion-location-12"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Beskriv forskjellen mellom konvergens, veksling mellom punkter og en kjøring som fremdeles er langt fra stoppkravet. Bruk også <span class="math inline">\(S\)</span> fra del 2 til å forklare hvorfor et steg rett under grensen kan være langsomt. Et endelig forsøk alene beviser ikke hvordan alle senere steg blir.</p>
+<section id="armijo-løser-et-tilpasset-steg-problemet" class="level3">
+<h3 class="anchored" data-anchor-id="armijo-løser-et-tilpasset-steg-problemet">Armijo: løser et tilpasset steg problemet?</h3>
+<p>Armijo starter med <span class="math inline">\(\alpha=1\)</span> og halverer til tapet synker nok. <code>armijo_gd</code> er gitt. <strong>Forutsi:</strong> Vil dette fjerne forskjellen mellom rå og standardiserte temperaturer?</p>
+<p>Cellen kjører din gradient med to metoder på de samme dataene. Den teller iterasjoner og de ekstra prøvepunktene Armijo avviser. Med implementasjonen her bruker Armijo <span class="math inline">\(2k+\)</span> <code>extra</code> tapsberegninger: én nåverdi og én godtatt prøve per steg, i tillegg til de avviste prøvene. Sluttkontrollen i utskriften er ikke med. Fast steg bruker ingen tapsberegning i løkken.</p>
+<div id="qpyodide-insertion-location-13"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>b. Konkluder fra din tabell.</strong></p>
+<ul>
+<li>Hvilken kombinasjon av koordinater og metode når toleransen?</li>
+<li>Hva koster halveringene? Er færre iterasjoner alene en rettferdig sammenligning?</li>
+<li>Gjenta med <code>budget = 4000</code> bare for de rå dataene. Hva støtter dette forsøket om Armijo, og hva kan det ikke si om framtidige iterasjoner?</li>
+<li>Bruk <a href="../pages/uke9.html#uke9-linjesok">Armijo-garantien</a> og kondisjonstallene til å skille mellom å sikre nedgang og å få rask konvergens.</li>
+</ul>
+</section>
+</section>
+<section id="sluttundersøkelse-liten-gradient-men-hvilken-løsning" class="level2">
+<h2 class="anchored" data-anchor-id="sluttundersøkelse-liten-gradient-men-hvilken-løsning">4. Sluttundersøkelse: liten gradient, men hvilken løsning?</h2>
+<p>Hva om alle skader lå under én temperatur og alle skadefrie oppskytinger over? Da kan en stadig brattere S-kurve passe bedre. Dette kalles <strong>full separasjon</strong>. Vi lager et tenkt datasett med skade akkurat når <span class="math inline">\(T&lt;65\)</span>; vi endrer ikke de virkelige dataene.</p>
+<p>Sammenlign de virkelige og de tenkte utfallene med samme sentrerte datamatrise og samme trygge steg. Cellen viser tap, gradientnorm og parameterstørrelse ved tre tidspunkter.</p>
+<div id="qpyodide-insertion-location-14"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<div id="project9-separated-terms">
+
+</div>
+<p>En gitt matematisk egenskap forklarer hva vi må se etter: For full separasjon er infimum av <span class="math inline">\(L\)</span> lik 0, men ingen endelig parametervektor oppnår det. Her er én familie som nærmer seg dette infimumet:</p>
+<p><span class="math display">\[p(T)=\sigma(c(65-T)),\qquad
+\gamma=(-5c,-c)^T\quad\text{i sentrerte koordinater}.\]</span></p>
+<p>Du skal ikke bevise egenskapen eller derivere familien. Cellen lar deg undersøke den direkte, uten en lang gradientkjøring.</p>
+<div id="qpyodide-insertion-location-15"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Skriv én kort konklusjon med tall fra begge utskriftene:</p>
+<ol type="1">
+<li>Hvordan skiller parameterstørrelse, tap og gradientnorm seg i de to datasettene?</li>
+<li>Ville «gradienten er liten» alene ha vært et godt belegg for et funnet minimum i det skilte datasettet?</li>
+<li>Bruk den gitte familien til å beskrive en ubegrenset subnivåmengde. Hvilken forutsetning i <a href="../pages/uke9.html#uke9-garanti">garantien fra uke 9</a> mangler? Du kan bruke den oppgitte matematiske egenskapen uten bevis.</li>
+</ol>
+</section>
 <section id="spørsmål-du-skal-kunne-svare-på" class="level2">
 <h2 class="anchored" data-anchor-id="spørsmål-du-skal-kunne-svare-på">Spørsmål du skal kunne svare på</h2>
-<p>Disse spørsmålene samler ideene; de er ikke en ekstra innleveringsdel.</p>
+<p>Disse er repetisjon, ikke en ekstra innlevering.</p>
 <ol type="1">
-<li>Hvordan leser du kostnad og forbrukskrav fra vektorer og matrisrader?</li>
-<li>Hvorfor er gjennomsnittskostnad og pris forskjellige tall?</li>
-<li>Hvordan kontrollerer du en marginal med to nye kostnadsverdier?</li>
-<li>Hva forteller ledig kapasitet og kapasitetsverdi om et kraftverk?</li>
-<li>Når kan en full linje ha verdi null, og når er linjeverdien prisforskjellen?</li>
-<li>Hva betyr vannverdien, og hvordan ser du hvilken time som kan bruke mer vann?</li>
-<li>Hvorfor må et lokalt prisanslag kontrolleres ved en større endring?</li>
+<li>Hva er data, parametre og tapsfunksjon i dette prosjektet?</li>
+<li>Hvordan kan samme gradient skrives med to summer og ett matriseprodukt?</li>
+<li>Hva bevarer sentrering og standardisering, og hva kan de endre?</li>
+<li>Hva forteller egenverdiene om det lokale gradientforløpet?</li>
+<li>Hvorfor er ikke et større fast steg alltid raskere?</li>
+<li>Hva sikrer Armijo, og hva forteller egen utskrift om arbeidsmengden?</li>
+<li>Hvorfor må en stoppmelding tolkes sammen med egenskapene til problemet?</li>
 </ol>
 </section>
 <section id="det-du-leverer" class="level2">
 <h2 class="anchored" data-anchor-id="det-du-leverer">Det du leverer</h2>
-<p>Lever én kjørbar notebook eller Quarto-side med de to studentfunksjonene, oppsettsfilen og disse resultatene:</p>
+<p>Lever én kjørbar notebook eller Quarto-side med:</p>
 <ul>
-<li>pristrappen og en kort forklaring av pris mot gjennomsnitt;</li>
-<li>kontrollen ved <code>D=80</code> og ett eksempel på komplementær slakk;</li>
-<li>sammenligningen av linjeutvidelsene fra del 3, med forklaring av rollebyttet;</li>
-<li>vannraden, figuren av vannverdi og kontrollen med 1 MWh ekstra vann;</li>
-<li>din undersøkelse fra del 5: forventning, faktisk endring og en avgrenset konklusjon.</li>
+<li>dine to funksjoner <code>grad</code> og <code>gd</code>, dimensjonene og den korte sammenhengen mellom summer og matriseprodukt fra del 1;</li>
+<li>tabellen for de tre koordinatvalgene, én figur av den tilpassede kurven og forbeholdet om temperaturer utenfor dataene;</li>
+<li>utvalgte utskrifter fra faste steg og Armijo, med en sammenligning av stoppstatus, steg og tapsberegninger;</li>
+<li>den korte konklusjonen fra sluttundersøkelsen.</li>
 </ul>
-<p>Bruk omtrent <strong>150–250 ord til sammen</strong> på konklusjonene, gjerne ved siden av de tilhørende utskriftene. Du trenger ikke i tillegg en samlet rapport eller svar på alle repetisjonsspørsmålene.</p>
+<p>Samle konklusjonene i omtrent <strong>200–300 ord</strong>, med tall som støtter dem. Du trenger ikke levere innføringseksemplene, håndderivasjoner eller en ekstra besvarelse av repetisjonsspørsmålene. Ta med oppsettsfilen hvis du leverer notebook, og kontroller at alt kjører fra en ny start.</p>
 
 
 </section>
@@ -4927,7 +4806,7 @@ Last ned project_week11_setup.py og legg den ved siden av notebooken. Kjør før
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
