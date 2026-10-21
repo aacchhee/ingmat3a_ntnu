@@ -13,10 +13,15 @@
 ### Hvordan velger vi neste punkt?
 
 I [uke 6](uke6.qmd#uke6-retning) gikk vi nedover en kvadratisk skål langs
-negativ gradient og regnet ut den beste steglengden eksakt. I
-[uke 8](uke8.qmd#uke8-eksistens) så vi at et søk kan gi stadig bedre punkter
-uten å ende i et minimum. Denne uken ser vi på søkemetoder for funksjoner som
-**ikke** er kvadratiske. Hele uken svarer på ett spørsmål:
+negativ gradient og regnet ut den beste steglengden eksakt. Nå spør vi hva
+som skjer når vi forlater skålen:
+
+- **Erfaringen fra [uke 8](uke8.qmd#uke8-eksistens):** Et søk kan gi stadig
+  bedre punkter uten å ende i et minimum.
+- **Denne uken:** Vi ser på søkemetoder for funksjoner som **ikke** er
+  kvadratiske.
+
+Hele uken svarer på ett spørsmål:
 
 > **Hvordan velger vi neste punkt, og hvor langt går vi, når vi vet stadig
 > mindre om funksjonen?**
@@ -25,10 +30,12 @@ Vi bruker hele uken **Himmelblaus funksjon**
 
 $$f(x,y)=(x^2+y-11)^2+(x+y^2-7)^2.$$
 
-Den er en klassisk testfunksjon for søkemetoder og har fire daler. I $(3,2)$
-er begge parentesene null, så $f(3,2)=0$, og siden $f$ er en sum av
-kvadrater, er dette et globalt minimumspunkt. Metodene får ikke vite det; vi
-bruker punktet til å kontrollere dem.
+- **Testfunksjonen:** Den er en klassisk testfunksjon for søkemetoder og har
+  fire daler.
+- **Kontrollpunktet:** I $(3,2)$ er begge parentesene null, så $f(3,2)=0$.
+  Siden $f$ er en sum av kvadrater, er dette et globalt minimumspunkt.
+- **Metodenes informasjon:** Metodene får ikke vite det; vi bruker punktet
+  til å kontrollere dem.
 
 Uken har fire deler. I hver del vet metoden mindre enn i delen før:
 
@@ -42,10 +49,10 @@ Uken har fire deler. I hver del vet metoden mindre enn i delen før:
 Den siste kolonnen fyller vi ut underveis. Del D spør hva metodene kan love
 til sammen, og hva funksjonen må oppfylle for at løftet skal holde.
 
-**Forelesning** viser hovedløpet. **Gå i dybden** åpner bevis,
-mellomregninger og noen sidespor. Regneoppgavene står i 9.6 og
-kodeoppgavene i 9.7, ordnet etter de fire delene. På slutten av hver del
-lenker vi til oppgavene som hører til.
+- **Forelesning** viser hovedløpet.
+- **Gå i dybden** åpner bevis, mellomregninger og noen sidespor.
+- **Oppgaver:** Regneoppgavene står i 9.6 og kodeoppgavene i 9.7, ordnet etter
+  de fire delene. På slutten av hver del lenker vi til oppgavene som hører til.
 
 ### Kort løype
 
@@ -98,33 +105,47 @@ steget
 
 $$z_{k+1}=z_k-\alpha\,\nabla f(z_k),$$
 
-der $\alpha>0$ er **steglengden** (egentlig en faktor; selve steget har
-lengde $\alpha\|\nabla f(z_k)\|_2$). For Himmelblaus funksjon setter vi
-$u=x^2+y-11$ og $w=x+y^2-7$. Kjerneregelen gir
+Her er $\alpha>0$ **steglengden** (egentlig en faktor; selve steget har
+lengde $\alpha\|\nabla f(z_k)\|_2$).
+
+For Himmelblaus funksjon setter vi $u=x^2+y-11$ og $w=x+y^2-7$.
+Kjerneregelen gir
 
 $$\nabla f(x,y)=\begin{pmatrix}4xu+2w\\2u+4yw\end{pmatrix}.$$
 
 I origo er $u=-11$ og $w=-7$, så
-$\nabla f(0,0)=(2\cdot(-7),\ 2\cdot(-11))^T=(-14,-22)^T$. Med $\alpha=1/100$
-går vi til $(0.14,\,0.22)$, og verdien synker fra 170 til omtrent 162. Med
-$\alpha=1$ havner vi i $(14,22)$, der $f$ er 283930 (vi regner den ut i 9.3).
+$\nabla f(0,0)=(2\cdot(-7),\ 2\cdot(-11))^T=(-14,-22)^T$. To steglengder gir
+svært ulike resultater:
+
+| Steglengde | Nytt punkt | Funksjonsverdi |
+|:--|:--|:--|
+| $\alpha=1/100$ | $(0.14,\,0.22)$ | synker fra 170 til omtrent 162 |
+| $\alpha=1$ | $(14,22)$ | $f$ er 283930 (vi regner den ut i 9.3) |
+
 Retningen er den samme; bare steglengden er forskjellig. **Retningen er altså
 ikke problemet. Spørsmålet i del A er hvor langt vi skal gå.**
 
 ### Hvor stort kan et fast steg være?
 
 Det enkleste valget er å bruke samme $\alpha$ i hvert steg. Da må vi velge
-$\alpha$ før vi starter. Er den for liten, kommer vi sakte fram. Er den for
-stor, så vi nettopp at ett steg kan gå langt forbi dalen.
+$\alpha$ før vi starter:
+
+- **For liten:** Vi kommer sakte fram.
+- **For stor:** Ett steg kan gå langt forbi dalen, slik vi nettopp så.
 
 I forsøket kjører vi gradientmetoden fra $(0,0)$ med fem faste steglengder.
-Cellen stopper når punktet er nærmere enn $10^{-8}$ fra $(3,2)$, når
-avstanden til $(3,2)$ er større enn $10^6$, eller etter 200 steg. For hver
-kjøring skriver den ut hvor mange steg som ble brukt, hvor langt fra $(3,2)$
-vi endte, og hvor mye feilen $e_k=\|z_k-(3,2)\|_2$ ganges med per steg, slik vi
-anslo konvergensfaktoren i uke 2. Når $x$ hopper fra side til side, er feilen
-litt ulik på de to sidene, så cellen tar et snitt over de to siste stegene:
-$\sqrt{e_k/e_{k-2}}$. Vi har ingen teori ennå; den kommer rett etter forsøket.
+Cellen gir oss følgende sammenligning:
+
+- **Stopp:** Punktet er nærmere enn $10^{-8}$ fra $(3,2)$, avstanden til
+  $(3,2)$ er større enn $10^6$, eller vi har tatt 200 steg.
+- **Resultat:** For hver kjøring får vi antall steg og avstanden til $(3,2)$
+  til slutt.
+- **Fart:** Vi måler hvor mye feilen $e_k=\|z_k-(3,2)\|_2$ ganges med per
+  steg, slik vi anslo konvergensfaktoren i uke 2. Når $x$ hopper fra side til
+  side, er feilen litt ulik på de to sidene. Derfor tar cellen et snitt over
+  de to siste stegene: $\sqrt{e_k/e_{k-2}}$.
+
+Vi har ingen teori ennå; den kommer rett etter forsøket.
 
 Målet er å finne grensen for hvor stort et fast steg kan være, og å se hva som
 skjer rett på hver side av den.
@@ -231,13 +252,18 @@ I én variabel finnes altså et perfekt steg, $\alpha=1/\lambda$, som gir
 faktor $0$. I neste fane ser vi at dette ikke går med to krumninger samtidig.
 
 For en vilkårlig glatt $f$ med minimum i $r$ er krumningen $\lambda=f''(r)$.
-Dette er helningsregelen fra [uke 2](page4.qmd#uke2-helning): gradientmetoden er
-fikspunktiterasjonen $g(x)=x-\alpha f'(x)$, og $g'(r)=1-\alpha f''(r)$ er
-akkurat faktoren over. Fikspunktet er attraktivt når $|g'(r)|<1$.
+Sammenhengen med helningsregelen fra [uke 2](page4.qmd#uke2-helning) er:
 
-**Dette tar vi med oss.** Et fast steg ganger feilen med $1-\alpha\lambda$.
-Det virker bare når $\alpha<2/\lambda$, og en negativ faktor gir hopping. I
-to variabler er det to krumninger. Neste fane finner ut hvilken som bestemmer.
+- **Fikspunktiterasjonen:** Gradientmetoden er $g(x)=x-\alpha f'(x)$.
+- **Faktoren:** $g'(r)=1-\alpha f''(r)$ er akkurat faktoren over.
+- **Attraktivt fikspunkt:** Når $|g'(r)|<1$, er fikspunktet attraktivt.
+
+**Dette tar vi med oss.**
+
+- Et fast steg ganger feilen med $1-\alpha\lambda$.
+- Det virker bare når $\alpha<2/\lambda$, og en negativ faktor gir hopping.
+
+I to variabler er det to krumninger. Neste fane finner ut hvilken som bestemmer.
 
 ## 9.2 A. Fast steg i to variabler
 
@@ -259,14 +285,22 @@ $$\begin{pmatrix}x_{k+1}\\y_{k+1}\end{pmatrix}
 
 **Hver koordinat oppfører seg som parabelen i 9.1, med sin egen krumning.**
 Med $\lambda_1=1$ og $\lambda_2=10$ er $y$-koordinaten nettopp parabelen fra
-tabellen i 9.1. Ved $\alpha=0.25$ er $y$-faktoren $-1.5$, og $y$ eksploderer,
-selv om $x$-faktoren $1-\alpha=0.75$ er fin. Ved $\alpha=0.05$ og $0.15$
-krymper begge, men $x$ (faktor $0.95$ og $0.85$) er tregest.
+tabellen i 9.1:
 
-Begge koordinatene må krympe, så **den største krumningen bestemmer grensen**:
-$\alpha<2/\lambda_2=0.2$. Feilen som helhet krymper ikke raskere enn den
-tregeste koordinaten, så konvergensfaktoren er **den største** av de to
-faktorene i absoluttverdi. Generelt, med krumningene $\lambda_1\le\lambda_2$:
+- **Ved $\alpha=0.25$:** $y$-faktoren er $-1.5$, og $y$ eksploderer, selv om
+  $x$-faktoren $1-\alpha=0.75$ er fin.
+- **Ved $\alpha=0.05$ og $0.15$:** Begge krymper, men $x$ (faktor $0.95$ og
+  $0.85$) er tregest.
+
+Dette gir to regler:
+
+- **Grensen:** Begge koordinatene må krympe, så **den største krumningen
+  bestemmer grensen**: $\alpha<2/\lambda_2=0.2$.
+- **Farten:** Feilen som helhet krymper ikke raskere enn den tregeste
+  koordinaten. Konvergensfaktoren er derfor **den største** av de to
+  faktorene i absoluttverdi.
+
+Generelt, med krumningene $\lambda_1\le\lambda_2$:
 
 $$\boxed{\alpha_{\text{krit}}=\frac{2}{\lambda_{\max}},\qquad
 S=\max_i|1-\alpha\lambda_i|.}$$
@@ -274,13 +308,19 @@ S=\max_i|1-\alpha\lambda_i|.}$$
 ### Hessianen i et minimum
 
 Nær et minimumspunkt $z_*$ ligner $f$ på en skål med Hessianen $H_*=H(z_*)$
-fra [uke 8.3](uke8.qmd#uke8-hessian). Der så vi at krumningen langs en
-enhetsretning $p$ er $p^TH_*p$. Hessianen er sjelden diagonal. Men den er
-symmetrisk, så fra [uke 5](uke5.qmd#uke5-basis) har den ortogonale egenvektorer $v_1,v_2$
-med egenverdier $\lambda_1\le\lambda_2$, og langs $v_i$ er krumningen
-$v_i^TH_*v_i=\lambda_i$. Bruker vi egenvektorene som nye akser, blir skålen
-diagonal, med egenverdiene som krumninger. Derfor gjelder de samme to formlene, med
-$\lambda_i$ lik egenverdiene til $H_*$. Når $H_*$ er positiv definitt (alle
+fra [uke 8.3](uke8.qmd#uke8-hessian). Vi finner krumningene slik:
+
+1. **Krumning langs en retning:** I uke 8.3 så vi at krumningen langs en
+   enhetsretning $p$ er $p^TH_*p$.
+2. **Velg egenretningene:** Hessianen er sjelden diagonal, men den er
+   symmetrisk. Fra [uke 5](uke5.qmd#uke5-basis) har den ortogonale
+   egenvektorer $v_1,v_2$ med egenverdier $\lambda_1\le\lambda_2$. Langs $v_i$
+   er krumningen $v_i^TH_*v_i=\lambda_i$.
+3. **Bytt akser:** Med egenvektorene som nye akser blir skålen diagonal, med
+   egenverdiene som krumninger. Derfor gjelder de samme to formlene, med
+   $\lambda_i$ lik egenverdiene til $H_*$.
+
+**Når gjelder konklusjonen?** Når $H_*$ er positiv definitt (alle
 $\lambda_i>0$, som i $(3,2)$), konvergerer metoden lokalt nøyaktig når
 $\alpha<2/\lambda_{\max}$.
 
@@ -294,10 +334,13 @@ $$\frac{\partial f}{\partial x}(z_k)=\frac{\partial f}{\partial x}(z_*)
 +\Bigl(\frac{\partial^2f}{\partial x^2},\ \frac{\partial^2f}{\partial x\,\partial y}\Bigr)\Big|_{z_*}e_k
 +\text{rest},$$
 
-der resten er høyst en konstant ganger $\|e_k\|_2^2$. Det samme gjelder
-$\partial f/\partial y$. De to radene av andrederiverte er radene i $H_*$, og
-$\nabla f(z_*)=0$. Altså er $\nabla f(z_k)=H_*e_k+O(\|e_k\|_2^2)$. Vi setter
-inn i $e_{k+1}=e_k-\alpha\nabla f(z_k)$:
+Her er resten høyst en konstant ganger $\|e_k\|_2^2$. Nå samler vi leddene:
+
+- Det samme gjelder $\partial f/\partial y$.
+- De to radene av andrederiverte er radene i $H_*$, og $\nabla f(z_*)=0$.
+- Altså er $\nabla f(z_k)=H_*e_k+O(\|e_k\|_2^2)$.
+
+Vi setter inn i $e_{k+1}=e_k-\alpha\nabla f(z_k)$:
 
 $$e_{k+1}=(I-\alpha H_*)\,e_k+O(\|e_k\|_2^2).$$
 
@@ -319,19 +362,25 @@ $S=\max_i|1-\alpha\lambda_i|$ blir
 $$\|(I-\alpha H_*)e_k\|_2^2=(1-\alpha\lambda_1)^2c_1^2+(1-\alpha\lambda_2)^2c_2^2
 \le S^2(c_1^2+c_2^2)=S^2\|e_k\|_2^2.$$
 
-Hovedleddet krymper altså med minst faktoren $S$ i hvert steg, og nøyaktig
-med $S$ i den egenretningen som gir den største faktoren. Når feilen er liten,
-er restleddet mye mindre enn hovedleddet. Derfor gjelder konklusjonene
-**lokalt**, som helningsregelen i uke 2. Langt fra $z_*$ sier de ingenting.
+- **Hovedleddet:** Det krymper med minst faktoren $S$ i hvert steg, og
+  nøyaktig med $S$ i den egenretningen som gir den største faktoren.
+- **Restleddet:** Når feilen er liten, er restleddet mye mindre enn
+  hovedleddet.
+- **Rekkevidden:** Konklusjonene gjelder derfor **lokalt**, som
+  helningsregelen i uke 2. Langt fra $z_*$ sier de ingenting.
 
 </details>
 
 ::: {.callout-note title="Håndeksempel: det kritiske steget i (3,2)"}
 
-**Utgangspunkt.** Hessianen får vi ved å derivere gradientens komponenter én
-gang til med produktregelen. For eksempel er
-$f_{xx}=\partial_x(4xu+2w)=4u+4x\cdot2x+2=12x^2+4y-42$, og de andre leddene
-regnes på samme måte. Hessianen til Himmelblaus funksjon er
+**Utgangspunkt.** Vi deriverer gradientens komponenter én gang til med
+produktregelen:
+
+- For eksempel er
+  $f_{xx}=\partial_x(4xu+2w)=4u+4x\cdot2x+2=12x^2+4y-42$.
+- De andre leddene regnes på samme måte.
+
+Hessianen til Himmelblaus funksjon er
 
 $$H(x,y)=\begin{bmatrix}12x^2+4y-42&4x+4y\\4x+4y&12y^2+4x-26\end{bmatrix}.$$
 
@@ -359,10 +408,11 @@ Dermed er $\alpha_{\text{krit}}=2/82.28\approx0.0243$. Faktorene blir
 | $0.024$ | $0.383$ | $-0.975$ |
 | $0.025$ | $0.357$ | $-1.057$ |
 
-Ved $\alpha=0.024$ krymper komponenten langs $v_2$ og skifter fortegn i hvert
-steg: det er hoppingen fra side til side. Ved $\alpha=0.025$ vokser den og
-skifter fortegn. Den vokser likevel ikke for alltid: lenger ut er ikke
-$f$ kvadratisk, og iteratene låses i en **2-syklus**, som i uke 2.
+- **Ved $\alpha=0.024$:** Komponenten langs $v_2$ krymper og skifter fortegn
+  i hvert steg: det er hoppingen fra side til side.
+- **Ved $\alpha=0.025$:** Komponenten vokser og skifter fortegn. Den vokser
+  likevel ikke for alltid: lenger ut er ikke $f$ kvadratisk, og iteratene
+  låses i en **2-syklus**, som i uke 2.
 
 **Dette tar vi med oss.** $\alpha_{\text{krit}}=2/\lambda_{\max}(H_*)$ skiller
 nøyaktig mellom de to steglengdene i eksperiment 1.
@@ -375,10 +425,13 @@ Håndeksemplet forklarte grensen. Men eksperiment 1 målte også en faktor for
 hver steglengde, og teorien sier at den skal være $S=\max_i|1-\alpha\lambda_i|$
 med egenverdiene til $H(3,2)$. Det kan vi kontrollere.
 
-Cellen regner ut egenverdiene og den forutsagte $S$ for de fire steglengdene
-som ikke eksploderte. Så tegner den de to faktorene $|1-\alpha\lambda_1|$ og
-$|1-\alpha\lambda_2|$ som funksjoner av $\alpha$, sammen med $S(\alpha)$, som
-er den største av dem. Punktene er steglengdene fra eksperiment 1.
+Cellen gir to måter å kontrollere teorien på:
+
+- **Tall:** Den regner ut egenverdiene og den forutsagte $S$ for de fire
+  steglengdene som ikke eksploderte.
+- **Figur:** Den tegner $|1-\alpha\lambda_1|$ og $|1-\alpha\lambda_2|$ som
+  funksjoner av $\alpha$, sammen med $S(\alpha)$, som er den største av dem.
+  Punktene er steglengdene fra eksperiment 1.
 
 Målet er å kontrollere de målte faktorene, og å lese av figuren hvilken fast
 $\alpha$ som gir minst $S$.
@@ -400,25 +453,31 @@ for alpha in [0.005, 0.02, 0.024, 0.025]:
 plot_step_factors(lam, marked=[0.005, 0.02, 0.024, 0.025])
 ```
 
-**Hva viser forsøket?** For $\alpha=0.005$, $0.02$ og $0.024$ er de
-forutsagte faktorene $0.8714$, $0.6457$ og $0.9748$, de samme som de målte med
-fire desimaler. For $\alpha=0.025$ er $S=1.0571>1$, og metoden konvergerer
-ikke.
-**Egenverdiene til Hessianen forutsier både grensen og farten.**
+**Hva viser forsøket?**
 
-Kurven $S(\alpha)$ har form som en V. Til venstre er det den minste
-egenverdien som bestemmer, til høyre den største. Bunnen er det beste faste
-steget.
+- **Samsvar:** For $\alpha=0.005$, $0.02$ og $0.024$ er de forutsagte
+  faktorene $0.8714$, $0.6457$ og $0.9748$, de samme som de målte med fire
+  desimaler.
+- **For stort steg:** For $\alpha=0.025$ er $S=1.0571>1$, og metoden
+  konvergerer ikke.
+- **Beste steg:** Kurven $S(\alpha)$ har form som en V. Til venstre er det
+  den minste egenverdien som bestemmer, til høyre den største. Bunnen er
+  det beste faste steget.
+
+**Egenverdiene til Hessianen forutsier både grensen og farten.**
 
 <div id="uke9-kondisjon"></div>
 
 ### Det beste faste steget, regnet ut
 
-Til venstre for bunnen er $1-\alpha\lambda_{\min}$ positiv og den største
-faktoren, så $S=1-\alpha\lambda_{\min}$, som **avtar** når $\alpha$ vokser.
-Til høyre er $1-\alpha\lambda_{\max}$ negativ og størst i absoluttverdi, så
-$S=\alpha\lambda_{\max}-1$, som **vokser** med $\alpha$. Bunnen ligger der de
-to er like store:
+Vi leser de to sidene av V-en hver for seg:
+
+| Side av bunnen | Største faktor | Når $\alpha$ vokser |
+|:--|:--|:--|
+| Til venstre | $1-\alpha\lambda_{\min}$ er positiv, så $S=1-\alpha\lambda_{\min}$ | $S$ **avtar** |
+| Til høyre | $1-\alpha\lambda_{\max}$ er negativ og størst i absoluttverdi, så $S=\alpha\lambda_{\max}-1$ | $S$ **vokser** |
+
+Bunnen ligger der de to er like store:
 
 $$
 \begin{aligned}
@@ -446,10 +505,13 @@ $$\boxed{S_{\text{best}}=\frac{\kappa-1}{\kappa+1}.}$$
 For $H(3,2)$ er $\kappa=82.28/25.72\approx3.2$,
 $\alpha_{\text{best}}=2/108\approx0.0185$ og $S_{\text{best}}\approx0.52$.
 
-**Hvor mange steg?** For å redusere feilen med en faktor $10^{-8}$ trenger vi
-$S^k\le10^{-8}$, altså $k\ge\ln(10^{-8})/\ln S$. Skriv
-$S_{\text{best}}=1-2/(\kappa+1)$. Når $\kappa$ er stor, er $\ln(1-t)\approx-t$
-for liten $t$, så $\ln S_{\text{best}}\approx-2/\kappa$ og
+**Hvor mange steg?** Vi regner i to trinn:
+
+1. **Kravet:** For å redusere feilen med en faktor $10^{-8}$ trenger vi
+   $S^k\le10^{-8}$, altså $k\ge\ln(10^{-8})/\ln S$.
+2. **Stor $\kappa$:** Skriv $S_{\text{best}}=1-2/(\kappa+1)$. Når $\kappa$ er
+   stor, er $\ln(1-t)\approx-t$ for liten $t$, så
+   $\ln S_{\text{best}}\approx-2/\kappa$ og
 
 $$k\approx\frac{\ln(10^{8})}{2/\kappa}=\frac{18.42}{2}\,\kappa\approx9.2\,\kappa.$$
 
@@ -458,40 +520,50 @@ $$k\approx\frac{\ln(10^{8})}{2/\kappa}=\frac{18.42}{2}\,\kappa\approx9.2\,\kappa
 <details class="reading-step">
 <summary>Gå i dybden: hvorfor er balansepunktet best, også med flere egenverdier?</summary>
 
-$S$ er den største av to funksjoner. Den ene,
-$\alpha\mapsto|1-\alpha\lambda_{\min}|$, avtar på
-$0<\alpha<2/(\lambda_{\min}+\lambda_{\max})$. Den andre,
-$\alpha\mapsto|1-\alpha\lambda_{\max}|$, vokser etter sitt nullpunkt
-$1/\lambda_{\max}$. Tar vi $\alpha$ mindre enn balansepunktet, blir den første
-større; tar vi den større, blir den andre større. Minimum av maksimum ligger
-derfor der de er like.
+**Hvorfor balanse?** $S$ er den største av to funksjoner:
 
-Med flere enn to egenverdier ligger hver $\lambda_i$ mellom $\lambda_{\min}$
-og $\lambda_{\max}$, så $1-\alpha\lambda_i$ ligger mellom
-$1-\alpha\lambda_{\max}$ og $1-\alpha\lambda_{\min}$. Faktoren
-$|1-\alpha\lambda_i|$ er derfor aldri større enn den største av de to ytterste,
-og svaret endres ikke.
+- $\alpha\mapsto|1-\alpha\lambda_{\min}|$ avtar på
+  $0<\alpha<2/(\lambda_{\min}+\lambda_{\max})$.
+- $\alpha\mapsto|1-\alpha\lambda_{\max}|$ vokser etter sitt nullpunkt
+  $1/\lambda_{\max}$.
+
+Tar vi $\alpha$ mindre enn balansepunktet, blir den første større; tar vi den
+større, blir den andre større. Minimum av maksimum ligger derfor der de er like.
+
+**Hva med flere egenverdier?**
+
+1. Hver $\lambda_i$ ligger mellom $\lambda_{\min}$ og $\lambda_{\max}$, så
+   $1-\alpha\lambda_i$ ligger mellom $1-\alpha\lambda_{\max}$ og
+   $1-\alpha\lambda_{\min}$.
+2. Faktoren $|1-\alpha\lambda_i|$ er derfor aldri større enn den største av
+   de to ytterste, og svaret endres ikke.
 
 </details>
 
 For $H(3,2)$ er $\kappa$ bare $3.2$, så eksperiment 1 gikk raskt. På smale
-skåler som i [uke 6](uke6.qmd#uke6-retning), med samme dreining og løsning, men
-med $\kappa=10$, $100$ og $1000$, gir regelen $92$, $922$ og $9211$ steg, og
-gradientmetoden med det beste faste
-steget bruker nøyaktig så mange (fordypningen under kjører forsøket). **Ti
-ganger større kondisjonstall gir ti ganger så mange steg.** Bratteste
-nedstigning med eksakt linjesøk fra uke 6 har i verste fall den samme faktoren;
-det er derfor den gikk i sikksakk i den smale skålen.
+skåler som i [uke 6](uke6.qmd#uke6-retning) ser vi tydeligere hva regelen betyr:
+
+- **Samme dreining og løsning:** Med $\kappa=10$, $100$ og $1000$ gir regelen
+  $92$, $922$ og $9211$ steg.
+- **Målt antall:** Gradientmetoden med det beste faste steget bruker nøyaktig
+  så mange (fordypningen under kjører forsøket). **Ti ganger større
+  kondisjonstall gir ti ganger så mange steg.**
+- **Tilbake til uke 6:** Bratteste nedstigning med eksakt linjesøk har i
+  verste fall den samme faktoren; det er derfor den gikk i sikksakk i den
+  smale skålen.
 
 <details class="reading-step">
 <summary>Gå i dybden: lovene på de smale skålene fra uke 6</summary>
 
 Vi bruker $\phi(x)=\tfrac12x^TAx-b^Tx$ med samme dreining og løsning
-$x_*=(1,-1.1)^T$ som i uke 6, men med egenverdier $1$ og $1/\kappa$. Der er
-Hessianen $A$ overalt, så teorien gjelder eksakt. Cellen kjører det beste faste
-steget til den relative feilen er under $10^{-8}$, og sammenligner med det minste
-hele $k$ som gir $S_{\text{best}}^k\le10^{-8}$. Prøv også et litt mindre steg,
-for eksempel `0.9*alpha`, og se hvor mye tregere det går.
+$x_*=(1,-1.1)^T$ som i uke 6, men med egenverdier $1$ og $1/\kappa$.
+
+- **Modellen:** Hessianen er $A$ overalt, så teorien gjelder eksakt.
+- **Sammenligningen:** Cellen kjører det beste faste steget til den relative
+  feilen er under $10^{-8}$, og sammenligner med det minste hele $k$ som gir
+  $S_{\text{best}}^k\le10^{-8}$.
+- **Prøv videre:** Prøv også et litt mindre steg, for eksempel `0.9*alpha`,
+  og se hvor mye tregere det går.
 
 ```{pyodide-python}
 #| label: week9-condition
@@ -515,10 +587,14 @@ Gradientmetoden bruker 92, 922 og 9211 steg, nøyaktig som forutsagt.
 
 </details>
 
-**Dette tar vi med oss fra del A.** Et fast steg krever $\alpha<2/\lambda_{\max}$
-for å virke, og gir i beste fall faktoren $(\kappa-1)/(\kappa+1)$. Begge tallene
-kommer fra egenverdiene til $H_*$, **Hessianen i et minimum vi ennå ikke har
-funnet**. Det er hovedproblemet med fast steg, og det løser del B.
+**Dette tar vi med oss fra del A.**
+
+- **For å virke:** Et fast steg krever $\alpha<2/\lambda_{\max}$.
+- **Beste fart:** Det gir i beste fall faktoren $(\kappa-1)/(\kappa+1)$.
+- **Hovedproblemet:** Begge tallene kommer fra egenverdiene til $H_*$,
+  **Hessianen i et minimum vi ennå ikke har funnet**.
+
+Det problemet løser del B.
 
 | Del | Metoden bruker | Steget velges slik | Hva kan vi love? |
 |:--|:--|:--|:--|
@@ -536,14 +612,16 @@ funnet**. Det er hovedproblemet med fast steg, og det løser del B.
 
 ### Vi kjenner ikke krumningen
 
-Del A forutsatte at vi kjenner $\lambda_{\max}$ i minimumet. Det gjør vi ikke.
-Himmelblaus funksjon har fire minimumspunkter, og det kritiske steget er
-forskjellig i hvert av dem: fra $0.0149$ til $0.0248$ (fordypningen under
-regner dem ut). Langt fra et minimum er Hessianen en helt annen. Et fast steg
-som er trygt i én dal, kan være for stort i en annen.
+Del A forutsatte at vi kjenner $\lambda_{\max}$ i minimumet. Det gjør vi ikke:
 
-Vi trenger en regel som velger steget **underveis**, ut fra det vi faktisk kan
-regne ut i punktet vi står i: funksjonsverdier og gradienten. Ideen er enkel:
+- **Ulike daler:** Himmelblaus funksjon har fire minimumspunkter, med
+  kritiske steg fra $0.0149$ til $0.0248$ (fordypningen under regner dem ut).
+  Et fast steg som er trygt i én dal, kan være for stort i en annen.
+- **Langt fra minimumet:** Hessianen er en helt annen.
+- **Det vi kan beregne her og nå:** Funksjonsverdier og gradienten i punktet
+  vi står i.
+
+Vi trenger derfor en regel som velger steget **underveis**. Ideen er enkel:
 prøv et stort steg, og halver det til funksjonen synker nok.
 
 <details class="reading-step">
@@ -573,16 +651,21 @@ variabel
 
 $$h(\alpha)=f(z+\alpha p).$$
 
-Den starter i $h(0)=f(z)$ med helningen $h'(0)=\nabla f(z)^Tp=-\|\nabla f(z)\|_2^2<0$.
-Tangentlinjen $h(0)+\alpha h'(0)$ er den nedgangen starthelningen lover.
-**Armijo-testen** godtar $\alpha$ når funksjonen har sunket med minst en liten
-brøkdel ($10^{-4}$) av denne nedgangen:
+- **Starten:** Linjen starter i $h(0)=f(z)$ med helningen
+  $h'(0)=\nabla f(z)^Tp=-\|\nabla f(z)\|_2^2<0$.
+- **Løftet fra tangenten:** Tangentlinjen $h(0)+\alpha h'(0)$ er den nedgangen
+  starthelningen lover.
+- **Kravet:** **Armijo-testen** godtar $\alpha$ når funksjonen har sunket med
+  minst en liten brøkdel ($10^{-4}$) av denne nedgangen:
 
 $$f(z+\alpha p)\le f(z)+10^{-4}\,\alpha\,\nabla f(z)^Tp.$$
 
 Testen krever altså en reell nedgang, men ikke det beste steget.
-**Armijo-søket** starter med $\alpha=1$ og halverer til testen er oppfylt.
-Etter flyttingen beregner vi en ny gradient og starter et nytt linjesøk.
+**Armijo-søket** bruker testen slik:
+
+1. Start med $\alpha=1$.
+2. Halver til testen er oppfylt, og flytt til det godtatte punktet.
+3. Beregn en ny gradient og start et nytt linjesøk.
 
 ::: {.callout-note title="Håndeksempel: det første linjesøket fra origo"}
 
@@ -605,46 +688,63 @@ prøve regner vi ut $u=x^2+y-11$, $w=x+y^2-7$ og $f=u^2+w^2$:
 | $1/4$ | $(3.5,\,5.5)$ | $6.75$ | $26.75$ | $761.125$ | $169.983$ | avvis |
 | $1/8$ | $(1.75,\,2.75)$ | $-5.1875$ | $2.3125$ | $32.2578125$ | $169.9915$ | godta |
 
-For eksempel er $u=1.75^2+2.75-11=-5.1875$ og $w=1.75+2.75^2-7=2.3125$ i siste
-rad, så $f=26.91015625+5.34765625=32.2578125$. Søket godtar $\alpha=1/8$ og
-flytter til $(1.75,\,2.75)$.
+Siste rad kan kontrolleres ledd for ledd:
 
-**Dette tar vi med oss.** Starthelningen gir retningen, men bare den faktiske
-funksjonsverdien kan godkjenne steget. Det godtatte steget $1/8$ er fem ganger
-større enn det kritiske steget $0.0243$ fra del A, men det er trygt fordi
-testen har sett at $f$ faktisk sank.
+- $u=1.75^2+2.75-11=-5.1875$ og $w=1.75+2.75^2-7=2.3125$.
+- Dermed er $f=26.91015625+5.34765625=32.2578125$.
+- Søket godtar $\alpha=1/8$ og flytter til $(1.75,\,2.75)$.
+
+**Dette tar vi med oss.**
+
+- **Retningen:** Starthelningen gir retningen, men bare den faktiske
+  funksjonsverdien kan godkjenne steget.
+- **Lengden:** Det godtatte steget $1/8$ er fem ganger større enn det kritiske
+  steget $0.0243$ fra del A. Det er trygt fordi testen har sett at $f$ faktisk
+  sank.
 
 :::
 
 <details class="reading-step">
 <summary>Gå i dybden: hvorfor halveringen til slutt finner et steg</summary>
 
-Sett $h(\alpha)=f(z+\alpha p)$ med $p=-\nabla f(z)$. Da er
-$h'(0)=\nabla f(z)^Tp=-\|\nabla f(z)\|_2^2<0$ når gradienten ikke er null.
-For en deriverbar funksjon er $h(\alpha)=h(0)+\alpha h'(0)+o(\alpha)$, der
-restleddet delt på $\alpha$ går mot null. Vi skriver testen som
+Vi setter opp funksjonen langs linjen og ser på små steg:
+
+- Sett $h(\alpha)=f(z+\alpha p)$ med $p=-\nabla f(z)$.
+- Da er $h'(0)=\nabla f(z)^Tp=-\|\nabla f(z)\|_2^2<0$ når gradienten ikke er null.
+- For en deriverbar funksjon er $h(\alpha)=h(0)+\alpha h'(0)+o(\alpha)$, der
+  restleddet delt på $\alpha$ går mot null.
+
+Vi skriver testen som
 
 $$\frac{h(\alpha)-h(0)}{\alpha}\le10^{-4}h'(0).$$
 
-Venstresiden går mot $h'(0)$ når $\alpha\to0$, og $h'(0)<10^{-4}h'(0)$ fordi
-$h'(0)<0$. Derfor er testen oppfylt for alle små nok positive $\alpha$, og
-halveringen stopper etter endelig mange forsøk. En stor fast steglengde har
-ingen tilsvarende garanti. Uten en nedgangsretning ($\nabla f(z)^Tp<0$)
-gjelder ikke argumentet.
+1. Venstresiden går mot $h'(0)$ når $\alpha\to0$.
+2. Fordi $h'(0)<0$, er $h'(0)<10^{-4}h'(0)$.
+3. Derfor er testen oppfylt for alle små nok positive $\alpha$, og halveringen
+   stopper etter endelig mange forsøk.
+
+**Forutsetningen:** Uten en nedgangsretning ($\nabla f(z)^Tp<0$) gjelder ikke
+argumentet. En stor fast steglengde har ingen tilsvarende garanti.
 
 </details>
 
 ### Er Armijo bedre enn et fast steg?
 
-Nå har vi to måter å velge steget på. Et godt fast steg, $\alpha=0.02$, krever
-at vi kjenner $\lambda_{\max}$ i minimumet. Et dårlig fast steg, $\alpha=0.1$,
-eksploderte i eksperiment 1. Armijo-søket trenger ingen av delene.
+Nå har vi to måter å velge steget på. Vi sammenligner dem fra $(0,0)$:
 
-Cellen kjører alle tre fra $(0,0)$. De faste stegene får 40 steg (funksjonen
-`fixed_steps` i oppsettet er løkken fra eksperiment 1). Armijo-løkken står i
-cellen, og stopper når $\|\nabla f\|_2<10^{-6}$. Tabellen viser antall steg,
-siste verdi og gradientnormen; figuren viser punktene på nivåkurvene og $f$
-steg for steg.
+| Valg | Hva vi vet fra del A |
+|:--|:--|
+| Godt fast steg, $\alpha=0.02$ | krever at vi kjenner $\lambda_{\max}$ i minimumet |
+| Dårlig fast steg, $\alpha=0.1$ | eksploderte i eksperiment 1 |
+| Armijo-søket | trenger ingen av delene |
+
+Cellen kjører alle tre med følgende oppsett:
+
+- **Faste steg:** De får 40 steg. Funksjonen `fixed_steps` i oppsettet er
+  løkken fra eksperiment 1.
+- **Armijo:** Løkken står i cellen og stopper når $\|\nabla f\|_2<10^{-6}$.
+- **Sammenligning:** Tabellen viser antall steg, siste verdi og
+  gradientnormen; figuren viser punktene på nivåkurvene og $f$ steg for steg.
 
 Målet er å se om en metode uten kjennskap til krumningen kan konkurrere med
 det gode faste steget, og om den unngår det dårlige.
@@ -680,22 +780,29 @@ for name, (end, values, points) in runs.items():
 plot_runs(runs, on_map=['fast α=0.02', 'Armijo'])
 ```
 
-**Hva viser forsøket?** Med $\alpha=0.02$ er verdien omtrent $10^{-15}$ etter
-40 steg; med $\alpha=0.1$ eksploderer den, og kjøringen stanser etter fire
-godtatte steg. Armijo-søket
-når $\|\nabla f\|_2<10^{-6}$ etter 25 steg, omtrent like raskt som det gode
-faste steget. Det trenger ikke å kjenne $\alpha_{\text{krit}}$: det første
-steget fra origo var $1/8$, langt over $0.0243$, men det ble godkjent fordi det
-faktisk senket $f$. Det viktigste er at **Armijo-søket alltid senker $f$**:
+**Hva viser forsøket?**
+
+- **Godt fast steg:** Med $\alpha=0.02$ er verdien omtrent $10^{-15}$ etter
+  40 steg.
+- **Dårlig fast steg:** Med $\alpha=0.1$ eksploderer den, og kjøringen stanser
+  etter fire godtatte steg.
+- **Armijo:** Søket når $\|\nabla f\|_2<10^{-6}$ etter 25 steg, omtrent like
+  raskt som det gode faste steget. Det trenger ikke å kjenne
+  $\alpha_{\text{krit}}$: det første steget fra origo var $1/8$, langt over
+  $0.0243$, men det ble godkjent fordi det faktisk senket $f$.
+
+Det viktigste er at **Armijo-søket alltid senker $f$**:
 $f(z_{k+1})<f(z_k)$ i hvert steg.
 
 <details class="reading-step">
 <summary>Gå i dybden: det beste steget langs en linje, eller et godt nok steg?</summary>
 
-**Et lite eksempel.** Ta $q(s)=(s-2)^2$, start i $s_0=0$ og gå i retning
-$p=1$. Langs linjen er verdien $q(\alpha)=(\alpha-2)^2$, og den beste
-steglengden er $\alpha=2$ med $q=0$. Armijo godtar allerede $\alpha=1$: $q(0)=4$,
-$q'(0)=-4$ og $q(1)=1\le4+10^{-4}\cdot1\cdot(-4)=3.9996$.
+**Et lite eksempel.** Ta $q(s)=(s-2)^2$, start i $s_0=0$ og gå i retning $p=1$.
+Langs linjen er verdien $q(\alpha)=(\alpha-2)^2$:
+
+- **Beste steg:** $\alpha=2$ gir $q=0$.
+- **Godt nok for Armijo:** Søket godtar allerede $\alpha=1$, fordi $q(0)=4$,
+  $q'(0)=-4$ og $q(1)=1\le4+10^{-4}\cdot1\cdot(-4)=3.9996$.
 
 **Et numerisk søk langs én linje.** Med fast $z$ og $p$ kan vi minimere
 funksjonen $h(\alpha)=f(z+\alpha p)$ av én variabel. Her søker
@@ -719,11 +826,13 @@ print(f'derivert langs linjen:   {line_gradient @ direction:.1e}')
 print(f'gradientnorm i planet:   {np.linalg.norm(line_gradient):.1f}')
 ```
 
-Søket gir omtrent $\alpha=0.1273$ og $f\approx32.13$, nesten det samme som
-Armijo-steget $1/8$ med $f\approx32.26$. Den deriverte langs linjen er nær null,
-men gradientnormen i planet er omtrent $36$: neste steg må gå i en ny retning.
-Det beste steget langs én linje er derfor sjelden verdt mange ekstra
-evalueringer.
+- **Valgt steg:** Søket gir omtrent $\alpha=0.1273$ og $f\approx32.13$,
+  nesten det samme som Armijo-steget $1/8$ med $f\approx32.26$.
+- **Langs linjen:** Den deriverte er nær null.
+- **I planet:** Gradientnormen er omtrent $36$, så neste steg må gå i en ny
+  retning.
+
+Det beste steget langs én linje er derfor sjelden verdt mange ekstra evalueringer.
 
 </details>
 
@@ -742,9 +851,13 @@ evalueringer.
 
 </details>
 
-**Dette tar vi med oss fra del B.** Armijo-søket trenger $f$ og $\nabla f$, men
-ingen krumning. Det tilpasser steget i hvert punkt, og det senker $f$ i hvert
-steg. Men hva om vi ikke engang kan regne ut gradienten? Det er del C.
+**Dette tar vi med oss fra del B.**
+
+- **Informasjon:** Armijo-søket trenger $f$ og $\nabla f$, men ingen krumning.
+- **Virkemåte:** Det tilpasser steget i hvert punkt.
+- **Løfte:** Det senker $f$ i hvert steg.
+
+Men hva om vi ikke engang kan regne ut gradienten? Det er del C.
 
 | Del | Metoden bruker | Steget velges slik | Hva kan vi love? |
 |:--|:--|:--|:--|
@@ -787,23 +900,34 @@ Kompassøket regner aldri ut en derivert. Likevel vil vi vite om punktet der
 det stopper, er nesten stasjonært. Det er det: en mislykket prøverunde gir en
 grense for gradienten. Vi ser først på én variabel.
 
-**Grensen.** Anta at runden med steg $\Delta$ mislykkes i $x$: begge naboene
-$x\pm\Delta$ er minst like høye som $f(x)$. La $K$ være en øvre grense for
-$|f''|$ mellom $x-\Delta$ og $x+\Delta$. Da er
+**Grensen.** Vi trenger to opplysninger:
+
+- **Mislykket runde:** Runden med steg $\Delta$ mislykkes i $x$, så begge
+  naboene $x\pm\Delta$ er minst like høye som $f(x)$.
+- **Krumning:** $K$ er en øvre grense for $|f''|$ mellom $x-\Delta$ og
+  $x+\Delta$.
+
+Da er
 
 $$\boxed{|f'(x)|\le\frac{K\Delta}{2}.}$$
 
-Grunnen med ord: var helningen brattere enn $K\Delta/2$, ville kurven falle så
-fort til den ene siden at krumningen $K$ ikke rekker å bøye den opp igjen før
-$x\pm\Delta$. Da ville den naboen vært lavere, og runden ville ikke ha
-mislyktes. Regningen står i fordypningen litt lenger ned; appleten viser hva
-som skjer.
+**Hvorfor, med ord?**
 
-I appleten drar du punktet $x$ langs kurven og halverer $\Delta$ med en knapp,
-fra $\Delta=0.5$. Naboene er grønne når de ligger minst like høyt som $f(x)$,
-og røde ellers. Den røde linjen er tangenten i $x$, de brune stiplede linjene
-har helningene $\pm K\Delta/2$, og den fiolette buen er det høyeste kurven kan
-nå mellom naboene når krumningen er høyst $K$ (Taylor).
+1. Var helningen brattere enn $K\Delta/2$, ville kurven falle så fort til den
+   ene siden at krumningen $K$ ikke rekker å bøye den opp igjen før
+   $x\pm\Delta$.
+2. Da ville den naboen vært lavere, og runden ville ikke ha mislyktes.
+
+Regningen står i fordypningen litt lenger ned; appleten viser hva som skjer.
+Her drar du punktet $x$ langs kurven og halverer $\Delta$ med en knapp, fra
+$\Delta=0.5$. Les figuren slik:
+
+| Tegn i figuren | Betydning |
+|:--|:--|
+| Grønne / røde naboer | minst like høyt som $f(x)$ / lavere enn $f(x)$ |
+| Rød linje | tangenten i $x$ |
+| Brune stiplede linjer | helningene $\pm K\Delta/2$ |
+| Fiolett bue | det høyeste kurven kan nå mellom naboene når krumningen er høyst $K$ (Taylor) |
 
 Målet er å se at en mislykket runde fanger helningen mellom to grenser, og at
 grensene halveres sammen med $\Delta$.
@@ -898,32 +1022,44 @@ board.create('button',[function(){return X(0.75);},function(){return Y(0.97);},'
   function(){cur=0; halv=2; board.setBoundingBox(SMALL,false); P.moveTo([0.05,F(0.05)]); board.update();}]);
 ```
 
-**Hva viser bildet?** Hver gang begge naboene er grønne, ligger tangenten
-mellom de stiplede linjene: $|f'(x)|\le K\Delta/2$. Den fiolette buen viser
-hvorfor. Kurven ligger aldri over buen, og når runden mislykkes, ligger begge
-naboene minst like høyt som $f(x)$. Da må også buen nå opp til høyden $f(x)$ i
-begge ender, og det klarer den bare når tangenten ikke er for bratt. (For
-$2x^2$ er krumningen overalt lik $K=4$, så buen faller sammen med kurven.) Hver
-halvering av $\Delta$ halverer båndet. En mislykket runde med lite $\Delta$
-betyr altså en liten derivert.
+**Hva viser bildet?**
 
-**Med tall.** For $f(x)=2x^2$ er $f''=4$, så $K=4$. I $x=0.05$ med
-$\Delta=1/8$ er $f(0.05)=0.005$, $f(0.175)=0.06125$ og $f(-0.075)=0.01125$.
-Begge naboene er høyere, så runden mislykkes, og grensen sier
-$|f'(0.05)|\le4\cdot\tfrac18/2=0.25$. Faktisk er $f'(0.05)=0.2$.
+- **Helningsgrensen:** Hver gang begge naboene er grønne, ligger tangenten
+  mellom de stiplede linjene: $|f'(x)|\le K\Delta/2$.
+- **Forklaringen i buen:** Kurven ligger aldri over den fiolette buen. Når
+  runden mislykkes, ligger begge naboene minst like høyt som $f(x)$. Da må
+  også buen nå opp til høyden $f(x)$ i begge ender, og det klarer den bare
+  når tangenten ikke er for bratt.
+- **Parabelen:** For $2x^2$ er krumningen overalt lik $K=4$, så buen faller
+  sammen med kurven.
+- **Halveringen:** Hver halvering av $\Delta$ halverer båndet. En mislykket
+  runde med lite $\Delta$ betyr altså en liten derivert.
 
-**I $n$ variabler.** En mislykket runde har prøvd både $+\Delta$ og $-\Delta$
-langs hver akse. Hver akse gir derfor sin egen grense
-$|\partial f/\partial x_i|\le K\Delta/2$, der $K$ nå er en grense for
-$|\partial^2f/\partial x_i^2|$ på linjestykkene fra $z-\Delta e_i$ til
-$z+\Delta e_i$. Med $n$ slike komponenter blir
+**Med tall.** For $f(x)=2x^2$ er $f''=4$, så $K=4$:
+
+1. I $x=0.05$ med $\Delta=1/8$ er $f(0.05)=0.005$, $f(0.175)=0.06125$ og
+   $f(-0.075)=0.01125$.
+2. Begge naboene er høyere, så runden mislykkes.
+3. Grensen sier $|f'(0.05)|\le4\cdot\tfrac18/2=0.25$. Faktisk er $f'(0.05)=0.2$.
+
+**I $n$ variabler.** Vi bruker den samme grensen langs hver akse:
+
+- **Hva runden har prøvd:** Både $+\Delta$ og $-\Delta$ langs hver akse.
+- **Én komponent:** Hver akse gir
+  $|\partial f/\partial x_i|\le K\Delta/2$.
+- **Hva $K$ betyr nå:** En grense for $|\partial^2f/\partial x_i^2|$ på
+  linjestykkene fra $z-\Delta e_i$ til $z+\Delta e_i$.
+
+Med $n$ slike komponenter blir
 
 $$\boxed{\|\nabla f(z)\|_2\le\sqrt n\,\frac{K\Delta}{2}.}$$
 
 **En mislykket runde med lite $\Delta$ beviser at gradienten er liten.**
-Stoppregelen «$\Delta$ er liten» får dermed en matematisk betydning: punktet er
-nesten stasjonært. Det sier ikke at punktet er et globalt minimum, og heller
-ikke at det er et minimum.
+
+- **Tolkning av stoppen:** Stoppregelen «$\Delta$ er liten» betyr at punktet
+  er nesten stasjonært.
+- **Begrensning:** Det sier ikke at punktet er et globalt minimum, og heller
+  ikke at det er et minimum.
 
 <details class="reading-step">
 <summary>Gå i dybden: hvorfor gir en mislykket runde en grense for gradienten?</summary>
@@ -953,11 +1089,15 @@ $$0\le-\Delta f'(x)+\tfrac12K\Delta^2,\qquad\text{altså}\qquad f'(x)\le\frac{K\
 
 Til sammen er $|f'(x)|\le K\Delta/2$.
 
-**I $n$ variabler.** Skriv $a_i=\partial f/\partial x_i(z)$ og la $e_i$ være
-enhetsvektoren langs akse $i$. Taylor langs aksen gir
-$f(z+\Delta e_i)=f(z)+\Delta a_i+\tfrac12\Delta^2f_{x_ix_i}(\xi)$ for et punkt
-$\xi$ mellom $z$ og $z+\Delta e_i$, og tilsvarende med $-\Delta$. Fordi runden
-mislyktes, er
+**I $n$ variabler.** Vi tar én akse om gangen:
+
+1. Skriv $a_i=\partial f/\partial x_i(z)$ og la $e_i$ være enhetsvektoren langs
+   akse $i$.
+2. Taylor langs aksen gir
+   $f(z+\Delta e_i)=f(z)+\Delta a_i+\tfrac12\Delta^2f_{x_ix_i}(\xi)$ for et
+   punkt $\xi$ mellom $z$ og $z+\Delta e_i$, og tilsvarende med $-\Delta$.
+
+Fordi runden mislyktes, er
 
 $$0\le f(z+\Delta e_i)-f(z)\le\Delta a_i+\tfrac12K\Delta^2,\qquad
 0\le f(z-\Delta e_i)-f(z)\le-\Delta a_i+\tfrac12K\Delta^2.$$
@@ -975,14 +1115,17 @@ langs aksene, $f_{x_ix_i}$, ikke de blandede.
 ### Er grensen nyttig i praksis?
 
 Grensen gjelder alltid, men den er bare interessant hvis den ikke er altfor
-grov. Funksjonen `compass` i oppsettet følger reglene 1–4 over. Vi kjører
-kompassøket fra $(0.3,\,0.7)$ til $\Delta<1/1024$, slik at siste
-mislykkede runde hadde $\Delta=1/1024$. Nær sluttpunktet endrer Hessianen seg
-lite, så vi bruker $K=\|H(z)\|_2$, den største egenverdien i absoluttverdi. Den
-er minst like stor som begge diagonalelementene, fordi
-$|h_{ii}|=|e_i^THe_i|\le\|H\|_2$. Så sammenligner vi grensen
-$\sqrt2\,K\Delta/2$ med den faktiske gradientnormen, som vi regner ut bare for
-å kontrollere.
+grov. Nå undersøker vi hvor nyttig den er ved slutten av et søk.
+
+- **Søket:** Funksjonen `compass` i oppsettet følger reglene 1–4 over. Vi
+  starter i $(0.3,\,0.7)$ og kjører til $\Delta<1/1024$, slik at siste
+  mislykkede runde hadde $\Delta=1/1024$.
+- **Anslaget for krumning:** Nær sluttpunktet endrer Hessianen seg lite, så
+  vi bruker $K=\|H(z)\|_2$, den største egenverdien i absoluttverdi. Den er
+  minst like stor som begge diagonalelementene, fordi
+  $|h_{ii}|=|e_i^THe_i|\le\|H\|_2$.
+- **Kontrollen:** Vi sammenligner grensen $\sqrt2\,K\Delta/2$ med den faktiske
+  gradientnormen, som vi regner ut bare for å kontrollere.
 
 Målet er å se hvor tett grensen er, uten at søket selv har brukt én eneste
 derivert.
@@ -1007,20 +1150,27 @@ print(f'faktisk |∇f|          = {np.linalg.norm(grad9(z)):.4f}')
 plot_path(path, 'kompass fra (0.3, 0.7)')
 ```
 
-**Hva viser forsøket?** Søket ender nær $(3,2)$ etter 101 evalueringer. Grensen
-er omtrent $0.057$, og den faktiske gradientnormen er omtrent $0.011$. Grensen
-holder, og den er ikke langt unna. Kompassøket brukte ingen deriverte. For å
-tolke stoppen trengte vi bare et anslag $K$ for krumningen; da vet vi at
-$\|\nabla f\|_2\le0.057$ uten å ha regnet ut gradienten.
+**Hva viser forsøket?**
+
+- **Sluttpunktet:** Søket ender nær $(3,2)$ etter 101 evalueringer.
+- **Grensen mot fasiten:** Grensen er omtrent $0.057$, og den faktiske
+  gradientnormen er omtrent $0.011$. Grensen holder, og den er ikke langt unna.
+- **Det søket brukte:** Kompassøket brukte ingen deriverte. For å tolke
+  stoppen trengte vi bare et anslag $K$ for krumningen; da vet vi at
+  $\|\nabla f\|_2\le0.057$ uten å ha regnet ut gradienten.
 
 <details class="reading-step">
 <summary>Gå i dybden: valg som gir andre baner</summary>
 
-Vi evaluerer alle fire naboer før vi flytter. En variant flytter til første
-forbedring og kan bruke færre evalueringer, men følger en annen bane. Vi kunne
-også prøve diagonale retninger. Grensen for gradienten gjelder for alle disse
-variantene, så lenge en mislykket runde har prøvd både $+\Delta$ og $-\Delta$
-langs hver akse. Ingen av variantene utelukker en lavere verdi i en annen dal.
+Vi evaluerer alle fire naboer før vi flytter. Andre valg er mulige:
+
+- **Første forbedring:** En variant flytter til første forbedring. Den kan
+  bruke færre evalueringer, men følger en annen bane.
+- **Flere retninger:** Vi kunne også prøve diagonale retninger.
+- **Samme gradientgrense:** Grensen gjelder for alle disse variantene, så
+  lenge en mislykket runde har prøvd både $+\Delta$ og $-\Delta$ langs hver akse.
+
+Ingen av variantene utelukker en lavere verdi i en annen dal.
 
 </details>
 
@@ -1033,11 +1183,15 @@ Kompassøket bruker de punktene det har sett, til å bestemme hvor det prøver
 neste gang. Det enkleste alternativet er å ikke ta steg i det hele tatt, men å
 se på mange punkter på forhånd og velge det beste.
 
-Et **gittersøk** prøver alle kombinasjoner av valgte koordinater. Åtte verdier
-for $x$ og åtte for $y$ gir $8^2=64$ punkter i kvadratet $[-4,4]^2$. Ved
-**tilfeldig sampling** trekker vi i stedet 64 punkter jevnt fordelt i samme
-kvadrat. Begge metodene bruker 64 **funksjonsevalueringer**. `default_rng(42)`
-fester de tilfeldige tallene, slik at forsøket kan gjentas.
+Vi sammenligner to måter å bruke 64 **funksjonsevalueringer** i kvadratet
+$[-4,4]^2$:
+
+| Metode | Valg av punkter |
+|:--|:--|
+| **Gittersøk** | Alle kombinasjoner av valgte koordinater: åtte verdier for $x$ og åtte for $y$ gir $8^2=64$ punkter. |
+| **Tilfeldig sampling** | Vi trekker 64 punkter jevnt fordelt i samme kvadrat. |
+
+`default_rng(42)` fester de tilfeldige tallene, slik at forsøket kan gjentas.
 
 ```{pyodide-python}
 #| label: week9-finite-search
@@ -1053,17 +1207,22 @@ for name, points in [('Gitter', grid), ('Tilfeldig', random_points)]:
 plot_samples(grid, random_points)
 ```
 
-Gitteret finner omtrent $2.710$ ved $(2.857,\,1.714)$. Det tilfeldige utvalget
-finner omtrent $0.094$ ved $(-3.818,\,-3.280)$, i en annen dal. Et annet frø
-kan snu rekkefølgen. Begge utvalgene lar alle punktene **mellom** prøvene være
-uprøvd.
+- **Gitteret:** Finner omtrent $2.710$ ved $(2.857,\,1.714)$.
+- **Tilfeldig utvalg:** Finner omtrent $0.094$ ved $(-3.818,\,-3.280)$, i en
+  annen dal. Et annet frø kan snu rekkefølgen.
+- **Felles begrensning:** Begge utvalgene lar alle punktene **mellom** prøvene
+  være uprøvd.
 
-**Prøvebudsjett og dimensjon.** Med $m$ punkter langs hver av $n$ koordinater
-bruker et fullt gitter $m^n$ evalueringer. For $m=8$ øker tallet fra $64$ i to
-dimensjoner til $8^6=262144$ i seks dimensjoner, og avstanden mellom
-gitterpunktene er den samme. Tilfeldige prøver kan holdes innenfor et budsjett,
-men treffer et lite område med lave verdier like sjelden. Å dekke hele området
-er håpløst i høy dimensjon.
+**Prøvebudsjett og dimensjon.**
+
+- **Fullt gitter:** Med $m$ punkter langs hver av $n$ koordinater bruker vi
+  $m^n$ evalueringer. For $m=8$ øker tallet fra $64$ i to dimensjoner til
+  $8^6=262144$ i seks dimensjoner, og avstanden mellom gitterpunktene er den
+  samme.
+- **Tilfeldige prøver:** De kan holdes innenfor et budsjett, men treffer et
+  lite område med lave verdier like sjelden.
+
+Å dekke hele området er håpløst i høy dimensjon.
 
 **Tilfeldig vandring.** En mellomting velger neste forslag relativt til
 punktet vi har beholdt. Vi trekker en tilfeldig retning med lengde 1, prøver et
@@ -1088,10 +1247,15 @@ ved å halvere steget når en runde mislykkes.
 
 </details>
 
-**Dette tar vi med oss fra del C.** Kompassøket trenger bare funksjonsverdier.
-Det halverer $\Delta$ når ingen nabo er bedre, og en mislykket runde gir
-$\|\nabla f\|_2\le\sqrt n\,K\Delta/2$. Både Armijo og kompassøket godtar bare
-punkter med lavere verdi. Er det nok til at de kommer fram? Det er del D.
+**Dette tar vi med oss fra del C.**
+
+- **Informasjon:** Kompassøket trenger bare funksjonsverdier.
+- **Steget:** Det halverer $\Delta$ når ingen nabo er bedre.
+- **Gradientgrensen:** En mislykket runde gir
+  $\|\nabla f\|_2\le\sqrt n\,K\Delta/2$.
+
+Både Armijo og kompassøket godtar bare punkter med lavere verdi. Er det nok
+til at de kommer fram? Det er del D.
 
 | Del | Metoden bruker | Steget velges slik | Hva kan vi love? |
 |:--|:--|:--|:--|
@@ -1114,13 +1278,17 @@ Armijo-søket og kompassøket har én ting felles: de godtar bare punkter med
 å bevise noe, tester vi det på et problem der vi vet at det ikke finnes noe
 minimum.
 
-I [uke 8](uke8.qmd#uke8-eksistens) prøvde vi å tilpasse $m(t)=a(1-e^{-bt})$ til
-ni målinger på linjen $y=0.5\,t$, med $b>0$. Vi kaller kvadratsummen
-$S_8(a,b)$ her, så den ikke blandes med konvergensfaktoren $S$. I uke 8 fant vi
-at $S_8$ kan gjøres så liten vi vil, men at minimum ikke finnes. Funksjonene
-`S8` og `grad_S8` står i oppsettet. Cellen kjører Armijo-søket fra
-$(a,b)=(1,1)$ i 3000 steg og skriver ut punktet, $S_8$ og gradientnormen
-underveis.
+I [uke 8](uke8.qmd#uke8-eksistens) prøvde vi å tilpasse $m(t)=a(1-e^{-bt})$
+til ni målinger på linjen $y=0.5\,t$, med $b>0$. Nå lar vi Armijo-søket prøve
+seg på det samme problemet:
+
+- **Navnet:** Vi kaller kvadratsummen $S_8(a,b)$ her, så den ikke blandes med
+  konvergensfaktoren $S$.
+- **Det vi vet:** I uke 8 fant vi at $S_8$ kan gjøres så liten vi vil, men at
+  minimum ikke finnes.
+- **Det vi får ferdig:** Funksjonene `S8` og `grad_S8` står i oppsettet.
+- **Kjøringen:** Cellen starter i $(a,b)=(1,1)$, tar 3000 steg og skriver ut
+  punktet, $S_8$ og gradientnormen underveis.
 
 Målet er å se hva en metode som alltid går nedover, gjør når det ikke finnes
 noen bunn.
@@ -1150,13 +1318,18 @@ for k in range(1, 3001):
 plot_drift(path)
 ```
 
-**Hva viser forsøket?** Armijo-søket gjør nøyaktig det det skal: $S_8$ synker i
-hvert steg. Men iteratene kryper langs kurven $a=0.5/b$: etter $10^2$, $10^3$
-og $3\cdot10^3$ steg er $a\approx2.5,\ 3.4,\ 3.8$ og $b\approx0.29,\ 0.20,\ 0.17$.
-Langs denne kurven går $S_8$ mot 0 mens $a\to\infty$, så det finnes ingen
-grense å konvergere mot. Gradientnormen faller likevel fra $0.77$ etter 10 steg
-til omtrent $0.13$ etter 3000. En stoppregel som $\|\nabla S_8\|_2<0.2$ ville derfor meldt suksess i et
-tilfeldig punkt på veien.
+**Hva viser forsøket?**
+
+- **Nedgangen virker:** Armijo-søket gjør nøyaktig det det skal: $S_8$ synker
+  i hvert steg.
+- **Punktene driver utover:** Iteratene kryper langs kurven $a=0.5/b$. Etter
+  $10^2$, $10^3$ og $3\cdot10^3$ steg er $a\approx2.5,\ 3.4,\ 3.8$ og
+  $b\approx0.29,\ 0.20,\ 0.17$. Langs denne kurven går $S_8$ mot 0 mens
+  $a\to\infty$, så det finnes ingen grense å konvergere mot.
+- **En liten gradient kan villede:** Gradientnormen faller fra $0.77$ etter
+  10 steg til omtrent $0.13$ etter 3000. En stoppregel som
+  $\|\nabla S_8\|_2<0.2$ ville derfor meldt suksess i et tilfeldig punkt på
+  veien.
 
 Det er ikke metoden som svikter, men funksjonen som mangler en egenskap. Resten
 av fanen sier hvilken.
@@ -1169,35 +1342,46 @@ der $f$ er høyere enn i startpunktet $z_0$. Alle iteratene ligger derfor i
 
 $$L_0=\{z: f(z)\le f(z_0)\}.$$
 
-I eksperiment 5 er $L_0$ ubegrenset: den inneholder hele den delen av kurven
-$a=0.5/b$ der $b$ er liten ($b\le0.36$), og iteratene kan vandre ut langs den.
-**Hvis $L_0$ derimot er begrenset, kan iteratene ikke rømme:** de må hope seg
-opp ved minst ett punkt i $L_0$. Et slikt punkt kalles et **grensepunkt** for
-følgen. Hvorfor det alltid finnes et grensepunkt, står i fordypningen etter
-garantien.
+Det avgjørende er om $L_0$ har plass til at iteratene kan rømme:
+
+- **Ubegrenset $L_0$:** I eksperiment 5 inneholder $L_0$ hele den delen av
+  kurven $a=0.5/b$ der $b$ er liten ($b\le0.36$). Iteratene kan vandre ut
+  langs den.
+- **Begrenset $L_0$:** **Iteratene kan ikke rømme.** De må hope seg opp ved
+  minst ett punkt i $L_0$. Et slikt punkt kalles et **grensepunkt** for
+  følgen. Hvorfor det alltid finnes et grensepunkt, står i fordypningen
+  etter garantien.
 
 Når er $L_0$ begrenset? En funksjon på hele $\mathbb R^n$ er **koersiv** hvis
 
 $$f(z)\to\infty\quad\text{når}\quad\|z\|_2\to\infty.$$
 
-Med ord: for hver høyde $M$ finnes en radius $R$ slik at $f(z)>M$ for alle $z$
-med $\|z\|_2>R$. Med $M=f(z_0)$ betyr det at hele $L_0$ ligger inne i skiven
-med radius $R$, så alle subnivåmengder er begrenset. Kvadratsummen $S_8$ er
-**ikke** koersiv: langs kurven $a=0.5/b$ holder den seg liten mens $a\to\infty$.
+- **Med ord:** For hver høyde $M$ finnes en radius $R$ slik at $f(z)>M$ for
+  alle $z$ med $\|z\|_2>R$.
+- **Følgen for $L_0$:** Med $M=f(z_0)$ ligger hele $L_0$ inne i skiven med
+  radius $R$, så alle subnivåmengder er begrenset.
+- **Moteksemplet:** Kvadratsummen $S_8$ er **ikke** koersiv. Langs kurven
+  $a=0.5/b$ holder den seg liten mens $a\to\infty$.
 
 ### Kan iteratene rømme?
 
 Himmelblaus funksjon er koersiv: langt ute er minst én av parentesene
-$x^2+y-11$ og $x+y^2-7$ stor (regningen står i fordypningen om koersive
-funksjoner lenger ned). Da bør $L_0$ være begrenset og iteratene stengt inne.
-For $S_8$ fra eksperiment 5 venter vi det motsatte.
+$x^2+y-11$ og $x+y^2-7$ stor. Regningen står i fordypningen om koersive
+funksjoner lenger ned. Vi venter derfor to ulike bilder:
 
-Appleten tegner randen av $L_0=\{f\le f(z_0)\}$ som en blå kurve. Startpunktet
-$z_0$ er den røde firkanten, og du kan dra den. Knappene kjører 10 eller 1000
-steg med Armijo-søket fra 9.3, med samme test og samme faktor $10^{-4}$; den
-grønne linjen går gjennom iteratene. Teksten øverst viser antall steg, verdien og
-gradientnormen. For Himmelblaus funksjon viser den også den største avstanden
-fra origo til et punkt i $L_0$, og den stiplede sirkelen har radius 7.
+- **Himmelblau:** $L_0$ bør være begrenset og iteratene stengt inne.
+- **$S_8$ fra eksperiment 5:** Vi venter det motsatte.
+
+Appleten lar oss undersøke forskjellen:
+
+| I appleten | Hva du ser eller gjør |
+|:--|:--|
+| Blå kurve | randen av $L_0=\{f\le f(z_0)\}$ |
+| Rød firkant | startpunktet $z_0$, som du kan dra |
+| Knapper for 10 eller 1000 steg | Armijo-søket fra 9.3, med samme test og faktor $10^{-4}$ |
+| Grønn linje | går gjennom iteratene |
+| Teksten øverst | antall steg, verdien og gradientnormen |
+| Ekstra for Himmelblau | største avstand fra origo til et punkt i $L_0$; den stiplede sirkelen har radius 7 |
 
 Målet er å se forskjellen på en begrenset og en ubegrenset subnivåmengde: i den
 ene er iteratene stengt inne og hoper seg opp ved et punkt, i den andre kan de
@@ -1316,21 +1500,23 @@ board.create('button',[function(){return X(0.75);},function(){return Y(0.86);},'
 radius(); board.update();
 ```
 
-**Hva viser bildet?** For Himmelblaus funksjon med start i origo er randen av
-$L_0$ en lukket kurve. Det fjerneste punktet har avstand omtrent $6.78$ fra
-origo, innenfor sirkelen med radius 7. Startpunktet ligger på randen, fordi
-$f(0,0)=170$. Iteratene blir inne i kurven og
-hoper seg opp i $(3,2)$, et grensepunkt der $\nabla f=0$. Det samme gjelder
-fra andre startpunkter: $L_0$ blir større eller mindre, men den er alltid
-begrenset. Armijo-søket i eksperiment 3 og kompassøket i eksperiment 4 (start i
-$(0.3,\,0.7)$, der $f\approx142.81<170$) holdt seg derfor også inne i denne
-kurven.
+**Hva viser bildet?**
 
-For $S_8$ fortsetter nivåkurven utenfor tegnevinduet. Subnivåmengden er
-ubegrenset: den strekker seg mot høyre langs den stiplede kurven $a=0.5/b$.
-Iteratene kryper utover der mens gradientnormen nesten står stille, akkurat
-som i eksperiment 5. Garantien under sier at det første
-bildet er det vi får hver gang $f$ er koersiv.
+- **Himmelblau fra origo:** Randen av $L_0$ er en lukket kurve. Det fjerneste
+  punktet har avstand omtrent $6.78$ fra origo, innenfor sirkelen med radius
+  7. Startpunktet ligger på randen, fordi $f(0,0)=170$.
+- **Iteratene er stengt inne:** De blir inne i kurven og hoper seg opp i
+  $(3,2)$, et grensepunkt der $\nabla f=0$.
+- **Andre startpunkter:** $L_0$ blir større eller mindre, men den er alltid
+  begrenset. Armijo-søket i eksperiment 3 og kompassøket i eksperiment 4
+  (start i $(0.3,\,0.7)$, der $f\approx142.81<170$) holdt seg derfor også
+  inne i denne kurven.
+- **$S_8$:** Nivåkurven fortsetter utenfor tegnevinduet. Subnivåmengden er
+  ubegrenset og strekker seg mot høyre langs den stiplede kurven $a=0.5/b$.
+  Iteratene kryper utover der mens gradientnormen nesten står stille,
+  akkurat som i eksperiment 5.
+
+Garantien under sier at det første bildet er det vi får hver gang $f$ er koersiv.
 
 ::: {.callout-important}
 #### Garantien
@@ -1351,11 +1537,13 @@ globalt best, er konveksitetsspørsmålet fra [uke 8](uke8.qmd#uke8-lokalt).
 <details class="reading-step">
 <summary>Gå i dybden: hvorfor finnes grensepunkter, og hvorfor er de stasjonære?</summary>
 
-**Grensepunkter finnes.** Iteratene ligger i $L_0$, som er begrenset. En
-begrenset følge har en konvergent delfølge (Bolzano–Weierstrass; se
-fordypningen om ekstremalverdisetningen i [uke 8](uke8.qmd#uke8-kompakt)).
-Hvis $f$ er kontinuerlig, er $L_0$ lukket, så grensen for delfølgen ligger i
-$L_0$. Den er et grensepunkt for følgen.
+**Grensepunkter finnes.**
+
+1. Iteratene ligger i $L_0$, som er begrenset.
+2. En begrenset følge har en konvergent delfølge (Bolzano–Weierstrass; se
+   fordypningen om ekstremalverdisetningen i [uke 8](uke8.qmd#uke8-kompakt)).
+3. Hvis $f$ er kontinuerlig, er $L_0$ lukket, så grensen for delfølgen ligger
+   i $L_0$. Den er et grensepunkt for følgen.
 
 **Grensepunktene er stasjonære.** Skriv $\nabla f_k=\nabla f(z_k)$ og la
 $\alpha_k$ være det godtatte steget.
@@ -1368,57 +1556,93 @@ $\alpha_k$ være det godtatte steget.
 3. La $z_k\to\bar z$ langs en delfølge. Hvis $\alpha_k$ holder seg over en fast
    positiv grense langs en videre delfølge, må $\|\nabla f_k\|_2\to0$ der, og
    $\nabla f(\bar z)=0$ fordi gradienten er kontinuerlig.
-4. Ellers går $\alpha_k\to0$ langs en videre delfølge. Da er $\alpha_k<1$ til
-   slutt, så steget $2\alpha_k$ ble avvist:
-   $f(z_k-2\alpha_k\nabla f_k)>f(z_k)-10^{-4}\cdot2\alpha_k\|\nabla f_k\|_2^2$.
-   Middelverdisetningen gir et punkt $\xi_k$ mellom $z_k$ og
+4. Ellers går $\alpha_k\to0$ langs en videre delfølge. Vi følger argumentet
+   gjennom tre mellomtrinn:
+
+   **Avvist steg:** Da er $\alpha_k<1$ til slutt, så steget $2\alpha_k$ ble
+   avvist: $f(z_k-2\alpha_k\nabla f_k)>f(z_k)-10^{-4}\cdot2\alpha_k\|\nabla f_k\|_2^2$.
+
+   **Middelverdisetningen:** Den gir et punkt $\xi_k$ mellom $z_k$ og
    $z_k-2\alpha_k\nabla f_k$ med
-   $-\nabla f(\xi_k)^T\nabla f_k>-10^{-4}\|\nabla f_k\|_2^2$. Når $k\to\infty$
-   langs delfølgen, går både $\xi_k$ og $z_k$ mot $\bar z$, og vi får
+   $-\nabla f(\xi_k)^T\nabla f_k>-10^{-4}\|\nabla f_k\|_2^2$.
+
+   **Grenseovergangen:** Når $k\to\infty$ langs delfølgen, går både $\xi_k$ og
+   $z_k$ mot $\bar z$, og vi får
    $\|\nabla f(\bar z)\|_2^2\le10^{-4}\|\nabla f(\bar z)\|_2^2$. Det er bare
    mulig når $\nabla f(\bar z)=0$.
 
-For kompassøket: prøvepunktene $z\pm\Delta e_i$ i en mislykket runde kan ligge
-litt utenfor $L_0$; de ble jo avvist. Men de ligger høyst $\Delta_0$ fra $L_0$,
-der $\Delta_0$ er startsteget, og mengden av punkter med avstand høyst
-$\Delta_0$ fra $L_0$ er også lukket og begrenset. Der finnes en grense $K$ for
-de andrederiverte, så grensen fra 9.4 gjelder i hver mislykket runde. $\Delta$
-går dessuten faktisk mot null. Med fast $\Delta$ ligger alle iteratene på et
-rutenett med avstand $\Delta$, og den begrensede $L_0$ inneholder bare endelig
-mange slike punkter. Siden $f$ synker i hver flytting, besøkes ingen av dem to
-ganger, så før eller siden mislykkes en runde og $\Delta$ halveres.
+**For kompassøket må vi også begrunne to ting.**
+
+**En felles grense $K$.**
+
+1. Prøvepunktene $z\pm\Delta e_i$ i en mislykket runde kan ligge litt utenfor
+   $L_0$; de ble jo avvist. Men de ligger høyst $\Delta_0$ fra $L_0$, der
+   $\Delta_0$ er startsteget.
+2. Mengden av punkter med avstand høyst $\Delta_0$ fra $L_0$ er også lukket
+   og begrenset. Der finnes en grense $K$ for de andrederiverte, så grensen
+   fra 9.4 gjelder i hver mislykket runde.
+
+**$\Delta$ går faktisk mot null.**
+
+1. Med fast $\Delta$ ligger alle iteratene på et rutenett med avstand
+   $\Delta$, og den begrensede $L_0$ inneholder bare endelig mange slike punkter.
+2. Siden $f$ synker i hver flytting, besøkes ingen av dem to ganger. Før
+   eller siden mislykkes derfor en runde, og $\Delta$ halveres.
 
 </details>
 
-**Koersiv eller ikke?** Én linje der $f$ holder seg begrenset mens
-$\|z\|_2\to\infty$, er nok til å vise at $f$ ikke er koersiv. For eksempel er
-$(x-y)^2=0$ langs hele linjen $x=y$. Garantien er en tilstrekkelig betingelse,
-ikke en nødvendig: Armijo-søket finner likevel et minimumspunkt for $(x-y)^2$,
-men det kunne ikke garantien love på forhånd.
+**Koersiv eller ikke?**
+
+- **Slik avkrefter vi koersivitet:** Én linje der $f$ holder seg begrenset
+  mens $\|z\|_2\to\infty$, er nok til å vise at $f$ ikke er koersiv. For
+  eksempel er $(x-y)^2=0$ langs hele linjen $x=y$.
+- **Hva garantien krever:** Koersivitet er en tilstrekkelig betingelse, ikke
+  en nødvendig. Armijo-søket finner likevel et minimumspunkt for $(x-y)^2$,
+  men det kunne ikke garantien love på forhånd.
 
 <details class="reading-step">
 <summary>Gå i dybden: hvilke funksjoner er koersive?</summary>
 
-- **To enkle eksempler.** For $f_1(x,y)=x^2+y^2$ er subnivåmengden
-  $\{f_1\le1\}$ skiven med radius 1, og $f_1$ er koersiv. For
-  $f_2(x,y)=(x-y)^2$ er $\{f_2\le1\}$ stripen $|x-y|\le1$, som inneholder hele
-  linjen $x=y$; $f_2$ er ikke koersiv. Armijo-søket på $f_2$ kommer likevel
-  fram i ett steg: gradienten er $2(x-y)(1,-1)$, og etter et steg med lengde
-  $\alpha$ er $x-y$ blitt $(1-4\alpha)(x-y)$. Steget $\alpha=1$ gir $-3(x-y)$
-  (høyere verdi) og $\alpha=\tfrac12$ gir $-(x-y)$ (samme verdi), så begge
-  avvises. Steget $\alpha=\tfrac14$ gir $x-y=0$, et minimumspunkt.
-- **Himmelblaus funksjon.** Siden $f=u^2+w^2$, er $f\ge u^2$ og $f\ge w^2$. Når
-  $|y|\le|x|$, er $u=x^2+y-11\ge x^2-|x|-11$. Når $|x|\le|y|$, er
-  $w=x+y^2-7\ge y^2-|y|-7$. Langt ute er den største av $|x|$ og $|y|$ stor,
-  og den tilhørende nedre grensen går mot uendelig, så $f\to\infty$.
-- **Skålen fra uke 6**, $\phi(x)=\tfrac12x^TAx-b^Tx$ med $A$ SPD: fordi
-  $x^TAx\ge\lambda_{\min}\|x\|_2^2$ (uke 5) og $b^Tx\le\|b\|_2\|x\|_2$, er
-  $$\phi(x)\ge\tfrac12\lambda_{\min}\|x\|_2^2-\|b\|_2\|x\|_2\to\infty.$$
-  Den er koersiv.
-- **Minste kvadrater fra uke 4**, $\|b-Ac\|_2^2$: koersiv når nullrommet til
-  $A$ bare er nullvektoren. Har $A$ et nullrom, er funksjonen konstant langs
-  det, og da er den ikke koersiv (den
-  [flate dalen i uke 8](uke8.qmd#uke8-flat)).
+**To enkle eksempler.**
+
+| Funksjon | Subnivåmengden ved høyde 1 | Koersiv? |
+|:--|:--|:--|
+| $f_1(x,y)=x^2+y^2$ | $\{f_1\le1\}$ er skiven med radius 1 | ja |
+| $f_2(x,y)=(x-y)^2$ | $\{f_2\le1\}$ er stripen $|x-y|\le1$, som inneholder hele linjen $x=y$ | nei |
+
+Armijo-søket på $f_2$ kommer likevel fram i ett steg:
+
+1. Gradienten er $2(x-y)(1,-1)$. Etter et steg med lengde $\alpha$ er $x-y$
+   blitt $(1-4\alpha)(x-y)$.
+2. Steget $\alpha=1$ gir $-3(x-y)$ (høyere verdi), og
+   $\alpha=\tfrac12$ gir $-(x-y)$ (samme verdi), så begge avvises.
+3. Steget $\alpha=\tfrac14$ gir $x-y=0$, et minimumspunkt.
+
+**Himmelblaus funksjon.** Siden $f=u^2+w^2$, er $f\ge u^2$ og $f\ge w^2$.
+Vi deler i to tilfeller:
+
+- Når $|y|\le|x|$, er $u=x^2+y-11\ge x^2-|x|-11$.
+- Når $|x|\le|y|$, er $w=x+y^2-7\ge y^2-|y|-7$.
+
+Langt ute er den største av $|x|$ og $|y|$ stor, og den tilhørende nedre
+grensen går mot uendelig, så $f\to\infty$.
+
+**Skålen fra uke 6**, $\phi(x)=\tfrac12x^TAx-b^Tx$ med $A$ SPD:
+
+- Fra uke 5 har vi $x^TAx\ge\lambda_{\min}\|x\|_2^2$.
+- Dessuten er $b^Tx\le\|b\|_2\|x\|_2$.
+
+Derfor er
+
+$$\phi(x)\ge\tfrac12\lambda_{\min}\|x\|_2^2-\|b\|_2\|x\|_2\to\infty.$$
+
+Den er koersiv.
+
+**Minste kvadrater fra uke 4**, $\|b-Ac\|_2^2$:
+
+- **Bare nullvektoren i nullrommet til $A$:** Funksjonen er koersiv.
+- **Har $A$ et nullrom:** Funksjonen er konstant langs det, og da er den
+  ikke koersiv (den [flate dalen i uke 8](uke8.qmd#uke8-flat)).
 
 </details>
 
@@ -1434,10 +1658,13 @@ stadig mindre. Nå kan vi fylle ut den siste kolonnen:
 | **C. Kompassøk** | bare $f$ | halver $\Delta$ når ingen nabo er bedre | $f$ synker; en mislykket runde gir $\lVert\nabla f\rVert_2\le\sqrt n\,K\Delta/2$ |
 | **D. Garantien** | krav til $f$: koersiv | | B og C: iteratene er begrenset, og grensepunktene er stasjonære |
 
-Jo mindre metoden vet, desto mer må vi kreve av **funksjonen** for å kunne
-love noe. Uten koersivitet (eller en annen grunn til at $L_0$ er begrenset) kan
-en metode som alltid går nedover, likevel aldri komme fram, som i
-eksperiment 5. Garantien følger ikke av metoden alene.
+- **Kravet til funksjonen:** Jo mindre metoden vet, desto mer må vi kreve av
+  **funksjonen** for å kunne love noe.
+- **Hvorfor nedgang ikke er nok:** Uten koersivitet (eller en annen grunn
+  til at $L_0$ er begrenset) kan en metode som alltid går nedover, likevel
+  aldri komme fram, som i eksperiment 5.
+
+Garantien følger ikke av metoden alene.
 
 **Øv på del D:** [regneoppgavene D](#uke9-oppg-d).
 
@@ -1445,19 +1672,23 @@ eksperiment 5. Garantien følger ikke av metoden alene.
 
 <div id="uke9-oppgaver"></div>
 
-Oppgavene er ordnet etter ukens fire deler. Regn uten kode først. Svar eksakt
-(hele tall, brøker eller uttrykk). I uttrykksfeltene bruker du `*` for
-multiplikasjon og `^` for potens. Der det spørres om ja/nei, skriver du **1 for
-ja, 0 for nei**. Begrunnelser skriver du i egne notater.
+Oppgavene er ordnet etter ukens fire deler. Regn uten kode først.
+
+- **Svarform:** Svar eksakt (hele tall, brøker eller uttrykk).
+- **Uttrykk:** Bruk `*` for multiplikasjon og `^` for potens.
+- **Ja/nei:** Skriv **1 for ja, 0 for nei**.
+- **Begrunnelser:** Skriv dem i egne notater.
 
 <div id="uke9-oppg-a"></div>
 
 ### A. Fast steg
 
 For Himmelblaus funksjon er $u=x^2+y-11$ og $w=x+y^2-7$, og gradientens
-komponenter er $4xu+2w$ og $2u+4yw$. Start i $z_0=(1,1)$. Finn negativ
-gradient og punktet etter ett steg med $\alpha=1/100$, og avgjør om verdien
-synker.
+komponenter er $4xu+2w$ og $2u+4yw$. Start i $z_0=(1,1)$:
+
+1. Finn negativ gradient.
+2. Finn punktet etter ett steg med $\alpha=1/100$.
+3. Avgjør om verdien synker.
 
 ```{math-exercise}
 #| label: week9-task-first-gradient-step
@@ -1473,10 +1704,12 @@ $z_1=$ vec[73/50,69/50]
 Er $f(z_1)<f(z_0)$? _[1]
 ```
 
-For $f(x)=2x^2$ er minimumet $r=0$ og krumningen $f''=4$. Skriv steget
-$x_{k+1}=x_k-\alpha f'(x_k)$ som $x_{k+1}=(\text{faktor})\cdot x_k$, slik som
-for parabelen i 9.1. Finn faktoren for to steglengder, avgjør om metoden
-konvergerer, og finn det kritiske steget.
+For $f(x)=2x^2$ er minimumet $r=0$ og krumningen $f''=4$.
+
+1. Skriv steget $x_{k+1}=x_k-\alpha f'(x_k)$ som
+   $x_{k+1}=(\text{faktor})\cdot x_k$, slik som for parabelen i 9.1.
+2. Finn faktoren for to steglengder og avgjør om metoden konvergerer.
+3. Finn det kritiske steget.
 
 ```{math-exercise}
 #| label: week9-task-one-dimension
@@ -1496,9 +1729,11 @@ Hva ser du i iteratene når faktoren er negativ? Sammenlign med helningsregelen
 fra uke 2.
 
 I et minimumspunkt er Hessianen $H_*=\begin{bmatrix}5&2\\2&2\end{bmatrix}$.
-Finn egenverdiene og det kritiske steget. Avgjør om gradientmetoden
-konvergerer lokalt med $\alpha=3/10$ og med $\alpha=7/20$, og finn
-konvergensfaktoren $S$ for $\alpha=3/10$.
+
+1. Finn egenverdiene og det kritiske steget.
+2. Avgjør om gradientmetoden konvergerer lokalt med $\alpha=3/10$ og med
+   $\alpha=7/20$.
+3. Finn konvergensfaktoren $S$ for $\alpha=3/10$.
 
 ```{math-exercise}
 #| label: week9-task-critical-step
@@ -1521,9 +1756,11 @@ Hvilken egenretning bestemmer $S$ her?
 
 La $f(x,y)=2x^2+\tfrac12y^2$, med Hessian $\operatorname{diag}(4,1)$ overalt.
 Dette er den diagonale skålen fra 9.2, med krumning $4$ langs $x$ og $1$ langs
-$y$, altså $\lambda_1=1$ og $\lambda_2=4$. Finn
-kondisjonstallet, det beste faste steget og konvergensfaktoren med dette
-steget. Finn til slutt det minste antallet steg $k$ som gir $S^k\le10^{-8}$.
+$y$, altså $\lambda_1=1$ og $\lambda_2=4$.
+
+1. Finn kondisjonstallet, det beste faste steget og konvergensfaktoren med
+   dette steget.
+2. Finn til slutt det minste antallet steg $k$ som gir $S^k\le10^{-8}$.
 
 ```{math-exercise}
 #| label: week9-task-conditioning
@@ -1564,10 +1801,12 @@ Godtas: _[1]
 ```
 
 Nå hele linjesøket, i én variabel. La $f(x)=x^4$ og start i $x=1$. Retningen er
-$p=-f'(1)$. Armijo-søket prøver $\alpha=1,\ 1/2,\ 1/4,\dots$ og godtar det
-første steget som oppfyller $f(1+\alpha p)\le f(1)+10^{-4}\alpha f'(1)p$. Regn
-ut $f$ i de to første prøvepunktene, og finn steget som godtas og det nye
-punktet.
+$p=-f'(1)$.
+
+- **Søkeregelen:** Armijo-søket prøver $\alpha=1,\ 1/2,\ 1/4,\dots$ og godtar
+  det første steget som oppfyller $f(1+\alpha p)\le f(1)+10^{-4}\alpha f'(1)p$.
+- **Regn ut:** Finn $f$ i de to første prøvepunktene, steget som godtas og det
+  nye punktet.
 
 ```{math-exercise}
 #| label: week9-task-armijo-halving
@@ -1694,9 +1933,11 @@ resultatet uten å vise løsningskode.
 ### A. Fast steg
 
 Listen `errors` inneholder feilene $e_0,e_1,\ldots,e_k$ fra en kjøring.
-Returner $(e_k/e_{k-10})^{1/10}$, altså den gjennomsnittlige faktoren over de
-ti siste stegene. I eksperiment 1 brukte vi et snitt over to steg; et snitt
-over ti steg tåler enda bedre at feilen svinger.
+
+- **Returner:** $(e_k/e_{k-10})^{1/10}$, altså den gjennomsnittlige faktoren
+  over de ti siste stegene.
+- **Hvorfor ti?** I eksperiment 1 brukte vi et snitt over to steg. Et snitt
+  over ti steg tåler enda bedre at feilen svinger.
 
 ```{py-exercise}
 #| label: week9-python-rate
