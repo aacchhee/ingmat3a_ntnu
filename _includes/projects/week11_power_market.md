@@ -517,8 +517,13 @@ kapasiteten og spart penger. Da var ikke planen den billigste.
 Med symboler: kall linjeverdien $\mu_L$, i kr per MW linjekapasitet. Husk at
 $\lambda_N$ er prisen i nord og $\lambda_S$ prisen i sør. Da er
 
-$$\text{linjen er full }(f=L):\quad \mu_L=\lambda_S-\lambda_N,\qquad\qquad
-\text{linjen er ikke full }(-L<f<L):\quad \mu_L=0\ \text{og}\ \lambda_S=\lambda_N.$$
+Når linjen er full i retning nord–sør, $f=L$, er
+
+$\mu_L=\lambda_S-\lambda_N.$
+
+Når linjen har ledig kapasitet, $-L<f<L$, er
+
+$\mu_L=0,\qquad \lambda_S=\lambda_N.$
 
 Dette er de samme reglene som for kraftverkene i 2c. Linjen er som et
 kraftverk med kostnad 0 som får prisforskjellen $\lambda_S-\lambda_N$ for hver
@@ -528,9 +533,9 @@ ikke full, er den «mellom», og da må «prisen» være lik kostnaden 0.
 5. Kontroller regelen med tabellen fra 3b for $L=60$ og $L=100$. Er linjen
    full? Stemmer linjeverdien med prisforskjellen?
 
-En full linje kalles ofte en **flaskehals**: den hindrer den billige strømmen
-i å nå fram. Når overføringen mellom to av de norske prisområdene er full, får
-de ulike priser av nettopp denne grunnen.
+En full linje kan være en **flaskehals**: den kan hindre billigere strøm
+i å nå fram og dermed gi ulike priser. Men at linjen er full, er ikke alene
+nok til å vite at mer kapasitet har verdi.
 
 ### 3d. Hvor lenge gjelder linjeverdien?
 
@@ -554,9 +559,11 @@ linjen erstatter nå import (40 kr), ikke gass (70 kr).
 
 </details>
 
-**Ta med videre:** En full linje gir to ulike priser, og én MW mer
-linjekapasitet er verdt prisforskjellen. Det gjelder bare til en annen grense blir aktiv: når
-gassen i sør er borte, eller når nord ikke har mer å sende.
+**Ta med videre:** En full linje kan gi ulike priser. Når mer linjekapasitet
+senker kostnaden, er verdien lik prisforskjellen så lenge de samme
+begrensningene bestemmer løsningen. Ved et knekkpunkt kan linjen være full
+selv om én ekstra MW ikke gir noen besparelse. Her er kostnaden 1200 kr både
+ved $L=70$ og $L=71$, selv om flyten ved $L=70$ fyller linjen.
 
 ## 4. Vannkraft med begrenset vann
 
