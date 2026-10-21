@@ -1,5 +1,5 @@
 ---
-title: "Uke 9 – søk uten deriverte og gradientmetoden"
+title: "Uke 9 – gradientmetoden og søk uten deriverte"
 ---
 
 {{< include ../_includes/optimization/week9_setup.md >}}

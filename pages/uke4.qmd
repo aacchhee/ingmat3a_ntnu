@@ -2,4 +2,6 @@
 title: "Uke 4 – Ortogonalitet, QR og minste kvadrater"
 ---
 
+{{< include ../_includes/linalg/week4_lecture_setup.md >}}
+
 {{< include ../_includes/linalg/uke4.md >}}

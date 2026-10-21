@@ -1,0 +1,9 @@
+---
+title: "Prosjekt 9 – Når skalaen bestemmer farten"
+resources:
+  - ../assets/project_week9_setup.py
+---
+
+{{< include ../_includes/projects/week9_setup.md >}}
+
+{{< include ../_includes/projects/week9_scaling.md >}}

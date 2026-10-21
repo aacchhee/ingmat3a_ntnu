@@ -1,7 +1,9 @@
 ---
-title: "Prosjekt 10 – Newton, startpunkt og skala"
+title: "Prosjekt 10 – Hvor er jeg? Posisjon fra avstander"
+resources:
+  - ../assets/project_week10_setup.py
 ---
 
 {{< include ../_includes/projects/week10_setup.md >}}
 
-{{< include ../_includes/projects/week10_optimization.md >}}
+{{< include ../_includes/projects/week10_positioning.md >}}

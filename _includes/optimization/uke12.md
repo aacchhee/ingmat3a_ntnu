@@ -10,17 +10,66 @@
 
 <div id="uke12-start"></div>
 
-### En begrensning kan være en kurve
+### Når svaret må ligge på en kurve
 
-I [uke 11](uke11.qmd#uke11-modell) var ressurskravene ulikheter, og
-vi sammenlignet hjørner i et tillatt område. Nå må et punkt oppfylle
-en **likning**, for eksempel $x^2+y^2=1$. Da er bare selve
-sirkelranden tillatt, ikke skiven inni. Vi finner først de retningene
-vi kan bevege oss i langs kurven. Så bruker vi Lagranges metode til
-å finne kandidater, kontrollerer et numerisk svar og undersøker når
-metoden kan svikte. I 12.5 kommer regneoppgaver; i 12.6 kan du prøve
-korte Python-oppgaver. **Forelesning** viser hovedideen, mens
-**Gå i dybden** åpner begrunnelser med flere likninger og andrederiverte.
+I [uke 8](uke8.qmd#uke8-kompakt) lå minimum av en kvadratsum på randen av et
+rektangel. Der var gradienten **ikke** null: funksjonen ville gjerne bli
+mindre, men kravet stoppet den.
+
+- **Uke 11:** I [uke 11](uke11.qmd) var kravene lineære ulikheter, og
+  løsningen lå i et hjørne.
+- **Denne uken:** Nå skal et punkt oppfylle en **likning**, for eksempel
+  $x^2+4y^2=1$. Da er bare punktene på selve kurven tillatt.
+- **Navnet på kravet:** Et slikt krav kalles en **likhetsbetingelse** eller
+  **bibetingelse**; vi sier ofte bare **krav**.
+
+Ukens spørsmål er: **Hva erstatter $\nabla f=0$ når punktet må ligge på en
+kurve, og hvordan vet vi at kandidaten vi finner, er den beste?** Vi bygger
+svaret i tre steg, ett om gangen:
+
+1. **Hva må gjelde i et beste punkt på kurven?** Nivålinjen til målet
+   berører kurven, og gradienten står vinkelrett på den. Det gir
+   **Lagranges likninger**, som er nye i kurset. Multiplikatoren i dem viser
+   seg å være en pris, som i uke 11 (12.1–12.3).
+2. **Hva blir likningene når målet er kvadratisk?** Med et sirkelkrav blir de
+   et egenverdiproblem, og med lineære krav et lineært likningssystem (12.4).
+3. **Hvordan kontrollerer vi et punkt som en løser gir oss?** SLSQP finner et
+   punkt, og vi kontrollerer det med to kontrollfeil og et globalt argument
+   (12.5).
+
+**Forelesning** viser hovedløpet. **Gå i dybden** åpner begrunnelser,
+spesialtilfeller og ulikhetskrav. Regneoppgavene står i 12.6 og
+kodeoppgavene i 12.7.
+
+### Kort løype
+
+**Hva må gjelde i et beste punkt?**
+
+1. [Nivålinjen berører kurven](#uke12-tangent): en applet som i uke 4, nå med en ellipse.
+2. [Lagranges likninger](#uke12-lagrange): to normaler som er parallelle.
+3. [Multiplikatoren er en pris](#uke12-pris): uke 11.
+4. [Kandidater er ikke løsninger](#uke12-kandidater): fire kandidater, to verdier.
+
+**Hva blir likningene når målet er kvadratisk?**
+
+5. [Kandidattabellen er en egenverditabell](#uke12-egenverdi): uke 5 og 7.
+6. [Lineære krav gir et lineært system](#uke12-kkt): uke 3, 6 og 10.
+
+**Hvordan kontrollerer vi et numerisk svar?**
+
+7. [Finn et punkt numerisk og kontroller det](#uke12-slsqp): SLSQP.
+
+### Dette bygger vi videre på
+
+| Fra tidligere uker | Spørsmålet vi tar med oss |
+|:--|:--|
+| [Uke 3: nullrom](uke3.qmd#uke3-del3) | Hvilke retninger endrer ikke $Cz$? |
+| [Uke 4: komponent langs en retning](uke4.qmd#uke4-retning) | Hvilken enhetsretning gir størst komponent? |
+| [Uke 5: Rayleigh-kvotienten](uke5.qmd#uke5-rayleigh) | Hva er størst mulig $z^TAz$ når $\lVert z\rVert_2=1$? |
+| [Uke 6: CG](uke6.qmd#uke6-cg) og [uke 10: Cholesky](uke10.qmd#uke10-cholesky) | Hva krever metodene av matrisen? |
+| [Uke 7: største strekk](uke7.qmd#uke7-geometri) og [pseudoinvers](uke7.qmd#uke7-pseudoinvers) | Hvorfor er $\sigma_1$ det største strekket? |
+| [Uke 8: kompakthet](uke8.qmd#uke8-kompakt) | Finnes et maksimum på en kurve? |
+| [Uke 11: hva en ekstra enhet er verdt](uke11.qmd#uke11-sensitivitet) | Hva er én enhet mer av en ressurs verdt? |
 
 ### Læringsmål
 
@@ -28,796 +77,1521 @@ Etter denne uken skal du kunne
 
 - finne tangent og normal til en regulær likhetsbetingelse i et punkt,
 - sette opp og løse Lagranges likninger for én likhetsbetingelse,
-- skille kandidater fra lokale og globale ekstremalpunkter ved å sammenligne verdier eller finne en global grense,
-- kontrollere både betingelsesfeil og stasjonaritetsfeil i et numerisk SLSQP-svar,
-- kjenne igjen en degenerert betingelse og forklare hvordan en Lagrangemultiplikator kan gi en nedre grense.
+- tolke $-\lambda$ som endringen i optimal verdi per enhet vi flytter kravet,
+- skille kandidater fra løsninger ved å sammenligne verdier eller finne en global grense,
+- forklare hvorfor en kvadratisk form på enhetssirkelen gir et egenverdiproblem,
+- sette opp likningssystemet for et kvadratisk mål med lineære krav, og forklare hvorfor
+  matrisen ikke er SPD,
+- kontrollere både betingelsesfeil og stasjonaritetsfeil i et numerisk SLSQP-svar.
 
-## 12.1 Sirkelen: retninger som er tillatt
+## 12.1 Nivålinjen berører kurven
 
 <div id="uke12-tangent"></div>
 
-Tenk at vi skal velge et punkt på kanten av en rund plate. En verdi
-blir større når vi går mot høyre, og vokser dobbelt så raskt når vi
-går oppover. Hvor på kanten blir verdien størst? Dette gir modellen
+### Hva skjer når sirkelen blir en ellipse?
+
+I [uke 4.1](uke4.qmd#uke4-retning) dro du en enhetsvektor $q$ rundt
+enhetssirkelen og leste av komponenten av $x=(3,2)$ langs $q$. Du fant at
+komponenten, $3q_1+2q_2$, blir størst når $q$ peker samme vei som $x$.
+Det var et optimeringsproblem på enhetssirkelen.
+
+Her bruker vi vektoren $(1,2)$, som gir enklere tall. Komponenten av $(1,2)$
+langs $q=(x,y)$ er $x+2y$, og etter regelen fra uke 4 er
+
+$$\text{maksimum av } f(x,y)=x+2y \quad\text{når}\quad x^2+y^2=1$$
+
+nådd i $(1,2)/\sqrt5$. Nå bytter vi sirkelen med ellipsen $x^2+4y^2=1$.
+Målet er det samme.
+
+Appleten gjør regningen for oss: den viser målverdien og to piler i punktet
+du velger. Hvorfor akkurat disse pilene er interessante, forklarer vi rett
+etter forsøket.
+
+Målet er å finne det beste punktet på ellipsen og se hva som kjennetegner
+det, nå som regelen fra uke 4 ikke lenger gjelder.
+
+### Eksperiment 1 – fra sirkel til ellipse
 
 | Rolle | Uttrykk | Hva det betyr |
 |:--|:--|:--|
 | Valg | $z=(x,y)$ | Punktet vi flytter på. |
-| Mål | Maksimer $f(x,y)=x+2y$ | Vi ønsker størst mulig verdi. |
-| Krav | $h(x,y)=x^2+y^2-1=0$ | Bare punkter på enhetssirkelens rand er tillatt. |
+| Mål | Maksimer $f(x,y)=x+2y$ | Skalarproduktet $(1,2)\cdot z$, som komponenten i uke 4. |
+| Krav | $h(x,y)=x^2+4y^2-1=0$ | Bare punkter på ellipsen er tillatt. |
 
-Vi kan begynne med å sammenligne noen punkter som oppfyller kravet:
+Dra punktet $z$ langs ellipsen. Slik leser du figuren:
 
-| Tillatt punkt $z$ | Kontroll av $x^2+y^2$ | Målverdi $f(z)$ |
-|:--|:--|:--|
-| $(1,0)$ | $1$ | $1$ |
-| $(0,1)$ | $1$ | $2$ |
-| $(1,2)/\sqrt5$ | $(1^2+2^2)/5=1$ | $\sqrt5\approx2.236$ |
+- **Stiplet brun linje:** **Nivålinjen** $x+2y=f(z)$ inneholder alle punkter
+  med samme målverdi som $z$.
+- **Rød pil:** Retningen til $\nabla f=(1,2)$.
+- **Grønn pil:** Retningen til $\nabla h=(2x,8y)$.
+- **Grå pil:** $v$ er en enhetstangent til ellipsen. Tallet
+  $\nabla f\cdot v$ øverst sier hvor fort $f$ endres når vi går langs
+  ellipsen i pilens retning.
+- **Grå sirkel og grått punkt:** Svaret på sirkelen, etter regelen fra uke 4.
 
-Den siste raden er bedre enn de to første, men tre prøver beviser ikke at
-verdien er størst mulig. En **nivålinje** $x+2y=c$ samler alle
-punkter med samme målverdi $c$. I figuren nedenfor ser du
-sirkelen og flere nivålinjer. Legg merke til hvor linjen med
-$c=\sqrt5$ berører sirkelen; senere skal vi bevise at ingen
-høyere nivålinje treffer et tillatt punkt.
-
-### Eksperiment 1 – hvor berører nivålinjen sirkelen?
-
-Koden prøver mange sirkelpunkter og tegner nivålinjene. Utvalgets
-største verdi er en pekepinn, mens den tegnede berøringen viser
-hvilket punkt vi skal undersøke for hånd.
-
-```{pyodide-python}
-#| label: week12-circle-experiment
-# NumPy gir vektorregning, Matplotlib figurer og SciPy minimeringsrutinen.
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.optimize import minimize
-
-# 1. Prøv mange tillatte punkter for å se omtrentlige ytterverdier.
-theta = np.linspace(0, 2*np.pi, 721)
-circle = np.column_stack((np.cos(theta), np.sin(theta)))
-values = circle @ np.array([1., 2.])
-print("Prøvepunkter på sirkelen:", len(circle))
-print("Største verdi i utvalget:", round(values.max(), 6))
-print("Minste verdi i utvalget:", round(values.min(), 6))
-
-# 2. Sammenlign nivålinjene med hele den tillatte kurven.
-xx, yy = np.meshgrid(np.linspace(-1.25, 1.25, 130),
-                     np.linspace(-1.25, 1.25, 130))
-fig, ax = plt.subplots(figsize=(6, 6))
-ax.contour(xx, yy, xx + 2*yy, levels=np.arange(-2, 2.1, .5),
-           colors="0.7")
-ax.plot(circle[:, 0], circle[:, 1], color="tab:blue", label="h = 0")
-ax.plot(xx[0], (np.sqrt(5)-xx[0])/2, "--", color="tab:red",
-        label="nivålinje f = √5")
-# 3. Merk det eksakte punktet som vi skal begrunne nedenfor.
-p_max = np.array([1., 2.])/np.sqrt(5)
-ax.plot(*p_max, "o", color="tab:red", label="eksakt maksimum")
-ax.set(xlabel="x", ylabel="y", xlim=(-1.25, 1.25), ylim=(-1.25, 1.25))
-ax.set_aspect("equal")
-ax.legend()
-plt.show()
+```{.jsxgraph width="620" height="460" style="width:100%;max-width:620px;height:460px;border:0;"}
+var board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [-1.7,1.6,1.9,-1.1], axis: true, keepaspectratio: true,
+  showNavigation: false, showCopyright: false,
+  pan: {enabled:false}, zoom: {enabled:false}
+});
+board.create('circle',[[0,0],1],{
+  strokeColor:'#9aa5ad',dash:2,strokeWidth:1,fixed:true,highlight:false
+});
+board.create('point',[1/Math.sqrt(5),2/Math.sqrt(5)],{
+  name:'svar på sirkelen',fixed:true,color:'#9aa5ad',size:2
+});
+var ell = board.create('curve',[
+  function(t){return Math.cos(t);},
+  function(t){return 0.5*Math.sin(t);},0,2*Math.PI
+],{strokeColor:'#345f78',strokeWidth:2.5,numberPointsHigh:200});
+var Q = board.create('glider',[1,0,ell],{name:'z',color:'#1565c0',size:4});
+var f = function(){return Q.X()+2*Q.Y();};
+board.create('line',[function(){return -f();},1,2],{
+  strokeColor:'#b45309',dash:2,strokeWidth:1.5,fixed:true,highlight:false
+});
+var g = 0.45/Math.sqrt(5);
+board.create('arrow',[Q,[function(){return Q.X()+g;},function(){return Q.Y()+2*g;}]],{
+  strokeColor:'#c62828',strokeWidth:2.5,fixed:true
+});
+var nl = function(){return Math.sqrt(4*Q.X()*Q.X()+64*Q.Y()*Q.Y());};
+board.create('arrow',[Q,[
+  function(){return Q.X()+0.45*2*Q.X()/nl();},
+  function(){return Q.Y()+0.45*8*Q.Y()/nl();}
+]],{strokeColor:'#2e7d32',strokeWidth:2.5,fixed:true});
+// Enhetstangenten v = (-8y, 2x)/|...| står vinkelrett på normalen og peker mot klokka.
+var tx = function(){return -8*Q.Y()/nl();}, ty = function(){return 2*Q.X()/nl();};
+board.create('arrow',[Q,[
+  function(){return Q.X()+0.45*tx();},
+  function(){return Q.Y()+0.45*ty();}
+]],{strokeColor:'#6b7280',strokeWidth:2.5,fixed:true});
+var slope = function(){var s = tx()+2*ty(); return Math.abs(s) < 5e-4 ? 0 : s;};
+var angle = function(){
+  var c = (2*Q.X()+16*Q.Y())/(Math.sqrt(5)*nl());
+  return Math.acos(Math.max(-1,Math.min(1,c)))*180/Math.PI;
+};
+// Tekstlinjene står et fast antall piksler under øvre venstre hjørne av det synlige brettet.
+var tx0 = function(){return board.getBoundingBox()[0]+10/board.unitX;};
+var ty0 = function(k){return function(){return board.getBoundingBox()[1]-(14+19*k)/board.unitY;};};
+board.create('text',[tx0,ty0(0),function(){
+  return 'z = ('+Q.X().toFixed(3)+', '+Q.Y().toFixed(3)+'),  f = '+f().toFixed(3);
+}],{fontSize:13,color:'#1565c0',fixed:true});
+board.create('text',[tx0,ty0(1),function(){
+  return 'vinkel rød–grønn: '+angle().toFixed(1)+'°';
+}],{fontSize:13,fixed:true});
+board.create('text',[tx0,ty0(2),function(){
+  return 'langs grå tangent: ∇f·v = '+slope().toFixed(3);
+}],{fontSize:13,color:'#4b5563',fixed:true});
+board.create('button',[-1.6,-0.95,'z = (1, 0)',function(){Q.moveTo([1,0]);}]);
+board.create('button',[-0.6,-0.95,'z langs (1, 2)',function(){
+  Q.moveTo([1/Math.sqrt(17),2/Math.sqrt(17)]);
+}]);
 ```
 
-### Tangent og normal: hvilke retninger kan vi følge?
+Prøv dette før du leser videre:
 
-En **tangentretning** viser hvilken vei vi kan begynne å gå
-langs kurven fra et punkt. Den rette tangentlinjen er bare et
-lokalt bilde av kurven: ved $(1,0)$ ligger $(1,t)$ utenfor
-sirkelen når $t\ne0$. En **normalretning** står vinkelrett på
-tangenten.
+1. Start i $z=(1,0)$. I hvilken retning langs ellipsen må du gå for at $f$
+   skal øke? Hva sier tallet $\nabla f\cdot v$?
+2. Trykk **z langs (1, 2)**. Er dette fortsatt det beste punktet?
+3. Dra $z$ til $f$ blir størst mulig. Les av punktet, vinkelen og
+   $\nabla f\cdot v$.
+4. Hva gjør nivålinjen i det beste punktet?
 
-**Regn for hånd.** Vi bruker punktet $(1,0)$ for å se hva
-sirkelkravet tillater, og hvordan målverdien endres der.
+**Hva viser forsøket?** Sammenlign målverdiene:
 
-1. Sirkelens radius fra origo til $(1,0)$ peker som $(1,0)$.
-   Retningen $v=(0,1)$ står vinkelrett på radiusen og er en
-   **enhetstangent**: den har lengde 1. På kurven kan vi gå
-   både oppover og nedover fra punktet.
-2. Gradientene er $\nabla h=(2x,2y)$ og $\nabla f=(1,2)$.
-   Ved $(1,0)$ er $\nabla h=(2,0)$, altså en normal til
-   sirkelen. Den deriverte av målet i tangentretningen er
-   $\nabla f\cdot v=(1,2)\cdot(0,1)=2$.
-3. Fordi denne deriverte ikke er null, øker målet når vi
-   begynner å gå oppover. Punktet $(1,0)$ er derfor ikke
-   et maksimum på sirkelen, selv om det er tillatt.
+| Punkt på ellipsen | Målverdi |
+|:--|:--|
+| Punktet langs $(1,2)$ | $f\approx1.213$ |
+| Beste punkt, $z\approx(0.707,\,0.354)$ | Omtrent $1.414$ |
 
-Generelt er $\nabla h$ en normal til kurven $h=0$ når
-$\nabla h\ne0$. Da kaller vi kravet **regulært** i punktet.
-Ved et lokalt maksimum eller minimum må den deriverte av målet
-langs enhver tillatt tangent være null. Målets gradient $\nabla f$ må derfor
-også stå normalt på kurven. Den trenger ikke være null, slik den
-gjorde ved et fritt indre ekstremum i [uke 8](uke8.qmd#uke8-lokalt).
-Den generelle begrunnelsen med kjerneregelen står under
-«Gå i dybden».
+Regelen fra uke 4, «pek langs vektoren», gjelder altså ikke lenger. Men tre
+ting gjelder fortsatt i det beste punktet:
 
-### Lagranges likninger: finn punkter uten endring til første orden
+- tallet $\nabla f\cdot v$ er **null**: det er positivt før punktet og
+  negativt etter, så $f$ slutter å vokse akkurat der;
+- nivålinjen **berører** ellipsen uten å krysse den;
+- den røde og den grønne pilen er **parallelle**: vinkelen er $0^\circ$.
 
-To normalvektorer til en regulær kurve i planet er parallelle.
-Vi innfører tallet $\lambda$, en **Lagrangemultiplikator**, og
-skriver parallelliteten som $\nabla f+\lambda\nabla h=0$.
-Funksjonen $L(z,\lambda)=f(z)+\lambda h(z)$ kalles
-**Lagrangefunksjonen**. Et regulært lokalt ekstremum må dermed
-oppfylle begge **Lagranges likninger**:
+Et punkt der nivålinjen krysser kurven, kan ikke være best: på den ene siden
+av krysningen ligger tillatte punkter med høyere verdi. Resten av uken handler
+om denne observasjonen.
+
+### Tangent og normal
+
+- **Tangentretning:** Viser hvilken vei vi kan begynne å gå langs kurven
+  fra et punkt.
+- **Normalretning:** Står vinkelrett på tangenten.
+- **Gradienten som normal:** Fra Matematikk 2 vet vi at gradienten står
+  vinkelrett på nivåkurvene (gradienten selv møtte vi også i
+  [uke 6](uke6.qmd#uke6-retning)). Kurven $h=0$ er en nivåkurve for $h$,
+  så $\nabla h$ er en normal til kurven, så lenge $\nabla h\ne0$.
+- **Regulært krav:** Når $\nabla h\ne0$, kaller vi kravet **regulært** i
+  punktet.
+
+**Regn for hånd.** Vi undersøker punktet $(1,0)$ på ellipsen.
+
+1. $\nabla h=(2x,8y)$, så $\nabla h(1,0)=(2,0)$. Normalen peker langs
+   $x$-aksen.
+2. En enhetstangent står vinkelrett på normalen: $v=(0,1)$. Fra $(1,0)$ kan
+   vi gå både oppover og nedover langs ellipsen.
+3. Målgradienten er $\nabla f=(1,2)$. Den deriverte av $f$ langs tangenten
+   er $\nabla f\cdot v=(1,2)\cdot(0,1)=2$.
+4. Fordi denne deriverte er positiv, øker $f$ når vi begynner å gå oppover.
+   Punktet $(1,0)$ er tillatt, men ikke et maksimum. Det stemmer med
+   spørsmål 1 i appleten.
+
+Det er denne deriverte appleten viser som $\nabla f\cdot v$. I det beste
+punktet er den null, og i 12.2 regner vi ut punktet eksakt.
+
+**Dette tar vi med oss.**
+
+- **Langs kurven:** I et ekstremalpunkt må den deriverte av målet langs
+  tangenten være null.
+- **Normalene:** Det er det samme som at $\nabla f$ står vinkelrett på
+  tangenten, altså parallelt med normalen $\nabla h$.
+- **Gradienten selv:** Den trenger ikke være null, slik den må i et indre
+  ekstremum (se [uke 8.3](uke8.qmd#uke8-hessian)).
+
+## 12.2 Lagranges likninger
+
+<div id="uke12-lagrange"></div>
+
+### To parallelle normaler
+
+At $\nabla f$ og $\nabla h$ er parallelle, betyr at den ene er et tall ganger
+den andre. Vi skriver det som
+
+$$\nabla f+\lambda\nabla h=0.$$
+
+- **Lagrangemultiplikator:** Tallet $\lambda$.
+- **Lagrangefunksjonen:** $L(z,\lambda)=f(z)+\lambda h(z)$.
+
+Et regulært lokalt ekstremum $z_*$ må oppfylle begge **Lagranges likninger**:
 
 $$\boxed{h(z_*)=0,\qquad \nabla f(z_*)+\lambda\nabla h(z_*)=0.}$$
 
-Den første krever et tillatt punkt. Den andre krever null
-derivert langs tangenten. Et tillatt punkt med denne egenskapen
-kalles **stasjonært under bibetingelsen**. Det er en kandidat,
-ikke automatisk et maksimum eller minimum.
+- **Første likning:** Punktet er tillatt.
+- **Andre likning:** Den deriverte langs tangenten er null.
+- **Samlet fra $L$:** Begge får vi ved å sette alle partiellderiverte av
+  $L$ lik null, også den med hensyn på $\lambda$.
 
-For vårt mål og vår sirkel blir likningene
+Med to variabler er dette tre likninger med tre ukjente: $x$, $y$ og
+$\lambda$.
 
-$$1+2\lambda x=0,\qquad 2+2\lambda y=0,\qquad x^2+y^2=1.$$
+- **Kandidat:** Et punkt som oppfyller likningene, kalles **stasjonært under
+  bibetingelsen**. Det er en **kandidat**, ikke automatisk et maksimum eller
+  minimum.
+- **Forutsetning:** Regularitet, $\nabla h(z_*)\ne0$, trengs fordi
+  $\nabla h$ ellers ikke er noen normal; se «Gå i dybden» nedenfor.
 
-**Regn for hånd.** Vi finner alle kandidatene før vi
-sammenligner verdiene.
+**Ellipsen fra 12.1, steg for steg.** La oss regne ut det appleten viste oss.
+Her er $\nabla f=(1,2)$ og $\nabla h=(2x,8y)$.
 
-1. Fra de to gradientlikningene er $\lambda\ne0$; ellers
-   ville den første likningen gi $1=0$.
-2. Likningene gir $x=-1/(2\lambda)$ og $y=-1/\lambda$.
-   Dermed må $y=2x$.
-3. Sett dette inn i kravet: $x^2+(2x)^2=5x^2=1$.
-   Altså er $x=\pm1/\sqrt5$ og $y=2x$.
+1. Likningene er $1+2\lambda x=0$, $2+8\lambda y=0$ og $x^2+4y^2=1$.
+2. Her er $\lambda\ne0$, ellers sier den første likningen $1=0$. Da er
+   $x=-\dfrac1{2\lambda}$ og $y=-\dfrac2{8\lambda}=-\dfrac1{4\lambda}$,
+   altså $x=2y$.
+3. Sett $x=2y$ inn i kravet: $(2y)^2+4y^2=8y^2=1$, så
+   $y=\pm\dfrac1{2\sqrt2}$ og $x=2y=\pm\dfrac1{\sqrt2}$.
+4. Målverdiene er
+   $f=x+2y=\pm\Bigl(\dfrac1{\sqrt2}+\dfrac1{\sqrt2}\Bigr)=\pm\sqrt2$.
+5. Første likning gir $\lambda=-\dfrac1{2x}=-\dfrac1{\sqrt2}$ i den positive
+   kandidaten. Der er $\nabla h=(\sqrt2,\,2\sqrt2)=\sqrt2\,(1,2)$, parallell
+   med $\nabla f$, slik appleten viste.
 
-Kandidatene har forskjellige målverdier:
+Den positive kandidaten er punktet appleten pekte ut, med
+$f=\sqrt2\approx1.414$.
+
+::: {.callout-note title="Håndeksempel: sirkelen og regelen fra uke 4"}
+
+**Utgangspunkt.** Maksimer $f(x,y)=x+2y$ når $h(x,y)=x^2+y^2-1=0$.
+
+**Prøv selv.** Skriv opp de tre likningene og finn alle kandidatene. Hvilken
+gir størst verdi?
+
+**Regnegangen.**
+
+1. Likningene er $1+2\lambda x=0$, $2+2\lambda y=0$ og $x^2+y^2=1$. Her er
+   $\lambda\ne0$, ellers gir den første $1=0$.
+2. Da er $x=-1/(2\lambda)$ og $y=-1/\lambda$, så $y=2x$.
+3. Kravet gir $x^2+(2x)^2=5x^2=1$. Kandidatene er $\pm(1,2)/\sqrt5$, og
+   $\lambda=-1/(2x)=\mp\sqrt5/2$:
 
 | Kandidat | $f=x+2y$ | $\lambda$ |
 |:--|:--|:--|
 | $(1,2)/\sqrt5$ | $\sqrt5$ | $-\sqrt5/2$ |
 | $-(1,2)/\sqrt5$ | $-\sqrt5$ | $\sqrt5/2$ |
 
-For en global garanti bruker vi **Cauchy–Schwarz-ulikheten**:
-$|a\cdot b|\le\|a\|_2\|b\|_2$. Indreproduktet kan altså
-ikke være større i absoluttverdi enn produktet av vektorenes
-lengder. Hvert tillatt $z$ har lengde 1, så
+4. **Er kandidaten best på hele sirkelen?** Cauchy–Schwarz-ulikheten
+   $|a\cdot b|\le\lVert a\rVert_2\lVert b\rVert_2$ gir for hvert tillatt $z$
+   $$x+2y=(1,2)\cdot z\le\lVert(1,2)\rVert_2\,\lVert z\rVert_2=\sqrt5.$$
+   Den første kandidaten oppnår grensen og er **globalt** maksimum.
 
-$$x+2y=(1,2)\cdot z\le\|(1,2)\|_2\|z\|_2=\sqrt5.$$
+**Dette tar vi med oss.**
 
-Punktet $(1,2)/\sqrt5$ oppnår grensen og er **globalt**
-maksimum; det motsatte punktet er globalt minimum. Sirkelen er
-kompakt, så ytterverdiene oppnås også etter resultatet i 8.3.
+- **Finn kandidaten:** Lagranges likninger fant regelen fra uke 4 uten at vi
+  dro i noe.
+- **Avgjør om den er best:** Ulikheten avgjorde dette.
+- **Bruk samme triks på ellipsen:** Med $w=2y$ blir kravet $x^2+w^2=1$, og
+  $x+2y=(1,1)\cdot(x,w)\le\sqrt2$.
+
+:::
 
 <details class="reading-step">
-<summary>Gå i dybden: hvorfor normalene er parallelle, og flere krav</summary>
+<summary>Gå i dybden: kjerneregelen langs kurven, og flere krav</summary>
 
-**Kjerneregelen langs en tillatt kurve.** La $p(t)$ være en glatt
-kurve med $h(p(t))=0$ og $p(0)=z_*$. Kjerneregelen gir
+**Hvorfor normalene er parallelle.** La $p(t)$ være en glatt kurve med
+$h(p(t))=0$ og $p(0)=z_*$. Kjerneregelen gir
 
-$$0=\left.\frac{d}{dt}h(p(t))\right|_{t=0}
-=\nabla h(z_*)\cdot p'(0).$$
+$$0=\left.\frac{d}{dt}h(p(t))\right|_{t=0}=\nabla h(z_*)\cdot p'(0).$$
 
-Dermed står enhver tangent $p'(0)$ vinkelrett på $\nabla h$.
-Ved et lokalt ekstremum for $f$ langs kurven gir samme regel
-$\nabla f(z_*)\cdot p'(0)=0$. Når $\nabla h(z_*)\ne0$,
-kan vi lokalt beskrive likningen som en glatt kurve. Normalrommet
-i planet er da endimensjonalt, slik at $\nabla f$ og
-$\nabla h$ er parallelle. Det gir multiplikatorlikningen i
-hovedteksten.
+1. **Tangenten:** Enhver tangent $p'(0)$ står altså vinkelrett på
+   $\nabla h$.
+2. **Ekstremum langs kurven:** Hvis $f$ har et lokalt ekstremum langs kurven
+   i $t=0$, gir samme regel $\nabla f(z_*)\cdot p'(0)=0$.
+3. **Én normalretning:** Når $\nabla h(z_*)\ne0$, beskriver likningen lokalt
+   en glatt kurve, og normalretningen i planet er én linje. Da må
+   $\nabla f$ og $\nabla h$ være parallelle.
 
-På sirkelen kan vi se tangentregningen direkte med
-$p(t)=(\cos t,\sin t)$. Da er $p'(t)=(-\sin t,\cos t)$
-og $(f\circ p)'(t)=-\sin t+2\cos t
-=\nabla f(p(t))\cdot p'(t)$.
+På sirkelen kan vi se dette direkte med $p(t)=(\cos t,\sin t)$:
+$(f\circ p)'(t)=-\sin t+2\cos t=\nabla f(p(t))\cdot p'(t)$.
 
-**Fra kurve til flate.** I tre variabler beskriver
-$x^2+y^2+z^2=1$ en flate. Ved $(0,0,1)$ er normalen
-$(0,0,2)$, så tangentretningene har tredje komponent null.
+**Flere krav.** For krav $h_1(z)=0,\ldots,h_m(z)=0$:
 
-**Flere likninger.** For krav $h_i(z)=0$ er **Jacobianen**
-$J_h$ matrisen med radene $\nabla h_i^T$. En tangent $v$ må
-oppfylle $J_h(z_*)v=0$. Er normalene $\nabla h_i(z_*)$
-lineært uavhengige, er kravene regulære. Hver normal får sin
-multiplikator, og de nødvendige likningene er
+- **Samle normalene:** **Jacobimatrisen** $J_h$ har gradientene
+  $\nabla h_i^T$ som rader.
+- **Finn tangentene:** En tangent $v$ må oppfylle $J_h(z_*)v=0$:
+  tangentretningene er **nullrommet** til $J_h$.
+- **Kontroller regularitet:** Hvis radene er lineært uavhengige, er kravene
+  regulære.
+
+Hvert krav får sin multiplikator:
 
 $$h_i(z_*)=0\quad(i=1,\ldots,m),\qquad
 \nabla f(z_*)+\sum_{i=1}^m\lambda_i\nabla h_i(z_*)=0.$$
 
-For eksempel gir kravene $x^2+y^2+z^2=1$ og $z=0$ ved
-$(1,0,0)$ normalene $(2,0,0)$ og $(0,0,1)$. De er
-uavhengige, og tangentene er $(0,t,0)$. Hvis normalene ikke er
-uavhengige, kan Lagranges likninger overse et ekstremum;
-12.4 viser et slikt tilfelle.
+For eksempel gir $x_1^2+x_2^2+x_3^2=1$ og $x_3=0$ i punktet $(1,0,0)$
+normalene $(2,0,0)$ og $(0,0,1)$. Tangentene er $(0,t,0)$. I 12.4 møter vi flere
+lineære krav, og i prosjektet ti krav samtidig.
+
+</details>
+
+<details class="reading-step">
+<summary>Gå i dybden: når normalen forsvinner</summary>
+
+<div id="uke12-degenerert"></div>
+
+Lagranges likninger forutsetter at $\nabla h\ne0$. Se på målet $f(x,y)=x$
+med kravet $h(x,y)=x^2+y^2=0$:
+
+1. **Tillatt mengde:** To kvadrater summerer til null bare i $(0,0)$, så
+   dette er det eneste tillatte punktet.
+2. **Ekstremum:** Punktet er dermed både minimum og maksimum på den tillatte
+   mengden.
+3. **Normaltesten:** Likevel er $\nabla f(0,0)=(1,0)$ og
+   $\nabla h(0,0)=(0,0)$, og
+
+$$\nabla f+\lambda\nabla h=(1,0)\quad\text{uansett hvilken }\lambda\text{ vi velger.}$$
+
+Kravet er **degenerert** i punktet: normaltesten finner ikke ekstremumet.
+
+Vil du se det med tall, prøver cellen tre ulike multiplikatorer i det eneste
+tillatte punktet. Stasjonaritetsfeilen blir den samme hver gang, fordi
+normalen er nullvektoren.
+
+```{pyodide-python}
+#| label: week12-degenerate-experiment
+p = np.array([0., 0.])
+grad_f = np.array([1., 0.])
+grad_constraint = 2*p          # gradienten til x^2 + y^2 i det eneste tillatte punktet
+for lam_test in [-10, 0, 10]:
+    error = np.linalg.norm(grad_f + lam_test*grad_constraint)
+    print(f'lambda = {lam_test:4d}:  |grad f + lambda grad h| = {error:.1f}')
+```
+
+Ekstremumet fant vi ved å se direkte på den tillatte mengden.
+
+**Øv på dette:** [et krav uten normal](#uke12-oppg-degenerert) i 12.6 (valgfri).
 
 </details>
 
 ### Et kort regneeksempel: nærmest origo på en linje
 
-Før vi går videre til flere kandidater, prøver vi samme metode med
-en rett linje som tillatt mengde. Vi vil **minimere**
-$f(x,y)=x^2+y^2$ under kravet $h(x,y)=x+y-2=0$. Målet er
-kvadratet av avstanden til origo, så vi søker punktet på linjen
-som ligger nærmest origo.
+Lagranges metode virker like godt for minimum. Vi søker punktet på linjen
+$x+y=2$ som ligger nærmest origo, og minimerer kvadrert avstand.
 
-1. Sett $L=x^2+y^2+\lambda(x+y-2)$. Kravet og de to
-   gradientlikningene er $x+y-2=0$, $2x+\lambda=0$ og
-   $2y+\lambda=0$.
-2. Trekk de to gradientlikningene fra hverandre: $2x-2y=0$,
-   så $x=y$.
-3. Sett $x=y$ inn i kravet. Da er $2x=2$, altså $(x,y)=(1,1)$.
-   Gradientlikningene gir $\lambda=-2$ med vårt plussfortegn,
+::: {.callout-note title="Håndeksempel: nærmeste punkt på en linje"}
+
+**Utgangspunkt.** Minimer $f(x,y)=x^2+y^2$ når $h(x,y)=x+y-2=0$.
+
+**Prøv selv.** Sett opp Lagranges likninger og finn kandidaten og $\lambda$.
+
+**Regnegangen.**
+
+1. Likningene er $2x+\lambda=0$, $2y+\lambda=0$ og $x+y=2$.
+2. De to første gir $x=y$. Kravet gir $(x,y)=(1,1)$, og da er $\lambda=-2$
    og $f(1,1)=2$.
-4. Kontroller at kandidaten virkelig er et minimum: på linjen
-   er $y=2-x$. Da er
-   $f(x,2-x)=x^2+(2-x)^2=2+2(x-1)^2\ge2$.
+3. **Kontroll av at det er minimum:** på linjen er $y=2-x$, og
+   $f(x,2-x)=2+2(x-1)^2\ge2$, med likhet bare for $x=1$.
 
-Likhet gjelder bare ved $x=1$, så $(1,1)$ er linjens **globale**
-minimumspunkt. Lagranges likninger fant kandidaten; den siste
-ulikheten klassifiserte den.
+**Dette tar vi med oss.**
 
-## 12.2 Lagranges likninger gir kandidater
+- **Kravet som system:** $Cz=d$ med $C=\begin{bmatrix}1&1\end{bmatrix}$ og
+  $d=2$.
+- **Korteste løsning:** Pseudoinversen fra den valgfrie delen
+  [uke 7.7](uke7.qmd#uke7-pseudoinvers) gir det korteste $z$ som løser et
+  underbestemt system: $C^+d=(1,1)$.
+- **Samme svar:** Lagrange og pseudoinversen gir samme punkt. I «Gå i
+  dybden» i 12.4 ser vi hvorfor.
+
+:::
+
+**Øv på dette:** [normal og tangent på ellipsen](#uke12-oppg-normal),
+[et annet mål på ellipsen](#uke12-oppg-ellipse) og
+[Lagrange på sirkelen](#uke12-oppg-sirkel) i 12.6.
+
+### Multiplikatoren er en pris
+
+<div id="uke12-pris"></div>
+
+Hva skjer med optimal verdi hvis vi flytter kravet litt? La linjen være
+$x+y=r$. Vi bruker samme regning som i håndeksempelet:
+
+1. $2x+\lambda=0$ og $2y+\lambda=0$ gir $x=y$.
+2. Kravet gir $x=y=r/2$.
+3. Da er $\lambda=-2x=-r$.
+
+Optimal verdi og dens deriverte er
+
+$$f_*(r)=\Bigl(\frac r2\Bigr)^2+\Bigl(\frac r2\Bigr)^2=\frac{r^2}{2},\qquad
+\frac{df_*}{dr}=r=-\lambda.$$
+
+- **For linjen:** Sammenhengen $df_*/dr=-\lambda$ gjelder altså for alle
+  $r$, ikke bare for $r=2$, der vi fant $\lambda=-2$.
+- **Generelt:** Flytter vi kravet fra $h(z)=0$ til $h(z)=s$, og løsningen
+  endrer seg glatt med $s$, er
+
+  $$\boxed{\frac{df_*}{ds}=-\lambda\quad\text{ved } s=0.}$$
+
+I eksempelet er $h=x+y-2$, så $h=s$ betyr $x+y=2+s$, altså $r=2+s$.
+Hvorfor regelen gjelder for alle glatte problemer, viser «Gå i dybden» rett
+under.
+
+Multiplikatoren sier hvor mye optimal verdi endres per enhet vi flytter
+kravet:
+
+- **Koblingen til uke 11:** Det er samme idé som i
+  [uke 11](uke11.qmd#uke11-sensitivitet): hva er én enhet mer av en ressurs
+  verdt?
+- **Fortegnet:** I uke 11 var prisen selve endringen, et positivt tall. Her
+  er prisen $-\lambda$, fordi vi skriver $L=f+\lambda h$.
+- **Enheten:** Har $f$ enhet kroner og $s$ enhet kilo, har $\lambda$ enhet
+  kroner per kilo.
+- **I prosjektet:** Multiplikatorene er krefter, og «prisen» er energi per
+  meter.
+
+**Dette tar vi med oss.**
+
+- **Likningene:** $h=0$ og $\nabla f+\lambda\nabla h=0$ gir kandidater,
+  både for maksimum og minimum.
+- **Tolkningen:** $-\lambda$ er hvor mye optimal verdi endres per enhet vi
+  flytter kravet.
+
+**Øv på dette:** [boksen med minst overflate](#uke12-oppg-boks) i 12.6.
+
+<details class="reading-step">
+<summary>Gå i dybden: hvorfor prisformelen gjelder generelt</summary>
+
+La $z(s)$ være løsningen når kravet er $h(z)=s$, og anta at den endrer seg
+glatt med $s$. Da er $f_*(s)=f(z(s))$.
+
+1. Kjerneregelen: $\dfrac{df_*}{ds}=\nabla f(z(s))\cdot z'(s)$.
+2. Lagranges likning i løsningen er $\nabla f=-\lambda\nabla h$, så
+   $\dfrac{df_*}{ds}=-\lambda\,\nabla h(z(s))\cdot z'(s)$.
+3. Kravet $h(z(s))=s$ gjelder for alle $s$. Deriver begge sider:
+   $\nabla h(z(s))\cdot z'(s)=1$.
+4. Sett inn: $\dfrac{df_*}{ds}=-\lambda$.
+
+Kontroll med linjen: $z(s)=\bigl(\tfrac{2+s}2,\tfrac{2+s}2\bigr)$ gir
+$z'(s)=(\tfrac12,\tfrac12)$ og $\nabla h\cdot z'=(1,1)\cdot(\tfrac12,\tfrac12)=1$.
+Med $\nabla f(1,1)=(2,2)$ blir $df_*/ds=(2,2)\cdot(\tfrac12,\tfrac12)=2=-\lambda$.
+
+Vi kan også kontrollere regelen uten Lagrange i det hele tatt. Cellen finner
+$f_*(r)$ ved å minimere direkte langs linjen $x+y=r$, og regner ut
+differansekvotienter rundt $r=2$; de skal nærme seg $-\lambda=2$.
+
+```{pyodide-python}
+#| label: week12-price
+from scipy.optimize import minimize_scalar
+
+def f_star(r):
+    # Punktene på linjen x + y = r er (t, r - t). Vi minimerer over t, uten Lagrange.
+    return minimize_scalar(lambda t: t**2 + (r - t)**2).fun
+
+for dr in [.1, .01, .001]:
+    print(f'dr = {dr:5}: (f*(2+dr) - f*(2))/dr = {(f_star(2+dr) - f_star(2))/dr:.4f}')
+print('-lambda fra håndeksempelet =', 2.0)
+```
+
+Differansekvotientene $2.05$, $2.005$ og $2.0005$ nærmer seg $2=-\lambda$.
+
+**Fortegnet til $\lambda$.** Sammenlign eksemplene:
+
+| Ekstremum | Multiplikator |
+|:--|:--|
+| Maksimum på sirkelen | $\lambda=-\sqrt5/2$ |
+| Minimum på linjen | $\lambda=-2$ |
+| Minimum i avstandsproblemet i 12.5 | $\lambda=+0.618$ |
+
+- **Ingen klassifisering:** Fortegnet skiller altså ikke maksimum fra
+  minimum. For et likhetskrav betyr fortegnet ingenting alene.
+- **Avhenger av skrivemåten:** Skriver vi kravet som $-h=0$ i stedet for
+  $h=0$, er punktet det samme, men $\lambda$ bytter fortegn.
+- **Mening gjennom prisen:** $-\lambda$ er endringen i optimal verdi når vi
+  flytter kravet i den retningen $h$ er skrevet.
+
+</details>
+
+<details class="reading-step">
+<summary>Gå i dybden: en multiplikator gir en nedre grense</summary>
+
+Lagrangefunksjonen kan også **bevise** en grense for optimal verdi, slik
+dualprisene ga en øvre grense i uke 11. Vi bruker avstandsproblemet som vi
+løser numerisk i 12.5: minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$ med
+$a=(2,1)$ når $h(z)=\lVert z\rVert_2^2-1=0$.
+
+- **På sirkelen:** $h=0$, så $L(z,\lambda)=F(z)$ for alle tillatte $z$.
+- **Grense for alle punkter:** Hvis $L(\cdot,\lambda)$ aldri går under et
+  tall $\beta$ for **alle** $z$, er også $F(z)\ge\beta$ for alle tillatte
+  $z$.
+
+1. Velg $\lambda_*=(\sqrt5-1)/2$. Hessianen til $L$ med hensyn på $z$ er
+   $(1+2\lambda_*)I=\sqrt5\,I$, som er SPD: $L$ er en skål.
+2. Bunnen av skålen finnes fra $\nabla_zL=(1+2\lambda_*)z-a=0$, altså
+   $z_*=a/\sqrt5$.
+3. Punktet $z_*$ ligger på sirkelen, og
+   $F(z_*)=\tfrac12\lVert a/\sqrt5-a\rVert_2^2=\tfrac12\cdot5\,(1-1/\sqrt5)^2=\tfrac12(\sqrt5-1)^2$.
+   Da er
+   $$F(z)=L(z,\lambda_*)\ge L(z_*,\lambda_*)=F(z_*)=\tfrac12(\sqrt5-1)^2$$
+   for alle tillatte $z$, og grensen er skarp.
+
+Generelt er $\varphi(\lambda)=\inf_zL(z,\lambda)$ en nedre grense for den
+tillatte minimumsverdien, for hver $\lambda$. I eksemplet ligger bunnen av
+skålen i $z(\lambda)=a/(1+2\lambda)$ når $1+2\lambda>0$, og innsatt er
+$$\varphi(\lambda)=L(z(\lambda),\lambda)=\frac{5\lambda}{1+2\lambda}-\lambda
+=\tfrac52-\lambda-\frac5{2(1+2\lambda)}.$$
+En slik skarp grense er ikke garantert for alle problemer.
+
+**Øv på dette:** [en nedre grense fra Lagrangefunksjonen](#uke12-oppg-grense) i 12.6 (valgfri).
+
+</details>
+
+## 12.3 Kandidater er ikke løsninger
 
 <div id="uke12-kandidater"></div>
 
-På samme sirkel bytter vi mål til $f(x,y)=xy$ og søker
-både maksimum og minimum. Nå kan flere punkter ha null endring
-langs tangenten uten å ha samme målverdi. Før vi løser likningene,
-undersøker vi de fire tillatte diagonalpunktene
-$(\pm1,\pm1)/\sqrt2$. Vi regner ut $xy$ og den
-**tangentderiverte** $\nabla f\cdot v$ i hvert punkt. Null
-tangentderivert gjør punktet til en kandidat; målverdien avgjør
-ikke alene om det er størst eller minst på hele sirkelen.
+Hittil har eksemplene gitt én eller to kandidater, og det var lett å se
+hvilken som var best. Nå ser vi hva som skjer når likningene gir flere
+kandidater. På enhetssirkelen bytter vi mål til $f(x,y)=xy$ og søker både
+maksimum og minimum.
 
-### Eksperiment 2 – samme tangenttest, ulike verdier
+Sirkelen er kompakt og $f$ er kontinuerlig, så ekstremalverdisetningen fra
+[uke 8.2](uke8.qmd#uke8-kompakt) lover at begge finnes. Spørsmålet er hvor,
+og om tangenttesten fra 12.1 kan skille dem.
 
-Kjør koden og sammenlign særlig kolonnene for målverdi og
-tangentderivert.
+Før vi løser Lagranges likninger, skanner vi hele sirkelen. Regningen bak
+skanningen er:
+
+1. **Punkt på sirkelen:** $(x,y)=(\cos t,\sin t)$.
+2. **Tangent:** $(-y,x)$, vinkelrett på radien.
+3. **Derivert langs tangenten:**
+   $\nabla f\cdot(-y,x)=(y,x)\cdot(-y,x)=x^2-y^2$. Den kan vi regne ut i
+   mange punkter samtidig.
+
+Målet er å finne alle punktene som består tangenttesten, og se om de er
+like gode.
+
+### Eksperiment 2 – hvor er den deriverte langs tangenten null?
+
+- Kjør cellen. Hvor mange punkter består tangenttesten, og hvilke verdier
+  har $f$ der?
+- Finn de samme punktene i figuren. Hvilke er topper, og hvilke er bunner?
+- Bytt til målet $x+2y$ fra håndeksempelet: `values = x + 2*y` og
+  `slope = -y + 2*x`. Hvor mange punkter får du nå?
+
+Cellen regner ut $f$ og den deriverte langs tangenten i tusen punkter på
+sirkelen, og skriver ut punktene der den deriverte skifter fortegn. En ferdig
+hjelpefunksjon tegner $f$ som funksjon av vinkelen $t$.
 
 ```{pyodide-python}
 #| label: week12-xy-experiment
-# 1. Ta med begge fortegn for hver koordinat; alle punktene er tillatt.
-points = np.array([[1, 1], [1, -1], [-1, 1], [-1, -1]], float)/np.sqrt(2)
-print("Punkt (x, y)       | f = xy | derivert langs tangenten")
-for p in points:
-    # 2. En tangent på sirkelen står vinkelrett på radiusen p.
-    tangent = np.array([-p[1], p[0]])
-    gradient = p[::-1]  # Gradienten til xy er (y, x).
-    directional = gradient @ tangent
-    print(f"{np.array2string(p, precision=4):20s} |"
-          f" {np.prod(p):6.3f} | {directional: .2e}")
+# Punkter (cos t, sin t) på sirkelen og den deriverte av f = xy langs tangenten (-y, x).
+t = np.linspace(0, 2*np.pi, 1000)
+x, y = np.cos(t), np.sin(t)
+values = x*y
+slope = y*(-y) + x*x                     # (y, x) · (-y, x)
+turn = np.where(np.sign(slope[:-1]) != np.sign(slope[1:]))[0]
+print('punkt (x, y)          f')
+for i in turn:
+    print(f'({x[i]: .3f}, {y[i]: .3f})      {values[i]: .3f}')
+plot_along_circle(t, values, t[turn])
 ```
 
-Utskriften gir null tangentderivert ved alle fire punktene,
-men verdiene er $1/2$ og $-1/2$. Lagranges likninger skal nå
-vise at vi ikke har oversett andre kandidater. Fordi
-$\nabla f=(y,x)$, får vi
+**Hva viser forsøket?** Fire punkter, omtrent $(\pm0.707,\pm0.707)$,
+består tangenttesten:
+
+| Antall | Verdi | Form i figuren |
+|:--|:--|:--|
+| To punkter | $f=1/2$ | Topper |
+| To punkter | $f=-1/2$ | Bunner |
+
+Tangenttesten finner kandidatene, men den skiller ikke maksimum fra
+minimum. Lagranges likninger skal nå vise at det ikke finnes flere
+kandidater, og gi de eksakte punktene. Med $\nabla f=(y,x)$ og
+$\nabla h=(2x,2y)$ får vi
 
 $$y+2\lambda x=0,\qquad x+2\lambda y=0,\qquad x^2+y^2=1.$$
 
 **Regn for hånd.**
 
-1. Ingen koordinat kan være null: $x=0$ tvinger $y=0$ i
-   første likning, og $y=0$ tvinger $x=0$ i den andre.
-   Begge strider mot sirkelkravet.
-2. Skriv $y=-2\lambda x$ og $x=-2\lambda y$. Når vi
-   setter den første inn i den andre og deler på $x\ne0$,
-   får vi $4\lambda^2=1$.
-3. Med $\lambda=-1/2$ blir $x=y$; med $\lambda=1/2$
-   blir $x=-y$. Sirkelkravet gir de fire punktene i tabellen.
+1. Ingen koordinat kan være null: $x=0$ gir $y=0$ i første likning, og det
+   strider mot kravet. Tilsvarende for $y=0$.
+2. Sett $y=-2\lambda x$ inn i den andre likningen:
+   $x+2\lambda(-2\lambda x)=x(1-4\lambda^2)=0$. Siden $x\ne0$, er
+   $4\lambda^2=1$, altså $\lambda=\pm\tfrac12$.
+3. Med $\lambda=-\tfrac12$ gir $y=-2\lambda x$ at $y=x$. Kravet blir
+   $2x^2=1$, så $x=y=\pm1/\sqrt2$. Med $\lambda=\tfrac12$ blir $y=-x$, og
+   igjen er $x=\pm1/\sqrt2$.
 
 | $\lambda$ | Relasjon | Kandidater | Verdi $xy$ |
 |:--|:--|:--|:--|
-| $-1/2$ | $x=y$ | $(1,1)/\sqrt2$ og $(-1,-1)/\sqrt2$ | $1/2$ |
-| $1/2$ | $x=-y$ | $(1,-1)/\sqrt2$ og $(-1,1)/\sqrt2$ | $-1/2$ |
+| $-1/2$ | $x=y$ | $\pm(1,1)/\sqrt2$ | $1/2$ |
+| $1/2$ | $x=-y$ | $\pm(1,-1)/\sqrt2$ | $-1/2$ |
 
-For å klassifisere dem globalt uten numerisk søk bruker vi at
-$(x-y)^2\ge0$ gir $2xy\le x^2+y^2=1$, og $(x+y)^2\ge0$ gir
-$2xy\ge-1$. Dermed er $-1/2\le xy\le1/2$, og alle fire
-kandidatene oppnår en av grensene. De to med verdi $1/2$ er
-globale maksimum; de andre er globale minimum.
+**Klassifiser globalt.**
 
-### Krumning langs tillatte retninger
+1. $(x-y)^2\ge0$ gir $2xy\le x^2+y^2=1$.
+2. $(x+y)^2\ge0$ gir $2xy\ge-1$.
+3. Dermed er $-1/2\le xy\le1/2$ på hele sirkelen. De to kandidatene med
+   verdi $1/2$ er globale maksimumspunkter, de to andre globale
+   minimumspunkter.
 
-Vi har nå en global klassifisering. Vil vi i stedet undersøke
-formen på målet helt nær et punkt, kan vi følge sirkelen som
-$p(t)=(\cos t,\sin t)$. Da er
-$f(p(t))=\tfrac12\sin(2t)$. Ved $t=\pi/4$ bøyer verdien
-nedover, og ved $t=-\pi/4$ bøyer den oppover. Dette er en
-lokal andrederiverttest langs *tillatte* retninger, i slekt med
-[uke 8](uke8.qmd#uke8-hessian). Den globale ulikheten over
-sier i tillegg hva som skjer på hele sirkelen.
+**Dette tar vi med oss.** Lagranges likninger gir en liste med kandidater.
+Hvilken som er best, avgjør vi ved å sammenligne verdiene, eller med en
+ulikhet som gjelder alle tillatte punkter.
+
+Sammenligningen er nok fordi to ting holder her:
+
+- **Eksistens:** Kompaktheten garanterer at maksimum og minimum **finnes**.
+- **Fullstendig kandidatliste:** $\nabla h=2z\ne0$ i **alle** punkter på
+  sirkelen, så de er regulære og må stå i listen. Uten regularitet kan et
+  optimum mangle i listen (se «Gå i dybden: når normalen forsvinner» i 12.2).
+
+**Øv på dette:** [en kvadratisk form på sirkelen](#uke12-oppg-form) i 12.6.
 
 <details class="reading-step">
-<summary>Gå i dybden: andrederivert langs en tangent</summary>
+<summary>Gå i dybden: andrederivert langs kurven</summary>
 
-I hovedteksten klassifiserte vi $xy$ med en global ulikhet.
-Her finner vi en *lokal* krumningstest når $f$ og $h$ er to
-ganger kontinuerlig deriverbare nær et regulært stasjonært punkt.
-La $\gamma(t)$ være en tillatt kurve gjennom punktet, med
-tangent $\gamma'(0)=v$.
+Vil vi undersøke formen helt nær én kandidat, kan vi følge sirkelen med
+$p(t)=(\cos t,\sin t)$. Da er $f(p(t))=\tfrac12\sin2t$.
 
-1. Deriver kravet $h(\gamma(t))=0$ to ganger. Det gir
-   $\nabla h\cdot v=0$ og
+| Vinkel | Andrederivert | Tolkning langs sirkelen |
+|:--|:--|:--|
+| $t=\pi/4$ | $-2$ | Verdien bøyer nedover: lokalt maksimum. |
+| $t=-\pi/4$ | $+2$ | Lokalt minimum. |
 
-   $$v^T\nabla^2h\,v+\nabla h\cdot\gamma''(0)=0.$$
+Generelt, for en tillatt kurve $\gamma(t)$ gjennom et regulært stasjonært
+punkt med tangent $v=\gamma'(0)$:
 
+1. Derivér kravet $h(\gamma(t))=0$ to ganger:
+   $v^T\nabla^2h\,v+\nabla h\cdot\gamma''(0)=0$.
 2. Den andrederiverte av målet langs kurven er
-   $v^T\nabla^2f\,v+\nabla f\cdot\gamma''(0)$.
-   Ved stasjonaritet er $\nabla f=-\lambda\nabla h$.
-3. Bruk likningen fra steg 1 til å fjerne leddet med
-   $\gamma''(0)$. Da står vi igjen med
+   $v^T\nabla^2f\,v+\nabla f\cdot\gamma''(0)$, og $\nabla f=-\lambda\nabla h$.
+3. Fjern leddet med $\gamma''(0)$ ved hjelp av steg 1:
+   $$(f\circ\gamma)''(0)=v^T\nabla^2_{zz}L(z_*,\lambda)\,v.$$
 
-   $$(f\circ\gamma)''(0)
-   =v^T\nabla^2_{zz}L(z_*,\lambda)v.$$
+Kurven selv bøyer seg, så det er Hessianen til $L$, ikke til $f$, som teller
+langs tangentene:
 
-Kurven selv bøyer seg, så vi må bruke Hessianen til *L* langs
-tillatte tangenter. Ved et lokalt minimum må formen være
-ikke-negativ for alle slike tangenter. Er den positiv for alle
-ikke-null tangenter, har vi et strengt lokalt minimum. Tilsvarende
-gir en negativ form for alle ikke-null tangenter et strengt lokalt
-maksimum. Null i en retning avgjør ikke saken.
+- **Positiv form for alle tangenter $v\ne0$:** Strengt lokalt minimum.
+- **Negativ form for alle tangenter $v\ne0$:** Strengt lokalt maksimum.
+- **Null i en retning:** Avgjør ikke saken.
 
-For $f=xy$ og $h=x^2+y^2-1$ blir
-$\nabla^2_{zz}L=
-\left(\begin{smallmatrix}2\lambda&1\\1&2\lambda\end{smallmatrix}\right)$.
-Ved $p=(1,1)/\sqrt2$, $\lambda=-1/2$ og enhetstangent
-$v=(-1,1)/\sqrt2$ gir formen $-2$: et maksimum langs
-sirkelen. Ved $x=-y$ blir den $+2$: et minimum. Direkte
-derivasjon av $f(\cos t,\sin t)=\tfrac12\sin2t$ gir
-samme fortegn.
-
-For flere regulære likninger bruker vi $L=f+\sum_i\lambda_i h_i$
-og bare tangenter med $J_hv=0$. En semidefinit form med null i en
-ikke-null tangentretning er fortsatt ikke en avgjørende test.
+For $f=xy$ er
+$\nabla^2_{zz}L=\left(\begin{smallmatrix}2\lambda&1\\1&2\lambda\end{smallmatrix}\right)$.
+Med $\lambda=-1/2$ og $v=(-1,1)/\sqrt2$ gir formen $-2$, som over.
 
 </details>
 
-## 12.3 Finn et punkt numerisk og kontroller det
+## 12.4 Lagrange møter lineær algebra
+
+<div id="uke12-egenverdi"></div>
+
+### Kandidattabellen er en egenverditabell
+
+Skriv målet fra 12.3 med en symmetrisk matrise:
+
+$$xy=z^TAz,\qquad A=\begin{bmatrix}0&\tfrac12\\\tfrac12&0\end{bmatrix}.$$
+
+Hva er gradienten til $z^TAz$? Vi regner den ut i det lille tilfellet først.
+
+1. **Utvid:** For en symmetrisk $2\times2$-matrise er
+   $z^TAz=a_{11}x^2+2a_{12}xy+a_{22}y^2$.
+2. **Derivér:** De partiellderiverte er $2a_{11}x+2a_{12}y$ og
+   $2a_{12}x+2a_{22}y$. Altså er $\nabla(z^TAz)=2Az$ (det gjelder i alle
+   dimensjoner).
+3. **Kontroller med vår $A$:**
+   $2Az=2\bigl(\tfrac12y,\tfrac12x\bigr)=(y,x)=\nabla(xy)$.
+
+For sirkelen er $\nabla h=2z$, og Lagranges likning blir da
+
+$$2Az+2\lambda z=0\qquad\Longleftrightarrow\qquad Az=-\lambda z.$$
+
+**En kandidat er en egenvektor, og $-\lambda$ er egenverdien.**
+
+- **Målverdien:** $z^TAz=-\lambda\,z^Tz=-\lambda$.
+- **Vår matrise:** Egenverdiene til $A$ er $\pm\tfrac12$, med egenvektorer
+  langs $(1,1)$ og $(1,-1)$. Det er akkurat tabellen i 12.3:
+  $\lambda=-\tfrac12$ gir maksimum $\tfrac12$, og $\lambda=\tfrac12$ gir
+  minimum $-\tfrac12$.
+- **Koblingen til uke 5:** På enhetssirkelen er $z^TAz$ Rayleigh-kvotienten
+  fra [uke 5](uke5.qmd#uke5-rayleigh), og vi har vist:
+
+> **Største og minste verdi av $z^TAz$ når $\lVert z\rVert_2=1$ er største og
+> minste egenverdi av $A$.**
+
+Begrunnelsen er den samme som i 12.3: maksimum og minimum finnes fordi
+sirkelen er kompakt, og hvert punkt på sirkelen er regulært, så de er blant
+kandidatene, altså egenvektorene.
+
+**Største strekk.** I [uke 7](uke7.qmd#uke7-geometri) sendte matrisen
+$B=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ (der het den $A$) enhetssirkelen til en
+ellipse, og største strekk var $\sigma_1=2$. Nå kan vi utlede det:
+
+1. **Skriv kvadrert strekk:** Her er $Bz=(2y,\,x)$, så
+   $\lVert Bz\rVert_2^2=x^2+4y^2=z^T(B^TB)z$ med
+   $B^TB=\operatorname{diag}(1,4)$. Det er samme type problem, og samme
+   uttrykk som ellipsen i 12.1.
+2. **Bruk sirkelkravet:** På sirkelen er $x^2=1-y^2$, så
+   $x^2+4y^2=1+3y^2\le4$, med likhet i $z=\pm e_2$.
+3. **Ta kvadratroten:** Største strekk er $\sqrt4=2$.
+
+Vi har vist med likninger at kandidatene er egenvektorer. Forsøket viser det
+samme som et bilde, og lar deg prøve andre matriser. Målet er å se at nivåkurvene
+berører sirkelen nøyaktig i egenvektorene, slik nivålinjen berørte ellipsen
+i 12.1.
+
+### Eksperiment 3 – se egenvektorene på sirkelen
+
+- Kjør cellen. Hvilke nivåkurver berører sirkelen, og hvor?
+- Bytt til `plot_quadratic_on_circle(B.T @ B)`. Hvor ligger nå punktet med
+  største strekk?
+- Velg en egen symmetrisk matrise, for eksempel `[[2, 1], [1, 2]]`, og
+  forutsi berøringspunktene før du kjører.
+
+Cellen gir oss både tallene og bildet:
+
+- **Tallene:** `np.linalg.eigh` regner ut egenverdiene og egenvektorene. Den
+  er som `eigvalsh` fra uke 8, men gir også egenvektorene.
+- **Figuren:** En ferdig hjelpefunksjon, `plot_quadratic_on_circle(A)`,
+  tegner nivåkurvene til $z^TAz$, enhetssirkelen og egenvektorene.
+
+```{pyodide-python}
+#| label: week12-eigen-experiment
+# Egenverdier og egenvektorer til A; figuren viser nivåkurvene til z^T A z på sirkelen.
+A = np.array([[0, .5], [.5, 0]])
+B = np.array([[0, 2.], [1, 0]])
+vals, vecs = np.linalg.eigh(A)
+print('egenverdier til A:     ', vals)
+print('egenvektorer (kolonner):\n', vecs.round(4))
+print('egenverdier til B^T B: ', np.linalg.eigvalsh(B.T @ B))
+print('singulærverdier til B: ', np.linalg.svd(B, compute_uv=False))
+plot_quadratic_on_circle(A)
+```
+
+**Hva viser forsøket?**
+
+- **For $A$:** Nivåkurvene $xy=\pm\tfrac12$ berører sirkelen nøyaktig i
+  egenvektorene, og verdien der er egenverdien: `eigh` gir $\pm0.5$.
+- **For $B^TB$:** `eigh` gir $1$ og $4$. Nivåkurvene er ellipsene
+  $x^2+4y^2=c$, og kurven $c=4$ berører sirkelen i $\pm e_2$.
+- **Strekket:** Største strekk er $\sqrt4=2$, og `svd` gir
+  singulærverdiene $2$ og $1$.
+
+**Øv på dette:** [største strekk med Lagrange](#uke12-oppg-strekk) i 12.6.
+
+### Lineære krav gir et lineært system
+
+<div id="uke12-kkt"></div>
+
+- **Ett lineært krav:** For $c^Tz=d$ er normalen $c$ den samme i alle
+  punkter.
+- **Flere lineære krav:** Vi samler dem som $Cz=d$, der hver rad i $C$ er
+  ett krav. Hvert krav får sin multiplikator $\lambda_i$.
+
+Lagranges likning blir
+
+$$\nabla f(z)+C^T\lambda=0.$$
+
+- **Gradienten:** Likningen sier at $\nabla f$ er en kombinasjon av radene i
+  $C$, altså av normalene, akkurat som $\nabla f$ var parallell med
+  $\nabla h$ i 12.2.
+- **Tillatte retninger:** De er **nullrommet** til $C$ fra
+  [uke 3](uke3.qmd#uke3-del3). Hvorfor $\nabla f$ da står vinkelrett på dem,
+  viser «Gå i dybden» under eksperimentet.
+
+Når $f$ er kvadratisk, er $\nabla f$ lineær i $z$, og alle likningene blir
+lineære. For linjeeksempelet i 12.2, $f=x^2+y^2$ og $x+y=2$, får vi
+
+$$\underbrace{\begin{bmatrix}2&0&1\\0&2&1\\1&1&0\end{bmatrix}}_{K}
+\begin{bmatrix}x\\y\\\lambda\end{bmatrix}
+=\begin{bmatrix}0\\0\\2\end{bmatrix}.$$
+
+De to første radene er $\nabla f+\lambda\nabla h=0$, den siste er kravet.
+Et slikt system kalles et **KKT-system** (etter Karush, Kuhn og Tucker).
+
+Systemet er symmetrisk, akkurat som systemene vi løste med CG i uke 6 og
+Cholesky i uke 10. Men begge metodene krevde mer: matrisen måtte være SPD.
+Målet er å finne ut om metodene fra uke 6 og 10 kan brukes på et
+KKT-system.
+
+### Eksperiment 4 – løs KKT-systemet og prøv Cholesky
+
+**Forutsi:** $K$ er symmetrisk. Er den SPD, slik at Cholesky fra uke 10 og
+CG fra uke 6 kan brukes?
+
+- Skriv ned forutsigelsen, og kjør cellen.
+- Bytt høyresiden til `(0, 0, 4)`, altså linjen $x+y=4$. Forutsi løsningen
+  før du kjører. Endrer egenverdiene seg?
+
+Cellen løser systemet med `np.linalg.solve`, som ikke krever SPD, regner ut
+egenverdiene og prøver Cholesky.
+
+```{pyodide-python}
+#| label: week12-kkt-experiment
+# KKT-systemet for linjeeksempelet: løs det, se på egenverdiene og prøv Cholesky.
+K = np.array([[2., 0, 1], [0, 2, 1], [1, 1, 0]])
+rhs = np.array([0., 0, 2])
+print('løsning (x, y, lambda):', np.linalg.solve(K, rhs))
+print('egenverdier til K:     ', np.linalg.eigvalsh(K).round(2))
+try:
+    np.linalg.cholesky(K)
+    print('Cholesky lyktes')
+except np.linalg.LinAlgError:
+    print('Cholesky feilet: K er ikke positiv definitt')
+```
+
+**Hva viser forsøket?**
+
+- **Løsningen:** $(1,1,-2)$, som for hånd i 12.2.
+- **Matrisen:** Egenverdiene er $-0.73$, $2$ og $2.73$. Matrisen er
+  symmetrisk, men **indefinit**, og Cholesky feiler.
+- **Hvorfor det skjer:** Nullen nederst til høyre gir $e_3^TKe_3=0$, og en
+  SPD-matrise har $v^TKv>0$ for alle $v\ne0$. Et KKT-system er derfor aldri
+  SPD (se «Gå i dybden» under), og CG og Cholesky kan ikke brukes direkte.
+
+**Dette tar vi med oss.** Når målet er kvadratisk, blir Lagranges likninger
+lineær algebra:
+
+| Krav | Hva likningene blir |
+|:--|:--|
+| Sirkelkrav | Egenverdiproblem, der kandidatene er egenvektorene. |
+| Lineære krav | Symmetrisk, men indefinit likningssystem: CG og Cholesky virker ikke direkte. |
+
+Nullromsmetoden i «Gå i dybden» viser én vei rundt.
+
+**Øv på dette:** [KKT-systemet for en linje](#uke12-oppg-kkt) i 12.6 og
+[KKT-systemet og pseudoinversen](#uke12-py-kkt) i 12.7.
+
+<details class="reading-step">
+<summary>Gå i dybden: nullrommet, og en vei rundt det indefinitte systemet</summary>
+
+**Hvorfor $\nabla f+C^T\lambda=0$ er riktig betingelse.**
+
+1. **Tillatte retninger:** En retning $v$ endrer ikke $Cz$ når $Cv=0$. De
+   tillatte retningene er altså nullrommet til $C$.
+2. **Vinkelrett på radene:** At $Cv=0$ betyr at $v$ står vinkelrett på hver
+   rad i $C$.
+3. **Gradienten balanseres av normalene:** Likningen sier at
+   $\nabla f=-C^T\lambda$ er en lineærkombinasjon av radene. Da står også
+   $\nabla f$ vinkelrett på alle tillatte retninger:
+   $\nabla f\cdot v=-\lambda^TCv=0$.
+
+Målet endres altså ikke til første orden i noen tillatt retning.
+
+**Nullromsmetoden.** Ethvert tillatt punkt kan skrives $z=z_0+tZ$:
+
+- $z_0=(2,0)$ er én løsning av kravet.
+- $Z=(1,-1)$ spenner ut nullrommet til $C=\begin{bmatrix}1&1\end{bmatrix}$.
+
+Da er kravet oppfylt for alle $t$, og vi minimerer uten krav:
+
+$$f(z_0+tZ)=(2+t)^2+t^2=4+4t+2t^2,\qquad
+\frac{d}{dt}=4+4t=0\ \Rightarrow\ t=-1,\ z=(1,1).$$
+
+Det reduserte problemet har én variabel og positiv krumning. Cellen setter
+inn $t=-1$, kontrollerer at punktet oppfyller kravet, og tegner bildet med en
+ferdig hjelpefunksjon.
+
+- **Punkter og retning:** Du ser $z_0$, nullromsretningen $Z$ og løsningen,
+  der $\nabla f=(2,2)$ er parallell med raden $(1,1)$ i $C$.
+- **Prikket sirkelbue:** Nivåkurven $f=2$, som berører linjen akkurat der.
+
+```{pyodide-python}
+#| label: week12-nullspace
+# Nullromsmetoden: z = z0 + t*Z, med C z0 = d og C Z = 0. Regningen over ga t = -1.
+z0, Z = np.array([2., 0]), np.array([1., -1])
+z_best = z0 + (-1)*Z
+print('z =', z_best, '  C z =', z_best.sum(), '  grad f =', 2*z_best)
+plot_nullspace_method(z0, Z, z_best, 2*z_best)
+```
+
+**Nullromsmetoden generelt.**
+
+1. **Parametriser:** Bruk $z=z_0+Zt$, der kolonnene i $Z$ er en basis for
+   nullrommet og $t$ er en vektor med like mange tall som kolonner i $Z$.
+2. **Sett inn i målet:** For $f=\tfrac12z^TQz-b^Tz$ (som i neste boks) gir
+   utvidelsen av $\tfrac12(z_0+Zt)^TQ(z_0+Zt)-b^T(z_0+Zt)$
+   $$f(z_0+Zt)=\tfrac12t^T(Z^TQZ)t+t^TZ^T(Qz_0-b)+f(z_0),$$
+   som vi minimerer uten krav.
+3. **Velg løser:** Matrisen $Z^TQZ$ er SPD når $Q$ er positiv definitt på
+   nullrommet, og da virker både Cholesky og CG igjen.
+
+</details>
+
+<details class="reading-step">
+<summary>Gå i dybden: det generelle KKT-systemet og pseudoinversen</summary>
+
+For $f(z)=\tfrac12z^TQz-b^Tz$ med symmetrisk $Q$ og krav $Cz=d$ er
+$\nabla f=Qz-b$, og Lagranges likninger blir
+
+$$\begin{bmatrix}Q&C^T\\C&0\end{bmatrix}
+\begin{bmatrix}z\\\lambda\end{bmatrix}=\begin{bmatrix}b\\d\end{bmatrix}.$$
+
+- **Invertibel:** Hvis $C$ har $m$ uavhengige rader og $Q$ er positiv
+  definitt på nullrommet til $C$, er matrisen invertibel.
+- **Aldri positiv definitt:** For $v=(0,w)$ er $v^TKv=0$.
+- **Negative egenverdier:** Under disse forutsetningene kan man vise at matrisen har
+  nøyaktig $m$ negative egenverdier; i eksperiment 4 var $m=1$.
+
+**Minste norm.** Med $Q=I$ og $b=0$ minimerer vi $\tfrac12\lVert z\rVert_2^2$
+under $Cz=d$:
+
+1. Første blokkrad gir $z=-C^T\lambda$.
+2. Andre blokkrad gir $-CC^T\lambda=d$.
+
+Dermed er
+
+$$z=C^T(CC^T)^{-1}d,$$
+
+som er pseudoinversløsningen $C^+d$ fra [uke 7.7](uke7.qmd#uke7-pseudoinvers)
+når radene i $C$ er uavhengige. Kodeoppgaven
+[KKT-systemet og pseudoinversen](#uke12-py-kkt) i 12.7 kontrollerer dette.
+
+</details>
+
+## 12.5 Finn et punkt numerisk og kontroller det
 
 <div id="uke12-slsqp"></div>
 
-Et målepunkt $a=(2,1)$ ligger utenfor enhetssirkelen. Vi
-vil finne sirkelpunktet som er **nærmest** målepunktet. Målet
-er halvparten av kvadrert avstand, og kravet er fortsatt sirkelen:
+For større problemer, som kjettingen i [prosjekt 12](project_week12.qmd) med ti
+krav, løser vi ikke
+Lagranges likninger for hånd. Vi bruker `minimize` med metoden `SLSQP`, som
+tar imot likhetskrav, og kontrollerer svaret selv.
+
+Eksempelet: punktet $a=(2,1)$ ligger utenfor enhetssirkelen. Finn
+sirkelpunktet som ligger nærmest.
 
 | Rolle | Uttrykk |
 |:--|:--|
 | Valg | $z=(x,y)$ |
-| Mål | Minimer $F(z)=\tfrac12\|z-a\|_2^2$ |
-| Krav | $h(z)=\|z\|_2^2-1=0$ |
+| Mål | Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$ |
+| Krav | $h(z)=\lVert z\rVert_2^2-1=0$ |
 
-Kvadrering og faktoren $1/2$ endrer ikke nærmeste punkt.
-Dette ligner kvadrerte residualer i [uke 4](uke4.qmd#uke4-mk),
-men residualen $z-a$ må nå stå normalt på den tillatte kurven
-ved et regulært optimum. Til sammenligning har $(1,0)$ verdien
-$F=1$, mens $a/\sqrt5$ har
-$F=\tfrac12(\sqrt5-1)^2\approx0.763932$.
+Løseren gir en **numerisk kandidat**. Stoppflagget erstatter ikke to
+kontroller vi må gjøre selv:
 
-Vi lar `minimize` fra SciPy søke fra $x_0=(0.4,0.9)$ med
-metoden `SLSQP`, som kan håndtere likningskrav. I kallet betyr
-`type='eq'` at $h(z)=0$. `fun=h` beregner kravet, og
-`jac=grad_h` leverer normalen $\nabla h$. Vi sender også
-målgradienten som `jac=grad_F`. En `callback` samler punktene
-som søket rapporterer, til figuren etterpå.
+- **Betingelsesfeilen** $|h(z)|$: ligger punktet på sirkelen?
+- **Stasjonaritetsfeilen** $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$:
+  kan målgradienten balanseres av normalen?
 
-Resultatet er en **numerisk kandidat**. Vi kontrollerer
-to ting som løserens stoppflagg ikke kan avgjøre for oss:
+Trenger vi $\lambda$, **velger vi den $\lambda$ som gjør
+stasjonaritetsfeilen minst**. Det er minste kvadrater med én ukjent, som i
+[uke 4](uke4.qmd#uke4-mk), og svaret er
 
-- **Betingelsesfeilen** $|h(z)|$ tester om punktet ligger på
-  sirkelen.
-- **Stasjonaritetsfeilen**
-  $\|\nabla F(z)+\lambda\nabla h(z)\|_2$ tester om
-  målgradienten kan balanseres av kravnormalen.
+$$\lambda=-\frac{\nabla F\cdot\nabla h}{\lVert\nabla h\rVert_2^2}.$$
 
-Vi velger $\lambda$ slik at stasjonaritetsfeilen blir minst
-mulig for punktet løseren fant:
+Med flere krav bruker vi samme idé:
 
-1. Sett $g=\nabla F(z)$ og $n=\nabla h(z)$. Her er
-   $g=z-a$ og $n=2z$.
-2. For et fast $z$ minimerer vi $\|g+\lambda n\|_2^2$.
-   Deriverten med hensyn til $\lambda$ er
-   $2n\cdot(g+\lambda n)$.
-3. Når $n\ne0$, setter vi deriverten lik null og får
-   $\lambda=-g\cdot n/\|n\|_2^2$.
+1. **Samle gradientene:** $\nabla h_i^T$ blir rader i **Jacobimatrisen** $J$
+   (som i prosjekt 10).
+2. **Løs minste kvadrater:** Løs
+   $\min_\lambda\lVert\nabla F+J^T\lambda\rVert_2$ med `np.linalg.lstsq`.
+   Det gjør vi i prosjektet.
 
-En liten verdi av bare den ene feilen sikrer ikke den andre. I
-dette enkle problemet bør begge for eksempel være under
-$10^{-7}$. Vi sammenligner også punktet med $a/\sqrt5$,
-som vi begrunner eksakt etter forsøket.
+Hvorfor vi ikke bruker SciPys egne multiplikatorer, står i
+[SciPy-oppslaget](#uke12-scipy).
 
-### Eksperiment 3 – finn og kontroller et sirkelpunkt
+<details class="reading-step">
+<summary>Gå i dybden: formelen for multiplikatoren med minst feil</summary>
 
-Koden rapporterer punkt, målverdi, begge kontrollfeilene og
-løserens stoppflagg hver for seg.
+Kvadratet av stasjonaritetsfeilen er et andregradspolynom i $\lambda$:
+
+$$\lVert\nabla F+\lambda\nabla h\rVert_2^2=\nabla F\cdot\nabla F
++2\lambda\,\nabla F\cdot\nabla h+\lambda^2\,\nabla h\cdot\nabla h.$$
+
+1. **Derivér med hensyn på $\lambda$:** Den deriverte er
+   $2\,\nabla F\cdot\nabla h+2\lambda\,\nabla h\cdot\nabla h$.
+2. **Sett lik null:** Den er null for
+   $\lambda=-\nabla F\cdot\nabla h/\lVert\nabla h\rVert_2^2$.
+3. **Kontroller minimum:** Den andrederiverte, $2\lVert\nabla h\rVert_2^2$,
+   er positiv når kravet er regulært, så dette er minimum.
+
+</details>
+
+Nå kan vi prøve alt dette på avstandsproblemet. Målet er å se hva
+kontrollfeilene sier, og hva de ikke sier.
+
+### Eksperiment 5 – finn og kontroller et sirkelpunkt
+
+- Kjør cellen, og sammenlign punktet med $a/\lVert a\rVert_2$.
+- Bytt startpunktet til `np.array([-.9, -.45])`, som ligger på linjen
+  gjennom origo og $a$. Hva rapporterer løseren nå, og hvilke av tallene
+  avslører at punktet ikke er det nærmeste?
+- Flytt startpunktet litt bort fra linjen, for eksempel til
+  `np.array([-.9, -.5])`. Hvor havner løseren nå?
+
+Cellen kjører SLSQP fra punktet $(0.4,0.9)$, regner ut de to kontrollfeilene
+og velger $\lambda$ med formelen over.
 
 ```{pyodide-python}
 #| label: week12-slsqp-experiment
-# 1. Definer avstandsmålet, sirkelkravet og gradientene deres.
-from scipy.optimize import minimize
-
+# F, grad_F, h og grad_h er definert i oppsettet; her står de igjen for oversiktens skyld.
 a = np.array([2., 1.])
+def F(z): return .5*np.sum((z-a)**2)
+def grad_F(z): return z-a
+def h(z): return np.dot(z, z)-1.
+def grad_h(z): return 2*z
 
-def F(z):
-    # Halvparten av kvadrert avstand gir samme minimumspunkt som avstand.
-    return .5*np.sum((z-a)**2)
-
-def grad_F(z):
-    # Gradienten til halvparten av kvadrert avstand er residualen.
-    return z-a
-
-def h(z):
-    # Null betyr at punktet ligger på enhetssirkelen.
-    return np.dot(z, z)-1.
-
-def grad_h(z):
-    # Denne normalen må ikke være null i kontrollen nedenfor.
-    return 2*z
-
-x0 = np.array([.4, .9])
-path = [x0.copy()]
-
-def save_iterate(z):
-    # Lagre en kopi, slik at senere oppdateringer ikke endrer eldre iterater.
-    path.append(z.copy())
-
-# 2. Løs problemet. Rapporterte mellomiterater kan bryte sirkelkravet.
-result = minimize(F, x0, jac=grad_F, method="SLSQP",
-                  constraints=[{"type": "eq", "fun": h, "jac": grad_h}],
-                  callback=save_iterate,
-                  options={"ftol": 1e-12, "maxiter": 100})
+result = minimize(F, np.array([.4, .9]), jac=grad_F, method='SLSQP',
+                  constraints=[{'type': 'eq', 'fun': h, 'jac': grad_h}],
+                  options={'ftol': 1e-12, 'maxiter': 100})
 z = result.x
-
-# 3. Finn multiplikatoren som gir minst stasjonaritetsfeil.
-lam = -np.dot(grad_F(z), grad_h(z))/np.dot(grad_h(z), grad_h(z))
-feasibility = abs(h(z))
-stationarity = np.linalg.norm(grad_F(z)+lam*grad_h(z))
-print("Numerisk kandidat:")
-print("  punkt z             =", np.round(z, 8))
-print("  verdi F(z)          =", round(result.fun, 10))
-print("Kontroller:")
-print("  betingelsesfeil |h| =", f"{feasibility:.2e}")
-print("  stasjonaritetsfeil  =", f"{stationarity:.2e}")
-print("  multiplikator       =", round(lam, 8))
-print("  løserens success    =", result.success)
-print("Eksakt referansepunkt =", np.round(a/np.linalg.norm(a), 8))
+gF, gh = grad_F(z), grad_h(z)
+lam = -(gF @ gh)/(gh @ gh)                    # minste kvadraters valg av lambda
+print('punkt z               =', z.round(8))
+print('verdi F(z)            =', round(result.fun, 8))
+print('betingelsesfeil |h|   =', f'{abs(h(z)):.1e}')
+print('stasjonaritetsfeil    =', f'{np.linalg.norm(gF + lam*gh):.1e}')
+print('multiplikator lambda  =', round(lam, 6))
+print('løserens success      =', result.success)
+print('eksakt a/|a|          =', (a/np.linalg.norm(a)).round(8))
 ```
 
-Kjøringen finner omtrent $(0.89442719,0.44721360)$ med
-målverdi $0.76393202$ og multiplikator $0.618034$ i vår
-fortegnskonvensjon. Begge feilene er små. `success=True`
-forteller at løseren stanset på vanlig måte; en global garanti
-krever fortsatt en begrunnelse som dekker hele sirkelen.
+**Hva viser forsøket?** Sammenlign to startpunkter:
 
-For ethvert tillatt $z$ gir Cauchy–Schwarz
-$a\cdot z\le\|a\|_2\|z\|_2=\sqrt5$. Da er
+| Startpunkt | Funnet sirkelpunkt | $F$ og $\lambda$ |
+|:--|:--|:--|
+| $(0.4,0.9)$ | $z\approx(0.89442719,\,0.44721360)$ | $F\approx0.76393202$, $\lambda\approx0.618034$ |
+| $(-0.9,-0.45)$ | $z\approx(-0.894,-0.447)=-a/\lVert a\rVert_2$ | $F\approx5.236$, $\lambda\approx-1.618$ |
 
-$$F(z)=\tfrac12(\|a\|_2^2+1-2a\cdot z)
-\ge\tfrac12(\sqrt5-1)^2.$$
+Punktet fra den første starten stemmer med $a/\lVert a\rVert_2$.
 
-Likhet gjelder ved $z=a/\sqrt5$. Dermed er dette det globalt
-nærmeste punktet. De to numeriske feilene kontrollerer bare
-kravet og stasjonariteten. Også det fjerneste sirkelpunktet kan
-være stasjonært; det gir ikke like liten avstand.
+- **Samme kontrollresultat:** Begge ganger er kontrollfeilene små og
+  `success=True`. Flagget betyr bare at løseren stoppet på vanlig måte.
+- **Ulik kvalitet:** Den andre kandidaten er det **fjerneste** punktet.
+  Startpunktet ligger på linjen gjennom origo og $a$. Der peker både
+  $\nabla F$ og normalen langs linjen, så hvert steg blir liggende på den.
+- **Litt endret start:** Flytter du starten litt bort fra linjen, finner
+  løseren det nærmeste punktet igjen.
+- **Hva kontrollene avgjør:** Kontrollfeilene viser bare at punktet er en
+  kandidat. Først verdien av $F$, eller ulikheten under, avgjør hvilken
+  kandidat som er best.
 
-Banefiguren viser hva søket rapporterte på vei mot sluttpunktet.
-Den tegner nivåkurver for $F$ og markerer startpunktet, de
-rapporterte iteratene og det eksakte punktet. Linjestykkene
-viser rekkefølgen, ikke en bane som nødvendigvis er tillatt.
-Et mellompunkt kan ligge utenfor sirkelen og ha lavere verdi
-enn det beste *tillatte* punktet.
+**Er det globalt nærmest?** For tillatte $z$ gir Cauchy–Schwarz
+$a\cdot z\le\lVert a\rVert_2=\sqrt5$, så
 
-### Eksperiment 4 – se de rapporterte iteratene
+$$F(z)=\tfrac12\bigl(\lVert a\rVert_2^2+1-2a\cdot z\bigr)\ge\tfrac12(\sqrt5-1)^2,$$
 
-Kjør SLSQP-cellen over først. Sammenlign markørene med sirkelen;
-den oransje linjen er bare en visuell forbindelse mellom dem.
+med likhet bare i $z=a/\sqrt5$. De to numeriske kontrollene viser at punktet
+er en kandidat; ulikheten viser at det er det beste.
+
+**Øv på dette:** [to kontrollfeil for et feil forslag](#uke12-oppg-kontroll)
+i 12.6 og [de tre første kodeoppgavene](#uke12-python) i 12.7.
+
+**En annen vei: straffemetoden.**
+
+- **Uten et eksplisitt krav:** I stedet for å kreve $h=0$ kan vi minimere
+  $F+\tfrac\mu2h^2$ uten krav, med et stort tall $\mu$.
+- **Gradienten:** $\nabla F+(\mu h)\nabla h$. Sammenlign med
+  $\nabla F+\lambda\nabla h$: tallet $\mu h$ spiller rollen til $\lambda$.
+- **Tilnærmingen:** Da blir $h$ liten, men ikke null, og $\mu h$ nærmer seg
+  multiplikatoren. I [prosjekt 12](project_week12.qmd) ser du hva det koster
+  når $\mu$ blir stor.
+
+<details class="reading-step">
+<summary>Gå i dybden: hva rapporterer SLSQP underveis?</summary>
+
+Hvordan kommer SLSQP fram til svaret? Cellen kjører samme søk med en
+`callback` som lagrer punktene SLSQP rapporterer, skriver ut $h$ og $F$ i
+hvert av dem, og tegner dem sammen med nivåkurvene til $F$.
+
+- **Linjestykkene:** Viser bare rekkefølgen.
+- **Mellompunktene:** Trenger ikke ligge på sirkelen. Et punkt utenfor
+  sirkelen kan ha lavere $F$ enn det beste tillatte punktet.
 
 ```{pyodide-python}
 #| label: week12-slsqp-path
-# 1. Bruk rapporterte iterater, og legg til sluttpunktet ved behov.
-track = np.array(path)
-if not np.allclose(track[-1], result.x):
-    track = np.vstack([track, result.x])
-
-# 2. Tegn nivåkurver til målet og hele den tillatte sirkelen.
-u, v = np.meshgrid(np.linspace(-1.2, 2.55, 220),
-                   np.linspace(-1.25, 2.25, 220))
-levels = .5*((u-a[0])**2 + (v-a[1])**2)
-fig, ax = plt.subplots(figsize=(7, 6))
-contours = ax.contour(u, v, levels, levels=[.25, .5, .764, 1., 2., 3.],
-                      colors="0.72", linestyles="dotted")
-ax.clabel(contours, inline=True, fontsize=8, fmt="F = %g")
-angles = np.linspace(0, 2*np.pi, 400)
-ax.plot(np.cos(angles), np.sin(angles), color="tab:blue", lw=2,
-        label="tillatt sirkel h = 0")
-
-# 3. Forbind markørene i rapportert rekkefølge.
-ax.plot(track[:, 0], track[:, 1], "-o", color="tab:orange",
-        lw=1.5, markersize=4, label="rapporterte iterater")
-ax.scatter(*x0, marker="s", s=75, color="tab:purple", zorder=5,
-           label="start")
-exact = a/np.linalg.norm(a)
-ax.scatter(*exact, marker="o", facecolors="none", edgecolors="tab:green",
-           linewidths=2.2, s=260, zorder=5, label="eksakt nærmeste punkt")
-ax.scatter(*result.x, marker="*", s=170, color="tab:red", zorder=6,
-           label="numerisk sluttpunkt")
-# Nummerer bare de første rapporterte iteratene, hvis de finnes.
-for i in range(1, min(4, len(track))):
-    ax.annotate(str(i), track[i], xytext=(5, 6),
-                textcoords="offset points", fontsize=9)
-ax.scatter(*a, marker="x", color="black", s=65, label="målepunkt a")
-ax.set(xlabel="x", ylabel="y", xlim=(-1.2, 2.55), ylim=(-1.25, 2.25))
-ax.set_aspect("equal")
-ax.legend(loc="upper center", bbox_to_anchor=(.5, -.10), ncol=2,
-          frameon=False, fontsize=9)
-fig.tight_layout()
-plt.show()
+x0 = np.array([.4, .9])
+path = [x0.copy()]
+res = minimize(F, x0, jac=grad_F, method='SLSQP',
+               constraints=[{'type': 'eq', 'fun': h, 'jac': grad_h}],
+               callback=lambda zk: path.append(zk.copy()),
+               options={'ftol': 1e-12, 'maxiter': 100})
+print('h i de rapporterte punktene:', ' '.join(f'{h(p):.3f}' for p in path))
+print('F i de rapporterte punktene:', ' '.join(f'{F(p):.3f}' for p in path))
+plot_path_on_circle(path, a)
 ```
 
-<details class="reading-step">
-<summary>Gå i dybden: begge stasjonære punkter i avstandsproblemet</summary>
+Det andre rapporterte punktet har $h=2.021$, langt utenfor sirkelen, og
+$F=0.264$, lavere enn $F=0.764$ i det beste punktet på sirkelen.
 
-Fra $z-a+2\lambda z=0$ følger $z=a/(1+2\lambda)$ når nevneren
-er ulik null. Kravet $\|z\|_2=1$ gir $|1+2\lambda|=\sqrt5$.
-Det finnes dermed to stasjonære sirkelpunkter: det nærmeste
-$a/\sqrt5$ og det fjerneste $-a/\sqrt5$. En null residual alene
-klassifiserer dem ikke. For alle sirkelpunkter gir Cauchy–Schwarz
-$-\sqrt5\le a\cdot z\le\sqrt5$. Siden
-$F(z)=\tfrac12(6-2a\cdot z)$, følger den tosidige grensen
+**Begge stasjonære punkter.**
 
-$$\tfrac12(\sqrt5-1)^2\le F(z)\le\tfrac12(\sqrt5+1)^2.$$
+1. Fra $z-a+2\lambda z=0$ følger $z=a/(1+2\lambda)$.
+2. Kravet gir $|1+2\lambda|=\sqrt5$.
+3. Det nærmeste punktet $a/\sqrt5$ og det fjerneste $-a/\sqrt5$ er begge
+   stasjonære.
 
-De to punktene oppnår hver sin grense.
+Små kontrollfeil alene skiller dem ikke; verdien av $F$ gjør det.
 
 </details>
 
-## 12.4 Degenerasjon og en nedre grense
+<details class="reading-step">
+<summary>Gå i dybden: ulikhetskrav – skiven i stedet for sirkelen</summary>
 
-<div id="uke12-degenerert"></div>
+Hva om punktet bare må ligge **i** skiven, $g(z)=\lVert z\rVert_2^2-1\le0$?
+Da er det to muligheter:
 
-### Når normalen forsvinner
+- Ligger $a$ inne i skiven, er $z=a$ selv svaret. Kravet er **ikke aktivt**,
+  og målet har gradient null der. Vi setter $\lambda=0$.
+- Ligger $a$ utenfor, er svaret på randen, som over. Kravet er **aktivt**.
 
-Lagranges likninger i 12.1 forutsatte at $\nabla h\ne0$.
-Vi prøver et krav som bare tillater ett punkt, for å se hvorfor
-den forutsetningen trengs:
+Begge tilfellene dekkes av **KKT-betingelsene** for en minimering med
+$g\le0$ og $L=F+\lambda g$:
 
-| Rolle | Uttrykk |
-|:--|:--|
-| Mål | $f(x,y)=x$ |
-| Krav | $h(x,y)=x^2+y^2=0$ |
-| Tillatt punkt | Bare $(0,0)$, fordi to kvadrater summerer til null bare der. |
+$$\nabla F+\lambda\nabla g=0,\qquad g\le0,\qquad \lambda\ge0,\qquad \lambda\,g=0.$$
 
-Det eneste tillatte punktet er både globalt minimum og globalt
-maksimum *på den tillatte mengden*. Likevel er
-$\nabla f(0,0)=(1,0)$ og $\nabla h(0,0)=(0,0)$.
-Dermed blir $\nabla f+\lambda\nabla h=(1,0)$ uansett
-hvilket tall vi velger for $\lambda$. Dette er et
-**degenerert krav** i punktet: gradienten til kravet er null,
-så normaltesten fra 12.1 kan overse et ekstremum.
+- **Komplementær slakk:** Den siste likningen er **komplementær slakk** fra
+  [uke 11](uke11.qmd#uke11-slakk): enten er kravet aktivt ($g=0$), eller så
+  er prisen null ($\lambda=0$).
+- **Fortegnskravet:** $\lambda\ge0$ sier at $-\nabla F$, retningen der $F$
+  avtar, peker ut av skiven. Å slippe kravet litt kan bare hjelpe.
 
-### Eksperiment 5 – prøv multiplikatorer ved et degenerert krav
-
-Koden kontrollerer tre valg av $\lambda$. Se at
-stasjonaritetsfeilen ikke endrer seg. Vi fant ekstremum ved å
-undersøke den tillatte mengden direkte.
+Cellen prøver begge tilfellene med SLSQP: én $a$ inne i skiven og én
+utenfor. For hvert svar sjekker den om kravet er aktivt, og regner i så fall
+ut $\lambda$ med formelen for minste kvadrater fra 12.5.
 
 ```{pyodide-python}
-#| label: week12-degenerate-experiment
-# 1. Regn ut gradientene i det eneste tillatte punktet.
-p = np.array([0., 0.])
-grad_f = np.array([1., 0.])
-grad_constraint = 2*p
-print("Tillatt punkt:", p)
-print("Målgradient grad f:", grad_f)
-print("Betingelsesgradient grad h:", grad_constraint)
-print("Prøvd multiplikator | stasjonaritetsfeil")
-# 2. Ingen av valgene kan endre grad f når grad h er null.
-for lam_test in [-10, 0, 10]:
-    error = np.linalg.norm(grad_f + lam_test*grad_constraint)
-    print(f"{lam_test:18d} | {error:.1f}")
+#| label: week12-disc
+for a_test in (np.array([.5, .25]), np.array([2., 1.])):
+    r = minimize(lambda q: .5*np.sum((q-a_test)**2), np.zeros(2), method='SLSQP',
+                 constraints=[{'type': 'ineq', 'fun': lambda q: 1 - q @ q}])
+    q = r.x
+    active = abs(1 - q @ q) < 1e-8
+    lam_d = -((q-a_test) @ (2*q))/((2*q) @ (2*q)) if active else 0.
+    print(f'a = {a_test}: z = {q.round(6)}, aktivt: {active}, lambda = {lam_d:.6f}')
 ```
 
-### En multiplikator som gir en nedre grense
+SciPy skriver ulikheter som `fun(z) >= 0`, derfor `1 - q @ q`.
 
-Nå bruker vi avstandsproblemet fra 12.3 til noe annet: å bevise
-en **nedre grense for optimalverdien**. Dette knytter an til
-grensene i [uke 11](uke11.qmd#uke11-dual). Med vår
-fortegnskonvensjon er Lagrangefunksjonen
-$L(z,\lambda)=F(z)+\lambda h(z)$.
+| Punktet vi søker nærmest | Er kravet aktivt? | Multiplikator |
+|:--|:--|:--|
+| $a=(0.5,0.25)$ | Nei | $\lambda=0$ |
+| $a=(2,1)$ | Ja | $\lambda=0.618034=(\sqrt5-1)/2$ |
 
-På sirkelen er $h(z)=0$, og dermed $L(z,\lambda)=F(z)$.
-Hvis vi velger en $\lambda$ slik at $L(z,\lambda)$ aldri
-går under et tall $d$, må også målet ved *ethvert tillatt*
-punkt være minst $d$. Her kan vi finne en slik grense for hånd:
+I det siste tilfellet er multiplikatoren den samme som med sirkelkravet.
 
-1. Velg $\lambda_*=(\sqrt5-1)/2$. Da er Hessianen til
-   $L$ med hensyn til $z$ lik
-   $(1+2\lambda_*)I=\sqrt5 I$. Den er positiv definit
-   (SPD): $L$ er en kvadratisk skål.
-2. Bunnen av skålen finnes ved $\nabla_zL=0$.
-   Det gir $(1+2\lambda_*)z-a=0$ og dermed
-   $z_*=a/\sqrt5$. Siden skålen er SPD, er dette dens
-   globale minimum over alle $z$.
-3. Punktet $z_*$ oppfyller også $\|z_*\|_2=1$.
-   Bunnen av skålen er altså selv tillatt, og grensen er
-   skarp.
-
-For hvert tillatt $z$ følger dermed
-
-$$F(z)=L(z,\lambda_*)\ge L(z_*,\lambda_*)
-=F(z_*)=\tfrac12(\sqrt5-1)^2.$$
-
-I uke 11 ga ressurspriser en **øvre** grense for et maksimalt
-overskudd. Her gir multiplikatoren en **nedre** grense for et
-minimalt mål. Et likningskrav har ingen påtvunget
-fortegnsbetingelse på multiplikatoren. Vi beholder konvensjonen
-$L=f+\lambda h$ gjennom hele uken. Et ulikhetskrav som
-$x^2+y^2\le1$ beskriver hele skiven og er et annet problem.
-
-<details class="reading-step">
-<summary>Gå i dybden: generell dualgrense og regning i eksemplet</summary>
-
-For en minimering med likhetskrav setter vi
-$d(\lambda)=\inf_z L(z,\lambda)$. Siden $F(z)=L(z,\lambda)$
-på alle tillatte punkter, er $d(\lambda)$ en nedre grense for
-den tillatte minimumsverdien, også når grensen er ubrukelig
-($-\infty$). Hvis et tillatt punkt samtidig minimerer $L$ globalt,
-møtes nedre grense og punktets verdi. Likningen $\nabla_zL=0$
-alene er ikke nok til å vise dette.
-
-I vårt eksempel utvider vi kvadratet i $F$ og samler leddene
-med $\|z\|^2$. Siden $\|a\|^2=5$, får vi, når $1+2\lambda>0$,
-
-$$L(z,\lambda)=\tfrac12(1+2\lambda)\|z\|^2-a\cdot z
-+\tfrac52-\lambda.$$
-
-Gradienten med hensyn til $z$ er $(1+2\lambda)z-a$.
-Derfor ligger minimum uten bibetingelser ved
-$z=a/(1+2\lambda)$. Innsetting i $L$ gir
-
-$$d(\lambda)=\tfrac52-\lambda-\frac5{2(1+2\lambda)}.$$
-
-Når $\lambda=\lambda_*=(\sqrt5-1)/2$, blir nevneren
-$1+2\lambda_*=\sqrt5$. Da er minimumspunktet $a/\sqrt5$
-tillatt, og den nedre grensen blir nøyaktig $F(a/\sqrt5)$.
-En slik skarp grense er ikke garantert for enhver likhetsbetingelse.
-
-Hvis målet har enhet kroner og kravet er $h=g-r=0$ målt i
-en ressursenhet, har $\lambda$ enhet kroner per ressursenhet,
-slik at $f+\lambda h$ kan summeres. Når optimal verdi varierer
-glatt med $r$ uten skifte av løsningstype, er $-\lambda$ den
-lokale endringen per ekstra enhet $r$.
+**Øv på dette:** [aktivt eller ikke aktivt krav](#uke12-oppg-skive) i 12.6 (valgfri).
 
 </details>
 
-## 12.5 Regneoppgaver
+### Hva de tolv ukene har bygget
+
+<div id="uke12-avslutning"></div>
+
+Ukens spørsmål var hva som erstatter $\nabla f=0$ når punktet må ligge på en
+kurve. Svaret bygger på tre deler:
+
+- **Finn kandidater:** Lagranges likninger er $h=0$ og
+  $\nabla f+\lambda\nabla h=0$. De gir kandidater, ikke løsninger.
+- **Avgjør hvilken som er best:** Sammenlign verdier eller bruk en global
+  ulikhet.
+- **Regn og kontroller:** For kvadratiske mål ble likningene lineær algebra.
+  Et punkt fra en løser kontrollerte vi med to kontrollfeil.
+
+Slik henger de tolv ukene sammen:
+
+| Uker | Det vi bygget |
+|:--|:--|
+| 1–7 | Flyttall og avrunding, iterasjon, likningssystemer, nullrom og rang, minste kvadrater, egenverdier, SPD-matriser og CG, og singulærverdier. |
+| 8 | Eksistens, Hessianen og konveksitet. |
+| 9–10 | Gradient- og Newtonmetoden med kondisjonstallet og Cholesky. |
+| 11–12 | Multiplikatorer som priser og sertifikater. |
+
+Ukene 8–12 brukte altså verktøyene fra ukene 1–7 på optimering.
+[Tre spørsmål](uke8.qmd#uke8-start) har fulgt oss siden uke 8, og underveis
+kom et fjerde til:
+
+1. Finnes det et beste svar?
+2. Hva forteller krumningen?
+3. Er kandidaten vi fant, den beste?
+4. Hvordan kontrollerer vi et tall som en løser gir oss?
+
+Denne uken svarte vi med kompakthet, Lagranges likninger, en global ulikhet
+og to kontrollfeil. Den arbeidsmåten tar du med deg videre: regn ut et svar,
+og kontroller det med et argument eller en uavhengig test.
+
+## 12.6 Regneoppgaver
 
 <div id="uke12-oppgaver"></div>
 
-Oppgave 1–2 bruker normal, tangent og Lagranges likninger fra
-12.1. Oppgave 3 gjelder klassifisering i 12.2, oppgave 4
-betingelsesfeil fra 12.3, og oppgave 5–6 degenerasjon og en
-nedre grense fra 12.4. Begrunn framgangsmåten i egne notater;
-feltene kontrollerer tallene. Skriv eksakte uttrykk som
-`1/sqrt(5)` med mindre oppgaven ber om desimaler.
+Oppgavene er sortert etter de tre ideene. De tre siste hører til «Gå i
+dybden»-boksene og er valgfrie.
+
+- **Arbeidsmåte:** Arbeid på papir først. Begrunnelsene skriver du i egne
+  notater; feltene kontrollerer tallene.
+- **Eksakte svar:** Svar for eksempel `1/sqrt(5)`. I uttrykksfeltene bruker
+  du `*` for multiplikasjon.
+- **Ja/nei:** Skriv **1 for ja, 0 for nei**.
 
 ::: {#week12-exercise-convention .math-exercise-context}
 
-Vi bruker $h=0$ og $L=f+\lambda h$. Ved et regulært ekstremum
-må $h=0$ og $\nabla f+\lambda\nabla h=0$. Løsning av disse
-likningene gir kandidater som må klassifiseres.
+Vi bruker $h=0$ og $L=f+\lambda h$. Ved et regulært ekstremum må $h=0$ og
+$\nabla f+\lambda\nabla h=0$. Løsningene av disse likningene er kandidater
+som må klassifiseres.
 
 :::
 
+### Idé 1: Lagranges likninger og prisen (12.1–12.2)
+
+<div id="uke12-oppg-normal"></div>
+
+Ellipsen $h(x,y)=x^2+4y^2-1=0$ fra 12.1 har sitt øverste punkt i
+$p=(0,1/2)$. Finn normalen $\nabla h(p)$ og en enhetstangent med positiv
+$x$-komponent.
+
 ```{math-exercise}
 #| label: week12-normal-tangent
+#| caption: Normal og tangent i toppen av ellipsen
 #| context: week12-exercise-convention
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: normalens x-komponent, normalens y-komponent, tangentens x-komponent, tangentens y-komponent
-
-**1. Tangent og normal.** La $h(x,y)=x^2+4y^2-1$ og $p=(0,1/2)$.
-Finn $\nabla h(p)$ og en enhetstangent med positiv $x$-komponent.
-Kontroller at skalarproduktet av de to vektorene er null.
 
 $\nabla h(p)=$ vec[0,4]
 
 Enhetstangent $=$ vec[1,0]
 ```
 
+**Forklar:** Kontroller at skalarproduktet av de to vektorene er null. Hva
+betyr det geometrisk?
+
+<div id="uke12-oppg-ellipse"></div>
+
+Maksimer $f(x,y)=2x+y$ når $x^2+4y^2=1$. Bruk substitusjonen $w=2y$, slik at
+kravet blir en sirkel, og bruk Cauchy–Schwarz som i håndeksempelet i 12.2.
+
+```{math-exercise}
+#| label: week12-ellipse-max
+#| caption: Maksimum av 2x + y på ellipsen
+#| context: week12-exercise-convention
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: maksimumspunktets x-koordinat, maksimumspunktets y-koordinat, maksimumsverdi, multiplikator ved maksimum
+
+$(x,y)=$ vec[4/sqrt(17),1/(2*sqrt(17))]
+
+Maksimumsverdi: _[sqrt(17)/2]
+
+$\lambda=$ _[-sqrt(17)/4]
+```
+
+**Forklar:** Kontroller svaret med Lagranges likninger, og kontroller at
+$\nabla h$ er parallell med $(2,1)$ i punktet.
+
+<div id="uke12-oppg-sirkel"></div>
+
+Maksimer $f(x,y)=3x-4y$ på enhetssirkelen, med $h=x^2+y^2-1=0$. Finn
+maksimumspunktet og multiplikatoren.
+
 ```{math-exercise}
 #| label: week12-circle-lagrange
+#| caption: Et lineært mål på sirkelen
 #| context: week12-exercise-convention
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: maksimumspunktets x-koordinat, maksimumspunktets y-koordinat, multiplikator ved maksimum
 
-**2. Lagrange på sirkelen.** Maksimer $f(x,y)=x+2y$ med
-$h=x^2+y^2-1=0$. Finn maksimumspunktet og multiplikatoren
-for $L=f+\lambda h$. Forklar hvorfor verdien er større enn
-ved det motsatte punktet.
+$(x,y)=$ vec[3/5,-4/5]
 
-$(x,y)=$ vec[1/sqrt(5),2/sqrt(5)]
-
-$\lambda=$ _[-sqrt(5)/2]
+$\lambda=$ _[-5/2]
 ```
 
+**Forklar:** Hvorfor er punktet globalt maksimum, og ikke bare en kandidat?
+
+<div id="uke12-oppg-boks"></div>
+
+En sylinderformet boks har radius $x>0$ og høyde $y>0$. Volumet skal være
+$V$, altså $h(x,y)=\pi x^2y-V=0$. Overflaten er $f(x,y)=2\pi x^2+2\pi xy$.
+
+Gradientene er gitt:
+
+$\nabla f=\begin{bmatrix}4\pi x+2\pi y\\2\pi x\end{bmatrix},\qquad
+\nabla h=\begin{bmatrix}2\pi xy\\\pi x^2\end{bmatrix}.$
+
+1. Sett opp vektorlikningen $\nabla f+\lambda\nabla h=0$ sammen med $h=0$.
+2. Bruk den andre komponentlikningen til å finne $\lambda$ uttrykt
+   med $x$, og den første komponentlikningen til å finne forholdet mellom høyde og
+   radius.
+3. Bruk til slutt prisformelen fra 12.2: hvor mye øker minste overflate
+   $A_*$ per enhet ekstra volum?
+
 ```{math-exercise}
-#| label: week12-xy-classification
+#| label: week12-can
+#| caption: Boksen med minst overflate for gitt volum
 #| context: week12-exercise-convention
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: funksjonsverdi, andrederivert langs sirkelen
+#| field-labels: høyde delt på radius, multiplikator som uttrykk i x, økning i overflate per volumenhet
 
-**3. Kandidat og type.** For $f(x,y)=xy$ på sirkelen, bruk
-$p=(1,1)/\sqrt2$. Finn verdien og andrederiverten av
-$f(\cos t,\sin t)$ ved $t=\pi/4$. Forklar hvorfor punktet er
-et maksimum langs sirkelen.
+$y/x=$ _[2]
 
-$f(p)=$ _[1/2]
+$\lambda=$ __[-2/x]
 
-$\frac{d^2}{dt^2}f(\cos t,\sin t)\big|_{t=\pi/4}=$ _[-2]
+$\frac{dA_*}{dV}=$ __[2/x]
 ```
+
+**Forklar:** Hvorfor er ekte hermetikkbokser ofte høyere enn dette? Nevn én
+ting modellen ser bort fra.
+
+### Idé 2: Kandidater, egenverdier og KKT-systemet (12.3–12.4)
+
+<div id="uke12-oppg-form"></div>
+
+La $f(x,y)=x^2+4xy+y^2$ på enhetssirkelen og $p=(1,1)/\sqrt2$.
+
+1. Skriv $f=z^TAz$ med en symmetrisk $A$, og finn egenverdiene og $f(p)$.
+2. Finn multiplikatoren fra $Ap=-\lambda p$.
+3. Krumningen langs sirkelen er gitt av $v^TBv$, der
+   $B=2A+2\lambda I$ og enhetstangenten er $v=(-1,1)/\sqrt2$.
+   Regn ut matriseproduktet. Hva forteller fortegnet om kandidaten $p$?
+
+```{math-exercise}
+#| label: week12-quadratic-form
+#| caption: Kandidat, krumning og egenverdier for en kvadratisk form
+#| context: week12-exercise-convention
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: funksjonsverdi i p, tangentkrumning v^T B v, største egenverdi, minste egenverdi, multiplikator i p
+
+$f(p)=$ _[3]
+
+$v^TBv=$ _[-8]
+
+Egenverdier til $A$: største _[3], minste _[-1]
+
+$\lambda$ i $p$: _[-3]
+```
+
+<div id="uke12-oppg-strekk"></div>
+
+La $B=\begin{bmatrix}3&0\\4&5\end{bmatrix}$. Maksimer
+$\lVert Bz\rVert_2^2=z^TB^TBz$ når $\lVert z\rVert_2=1$. Regn ut $B^TB$ og
+egenverdiene. Velg maksimumspunktet med positive koordinater.
+
+```{math-exercise}
+#| label: week12-stretch
+#| caption: Største strekk som egenverdiproblem
+#| context: week12-exercise-convention
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: største egenverdi til BᵀB, minste egenverdi til BᵀB, største strekk, maksimumspunktets x-koordinat, maksimumspunktets y-koordinat
+
+Egenverdier til $B^TB$: største _[45], minste _[5]
+
+Største strekk $\max\lVert Bz\rVert_2=$ _[3*sqrt(5)]
+
+Maksimumspunkt $z=$ vec[1/sqrt(2),1/sqrt(2)]
+```
+
+**Forklar:** Sammenlign med `np.linalg.svd(B)`.
+
+<div id="uke12-oppg-kkt"></div>
+
+Minimer $f(x,y)=x^2+y^2$ når $x+2y=5$. Skriv Lagranges likninger som et
+$3\times3$-system $K(x,y,\lambda)^T=(0,0,5)^T$ og løs det. Regn ut
+determinanten til $K$, og avgjør om $K$ er SPD.
+
+```{math-exercise}
+#| label: week12-kkt
+#| caption: KKT-systemet for nærmeste punkt på en linje
+#| context: week12-exercise-convention
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: x, y, multiplikator, determinant til K, K er SPD
+
+$(x,y)=$ vec[1,2]
+
+$\lambda=$ _[-2]
+
+$\det K=$ _[-10]
+
+$K$ er SPD: _[0]
+```
+
+**Forklar:** Hvorfor viser fortegnet til determinanten alene at $K$ ikke er
+SPD?
+
+### Idé 3: Kontroller et numerisk svar (12.5)
+
+<div id="uke12-oppg-kontroll"></div>
+
+I avstandsproblemet fra 12.5 er $a=(2,1)$,
+$F(z)=\tfrac12\lVert z-a\rVert_2^2$ og $h(z)=\lVert z\rVert_2^2-1$. En løser
+rapporterer $z=(1,0)$ og $\lambda=1/2$. Regn ut begge kontrollfeilene.
 
 ```{math-exercise}
 #| label: week12-numeric-check
+#| caption: To kontrollfeil for et feil forslag
 #| context: week12-exercise-convention
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: betingelsesfeil, stasjonaritetsfeil
 
-**4. Kontroller et numerisk forslag.** I avstandsproblemet er
-$a=(2,1)$, $F(z)=\tfrac12\|z-a\|^2$, $h(z)=\|z\|^2-1$.
-En løser rapporterer $z=(1,0)$ og $\lambda=1/2$.
-Regn ut $|h(z)|$ og $\|\nabla F(z)+\lambda\nabla h(z)\|_2$.
-Hvilken kontroll avslører at dette ikke er et stasjonært punkt?
-
 $|h(z)|=$ _[0]
-Stasjonaritetsfeil $=$ _[1]
+
+$\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2=$ _[1]
 ```
+
+**Forklar:** Hvilken kontroll avslører at punktet ikke er stasjonært? Kan en
+annen $\lambda$ gjøre stasjonaritetsfeilen mindre?
+
+### Til fordypningene (valgfritt)
+
+<div id="uke12-oppg-degenerert"></div>
+
+Hører til «Gå i dybden: når normalen forsvinner» i 12.2. La $f(x,y)=x+3y$ og
+$h(x,y)=x^2+y^2=0$. Finn det eneste tillatte punktet og $\nabla h$ der.
 
 ```{math-exercise}
 #| label: week12-degenerate-check
+#| caption: Et krav uten normal
 #| context: week12-exercise-convention
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: punktets x-koordinat, punktets y-koordinat, betingelsesgradientens x-komponent, betingelsesgradientens y-komponent
-
-**5. Degenerert likning.** La $f(x,y)=x+3y$ og
-$h(x,y)=x^2+y^2=0$. Finn det eneste tillatte punktet og
-$\nabla h$ der. Forklar hvorfor ingen multiplikator kan gjøre
-$\nabla f+\lambda\nabla h=0$, selv om punktet er et optimum.
+#| field-labels: punktets x-koordinat, punktets y-koordinat, x-komponent av grad h, y-komponent av grad h
 
 Tillatt punkt $=$ vec[0,0]
 
-$\nabla h(0,0)=$ vec[0,0]
+$\nabla h=$ vec[0,0]
 ```
+
+**Forklar:** Hvorfor kan ingen multiplikator gjøre $\nabla f+\lambda\nabla h=0$,
+selv om punktet er et optimum?
+
+<div id="uke12-oppg-grense"></div>
+
+Hører til «Gå i dybden: en multiplikator gir en nedre grense» i 12.2. Bruk
+$F(z)=\tfrac12\lVert z-(2,1)\rVert_2^2$, $h(z)=\lVert z\rVert_2^2-1$ og
+$\lambda=1/2$. Da er $L=F+\lambda h$ kvadratisk.
+
+Finn:
+
+1. $c$ slik at Hessianen til $L$ er $cI$,
+2. minimumsverdien av $L$ over alle $z$,
+3. $F(1,0)$.
 
 ```{math-exercise}
 #| label: week12-dual-bound
+#| caption: En nedre grense fra Lagrangefunksjonen
 #| context: week12-exercise-convention
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: SPD Hessianverdi, minste verdi av L, F i tillatt punkt
-
-**6. En nedre grense.** Bruk $F(z)=\tfrac12\|z-(2,1)\|^2$,
-$h(z)=\|z\|^2-1$ og $\lambda=1/2$. Da er
-$L=F+\lambda h$ en kvadratisk funksjon.
-Finn tallet $c$ slik at Hessianen til $L$ er $cI$.
-Finn deretter minimumsverdien av $L$ over alle $z$, og
-verdien $F(1,0)$ i ett tillatt punkt. For å avgjøre om nedre grense
-er skarp, sammenlign den med den eksakte minimumsverdien
-$\tfrac12(\sqrt5-1)^2$ fra 12.3. Begrunn i egne notater.
+#| field-labels: tallet c i Hessianen, minste verdi av L, F i punktet (1 0)
 
 $c=$ _[2]
-$\min_z L(z,1/2)=$ _[3/4]
+
+$\min_zL(z,1/2)=$ _[3/4]
+
 $F(1,0)=$ _[1]
 ```
 
-## 12.6 Python: prøv kontrollene selv
+**Forklar:** Er grensen skarp? Sammenlign med $\tfrac12(\sqrt5-1)^2$.
+
+<div id="uke12-oppg-skive"></div>
+
+Hører til «Gå i dybden: ulikhetskrav» i 12.5. Finn punktet i skiven
+$\lVert z\rVert_2^2\le1$ som ligger nærmest $a$, med
+$F=\tfrac12\lVert z-a\rVert_2^2$, $g=\lVert z\rVert_2^2-1$ og $L=F+\lambda g$.
+Gjør det for $a=(0.3,0.4)$ og for $a=(0,3)$.
+
+```{math-exercise}
+#| label: week12-disc-kkt
+#| caption: Aktivt eller ikke aktivt krav i skiven
+#| context: week12-exercise-convention
+#| mode: equivalent
+#| partial-credit: true
+#| field-labels: aktivt for a=(0.3 0.4), multiplikator for a=(0.3 0.4), x-koordinat for a=(0 3), y-koordinat for a=(0 3), multiplikator for a=(0 3)
+
+$a=(0.3,0.4)$: aktivt _[0], $\lambda=$ _[0]
+
+$a=(0,3)$: $z=$ vec[0,1], $\lambda=$ _[1]
+```
+
+**Forklar:** Kontroller fortegnskravet og komplementær slakk i begge
+tilfellene.
+
+## 12.7 Python: prøv kontrollene selv
 
 <div id="uke12-python"></div>
 
-Importene av NumPy som `np` og Matplotlib som `plt` står i første kodecelle.
-Oppgavene nedenfor har egne importer og definisjoner og kan kjøres
-uavhengig av forsøkene over. Fyll bare hullene merket `TODO`.
-Testene kontrollerer resultatene uten å vise løsningen.
+Oppgavene har egne importer og definisjoner og kan kjøres uavhengig av
+forsøkene. Fyll bare hullene merket `TODO`. Kontrollene vurderer resultatet
+uten å vise løsningen.
 
-**Oppgave 1 – normal og tangent.** For
-$h(x,y)=x^2+4y^2-1$, returner gradienten som en vektor.
-Den ferdige kontrollen undersøker normalens komponenter; tangentene
-fra 12.1 står vinkelrett på denne normalen.
+<div id="uke12-scipy"></div>
+
+<details>
+<summary>SciPy-oppslag: SLSQP og multiplikatoren</summary>
+
+| Uttrykk | Betydning |
+|:--|:--|
+| `method="SLSQP"` | En metode i `minimize` som tar imot likhets- og ulikhetskrav. |
+| `{"type": "eq", "fun": h, "jac": grad_h}` | Krever $h(z)=0$ og oppgir gradienten (normalen). |
+| `{"type": "ineq", "fun": lambda z: -g(z)}` | Krever at funksjonen er $\ge0$. Et krav $g(z)\le0$ sendes derfor som $-g$. |
+| `options={"ftol": 1e-12, "maxiter": 100}` | Løserens stopptoleranse og grense for antall iterasjoner. |
+| `np.linalg.lstsq(J.T, -grad, rcond=None)[0]` | Multiplikatorene som gjør $\lVert\nabla F+J^T\lambda\rVert_2$ minst, med `grad` $=\nabla F$. |
+
+**Flere krav:** Bruk en liste med ordbøker, eller én `fun` som returnerer
+en vektor og en `jac` som returnerer Jacobimatrisen.
+
+`result.x`, `result.fun` og `result.success` betyr det samme som i
+[uke 8](uke8.qmd#uke8-python-local).
+
+- **Nyere SciPy-versjoner:** Gir også `result.multipliers`, men med motsatt
+  fortegn av vårt ($L=f-\lambda h$).
+- **SciPy 1.14 i nettleseren:** Gir dem ikke.
+- **Vår kontroll:** Vi beregner derfor $\lambda$ selv med `lstsq`, som virker
+  overalt, og kontrollerer $|h|$ og
+  $\lVert\nabla F+\lambda\nabla h\rVert_2$.
+
+</details>
+
+<div id="uke12-py-normal"></div>
+
+**Normalen til ellipsen.** For $h(x,y)=x^2+4y^2-1$ skal
+`grad_h(z)` returnere gradienten som en NumPy-array.
 
 ```{py-exercise}
 #| label: week12-python-normal
@@ -825,32 +1599,29 @@ fra 12.1 står vinkelrett på denne normalen.
 #| show-test-hints: false
 import numpy as np
 
-# En likningsgradient har én komponent per variabel.
 def grad_h(z):
     x, y = z
-    # TODO: Bytt ut begge komponentene med partiellderiverte av h.
+    # TODO: Bytt ut begge komponentene med de partiellderiverte av h.
     return np.array([0., 0.])
 
 ## TESTS ##
-# Test i flere punkter, også et punkt med to ikke-null koordinater.
 assert np.allclose(grad_h(np.array([0., .5])), [0., 4.])
 assert np.allclose(grad_h(np.array([1., 0.])), [2., 0.])
 assert np.allclose(grad_h(np.array([.25, -.5])), [.5, -4.])
 ```
 
-**Oppgave 2 – les et numerisk svar.** For avstandsproblemet fra
-12.3 er målet og de to gradientene gitt. Fullfør funksjonen som
-returnerer begge kontrollfeilene for et foreslått punkt og en
-oppgitt multiplikator. En liten stasjonaritetsfeil kan ikke erstatte
-en liten betingelsesfeil.
+<div id="uke12-py-kontroll"></div>
+
+**Les et numerisk svar.** For avstandsproblemet i 12.5 skal
+`check(z, lam)` returnere betingelsesfeilen $|h(z)|$ og
+stasjonaritetsfeilen $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$.
 
 ```{py-exercise}
 #| label: week12-python-residuals
-#| caption: Kontroller mulighet og stasjonaritet
+#| caption: Kontroller betingelsesfeil og stasjonaritet
 #| show-test-hints: false
 import numpy as np
 
-# Definer hele modellen lokalt, så cellen kan kjøres alene.
 a = np.array([2., 1.])
 
 def h(z):
@@ -870,18 +1641,15 @@ def check(z, lam):
     return feasibility, stationarity
 
 ## TESTS ##
-# Ett punkt er tillatt, men ikke stasjonært; det andre er ikke tillatt.
 assert np.allclose(check(np.array([1., 0.]), .5), (0., 1.))
 assert np.allclose(check(np.array([0., 0.]), 0.), (1., np.sqrt(5)))
-# Den eksakte løsningen tilfredsstiller begge kontrollene.
-exact = a/np.sqrt(5)
-assert np.allclose(check(exact, (np.sqrt(5)-1)/2), (0., 0.), atol=1e-12)
+assert np.allclose(check(a/np.sqrt(5), (np.sqrt(5)-1)/2), (0., 0.), atol=1e-12)
 ```
 
-**Oppgave 3 – send likningen til SLSQP.** Mål og gradient er
-ferdig definert. Fyll inn den ene ordboken som angir
-$h(z)=0$ og dens gradient, og returner løserresultatet.
-SLSQP kan starte utenfor sirkelen; kontrollen gjelder sluttpunktet.
+<div id="uke12-py-slsqp"></div>
+
+**Send kravet til SLSQP.** Fyll inn ordboken som angir
+$h(z)=0$ og gradienten.
 
 ```{py-exercise}
 #| label: week12-python-slsqp
@@ -890,7 +1658,6 @@ SLSQP kan starte utenfor sirkelen; kontrollen gjelder sluttpunktet.
 import numpy as np
 from scipy.optimize import minimize
 
-# Målfunksjon og gradient er gitt; oppgaven gjelder constraints.
 a = np.array([2., 1.])
 
 def F(z):
@@ -908,37 +1675,47 @@ def grad_h(z):
 def solve(start):
     # TODO: Sett inn ordboken med type 'eq', fun h og jac grad_h.
     condition = None
-    # Den oppgitte metoden og målgradienten er klare.
     return minimize(F, start, jac=grad_F, method="SLSQP",
                     constraints=[condition], options={"ftol": 1e-12})
 
 ## TESTS ##
-# To starter skal begge gi et tillatt punkt nær det håndregnede svaret.
 for start in (np.array([.4, .9]), np.array([1., 0.])):
     result = solve(start)
-    assert result.success
     assert abs(h(result.x)) < 1e-8
     assert np.allclose(result.x, a/np.sqrt(5), atol=1e-6)
 ```
 
-<div id="uke12-scipy"></div>
+<div id="uke12-py-kkt"></div>
 
-<details>
-<summary>SciPy-oppslag: det nye ved SLSQP</summary>
+**KKT-systemet og pseudoinversen.** *Valgfri: bygger på den valgfrie fanen
+[7.7](uke7.qmd#uke7-pseudoinvers).* Minimer $\tfrac12\lVert z\rVert_2^2$ når
+$Cz=d$.
 
-| Uttrykk | Betydning i avstandsproblemet |
-|:--|:--|
-| `method="SLSQP"` | Velger en numerisk metode som kan bruke likhetsbetingelser. |
-| `{"type":"eq", "fun":h, "jac":grad_h}` | Krever $h(z)=0$ og oppgir gradienten som normalvektor. For flere likninger brukes flere slike ordbøker. |
-| `callback=save_iterate` | Lagrer rapporterte iterater; de behøver ikke ligge på den tillatte kurven. |
-| `options={"ftol":1e-12, "maxiter":100}` | Setter løserens interne stopptoleranse og grense for iterasjoner; kontroller residualene selv. |
+1. Bygg blokkmatrisen $K=\begin{bmatrix}I&C^T\\C&0\end{bmatrix}$ med
+   `np.block`.
+2. Løs $K(z,\lambda)^T=(0,d)^T$ og returner bare $z$.
+3. Sammenlign etterpå med `np.linalg.pinv(C) @ d`.
 
-`result.x`, `result.fun` og `result.success` har samme betydning som
-ved de frie søkene i [uke 8](uke8.qmd#uke8-python-local): punkt,
-verdi og rapportert stopp. Her må vi i tillegg kontrollere $|h|$
-og $\|\nabla F+\lambda\nabla h\|_2$. Koden i 12.3 beregner selv
-$\lambda$ med vår fortegnskonvensjon.
+```{py-exercise}
+#| label: week12-python-kkt
+#| caption: Løs et KKT-system og sammenlign med pseudoinversen
+#| show-test-hints: false
+import numpy as np
 
-</details>
+C = np.array([[1., 1, 1], [1, -1, 2]])
+d = np.array([3., 1])
+
+def kkt_min_norm(C, d):
+    m, n = C.shape
+    # TODO: Bygg K med np.block, høyresiden (0, d), løs og returner z (de n første).
+    return np.zeros(n)
+
+## TESTS ##
+z = kkt_min_norm(C, d)
+assert np.allclose(C @ z, d)
+assert np.allclose(z, np.linalg.pinv(C) @ d)
+C2 = np.array([[1., 2, 0, 1]]); d2 = np.array([4.])
+assert np.allclose(kkt_min_norm(C2, d2), np.linalg.pinv(C2) @ d2)
+```
 
 :::

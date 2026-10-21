@@ -27,7 +27,7 @@ Alle tre reglene har $\sqrt2$ som fikspunkt, men de beveger seg svært forskjell
 Koden under kjører de tre reglene med `fixed_point` fra fanen «Implementasjon». For hver kjøring viser plottet
 
 - **skrittlengden** $|x_n-x_{n-1}|$, som måler hvor mye den lagrede verdien endret seg,
-- **residualen** $|f(x_n)|=|x_n^2-2|$, som måler hvor godt den siste verdien oppfyller ligningen.
+- **residualen** $|f(x_n)|=|x_n^2-2|$, som måler hvor godt den siste verdien oppfyller likningen.
 
 En kjøring kan bare godkjennes dersom residualen er under systemkravet. En stoppmelding er ikke nok i seg selv.
 
@@ -53,27 +53,8 @@ for name, update in updates.items():
         atol=1e-10, rtol=1e-10, maxiter=10
     )
 
-plt.close("all")
-fig, axes = plt.subplots(1, 3, figsize=(12, 4.2), sharey=True)
-
-for ax, name in zip(axes, ["A", "B", "C"]):
-    run = runs[name]
-    iterations = np.arange(1, run["iterations"] + 1)
-    ax.semilogy(iterations, run["steps"], "o-", label="skrittlengde")
-    ax.semilogy(iterations, run["residuals"][1:], "s-", label="residual")
-    ax.axhline(1e-8, color="black", linestyle="--",
-               linewidth=1, label="krav til residual")
-    ax.set_title(f"Kjøring {name}\nStopp: {run['reason']}")
-    ax.set_xlabel("Iterasjon")
-    ax.set_xticks(iterations)
-    ax.grid(True, which="both", alpha=0.3)
-
-axes[0].set_ylabel("Størrelse (logaritmisk skala)")
-axes[0].set_ylim(1e-16, 3)
-axes[2].legend(loc="lower left", fontsize=8)
-fig.suptitle("Tre kjøringer av samme ligning")
-fig.tight_layout()
-plt.show()
+# Tegnekoden ligger i oppsettet.
+plot_runs(runs, requirement=1e-8)
 
 for name in ["A", "B", "C"]:
     run = runs[name]
@@ -151,11 +132,7 @@ For B hjelper det ikke bare å øke `maxiter`: regelen fortsetter å sende $1$ t
 
 #### Forbedre stoppkontrollen
 
-Funksjonen `fixed_point` godkjenner nå et resultat når skrittlengden alene er liten. I en beregning med et eget residualkrav bør begge kravene være oppfylt:
-
-```python
-step <= step_tolerance and residual_value <= residual_tolerance
-```
+Funksjonen `fixed_point` godkjenner nå et resultat når skrittlengden alene er liten. I en beregning med et eget residualkrav bør begge kravene være oppfylt. I Python kobler vi to krav med `and`: uttrykket `a and b` er sant bare når både `a` og `b` er sanne.
 
 Bruk den redigerbare cellen under som en liten testbenk. Endre bare linjen med `return`, slik at alle tre kontrollene skriver `bestått`.
 
@@ -176,4 +153,4 @@ for description, step, step_tol, residual, residual_tol, expected in test_cases:
     print(f"{description:29s}: {status}")
 ```
 
-Når alle testene består, har stoppkontrollen skilt mellom «verdien endrer seg nesten ikke» og «verdien oppfyller ligningen godt nok». Det er denne forskjellen som gjør at A kan godkjennes, mens C må undersøkes videre.
+Når alle testene består, har stoppkontrollen skilt mellom «verdien endrer seg nesten ikke» og «verdien oppfyller likningen godt nok». Det er denne forskjellen som gjør at A kan godkjennes, mens C må undersøkes videre.

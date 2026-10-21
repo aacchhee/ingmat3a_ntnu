@@ -1,11 +1,6 @@
-#### Les nøyaktighet fra et semilogaritmisk plott
+#### Les nøyaktighet fra plott
 
-Når feilene blir små, kan de variere fra tideler til milliarddeler på få iterasjoner. På en vanlig loddrett akse blir de minste verdiene presset sammen nær null. Et **semilogaritmisk plott**, ofte kalt et `semilogy`-plott i Python, løser dette ved å bruke
-
-- en vanlig, lineær akse for iterasjonsnummeret $n$, og
-- en logaritmisk akse for den absolutte feilen $|e_n|$.
-
-På den logaritmiske aksen betyr like store loddrette avstander like store *faktorer*, ikke like store differanser. Ett hovedtrinn ned fra $10^{-3}$ til $10^{-4}$ betyr at feilen er delt på $10$. En rett, synkende linje betyr derfor at feilen reduseres med omtrent samme faktor i hvert steg. En kurve som blir stadig brattere, kan tyde på raskere konvergens, for eksempel kvadratisk konvergens.
+Husk fra 2.3: på en logaritmisk akse betyr like store avstander like store *faktorer*.
 
 Vi sammenligner tre fikspunktiterasjoner som alle har fikspunktet $r=0$:
 
@@ -17,34 +12,22 @@ Vi sammenligner tre fikspunktiterasjoner som alle har fikspunktet $r=0$:
 
 For de lineære reglene blir feilen multiplisert med henholdsvis $0.8$ og $0.1$ i hvert steg. For den grønne kurven er $e_{n+1}=e_n^2$, så antallet korrekte desimaler vokser mye raskere når feilen først er liten.
 
+Cellen regner ut de tre feilhistoriene og tegner dem på en logaritmisk akse.
+
 ```{pyodide-python}
 #| canvas: false
 
 def error_history(g, x0, number_of_steps):
-    values = iterate(g, x0, number_of_steps)
-    return np.abs(values)  # Fikspunktet er r = 0
+    return np.abs(iterate(g, x0, number_of_steps))  # Fikspunktet er r = 0
 
-steps = np.arange(6)
 errors_slow = error_history(lambda x: 0.8*x, 0.1, 5)
 errors_fast = error_history(lambda x: 0.1*x, 0.1, 5)
 errors_quadratic = error_history(lambda x: x**2, 0.3, 5)
 
-plt.close("all")
-fig, ax = plt.subplots(figsize=(8, 6))
-ax.semilogy(steps, errors_slow, "o-", color="tab:blue",
-            label="Blå: langsom lineær")
-ax.semilogy(steps, errors_fast, "o-", color="tab:orange",
-            label="Oransje: rask lineær")
-ax.semilogy(steps, errors_quadratic, "o-", color="tab:green",
-            label="Grønn: kvadratisk")
-ax.set_xticks(steps)
-ax.set_ylim(1e-18, 1)
-ax.set_xlabel("Iterasjon $n$")
-ax.set_ylabel("Absolutt feil $|e_n|$")
-ax.set_title("Tre typer konvergens")
-ax.grid(True, which="both", alpha=0.35)
-ax.legend()
-plt.show()
+# Tegnekoden ligger i oppsettet.
+plot_error_curves([errors_slow, errors_fast, errors_quadratic],
+                  ["Blå: langsom lineær", "Oransje: rask lineær", "Grønn: kvadratisk"],
+                  "Tre typer konvergens", ylim=(1e-18, 1))
 ```
 
 ::: {#semilogy-decimals-context .math-exercise-context}
@@ -88,8 +71,6 @@ Blå kurve: _[0]
 Oransje kurve: _[1]
 Grønn kurve: _[8]
 ```
-
-#### Klikk på iteratet med sju korrekte desimaler
 
 Den interaktive grafen nedenfor viser den raske lineære iterasjonen $x_{n+1}=0.1x_n$ med $x_0=0.1$. Det er den samme oransje kurven som i semilogy-plottet, forlenget med noen steg.
 
@@ -212,8 +193,6 @@ JXG.QuartoAssessment.register({
 
 Klikk på punktet på kurven som viser at iteratet har sju korrekte desimaler.
 ```
-
-#### Finn det første kvadratiske iteratet som passerer sju desimaler
 
 Den grønne iterasjonen $x_{n+1}=x_n^2$ med $x_0=0.3$ konvergerer kvadratisk mot fikspunktet $r=0$. Her finnes det ikke nødvendigvis et iterat med *akkurat* sju korrekte desimaler: Kvadratisk konvergens kan hoppe over flere nivåer i ett steg.
 
@@ -361,4 +340,37 @@ JXG.QuartoAssessment.register({
 #|       return {"score": 0, "feedback": "Ikke helt. Finn det første punktet under linjen |e_n| = 5·10^(-8)."}
 
 Klikk på det første grønne punktet som har minst sju korrekte desimaler.
+```
+
+<div id="uke2-ov-23b"></div>
+
+#### Hvor lenge må vi iterere?
+
+::: {#error-table-factor-context .math-exercise-context}
+
+En fikspunktiterasjon gir disse absolutte feilene:
+
+| $n$ | $0$ | $1$ | $2$ | $3$ |
+|:--|--:|--:|--:|--:|
+| $\lvert e_n\rvert$ | $4.0\cdot10^{-2}$ | $2.4\cdot10^{-2}$ | $1.44\cdot10^{-2}$ | $8.64\cdot10^{-3}$ |
+
+Anta at modellen $|e_{n+1}|\approx S|e_n|$ fra 2.3 fortsetter å gjelde med samme $S$. Kriteriet for fire korrekte desimaler er $|e_n|<\frac12 10^{-4}$.
+
+:::
+
+```{math-exercise}
+#| label: error-table-factor
+#| caption: Konvergensfaktor og antall steg fra en feiltabell
+#| mode: numeric
+#| tolerance: 1%
+#| partial-credit: true
+#| field-labels: konvergensfaktoren S, antall ekstra steg etter n=3
+#| context: error-table-factor-context
+
+Les av konvergensfaktoren $S$ fra tabellen. Hvor mange steg **etter** $n=3$ trengs før feilen gir minst fire korrekte desimaler?
+
+Svarformat: Skriv $S$ som et desimaltall med punktum og antall steg som et heltall.
+
+$S\approx$ _[0.6]
+Antall ekstra steg: _[11]
 ```

@@ -1,0 +1,9 @@
+---
+title: "Prosjekt 12 – Kjettingen som henger"
+resources:
+  - ../assets/project_week12_setup.py
+---
+
+{{< include ../_includes/projects/week12_setup.md >}}
+
+{{< include ../_includes/projects/week12_chain.md >}}

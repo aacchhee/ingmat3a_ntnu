@@ -19,6 +19,7 @@ ett eget forsøk som undersøker når denne ideen hjelper.
 Du får ferdig CG, forsøksdata og plotteverktøy. Kodeoppgaven består
 av tre uttrykk i PCG. Den viktigste jobben er å **begrunne at
 problemet er bevart, forutsi virkningen og tolke resultatene**.
+Sett av omtrent 4–6 timer.
 
 ### En vei gjennom prosjektet
 

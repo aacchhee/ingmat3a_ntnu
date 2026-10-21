@@ -1,6 +1,6 @@
 # Floating-point attack
 
-Dette prosjektet er laget for omtrent **2–3 timer selvstendig arbeid**.
+Dette prosjektet er laget for omtrent **4–6 timer selvstendig arbeid**.
 
 Du har allerede sett at en datamaskin ikke kan lagre alle reelle tall nøyaktig. Her skal vi ikke bruke tiden på å se de samme eksemplene én gang til. I stedet skal vi gjøre noe mer aktivt:
 

@@ -1,6 +1,6 @@
 #### Når tallformatet setter en grense
 
-Vi bruker Newton-iterasjonen for $\sqrt{2}$,
+Vi bruker iterasjonen for $\sqrt{2}$ som vi bygger i 2.5,
 
 $$
 x_{n+1}=\frac12\left(x_n+\frac{2}{x_n}\right),
@@ -31,12 +31,8 @@ x32 = np.float32(1.0)
 x64 = 1.0
 errors32 = []
 errors64 = []
-values32 = []
-values64 = []
 
 for _ in range(number_of_steps + 1):
-    values32.append(x32)
-    values64.append(x64)
     errors32.append(error_against_reference(x32))
     errors64.append(error_against_reference(x64))
 
@@ -45,24 +41,13 @@ for _ in range(number_of_steps + 1):
     )
     x64 = (x64 + 2.0/x64) / 2.0
 
-steps = np.arange(number_of_steps + 1)
-
-plt.close("all")
-fig, ax = plt.subplots(figsize=(8, 6))
-ax.semilogy(steps, errors32, "o-", color="tab:blue",
-            label="binary32")
-ax.semilogy(steps, errors64, "o-", color="tab:orange",
-            label="binary64")
-ax.set_xticks(steps)
-ax.set_xlabel("Iterasjon $n$")
-ax.set_ylabel(r"Absolutt feil $|x_n-\sqrt{2}|$")
-ax.set_title("Samme iterasjon i binary32 og binary64")
-ax.grid(True, which="both", alpha=0.35)
-ax.legend()
-plt.show()
+# Tegnekoden ligger i oppsettet.
+plot_error_curves([errors32, errors64], ["binary32", "binary64"],
+                  "Samme iterasjon i binary32 og binary64",
+                  ylabel=r"Absolutt feil $|x_n-\sqrt{2}|$")
 ```
 
-Begge kurvene faller raskt i starten fordi Newtons metode konvergerer kvadratisk nær løsningen. Etter noen steg blir hver kurve vannrett. Dette **feilplatået** betyr at tallformatet ikke kan lagre en bedre tilnærming med denne iterasjonen. Flere steg gjentar bare samme lagrede verdi.
+Begge kurvene faller raskt i starten fordi iterasjonen konvergerer kvadratisk nær løsningen (det forklarer vi i 2.5). Etter noen steg blir hver kurve vannrett. Dette **feilplatået** betyr at tallformatet ikke kan lagre en bedre tilnærming med denne iterasjonen. Flere steg gjentar bare samme lagrede verdi.
 
 Legg merke til forskjellen mellom skrittlengde og feil mot referanseverdien: Når to påfølgende lagrede verdier er like, er skrittlengden $|x_{n+1}-x_n|=0$. Feilen mot den mer presise referansen er likevel ikke null. Et stopp på grunn av null skrittlengde betyr derfor «ingen videre endring i dette tallformatet», ikke «eksakt løsning».
 

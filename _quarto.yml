@@ -45,13 +45,13 @@ website:
         contents:
           - text: "Uke 8 – introduksjon til optimering"
             file: pages/uke8.qmd
-          - text: "Uke 9 – søk uten deriverte og gradientmetoden"
+          - text: "Uke 9 – gradientmetoden og søk uten deriverte"
             file: pages/uke9.qmd
           - text: "Uke 10 – Newtons metode"
             file: pages/uke10.qmd
           - text: "Uke 11 – lineær programmering"
             file: pages/uke11.qmd
-          - text: "Uke 12 – optimering med bibetingelser"
+          - text: "Uke 12 – optimering med likhetsbetingelser og Lagranges metode"
             file: pages/uke12.qmd
 
       - section: "Projects"
@@ -63,8 +63,10 @@ website:
           - pages/project_week5.qmd
           - pages/project_week6.qmd
           - pages/project_week7.qmd
+          - pages/project_week9.qmd
           - pages/project_week10.qmd
           - pages/project_week11.qmd
+          - pages/project_week12.qmd
 
       - section: "Eksamensoppgaver"
         contents:

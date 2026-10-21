@@ -21,7 +21,7 @@ title: "Uke 2 – fikspunktiterasjon"
 ## 2.4 Feil, residual og toleranse
 {{< include ../_includes/module2/m2_4.md >}}
 
-## 2.5 En robust metode og et raskt eksempel
+## 2.5 Et robust program og et raskt eksempel
 {{< include ../_includes/module2/m2_5.md >}}
 
 :::

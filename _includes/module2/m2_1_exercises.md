@@ -31,12 +31,12 @@ Når uttrykket under rottegnet er negativt, skal den reelle kubikkroten brukes. 
 Bruk iterasjonen
 
 $$
-x_{n+1}=\sqrt[3]{1-x_n},\qquad x_0=0.5.
+x_{n+1}=\sqrt[3]{1-x_n},\qquad x_0=0.2.
 $$
 
 Utfør tre iterasjoner. Oppgi $x_3$ avrundet til tre desimaler.
 
 Svarformat: Skriv ett desimaltall med punktum som desimalskilletegn, for eksempel `0.625`.
 
-$$x_3\approx$$ _[0.742]
+$$x_3\approx$$ _[0.836]
 ```
