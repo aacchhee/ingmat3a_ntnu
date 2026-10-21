@@ -1,14 +1,9 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ::: {.panel-tabset}
 
 ## 9.0 Oversikt
 
-<div id="uke9-start"></div>
+::: {#uke9-start}
+:::
 
 ### Hvordan velger vi neste punkt?
 
@@ -91,7 +86,8 @@ Etter denne uken skal du kunne
 
 ## 9.1 A. Fast steg i én variabel
 
-<div id="uke9-gradient"></div>
+::: {#uke9-gradient}
+:::
 
 | Del | Metoden bruker | Steget velges slik | Hva kan vi love? |
 |:--|:--|:--|:--|
@@ -267,7 +263,8 @@ I to variabler er det to krumninger. Neste fane finner ut hvilken som bestemmer.
 
 ## 9.2 A. Fast steg i to variabler
 
-<div id="uke9-stabilitet"></div>
+::: {#uke9-stabilitet}
+:::
 
 ### Først en diagonal skål
 
@@ -324,8 +321,7 @@ fra [uke 8.3](uke8.qmd#uke8-hessian). Vi finner krumningene slik:
 $\lambda_i>0$, som i $(3,2)$), konvergerer metoden lokalt nøyaktig når
 $\alpha<2/\lambda_{\max}$.
 
-<details class="reading-step">
-<summary>Gå i dybden: hele regningen med en vilkårlig symmetrisk Hessian</summary>
+::: {.reading-step title="Gå i dybden: hele regningen med en vilkårlig symmetrisk Hessian"}
 
 **Feilen ganges med en matrise.** La $e_k=z_k-z_*$. Bruk Taylor på hver
 komponent av gradienten. For $\partial f/\partial x$ gir det
@@ -369,7 +365,7 @@ $$\|(I-\alpha H_*)e_k\|_2^2=(1-\alpha\lambda_1)^2c_1^2+(1-\alpha\lambda_2)^2c_2^
 - **Rekkevidden:** Konklusjonene gjelder derfor **lokalt**, som
   helningsregelen i uke 2. Langt fra $z_*$ sier de ingenting.
 
-</details>
+:::
 
 ::: {.callout-note title="Håndeksempel: det kritiske steget i (3,2)"}
 
@@ -466,7 +462,8 @@ plot_step_factors(lam, marked=[0.005, 0.02, 0.024, 0.025])
 
 **Egenverdiene til Hessianen forutsier både grensen og farten.**
 
-<div id="uke9-kondisjon"></div>
+::: {#uke9-kondisjon}
+:::
 
 ### Det beste faste steget, regnet ut
 
@@ -517,8 +514,7 @@ $$k\approx\frac{\ln(10^{8})}{2/\kappa}=\frac{18.42}{2}\,\kappa\approx9.2\,\kappa
 
 **Antall steg vokser proporsjonalt med kondisjonstallet.**
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor er balansepunktet best, også med flere egenverdier?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor er balansepunktet best, også med flere egenverdier?"}
 
 **Hvorfor balanse?** $S$ er den største av to funksjoner:
 
@@ -538,7 +534,7 @@ større, blir den andre større. Minimum av maksimum ligger derfor der de er lik
 2. Faktoren $|1-\alpha\lambda_i|$ er derfor aldri større enn den største av
    de to ytterste, og svaret endres ikke.
 
-</details>
+:::
 
 For $H(3,2)$ er $\kappa$ bare $3.2$, så eksperiment 1 gikk raskt. På smale
 skåler som i [uke 6](uke6.qmd#uke6-retning) ser vi tydeligere hva regelen betyr:
@@ -552,8 +548,7 @@ skåler som i [uke 6](uke6.qmd#uke6-retning) ser vi tydeligere hva regelen betyr
   verste fall den samme faktoren; det er derfor den gikk i sikksakk i den
   smale skålen.
 
-<details class="reading-step">
-<summary>Gå i dybden: lovene på de smale skålene fra uke 6</summary>
+::: {.reading-step title="Gå i dybden: lovene på de smale skålene fra uke 6"}
 
 Vi bruker $\phi(x)=\tfrac12x^TAx-b^Tx$ med samme dreining og løsning
 $x_*=(1,-1.1)^T$ som i uke 6, men med egenverdier $1$ og $1/\kappa$.
@@ -585,7 +580,7 @@ plot_errors(curves, ylabel='relativ feil', xlog=True)
 
 Gradientmetoden bruker 92, 922 og 9211 steg, nøyaktig som forutsagt.
 
-</details>
+:::
 
 **Dette tar vi med oss fra del A.**
 
@@ -604,7 +599,8 @@ Det problemet løser del B.
 
 ## 9.3 B. Armijo
 
-<div id="uke9-linjesok"></div>
+::: {#uke9-linjesok}
+:::
 
 | Del | Metoden bruker | Steget velges slik | Hva kan vi love? |
 |:--|:--|:--|:--|
@@ -624,8 +620,7 @@ Del A forutsatte at vi kjenner $\lambda_{\max}$ i minimumet. Det gjør vi ikke:
 Vi trenger derfor en regel som velger steget **underveis**. Ideen er enkel:
 prøv et stort steg, og halver det til funksjonen synker nok.
 
-<details class="reading-step">
-<summary>Gå i dybden: det kritiske steget i de fire minimumene</summary>
+::: {.reading-step title="Gå i dybden: det kritiske steget i de fire minimumene"}
 
 Cellen regner ut egenverdiene til Hessianen i hvert av de fire
 minimumspunktene og det kritiske steget $2/\lambda_{\max}$.
@@ -641,7 +636,7 @@ for m in minima:                     # de fire minimumspunktene fra oppsettet
 De kritiske stegene er $0.0243$, $0.0248$, $0.0149$ og $0.0190$. Et fast steg
 på $0.02$ virker i $(3,2)$, men ikke nær minimumet i $(-3.78,\,-3.28)$.
 
-</details>
+:::
 
 ### Armijo-testen
 
@@ -704,8 +699,7 @@ Siste rad kan kontrolleres ledd for ledd:
 
 :::
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor halveringen til slutt finner et steg</summary>
+::: {.reading-step title="Gå i dybden: hvorfor halveringen til slutt finner et steg"}
 
 Vi setter opp funksjonen langs linjen og ser på små steg:
 
@@ -726,7 +720,7 @@ $$\frac{h(\alpha)-h(0)}{\alpha}\le10^{-4}h'(0).$$
 **Forutsetningen:** Uten en nedgangsretning ($\nabla f(z)^Tp<0$) gjelder ikke
 argumentet. En stor fast steglengde har ingen tilsvarende garanti.
 
-</details>
+:::
 
 ### Er Armijo bedre enn et fast steg?
 
@@ -794,8 +788,7 @@ plot_runs(runs, on_map=['fast α=0.02', 'Armijo'])
 Det viktigste er at **Armijo-søket alltid senker $f$**:
 $f(z_{k+1})<f(z_k)$ i hvert steg.
 
-<details class="reading-step">
-<summary>Gå i dybden: det beste steget langs en linje, eller et godt nok steg?</summary>
+::: {.reading-step title="Gå i dybden: det beste steget langs en linje, eller et godt nok steg?"}
 
 **Et lite eksempel.** Ta $q(s)=(s-2)^2$, start i $s_0=0$ og gå i retning $p=1$.
 Langs linjen er verdien $q(\alpha)=(\alpha-2)^2$:
@@ -834,12 +827,12 @@ print(f'gradientnorm i planet:   {np.linalg.norm(line_gradient):.1f}')
 
 Det beste steget langs én linje er derfor sjelden verdt mange ekstra evalueringer.
 
-</details>
+:::
 
-<div id="uke9-scipy"></div>
+::: {#uke9-scipy}
+:::
 
-<details>
-<summary>SciPy-oppslag: ett avgrenset linjesøk (brukt i fordypningen over)</summary>
+::: {.details title="SciPy-oppslag: ett avgrenset linjesøk (brukt i fordypningen over)"}
 
 | Uttrykk | Betydning |
 |:--|:--|
@@ -849,7 +842,7 @@ Det beste steget langs én linje er derfor sjelden verdt mange ekstra evaluering
 | `line.x`, `line.fun`, `line.nfev` | Valgt steglengde, verdi langs linjen og antall evalueringer. |
 | `line.success` | Om rutinen nådde sitt stoppvilkår, ikke et globalt optimalitetsbevis. |
 
-</details>
+:::
 
 **Dette tar vi med oss fra del B.**
 
@@ -867,7 +860,8 @@ Men hva om vi ikke engang kan regne ut gradienten? Det er del C.
 
 ## 9.4 C. Kompassøk
 
-<div id="uke9-kompass"></div>
+::: {#uke9-kompass}
+:::
 
 | Del | Metoden bruker | Steget velges slik | Hva kan vi love? |
 |:--|:--|:--|:--|
@@ -942,7 +936,8 @@ grensene halveres sammen med $\Delta$.
   etter appleten. Bytt så til den andre funksjonen. Klarer du å finne en
   mislykket runde der tangenten ligger utenfor båndet?
 
-<div id="uke9-kompass-applet"></div>
+::: {#uke9-kompass-applet}
+:::
 
 ```{.jsxgraph width="620" height="480" style="width:100%;max-width:620px;height:480px;border:0;"}
 var BIG = [-1.7,2.75,1.7,-1.45], SMALL = [-0.42,0.43,0.52,-0.2];
@@ -1061,8 +1056,7 @@ $$\boxed{\|\nabla f(z)\|_2\le\sqrt n\,\frac{K\Delta}{2}.}$$
 - **Begrensning:** Det sier ikke at punktet er et globalt minimum, og heller
   ikke at det er et minimum.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor gir en mislykket runde en grense for gradienten?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor gir en mislykket runde en grense for gradienten?"}
 
 **I én variabel.** Runden med steg $\Delta$ mislykkes i $x$:
 
@@ -1110,7 +1104,7 @@ $$\|\nabla f(z)\|_2^2=a_1^2+\dots+a_n^2\le n\Bigl(\frac{K\Delta}{2}\Bigr)^2.$$
 Kvadratroten gir grensen. Legg merke til at vi bare trenger de andrederiverte
 langs aksene, $f_{x_ix_i}$, ikke de blandede.
 
-</details>
+:::
 
 ### Er grensen nyttig i praksis?
 
@@ -1159,8 +1153,7 @@ plot_path(path, 'kompass fra (0.3, 0.7)')
   stoppen trengte vi bare et anslag $K$ for krumningen; da vet vi at
   $\|\nabla f\|_2\le0.057$ uten å ha regnet ut gradienten.
 
-<details class="reading-step">
-<summary>Gå i dybden: valg som gir andre baner</summary>
+::: {.reading-step title="Gå i dybden: valg som gir andre baner"}
 
 Vi evaluerer alle fire naboer før vi flytter. Andre valg er mulige:
 
@@ -1172,12 +1165,12 @@ Vi evaluerer alle fire naboer før vi flytter. Andre valg er mulige:
 
 Ingen av variantene utelukker en lavere verdi i en annen dal.
 
-</details>
+:::
 
-<div id="uke9-endelig"></div>
+::: {#uke9-endelig}
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor ikke bare prøve mange punkter?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor ikke bare prøve mange punkter?"}
 
 Kompassøket bruker de punktene det har sett, til å bestemme hvor det prøver
 neste gang. Det enkleste alternativet er å ikke ta steg i det hele tatt, men å
@@ -1245,7 +1238,7 @@ Vandringen kommer et godt stykke ned, men med fast steglengde 0.5 kan den
 aldri komme nærmere et minimum enn det steget tillater. Kompassøket løser det
 ved å halvere steget når en runde mislykkes.
 
-</details>
+:::
 
 **Dette tar vi med oss fra del C.**
 
@@ -1265,7 +1258,8 @@ til at de kommer fram? Det er del D.
 
 ## 9.5 D. Garantien
 
-<div id="uke9-garanti"></div>
+::: {#uke9-garanti}
+:::
 
 | Del | Metoden bruker | Steget velges slik | Hva kan vi love? |
 |:--|:--|:--|:--|
@@ -1396,7 +1390,8 @@ vandre ut.
 - Bytt til **S₈ fra uke 8**, og trykk **+1000 steg** et par ganger.
   Sammenlign med tabellen i eksperiment 5.
 
-<div id="uke9-subniva-applet"></div>
+::: {#uke9-subniva-applet}
+:::
 
 ```{.jsxgraph width="620" height="560" style="width:100%;max-width:620px;height:560px;border:0;"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -1534,8 +1529,7 @@ Garantien sier **stasjonært**, ikke globalt minimum. Om et stasjonært punkt er
 globalt best, er konveksitetsspørsmålet fra [uke 8](uke8.qmd#uke8-lokalt).
 :::
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor finnes grensepunkter, og hvorfor er de stasjonære?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor finnes grensepunkter, og hvorfor er de stasjonære?"}
 
 **Grensepunkter finnes.**
 
@@ -1589,7 +1583,7 @@ $\alpha_k$ være det godtatte steget.
 2. Siden $f$ synker i hver flytting, besøkes ingen av dem to ganger. Før
    eller siden mislykkes derfor en runde, og $\Delta$ halveres.
 
-</details>
+:::
 
 **Koersiv eller ikke?**
 
@@ -1600,8 +1594,7 @@ $\alpha_k$ være det godtatte steget.
   en nødvendig. Armijo-søket finner likevel et minimumspunkt for $(x-y)^2$,
   men det kunne ikke garantien love på forhånd.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvilke funksjoner er koersive?</summary>
+::: {.reading-step title="Gå i dybden: hvilke funksjoner er koersive?"}
 
 **To enkle eksempler.**
 
@@ -1644,7 +1637,7 @@ Den er koersiv.
 - **Har $A$ et nullrom:** Funksjonen er konstant langs det, og da er den
   ikke koersiv (den [flate dalen i uke 8](uke8.qmd#uke8-flat)).
 
-</details>
+:::
 
 ### Tilbake til ukens spørsmål
 
@@ -1670,7 +1663,8 @@ Garantien følger ikke av metoden alene.
 
 ## 9.6 Regneoppgaver
 
-<div id="uke9-oppgaver"></div>
+::: {#uke9-oppgaver}
+:::
 
 Oppgavene er ordnet etter ukens fire deler. Regn uten kode først.
 
@@ -1679,7 +1673,8 @@ Oppgavene er ordnet etter ukens fire deler. Regn uten kode først.
 - **Ja/nei:** Skriv **1 for ja, 0 for nei**.
 - **Begrunnelser:** Skriv dem i egne notater.
 
-<div id="uke9-oppg-a"></div>
+::: {#uke9-oppg-a}
+:::
 
 ### A. Fast steg
 
@@ -1780,7 +1775,8 @@ Antall steg: _[37]
 
 Hvor mange steg ville du vente for $\kappa=40$? Begrunn uten å regne nøyaktig.
 
-<div id="uke9-oppg-b"></div>
+::: {#uke9-oppg-b}
+:::
 
 ### B. Armijo
 
@@ -1827,7 +1823,8 @@ Nytt punkt: $x=$ _[0]
 Hva ville gradientmetoden med fast steg $\alpha=1/2$ gjort fra $x=1$? Sammenlign
 med 2-syklusen i eksperiment 1.
 
-<div id="uke9-oppg-c"></div>
+::: {#uke9-oppg-c}
+:::
 
 ### C. Kompassøk
 
@@ -1894,7 +1891,8 @@ To dimensjoner: _[81]
 Seks dimensjoner: _[531441]
 ```
 
-<div id="uke9-oppg-d"></div>
+::: {#uke9-oppg-d}
+:::
 
 ### D. Garantien
 
@@ -1922,13 +1920,15 @@ Hva kan du si om iteratene til Armijo-søket for hver av de fire funksjonene?
 
 ## 9.7 Python: mål og tilpass
 
-<div id="uke9-python"></div>
+::: {#uke9-python}
+:::
 
 Fullfør én eller to linjer i hver oppgave. Hver celle har egne importer og
 egne funksjonsdefinisjoner og kan kjøres uavhengig. Kontrollene vurderer
 resultatet uten å vise løsningskode.
 
-<div id="uke9-py-a"></div>
+::: {#uke9-py-a}
+:::
 
 ### A. Fast steg
 
@@ -1955,7 +1955,8 @@ assert np.isclose(rate_estimate([10., 1.] + [0.8**k for k in range(20)]), 0.8)
 assert np.isclose(rate_estimate([0.5**k*(1 + 0.5*(-1)**k) for k in range(31)]), 0.5)
 ```
 
-<div id="uke9-py-b"></div>
+::: {#uke9-py-b}
+:::
 
 ### B. Armijo
 
@@ -1985,7 +1986,8 @@ assert np.isclose(accept_or_halve(8., 7.999, -10., 1.), 1.)
 assert np.isclose(accept_or_halve(8., 8.1, -10., 1.), .5)
 ```
 
-<div id="uke9-py-c"></div>
+::: {#uke9-py-c}
+:::
 
 ### C. Kompassøk
 

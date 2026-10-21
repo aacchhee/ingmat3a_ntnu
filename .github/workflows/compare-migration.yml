@@ -9,19 +9,19 @@ permissions:
 
 jobs:
   compare:
-    uses: Erasmus-CTM/ctm-assessment/.github/workflows/compare-courses.yml@74e27b6c693fe45ddff63cfd70ac3cdc4fc027df
+    # This fixed baseline is the acceptance comparison for this migration only.
+    if: ${{ github.head_ref == 'consolidation/2026-10-step4-migration' }}
+    uses: Erasmus-CTM/ctm-assessment/.github/workflows/compare-courses.yml@da154fad5b381c500b5f000fe0dbfecd67d037c8
     with:
-      tooling-ref: 74e27b6c693fe45ddff63cfd70ac3cdc4fc027df
+      tooling-ref: da154fad5b381c500b5f000fe0dbfecd67d037c8
       course: aacchhee/ingmat3a_ntnu
       course-ref: ${{ github.event.pull_request.head.sha }}
       course-base-ref: a0a34ee508fdd4d00e78e7ea782b00a343fcf682
       base: pin
       head: 3d9ebd94565ca302724dc619092ad9d043c1497f
-      # Bootstrap only: recover the authoritative converter output through
-      # the connector before committing and testing the actual migrated sources.
-      convert: true
-      emit-converted-source: true
+      convert: false
+      emit-converted-source: false
       expect: step4-migration.yml
-      browser: false
+      browser: true
       browsers: chromium firefox webkit
       shards: '4'

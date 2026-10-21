@@ -1,6 +1,7 @@
 ## Oppgaver
 
-<div id="uke1-oppg-binaer"></div>
+::: {#uke1-oppg-binaer}
+:::
 
 ### Fra totallssystemet til titallssystemet
 

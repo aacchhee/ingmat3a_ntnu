@@ -69,7 +69,8 @@ stor $1-p_i$. Vi antar at utfallene fra ulike oppskytinger er uavhengige.
 Da måler produktet av disse faktorene hvor sannsynlige de observerte
 utfallene er under modellen.
 
-<div id="project9-two-launches"></div>
+::: {#project9-two-launches}
+:::
 
 For skade ved 58 °F og ingen skade ved 78 °F er produktet
 $p(58)(1-p(78))$. Cellen sammenligner to kurver. Du trenger ikke regne
@@ -123,7 +124,8 @@ Matplotlib. Kopier cellene i rekkefølge, og kontroller med
 Regn med omtrent 4–6 timer inkludert innføringen. Skriv en kort
 forventning før forsøkene og bruk resultatene som grunnlag for svaret.
 
-<div id="project9-start"></div>
+::: {#project9-start}
+:::
 
 ## 1. Her begynner prosjektet: fra formel til metode
 
@@ -159,8 +161,11 @@ def grad(X, beta, yy=damage):
     raise NotImplementedError('Skriv matriseproduktet')
 ```
 
-<div id="project9-gradient-zero"></div>
-<div id="project9-safe-step"></div>
+::: {#project9-gradient-zero}
+:::
+
+::: {#project9-safe-step}
+:::
 
 En ferdig regel fra krumningsgrensen er
 
@@ -245,7 +250,8 @@ for name, X in designs.items():
     print(name, 'singulærverdier:', sv.round(3), 'forhold:', sv[0]/sv[1])
 ```
 
-<div id="project9-centred"></div>
+::: {#project9-centred}
+:::
 
 **b. Kjør og sammenlign.** Tabellen under bruker din `gd` med samme start,
 toleranse og tak på antall steg. Den oppgir også kondisjonstallet til
@@ -275,7 +281,8 @@ for name, X in designs.items():
           np.max(np.abs(1-alpha*lam)), 'L:', loss(X, beta))
 ```
 
-<div id="project9-predict"></div>
+::: {#project9-predict}
+:::
 
 - Hvilke kjøringer nådde toleransen? En avbrutt kjøring teller ikke som en
   rask løsning.
@@ -312,7 +319,8 @@ $2/\lambda_{\max}(H_*)$ den lokale kritiske grensen fra
 [uke 9](uke9.qmd#uke9-stabilitet). Den sier ikke hva en vilkårlig
 start vil gjøre langt fra minimumet.
 
-<div id="project9-critical"></div>
+::: {#project9-critical}
+:::
 
 **a. Forutsi og undersøk.** Sammenlign $\alpha=0.55$, $0.6$ og $1.5$
 med grensen. Tror du større steg alltid betyr mindre arbeid?
@@ -410,7 +418,8 @@ for name, yy in [('virkelige', damage), ('skilte', (temps < 65).astype(float))]:
                   '|gradient|:', np.linalg.norm(grad(X_c, beta, yy)))
 ```
 
-<div id="project9-separated-terms"></div>
+::: {#project9-separated-terms}
+:::
 
 En gitt matematisk egenskap forklarer hva vi må se etter: For full
 separasjon er infimum av $L$ lik 0, men ingen endelig parametervektor

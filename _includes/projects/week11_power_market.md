@@ -56,8 +56,7 @@ verdi null. En aktiv grense kan også ha verdi null. Marginalene er lokale:
 ved større endringer må du løse modellen igjen
 ([uke 11.4](uke11.qmd#uke11-sensitivitet)).
 
-<details>
-<summary>Egen notebook: last ned oppsettet og kom i gang</summary>
+::: {.details title="Egen notebook: last ned oppsettet og kom i gang"}
 
 Last ned [project_week11_setup.py](../assets/project_week11_setup.py){download="project_week11_setup.py"}
 og legg den ved siden av notebooken. Kjør først
@@ -71,7 +70,7 @@ modell- og figurhjelpere. De to studentfunksjonene skriver du selv.
 Kopier cellene i rekkefølge og kontroller med **Restart / Run all** før
 levering. Ta med oppsettsfilen.
 
-</details>
+:::
 
 **Her begynner prosjektarbeidet.** Fra nå av bruker du lineær algebra,
 løserresultater og egne sammenligninger.
@@ -431,7 +430,8 @@ små endringer. En ny løsning og dens slakk viser når du trenger et nytt
 anslag. Skill mellom det prisregelen sier under sine forutsetninger og det
 dine konkrete forsøk viser.
 
-<div id="project11-battery"></div>
+::: {#project11-battery}
+:::
 
 ## Spørsmål du skal kunne svare på
 

@@ -1,14 +1,9 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ::: {.panel-tabset}
 
 ## 12.0 Oversikt
 
-<div id="uke12-start"></div>
+::: {#uke12-start}
+:::
 
 ### Når svaret må ligge på en kurve
 
@@ -86,7 +81,8 @@ Etter denne uken skal du kunne
 
 ## 12.1 Nivålinjen berører kurven
 
-<div id="uke12-tangent"></div>
+::: {#uke12-tangent}
+:::
 
 ### Hva skjer når sirkelen blir en ellipse?
 
@@ -254,7 +250,8 @@ punktet er den null, og i 12.2 regner vi ut punktet eksakt.
 
 ## 12.2 Lagranges likninger
 
-<div id="uke12-lagrange"></div>
+::: {#uke12-lagrange}
+:::
 
 ### To parallelle normaler
 
@@ -337,8 +334,7 @@ gir størst verdi?
 
 :::
 
-<details class="reading-step">
-<summary>Gå i dybden: kjerneregelen langs kurven, og flere krav</summary>
+::: {.reading-step title="Gå i dybden: kjerneregelen langs kurven, og flere krav"}
 
 **Hvorfor normalene er parallelle.** La $p(t)$ være en glatt kurve med
 $h(p(t))=0$ og $p(0)=z_*$. Kjerneregelen gir
@@ -374,12 +370,12 @@ For eksempel gir $x_1^2+x_2^2+x_3^2=1$ og $x_3=0$ i punktet $(1,0,0)$
 normalene $(2,0,0)$ og $(0,0,1)$. Tangentene er $(0,t,0)$. I 12.4 møter vi flere
 lineære krav, og i prosjektet ti krav samtidig.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: når normalen forsvinner</summary>
+::: {.reading-step title="Gå i dybden: når normalen forsvinner"}
 
-<div id="uke12-degenerert"></div>
+::: {#uke12-degenerert}
+:::
 
 Lagranges likninger forutsetter at $\nabla h\ne0$. Se på målet $f(x,y)=x$
 med kravet $h(x,y)=x^2+y^2=0$:
@@ -413,7 +409,7 @@ Ekstremumet fant vi ved å se direkte på den tillatte mengden.
 
 **Øv på dette:** [et krav uten normal](#uke12-oppg-degenerert) i 12.6 (valgfri).
 
-</details>
+:::
 
 ### Et kort regneeksempel: nærmest origo på en linje
 
@@ -452,7 +448,8 @@ $x+y=2$ som ligger nærmest origo, og minimerer kvadrert avstand.
 
 ### Multiplikatoren er en pris
 
-<div id="uke12-pris"></div>
+::: {#uke12-pris}
+:::
 
 Hva skjer med optimal verdi hvis vi flytter kravet litt? La linjen være
 $x+y=r$. Vi bruker samme regning som i håndeksempelet:
@@ -499,8 +496,7 @@ kravet:
 
 **Øv på dette:** [boksen med minst overflate](#uke12-oppg-boks) i 12.6.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor prisformelen gjelder generelt</summary>
+::: {.reading-step title="Gå i dybden: hvorfor prisformelen gjelder generelt"}
 
 La $z(s)$ være løsningen når kravet er $h(z)=s$, og anta at den endrer seg
 glatt med $s$. Da er $f_*(s)=f(z(s))$.
@@ -550,10 +546,9 @@ Differansekvotientene $2.05$, $2.005$ og $2.0005$ nærmer seg $2=-\lambda$.
 - **Mening gjennom prisen:** $-\lambda$ er endringen i optimal verdi når vi
   flytter kravet i den retningen $h$ er skrevet.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: en multiplikator gir en nedre grense</summary>
+::: {.reading-step title="Gå i dybden: en multiplikator gir en nedre grense"}
 
 Lagrangefunksjonen kan også **bevise** en grense for optimal verdi, slik
 dualprisene ga en øvre grense i uke 11. Vi bruker avstandsproblemet som vi
@@ -584,11 +579,12 @@ En slik skarp grense er ikke garantert for alle problemer.
 
 **Øv på dette:** [en nedre grense fra Lagrangefunksjonen](#uke12-oppg-grense) i 12.6 (valgfri).
 
-</details>
+:::
 
 ## 12.3 Kandidater er ikke løsninger
 
-<div id="uke12-kandidater"></div>
+::: {#uke12-kandidater}
+:::
 
 Hittil har eksemplene gitt én eller to kandidater, og det var lett å se
 hvilken som var best. Nå ser vi hva som skjer når likningene gir flere
@@ -689,8 +685,7 @@ Sammenligningen er nok fordi to ting holder her:
 
 **Øv på dette:** [en kvadratisk form på sirkelen](#uke12-oppg-form) i 12.6.
 
-<details class="reading-step">
-<summary>Gå i dybden: andrederivert langs kurven</summary>
+::: {.reading-step title="Gå i dybden: andrederivert langs kurven"}
 
 Vil vi undersøke formen helt nær én kandidat, kan vi følge sirkelen med
 $p(t)=(\cos t,\sin t)$. Da er $f(p(t))=\tfrac12\sin2t$.
@@ -721,11 +716,12 @@ For $f=xy$ er
 $\nabla^2_{zz}L=\left(\begin{smallmatrix}2\lambda&1\\1&2\lambda\end{smallmatrix}\right)$.
 Med $\lambda=-1/2$ og $v=(-1,1)/\sqrt2$ gir formen $-2$, som over.
 
-</details>
+:::
 
 ## 12.4 Lagrange møter lineær algebra
 
-<div id="uke12-egenverdi"></div>
+::: {#uke12-egenverdi}
+:::
 
 ### Kandidattabellen er en egenverditabell
 
@@ -822,7 +818,8 @@ plot_quadratic_on_circle(A)
 
 ### Lineære krav gir et lineært system
 
-<div id="uke12-kkt"></div>
+::: {#uke12-kkt}
+:::
 
 - **Ett lineært krav:** For $c^Tz=d$ er normalen $c$ den samme i alle
   punkter.
@@ -903,8 +900,7 @@ Nullromsmetoden i «Gå i dybden» viser én vei rundt.
 **Øv på dette:** [KKT-systemet for en linje](#uke12-oppg-kkt) i 12.6 og
 [KKT-systemet og pseudoinversen](#uke12-py-kkt) i 12.7.
 
-<details class="reading-step">
-<summary>Gå i dybden: nullrommet, og en vei rundt det indefinitte systemet</summary>
+::: {.reading-step title="Gå i dybden: nullrommet, og en vei rundt det indefinitte systemet"}
 
 **Hvorfor $\nabla f+C^T\lambda=0$ er riktig betingelse.**
 
@@ -957,10 +953,9 @@ plot_nullspace_method(z0, Z, z_best, 2*z_best)
 3. **Velg løser:** Matrisen $Z^TQZ$ er SPD når $Q$ er positiv definitt på
    nullrommet, og da virker både Cholesky og CG igjen.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: det generelle KKT-systemet og pseudoinversen</summary>
+::: {.reading-step title="Gå i dybden: det generelle KKT-systemet og pseudoinversen"}
 
 For $f(z)=\tfrac12z^TQz-b^Tz$ med symmetrisk $Q$ og krav $Cz=d$ er
 $\nabla f=Qz-b$, og Lagranges likninger blir
@@ -988,11 +983,12 @@ som er pseudoinversløsningen $C^+d$ fra [uke 7.7](uke7.qmd#uke7-pseudoinvers)
 når radene i $C$ er uavhengige. Kodeoppgaven
 [KKT-systemet og pseudoinversen](#uke12-py-kkt) i 12.7 kontrollerer dette.
 
-</details>
+:::
 
 ## 12.5 Finn et punkt numerisk og kontroller det
 
-<div id="uke12-slsqp"></div>
+::: {#uke12-slsqp}
+:::
 
 For større problemer, som kjettingen i [prosjekt 12](project_week12.qmd) med ti
 krav, løser vi ikke
@@ -1032,8 +1028,7 @@ Med flere krav bruker vi samme idé:
 Hvorfor vi ikke bruker SciPys egne multiplikatorer, står i
 [SciPy-oppslaget](#uke12-scipy).
 
-<details class="reading-step">
-<summary>Gå i dybden: formelen for multiplikatoren med minst feil</summary>
+::: {.reading-step title="Gå i dybden: formelen for multiplikatoren med minst feil"}
 
 Kvadratet av stasjonaritetsfeilen er et andregradspolynom i $\lambda$:
 
@@ -1047,7 +1042,7 @@ $$\lVert\nabla F+\lambda\nabla h\rVert_2^2=\nabla F\cdot\nabla F
 3. **Kontroller minimum:** Den andrederiverte, $2\lVert\nabla h\rVert_2^2$,
    er positiv når kravet er regulært, så dette er minimum.
 
-</details>
+:::
 
 Nå kan vi prøve alt dette på avstandsproblemet. Målet er å se hva
 kontrollfeilene sier, og hva de ikke sier.
@@ -1129,8 +1124,7 @@ i 12.6 og [de tre første kodeoppgavene](#uke12-python) i 12.7.
   multiplikatoren. I [prosjekt 12](project_week12.qmd) ser du hva det koster
   når $\mu$ blir stor.
 
-<details class="reading-step">
-<summary>Gå i dybden: hva rapporterer SLSQP underveis?</summary>
+::: {.reading-step title="Gå i dybden: hva rapporterer SLSQP underveis?"}
 
 Hvordan kommer SLSQP fram til svaret? Cellen kjører samme søk med en
 `callback` som lagrer punktene SLSQP rapporterer, skriver ut $h$ og $F$ i
@@ -1165,10 +1159,9 @@ $F=0.264$, lavere enn $F=0.764$ i det beste punktet på sirkelen.
 
 Små kontrollfeil alene skiller dem ikke; verdien av $F$ gjør det.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: ulikhetskrav – skiven i stedet for sirkelen</summary>
+::: {.reading-step title="Gå i dybden: ulikhetskrav – skiven i stedet for sirkelen"}
 
 Hva om punktet bare må ligge **i** skiven, $g(z)=\lVert z\rVert_2^2-1\le0$?
 Da er det to muligheter:
@@ -1214,11 +1207,12 @@ I det siste tilfellet er multiplikatoren den samme som med sirkelkravet.
 
 **Øv på dette:** [aktivt eller ikke aktivt krav](#uke12-oppg-skive) i 12.6 (valgfri).
 
-</details>
+:::
 
 ### Hva de tolv ukene har bygget
 
-<div id="uke12-avslutning"></div>
+::: {#uke12-avslutning}
+:::
 
 Ukens spørsmål var hva som erstatter $\nabla f=0$ når punktet må ligge på en
 kurve. Svaret bygger på tre deler:
@@ -1254,7 +1248,8 @@ og kontroller det med et argument eller en uavhengig test.
 
 ## 12.6 Regneoppgaver
 
-<div id="uke12-oppgaver"></div>
+::: {#uke12-oppgaver}
+:::
 
 Oppgavene er sortert etter de tre ideene. De tre siste hører til «Gå i
 dybden»-boksene og er valgfrie.
@@ -1275,7 +1270,8 @@ som må klassifiseres.
 
 ### Idé 1: Lagranges likninger og prisen (12.1–12.2)
 
-<div id="uke12-oppg-normal"></div>
+::: {#uke12-oppg-normal}
+:::
 
 Ellipsen $h(x,y)=x^2+4y^2-1=0$ fra 12.1 har sitt øverste punkt i
 $p=(0,1/2)$. Finn normalen $\nabla h(p)$ og en enhetstangent med positiv
@@ -1297,7 +1293,8 @@ Enhetstangent $=$ vec[1,0]
 **Forklar:** Kontroller at skalarproduktet av de to vektorene er null. Hva
 betyr det geometrisk?
 
-<div id="uke12-oppg-ellipse"></div>
+::: {#uke12-oppg-ellipse}
+:::
 
 Maksimer $f(x,y)=2x+y$ når $x^2+4y^2=1$. Bruk substitusjonen $w=2y$, slik at
 kravet blir en sirkel, og bruk Cauchy–Schwarz som i håndeksempelet i 12.2.
@@ -1320,7 +1317,8 @@ $\lambda=$ _[-sqrt(17)/4]
 **Forklar:** Kontroller svaret med Lagranges likninger, og kontroller at
 $\nabla h$ er parallell med $(2,1)$ i punktet.
 
-<div id="uke12-oppg-sirkel"></div>
+::: {#uke12-oppg-sirkel}
+:::
 
 Maksimer $f(x,y)=3x-4y$ på enhetssirkelen, med $h=x^2+y^2-1=0$. Finn
 maksimumspunktet og multiplikatoren.
@@ -1340,7 +1338,8 @@ $\lambda=$ _[-5/2]
 
 **Forklar:** Hvorfor er punktet globalt maksimum, og ikke bare en kandidat?
 
-<div id="uke12-oppg-boks"></div>
+::: {#uke12-oppg-boks}
+:::
 
 En sylinderformet boks har radius $x>0$ og høyde $y>0$. Volumet skal være
 $V$, altså $h(x,y)=\pi x^2y-V=0$. Overflaten er $f(x,y)=2\pi x^2+2\pi xy$.
@@ -1377,7 +1376,8 @@ ting modellen ser bort fra.
 
 ### Idé 2: Kandidater, egenverdier og KKT-systemet (12.3–12.4)
 
-<div id="uke12-oppg-form"></div>
+::: {#uke12-oppg-form}
+:::
 
 La $f(x,y)=x^2+4xy+y^2$ på enhetssirkelen og $p=(1,1)/\sqrt2$.
 
@@ -1404,7 +1404,8 @@ Egenverdier til $A$: største _[3], minste _[-1]
 $\lambda$ i $p$: _[-3]
 ```
 
-<div id="uke12-oppg-strekk"></div>
+::: {#uke12-oppg-strekk}
+:::
 
 La $B=\begin{bmatrix}3&0\\4&5\end{bmatrix}$. Maksimer
 $\lVert Bz\rVert_2^2=z^TB^TBz$ når $\lVert z\rVert_2=1$. Regn ut $B^TB$ og
@@ -1427,7 +1428,8 @@ Maksimumspunkt $z=$ vec[1/sqrt(2),1/sqrt(2)]
 
 **Forklar:** Sammenlign med `np.linalg.svd(B)`.
 
-<div id="uke12-oppg-kkt"></div>
+::: {#uke12-oppg-kkt}
+:::
 
 Minimer $f(x,y)=x^2+y^2$ når $x+2y=5$. Skriv Lagranges likninger som et
 $3\times3$-system $K(x,y,\lambda)^T=(0,0,5)^T$ og løs det. Regn ut
@@ -1455,7 +1457,8 @@ SPD?
 
 ### Idé 3: Kontroller et numerisk svar (12.5)
 
-<div id="uke12-oppg-kontroll"></div>
+::: {#uke12-oppg-kontroll}
+:::
 
 I avstandsproblemet fra 12.5 er $a=(2,1)$,
 $F(z)=\tfrac12\lVert z-a\rVert_2^2$ og $h(z)=\lVert z\rVert_2^2-1$. En løser
@@ -1479,7 +1482,8 @@ annen $\lambda$ gjøre stasjonaritetsfeilen mindre?
 
 ### Til fordypningene (valgfritt)
 
-<div id="uke12-oppg-degenerert"></div>
+::: {#uke12-oppg-degenerert}
+:::
 
 Hører til «Gå i dybden: når normalen forsvinner» i 12.2. La $f(x,y)=x+3y$ og
 $h(x,y)=x^2+y^2=0$. Finn det eneste tillatte punktet og $\nabla h$ der.
@@ -1500,7 +1504,8 @@ $\nabla h=$ vec[0,0]
 **Forklar:** Hvorfor kan ingen multiplikator gjøre $\nabla f+\lambda\nabla h=0$,
 selv om punktet er et optimum?
 
-<div id="uke12-oppg-grense"></div>
+::: {#uke12-oppg-grense}
+:::
 
 Hører til «Gå i dybden: en multiplikator gir en nedre grense» i 12.2. Bruk
 $F(z)=\tfrac12\lVert z-(2,1)\rVert_2^2$, $h(z)=\lVert z\rVert_2^2-1$ og
@@ -1529,7 +1534,8 @@ $F(1,0)=$ _[1]
 
 **Forklar:** Er grensen skarp? Sammenlign med $\tfrac12(\sqrt5-1)^2$.
 
-<div id="uke12-oppg-skive"></div>
+::: {#uke12-oppg-skive}
+:::
 
 Hører til «Gå i dybden: ulikhetskrav» i 12.5. Finn punktet i skiven
 $\lVert z\rVert_2^2\le1$ som ligger nærmest $a$, med
@@ -1554,16 +1560,17 @@ tilfellene.
 
 ## 12.7 Python: prøv kontrollene selv
 
-<div id="uke12-python"></div>
+::: {#uke12-python}
+:::
 
 Oppgavene har egne importer og definisjoner og kan kjøres uavhengig av
 forsøkene. Fyll bare hullene merket `TODO`. Kontrollene vurderer resultatet
 uten å vise løsningen.
 
-<div id="uke12-scipy"></div>
+::: {#uke12-scipy}
+:::
 
-<details>
-<summary>SciPy-oppslag: SLSQP og multiplikatoren</summary>
+::: {.details title="SciPy-oppslag: SLSQP og multiplikatoren"}
 
 | Uttrykk | Betydning |
 |:--|:--|
@@ -1586,9 +1593,10 @@ en vektor og en `jac` som returnerer Jacobimatrisen.
   overalt, og kontrollerer $|h|$ og
   $\lVert\nabla F+\lambda\nabla h\rVert_2$.
 
-</details>
+:::
 
-<div id="uke12-py-normal"></div>
+::: {#uke12-py-normal}
+:::
 
 **Normalen til ellipsen.** For $h(x,y)=x^2+4y^2-1$ skal
 `grad_h(z)` returnere gradienten som en NumPy-array.
@@ -1610,7 +1618,8 @@ assert np.allclose(grad_h(np.array([1., 0.])), [2., 0.])
 assert np.allclose(grad_h(np.array([.25, -.5])), [.5, -4.])
 ```
 
-<div id="uke12-py-kontroll"></div>
+::: {#uke12-py-kontroll}
+:::
 
 **Les et numerisk svar.** For avstandsproblemet i 12.5 skal
 `check(z, lam)` returnere betingelsesfeilen $|h(z)|$ og
@@ -1646,7 +1655,8 @@ assert np.allclose(check(np.array([0., 0.]), 0.), (1., np.sqrt(5)))
 assert np.allclose(check(a/np.sqrt(5), (np.sqrt(5)-1)/2), (0., 0.), atol=1e-12)
 ```
 
-<div id="uke12-py-slsqp"></div>
+::: {#uke12-py-slsqp}
+:::
 
 **Send kravet til SLSQP.** Fyll inn ordboken som angir
 $h(z)=0$ og gradienten.
@@ -1685,7 +1695,8 @@ for start in (np.array([.4, .9]), np.array([1., 0.])):
     assert np.allclose(result.x, a/np.sqrt(5), atol=1e-6)
 ```
 
-<div id="uke12-py-kkt"></div>
+::: {#uke12-py-kkt}
+:::
 
 **KKT-systemet og pseudoinversen.** *Valgfri: bygger på den valgfrie fanen
 [7.7](uke7.qmd#uke7-pseudoinvers).* Minimer $\tfrac12\lVert z\rVert_2^2$ når

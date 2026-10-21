@@ -52,8 +52,7 @@ På nettsiden lastes dataene og hjelpefunksjonene automatisk. Du får
 den korte Gauss–Newton-løkken står ferdig på siden. Etter ny lasting må du
 kjøre cellene med disse funksjonene igjen før du fortsetter.
 
-<details>
-<summary>Egen notebook: last ned oppsettet og kom i gang</summary>
+::: {.details title="Egen notebook: last ned oppsettet og kom i gang"}
 
 Last ned [project_week10_setup.py](../assets/project_week10_setup.py){download="project_week10_setup.py"}
 og legg den ved siden av notebooken. Start med
@@ -66,7 +65,7 @@ Du trenger NumPy og Matplotlib. Kopier cellene i rekkefølge og kontroller
 med **Restart / Run all** før levering. Ta med oppsettsfilen.
 SVD-appen i del 3 virker bare på nettsiden; Python-figuren viser samme idé.
 
-</details>
+:::
 
 ## Bakgrunn: avstandsmålingene og modellen (gitt)
 
