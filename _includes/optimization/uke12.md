@@ -1345,9 +1345,14 @@ $\lambda=$ _[-5/2]
 En sylinderformet boks har radius $x>0$ og høyde $y>0$. Volumet skal være
 $V$, altså $h(x,y)=\pi x^2y-V=0$. Overflaten er $f(x,y)=2\pi x^2+2\pi xy$.
 
-1. Sett opp Lagranges likninger.
-2. Bruk likningen for $\partial L/\partial y$ til å finne $\lambda$ uttrykt
-   med $x$, og den andre likningen til å finne forholdet mellom høyde og
+Gradientene er gitt:
+
+$\nabla f=\begin{bmatrix}4\pi x+2\pi y\\2\pi x\end{bmatrix},\qquad
+\nabla h=\begin{bmatrix}2\pi xy\\\pi x^2\end{bmatrix}.$
+
+1. Sett opp vektorlikningen $\nabla f+\lambda\nabla h=0$ sammen med $h=0$.
+2. Bruk den andre komponentlikningen til å finne $\lambda$ uttrykt
+   med $x$, og den første komponentlikningen til å finne forholdet mellom høyde og
    radius.
 3. Bruk til slutt prisformelen fra 12.2: hvor mye øker minste overflate
    $A_*$ per enhet ekstra volum?
@@ -1376,10 +1381,11 @@ ting modellen ser bort fra.
 
 La $f(x,y)=x^2+4xy+y^2$ på enhetssirkelen og $p=(1,1)/\sqrt2$.
 
-1. Regn ut $f(p)$ og andrederiverten av $f(\cos t,\sin t)$ ved $t=\pi/4$
-   (tips: $f(\cos t,\sin t)=1+2\sin2t$).
-2. Skriv $f=z^TAz$ med en symmetrisk $A$, og finn egenverdiene.
-3. Hvilken multiplikator hører til $p$?
+1. Skriv $f=z^TAz$ med en symmetrisk $A$, og finn egenverdiene og $f(p)$.
+2. Finn multiplikatoren fra $Ap=-\lambda p$.
+3. Krumningen langs sirkelen er gitt av $v^TBv$, der
+   $B=2A+2\lambda I$ og enhetstangenten er $v=(-1,1)/\sqrt2$.
+   Regn ut matriseproduktet. Hva forteller fortegnet om kandidaten $p$?
 
 ```{math-exercise}
 #| label: week12-quadratic-form
@@ -1387,11 +1393,11 @@ La $f(x,y)=x^2+4xy+y^2$ på enhetssirkelen og $p=(1,1)/\sqrt2$.
 #| context: week12-exercise-convention
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: funksjonsverdi i p, andrederivert langs sirkelen, største egenverdi, minste egenverdi, multiplikator i p
+#| field-labels: funksjonsverdi i p, tangentkrumning v^T B v, største egenverdi, minste egenverdi, multiplikator i p
 
 $f(p)=$ _[3]
 
-$\frac{d^2}{dt^2}f(\cos t,\sin t)\big|_{t=\pi/4}=$ _[-8]
+$v^TBv=$ _[-8]
 
 Egenverdier til $A$: største _[3], minste _[-1]
 
