@@ -10,11 +10,11 @@ og hvordan den tilpassede kurven oppfører seg.
 
 ## Arbeidsplan
 
-| Løype | Arbeid | Omtrent |
-|---|---|---:|
-| **Kjerne** | Del 1–4: vurder en tilpasning, undersøk et sammenbrudd og tilpass polynomer | 3 timer |
-| **Valgt fordypning** | Del 5 **eller** del 6: sammenlign beregningsmetoder | 1 time |
-| **Redningsforsøk og rapport** | Del 7 og en samlet vurdering | 1 time |
+| Løype | Arbeid |
+|---|--- |
+| **Kjerne** | Del 1–4: vurder en tilpasning, undersøk et sammenbrudd og tilpass polynomer |
+| **Valgt fordypning** | Del 5 **eller** del 6: sammenlign beregningsmetoder |
+| **Redningsforsøk og rapport** | Del 7 og en samlet vurdering |
 
 Startcellene lager data og gir noen kodeverktøy. **Du fyller selv inn
 beregningene merket `TODO`.** Før hvert forsøk skal du skrive en forventning.
