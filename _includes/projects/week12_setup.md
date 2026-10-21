@@ -2,8 +2,8 @@
 #| label: project-week12-setup
 #| autorun: true
 #| context: setup
-# Ferdige verktøy for kjettingen. Kravfunksjonen h og straffefunksjonen
-# skriver du selv i prosjektet.
+# Ferdige modellderivater, løsere og figurer. Studentfunksjonene h og F_mu
+# er ikke en del av oppsettet; de skrives i prosjektet.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
@@ -87,19 +87,26 @@ def plot_chain(*shapes, labels=None):
     plt.show()
 
 
-def plot_constraint_circles(centres, radius, candidates, labels=None):
-    """Tegn kravsirklene rundt endene, og hver kandidat som en kjetting fra ende til kandidat til ende."""
-    t = np.linspace(0, 2*np.pi, 300)
-    fig, ax = plt.subplots(figsize=(6, 4.5))
-    for c in centres:
-        ax.plot(c[0] + radius*np.cos(t), c[1] + radius*np.sin(t), color='0.7')
-    for k, p in enumerate(candidates):
-        P = np.vstack([centres[0], p, centres[1]])
-        ax.plot(P[:, 0], P[:, 1], 'o-' if k == 0 else 'o--',
-                label=None if labels is None else labels[k])
-    ax.set(xlabel='x (m)', ylabel='y (m)')
-    ax.set_aspect('equal')
-    if labels is not None:
-        ax.legend()
-    plt.show()
+
+def solve_exact(hfun, lengths=0.5, z0=None, loads=None):
+    """SLSQP med studentens kravfunksjon og ferdige modellderivater."""
+    z0 = flat_start() if z0 is None else z0
+    return minimize(energy, z0, args=(loads,), jac=grad_energy, method='SLSQP',
+                    constraints=[{'type': 'eq', 'fun': hfun, 'jac': jac_links,
+                                  'args': (lengths,)}],
+                    options={'ftol': 1e-14, 'maxiter': 500})
+
+
+def multipliers(z, loads=None):
+    """Multiplikatorene i avtalen L = E + lambda^T h, fra minste kvadrater."""
+    return np.linalg.lstsq(jac_links(z).T, -grad_energy(z, loads), rcond=None)[0]
+
+
+def solve_penalty(hfun, penaltyfun, mu, z0=None):
+    """BFGS med gitt gradientformel; høyst 1500 iterasjoner per kjøring."""
+    z0 = flat_start() if z0 is None else z0
+    def gradient(z, mu):
+        return grad_energy(z) + mu*jac_links(z).T @ hfun(z)
+    return minimize(penaltyfun, z0, args=(mu,), jac=gradient, method='BFGS',
+                    options={'gtol': 1e-6, 'maxiter': 1500})
 ```
