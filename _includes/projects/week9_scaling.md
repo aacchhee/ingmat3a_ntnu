@@ -11,8 +11,8 @@ kjøringer, lese tall og figurer og begrunne konklusjonene dine.
 
 ## Før prosjektarbeidet: en kort innføring i statistikken
 
-**Dette er bakgrunn, ikke en egen innleveringsdel.** Bruk omtrent 20–30
-minutter på å lese og kjøre eksemplene. Du trenger ingen statistikk fra før.
+**Dette er bakgrunn, ikke en egen innleveringsdel.** Les og kjør
+eksemplene. Du trenger ingen statistikk fra før.
 Selve optimeringsarbeidet begynner i [del 1](#project9-start).
 
 ### Data og en kurve mellom 0 og 1
@@ -111,16 +111,16 @@ og kjør `from project_week9_setup import *`. Du trenger NumPy og
 Matplotlib. Kopier cellene i rekkefølge, og kontroller med
 **Restart / Run all** før levering.
 
-| Del | Arbeidet ditt | Omtrent tid |
-|:--|:--|:--|
-| Innføring | Les og kjør statistikkeksemplene; ingen egen levering | 20–30 min |
-| 1 | Koble summer til matriseprodukt og fullfør to korte funksjoner | 35–45 min |
-| 2 | Sammenlign tre koordinatvalg og forklar forskjellene | 40–50 min |
-| 3 | Undersøk steglengde og Armijo med dine egne utskrifter | 40–50 min |
-| 4 | En kort sluttundersøkelse av stoppkravet | 25–35 min |
-| Levering | Samle utvalgte resultater og korte konklusjoner | 20–30 min |
+| Del | Arbeidet ditt |
+|:--|:-- |
+| Innføring | Les og kjør statistikkeksemplene; ingen egen levering |
+| 1 | Koble summer til matriseprodukt og fullfør to korte funksjoner |
+| 2 | Sammenlign tre koordinatvalg og forklar forskjellene |
+| 3 | Undersøk steglengde og Armijo med dine egne utskrifter |
+| 4 | En kort sluttundersøkelse av stoppkravet |
+| Levering | Samle utvalgte resultater og korte konklusjoner |
 
-Regn med omtrent 3–4 timer inkludert innføringen. Skriv en kort
+Regn med omtrent 4–6 timer inkludert innføringen. Skriv en kort
 forventning før forsøkene og bruk resultatene som grunnlag for svaret.
 
 <div id="project9-start"></div>
