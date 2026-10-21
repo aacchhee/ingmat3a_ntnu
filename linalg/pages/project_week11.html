@@ -80,7 +80,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-0e53955fafe0ce48d7f15f4d9f72b5a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5337165f197680d68c11b8afac1372bd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-core.js"></script>
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-dom.js"></script>
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.js"></script>
@@ -4733,13 +4733,15 @@ Regnehjelp: hele regningen for <span class="math inline">\(L=40\)</span> og <spa
 <p><strong>Fra tall til regel.</strong> Se på de to tallene du brukte. 10 kr er prisen i nord: så mye koster det å produsere 1 MW mer der. 70 kr er prisen i sør: så mye sparer vi når sør trenger 1 MW mindre. Én MW mer over linjen betyr nettopp 1 MW mer produksjon i nord og 1 MW mindre i sør. Derfor er én MW mer på en full linje verdt <strong>prisen i sør minus prisen i nord</strong>. (Du kan også tenke deg at du eier linjen: du kjøper 1 MWh i nord for 10 kr og selger den i sør for 70 kr.)</p>
 <p>Hva om linjen <em>ikke</em> er full, som ved <span class="math inline">\(L=100\)</span>? Da hjelper det ingenting å gjøre den sterkere, så linjeverdien er 0. Og prisene må være like. Hvis sør var dyrere enn nord, kunne vi sendt litt mer strøm gjennom den ledige kapasiteten og spart penger. Da var ikke planen den billigste.</p>
 <p>Med symboler: kall linjeverdien <span class="math inline">\(\mu_L\)</span>, i kr per MW linjekapasitet. Husk at <span class="math inline">\(\lambda_N\)</span> er prisen i nord og <span class="math inline">\(\lambda_S\)</span> prisen i sør. Da er</p>
-<p><span class="math display">\[\text{linjen er full }(f=L):\quad \mu_L=\lambda_S-\lambda_N,\qquad\qquad
-\text{linjen er ikke full }(-L&lt;f&lt;L):\quad \mu_L=0\ \text{og}\ \lambda_S=\lambda_N.\]</span></p>
+<p>Når linjen er full i retning nord–sør, <span class="math inline">\(f=L\)</span>, er</p>
+<p><span class="math inline">\(\mu_L=\lambda_S-\lambda_N.\)</span></p>
+<p>Når linjen har ledig kapasitet, <span class="math inline">\(-L&lt;f&lt;L\)</span>, er</p>
+<p><span class="math inline">\(\mu_L=0,\qquad \lambda_S=\lambda_N.\)</span></p>
 <p>Dette er de samme reglene som for kraftverkene i 2c. Linjen er som et kraftverk med kostnad 0 som får prisforskjellen <span class="math inline">\(\lambda_S-\lambda_N\)</span> for hver MW. Er den full, er verdien av mer kapasitet lik «pris minus kostnad». Er den ikke full, er den «mellom», og da må «prisen» være lik kostnaden 0.</p>
 <ol start="5" type="1">
 <li>Kontroller regelen med tabellen fra 3b for <span class="math inline">\(L=60\)</span> og <span class="math inline">\(L=100\)</span>. Er linjen full? Stemmer linjeverdien med prisforskjellen?</li>
 </ol>
-<p>En full linje kalles ofte en <strong>flaskehals</strong>: den hindrer den billige strømmen i å nå fram. Når overføringen mellom to av de norske prisområdene er full, får de ulike priser av nettopp denne grunnen.</p>
+<p>En full linje kan være en <strong>flaskehals</strong>: den kan hindre billigere strøm i å nå fram og dermed gi ulike priser. Men at linjen er full, er ikke alene nok til å vite at mer kapasitet har verdi.</p>
 </section>
 <section id="d.-hvor-lenge-gjelder-linjeverdien" class="level3">
 <h3 class="anchored" data-anchor-id="d.-hvor-lenge-gjelder-linjeverdien">3d. Hvor lenge gjelder linjeverdien?</h3>
@@ -4753,7 +4755,7 @@ Regnehjelp: <span class="math inline">\(L=55\)</span>
 </summary>
 <p>Sør trenger <span class="math inline">\(80-55=25\)</span> MW. Det dekker import alene, så gassen står, og import er det marginale kraftverket i sør. Prisen i sør er derfor 40 kr. Nord produserer <span class="math inline">\(30+55=85\)</span> MW: vind 20 og vannkraft 65, så prisen i nord er fortsatt 10 kr. Linjen er full, og linjeverdien er <span class="math inline">\(40-10=30\)</span> kr. Én MW mer på linjen erstatter nå import (40 kr), ikke gass (70 kr).</p>
 </details>
-<p><strong>Ta med videre:</strong> En full linje gir to ulike priser, og én MW mer linjekapasitet er verdt prisforskjellen. Det gjelder bare til en annen grense blir aktiv: når gassen i sør er borte, eller når nord ikke har mer å sende.</p>
+<p><strong>Ta med videre:</strong> En full linje kan gi ulike priser. Når mer linjekapasitet senker kostnaden, er verdien lik prisforskjellen så lenge de samme begrensningene bestemmer løsningen. Ved et knekkpunkt kan linjen være full selv om én ekstra MW ikke gir noen besparelse. Her er kostnaden 1200 kr både ved <span class="math inline">\(L=70\)</span> og <span class="math inline">\(L=71\)</span>, selv om flyten ved <span class="math inline">\(L=70\)</span> fyller linjen.</p>
 </section>
 </section>
 <section id="vannkraft-med-begrenset-vann" class="level2">

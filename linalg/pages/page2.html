@@ -80,7 +80,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-0e53955fafe0ce48d7f15f4d9f72b5a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5337165f197680d68c11b8afac1372bd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-core.js"></script>
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-dom.js"></script>
 <script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.js"></script>
@@ -5684,32 +5684,32 @@ Gå i dybden: FP4 og kvantisering
 <div id="mini-machine-format" class="math-exercise-context">
 <p>Her bygger vi en <strong>mini-versjon av en flyttallsmaskin</strong>. Poenget er at formatet er så lite at vi faktisk kan se <em>alle</em> tallene maskinen kjenner.</p>
 <p>Vi bruker et forenklet format med</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p><span data-ai-feedback-tex="
 \boxed{S}\quad\boxed{EEE}\quad\boxed{MMMM}
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 \boxed{S}\quad\boxed{EEE}\quad\boxed{MMMM}
 \]</span></span></p>
 <p>der</p>
 <ul>
-<li><span data-ai-feedback-display="false" data-ai-feedback-tex="S"><span class="math inline">\(S\)</span></span> er én fortegnsbit,</li>
-<li><span data-ai-feedback-display="false" data-ai-feedback-tex="E"><span class="math inline">\(E\)</span></span> er 3 eksponentbiter,</li>
-<li><span data-ai-feedback-display="false" data-ai-feedback-tex="M"><span class="math inline">\(M\)</span></span> er 4 mantissebiter,</li>
-<li>bias er <span data-ai-feedback-display="false" data-ai-feedback-tex="3"><span class="math inline">\(3\)</span></span>.</li>
+<li><span data-ai-feedback-tex="S" data-ai-feedback-display="false"><span class="math inline">\(S\)</span></span> er én fortegnsbit,</li>
+<li><span data-ai-feedback-tex="E" data-ai-feedback-display="false"><span class="math inline">\(E\)</span></span> er 3 eksponentbiter,</li>
+<li><span data-ai-feedback-tex="M" data-ai-feedback-display="false"><span class="math inline">\(M\)</span></span> er 4 mantissebiter,</li>
+<li>bias er <span data-ai-feedback-tex="3" data-ai-feedback-display="false"><span class="math inline">\(3\)</span></span>.</li>
 </ul>
 <p>Vi bruker bare normaliserte tall med</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p><span data-ai-feedback-tex="
 E=1,2,\ldots,6.
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 E=1,2,\ldots,6.
 \]</span></span></p>
-<p>Bitmønstrene <span data-ai-feedback-display="false" data-ai-feedback-tex="E=0"><span class="math inline">\(E=0\)</span></span> og <span data-ai-feedback-display="false" data-ai-feedback-tex="E=7"><span class="math inline">\(E=7\)</span></span> lar vi ligge. Vi ignorerer altså subnormale tall, <code>inf</code> og <code>NaN</code> i denne mini-maskinen.</p>
+<p>Bitmønstrene <span data-ai-feedback-tex="E=0" data-ai-feedback-display="false"><span class="math inline">\(E=0\)</span></span> og <span data-ai-feedback-tex="E=7" data-ai-feedback-display="false"><span class="math inline">\(E=7\)</span></span> lar vi ligge. Vi ignorerer altså subnormale tall, <code>inf</code> og <code>NaN</code> i denne mini-maskinen.</p>
 <p>Et tall tolkes som</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p><span data-ai-feedback-tex="
 (-1)^S\left(1+\frac{M}{16}\right)2^{E-3},
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 (-1)^S\left(1+\frac{M}{16}\right)2^{E-3},
 \]</span></span></p>
-<p>der <span data-ai-feedback-display="false" data-ai-feedback-tex="M"><span class="math inline">\(M\)</span></span> er heltallsverdien til de fire mantissebitene.</p>
+<p>der <span data-ai-feedback-tex="M" data-ai-feedback-display="false"><span class="math inline">\(M\)</span></span> er heltallsverdien til de fire mantissebitene.</p>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -5731,30 +5731,30 @@ E=1,2,\ldots,6.
 <p>Vi starter med å lese bitmønstre.</p>
 <div id="mini-machine-decode-method" class="math-exercise-context">
 <p>For eksempel</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p><span data-ai-feedback-tex="
 0\;|\;100\;|\;0110
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 0\;|\;100\;|\;0110
 \]</span></span></p>
 <p>gir</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p><span data-ai-feedback-tex="
 S=0,\qquad E=(100)_2=4,\qquad e=4-3=1,
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 S=0,\qquad E=(100)_2=4,\qquad e=4-3=1,
 \]</span></span></p>
 <p>og</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p><span data-ai-feedback-tex="
 M=(0110)_2=6.
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 M=(0110)_2=6.
 \]</span></span></p>
 <p>Dermed</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p><span data-ai-feedback-tex="
 x=(1+6/16)2^1=2.75.
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 x=(1+6/16)2^1=2.75.
 \]</span></span></p>
-<p>For å dekode et bitmønster leser vi derfor de tre feltene hver for seg: fortegnsbiten <span data-ai-feedback-display="false" data-ai-feedback-tex="S"><span class="math inline">\(S\)</span></span>, de tre eksponentbitene <span data-ai-feedback-display="false" data-ai-feedback-tex="E"><span class="math inline">\(E\)</span></span> og de fire mantissebitene <span data-ai-feedback-display="false" data-ai-feedback-tex="M"><span class="math inline">\(M\)</span></span>. Deretter regner vi ut <span data-ai-feedback-display="false" data-ai-feedback-tex="e=E-3"><span class="math inline">\(e=E-3\)</span></span> og setter verdiene inn i mini-maskinens formel.</p>
+<p>For å dekode et bitmønster leser vi derfor de tre feltene hver for seg: fortegnsbiten <span data-ai-feedback-tex="S" data-ai-feedback-display="false"><span class="math inline">\(S\)</span></span>, de tre eksponentbitene <span data-ai-feedback-tex="E" data-ai-feedback-display="false"><span class="math inline">\(E\)</span></span> og de fire mantissebitene <span data-ai-feedback-tex="M" data-ai-feedback-display="false"><span class="math inline">\(M\)</span></span>. Deretter regner vi ut <span data-ai-feedback-tex="e=E-3" data-ai-feedback-display="false"><span class="math inline">\(e=E-3\)</span></span> og setter verdiene inn i mini-maskinens formel.</p>
 </div>
 <p>Les de tre feltene og regn ut verdien, som i eksemplet over.</p>
 <div class="math-exercise-cell" id="math-exercise-4" data-label="mini-decode" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;Verdi&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;mini-decode&quot;,&quot;name&quot;:&quot;&quot;}" data-context-mode="explicit" data-context-refs="mini-machine-format, mini-machine-decode-method" data-context="&quot;1. Møt mini-maskinen\nVi starter med å lese bitmønstre.\nLes de tre feltene og regn ut verdien, som i eksemplet over.&quot;" data-pool="[&quot;$$0\\;|\\;100\\;|\\;1010$$\n\nVerdien er: _[13/4]&quot;,&quot;$$0\\;|\\;101\\;|\\;0110$$\n\nVerdien er: _[11/2]&quot;,&quot;$$1\\;|\\;100\\;|\\;0000$$\n\nVerdien er: _[-2]&quot;,&quot;$$0\\;|\\;011\\;|\\;1000$$\n\nVerdien er: _[3/2]&quot;,&quot;$$0\\;|\\;010\\;|\\;0100$$\n\nVerdien er: _[5/8]&quot;]" data-fields="[]" data-structural-field-labels="[]">
@@ -5778,12 +5778,12 @@ x=(1+6/16)2^1=2.75.
 </div>
 <div id="mini-machine-encode-method" class="math-exercise-context">
 <p>Nå går vi motsatt vei. Hvis et tall allerede er representerbart, kan vi skrive det som</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p><span data-ai-feedback-tex="
 \pm(1.MMMM)_2\,2^e,
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 \pm(1.MMMM)_2\,2^e,
 \]</span></span></p>
-<p>finne <span data-ai-feedback-display="false" data-ai-feedback-tex="E=e+3"><span class="math inline">\(E=e+3\)</span></span>, og deretter skrive <span data-ai-feedback-display="false" data-ai-feedback-tex="S"><span class="math inline">\(S\)</span></span>, <span data-ai-feedback-display="false" data-ai-feedback-tex="E"><span class="math inline">\(E\)</span></span> og <span data-ai-feedback-display="false" data-ai-feedback-tex="M"><span class="math inline">\(M\)</span></span> som bit.</p>
+<p>finne <span data-ai-feedback-tex="E=e+3" data-ai-feedback-display="false"><span class="math inline">\(E=e+3\)</span></span>, og deretter skrive <span data-ai-feedback-tex="S" data-ai-feedback-display="false"><span class="math inline">\(S\)</span></span>, <span data-ai-feedback-tex="E" data-ai-feedback-display="false"><span class="math inline">\(E\)</span></span> og <span data-ai-feedback-tex="M" data-ai-feedback-display="false"><span class="math inline">\(M\)</span></span> som bit.</p>
 </div>
 <p>Nå går vi motsatt vei: fyll inn fortegn, eksponentfelt og mantissefelt. Skriv inn <span class="math inline">\(S\)</span>, <span class="math inline">\(E\)</span> og <span class="math inline">\(M\)</span> som bitstreng, det vil si sekvensen av <span class="math inline">\(0\)</span> og <span class="math inline">\(1\)</span>.</p>
 <div class="math-exercise-cell" id="math-exercise-5" data-label="mini-encode" data-mode="string" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;S&quot;,&quot;E&quot;,&quot;M&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;mini-encode&quot;,&quot;name&quot;:&quot;&quot;}" data-context-mode="explicit" data-context-refs="mini-machine-format, mini-machine-encode-method" data-context="&quot;1. Møt mini-maskinen\nVi starter med å lese bitmønstre.\nLes de tre feltene og regn ut verdien, som i eksemplet over.\nNå går vi motsatt vei: fyll inn fortegn, eksponentfelt og mantissefelt. Skriv inn \\(S\\), \\(E\\) og \\(M\\) som bitstreng, det vil si sekvensen av \\(0\\) og \\(1\\).&quot;" data-pool="[&quot;$$x=3$$\n\n$S=$ _[0]\n$E=$ _[100]\n$M=$ _[1000]&quot;,&quot;$$x=5.5$$\n\n$S=$ _[0]\n$E=$ _[101]\n$M=$ _[0110]&quot;,&quot;$$x=-0.75$$\n\n$S=$ _[1]\n$E=$ _[010]\n$M=$ _[1000]&quot;,&quot;$$x=0.3125$$\n\n$S=$ _[0]\n$E=$ _[001]\n$M=$ _[0100]&quot;,&quot;$$x=12$$\n\n$S=$ _[0]\n$E=$ _[110]\n$M=$ _[1000]&quot;]" data-fields="[]" data-structural-field-labels="[]">
@@ -5837,24 +5837,24 @@ x=(1+6/16)2^1=2.75.
 <div id="mini-machine-rounding" class="math-exercise-context">
 <p>Et vanlig reelt tall trenger ikke være blant de 96 positive eller 96 negative verdiene maskinen kjenner.</p>
 <p>Da må vi velge det <strong>nærmeste representerbare tallet</strong>.</p>
-<p>For eksempel ligger <span data-ai-feedback-display="false" data-ai-feedback-tex="1.1"><span class="math inline">\(1.1\)</span></span> mellom</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p>For eksempel ligger <span data-ai-feedback-tex="1.1" data-ai-feedback-display="false"><span class="math inline">\(1.1\)</span></span> mellom</p>
+<p><span data-ai-feedback-tex="
 1.0625
 \quad\text{og}\quad
 1.125.
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 1.0625
 \quad\text{og}\quad
 1.125.
 \]</span></span></p>
-<p>Det nærmeste er <span data-ai-feedback-display="false" data-ai-feedback-tex="1.125"><span class="math inline">\(1.125\)</span></span>, så mini-maskinen vil lagre</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p>Det nærmeste er <span data-ai-feedback-tex="1.125" data-ai-feedback-display="false"><span class="math inline">\(1.125\)</span></span>, så mini-maskinen vil lagre</p>
+<p><span data-ai-feedback-tex="
 1.1\longmapsto1.125.
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 1.1\longmapsto1.125.
 \]</span></span></p>
 <p>Avrunding i mini-maskinen betyr altså å velge den representerbare verdien med minst avstand til tallet som skal lagres.</p>
-<p>Ligger tallet <strong>nøyaktig midt mellom</strong> to mini-tall, bruker vi samme regel som IEEE 754, <em>ties to even</em>: vi velger tallet der den siste mantissebiten er <span data-ai-feedback-display="false" data-ai-feedback-tex="0"><span class="math inline">\(0\)</span></span>. Eksempel: <span data-ai-feedback-display="false" data-ai-feedback-tex="9.25=(1001.01)_2=(1.00101)_2\times2^3"><span class="math inline">\(9.25=(1001.01)_2=(1.00101)_2\times2^3\)</span></span>. Med fire mantissebiter ligger det midt mellom <span data-ai-feedback-display="false" data-ai-feedback-tex="(1.0010)_2\times2^3=9"><span class="math inline">\((1.0010)_2\times2^3=9\)</span></span> og <span data-ai-feedback-display="false" data-ai-feedback-tex="(1.0011)_2\times2^3=9.5"><span class="math inline">\((1.0011)_2\times2^3=9.5\)</span></span>. Siste bit er <span data-ai-feedback-display="false" data-ai-feedback-tex="0"><span class="math inline">\(0\)</span></span> for <span data-ai-feedback-display="false" data-ai-feedback-tex="9"><span class="math inline">\(9\)</span></span>, så mini-maskinen lagrer <span data-ai-feedback-display="false" data-ai-feedback-tex="9.25\longmapsto9"><span class="math inline">\(9.25\longmapsto9\)</span></span>. I bitform er det <span data-ai-feedback-display="false" data-ai-feedback-tex="0\;|\;110\;|\;0010"><span class="math inline">\(0\;|\;110\;|\;0010\)</span></span>, fordi <span data-ai-feedback-display="false" data-ai-feedback-tex="E=3+3=6=(110)_2"><span class="math inline">\(E=3+3=6=(110)_2\)</span></span>.</p>
+<p>Ligger tallet <strong>nøyaktig midt mellom</strong> to mini-tall, bruker vi samme regel som IEEE 754, <em>ties to even</em>: vi velger tallet der den siste mantissebiten er <span data-ai-feedback-tex="0" data-ai-feedback-display="false"><span class="math inline">\(0\)</span></span>. Eksempel: <span data-ai-feedback-tex="9.25=(1001.01)_2=(1.00101)_2\times2^3" data-ai-feedback-display="false"><span class="math inline">\(9.25=(1001.01)_2=(1.00101)_2\times2^3\)</span></span>. Med fire mantissebiter ligger det midt mellom <span data-ai-feedback-tex="(1.0010)_2\times2^3=9" data-ai-feedback-display="false"><span class="math inline">\((1.0010)_2\times2^3=9\)</span></span> og <span data-ai-feedback-tex="(1.0011)_2\times2^3=9.5" data-ai-feedback-display="false"><span class="math inline">\((1.0011)_2\times2^3=9.5\)</span></span>. Siste bit er <span data-ai-feedback-tex="0" data-ai-feedback-display="false"><span class="math inline">\(0\)</span></span> for <span data-ai-feedback-tex="9" data-ai-feedback-display="false"><span class="math inline">\(9\)</span></span>, så mini-maskinen lagrer <span data-ai-feedback-tex="9.25\longmapsto9" data-ai-feedback-display="false"><span class="math inline">\(9.25\longmapsto9\)</span></span>. I bitform er det <span data-ai-feedback-tex="0\;|\;110\;|\;0010" data-ai-feedback-display="false"><span class="math inline">\(0\;|\;110\;|\;0010\)</span></span>, fordi <span data-ai-feedback-tex="E=3+3=6=(110)_2" data-ai-feedback-display="false"><span class="math inline">\(E=3+3=6=(110)_2\)</span></span>.</p>
 </div>
 <p>Bruk regelen over på nye tall: finn de to mini-tallene som <span class="math inline">\(x\)</span> ligger mellom, og velg det nærmeste. Ligger <span class="math inline">\(x\)</span> nøyaktig midt mellom, avgjør <em>ties to even</em>.</p>
 <div class="math-exercise-cell" id="math-exercise-6" data-label="mini-round" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;Lagret verdi&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;mini-round&quot;,&quot;name&quot;:&quot;&quot;}" data-context-mode="explicit" data-context-refs="mini-machine-format, mini-machine-rounding" data-context="&quot;3. Avrunding i mini-maskinen\nBruk regelen over på nye tall: finn de to mini-tallene som \\(x\\) ligger mellom, og velg det nærmeste. Ligger \\(x\\) nøyaktig midt mellom, avgjør ties to even.&quot;" data-pool="[&quot;$$x=1.09375$$\n\nMini-maskinen lagrer: _[9/8]&quot;,&quot;$$x=0.7$$\n\nMini-maskinen lagrer: _[11/16]&quot;,&quot;$$x=3.14$$\n\nMini-maskinen lagrer: _[25/8]&quot;,&quot;$$x=6.3$$\n\nMini-maskinen lagrer: _[25/4]&quot;,&quot;$$x=0.3$$\n\nMini-maskinen lagrer: _[19/64]&quot;]" data-fields="[]" data-structural-field-labels="[]">
@@ -5918,13 +5918,13 @@ mini_float(x)</code></pre>
 </div>
 <p>Til slutt i denne fanen: hva er maskinepsilon i et lite format? Regn som for binary64 i fanen «Maskinepsilon».</p>
 <div id="mini-machine-epsilon-rule" class="math-exercise-context">
-<p>I mini-maskinen er <span data-ai-feedback-display="false" data-ai-feedback-tex="1=(1.0000)_2\times2^0"><span class="math inline">\(1=(1.0000)_2\times2^0\)</span></span>. Det neste tallet får vi ved å gjøre den siste av de fire mantissebitene til <span data-ai-feedback-display="false" data-ai-feedback-tex="1"><span class="math inline">\(1\)</span></span>:</p>
-<p><span data-ai-feedback-display="true" data-ai-feedback-tex="
+<p>I mini-maskinen er <span data-ai-feedback-tex="1=(1.0000)_2\times2^0" data-ai-feedback-display="false"><span class="math inline">\(1=(1.0000)_2\times2^0\)</span></span>. Det neste tallet får vi ved å gjøre den siste av de fire mantissebitene til <span data-ai-feedback-tex="1" data-ai-feedback-display="false"><span class="math inline">\(1\)</span></span>:</p>
+<p><span data-ai-feedback-tex="
 (1.0001)_2=1+\frac1{16}.
-"><span class="math display">\[
+" data-ai-feedback-display="true"><span class="math display">\[
 (1.0001)_2=1+\frac1{16}.
 \]</span></span></p>
-<p>Avstanden fra <span data-ai-feedback-display="false" data-ai-feedback-tex="1"><span class="math inline">\(1\)</span></span> til neste tall er altså <span data-ai-feedback-display="false" data-ai-feedback-tex="\frac1{16}"><span class="math inline">\(\frac1{16}\)</span></span>. Gjør samme regning for formater med et annet antall mantissebiter <span data-ai-feedback-display="false" data-ai-feedback-tex="p"><span class="math inline">\(p\)</span></span>.</p>
+<p>Avstanden fra <span data-ai-feedback-tex="1" data-ai-feedback-display="false"><span class="math inline">\(1\)</span></span> til neste tall er altså <span data-ai-feedback-tex="\frac1{16}" data-ai-feedback-display="false"><span class="math inline">\(\frac1{16}\)</span></span>. Gjør samme regning for formater med et annet antall mantissebiter <span data-ai-feedback-tex="p" data-ai-feedback-display="false"><span class="math inline">\(p\)</span></span>.</p>
 </div>
 <div class="math-exercise-cell" id="math-exercise-7" data-label="mini-epsilon" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="false" data-form-credit="0.5" data-field-labels="[&quot;Maskinepsilon&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;mini-epsilon&quot;,&quot;name&quot;:&quot;&quot;}" data-context-mode="explicit" data-context-refs="mini-machine-epsilon-rule" data-context="&quot;3. Avrunding i mini-maskinen\nBruk regelen over på nye tall: finn de to mini-tallene som \\(x\\) ligger mellom, og velg det nærmeste. Ligger \\(x\\) nøyaktig midt mellom, avgjør ties to even.\nNå lar vi Python gjøre denne avrundingen. Vi trenger både positive og negative mini-flyttall.\nKopier din egen positive_mini_values() fra forrige fane inn i kodevinduet. Deretter lager du all_mini_values() og mini_float().\nNår du først har laget et verktøy, skal vi bruke det videre — ikke få løsningen servert på nytt.\nNår denne oppgaven virker, har du laget en liten verktøykasse:\nTa vare på funksjonene. I neste fane skal mini-maskinen begynne å regne.\nTil slutt i denne fanen: hva er maskinepsilon i et lite format? Regn som for binary64 i fanen «Maskinepsilon».&quot;" data-pool="[&quot;Formatet lagrer $p=2$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/4]&quot;,&quot;Formatet lagrer $p=3$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/8]&quot;,&quot;Formatet lagrer $p=5$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/32]&quot;,&quot;Formatet lagrer $p=6$ mantissebiter.\n\n$$\\varepsilon_{\\mathrm{mach}}=$$ _[1/64]&quot;]" data-fields="[]" data-structural-field-labels="[]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Maskinepsilon for små binære formater" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Maskinepsilon for små binære formater</div>
