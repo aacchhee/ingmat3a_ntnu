@@ -635,8 +635,9 @@ er ortogonale. Dermed har de nye vektorene lengde 1 og er parvis ortogonale.
 ### Hvordan beregnes SVD i praksis?
 
 I praksis bruker vi `U, s, Vt = np.linalg.svd(A, full_matrices=False)`.
-Biblioteket danner ikke $A^TA$, fordi $\kappa_2(A^TA)=\kappa_2(A)^2$ kan
-gjøre små singulærverdier unøyaktige.
+Biblioteket danner ikke $A^TA$. Når $A$ har full kolonnerang, er
+$\kappa_2(A^TA)=\kappa_2(A)^2$, så produktet kan gjøre små singulærverdier
+unøyaktige.
 
 <details class="reading-step">
 <summary>Gå i dybden: hvordan regner biblioteket ut SVD?</summary>
