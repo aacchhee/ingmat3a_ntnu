@@ -2011,6 +2011,11 @@ hører til øvre venstre blokk, c4–c6 til øvre høyre, c7–c9 til nedre vens
 c10–c12 til nedre høyre). Prøv begge typer: De fargede endrer både inputbildet
 og outputen, de grå endrer bare inputbildet.
 
+Her regner vi i hele bilderommet: pikselverdier kan være mindre enn 0 eller
+større enn 1. Bare fargeskalaen klippes til svart–hvitt; tallene og
+blokkgjennomsnittet klippes ikke. En melding under inputbildet viser når
+fargeskalaen ikke kan vise hele variasjonen.
+
 ```{.jsxgraph width="760" height="440"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
   boundingbox: [0, 9.1, 15.2, 0],
@@ -2079,9 +2084,9 @@ var patternRows=[[1,-1,1,-1],[1,1,-1,-1],[1,-1,-1,1]];
 function inputValue(block,pos){
   var v=meanControls[block].Value();
   for (var j=0;j<3;j++) v+=0.25*contrastControls[3*block+j].Value()*patternRows[j][pos];
-  return Math.max(0,Math.min(1,v));
+  return v;
 }
-function grayFill(v){var l=Math.round(255*v); return 'rgb('+l+','+l+','+l+')';}
+function grayFill(v){var l=Math.round(255*Math.max(0,Math.min(1,v))); return 'rgb('+l+','+l+','+l+')';}
 var px=0.5, ix=6.35, iy=3.55;
 for (let r=0;r<4;r++) for (let c=0;c<4;c++) {
   let block=(r<2?0:2)+(c<2?0:1), pos=2*(r%2)+(c%2);
@@ -2095,6 +2100,13 @@ for (let r=0;r<4;r++) for (let c=0;c<4;c++) {
 board.create('text',[ix+2*px,iy+4*px+0.25,'inputbildet'],{
   anchorX:'middle',fontSize:11,fixed:true
 });
+board.create('text',[ix+2*px,1.65,function(){
+  for (var block=0;block<4;block++) for (var pos=0;pos<4;pos++) {
+    var v=inputValue(block,pos);
+    if (v<0 || v>1) return 'Fargeskala klippet: verdier utenfor [0,1]';
+  }
+  return 'Alle pikselverdier er i [0,1]';
+}],{anchorX:'middle',fontSize:10,fixed:true});
 
 board.create('arrow',[[5.75,6.55],[8.65,6.55]],{
   strokeColor:'#333333',strokeWidth:3,fixed:true,highlight:false
@@ -2152,9 +2164,12 @@ board.create('text',[7.60,0.75,'Én uavhengig knapp = én retning'],{
 ```
 
 Å bevege én knapp mens de andre står stille, kaller vi å bevege oss i én
-**retning**. De tolv grå knappene er de tolv kontrastene, en basis for
-nullrommet. De fire fargede gir en basis for kolonnerommet. Sammen gjør de
-rede for alle 16 inputmulighetene:
+**retning**. De tolv grå knappene styrer kontrastmønstre som danner en basis
+for nullrommet. De fire fargede knappene styrer fire inputmønstre som er
+konstante i hver sin blokk. Disse fire mønstrene og de tolv kontrastene danner
+til sammen en basis for inputrommet. Outputene til de fire konstante
+mønstrene danner en basis for kolonnerommet. Til sammen har inputrommet
+16 uavhengige retninger:
 
 $$16=4+12.$$
 
