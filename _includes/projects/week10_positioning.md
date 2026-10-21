@@ -16,16 +16,16 @@ utskriftene og figurene forteller:
 
 ### En vei gjennom prosjektet
 
-| Del | Arbeidet ditt | Sett av |
-|:--|:--|--:|
-| Bakgrunn | Bli kjent med avstandsmålingene og den gitte modellen. | 10–15 min |
-| 1. Fra modell til metode | Les vektorer og matriser; fullfør ett Gauss–Newton-steg. | 35–45 min |
-| 2. Les konvergensen | Sammenlign feil og faktorer med tre typer målinger. | 25–35 min |
-| 3. Les følsomheten | Undersøk målefeil og forklar geometrien med SVD. | 40–50 min |
-| 4. Konvergert, men feil? | Les diagnosene og fullfør en kort Armijo-løkke. | 35–45 min |
-| 5. Din påstand | Gjør ett kontrollert forsøk og trekk en avgrenset konklusjon. | 20–25 min |
+| Del | Arbeidet ditt |
+|:--|:-- |
+| Bakgrunn | Bli kjent med avstandsmålingene og den gitte modellen. |
+| 1. Fra modell til metode | Les vektorer og matriser; fullfør ett Gauss–Newton-steg. |
+| 2. Les konvergensen | Sammenlign feil og faktorer med tre typer målinger. |
+| 3. Les følsomheten | Undersøk målefeil og forklar geometrien med SVD. |
+| 4. Konvergert, men feil? | Les diagnosene og fullfør en kort Armijo-løkke. |
+| 5. Din påstand | Gjør ett kontrollert forsøk og trekk en avgrenset konklusjon. |
 
-Sett av omtrent **3–4 timer**, inkludert oppsett og en kort oppsummering.
+Sett av omtrent **4–6 timer**, inkludert oppsett og en kort oppsummering.
 Skriv en forventning før et forsøk, kjør det, og vis til konkrete tall når
 du konkluderer. Du skal ikke levere utledninger av deriverte.
 
