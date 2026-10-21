@@ -40,12 +40,18 @@ def fixed_steps(alpha, start=(0., 0.), n=40):
         values.append(f9(z)); points.append(z.copy())
     return z, np.array(values), np.array(points)
 
-def compass(z, step, min_step):
+def compass(z, step, min_step, maxpolls=10000):
     """Kompassøk (reglene i 9.4) fra z med startsteg step, til step < min_step.
     Returnerer sluttpunkt, Δ i siste mislykkede runde, antall prøverunder og banen."""
+    if not np.isfinite(min_step) or min_step <= 0:
+        raise ValueError("min_step må være endelig og positiv")
+    if not np.isfinite(step) or step < min_step:
+        raise ValueError("step må være endelig og minst min_step")
     directions = np.array([[1., 0.], [-1., 0.], [0., 1.], [0., -1.]])
     current, polls, path = f9(z), 0, [z]
     while step >= min_step:
+        if polls >= maxpolls:
+            raise RuntimeError("Kompassøket nådde maksimalt antall prøverunder")
         trials = z + step*directions
         values = np.array([f9(t) for t in trials]); polls += 1
         best = np.argmin(values)

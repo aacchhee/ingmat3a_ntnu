@@ -135,7 +135,7 @@ skjer rett på hver side av den.
   $0.025$ og $0.1$ går grensen for hva som virker?
 - Kjør cellen. Se på kolonnen «faktor per steg»: hvilken steglengde gir
   raskest konvergens?
-- Bytt en av steglengdene til $0.0243$ eller $0.0244$, og undersøk hvor
+- Bytt en av steglengdene i listen `alphas` til $0.0243$ eller $0.0244$, og undersøk hvor
   grensen ligger.
 
 ```{pyodide-python}
@@ -144,7 +144,8 @@ skjer rett på hver side av den.
 z_star = np.array([3., 2.])
 xs_per_alpha = {}
 print(f'{"α":>6} {"steg":>5} {"avstand til (3, 2)":>19} {"faktor per steg":>16}')
-for alpha in [0.005, 0.02, 0.024, 0.025, 0.1]:
+alphas = [0.005, 0.02, 0.024, 0.025, 0.1]
+for alpha in alphas:
     z = np.array([0., 0.])
     errors, xs = [np.linalg.norm(z - z_star)], [z[0]]
     for k in range(1, 201):
@@ -160,7 +161,7 @@ for alpha in [0.005, 0.02, 0.024, 0.025, 0.1]:
         cycle = f'   x veksler: {xs[-2]:.3f}, {xs[-1]:.3f}' if abs(factor - 1) < 5e-4 else ''
         print(f'{alpha:>6} {k:>5} {errors[-1]:>19.1e} {factor:>16.4f}{cycle}')
 
-plot_x_paths({a: xs_per_alpha[a] for a in [0.02, 0.024, 0.025]})
+plot_x_paths({a: xs_per_alpha[a] for a in alphas[1:4]})
 ```
 
 **Hva viser forsøket?**
@@ -1325,9 +1326,10 @@ begrenset. Armijo-søket i eksperiment 3 og kompassøket i eksperiment 4 (start 
 $(0.3,\,0.7)$, der $f\approx142.81<170$) holdt seg derfor også inne i denne
 kurven.
 
-For $S_8$ er randen ikke lukket. Den åpner seg mot høyre langs den stiplede
-kurven $a=0.5/b$, og iteratene kryper utover der mens gradientnormen nesten
-står stille, akkurat som i eksperiment 5. Garantien under sier at det første
+For $S_8$ fortsetter nivåkurven utenfor tegnevinduet. Subnivåmengden er
+ubegrenset: den strekker seg mot høyre langs den stiplede kurven $a=0.5/b$.
+Iteratene kryper utover der mens gradientnormen nesten står stille, akkurat
+som i eksperiment 5. Garantien under sier at det første
 bildet er det vi får hver gang $f$ er koersiv.
 
 ::: {.callout-important}
