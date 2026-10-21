@@ -1,0 +1,27 @@
+name: Compare step-4 migration
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    uses: Erasmus-CTM/ctm-assessment/.github/workflows/compare-courses.yml@74e27b6c693fe45ddff63cfd70ac3cdc4fc027df
+    with:
+      tooling-ref: 74e27b6c693fe45ddff63cfd70ac3cdc4fc027df
+      course: aacchhee/ingmat3a_ntnu
+      course-ref: ${{ github.event.pull_request.head.sha }}
+      course-base-ref: a0a34ee508fdd4d00e78e7ea782b00a343fcf682
+      base: pin
+      head: 3d9ebd94565ca302724dc619092ad9d043c1497f
+      # Bootstrap only: recover the authoritative converter output through
+      # the connector before committing and testing the actual migrated sources.
+      convert: true
+      emit-converted-source: true
+      expect: step4-migration.yml
+      browser: false
+      browsers: chromium firefox webkit
+      shards: '4'
