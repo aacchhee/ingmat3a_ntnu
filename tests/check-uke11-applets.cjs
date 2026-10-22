@@ -60,8 +60,10 @@ function writeReport(failure) {
         route.fulfill({path: path.join(jsxgraph, 'distrib/jsxgraph.css'), contentType: 'text/css'}));
       let frameHtml = frames[index];
       const boardId = [...frameHtml.matchAll(/var board = JXG.JSXGraph.initBoard\(([^,]+),/g)].at(-1)[1];
-      const compiled = newPrograms[index].replaceAll('BOARDID', boardId);
-      const control = oldPrograms[index].replaceAll('BOARDID', boardId);
+      // The pinned renderer rewrites initBoard only; other uses read window.BOARDID.
+      const compile = program => program.replace(/initBoard\(\s*BOARDID\s*,/g, 'initBoard(' + boardId + ',');
+      const compiled = compile(newPrograms[index]);
+      const control = compile(oldPrograms[index]);
       assert.ok(frameHtml.includes(compiled), 'actual iframe contains exact compiled candidate source');
       const capture = '\nwindow.__widgetProbe={board:board,c:c,best:best,P:typeof P!=="undefined"?P:null,Z:typeof Z!=="undefined"?Z:null};\n';
       // Capture existing locals after the unchanged body; no calculation or event is replaced.
