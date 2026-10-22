@@ -1,0 +1,918 @@
+{
+  "schema": 1,
+  "base": "80c3851dd20326c039c0060ae3ada4fc97d1f9b1",
+  "quizzes": [
+    {
+      "page": "pages/page2.html",
+      "source": "_includes/module1/m1_1_exercises.md",
+      "heading": "## Oppgaver",
+      "id": "uke1-horner",
+      "exercises": [
+        {
+          "component": "py-exercise",
+          "id": "horner-general"
+        }
+      ]
+    },
+    {
+      "page": "pages/page2.html",
+      "source": "_includes/module1/m1_2_exercises.md",
+      "heading": "## Oppgaver",
+      "id": "uke1-binaer",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "binary-to-decimal"
+        },
+        {
+          "component": "math-exercise",
+          "id": "binary-fraction-to-decimal"
+        },
+        {
+          "component": "py-exercise",
+          "id": "binary-string-to-decimal"
+        },
+        {
+          "component": "math-exercise",
+          "id": "decimal-fraction-to-binary"
+        },
+        {
+          "component": "py-exercise",
+          "id": "decimal-to-binary-string"
+        }
+      ]
+    },
+    {
+      "page": "pages/page2.html",
+      "source": "_includes/module1/m1_3.md",
+      "heading": "## Oppgaver",
+      "id": "uke1-flyttall",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "mini-decode"
+        },
+        {
+          "component": "math-exercise",
+          "id": "mini-encode"
+        },
+        {
+          "component": "py-exercise",
+          "id": "mini-positive-values"
+        },
+        {
+          "component": "math-exercise",
+          "id": "mini-round"
+        },
+        {
+          "component": "py-exercise",
+          "id": "mini-float-rounding"
+        },
+        {
+          "component": "math-exercise",
+          "id": "mini-epsilon"
+        },
+        {
+          "component": "py-exercise",
+          "id": "mini-find-nonassociative"
+        },
+        {
+          "component": "math-exercise",
+          "id": "uke1-spacing-fixed-exponent"
+        },
+        {
+          "component": "math-exercise",
+          "id": "uke1-vanishing-term"
+        },
+        {
+          "component": "math-exercise",
+          "id": "uke1-decimal-cancellation"
+        }
+      ]
+    },
+    {
+      "page": "pages/page4.html",
+      "source": "_includes/module2/m2_1.md",
+      "heading": "### Oppgave",
+      "id": "uke2-oppgaver-1",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "fixed-point-three-iterations"
+        }
+      ]
+    },
+    {
+      "page": "pages/page4.html",
+      "source": "_includes/module2/m2_2.md",
+      "heading": "### Oppgave",
+      "id": "uke2-oppgaver-2",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "golden-rewritings-slopes"
+        },
+        {
+          "component": "math-exercise",
+          "id": "design-relaxed-fixed-point"
+        }
+      ]
+    },
+    {
+      "page": "pages/page4.html",
+      "source": "_includes/module2/m2_3.md",
+      "heading": "### Oppgave",
+      "id": "uke2-oppgaver-3",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "read-semilogy-correct-decimals"
+        },
+        {
+          "component": "math-exercise",
+          "id": "click-seven-correct-decimals"
+        },
+        {
+          "component": "math-exercise",
+          "id": "click-quadratic-seven-decimals"
+        },
+        {
+          "component": "math-exercise",
+          "id": "error-table-factor"
+        }
+      ]
+    },
+    {
+      "page": "pages/page4.html",
+      "source": "_includes/module2/m2_4.md",
+      "heading": "### Oppgave",
+      "id": "uke2-oppgaver-4",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "compare-binary32-binary64"
+        }
+      ]
+    },
+    {
+      "page": "pages/page4.html",
+      "source": "_includes/module2/m2_5.md",
+      "heading": "### Oppgave",
+      "id": "uke2-oppgaver-5",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "diagnose-three-iterations"
+        },
+        {
+          "component": "math-exercise",
+          "id": "identify-stop-reasons"
+        },
+        {
+          "component": "math-exercise",
+          "id": "choose-diagnostic-action"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke3.html",
+      "source": "_includes/linalg/uke3.md",
+      "heading": "## 3.6 Egenarbeid: bildeforsøk og polynomoppgaver {#uke3-del4}",
+      "id": "uke3-6-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week3-polynomial-arithmetic"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-polynomial-coefficients"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-polynomial-from-coordinates"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-polynomial-rank-test"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-polynomial-simple-change-basis"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-polynomial-coordinates"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-polynomial-p3-basis"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-polynomial-subspace-basis"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-evaluation-two-points"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-polynomial-dimension"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke3.html",
+      "source": "_includes/linalg/uke3.md",
+      "heading": "## 3.8 Støtteløp: Papir- og kontrolloppgaver {#uke3-stotte-oppgaver}",
+      "id": "uke3-8-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-b-echelon"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-b-rank"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-b-column-basis"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-b-null-basis"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-b-rank-nullity"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-c-echelon"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-c-rank"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-c-column-basis"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-c-null-basis"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week3-paper-c-rank-nullity"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke4.html",
+      "source": "_includes/linalg/uke4.md",
+      "heading": "## 4.7 Oppsummering og oppgaver",
+      "id": "uke4-7-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week4-task-pattern-readings"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week4-task-pattern-code"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week4-task-nonorthogonal"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week4-task-qr-paper"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week4-task-qr-fit"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week4-task-qr-code"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week4-task-normal-equations"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week4-task-proposed-fit"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week4-task-rounding"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week4-task-cgs-mgs"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week4-task-extra-point"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week4-task-extra-point-code"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week4-task-false-qr"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week4-task-quality-code"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke9.html",
+      "source": "_includes/optimization/uke9.md",
+      "heading": "## 9.6 Regneoppgaver",
+      "id": "uke9-6-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week9-task-first-gradient-step"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-one-dimension"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-critical-step"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-conditioning"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-armijo"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-armijo-halving"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-compass-first"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-compass-shrink"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-compass-bound"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-grid-count"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week9-task-coercive"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke9.html",
+      "source": "_includes/optimization/uke9.md",
+      "heading": "## 9.7 Python: mål og tilpass",
+      "id": "uke9-7-oppgaver",
+      "exercises": [
+        {
+          "component": "py-exercise",
+          "id": "week9-python-rate"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week9-python-armijo-step"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week9-python-compass-round"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week9-python-best-sample"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke5.html",
+      "source": "_includes/linalg/uke5.md",
+      "heading": "## 5.7 Støtteløp: repetisjon ved behov",
+      "id": "uke5-7-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week5-task-coordinates"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week5-task-eigenvectors"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke5.html",
+      "source": "_includes/linalg/uke5.md",
+      "heading": "## 5.8 Hovedløp: iterasjon og PageRank",
+      "id": "uke5-8-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week5-task-powers-general"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week5-task-powers"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week5-task-powers-direction"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week5-task-powers-exception"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week5-task-powers-sign"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week5-task-power-step"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week5-task-power-residual"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week5-task-three-pages"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week5-task-stationary-cycle"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week5-task-teleportation"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week5-task-skewed-jump"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke11.html",
+      "source": "_includes/optimization/uke11.md",
+      "heading": "## 11.5 Regneoppgaver",
+      "id": "uke11-5-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week11-task-slack"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week11-task-pairs"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week11-task-price-range"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week11-task-status"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week11-task-prices"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week11-task-loose-bound"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week11-task-three-products"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week11-task-perturb"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week11-task-range"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke11.html",
+      "source": "_includes/optimization/uke11.md",
+      "heading": "## 11.6 Python: undersøk og kontroller",
+      "id": "uke11-6-oppgaver",
+      "exercises": [
+        {
+          "component": "py-exercise",
+          "id": "week11-python-evaluate"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week11-python-vertices"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week11-python-solve"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week11-python-certificate"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke10.html",
+      "source": "_includes/optimization/uke10.md",
+      "heading": "## 10.5 Regneoppgaver",
+      "id": "uke10-5-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week10-task-week2-newton"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-hand-step"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-quadratic"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-digits"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-saddle"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-direction"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-cholesky-factor"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-cholesky-test"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-regularize"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-armijo-well"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-invariance"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-cholesky-solves"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week10-task-valley"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke10.html",
+      "source": "_includes/optimization/uke10.md",
+      "heading": "## 10.6 Python: prøv stegene selv",
+      "id": "uke10-6-oppgaver",
+      "exercises": [
+        {
+          "component": "py-exercise",
+          "id": "week10-python-quadratic"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week10-python-curvature"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week10-python-shift"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week10-python-armijo"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke8.html",
+      "source": "_includes/optimization/uke8.md",
+      "heading": "## 8.5 Regneoppgaver",
+      "id": "uke8-5-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week8-task-infimum"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-sequence"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-compact"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-existence-disk"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-box"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-hessian-entries"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-line-curvature"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-two-stationary"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-convex-set"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-convex"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-convex-test"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-strict-convex"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-null-space"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-tangent"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke8.html",
+      "source": "_includes/optimization/uke8.md",
+      "heading": "## 8.6 Python: SciPy-oppslag og kodeoppgaver",
+      "id": "uke8-6-oppgaver",
+      "exercises": [
+        {
+          "component": "py-exercise",
+          "id": "week8-python-minimize"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week8-python-classify"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week8-python-two-starts"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week8-python-midpoint"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke8.html",
+      "source": "_includes/optimization/uke8.md",
+      "heading": "## 8.7 Støtteløp: flervariabel derivasjon ved behov",
+      "id": "uke8-7-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week8-support-partials"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-support-directional"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-support-hessian-entries"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week8-task-hessian"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week8-python-gradient"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke7.html",
+      "source": "_includes/linalg/uke7.md",
+      "heading": "## 7.8 Oppgaver",
+      "id": "uke7-8-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week7-task-diagonal"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week7-task-left-projection"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week7-task-svd-solve"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week7-task-tail"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week7-python-rank-for-error"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week7-task-noise"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke12.html",
+      "source": "_includes/optimization/uke12.md",
+      "heading": "## 12.6 Regneoppgaver",
+      "id": "uke12-6-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week12-normal-tangent"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-ellipse-max"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-circle-lagrange"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-can"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-quadratic-form"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-stretch"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-kkt"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-numeric-check"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-degenerate-check"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-dual-bound"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week12-disc-kkt"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke12.html",
+      "source": "_includes/optimization/uke12.md",
+      "heading": "## 12.7 Python: prøv kontrollene selv",
+      "id": "uke12-7-oppgaver",
+      "exercises": [
+        {
+          "component": "py-exercise",
+          "id": "week12-python-normal"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week12-python-residuals"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week12-python-slsqp"
+        },
+        {
+          "component": "py-exercise",
+          "id": "week12-python-kkt"
+        }
+      ]
+    },
+    {
+      "page": "pages/uke6.html",
+      "source": "_includes/linalg/uke6.md",
+      "heading": "## 6.7 Prosjekt og egenarbeid",
+      "id": "uke6-7-oppgaver",
+      "exercises": [
+        {
+          "component": "math-exercise",
+          "id": "week6-task-sweeps"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-error-factor"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-residual"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-forward-backward"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-condition-eigenvalues"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-quadratic-function"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-minimum"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-first-line-search"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-first-step"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-conjugate-direction"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-second-cg-step"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-cg-recipe-first"
+        },
+        {
+          "component": "math-exercise",
+          "id": "week6-task-cg-recipe-second"
+        }
+      ]
+    }
+  ]
+}
