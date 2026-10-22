@@ -1348,7 +1348,7 @@ Ressursprisene er et første eksempel på **multiplikatorer**: tall som veier sa
 - **Samme pristolkning:** De er priser på samme måte som dualvariablene her (med fortegnsavtalen i uke 12 er prisen $-\lambda$): de måler hva en litt endret bibetingelse er verdt ([uke 12](uke12.qmd#uke12-pris)).
 - **Valgfri fordypning:** Ulikheter med komplementær slakk kommer der bare som valgfri fordypning.
 
-## 11.5 Regneoppgaver
+## 11.5 Regneoppgaver {quiz=uke11-5-oppgaver}
 
 ::: {#uke11-oppgaver}
 :::
@@ -1590,7 +1590,7 @@ $\Delta=$ _[3/2]
 
 **Forklar:** Hvorfor må prisanslaget undersøkes på nytt etter denne økningen?
 
-## 11.6 Python: undersøk og kontroller
+## 11.6 Python: undersøk og kontroller {quiz=uke11-6-oppgaver}
 
 ::: {#uke11-python}
 :::

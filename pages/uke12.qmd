@@ -1,5 +1,7 @@
 ---
 title: "Uke 12 – optimering med likhetsbetingelser og Lagranges metode"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/optimization/week12_setup.md >}}

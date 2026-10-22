@@ -2904,7 +2904,7 @@ Del 3–4 undersøker polynomtilpasning og basisvalg. Deretter velger du
 fordypning i del 5 eller 6 og gjør et eget redningsforsøk i del 7.
 Kodeverktøyene finnes på prosjektsiden.
 
-## 4.7 Oppsummering og oppgaver
+## 4.7 Oppsummering og oppgaver {quiz=uke4-7-oppgaver}
 
 ::: {#uke4-oppgaver}
 :::

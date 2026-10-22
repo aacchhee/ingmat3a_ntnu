@@ -1,5 +1,7 @@
 ---
 title: "Uke 3 – hva slags informasjon mister en matrise?"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/linalg/uke3.md >}}

@@ -1,5 +1,7 @@
 ---
 title: "Uke 10 – Newtons metode"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/optimization/week10_setup.md >}}

@@ -1,0 +1,173 @@
+name: Exercise quiz render and browser
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  ASSESSMENT_REF: 65be5facbf67f900533a71cd950aa82e5c4c1e95
+  REVIEWED_COMPONENTS: '{"ctm-libs":"41b2be0a94a5bbf9dd8389fa83458d23692f2b4a","math-exercise":"98c8fe54fded2b189c50f5f0cd9c0ea7688366ba","py-exercise":"ea21348341854f2c5f36a5fd0b253d98fe1d68f3","pyodide-interaktiv":"e85d9af4f39128180b0b0ad14ce53a087b079d93","ctm-checkers":"a1637dc95b9e11d8a0c838c801cd53e20997eceb"}'
+  COURSE_SHA: ${{ github.event.pull_request.head.sha }}
+
+concurrency:
+  group: exercise-quizzes-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node --check scripts/check-exercise-quizzes-browser.mjs
+
+  # Independent source review of this pinned foundation is required before changes.
+  # Render/browser acceptance remains separate from the source contract check.
+  render:
+    needs: syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.COURSE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Validate exact reviewed pins
+        run: |
+          python - <<'PY'
+          import json, os, re
+          names = {'ctm-libs', 'math-exercise', 'py-exercise', 'pyodide-interaktiv', 'ctm-checkers'}
+          refs = json.loads(os.environ['REVIEWED_COMPONENTS'])
+          assert isinstance(refs, dict) and set(refs) == names, 'name all five reviewed components'
+          assert re.fullmatch('[0-9a-f]{40}', os.environ['ASSESSMENT_REF']), 'exact assessment head required'
+          assert all(isinstance(v, str) and re.fullmatch('[0-9a-f]{40}', v) for v in refs.values())
+          assert refs['ctm-checkers'] == 'a1637dc95b9e11d8a0c838c801cd53e20997eceb', 'Math question-test APIs need reviewed Q checker'
+          assert refs['ctm-libs'] == '41b2be0a94a5bbf9dd8389fa83458d23692f2b4a', 'use reviewed shared store and assets'
+          assert refs['pyodide-interaktiv'] == 'e85d9af4f39128180b0b0ad14ce53a087b079d93', 'use canonical B6 copy'
+          PY
+      - uses: actions/checkout@v7
+        with:
+          repository: Erasmus-CTM/ctm-assessment
+          ref: ${{ env.ASSESSMENT_REF }}
+          path: _ci/ctm-assessment
+          persist-credentials: false
+      - name: Verify the coherent foundation pins
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, subprocess
+          root = pathlib.Path('_ci/ctm-assessment')
+          assert subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip() == os.environ['ASSESSMENT_REF']
+          pins = json.loads((root / 'integration/feedback/repos.json').read_text())['repositories']
+          expected = json.loads(os.environ['REVIEWED_COMPONENTS'])
+          for name, sha in expected.items():
+              assert pins[name]['commit'] == sha, 'stale foundation pin: ' + name
+              branch = 'feature/shared-feedback-integration' if name == 'pyodide-interaktiv' else 'main'
+              assert pins[name]['branch'] == branch, 'designated branch changed: ' + name
+          assert pins['pyodide-interaktiv']['ships-copies'] == ['ai-feedback', 'ctm-libs']
+          print(json.dumps({'assessment': os.environ['ASSESSMENT_REF'], 'components': expected}, indent=2))
+          PY
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: '1.8.27'
+      - run: python -m pip install sympy==1.13.3 'networkx>=3.4' 'PyYAML>=6' jupyter nbformat
+      - name: Source contract and exact baseline preservation
+        run: python scripts/audit-exercise-quizzes.py
+      - name: Build the actual course at this exact commit without conversion
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/quiz-evidence"
+          python _ci/ctm-assessment/scripts/build-course.py \
+            --umbrella "$GITHUB_WORKSPACE/_ci/ctm-assessment" \
+            --repo "https://github.com/$GITHUB_REPOSITORY.git" --ref "$COURSE_SHA" \
+            --dest "$RUNNER_TEMP/quiz-course" --workspace "$RUNNER_TEMP/quiz-package" \
+            2>&1 | tee "$RUNNER_TEMP/quiz-evidence/render.log"
+          python - <<'PY'
+          import os, pathlib, re
+          log = (pathlib.Path(os.environ['RUNNER_TEMP']) / 'quiz-evidence/render.log').read_text()
+          plain = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', log)
+          warnings = [line for line in plain.splitlines() if re.search(r'\bWARNING\b', line, re.I)]
+          assert not warnings, 'Course rendering must have zero warnings:\n' + '\n'.join(warnings)
+          PY
+      - name: Check resolved component heads and rendered membership
+        run: |
+          set -o pipefail
+          python - <<'PY'
+          import json, os, pathlib
+          record = pathlib.Path(os.environ['RUNNER_TEMP']) / 'quiz-course/.private-extensions/resolved-repos.json'
+          resolved = json.loads(record.read_text())['repositories']
+          for name, sha in json.loads(os.environ['REVIEWED_COMPONENTS']).items():
+              assert resolved[name]['commit'] == sha, 'installed unexpected component: ' + name
+              assert not resolved[name]['dirty_files'], 'dirty component checkout: ' + name
+          output = pathlib.Path(os.environ['RUNNER_TEMP']) / 'quiz-evidence/resolved-repos.json'
+          output.write_bytes(record.read_bytes())
+          PY
+          python scripts/audit-exercise-quizzes.py --site "$RUNNER_TEMP/quiz-course/_site" \
+            | tee "$RUNNER_TEMP/quiz-evidence/membership.log"
+          cp tests/exercise-quizzes.json "$RUNNER_TEMP/quiz-evidence/contract.json"
+          printf '%s\n' "$COURSE_SHA" > "$RUNNER_TEMP/quiz-evidence/course-head.txt"
+      - uses: actions/upload-artifact@v7
+        if: success()
+        with:
+          name: exercise-quiz-site
+          path: ${{ runner.temp }}/quiz-course/_site
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: exercise-quiz-render-evidence
+          path: ${{ runner.temp }}/quiz-evidence
+
+  browser:
+    needs: render
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --user 1001
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.COURSE_SHA }}
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: Erasmus-CTM/ctm-assessment
+          ref: ${{ env.ASSESSMENT_REF }}
+          path: _ci/ctm-assessment
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+        working-directory: _ci/ctm-assessment
+      - uses: actions/download-artifact@v7
+        with:
+          name: exercise-quiz-site
+          path: ${{ runner.temp }}/quiz-site
+      - name: Actual quiz tile navigation at desktop and 390px
+        env:
+          CTM_ASSESSMENT_ROOT: ${{ github.workspace }}/_ci/ctm-assessment
+          CTM_QUIZ_SITE: ${{ runner.temp }}/quiz-site
+          CTM_QUIZ_REPORT_DIR: ${{ runner.temp }}/quiz-browser
+          CTM_QUIZ_BROWSER: ${{ matrix.engine }}
+        run: node scripts/check-exercise-quizzes-browser.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: exercise-quiz-browser-${{ matrix.engine }}
+          path: ${{ runner.temp }}/quiz-browser
