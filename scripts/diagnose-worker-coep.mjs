@@ -76,7 +76,12 @@ function nativeProbe(revoke) {
       done = true; clearTimeout(timer);
       if (worker) worker.terminate();
       if (url) URL.revokeObjectURL(url);
-      resolve({status, detail, origin:location.origin, coi:crossOriginIsolated, secure:isSecureContext});
+      let parentAccess = 'self';
+      if (parent !== self) {
+        try { void parent.document; parentAccess = 'allowed'; }
+        catch (_) { parentAccess = 'denied'; }
+      }
+      resolve({status, detail, origin:location.origin, coi:crossOriginIsolated, secure:isSecureContext, parentAccess});
     };
     const timer = setTimeout(() => finish('timeout'), 4000);
     try {
@@ -179,6 +184,7 @@ try {
     if (requestURL.pathname.startsWith('/strict')) Object.assign(headers, {
       'Cross-Origin-Opener-Policy':'same-origin', 'Cross-Origin-Embedder-Policy':'require-corp',
     });
+    if (requestURL.pathname === '/strict-frame') headers['Cross-Origin-Resource-Policy'] = 'cross-origin';
     response.writeHead(200, headers);
     if (requestURL.pathname === '/strict-frame') {
       const revoke = requestURL.searchParams.get('revoke');
@@ -222,6 +228,10 @@ try {
     }
   }
   assert.equal(report.controls.length, 14);
+  for (const row of report.controls) {
+    if (row.mode !== 'top' && row.result.status !== 'frame-timeout')
+      assert.equal(row.result.parentAccess, 'denied', 'control frame must retain parent DOM isolation');
+  }
   assert.equal(report.controls.find(row => row.policy === 'plain' && row.mode === 'top' && row.revoke === 'message').result.status, 'message',
     'the import-free native worker control must work');
   assert.ok(report.coursePages.some(row => row.events.some(event => event.kind === 'worker-created')),
