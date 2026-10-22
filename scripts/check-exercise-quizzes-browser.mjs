@@ -18,9 +18,9 @@ assert.equal(contract.schema, 1);
 assert.equal(contract.quizzes.length, 26);
 assert.equal(contract.quizzes.reduce((n, q) => n + q.exercises.length, 0), 176);
 fs.mkdirSync(reports, {recursive: true});
-const server = await serve({course: site}, true);
+const server = await serve({course: site}, true, 'require-corp');
 const origin = 'http://127.0.0.1:' + server.address().port + '/course/';
-const results = [], errors = [], screenshots = [];
+const results = [], errors = [], screenshots = [], documents = [];
 let browser;
 let currentPage;
 let failure = null;
@@ -115,7 +115,7 @@ async function targetState(page, member) {
     const fixed = header && ['fixed', 'sticky'].includes(getComputedStyle(header).position);
     const headerBottom = fixed ? header.getBoundingClientRect().bottom : 0;
     const rect = target.getBoundingClientRect();
-    return {count: 1, focused: document.activeElement === target,
+    return {count: 1, timeOrigin: performance.timeOrigin, focused: document.activeElement === target,
       visible: target.getClientRects().length > 0, top: rect.top,
       headerBottom, height: innerHeight, panes, details, callouts,
       mark: target.getAttribute('data-ctm-nav')};
@@ -144,7 +144,20 @@ try {
     const shots = new Set();
     for (const file of pages) {
       assert.ok(!file.startsWith('/') && !file.split('/').includes('..') && file.endsWith('.html'), 'safe course page');
-      await page.goto(origin + file, {waitUntil: 'domcontentloaded'});
+      const response = await page.goto(origin + file, {waitUntil: 'domcontentloaded'});
+      assert.equal(response.status(), 200, 'actual course document was served');
+      const headers = response.headers();
+      const isolationHeaders = {
+        coop: headers['cross-origin-opener-policy'],
+        coep: headers['cross-origin-embedder-policy'],
+      };
+      assert.deepEqual(isolationHeaders, {coop: 'same-origin', coep: 'require-corp'}, 'real HTTP isolation headers');
+      const documentState = await page.evaluate(() => ({
+        crossOriginIsolated: globalThis.crossOriginIsolated,
+        timeOrigin: performance.timeOrigin,
+      }));
+      documents.push({engine, width, file, headers: isolationHeaders, ...documentState});
+      assert.equal(documentState.crossOriginIsolated, true, 'actual browser crossOriginIsolated: ' + file);
       await page.waitForFunction(() => window.CTMNav && window.CTMStore && document.querySelector('.ctm-progress'));
       const quizzes = contract.quizzes.filter(q => q.page === file);
       const rendered = await page.evaluate(() => JSON.parse(document.getElementById('ctm-store-manifest').textContent));
@@ -186,6 +199,7 @@ try {
             await new Promise(resolve => setTimeout(resolve, 20));
           }
           assert.ok(navigated(state), JSON.stringify({file, quiz: quiz.id, member, state}));
+          assert.equal(state.timeOrigin, documentState.timeOrigin, 'the actual document stays loaded through tile navigation');
           results.push({engine, width, file, quiz: quiz.id, member, prepared, before, state});
           const kinds = [];
           if (before.panes.some(p => !p.active)) kinds.push('nested-tabs');
@@ -227,7 +241,7 @@ try {
       closedRevealsOpened: rows.filter(r => r.before.details.some(open => !open)).length,
       inactivePanesActivated: rows.filter(r => r.before.panes.some(p => !p.active)).length};
   });
-  const report = {engine, coverage, screenshots, checks: results.length, expectedChecks: 352, results, errors, failure,
+  const report = {engine, coverage, documents, screenshots, checks: results.length, expectedChecks: 352, results, errors, failure,
     url: currentPage?.url(), boundary: 'Navigation/focus and nested-tab evidence. The 176 actual graded roots are outside reveals; no reveal-transition proof is claimed. Horizontal access to wide math is not asserted.'};
   fs.writeFileSync(path.join(reports, engine + '.json'), JSON.stringify(report, null, 2) + '\n');
   console.log(JSON.stringify({engine, checks: report.checks, errors}, null, 2));

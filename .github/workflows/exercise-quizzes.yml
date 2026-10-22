@@ -8,8 +8,8 @@ permissions:
   contents: read
 
 env:
-  ASSESSMENT_REF: f9358ccb80cd71bf19139ba251f7578b45c4fa24
-  REVIEWED_COMPONENTS: '{"ctm-libs":"1320be6ac38a25269abffe82652feea8f1af8636","math-exercise":"59c4e95f332ba314ea11031ff44ef77bd3bdd68a","py-exercise":"e9af7a40bb67801ff37d77cae68cdb4cb1483258","pyodide-interaktiv":"c0acbada72e2cf29c74ca0c88fc537eb85506370","ctm-checkers":"a1637dc95b9e11d8a0c838c801cd53e20997eceb"}'
+  ASSESSMENT_REF: 2d2f002cd6255e3fa9472a07f6ae4947b865621d
+  REVIEWED_COMPONENTS: '{"ctm-libs":"9b15fdb2ab95deb190ff6e729fb609ee4b76ed10","math-exercise":"839afa3e1e5b4a361c8d6fc7e09c25c3f504f4ac","py-exercise":"8289b3bbfb2f670f64539e74ff0b0af49321b09f","pyodide-interaktiv":"8efc70b285b297285d3e6b3358272df0844d0118","ctm-checkers":"a1637dc95b9e11d8a0c838c801cd53e20997eceb"}'
   COURSE_SHA: ${{ github.event.pull_request.head.sha }}
 
 concurrency:
@@ -54,8 +54,8 @@ jobs:
           assert re.fullmatch('[0-9a-f]{40}', os.environ['ASSESSMENT_REF']), 'exact assessment head required'
           assert all(isinstance(v, str) and re.fullmatch('[0-9a-f]{40}', v) for v in refs.values())
           assert refs['ctm-checkers'] == 'a1637dc95b9e11d8a0c838c801cd53e20997eceb', 'Math question-test APIs need reviewed Q checker'
-          assert refs['ctm-libs'] == '1320be6ac38a25269abffe82652feea8f1af8636', 'use reviewed reset/forget + alias composition'
-          assert refs['pyodide-interaktiv'] == 'c0acbada72e2cf29c74ca0c88fc537eb85506370', 'use canonical B6 copy'
+          assert refs['ctm-libs'] == '9b15fdb2ab95deb190ff6e729fb609ee4b76ed10', 'use reviewed reset/forget + alias composition'
+          assert refs['pyodide-interaktiv'] == '8efc70b285b297285d3e6b3358272df0844d0118', 'use canonical B6 copy'
           PY
       - uses: actions/checkout@v7
         with:
