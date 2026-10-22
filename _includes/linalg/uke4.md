@@ -1,9 +1,3 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ::: {.panel-tabset}
 
 ## 4.0 Oversikt
@@ -30,8 +24,7 @@ Svaret bygger vi i tre trinn:
 Piler, bilder og polynomer kan legges sammen og ganges med tall. Derfor
 kan vi bruke de samme ideene om retning og lengde på alle tre.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor kaller vi bilder og polynomer «piler»?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor kaller vi bilder og polynomer «piler»?"}
 
 Denne uken møter vi ulike objekter: en pil i planet, et bilde og et polynom.
 De ser forskjellige ut, men har en felles matematisk struktur: Vi kan legge
@@ -49,7 +42,7 @@ en vanlig pil for å bruke denne tankegangen.
 Når vi senere snakker om lengde og vinkel, må vi også velge hvordan de skal
 måles. Det er indreproduktet som gir oss denne måleregelen.
 
-</details>
+:::
 
 ### Begreper
 
@@ -304,8 +297,7 @@ Siden $q_1=\cos\theta$ og $q_2=\sin\theta$, er dette nettopp
 $3q_1+2q_2$. Den generelle regelen nedenfor er den samme oppskriften for
 $x_1$ vannrette og $x_2$ loddrette skritt.
 
-<details class="reading-step">
-<summary>Gå i dybden: de to etappene i Python</summary>
+::: {.reading-step title="Gå i dybden: de to etappene i Python"}
 
 Prøv de to etappene hver for seg. Koden skriver dem ut før summen.
 Endre retningen og forutsi fortegnene først.
@@ -327,7 +319,7 @@ print("To skritt opp bidrar:", vertical)
 print("Til sammen:", horizontal+vertical)
 ```
 
-</details>
+:::
 
 For en tur med $x_1$ vannrette og $x_2$ loddrette skritt får vi derfor:
 
@@ -394,8 +386,7 @@ i flyttallsregningen blir resultatet `NaN` («not a number»). Det er maskinens
 markering av at regningen ikke ga et gyldig tall. En algoritme må kontrollere
 lengden før den normaliserer.
 
-<details class="reading-step">
-<summary>Gå i dybden: se NaN oppstå i Python</summary>
+::: {.reading-step title="Gå i dybden: se NaN oppstå i Python"}
 
 Cellen normaliserer først $(3,4)^T$ og deretter nullvektoren. Advarselen og
 `NaN` i den andre linjen er tilsiktet.
@@ -414,7 +405,7 @@ with np.errstate(divide="warn", invalid="warn"):
         print("endelige tall?", np.isfinite(q).all())
 ```
 
-</details>
+:::
 
 ### Hva om vi bruker målepilen uten å normalisere?
 
@@ -424,8 +415,7 @@ målepilen har lengde én. Med $x=(3,2)^T$, $q=(1,0)^T$ og $v=2q=(2,0)^T$ er
 $x^Tq=3$, mens $x^Tv=6=2(x^Tq)$: Dobling av målepilen dobler resultatet.
 Generelt er $x^Tv=\lVert v\rVert_2\,(x^Tq)$ med $q=v/\lVert v\rVert_2$.
 
-<details class="reading-step">
-<summary>Gå i dybden: målepil som ikke har lengde én</summary>
+::: {.reading-step title="Gå i dybden: målepil som ikke har lengde én"}
 
 Til nå har $q$ hatt lengde én. Det er derfor tallet $x^Tq$ har kunnet
 tolkes direkte som komponenten av $x$ langs $q$. Men selve regningen
@@ -475,7 +465,7 @@ $$\underbrace{x^Tv}_{\text{indreprodukt}}
 For å finne komponenten deler vi derfor $x^Tv$ på $\lVert v\rVert_2$.
 Når lengden allerede er én, er dette akkurat regelen fra figuren.
 
-</details>
+:::
 
 **Ta med til neste fane:** En positiv lengdefaktor kan endre størrelsen
 på resultatet, men kan ikke gjøre et nullresultat forskjellig fra null.
@@ -538,8 +528,7 @@ $$Q^TQ=\begin{bmatrix}q_1^Tq_1&q_1^Tq_2\\q_2^Tq_1&q_2^Tq_2\end{bmatrix}
 =\begin{bmatrix}1\cdot1+0\cdot0&1\cdot0+0\cdot1\\0\cdot1+1\cdot0&0\cdot0+1\cdot1\end{bmatrix}
 =\begin{bmatrix}1&0\\0&1\end{bmatrix}.$$
 
-<details class="reading-step">
-<summary>Gå i dybden: produktet $Q^TQ$ med fargekode</summary>
+::: {.reading-step title="Gå i dybden: produktet $Q^TQ$ med fargekode"}
 
 Fargene følger rollen i produktet: **blått er kolonner fra $Q$**, og
 **oransje er rader fra $Q^T$**. Det er de samme tallene før og etter
@@ -571,7 +560,7 @@ $$\begin{aligned}
 \end{aligned}$$
 
 
-</details>
+:::
 
 Resultatene skrives uten farge fordi hvert resultat kommer fra **begge**
 faktorene. På diagonalen måler hver pil seg selv:
@@ -593,8 +582,7 @@ lengdene, og resten kontrollerer ortogonaliteten. Selve $Q$ trenger
 ikke være en identitetsmatrise; det er **tabellen over indreproduktene**
 som blir $I_k$ når kolonnene er ortonormale.
 
-<details class="reading-step">
-<summary>Gå i dybden: hele tabellen $Q^TQ$ for $k$ piler</summary>
+::: {.reading-step title="Gå i dybden: hele tabellen $Q^TQ$ for $k$ piler"}
 
 For to piler kan vi sette begge stablene inn i selve produktet:
 
@@ -671,7 +659,7 @@ $$\textcolor{#b45309}{Q^T}\textcolor{#1565c0}{Q}=
 Matrisen helt til høyre er identitetsmatrisen $I_k$, med $k$ rader og
 $k$ kolonner. Hele kjeden forkortes altså til $Q^TQ=I_k$.
 
-</details>
+:::
 
 ### Fra retningsmåler til mønsterdetektor {#uke4-monster}
 
@@ -711,8 +699,7 @@ $$\textcolor{#277da1}{+\tfrac12},\quad \textcolor{#d98900}{-\tfrac12},\quad
 Vi har beholdt alle pikselverdiene; vi har bare skrevet dem som én kolonne.
 Pilen over $\vec h$ sier at symbolet står for **hele vektoren**.
 
-<details class="reading-step">
-<summary>Gå i dybden: fargene, plassene og notasjonen i bildedelen</summary>
+::: {.reading-step title="Gå i dybden: fargene, plassene og notasjonen i bildedelen"}
 
 Vi bruker de samme fire pikselfargene som i uke 3, i samme rekkefølge:
 
@@ -737,7 +724,7 @@ For eksempel er $h_2=-1/2$ ett tall, mens $\vec h$ inneholder alle fire.
 Vi bruker $x_1,\ldots,x_4$ fremfor $a,b,c,d$ for pikselverdiene, så
 bokstaven $d$ ikke får to forskjellige roller.
 
-</details>
+:::
 
 Les de tre andre bildene i samme rekkefølge. Da får vi
 
@@ -753,8 +740,7 @@ $$\sqrt{(1/2)^2+(1/2)^2+(1/2)^2+(1/2)^2}=\sqrt1=1.$$
 Det er derfor vi valgte størrelsen $1/2$: Mønstrene kan brukes som
 enhetsretninger, akkurat som målepilen tidligere.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor kan et mønster være en retning?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor kan et mønster være en retning?"}
 
 For en vanlig pil sier «samme retning» at vi kan få den ene ved å gange
 den andre med et positivt tall. Prøv den samme handlingen på H-bildet:
@@ -773,7 +759,7 @@ koordinat for koordinat. Det er disse handlingene som gjør det mulig å
 bruke samme vektoridé på begge objektene. Vi trenger ikke tegne fire
 romlige akser for å undersøke regningen.
 
-</details>
+:::
 
 Indreproduktet med fire koordinater regner vi som før: Gang sammen
 verdiene på samme pikselplass og legg sammen,
@@ -789,8 +775,7 @@ $\tfrac12-\tfrac12+\tfrac12-\tfrac12=0$, og for $\vec y=3\vec h$ gir den
 $3$. Ett tall måler altså mengden av mønsteret, med fortegn. Det er dette
 vi mener med en **detektor**.
 
-<details class="reading-step">
-<summary>Gå i dybden: kontrollforsøket med tre rene bilder</summary>
+::: {.reading-step title="Gå i dybden: kontrollforsøket med tre rene bilder"}
 
 **Gitt:** Vi kjenner enhetsmønsteret $\vec h$ og tre enkle bilder.
 **Målet:** Undersøke om indreproduktet gir null for et jevnt bilde,
@@ -818,7 +803,7 @@ er snudd.
 Vi har brukt samme oppskrift som for to koordinater, bare med fire ledd.
 Hver faktor $h_i$ eller $y_i$ er et tall; hele uttrykket gir også ett tall.
 
-</details>
+:::
 
 #### Forsøk: finner vi igjen ingrediensene i en blanding?
 
@@ -858,8 +843,7 @@ De andre mønsterparene gir også null. Mønstervektorene er altså
 gir byggekoeffisientene direkte; med vilkårlige mønstre ville dette ikke
 vært garantert.
 
-<details class="reading-step">
-<summary>Gå i dybden: blandingen piksel for piksel og de tre andre målingene</summary>
+::: {.reading-step title="Gå i dybden: blandingen piksel for piksel og de tre andre målingene"}
 
 Regn piksel for piksel:
 
@@ -886,7 +870,7 @@ Vi fikk tilbake $2,-1,1/2,0$: akkurat mengdene i oppskriften. Det siste
 nullresultatet sier at blandingen ikke inneholder noe D-bidrag i denne
 mønsterbasisen.
 
-</details>
+:::
 
 #### Alle fire målingene med én matrise
 
@@ -911,8 +895,7 @@ Q_{\text{pattern}}^T\vec x
 Her betyr **måling** ett indreprodukt mellom et enhetsmønster og
 bildevektoren. Tallene er **mønstermengder**, ikke de fire pikselverdiene.
 
-<details class="reading-step">
-<summary>Gå i dybden: hva betyr de fire mengdene i blandingen?</summary>
+::: {.reading-step title="Gå i dybden: hva betyr de fire mengdene i blandingen?"}
 
 Hvert tall forteller hvor mye av det mønsteret bildet
 inneholder i denne ortonormale basisen:
@@ -927,7 +910,7 @@ inneholder i denne ortonormale basisen:
 For eksempel er M-mengden $2$, mens gjennomsnittet av pikselverdiene er $1$,
 fordi hver piksel i enhetsmønsteret M har verdien $1/2$.
 
-</details>
+:::
 
 I Python skriver vi ikke pil over variabelnavn: `h` svarer til $\vec h$.
 `H` lagrer de samme fire verdiene i bildeform, og `H.reshape(-1)` leser
@@ -975,14 +958,13 @@ koordinatene direkte.
 **Øv på dette:** [Finn det skjulte mønsteret](#uke4-oppg-monster) og
 [Når målinger ikke er koordinater](#uke4-oppg-ikke-ortogonal) i 4.7.
 
-<details class="reading-step">
-<summary>Gå i dybden: legg til støy</summary>
+::: {.reading-step title="Gå i dybden: legg til støy"}
 
 Legg `0.05*np.random.default_rng(4).standard_normal((2, 2))` til bildet og
 gjenta deteksjonen. Målingene blir ikke identiske med de opprinnelige
 koeffisientene, men de forteller fortsatt hvilke mønstre som dominerer.
 
-</details>
+:::
 
 ### Fra komponent til vektor og rest {#uke4-projeksjon}
 
@@ -1136,8 +1118,7 @@ forsvinner siden $q_j^Tq_i=0$ for $i\ne j$:
 
 $$\boxed{c=Q^Tx,\qquad p=Q(Q^Tx),\qquad Q^T(x-p)=0.}$$
 
-<details class="reading-step">
-<summary>Gå i dybden: de to matriseproduktene oppføring for oppføring</summary>
+::: {.reading-step title="Gå i dybden: de to matriseproduktene oppføring for oppføring"}
 
 Vi har utført to indreprodukter på samme vektor. For å skrive begge
 beregningene samlet setter vi retningsvektorene som kolonner i $Q$.
@@ -1192,10 +1173,9 @@ $$p=\textcolor{#1565c0}{Q}c
 Matrisen $QQ^T$ har størrelse $3\times3$ i dette eksemplet. Den er ikke
 $Q^TQ$, som har størrelse $2\times2$.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: projeksjon på $k$ ortonormale retninger</summary>
+::: {.reading-step title="Gå i dybden: projeksjon på $k$ ortonormale retninger"}
 
 La nå $q_1,\ldots,q_k$ være ortonormale vektorer i $\mathbb R^m$.
 Vi beregner først de $k$ tallene $c_i=q_i^Tx$ og deretter vektoren
@@ -1231,7 +1211,7 @@ $$\textcolor{#b45309}{Q^T}r
 
 Det er nettopp den siste likningen i rammen over: $Q^T(x-p)=0$.
 
-</details>
+:::
 
 #### Hvorfor er ikke projeksjonen alltid lik $x$?
 
@@ -1240,8 +1220,7 @@ kolonner enn rader. I eksemplet over er $p=QQ^Tx=(3,2,0)^T\ne x$: Den
 tredje komponenten ligger utenfor planet og blir igjen i residualen.
 **Vi får $p=x$ akkurat når $x$ ligger i rommet kolonnene i $Q$ spenner ut.**
 
-<details class="reading-step">
-<summary>Gå i dybden: $Q^TQ$ og $QQ^T$ i samme eksempel</summary>
+::: {.reading-step title="Gå i dybden: $Q^TQ$ og $QQ^T$ i samme eksempel"}
 
 Vi har vist at **$Q^TQ=I_k$** når de $k$ kolonnene i $Q$ er
 ortonormale. Det betyr ikke at $QQ^T$ er identitetsmatrisen:
@@ -1271,10 +1250,9 @@ Hvis $Q$ er kvadratisk med ortonormale kolonner, spenner kolonnene ut
 hele rommet. Da gjelder også $QQ^T=I$, og projeksjonen er lik $x$ for
 alle $x$.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: hvis målevektoren ikke har lengde én</summary>
+::: {.reading-step title="Gå i dybden: hvis målevektoren ikke har lengde én"}
 
 For en vilkårlig ikke-null vektor $a$ normaliserer vi først:
 $q=a/\lVert a\rVert_2$. Fra 4.1 vet vi at $x^Ta=\lVert a\rVert_2\,(x^Tq)$,
@@ -1290,7 +1268,7 @@ $$\operatorname{proj}_a(x)=\frac{a^Tx}{a^Ta}a.$$
 
 Når $a$ er en enhetsvektor, er $a^Ta=1$, og vi får $p=(a^Tx)a$ som før.
 
-</details>
+:::
 
 Nå har vi en måte å fjerne en kjent retning på. I neste fane bruker vi
 nettopp dette til å lage nye ortogonale retninger: Ta en ny pil, fjern
@@ -1391,8 +1369,7 @@ Vi har altså to ferdige likninger:
 $$a_1=\textcolor{#8b5aa7}{r_{11}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{0}\textcolor{#1565c0}{q_2},$$
 $$a_2=\textcolor{#8b5aa7}{r_{12}}\textcolor{#1565c0}{q_1}+\textcolor{#8b5aa7}{r_{22}}\textcolor{#1565c0}{q_2}.$$
 
-<details class="reading-step">
-<summary>Gå i dybden: kontroller de to likningene med tall</summary>
+::: {.reading-step title="Gå i dybden: kontroller de to likningene med tall"}
 
 Kontroller begge med tallene fra regningen:
 
@@ -1410,7 +1387,7 @@ a_2&=\textcolor{#8b5aa7}{\frac4{\sqrt5}}\,\textcolor{#1565c0}{\frac1{\sqrt5}\beg
 Ingen nye vektorer eller koeffisienter skal beregnes for å skrive QR.
 Vi skal bare samle disse to likningene.
 
-</details>
+:::
 
 #### Fra to likninger til to matriser
 
@@ -1444,8 +1421,7 @@ Når $Q$ multipliseres med første kolonne i $R$, får vi
 $r_{11}q_1+0\cdot q_2=a_1$. Andre kolonne gir $r_{12}q_1+r_{22}q_2=a_2$.
 Produktet $QR$ har altså nettopp $a_1$ og $a_2$ som kolonner.
 
-<details class="reading-step">
-<summary>Gå i dybden: $QR$ kolonne for kolonne og rad for kolonne</summary>
+::: {.reading-step title="Gå i dybden: $QR$ kolonne for kolonne og rad for kolonne"}
 
 Hele produktet kolonne for kolonne:
 
@@ -1477,7 +1453,7 @@ $$\begin{aligned}
 =\begin{bmatrix}2&1\\1&2\end{bmatrix}.
 \end{aligned}$$
 
-</details>
+:::
 
 Matrisen med de opprinnelige vektorene som kolonner kaller vi
 $A=[a_1\ a_2]$. Hele regnskapet kan dermed forkortes til
@@ -1573,8 +1549,7 @@ Resten $v_3$ står vinkelrett på både $q_1$ og $q_2$: Når vi regner ut
 $q_1^Tv_3$, forsvinner kryssleddet med $q_1^Tq_2=0$, og det som står igjen
 er $r_{13}-r_{13}=0$. Det samme skjer for $q_2^Tv_3$.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor resten blir ortogonal på begge retningene</summary>
+::: {.reading-step title="Gå i dybden: hvorfor resten blir ortogonal på begge retningene"}
 
 For den første retningen får vi
 
@@ -1601,7 +1576,7 @@ Kryssleddene er null fordi $q_1$ og $q_2$ er ortogonale.
 komponenten langs den andre. Dette er en forklaring i eksakt regning;
 i neste fane undersøker vi hva avrunding kan endre.
 
-</details>
+:::
 
 Siden $a_3$ tilfører en uavhengig retning, er $v_3\ne0$. Normaliser resten:
 
@@ -1613,8 +1588,7 @@ indreproduktene som var null, forblir null. Dermed er $q_1,q_2,q_3$
 ortonormale. Regnskapet for $a_3$ blir
 $a_3=r_{13}q_1+r_{23}q_2+r_{33}q_3$, og det blir tredje kolonne i $R$.
 
-<details class="reading-step">
-<summary>Gå i dybden: regnskapet for tre kolonner</summary>
+::: {.reading-step title="Gå i dybden: regnskapet for tre kolonner"}
 
 Normaliseringen gir $v_3=r_{33}q_3$. Sett dette inn i
 $a_3=p_3+v_3$. Da har vi følgende tre likninger:
@@ -1653,7 +1627,7 @@ Også med tre kolonner er $A=QR$ kortformen av regnskapet vi allerede
 har ført. Nullene under diagonalen i $R$ beskriver rekkefølgen på
 beregningene: Tidligere vektorer bruker ikke retninger som beregnes senere.
 
-</details>
+:::
 
 #### Den samme beregningen i generell vektorform
 
@@ -1921,8 +1895,7 @@ noe tall er NaN. Dette er mekanismen fra
 [prosjekt 1 – Floating-point attack](project_week1.qmd): Et lite bidrag
 forsvinner når det legges til et stort.
 
-<details class="reading-step">
-<summary>Gå i dybden: følg avrundingen trinn for trinn</summary>
+::: {.reading-step title="Gå i dybden: følg avrundingen trinn for trinn"}
 
 Uttrykkene nedenfor viser float64-resultatene med enkle brøker;
 $\approx$ skjuler bare de siste avrundede sifrene.
@@ -2014,7 +1987,7 @@ $$\begin{aligned}
 Begge vektorene har lengde omtrent én, men de er langt fra ortogonale.
 Ingen tall er NaN.
 
-</details>
+:::
 
 Forløpet er altså **avrunding i første normalisering → liten
 ortogonalitetsfeil → koeffisient beregnet før resten oppdateres → stor
@@ -2161,8 +2134,7 @@ og måle ortogonalitetsfeilen og den relative faktoriseringsfeilen for begge
 metodene. Cellen står i Gå i dybden-blokken nedenfor; resultatet oppsummerer
 vi etterpå.
 
-<details class="reading-step">
-<summary>Gå i dybden: tap av ortogonalitet i et helt sveip</summary>
+::: {.reading-step title="Gå i dybden: tap av ortogonalitet i et helt sveip"}
 
 Matrisene er $A_\varepsilon$ med en rad av ettall øverst og
 $\varepsilon I_3$ under; mindre $\varepsilon$ gjør kolonnene mer parallelle.
@@ -2231,7 +2203,7 @@ ortogonalitet i dette forsøket? Hvor mye lenger holder modifisert GS her?
 Kontroller også at alle tall er endelige og den relative feilen
 $\lVert A-QR\rVert_F/\lVert A\rVert_F$.
 
-</details>
+:::
 
 **Hva viser sveipet?** Klassisk GS holder ortogonaliteten godt så lenge
 kolonnene ikke er for like: ved $\varepsilon=10^{-5}$ er
@@ -2245,15 +2217,14 @@ ortogonaliteten; vi må kontrollere begge.
 
 **Øv på dette:** [En nesten usynlig feil blir stor](#uke4-oppg-avrunding) i 4.7.
 
-<details class="reading-step">
-<summary>Gå i dybden: hva bruker NumPy?</summary>
+::: {.reading-step title="Gå i dybden: hva bruker NumPy?"}
 
 `numpy.linalg.qr` bruker ikke den pedagogiske Gram–Schmidt-koden over.
 Robuste biblioteker bruker vanligvis **Householder-transformasjoner**:
 speilinger som lager nuller uten de samme gjentatte subtraksjonene som
 Gram–Schmidt. Vi utleder ikke Householder-metoden denne uken.
 
-</details>
+:::
 
 ## 4.5 Minste kvadrater
 
@@ -2510,8 +2481,7 @@ Legg også merke til at $Q^Tr=Q^Tr_*+Q^TQ(d-Rc)=d-Rc$. For en $c$ som ikke
 er best, er altså $Q^Tr\ne0$. Det er kontrollen du bruker på den foreslåtte
 linjen i prosjekt 4, del 1.
 
-<details class="reading-step">
-<summary>Gå i dybden: Pytagoras-steget utregnet</summary>
+::: {.reading-step title="Gå i dybden: Pytagoras-steget utregnet"}
 
 Kall de to leddene $u=r_*$ og $w=Q(d-Rc)$. Siden $Q^Tr_*=0$, er
 $w^Tu=(d-Rc)^TQ^Tr_*=0$. Da gir utganging
@@ -2524,7 +2494,7 @@ Altså er $\lVert r\rVert_2^2=\lVert r_*\rVert_2^2+\lVert Q(d-Rc)\rVert_2^2
 $\lVert Q(d-Rc)\rVert_2^2=(d-Rc)^TQ^TQ(d-Rc)=\lVert d-Rc\rVert_2^2$, så
 likhet gjelder bare når $Rc=d$.
 
-</details>
+:::
 
 #### Finn konstantleddet og stigningstallet
 
@@ -2555,7 +2525,8 @@ vises som loddrette avvik i figuren. At $Q^Tr_*=0$, gjelder
 vektorene med fire koordinater, én for hver måling; det betyr
 ikke at de røde segmentene står vinkelrett på den tegnede linjen.
 
-<div id="uke4-normal"></div>
+::: {#uke4-normal}
+:::
 
 #### Normallikningene: den samme betingelsen uten $Q$
 
@@ -2657,7 +2628,8 @@ Som her forutsetter vi at modellkolonnene er lineært uavhengige.
 
 ## 4.6 Polynomer: fra uke 3 til prosjekt 4
 
-<div id="uke4-polynomer"></div>
+::: {#uke4-polynomer}
+:::
 
 ### Samme polynom, flere målinger
 
@@ -2706,8 +2678,7 @@ $Rc=d$. For disse dataene gir det $c=(1,1,\tfrac12)^T$ – akkurat
 referansepolynomet – og kvadratsummen $0.007$. Kolonnene i $Q$ er verdiene
 av tre nye basispolynomer ved målepunktene; formlene står i Gå i dybden.
 
-<details class="reading-step">
-<summary>Gå i dybden: QR-systemet for polynomet regnet for hånd</summary>
+::: {.reading-step title="Gå i dybden: QR-systemet for polynomet regnet for hånd"}
 
 Vi faktoriserer $A=\textcolor{#1565c0}{Q}\textcolor{#8b5aa7}{R}$.
 Matrisen $Q$ har fem rader og tre ortonormale kolonner som spenner ut
@@ -2773,10 +2744,9 @@ valgt ortogonal på kolonnene i $Q$.** Da bidrar den med null i $Q^Tb$.
 Vanlig målefeil har også en komponent i modellrommet og vil som regel
 endre det tilpassede polynomet.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: ortonormale polynomer fra $R$</summary>
+::: {.reading-step title="Gå i dybden: ortonormale polynomer fra $R$"}
 
 Kolonnene i $Q$ inneholder verdiene av nye basispolynomer
 $\phi_0,\phi_1,\phi_2$ ved målepunktene. **For å finne selve
@@ -2821,7 +2791,7 @@ Ortogonaliteten gjelder altså **polynomverdiene ved de valgte punktene**,
 ikke koeffisientlistene. Endrer vi målepunktene, kan også den
 ortonormale polynombasisen fra QR endre seg.
 
-</details>
+:::
 
 ### Bytt polynombasis, behold QR-metoden
 
@@ -2936,7 +2906,8 @@ Kodeverktøyene finnes på prosjektsiden.
 
 ## 4.7 Oppsummering og oppgaver
 
-<div id="uke4-oppgaver"></div>
+::: {#uke4-oppgaver}
+:::
 
 ### Svar på ukens spørsmål
 
@@ -3008,7 +2979,8 @@ gjerne på egne eksempler også.
 De åpne forklaringene skriver du i egne notater; de vurderes ikke automatisk.
 Et grønt resultat erstatter derfor ikke begrunnelsen.
 
-<div id="uke4-oppg-monster"></div>
+::: {#uke4-oppg-monster}
+:::
 
 ### Finn det skjulte mønsteret
 
@@ -3082,7 +3054,8 @@ assert np.allclose(p+r, x), 'De to delene må gi det opprinnelige signalet.'
 Forutsi hva som skjer med alle tre målingene når bare første måling økes
 med $1$. Forklar svaret ut fra komponentene i $q_i$, ikke bare utskriften.
 
-<div id="uke4-oppg-ikke-ortogonal"></div>
+::: {#uke4-oppg-ikke-ortogonal}
+:::
 
 ### Når målinger ikke er koordinater
 
@@ -3129,7 +3102,8 @@ $U=[u_1\ u_2\ u_3]$ og koeffisientene i $c=(2,-\sqrt2,\sqrt3)^T$.
 Forklar nå likningen $U^Tx=(U^TU)c$: Hvilke oppføringer i $U^TU$ gjør at
 målingene påvirkes av flere byggekoeffisienter?
 
-<div id="uke4-oppg-qr"></div>
+::: {#uke4-oppg-qr}
+:::
 
 ### Bygg QR og bruk den
 
@@ -3223,7 +3197,8 @@ assert np.allclose(c,[0,1,2]), 'Løs R c = Q.T @ b, ikke A c = b.'
 *langs* byggeretningene til en rest som allerede står vinkelrett på dem?
 Bruk Pytagoras til å forklare hvorfor feilen ikke kan bli mindre.
 
-<div id="uke4-oppg-normal"></div>
+::: {#uke4-oppg-normal}
+:::
 
 ### Normallikningene for hånd
 
@@ -3253,7 +3228,8 @@ Kvadratsummen $\lVert b-Ac\rVert_2^2$ er __[2/3].
 **Forklar:** Hvorfor er $A^TA$ symmetrisk? Hvilket indreprodukt står i
 rad $i$, kolonne $j$?
 
-<div id="uke4-oppg-forslag"></div>
+::: {#uke4-oppg-forslag}
+:::
 
 ### Er det foreslåtte svaret det beste?
 
@@ -3280,7 +3256,8 @@ $\lVert d-Rc\rVert_2^2=$ __[1/20]
 **Forklar:** Hvilken av de to kontrollene $Q^Tr$ og $A-QR$ avslører at
 forslaget ikke er best?
 
-<div id="uke4-oppg-avrunding"></div>
+::: {#uke4-oppg-avrunding}
+:::
 
 ### En nesten usynlig feil blir stor
 
@@ -3357,7 +3334,8 @@ bare én gir gode måleretninger? Knytt forklaringen til det tapte leddet og
 normaliseringen, og til [prosjekt 1](project_week1.qmd). Unngå påstanden
 «MGS er alltid stabil»; beskriv hva akkurat disse forsøkene viser.
 
-<div id="uke4-oppg-ekstra-punkt"></div>
+::: {#uke4-oppg-ekstra-punkt}
+:::
 
 ### Kan et ekstra datapunkt gjøre tilpasningen dårligere?
 
@@ -3416,7 +3394,8 @@ feil $2.7$ på fire punkter. Hvorfor er ikke denne sammenligningen alene et
 argument mot minste kvadrater? Hvilken sammenligning viser at metoden har
 funnet en forbedring på det nye problemet?
 
-<div id="uke4-oppg-falsk-qr"></div>
+::: {#uke4-oppg-falsk-qr}
+:::
 
 ### Avslør en falsk kvalitetskontroll
 

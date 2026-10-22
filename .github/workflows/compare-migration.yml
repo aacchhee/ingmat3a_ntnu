@@ -1,0 +1,28 @@
+name: Compare step-4 migration
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    # This fixed baseline is the acceptance comparison for this migration only.
+    if: ${{ github.head_ref == 'consolidation/2026-10-step4-migration' }}
+    uses: Erasmus-CTM/ctm-assessment/.github/workflows/compare-courses.yml@4edd42835a8923ebeac1a44b158add3c2698b75c
+    with:
+      tooling-ref: 4edd42835a8923ebeac1a44b158add3c2698b75c
+      course: aacchhee/ingmat3a_ntnu
+      course-ref: ${{ github.event.pull_request.head.sha }}
+      course-base-ref: a0a34ee508fdd4d00e78e7ea782b00a343fcf682
+      base: pin
+      head: 3d9ebd94565ca302724dc619092ad9d043c1497f
+      convert: false
+      emit-converted-source: false
+      expect: step4-migration.yml
+      browser: true
+      emit-browser-shots: true
+      browsers: chromium firefox webkit
+      shards: '4'

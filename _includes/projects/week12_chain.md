@@ -236,15 +236,14 @@ Fullfør først funksjonen `h` i del 1 og senere `F_mu` i del 3. De andre
 cellene kan kjøres i vilkårlig rekkefølge når disse studentfunksjonene er
 definert; hver celle finner sine egne løsningsdata.
 
-<details>
-<summary>Egen notebook: last ned oppsettet og kom i gang</summary>
+::: {.details title="Egen notebook: last ned oppsettet og kom i gang"}
 
 Last ned [project_week12_setup.py](../assets/project_week12_setup.py){download="project_week12_setup.py"}
 til samme mappe som notebooken. Kjør `from project_week12_setup import *`,
 og kopier prosjektcellene i rekkefølge. Du trenger NumPy, SciPy og Matplotlib.
 Kontroller med **Restart / Run all**, og ta med oppsettsfilen ved levering.
 
-</details>
+:::
 
 ## 1. Finn og kontroller formen
 
@@ -483,7 +482,8 @@ Hvor mange egenverdier er store sammenlignet med de minste? Forklar
 hvorfor $\mu J^TJ$ skiller mellom disse retningene, og bruk
 [uke 9](uke9.qmd#uke9-stabilitet) til å tolke kondisjonstallet.
 
-<div id="project-week12-too-stiff"></div>
+::: {#project-week12-too-stiff}
+:::
 
 **Ta med videre:** Et større straffeledd kan gi mindre kravbrudd samtidig
 som problemet blir vanskeligere å løse. Tallene avhenger også av start,

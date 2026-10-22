@@ -1,14 +1,9 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ::: {.panel-tabset}
 
 ## 6.0 Oversikt
 
-<div id="uke6-start"></div>
+::: {#uke6-start}
+:::
 
 ### Kan vi løse tusenvis av likninger ved å begynne med et grovt svar og forbedre det litt om gangen?
 
@@ -49,7 +44,8 @@ skalering kan endre arbeidsmengden for CG.
 
 ## 6.1 Fra likningssystem til Gauss–Seidel
 
-<div id="uke6-gs"></div>
+::: {#uke6-gs}
+:::
 
 ### Én likning og én ukjent om gangen
 
@@ -164,8 +160,7 @@ egenverdi. Men virker oppskriften for ethvert system?
 
 **Øv på dette:** [Jacobi eller Gauss–Seidel?](#uke6-ov-sveip)
 
-<details class="reading-step">
-<summary>Gå i dybden: fire ukjente, rekkefølgen i sveipet og korreksjonen i koden</summary>
+::: {.reading-step title="Gå i dybden: fire ukjente, rekkefølgen i sveipet og korreksjonen i koden"}
 
 **Den samme oppskriften som matriseregning**
 
@@ -334,11 +329,12 @@ gangen, bruker neste rad de oppdaterte verdiene automatisk.
 Beregner vi derimot hele residualen én gang ved starten av sveipet
 og bruker den uendret i alle korreksjonene, får vi Jacobi.
 
-</details>
+:::
 
 ## 6.2 Følg feilen
 
-<div id="uke6-fikspunkt"></div>
+::: {#uke6-fikspunkt}
+:::
 
 I eksperiment 1 krympet GS-feilen med samme faktor i hvert sveip etter
 det første. Skjer det
@@ -437,8 +433,7 @@ akkurat når $\rho(T)<1$. Det er $T$ vi undersøker her.
 
 **Øv på dette:** [Blir feilen mindre?](#uke6-ov-feilfaktor)
 
-<details class="reading-step">
-<summary>Gå i dybden: finn matriserepresentasjonen av feiloppdateringen</summary>
+::: {.reading-step title="Gå i dybden: finn matriserepresentasjonen av feiloppdateringen"}
 
 **Prøv selv**
 
@@ -485,11 +480,12 @@ $$(D+L)x_{k+1}=b-Ux_k,\qquad T=-(D+L)^{-1}U.$$
 Dette er et analyseuttrykk; implementasjonen trenger ikke en eksplisitt invers.
 For Jacobi er $T=-D^{-1}(L+U)$.
 
-</details>
+:::
 
 ## 6.3 Residual, norm og kondisjonstall
 
-<div id="uke6-residual"></div>
+::: {#uke6-residual}
+:::
 
 ### Fra ett tall i uke 2 til en vektor i uke 6
 
@@ -652,8 +648,7 @@ hvilken øvre grense får dere for relativ feil?**
 
 **Øv på dette:** [Liten residual, godt svar?](#uke6-ov-residual)
 
-<details class="reading-step">
-<summary>Gå i dybden: feilgrensen, enhetssirkelen og et forsøk med kondisjonstall</summary>
+::: {.reading-step title="Gå i dybden: feilgrensen, enhetssirkelen og et forsøk med kondisjonstall"}
 
 **Feilgrensen i tre trinn**
 
@@ -866,11 +861,12 @@ $(5\pm\sqrt5)/2$, og kondisjonstallet er omtrent $2.62$.
 For en generell matrise kan vi ikke bruke denne egenverdikvotienten;
 uke 7 forklarer sammenhengen med singulærverdier.
 
-</details>
+:::
 
 ## 6.4 Løsningen som minimum
 
-<div id="uke6-energi"></div>
+::: {#uke6-energi}
+:::
 
 ### Fra to likninger til én funksjon
 
@@ -1036,8 +1032,7 @@ allerede har oppnådd i tidligere retninger.
 **Øv på dette:** [Fra likningssystem til minimum](#uke6-ov-skal) og
 [kondisjonstall fra egenverdiene](#uke6-ov-kondisjon).
 
-<details class="reading-step">
-<summary>Gå i dybden: nivåkurver, hele GS-sveipet, tre ukjente og den generelle minimeringen</summary>
+::: {.reading-step title="Gå i dybden: nivåkurver, hele GS-sveipet, tre ukjente og den generelle minimeringen"}
 
 **Nivåkurvene er ellipser**
 
@@ -1299,11 +1294,12 @@ Hjelperen brukes her for symmetriske $2\times2$-matriser.
 Matrisen og høyresiden bestemmer nivåkurvene, mens `path` bestemmer
 hvilke løsningsforslag som forbindes i figuren.
 
-</details>
+:::
 
 ## 6.5 Fra skål til søkeretning
 
-<div id="uke6-retning"></div>
+::: {#uke6-retning}
+:::
 
 ### Vi kan velge andre linjer enn koordinataksene
 
@@ -1485,8 +1481,7 @@ på nytt. Dette leder til CG.
 
 **Øv på dette:** [Ett steg med bratteste nedstigning](#uke6-ov-linjesok)
 
-<details class="reading-step">
-<summary>Gå i dybden: fra partiellderiverte til eksakt linjesøk</summary>
+::: {.reading-step title="Gå i dybden: fra partiellderiverte til eksakt linjesøk"}
 
 **Prøv selv**
 
@@ -1544,11 +1539,12 @@ Langs en nivåkurve er funksjonsendringen null, så tangentretningen
 står vinkelrett på gradienten. Ved minimum er gradienten null,
 og vi trenger ingen ny søkeretning.
 
-</details>
+:::
 
 ## 6.6 Konjugert gradient
 
-<div id="uke6-cg"></div>
+::: {#uke6-cg}
+:::
 
 ### Først: hva har ett linjesøk gitt oss?
 
@@ -1763,7 +1759,8 @@ løsningen; her sier det noe om skålens form og inngår i grenser for hvor
 fort CG konvergerer. Det bestemmer ikke alene antall steg; fordelingen av
 egenverdiene og startfeilen betyr også noe. Det undersøker du i prosjektet.
 
-<div id="uke6-svar"></div>
+::: {#uke6-svar}
+:::
 
 ### Svar på ukens spørsmål
 
@@ -1788,8 +1785,7 @@ for bratteste nedstigning og CG), hvert steg er billig og vi måler
 framgangen med residualen.
 I prosjektet spør vi om vi kan gjøre skålen rundere før CG starter.
 
-<details class="reading-step">
-<summary>Gå i dybden: hva taper bratteste nedstigning, og hvor kommer CG-formlene fra?</summary>
+::: {.reading-step title="Gå i dybden: hva taper bratteste nedstigning, og hvor kommer CG-formlene fra?"}
 
 **Fordypningsforsøk: hva taper bratteste nedstigning?**
 
@@ -1939,13 +1935,14 @@ CGs minimering reduserer energifeilen i eksakt regning.
 Den vanlige residualnormen $\lVert b-Ax\rVert_2$ måler en annen
 størrelse og har ingen tilsvarende garanti for hvert enkelt steg.
 
-</details>
+:::
 
 
 
 ## 6.7 Prosjekt og egenarbeid
 
-<div id="uke6-prosjekt"></div>
+::: {#uke6-prosjekt}
+:::
 
 ### Diskusjon — samme løsning, bedre skalering?
 
@@ -1991,7 +1988,8 @@ Det vil si $2u+v=3$ og $u+2v=0$. Oppgavene krever ingen programmering.
 
 ### Iterasjon og feil
 
-<div id="uke6-ov-sveip"></div>
+::: {#uke6-ov-sveip}
+:::
 
 #### Jacobi eller Gauss–Seidel?
 
@@ -2014,7 +2012,8 @@ Gauss–Seidel: $x_1=$ vec[3/2,-3/4]
 **Forklar i egne notater:** Hvorfor får metodene ulik andre koordinat?
 Pek på hvilken verdi av $u$ hver metode bruker.
 
-<div id="uke6-ov-feilfaktor"></div>
+::: {#uke6-ov-feilfaktor}
+:::
 
 #### Blir feilen mindre?
 
@@ -2046,7 +2045,8 @@ startverdi? Hvorfor går da også første koordinat mot riktig verdi?
 
 ### Residual og kondisjon
 
-<div id="uke6-ov-residual"></div>
+::: {#uke6-ov-residual}
+:::
 
 #### Liten residual, godt svar?
 
@@ -2094,7 +2094,8 @@ $\hat x$? Kontroller feilgrensen fra 6.3, og forklar hvorfor liten
 bakoverfeil ikke nødvendigvis gir liten foroverfeil. Er grensen nesten
 nådd her, slik den var i eksemplet i 6.3?
 
-<div id="uke6-ov-kondisjon"></div>
+::: {#uke6-ov-kondisjon}
+:::
 
 #### Kondisjonstall fra egenverdiene
 
@@ -2123,7 +2124,8 @@ egenverdier lik $1$. Hvorfor gir kvotienten ikke kondisjonstallet for den?
 
 ### Skål, linjesøk og CG
 
-<div id="uke6-ov-skal"></div>
+::: {#uke6-ov-skal}
+:::
 
 #### Fra likningssystem til minimum
 
@@ -2164,7 +2166,8 @@ $x_*=$ vec[2,-1]
 $\phi$? Begrunn at $A$ er positivt definitt, for eksempel med egenverdiene.
 At gradienten er null, er ikke alene nok til å avgjøre dette.
 
-<div id="uke6-ov-linjesok"></div>
+::: {#uke6-ov-linjesok}
+:::
 
 #### Ett steg med bratteste nedstigning
 
@@ -2203,7 +2206,8 @@ $r_1=$ vec[0,-3/2]
 **Forklar i egne notater:** Hvorfor har vi funnet minimum langs
 søkelinjen uten å ha løst hele likningssystemet? Bruk residualen i svaret.
 
-<div id="uke6-ov-cg"></div>
+::: {#uke6-ov-cg}
+:::
 
 #### Neste CG-retning med Gram–Schmidt
 
@@ -2252,7 +2256,8 @@ $\lVert b-Ax_2\rVert_2=$ __[0]
 stå vinkelrett i det vanlige koordinatplanet? Hva sikrer
 A-konjugertheten når vi gjør det andre linjesøket?
 
-<div id="uke6-ov-cg-oppskrift"></div>
+::: {#uke6-ov-cg-oppskrift}
+:::
 
 #### To CG-steg med de korte formlene
 

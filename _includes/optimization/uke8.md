@@ -1,14 +1,9 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ::: {.panel-tabset}
 
 ## 8.0 Oversikt
 
-<div id="uke8-start"></div>
+::: {#uke8-start}
+:::
 
 ### Tre spørsmål før vi velger en metode
 
@@ -85,7 +80,8 @@ Etter denne uken skal du kunne
 
 ## 8.1 Et søk som aldri blir ferdig
 
-<div id="uke8-eksistens"></div>
+::: {#uke8-eksistens}
+:::
 
 ### Kan vi stole på at et søk er ferdig?
 
@@ -185,8 +181,7 @@ plot_model_curves([1, 0.3, 0.1, 0.03])
   gjelder for *alle* $a$ og $b>0$, og ikke bare for kurvene i figuren,
   står i fordypningen under.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor er kvadratsummen positiv i alle tillatte punkter?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor er kvadratsummen positiv i alle tillatte punkter?"}
 
 Vi skiller mellom to tilfeller:
 
@@ -211,7 +206,7 @@ Målingene er ni punkter på linjen. Minst sju av dem ligger altså utenfor
 modellkurven, og hver av dem gir et positivt ledd i $S$. Derfor er
 $S(a,b)>0$ i alle tillatte punkter.
 
-</details>
+:::
 
 Hvor små kan verdiene bli? Cellen regner ut $S$ langs kurven $a=0.5/b$
 for stadig mindre $b$, slik at vi ser i tall hvor fort $S$ synker.
@@ -331,7 +326,8 @@ Her skjer begge deler på en gang:
 
 ## 8.2 Kompakthet gir et minimum
 
-<div id="uke8-kompakt"></div>
+::: {#uke8-kompakt}
+:::
 
 ### To måter å miste minimum på
 
@@ -380,8 +376,7 @@ Bruk setningen ved å kontrollere to ting hver for seg:
   betingelse, ikke en nødvendig. Hele $\mathbb R$ er ikke kompakt, men
   $x^2$ har likevel minimum der.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor gjelder setningen, og hvorfor trengs kontinuitet?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor gjelder setningen, og hvorfor trengs kontinuitet?"}
 
 **Idé til bevis.** La $z_k$ være en minimerende følge i den kompakte
 mengden $D$.
@@ -396,7 +391,7 @@ mengden $D$.
 lar vi $h(0)=1$ og $h(x)=x$ ellers. Da er $\inf h=0$, men ingen $x$ gir
 $h(x)=0$. Funksjonsverdien gjør et sprang i grensen.
 
-</details>
+:::
 
 ### Kan vi redde tilpasningen fra eksperiment 1?
 
@@ -450,10 +445,10 @@ print(f'a = {a:.3f}, b = {b:.3f}, S = {r.fun:.2e}')
 - **Regelen på randen:** Ved et minimum på randen gjelder altså ikke
   regelen $\nabla f=0$. Dette kommer vi tilbake til i uke 11 og 12.
 
-<details class="reading-step">
-<summary>Gå i dybden: lineær og ikke-lineær tilpasning – hvorfor merket vi ingenting i uke 4?</summary>
+::: {.reading-step title="Gå i dybden: lineær og ikke-lineær tilpasning – hvorfor merket vi ingenting i uke 4?"}
 
-<div id="uke8-tilpasning"></div>
+::: {#uke8-tilpasning}
+:::
 
 **Én koeffisient, regnet ut.** Den enkleste lineære modellen er en linje
 gjennom origo, $y\approx c\,t$. Kvadratsummen er
@@ -584,7 +579,7 @@ for seed in range(6):
 
 Det tillatte området er altså en del av problemet.
 
-</details>
+:::
 
 **Dette tar vi med oss.**
 
@@ -599,7 +594,8 @@ Det tillatte området er altså en del av problemet.
 
 ## 8.3 Hessianen: krumning i alle retninger
 
-<div id="uke8-hessian"></div>
+::: {#uke8-hessian}
+:::
 
 ### Fra én variabel til flere
 
@@ -652,8 +648,7 @@ Funksjonsverdiene er $f(0,0)=0$ og $f(1,1)=1+1-3=-1$.
 - **På randen:** Betingelsen gjelder ikke på randen: i eksperiment 2 lå
   minimum på randen, og der var gradienten ikke null.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor må gradienten være null i et indre minimum?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor må gradienten være null i et indre minimum?"}
 
 Et **indre** punkt har et lite område rundt seg der alle punkter er
 tillatt. I et indre lokalt minimum kan ingen retning gå nedover.
@@ -666,7 +661,7 @@ tillatt. I et indre lokalt minimum kan ingen retning gå nedover.
 3. Altså må $\nabla f^Tp=0$ for alle $p$. Med $p=\nabla f$ får vi
    $\|\nabla f\|^2=0$, og da er $\nabla f=0$.
 
-</details>
+:::
 
 ### Hessianmatrisen, ledd for ledd
 
@@ -712,8 +707,7 @@ $$\varphi''(s)=f_{xx}p_1^2+2f_{xy}\,p_1p_2+f_{yy}p_2^2=p^T\,H(z+sp)\,p.$$
 Det siste likhetstegnet ser du ved å gange ut $p^THp$ med matrisen $H$ fra
 over. Håndeksempelet under kontrollerer formelen på et konkret polynom.
 
-<details class="reading-step">
-<summary>Gå i dybden: den andrederiverte langs linjen, ledd for ledd</summary>
+::: {.reading-step title="Gå i dybden: den andrederiverte langs linjen, ledd for ledd"}
 
 Vi deriverer $\varphi'(s)=f_x\,p_1+f_y\,p_2$ én gang til. Tallene
 $p_1,p_2$ er konstanter. Faktorene $f_x$ og $f_y$ er selv funksjoner av $x$
@@ -739,7 +733,7 @@ $$
 \end{aligned}
 $$
 
-</details>
+:::
 
 **Krumningen i retningen $p$ er tallet $p^THp$.** Én matrise gir oss den
 andrederiverte langs alle linjer gjennom punktet.
@@ -785,8 +779,7 @@ $$f(z+sp)\approx f(z)+s\,\nabla f(z)^Tp+\tfrac12\,s^2\,p^TH(z)\,p.$$
 - **Videre:** Den kvadratiske modellen er grunnlaget for Newtons metode i
   uke 10.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvor mye vinner vi på det kvadratiske leddet?</summary>
+::: {.reading-step title="Gå i dybden: hvor mye vinner vi på det kvadratiske leddet?"}
 
 Vi kan måle det. Cellen regner ut feilen i den lineære og den kvadratiske
 modellen ved $z=(2,1)$ i retningen $p=(1,1)$, for $s=0.1$, $0.01$ og
@@ -819,7 +812,7 @@ for s in [0.1, 0.01, 0.001]:
 - **Hvorfor:** Håndeksempelet forklarer tallene: den lineære modellen
   mangler $6s^2+2s^3$, og den kvadratiske mangler bare $2s^3$.
 
-</details>
+:::
 
 ### Minimum, maksimum eller sadelpunkt?
 
@@ -906,8 +899,7 @@ $$p^THp=\lambda_1c_1^2+\lambda_2c_2^2.$$
 Grunnen er at $H$ bare strekker hver egenretning, og at de to retningene
 står vinkelrett på hverandre, så blandingsleddene forsvinner.
 
-<details class="reading-step">
-<summary>Gå i dybden: krumningen skrevet i egenvektorbasisen</summary>
+::: {.reading-step title="Gå i dybden: krumningen skrevet i egenvektorbasisen"}
 
 Enhetsvektorene oppfyller $v_1^Tv_1=v_2^Tv_2=1$ og $v_1^Tv_2=0$. Med
 $p=c_1v_1+c_2v_2$ er $Hp=c_1\lambda_1v_1+c_2\lambda_2v_2$, og
@@ -920,7 +912,7 @@ p^THp&=(c_1v_1+c_2v_2)^T(c_1\lambda_1v_1+c_2\lambda_2v_2)\\
 \end{aligned}
 $$
 
-</details>
+:::
 
 - **Begge positive:** Summen er positiv for alle $p\ne0$.
 - **Motsatt fortegn:** Vi kan velge $p=v_1$ eller $p=v_2$ og få hvert av
@@ -972,8 +964,7 @@ For eksempelet:
 
 For flere enn to variabler finnes ingen enkel $D$; da bruker vi egenverdiene.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor D-testen er egenverditesten</summary>
+::: {.reading-step title="Gå i dybden: hvorfor D-testen er egenverditesten"}
 
 **Determinant og sum fra egenverdiene.** Skriv
 $H=\begin{bmatrix}f_{xx}&f_{xy}\\f_{xy}&f_{yy}\end{bmatrix}$. Egenverdiene
@@ -1006,10 +997,9 @@ For $H(1,1)$ gir det $27=3\cdot9$ og $12=3+9$.
    egenverdiene er positive: minimum.
 4. Er $f_{xx}<0$, er begge negative: maksimum.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: når testen ikke avgjør</summary>
+::: {.reading-step title="Gå i dybden: når testen ikke avgjør"}
 
 - **Flat retning:** Hvis en egenverdi er null og de andre har samme
   fortegn, er $p^THp=0$ i egenretningen.
@@ -1043,7 +1033,7 @@ ligger langs $v$-aksen ($u=0$):
   $\nabla f(0,0)=0$ og samme $H$, men forskjellig type. Derfor sier tabellen
   «testen avgjør ikke».
 
-</details>
+:::
 
 **Dette tar vi med oss.**
 
@@ -1060,7 +1050,8 @@ ligger langs $v$-aksen ($u=0$):
 
 ## 8.4 Konveksitet: når lokalt er globalt
 
-<div id="uke8-lokalt"></div>
+::: {#uke8-lokalt}
+:::
 
 ### Er kandidaten vi fant, den beste?
 
@@ -1170,8 +1161,7 @@ funksjonsverdiene langs et linjestykke i planet:
 
 Tallene og bildene står i fordypningen.
 
-<details class="reading-step">
-<summary>Gå i dybden: kordetesten på de to tilpasningsproblemene</summary>
+::: {.reading-step title="Gå i dybden: kordetesten på de to tilpasningsproblemene"}
 
 For en funksjon av to variabler velger vi to punkter i planet og ser på
 funksjonsverdiene langs linjestykket mellom dem. For linjen tar vi $(0,0)$
@@ -1201,7 +1191,7 @@ for F, P, Q, name in [(S_line, [0., 0.], [2., 2.], 'Linje'),
     plot_slice(F, P, Q, name)
 ```
 
-</details>
+:::
 
 ### Konvekse funksjoner
 
@@ -1380,8 +1370,7 @@ board.create('button',[2.8,-0.3,'w nær x̂',function(){
 Det er derfor et lokalt søk kan bli stående i $\hat x$, slik søkene på
 svingningen ble stående i eksperiment 3.
 
-<details class="reading-step">
-<summary>Gå i dybden: beviset steg for steg</summary>
+::: {.reading-step title="Gå i dybden: beviset steg for steg"}
 
 1. Anta at $\hat x$ er et lokalt minimum, men at et tillatt punkt $z$ har
    lavere verdi, $f(z)<f(\hat x)$.
@@ -1397,7 +1386,7 @@ svingningen ble stående i eksperiment 3.
 
 Derfor finnes ingen slik $z$, og $\hat x$ er globalt.
 
-</details>
+:::
 
 Entydigheten ved streng konveksitet er én linje: hvis $x\ne z$ begge var
 minimumspunkter med verdi $m$, ville midtpunktet gi
@@ -1411,7 +1400,8 @@ ikke noe minimum der. Still alltid begge spørsmålene:
 
 ### Konveksitet fra Hessianen
 
-<div id="uke8-konveks-test"></div>
+::: {#uke8-konveks-test}
+:::
 
 Definisjonen handler om linjestykker, og i 8.3 regnet vi ut
 krumningen langs en linje:
@@ -1485,8 +1475,7 @@ $p^THp>0$ én gang. Da er det lokale svaret også det globale.
 - **Flere daler for svingningen:** Midtpunktet viste et brudd på
   konveksiteten, og et søk kan bli stående i en dårlig dal.
 
-<details class="reading-step">
-<summary>Gå i dybden: Hessianen til kvadratsummen for linjen</summary>
+::: {.reading-step title="Gå i dybden: Hessianen til kvadratsummen for linjen"}
 
 Hvert ledd deriveres med kjerneregelen:
 
@@ -1502,14 +1491,13 @@ $$\frac{\partial S}{\partial c_0}=-2\sum_i(b_i-c_0-c_1t_i),\qquad
 Her gir $t=(-1,0,1,2)$ at $\sum t_i=2$ og $\sum t_i^2=6$. Ingen av tallene
 avhenger av $c_0$ eller $c_1$.
 
-</details>
+:::
 
 Konveksitet hører alltid til et bestemt område. Funksjonen
 $x^3+y^3-3xy$ fra 8.3 er ikke konveks på hele planet, men den er strengt
 konveks på området $x>\tfrac12$, $y>\tfrac12$.
 
-<details class="reading-step">
-<summary>Gå i dybden: konveks på et område, men ikke på hele planet</summary>
+::: {.reading-step title="Gå i dybden: konveks på et område, men ikke på hele planet"}
 
 **Ikke konveks på hele planet.**
 
@@ -1534,12 +1522,12 @@ fordi $xy>\tfrac12\cdot\tfrac12=\tfrac14$ gir $36xy>9$.
 - **Utenfor området:** Der gjelder ikke garantien: $f$ synker mot
   $-\infty$ langs $y=x$.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: kvadratsummer er alltid konvekse – og den flate dalen</summary>
+::: {.reading-step title="Gå i dybden: kvadratsummer er alltid konvekse – og den flate dalen"}
 
-<div id="uke8-flat"></div>
+::: {#uke8-flat}
+:::
 
 **Langs en linje, regnet ut.** For kvadratsummen $S(c)=\|b-Ac\|_2^2$ fra
 uke 4 kan vi regne langs en linje direkte. Med residualen $r=b-Ac$ er
@@ -1632,12 +1620,12 @@ retning selv.
 
 For kvadratsummer er forskjellen nullrommet.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: en nedre grense fra tangenten</summary>
+::: {.reading-step title="Gå i dybden: en nedre grense fra tangenten"}
 
-<div id="uke8-tangent"></div>
+::: {#uke8-tangent}
+:::
 
 For en deriverbar konveks funksjon ligger tangentplanet under grafen:
 
@@ -1660,7 +1648,7 @@ $x^2\ge2x-1$, som er $(x-1)^2\ge0$.
 
 Øv på dette i [oppgaven om tangenten](#uke8-oppg-tangent) i 8.5.
 
-</details>
+:::
 
 **Dette tar vi med oss.**
 
@@ -1678,7 +1666,8 @@ $x^2\ge2x-1$, som er $(x-1)^2\ge0$.
 
 ## 8.5 Regneoppgaver
 
-<div id="uke8-oppgaver"></div>
+::: {#uke8-oppgaver}
+:::
 
 Oppgavene er sortert etter de tre ideene.
 
@@ -1694,7 +1683,8 @@ Oppgavene er sortert etter de tre ideene.
 
 ### Idé 1: Finnes det et minimum?
 
-<div id="uke8-oppg-infimum"></div>
+::: {#uke8-oppg-infimum}
+:::
 
 La $g(x)=x^2$. På det åpne intervallet $(0,2)$ er begge endepunktene
 utelatt; på $[0,2]$ er de med. Finn infimum og supremum på det åpne
@@ -1717,7 +1707,8 @@ Minimum finnes på $[0,2]$: _[1]
 **Forklar:** Hvorfor endrer ikke et finere rutenett svaret på det åpne
 intervallet?
 
-<div id="uke8-oppg-folge"></div>
+::: {#uke8-oppg-folge}
+:::
 
 Funksjonen $f(a,b)=(ab-1)^2+b^2$ er definert på hele planet. Begrunn først
 at $f(a,b)>0$ for alle $(a,b)$: hva skjer hvis $b=0$, og hva hvis $b\ne0$?
@@ -1740,7 +1731,8 @@ Finnes et minimum? _[0]
 **Forklar:** Skriv opp en minimerende følge. Hvilket krav i
 ekstremalverdisetningen er ikke oppfylt?
 
-<div id="uke8-oppg-kompakt"></div>
+::: {#uke8-oppg-kompakt}
+:::
 
 Undersøk de tre intervallene $A=[-2,3]$, $B=(-2,3]$ og $C=[0,\infty)$.
 Avgjør for hvert av dem hvilke endepunkter som er med, og om punktene kan
@@ -1762,7 +1754,8 @@ $C$: lukket _[1], begrenset _[0], kompakt _[0]
 
 **Forklar:** Gi en følge i $B$ som konvergerer mot et punkt utenfor $B$.
 
-<div id="uke8-oppg-evt"></div>
+::: {#uke8-oppg-evt}
+:::
 
 Vi undersøker $f(u,v)=u^2+v^2$ på skiven
 $D=\{(u,v):u^2+v^2\le4\}$. Kontroller først kravene i
@@ -1785,7 +1778,8 @@ Minimumspunkt: $u=$ _[0], $v=$ _[0]
 **Forklar:** Beskriv alle maksimumspunktene. Hvorfor gir ikke setningen et
 entydig maksimumspunkt her?
 
-<div id="uke8-oppg-rand"></div>
+::: {#uke8-oppg-rand}
+:::
 
 Vi bruker $f(a,b)=(ab-1)^2+b^2$ igjen, men bare på rektangelet
 $0\le a\le10$, $\tfrac14\le b\le1$. Begrunn med ekstremalverdisetningen at
@@ -1810,7 +1804,8 @@ minimumspunkt?
 
 ### Idé 2: Hessianen
 
-<div id="uke8-oppg-hessian"></div>
+::: {#uke8-oppg-hessian}
+:::
 
 Funksjonen $f(x,y)=x^2+4xy+y^2$ har gradient null i origo.
 
@@ -1837,7 +1832,8 @@ Egenverdier: minste _[-2], største _[6]
 synker når du går ut fra origo. Hvorfor er $p^THp$ for $p=(1,1)$ akkurat
 to ganger en av egenverdiene?
 
-<div id="uke8-oppg-linje"></div>
+::: {#uke8-oppg-linje}
+:::
 
 La $f(x,y)=x^2+y^3$, punktet $z=(1,1)$ og retningen $p=(1,-1)$.
 
@@ -1866,7 +1862,8 @@ Kvadratisk modell: __[2 - s + 4*s^2]
 **Forklar:** Sammenlign $\varphi'(0)$ og $\varphi''(0)$ fra polynomet med
 de to tallene. Hvilket ledd mangler i den kvadratiske modellen?
 
-<div id="uke8-oppg-stasjonaer"></div>
+::: {#uke8-oppg-stasjonaer}
+:::
 
 Funksjonen $f(x,y)=x^3-3xy+y^2$ har to stasjonære punkter, og det ene er
 origo. Løs $\nabla f=0$ for å finne det andre. Regn ut Hessianen i begge
@@ -1895,7 +1892,8 @@ fortegnet til $p^THp$.
 
 ### Idé 3: Konveksitet
 
-<div id="uke8-oppg-mengde"></div>
+::: {#uke8-oppg-mengde}
+:::
 
 Punktene $P=(2,0)$ og $Q=(-2,0)$ ligger både på sirkelranden
 $K=\{(u,v):u^2+v^2=4\}$ og i skiven $D=\{(u,v):u^2+v^2\le4\}$. Finn
@@ -1918,7 +1916,8 @@ Er $m$ i skiven $D$? _[1]
 Hvorfor beviser ikke én midtpunktsberegning alene at den andre mengden er
 konveks?
 
-<div id="uke8-oppg-korde"></div>
+::: {#uke8-oppg-korde}
+:::
 
 For $q(x)=x^4-2x^2$ bruker du endepunktene $-1$ og $1$. Regn ut verdien i
 midtpunktet og gjennomsnittet av endeverdiene, altså kordens høyde over
@@ -1938,7 +1937,8 @@ $(q(-1)+q(1))/2=$ _[-1]
 **Forklar:** Hva sier sammenligningen om konveksitet på $\mathbb R$? Tegn
 grafen og korden.
 
-<div id="uke8-oppg-konveks"></div>
+::: {#uke8-oppg-konveks}
+:::
 
 Vi undersøker $f(x,y)=x^2-2xy+2y^2+3x$ på hele planet. Regn ut Hessianen
 og avgjør om $f$ er strengt konveks. Finn så det stasjonære punktet.
@@ -1962,7 +1962,8 @@ Minimumspunkt: $x=$ _[-3], $y=$ _[-3/2]
 **Forklar:** Skriv $p^THp$ som en sum av kvadrater. Hvorfor er det
 stasjonære punktet et **globalt** minimum, og hvorfor det **eneste**?
 
-<div id="uke8-oppg-streng"></div>
+::: {#uke8-oppg-streng}
+:::
 
 Sammenlign $f(u,v)=(u-2)^2$ og $g(u,v)=(u-2)^2+(v+1)^2$ på $\mathbb R^2$.
 Finn Hessianen til $f$ og egenverdiene dens, minimumsverdien til $f$ og
@@ -1986,7 +1987,8 @@ Minimumspunktet til $g$: $u=$ _[2], $v=$ _[-1]
 du flytte deg fra et minimumspunkt uten at $f$ endres? Forklar hvorfor
 begge funksjonene er konvekse, men bare $g$ er strengt konveks.
 
-<div id="uke8-oppg-nullrom"></div>
+::: {#uke8-oppg-nullrom}
+:::
 
 *Til fordypningen om den flate dalen i 8.4.*
 
@@ -2017,7 +2019,8 @@ En retning $(0,4,d)$ som ikke endrer modellen: $d=$ _[-2]
    det står vinkelrett på retningen $(0,4,d)$ du fant.
 3. Hvorfor gjør det punktet til det korteste av minimumspunktene?
 
-<div id="uke8-oppg-tangent"></div>
+::: {#uke8-oppg-tangent}
+:::
 
 *Til fordypningen om tangenten i 8.4.* La $q(x)=(x-3)^2$. Beregn $q(1)$ og
 $q'(1)$, og skriv den lineære modellen ved $x=1$ som et uttrykk i $x$.
@@ -2043,17 +2046,19 @@ konveksitet det entydig?
 
 ## 8.6 Python: SciPy-oppslag og kodeoppgaver
 
-<div id="uke8-python"></div>
+::: {#uke8-python}
+:::
 
-<div id="uke8-python-local"></div>
+::: {#uke8-python-local}
+:::
 
 Forsøkene i 8.1–8.4 bruker `minimize` fra SciPy. Oppslagsboksen samler
 det du trenger å vite om kallet og resultatet.
 
-<div id="uke8-scipy"></div>
+::: {#uke8-scipy}
+:::
 
-<details>
-<summary>SciPy-oppslag: kall, returverdi og kontroll</summary>
+::: {.details title="SciPy-oppslag: kall, returverdi og kontroll"}
 
 | Uttrykk | Betydning |
 |:--|:--|
@@ -2071,12 +2076,13 @@ det du trenger å vite om kallet og resultatet.
   globalt minimum, og heller ikke for at et minimum finnes. Det må vi
   begrunne selv, som i 8.2–8.4.
 
-</details>
+:::
 
 Kodeoppgavene kan kjøres hver for seg. Kontrollene vurderer resultatet uten
 å vise løsningskoden.
 
-<div id="uke8-kode-minimize"></div>
+::: {#uke8-kode-minimize}
+:::
 
 **SciPy-resultatet.** Minimer $q(x,y)=(x+1)^2+3(y-2)^2$ fra den oppgitte
 `start`-vektoren med `jac=grad_q` og `method="BFGS"`. Returner paret
@@ -2109,7 +2115,8 @@ assert np.isclose(solve_q(np.array([0., 0.]))[1], 0., atol=1e-9)
 assert np.allclose(solve_q(np.array([7., 3.]))[0], [-1., 2.], atol=1e-5)
 ```
 
-<div id="uke8-kode-klassifiser"></div>
+::: {#uke8-kode-klassifiser}
+:::
 
 **Klassifiser med egenverdier.**
 
@@ -2139,7 +2146,8 @@ assert classify(np.diag([1., 4., -2.])) == 'sadelpunkt'
 assert classify(np.diag([-1., 0., 1.])) == 'sadelpunkt'
 ```
 
-<div id="uke8-kode-svingning"></div>
+::: {#uke8-kode-svingning}
+:::
 
 **To starter på svingningen.**
 
@@ -2175,7 +2183,8 @@ assert two_searches()[0].fun < 0.05
 assert two_searches()[1].fun > 5
 ```
 
-<div id="uke8-kode-midtpunkt"></div>
+::: {#uke8-kode-midtpunkt}
+:::
 
 **Kontroller en midtpunktsulikhet.** Skriv `midpoint_gap(f, x, z)` som
 returnerer $\tfrac12\bigl(f(x)+f(z)\bigr)-f\bigl(\tfrac{x+z}{2}\bigr)$,
@@ -2200,7 +2209,8 @@ assert np.isclose(midpoint_gap(lambda z: z @ z, np.array([0., 0.]), np.array([2.
 
 ## 8.7 Støtteløp: flervariabel derivasjon ved behov
 
-<div id="uke8-gradient"></div>
+::: {#uke8-gradient}
+:::
 
 Denne delen repeterer stoff fra tidligere emner: partiellderiverte,
 gradienten, den retningsderiverte og kjerneregelen langs en linje. 8.3

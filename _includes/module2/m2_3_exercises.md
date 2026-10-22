@@ -342,7 +342,8 @@ JXG.QuartoAssessment.register({
 Klikk på det første grønne punktet som har minst sju korrekte desimaler.
 ```
 
-<div id="uke2-ov-23b"></div>
+::: {#uke2-ov-23b}
+:::
 
 #### Hvor lenge må vi iterere?
 
