@@ -1,0 +1,82 @@
+name: Week 11 applet regression
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  # Reviewed bounded test input; final shared-store/course acceptance is separate.
+  CTM_ASSESSMENT_REF: f9358ccb80cd71bf19139ba251f7578b45c4fa24
+  CTM_COURSE_SHA: ${{ github.event.pull_request.head.sha }}
+
+concurrency:
+  group: uke11-applets-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  applets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: Erasmus-CTM/ctm-assessment
+          ref: ${{ env.CTM_ASSESSMENT_REF }}
+          path: _ci/ctm-assessment
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: '1.8.27'
+      - run: node --check tests/check-uke11-applets.cjs
+      - name: Verify the exact fixture toolchain
+        run: |
+          test "$(git -C _ci/ctm-assessment rev-parse HEAD)" = "$CTM_ASSESSMENT_REF"
+          node - <<'JS'
+          const assert = require('node:assert/strict');
+          const lock = require('./_ci/ctm-assessment/package-lock.json');
+          assert.equal(lock.packages['node_modules/playwright'].version, '1.55.1');
+          JS
+      - run: python -m pip install sympy==1.13.3 'networkx>=3.4' 'PyYAML>=6' jupyter nbformat
+      - name: Render the actual current course without source conversion
+        run: |
+          set -o pipefail
+          python _ci/ctm-assessment/scripts/build-course.py \
+            --umbrella "$GITHUB_WORKSPACE/_ci/ctm-assessment" \
+            --repo "https://github.com/$GITHUB_REPOSITORY.git" --ref "$CTM_COURSE_SHA" \
+            --dest "$RUNNER_TEMP/applet-course" --workspace "$RUNNER_TEMP/applet-package" \
+            2>&1 | tee "$RUNNER_TEMP/applet-render.log"
+      - run: npm ci --ignore-scripts
+        working-directory: _ci/ctm-assessment
+      - run: npx playwright install --with-deps firefox chromium
+        working-directory: _ci/ctm-assessment
+      - name: Install the recorded official JSXGraph core
+        run: npm install --prefix "$RUNNER_TEMP/applet-assets" --ignore-scripts --no-package-lock jsxgraph@1.14.1
+      - name: Baseline failures and candidate hidden/visible controls
+        env:
+          CTM_ASSESSMENT_ROOT: ${{ github.workspace }}/_ci/ctm-assessment
+          CTM_APPLET_SITE: ${{ runner.temp }}/applet-course/_site
+          CTM_JSXGRAPH_ROOT: ${{ runner.temp }}/applet-assets/node_modules/jsxgraph
+          CTM_APPLET_REPORTS: ${{ runner.temp }}/applet-reports
+        run: node tests/check-uke11-applets.cjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: uke11-applet-regression
+          path: |
+            ${{ runner.temp }}/applet-reports
+            ${{ runner.temp }}/applet-render.log
+          if-no-files-found: warn
