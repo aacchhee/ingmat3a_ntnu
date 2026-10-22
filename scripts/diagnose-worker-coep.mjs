@@ -174,15 +174,21 @@ try {
   // Both servers return real HTTP responses. The plain server is a labelled
   // negative control; actual course pages above always keep strict COOP/COEP.
   controlServer = createServer((request, response) => {
+    const requestURL = new URL(request.url, 'http://control');
     const headers = {'Content-Type':'text/html'};
-    if (request.url === '/strict') Object.assign(headers, {
+    if (requestURL.pathname.startsWith('/strict')) Object.assign(headers, {
       'Cross-Origin-Opener-Policy':'same-origin', 'Cross-Origin-Embedder-Policy':'require-corp',
     });
     response.writeHead(200, headers);
-    response.end('<!doctype html><title>Native worker policy control</title>');
+    if (requestURL.pathname === '/strict-frame') {
+      const revoke = requestURL.searchParams.get('revoke');
+      response.end('<!doctype html><script>(' + nativeProbe.toString() + ')(' + JSON.stringify(revoke) +
+        ').then(result=>parent.postMessage(result,"*"))<' + '/script>');
+    } else response.end('<!doctype html><title>Native worker policy control</title>');
   });
   await new Promise(resolve => controlServer.listen(0, '127.0.0.1', resolve));
-  for (const policy of ['strict', 'plain']) for (const mode of ['top', 'data-sandbox']) {
+  for (const policy of ['strict', 'plain']) for (const mode of ['top', 'data-sandbox', 'srcdoc-sandbox', 'data-unsandboxed', 'http-sandbox']) {
+    if (policy === 'plain' && !['top', 'data-sandbox'].includes(mode)) continue;
     for (const revoke of ['immediate', 'message']) {
       const page = await browser.newPage(), errors = [];
       rawErrors(page, errors);
@@ -192,9 +198,9 @@ try {
       assert.equal(top.coi, policy === 'strict');
       let result;
       if (mode === 'top') result = await page.evaluate(nativeProbe, revoke);
-      else result = await page.evaluate(({source, revoke}) => new Promise(resolve => {
+      else result = await page.evaluate(({source, revoke, mode}) => new Promise(resolve => {
         const frame = document.createElement('iframe');
-        frame.sandbox = 'allow-scripts';
+        if (mode !== 'data-unsandboxed') frame.sandbox = 'allow-scripts';
         const listener = event => {
           if (event.source !== frame.contentWindow) return;
           removeEventListener('message', listener); clearTimeout(timer); resolve(event.data);
@@ -204,15 +210,18 @@ try {
           resolve({status:'frame-timeout'});
         }, 8000);
         addEventListener('message', listener);
-        frame.src = 'data:text/html;base64,' + btoa('<script>(' + source + ')(' +
-          JSON.stringify(revoke) + ').then(result=>parent.postMessage(result,"*"))<' + '/script>');
+        const html = '<script>(' + source + ')(' + JSON.stringify(revoke) +
+          ').then(result=>parent.postMessage(result,"*"))<' + '/script>';
+        if (mode === 'srcdoc-sandbox') frame.srcdoc = html;
+        else if (mode === 'http-sandbox') frame.src = location.origin + '/strict-frame?revoke=' + encodeURIComponent(revoke);
+        else frame.src = 'data:text/html;base64,' + btoa(html);
         document.body.append(frame);
-      }), {source:nativeProbe.toString(), revoke});
+      }), {source:nativeProbe.toString(), revoke, mode});
       report.controls.push({policy, mode, revoke, top, result, errors});
       await page.close();
     }
   }
-  assert.equal(report.controls.length, 8);
+  assert.equal(report.controls.length, 14);
   assert.equal(report.controls.find(row => row.policy === 'plain' && row.mode === 'top' && row.revoke === 'message').result.status, 'message',
     'the import-free native worker control must work');
   assert.ok(report.coursePages.some(row => row.events.some(event => event.kind === 'worker-created')),
