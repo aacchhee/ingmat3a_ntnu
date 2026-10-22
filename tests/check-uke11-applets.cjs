@@ -72,7 +72,7 @@ function writeReport(failure) {
         (hidden ? 'display:none' : '') + '"><iframe src="data:text/html;base64,' +
         Buffer.from(frameHtml).toString('base64') + '"></iframe></div>', {waitUntil: 'domcontentloaded'});
       const frame = page.frames()[1];
-      await frame.waitForFunction(() => typeof JXG !== 'undefined' && JXG.version === '1.14.1');
+      await frame.waitForFunction(() => typeof JXG !== 'undefined' && JXG.version === '1.14.1', null, {polling: 50});
       await page.waitForTimeout(800);
       const initial = await frame.evaluate(() => ({
         deferred: !window.__widgetProbe,
