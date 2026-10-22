@@ -1,0 +1,73 @@
+name: Course worker policy diagnostic
+on:
+  push:
+    branches: [diagnostics/2026-10-worker-coep]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --user 1001
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: Erasmus-CTM/ctm-assessment
+          ref: 65be5facbf67f900533a71cd950aa82e5c4c1e95
+          path: _ci/ctm-assessment
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+        working-directory: _ci/ctm-assessment
+      - name: Bind the existing rendered artifact to its exact course source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          const response = await fetch('https://api.github.com/repos/aacchhee/ingmat3a_ntnu/actions/artifacts/12450906416', {
+            headers:{Authorization:'Bearer ' + process.env.GH_TOKEN, Accept:'application/vnd.github+json'},
+          });
+          assert.equal(response.status, 200);
+          const artifact = await response.json();
+          assert.equal(artifact.id, 12450906416);
+          assert.equal(artifact.name, 'exercise-quiz-site');
+          assert.equal(artifact.expired, false);
+          assert.equal(artifact.workflow_run.id, 39835256923);
+          assert.equal(artifact.workflow_run.head_sha, '23e47057806766ecb95f3cc86cf92eefa8102316');
+          console.log(JSON.stringify({artifact:artifact.id, run:artifact.workflow_run.id, course:artifact.workflow_run.head_sha}));
+          JS
+      - uses: actions/download-artifact@v7
+        with:
+          artifact-ids: 12450906416
+          merge-multiple: true
+          run-id: 39835256923
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/worker-course-site
+      - name: Observe unchanged course workers and native origin/lifecycle controls
+        env:
+          CTM_ASSESSMENT_ROOT: ${{ github.workspace }}/_ci/ctm-assessment
+          CTM_QUIZ_SITE: ${{ runner.temp }}/worker-course-site
+          CTM_WORKER_REPORT_DIR: ${{ runner.temp }}/worker-coep-reports
+          CTM_WORKER_BROWSER: ${{ matrix.engine }}
+        run: node scripts/diagnose-worker-coep.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: worker-coep-${{ matrix.engine }}
+          path: ${{ runner.temp }}/worker-coep-reports
+          retention-days: 7
+
