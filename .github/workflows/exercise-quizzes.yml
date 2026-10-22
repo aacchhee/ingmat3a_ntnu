@@ -93,10 +93,13 @@ jobs:
             --repo "https://github.com/$GITHUB_REPOSITORY.git" --ref "$COURSE_SHA" \
             --dest "$RUNNER_TEMP/quiz-course" --workspace "$RUNNER_TEMP/quiz-package" \
             2>&1 | tee "$RUNNER_TEMP/quiz-evidence/render.log"
-          if grep -Ei '(^|[[:space:]])WARNING:' "$RUNNER_TEMP/quiz-evidence/render.log"; then
-            echo '::error::Course rendering must have zero warnings.'
-            exit 1
-          fi
+          python - <<'PY'
+          import os, pathlib, re
+          log = (pathlib.Path(os.environ['RUNNER_TEMP']) / 'quiz-evidence/render.log').read_text()
+          plain = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', log)
+          warnings = [line for line in plain.splitlines() if re.search(r'\bWARNING\b', line, re.I)]
+          assert not warnings, 'Course rendering must have zero warnings:\n' + '\n'.join(warnings)
+          PY
       - name: Check resolved component heads and rendered membership
         run: |
           set -o pipefail

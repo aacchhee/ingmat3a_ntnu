@@ -20,7 +20,7 @@ assert.equal(contract.quizzes.reduce((n, q) => n + q.exercises.length, 0), 176);
 fs.mkdirSync(reports, {recursive: true});
 const server = await serve({course: site}, true);
 const origin = 'http://127.0.0.1:' + server.address().port + '/course/';
-const results = [], errors = [];
+const results = [], errors = [], screenshots = [];
 let browser;
 let currentPage;
 let failure = null;
@@ -167,6 +167,13 @@ try {
           quiz.exercises.map(() => 'unattempted'), 'fresh context has no seeded grades');
         assert.deepEqual(await tiles.evaluateAll(nodes => nodes.map(e => Number(e.textContent.match(/^(\d+)\./)?.[1]))),
           quiz.exercises.map((_, i) => i + 1), 'numbered source order');
+        if (quiz.exercises.length > 1 && !shots.has('quiz-panel')) {
+          await panel.scrollIntoViewIfNeeded();
+          const name = engine + '-' + width + '-quiz-panel.png';
+          await page.screenshot({path: path.join(reports, name), fullPage: false});
+          screenshots.push({name, width, kind: 'quiz-panel', file, quiz: quiz.id});
+          shots.add('quiz-panel');
+        }
         for (const [memberIndex, member] of quiz.exercises.entries()) {
           await showSlot(page, quiz.id);
           const prepared = await prepareHiddenTarget(page, quiz, member);
@@ -187,6 +194,7 @@ try {
             if (shots.has(kind)) continue;
             const name = engine + '-' + width + '-' + kind + '.png';
             await page.screenshot({path: path.join(reports, name), fullPage: false});
+            screenshots.push({name, width, kind, file, quiz: quiz.id, member});
             shots.add(kind);
           }
         }
@@ -195,8 +203,12 @@ try {
     const covered = results.filter(r => r.width === width);
     assert.equal(covered.length, 176, 'all actual members at width ' + width);
     assert.ok(covered.some(r => r.before.panes.some(p => !p.active)), 'activate an inactive nested pane at width ' + width);
-    assert.ok(covered.some(r => r.before.details.some(open => !open)), 'open an actual closed reveal at width ' + width);
-    assert.deepEqual([...shots].sort(), ['nested-tabs', 'reveal'], 'representative screenshots at width ' + width);
+    // All 176 authored graded roots in this contract are outside native
+    // reveals. Record that actual course boundary; foundation fixtures own
+    // reveal navigation proof rather than adding synthetic course content.
+    assert.equal(covered.filter(r => r.before.details.length > 0).length, 0,
+      'this actual course contract has zero graded targets inside reveals at width ' + width);
+    assert.deepEqual([...shots].sort(), ['nested-tabs', 'quiz-panel'], 'representative panel and nested-tab screenshots at width ' + width);
     await context.close();
   }
   assert.equal(results.length, 352, 'all 176 members at desktop and 390px');
@@ -211,11 +223,12 @@ try {
   const coverage = [1280, 390].map(width => {
     const rows = results.filter(r => r.width === width);
     return {width, checks: rows.length,
+      targetsInsideReveals: rows.filter(r => r.before.details.length > 0).length,
       closedRevealsOpened: rows.filter(r => r.before.details.some(open => !open)).length,
       inactivePanesActivated: rows.filter(r => r.before.panes.some(p => !p.active)).length};
   });
-  const report = {engine, coverage, checks: results.length, expectedChecks: 352, results, errors, failure,
-    url: currentPage?.url(), boundary: 'Navigation/focus evidence; horizontal access to wide math is not asserted.'};
+  const report = {engine, coverage, screenshots, checks: results.length, expectedChecks: 352, results, errors, failure,
+    url: currentPage?.url(), boundary: 'Navigation/focus and nested-tab evidence. The 176 actual graded roots are outside reveals; no reveal-transition proof is claimed. Horizontal access to wide math is not asserted.'};
   fs.writeFileSync(path.join(reports, engine + '.json'), JSON.stringify(report, null, 2) + '\n');
   console.log(JSON.stringify({engine, checks: report.checks, errors}, null, 2));
   if (browser) await browser.close();
