@@ -1560,7 +1560,7 @@ I flyttallsregning bruker også `np.linalg.pinv` en terskel og behandler
 svært små singulærverdier som null. En terskel for avrunding fra uke 1
 og en terskel valgt ut fra usikkerhet i dataene svarer på ulike spørsmål.
 
-## 7.8 Oppgaver
+## 7.8 Oppgaver {quiz=uke7-8-oppgaver}
 
 ::: {#uke7-oppgaver}
 :::

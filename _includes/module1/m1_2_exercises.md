@@ -1,4 +1,4 @@
-## Oppgaver
+## Oppgaver {quiz=uke1-binaer}
 
 ::: {#uke1-oppg-binaer}
 :::

@@ -1,5 +1,7 @@
 ---
 title: "Uke 5 – hva overlever gjentatt matrisemultiplikasjon?"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/linalg/week5_lecture_setup.md >}}

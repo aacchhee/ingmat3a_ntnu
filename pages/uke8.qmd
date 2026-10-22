@@ -1,5 +1,7 @@
 ---
 title: "Uke 8 – introduksjon til optimering"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/optimization/week8_setup.md >}}
