@@ -152,9 +152,10 @@ try {
         coep: headers['cross-origin-embedder-policy'],
       };
       assert.deepEqual(isolationHeaders, {coop: 'same-origin', coep: 'require-corp'}, 'real HTTP isolation headers');
-      const documentState = await page.evaluate(() => ({
-        crossOriginIsolated: globalThis.crossOriginIsolated,
-        timeOrigin: performance.timeOrigin,
+      const documentHandle = await page.evaluateHandle(() => document);
+      const documentState = await documentHandle.evaluate(doc => ({
+        crossOriginIsolated: doc.defaultView.crossOriginIsolated,
+        timeOrigin: doc.defaultView.performance.timeOrigin,
       }));
       documents.push({engine, width, file, headers: isolationHeaders, ...documentState});
       assert.equal(documentState.crossOriginIsolated, true, 'actual browser crossOriginIsolated: ' + file);
@@ -199,8 +200,9 @@ try {
             await new Promise(resolve => setTimeout(resolve, 20));
           }
           assert.ok(navigated(state), JSON.stringify({file, quiz: quiz.id, member, state}));
-          assert.equal(state.timeOrigin, documentState.timeOrigin, 'the actual document stays loaded through tile navigation');
-          results.push({engine, width, file, quiz: quiz.id, member, prepared, before, state});
+          const sameDocument = await documentHandle.evaluate(doc => doc === document);
+          assert.equal(sameDocument, true, 'the actual document stays loaded through tile navigation');
+          results.push({engine, width, file, quiz: quiz.id, member, prepared, before, state, sameDocument});
           const kinds = [];
           if (before.panes.some(p => !p.active)) kinds.push('nested-tabs');
           if (before.details.some(open => !open)) kinds.push('reveal');
@@ -213,6 +215,7 @@ try {
           }
         }
       }
+      await documentHandle.dispose();
     }
     const covered = results.filter(r => r.width === width);
     assert.equal(covered.length, 176, 'all actual members at width ' + width);
