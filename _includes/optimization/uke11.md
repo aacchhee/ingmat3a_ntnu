@@ -183,6 +183,9 @@ Den stiplede linjen er mållinjen gjennom det beste punktet, og teksten viser hv
 :::
 
 ```{.jsxgraph width="620" height="560" style="width:100%;max-width:620px;height:560px;border:0;"}
+(function () {
+  var host = document.getElementById(BOARDID);
+  function initialize() {
 var board = JXG.JSXGraph.initBoard(BOARDID, {
   boundingbox: [-0.6, 5.0, 5.6, -0.6], axis: true, keepaspectratio: true,
   showCopyright: false, showNavigation: false,
@@ -242,6 +245,19 @@ board.create('text', [xl, function () { return narrow() ? ytop() - 1.3 : 4.2; },
 board.create('text', [xl, function () { return narrow() ? ytop() - 1.8 : 3.85; }, function () {
   return 'P = 5x + ' + c.Value().toFixed(1) + 'y = ' + Math.round(100*best().m)/100;
 }], {fontSize: fs, color: '#263238', fixed: true});
+  }
+  if (host.clientWidth > 0 && host.clientHeight > 0) {
+    initialize();
+  } else {
+    var pending = new ResizeObserver(function () {
+      if (host.clientWidth > 0 && host.clientHeight > 0) {
+        pending.disconnect();
+        initialize();
+      }
+    });
+    pending.observe(host);
+  }
+})();
 ```
 
 **Hva viser forsøket?**
@@ -287,6 +303,9 @@ Appleten starter med $c=4$, $P=20$ og planen $Z=(2,1)$ fra modellen i 11.1.
 :::
 
 ```{.jsxgraph width="620" height="730" style="width:100%;max-width:620px;height:730px;border:0;"}
+(function () {
+  var host = document.getElementById(BOARDID);
+  function initialize() {
 var board = JXG.JSXGraph.initBoard(BOARDID, {
   boundingbox: [-0.6, 7.2, 6.0, -0.6], axis: true, keepaspectratio: true,
   showCopyright: false, showNavigation: false,
@@ -427,6 +446,19 @@ board.create('text', [xl, row(4), function () {
   var parts = q.map(function (v, j) { return r.w[j]*val(v[0], v[1]); });
   return 'P(Z) = ' + parts.map(fmt).join(' + ') + ' = ' + fmt(val(Z.X(), Z.Y())) + ' ≤ ' + fmt(best().m);
 }], {fontSize: fs, color: '#263238', fixed: true});
+  }
+  if (host.clientWidth > 0 && host.clientHeight > 0) {
+    initialize();
+  } else {
+    var pending = new ResizeObserver(function () {
+      if (host.clientWidth > 0 && host.clientHeight > 0) {
+        pending.disconnect();
+        initialize();
+      }
+    });
+    pending.observe(host);
+  }
+})();
 ```
 
 **Hva viser bildet?**

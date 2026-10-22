@@ -8,8 +8,8 @@ permissions:
   contents: read
 
 env:
-  ASSESSMENT_REF: 2d2f002cd6255e3fa9472a07f6ae4947b865621d
-  REVIEWED_COMPONENTS: '{"ctm-libs":"9b15fdb2ab95deb190ff6e729fb609ee4b76ed10","math-exercise":"839afa3e1e5b4a361c8d6fc7e09c25c3f504f4ac","py-exercise":"8289b3bbfb2f670f64539e74ff0b0af49321b09f","pyodide-interaktiv":"8efc70b285b297285d3e6b3358272df0844d0118","ctm-checkers":"a1637dc95b9e11d8a0c838c801cd53e20997eceb"}'
+  ASSESSMENT_REF: 65be5facbf67f900533a71cd950aa82e5c4c1e95
+  REVIEWED_COMPONENTS: '{"ctm-libs":"41b2be0a94a5bbf9dd8389fa83458d23692f2b4a","math-exercise":"98c8fe54fded2b189c50f5f0cd9c0ea7688366ba","py-exercise":"ea21348341854f2c5f36a5fd0b253d98fe1d68f3","pyodide-interaktiv":"e85d9af4f39128180b0b0ad14ce53a087b079d93","ctm-checkers":"a1637dc95b9e11d8a0c838c801cd53e20997eceb"}'
   COURSE_SHA: ${{ github.event.pull_request.head.sha }}
 
 concurrency:
@@ -54,8 +54,8 @@ jobs:
           assert re.fullmatch('[0-9a-f]{40}', os.environ['ASSESSMENT_REF']), 'exact assessment head required'
           assert all(isinstance(v, str) and re.fullmatch('[0-9a-f]{40}', v) for v in refs.values())
           assert refs['ctm-checkers'] == 'a1637dc95b9e11d8a0c838c801cd53e20997eceb', 'Math question-test APIs need reviewed Q checker'
-          assert refs['ctm-libs'] == '9b15fdb2ab95deb190ff6e729fb609ee4b76ed10', 'use reviewed reset/forget + alias composition'
-          assert refs['pyodide-interaktiv'] == '8efc70b285b297285d3e6b3358272df0844d0118', 'use canonical B6 copy'
+          assert refs['ctm-libs'] == '41b2be0a94a5bbf9dd8389fa83458d23692f2b4a', 'use reviewed shared store and assets'
+          assert refs['pyodide-interaktiv'] == 'e85d9af4f39128180b0b0ad14ce53a087b079d93', 'use canonical B6 copy'
           PY
       - uses: actions/checkout@v7
         with:
