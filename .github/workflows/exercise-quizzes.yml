@@ -131,6 +131,9 @@ jobs:
   browser:
     needs: render
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-noble
+      options: --user 1001
     timeout-minutes: 90
     strategy:
       fail-fast: false
@@ -151,8 +154,6 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts
-        working-directory: _ci/ctm-assessment
-      - run: npx playwright install --with-deps ${{ matrix.engine }}
         working-directory: _ci/ctm-assessment
       - uses: actions/download-artifact@v7
         with:
