@@ -130,7 +130,7 @@ function navigated(state) {
 try {
   browser = await playwright[engine].launch({headless: true});
   for (const width of [1280, 390]) {
-    const context = await browser.newContext({viewport: {width, height: 900}, serviceWorkers: 'block'});
+    const context = await browser.newContext({viewport: {width, height: 900}});
     const page = await context.newPage();
     currentPage = page;
     page.setDefaultTimeout(30000);
