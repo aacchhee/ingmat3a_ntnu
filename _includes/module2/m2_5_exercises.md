@@ -1,5 +1,9 @@
 #### Kan resultatet sendes videre?
 
+::: {#diagnostic-run-givens .math-exercise-context}
+
+Stoppregelen i `fixed_point` er $|x_n-x_{n-1}|\leq\text{atol}+\text{rtol}|x_n|$. Hvis alle tall er endelige og ingen slik stopp skjer, avsluttes kjøringen etter `maxiter` steg.
+
 En beregningsmodul skal finne den positive løsningen av
 
 $$
@@ -22,6 +26,8 @@ $$
 \end{aligned}
 $$
 
+:::
+
 Alle tre reglene har $\sqrt2$ som fikspunkt, men de beveger seg svært forskjellig på vei dit. Regel C tar med vilje svært små skritt. Det gjør den nyttig for å undersøke om «lite skritt» alene er et trygt stoppkriterium.
 
 Koden under kjører de tre reglene med `fixed_point` fra fanen «Implementasjon». For hver kjøring viser plottet
@@ -32,6 +38,8 @@ Koden under kjører de tre reglene med `fixed_point` fra fanen «Implementasjon�
 En kjøring kan bare godkjennes dersom residualen er under systemkravet. En stoppmelding er ikke nok i seg selv.
 
 ```{pyodide-python}
+#| label: ingmat-ide-module2-m2-5-exercises-1
+#| feedback-context: ide-page4-reference-assumptions, ide-page4-fixed-point-93c1ac45, ide-page4-plot-runs-3bac01b5
 def equation(x):
     return x*x - 2
 
@@ -81,7 +89,7 @@ Bruk kodene **A = 1**, **B = 2** og **C = 3**.
 #| caption: Finn riktig diagnose
 #| mode: equivalent
 #| field-labels: godkjent kjøring, kjøring med 2-syklus, kjøring med falskt vellykket stopp
-#| context: diagnose-three-runs-context
+#| context: diagnose-three-runs-context, diagnostic-run-givens
 
 Oppgi nummeret til kjøringen.
 
@@ -90,14 +98,19 @@ Oppgi nummeret til kjøringen.
 - Hvilken kjøring rapporterer «lite skritt» selv om residualen er for stor? _[3]
 ```
 
+::: {#diagnostic-stop-codes .math-exercise-context}
+
 Stoppårsaken sier hva programmet observerte, ikke nødvendigvis at svaret er riktig. Bruk disse kodene:
 
 1. lite skritt
 2. maksimalt antall iterasjoner
 3. ikke-endelig verdi
 
+:::
+
 ```{math-exercise}
 #| label: identify-stop-reasons
+#| context: diagnostic-run-givens, diagnostic-stop-codes
 #| caption: Les stoppårsakene
 #| mode: equivalent
 #| field-labels: stoppårsak A, stoppårsak B, stoppårsak C
@@ -109,14 +122,19 @@ Skriv koden for stoppårsaken til hver kjøring.
 - Kjøring C: _[1]
 ```
 
+::: {#diagnostic-action-codes .math-exercise-context}
+
 Nå skal du velge hva en ingeniør bør gjøre med hver kjøring:
 
 1. godkjenn resultatet,
 2. bytt oppdateringsregel,
 3. krev både liten skrittlengde og liten residual før resultatet godkjennes.
 
+:::
+
 ```{math-exercise}
 #| label: choose-diagnostic-action
+#| context: diagnostic-run-givens, diagnostic-action-codes
 #| caption: Velg riktig tiltak
 #| mode: equivalent
 #| field-labels: tiltak A, tiltak B, tiltak C
@@ -137,6 +155,7 @@ Funksjonen `fixed_point` godkjenner nå et resultat når skrittlengden alene er 
 Bruk den redigerbare cellen under som en liten testbenk. Endre bare linjen med `return`, slik at alle tre kontrollene skriver `bestått`.
 
 ```{pyodide-python}
+#| label: ingmat-ide-module2-m2-5-exercises-2
 def approve_result(step, step_tolerance, residual_value, residual_tolerance):
     # Endre denne linjen: Begge kravene må være oppfylt.
     return step <= step_tolerance

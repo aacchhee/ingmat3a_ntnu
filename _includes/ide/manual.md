@@ -17,6 +17,7 @@ Mini-IDE-en kjører Python lokalt i nettleseren ved hjelp av [Pyodide](https://p
 Prøv gjerne dette eksemplet:
 
 ```{pyodide-python}
+#| label: ingmat-ide-ide-manual-1
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -40,12 +41,16 @@ plt.show()
 
 Alle kodevinduer på **samme side** deler variabler, funksjoner og importer. Kjør derfor celler i naturlig rekkefølge når en celle bygger på en tidligere celle. (En **side** i konteksten av denne ressursen er en HTML-side. Hver pensumuke ligger på egen side med alle sine faner og underfaner.)
 
-Python-miljøet deles ikke mellom ulike sider, og det opprettes på nytt når du laster inn siden på nytt eller stopper en kjøring med **Stopp**. Hver ukeside har en skjult oppstartscelle som laster inn nødvendige biblioteker og felles definisjoner. Hvis du senere kjører en synlig, endret versjon av en funksjon, brukes den endrede versjonen resten av økten.
+Python-miljøet deles ikke mellom ulike sider, og det opprettes på nytt når du laster inn siden på nytt. **Stopp** avbryter en kjøring; hvis nettleseren må starte Python på nytt for å stoppe den, må du også kjøre nødvendige definisjoner på nytt. Hver ukeside har en skjult oppstartscelle som laster inn nødvendige biblioteker og felles definisjoner. Hvis du senere kjører en synlig, endret versjon av en funksjon, brukes den endrede versjonen resten av økten.
 
 ::: {.callout-warning title="Ta vare på arbeidet ditt"}
 
-Koden lagres ikke automatisk. Kopier kode du vil beholde til en lokal fil, VS Code eller et annet egnet sted før du lukker eller laster inn siden på nytt.
+Når lagring er på, lagres kodeendringer og oppgavesvar lokalt i denne nettleseren. De hentes fram når du åpner samme side igjen, men Python kjøres ikke automatisk og matematikksvar sjekkes ikke på nytt. Lagringen følger ikke med til en annen nettleser eller datamaskin, og kan forsvinne hvis nettleserdata slettes. Behold derfor en egen kopi av viktig arbeid.
 :::
+
+Linja øverst på siden lar deg slette svarene på siden eller i emnet, og velge **Ikke lagre på denne enheten**. Det er nyttig på en delt datamaskin. **Lagre igjen** slår lagringen på igjen. **Tilbakestill** ved et kodevindu henter tilbake startkoden og fjerner det lagrede svaret for dette vinduet; Python-miljøet nullstilles ikke.
+
+Med **Eksporter svarene mine** kan du kopiere svarene eller laste dem ned som Markdown eller HTML. Fremdriftspanelet viser siste registrerte resultat og lar deg gå til oppgavene. I oppgavefaner med en quiz samles resultatene for den fanen. Et gjenopprettet resultat er historikk, ikke en ny kontroll av svaret.
 
 ### Når noe ikke virker
 

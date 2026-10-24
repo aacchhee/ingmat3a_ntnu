@@ -1,0 +1,6955 @@
+{
+  "version": 1,
+  "referenceAssumption": "Referansen beskriver kursets opprinnelige oppsett og delte definisjoner. Den aktuelle cellens kode og tilgjengelige kjøringsresultater vurderes sammen med dette. Hvis du endrer en delt definisjon i en annen celle, ta med den endrede definisjonen i koden eller kommentarene du ber om tilbakemelding på.",
+  "cells": {
+    "error-scale": {
+      "page": "page2.html",
+      "references": [
+        "ide-page2-reference-assumptions",
+        "ide-page2-plot-relative-errors-4575a9a7"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_relative_errors",
+        "Søylediagram av relativ feil (i prosent) for hver eksakt verdi."
+      ],
+      "dependencies": [
+        "plot_relative_errors"
+      ]
+    },
+    "week1-show-bits": {
+      "page": "page2.html",
+      "references": [
+        "ide-page2-reference-assumptions",
+        "ide-page2-show-bits-8fb86031"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "show_bits",
+        "Skriv ut de tre feltene i IEEE 754 double for tallet x."
+      ],
+      "dependencies": [
+        "show_bits"
+      ]
+    },
+    "week1-neighbours": {
+      "page": "page2.html",
+      "references": [
+        "ide-page2-reference-assumptions",
+        "ide-page2-plot-neighbours-a77b9dae"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_neighbours",
+        "Tegn lagret 0.1, de to naboene og posisjonen til eksakt 1/10 (i lokale"
+      ],
+      "dependencies": [
+        "plot_neighbours"
+      ]
+    },
+    "week1-spacing": {
+      "page": "page2.html",
+      "references": [
+        "ide-page2-reference-assumptions",
+        "ide-page2-plot-spacing-97c7d945"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_spacing",
+        "Log-log-plott av avstanden til neste flyttall mot størrelsen på tallet"
+      ],
+      "dependencies": [
+        "plot_spacing"
+      ]
+    },
+    "week1-cancellation-plot": {
+      "page": "page2.html",
+      "references": [
+        "ide-page2-reference-assumptions",
+        "ide-page2-naive-f32d3d01",
+        "ide-page2-plot-cancellation-03decf84",
+        "ide-page2-stable-9f1b3add"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "naive",
+        "math.sqrt(1+x)-1",
+        "plot_cancellation",
+        "Log-log-plott av relativ feil i den direkte formen; små x til høyre.",
+        "stable",
+        "x/(math.sqrt(1+x)+1)"
+      ],
+      "dependencies": [
+        "naive",
+        "plot_cancellation",
+        "stable"
+      ]
+    },
+    "week1-mini-number-line": {
+      "page": "page2.html",
+      "references": [
+        "ide-page2-reference-assumptions",
+        "ide-page2-plot-number-line-4779209a",
+        "ide-page2-positive-mini-values-e3b0c442"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_number_line",
+        "Tegn tallene i values som prikker på en tallinje.",
+        "positive_mini_values",
+        "(1+M/16)*2**(E-3)"
+      ],
+      "dependencies": [
+        "plot_number_line",
+        "positive_mini_values"
+      ]
+    },
+    "week1-mini-add": {
+      "page": "page2.html",
+      "references": [
+        "ide-page2-reference-assumptions",
+        "ide-page2-mini-float-e3b0c442"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "mini_float",
+        "mini_float(x)"
+      ],
+      "dependencies": [
+        "mini_float"
+      ]
+    },
+    "m2-0-graf": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-plot-function-5d5eca31"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_function",
+        "Tegn y = f(x) på [x_min, x_max] sammen med x-aksen."
+      ],
+      "dependencies": [
+        "plot_function"
+      ]
+    },
+    "m2-0-tre-regler": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-iterate-5e30a8e5",
+        "ide-page4-np-6f11581d",
+        "ide-page4-plot-sequences-8133eeeb"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "iterate",
+        "Starter med float(x0) og anvender g nøyaktig number_of_steps ganger. R",
+        "np",
+        "import numpy as np",
+        "plot_sequences",
+        "Tegner x_n mot n for reglene i rules fra samme x0 ved hjelp av iterate"
+      ],
+      "dependencies": [
+        "iterate",
+        "np",
+        "plot_sequences"
+      ]
+    },
+    "m2-1-iterate": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-g2-fba8dd00",
+        "ide-page4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "g2",
+        "g2(x)=np.cbrt(1-x)",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "g2",
+        "np"
+      ]
+    },
+    "m2-2-tre-spindelvev": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-cobweb-row-61f5138a",
+        "ide-page4-g1-ed97e13c",
+        "ide-page4-g2-fba8dd00",
+        "ide-page4-g3-119d5cc6"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cobweb_row",
+        "Spindelvev side om side. x0, steps, x_min og x_max kan være tall eller",
+        "g1",
+        "g1(x)=1-x**3",
+        "g2",
+        "g2(x)=np.cbrt(1-x)",
+        "g3",
+        "g3(x)=(2*x**3+1)/(3*x**2+1)"
+      ],
+      "dependencies": [
+        "cobweb_row",
+        "g1",
+        "g2",
+        "g3"
+      ]
+    },
+    "m2-2-helning-1": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-cobweb-row-61f5138a"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cobweb_row",
+        "Spindelvev side om side. x0, steps, x_min og x_max kan være tall eller"
+      ],
+      "dependencies": [
+        "cobweb_row"
+      ]
+    },
+    "m2-3-startverdier": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-g2-fba8dd00",
+        "ide-page4-np-6f11581d",
+        "ide-page4-plot-final-values-82d3946a"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "g2",
+        "g2(x)=np.cbrt(1-x)",
+        "np",
+        "import numpy as np",
+        "plot_final_values",
+        "Tegner punktene (starting_values,final_values) etter steps steg og ref"
+      ],
+      "dependencies": [
+        "g2",
+        "np",
+        "plot_final_values"
+      ]
+    },
+    "m2-3-feilplott": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-g2-fba8dd00",
+        "ide-page4-g3-119d5cc6",
+        "ide-page4-plot-errors-d61a283a"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "g2",
+        "g2(x)=np.cbrt(1-x)",
+        "g3",
+        "g3(x)=(2*x**3+1)/(3*x**2+1)",
+        "plot_errors",
+        "Tegner abs(x_n-reference) mot n på logaritmisk y-akse for reglene i ru"
+      ],
+      "dependencies": [
+        "g2",
+        "g3",
+        "plot_errors"
+      ]
+    },
+    "m2-3-forhold": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-g2-fba8dd00",
+        "ide-page4-iterate-959821b9",
+        "ide-page4-np-6f11581d",
+        "ide-page4-r-reference-2b9c3fed"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "g2",
+        "g2(x)=np.cbrt(1-x)",
+        "iterate",
+        "Starter med float(x0) og anvender g nøyaktig number_of_steps ganger. R",
+        "np",
+        "import numpy as np",
+        "r_reference",
+        "r_reference=solution=0.6823278038280193"
+      ],
+      "dependencies": [
+        "g2",
+        "iterate",
+        "np",
+        "r_reference"
+      ]
+    },
+    "ingmat-ide-module2-m2-3-exercises-1": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-iterate-959821b9",
+        "ide-page4-np-6f11581d",
+        "ide-page4-plot-error-curves-34829957"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "iterate",
+        "Starter med float(x0) og anvender g nøyaktig number_of_steps ganger. R",
+        "np",
+        "import numpy as np",
+        "plot_error_curves",
+        "Tegn flere feilkurver mot n med logaritmisk y-akse (blå, oransje, grøn"
+      ],
+      "dependencies": [
+        "iterate",
+        "np",
+        "plot_error_curves"
+      ]
+    },
+    "m2-4-eps": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "ingmat-ide-module2-m2-4-exercises-1": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-np-6f11581d",
+        "ide-page4-plot-error-curves-34829957"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "plot_error_curves",
+        "Tegn flere feilkurver mot n med logaritmisk y-akse (blå, oransje, grøn"
+      ],
+      "dependencies": [
+        "np",
+        "plot_error_curves"
+      ]
+    },
+    "m2-5-fixed-point": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "m2-5-diagnostikk": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-fixed-point-93c1ac45",
+        "ide-page4-g2-fba8dd00",
+        "ide-page4-plot-step-and-residual-2d44354e"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "fixed_point",
+        "abs(x_new-x) <= atol+rtol*abs(x_new)",
+        "g2",
+        "g2(x)=np.cbrt(1-x)",
+        "plot_step_and_residual",
+        "Tegn skrittlengde og residual fra fixed_point med logaritmisk y-akse.",
+        "history inkluderer startverdien",
+        "steps gjør det ikke",
+        "abs(f(x))",
+        "abs(g(x)-x)"
+      ],
+      "dependencies": [
+        "fixed_point",
+        "g2",
+        "plot_step_and_residual"
+      ]
+    },
+    "m2-5-a-over-x": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-iterate-959821b9"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "iterate",
+        "Starter med float(x0) og anvender g nøyaktig number_of_steps ganger. R"
+      ],
+      "dependencies": [
+        "iterate"
+      ]
+    },
+    "m2-5-sqrt": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-fixed-point-93c1ac45"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "fixed_point",
+        "abs(x_new-x) <= atol+rtol*abs(x_new)",
+        "history inkluderer startverdien",
+        "steps gjør det ikke",
+        "abs(f(x))",
+        "abs(g(x)-x)"
+      ],
+      "dependencies": [
+        "fixed_point"
+      ]
+    },
+    "m2-5-sqrt-spindelvev": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-cobweb-plot-7ff6f21b",
+        "ide-page4-make-sqrt-iteration-66efff32"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cobweb_plot",
+        "Ett spindelvevplott. Returnerer x_0, ..., x_n.",
+        "make_sqrt_iteration",
+        "g(x)=0.5*(x+a/x)"
+      ],
+      "dependencies": [
+        "cobweb_plot",
+        "make_sqrt_iteration"
+      ]
+    },
+    "ingmat-ide-module2-m2-5-exercises-1": {
+      "page": "page4.html",
+      "references": [
+        "ide-page4-reference-assumptions",
+        "ide-page4-fixed-point-93c1ac45",
+        "ide-page4-plot-runs-3bac01b5"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "fixed_point",
+        "abs(x_new-x) <= atol+rtol*abs(x_new)",
+        "plot_runs",
+        "Ett panel per kjøring av fixed_point: skrittlengde, residual og kravli",
+        "history inkluderer startverdien",
+        "steps gjør det ikke",
+        "abs(f(x))",
+        "abs(g(x)-x)"
+      ],
+      "dependencies": [
+        "fixed_point",
+        "plot_runs"
+      ]
+    },
+    "week3-same-output": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-average-pool-d3bed1b8",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-image-table-9d931363"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "average_pool",
+        "X.reshape(2,2,2,2).mean(axis=(1,3))",
+        "np",
+        "import numpy as np",
+        "show_image_table",
+        "Vis en bildetabell med samme fysiske størrelse per piksel.",
+        "4x4-bilde",
+        "2x2-bilde",
+        "ikke-overlappende"
+      ],
+      "dependencies": [
+        "average_pool",
+        "np",
+        "show_image_table"
+      ]
+    },
+    "week3-difference-and-zero-images": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-x1-4351f978",
+        "ide-uke3-x2-b6535cc4",
+        "ide-uke3-y1-38e12495",
+        "ide-uke3-y2-38e12495",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-image-table-9d931363"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X1",
+        "X1 = np.full((4, 4), 0.5)",
+        "X2",
+        "X2 = np.array([[0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1], [0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1]])",
+        "Y1",
+        "Y1=average_pool(X1)",
+        "Y2",
+        "Y2=average_pool(X2)",
+        "np",
+        "import numpy as np",
+        "show_image_table",
+        "Vis en bildetabell med samme fysiske størrelse per piksel."
+      ],
+      "dependencies": [
+        "X1",
+        "X2",
+        "Y1",
+        "Y2",
+        "np",
+        "show_image_table"
+      ]
+    },
+    "week3-first-norm": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-x1-4351f978",
+        "ide-uke3-x2-b6535cc4",
+        "ide-uke3-y1-38e12495",
+        "ide-uke3-y2-38e12495",
+        "ide-uke3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X1",
+        "X1 = np.full((4, 4), 0.5)",
+        "X2",
+        "X2 = np.array([[0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1], [0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1]])",
+        "Y1",
+        "Y1=average_pool(X1)",
+        "Y2",
+        "Y2=average_pool(X2)",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "X1",
+        "X2",
+        "Y1",
+        "Y2",
+        "np"
+      ]
+    },
+    "week3-four-blocks": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-x2-b6535cc4",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X2",
+        "X2 = np.array([[0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1], [0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1]])",
+        "np",
+        "import numpy as np",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "X2",
+        "np",
+        "show_images"
+      ]
+    },
+    "week3-flatten-picture": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-x2-b6535cc4",
+        "ide-uke3-show-flattened-e934fa8d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X2",
+        "X2 = np.array([[0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1], [0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1]])",
+        "show_flattened",
+        "Vis et 4 x 4-bilde og de samme 16 tallene lagt radvis i én vektor."
+      ],
+      "dependencies": [
+        "X2",
+        "show_flattened"
+      ]
+    },
+    "week3-pooling-as-matrix": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-pool-b55b8935",
+        "ide-uke3-x1-4351f978",
+        "ide-uke3-x2-b6535cc4"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A_pool",
+        "Målematrisen har form (4,16). Input er X.reshape(-1), radvis fra et 4x",
+        "X1",
+        "X1 = np.full((4, 4), 0.5)",
+        "X2",
+        "X2 = np.array([[0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1], [0.1, 0.9, 0.1, 0.9], [0.9, 0.1, 0.9, 0.1]])"
+      ],
+      "dependencies": [
+        "A_pool",
+        "X1",
+        "X2"
+      ]
+    },
+    "week3-check-linearity": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-x1-4351f978",
+        "ide-uke3-average-pool-d3bed1b8",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-two-routes-ad3dc9fb"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X1",
+        "X1 = np.full((4, 4), 0.5)",
+        "average_pool",
+        "X.reshape(2,2,2,2).mean(axis=(1,3))",
+        "np",
+        "import numpy as np",
+        "show_two_routes",
+        "Vis de to regnerekkefølgene i linearitetsforsøket som en bildetabell. ",
+        "4x4-bilde",
+        "2x2-bilde",
+        "ikke-overlappende"
+      ],
+      "dependencies": [
+        "X1",
+        "average_pool",
+        "np",
+        "show_two_routes"
+      ]
+    },
+    "week3-pixel-basis": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "np",
+        "show_images"
+      ]
+    },
+    "week3-missing-and-redundant": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-e1-cc234cbc",
+        "ide-uke3-e2-a92f3144",
+        "ide-uke3-e3-84efe1df",
+        "ide-uke3-e4-f5e56079",
+        "ide-uke3-x-2e7a1080",
+        "ide-uke3-coefficients-4a3845b0",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "E1",
+        "E1 = np.array([[1.0, 0.0], [0.0, 0.0]])",
+        "E2",
+        "E2 = np.array([[0.0, 1.0], [0.0, 0.0]])",
+        "E3",
+        "E3 = np.array([[0.0, 0.0], [1.0, 0.0]])",
+        "E4",
+        "E4 = np.array([[0.0, 0.0], [0.0, 1.0]])",
+        "X",
+        "coefficients=[0.2,0.7,0.4,0.9]",
+        "X=sum(components)=[[0.2,0.7],[0.4,0.9]]",
+        "coefficients",
+        "coefficients = np.array([0.2, 0.7, 0.4, 0.9])",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "X",
+        "coefficients",
+        "show_images"
+      ]
+    },
+    "week3-pattern-basis": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "np",
+        "show_images"
+      ]
+    },
+    "week3-change-basis": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-x-2e7a1080",
+        "ide-uke3-coefficients-4a3845b0",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-pattern-basis-86f90409",
+        "ide-uke3-pattern-names-a2778e74",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X",
+        "coefficients=[0.2,0.7,0.4,0.9]",
+        "X=sum(components)=[[0.2,0.7],[0.4,0.9]]",
+        "coefficients",
+        "coefficients = np.array([0.2, 0.7, 0.4, 0.9])",
+        "np",
+        "import numpy as np",
+        "pattern_basis",
+        "M=[[1,1],[1,1]]",
+        "H=[[1,-1],[1,-1]]",
+        "V=[[1,1],[-1,-1]]",
+        "pattern_names",
+        "pattern_names = ['Lysnivå', 'Venstre–høyre', 'Topp–bunn', 'Sjakkmønster']",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "X",
+        "coefficients",
+        "np",
+        "pattern_basis",
+        "pattern_names",
+        "show_images"
+      ]
+    },
+    "week3-average-patterns": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-pattern-basis-86f90409",
+        "ide-uke3-pattern-names-a2778e74",
+        "ide-uke3-show-image-table-9d931363"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "pattern_basis",
+        "M=[[1,1],[1,1]]",
+        "H=[[1,-1],[1,-1]]",
+        "V=[[1,1],[-1,-1]]",
+        "pattern_names",
+        "pattern_names = ['Lysnivå', 'Venstre–høyre', 'Topp–bunn', 'Sjakkmønster']",
+        "show_image_table",
+        "Vis en bildetabell med samme fysiske størrelse per piksel."
+      ],
+      "dependencies": [
+        "np",
+        "pattern_basis",
+        "pattern_names",
+        "show_image_table"
+      ]
+    },
+    "week3-family-same-average": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-d-455a2655",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "D",
+        "D = np.array([[1.0, -1.0], [-1.0, 1.0]])",
+        "np",
+        "import numpy as np",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "D",
+        "np",
+        "show_images"
+      ]
+    },
+    "week3-full-null-basis": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-d-455a2655",
+        "ide-uke3-h-91e113d2",
+        "ide-uke3-v-d28bf387",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "D",
+        "D = np.array([[1.0, -1.0], [-1.0, 1.0]])",
+        "H",
+        "H = np.array([[1.0, -1.0], [1.0, -1.0]])",
+        "V",
+        "V = np.array([[1.0, 1.0], [-1.0, -1.0]])",
+        "np",
+        "import numpy as np",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "D",
+        "H",
+        "V",
+        "np",
+        "show_images"
+      ]
+    },
+    "week3-random-null-image": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-pool-b55b8935",
+        "ide-uke3-average-pool-d3bed1b8",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-null-basis-cb305c7a",
+        "ide-uke3-show-image-table-9d931363"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A_pool",
+        "Målematrisen har form (4,16). Input er X.reshape(-1), radvis fra et 4x",
+        "average_pool",
+        "X.reshape(2,2,2,2).mean(axis=(1,3))",
+        "np",
+        "import numpy as np",
+        "null_basis",
+        "Listen bygges ferdig i forsøket: tolv 4x4-bilder, tre for hver av de f",
+        "show_image_table",
+        "Vis en bildetabell med samme fysiske størrelse per piksel.",
+        "4x4-bilde",
+        "2x2-bilde",
+        "ikke-overlappende"
+      ],
+      "dependencies": [
+        "A_pool",
+        "average_pool",
+        "np",
+        "null_basis",
+        "show_image_table"
+      ]
+    },
+    "week3-columns-as-images": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-pool-b55b8935",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A_pool",
+        "Målematrisen har form (4,16). Input er X.reshape(-1), radvis fra et 4x",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "A_pool",
+        "show_images"
+      ]
+    },
+    "week3-build-arbitrary-output": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-average-pool-d3bed1b8",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-image-table-9d931363"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "average_pool",
+        "X.reshape(2,2,2,2).mean(axis=(1,3))",
+        "np",
+        "import numpy as np",
+        "show_image_table",
+        "Vis en bildetabell med samme fysiske størrelse per piksel.",
+        "4x4-bilde",
+        "2x2-bilde",
+        "ikke-overlappende"
+      ],
+      "dependencies": [
+        "average_pool",
+        "np",
+        "show_image_table"
+      ]
+    },
+    "week3-rank-check": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-pool-b55b8935",
+        "ide-uke3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A_pool",
+        "Målematrisen har form (4,16). Input er X.reshape(-1), radvis fra et 4x",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "A_pool",
+        "np"
+      ]
+    },
+    "week3-redundant-output": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-pool-b55b8935",
+        "ide-uke3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A_pool",
+        "Målematrisen har form (4,16). Input er X.reshape(-1), radvis fra et 4x",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "A_pool",
+        "np"
+      ]
+    },
+    "week3-activity-a": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-pool-b55b8935",
+        "ide-uke3-average-pool-d3bed1b8",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A_pool",
+        "Målematrisen har form (4,16). Input er X.reshape(-1), radvis fra et 4x",
+        "average_pool",
+        "X.reshape(2,2,2,2).mean(axis=(1,3))",
+        "np",
+        "import numpy as np",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala.",
+        "4x4-bilde",
+        "2x2-bilde",
+        "ikke-overlappende"
+      ],
+      "dependencies": [
+        "A_pool",
+        "average_pool",
+        "np",
+        "show_images"
+      ]
+    },
+    "week3-activity-b": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-pattern-basis-86f90409",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "pattern_basis",
+        "M=[[1,1],[1,1]]",
+        "H=[[1,-1],[1,-1]]",
+        "V=[[1,1],[-1,-1]]",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "np",
+        "pattern_basis",
+        "show_images"
+      ]
+    },
+    "week3-activity-c": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-e1-cc234cbc",
+        "ide-uke3-e2-a92f3144",
+        "ide-uke3-e3-84efe1df",
+        "ide-uke3-e4-f5e56079",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-rng-ab3c6f35",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "E1",
+        "E1 = np.array([[1.0, 0.0], [0.0, 0.0]])",
+        "E2",
+        "E2 = np.array([[0.0, 1.0], [0.0, 0.0]])",
+        "E3",
+        "E3 = np.array([[0.0, 0.0], [1.0, 0.0]])",
+        "E4",
+        "E4 = np.array([[0.0, 0.0], [0.0, 1.0]])",
+        "np",
+        "import numpy as np",
+        "rng",
+        "rng = np.random.default_rng(10)",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "np",
+        "rng",
+        "show_images"
+      ]
+    },
+    "week3-activity-d": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-rng-ab3c6f35",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "rng",
+        "rng = np.random.default_rng(10)",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "np",
+        "rng",
+        "show_images"
+      ]
+    },
+    "week3-nearly-same-measurements-picture": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-show-images-4baf6979"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "show_images",
+        "Vis flere 2D-arrays med samme fargeskala."
+      ],
+      "dependencies": [
+        "np",
+        "show_images"
+      ]
+    },
+    "week3-nearly-same-measurements-rank": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-nearly-redundant-measurements-ccbbea1d",
+        "ide-uke3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "nearly_redundant_measurements",
+        "Returnerer en matrise med form (2,16) og valgt dtype. Første rad er ba",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "nearly_redundant_measurements",
+        "np"
+      ]
+    },
+    "week3-pure-matrix-setup": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week3-row-echelon-function": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-1c236284",
+        "ide-uke3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A",
+        "A = np.array([[1.0, 2.0, 0.0, 1.0], [0.0, 1.0, 1.0, 1.0], [1.0, 3.0, 1.0, 2.0]])",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "A",
+        "np"
+      ]
+    },
+    "week3-column-space-basis": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-1c236284",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-pivot-columns-058422ff"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A",
+        "A = np.array([[1.0, 2.0, 0.0, 1.0], [0.0, 1.0, 1.0, 1.0], [1.0, 3.0, 1.0, 2.0]])",
+        "np",
+        "import numpy as np",
+        "pivot_columns",
+        "Nullbaserte Python-indekser returnert av row_echelon(A), der pivoten v"
+      ],
+      "dependencies": [
+        "A",
+        "np",
+        "pivot_columns"
+      ]
+    },
+    "week3-null-space-basis-matrix": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-1c236284",
+        "ide-uke3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A",
+        "A = np.array([[1.0, 2.0, 0.0, 1.0], [0.0, 1.0, 1.0, 1.0], [1.0, 3.0, 1.0, 2.0]])",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "A",
+        "np"
+      ]
+    },
+    "week3-rank-nullity-check": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-1c236284",
+        "ide-uke3-z-a-ce37b082",
+        "ide-uke3-pivot-columns-058422ff"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A",
+        "A = np.array([[1.0, 2.0, 0.0, 1.0], [0.0, 1.0, 1.0, 1.0], [1.0, 3.0, 1.0, 2.0]])",
+        "Z_A",
+        "z1=[2,-1,1,0]",
+        "z2=[1,-1,0,1]",
+        "pivot_columns",
+        "Nullbaserte Python-indekser returnert av row_echelon(A), der pivoten v"
+      ],
+      "dependencies": [
+        "A",
+        "Z_A",
+        "pivot_columns"
+      ]
+    },
+    "week3-reachable-outputs": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-1c236284",
+        "ide-uke3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A",
+        "A = np.array([[1.0, 2.0, 0.0, 1.0], [0.0, 1.0, 1.0, 1.0], [1.0, 3.0, 1.0, 2.0]])",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "A",
+        "np"
+      ]
+    },
+    "week3-same-output-pure-matrix": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-1c236284",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-z1-a493e4a5"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A",
+        "A = np.array([[1.0, 2.0, 0.0, 1.0], [0.0, 1.0, 1.0, 1.0], [1.0, 3.0, 1.0, 2.0]])",
+        "np",
+        "import numpy as np",
+        "z1",
+        "z1 = np.array([2.0, -1.0, 1.0, 0.0])"
+      ],
+      "dependencies": [
+        "A",
+        "np",
+        "z1"
+      ]
+    },
+    "week3-nearly-dependent-row": {
+      "page": "uke3.html",
+      "references": [
+        "ide-uke3-reference-assumptions",
+        "ide-uke3-a-1c236284",
+        "ide-uke3-np-6f11581d",
+        "ide-uke3-row-echelon-0bf91957"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A",
+        "A = np.array([[1.0, 2.0, 0.0, 1.0], [0.0, 1.0, 1.0, 1.0], [1.0, 3.0, 1.0, 2.0]])",
+        "np",
+        "import numpy as np",
+        "row_echelon",
+        "Tar en kopi av den reelle m x n-matrisen A. Går fra venstre mot høyre,",
+        "nullbaserte Python-indekser",
+        "første gjenværende rad"
+      ],
+      "dependencies": [
+        "A",
+        "np",
+        "row_echelon"
+      ]
+    },
+    "week4-direction-readings": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week4-normalize-zero": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week4-pattern-detectors": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-np-6f11581d",
+        "ide-uke4-show-pattern-readings-ff5e657f"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "show_pattern_readings",
+        "Fire 2x2-mønstre, blandingen X og søyler med de målte mønstermengdene."
+      ],
+      "dependencies": [
+        "np",
+        "show_pattern_readings"
+      ]
+    },
+    "week4-two-vector-gs": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week4-classical-gs": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week4-gs-nan": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-classical-gram-schmidt-73ba741b",
+        "ide-uke4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "classical_gram_schmidt",
+        "Pedagogisk klassisk Gram–Schmidt uten rangkontroll. For A med form (m,",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "classical_gram_schmidt",
+        "np"
+      ]
+    },
+    "week4-cgs-worked": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-np-6f11581d",
+        "ide-uke4-show-component-bars-dc9d5cb1"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "show_component_bars",
+        "Komponentene i q2 og q3 side om side, og bidragene til q2 @ q3."
+      ],
+      "dependencies": [
+        "np",
+        "show_component_bars"
+      ]
+    },
+    "week4-mgs-comparison": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-classical-gram-schmidt-73ba741b",
+        "ide-uke4-np-6f11581d",
+        "ide-uke4-plot-orthogonality-loss-0ebd1bc2"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "classical_gram_schmidt",
+        "Pedagogisk klassisk Gram–Schmidt uten rangkontroll. For A med form (m,",
+        "np",
+        "import numpy as np",
+        "plot_orthogonality_loss",
+        "Ortogonalitetsfeil mot epsilon på logaritmiske akser."
+      ],
+      "dependencies": [
+        "classical_gram_schmidt",
+        "np",
+        "plot_orthogonality_loss"
+      ]
+    },
+    "week4-least-squares": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-np-6f11581d",
+        "ide-uke4-plot-line-fit-b5929777"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "plot_line_fit",
+        "Målinger, linjen c[0] + c[1] t og de loddrette residualene."
+      ],
+      "dependencies": [
+        "np",
+        "plot_line_fit"
+      ]
+    },
+    "week4-polynomial-bridge": {
+      "page": "uke4.html",
+      "references": [
+        "ide-uke4-reference-assumptions",
+        "ide-uke4-np-6f11581d",
+        "ide-uke4-plot-polynomial-fits-1325d7a1"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "plot_polynomial_fits",
+        "Målinger, referansekurven, tilpassede kurver og residualene ved målepu"
+      ],
+      "dependencies": [
+        "np",
+        "plot_polynomial_fits"
+      ]
+    },
+    "week5-directions": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d",
+        "ide-uke5-plot-before-after-271ee29f"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "plot_before_after",
+        "Én rute per matrise: startvektoren (oransje) og M @ start (blå), uten "
+      ],
+      "dependencies": [
+        "np",
+        "plot_before_after"
+      ]
+    },
+    "week5-contributions": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d",
+        "ide-uke5-plot-shares-df428610"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "plot_shares",
+        "Tegn andelene a1(k) (blå) og a2(k) (oransje) mot antall steg. curves: "
+      ],
+      "dependencies": [
+        "np",
+        "plot_shares"
+      ]
+    },
+    "week5-eigen-split": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d",
+        "ide-uke5-show-eigen-split-9b0c4a99"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "show_eigen_split",
+        "For en symmetrisk 2x2-matrise A: vis x som summen av bidragene langs t"
+      ],
+      "dependencies": [
+        "np",
+        "show_eigen_split"
+      ]
+    },
+    "week5-speed": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d",
+        "ide-uke5-plot-shares-df428610"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "plot_shares",
+        "Tegn andelene a1(k) (blå) og a2(k) (oransje) mot antall steg. curves: "
+      ],
+      "dependencies": [
+        "np",
+        "plot_shares"
+      ]
+    },
+    "week5-rayleigh": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d",
+        "ide-uke5-show-rayleigh-cf5467af"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "show_rayleigh",
+        "Tegn x (oransje), Ax (blå), projeksjonen rho*x av Ax på linjen gjennom"
+      ],
+      "dependencies": [
+        "np",
+        "show_rayleigh"
+      ]
+    },
+    "week5-power": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week5-power-demo": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d",
+        "ide-uke5-power-iteration-fb908340"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "power_iteration",
+        "Tar reell kvadratisk A og en ikke-null startvektor x0; normaliserer st",
+        "residual <= tol*norm(A,\"fro\")",
+        "history er en array med to kolonner",
+        "Ax=0",
+        "ikke at egenverdien er størst"
+      ],
+      "dependencies": [
+        "np",
+        "power_iteration"
+      ]
+    },
+    "week5-failures": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d",
+        "ide-uke5-plot-orbits-3281c7ae",
+        "ide-uke5-power-iteration-fb908340"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "plot_orbits",
+        "Én rute per tilfelle: endepunktene til de normaliserte vektorene x_0, ",
+        "power_iteration",
+        "Tar reell kvadratisk A og en ikke-null startvektor x0; normaliserer st",
+        "residual <= tol*norm(A,\"fro\")",
+        "history er en array med to kolonner",
+        "Ax=0",
+        "ikke at egenverdien er størst"
+      ],
+      "dependencies": [
+        "np",
+        "plot_orbits",
+        "power_iteration"
+      ]
+    },
+    "week5-roundoff": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week5-network": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week5-trap": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-s-net-82b1f564",
+        "ide-uke5-np-6f11581d",
+        "ide-uke5-plot-history-07442e50"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "S_net",
+        "S_net = np.array([[0.0, 0.0, 1 / 2, 1.0], [1 / 2, 0.0, 0.0, 0.0], [1 / 2, 1.0, 0.0, 0.0], [0.0, 0.0, 1 / 2, 0.0]])",
+        "np",
+        "import numpy as np",
+        "plot_history",
+        "Sannsynligheten for hver side mot antall steg. values: liste av fordel"
+      ],
+      "dependencies": [
+        "S_net",
+        "np",
+        "plot_history"
+      ]
+    },
+    "week5-teleport": {
+      "page": "uke5.html",
+      "references": [
+        "ide-uke5-reference-assumptions",
+        "ide-uke5-s-net-82b1f564",
+        "ide-uke5-np-6f11581d",
+        "ide-uke5-plot-distributions-d83d9fb5"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "S_net",
+        "S_net = np.array([[0.0, 0.0, 1 / 2, 1.0], [1 / 2, 0.0, 0.0, 0.0], [1 / 2, 1.0, 0.0, 0.0], [0.0, 0.0, 1 / 2, 0.0]])",
+        "np",
+        "import numpy as np",
+        "plot_distributions",
+        "Én kurve per verdi av alpha: den stasjonære fordelingen over sidene. r"
+      ],
+      "dependencies": [
+        "S_net",
+        "np",
+        "plot_distributions"
+      ]
+    },
+    "week6-gs-experiment": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-error-plot-65438c90",
+        "ide-uke6-gs-path-e78d0fee",
+        "ide-uke6-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "error_plot",
+        "Tegn feilkurver på logaritmisk skala. curves: {navn: feilnormer}.",
+        "gs_path",
+        "x[i]+=(b[i]-A[i]@x)/A[i,i]",
+        "np",
+        "import numpy as np",
+        "(1+sweeps*n,n)",
+        "ikke-null diagonalelementer",
+        "allerede oppdaterte koordinater"
+      ],
+      "dependencies": [
+        "error_plot",
+        "gs_path",
+        "np"
+      ]
+    },
+    "week6-convergence": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-error-plot-65438c90",
+        "ide-uke6-gs-path-e78d0fee",
+        "ide-uke6-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "error_plot",
+        "Tegn feilkurver på logaritmisk skala. curves: {navn: feilnormer}.",
+        "gs_path",
+        "x[i]+=(b[i]-A[i]@x)/A[i,i]",
+        "np",
+        "import numpy as np",
+        "(1+sweeps*n,n)",
+        "ikke-null diagonalelementer",
+        "allerede oppdaterte koordinater"
+      ],
+      "dependencies": [
+        "error_plot",
+        "gs_path",
+        "np"
+      ]
+    },
+    "week6-matrix-norm": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-np-6f11581d",
+        "ide-uke6-show-unit-circle-image-586343cb"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "show_unit_circle_image",
+        "Enhetssirkelen og bildet av den under en 2x2-matrise B, med bildene av"
+      ],
+      "dependencies": [
+        "np",
+        "show_unit_circle_image"
+      ]
+    },
+    "week6-conditioning-experiment": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-np-6f11581d",
+        "ide-uke6-show-conditioning-055de0e4"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "show_conditioning",
+        "Relativ foroverfeil mot kondisjonstall, begge på logaritmisk skala."
+      ],
+      "dependencies": [
+        "np",
+        "show_conditioning"
+      ]
+    },
+    "week6-energy-surface": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-show-surface-and-levels-7ac86ea0"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "show_surface_and_levels",
+        "Flaten z = phi(u, v) og nivåkurvene sett ovenfra, med minimum og marke"
+      ],
+      "dependencies": [
+        "show_surface_and_levels"
+      ]
+    },
+    "week6-coordinate-energy": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-bowl-plot-a08ab78f",
+        "ide-uke6-gs-path-e78d0fee",
+        "ide-uke6-np-6f11581d",
+        "ide-uke6-plt-7be21394"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "bowl_plot",
+        "Tegner nivåkurver for phi(x)=0.5*x@A@x-b@x på det gitte Matplotlib-aks",
+        "gs_path",
+        "x[i]+=(b[i]-A[i]@x)/A[i,i]",
+        "np",
+        "import numpy as np",
+        "plt",
+        "import matplotlib.pyplot as plt",
+        "(1+sweeps*n,n)",
+        "ikke-null diagonalelementer",
+        "allerede oppdaterte koordinater"
+      ],
+      "dependencies": [
+        "bowl_plot",
+        "gs_path",
+        "np",
+        "plt"
+      ]
+    },
+    "week6-line-search": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-line-search-plot-fb0f9618",
+        "ide-uke6-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "line_search_plot",
+        "Øverst: søkelinjen x0 + alpha*p0, nivåkurven gjennom x1, ny residual o",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "line_search_plot",
+        "np"
+      ]
+    },
+    "week6-steepest-descent": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-descent-path-3710b68f",
+        "ide-uke6-np-6f11581d",
+        "ide-uke6-two-bowls-b41c6f38"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "descent_path",
+        "x += (r@r)/(r@(A@r))*r",
+        "np",
+        "import numpy as np",
+        "two_bowls",
+        "Nivåkurvebilder over hverandre, ett per tilfelle. cases: liste med (A,",
+        "SPD A",
+        "norm(r)<=rtol*norm(b)",
+        "(r@r)/(r@(A@r))",
+        "startpunktet"
+      ],
+      "dependencies": [
+        "descent_path",
+        "np",
+        "two_bowls"
+      ]
+    },
+    "week6-parallel-minima": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-np-6f11581d",
+        "ide-uke6-parallel-minima-plot-4a41e7d4"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "parallel_minima_plot",
+        "Linjer (0, c) + t*d for hver c i offsets, minimum på hver linje og lin"
+      ],
+      "dependencies": [
+        "np",
+        "parallel_minima_plot"
+      ]
+    },
+    "week6-cg-experiment": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-cg-7910cbff",
+        "ide-uke6-descent-path-3710b68f",
+        "ide-uke6-np-6f11581d",
+        "ide-uke6-two-bowls-b41c6f38"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cg",
+        "Konjugert gradient for SPD A med form (n,n), b og valgfri x0 med form ",
+        "descent_path",
+        "x += (r@r)/(r@(A@r))*r",
+        "np",
+        "import numpy as np",
+        "two_bowls",
+        "Nivåkurvebilder over hverandre, ett per tilfelle. cases: liste med (A,",
+        "atol+rtol*norm(b)",
+        "preconditioner_calls=0",
+        "SPD A",
+        "norm(r)<=rtol*norm(b)",
+        "(r@r)/(r@(A@r))",
+        "startpunktet"
+      ],
+      "dependencies": [
+        "cg",
+        "descent_path",
+        "np",
+        "two_bowls"
+      ]
+    },
+    "week6-cg-preservation": {
+      "page": "uke6.html",
+      "references": [
+        "ide-uke6-reference-assumptions",
+        "ide-uke6-cg-7910cbff",
+        "ide-uke6-descent-path-3710b68f",
+        "ide-uke6-np-6f11581d",
+        "ide-uke6-second-step-plot-709b2ade"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cg",
+        "Konjugert gradient for SPD A med form (n,n), b og valgfri x0 med form ",
+        "descent_path",
+        "x += (r@r)/(r@(A@r))*r",
+        "np",
+        "import numpy as np",
+        "second_step_plot",
+        "Andre steg fra x1: bratteste nedstigning til S, CG til løsningen, og M",
+        "atol+rtol*norm(b)",
+        "preconditioner_calls=0",
+        "SPD A",
+        "norm(r)<=rtol*norm(b)",
+        "(r@r)/(r@(A@r))",
+        "startpunktet"
+      ],
+      "dependencies": [
+        "cg",
+        "descent_path",
+        "np",
+        "second_step_plot"
+      ]
+    },
+    "week7-first-image": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-portrait-28c7bf94",
+        "ide-uke7-rank-image-c8fb2c8d",
+        "ide-uke7-show-images-a8b96b0c"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "portrait",
+        "Det faste portrettet er en 96x96-array med gråtoneverdier fra 0 til 1,",
+        "rank_image",
+        "(U[:,:k]*s[:k])@Vt[:k,:]",
+        "show_images",
+        "Tar en ordbok {navn: todimensjonal array}; tegner ett gråtonebilde per",
+        "samme form som A"
+      ],
+      "dependencies": [
+        "portrait",
+        "rank_image",
+        "show_images"
+      ]
+    },
+    "week7-building-block": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-np-6f11581d",
+        "ide-uke7-portrait-28c7bf94",
+        "ide-uke7-show-component-801aaed2"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "portrait",
+        "Det faste portrettet er en 96x96-array med gråtoneverdier fra 0 til 1,",
+        "show_component",
+        "s[i]*np.outer(U[:,i],Vt[i,:])"
+      ],
+      "dependencies": [
+        "np",
+        "portrait",
+        "show_component"
+      ]
+    },
+    "week7-perturbation": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week7-polynomial": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week7-tail": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-np-6f11581d",
+        "ide-uke7-portrait-28c7bf94",
+        "ide-uke7-show-images-a8b96b0c",
+        "ide-uke7-show-singular-values-1359b82e"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "portrait",
+        "Det faste portrettet er en 96x96-array med gråtoneverdier fra 0 til 1,",
+        "show_images",
+        "Tar en ordbok {navn: todimensjonal array}; tegner ett gråtonebilde per",
+        "show_singular_values",
+        "Tar spectra={navn: array av singulærverdier}; tegner verdiene mot ettb"
+      ],
+      "dependencies": [
+        "np",
+        "portrait",
+        "show_images",
+        "show_singular_values"
+      ]
+    },
+    "week7-tail-list": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-np-6f11581d",
+        "ide-uke7-portrait-28c7bf94"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "portrait",
+        "Det faste portrettet er en 96x96-array med gråtoneverdier fra 0 til 1,"
+      ],
+      "dependencies": [
+        "np",
+        "portrait"
+      ]
+    },
+    "week7-tail-check": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-np-6f11581d",
+        "ide-uke7-portrait-28c7bf94"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "portrait",
+        "Det faste portrettet er en 96x96-array med gråtoneverdier fra 0 til 1,"
+      ],
+      "dependencies": [
+        "np",
+        "portrait"
+      ]
+    },
+    "week7-noise": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-np-6f11581d",
+        "ide-uke7-portrait-28c7bf94",
+        "ide-uke7-rank-image-c8fb2c8d",
+        "ide-uke7-show-images-a8b96b0c",
+        "ide-uke7-show-singular-values-1359b82e"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "import numpy as np",
+        "portrait",
+        "Det faste portrettet er en 96x96-array med gråtoneverdier fra 0 til 1,",
+        "rank_image",
+        "(U[:,:k]*s[:k])@Vt[:k,:]",
+        "show_images",
+        "Tar en ordbok {navn: todimensjonal array}; tegner ett gråtonebilde per",
+        "show_singular_values",
+        "Tar spectra={navn: array av singulærverdier}; tegner verdiene mot ettb",
+        "samme form som A"
+      ],
+      "dependencies": [
+        "np",
+        "portrait",
+        "rank_image",
+        "show_images",
+        "show_singular_values"
+      ]
+    },
+    "week7-budget-inputs": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-challenge-images-29ca5158",
+        "ide-uke7-show-images-a8b96b0c"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "challenge_images",
+        "Returnerer en ordbok med fire 96x96-bilder: en kopi av portrait; binær",
+        "show_images",
+        "Tar en ordbok {navn: todimensjonal array}; tegner ett gråtonebilde per"
+      ],
+      "dependencies": [
+        "challenge_images",
+        "show_images"
+      ]
+    },
+    "week7-budget": {
+      "page": "uke7.html",
+      "references": [
+        "ide-uke7-reference-assumptions",
+        "ide-uke7-challenge-images-29ca5158",
+        "ide-uke7-portrait-28c7bf94",
+        "ide-uke7-rank-image-c8fb2c8d",
+        "ide-uke7-show-images-a8b96b0c"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "challenge_images",
+        "Returnerer en ordbok med fire 96x96-bilder: en kopi av portrait; binær",
+        "portrait",
+        "Det faste portrettet er en 96x96-array med gråtoneverdier fra 0 til 1,",
+        "rank_image",
+        "(U[:,:k]*s[:k])@Vt[:k,:]",
+        "show_images",
+        "Tar en ordbok {navn: todimensjonal array}; tegner ett gråtonebilde per",
+        "samme form som A"
+      ],
+      "dependencies": [
+        "challenge_images",
+        "portrait",
+        "rank_image",
+        "show_images"
+      ]
+    },
+    "week8-no-minimum": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-minimize-862d1fc3",
+        "ide-uke8-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "minimize",
+        "scipy.optimize",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "minimize",
+        "np"
+      ]
+    },
+    "week8-model-curves": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-plot-model-curves-646bcb9d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_model_curves",
+        "a = 0.5/b",
+        "b ulik null",
+        "Returnerer None"
+      ],
+      "dependencies": [
+        "plot_model_curves"
+      ]
+    },
+    "week8-minimizing-sequence": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-s-75bcf490"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "S",
+        "z = (a, b)",
+        "kvadratsum",
+        "y = 0.5*t"
+      ],
+      "dependencies": [
+        "S"
+      ]
+    },
+    "week8-inf-pictures": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-plot-inf-examples-25cbe052"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_inf_examples",
+        "infimum 0",
+        "åpent endepunkt",
+        "Returnerer None"
+      ],
+      "dependencies": [
+        "plot_inf_examples"
+      ]
+    },
+    "week8-box": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-s-75bcf490",
+        "ide-uke8-minimize-862d1fc3"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "S",
+        "z = (a, b)",
+        "kvadratsum",
+        "y = 0.5*t",
+        "minimize",
+        "scipy.optimize"
+      ],
+      "dependencies": [
+        "S",
+        "minimize"
+      ]
+    },
+    "week8-noisy-data": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-np-6f11581d",
+        "ide-uke8-plot-profiles-bb6de665",
+        "ide-uke8-t-ddd4f94e"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "plot_profiles",
+        "curves = {navn: differanser}",
+        "logaritmisk b-akse",
+        "nullinje",
+        "t",
+        "np.linspace(0, 4, 9)",
+        "ni tidspunkter"
+      ],
+      "dependencies": [
+        "np",
+        "plot_profiles",
+        "t"
+      ]
+    },
+    "week8-negative-b": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-np-6f11581d",
+        "ide-uke8-t-ddd4f94e"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "t",
+        "np.linspace(0, 4, 9)",
+        "ni tidspunkter"
+      ],
+      "dependencies": [
+        "np",
+        "t"
+      ]
+    },
+    "week8-taylor-check": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week8-saddle-picture": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-plot-saddle-e0ff341e"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_saddle",
+        "x**3 + y**3 - 3*x*y",
+        "to snitt",
+        "Returnerer None"
+      ],
+      "dependencies": [
+        "plot_saddle"
+      ]
+    },
+    "week8-many-starts": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-minimize-862d1fc3",
+        "ide-uke8-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "minimize",
+        "scipy.optimize",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "minimize",
+        "np"
+      ]
+    },
+    "week8-chord-pictures": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-plot-chord-examples-14658a0f"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_chord_examples",
+        "én korde",
+        "konveks",
+        "ikke-konveks"
+      ],
+      "dependencies": [
+        "plot_chord_examples"
+      ]
+    },
+    "week8-chords": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-s-line-21cfeb59",
+        "ide-uke8-s-wave-d888a2fd",
+        "ide-uke8-np-6f11581d",
+        "ide-uke8-plot-slice-96257137"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "S_line",
+        "konstantledd",
+        "stigning",
+        "kvadratsum",
+        "S_wave",
+        "amplitude a",
+        "frekvens w",
+        "frø 8",
+        "40 målinger",
+        "np",
+        "numpy",
+        "plot_slice",
+        "F((1-s)*P+s*Q)",
+        "s i [0,1]",
+        "korden"
+      ],
+      "dependencies": [
+        "S_line",
+        "S_wave",
+        "np",
+        "plot_slice"
+      ]
+    },
+    "week8-convex-sets": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-plot-convex-sets-f760b091"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "plot_convex_sets",
+        "skive",
+        "rektangel",
+        "ring og månesigd"
+      ],
+      "dependencies": [
+        "plot_convex_sets"
+      ]
+    },
+    "week8-flat-valley": {
+      "page": "uke8.html",
+      "references": [
+        "ide-uke8-reference-assumptions",
+        "ide-uke8-bl-d2141758",
+        "ide-uke8-minimize-862d1fc3",
+        "ide-uke8-np-6f11581d",
+        "ide-uke8-tl-92e37580"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "bl",
+        "[.2, .9, 2.1, 2.8]",
+        "fire målinger",
+        "minimize",
+        "scipy.optimize",
+        "np",
+        "numpy",
+        "tl",
+        "[-1., 0., 1., 2.]",
+        "fire tidspunkter"
+      ],
+      "dependencies": [
+        "bl",
+        "minimize",
+        "np",
+        "tl"
+      ]
+    },
+    "week9-fixed-step-sweep": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-grad9-7f3a74d2",
+        "ide-uke9-np-6f11581d",
+        "ide-uke9-plot-x-paths-c37dbe7b"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "grad9",
+        "gradienten til f9",
+        "form (2,)",
+        "4*x*u + 2*w",
+        "np",
+        "numpy",
+        "plot_x_paths",
+        "{steglengde: følge av x-koordinater}",
+        "høyst fem",
+        "x = 3"
+      ],
+      "dependencies": [
+        "grad9",
+        "np",
+        "plot_x_paths"
+      ]
+    },
+    "week9-best-step-figure": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-hess9-01410542",
+        "ide-uke9-np-6f11581d",
+        "ide-uke9-plot-step-factors-91af84e4"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "hess9",
+        "Hessianen til f9",
+        "form (2,2)",
+        "symmetrisk",
+        "np",
+        "numpy",
+        "plot_step_factors",
+        "stigende positive egenverdier",
+        "maksimumet",
+        "2/(lam[0]+lam[-1])",
+        "2/lam[-1]"
+      ],
+      "dependencies": [
+        "hess9",
+        "np",
+        "plot_step_factors"
+      ]
+    },
+    "week9-condition": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-np-6f11581d",
+        "ide-uke9-plot-errors-57115135"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "plot_errors",
+        "høyst fem kurver",
+        "logaritmisk y-akse",
+        "xlog=True"
+      ],
+      "dependencies": [
+        "np",
+        "plot_errors"
+      ]
+    },
+    "week9-critical-steps": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-hess9-01410542",
+        "ide-uke9-minima-cb2037cb",
+        "ide-uke9-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "hess9",
+        "Hessianen til f9",
+        "form (2,2)",
+        "symmetrisk",
+        "minima",
+        "fire minimumpunkter",
+        "(3., 2.)",
+        "avrundet",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "hess9",
+        "minima",
+        "np"
+      ]
+    },
+    "week9-gradient-steps": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-f9-0f604562",
+        "ide-uke9-fixed-steps-b00fa515",
+        "ide-uke9-grad9-7f3a74d2",
+        "ide-uke9-np-6f11581d",
+        "ide-uke9-plot-runs-cbf815ae"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "f9",
+        "Himmelblau",
+        "to komponenter",
+        "skalar",
+        "fixed_steps",
+        "z - alpha*grad9(z)",
+        "inkluderer starten",
+        "norm over 1e6",
+        "slutt-z kan ligge utenfor loggen",
+        "grad9",
+        "gradienten til f9",
+        "form (2,)",
+        "4*x*u + 2*w",
+        "np",
+        "numpy",
+        "plot_runs",
+        "(sluttpunkt, verdiarray, punktarray)",
+        "on_map filtrerer bare banekartet",
+        "1e-15"
+      ],
+      "dependencies": [
+        "f9",
+        "fixed_steps",
+        "grad9",
+        "np",
+        "plot_runs"
+      ]
+    },
+    "week9-scalar-line-search": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-f9-0f604562",
+        "ide-uke9-grad9-7f3a74d2",
+        "ide-uke9-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "f9",
+        "Himmelblau",
+        "to komponenter",
+        "skalar",
+        "grad9",
+        "gradienten til f9",
+        "form (2,)",
+        "4*x*u + 2*w",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "f9",
+        "grad9",
+        "np"
+      ]
+    },
+    "week9-compass-certificate": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-compass-c3234512",
+        "ide-uke9-f9-0f604562",
+        "ide-uke9-grad9-7f3a74d2",
+        "ide-uke9-hess9-01410542",
+        "ide-uke9-np-6f11581d",
+        "ide-uke9-plot-path-ae7201a8"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "compass",
+        "fire koordinatretninger",
+        "strengt beste forbedringen",
+        "halveres step",
+        "antall prøverunder",
+        "f9",
+        "Himmelblau",
+        "to komponenter",
+        "skalar",
+        "grad9",
+        "gradienten til f9",
+        "form (2,)",
+        "4*x*u + 2*w",
+        "hess9",
+        "Hessianen til f9",
+        "form (2,2)",
+        "symmetrisk",
+        "np",
+        "numpy",
+        "plot_path",
+        "form (m,2)",
+        "nivåkurver for f9",
+        "(3,2)"
+      ],
+      "dependencies": [
+        "compass",
+        "f9",
+        "grad9",
+        "hess9",
+        "np",
+        "plot_path"
+      ]
+    },
+    "week9-finite-search": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-f9-0f604562",
+        "ide-uke9-np-6f11581d",
+        "ide-uke9-plot-samples-f6a080b4"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "f9",
+        "Himmelblau",
+        "to komponenter",
+        "skalar",
+        "np",
+        "numpy",
+        "plot_samples",
+        "to kolonner",
+        "[-4,4]**2",
+        "(3,2)"
+      ],
+      "dependencies": [
+        "f9",
+        "np",
+        "plot_samples"
+      ]
+    },
+    "week9-random-walk-extension": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-f9-0f604562",
+        "ide-uke9-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "f9",
+        "Himmelblau",
+        "to komponenter",
+        "skalar",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "f9",
+        "np"
+      ]
+    },
+    "week9-drift": {
+      "page": "uke9.html",
+      "references": [
+        "ide-uke9-reference-assumptions",
+        "ide-uke9-s8-ab2d0174",
+        "ide-uke9-grad-s8-91705fbf",
+        "ide-uke9-np-6f11581d",
+        "ide-uke9-plot-drift-3e942b81"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "S8",
+        "z = (a,b)",
+        "kvadratsum",
+        "y8 = 0.5*t8",
+        "grad_S8",
+        "gradient til S8",
+        "form (2,)",
+        "r = y8-a*(1-e)",
+        "np",
+        "numpy",
+        "plot_drift",
+        "form (m,2)",
+        "kolonner (a,b)",
+        "a = 0.5/b"
+      ],
+      "dependencies": [
+        "S8",
+        "grad_S8",
+        "np",
+        "plot_drift"
+      ]
+    },
+    "week10-model-1d": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-show-model-f6e8471b"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "show_model",
+        "d2phi(x0)+mu",
+        "stasjonære punkt",
+        "nevner ulik null"
+      ],
+      "dependencies": [
+        "show_model"
+      ]
+    },
+    "week10-hand-step": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-himmel-d0d2da78",
+        "ide-uke10-himmel-grad-75df97b1",
+        "ide-uke10-himmel-hess-c5868e2e",
+        "ide-uke10-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "himmel",
+        "Himmelblau",
+        "z = (x,y)",
+        "skalar",
+        "himmel_grad",
+        "gradienten til himmel",
+        "form (2,)",
+        "4*x*a + 2*b",
+        "himmel_hess",
+        "Hessianen til himmel",
+        "form (2,2)",
+        "symmetrisk",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "himmel",
+        "himmel_grad",
+        "himmel_hess",
+        "np"
+      ]
+    },
+    "week10-newton-vs-gradient": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-himmel-grad-75df97b1",
+        "ide-uke10-himmel-hess-c5868e2e",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-plot-errors-7affd196"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "himmel_grad",
+        "gradienten til himmel",
+        "form (2,)",
+        "4*x*a + 2*b",
+        "himmel_hess",
+        "Hessianen til himmel",
+        "form (2,2)",
+        "symmetrisk",
+        "np",
+        "numpy",
+        "plot_errors",
+        "høyst tre",
+        "opprinnelige stegindekser",
+        "strengt positive feil"
+      ],
+      "dependencies": [
+        "himmel_grad",
+        "himmel_hess",
+        "np",
+        "plot_errors"
+      ]
+    },
+    "week10-quadratic-ratio": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-himmel-grad-75df97b1",
+        "ide-uke10-himmel-hess-c5868e2e",
+        "ide-uke10-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "himmel_grad",
+        "gradienten til himmel",
+        "form (2,)",
+        "4*x*a + 2*b",
+        "himmel_hess",
+        "Hessianen til himmel",
+        "form (2,2)",
+        "symmetrisk",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "himmel_grad",
+        "himmel_hess",
+        "np"
+      ]
+    },
+    "week10-invariance": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-himmel-grad-75df97b1",
+        "ide-uke10-himmel-hess-c5868e2e",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-show-units-6e9d7047"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "himmel_grad",
+        "gradienten til himmel",
+        "form (2,)",
+        "4*x*a + 2*b",
+        "himmel_hess",
+        "Hessianen til himmel",
+        "form (2,2)",
+        "symmetrisk",
+        "np",
+        "numpy",
+        "show_units",
+        "fire 2-vektorer",
+        "første koordinat skalert",
+        "samme synlige lengde"
+      ],
+      "dependencies": [
+        "himmel_grad",
+        "himmel_hess",
+        "np",
+        "show_units"
+      ]
+    },
+    "week10-basins-pure": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-newton-basins-26bcd7a4",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-show-basins-dece837f"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "newton_basins",
+        "form (n,n)",
+        "mu = 0,0.5,1,2",
+        "gradientnorm < 1e-6",
+        "which=True",
+        "np",
+        "numpy",
+        "show_basins",
+        "like store todimensjonale arrays",
+        "0 minimum",
+        "1 sadel",
+        "2 maksimum"
+      ],
+      "dependencies": [
+        "newton_basins",
+        "np",
+        "show_basins"
+      ]
+    },
+    "week10-ascent": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-well-149ac5c5",
+        "ide-uke10-well-grad-0afe68bb",
+        "ide-uke10-well-hess-0bb9d786"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "well",
+        "x = (u,v)",
+        "(u*u - 1)**2",
+        "0.5*v*v",
+        "well_grad",
+        "gradienten til well",
+        "form (2,)",
+        "[4*u*(u*u-1), v]",
+        "well_hess",
+        "np.diag([12*u*u-4, 1.])",
+        "form (2,2)",
+        "blandede andrederiverte er null"
+      ],
+      "dependencies": [
+        "np",
+        "well",
+        "well_grad",
+        "well_hess"
+      ]
+    },
+    "week10-model-saddle": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-show-model-f6e8471b"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "show_model",
+        "d2phi(x0)+mu",
+        "stasjonære punkt",
+        "nevner ulik null"
+      ],
+      "dependencies": [
+        "show_model"
+      ]
+    },
+    "week10-cholesky-test": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-himmel-hess-c5868e2e",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-well-hess-0bb9d786"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "himmel_hess",
+        "Hessianen til himmel",
+        "form (2,2)",
+        "symmetrisk",
+        "np",
+        "numpy",
+        "well_hess",
+        "np.diag([12*u*u-4, 1.])",
+        "blandede andrederiverte er null"
+      ],
+      "dependencies": [
+        "himmel_hess",
+        "np",
+        "well_hess"
+      ]
+    },
+    "week10-cholesky-solve": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week10-cholesky-shift": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-well-grad-0afe68bb",
+        "ide-uke10-well-hess-0bb9d786"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "well_grad",
+        "gradienten til well",
+        "form (2,)",
+        "[4*u*(u*u-1), v]",
+        "well_hess",
+        "np.diag([12*u*u-4, 1.])",
+        "form (2,2)",
+        "blandede andrederiverte er null"
+      ],
+      "dependencies": [
+        "np",
+        "well_grad",
+        "well_hess"
+      ]
+    },
+    "week10-model-shift": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-show-model-f6e8471b"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "show_model",
+        "d2phi(x0)+mu",
+        "stasjonære punkt",
+        "nevner ulik null"
+      ],
+      "dependencies": [
+        "show_model"
+      ]
+    },
+    "week10-regularized-step": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-armijo-991d89e2",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-well-149ac5c5",
+        "ide-uke10-well-grad-0afe68bb"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "armijo",
+        "g@p < 0",
+        "alpha = 1, 1/2",
+        "antall halveringer",
+        "RuntimeError",
+        "np",
+        "numpy",
+        "well",
+        "x = (u,v)",
+        "(u*u - 1)**2",
+        "0.5*v*v",
+        "well_grad",
+        "gradienten til well",
+        "form (2,)",
+        "[4*u*(u*u-1), v]"
+      ],
+      "dependencies": [
+        "armijo",
+        "np",
+        "well",
+        "well_grad"
+      ]
+    },
+    "week10-backtrack-positive-hess": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-armijo-991d89e2",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-show-valley-91b556a5",
+        "ide-uke10-valley-58d616b4",
+        "ide-uke10-valley-grad-08bc0a48",
+        "ide-uke10-valley-hess-53f962d5"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "armijo",
+        "g@p < 0",
+        "alpha = 1, 1/2",
+        "antall halveringer",
+        "RuntimeError",
+        "np",
+        "numpy",
+        "show_valley",
+        "valley(z+alpha*p)",
+        "kvadratiske Taylor-modellen",
+        "to fulle Newton-steg",
+        "fem Armijo-dempede Newton-steg",
+        "valley",
+        "x = (u,v)",
+        "(1-u)**2",
+        "10*(v-u*u)**2",
+        "valley_grad",
+        "gradienten til valley",
+        "form (2,)",
+        "20*(v-u*u)",
+        "valley_hess",
+        "Hessianen til valley",
+        "form (2,2)",
+        "2-40*v+120*u*u"
+      ],
+      "dependencies": [
+        "armijo",
+        "np",
+        "show_valley",
+        "valley",
+        "valley_grad",
+        "valley_hess"
+      ]
+    },
+    "week10-basins-safe": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-newton-basins-26bcd7a4",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-show-minima-bc8da9dd"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "newton_basins",
+        "form (n,n)",
+        "mu = 0,0.5,1,2",
+        "gradientnorm < 1e-6",
+        "which=True",
+        "np",
+        "numpy",
+        "show_minima",
+        "minimumindeks 0–3",
+        "fire minimumpunkter",
+        "stjerner"
+      ],
+      "dependencies": [
+        "newton_basins",
+        "np",
+        "show_minima"
+      ]
+    },
+    "week10-scipy-compare": {
+      "page": "uke10.html",
+      "references": [
+        "ide-uke10-reference-assumptions",
+        "ide-uke10-minimize-862d1fc3",
+        "ide-uke10-np-6f11581d",
+        "ide-uke10-valley-58d616b4",
+        "ide-uke10-valley-grad-08bc0a48",
+        "ide-uke10-valley-hess-53f962d5"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "minimize",
+        "scipy.optimize",
+        "jac og hess",
+        "np",
+        "numpy",
+        "valley",
+        "x = (u,v)",
+        "(1-u)**2",
+        "10*(v-u*u)**2",
+        "valley_grad",
+        "gradienten til valley",
+        "form (2,)",
+        "20*(v-u*u)",
+        "valley_hess",
+        "Hessianen til valley",
+        "form (2,2)",
+        "2-40*v+120*u*u"
+      ],
+      "dependencies": [
+        "minimize",
+        "np",
+        "valley",
+        "valley_grad",
+        "valley_hess"
+      ]
+    },
+    "week11-polygon": {
+      "page": "uke11.html",
+      "references": [
+        "ide-uke11-reference-assumptions",
+        "ide-uke11-np-6f11581d",
+        "ide-uke11-show-region-5e50084a"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "show_region",
+        "corners med form (m,2)",
+        "geometrien beregnes ikke på nytt",
+        "limits=False",
+        "gitt ax"
+      ],
+      "dependencies": [
+        "np",
+        "show_region"
+      ]
+    },
+    "week11-pairs": {
+      "page": "uke11.html",
+      "references": [
+        "ide-uke11-reference-assumptions",
+        "ide-uke11-show-pairs-e42f231f"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "show_pairs",
+        "form (m,2)",
+        "hjørner som o",
+        "ytre skjæringer som x",
+        "beregner ingen skjæringer"
+      ],
+      "dependencies": [
+        "show_pairs"
+      ]
+    },
+    "week11-simplex-path": {
+      "page": "uke11.html",
+      "references": [
+        "ide-uke11-reference-assumptions",
+        "ide-uke11-corners-14b8a886",
+        "ide-uke11-show-region-5e50084a"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "corners",
+        "form (5,2)",
+        "rekkefølge rundt kanten",
+        "[3,3]",
+        "show_region",
+        "corners med form (m,2)",
+        "geometrien beregnes ikke på nytt",
+        "limits=False",
+        "gitt ax"
+      ],
+      "dependencies": [
+        "corners",
+        "show_region"
+      ]
+    },
+    "week11-highs": {
+      "page": "uke11.html",
+      "references": [
+        "ide-uke11-reference-assumptions",
+        "ide-uke11-linprog-5e96555f",
+        "ide-uke11-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "linprog",
+        "scipy.optimize",
+        "method=\"highs\"",
+        "A_ub*x <= b_ub",
+        "-p",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "linprog",
+        "np"
+      ]
+    },
+    "week11-normals": {
+      "page": "uke11.html",
+      "references": [
+        "ide-uke11-reference-assumptions",
+        "ide-uke11-np-6f11581d",
+        "ide-uke11-show-price-arrows-522fbcd2"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "show_price_arrows",
+        "to normalvektorer",
+        "to priser",
+        "skalert med 0.35"
+      ],
+      "dependencies": [
+        "np",
+        "show_price_arrows"
+      ]
+    },
+    "week11-capacity-geometry": {
+      "page": "uke11.html",
+      "references": [
+        "ide-uke11-reference-assumptions",
+        "ide-uke11-compare-regions-5f3825f4"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "compare_regions",
+        "dict med nøkkelord",
+        "én akse per panel",
+        "show_region(ax=..., **panel)"
+      ],
+      "dependencies": [
+        "compare_regions"
+      ]
+    },
+    "week11-marginals": {
+      "page": "uke11.html",
+      "references": [
+        "ide-uke11-reference-assumptions",
+        "ide-uke11-linprog-5e96555f",
+        "ide-uke11-np-6f11581d",
+        "ide-uke11-show-value-curve-84803970"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "linprog",
+        "scipy.optimize",
+        "method=\"highs\"",
+        "A_ub*x <= b_ub",
+        "-p",
+        "np",
+        "numpy",
+        "show_value_curve",
+        "like lange endimensjonale følger",
+        "optimalverdi og prisgrense",
+        "kink"
+      ],
+      "dependencies": [
+        "linprog",
+        "np",
+        "show_value_curve"
+      ]
+    },
+    "week11-status": {
+      "page": "uke11.html",
+      "references": [
+        "ide-uke11-reference-assumptions",
+        "ide-uke11-linprog-5e96555f"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "linprog",
+        "scipy.optimize",
+        "method=\"highs\"",
+        "A_ub*x <= b_ub",
+        "-p"
+      ],
+      "dependencies": [
+        "linprog"
+      ]
+    },
+    "week12-degenerate-experiment": {
+      "page": "uke12.html",
+      "references": [
+        "ide-uke12-reference-assumptions",
+        "ide-uke12-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week12-xy-experiment": {
+      "page": "uke12.html",
+      "references": [
+        "ide-uke12-reference-assumptions",
+        "ide-uke12-np-6f11581d",
+        "ide-uke12-plot-along-circle-2a47762f"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "plot_along_circle",
+        "like lange endimensjonale følger",
+        "radianer",
+        "t_marks"
+      ],
+      "dependencies": [
+        "np",
+        "plot_along_circle"
+      ]
+    },
+    "week12-eigen-experiment": {
+      "page": "uke12.html",
+      "references": [
+        "ide-uke12-reference-assumptions",
+        "ide-uke12-np-6f11581d",
+        "ide-uke12-plot-quadratic-on-circle-370944fa"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "plot_quadratic_on_circle",
+        "symmetrisk 2x2-matrise",
+        "begge fortegn",
+        "np.linalg.eigh(A)",
+        "nullnivå fjernes"
+      ],
+      "dependencies": [
+        "np",
+        "plot_quadratic_on_circle"
+      ]
+    },
+    "week12-kkt-experiment": {
+      "page": "uke12.html",
+      "references": [
+        "ide-uke12-reference-assumptions",
+        "ide-uke12-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "week12-nullspace": {
+      "page": "uke12.html",
+      "references": [
+        "ide-uke12-reference-assumptions",
+        "ide-uke12-np-6f11581d",
+        "ide-uke12-plot-nullspace-method-54967506"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "plot_nullspace_method",
+        "form (2,)",
+        "z0+t*Z",
+        "grad_best ulik null",
+        "pilen normaliseres"
+      ],
+      "dependencies": [
+        "np",
+        "plot_nullspace_method"
+      ]
+    },
+    "week12-slsqp-experiment": {
+      "page": "uke12.html",
+      "references": [
+        "ide-uke12-reference-assumptions",
+        "ide-uke12-minimize-862d1fc3",
+        "ide-uke12-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "minimize",
+        "scipy.optimize",
+        "SLSQP",
+        "fun(z)=0",
+        "fun(z)>=0",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "minimize",
+        "np"
+      ]
+    },
+    "week12-slsqp-path": {
+      "page": "uke12.html",
+      "references": [
+        "ide-uke12-reference-assumptions",
+        "ide-uke12-f-3505fdc9",
+        "ide-uke12-a-9d45c0c7",
+        "ide-uke12-grad-f-d371153a",
+        "ide-uke12-grad-h-d495f7a7",
+        "ide-uke12-h-d5a1c2a7",
+        "ide-uke12-minimize-862d1fc3",
+        "ide-uke12-np-6f11581d",
+        "ide-uke12-plot-path-on-circle-3dc52216"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "F",
+        "0.5*sum((z-a)**2)",
+        "form (2,)",
+        "globale målpunktet a",
+        "a",
+        "np.array([2., 1.])",
+        "målpunktet",
+        "grad_F",
+        "z-a",
+        "gradienten til F",
+        "global a",
+        "grad_h",
+        "2*z",
+        "gradienten til h",
+        "h",
+        "np.dot(z,z)-1.",
+        "h(z)=0",
+        "enhetssirkelen",
+        "minimize",
+        "scipy.optimize",
+        "SLSQP",
+        "fun(z)=0",
+        "fun(z)>=0",
+        "np",
+        "numpy",
+        "plot_path_on_circle",
+        "form (m,2)",
+        "0.5*|z-a|**2",
+        "markert start"
+      ],
+      "dependencies": [
+        "F",
+        "a",
+        "grad_F",
+        "grad_h",
+        "h",
+        "minimize",
+        "np",
+        "plot_path_on_circle"
+      ]
+    },
+    "week12-disc": {
+      "page": "uke12.html",
+      "references": [
+        "ide-uke12-reference-assumptions",
+        "ide-uke12-minimize-862d1fc3",
+        "ide-uke12-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "minimize",
+        "scipy.optimize",
+        "SLSQP",
+        "fun(z)=0",
+        "fun(z)>=0",
+        "np",
+        "numpy"
+      ],
+      "dependencies": [
+        "minimize",
+        "np"
+      ]
+    },
+    "project-week12-one-joint": {
+      "page": "project_week12.html",
+      "references": [
+        "ide-project_week12-reference-assumptions",
+        "ide-project_week12-energy-4bbc55c8",
+        "ide-project_week12-grad-energy-93b2c70f",
+        "ide-project_week12-jac-links-3145f2a4",
+        "ide-project_week12-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "energy",
+        "sum(load_i*y_i)",
+        "w=1.0",
+        "høydevektoren",
+        "grad_energy",
+        "null på x-plasser",
+        "y-komponentene",
+        "jac_links",
+        "(N,2*(N-1))",
+        "faste enders",
+        "args ignoreres",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "energy",
+        "grad_energy",
+        "jac_links",
+        "np"
+      ]
+    },
+    "project-week12-student-h": {
+      "page": "project_week12.html",
+      "references": [
+        "ide-project_week12-reference-assumptions",
+        "ide-project_week12-flat-start-e1ee4cb0",
+        "ide-project_week12-joints-b2a79435",
+        "ide-project_week12-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "flat_start",
+        "2*(n_links-1)",
+        "y=-depth",
+        "span=4.0",
+        "joints",
+        "(N+1,2)",
+        "faste ender",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "flat_start",
+        "joints",
+        "np"
+      ]
+    },
+    "project-week12-exact": {
+      "page": "project_week12.html",
+      "references": [
+        "ide-project_week12-reference-assumptions",
+        "ide-project_week12-flat-start-e1ee4cb0",
+        "ide-project_week12-h-e2618920",
+        "ide-project_week12-joints-b2a79435",
+        "ide-project_week12-np-6f11581d",
+        "ide-project_week12-plot-chain-df10e56f",
+        "ide-project_week12-solve-exact-4a89bf32"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "flat_start",
+        "2*(n_links-1)",
+        "y=-depth",
+        "span=4.0",
+        "h",
+        "N restverdier",
+        "én verdi per ledd",
+        "NotImplementedError",
+        "joints",
+        "(N+1,2)",
+        "faste ender",
+        "np",
+        "numpy",
+        "NumPy",
+        "plot_chain",
+        "faste endepunkter",
+        "like akser",
+        "None",
+        "solve_exact",
+        "SLSQP",
+        "OptimizeResult",
+        "maxiter=500"
+      ],
+      "dependencies": [
+        "flat_start",
+        "h",
+        "joints",
+        "np",
+        "plot_chain",
+        "solve_exact"
+      ]
+    },
+    "project-week12-multipliers": {
+      "page": "project_week12.html",
+      "references": [
+        "ide-project_week12-reference-assumptions",
+        "ide-project_week12-grad-energy-93b2c70f",
+        "ide-project_week12-h-e2618920",
+        "ide-project_week12-jac-links-3145f2a4",
+        "ide-project_week12-np-6f11581d",
+        "ide-project_week12-solve-exact-4a89bf32"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "grad_energy",
+        "null på x-plasser",
+        "y-komponentene",
+        "w=1.0",
+        "h",
+        "N restverdier",
+        "én verdi per ledd",
+        "NotImplementedError",
+        "jac_links",
+        "(N,2*(N-1))",
+        "faste enders",
+        "args ignoreres",
+        "np",
+        "numpy",
+        "NumPy",
+        "solve_exact",
+        "SLSQP",
+        "OptimizeResult",
+        "maxiter=500"
+      ],
+      "dependencies": [
+        "grad_energy",
+        "h",
+        "jac_links",
+        "np",
+        "solve_exact"
+      ]
+    },
+    "project-week12-balance": {
+      "page": "project_week12.html",
+      "references": [
+        "ide-project_week12-reference-assumptions",
+        "ide-project_week12-directions-3beb3934",
+        "ide-project_week12-h-e2618920",
+        "ide-project_week12-multipliers-40736c49",
+        "ide-project_week12-np-6f11581d",
+        "ide-project_week12-solve-exact-4a89bf32",
+        "ide-project_week12-w-fd4dd3b0"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "directions",
+        "(N,2)",
+        "positiv lengde",
+        "h",
+        "N restverdier",
+        "én verdi per ledd",
+        "NotImplementedError",
+        "multipliers",
+        "L=E+lambda^T*h",
+        "J.T@lambda=-grad E",
+        "minste kvadraters",
+        "np",
+        "numpy",
+        "NumPy",
+        "solve_exact",
+        "SLSQP",
+        "OptimizeResult",
+        "maxiter=500",
+        "w",
+        "w=1.0",
+        "loads"
+      ],
+      "dependencies": [
+        "directions",
+        "h",
+        "multipliers",
+        "np",
+        "solve_exact",
+        "w"
+      ]
+    },
+    "project-week12-price": {
+      "page": "project_week12.html",
+      "references": [
+        "ide-project_week12-reference-assumptions",
+        "ide-project_week12-h-e2618920",
+        "ide-project_week12-multipliers-40736c49",
+        "ide-project_week12-np-6f11581d",
+        "ide-project_week12-solve-exact-4a89bf32"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "h",
+        "N restverdier",
+        "én verdi per ledd",
+        "NotImplementedError",
+        "multipliers",
+        "L=E+lambda^T*h",
+        "J.T@lambda=-grad E",
+        "minste kvadraters",
+        "np",
+        "numpy",
+        "NumPy",
+        "solve_exact",
+        "SLSQP",
+        "OptimizeResult",
+        "maxiter=500"
+      ],
+      "dependencies": [
+        "h",
+        "multipliers",
+        "np",
+        "solve_exact"
+      ]
+    },
+    "project-week12-penalty": {
+      "page": "project_week12.html",
+      "references": [
+        "ide-project_week12-reference-assumptions",
+        "ide-project_week12-h-e2618920",
+        "ide-project_week12-multipliers-40736c49",
+        "ide-project_week12-np-6f11581d",
+        "ide-project_week12-solve-exact-4a89bf32",
+        "ide-project_week12-solve-penalty-745aae83"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "h",
+        "N restverdier",
+        "én verdi per ledd",
+        "NotImplementedError",
+        "multipliers",
+        "L=E+lambda^T*h",
+        "J.T@lambda=-grad E",
+        "minste kvadraters",
+        "np",
+        "numpy",
+        "NumPy",
+        "solve_exact",
+        "SLSQP",
+        "OptimizeResult",
+        "maxiter=500",
+        "solve_penalty",
+        "BFGS",
+        "maxiter=1500"
+      ],
+      "dependencies": [
+        "h",
+        "multipliers",
+        "np",
+        "solve_exact",
+        "solve_penalty"
+      ]
+    },
+    "project-week12-hessian": {
+      "page": "project_week12.html",
+      "references": [
+        "ide-project_week12-reference-assumptions",
+        "ide-project_week12-f-mu-da08b65a",
+        "ide-project_week12-h-e2618920",
+        "ide-project_week12-jac-links-3145f2a4",
+        "ide-project_week12-np-6f11581d",
+        "ide-project_week12-penalty-hessian-a6d8b521",
+        "ide-project_week12-solve-exact-4a89bf32",
+        "ide-project_week12-solve-penalty-745aae83"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "F_mu",
+        "mu/2",
+        "lengths=0.5",
+        "NotImplementedError",
+        "h",
+        "N restverdier",
+        "én verdi per ledd",
+        "jac_links",
+        "(N,2*(N-1))",
+        "faste enders",
+        "args ignoreres",
+        "np",
+        "numpy",
+        "NumPy",
+        "penalty_hessian",
+        "(2*(N-1),2*(N-1))",
+        "restvektet krumning",
+        "positive leddlengder",
+        "solve_exact",
+        "SLSQP",
+        "OptimizeResult",
+        "maxiter=500",
+        "solve_penalty",
+        "BFGS",
+        "maxiter=1500"
+      ],
+      "dependencies": [
+        "F_mu",
+        "h",
+        "jac_links",
+        "np",
+        "penalty_hessian",
+        "solve_exact",
+        "solve_penalty"
+      ]
+    },
+    "project-week12-lamp": {
+      "page": "project_week12.html",
+      "references": [
+        "ide-project_week12-reference-assumptions",
+        "ide-project_week12-directions-3beb3934",
+        "ide-project_week12-grad-energy-93b2c70f",
+        "ide-project_week12-h-e2618920",
+        "ide-project_week12-jac-links-3145f2a4",
+        "ide-project_week12-multipliers-40736c49",
+        "ide-project_week12-np-6f11581d",
+        "ide-project_week12-plot-chain-df10e56f",
+        "ide-project_week12-solve-exact-4a89bf32"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "directions",
+        "(N,2)",
+        "positiv lengde",
+        "grad_energy",
+        "null på x-plasser",
+        "y-komponentene",
+        "w=1.0",
+        "h",
+        "N restverdier",
+        "én verdi per ledd",
+        "NotImplementedError",
+        "jac_links",
+        "(N,2*(N-1))",
+        "faste enders",
+        "args ignoreres",
+        "multipliers",
+        "L=E+lambda^T*h",
+        "J.T@lambda=-grad E",
+        "minste kvadraters",
+        "np",
+        "numpy",
+        "NumPy",
+        "plot_chain",
+        "faste endepunkter",
+        "like akser",
+        "None",
+        "solve_exact",
+        "SLSQP",
+        "OptimizeResult",
+        "maxiter=500"
+      ],
+      "dependencies": [
+        "directions",
+        "grad_energy",
+        "h",
+        "jac_links",
+        "multipliers",
+        "np",
+        "plot_chain",
+        "solve_exact"
+      ]
+    },
+    "project10-residual": {
+      "page": "project_week10.html",
+      "references": [
+        "ide-project_week10-reference-assumptions",
+        "ide-project_week10-d-exact-5d11171c",
+        "ide-project_week10-hall-05c3f3b7",
+        "ide-project_week10-jacobian-70c58482",
+        "ide-project_week10-np-6f11581d",
+        "ide-project_week10-residual-faa78ea1",
+        "ide-project_week10-z-true-9d2e97c2"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "d_exact",
+        "(4,)",
+        "axis=1",
+        "hall",
+        "(4,2)",
+        "meter",
+        "jacobian",
+        "J(m,2)",
+        "z ulik alle ankrene",
+        "np",
+        "numpy",
+        "NumPy",
+        "residual",
+        "(m,)",
+        "beregnet minus målt",
+        "z_true",
+        "[3.,5.]",
+        "(2,)"
+      ],
+      "dependencies": [
+        "d_exact",
+        "hall",
+        "jacobian",
+        "np",
+        "residual",
+        "z_true"
+      ]
+    },
+    "project10-gauss-newton": {
+      "page": "project_week10.html",
+      "references": [
+        "ide-project_week10-reference-assumptions",
+        "ide-project_week10-d-exact-5d11171c",
+        "ide-project_week10-hall-05c3f3b7",
+        "ide-project_week10-jacobian-70c58482",
+        "ide-project_week10-np-6f11581d",
+        "ide-project_week10-residual-faa78ea1",
+        "ide-project_week10-show-hall-cf529db4",
+        "ide-project_week10-z-true-9d2e97c2"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "d_exact",
+        "(4,)",
+        "axis=1",
+        "hall",
+        "(4,2)",
+        "meter",
+        "jacobian",
+        "J(m,2)",
+        "z ulik alle ankrene",
+        "np",
+        "numpy",
+        "NumPy",
+        "residual",
+        "(m,)",
+        "beregnet minus målt",
+        "show_hall",
+        "box=(xmin,xmax,ymin,ymax)",
+        "like akser",
+        "None",
+        "z_true",
+        "[3.,5.]",
+        "(2,)"
+      ],
+      "dependencies": [
+        "d_exact",
+        "hall",
+        "jacobian",
+        "np",
+        "residual",
+        "show_hall",
+        "z_true"
+      ]
+    },
+    "project10-rates": {
+      "page": "project_week10.html",
+      "references": [
+        "ide-project_week10-reference-assumptions",
+        "ide-project_week10-d-bad-f5992bb8",
+        "ide-project_week10-d-exact-5d11171c",
+        "ide-project_week10-d-noisy-1992b3c2",
+        "ide-project_week10-dropped-part-e0bb18a9",
+        "ide-project_week10-gauss-newton-da0fde47",
+        "ide-project_week10-hall-05c3f3b7",
+        "ide-project_week10-jacobian-70c58482",
+        "ide-project_week10-newton-position-238c4ade",
+        "ide-project_week10-np-6f11581d",
+        "ide-project_week10-residual-faa78ea1"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "d_bad",
+        "tredje ankers",
+        "3 meter",
+        "d_exact",
+        "(4,)",
+        "axis=1",
+        "d_noisy",
+        "[.3,-.4,.5,-.2]",
+        "meter",
+        "dropped_part",
+        "2×2",
+        "J.T@J",
+        "ulik ankrene",
+        "gauss_newton",
+        "(steps+1,2)",
+        "startpunkt",
+        "toleransestopp",
+        "hall",
+        "(4,2)",
+        "jacobian",
+        "J(m,2)",
+        "z ulik alle ankrene",
+        "newton_position",
+        "H må være løsbar",
+        "np",
+        "numpy",
+        "NumPy",
+        "residual",
+        "(m,)",
+        "beregnet minus målt"
+      ],
+      "dependencies": [
+        "d_bad",
+        "d_exact",
+        "d_noisy",
+        "dropped_part",
+        "gauss_newton",
+        "hall",
+        "jacobian",
+        "newton_position",
+        "np",
+        "residual"
+      ]
+    },
+    "project10-moves": {
+      "page": "project_week10.html",
+      "references": [
+        "ide-project_week10-reference-assumptions",
+        "ide-project_week10-gauss-newton-da0fde47",
+        "ide-project_week10-hall-05c3f3b7",
+        "ide-project_week10-jacobian-70c58482",
+        "ide-project_week10-move-b94d63cf",
+        "ide-project_week10-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "gauss_newton",
+        "(steps+1,2)",
+        "startpunkt",
+        "toleransestopp",
+        "hall",
+        "(4,2)",
+        "meter",
+        "jacobian",
+        "J(m,2)",
+        "z ulik alle ankrene",
+        "move",
+        "dz(2,)",
+        "rcond=None",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "gauss_newton",
+        "hall",
+        "jacobian",
+        "move",
+        "np"
+      ]
+    },
+    "project10-ellipse": {
+      "page": "project_week10.html",
+      "references": [
+        "ide-project_week10-reference-assumptions",
+        "ide-project_week10-hall-05c3f3b7",
+        "ide-project_week10-jacobian-70c58482",
+        "ide-project_week10-move-b94d63cf",
+        "ide-project_week10-np-6f11581d",
+        "ide-project_week10-show-moves-f100bc59"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "hall",
+        "(4,2)",
+        "meter",
+        "jacobian",
+        "J(m,2)",
+        "z ulik alle ankrene",
+        "move",
+        "dz(2,)",
+        "rcond=None",
+        "np",
+        "numpy",
+        "NumPy",
+        "show_moves",
+        "eps/sigma_i",
+        "høyresingulærvektorene",
+        "None"
+      ],
+      "dependencies": [
+        "hall",
+        "jacobian",
+        "move",
+        "np",
+        "show_moves"
+      ]
+    },
+    "project10-far-away": {
+      "page": "project_week10.html",
+      "references": [
+        "ide-project_week10-reference-assumptions",
+        "ide-project_week10-hall-05c3f3b7",
+        "ide-project_week10-jacobian-70c58482",
+        "ide-project_week10-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "hall",
+        "(4,2)",
+        "meter",
+        "jacobian",
+        "J(m,2)",
+        "z ulik alle ankrene",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "hall",
+        "jacobian",
+        "np"
+      ]
+    },
+    "project10-wall": {
+      "page": "project_week10.html",
+      "references": [
+        "ide-project_week10-reference-assumptions",
+        "ide-project_week10-d-wall-d4128296",
+        "ide-project_week10-gauss-newton-da0fde47",
+        "ide-project_week10-jacobian-70c58482",
+        "ide-project_week10-np-6f11581d",
+        "ide-project_week10-residual-faa78ea1",
+        "ide-project_week10-show-hall-cf529db4",
+        "ide-project_week10-wall-e1fdb0bc",
+        "ide-project_week10-z-true-wall-6bbf796f"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "d_wall",
+        "(4,)",
+        "axis=1",
+        "gauss_newton",
+        "(steps+1,2)",
+        "startpunkt",
+        "toleransestopp",
+        "jacobian",
+        "J(m,2)",
+        "z ulik alle ankrene",
+        "np",
+        "numpy",
+        "NumPy",
+        "residual",
+        "(m,)",
+        "beregnet minus målt",
+        "show_hall",
+        "box=(xmin,xmax,ymin,ymax)",
+        "like akser",
+        "None",
+        "wall",
+        "(4,2)",
+        "horisontale vegg",
+        "z_true_wall",
+        "[6.,3.]",
+        "(2,)"
+      ],
+      "dependencies": [
+        "d_wall",
+        "gauss_newton",
+        "jacobian",
+        "np",
+        "residual",
+        "show_hall",
+        "wall",
+        "z_true_wall"
+      ]
+    },
+    "project10-armijo": {
+      "page": "project_week10.html",
+      "references": [
+        "ide-project_week10-reference-assumptions",
+        "ide-project_week10-d-wall-d4128296",
+        "ide-project_week10-gn-step-fbf22546",
+        "ide-project_week10-jacobian-70c58482",
+        "ide-project_week10-np-6f11581d",
+        "ide-project_week10-residual-faa78ea1",
+        "ide-project_week10-wall-e1fdb0bc"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "d_wall",
+        "(4,)",
+        "axis=1",
+        "gn_step",
+        "p(2,)",
+        "NotImplementedError",
+        "jacobian",
+        "J(m,2)",
+        "z ulik alle ankrene",
+        "np",
+        "numpy",
+        "NumPy",
+        "residual",
+        "(m,)",
+        "beregnet minus målt",
+        "wall",
+        "(4,2)",
+        "horisontale vegg"
+      ],
+      "dependencies": [
+        "d_wall",
+        "gn_step",
+        "jacobian",
+        "np",
+        "residual",
+        "wall"
+      ]
+    },
+    "project-week5-data": {
+      "page": "project_week5.html",
+      "references": [
+        "ide-project_week5-reference-assumptions",
+        "ide-project_week5-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "project-week5-iteration": {
+      "page": "project_week5.html",
+      "references": [
+        "ide-project_week5-reference-assumptions",
+        "ide-project_week5-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "project-week5-reference": {
+      "page": "project_week5.html",
+      "references": [
+        "ide-project_week5-reference-assumptions",
+        "ide-project_week5-s-862a1ab0",
+        "ide-project_week5-direct-rank-e619ed46",
+        "ide-project_week5-names-65b5f86f",
+        "ide-project_week5-np-6f11581d",
+        "ide-project_week5-pagerank-6f6871bf",
+        "ide-project_week5-u0-54c3d00d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "S",
+        "6×6",
+        "avsenderside",
+        "bare nuller",
+        "direct_rank",
+        "(I-alpha*S)",
+        "np.linalg.solve",
+        "invertibel",
+        "names",
+        "list(\"ABCDEF\")",
+        "seks sidene",
+        "np",
+        "numpy",
+        "NumPy",
+        "pagerank",
+        "(p,residuals,converged)",
+        "max_steps+1",
+        "(1-alpha)*error_goal",
+        "u0",
+        "np.ones(6)/6",
+        "hoppfordeling"
+      ],
+      "dependencies": [
+        "S",
+        "direct_rank",
+        "names",
+        "np",
+        "pagerank",
+        "u0"
+      ]
+    },
+    "project-week5-two-pages": {
+      "page": "project_week5.html",
+      "references": [
+        "ide-project_week5-reference-assumptions",
+        "ide-project_week5-np-6f11581d",
+        "ide-project_week5-plt-7be21394",
+        "ide-project_week5-visit-step-88ad3ef8"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot",
+        "visit_step",
+        "lenker og hopp",
+        "None",
+        "(n,)"
+      ],
+      "dependencies": [
+        "np",
+        "plt",
+        "visit_step"
+      ]
+    },
+    "project-week5-personalization": {
+      "page": "project_week5.html",
+      "references": [
+        "ide-project_week5-reference-assumptions",
+        "ide-project_week5-s-862a1ab0",
+        "ide-project_week5-direct-rank-e619ed46",
+        "ide-project_week5-names-65b5f86f",
+        "ide-project_week5-np-6f11581d",
+        "ide-project_week5-plt-7be21394",
+        "ide-project_week5-u0-54c3d00d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "S",
+        "6×6",
+        "avsenderside",
+        "bare nuller",
+        "direct_rank",
+        "(I-alpha*S)",
+        "np.linalg.solve",
+        "invertibel",
+        "names",
+        "list(\"ABCDEF\")",
+        "seks sidene",
+        "np",
+        "numpy",
+        "NumPy",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot",
+        "u0",
+        "np.ones(6)/6",
+        "hoppfordeling"
+      ],
+      "dependencies": [
+        "S",
+        "direct_rank",
+        "names",
+        "np",
+        "plt",
+        "u0"
+      ]
+    },
+    "project-week6-contours": {
+      "page": "project_week6.html",
+      "references": [
+        "ide-project_week6-reference-assumptions",
+        "ide-project_week6-np-6f11581d",
+        "ide-project_week6-show-coordinate-change-02d23263"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy",
+        "show_coordinate_change",
+        "2×2",
+        "nivåkurver",
+        "None"
+      ],
+      "dependencies": [
+        "np",
+        "show_coordinate_change"
+      ]
+    },
+    "project-week6-baseline": {
+      "page": "project_week6.html",
+      "references": [
+        "ide-project_week6-reference-assumptions",
+        "ide-project_week6-cg-7910cbff",
+        "ide-project_week6-make-week6-problems-97c5f5c4",
+        "ide-project_week6-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cg",
+        "atol+rtol*||b||",
+        "preconditioner_calls=0",
+        "to A-produkter",
+        "make_week6_problems",
+        "(star,problems)",
+        "frø 6",
+        "A@star",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "cg",
+        "make_week6_problems",
+        "np"
+      ]
+    },
+    "project-week6-transform": {
+      "page": "project_week6.html",
+      "references": [
+        "ide-project_week6-reference-assumptions",
+        "ide-project_week6-cg-7910cbff",
+        "ide-project_week6-np-6f11581d",
+        "ide-project_week6-problems-bcb283d6",
+        "ide-project_week6-x-star-bcb283d6"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cg",
+        "atol+rtol*||b||",
+        "preconditioner_calls=0",
+        "to A-produkter",
+        "np",
+        "numpy",
+        "NumPy",
+        "problems",
+        "\"Ujevn skalering\"",
+        "\"Poisson\"",
+        "60×60",
+        "x_star",
+        "(60,)",
+        "b=A@x_star"
+      ],
+      "dependencies": [
+        "cg",
+        "np",
+        "problems",
+        "x_star"
+      ]
+    },
+    "project-week6-spectrum": {
+      "page": "project_week6.html",
+      "references": [
+        "ide-project_week6-reference-assumptions",
+        "ide-project_week6-problems-bcb283d6",
+        "ide-project_week6-show-spectra-9d5da394",
+        "ide-project_week6-transformed-2e6e0054"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "problems",
+        "\"Ujevn skalering\"",
+        "\"Poisson\"",
+        "60×60",
+        "show_spectra",
+        "transformed[name][0]",
+        "største/minste egenverdi",
+        "None",
+        "transformed",
+        "(At,x_path)",
+        "opprinnelige x-koordinater",
+        "én rad"
+      ],
+      "dependencies": [
+        "problems",
+        "show_spectra",
+        "transformed"
+      ]
+    },
+    "project-week6-pcg-template": {
+      "page": "project_week6.html",
+      "references": [
+        "ide-project_week6-reference-assumptions",
+        "ide-project_week6-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "project-week6-checks": {
+      "page": "project_week6.html",
+      "references": [
+        "ide-project_week6-reference-assumptions",
+        "ide-project_week6-check-pcg-ef277aee",
+        "ide-project_week6-pcg-7ff74ab5"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "check_pcg",
+        "fire kontroller",
+        "resultatordboken",
+        "pcg",
+        "positiv diagonal",
+        "preconditioner_calls",
+        "ikke fullført"
+      ],
+      "dependencies": [
+        "check_pcg",
+        "pcg"
+      ]
+    },
+    "project-week6-comparison": {
+      "page": "project_week6.html",
+      "references": [
+        "ide-project_week6-reference-assumptions",
+        "ide-project_week6-cg-7910cbff",
+        "ide-project_week6-compare-runs-40ba6d69",
+        "ide-project_week6-np-6f11581d",
+        "ide-project_week6-pcg-7ff74ab5",
+        "ide-project_week6-problems-bcb283d6",
+        "ide-project_week6-x-star-bcb283d6"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cg",
+        "atol+rtol*||b||",
+        "preconditioner_calls=0",
+        "to A-produkter",
+        "compare_runs",
+        "1+2*k",
+        "punktene som rader",
+        "None",
+        "np",
+        "numpy",
+        "NumPy",
+        "pcg",
+        "positiv diagonal",
+        "preconditioner_calls",
+        "ikke fullført",
+        "problems",
+        "\"Ujevn skalering\"",
+        "\"Poisson\"",
+        "60×60",
+        "x_star",
+        "(60,)",
+        "b=A@x_star"
+      ],
+      "dependencies": [
+        "cg",
+        "compare_runs",
+        "np",
+        "pcg",
+        "problems",
+        "x_star"
+      ]
+    },
+    "project9-line": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-damage-fcb0b628",
+        "ide-project_week9-design-ae6c56f5",
+        "ide-project_week9-np-6f11581d",
+        "ide-project_week9-show-line-fit-dc5363ee",
+        "ide-project_week9-temps-9a041e91"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "damage",
+        "O-ring",
+        "(23,)",
+        "design",
+        "(m,2)",
+        "første kolonne ettall",
+        "np",
+        "numpy",
+        "NumPy",
+        "show_line_fit",
+        "25 til 85",
+        "under 0/over 1",
+        "None",
+        "temps",
+        "23 oppskytinger",
+        "°F"
+      ],
+      "dependencies": [
+        "damage",
+        "design",
+        "np",
+        "show_line_fit",
+        "temps"
+      ]
+    },
+    "project9-s-curve": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-beta-oracle-325a7892",
+        "ide-project_week9-show-curves-1da5c293",
+        "ide-project_week9-sigma-2bf05701"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "beta_oracle",
+        "[15.0429,-0.23216]",
+        "°F",
+        "show_curves",
+        "første beta-vektoren",
+        "T=40..90",
+        "None",
+        "sigma",
+        "Elementvis",
+        "beholder formen"
+      ],
+      "dependencies": [
+        "beta_oracle",
+        "show_curves",
+        "sigma"
+      ]
+    },
+    "project9-product": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-np-6f11581d",
+        "ide-project_week9-sigma-2bf05701"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy",
+        "sigma",
+        "Elementvis",
+        "beholder formen"
+      ],
+      "dependencies": [
+        "np",
+        "sigma"
+      ]
+    },
+    "project9-grad": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-damage-fcb0b628"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "damage",
+        "O-ring",
+        "(23,)"
+      ],
+      "dependencies": [
+        "damage"
+      ]
+    },
+    "project9-grad-check": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-x-raw-49f2e1a7",
+        "ide-project_week9-grad-35026aaa",
+        "ide-project_week9-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X_raw",
+        "(23,2)",
+        "°F",
+        "grad",
+        "gradientvektor (2,)",
+        "NotImplementedError",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "X_raw",
+        "grad",
+        "np"
+      ]
+    },
+    "project9-gd": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-damage-fcb0b628",
+        "ide-project_week9-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "damage",
+        "O-ring",
+        "(23,)",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "damage",
+        "np"
+      ]
+    },
+    "project9-raw-run": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-x-raw-49f2e1a7",
+        "ide-project_week9-alpha-raw-f48c6c91",
+        "ide-project_week9-beta-oracle-325a7892",
+        "ide-project_week9-gd-ea2a7253",
+        "ide-project_week9-grad-35026aaa",
+        "ide-project_week9-loss-94eeaeea",
+        "ide-project_week9-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X_raw",
+        "(23,2)",
+        "°F",
+        "alpha_raw",
+        "4/",
+        "største singulærverdi",
+        "beta_oracle",
+        "[15.0429,-0.23216]",
+        "gd",
+        "(beta,k)",
+        "fast alpha",
+        "NotImplementedError",
+        "grad",
+        "gradientvektor (2,)",
+        "loss",
+        "logaddexp",
+        "beta(2,)",
+        "summert",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "X_raw",
+        "alpha_raw",
+        "beta_oracle",
+        "gd",
+        "grad",
+        "loss",
+        "np"
+      ]
+    },
+    "project9-singular": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-design-ae6c56f5",
+        "ide-project_week9-np-6f11581d",
+        "ide-project_week9-temps-9a041e91"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "design",
+        "(m,2)",
+        "første kolonne ettall",
+        "np",
+        "numpy",
+        "NumPy",
+        "temps",
+        "23 oppskytinger",
+        "°F",
+        "damage"
+      ],
+      "dependencies": [
+        "design",
+        "np",
+        "temps"
+      ]
+    },
+    "project9-three-runs": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-beta-oracle-325a7892",
+        "ide-project_week9-d-4f9c0b40",
+        "ide-project_week9-designs-827c08f4",
+        "ide-project_week9-gd-ea2a7253",
+        "ide-project_week9-grad-35026aaa",
+        "ide-project_week9-hessian-c504b170",
+        "ide-project_week9-loss-94eeaeea",
+        "ide-project_week9-m-4f9c0b40",
+        "ide-project_week9-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "beta_oracle",
+        "[15.0429,-0.23216]",
+        "°F",
+        "d",
+        "temps.std()",
+        "ddof=0",
+        "designs",
+        "(23,2)",
+        "temps-70",
+        "(temps-m)/d",
+        "gd",
+        "(beta,k)",
+        "fast alpha",
+        "NotImplementedError",
+        "grad",
+        "gradientvektor (2,)",
+        "hessian",
+        "(2,2)",
+        "p_i*(1-p_i)",
+        "loss",
+        "logaddexp",
+        "beta(2,)",
+        "summert",
+        "m",
+        "temps.mean()",
+        "standardiseringen",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "beta_oracle",
+        "d",
+        "designs",
+        "gd",
+        "grad",
+        "hessian",
+        "loss",
+        "m",
+        "np"
+      ]
+    },
+    "project9-launch-day": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-x-std-0939bc5a",
+        "ide-project_week9-d-4f9c0b40",
+        "ide-project_week9-gd-ea2a7253",
+        "ide-project_week9-m-4f9c0b40",
+        "ide-project_week9-np-6f11581d",
+        "ide-project_week9-show-fit-bf5fd38d",
+        "ide-project_week9-sigma-2bf05701"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X_std",
+        "(23,2)",
+        "standardiserte temperaturer",
+        "d",
+        "temps.std()",
+        "ddof=0",
+        "gd",
+        "(beta,k)",
+        "fast alpha",
+        "NotImplementedError",
+        "m",
+        "temps.mean()",
+        "standardiseringen",
+        "np",
+        "numpy",
+        "NumPy",
+        "show_fit",
+        "opprinnelige °F-koordinater",
+        "31 °F",
+        "None",
+        "sigma",
+        "Elementvis",
+        "beholder formen"
+      ],
+      "dependencies": [
+        "X_std",
+        "d",
+        "gd",
+        "m",
+        "np",
+        "show_fit",
+        "sigma"
+      ]
+    },
+    "project9-too-large": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-x-std-0939bc5a",
+        "ide-project_week9-beta-oracle-325a7892",
+        "ide-project_week9-d-4f9c0b40",
+        "ide-project_week9-gd-ea2a7253",
+        "ide-project_week9-grad-35026aaa",
+        "ide-project_week9-hessian-c504b170",
+        "ide-project_week9-m-4f9c0b40",
+        "ide-project_week9-np-6f11581d",
+        "ide-project_week9-show-cycles-2392b60f"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X_std",
+        "(23,2)",
+        "standardiserte temperaturer",
+        "beta_oracle",
+        "[15.0429,-0.23216]",
+        "°F",
+        "d",
+        "temps.std()",
+        "ddof=0",
+        "gd",
+        "(beta,k)",
+        "fast alpha",
+        "NotImplementedError",
+        "grad",
+        "gradientvektor (2,)",
+        "hessian",
+        "(2,2)",
+        "p_i*(1-p_i)",
+        "m",
+        "temps.mean()",
+        "standardiseringen",
+        "np",
+        "numpy",
+        "NumPy",
+        "show_cycles",
+        "siste 200",
+        "beta_min",
+        "None"
+      ],
+      "dependencies": [
+        "X_std",
+        "beta_oracle",
+        "d",
+        "gd",
+        "grad",
+        "hessian",
+        "m",
+        "np",
+        "show_cycles"
+      ]
+    },
+    "project9-armijo": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-armijo-gd-28a92a6f",
+        "ide-project_week9-designs-827c08f4",
+        "ide-project_week9-gd-ea2a7253",
+        "ide-project_week9-grad-35026aaa",
+        "ide-project_week9-loss-94eeaeea",
+        "ide-project_week9-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "armijo_gd",
+        "alpha=1",
+        "1e-4",
+        "(beta,k,extra)",
+        "designs",
+        "(23,2)",
+        "temps-70",
+        "(temps-m)/d",
+        "gd",
+        "(beta,k)",
+        "fast alpha",
+        "NotImplementedError",
+        "grad",
+        "gradientvektor (2,)",
+        "loss",
+        "logaddexp",
+        "beta(2,)",
+        "summert",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "armijo_gd",
+        "designs",
+        "gd",
+        "grad",
+        "loss",
+        "np"
+      ]
+    },
+    "project9-separable": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-x-c-9179e629",
+        "ide-project_week9-alpha-c-ae727d57",
+        "ide-project_week9-damage-fcb0b628",
+        "ide-project_week9-grad-35026aaa",
+        "ide-project_week9-loss-94eeaeea",
+        "ide-project_week9-np-6f11581d",
+        "ide-project_week9-temps-9a041e91"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X_c",
+        "(23,2)",
+        "70 °F",
+        "alpha_c",
+        "4/",
+        "største singulærverdi",
+        "damage",
+        "O-ring",
+        "(23,)",
+        "grad",
+        "gradientvektor (2,)",
+        "NotImplementedError",
+        "loss",
+        "logaddexp",
+        "beta(2,)",
+        "summert",
+        "np",
+        "numpy",
+        "NumPy",
+        "temps",
+        "23 oppskytinger",
+        "°F"
+      ],
+      "dependencies": [
+        "X_c",
+        "alpha_c",
+        "damage",
+        "grad",
+        "loss",
+        "np",
+        "temps"
+      ]
+    },
+    "project9-ray": {
+      "page": "project_week9.html",
+      "references": [
+        "ide-project_week9-reference-assumptions",
+        "ide-project_week9-x-c-9179e629",
+        "ide-project_week9-grad-35026aaa",
+        "ide-project_week9-loss-94eeaeea",
+        "ide-project_week9-np-6f11581d",
+        "ide-project_week9-temps-9a041e91"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "X_c",
+        "(23,2)",
+        "70 °F",
+        "grad",
+        "gradientvektor (2,)",
+        "NotImplementedError",
+        "loss",
+        "logaddexp",
+        "beta(2,)",
+        "summert",
+        "np",
+        "numpy",
+        "NumPy",
+        "temps",
+        "23 oppskytinger",
+        "°F",
+        "damage"
+      ],
+      "dependencies": [
+        "X_c",
+        "grad",
+        "loss",
+        "np",
+        "temps"
+      ]
+    },
+    "project-week4-first-fit": {
+      "page": "project_week4.html",
+      "references": [
+        "ide-project_week4-reference-assumptions",
+        "ide-project_week4-np-6f11581d",
+        "ide-project_week4-plt-7be21394"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot"
+      ],
+      "dependencies": [
+        "np",
+        "plt"
+      ]
+    },
+    "project-week4-dependent-nan": {
+      "page": "project_week4.html",
+      "references": [
+        "ide-project_week4-reference-assumptions",
+        "ide-project_week4-classical-gram-schmidt-0f5f205a",
+        "ide-project_week4-modified-gram-schmidt-8c2c1dd4",
+        "ide-project_week4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "classical_gram_schmidt",
+        "Q (m,n)",
+        "R (n,n)",
+        "Ingen rangkontroll",
+        "modified_gram_schmidt",
+        "oppdatert rest",
+        "LinAlgError",
+        "m>=n",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "classical_gram_schmidt",
+        "modified_gram_schmidt",
+        "np"
+      ]
+    },
+    "project-week4-polynomial-fit": {
+      "page": "project_week4.html",
+      "references": [
+        "ide-project_week4-reference-assumptions",
+        "ide-project_week4-cheb-1e0b010a",
+        "ide-project_week4-np-6f11581d",
+        "ide-project_week4-reference-coordinates-222618bf"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cheb",
+        "numpy.polynomial",
+        "stigende grad",
+        "np",
+        "numpy",
+        "NumPy",
+        "reference_coordinates",
+        "c_k=(-1)^k/(k+1)^2",
+        "n+1"
+      ],
+      "dependencies": [
+        "cheb",
+        "np",
+        "reference_coordinates"
+      ]
+    },
+    "project-week4-basis-comparison": {
+      "page": "project_week4.html",
+      "references": [
+        "ide-project_week4-reference-assumptions",
+        "ide-project_week4-cheb-1e0b010a",
+        "ide-project_week4-chebyshev-matrix-771551eb",
+        "ide-project_week4-monomial-matrix-898f4130",
+        "ide-project_week4-np-6f11581d",
+        "ide-project_week4-reference-coordinates-222618bf"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cheb",
+        "numpy.polynomial",
+        "stigende grad",
+        "chebyshev_matrix",
+        "cheb.chebvander",
+        "(len(points),n+1)",
+        "monomial_matrix",
+        "konstantkolonne først",
+        "np",
+        "numpy",
+        "NumPy",
+        "reference_coordinates",
+        "c_k=(-1)^k/(k+1)^2",
+        "n+1"
+      ],
+      "dependencies": [
+        "cheb",
+        "chebyshev_matrix",
+        "monomial_matrix",
+        "np",
+        "reference_coordinates"
+      ]
+    },
+    "project-week4-cgs-mgs": {
+      "page": "project_week4.html",
+      "references": [
+        "ide-project_week4-reference-assumptions",
+        "ide-project_week4-classical-gram-schmidt-0f5f205a",
+        "ide-project_week4-modified-gram-schmidt-8c2c1dd4"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "classical_gram_schmidt",
+        "Q (m,n)",
+        "R (n,n)",
+        "Ingen rangkontroll",
+        "modified_gram_schmidt",
+        "oppdatert rest",
+        "LinAlgError",
+        "m>=n"
+      ],
+      "dependencies": [
+        "classical_gram_schmidt",
+        "modified_gram_schmidt"
+      ]
+    },
+    "project-week4-normal-equations": {
+      "page": "project_week4.html",
+      "references": [
+        "ide-project_week4-reference-assumptions",
+        "ide-project_week4-c-007f1c18",
+        "ide-project_week4-m-0c4c08fd",
+        "ide-project_week4-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "C",
+        "(25,13)",
+        "b_noisy",
+        "M",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "C",
+        "M",
+        "np"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-2": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-np-6f11581d",
+        "ide-project_week2-plt-7be21394",
+        "ide-project_week2-roots-8df4041d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot",
+        "roots",
+        "np.roots",
+        "indeksene"
+      ],
+      "dependencies": [
+        "np",
+        "plt",
+        "roots"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-3": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-df-8df4041d",
+        "ide-project_week2-f-8df4041d",
+        "ide-project_week2-newton-trace-288cbf47",
+        "ide-project_week2-roots-8df4041d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "df",
+        "np.polyder",
+        "np.polyval",
+        "f",
+        "komplekst",
+        "newton_trace",
+        "history",
+        "nullpunktindeks",
+        "NaN",
+        "roots",
+        "np.roots",
+        "indeksene"
+      ],
+      "dependencies": [
+        "df",
+        "f",
+        "newton_trace",
+        "roots"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-4": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-df-8df4041d",
+        "ide-project_week2-f-8df4041d",
+        "ide-project_week2-newton-trace-288cbf47",
+        "ide-project_week2-plot-trace-3cdeb5d9",
+        "ide-project_week2-print-trace-6868512c",
+        "ide-project_week2-roots-8df4041d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "df",
+        "np.polyder",
+        "np.polyval",
+        "f",
+        "komplekst",
+        "newton_trace",
+        "history",
+        "nullpunktindeks",
+        "NaN",
+        "plot_trace",
+        "logaritmisk y-akse",
+        "NaN-skritt",
+        "print_trace",
+        "historikkens",
+        "globale roots",
+        "None",
+        "roots",
+        "np.roots",
+        "indeksene"
+      ],
+      "dependencies": [
+        "df",
+        "f",
+        "newton_trace",
+        "plot_trace",
+        "print_trace",
+        "roots"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-5": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-patch-886e31f5",
+        "ide-project_week2-np-6f11581d",
+        "ide-project_week2-plt-7be21394"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "Patch",
+        "matplotlib.patches",
+        "fargeforklaring",
+        "np",
+        "numpy",
+        "NumPy",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot"
+      ],
+      "dependencies": [
+        "Patch",
+        "np",
+        "plt"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-6": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-df-8df4041d",
+        "ide-project_week2-f-8df4041d",
+        "ide-project_week2-my-function-b21bc776",
+        "ide-project_week2-newton-grid-6ef1e72a",
+        "ide-project_week2-plot-basins-d72a8324",
+        "ide-project_week2-print-summary-4b298aa6",
+        "ide-project_week2-roots-8df4041d",
+        "ide-project_week2-summarize-grid-9d41bc57"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "df",
+        "np.polyder",
+        "np.polyval",
+        "f",
+        "komplekst",
+        "my_function",
+        "coefficients",
+        "høyeste grad først",
+        "plot_window",
+        "newton_grid",
+        "(ny,nx)",
+        "-1",
+        "-2",
+        "nullpunktindeks",
+        "plot_basins",
+        "svart for -2",
+        "fargeskalaen",
+        "None",
+        "print_summary",
+        "summarize_grid",
+        "konvergensandel",
+        "roots",
+        "np.roots",
+        "indeksene",
+        "fraction_converged",
+        "max_accepted_residual",
+        "NaN"
+      ],
+      "dependencies": [
+        "df",
+        "f",
+        "my_function",
+        "newton_grid",
+        "plot_basins",
+        "print_summary",
+        "roots",
+        "summarize_grid"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-7": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-basin-data-88c3f2d1",
+        "ide-project_week2-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "basin_data",
+        "400×400",
+        "tol=1e-8",
+        "maxiter=50",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "basin_data",
+        "np"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-8": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-basin-data-88c3f2d1",
+        "ide-project_week2-np-6f11581d",
+        "ide-project_week2-roots-8df4041d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "basin_data",
+        "400×400",
+        "tol=1e-8",
+        "maxiter=50",
+        "np",
+        "numpy",
+        "NumPy",
+        "roots",
+        "np.roots",
+        "indeksene"
+      ],
+      "dependencies": [
+        "basin_data",
+        "np",
+        "roots"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-9": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-basin-data-88c3f2d1",
+        "ide-project_week2-critical-points-8df4041d",
+        "ide-project_week2-f-8df4041d",
+        "ide-project_week2-plot-basins-d72a8324"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "basin_data",
+        "400×400",
+        "tol=1e-8",
+        "maxiter=50",
+        "critical_points",
+        "nullpunktene til df",
+        "kritiske punkter",
+        "f",
+        "np.polyval",
+        "komplekst",
+        "plot_basins",
+        "svart for -2",
+        "fargeskalaen",
+        "None"
+      ],
+      "dependencies": [
+        "basin_data",
+        "critical_points",
+        "f",
+        "plot_basins"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-10": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-critical-points-8df4041d",
+        "ide-project_week2-df-8df4041d",
+        "ide-project_week2-f-8df4041d",
+        "ide-project_week2-newton-trace-288cbf47",
+        "ide-project_week2-np-6f11581d",
+        "ide-project_week2-roots-8df4041d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "critical_points",
+        "nullpunktene til df",
+        "kritiske punkter",
+        "df",
+        "np.polyder",
+        "np.polyval",
+        "f",
+        "komplekst",
+        "newton_trace",
+        "history",
+        "nullpunktindeks",
+        "NaN",
+        "np",
+        "numpy",
+        "NumPy",
+        "roots",
+        "np.roots",
+        "indeksene"
+      ],
+      "dependencies": [
+        "critical_points",
+        "df",
+        "f",
+        "newton_trace",
+        "np",
+        "roots"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-11": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-basin-data-88c3f2d1",
+        "ide-project_week2-df-8df4041d",
+        "ide-project_week2-f-8df4041d",
+        "ide-project_week2-newton-trace-288cbf47",
+        "ide-project_week2-np-6f11581d",
+        "ide-project_week2-roots-8df4041d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "basin_data",
+        "400×400",
+        "tol=1e-8",
+        "maxiter=50",
+        "df",
+        "np.polyder",
+        "np.polyval",
+        "f",
+        "komplekst",
+        "newton_trace",
+        "history",
+        "nullpunktindeks",
+        "NaN",
+        "np",
+        "numpy",
+        "NumPy",
+        "roots",
+        "np.roots",
+        "indeksene"
+      ],
+      "dependencies": [
+        "basin_data",
+        "df",
+        "f",
+        "newton_trace",
+        "np",
+        "roots"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-12": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-bounds-fc418329",
+        "ide-project_week2-df-8df4041d",
+        "ide-project_week2-f-8df4041d",
+        "ide-project_week2-newton-grid-6ef1e72a",
+        "ide-project_week2-roots-8df4041d",
+        "ide-project_week2-summarize-grid-9d41bc57"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "bounds",
+        "plot_window",
+        "(xmin,xmax,ymin,ymax)",
+        "df",
+        "np.polyder",
+        "np.polyval",
+        "f",
+        "komplekst",
+        "newton_grid",
+        "(ny,nx)",
+        "-1",
+        "-2",
+        "nullpunktindeks",
+        "roots",
+        "np.roots",
+        "indeksene",
+        "summarize_grid",
+        "fraction_converged",
+        "max_accepted_residual",
+        "NaN"
+      ],
+      "dependencies": [
+        "bounds",
+        "df",
+        "f",
+        "newton_grid",
+        "roots",
+        "summarize_grid"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-13": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-14": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-basin-data-88c3f2d1",
+        "ide-project_week2-print-boundary-summary-3f9df8fb"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "basin_data",
+        "400×400",
+        "tol=1e-8",
+        "maxiter=50",
+        "print_boundary_summary",
+        "pikselbredde",
+        "konvergerte piksler",
+        "None"
+      ],
+      "dependencies": [
+        "basin_data",
+        "print_boundary_summary"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-15": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-boundary-point-5a4f1705",
+        "ide-project_week2-bounds-fc418329",
+        "ide-project_week2-df-8df4041d",
+        "ide-project_week2-f-8df4041d",
+        "ide-project_week2-newton-grid-6ef1e72a",
+        "ide-project_week2-plot-basins-d72a8324",
+        "ide-project_week2-print-boundary-summary-3f9df8fb",
+        "ide-project_week2-roots-8df4041d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "boundary_point",
+        "Komplekst punkt",
+        "vannrette nabopiksler",
+        "sentrum",
+        "bounds",
+        "plot_window",
+        "(xmin,xmax,ymin,ymax)",
+        "df",
+        "np.polyder",
+        "np.polyval",
+        "f",
+        "komplekst",
+        "newton_grid",
+        "(ny,nx)",
+        "-1",
+        "-2",
+        "nullpunktindeks",
+        "plot_basins",
+        "svart for -2",
+        "fargeskalaen",
+        "None",
+        "print_boundary_summary",
+        "pikselbredde",
+        "konvergerte piksler",
+        "roots",
+        "np.roots",
+        "indeksene"
+      ],
+      "dependencies": [
+        "boundary_point",
+        "bounds",
+        "df",
+        "f",
+        "newton_grid",
+        "plot_basins",
+        "print_boundary_summary",
+        "roots"
+      ]
+    },
+    "ingmat-ide-projects-week2-newton-fractals-16": {
+      "page": "project_week2.html",
+      "references": [
+        "ide-project_week2-reference-assumptions",
+        "ide-project_week2-boundary-mask-53c85037",
+        "ide-project_week2-df-8df4041d",
+        "ide-project_week2-f-8df4041d",
+        "ide-project_week2-newton-grid-6ef1e72a",
+        "ide-project_week2-np-6f11581d",
+        "ide-project_week2-roots-8df4041d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "boundary_mask",
+        "bool-array",
+        "vannrette/loddrette",
+        "diagonale",
+        "df",
+        "np.polyder",
+        "np.polyval",
+        "f",
+        "komplekst",
+        "newton_grid",
+        "(ny,nx)",
+        "-1",
+        "-2",
+        "nullpunktindeks",
+        "np",
+        "numpy",
+        "NumPy",
+        "roots",
+        "np.roots",
+        "indeksene"
+      ],
+      "dependencies": [
+        "boundary_mask",
+        "df",
+        "f",
+        "newton_grid",
+        "np",
+        "roots"
+      ]
+    },
+    "project7-student-image": {
+      "page": "project_week7.html",
+      "references": [
+        "ide-project_week7-reference-assumptions",
+        "ide-project_week7-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "project7-image-first": {
+      "page": "project_week7.html",
+      "references": [
+        "ide-project_week7-reference-assumptions",
+        "ide-project_week7-image-svd-trial-f45a5335"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "image_svd_trial",
+        "96×96",
+        "minste rang",
+        "lost_squared",
+        "klippes ikke"
+      ],
+      "dependencies": [
+        "image_svd_trial"
+      ]
+    },
+    "project7-student-inverse": {
+      "page": "project_week7.html",
+      "references": [
+        "ide-project_week7-reference-assumptions",
+        "ide-project_week7-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "project7-signal-first": {
+      "page": "project_week7.html",
+      "references": [
+        "ide-project_week7-reference-assumptions",
+        "ide-project_week7-signal-svd-trial-2f5b02f2"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "signal_svd_trial",
+        "H(80,80)",
+        "residual_formula",
+        "k=None"
+      ],
+      "dependencies": [
+        "signal_svd_trial"
+      ]
+    },
+    "project7-image-check": {
+      "page": "project_week7.html",
+      "references": [
+        "ide-project_week7-reference-assumptions",
+        "ide-project_week7-image-svd-trial-f45a5335"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "image_svd_trial",
+        "96×96",
+        "minste rang",
+        "lost_squared",
+        "klippes ikke"
+      ],
+      "dependencies": [
+        "image_svd_trial"
+      ]
+    },
+    "project7-signal-check": {
+      "page": "project_week7.html",
+      "references": [
+        "ide-project_week7-reference-assumptions",
+        "ide-project_week7-signal-svd-trial-2f5b02f2"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "signal_svd_trial",
+        "H(80,80)",
+        "residual_formula",
+        "k=None"
+      ],
+      "dependencies": [
+        "signal_svd_trial"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-4": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-chebyshev-table-6cc5accb"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "chebyshev_table",
+        "x.shape+(n+1,)",
+        "siste akse",
+        "treleddsrekursjonen"
+      ],
+      "dependencies": [
+        "chebyshev_table"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-5": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-6": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-chebyshev-table-6cc5accb",
+        "ide-project_week3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "chebyshev_table",
+        "x.shape+(n+1,)",
+        "siste akse",
+        "treleddsrekursjonen",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "chebyshev_table",
+        "np"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-7": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-c-small-1e2e5a92",
+        "ide-project_week3-m-small-6bfc516b",
+        "ide-project_week3-cheb-1e0b010a",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-points-small-90387913",
+        "ide-project_week3-poly-894ef2d6"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "C_small",
+        "(4,4)",
+        "T_k",
+        "M_small",
+        "kolonne j",
+        "fullført",
+        "cheb",
+        "numpy.polynomial",
+        "stigende grad",
+        "np",
+        "numpy",
+        "NumPy",
+        "points_small",
+        "[-1.0,-1/3,1/3,1.0]",
+        "grad 3",
+        "poly"
+      ],
+      "dependencies": [
+        "C_small",
+        "M_small",
+        "cheb",
+        "np",
+        "points_small",
+        "poly"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-8": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-monomial-matrix-4391e9ee",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-points-small-90387913"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "monomial_matrix",
+        "(len(points),n+1)",
+        "NotImplementedError",
+        "np",
+        "numpy",
+        "NumPy",
+        "points_small",
+        "[-1.0,-1/3,1/3,1.0]",
+        "grad 3"
+      ],
+      "dependencies": [
+        "monomial_matrix",
+        "np",
+        "points_small"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-9": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-monomial-true-789ac4f4",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-plt-7be21394",
+        "ide-project_week3-points-three-4e89b03e",
+        "ide-project_week3-poly-894ef2d6",
+        "ide-project_week3-x-dense-a120796e"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "monomial_true",
+        "[1.0,-2.0,0.5,1.0]",
+        "stigende monomialgrad",
+        "np",
+        "numpy",
+        "NumPy",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot",
+        "points_three",
+        "points_small[:-1]",
+        "tre avlesningspunkter",
+        "poly",
+        "numpy.polynomial",
+        "stigende grad",
+        "x_dense",
+        "1001",
+        "evalueringsrutenett"
+      ],
+      "dependencies": [
+        "monomial_true",
+        "np",
+        "plt",
+        "points_three",
+        "poly",
+        "x_dense"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-10": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-11": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-cheb-1e0b010a",
+        "ide-project_week3-chebyshev-matrix-49f2042e",
+        "ide-project_week3-chebyshev-points-9c6634dc",
+        "ide-project_week3-max-grid-error-b3661a5a",
+        "ide-project_week3-monomial-matrix-4391e9ee",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-poly-894ef2d6",
+        "ide-project_week3-reference-coordinates-8e58a20d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cheb",
+        "numpy.polynomial",
+        "stigende grad",
+        "chebyshev_matrix",
+        "(len(points),n+1)",
+        "T_k",
+        "chebyshev_points",
+        "n+1",
+        "Endepunktene",
+        "max_grid_error",
+        "elementvis",
+        "endelig rutenett",
+        "monomial_matrix",
+        "NotImplementedError",
+        "np",
+        "numpy",
+        "NumPy",
+        "poly",
+        "reference_coordinates",
+        "c_k=(-1)^k/(k+1)^2"
+      ],
+      "dependencies": [
+        "cheb",
+        "chebyshev_matrix",
+        "chebyshev_points",
+        "max_grid_error",
+        "monomial_matrix",
+        "np",
+        "poly",
+        "reference_coordinates"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-12": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-compare-bases-2e0b251a",
+        "ide-project_week3-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "compare_bases",
+        "monomial_coordinates",
+        "chebyshev_error",
+        "ulike basiser",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "compare_bases",
+        "np"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-13": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-basis-data-52b41529",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-plt-7be21394"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "basis_data",
+        "compare_bases(30)",
+        "31 målinger",
+        "2001",
+        "np",
+        "numpy",
+        "NumPy",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot"
+      ],
+      "dependencies": [
+        "basis_data",
+        "np",
+        "plt"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-14": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-cheb-1e0b010a",
+        "ide-project_week3-chebyshev-matrix-49f2042e",
+        "ide-project_week3-chebyshev-points-9c6634dc",
+        "ide-project_week3-monomial-matrix-4391e9ee",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-reference-coordinates-8e58a20d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cheb",
+        "numpy.polynomial",
+        "stigende grad",
+        "chebyshev_matrix",
+        "(len(points),n+1)",
+        "T_k",
+        "chebyshev_points",
+        "n+1",
+        "Endepunktene",
+        "monomial_matrix",
+        "NotImplementedError",
+        "np",
+        "numpy",
+        "NumPy",
+        "reference_coordinates",
+        "c_k=(-1)^k/(k+1)^2"
+      ],
+      "dependencies": [
+        "cheb",
+        "chebyshev_matrix",
+        "chebyshev_points",
+        "monomial_matrix",
+        "np",
+        "reference_coordinates"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-15": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-chebyshev-points-9c6634dc",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-plt-7be21394"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "chebyshev_points",
+        "n+1",
+        "Endepunktene",
+        "np",
+        "numpy",
+        "NumPy",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot"
+      ],
+      "dependencies": [
+        "chebyshev_points",
+        "np",
+        "plt"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-16": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-cheb-1e0b010a",
+        "ide-project_week3-cheb-points-a8daaa35",
+        "ide-project_week3-chebyshev-matrix-49f2042e",
+        "ide-project_week3-equal-points-6d1ee98f",
+        "ide-project_week3-n-c51783d1",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-reference-coordinates-8e58a20d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cheb",
+        "numpy.polynomial",
+        "stigende grad",
+        "cheb_points",
+        "uten endepunktene",
+        "(31,)",
+        "chebyshev_matrix",
+        "(len(points),n+1)",
+        "T_k",
+        "equal_points",
+        "inklusive endepunktene",
+        "n",
+        "n=30",
+        "31 avlesningspunkter",
+        "np",
+        "numpy",
+        "NumPy",
+        "reference_coordinates",
+        "c_k=(-1)^k/(k+1)^2",
+        "n+1"
+      ],
+      "dependencies": [
+        "cheb",
+        "cheb_points",
+        "chebyshev_matrix",
+        "equal_points",
+        "n",
+        "np",
+        "reference_coordinates"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-17": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-cheb-data-3b1d810c",
+        "ide-project_week3-equal-data-89ad45a2",
+        "ide-project_week3-plt-7be21394"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cheb_data",
+        "noise_size=1e-10",
+        "grid_size=5001",
+        "equal_data",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot"
+      ],
+      "dependencies": [
+        "cheb_data",
+        "equal_data",
+        "plt"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-18": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-chebyshev-points-9c6634dc",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-point-placement-experiment-bb8dcd1e"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "chebyshev_points",
+        "n+1",
+        "Endepunktene",
+        "np",
+        "numpy",
+        "NumPy",
+        "point_placement_experiment",
+        "alternerende støy",
+        "max_data_error",
+        "max_curve_error"
+      ],
+      "dependencies": [
+        "chebyshev_points",
+        "np",
+        "point_placement_experiment"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-19": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-cheb-1e0b010a",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-poly-894ef2d6"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cheb",
+        "numpy.polynomial",
+        "stigende grad",
+        "np",
+        "numpy",
+        "NumPy",
+        "poly"
+      ],
+      "dependencies": [
+        "cheb",
+        "np",
+        "poly"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-20": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-cheb-1e0b010a",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-poly-894ef2d6",
+        "ide-project_week3-x0-b8af24e1"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cheb",
+        "numpy.polynomial",
+        "stigende grad",
+        "np",
+        "numpy",
+        "NumPy",
+        "poly",
+        "x0",
+        "x0=0.99",
+        "evalueringspunkt"
+      ],
+      "dependencies": [
+        "cheb",
+        "np",
+        "poly",
+        "x0"
+      ]
+    },
+    "ingmat-ide-projects-week3-chebyshev-sampling-21": {
+      "page": "project_week3.html",
+      "references": [
+        "ide-project_week3-reference-assumptions",
+        "ide-project_week3-cheb-1e0b010a",
+        "ide-project_week3-chebyshev-matrix-49f2042e",
+        "ide-project_week3-np-6f11581d",
+        "ide-project_week3-plt-7be21394",
+        "ide-project_week3-reference-coordinates-8e58a20d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "cheb",
+        "numpy.polynomial",
+        "stigende grad",
+        "chebyshev_matrix",
+        "(len(points),n+1)",
+        "T_k",
+        "np",
+        "numpy",
+        "NumPy",
+        "plt",
+        "matplotlib.pyplot",
+        "pyplot",
+        "reference_coordinates",
+        "c_k=(-1)^k/(k+1)^2",
+        "n+1"
+      ],
+      "dependencies": [
+        "cheb",
+        "chebyshev_matrix",
+        "np",
+        "plt",
+        "reference_coordinates"
+      ]
+    },
+    "project11-merit-order": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-capacity-f8fda3d6",
+        "ide-project_week11-cost-066909c5",
+        "ide-project_week11-show-merit-order-58c27887"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "capacity",
+        "[30.,50.,30.,40.]",
+        "MW",
+        "cost",
+        "[0.,10.,40.,70.]",
+        "kr/MWh",
+        "show_merit_order",
+        "Sorterer stabilt",
+        "Nullkostnad",
+        "None"
+      ],
+      "dependencies": [
+        "capacity",
+        "cost",
+        "show_merit_order"
+      ]
+    },
+    "project11-one-zone": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-capacity-f8fda3d6",
+        "ide-project_week11-cost-066909c5",
+        "ide-project_week11-linprog-5e96555f",
+        "ide-project_week11-np-6f11581d",
+        "ide-project_week11-plant-names-1ea0e5dd"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "capacity",
+        "[30.,50.,30.,40.]",
+        "MW",
+        "cost",
+        "[0.,10.,40.,70.]",
+        "kr/MWh",
+        "linprog",
+        "scipy.optimize",
+        "OptimizeResult",
+        "np",
+        "numpy",
+        "NumPy",
+        "plant_names",
+        "\"vind\"",
+        "\"vannkraft\""
+      ],
+      "dependencies": [
+        "capacity",
+        "cost",
+        "linprog",
+        "np",
+        "plant_names"
+      ]
+    },
+    "project11-price-steps": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-np-6f11581d",
+        "ide-project_week11-one-zone-0ad21954",
+        "ide-project_week11-read-market-41224ef0",
+        "ide-project_week11-show-steps-d35b54cd"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy",
+        "one_zone",
+        "sum(x)=D",
+        "eqlin.marginals",
+        "success",
+        "read_market",
+        "(price,average)",
+        "None",
+        "show_steps",
+        "where=\"mid\"",
+        "smooth"
+      ],
+      "dependencies": [
+        "np",
+        "one_zone",
+        "read_market",
+        "show_steps"
+      ]
+    },
+    "project11-finite-difference": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-one-zone-0ad21954"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "one_zone",
+        "sum(x)=D",
+        "eqlin.marginals",
+        "success"
+      ],
+      "dependencies": [
+        "one_zone"
+      ]
+    },
+    "project11-slackness": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-capacity-f8fda3d6",
+        "ide-project_week11-one-zone-0ad21954",
+        "ide-project_week11-plant-names-1ea0e5dd"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "capacity",
+        "[30.,50.,30.,40.]",
+        "MW",
+        "one_zone",
+        "sum(x)=D",
+        "eqlin.marginals",
+        "success",
+        "plant_names",
+        "\"vind\"",
+        "\"vannkraft\"",
+        "cost"
+      ],
+      "dependencies": [
+        "capacity",
+        "one_zone",
+        "plant_names"
+      ]
+    },
+    "project11-two-zones": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-two-zones-61836c29"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "two_zones",
+        "nord→sør",
+        "-L<=f<=L",
+        "eqlin.marginals"
+      ],
+      "dependencies": [
+        "two_zones"
+      ]
+    },
+    "project11-line-picture": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-show-two-zones-250070b6",
+        "ide-project_week11-two-zones-61836c29"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "show_two_zones",
+        "res.x[4]",
+        "L-1e-9",
+        "None",
+        "two_zones",
+        "nord→sør",
+        "-L<=f<=L",
+        "eqlin.marginals"
+      ],
+      "dependencies": [
+        "show_two_zones",
+        "two_zones"
+      ]
+    },
+    "project11-line-change": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-two-zones-61836c29"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "two_zones",
+        "nord→sør",
+        "-L<=f<=L",
+        "eqlin.marginals"
+      ],
+      "dependencies": [
+        "two_zones"
+      ]
+    },
+    "project11-water-row": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-np-6f11581d"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "np",
+        "numpy",
+        "NumPy"
+      ],
+      "dependencies": [
+        "np"
+      ]
+    },
+    "project11-hydro": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-a-eq3-783ef676",
+        "ide-project_week11-bounds3-783ef676",
+        "ide-project_week11-c3-783ef676",
+        "ide-project_week11-demand3-1ff1608f",
+        "ide-project_week11-linprog-5e96555f",
+        "ide-project_week11-make-water-row-47594272",
+        "ide-project_week11-water-dfa5ec02"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A_eq3",
+        "(3,12)",
+        "fire ettall",
+        "A_eq3@x=demand3",
+        "bounds3",
+        "(30,50,30,40)",
+        "(10,50,30,40)",
+        "separat globalt krav",
+        "c3",
+        "np.tile(cost,3)",
+        "(12,)",
+        "timeblokker",
+        "demand3",
+        "[60.,95.,120.]",
+        "én-timesperioder",
+        "linprog",
+        "scipy.optimize",
+        "OptimizeResult",
+        "make_water_row",
+        "(1,12)",
+        "tre timeblokkene",
+        "bare nuller",
+        "water",
+        "120.0 MWh"
+      ],
+      "dependencies": [
+        "A_eq3",
+        "bounds3",
+        "c3",
+        "demand3",
+        "linprog",
+        "make_water_row",
+        "water"
+      ]
+    },
+    "project11-water-steps": {
+      "page": "project_week11.html",
+      "references": [
+        "ide-project_week11-reference-assumptions",
+        "ide-project_week11-a-eq3-783ef676",
+        "ide-project_week11-bounds3-783ef676",
+        "ide-project_week11-c3-783ef676",
+        "ide-project_week11-demand3-1ff1608f",
+        "ide-project_week11-linprog-5e96555f",
+        "ide-project_week11-make-water-row-47594272",
+        "ide-project_week11-np-6f11581d",
+        "ide-project_week11-show-steps-d35b54cd"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "A_eq3",
+        "(3,12)",
+        "fire ettall",
+        "A_eq3@x=demand3",
+        "bounds3",
+        "(30,50,30,40)",
+        "(10,50,30,40)",
+        "separat globalt krav",
+        "c3",
+        "np.tile(cost,3)",
+        "(12,)",
+        "timeblokker",
+        "demand3",
+        "[60.,95.,120.]",
+        "én-timesperioder",
+        "linprog",
+        "scipy.optimize",
+        "OptimizeResult",
+        "make_water_row",
+        "(1,12)",
+        "tre timeblokkene",
+        "bare nuller",
+        "np",
+        "numpy",
+        "NumPy",
+        "show_steps",
+        "where=\"mid\"",
+        "smooth",
+        "None"
+      ],
+      "dependencies": [
+        "A_eq3",
+        "bounds3",
+        "c3",
+        "demand3",
+        "linprog",
+        "make_water_row",
+        "np",
+        "show_steps"
+      ]
+    },
+    "ingmat-ide-projects-week1-floating-point-attack-2": {
+      "page": "project_week1.html",
+      "references": [
+        "ide-project_week1-reference-assumptions",
+        "ide-project_week1-ordinary-sum-e1bef6da"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "ordinary_sum",
+        "venstre mot høyre",
+        "Tom input"
+      ],
+      "dependencies": [
+        "ordinary_sum"
+      ]
+    },
+    "ingmat-ide-projects-week1-floating-point-attack-4": {
+      "page": "project_week1.html",
+      "references": [
+        "ide-project_week1-reference-assumptions",
+        "ide-project_week1-make-attack-70fdf505",
+        "ide-project_week1-ordinary-sum-e1bef6da"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "make_attack",
+        "n styrer",
+        "tom liste",
+        "ordinary_sum",
+        "venstre mot høyre",
+        "Tom input"
+      ],
+      "dependencies": [
+        "make_attack",
+        "ordinary_sum"
+      ]
+    },
+    "ingmat-ide-projects-week1-floating-point-attack-5": {
+      "page": "project_week1.html",
+      "references": [
+        "ide-project_week1-reference-assumptions",
+        "ide-project_week1-ordinary-sum-e1bef6da"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "ordinary_sum",
+        "venstre mot høyre",
+        "Tom input"
+      ],
+      "dependencies": [
+        "ordinary_sum"
+      ]
+    },
+    "ingmat-ide-projects-week1-floating-point-attack-6": {
+      "page": "project_week1.html",
+      "references": [
+        "ide-project_week1-reference-assumptions",
+        "ide-project_week1-ordinary-sum-e1bef6da"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "ordinary_sum",
+        "venstre mot høyre",
+        "Tom input"
+      ],
+      "dependencies": [
+        "ordinary_sum"
+      ]
+    },
+    "ingmat-ide-projects-week1-floating-point-attack-7": {
+      "page": "project_week1.html",
+      "references": [
+        "ide-project_week1-reference-assumptions",
+        "ide-project_week1-ordinary-sum-e1bef6da"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "ordinary_sum",
+        "venstre mot høyre",
+        "Tom input"
+      ],
+      "dependencies": [
+        "ordinary_sum"
+      ]
+    },
+    "ingmat-ide-projects-week1-floating-point-attack-9": {
+      "page": "project_week1.html",
+      "references": [
+        "ide-project_week1-reference-assumptions",
+        "ide-project_week1-defense-order-edf5c8dc",
+        "ide-project_week1-ordinary-sum-e1bef6da",
+        "ide-project_week1-target-attack-83f2e562"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "defense_order",
+        "samme tallene",
+        "originaldataene",
+        "ordinary_sum",
+        "venstre mot høyre",
+        "Tom input",
+        "target_attack",
+        "1e-10",
+        "10 000"
+      ],
+      "dependencies": [
+        "defense_order",
+        "ordinary_sum",
+        "target_attack"
+      ]
+    },
+    "ingmat-ide-projects-week1-floating-point-attack-10": {
+      "page": "project_week1.html",
+      "references": [
+        "ide-project_week1-reference-assumptions",
+        "ide-project_week1-bounded-attack-523c49dd",
+        "ide-project_week1-defense-order-edf5c8dc",
+        "ide-project_week1-ordinary-sum-e1bef6da",
+        "ide-project_week1-positive-attack-082e4d1b",
+        "ide-project_week1-target-attack-83f2e562"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "bounded_attack",
+        "1e6",
+        "tom liste",
+        "defense_order",
+        "samme tallene",
+        "originaldataene",
+        "ordinary_sum",
+        "venstre mot høyre",
+        "Tom input",
+        "positive_attack",
+        "strengt positive",
+        "kansellering",
+        "target_attack",
+        "1e-10",
+        "10 000"
+      ],
+      "dependencies": [
+        "bounded_attack",
+        "defense_order",
+        "ordinary_sum",
+        "positive_attack",
+        "target_attack"
+      ]
+    },
+    "ingmat-ide-projects-week1-floating-point-attack-12": {
+      "page": "project_week1.html",
+      "references": [
+        "ide-project_week1-reference-assumptions",
+        "ide-project_week1-attacks-91cb572f",
+        "ide-project_week1-better-sum-875c6a78"
+      ],
+      "facts": [
+        "Referansen beskriver kursets opprinnelige oppsett ",
+        "attacks",
+        "\"target\"",
+        "\"bounded\"",
+        "\"positive\"",
+        "better_sum",
+        "ikke tillatt",
+        "sekvensiell addisjon"
+      ],
+      "dependencies": [
+        "attacks",
+        "better_sum"
+      ]
+    }
+  }
+}

@@ -1,9 +1,3 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 :::: {.callout-note}
 ## Slik bruker du siden
 
@@ -132,22 +126,19 @@ outputen? Hvilken matematisk påstand skal utskriften eller figuren kontrollere?
 
 ## 3.1 To bilder, samme output {#uke3-start}
 
-<div id="uke3-start"></div>
-
 Kan et sjakkbrett og en ensfarget grå flate bli helt like når vi gjør bildene mindre? Svaret er ja, og denne uka finner vi ut nøyaktig hvorfor. En **transformasjon** er en regel som tar en input og lager en output,
 
 $$T(\text{input})=\text{output}.$$
 
 Det er det samme som en funksjon; ordet **avbildning** brukes også. Her er inputen et bilde $X$ med 16 piksler og outputen et mindre bilde $Y=T(X)$ med fire piksler. Spørsmålet er hvilken informasjon regelen bruker, og om noe går tapt underveis.
 
-<details class="reading-step">
-<summary>Gå i dybden: transformasjon, funksjon og Python-funksjon</summary>
+::: {.reading-step title="Gå i dybden: transformasjon, funksjon og Python-funksjon"}
 
 Inputen til en transformasjon kan være et bilde, en lydfil eller en tabell med målinger; outputen kan være et nytt bilde eller noen få tall som oppsummerer inputen. Hver tillatt input får nøyaktig én output, akkurat som for en **funksjon**. I matematikk er for eksempel $f(t)=t^2$ en funksjon som sender $3$ til $9$. I Python gjør `abs(-3)` inputen `-3` om til outputen `3`. På samme måte tar Python-funksjonen `average_pool(X)` inn et bilde og returnerer et mindre bilde.
 
 Navnet transformasjon sier ikke noe mer mystisk enn dette. Det framhever bare at input og output gjerne er vektorer eller bilder, ikke nødvendigvis enkelttall.
 
-</details>
+:::
 
 Figuren viser hele oppskriften uten matriser eller formler.
 
@@ -420,6 +411,7 @@ def show_two_routes(alpha, beta, route_1, route_2):
 
 ```{pyodide-python}
 #| label: week3-same-output
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-average-pool-d3bed1b8, ide-uke3-np-6f11581d, ide-uke3-show-image-table-9d931363
 #| autorun: true
 
 # To bevisst svært forskjellige inputbilder: ett konstant og ett rutete.
@@ -457,8 +449,7 @@ $$
 Hvis to bilder er like, er forskjellen 0 på hver pikselplass. Da får vi
 **nullbildet**, altså en matrise der alle pikselverdiene er 0.
 
-<details class="reading-step">
-<summary>Gå i dybden: forskjellsbildet piksel for piksel</summary>
+::: {.reading-step title="Gå i dybden: forskjellsbildet piksel for piksel"}
 
 Forskjellsmatrisene forteller både **hvor** bildene er forskjellige, og i
 hvilken retning pikselverdiene har endret seg. Tabellen nedenfor skal leses
@@ -478,6 +469,7 @@ Cellen regner ut de to forskjellene og tegner dem over hvert sitt nullbilde.
 
 ```{pyodide-python}
 #| label: week3-difference-and-zero-images
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-x1-4351f978, ide-uke3-x2-b6535cc4, ide-uke3-y1-38e12495, ide-uke3-y2-38e12495, ide-uke3-np-6f11581d, ide-uke3-show-image-table-9d931363
 #| autorun: true
 
 # Beregn forskjellen mellom samsvarende pikselverdier før og etter
@@ -503,7 +495,7 @@ på alle 16 pikselplasser. Feltet øverst til høyre er helt hvitt og ser ut som
 nullbildet under: $Y_1-Y_2$ er 0 på alle fire plasser, så outputbildene er
 like.
 
-</details>
+:::
 
 ### Ett tall for størrelsen på en forskjell
 
@@ -530,6 +522,7 @@ For en vektor summerer vi kvadratene av komponentene på samme måte. Cellen reg
 
 ```{pyodide-python}
 #| label: week3-first-norm
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-x1-4351f978, ide-uke3-x2-b6535cc4, ide-uke3-y1-38e12495, ide-uke3-y2-38e12495, ide-uke3-np-6f11581d
 #| autorun: true
 
 # Forskjellene fra formelen over, piksel for piksel.
@@ -559,13 +552,13 @@ Bildene er forskjellige, men transformasjonen gir samme output. Den bevarer gjen
 
 Transformasjonen arbeider blokk for blokk. I øvre venstre blokk i `X2` er pikselverdiene $0.1,0.9,0.9,0.1$. Summen er 2, og gjennomsnittet er derfor $2/4=0.5$. Det samme skjer i de tre andre blokkene. I `X1` er hver piksel allerede $0.5$, så også der blir alle fire blokkgjennomsnittene $0.5$.
 
-<details class="reading-step">
-<summary>Gå i dybden: de fire blokkene i sjakkbildet</summary>
+::: {.reading-step title="Gå i dybden: de fire blokkene i sjakkbildet"}
 
 Cellen klipper de fire $2\times2$-blokkene ut av `X2` og skriver blokkgjennomsnittet over hver av dem.
 
 ```{pyodide-python}
 #| label: week3-four-blocks
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-x2-b6535cc4, ide-uke3-np-6f11581d, ide-uke3-show-images-4baf6979
 #| autorun: true
 
 # Løkkene skjærer ut de fire 2 x 2-blokkene. Uttrykket a:b betyr
@@ -586,7 +579,7 @@ show_images(blocks,
 
 Figuren viser de fire delene som ble klippet ut av `X2`, i samme leseretning som outputbildet: først øvre rad fra venstre mot høyre, deretter nedre rad. Ordet «gjennomsnitt» over hvert delbilde er tallet som plasseres i den tilsvarende outputpikselen. Alle fire tallene er $0.5$, og outputen blir derfor et ensfarget $2\times2$-bilde.
 
-</details>
+:::
 
 Dette er ikke en avrundingsfeil: Gjennomsnittene er matematisk like. Transformasjonen er **mange-til-én**: flere forskjellige inputbilder kan havne på samme output, så fra outputen alene kan vi ikke avgjøre hvilket bilde som var input.
 
@@ -599,12 +592,11 @@ Før vi gir dette et matematisk navn, kan du prøve å endre `X2` uten å endre 
 
 ## 3.2 Fra bilde til vektor og matrise {#uke3-del1}
 
-<div id="uke3-del1"></div>
-
 Pikselverdiene i et bilde kan også legges etter hverandre i en liste. NumPy-funksjonen `reshape(-1)` leser øverste rad fra venstre mot høyre, deretter neste rad, og så videre. Cellen gjør dette med sjakkbildet `X2` og tegner bildet og vektoren ved siden av hverandre.
 
 ```{pyodide-python}
 #| label: week3-flatten-picture
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-x2-b6535cc4, ide-uke3-show-flattened-e934fa8d
 #| autorun: true
 
 # reshape(-1) leser radene etter hverandre: 16 tall, ingen endret eller borte.
@@ -662,6 +654,7 @@ gjør de to bildene fra 3.1 om til vektorer og regner ut $Ax$ for hvert av dem.
 
 ```{pyodide-python}
 #| label: week3-pooling-as-matrix
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-pool-b55b8935, ide-uke3-x1-4351f978, ide-uke3-x2-b6535cc4
 #| autorun: true
 
 # Samme bilder skrives som vektorer, slik at vi kan bruke vanlig Ax.
@@ -824,6 +817,7 @@ Målet er å se om forskjellen $R_1-R_2$ blir nullbildet.
 
 ```{pyodide-python}
 #| label: week3-check-linearity
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-x1-4351f978, ide-uke3-average-pool-d3bed1b8, ide-uke3-np-6f11581d, ide-uke3-show-two-routes-ad3dc9fb
 
 # Fast frø gir samme testbilde ved hver kjøring.
 rng=np.random.default_rng(3)
@@ -850,8 +844,7 @@ print("Normen til R1-R2:",np.linalg.norm(difference))
 er hvit (hvitt betyr 0) og har norm 0. Ett forsøk er likevel ikke et bevis, så vi ser på selve
 regelen.
 
-<details class="reading-step">
-<summary>Gå i dybden: slik leser du tabellen</summary>
+::: {.reading-step title="Gå i dybden: slik leser du tabellen"}
 
 Les tabellen fra venstre mot høyre. I øverste rad har de tre første bildene
 størrelse $4\times4$: De to skalerte lagene legges sammen til
@@ -861,7 +854,7 @@ bildene $2\times2$, og de to første legges sammen til $R_2$. Feltet nederst
 til høyre viser $R_1-R_2$ med samme rød–blå skala som i 3.1. Det er hvitt
 fordi alle fire forskjellene er 0.
 
-</details>
+:::
 
 Hver outputpiksel er summen av fire inputverdier, alle ganget med $1/4$. For
 øvre venstre outputpiksel og to inputvektorer $x$ og $z$ er
@@ -892,8 +885,6 @@ $$Ax=c_1Ab_1+\cdots+c_kAb_k.$$
 Vi kan altså finne hva transformasjonen gjør med hver byggestein én gang og deretter kombinere resultatene. Basis, nullrom og kolonnerom bygger alle på denne ideen. Ikke alle transformasjoner er lineære: å klippe alle negative pikselverdier til null eller å sortere pikslene vil for eksempel vanligvis bryte regneregelen.
 
 ## 3.3 Beskriv bilder med forskjellige basiser {#uke3-del2}
-
-<div id="uke3-del2"></div>
 
 Vi skal nå finne et systematisk språk for «byggesteiner». Tenk på et tomt $2\times2$-bilde og fire skyveknapper, én for hver piksel.
 
@@ -1034,13 +1025,13 @@ $$X=\begin{bmatrix}0.2&0.7\\0.4&0.9\end{bmatrix}=0.2E_1+0.7E_2+0.4E_3+0.9E_4.$$
 
 For eksempel bidrar $0.7E_2$ bare med $0.7$ i øvre høyre piksel, så hver piksel kan stilles inn uavhengig.
 
-<details class="reading-step">
-<summary>Gå i dybden: pikselbasisen i NumPy</summary>
+::: {.reading-step title="Gå i dybden: pikselbasisen i NumPy"}
 
 Her gjentar vi appleten i NumPy. De fire første bildene har verdi 1 i hver sin piksel og 0 i de andre. Deretter blir hvert bilde ganget med ønsket pikselverdi, og de fire delbildene legges sammen.
 
 ```{pyodide-python}
 #| label: week3-pixel-basis
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-np-6f11581d, ide-uke3-show-images-4baf6979
 #| autorun: true
 
 # Hvert E-bilde har én eneste ener. Derfor styrer hver koeffisient nøyaktig
@@ -1061,7 +1052,7 @@ show_images(components+[X],
     cols=5,vmin=0,vmax=1,figsize=(7.0,1.7))
 ```
 
-</details>
+:::
 
 De fire tallene foran byggesteinene kalles **koordinater i denne beskrivelsen**. Her er de nøyaktig de fire pikselverdiene i $X$.
 
@@ -1079,6 +1070,7 @@ begge forsøkene, ett i hver rad. Målet er å se hva som skjer med egenskapene
 
 ```{pyodide-python}
 #| label: week3-missing-and-redundant
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-e1-cc234cbc, ide-uke3-e2-a92f3144, ide-uke3-e3-84efe1df, ide-uke3-e4-f5e56079, ide-uke3-x-2e7a1080, ide-uke3-coefficients-4a3845b0, ide-uke3-show-images-4baf6979
 #| autorun: true
 
 # E1, ..., E4, målbildet X og coefficients kommer fra «Gå i dybden: pikselbasisen i NumPy».
@@ -1121,12 +1113,11 @@ som betyr «fire reelle tall ordnet som to rader og to kolonner». Den er et
 operasjonene følger de vanlige regnereglene. Et vektorrom trenger altså ikke
 å bestå av piler eller tallkolonner.
 
-<details class="reading-step">
-<summary>Gå i dybden: gyldige gråtonebilder og hele vektorrommet</summary>
+::: {.reading-step title="Gå i dybden: gyldige gråtonebilder og hele vektorrommet"}
 
 Et vanlig gråtonebilde har pikselverdier mellom 0 og 1: 0 er svart og 1 er hvitt. Slike $2\times2$-bilder ligger i $[0,1]^{2\times2}$. Elementene i $\mathbb R^{2\times2}$ kan regnes med som bilder, forskjellsbilder eller mønstre, selv om ikke alle kan vises direkte som vanlige gråtonebilder. Det er $\mathbb R^{2\times2}$ som er et vektorrom; $[0,1]^{2\times2}$ er bare delen som består av gyldige gråtonebilder. For eksempel ligger $E_1$ i $[0,1]^{2\times2}$, men $-E_1$ gjør det ikke.
 
-</details>
+:::
 
 $E_1,E_2,E_3,E_4$ danner en basis for $\mathbb R^{2\times2}$. **Dimensjonen** er antallet byggesteiner i en basis, altså
 
@@ -1286,6 +1277,7 @@ deretter nedre rad.
 
 ```{pyodide-python}
 #| label: week3-pattern-basis
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-np-6f11581d, ide-uke3-show-images-4baf6979
 #| autorun: true
 
 # De fire arrayene er ikke tilfeldige: M styrer felles lysnivå, mens H, V
@@ -1421,6 +1413,7 @@ Cellen gjentar regnestykket: `column_stack` bygger $P$, `matrix_rank` teller piv
 
 ```{pyodide-python}
 #| label: week3-change-basis
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-x-2e7a1080, ide-uke3-coefficients-4a3845b0, ide-uke3-np-6f11581d, ide-uke3-pattern-basis-86f90409, ide-uke3-pattern-names-a2778e74, ide-uke3-show-images-4baf6979
 #| autorun: true
 
 # reshape(-1) gjør hvert 2 x 2-mønster til en 4-vektor.
@@ -1455,8 +1448,7 @@ beskriver det samme bildet som lysnivå pluss tre kontraster. Dette er et
 En basis er ikke bare et sett som tilfredsstiller en definisjon. Et godt valg av basis kan skille egenskaper vi vil bevare fra egenskaper en transformasjon fjerner. Det er nettopp det som skjer i neste eksperiment.
 :::
 
-<details class="reading-step">
-<summary>Gå i dybden: fra byggesteiner til bildekompresjon</summary>
+::: {.reading-step title="Gå i dybden: fra byggesteiner til bildekompresjon"}
 
 Valget av byggesteiner kan få praktisk betydning. Vanlige bilder inneholder ofte store jevne områder, langsomme overganger, kanter og gjentatte mønstre. Hvis byggesteinene passer til denne strukturen, kan bildet kanskje beskrives godt med noen få store koeffisienter og mange små.
 
@@ -1471,11 +1463,9 @@ I [uke 7](uke7.qmd#uke7-bilde) skal vi bruke singulærverdifaktorisering (SVD) t
 
 I uke 3 er målet mindre, men grunnleggende: Vi analyserer små $2\times2$- og $4\times4$-bilder der alle byggesteiner, koeffisienter og transformasjoner kan sees direkte. De små bildeblokkene fungerer som en oversiktlig modell for ideene som senere skaleres opp i SVD-algoritmen.
 
-</details>
+:::
 
 ## 3.4 Hva transformasjonen ser og ikke ser {#uke3-del3}
-
-<div id="uke3-del3"></div>
 
 Nå bruker vi matrisen og byggesteinene til å besvare to spørsmål:
 
@@ -1498,6 +1488,7 @@ som skjer med enhver kombinasjon av dem.
 
 ```{pyodide-python}
 #| label: week3-average-patterns
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-np-6f11581d, ide-uke3-pattern-basis-86f90409, ide-uke3-pattern-names-a2778e74, ide-uke3-show-image-table-9d931363
 #| autorun: true
 
 # Vi sender én basisretning om gangen gjennom gjennomsnittstransformasjonen.
@@ -1567,6 +1558,7 @@ sjakkmønsteret virkelig ligger i nullrommet, skal gjennomsnittet stå stille.
 
 ```{pyodide-python}
 #| label: week3-family-same-average
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-d-455a2655, ide-uke3-np-6f11581d, ide-uke3-show-images-4baf6979
 #| autorun: true
 
 # base er startbildet, direction er en nullromsretning, og t bestemmer
@@ -1591,8 +1583,7 @@ For hele $4\times4$-bildet bruker $A_{\mathrm{pool}}\in\mathbb R^{4\times16}$ de
 Vi gjentar argumentet i hver blokk: $4\cdot3=12$
 usynlige og $4\cdot1=4$ synlige retninger.
 
-<details class="reading-step">
-<summary>Gå i dybden: alle tolv usynlige mønstre</summary>
+::: {.reading-step title="Gå i dybden: alle tolv usynlige mønstre"}
 
 Den presise overføringen er:
 
@@ -1611,6 +1602,7 @@ $4\cdot3=12$ bilder.
 
 ```{pyodide-python}
 #| label: week3-full-null-basis
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-d-455a2655, ide-uke3-h-91e113d2, ide-uke3-v-d28bf387, ide-uke3-np-6f11581d, ide-uke3-show-images-4baf6979
 #| autorun: true
 
 def place_in_block(pattern,block_row,block_col):
@@ -1642,6 +1634,7 @@ Neste celle kontrollerer dette numerisk. Deretter velger den tolv tilfeldige koe
 
 ```{pyodide-python}
 #| label: week3-random-null-image
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-pool-b55b8935, ide-uke3-average-pool-d3bed1b8, ide-uke3-np-6f11581d, ide-uke3-null-basis-cb305c7a, ide-uke3-show-image-table-9d931363
 #| autorun: true
 
 # Først kontrolleres hver kandidat separat med ||A z||.
@@ -1676,7 +1669,7 @@ kontraster i samme blokk. Ingen av dem kan fjernes uten at vi mister en mulig
 lokal endring. Samtidig kan ethvert bilde der hver blokk har sum null bygges
 av dem, blokk for blokk.
 
-</details>
+:::
 
 Hvis $Az_1=0$ og $Az_2=0$, er også $A(\alpha z_1+\beta z_2)=\alpha Az_1+\beta Az_2=0$.
 Nullrommet er altså en samling der vi kan addere bilder og multiplisere dem med tall uten å forlate samlingen. En slik lineær samling inni et større rom kalles et **underrom**. Vi trenger ingen nye regneregler; ordet beskriver bare at lineærkombinasjoner blir værende i samlingen.
@@ -1691,15 +1684,14 @@ Nå finner vi rangen ved å spørre hva som kan produseres. Da bruker vi en anne
 > Kolonne $j$ er outputen når input er $e_j$, altså når inputverdi $j$ er 1
 > og alle andre inputverdier er 0.
 
-<details class="reading-step">
-<summary>Gå i dybden: to måter å bygge matrisen på</summary>
+::: {.reading-step title="Gå i dybden: to måter å bygge matrisen på"}
 
 For en regel som er oppgitt med outputformler, er radmetoden fra 3.2 raskest.
 For en ukjent regel vi kan teste — et typisk reverse-engineering-problem —
 kan vi sende inn $e_1,e_2,\ldots,e_n$ og samle de observerte outputene som
 kolonner. De to metodene bygger den samme matrisen.
 
-</details>
+:::
 
 Klikk på en inputpiksel i figuren: Den pikselen er 1 og alle andre 0, vi
 **slår på én piksel**. Outputbildet til høyre viser hva transformasjonen gjør.
@@ -1814,8 +1806,7 @@ Alle piksler med samme farge peker mot samme felt: Én påslått piksel gir blok
 
 Her kommer forbindelsen til matrisen: **Kolonne $j$ i $A$ er outputen vi får når bare inputpiksel $j$ er slått på.** Fire piksler som gir samme output, gir derfor fire identiske kolonner. Figuren viser på denne måten fire grupper av like kolonner, én gruppe for hver farge.
 
-<details class="reading-step">
-<summary>Gå i dybden: kolonnene som bilder</summary>
+::: {.reading-step title="Gå i dybden: kolonnene som bilder"}
 
 La $f_1,f_2,f_3,f_4$ være pikselbasisen i outputrommet
 $\mathbb R^4$. Forsøkene gir konkret
@@ -1840,6 +1831,7 @@ Koden nedenfor utfører alle de 16 forsøkene på én gang og tegner hver matris
 
 ```{pyodide-python}
 #| label: week3-columns-as-images
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-pool-b55b8935, ide-uke3-show-images-4baf6979
 #| autorun: true
 
 # Kolonne j er outputen A_pool lager når bare inputpiksel j er lik 1.
@@ -1854,7 +1846,7 @@ grupper. Innenfor hver gruppe er outputbildene identiske. Derfor gir flere
 kolonner i samme gruppe ingen ny måte å endre outputen på. Mellom gruppene
 flytter den eneste ikke-null outputpikselen seg til en ny plass.
 
-</details>
+:::
 
 Velg én representant fra hver gruppe, for eksempel kolonne 1, 3, 9 og 11.
 Hver av dem har verdien $1/4$ på én outputplass og 0 på de tre andre, og
@@ -1865,8 +1857,7 @@ De spenner også ut hele outputrommet. For å lage en ønsket output
 $y=[y_1,y_2,y_3,y_4]^T$ kan vi for eksempel sette inputpikslene 1, 3, 9 og
 11 lik $4y_1,4y_2,4y_3,4y_4$ og la alle andre inputpiksler være null.
 
-<details class="reading-step">
-<summary>Gå i dybden: en oppskrift for enhver output</summary>
+::: {.reading-step title="Gå i dybden: en oppskrift for enhver output"}
 
 En annen, mer bildelik oppskrift er å fylle hver blokk med den ønskede
 outputverdien. Koden nedenfor bruker denne oppskriften og kontrollerer den
@@ -1874,6 +1865,7 @@ på fire tilfeldige målbilder.
 
 ```{pyodide-python}
 #| label: week3-build-arbitrary-output
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-average-pool-d3bed1b8, ide-uke3-np-6f11581d, ide-uke3-show-image-table-9d931363
 #| autorun: true
 
 def expand_block_values(Y):
@@ -1914,7 +1906,7 @@ verdien selv. Feilen er derfor nøyaktig null, bortsett fra eventuell
 avrunding. Transformasjonen kan altså produsere alle vektorer i
 $\mathbb R^4$.
 
-</details>
+:::
 
 Fra tidligere kjenner vi samlingen av alle outputvektorer en matrise kan produsere som **kolonnerommet**. For hele bildereduksjonen skriver vi
 
@@ -1948,14 +1940,14 @@ antallet kolonner eller antallet rader: Hver pivot trenger sin egen kolonne og
 sin egen rad. For en annen $4\times16$-matrise kunne rangen vært mindre dersom
 noen målinger var avhengige av de andre.
 
-<details class="reading-step">
-<summary>Gå i dybden: NumPy teller det samme</summary>
+::: {.reading-step title="Gå i dybden: NumPy teller det samme"}
 
 Til slutt lar vi NumPy telle det samme. `matrix_rank` er bare en kontroll;
 begrunnelsen er de fire uavhengige kolonnene over.
 
 ```{pyodide-python}
 #| label: week3-rank-check
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-pool-b55b8935, ide-uke3-np-6f11581d
 
 # shape[1] teller inputkoordinater, shape[0] teller outputkoordinater.
 # Rangen kan være mindre enn begge dersom noen retninger er overflødige.
@@ -1964,10 +1956,9 @@ print("Outputverdier:",A_pool.shape[0])
 print("Numerisk rang:",np.linalg.matrix_rank(A_pool))
 ```
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: en overflødig femte måling</summary>
+::: {.reading-step title="Gå i dybden: en overflødig femte måling"}
 
 Her kan du kontrollere at flere outputtall ikke nødvendigvis betyr mer
 informasjon. Vi legger til gjennomsnittet av alle de 16 inputpikslene som en
@@ -1978,6 +1969,7 @@ raden.
 
 ```{pyodide-python}
 #| label: week3-redundant-output
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-pool-b55b8935, ide-uke3-np-6f11581d
 #| autorun: true
 
 # vstack legger til én ny måling som femte rad. Den nye raden er
@@ -2001,7 +1993,7 @@ fire andre, så rangen er fortsatt 4. Det samme skjer i prosjektet når et
 avlesningspunkt gjentas: Den nye raden er en kopi av en gammel og kan ikke øke
 rangen.
 
-</details>
+:::
 
 ### Seksten knapper, men bare fire når fram
 
@@ -2193,8 +2185,6 @@ Vil du øve på rang og nullrom med papir og blyant? Se
 
 ## 3.5 Overfør ideene til polynomer {#uke3-del5}
 
-<div id="uke3-del5"></div>
-
 Så langt har vektorene vært bilder eller tallkolonner. Nå bruker vi de kjente
 begrepene på polynomer. Dette er overgangen til ukeprosjektet.
 
@@ -2368,9 +2358,7 @@ informasjon mister målingen, og kan små endringer være nesten usynlige?
 Del 2 og finalen i prosjektet handler også om avrundingsfeil og kansellering;
 de repeteres i [uke 1](page2.qmd#uke1-kansellering).
 
-## 3.6 Egenarbeid: bildeforsøk og polynomoppgaver {#uke3-del4}
-
-<div id="uke3-del4"></div>
+## 3.6 Egenarbeid: bildeforsøk og polynomoppgaver {#uke3-del4 quiz=uke3-6-oppgaver}
 
 Denne delen er egenarbeid. Nå går vi tilbake til
 bildetransformasjonen fra 3.1–3.4, og du skal selv konstruere, teste og
@@ -2401,6 +2389,7 @@ Endre `Z`. Hver $2\times2$-blokk skal ha gjennomsnitt null, men bruk ikke sjakkm
 
 ```{pyodide-python}
 #| label: week3-activity-a
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-pool-b55b8935, ide-uke3-average-pool-d3bed1b8, ide-uke3-np-6f11581d, ide-uke3-show-images-4baf6979
 
 # Dette er startforslaget, ikke et fasitsvar. Endre minst to av tallene,
 # men pass på at hver 2 x 2-blokk fortsatt har sum null.
@@ -2423,6 +2412,7 @@ Velg tre mønsterbilder og generer åtte tilfeldige lineærkombinasjoner. Se ett
 
 ```{pyodide-python}
 #| label: week3-activity-b
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-np-6f11581d, ide-uke3-pattern-basis-86f90409, ide-uke3-show-images-4baf6979
 
 M,H,V,D=pattern_basis   # henter mønstrene fra 3.3 på nytt
 rng=np.random.default_rng(10)
@@ -2446,6 +2436,7 @@ Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygge
 
 ```{pyodide-python}
 #| label: week3-activity-c
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-e1-cc234cbc, ide-uke3-e2-a92f3144, ide-uke3-e3-84efe1df, ide-uke3-e4-f5e56079, ide-uke3-np-6f11581d, ide-uke3-rng-ab3c6f35, ide-uke3-show-images-4baf6979
 
 # Studentvalg: Endre B1, ..., B4 før resten av cellen kjøres.
 B1,B2,B3,B4=E1.copy(),E2.copy(),E3.copy(),E4.copy()
@@ -2473,6 +2464,7 @@ Lag en lineær transformasjon fra 16 inputpiksler til høyst 6 outputverdier. Hv
 
 ```{pyodide-python}
 #| label: week3-activity-d
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-np-6f11581d, ide-uke3-rng-ab3c6f35, ide-uke3-show-images-4baf6979
 
 # Fire rader betyr fire målinger. Endre også antallet rader dersom
 # transformasjonen din skal ha et annet antall outputverdier.
@@ -2497,6 +2489,7 @@ To målinger kan være matematisk forskjellige, men så like at maskinen får pr
 
 ```{pyodide-python}
 #| label: week3-nearly-same-measurements-picture
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-np-6f11581d, ide-uke3-show-images-4baf6979
 #| autorun: true
 
 def nearly_redundant_measurements(eps,dtype=float):
@@ -2520,6 +2513,7 @@ Forskjellsbildet har bare én ikke-null piksel. Gjør nå denne forskjellen mind
 
 ```{pyodide-python}
 #| label: week3-nearly-same-measurements-rank
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-nearly-redundant-measurements-ccbbea1d, ide-uke3-np-6f11581d
 
 # Gjør forskjellen 10 000 ganger mindre for hver runde og sammenlign hvor
 # lenge de to tallformatene klarer å skille radene.
@@ -2540,14 +2534,16 @@ møter du samme idé: en endring som avlesningene nesten ikke ser.
 
 ### Øv på polynomer
 
-<div id="uke3-ovinger"></div>
+::: {#uke3-ovinger}
+:::
 
 Oppgavene øver på 3.5. Arbeid på papir først og skriv svarene eksakt, for
 eksempel `1/3` og ikke `0.333`.
 
 #### Polynomer som vektorer
 
-<div id="uke3-ov-polynomer"></div>
+::: {#uke3-ov-polynomer}
+:::
 
 Bruk de samme polynomene som i 3.5, $p(x)=1+2x$ og $q(x)=3-x+x^2$, men en
 annen lineærkombinasjon.
@@ -2599,7 +2595,8 @@ $r(x)=$ __[-1+2*x+3*x^2]
 
 #### Rangtest, basis og koordinater
 
-<div id="uke3-ov-basis"></div>
+::: {#uke3-ov-basis}
+:::
 
 Polynomene $1+x$, $x+x^2$ og $1-x^2$ ligger i $\mathcal P_2$. Skriv dem som
 kolonner i en koeffisientmatrise og radreduser.
@@ -2720,7 +2717,8 @@ $A=$ mat{name=P3basis, rows=4, cols=auto, initial-cols=2, min-cols=0, max-cols=5
 
 #### Polynomunderrom
 
-<div id="uke3-ov-underrom"></div>
+::: {#uke3-ov-underrom}
+:::
 
 Vi begynner med noen polynomer og undersøker alle lineærkombinasjonene de kan
 lage. La
@@ -2781,7 +2779,8 @@ $B_U=$ mat{name=Ubasis, rows=4, cols=auto, initial-cols=2, min-cols=0, max-cols=
 
 #### Avlesningsmatriser og dimensjon
 
-<div id="uke3-ov-avlesning"></div>
+::: {#uke3-ov-avlesning}
+:::
 
 Et polynom $p(x)=a_0+a_1x+a_2x^2$ i $\mathcal P_2$ leses av i bare to punkter,
 $x=1$ og $x=2$. Avlesningen gir $E(p)=\begin{bmatrix}p(1)\\p(2)\end{bmatrix}$.
@@ -2817,8 +2816,6 @@ $\dim U=$ _[3]
 ```
 
 ## 3.7 Støtteløp: Matriseregning ved behov {#uke3-stotte-matriser}
-
-<div id="uke3-stotte-matriser"></div>
 
 Denne delen repeterer radreduksjon fra Matematikk 1: radoperasjoner,
 likningssystemer og Gauss-eliminasjon. Den er med slik at du ikke trenger å
@@ -2880,6 +2877,7 @@ Vi bruker de samme fargene gjennom hele regningen:
 
 ```{pyodide-python}
 #| label: week3-pure-matrix-setup
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-np-6f11581d
 #| autorun: true
 
 # Denne matrisen er felles eksempel i hele 3.7. Rad 3 er summen av de to
@@ -2929,6 +2927,7 @@ Koden under utfører vanlig framovereliminasjon. Den går fra venstre mot høyre
 
 ```{pyodide-python}
 #| label: week3-row-echelon-function
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-1c236284, ide-uke3-np-6f11581d
 #| autorun: true
 
 def row_echelon(A,tol=1e-12,show_steps=False):
@@ -3015,6 +3014,7 @@ Kontroller begge relasjonene før du kjører cellen.
 
 ```{pyodide-python}
 #| label: week3-column-space-basis
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-1c236284, ide-uke3-np-6f11581d, ide-uke3-pivot-columns-058422ff
 #| autorun: true
 
 # Pivotindeksene ble funnet fra trappeformen, men selve basisvektorene må
@@ -3066,6 +3066,7 @@ Dermed er de to viste vektorene en basis for nullrommet. Koden kontrollerer båd
 
 ```{pyodide-python}
 #| label: week3-null-space-basis-matrix
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-1c236284, ide-uke3-np-6f11581d
 #| autorun: true
 
 # z1 og z2 kommer fra håndregningen. Z_A samler dem som kolonner slik at
@@ -3110,6 +3111,7 @@ Rangen kommer fra de to pivotene. Nulliteten kommer **uavhengig** fra nullromsbe
 
 ```{pyodide-python}
 #| label: week3-rank-nullity-check
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-1c236284, ide-uke3-z-a-ce37b082, ide-uke3-pivot-columns-058422ff
 
 # Antall pivotkolonner gir rang; antall kolonner i nullromsbasisen gir
 # nullitet. A.shape[1] er inputdimensjonen n.
@@ -3146,6 +3148,7 @@ Vektoren $b$ oppfyller $b_3=b_1+b_2$, mens $d$ ikke gjør det. Den utvidede matr
 
 ```{pyodide-python}
 #| label: week3-reachable-outputs
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-1c236284, ide-uke3-np-6f11581d
 #| autorun: true
 
 b=np.array([2.,-1.,1.])
@@ -3184,6 +3187,7 @@ Her er en hel familie av forskjellige inputvektorer med samme output.
 
 ```{pyodide-python}
 #| label: week3-same-output-pure-matrix
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-1c236284, ide-uke3-np-6f11581d, ide-uke3-z1-a493e4a5
 #| autorun: true
 
 # Start med én input x0 og dens output y.
@@ -3210,6 +3214,7 @@ Til slutt endrer vi den avhengige tredje raden med et svært lite tall. For enhv
 
 ```{pyodide-python}
 #| label: week3-nearly-dependent-row
+#| feedback-context: ide-uke3-reference-assumptions, ide-uke3-a-1c236284, ide-uke3-np-6f11581d, ide-uke3-row-echelon-0bf91957
 #| autorun: true
 
 # direction bestemmer hvordan vi forstyrrer den avhengige tredje raden.
@@ -3228,9 +3233,7 @@ Dette er ikke en motsigelse. **Eksakt rang** gjelder en idealisert matrise med e
 
 ::::
 
-## 3.8 Støtteløp: Papir- og kontrolloppgaver {#uke3-stotte-oppgaver}
-
-<div id="uke3-stotte-oppgaver"></div>
+## 3.8 Støtteløp: Papir- og kontrolloppgaver {#uke3-stotte-oppgaver quiz=uke3-8-oppgaver}
 
 Dette er repetisjonsoppgaver, ikke en obligatorisk fortsettelse av
 hovedløpet. Bruk matrisen $B$ som selvtest. Hvis regningen går greit, kan du

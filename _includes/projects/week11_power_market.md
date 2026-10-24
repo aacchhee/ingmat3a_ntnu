@@ -56,8 +56,7 @@ verdi null. En aktiv grense kan også ha verdi null. Marginalene er lokale:
 ved større endringer må du løse modellen igjen
 ([uke 11.4](uke11.qmd#uke11-sensitivitet)).
 
-<details>
-<summary>Egen notebook: last ned oppsettet og kom i gang</summary>
+::: {.details title="Egen notebook: last ned oppsettet og kom i gang"}
 
 Last ned [project_week11_setup.py](../assets/project_week11_setup.py){download="project_week11_setup.py"}
 og legg den ved siden av notebooken. Kjør først
@@ -71,7 +70,7 @@ modell- og figurhjelpere. De to studentfunksjonene skriver du selv.
 Kopier cellene i rekkefølge og kontroller med **Restart / Run all** før
 levering. Ta med oppsettsfilen.
 
-</details>
+:::
 
 **Her begynner prosjektarbeidet.** Fra nå av bruker du lineær algebra,
 løserresultater og egne sammenligninger.
@@ -107,6 +106,7 @@ ved `D=90`. Kjør så figuren; du trenger ingen full håndtabell.
 
 ```{pyodide-python}
 #| label: project11-merit-order
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-capacity-f8fda3d6, ide-project_week11-cost-066909c5, ide-project_week11-show-merit-order-58c27887
 show_merit_order(cost, capacity, D=90)
 ```
 
@@ -120,6 +120,7 @@ gjennomsnitt for hvert forbruk.
 
 ```{pyodide-python}
 #| label: project11-one-zone
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-capacity-f8fda3d6, ide-project_week11-cost-066909c5, ide-project_week11-linprog-5e96555f, ide-project_week11-np-6f11581d, ide-project_week11-plant-names-1ea0e5dd
 def one_zone(D):
     return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],
                    bounds=list(zip(np.zeros(4), capacity)), method="highs")
@@ -161,6 +162,7 @@ unngår punkter der prisen kan ha to ulike ensidige verdier.
 
 ```{pyodide-python}
 #| label: project11-price-steps
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-np-6f11581d, ide-project_week11-one-zone-0ad21954, ide-project_week11-read-market-41224ef0, ide-project_week11-show-steps-d35b54cd
 Ds = np.arange(0.5, 150, 1.0)
 prices = np.zeros(len(Ds))
 averages = np.zeros(len(Ds))
@@ -189,6 +191,7 @@ mindre. Forutsi først hvilket av de tre forbrukene som skiller seg ut.
 
 ```{pyodide-python}
 #| label: project11-finite-difference
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-one-zone-0ad21954
 print(" D   pris   kostnad ved 1 MW mer   spart ved 1 MW mindre")
 for D in (60, 80, 90):
     r = one_zone(D)
@@ -222,6 +225,7 @@ Sammenlign også prisgrensen med kostnaden fra løseren.
 
 ```{pyodide-python}
 #| label: project11-slackness
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-capacity-f8fda3d6, ide-project_week11-one-zone-0ad21954, ide-project_week11-plant-names-1ea0e5dd
 D = 100
 res = one_zone(D)
 price = res.eqlin.marginals[0]
@@ -264,6 +268,7 @@ så verdien er `lower.marginals[4] - upper.marginals[4]`.
 
 ```{pyodide-python}
 #| label: project11-two-zones
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-two-zones-61836c29
 print("  L   kostnad   pris N   pris S   flyt   ledig mot sør   linjeverdi")
 for L in (20, 40, 55, 70, 100):
     r = two_zones(L)
@@ -282,6 +287,7 @@ hvilke kraftverk som produserer på hver side av linjen.
 
 ```{pyodide-python}
 #| label: project11-line-picture
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-show-two-zones-250070b6, ide-project_week11-two-zones-61836c29
 L = 40
 show_two_zones(two_zones(L), L)
 ```
@@ -302,6 +308,7 @@ skal sammenlignes med nye løsninger, ikke en håndutledning.
 
 ```{pyodide-python}
 #| label: project11-line-change
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-two-zones-61836c29
 for L, extra in ((40, 1), (40, 40), (70, 1)):
     base = two_zones(L)
     value = base.lower.marginals[4] - base.upper.marginals[4]
@@ -343,6 +350,7 @@ før du løser modellen dersom kontrollen ikke stemmer.
 
 ```{pyodide-python}
 #| label: project11-water-row
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-np-6f11581d
 def make_water_row():
     row = np.zeros((1, 12))
     # TODO: sett 1 på plassene til vannkraft; behold 0 ellers.
@@ -359,6 +367,7 @@ prisene og **vannverdien**, altså spart kostnad per MWh ekstra vann.
 
 ```{pyodide-python}
 #| label: project11-hydro
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-a-eq3-783ef676, ide-project_week11-bounds3-783ef676, ide-project_week11-c3-783ef676, ide-project_week11-demand3-1ff1608f, ide-project_week11-linprog-5e96555f, ide-project_week11-make-water-row-47594272, ide-project_week11-water-dfa5ec02
 A_water = make_water_row()
 res3 = linprog(c3, A_ub=A_water, b_ub=[water], A_eq=A_eq3, b_eq=demand3,
                bounds=bounds3, method="highs")
@@ -384,6 +393,7 @@ liten økning fra 120 MWh. Forutsi først om mer vann alltid har samme verdi.
 
 ```{pyodide-python}
 #| label: project11-water-steps
+#| feedback-context: ide-project_week11-reference-assumptions, ide-project_week11-a-eq3-783ef676, ide-project_week11-bounds3-783ef676, ide-project_week11-c3-783ef676, ide-project_week11-demand3-1ff1608f, ide-project_week11-linprog-5e96555f, ide-project_week11-make-water-row-47594272, ide-project_week11-np-6f11581d, ide-project_week11-show-steps-d35b54cd
 A_water = make_water_row()
 Ws = np.arange(50.5, 160, 1.0)
 values = []
@@ -431,7 +441,8 @@ små endringer. En ny løsning og dens slakk viser når du trenger et nytt
 anslag. Skill mellom det prisregelen sier under sine forutsetninger og det
 dine konkrete forsøk viser.
 
-<div id="project11-battery"></div>
+::: {#project11-battery}
+:::
 
 ## Spørsmål du skal kunne svare på
 

@@ -5,3 +5,5 @@ title: "Uke 10 – Newtons metode"
 {{< include ../_includes/optimization/week10_setup.md >}}
 
 {{< include ../_includes/optimization/uke10.md >}}
+
+{{< include ../_includes/ai-context/uke10.md >}}

@@ -5,3 +5,5 @@ title: "Uke 12 – optimering med likhetsbetingelser og Lagranges metode"
 {{< include ../_includes/optimization/week12_setup.md >}}
 
 {{< include ../_includes/optimization/uke12.md >}}
+
+{{< include ../_includes/ai-context/uke12.md >}}

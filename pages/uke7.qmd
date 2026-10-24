@@ -9,3 +9,5 @@ resources:
 {{< include ../_includes/linalg/week7_lecture_setup.md >}}
 
 {{< include ../_includes/linalg/uke7.md >}}
+
+{{< include ../_includes/ai-context/uke7.md >}}

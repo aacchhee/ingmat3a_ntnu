@@ -1,14 +1,9 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ::: {.panel-tabset}
 
 ## 10.0 Oversikt
 
-<div id="uke10-start"></div>
+::: {#uke10-start}
+:::
 
 ### Fra helning til krumning
 
@@ -65,7 +60,8 @@ Etter denne uken skal du kunne
 
 ## 10.1 Newton er regelen fra uke 2
 
-<div id="uke10-newton"></div>
+::: {#uke10-newton}
+:::
 
 ### Kan krumningen gjøre søket raskere?
 
@@ -95,7 +91,8 @@ Hvor rask metoden er, ser vi i 10.2.
 
 ### Uke 2 var Newton
 
-<div id="uke10-likning"></div>
+::: {#uke10-likning}
+:::
 
 I uke 2 løste vi likningen
 
@@ -217,6 +214,7 @@ Newton hopper til.
 
 ```{pyodide-python}
 #| label: week10-model-1d
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-show-model-f6e8471b
 # f fra uke 2, parabelen i x0 = 0.5 og bunnen av parabelen (Newton-punktet x1).
 show_model(lambda x: x**4/4 + x**2/2 - x, lambda x: x**3 + x - 1,
            lambda x: 3*x**2 + 1, x0=.5, xlim=(-.5, 1.5))
@@ -334,6 +332,7 @@ kodeoppgavene i 10.6.
 
 ```{pyodide-python}
 #| label: week10-hand-step
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-himmel-d0d2da78, ide-uke10-himmel-grad-75df97b1, ide-uke10-himmel-hess-c5868e2e, ide-uke10-np-6f11581d
 z0 = np.array([2.5, 2.5])
 g, H = himmel_grad(z0), himmel_hess(z0)
 p = np.linalg.solve(H, -g)
@@ -348,7 +347,8 @@ print(f'avstand til (3,2): {np.linalg.norm(z1 - [3, 2]):.3f},  g·p = {g @ p:.2f
 
 ## 10.2 Sifrene dobles
 
-<div id="uke10-kvadratisk"></div>
+::: {#uke10-kvadratisk}
+:::
 
 ### Hvor rask er Newton?
 
@@ -377,6 +377,7 @@ det også bruker krumningen, og å få en feiltabell vi kan tolke.
 
 ```{pyodide-python}
 #| label: week10-newton-vs-gradient
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-himmel-grad-75df97b1, ide-uke10-himmel-hess-c5868e2e, ide-uke10-np-6f11581d, ide-uke10-plot-errors-7affd196
 # Fem steg med Newton (oppskriften fra 10.1) og med gradientmetoden fra uke 9.
 # Utskriften viser avstanden til minimumet (3, 2) etter hvert steg.
 z_min = np.array([3., 2.])
@@ -425,6 +426,7 @@ Cellen regner ut begge størrelsene for hvert steg.
 
 ```{pyodide-python}
 #| label: week10-quadratic-ratio
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-himmel-grad-75df97b1, ide-uke10-himmel-hess-c5868e2e, ide-uke10-np-6f11581d
 z_min = np.array([3., 2.]); z = np.array([2.5, 2.5]); e = []
 for k in range(5):
     e.append(np.linalg.norm(z - z_min))
@@ -489,8 +491,7 @@ Dette er **kvadratisk konvergens** fra
 Legg merke til at setningen sier **stasjonært punkt**, ikke minimum. Det
 kommer vi tilbake til i 10.3.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvor kommer $e_{k+1}\le Ce_k^2$ fra?</summary>
+::: {.reading-step title="Gå i dybden: hvor kommer $e_{k+1}\\le Ce_k^2$ fra?"}
 
 Vi ser på én variabel. La $x_*$ være et stasjonært punkt, $f'(x_*)=0$, med
 $f''(x_*)\ne0$, og la $e_k=x_k-x_*$ (med fortegn).
@@ -544,12 +545,12 @@ Forholdene $0.961$, $0.834$ og $0.854$ nærmer seg $C\approx0.854$.
 - **Minimering:** for $G=\nabla f$ er $J_G=H$. Newton for minimering er
   derfor Newton for likningssystemet $\nabla f=0$.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: Newton bryr seg ikke om enhetene</summary>
+::: {.reading-step title="Gå i dybden: Newton bryr seg ikke om enhetene"}
 
-<div id="uke10-skala"></div>
+::: {#uke10-skala}
+:::
 
 En grunn til at Newton er så rask, er at metoden selv velger riktig skala.
 Anta at vi måler den første koordinaten i desimeter i stedet for meter,
@@ -632,6 +633,7 @@ retningene som peker mot samme punkt etter enhetsbyttet.
 
 ```{pyodide-python}
 #| label: week10-invariance
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-himmel-grad-75df97b1, ide-uke10-himmel-hess-c5868e2e, ide-uke10-np-6f11581d, ide-uke10-show-units-6e9d7047
 D = np.diag([10., 1.]); Dinv = np.linalg.inv(D)
 z = np.array([2.5, 2.5])
 g, H = himmel_grad(z), himmel_hess(z)
@@ -653,13 +655,14 @@ hvilke enheter vi velger. Gradientmetoden er det ikke.
 
 **Øv på dette:** [samme steg i nye enheter](#uke10-ov-enheter).
 
-</details>
+:::
 
 **Øv på dette:** [feilen kvadreres](#uke10-ov-sifre).
 
 ## 10.3 Newton kan gå til feil punkt
 
-<div id="uke10-stasjonaer"></div>
+::: {#uke10-stasjonaer}
+:::
 
 ### Finner Newton alltid et minimum?
 
@@ -691,6 +694,7 @@ sadelpunkt eller et maksimum.
 
 ```{pyodide-python}
 #| label: week10-basins-pure
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-newton-basins-26bcd7a4, ide-uke10-np-6f11581d, ide-uke10-show-basins-dece837f
 # Rene Newton-steg fra 81 x 81 starter; fargen viser typen sluttpunkt.
 X0, Y0, kind = newton_basins(safe=False)
 for k, name in [(0, 'minimum'), (1, 'sadelpunkt'), (2, 'maksimum'), (-1, 'ikke konvergert')]:
@@ -786,6 +790,7 @@ Newton-retningen, $g^Tp$ og verdien av $f$ før og etter et helt steg.
 
 ```{pyodide-python}
 #| label: week10-ascent
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-np-6f11581d, ide-uke10-well-149ac5c5, ide-uke10-well-grad-0afe68bb, ide-uke10-well-hess-0bb9d786
 z = np.array([.2, 0.])
 g, H = well_grad(z), well_hess(z)
 p = np.linalg.solve(H, -g)
@@ -800,6 +805,7 @@ samme måte som bildet i 10.1.
 
 ```{pyodide-python}
 #| label: week10-model-saddle
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-show-model-f6e8471b
 # Dobbeltbrønnen langs v = 0 og parabelen i u = 0.2; trekanten er Newton-punktet.
 show_model(lambda u: (u*u - 1)**2, lambda u: 4*u*(u*u - 1),
            lambda u: 12*u*u - 4, x0=.2, xlim=(-1.5, 2.), name='u')
@@ -816,7 +822,8 @@ show_model(lambda u: (u*u - 1)**2, lambda u: 4*u*(u*u - 1),
 
 ## 10.4 Reparasjonen: Cholesky-forsøket og Armijo
 
-<div id="uke10-demping"></div>
+::: {#uke10-demping}
+:::
 
 To ting kan gå galt i et Newton-steg. Vi retter dem i denne rekkefølgen:
 
@@ -826,7 +833,8 @@ To ting kan gå galt i et Newton-steg. Vi retter dem i denne rekkefølgen:
 
 ### Cholesky: en SPD-test ved faktorisering
 
-<div id="uke10-cholesky"></div>
+::: {#uke10-cholesky}
+:::
 
 I uke 8 avgjorde vi definitthet med egenverdiene. For store matriser er
 egenverdier dyre å regne ut. **Cholesky-faktoriseringen**, som ble lovet i
@@ -900,6 +908,7 @@ pivotene, som er kvadratene av diagonalelementene i $L$:
 
 ```{pyodide-python}
 #| label: week10-cholesky-test
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-himmel-hess-c5868e2e, ide-uke10-np-6f11581d, ide-uke10-well-hess-0bb9d786
 for name, H in [('H_A', [[4., 2.], [2., 3.]]),
                 ('H_B', himmel_hess(np.array([2.5, 2.5]))),
                 ('H_C', well_hess(np.array([.2, 0.])))]:
@@ -916,8 +925,7 @@ hovedløpet trenger vi bare testen.
 
 **Øv på dette:** [finn Cholesky-faktoren](#uke10-ov-cholesky-faktor).
 
-<details class="reading-step">
-<summary>Gå i dybden: løs Newton-systemet med Cholesky, og koordinatene der $H=I$</summary>
+::: {.reading-step title="Gå i dybden: løs Newton-systemet med Cholesky, og koordinatene der $H=I$"}
 
 Når $H=LL^T$, deler vi $Hp=-g$ i to. Kall $y=L^Tp$ (en hjelpevektor, ikke et
 nytt punkt). Da er $Hp=L(L^Tp)=Ly$, og systemet blir
@@ -954,6 +962,7 @@ to triangulære systemene. Til slutt kontrollerer den at $Hp=-g$.
 
 ```{pyodide-python}
 #| label: week10-cholesky-solve
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-np-6f11581d
 H = np.array([[4., 2.], [2., 3.]])
 g = np.array([-6., -5.])
 L = np.linalg.cholesky(H)
@@ -1000,10 +1009,9 @@ Følg gradientsteget fra de nye koordinatene tilbake:
 
 **Øv på dette:** [to triangulære systemer](#uke10-ov-triangulaer).
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: hva koster et Newton-steg? Newton utenpå, CG inni</summary>
+::: {.reading-step title="Gå i dybden: hva koster et Newton-steg? Newton utenpå, CG inni"}
 
 | Arbeid | Omtrent antall regneoperasjoner | For $n=1000$ |
 |:--|:--|:--|
@@ -1048,7 +1056,7 @@ Cholesky og CG er altså to måter å løse det samme indre SPD-systemet på.
 - **Krav:** vanlig CG krever SPD; at $H$ er invertibel er ikke nok.
 - **Tidlig stopp:** stopper vi CG tidlig, får vi en tilnærmet Newton-retning.
 
-</details>
+:::
 
 ### Rett retningen: Cholesky-forsøket med $\mu I$
 
@@ -1114,6 +1122,7 @@ $(H+\mu I)p=-g$ med faktoren $L$ og kontrollerer fortegnet til $g^Tp$.
 
 ```{pyodide-python}
 #| label: week10-cholesky-shift
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-np-6f11581d, ide-uke10-well-grad-0afe68bb, ide-uke10-well-hess-0bb9d786
 z = np.array([.2, 0.])
 g, H = well_grad(z), well_hess(z)
 mu = 0.
@@ -1138,6 +1147,7 @@ et helt steg havner.
 
 ```{pyodide-python}
 #| label: week10-model-shift
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-show-model-f6e8471b
 # Samme kurve som i 10.3, nå med parabelen for H + 4I i u = 0.2.
 show_model(lambda u: (u*u - 1)**2, lambda u: 4*u*(u*u - 1),
            lambda u: 12*u*u - 4, x0=.2, mu=4., xlim=(-1.5, 2.), name='u')
@@ -1180,6 +1190,7 @@ halveringen selv. Begge veier skal gi $\alpha=1/2$.
 
 ```{pyodide-python}
 #| label: week10-regularized-step
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-armijo-991d89e2, ide-uke10-np-6f11581d, ide-uke10-well-149ac5c5, ide-uke10-well-grad-0afe68bb
 z = np.array([.2, 0.])
 g = well_grad(z)
 p = np.array([1.6, 0.])          # retningen fra Cholesky-forsøket
@@ -1200,8 +1211,7 @@ print('Armijo godtar alpha =', a, 'etter', halvings, 'halvering')
 
 **Øv på dette:** [Armijo i dobbeltbrønnen](#uke10-ov-armijo).
 
-<details class="reading-step">
-<summary>Gå i dybden: et helt steg kan svikte også når $H$ er SPD</summary>
+::: {.reading-step title="Gå i dybden: et helt steg kan svikte også når $H$ er SPD"}
 
 Ta den **bøyde dalen**
 
@@ -1236,6 +1246,7 @@ modellen langs den første Newton-retningen.
 
 ```{pyodide-python}
 #| label: week10-backtrack-positive-hess
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-armijo-991d89e2, ide-uke10-np-6f11581d, ide-uke10-show-valley-91b556a5, ide-uke10-valley-58d616b4, ide-uke10-valley-grad-08bc0a48, ide-uke10-valley-hess-53f962d5
 z = np.array([0., 0.])
 g, H = valley_grad(z), valley_hess(z)
 p = np.linalg.solve(H, -g)
@@ -1251,7 +1262,7 @@ nedgang for *tilstrekkelig små* steg, ikke for hvert helt steg.
 
 **Øv på dette:** [modell og virkelig verdi i den bøyde dalen](#uke10-ov-dalen).
 
-</details>
+:::
 
 ### Hjelper reparasjonen i hele bildet?
 
@@ -1283,6 +1294,7 @@ minimum, og i hvilket.
 
 ```{pyodide-python}
 #| label: week10-basins-safe
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-newton-basins-26bcd7a4, ide-uke10-np-6f11581d, ide-uke10-show-minima-bc8da9dd
 # Samme 81 x 81 starter som i eksperiment 2, nå med Cholesky-forsøk og Armijo.
 X0, Y0, kind_safe, which = newton_basins(safe=True, which=True)
 for k, name in [(0, 'minimum'), (1, 'sadelpunkt'), (2, 'maksimum'), (-1, 'ikke konvergert')]:
@@ -1312,10 +1324,10 @@ Hvilket av de fire minimumene vi ender i, avhenger fortsatt av starten:
   Her har alle fire minimumene $f=0$; i andre problemer kan et lokalt
   minimum være mye dårligere enn det globale.
 
-<details class="reading-step">
-<summary>Gå i dybden: sammenlign med SciPy</summary>
+::: {.reading-step title="Gå i dybden: sammenlign med SciPy"}
 
-<div id="uke10-scipy"></div>
+::: {#uke10-scipy}
+:::
 
 SciPys `minimize` fra [uke 8](uke8.qmd#uke8-scipy) kan gjøre hele søket for
 den bøyde dalen.
@@ -1333,6 +1345,7 @@ iterasjoner, sluttpunktet, $q$ og gradientnormen.
 
 ```{pyodide-python}
 #| label: week10-scipy-compare
+#| feedback-context: ide-uke10-reference-assumptions, ide-uke10-minimize-862d1fc3, ide-uke10-np-6f11581d, ide-uke10-valley-58d616b4, ide-uke10-valley-grad-08bc0a48, ide-uke10-valley-hess-53f962d5
 for name, kwargs in [('BFGS', {}), ('Newton-CG', {'hess': valley_hess})]:
     res = minimize(valley, np.array([0., 0.]), jac=valley_grad,
                    method=name, options={'maxiter': 100}, **kwargs)
@@ -1350,16 +1363,17 @@ for name, kwargs in [('BFGS', {}), ('Newton-CG', {'hess': valley_hess})]:
 
 Kallene er forklart i SciPy-oppslaget i 10.6.
 
-</details>
+:::
 
 I [prosjekt 10](project_week10.qmd) bruker du Newton-idéen på et
 tilpasningsproblem: å finne en posisjon fra unøyaktige avstander. I
 [uke 11](uke11.qmd) får vi lineære krav (ulikheter) og ofte et beste punkt på
 randen. Da er gradient null ikke lenger den riktige kontrollen.
 
-## 10.5 Regneoppgaver
+## 10.5 Regneoppgaver {quiz=uke10-5-oppgaver}
 
-<div id="uke10-oppgaver"></div>
+::: {#uke10-oppgaver}
+:::
 
 Oppgavene er ordnet etter de fire stegene i hovedløpet, og til slutt
 kommer tre oppgaver til «Gå i dybden». Kodeoppgavene står i 10.6.
@@ -1372,7 +1386,8 @@ kommer tre oppgaver til «Gå i dybden». Kodeoppgavene står i 10.6.
 
 ### Steg 1: Newton er regelen fra uke 2
 
-<div id="uke10-ov-uke2"></div>
+::: {#uke10-ov-uke2}
+:::
 
 #### Newton-regelen fra uke 2
 
@@ -1404,7 +1419,8 @@ Feilene $|x_k-1|$ for minimeringen er $1,\ 0.42,\ 0.11,\ 1.1\cdot10^{-2},\
 1.1\cdot10^{-4},\ 1.2\cdot10^{-8}$ for $k=0,\ldots,5$. Hvor mange riktige
 desimaler har du etter hvert steg?
 
-<div id="uke10-ov-handsteg"></div>
+::: {#uke10-ov-handsteg}
+:::
 
 #### Ett Newton-steg for hånd
 
@@ -1435,7 +1451,8 @@ $f(z_1)=$ _[0]
 Sammenlign med $f(z_0)$. Er $z_1$ minimumet? Kontroller ved å regne ut
 gradienten i $z_1$.
 
-<div id="uke10-ov-kvadratisk"></div>
+::: {#uke10-ov-kvadratisk}
+:::
 
 #### Ett steg treffer for en kvadratisk funksjon
 
@@ -1461,7 +1478,8 @@ steg er nok for en kvadratisk funksjon, uansett startpunkt.
 
 ### Steg 2: sifrene dobles
 
-<div id="uke10-ov-sifre"></div>
+::: {#uke10-ov-sifre}
+:::
 
 #### Feilen kvadreres
 
@@ -1493,7 +1511,8 @@ hvert steg? Hvorfor trenger halveringen så mange flere steg?
 
 ### Steg 3: Newton kan gå til feil punkt
 
-<div id="uke10-ov-sadel"></div>
+::: {#uke10-ov-sadel}
+:::
 
 #### Et sadelpunkt i en annen funksjon
 
@@ -1516,13 +1535,18 @@ $\lambda_{\min}=$ _[-4], $\lambda_{\max}=$ _[8]
 Hvorfor er punktet ikke et minimum? I hvilken retning går $f$ nedover? Hvor
 går et rent Newton-steg fra dette punktet?
 
-<div id="uke10-ov-retning"></div>
+::: {#uke10-ov-retning}
+:::
 
 #### Negativ krumning i et annet punkt
+
+::: {#week10-double-well-givens .math-exercise-context}
 
 Bruk dobbeltbrønnen $f(u,v)=(u^2-1)^2+\tfrac12v^2$ i punktet $z=(1/2,\,0)$.
 Regn ut $g$ og $H$ med formlene i håndeksemplet i 10.3, løs $Hp=-g$, og regn ut
 både $p^THp$ og $g^Tp$. Svar eksakt.
+
+:::
 
 ```{math-exercise}
 #| label: week10-task-direction
@@ -1547,14 +1571,19 @@ $g^Tp=$ _[9/4]
 
 ### Steg 4: Cholesky-forsøket og Armijo
 
-<div id="uke10-ov-cholesky-faktor"></div>
+::: {#uke10-ov-cholesky-faktor}
+:::
 
 #### Finn Cholesky-faktoren
+
+::: {#week10-cholesky-givens .math-exercise-context}
 
 Matrisen $H=\begin{bmatrix}9&3\\3&5\end{bmatrix}$ er SPD. Skriv $H=LL^T$ med
 $L=\begin{bmatrix}a&0\\b&c\end{bmatrix}$ og $a,c>0$, og finn $a$, $b$ og $c$
 ved å sammenligne $LL^T$ med $H$ ett element om gangen, som i 10.4. Svar
 eksakt.
+
+:::
 
 ```{math-exercise}
 #| label: week10-task-cholesky-factor
@@ -1572,7 +1601,8 @@ $c=$ _[2]
 
 Hva er de to pivotene? Kontroller at $c^2=\det H/h_{11}$.
 
-<div id="uke10-ov-cholesky-test"></div>
+::: {#uke10-ov-cholesky-test}
+:::
 
 #### Når Cholesky stopper
 
@@ -1605,9 +1635,12 @@ $\mu=$ _[1]
 
 Hva forteller fortegnet til $c^2$ om egenverdiene til $H$?
 
-<div id="uke10-ov-forskyvning"></div>
+::: {#uke10-ov-forskyvning}
+:::
 
 #### Cholesky-forsøket i et annet punkt
+
+::: {#week10-regularization-rule .math-exercise-context}
 
 Bruk dobbeltbrønnen i punktet $z=(1/2,\,0)$ igjen, med $g$ og $H$ fra oppgaven
 «Negativ krumning i et annet punkt». Svar eksakt.
@@ -1617,8 +1650,11 @@ Bruk dobbeltbrønnen i punktet $z=(1/2,\,0)$ igjen, med $g$ og $H$ fra oppgaven
 2. Løs $(H+\mu I)p=-g$ med den første $\mu$ som virker.
 3. Regn ut $g^Tp$.
 
+:::
+
 ```{math-exercise}
 #| label: week10-task-regularize
+#| context: week10-double-well-givens
 #| caption: Første godkjente forskyvning og den nye retningen
 #| mode: equivalent
 #| partial-credit: true
@@ -1633,7 +1669,8 @@ $g^Tp=$ _[-9/4]
 
 Forklar hvorfor et lite positivt steg langs $p$ nå gir nedgang.
 
-<div id="uke10-ov-armijo"></div>
+::: {#uke10-ov-armijo}
+:::
 
 #### Armijo i dobbeltbrønnen
 
@@ -1647,6 +1684,7 @@ $g^Tp$ som du fant med Cholesky-forsøket. Svar eksakt.
 
 ```{math-exercise}
 #| label: week10-task-armijo-well
+#| context: week10-double-well-givens, week10-regularization-rule
 #| caption: Helt og halvt steg langs den rettede retningen
 #| mode: equivalent
 #| partial-credit: true
@@ -1667,7 +1705,8 @@ Hvorfor ble $\alpha=1$ avvist, selv om retningen peker nedover?
 
 ### Til «Gå i dybden»
 
-<div id="uke10-ov-enheter"></div>
+::: {#uke10-ov-enheter}
+:::
 
 #### Samme steg i nye enheter
 
@@ -1702,7 +1741,8 @@ Regn retningen $-\tilde g$ om til $(u,v)$-koordinater. Er den parallell med
 $p$ eller med $-g$? Hva sier det om hvilke koordinater som er
 «riktige» for gradientmetoden her?
 
-<div id="uke10-ov-triangulaer"></div>
+::: {#uke10-ov-triangulaer}
+:::
 
 #### To triangulære systemer
 
@@ -1715,6 +1755,7 @@ fra oppgaven «Finn Cholesky-faktoren» og høyresiden $-g=(9,7)^T$. Svar eksakt
 
 ```{math-exercise}
 #| label: week10-task-cholesky-solves
+#| context: week10-cholesky-givens
 #| caption: Hjelpevektor og Newton-retning
 #| mode: equivalent
 #| partial-credit: true
@@ -1731,7 +1772,8 @@ $p_2=$ _[1]
 
 Kontroller svaret ved å regne ut $Hp$.
 
-<div id="uke10-ov-dalen"></div>
+::: {#uke10-ov-dalen}
+:::
 
 #### Modell og virkelig verdi i den bøyde dalen
 
@@ -1766,15 +1808,15 @@ Sammenlign med tallene for den brattere dalen i «Gå i dybden».
 
 Arbeid videre med [prosjekt 10: posisjon fra avstander](project_week10.qmd).
 
-## 10.6 Python: prøv stegene selv
+## 10.6 Python: prøv stegene selv {quiz=uke10-6-oppgaver}
 
-<div id="uke10-python"></div>
+::: {#uke10-python}
+:::
 
 Sammenligningen med SciPy i «Gå i dybden» i 10.4 bruker `minimize`.
 Oppslagsboksen samler det du trenger å vite om kallet og resultatet.
 
-<details>
-<summary>SciPy-oppslag: kall og resultat</summary>
+::: {.details title="SciPy-oppslag: kall og resultat"}
 
 | Uttrykk | Betydning her |
 |:--|:--|
@@ -1786,7 +1828,7 @@ Oppslagsboksen samler det du trenger å vite om kallet og resultatet.
 
 `jac` er SciPys navn på gradientargumentet.
 
-</details>
+:::
 
 Fullfør fire korte funksjoner til stegene i hovedløpet.
 

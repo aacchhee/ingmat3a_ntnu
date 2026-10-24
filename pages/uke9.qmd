@@ -5,3 +5,5 @@ title: "Uke 9 – gradientmetoden og søk uten deriverte"
 {{< include ../_includes/optimization/week9_setup.md >}}
 
 {{< include ../_includes/optimization/uke9.md >}}
+
+{{< include ../_includes/ai-context/uke9.md >}}

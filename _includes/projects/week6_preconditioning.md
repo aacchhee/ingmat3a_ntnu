@@ -70,8 +70,7 @@ Oppsettet på denne siden lastes automatisk og inneholder alle
 hjelpefunksjonene. Start med del 1 og kjør cellene i rekkefølge.
 Den ferdige CG-koden ligger i oppsettet; PCG-malen åpner du i del 4.
 
-<details>
-<summary>Egen notebook: last ned oppsettet og kom i gang</summary>
+::: {.details title="Egen notebook: last ned oppsettet og kom i gang"}
 
 Last ned [project_week6_setup.py](../assets/project_week6_setup.py){download="project_week6_setup.py"}
 og legg filen ved siden av notebooken. Kjør først
@@ -88,7 +87,7 @@ du har fullført malen, skal hele notebooken kunne kjøres med
 **Restart / Run all**. Ta med oppsettsfilen ved levering.
 Importlinjen brukes bare i egen notebook.
 
-</details>
+:::
 
 ## 1. Begynn med en skål vi kan regne på
 
@@ -119,6 +118,7 @@ Når du har et forslag, kan du kontrollere det og se på figuren:
 
 ```{pyodide-python}
 #| label: project-week6-contours
+#| feedback-context: ide-project_week6-reference-assumptions, ide-project_week6-np-6f11581d, ide-project_week6-show-coordinate-change-02d23263
 A2 = np.array([[1.,2.],[2.,100.]])
 s2 = np.array([1.,1.]); b2 = A2 @ s2
 w = 1/np.sqrt(np.diag(A2))
@@ -134,8 +134,7 @@ $x$-koordinater, nederste bruker $y$-koordinater; aksene har derfor
 forskjellige betydninger. **Oversett stjernen i nederste bilde tilbake
 til $x$. Får du samme løsning?**
 
-<details>
-<summary>Regnehjelp: samme minimum i to koordinatsystemer</summary>
+::: {.details title="Regnehjelp: samme minimum i to koordinatsystemer"}
 
 Etter innsetting er funksjonen
 
@@ -156,7 +155,7 @@ er $1.5$. Kryssleddet er fortsatt med: kurvene er blitt rundere,
 men er ikke helt sirkulære. Koordinatskiftet har heller ikke endret
 hvilket fysisk eller matematisk svar vi søker i de opprinnelige variablene.
 
-</details>
+:::
 
 **Ta med videre:** Skriv de to systemene og pilene mellom $x$ og $y$
 ved siden av hverandre. Dette er modellen for resten av prosjektet.
@@ -192,8 +191,7 @@ Navnet betyr ikke at vi utfører Jacobi-iterasjoner.
    Finn sammenhengen mellom residualene. Betyr like små residualnormer
    i de to koordinatsystemene det samme?
 
-<details>
-<summary>Gå i dybden: symmetri, positiv definitet og residual</summary>
+::: {.details title="Gå i dybden: symmetri, positiv definitet og residual"}
 
 Det nye diagonalelementet er $a_{ii}/(\sqrt{m_i}\sqrt{m_i})=1$.
 Symmetrien følger av at $M^{-1/2}$ er diagonal og $A^T=A$:
@@ -216,7 +214,7 @@ De to normene måler ulik skalering av samme avvik. Et stoppkrav på
 $\lVert\widetilde r\rVert_2$ er derfor ikke automatisk det samme som
 et stoppkrav på $\lVert r\rVert_2$.
 
-</details>
+:::
 
 **Ta med videre:** Vi kan bruke CG på det nye systemet og regne svaret
 tilbake. Når vi sammenligner metoder senere, skal begge kontrolleres
@@ -246,6 +244,7 @@ faktisk nådde stoppkravet.
 
 ```{pyodide-python}
 #| label: project-week6-baseline
+#| feedback-context: ide-project_week6-reference-assumptions, ide-project_week6-cg-7910cbff, ide-project_week6-make-week6-problems-97c5f5c4, ide-project_week6-np-6f11581d
 x_star, problems = make_week6_problems(n=60)
 baseline = {}
 for name, A in problems.items():
@@ -278,6 +277,7 @@ Skriv en forventning om kondisjonstall og arbeidsmengde før neste kjøring.
 
 ```{pyodide-python}
 #| label: project-week6-transform
+#| feedback-context: ide-project_week6-reference-assumptions, ide-project_week6-cg-7910cbff, ide-project_week6-np-6f11581d, ide-project_week6-problems-bcb283d6, ide-project_week6-x-star-bcb283d6
 transformed = {}
 for name, A in problems.items():
     b = A @ x_star
@@ -301,6 +301,7 @@ Se deretter på **spekteret**, altså samlingen av egenverdier:
 
 ```{pyodide-python}
 #| label: project-week6-spectrum
+#| feedback-context: ide-project_week6-reference-assumptions, ide-project_week6-problems-bcb283d6, ide-project_week6-show-spectra-9d5da394, ide-project_week6-transformed-2e6e0054
 show_spectra(problems, transformed)
 ```
 
@@ -310,8 +311,7 @@ og skriver ut kondisjonstallene. **Se etter forholdet mellom
 største og minste verdi, ikke bare om punktene flytter seg nedover.**
 Sammenlign med forventningen din.
 
-<details>
-<summary>Gå i dybden: hvorfor er matrisene SPD, og hva forklarer forskjellen?</summary>
+::: {.details title="Gå i dybden: hvorfor er matrisene SPD, og hva forklarer forskjellen?"}
 
 For det første systemet er $M=2D^2$ og
 $M^{-1/2}=D^{-1}/\sqrt2$, fordi diagonalen i $D$ er positiv. Dermed
@@ -337,7 +337,7 @@ $$z^TAz=\sum_{i=0}^n(z_{i+1}-z_i)^2>0\qquad(z\ne0).$$
 Summen kan bare være null når alle naboforskjellene er null; med
 randverdiene null betyr det at hele vektoren er null.
 
-</details>
+:::
 
 **Ta med videre:** En god forklaring må skille mellom å fjerne ujevn
 koordinatskala og å endre koblingen mellom koordinater. At diagonalen
@@ -370,8 +370,7 @@ $\widetilde r=M^{-1/2}r$.
 Disse tre regningene forklarer de viktigste endringene fra CG til PCG.
 Vi kaller den nye telleren $\gamma=r^Tz$.
 
-<details>
-<summary>Regnehjelp: omregn residual og søkeretning</summary>
+::: {.details title="Regnehjelp: omregn residual og søkeretning"}
 
 Siden $M^{-1/2}$ er symmetrisk, får vi
 
@@ -394,7 +393,7 @@ med $\beta_k=\gamma_{k+1}/\gamma_k$.
 Vi bruker en fast SPD-prekondisjonering gjennom hele kjøringen;
 det er forutsetningen for denne PCG-oppskriften.
 
-</details>
+:::
 
 ### Oppskriften du skal kode
 
@@ -420,8 +419,7 @@ Gjenta:
     gamma = gamma_ny
 ```
 
-<details>
-<summary>Kodeverksted: åpne PCG-malen og fyll tre uttrykk</summary>
+::: {.details title="Kodeverksted: åpne PCG-malen og fyll tre uttrykk"}
 
 Fyll bare de tre markerte TODO-delene. Resten av malen tar hånd om
 startvektor, inputkontroll, stoppkrav og telling av arbeid.
@@ -430,6 +428,7 @@ ennå ingen av forsøkene.
 
 ```{pyodide-python}
 #| label: project-week6-pcg-template
+#| feedback-context: ide-project_week6-reference-assumptions, ide-project_week6-np-6f11581d
 # Fullfør bare de tre TODO-delene ved hjelp av pseudokoden.
 # m lagrer diagonalen til M; z er løsningen av hjelpesystemet Mz=r.
 # Vi arbeider fortsatt med A og stopper på den opprinnelige residualen b-Ax.
@@ -497,7 +496,7 @@ SPD av konstruksjon, og testen på $p^TAp$ oppdager bare enkelte
 brudd på forutsetningen. Direkte kontroll av $b-Ax$ brukes fordi den
 kort oppdaterte residualen kan samle avrundingsfeil.
 
-</details>
+:::
 
 ### Fire små kontroller før hovedforsøket
 
@@ -515,6 +514,7 @@ matematiske uttrykket den skal representere.
 
 ```{pyodide-python}
 #| label: project-week6-checks
+#| feedback-context: ide-project_week6-reference-assumptions, ide-project_week6-check-pcg-ef277aee, ide-project_week6-pcg-7ff74ab5
 check_pcg(pcg)
 ```
 
@@ -533,6 +533,7 @@ du størst gevinst, og hvilken utregning fra del 3 støtter svaret?
 
 ```{pyodide-python}
 #| label: project-week6-comparison
+#| feedback-context: ide-project_week6-reference-assumptions, ide-project_week6-cg-7910cbff, ide-project_week6-compare-runs-40ba6d69, ide-project_week6-np-6f11581d, ide-project_week6-pcg-7ff74ab5, ide-project_week6-problems-bcb283d6, ide-project_week6-x-star-bcb283d6
 for name, A in problems.items():
     b = A @ x_star
     results = {'CG':cg(A,b), 'PCG':pcg(A,b,np.diag(A))}
@@ -571,8 +572,7 @@ verdier i $D$ fra $1$ til `span`, $2$ på diagonalen i $B$ og
 er diagonalen i $A$ alltid $2d_i^2$, uansett `coupling`.
 Kravene er `n >= 2`, `span >= 1` og `0 <= coupling < 1`.
 
-<details>
-<summary>Gå i dybden: hvorfor er denne forsøksfamilien SPD?</summary>
+::: {.details title="Gå i dybden: hvorfor er denne forsøksfamilien SPD?"}
 
 $B$ er symmetrisk og strengt diagonaldominant: $2$ er større enn
 summen av nabobidragene, som er høyst $2\,\text{coupling}<2$.
@@ -582,7 +582,7 @@ $z^TDBDz=(Dz)^TB(Dz)>0$ når $z\ne0$.
 Ved andre egne konstruksjoner må du selv begrunne at CGs
 forutsetninger fortsatt er oppfylt.
 
-</details>
+:::
 
 Velg $x_*\ne0$; da er også $b=Ax_*\ne0$ for SPD. Dermed er
 relativ residual og relativ løsningsfeil definert i forsøket ditt.

@@ -5,3 +5,5 @@ title: "Uke 8 – introduksjon til optimering"
 {{< include ../_includes/optimization/week8_setup.md >}}
 
 {{< include ../_includes/optimization/uke8.md >}}
+
+{{< include ../_includes/ai-context/uke8.md >}}

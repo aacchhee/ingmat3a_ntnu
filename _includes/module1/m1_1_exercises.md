@@ -1,6 +1,7 @@
-## Oppgaver
+## Oppgaver {quiz=uke1-horner}
 
-<div id="uke1-oppg-horner"></div>
+::: {#uke1-oppg-horner}
+:::
 
 Nå skal du gjøre oppskriften fra Horners metode om til en løkke. Funksjonen skal regne ut et generelt polynom
 

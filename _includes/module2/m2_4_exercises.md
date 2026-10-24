@@ -1,5 +1,7 @@
 #### Når tallformatet setter en grense
 
+::: {#binary-format-iteration-givens .math-exercise-context}
+
 Vi bruker iterasjonen for $\sqrt{2}$ som vi bygger i 2.5,
 
 $$
@@ -14,7 +16,11 @@ og utfører nøyaktig de samme regneoperasjonene i to tallformater:
 
 Referanseverdien beregnes med 80 desimalsifres presisjon og brukes bare til å måle feil. Hver iterasjon i de to metodene blir derimot lagret i sitt angitte tallformat.
 
+:::
+
 ```{pyodide-python}
+#| label: ingmat-ide-module2-m2-4-exercises-1
+#| feedback-context: ide-page4-reference-assumptions, ide-page4-np-6f11581d, ide-page4-plot-error-curves-34829957
 #| canvas: false
 
 from decimal import Decimal, getcontext
@@ -53,6 +59,22 @@ Legg merke til forskjellen mellom skrittlengde og feil mot referanseverdien: Nå
 
 ::: {#binary-format-plateau-context .math-exercise-context}
 
+De samme lagrede iteratene og feilene som i plottet står her. Tallene i
+kolonnene for $x_n$ viser den lagrede verdien med 17 signifikante sifre;
+feilene er målt mot referansen med 80 desimalsifres presisjon.
+
+| $n$ | binary32: $x_n$ | binary64: $x_n$ | binary32: $\lvert x_n-\sqrt2\rvert$ | binary64: $\lvert x_n-\sqrt2\rvert$ |
+|---:|---:|---:|---:|---:|
+| 0 | 1 | 1 | 4.142135623731e-1 | 4.142135623731e-1 |
+| 1 | 1.5 | 1.5 | 8.578643762690e-2 | 8.578643762690e-2 |
+| 2 | 1.4166667461395264 | 1.4166666666666665 | 2.453183766431e-3 | 2.453104293571e-3 |
+| 3 | 1.4142156839370728 | 1.4142156862745097 | 2.121563977705e-6 | 2.123901414616e-6 |
+| 4 | 1.4142135381698608 | 1.4142135623746899 | 2.420323420896e-8 | 1.594821025505e-12 |
+| 5 | 1.4142135381698608 | 1.4142135623730949 | 2.420323420896e-8 | 1.253716717905e-16 |
+| 6 | 1.4142135381698608 | 1.4142135623730949 | 2.420323420896e-8 | 1.253716717905e-16 |
+| 7 | 1.4142135381698608 | 1.4142135623730949 | 2.420323420896e-8 | 1.253716717905e-16 |
+| 8 | 1.4142135381698608 | 1.4142135623730949 | 2.420323420896e-8 | 1.253716717905e-16 |
+
 Les følgende fra semilogy-plottet:
 
 1. **Starten på platået** er den første iterasjonen der feilen har nådd nivået den beholder i alle senere steg.
@@ -71,7 +93,7 @@ Les følgende fra semilogy-plottet:
 #| caption: Sammenlign nøyaktighetsgrensene
 #| mode: equivalent
 #| field-labels: binary32 platåstart, binary64 platåstart, binary32 korrekte desimaler, binary64 korrekte desimaler, binary32 første nullskritt, binary64 første nullskritt
-#| context: binary-format-plateau-context
+#| context: binary-format-plateau-context, binary-format-iteration-givens
 
 Oppgi ett ikke-negativt heltall i hvert felt.
 

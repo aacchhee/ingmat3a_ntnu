@@ -44,6 +44,7 @@ sannsynlighetskurve.
 
 ```{pyodide-python}
 #| label: project9-line
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-damage-fcb0b628, ide-project_week9-design-ae6c56f5, ide-project_week9-np-6f11581d, ide-project_week9-show-line-fit-dc5363ee, ide-project_week9-temps-9a041e91
 line = np.linalg.lstsq(design(temps), damage, rcond=None)[0]
 for T in [31, 53, 81]:
     print(f'rett linje ved {T} °F: {line[0] + line[1]*T:.3f}')
@@ -56,6 +57,7 @@ optimeringen senere; du skal ikke finne dem i innføringen.
 
 ```{pyodide-python}
 #| label: project9-s-curve
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-beta-oracle-325a7892, ide-project_week9-show-curves-1da5c293, ide-project_week9-sigma-2bf05701
 for name, beta in [('referanse', beta_oracle), ('halverte tall', beta_oracle/2)]:
     print(name, 'terskel:', -beta[0]/beta[1],
           'p(53):', sigma(beta[0] + beta[1]*53))
@@ -69,7 +71,8 @@ stor $1-p_i$. Vi antar at utfallene fra ulike oppskytinger er uavhengige.
 Da måler produktet av disse faktorene hvor sannsynlige de observerte
 utfallene er under modellen.
 
-<div id="project9-two-launches"></div>
+::: {#project9-two-launches}
+:::
 
 For skade ved 58 °F og ingen skade ved 78 °F er produktet
 $p(58)(1-p(78))$. Cellen sammenligner to kurver. Du trenger ikke regne
@@ -77,6 +80,7 @@ sannsynlighetene for hånd.
 
 ```{pyodide-python}
 #| label: project9-product
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-np-6f11581d, ide-project_week9-sigma-2bf05701
 for name, beta in [('A', np.array([13.6, -0.2])),
                    ('B', np.array([6.8, -0.1]))]:
     p = sigma(beta[0] + beta[1]*np.array([58., 78.]))
@@ -123,7 +127,8 @@ Matplotlib. Kopier cellene i rekkefølge, og kontroller med
 Regn med omtrent 4–6 timer inkludert innføringen. Skriv en kort
 forventning før forsøkene og bruk resultatene som grunnlag for svaret.
 
-<div id="project9-start"></div>
+::: {#project9-start}
+:::
 
 ## 1. Her begynner prosjektet: fra formel til metode
 
@@ -154,13 +159,17 @@ sluttdelen.
 
 ```{pyodide-python}
 #| label: project9-grad
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-damage-fcb0b628
 def grad(X, beta, yy=damage):
     # TODO: returner X^T(p-y), der p = sigma(X beta).
     raise NotImplementedError('Skriv matriseproduktet')
 ```
 
-<div id="project9-gradient-zero"></div>
-<div id="project9-safe-step"></div>
+::: {#project9-gradient-zero}
+:::
+
+::: {#project9-safe-step}
+:::
 
 En ferdig regel fra krumningsgrensen er
 
@@ -175,6 +184,7 @@ steget. Bruk utskriften til å finne en eventuell feil før du fortsetter.
 
 ```{pyodide-python}
 #| label: project9-grad-check
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-x-raw-49f2e1a7, ide-project_week9-grad-35026aaa, ide-project_week9-np-6f11581d
 sv = np.linalg.svd(X_raw, compute_uv=False)
 print('dimensjon X:', X_raw.shape, 'singulærverdier:', sv)
 print('din gradient i 0:', grad(X_raw, np.zeros(2)))
@@ -189,6 +199,7 @@ Returner både sluttpunkt og antall utførte steg.
 
 ```{pyodide-python}
 #| label: project9-gd
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-damage-fcb0b628, ide-project_week9-np-6f11581d
 def gd(X, alpha, tol=1e-6, max_steps=2000, yy=damage):
     beta = np.zeros(2)
     k = 0
@@ -202,6 +213,7 @@ må være sann før vi sier at metoden nådde den valgte toleransen.
 
 ```{pyodide-python}
 #| label: project9-raw-run
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-x-raw-49f2e1a7, ide-project_week9-alpha-raw-f48c6c91, ide-project_week9-beta-oracle-325a7892, ide-project_week9-gd-ea2a7253, ide-project_week9-grad-35026aaa, ide-project_week9-loss-94eeaeea, ide-project_week9-np-6f11581d
 for budget in [5, 2000]:
     beta, k = gd(X_raw, alpha_raw, max_steps=budget)
     norm = np.linalg.norm(grad(X_raw, beta))
@@ -236,6 +248,7 @@ Finn forskjellen i tallene selv; ikke se bare på størrelsen til hver verdi.
 
 ```{pyodide-python}
 #| label: project9-singular
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-design-ae6c56f5, ide-project_week9-np-6f11581d, ide-project_week9-temps-9a041e91
 m, d = temps.mean(), temps.std()
 designs = {'rå T': design(temps),
            'sentrert T - 70': design(temps-70),
@@ -245,7 +258,8 @@ for name, X in designs.items():
     print(name, 'singulærverdier:', sv.round(3), 'forhold:', sv[0]/sv[1])
 ```
 
-<div id="project9-centred"></div>
+::: {#project9-centred}
+:::
 
 **b. Kjør og sammenlign.** Tabellen under bruker din `gd` med samme start,
 toleranse og tak på antall steg. Den oppgir også kondisjonstallet til
@@ -261,6 +275,7 @@ sammenligning av faktisk arbeid og forventet lokal fart.
 
 ```{pyodide-python}
 #| label: project9-three-runs
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-beta-oracle-325a7892, ide-project_week9-d-4f9c0b40, ide-project_week9-designs-827c08f4, ide-project_week9-gd-ea2a7253, ide-project_week9-grad-35026aaa, ide-project_week9-hessian-c504b170, ide-project_week9-loss-94eeaeea, ide-project_week9-m-4f9c0b40, ide-project_week9-np-6f11581d
 b0, b1 = beta_oracle
 beta_star = {'rå T': beta_oracle,
              'sentrert T - 70': np.array([b0+70*b1, b1]),
@@ -275,7 +290,8 @@ for name, X in designs.items():
           np.max(np.abs(1-alpha*lam)), 'L:', loss(X, beta))
 ```
 
-<div id="project9-predict"></div>
+::: {#project9-predict}
+:::
 
 - Hvilke kjøringer nådde toleransen? En avbrutt kjøring teller ikke som en
   rask løsning.
@@ -293,6 +309,7 @@ utenfor temperaturene i dataene.
 
 ```{pyodide-python}
 #| label: project9-launch-day
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-x-std-0939bc5a, ide-project_week9-d-4f9c0b40, ide-project_week9-gd-ea2a7253, ide-project_week9-m-4f9c0b40, ide-project_week9-np-6f11581d, ide-project_week9-show-fit-bf5fd38d, ide-project_week9-sigma-2bf05701
 alpha_std = 4/np.linalg.svd(X_std, compute_uv=False)[0]**2
 gamma, k = gd(X_std, alpha_std)
 beta_F = np.array([gamma[0]-m*gamma[1]/d, gamma[1]/d])
@@ -312,7 +329,8 @@ $2/\lambda_{\max}(H_*)$ den lokale kritiske grensen fra
 [uke 9](uke9.qmd#uke9-stabilitet). Den sier ikke hva en vilkårlig
 start vil gjøre langt fra minimumet.
 
-<div id="project9-critical"></div>
+::: {#project9-critical}
+:::
 
 **a. Forutsi og undersøk.** Sammenlign $\alpha=0.55$, $0.6$ og $1.5$
 med grensen. Tror du større steg alltid betyr mindre arbeid?
@@ -322,6 +340,7 @@ Den trygge steglengden prøves også med stoppregel.
 
 ```{pyodide-python}
 #| label: project9-too-large
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-x-std-0939bc5a, ide-project_week9-beta-oracle-325a7892, ide-project_week9-d-4f9c0b40, ide-project_week9-gd-ea2a7253, ide-project_week9-grad-35026aaa, ide-project_week9-hessian-c504b170, ide-project_week9-m-4f9c0b40, ide-project_week9-np-6f11581d, ide-project_week9-show-cycles-2392b60f
 b0, b1 = beta_oracle
 reference_std = np.array([b0+m*b1, d*b1])
 lam = np.linalg.eigvalsh(hessian(X_std, reference_std))
@@ -363,6 +382,7 @@ utskriften er ikke med. Fast steg bruker ingen tapsberegning i løkken.
 
 ```{pyodide-python}
 #| label: project9-armijo
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-armijo-gd-28a92a6f, ide-project_week9-designs-827c08f4, ide-project_week9-gd-ea2a7253, ide-project_week9-grad-35026aaa, ide-project_week9-loss-94eeaeea, ide-project_week9-np-6f11581d
 budget = 2000                 # du kan prøve 4000; ikke bruk millionkjøringer
 for name in ['rå T', 'standardisert (T - m)/d']:
     X = designs[name]
@@ -400,6 +420,7 @@ parameterstørrelse ved tre tidspunkter.
 
 ```{pyodide-python}
 #| label: project9-separable
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-x-c-9179e629, ide-project_week9-alpha-c-ae727d57, ide-project_week9-damage-fcb0b628, ide-project_week9-grad-35026aaa, ide-project_week9-loss-94eeaeea, ide-project_week9-np-6f11581d, ide-project_week9-temps-9a041e91
 for name, yy in [('virkelige', damage), ('skilte', (temps < 65).astype(float))]:
     beta = np.zeros(2)
     for k in range(1, 10001):
@@ -410,7 +431,8 @@ for name, yy in [('virkelige', damage), ('skilte', (temps < 65).astype(float))]:
                   '|gradient|:', np.linalg.norm(grad(X_c, beta, yy)))
 ```
 
-<div id="project9-separated-terms"></div>
+::: {#project9-separated-terms}
+:::
 
 En gitt matematisk egenskap forklarer hva vi må se etter: For full
 separasjon er infimum av $L$ lik 0, men ingen endelig parametervektor
@@ -424,6 +446,7 @@ undersøke den direkte, uten en lang gradientkjøring.
 
 ```{pyodide-python}
 #| label: project9-ray
+#| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-x-c-9179e629, ide-project_week9-grad-35026aaa, ide-project_week9-loss-94eeaeea, ide-project_week9-np-6f11581d, ide-project_week9-temps-9a041e91
 skilt = (temps < 65).astype(float)
 for c in [1, 2, 5, 10]:
     gamma = np.array([-5.*c, -c])

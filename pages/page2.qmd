@@ -19,3 +19,5 @@ title: "Uke 1 – regnetid, binære tall og tall på datamaskiner"
 {{< include ../_includes/module1/m1_3.md >}}
 
 :::
+
+{{< include ../_includes/ai-context/page2.md >}}

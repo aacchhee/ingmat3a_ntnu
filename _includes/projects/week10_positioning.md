@@ -52,8 +52,7 @@ På nettsiden lastes dataene og hjelpefunksjonene automatisk. Du får
 den korte Gauss–Newton-løkken står ferdig på siden. Etter ny lasting må du
 kjøre cellene med disse funksjonene igjen før du fortsetter.
 
-<details>
-<summary>Egen notebook: last ned oppsettet og kom i gang</summary>
+::: {.details title="Egen notebook: last ned oppsettet og kom i gang"}
 
 Last ned [project_week10_setup.py](../assets/project_week10_setup.py){download="project_week10_setup.py"}
 og legg den ved siden av notebooken. Start med
@@ -66,7 +65,7 @@ Du trenger NumPy og Matplotlib. Kopier cellene i rekkefølge og kontroller
 med **Restart / Run all** før levering. Ta med oppsettsfilen.
 SVD-appen i del 3 virker bare på nettsiden; Python-figuren viser samme idé.
 
-</details>
+:::
 
 ## Bakgrunn: avstandsmålingene og modellen (gitt)
 
@@ -121,6 +120,7 @@ en liten flytting og både anslåtte og faktiske avstandsendringer.
 
 ```{pyodide-python}
 #| label: project10-residual
+#| feedback-context: ide-project_week10-reference-assumptions, ide-project_week10-d-exact-5d11171c, ide-project_week10-hall-05c3f3b7, ide-project_week10-jacobian-70c58482, ide-project_week10-np-6f11581d, ide-project_week10-residual-faa78ea1, ide-project_week10-z-true-9d2e97c2
 z0 = np.array([5., 4.])
 p = np.array([.1, 0.])
 J = jacobian(z0, hall)
@@ -148,6 +148,7 @@ ut feilen etter hvert steg. Fasiten brukes bare til kontroll.
 
 ```{pyodide-python}
 #| label: project10-gauss-newton
+#| feedback-context: ide-project_week10-reference-assumptions, ide-project_week10-d-exact-5d11171c, ide-project_week10-hall-05c3f3b7, ide-project_week10-jacobian-70c58482, ide-project_week10-np-6f11581d, ide-project_week10-residual-faa78ea1, ide-project_week10-show-hall-cf529db4, ide-project_week10-z-true-9d2e97c2
 def gn_step(z, B, d):
     J, r = jacobian(z, B), residual(z, B, d)
     # TODO: returner p som løser min ||J p - (-r)|| med np.linalg.lstsq.
@@ -212,6 +213,7 @@ med `nan` og skal ikke brukes til å vurdere farten.
 
 ```{pyodide-python}
 #| label: project10-rates
+#| feedback-context: ide-project_week10-reference-assumptions, ide-project_week10-d-bad-f5992bb8, ide-project_week10-d-exact-5d11171c, ide-project_week10-d-noisy-1992b3c2, ide-project_week10-dropped-part-e0bb18a9, ide-project_week10-gauss-newton-da0fde47, ide-project_week10-hall-05c3f3b7, ide-project_week10-jacobian-70c58482, ide-project_week10-newton-position-238c4ade, ide-project_week10-np-6f11581d, ide-project_week10-residual-faa78ea1
 for name, d in [('eksakte', d_exact), ('små feil', d_noisy), ('feil måling', d_bad)]:
     path = gauss_newton([5., 4.], hall, d, steps=20)
     z_end = path[-1]
@@ -259,6 +261,7 @@ Kjør først midt i hallen. Bytt så `z_c` til `z_true`, altså $(3,5)$.
 
 ```{pyodide-python}
 #| label: project10-moves
+#| feedback-context: ide-project_week10-reference-assumptions, ide-project_week10-gauss-newton-da0fde47, ide-project_week10-hall-05c3f3b7, ide-project_week10-jacobian-70c58482, ide-project_week10-move-b94d63cf, ide-project_week10-np-6f11581d
 z_c = np.array([5., 4.])
 d_c = np.linalg.norm(z_c - hall, axis=1)
 J = jacobian(z_c, hall)
@@ -423,6 +426,7 @@ Cellen viser halvaksene og kontrollerer den mest følsomme retningen med
 
 ```{pyodide-python}
 #| label: project10-ellipse
+#| feedback-context: ide-project_week10-reference-assumptions, ide-project_week10-hall-05c3f3b7, ide-project_week10-jacobian-70c58482, ide-project_week10-move-b94d63cf, ide-project_week10-np-6f11581d, ide-project_week10-show-moves-f100bc59
 eps = .1
 z_c = np.array([5., 4.])
 J = jacobian(z_c, hall)
@@ -450,6 +454,7 @@ og den største lineære flyttingen for en målefeil med norm $0.1$ m.
 
 ```{pyodide-python}
 #| label: project10-far-away
+#| feedback-context: ide-project_week10-reference-assumptions, ide-project_week10-hall-05c3f3b7, ide-project_week10-jacobian-70c58482, ide-project_week10-np-6f11581d
 eps = .1
 print(' R     sigma_1  sigma_2  største lineære flytting (m)')
 for R in [0, 20, 50, 100]:
@@ -481,6 +486,7 @@ gradientnorm. Nivåkurvene hjelper deg å tolke forskjellen.
 
 ```{pyodide-python}
 #| label: project10-wall
+#| feedback-context: ide-project_week10-reference-assumptions, ide-project_week10-d-wall-d4128296, ide-project_week10-gauss-newton-da0fde47, ide-project_week10-jacobian-70c58482, ide-project_week10-np-6f11581d, ide-project_week10-residual-faa78ea1, ide-project_week10-show-hall-cf529db4, ide-project_week10-wall-e1fdb0bc, ide-project_week10-z-true-wall-6bbf796f
 starts = ([5., 4.], [5., -4.])
 paths = [gauss_newton(start, wall, d_wall, steps=15) for start in starts]
 for start, path in zip(starts, paths):
@@ -524,6 +530,7 @@ halveringen hjelper; bruk residualen til å vurdere sluttpunktet.
 
 ```{pyodide-python}
 #| label: project10-armijo
+#| feedback-context: ide-project_week10-reference-assumptions, ide-project_week10-d-wall-d4128296, ide-project_week10-gn-step-fbf22546, ide-project_week10-jacobian-70c58482, ide-project_week10-np-6f11581d, ide-project_week10-residual-faa78ea1, ide-project_week10-wall-e1fdb0bc
 def armijo_step(z, B, d):
     p = gn_step(z, B, d)
     F = lambda w: .5*np.sum(residual(w, B, d)**2)

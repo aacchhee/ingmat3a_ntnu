@@ -45,6 +45,7 @@ Tenk deg at du skal summere en liste med tall. Den mest naturlige måten er å s
 Det er akkurat dette funksjonen under gjør:
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-1
 def ordinary_sum(values):
     # Start med summen 0.
     total = 0.0
@@ -67,6 +68,8 @@ Lag en liste `values` slik at `ordinary_sum(values)` gir et tydelig dårligere r
 Du trenger ikke mange tall. Tre eller fire kan være nok til et første forsøk.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-2
+#| feedback-context: ide-project_week1-reference-assumptions, ide-project_week1-ordinary-sum-e1bef6da
 import math
 
 # Bytt ut tallene med ditt eget første angrep.
@@ -101,6 +104,7 @@ Hvorfor? Fordi det er lettere å forstå en mekanisme når vi kan skru på den. 
 Du skal lage en liten «angrepsgenerator»:
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-3
 def make_attack(n, scale):
     # n bestemmer hvor stort eksperimentet skal være.
     # scale kan brukes til å styre størrelsesforskjellen mellom tallene.
@@ -117,6 +121,8 @@ Her bestemmer du selv hva `n` og `scale` skal bety i angrepet ditt. For eksempel
 Test så generatoren flere ganger:
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-4
+#| feedback-context: ide-project_week1-reference-assumptions, ide-project_week1-make-attack-70fdf505, ide-project_week1-ordinary-sum-e1bef6da
 import math
 
 for n in [10, 100, 1000]:
@@ -168,6 +174,8 @@ Tenk på dette som et mer kontrollert eksperiment:
 > Det riktige svaret er 1. Hvor dårlig kan du få `ordinary_sum` til å oppføre seg?
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-5
+#| feedback-context: ide-project_week1-reference-assumptions, ide-project_week1-ordinary-sum-e1bef6da
 import math
 
 
@@ -231,6 +239,8 @@ $$
 Nå kan du ikke bare bruke et astronomisk stort tall for å sluke alle små bidrag.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-6
+#| feedback-context: ide-project_week1-reference-assumptions, ide-project_week1-ordinary-sum-e1bef6da
 import math
 
 
@@ -268,6 +278,8 @@ $$
 for alle tallene.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-7
+#| feedback-context: ide-project_week1-reference-assumptions, ide-project_week1-ordinary-sum-e1bef6da
 import math
 
 
@@ -312,6 +324,7 @@ kan vi nå spørre
 Vi beholder de samme tallene og den samme matematiske summen. Det eneste du får lov til å endre først, er **rekkefølgen**.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-8
 def defense_order(values):
     # Lag en kopi slik at originaldataene ikke endres.
     reordered = list(values)
@@ -324,6 +337,8 @@ def defense_order(values):
 Test forsvaret mot et av dine egne angrep:
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-9
+#| feedback-context: ide-project_week1-reference-assumptions, ide-project_week1-defense-order-edf5c8dc, ide-project_week1-ordinary-sum-e1bef6da, ide-project_week1-target-attack-83f2e562
 import math
 
 values = target_attack()
@@ -375,6 +390,8 @@ Vi lar samme forsvar møte flere forskjellige angrep:
 3. angrepet med bare positive tall.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-10
+#| feedback-context: ide-project_week1-reference-assumptions, ide-project_week1-bounded-attack-523c49dd, ide-project_week1-defense-order-edf5c8dc, ide-project_week1-ordinary-sum-e1bef6da, ide-project_week1-positive-attack-082e4d1b, ide-project_week1-target-attack-83f2e562
 import math
 
 attacks = {
@@ -441,6 +458,7 @@ kan vi for eksempel kombinere tall i mindre grupper og deretter kombinere gruppe
 Du trenger ikke løse denne delen for å fullføre prosjektet. Men hvis du har tid, er dette et naturlig neste steg.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-11
 def better_sum(values):
     # TODO: design din egen summeringsalgoritme.
     # Ikke bruk sum(), numpy.sum() eller math.fsum().
@@ -455,6 +473,8 @@ def better_sum(values):
 Test den mot datasettene fra turneringen:
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week1-floating-point-attack-12
+#| feedback-context: ide-project_week1-reference-assumptions, ide-project_week1-attacks-91cb572f, ide-project_week1-better-sum-875c6a78
 import math
 
 for name, values in attacks.items():

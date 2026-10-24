@@ -3,3 +3,5 @@ title: "Prosjekt 5 – Kan vi stole på rangeringen?"
 ---
 
 {{< include ../_includes/projects/week5_pagerank.md >}}
+
+{{< include ../_includes/ai-context/project_week5.md >}}

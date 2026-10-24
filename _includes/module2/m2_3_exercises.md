@@ -2,6 +2,8 @@
 
 Husk fra 2.3: på en logaritmisk akse betyr like store avstander like store *faktorer*.
 
+::: {#semilogy-curve-data .math-exercise-context}
+
 Vi sammenligner tre fikspunktiterasjoner som alle har fikspunktet $r=0$:
 
 | Kurve | Oppdateringsregel | Startverdi | Forventet oppførsel nær $0$ |
@@ -10,11 +12,15 @@ Vi sammenligner tre fikspunktiterasjoner som alle har fikspunktet $r=0$:
 | Oransje | $x_{n+1}=0.1x_n$ | $x_0=0.1$ | rask lineær konvergens |
 | Grønn | $x_{n+1}=x_n^2$ | $x_0=0.3$ | kvadratisk konvergens |
 
+:::
+
 For de lineære reglene blir feilen multiplisert med henholdsvis $0.8$ og $0.1$ i hvert steg. For den grønne kurven er $e_{n+1}=e_n^2$, så antallet korrekte desimaler vokser mye raskere når feilen først er liten.
 
 Cellen regner ut de tre feilhistoriene og tegner dem på en logaritmisk akse.
 
 ```{pyodide-python}
+#| label: ingmat-ide-module2-m2-3-exercises-1
+#| feedback-context: ide-page4-reference-assumptions, ide-page4-iterate-959821b9, ide-page4-np-6f11581d, ide-page4-plot-error-curves-34829957
 #| canvas: false
 
 def error_history(g, x0, number_of_steps):
@@ -55,7 +61,7 @@ altså antallet korrekte desimaler etter steg 5 minus antallet etter steg 4. Les
 #| caption: Les korrekte desimaler fra semilogy-plottet
 #| mode: equivalent
 #| field-labels: blå etter steg 5, oransje etter steg 5, grønn etter steg 5, nye blå fra 4 til 5, nye oransje fra 4 til 5, nye grønne fra 4 til 5
-#| context: semilogy-decimals-context
+#| context: semilogy-decimals-context, semilogy-curve-data
 
 Oppgi ett ikke-negativt heltall i hvert felt.
 
@@ -342,7 +348,8 @@ JXG.QuartoAssessment.register({
 Klikk på det første grønne punktet som har minst sju korrekte desimaler.
 ```
 
-<div id="uke2-ov-23b"></div>
+::: {#uke2-ov-23b}
+:::
 
 #### Hvor lenge må vi iterere?
 

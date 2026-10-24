@@ -9,3 +9,5 @@ resources:
 {{< include ../_includes/projects/week7_setup.md >}}
 
 {{< include ../_includes/projects/week7_svd.md >}}
+
+{{< include ../_includes/ai-context/project_week7.md >}}

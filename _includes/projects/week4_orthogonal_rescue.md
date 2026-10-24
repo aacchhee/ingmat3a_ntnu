@@ -212,6 +212,7 @@ Hvilke beregninger trenger du for å avgjøre det?
 
 ```{pyodide-python}
 #| label: project-week4-first-fit
+#| feedback-context: ide-project_week4-reference-assumptions, ide-project_week4-np-6f11581d, ide-project_week4-plt-7be21394
 
 # Data og en foreslått modell. Ingen optimal løsning er beregnet her.
 t = np.linspace(-1.0, 1.0, 6)
@@ -263,6 +264,7 @@ og forutsi hva som skjer med diagonalverdiene i $R$.
 
 ```{pyodide-python}
 #| label: project-week4-dependent-nan
+#| feedback-context: ide-project_week4-reference-assumptions, ide-project_week4-classical-gram-schmidt-0f5f205a, ide-project_week4-modified-gram-schmidt-8c2c1dd4, ide-project_week4-np-6f11581d
 
 B = np.array([[1.0, 0.0, 1.0],
               [0.0, 1.0, 1.0],
@@ -349,6 +351,7 @@ og en matrise med $m$ rader og $n+1$ kolonner.
 
 ```{pyodide-python}
 #| label: project-week4-polynomial-fit
+#| feedback-context: ide-project_week4-reference-assumptions, ide-project_week4-cheb-1e0b010a, ide-project_week4-np-6f11581d, ide-project_week4-reference-coordinates-222618bf
 
 # Endre én forsøksinnstilling om gangen.
 n = 3
@@ -401,6 +404,7 @@ basis når du beregner kurven.
 
 ```{pyodide-python}
 #| label: project-week4-basis-comparison
+#| feedback-context: ide-project_week4-reference-assumptions, ide-project_week4-cheb-1e0b010a, ide-project_week4-chebyshev-matrix-771551eb, ide-project_week4-monomial-matrix-898f4130, ide-project_week4-np-6f11581d, ide-project_week4-reference-coordinates-222618bf
 
 # Begge basiser skal få nøyaktig de samme dataene.
 n = 12
@@ -470,6 +474,7 @@ størrelse $10^{-10}$ med fast frø.
 
 ```{pyodide-python}
 #| label: project-week4-cgs-mgs
+#| feedback-context: ide-project_week4-reference-assumptions, ide-project_week4-classical-gram-schmidt-0f5f205a, ide-project_week4-modified-gram-schmidt-8c2c1dd4
 
 degrees = [8, 12, 16, 20]
 methods = [
@@ -558,6 +563,7 @@ følsomhetsvarsel og beregner tallet med `np.linalg.cond(A)`.
 
 ```{pyodide-python}
 #| label: project-week4-normal-equations
+#| feedback-context: ide-project_week4-reference-assumptions, ide-project_week4-c-007f1c18, ide-project_week4-m-0c4c08fd, ide-project_week4-np-6f11581d
 
 # Kjør først del 4 for å opprette M, C og b_noisy.
 # Disse tallene er varsler om følsomhet, ikke målinger av kurvefeilen.

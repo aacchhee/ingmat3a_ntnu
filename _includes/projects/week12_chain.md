@@ -236,15 +236,14 @@ Fullfør først funksjonen `h` i del 1 og senere `F_mu` i del 3. De andre
 cellene kan kjøres i vilkårlig rekkefølge når disse studentfunksjonene er
 definert; hver celle finner sine egne løsningsdata.
 
-<details>
-<summary>Egen notebook: last ned oppsettet og kom i gang</summary>
+::: {.details title="Egen notebook: last ned oppsettet og kom i gang"}
 
 Last ned [project_week12_setup.py](../assets/project_week12_setup.py){download="project_week12_setup.py"}
 til samme mappe som notebooken. Kjør `from project_week12_setup import *`,
 og kopier prosjektcellene i rekkefølge. Du trenger NumPy, SciPy og Matplotlib.
 Kontroller med **Restart / Run all**, og ta med oppsettsfilen ved levering.
 
-</details>
+:::
 
 ## 1. Finn og kontroller formen
 
@@ -261,6 +260,7 @@ løser det lille lineære systemet for multiplikatorene ved begge punktene.
 
 ```{pyodide-python}
 #| label: project-week12-one-joint
+#| feedback-context: ide-project_week12-reference-assumptions, ide-project_week12-energy-4bbc55c8, ide-project_week12-grad-energy-93b2c70f, ide-project_week12-jac-links-3145f2a4, ide-project_week12-np-6f11581d
 for point in [np.array([2., -1.5]), np.array([2., 1.5])]:
     J = jac_links(point)
     g = grad_energy(point)
@@ -288,6 +288,7 @@ Fullfør `h` med `np.diff(P, axis=0)` og `np.linalg.norm(..., axis=1)`.
 
 ```{pyodide-python}
 #| label: project-week12-student-h
+#| feedback-context: ide-project_week12-reference-assumptions, ide-project_week12-flat-start-e1ee4cb0, ide-project_week12-joints-b2a79435, ide-project_week12-np-6f11581d
 def h(z, lengths=0.5):
     P = joints(z)
     # TODO: lengden av hvert ledd minus lengths.
@@ -306,6 +307,7 @@ ut både løsermeldingen og størrelsen på kravbruddene, og tegner løsningen.
 
 ```{pyodide-python}
 #| label: project-week12-exact
+#| feedback-context: ide-project_week12-reference-assumptions, ide-project_week12-flat-start-e1ee4cb0, ide-project_week12-h-e2618920, ide-project_week12-joints-b2a79435, ide-project_week12-np-6f11581d, ide-project_week12-plot-chain-df10e56f, ide-project_week12-solve-exact-4a89bf32
 res = solve_exact(h)
 print('success:', res.success, ' melding:', res.message)
 print('største |h_i|:', f'{np.abs(h(res.x)).max():.2e}')
@@ -331,6 +333,7 @@ i stasjonaritetslikningen. Rad 0 i Python er ledd 1 i matematikken.
 
 ```{pyodide-python}
 #| label: project-week12-multipliers
+#| feedback-context: ide-project_week12-reference-assumptions, ide-project_week12-grad-energy-93b2c70f, ide-project_week12-h-e2618920, ide-project_week12-jac-links-3145f2a4, ide-project_week12-np-6f11581d, ide-project_week12-solve-exact-4a89bf32
 res = solve_exact(h)
 J = jac_links(res.x)
 g = grad_energy(res.x)
@@ -360,6 +363,7 @@ sammenligner komponentene med stasjonaritetskontrollen over.
 
 ```{pyodide-python}
 #| label: project-week12-balance
+#| feedback-context: ide-project_week12-reference-assumptions, ide-project_week12-directions-3beb3934, ide-project_week12-h-e2618920, ide-project_week12-multipliers-40736c49, ide-project_week12-np-6f11581d, ide-project_week12-solve-exact-4a89bf32, ide-project_week12-w-fd4dd3b0
 res = solve_exact(h)
 lam = multipliers(res.x)
 U = directions(res.x)
@@ -390,6 +394,7 @@ endringer. Den starter den nye løsningen i den gamle formen.
 
 ```{pyodide-python}
 #| label: project-week12-price
+#| feedback-context: ide-project_week12-reference-assumptions, ide-project_week12-h-e2618920, ide-project_week12-multipliers-40736c49, ide-project_week12-np-6f11581d, ide-project_week12-solve-exact-4a89bf32
 res = solve_exact(h)
 lam = multipliers(res.x)
 for d in [1e-3, 1e-4]:
@@ -426,6 +431,7 @@ For et ledd er dette fjærkraft = stivhet ganger forlengelse.
 
 ```{pyodide-python}
 #| label: project-week12-penalty
+#| feedback-context: ide-project_week12-reference-assumptions, ide-project_week12-h-e2618920, ide-project_week12-multipliers-40736c49, ide-project_week12-np-6f11581d, ide-project_week12-solve-exact-4a89bf32, ide-project_week12-solve-penalty-745aae83
 def F_mu(z, mu):
     # TODO: E(z) + mu/2 ganger summen av h_i(z)^2.
     raise NotImplementedError('Fullfør straffefunksjonen')
@@ -465,6 +471,7 @@ kjøring enn sammenligningen fra den flate starten over.
 
 ```{pyodide-python}
 #| label: project-week12-hessian
+#| feedback-context: ide-project_week12-reference-assumptions, ide-project_week12-f-mu-da08b65a, ide-project_week12-h-e2618920, ide-project_week12-jac-links-3145f2a4, ide-project_week12-np-6f11581d, ide-project_week12-penalty-hessian-a6d8b521, ide-project_week12-solve-exact-4a89bf32, ide-project_week12-solve-penalty-745aae83
 exact = solve_exact(h)
 mu = 1e6
 result = solve_penalty(h, F_mu, mu, z0=exact.x)
@@ -483,7 +490,8 @@ Hvor mange egenverdier er store sammenlignet med de minste? Forklar
 hvorfor $\mu J^TJ$ skiller mellom disse retningene, og bruk
 [uke 9](uke9.qmd#uke9-stabilitet) til å tolke kondisjonstallet.
 
-<div id="project-week12-too-stiff"></div>
+::: {#project-week12-too-stiff}
+:::
 
 **Ta med videre:** Et større straffeledd kan gi mindre kravbrudd samtidig
 som problemet blir vanskeligere å løse. Tallene avhenger også av start,
@@ -505,6 +513,7 @@ kolonnen viser hver loddrett differanse og vekten den skal sammenlignes med.
 
 ```{pyodide-python}
 #| label: project-week12-lamp
+#| feedback-context: ide-project_week12-reference-assumptions, ide-project_week12-directions-3beb3934, ide-project_week12-grad-energy-93b2c70f, ide-project_week12-h-e2618920, ide-project_week12-jac-links-3145f2a4, ide-project_week12-multipliers-40736c49, ide-project_week12-np-6f11581d, ide-project_week12-plot-chain-df10e56f, ide-project_week12-solve-exact-4a89bf32
 base = solve_exact(h)
 loads = np.ones(9)
 loads[2] += 5

@@ -1,14 +1,9 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ::: {.panel-tabset}
 
 ## 7.0 Oversikt
 
-<div id="uke7-start"></div>
+::: {#uke7-start}
+:::
 
 ### Hvilken informasjon bevares når vi forenkler?
 
@@ -56,8 +51,7 @@ ulike retninger svært forskjellig. Denne uken finner vi nettopp disse
 retningene og strekkfaktorene. Det samme verktøyet forteller hvilke
 mønstre som bidrar mest i en bildematrise.
 
-<details class="reading-step">
-<summary>Gå i dybden: spørsmål fra tidligere uker</summary>
+::: {.reading-step title="Gå i dybden: spørsmål fra tidligere uker"}
 
 | Fra tidligere uker | Spørsmålet vi tar med oss |
 |:--|:--|
@@ -68,11 +62,12 @@ mønstre som bidrar mest i en bildematrise.
 | [Uke 5: egenverdier](uke5.qmd) | Hvilke spesielle retninger finnes når matrisen også kan være rektangulær? |
 | [Uke 6: norm, residual og kondisjonstall](uke6.qmd#uke6-residual) | Hvordan finner vi største og minste strekk i praksis? |
 
-</details>
+:::
 
 ## 7.1 Et bilde som en sum av mønstre
 
-<div id="uke7-bilde"></div>
+::: {#uke7-bilde}
+:::
 
 ### Hvordan kan vi bygge et bilde av enklere bilder?
 
@@ -103,6 +98,7 @@ bildet, og hva som krever flere bidrag.
 
 ```{pyodide-python}
 #| label: week7-first-image
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-portrait-28c7bf94, ide-uke7-rank-image-c8fb2c8d, ide-uke7-show-images-a8b96b0c
 # Hjelperen finner bidragene og legger sammen de k første.
 # Her undersøker vi resultatet; oppskriften bak bidragene kommer senere.
 
@@ -160,8 +156,7 @@ disse vektene og profilene brukes, forklarer vi i 7.3 og 7.5.
 positivt, blått negativt. De svarte markeringene følger rad 25 og kolonne 50,
 og cellen skriver ut produktet for akkurat den pikselen.
 
-<details class="reading-step">
-<summary>Gå i dybden: slik leser du figuren</summary>
+::: {.reading-step title="Gå i dybden: slik leser du figuren"}
 
 Les figuren i denne rekkefølgen:
 
@@ -179,13 +174,14 @@ Like fortegn gir et positivt produkt, ulike fortegn et negativt. Vekten er
 ikke-negativ og endrer derfor ikke fortegnet. Kontroller dette med de tre
 tallene cellen skriver ut for rad 25 og kolonne 50.
 
-</details>
+:::
 
 Kjør cellen med `i = 1`, og prøv så `i = 2`. Dette viser ett bidrag om
 gangen, ikke summen av de første bidragene som i eksperiment 1.
 
 ```{pyodide-python}
 #| label: week7-building-block
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-np-6f11581d, ide-uke7-portrait-28c7bf94, ide-uke7-show-component-801aaed2
 # Ett bidrag bygges av to profiler og én vekt; hjelperen tegner de tre delene.
 # Python teller fra 0; i=1 velger det andre bidraget.
 
@@ -205,7 +201,8 @@ som forklarer hvor profilene og vektene kommer fra.
 
 ## 7.2 Fra sirkel til ellipse
 
-<div id="uke7-geometri"></div>
+::: {#uke7-geometri}
+:::
 
 ### Hva gjør transformasjonen med like lange vektorer?
 
@@ -241,7 +238,8 @@ Målet er å finne startretningene som gir lengst og kortest resultat, og
 - Velg **Smal ellipse**. Hva blir vanskeligere å skille i resultatet?
 - Velg **Rangtap**. Kan ulike startvektorer nå gi samme resultat?
 
-<iframe src="../assets/svd-visualizer.html" title="Interaktivt SVD-forsøk: følg retninger fra sirkel til ellipse" loading="lazy" style="width:100%;height:920px;border:1px solid #d4e0e7;border-radius:6px;"></iframe>
+::: {.embed src="../assets/svd-visualizer.html" title="Interaktivt SVD-forsøk: følg retninger fra sirkel til ellipse" height="920px"}
+:::
 
 [Åpne forsøket i eget vindu](../assets/svd-visualizer.html){target="_blank" rel="noopener"}.
 
@@ -308,8 +306,7 @@ $\sigma_1=2$ og $\sigma_2=1$.
 
 :::
 
-<details class="reading-step">
-<summary>Gå i dybden: hva endres når ellipsen blir smalere?</summary>
+::: {.reading-step title="Gå i dybden: hva endres når ellipsen blir smalere?"}
 
 Behold 2 øverst til høyre i $A$, men bytt 1 nederst til venstre med
 et tall $s$ mellom 0 og 1. Da får vi $T_s(a,b)=(2b,sa)$.
@@ -365,10 +362,9 @@ en kan bli kraftig forkortet. For $s=0$ forsvinner hele retningen langs
 $e_1$. Forskjellen mellom en liten positiv verdi og null blir viktig når vi
 skal rekonstruere startvektoren i 7.4.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor kan pilene ha ulike fortegn?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor kan pilene ha ulike fortegn?"}
 
 Hvis $Av_i=\sigma_i u_i$, gjelder også $A(-v_i)=\sigma_i(-u_i)$.
 Vi kan altså snu begge basisvektorene i et par uten å endre transformasjonen.
@@ -387,13 +383,14 @@ singulærverdi lik null bestemmer ikke $Av_i=0$ retningen til $u_i$;
 vi fullfører med en ortogonal enhetsvektor. Faktorene kan derfor endre
 utseende selv om transformasjonen endres lite.
 
-</details>
+:::
 
 Forsøket er tilpasset fra [den opprinnelige SVD-demoen](https://andreyac.folk.ntnu.no/svd_complete.html).
 
 ## 7.3 To basiser, én enkel operasjon
 
-<div id="uke7-svd"></div>
+::: {#uke7-svd}
+:::
 
 ### Del transformasjonen i forståelige trinn
 
@@ -420,8 +417,7 @@ og ett som strekker langs aksene?
 $\Sigma$. De to andre trinnene dreier eller speiler. Det er dette vi nå
 skriver som et matriseprodukt.
 
-<details class="reading-step">
-<summary>Gå i dybden: regn de tre trinnene med tallene i appleten</summary>
+::: {.reading-step title="Gå i dybden: regn de tre trinnene med tallene i appleten"}
 
 Bli i **Skråstilling**. Hva skjer med den blå og den fiolette retningen
 når de uttrykkes i nye koordinater? Prøv deretter et negativt matriseelement.
@@ -434,7 +430,7 @@ Sammenlign med tallene i raden **Rosa** og med direkte beregning av $Ax$.
 For **Ellipse** bruker appleten samme basisvalg som håndregningen nedenfor.
 Kontroller særlig at siste trinn ikke endrer vektoren: her er $U=I$.
 
-</details>
+:::
 
 ### SVD er et valg av koordinater på hver side
 
@@ -573,8 +569,7 @@ Grunnen er at $A^TA$ alltid er symmetrisk med ikke-negative egenverdier,
 slik at den har en ortonormal egenvektorbasis $v_i$ med
 $\sigma_i=\sqrt{\lambda_i}$.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor finnes SVD alltid?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor finnes SVD alltid?"}
 
 **Egenvektorer og singulærvektorer.** En egenvektor oppfyller $Av=\lambda v$
 og beholder linjen sin. Singulærvektorer beskriver i stedet et par retninger:
@@ -630,7 +625,7 @@ $$u_i^Tu_j=\frac{(Av_i)^T(Av_j)}{\sigma_i\sigma_j}
 Når $i=j$, er dette 1. Når $i\ne j$, er det 0, fordi $v_i$ og $v_j$
 er ortogonale. Dermed har de nye vektorene lengde 1 og er parvis ortogonale.
 
-</details>
+:::
 
 ### Hvordan beregnes SVD i praksis?
 
@@ -639,8 +634,7 @@ Biblioteket danner ikke $A^TA$. Når $A$ har full kolonnerang, er
 $\kappa_2(A^TA)=\kappa_2(A)^2$, så produktet kan gjøre små singulærverdier
 unøyaktige.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvordan regner biblioteket ut SVD?</summary>
+::: {.reading-step title="Gå i dybden: hvordan regner biblioteket ut SVD?"}
 
 $A^TA$ forklarer **hvorfor** SVD finnes, men er vanligvis ikke veien vi
 bruker i flyttallsregning. Når $A$ har full kolonnerang, er
@@ -669,7 +663,7 @@ og kontrollerer at faktorene rekonstruerer $A$.
 For flere detaljer: [LAPACKs beskrivelse av SVD](https://www.netlib.org/lapack/lug/node53.html)
 og [NumPys dokumentasjon](https://numpy.org/doc/stable/reference/generated/numpy.linalg.svd.html).
 
-</details>
+:::
 
 ### Hvilke opplysninger kan vi finne igjen?
 
@@ -678,8 +672,7 @@ en startkomponent, mens et nullstrekk fjerner den. De $r$ positive
 strekkfaktorene gir $r$ uavhengige resultatretninger, og derfor er
 $\operatorname{rank}(A)=r$.
 
-<details class="reading-step">
-<summary>Gå i dybden: kolonnerom og nullrom fra SVD</summary>
+::: {.reading-step title="Gå i dybden: kolonnerom og nullrom fra SVD"}
 
 I uke 3 skilte vi mellom resultatene som er mulige (**kolonnerommet**)
 og startvektorene som gir null (**nullrommet**). SVD gjør disse rommene
@@ -730,10 +723,9 @@ Her betyr $\operatorname{span}$ alle lineærkombinasjoner av de oppgitte
 vektorene. Vi har $r$ synlige og $n-r$ usynlige startretninger,
 slik at rang pluss nullromsdimensjon blir $n$, som i uke 3.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: full SVD i NumPy og numerisk rang</summary>
+::: {.reading-step title="Gå i dybden: full SVD i NumPy og numerisk rang"}
 
 **Full eller redusert SVD.** Python returnerer `U, s, Vt`:
 
@@ -755,11 +747,12 @@ uke 1. Antallet singulærverdier over terskelen kalles **numerisk rang**.
 Usikre data kan begrunne en større terskel. Numerisk rang avhenger
 av toleransen; eksakt rang teller nøyaktig positive singulærverdier.
 
-</details>
+:::
 
 ## 7.4 Små datafeil, store løsningsfeil
 
-<div id="uke7-kondisjon"></div>
+::: {#uke7-kondisjon}
+:::
 
 ### Fra residual til bakoverfeil og foroverfeil
 
@@ -845,6 +838,7 @@ foroverfeilene avhenger av hvor stor datafeilen er.
 
 ```{pyodide-python}
 #| label: week7-perturbation
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-np-6f11581d
 # A og b definerer det opprinnelige systemet i begge tilfeller.
 # Svaret bygges i SVD-koordinater: projiser på u_i, del på sigma_i, bygg med v_i.
 
@@ -913,8 +907,7 @@ byttet lønner seg.
 
 :::
 
-<details class="reading-step">
-<summary>Gå i dybden: svaret for endringen (0, 0.03)</summary>
+::: {.reading-step title="Gå i dybden: svaret for endringen (0, 0.03)"}
 
 Med endringen $(0,0.03)^T$ er $\tilde b=(2,\,0.05)^T$. Full løsning gir
 $\widehat x=\tfrac22v_1+\tfrac{0.05}{0.02}v_2=(2.5,\,1)^T$, med
@@ -922,7 +915,7 @@ rekonstruksjonsfeil $\|(1.5,\,0)^T\|_2=1.5$ mot $x_*$. Den trunkerte
 løsningen er fortsatt $x_1=(0,1)^T$ med feil 1. Nå er datafeilen langs
 $u_2$ så stor at det lønner seg å kaste retningen.
 
-</details>
+:::
 
 ### Svak informasjon er vanskelig å rekonstruere
 
@@ -933,8 +926,7 @@ relative dataendringer kan gi store relative løsningsendringer.
 Kondisjonstallet fra uke 6 er forholdet mellom største og minste strekk,
 $\kappa_2(A)=\sigma_1/\sigma_n$, her 100.
 
-<details class="reading-step">
-<summary>Gå i dybden: følsomhet og konvergens er ulike spørsmål</summary>
+::: {.reading-step title="Gå i dybden: følsomhet og konvergens er ulike spørsmål"}
 
 I [uke 2](page4.qmd) undersøkte vi om en oppdatering demper forskjeller,
 og i [uke 6.2](uke6.qmd#uke6-fikspunkt) skrev vi feilen i en lineær
@@ -952,10 +944,9 @@ iterasjonen kan konvergere selv om noen feil først vokser.
 Vi må altså holde fra hverandre **konvergensen til metoden** og
 **følsomheten til problemet**.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: norm, kondisjonstall og håndregning</summary>
+::: {.reading-step title="Gå i dybden: norm, kondisjonstall og håndregning"}
 
 For en vektor er **2-normen** den vanlige lengden,
 $\|x\|_2=\sqrt{\sum_i x_i^2}$. Matrisens **spektralnorm**, også kalt
@@ -1002,10 +993,9 @@ minste-kvadratersproblem avhenger dessuten av residualen og hvilke data
 som forstyrres. Grensen ovenfor gjelder et invertibelt system med bare
 forstyrrelser i $b$.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: nesten like kolonner og polynomtilpasning fra uke 4</summary>
+::: {.reading-step title="Gå i dybden: nesten like kolonner og polynomtilpasning fra uke 4"}
 
 I en polynommodell er $A_{ij}=t_i^j$, der $t_i$ er evalueringspunktene og
 $c_j$ er koeffisientene. Produktet $Ac$ gir modellverdiene. Når punktene
@@ -1019,6 +1009,7 @@ Kjør cellen og sammenlign de to lengdene. Gjenta med punkter over $[-1,1]$.
 
 ```{pyodide-python}
 #| label: week7-polynomial
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-np-6f11581d
 # Transformasjonen c -> P @ c gir polynomverdier fra koeffisientene, som i uke 4.
 # Punktene ligger tett rundt 1; ulike koeffisienter kan gi nesten samme verdier.
 # Vi undersøker koeffisientretningen som gir minst endring i verdiene.
@@ -1042,7 +1033,7 @@ og minste egenverdi i $A^TA$ er $\sigma_1^2$ og $\sigma_n^2$.
 Bedre skalering eller valg av polynombasis kan hjelpe. Flere sifre i
 regningen kan ikke gjenopprette informasjon som de oppgitte dataene ikke gir presist.
 
-</details>
+:::
 
 Minste kvadrater fra uke 4 lar oss også behandle data utenfor kolonnerommet.
 I den [valgfrie fanen om pseudoinversen](#uke7-pseudoinvers) bruker vi SVD
@@ -1050,7 +1041,8 @@ til å finne den korteste løsningen blant dem som passer dataene best.
 
 ## 7.5 Rang som et valg
 
-<div id="uke7-rang"></div>
+::: {#uke7-rang}
+:::
 
 ### Hvor mye får vi igjen for flere komponenter?
 
@@ -1088,6 +1080,7 @@ Målet er å finne ut om hver ny komponent gir like mye igjen.
 
 ```{pyodide-python}
 #| label: week7-tail
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-np-6f11581d, ide-uke7-portrait-28c7bf94, ide-uke7-show-images-a8b96b0c, ide-uke7-show-singular-values-1359b82e
 # Samme bilde og samme SVD brukes i alle sammenligningene.
 # Vi lagrer faktorene, ikke den ferdig rekonstruerte bildematrisen.
 
@@ -1134,12 +1127,16 @@ forklare hvorfor singulærverdiene alene kan fortelle oss den samlede feilen.
 
 ### Fra byggeklosser til rangreduksjon
 
+::: {#week7-svd-reconstruction .math-exercise-context}
+
 Vi kan nå gi mønstrene fra 7.1 navn. En **komponent** er
 $\sigma_i u_i v_i^T$: et rang-1-mønster $u_i v_i^T$ med vekt $\sigma_i$.
 Hele bildet og en rekonstruksjon med de $k$ første komponentene er
 
 $$A=\sum_{i=1}^r\sigma_i u_i v_i^T,\qquad
 A_k=\sum_{i=1}^k\sigma_i u_i v_i^T.$$
+
+:::
 
 Her er $r$ antall positive singulærverdier, og vi velger $0\leq k\leq r$
 i denne summen. For $k=0$ er summen nullmatrisen. Matrisen $A_k$ har rang høyst $k$.
@@ -1192,11 +1189,15 @@ Den relative feilen er $1/\sqrt{10}\approx0.316$. Den absolutte feilen
 bruker vi Pytagoras, fordi mønstrene er ortogonale. Her betyr ortogonale
 at tabellene, skrevet som lange vektorer, har indreprodukt null:
 
+::: {#week7-svd-tail-error .math-exercise-context}
+
 $$\|A-A_k\|_F^2=\sigma_{k+1}^2+\cdots+\sigma_p^2,
 \qquad p=\min(m,n).$$
 
 Vi kaller dette **halefeilformelen**: feilen kommer bare fra «halen»
 $\sigma_{k+1},\ldots,\sigma_p$ av singulærverdiene.
+
+:::
 
 Dette gir en måte å velge $k$ på før vi bygger bildet på nytt:
 legg sammen kvadratene av de vektene vi vil utelate, og sammenlign med
@@ -1218,6 +1219,7 @@ passerer 5 %.
 
 ```{pyodide-python}
 #| label: week7-tail-list
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-np-6f11581d, ide-uke7-portrait-28c7bf94
 # Relativ feil fra de utelatte singulærverdiene alene, uten å bygge et eneste bilde.
 
 A = portrait
@@ -1235,8 +1237,7 @@ velge $k$ før vi bygger bildet.
 **Øv på dette:** [halefeil og minste tillatte rang](#uke7-oppg-hale) og
 [velg rang fra singulærverdiene i Python](#uke7-kode-rang).
 
-<details class="reading-step">
-<summary>Gå i dybden: lengder i en ortonormal basis</summary>
+::: {.reading-step title="Gå i dybden: lengder i en ortonormal basis"}
 
 Hvis $q_1,\ldots,q_n$ er en ortonormal basis og $x=c_1q_1+\cdots+c_nq_n$, er
 
@@ -1258,10 +1259,9 @@ delen kan derfor ikke bli mindre, og resten kan ikke bli større. Å projisere
 to ganger endrer ingenting: $P_kP_k=Q_k(Q_k^TQ_k)Q_k^T=P_k$, altså
 $P_k(I-P_k)=0$.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: feilformelen, ortogonalitet og lagring</summary>
+::: {.reading-step title="Gå i dybden: feilformelen, ortogonalitet og lagring"}
 
 For en matrise $B$ er $\|B\|_F^2=\sum_{i,j}B_{ij}^2$.
 Vi kan også definere **Frobeniusindreproduktet** som
@@ -1286,6 +1286,7 @@ måter, men skal bli like.
 
 ```{pyodide-python}
 #| label: week7-tail-check
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-np-6f11581d, ide-uke7-portrait-28c7bf94
 # Samme feil beregnes på to uavhengige måter: fra bildet og fra utelatte singulærverdier.
 # Tallene skal stemme opp til avrunding; det kontrollerer koblingen mellom kode og teori.
 
@@ -1314,11 +1315,12 @@ Tall er dessuten ikke bytes: float64-faktorer bruker 8 bytes per tall,
 et 8-bits gråtonebilde én byte per piksel før filkomprimering.
 Denne opptellingen er ikke en sammenligning med PNG eller JPEG.
 
-</details>
+:::
 
 ## 7.6 Hva betyr «god nok»?
 
-<div id="uke7-prosjekt"></div>
+::: {#uke7-prosjekt}
+:::
 
 ### Hva om dataene har støy?
 
@@ -1345,6 +1347,7 @@ Målet er å se om feilen mot det rene bildet også blir mindre for hver kompone
 
 ```{pyodide-python}
 #| label: week7-noise
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-np-6f11581d, ide-uke7-portrait-28c7bf94, ide-uke7-rank-image-c8fb2c8d, ide-uke7-show-images-a8b96b0c, ide-uke7-show-singular-values-1359b82e
 # Data = rent bilde + støy. Vi trunkerer dataene Y og måler mot to referanser.
 # I virkeligheten kjenner vi ikke C; her gjør vi det, slik at vi kan se hva trunkeringen gjør.
 
@@ -1371,8 +1374,7 @@ velger $k$ uten å kjenne $C$.
 
 **Øv på dette:** [data med støy](#uke7-oppg-stoy) i 7.8.
 
-<details class="reading-step">
-<summary>Gå i dybden: rent bilde pluss støy for hånd</summary>
+::: {.reading-step title="Gå i dybden: rent bilde pluss støy for hånd"}
 
 Ta $C=\begin{bmatrix}0&0\\0&3\end{bmatrix}$ og
 $E=\begin{bmatrix}0.5&0\\0&0\end{bmatrix}$, slik at
@@ -1390,10 +1392,9 @@ Avviket mot dataene synker hele veien; feilen mot det rene bildet er minst
 ved $k=1$. Her lå støyen i en retning der det rene bildet var null, og det
 er ikke alltid slik.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: samme budsjett, fire bilder</summary>
+::: {.reading-step title="Gå i dybden: samme budsjett, fire bilder"}
 
 En metode som fungerer godt på ett bilde, trenger ikke fungere like godt
 på et annet. Her får fire like store bilder det samme lagringsbudsjettet,
@@ -1405,6 +1406,7 @@ Kjør først cellen som bare viser originalene.
 
 ```{pyodide-python}
 #| label: week7-budget-inputs
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-challenge-images-29ca5158, ide-uke7-show-images-a8b96b0c
 # Se originalene før du vurderer hvilke bilder lav rang vil passe for.
 
 images = challenge_images()
@@ -1420,6 +1422,7 @@ som de opprinnelige bildematrisene.
 
 ```{pyodide-python}
 #| label: week7-budget
+#| feedback-context: ide-uke7-reference-assumptions, ide-uke7-challenge-images-29ca5158, ide-uke7-portrait-28c7bf94, ide-uke7-rank-image-c8fb2c8d, ide-uke7-show-images-a8b96b0c
 # Alle bildene har samme dimensjoner og får samme parameterbudsjett.
 # Rang k bestemmes av hva vi har råd til å lagre, ikke av ønsket bildekvalitet.
 # Undersøk hvorfor samme rang kan gi svært ulikt resultat.
@@ -1437,10 +1440,9 @@ må bevares i et av bildene. Er liten samlet pikselfeil nok til å sikre det?
 Forklar hvorfor et bilde kan være enkelt å beskrive med ord og likevel
 kreve mange SVD-komponenter.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: regn på budsjettet og den diagonale streken</summary>
+::: {.reading-step title="Gå i dybden: regn på budsjettet og den diagonale streken"}
 
 Finn største heltall $k$ som oppfyller $k(m+n+1)\leq0.25mn$ for
 $m=n=96$. **Regnegangen:** $0.25\cdot96^2/193\approx11.94$,
@@ -1455,7 +1457,7 @@ Den er enkel å beskrive, men ingen av SVD-komponentene har mindre vekt
 enn de andre. SVD-forenkling utnytter bestemte lineære sammenhenger mellom
 rader og kolonner, ikke enhver form for visuell enkelhet.
 
-</details>
+:::
 
 ### Svar på ukens spørsmål
 
@@ -1470,8 +1472,7 @@ retningene også de farlige: der deler vi på små $\sigma_i$ og forsterker
 datafeil (7.4). Hva som er «godt nok», avhenger derfor av hva vi vil
 bevare, og hvor mye vi stoler på dataene.
 
-<details class="reading-step">
-<summary>Gå i dybden: samle trådene og se fram mot optimering</summary>
+::: {.reading-step title="Gå i dybden: samle trådene og se fram mot optimering"}
 
 Forklar med egne ord: Hvorfor bruker SVD to basiser? Hvorfor deler inversjon
 på $\sigma_i$? Hva er forskjellen mellom null og nesten null? Hvorfor
@@ -1484,11 +1485,12 @@ Retningen $v_i$ har derfor krumning $\sigma_i^2$. Små singulærverdier gir
 flate retninger: store endringer i $x$ gir liten endring i modellen.
 Det er den samme geometrien som i nivåkurvene og gradientmetoden fra uke 6.
 
-</details>
+:::
 
 ## 7.7 Pseudoinversen (valgfritt)
 
-<div id="uke7-pseudoinvers"></div>
+::: {#uke7-pseudoinvers}
+:::
 
 ### Når vi ikke kan bruke en vanlig invers
 
@@ -1576,9 +1578,10 @@ I flyttallsregning bruker også `np.linalg.pinv` en terskel og behandler
 svært små singulærverdier som null. En terskel for avrunding fra uke 1
 og en terskel valgt ut fra usikkerhet i dataene svarer på ulike spørsmål.
 
-## 7.8 Oppgaver
+## 7.8 Oppgaver {quiz=uke7-8-oppgaver}
 
-<div id="uke7-oppgaver"></div>
+::: {#uke7-oppgaver}
+:::
 
 Oppgavene øver på regningene du trenger i prosjekt 7, sortert etter de
 samme ideene som forelesningen. Arbeid på papir først. Svar eksakt uten
@@ -1586,7 +1589,8 @@ avrunding, for eksempel `sqrt(5)` eller `3/2`. Vektorer skriver du én
 koordinat i hvert felt. Begrunnelsene skriver du i egne notater; feltene
 kontrollerer bare regningen.
 
-<div id="uke7-oppg-diagonal"></div>
+::: {#uke7-oppg-diagonal}
+:::
 
 ### SVD av diagonalmatriser
 
@@ -1597,6 +1601,7 @@ negativ. Bygg så $D_1$ og $D_2$, og regn ut feilene med halefeilformelen fra 7.
 
 ```{math-exercise}
 #| label: week7-task-diagonal
+#| context: week7-svd-reconstruction, week7-svd-tail-error
 #| caption: Sorter, behold og mål feilen
 #| mode: equivalent
 #| partial-credit: true
@@ -1613,7 +1618,8 @@ $\|D-D_2\|_F=$ _[1]
 
 **Forklar:** Hvorfor er $D_1$ ikke $\operatorname{diag}(2,0,0)$?
 
-<div id="uke7-oppg-projeksjon"></div>
+::: {#uke7-oppg-projeksjon}
+:::
 
 ### SVD fra resultatsiden og som projeksjon
 
@@ -1623,6 +1629,7 @@ $\sigma_1v_1^T$. Bygg deretter $P_1=u_1u_1^T$ og produktet $P_1A$.
 
 ```{math-exercise}
 #| label: week7-task-left-projection
+#| context: week7-svd-reconstruction, week7-svd-tail-error
 #| caption: Raden u₁ᵀA og projeksjonen P₁A
 #| mode: equivalent
 #| partial-credit: true
@@ -1637,7 +1644,8 @@ $\|A-P_1A\|_F=$ _[2]
 
 **Forklar:** Hvorfor er $\lVert A-P_1A\rVert_F$ lik den andre singulærverdien?
 
-<div id="uke7-oppg-losning"></div>
+::: {#uke7-oppg-losning}
+:::
 
 ### Løs og trunker i SVD-koordinater
 
@@ -1663,7 +1671,8 @@ $\|b-Ax_1\|_2=$ _[3]
 
 **Forklar:** Hvilken datakoordinat er residualen for $x_1$ lik? Kontroller at $Ax=b$.
 
-<div id="uke7-oppg-hale"></div>
+::: {#uke7-oppg-hale}
+:::
 
 ### Hvor mange komponenter trenger vi?
 
@@ -1673,6 +1682,7 @@ rangen $k$ som gir $\|A-A_k\|_F\leq2.5$.
 
 ```{math-exercise}
 #| label: week7-task-tail
+#| context: week7-svd-reconstruction, week7-svd-tail-error
 #| caption: Halefeil og minste tillatte rang
 #| mode: equivalent
 #| partial-credit: true
@@ -1687,7 +1697,8 @@ Minste $k$: _[2]
 
 **Forklar:** Hvor stor er den relative feilen ved $k=2$?
 
-<div id="uke7-kode-rang"></div>
+::: {#uke7-kode-rang}
+:::
 
 Skriv `rank_for_error(s, max_rel)`. Listen `s` inneholder
 singulærverdiene i synkende rekkefølge. Returner den minste $k$ slik at
@@ -1716,7 +1727,8 @@ assert rank_for_error([4., 3.], 1.0) == 0
 **Forklar:** Hvorfor finnes det alltid en $k$ som oppfyller kravet når
 `max_rel` er ikke-negativ?
 
-<div id="uke7-oppg-stoy"></div>
+::: {#uke7-oppg-stoy}
+:::
 
 ### Data med støy
 
@@ -1727,6 +1739,7 @@ dataene og feilen mot det rene bildet for rang 1 og 2, som i eksperiment 6.
 
 ```{math-exercise}
 #| label: week7-task-noise
+#| context: week7-svd-reconstruction, week7-svd-tail-error
 #| caption: Avvik mot data og feil mot rent bilde
 #| mode: equivalent
 #| partial-credit: true

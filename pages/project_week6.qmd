@@ -10,3 +10,4 @@ resources:
 
 {{< include ../_includes/projects/week6_preconditioning.md >}}
 
+{{< include ../_includes/ai-context/project_week6.md >}}

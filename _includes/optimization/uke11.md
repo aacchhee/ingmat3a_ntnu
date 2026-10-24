@@ -1,14 +1,9 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ::: {.panel-tabset}
 
 ## 11.0 Oversikt
 
-<div id="uke11-start"></div>
+::: {#uke11-start}
+:::
 
 ### Hva bør verkstedet produsere, og hva er en ekstra maskintime verdt?
 
@@ -78,7 +73,8 @@ Etter denne uken skal du kunne
 
 ## 11.1 Fra tabell til tillatt område
 
-<div id="uke11-modell"></div>
+::: {#uke11-modell}
+:::
 
 ### Modellen: to produkter og to typer timer
 
@@ -133,6 +129,7 @@ Se etter den siste linjen som fortsatt treffer det blå området.
 
 ```{pyodide-python}
 #| label: week11-polygon
+#| feedback-context: ide-uke11-reference-assumptions, ide-uke11-np-6f11581d, ide-uke11-show-region-5e50084a
 # Hjørnene rundt området (rekkefølge langs kanten) og tre nivåer av P = 5x + 4y.
 corners = np.array([[0, 0], [4, 0], [4, 1], [3, 3], [0, 4.5]])
 show_region(corners, objective=(5, 4), levels=(20, 24, 27), best=(3, 3))
@@ -156,7 +153,8 @@ I $(3,3)$ er begge timekapasitetene brukt opp, men det er rom for ett A-parti f�
 - **Slakk** er kapasitet minus bruk. De tre slakkene er altså $(0,0,1)$.
 - **Aktiv grense:** En grense med null slakk er **aktiv**.
 
-<div id="uke11-pris"></div>
+::: {#uke11-pris}
+:::
 
 ### Hvor robust er den beste planen?
 
@@ -182,7 +180,8 @@ Målet er å finne ut hvordan den beste planen flytter seg når $c$ endres, og v
 
 Den stiplede linjen er mållinjen gjennom det beste punktet, og teksten viser hvilket hjørne som er best og verdien der.
 
-<div id="uke11-pris-applet"></div>
+::: {#uke11-pris-applet}
+:::
 
 ```{.jsxgraph width="620" height="560" style="width:100%;max-width:620px;height:560px;border:0;"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -264,7 +263,8 @@ Den beste planen flytter seg aldri litt: den står stille, og så hopper den. Kn
 
 ### Hvorfor ligger optimum i et hjørne?
 
-<div id="uke11-hvorfor"></div>
+::: {#uke11-hvorfor}
+:::
 
 Forsøket viste at den beste planen alltid er et hjørne, eller en hel kant mellom to like gode hjørner.
 
@@ -284,7 +284,8 @@ Målet er å se med egne øyne at det siste punktet mållinjen berører, er et h
 
 Appleten starter med $c=4$, $P=20$ og planen $Z=(2,1)$ fra modellen i 11.1.
 
-<div id="uke11-hvorfor-applet"></div>
+::: {#uke11-hvorfor-applet}
+:::
 
 ```{.jsxgraph width="620" height="730" style="width:100%;max-width:620px;height:730px;border:0;"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -444,8 +445,7 @@ Bildet gir også en **stoppregel**: hvis ingen av de to kantene ut fra et hjørn
 
 Begrunnelsene står i *Gå i dybden* under.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor ligger det beste svaret i et hjørne?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor ligger det beste svaret i et hjørne?"}
 
 Vi viser først med tall at verdien i en plan inni området er et gjennomsnitt av hjørneverdiene. Deretter ser vi hvorfor slike vekter finnes for hver plan, og til slutt bruker vi to av ideene fra uke 8.
 
@@ -498,10 +498,9 @@ Samme konstruksjon virker for hvert punkt: strålen fra et hjørne treffer en ka
 
 Punkt 3 er stoppregelen: en metode kan stoppe ved det første hjørnet som ikke har en bedre nabo.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor er $(3,3)$ et lokalt maksimum?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor er $(3,3)$ et lokalt maksimum?"}
 
 De to kantene fra $(3,3)$ gir disse retningene:
 
@@ -521,30 +520,29 @@ $$\nabla P\cdot d=k_1(\nabla P\cdot d_1)+k_2(\nabla P\cdot d_2)=-3k_1-6k_2\le0.$
 
 Ingen tillatt retning øker $P$. Hjørnet er et lokalt maksimum, og etter punkt 3 i boksen over også et globalt.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor er snittet av halvplan konvekst?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor er snittet av halvplan konvekst?"}
 
 Hvis to planer $(x_1,y_1)$ og $(x_2,y_2)$ oppfyller for eksempel $2x+y\le9$, gjør også hvert punkt på linjestykket mellom dem det:
 $$2\bigl(tx_1+(1-t)x_2\bigr)+\bigl(ty_1+(1-t)y_2\bigr)=t(2x_1+y_1)+(1-t)(2x_2+y_2)\le t\cdot9+(1-t)\cdot9=9$$
 for $0\le t\le1$. Et punkt som oppfyller alle fem kravene, ligger i alle fem halvplanene. Linjestykket mellom to slike punkter ligger derfor også i alle fem, og mangekanten er en konveks mengde.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: når hjørneargumentet ikke gjelder</summary>
+::: {.reading-step title="Gå i dybden: når hjørneargumentet ikke gjelder"}
 
 - **Vilkåret for argumentet:** En LP kan også ha et tomt tillatt område eller et mål som kan bli vilkårlig stort. Hjørneargumentet over gjelder vårt ikke-tomme, begrensede område.
 - **Hvorfor grensene trengs:** Gradienten $\nabla P=(5,4)$ er konstant og Hessianen er null. Det finnes derfor ikke noe indre stasjonært punkt slik de lokale testene fra [uke 8](uke8.qmd#uke8-hessian) og [uke 10](uke10.qmd) undersøkte; grensene stopper forbedringen.
 
 Et ubegrenset område kan likevel ha et optimum. For eksempel har $\min(x+y)$ under $x,y\ge0$ minimum 0 i hjørnet $(0,0)$, selv om området ikke er kompakt. Ekstremalverdisetningen er tilstrekkelig, ikke nødvendig.
 
-</details>
+:::
 
 ### Hjørner er kvadratiske likningssystemer
 
-<div id="uke11-hjorner"></div>
+::: {#uke11-hjorner}
+:::
 
 I et hjørne er to grenser aktive. Vi går fram slik:
 
@@ -578,27 +576,26 @@ Går vi gjennom alle ti par på samme måte, får vi **5 hjørner**, **4 skjæri
 
 **Øv på dette:** [hjørne, utenfor eller singulært?](#uke11-oppg-par) i 11.5 og [finn alle hjørnene](#uke11-kode-hjorner) i 11.6.
 
-<details class="reading-step">
-<summary>Gå i dybden: alle ti par i én figur</summary>
+::: {.reading-step title="Gå i dybden: alle ti par i én figur"}
 
 Figuren viser de fem grenselinjene og alle ni skjæringspunktene. Det tiende paret, $x=4$ og $x=0$, har ikke noe skjæringspunkt: de to loddrette linjene er parallelle.
 
 ```{pyodide-python}
 #| label: week11-pairs
+#| feedback-context: ide-uke11-reference-assumptions, ide-uke11-show-pairs-e42f231f
 # Fem hjørner og fire skjæringspunkter utenfor området; x = 4 og x = 0 skjærer aldri.
 vertices = [(3, 3), (4, 1), (0, 4.5), (4, 0), (0, 0)]
 outside = [(0, 9), (4.5, 0), (4, 2.5), (9, 0)]
 show_pairs(vertices, outside)
 ```
 
-</details>
+:::
 
 ### Antall kandidater eksploderer
 
 Verkstedet har 10 par. Et problem med 50 variabler og 100 krav har mer enn $10^{40}$ mulige valg av aktive grenser. Å løse alle systemene er ingen algoritme.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvor mange kandidater finnes det?</summary>
+::: {.reading-step title="Gå i dybden: hvor mange kandidater finnes det?"}
 
 Slik teller vi mulige valg av aktive grenser:
 
@@ -619,7 +616,7 @@ Selv med en milliard løste systemer per sekund blir den siste listen uoverkomme
 1. **Sekunder:** Omtrent $2.0\cdot10^{40}/10^9=2.0\cdot10^{31}$ sekunder.
 2. **År:** Et år er omtrent $3.2\cdot10^7$ sekunder, så det blir omtrent $6\cdot10^{23}$ år.
 
-</details>
+:::
 
 ### Simpleksmetoden går langs kantene
 
@@ -636,6 +633,7 @@ Selv med en milliard løste systemer per sekund blir den siste listen uoverkomme
 
 ```{pyodide-python}
 #| label: week11-simplex-path
+#| feedback-context: ide-uke11-reference-assumptions, ide-uke11-corners-14b8a886, ide-uke11-show-region-5e50084a
 # Simpleksbanen fra tabellen: hvert steg bytter én aktiv grense.
 show_region(corners, path=[(0, 0), (4, 0), (4, 1), (3, 3)], best=(3, 3), title="Simpleksbanen")
 ```
@@ -647,7 +645,8 @@ show_region(corners, path=[(0, 0), (4, 0), (4, 1), (3, 3)], best=(3, 3), title="
 
 ## 11.2 Finn planen med `linprog`
 
-<div id="uke11-linprog"></div>
+::: {#uke11-linprog}
+:::
 
 ### Fra tegning til løser
 
@@ -692,6 +691,7 @@ Cellen sender tallene fra tabellene til `linprog` og skriver ut status, plan, bi
 
 ```{pyodide-python}
 #| label: week11-highs
+#| feedback-context: ide-uke11-reference-assumptions, ide-uke11-linprog-5e96555f, ide-uke11-np-6f11581d
 # Bidrag per parti (A, B) i tusen kroner. Rader: maskintimer, arbeidstimer, A-grense.
 p = np.array([5., 4.])
 A = np.array([[2., 1.], [1., 2.], [1., 0.]])
@@ -715,8 +715,7 @@ if result.success:                       # x og fun finnes bare ved et optimum
 
 Statusen gjelder modellen vi skrev inn. En feil i produksjonskravene blir ikke rettet av løseren.
 
-<details class="reading-step">
-<summary>Gå i dybden: skriv andre krav på samme form</summary>
+::: {.reading-step title="Gå i dybden: skriv andre krav på samme form"}
 
 SciPy tar imot ulikheter på formen $Az\le b$. Et krav $x+y\ge2$ skrives derfor $-x-y\le-2$: både koeffisientene og høyresiden skifter fortegn. Likninger kan gis direkte med `A_eq` og `b_eq`.
 
@@ -730,13 +729,14 @@ En **slakkvariabel** gjør ubrukt kapasitet til en egen variabel: $2x+y\le9$ er 
 - **Eksempler:** Ved planen $(4,1)$ er $s=0$; ved $(3,2)$ er $s=1$.
 - **Standardform:** Å samle alle krav i én slik avtalt form kalles å skrive problemet på **standardform**. Ulike framstillinger velger ulikhetsform eller likhetsform; oppgi derfor alltid formen.
 
-</details>
+:::
 
 **Øv på dette:** [umulig eller ubegrenset?](#uke11-oppg-status) i 11.5 og [send modellen til SciPy](#uke11-kode-linprog) i 11.6.
 
 ## 11.3 Ressurspriser gir en øvre grense
 
-<div id="uke11-dual"></div>
+::: {#uke11-dual}
+:::
 
 ### Prøv to prisforslag
 
@@ -791,8 +791,7 @@ Regningen er den samme som for de to forslagene over:
 2. Planen $(3,3)$ gir $5\cdot3+4\cdot3=27$, og prisene $(2,1,0)$ gir $9\cdot2+9\cdot1+4\cdot0=27$.
 3. Planen når grensen, så ingen tillatt plan er bedre.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor gir gyldige priser alltid en øvre grense?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor gir gyldige priser alltid en øvre grense?"}
 
 Vi går gjennom de to ulikhetene i den vektede ulikheten, én om gangen.
 
@@ -803,7 +802,7 @@ Vi går gjennom de to ulikhetene i den vektede ulikheten, én om gangen.
 
 Steg 1 bruker at $x,y\ge0$, og steg 2 bruker at $u,v,w\ge0$. Med negative tall ville en av ulikhetene snudd. Boksen *andre fortegn i primalen* lenger ned viser hva som skjer med prisene når kravene har andre fortegn.
 
-</details>
+:::
 
 | Begrep | Betydning |
 |:--|:--|
@@ -832,7 +831,8 @@ Når begge LP-er har mulige løsninger og et endelig optimum, er de beste verdie
 
 ### Komplementær slakk: finn prisene fra planen
 
-<div id="uke11-slakk"></div>
+::: {#uke11-slakk}
+:::
 
 Prisene $(2,1,0)$ falt ikke ned fra himmelen. Vi kan *finne* dem fra planen. Først ser vi hvor gapet mellom en grense og en plan kommer fra.
 
@@ -865,8 +865,7 @@ $$b^Tq-p^Tz=\underbrace{q^T(b-Az)}_{\text{pris}\,\times\,\text{slakk}}+\underbra
 
 Grunnen er at alle de blandede leddene, som $2xu$ og $yu$, forsvinner når du ganger ut høyresiden. Regningen står i *Gå i dybden* rett under.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvorfor gjelder gap-likningen for alle planer og priser?</summary>
+::: {.reading-step title="Gå i dybden: hvorfor gjelder gap-likningen for alle planer og priser?"}
 
 Gang ut høyresiden av den første likningen:
 
@@ -879,9 +878,10 @@ Med vektorer tar det to linjer:
 $$q^T(b-Az)+z^T(A^Tq-p)=q^Tb-q^TAz+z^TA^Tq-z^Tp.$$
 Tallet $q^TAz$ er lik sin egen transponerte $z^TA^Tq$, så de to midterste leddene forsvinner, og det som står igjen, er $b^Tq-p^Tz$.
 
-</details>
+:::
 
-<div id="uke11-prisbevis"></div>
+::: {#uke11-prisbevis}
+:::
 
 Håndeksemplet så på én plan og ett prisforslag. Appleten under lar deg prøve alle. Slik leser du den:
 
@@ -1051,6 +1051,7 @@ $$u\begin{pmatrix}2\\1\end{pmatrix}+v\begin{pmatrix}1\\2\end{pmatrix}=\begin{pma
 
 ```{pyodide-python}
 #| label: week11-normals
+#| feedback-context: ide-uke11-reference-assumptions, ide-uke11-np-6f11581d, ide-uke11-show-price-arrows-522fbcd2
 # Komplementær slakk ga u = 2, v = 1. Bygger de normalene til målretningen?
 print(2*np.array([2, 1]) + 1*np.array([1, 2]))
 show_price_arrows(at=(3, 3), normals=[(2, 1), (1, 2)], prices=[2, 1], gradient=(5, 4))
@@ -1063,10 +1064,10 @@ Summen er $(5,4)$, og pilene ender i samme punkt som gradienten.
 
 En aktiv grense kan likevel ha pris null, som vi ser ved $\Delta=3/2$ i 11.4.
 
-<details class="reading-step">
-<summary>Gå i dybden: andre fortegn i primalen</summary>
+::: {.reading-step title="Gå i dybden: andre fortegn i primalen"}
 
-<div id="uke11-fortegn"></div>
+::: {#uke11-fortegn}
+:::
 
 Hvis rader eller variabler har andre fortegn, må også prisreglene endres. For et primalproblem som maksimeres:
 
@@ -1090,13 +1091,14 @@ Den vektede ulikheten forklarer alle tre reglene: vi kan bare multiplisere en ul
 
 I hovedmodellen bruker vi bare $Az\le b$ og $z\ge0$, så alle prisene er ikke-negative og priskravene er ulikheter.
 
-</details>
+:::
 
 **Øv på dette:** [prisene for planen (4, 1)](#uke11-oppg-priser), [en løs grense](#uke11-oppg-los) og [tre produkter](#uke11-oppg-tre) i 11.5; [kontroller et prisbevis](#uke11-kode-sertifikat) i 11.6.
 
 ## 11.4 Hva er en ekstra maskintime verdt?
 
-<div id="uke11-sensitivitet"></div>
+::: {#uke11-sensitivitet}
+:::
 
 En **lokal ressursverdi** er økningen i det beste bidraget **per ekstra enhet** av ressursen, når kapasiteten endres litt. Vi undersøker om verdien av en maskintime fortsatt er 2 tusen kroner når kapasiteten endres.
 
@@ -1154,6 +1156,7 @@ Figuren lar oss se *hvilken grense* som stopper forbedringen. Sammenlign hvor m�
 
 ```{pyodide-python}
 #| label: week11-capacity-geometry
+#| feedback-context: ide-uke11-reference-assumptions, ide-uke11-compare-regions-5f3825f4
 # Hjørner og beste plan fra regningene over, uten og med to ekstra maskintimer.
 before = dict(corners=[[0, 0], [4, 0], [4, 1], [3, 3], [0, 4.5]], best=(3, 3), levels=[27],
               machine=9, title="Ekstra maskintimer: Δ = 0")
@@ -1197,6 +1200,7 @@ Cellen definerer verkstedet på nytt, i tilfelle du endret `p` i eksperiment 2. 
 
 ```{pyodide-python}
 #| label: week11-marginals
+#| feedback-context: ide-uke11-reference-assumptions, ide-uke11-linprog-5e96555f, ide-uke11-np-6f11581d, ide-uke11-show-value-curve-84803970
 # Verkstedet fra 11.2 (på nytt her, i tilfelle p ble endret i eksperiment 2).
 p, A, b = np.array([5., 4.]), np.array([[2., 1.], [1., 2.], [1., 0.]]), np.array([9., 9., 4.])
 row, price, kink = 0, 2, 1.5      # rad 0 = maskintimer, med prisen 2 fra 11.3
@@ -1224,8 +1228,7 @@ print("SciPy-marginaler ved Δ = 0:", base.ineqlin.marginals + 0)
 - **SciPys fortegn:** `ineqlin.marginals` er den *lokale* endringen i minimeringsverdien når en høyreside økes. SciPy minimerer $-P$, så marginalene $(-2,-1,0)$ gir de lokale verdiene $(2,1,0)$ for ekstra maskintime, arbeidstime og høyere A-grense.
 - **Arbeidstimene:** Stigningstallet er 1 for $\Delta\ge-3$ og 2 under; knekken kommer der A-grensen blir aktiv.
 
-<details class="reading-step">
-<summary>Gå i dybden: hvor lenge er prisformelen eksakt?</summary>
+::: {.reading-step title="Gå i dybden: hvor lenge er prisformelen eksakt?"}
 
 For å finne hele intervallet der gammel pris gir riktig *optimalverdi*, lar vi $\Delta$ være en endring i maskinkapasiteten: positiv $\Delta$ betyr flere timer, negativ $\Delta$ betyr færre. Den nye kapasiteten er $9+\Delta$.
 
@@ -1253,10 +1256,9 @@ Ved $\Delta=3/2$ blir punktet $(4,5/2)$ tillatt, og der er alle tre grensene akt
 - **To optimale prisvalg:** Prisene $(0,2,3)$ gir da grensen $0\cdot\tfrac{21}{2}+2\cdot9+3\cdot4=30$, den samme verdien som $(2,1,0)$ gir: $2\cdot\tfrac{21}{2}+9=30$.
 - **Aktiv betyr ikke positiv pris:** Prisene $(0,2,3)$ er altså allerede optimale, selv om maskintimekravet fortsatt er aktivt. En aktiv grense kan ha pris null.
 
-</details>
+:::
 
-<details class="reading-step">
-<summary>Gå i dybden: hva om partiene må være hele?</summary>
+::: {.reading-step title="Gå i dybden: hva om partiene må være hele?"}
 
 Hvis partier må være hele, er det tillatte området bare heltallspunktene i mangekanten.
 
@@ -1301,7 +1303,7 @@ Den beste heltallsplanen er derfor $(8,14)$ med 6850 kr, som lar seks komponente
 
 I verkstedet er $(10/3,17/6)$ ved $\Delta=1/2$ ikke en plan med hele partier.
 
-</details>
+:::
 
 **Øv på dette:** [ti maskintimer](#uke11-oppg-kapasitet) og [hvor langt prisen gjelder](#uke11-oppg-gyldighet) i 11.5.
 
@@ -1321,9 +1323,10 @@ Ressursprisene er et første eksempel på **multiplikatorer**: tall som veier sa
 - **Samme pristolkning:** De er priser på samme måte som dualvariablene her (med fortegnsavtalen i uke 12 er prisen $-\lambda$): de måler hva en litt endret bibetingelse er verdt ([uke 12](uke12.qmd#uke12-pris)).
 - **Valgfri fordypning:** Ulikheter med komplementær slakk kommer der bare som valgfri fordypning.
 
-## 11.5 Regneoppgaver
+## 11.5 Regneoppgaver {quiz=uke11-5-oppgaver}
 
-<div id="uke11-oppgaver"></div>
+::: {#uke11-oppgaver}
+:::
 
 Oppgavene er sortert etter ukens tre ideer. Kodeoppgavene er i 11.6.
 
@@ -1341,7 +1344,8 @@ Oppgavene er sortert etter ukens tre ideer. Kodeoppgavene er i 11.6.
 
 ### Idé 1: Hjørner og tillatte planer
 
-<div id="uke11-oppg-plan"></div>
+::: {#uke11-oppg-plan}
+:::
 
 Planen $(x,y)=(4,1)$ lager fire A-partier og ett B-parti. Regn ut bruken av maskintimer, arbeidstimer og A-partier, og trekk bruken fra kapasiteten. Regn også ut dekningsbidraget.
 
@@ -1360,7 +1364,8 @@ Dekningsbidrag: _[24]
 
 **Forklar:** Er planen tillatt? Hvilke grenser er aktive, og hvilket hjørne i hjørnetabellen er dette?
 
-<div id="uke11-oppg-par"></div>
+::: {#uke11-oppg-par}
+:::
 
 Et hjørne er to aktive grenser med et ikke-singulært $2\times2$-system og et punkt som oppfyller de andre kravene.
 
@@ -1386,7 +1391,8 @@ Determinant, A-grense og $y=0$: _[1]
 
 **Forklar:** Hva sier de to determinantene om linjene, og hvilket hjørne gir paret A-grense og $y=0$? Hvilket krav bryter det første punktet?
 
-<div id="uke11-oppg-bidrag"></div>
+::: {#uke11-oppg-bidrag}
+:::
 
 I eksperiment 1 endret vi bidraget fra B. Nå er bidraget fra A usikkert: målet er $ax+4y$, mens kravene er de samme.
 
@@ -1412,7 +1418,8 @@ Nedre knekkpunkt: $a=$ _[2]
 Øvre knekkpunkt: $a=$ _[8]
 ```
 
-<div id="uke11-oppg-status"></div>
+::: {#uke11-oppg-status}
+:::
 
 | Problem | Mål og krav |
 |:--|:--|
@@ -1438,7 +1445,8 @@ Problem II: _[3]
 
 ### Idé 2: Prisbevis og komplementær slakk
 
-<div id="uke11-oppg-priser"></div>
+::: {#uke11-oppg-priser}
+:::
 
 Nå gir et B-parti bare 2 tusen kroner, så målet er $5x+2y$. Eksperiment 1 viser at $(4,1)$ da er best. Finn prisene $(u,v,w)$ med komplementær slakk:
 
@@ -1465,7 +1473,8 @@ Bidrag $5x+2y$ i $(4,1)$: _[22]
 
 **Forklar:** Hvorfor beviser prisene at $(4,1)$ er best? Hvilken grense har nå positiv pris, og hvorfor er det en annen enn ved $(3,3)$?
 
-<div id="uke11-oppg-los"></div>
+::: {#uke11-oppg-los}
+:::
 
 Prøv prisforslaget $(u,v,w)=(1,2,1)$ for det opprinnelige målet $5x+4y$. Finn innsatsprisene $2u+v+w$ for A og $u+2v$ for B, avgjør om prisene er gyldige, og regn ut den øvre grensen.
 
@@ -1484,7 +1493,8 @@ Innsatspriser (A, B): vec[5,5]
 
 **Forklar:** Sammenlign med planen $(3,3)$. Bruk komplementær slakk til å forklare hvorfor akkurat dette prisvalget ikke kan bevise at $(3,3)$ er optimal: hvilket produkt har innsatspris større enn bidraget, og hva krever regelen da av mengden?
 
-<div id="uke11-oppg-tre"></div>
+::: {#uke11-oppg-tre}
+:::
 
 Nå er det tre produkter, og vi kan ikke lenger tegne området i planet. Et sertifikat kan fortsatt kontrolleres for hånd. En bedrift lager $x_A,x_B,x_C$ partier og maksimerer $6x_A+5x_B+7x_C$ (tusen kr).
 
@@ -1518,7 +1528,8 @@ Innsatspris C: _[25/3]
 
 ### Idé 3: Hva er kapasitet verdt?
 
-<div id="uke11-oppg-kapasitet"></div>
+::: {#uke11-oppg-kapasitet}
+:::
 
 Øk bare maskintimene fra 9 til 10, og anta at de to timegrensene fortsatt er aktive. Løs grenselikningene som ved $\Delta=1/2$ i 11.4, kontroller $x\le4$ og finn det nye dekningsbidraget. Skriv produksjonstallene som brøker.
 
@@ -1537,7 +1548,8 @@ Dekningsbidrag: _[29]
 
 **Forklar:** Stemmer økningen i dekningsbidraget med prisen 2 per maskintime?
 
-<div id="uke11-oppg-gyldighet"></div>
+::: {#uke11-oppg-gyldighet}
+:::
 
 Løs $2x+y=9+\Delta$ og $x+2y=9$ som i 11.4, men behold $\Delta$ som bokstav. Du skal få $x=3+2\Delta/3$ og $y=3-\Delta/3$. Finn den største $\Delta\ge0$ som fortsatt oppfyller $x\le4$.
 
@@ -1553,14 +1565,14 @@ $\Delta=$ _[3/2]
 
 **Forklar:** Hvorfor må prisanslaget undersøkes på nytt etter denne økningen?
 
-## 11.6 Python: undersøk og kontroller
+## 11.6 Python: undersøk og kontroller {quiz=uke11-6-oppgaver}
 
-<div id="uke11-python"></div>
+::: {#uke11-python}
+:::
 
 Forsøkene i 11.2–11.4 bruker `linprog` fra SciPy. Oppslagsboksen samler det du trenger å vite om kallet og resultatet.
 
-<details>
-<summary>SciPy-oppslag: `linprog` og resultatet</summary>
+::: {.details title="SciPy-oppslag: `linprog` og resultatet"}
 
 | Skriv/les | Betydning i modellen |
 |:--|:--|
@@ -1570,7 +1582,7 @@ Forsøkene i 11.2–11.4 bruker `linprog` fra SciPy. Oppslagsboksen samler det d
 | `result.ineqlin.residual`, `result.ineqlin.marginals` | Slakk og lokal verdiendring for minimeringsmålet per rad. Snudd fortegn gir ressursverdien for $P$. |
 | `np.linalg.solve(M, h)` | Løs et kvadratisk system. Ved en singulær matrise kastes `np.linalg.LinAlgError`. |
 
-</details>
+:::
 
 Hva skjer hvis løseren *ikke* finner en beste plan? To små modeller med én variabel $\tau$ skiller de to utfallene:
 
@@ -1581,6 +1593,7 @@ I [regneoppgaven om umulig og ubegrenset](#uke11-oppg-status) bruker du de samme
 
 ```{pyodide-python}
 #| label: week11-status
+#| feedback-context: ide-uke11-reference-assumptions, ide-uke11-linprog-5e96555f
 # Første modell: τ <= 1 og τ >= 2 motsier hverandre.
 # Skriv τ >= 2 som -τ <= -2 for A_ub og b_ub.
 impossible = linprog([1.], A_ub=[[1.], [-1.]], b_ub=[1., -2.],
@@ -1598,7 +1611,8 @@ Disse korte oppgavene kan kjøres uavhengig av hverandre. Data, importer og funk
 
 ### Idé 1: Hjørner og tillatte planer
 
-<div id="uke11-kode-plan"></div>
+::: {#uke11-kode-plan}
+:::
 
 Funksjonen `evaluate(z)` skal returnere paret `(slack, profit)` for en plan `z`:
 
@@ -1628,7 +1642,8 @@ assert np.allclose(evaluate(np.array([4., 2.]))[0], [-1., 1., 0.])
 assert np.isclose(evaluate(np.array([4., 2.]))[1], 28.)
 ```
 
-<div id="uke11-kode-hjorner"></div>
+::: {#uke11-kode-hjorner}
+:::
 
 Nå gjør vi håndeksemplet fra 11.1 for alle ti par. Alle fem grensene er skrevet som rader i $Gz\le h$; fortegnskravene står som $-x\le0$ og $-y\le0$.
 
@@ -1667,7 +1682,8 @@ assert all(np.all(G @ z <= h + 1e-9) for z in found)
 
 Bruk funksjonen etterpå: regn ut $5x+4y$ i hvert hjørne og kontroller at det største er 27. For hvor mange par av rader måtte du løse et system?
 
-<div id="uke11-kode-linprog"></div>
+::: {#uke11-kode-linprog}
+:::
 
 Funksjonen `solve_production()` skal maksimere bidraget med `linprog`, som i eksperiment 2. Husk at `linprog` minimerer. Returner hele resultatobjektet, slik at status, plan og verdi kan kontrolleres.
 
@@ -1698,7 +1714,8 @@ assert np.allclose(b - A @ solve_production().x, [0., 0., 1.], atol=1e-7)
 
 ### Idé 2: Prisbevis og komplementær slakk
 
-<div id="uke11-kode-sertifikat"></div>
+::: {#uke11-kode-sertifikat}
+:::
 
 Funksjonen `certificate(z, q)` skal kontrollere et prisbevis og returnere `(plan_ok, prices_ok, gap)`:
 

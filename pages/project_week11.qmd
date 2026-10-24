@@ -7,3 +7,5 @@ resources:
 {{< include ../_includes/projects/week11_setup.md >}}
 
 {{< include ../_includes/projects/week11_power_market.md >}}
+
+{{< include ../_includes/ai-context/project_week11.md >}}

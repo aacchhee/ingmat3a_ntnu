@@ -25,3 +25,5 @@ title: "Uke 2 – fikspunktiterasjon"
 {{< include ../_includes/module2/m2_5.md >}}
 
 :::
+
+{{< include ../_includes/ai-context/page4.md >}}

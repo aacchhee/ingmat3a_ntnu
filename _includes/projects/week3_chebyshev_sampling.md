@@ -138,6 +138,7 @@ følg kallene som trengs for å beregne $T_4(0.3)$, og forklar hvilken linje som
 svarer til hvert av de tre tilfellene i den matematiske definisjonen.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-2
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -185,6 +186,7 @@ til å lage neste kolonne. Dermed slipper programmet å starte rekursjonen på
 nytt hver gang.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-3
 import numpy as np
 
 def chebyshev_table(x, n):
@@ -226,6 +228,8 @@ $T_0,\ldots,T_8$ i alle sammen. Resultatet `T_plot` har 1200 rader og 9
 kolonner. I løkken tegner `T_plot[:, n]` hele kolonnen som hører til $T_n$.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-4
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-table-6cc5accb
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -309,6 +313,8 @@ polynomer i et femdimensjonalt rom fyller hele rommet. Derfor danner de en
 basis. Start nå med koeffisientene du fant for hånd, og fyll kolonnene i `Q`.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-5
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-np-6f11581d
 # Hver kolonne skal inneholde monomialkoeffisientene til ett T_k.
 # Rekkefølgen på radene er 1, x, x^2, x^3, x^4.
 Q = np.full((5, 5), np.nan)
@@ -454,6 +460,8 @@ Andre rad blir dermed $[1,-1/3,-7/9,23/27]$. Regn ut de to siste radene på
 samme måte, og kontroller dem mot utskriften fra `chebyshev_matrix`.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-6
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-table-6cc5accb, ide-project_week3-np-6f11581d
 def monomial_matrix(points, n):
     """Avlesningsmatrise for basisen (1, x, ..., x^n)."""
     points = np.asarray(points, dtype=float)
@@ -543,6 +551,8 @@ bare «finn tallkolonnen $u$ som løser $Au=b$». Den kjenner ikke til polynomer
 tolkningen kommer fra hvordan vi bygde matrisen `A`.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-7
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-c-small-1e2e5a92, ide-project_week3-m-small-6bfc516b, ide-project_week3-cheb-1e0b010a, ide-project_week3-np-6f11581d, ide-project_week3-points-small-90387913, ide-project_week3-poly-894ef2d6
 monomial_true = np.array([1.0, -2.0, 0.5, 1.0])
 # Dette er de eneste dataene de to lineære systemene får.
 measurements_small = poly.polyval(points_small, monomial_true)
@@ -584,6 +594,8 @@ mindre enn 4.
 Kjør de to endringene under én om gangen:
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-8
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-monomial-matrix-4391e9ee, ide-project_week3-np-6f11581d, ide-project_week3-points-small-90387913
 # Forsøk A: Fjern den siste avlesningen.
 points_three = points_small[:-1]
 M_three = monomial_matrix(points_three, 3)
@@ -610,6 +622,8 @@ Bruk deretter koden under til å kontrollere svaret og lage to forskjellige
 polynomer med identiske tre avlesninger:
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-9
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-monomial-true-789ac4f4, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394, ide-project_week3-points-three-4e89b03e, ide-project_week3-poly-894ef2d6, ide-project_week3-x-dense-a120796e
 # TODO: Utvid produktet du fant, og skriv inn de fire koeffisientene i
 # rekkefølgen 1, x, x^2, x^3. NaN-verdiene skal erstattes.
 invisible_coefficients = np.full(4, np.nan)
@@ -696,6 +710,8 @@ polynom med små Chebyshev-koeffisienter, og `max_grid_error` måler den størst
 observerte forskjellen på et tett rutenett.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-10
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-np-6f11581d
 def chebyshev_points(n):
     """Returner n+1 cosinusfordelte punkter i intervallet [-1,1]."""
     # P_n har dimensjon n+1, så vi bruker n+1 forskjellige avlesninger.
@@ -738,6 +754,8 @@ Det tette rutenettet brukes bare til etterkontroll. Det gir ikke de lineære
 systemene ekstra informasjon.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-11
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-max-grid-error-b3661a5a, ide-project_week3-monomial-matrix-4391e9ee, ide-project_week3-np-6f11581d, ide-project_week3-poly-894ef2d6, ide-project_week3-reference-coordinates-8e58a20d
 def compare_bases(n, grid_size=2001):
     # Det samme polynomet leses av i de samme punktene for begge basiser.
     points = chebyshev_points(n)
@@ -810,6 +828,8 @@ Ikke gå direkte videre. Les tallene i denne rekkefølgen:
 ### Valgfri utvidelse: se hva som skjer når graden øker
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-12
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-compare-bases-2e0b251a, ide-project_week3-np-6f11581d
 degrees = [3, 10, 20, 25, 30]
 basis_results = [compare_bases(n) for n in degrees]
 
@@ -827,6 +847,8 @@ for data in basis_results:
 Lag en logaritmisk feilfigur for grad 30:
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-13
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-basis-data-52b41529, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394
 grid = basis_data["grid"]
 error_monomial = np.abs(
     basis_data["monomial_values"]-basis_data["reference"]
@@ -874,6 +896,8 @@ betydning: Plass nummer 2 står foran $x^2$ i den ene listen og foran $T_2$ i
 den andre.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-14
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-monomial-matrix-4391e9ee, ide-project_week3-np-6f11581d, ide-project_week3-reference-coordinates-8e58a20d
 n = 30
 points = chebyshev_points(n)
 true_chebyshev = reference_coordinates(n)
@@ -935,6 +959,8 @@ endene, blir det da lettere eller vanskeligere for polynomet å få store
 utslag der mellom avlesningene?
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-15
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394
 n = 30
 equal_points = np.linspace(-1.0, 1.0, n+1)
 cheb_points = chebyshev_points(n)
@@ -985,6 +1011,8 @@ $10^{-10}$ ved avlesningspunktene har blitt til en feil på omtrent $10^{-4}$
 et sted mellom dem.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-16
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-cheb-points-a8daaa35, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-equal-points-6d1ee98f, ide-project_week3-n-c51783d1, ide-project_week3-np-6f11581d, ide-project_week3-reference-coordinates-8e58a20d
 def point_placement_experiment(n, points, noise_size=1e-10,
                                grid_size=5001):
     # Lag de nøyaktige avlesningene fra ett fast referansepolynom.
@@ -1052,6 +1080,8 @@ mellom dem. Figuren tegner derfor både de små svarte verdiene $r(x_k)$ og hele
 kurven $r(x)$ på det tette rutenettet.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-17
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-cheb-data-3b1d810c, ide-project_week3-equal-data-89ad45a2, ide-project_week3-plt-7be21394
 plt.close("all")
 fig, axes = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
 
@@ -1094,6 +1124,8 @@ nesten ikke ser en endring som likevel kan være stor mellom punktene.
 ### Valgfri utvidelse: finn graden der forskjellen blir synlig
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-18
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-np-6f11581d, ide-project_week3-point-placement-experiment-bb8dcd1e
 degrees = [5, 10, 15, 20, 25, 30, 35]
 
 print(f"{'grad':>5} {'forsterkning, jevn':>22} "
@@ -1145,6 +1177,8 @@ med potenser av $x$, og de tre variablene som begynner med `value_` er de tre
 svarene.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-19
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-np-6f11581d, ide-project_week3-poly-894ef2d6
 n = 50
 x0 = 0.99
 
@@ -1183,6 +1217,8 @@ hverandre hvor stor den største monomialkoeffisienten er og hvor mye de to
 beregningsmåtene avviker fra cosinuskontrollen.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-20
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-np-6f11581d, ide-project_week3-poly-894ef2d6, ide-project_week3-x0-b8af24e1
 print(f"{'grad':>5} {'største koeff.':>18} "
       f"{'feil monomial':>18} {'feil Chebyshev':>18}")
 print("-"*63)
@@ -1248,6 +1284,8 @@ forskjellen fra referansepolynomet på det tette rutenettet. `assert`-linjene
 stopper forsøket hvis reglene ikke er fulgt.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week3-chebyshev-sampling-21
+#| feedback-context: ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394, ide-project_week3-reference-coordinates-8e58a20d
 # Startforslag: Bytt ut både punktene og fortegnsmønsteret i feilen.
 n_design = 20
 my_points = np.linspace(-1.0, 1.0, n_design+1)

@@ -3,3 +3,5 @@ title: "Uke 3 – Polynomer i blindsonen"
 ---
 
 {{< include ../_includes/projects/week3_chebyshev_sampling.md >}}
+
+{{< include ../_includes/ai-context/project_week3.md >}}

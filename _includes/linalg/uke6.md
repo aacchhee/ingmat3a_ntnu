@@ -1,14 +1,9 @@
-<div class="learning-mode" data-learning-mode role="group" aria-label="Velg lesemodus">
-<button type="button" data-mode="lecture" aria-pressed="true">Forelesning</button>
-<button type="button" data-mode="reading" aria-pressed="false">Gå i dybden</button>
-<span role="status" aria-live="polite"></span>
-</div>
-
 ::: {.panel-tabset}
 
 ## 6.0 Oversikt
 
-<div id="uke6-start"></div>
+::: {#uke6-start}
+:::
 
 ### Kan vi løse tusenvis av likninger ved å begynne med et grovt svar og forbedre det litt om gangen?
 
@@ -49,7 +44,8 @@ skalering kan endre arbeidsmengden for CG.
 
 ## 6.1 Fra likningssystem til Gauss–Seidel
 
-<div id="uke6-gs"></div>
+::: {#uke6-gs}
+:::
 
 ### Én likning og én ukjent om gangen
 
@@ -140,6 +136,7 @@ sveip med hver metode.
 
 ```{pyodide-python}
 #| label: week6-gs-experiment
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-error-plot-65438c90, ide-uke6-gs-path-e78d0fee, ide-uke6-np-6f11581d
 # Samme system, nullstart og like mange hele sveip for begge metodene.
 A = np.array([[3., 1.], [1., 2.]])
 b = np.array([5., 5.])
@@ -164,8 +161,7 @@ egenverdi. Men virker oppskriften for ethvert system?
 
 **Øv på dette:** [Jacobi eller Gauss–Seidel?](#uke6-ov-sveip)
 
-<details class="reading-step">
-<summary>Gå i dybden: fire ukjente, rekkefølgen i sveipet og korreksjonen i koden</summary>
+::: {.reading-step title="Gå i dybden: fire ukjente, rekkefølgen i sveipet og korreksjonen i koden"}
 
 **Den samme oppskriften som matriseregning**
 
@@ -334,11 +330,12 @@ gangen, bruker neste rad de oppdaterte verdiene automatisk.
 Beregner vi derimot hele residualen én gang ved starten av sveipet
 og bruker den uendret i alle korreksjonene, får vi Jacobi.
 
-</details>
+:::
 
 ## 6.2 Følg feilen
 
-<div id="uke6-fikspunkt"></div>
+::: {#uke6-fikspunkt}
+:::
 
 I eksperiment 1 krympet GS-feilen med samme faktor i hvert sveip etter
 det første. Skjer det
@@ -363,6 +360,7 @@ vokser.
 
 ```{pyodide-python}
 #| label: week6-convergence
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-error-plot-65438c90, ide-uke6-gs-path-e78d0fee, ide-uke6-np-6f11581d
 # Vi konstruerer b fra en kjent løsning for å isolere effekten av A.
 star = np.array([1., 2.])
 kurver = {}
@@ -437,8 +435,7 @@ akkurat når $\rho(T)<1$. Det er $T$ vi undersøker her.
 
 **Øv på dette:** [Blir feilen mindre?](#uke6-ov-feilfaktor)
 
-<details class="reading-step">
-<summary>Gå i dybden: finn matriserepresentasjonen av feiloppdateringen</summary>
+::: {.reading-step title="Gå i dybden: finn matriserepresentasjonen av feiloppdateringen"}
 
 **Prøv selv**
 
@@ -485,11 +482,12 @@ $$(D+L)x_{k+1}=b-Ux_k,\qquad T=-(D+L)^{-1}U.$$
 Dette er et analyseuttrykk; implementasjonen trenger ikke en eksplisitt invers.
 For Jacobi er $T=-D^{-1}(L+U)$.
 
-</details>
+:::
 
 ## 6.3 Residual, norm og kondisjonstall
 
-<div id="uke6-residual"></div>
+::: {#uke6-residual}
+:::
 
 ### Fra ett tall i uke 2 til en vektor i uke 6
 
@@ -652,8 +650,7 @@ hvilken øvre grense får dere for relativ feil?**
 
 **Øv på dette:** [Liten residual, godt svar?](#uke6-ov-residual)
 
-<details class="reading-step">
-<summary>Gå i dybden: feilgrensen, enhetssirkelen og et forsøk med kondisjonstall</summary>
+::: {.reading-step title="Gå i dybden: feilgrensen, enhetssirkelen og et forsøk med kondisjonstall"}
 
 **Feilgrensen i tre trinn**
 
@@ -749,6 +746,7 @@ hovedteksten.
 
 ```{pyodide-python}
 #| label: week6-matrix-norm
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-np-6f11581d, ide-uke6-show-unit-circle-image-586343cb
 # Enhetsvektorer inn, bildene Bz ut; hjelperen tegner begge.
 B = np.diag([3., 1.])
 show_unit_circle_image(B)
@@ -777,6 +775,7 @@ virkelig vokser med kondisjonstallet, selv om løseren gjør jobben sin.
 
 ```{pyodide-python}
 #| label: week6-conditioning-experiment
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-np-6f11581d, ide-uke6-show-conditioning-055de0e4
 # Samme løser på fem systemer; bare kondisjonstallet K endres.
 K_verdier = [1., 1e2, 1e4, 1e6, 1e8]
 x_fasit = np.array([1., 0.])
@@ -866,11 +865,12 @@ $(5\pm\sqrt5)/2$, og kondisjonstallet er omtrent $2.62$.
 For en generell matrise kan vi ikke bruke denne egenverdikvotienten;
 uke 7 forklarer sammenhengen med singulærverdier.
 
-</details>
+:::
 
 ## 6.4 Løsningen som minimum
 
-<div id="uke6-energi"></div>
+::: {#uke6-energi}
+:::
 
 ### Fra to likninger til én funksjon
 
@@ -964,6 +964,7 @@ plassere dem på skålen og i nivåkurvebildet?**
 
 ```{pyodide-python}
 #| label: week6-energy-surface
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-show-surface-and-levels-7ac86ea0
 # Samme phi brukes til både flaten og nivåkurvene.
 def phi(u, v):
     return 1.5*u**2 + u*v + v**2 - 5*u - 5*v
@@ -1036,8 +1037,7 @@ allerede har oppnådd i tidligere retninger.
 **Øv på dette:** [Fra likningssystem til minimum](#uke6-ov-skal) og
 [kondisjonstall fra egenverdiene](#uke6-ov-kondisjon).
 
-<details class="reading-step">
-<summary>Gå i dybden: nivåkurver, hele GS-sveipet, tre ukjente og den generelle minimeringen</summary>
+::: {.reading-step title="Gå i dybden: nivåkurver, hele GS-sveipet, tre ukjente og den generelle minimeringen"}
 
 **Nivåkurvene er ellipser**
 
@@ -1110,6 +1110,7 @@ GS-iterasjonen. Figuraksene $x_1,x_2$ er våre $u,v$.
 
 ```{pyodide-python}
 #| label: week6-coordinate-energy
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-bowl-plot-a08ab78f, ide-uke6-gs-path-e78d0fee, ide-uke6-np-6f11581d, ide-uke6-plt-7be21394
 A = np.array([[3., 1.], [1., 2.]])
 b = np.array([5., 5.])
 path = gs_path(A, b, [0., 0.], sweeps=3)
@@ -1299,11 +1300,12 @@ Hjelperen brukes her for symmetriske $2\times2$-matriser.
 Matrisen og høyresiden bestemmer nivåkurvene, mens `path` bestemmer
 hvilke løsningsforslag som forbindes i figuren.
 
-</details>
+:::
 
 ## 6.5 Fra skål til søkeretning
 
-<div id="uke6-retning"></div>
+::: {#uke6-retning}
+:::
 
 ### Vi kan velge andre linjer enn koordinataksene
 
@@ -1414,6 +1416,7 @@ og hvorfor det likevel ikke er nok.
 
 ```{pyodide-python}
 #| label: week6-line-search
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-line-search-plot-fb0f9618, ide-uke6-np-6f11581d
 # Linjesøket fra x0 i residualens retning, med formelen alpha = pᵀr / pᵀAp.
 A = np.array([[3.,1.], [1.,2.]])
 b = np.array([5.,5.])
@@ -1459,6 +1462,7 @@ om formen på skålen bestemmer hvor mange steg metoden trenger.
 
 ```{pyodide-python}
 #| label: week6-steepest-descent
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-descent-path-3710b68f, ide-uke6-np-6f11581d, ide-uke6-two-bowls-b41c6f38
 # Samme dreining Q og samme løsning; bare den minste egenverdien endres.
 Q = np.array([[1.,-1.],[1.,1.]])/np.sqrt(2)
 star = np.array([1.,-1.1])
@@ -1485,8 +1489,7 @@ på nytt. Dette leder til CG.
 
 **Øv på dette:** [Ett steg med bratteste nedstigning](#uke6-ov-linjesok)
 
-<details class="reading-step">
-<summary>Gå i dybden: fra partiellderiverte til eksakt linjesøk</summary>
+::: {.reading-step title="Gå i dybden: fra partiellderiverte til eksakt linjesøk"}
 
 **Prøv selv**
 
@@ -1544,11 +1547,12 @@ Langs en nivåkurve er funksjonsendringen null, så tangentretningen
 står vinkelrett på gradienten. Ved minimum er gradienten null,
 og vi trenger ingen ny søkeretning.
 
-</details>
+:::
 
 ## 6.6 Konjugert gradient
 
-<div id="uke6-cg"></div>
+::: {#uke6-cg}
+:::
 
 ### Først: hva har ett linjesøk gitt oss?
 
@@ -1570,6 +1574,7 @@ har noe felles.
 
 ```{pyodide-python}
 #| label: week6-parallel-minima
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-np-6f11581d, ide-uke6-parallel-minima-plot-4a41e7d4
 # Linjesøk langs retningen (1,1) fra et punkt på hver parallelle linje v = u + c.
 A = np.array([[3.,1.], [1.,2.]])
 b = np.array([5.,5.])
@@ -1720,6 +1725,7 @@ Og hva tror dere endrer seg på den smale?**
 
 ```{pyodide-python}
 #| label: week6-cg-experiment
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-cg-7910cbff, ide-uke6-descent-path-3710b68f, ide-uke6-np-6f11581d, ide-uke6-two-bowls-b41c6f38
 # Samme to skåler som i eksperiment 4b; CG legges oppå bratteste nedstigning.
 Q = np.array([[1.,-1.],[1.,1.]])/np.sqrt(2)
 star = np.array([1.,-1.1])
@@ -1763,7 +1769,8 @@ løsningen; her sier det noe om skålens form og inngår i grenser for hvor
 fort CG konvergerer. Det bestemmer ikke alene antall steg; fordelingen av
 egenverdiene og startfeilen betyr også noe. Det undersøker du i prosjektet.
 
-<div id="uke6-svar"></div>
+::: {#uke6-svar}
+:::
 
 ### Svar på ukens spørsmål
 
@@ -1788,8 +1795,7 @@ for bratteste nedstigning og CG), hvert steg er billig og vi måler
 framgangen med residualen.
 I prosjektet spør vi om vi kan gjøre skålen rundere før CG starter.
 
-<details class="reading-step">
-<summary>Gå i dybden: hva taper bratteste nedstigning, og hvor kommer CG-formlene fra?</summary>
+::: {.reading-step title="Gå i dybden: hva taper bratteste nedstigning, og hvor kommer CG-formlene fra?"}
 
 **Fordypningsforsøk: hva taper bratteste nedstigning?**
 
@@ -1807,6 +1813,7 @@ figuren.
 
 ```{pyodide-python}
 #| label: week6-cg-preservation
+#| feedback-context: ide-uke6-reference-assumptions, ide-uke6-cg-7910cbff, ide-uke6-descent-path-3710b68f, ide-uke6-np-6f11581d, ide-uke6-second-step-plot-709b2ade
 # To steg med hver metode fra (0,0); M er et sammenligningspunkt, ikke et steg.
 A = np.array([[3.,1.], [1.,2.]])
 b = np.array([5.,5.])
@@ -1939,13 +1946,14 @@ CGs minimering reduserer energifeilen i eksakt regning.
 Den vanlige residualnormen $\lVert b-Ax\rVert_2$ måler en annen
 størrelse og har ingen tilsvarende garanti for hvert enkelt steg.
 
-</details>
+:::
 
 
 
-## 6.7 Prosjekt og egenarbeid
+## 6.7 Prosjekt og egenarbeid {quiz=uke6-7-oppgaver}
 
-<div id="uke6-prosjekt"></div>
+::: {#uke6-prosjekt}
+:::
 
 ### Diskusjon — samme løsning, bedre skalering?
 
@@ -1980,6 +1988,8 @@ brøker og kvadratrøtter, for eksempel `5/7` og `sqrt(3)`. I uttrykk bruker
 du `*` for multiplikasjon og `^` for potens. Skriv bare uttrykket i
 feltet, uten likhetstegn. Korte begrunnelser fører du i egne notater.
 
+::: {#week6-common-system .math-exercise-context}
+
 I alle oppgavene unntatt «Liten residual, godt svar?» og «To CG-steg med
 de korte formlene» bruker vi det samme systemet:
 
@@ -1989,9 +1999,12 @@ x=\begin{bmatrix}u\\v\end{bmatrix}.$$
 
 Det vil si $2u+v=3$ og $u+2v=0$. Oppgavene krever ingen programmering.
 
+:::
+
 ### Iterasjon og feil
 
-<div id="uke6-ov-sveip"></div>
+::: {#uke6-ov-sveip}
+:::
 
 #### Jacobi eller Gauss–Seidel?
 
@@ -2001,6 +2014,7 @@ I begge tilfeller oppdaterer du $u$ først og deretter $v$.
 
 ```{math-exercise}
 #| label: week6-task-sweeps
+#| context: week6-common-system
 #| caption: Punktet etter ett sveip
 #| mode: equivalent
 #| partial-credit: true
@@ -2014,7 +2028,8 @@ Gauss–Seidel: $x_1=$ vec[3/2,-3/4]
 **Forklar i egne notater:** Hvorfor får metodene ulik andre koordinat?
 Pek på hvilken verdi av $u$ hver metode bruker.
 
-<div id="uke6-ov-feilfaktor"></div>
+::: {#uke6-ov-feilfaktor}
+:::
 
 #### Blir feilen mindre?
 
@@ -2028,6 +2043,7 @@ Finn tallet $q$ slik at $e_{k+1}=q e_k$.
 
 ```{math-exercise}
 #| label: week6-task-error-factor
+#| context: week6-common-system
 #| caption: Fra oppdateringsregel til feil etter flere sveip
 #| vars: v
 #| mode: equivalent
@@ -2046,7 +2062,8 @@ startverdi? Hvorfor går da også første koordinat mot riktig verdi?
 
 ### Residual og kondisjon
 
-<div id="uke6-ov-residual"></div>
+::: {#uke6-ov-residual}
+:::
 
 #### Liten residual, godt svar?
 
@@ -2094,7 +2111,8 @@ $\hat x$? Kontroller feilgrensen fra 6.3, og forklar hvorfor liten
 bakoverfeil ikke nødvendigvis gir liten foroverfeil. Er grensen nesten
 nådd her, slik den var i eksemplet i 6.3?
 
-<div id="uke6-ov-kondisjon"></div>
+::: {#uke6-ov-kondisjon}
+:::
 
 #### Kondisjonstall fra egenverdiene
 
@@ -2104,6 +2122,7 @@ Finn egenverdiene, og bruk dem til å finne kondisjonstallet $\kappa_2(A)$.
 
 ```{math-exercise}
 #| label: week6-task-condition-eigenvalues
+#| context: week6-common-system
 #| caption: Egenverdier og kondisjonstall for en SPD-matrise
 #| mode: equivalent
 #| partial-credit: true
@@ -2123,7 +2142,8 @@ egenverdier lik $1$. Hvorfor gir kvotienten ikke kondisjonstallet for den?
 
 ### Skål, linjesøk og CG
 
-<div id="uke6-ov-skal"></div>
+::: {#uke6-ov-skal}
+:::
 
 #### Fra likningssystem til minimum
 
@@ -2137,6 +2157,7 @@ Funksjonsfeltet skal inneholde hele uttrykket for $\phi(u,v)$.
 
 ```{math-exercise}
 #| label: week6-task-quadratic-function
+#| context: week6-common-system
 #| caption: Funksjonen og gradienten
 #| vars: u, v
 #| mode: equivalent
@@ -2152,6 +2173,7 @@ $\nabla\phi(u,v)=$ vec[2*u+v-3,u+2*v]
 
 ```{math-exercise}
 #| label: week6-task-minimum
+#| context: week6-common-system
 #| caption: Punktet der gradienten er null
 #| mode: equivalent
 #| partial-credit: true
@@ -2164,7 +2186,8 @@ $x_*=$ vec[2,-1]
 $\phi$? Begrunn at $A$ er positivt definitt, for eksempel med egenverdiene.
 At gradienten er null, er ikke alene nok til å avgjøre dette.
 
-<div id="uke6-ov-linjesok"></div>
+::: {#uke6-ov-linjesok}
+:::
 
 #### Ett steg med bratteste nedstigning
 
@@ -2176,6 +2199,7 @@ $\phi(x_0+\alpha_0p_0)$ minst mulig. Bruk $p_0=r_0$ uten å normalisere.
 
 ```{math-exercise}
 #| label: week6-task-first-line-search
+#| context: week6-common-system
 #| caption: Retningen og faktoren i første steg
 #| mode: equivalent
 #| partial-credit: true
@@ -2190,6 +2214,7 @@ $\alpha_0=$ __[1/2]
 
 ```{math-exercise}
 #| label: week6-task-first-step
+#| context: week6-common-system
 #| caption: Det nye punktet og residualen der
 #| mode: equivalent
 #| partial-credit: true
@@ -2203,7 +2228,8 @@ $r_1=$ vec[0,-3/2]
 **Forklar i egne notater:** Hvorfor har vi funnet minimum langs
 søkelinjen uten å ha løst hele likningssystemet? Bruk residualen i svaret.
 
-<div id="uke6-ov-cg"></div>
+::: {#uke6-ov-cg}
+:::
 
 #### Neste CG-retning med Gram–Schmidt
 
@@ -2217,6 +2243,7 @@ Behold akkurat denne skaleringen av $p_1$; ikke normaliser den.
 
 ```{math-exercise}
 #| label: week6-task-conjugate-direction
+#| context: week6-common-system
 #| caption: Trekk fra projeksjonen med A-indreproduktet
 #| mode: equivalent
 #| partial-credit: true
@@ -2236,6 +2263,7 @@ Finn $\alpha_1$, beregn $x_2=x_1+\alpha_1p_1$, og kontroller residualen.
 
 ```{math-exercise}
 #| label: week6-task-second-cg-step
+#| context: week6-common-system
 #| caption: Andre CG-steg
 #| mode: equivalent
 #| partial-credit: true
@@ -2252,7 +2280,8 @@ $\lVert b-Ax_2\rVert_2=$ __[0]
 stå vinkelrett i det vanlige koordinatplanet? Hva sikrer
 A-konjugertheten når vi gjør det andre linjesøket?
 
-<div id="uke6-ov-cg-oppskrift"></div>
+::: {#uke6-ov-cg-oppskrift}
+:::
 
 #### To CG-steg med de korte formlene
 

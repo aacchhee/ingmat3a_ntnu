@@ -72,6 +72,7 @@ import matplotlib.pyplot as plt
 
 ```{pyodide-python}
 #| label: project-week5-data
+#| feedback-context: ide-project_week5-reference-assumptions, ide-project_week5-np-6f11581d
 # Overfør matrisen fra papir. Hver innerste liste er EN RAD.
 # Kolonnene er avsendersider, selv om vi skriver matrisen radvis i Python.
 names = list("ABCDEF")
@@ -130,6 +131,7 @@ Bruk `np.linalg.norm(vektor, 1)` for 1-normen.
 
 ```{pyodide-python}
 #| label: project-week5-iteration
+#| feedback-context: ide-project_week5-reference-assumptions, ide-project_week5-np-6f11581d
 def visit_step(S, alpha, u, p):
     # TODO: returner fordelingen etter ett steg med lenker og hopp.
     return None
@@ -165,6 +167,7 @@ Kjør fra både jevn startfordeling og sikker start på A.
 
 ```{pyodide-python}
 #| label: project-week5-reference
+#| feedback-context: ide-project_week5-reference-assumptions, ide-project_week5-s-862a1ab0, ide-project_week5-direct-rank-e619ed46, ide-project_week5-names-65b5f86f, ide-project_week5-np-6f11581d, ide-project_week5-pagerank-6f6871bf, ide-project_week5-u0-54c3d00d
 alpha = 0.85
 p_ref = direct_rank(S, alpha, u0)
 
@@ -228,6 +231,7 @@ og en eksplisitt vektorformel for $p_k$. Sammenlign med
 
 ```{pyodide-python}
 #| label: project-week5-two-pages
+#| feedback-context: ide-project_week5-reference-assumptions, ide-project_week5-np-6f11581d, ide-project_week5-plt-7be21394, ide-project_week5-visit-step-88ad3ef8
 # Kontroller den håndutledede formelen; her er S2 allerede oppgitt.
 S2 = np.array([[0., 1.], [1., 0.]])
 u2 = np.array([0.5, 0.5])
@@ -306,6 +310,7 @@ fra del b. Du trenger ikke søke gjennom et stort antall verdier.
 
 ```{pyodide-python}
 #| label: project-week5-personalization
+#| feedback-context: ide-project_week5-reference-assumptions, ide-project_week5-s-862a1ab0, ide-project_week5-direct-rank-e619ed46, ide-project_week5-names-65b5f86f, ide-project_week5-np-6f11581d, ide-project_week5-plt-7be21394, ide-project_week5-u0-54c3d00d
 # Startforslag: hopp oftere til F. Velg og begrunn ditt eget mønster.
 # Du kan bruke forslaget hvis det svarer til påstanden du vil undersøke.
 u1 = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.5])

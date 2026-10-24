@@ -58,6 +58,7 @@ Skriv fornavnet ditt i cellen under. Navnet normaliseres og hashes med SHA-256. 
 Tildelingen skjer lokalt i nettleseren. Navnet sendes ikke noe sted.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-1
 import hashlib
 import unicodedata
 
@@ -187,6 +188,8 @@ store hopp, men i dette prosjektet er det residualen som avgjør konvergens.
 Uttrykket $|z-f(z)|$ er ikke residualen til ligningen $f(z)=0$.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-2
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-np-6f11581d, ide-project_week2-plt-7be21394, ide-project_week2-roots-8df4041d
 def is_finite_complex(z):
     """Sjekk at både real- og imaginærdelen kan brukes videre."""
     return np.isfinite(np.real(z)) and np.isfinite(np.imag(z))
@@ -282,6 +285,8 @@ def plot_trace(result):
 Kjør først koden med de foreslåtte startverdiene. Legg deretter til minst to egne startverdier.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-3
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-df-8df4041d, ide-project_week2-f-8df4041d, ide-project_week2-newton-trace-288cbf47, ide-project_week2-roots-8df4041d
 starting_values = [1.5, -1+1j, 0.1, 1j]
 
 for z0 in starting_values:
@@ -298,6 +303,8 @@ for z0 in starting_values:
 Velg én startverdi som konvergerer raskt, og én som konvergerer langsomt eller ikke konvergerer. Vis hele historikken og plottet for begge.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-4
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-df-8df4041d, ide-project_week2-f-8df4041d, ide-project_week2-newton-trace-288cbf47, ide-project_week2-plot-trace-3cdeb5d9, ide-project_week2-print-trace-6868512c, ide-project_week2-roots-8df4041d
 #| canvas: false
 # Bytt startverdien med en verdi du vil undersøke nærmere.
 z0 = -1 + 1j
@@ -327,6 +334,8 @@ klassifiseres som et nullpunktnummer, `-1` for ikke konvergert innen
 `maxiter`, eller `-2` for ugyldig beregning.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-5
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-patch-886e31f5, ide-project_week2-np-6f11581d, ide-project_week2-plt-7be21394
 def newton_grid(f, df, roots, bounds, nx=400, ny=400,
                 tol=1e-8, maxiter=50, derivative_tol=1e-14):
     """Kjør det samme Newton-forsøket for alle pikslene i et rektangel.
@@ -514,6 +523,8 @@ def print_summary(summary):
 Kjør standardeksperimentet. Dersom nettleseren arbeider langsomt, kan du først bruke `nx=250, ny=250` og øke oppløsningen til slutt.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-6
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-df-8df4041d, ide-project_week2-f-8df4041d, ide-project_week2-my-function-b21bc776, ide-project_week2-newton-grid-6ef1e72a, ide-project_week2-plot-basins-d72a8324, ide-project_week2-print-summary-4b298aa6, ide-project_week2-roots-8df4041d, ide-project_week2-summarize-grid-9d41bc57
 #| canvas: false
 bounds = my_function["plot_window"]
 
@@ -554,6 +565,8 @@ Koden under foreslår startverdier fra kategoriene. Du kan bruke dem eller
 velge punkter som er lettere å se i figuren.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-7
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-basin-data-88c3f2d1, ide-project_week2-np-6f11581d
 def first_start_in(data, mask):
     """Finn én startverdi i en kategori, hvis kategorien finnes."""
     indices = np.argwhere(mask)
@@ -594,6 +607,8 @@ Koden under sammenligner nærmeste nullpunkt til $z_0$ med nullpunktet
 iterasjonen faktisk fant.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-8
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-basin-data-88c3f2d1, ide-project_week2-np-6f11581d, ide-project_week2-roots-8df4041d
 def compare_with_nearest(data):
     """Test nærmeste-nullpunkt-gjetningen på hele rutenettet."""
     basin = data["basin"]
@@ -644,6 +659,8 @@ nødvendigvis dårlige startverdier alene, men de gir oss steder det er naturlig
 å undersøke nærmere.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-9
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-basin-data-88c3f2d1, ide-project_week2-critical-points-8df4041d, ide-project_week2-f-8df4041d, ide-project_week2-plot-basins-d72a8324
 #| canvas: false
 plot_basins(basin_data,
             "Nullpunkter, kritiske punkter og tiltrekningsområder",
@@ -660,6 +677,8 @@ antall iterasjoner. Du kan endre perturbasjonene dersom alle tre forsøkene
 blir nesten like.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-10
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-critical-points-8df4041d, ide-project_week2-df-8df4041d, ide-project_week2-f-8df4041d, ide-project_week2-newton-trace-288cbf47, ide-project_week2-np-6f11581d, ide-project_week2-roots-8df4041d
 c = critical_points[0]  # Velg eventuelt et annet kritisk punkt.
 critical_starts = [c, c + 1e-3, c + 1e-2j]
 
@@ -691,6 +710,8 @@ mellom to nabopiksler med forskjellig farge. Du kan bruke forslaget eller
 velge et tydeligere punkt i din egen figur.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-11
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-basin-data-88c3f2d1, ide-project_week2-df-8df4041d, ide-project_week2-f-8df4041d, ide-project_week2-newton-trace-288cbf47, ide-project_week2-np-6f11581d, ide-project_week2-roots-8df4041d
 def suggest_boundary_point(data):
     """Finn et sentralt sted der to nabopiksler har forskjellig farge."""
     basin = data["basin"]
@@ -750,6 +771,8 @@ kontroller at hovedresultatet ikke bare skyldes ett tilfeldig valg av
 toleranse eller `maxiter`. Bruk et mindre rutenett for å spare tid.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-12
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-bounds-fc418329, ide-project_week2-df-8df4041d, ide-project_week2-f-8df4041d, ide-project_week2-newton-grid-6ef1e72a, ide-project_week2-roots-8df4041d, ide-project_week2-summarize-grid-9d41bc57
 print("      tol  maxiter  konvergert  nådde grensen  gj.snitt steg")
 for tolerance, maximum in [(1e-4, 50), (1e-8, 50),
                            (1e-12, 50), (1e-8, 15), (1e-8, 100)]:
@@ -822,6 +845,8 @@ spørsmålet vårt: En grensepiksel representerer en startverdi der en endring p
 omtrent én pikselbredde kan endre hvilket nullpunkt Newton finner.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-13
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-np-6f11581d
 def boundary_mask(data):
     """Marker piksler ved en overgang mellom to konvergensområder.
 
@@ -884,6 +909,8 @@ Kjør oppsummeringen på hovedkartet. Bruk tallene som nullpunkt for
 zoom-ekspedisjonen—ikke som en konklusjon ennå.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-14
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-basin-data-88c3f2d1, ide-project_week2-print-boundary-summary-3f9df8fb
 print_boundary_summary(basin_data)
 ```
 
@@ -904,6 +931,8 @@ Start ved `boundary_point` fra del 6. Hvis første bilde ikke viser en
 interessant grense, velger du et nytt sentrum fra hovedfiguren.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-15
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-boundary-point-5a4f1705, ide-project_week2-bounds-fc418329, ide-project_week2-df-8df4041d, ide-project_week2-f-8df4041d, ide-project_week2-newton-grid-6ef1e72a, ide-project_week2-plot-basins-d72a8324, ide-project_week2-print-boundary-summary-3f9df8fb, ide-project_week2-roots-8df4041d
 #| canvas: false
 def square_bounds(center, width):
     """Lag et kvadratisk vindu rundt startverdien vi vil følge."""
@@ -1060,6 +1089,8 @@ vinduet også flyttes eller krympes, vet vi ikke om endringen skyldes mindre
 piksler eller at vi har valgt en annen del av grensen.
 
 ```{pyodide-python}
+#| label: ingmat-ide-projects-week2-newton-fractals-16
+#| feedback-context: ide-project_week2-reference-assumptions, ide-project_week2-boundary-mask-53c85037, ide-project_week2-df-8df4041d, ide-project_week2-f-8df4041d, ide-project_week2-newton-grid-6ef1e72a, ide-project_week2-np-6f11581d, ide-project_week2-roots-8df4041d
 def boundary_growth_experiment(test_bounds,
                                resolutions=(100, 200, 400),
                                tol=1e-8, maxiter=100):

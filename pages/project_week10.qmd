@@ -7,3 +7,5 @@ resources:
 {{< include ../_includes/projects/week10_setup.md >}}
 
 {{< include ../_includes/projects/week10_positioning.md >}}
+
+{{< include ../_includes/ai-context/project_week10.md >}}

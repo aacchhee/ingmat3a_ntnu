@@ -7,3 +7,5 @@ resources:
 {{< include ../_includes/projects/week12_setup.md >}}
 
 {{< include ../_includes/projects/week12_chain.md >}}
+
+{{< include ../_includes/ai-context/project_week12.md >}}

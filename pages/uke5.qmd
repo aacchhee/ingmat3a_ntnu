@@ -5,3 +5,5 @@ title: "Uke 5 – hva overlever gjentatt matrisemultiplikasjon?"
 {{< include ../_includes/linalg/week5_lecture_setup.md >}}
 
 {{< include ../_includes/linalg/uke5.md >}}
+
+{{< include ../_includes/ai-context/uke5.md >}}

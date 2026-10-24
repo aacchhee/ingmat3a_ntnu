@@ -3,3 +3,5 @@ title: "Uke 3 – hva slags informasjon mister en matrise?"
 ---
 
 {{< include ../_includes/linalg/uke3.md >}}
+
+{{< include ../_includes/ai-context/uke3.md >}}

@@ -77,6 +77,7 @@ Funksjonen skal også gi nullmatrisen for $k=0$.
 
 ```{pyodide-python}
 #| label: project7-student-image
+#| feedback-context: ide-project_week7-reference-assumptions, ide-project_week7-np-6f11581d
 def svd_image(Y, k):
     U, s, Vt = np.linalg.svd(Y, full_matrices=False)
     # TODO: returner summen av de k første SVD-leddene.
@@ -153,8 +154,7 @@ for best mulig rekonstruksjon.
 1. Skriv regelen med bare singulærverdiene til $Y$. Hvorfor finnes en
    tillatt rang blant $0,\ldots,\min(m,n)$ i eksakt regning?
 
-<details>
-<summary>Valgfri fordypning: hva kan regelen garantere?</summary>
+::: {.details title="Valgfri fordypning: hva kan regelen garantere?"}
 
 Bruk trekantulikheten til å vise at et valgt $Y_k$ oppfyller
    $$\|Y_k-C\|_F\leq(\tau+1)\delta.$$
@@ -163,7 +163,7 @@ Hvis $\operatorname{rank}(C)\leq r$, bruk beste-tilnærmingsteoremet
    til å vise at regelen velger $k\leq r$. Hvorfor følger det likevel
    ikke at $Y_k=C$? Knytt svaret til A2.
 
-</details>
+:::
 
 **Skriv en forventning før kjøring:** Vil det valgte $Y_k$ få mindre
 feil mot $C$ enn $Y$? Hvilket av de to feilleddene tror du vil dominere?
@@ -190,6 +190,7 @@ brukes bare til feilanalysen. Regelen søker alle ranger, også null.
 
 ```{pyodide-python}
 #| label: project7-image-first
+#| feedback-context: ide-project_week7-reference-assumptions, ide-project_week7-image-svd-trial-f45a5335
 result_A = image_svd_trial(noise_level=.12, seed=23, tau=1.05)
 ```
 
@@ -252,6 +253,7 @@ av den ferdige kontrollen.
 
 ```{pyodide-python}
 #| label: project7-student-inverse
+#| feedback-context: ide-project_week7-reference-assumptions, ide-project_week7-np-6f11581d
 def svd_solve(H, b, k):
     U, s, Vt = np.linalg.svd(H, full_matrices=False)
     cutoff = max(H.shape)*np.finfo(float).eps*s[0]
@@ -299,8 +301,8 @@ du trenger ikke lese hele den valgfrie fanen for å bruke den her.
 3. Finn betingelsen for at det å ta med retning $k+1$ **reduserer**
    rekonstruksjonsfeilen. Hvilke størrelser i betingelsen kjenner vi
    ikke i et problem uten fasit? Kontroller resultatet mot B1.
-<details>
-<summary>Valgfri fordypning: en grense for støyforsterkningen</summary>
+
+::: {.details title="Valgfri fordypning: en grense for støyforsterkningen"}
 
 Vis for $k\geq1$ at
 
@@ -310,7 +312,7 @@ $$\|x_k-x_*\|_2^2\leq
 Hva vinner vi ved å kutte før de minste singulærverdiene, og hvorfor
 er det ikke uten kostnad?
 
-</details>
+:::
 
 #### Kodespor B2: kontroller formlene uten spesielle koordinatakser
 
@@ -346,8 +348,7 @@ i et likningssystem. Vi krever ikke at rekonstruksjonen forklarer all støyen.
    $\delta=|d|$. Gir den best rekonstruksjon i begge? Hva forteller det
    om forskjellen mellom en begrunnet regel og et optimalt valg?
 
-<details>
-<summary>Valgfri fordypning: hvor sterk er en garanti fra residualen?</summary>
+::: {.details title="Valgfri fordypning: hvor sterk er en garanti fra residualen?"}
 
 For et valgt $x_k$, bruk trekantulikheten og
    $\|Hz\|_2\geq\sigma_n\|z\|_2$ til å vise
@@ -355,7 +356,7 @@ For et valgt $x_k$, bruk trekantulikheten og
    Hvorfor kan denne garantien være lite nyttig? Hva viser den om
    begrensningen ved å vurdere rekonstruksjonen bare gjennom residualen?
 
-</details>
+:::
 
 **Skriv en forventning før kjøring:** Hvordan vil feilen endres hvis vi
 beholder langt flere retninger enn regelen velger? Bruk B2 til å begrunne
@@ -369,6 +370,7 @@ vanligvis kan beregne fra $b$ alene.
 
 ```{pyodide-python}
 #| label: project7-signal-first
+#| feedback-context: ide-project_week7-reference-assumptions, ide-project_week7-signal-svd-trial-2f5b02f2
 result_B = signal_svd_trial(noise_level=.005, seed=17, tau=1.05)
 ```
 
@@ -410,6 +412,7 @@ For å kontrollere konklusjonen fra A, kjør:
 
 ```{pyodide-python}
 #| label: project7-image-check
+#| feedback-context: ide-project_week7-reference-assumptions, ide-project_week7-image-svd-trial-f45a5335
 check_A = image_svd_trial(noise_level=.12, seed=24, tau=1.05)
 ```
 
@@ -417,6 +420,7 @@ For å kontrollere konklusjonen fra B, kjør i stedet:
 
 ```{pyodide-python}
 #| label: project7-signal-check
+#| feedback-context: ide-project_week7-reference-assumptions, ide-project_week7-signal-svd-trial-2f5b02f2
 check_B = signal_svd_trial(noise_level=.005, seed=18, tau=1.05)
 ```
 

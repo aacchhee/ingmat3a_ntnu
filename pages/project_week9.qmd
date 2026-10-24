@@ -7,3 +7,5 @@ resources:
 {{< include ../_includes/projects/week9_setup.md >}}
 
 {{< include ../_includes/projects/week9_scaling.md >}}
+
+{{< include ../_includes/ai-context/project_week9.md >}}
