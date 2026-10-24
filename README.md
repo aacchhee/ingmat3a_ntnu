@@ -73,6 +73,27 @@ The preview uses a separate storage key from the student site. AI feedback
 references the visible definitions and givens needed by each question; it does
 not send requests during the build or the context checks.
 
+The preview action checks source preservation, rendered AI-context facts and
+mocked adapter requests before testing real Python/Check, saving, quizzes,
+export, first-visit startup and optional-feature isolation in Chromium. The
+published preview then gets a separate first-visit check on its actual URL.
+Run the source/context gates locally with:
+
+```bash
+python scripts/check-linalg-migration.py
+quarto render --profile linalg
+python scripts/check_feedback_contexts.py --site _site
+npm ci --ignore-scripts
+npx playwright install chromium
+npm run test:contexts
+npm run test:linalg
+```
+
+`scripts/check-linalg-grading-parity.cjs` additionally compares a rendered
+old-package baseline with the new site. It rejects changes to grading, teacher
+answers, tests and input/matrix configuration while validating the new save
+metadata with the accepted package's own comparison tool.
+
 ## Automatic exercise feedback
 
 The shared `ai-feedback` component of CTM Assessment provides optional model-generated feedback for mathematics exercises and Python cells. Python exercises (`py-exercise`) are graded by their tests and have no AI feedback. Students configure the endpoint, model, and API key from the feedback settings in the rendered page. The student-facing setup and usage guide is on the IDE page.

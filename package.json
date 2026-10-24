@@ -1,0 +1,13 @@
+{
+  "name": "ingmat3a-linalg-checks",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:contexts": "node scripts/test-feedback-contexts.mjs --site _site",
+    "test:linalg": "node scripts/test-linalg-ui.mjs --site _site --case baseline --coi off && node scripts/test-linalg-ui.mjs --site _site --case jsxgraph --coi on && node scripts/test-linalg-ui.mjs --site _site --case speech --coi on"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0",
+    "playwright": "1.62.1"
+  }
+}

@@ -18,6 +18,7 @@ jobs:
   build:
     if: github.ref == 'refs/heads/linalg-branch'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Hent emnerepositoriet
@@ -49,6 +50,33 @@ jobs:
 
       - name: Kontroller AI-kontekst mot de synlige oppgavedataene
         run: python scripts/check_feedback_contexts.py --site _site
+
+      - name: Installer Node for nettleserkontrollene
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Installer den fastsatte nettlesertesten
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+
+      - name: Kontroller ekte UI og isolasjon av valgfrie funksjoner
+        run: |
+          npm run test:contexts
+          npm run test:linalg
+
+      - name: Merk den kontrollerte forhåndsvisningen
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('_site/ctm-preview-build.json').write_text(json.dumps({
+              'commit': os.environ['GITHUB_SHA'], 'profile': 'linalg',
+              'assessment': '503c8688eaf556ff23af0fc629ca60f71833ea73'
+          }) + '\n')
+          PY
 
       - name: Ta vare på den ferdige forhåndsvisningen
         uses: actions/upload-artifact@v4
@@ -83,3 +111,50 @@ jobs:
           destination_dir: linalg
           keep_files: true
           force_orphan: false
+
+  verify-preview:
+    if: github.ref == 'refs/heads/linalg-branch'
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Hent de samme kontrollene
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Hent den kontrollerte forhåndsvisningen
+        uses: actions/download-artifact@v4
+        with:
+          name: ingmat3a-linalg-site
+          path: _site
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Installer nettleseren
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+      - name: Vent på riktig versjon på Pages
+        run: |
+          python3 - <<'PY'
+          import json, os, time, urllib.request
+          expected = os.environ['GITHUB_SHA']
+          url = 'https://aacchhee.github.io/ingmat3a_ntnu/linalg/ctm-preview-build.json?head=' + expected
+          deadline = time.monotonic() + 360
+          while time.monotonic() < deadline:
+              try:
+                  with urllib.request.urlopen(url, timeout=15) as response:
+                      marker = json.loads(response.read(16384))
+                  if marker.get('commit') == expected:
+                      print('Expected preview commit is published: ' + expected)
+                      break
+              except (OSError, ValueError):
+                  pass
+              time.sleep(10)
+          else:
+              raise SystemExit('Pages did not publish the expected preview commit in time')
+          PY
+      - name: Kontroller første besøk på den publiserte siden
+        run: node scripts/test-linalg-ui.mjs --site _site --case baseline --coi off --base-url https://aacchhee.github.io/ingmat3a_ntnu/linalg/
