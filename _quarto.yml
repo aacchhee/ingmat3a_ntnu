@@ -4,6 +4,8 @@ project:
 lang: nb
 
 filters:
+  - path: _extensions/ctm-assessment/tab-ids.lua
+    at: pre-ast
   - ctm-assessment
 
 website:
@@ -77,6 +79,11 @@ format:
   html:
     theme: cosmo
     css: styles.css
-    include-after-body:
-      - _includes/site/tab-links.html
-      - _includes/site/learning-mode.html
+
+ctm-assessment:
+  markdown-lint: true
+  modes: true
+  tab-links: true
+  save: answers
+  progress: true
+  export: true

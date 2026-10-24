@@ -1,0 +1,6 @@
+# Build-time mathematics matches the accepted package's browser SymPy.
+sympy==1.13.3
+networkx>=3.4
+PyYAML>=6
+jupyter>=1
+nbformat>=5

@@ -36,13 +36,14 @@ Keep this separation when adding material. Put shared imports and definitions in
 
 ## Local preview
 
-Install Quarto (1.8.27 or later), Git and Python with PyYAML. Install the
+Install Quarto 1.8.27, Git and Python 3.12. Install the
 [CTM Assessment](https://github.com/Erasmus-CTM/ctm-assessment) package, which
 bundles all interactive components, then preview:
 
 ```bash
+python -m pip install -r requirements.txt
 python scripts/setup.py
-quarto preview
+quarto preview --profile linalg
 ```
 
 `quarto-extensions.yml` sets which ctm-assessment branch or commit is
@@ -50,6 +51,27 @@ installed. The component commits used are recorded in
 `.private-extensions/resolved-repos.json`.
 
 The Python cells use Pyodide and run in the browser. Cells on one page share a Python environment; different pages do not. Each teaching page therefore includes a hidden setup cell with the definitions that its examples require.
+
+## Consolidated course preview
+
+`linalg-branch` uses the coherent CTM Assessment package at immutable commit
+`503c8688eaf556ff23af0fc629ca60f71833ea73`, accepted in ctm-demo. The installer
+uses that package's component tuple without review overrides. The ordinary
+course has no generated variants and requires no teaching-approval workflow.
+
+The existing linear algebra action builds with the `linalg` profile and
+publishes only its preview under
+[/ingmat3a_ntnu/linalg/](https://aacchhee.github.io/ingmat3a_ntnu/linalg/).
+The build has read-only repository access; only the publication job can write
+to Pages. It preserves files outside the preview subtree. Student `main` and
+its publication action are unchanged; a later publication from that existing
+action may replace the preview.
+
+The shared package provides reading/lecture modes, reveals, links into nested
+tabs, local saving, page progress, quiz panels and copy/export controls.
+The preview uses a separate storage key from the student site. AI feedback
+references the visible definitions and givens needed by each question; it does
+not send requests during the build or the context checks.
 
 ## Automatic exercise feedback
 
