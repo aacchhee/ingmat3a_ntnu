@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Prosjekt 11 – Hvorfor koster strømmen det den koster? – Matematikk 3A</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-e451d5fd0f9f7132a26567a44e8d50ee.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/ctm-coi-frame-startup-1/coi-frame-startup.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-assets-0.9.0/assets.js"></script>
+<link href="../site_libs/quarto-contrib/ctm-ui-0.9.0/ctm-ui.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/ctm-layout-0.9.0/ctm-layout.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-reveal-0.9.0/ctm-reveal.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-nav-0.9.0/ctm-nav.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-core.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-dom.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.js"></script>
+<link href="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/ctm-runtime-0.9.0/pyodide-runtime.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-worker-0.9.0/pyodide-worker.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-0.9.0/ctm-locale.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-0.9.0/common.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-ui-0.9.0/ui.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-copy-0.9.0/ctm-copy.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-store-0.9.0/ctm-store.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-pyodide-interaktiv-0.9.0/pyodide-interaktiv.js"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-locale.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-storage.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-document-status.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-storage-settings.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-worker-plugin.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-document-engine-initialization.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-canvas-plots.js" type="module"></script>
+<link href="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-styling.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-feedback-1.10.0/qpyodide-feedback.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/ctm-export-0.9.0/ctm-export.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-progress-0.9.0/ctm-progress.js"></script>
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Ingen resultater",
+    "search-matching-documents-text": "Samsvarende dokumenter",
+    "search-copy-link-title": "Kopier link for å søke",
+    "search-hide-matches-text": "Skjul ytterlige resultater",
+    "search-more-match-text": "annet resultat i dette dokumentet",
+    "search-more-matches-text": "andre resultater i dette dokumentet",
+    "search-clear-button-title": "Tøm",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Avbryt",
+    "search-submit-button-title": "Send inn",
+    "search-label": "Søk"
+  }
+}</script>
+<script>globalThis.CTM_ASSETS={"bases":{"font-awesome":"https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/","jsxgraph":"https://cdn.jsdelivr.net/npm/jsxgraph@1.14.1/","katex":"https://cdn.jsdelivr.net/npm/katex@0.16.47/","mathjax-newcm-font":"https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/","mathjax3":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/","mathjax4":"https://cdn.jsdelivr.net/npm/mathjax@4.1.3/","monaco-editor":"https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/","pyodide":"https://cdn.jsdelivr.net/pyodide/v0.28.3/full/","source-sans-pro":"https://cdn.jsdelivr.net/npm/@fontsource/source-sans-pro@5.3.0/"},"mode":"cdn","v":1};</script>
+<script src="../coi-serviceworker.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/editor/editor.main.css">
+<script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/js/all.min.js" defer="" crossorigin="anonymous"></script>
+<script type="text/javascript">
+// qpyodide-document-settings.js – document-wide settings (template)
+//
+// This file is a template: the {{PLACEHOLDERS}} are replaced by the Lua
+// filter (qpyodide.lua, function initializationPyodide) during rendering.
+// It's injected as the first module into the <head>, so that all further
+// modules can access the global settings.
+
+// Document level settings ----
+
+// Determine if we need to install python packages
+globalThis.qpyodideInstallPythonPackagesList = [''];
+
+// Check to see if we have an empty array, if we do set to skip the installation.
+globalThis.qpyodideSetupPythonPackages = !(qpyodideInstallPythonPackagesList.indexOf("") !== -1);
+
+// Automatically preload the HTTP shim and plotting packages? Defaults to true.
+// Explicit pyodide: packages entries still install when this is false.
+globalThis.qpyodidePreloadPackages = true;
+
+// Display a startup message?
+globalThis.qpyodideShowStartupMessage = true;
+
+// Describe the Pyodide settings that should be used.
+// Data only (no functions) – the configuration is passed to the Pyodide
+// web worker via postMessage; the worker collects stdout/stderr itself.
+globalThis.qpyodideCustomizedPyodideOptions = {
+  "indexURL": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/",
+  "env": {
+    "HOME": "/home/pyodide",
+  }
+}
+
+// Interactive plot backend ----
+//
+// "webagg" (Pyodide 0.28+), "html5-canvas" (an older Pyodide pinned via
+// `pyodide: base-url:`) or "auto" (the base URL names no version; decided
+// from the loaded Pyodide). See qpyodide-canvas-plots.js.
+globalThis.qpyodideCanvasBackend = "webagg";
+
+// UI language for this render pass ----
+//
+// Set by the Lua filter (ctm.locale: `pyodide: lang:`, `ctm-assessment: lang:`,
+// Quarto's own `lang:`): a language of the catalogue (en, de, sv, nb, da).
+globalThis.qpyodideLang = "nb";
+
+// Store cell data
+globalThis.qpyodideCellDetails = [{"code":"# Grunndata og hjelpere for prosjektet. Alle tall er oppdiktede og forenklede.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import linprog\n\n# Ett prisområde (del 1-2): kostnad i kr/MWh og kapasitet i MW.\nplant_names = ['vind', 'vannkraft', 'import', 'gass']\ncost = np.array([0., 10., 40., 70.])\ncapacity = np.array([30., 50., 30., 40.])\n\n# Tre timer (del 4): forbruk og tilgjengelig vind i hver time (MW),\n# og vannmengden som vannkraften kan bruke til sammen (MWh).\ndemand3 = np.array([60., 95., 120.])\nwind3 = np.array([30., 10., 20.])\nwater = 120.\n\n\n# Samme funksjon som i del 1b, slik at senere celler virker etter ny innlasting.\ndef one_zone(D):\n    return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],\n                   bounds=list(zip(np.zeros(4), capacity)), method=\"highs\")\n\n\n# Samme funksjon som i del 3b. Variabler: vind N, vannkraft N, import S, gass S, flyt f.\ndef two_zones(L, wind_north=20.):\n    c = np.array([0., 10., 40., 70., 0.])\n    A_eq = np.array([[1., 1., 0., 0., -1.],\n                     [0., 0., 1., 1., 1.]])\n    bounds = [(0, wind_north), (0, 80), (0, 30), (0, 80), (-L, L)]\n    return linprog(c, A_eq=A_eq, b_eq=[30., 80.], bounds=bounds, method=\"highs\")\n\n\n# Ferdig tre-timersmodell (del 4); vannraden skriver du selv i prosjektet.\ndef _three_hours():\n    c3 = np.tile(cost, 3)\n    bounds3 = []\n    for h in range(3):\n        bounds3 += [(0, wind3[h]), (0, 50.), (0, 30.), (0, 40.)]\n    A_eq3 = np.zeros((3, 12))\n    for h in range(3):\n        A_eq3[h, 4*h:4*h + 4] = 1\n    return c3, bounds3, A_eq3\n\n\nc3, bounds3, A_eq3 = _three_hours()\n# Tegnehjelpere: de tegner bare tall som allerede er regnet ut.\ndef show_merit_order(cost, capacity, D, names=plant_names):\n    \"\"\"Tilbudstrappen: hvert kraftverk er en blokk med bredde = kapasitet og\n    høyde = kostnad, sortert billigst først. Den røde linjen er forbruket D.\"\"\"\n    fig, ax = plt.subplots(figsize=(7, 3.5), layout=\"constrained\")\n    left = 0.\n    for i in np.argsort(cost, kind=\"stable\"):\n        ax.bar(left, max(cost[i], 1.5), width=capacity[i], align=\"edge\",\n               alpha=.6, edgecolor=\"k\")\n        ax.text(left + capacity[i]/2, max(cost[i], 1.5) + 2,\n                f\"{names[i]}\\n{cost[i]:g} kr\", ha=\"center\", va=\"bottom\", fontsize=8)\n        left += capacity[i]\n    ax.axvline(D, color=\"tab:red\", lw=2)\n    ax.text(D, 92, f\" D = {D:g} MW\", color=\"tab:red\", va=\"top\")\n    ax.set(xlim=(0, left), ylim=(0, 95), ylabel=\"kostnad (kr/MWh)\",\n           xlabel=\"samlet kapasitet, billigste først (MW)\")\n    plt.show()\n\n\ndef show_steps(x, steps, smooth=None, xlabel=\"\", ylabel=\"kr/MWh\",\n               labels=(\"Pris (dual)\", \"Gjennomsnittskostnad\")):\n    \"\"\"Trappekurve (dualverdier) og eventuelt en glatt kurve i samme figur.\"\"\"\n    fig, ax = plt.subplots(figsize=(7, 4), layout=\"constrained\")\n    ax.step(x, steps, where=\"mid\", label=labels[0])\n    if smooth is not None:\n        ax.plot(x, smooth, label=labels[1])\n        ax.legend()\n    ax.set(xlabel=xlabel, ylabel=ylabel)\n    ax.grid(alpha=.3)\n    plt.show()\n\n\ndef show_two_zones(res, L):\n    \"\"\"Nord og sør som to bokser med produksjon og pris, og linjen som en pil.\"\"\"\n    x, (pN, pS), f = res.x, res.eqlin.marginals, res.x[4]\n    fig, ax = plt.subplots(figsize=(7, 2.8), layout=\"constrained\")\n    boxes = [(0.02, \"NORD (forbruk 30 MW)\", [(\"vind\", x[0]), (\"vannkraft\", x[1])], pN),\n             (0.62, \"SØR (forbruk 80 MW)\", [(\"import\", x[2]), (\"gass\", x[3])], pS)]\n    for x0, title, plants, price in boxes:\n        ax.add_patch(plt.Rectangle((x0, .08), .36, .84, fill=False, lw=1.5))\n        lines = [title] + [f\"{n}: {v:g} MW\" for n, v in plants] + [f\"pris: {price + 0:g} kr/MWh\"]\n        ax.text(x0 + .18, .5, \"\\n\".join(lines), ha=\"center\", va=\"center\", fontsize=9)\n    full = \"full\" if abs(f) >= L - 1e-9 else \"ikke full\"\n    ax.annotate(\"\", xy=(.61, .5), xytext=(.39, .5),\n                arrowprops=dict(arrowstyle=\"->\", lw=2 + 3*(full == \"full\"),\n                                color=\"tab:red\" if full == \"full\" else \"tab:blue\"))\n    ax.text(.5, .62, f\"f = {f + 0:g} MW\\nL = {L:g} MW ({full})\", ha=\"center\", fontsize=9)\n    ax.set(xlim=(0, 1), ylim=(0, 1))\n    ax.axis(\"off\")\n    plt.show()","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week11-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week11-setup","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"show_merit_order(cost, capacity, D=90)","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"b1ec045eecd1f2df","ctm-store-id":"project11-merit-order","ctm-store-save":true,"ctm-store-source":"e57becd2e8699ef6","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-capacity-f8fda3d6, ide-project_week11-cost-066909c5, ide-project_week11-show-merit-order-58c27887","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-capacity-f8fda3d6, ide-project_week11-cost-066909c5, ide-project_week11-show-merit-order-58c27887","text":"Se planen før du leser tallene\nFiguren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet, og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes ved D=90. Kjør så figuren; du trenger ingen full håndtabell."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-merit-order","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-merit-order","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"def one_zone(D):\n    return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],\n                   bounds=list(zip(np.zeros(4), capacity)), method=\"highs\")\n\nD = 90\nres = one_zone(D)\nprint(\"status:\", res.status)\nfor name, x in zip(plant_names, res.x):\n    print(f\"{name:<10}{x:6.1f} MW\")\nprint(f\"kostnad {res.fun:g} kr, gjennomsnitt {res.fun/D:.2f} kr/MWh\")\nprint(f\"pris {res.eqlin.marginals[0] + 0:g} kr/MWh\")\nprint(\"avvik i forbrukslikningen:\", res.eqlin.residual)","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"88a7a594dab048c8","ctm-store-id":"project11-one-zone","ctm-store-save":true,"ctm-store-source":"89b874e1294401d0","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-capacity-f8fda3d6, ide-project_week11-cost-066909c5, ide-project_week11-linprog-5e96555f, ide-project_week11-np-6f11581d, ide-project_week11-plant-names-1ea0e5dd","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-capacity-f8fda3d6, ide-project_week11-cost-066909c5, ide-project_week11-linprog-5e96555f, ide-project_week11-np-6f11581d, ide-project_week11-plant-names-1ea0e5dd","text":"Se planen før du leser tallene\nFiguren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet, og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes ved D=90. Kjør så figuren; du trenger ingen full håndtabell.\nEt kraftverk som kan skrus litt opp eller ned i den beste planen, er marginalt. Det ligger mellom null og full kapasitet. Nå sammenligner du prisen med både dette kraftverkets kostnad og gjennomsnittskostnaden.\nCellen viser modellen som sendes til linprog og skriver ut løsningen. Bytt D mellom 60, 90 og 130; noter én linje med produksjon, pris og gjennomsnitt for hvert forbruk."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-one-zone","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-one-zone","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"def read_market(res, D):\n    # TODO: returner prisen og gjennomsnittskostnaden.\n    return None","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"928f6791aca43888","ctm-store-id":"project11-read-market","ctm-store-save":true,"ctm-store-source":"ff026a501a538186","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Fra tre kjøringer til en pristrapp\nNå ser vi på flere forbruk. Kodespor 1: Fullfør read_market slik at den returnerer paret (pris, gjennomsnittskostnad) fra et vellykket resultat og forbruket D. Du trenger bare opplysningene i tabellen over."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-read-market","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-read-market","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"Ds = np.arange(0.5, 150, 1.0)\nprices = np.zeros(len(Ds))\naverages = np.zeros(len(Ds))\nfor i, D in enumerate(Ds):\n    prices[i], averages[i] = read_market(one_zone(D), D)\nshow_steps(Ds, prices, averages, xlabel=\"Forbruk D (MW)\")","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"6441285041570d69","ctm-store-id":"project11-price-steps","ctm-store-save":true,"ctm-store-source":"eeff8219b7b8bb24","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-np-6f11581d, ide-project_week11-one-zone-0ad21954, ide-project_week11-read-market-41224ef0, ide-project_week11-show-steps-d35b54cd","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-np-6f11581d, ide-project_week11-one-zone-0ad21954, ide-project_week11-read-market-41224ef0, ide-project_week11-show-steps-d35b54cd","text":"Fra tre kjøringer til en pristrapp\nNå ser vi på flere forbruk. Kodespor 1: Fullfør read_market slik at den returnerer paret (pris, gjennomsnittskostnad) fra et vellykket resultat og forbruket D. Du trenger bare opplysningene i tabellen over.\nLøkken bruker funksjonen din til å tegne begge kurvene. Halve forbrukstall unngår punkter der prisen kan ha to ulike ensidige verdier."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-price-steps","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-price-steps","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"print(\" D   pris   kostnad ved 1 MW mer   spart ved 1 MW mindre\")\nfor D in (60, 80, 90):\n    r = one_zone(D)\n    more = one_zone(D + 1).fun - r.fun\n    less = r.fun - one_zone(D - 1).fun\n    print(f\"{D:3}{r.eqlin.marginals[0]:7g}{more:22g}{less:24g}\")","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"65f8cc91367008e8","ctm-store-id":"project11-finite-difference","ctm-store-save":true,"ctm-store-source":"7417d355419fe033","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-one-zone-0ad21954","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-one-zone-0ad21954","text":"2. Kontroller prisen og kapasiteten\nEn marginal er et lokalt anslag, ikke et løfte for enhver endring. Den oppgitte prisen \\(\\lambda\\) gir anslaget\n\\[C(D+\\Delta D)\\approx C(D)+\\lambda\\Delta D,\\]\nder \\(C(D)\\) er den laveste kostnaden. Inne i ett rett kurvestykke er anslaget eksakt. Ved et knekkpunkt kan det være ulike endringsrater på hver side; én rapportert dualverdi trenger ikke passe begge veier.\nCellen sammenligner prisen med kostnadsendringen ved én MW mer og én MW mindre. Forutsi først hvilket av de tre forbrukene som skiller seg ut."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-finite-difference","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-finite-difference","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"D = 100\nres = one_zone(D)\nprice = res.eqlin.marginals[0]\nmu = -res.upper.marginals\nprint(\"kraftverk   produksjon   ledig kapasitet   kapasitetsverdi\")\nfor name, x, slack, value in zip(plant_names, res.x, res.upper.residual, mu):\n    print(f\"{name:<12}{x:10g}{slack:18g}{value + 0:19g}\")\nprint(\"pris:\", price, \"  kostnad:\", res.fun, \"  prisgrense:\", price*D - mu @ capacity)","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"f186542bfa214ba8","ctm-store-id":"project11-slackness","ctm-store-save":true,"ctm-store-source":"ec73c396ced28608","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-capacity-f8fda3d6, ide-project_week11-one-zone-0ad21954, ide-project_week11-plant-names-1ea0e5dd","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-capacity-f8fda3d6, ide-project_week11-one-zone-0ad21954, ide-project_week11-plant-names-1ea0e5dd","text":"Komplementær slakk fra utskriften\nFra uke 11.3 har vi disse reglene:\nKraftverkets tilstandForhold mellom kostnad \\(c_i\\) og pris \\(\\lambda\\)Mellom null og kapasitet\\(c_i=\\lambda\\)Full kapasitet\\(c_i\\le\\lambda\\)Ingen produksjon\\(c_i\\ge\\lambda\\)\nFor denne modellen er kapasitetsverdien \\(\\mu_i=-\\)res.upper.marginals[i]. Prisene gir dessuten en nedre kostnadsgrense \\(\\lambda D-\\mu^Tk\\), med \\(\\mu\\ge0\\) og \\(\\lambda\\mathbf1-\\mu\\le c\\). Du får denne sammenhengen ferdig; oppgaven er å lese og kontrollere tallene.\nCellen skriver ut produksjon, ledig kapasitet og kapasitetsverdi. Sammenlign også prisgrensen med kostnaden fra løseren."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-slackness","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-slackness","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"print(\"  L   kostnad   pris N   pris S   flyt   ledig mot sør   linjeverdi\")\nfor L in (20, 40, 55, 70, 100):\n    r = two_zones(L)\n    pN, pS = r.eqlin.marginals\n    value = r.lower.marginals[4] - r.upper.marginals[4]\n    print(f\"{L:3}{r.fun:10g}{pN:9g}{pS:9g}{r.x[4] + 0:7g}\"\n          f\"{r.upper.residual[4]:16g}{value + 0:13g}\")","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"4a26a650dc543956","ctm-store-id":"project11-two-zones","ctm-store-save":true,"ctm-store-source":"7edd7e33ffa17e9f","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-two-zones-61836c29","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-two-zones-61836c29","text":"3. To områder og en linje\nNå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er verdt å bygge en litt sterkere linje.\nOmrådeKraftverk (kostnad, kapasitet)Forbruk (MW)Nordvind (0 kr, 20 MW), vannkraft (10 kr, 80 MW)30Sørimport (40 kr, 30 MW), gass (70 kr, 80 MW)80\nFlyten \\(f\\) er positiv fra nord til sør og har grensene \\(-L\\le f\\le L\\). Med rekkefølgen (vind N, vann N, import S, gass S, f) er balansene\n\\[\\begin{pmatrix}1&1&0&0&-1\\\\0&0&1&1&1\\end{pmatrix}x\n=\\begin{pmatrix}30\\\\80\\end{pmatrix}.\\]\nLes en matrisrad: Skriv de to radene som hver sin sum. Forklar hvorfor \\(f\\) har ulikt fortegn, og hvorfor summen av radene fjerner flyten.\nForutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet. Cellen løser samme modell for flere L og viser også den lokale verdien av mer kapasitet. For L>0 økes begge grensene (-L, L) når linjen utvides, så verdien er lower.marginals[4] - upper.marginals[4]."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-two-zones","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-two-zones","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"L = 40\nshow_two_zones(two_zones(L), L)","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"dcff4c0cc964d6cc","ctm-store-id":"project11-line-picture","ctm-store-save":true,"ctm-store-source":"f60e32f2597af13f","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-show-two-zones-250070b6, ide-project_week11-two-zones-61836c29","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-show-two-zones-250070b6, ide-project_week11-two-zones-61836c29","text":"3. To områder og en linje\nNå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er verdt å bygge en litt sterkere linje.\nOmrådeKraftverk (kostnad, kapasitet)Forbruk (MW)Nordvind (0 kr, 20 MW), vannkraft (10 kr, 80 MW)30Sørimport (40 kr, 30 MW), gass (70 kr, 80 MW)80\nFlyten \\(f\\) er positiv fra nord til sør og har grensene \\(-L\\le f\\le L\\). Med rekkefølgen (vind N, vann N, import S, gass S, f) er balansene\n\\[\\begin{pmatrix}1&1&0&0&-1\\\\0&0&1&1&1\\end{pmatrix}x\n=\\begin{pmatrix}30\\\\80\\end{pmatrix}.\\]\nLes en matrisrad: Skriv de to radene som hver sin sum. Forklar hvorfor \\(f\\) har ulikt fortegn, og hvorfor summen av radene fjerner flyten.\nForutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet. Cellen løser samme modell for flere L og viser også den lokale verdien av mer kapasitet. For L>0 økes begge grensene (-L, L) når linjen utvides, så verdien er lower.marginals[4] - upper.marginals[4].\nLes og konkluder: Sammenlign L=40, 55 og 100. Når er prisene like, og når er linjen full mot sør? Forklar prisen i nord ved L=100 ved å se på hvor en ekstra MW til forbruket i nord måtte komme fra.\nVil du se planen som et bilde, velger du en av kjøringene. Figuren viser hvilke kraftverk som produserer på hver side av linjen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-line-picture","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-line-picture","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"for L, extra in ((40, 1), (40, 40), (70, 1)):\n    base = two_zones(L)\n    value = base.lower.marginals[4] - base.upper.marginals[4]\n    changed = two_zones(L + extra)\n    print(f\"L={L}, ekstra={extra}: anslått spart {value*extra:g}, \"\n          f\"faktisk spart {base.fun - changed.fun:g}, ny plan {changed.x}\")","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"a3efa28a53b143a5","ctm-store-id":"project11-line-change","ctm-store-save":true,"ctm-store-source":"dff176523578627f","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-two-zones-61836c29","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-two-zones-61836c29","text":"Hvor lenge virker linjeverdien?\nDu får prisreglene ferdig for denne tapsfrie modellen:\nFull mot sør, \\(f=L>0\\): Linjeverdien er \\(\\lambda_S-\\lambda_N\\).\nLedig begge veier, \\(-L<f<L\\): Linjeverdien er null og prisene er like.\nVed et knekkpunkt: En full linje kan ha verdi null. At linjen er full, er ikke alene nok til å vite at mer kapasitet senker kostnaden.\nEn lokal verdi gjelder bare mens de samme begrensningene bestemmer kostnadsendringen. Nå tester du både en liten og en større utvidelse fra L=40, og én ekstra MW fra L=70. Formuleringen er en forutsigelse som skal sammenlignes med nye løsninger, ikke en håndutledning."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-line-change","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-line-change","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"def make_water_row():\n    row = np.zeros((1, 12))\n    # TODO: sett 1 på plassene til vannkraft; behold 0 ellers.\n    return row\n\nexample = np.array([0., 2., 0., 0., 0., 3., 0., 0., 0., 5., 0., 0.])\nprint(\"vannmengde fra din rad:\", (make_water_row() @ example)[0])\nprint(\"forventet vannmengde: 10 MWh\")","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"837cbdea95cc680d","ctm-store-id":"project11-water-row","ctm-store-save":true,"ctm-store-source":"2373a28c83aeb3f6","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-np-6f11581d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-np-6f11581d","text":"Bygg én rad i modellen\nVariablene kommer i tre grupper: (vind, vann, import, gass) for hver time. Vannkravet er\n\\[x_{\\text{vann},1}+x_{\\text{vann},2}+x_{\\text{vann},3}\\le120.\\]\nKodespor 2: Fullfør make_water_row slik at den returnerer en (1, 12)-matrise som velger ut akkurat de tre vannvariablene. Forklar hvordan A_water @ x da blir summen over de tre timene. Dette er den samme koblingen mellom en sum og en matrisrad som i del 1. Kontrollen bruker 2, 3 og 5 MWh vann i de tre timene; summen skal bli 10 MWh. Rett raden før du løser modellen dersom kontrollen ikke stemmer."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-water-row","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-water-row","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"A_water = make_water_row()\nres3 = linprog(c3, A_ub=A_water, b_ub=[water], A_eq=A_eq3, b_eq=demand3,\n               bounds=bounds3, method=\"highs\")\nprint(\"status:\", res3.status, \"  kostnad:\", res3.fun)\nprint(\"time   vind  vann  import  gass   pris\")\nfor h in range(3):\n    print(f\"{h + 1:4}\", *[f\"{v:6g}\" for v in res3.x[4*h:4*h + 4]],\n          f\"{res3.eqlin.marginals[h]:6g}\")\nprint(\"vann brukt:\", (A_water @ res3.x)[0], \"av\", water)\nprint(\"ledig vann:\", res3.ineqlin.residual[0])\nprint(\"vannverdi:\", -res3.ineqlin.marginals[0] + 0, \"kr/MWh\")","id":12,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"eee7be75234960ff","ctm-store-id":"project11-hydro","ctm-store-save":true,"ctm-store-source":"efa7da8b7a0b17cb","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-a-eq3-783ef676, ide-project_week11-bounds3-783ef676, ide-project_week11-c3-783ef676, ide-project_week11-demand3-1ff1608f, ide-project_week11-linprog-5e96555f, ide-project_week11-make-water-row-47594272, ide-project_week11-water-dfa5ec02","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-a-eq3-783ef676, ide-project_week11-bounds3-783ef676, ide-project_week11-c3-783ef676, ide-project_week11-demand3-1ff1608f, ide-project_week11-linprog-5e96555f, ide-project_week11-make-water-row-47594272, ide-project_week11-water-dfa5ec02","text":"Bygg én rad i modellen\nVariablene kommer i tre grupper: (vind, vann, import, gass) for hver time. Vannkravet er\n\\[x_{\\text{vann},1}+x_{\\text{vann},2}+x_{\\text{vann},3}\\le120.\\]\nKodespor 2: Fullfør make_water_row slik at den returnerer en (1, 12)-matrise som velger ut akkurat de tre vannvariablene. Forklar hvordan A_water @ x da blir summen over de tre timene. Dette er den samme koblingen mellom en sum og en matrisrad som i del 1. Kontrollen bruker 2, 3 og 5 MWh vann i de tre timene; summen skal bli 10 MWh. Rett raden før du løser modellen dersom kontrollen ikke stemmer.\nResten av tre-timersmodellen er gitt i oppsettet: A_eq3 har én forbrukslikning per time. Cellen bruker vannraden din og skriver ut planen, prisene og vannverdien, altså spart kostnad per MWh ekstra vann."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-hydro","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-hydro","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"A_water = make_water_row()\nWs = np.arange(50.5, 160, 1.0)\nvalues = []\nfor W in Ws:\n    r = linprog(c3, A_ub=A_water, b_ub=[W], A_eq=A_eq3, b_eq=demand3,\n                bounds=bounds3, method=\"highs\")\n    values.append(-r.ineqlin.marginals[0])\nshow_steps(Ws, values, xlabel=\"Vannmengde W (MWh)\", ylabel=\"Vannverdi (kr/MWh)\")\nfor W in (40, 120, 121, 140):\n    r = linprog(c3, A_ub=A_water, b_ub=[W], A_eq=A_eq3, b_eq=demand3,\n                bounds=bounds3, method=\"highs\")\n    if r.success:\n        print(f\"W={W}: kostnad {r.fun:g}, ledig vann {r.ineqlin.residual[0]:g}, \"\n              f\"vannverdi {-r.ineqlin.marginals[0] + 0:g}\")\n    else:\n        print(f\"W={W}: status {r.status}, ingen tillatt plan\")","id":13,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"3ab5cbc0374a9a2e","ctm-store-id":"project11-water-steps","ctm-store-save":true,"ctm-store-source":"1144b9516738e9ff","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week11-reference-assumptions, ide-project_week11-a-eq3-783ef676, ide-project_week11-bounds3-783ef676, ide-project_week11-c3-783ef676, ide-project_week11-demand3-1ff1608f, ide-project_week11-linprog-5e96555f, ide-project_week11-make-water-row-47594272, ide-project_week11-np-6f11581d, ide-project_week11-show-steps-d35b54cd","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week11-reference-assumptions, ide-project_week11-a-eq3-783ef676, ide-project_week11-bounds3-783ef676, ide-project_week11-c3-783ef676, ide-project_week11-demand3-1ff1608f, ide-project_week11-linprog-5e96555f, ide-project_week11-make-water-row-47594272, ide-project_week11-np-6f11581d, ide-project_week11-show-steps-d35b54cd","text":"Når slutter vannet å være knapt?\nDen neste cellen gjentar løsningen for flere vannmengder og kontrollerer én liten økning fra 120 MWh. Forutsi først om mer vann alltid har samme verdi."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project11-water-steps","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project11-water-steps","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}}];
+
+// AI feedback feature settings ----
+//
+// enabled : show a Feedback button per interactive cell?
+// storage : default for where credentials are stored
+//           ("local" = localStorage, persistent; "session" = sessionStorage, per tab).
+//           Can be changed by the user in the settings panel.
+// hints   : progressive hints – the hint level rises with each click of the
+//           Feedback button on the same cell.
+// uiLanguage : the language of the feedback interface and of the feedback
+//              (this extension's interface language).
+globalThis.qpyodideFeedbackOptions = {
+  enabled: true,
+  storage: "local",
+  hints: true,
+  uiLanguage: "nb"
+};
+
+// Local-storage autosave feature settings ----
+//
+// enabled : document-wide default (`pyodide: local-storage: true`); a
+//           cell's own `#| local-storage: true/false` overrides this.
+// epoch   : "" (off) unless `pyodide: local-storage-epoch:` was set. When
+//           non-empty, it's folded into every saved-code storage key, so
+//           re-rendering with a new epoch value makes every previously
+//           saved answer on this page unreachable -- an exam-room "next
+//           group gets a clean slate" reset. See qpyodide-storage.js.
+globalThis.qpyodideLocalStorageOptions = {
+  enabled: false,
+  epoch: ""
+};
+
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week11.html">Prosjekt 11 – Hvorfor koster strømmen det den koster?</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Matematikk 3A</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Søk"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Forside</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IDE / Readme</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tall og algoritmer</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 1 – regnetid, binære tall og tall på datamaskiner</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 2 – fikspunktiterasjon</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Numerisk lineær algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 3 – vektorrom, kolonnerom og nullrom</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 4 – ortogonalitet, QR og minste kvadrater</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 5 – egenverdier og gjentatt matrisemultiplikasjon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 6 – iterative metoder for lineære systemer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 7 – singulærverdidekomposisjon</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Optimering</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 8 – introduksjon til optimering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 9 – gradientmetoden og søk uten deriverte</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 10 – Newtons metode</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 11 – lineær programmering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 12 – optimering med likhetsbetingelser og Lagranges metode</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Projects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 1 – Floating-point attack</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 2 – Newtonfraktaler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 3 – Polynomer i blindsonen</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 4 – Når målingene ikke passer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 5 – Kan vi stole på rangeringen?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 6 – Samme løsning, mindre arbeid?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 7 – Behold informasjonen som betyr noe</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 9 – Når skalaen bestemmer farten</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 10 – Hvor er jeg? Posisjon fra avstander</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Prosjekt 11 – Hvorfor koster strømmen det den koster?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 12 – Kjettingen som henger</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Eksamensoppgaver</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Flyttall og numerisk stabilitet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<script>window.__aiFeedbackPolicies = {"layers":[],"pageLayers":[]};</script>
+<script>window.__aiFeedbackConfig = {"baseUrl":"","mode":"copy","model":""};</script>
+<script>window.__mathExerciseConfig = {"lang":"nb","stopAfter":20};</script>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/loader.js"></script>
+<script type="module" id="qpyodide-monaco-editor-init">
+
+  // Configure the Monaco Editor's loader
+  require.config({
+    paths: {
+      'vs': CTMAssets.url('monaco-editor', 'min/vs')
+    }
+  });
+</script>
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week11.html">Prosjekt 11 – Hvorfor koster strømmen det den koster?</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Prosjekt 11 – Hvorfor koster strømmen det den koster?</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!--ctm-save-generated--><div class="ctm-save-bar" role="region" aria-label="Lagrede svar" hidden=""><p class="ctm-save-notice">Svarene dine lagres bare i denne nettleseren.</p><div class="ctm-save-actions"><button type="button" data-ctm-clear-page="">Slett svarene på denne siden</button>
+<button type="button" data-ctm-clear-course="">Slett alle svarene dine i dette emnet</button>
+<button type="button" data-ctm-save-toggle="">Ikke lagre på denne enheten</button>
+<button type="button" data-ctm-export="">Eksporter svarene mine</button></div><span class="ctm-save-status" role="status" aria-live="polite"></span></div>
+<div id="qpyodide-insertion-location-1"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<section id="hvorfor-koster-strømmen-det-den-koster" class="level2">
+<h2 class="anchored" data-anchor-id="hvorfor-koster-strømmen-det-den-koster">Hvorfor koster strømmen det den koster?</h2>
+<p>Du har kanskje sett at strømprisen kan være forskjellig i to deler av landet i samme time. Her bygger vi et lite kraftmarked og bruker <code>linprog</code> til å undersøke tre spørsmål:</p>
+<ul>
+<li>Hvilket kraftverk bestemmer prisen når forbruket øker litt?</li>
+<li>Når kan en overføringslinje gi ulike priser i to områder?</li>
+<li>Hvorfor har vannet i et magasin verdi selv om regnet er gratis?</li>
+</ul>
+<section id="bakgrunn-slik-leser-vi-energimodellen" class="level3">
+<h3 class="anchored" data-anchor-id="bakgrunn-slik-leser-vi-energimodellen">Bakgrunn: slik leser vi energimodellen</h3>
+<p>Dette er en kort orientering, ikke en egen oppgavedel. Du trenger ingen økonomi. Vi bruker <strong>pris</strong> om endringen i den laveste samlede kostnaden per MW ekstra forbruk. En produksjon på 1 MW i én time gir 1 MWh energi. En <strong>dualvariabel</strong> er tallet løseren gir for denne lokale endringen, slik som ressursprisene i <a href="../pages/uke11.html#uke11-dual">uke 11</a>. Ved et knekkpunkt kan endringen være ulik på hver side.</p>
+<p>Alle tall er oppdiktede. Vi antar fast forbruk, kjente kostnader, ingen tap i nettet og delbar produksjon. Modellen skal forklare sammenhenger, ikke forutsi den faktiske strømprisen.</p>
+</section>
+<section id="en-vei-gjennom-prosjektet" class="level3">
+<h3 class="anchored" data-anchor-id="en-vei-gjennom-prosjektet">En vei gjennom prosjektet</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Del</th>
+<th style="text-align: left;">Det du undersøker</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Les produksjon, pris og gjennomsnitt fra løseren.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Kontroller prisene med små endringer og les slakk.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Sammenlign prisene på hver side av en linje.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Bygg én matrisrad og undersøk vannverdien.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5 og levering</td>
+<td style="text-align: left;">Test ett lokalt prisanslag og samle konklusjonene.</td>
+</tr>
+</tbody>
+</table>
+<p>Sett av omtrent <strong>4–6 timer</strong>. Du skriver to korte funksjoner; resten av arbeidet er å velge forsøk, lese utskrifter og begrunne konklusjoner. Skriv en kort forventning før hver sammenligning. Du skal ikke utlede pristeorien på nytt.</p>
+</section>
+<section id="oppsett-og-begreper" class="level3">
+<h3 class="anchored" data-anchor-id="oppsett-og-begreper">Oppsett og begreper</h3>
+<p>På nettsiden er data, <code>one_zone</code>, <code>two_zones</code> og figurhjelpere klare. Studentfunksjonene <code>read_market</code> og <code>make_water_row</code> må du kjøre igjen etter at siden lastes på nytt. Hver forsøkscelle kan ellers kjøres med oppsettet uten at tidligere forsøksceller er kjørt.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Les i resultatet</th>
+<th style="text-align: left;">Betydning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>res.status</code>, <code>res.success</code></td>
+<td style="text-align: left;">Sjekk utfallet først: 0 er vellykket, 2 betyr umulige krav.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>res.x</code>, <code>res.fun</code></td>
+<td style="text-align: left;">Produksjonsplan og laveste samlede kostnad.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>res.eqlin.marginals</code></td>
+<td style="text-align: left;">Lokal kostnadsendring per ekstra enhet på likningshøyresiden.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>res.upper.residual</code></td>
+<td style="text-align: left;">Ledig kapasitet: øvre grense minus produksjon.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>-res.upper.marginals</code></td>
+<td style="text-align: left;">Verdien av litt mer kapasitet.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>-res.ineqlin.marginals</code></td>
+<td style="text-align: left;">Verdien av litt mer på en øvre ressursgrense.</td>
+</tr>
+</tbody>
+</table>
+<p>En grense med null slakk er <strong>aktiv</strong>. En grense med ledig kapasitet har verdi null. En aktiv grense kan også ha verdi null. Marginalene er lokale: ved større endringer må du løse modellen igjen (<a href="../pages/uke11.html#uke11-sensitivitet">uke 11.4</a>).</p>
+<details class="ctm-reveal details">
+<summary>
+Egen notebook: last ned oppsettet og kom i gang
+</summary>
+<div class="ctm-reveal-body">
+<p>Last ned <a href="../assets/project_week11_setup.py" download="project_week11_setup.py">project_week11_setup.py</a> og legg den ved siden av notebooken. Kjør først</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-ai-feedback-context="Oppsett og begreper
+På nettsiden er data, one_zone, two_zones og figurhjelpere klare. Studentfunksjonene read_market og make_water_row må du kjøre igjen etter at siden lastes på nytt. Hver forsøkscelle kan ellers kjøres med oppsettet uten at tidligere forsøksceller er kjørt.
+Les i resultatetBetydningres.status, res.successSjekk utfallet først: 0 er vellykket, 2 betyr umulige krav.res.x, res.funProduksjonsplan og laveste samlede kostnad.res.eqlin.marginalsLokal kostnadsendring per ekstra enhet på likningshøyresiden.res.upper.residualLedig kapasitet: øvre grense minus produksjon.-res.upper.marginalsVerdien av litt mer kapasitet.-res.ineqlin.marginalsVerdien av litt mer på en øvre ressursgrense.
+En grense med null slakk er aktiv. En grense med ledig kapasitet har verdi null. En aktiv grense kan også ha verdi null. Marginalene er lokale: ved større endringer må du løse modellen igjen (uke 11.4).
+Egen notebook: last ned oppsettet og kom i gang
+Last ned project_week11_setup.py og legg den ved siden av notebooken. Kjør først"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> project_week11_setup <span class="im">import</span> <span class="op">*</span></span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Du trenger NumPy, SciPy og Matplotlib. Oppsettet gir data og ferdige modell- og figurhjelpere. De to studentfunksjonene skriver du selv. Kopier cellene i rekkefølge og kontroller med <strong>Restart / Run all</strong> før levering. Ta med oppsettsfilen.</p>
+</div>
+</details>
+<p><strong>Her begynner prosjektarbeidet.</strong> Fra nå av bruker du lineær algebra, løserresultater og egne sammenligninger.</p>
+</section>
+</section>
+<section id="ett-prisområde-les-markedet" class="level2">
+<h2 class="anchored" data-anchor-id="ett-prisområde-les-markedet">1. Ett prisområde: les markedet</h2>
+<p>Først har vi ett område, én time og fire kraftverk. Markedet skal dekke forbruket så billig som mulig. Hvert kraftverk oppgir en kostnad og hvor mye det kan levere, <strong>kapasiteten</strong>.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Kraftverk</th>
+<th style="text-align: right;">Kostnad <span class="math inline">\(c_i\)</span> (kr/MWh)</th>
+<th style="text-align: right;">Kapasitet <span class="math inline">\(k_i\)</span> (MW)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">vind</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">vannkraft</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">import</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gass</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">40</td>
+</tr>
+</tbody>
+</table>
+<p>Import behandles som et kraftverk. Med produksjonsvektor <span class="math inline">\(x=(x_1,x_2,x_3,x_4)^T\)</span> og forbruk <span class="math inline">\(D\)</span> er modellen</p>
+<p><span class="math display">\[\min c^Tx\quad\text{slik at}\quad
+\mathbf1^Tx=D,\qquad 0\le x_i\le k_i.\]</span></p>
+<p><strong>Koble sum og vektor:</strong> Skriv <span class="math inline">\(c^Tx\)</span> som en sum med de fire kostnadene. Hvilken rad i <code>A_eq</code> uttrykker at all produksjon til sammen skal bli <span class="math inline">\(D\)</span>? Dette er samme rad-for-rad-tenkning som i <a href="../pages/uke3.html">uke 3</a>.</p>
+<section id="se-planen-før-du-leser-tallene" class="level3">
+<h3 class="anchored" data-anchor-id="se-planen-før-du-leser-tallene">Se planen før du leser tallene</h3>
+<p>Figuren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet, og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes ved <code>D=90</code>. Kjør så figuren; du trenger ingen full håndtabell.</p>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Et kraftverk som kan skrus litt opp eller ned i den beste planen, er <strong>marginalt</strong>. Det ligger mellom null og full kapasitet. Nå sammenligner du prisen med både dette kraftverkets kostnad og gjennomsnittskostnaden.</p>
+<p>Cellen viser modellen som sendes til <code>linprog</code> og skriver ut løsningen. Bytt <code>D</code> mellom 60, 90 og 130; noter én linje med produksjon, pris og gjennomsnitt for hvert forbruk.</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>En kort håndsjekk:</strong> For <span class="math inline">\(D=90\)</span> skal du bruke billigste kraftverk først. Finn produksjonsvektoren og regn ut kostnaden med <span class="math inline">\(c^Tx\)</span>. Hvis forbruket øker fra 90 til 91, hvilket kraftverk justeres, og hvor mye koster det? Sammenlign med utskriften. Du trenger bare denne ene håndsjekken.</p>
+<p><strong>Les og konkluder:</strong> Hvilket kraftverk er marginalt i hver kjøring? Sammenlign kostnaden til dette kraftverket med prisen og gjennomsnittet. Bruk utskriften til å forklare hvorfor pris og gjennomsnitt er ulike tall.</p>
+</section>
+<section id="fra-tre-kjøringer-til-en-pristrapp" class="level3">
+<h3 class="anchored" data-anchor-id="fra-tre-kjøringer-til-en-pristrapp">Fra tre kjøringer til en pristrapp</h3>
+<p>Nå ser vi på flere forbruk. <strong>Kodespor 1:</strong> Fullfør <code>read_market</code> slik at den returnerer paret <code>(pris, gjennomsnittskostnad)</code> fra et vellykket resultat og forbruket <code>D</code>. Du trenger bare opplysningene i tabellen over.</p>
+<div id="qpyodide-insertion-location-4"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Løkken bruker funksjonen din til å tegne begge kurvene. Halve forbrukstall unngår punkter der prisen kan ha to ulike ensidige verdier.</p>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Finn de tre indre trinnene i prisen. Koble hvert trinn til kapasitetene i kraftverkstabellen. Hvorfor trenger ikke gjennomsnittet å hoppe når det marginale kraftverket byttes?</p>
+</section>
+</section>
+<section id="kontroller-prisen-og-kapasiteten" class="level2">
+<h2 class="anchored" data-anchor-id="kontroller-prisen-og-kapasiteten">2. Kontroller prisen og kapasiteten</h2>
+<p>En marginal er et <strong>lokalt anslag</strong>, ikke et løfte for enhver endring. Den oppgitte prisen <span class="math inline">\(\lambda\)</span> gir anslaget</p>
+<p><span class="math display">\[C(D+\Delta D)\approx C(D)+\lambda\Delta D,\]</span></p>
+<p>der <span class="math inline">\(C(D)\)</span> er den laveste kostnaden. Inne i ett rett kurvestykke er anslaget eksakt. Ved et knekkpunkt kan det være ulike endringsrater på hver side; én rapportert dualverdi trenger ikke passe begge veier.</p>
+<p>Cellen sammenligner prisen med kostnadsendringen ved én MW mer og én MW mindre. Forutsi først hvilket av de tre forbrukene som skiller seg ut.</p>
+<div id="qpyodide-insertion-location-6"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Hvor er én pris nok til å beskrive begge endringene? Hvorfor er <code>D=80</code> annerledes? Bruk hvilke kraftverk som kan justeres, ikke en ny derivasjon. En annen løserversjon kan velge en annen gyldig dualverdi akkurat på trinnet; de to endelige kostnadsendringene er kontrollen din.</p>
+<section id="komplementær-slakk-fra-utskriften" class="level3">
+<h3 class="anchored" data-anchor-id="komplementær-slakk-fra-utskriften">Komplementær slakk fra utskriften</h3>
+<p>Fra <a href="../pages/uke11.html#uke11-slakk">uke 11.3</a> har vi disse reglene:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Kraftverkets tilstand</th>
+<th style="text-align: left;">Forhold mellom kostnad <span class="math inline">\(c_i\)</span> og pris <span class="math inline">\(\lambda\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mellom null og kapasitet</td>
+<td style="text-align: left;"><span class="math inline">\(c_i=\lambda\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Full kapasitet</td>
+<td style="text-align: left;"><span class="math inline">\(c_i\le\lambda\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ingen produksjon</td>
+<td style="text-align: left;"><span class="math inline">\(c_i\ge\lambda\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>For denne modellen er kapasitetsverdien <span class="math inline">\(\mu_i=-\)</span><code>res.upper.marginals[i]</code>. Prisene gir dessuten en nedre kostnadsgrense <span class="math inline">\(\lambda D-\mu^Tk\)</span>, med <span class="math inline">\(\mu\ge0\)</span> og <span class="math inline">\(\lambda\mathbf1-\mu\le c\)</span>. Du får denne sammenhengen ferdig; oppgaven er å lese og kontrollere tallene.</p>
+<p>Cellen skriver ut produksjon, ledig kapasitet og kapasitetsverdi. Sammenlign også prisgrensen med kostnaden fra løseren.</p>
+<div id="qpyodide-insertion-location-7"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Finn ett kraftverk i hver tilstand og kontroller reglene. Hvem har verdi av mer kapasitet, og hvilken produksjon ville den ekstra kapasiteten erstatte? Hvorfor er ledig kapasitet og en pris på null to forskjellige opplysninger?</p>
+</section>
+</section>
+<section id="to-områder-og-en-linje" class="level2">
+<h2 class="anchored" data-anchor-id="to-områder-og-en-linje">3. To områder og en linje</h2>
+<p>Nå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er verdt å bygge en litt sterkere linje.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Område</th>
+<th style="text-align: left;">Kraftverk (kostnad, kapasitet)</th>
+<th style="text-align: right;">Forbruk (MW)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Nord</td>
+<td style="text-align: left;">vind (0 kr, 20 MW), vannkraft (10 kr, 80 MW)</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sør</td>
+<td style="text-align: left;">import (40 kr, 30 MW), gass (70 kr, 80 MW)</td>
+<td style="text-align: right;">80</td>
+</tr>
+</tbody>
+</table>
+<p>Flyten <span class="math inline">\(f\)</span> er positiv fra nord til sør og har grensene <span class="math inline">\(-L\le f\le L\)</span>. Med rekkefølgen <code>(vind N, vann N, import S, gass S, f)</code> er balansene</p>
+<p><span class="math display">\[\begin{pmatrix}1&amp;1&amp;0&amp;0&amp;-1\\0&amp;0&amp;1&amp;1&amp;1\end{pmatrix}x
+=\begin{pmatrix}30\\80\end{pmatrix}.\]</span></p>
+<p><strong>Les en matrisrad:</strong> Skriv de to radene som hver sin sum. Forklar hvorfor <span class="math inline">\(f\)</span> har ulikt fortegn, og hvorfor summen av radene fjerner flyten.</p>
+<p>Forutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet. Cellen løser samme modell for flere <code>L</code> og viser også den lokale verdien av mer kapasitet. For <code>L&gt;0</code> økes begge grensene <code>(-L, L)</code> når linjen utvides, så verdien er <code>lower.marginals[4] - upper.marginals[4]</code>.</p>
+<div id="qpyodide-insertion-location-8"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Sammenlign <code>L=40</code>, <code>55</code> og <code>100</code>. Når er prisene like, og når er linjen full mot sør? Forklar prisen i nord ved <code>L=100</code> ved å se på hvor en ekstra MW til forbruket i nord måtte komme fra.</p>
+<p>Vil du se planen som et bilde, velger du en av kjøringene. Figuren viser hvilke kraftverk som produserer på hver side av linjen.</p>
+<div id="qpyodide-insertion-location-9"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<section id="hvor-lenge-virker-linjeverdien" class="level3">
+<h3 class="anchored" data-anchor-id="hvor-lenge-virker-linjeverdien">Hvor lenge virker linjeverdien?</h3>
+<p>Du får prisreglene ferdig for denne tapsfrie modellen:</p>
+<ul>
+<li><strong>Full mot sør, <span class="math inline">\(f=L&gt;0\)</span>:</strong> Linjeverdien er <span class="math inline">\(\lambda_S-\lambda_N\)</span>.</li>
+<li><strong>Ledig begge veier, <span class="math inline">\(-L&lt;f&lt;L\)</span>:</strong> Linjeverdien er null og prisene er like.</li>
+<li><strong>Ved et knekkpunkt:</strong> En full linje kan ha verdi null. At linjen er full, er ikke alene nok til å vite at mer kapasitet senker kostnaden.</li>
+</ul>
+<p>En lokal verdi gjelder bare mens de samme begrensningene bestemmer kostnadsendringen. Nå tester du både en liten og en større utvidelse fra <code>L=40</code>, og én ekstra MW fra <code>L=70</code>. Formuleringen er en forutsigelse som skal sammenlignes med nye løsninger, ikke en håndutledning.</p>
+<div id="qpyodide-insertion-location-10"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Hvor virker anslaget, og hvor gjør det ikke det? Bruk produksjonsplanene til å peke på hvilken grense som skifter rolle. Sammenlign særskilt <code>L=70</code> med én ekstra MW: er «full» det samme som «verdifull å utvide»?</p>
+</section>
+</section>
+<section id="vannkraft-med-begrenset-vann" class="level2">
+<h2 class="anchored" data-anchor-id="vannkraft-med-begrenset-vann">4. Vannkraft med begrenset vann</h2>
+<p>En MWh vann brukt nå kan ikke brukes i en dyrere time senere. Vi ser derfor på tre timer samtidig. Kraftverkene har kostnadene fra del 1; vind varierer, og vannkraften kan levere høyst 50 MW per time og bruke høyst <strong>120 MWh vann til sammen</strong>.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Time</th>
+<th style="text-align: right;">1</th>
+<th style="text-align: right;">2</th>
+<th style="text-align: right;">3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Forbruk (MW)</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">120</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tilgjengelig vind (MW)</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">20</td>
+</tr>
+</tbody>
+</table>
+<section id="bygg-én-rad-i-modellen" class="level3">
+<h3 class="anchored" data-anchor-id="bygg-én-rad-i-modellen">Bygg én rad i modellen</h3>
+<p>Variablene kommer i tre grupper: <code>(vind, vann, import, gass)</code> for hver time. Vannkravet er</p>
+<p><span class="math display">\[x_{\text{vann},1}+x_{\text{vann},2}+x_{\text{vann},3}\le120.\]</span></p>
+<p><strong>Kodespor 2:</strong> Fullfør <code>make_water_row</code> slik at den returnerer en <code>(1, 12)</code>-matrise som velger ut akkurat de tre vannvariablene. Forklar hvordan <code>A_water @ x</code> da blir summen over de tre timene. Dette er den samme koblingen mellom en sum og en matrisrad som i del 1. Kontrollen bruker 2, 3 og 5 MWh vann i de tre timene; summen skal bli 10 MWh. Rett raden før du løser modellen dersom kontrollen ikke stemmer.</p>
+<div id="qpyodide-insertion-location-11"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Resten av tre-timersmodellen er gitt i oppsettet: <code>A_eq3</code> har én forbrukslikning per time. Cellen bruker vannraden din og skriver ut planen, prisene og <strong>vannverdien</strong>, altså spart kostnad per MWh ekstra vann.</p>
+<div id="qpyodide-insertion-location-12"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> I hvilken time kunne vannkraften bruke litt mer vann uten å nå 50 MW-grensen? Hvilket annet kraftverk ville den erstatte? Bruk kostnadsforskjellen til å tolke vannverdien i utskriften. Sammenlign også <code>10 + vannverdi</code> med prisene; hva endres når vannkraften går for fullt?</p>
+</section>
+<section id="når-slutter-vannet-å-være-knapt" class="level3">
+<h3 class="anchored" data-anchor-id="når-slutter-vannet-å-være-knapt">Når slutter vannet å være knapt?</h3>
+<p>Den neste cellen gjentar løsningen for flere vannmengder og kontrollerer én liten økning fra 120 MWh. Forutsi først om mer vann alltid har samme verdi.</p>
+<div id="qpyodide-insertion-location-13"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p><strong>Les og konkluder:</strong> Kontroller vannverdien ved 120 MWh mot besparelsen ved 121 MWh. Finn trinnene i figuren og forklar ett av dem med hvilket kraftverk vannet erstatter. Bruk utskriften til å skille mellom «vann har verdi null» og «det finnes ingen tillatt plan».</p>
+</section>
+</section>
+<section id="din-undersøkelse-bruk-et-lokalt-prisanslag" class="level2">
+<h2 class="anchored" data-anchor-id="din-undersøkelse-bruk-et-lokalt-prisanslag">5. Din undersøkelse: bruk et lokalt prisanslag</h2>
+<p>Du har undersøkt både linje- og vannverdier. Nå velger du <strong>ett</strong> tiltak og tester hvor langt en forutsigelse med startmodellens dualverdi holder. Du trenger ikke bygge en ny modell.</p>
+<ul>
+<li><strong>Mer vind i nord:</strong> Bruk <code>two_zones(40, wind_north=20 + delta)</code> og vindverdien <code>-two_zones(40).upper.marginals[0]</code> fra startmodellen.</li>
+<li><strong>Mer vann:</strong> Bruk tre-timersmodellen, vannraden din og startmodellens vannverdi ved 120 MWh.</li>
+</ul>
+<p>Gjør én liten og én større endring. Du velger størrelsene; målet er å finne både et tilfelle der anslaget virker og et der en annen grense tar over.</p>
+<ol type="1">
+<li>Skriv forventet besparelse som <code>dualverdi * endring</code> før du løser på nytt.</li>
+<li>Skriv ut faktisk besparelse og produksjonsplan for hver endring.</li>
+<li>Forklar med tallene hvilken grense som gjør det store anslaget mindre presist. Hvis anslaget fortsatt virker, velg en større endring.</li>
+</ol>
+<p><strong>Ta med videre:</strong> Et lokalt anslag er nyttig fordi det sparer ny regning for små endringer. En ny løsning og dens slakk viser når du trenger et nytt anslag. Skill mellom det prisregelen sier under sine forutsetninger og det dine konkrete forsøk viser.</p>
+<div id="project11-battery">
+
+</div>
+</section>
+<section id="spørsmål-du-skal-kunne-svare-på" class="level2">
+<h2 class="anchored" data-anchor-id="spørsmål-du-skal-kunne-svare-på">Spørsmål du skal kunne svare på</h2>
+<p>Disse spørsmålene samler ideene; de er ikke en ekstra innleveringsdel.</p>
+<ol type="1">
+<li>Hvordan leser du kostnad og forbrukskrav fra vektorer og matrisrader?</li>
+<li>Hvorfor er gjennomsnittskostnad og pris forskjellige tall?</li>
+<li>Hvordan kontrollerer du en marginal med to nye kostnadsverdier?</li>
+<li>Hva forteller ledig kapasitet og kapasitetsverdi om et kraftverk?</li>
+<li>Når kan en full linje ha verdi null, og når er linjeverdien prisforskjellen?</li>
+<li>Hva betyr vannverdien, og hvordan ser du hvilken time som kan bruke mer vann?</li>
+<li>Hvorfor må et lokalt prisanslag kontrolleres ved en større endring?</li>
+</ol>
+</section>
+<section id="det-du-leverer" class="level2">
+<h2 class="anchored" data-anchor-id="det-du-leverer">Det du leverer</h2>
+<p>Lever én kjørbar notebook eller Quarto-side med de to studentfunksjonene, oppsettsfilen og disse resultatene:</p>
+<ul>
+<li>pristrappen og en kort forklaring av pris mot gjennomsnitt;</li>
+<li>kontrollen ved <code>D=80</code> og ett eksempel på komplementær slakk;</li>
+<li>sammenligningen av linjeutvidelsene fra del 3, med forklaring av rollebyttet;</li>
+<li>vannraden, figuren av vannverdi og kontrollen med 1 MWh ekstra vann;</li>
+<li>din undersøkelse fra del 5: forventning, faktisk endring og en avgrenset konklusjon.</li>
+</ul>
+<p>Bruk omtrent <strong>150–250 ord til sammen</strong> på konklusjonene, gjerne ved siden av de tilhørende utskriftene. Du trenger ikke i tillegg en samlet rapport eller svar på alle repetisjonsspørsmålene.</p>
+<details class="ctm-reveal details">
+<summary>
+Python: delte definisjoner og hjelpefunksjoner
+</summary>
+<div class="ctm-reveal-body">
+<div id="ide-project_week11-reference-assumptions" class="ai-feedback-context">
+<p>Referansen beskriver kursets opprinnelige oppsett og delte definisjoner. Den aktuelle cellens kode og tilgjengelige kjøringsresultater vurderes sammen med dette. Hvis du endrer en delt definisjon i en annen celle, ta med den endrede definisjonen i koden eller kommentarene du ber om tilbakemelding på.</p>
+</div>
+<div id="ide-project_week11-capacity-f8fda3d6" class="ai-feedback-context">
+<p><code>capacity</code></p>
+<p>np.array([30.,50.,30.,40.]), øvre produksjonsgrenser i MW for vind, vannkraft, import og gass i denne rekkefølgen.</p>
+</div>
+<div id="ide-project_week11-cost-066909c5" class="ai-feedback-context">
+<p><code>cost</code></p>
+<p>np.array([0.,10.,40.,70.]), marginal produksjonskostnad i kr/MWh for vind, vannkraft, import og gass i denne rekkefølgen.</p>
+</div>
+<div id="ide-project_week11-show-merit-order-58c27887" class="ai-feedback-context">
+<p><code>show_merit_order(cost, capacity, D, names=plant_names)</code></p>
+<p>Tar like lange cost/capacity/navnelister og skalaren D. Sorterer stabilt etter kostnad og tegner tilbudsblokker med kapasitetsbredde, kostnadsmerking og rød etterspørselslinje ved D. Nullkostnad gis liten synlig søylehøyde; ingen markedsoptimering utføres. Returnerer None.</p>
+</div>
+<div id="ide-project_week11-linprog-5e96555f" class="ai-feedback-context">
+<p><code>linprog</code></p>
+<p>Importert med <code>from scipy.optimize import linprog</code>; løser lineære programmer. Sidens modeller bruker method=“highs” og returnerer OptimizeResult.</p>
+</div>
+<div id="ide-project_week11-np-6f11581d" class="ai-feedback-context">
+<p><code>np</code></p>
+<p>Importert med <code>import numpy as np</code>; NumPy-arrays, lineær algebra og tilfeldighet er tilgjengelig gjennom np.</p>
+</div>
+<div id="ide-project_week11-plant-names-1ea0e5dd" class="ai-feedback-context">
+<p><code>plant_names</code></p>
+<p>Listen [“vind”,“vannkraft”,“import”,“gass”], i samme rekkefølge som cost, capacity og variablene i ettområdemodellen.</p>
+</div>
+<div id="ide-project_week11-one-zone-0ad21954" class="ai-feedback-context">
+<p><code>one_zone(D)</code></p>
+<p>Returnerer linprog/HiGHS-resultatet for minimum cost@x, sum(x)=D og 0&lt;=x&lt;=capacity. Fire produksjonsvariabler følger plant_names. Resultatet har blant annet success,x,fun,eqlin.marginals; tolk pris/produksjon bare når problemet er løst.</p>
+</div>
+<div id="ide-project_week11-read-market-41224ef0" class="ai-feedback-context">
+<p><code>read_market(res, D)</code></p>
+<p>Studentens uttrekk fra ettområdets linprog-resultat res og etterspørsel D: skal returnere pris og gjennomsnittskostnad. Startskissen returnerer None og må fullføres; kallene bruker paret (price,average).</p>
+</div>
+<div id="ide-project_week11-show-steps-d35b54cd" class="ai-feedback-context">
+<p><code>show_steps(x, steps, smooth=None, xlabel='', ylabel='kr/MWh', labels=('Pris (dual)', 'Gjennomsnittskostnad'))</code></p>
+<p>Tar x og steps som parallelle tallfølger og valgfri smooth i samme punkter. Tegner trappekurven med where=“mid” og eventuell glatt kurve; labels gir kurvenavn. Returnerer None.</p>
+</div>
+<div id="ide-project_week11-two-zones-61836c29" class="ai-feedback-context">
+<p><code>two_zones(L, wind_north=20.0)</code></p>
+<p>Returnerer linprog/HiGHS-resultat med x=(vind N,vannkraft N,import S,gass S,flyt f), kostnader (0,10,40,70,0), forbruk (30,80). Positiv f går nord→sør; -L&lt;=f&lt;=L. Produksjonsgrenser er (wind_north,80,30,80). eqlin.marginals gir to områdeverdier.</p>
+</div>
+<div id="ide-project_week11-show-two-zones-250070b6" class="ai-feedback-context">
+<p><code>show_two_zones(res, L)</code></p>
+<p>Tar løst resultat fra two_zones og linjegrensen L. Leser res.x og de to res.eqlin.marginals, viser produksjon/pris i nord og sør samt flyt f=res.x[4]. Marker linjen som full når abs(f)&gt;=L-1e-9; returnerer None.</p>
+</div>
+<div id="ide-project_week11-a-eq3-783ef676" class="ai-feedback-context">
+<p><code>A_eq3</code></p>
+<p>Balansematrisen fra _three_hours(), form (3,12): rad h har fire ettall i timeblokk h og null ellers. A_eq3@x=demand3 pålegger én produksjonsbalanse per time; vannbegrensningen ligger ikke i denne matrisen.</p>
+</div>
+<div id="ide-project_week11-bounds3-783ef676" class="ai-feedback-context">
+<p><code>bounds3</code></p>
+<p>Liste med 12 produksjonsintervaller i tre timeblokker (vind,vannkraft,import,gass). Nedre grenser er 0; øvre er henholdsvis (30,50,30,40), (10,50,30,40), (20,50,30,40). Vannbudsjettet er et separat globalt krav.</p>
+</div>
+<div id="ide-project_week11-c3-783ef676" class="ai-feedback-context">
+<p><code>c3</code></p>
+<p>Kostnadsvektor np.tile(cost,3), form (12,). Variablene er tre timeblokker med rekkefølgen vind,vannkraft,import,gass innen hver time.</p>
+</div>
+<div id="ide-project_week11-demand3-1ff1608f" class="ai-feedback-context">
+<p><code>demand3</code></p>
+<p>np.array([60.,95.,120.]), fast etterspørsel i MW for hver av tre én-timesperioder, i samme timerekkefølge som A_eq3.</p>
+</div>
+<div id="ide-project_week11-make-water-row-47594272" class="ai-feedback-context">
+<p><code>make_water_row()</code></p>
+<p>Studentens koeffisientrad med form (1,12) for samlet vannkraft i de tre timeblokkene. Skal velge vannkraftvariabelen i hver blokk og ignorere andre produksjonstyper. Startskissen returnerer bare nuller og må fullføres.</p>
+</div>
+<div id="ide-project_week11-water-dfa5ec02" class="ai-feedback-context">
+<p><code>water</code></p>
+<p>Skalaren 120.0 MWh, samlet vannkraftbudsjett over tre én-timesperioder. Brukes som øvre grense sammen med raden fra make_water_row.</p>
+</div>
+</div>
+</details>
+
+
+<!--ctm-save-generated--><script type="application/json" id="ctm-store-manifest">{"course":"ingmat3a-ntnu-linalg-preview","exercises":[{"component":"pyodide-interaktiv","id":"project11-merit-order","order":1,"runtimeId":"ctm-runtime-1","save":true,"source":"e57becd2e8699ef6"},{"component":"pyodide-interaktiv","id":"extra:project11-merit-order","order":2,"runtimeId":"ctm-runtime-2","save":true,"source":"b1ec045eecd1f2df"},{"component":"pyodide-interaktiv","id":"project11-one-zone","order":3,"runtimeId":"ctm-runtime-3","save":true,"source":"89b874e1294401d0"},{"component":"pyodide-interaktiv","id":"extra:project11-one-zone","order":4,"runtimeId":"ctm-runtime-4","save":true,"source":"88a7a594dab048c8"},{"component":"pyodide-interaktiv","id":"project11-read-market","order":5,"runtimeId":"ctm-runtime-5","save":true,"source":"ff026a501a538186"},{"component":"pyodide-interaktiv","id":"extra:project11-read-market","order":6,"runtimeId":"ctm-runtime-6","save":true,"source":"928f6791aca43888"},{"component":"pyodide-interaktiv","id":"project11-price-steps","order":7,"runtimeId":"ctm-runtime-7","save":true,"source":"eeff8219b7b8bb24"},{"component":"pyodide-interaktiv","id":"extra:project11-price-steps","order":8,"runtimeId":"ctm-runtime-8","save":true,"source":"6441285041570d69"},{"component":"pyodide-interaktiv","id":"project11-finite-difference","order":9,"runtimeId":"ctm-runtime-9","save":true,"source":"7417d355419fe033"},{"component":"pyodide-interaktiv","id":"extra:project11-finite-difference","order":10,"runtimeId":"ctm-runtime-10","save":true,"source":"65f8cc91367008e8"},{"component":"pyodide-interaktiv","id":"project11-slackness","order":11,"runtimeId":"ctm-runtime-11","save":true,"source":"ec73c396ced28608"},{"component":"pyodide-interaktiv","id":"extra:project11-slackness","order":12,"runtimeId":"ctm-runtime-12","save":true,"source":"f186542bfa214ba8"},{"component":"pyodide-interaktiv","id":"project11-two-zones","order":13,"runtimeId":"ctm-runtime-13","save":true,"source":"7edd7e33ffa17e9f"},{"component":"pyodide-interaktiv","id":"extra:project11-two-zones","order":14,"runtimeId":"ctm-runtime-14","save":true,"source":"4a26a650dc543956"},{"component":"pyodide-interaktiv","id":"project11-line-picture","order":15,"runtimeId":"ctm-runtime-15","save":true,"source":"f60e32f2597af13f"},{"component":"pyodide-interaktiv","id":"extra:project11-line-picture","order":16,"runtimeId":"ctm-runtime-16","save":true,"source":"dcff4c0cc964d6cc"},{"component":"pyodide-interaktiv","id":"project11-line-change","order":17,"runtimeId":"ctm-runtime-17","save":true,"source":"dff176523578627f"},{"component":"pyodide-interaktiv","id":"extra:project11-line-change","order":18,"runtimeId":"ctm-runtime-18","save":true,"source":"a3efa28a53b143a5"},{"component":"pyodide-interaktiv","id":"project11-water-row","order":19,"runtimeId":"ctm-runtime-19","save":true,"source":"2373a28c83aeb3f6"},{"component":"pyodide-interaktiv","id":"extra:project11-water-row","order":20,"runtimeId":"ctm-runtime-20","save":true,"source":"837cbdea95cc680d"},{"component":"pyodide-interaktiv","id":"project11-hydro","order":21,"runtimeId":"ctm-runtime-21","save":true,"source":"efa7da8b7a0b17cb"},{"component":"pyodide-interaktiv","id":"extra:project11-hydro","order":22,"runtimeId":"ctm-runtime-22","save":true,"source":"eee7be75234960ff"},{"component":"pyodide-interaktiv","id":"project11-water-steps","order":23,"runtimeId":"ctm-runtime-23","save":true,"source":"1144b9516738e9ff"},{"component":"pyodide-interaktiv","id":"extra:project11-water-steps","order":24,"runtimeId":"ctm-runtime-24","save":true,"source":"3ab5cbc0374a9a2e"}],"export":true,"messages":{"clearFailed":"Nettleserlagringen kunne ikke slettes eller oppdateres. Fjern emnedataene i nettleserinnstillingene.","confirmClearCourse":"Slett alle de lagrede svarene dine i dette emnet?","confirmNewVariant":"Erstatt svarene du har fylt ut med en ny variant?","confirmSaveOff":"Dette sletter alle lagrede svar i dette emnet og slutter å lagre.","copyAll":"Kopier alt","correct":"✓ riktig","downloadHTML":"Last ned .html","downloadMarkdown":"Last ned .md","exercise":"Oppgave","exportClose":"Lukk","exportTitle":"Eksporter svarene mine","lastResult":"Siste resultat","locale":"nb","outdated":"Utdatert","partial":"½ delvis","progressTitle":"Fremdrift på siden","recordTooLarge":"Dette svaret er for stort til å lagres. Kopier det før du forlater siden.","saveOff":"Ikke lagre på denne enheten","saveOn":"Lagre igjen","savingDisabled":"Lagring er slått av for denne siden.","savingNotice":"Svarene dine lagres bare i denne nettleseren.","savingOffNotice":"Lagring er slått av på denne enheten for dette emnet.","showSaved":"Vis svaret ditt","sourceChanged":"Oppgaven er endret siden du svarte.","statusCorrect":"riktig","statusInvalid":"ugyldig","statusPartial":"delvis riktig","statusWrong":"feil","storageUnavailable":"Lagring er ikke tilgjengelig. Svarene dine beholdes bare i minnet på denne siden.","total":"{score} av {count}","unattempted":"– ikke prøvd","variantChanged":"Denne varianten er endret.","variantWithdrawn":"Denne varianten er trukket tilbake.","wrong":"✗ feil"},"progress":true,"quizzes":[],"save":true,"v":1}</script>
+<!--ctm-layout-generated--><span id="ctm-layout-ready" hidden=""></span>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Kopiert!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Kopiert!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/linalg\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Publisert under <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.en">CC BY-SA 4.0</a>.</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-cell-classes.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-cell-initialization.js" type="module"></script>
+</body></html>
