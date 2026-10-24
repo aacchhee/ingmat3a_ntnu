@@ -78,7 +78,8 @@ async function openAncestors(page, locator) {
   const toggle = locator.locator(':scope > .math-exercise-toggle[aria-expanded="false"], :scope > .py-exercise-toggle[aria-expanded="false"]');
   if (await toggle.count()) await toggle.click();
 }
-const cell = (page, id) => page.locator('[data-ctm-id="' + id + '"]');
+const cellSelector = id => '[data-ctm-id="' + id + '"], .qpyodide-interactive-area[data-id="' + id + '"]';
+const cell = (page, id) => page.locator(cellSelector(id));
 async function editCode(page, id, text) {
   const root = cell(page, id);
   await openAncestors(page, root);
@@ -91,10 +92,10 @@ async function editCode(page, id, text) {
   });
   await page.keyboard.press('Backspace');
   await page.keyboard.insertText(text);
-  await page.waitForFunction(({id, text}) => {
-    const node = document.querySelector('[data-ctm-id="' + id + '"]');
+  await page.waitForFunction(({selector, text}) => {
+    const node = document.querySelector(selector);
     return monaco.editor.getEditors().some(e => node.contains(e.getDomNode()) && e.getValue() === text);
-  }, {id, text});
+  }, {selector: cellSelector(id), text});
 }
 async function runtimeReady(page) {
   // The package itself decides whether to reload for COI. Do not start Python,
@@ -129,7 +130,7 @@ async function runCode(page, id) {
   // before any harness Python readiness wait; fault diagnostics may be warm.
   await button.click({timeout});
   const clickWaitMs = Date.now() - clickedAt;
-  await page.waitForFunction(id => document.querySelector('[data-ctm-id="' + id + '"] .qpyodide-output-code-area')?.textContent.trim() === '42', id, {timeout});
+  await page.waitForFunction(selector => document.querySelector(selector)?.querySelector('.qpyodide-output-code-area')?.textContent.trim() === '42', cellSelector(id), {timeout});
   return {beforeEdit, beforeRun, clickActionabilityWaitMs: clickWaitMs, output: '42'};
 }
 async function checkMath(page) {
@@ -221,10 +222,10 @@ async function runCase(kind, base) {
       // IDE Run does not emit ctm:result. Wait through the real setup/output/
       // autorun startup phase, then inspect this restored cell's actual output
       // and idle control as well as the independent grading event observer.
-      await page.waitForFunction(id => {
-        const run = document.querySelector('[data-ctm-id="' + id + '"] .qpyodide-button-run');
+      await page.waitForFunction(selector => {
+        const run = document.querySelector(selector)?.querySelector('.qpyodide-button-run');
         return window.qpyodideStartupPhaseDone === true && run && !run.disabled && run.dataset.queued !== '1';
-      }, id, {timeout});
+      }, cellSelector(id), {timeout});
       const restoredOutput = await cell(page, id).locator('.qpyodide-output-code-area').innerText();
       assert.ok(!restoredOutput.includes('INGMAT_LINALG_SAVED'), 'Restoring an IDE answer must not execute its print statement');
       const restoredAudit = await page.evaluate(() => __linalgWorkerAudit);
