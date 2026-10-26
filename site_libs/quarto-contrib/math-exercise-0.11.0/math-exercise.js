@@ -55,14 +55,17 @@
   var katexReady = false;
   var katexLib = null;
   var renderMathInElementFn = null;
-  var KATEX = 'https://cdn.jsdelivr.net/npm/katex@0.16/';
-
   async function ensureKatex() {
     if (katexReady) return;
+    var KATEX = window.CTMAssets.url('katex', '');
     var link = document.createElement('link');
     link.rel = 'stylesheet'; link.href = KATEX + 'dist/katex.min.css';
+    var stylesheet = new Promise(function (resolve, reject) {
+      link.onload = resolve;
+      link.onerror = function () { reject(new Error('Failed to load: ' + link.href)); };
+    });
     document.head.appendChild(link);
-    // Loaded as ES modules (jsDelivr's `+esm` build), not classic <script>
+    // Load the package's own ES modules in both asset modes, not classic <script>
     // tags. Reason: KaTeX's classic UMD bundles register themselves through
     // Monaco's global AMD loader (vs/loader.js, injected here for the code
     // editor) instead of setting window.katex / window.renderMathInElement,
@@ -72,8 +75,12 @@
     // of racing Monaco's own concurrent module loads (a "temporarily hide
     // define.amd" workaround was tried first and broke Monaco's lazily
     // loaded markdown renderer for hover tooltips).
-    var katexMod      = await import(KATEX + '+esm');
-    var autoRenderMod = await import(KATEX + 'contrib/auto-render/+esm');
+    var modules = await Promise.all([
+      import(KATEX + 'dist/katex.mjs'),
+      import(KATEX + 'dist/contrib/auto-render.mjs'),
+      stylesheet
+    ]);
+    var katexMod = modules[0], autoRenderMod = modules[1];
     katexLib = katexMod.default;
     renderMathInElementFn = autoRenderMod.default;
     katexReady = true;
@@ -172,7 +179,8 @@
   var LEGEND = L.legend;
 
   async function buildLegend(container) {
-    await ensureKatex();
+    try { await ensureKatex(); }
+    catch (error) { console.warn('math-exercise: showing input help without mathematical formatting', error); }
     var rows = LEGEND.map(function (item) {
       var math;
       try { math = katexLib.renderToString(item[0], { throwOnError: false }); }
@@ -864,6 +872,7 @@
     opts = opts || {};
     return runOnCurrentRuntime(async function (py) {
       return JSON.parse(await callCheckers(py, 'check', {
+        ...(opts.generated ? {generated: true, learner: true} : {}),
         student:   val,
         correct:   el.dataset.answer || '',
         vars:      el.dataset.vars   || '',
@@ -934,17 +943,20 @@
   }
 
   async function checkCustomNow(response, opts) {
-    if (opts.variant) {
+    if (opts.variant && !opts.questionContext) {
       if (!response || typeof response !== 'object' || Array.isArray(response)) throw new Error('Generated custom responses must be objects');
       response = Object.assign({}, response, {variant: opts.variant});
     }
     return runOnCurrentRuntime(async function (py) {
       await ensurePackages(opts.packages);
-      return JSON.parse(await callCheckers(py, 'check_custom', {
+      var request = {
         response: response,
+        ...(opts.generated ? {generated: true, learner: true} : {}),
         vars:     opts.vars || '',
         checker:  opts.checker || '',
-      }));
+      };
+      if (opts.questionContext) request.question_context = opts.questionContext;
+      return JSON.parse(await callCheckers(py, 'check_custom', request));
     }, opts.packages);
   }
 
@@ -964,8 +976,16 @@
     var text = '';
     try { text = JSON.parse(cell.dataset.context || '""'); } catch (_) {}
     var materials = window.AIFeedback.contextMaterials({mode:cell.dataset.contextMode || 'auto', refs:cell.dataset.contextRefs || '', text});
-    if (cell.dataset.contextMode !== 'none' && cell.mathExercise?.getVariant()?.context) {
-      materials.push({id:cell.dataset.label + '-variant', title:'Variant context', text:cell.mathExercise.getVariant().context});
+    var authoredContext = '';
+    try { authoredContext = JSON.parse(cell.dataset.contextText || '""'); } catch (_) {}
+    if (cell.dataset.contextMode !== 'none' && authoredContext) {
+      materials.push({id:cell.dataset.label + '-context-text', title:'Authored context', text:authoredContext});
+    }
+    var current = cell.mathExercise?.getVariant();
+    var variantContext = cell.mathExercise?.getVariantContext
+      ? cell.mathExercise.getVariantContext() : current && current.context;
+    if (cell.dataset.contextMode !== 'none' && variantContext) {
+      materials.push({id:cell.dataset.label + '-variant', title:'Variant context', text:variantContext});
     }
     return materials;
   }
@@ -1011,6 +1031,7 @@
   }
 
   function setupCell(cell) {
+    if (cell._mathExerciseSetup) return;
     var vars   = cell.dataset.vars   || '';
     var mode   = cell.dataset.mode   || 'equivalent';
     var reject = cell.dataset.reject || '';
@@ -1026,6 +1047,7 @@
     try { packages = JSON.parse(cell.dataset.packages || '[]'); } catch (e) {}
     var formCredit = finiteCredit(cell.dataset.formCredit || '0.5');
     var checkOpts = {
+      generated: cell.dataset.similarGenerated === "true",
       reject:    reject,
       tolerance: cell.dataset.tolerance || '',
       decplaces: cell.dataset.decplaces || '',
@@ -1053,10 +1075,45 @@
       }
     }
 
+    if (cell._similarContext) checkOpts.questionContext = cell._similarContext;
+    var storedAnswers = cell._generatedStore || null, variantBoards = null;
+    var storageVariants = JSON.parse(cell.dataset.storageVariants || '[]');
+    function storedVariant() { return storageVariants[idx] || null; }
     var generated = cell.dataset.variants ? JSON.parse(cell.dataset.variants) : null;
+    var nativeVariants = !!(generated && generated.native), chooser = null;
+    // A static review catalog selects one exact tested record, without learner state.
+    var catalogReview = false;
+    if (nativeVariants && generated.renderMode === 'review') {
+      var reviewKeys = new URLSearchParams(location.search).getAll('ctm-review');
+      if (generated.reviewCatalog === true || reviewKeys.length) {
+        if (reviewKeys.length !== 1 || !/^[0-9a-f]{64}$/.test(reviewKeys[0])) throw new Error('Invalid review candidate selector.');
+        var matches = generated.variants.filter(function (record) {return record.reviewKey === reviewKeys[0];});
+        if (matches.length !== 1) throw new Error('Unknown or ambiguous review candidate selector.');
+        var selected = matches[0];
+        generated.variants = [selected];
+        storageVariants = [{n:selected.n, id:selected.id, hash:selected.hash, proposal:selected.proposal === true}];
+        catalogReview = true;
+      }
+    }
+    if (!catalogReview && (nativeVariants || (!generated && cell.dataset.pool)) && (!window.CTMVariants || !window.CTMStore)) {
+      throw new Error('Shared variant selection is unavailable. Update CTM Assessment or reload the page.');
+    }
+    function makeChooser(saved) {
+      chooser = window.CTMVariants.create({label: label, variants: storageVariants,
+        allowProposals: nativeVariants, saved: saved});
+      return storageVariants.indexOf(chooser.current());
+    }
+    function variantIndex(variant) {
+      var index = storageVariants.indexOf(variant);
+      if (index >= 0) return index;
+      return storageVariants.findIndex(function (item) {
+        return item.hash === variant.hash && item.id === variant.id && item.n === variant.n;
+      });
+    }
     function currentVariant() {
       if (!generated) return null;
       var record = generated.variants[idx];
+      if (nativeVariants) return JSON.parse(JSON.stringify(record.context.variant));
       return JSON.parse(JSON.stringify({id:record.id, parameters:record.parameters, derived:record.derived,
         fingerprint:record.fingerprint, context:record['variant-context']}));
     }
@@ -1064,9 +1121,10 @@
       if (!generated) return;
       var record = generated.variants[idx];
       checkOpts.variant = currentVariant();
+      if (nativeVariants) checkOpts.questionContext = JSON.parse(JSON.stringify(record.context));
       checkOpts.checker = record.checker;
       cell.dataset.variantId = record.id;
-      try { sessionStorage.setItem(poolKey + '|id', record.id); } catch (_) {}
+      if (!chooser && !catalogReview) { try { sessionStorage.setItem(poolKey + '|id', record.id); } catch (_) {} }
       var target = generated.solutionTarget && document.getElementById(generated.solutionTarget);
       if (!target && record.solution) {
         var details = cell.querySelector('.math-variant-solution');
@@ -1083,24 +1141,31 @@
         target.innerHTML=record.solution;
         renderMathInQuestion(target);
       }
-      cell.dispatchEvent(new CustomEvent('math-exercise:variant-change', {bubbles:true, detail:{label:label, variant:currentVariant()}}));
+      var detail = {label:label, variant:currentVariant()};
+      if (nativeVariants && record.proposal) detail.proposal = {id:record.id,hash:record.hash};
+      cell.dispatchEvent(new CustomEvent('math-exercise:variant-change', {bubbles:true, detail:detail}));
+      updateVariantLabel();
     }
     var poolRaw   = cell.dataset.pool;
-    var poolTasks = poolRaw ? JSON.parse(poolRaw) : null;
+    var poolTasks = nativeVariants ? generated.variants.map(function (record) {return record.question;})
+      : poolRaw ? JSON.parse(poolRaw) : null;
     var poolKey   = 'math-pool|' + location.pathname + '|' + label;
 
-    // Pool: pick a stored or random task index, then render the question
+    // Shared pools restore a stable choice; legacy generated tasks retain their compatibility path.
     if (poolTasks) {
       var idx;
-      try {
+      if (catalogReview) idx = 0;
+      else if ((!generated || nativeVariants) && window.CTMVariants && window.CTMStore) {
+        idx = makeChooser(null);
+      } else try {
         idx = generated ? generated.variants.findIndex(function(v){return v.id === sessionStorage.getItem(poolKey + '|id');})
           : parseInt(sessionStorage.getItem(poolKey));
       } catch(e) {}
       if (isNaN(idx) || idx < 0 || idx >= poolTasks.length) {
-        idx = Math.floor(Math.random() * poolTasks.length);
+        idx = nativeVariants ? 0 : Math.floor(Math.random() * poolTasks.length);
         try { sessionStorage.setItem(poolKey, String(idx)); } catch(e) {}
       }
-      var r = renderTaskText(poolTasks[idx], cell.id, vars, vecdir, mode, !!generated);
+      var r = renderTaskText(poolTasks[idx], cell.id, vars, vecdir, mode, !!generated && !nativeVariants);
       var qDiv = cell.querySelector('.math-exercise-question');
       setQuestionContent(qDiv, r);
       cell.dataset.fields = JSON.stringify(r.fieldIds);
@@ -1133,6 +1198,30 @@
     var feedbackBtn  = cell.querySelector('.math-feedback-btn');
     var reconfigBtn  = cell.querySelector('.math-reconfig-btn');
     var reloadBtn    = cell.querySelector('.math-pool-reload');
+    var variantLabel = null, variantAnnouncement = null;
+    var variantUI = L;
+    if (catalogReview && reloadBtn) reloadBtn.disabled = true;
+    if (chooser && reloadBtn) {
+      reloadBtn.textContent = variantUI.newVariant || 'New variant';
+      reloadBtn.title = reloadBtn.textContent;
+      reloadBtn.disabled = poolTasks.length < 2;
+      variantLabel = document.createElement('span'); variantLabel.className = 'math-variant-number';
+      variantAnnouncement = document.createElement('span'); variantAnnouncement.className = 'visually-hidden math-variant-announcement';
+      variantAnnouncement.setAttribute('role', 'status'); variantAnnouncement.setAttribute('aria-live', 'polite');
+      reloadBtn.after(variantLabel, variantAnnouncement);
+    }
+    function updateVariantLabel(announce) {
+      if (!chooser) return;
+      var choice = chooser.current(), proposal = choice.proposal === true;
+      var text = proposal ? variantUI.variantUnapproved || 'Not approved' : typeof variantUI.variantNumber === 'function'
+        ? variantUI.variantNumber(choice.n) : 'Variant ' + choice.n;
+      if (variantLabel) variantLabel.textContent = text;
+      if (announce && variantAnnouncement) variantAnnouncement.textContent = !proposal && typeof variantUI.variantSelected === 'function'
+        ? variantUI.variantSelected(choice.n) : text;
+      var notice = cell.querySelector('.math-variant-unapproved');
+      if (notice) notice.hidden = generated.renderMode === 'review' ? false : !proposal;
+    }
+    updateVariantLabel();
     var legendPanel = cell.querySelector('.math-legend-panel');
     var fbDiv       = cell.querySelector('.math-feedback-area');
     var legendBuilt = false;
@@ -1150,10 +1239,14 @@
     }
     function localSnapshot() {
       refreshFields();
+      var identityOptions = Object.assign({}, checkOpts);
+      delete identityOptions.questionContext;
+      delete identityOptions.checker;
+      delete identityOptions.variant;
       return JSON.stringify({ task: questionText(cell, fieldIds, fieldLabel),
         variant: poolTasks ? idx : null,
         fields: fieldIds.map(function (id, i) { return [id, fieldLabel(i), document.getElementById(id).value.trim()]; }),
-        matrices: collectDynamicMatrixInputs(questionDiv), options: checkOpts, revision: revision });
+        matrices: collectDynamicMatrixInputs(questionDiv), options: identityOptions, revision: revision });
     }
     function safeResult(result) {
       var status = normalizedAssessmentStatus(result.status);
@@ -1195,6 +1288,7 @@
         input.classList.remove('math-input-ok', 'math-input-dependent', 'math-input-partial', 'math-input-wrong', 'math-input-err');
       });
       fbDiv.innerHTML = '';
+      if (storedAnswers) storedAnswers.changed();
     }
 
     function setupDynamicMatrices() {
@@ -1323,6 +1417,7 @@
           else
             parts.push('<div class="math-fb-err">&#9888;&nbsp;' + friendlyError(custom.message) + '</div>');
           fbDiv.innerHTML = parts.join('');
+          publishStoredResult([safeResult(custom)]);
           return;
         }
         var totalScore = 0;
@@ -1339,7 +1434,7 @@
           if      (res.status === 'empty')    { parts.push('<div class="math-fb-empty">'  + prefix + L.resEmpty + '</div>'); }
           else if (res.status === 'correct')  { el.classList.add('math-input-ok');    parts.push('<div class="math-fb-ok">&#10003;&nbsp;'  + prefix + L.resCorrect + '</div>'); }
           else if (res.status === 'partial')  { el.classList.add('math-input-partial'); parts.push('<div class="math-fb-partial">' + prefix + L.resPartial(Math.round(res.score * 100)) + '</div>'); }
-          else if (res.status === 'wrong')    { el.classList.add('math-input-wrong'); parts.push('<div class="math-fb-wrong">&#10007;&nbsp;' + prefix + L.resWrong + '</div>'); }
+          else if (res.status === 'wrong')    { el.classList.add('math-input-wrong'); parts.push('<div class="math-fb-wrong">&#10007;&nbsp;' + prefix + (cell._similarVerdict ? cell._similarVerdict(L.resWrong) : L.resWrong) + '</div>'); }
           else if (res.status === 'rejected') { el.classList.add('math-input-wrong'); parts.push('<div class="math-fb-wrong">&#10007;&nbsp;' + prefix + L.resRejected + '</div>'); }
           else if (res.status === 'not_exact'){ el.classList.add(res.score > 0 ? 'math-input-partial' : 'math-input-wrong'); parts.push('<div class="' + (res.score > 0 ? 'math-fb-partial' : 'math-fb-wrong') + '">' + prefix + L.resNotExact + (res.score > 0 ? ' ' + L.resPartial(Math.round(res.score * 100)) : '') + '</div>'); }
           else if (res.status === 'not_form') { el.classList.add(res.score > 0 ? 'math-input-partial' : 'math-input-wrong'); parts.push('<div class="' + (res.score > 0 ? 'math-fb-partial' : 'math-fb-wrong') + '">' + prefix + L.resNotForm(checkOpts.form) + (res.score > 0 ? ' ' + L.resPartial(Math.round(res.score * 100)) : '') + '</div>'); }
@@ -1350,8 +1445,10 @@
         }
         checkedEvidence = { snapshot: checkSnapshot, results: results };
         fbDiv.innerHTML = parts.join('');
+        publishStoredResult(results.map(function (item) { return item.result; }));
       } catch (err) {
         fbDiv.innerHTML = '<div class="math-fb-err">&#9888;&nbsp;' + friendlyError(String(err)) + '</div>';
+        if (storedAnswers) storedAnswers.result({status: 'invalid', score: 0});
       } finally {
         reloadHooks.delete(onReload);
         cancelSlow();
@@ -1360,6 +1457,23 @@
         checkBtn.disabled = false;
         if (feedbackBtn) feedbackBtn.disabled = !feedbackHandle;
       }
+    }
+
+    function publishStoredResult(results) {
+      if (cell._similarVerdict && results.some(function (r) {return r.status === "incorrect";})) {
+        if (mode === "custom") fbDiv.textContent = cell._similarVerdict(L.resWrong);
+      }
+      if (!storedAnswers) return;
+      var invalid = !results.length || results.some(function (result) {
+        return !/^(correct|partial|incorrect)$/.test(result.status);
+      });
+      var score = invalid ? 0 : results.reduce(function (sum, result) {
+        return sum + (typeof result.score === 'number' ? result.score : result.status === 'correct' ? 1 : 0);
+      }, 0) / results.length;
+      if (!checkOpts.partialCredit && mode !== 'custom' && score < 1) score = 0;
+      var status = invalid ? 'invalid' : score >= 1 ? 'correct' : score > 0 ? 'partial' : 'wrong';
+      if (!invalid && mode === 'custom') status = results[0].status === 'incorrect' ? 'wrong' : results[0].status;
+      storedAnswers.result({status: status, score: score});
     }
 
     function attachKeyListeners() {
@@ -1388,13 +1502,14 @@
     }
 
     // Selection is shared by random reload and author review; always invalidates old feedback.
-    function selectTask(next) {
+    function selectTask(next, accepted) {
       if (!poolTasks || !Number.isInteger(next) || next < 0 || next >= poolTasks.length) throw new Error('Invalid variant selection');
+      if (accepted && next === idx) return;
       invalidateFeedback();
       if (feedbackHandle) feedbackHandle.reset();
       idx = next;
-      try { sessionStorage.setItem(poolKey, String(next)); } catch(e) {}
-      var r = renderTaskText(poolTasks[next], cell.id, vars, vecdir, mode, !!generated);
+      if (!chooser && !catalogReview) { try { sessionStorage.setItem(poolKey, String(next)); } catch(e) {} }
+      var r = renderTaskText(poolTasks[next], cell.id, vars, vecdir, mode, !!generated && !nativeVariants);
       questionDiv.querySelectorAll('.math-dynamic-matrix-wrap').forEach(function (wrap) { if (wrap.matrixInput) wrap.matrixInput.destroy(); });
       setQuestionContent(questionDiv, r);
       cell.dataset.fields = JSON.stringify(r.fieldIds);
@@ -1403,22 +1518,61 @@
       rememberCurrentLabels(); setupDynamicMatrices(); fillInitialValues(); warnExtraFieldLabels();
       renderMathInQuestion(questionDiv); attachKeyListeners(); fbDiv.innerHTML = '';
       publishVariant();
+      if (variantBoards) variantBoards.changed();
+      updateVariantLabel();
+      if (storedAnswers) {
+        storedAnswers.changed();
+        if (accepted && storedAnswers.choiceChanged) storedAnswers.choiceChanged();
+      }
+      if (accepted) {
+        // External worked solutions close only after a real, accepted change.
+        var target = generated && generated.solutionTarget && document.getElementById(generated.solutionTarget);
+        if (target) {
+          var details = target.closest('details');
+          if (details) details.open = false;
+          var collapse = target.closest('.collapse') || target.closest('.callout')?.querySelector('.collapse');
+          if (collapse && window.bootstrap && window.bootstrap.Collapse) {
+            try { window.bootstrap.Collapse.getOrCreateInstance(collapse, {toggle: false}).hide(); }
+            catch (error) { console.warn('math-exercise: optional solution collapse unavailable', error); }
+          }
+        }
+        var identity = chooser ? chooser.state() : {variant: storedVariant() || currentVariant()};
+        var selected = identity.variant;
+        var detail = {label: label, variant: selected ? {n: selected.n, id: selected.id, hash: selected.hash} : null};
+        if (identity.proposal) detail.proposal = identity.proposal;
+        cell.dispatchEvent(new CustomEvent('math-exercise:variant-accepted', {bubbles: true, detail: detail}));
+      }
     }
     if (reloadBtn && poolTasks) reloadBtn.addEventListener('click', function () {
+      if (storedAnswers && !storedAnswers.beforeVariant()) return;
       var next = idx;
-      if (poolTasks.length > 1) next = (idx + 1 + Math.floor(Math.random() * (poolTasks.length - 1))) % poolTasks.length;
-      selectTask(next);
+      if (chooser) { chooser.next(); next = storageVariants.indexOf(chooser.current()); }
+      else if (poolTasks.length > 1) next = (idx + 1 + Math.floor(Math.random() * (poolTasks.length - 1))) % poolTasks.length;
+      selectTask(next, true);
+      updateVariantLabel(true);
+      questionDiv.setAttribute('tabindex', '-1'); questionDiv.focus();
     });
     if (generated) {
       cell.mathExercise = {
         getVariant: currentVariant,
-        selectVariant: function(id) {selectTask(generated.variants.findIndex(function(v){return v.id===id;}));},
+        getVariantContext: function() {return generated.variants[idx]['variant-context'] || '';},
+        selectVariant: function(id) {
+          var next = generated.variants.findIndex(function(v){return v.id===id;});
+          if (next < 0) throw new Error('Invalid variant selection');
+          if (chooser) {
+            var choice = storageVariants[next];
+            chooser.restore({variant:choice.proposal ? null : choice,
+              proposal:choice.proposal ? {id:choice.id,hash:choice.hash} : undefined,seen:chooser.seen()});
+          }
+          selectTask(next, true);
+        },
         checkFixture: async function(record, fixture) {
           await prepareRuntime(checkOpts.packages);
           var options=Object.assign({}, checkOpts, {checker:record.checker,
-            variant:JSON.parse(JSON.stringify({id:record.id, parameters:record.parameters, derived:record.derived, fingerprint:record.fingerprint, context:record['variant-context']}))});
+            questionContext:nativeVariants ? record.context : undefined,
+            variant:nativeVariants ? record.context.variant : JSON.parse(JSON.stringify({id:record.id, parameters:record.parameters, derived:record.derived, fingerprint:record.fingerprint, context:record['variant-context']}))});
           if(mode==='custom') return [await checkCustom(fixture.response || {kind:'expressions', raw:fixture.answers || [], inputs:{}}, options)];
-          var rendered=renderTaskText(record.question, cell.id+'-review', vars, vecdir, mode, true);
+          var rendered=renderTaskText(record.question, cell.id+'-review', vars, vecdir, mode, !nativeVariants);
           var box=document.createElement('div');box.innerHTML=rendered.html;
           var fields=Array.from(box.querySelectorAll('input[data-answer],textarea[data-answer]'));
           if(fields.length!==(fixture.answers || []).length) throw new Error('Fixture answer count does not match fields');
@@ -1431,6 +1585,58 @@
       if(generated.review) setupVariantReview(cell, generated);
     }
 
+    var similar = window.MathSimilar && !checkOpts.generated && window.MathSimilar.attach({
+      cell: cell, mode: mode, language: ME_CFG.lang,
+      task: function () {return questionText(cell, fieldIds, fieldLabel);},
+      contexts: function () {return resolveContexts(cell);},
+      options: function () {return JSON.parse(JSON.stringify(checkOpts));},
+      render: renderTaskText, typeset: renderMathInQuestion, setup: setupCell,
+      call: function (name, request) {return runOnCurrentRuntime(async function (py) {return JSON.parse(await callCheckers(py, name, request));});},
+      changed: function () {if (storedAnswers && storedAnswers.generatedChanged) storedAnswers.generatedChanged();}
+    });
+    if (window.MathExerciseStore && !catalogReview && !checkOpts.generated) {
+      storedAnswers = window.MathExerciseStore.attach({
+        element: cell, question: questionDiv, id: cell.dataset.ctmId || label, lang: ME_CFG.lang,
+        graphical: !!checkOpts.responseSource, generated: similar,
+        variant: function () {return chooser ? chooser.state().variant : storedVariant();},
+        proposal: function () {return chooser ? chooser.state().proposal : undefined;},
+        allowProposals: nativeVariants,
+        seen: chooser ? function () {return chooser.seen();} : undefined,
+        choice: chooser ? function () {return chooser.state();} : undefined,
+        initializeChoice: chooser ? function (saved) {
+          var next = makeChooser(saved);
+          if (next !== idx) selectTask(next);
+          updateVariantLabel();
+        } : undefined,
+        variants: function () { return storageVariants; },
+        fields: function () {
+          refreshFields();
+          return fieldIds.map(function (id, index) {
+            return {element: document.getElementById(id), label: fieldLabel(index),
+              key: typeof configuredFieldLabels[index] === 'string' ? configuredFieldLabels[index].trim() : ''};
+          });
+        },
+        select: function (variant) {
+          var next = variantIndex(variant);
+          if (next >= 0 && next !== idx) selectTask(next);
+        },
+        invalidate: clearAssessmentAfterResize
+      });
+    }
+
+    // Optional boards receive only the producer's public projection, after saved choice hydration.
+    if (cell.dataset.variantBoards && window.MathExerciseBoards) {
+      try {
+        variantBoards = window.MathExerciseBoards.attach({label: label, title: cell.dataset.variantBoardTitle,
+          boards: JSON.parse(cell.dataset.variantBoards), getVariant: function () {
+            var row = nativeVariants ? generated.variants[idx] : null;
+            var identity = chooser ? chooser.current() : storedVariant();
+            return {n: identity && identity.proposal !== true ? identity.n : null,
+              id: identity && identity.id, values: row && row.values || {}};
+          }});
+      } catch (error) { console.warn('math-exercise: optional variant board unavailable', error); }
+    }
+
     // ---- Shared AI Feedback adapter: collection never invokes Python ----
     if (feedbackBtn) {
       var F = window.AIFeedback;
@@ -1440,7 +1646,7 @@
       output.setAttribute('aria-live', 'polite');
       feedbackHandle = F.attach({
         contextRefs: function () { return cell.dataset.contextMode === 'none' ? '' : cell.dataset.contextRefs; },
-        integration: 'math-exercise', policySelection: JSON.parse(cell.dataset.feedbackPolicy || '{}'), requestOptions: {imageFallback:'text'}, id: 'math-' + label, button: feedbackBtn, output: output,
+        integration: 'math-exercise', policySelection: JSON.parse(cell.dataset.feedbackPolicy || '{}'), requestOptions: {imageFallback:'text'}, id: checkOpts.generated ? '' : 'math-' + label, button: feedbackBtn, output: output,
         uiLanguage: L.outputLanguageCode,
         getRequest: async function (state) {
           var before = localSnapshot();
@@ -1468,7 +1674,7 @@
               ? (externalAISummary(ai) || 'Interactive graphical response submitted; no textual summary is available.')
               : expressionAnswersXml(responses, structuredInputs) }],
 
-            evidence: evidence.map(function (result) { return { label: 'Private check assessment', text: JSON.stringify(result) }; }),
+            evidence: (cell._similarTrust ? [{label: 'Generated answer-key trust', text: cell._similarTrust()}] : []).concat(evidence.map(function (result) { return { label: 'Private check assessment', text: JSON.stringify(result) }; })),
             attachments: ai && ai.image && /^data:image\/(?:png|jpeg|jpg|webp);base64,/i.test(ai.image)
               ? [{ id: 'graph', role: 'response', label: 'Current graph', dataUrl: ai.image }] : [],
             feedback: {language: L.outputLanguageCode}
@@ -1476,15 +1682,18 @@
         }
       });
       questionDiv.addEventListener('input', function () { output.replaceChildren(); });
-      if (reloadBtn) reloadBtn.addEventListener('click', function () { feedbackHandle.reset(); });
     }
     if (reconfigBtn) reconfigBtn.replaceWith(window.AIFeedback.settingsButton(L.outputLanguageCode));
+    cell._mathExerciseDispose = function () { if (feedbackHandle) feedbackHandle.dispose(); };
+    cell._mathExerciseSetup = true;
 
   }
 
   // ---------------------------------------------------------------------------
   // Init
   // ---------------------------------------------------------------------------
+
+  window.MathExercise = Object.assign(window.MathExercise || {}, {setupCell: setupCell});
 
   // Deliberately absent in normal pages.  The repository's Node regression
   // test enables this flag before loading the bundle so it can exercise the
@@ -1520,22 +1729,48 @@
     };
   }
 
-  document.addEventListener('DOMContentLoaded', async function () {
+  var initialUI = new Promise(function (resolve) {
+    document.addEventListener('DOMContentLoaded', resolve, {once: true});
+  }).then(async function () {
     var cells = document.querySelectorAll('.math-exercise-cell');
     // Exercises shown as text (a build without AI feedback) only need their maths.
     var texts = document.querySelectorAll('.math-exercise-text .math-exercise-question');
     if (!cells.length && !texts.length) return;
-    // KaTeX rendering must not depend on Pyodide: Pyodide is only needed lazily
-    // on the first Check click (ensureSympy()), but if ensurePyodide() rejects
-    // (slow/broken network, no other Pyodide extension on the page), a shared
-    // Promise.all would previously also block/kill math rendering entirely.
-    await ensureKatex();
-    texts.forEach(renderMathInQuestion);
-    if (!cells.length) return;
-    cells.forEach(setupCell);
-    ensurePyodide().catch(function (e) {
+    // Install answer, Check and storage handlers independently of the optional
+    // renderer. A slow/broken stylesheet or module must not disable grading.
+    var setupErrors = [];
+    cells.forEach(function (cell) {
+      try { setupCell(cell); }
+      catch (error) {
+        setupErrors.push(error);
+        console.error('math-exercise: exercise initialization failed', error);
+        var notice = document.createElement('p');
+        notice.className = 'math-setup-unavailable'; notice.setAttribute('role', 'alert');
+        notice.textContent = L.exerciseUnavailable || 'This question could not load. Reload the page to try again.';
+        cell.appendChild(notice);
+        cell.querySelectorAll('button.math-check-btn, button.math-pool-reload').forEach(function (button) { button.disabled = true; });
+      }
+    });
+    if (cells.length) ensurePyodide().catch(function (e) {
       console.warn('math-exercise: Pyodide preload failed (will retry on the first check):', e);
     });
+    try { await ensureKatex(); }
+    catch (error) {
+      cells.forEach(function (cell) {
+        var warning = document.createElement('p');
+        warning.className = 'math-render-unavailable';
+        warning.setAttribute('role', 'status');
+        warning.textContent = L.renderUnavailable;
+        cell.appendChild(warning);
+      });
+      // Keep the readiness failure visible to the reload decision; the working
+      // controls above remain available in the retained document.
+      throw error;
+    }
+    texts.forEach(renderMathInQuestion);
+    cells.forEach(function (cell) { renderMathInQuestion(cell); });
+    if (setupErrors.length) throw setupErrors[0];
   });
+  globalThis.MathExerciseRuntime.trackInitialUI(initialUI);
 
 })();
