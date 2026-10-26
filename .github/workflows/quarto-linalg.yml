@@ -20,13 +20,13 @@ jobs:
 
     steps:
       - name: Hent emnerepositoriet
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Installer Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Installer Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
