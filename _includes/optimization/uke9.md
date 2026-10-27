@@ -1172,6 +1172,45 @@ plot_path(path, 'kompass fra (0.3, 0.7)')
   stoppen trengte vi bare et anslag $K$ for krumningen; da vet vi at
   $\|\nabla f\|_2\le0.057$ uten å ha regnet ut gradienten.
 
+::: {.reading-step title="Gå i dybden: Nelder–Mead i praksis"}
+
+Vi bruker kompassøk fordi reglene er enkle og en mislykket prøverunde gir
+en gradientgrense vi kan analysere. Et vanlig praktisk alternativ uten
+deriverte er **Nelder–Mead**, særlig for problemer med få variabler.
+
+- **Ideen:** I to variabler holder metoden tre punkter som danner en
+  trekant. Den sammenligner funksjonsverdiene og prøver å erstatte det
+  dårligste hjørnet ved å speile det i midtpunktet mellom de to andre.
+  Trekanten kan også strekkes eller trekkes sammen. I $n$ variabler brukes
+  $n+1$ hjørner, som danner et **simpleks**.
+- **Begrensningen:** Søket er lokalt, og resultatet kan avhenge av
+  startpunktene og skaleringen av variablene. Konvergensgarantiene er
+  begrensede; gradientgrensen fra kompassøk gjelder ikke automatisk her.
+- **Navnet:** Dette er en annen metode enn simpleksmetoden for lineær
+  programmering i [uke 11](uke11.qmd).
+
+Prøv Nelder–Mead på den samme Himmelblau-funksjonen `f9`. Cellen viser
+sluttpunkt, funksjonsverdi, stoppstatus og antall funksjonsevalueringer.
+Kjør først som den står, og bytt deretter startpunktet til `[-3., -3.]`.
+Havner søkene i samme dal?
+
+```{pyodide-python}
+#| label: week9-nelder-mead
+from scipy.optimize import minimize
+
+nm_result = minimize(f9, [0.3, 0.7], method="Nelder-Mead")
+print("sluttpunkt:", nm_result.x)
+print(f"f = {nm_result.fun:.2e}")
+print("stoppstatus:", nm_result.success)
+print("funksjonsevalueringer:", nm_result.nfev)
+```
+
+`success=True` betyr at løserens stoppkriterier er oppfylt. Det beviser
+verken at punktet er et minimum eller at ingen annen dal ligger lavere.
+Her kan vi kontrollere verdien mot den kjente nedre grensen $f\ge0$.
+
+:::
+
 ::: {.reading-step title="Gå i dybden: valg som gir andre baner"}
 
 Vi evaluerer alle fire naboer før vi flytter. Andre valg er mulige:
