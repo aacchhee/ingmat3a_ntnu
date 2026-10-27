@@ -408,7 +408,7 @@ basis når du beregner kurven.
 
 # Begge basiser skal få nøyaktig de samme dataene.
 n = 12
-m = 25
+m = 27
 points = np.linspace(-1.0, 1.0, m)
 true_chebyshev = reference_coordinates(n)
 exact_values = cheb.chebval(points, true_chebyshev)
@@ -500,7 +500,7 @@ Velg så **ett** av spørsmålene nedenfor, og undersøk det nærmere:
 Konklusjonen skal vise til egne tall. Unngå å formulere en generell
 garanti ut fra ett forsøk.
 
-### 6. Hva endrer normalligningene?
+### 6. Hva endrer normallikningene?
 
 Fra residualbetingelsen $A^T(b-Ac)=0$ kan du samle de ukjente i et
 kvadratisk system.

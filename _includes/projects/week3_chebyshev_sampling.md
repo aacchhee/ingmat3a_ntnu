@@ -1187,7 +1187,7 @@ cheb_coordinates = np.zeros(n+1)
 # Denne koordinatvektoren betyr 0*T_0 + ... + 1*T_50.
 cheb_coordinates[n] = 1.0
 # Konverteringen endrer koordinatene, ikke polynomet. Etterpå evalueres det
-# samme matematiske objekt med to forskjellige representasjoner.
+# samme matematiske objektet med to forskjellige representasjoner.
 monomial_coordinates = cheb.cheb2poly(cheb_coordinates)
 
 value_monomial = poly.polyval(x0, monomial_coordinates)

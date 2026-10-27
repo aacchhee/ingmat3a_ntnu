@@ -2187,7 +2187,7 @@ all_finite = []
 for eps in epsilons:
     A_eps = np.vstack([np.ones((1, 3)), eps*np.eye(3)])
     Qc, Rc = classical_gram_schmidt(A_eps)
-    # tolerance=0 brukes bare her for å eksponere feilutviklingen i hele sveipet.
+    # tolerance=0 brukes bare her for å vise feilutviklingen i hele sveipet.
     Qm, Rm = modified_gram_schmidt(A_eps, tolerance=0.0)
     cgs_errors.append(np.linalg.norm(Qc.T@Qc-np.eye(3), "fro"))
     mgs_errors.append(np.linalg.norm(Qm.T@Qm-np.eye(3), "fro"))
@@ -3375,7 +3375,7 @@ b_{\rm ny}=(0,1,2,6)^T.$$
 #| partial-credit: true
 #| field-labels: ny c₀, ny c₁, ny linje gamle punkter, ny linje alle punkter, gammel linje alle punkter
 
-For den nye minste-kvadraters linjen er $c_0=$ __[13/10] og $c_1=$ __[19/10].
+For den nye linjen fra minste kvadrater er $c_0=$ __[13/10] og $c_1=$ __[19/10].
 
 Summen av kvadrerte feil for den nye linjen på de tre gamle punktene er __[189/100].
 

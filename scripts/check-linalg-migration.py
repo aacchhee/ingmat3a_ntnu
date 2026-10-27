@@ -21,9 +21,10 @@ SOURCE_BASELINES = {
     "_includes/optimization/uke9.md": "b8baf4f33bfc294aee3a53d2a551f42595d7c4ed",
     "_includes/optimization/week9_setup.md": "b8baf4f33bfc294aee3a53d2a551f42595d7c4ed",
 }
-# Wording fixes the course author approved (27 Oct 2026) inside protected
-# fences and the project 12 header. Each pair is applied once to the
-# baseline text; nothing else in those blocks may change.
+# Wording fixes (and the project 4 point count) the course author approved
+# on 27 Oct 2026 inside protected fences and the project 12 header. Each
+# pair is applied once to the baseline text; nothing else in those blocks
+# may change.
 APPROVED_WORDING = {
     '_includes/optimization/uke11.md': [
         ('# Komplementær slakk ga u = 2, v = 1. Bygger de normalene til målretningen?',
@@ -52,6 +53,56 @@ APPROVED_WORDING = {
          'Skriv ned hva du forventer før hvert forsøk, og sammenlign med det du faktisk ser.'),
         ('| Straffefeil, kondisjon og solvermeldinger |',
          '| Straffefeil, kondisjon og løsermeldinger |'),
+    ],
+    '_includes/module2/m2_3_exercises.md': [
+        ('trengs før feilen gir minst fire korrekte desimaler?',
+         'trengs før iteratet har minst fire korrekte desimaler?'),
+    ],
+    '_includes/projects/week1_floating_point_attack.md': [
+        ('# TODO: design din egen summeringsalgoritme.',
+         '# TODO: lag din egen summeringsalgoritme.'),
+    ],
+    '_includes/projects/week2_newton_fractals.md': [
+        ('# Basin-fargen skal bare kode nullpunkt, ikke iterasjonstall.',
+         '# Fargen for tiltrekningsområdet skal bare kode nullpunkt, ikke iterasjonstall.'),
+        ('får ikke lage en kunstig\n    basin-grense.',
+         'får ikke lage en kunstig\n    grense mellom tiltrekningsområder.'),
+        ('"""Sammenlign Newton-arbeidet på grensen og inne i basinene."""',
+         '"""Sammenlign Newton-arbeidet på grensen og inne i tiltrekningsområdene."""'),
+        ('print("Synlige basin:           ", summary["visible_basins"])',
+         'print("Tiltrekningsområder:     ", summary["visible_basins"])'),
+    ],
+    '_includes/projects/week3_chebyshev_sampling.md': [
+        ('# samme matematiske objekt med to forskjellige representasjoner.',
+         '# samme matematiske objektet med to forskjellige representasjoner.'),
+    ],
+    '_includes/projects/week4_orthogonal_rescue.md': [
+        ('n = 12\nm = 25\npoints = np.linspace(-1.0, 1.0, m)',
+         'n = 12\nm = 27\npoints = np.linspace(-1.0, 1.0, m)'),
+    ],
+    '_includes/projects/week5_pagerank.md': [
+        ('# Felles verktøy for prosjektet. Ingen celler fra notatene må kjøres først.',
+         '# Felles verktøy for prosjektet. Du trenger ikke kjøre noen celler fra notatene først.'),
+        ('# Grensen fra 5.6 gjør residualkravet til en garanti for faktisk feil.',
+         '# Grensen fra 5.6 gjør residualkravet til en garanti for at den faktiske feilen er høyst error_goal.'),
+    ],
+    '_includes/linalg/uke3.md': [
+        ('# Eksperimentet spør om blokk-gjennomsnittene likevel kan bli de samme.',
+         '# Eksperimentet spør om blokkgjennomsnittene likevel kan bli de samme.'),
+        ('oppfyller ikke Bz=0."\n#|           elif "dependent" in statuses:\n#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."\n#|           elif statuses:\n#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."',
+         'oppfyller ikke Bz=0."\n#|           elif "dependent" in statuses:\n#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."\n#|           elif statuses:\n#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke ut hele nullrommet."'),
+        ('oppfyller ikke Cz=0."\n#|           elif "dependent" in statuses:\n#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."\n#|           elif statuses:\n#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."',
+         'oppfyller ikke Cz=0."\n#|           elif "dependent" in statuses:\n#|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."\n#|           elif statuses:\n#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke ut hele nullrommet."'),
+    ],
+    '_includes/linalg/uke4.md': [
+        ('# tolerance=0 brukes bare her for å eksponere feilutviklingen i hele sveipet.',
+         '# tolerance=0 brukes bare her for å vise feilutviklingen i hele sveipet.'),
+        ('For den nye minste-kvadraters linjen er',
+         'For den nye linjen fra minste kvadrater er'),
+    ],
+    '_includes/linalg/uke5.md': [
+        ('"Startvektoren gir en følge som blir på den andre egenlinjen."',
+         '"Startvektoren gir en følge som blir liggende på den andre egenlinjen."'),
     ],
 }
 RUNTIME = {"{math-exercise}", "{py-exercise}", "{pyodide-python}"}

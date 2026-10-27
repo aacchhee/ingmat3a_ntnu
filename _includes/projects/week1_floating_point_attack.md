@@ -377,7 +377,7 @@ Vi prøver å forstå hvordan **algoritmen** påvirker resultatet, selv om den m
 
 ---
 
-## 6. Tournament: tåler forsvaret flere angrep?
+## 6. Turnering: tåler forsvaret flere angrep?
 
 Hvis du bare tester forsvaret mot datasettet du brukte da du laget det, er det lett å lure deg selv.
 
@@ -460,7 +460,7 @@ Du trenger ikke løse denne delen for å fullføre prosjektet. Men hvis du har t
 ```{pyodide-python}
 #| label: ingmat-ide-projects-week1-floating-point-attack-11
 def better_sum(values):
-    # TODO: design din egen summeringsalgoritme.
+    # TODO: lag din egen summeringsalgoritme.
     # Ikke bruk sum(), numpy.sum() eller math.fsum().
 
     total = 0.0

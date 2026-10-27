@@ -374,7 +374,7 @@ Anta at modellen $|e_{n+1}|\approx S|e_n|$ fra 2.3 fortsetter å gjelde med samm
 #| field-labels: konvergensfaktoren S, antall ekstra steg etter n=3
 #| context: error-table-factor-context
 
-Les av konvergensfaktoren $S$ fra tabellen. Hvor mange steg **etter** $n=3$ trengs før feilen gir minst fire korrekte desimaler?
+Les av konvergensfaktoren $S$ fra tabellen. Hvor mange steg **etter** $n=3$ trengs før iteratet har minst fire korrekte desimaler?
 
 Svarformat: Skriv $S$ som et desimaltall med punktum og antall steg som et heltall.
 

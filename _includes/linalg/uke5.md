@@ -2218,7 +2218,7 @@ gyldige skaleringer godtas.
 #|           return {"score": 0, "feedback": "Startvektoren må være forskjellig fra null."}
 #|       B = Matrix([[2, 2], [2, 5]])
 #|       ok = all(simplify(z) == 0 for z in B*v-v)
-#|       return {"correct": ok, "feedback": "Startvektoren gir en følge som blir på den andre egenlinjen." if ok else "Undersøk om startvektoren har et bidrag langs w₁."}
+#|       return {"correct": ok, "feedback": "Startvektoren gir en følge som blir liggende på den andre egenlinjen." if ok else "Undersøk om startvektoren har et bidrag langs w₁."}
 
 En startvektor for transformasjonen med matrise $B$: vec[2,-1]
 ```

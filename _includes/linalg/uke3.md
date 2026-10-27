@@ -415,7 +415,7 @@ def show_two_routes(alpha, beta, route_1, route_2):
 #| autorun: true
 
 # To bevisst svært forskjellige inputbilder: ett konstant og ett rutete.
-# Eksperimentet spør om blokk-gjennomsnittene likevel kan bli de samme.
+# Eksperimentet spør om blokkgjennomsnittene likevel kan bli de samme.
 X1 = np.full((4, 4), 0.5)
 X2 = np.array([
     [0.1, 0.9, 0.1, 0.9],
@@ -3435,7 +3435,7 @@ $Q_B=$ mat{name=QB, rows=3, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
 #|           elif "dependent" in statuses:
 #|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."
 #|           elif statuses:
-#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."
+#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke ut hele nullrommet."
 #|           else:
 #|               result["feedback"] = "Legg til basisvektorer for nullrommet."
 #|       return result
@@ -3619,7 +3619,7 @@ $Q_C=$ mat{name=QC, rows=2, cols=auto, initial-cols=1, min-cols=0, max-cols=3}
 #|           elif "dependent" in statuses:
 #|               result["feedback"] = "De gule kolonnene ligger i nullrommet, men familien er lineært avhengig."
 #|           elif statuses:
-#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke hele nullrommet."
+#|               result["feedback"] = "De grønne kolonnene er gyldige og uavhengige, men de spenner ennå ikke ut hele nullrommet."
 #|           else:
 #|               result["feedback"] = "Legg til basisvektorer for nullrommet."
 #|       return result

@@ -422,7 +422,7 @@ def plot_basins(data, title="Newtons metode: tiltrekningsområder",
     roots = data["roots"]
     xmin, xmax, ymin, ymax = data["bounds"]
 
-    # Basin-fargen skal bare kode nullpunkt, ikke iterasjonstall.
+    # Fargen for tiltrekningsområdet skal bare kode nullpunkt, ikke iterasjonstall.
     basin_image = np.full(basin.shape + (3,), 0.25)
     basin_image[basin == -2] = 0.0
     legend_handles = []
@@ -812,8 +812,8 @@ Newton-resultatet er for stadig mindre endringer i startverdien.
 
 Et numerisk bilde er bygget opp av små fargede ruter. I dette prosjektet
 kaller vi én slik rute en **piksel**. Hver piksel representerer resultatet fra
-én startverdi i rutenettet: basin-fargen viser hvilket nullpunkt startverdien
-fant, mens iterasjonskartet viser hvor mange Newton-steg som ble brukt.
+én startverdi i rutenettet: fargen for tiltrekningsområdet viser hvilket
+nullpunkt startverdien fant, mens iterasjonskartet viser hvor mange Newton-steg som ble brukt.
 
 **Oppløsningen** `nx × ny` er antall startverdier vi beregner i vannrett og
 loddrett retning. I et vindu fra `xmin` til `xmax` er avstanden mellom to
@@ -836,8 +836,8 @@ av det gamle bildet.
 
 Før vi zoomer, trenger vi en enkel måleregel. Vi kaller en piksel en
 **grensepiksel** dersom minst én nabo over, under, til venstre eller til høyre
-konvergerer mot et annet nullpunkt. En **indre piksel** har samme basin-farge
-som alle disse naboene.
+konvergerer mot et annet nullpunkt. En **indre piksel** har samme farge
+for tiltrekningsområdet som alle disse naboene.
 
 Dette er ikke en eksakt definisjon av den matematiske grensen. Det er en
 praktisk regel for et endelig bilde. Regelen lar oss koble figuren til
@@ -852,7 +852,7 @@ def boundary_mask(data):
 
     Vi teller bare overganger mellom punkter som faktisk konvergerte. Punkter
     som nådde maxiter eller ga en ugyldig beregning får ikke lage en kunstig
-    basin-grense.
+    grense mellom tiltrekningsområder.
     """
     basin = data["basin"]
     boundary = np.zeros(basin.shape, dtype=bool)
@@ -872,7 +872,7 @@ def boundary_mask(data):
 
 
 def boundary_summary(data):
-    """Sammenlign Newton-arbeidet på grensen og inne i basinene."""
+    """Sammenlign Newton-arbeidet på grensen og inne i tiltrekningsområdene."""
     boundary = boundary_mask(data)
     converged = data["basin"] >= 0
     interior = converged & ~boundary
@@ -896,7 +896,7 @@ def print_boundary_summary(data):
 
     print("Bredde på vinduet:       ", f"{xmax-xmin:.4e}")
     print("Bredde per piksel:       ", f"{pixel_width:.4e}")
-    print("Synlige basin:           ", summary["visible_basins"])
+    print("Tiltrekningsområder:     ", summary["visible_basins"])
     print("Andel grensepiksler:     ", f"{summary['boundary_fraction']:.4f}")
     print("Gj.snitt steg, grense:   ",
           f"{summary['mean_boundary_iterations']:.2f}")
@@ -987,7 +987,7 @@ For hvert nivå lagrer du:
 - figuren med tiltrekningsområder og iterasjonstall,
 - sentrum og vindusbredde,
 - bredden som én piksel representerer,
-- antall synlige basin-farger,
+- antall synlige tiltrekningsområder (farger),
 - andel grensepiksler,
 - gjennomsnittlig iterasjonstall på grensen og i indre områder.
 
@@ -1000,7 +1000,7 @@ tillegg om disse områdene er numerisk krevende.
 
 Velg på det siste zoomnivået:
 
-- to nabostartverdier med forskjellig basin-farge,
+- to nabostartverdier i forskjellige tiltrekningsområder (ulik farge),
 - én startverdi et stykke inne i et ensfarget område.
 
 Kjør `newton_trace` for alle tre. Sammenlign de første iteratene, største

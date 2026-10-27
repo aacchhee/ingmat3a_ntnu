@@ -74,7 +74,7 @@ For 1D-punkter returneres float-matrisen (len(points),n+1). Rad i er punkt i og 
 
 `C`
 
-chebyshev_matrix(points,n) fra basissammenligningen: startverdier n=12,m=25,points=np.linspace(-1,1,25), derfor form (25,13). Samme målepunkter som M; tilpasses til samme b_noisy.
+chebyshev_matrix(points,n) fra basissammenligningen: startverdier n=12,m=27,points=np.linspace(-1,1,27), derfor form (27,13). Samme målepunkter som M; tilpasses til samme b_noisy.
 
 :::
 
@@ -82,7 +82,7 @@ chebyshev_matrix(points,n) fra basissammenligningen: startverdier n=12,m=25,poin
 
 `M`
 
-monomial_matrix(points,n) fra basissammenligningen: startverdier n=12,m=25,points=np.linspace(-1,1,25), derfor form (25,13). Samme målepunkter som C; tilpasses til samme b_noisy.
+monomial_matrix(points,n) fra basissammenligningen: startverdier n=12,m=27,points=np.linspace(-1,1,27), derfor form (27,13). Samme målepunkter som C; tilpasses til samme b_noisy.
 
 :::
 

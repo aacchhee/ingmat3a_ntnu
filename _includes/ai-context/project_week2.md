@@ -74,7 +74,7 @@ Tar dict fra newton_trace, skriver historikkens n, z, residual og step samt stop
 
 `Patch`
 
-Importert med `from matplotlib.patches import Patch`; rektangulære Patch-objekter brukes som fargeforklaring i basinfiguren.
+Importert med `from matplotlib.patches import Patch`; rektangulære Patch-objekter brukes som fargeforklaring i figuren med tiltrekningsområder.
 
 :::
 
@@ -138,7 +138,7 @@ Kompleks NumPy-vektor av nullpunktene til df: np.roots på de deriverte polynomk
 
 `bounds`
 
-Den valgte funksjonens plot_window, en tuple (xmin,xmax,ymin,ymax) i det komplekse planet. Brukes til det første basin-rutenettet; faktisk verdi avhenger av my_function.
+Den valgte funksjonens plot_window, en tuple (xmin,xmax,ymin,ymax) i det komplekse planet. Brukes til det første rutenettet med tiltrekningsområder; faktisk verdi avhenger av my_function.
 
 :::
 
@@ -146,7 +146,7 @@ Den valgte funksjonens plot_window, en tuple (xmin,xmax,ymin,ymax) i det komplek
 
 `print_boundary_summary(data)`
 
-Tar newton_grid-dict og skriver vindusbredde, pikselbredde, synlige basin, andel grensepiksler og iterasjonsmål på grense/indre. Grense betyr boundary_mask, andelen måles blant konvergerte piksler; returnerer None.
+Tar newton_grid-dict og skriver vindusbredde, pikselbredde, antall synlige tiltrekningsområder, andel grensepiksler og iterasjonsmål på grense/indre. Grense betyr boundary_mask, andelen måles blant konvergerte piksler; returnerer None.
 
 :::
 

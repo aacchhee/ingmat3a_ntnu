@@ -65,7 +65,7 @@ En matrise med ikke-negative elementer og kolonnesum én kalles
 #| label: project-week5-setup
 #| autorun: true
 #| context: setup
-# Felles verktøy for prosjektet. Ingen celler fra notatene må kjøres først.
+# Felles verktøy for prosjektet. Du trenger ikke kjøre noen celler fra notatene først.
 import numpy as np
 import matplotlib.pyplot as plt
 ```
@@ -145,7 +145,7 @@ def residual_norm(S, alpha, u, p):
 def pagerank(S, alpha, u, p0, error_goal=1e-8, max_steps=10000):
     p = np.array(p0, dtype=float, copy=True)
     residuals = []
-    # Grensen fra 5.6 gjør residualkravet til en garanti for faktisk feil.
+    # Grensen fra 5.6 gjør residualkravet til en garanti for at den faktiske feilen er høyst error_goal.
     tolerance = (1-alpha) * error_goal
     for k in range(max_steps + 1):
         r = float(residual_norm(S, alpha, u, p))
