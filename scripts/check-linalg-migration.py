@@ -5,6 +5,7 @@ This is the migration's fixed source baseline, not a new grading engine. The
 only allowed code-fence changes are explicit AI context metadata and the listed
 new labels on formerly unlabelled visible IDE cells. Existing labels, tasks,
 answers, modes, code, checks and tests remain byte-for-byte unchanged.
+The approved week 9 Nelder–Mead addition has its own fixed source baseline.
 """
 from pathlib import Path
 import json
@@ -13,6 +14,12 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = "3012cb7b9ab16b738f9c012f8ab119efbde5cd59"
+# The same approved addition is on main and linalg-branch. Protect its code
+# and setup comment as well, without rebasing the other migration checks.
+SOURCE_BASELINES = {
+    "_includes/optimization/uke9.md": "b8baf4f33bfc294aee3a53d2a551f42595d7c4ed",
+    "_includes/optimization/week9_setup.md": "b8baf4f33bfc294aee3a53d2a551f42595d7c4ed",
+}
 RUNTIME = {"{math-exercise}", "{py-exercise}", "{pyodide-python}"}
 NEW_IDE_LABELS = {'_includes/ide/manual.md': ['ingmat-ide-ide-manual-1'],
  '_includes/module2/m2_3_exercises.md': ['ingmat-ide-module2-m2-3-exercises-1'],
@@ -140,7 +147,8 @@ def audit():
     protected = graded = added = 0
     seen_added = set()
     for name in source_names:
-        before = blocks(git("show", BASE + ":" + name).decode(), name)
+        source_base = SOURCE_BASELINES.get(name, BASE)
+        before = blocks(git("show", source_base + ":" + name).decode(), name)
         after = blocks((ROOT / name).read_text(), name)
         assert len(before) == len(after), f"{name}: code-fence count changed"
         expected_labels = set(NEW_IDE_LABELS.get(name, []))
@@ -164,7 +172,7 @@ def audit():
             assert old == current, f"{name}: authored code, answers, tasks, grading or test data changed"
             protected += 1
         assert actual_labels == expected_labels, f"{name}: required visible IDE labels differ"
-    assert added == 53 and graded == 191 and protected == 560, (added, graded, protected)
+    assert added == 53 and graded == 191 and protected == 561, (added, graded, protected)
     for name, heading, quiz in QUIZZES:
         expected = heading[:-1] + " quiz=" + quiz + "}" if heading.endswith("}") else heading + " {quiz=" + quiz + "}"
         assert (ROOT / name).read_text().splitlines().count(expected) == 1, f"{name}: missing or duplicate quiz {quiz}"
@@ -174,7 +182,8 @@ def audit():
     assert current == original, "Project12 workload estimate/plan changed"
     for legacy in ("_includes/site/learning-mode.html", "_includes/site/tab-links.html"):
         assert not (ROOT / legacy).exists(), f"Legacy UI script remains: {legacy}"
-    result = {"passed": True, "baseline": BASE, "protectedCodeBlocks": protected,
+    result = {"passed": True, "baseline": BASE, "sourceBaselines": SOURCE_BASELINES,
+              "protectedCodeBlocks": protected,
               "gradedExerciseBlocks": graded, "newVisibleIDELabels": added,
               "quizScopes": len(QUIZZES), "project12WorkloadPreserved": True}
     print(json.dumps(result, sort_keys=True))
