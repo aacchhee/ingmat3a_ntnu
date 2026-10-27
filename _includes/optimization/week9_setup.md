@@ -8,7 +8,7 @@
 # Her står ukens funksjon og tegnehjelperne; selve matematikken står i cellene.
 import numpy as np
 import matplotlib.pyplot as plt
-# SciPy brukes bare i fordypningen om ett linjesøk i 9.3 og importeres der.
+# SciPy importeres i fordypningene om linjesøk i 9.3 og Nelder–Mead i 9.4.
 
 # Himmelblaus funksjon, gradient og Hessian; u og w er parentesene i f.
 def f9(z):
