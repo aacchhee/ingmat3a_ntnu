@@ -1,12 +1,12 @@
 ## Hvor er jeg?
 
 En mobil i en hall kan måle avstander til faste punkter med kjent
-plassering, kalt **ankre**. Enheten vi leter etter, kaller vi **taggen**:
+plassering, kalt **ankre**. Enheten vi vil finne posisjonen til, kaller vi **taggen**:
 en liten radiobrikke. Fire unøyaktige avstander skal gi oss to koordinater.
-Ingen posisjon passer nødvendigvis alle målingene nøyaktig.
+Fordi målingene har feil, finnes det kanskje ingen posisjon som passer alle målingene nøyaktig.
 
 Vi bruker **Gauss–Newton**, en variant av Newtons metode for minste
-kvadrater. Formlene for de deriverte får du ferdig. Arbeidet ditt er å
+kvadrater. Formlene for de deriverte får du oppgitt. Arbeidet ditt er å
 sette sammen metoden med lineær algebra, kjøre forsøk og begrunne hva
 utskriftene og figurene forteller:
 
@@ -20,27 +20,27 @@ utskriftene og figurene forteller:
 |:--|:-- |
 | Bakgrunn | Bli kjent med avstandsmålingene og den gitte modellen. |
 | 1. Fra modell til metode | Les vektorer og matriser; fullfør ett Gauss–Newton-steg. |
-| 2. Les konvergensen | Sammenlign feil og faktorer med tre typer målinger. |
+| 2. Les konvergensen | Sammenlign feil og konvergensfaktorer for tre typer målinger. |
 | 3. Les følsomheten | Undersøk målefeil og forklar geometrien med SVD. |
 | 4. Konvergert, men feil? | Les diagnosene og fullfør en kort Armijo-løkke. |
 | 5. Din påstand | Gjør ett kontrollert forsøk og trekk en avgrenset konklusjon. |
 
 Sett av omtrent **4–6 timer**, inkludert oppsett og en kort oppsummering.
-Skriv en forventning før et forsøk, kjør det, og vis til konkrete tall når
+Skriv ned hva du forventer før hvert forsøk, kjør forsøket, og vis til konkrete tall når
 du konkluderer. Du skal ikke levere utledninger av deriverte.
 
 ### Det vi trenger fra tidligere uker
 
 - **Minste kvadrater** ([uke 4](uke4.qmd#uke4-mk)):
   `np.linalg.lstsq(A, b, rcond=None)[0]` finner vektoren som gjør
-  $\|Ac-b\|$ minst. Vi unngår å danne $A^TA$, som har kvadrert
-  kondisjonstall når $A$ har full kolonnerang.
+  $\|Ac-b\|$ minst. Vi unngår å danne $A^TA$, fordi kondisjonstallet da blir
+  kvadrert når $A$ har full kolonnerang.
 - **Newton** ([uke 10.1](uke10.qmd#uke10-newton)): steget løser $Hp=-g$.
 - **Konvergensfart** ([uke 2](page4.qmd#uke2-konvergensfart)):
   et omtrent fast forhold $e_{k+1}/e_k$ betyr lineær konvergens; ved
   kvadratisk konvergens blir forholdet stadig mindre nær løsningen.
 - **SVD** ([uke 7](uke7.qmd#uke7-geometri)): $Jv_i=\sigma_i u_i$.
-  Små singulærverdier betyr at noen retninger er vanskelige å skille.
+  Små singulærverdier betyr at flyttinger i noen retninger knapt gir utslag i målingene.
 - **Armijo** ([uke 10.4](uke10.qmd#uke10-demping)):
   halver steget til funksjonsverdien har sunket nok.
 
@@ -49,20 +49,20 @@ du konkluderer. Du skal ikke levere utledninger av deriverte.
 På nettsiden lastes dataene og hjelpefunksjonene automatisk. Du får
 `residual`, `jacobian`, `move`, en Newton-metode og figurhjelperne
 `show_hall` og `show_moves`. Du skriver selv `gn_step` og `armijo_step`;
-den korte Gauss–Newton-løkken står ferdig på siden. Etter ny lasting må du
-kjøre cellene med disse funksjonene igjen før du fortsetter.
+den korte Gauss–Newton-løkken står ferdig på siden. Hvis du laster siden på nytt,
+må du kjøre cellene med disse funksjonene igjen før du fortsetter.
 
 ::: {.details title="Egen notebook: last ned oppsettet og kom i gang"}
 
 Last ned [project_week10_setup.py](../assets/project_week10_setup.py){download="project_week10_setup.py"}
-og legg den ved siden av notebooken. Start med
+og legg den i samme mappe som notebooken. Start med
 
 ```python
 from project_week10_setup import *
 ```
 
 Du trenger NumPy og Matplotlib. Kopier cellene i rekkefølge og kontroller
-med **Restart / Run all** før levering. Ta med oppsettsfilen.
+med **Restart / Run all** før levering. Lever oppsettsfilen sammen med notebooken.
 SVD-appen i del 3 virker bare på nettsiden; Python-figuren viser samme idé.
 
 :::
@@ -76,7 +76,7 @@ Hallen er 10 m × 8 m, med ett anker i hvert hjørne:
 
 $$b_1=(0,0),\quad b_2=(10,0),\quad b_3=(10,8),\quad b_4=(0,8).$$
 
-Posisjonen er $z=(x,y)$, og anker $i$ måler avstanden $d_i$.
+Taggens posisjon er $z=(x,y)$, og anker $i$ måler avstanden $d_i$.
 **Residualen** er beregnet avstand minus målt avstand. Vi samler fire
 slike tall i en vektor og minimerer kvadratsummen:
 
@@ -84,8 +84,8 @@ $$r_i(z)=\|z-b_i\|-d_i,\qquad
 r(z)=\begin{bmatrix}r_1(z)\\r_2(z)\\r_3(z)\\r_4(z)\end{bmatrix},\qquad
 F(z)=\tfrac12\sum_{i=1}^4r_i(z)^2=\tfrac12r(z)^Tr(z).$$
 
-Oppsettet inneholder `hall` med ett anker per rad og tre målevektorer
-fra en kjent posisjon `z_true`. Fasiten brukes bare til å undersøke
+Oppsettet inneholder `hall` med ett anker per rad og tre vektorer med målte avstander
+fra en kjent posisjon `z_true`. Denne kjente posisjonen er fasiten, og vi bruker den bare til å undersøke
 metodene. I praksis kjenner vi målingene, men ikke posisjonen.
 
 ## 1. Fra Newton til Gauss–Newton
@@ -100,19 +100,19 @@ en matrise som kobler en liten flytting til endringer i avstandene.
 
 $$\text{rad }i\text{ i }J(z)=\frac{(z-b_i)^T}{\|z-b_i\|},\qquad z\ne b_i.$$
 
-Raden er en enhetsvektor fra ankeret mot taggen. For et lite steg $p$ er
+Hver rad er en enhetsvektor fra ankeret mot taggen. For et lite steg $p$ er
 
 $$r(z+p)\approx r(z)+J(z)p.$$
 
-For eksempel er raden $(0.6,0.8)$ når ankeret er $(0,0)$ og taggen er
+For eksempel er raden $(0.6,0.8)$ når ankeret står i $(0,0)$ og taggen i
 $(3,4)$. En flytting $p=(0.1,0)$ endrer da avstanden med omtrent
 $0.6\cdot0.1+0.8\cdot0=0.06$ m.
 
 **Koble sammen skrivemåtene:**
 
-1. Hvilke størrelser har $r$, $J$, $p$ og $Jp$ med fire ankre?
+1. Hvilke dimensjoner har $r$, $J$, $p$ og $Jp$ når vi har fire ankre?
 2. Skriv første komponent av $Jp$ som en sum. Hva skjer med denne
-   avstanden dersom $p$ står vinkelrett på første rad i $J$?
+   komponenten dersom $p$ står vinkelrett på første rad i $J$?
 3. Hvorfor er $\tfrac12r^Tr$ det samme tallet som kvadratsummen over?
 
 Vi kan kontrollere forståelsen uten å derivere. Cellen viser matrisen,
@@ -135,7 +135,7 @@ når du endrer første komponent i $p$ fra $0.1$ til $0.01$?
 
 ### Ett lineært minste kvadraters problem per steg
 
-Gauss–Newton velger $p$ slik at den lineære modellen passer best:
+Gauss–Newton velger $p$ slik at residualen i den lineære modellen blir minst mulig:
 
 $$\min_p\|Jp+r\|=\min_p\|Jp-(-r)\|.$$
 
@@ -170,9 +170,9 @@ show_hall(hall, d_exact, [path], ['Gauss–Newton'], true=z_true)
 
 Les feiltabellen: på hvilket steg er avstanden til fasiten mindre enn
 $10^{-4}$ m? Finn også et tegn på at feilen synker raskere enn med en fast
-faktor. Kontrollen med forventet posisjon $(3,5)$ er viktig før del 2.
+faktor. Kontroller at metoden ender i den forventede posisjonen $(3,5)$ før du går videre til del 2.
 
-**Ta med videre:** Ett ikke-lineært problem blir en serie lineære minste
+**Ta med videre:** Gauss–Newton gjør ett ikke-lineært problem om til en serie lineære minste
 kvadraters problemer. $Jp$ kobler en flytting i planet til endringer i
 alle fire målte avstander.
 
@@ -186,30 +186,30 @@ Vi beholder ankrene og den kjente posisjonen, men endrer målingene:
 | `d_noisy` | $(0.3,-0.4,0.5,-0.2)$ m |
 | `d_bad` | $(0,0,3,0)$ m |
 
-Her er det matematiske resultatet du trenger, ferdig beregnet:
+Her får du gradienten og Hessianen ferdig beregnet:
 
 $$g=J^Tr,\qquad H=J^TJ+Q.$$
 
 Newton bruker hele Hessianen $H$. Gauss–Newton bruker bare $J^TJ$.
 Hjelperen `dropped_part` beregner $Q$; hvert bidrag til denne matrisen er
 ganget med en residual. Når alle residualene er null, er derfor $Q=0$.
-Store residualer kan gjøre forskjellen mellom metodene viktig.
+Med store residualer kan derimot forskjellen mellom metodene bli viktig.
 
 Nær en regulær løsning med full kolonnerang i $J$ er Gauss–Newton-feilen
 omtrent en matrise ganger forrige feil:
 
 $$e_{k+1}\approx M e_k,\qquad M=-(J^TJ)^{-1}Q.$$
 
-Her er $e_k$ en **feilvektor**. Den forutsagte lokale faktoren er største
-absoluttverdi av egenverdiene til $M$ ([uke 6](uke6.qmd#uke6-fikspunkt)).
+Her er $e_k$ **feilvektoren**, altså avviket fra løsningen. Den forutsagte lokale konvergensfaktoren er den største
+absoluttverdien av egenverdiene til $M$ ([uke 6](uke6.qmd#uke6-fikspunkt)).
 Når residualene er null og løsningen er regulær, får vi den raske lokale,
-kvadratiske konvergensen. Dette er en lokal forklaring, ingen garanti fra
+kvadratiske konvergensen. Dette er en lokal forklaring, ikke en garanti for konvergens fra
 alle startpunkter.
 
 **Forutsi:** I hvilket datasett venter du at Gauss–Newton og Newton har
-mest lik fart? Kjør så cellen. Den skriver både feilnormer og forhold
-mellom etterfølgende feilnormer. Forhold under avrundingsnivå er markert
-med `nan` og skal ikke brukes til å vurdere farten.
+mest lik fart? Kjør så cellen. Den skriver ut både feilnormer og forhold
+mellom etterfølgende feilnormer. Når feilen er nede på avrundingsnivå, er forholdet markert
+med `nan`, og det skal ikke brukes til å vurdere farten.
 
 ```{pyodide-python}
 #| label: project10-rates
@@ -229,7 +229,7 @@ for name, d in [('eksakte', d_exact), ('små feil', d_noisy), ('feil måling', d
     print(f'  forutsagt GN-faktor: {max(abs(np.linalg.eigvals(M))):.3f}')
 ```
 
-**Les og konkluder:** Lag tre korte rader i en tabell: residualnorm,
+**Les og konkluder:** Lag en tabell med én rad per datasett og kolonnene residualnorm,
 observert konvergenstype og forutsagt faktor. Hvilke feilforhold støtter
 konklusjonen din? Bruk også forskjellen mellom $J^TJ$ og $J^TJ+Q$ i
 forklaringen. En stor residual og langsom konvergens er ulike ting:
@@ -237,7 +237,7 @@ rapporter begge, og ikke bruk bare antall steg som diagnose.
 
 ## 3. Hvor presist vet vi hvor vi er?
 
-En rask metode kan finne en usikker posisjon. Vi undersøker derfor hva
+En metode kan være rask og likevel finne en usikker posisjon. Vi undersøker derfor hva
 som skjer når de målte avstandene endres litt, fra $d$ til $d+\delta d$.
 Vi starter ved en løsning med eksakte data og full kolonnerang i $J$.
 Den **lineære følsomhetsmodellen** er gitt ved
@@ -245,19 +245,19 @@ Den **lineære følsomhetsmodellen** er gitt ved
 $$\delta z_{\mathrm{lin}}=\underset{w}{\operatorname{argmin}}\,
 \|Jw-\delta d\|.$$
 
-Det er den flyttingen som forklarer måleendringene best. Hjelperen
-`move(J, delta_d)` bruker `lstsq` til denne beregningen. Den er en lokal
+Følsomhetsmodellen gir altså den flyttingen som best forklarer måleendringene. Hjelperen
+`move(J, delta_d)` bruker `lstsq` til denne beregningen. Modellen er en lokal
 tilnærming, ikke en eksakt regel for store målefeil.
 
 ### Én feil eller samme feil i alle målingene?
 
 Midt i hallen peker rad 1 og rad 3 i $J$ i motsatte retninger. Det samme
 gjør rad 2 og rad 4. Derfor er $J^T(1,1,1,1)^T=0$: like store feil i alle
-fire avstander har ingen del langs kolonnene i $J$. De gir ingen flytting
-i den lineære modellen der. Dette er en symmetri vi kan undersøke.
+fire avstander har ingen del langs kolonnene i $J$. De gir derfor ingen flytting
+i den lineære modellen midt i hallen. Dette skyldes symmetrien, og det kan vi undersøke.
 
-Cellen sammenligner den lineære modellen med en ny Gauss–Newton-løsning.
-Kjør først midt i hallen. Bytt så `z_c` til `z_true`, altså $(3,5)$.
+Cellen sammenligner den lineære modellen med en ny Gauss–Newton-løsning for de endrede målingene.
+Kjør først cellen med taggen midt i hallen. Bytt så `z_c` til `z_true`, altså $(3,5)$.
 
 ```{pyodide-python}
 #| label: project10-moves
@@ -278,8 +278,8 @@ tilfellene og kontroller om avviket mellom modell og ny løsning blir mindre.
 
 ### SVD viser den mest følsomme retningen
 
-Fra [uke 7](uke7.qmd#uke7-geometri) er $Jv_i=\sigma_i u_i$.
-Hvis målefeilen er $\delta d=\varepsilon u_i$, gir regelen
+Fra [uke 7](uke7.qmd#uke7-geometri) vet vi at $Jv_i=\sigma_i u_i$.
+Hvis målefeilen er $\delta d=\varepsilon u_i$, gir den lineære modellen
 $\delta z_{\mathrm{lin}}=(\varepsilon/\sigma_i)v_i$.
 Du kan kontrollere den med én linje matrisealgebra:
 
@@ -441,7 +441,7 @@ show_moves(z_c, J, eps, {'ett anker ±10 cm': one_anchor})
 **Les og forklar:** Hvilken av halvaksene er lengst, og hvilken retning
 har den? Finn igjen $\varepsilon/\sigma_2$ i utskriften. Hvorfor kan en
 liten singulærverdi gi stor posisjonsfeil selv om målefeilen er liten?
-Fortegnet på $v_2$ er fritt; det er aksen, ikke pilens fortegn, som teller.
+Fortegnet på $v_2$ er fritt; det er aksen, ikke hvilken vei pilen peker, som teller.
 
 ### Gå ut av hallen
 
@@ -449,7 +449,7 @@ Vi flytter taggen fra midten av hallen langs linjen $y=4$. Langt unna ser
 taggen alle ankrene i nesten samme retning. **Forutsi:** blir det lettest
 å skille flyttinger langs eller på tvers av denne retningen?
 
-Cellen sammenligner fire avstander fra midten. Les både singulærverdiene
+Cellen sammenligner fire posisjoner med ulik avstand fra midten. Les både singulærverdiene
 og den største lineære flyttingen for en målefeil med norm $0.1$ m.
 
 ```{pyodide-python}
@@ -477,11 +477,10 @@ Nå står ankrene nesten på en rett linje langs en vegg:
 $$b_1=(0,0),\quad b_2=(4,0.1),\quad b_3=(7,-0.1),\quad b_4=(10,0).$$
 
 Taggen står i $(6,3)$, og `d_wall` er eksakte målinger. Fra avstandene
-alene kan et punkt på den andre siden av veggen se nesten like godt ut.
-**Forutsi:** Hva vil liten gradient fortelle oss, og hva vil den ikke
-fortelle oss?
+alene kan et punkt på den andre siden av veggen passe nesten like godt.
+**Forutsi:** Hva forteller en liten gradient oss, og hva forteller den ikke?
 
-Cellen bruker to starter og skriver ut sluttpunkt, residualnorm og
+Cellen bruker to startpunkter og skriver ut sluttpunkt, residualnorm og
 gradientnorm. Nivåkurvene hjelper deg å tolke forskjellen.
 
 ```{pyodide-python}
@@ -498,17 +497,17 @@ show_hall(wall, d_wall, paths, ['start (5,4)', 'start (5,-4)'], true=z_true_wall
 ```
 
 **Les og konkluder:** Hvilken start gir riktig posisjon? Kan gradientnormen
-alene avsløre det andre svaret? Bruk både residualen og figuren.
+alene avsløre at det andre svaret er feil? Bruk både residualen og figuren.
 
 I praksis kjenner vi ikke fasiten. Her får du en modellkontroll: hvis
-hver av $m$ målinger er høyst $\varepsilon$ feil, finnes en posisjon med
+hver av de $m$ målingene har feil på høyst $\varepsilon$, finnes det en posisjon med
 $\|r\|\le\sqrt m\,\varepsilon$. Et globalt minste kvadraters minimum har
 minst like liten residual. For fire målinger med høyst $0.05$ m feil er
 grensen $0.10$ m.
 
 Sammenlign grensen med begge utskriftene. En residual over grensen betyr
 at svaret eller antakelsen om målefeil ikke holder. En residual under
-grensen beviser heller ikke at posisjonen er entydig eller riktig.
+grensen beviser derimot ikke at posisjonen er entydig eller riktig.
 
 ### Start på veggen: kontroller lengden med Armijo
 
@@ -525,7 +524,7 @@ $\alpha=1,1/2,1/4,\ldots$ til
 $$F(z+\alpha p)\le F(z)+10^{-4}\alpha g^Tp.$$
 
 **Kodespor 2:** Fullfør halveringsløkken. Cellen viser det første steget
-og tar deretter ti sikrede steg. Bruk funksjonsverdiene til å avgjøre om
+og tar deretter ti steg med Armijo-kontroll. Bruk funksjonsverdiene til å avgjøre om
 halveringen hjelper; bruk residualen til å vurdere sluttpunktet.
 
 ```{pyodide-python}
@@ -554,8 +553,8 @@ for k in range(10):
 print(f'slutt {z.round(4)}, ||r|| = {np.linalg.norm(residual(z, wall, d_wall)):.3f}')
 ```
 
-Sammenlign helt og halvert steg: hva løste Armijo, og hvilket problem fra
-forsøket med to starter står igjen? Foreslå én praktisk kontroll når du
+Sammenlign det hele og det halverte steget: hvilket problem løste Armijo, og hvilket problem fra
+forsøket med to startpunkter står igjen? Foreslå én praktisk kontroll når du
 ikke kjenner fasiten. Begrunn med tall fra utskriftene, ikke bare med
 at metoden har «konvergert».
 
@@ -564,14 +563,14 @@ forskjellige spørsmål. Ingen enkelt liten norm svarer på dem alle.
 
 ## 5. Din påstand
 
-Velg **én** av undersøkelsene. Hold alt annet fast, skriv én forutsigelse,
+Velg **én** av de to undersøkelsene nedenfor. Hold alt annet uendret, skriv én forutsigelse,
 og bruk et lite kontrollert forsøk til å undersøke den.
 
 - **Et femte anker:** Sammenlign to plasseringer av et nytt anker for en
   tagg i $(3,5)$. Lag `B5 = np.vstack([hall, [x5, y5]])` og sammenlign
   $\sigma_2$ og største lineære flytting $\varepsilon/\sigma_2$.
 - **Ankre nøyaktig på én linje:** Sett alle ankre på $y=0$, lag eksakte
-  avstander fra $(6,3)$, og prøv én start på hver side. Kan avstandene
+  avstander fra $(6,3)$, og prøv ett startpunkt på hver side av linjen. Kan avstandene
   alene avgjøre hvilken side taggen er på?
 
 Vis ett resultat som støtter eller utfordrer forventningen. Avgrens
@@ -585,7 +584,7 @@ Disse spørsmålene er til egenkontroll, ikke en ekstra rapport.
 2. Hvorfor kan Gauss–Newton-steget regnes med `lstsq`?
 3. Hva viser feilforholdene om konvergensfarten, og hvilken rolle har $Q$?
 4. Hva kan den lineære følsomhetsmodellen si, og når er den bare en tilnærming?
-5. Hvordan gir en liten $\sigma_2$ en stor usikker retning?
+5. Hvorfor gir en liten $\sigma_2$ en retning med stor usikkerhet?
 6. Hva kan residualnormen fortelle som gradientnormen ikke forteller?
 7. Hva reparerer Armijo, og hvorfor avgjør det ikke hvilket minimum vi finner?
 
@@ -593,13 +592,13 @@ Disse spørsmålene er til egenkontroll, ikke en ekstra rapport.
 
 Lever én kjørbar notebook eller Quarto-side med:
 
-- din `gn_step` og `armijo_step`, samt den korte koblingen mellom
+- din `gn_step` og `armijo_step`, samt de korte svarene om koblingen mellom
   komponenter, vektorer og matriser fra del 1;
 - konvergenstabellen fra del 2 og én figur/tabell fra følsomhetsforsøkene;
 - diagnosen fra del 4, med konkrete residualer og resultatet av Armijo;
 - forutsigelse, kontroll og avgrenset konklusjon fra **én** undersøkelse i del 5.
 
 Forklaringene kan stå rett ved utskriftene. Avslutt med **150–250 ord**
-om hva som bestemmer fart, presisjon og troverdighet. Du vurderes på
+om hva som bestemmer farten, presisjonen og troverdigheten til posisjonsberegningen. Du vurderes på
 hvordan du bruker lineær algebra og egne beregninger til å begrunne
 konklusjonene. Formler for deriverte skal ikke utledes eller leveres.
