@@ -10,14 +10,14 @@ Etterpå undersøker du hva løserens svar forteller:
 Du får gradienter, Jacobimatriser og løserne ferdig. Arbeidet er å skrive
 tre korte kodeuttrykk, lese utskriftene og begrunne konklusjonene dine.
 Sett av omtrent **4–6 timer**, inkludert den korte undersøkelsen til slutt.
-Skriv en forventning før et forsøk; sammenlign den med det du faktisk ser.
+Skriv ned hva du forventer før hvert forsøk, og sammenlign med det du faktisk ser.
 
 | Del | Hovedarbeid |
 |:--|:-- |
 | Bildet og modellen | Bli kjent med punkter, lengder og energi |
 | 1. Finn og kontroller formen | Kravfunksjon, dimensjoner og løserens svar |
 | 2. Les multiplikatorene | Kraftbalanse og en liten lengdeendring |
-| 3. Bytt ledd med fjærer | Straffefeil, kondisjon og solvermeldinger |
+| 3. Bytt ledd med fjærer | Straffefeil, kondisjon og løsermeldinger |
 | 4. En lampe på kjettingen | Ett eget forsøk og kort rapport |
 
 ### Bakgrunn: bildet og den ferdige fysiske modellen
@@ -28,7 +28,7 @@ og lineær algebra begynner ved del 1.
 
 Appleten viser tre ledd mellom to kroker, 4 m fra hverandre. Leddene er
 1.5 m, 2 m og 1.5 m lange. I hvert av de to frie punktene henger en vekt
-på 1 N. Dra i et blått punkt; lengdene skal holde seg faste.
+på 1 N. Dra i et blått punkt; lengdene holder seg faste mens du drar.
 
 ```{.jsxgraph width="620" height="420" style="width:100%;max-width:620px;height:420px;border:0;"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -200,7 +200,7 @@ JXG.addEvent(showForces.rendNodeCheckbox, 'change', function () {
 }, showForces);
 ```
 
-1. Finn en form med lav energi, og sammenlign med **vis likevekt**.
+1. Finn en form med lav energi, og sammenlign med formen du får med **vis likevekt**.
 2. Slå på **vis krefter**. Hva skjer med pilkjeden og kraftgapet når du
    flytter punktet bort fra likevekten?
 
@@ -211,7 +211,7 @@ skal kjenne igjen i løserens utskrift.
 ### Ordboken fra bilde til modell
 
 Vi regner leddene som vektløse og legger vekten i de frie punktene.
-Endepunktene ligger fast på samme høyde. Dette er modellen vi undersøker:
+Endepunktene er festet i samme høyde. Dette er modellen vi undersøker:
 
 | Navn | Betydning i modellen |
 |:--|:--|
@@ -230,18 +230,18 @@ høyde; negativ energi er derfor helt i orden. Energi måles i J = N·m.
 
 På siden lastes NumPy, SciPy og figurhjelperne automatisk. Derivatene er
 også ferdige: `grad_energy(z)` gir $g=\nabla E$, og `jac_links(z)` gir
-$J$, matrisen med radene $\nabla h_i^T$. Du skal bruke dem, ikke derivere dem.
+$J$, matrisen med radene $\nabla h_i^T$. Du skal bruke dem, ikke utlede dem selv.
 
 Fullfør først funksjonen `h` i del 1 og senere `F_mu` i del 3. De andre
-cellene kan kjøres i vilkårlig rekkefølge når disse studentfunksjonene er
-definert; hver celle finner sine egne løsningsdata.
+cellene kan kjøres i vilkårlig rekkefølge når du har
+definert disse to funksjonene; hver celle regner selv ut løsningene den trenger.
 
 ::: {.details title="Egen notebook: last ned oppsettet og kom i gang"}
 
 Last ned [project_week12_setup.py](../assets/project_week12_setup.py){download="project_week12_setup.py"}
 til samme mappe som notebooken. Kjør `from project_week12_setup import *`,
 og kopier prosjektcellene i rekkefølge. Du trenger NumPy, SciPy og Matplotlib.
-Kontroller med **Restart / Run all**, og ta med oppsettsfilen ved levering.
+Kontroller at alt virker med **Restart / Run all**, og ta med oppsettsfilen ved levering.
 
 :::
 
@@ -250,8 +250,8 @@ Kontroller med **Restart / Run all**, og ta med oppsettsfilen ved levering.
 **Her begynner prosjektarbeidet.** Vi bruker den ferdige modellen til å
 beregne, kontrollere og tolke en løsning. Du skal ikke utlede fysikken.
 
-Vi begynner med to ledd på 2.5 m og ett fritt punkt. De eneste tillatte
-punktene er $(2,-1.5)$ og $(2,1.5)$. Vi bruker fortegnsavtalen
+Som en liten oppvarming begynner vi med to ledd på 2.5 m og ett fritt punkt.
+Da er det bare to tillatte plasseringer av punktet: $(2,-1.5)$ og $(2,1.5)$. Vi bruker fortegnsavtalen
 
 $$L=E+\lambda^Th,\qquad g+J^T\lambda=0.$$
 
@@ -267,21 +267,22 @@ for point in [np.array([2., -1.5]), np.array([2., 1.5])]:
     print('punkt:', point, ' E:', energy(point), ' lambda:', lam.round(3))
 ```
 
-**Les svaret:** Hvilket punkt minimerer energien? Begge oppfyller
-Lagranges likning; er den likningen alene nok til å velge minimumet?
+**Les svaret:** Hvilket punkt minimerer energien? Begge punktene oppfyller
+Lagranges likning; er likningen alene nok til å avgjøre hvilket som er minimum?
 
-Med vår avtale betyr positiv $\lambda_i$ at leddet trekker. På punkt
-$p_j$ virker tyngden $(0,-w)$, venstre ledd med $-\lambda_ju_j$ og høyre
-ledd med $+\lambda_{j+1}u_{j+1}$. Summen er null i likevekt. Negativ
-multiplikator ville bety trykk, ikke trekk.
+Med vår fortegnsavtale betyr positiv $\lambda_i$ at leddet trekker. På punktet
+$p_j$ virker tyngden $(0,-w)$, kraften $-\lambda_ju_j$ fra venstre ledd og kraften
+$+\lambda_{j+1}u_{j+1}$ fra høyre ledd. Summen er null i likevekt. En negativ
+multiplikator ville bety trykk, ikke strekk.
 
 ### Fra punkter til en kravvektor
 
-Resten av prosjektet har **ti ledd på 0.5 m** mellom $(0,0)$ og $(4,0)$.
-Det gir ni frie punkter og 18 ukjente koordinater. SLSQP løser problemet;
-du forteller den hva «fast lengde» betyr.
+I resten av prosjektet har kjettingen **ti ledd på 0.5 m** mellom $(0,0)$ og $(4,0)$.
+Det gir ni frie punkter og 18 ukjente koordinater. SLSQP finner løsningen;
+din jobb er å fortelle løseren hva «fast lengde» betyr.
 
-**Kodespor 1.** `joints(z)` gir alle punktene som rader i en matrise.
+**Kodespor 1.** Her skriver du kravfunksjonen: for hvert ledd skal den gi
+faktisk lengde minus ønsket lengde. `joints(z)` gir alle punktene som rader i en matrise.
 Fullfør `h` med `np.diff(P, axis=0)` og `np.linalg.norm(..., axis=1)`.
 `lengths` kan være ett tall eller én lengde for hvert ledd.
 
@@ -300,7 +301,7 @@ print('forventet: [ 0.1403 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1  0.1403]')
 form må $J$ og $J^T$ ha for at $g+J^T\lambda$ skal være en vektor med
 18 komponenter? Forklar hva én komponent av `h` måler.
 
-Når kontrollen stemmer, finner den ferdige løseren formen. Cellen skriver
+Når utskriften din stemmer med den forventede, kan den ferdige løseren finne formen. Cellen skriver
 ut både løsermeldingen og størrelsen på kravbruddene, og tegner løsningen.
 
 ```{pyodide-python}
@@ -315,18 +316,18 @@ plot_chain(flat_start(), res.x, labels=['start', 'SLSQP'])
 
 **Vurder løsningen:** Er den tillatt innenfor den nøyaktigheten du ser?
 Passer formen med symmetrien i dataene? Bruk utskriften i svaret.
-Et vellykket stopp og små kravbrudd er nyttige kontroller; de er ikke
-alene et bevis for et globalt minimum i et ikke-lineært problem.
+Et vellykket stopp og små kravbrudd er nyttige kontroller, men alene
+beviser de ikke at vi har et globalt minimum i et ikke-lineært problem.
 
 ## 2. Les multiplikatorene som krefter og priser
 
 Nå kjenner vi formen. For å finne $\lambda$ løser vi
 $J^T\lambda\approx-g$ med minste kvadrater fra [uke 4](uke4.qmd#uke4-mk).
-Samme framgangsmåte virker med begge SciPy-versjonene vi bruker, uavhengig
-av hvilke multiplikatorer selve SLSQP-utgaven rapporterer.
+Vi regner dem ut selv fordi denne framgangsmåten virker likt med begge
+SciPy-versjonene vi bruker, uansett hvilke multiplikatorer SLSQP selv rapporterer.
 
 Cellen finner formen på nytt og skriver ut både $\lambda$ og residualen
-i stasjonaritetslikningen. Rad 0 i Python er ledd 1 i matematikken.
+i stasjonaritetslikningen. Indeks 0 i Python er ledd 1 i matematikken.
 
 ```{pyodide-python}
 #| label: project-week12-multipliers
@@ -350,11 +351,11 @@ Kraftbalansen kan også skrives som en kort vektorlikning:
 
 $$\begin{bmatrix}0\\w\end{bmatrix}+\lambda_ju_j-\lambda_{j+1}u_{j+1}=0.$$
 
-Skriv dens $x$- og $y$-komponent. Dette er bare å legge sammen vektorer;
+Skriv opp $x$- og $y$-komponenten av denne likningen. Du trenger bare å legge sammen vektorer;
 derivatene er allerede gitt. Hvilken komponent skal være lik fra ledd
 til ledd, og hvilken differanse skal være lik vekten $w$?
 
-**Kodespor 2.** Fullfør uttrykket for den vannrette delen. Cellen
+**Kodespor 2.** Fullfør uttrykket for den vannrette kraftdelen. Cellen
 sammenligner komponentene med stasjonaritetskontrollen over.
 
 ```{pyodide-python}
@@ -370,22 +371,22 @@ print('loddrett del i endeleddene:', (lam*U[:, 1])[[0, -1]].round(4))
 ```
 
 **Konkluder:** Støtter tallene komponentlikningene dine? Bruk også de to
-endeleddene til å kontrollere at de til sammen bærer vekten av ni punkter.
-Det er samme stasjonaritetslikning som før, nå med en tolkning av hver del.
+endeleddene til å kontrollere at de til sammen bærer vekten av de ni punktene.
+Dette er den samme stasjonaritetslikningen som før, men nå tolker vi hver del.
 
 ### Litt mer lengde: en lokal pris
 
-En multiplikator gir også følsomheten til optimal energi. For en regulær,
-stabil lokal løsning er den ferdige formelen
+En multiplikator forteller også hvor følsom den optimale energien er for en
+lengdeendring. For en regulær, stabil lokal løsning gjelder den oppgitte formelen
 
 $$\frac{dE_*}{d\ell_i}=-\lambda_i.$$
 
-Pluss litt lengde gir altså omtrent $-\lambda_i$ ganger lengdeendringen
-i energi. Fortegnet følger av $h_i=\text{lengde}-\ell_i$ og avtalen for $L$.
+Gjør vi leddet litt lengre, endres energien altså med omtrent $-\lambda_i$
+ganger lengdeendringen. Fortegnet følger av $h_i=\text{lengde}-\ell_i$ og avtalen for $L$.
 Som i [prosjekt 11](project_week11.qmd) er dette en **lokal** pris.
 
-Cellen gjør ledd 5 litt lengre og kontrollerer formelen ved to små
-endringer. Den starter den nye løsningen i den gamle formen.
+Cellen gjør ledd 5 litt lengre og kontrollerer formelen med to små
+endringer. Den nye løsningen startes fra den gamle formen.
 
 ```{pyodide-python}
 #| label: project-week12-price
@@ -406,7 +407,7 @@ og hvorfor kan vi ikke uten videre bruke samme pris for en stor endring?
 
 ## 3. Bytt de stive leddene med fjærer
 
-Et annet valg er å tillate litt lengdefeil og straffe den. Da kan BFGS
+I stedet for faste lengder kan vi tillate litt lengdefeil og straffe den. Da kan BFGS
 løse et problem uten eksplisitte krav. Med stivhet $\mu>0$ bruker vi
 
 $$F_\mu(z)=E(z)+\frac\mu2\lVert h(z)\rVert_2^2.$$
@@ -415,9 +416,9 @@ Her er $\lVert h\rVert_2^2=\sum_i h_i^2$. Gradienten er ferdig:
 
 $$\nabla F_\mu=g+\mu J^Th.$$
 
-Sammenlign denne med $g+J^T\lambda=0$. **Hvilken vektor spiller rollen
+Sammenlign gradienten med $g+J^T\lambda=0$. **Hvilken vektor spiller rollen
 til $\lambda$ når straffeproblemet er nær en stasjonær løsning?**
-For et ledd er dette fjærkraft = stivhet ganger forlengelse.
+For hvert ledd er dette regelen fjærkraft = stivhet ganger forlengelse.
 
 **Kodespor 3.** Skriv straffefunksjonen på én linje. Den ferdige
 `solve_penalty` bruker gradientformelen over. Hver kjøring har et tak på
@@ -446,21 +447,22 @@ print('sammenlign mu*h_1 med lambda_1 =', round(lam[0], 4))
 **Les tabellen før du konkluderer:**
 
 1. Hvordan endres største lengdefeil og avstanden til SLSQP-formen når
-   $\mu$ øker? Sammenlign faktorer mellom radene.
+   $\mu$ øker? Med hvilken faktor endres tallene fra rad til rad?
 2. Støtter siste kolonne tolkningen din av multiplikatoren?
-3. Blir større $\mu$ også enklere for BFGS? Bruk iterasjoner og meldinger.
+3. Blir problemet også enklere for BFGS når $\mu$ blir større? Bruk iterasjoner og meldinger.
    Skill mellom «løseren nådde sin stoppregel» og «formen er nær referansen».
 
 ### Hva gjør problemet vanskelig?
 
-En ferdig Hessianformel har et ledd $\mu J^TJ$ pluss et korreksjonsledd
+For å se hvorfor stor stivhet gjør problemet vanskelig, ser vi på Hessianen.
+Den ferdige formelen har et ledd $\mu J^TJ$ pluss et korreksjonsledd,
 som `penalty_hessian` også tar med. For en vektor $v$ er
-$v^T(\mu J^TJ)v=\mu\lVert Jv\rVert_2^2$. Dermed straffes retninger som
-endrer lengdene sterkt, mens dette leddet er null for $v$ i nullrommet til $J$.
+$v^T(\mu J^TJ)v=\mu\lVert Jv\rVert_2^2$. Dermed får retninger som
+endrer lengdene, en stor straff, mens dette leddet er null for $v$ i nullrommet til $J$.
 
 Cellen bruker en god start for å undersøke krumningen ved stor $\mu$.
-Den skriver ut rang, nullromsdimensjon og egenverdier; dette er en annen
-kjøring enn sammenligningen fra den flate starten over.
+Den skriver ut rang, nullromsdimensjon og egenverdier; merk at dette er en annen
+kjøring enn sammenligningen over, som startet i den flate formen.
 
 ```{pyodide-python}
 #| label: project-week12-hessian
@@ -479,7 +481,7 @@ print('success:', result.success, ' melding:', result.message)
 
 **Koble til lineær algebra:** Hvor mange retninger ligger i nullrommet?
 Hvor mange egenverdier er store sammenlignet med de minste? Forklar
-hvorfor $\mu J^TJ$ skiller mellom disse retningene, og bruk
+hvorfor $\mu J^TJ$ skiller mellom retningene i nullrommet og de andre, og bruk
 [uke 9](uke9.qmd#uke9-stabilitet) til å tolke kondisjonstallet.
 
 ::: {#project-week12-too-stiff}
@@ -488,20 +490,20 @@ hvorfor $\mu J^TJ$ skiller mellom disse retningene, og bruk
 **Ta med videre:** Et større straffeledd kan gi mindre kravbrudd samtidig
 som problemet blir vanskeligere å løse. Tallene avhenger også av start,
 stoppregel og avrunding. En løsermelding må derfor leses sammen med
-kravfeilen og de andre kontrollene.
+kravbruddene og de andre kontrollene.
 
 ## 4. Din undersøkelse: en lampe på kjettingen
 
-Nå legger du til én endring: en lampe på 5 N i leddpunkt 3. Den vekten
-blir $w_3=6$ N, mens de andre fortsatt er 1 N. Kravene endres ikke, men
-energien blir $E=\sum_jw_jy_j$ og gradienten får de nye vektene på
-$y$-plassene. Disse formlene er allerede bygget inn i oppsettet.
+Nå legger du til én endring: en lampe på 5 N i leddpunkt 3. Vekten i dette
+punktet blir da $w_3=6$ N, mens de andre fortsatt er 1 N. Kravene endres ikke, men
+energien blir $E=\sum_jw_jy_j$ og gradienten får de nye vektene i
+$y$-komponentene. Disse formlene er allerede bygget inn i oppsettet.
 
 **Forutsi:** Hvor blir formen mest endret? Blir den vannrette kraftdelen
 fortsatt lik fra ledd til ledd? Begrunn med komponentlikningene i del 2.
 
 Cellen løser den endrede modellen og skriver ut kontrollene. Den siste
-kolonnen viser hver loddrett differanse og vekten den skal sammenlignes med.
+utskriften viser hver loddrett differanse ved siden av vekten den skal sammenlignes med.
 
 ```{pyodide-python}
 #| label: project-week12-lamp
@@ -528,12 +530,12 @@ med lampen er selve målfunksjonen endret.
 
 Dette er repetisjon, ikke en ekstra innleveringsdel.
 
-1. Hva er valg, mål og krav, og hvilke dimensjoner har $z$, $h$, $J$ og $\lambda$?
+1. Hva er valgene, målet og kravene i kjettingproblemet, og hvilke dimensjoner har $z$, $h$, $J$ og $\lambda$?
 2. Hvordan finner vi $\lambda$ med minste kvadrater, og hva kontrollerer residualen?
 3. Hvordan blir $g+J^T\lambda=0$ til kraftbalanse komponent for komponent?
 4. Hva betyr fortegnet i den lokale prisformelen $dE_*/d\ell_i=-\lambda_i$?
 5. Hva må vi sammenligne for å vurdere en straffeløsning?
-6. Hvordan hjelper rang, nullrom og egenverdier oss å forklare stor stivhet?
+6. Hvordan hjelper rang, nullrom og egenverdier oss med å forklare problemene ved stor stivhet?
 7. Hvorfor bør en `success`-verdi aldri være hele konklusjonen?
 
 ## Det du leverer
@@ -541,8 +543,8 @@ Dette er repetisjon, ikke en ekstra innleveringsdel.
 Lever én kjørbar notebook eller Quarto-side med de tre fullførte
 kodeuttrykkene og de kjørte cellene. Ta med:
 
-- dimensjonene og den korte komponentoversettelsen fra del 1–2;
-- multiplikatortabellen, lengdeendringen og straffetabellen, med korte
+- dimensjonene og den korte oversettelsen til komponentlikninger fra del 1–2;
+- multiplikatortabellen, forsøket med lengdeendringen og straffetabellen, med korte
   konklusjoner som peker på tall i din egen utskrift;
 - figuren og kontrollene for lampen, med forutsigelse og konklusjon.
 

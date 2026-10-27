@@ -28,8 +28,8 @@ Denne uken bygger vi tre ideer, én om gangen:
    stiger. **Hessianmatrisen** sier hvordan den krummer, i alle retninger
    på en gang. Med den skiller vi et minimum fra et sadelpunkt (8.3).
 3. **Er kandidaten vi fant, den beste?** Et lokalt søk ser bare området
-   rundt seg. For **konvekse** funksjoner er det nok, og Hessianen er
-   testen (8.4).
+   rundt seg. For **konvekse** funksjoner er et lokalt søk nok, og
+   Hessianen er testen på konveksitet (8.4).
 
 - **Forkunnskaper:** Gradient og Hessian har du møtt i tidligere
   matematikkemner. Vi bygger dem likevel opp på nytt i 8.3, fordi resten av
@@ -94,7 +94,7 @@ eksempel oppvarming eller lading av et batteri, beskrives ofte med modellen
 $$m(t)=a\,(1-e^{-bt}).$$
 
 - **Nivå:** Tallet $a$ er nivået kurven flater ut mot.
-- **Fart:** $b$ sier hvor fort den gjør det.
+- **Fart:** $b$ sier hvor fort kurven flater ut.
 
 Vi velger $a$ og $b$ slik at kvadratsummen
 
@@ -117,7 +117,7 @@ formel for svaret. Vi lar i stedet SciPys funksjon `minimize` søke:
 Foreløpig bruker vi den som et ferdig verktøy; hvordan slike søk virker,
 er temaet i uke 9 og 10.
 
-For å gjøre det spennende gir vi søket målinger som ligger nøyaktig på
+For å sette søket på prøve gir vi det målinger som ligger nøyaktig på
 linjen $y=0.5\,t$. Målet er å finne ut om tre søk fra ulike starter blir
 enige, og om programmet selv kan si fra når svaret ikke er til å stole på.
 
@@ -150,8 +150,8 @@ for start in ([1., 1.], [5., .1], [2., .5]):
 
 - **Ulike svar:** Søkene blir ikke enige om $a$ og $b$, og ingen av dem
   melder suksess (`success = False`).
-- **Sluttpunktene:** De ender med svært store $a$ (flere hundre), svært små
-  $b$ (omtrent 0.002) og ulike sluttpunkter.
+- **Sluttpunktene:** De ender i ulike punkter, alle med svært store $a$ (flere
+  hundre) og svært små $b$ (omtrent 0.002).
 - **Felles mønster:** Produktet $ab$ er omtrent 0.50 hver gang, og $S$ er
   nesten null.
 
@@ -194,7 +194,7 @@ $$d''(t)=m''(t)=-ab^2e^{-bt},$$
 
 som aldri er null. Nå teller vi mulige nullpunkter:
 
-1. $d'$ er enten strengt voksende eller strengt avtagende, så $d'$ har høyst
+1. Derfor er $d'$ enten strengt voksende eller strengt avtagende, så $d'$ har høyst
    ett nullpunkt.
 2. Mellom to nullpunkter av $d$ har $d$ et toppunkt eller et bunnpunkt, og
    der er $d'=0$. Hadde $d$ tre nullpunkter, ville $d'$ altså hatt to, ett
@@ -208,7 +208,7 @@ $S(a,b)>0$ i alle tillatte punkter.
 
 :::
 
-Hvor små kan verdiene bli? Cellen regner ut $S$ langs kurven $a=0.5/b$
+Hvor liten kan kvadratsummen bli? Cellen regner ut $S$ langs kurven $a=0.5/b$
 for stadig mindre $b$, slik at vi ser i tall hvor fort $S$ synker.
 
 ```{pyodide-python}
@@ -233,8 +233,8 @@ treffer.
   $D$ hvis $f(z)\ge L$ for alle $z\in D$. For $S$ er både $-1$ og $0$ nedre
   grenser.
 - **Infimum:** Den **største** nedre grensen kalles **infimum** og skrives
-  $\inf_{z\in D}f(z)$. For $S$ er infimum $0$: ingen større tall er en nedre
-  grense, for $S$ kommer under ethvert positivt tall.
+  $\inf_{z\in D}f(z)$. For $S$ er infimum $0$: ikke noe større tall er en nedre
+  grense, fordi $S$ får verdier under ethvert positivt tall.
 - **Et tall, ikke nødvendigvis en verdi:** Infimum er et tall; det trenger
   ikke være verdien i noe punkt.
 - **Minimum:** Et **minimum** er et infimum som **oppnås**: det finnes et
@@ -338,13 +338,13 @@ I 8.1 så vi to måter en minimerende følge kan mislykkes på:
 2. **Grensen mangler.** Midten av figuren: $x_k=1/k$ nærmer seg $0$, men
    $0$ er ikke med i $(0,1]$.
 
-Eksperiment 1 viste begge på en gang. Hver av dem gir et krav til området:
+Eksperiment 1 viste begge på en gang. Hver av de to måtene gir et krav til området:
 
 - En mengde er **begrenset** hvis det finnes et tall $R$ slik at alle
   punktene ligger innenfor avstand $R$ fra origo. Da kan ingen følge rømme.
 - En mengde er **lukket** hvis den inneholder grensen til hver konvergent
-  følge av punkter fra mengden. Da kan ingen grense mangle. Typisk: alle
-  randpunktene er med.
+  følge av punkter fra mengden. Da kan ingen grense mangle. Typisk betyr det
+  at alle randpunktene er med.
 - En mengde i $\mathbb R^n$ som er både lukket og begrenset, kalles
   **kompakt**.
 
@@ -410,7 +410,7 @@ som tar tusen år, er ikke interessant.
 - **Hvorfor minimum finnes:** Området er da et lukket rektangel, altså
   kompakt, og $S$ er kontinuerlig.
 - **Verktøyet:** Cellen bruker en variant av `minimize` (metoden
-  `L-BFGS-B`) som holder seg innenfor grensene. Vi bruker den ferdig;
+  `L-BFGS-B`) som holder seg innenfor grensene. Vi bruker den som et ferdig verktøy;
   hvordan et søk tar hensyn til grenser, kommer i uke 11 og 12.
 
 Målet er å se om ekstremalverdisetningen holder det den lover, og hvor
@@ -461,7 +461,7 @@ Q(c)&=\sum_i(y_i-c\,t_i)^2
 \end{aligned}
 $$
 
-Dette er en parabel i $c$ med positiv leddkoeffisient $t^Tt$ (når
+Dette er en parabel i $c$ med positiv andregradskoeffisient $t^Tt$ (når
 $t\ne0$). Den deriverte $-2\,t^Ty+2c\,t^Tt$ er null for
 
 $$c_*=\frac{t^Ty}{t^Tt},\qquad
@@ -470,8 +470,8 @@ Q(c_*)=\|y\|^2-2\frac{(t^Ty)^2}{t^Tt}+\frac{(t^Ty)^2}{t^Tt}
 
 En parabel som åpner oppover, har alltid en bunn. Minimum finnes.
 
-**Mange koeffisienter.** Med modellverdier $Ac$ er alle mulige
-modellverdier kolonnerommet til $A$, et underrom.
+**Mange koeffisienter.** Når modellverdiene er $Ac$, utgjør alle mulige
+modellverdier kolonnerommet til $A$, som er et underrom.
 
 1. **Avgrens søket:** Vi trenger bare å lete blant modellverdiene som ligger
    minst like nær dataene som nullvektoren.
@@ -479,7 +479,7 @@ modellverdier kolonnerommet til $A$, et underrom.
    avstanden er kontinuerlig, så ekstremalverdisetningen gir et nærmeste
    punkt. Lineær minste kvadrater har derfor alltid en beste tilpasning,
    også når kolonnene er avhengige.
-3. **Skill kurve fra koeffisienter:** Den beste kurven er dessuten én:
+3. **Skill kurve fra koeffisienter:** Den beste kurven er dessuten entydig:
    ekstremalverdisetningen sier bare at et nærmeste punkt finnes, men fra
    [uke 4](uke4.qmd#uke4-mk) vet vi at det nærmeste punktet er projeksjonen
    av dataene på kolonnerommet, og den er entydig.
@@ -492,7 +492,7 @@ underrom, og den trenger ikke være lukket. I eksperiment 1 nærmet kurvene
 seg en rett linje som ikke selv er en modellkurve.
 
 **Hva med ekte målinger?** Målingene i eksperiment 1 lå nøyaktig på en
-linje, og det var derfor modellen tapte. Ekte målinger har støy, og da
+linje, og det var derfor minimum manglet. Ekte målinger har støy, og da
 ligger de ikke på noen linje. Kanskje finnes en beste tilpasning likevel?
 
 Vi trenger en måte å se det på uten å stole på et søk. For en fast $b$ er
@@ -577,7 +577,7 @@ for seed in range(6):
 - **Støy nr. 0 og 4:** Den beste negative $b$ havner helt inntil $0$, og
   differansen er positiv: der ligger den beste tilpasningen på siden $b>0$.
 
-Det tillatte området er altså en del av problemet.
+Valget av tillatt område er altså en del av problemet: det avgjør om en beste tilpasning finnes.
 
 :::
 
@@ -585,7 +585,7 @@ Det tillatte området er altså en del av problemet.
 
 - **Programmet** kan ikke se om minimum mangler; det lager bare en følge
   av stadig bedre punkter.
-- **Matematikken** må avgjøre om følgen har en grense: kompakthet, eller en
+- **Matematikken** må avgjøre om minimum finnes, med kompakthet eller med en
   direkte sammenligning som $S>0=\inf S$.
 
 **Øv på dette:** [lukket, begrenset, kompakt](#uke8-oppg-kompakt),
@@ -635,7 +635,7 @@ Et punkt der $\nabla f=0$, kalles **stasjonært**. Vi løser
 $3x^2-3y=0$ og $3y^2-3x=0$:
 
 - Den første likningen gir $y=x^2$.
-- Satt inn i den andre: $x^4-x=0$, altså $x\,(x^3-1)=0$, så $x=0$ eller
+- Setter vi det inn i den andre, får vi $x^4-x=0$, altså $x\,(x^3-1)=0$, så $x=0$ eller
   $x=1$.
 - Med $y=x^2$ får vi punktene $(0,0)$ og $(1,1)$.
 
@@ -643,8 +643,8 @@ Funksjonsverdiene er $f(0,0)=0$ og $f(1,1)=1+1-3=-1$.
 
 - **Hvorfor gradient null?** Et lokalt minimum **inne i** området kan ikke
   ha en retning som går nedover. Derfor leter vi etter $\nabla f=0$.
-- **Hva det lover:** Det er en **nødvendig** betingelse, ikke en
-  tilstrekkelig.
+- **Hva det lover:** Betingelsen er **nødvendig**, men ikke
+  tilstrekkelig: et stasjonært punkt trenger ikke være et minimum.
 - **På randen:** Betingelsen gjelder ikke på randen: i eksperiment 2 lå
   minimum på randen, og der var gradienten ikke null.
 
@@ -665,7 +665,7 @@ tillatt. I et indre lokalt minimum kan ingen retning gå nedover.
 
 ### Hessianmatrisen, ledd for ledd
 
-**Hessianmatrisen** $H$ samler de fire andre partiellderiverte. Vi
+**Hessianmatrisen** $H$ samler de fire andreordens partiellderiverte. Vi
 deriverer $f_x=3x^2-3y$ og $f_y=3y^2-3x$ én gang til:
 
 | | derivert med hensyn på $x$ | derivert med hensyn på $y$ |
@@ -685,7 +685,7 @@ H(1,1)=\begin{bmatrix}6&-3\\-3&6\end{bmatrix}.$$
 
 ### Krumning langs en linje
 
-Nå lager vi en funksjon av én variabel. Velg et punkt $z=(x_0,y_0)$ og en
+For å bruke det vi kan fra én variabel, lager vi nå en funksjon av én variabel. Velg et punkt $z=(x_0,y_0)$ og en
 retning $p=(p_1,p_2)$, og gå langs linjen $z+sp$:
 
 $$\varphi(s)=f(z+sp)=f(x_0+sp_1,\ y_0+sp_2).$$
@@ -704,8 +704,8 @@ ganget med to av tallene $p_1,p_2$:
 
 $$\varphi''(s)=f_{xx}p_1^2+2f_{xy}\,p_1p_2+f_{yy}p_2^2=p^T\,H(z+sp)\,p.$$
 
-Det siste likhetstegnet ser du ved å gange ut $p^THp$ med matrisen $H$ fra
-over. Håndeksempelet under kontrollerer formelen på et konkret polynom.
+Det siste likhetstegnet ser du ved å gange ut $p^THp$ med matrisen $H$
+ovenfor. Håndeksempelet under kontrollerer formelen på et konkret polynom.
 
 ::: {.reading-step title="Gå i dybden: den andrederiverte langs linjen, ledd for ledd"}
 
@@ -756,7 +756,7 @@ helningen og krumningen langs linjen?
 
 Til sammenligning er de ferdig beregnede linjederiverte
 $\varphi'(0)=6$ og $\varphi''(0)=12$. De stemmer med de to
-matriseproduktene; du trenger ikke utvide og derivere polynomet for å finne dem.
+matriseproduktene; du trenger ikke gange ut og derivere polynomet for å finne dem.
 
 **Dette tar vi med oss.** $\varphi'(0)=\nabla f(z)^Tp$ og
 $\varphi''(0)=p^TH(z)p$. Vi trenger ikke gange ut $\varphi$ hver gang; to
@@ -766,7 +766,7 @@ små matriseprodukter gir det samme.
 
 ### Den kvadratiske modellen
 
-For små $s$ gir Taylor-tilnærmingen for $\varphi$ ved $s=0$
+Nå setter vi helningen og krumningen sammen til en tilnærming av funksjonen. For små $s$ gir Taylor-tilnærmingen for $\varphi$ ved $s=0$
 $\varphi(s)\approx\varphi(0)+\varphi'(0)\,s+\tfrac12\varphi''(0)\,s^2$.
 Setter vi inn det vi nettopp fant, får vi den **kvadratiske modellen**
 
@@ -887,6 +887,7 @@ $p^THp>0$ for alle $p\ne0$, og $(1,1)$ er et **strengt lokalt minimum**.
 
 ### Egenverdiene gir fortegnet i alle retninger
 
+Nå ser vi hvordan egenverdiene til Hessianen avgjør fortegnet i alle retninger samtidig.
 Fra [uke 5](uke5.qmd#uke5-basis) vet vi at en symmetrisk matrise har
 ortogonale egenvektorer $v_1,v_2$ med egenverdier $\lambda_1,\lambda_2$.
 
@@ -1004,7 +1005,7 @@ For $H(1,1)$ gir det $27=3\cdot9$ og $12=3+9$.
 - **Flat retning:** Hvis en egenverdi er null og de andre har samme
   fortegn, er $p^THp=0$ i egenretningen.
 - **Hva modellen mangler:** Den kvadratiske modellen er da flat i den
-  retningen, og leddene av høyere orden bestemmer.
+  retningen, og leddene av høyere orden avgjør typen.
 
 Tre funksjoner med gradient null og samme Hessian
 $H(0,0)=\begin{bmatrix}2&0\\0&0\end{bmatrix}$ i origo viser at alt kan skje:
@@ -1060,13 +1061,13 @@ er et lokalt minimum. Det gjenstår et tredje spørsmål.
 
 - **Globalt minimumspunkt:** Et tillatt punkt $z_*$ er et **globalt
   minimumspunkt** hvis $f(z_*)\le f(z)$ for alle tillatte $z$.
-- **Lokalt minimumspunkt:** Det er et **lokalt minimumspunkt** hvis
+- **Lokalt minimumspunkt:** Punktet er et **lokalt minimumspunkt** hvis
   ulikheten gjelder for alle tillatte $z$ tilstrekkelig nær $z_*$.
 - **Lokale verktøy:** Hessianen i 8.3 er en lokal test: den ser bare et lite
   område rundt punktet. Et søk som `minimize` er også lokalt; det går
   nedover fra der det starter.
 
-Funksjonen $x^3+y^3-3xy$ fra 8.3 viser at faren er reell: $(1,1)$ er et
+Funksjonen $x^3+y^3-3xy$ fra 8.3 viser at et lokalt minimum ikke trenger å være globalt: $(1,1)$ er et
 lokalt minimum, men langs linjen $y=x$ synker $f$ mot $-\infty$ når
 $x\to-\infty$.
 
@@ -1212,15 +1213,15 @@ Funksjonen er **strengt konveks** hvis ulikheten er streng når $x\ne z$ og
 $0<s<1$: grafen ligger da strengt under korden.
 
 - **Moteksempel:** **Ett brudd er nok** til å vise at en funksjon ikke er
-  konveks, som midtpunktet for svingningen.
+  konveks, slik midtpunktet for svingningen viste.
 - **Begrunnelse for konveksitet:** Mange vellykkede kontroller beviser
   derimot ikke konveksitet; til det trenger vi et argument som gjelder alle
   punkter. Det gir Hessianen nedenfor.
 
 ### Konvekse mengder
 
-Definisjonen krever at linjestykket mellom to tillatte punkter selv er
-tillatt. En mengde $D$ er **konveks** hvis linjestykket mellom to punkter i
+Definisjonen av en konveks funksjon forutsetter at linjestykket mellom to
+tillatte punkter selv er tillatt. En mengde $D$ er **konveks** hvis linjestykket mellom to punkter i
 $D$ alltid ligger helt i $D$: $s\,x+(1-s)\,z\in D$ for alle $x,z\in D$ og
 $0\le s\le1$.
 
@@ -1384,11 +1385,11 @@ svingningen ble stående i eksperiment 3.
    bedre punkter vilkårlig nær $\hat x$, og det motsier at $\hat x$ er et
    lokalt minimum.
 
-Derfor finnes ingen slik $z$, og $\hat x$ er globalt.
+Derfor finnes ingen slik $z$, og $\hat x$ er et globalt minimum.
 
 :::
 
-Entydigheten ved streng konveksitet er én linje: hvis $x\ne z$ begge var
+Beviset for entydigheten ved streng konveksitet er bare én linje: hvis $x\ne z$ begge var
 minimumspunkter med verdi $m$, ville midtpunktet gi
 $f\bigl(\tfrac{x+z}2\bigr)<\tfrac12m+\tfrac12m=m$, som er umulig.
 
@@ -1428,10 +1429,10 @@ Testen for streng konveksitet går bare én vei:
 
 - **Eksempel:** $x^4$ er strengt konveks, selv om den andrederiverte
   $12x^2$ er null i $x=0$.
-- **Hva null ikke viser:** En null egenverdi viser altså ikke alene at
+- **Hva null ikke viser:** En egenverdi lik null viser altså ikke alene at
   funksjonen ikke er strengt konveks.
-- **Hva vi må finne:** Da må vi finne et linjestykke der funksjonen ikke
-  krummer, slik som i fordypningen om den flate dalen nedenfor.
+- **Hva vi må finne:** For å vise at funksjonen ikke er strengt konveks,
+  må vi finne et linjestykke der den ikke krummer, slik som i fordypningen om den flate dalen nedenfor.
 
 ::: {.callout-note title="Håndeksempel: en strengt konveks funksjon"}
 
@@ -1482,7 +1483,7 @@ Hvert ledd deriveres med kjerneregelen:
 $$\frac{\partial S}{\partial c_0}=-2\sum_i(b_i-c_0-c_1t_i),\qquad
 \frac{\partial S}{\partial c_1}=-2\sum_it_i\,(b_i-c_0-c_1t_i).$$
 
-Én gang til gir:
+Deriverer vi én gang til, får vi:
 
 - $S_{c_0c_0}=2\sum_i1=8$.
 - $S_{c_0c_1}=2\sum_it_i=4$.
@@ -1552,7 +1553,7 @@ $$
   er den andrederiverte $p^TAp$, som er positiv når $A$ er SPD. Derfor hadde
   skålen én bunn.
 
-**Hva skjer når nullrommet ikke er null?** Regningen over sier at
+**Hva skjer når nullrommet inneholder mer enn nullvektoren?** Regningen over sier at
 kvadratsummen er konveks, men bare strengt konveks når $Ap\ne0$ for alle
 $p\ne0$.
 
@@ -1606,8 +1607,8 @@ I [oppgaven om den flate dalen](#uke8-oppg-nullrom) i 8.5 finner du en slik
 retning selv.
 
 - **Pseudoinversen:** Pseudoinversen fra den valgfrie
-  [fanen 7.7](uke7.qmd#uke7-pseudoinvers) velger det korteste av
-  minimumspunktene.
+  [fanen 7.7](uke7.qmd#uke7-pseudoinvers) velger det av
+  minimumspunktene som har kortest lengde.
 - **Søket fra null:** Søket fra nullvektoren ender praktisk talt i samme
   punkt: alle gradientene $-2A^Tr$ står vinkelrett på nullrommet, så søket
   fra $0$ beveger seg nesten ikke langs det. Et lite avvik kommer fra at
@@ -1618,7 +1619,7 @@ retning selv.
 | Konveks | Alle lokale minimumspunkter er globale. |
 | Strengt konveks | I tillegg finnes det høyst ett minimumspunkt. |
 
-For kvadratsummer er forskjellen nullrommet.
+For kvadratsummer er det nullrommet som avgjør forskjellen.
 
 :::
 
@@ -1633,7 +1634,7 @@ $$f(x)\ge f(z)+\nabla f(z)^T(x-z)\qquad\text{for alle }x.$$
 
 - **Med konveksitet:** Hvis $\nabla f(z)=0$, sier ulikheten at
   $f(x)\ge f(z)$ for alle $x$. For en konveks funksjon er altså **gradient
-  null nok til å bevise globalt minimum**.
+  null nok til å bevise at punktet er et globalt minimum**.
 - **Uten konveksitet:** Det holder ikke: et punkt med gradient null kan
   være en dårlig dal eller et sadelpunkt, som origo i 8.3.
 
@@ -2017,7 +2018,7 @@ En retning $(0,4,d)$ som ikke endrer modellen: $d=$ _[-2]
 1. Hvorfor er kvadratsummen konveks, men ikke strengt konveks?
 2. Pseudoinversen ga minimumspunktet $(1.05,\,0.18,\,0.36)$. Kontroller at
    det står vinkelrett på retningen $(0,4,d)$ du fant.
-3. Hvorfor gjør det punktet til det korteste av minimumspunktene?
+3. Hvorfor betyr det at punktet har kortest lengde av alle minimumspunktene?
 
 ::: {#uke8-oppg-tangent}
 :::
@@ -2213,8 +2214,8 @@ assert np.isclose(midpoint_gap(lambda z: z @ z, np.array([0., 0.]), np.array([2.
 :::
 
 Denne delen repeterer stoff fra tidligere emner: partiellderiverte,
-gradienten, den retningsderiverte og kjerneregelen langs en linje. 8.3
-bygger på alt dette. Det er en stund siden du lærte det, så vi forventer
+gradienten, den retningsderiverte og kjerneregelen langs en linje. Avsnitt 8.3
+bygger på alt dette. Det er kanskje en stund siden du lærte det, så vi forventer
 ikke at regningen sitter friskt. Bruk spørsmålene som en rask selvtest:
 
 1. Kan du regne ut $f_x$ og $f_y$ for $f(x,y)=x^2y-y^3$?
@@ -2227,7 +2228,7 @@ Hvis svaret er ja på alle fire, kan du gå rett til oppgavene nederst.
 ### Partiellderiverte
 
 Den partiellderiverte $f_x$ er den vanlige deriverte med hensyn på $x$,
-der $y$ behandles som en konstant. Tilsvarende for $f_y$. For
+der $y$ behandles som en konstant. $f_y$ finner vi på tilsvarende måte. For
 $f(x,y)=x^2y+3y$:
 
 - $f_x$: leddet $x^2y$ er $y$ ganger $x^2$, med derivert $2xy$. Leddet
@@ -2297,7 +2298,7 @@ $f_x(2,1)=$ _[4], $f_y(2,1)=$ _[1]
 
 Bruk gradienten i $(2,1)$ fra forrige oppgave. Regn ut stigningen i
 retningen $p=(1,-2)$. Finn så tallet $d$ som gjør at retningen $(1,d)$ har
-stigning null, og stigningen i retningen $-\nabla f(2,1)$.
+stigning null, og regn til slutt ut stigningen i retningen $-\nabla f(2,1)$.
 
 ```{math-exercise}
 #| label: week8-support-directional

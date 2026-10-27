@@ -10,7 +10,7 @@ landet i samme time. Her bygger vi et lite kraftmarked og bruker
 
 ### Bakgrunn: slik leser vi energimodellen
 
-Dette er en kort orientering, ikke en egen oppgavedel. Du trenger ingen økonomi. Vi bruker **pris** om endringen i den laveste
+Dette er en kort orientering, ikke en egen oppgavedel. Du trenger ingen forkunnskaper i økonomi. Vi bruker **pris** om endringen i den laveste
 samlede kostnaden per MW ekstra forbruk. En produksjon på 1 MW i én time gir
 1 MWh energi. En **dualvariabel** er tallet løseren gir for denne lokale
 endringen, slik som ressursprisene i [uke 11](uke11.qmd#uke11-dual).
@@ -37,22 +37,22 @@ pristeorien på nytt.
 
 ### Oppsett og begreper
 
-På nettsiden er data, `one_zone`, `two_zones` og figurhjelpere klare.
+På nettsiden er dataene, `one_zone`, `two_zones` og hjelpefunksjonene for figurer allerede klare.
 Studentfunksjonene `read_market` og `make_water_row` må du kjøre igjen
-etter at siden lastes på nytt. Hver forsøkscelle kan ellers kjøres med
-oppsettet uten at tidligere forsøksceller er kjørt.
+hver gang siden lastes inn på nytt. Ellers kan hver forsøkscelle kjøres alene
+med oppsettet, uten at tidligere forsøksceller er kjørt.
 
 | Les i resultatet | Betydning |
 |:--|:--|
 | `res.status`, `res.success` | Sjekk utfallet først: 0 er vellykket, 2 betyr umulige krav. |
 | `res.x`, `res.fun` | Produksjonsplan og laveste samlede kostnad. |
-| `res.eqlin.marginals` | Lokal kostnadsendring per ekstra enhet på likningshøyresiden. |
+| `res.eqlin.marginals` | Lokal kostnadsendring per ekstra enhet på høyresiden av likningene. |
 | `res.upper.residual` | Ledig kapasitet: øvre grense minus produksjon. |
 | `-res.upper.marginals` | Verdien av litt mer kapasitet. |
 | `-res.ineqlin.marginals` | Verdien av litt mer på en øvre ressursgrense. |
 
 En grense med null slakk er **aktiv**. En grense med ledig kapasitet har
-verdi null. En aktiv grense kan også ha verdi null. Marginalene er lokale:
+alltid verdi null. Men også en aktiv grense kan ha verdi null. Marginalene er lokale:
 ved større endringer må du løse modellen igjen
 ([uke 11.4](uke11.qmd#uke11-sensitivitet)).
 
@@ -78,8 +78,8 @@ løserresultater og egne sammenligninger.
 ## 1. Ett prisområde: les markedet
 
 Først har vi ett område, én time og fire kraftverk. Markedet skal dekke
-forbruket så billig som mulig. Hvert kraftverk oppgir en kostnad og hvor
-mye det kan levere, **kapasiteten**.
+forbruket så billig som mulig. Hvert kraftverk oppgir en kostnad per MWh og hvor
+mye det kan levere, altså **kapasiteten**.
 
 | Kraftverk | Kostnad $c_i$ (kr/MWh) | Kapasitet $k_i$ (MW) |
 |:--|--:|--:|
@@ -102,7 +102,7 @@ Dette er samme rad-for-rad-tenkning som i [uke 3](uke3.qmd).
 
 Figuren ordner kraftverkene fra billigst til dyrest. Bredden er kapasitet,
 og den røde linjen viser forbruket. Forutsi hvilke kraftverk som må brukes
-ved `D=90`. Kjør så figuren; du trenger ingen full håndtabell.
+ved `D=90`. Kjør så cellen; du trenger ikke lage en full tabell for hånd.
 
 ```{pyodide-python}
 #| label: project11-merit-order
@@ -110,12 +110,12 @@ show_merit_order(cost, capacity, D=90)
 ```
 
 Et kraftverk som kan skrus litt opp eller ned i den beste planen, er
-**marginalt**. Det ligger mellom null og full kapasitet. Nå sammenligner du
-prisen med både dette kraftverkets kostnad og gjennomsnittskostnaden.
+**marginalt**. Det produserer altså mer enn null, men mindre enn full kapasitet. Nå sammenligner du
+prisen med både det marginale kraftverkets kostnad og gjennomsnittskostnaden.
 
 Cellen viser modellen som sendes til `linprog` og skriver ut løsningen.
-Bytt `D` mellom 60, 90 og 130; noter én linje med produksjon, pris og
-gjennomsnitt for hvert forbruk.
+Kjør cellen med `D` lik 60, 90 og 130 etter tur, og noter én linje med
+produksjon, pris og gjennomsnittskostnad for hvert forbruk.
 
 ```{pyodide-python}
 #| label: project11-one-zone
@@ -133,9 +133,9 @@ print(f"pris {res.eqlin.marginals[0] + 0:g} kr/MWh")
 print("avvik i forbrukslikningen:", res.eqlin.residual)
 ```
 
-**En kort håndsjekk:** For $D=90$ skal du bruke billigste kraftverk først.
+**En kort håndsjekk:** For $D=90$ bruker du de billigste kraftverkene først.
 Finn produksjonsvektoren og regn ut kostnaden med $c^Tx$. Hvis forbruket
-øker fra 90 til 91, hvilket kraftverk justeres, og hvor mye koster det?
+øker fra 90 til 91, hvilket kraftverk justeres, og hva koster den ekstra MWh-en?
 Sammenlign med utskriften. Du trenger bare denne ene håndsjekken.
 
 **Les og konkluder:** Hvilket kraftverk er marginalt i hver kjøring?
@@ -144,9 +144,9 @@ Bruk utskriften til å forklare hvorfor pris og gjennomsnitt er ulike tall.
 
 ### Fra tre kjøringer til en pristrapp
 
-Nå ser vi på flere forbruk. **Kodespor 1:** Fullfør `read_market` slik at den
+Nå løser vi modellen for mange verdier av forbruket. **Kodespor 1:** Fullfør `read_market` slik at den
 returnerer paret `(pris, gjennomsnittskostnad)` fra et vellykket resultat og
-forbruket `D`. Du trenger bare opplysningene i tabellen over.
+forbruket `D`. Du trenger bare opplysningene i resultattabellen under «Oppsett og begreper».
 
 ```{pyodide-python}
 #| label: project11-read-market
@@ -155,8 +155,8 @@ def read_market(res, D):
     return None
 ```
 
-Løkken bruker funksjonen din til å tegne begge kurvene. Halve forbrukstall
-unngår punkter der prisen kan ha to ulike ensidige verdier.
+Løkken bruker funksjonen din til å tegne begge kurvene. Forbruket går i halve
+tall, slik at vi unngår punkter der prisen kan ha to ulike ensidige verdier.
 
 ```{pyodide-python}
 #| label: project11-price-steps
@@ -168,20 +168,21 @@ for i, D in enumerate(Ds):
 show_steps(Ds, prices, averages, xlabel="Forbruk D (MW)")
 ```
 
-**Les og konkluder:** Finn de tre indre trinnene i prisen. Koble hvert trinn
-til kapasitetene i kraftverkstabellen. Hvorfor trenger ikke gjennomsnittet
-å hoppe når det marginale kraftverket byttes?
+**Les og konkluder:** Finn de tre stedene der priskurven hopper. Koble hvert trinn
+til kapasitetene i kraftverkstabellen. Hvorfor trenger ikke gjennomsnittskostnaden
+å hoppe når et nytt kraftverk blir marginalt?
 
 ## 2. Kontroller prisen og kapasiteten
 
-En marginal er et **lokalt anslag**, ikke et løfte for enhver endring.
+Nå kontrollerer vi prisen fra løseren ved å løse modellen på nytt med litt
+endret forbruk. En marginal er et **lokalt anslag**, ikke et løfte for enhver endring.
 Den oppgitte prisen $\lambda$ gir anslaget
 
 $$C(D+\Delta D)\approx C(D)+\lambda\Delta D,$$
 
-der $C(D)$ er den laveste kostnaden. Inne i ett rett kurvestykke er anslaget
-eksakt. Ved et knekkpunkt kan det være ulike endringsrater på hver side;
-én rapportert dualverdi trenger ikke passe begge veier.
+der $C(D)$ er den laveste samlede kostnaden. Så lenge vi holder oss på
+ett rett stykke av kostnadskurven, er anslaget eksakt. Ved et knekkpunkt kan det være ulike endringsrater på hver side;
+derfor trenger ikke én rapportert dualverdi å passe begge veier.
 
 Cellen sammenligner prisen med kostnadsendringen ved én MW mer og én MW
 mindre. Forutsi først hvilket av de tre forbrukene som skiller seg ut.
@@ -196,10 +197,11 @@ for D in (60, 80, 90):
     print(f"{D:3}{r.eqlin.marginals[0]:7g}{more:22g}{less:24g}")
 ```
 
-**Les og konkluder:** Hvor er én pris nok til å beskrive begge endringene?
-Hvorfor er `D=80` annerledes? Bruk hvilke kraftverk som kan justeres, ikke
-en ny derivasjon. En annen løserversjon kan velge en annen gyldig dualverdi
-akkurat på trinnet; de to endelige kostnadsendringene er kontrollen din.
+**Les og konkluder:** For hvilke forbruk er én pris nok til å beskrive begge endringene?
+Hvorfor er `D=80` annerledes? Forklar ut fra hvilke kraftverk som kan justeres;
+du trenger ingen ny derivasjon. En annen løserversjon kan velge en annen gyldig dualverdi
+akkurat på trinnet; derfor er det kostnadsendringene ved én MW mer og mindre
+som er kontrollen din.
 
 ### Komplementær slakk fra utskriften
 
@@ -214,10 +216,10 @@ Fra [uke 11.3](uke11.qmd#uke11-slakk) har vi disse reglene:
 For denne modellen er kapasitetsverdien $\mu_i=-$`res.upper.marginals[i]`.
 Prisene gir dessuten en nedre kostnadsgrense
 $\lambda D-\mu^Tk$, med $\mu\ge0$ og $\lambda\mathbf1-\mu\le c$.
-Du får denne sammenhengen ferdig; oppgaven er å lese og kontrollere tallene.
+Denne sammenhengen er gitt; oppgaven din er å lese og kontrollere tallene.
 
 Cellen skriver ut produksjon, ledig kapasitet og kapasitetsverdi.
-Sammenlign også prisgrensen med kostnaden fra løseren.
+Sammenlign også den nedre kostnadsgrensen med kostnaden fra løseren.
 
 ```{pyodide-python}
 #| label: project11-slackness
@@ -232,14 +234,14 @@ print("pris:", price, "  kostnad:", res.fun, "  prisgrense:", price*D - mu @ cap
 ```
 
 **Les og konkluder:** Finn ett kraftverk i hver tilstand og kontroller
-reglene. Hvem har verdi av mer kapasitet, og hvilken produksjon ville den
-ekstra kapasiteten erstatte? Hvorfor er ledig kapasitet og en pris på null
+reglene. For hvilket kraftverk har mer kapasitet verdi, og hvilken produksjon ville
+den ekstra kapasiteten erstatte? Hvorfor er ledig kapasitet og en kapasitetsverdi på null
 to forskjellige opplysninger?
 
 ## 3. To områder og en linje
 
-Nå deler vi markedet i nord og sør. Nord har billig kraft, men ledningen
-sørover har en grense. Vi vil undersøke både prisforskjellen og hva det er
+Nå deler vi markedet i nord og sør. Nord har billig kraft, men linjen
+sørover har en kapasitetsgrense. Vi vil undersøke både prisforskjellen og hva det er
 verdt å bygge en litt sterkere linje.
 
 | Område | Kraftverk (kostnad, kapasitet) | Forbruk (MW) |
@@ -254,12 +256,13 @@ $$\begin{pmatrix}1&1&0&0&-1\\0&0&1&1&1\end{pmatrix}x
 =\begin{pmatrix}30\\80\end{pmatrix}.$$
 
 **Les en matrisrad:** Skriv de to radene som hver sin sum. Forklar hvorfor
-$f$ har ulikt fortegn, og hvorfor summen av radene fjerner flyten.
+$f$ har ulikt fortegn i de to radene, og hvorfor flyten forsvinner når du
+legger sammen radene.
 
 Forutsi om områdene kan ha ulik pris når linjen har mye ledig kapasitet.
-Cellen løser samme modell for flere `L` og viser også den lokale verdien av
-mer kapasitet. For `L>0` økes begge grensene `(-L, L)` når linjen utvides,
-så verdien er `lower.marginals[4] - upper.marginals[4]`.
+Cellen løser samme modell for flere verdier av linjekapasiteten `L` og viser
+også den lokale verdien av mer linjekapasitet. For `L>0` flyttes begge
+grensene `(-L, L)` utover når linjen utvides, og derfor er verdien `lower.marginals[4] - upper.marginals[4]`.
 
 ```{pyodide-python}
 #| label: project11-two-zones
@@ -276,7 +279,7 @@ for L in (20, 40, 55, 70, 100):
 og når er linjen full mot sør? Forklar prisen i nord ved `L=100` ved å se
 på hvor en ekstra MW til forbruket i nord måtte komme fra.
 
-Vil du se planen som et bilde, velger du en av kjøringene. Figuren viser
+Hvis du vil se planen som en figur, velger du linjegrensen fra én av kjøringene i cellen under. Figuren viser
 hvilke kraftverk som produserer på hver side av linjen.
 
 ```{pyodide-python}
@@ -287,7 +290,7 @@ show_two_zones(two_zones(L), L)
 
 ### Hvor lenge virker linjeverdien?
 
-Du får prisreglene ferdig for denne tapsfrie modellen:
+Prisreglene for denne tapsfrie modellen er gitt her:
 
 - **Full mot sør, $f=L>0$:** Linjeverdien er $\lambda_S-\lambda_N$.
 - **Ledig begge veier, $-L<f<L$:** Linjeverdien er null og prisene er like.
@@ -296,8 +299,8 @@ Du får prisreglene ferdig for denne tapsfrie modellen:
 
 En lokal verdi gjelder bare mens de samme begrensningene bestemmer
 kostnadsendringen. Nå tester du både en liten og en større utvidelse fra
-`L=40`, og én ekstra MW fra `L=70`. Formuleringen er en forutsigelse som
-skal sammenlignes med nye løsninger, ikke en håndutledning.
+`L=40`, og én ekstra MW fra `L=70`. Linjeverdien gir en forutsigelse som
+du skal sammenligne med nye løsninger; du skal ikke utlede den for hånd.
 
 ```{pyodide-python}
 #| label: project11-line-change
@@ -309,7 +312,7 @@ for L, extra in ((40, 1), (40, 40), (70, 1)):
           f"faktisk spart {base.fun - changed.fun:g}, ny plan {changed.x}")
 ```
 
-**Les og konkluder:** Hvor virker anslaget, og hvor gjør det ikke det?
+**Les og konkluder:** I hvilke forsøk stemmer anslaget, og i hvilke stemmer det ikke?
 Bruk produksjonsplanene til å peke på hvilken grense som skifter rolle.
 Sammenlign særskilt `L=70` med én ekstra MW: er «full» det samme som
 «verdifull å utvide»?
@@ -328,7 +331,7 @@ til sammen**.
 
 ### Bygg én rad i modellen
 
-Variablene kommer i tre grupper: `(vind, vann, import, gass)` for hver time.
+Variablene kommer i tre grupper, én per time, hver i rekkefølgen `(vind, vann, import, gass)`.
 Vannkravet er
 
 $$x_{\text{vann},1}+x_{\text{vann},2}+x_{\text{vann},3}\le120.$$
@@ -352,7 +355,7 @@ print("vannmengde fra din rad:", (make_water_row() @ example)[0])
 print("forventet vannmengde: 10 MWh")
 ```
 
-Resten av tre-timersmodellen er gitt i oppsettet: `A_eq3` har én
+Resten av tretimersmodellen er gitt i oppsettet: `A_eq3` har én
 forbrukslikning per time. Cellen bruker vannraden din og skriver ut planen,
 prisene og **vannverdien**, altså spart kostnad per MWh ekstra vann.
 
@@ -414,7 +417,7 @@ Du trenger ikke bygge en ny modell.
 
 - **Mer vind i nord:** Bruk `two_zones(40, wind_north=20 + delta)` og
   vindverdien `-two_zones(40).upper.marginals[0]` fra startmodellen.
-- **Mer vann:** Bruk tre-timersmodellen, vannraden din og startmodellens
+- **Mer vann:** Bruk tretimersmodellen, vannraden din og startmodellens
   vannverdi ved 120 MWh.
 
 Gjør én liten og én større endring. Du velger størrelsene; målet er å finne
@@ -422,11 +425,11 @@ både et tilfelle der anslaget virker og et der en annen grense tar over.
 
 1. Skriv forventet besparelse som `dualverdi * endring` før du løser på nytt.
 2. Skriv ut faktisk besparelse og produksjonsplan for hver endring.
-3. Forklar med tallene hvilken grense som gjør det store anslaget mindre
-   presist. Hvis anslaget fortsatt virker, velg en større endring.
+3. Forklar med tallene hvilken grense som gjør anslaget for den store endringen
+   mindre presist. Hvis anslaget fortsatt stemmer, velg en enda større endring.
 
-**Ta med videre:** Et lokalt anslag er nyttig fordi det sparer ny regning for
-små endringer. En ny løsning og dens slakk viser når du trenger et nytt
+**Ta med videre:** Et lokalt anslag er nyttig fordi du slipper å løse modellen på
+nytt for små endringer. En ny løsning og dens slakk viser når du trenger et nytt
 anslag. Skill mellom det prisregelen sier under sine forutsetninger og det
 dine konkrete forsøk viser.
 
@@ -457,5 +460,5 @@ oppsettsfilen og disse resultatene:
 - din undersøkelse fra del 5: forventning, faktisk endring og en avgrenset konklusjon.
 
 Bruk omtrent **150–250 ord til sammen** på konklusjonene, gjerne ved siden av
-de tilhørende utskriftene. Du trenger ikke i tillegg en samlet rapport eller
-svar på alle repetisjonsspørsmålene.
+de tilhørende utskriftene. Du trenger ikke skrive en egen samlet rapport eller
+svare på alle repetisjonsspørsmålene.

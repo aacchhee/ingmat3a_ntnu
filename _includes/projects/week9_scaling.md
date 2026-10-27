@@ -1,8 +1,8 @@
 ## Når skalaen bestemmer farten
 
 Samme data og samme gradientmetode kan gi svært ulik arbeidsmengde.
-**Hva skyldes skalaen på variablene, og hva kan Armijo-søk hjelpe med?**
-Du undersøker dette med en sannsynlighetsmodell for O-ringskade før
+**Hvor mye av forskjellen skyldes skalaen på variablene, og hva kan Armijo-søk hjelpe med?**
+Du undersøker dette med en sannsynlighetsmodell for O-ringskade på romfergeoppskytinger før
 Challenger-ulykken.
 
 Du får de nødvendige deriverte og en ferdig Armijo-metode. Du skriver en
@@ -12,7 +12,7 @@ kjøringer, lese tall og figurer og begrunne konklusjonene dine.
 ## Før prosjektarbeidet: en kort innføring i statistikken
 
 **Dette er bakgrunn, ikke en egen innleveringsdel.** Les og kjør
-eksemplene. Du trenger ingen statistikk fra før.
+eksemplene. Du trenger ingen forkunnskaper i statistikk.
 Selve optimeringsarbeidet begynner i [del 1](#project9-start).
 
 ### Data og en kurve mellom 0 og 1
@@ -25,10 +25,10 @@ Vi har temperatur og O-ringskade fra 23 romfergeoppskytinger før Challenger:
   Hoadley (1989, *Journal of the American Statistical Association* 84,
   s. 945–957), for oppskytingene der motorene kunne undersøkes.
 
-Challenger ble skutt opp ved 31 °F, under temperaturene i dette datasettet.
-Vi må skille mellom det en tilpasset modell sier og det dataene støtter.
+Challenger ble skutt opp ved 31 °F, altså kaldere enn alle temperaturene i dette datasettet.
+Derfor må vi skille mellom det en tilpasset modell sier, og det dataene faktisk støtter.
 
-En rett linje kan gi verdier utenfor $[0,1]$. Derfor bruker vi en S-kurve:
+En rett linje kan gi verdier utenfor $[0,1]$, og slike verdier kan ikke være sannsynligheter. Derfor bruker vi en S-kurve:
 
 $$p(T)=\sigma(\beta_0+\beta_1T),\qquad
 \sigma(s)=\frac{1}{1+e^{-s}}.$$
@@ -51,8 +51,8 @@ show_line_fit(line)
 ```
 
 Den neste viser en logistisk referansekurve og en slakere kurve med samme
-terskel. Referansekoeffisientene `beta_oracle` er gitt for å kontrollere
-optimeringen senere; du skal ikke finne dem i innføringen.
+terskel. Referansekoeffisientene `beta_oracle` er gitt slik at du kan kontrollere
+optimeringen senere; du skal ikke beregne dem selv i innføringen.
 
 ```{pyodide-python}
 #| label: project9-s-curve
@@ -64,15 +64,15 @@ show_curves([beta_oracle, beta_oracle/2], ['referanse', 'halverte tall'])
 
 ### Hva betyr «kurven passer»?
 
-En oppskyting med skade bør få stor $p_i=p(T_i)$; en uten skade bør få
+Hvis kurven passer, bør en oppskyting med skade få stor $p_i=p(T_i)$; en uten skade bør få
 stor $1-p_i$. Vi antar at utfallene fra ulike oppskytinger er uavhengige.
 Da måler produktet av disse faktorene hvor sannsynlige de observerte
-utfallene er under modellen.
+utfallene er ifølge modellen.
 
 ::: {#project9-two-launches}
 :::
 
-For skade ved 58 °F og ingen skade ved 78 °F er produktet
+Se på to oppskytinger: én med skade ved 58 °F og én uten skade ved 78 °F. Da er produktet
 $p(58)(1-p(78))$. Cellen sammenligner to kurver. Du trenger ikke regne
 sannsynlighetene for hånd.
 
@@ -85,16 +85,16 @@ for name, beta in [('A', np.array([13.6, -0.2])),
     print(name, 'produkt:', probability, 'minus log:', -np.log(probability))
 ```
 
-Størst produkt er best. I stedet for å maksimere et lite produkt
+Kurven med størst produkt passer best. Produktet blir fort svært lite, så i stedet for å maksimere det
 minimerer vi **summen av minus logaritmen til faktorene**. Det gir samme
-beste kurve. Tapet som brukes videre, er ferdig skrevet som
+beste kurve. Tapet som brukes videre, er gitt ferdig:
 
 $$L(\beta)=\sum_{i=1}^{23}\left(\log(1+e^{s_i})-y_i s_i\right),
 \qquad s_i=\beta_0+\beta_1T_i.$$
 
-Dette heter **logistisk regresjon**. I Python bruker `loss` en numerisk
-stabil måte å beregne denne summen på. Lavere $L$ betyr bedre tilpasning
-etter denne regelen; det sier ikke alene hvor godt modellen virker
+Å tilpasse kurven på denne måten heter **logistisk regresjon**. I Python beregner `loss`
+denne summen på en numerisk stabil måte. Lavere $L$ betyr bedre tilpasning
+etter dette målet, men denne verdien alene sier ikke hvor godt modellen virker
 utenfor dataene.
 
 **Ta med videre:** To parametre bestemmer en sannsynlighetskurve. Vi
@@ -103,8 +103,8 @@ finner dem ved å minimere en gitt funksjon $L$ av to variabler.
 ### Oppsett og arbeidsplan
 
 På nettsiden er data, `sigma`, `design`, `loss`, `hessian`, `armijo_gd` og
-figurhjelperne klare automatisk. Dine to funksjoner `grad` og `gd` må kjøres
-igjen hvis siden lastes på nytt.
+hjelpefunksjonene for figurer lastet inn automatisk. Cellene der du definerer `grad` og `gd`, må du
+kjøre igjen hvis siden lastes på nytt.
 
 I egen notebook: last ned
 [oppsettsfilen](../assets/project_week9_setup.py){download="project_week9_setup.py"}
@@ -129,7 +129,7 @@ forventning før forsøkene og bruk resultatene som grunnlag for svaret.
 
 ## 1. Her begynner prosjektet: fra formel til metode
 
-Vi bruker matrisen $X$ med rad $i$ lik $(1,T_i)$ og vektorene
+Først skriver vi gradienten med matriser, slik at den blir enkel å programmere. Vi bruker matrisen $X$ med rad $i$ lik $(1,T_i)$ og vektorene
 $\beta=(\beta_0,\beta_1)^T$, $y=(y_1,\ldots,y_{23})^T$.
 Da er $s=X\beta$ og $p=\sigma(s)$, der $\sigma$ brukes på hvert element.
 
@@ -151,7 +151,7 @@ $X^T(p-y)$. Forklar kort hvorfor de to radene i produktet blir summene
 over. Dette er samme kobling mellom rader og enkeltuttrykk som i uke 3.
 
 **b. Fullfør gradienten.** Bruk `X.T` for transponering og `@` for
-matrise–vektor-produkt. Argumentet `yy` lar oss undersøke andre utfall i
+matrise–vektor-produkt. Med argumentet `yy` kan vi undersøke andre utfall i
 sluttdelen.
 
 ```{pyodide-python}
@@ -167,13 +167,13 @@ def grad(X, beta, yy=damage):
 ::: {#project9-safe-step}
 :::
 
-En ferdig regel fra krumningsgrensen er
+En ferdig regel for steglengden, basert på en grense for krumningen, er
 
 $$\alpha=\frac{4}{\sigma_1(X)^2},$$
 
 der $\sigma_1(X)$ er største singulærverdi, ikke den logistiske
-funksjonen. Dette er et trygt fast steg: i eksakt regning synker $L$
-når gradienten ikke er null. Du trenger ikke utlede grensen.
+funksjonen. Dette gir et trygt fast steg: i eksakt regning synker $L$
+i hvert steg så lenge gradienten ikke er null. Du trenger ikke utlede grensen.
 
 Cellen kontrollerer gradienten din i ett punkt og beregner det trygge
 steget. Bruk utskriften til å finne en eventuell feil før du fortsetter.
@@ -189,7 +189,7 @@ print('trygt steg:', 4/sv[0]**2)
 
 **c. Fullfør løkken.** Gradientmetoden er
 $\beta_{k+1}=\beta_k-\alpha\nabla L(\beta_k)$.
-Stopp på gradientnorm `tol` eller når `max_steps` er brukt.
+Stopp når gradientnormen er mindre enn `tol`, eller når alle `max_steps` steg er brukt.
 Returner både sluttpunkt og antall utførte steg.
 
 ```{pyodide-python}
@@ -202,8 +202,8 @@ def gd(X, alpha, tol=1e-6, max_steps=2000, yy=damage):
     return beta, k
 ```
 
-Cellen prøver fem steg og deretter et begrenset budsjett. `stoppkrav`
-må være sann før vi sier at metoden nådde den valgte toleransen.
+Cellen kjører først fem steg og deretter med et større, men begrenset budsjett. `stoppkrav`
+må være sann før vi kan si at metoden har nådd den valgte toleransen.
 
 ```{pyodide-python}
 #| label: project9-raw-run
@@ -220,8 +220,8 @@ stoppkravet er nådd? Bruk både `beta` og gradientnormen i svaret.
 
 ## 2. Samme modell i bedre koordinater?
 
-Den andre kolonnen i $X$ er nesten 70 ganger den første. Vi endrer ikke
-målingene, men hvordan temperaturene beskrives:
+Hittil har vi brukt temperaturene direkte. Tallene i den andre kolonnen i $X$ er nesten 70 ganger så store som i den første. Vi endrer ikke
+målingene, men måten vi beskriver temperaturene på:
 
 | Navn | Temperaturkoordinat $t$ | Parametre $\gamma$ som gir samme kurve |
 |:--|:--|:--|
@@ -229,15 +229,15 @@ målingene, men hvordan temperaturene beskrives:
 | Sentrert | $T-70$ | $(\beta_0+70\beta_1,\beta_1)$ |
 | Standardisert | $(T-m)/d$ | $(\beta_0+m\beta_1,d\beta_1)$ |
 
-Her er $m=$ `temps.mean()` gjennomsnittet og $d=$ `temps.std()`
-standardavviket, et mål på spredningen. Omregningene er gitt. De
-bevarer $\gamma_0+\gamma_1t=\beta_0+\beta_1T$ for hver temperatur.
+Her er $m=$ `temps.mean()` gjennomsnittet av temperaturene, og $d=$ `temps.std()` er
+standardavviket, et mål på spredningen. Omregningene i tabellen er gitt. De
+sikrer at $\gamma_0+\gamma_1t=\beta_0+\beta_1T$ for hver temperatur, altså at kurven blir den samme.
 
 **a. Forutsi.** Hvilket koordinatvalg tror du gir færrest steg? Knytt
 forventningen til forholdet mellom de to singulærverdiene.
 
 Cellen bygger matrisene og skriver ut singulærverdier og forholdet.
-Finn forskjellen i tallene selv; ikke se bare på størrelsen til hver verdi.
+Tolk tallene selv; se på forholdet, ikke bare på hvor stor hver verdi er.
 
 ```{pyodide-python}
 #| label: project9-singular
@@ -253,13 +253,13 @@ for name, X in designs.items():
 ::: {#project9-centred}
 :::
 
-**b. Kjør og sammenlign.** Tabellen under bruker din `gd` med samme start,
-toleranse og tak på antall steg. Den oppgir også kondisjonstallet til
+**b. Kjør og sammenlign.** Cellen under kjører din `gd` med samme start,
+toleranse og tak på antall steg. Utskriften viser også kondisjonstallet til
 Hessianen ved referanseløsningen og faktoren fra uke 9:
 
 $$S=\max_i|1-\alpha\lambda_i(H_*)|.$$
 
-Dette er en **lokal modell** for farten nær minimumet, ikke en garanti
+Denne faktoren er en **lokal modell** for farten nær minimumet, ikke en garanti
 for antall steg fra startpunktet. En faktor nær 1 betyr langsom framgang.
 
 Cellen beregner omregningen og diagnostikken ferdig. Skriv selv en kort
@@ -284,19 +284,19 @@ for name, X in designs.items():
 ::: {#project9-predict}
 :::
 
-- Hvilke kjøringer nådde toleransen? En avbrutt kjøring teller ikke som en
+- Hvilke kjøringer nådde toleransen? En kjøring som ble avbrutt ved taket på antall steg, teller ikke som en
   rask løsning.
 - Sammenlign kondisjonstall, $S$ og observerte steg. Hva er bevart ved
   koordinatskiftet, og hva er endret?
 - Velg sentrering. Sett den gitte $\gamma$ inn i $\gamma_0+\gamma_1(T-70)$
   og forenkle til $\beta_0+\beta_1T$. To korte linjer er nok.
 
-**c. Tolk modellen med forbehold.** Vi kan regne tilbake fra
-standardiserte koordinater med
+**c. Tolk modellen med forbehold.** Vi kan regne en løsning i
+standardiserte koordinater tilbake til de opprinnelige parametrene med
 $\beta_1=\gamma_1/d$, $\beta_0=\gamma_0-m\gamma_1/d$.
 
-Cellen bruker din løsning, regner den tilbake og viser kurven ved og
-utenfor temperaturene i dataene.
+Cellen finner en løsning med din gradientløkke, regner den tilbake og viser kurven både innenfor og
+utenfor temperaturområdet i dataene.
 
 ```{pyodide-python}
 #| label: project9-launch-day
@@ -314,10 +314,10 @@ Dette forbeholdet skal være med i konklusjonen din.
 
 ## 3. Steglengde: stabilitet, fart og arbeidsmengde
 
-Et trygt steg trenger ikke være det raskeste. Nær minimumet gir
-$2/\lambda_{\max}(H_*)$ den lokale kritiske grensen fra
-[uke 9](uke9.qmd#uke9-stabilitet). Den sier ikke hva en vilkårlig
-start vil gjøre langt fra minimumet.
+Et trygt steg trenger ikke å være det raskeste. Nær minimumet er
+$2/\lambda_{\max}(H_*)$ den lokale kritiske grensen for steglengden fra
+[uke 9](uke9.qmd#uke9-stabilitet). Grensen sier ikke hva som skjer når vi
+starter et vilkårlig sted langt fra minimumet.
 
 ::: {#project9-critical}
 :::
@@ -355,23 +355,23 @@ for alpha in [alpha_std, 0.55]:
 Beskriv forskjellen mellom konvergens, veksling mellom punkter og en
 kjøring som fremdeles er langt fra stoppkravet. Bruk også $S$ fra del 2
 til å forklare hvorfor et steg rett under grensen kan være langsomt.
-Et endelig forsøk alene beviser ikke hvordan alle senere steg blir.
+Husk at et forsøk med et endelig antall steg ikke alene beviser hvordan alle senere steg blir.
 
 ### Armijo: løser et tilpasset steg problemet?
 
-Armijo starter med $\alpha=1$ og halverer til tapet synker nok.
-`armijo_gd` er gitt. **Forutsi:** Vil dette fjerne forskjellen mellom
+Armijo-søket starter med $\alpha=1$ og halverer steglengden til tapet synker nok.
+Funksjonen `armijo_gd` er gitt. **Forutsi:** Vil et tilpasset steg fjerne forskjellen i arbeidsmengde mellom
 rå og standardiserte temperaturer?
 
-Cellen kjører din gradient med to metoder på de samme dataene. Den teller
+Cellen bruker gradienten din i to metoder, fast steg og Armijo, på de samme dataene. Den teller
 iterasjoner og de ekstra prøvepunktene Armijo avviser. Med implementasjonen
-her bruker Armijo $2k+$ `extra` tapsberegninger: én nåverdi og én godtatt
-prøve per steg, i tillegg til de avviste prøvene. Sluttkontrollen i
-utskriften er ikke med. Fast steg bruker ingen tapsberegning i løkken.
+her bruker Armijo $2k+$ `extra` tapsberegninger: én i det nåværende punktet og én for den godtatte
+prøven per steg, i tillegg til de avviste prøvene. Sluttkontrollen i
+utskriften er ikke regnet med. Metoden med fast steg bruker ingen tapsberegninger i løkken.
 
 ```{pyodide-python}
 #| label: project9-armijo
-budget = 2000                 # du kan prøve 4000; ikke bruk millionkjøringer
+budget = 2000                 # du kan prøve 4000; ikke kjør med millioner av steg
 for name in ['rå T', 'standardisert (T - m)/d']:
     X = designs[name]
     alpha = 4/np.linalg.svd(X, compute_uv=False)[0]**2
@@ -388,23 +388,23 @@ for name in ['rå T', 'standardisert (T - m)/d']:
 **b. Konkluder fra din tabell.**
 
 - Hvilken kombinasjon av koordinater og metode når toleransen?
-- Hva koster halveringene? Er færre iterasjoner alene en rettferdig
+- Hva koster halveringene? Gir antall iterasjoner alene en rettferdig
   sammenligning?
-- Gjenta med `budget = 4000` bare for de rå dataene. Hva støtter dette
-  forsøket om Armijo, og hva kan det ikke si om framtidige iterasjoner?
+- Gjenta med `budget = 4000` bare for de rå dataene. Hva sier dette
+  forsøket om Armijo, og hva kan det ikke si om senere iterasjoner?
 - Bruk [Armijo-garantien](uke9.qmd#uke9-linjesok) og kondisjonstallene
   til å skille mellom å sikre nedgang og å få rask konvergens.
 
 ## 4. Sluttundersøkelse: liten gradient, men hvilken løsning?
 
-Hva om alle skader lå under én temperatur og alle skadefrie oppskytinger
-over? Da kan en stadig brattere S-kurve passe bedre. Dette kalles
+Hva om alle skader lå under en bestemt temperatur og alle skadefrie oppskytinger
+over den? Da passer en S-kurve bedre jo brattere den er. Dette kalles
 **full separasjon**. Vi lager et tenkt datasett med skade akkurat når
 $T<65$; vi endrer ikke de virkelige dataene.
 
 Sammenlign de virkelige og de tenkte utfallene med samme sentrerte
 datamatrise og samme trygge steg. Cellen viser tap, gradientnorm og
-parameterstørrelse ved tre tidspunkter.
+parameterstørrelse etter tre ulike antall steg.
 
 ```{pyodide-python}
 #| label: project9-separable
@@ -421,15 +421,15 @@ for name, yy in [('virkelige', damage), ('skilte', (temps < 65).astype(float))]:
 ::: {#project9-separated-terms}
 :::
 
-En gitt matematisk egenskap forklarer hva vi må se etter: For full
+Vi oppgir en matematisk egenskap som forklarer hva vi må se etter: Ved full
 separasjon er infimum av $L$ lik 0, men ingen endelig parametervektor
-oppnår det. Her er én familie som nærmer seg dette infimumet:
+oppnår det. Her er én familie av kurver der tapet nærmer seg dette infimumet:
 
 $$p(T)=\sigma(c(65-T)),\qquad
 \gamma=(-5c,-c)^T\quad\text{i sentrerte koordinater}.$$
 
-Du skal ikke bevise egenskapen eller derivere familien. Cellen lar deg
-undersøke den direkte, uten en lang gradientkjøring.
+Du skal ikke bevise egenskapen eller utlede familien. Med cellen kan du
+undersøke familien direkte, uten en lang gradientkjøring.
 
 ```{pyodide-python}
 #| label: project9-ray
@@ -442,13 +442,13 @@ for c in [1, 2, 5, 10]:
 
 Skriv én kort konklusjon med tall fra begge utskriftene:
 
-1. Hvordan skiller parameterstørrelse, tap og gradientnorm seg i de to
+1. Hvordan skiller parameterstørrelse, tap og gradientnorm seg mellom de to
    datasettene?
-2. Ville «gradienten er liten» alene ha vært et godt belegg for et funnet
+2. Ville «gradienten er liten» alene ha vært et godt belegg for at vi har funnet et
    minimum i det skilte datasettet?
 3. Bruk den gitte familien til å beskrive en ubegrenset subnivåmengde.
    Hvilken forutsetning i [garantien fra uke 9](uke9.qmd#uke9-garanti)
-   mangler? Du kan bruke den oppgitte matematiske egenskapen uten bevis.
+   er ikke oppfylt her? Du kan bruke den oppgitte matematiske egenskapen uten bevis.
 
 ## Spørsmål du skal kunne svare på
 
@@ -457,7 +457,7 @@ Disse er repetisjon, ikke en ekstra innlevering.
 1. Hva er data, parametre og tapsfunksjon i dette prosjektet?
 2. Hvordan kan samme gradient skrives med to summer og ett matriseprodukt?
 3. Hva bevarer sentrering og standardisering, og hva kan de endre?
-4. Hva forteller egenverdiene om det lokale gradientforløpet?
+4. Hva forteller egenverdiene til Hessianen om hvordan gradientmetoden oppfører seg nær minimumet?
 5. Hvorfor er ikke et større fast steg alltid raskere?
 6. Hva sikrer Armijo, og hva forteller egen utskrift om arbeidsmengden?
 7. Hvorfor må en stoppmelding tolkes sammen med egenskapene til problemet?
