@@ -1052,7 +1052,7 @@ $$u\begin{pmatrix}2\\1\end{pmatrix}+v\begin{pmatrix}1\\2\end{pmatrix}=\begin{pma
 ```{pyodide-python}
 #| label: week11-normals
 #| feedback-context: ide-uke11-reference-assumptions, ide-uke11-np-6f11581d, ide-uke11-show-price-arrows-522fbcd2
-# Komplementær slakk ga u = 2, v = 1. Bygger de normalene til målretningen?
+# Komplementær slakk ga u = 2, v = 1. Gir de vektede normalene til sammen målretningen?
 print(2*np.array([2, 1]) + 1*np.array([1, 2]))
 show_price_arrows(at=(3, 3), normals=[(2, 1), (1, 2)], prices=[2, 1], gradient=(5, 4))
 ```
@@ -1695,7 +1695,7 @@ Funksjonen `solve_production()` skal maksimere bidraget med `linprog`, som i eks
 import numpy as np
 from scipy.optimize import linprog
 
-# En rad per begrensning og en kolonne per produkt.
+# En rad per krav og en kolonne per produkt.
 p = np.array([5., 4.])
 A = np.array([[2., 1.], [1., 2.], [1., 0.]])
 b = np.array([9., 9., 4.])

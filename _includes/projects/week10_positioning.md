@@ -317,7 +317,7 @@ for (var i = 0; i < 4; i++) {
   board.create('point', toMap(B[i][0], B[i][1]), {name:'', face:'square', size:3,
     color:'#212121', fixed:true, highlight:false});
 }
-var T = board.create('point', toMap(5, 4), {name:'tag', size:5, strokeColor:'#c62828', fillColor:'#c62828',
+var T = board.create('point', toMap(5, 4), {name:'tagg', size:5, strokeColor:'#c62828', fillColor:'#c62828',
   label:{offset:[6, 8], fontSize:12}});
 function tag() { return [(T.X() - m0[0])/km, (T.Y() - m0[1])/km]; }
 T.on('drag', function () {      // hold taggen i området x i [0.5, 30], y i [0.5, 7.5], på et 0.5 m-rutenett

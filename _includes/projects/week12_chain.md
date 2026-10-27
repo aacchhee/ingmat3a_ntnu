@@ -10,14 +10,14 @@ Etterpå undersøker du hva løserens svar forteller:
 Du får gradienter, Jacobimatriser og løserne ferdig. Arbeidet er å skrive
 tre korte kodeuttrykk, lese utskriftene og begrunne konklusjonene dine.
 Sett av omtrent **4–6 timer**, inkludert den korte undersøkelsen til slutt.
-Skriv en forventning før et forsøk; sammenlign den med det du faktisk ser.
+Skriv ned hva du forventer før hvert forsøk, og sammenlign med det du faktisk ser.
 
 | Del | Hovedarbeid |
 |:--|:-- |
 | Bildet og modellen | Bli kjent med punkter, lengder og energi |
 | 1. Finn og kontroller formen | Kravfunksjon, dimensjoner og løserens svar |
 | 2. Les multiplikatorene | Kraftbalanse og en liten lengdeendring |
-| 3. Bytt ledd med fjærer | Straffefeil, kondisjon og solvermeldinger |
+| 3. Bytt ledd med fjærer | Straffefeil, kondisjon og løsermeldinger |
 | 4. En lampe på kjettingen | Ett eget forsøk og kort rapport |
 
 ### Bakgrunn: bildet og den ferdige fysiske modellen

@@ -5,7 +5,8 @@ This is the migration's fixed source baseline, not a new grading engine. The
 only allowed code-fence changes are explicit AI context metadata and the listed
 new labels on formerly unlabelled visible IDE cells. Existing labels, tasks,
 answers, modes, code, checks and tests remain byte-for-byte unchanged.
-The approved week 9 Nelder–Mead addition has its own fixed source baseline.
+The approved week 9 Nelder–Mead addition has its own fixed source baseline,
+and APPROVED_WORDING lists the approved wording fixes in protected blocks.
 """
 from pathlib import Path
 import json
@@ -19,6 +20,39 @@ BASE = "3012cb7b9ab16b738f9c012f8ab119efbde5cd59"
 SOURCE_BASELINES = {
     "_includes/optimization/uke9.md": "b8baf4f33bfc294aee3a53d2a551f42595d7c4ed",
     "_includes/optimization/week9_setup.md": "b8baf4f33bfc294aee3a53d2a551f42595d7c4ed",
+}
+# Wording fixes the course author approved (27 Oct 2026) inside protected
+# fences and the project 12 header. Each pair is applied once to the
+# baseline text; nothing else in those blocks may change.
+APPROVED_WORDING = {
+    '_includes/optimization/uke11.md': [
+        ('# Komplementær slakk ga u = 2, v = 1. Bygger de normalene til målretningen?',
+         '# Komplementær slakk ga u = 2, v = 1. Gir de vektede normalene til sammen målretningen?'),
+        ('# En rad per begrensning og en kolonne per produkt.',
+         '# En rad per krav og en kolonne per produkt.'),
+    ],
+    '_includes/optimization/uke12.md': [
+        ('står vinkelrett på normalen og peker mot klokka.',
+         'står vinkelrett på normalen og peker mot urviseren.'),
+        ('#| caption: Kontroller betingelsesfeil og stasjonaritet\n',
+         '#| caption: Kontroller betingelsesfeil og stasjonaritetsfeil\n'),
+        ('# TODO: Bygg K med np.block, høyresiden (0, d), løs og returner z (de n første).',
+         '# TODO: Bygg K med np.block og høyresiden (0, d), løs, og returner z (de n første komponentene).'),
+    ],
+    '_includes/projects/week9_scaling.md': [
+        ('# du kan prøve 4000; ikke bruk millionkjøringer',
+         '# du kan prøve 4000; ikke kjør med millioner av steg'),
+    ],
+    '_includes/projects/week10_positioning.md': [
+        ("{name:'tag', size:5,",
+         "{name:'tagg', size:5,"),
+    ],
+    '_includes/projects/week12_chain.md': [
+        ('Skriv en forventning før et forsøk; sammenlign den med det du faktisk ser.',
+         'Skriv ned hva du forventer før hvert forsøk, og sammenlign med det du faktisk ser.'),
+        ('| Straffefeil, kondisjon og solvermeldinger |',
+         '| Straffefeil, kondisjon og løsermeldinger |'),
+    ],
 }
 RUNTIME = {"{math-exercise}", "{py-exercise}", "{pyodide-python}"}
 NEW_IDE_LABELS = {'_includes/ide/manual.md': ['ingmat-ide-ide-manual-1'],
@@ -114,6 +148,13 @@ def git(*args):
     return subprocess.check_output(["git", *args], cwd=ROOT)
 
 
+def approved(name, text):
+    for old, new in APPROVED_WORDING.get(name, []):
+        assert text.count(old) == 1, f"{name}: approved wording baseline not found: {old!r}"
+        text = text.replace(old, new)
+    return text
+
+
 def blocks(text, name):
     lines = text.splitlines(keepends=True)
     found = []
@@ -148,7 +189,7 @@ def audit():
     seen_added = set()
     for name in source_names:
         source_base = SOURCE_BASELINES.get(name, BASE)
-        before = blocks(git("show", source_base + ":" + name).decode(), name)
+        before = blocks(approved(name, git("show", source_base + ":" + name).decode()), name)
         after = blocks((ROOT / name).read_text(), name)
         assert len(before) == len(after), f"{name}: code-fence count changed"
         expected_labels = set(NEW_IDE_LABELS.get(name, []))
@@ -177,7 +218,7 @@ def audit():
         expected = heading[:-1] + " quiz=" + quiz + "}" if heading.endswith("}") else heading + " {quiz=" + quiz + "}"
         assert (ROOT / name).read_text().splitlines().count(expected) == 1, f"{name}: missing or duplicate quiz {quiz}"
     project = "_includes/projects/week12_chain.md"
-    original = git("show", BASE + ":" + project).decode().split("### Bakgrunn:", 1)[0]
+    original = approved(project, git("show", BASE + ":" + project).decode()).split("### Bakgrunn:", 1)[0]
     current = (ROOT / project).read_text().split("### Bakgrunn:", 1)[0]
     assert current == original, "Project12 workload estimate/plan changed"
     for legacy in ("_includes/site/learning-mode.html", "_includes/site/tab-links.html"):

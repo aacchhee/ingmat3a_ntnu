@@ -383,7 +383,7 @@ utskriften er ikke regnet med. Metoden med fast steg bruker ingen tapsberegninge
 ```{pyodide-python}
 #| label: project9-armijo
 #| feedback-context: ide-project_week9-reference-assumptions, ide-project_week9-armijo-gd-28a92a6f, ide-project_week9-designs-827c08f4, ide-project_week9-gd-ea2a7253, ide-project_week9-grad-35026aaa, ide-project_week9-loss-94eeaeea, ide-project_week9-np-6f11581d
-budget = 2000                 # du kan prøve 4000; ikke bruk millionkjøringer
+budget = 2000                 # du kan prøve 4000; ikke kjør med millioner av steg
 for name in ['rå T', 'standardisert (T - m)/d']:
     X = designs[name]
     alpha = 4/np.linalg.svd(X, compute_uv=False)[0]**2

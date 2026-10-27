@@ -155,7 +155,7 @@ board.create('arrow',[Q,[
   function(){return Q.X()+0.45*2*Q.X()/nl();},
   function(){return Q.Y()+0.45*8*Q.Y()/nl();}
 ]],{strokeColor:'#2e7d32',strokeWidth:2.5,fixed:true});
-// Enhetstangenten v = (-8y, 2x)/|...| står vinkelrett på normalen og peker mot klokka.
+// Enhetstangenten v = (-8y, 2x)/|...| står vinkelrett på normalen og peker mot urviseren.
 var tx = function(){return -8*Q.Y()/nl();}, ty = function(){return 2*Q.X()/nl();};
 board.create('arrow',[Q,[
   function(){return Q.X()+0.45*tx();},
@@ -909,7 +909,7 @@ Nullromsmetoden i «Gå i dybden» viser én vei rundt.
 **Øv på dette:** [KKT-systemet for en linje](#uke12-oppg-kkt) i 12.6 og
 [KKT-systemet og pseudoinversen](#uke12-py-kkt) i 12.7.
 
-::: {.reading-step title="Gå i dybden: nullrommet, og en vei rundt det indefinitte systemet"}
+::: {.reading-step title="Gå i dybden: nullrommet, og hvordan vi kan omgå det indefinitte systemet"}
 
 **Hvorfor $\nabla f+C^T\lambda=0$ er riktig betingelse.**
 
@@ -1640,7 +1640,7 @@ stasjonaritetsfeilen $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$.
 
 ```{py-exercise}
 #| label: week12-python-residuals
-#| caption: Kontroller betingelsesfeil og stasjonaritet
+#| caption: Kontroller betingelsesfeil og stasjonaritetsfeil
 #| show-test-hints: false
 import numpy as np
 
@@ -1731,7 +1731,7 @@ d = np.array([3., 1])
 
 def kkt_min_norm(C, d):
     m, n = C.shape
-    # TODO: Bygg K med np.block, høyresiden (0, d), løs og returner z (de n første).
+    # TODO: Bygg K med np.block og høyresiden (0, d), løs, og returner z (de n første komponentene).
     return np.zeros(n)
 
 ## TESTS ##

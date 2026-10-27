@@ -1389,7 +1389,7 @@ plot_drift(path)
 Det er ikke metoden som svikter, men funksjonen som mangler en egenskap. Resten
 av fanen viser hvilken egenskap det er.
 
-### Iteratene blir i subnivåmengden
+### Iteratene holder seg i subnivåmengden
 
 Fordi begge metodene bare godtar lavere verdier, kan de aldri besøke et punkt
 der $f$ er høyere enn i startpunktet $z_0$. Alle iteratene ligger derfor i
