@@ -84,7 +84,7 @@ veien fra forsøk til formel også uten å åpne Gå i dybden-blokkene.
 
 ### Slik bruker du siden
 
-JSXGraph-figurene brukes til å dra, se og lage hypoteser. Pyodide-cellene
+I JSXGraph-figurene kan du dra, se hva som skjer og lage hypoteser. Pyodide-cellene
 gjentar forsøkene med tall og lar oss teste mange tilfeller. Figurene og
 Python-cellene deler ikke variabler; derfor står nødvendige tall og matriser
 på nytt ved hvert forsøk. Klassisk Gram–Schmidt fra 4.3 og tegnehjelperne lastes
@@ -153,8 +153,8 @@ Treffpunktet er merket $P$.
 
 Hvor langt ligger $P$ fra origo, målt langs $q$? Vi kaller dette tallet
 **komponenten av $x$ langs $q$**, og skriver det som $c$. Tallet har fortegn:
-positivt i samme retning som $q$, negativt i motsatt retning. Mot høyre
-får vi $c=3$; oppover får vi $c=2$. Her er komponenten ett tall; senere
+positivt i samme retning som $q$, negativt i motsatt retning. Når målepilen peker mot høyre,
+får vi $c=3$; når den peker oppover, får vi $c=2$. Her er komponenten ett tall; senere
 bruker vi tallet til å bygge en pil.
 
 Den oransje buen viser vinkelen $\theta$ fra positiv vannrett akse til $q$,
@@ -241,7 +241,7 @@ Prøv dette før du leser videre:
 
 ### Finn regneregelen {#uke4-regneregel}
 
-Skriv enhetsretningen som vektoren
+Nå vil vi regne ut komponenten fra koordinatene i stedet for å lese den av i figuren. Skriv enhetsretningen som vektoren
 
 $$q=\begin{bmatrix}q_1\\q_2\end{bmatrix},\qquad q_1^2+q_2^2=1.$$
 
@@ -291,7 +291,7 @@ $$c=
 Prøv $\theta=0^\circ$, $90^\circ$ og $45^\circ$ i figuren. Vi får
 henholdsvis $3$, $2$ og $5/\sqrt2\approx3.54$. Når målepilen dreies videre,
 gir fortegnene til cosinus og sinus automatisk negative bidrag der
-bevegelsen går mot måleretningen.
+bevegelsen går motsatt vei av måleretningen.
 
 Siden $q_1=\cos\theta$ og $q_2=\sin\theta$, er dette nettopp
 $3q_1+2q_2$. Den generelle regelen nedenfor er den samme oppskriften for
@@ -299,7 +299,7 @@ $x_1$ vannrette og $x_2$ loddrette skritt.
 
 ::: {.reading-step title="Gå i dybden: de to etappene i Python"}
 
-Prøv de to etappene hver for seg. Koden skriver dem ut før summen.
+Prøv de to etappene hver for seg. Koden skriver ut bidraget fra hver etappe før summen.
 Endre retningen og forutsi fortegnene først.
 
 ```{pyodide-python}
@@ -491,7 +491,7 @@ har målt og undersøker hva som blir igjen.
 
 Trykk «vinkelrett» i [retningsmåleren](#uke4-retning). Pilen $x=(3,2)^T$ er fortsatt like
 lang, men komponenten er null. Drei målepilen litt til hver side: fortegnet
-skifter. Hele bevegelsen går på tvers av måleretningen akkurat ved null.
+skifter. Akkurat når komponenten er null, går hele bevegelsen på tvers av måleretningen.
 
 Prøv nå på papir med $v=(-2,3)^T$:
 
@@ -509,8 +509,8 @@ Det betyr ikke at en av vektorene er null. Det betyr at retningsmåleren $q$
 ikke finner noen del av $x$ i sin retning. Pilen $v=(-2,3)^T$ over er
 altså ortogonal på $x=(3,2)^T$.
 
-Prøv to målepiler: $(1,0)^T$ og $(0,1)^T$. Begge har lengde én. Hver leser
-seg selv som $1$, men den andre som $0$. Dermed måler de vannrett og loddrett
+Prøv to målepiler: $(1,0)^T$ og $(0,1)^T$. Begge har lengde én. Hver av dem
+gir $1$ når den måler seg selv, og $0$ når den måler den andre. Dermed måler de vannrett og loddrett
 bevegelse hver for seg. Vi kaller en slik samling **ortonormal**: pilene har
 lengde én og er parvis ortogonale.
 
@@ -723,7 +723,7 @@ Vi bruker denne notasjonen i bildedelen:
 | $M,H,V,D,X$ i koden | pikselverdiene ordnet som $2\times2$-bilder |
 
 For eksempel er $h_2=-1/2$ ett tall, mens $\vec h$ inneholder alle fire.
-Vi bruker $x_1,\ldots,x_4$ fremfor $a,b,c,d$ for pikselverdiene, så
+Vi bruker $x_1,\ldots,x_4$ fremfor $a,b,c,d$ for pikselverdiene, slik at
 bokstaven $d$ ikke får to forskjellige roller.
 
 :::
@@ -744,7 +744,7 @@ enhetsretninger, akkurat som målepilen tidligere.
 
 ::: {.reading-step title="Gå i dybden: hvorfor kan et mønster være en retning?"}
 
-For en vanlig pil sier «samme retning» at vi kan få den ene ved å gange
+For en vanlig pil betyr «samme retning» at vi kan få den ene ved å gange
 den andre med et positivt tall. Prøv den samme handlingen på H-bildet:
 Når vi dobler alle fire pikselverdiene, beholder vi kontrastmønsteret,
 men gjør kontrasten dobbelt så sterk. Vi har beveget oss lenger i samme
@@ -878,7 +878,7 @@ mønsterbasisen.
 
 For hvert nytt bilde vil vi gjenta de samme fire målingene i fast
 rekkefølge: M, H, V, D. Vi setter derfor mønstervektorene som kolonner i én
-matrise. Da skriver matriseproduktet de fire målingene i én kolonne:
+matrise. Da gir matriseproduktet de fire målingene samlet i én kolonne:
 
 $$Q_{\text{pattern}}=
 \begin{bmatrix}|&|&|&|\\
@@ -1221,7 +1221,7 @@ Det er nettopp den siste likningen i rammen over: $Q^T(x-p)=0$.
 Selv om $Q^TQ=I_k$, er $QQ^T$ ikke identitetsmatrisen når $Q$ har færre
 kolonner enn rader. I eksemplet over er $p=QQ^Tx=(3,2,0)^T\ne x$: Den
 tredje komponenten ligger utenfor planet og blir igjen i residualen.
-**Vi får $p=x$ akkurat når $x$ ligger i rommet kolonnene i $Q$ spenner ut.**
+**Vi får $p=x$ akkurat når $x$ ligger i rommet som kolonnene i $Q$ spenner ut.**
 
 ::: {.reading-step title="Gå i dybden: $Q^TQ$ og $QQ^T$ i samme eksempel"}
 
@@ -1304,15 +1304,15 @@ $$r_{12}=q_1^Ta_2,\qquad
 v_2=a_2-r_{12}q_1,\qquad
 q_2=\frac{v_2}{\lVert v_2\rVert_2}.$$
 
-Les operasjonene med språket vi allerede har:
+Vi kan lese operasjonene med begrepene vi allerede kjenner:
 
 1. normaliser den første retningen;
 2. mål hvor mye av $a_2$ som går i retning $q_1$;
 3. bygg opp og trekk fra denne delen;
 4. normaliser det som er igjen.
 
-Hvorfor blir den nye pilen vinkelrett? Måleren $q_1$ leste $r_{12}$ på
-$a_2$. Vi trekker fra nøyaktig denne mengden i retning $q_1$:
+Hvorfor står den nye pilen vinkelrett på den første retningen? Når måleren $q_1$ måler
+$a_2$, gir den $r_{12}$. Vi trekker fra nøyaktig denne mengden i retning $q_1$:
 
 $$q_1^Tv_2=q_1^Ta_2-r_{12}(q_1^Tq_1)=r_{12}-r_{12}=0.$$
 
@@ -1387,7 +1387,7 @@ a_2&=\textcolor{#8b5aa7}{\frac4{\sqrt5}}\,\textcolor{#1565c0}{\frac1{\sqrt5}\beg
 =\begin{bmatrix}1\\2\end{bmatrix}.
 \end{aligned}$$
 
-Ingen nye vektorer eller koeffisienter skal beregnes for å skrive QR.
+Vi trenger ikke beregne nye vektorer eller koeffisienter for å skrive opp QR.
 Vi skal bare samle disse to likningene.
 
 :::
@@ -1710,8 +1710,8 @@ Matrisen som brukes i forsøket, er
 
 $$A=\begin{bmatrix}1&1&0\\1&0&1\\0&1&1\\1&1&1\end{bmatrix}.$$
 
-Den har fire rader og tre uavhengige kolonner. Resultatet får derfor
-$Q$ av størrelse $4\times3$ og $R$ av størrelse $3\times3$.
+Den har fire rader og tre uavhengige kolonner. Derfor får
+$Q$ størrelse $4\times3$ og $R$ størrelse $3\times3$.
 
 ```{pyodide-python}
 #| label: week4-classical-gs
@@ -1841,7 +1841,7 @@ $$A=\begin{bmatrix}1&2&3\\0&1&1\\0&0&0\end{bmatrix}$$
 
 er $a_3=a_1+a_2$. Den tredje kolonnen inneholder derfor ingen ny retning.
 I eksakt aritmetikk trekker Gram–Schmidt fra hele kolonnen og får $v_3=0$.
-I dette binært eksakte eksemplet skjer det også i flyttallsregning, og koden
+Alle tallene i dette eksemplet lagres eksakt i binær form. Derfor skjer det også i flyttallsregning, og koden
 forsøker så å dele på $\lVert v_3\rVert_2=0$.
 
 ```{pyodide-python}
@@ -1880,7 +1880,7 @@ eksakt avhengige.
 
 #### Følg GS og avrundingen samtidig
 
-Vi setter **$e=10^{-8}$ fra starten** og bruker vanlig float64-regning.
+Nå ser vi på kolonner som er nesten, men ikke helt, avhengige. Vi setter **$e=10^{-8}$ fra starten** og bruker vanlig float64-regning.
 De tre vektorene er
 
 $$\textcolor{#1565c0}{a_1=(1,e,0,0)^T},\qquad
@@ -2208,14 +2208,14 @@ plot_orthogonality_loss(epsilons, cgs_errors, mgs_errors)
 
 Les figuren mot mindre $\varepsilon$. Hvor begynner klassisk GS å miste
 ortogonalitet i dette forsøket? Hvor mye lenger holder modifisert GS her?
-Kontroller også at alle tall er endelige og den relative feilen
+Kontroller også at alle tall er endelige, og se på den relative feilen
 $\lVert A-QR\rVert_F/\lVert A\rVert_F$.
 
 :::
 
 **Hva viser sveipet?** Klassisk GS holder ortogonaliteten godt så lenge
 kolonnene ikke er for like: ved $\varepsilon=10^{-5}$ er
-$\lVert Q^TQ-I\rVert_F$ omtrent $10^{-7}$. Så går det fort: ved $10^{-6}$ er
+$\lVert Q^TQ-I\rVert_F$ omtrent $10^{-7}$. Deretter blir det raskt verre: ved $10^{-6}$ er
 feilen omtrent $10^{-4}$, ved $10^{-7}$ omtrent $0.02$, og fra $10^{-8}$ er den
 omtrent $0.7$ – kolonnene i $Q$ er langt fra ortogonale, selv om ingen tall er
 NaN. Med modifisert GS blir feilen aldri større enn omtrent $10^{-8}$ i dette
@@ -2386,7 +2386,7 @@ Vi søker en kombinasjon av $a_1,a_2$ som ligger nærmest $b$.
 
 Vi bruker nå $A=QR$ som et kjent verktøy. Husk at kolonnene i $Q$
 er ortonormale og gir de samme mulige modellvektorene som kolonnene i $A$.
-Det gjør projeksjonsformelen fra 4.2 tilgjengelig.
+Derfor kan vi bruke projeksjonsformelen fra 4.2.
 
 Vi lager $Q$ og $R$ med Gram–Schmidt fra 4.3, akkurat som for hånd der:
 $r_{11}=\lVert a_1\rVert_2=\sqrt{1+1+1+1}=2$ og
@@ -2500,7 +2500,7 @@ linjen i prosjekt 4, del 1.
 ::: {.reading-step title="Gå i dybden: Pytagoras-steget utregnet"}
 
 Kall de to leddene $u=r_*$ og $w=Q(d-Rc)$. Siden $Q^Tr_*=0$, er
-$w^Tu=(d-Rc)^TQ^Tr_*=0$. Da gir utganging
+$w^Tu=(d-Rc)^TQ^Tr_*=0$. Når vi multipliserer ut, får vi
 
 $$\lVert u+w\rVert_2^2=(u+w)^T(u+w)=u^Tu+2\,w^Tu+w^Tw
 =\lVert u\rVert_2^2+\lVert w\rVert_2^2.$$
@@ -2514,7 +2514,7 @@ likhet gjelder bare når $Rc=d$.
 
 #### Finn konstantleddet og stigningstallet
 
-Dette gir et lite, øvre triangulært system:
+Kravet om minst kvadratsum gir altså et lite, øvre triangulært system:
 
 $$\boxed{\textcolor{#8b5aa7}{R}c_*=\textcolor{#1565c0}{Q^T}b},
 \qquad
@@ -2690,7 +2690,7 @@ $$A=[a_0\ a_1\ a_2]
 Som før er $Ac$ **modellverdier ved målepunktene**, mens $c$ inneholder
 **modellkoeffisientene**. Her har vi fem målinger og tre koeffisienter.
 Vi søker $c$ som gjør $\lVert b-Ac\rVert_2^2$ minst mulig, og bruker
-nøyaktig beregningen fra 4.5: Faktoriser $A=QR$, regn $d=Q^Tb$ og løs
+nøyaktig samme beregning som i 4.5: Faktoriser $A=QR$, regn $d=Q^Tb$ og løs
 $Rc=d$. For disse dataene gir det $c=(1,1,\tfrac12)^T$ – akkurat
 referansepolynomet – og kvadratsummen $0.007$. Kolonnene i $Q$ er verdiene
 av tre nye basispolynomer ved målepunktene; formlene står i Gå i dybden.
@@ -2704,7 +2704,7 @@ polynomkoeffisientene til koeffisienter i denne ortonormale basisen:
 
 $$Ac=\textcolor{#1565c0}{Q}\bigl(\textcolor{#8b5aa7}{R}c\bigr).$$
 
-Vi bruker nå akkurat beregningen fra 4.5:
+Vi bruker nå akkurat samme beregning som i 4.5:
 
 $$d=\textcolor{#1565c0}{Q^T}b,\qquad
 \widehat b=\textcolor{#1565c0}{Q}d,\qquad
@@ -2752,8 +2752,8 @@ $$\textcolor{#c62828}{r=0.01\begin{bmatrix}1\\-4\\6\\-4\\1\end{bmatrix}},
 \qquad Q^Tr=0,\qquad
 \lVert r\rVert_2^2=0.007.$$
 
-Som i 4.5 står residualen ortogonalt på rommet av mulige modellverdier.
-Derfor er dette den minste kvadratsummen. Den er ikke null, så ingen
+Som i 4.5 er residualen ortogonal på rommet av mulige modellverdier.
+Derfor er dette den minste kvadratsummen. Den er ikke null, så ikke noe
 andregradspolynom treffer alle fem målingene.
 
 **Her finner vi tilbake til referansepolynomet fordi målefeilen er
@@ -2812,7 +2812,7 @@ ortonormale polynombasisen fra QR endre seg.
 
 ### Bytt polynombasis, behold QR-metoden
 
-Fra uke 3 kjenner vi Chebyshev-polynomene
+Samme polynom kan skrives i en annen basis. Fra uke 3 kjenner vi Chebyshev-polynomene
 $T_0(t)=1$, $T_1(t)=t$ og $T_2(t)=2t^2-1$.
 La $C$ være matrisen som inneholder verdiene av disse basispolynomene
 ved de fem målepunktene, altså $C_{ij}=T_j(t_i)$. I prosjekt 4 heter
@@ -2837,7 +2837,7 @@ Normaliserer vi begge, gir indreproduktet $0.997$ (1 betyr samme retning).
 For $T_{10}$ og $T_{12}$ blir det $-0.22$. Nesten parallelle kolonner kjenner
 vi fra 4.4 – der kunne Gram–Schmidt miste ortogonaliteten.
 
-Chebyshev-basis betyr ikke automatisk ortonormale kolonner.
+En Chebyshev-basis gir ikke automatisk ortonormale kolonner.
 **QR beregner en ortonormal basis for den konkrete målematrisen.**
 Det er denne egenskapen som gjør projeksjonsformelen tilgjengelig.
 
@@ -2966,14 +2966,14 @@ Kontroller at du kan forklare følgende uten å starte med kode:
 
 1. Ellers blander målingen retning og lengden til måleren.
 2. Vektorene står vinkelrett; $q$ finner ingen komponent av $x$ i sin retning.
-3. For $x\in C(Q)$ gir $x=Q(Q^Tx)$; ellers er de koordinatene til projeksjonen.
+3. For $x\in C(Q)$ gjelder $x=Q(Q^Tx)$; ellers er tallene koordinatene til projeksjonen.
 4. Projeksjonene på retningene som allerede er laget.
 5. Eksakt avhengighet gir ingen ny retning; i det viste eksemplet deles
    nullvektoren på sin norm null.
 6. En liten rest dannes ved kansellerende subtraksjoner og kan domineres av
    avrundingsfeil.
 7. CGS måler mot den opprinnelige kolonnen; MGS måler mot den fortløpende
-   rensede resten.
+   oppdaterte resten.
 8. Pytagoras viser at den korteste residualen er delen utenfor $C(A)$.
 9. $A^Tr_*=R^TQ^Tr_*=0$; sett inn $r_*=b-Ac_*$ og flytt leddet med $c_*$.
 :::
@@ -2986,7 +2986,7 @@ trenger en repetisjon.
 Arbeid først på papir, og bruk deretter kode til å undersøke det du fant.
 De fem første oppgavegruppene (mønster, målinger som ikke er koordinater,
 QR, normallikningene og et foreslått svar) hører til hovedløpet; de tre
-siste undersøker numeriske feil og hva «god løsning» betyr. Beregn omtrent
+siste undersøker numeriske feil og hva «god løsning» betyr. Sett av omtrent
 2½–3 timer for hele settet. Alle nødvendige data er
 oppgitt her, og hver kodeoppgave importerer sine egne biblioteker.
 
@@ -3040,7 +3040,7 @@ ikke dette at resten er null? Hvilket fjerde mønster ville forklart den?
 
 **Kode:** Samle mønstrene som kolonnene i $Q$. Fullfør `decompose(Q, x)`;
 returner målingene, rekonstruksjonen og resten i denne rekkefølgen.
-Forutsett at kolonnene i $Q$ er ortonormale.
+Du kan anta at kolonnene i $Q$ er ortonormale.
 
 ```{py-exercise}
 #| label: week4-task-pattern-code
@@ -3362,8 +3362,8 @@ De tre punktene $(-1,0),(0,1),(1,2)$ ligger på linjen $p(t)=1+t$.
 Legg til målingen $(2,6)$. Før du regner: Vil den nye beste linjen fortsatt
 treffe de tre gamle punktene? Hva mener vi egentlig med «dårligere»?
 
-Vi skriver linjen som $p(t)=c_0+c_1t$. Første kolonne i målematrisen er
-énere og andre kolonne inneholder $t$-verdiene:
+Vi skriver linjen som $p(t)=c_0+c_1t$. Første kolonne i målematrisen består av
+énere, og andre kolonne inneholder $t$-verdiene:
 
 $$A_{\rm ny}=\begin{bmatrix}1&-1\\1&0\\1&1\\1&2\end{bmatrix},\qquad
 b_{\rm ny}=(0,1,2,6)^T.$$
@@ -3418,7 +3418,7 @@ funnet en forbedring på det nye problemet?
 
 ### Avslør en falsk kvalitetskontroll
 
-En medstudent hevder: «Hvis $QR=A$, kan vi finne minste-kvadraters løsningen
+En medstudent hevder: «Hvis $QR=A$, kan vi finne løsningen med minste kvadrater
 fra $Rc=Q^Tb$.» Undersøk følgende eksakte moteksempel:
 
 $$A=\begin{bmatrix}1&0\\0&1\\0&0\end{bmatrix},\quad

@@ -31,7 +31,7 @@ Prosjektets hovedspørsmål er:
 
 Du skal gjøre tre kontrollerte sammenligninger. Først arbeider du med lav grad
 og eksakt lineær algebra. Deretter endrer du bare basisen. Til slutt holder du
-basis fast og endrer bare avlesningspunktene. Ikke bland disse eksperimentene:
+basisen fast og endrer bare avlesningspunktene. Ikke bland disse eksperimentene:
 Ellers vet du ikke hva som forårsaket forskjellen.
 
 ```{pyodide-python}
@@ -64,7 +64,7 @@ a = np.array([1.0, -2.0, 0.5, 1.0])
 
 `np.array` lager her bare en talliste som NumPy kan regne med.
 
-Her betyr altså `a[0]` konstantleddet $1$, `a[1]` betyr $-2$, og `a[3]`
+Her betyr altså `a[0]` konstantleddet $1$, `a[1]` betyr koeffisienten $-2$, og `a[3]`
 betyr koeffisienten $1$ foran $x^3$. For å regne ut $p(0.4)$ skriver vi
 
 ```python
@@ -80,7 +80,7 @@ y = poly.polyval(x, a)
 ```
 
 Da inneholder `y` de fire tallene $p(-1)$, $p(0)$, $p(0.4)$ og $p(1)$ i
-samme rekkefølge. Dette er alt `poly.polyval` gjør: Det setter de oppgitte
+samme rekkefølge. Dette er alt `poly.polyval` gjør: Den setter de oppgitte
 $x$-verdiene inn i polynomet.
 
 Senere skriver vi det samme polynomet ved hjelp av
@@ -90,7 +90,7 @@ $$p(x)=c_0T_0(x)+c_1T_1(x)+c_2T_2(x),$$
 
 lagrer vi tallene som `c = np.array([c_0, c_1, c_2])` og bruker
 `cheb.chebval(x, c)`. Forskjellen mellom `poly.polyval` og `cheb.chebval` er
-derfor hvilken liste av polynomer koeffisientene hører til.
+altså hvilke polynomer koeffisientene hører til.
 
 Vi bruker også to hjelpefunksjoner senere:
 
@@ -121,19 +121,20 @@ for en matematisk forklaring.
 
 ## Innledning: Bli kjent med Chebyshev-polynomene
 
-Chebyshev-polynomene bygges med rekursjonen
+Gjennom prosjektet sammenligner vi den vanlige potensbasisen med
+Chebyshev-polynomene. Disse polynomene bygges med rekursjonen
 
 $$
 T_0(x)=1,\qquad T_1(x)=x,\qquad
 T_{n+1}(x)=2xT_n(x)-T_{n-1}(x).
 $$
 
-De første polynomene er altså ikke oppgitt ferdig. Bruk rekursjonen til å
+Bare de to første polynomene er oppgitt ferdig. Bruk rekursjonen til å
 regne ut $T_2$, $T_3$ og $T_4$ for hånd. Samle ledd med samme potens av $x$.
 
 ### Oversett rekursjonen fra papir til Python
 
-Funksjonen under er en direkte oversettelse av definisjonen. Før du kjører,
+Funksjonen under er en direkte oversettelse av definisjonen. Før du kjører koden,
 følg kallene som trengs for å beregne $T_4(0.3)$, og forklar hvilken linje som
 svarer til hvert av de tre tilfellene i den matematiske definisjonen.
 
@@ -172,7 +173,7 @@ direkte rekursjonen gjentar stadig flere delberegninger.
 
 Den direkte rekursjonen gjør mange av de samme beregningene flere ganger. Vi
 vil dessuten snart trenge mange $T$-polynomer i mange forskjellige
-$x$-verdier. Derfor lager vi én tabell som samler alt.
+$x$-verdier. Derfor lager vi én tabell som samler alle verdiene.
 
 Hvis `x` inneholder fem punkter og vi ber om polynomene fra $T_0$ til $T_4$,
 får tabellen fem rader og fem kolonner:
@@ -210,7 +211,7 @@ print(chebyshev_table(x_test, 4))
 ```
 
 Les den utskrevne tabellen rad for rad. Kontroller for eksempel at første rad
-stemmer med $T_k(-1)$ for $k=0,\ldots,4$, og at kolonne 1 er de fem
+stemmer med $T_k(-1)$ for $k=0,\ldots,4$, og at kolonne 1 inneholder de fem
 $x$-verdiene fordi $T_1(x)=x$. Senere bruker vi den samme tabellen når vi vil
 regne ut flere lineærkombinasjoner av $T_0,\ldots,T_n$ i de samme punktene.
 
@@ -219,13 +220,13 @@ regne ut flere lineærkombinasjoner av $T_0,\ldots,T_n$ i de samme punktene.
 Før vi bruker Chebyshev-polynomene som regneverktøy, trenger vi et bilde av
 hvordan de oppfører seg på intervallet $[-1,1]$. Er de store eller små? Hvor
 mange ganger svinger de? Oppfører partalls- og oddetallspolynomene seg ulikt?
-Dette blir viktig senere når vi skal forstå hvorfor denne beskrivelsen av et
-polynom kan være numerisk gunstig.
+Dette blir viktig senere når vi skal forstå hvorfor det kan være numerisk gunstig å
+skrive et polynom med Chebyshev-polynomer.
 
 En graf består av mange beregnede punkter. Koden lager derfor 1200 jevnt
 fordelte $x$-verdier og bruker `chebyshev_table` til å regne ut
 $T_0,\ldots,T_8$ i alle sammen. Resultatet `T_plot` har 1200 rader og 9
-kolonner. I løkken tegner `T_plot[:, n]` hele kolonnen som hører til $T_n$.
+kolonner. I løkken tegner vi `T_plot[:, n]`, altså hele kolonnen som hører til $T_n$.
 
 ```{pyodide-python}
 #| label: ingmat-ide-projects-week3-chebyshev-sampling-4
@@ -300,15 +301,15 @@ $$
 
 Nå kan vi bruke **rangtesten**. Det er navnet vi bruker på følgende
 standardtest fra lineær algebra: En matrise med fem kolonner har fem lineært
-uavhengige kolonner akkurat når rangen er 5. Da har ligningen $Qb=0$ bare
+uavhengige kolonner akkurat når rangen er 5. Da har likningen $Qb=0$ bare
 løsningen $b=0$.
 
-Dette forklarer også hvorfor uavhengige kolonner betyr uavhengige polynomer:
+Hvorfor betyr uavhengige kolonner også uavhengige polynomer?
 Hver kolonne er bare koeffisientlisten til ett bestemt $T_k$. Hvis ingen
 ikke-triviell kombinasjon av listene gir nullkolonnen, kan heller ingen
 ikke-triviell kombinasjon av polynomene gi nullpolynomet.
 
-Til slutt vet vi at $\mathcal P_4$ har dimensjon 5. Fem lineært uavhengige
+Til slutt bruker vi at $\mathcal P_4$ har dimensjon 5. Fem lineært uavhengige
 polynomer i et femdimensjonalt rom fyller hele rommet. Derfor danner de en
 basis. Start nå med koeffisientene du fant for hånd, og fyll kolonnene i `Q`.
 
@@ -336,7 +337,7 @@ Kontroller alle kolonnene mot håndregningen. Bestem deretter om
 $(T_0,T_1,T_2,T_3,T_4)$ er en basis for $\mathcal P_4$. Begrunnelsen skal
 bruke matrisen, ikke bare at figurene ser forskjellige ut.
 
-Hva forteller formen til `Q` om samme spørsmål for
+Hva forteller formen til `Q` om det samme spørsmålet for
 $(T_0,\ldots,T_n)$ ved høyere grad? Formuler en begrunnet regel. Pek på
 mønsteret i matrisen; du trenger ikke bevise regelen for alle $n$.
 
@@ -416,7 +417,7 @@ p(x_0)=a_0-a_1,
 p(x_1)=a_0+2a_1.
 $$
 
-Begge ligningene kan samles i ett matriseprodukt:
+Begge likningene kan samles i ett matriseprodukt:
 
 $$
 \begin{bmatrix}p(-1)\\p(2)\end{bmatrix}
@@ -439,9 +440,9 @@ $p(2)=a_0+2a_1+2^2a_2$. Hver rad lages ved å sette ett punkt inn i
 $1,x,x^2,\ldots$. Når matrisen multipliseres med koeffisientkolonnen, får vi
 én polynomverdi per rad. I Python betyr `A @ a` matriseproduktet $Aa$.
 
-Koden under lager denne matrisen for så mange punkter og potenser som vi ber
+Koden under lager en slik matrise for så mange punkter og potenser som vi ber
 om. Uttrykket med `None` er NumPys kompakte måte å kombinere hvert punkt med
-hver potens. Bruk de to små matrisene over som fasit når du fullfører linjen.
+hver potens. Bruk de to små matrisene over som fasit når du fullfører den manglende linjen.
 
 Chebyshev-matrisen bygges på samme måte, men nå skriver vi
 
@@ -495,7 +496,7 @@ spørsmål til å knytte tallene til lineær algebra:
 
 1. Avbildningen $E$ tar inn et polynom av grad høyst 3 og gir ut fire tall.
    Skriv derfor definisjonsrommet og verdirommet med symboler. Beskriv også
-   med ord hva ett element i hvert av rommene ser ut som.
+   med ord hvordan ett element i hvert av rommene ser ut.
 2. La $a$ være koeffisientkolonnen når $p$ skrives med
    $1,x,x^2,x^3$. Forklar hvorfor `M_small @ a` er det samme som $E(p)$.
    Pek på én bestemt rad og vis regnestykket.
@@ -533,7 +534,7 @@ matrisen multipliseres med $a$, får vi derfor verdiene til
 
 $$a_0+a_1x+a_2x^2+a_3x^3$$
 
-i de fire punktene. Ligningen $M_{\text{small}}a=E(p)$ ber om akkurat de
+i de fire punktene. Likningen $M_{\text{small}}a=E(p)$ ber om akkurat de
 tallene $a_0,\ldots,a_3$ som får disse verdiene til å passe med dataene.
 
 På samme måte inneholder kolonne $j$ i $C_{\text{small}}$ verdiene til $T_j$
@@ -541,12 +542,12 @@ i punktene. Produktet $C_{\text{small}}c$ gir derfor avlesningene av
 
 $$c_0T_0+c_1T_1+c_2T_2+c_3T_3.$$
 
-Ligningen $C_{\text{small}}c=E(p)$ finner dermed Chebyshev-koeffisientene.
+Likningen $C_{\text{small}}c=E(p)$ finner dermed Chebyshev-koeffisientene.
 Det er matrisens kolonner som bestemmer hva de ukjente tallene betyr.
 
 Til slutt evaluerer vi begge reverse-engineering-svarene på et tett
-rutenett. Hvis de representerer samme polynom, skal grafverdiene stemme selv
-om koeffisientlistene ikke gjør det. Kommandoen `np.linalg.solve(A, b)` betyr
+rutenett. Hvis de representerer samme polynom, skal grafverdiene være like selv
+om koeffisientlistene ikke er det. Kommandoen `np.linalg.solve(A, b)` betyr
 bare «finn tallkolonnen $u$ som løser $Au=b$». Den kjenner ikke til polynomer;
 tolkningen kommer fra hvordan vi bygde matrisen `A`.
 
@@ -586,12 +587,12 @@ monomialformen.
 
 Med fire forskjellige avlesningspunkter kunne vi finne et polynom i
 $\mathcal P_3$ entydig. Nå undersøker vi hvorfor «fire tall» ikke alene er
-nok: Punktene må også gi fire forskjellige opplysninger. Vi gjør to separate
+nok: Punktene må også gi fire uavhengige opplysninger. Vi gjør to separate
 endringer. Først beholder vi bare tre avlesninger. Deretter bruker vi fire
 rader, men gjentar ett punkt. I begge tilfeller forventer vi at rangen blir
 mindre enn 4.
 
-Kjør de to endringene under én om gangen:
+Koden under gjør de to endringene hver for seg:
 
 ```{pyodide-python}
 #| label: ingmat-ide-projects-week3-chebyshev-sampling-8
@@ -619,7 +620,7 @@ $$z(-1)=z(-1/3)=z(1/3)=0.$$
 faktorene $(x-r_1)(x-r_2)(x-r_3)$.
 
 Bruk deretter koden under til å kontrollere svaret og lage to forskjellige
-polynomer med identiske tre avlesninger:
+polynomer med de samme tre avlesningene:
 
 ```{pyodide-python}
 #| label: ingmat-ide-projects-week3-chebyshev-sampling-9
@@ -681,7 +682,7 @@ Gå gjennom argumentet i disse trinnene:
 
 ## Del 2: Hold punktene fast og bytt basis
 
-Ved grad 3 fant begge matrisene fram til det riktige polynomet. Det kan derfor
+Ved grad 3 førte begge systemene fram til det riktige polynomet. Det kan derfor
 se ut som basisvalget bare endrer hvordan koeffisientene skrives. I eksakt
 matematikk er det riktig. På en datamaskin må imidlertid alle mellomresultater
 lagres med et begrenset antall sifre. Nå spør vi om én skrivemåte kan føre til
@@ -700,11 +701,11 @@ x_k=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
 \qquad k=0,\ldots,n.
 $$
 
-Hvorfor disse punktene er interessante, undersøker vi først i del 3. Akkurat
-nå trenger du bare å merke deg at funksjonen lager $n+1$ forskjellige tall i
+Hvorfor disse punktene er interessante, ser vi på i del 3. Akkurat
+nå trenger du bare å merke deg at formelen gir $n+1$ forskjellige tall i
 $[-1,1]$, og at begge basisene får de samme tallene.
 
-De tre korte hjelpefunksjonene under gjør forsøket mulig å gjenta:
+De tre korte hjelpefunksjonene under gjør det mulig å gjenta forsøket:
 `chebyshev_points` lager punktene, `reference_coordinates` lager et fast
 polynom med små Chebyshev-koeffisienter, og `max_grid_error` måler den største
 observerte forskjellen på et tett rutenett.
@@ -733,7 +734,7 @@ def max_grid_error(values, reference):
     return float(np.max(np.abs(values-reference)))
 ```
 
-Se på formelen i `reference_coordinates` før du kjører grad 30. Alle tallene
+Se på formelen i `reference_coordinates` før du kjører forsøket med grad 30. Alle tallene
 $c_k=(-1)^k/(k+1)^2$ ligger mellom $-1$ og $1$. Skriv ned om du tror dette
 også tvinger koeffisientene foran $1,x,x^2,\ldots,x^{30}$ til å være små.
 Dette er hypotesen som forsøket skal teste.
@@ -816,8 +817,8 @@ Ikke gå direkte videre. Les tallene i denne rekkefølgen:
 1. Bekreft i koden at `measurements` lages én gang og brukes på høyre side i
    begge systemene. Hva forteller det om dataene de to metodene får?
 2. Sammenlign den største koeffisienten i de to listene. Hvor mange
-   tierpotenser skiller dem? Husk at koeffisientene hører til forskjellige
-   polynomer i basislistene og derfor ikke skal sammenlignes ledd for ledd.
+   tierpotenser skiller dem? Husk at koeffisientene står foran forskjellige
+   basispolynomer og derfor ikke skal sammenlignes ledd for ledd.
 3. Sammenlign feilene på rutenettet. Hvor ligger maksimumsfeilen du fant med
    `np.argmax`?
 4. Forklar hva som ble holdt fast: polynomrom, referansepolynom,
@@ -875,7 +876,7 @@ Skriv en foreløpig forklaring. Bruk minst disse observasjonene:
 
 - størrelsen på koordinatene;
 - størrelsen på basisfunksjonene på $[-1,1]$;
-- at et moderat sluttresultat kan bygges ved at store ledd nesten kansellerer;
+- at et moderat sluttresultat kan bygges ved at store ledd nesten kansellerer hverandre;
 - at hvert mellomresultat lagres med endelig presisjon.
 
 Ikke skriv at «datamaskinen er unøyaktig» uten å identifisere hvilke tall som
@@ -887,12 +888,12 @@ Virkelige avlesninger er sjelden eksakte. Vi legger derfor til en svært liten
 feil, omtrent $10^{-10}$, i hver polynomverdi. Først løser vi systemet med de
 opprinnelige dataene, deretter med de litt endrede dataene. Vi gjør dette i
 begge basiser med nøyaktig den samme feillisten. Spørsmålet er hvor mye en
-liten målefeil påvirker reverse engineering av koeffisientene.
+liten målefeil påvirker koeffisientene vi finner med reverse engineering.
 
 Vi sammenligner `a_after-a_before` fordi begge vektorene bruker
 monomialbasis. Tilsvarende sammenligner vi `c_after-c_before` fordi begge
 bruker Chebyshev-basis. Derimot ville `a_after-c_after` ikke hatt en enkel
-betydning: Plass nummer 2 står foran $x^2$ i den ene listen og foran $T_2$ i
+betydning: Tallet på plass nummer 2 står foran $x^2$ i den ene listen og foran $T_2$ i
 den andre.
 
 ```{pyodide-python}
@@ -984,7 +985,7 @@ plt.show()
 
 Hvor er punktavstanden størst og minst i hvert oppsett? Hvilket oppsett ville
 du valgt dersom du var spesielt redd for at polynomet skulle gjøre noe
-uventet nær $-1$ eller $1$? Skriv hypotesen før forsøket med forstyrrelser.
+uventet nær $-1$ eller $1$? Skriv ned hypotesen før du gjør forsøket med forstyrrelser.
 
 ### Bruk den samme lille feilen med begge punktsettene
 
@@ -992,14 +993,14 @@ Vi forstyrrer avlesningene med det faste mønsteret
 
 $$\delta y_k=10^{-10}(-1)^k.$$
 
-Det er viktig at både størrelsen og fortegnsmønsteret er identisk i de to
+Det er viktig at både størrelsen og fortegnsmønsteret er identiske i de to
 forsøkene. Dermed kan ikke forskjellen forklares med at det ene forsøket fikk
 en større eller mer gunstig feil.
 
 Funksjonen lager først nøyaktige avlesninger fra referansepolynomet. Deretter
-legger den til feilen og gjør reverse engineering: Den finner det ene
+legger den til feilen og gjør reverse engineering: Den finner det eneste
 polynomet av grad høyst $n$ som passer til de forstyrrede verdiene. Til slutt
-sammenlignes dette polynomet med referansen på 5001 punkter. Forholdet
+sammenlignes dette polynomet med referansen i 5001 punkter. Forholdet
 
 $$
 \frac{\text{største feil på det tette rutenettet}}
@@ -1067,8 +1068,8 @@ størrelse på forstyrrelsen.
 
 ### Gjør det nesten usynlige feilpolynomet synlig
 
-For å forstå forsterkningen ser vi ikke bare på to hele polynomer. Vi trekker
-dem fra hverandre. Forskjellen mellom reverse-engineering-resultatet og det
+For å forstå forsterkningen ser vi ikke bare på de to polynomene hver for seg. Vi
+trekker dem fra hverandre. Forskjellen mellom reverse-engineering-resultatet og det
 opprinnelige polynomet er selv et polynom:
 
 $$r(x)=p_{\mathrm{forstyrret}}(x)-p_{\mathrm{opprinnelig}}(x).$$
@@ -1076,7 +1077,7 @@ $$r(x)=p_{\mathrm{forstyrret}}(x)-p_{\mathrm{opprinnelig}}(x).$$
 Ved hvert avlesningspunkt er $r(x_k)$ akkurat den lille forstyrrelsen vi la
 til. Hvis vi bare så på disse $n+1$ tallene, ville $r$ virke nesten som
 nullpolynomet. Men avlesningspunktene forteller ikke direkte hva som skjer
-mellom dem. Figuren tegner derfor både de små svarte verdiene $r(x_k)$ og hele
+mellom dem. Figuren tegner derfor både de små verdiene $r(x_k)$ som svarte punkter og hele
 kurven $r(x)$ på det tette rutenettet.
 
 ```{pyodide-python}
@@ -1206,7 +1207,7 @@ Hvis et svar ligger langt utenfor intervallet $[-1,1]$, vet du fra
 cosinusidentiteten at det ikke kan være riktig. Se da på den største
 monomialkoeffisienten. Når mange svært store ledd til slutt skal gi et svar
 mellom $-1$ og $1$, må positive og negative bidrag nesten kansellere
-hverandre. Små avrundinger i de store mellomresultatene kan da overleve etter
+hverandre. Små avrundingsfeil i de store mellomresultatene kan da overleve etter
 kanselleringen og bli store sammenlignet med det riktige svaret.
 
 ### Se hvordan feilen vokser fram mot grad 50
@@ -1255,7 +1256,7 @@ Bygg forklaringen i denne rekkefølgen:
 ## Åpen utfordring: Lag din egen blindsone
 
 Nå får du bruke ideene fra prosjektet mer fritt. Du skal gjenta historien fra
-del 3, men velge graden, punktene og fortegnene selv. Start med et
+del 3, men velge graden, punktene og fortegnene i feilen selv. Start med et
 referansepolynom, legg en svært liten feil til avlesningene, gjør reverse
 engineering av polynomet som passer de endrede dataene, og mål hvor stort
 avviket blir mellom punktene.
@@ -1269,7 +1270,7 @@ Følg disse reglene:
 - alle $n+1$ avlesningspunkter skal være forskjellige og ligge i $[-1,1]$;
 - avstanden mellom to nabopunkter skal være minst $10^{-3}$;
 - hver avlesningsfeil skal ha absoluttverdi høyst $10^{-10}$;
-- polynomet skal finnes i Chebyshev-basis;
+- polynomet skal bestemmes i Chebyshev-basis;
 - forsterkningen skal beregnes på et tett rutenett med minst 5001 punkter.
 
 Du kan endre graden, punktene og fortegnsmønsteret i forstyrrelsen. Du kan
@@ -1365,7 +1366,7 @@ Besvar også følgende hovedspørsmål:
 - Hva var nesten usynlig for avlesningsavbildningen?
 - Hvilke påstander har du vist matematisk, og hvilke bygger bare på numeriske
   forsøk?
-- Hva lærte $T_{50}$-forsøket som ikke allerede var synlig ved grad 3?
+- Hva viste $T_{50}$-forsøket som ikke allerede var synlig ved grad 3?
 
 ## Dette skal leveres
 
@@ -1382,7 +1383,7 @@ Lever én Quarto-side eller notebook med:
 9. den samlede analysen.
 
 Oppgi alltid grad, punkter, størrelsen på forstyrrelsen og rutenettstørrelse sammen
-med et resultat. Ellers kan forsøket ikke gjentas.
+med hvert resultat. Ellers kan forsøket ikke gjentas.
 
 :::: {.callout-warning}
 ## Krav til kodeassistenter og numeriske påstander

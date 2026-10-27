@@ -2,12 +2,12 @@
 
 Dette prosjektet er laget for omtrent **4–6 timer selvstendig arbeid**. Copilot og andre kodeassistenter er tillatt.
 
-Når en ligning har flere løsninger, er det ikke nok å spørre om en metode
+Når en likning har flere løsninger, er det ikke nok å spørre om en metode
 konvergerer. Vi må også spørre *hvilken* løsning den finner, hvor raskt den
 kommer dit, og hvor mye svaret avhenger av startverdien. Newtons metode gjør
 disse spørsmålene synlige på en særlig tydelig måte.
 
-Metoden løser ligningen
+Metoden løser likningen
 
 $$
 f(z)=0
@@ -41,7 +41,7 @@ konvergerer mot et bestemt nullpunkt, kalles nullpunktets
 Koden for funksjonstildeling, Newton-iterasjon, rutenett, klassifisering og plotting er gitt. Arbeidet ditt er å planlegge numeriske eksperimenter, velge parametere, kontrollere resultatene og forklare det du observerer.
 
 Dette er også en øvelse i å sette seg inn i eksisterende kode for en
-modellmetode. Du skal ikke bygge alt fra bunnen av. Les kommentarene, kjør
+numerisk metode. Du skal ikke bygge alt fra bunnen av. Les kommentarene, kjør
 koden, finn parameterne som styrer forsøket, og gjør små endringer du kan
 kontrollere. Slik arbeider man ofte med vitenskapelig kode: forstå nok til å
 stille et spørsmål, endre én ting, og undersøke hva som faktisk skjedde.
@@ -53,7 +53,7 @@ fraktalbilde, men å bruke bildet til å velge og begrunne numeriske forsøk.
 
 ## 1. Du får tildelt en funksjon
 
-Skriv fornavnet ditt i cellen under. Navnet normaliseres og hashes med SHA-256. Samme normaliserte fornavn gir alltid samme funksjon i dette prosjektet. Studenter med samme fornavn kan derfor få samme funksjon.
+Skriv fornavnet ditt i cellen under. Navnet gjøres først om til en standardform (små bokstaver, uten aksenter) og hashes deretter med SHA-256. Samme normaliserte fornavn gir alltid samme funksjon i dette prosjektet. Studenter med samme fornavn kan derfor få samme funksjon.
 
 Tildelingen skjer lokalt i nettleseren. Navnet sendes ikke noe sted.
 
@@ -161,7 +161,7 @@ iterasjoner trinn for trinn. Da kan vi se hva «rask» og «langsom» konvergens
 betyr i praksis.
 
 Programmet trenger en regel for å avgjøre når svaret er godt nok. Siden vi
-prøver å løse $f(z)=0$, måler vi hvor nær funksjonsverdien er null. Størrelsen
+prøver å løse $f(z)=0$, måler vi hvor nær null funksjonsverdien er. Størrelsen
 
 $$
 |f(z_n)|
@@ -174,7 +174,7 @@ $$
 $$
 
 eller når `maxiter` er nådd. En liten residual betyr at den beregnede verdien
-nesten oppfyller ligningen. Den er ikke det samme som avstanden til det
+nesten oppfyller likningen. Residualen er likevel ikke det samme som avstanden til det
 eksakte nullpunktet.
 
 Vi registrerer også skrittlengden
@@ -183,9 +183,9 @@ $$
 |z_{n+1}-z_n|=\left|\frac{f(z_n)}{f'(z_n)}\right|.
 $$
 
-Den forteller hvor mye iteratet flytter seg. Den er nyttig når vi skal forstå
+Skrittlengden forteller hvor mye iteratet flytter seg i ett steg. Den er nyttig når vi skal forstå
 store hopp, men i dette prosjektet er det residualen som avgjør konvergens.
-Uttrykket $|z-f(z)|$ er ikke residualen til ligningen $f(z)=0$.
+Uttrykket $|z-f(z)|$ er ikke residualen til likningen $f(z)=0$.
 
 ```{pyodide-python}
 #| label: ingmat-ide-projects-week2-newton-fractals-2
@@ -330,8 +330,8 @@ forsøk på et helt rutenett i det komplekse planet. Resultatet blir både et
 kart og et datasett vi kan stille spørsmål til.
 
 Neste funksjon kjører Newtons metode samtidig for hele rutenettet. Hvert punkt
-klassifiseres som et nullpunktnummer, `-1` for ikke konvergert innen
-`maxiter`, eller `-2` for ugyldig beregning.
+får nummeret til nullpunktet det konvergerte mot, `-1` hvis det ikke konvergerte innen
+`maxiter`, eller `-2` hvis beregningen ble ugyldig.
 
 ```{pyodide-python}
 #| label: ingmat-ide-projects-week2-newton-fractals-5
@@ -547,7 +547,7 @@ fargeskalaen. Verdier på 20 eller mer får samme endefarge, slik at noen få
 svært langsomme punkter ikke skjuler forskjellene i resten av kartet.
 
 Mørkegrå punkter i venstre figur nådde `maxiter`, mens svarte punkter ga en
-ugyldig beregning. Slike punkter er maskert i iterasjonskartet.
+ugyldig beregning. Begge typene punkter er utelatt (maskert) i iterasjonskartet.
 
 For resten av prosjektet bruker vi følgende målbare beskrivelser:
 
@@ -561,7 +561,7 @@ startverdier som konkrete eksempler på «dårlige» startverdier. Finn ett
 eksempel i hver kategori som finnes i ditt datasett. Oppgi $z_0$, funnet
 nullpunkt, iterasjonstall og siste residual.
 
-Koden under foreslår startverdier fra kategoriene. Du kan bruke dem eller
+Koden under foreslår én startverdi fra hver kategori. Du kan bruke dem eller
 velge punkter som er lettere å se i figuren.
 
 ```{pyodide-python}
@@ -593,7 +593,7 @@ for name, mask in categories.items():
 
 **Svar kort:**
 
-1. Hvilke områder konvergerer mot hvert nullpunkt?
+1. Hvilke områder gir konvergens mot hvert nullpunkt?
 2. Hvor ligger startverdiene som krever flest iterasjoner?
 3. Hvordan skiller punkter nær en grense seg fra punkter langt inne i et tiltrekningsområde?
 4. Ser figuren symmetrisk ut? Sammenlign med plasseringen av nullpunktene.
@@ -655,7 +655,7 @@ Velg ett av moteksemplene og vis iterasjonshistorikken med `print_trace`.
 I Newton-formelen deler vi på $f'(z_n)$. Når $f'(z_n)$ er nær null, kan ett
 Newton-skritt derfor bli svært stort selv om funksjonsverdien ikke er stor.
 Punkter som oppfyller $f'(z)=0$, kalles her **kritiske punkter**. De er ikke
-nødvendigvis dårlige startverdier alene, men de gir oss steder det er naturlig
+nødvendigvis dårlige startverdier i seg selv, men de er naturlige steder
 å undersøke nærmere.
 
 ```{pyodide-python}
@@ -673,7 +673,7 @@ for point in critical_points:
 
 Velg ett kritisk punkt $c$. Kjør `newton_trace` for $c$, $c+10^{-3}$ og
 $c+10^{-2}i$. Oppgi stoppårsak, største skrittlengde, funnet nullpunkt og
-antall iterasjoner. Du kan endre perturbasjonene dersom alle tre forsøkene
+antall iterasjoner. Du kan endre de små tilleggene (perturbasjonene) dersom alle tre forsøkene
 blir nesten like.
 
 ```{pyodide-python}
@@ -704,7 +704,7 @@ for z0 in critical_starts:
 
 Tiltrekningsplottet antyder at en svært liten endring i startverdien kan endre
 resultatet. For å gjøre dette til et kontrollert forsøk trenger vi et konkret
-grensepunkt og en oppgitt **perturbasjon**, altså en liten, kontrollert endring
+grensepunkt og en bestemt **perturbasjon**, altså en liten, kontrollert endring
 av startverdien. Funksjonen under foreslår et punkt
 mellom to nabopiksler med forskjellig farge. Du kan bruke forslaget eller
 velge et tydeligere punkt i din egen figur.
@@ -766,7 +766,7 @@ finner forskjellige nullpunkter.
 
 ## 7. Kontroller stoppreglene
 
-Fargene i kartet avhenger også av reglene i programmet. Før du konkluderer,
+Fargene i kartet avhenger også av stoppreglene i programmet. Før du konkluderer,
 kontroller at hovedresultatet ikke bare skyldes ett tilfeldig valg av
 toleranse eller `maxiter`. Bruk et mindre rutenett for å spare tid.
 
@@ -797,7 +797,7 @@ grense se ut som en vanlig kurve. Men når vi beregner et nytt kart over et
 mindre område, dukker det ofte opp nye bukter, øyer og striper som ikke var
 synlige før.
 
-Dette er nesten selve ideen bak en fraktal: nye detaljer fortsetter å bli
+Dette er i grove trekk ideen bak en fraktal: nye detaljer fortsetter å bli
 synlige når vi undersøker figuren på mindre skalaer. Det betyr ikke at hvert
 zoom-bilde må være en nøyaktig minikopi av det forrige. Det viktige her er at
 grensen ikke raskt blir til en enkel, glatt linje.
@@ -805,7 +805,7 @@ grensen ikke raskt blir til en enkel, glatt linje.
 For Newtons metode har zoomingen også en konkret numerisk betydning. Hvert
 punkt i bildet er en startverdi $z_0$. Når vinduet blir ti ganger smalere, men
 fortsatt tegnes med $400\times400$ piksler, undersøker vi startverdier som
-ligger ti ganger tettere. En fraktalzoom er derfor et forsøk på hvor følsomt
+ligger ti ganger tettere. En fraktalzoom er derfor et forsøk som undersøker hvor følsomt
 Newton-resultatet er for stadig mindre endringer i startverdien.
 
 ### Begrepene vi trenger
@@ -905,8 +905,8 @@ def print_boundary_summary(data):
     print("Største steg, grense:    ", summary["max_boundary_iterations"])
 ```
 
-Kjør oppsummeringen på hovedkartet. Bruk tallene som nullpunkt for
-zoom-ekspedisjonen—ikke som en konklusjon ennå.
+Kjør oppsummeringen på hovedkartet. Bruk tallene som sammenligningsgrunnlag for
+zoom-ekspedisjonen – ikke som en konklusjon ennå.
 
 ```{pyodide-python}
 #| label: ingmat-ide-projects-week2-newton-fractals-14
@@ -979,7 +979,7 @@ velger bare en fargeovergang i rutenettet; den vet ikke hvilken struktur du
 synes er interessant.
 
 Lag minst tre nye zoomnivåer. Bruk samme oppløsning, `tol` og `maxiter` på
-alle nivåene. Da blir én piksel en stadig mindre endring i startverdien, mens
+alle nivåene. Da svarer én piksel til en stadig mindre endring i startverdien, mens
 stoppreglene er de samme.
 
 For hvert nivå lagrer du:
@@ -994,7 +994,7 @@ For hvert nivå lagrer du:
 ### Delproblem 4: Hva forteller fraktalzoomen om Newtons metode?
 
 Fraktalbildet er ikke pynt ved siden av den numeriske metoden. Hver ny detalj
-forteller at startverdier som er svært nær hverandre kan følge forskjellige
+forteller at startverdier som er svært nær hverandre, kan følge forskjellige
 Newton-baner og finne forskjellige nullpunkter. Iterasjonskartet forteller i
 tillegg om disse områdene er numerisk krevende.
 
@@ -1045,7 +1045,7 @@ $$
 N\longrightarrow2N.
 $$
 
-En strek vokser altså med omtrent faktor 2 når oppløsningen dobles.
+Antallet piksler langs en strek vokser altså med omtrent faktor 2 når oppløsningen dobles.
 
 Tenk deretter på et område som er helt fylt med grense. Når vi dobler
 oppløsningen, får vi dobbelt så mange piksler vannrett *og* dobbelt så mange

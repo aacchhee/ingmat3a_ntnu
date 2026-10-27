@@ -200,7 +200,7 @@ JXG.QuartoAssessment.register({
 Klikk på punktet på kurven som viser at iteratet har sju korrekte desimaler.
 ```
 
-Den grønne iterasjonen $x_{n+1}=x_n^2$ med $x_0=0.3$ konvergerer kvadratisk mot fikspunktet $r=0$. Her finnes det ikke nødvendigvis et iterat med *akkurat* sju korrekte desimaler: Kvadratisk konvergens kan hoppe over flere nivåer i ett steg.
+Den grønne iterasjonen $x_{n+1}=x_n^2$ med $x_0=0.3$ konvergerer kvadratisk mot fikspunktet $r=0$. Her finnes det ikke nødvendigvis et iterat med *akkurat* sju korrekte desimaler: Ved kvadratisk konvergens kan antallet korrekte desimaler øke med flere i ett steg.
 
 Grafen viser den samme grønne kurven som i semilogy-plottet. Klikk på det **første** punktet som har minst sju korrekte desimaler. Sammenlign feilen med grensen $\frac12 10^{-7}=5\cdot10^{-8}$. Det valgte punktet markeres med rødt.
 

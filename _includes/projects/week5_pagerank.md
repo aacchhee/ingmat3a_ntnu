@@ -7,17 +7,17 @@ interesser. **Hvor mye må vi endre besøksmønsteret før to sider bytter plass
 I dette prosjektet skal du først bygge og kontrollere modellen. Deretter bruker
 du lineær algebra til å undersøke et selvvalgt besøksmønster. Koden brukes til
 å regne og kontrollere; de matematiske begrunnelsene er hovedarbeidet.
-Prosjektet er lagt opp til omtrent 4–6 timers arbeid med notatene tilgjengelig.
+Prosjektet er lagt opp til omtrent 4–6 timers arbeid når du har notatene for hånden.
 
-Du trenger [besøksmodellen i 5.5](uke5.qmd#uke5-nett),
+Prosjektet bygger på [besøksmodellen i 5.5](uke5.qmd#uke5-nett),
 [PageRank og tilfeldige hopp i 5.6](uke5.qmd#uke5-google) og
 [fikspunktiterasjon fra uke 2](page4.qmd).
 Utledningene under bruker også egenverdier og egenvektorer fra 5.2–5.4.
 Alle nødvendige data og kodefunksjoner finnes på denne siden.
 
-**Arbeidsform:** Skriv en forventning før hvert forsøk. Regn og begrunn, bruk
+**Arbeidsform:** Skriv ned hva du forventer, før hvert forsøk. Regn og begrunn, bruk
 koden som kontroll, og forklar eventuelle forskjeller. Alle fire delene inngår
-i prosjektet. Det er ikke nødvendig å bygge flere nettverk eller prøve mange parametre.
+i prosjektet. Det er ikke nødvendig å bygge flere nettverk eller prøve mange parameterverdier.
 
 ## 1. Fra lenker til en overgangsmatrise
 
@@ -34,7 +34,7 @@ på en side:
 | F | D |
 
 En tenkt besøkende velger én av lenkene på siden hen er på, med lik
-sannsynlighet, og åpner siden lenken peker til. Dette er ett steg.
+sannsynlighet, og åpner siden lenken peker til. Dette kaller vi ett steg.
 Vi følger sannsynligheten for å være på hver side etter et bestemt antall steg,
 ikke antall besøk samlet over tid.
 
@@ -54,7 +54,7 @@ Kolonne $j$ beskriver altså siden vi går fra, og rad $i$ siden vi går til.
 $$u_0=\frac16(1,1,1,1,1,1)^T.$$
 
 Beregn $Su_0$ for hånd. Vis deretter at $Sp$ har ikke-negative elementer
-og sum én når $p$ har det. Du kan bruke $\mathbf1=(1,1,1,1,1,1)^T$
+og sum én når $p$ har begge disse egenskapene. Du kan bruke $\mathbf1=(1,1,1,1,1,1)^T$
 og uttrykke kolonnesummene som $\mathbf1^TS=\mathbf1^T$.
 
 **Svar:** én sannsynlighetsvektor og en kort generell utledning.
@@ -101,7 +101,7 @@ etter en **hoppfordeling** $u$. Denne sannsynlighetsvektoren beskriver hvor
 et hopp ender, uavhengig av nåværende side. Vi bruker $\alpha=0.85$
 i denne delen og i del 4.
 
-En oppdatering er
+Ett steg er altså oppdateringen
 
 $$T(p)=\alpha Sp+(1-\alpha)u,\qquad p_{k+1}=T(p_k).$$
 
@@ -113,14 +113,14 @@ PageRank-verdiene er koordinatene i $p_*$.
 Samle leddene som inneholder $p_*$ på venstre side, og skriv systemet
 på formen $Mp_*=b$. Oppgi $M$ og $b$ uttrykt ved $S$, $u$ og $\alpha$.
 
-**Hvorfor finnes én løsning?** Du kan bruke at egenverdiene til en
+**Hvorfor finnes nøyaktig én løsning?** Du kan bruke at egenverdiene til en
 kolonnestokastisk matrise har absoluttverdi høyst én.
 Forklar hvorfor matrisen $M$ er invertibel når $0<\alpha<1$.
 Fra 5.6 vet vi dessuten at positiv $u$ gir en positiv stasjonær fordeling
 som iterasjonen nærmer seg fra enhver startfordeling.
 
-**b. Fullfør to regneuttrykk.** Koden under har ferdig løkke, stoppkontroll
-og direkte løsning. Du fyller bare inn besøksregelen og residualnormen:
+**b. Fullfør to regneuttrykk.** I koden under er løkken, stoppkontrollen
+og den direkte løsningen ferdig skrevet. Du fyller bare inn besøksregelen og residualnormen:
 
 $$r(p)=T(p)-p,\qquad \lVert r(p)\rVert_1=\sum_i|r(p)_i|.$$
 
@@ -163,7 +163,7 @@ def direct_rank(S, alpha, u):
 
 **c. Sammenlign to metoder.** Bruk jevn hoppfordeling $u=u_0$.
 Forutsi om startfordelingen kan endre den stasjonære løsningen.
-Kjør fra både jevn startfordeling og sikker start på A.
+Kjør iterasjonen fra både jevn startfordeling og sikker start på A.
 
 ```{pyodide-python}
 #| label: project-week5-reference
@@ -193,7 +193,7 @@ Stoppkravet bygger på feilgrensen fra [5.6](uke5.qmd#uke5-google):
 $$\lVert p-p_*\rVert_1\leq\frac{\lVert T(p)-p\rVert_1}{1-\alpha}.$$
 
 Forklar hvorfor koden sammenligner residualnormen med
-$(1-\alpha)\cdot10^{-8}$ når målet er feil høyst $10^{-8}$.
+$(1-\alpha)\cdot10^{-8}$ når målet er en feil på høyst $10^{-8}$.
 Du trenger ikke utlede denne grensen på nytt.
 
 ## 3. Forklar konvergens med egenverdier
@@ -206,7 +206,7 @@ I denne delen er $\alpha$ en parameter med $0<\alpha<1$.
 **a. Finn egenverdiene.** Skriv $S_2$ og Google-matrisen
 $G_2=\alpha S_2+(1-\alpha)u_2\mathbf1^T$, der $\mathbf1=(1,1)^T$.
 Beregn $G_2v$ og $G_2w$ for $v=(1,1)^T$ og $w=(1,-1)^T$.
-Finn begge egenverdiene som uttrykk i $\alpha$, og bestem den
+Finn begge egenverdiene uttrykt ved $\alpha$, og bestem den
 stasjonære sannsynlighetsvektoren.
 
 **b. Utled feiloppdateringen.** For det generelle nettverket setter vi
@@ -217,7 +217,7 @@ p_*=\alpha Sp_*+(1-\alpha)u$$
 
 fra hverandre. Vis at $e_{k+1}=\alpha Se_k$.
 Forklar også hvorfor $\mathbf1^Te_k=0$.
-Dette gjelder uten at vi trenger en egenvektorbasis for $S$.
+Utledningen krever ikke at $S$ har en egenvektorbasis.
 
 **c. Finn hele følgen for to sider.** Bruk $p_0=(1,0)^T$.
 Skriv startfordelingen som en lineærkombinasjon av $v$ og $w$,
@@ -260,11 +260,11 @@ print("p1 og p2:", values2[1], values2[2])
 
 Vi vender tilbake til seksidersgrafen. **Hold $S$ og $\alpha=0.85$ faste.**
 Vi endrer bare hvor tilfeldige hopp lander.
-Ingen side i denne grafen mangler lenker, så $S$ er uavhengig av hoppfordelingen.
+Ingen side i denne grafen mangler utgående lenker, så $S$ er uavhengig av hoppfordelingen.
 
 **a. Velg et besøksmønster og en påstand.** Velg en positiv
 sannsynlighetsvektor $u_1\ne u_0$ som uttrykker en interesse du kan beskrive.
-For eksempel kan besøkende oftere hoppe til F. Alle seks koordinater
+For eksempel kan du la besøkende hoppe oftere til F. Alle seks koordinatene
 skal være større enn null og summere til én.
 
 Vi blander jevn hopping og dette besøksmønsteret:
@@ -273,9 +273,9 @@ $$u(t)=(1-t)u_0+tu_1,\qquad 0\leq t\leq1.$$
 
 Her er $t$ vekten på det nye besøksmønsteret, **ikke antall steg**.
 $t=0$ gir jevne hopp, og $t=1$ gir hopp etter $u_1$.
-Vis at $u(t)$ er en positiv sannsynlighetsvektor for hele intervallet.
+Vis at $u(t)$ er en positiv sannsynlighetsvektor for hver verdi i intervallet.
 
-Velg to forskjellige sider, $i$ og $j$, og skriv en påstand **før du kjører**:
+Velg to forskjellige sider, $i$ og $j$, og skriv en påstand **før du kjører koden**:
 Vil de bytte plass når $t$ øker fra 0 til 1? Hvorfor?
 Bruk lenkene til å begrunne forventningen. Oppgi hva som ville avkrefte den.
 
@@ -293,14 +293,14 @@ Dette er en eksakt matematisk sammenheng; et plott alene beviser den ikke.
 
 **c. Finn en terskel, eller vis at det ikke finnes noen.**
 Sett $d(t)=p_i(t)-p_j(t)$. Utled et uttrykk for $d(t)$ fra del b.
-Finn når $d(t)=0$, og bestem hvilken side som ligger høyest på hver side
-av en eventuell terskel. Ta med tilfellene der $d(t)$ er konstant,
-der sidene er like for alle $t$, og der likhet bare oppstår ved et endepunkt.
+Finn når $d(t)=0$, og bestem hvilken av de to sidene som ligger høyest før og etter
+en eventuell terskel. Ta med tilfellene der $d(t)$ er konstant,
+der sidene har like verdier for alle $t$, og der likhet bare oppstår ved et endepunkt.
 
 **Svar:** et uttrykk for $d(t)$, en terskel i $[0,1]$ dersom den finnes,
 og en konklusjon om plassforholdet. En terskel utenfor intervallet gir
-ikke et plassbytte i forsøket. Hvis plassbyttet uteblir, er det også et
-gyldig resultat når du begrunner det.
+ikke et plassbytte i forsøket. Uteblir plassbyttet, er det også et
+gyldig resultat, så lenge du begrunner hvorfor.
 
 **d. Kontroller med få beregninger.** Beregn $p(0)$ og $p(1)$ direkte.
 Bruk tallene til å bestemme terskelen numerisk, etter at du har utledet
@@ -351,9 +351,9 @@ for t in t_checks:
 ```
 
 **Hvor sikker er konklusjonen?** Oppgi hvor mange sifre du bruker i terskelen.
-Et svært lite beregnet avvik er ikke automatisk en eksakt likhet.
+Et svært lite beregnet avvik betyr ikke automatisk at verdiene er eksakt like.
 Hvis to verdier er så nær hverandre at beregningsfeilen kan avgjøre
-fortegnet, rapporter usikkerheten eller bruk strengere nøyaktighet.
+fortegnet, rapporter usikkerheten eller bruk et strengere nøyaktighetskrav.
 Drøft også forskjellen på at to sider bytter innbyrdes plass og at en side
 blir høyest rangert blant alle seks.
 
@@ -362,7 +362,7 @@ blir høyest rangert blant alle seks.
 Lever én kjørbar notebook eller Quarto-side med:
 
 - Grafen, overgangsmatrisen og håndberegningen av ett steg.
-- Korte utledninger av bevaring av sum én, referansesystemet og feiloppdateringen.
+- Korte utledninger av at summen én bevares, av referansesystemet og av feiloppdateringen.
 - Tosideanalysen med egenverdier, stasjonær fordeling og formel for iterasjonsfølgen.
 - Rangeringen og kontrolltabellen fra del 2, samt høyst to figurer totalt.
 - Den egne undersøkelsen: valgt $u_1$ og sidepar, påstanden før forsøket,
@@ -371,7 +371,7 @@ Lever én kjørbar notebook eller Quarto-side med:
 Skriv omtrent **300–500 ord analyse** i tillegg til formler og beregninger.
 Bruk de konkrete resultatene til å skille mellom:
 
-1. Om koden løser den innlagte modellens likning.
+1. Om koden løser likningen for modellen slik du har lagt den inn.
 2. Om iterasjonen konvergerer.
 3. Hva modellen måler som «viktighet», og hvordan besøksmønsteret påvirker dette.
 

@@ -5,7 +5,7 @@
 
 Vi følger ett lite eksempel hele uka: Et bilde med 16 piksler gjøres om til et bilde med fire piksler.
 Underveis får ideene navn: lineær transformasjon, basis og koordinater, nullrom og rang. Til slutt bruker vi
-de samme ideene på polynomer. Det er grunnlaget for prosjektet.
+de samme ideene på polynomer. Denne overgangen er grunnlaget for prosjektet.
 
 **Kort løype**
 
@@ -88,8 +88,8 @@ c = np.linalg.solve(P, target)
 
 `A @ x` er matrise-vektorproduktet $Ax$. `solve(P, target)` gjør reverse
 engineering: Den finner koeffisientene `c` som oppfyller
-`P @ c = target`. Den brukes her bare når den kvadratiske matrisen har én
-entydig løsning.
+`P @ c = target`. Vi bruker den her bare når matrisen er kvadratisk og likningssystemet har
+nøyaktig én løsning.
 
 ### Kontroller et matematisk svar
 
@@ -459,7 +459,7 @@ rad for rad og kolonne for kolonne:
   de to $4\times4$-inputene, mens høyre kolonne sammenligner de to
   $2\times2$-outputene.
 - Nederste rad viser nullbilder med tilsvarende størrelse. De fungerer som
-  visuelle referanser: En forskjell som ser lik ut som nullbildet under, har
+  visuelle referanser: En forskjell som ser ut som nullbildet under, har
   ingen utslag.
 - Rødt betyr positiv forskjell, blått betyr negativ forskjell og hvitt betyr
   0. Størrelsen på hver rute følger antallet piksler, så et $2\times2$-bilde
@@ -1014,9 +1014,9 @@ board.create('text',[14.55,imageY-0.38,'1×1-output'],{
 });
 ```
 
-Appleten antyder to viktige egenskaper før vi bruker matematisk terminologi. Alle $2\times2$-bilder med pikselverdier mellom 0 og 1 kan lages ved å velge de fire kontrollene. Samtidig har hvert ferdig bilde bare én innstilling av kontrollene: Pikselverdiene bestemmer skyveknappene.
+Appleten antyder to viktige egenskaper før vi bruker matematisk terminologi. Alle $2\times2$-bilder med pikselverdier mellom 0 og 1 kan lages ved å stille inn de fire kontrollene. Samtidig har hvert ferdig bilde bare én innstilling av kontrollene: Pikselverdiene bestemmer skyveknappene.
 
-Ruten lengst til høyre viser blokkgjennomsnittet (0 er svart, 1 er hvitt). Én pikselendring på $\Delta$ endrer det med $\Delta/4$; denne regelen blir den lille transformasjonen i 3.4.
+Ruten lengst til høyre viser blokkgjennomsnittet (0 er svart, 1 er hvitt). Når én piksel endres med $\Delta$, endres gjennomsnittet med $\Delta/4$. Denne regelen blir den lille transformasjonen i 3.4.
 
 Byggesteinsbildet $E_k$ har verdien 1 i piksel $k$ og 0 i de tre andre
 pikslene. Startinnstillingen i appleten lager derfor bildet
@@ -1092,7 +1092,7 @@ lineærkombinasjon, så ikke alle bilder kan lages. Med $E_5$ i tillegg gir to
 forskjellige oppskrifter samme bilde, så oppskriften er ikke entydig. Det
 hjelper ikke å bytte ut $E_5$: De fire pikselbildene lager allerede alle
 $2\times2$-bilder, så enhver femte byggestein kan bygges av dem, og da finnes
-det alltid to oppskrifter. En basis er akkurat nok, uten hull og uten
+det alltid to oppskrifter. En basis har akkurat nok byggesteiner: ingen hull og ingen
 overflødige byggesteiner.
 
 ::: {.callout-tip}
@@ -1129,7 +1129,7 @@ Dimensjon teller hvor mange uavhengige tall som trengs for å beskrive et bilde;
 
 Pikselkoordinatene sier bare hvor lyse de fire pikslene er. Vi prøver nå fire andre byggesteiner. I figurene betyr rødt positive verdier, blått negative verdier og hvitt null. Negative tall betyr at et mønster trekkes fra.
 
-Appleten er bygd som pikselappleten, men skyveknappene styrer nå fire mønstre og går fra $-1$ til $1$. En negativ koeffisient legger til mønsteret med motsatte fortegn. Tallet i hver piksel viser det faktiske bidraget.
+Appleten er bygd som pikselappleten, men skyveknappene styrer nå fire mønstre og går fra $-1$ til $1$. En negativ koeffisient legger til mønsteret med motsatt fortegn. Tallet i hver piksel viser det faktiske bidraget.
 
 ```{.jsxgraph width="760" height="430"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -1269,7 +1269,7 @@ board.create('text',[14.55,imageY-0.38,'1×1-output'],{
 });
 ```
 
-Startinnstillingen lager samme bilde som før, men med andre tall: lysnivå $0.55$, venstre–høyre $-0.25$, topp–bunn $-0.10$ og sjakkmønster $0$. Legg merke til at kontrastkontrollene endrer bildet, men ikke blokkgjennomsnittet; det forklarer vi i 3.4. Lysnivåkontrollen endrer derimot alle fire pikselverdiene og gjennomsnittet med samme beløp.
+Startinnstillingen lager samme bilde som før, men med andre tall: lysnivå $0.55$, venstre–høyre $-0.25$, topp–bunn $-0.10$ og sjakkmønster $0$. Legg merke til at kontrastkontrollene endrer bildet, men ikke blokkgjennomsnittet; det forklarer vi i 3.4. Lysnivåkontrollen endrer derimot alle fire pikselverdiene og gjennomsnittet like mye.
 
 Cellen lager de samme fire mønstrene i NumPy. Vi bruker dem resten av uka, og
 pikslene står i samme rekkefølge som før: øvre rad fra venstre mot høyre,
@@ -1322,7 +1322,7 @@ $$
 
 Radene sier $c_1+c_2=2$ og $c_1-c_2=0$. Legger vi sammen de to likningene,
 får vi $2c_1=2$, altså $c_1=1$; den andre likningen gir da $c_2=c_1=1$.
-Kontrollen er framoverregningen
+Vi kontrollerer ved å regne forover:
 $1b_1+1b_2=[2,0]^T$. Dette lille eksemplet viser hele mekanismen:
 $P$ inneholder kjente byggesteiner, $t$ er det kjente målet, og $c$ er den
 ukjente oppskriften.
@@ -1482,7 +1482,7 @@ $u=[u_1,u_2,u_3,u_4]^T$. Gjennomsnittet er
 $$G(u)=\frac14(u_1+u_2+u_3+u_4)
 =\underbrace{\begin{bmatrix}\frac14&\frac14&\frac14&\frac14\end{bmatrix}}_{B}u.$$
 
-Én output gir én rad, som i 3.2. Cellen sender de fire mønstrene fra 3.3
+Én outputverdi gir én rad i matrisen, som i 3.2. Cellen sender de fire mønstrene fra 3.3
 gjennom $G$, én om gangen. Fordi $G$ er lineær, forteller resultatene også hva
 som skjer med enhver kombinasjon av dem.
 
@@ -1514,8 +1514,8 @@ har fire enere, så gjennomsnittet er 1. Hvert kontrastbilde har to enere og
 to minusenere; summen er 0, og gjennomsnittet er derfor 0.
 
 Resultatene deler byggesteinene i to grupper. Transformasjonen registrerer
-lysnivåretningen, men sender hver kontrastretning til null. Linearitet fra 3.2
-gir at enhver kombinasjon av kontrastbildene også har gjennomsnitt 0.
+lysnivåretningen, men sender hver kontrastretning til null. Fordi transformasjonen er
+lineær (se 3.2), har også enhver kombinasjon av kontrastbildene gjennomsnitt 0.
 
 ::: {.callout-important}
 ### Den lille transformasjonens nullrom og rang
@@ -1530,7 +1530,7 @@ $$4=\operatorname{rank}(B)+\dim N(B)=1+3.$$
 
 :::
 
-Fra tidligere lineær algebra kjenner vi nullrommet som løsningene av et homogent system. For en transformasjon $A:\mathbb R^n\to\mathbb R^m$ er
+Fra tidligere kurs i lineær algebra kjenner vi nullrommet som mengden av løsninger av et homogent likningssystem. For en transformasjon $A:\mathbb R^n\to\mathbb R^m$ er
 
 $$N(A)=\{z\in\mathbb R^n:Az=0\}\subseteq\mathbb R^n.$$
 
@@ -1580,12 +1580,12 @@ målingen ikke kan oppdage.
 
 For hele $4\times4$-bildet bruker $A_{\mathrm{pool}}\in\mathbb R^{4\times16}$ den samme raden $B$ på fire blokker og lager ett blokkgjennomsnitt fra hver. Den tar altså ikke gjennomsnittet av alle 16 piksler samlet.
 
-Vi gjentar argumentet i hver blokk: $4\cdot3=12$
+Når vi gjentar argumentet i hver blokk, får vi $4\cdot3=12$
 usynlige og $4\cdot1=4$ synlige retninger.
 
 ::: {.reading-step title="Gå i dybden: alle tolv usynlige mønstre"}
 
-Den presise overføringen er:
+Tabellen viser presist hvordan resultatene for én blokk overføres til hele bildet:
 
 | Én blokk | Hele bildet |
 |---|---|
@@ -1660,7 +1660,7 @@ For hvert mønster er $Az$ et $2\times2$-outputbilde. Utskriften $\lVert Az\rVer
 
 Venstre felt i tabellen viser kombinasjonen av de tolv mønstrene. Høyre felt
 viser den mindre outputen etter blokkgjennomsnitt. Den er null i alle fire
-posisjoner. Koden gjør dermed to observasjoner: Hver lokal kontrast gir output
+posisjoner. Koden viser dermed to ting: Hver lokal kontrast gir output
 null, og en tilfeldig lineærkombinasjon av dem gir fremdeles output null.
 Grunnen er linearitet, ikke at vi var heldige med koeffisientene.
 
@@ -1681,7 +1681,7 @@ til $A_{\mathrm{pool}}$, som derfor har dimensjon 12.
 
 Nå finner vi rangen ved å spørre hva som kan produseres. Da bruker vi en annen måte å bygge en matrise på:
 
-> Kolonne $j$ er outputen når input er $e_j$, altså når inputverdi $j$ er 1
+> Kolonne $j$ er outputen når inputen er $e_j$, altså når inputverdi $j$ er 1
 > og alle andre inputverdier er 0.
 
 ::: {.reading-step title="Gå i dybden: to måter å bygge matrisen på"}
@@ -1693,8 +1693,8 @@ kolonner. De to metodene bygger den samme matrisen.
 
 :::
 
-Klikk på en inputpiksel i figuren: Den pikselen er 1 og alle andre 0, vi
-**slår på én piksel**. Outputbildet til høyre viser hva transformasjonen gjør.
+Klikk på en inputpiksel i figuren. Da får den pikselen verdien 1 og alle andre verdien 0;
+vi sier at vi **slår på én piksel**. Outputbildet til høyre viser hva transformasjonen gjør.
 **Hvilke $2\times2$-bilder kan transformasjonen produsere?**
 
 ```{.jsxgraph width="760" height="430"}
@@ -1802,7 +1802,7 @@ board.create('text',[7.55,1.15,'Én piksel med verdi 1 gir gjennomsnitt 1/4 i si
 });
 ```
 
-Alle piksler med samme farge peker mot samme felt: Én påslått piksel gir blokkgjennomsnitt $1/4$ i sin blokk og 0 i de andre. Prøv flere piksler med samme farge; outputen endrer seg ikke.
+Alle piksler med samme farge peker mot samme felt: Én påslått piksel gir blokkgjennomsnitt $1/4$ i sin blokk og 0 i de andre. Klikk på flere piksler med samme farge etter tur; outputen blir den samme.
 
 Her kommer forbindelsen til matrisen: **Kolonne $j$ i $A$ er outputen vi får når bare inputpiksel $j$ er slått på.** Fire piksler som gir samme output, gir derfor fire identiske kolonner. Figuren viser på denne måten fire grupper av like kolonner, én gruppe for hver farge.
 
@@ -1843,8 +1843,8 @@ show_images(column_images,[f"Kolonne {j+1}" for j in range(16)],
 
 De 16 små bildene bekrefter det vi så i appleten: Kolonnene kommer i fire
 grupper. Innenfor hver gruppe er outputbildene identiske. Derfor gir flere
-kolonner i samme gruppe ingen ny måte å endre outputen på. Mellom gruppene
-flytter den eneste ikke-null outputpikselen seg til en ny plass.
+kolonner i samme gruppe ingen ny måte å endre outputen på. Fra én gruppe til
+den neste flytter den eneste outputpikselen som ikke er null, seg til en ny plass.
 
 :::
 
@@ -1921,14 +1921,14 @@ $$A_{\mathrm{pool}}x=x_1a_1+\cdots+x_{16}a_{16}.$$
 
 Inputverdien $x_j$ skalerer kolonnen $a_j$, og bidragene legges sammen: Alle outputer er lineærkombinasjoner av kolonnene.
 
-Her holder det å beholde kolonnene 1, 3, 9 og 11, én fra hver gruppe; de andre tolv er kopier.
+For å beskrive kolonnerommet holder det å beholde kolonnene 1, 3, 9 og 11, én fra hver gruppe; de andre tolv er kopier.
 
 **Rangen** er dimensjonen til kolonnerommet:
 
 $$\operatorname{rank}(A_{\mathrm{pool}})
 =\dim\operatorname{Col}(A_{\mathrm{pool}}).$$
 
-Rangen er derfor 4 av tre likeverdige grunner:
+Rangen er derfor 4. Det kan vi begrunne på tre likeverdige måter:
 
 1. Vi har funnet fire lineært uavhengige matriskolonner.
 2. Disse fire kolonnene spenner ut hele det firedimensjonale outputrommet.
@@ -2001,7 +2001,7 @@ Nå beskriver vi det samme inputbildet med 16 nye skyveknapper: fire fargede
 for blokkgjennomsnittene og tolv grå for kontrastene inne i blokkene (c1–c3
 hører til øvre venstre blokk, c4–c6 til øvre høyre, c7–c9 til nedre venstre og
 c10–c12 til nedre høyre). Prøv begge typer: De fargede endrer både inputbildet
-og outputen, de grå endrer bare inputbildet.
+og outputen, mens de grå bare endrer inputbildet.
 
 Her regner vi i hele bilderommet: pikselverdier kan være mindre enn 0 eller
 større enn 1. Bare fargeskalaen klippes til svart–hvitt; tallene og
@@ -2311,7 +2311,7 @@ $(2,-3,3)$ i basisen $\mathcal B$.
 
 Øv på dette: [rangtest, basis og koordinater](#uke3-ov-basis).
 
-En samling polynomer som tåler addisjon og multiplikasjon med tall, er et
+En samling polynomer der vi kan addere og multiplisere med tall uten å forlate samlingen, er et
 **underrom** av $\mathcal P_n$, akkurat som nullrommet i 3.4. Mengden av alle
 lineærkombinasjoner av noen polynomer, $\operatorname{Span}(p_1,\ldots,p_k)$,
 er et slikt underrom. Øv på dette: [polynomunderrom](#uke3-ov-underrom).
@@ -2334,7 +2334,7 @@ $$\begin{bmatrix}p(-1)\\p(0)\\p(1)\end{bmatrix}
 =\begin{bmatrix}1&-1&1\\1&0&0\\1&1&1\end{bmatrix}
 \begin{bmatrix}a_0\\a_1\\a_2\end{bmatrix}.$$
 
-Hver rad er ett punkt satt inn i $1,x,x^2$. For $p(x)=4-2x+3x^2$ gir
+Hver rad inneholder verdiene av $1,x,x^2$ i ett punkt. For $p(x)=4-2x+3x^2$ gir
 produktet $[9,4,5]^T$. Kontroll: $p(-1)=4+2+3=9$, $p(0)=4$ og
 $p(1)=4-2+3=5$. Avlesningen er en lineær **avbildning** $E$ fra
 $\mathcal P_2$ til $\mathbb R^3$ (her står $E$ for avlesning, ikke for
@@ -2356,7 +2356,7 @@ Hvilke koeffisienter kan ha produsert disse verdiene? Bildeeksemplene har
 allerede gitt oss de sentrale spørsmålene: Hvilken basis bruker vi, hvilken
 informasjon mister målingen, og kan små endringer være nesten usynlige?
 Del 2 og finalen i prosjektet handler også om avrundingsfeil og kansellering;
-de repeteres i [uke 1](page2.qmd#uke1-kansellering).
+disse temaene kan du repetere i [uke 1](page2.qmd#uke1-kansellering).
 
 ## 3.6 Egenarbeid: bildeforsøk og polynomoppgaver {#uke3-del4 quiz=uke3-6-oppgaver}
 
@@ -2381,7 +2381,7 @@ valgt eksperiment arbeider du i denne rekkefølgen:
    ([uke 2](page4.qmd#feil-residual-og-toleranse)) eller en rang.
 4. Forklar til slutt observasjonen med begrepene fra uka.
 
-Startcellene gjør plotting og bokføring, men gir ikke ferdige svar. Et forsøk som ikke virker ved første kjøring kan være nyttig: undersøk forskjellen mellom det du forventet og det koden faktisk produserte.
+Startcellene tar seg av figurer og utskrifter, men gir ikke ferdige svar. Et forsøk som ikke virker ved første kjøring, kan også være nyttig: Undersøk forskjellen mellom det du forventet og det koden faktisk produserte.
 
 ### Anbefalt A: Lag et nytt mønster med output null
 
@@ -2432,7 +2432,7 @@ Forsøk å lage et konkret $2\times2$-målbilde som de tre byggesteinene ikke ka
 
 ### Valgfri C: Lag en annen basis
 
-Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om likningssystemet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
+Cellen starter med pikselbasisen som byggesteiner. Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om likningssystemet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
 
 ```{pyodide-python}
 #| label: week3-activity-c
@@ -2731,7 +2731,7 @@ p_3&=1+x^2+x^3, & p_4&=2-x-x^2+x^3.
 $$
 
 Notasjonen $\operatorname{Span}$ betyr «alle lineærkombinasjoner». Mengden
-$U=\operatorname{Span}(p_1,p_2,p_3,p_4)$ er derfor alle polynomer som kan
+$U=\operatorname{Span}(p_1,p_2,p_3,p_4)$ består derfor av alle polynomer som kan
 bygges av $p_1,p_2,p_3,p_4$. Dette er et underrom av $\mathcal P_3$, og det
 inneholder nullpolynomet. En basis for $U$ kan bestå av noen av polynomene
 over, eller av andre polynomer som spenner ut nøyaktig det samme rommet.
@@ -2921,7 +2921,7 @@ $$
 \end{bmatrix}.
 $$
 
-Den siste raden inneholder ingen ny likning. To rader er igjen, og de ledende oppføringene — **pivotene** — ligger i kolonne 1 og 2. Dermed er rangen 2.
+Den siste raden er null og inneholder derfor ingen ny likning. To ikke-null-rader er igjen, og de ledende oppføringene — **pivotene** — ligger i kolonne 1 og 2. Dermed er rangen 2.
 
 Koden under utfører vanlig framovereliminasjon. Den går fra venstre mot høyre og bruker den første tilgjengelige ikke-null-oppføringen som pivot. Dette er tilstrekkelig for eksemplene våre og følger papirregningen tett.
 
@@ -2981,7 +2981,7 @@ print("Rang fra eliminasjon:",len(pivot_columns))
 print("Kontroll med NumPy:",np.linalg.matrix_rank(A))
 ```
 
-`matrix_rank` er nyttig som kontroll, men eliminasjonen viser *hvorfor* rangen er 2. Mer robuste eliminasjonsalgoritmer kan omstokke rader og eventuelt kolonner for å unngå dårlige pivoter. Det tar vi ikke nå. Senere skal vi se at numerisk rang alltid avhenger av hva som regnes som «tilstrekkelig nær null».
+`matrix_rank` er nyttig som kontroll, men eliminasjonen viser *hvorfor* rangen er 2. Mer robuste eliminasjonsalgoritmer kan bytte om rader og eventuelt kolonner for å unngå dårlige pivoter. Det ser vi ikke på her. Senere skal vi se at numerisk rang alltid avhenger av hva som regnes som «tilstrekkelig nær null».
 
 ::::
 
@@ -3183,7 +3183,7 @@ Velg en input $x_0$ og beregn $y=Ax_0$. Hvis $z$ ligger i nullrommet, gir $x_0+z
 
 $$A(x_0+z)=Ax_0+Az=Ax_0.$$
 
-Her er en hel familie av forskjellige inputvektorer med samme output.
+Cellen under lager en hel familie av forskjellige inputvektorer med samme output.
 
 ```{pyodide-python}
 #| label: week3-same-output-pure-matrix
@@ -3210,7 +3210,7 @@ Dette er den rene matriseversjonen av åpningsproblemet: Nullrommet beskriver al
 :::: {.callout-note collapse="true"}
 ### Eksakt og numerisk rang
 
-Til slutt endrer vi den avhengige tredje raden med et svært lite tall. For enhver $\varepsilon\ne0$ er den perturberte matrisen eksakt sett av rang 3. Numerisk må vi likevel avgjøre om den nye pivoten er stor nok til å skille fra avrundingsfeil.
+Til slutt endrer vi den avhengige tredje raden med et svært lite tall. For enhver $\varepsilon\ne0$ er den forstyrrede matrisen eksakt sett av rang 3. Numerisk må vi likevel avgjøre om den nye pivoten er stor nok til å skilles fra avrundingsfeil.
 
 ```{pyodide-python}
 #| label: week3-nearly-dependent-row
@@ -3650,7 +3650,7 @@ inputdimensjon _[3] $=$ rang _[1] $+$ nullitet _[2]
 
 ### Med kode
 
-Bruk denne delen først etter at du har arbeidet med den valgte matrisen på
+Bruk denne delen etter at du har arbeidet med den valgte matrisen på
 papir. Cellen under inneholder en kort, selvstendig kopi av
 `row_echelon`, slik at kontrolloppgaven virker selv om du ikke har åpnet og
 kjørt kodecellen i matriserepetisjonen i 3.7.

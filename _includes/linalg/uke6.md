@@ -117,7 +117,7 @@ $$x^{(k+1)}=x^{(k)}+D^{-1}\bigl(b-Ax^{(k)}\bigr).$$
 
 Denne operasjonen kommer tilbake i prosjektet. GS gjør det samme, men
 regner residualen i andre likning på nytt med den nye $u$ før $v$
-korrigeres. Begge oppskriftene krever $a_{ii}\ne0$; det alene garanterer
+korrigeres. Begge oppskriftene krever $a_{ii}\ne0$, men dette alene garanterer
 ikke at iterasjonen konvergerer. Matriseformen med $A=L+D+U$ og et
 eksempel med fire ukjente står i «Gå i dybden».
 
@@ -188,7 +188,7 @@ $$(\textcolor{#B45309}{D}+\textcolor{#1565C0}{L})x^{(k+1)}=b-\textcolor{#7E22CE}
 =\begin{bmatrix}5-v_k\\5\end{bmatrix}.$$
 
 Første rad sier $3u_{k+1}=5-v_k$, og andre rad sier $u_{k+1}+2v_{k+1}=5$.
-Det er nøyaktig GS-oppdateringene over. Venstresiden er et nedre
+Det er nøyaktig GS-oppdateringene over. Dette er et nedre
 trekantsystem, og vi løser det ovenfra og ned. Jacobi bruker derimot bare
 gamle verdier på høyresiden:
 
@@ -199,13 +199,13 @@ på diagonalelementet sitt, kan Jacobi skrives som en korreksjon:
 
 $$x^{(k+1)}=x^{(k)}+D^{-1}\bigl(b-Ax^{(k)}\bigr),$$
 
-som er korreksjonsformen fra hovedteksten. Oppdelingen $A=L+D+U$ virker
+som er korreksjonsformen fra hovedteksten. Oppdelingen $A=L+D+U$ kan gjøres
 for enhver kvadratisk matrise.
 
 **Fire ukjente: hva er gammelt, og hva er nytt?**
 
 For å se mønsteret tydeligere bruker vi en $4\times4$-matrise.
-Fargene følger delene: **blått for $L$**, **oransje for $D$** og
+Fargene viser hvilken del tallene hører til: **blått for $L$**, **oransje for $D$** og
 **lilla for $U$**. $L$ og $U$ har null på diagonalen.
 
 $$
@@ -325,7 +325,7 @@ Siden $(Ax)_i=a_{ii}x_i+\sum_{j\ne i}a_{ij}x_j$, er
 $$x_i+\frac{b_i-(Ax)_i}{a_{ii}}
 =\frac{b_i-\sum_{j\ne i}a_{ij}x_j}{a_{ii}}.$$
 
-Den gamle $x_i$ kansellerer. Når vi overskriver én koordinat om
+Leddene med den gamle $x_i$ faller bort. Når vi overskriver én koordinat om
 gangen, bruker neste rad de oppdaterte verdiene automatisk.
 Beregner vi derimot hele residualen én gang ved starten av sveipet
 og bruker den uendret i alle korreksjonene, får vi Jacobi.
@@ -347,7 +347,7 @@ $$A_a=\begin{bmatrix}3&1\\1&2\end{bmatrix},\qquad
 A_b=\begin{bmatrix}1&2\\2&1\end{bmatrix}.$$
 
 Begge systemene får samme kjente løsning $x_*=(1,2)^T$: vi lager
-$b=Ax_*$ for hver matrise og kan måle feilen direkte. Målet er å finne
+$b=Ax_*$ for hver matrise, og derfor kan vi måle feilen direkte. Målet er å finne
 ett tall, regnet ut fra matrisen, som forteller om feilen krymper eller
 vokser.
 
@@ -398,7 +398,7 @@ For $A_a$ finner vi $T$ ved å sette den nye $u$ inn i oppdateringen av $v$:
 $$u_{k+1}=\tfrac53-\tfrac13v_k,\qquad
 v_{k+1}=\frac{5-u_{k+1}}{2}=\frac{5-\frac53+\frac13v_k}{2}=\tfrac53+\tfrac16v_k.$$
 
-Begge nye verdier avhenger bare av den gamle $v_k$. Som matriseregning er dette
+Begge nye verdier avhenger bare av den gamle $v_k$. På matriseform er dette
 
 $$\begin{bmatrix}u_{k+1}\\v_{k+1}\end{bmatrix}=
 \underbrace{\begin{bmatrix}0&-1/3\\0&1/6\end{bmatrix}}_{T_a}
@@ -423,10 +423,10 @@ $$e_1=T_ae_0=\begin{bmatrix}0\cdot(-1)-\frac13\cdot(-2)\\[2pt]0\cdot(-1)+\frac16
 Bidraget langs egenvektoren til egenverdien $0$ forsvant i første sveip. Resten ligger
 langs egenvektoren til $1/6$, så hvert nytt sveip deler feilen på seks:
 $\lVert e_0\rVert_2=\sqrt5\approx2.24$, $\lVert e_1\rVert_2=\sqrt5/3\approx0.745$
-og $\lVert e_2\rVert_2=\sqrt5/18\approx0.124$, nøyaktig punktene på kurven.
+og $\lVert e_2\rVert_2=\sqrt5/18\approx0.124$, som er nøyaktig punktene på kurven.
 Derfor er første forhold i utskriften $1/3$.
 For $A_b$ gir samme regning $e_1=T_be_0=(4,-8)^T$, med lengde
-$\sqrt{80}\approx8.94$. Det er en egenvektor til $4$.
+$\sqrt{80}\approx8.94$. Denne feilen er en egenvektor til egenverdien $4$.
 
 **Spektralradiusen** er største absoluttverdi av egenverdiene:
 $\rho(T)=\max_i|\lambda_i(T)|$. Iterasjonen konvergerer fra enhver startvektor
@@ -479,7 +479,7 @@ $U$ den strengt øvre delen, med opprinnelige fortegn. Da er
 
 $$(D+L)x_{k+1}=b-Ux_k,\qquad T=-(D+L)^{-1}U.$$
 
-Dette er et analyseuttrykk; implementasjonen trenger ikke en eksplisitt invers.
+Dette uttrykket bruker vi til analyse; i koden trenger vi ikke beregne inversen eksplisitt.
 For Jacobi er $T=-D^{-1}(L+U)$.
 
 :::
@@ -494,7 +494,7 @@ For Jacobi er $T=-D^{-1}(L+U)$.
 I [uke 1](page2.qmd) målte vi absolutt og relativ feil. I
 [uke 2, del 2.4](page4.qmd#feil-residual-og-toleranse) skilte vi mellom **foroverfeil** (feil i
 svaret) og **bakoverfeil** (hvor mye problemet må endres for at svaret
-skal bli eksakt). Vi bruker nå de samme spørsmålene for $Ax=b$.
+skal bli eksakt). Nå stiller vi de samme spørsmålene for $Ax=b$.
 
 La $x_*$ være den eksakte løsningen og $\hat x$ en **beregnet tilnærming**,
 for eksempel vektoren etter ti GS-sveip. For en vektor bruker vi den vanlige lengden
@@ -556,7 +556,7 @@ Den nødvendige endringen i høyresiden er altså $-r$, og størrelsen
 på endringen er $\lVert r\rVert_2$. **Med fast $A$ er residualnormen
 den absolutte bakoverfeilen.** I eksemplet er den $10^{-4}$.
 
-Liten bakoverfeil, men stor foroverfeil: for å forstå forskjellen må vi
+Svaret har altså liten bakoverfeil, men stor foroverfeil. For å forstå forskjellen må vi
 se på hvordan matrisen endrer vektorlengder.
 
 ### Matrisens 2-norm: den største strekkfaktoren
@@ -588,9 +588,9 @@ For en invertibel, kvadratisk matrise definerer vi
 $$\boxed{\kappa_2(A)=\lVert A\rVert_2\lVert A^{-1}\rVert_2.}$$
 
 Den inverse transformasjonen må oppheve også den svakeste strekkingen
-fra $A$. Derfor er $\lVert A^{-1}\rVert_2$ den inverse av den minste
+fra $A$. Derfor er $\lVert A^{-1}\rVert_2$ lik én delt på den minste
 strekkfaktoren. Kondisjonstallet er dermed **største strekkfaktor delt
-på minste strekkfaktor**. Det er minst $1$. Et stort tall betyr
+på minste strekkfaktor**. Kondisjonstallet er alltid minst $1$. Et stort tall betyr
 at transformasjonen behandler ulike retninger svært ulikt.
 
 | Matrise | $\lVert A\rVert_2$ | $\lVert A^{-1}\rVert_2$ | $\kappa_2(A)$ | Hva ser vi? |
@@ -606,7 +606,7 @@ egenverdiene til en SPD-matrise: $\kappa_2(A)=\lambda_{\max}/\lambda_{\min}$.
 
 Matrisen fra det første eksemplet har altså kondisjonstall $10^4$:
 når vi løser systemet, deler vi andre komponent i høyresiden på $10^{-4}$.
-Nå gjør vi denne sammenhengen presis.
+Nå gjør vi sammenhengen mellom kondisjonstall og feil presis.
 
 ### Hva betyr tallet for nøyaktigheten?
 
@@ -639,11 +639,11 @@ I et iterativt program kan vi kreve
 $$\lVert b-Ax_k\rVert_2\le\text{atol}+\text{rtol}\lVert b\rVert_2.$$
 
 `atol` er en absolutt toleranse og `rtol` en relativ toleranse.
-Dette begrenser residualen, altså bakoverfeilen med fast $A$, men ikke
+Kravet begrenser residualen, altså bakoverfeilen med fast $A$, men ikke
 foroverfeilen direkte; den avhenger også av kondisjonstallet. Vi
 begrenser i tillegg antall steg, og rapporterer manglende konvergens hvis
-stoppkravet ikke er nådd. En liten endring mellom to iterasjoner alene er
-ikke et sikkert stopptegn.
+stoppkravet ikke er nådd. En liten endring mellom to iterasjoner er alene
+ikke et sikkert tegn på at vi kan stoppe.
 
 **Hvis relativ residual er $10^{-10}$ og kondisjonstallet er $10^6$,
 hvilken øvre grense får dere for relativ feil?**
@@ -663,7 +663,7 @@ så vi kan dele på både $\lVert b\rVert_2$ og $\lVert x_*\rVert_2$.
 
 *1. Del den absolutte feilgrensen på størrelsen til løsningen.*
 Fra $r=-Ae$ får vi $e=-A^{-1}r$. Matrisenormen gir en grense for
-lengden av et matriseprodukt: $\lVert Cz\rVert_2\le\lVert C\rVert_2\lVert z\rVert_2$.
+lengden av et matrise–vektor-produkt: $\lVert Cz\rVert_2\le\lVert C\rVert_2\lVert z\rVert_2$.
 Vi bruker dette med $C=A^{-1}$ og $z=r$. Minustegnet endrer ikke lengden, så
 
 $$\lVert e\rVert_2=\lVert A^{-1}r\rVert_2
@@ -713,7 +713,7 @@ Produktet i parentes er kondisjonstallet $\kappa_2(A)$. Setter vi tilbake
 $e=\hat x-x_*$ og $r=b-A\hat x$, får vi grensen i hovedteksten.
 
 Vi kan også endre dataene med vilje og løse $A\tilde x=b+\delta b$.
-Da gir subtraksjon av $Ax_*=b$ at $A(\tilde x-x_*)=\delta b$. Samme regning gir
+Trekker vi fra $Ax_*=b$, får vi $A(\tilde x-x_*)=\delta b$. Samme regning gir
 
 $$\frac{\lVert\tilde x-x_*\rVert_2}{\lVert x_*\rVert_2}
 \le\kappa_2(A)\frac{\lVert\delta b\rVert_2}{\lVert b\rVert_2}.$$
@@ -726,8 +726,8 @@ følsomhet i problemet, også kalt kondisjon.
 **Mer om normer og kondisjonstall**
 
 En strekkfaktor på $0.01$ betyr at vektoren blir hundre ganger kortere;
-dette kalles også at vektoren **dempes**. Faktoren trenger altså ikke være
-større enn $1$. Til matriser har vi tidligere brukt **Frobenius-normen**
+vi sier da også at vektoren **dempes**. Faktoren trenger altså ikke være
+større enn $1$. For matriser har vi tidligere brukt **Frobenius-normen**
 $\lVert A\rVert_F=\sqrt{\sum_{i,j}a_{ij}^2}$, som summerer kvadratene av
 alle elementene. For $B=\operatorname{diag}(3,1)$ er
 $\lVert B\rVert_F=\sqrt{10}$, mens $\lVert B\rVert_2=3$: de to normene
@@ -823,7 +823,7 @@ mens kondisjonstallet er $10^4$. To nesten like normer på $A$ kan
 altså høre til svært ulike kondisjonstall: også $A^{-1}$ spiller inn.
 Skalering gir $\lVert cA\rVert_2=|c|\lVert A\rVert_2$ og
 $\lVert(cA)^{-1}\rVert_2=|c|^{-1}\lVert A^{-1}\rVert_2$;
-faktorene kansellerer i produktet.
+faktorene opphever hverandre i produktet.
 
 Med $b=0$ er $x_*=0$, og vi kan ikke dele på $\lVert x_*\rVert_2$.
 Null residual gir null feil når $A$ er invertibel. For stoppkravseksemplet
@@ -846,7 +846,7 @@ høyresiden, og viser derfor en annen residual.
 **Hva forklarer dette?**
 
 Kondisjonstallet beskriver den største mulige relative forsterkningen,
-og det andre valget treffer denne grensen. Grovt kan en forsterkning
+og det andre valget treffer denne grensen. Grovt sagt kan en forsterkning
 på $10^m$ koste omtrent $m$ desimalsifre i relativ nøyaktighet, men
 ikke alle forstyrrelser utløser dette tapet. For generelle matriser
 må vi bruke strekkfaktorer, ikke bare egenverdier. For eksempel har
@@ -985,8 +985,8 @@ Vi bruker her **symmetrisk positivt definitte (SPD)** matriser:
 
 $$A^T=A,\qquad z^TAz>0\quad\text{for alle }z\ne0.$$
 
-Symmetrien gjør at kryssleddene fra hver side av diagonalen passer
-sammen. Positiv definitthet betyr at det kvadratiske bidraget er positivt i enhver
+Symmetrien gjør at kryssleddene fra hver side av diagonalen blir like
+og kan slås sammen. Positiv definitthet betyr at det kvadratiske bidraget er positivt i enhver
 ikke-null retning. Kvadratfullføringen ovenfor viser at matrisen vår
 har nettopp denne egenskapen.
 
@@ -1047,7 +1047,7 @@ funksjonsverdi $c$:
 $$\{(u,v):\phi(u,v)=c\}.$$
 
 For funksjonen vår er dette en **nivåkurve** når $c>-7.5$.
-Følg én kurve, og høyden endrer seg ikke. Geometrisk skjærer vi skålen
+Langs én kurve endrer høyden seg ikke. Geometrisk skjærer vi skålen
 med planet $z=c$ og tegner skjæringskurven sett ovenfra. Høyden $c$ står
 som merking på kurven. Setter vi inn uttrykket rundt minimumet, får vi
 
@@ -1066,7 +1066,7 @@ koordinatene til $z$ i en ortonormal egenvektorbasis $q_1,\ldots,q_n$. Er
 alle $\lambda_i>0$, er $A$ positivt definitt. Omvendt gir $z=q_i$ at
 $q_i^TAq_i=\lambda_i$, så positiv definitthet krever $\lambda_i>0$.
 
-Forutsetningen betyr noe. For $A_b$ fra 6.2 så vi i hovedteksten at
+Forutsetningen er viktig. For $A_b$ fra 6.2 så vi i hovedteksten at
 $z^TA_bz<0$ for $z=(1,-1)^T$, selv om diagonalen er positiv. Den tilhørende
 funksjonen har ikke en skål med én bunn. Vi kan derfor ikke tolke ethvert lineært system som
 minimering av denne $\phi$.
@@ -1130,7 +1130,7 @@ Utskriften viser at $\phi$ synker fra $0$ til $-4.166667$ og $-6.944444$ i
 de to første koordinatstegene, men ikke helt ned til $-7.5$.
 **Hvilke linjer minimerer de to første stegene langs? Hvorfor fortsetter
 ikke første steg helt til sentrum av ellipsene?** Å gå lenger langs
-samme linje ville økt funksjonen igjen; sentrum ligger på en annen
+samme linje ville økt funksjonsverdien igjen; sentrum ligger på en annen
 linje.
 
 **Prøv selv**
@@ -1167,7 +1167,7 @@ noe $uw$-ledd. Vi kan også gå motsatt vei: dobler vi
 kvadratkoeffisientene og plasserer krysskoeffisientene symmetrisk,
 får vi tilbake $A$. De lineære koeffisientene er $-b_i$.
 
-For å kontrollere SPD lar vi $z=(z_1,z_2,z_3)^T$. Kvadratfullføring gir
+For å kontrollere at matrisen er SPD, lar vi $z=(z_1,z_2,z_3)^T$. Kvadratfullføring gir
 
 $$z^TAz=4(z_1+z_2/4)^2+\tfrac{11}{4}(z_2+4z_3/11)^2+\tfrac{18}{11}z_3^2.$$
 
@@ -1228,7 +1228,7 @@ så hvert uttrykk gir et minimum. Fra nullstart blir koordinatstegene
 $$(0,0,0)\longmapsto(3/2,0,0)
 \longmapsto(3/2,17/6,0)\longmapsto(3/2,17/6,31/12).$$
 
-Verdien synker ved hvert steg, men etter ett sveip er vi ennå ikke
+Funksjonsverdien synker ved hvert steg, men etter ett sveip er vi ennå ikke
 ved $(1,2,3)$. Minimering langs hver linje bruker de andre koordinatene
 slik de er akkurat da, og de vil endres senere i sveipet.
 
@@ -1250,7 +1250,7 @@ $$
 $$
 
 Siste likhet bruker $Ax_*=b$. Positiv definitthet gjør at det siste
-leddet er strengt positivt når $e\ne0$. Det beviser minimeringen.
+leddet er strengt positivt når $e\ne0$. Det beviser at løsningen er det eneste minimumet.
 Med egenverdidekomposisjonen $A=Q\Lambda Q^T$ og $y=Q^Te$ blir
 
 $$\phi(x)-\phi(x_*)=\tfrac12\sum_i\lambda_i y_i^2.$$
@@ -1363,7 +1363,7 @@ ikke nødvendigvis minimumet i hele planet.
 I startpunktet $x_0=(0,0)^T$ er gradienten $(-5,-5)^T$ og residualen
 $r_0=(5,5)^T$. Et lite steg i residualens retning øker derfor både
 $u$ og $v$. Likevel **synker** $\phi$: «nedover» viser til høyden på
-skålen, ikke til nedover på arket. Vi velger $p_0=r_0=(5,5)^T$.
+skålen, ikke til retningen nedover på arket. Vi velger $p_0=r_0=(5,5)^T$.
 Punktene på linjen er $(5\alpha,5\alpha)$. Setter vi disse inn i $\phi$, får vi
 
 $$\psi(\alpha)=\phi(5\alpha,5\alpha)
@@ -1371,7 +1371,7 @@ $$\psi(\alpha)=\phi(5\alpha,5\alpha)
 =\tfrac{175}{2}\alpha^2-50\alpha.$$
 
 Derivasjon gir $\psi'(\alpha)=175\alpha-50=0$, altså $\alpha_0=2/7$, og
-parabelen vender opp. Første nye punkt er $x_1=(10/7,10/7)^T$: best på
+parabelen vender opp. Første nye punkt er $x_1=(10/7,10/7)^T$: det beste punktet på
 linjen $u=v$, men ennå ikke $(1,2)$.
 
 Legg merke til hvor tallene i $\psi$ kommer fra: $50=p_0^Tr_0$ og
@@ -1433,7 +1433,7 @@ line_search_plot(A, b, x0, p0, alpha0)
 $x_1\approx(1.4286,1.4286)$ og $r_1\approx(-0.714,0.714)$. Ved
 $\alpha=2/7$ er vi i bunnen av parabelen; ved $\alpha=0.4$ har vi gått
 forbi og er på vei opp igjen. Hele skålens minimum $-7.5$ nås ikke langs
-linjen, fordi residualen peker brattest ned der vi står, ikke mot bunnen.
+linjen, fordi residualen peker i den bratteste retningen nedover der vi står, ikke mot bunnen.
 Den oransje nivåkurven berører søkelinjen i $x_1$, og den grønne pilen
 $r_1$ står vinkelrett på både nivåkurven og søkelinjen: et eksakt
 linjesøk gir en ny residual som er ortogonal til søkeretningen.
@@ -1560,7 +1560,7 @@ Fra $x_0=(0,0)^T$ gikk vi langs $p_0=(5,5)^T$, altså linjen $u=v$, og
 linjesøket ga $x_1=(10/7,10/7)^T$. Langs $u=v$ kommer vi ikke lenger, men
 stjernen $(1,2)$ ligger lavere og utenfor linjen. Bratteste nedstigning
 bruker den nye residualen som retning. CG velger den nye retningen slik at
-vi slipper å gjøre om igjen minimeringen i den første. For å forstå hva
+vi slipper å gjøre om igjen minimeringen i den første retningen. For å forstå hva
 det betyr, ser vi på flere linjer som er parallelle med $u=v$.
 
 ### Én linje, ett minimum – flere linjer, flere minimumspunkter
@@ -1618,7 +1618,7 @@ $x_{\rm ny}=x+\alpha q$ er
 
 $$p^T(Ax_{\rm ny}-b)=p^T(Ax-b)+\alpha\,p^TAq=\alpha\,p^TAq.$$
 
-Den er null for alle $\alpha$ akkurat når $p^TAq=0$.
+Uttrykket er null for alle $\alpha$ akkurat når $p^TAq=0$.
 
 I figuren med de parallelle blå linjene er den første retningen
 $p_0=(5,5)^T$. En retning langs
@@ -1687,7 +1687,7 @@ Gjenta:
 ```
 
 Hver linje er noe vi allerede har gjort. `alpha` er linjesøket fra 6.5,
-$\alpha=p^Tr/p^TAp$. I CG er $p^Tr=r^Tr$: $p$ er $r$ pluss et multiplum av
+$\alpha=p^Tr/p^TAp$. I CG er $p^Tr=r^Tr$, fordi $p$ er $r$ pluss et multiplum av
 forrige retning, og linjesøket i 6.5 gjorde den nye residualen vinkelrett
 på forrige retning. Den nye residualen får vi uten et ekstra produkt med
 $A$, fordi $b-A(x+\alpha p)=r-\alpha Ap$. `beta` er Gram–Schmidt-koeffisienten
@@ -1704,8 +1704,8 @@ Hvorfor de korte formene for `alpha` og `beta` stemmer, står i «Gå i dybden»
 
 I vanlig Gram–Schmidt må vi trekke fra bidrag i **alle** tidligere
 retninger. For CG med SPD-matrise og eksakte linjesøk holder det å
-bruke **den siste**: den nye retningen blir også A-ortogonal til de
-eldre retningene, i eksakt regning. Dette er en egen egenskap ved CG.
+bruke **den siste** retningen: den nye retningen blir også A-ortogonal til de
+eldre retningene, i eksakt regning. Dette er en særegen egenskap ved CG.
 
 **Øv på dette:** [Neste CG-retning med Gram–Schmidt](#uke6-ov-cg) og
 [to CG-steg med de korte formlene](#uke6-ov-cg-oppskrift).
@@ -1745,19 +1745,19 @@ two_bowls(cases)
 og ett linjesøk er nok. På den smale er første steg felles; deretter
 fortsetter bratteste nedstigning i sikksakk, mens CG korrigerer
 residualretningen med den forrige søkeretningen og er framme etter to
-steg. Det skyldes at forsøket har **to ukjente**, ikke kondisjonstallet.
+steg. At CG er framme så fort, skyldes at forsøket har **to ukjente**, ikke kondisjonstallet.
 
 ### Hva kan vi forvente i større systemer?
 
 For et SPD-system med $n$ ukjente når CG løsningen etter **høyst $n$
-steg i eksakt regning**, ofte før: ikke-null, parvis A-konjugerte
+steg i eksakt regning**, ofte før. Grensen kommer av at ikke-null, parvis A-konjugerte
 retninger er lineært uavhengige, så $n$ av dem dekker hele rommet. I
 store problemer håper vi å nå en liten nok residual lenge før dette.
 
 Ett CG-steg koster ett matrise–vektor-produkt $Ap_k$ og noen få
 indreprodukter. Hjelperen `cg` bruker ett produkt til i hvert steg for å
 kontrollere $b-Ax$ direkte. Antall produkter med $A$ er derfor et godt mål
-på arbeidet, og det er dette prosjektet teller.
+på arbeidet, og det er disse produktene vi teller i prosjektet.
 
 På datamaskinen avrundes tallene. Retningene kan miste konjugerthet, og
 flere steg enn $n$ kan trengs. Derfor bruker vi både en maksimalgrense og
@@ -1854,7 +1854,7 @@ Hvert punkt underveis er derfor fortsatt minimum i den gamle retningen,
 langs sin egen parallelle linje. Det nye linjesøket finner det laveste
 punktet langs den grønne linjen: i dette todimensjonale eksemplet er
 det stjernen $(1,2)^T$. Vi har nå minimert i begge søkeretningene,
-uten at det andre steget har gjort ny leting i den første nødvendig.
+uten at det andre steget gjorde det nødvendig å lete på nytt i den første retningen.
 
 **Prøv selv**
 
