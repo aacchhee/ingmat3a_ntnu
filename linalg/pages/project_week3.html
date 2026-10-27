@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Uke 3 – Polynomer i blindsonen – Matematikk 3A</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-e451d5fd0f9f7132a26567a44e8d50ee.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/ctm-coi-frame-startup-1/coi-frame-startup.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-assets-0.9.0/assets.js"></script>
+<link href="../site_libs/quarto-contrib/ctm-ui-0.9.0/ctm-ui.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/ctm-layout-0.9.0/ctm-layout.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-reveal-0.9.0/ctm-reveal.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-nav-0.9.0/ctm-nav.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-core.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-dom.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.js"></script>
+<link href="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/ctm-runtime-0.9.0/pyodide-runtime.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-worker-0.9.0/pyodide-worker.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-0.9.0/ctm-locale.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-0.9.0/common.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-ui-0.9.0/ui.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-copy-0.9.0/ctm-copy.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-store-0.9.0/ctm-store.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-pyodide-interaktiv-0.9.0/pyodide-interaktiv.js"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-locale.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-storage.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-document-status.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-storage-settings.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-worker-plugin.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-document-engine-initialization.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-canvas-plots.js" type="module"></script>
+<link href="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-styling.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-feedback-1.10.0/qpyodide-feedback.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/ctm-export-0.9.0/ctm-export.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-progress-0.9.0/ctm-progress.js"></script>
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Ingen resultater",
+    "search-matching-documents-text": "Samsvarende dokumenter",
+    "search-copy-link-title": "Kopier link for å søke",
+    "search-hide-matches-text": "Skjul ytterlige resultater",
+    "search-more-match-text": "annet resultat i dette dokumentet",
+    "search-more-matches-text": "andre resultater i dette dokumentet",
+    "search-clear-button-title": "Tøm",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Avbryt",
+    "search-submit-button-title": "Send inn",
+    "search-label": "Søk"
+  }
+}</script>
+<script>globalThis.CTM_ASSETS={"bases":{"font-awesome":"https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/","jsxgraph":"https://cdn.jsdelivr.net/npm/jsxgraph@1.14.1/","katex":"https://cdn.jsdelivr.net/npm/katex@0.16.47/","mathjax-newcm-font":"https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/","mathjax3":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/","mathjax4":"https://cdn.jsdelivr.net/npm/mathjax@4.1.3/","monaco-editor":"https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/","pyodide":"https://cdn.jsdelivr.net/pyodide/v0.28.3/full/","source-sans-pro":"https://cdn.jsdelivr.net/npm/@fontsource/source-sans-pro@5.3.0/"},"mode":"cdn","v":1};</script>
+<script src="../coi-serviceworker.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/editor/editor.main.css">
+<script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/js/all.min.js" defer="" crossorigin="anonymous"></script>
+<script type="text/javascript">
+// qpyodide-document-settings.js – document-wide settings (template)
+//
+// This file is a template: the {{PLACEHOLDERS}} are replaced by the Lua
+// filter (qpyodide.lua, function initializationPyodide) during rendering.
+// It's injected as the first module into the <head>, so that all further
+// modules can access the global settings.
+
+// Document level settings ----
+
+// Determine if we need to install python packages
+globalThis.qpyodideInstallPythonPackagesList = [''];
+
+// Check to see if we have an empty array, if we do set to skip the installation.
+globalThis.qpyodideSetupPythonPackages = !(qpyodideInstallPythonPackagesList.indexOf("") !== -1);
+
+// Automatically preload the HTTP shim and plotting packages? Defaults to true.
+// Explicit pyodide: packages entries still install when this is false.
+globalThis.qpyodidePreloadPackages = true;
+
+// Display a startup message?
+globalThis.qpyodideShowStartupMessage = true;
+
+// Describe the Pyodide settings that should be used.
+// Data only (no functions) – the configuration is passed to the Pyodide
+// web worker via postMessage; the worker collects stdout/stderr itself.
+globalThis.qpyodideCustomizedPyodideOptions = {
+  "indexURL": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/",
+  "env": {
+    "HOME": "/home/pyodide",
+  }
+}
+
+// Interactive plot backend ----
+//
+// "webagg" (Pyodide 0.28+), "html5-canvas" (an older Pyodide pinned via
+// `pyodide: base-url:`) or "auto" (the base URL names no version; decided
+// from the loaded Pyodide). See qpyodide-canvas-plots.js.
+globalThis.qpyodideCanvasBackend = "webagg";
+
+// UI language for this render pass ----
+//
+// Set by the Lua filter (ctm.locale: `pyodide: lang:`, `ctm-assessment: lang:`,
+// Quarto's own `lang:`): a language of the catalogue (en, de, sv, nb, da).
+globalThis.qpyodideLang = "nb";
+
+// Store cell data
+globalThis.qpyodideCellDetails = [{"code":"\n# Felles verktøy for alle kodecellene i prosjektet. Cellen kjøres\n# automatisk og vises ikke på den ferdige siden.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom numpy.polynomial import polynomial as poly\nfrom numpy.polynomial import chebyshev as cheb","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Polynomer i blindsonen\nDette prosjektet er laget for omtrent 4–6 timer selvstendig arbeid. Kodeassistenter er tillatt, men du er ansvarlig for at eksperimentene faktisk svarer på de matematiske spørsmålene.\nI uke 3 har vi sett at samme vektorrom kan beskrives med forskjellige basiser. I eksakt matematikk er dette bare forskjellige koordinater for de samme objektene. På en datamaskin kan basisvalget likevel få stor betydning.\nVi skal undersøke polynomrommet \\(\\mathcal P_n\\). Tenk deg at vi ikke kjenner hele grafen til et polynom, men bare leser av polynomverdien på \\(n+1\\) steder. Vi samler avlesningene i en tallkolonne:\n\\[\nE(p)=\n\\begin{bmatrix}\np(x_0)\\\\p(x_1)\\\\\\vdots\\\\p(x_n)\n\\end{bmatrix}.\n\\]\nÅ gå fra et kjent polynom til disse verdiene er vanlig evaluering. Flere steder i prosjektet går vi motsatt vei: Vi får bare verdiene og prøver å finne koeffisientene til polynomet som laget dem. Vi kaller denne baklengsprosessen reverse engineering av polynomet.\nProsjektets hovedspørsmål er:\nHvordan kan matematisk likeverdige beskrivelser av det samme polynomrommet gi svært forskjellige numeriske resultater?\nDu skal gjøre tre kontrollerte sammenligninger. Først arbeider du med lav grad og eksakt lineær algebra. Deretter endrer du bare basisen. Til slutt holder du basis fast og endrer bare avlesningspunktene. Ikke bland disse eksperimentene: Ellers vet du ikke hva som forårsaket forskjellen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week3-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week3-setup","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef chebyshev_recursive(n, x):\n    \"\"\"Beregn T_n(x) direkte fra den rekursive definisjonen.\"\"\"\n    if n < 0:\n        raise ValueError(\"n må være et ikke-negativt heltall\")\n    if n == 0:\n        return 1 + 0*x       # TODO: forklar hvorfor 0*x er nyttig for arrays\n    if n == 1:\n        return x\n    return (2*x*chebyshev_recursive(n-1, x)\n            - chebyshev_recursive(n-2, x))\n\n\nfor n in range(5):\n    print(f\"T_{n}(0.3) = {chebyshev_recursive(n, 0.3): .8f}\")","id":2,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"ed4be0313d870a01","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-2","ctm-store-save":true,"ctm-store-source":"a133a1ad2244edbf","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Oversett rekursjonen fra papir til Python\nFunksjonen under er en direkte oversettelse av definisjonen. Før du kjører, følg kallene som trengs for å beregne \\(T_4(0.3)\\), og forklar hvilken linje som svarer til hvert av de tre tilfellene i den matematiske definisjonen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-2","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-2","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"import numpy as np\n\ndef chebyshev_table(x, n):\n    \"\"\"Returner en tabell med T_0(x), ..., T_n(x) som kolonner.\"\"\"\n    x = np.asarray(x, dtype=float)\n    # En rad hører til én x-verdi. Den siste aksen reserveres for\n    # polynomnummeret k: kolonne k inneholder T_k(x).\n    table = np.empty(x.shape + (n+1,), dtype=float)\n    table[..., 0] = 1.0\n    if n >= 1:\n        table[..., 1] = x\n    # Tabellen tar vare på tidligere resultater. Derfor kan hver ny kolonne\n    # bygges fra de to foregående uten å beregne dem på nytt.\n    for k in range(1, n):\n        table[..., k+1] = 2*x*table[..., k] - table[..., k-1]\n    return table\n\n\nx_test = np.array([-1.0, -0.25, 0.0, 0.4, 1.0])\nprint(chebyshev_table(x_test, 4))","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"0ba6263d84613b62","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-3","ctm-store-save":true,"ctm-store-source":"04ba88794ec92bee","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":"Oversett rekursjonen fra papir til Python\nFunksjonen under er en direkte oversettelse av definisjonen. Før du kjører, følg kallene som trengs for å beregne \\(T_4(0.3)\\), og forklar hvilken linje som svarer til hvert av de tre tilfellene i den matematiske definisjonen.\nKontroller de håndregnede uttrykkene ved å evaluere dem og chebyshev_recursive i minst tre verdier av \\(x\\).\nDen direkte rekursjonen gjør mange av de samme beregningene flere ganger. Vi vil dessuten snart trenge mange \\(T\\)-polynomer i mange forskjellige \\(x\\)-verdier. Derfor lager vi én tabell som samler alt.\nHvis x inneholder fem punkter og vi ber om polynomene fra \\(T_0\\) til \\(T_4\\), får tabellen fem rader og fem kolonner:\nrad 0 inneholder \\(T_0(x_0),T_1(x_0),\\ldots,T_4(x_0)\\);\nrad 1 inneholder de samme fem polynomene regnet ut i \\(x_1\\);\nkolonne 2 inneholder \\(T_2\\) regnet ut i alle de fem punktene.\nNår en verdi først er regnet ut, blir den liggende i tabellen og kan brukes til å lage neste kolonne. Dermed slipper programmet å starte rekursjonen på nytt hver gang."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-3","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-3","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"import numpy as np\nimport matplotlib.pyplot as plt\n\nx_plot = np.linspace(-1.0, 1.0, 1200)\n# Tabellen gjør at vi beregner alle ni kurvene i ett kall. T_plot[:, n]\n# betyr: alle x-rader, men bare kolonnen som hører til T_n.\nT_plot = chebyshev_table(x_plot, 8)\n\nplt.close(\"all\")\nfig, axes = plt.subplots(3, 3, figsize=(8, 6), sharex=True, sharey=True)\nfor n, ax in enumerate(axes.ravel()):\n    ax.plot(x_plot, T_plot[:, n], color=\"#277da1\")\n    ax.axhline(0, color=\"0.75\", linewidth=0.8)\n    ax.set_title(f\"$T_{n}$\")\n    ax.grid(alpha=0.2)\n    ax.set_ylim(-1.15, 1.15)\nfig.supxlabel(\"x\")\nfig.supylabel(\"$T_n(x)$\")\nplt.tight_layout()\nplt.show()","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"d3a5cb893faa1688","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-4","ctm-store-save":true,"ctm-store-source":"635ef75defb45ef3","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-table-6cc5accb","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-table-6cc5accb","text":"Se hvordan polynomene oppfører seg\nFør vi bruker Chebyshev-polynomene som regneverktøy, trenger vi et bilde av hvordan de oppfører seg på intervallet \\([-1,1]\\). Er de store eller små? Hvor mange ganger svinger de? Oppfører partalls- og oddetallspolynomene seg ulikt? Dette blir viktig senere når vi skal forstå hvorfor denne beskrivelsen av et polynom kan være numerisk gunstig.\nEn graf består av mange beregnede punkter. Koden lager derfor 1200 jevnt fordelte \\(x\\)-verdier og bruker chebyshev_table til å regne ut \\(T_0,\\ldots,T_8\\) i alle sammen. Resultatet T_plot har 1200 rader og 9 kolonner. I løkken tegner T_plot[:, n] hele kolonnen som hører til \\(T_n\\)."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-4","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-4","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"# Hver kolonne skal inneholde monomialkoeffisientene til ett T_k.\n# Rekkefølgen på radene er 1, x, x^2, x^3, x^4.\nQ = np.full((5, 5), np.nan)\n# Kolonne k er koeffisientlisten til T_k. Rangtesten undersøker om de fem\n# listene, og dermed de fem polynomene, er lineært uavhengige.\nQ[:, 0] = [1, 0, 0, 0, 0]  # T_0\nQ[:, 1] = [0, 1, 0, 0, 0]  # T_1\n\n# TODO: Fyll kolonne 2, 3 og 4 fra håndregningen.\n\nif np.isnan(Q).any():\n    print(\"Fyll inn de tre siste kolonnene før rangtesten.\")\nelse:\n    print(\"Rang:\", np.linalg.matrix_rank(Q))\n    print(\"Diagonal:\", np.diag(Q))","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"cba53424b0a7b7f7","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-5","ctm-store-save":true,"ctm-store-source":"c7cd3b4b5a5262c1","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-np-6f11581d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-np-6f11581d","text":"Vi vil avgjøre om hvert polynom i \\(\\mathcal P_4\\) også kan skrives på nøyaktig én måte som\n\\[p(x)=c_0T_0(x)+c_1T_1(x)+\\cdots+c_4T_4(x).\\]\nHvordan kan vi kontrollere om \\(T_0,\\ldots,T_4\\) er lineært uavhengige? Vi må undersøke om det finnes tall \\(b_0,\\ldots,b_4\\), ikke alle lik null, slik at\n\\[\nb_0T_0(x)+b_1T_1(x)+\\cdots+b_4T_4(x)=0.\n\\]\nHøyresiden betyr nullpolynomet: Alle koeffisientene foran \\(1,x,x^2,x^3,x^4\\) er null. Vi skriver derfor hvert \\(T_k\\) i den kjente monomialbasisen og setter de fem koeffisientlistene som kolonner i matrisen Q. Da er koeffisientkolonnen til summen over akkurat\n\\[\nQ\n\\begin{bmatrix}b_0\\\\b_1\\\\b_2\\\\b_3\\\\b_4\\end{bmatrix}.\n\\]\nPolynomsummen er nullpolynomet hvis og bare hvis\n\\[\nQb=0.\n\\]\nNå kan vi bruke rangtesten. Det er navnet vi bruker på følgende standardtest fra lineær algebra: En matrise med fem kolonner har fem lineært uavhengige kolonner akkurat når rangen er 5. Da har ligningen \\(Qb=0\\) bare løsningen \\(b=0\\).\nDette forklarer også hvorfor uavhengige kolonner betyr uavhengige polynomer: Hver kolonne er bare koeffisientlisten til ett bestemt \\(T_k\\). Hvis ingen ikke-triviell kombinasjon av listene gir nullkolonnen, kan heller ingen ikke-triviell kombinasjon av polynomene gi nullpolynomet.\nTil slutt vet vi at \\(\\mathcal P_4\\) har dimensjon 5. Fem lineært uavhengige polynomer i et femdimensjonalt rom fyller hele rommet. Derfor danner de en basis. Start nå med koeffisientene du fant for hånd, og fyll kolonnene i Q."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-5","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-5","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"def monomial_matrix(points, n):\n    \"\"\"Avlesningsmatrise for basisen (1, x, ..., x^n).\"\"\"\n    points = np.asarray(points, dtype=float)\n    powers = np.arange(n+1)\n    # points[:, None] lager en punktkolonne, og powers[None, :] lager en\n    # potensrad. NumPy kombinerer dem til alle x_i**j samtidig.\n    # TODO: Erstatt neste linje med uttrykket points[:, None] opphøyd i\n    # powers[None, :]. Kontroller resultatet mot minieksemplene over.\n    raise NotImplementedError(\"Fullfør monomial_matrix før du går videre\")\n\n\ndef chebyshev_matrix(points, n):\n    \"\"\"Avlesningsmatrise for basisen (T_0, ..., T_n).\"\"\"\n    # chebyshev_table har allerede riktig design: rad i = punkt x_i og\n    # kolonne k = T_k evaluert i alle punktene.\n    return chebyshev_table(points, n)\n\n\npoints_small = np.array([-1.0, -1/3, 1/3, 1.0])\nM_small = monomial_matrix(points_small, 3)\nC_small = chebyshev_matrix(points_small, 3)\n\nprint(\"Monomialbasis:\\n\", M_small)\nprint(\"\\nChebyshev-basis:\\n\", C_small)\nprint(\"\\nRanger:\", np.linalg.matrix_rank(M_small),\n      np.linalg.matrix_rank(C_small))","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"2c694765b6303129","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-6","ctm-store-save":true,"ctm-store-source":"cb9043bc79fa3f0c","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-table-6cc5accb, ide-project_week3-np-6f11581d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-table-6cc5accb, ide-project_week3-np-6f11581d","text":"\\[\np(x_0)=a_0-a_1,\n\\qquad\np(x_1)=a_0+2a_1.\n\\]\nBegge ligningene kan samles i ett matriseprodukt:\n\\[\n\\begin{bmatrix}p(-1)\\\\p(2)\\end{bmatrix}\n=\n\\begin{bmatrix}1&-1\\\\1&2\\end{bmatrix}\n\\begin{bmatrix}a_0\\\\a_1\\end{bmatrix}.\n\\]\nEt andre eksempel bruker \\(p(x)=a_0+a_1x+a_2x^2\\) og punktene \\(0,1,2\\):\n\\[\n\\begin{bmatrix}p(0)\\\\p(1)\\\\p(2)\\end{bmatrix}\n=\n\\begin{bmatrix}1&0&0\\\\1&1&1\\\\1&2&4\\end{bmatrix}\n\\begin{bmatrix}a_0\\\\a_1\\\\a_2\\end{bmatrix}.\n\\]\nSe spesielt på siste rad: Den kommer fra \\(p(2)=a_0+2a_1+2^2a_2\\). Hver rad lages ved å sette ett punkt inn i \\(1,x,x^2,\\ldots\\). Når matrisen multipliseres med koeffisientkolonnen, får vi én polynomverdi per rad. I Python betyr A @ a matriseproduktet \\(Aa\\).\nKoden under lager denne matrisen for så mange punkter og potenser som vi ber om. Uttrykket med None er NumPys kompakte måte å kombinere hvert punkt med hver potens. Bruk de to små matrisene over som fasit når du fullfører linjen.\nChebyshev-matrisen bygges på samme måte, men nå skriver vi\n\\[p(x)=c_0T_0(x)+c_1T_1(x)+c_2T_2(x)+c_3T_3(x).\\]\nVed \\(x=-1\\) får vi \\(T_0(-1)=1\\), \\(T_1(-1)=-1\\), \\(T_2(-1)=1\\) og \\(T_3(-1)=-1\\). Første rad blir derfor \\([1,-1,1,-1]\\). Ved \\(x=-1/3\\) gir uttrykkene du regnet ut tidligere\n\\[\nT_0(-1/3)=1,\\quad T_1(-1/3)=-\\frac13,\\quad\nT_2(-1/3)=-\\frac79,\\quad T_3(-1/3)=\\frac{23}{27}.\n\\]\nAndre rad blir dermed \\([1,-1/3,-7/9,23/27]\\). Regn ut de to siste radene på samme måte, og kontroller dem mot utskriften fra chebyshev_matrix."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-6","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-6","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"monomial_true = np.array([1.0, -2.0, 0.5, 1.0])\n# Dette er de eneste dataene de to lineære systemene får.\nmeasurements_small = poly.polyval(points_small, monomial_true)\n\n# Begge systemene har formen «avlesningsmatrise @ koordinater = data».\n# solve returnerer koordinatene; hvilken basis de tilhører bestemmes av\n# matrisen på venstre side.\nmonomial_recovered = np.linalg.solve(M_small, measurements_small)\nchebyshev_recovered = np.linalg.solve(C_small, measurements_small)\n\nprint(\"Avlesninger:\", measurements_small)\nprint(\"Monomialkoordinater:\", monomial_recovered)\nprint(\"Chebyshev-koordinater:\", chebyshev_recovered)\n\nx_dense = np.linspace(-1, 1, 1001)\np_reference = poly.polyval(x_dense, monomial_true)\np_from_monomials = poly.polyval(x_dense, monomial_recovered)\np_from_chebyshev = cheb.chebval(x_dense, chebyshev_recovered)\n\nprint(\"Største forskjell, monomial:\",\n      np.max(np.abs(p_from_monomials-p_reference)))\nprint(\"Største forskjell, Chebyshev:\",\n      np.max(np.abs(p_from_chebyshev-p_reference)))","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"a06bc5a8942ce73a","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-7","ctm-store-save":true,"ctm-store-source":"d982ef1e21278ee6","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-c-small-1e2e5a92, ide-project_week3-m-small-6bfc516b, ide-project_week3-cheb-1e0b010a, ide-project_week3-np-6f11581d, ide-project_week3-points-small-90387913, ide-project_week3-poly-894ef2d6","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-c-small-1e2e5a92, ide-project_week3-m-small-6bfc516b, ide-project_week3-cheb-1e0b010a, ide-project_week3-np-6f11581d, ide-project_week3-points-small-90387913, ide-project_week3-poly-894ef2d6","text":"\\[p(x)=1-2x+\\frac12x^2+x^3.\\]\nKoden regner først ut de fire avlesningene. Deretter later vi som om koeffisientene er glemt og beholder bare avlesningene. Vi skal altså arbeide baklengs: Fra noen målte polynomverdier prøver vi å finne ut hvilket polynom som kan ha laget dem. Vi kaller dette reverse engineering av polynomet.\nVi løser to lineære systemer:\n\\[M_{\\text{small}}a=E(p),\n\\qquad\nC_{\\text{small}}c=E(p).\\]\nHvorfor finner det første systemet monomialkoeffisientene? Kolonne \\(j\\) i \\(M_{\\text{small}}\\) inneholder verdiene til \\(x^j\\) i de fire punktene. Når matrisen multipliseres med \\(a\\), får vi derfor verdiene til\n\\[a_0+a_1x+a_2x^2+a_3x^3\\]\ni de fire punktene. Ligningen \\(M_{\\text{small}}a=E(p)\\) ber om akkurat de tallene \\(a_0,\\ldots,a_3\\) som får disse verdiene til å passe med dataene.\nPå samme måte inneholder kolonne \\(j\\) i \\(C_{\\text{small}}\\) verdiene til \\(T_j\\) i punktene. Produktet \\(C_{\\text{small}}c\\) gir derfor avlesningene av\n\\[c_0T_0+c_1T_1+c_2T_2+c_3T_3.\\]\nLigningen \\(C_{\\text{small}}c=E(p)\\) finner dermed Chebyshev-koeffisientene. Det er matrisens kolonner som bestemmer hva de ukjente tallene betyr.\nTil slutt evaluerer vi begge reverse-engineering-svarene på et tett rutenett. Hvis de representerer samme polynom, skal grafverdiene stemme selv om koeffisientlistene ikke gjør det. Kommandoen np.linalg.solve(A, b) betyr bare «finn tallkolonnen \\(u\\) som løser \\(Au=b\\)». Den kjenner ikke til polynomer; tolkningen kommer fra hvordan vi bygde matrisen A."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-7","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-7","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"# Forsøk A: Fjern den siste avlesningen.\npoints_three = points_small[:-1]\nM_three = monomial_matrix(points_three, 3)\n\n# Forsøk B: Bruk fire plasser, men les av samme punkt to ganger.\npoints_repeated = np.array([-1.0, -1/3, 1/3, 1/3])\nM_repeated = monomial_matrix(points_repeated, 3)\n\nprint(\"Form og rang med tre avlesninger:\",\n      M_three.shape, np.linalg.matrix_rank(M_three))\nprint(\"Form og rang med gjentatt punkt:\",\n      M_repeated.shape, np.linalg.matrix_rank(M_repeated))","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"62dbb1a4b64a1552","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-8","ctm-store-save":true,"ctm-store-source":"8d584f371103bed5","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-monomial-matrix-4391e9ee, ide-project_week3-np-6f11581d, ide-project_week3-points-small-90387913","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-monomial-matrix-4391e9ee, ide-project_week3-np-6f11581d, ide-project_week3-points-small-90387913","text":"Finn det avlesningene ikke kan se\nMed fire forskjellige avlesningspunkter kunne vi finne et polynom i \\(\\mathcal P_3\\) entydig. Nå undersøker vi hvorfor «fire tall» ikke alene er nok: Punktene må også gi fire forskjellige opplysninger. Vi gjør to separate endringer. Først beholder vi bare tre avlesninger. Deretter bruker vi fire rader, men gjentar ett punkt. I begge tilfeller forventer vi at rangen blir mindre enn 4.\nKjør de to endringene under én om gangen:"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-8","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-8","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"# TODO: Utvid produktet du fant, og skriv inn de fire koeffisientene i\n# rekkefølgen 1, x, x^2, x^3. NaN-verdiene skal erstattes.\ninvisible_coefficients = np.full(4, np.nan)\nif np.isnan(invisible_coefficients).any():\n    raise ValueError(\"Fyll inn koeffisientene til z før du går videre\")\n\n# Biblioteket brukes her bare som en uavhengig kontroll av håndregningen.\ncoefficients_check = poly.polyfromroots(points_three)\nprint(\"Største avvik fra polyfromroots:\",\n      np.max(np.abs(invisible_coefficients-coefficients_check)))\n\n# Velg selv en synlig skaleringsfaktor.\nalpha = 2.0\nsecond_polynomial = monomial_true + alpha*invisible_coefficients\n\n# De to polynomene er forskjellige, men z er null i alle tre punktene.\nfirst_values = poly.polyval(points_three, monomial_true)\nsecond_values = poly.polyval(points_three, second_polynomial)\n\nprint(\"Koeffisienter til z:\", invisible_coefficients)\nprint(\"Avlesninger av p:       \", first_values)\nprint(\"Avlesninger av p+alpha*z:\", second_values)\nprint(\"Forskjell i avlesningene:\", second_values-first_values)\n\nplt.close(\"all\")\nplt.plot(x_dense, poly.polyval(x_dense, monomial_true), label=\"$p$\")\nplt.plot(x_dense, poly.polyval(x_dense, second_polynomial),\n         label=\"$p+\\\\alpha z$\")\nplt.scatter(points_three, first_values, color=\"black\", zorder=3,\n            label=\"Tre avlesninger\")\nplt.xlabel(\"x\")\nplt.ylabel(\"polynomverdi\")\nplt.title(\"Forskjellige polynomer, identiske avlesninger\")\nplt.grid(alpha=0.25)\nplt.legend()\nplt.show()","id":9,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"45bb6e9111fefc84","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-9","ctm-store-save":true,"ctm-store-source":"fa455bf099d67ce2","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-monomial-true-789ac4f4, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394, ide-project_week3-points-three-4e89b03e, ide-project_week3-poly-894ef2d6, ide-project_week3-x-dense-a120796e","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-monomial-true-789ac4f4, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394, ide-project_week3-points-three-4e89b03e, ide-project_week3-poly-894ef2d6, ide-project_week3-x-dense-a120796e","text":"Finn det avlesningene ikke kan se\nMed fire forskjellige avlesningspunkter kunne vi finne et polynom i \\(\\mathcal P_3\\) entydig. Nå undersøker vi hvorfor «fire tall» ikke alene er nok: Punktene må også gi fire forskjellige opplysninger. Vi gjør to separate endringer. Først beholder vi bare tre avlesninger. Deretter bruker vi fire rader, men gjentar ett punkt. I begge tilfeller forventer vi at rangen blir mindre enn 4.\nKjør de to endringene under én om gangen:\nEn lavere rang betyr at noe ved polynomet er usynlig i avlesningene. Finn et ikke-null polynom \\(z\\in\\mathcal P_3\\) som tilfredsstiller\n\\[z(-1)=z(-1/3)=z(1/3)=0.\\]\nHint ved behov: Et polynom med nullpunktene \\(r_1,r_2,r_3\\) inneholder faktorene \\((x-r_1)(x-r_2)(x-r_3)\\).\nBruk deretter koden under til å kontrollere svaret og lage to forskjellige polynomer med identiske tre avlesninger:"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-9","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-9","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"def chebyshev_points(n):\n    \"\"\"Returner n+1 cosinusfordelte punkter i intervallet [-1,1].\"\"\"\n    # P_n har dimensjon n+1, så vi bruker n+1 forskjellige avlesninger.\n    k = np.arange(n+1)\n    return np.cos((2*k+1)*np.pi/(2*(n+1)))\n\n\ndef reference_coordinates(n):\n    \"\"\"Moderate, deterministiske koordinater i Chebyshev-basis.\"\"\"\n    # En fast formel gir samme referansepolynom hver gang forsøket gjentas.\n    # Avtagende koeffisienter hindrer at vi bygger inn store tall med vilje.\n    k = np.arange(n+1)\n    return (-1.0)**k/(k+1.0)**2\n\n\ndef max_grid_error(values, reference):\n    # Maksimum på et tett rutenett er en numerisk måling, ikke et bevis på\n    # maksimum over alle reelle x i intervallet.\n    return float(np.max(np.abs(values-reference)))","id":10,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"9ea49626ca09d232","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-10","ctm-store-save":true,"ctm-store-source":"85ccff09d2014e5c","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-np-6f11581d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-np-6f11581d","text":"Del 2: Hold punktene fast og bytt basis\nVed grad 3 fant begge matrisene fram til det riktige polynomet. Det kan derfor se ut som basisvalget bare endrer hvordan koeffisientene skrives. I eksakt matematikk er det riktig. På en datamaskin må imidlertid alle mellomresultater lagres med et begrenset antall sifre. Nå spør vi om én skrivemåte kan føre til større avrundingsproblemer enn den andre når graden øker.\nFor å gjøre sammenligningen rettferdig bruker vi nøyaktig det samme referansepolynomet, de samme avlesningspunktene og de samme avlesningsverdiene i begge systemene. Det eneste som byttes, er kolonnene i matrisen: enten \\(1,x,\\ldots,x^n\\) eller \\(T_0,T_1,\\ldots,T_n\\). Hvis resultatene blir ulike, har vi dermed isolert virkningen av basisvalget.\nVi bruker foreløpig punktene\n\\[\nx_k=\\cos\\left(\\frac{(2k+1)\\pi}{2(n+1)}\\right),\n\\qquad k=0,\\ldots,n.\n\\]\nHvorfor disse punktene er interessante, undersøker vi først i del 3. Akkurat nå trenger du bare å merke deg at funksjonen lager \\(n+1\\) forskjellige tall i \\([-1,1]\\), og at begge basisene får de samme tallene.\nDe tre korte hjelpefunksjonene under gjør forsøket mulig å gjenta: chebyshev_points lager punktene, reference_coordinates lager et fast polynom med små Chebyshev-koeffisienter, og max_grid_error måler den største observerte forskjellen på et tett rutenett."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-10","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-10","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"def compare_bases(n, grid_size=2001):\n    # Det samme polynomet leses av i de samme punktene for begge basiser.\n    points = chebyshev_points(n)\n    true_chebyshev = reference_coordinates(n)\n    measurements = cheb.chebval(points, true_chebyshev)\n\n    # Bare koordinatsystemet endres mellom de to lineære systemene.\n    M = monomial_matrix(points, n)\n    C = chebyshev_matrix(points, n)\n\n    # Reverse engineering i to basiser: solve finner koeffisientene som gir\n    # de oppgitte avlesningene. Svarvektorene kan ikke sammenlignes ledd for\n    # ledd fordi basisene er ulike.\n    recovered_monomial = np.linalg.solve(M, measurements)\n    recovered_chebyshev = np.linalg.solve(C, measurements)\n\n    # Det tette rutenettet gir ingen nye data til systemet. Det brukes bare\n    # til å sammenligne de to ferdige polynomene mellom avlesningspunktene.\n    grid = np.linspace(-1.0, 1.0, grid_size)\n    reference = cheb.chebval(grid, true_chebyshev)\n    from_monomials = poly.polyval(grid, recovered_monomial)\n    from_chebyshev = cheb.chebval(grid, recovered_chebyshev)\n\n    return {\n        \"n\": n,\n        \"points\": points,\n        \"measurements\": measurements,\n        \"grid\": grid,\n        \"reference\": reference,\n        \"monomial_values\": from_monomials,\n        \"chebyshev_values\": from_chebyshev,\n        \"monomial_coordinates\": recovered_monomial,\n        \"chebyshev_coordinates\": recovered_chebyshev,\n        \"monomial_error\": max_grid_error(from_monomials, reference),\n        \"chebyshev_error\": max_grid_error(from_chebyshev, reference),\n    }\n\n\nbasis_data = compare_bases(30)\nprint(\"Grad:\", basis_data[\"n\"])\nprint(\"Største |monomialkoordinat|:\",\n      np.max(np.abs(basis_data[\"monomial_coordinates\"])))\nprint(\"Største |Chebyshev-koordinat|:\",\n      np.max(np.abs(basis_data[\"chebyshev_coordinates\"])))\nprint(\"Maksfeil med monomialbasis:\", basis_data[\"monomial_error\"])\nprint(\"Maksfeil med Chebyshev-basis:\", basis_data[\"chebyshev_error\"])","id":11,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"90185df1073866a0","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-11","ctm-store-save":true,"ctm-store-source":"bb487cf787936f19","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-max-grid-error-b3661a5a, ide-project_week3-monomial-matrix-4391e9ee, ide-project_week3-np-6f11581d, ide-project_week3-poly-894ef2d6, ide-project_week3-reference-coordinates-8e58a20d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-max-grid-error-b3661a5a, ide-project_week3-monomial-matrix-4391e9ee, ide-project_week3-np-6f11581d, ide-project_week3-poly-894ef2d6, ide-project_week3-reference-coordinates-8e58a20d","text":"Gjør reverse engineering i begge basiser\nFunksjonen følger denne historien:\nLag et polynom ved å velge Chebyshev-koeffisienter.\nRegn ut polynomets verdi i \\(n+1\\) punkter. Deretter behandles disse avlesningene som de eneste kjente dataene.\nGjør reverse engineering: Finn koeffisienter som passer til dataene, først i monomialbasis og så i Chebyshev-basis.\nRegn ut de to reverse-engineering-resultatene i mange punkter mellom avlesningene og sammenlign dem med polynomet vi startet med.\nDet tette rutenettet brukes bare til etterkontroll. Det gir ikke de lineære systemene ekstra informasjon."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-11","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-11","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"degrees = [3, 10, 20, 25, 30]\nbasis_results = [compare_bases(n) for n in degrees]\n\nprint(f\"{'grad':>5} {'maks |a_k|':>16} {'maks |c_k|':>16} \"\n      f\"{'feil monomial':>18} {'feil Chebyshev':>18}\")\nprint(\"-\"*79)\nfor data in basis_results:\n    print(f\"{data['n']:5d} \"\n          f\"{np.max(np.abs(data['monomial_coordinates'])):16.4e} \"\n          f\"{np.max(np.abs(data['chebyshev_coordinates'])):16.4e} \"\n          f\"{data['monomial_error']:18.4e} \"\n          f\"{data['chebyshev_error']:18.4e}\")","id":12,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"2be005664983d08b","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-12","ctm-store-save":true,"ctm-store-source":"1506ee2f51415fc3","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-compare-bases-2e0b251a, ide-project_week3-np-6f11581d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-compare-bases-2e0b251a, ide-project_week3-np-6f11581d","text":"Valgfri utvidelse: se hva som skjer når graden øker"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-12","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-12","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"grid = basis_data[\"grid\"]\nerror_monomial = np.abs(\n    basis_data[\"monomial_values\"]-basis_data[\"reference\"]\n)\nerror_chebyshev = np.abs(\n    basis_data[\"chebyshev_values\"]-basis_data[\"reference\"]\n)\n\ntiny = np.finfo(float).tiny\nplt.close(\"all\")\nplt.semilogy(grid, np.maximum(error_monomial, tiny),\n             label=\"Monomialbasis\")\nplt.semilogy(grid, np.maximum(error_chebyshev, tiny),\n             label=\"Chebyshev-basis\")\nplt.xlabel(\"x\")\nplt.ylabel(\"absolutt feil\")\nplt.title(\"Samme polynom og samme avlesningspunkter\")\nplt.grid(alpha=0.25)\nplt.legend()\nplt.show()","id":13,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"cf7ab701ad4f8947","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-13","ctm-store-save":true,"ctm-store-source":"ea5071a75d0e2f2f","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-basis-data-52b41529, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-basis-data-52b41529, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394","text":"Valgfri utvidelse: se hva som skjer når graden øker\nLag en logaritmisk feilfigur for grad 30:"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-13","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-13","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"n = 30\npoints = chebyshev_points(n)\ntrue_chebyshev = reference_coordinates(n)\nmeasurements = cheb.chebval(points, true_chebyshev)\n\nrng = np.random.default_rng(2026)\n# Fast startverdi gjør forsøket reproduserbart: alle får nøyaktig samme\n# forstyrrelse når cellen kjøres på nytt.\nmeasurement_noise = 1e-10*rng.standard_normal(n+1)\n\nM = monomial_matrix(points, n)\nC = chebyshev_matrix(points, n)\n\na_before = np.linalg.solve(M, measurements)\na_after = np.linalg.solve(M, measurements+measurement_noise)\nc_before = np.linalg.solve(C, measurements)\nc_after = np.linalg.solve(C, measurements+measurement_noise)\n\n# Normen samler endringene i hele koordinatvektoren til ett tall. Vi\n# sammenligner før og etter innen samme basis, ikke koeffisienter på tvers.\nprint(\"Største endring i avlesning:\", np.max(np.abs(measurement_noise)))\nprint(\"Endring i monomialkoordinater:\", np.linalg.norm(a_after-a_before))\nprint(\"Endring i Chebyshev-koordinater:\", np.linalg.norm(c_after-c_before))","id":14,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"890dd605a6cd339b","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-14","ctm-store-save":true,"ctm-store-source":"d17dd9f32a2b39ed","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-monomial-matrix-4391e9ee, ide-project_week3-np-6f11581d, ide-project_week3-reference-coordinates-8e58a20d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-monomial-matrix-4391e9ee, ide-project_week3-np-6f11581d, ide-project_week3-reference-coordinates-8e58a20d","text":"Legg den samme lille feilen til begge systemene\nVirkelige avlesninger er sjelden eksakte. Vi legger derfor til en svært liten feil, omtrent \\(10^{-10}\\), i hver polynomverdi. Først løser vi systemet med de opprinnelige dataene, deretter med de litt endrede dataene. Vi gjør dette i begge basiser med nøyaktig den samme feillisten. Spørsmålet er hvor mye en liten målefeil påvirker reverse engineering av koeffisientene.\nVi sammenligner a_after-a_before fordi begge vektorene bruker monomialbasis. Tilsvarende sammenligner vi c_after-c_before fordi begge bruker Chebyshev-basis. Derimot ville a_after-c_after ikke hatt en enkel betydning: Plass nummer 2 står foran \\(x^2\\) i den ene listen og foran \\(T_2\\) i den andre."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-14","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-14","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"n = 30\nequal_points = np.linspace(-1.0, 1.0, n+1)\ncheb_points = chebyshev_points(n)\n\n# Punktene tegnes på hver sin tallinje før løsing. Figuren kontrollerer den\n# variabelen vi skal endre: punktplasseringen.\nplt.close(\"all\")\nfig, axes = plt.subplots(2, 1, figsize=(8, 2.5), sharex=True)\naxes[0].scatter(equal_points, np.zeros_like(equal_points), marker=\"|\", s=180)\naxes[0].set_title(\"Like langt mellom avlesningspunktene\")\naxes[1].scatter(cheb_points, np.zeros_like(cheb_points), marker=\"|\", s=180,\n                color=\"#d98900\")\naxes[1].set_title(\"Cosinusfordelte avlesningspunkter\")\nfor ax in axes:\n    ax.set_yticks([])\n    ax.grid(axis=\"x\", alpha=0.2)\naxes[1].set_xlabel(\"x\")\nplt.tight_layout()\nplt.show()","id":15,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"cd80adf20f300a72","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-15","ctm-store-save":true,"ctm-store-source":"76bfddf239c04cb1","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394","text":"Sammenlign punktplasseringene før du regner\nFør vi løser et eneste system, tegner vi bare punktene på en tallinje. De jevne punktene har samme avstand overalt. Cosinuspunktene ligger tettere ved endene av intervallet og glisnere nær midten. Figuren skal hjelpe deg å lage en hypotese: Hvis et polynom er tvunget til å passe data i mange punkter nær endene, blir det da lettere eller vanskeligere for polynomet å få store utslag der mellom avlesningene?"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-15","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-15","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"def point_placement_experiment(n, points, noise_size=1e-10,\n                               grid_size=5001):\n    # Lag de nøyaktige avlesningene fra ett fast referansepolynom.\n    true_coordinates = reference_coordinates(n)\n    measurements = cheb.chebval(points, true_coordinates)\n    # Det samme fortegnsmønsteret brukes uansett hvor punktene ligger.\n    noise = noise_size*(-1.0)**np.arange(n+1)\n\n    # Reverse engineering: Finn koeffisientene til polynomet som passer til\n    # de litt forstyrrede avlesningene.\n    C = chebyshev_matrix(points, n)\n    recovered = np.linalg.solve(C, measurements+noise)\n\n    # Sammenlign med referansepolynomet også mellom avlesningspunktene. Det\n    # tette rutenettet påvirker ikke løsningen; det fungerer som måleinstrument.\n    grid = np.linspace(-1.0, 1.0, grid_size)\n    reference = cheb.chebval(grid, true_coordinates)\n    perturbed = cheb.chebval(grid, recovered)\n    error = perturbed-reference\n\n    return {\n        \"n\": n,\n        \"points\": points,\n        \"noise\": noise,\n        \"grid\": grid,\n        \"error\": error,\n        \"max_data_error\": float(np.max(np.abs(noise))),\n        \"max_curve_error\": float(np.max(np.abs(error))),\n    }\n\n\nequal_data = point_placement_experiment(\n    n, equal_points, noise_size=1e-10\n)\ncheb_data = point_placement_experiment(\n    n, cheb_points, noise_size=1e-10\n)\n\nfor name, data in [(\"Jevne punkter\", equal_data),\n                   (\"Cosinusfordelte punkter\", cheb_data)]:\n    amplification = data[\"max_curve_error\"]/data[\"max_data_error\"]\n    print(f\"{name:27s}\",\n          f\"feil i avlesning={data['max_data_error']:.3e}\",\n          f\"kurvefeil={data['max_curve_error']:.3e}\",\n          f\"forsterkning={amplification:.3e}\")","id":16,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"024ea1d6c2ed9079","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-16","ctm-store-save":true,"ctm-store-source":"4c2f11fb106390ea","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-cheb-points-a8daaa35, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-equal-points-6d1ee98f, ide-project_week3-n-c51783d1, ide-project_week3-np-6f11581d, ide-project_week3-reference-coordinates-8e58a20d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-cheb-points-a8daaa35, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-equal-points-6d1ee98f, ide-project_week3-n-c51783d1, ide-project_week3-np-6f11581d, ide-project_week3-reference-coordinates-8e58a20d","text":"Bruk den samme lille feilen med begge punktsettene\nVi forstyrrer avlesningene med det faste mønsteret\n\\[\\delta y_k=10^{-10}(-1)^k.\\]\nDet er viktig at både størrelsen og fortegnsmønsteret er identisk i de to forsøkene. Dermed kan ikke forskjellen forklares med at det ene forsøket fikk en større eller mer gunstig feil.\nFunksjonen lager først nøyaktige avlesninger fra referansepolynomet. Deretter legger den til feilen og gjør reverse engineering: Den finner det ene polynomet av grad høyst \\(n\\) som passer til de forstyrrede verdiene. Til slutt sammenlignes dette polynomet med referansen på 5001 punkter. Forholdet\n\\[\n\\frac{\\text{største feil på det tette rutenettet}}\n{\\text{største feil i de oppgitte avlesningene}}\n\\]\nkalles her forsterkning. En forsterkning på \\(10^6\\) betyr at en feil på \\(10^{-10}\\) ved avlesningspunktene har blitt til en feil på omtrent \\(10^{-4}\\) et sted mellom dem."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-16","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-16","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"plt.close(\"all\")\nfig, axes = plt.subplots(2, 1, figsize=(8, 6), sharex=True)\n\nfor ax, title, data, color in [\n    (axes[0], \"Like langt mellom punktene\", equal_data, \"#277da1\"),\n    (axes[1], \"Cosinusfordelte punkter\", cheb_data, \"#d98900\"),\n]:\n    ax.plot(data[\"grid\"], data[\"error\"], color=color,\n            label=\"$r(x)$ mellom avlesningene\")\n    ax.scatter(data[\"points\"], data[\"noise\"], color=\"black\", s=16,\n               zorder=3, label=\"$r(x_k)$ ved avlesningspunktene\")\n    ax.axhline(0, color=\"0.7\", linewidth=0.8)\n    ax.set_title(title)\n    ax.set_ylabel(\"feil\")\n    ax.grid(alpha=0.25)\n    ax.legend(loc=\"upper center\")\n\naxes[1].set_xlabel(\"x\")\nplt.tight_layout()\nplt.show()","id":17,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"0922b040e8f12f56","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-17","ctm-store-save":true,"ctm-store-source":"a0f976f4b43361c9","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-data-3b1d810c, ide-project_week3-equal-data-89ad45a2, ide-project_week3-plt-7be21394","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-data-3b1d810c, ide-project_week3-equal-data-89ad45a2, ide-project_week3-plt-7be21394","text":"Gjør det nesten usynlige feilpolynomet synlig\nFor å forstå forsterkningen ser vi ikke bare på to hele polynomer. Vi trekker dem fra hverandre. Forskjellen mellom reverse-engineering-resultatet og det opprinnelige polynomet er selv et polynom:\n\\[r(x)=p_{\\mathrm{forstyrret}}(x)-p_{\\mathrm{opprinnelig}}(x).\\]\nVed hvert avlesningspunkt er \\(r(x_k)\\) akkurat den lille forstyrrelsen vi la til. Hvis vi bare så på disse \\(n+1\\) tallene, ville \\(r\\) virke nesten som nullpolynomet. Men avlesningspunktene forteller ikke direkte hva som skjer mellom dem. Figuren tegner derfor både de små svarte verdiene \\(r(x_k)\\) og hele kurven \\(r(x)\\) på det tette rutenettet."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-17","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-17","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"degrees = [5, 10, 15, 20, 25, 30, 35]\n\nprint(f\"{'grad':>5} {'forsterkning, jevn':>22} \"\n      f\"{'forsterkning, cosinus':>25}\")\nprint(\"-\"*57)\nfor n_test in degrees:\n    equal = point_placement_experiment(\n        n_test, np.linspace(-1.0, 1.0, n_test+1)\n    )\n    cosine = point_placement_experiment(\n        n_test, chebyshev_points(n_test)\n    )\n    amp_equal = equal[\"max_curve_error\"]/equal[\"max_data_error\"]\n    amp_cosine = cosine[\"max_curve_error\"]/cosine[\"max_data_error\"]\n    print(f\"{n_test:5d} {amp_equal:22.4e} {amp_cosine:25.4e}\")","id":18,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"717991fb46f002aa","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-18","ctm-store-save":true,"ctm-store-source":"c82b437634af1f20","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-np-6f11581d, ide-project_week3-point-placement-experiment-bb8dcd1e","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-chebyshev-points-9c6634dc, ide-project_week3-np-6f11581d, ide-project_week3-point-placement-experiment-bb8dcd1e","text":"Valgfri utvidelse: finn graden der forskjellen blir synlig"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-18","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-18","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"n = 50\nx0 = 0.99\n\ncheb_coordinates = np.zeros(n+1)\n# Denne koordinatvektoren betyr 0*T_0 + ... + 1*T_50.\ncheb_coordinates[n] = 1.0\n# Konverteringen endrer koordinatene, ikke polynomet. Etterpå evalueres det\n# samme matematiske objekt med to forskjellige representasjoner.\nmonomial_coordinates = cheb.cheb2poly(cheb_coordinates)\n\nvalue_monomial = poly.polyval(x0, monomial_coordinates)\nvalue_chebyshev = cheb.chebval(x0, cheb_coordinates)\nvalue_reference = np.cos(n*np.arccos(x0))\n\nprint(\"Største monomialkoeffisient:\",\n      np.max(np.abs(monomial_coordinates)))\nprint(\"Monomialevaluering:   \", value_monomial)\nprint(\"Chebyshev-evaluering: \", value_chebyshev)\nprint(\"Cosinusreferanse:     \", value_reference)\nprint(\"Feil, monomial:       \", abs(value_monomial-value_reference))\nprint(\"Feil, Chebyshev:      \", abs(value_chebyshev-value_reference))","id":19,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"54d1f0bc5c52ca1a","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-19","ctm-store-save":true,"ctm-store-source":"12d175b3117973a8","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-np-6f11581d, ide-project_week3-poly-894ef2d6","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-np-6f11581d, ide-project_week3-poly-894ef2d6","text":"Finale: Beregn det samme polynomet på tre måter\nPlottene i starten antydet at \\(T_n\\) holder seg mellom \\(-1\\) og \\(1\\) på intervallet. Identiteten\n\\[T_n(x)=\\cos(n\\arccos x),\\qquad -1\\le x\\le1,\\]\ngir oss en uavhengig måte å kontrollere dette på. Dermed kjenner vi størrelsen på det riktige svaret før vi bruker NumPy: \\(T_{50}(0.99)\\) må ligge i \\([-1,1]\\).\nVi skal nå evaluere \\(T_{50}(0.99)\\) på tre matematisk likeverdige måter:\nkonverter til monomialkoeffisienter og bruk vanlig polynomevaluering;\nbruk Chebyshev-representasjonen direkte;\nbruk cosinusidentiteten som referanse.\nDen første metoden skriver \\(T_{50}\\) som \\(a_0+a_1x+\\cdots+a_{50}x^{50}\\) før den setter inn \\(x=0.99\\). Den andre bruker Chebyshev-rekursjonen direkte, uten å lage denne lange potensformen. Den tredje regner ut cosinusuttrykket og fungerer som en kontroll som ikke bruker noen av koeffisientlistene.\nSkriv ned hvilken metode du forventer vil være mest pålitelig før du kjører, og hvorfor. Følg deretter variablene i koden: cheb_coordinates beskriver nøyaktig ett \\(T\\)-polynom, monomial_coordinates beskriver det samme polynomet med potenser av \\(x\\), og de tre variablene som begynner med value_ er de tre svarene."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-19","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-19","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"print(f\"{'grad':>5} {'største koeff.':>18} \"\n      f\"{'feil monomial':>18} {'feil Chebyshev':>18}\")\nprint(\"-\"*63)\n\nfor n_test in [10, 20, 30, 40, 50]:\n    c = np.zeros(n_test+1)\n    c[n_test] = 1.0\n    a = cheb.cheb2poly(c)\n    reference = np.cos(n_test*np.arccos(x0))\n    monomial_value = poly.polyval(x0, a)\n    chebyshev_value = cheb.chebval(x0, c)\n    print(f\"{n_test:5d} {np.max(np.abs(a)):18.4e} \"\n          f\"{abs(monomial_value-reference):18.4e} \"\n          f\"{abs(chebyshev_value-reference):18.4e}\")","id":20,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"dfc01d7f43500abd","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-20","ctm-store-save":true,"ctm-store-source":"9f468077fcc8be14","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-np-6f11581d, ide-project_week3-poly-894ef2d6, ide-project_week3-x0-b8af24e1","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-np-6f11581d, ide-project_week3-poly-894ef2d6, ide-project_week3-x0-b8af24e1","text":"Se hvordan feilen vokser fram mot grad 50\nFor å se om problemet dukker opp plutselig eller bygger seg opp, gjentar vi de tre evalueringene for grad 10, 20, 30, 40 og 50. Tabellen viser ved siden av hverandre hvor stor den største monomialkoeffisienten er og hvor mye de to beregningsmåtene avviker fra cosinuskontrollen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-20","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-20","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"# Startforslag: Bytt ut både punktene og fortegnsmønsteret i feilen.\nn_design = 20\nmy_points = np.linspace(-1.0, 1.0, n_design+1)\nmy_noise = 1e-10*(-1.0)**np.arange(n_design+1)\n\ntrue_coordinates = reference_coordinates(n_design)\nmy_measurements = cheb.chebval(my_points, true_coordinates)\nmy_matrix = chebyshev_matrix(my_points, n_design)\n# Reverse engineering i Chebyshev-basis: Vi finner koeffisientene som passer\n# de endrede avlesningene. Dermed undersøker vi punktplasseringen uten å bytte\n# basis samtidig.\nmy_recovered = np.linalg.solve(my_matrix, my_measurements+my_noise)\n\nmy_grid = np.linspace(-1.0, 1.0, 5001)\nmy_reference = cheb.chebval(my_grid, true_coordinates)\nmy_curve = cheb.chebval(my_grid, my_recovered)\nmy_error = my_curve-my_reference\n\nassert len(np.unique(my_points)) == n_design+1\nassert np.all(np.abs(my_points) <= 1.0)\nassert np.max(np.abs(my_noise)) <= 1.000001e-10\nminimum_spacing = np.min(np.diff(np.sort(my_points)))\nassert minimum_spacing >= 1e-3\n\n# Et stort utslag er bare interessant hvis systemet faktisk løser de oppgitte\n# avlesningene. Derfor rapporterer vi både rang og residual.\nmy_rank = np.linalg.matrix_rank(my_matrix)\nmy_residual = np.linalg.norm(\n    my_matrix @ my_recovered - (my_measurements+my_noise), ord=np.inf\n)\nassert my_rank == n_design+1\n\n# Sammenlign den største feilen mellom punktene med den største feilen\n# vi faktisk la inn i avlesningene.\nmy_amplification = (np.max(np.abs(my_error))\n                    / np.max(np.abs(my_noise)))\nprint(\"Forsterkning:\", my_amplification)\nprint(\"Minste punktavstand:\", minimum_spacing)\nprint(\"Rang:\", my_rank)\nprint(\"Største residual i avlesningene:\", my_residual)\n\nplt.close(\"all\")\nplt.plot(my_grid, my_error, label=\"feilpolynomet\")\nplt.scatter(my_points, my_noise, color=\"black\", s=15,\n            label=\"feil ved avlesningspunktene\")\nplt.xlabel(\"x\")\nplt.ylabel(\"feil\")\nplt.title(\"Min blindsone\")\nplt.grid(alpha=0.25)\nplt.legend()\nplt.show()","id":21,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"07321928249b1da1","ctm-store-id":"ingmat-ide-projects-week3-chebyshev-sampling-21","ctm-store-save":true,"ctm-store-source":"0ccdfa282a4dcfbf","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394, ide-project_week3-reference-coordinates-8e58a20d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week3-reference-assumptions, ide-project_week3-cheb-1e0b010a, ide-project_week3-chebyshev-matrix-49f2042e, ide-project_week3-np-6f11581d, ide-project_week3-plt-7be21394, ide-project_week3-reference-coordinates-8e58a20d","text":"Nå får du bruke ideene fra prosjektet mer fritt. Du skal gjenta historien fra del 3, men velge graden, punktene og fortegnene selv. Start med et referansepolynom, legg en svært liten feil til avlesningene, gjør reverse engineering av polynomet som passer de endrede dataene, og mål hvor stort avviket blir mellom punktene.\nPlasser avlesningspunktene slik at en svært liten feil i avlesningene gir en stor feil mellom punktene, og slik at du kan forklare mekanismen. Målet er ikke et kunstig rekordtall. Følg disse reglene:\npolynomgraden skal være høyst 35;\nalle \\(n+1\\) avlesningspunkter skal være forskjellige og ligge i \\([-1,1]\\);\navstanden mellom to nabopunkter skal være minst \\(10^{-3}\\);\nhver avlesningsfeil skal ha absoluttverdi høyst \\(10^{-10}\\);\npolynomet skal finnes i Chebyshev-basis;\nforsterkningen skal beregnes på et tett rutenett med minst 5001 punkter.\nDu kan endre graden, punktene og fortegnsmønsteret i forstyrrelsen. Du kan ikke gjøre avlesningsfeilen større eller bryte kravet til minste punktavstand. Før koden kjøres, skriv hvilken endring du prøver og hvorfor du tror den kan skjule feilpolynomet for avlesningene.\nVariablene med prefikset my_ er delene du skal følge og senere endre: my_points er avlesningspunktene, my_noise er de små feilene, my_recovered er polynomet som passer de endrede dataene, og my_error er forskjellen fra referansepolynomet på det tette rutenettet. assert-linjene stopper forsøket hvis reglene ikke er fulgt."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"ingmat-ide-projects-week3-chebyshev-sampling-21","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"ingmat-ide-projects-week3-chebyshev-sampling-21","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}}];
+
+// AI feedback feature settings ----
+//
+// enabled : show a Feedback button per interactive cell?
+// storage : default for where credentials are stored
+//           ("local" = localStorage, persistent; "session" = sessionStorage, per tab).
+//           Can be changed by the user in the settings panel.
+// hints   : progressive hints – the hint level rises with each click of the
+//           Feedback button on the same cell.
+// uiLanguage : the language of the feedback interface and of the feedback
+//              (this extension's interface language).
+globalThis.qpyodideFeedbackOptions = {
+  enabled: true,
+  storage: "local",
+  hints: true,
+  uiLanguage: "nb"
+};
+
+// Local-storage autosave feature settings ----
+//
+// enabled : document-wide default (`pyodide: local-storage: true`); a
+//           cell's own `#| local-storage: true/false` overrides this.
+// epoch   : "" (off) unless `pyodide: local-storage-epoch:` was set. When
+//           non-empty, it's folded into every saved-code storage key, so
+//           re-rendering with a new epoch value makes every previously
+//           saved answer on this page unreachable -- an exam-room "next
+//           group gets a clean slate" reset. See qpyodide-storage.js.
+globalThis.qpyodideLocalStorageOptions = {
+  enabled: false,
+  epoch: ""
+};
+
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week3.html">Uke 3 – Polynomer i blindsonen</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Matematikk 3A</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Søk"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Forside</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IDE / Readme</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tall og algoritmer</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 1 – regnetid, binære tall og tall på datamaskiner</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 2 – fikspunktiterasjon</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Numerisk lineær algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 3 – vektorrom, kolonnerom og nullrom</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 4 – ortogonalitet, QR og minste kvadrater</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 5 – egenverdier og gjentatt matrisemultiplikasjon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 6 – iterative metoder for lineære systemer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 7 – singulærverdidekomposisjon</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Optimering</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 8 – introduksjon til optimering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 9 – gradientmetoden og søk uten deriverte</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 10 – Newtons metode</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 11 – lineær programmering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 12 – optimering med likhetsbetingelser og Lagranges metode</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Projects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 1 – Floating-point attack</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 2 – Newtonfraktaler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week3.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Uke 3 – Polynomer i blindsonen</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 4 – Når målingene ikke passer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 5 – Kan vi stole på rangeringen?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 6 – Samme løsning, mindre arbeid?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 7 – Behold informasjonen som betyr noe</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 9 – Når skalaen bestemmer farten</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 10 – Hvor er jeg? Posisjon fra avstander</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 11 – Hvorfor koster strømmen det den koster?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 12 – Kjettingen som henger</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Eksamensoppgaver</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Flyttall og numerisk stabilitet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<script>window.__aiFeedbackPolicies = {"layers":[],"pageLayers":[]};</script>
+<script>window.__aiFeedbackConfig = {"baseUrl":"","mode":"copy","model":""};</script>
+<script>window.__mathExerciseConfig = {"lang":"nb","stopAfter":20};</script>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/loader.js"></script>
+<script type="module" id="qpyodide-monaco-editor-init">
+
+  // Configure the Monaco Editor's loader
+  require.config({
+    paths: {
+      'vs': CTMAssets.url('monaco-editor', 'min/vs')
+    }
+  });
+</script>
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week3.html">Uke 3 – Polynomer i blindsonen</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Uke 3 – Polynomer i blindsonen</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!--ctm-save-generated--><div class="ctm-save-bar" role="region" aria-label="Lagrede svar" hidden=""><p class="ctm-save-notice">Svarene dine lagres bare i denne nettleseren.</p><div class="ctm-save-actions"><button type="button" data-ctm-clear-page="">Slett svarene på denne siden</button>
+<button type="button" data-ctm-clear-course="">Slett alle svarene dine i dette emnet</button>
+<button type="button" data-ctm-save-toggle="">Ikke lagre på denne enheten</button>
+<button type="button" data-ctm-export="">Eksporter svarene mine</button></div><span class="ctm-save-status" role="status" aria-live="polite"></span></div>
+<section id="polynomer-i-blindsonen" class="level1">
+<h1>Polynomer i blindsonen</h1>
+<p>Dette prosjektet er laget for omtrent <strong>4–6 timer selvstendig arbeid</strong>. Kodeassistenter er tillatt, men du er ansvarlig for at eksperimentene faktisk svarer på de matematiske spørsmålene.</p>
+<p>I uke 3 har vi sett at samme vektorrom kan beskrives med forskjellige basiser. I eksakt matematikk er dette bare forskjellige koordinater for de samme objektene. På en datamaskin kan basisvalget likevel få stor betydning.</p>
+<p>Vi skal undersøke polynomrommet <span class="math inline">\(\mathcal P_n\)</span>. Tenk deg at vi ikke kjenner hele grafen til et polynom, men bare leser av polynomverdien på <span class="math inline">\(n+1\)</span> steder. Vi samler avlesningene i en tallkolonne:</p>
+<p><span class="math display">\[
+E(p)=
+\begin{bmatrix}
+p(x_0)\\p(x_1)\\\vdots\\p(x_n)
+\end{bmatrix}.
+\]</span></p>
+<p>Å gå fra et kjent polynom til disse verdiene er vanlig evaluering. Flere steder i prosjektet går vi motsatt vei: Vi får bare verdiene og prøver å finne koeffisientene til polynomet som laget dem. Vi kaller denne baklengsprosessen <strong>reverse engineering</strong> av polynomet.</p>
+<p>Prosjektets hovedspørsmål er:</p>
+<blockquote class="blockquote">
+<p><strong>Hvordan kan matematisk likeverdige beskrivelser av det samme polynomrommet gi svært forskjellige numeriske resultater?</strong></p>
+</blockquote>
+<p>Du skal gjøre tre kontrollerte sammenligninger. Først arbeider du med lav grad og eksakt lineær algebra. Deretter endrer du bare basisen. Til slutt holder du basis fast og endrer bare avlesningspunktene. Ikke bland disse eksperimentene: Ellers vet du ikke hva som forårsaket forskjellen.</p>
+<div id="qpyodide-insertion-location-1"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Kort manual: polynomer i NumPy
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>På papir skriver vi for eksempel</p>
+<p><span class="math display">\[p(x)=1-2x+0.5x^2+x^3.\]</span></p>
+<p>I Python lagrer vi koeffisientene i samme rekkefølge som leddene over: først konstantleddet, så koeffisienten foran <span class="math inline">\(x\)</span>, deretter koeffisienten foran <span class="math inline">\(x^2\)</span>, og så videre.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-ai-feedback-context="I uke 3 har vi sett at samme vektorrom kan beskrives med forskjellige basiser. I eksakt matematikk er dette bare forskjellige koordinater for de samme objektene. På en datamaskin kan basisvalget likevel få stor betydning.
+Vi skal undersøke polynomrommet \(\mathcal P_n\). Tenk deg at vi ikke kjenner hele grafen til et polynom, men bare leser av polynomverdien på \(n+1\) steder. Vi samler avlesningene i en tallkolonne:
+\[
+E(p)=
+\begin{bmatrix}
+p(x_0)\\p(x_1)\\\vdots\\p(x_n)
+\end{bmatrix}.
+\]
+Å gå fra et kjent polynom til disse verdiene er vanlig evaluering. Flere steder i prosjektet går vi motsatt vei: Vi får bare verdiene og prøver å finne koeffisientene til polynomet som laget dem. Vi kaller denne baklengsprosessen reverse engineering av polynomet.
+Prosjektets hovedspørsmål er:
+Hvordan kan matematisk likeverdige beskrivelser av det samme polynomrommet gi svært forskjellige numeriske resultater?
+Du skal gjøre tre kontrollerte sammenligninger. Først arbeider du med lav grad og eksakt lineær algebra. Deretter endrer du bare basisen. Til slutt holder du basis fast og endrer bare avlesningspunktene. Ikke bland disse eksperimentene: Ellers vet du ikke hva som forårsaket forskjellen.
+Kort manual: polynomer i NumPy
+På papir skriver vi for eksempel
+\[p(x)=1-2x+0.5x^2+x^3.\]
+I Python lagrer vi koeffisientene i samme rekkefølge som leddene over: først konstantleddet, så koeffisienten foran \(x\), deretter koeffisienten foran \(x^2\), og så videre."><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="op">-</span><span class="fl">2.0</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>])</span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>np.array</code> lager her bare en talliste som NumPy kan regne med.</p>
+<p>Her betyr altså <code>a[0]</code> konstantleddet <span class="math inline">\(1\)</span>, <code>a[1]</code> betyr <span class="math inline">\(-2\)</span>, og <code>a[3]</code> betyr koeffisienten <span class="math inline">\(1\)</span> foran <span class="math inline">\(x^3\)</span>. For å regne ut <span class="math inline">\(p(0.4)\)</span> skriver vi</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-ai-feedback-context="Vi skal undersøke polynomrommet \(\mathcal P_n\). Tenk deg at vi ikke kjenner hele grafen til et polynom, men bare leser av polynomverdien på \(n+1\) steder. Vi samler avlesningene i en tallkolonne:
+\[
+E(p)=
+\begin{bmatrix}
+p(x_0)\\p(x_1)\\\vdots\\p(x_n)
+\end{bmatrix}.
+\]
+Å gå fra et kjent polynom til disse verdiene er vanlig evaluering. Flere steder i prosjektet går vi motsatt vei: Vi får bare verdiene og prøver å finne koeffisientene til polynomet som laget dem. Vi kaller denne baklengsprosessen reverse engineering av polynomet.
+Prosjektets hovedspørsmål er:
+Hvordan kan matematisk likeverdige beskrivelser av det samme polynomrommet gi svært forskjellige numeriske resultater?
+Du skal gjøre tre kontrollerte sammenligninger. Først arbeider du med lav grad og eksakt lineær algebra. Deretter endrer du bare basisen. Til slutt holder du basis fast og endrer bare avlesningspunktene. Ikke bland disse eksperimentene: Ellers vet du ikke hva som forårsaket forskjellen.
+Kort manual: polynomer i NumPy
+På papir skriver vi for eksempel
+\[p(x)=1-2x+0.5x^2+x^3.\]
+I Python lagrer vi koeffisientene i samme rekkefølge som leddene over: først konstantleddet, så koeffisienten foran \(x\), deretter koeffisienten foran \(x^2\), og så videre.
+np.array lager her bare en talliste som NumPy kan regne med.
+Her betyr altså a[0] konstantleddet \(1\), a[1] betyr \(-2\), og a[3] betyr koeffisienten \(1\) foran \(x^3\). For å regne ut \(p(0.4)\) skriver vi"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>poly.polyval(<span class="fl">0.4</span>, a)</span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For å regne ut polynomverdien i flere punkter på én gang sender vi inn en liste eller en NumPy-array:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-ai-feedback-context="\[
+E(p)=
+\begin{bmatrix}
+p(x_0)\\p(x_1)\\\vdots\\p(x_n)
+\end{bmatrix}.
+\]
+Å gå fra et kjent polynom til disse verdiene er vanlig evaluering. Flere steder i prosjektet går vi motsatt vei: Vi får bare verdiene og prøver å finne koeffisientene til polynomet som laget dem. Vi kaller denne baklengsprosessen reverse engineering av polynomet.
+Prosjektets hovedspørsmål er:
+Hvordan kan matematisk likeverdige beskrivelser av det samme polynomrommet gi svært forskjellige numeriske resultater?
+Du skal gjøre tre kontrollerte sammenligninger. Først arbeider du med lav grad og eksakt lineær algebra. Deretter endrer du bare basisen. Til slutt holder du basis fast og endrer bare avlesningspunktene. Ikke bland disse eksperimentene: Ellers vet du ikke hva som forårsaket forskjellen.
+Kort manual: polynomer i NumPy
+På papir skriver vi for eksempel
+\[p(x)=1-2x+0.5x^2+x^3.\]
+I Python lagrer vi koeffisientene i samme rekkefølge som leddene over: først konstantleddet, så koeffisienten foran \(x\), deretter koeffisienten foran \(x^2\), og så videre.
+np.array lager her bare en talliste som NumPy kan regne med.
+Her betyr altså a[0] konstantleddet \(1\), a[1] betyr \(-2\), og a[3] betyr koeffisienten \(1\) foran \(x^3\). For å regne ut \(p(0.4)\) skriver vi
+For å regne ut polynomverdien i flere punkter på én gang sender vi inn en liste eller en NumPy-array:"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([<span class="op">-</span><span class="fl">1.0</span>, <span class="fl">0.0</span>, <span class="fl">0.4</span>, <span class="fl">1.0</span>])</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> poly.polyval(x, a)</span></code></pre></div><button title="Kopier til utklipstavle" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Da inneholder <code>y</code> de fire tallene <span class="math inline">\(p(-1)\)</span>, <span class="math inline">\(p(0)\)</span>, <span class="math inline">\(p(0.4)\)</span> og <span class="math inline">\(p(1)\)</span> i samme rekkefølge. Dette er alt <code>poly.polyval</code> gjør: Det setter de oppgitte <span class="math inline">\(x\)</span>-verdiene inn i polynomet.</p>
+<p>Senere skriver vi det samme polynomet ved hjelp av <span class="math inline">\(T_0,T_1,T_2,\ldots\)</span> i stedet for <span class="math inline">\(1,x,x^2,\ldots\)</span>. Hvis</p>
+<p><span class="math display">\[p(x)=c_0T_0(x)+c_1T_1(x)+c_2T_2(x),\]</span></p>
+<p>lagrer vi tallene som <code>c = np.array([c_0, c_1, c_2])</code> og bruker <code>cheb.chebval(x, c)</code>. Forskjellen mellom <code>poly.polyval</code> og <code>cheb.chebval</code> er derfor hvilken liste av polynomer koeffisientene hører til.</p>
+<p>Vi bruker også to hjelpefunksjoner senere:</p>
+<ul>
+<li><code>poly.polyfromroots([r1, r2])</code> regner ut koeffisientene til <span class="math inline">\((x-r_1)(x-r_2)\)</span>;</li>
+<li><code>cheb.cheb2poly(c)</code> skriver et polynom fra <span class="math inline">\(T\)</span>-formen om til den vanlige formen <span class="math inline">\(a_0+a_1x+a_2x^2+\cdots\)</span>.</li>
+</ul>
+<p>Bruk funksjonene med prefiksene <code>poly.</code> og <code>cheb.</code> i dette prosjektet. Ikke bruk <code>np.polyval</code>: Den forventer koeffisientene i motsatt rekkefølge og gjør det unødvendig lett å få et svar som ser rimelig ut, men er feil.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tips</span>Forslag til arbeidsmåte
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For hvert hovedeksperiment:</p>
+<ol type="1">
+<li>Skriv ned hva du tror vil skje.</li>
+<li>Endre bare én ting.</li>
+<li>Kjør forsøket og lagre tallene og figuren.</li>
+<li>Finn hvor forskjellen er størst.</li>
+<li>Forklar resultatet med begrepene basis, koordinater, rang og nullrom.</li>
+</ol>
+<p>Store fargerike figurer er ikke et mål i seg selv. Figuren skal brukes som data for en matematisk forklaring.</p>
+</div>
+</div>
+<section id="innledning-bli-kjent-med-chebyshev-polynomene" class="level2">
+<h2 class="anchored" data-anchor-id="innledning-bli-kjent-med-chebyshev-polynomene">Innledning: Bli kjent med Chebyshev-polynomene</h2>
+<p>Chebyshev-polynomene bygges med rekursjonen</p>
+<p><span class="math display">\[
+T_0(x)=1,\qquad T_1(x)=x,\qquad
+T_{n+1}(x)=2xT_n(x)-T_{n-1}(x).
+\]</span></p>
+<p>De første polynomene er altså ikke oppgitt ferdig. Bruk rekursjonen til å regne ut <span class="math inline">\(T_2\)</span>, <span class="math inline">\(T_3\)</span> og <span class="math inline">\(T_4\)</span> for hånd. Samle ledd med samme potens av <span class="math inline">\(x\)</span>.</p>
+<section id="oversett-rekursjonen-fra-papir-til-python" class="level3">
+<h3 class="anchored" data-anchor-id="oversett-rekursjonen-fra-papir-til-python">Oversett rekursjonen fra papir til Python</h3>
+<p>Funksjonen under er en direkte oversettelse av definisjonen. Før du kjører, følg kallene som trengs for å beregne <span class="math inline">\(T_4(0.3)\)</span>, og forklar hvilken linje som svarer til hvert av de tre tilfellene i den matematiske definisjonen.</p>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Kontroller de håndregnede uttrykkene ved å evaluere dem og <code>chebyshev_recursive</code> i minst tre verdier av <span class="math inline">\(x\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Valgfri utfordring: hvor mye arbeid gjør rekursjonen?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Legg inn en teller i funksjonen og sammenlign antall funksjonskall for <span class="math inline">\(n=5,10,15\)</span>. Nullstill telleren mellom hvert forsøk. Forklar hvorfor den direkte rekursjonen gjentar stadig flere delberegninger.</p>
+</div>
+</div>
+</div>
+<p>Den direkte rekursjonen gjør mange av de samme beregningene flere ganger. Vi vil dessuten snart trenge mange <span class="math inline">\(T\)</span>-polynomer i mange forskjellige <span class="math inline">\(x\)</span>-verdier. Derfor lager vi én tabell som samler alt.</p>
+<p>Hvis <code>x</code> inneholder fem punkter og vi ber om polynomene fra <span class="math inline">\(T_0\)</span> til <span class="math inline">\(T_4\)</span>, får tabellen fem rader og fem kolonner:</p>
+<ul>
+<li>rad 0 inneholder <span class="math inline">\(T_0(x_0),T_1(x_0),\ldots,T_4(x_0)\)</span>;</li>
+<li>rad 1 inneholder de samme fem polynomene regnet ut i <span class="math inline">\(x_1\)</span>;</li>
+<li>kolonne 2 inneholder <span class="math inline">\(T_2\)</span> regnet ut i alle de fem punktene.</li>
+</ul>
+<p>Når en verdi først er regnet ut, blir den liggende i tabellen og kan brukes til å lage neste kolonne. Dermed slipper programmet å starte rekursjonen på nytt hver gang.</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Les den utskrevne tabellen rad for rad. Kontroller for eksempel at første rad stemmer med <span class="math inline">\(T_k(-1)\)</span> for <span class="math inline">\(k=0,\ldots,4\)</span>, og at kolonne 1 er de fem <span class="math inline">\(x\)</span>-verdiene fordi <span class="math inline">\(T_1(x)=x\)</span>. Senere bruker vi den samme tabellen når vi vil regne ut flere lineærkombinasjoner av <span class="math inline">\(T_0,\ldots,T_n\)</span> i de samme punktene.</p>
+</section>
+<section id="se-hvordan-polynomene-oppfører-seg" class="level3">
+<h3 class="anchored" data-anchor-id="se-hvordan-polynomene-oppfører-seg">Se hvordan polynomene oppfører seg</h3>
+<p>Før vi bruker Chebyshev-polynomene som regneverktøy, trenger vi et bilde av hvordan de oppfører seg på intervallet <span class="math inline">\([-1,1]\)</span>. Er de store eller små? Hvor mange ganger svinger de? Oppfører partalls- og oddetallspolynomene seg ulikt? Dette blir viktig senere når vi skal forstå hvorfor denne beskrivelsen av et polynom kan være numerisk gunstig.</p>
+<p>En graf består av mange beregnede punkter. Koden lager derfor 1200 jevnt fordelte <span class="math inline">\(x\)</span>-verdier og bruker <code>chebyshev_table</code> til å regne ut <span class="math inline">\(T_0,\ldots,T_8\)</span> i alle sammen. Resultatet <code>T_plot</code> har 1200 rader og 9 kolonner. I løkken tegner <code>T_plot[:, n]</code> hele kolonnen som hører til <span class="math inline">\(T_n\)</span>.</p>
+<div id="qpyodide-insertion-location-4"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Undersøk figurene før du leser videre:</p>
+<ol type="1">
+<li>Hvor store og små blir polynomene på <span class="math inline">\([-1,1]\)</span>, og hva skjer i endepunktene?</li>
+<li>Hvordan endres nullpunkter, svingninger og symmetri med <span class="math inline">\(n\)</span>?</li>
+<li>Velg én av observasjonene og begrunn den fra rekursjonen.</li>
+</ol>
+</section>
+<section id="undersøk-om-chebyshev-polynomene-danner-en-basis" class="level3">
+<h3 class="anchored" data-anchor-id="undersøk-om-chebyshev-polynomene-danner-en-basis">Undersøk om Chebyshev-polynomene danner en basis</h3>
+<p>Den vanlige måten å skrive polynomer i <span class="math inline">\(\mathcal P_4\)</span> på er</p>
+<p><span class="math display">\[p(x)=a_0+a_1x+a_2x^2+a_3x^3+a_4x^4.\]</span></p>
+<p>Polynomene <span class="math inline">\((1,x,x^2,x^3,x^4)\)</span> kalles her <strong>monomialbasis</strong> eller <strong>potensbasis</strong>. Tallkolonnen <span class="math inline">\((a_0,a_1,a_2,a_3,a_4)^T\)</span> er koordinatene til <span class="math inline">\(p\)</span> i denne basisen. For eksempel har <span class="math inline">\(3-2x^2\)</span> koordinatkolonnen</p>
+<p><span class="math display">\[\begin{bmatrix}3&amp;0&amp;-2&amp;0&amp;0\end{bmatrix}^T.\]</span></p>
+<p>Vi vil avgjøre om hvert polynom i <span class="math inline">\(\mathcal P_4\)</span> også kan skrives på nøyaktig én måte som</p>
+<p><span class="math display">\[p(x)=c_0T_0(x)+c_1T_1(x)+\cdots+c_4T_4(x).\]</span></p>
+<p>Hvordan kan vi kontrollere om <span class="math inline">\(T_0,\ldots,T_4\)</span> er lineært uavhengige? Vi må undersøke om det finnes tall <span class="math inline">\(b_0,\ldots,b_4\)</span>, ikke alle lik null, slik at</p>
+<p><span class="math display">\[
+b_0T_0(x)+b_1T_1(x)+\cdots+b_4T_4(x)=0.
+\]</span></p>
+<p>Høyresiden betyr <strong>nullpolynomet</strong>: Alle koeffisientene foran <span class="math inline">\(1,x,x^2,x^3,x^4\)</span> er null. Vi skriver derfor hvert <span class="math inline">\(T_k\)</span> i den kjente monomialbasisen og setter de fem koeffisientlistene som kolonner i matrisen <code>Q</code>. Da er koeffisientkolonnen til summen over akkurat</p>
+<p><span class="math display">\[
+Q
+\begin{bmatrix}b_0\\b_1\\b_2\\b_3\\b_4\end{bmatrix}.
+\]</span></p>
+<p>Polynomsummen er nullpolynomet hvis og bare hvis</p>
+<p><span class="math display">\[
+Qb=0.
+\]</span></p>
+<p>Nå kan vi bruke <strong>rangtesten</strong>. Det er navnet vi bruker på følgende standardtest fra lineær algebra: En matrise med fem kolonner har fem lineært uavhengige kolonner akkurat når rangen er 5. Da har ligningen <span class="math inline">\(Qb=0\)</span> bare løsningen <span class="math inline">\(b=0\)</span>.</p>
+<p>Dette forklarer også hvorfor uavhengige kolonner betyr uavhengige polynomer: Hver kolonne er bare koeffisientlisten til ett bestemt <span class="math inline">\(T_k\)</span>. Hvis ingen ikke-triviell kombinasjon av listene gir nullkolonnen, kan heller ingen ikke-triviell kombinasjon av polynomene gi nullpolynomet.</p>
+<p>Til slutt vet vi at <span class="math inline">\(\mathcal P_4\)</span> har dimensjon 5. Fem lineært uavhengige polynomer i et femdimensjonalt rom fyller hele rommet. Derfor danner de en basis. Start nå med koeffisientene du fant for hånd, og fyll kolonnene i <code>Q</code>.</p>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Kontroller alle kolonnene mot håndregningen. Bestem deretter om <span class="math inline">\((T_0,T_1,T_2,T_3,T_4)\)</span> er en basis for <span class="math inline">\(\mathcal P_4\)</span>. Begrunnelsen skal bruke matrisen, ikke bare at figurene ser forskjellige ut.</p>
+<p>Hva forteller formen til <code>Q</code> om samme spørsmål for <span class="math inline">\((T_0,\ldots,T_n)\)</span> ved høyere grad? Formuler en begrunnet regel. Pek på mønsteret i matrisen; du trenger ikke bevise regelen for alle <span class="math inline">\(n\)</span>.</p>
+</section>
+</section>
+<section id="del-1-reverse-engineering-fra-polynomverdier" class="level2">
+<h2 class="anchored" data-anchor-id="del-1-reverse-engineering-fra-polynomverdier">Del 1: Reverse engineering fra polynomverdier</h2>
+<p>Vi går tilbake til lav grad før vi gjør store numeriske eksperimenter. La <span class="math inline">\(p\in\mathcal P_3\)</span>, og les av verdien til <span class="math inline">\(p\)</span> i punktene</p>
+<p><span class="math display">\[x_0=-1,\qquad x_1=-\frac13,\qquad x_2=\frac13,\qquad x_3=1.\]</span></p>
+<p>Transformasjonen</p>
+<p><span class="math display">\[
+E(p)=
+\begin{bmatrix}
+p(x_0)\\p(x_1)\\p(x_2)\\p(x_3)
+\end{bmatrix}
+\]</span></p>
+<p>sender altså et polynom til fire polynomverdier. Avbildningen er lineær: Hvis vi dobler polynomet, dobles alle avlesningene, og avlesning av en sum gir summen av avlesningene:</p>
+<p><span class="math display">\[E(2p)=2E(p),\qquad E(p+q)=E(p)+E(q).\]</span></p>
+<p>Det er nettopp denne lineariteten som gjør at hele avlesningsprosessen kan beskrives med en matrise.</p>
+<section id="bygg-avlesningsmatrisene-for-hånd" class="level3">
+<h3 class="anchored" data-anchor-id="bygg-avlesningsmatrisene-for-hånd">Bygg avlesningsmatrisene for hånd</h3>
+<p>Hvis</p>
+<p><span class="math display">\[p(x)=a_0+a_1x+a_2x^2+a_3x^3,\]</span></p>
+<p>er den første avlesningen</p>
+<p><span class="math display">\[p(x_0)=a_0+a_1x_0+a_2x_0^2+a_3x_0^3.\]</span></p>
+<p>Dermed er første rad i avlesningsmatrisen <span class="math inline">\([1,x_0,x_0^2,x_0^3]\)</span>. Utled de tre andre radene før du fullfører funksjonen under.</p>
+<p>For de fire punktene i dette prosjektet kan hele håndregningen skrives slik:</p>
+<p><span class="math display">\[
+\begin{aligned}
+p(-1) &amp;= a_0-a_1+a_2-a_3,\\
+p(-1/3) &amp;= a_0-\frac13a_1+\frac19a_2-\frac1{27}a_3,\\
+p(1/3) &amp;= a_0+\frac13a_1+\frac19a_2+\frac1{27}a_3,\\
+p(1) &amp;= a_0+a_1+a_2+a_3.
+\end{aligned}
+\]</span></p>
+<p>Koeffisientene foran <span class="math inline">\(a_0,a_1,a_2,a_3\)</span> blir radene i matrisen:</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+p(-1)\\p(-1/3)\\p(1/3)\\p(1)
+\end{bmatrix}
+=
+\underbrace{
+\begin{bmatrix}
+1&amp;-1&amp;1&amp;-1\\
+1&amp;-1/3&amp;1/9&amp;-1/27\\
+1&amp;1/3&amp;1/9&amp;1/27\\
+1&amp;1&amp;1&amp;1
+\end{bmatrix}}_{M_{\text{small}}}
+\begin{bmatrix}a_0\\a_1\\a_2\\a_3\end{bmatrix}.
+\]</span></p>
+<p>Her er et lite eksempel med et førstegradspolynom <span class="math inline">\(p(x)=a_0+a_1x\)</span>. Avlesning i punktene <span class="math inline">\(x_0=-1\)</span> og <span class="math inline">\(x_1=2\)</span> gir</p>
+<p><span class="math display">\[
+p(x_0)=a_0-a_1,
+\qquad
+p(x_1)=a_0+2a_1.
+\]</span></p>
+<p>Begge ligningene kan samles i ett matriseprodukt:</p>
+<p><span class="math display">\[
+\begin{bmatrix}p(-1)\\p(2)\end{bmatrix}
+=
+\begin{bmatrix}1&amp;-1\\1&amp;2\end{bmatrix}
+\begin{bmatrix}a_0\\a_1\end{bmatrix}.
+\]</span></p>
+<p>Et andre eksempel bruker <span class="math inline">\(p(x)=a_0+a_1x+a_2x^2\)</span> og punktene <span class="math inline">\(0,1,2\)</span>:</p>
+<p><span class="math display">\[
+\begin{bmatrix}p(0)\\p(1)\\p(2)\end{bmatrix}
+=
+\begin{bmatrix}1&amp;0&amp;0\\1&amp;1&amp;1\\1&amp;2&amp;4\end{bmatrix}
+\begin{bmatrix}a_0\\a_1\\a_2\end{bmatrix}.
+\]</span></p>
+<p>Se spesielt på siste rad: Den kommer fra <span class="math inline">\(p(2)=a_0+2a_1+2^2a_2\)</span>. Hver rad lages ved å sette ett punkt inn i <span class="math inline">\(1,x,x^2,\ldots\)</span>. Når matrisen multipliseres med koeffisientkolonnen, får vi én polynomverdi per rad. I Python betyr <code>A @ a</code> matriseproduktet <span class="math inline">\(Aa\)</span>.</p>
+<p>Koden under lager denne matrisen for så mange punkter og potenser som vi ber om. Uttrykket med <code>None</code> er NumPys kompakte måte å kombinere hvert punkt med hver potens. Bruk de to små matrisene over som fasit når du fullfører linjen.</p>
+<p>Chebyshev-matrisen bygges på samme måte, men nå skriver vi</p>
+<p><span class="math display">\[p(x)=c_0T_0(x)+c_1T_1(x)+c_2T_2(x)+c_3T_3(x).\]</span></p>
+<p>Ved <span class="math inline">\(x=-1\)</span> får vi <span class="math inline">\(T_0(-1)=1\)</span>, <span class="math inline">\(T_1(-1)=-1\)</span>, <span class="math inline">\(T_2(-1)=1\)</span> og <span class="math inline">\(T_3(-1)=-1\)</span>. Første rad blir derfor <span class="math inline">\([1,-1,1,-1]\)</span>. Ved <span class="math inline">\(x=-1/3\)</span> gir uttrykkene du regnet ut tidligere</p>
+<p><span class="math display">\[
+T_0(-1/3)=1,\quad T_1(-1/3)=-\frac13,\quad
+T_2(-1/3)=-\frac79,\quad T_3(-1/3)=\frac{23}{27}.
+\]</span></p>
+<p>Andre rad blir dermed <span class="math inline">\([1,-1/3,-7/9,23/27]\)</span>. Regn ut de to siste radene på samme måte, og kontroller dem mot utskriften fra <code>chebyshev_matrix</code>.</p>
+<div id="qpyodide-insertion-location-6"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Stopp ved de to utskrevne matrisene før du løser et system. Bruk følgende spørsmål til å knytte tallene til lineær algebra:</p>
+<ol type="1">
+<li>Avbildningen <span class="math inline">\(E\)</span> tar inn et polynom av grad høyst 3 og gir ut fire tall. Skriv derfor definisjonsrommet og verdirommet med symboler. Beskriv også med ord hva ett element i hvert av rommene ser ut som.</li>
+<li>La <span class="math inline">\(a\)</span> være koeffisientkolonnen når <span class="math inline">\(p\)</span> skrives med <span class="math inline">\(1,x,x^2,x^3\)</span>. Forklar hvorfor <code>M_small @ a</code> er det samme som <span class="math inline">\(E(p)\)</span>. Pek på én bestemt rad og vis regnestykket.</li>
+<li>La <span class="math inline">\(c\)</span> være koeffisientkolonnen når det samme <span class="math inline">\(p\)</span> skrives med <span class="math inline">\(T_0,T_1,T_2,T_3\)</span>. Da er <code>C_small @ c</code> også <span class="math inline">\(E(p)\)</span>. Hvorfor kan <code>M_small</code> og <code>C_small</code> være forskjellige selv om de ender med de samme fire polynomverdiene?</li>
+<li>Begge matrisene har rang 4. Hva sier dette om muligheten for at to forskjellige polynomer i <span class="math inline">\(\mathcal P_3\)</span> har de samme fire avlesningene i disse fire forskjellige punktene? Knytt svaret til nullrom og entydighet.</li>
+<li>Koeffisientkolonnene <span class="math inline">\(a\)</span> og <span class="math inline">\(c\)</span> vil vanligvis være forskjellige. Betyr det at polynomene er forskjellige, eller bare at det samme polynomet er skrevet med forskjellige byggeklosser? Hvordan kan du kontrollere svaret?</li>
+</ol>
+</section>
+<section id="skriv-det-samme-polynomet-i-to-basiser" class="level3">
+<h3 class="anchored" data-anchor-id="skriv-det-samme-polynomet-i-to-basiser">Skriv det samme polynomet i to basiser</h3>
+<p>Nå prøver vi tankegangen i praksis. Vi starter med et kjent polynom,</p>
+<p><span class="math display">\[p(x)=1-2x+\frac12x^2+x^3.\]</span></p>
+<p>Koden regner først ut de fire avlesningene. Deretter later vi som om koeffisientene er glemt og beholder bare avlesningene. Vi skal altså arbeide baklengs: Fra noen målte polynomverdier prøver vi å finne ut hvilket polynom som kan ha laget dem. Vi kaller dette <strong>reverse engineering</strong> av polynomet.</p>
+<p>Vi løser to lineære systemer:</p>
+<p><span class="math display">\[M_{\text{small}}a=E(p),
+\qquad
+C_{\text{small}}c=E(p).\]</span></p>
+<p>Hvorfor finner det første systemet monomialkoeffisientene? Kolonne <span class="math inline">\(j\)</span> i <span class="math inline">\(M_{\text{small}}\)</span> inneholder verdiene til <span class="math inline">\(x^j\)</span> i de fire punktene. Når matrisen multipliseres med <span class="math inline">\(a\)</span>, får vi derfor verdiene til</p>
+<p><span class="math display">\[a_0+a_1x+a_2x^2+a_3x^3\]</span></p>
+<p>i de fire punktene. Ligningen <span class="math inline">\(M_{\text{small}}a=E(p)\)</span> ber om akkurat de tallene <span class="math inline">\(a_0,\ldots,a_3\)</span> som får disse verdiene til å passe med dataene.</p>
+<p>På samme måte inneholder kolonne <span class="math inline">\(j\)</span> i <span class="math inline">\(C_{\text{small}}\)</span> verdiene til <span class="math inline">\(T_j\)</span> i punktene. Produktet <span class="math inline">\(C_{\text{small}}c\)</span> gir derfor avlesningene av</p>
+<p><span class="math display">\[c_0T_0+c_1T_1+c_2T_2+c_3T_3.\]</span></p>
+<p>Ligningen <span class="math inline">\(C_{\text{small}}c=E(p)\)</span> finner dermed Chebyshev-koeffisientene. Det er matrisens kolonner som bestemmer hva de ukjente tallene betyr.</p>
+<p>Til slutt evaluerer vi begge reverse-engineering-svarene på et tett rutenett. Hvis de representerer samme polynom, skal grafverdiene stemme selv om koeffisientlistene ikke gjør det. Kommandoen <code>np.linalg.solve(A, b)</code> betyr bare «finn tallkolonnen <span class="math inline">\(u\)</span> som løser <span class="math inline">\(Au=b\)</span>». Den kjenner ikke til polynomer; tolkningen kommer fra hvordan vi bygde matrisen <code>A</code>.</p>
+<div id="qpyodide-insertion-location-7"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Kontroller at de to koordinatvektorene virkelig bygger samme polynom. Skriv polynomet som en lineærkombinasjon av <span class="math inline">\(T_0,T_1,T_2,T_3\)</span> og sammenlign med monomialformen.</p>
+</section>
+<section id="finn-det-avlesningene-ikke-kan-se" class="level3">
+<h3 class="anchored" data-anchor-id="finn-det-avlesningene-ikke-kan-se">Finn det avlesningene ikke kan se</h3>
+<p>Med fire forskjellige avlesningspunkter kunne vi finne et polynom i <span class="math inline">\(\mathcal P_3\)</span> entydig. Nå undersøker vi hvorfor «fire tall» ikke alene er nok: Punktene må også gi fire forskjellige opplysninger. Vi gjør to separate endringer. Først beholder vi bare tre avlesninger. Deretter bruker vi fire rader, men gjentar ett punkt. I begge tilfeller forventer vi at rangen blir mindre enn 4.</p>
+<p>Kjør de to endringene under én om gangen:</p>
+<div id="qpyodide-insertion-location-8"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>En lavere rang betyr at noe ved polynomet er usynlig i avlesningene. Finn et ikke-null polynom <span class="math inline">\(z\in\mathcal P_3\)</span> som tilfredsstiller</p>
+<p><span class="math display">\[z(-1)=z(-1/3)=z(1/3)=0.\]</span></p>
+<p><strong>Hint ved behov:</strong> Et polynom med nullpunktene <span class="math inline">\(r_1,r_2,r_3\)</span> inneholder faktorene <span class="math inline">\((x-r_1)(x-r_2)(x-r_3)\)</span>.</p>
+<p>Bruk deretter koden under til å kontrollere svaret og lage to forskjellige polynomer med identiske tre avlesninger:</p>
+<div id="qpyodide-insertion-location-9"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Gå gjennom argumentet i disse trinnene:</p>
+<ol type="1">
+<li>Regn ut <span class="math inline">\(E(z)\)</span> når <span class="math inline">\(E\)</span> bare leser av i de tre punktene. Hvorfor er resultatet nullkolonnen selv om <span class="math inline">\(z\)</span> ikke er nullpolynomet? Dette viser at <span class="math inline">\(z\)</span> ligger i nullrommet til <span class="math inline">\(E\)</span>.</li>
+<li>Bruk linearitet til å regne ut <span class="math inline">\(E(p+\alpha z)\)</span>. Forklar hvorfor alle valg av tallet <span class="math inline">\(\alpha\)</span> gir de samme tre avlesningene som <span class="math inline">\(p\)</span>.</li>
+<li>Generaliser til <span class="math inline">\(\mathcal P_n\)</span>, som har dimensjon <span class="math inline">\(n+1\)</span>. Anta at vi bruker <span class="math inline">\(m\)</span> <strong>forskjellige</strong> punkter, at <span class="math inline">\(m&lt;n+1\)</span>, og at hvert punkt gir en uavhengig betingelse. Hva blir da rangen til avlesningsmatrisen?</li>
+<li>Bruk rang–nullitet, <span class="math inline">\(\dim(\ker E)+\operatorname{rang}(E)=n+1\)</span>, til å finne dimensjonen til nullrommet. Dette tallet er antallet uavhengige måter et polynom kan endres på uten at de <span class="math inline">\(m\)</span> avlesningene merker det.</li>
+<li>Forklar til slutt hvorfor antakelsen om forskjellige punkter er viktig. Hva så du i forsøket der ett punkt ble gjentatt?</li>
+</ol>
+</section>
+</section>
+<section id="del-2-hold-punktene-fast-og-bytt-basis" class="level2">
+<h2 class="anchored" data-anchor-id="del-2-hold-punktene-fast-og-bytt-basis">Del 2: Hold punktene fast og bytt basis</h2>
+<p>Ved grad 3 fant begge matrisene fram til det riktige polynomet. Det kan derfor se ut som basisvalget bare endrer hvordan koeffisientene skrives. I eksakt matematikk er det riktig. På en datamaskin må imidlertid alle mellomresultater lagres med et begrenset antall sifre. Nå spør vi om én skrivemåte kan føre til større avrundingsproblemer enn den andre når graden øker.</p>
+<p>For å gjøre sammenligningen rettferdig bruker vi nøyaktig det samme referansepolynomet, de samme avlesningspunktene og de samme avlesningsverdiene i begge systemene. Det eneste som byttes, er kolonnene i matrisen: enten <span class="math inline">\(1,x,\ldots,x^n\)</span> eller <span class="math inline">\(T_0,T_1,\ldots,T_n\)</span>. Hvis resultatene blir ulike, har vi dermed isolert virkningen av basisvalget.</p>
+<p>Vi bruker foreløpig punktene</p>
+<p><span class="math display">\[
+x_k=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
+\qquad k=0,\ldots,n.
+\]</span></p>
+<p>Hvorfor disse punktene er interessante, undersøker vi først i del 3. Akkurat nå trenger du bare å merke deg at funksjonen lager <span class="math inline">\(n+1\)</span> forskjellige tall i <span class="math inline">\([-1,1]\)</span>, og at begge basisene får de samme tallene.</p>
+<p>De tre korte hjelpefunksjonene under gjør forsøket mulig å gjenta: <code>chebyshev_points</code> lager punktene, <code>reference_coordinates</code> lager et fast polynom med små Chebyshev-koeffisienter, og <code>max_grid_error</code> måler den største observerte forskjellen på et tett rutenett.</p>
+<div id="qpyodide-insertion-location-10"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Se på formelen i <code>reference_coordinates</code> før du kjører grad 30. Alle tallene <span class="math inline">\(c_k=(-1)^k/(k+1)^2\)</span> ligger mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1\)</span>. Skriv ned om du tror dette også tvinger koeffisientene foran <span class="math inline">\(1,x,x^2,\ldots,x^{30}\)</span> til å være små. Dette er hypotesen som forsøket skal teste.</p>
+<section id="gjør-reverse-engineering-i-begge-basiser" class="level3">
+<h3 class="anchored" data-anchor-id="gjør-reverse-engineering-i-begge-basiser">Gjør reverse engineering i begge basiser</h3>
+<p>Funksjonen følger denne historien:</p>
+<ol type="1">
+<li>Lag et polynom ved å velge Chebyshev-koeffisienter.</li>
+<li>Regn ut polynomets verdi i <span class="math inline">\(n+1\)</span> punkter. Deretter behandles disse avlesningene som de eneste kjente dataene.</li>
+<li>Gjør reverse engineering: Finn koeffisienter som passer til dataene, først i monomialbasis og så i Chebyshev-basis.</li>
+<li>Regn ut de to reverse-engineering-resultatene i mange punkter mellom avlesningene og sammenlign dem med polynomet vi startet med.</li>
+</ol>
+<p>Det tette rutenettet brukes bare til etterkontroll. Det gir ikke de lineære systemene ekstra informasjon.</p>
+<div id="qpyodide-insertion-location-11"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Finn selv rutenettspunktet der hver av de to feilene er størst. Bruk <code>np.argmax</code> på absoluttverdien av feilen, og rapporter både <span class="math inline">\(x\)</span>-verdien og feilen. <code>np.argmax</code> gir plassnummeret til det største tallet, ikke selve tallet. Bruk derfor det samme plassnummeret til å hente både punktet fra <code>basis_data["grid"]</code> og feilen fra feillisten. Dette er et nytt mål du skal beregne; det er ikke ferdigkodet over.</p>
+<p>Ikke gå direkte videre. Les tallene i denne rekkefølgen:</p>
+<ol type="1">
+<li>Bekreft i koden at <code>measurements</code> lages én gang og brukes på høyre side i begge systemene. Hva forteller det om dataene de to metodene får?</li>
+<li>Sammenlign den største koeffisienten i de to listene. Hvor mange tierpotenser skiller dem? Husk at koeffisientene hører til forskjellige polynomer i basislistene og derfor ikke skal sammenlignes ledd for ledd.</li>
+<li>Sammenlign feilene på rutenettet. Hvor ligger maksimumsfeilen du fant med <code>np.argmax</code>?</li>
+<li>Forklar hva som ble holdt fast: polynomrom, referansepolynom, avlesningspunkter og avlesningsverdier. Hva var den eneste endringen?</li>
+<li>I eksakt matematikk er begge basisskrivemåtene likeverdige. Hvilken del av forskjellen i utskriften skyldes derfor flyttallsregning?</li>
+</ol>
+</section>
+<section id="valgfri-utvidelse-se-hva-som-skjer-når-graden-øker" class="level3">
+<h3 class="anchored" data-anchor-id="valgfri-utvidelse-se-hva-som-skjer-når-graden-øker">Valgfri utvidelse: se hva som skjer når graden øker</h3>
+<div id="qpyodide-insertion-location-12"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Lag en logaritmisk feilfigur for grad 30:</p>
+<div id="qpyodide-insertion-location-13"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Skriv en foreløpig forklaring. Bruk minst disse observasjonene:</p>
+<ul>
+<li>størrelsen på koordinatene;</li>
+<li>størrelsen på basisfunksjonene på <span class="math inline">\([-1,1]\)</span>;</li>
+<li>at et moderat sluttresultat kan bygges ved at store ledd nesten kansellerer;</li>
+<li>at hvert mellomresultat lagres med endelig presisjon.</li>
+</ul>
+<p>Ikke skriv at «datamaskinen er unøyaktig» uten å identifisere hvilke tall som er store, og hvor kanselleringen oppstår.</p>
+</section>
+<section id="legg-den-samme-lille-feilen-til-begge-systemene" class="level3">
+<h3 class="anchored" data-anchor-id="legg-den-samme-lille-feilen-til-begge-systemene">Legg den samme lille feilen til begge systemene</h3>
+<p>Virkelige avlesninger er sjelden eksakte. Vi legger derfor til en svært liten feil, omtrent <span class="math inline">\(10^{-10}\)</span>, i hver polynomverdi. Først løser vi systemet med de opprinnelige dataene, deretter med de litt endrede dataene. Vi gjør dette i begge basiser med nøyaktig den samme feillisten. Spørsmålet er hvor mye en liten målefeil påvirker reverse engineering av koeffisientene.</p>
+<p>Vi sammenligner <code>a_after-a_before</code> fordi begge vektorene bruker monomialbasis. Tilsvarende sammenligner vi <code>c_after-c_before</code> fordi begge bruker Chebyshev-basis. Derimot ville <code>a_after-c_after</code> ikke hatt en enkel betydning: Plass nummer 2 står foran <span class="math inline">\(x^2\)</span> i den ene listen og foran <span class="math inline">\(T_2\)</span> i den andre.</p>
+<div id="qpyodide-insertion-location-14"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Bruk denne forklaringen til å tolke de tre utskrevne tallene. Hvor stor var endringen i selve dataene? Hvor stor ble endringen i hver koeffisientliste? Hvilken representasjon forsterket den lille dataendringen mest?</p>
+</section>
+</section>
+<section id="del-3-hold-basisen-fast-og-flytt-punktene" class="level2">
+<h2 class="anchored" data-anchor-id="del-3-hold-basisen-fast-og-flytt-punktene">Del 3: Hold basisen fast og flytt punktene</h2>
+<p>I del 2 holdt vi punktene fast og byttet basis. Nå gjør vi det motsatte: Chebyshev-basis brukes i begge systemene, men avlesningspunktene flyttes. Spørsmålet er om <span class="math inline">\(n+1\)</span> avlesninger alltid er like informative, eller om plasseringen av dem betyr noe for hva polynomet kan gjøre mellom punktene.</p>
+<p>De to punktfamiliene er</p>
+<p><span class="math display">\[
+x_k^{\mathrm{jevn}}=-1+\frac{2k}{n}
+\]</span></p>
+<p>og</p>
+<p><span class="math display">\[
+x_k^{\mathrm{Cheb}}
+=\cos\left(\frac{(2k+1)\pi}{2(n+1)}\right),
+\]</span></p>
+<p>for <span class="math inline">\(k=0,\ldots,n\)</span>.</p>
+<section id="sammenlign-punktplasseringene-før-du-regner" class="level3">
+<h3 class="anchored" data-anchor-id="sammenlign-punktplasseringene-før-du-regner">Sammenlign punktplasseringene før du regner</h3>
+<p>Før vi løser et eneste system, tegner vi bare punktene på en tallinje. De jevne punktene har samme avstand overalt. Cosinuspunktene ligger tettere ved endene av intervallet og glisnere nær midten. Figuren skal hjelpe deg å lage en hypotese: Hvis et polynom er tvunget til å passe data i mange punkter nær endene, blir det da lettere eller vanskeligere for polynomet å få store utslag der mellom avlesningene?</p>
+<div id="qpyodide-insertion-location-15"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Hvor er punktavstanden størst og minst i hvert oppsett? Hvilket oppsett ville du valgt dersom du var spesielt redd for at polynomet skulle gjøre noe uventet nær <span class="math inline">\(-1\)</span> eller <span class="math inline">\(1\)</span>? Skriv hypotesen før forsøket med forstyrrelser.</p>
+</section>
+<section id="bruk-den-samme-lille-feilen-med-begge-punktsettene" class="level3">
+<h3 class="anchored" data-anchor-id="bruk-den-samme-lille-feilen-med-begge-punktsettene">Bruk den samme lille feilen med begge punktsettene</h3>
+<p>Vi forstyrrer avlesningene med det faste mønsteret</p>
+<p><span class="math display">\[\delta y_k=10^{-10}(-1)^k.\]</span></p>
+<p>Det er viktig at både størrelsen og fortegnsmønsteret er identisk i de to forsøkene. Dermed kan ikke forskjellen forklares med at det ene forsøket fikk en større eller mer gunstig feil.</p>
+<p>Funksjonen lager først nøyaktige avlesninger fra referansepolynomet. Deretter legger den til feilen og gjør reverse engineering: Den finner det ene polynomet av grad høyst <span class="math inline">\(n\)</span> som passer til de forstyrrede verdiene. Til slutt sammenlignes dette polynomet med referansen på 5001 punkter. Forholdet</p>
+<p><span class="math display">\[
+\frac{\text{største feil på det tette rutenettet}}
+{\text{største feil i de oppgitte avlesningene}}
+\]</span></p>
+<p>kalles her <strong>forsterkning</strong>. En forsterkning på <span class="math inline">\(10^6\)</span> betyr at en feil på <span class="math inline">\(10^{-10}\)</span> ved avlesningspunktene har blitt til en feil på omtrent <span class="math inline">\(10^{-4}\)</span> et sted mellom dem.</p>
+<div id="qpyodide-insertion-location-16"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Sammenlign først <code>feil i avlesning</code> i de to utskriftene: De skal være like. Sammenlign så <code>kurvefeil</code> og <code>forsterkning</code>. Hvor mange tierpotenser skiller forsøkene? Forklar hvorfor forskjellen ikke kan skyldes ulik basis eller ulik størrelse på forstyrrelsen.</p>
+</section>
+<section id="gjør-det-nesten-usynlige-feilpolynomet-synlig" class="level3">
+<h3 class="anchored" data-anchor-id="gjør-det-nesten-usynlige-feilpolynomet-synlig">Gjør det nesten usynlige feilpolynomet synlig</h3>
+<p>For å forstå forsterkningen ser vi ikke bare på to hele polynomer. Vi trekker dem fra hverandre. Forskjellen mellom reverse-engineering-resultatet og det opprinnelige polynomet er selv et polynom:</p>
+<p><span class="math display">\[r(x)=p_{\mathrm{forstyrret}}(x)-p_{\mathrm{opprinnelig}}(x).\]</span></p>
+<p>Ved hvert avlesningspunkt er <span class="math inline">\(r(x_k)\)</span> akkurat den lille forstyrrelsen vi la til. Hvis vi bare så på disse <span class="math inline">\(n+1\)</span> tallene, ville <span class="math inline">\(r\)</span> virke nesten som nullpolynomet. Men avlesningspunktene forteller ikke direkte hva som skjer mellom dem. Figuren tegner derfor både de små svarte verdiene <span class="math inline">\(r(x_k)\)</span> og hele kurven <span class="math inline">\(r(x)\)</span> på det tette rutenettet.</p>
+<div id="qpyodide-insertion-location-17"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Les først de svarte punktene og deretter kurvene:</p>
+<ol type="1">
+<li>Hvor små er <span class="math inline">\(r(x_k)\)</span> ved de oppgitte avlesningspunktene? Sammenlign med maksimum av <span class="math inline">\(|r(x)|\)</span> på hele rutenettet.</li>
+<li>Hvor i intervallet blir <span class="math inline">\(|r(x)|\)</span> størst for jevne punkter? Se tilbake på punktfiguren: Er det få eller mange avlesningspunkter i dette området?</li>
+<li>Gjør den samme sammenligningen for cosinuspunktene. Hvordan har de ekstra punktene nær endene påvirket feiltoppene?</li>
+<li>I del 1 fant vi et eksakt nullromspolynom <span class="math inline">\(z\)</span> med <span class="math inline">\(E(z)=0\)</span>. Her er <span class="math inline">\(E(r)\)</span> ikke null; det består av tall med størrelse <span class="math inline">\(10^{-10}\)</span>. Forklar både likheten og forskjellen mellom <span class="math inline">\(z\)</span> og <span class="math inline">\(r\)</span>.</li>
+</ol>
+<p>Vi kan uformelt kalle <span class="math inline">\(r\)</span> en <strong>numerisk nullromsretning</strong>: Et ikke-null polynom blir sendt til en svært liten, men ikke helt null, avlesningskolonne. Dette er ikke et nytt eksakt nullrom. Uttrykket beskriver at avlesningene nesten ikke ser en endring som likevel kan være stor mellom punktene.</p>
+</section>
+<section id="valgfri-utvidelse-finn-graden-der-forskjellen-blir-synlig" class="level3">
+<h3 class="anchored" data-anchor-id="valgfri-utvidelse-finn-graden-der-forskjellen-blir-synlig">Valgfri utvidelse: finn graden der forskjellen blir synlig</h3>
+<div id="qpyodide-insertion-location-18"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Hvis du gjør utvidelsen, velg minst to ekstra grader selv. Beskriv når forskjellen først blir tydelig, og om veksten ser jevn ut. Tallene viser hva som skjer i forsøkene dine, men de beviser ikke hva som skjer for alle grader.</p>
+</section>
+</section>
+<section id="finale-beregn-det-samme-polynomet-på-tre-måter" class="level2">
+<h2 class="anchored" data-anchor-id="finale-beregn-det-samme-polynomet-på-tre-måter">Finale: Beregn det samme polynomet på tre måter</h2>
+<p>Plottene i starten antydet at <span class="math inline">\(T_n\)</span> holder seg mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1\)</span> på intervallet. Identiteten</p>
+<p><span class="math display">\[T_n(x)=\cos(n\arccos x),\qquad -1\le x\le1,\]</span></p>
+<p>gir oss en uavhengig måte å kontrollere dette på. Dermed kjenner vi størrelsen på det riktige svaret før vi bruker NumPy: <span class="math inline">\(T_{50}(0.99)\)</span> må ligge i <span class="math inline">\([-1,1]\)</span>.</p>
+<p>Vi skal nå evaluere <span class="math inline">\(T_{50}(0.99)\)</span> på tre matematisk likeverdige måter:</p>
+<ol type="1">
+<li>konverter til monomialkoeffisienter og bruk vanlig polynomevaluering;</li>
+<li>bruk Chebyshev-representasjonen direkte;</li>
+<li>bruk cosinusidentiteten som referanse.</li>
+</ol>
+<p>Den første metoden skriver <span class="math inline">\(T_{50}\)</span> som <span class="math inline">\(a_0+a_1x+\cdots+a_{50}x^{50}\)</span> før den setter inn <span class="math inline">\(x=0.99\)</span>. Den andre bruker Chebyshev-rekursjonen direkte, uten å lage denne lange potensformen. Den tredje regner ut cosinusuttrykket og fungerer som en kontroll som ikke bruker noen av koeffisientlistene.</p>
+<p>Skriv ned hvilken metode du forventer vil være mest pålitelig før du kjører, og hvorfor. Følg deretter variablene i koden: <code>cheb_coordinates</code> beskriver nøyaktig ett <span class="math inline">\(T\)</span>-polynom, <code>monomial_coordinates</code> beskriver det samme polynomet med potenser av <span class="math inline">\(x\)</span>, og de tre variablene som begynner med <code>value_</code> er de tre svarene.</p>
+<div id="qpyodide-insertion-location-19"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Hvis et svar ligger langt utenfor intervallet <span class="math inline">\([-1,1]\)</span>, vet du fra cosinusidentiteten at det ikke kan være riktig. Se da på den største monomialkoeffisienten. Når mange svært store ledd til slutt skal gi et svar mellom <span class="math inline">\(-1\)</span> og <span class="math inline">\(1\)</span>, må positive og negative bidrag nesten kansellere hverandre. Små avrundinger i de store mellomresultatene kan da overleve etter kanselleringen og bli store sammenlignet med det riktige svaret.</p>
+<section id="se-hvordan-feilen-vokser-fram-mot-grad-50" class="level3">
+<h3 class="anchored" data-anchor-id="se-hvordan-feilen-vokser-fram-mot-grad-50">Se hvordan feilen vokser fram mot grad 50</h3>
+<p>For å se om problemet dukker opp plutselig eller bygger seg opp, gjentar vi de tre evalueringene for grad 10, 20, 30, 40 og 50. Tabellen viser ved siden av hverandre hvor stor den største monomialkoeffisienten er og hvor mye de to beregningsmåtene avviker fra cosinuskontrollen.</p>
+<div id="qpyodide-insertion-location-20"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Bygg forklaringen i denne rekkefølgen:</p>
+<ol type="1">
+<li>Skill mellom størrelsen på et polynom på intervallet og størrelsen på koeffisientene i en bestemt basis. Hvorfor er ikke disse det samme?</li>
+<li>Bruk utskriften til å beskrive hvordan de største monomialkoeffisientene vokser. Hvorfor må store positive og negative ledd kansellere hvis sluttverdien skal ligge i <span class="math inline">\([-1,1]\)</span>?</li>
+<li>Knytt avrunding av de store mellomresultatene til flyttallsregningen fra uke 1. Hva blir igjen når den nesten perfekte kanselleringen ikke lenger er perfekt?</li>
+<li>Knytt valget mellom monomialbasis og Chebyshev-basis til uke 3. De to uttrykkene er algebraisk like, så hvorfor kan beregningene likevel få ulik kvalitet?</li>
+<li>Det brukes ingen avlesningsmatrise eller interpolasjon i dette forsøket. Forklar derfor hvorfor feilen her ikke skyldes plasseringen av avlesningspunkter.</li>
+</ol>
+</section>
+</section>
+<section id="åpen-utfordring-lag-din-egen-blindsone" class="level2">
+<h2 class="anchored" data-anchor-id="åpen-utfordring-lag-din-egen-blindsone">Åpen utfordring: Lag din egen blindsone</h2>
+<p>Nå får du bruke ideene fra prosjektet mer fritt. Du skal gjenta historien fra del 3, men velge graden, punktene og fortegnene selv. Start med et referansepolynom, legg en svært liten feil til avlesningene, gjør reverse engineering av polynomet som passer de endrede dataene, og mål hvor stort avviket blir mellom punktene.</p>
+<p>Plasser avlesningspunktene slik at en svært liten feil i avlesningene gir en stor feil mellom punktene, og slik at du kan forklare mekanismen. Målet er ikke et kunstig rekordtall. Følg disse reglene:</p>
+<ul>
+<li>polynomgraden skal være høyst 35;</li>
+<li>alle <span class="math inline">\(n+1\)</span> avlesningspunkter skal være forskjellige og ligge i <span class="math inline">\([-1,1]\)</span>;</li>
+<li>avstanden mellom to nabopunkter skal være minst <span class="math inline">\(10^{-3}\)</span>;</li>
+<li>hver avlesningsfeil skal ha absoluttverdi høyst <span class="math inline">\(10^{-10}\)</span>;</li>
+<li>polynomet skal finnes i Chebyshev-basis;</li>
+<li>forsterkningen skal beregnes på et tett rutenett med minst 5001 punkter.</li>
+</ul>
+<p>Du kan endre graden, punktene og fortegnsmønsteret i forstyrrelsen. Du kan ikke gjøre avlesningsfeilen større eller bryte kravet til minste punktavstand. Før koden kjøres, skriv hvilken endring du prøver og hvorfor du tror den kan skjule feilpolynomet for avlesningene.</p>
+<p>Variablene med prefikset <code>my_</code> er delene du skal følge og senere endre: <code>my_points</code> er avlesningspunktene, <code>my_noise</code> er de små feilene, <code>my_recovered</code> er polynomet som passer de endrede dataene, og <code>my_error</code> er forskjellen fra referansepolynomet på det tette rutenettet. <code>assert</code>-linjene stopper forsøket hvis reglene ikke er fulgt.</p>
+<div id="qpyodide-insertion-location-21"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Prøv minst to ideer, og endre én egenskap om gangen. Det beste forsøket er ikke nødvendigvis det med størst tall. Du må også kunne forklare hvorfor plasseringen av punktene skjuler feilpolynomet.</p>
+</section>
+<section id="samlet-analyse-forklar-hva-forsøkene-viste" class="level2">
+<h2 class="anchored" data-anchor-id="samlet-analyse-forklar-hva-forsøkene-viste">Samlet analyse: Forklar hva forsøkene viste</h2>
+<p>Skriv en sammenhengende analyse på omtrent <strong>400–600 ord</strong>. Figurer og tabeller underbygger analysen, men de erstatter ikke forklaringen.</p>
+<p>Analysen skal skille tydelig mellom:</p>
+<ol type="1">
+<li>polynomrommet og koordinatene i en valgt basis;</li>
+<li>avlesningsavbildningen og matrisen som representerer den;</li>
+<li>eksakt informasjonstap og numerisk nesten-informasjonstap;</li>
+<li>effekten av å bytte basis med punktene faste;</li>
+<li>effekten av å flytte avlesningspunktene med basisen fast;</li>
+<li>algebraisk likeverdighet og numerisk pålitelighet.</li>
+</ol>
+<p>Besvar også følgende hovedspørsmål:</p>
+<ul>
+<li>Hvilket eksperiment ga den største forskjellen, og hvor stor var den?</li>
+<li>Hvor i intervallet oppstod de største feilene?</li>
+<li>Hvilke store tall eller nesten-kanselleringer fant du?</li>
+<li>Hva var nesten usynlig for avlesningsavbildningen?</li>
+<li>Hvilke påstander har du vist matematisk, og hvilke bygger bare på numeriske forsøk?</li>
+<li>Hva lærte <span class="math inline">\(T_{50}\)</span>-forsøket som ikke allerede var synlig ved grad 3?</li>
+</ul>
+</section>
+<section id="dette-skal-leveres" class="level2">
+<h2 class="anchored" data-anchor-id="dette-skal-leveres">Dette skal leveres</h2>
+<p>Lever én Quarto-side eller notebook med:</p>
+<ol type="1">
+<li>håndregnede <span class="math inline">\(T_2,T_3,T_4\)</span> og kontroll av rekursjonen;</li>
+<li>oppvarmingsfigurene og observasjonene dine;</li>
+<li>basis- og rangargumentet for <span class="math inline">\(T_0,\ldots,T_4\)</span>;</li>
+<li>begge avlesningsmatrisene i lav grad og nullromseksperimentet;</li>
+<li>resultater og feilfigur for basiseksperimentet ved grad 30;</li>
+<li>resultater, punktfigur og feilpolynom for forsøket med avlesningspunkter;</li>
+<li><span class="math inline">\(T_{50}\)</span>-resultatene og forklaringen på sammenbruddet;</li>
+<li>minst to forsøk i den åpne utfordringen;</li>
+<li>den samlede analysen.</li>
+</ol>
+<p>Oppgi alltid grad, punkter, størrelsen på forstyrrelsen og rutenettstørrelse sammen med et resultat. Ellers kan forsøket ikke gjentas.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advarsel</span>Krav til kodeassistenter og numeriske påstander
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Kodeassistenter kan hjelpe med Python-syntaks og plotting, men de kan også blande sammen effekten av basisvalg og plasseringen av avlesningspunktene. Du må kunne forklare hvorfor hvert eksperiment bare endrer én av dem.</p>
+<p>Et tall fra <code>np.linalg.solve</code> er ikke i seg selv en matematisk forklaring. Kontroller dimensjoner, rang, residualer og hva koordinatene representerer. Påstander om «stabilitet» skal støttes av konkrete forstyrrelser og beregnede feil.</p>
+</div>
+</div>
+<p>Neste steg er <a href="../pages/project_week4.html">prosjekt 4: Når målingene ikke passer</a>, der flere støyfylte målinger leder til projeksjon, QR og minste kvadrater.</p>
+<details class="ctm-reveal details">
+<summary>
+Python: delte definisjoner og hjelpefunksjoner
+</summary>
+<div class="ctm-reveal-body">
+<div id="ide-project_week3-reference-assumptions" class="ai-feedback-context">
+<p>Referansen beskriver kursets opprinnelige oppsett og delte definisjoner. Den aktuelle cellens kode og tilgjengelige kjøringsresultater vurderes sammen med dette. Hvis du endrer en delt definisjon i en annen celle, ta med den endrede definisjonen i koden eller kommentarene du ber om tilbakemelding på.</p>
+</div>
+<div id="ide-project_week3-chebyshev-table-6cc5accb" class="ai-feedback-context">
+<p><code>chebyshev_table(x, n)</code></p>
+<p>Konverterer x til float-array; returnerer form x.shape+(n+1,) med T_0,…,T_n langs siste akse. Bygger tabellen fra T_0=1, T_1=x og treleddsrekursjonen; n forutsettes ikke-negativ.</p>
+</div>
+<div id="ide-project_week3-np-6f11581d" class="ai-feedback-context">
+<p><code>np</code></p>
+<p>Importert med <code>import numpy as np</code>; NumPy-arrays, lineær algebra og tilfeldighet er tilgjengelig gjennom np.</p>
+</div>
+<div id="ide-project_week3-c-small-1e2e5a92" class="ai-feedback-context">
+<p><code>C_small</code></p>
+<p>Chebyshev-matrisen chebyshev_matrix(points_small,3), form (4,4), med rad i for points_small[i] og kolonne k for T_k.</p>
+</div>
+<div id="ide-project_week3-m-small-6bfc516b" class="ai-feedback-context">
+<p><code>M_small</code></p>
+<p>Monomialmatrisen monomial_matrix(points_small,3), forventet form (4,4). Rad i svarer til points_small[i], og kolonne j til x**j; krever at studentens monomial_matrix er fullført.</p>
+</div>
+<div id="ide-project_week3-cheb-1e0b010a" class="ai-feedback-context">
+<p><code>cheb</code></p>
+<p>Importert med <code>from numpy.polynomial import chebyshev as cheb</code>; Chebyshev-koeffisienter står i stigende grad, og cheb.chebval evaluerer dem.</p>
+</div>
+<div id="ide-project_week3-points-small-90387913" class="ai-feedback-context">
+<p><code>points_small</code></p>
+<p>Float-vektoren np.array([-1.0,-1/3,1/3,1.0]); fire forskjellige avlesningspunkter for polynomer av grad 3.</p>
+</div>
+<div id="ide-project_week3-poly-894ef2d6" class="ai-feedback-context">
+<p><code>poly</code></p>
+<p>Importert med <code>from numpy.polynomial import polynomial as poly</code>; monomialkoeffisienter står i stigende grad, og poly.polyval evaluerer dem.</p>
+</div>
+<div id="ide-project_week3-monomial-matrix-4391e9ee" class="ai-feedback-context">
+<p><code>monomial_matrix(points, n)</code></p>
+<p>Studentens avlesningsmatrise for en 1D-punktvektor og grad n: forventet form (len(points),n+1), med rad i for punkt i og kolonne j for x**j fra grad 0. Startskissen hever NotImplementedError og må fullføres før senere forsøk.</p>
+</div>
+<div id="ide-project_week3-monomial-true-789ac4f4" class="ai-feedback-context">
+<p><code>monomial_true</code></p>
+<p>np.array([1.0,-2.0,0.5,1.0]), koeffisienter i stigende monomialgrad. Referansepolynomet er 1 - 2x + 0.5x² + x³.</p>
+</div>
+<div id="ide-project_week3-plt-7be21394" class="ai-feedback-context">
+<p><code>plt</code></p>
+<p>Importert med <code>import matplotlib.pyplot as plt</code>; Matplotlibs pyplot er tilgjengelig gjennom plt.</p>
+</div>
+<div id="ide-project_week3-points-three-4e89b03e" class="ai-feedback-context">
+<p><code>points_three</code></p>
+<p>points_small[:-1], altså np.array([-1.0,-1/3,1/3]); tre avlesningspunkter til forsøket med for få målinger for et grad-3-polynom.</p>
+</div>
+<div id="ide-project_week3-x-dense-a120796e" class="ai-feedback-context">
+<p><code>x_dense</code></p>
+<p>np.linspace(-1,1,1001), et tett evalueringsrutenett i [-1,1]. Brukes til å sammenligne polynomkurver mellom målepunktene, ikke som nye avlesninger til systemet.</p>
+</div>
+<div id="ide-project_week3-chebyshev-matrix-49f2042e" class="ai-feedback-context">
+<p><code>chebyshev_matrix(points, n)</code></p>
+<p>Returnerer chebyshev_table(points,n). For en 1D-punktvektor får matrisen form (len(points),n+1), rad i = punkt i og kolonne k = T_k evaluert i punktene.</p>
+</div>
+<div id="ide-project_week3-chebyshev-points-9c6634dc" class="ai-feedback-context">
+<p><code>chebyshev_points(n)</code></p>
+<p>Returnerer en vektor med n+1 cosinusfordelte, forskjellige punkter i (-1,1): cos((2k+1)π/(2(n+1))) for k=0,…,n.&nbsp;Endepunktene ±1 er ikke inkludert.</p>
+</div>
+<div id="ide-project_week3-max-grid-error-b3661a5a" class="ai-feedback-context">
+<p><code>max_grid_error(values, reference)</code></p>
+<p>Returnerer float(np.max(np.abs(values-reference))). Input sammenlignes elementvis; maksimum på et endelig rutenett er en måling og ikke et bevis for maksimum på hele intervallet.</p>
+</div>
+<div id="ide-project_week3-reference-coordinates-8e58a20d" class="ai-feedback-context">
+<p><code>reference_coordinates(n)</code></p>
+<p>Returnerer n+1 deterministiske Chebyshev-koeffisienter c_k=(-1)^k/(k+1)^2 for k=0,…,n.&nbsp;Dette definerer samme moderate referansepolynom ved gjentatte forsøk.</p>
+</div>
+<div id="ide-project_week3-compare-bases-2e0b251a" class="ai-feedback-context">
+<p><code>compare_bases(n, grid_size=2001)</code></p>
+<p>Samme referansepolynom og n+1 Chebyshev-punkter brukes i to kvadratiske solve-systemer. Returnerer dict med n,points,measurements,grid,reference,monomial_values,chebyshev_values,monomial_coordinates,chebyshev_coordinates,monomial_error,chebyshev_error. Kurver/feil evalueres på grid_size punkter i [-1,1]; koeffisientene tilhører ulike basiser.</p>
+</div>
+<div id="ide-project_week3-basis-data-52b41529" class="ai-feedback-context">
+<p><code>basis_data</code></p>
+<p>Resultatdict fra compare_bases(30): samme grad-30-polynom rekonstruert i monomial- og Chebyshev-basis fra 31 målinger, med standard evalueringsrutenett på 2001 punkter.</p>
+</div>
+<div id="ide-project_week3-cheb-points-a8daaa35" class="ai-feedback-context">
+<p><code>cheb_points</code></p>
+<p>chebyshev_points(n); n+1 cosinusfordelte avlesningspunkter uten endepunktene. Med startverdien n=30 er formen (31,).</p>
+</div>
+<div id="ide-project_week3-equal-points-6d1ee98f" class="ai-feedback-context">
+<p><code>equal_points</code></p>
+<p>np.linspace(-1.0,1.0,n+1); n+1 jevnt fordelte avlesningspunkter inklusive endepunktene. Med startverdien n=30 er formen (31,).</p>
+</div>
+<div id="ide-project_week3-n-c51783d1" class="ai-feedback-context">
+<p><code>n</code></p>
+<p>I punktplasseringsforsøket settes n=30; graden n krever n+1=31 avlesningspunkter. Verdien kan endres ved ny kjøring av studentcellen.</p>
+</div>
+<div id="ide-project_week3-cheb-data-3b1d810c" class="ai-feedback-context">
+<p><code>cheb_data</code></p>
+<p>Resultatdict fra point_placement_experiment(n,cheb_points,noise_size=1e-10); bruker cosinusfordelte punkter og standard grid_size=5001. Samme referansepolynom og fortegnsmønster som equal_data.</p>
+</div>
+<div id="ide-project_week3-equal-data-89ad45a2" class="ai-feedback-context">
+<p><code>equal_data</code></p>
+<p>Resultatdict fra point_placement_experiment(n,equal_points,noise_size=1e-10); bruker jevnt fordelte punkter og standard grid_size=5001. Samme referansepolynom og fortegnsmønster som cheb_data.</p>
+</div>
+<div id="ide-project_week3-point-placement-experiment-bb8dcd1e" class="ai-feedback-context">
+<p><code>point_placement_experiment(n, points, noise_size=1e-10, grid_size=5001)</code></p>
+<p>Forutsetter n+1 punkter og løsbart Chebyshev-system. Legger samme alternerende støy noise_size*(-1)^k til referanseavlesningene og løser for koeffisientene. Returnerer n,points,noise,grid,error,max_data_error,max_curve_error; error er perturbert minus referansekurve på grid_size punkter i [-1,1].</p>
+</div>
+<div id="ide-project_week3-x0-b8af24e1" class="ai-feedback-context">
+<p><code>x0</code></p>
+<p>Skalaren x0=0.99; evalueringspunkt for å sammenligne samme polynom skrevet i monomial- og Chebyshev-koordinater.</p>
+</div>
+</div>
+</details>
+
+
+<!--ctm-save-generated--><script type="application/json" id="ctm-store-manifest">{"course":"ingmat3a-ntnu-linalg-preview","exercises":[{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-2","order":1,"runtimeId":"ctm-runtime-1","save":true,"source":"a133a1ad2244edbf"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-2","order":2,"runtimeId":"ctm-runtime-2","save":true,"source":"ed4be0313d870a01"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-3","order":3,"runtimeId":"ctm-runtime-3","save":true,"source":"04ba88794ec92bee"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-3","order":4,"runtimeId":"ctm-runtime-4","save":true,"source":"0ba6263d84613b62"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-4","order":5,"runtimeId":"ctm-runtime-5","save":true,"source":"635ef75defb45ef3"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-4","order":6,"runtimeId":"ctm-runtime-6","save":true,"source":"d3a5cb893faa1688"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-5","order":7,"runtimeId":"ctm-runtime-7","save":true,"source":"c7cd3b4b5a5262c1"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-5","order":8,"runtimeId":"ctm-runtime-8","save":true,"source":"cba53424b0a7b7f7"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-6","order":9,"runtimeId":"ctm-runtime-9","save":true,"source":"cb9043bc79fa3f0c"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-6","order":10,"runtimeId":"ctm-runtime-10","save":true,"source":"2c694765b6303129"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-7","order":11,"runtimeId":"ctm-runtime-11","save":true,"source":"d982ef1e21278ee6"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-7","order":12,"runtimeId":"ctm-runtime-12","save":true,"source":"a06bc5a8942ce73a"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-8","order":13,"runtimeId":"ctm-runtime-13","save":true,"source":"8d584f371103bed5"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-8","order":14,"runtimeId":"ctm-runtime-14","save":true,"source":"62dbb1a4b64a1552"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-9","order":15,"runtimeId":"ctm-runtime-15","save":true,"source":"fa455bf099d67ce2"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-9","order":16,"runtimeId":"ctm-runtime-16","save":true,"source":"45bb6e9111fefc84"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-10","order":17,"runtimeId":"ctm-runtime-17","save":true,"source":"85ccff09d2014e5c"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-10","order":18,"runtimeId":"ctm-runtime-18","save":true,"source":"9ea49626ca09d232"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-11","order":19,"runtimeId":"ctm-runtime-19","save":true,"source":"bb487cf787936f19"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-11","order":20,"runtimeId":"ctm-runtime-20","save":true,"source":"90185df1073866a0"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-12","order":21,"runtimeId":"ctm-runtime-21","save":true,"source":"1506ee2f51415fc3"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-12","order":22,"runtimeId":"ctm-runtime-22","save":true,"source":"2be005664983d08b"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-13","order":23,"runtimeId":"ctm-runtime-23","save":true,"source":"ea5071a75d0e2f2f"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-13","order":24,"runtimeId":"ctm-runtime-24","save":true,"source":"cf7ab701ad4f8947"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-14","order":25,"runtimeId":"ctm-runtime-25","save":true,"source":"d17dd9f32a2b39ed"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-14","order":26,"runtimeId":"ctm-runtime-26","save":true,"source":"890dd605a6cd339b"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-15","order":27,"runtimeId":"ctm-runtime-27","save":true,"source":"76bfddf239c04cb1"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-15","order":28,"runtimeId":"ctm-runtime-28","save":true,"source":"cd80adf20f300a72"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-16","order":29,"runtimeId":"ctm-runtime-29","save":true,"source":"4c2f11fb106390ea"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-16","order":30,"runtimeId":"ctm-runtime-30","save":true,"source":"024ea1d6c2ed9079"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-17","order":31,"runtimeId":"ctm-runtime-31","save":true,"source":"a0f976f4b43361c9"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-17","order":32,"runtimeId":"ctm-runtime-32","save":true,"source":"0922b040e8f12f56"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-18","order":33,"runtimeId":"ctm-runtime-33","save":true,"source":"c82b437634af1f20"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-18","order":34,"runtimeId":"ctm-runtime-34","save":true,"source":"717991fb46f002aa"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-19","order":35,"runtimeId":"ctm-runtime-35","save":true,"source":"12d175b3117973a8"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-19","order":36,"runtimeId":"ctm-runtime-36","save":true,"source":"54d1f0bc5c52ca1a"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-20","order":37,"runtimeId":"ctm-runtime-37","save":true,"source":"9f468077fcc8be14"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-20","order":38,"runtimeId":"ctm-runtime-38","save":true,"source":"dfc01d7f43500abd"},{"component":"pyodide-interaktiv","id":"ingmat-ide-projects-week3-chebyshev-sampling-21","order":39,"runtimeId":"ctm-runtime-39","save":true,"source":"0ccdfa282a4dcfbf"},{"component":"pyodide-interaktiv","id":"extra:ingmat-ide-projects-week3-chebyshev-sampling-21","order":40,"runtimeId":"ctm-runtime-40","save":true,"source":"07321928249b1da1"}],"export":true,"messages":{"clearFailed":"Nettleserlagringen kunne ikke slettes eller oppdateres. Fjern emnedataene i nettleserinnstillingene.","confirmClearCourse":"Slett alle de lagrede svarene dine i dette emnet?","confirmNewVariant":"Erstatt svarene du har fylt ut med en ny variant?","confirmSaveOff":"Dette sletter alle lagrede svar i dette emnet og slutter å lagre.","copyAll":"Kopier alt","correct":"✓ riktig","downloadHTML":"Last ned .html","downloadMarkdown":"Last ned .md","exercise":"Oppgave","exportClose":"Lukk","exportTitle":"Eksporter svarene mine","lastResult":"Siste resultat","locale":"nb","outdated":"Utdatert","partial":"½ delvis","progressTitle":"Fremdrift på siden","recordTooLarge":"Dette svaret er for stort til å lagres. Kopier det før du forlater siden.","saveOff":"Ikke lagre på denne enheten","saveOn":"Lagre igjen","savingDisabled":"Lagring er slått av for denne siden.","savingNotice":"Svarene dine lagres bare i denne nettleseren.","savingOffNotice":"Lagring er slått av på denne enheten for dette emnet.","showSaved":"Vis svaret ditt","sourceChanged":"Oppgaven er endret siden du svarte.","statusCorrect":"riktig","statusInvalid":"ugyldig","statusPartial":"delvis riktig","statusWrong":"feil","storageUnavailable":"Lagring er ikke tilgjengelig. Svarene dine beholdes bare i minnet på denne siden.","total":"{score} av {count}","unattempted":"– ikke prøvd","variantChanged":"Denne varianten er endret.","variantWithdrawn":"Denne varianten er trukket tilbake.","wrong":"✗ feil"},"progress":true,"quizzes":[],"save":true,"v":1}</script>
+<!--ctm-layout-generated--><span id="ctm-layout-ready" hidden=""></span>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Kopiert!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Kopiert!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/linalg\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Publisert under <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.en">CC BY-SA 4.0</a>.</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-cell-classes.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-cell-initialization.js" type="module"></script>
+</body></html>

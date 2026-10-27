@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Prosjekt 7 – Behold informasjonen som betyr noe – Matematikk 3A</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-e451d5fd0f9f7132a26567a44e8d50ee.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/ctm-coi-frame-startup-1/coi-frame-startup.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-assets-0.9.0/assets.js"></script>
+<link href="../site_libs/quarto-contrib/ctm-ui-0.9.0/ctm-ui.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/ctm-layout-0.9.0/ctm-layout.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-reveal-0.9.0/ctm-reveal.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-nav-0.9.0/ctm-nav.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-core.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/feedback-dom.js"></script>
+<script src="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.js"></script>
+<link href="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/ctm-runtime-0.9.0/pyodide-runtime.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-worker-0.9.0/pyodide-worker.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-0.9.0/ctm-locale.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-0.9.0/common.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-ui-0.9.0/ui.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-copy-0.9.0/ctm-copy.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-store-0.9.0/ctm-store.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-locale-pyodide-interaktiv-0.9.0/pyodide-interaktiv.js"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-locale.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-storage.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-document-status.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-storage-settings.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-worker-plugin.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-document-engine-initialization.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-canvas-plots.js" type="module"></script>
+<link href="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-styling.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-feedback-1.10.0/qpyodide-feedback.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/ctm-export-0.9.0/ctm-export.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-progress-0.9.0/ctm-progress.js"></script>
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Ingen resultater",
+    "search-matching-documents-text": "Samsvarende dokumenter",
+    "search-copy-link-title": "Kopier link for å søke",
+    "search-hide-matches-text": "Skjul ytterlige resultater",
+    "search-more-match-text": "annet resultat i dette dokumentet",
+    "search-more-matches-text": "andre resultater i dette dokumentet",
+    "search-clear-button-title": "Tøm",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Avbryt",
+    "search-submit-button-title": "Send inn",
+    "search-label": "Søk"
+  }
+}</script>
+<script>globalThis.CTM_ASSETS={"bases":{"font-awesome":"https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/","jsxgraph":"https://cdn.jsdelivr.net/npm/jsxgraph@1.14.1/","katex":"https://cdn.jsdelivr.net/npm/katex@0.16.47/","mathjax-newcm-font":"https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/","mathjax3":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/","mathjax4":"https://cdn.jsdelivr.net/npm/mathjax@4.1.3/","monaco-editor":"https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/","pyodide":"https://cdn.jsdelivr.net/pyodide/v0.28.3/full/","source-sans-pro":"https://cdn.jsdelivr.net/npm/@fontsource/source-sans-pro@5.3.0/"},"mode":"cdn","v":1};</script>
+<script src="../coi-serviceworker.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/editor/editor.main.css">
+<script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/js/all.min.js" defer="" crossorigin="anonymous"></script>
+<script type="text/javascript">
+// qpyodide-document-settings.js – document-wide settings (template)
+//
+// This file is a template: the {{PLACEHOLDERS}} are replaced by the Lua
+// filter (qpyodide.lua, function initializationPyodide) during rendering.
+// It's injected as the first module into the <head>, so that all further
+// modules can access the global settings.
+
+// Document level settings ----
+
+// Determine if we need to install python packages
+globalThis.qpyodideInstallPythonPackagesList = [''];
+
+// Check to see if we have an empty array, if we do set to skip the installation.
+globalThis.qpyodideSetupPythonPackages = !(qpyodideInstallPythonPackagesList.indexOf("") !== -1);
+
+// Automatically preload the HTTP shim and plotting packages? Defaults to true.
+// Explicit pyodide: packages entries still install when this is false.
+globalThis.qpyodidePreloadPackages = true;
+
+// Display a startup message?
+globalThis.qpyodideShowStartupMessage = true;
+
+// Describe the Pyodide settings that should be used.
+// Data only (no functions) – the configuration is passed to the Pyodide
+// web worker via postMessage; the worker collects stdout/stderr itself.
+globalThis.qpyodideCustomizedPyodideOptions = {
+  "indexURL": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/",
+  "env": {
+    "HOME": "/home/pyodide",
+  }
+}
+
+// Interactive plot backend ----
+//
+// "webagg" (Pyodide 0.28+), "html5-canvas" (an older Pyodide pinned via
+// `pyodide: base-url:`) or "auto" (the base URL names no version; decided
+// from the loaded Pyodide). See qpyodide-canvas-plots.js.
+globalThis.qpyodideCanvasBackend = "webagg";
+
+// UI language for this render pass ----
+//
+// Set by the Lua filter (ctm.locale: `pyodide: lang:`, `ctm-assessment: lang:`,
+// Quarto's own `lang:`): a language of the catalogue (en, de, sv, nb, da).
+globalThis.qpyodideLang = "nb";
+
+// Store cell data
+globalThis.qpyodideCellDetails = [{"code":"# Ferdige forsøksdata og visningshjelpere til SVD-uken.\n# Bildedata lastes lokalt; selve matematikken ligger i SVD, trunkering og uskarphetstransformasjonen.\n# Du trenger ikke endre det kodede portrettet for å undersøke de matematiske valgene.\n\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport base64, zlib\n\n# Original: https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif\n# Gråtoner, skalert til 96 x 96 for korte beregninger i nettleseren.\n_portrait_data = \"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\"\nportrait = np.frombuffer(zlib.decompress(base64.b64decode(_portrait_data)), dtype=np.uint8).reshape(96,96).astype(float)/255\n\n# Like bildedimensjoner gjør parameterbudsjettet sammenlignbart på tvers av mønstre.\ndef challenge_images():\n    n = 96\n    text = np.zeros((n,n))\n    # Fire enkle bokstavformer: H, I, L, I; ingen skrifttypeavhengighet.\n    for col in (8, 30, 52, 74):\n        text[24:72, col:col+5] = 1\n    text[24:72, 20:25] = 1\n    text[46:51, 8:25] = 1\n    text[67:72, 52:69] = 1\n    return {'portrett': portrait.copy(), 'tekst': text,\n            'diagonal': np.eye(n),\n            'tilfeldig': np.random.default_rng(7).random((n,n))}\n\n# Samme gråtoneskala i alle bilder; visning endrer ikke matrisene brukt til feilberegning.\ndef show_images(images):\n    fig, axes = plt.subplots(1, len(images), figsize=(3*len(images),3), squeeze=False)\n    for ax, (name, value) in zip(axes[0], images.items()):\n        ax.imshow(value, cmap='gray', vmin=0, vmax=1)\n        ax.set_title(name); ax.axis('off')\n    plt.tight_layout(); plt.show()\n\n# Visningshjelper: behold k SVD-ledd.\ndef rank_image(A, k):\n    U, s, Vt = np.linalg.svd(A, full_matrices=False)\n    return (U[:, :k]*s[:k]) @ Vt[:k, :]\n\n# Lag kjent signal, uskarpe data og én støyrealisasjon for et kontrollert inversjonsforsøk.\ndef blur_problem(noise_level=.005, seed=17):\n    n = 80\n    t = np.linspace(0, 1, n)\n    truth = ((t>.2)&(t<.4)).astype(float) + .6*np.exp(-((t-.72)/.06)**2)\n    # Hver rad beskriver hvordan én resultatkoordinat beregnes fra signalverdier i nærliggende posisjoner.\n    H = np.exp(-.5*((t[:,None]-t[None,:])/.035)**2)\n    # Radsum 1 gjør at et konstant signal forblir konstant etter glatting.\n    H /= H.sum(axis=1, keepdims=True)\n    # Dette er data uten støy; støyen legges til etter at signalet er glattet.\n    clean = H @ truth\n    observed = clean + noise_level*np.random.default_rng(seed).standard_normal(n)\n    return t, H, truth, clean, observed","id":1,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"week7-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"week7-setup","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"# Ferdige forsøksverktøy. Rangregelen bruker bare data og oppgitt støynorm.\n# Feil mot fasiten beregnes etterpå og påvirker ikke rangvalget.\n\ndef _choose_svd_rank(residuals, delta, tau):\n    if delta <= 0 or tau < 1:\n        raise ValueError('Bruk positivt støynivå og tau >= 1.')\n    admissible = np.flatnonzero(residuals <= tau*delta)\n    return int(admissible[0]) if admissible.size else None\n\n\ndef image_svd_trial(noise_level=.12, seed=23, tau=1.05, image_name='portrett'):\n    if noise_level <= 0:\n        raise ValueError('Bruk positivt støynivå.')\n    C = challenge_images()[image_name]\n    E = noise_level*np.random.default_rng(seed).standard_normal(C.shape)\n    Y = C+E\n    U,s,Vt = np.linalg.svd(Y,full_matrices=False)\n    delta = np.linalg.norm(E,'fro')\n    # Ingen klipping av data eller rekonstruksjon før feilberegningen.\n    residuals = np.sqrt(np.r_[np.cumsum(s[::-1]**2)[::-1],0.])\n    k = _choose_svd_rank(residuals,delta,tau)\n    # Ortonormale koordinater gir de to leddene i prosjektets feilidentitet.\n    signal_coordinates, noise_coordinates = U.T@C, U.T@E\n    signal_energy = np.sum(signal_coordinates**2,axis=1)\n    noise_energy = np.sum(noise_coordinates**2,axis=1)\n    lost = np.r_[np.cumsum(signal_energy[::-1])[::-1],0.]\n    kept = np.r_[0.,np.cumsum(noise_energy)]\n    errors = np.sqrt(lost+kept)\n    Yk = (U[:,:k]*s[:k])@Vt[:k,:]\n    actual_error = np.linalg.norm(Yk-C,'fro')\n    print(f'Frø {seed}; delta = {delta:.6g}; tau = {tau}; valgt rang = {k}')\n    print('Alle normer i tabellen er absolutte Frobeniusnormer.')\n    print('                  Rang    Dataavvik    Feil mot rent bilde')\n    print(f'Valgt             {k:4d}    {np.linalg.norm(Y-Yk):9.4g}    {actual_error:9.4g}')\n    print(f'Ubehandlet Y      {len(s):4d}    {0.:9.4g}    {delta:9.4g}')\n    print('Feil² direkte:',actual_error**2,\n          '= tapt signal² + beholdt støy²:',lost[k],'+',kept[k])\n    best = int(np.argmin(errors))\n    print(f'Beste rang mot fasit (bare etterpå): {best}; feil = {errors[best]:.6g}')\n    ranks = np.arange(len(s)+1)\n    fig,ax = plt.subplots(figsize=(7,4))\n    ax.plot(ranks,residuals,label='Avvik mot Y')\n    ax.plot(ranks,errors,label='Feil mot C')\n    ax.plot(ranks,np.sqrt(lost),'--',label='Tapt signal')\n    ax.plot(ranks,np.sqrt(kept),'--',label='Beholdt støy')\n    ax.axhline(tau*delta,color='gray',linestyle=':',label='Tillatt dataavvik')\n    ax.axvline(k,color='black',linestyle=':')\n    ax.set(xlabel='Antall komponenter k',ylabel='Absolutt Frobeniusnorm')\n    ax.legend(); fig.tight_layout(); plt.show()\n    # To bilder i bredden, samme gråtoneskala; figurene endrer ikke dataene.\n    fig,axes = plt.subplots(1,2,figsize=(7,3.5))\n    for ax,M,title in zip(axes,[Y,Yk],['Data med støy',f'Regelens valg: k={k}']):\n        ax.imshow(M,cmap='gray',vmin=0,vmax=1); ax.set_title(title); ax.axis('off')\n    fig.tight_layout(); plt.show()\n    return dict(k=k,delta=delta,residuals=residuals,errors=errors,\n                lost_squared=lost,noise_squared=kept,singular_values=s,\n                C=C,E=E,Y=Y,reconstruction=Yk)\n\n\ndef signal_svd_trial(noise_level=.005, seed=17, tau=1.05):\n    if noise_level <= 0:\n        raise ValueError('Bruk positivt støynivå.')\n    t,H,truth,clean,b = blur_problem(noise_level=noise_level,seed=seed)\n    eta = b-clean\n    U,s,Vt = np.linalg.svd(H,full_matrices=False)\n    delta = np.linalg.norm(eta)\n    beta,alpha,e = U.T@b,Vt@truth,U.T@eta\n    cutoff = max(H.shape)*np.finfo(float).eps*s[0]\n    cap = int(np.sum(s>cutoff))\n    ranks = np.arange(cap+1)\n    # Resterende datakoordinater teller med også når rangsøket stopper ved cap.\n    residual_formula = np.sqrt(np.r_[np.cumsum(beta[::-1]**2)[::-1],0.])[:cap+1]\n    k = _choose_svd_rank(residual_formula,delta,tau)\n    print(f'Frø {seed}; delta = {delta:.6g}; tau = {tau}; største tillatte rang = {cap}')\n    if k is None:\n        print('Ingen numerisk tillatt rang oppfyller residualkravet.')\n        return dict(k=None,delta=delta,cap=cap)\n    # Hver kolonne i solutions er en rekonstruksjon; første kolonne er x_0=0.\n    increments = Vt[:cap,:].T*(beta[:cap]/s[:cap])\n    solutions = np.column_stack([np.zeros(H.shape[1]),np.cumsum(increments,axis=1)])\n    residuals = np.linalg.norm(b[:,None]-H@solutions,axis=0)\n    errors = np.linalg.norm(solutions-truth[:,None],axis=0)\n    amplified = np.r_[0.,np.cumsum((e[:cap]/s[:cap])**2)]\n    lost = np.r_[np.cumsum(alpha[::-1]**2)[::-1],0.][:cap+1]\n    print('Alle normer i tabellen er absolutte euklidske normer.')\n    print('                  Rang    Residual    Rekonstruksjonsfeil')\n    for label,j in [('Regelens valg',k),('Fast referanse',5)]:\n        if j <= cap:\n            print(f'{label:17s} {j:4d}    {residuals[j]:9.4g}    {errors[j]:9.4g}')\n    print('Feil² direkte:',errors[k]**2,\n          '= forsterket støy² + tapt signal²:',amplified[k],'+',lost[k])\n    print('Residual² direkte / koordinatformel:',residuals[k]**2,residual_formula[k]**2)\n    best = int(np.argmin(errors))\n    print(f'Beste tillatte rang mot fasit (bare etterpå): {best}; feil = {errors[best]:.6g}')\n    fig,axes = plt.subplots(2,1,figsize=(7,7))\n    axes[0].semilogy(ranks,np.maximum(residuals,1e-16),label='Residual mot b')\n    axes[0].semilogy(ranks,np.maximum(errors,1e-16),label='Feil mot kjent signal')\n    axes[0].axhline(tau*delta,color='gray',linestyle=':',label='Tillatt residual')\n    axes[0].axvline(k,color='black',linestyle=':')\n    axes[0].set(xlabel='Antall beholdte retninger k',ylabel='Absolutt norm (logaritmisk)')\n    axes[1].plot(t,truth,label='Kjent signal')\n    axes[1].plot(t,solutions[:,k],label=f'Regelens valg: k={k}')\n    if cap >= 5:\n        axes[1].plot(t,solutions[:,5],'--',label='Fast referanse: k=5')\n    axes[1].set(xlabel='Posisjon',ylabel='Signalverdi')\n    for ax in axes: ax.legend(); ax.grid(alpha=.25)\n    fig.tight_layout(); plt.show()\n    return dict(k=k,delta=delta,cap=cap,residuals=residuals,errors=errors,\n                residual_formula=residual_formula,lost_squared=lost,\n                noise_squared=amplified,singular_values=s,\n                H=H,b=b,truth=truth,eta=eta,reconstruction=solutions[:,k])","id":2,"options":{"autorun":"true","classes":"","code-fold":"show","comment":"","context":"setup","dpi":72,"echo":"","eval":"","feedback-context":"","feedback-policy":"","feedbackContext":{"mode":"auto","refs":"auto","text":""},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project-week7-setup","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project-week7-setup","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"def svd_image(Y, k):\n    U, s, Vt = np.linalg.svd(Y, full_matrices=False)\n    # TODO: returner summen av de k første SVD-leddene.\n    raise NotImplementedError('Fullfør rang-k-rekonstruksjonen')","id":3,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"1d8d3d7696269b95","ctm-store-id":"project7-student-image","ctm-store-save":true,"ctm-store-source":"d958b2580de80aea","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week7-reference-assumptions, ide-project_week7-np-6f11581d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week7-reference-assumptions, ide-project_week7-np-6f11581d","text":"Kodespor A1: bygg samme tabell med SVD\nFullfør funksjonen nedenfor med produktet av de første \\(k\\) SVD-leddene. Bruk @ til matrisemultiplikasjon; s er en vektor, ikke en diagonalmatrise. Funksjonen skal også gi nullmatrisen for \\(k=0\\)."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-student-image","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project7-student-image","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"result_A = image_svd_trial(noise_level=.12, seed=23, tau=1.05)","id":4,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"53f85e662f9a7cd8","ctm-store-id":"project7-image-first","ctm-store-save":true,"ctm-store-source":"19fcae01accc9ef6","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week7-reference-assumptions, ide-project_week7-image-svd-trial-f45a5335","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week7-reference-assumptions, ide-project_week7-image-svd-trial-f45a5335","text":"Kodespor A3: implementer beslutningsregelen\nSkriv choose_rank(residuals, delta, tau=1.05). Element residuals[k] er dataavviket ved rang \\(k\\), inkludert rang null. Returner første indeks som oppfyller kravet, eller None hvis ingen gjør det. Funksjonen skal ikke ha tilgang til det rene bildet eller feilene mot fasiten.\nBegrunn først svarene, og kontroller deretter disse tre tilfellene med \\(\\delta=1\\) og \\(\\tau=1.05\\):\n[3., 1., 0.]: én rang er den første tillatte;\n[.5, .2, 0.]: allerede null rang oppfyller kravet;\n[3., 2.]: ingen av de oppgitte rangene er tillatt.\nHjelperen nedenfor bruker et \\(96\\times96\\)-portrett og uavhengige normale støyverdier med standardavvik noise_level. I dette kontrollerte forsøket settes \\(\\delta=\\|E\\|_F\\). Støynormen brukes til rangvalget; det rene bildet brukes bare til feilanalysen. Regelen søker alle ranger, også null."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-image-first","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project7-image-first","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"def svd_solve(H, b, k):\n    U, s, Vt = np.linalg.svd(H, full_matrices=False)\n    cutoff = max(H.shape)*np.finfo(float).eps*s[0]\n    if not 0 <= k <= np.count_nonzero(s > cutoff):\n        raise ValueError('Velg en rang innenfor den numeriske grensen')\n    # TODO: beregn de k datakoordinatene og rekonstruer løsningen.\n    raise NotImplementedError('Fullfør trunkert inversjon')","id":5,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"cc4943dee96cd683","ctm-store-id":"project7-student-inverse","ctm-store-save":true,"ctm-store-source":"0f208dcb40926796","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week7-reference-assumptions, ide-project_week7-np-6f11581d","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week7-reference-assumptions, ide-project_week7-np-6f11581d","text":"Kodespor B1: implementer den trunkerte inversjonen\nFullfør funksjonen fra SVD-formelen som kommer i B2. Projiser \\(b\\) på de beholdte venstre singulærvektorene, del koordinatene på singulærverdiene, og bygg løsningen med høyre singulærvektorer. Ikke bruk inv, solve eller pinv inne i funksjonen. Numerisk ubrukelige retninger avvises av den ferdige kontrollen."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-student-inverse","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project7-student-inverse","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"result_B = signal_svd_trial(noise_level=.005, seed=17, tau=1.05)","id":6,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"d1ead140384a662e","ctm-store-id":"project7-signal-first","ctm-store-save":true,"ctm-store-source":"81a64f80aa2f5494","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week7-reference-assumptions, ide-project_week7-signal-svd-trial-2f5b02f2","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week7-reference-assumptions, ide-project_week7-signal-svd-trial-2f5b02f2","text":"B3. Velg hvor inversjonen skal stoppe\nAnta at vi kjenner en øvre grense \\(\\delta>0\\) for \\(\\|\\eta\\|_2\\). Velg den minste \\(k\\) slik at\n\\[\\|b-Hx_k\\|_2\\leq\\tau\\delta,\\qquad\\tau=1.05.\\]\nDette er samme diskrepansprinsipp som i A3, nå brukt på residualen i et likningssystem. Vi krever ikke at rekonstruksjonen forklarer all støyen.\nBruk B2 til å skrive regelen med datakoordinatene \\(\\beta_i\\). Hvorfor kan rangvalget gjøres uten å kjenne \\(x_*\\)?\nFinn rangen regelen velger i begge talltilfellene i B1, med \\(\\delta=|d|\\). Gir den best rekonstruksjon i begge? Hva forteller det om forskjellen mellom en begrunnet regel og et optimalt valg?\nSkriv en forventning før kjøring: Hvordan vil feilen endres hvis vi beholder langt flere retninger enn regelen velger? Bruk B2 til å begrunne svaret, og angi hva som ville utfordre forventningen.\nForsøket bruker 80 signalverdier. Hver rad i \\(H\\) er et normalisert Gauss-filter som blander nærliggende verdier; matrisen er sterkt illkondisjonert. Hjelperen bruker \\(\\delta=\\|\\eta\\|_2\\) fra den kontrollerte støyen. Som i A er støynormen oppgitt forsøksinformasjon, ikke noe vi vanligvis kan beregne fra \\(b\\) alene."},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-signal-first","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project7-signal-first","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"check_A = image_svd_trial(noise_level=.12, seed=24, tau=1.05)","id":7,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"f12376f1ed9aaa74","ctm-store-id":"project7-image-check","ctm-store-save":true,"ctm-store-source":"390e77b063c2d999","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week7-reference-assumptions, ide-project_week7-image-svd-trial-f45a5335","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week7-reference-assumptions, ide-project_week7-image-svd-trial-f45a5335","text":"Samle trådene og kontroller én konklusjon\nDu har nå undersøkt begge problemene. Sammenlign feilformlene fra A2 og B2: Hvorfor kan vi omtale begge som «tapt signal og beholdt støy», og hvorfor er små singulærverdier en ekstra utfordring i B? Sammenlign også med prekondisjonering fra uke 6: bevarer trunkering den eksakte løsningen på samme måte som et invertibelt koordinatskifte?\nVelg deretter én av konklusjonene dine fra A eller B for en kontroll med ny støy. Dette valget gjelder bare kontrollforsøket; begge hoveddelene er obligatoriske. Behold signal/bilde, støynivå og \\(\\tau\\). Skriv hva du forventer før kjøring, og bruk samme regel, ikke den fasitvalgte rangen. Den valgte rangen kan endre seg når dataene endres.\nFor å kontrollere konklusjonen fra A, kjør:"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-image-check","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project7-image-check","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}},{"code":"check_B = signal_svd_trial(noise_level=.005, seed=18, tau=1.05)","id":8,"options":{"autorun":"","classes":"","code-fold":"show","comment":"","context":"","ctm-extra-save":true,"ctm-extra-source":"4a7cfcf238c092b3","ctm-store-id":"project7-signal-check","ctm-store-save":true,"ctm-store-source":"e2f35afcca833665","dpi":72,"echo":"","eval":"","feedback-context":"ide-project_week7-reference-assumptions, ide-project_week7-signal-svd-trial-2f5b02f2","feedback-policy":"","feedbackContext":{"mode":"explicit","refs":"ide-project_week7-reference-assumptions, ide-project_week7-signal-svd-trial-2f5b02f2","text":"Samle trådene og kontroller én konklusjon\nDu har nå undersøkt begge problemene. Sammenlign feilformlene fra A2 og B2: Hvorfor kan vi omtale begge som «tapt signal og beholdt støy», og hvorfor er små singulærverdier en ekstra utfordring i B? Sammenlign også med prekondisjonering fra uke 6: bevarer trunkering den eksakte løsningen på samme måte som et invertibelt koordinatskifte?\nVelg deretter én av konklusjonene dine fra A eller B for en kontroll med ny støy. Dette valget gjelder bare kontrollforsøket; begge hoveddelene er obligatoriske. Behold signal/bilde, støynivå og \\(\\tau\\). Skriv hva du forventer før kjøring, og bruk samme regel, ikke den fasitvalgte rangen. Den valgte rangen kan endre seg når dataene endres.\nFor å kontrollere konklusjonen fra A, kjør:\nFor å kontrollere konklusjonen fra B, kjør i stedet:"},"fig-cap":"","fig-height":5,"fig-width":7,"include":"","label":"project7-signal-check","local-storage":"","message":"true","out-height":"","out-width":"700px","output":"true","pdf-fallback":"","policySelection":{"exercise":"project7-signal-check","name":""},"read-only":"false","results":"markup","save":"","task":"","warning":"true"}}];
+
+// AI feedback feature settings ----
+//
+// enabled : show a Feedback button per interactive cell?
+// storage : default for where credentials are stored
+//           ("local" = localStorage, persistent; "session" = sessionStorage, per tab).
+//           Can be changed by the user in the settings panel.
+// hints   : progressive hints – the hint level rises with each click of the
+//           Feedback button on the same cell.
+// uiLanguage : the language of the feedback interface and of the feedback
+//              (this extension's interface language).
+globalThis.qpyodideFeedbackOptions = {
+  enabled: true,
+  storage: "local",
+  hints: true,
+  uiLanguage: "nb"
+};
+
+// Local-storage autosave feature settings ----
+//
+// enabled : document-wide default (`pyodide: local-storage: true`); a
+//           cell's own `#| local-storage: true/false` overrides this.
+// epoch   : "" (off) unless `pyodide: local-storage-epoch:` was set. When
+//           non-empty, it's folded into every saved-code storage key, so
+//           re-rendering with a new epoch value makes every previously
+//           saved answer on this page unreachable -- an exam-room "next
+//           group gets a clean slate" reset. See qpyodide-storage.js.
+globalThis.qpyodideLocalStorageOptions = {
+  enabled: false,
+  epoch: ""
+};
+
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week7.html">Prosjekt 7 – Behold informasjonen som betyr noe</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Matematikk 3A</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Søk"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Forside</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IDE / Readme</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tall og algoritmer</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 1 – regnetid, binære tall og tall på datamaskiner</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 2 – fikspunktiterasjon</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Numerisk lineær algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 3 – vektorrom, kolonnerom og nullrom</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 4 – ortogonalitet, QR og minste kvadrater</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 5 – egenverdier og gjentatt matrisemultiplikasjon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 6 – iterative metoder for lineære systemer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 7 – singulærverdidekomposisjon</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Optimering</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 8 – introduksjon til optimering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 9 – gradientmetoden og søk uten deriverte</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 10 – Newtons metode</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 11 – lineær programmering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/uke12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 12 – optimering med likhetsbetingelser og Lagranges metode</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Projects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 1 – Floating-point attack</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 2 – Newtonfraktaler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uke 3 – Polynomer i blindsonen</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 4 – Når målingene ikke passer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 5 – Kan vi stole på rangeringen?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 6 – Samme løsning, mindre arbeid?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week7.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Prosjekt 7 – Behold informasjonen som betyr noe</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 9 – Når skalaen bestemmer farten</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 10 – Hvor er jeg? Posisjon fra avstander</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 11 – Hvorfor koster strømmen det den koster?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/project_week12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prosjekt 12 – Kjettingen som henger</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Eksamensoppgaver</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Slå på delen">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/page5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Flyttall og numerisk stabilitet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<script>window.__aiFeedbackPolicies = {"layers":[],"pageLayers":[]};</script>
+<script>window.__aiFeedbackConfig = {"baseUrl":"","mode":"copy","model":""};</script>
+<script>window.__mathExerciseConfig = {"lang":"nb","stopAfter":20};</script>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/loader.js"></script>
+<script type="module" id="qpyodide-monaco-editor-init">
+
+  // Configure the Monaco Editor's loader
+  require.config({
+    paths: {
+      'vs': CTMAssets.url('monaco-editor', 'min/vs')
+    }
+  });
+</script>
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/project_week1.html">Projects</a></li><li class="breadcrumb-item"><a href="../pages/project_week7.html">Prosjekt 7 – Behold informasjonen som betyr noe</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Prosjekt 7 – Behold informasjonen som betyr noe</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!--ctm-save-generated--><div class="ctm-save-bar" role="region" aria-label="Lagrede svar" hidden=""><p class="ctm-save-notice">Svarene dine lagres bare i denne nettleseren.</p><div class="ctm-save-actions"><button type="button" data-ctm-clear-page="">Slett svarene på denne siden</button>
+<button type="button" data-ctm-clear-course="">Slett alle svarene dine i dette emnet</button>
+<button type="button" data-ctm-save-toggle="">Ikke lagre på denne enheten</button>
+<button type="button" data-ctm-export="">Eksporter svarene mine</button></div><span class="ctm-save-status" role="status" aria-live="polite"></span></div>
+<div id="qpyodide-insertion-location-1"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<section id="hvilken-informasjon-bør-vi-beholde" class="level2">
+<h2 class="anchored" data-anchor-id="hvilken-informasjon-bør-vi-beholde">Hvilken informasjon bør vi beholde?</h2>
+<p>En SVD kan brukes til å forenkle et bilde eller rekonstruere et signal. Men hvorfor skulle færre komponenter gi et bedre svar? Og hvilken informasjon risikerer vi å fjerne sammen med støyen?</p>
+<p><strong>Alle gjør både A og B, i denne rekkefølgen.</strong> I hver del skal du regne på et lite eksempel, utlede en feilformel og bruke den til å begrunne og undersøke et valg. <strong>Hver del har to parallelle spor: matematisk utledning og numerisk kontroll med egen kode.</strong> Du bruker NumPy til selve SVD-beregningen, men skriver rekonstruksjonen, feilkontrollene og rangvalget selv. Ferdige hjelpere gir forsøksdata og figurer som du kan sammenligne med.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Del</th>
+<th style="text-align: left;">Hovedspørsmål</th>
+<th style="text-align: left;">Matematisk verktøy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A. Støy i et bilde</td>
+<td style="text-align: left;">Når fjerner lav rang støy, og når fjerner den signal?</td>
+<td style="text-align: left;">Ortogonal projeksjon og Frobeniusnorm.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B. Et uskarpt signal</td>
+<td style="text-align: left;">Hvorfor kan bedre tilpasning til data gi dårligere rekonstruksjon?</td>
+<td style="text-align: left;">SVD-koordinater, residual og følsomhet.</td>
+</tr>
+</tbody>
+</table>
+<p>Sett av omtrent 4–6 timer. A og B bruker samme hovedidé: feilen består av informasjon vi forkaster og støy vi slipper gjennom. I B blir den beholdte støyen dessuten forsterket av inversjonen. Gjør papirregningene før du åpner hvert forsøk. For hver del skal det være tydelig hva du påstår, hvilken regning som begrunner det, og hva en numerisk kontroll faktisk kan si.</p>
+<section id="oppsett-og-begreper" class="level3">
+<h3 class="anchored" data-anchor-id="oppsett-og-begreper">Oppsett og begreper</h3>
+<p>Vi bruker SVD og trunkering fra <a href="../pages/uke7.html#uke7-svd">uke 7.3–7.5</a>, ortogonale projeksjoner fra <a href="../pages/uke4.html">uke 4</a> og skillet mellom residual og feil fra <a href="../pages/uke6.html#uke6-residual">uke 6</a>. Singulærverdiene ordnes fra størst til minst. Frobeniusnormen er <span class="math inline">\(\|M\|_F^2=\sum_{i,j}M_{ij}^2\)</span>; for vektorer bruker vi euklidsk norm. Du kan bruke teoremet om beste rang-<span class="math inline">\(k\)</span>-tilnærming fra notatene uten bevis.</p>
+<p>På nettsiden er oppsettet klart automatisk. I en egen notebook laster du ned <a href="../assets/project_week7_setup.py" download="project_week7_setup.py">oppsettsfilen</a> og kjører <code>from project_week7_setup import *</code>. Du trenger NumPy og Matplotlib. Kopier kodemalene og forsøkscellene i rekkefølge, og legg inn egne kontrollceller der oppgavene ber om det. Avslutt med én kontrollcelle fra sluttdelen. Ta med oppsettsfilen, og kontroller notebooken med <strong>Restart / Run all</strong>. Portrettet er tilpasset fra <a href="https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif">NTNUs mm.gif</a>.</p>
+</section>
+</section>
+<section id="a.-kan-færre-komponenter-gi-et-bedre-bilde" class="level2">
+<h2 class="anchored" data-anchor-id="a.-kan-færre-komponenter-gi-et-bedre-bilde">A. Kan færre komponenter gi et bedre bilde?</h2>
+<p>Vi skriver de tilgjengelige bildedataene som <span class="math inline">\(Y=C+E\)</span>, der <span class="math inline">\(C\)</span> er det rene bildet og <span class="math inline">\(E\)</span> er støy. En trunkert SVD av <strong><span class="math inline">\(Y\)</span></strong>, ikke av <span class="math inline">\(C\)</span>, gir <span class="math inline">\(Y_k\)</span>. Vi vil ha liten feil mot <span class="math inline">\(C\)</span>, selv om det er <span class="math inline">\(Y\)</span> vi kjenner. Fasiten er tilgjengelig i forsøket bare for å undersøke valget etterpå.</p>
+<section id="a1.-et-lite-bilde-der-vi-kan-finne-alt-for-hånd" class="level3">
+<h3 class="anchored" data-anchor-id="a1.-et-lite-bilde-der-vi-kan-finne-alt-for-hånd">A1. Et lite bilde der vi kan finne alt for hånd</h3>
+<p>Bruk</p>
+<p><span class="math display">\[C=\operatorname{diag}(4,1,0),\qquad
+E=\operatorname{diag}(0,0,\eta),\qquad Y=C+E.\]</span></p>
+<p>Undersøk først <span class="math inline">\(\eta=1/2\)</span>, deretter <span class="math inline">\(\eta=2\)</span>. Dette er to separate forsøk med samme rene bilde.</p>
+<ol type="1">
+<li>Finn singulærverdiene og tilhørende retninger til <span class="math inline">\(Y\)</span> i hvert tilfelle. Husk å sortere dem. Skriv <span class="math inline">\(Y_1\)</span>, <span class="math inline">\(Y_2\)</span> og <span class="math inline">\(Y_3\)</span> eksplisitt.</li>
+<li>Lag en tabell med <span class="math inline">\(\|Y-Y_k\|_F\)</span> og <span class="math inline">\(\|Y_k-C\|_F\)</span> for <span class="math inline">\(k=1,2,3\)</span>. Hvilken rang gir minst feil mot dataene? Hvilken gir minst feil mot det rene bildet?</li>
+<li>Vurder påstanden: «Det rene bildet har rang 2, så vi bør beholde to komponenter.» Er rang alene nok til å begrunne dette? Forklar hva som skjer når støybidraget passerer den minste positive singulærverdien til <span class="math inline">\(C\)</span>.</li>
+<li>Er det alltid slik at feilen mot det rene bildet først synker og så stiger når <span class="math inline">\(k\)</span> øker? Bruk tabellen til å begrunne svaret.</li>
+</ol>
+<section id="kodespor-a1-bygg-samme-tabell-med-svd" class="level4">
+<h4 class="anchored" data-anchor-id="kodespor-a1-bygg-samme-tabell-med-svd">Kodespor A1: bygg samme tabell med SVD</h4>
+<p>Fullfør funksjonen nedenfor med produktet av de første <span class="math inline">\(k\)</span> SVD-leddene. Bruk <code>@</code> til matrisemultiplikasjon; <code>s</code> er en vektor, ikke en diagonalmatrise. Funksjonen skal også gi nullmatrisen for <span class="math inline">\(k=0\)</span>.</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<ul>
+<li>Skriv en løkke over de to verdiene av <span class="math inline">\(\eta\)</span> og <span class="math inline">\(k=0,1,2,3\)</span>. Beregn de to feilnormene direkte fra matrisene, og sammenlign med håndtabellen. Kontroller også null rang og full rekonstruksjon med <code>np.allclose</code>.</li>
+<li>Prøv deretter <span class="math inline">\(\eta=0.8\)</span> og <span class="math inline">\(\eta=1.2\)</span>. <strong>Forutsi først</strong> hvilken retning som blir med i <span class="math inline">\(Y_2\)</span>. Bekrefter koden forklaringen fra papirregningen?</li>
+<li>Sammenlign rekonstruksjoner, ikke fortegnene til enkeltstående singulærvektorer: begge vektorene i et SVD-par kan skifte fortegn.</li>
+</ul>
+<p><strong>Ta med videre:</strong> et konkret eksempel som skiller mellom å tilpasse oppgitte data og å rekonstruere informasjonen vi ønsker.</p>
+</section>
+</section>
+<section id="a2.-hvor-kommer-feilen-fra" class="level3">
+<h3 class="anchored" data-anchor-id="a2.-hvor-kommer-feilen-fra">A2. Hvor kommer feilen fra?</h3>
+<p>La <span class="math inline">\(U_k\)</span> inneholde de <span class="math inline">\(k\)</span> første venstre singulærvektorene til <span class="math inline">\(Y\)</span>, og sett <span class="math inline">\(P_k=U_kU_k^T\)</span>. Fra uke 4 er dette den ortogonale projeksjonen på rommet spent ut av disse vektorene. Vi setter <span class="math inline">\(P_0=0\)</span>.</p>
+<ol type="1">
+<li>Vis at <span class="math inline">\(Y_k=P_kY\)</span>, og at <span class="math display">\[Y_k-C=-(I-P_k)C+P_kE.\]</span></li>
+<li>Vis at de to matrisene på høyresiden er ortogonale i Frobeniusindreproduktet. Du kan undersøke én kolonne om gangen og bruke at <span class="math inline">\(P_k(I-P_k)=0\)</span>. Utled deretter <span class="math display">\[\boxed{\|Y_k-C\|_F^2=\|(I-P_k)C\|_F^2+\|P_kE\|_F^2}.\]</span> Hvilket ledd er tapt signal, og hvilket er beholdt støy?</li>
+<li>Når vi holder <span class="math inline">\(Y\)</span> og dens valgte SVD fast og øker <span class="math inline">\(k\)</span>, blir projeksjonsrommene større. Begrunn at det første leddet ikke øker, mens det andre ikke avtar. Hvorfor betyr ikke dette at summen må avta, eller at den bare kan ha ett minimum?</li>
+<li>Bruk formelen på <span class="math inline">\(C=\operatorname{diag}(4,0,0)\)</span> og <span class="math inline">\(E=\operatorname{diag}(\eta,0,0)\)</span> med <span class="math inline">\(\eta&gt;0\)</span>. Kan rang 1 fjerne denne støyen? Hva er annerledes?</li>
+</ol>
+<p>Merk at <span class="math inline">\(P_k\)</span> kommer fra <strong>de støyete dataene</strong> og selv avhenger av <span class="math inline">\(E\)</span>. Identiteten gjelder likevel for hvert enkelt datasett. Vi antar ikke at singulærvektorene til <span class="math inline">\(Y\)</span> og <span class="math inline">\(C\)</span> er like.</p>
+<section id="kodespor-a2-to-uavhengige-beregninger-av-samme-feil" class="level4">
+<h4 class="anchored" data-anchor-id="kodespor-a2-to-uavhengige-beregninger-av-samme-feil">Kodespor A2: to uavhengige beregninger av samme feil</h4>
+<p>Skriv en kontrollcelle som beregner <span class="math inline">\(P_k\)</span> fra en SVD av <span class="math inline">\(Y=C+E\)</span>. Beregn venstresiden i feilidentiteten med din <code>svd_image</code>, og høyresiden med matriseproduktene <span class="math inline">\((I-P_k)C\)</span> og <span class="math inline">\(P_kE\)</span>. Kontroller også indreproduktet med <code>np.sum(((I-Pk) @ C) * (Pk @ E))</code>. Hvorfor skal det være nær null?</p>
+<p>Bruk først A1 og deretter dette rektangulære eksempelet, slik at kontrollen ikke bare virker for diagonalmatriser:</p>
+<p><span class="math display">\[C=\begin{bmatrix}1&amp;2\\2&amp;4\\-1&amp;-2\end{bmatrix},\qquad
+E=\begin{bmatrix}0&amp;0.1\\-0.2&amp;0\\0.1&amp;-0.1\end{bmatrix}.\]</span></p>
+<p>Prøv alle tillatte <span class="math inline">\(k\)</span>, også null. Identitetsmatrisen <span class="math inline">\(I\)</span> skal ha like mange rader som <span class="math inline">\(C\)</span>. Bruk <code>np.isclose</code> med <code>rtol=1e-10, atol=1e-12</code> for disse små eksemplene, og rapporter største absolutte avvik mellom feilformelens to sider. Forklar hvorfor dette er en kontroll av koden og regningen, men ikke et bevis for alle matriser.</p>
+</section>
+</section>
+<section id="a3.-velg-rang-uten-å-bruke-det-rene-bildet" class="level3">
+<h3 class="anchored" data-anchor-id="a3.-velg-rang-uten-å-bruke-det-rene-bildet">A3. Velg rang uten å bruke det rene bildet</h3>
+<p>Anta at vi har en øvre grense <span class="math inline">\(\delta&gt;0\)</span> for <span class="math inline">\(\|E\|_F\)</span>. En mulig regel er å velge den <strong>minste</strong> rangen <span class="math inline">\(k\)</span> slik at</p>
+<p><span class="math display">\[\|Y-Y_k\|_F\leq\tau\delta,\qquad \tau=1.05.\]</span></p>
+<p>Regelen tillater et avvik på størrelse med støyen, i stedet for å kreve at rekonstruksjonen passer alle dataene nøyaktig. Dette kalles et <strong>diskrepansprinsipp</strong>. Det er en regel vi skal undersøke, ikke en garanti for best mulig rekonstruksjon.</p>
+<ol type="1">
+<li>Skriv regelen med bare singulærverdiene til <span class="math inline">\(Y\)</span>. Hvorfor finnes en tillatt rang blant <span class="math inline">\(0,\ldots,\min(m,n)\)</span> i eksakt regning?</li>
+</ol>
+<details class="ctm-reveal details">
+<summary>
+Valgfri fordypning: hva kan regelen garantere?
+</summary>
+<div class="ctm-reveal-body">
+<p>Bruk trekantulikheten til å vise at et valgt <span class="math inline">\(Y_k\)</span> oppfyller <span class="math display">\[\|Y_k-C\|_F\leq(\tau+1)\delta.\]</span> Garanterer denne grensen at feilen blir mindre enn i <span class="math inline">\(Y\)</span>? Hvis <span class="math inline">\(\operatorname{rank}(C)\leq r\)</span>, bruk beste-tilnærmingsteoremet til å vise at regelen velger <span class="math inline">\(k\leq r\)</span>. Hvorfor følger det likevel ikke at <span class="math inline">\(Y_k=C\)</span>? Knytt svaret til A2.</p>
+</div>
+</details>
+<p><strong>Skriv en forventning før kjøring:</strong> Vil det valgte <span class="math inline">\(Y_k\)</span> få mindre feil mot <span class="math inline">\(C\)</span> enn <span class="math inline">\(Y\)</span>? Hvilket av de to feilleddene tror du vil dominere? Begrunn med A2, og angi ett resultat som ville utfordre forventningen.</p>
+<section id="kodespor-a3-implementer-beslutningsregelen" class="level4">
+<h4 class="anchored" data-anchor-id="kodespor-a3-implementer-beslutningsregelen">Kodespor A3: implementer beslutningsregelen</h4>
+<p>Skriv <code>choose_rank(residuals, delta, tau=1.05)</code>. Element <code>residuals[k]</code> er dataavviket ved rang <span class="math inline">\(k\)</span>, inkludert rang null. Returner første indeks som oppfyller kravet, eller <code>None</code> hvis ingen gjør det. Funksjonen skal ikke ha tilgang til det rene bildet eller feilene mot fasiten.</p>
+<p>Begrunn først svarene, og kontroller deretter disse tre tilfellene med <span class="math inline">\(\delta=1\)</span> og <span class="math inline">\(\tau=1.05\)</span>:</p>
+<ul>
+<li><code>[3., 1., 0.]</code>: én rang er den første tillatte;</li>
+<li><code>[.5, .2, 0.]</code>: allerede null rang oppfyller kravet;</li>
+<li><code>[3., 2.]</code>: ingen av de oppgitte rangene er tillatt.</li>
+</ul>
+<p>Hjelperen nedenfor bruker et <span class="math inline">\(96\times96\)</span>-portrett og uavhengige normale støyverdier med standardavvik <code>noise_level</code>. I dette kontrollerte forsøket settes <span class="math inline">\(\delta=\|E\|_F\)</span>. Støynormen brukes til rangvalget; det rene bildet brukes bare til feilanalysen. Regelen søker alle ranger, også null.</p>
+<div id="qpyodide-insertion-location-4"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Hjelperen viser dataavvik, feil mot fasit, tapt signal og beholdt støy. Den markerer rangen fra regelen og skriver ut de to leddene i A2.</p>
+<ul>
+<li>Beregn selv hele listen med dataavvik fra <code>result_A['singular_values']</code> ved hjelp av halefeilformelen. Bruk <code>choose_rank</code> og sammenlign med <code>result_A['k']</code>. Kontroller også at rangen rett før ikke er tillatt, hvis den valgte rangen er positiv.</li>
+<li>Bruk din <code>svd_image</code> på <code>result_A['Y']</code> ved den valgte rangen. Kontroller rekonstruksjonen mot <code>result_A['reconstruction']</code>, og gjenta A2-kontrollen med <code>result_A['C']</code> og <code>result_A['E']</code>.</li>
+<li>Sammenlign valgt rekonstruksjon med det ubehandlede støybildet. Forklar forskjellen med de to feilleddene, ikke bare med utseendet.</li>
+<li>Hvor langt er regelen fra den beste rangen for akkurat denne fasiten? Dette siste valget er en etterpå-vurdering og kan ikke brukes i neste forsøk.</li>
+</ul>
+<p><strong>Ta med videre til B:</strong> Feilen deles i to ortogonale bidrag. Hvilken endring forventer du i denne oppdelingen når vi i tillegg må dele på singulærverdiene for å finne signalet?</p>
+</section>
+</section>
+</section>
+<section id="b.-kan-vi-gjøre-et-uskarpt-signal-skarpt-igjen" class="level2">
+<h2 class="anchored" data-anchor-id="b.-kan-vi-gjøre-et-uskarpt-signal-skarpt-igjen">B. Kan vi gjøre et uskarpt signal skarpt igjen?</h2>
+<p>En lineær transformasjon <span class="math inline">\(T(x)=Hx\)</span> gjør signalet uskarpt. Dataene er <span class="math inline">\(b=Hx_*+\eta\)</span>, der <span class="math inline">\(x_*\)</span> er signalet vi vil finne og <span class="math inline">\(\eta\)</span> er støy. Små singulærverdier betyr at noen signalretninger blir svært svake i dataene. Vi undersøker hva som skjer når vi lar være å invertere disse retningene.</p>
+<section id="b1.-to-ukjente-og-to-forskjellige-feil" class="level3">
+<h3 class="anchored" data-anchor-id="b1.-to-ukjente-og-to-forskjellige-feil">B1. To ukjente og to forskjellige feil</h3>
+<p>Bruk</p>
+<p><span class="math display">\[H=\begin{bmatrix}1&amp;0\\0&amp;\varepsilon\end{bmatrix},\quad
+x_*=\begin{bmatrix}1\\1\end{bmatrix},\quad
+\eta=\begin{bmatrix}0\\d\end{bmatrix},\quad
+b=Hx_*+\eta,\qquad 0&lt;\varepsilon&lt;1.\]</span></p>
+<ol type="1">
+<li>Finn løsningen <span class="math inline">\(x_{\mathrm{full}}\)</span> av <span class="math inline">\(Hx=b\)</span> og den trunkerte løsningen <span class="math inline">\(x_1\)</span> som bare bruker den største singulærverdien.</li>
+<li>Finn residualnormen <span class="math inline">\(\|b-Hx\|_2\)</span> og rekonstruksjonsfeilen <span class="math inline">\(\|x-x_*\|_2\)</span> for begge. Når er trunkering bedre enn full inversjon? Gi en betingelse uttrykt med <span class="math inline">\(|d|\)</span> og <span class="math inline">\(\varepsilon\)</span>.</li>
+<li>Regn ut tallene for <span class="math inline">\(\varepsilon=0.01\)</span>, først med <span class="math inline">\(d=0.002\)</span> og så med <span class="math inline">\(d=0.02\)</span>. Forklar hvorfor minst residual ikke alltid gir best signal.</li>
+</ol>
+<p>Med fast <span class="math inline">\(H\)</span> er residualnormen <strong>absolutt bakoverfeil for systemet <span class="math inline">\(Hx=b\)</span></strong>. Rekonstruksjonsfeilen her er avstanden til <span class="math inline">\(x_*\)</span>, løsningen for dataene <strong>uten støy</strong>. Den er ikke foroverfeilen mot den eksakte løsningen av det støyete systemet. Forklar dette skillet med B1.</p>
+<section id="kodespor-b1-implementer-den-trunkerte-inversjonen" class="level4">
+<h4 class="anchored" data-anchor-id="kodespor-b1-implementer-den-trunkerte-inversjonen">Kodespor B1: implementer den trunkerte inversjonen</h4>
+<p>Fullfør funksjonen fra SVD-formelen som kommer i B2. Projiser <span class="math inline">\(b\)</span> på de beholdte venstre singulærvektorene, del koordinatene på singulærverdiene, og bygg løsningen med høyre singulærvektorer. Ikke bruk <code>inv</code>, <code>solve</code> eller <code>pinv</code> inne i funksjonen. Numerisk ubrukelige retninger avvises av den ferdige kontrollen.</p>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Lag samme tabell som i B1 for begge verdiene av <span class="math inline">\(d\)</span> og <span class="math inline">\(k=0,1,2\)</span>. Kontroller full løsning også med <code>np.linalg.solve(H,b)</code> på denne lille, moderat kondisjonerte matrisen. Bruk <code>np.allclose</code> til å sammenligne vektorer, og beregn residualene direkte som <code>b-H@x</code>.</p>
+<p>Hold så <span class="math inline">\(d=0.002\)</span> fast og varier <span class="math inline">\(\varepsilon\)</span> over <code>[.1, .01, .002, .001]</code>. Tegn rekonstruksjonsfeilen for <span class="math inline">\(k=1\)</span> og <span class="math inline">\(k=2\)</span> mot <span class="math inline">\(\varepsilon\)</span> med logaritmisk vannrett akse. Merk punktet der de to feilene er like. Stemmer overgangen med betingelsen du utledet?</p>
+</section>
+</section>
+<section id="b2.-del-feilen-i-tapt-signal-og-forsterket-støy" class="level3">
+<h3 class="anchored" data-anchor-id="b2.-del-feilen-i-tapt-signal-og-forsterket-støy">B2. Del feilen i tapt signal og forsterket støy</h3>
+<p>Anta i denne papirregningen at <span class="math inline">\(H\)</span> er en invertibel <span class="math inline">\(n\times n\)</span>-matrise med SVD <span class="math inline">\(H=U\Sigma V^T\)</span> og <span class="math inline">\(\sigma_1\geq\cdots\geq\sigma_n&gt;0\)</span>. Skriv</p>
+<p><span class="math display">\[a_i=v_i^Tx_*,\qquad e_i=u_i^T\eta,\qquad
+\beta_i=u_i^Tb.\]</span></p>
+<p>Vi bruker den trunkerte løsningen</p>
+<p><span class="math display">\[x_k=\sum_{i=1}^k\frac{\beta_i}{\sigma_i}v_i,
+\qquad 0\leq k\leq n,\]</span></p>
+<p>med <span class="math inline">\(x_0=0\)</span>. Dette er formelen fra <a href="../pages/uke7.html#uke7-pseudoinvers">uke 7.7</a>; du trenger ikke lese hele den valgfrie fanen for å bruke den her.</p>
+<ol type="1">
+<li>Vis at <span class="math inline">\(\beta_i=\sigma_i a_i+e_i\)</span>. Skriv så <span class="math inline">\(x_k-x_*\)</span> som en sum langs <span class="math inline">\(v_i\)</span> og utled med Pytagoras <span class="math display">\[\boxed{\|x_k-x_*\|_2^2=
+\sum_{i=1}^k\frac{e_i^2}{\sigma_i^2}+\sum_{i=k+1}^n a_i^2}.\]</span></li>
+<li>Utled også <span class="math display">\[\boxed{\|b-Hx_k\|_2^2=\sum_{i=k+1}^n\beta_i^2}.\]</span> Hvorfor avtar residualnormen når vi beholder flere retninger, mens rekonstruksjonsfeilen kan øke?</li>
+<li>Finn betingelsen for at det å ta med retning <span class="math inline">\(k+1\)</span> <strong>reduserer</strong> rekonstruksjonsfeilen. Hvilke størrelser i betingelsen kjenner vi ikke i et problem uten fasit? Kontroller resultatet mot B1.</li>
+</ol>
+<details class="ctm-reveal details">
+<summary>
+Valgfri fordypning: en grense for støyforsterkningen
+</summary>
+<div class="ctm-reveal-body">
+<p>Vis for <span class="math inline">\(k\geq1\)</span> at</p>
+<p><span class="math display">\[\|x_k-x_*\|_2^2\leq
+\frac{\|\eta\|_2^2}{\sigma_k^2}+\sum_{i=k+1}^n a_i^2.\]</span></p>
+<p>Hva vinner vi ved å kutte før de minste singulærverdiene, og hvorfor er det ikke uten kostnad?</p>
+</div>
+</details>
+<section id="kodespor-b2-kontroller-formlene-uten-spesielle-koordinatakser" class="level4">
+<h4 class="anchored" data-anchor-id="kodespor-b2-kontroller-formlene-uten-spesielle-koordinatakser">Kodespor B2: kontroller formlene uten spesielle koordinatakser</h4>
+<p>Bruk en dreining på <span class="math inline">\(\theta=\pi/6\)</span>,</p>
+<p><span class="math display">\[Q=\begin{bmatrix}\cos\theta&amp;-\sin\theta\\
+\sin\theta&amp;\cos\theta\end{bmatrix},\qquad
+H=Q\operatorname{diag}(1,0.01)Q^T,\]</span></p>
+<p>med <span class="math inline">\(x_*=(1,1)^T\)</span> og <span class="math inline">\(\eta=(0,0.02)^T\)</span>. Beregn <span class="math inline">\(b=Hx_*+\eta\)</span>.</p>
+<ul>
+<li>Finn <span class="math inline">\(a_i,e_i,\beta_i\)</span> fra <strong>samme</strong> numeriske SVD av <span class="math inline">\(H\)</span>.</li>
+<li>For <span class="math inline">\(k=0,1,2\)</span>, beregn løsningen med <code>svd_solve</code> og sammenlign direkte feil og residual med de to koordinatformlene i B2. Bruk samme toleranser som i A2 og rapporter avvikene.</li>
+<li>Kontroller også fortegnet til endringen i kvadrert feil når du går fra <span class="math inline">\(k\)</span> til <span class="math inline">\(k+1\)</span>, mot betingelsen i B2.3. Hvorfor er denne kontrollen mer opplysende enn bare at programmet kjører?</li>
+</ul>
+</section>
+</section>
+<section id="b3.-velg-hvor-inversjonen-skal-stoppe" class="level3">
+<h3 class="anchored" data-anchor-id="b3.-velg-hvor-inversjonen-skal-stoppe">B3. Velg hvor inversjonen skal stoppe</h3>
+<p>Anta at vi kjenner en øvre grense <span class="math inline">\(\delta&gt;0\)</span> for <span class="math inline">\(\|\eta\|_2\)</span>. Velg den minste <span class="math inline">\(k\)</span> slik at</p>
+<p><span class="math display">\[\|b-Hx_k\|_2\leq\tau\delta,\qquad\tau=1.05.\]</span></p>
+<p>Dette er samme <strong>diskrepansprinsipp</strong> som i A3, nå brukt på residualen i et likningssystem. Vi krever ikke at rekonstruksjonen forklarer all støyen.</p>
+<ol type="1">
+<li>Bruk B2 til å skrive regelen med datakoordinatene <span class="math inline">\(\beta_i\)</span>. Hvorfor kan rangvalget gjøres uten å kjenne <span class="math inline">\(x_*\)</span>?</li>
+<li>Finn rangen regelen velger i begge talltilfellene i B1, med <span class="math inline">\(\delta=|d|\)</span>. Gir den best rekonstruksjon i begge? Hva forteller det om forskjellen mellom en begrunnet regel og et optimalt valg?</li>
+</ol>
+<details class="ctm-reveal details">
+<summary>
+Valgfri fordypning: hvor sterk er en garanti fra residualen?
+</summary>
+<div class="ctm-reveal-body">
+<p>For et valgt <span class="math inline">\(x_k\)</span>, bruk trekantulikheten og <span class="math inline">\(\|Hz\|_2\geq\sigma_n\|z\|_2\)</span> til å vise <span class="math display">\[\|x_k-x_*\|_2\leq\frac{(\tau+1)\delta}{\sigma_n}.\]</span> Hvorfor kan denne garantien være lite nyttig? Hva viser den om begrensningen ved å vurdere rekonstruksjonen bare gjennom residualen?</p>
+</div>
+</details>
+<p><strong>Skriv en forventning før kjøring:</strong> Hvordan vil feilen endres hvis vi beholder langt flere retninger enn regelen velger? Bruk B2 til å begrunne svaret, og angi hva som ville utfordre forventningen.</p>
+<p>Forsøket bruker 80 signalverdier. Hver rad i <span class="math inline">\(H\)</span> er et normalisert Gauss-filter som blander nærliggende verdier; matrisen er sterkt illkondisjonert. Hjelperen bruker <span class="math inline">\(\delta=\|\eta\|_2\)</span> fra den kontrollerte støyen. Som i A er støynormen oppgitt forsøksinformasjon, ikke noe vi vanligvis kan beregne fra <span class="math inline">\(b\)</span> alene.</p>
+<div id="qpyodide-insertion-location-6"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>I flyttallsregning søker hjelperen bare blant retninger med <span class="math inline">\(\sigma_i&gt;n\epsilon_{\mathrm{mach}}\sigma_1\)</span>. Her er <span class="math inline">\(\epsilon_{\mathrm{mach}}\)</span> maskinpresisjonen fra uke 1, ikke <span class="math inline">\(\varepsilon\)</span> i B1. Hvis ingen tillatt rang oppfyller kravet, meldes nettopp det. Det skal ikke tolkes som et vellykket rangvalg.</p>
+<ul>
+<li>Sammenlign regelen med den på forhånd valgte referansen <span class="math inline">\(k=5\)</span>. Vis både residual og rekonstruksjonsfeil. Forklar med B2.</li>
+<li><strong>Bruk egen kode:</strong> Beregn datakoordinatene fra en SVD av <code>result_B['H']</code> og <code>result_B['b']</code>. Bygg residualnormene med formelen i B2, for <span class="math inline">\(k=0,\ldots,\)</span> <code>result_B['cap']</code>. Bruk samme <code>choose_rank</code> som i A, og kontroller rangen mot <code>result_B['k']</code>.</li>
+<li>Bruk <code>svd_solve</code> ved den valgte rangen, sammenlign med <code>result_B['reconstruction']</code>, og kontroller feil og residual direkte. Fasiten er <code>result_B['truth']</code>. Hjelperens utskrift er en referanse for din beregning, ikke en erstatning for kontrollen.</li>
+<li>Finn beste rang mot fasiten blant de numerisk tillatte rangene. Hvorfor kan dette etterpå-valget ikke brukes som en regel uten fasit? Hvorfor bør vi ikke tolke de minste beregnede singulærverdiene som eksakte?</li>
+</ul>
+</section>
+</section>
+<section id="samle-trådene-og-kontroller-én-konklusjon" class="level2">
+<h2 class="anchored" data-anchor-id="samle-trådene-og-kontroller-én-konklusjon">Samle trådene og kontroller én konklusjon</h2>
+<p>Du har nå undersøkt <strong>begge</strong> problemene. Sammenlign feilformlene fra A2 og B2: Hvorfor kan vi omtale begge som «tapt signal og beholdt støy», og hvorfor er små singulærverdier en ekstra utfordring i B? Sammenlign også med prekondisjonering fra uke 6: bevarer trunkering den eksakte løsningen på samme måte som et invertibelt koordinatskifte?</p>
+<p>Velg deretter <strong>én av konklusjonene dine</strong> fra A eller B for en kontroll med ny støy. Dette valget gjelder bare kontrollforsøket; begge hoveddelene er obligatoriske. Behold signal/bilde, støynivå og <span class="math inline">\(\tau\)</span>. Skriv hva du forventer før kjøring, og bruk samme regel, ikke den fasitvalgte rangen. Den valgte rangen kan endre seg når dataene endres.</p>
+<p>For å kontrollere konklusjonen fra A, kjør:</p>
+<div id="qpyodide-insertion-location-7"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>For å kontrollere konklusjonen fra B, kjør i stedet:</p>
+<div id="qpyodide-insertion-location-8"></div>
+<noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
+<p>Gjenta din egen rangberegning og rekonstruksjonskontroll på de nye dataene som kontrollhjelperen returnerer. Sammenlign deretter med første kjøring av <strong>samme</strong> problem og samme referanse. Skill mellom det feilformlene beviser og det forsøkene støtter. Hva trenger vi å vite om støyen for å bruke regelen uten fasit?</p>
+<p><strong>Valgfri fordypning — velg etter interesse:</strong></p>
+<ul>
+<li>I A: Prøv <code>image_name='diagonal'</code>. Forklar forskjellen fra portrettet med A1–A2 og singulærverdiene til identitetsmatrisen.</li>
+<li>I B: Hold <span class="math inline">\(\|\eta\|_2=\delta\)</span> fast, men legg all støyen langs én <span class="math inline">\(u_i\)</span>. Sammenlign en stor og en liten singulærverdi. Forutsi feilene med B2 før du eventuelt lager en numerisk kontroll.</li>
+</ul>
+</section>
+<section id="det-du-leverer" class="level2">
+<h2 class="anchored" data-anchor-id="det-du-leverer">Det du leverer</h2>
+<p>Lever <strong>både A og B</strong>, og én kontroll på nye data, med:</p>
+<ul>
+<li>håndregningene, tabellen fra det lille eksempelet og de etterspurte utledningene; vis mellomsteg og hvilke forutsetninger du bruker;</li>
+<li>egen kode for <code>svd_image</code>, <code>svd_solve</code> og <code>choose_rank</code>, med kontrolltabellene, parameterundersøkelsen i B1 og avvikene fra identitetene;</li>
+<li>forventningene før forsøkene i A og B og før kontrollen, med et mulig motfunn;</li>
+<li>en liten tabell for hvert hovedforsøk: valgt rang, dataavvik/residual og rekonstruksjonsfeil, sammen med referansen; legg kontrollen til tabellen for den delen du kontrollerte;</li>
+<li>forklaring til høyst tre utvalgte figurer, og koden som gjenskaper forsøket; de øvrige automatiske kontrollplottene kan stå i notebooken;</li>
+<li>en avsluttende vurdering på <strong>200–350 ord</strong>: hva har A og B til felles, hvorfor er inversjon mer følsom, og hva kan du konkludere med uten fasit?</li>
+</ul>
+<p>Papirregninger kan leveres som leselige bilder i notebooken eller i en separat PDF. Tekstmengden gjelder bare sluttvurderingen. Du vurderes først og fremst på koblingen mellom utledning og egen numerisk kontroll, skillet mellom ulike feil og en konklusjon som ikke sier mer enn argumentene og forsøkene støtter.</p>
+<details class="ctm-reveal details">
+<summary>
+Python: delte definisjoner og hjelpefunksjoner
+</summary>
+<div class="ctm-reveal-body">
+<div id="ide-project_week7-reference-assumptions" class="ai-feedback-context">
+<p>Referansen beskriver kursets opprinnelige oppsett og delte definisjoner. Den aktuelle cellens kode og tilgjengelige kjøringsresultater vurderes sammen med dette. Hvis du endrer en delt definisjon i en annen celle, ta med den endrede definisjonen i koden eller kommentarene du ber om tilbakemelding på.</p>
+</div>
+<div id="ide-project_week7-np-6f11581d" class="ai-feedback-context">
+<p><code>np</code></p>
+<p>Importert med <code>import numpy as np</code>; NumPy-arrays, lineær algebra og tilfeldighet er tilgjengelig gjennom np.</p>
+</div>
+<div id="ide-project_week7-image-svd-trial-f45a5335" class="ai-feedback-context">
+<p><code>image_svd_trial(noise_level=0.12, seed=23, tau=1.05, image_name='portrett')</code></p>
+<p>Krever noise_level&gt;0 og tau&gt;=1; image_name velger lokalt portrett/mønster, C(96×96) i [0,1]; pikseldata gjengis ikke her. Legger frøstyrt Gauss-støy E til C og velger minste rang k med Frobenius-dataavvik &lt;= tau*delta, delta=||E||_F. Tegner/skriver forsøket. Returnerer k,delta,residuals,errors,lost_squared,noise_squared,singular_values,C,E,Y,reconstruction i dict; rangkurvene inkluderer k=0, og data klippes ikke før feilberegning.</p>
+</div>
+<div id="ide-project_week7-signal-svd-trial-2f5b02f2" class="ai-feedback-context">
+<p><code>signal_svd_trial(noise_level=0.005, seed=17, tau=1.05)</code></p>
+<p>Krever noise_level&gt;0 og tau&gt;=1. Frøstyrt 80-punkts uskarphetsforsøk, H(80,80); trunkert SVD bruker bare singulærverdier over max(H.shape)*eps*s[0]. Velger minste k med residual&lt;=tau*delta. Returnerer k,delta,cap; ved gyldig rang også residuals,errors,residual_formula,lost_squared,noise_squared,singular_values,H,b,truth,eta,reconstruction. k=None betyr at ingen tillatt rang nådde kravet.</p>
+</div>
+</div>
+</details>
+
+
+<!--ctm-save-generated--><script type="application/json" id="ctm-store-manifest">{"course":"ingmat3a-ntnu-linalg-preview","exercises":[{"component":"pyodide-interaktiv","id":"project7-student-image","order":1,"runtimeId":"ctm-runtime-1","save":true,"source":"d958b2580de80aea"},{"component":"pyodide-interaktiv","id":"extra:project7-student-image","order":2,"runtimeId":"ctm-runtime-2","save":true,"source":"1d8d3d7696269b95"},{"component":"pyodide-interaktiv","id":"project7-image-first","order":3,"runtimeId":"ctm-runtime-3","save":true,"source":"19fcae01accc9ef6"},{"component":"pyodide-interaktiv","id":"extra:project7-image-first","order":4,"runtimeId":"ctm-runtime-4","save":true,"source":"53f85e662f9a7cd8"},{"component":"pyodide-interaktiv","id":"project7-student-inverse","order":5,"runtimeId":"ctm-runtime-5","save":true,"source":"0f208dcb40926796"},{"component":"pyodide-interaktiv","id":"extra:project7-student-inverse","order":6,"runtimeId":"ctm-runtime-6","save":true,"source":"cc4943dee96cd683"},{"component":"pyodide-interaktiv","id":"project7-signal-first","order":7,"runtimeId":"ctm-runtime-7","save":true,"source":"81a64f80aa2f5494"},{"component":"pyodide-interaktiv","id":"extra:project7-signal-first","order":8,"runtimeId":"ctm-runtime-8","save":true,"source":"d1ead140384a662e"},{"component":"pyodide-interaktiv","id":"project7-image-check","order":9,"runtimeId":"ctm-runtime-9","save":true,"source":"390e77b063c2d999"},{"component":"pyodide-interaktiv","id":"extra:project7-image-check","order":10,"runtimeId":"ctm-runtime-10","save":true,"source":"f12376f1ed9aaa74"},{"component":"pyodide-interaktiv","id":"project7-signal-check","order":11,"runtimeId":"ctm-runtime-11","save":true,"source":"e2f35afcca833665"},{"component":"pyodide-interaktiv","id":"extra:project7-signal-check","order":12,"runtimeId":"ctm-runtime-12","save":true,"source":"4a7cfcf238c092b3"}],"export":true,"messages":{"clearFailed":"Nettleserlagringen kunne ikke slettes eller oppdateres. Fjern emnedataene i nettleserinnstillingene.","confirmClearCourse":"Slett alle de lagrede svarene dine i dette emnet?","confirmNewVariant":"Erstatt svarene du har fylt ut med en ny variant?","confirmSaveOff":"Dette sletter alle lagrede svar i dette emnet og slutter å lagre.","copyAll":"Kopier alt","correct":"✓ riktig","downloadHTML":"Last ned .html","downloadMarkdown":"Last ned .md","exercise":"Oppgave","exportClose":"Lukk","exportTitle":"Eksporter svarene mine","lastResult":"Siste resultat","locale":"nb","outdated":"Utdatert","partial":"½ delvis","progressTitle":"Fremdrift på siden","recordTooLarge":"Dette svaret er for stort til å lagres. Kopier det før du forlater siden.","saveOff":"Ikke lagre på denne enheten","saveOn":"Lagre igjen","savingDisabled":"Lagring er slått av for denne siden.","savingNotice":"Svarene dine lagres bare i denne nettleseren.","savingOffNotice":"Lagring er slått av på denne enheten for dette emnet.","showSaved":"Vis svaret ditt","sourceChanged":"Oppgaven er endret siden du svarte.","statusCorrect":"riktig","statusInvalid":"ugyldig","statusPartial":"delvis riktig","statusWrong":"feil","storageUnavailable":"Lagring er ikke tilgjengelig. Svarene dine beholdes bare i minnet på denne siden.","total":"{score} av {count}","unattempted":"– ikke prøvd","variantChanged":"Denne varianten er endret.","variantWithdrawn":"Denne varianten er trukket tilbake.","wrong":"✗ feil"},"progress":true,"quizzes":[],"save":true,"v":1}</script>
+<!--ctm-layout-generated--><span id="ctm-layout-ready" hidden=""></span>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Kopiert!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Kopiert!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/aacchhee\.github\.io\/ingmat3a_ntnu\/linalg\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Publisert under <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.en">CC BY-SA 4.0</a>.</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-cell-classes.js" type="module"></script>
+<script src="../site_libs/quarto-contrib/pyodide-interaktiv-1.10.0/qpyodide-cell-initialization.js" type="module"></script>
+</body></html>
