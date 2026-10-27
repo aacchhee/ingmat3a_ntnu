@@ -99,8 +99,9 @@ $$\text{maksimum av } f(x,y)=x+2y \quad\text{når}\quad x^2+y^2=1$$
 nådd i $(1,2)/\sqrt5$. Nå bytter vi ut sirkelen med ellipsen $x^2+4y^2=1$.
 Målet er det samme.
 
-Appleten gjør regningen for oss: den viser målverdien og to piler i punktet
-du velger. Hvorfor akkurat disse pilene er interessante, forklarer vi rett
+Appleten gjør regningen for oss: den viser målverdien, to gradientpiler og en
+tangentpil i punktet du velger. Hvorfor akkurat gradientpilene er interessante,
+forklarer vi rett
 etter forsøket.
 
 Hensikten er å finne det beste punktet på ellipsen og se hva som kjennetegner
