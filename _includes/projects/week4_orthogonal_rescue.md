@@ -5,7 +5,7 @@ hva som skjer når målingene inneholder støy, og avgjøre om en beregnet
 tilpasning er pålitelig. Bruk QR og projeksjon fra uke 4 som verktøy.
 
 **Oppdraget er å begrunne en metode og en tilpasning med egne forsøk.**
-En liten residual er én observasjon; du må også undersøke beregningen
+En liten residual er bare én observasjon; du må også undersøke beregningen
 og hvordan den tilpassede kurven oppfører seg.
 
 ## Arbeidsplan
@@ -18,13 +18,13 @@ og hvordan den tilpassede kurven oppfører seg.
 
 Startcellene lager data og gir noen kodeverktøy. **Du fyller selv inn
 beregningene merket `TODO`.** Før hvert forsøk skal du skrive en forventning.
-Etterpå skal du vise et resultat og forklare hva det støtter. Endre én
-egenskap om gangen, og noter grad, målepunkter, støystørrelse og metode.
+Etterpå skal du vise et resultat og forklare hvilken konklusjon det støtter. Endre én
+innstilling om gangen, og noter grad, målepunkter, støystørrelse og metode.
 
-Ved behov: [projeksjon i 4.2](uke4.qmd#uke4-projeksjon),
+Ved behov kan du lese om [projeksjon i 4.2](uke4.qmd#uke4-projeksjon),
 [minste kvadrater i 4.5](uke4.qmd#uke4-mk) og
 [polynomer i 4.6](uke4.qmd#uke4-polynomer).
-Hintene nedenfor er sammenfoldet, slik at du kan forsøke selv først.
+Hintene nedenfor er skjult til du åpner dem, slik at du kan prøve selv først.
 
 ```{pyodide-python}
 #| label: project-week4-setup
@@ -184,8 +184,8 @@ def method_report(name, A, b, c, Q=None, R=None):
 
 Fellesfunksjonene lastes automatisk på denne siden; du trenger ikke
 kopiere kode fra prosjekt 3. Kjør startcellene ovenfra og ned.
-Del 5–6 bruker dataene fra del 4. Etter endringer i data må de tilhørende
-beregningene kjøres på nytt.
+Del 5–6 bruker dataene fra del 4. Når du endrer data, må du kjøre de tilhørende
+beregningene på nytt.
 
 | Verktøy | Hva du får |
 |---|---|
@@ -229,21 +229,21 @@ plt.grid(alpha=0.25); plt.legend(); plt.show()
 ```
 
 1. Skriv dimensjonene til $A,c,b$ og bygg $A$. Beregn $r=b-Ac_{\text{forslag}}$
-   og kvadratsummen. Hvilke målinger ligger over den foreslåtte modellen?
+   og kvadratsummen av avvikene. Hvilke målinger ligger over den foreslåtte modellen?
 2. Finn en tilpasning med QR. Bruk `modified_gram_schmidt(A)` til å få
    $Q,R$, og beregn deretter koeffisientene selv.
 3. Kontroller $Q^TQ-I$, $A-QR$ og $Q^Tr$ for den nye tilpasningen.
    Forklar hva hver kontroll undersøker. Gjør også den siste kontrollen
    for den foreslåtte tilpasningen.
-4. Bruk `np.linalg.lstsq(A, b, rcond=None)[0]` som kontroll **etter** egen
-   løsning. Lever én figur med begge modellene og en begrunnet avgjørelse:
+4. Bruk `np.linalg.lstsq(A, b, rcond=None)[0]` som kontroll **etter** at du har
+   funnet din egen løsning. Lever én figur med begge modellene og en begrunnet avgjørelse:
    Hva gjør du hvis residualen ikke er null, men QR-kontrollene er gode?
 
 Når du vil samle alle elementene i en matrise $E$ til ett kontrolltall,
 bruker du **Frobeniusnormen**:
 $\lVert E\rVert_F=\sqrt{\sum_{i,j}E_{ij}^2}$.
 I Python er dette `np.linalg.norm(E, "fro")`.
-Små avrundingsavvik fra null er forventet.
+Små avvik fra null i kontrollene skyldes avrunding og er forventet.
 
 ::: {.callout-tip collapse="true"}
 ## Hint: modellen og QR
@@ -287,12 +287,12 @@ for name, method in [
 # Python-indeksen til dette elementet er [2, 2].
 ```
 
-1. Knytt resultatet til kolonnerelasjonen du fant. Identifiser den konkrete
+1. Knytt resultatet til sammenhengen mellom kolonnene som du fant. Identifiser den konkrete
    divisjonen i GS som må undersøkes; se eventuelt
    [algoritmen fra 4.3](uke4.qmd#uke4-cgs).
 2. Sett elementet i tredje rad og tredje kolonne til
    $\delta=10^{-4},10^{-10},10^{-16}$, ett forsøk om gangen.
-   Hvor er kolonnene uavhengige på papir, og hvor fullføres beregningen?
+   For hvilke verdier er kolonnene uavhengige på papir, og når fullføres beregningen?
 3. Den modifiserte funksjonen har en stoppkontroll som den klassiske mangler.
    Hvilken del av forskjellen du observerer skyldes denne kontrollen?
 4. Vurder påstanden: «Alle verdiene i $Q$ er endelige, derfor er
@@ -303,7 +303,7 @@ for name, method in [
 
 Stoppgrensen i hjelpefunksjonen tilpasses størrelsen på matrisen og
 presisjonen i flyttallsregningen. En stopp betyr at funksjonen ikke
-godtar resten som en pålitelig ny vektor. Det er ikke et bevis på at
+godtar resten som en pålitelig ny vektor. Stoppen er ikke et bevis på at
 kolonnene er nøyaktig avhengige.
 :::
 
@@ -328,7 +328,7 @@ T_{j+1}(x)=2xT_j(x)-T_{j-1}(x).$$
 **Chebyshev-målematrisen $C$ inneholder verdiene av disse
 basisfunksjonene ved målepunktene:** rad $i$ hører til $x_i$,
 og kolonne $j$ hører til $T_j$. Altså er $C_{ij}=T_j(x_i)$.
-For grad $2$ ser det slik ut, siden $T_2(x)=2x^2-1$:
+For grad $2$ ser matrisen slik ut, siden $T_2(x)=2x^2-1$:
 
 $$C=\begin{bmatrix}
 1&x_0&2x_0^2-1\\
@@ -372,14 +372,14 @@ reference_curve = cheb.chebval(grid, true_coordinates)
 # TODO: Registrer kontrolltall og tegn målinger, referanse og tilpasset kurve.
 ```
 
-1. Hvor mange ligninger og ukjente har du? Beregn første rad i $C$
+1. Hvor mange likninger og ukjente har du? Beregn første rad i $C$
    for hånd, og kontroller den mot koden.
 2. Gjennomfør tilpasningen. Registrer residualnormen og den største
    absolutte forskjellen mellom tilpasset kurve og referanse på `grid`.
    Hvorfor må begge størrelsene undersøkes?
 3. Hold $m=12$ fast og prøv `noise_size` lik $0$, $10^{-3}$ og $10^{-2}$.
    Hva endrer seg i tilpasningen og kontrolltallene?
-4. Hold støystørrelsen på $10^{-3}$ og sammenlign $m=8,16,32$.
+4. Hold støystørrelsen fast på $10^{-3}$ og sammenlign $m=8,16,32$.
    Gjenta med frøene $2026,2027,2028$. Er konklusjonen om flere målinger
    den samme i alle forsøkene?
 
@@ -396,7 +396,7 @@ til å sammenligne forsøkene; du trenger ikke en figur for hvert frø.
 Monomialmatrisen $M$ har kolonnene $1,x,\ldots,x^n$ evaluert ved
 målepunktene; Chebyshev-matrisen $C$ har kolonnene $T_0,\ldots,T_n$.
 Begge beskriver polynomer av grad høyst $n$.
-Koeffisientene har ulik betydning, så hver vektor må brukes med riktig
+Koeffisientene har ulik betydning, så hver koeffisientvektor må brukes med riktig
 basis når du beregner kurven.
 
 ```{pyodide-python}
@@ -404,7 +404,7 @@ basis når du beregner kurven.
 
 # Begge basiser skal få nøyaktig de samme dataene.
 n = 12
-m = 25
+m = 27
 points = np.linspace(-1.0, 1.0, m)
 true_chebyshev = reference_coordinates(n)
 exact_values = cheb.chebval(points, true_chebyshev)
@@ -425,16 +425,16 @@ reference = cheb.chebval(grid, true_chebyshev)
 
 1. Skriv først hva du forventer: Ville de beste modellverdiene ved
    målepunktene vært like med de to basisene i eksakt regning? Begrunn.
-2. Beregn tilpasningene med modifisert GS, og lag én figur av
-   absolutt kurvefeil for hver basis. Registrer også residualnorm,
+2. Beregn tilpasningene med modifisert GS, og lag én figur som viser
+   den absolutte kurvefeilen for hver basis. Registrer også residualnorm,
    ortogonalitetsfeil og relativ faktoriseringsfeil.
 3. Gjenta med de støyfrie verdiene `exact_values`. Hvor mye endres hver
    beregnet kurve når den lille støyen legges til?
-4. Bruk `lstsq` på de samme to matrisene som kontroll. Hva tyder
-   resultatene på om effekten av måledata, basisvalg og beregningsmetode?
+4. Bruk `lstsq` på de samme to matrisene som kontroll. Hva sier
+   resultatene om hvor mye måledata, basisvalg og beregningsmetode betyr?
    Ikke anta at én basis alltid gir den beste kurven.
 
-Selv om forskjellige punkter gir uavhengige modellkolonner på papir,
+Selv om forskjellige målepunkter gjør modellkolonnene uavhengige på papir,
 kan små endringer i målinger eller avrundinger påvirke beregningen mye.
 I denne delen beskriver du følsomheten med de endringene du faktisk
 måler. Du trenger ikke et nytt matrisebegrep for å gjøre det.
@@ -448,11 +448,11 @@ Hvis du også gir funksjonen $Q,R$, får du:
 | Kontroll | Hva som undersøkes |
 |---|---|
 | $\lVert Q^TQ-I\rVert_F$ | Hvor godt de beregnede kolonnene er ortonormale |
-| $\lVert A-QR\rVert_F/\lVert A\rVert_F$ | Hvor godt produktet gjengir matrisen det startet med |
+| $\lVert A-QR\rVert_F/\lVert A\rVert_F$ | Hvor godt produktet gjengir den opprinnelige matrisen |
 | `alle_endelige` | Om koeffisienter, residual og faktorer inneholder ugyldige verdier |
 
-Bruk henholdsvis $M$ og $C$ som $A$ i kontrollene. En liten verdi
-i én kolonne erstatter ikke de andre kontrollene.
+Bruk henholdsvis $M$ og $C$ som $A$ i kontrollene. Én liten
+kontrollverdi erstatter ikke de andre kontrollene.
 :::
 
 ## Velg én fordypning
@@ -463,9 +463,10 @@ som utgangspunkt.
 
 ### 5. Når betyr GS-varianten noe?
 
+Her undersøker du om forskjellen mellom GS-variantene vokser med graden.
 Sammenlign klassisk GS, modifisert GS og `lstsq` for gradene
 $n=8,12,16,20$. Bruk $m=2(n+1)+1$ jevnt fordelte målepunkter,
-samme referansepolynom for begge basiser ved hver grad og støy av
+samme referansepolynom for begge basisene ved hver grad og støy av
 størrelse $10^{-10}$ med fast frø.
 
 ```{pyodide-python}
@@ -485,16 +486,16 @@ results = []
 ```
 
 Lever en tabell og et plott av ortogonalitetsfeil mot grad.
-Velg så **ett** resultat som du undersøker nærmere:
+Velg så **ett** av spørsmålene nedenfor, og undersøk det nærmere:
 
 - Er en liten faktoriseringsfeil tilstrekkelig til å stole på $Q$?
 - Følger endringer i ortogonalitetsfeilen endringene i kurvefeilen?
-- Er metodeforskjellen den samme i begge basiser?
+- Er metodeforskjellen den samme i begge basisene?
 
 Konklusjonen skal vise til egne tall. Unngå å formulere en generell
 garanti ut fra ett forsøk.
 
-### 6. Hva endrer normalligningene?
+### 6. Hva endrer normallikningene?
 
 Fra residualbetingelsen $A^T(b-Ac)=0$ kan du samle de ukjente i et
 kvadratisk system.
@@ -502,15 +503,15 @@ kvadratisk system.
 1. Skriv dette systemet selv. Hvilke dimensjoner får matrisen og høyresiden?
 2. Implementer løsningen med `np.linalg.solve`.
 3. Sammenlign med QR og `lstsq`, først for grad $12$, deretter for
-   $16$ og $20$. Bruk samme data som i del 4 og
+   $16$ og $20$. Lag dataene på samme måte som i del 4, med
    $m=2(n+1)+1$ for hver grad.
 
 #### Et mål på følsomhet, når vi trenger det
 
 **Kondisjonstallet** beskriver hvor ulikt matrisen skalerer
 koeffisientvektorer i forskjellige retninger. Et stort tall varsler at
-noen endringer i koeffisientene er vanskelige å skille fra hverandre i
-modellverdiene. Da kan små endringer i data eller avrundinger få stor
+noen endringer i koeffisientene nesten ikke
+synes i modellverdiene. Da kan små endringer i data eller avrundinger få stor
 betydning for de beregnede koeffisientene.
 
 Vi bruker varianten som skrives $\kappa_2(A)$ og beregnes med
@@ -534,13 +535,13 @@ $$\kappa_2(A)=
 {\min_{\lVert z\rVert_2=1}\lVert Az\rVert_2}.$$
 
 Det er altså forholdet mellom den største og den minste skaleringen.
-Dette er en annen matrisenorm enn Frobeniusnormen vi bruker til
+Spektralnormen er en annen matrisenorm enn Frobeniusnormen vi bruker til
 QR-kontrollene. Du trenger ikke beregne disse maksimums- og
 minimumsverdiene selv.
 
 **Et frampek til [uke 5](uke5.qmd):** Egenverdier beskriver hvordan en
 kvadratisk matrise skalerer vektorer langs bestemte retninger,
-kalt egenvektorretninger. Her er forbindelsen gjennom $A^TA$,
+kalt egenvektorretninger. Forbindelsen til kondisjonstallet går gjennom $A^TA$,
 som er kvadratisk selv om $A$ er rektangulær.
 
 Den største og minste egenverdien til $A^TA$ er kvadratene av den
@@ -575,13 +576,13 @@ For uavhengige kolonner gjelder
 $\kappa_2(A^TA)=\kappa_2(A)^2$ i eksakt regning.
 Bruk dette som støtte når du tolker forsøket: Hvilken sammenheng
 ser du mellom følsomhetsvarselet og feilen du faktisk målte?
-Flyttallsberegnede kondisjonstall kan avvike fra identiteten,
+Kondisjonstall beregnet med flyttall kan avvike fra denne identiteten,
 særlig når tallene blir svært store.
 
 ::: {.callout-tip collapse="true"}
 ## Hint til systemet
 
-Fordel $A^T$ over parentesen og flytt leddet med $c$ til den andre siden.
+Gang $A^T$ inn i parentesen og flytt leddet med $c$ til den andre siden.
 Systemet har $A^TA$ som matrise. Bruk koden fra del 2 som mønster for å
 registrere en eventuell `LinAlgError` uten å avbryte resten av forsøket.
 :::
@@ -632,13 +633,13 @@ Analysen skal bruke konkrete resultater til å svare på:
   kontrollene på problemer i beregningen?
 - Hva forteller residual, ortogonalitet og kurvefeil hver for seg?
 - Hva endret du i redningsforsøket, og hvilke resultater støtter vurderingen?
-- Hvilken begrensning ved forsøket gjør at du bør være forsiktige med
+- Hvilken begrensning ved forsøket gjør at du bør være forsiktig med
   å generalisere?
 
 ::: {.callout-note}
 ## Bruk av kodeassistenter
 
-Du kan få hjelp med syntaks, men skal kunne forklare egne forsøk.
+Du kan få hjelp med syntaks, men du skal selv kunne forklare forsøkene dine.
 Kontroller at metodene får samme data, og noter hvilke variabler du
 endret. Automatisk generert kode eller en utskrift alene er ikke en
 faglig begrunnelse.

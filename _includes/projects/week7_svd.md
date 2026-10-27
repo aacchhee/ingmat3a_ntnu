@@ -6,7 +6,7 @@ informasjon risikerer vi å fjerne sammen med støyen?
 
 **Alle gjør både A og B, i denne rekkefølgen.**
 I hver del skal du regne på et lite eksempel, utlede en feilformel og bruke den til
-å begrunne og undersøke et valg. **Hver del har to parallelle spor:
+å begrunne og undersøke et valg av rang. **Hver del har to parallelle spor:
 matematisk utledning og numerisk kontroll med egen kode.** Du bruker
 NumPy til selve SVD-beregningen, men skriver rekonstruksjonen, feilkontrollene
 og rangvalget selv. Ferdige hjelpere gir forsøksdata og figurer som du
@@ -20,7 +20,7 @@ kan sammenligne med.
 Sett av omtrent 4–6 timer. A og B bruker samme hovedidé:
 feilen består av informasjon vi forkaster og støy vi slipper gjennom.
 I B blir den beholdte støyen dessuten forsterket av inversjonen.
-Gjør papirregningene før du åpner hvert forsøk.
+Gjør papirregningene før du kjører hvert forsøk.
 For hver del skal det være tydelig hva du påstår, hvilken regning som
 begrunner det, og hva en numerisk kontroll faktisk kan si.
 
@@ -33,12 +33,12 @@ størst til minst. Frobeniusnormen er
 $\|M\|_F^2=\sum_{i,j}M_{ij}^2$; for vektorer bruker vi euklidsk norm.
 Du kan bruke teoremet om beste rang-$k$-tilnærming fra notatene uten bevis.
 
-På nettsiden er oppsettet klart automatisk. I en egen notebook laster du
+På nettsiden lastes oppsettet inn automatisk. I en egen notebook laster du
 ned [oppsettsfilen](../assets/project_week7_setup.py){download="project_week7_setup.py"}
 og kjører `from project_week7_setup import *`. Du trenger NumPy og
 Matplotlib. Kopier kodemalene og forsøkscellene i rekkefølge, og legg inn egne
-kontrollceller der oppgavene ber om det. Avslutt med én kontrollcelle fra sluttdelen.
-Ta med oppsettsfilen, og kontroller notebooken med **Restart / Run all**.
+kontrollceller der oppgavene ber om det. Avslutt med én av de to kontrollcellene fra sluttdelen.
+Legg ved oppsettsfilen, og kontroller notebooken med **Restart / Run all**.
 Portrettet er tilpasset fra [NTNUs mm.gif](https://wiki.math.ntnu.no/_media/imax3011/2025h/mm.gif).
 
 ## A. Kan færre komponenter gi et bedre bilde?
@@ -46,7 +46,7 @@ Portrettet er tilpasset fra [NTNUs mm.gif](https://wiki.math.ntnu.no/_media/imax
 Vi skriver de tilgjengelige bildedataene som $Y=C+E$, der $C$ er det
 rene bildet og $E$ er støy. En trunkert SVD av **$Y$**, ikke av $C$,
 gir $Y_k$. Vi vil ha liten feil mot $C$, selv om det er $Y$ vi kjenner.
-Fasiten er tilgjengelig i forsøket bare for å undersøke valget etterpå.
+Fasiten, det rene bildet, er tilgjengelig i forsøket bare for å vurdere rangvalget etterpå.
 
 ### A1. Et lite bilde der vi kan finne alt for hånd
 
@@ -65,13 +65,13 @@ forsøk med samme rene bilde.
    det rene bildet?
 3. Vurder påstanden: «Det rene bildet har rang 2, så vi bør beholde to
    komponenter.» Er rang alene nok til å begrunne dette? Forklar hva som
-   skjer når støybidraget passerer den minste positive singulærverdien til $C$.
+   skjer når støybidraget blir større enn den minste positive singulærverdien til $C$.
 4. Er det alltid slik at feilen mot det rene bildet først synker og så
    stiger når $k$ øker? Bruk tabellen til å begrunne svaret.
 
 #### Kodespor A1: bygg samme tabell med SVD
 
-Fullfør funksjonen nedenfor med produktet av de første $k$ SVD-leddene.
+Fullfør funksjonen nedenfor slik at den returnerer summen av de første $k$ SVD-leddene.
 Bruk `@` til matrisemultiplikasjon; `s` er en vektor, ikke en diagonalmatrise.
 Funksjonen skal også gi nullmatrisen for $k=0$.
 
@@ -85,7 +85,7 @@ def svd_image(Y, k):
 
 - Skriv en løkke over de to verdiene av $\eta$ og $k=0,1,2,3$.
   Beregn de to feilnormene direkte fra matrisene, og sammenlign med
-  håndtabellen. Kontroller også null rang og full rekonstruksjon med `np.allclose`.
+  håndtabellen. Kontroller også tilfellene rang null og full rang med `np.allclose`.
 - Prøv deretter $\eta=0.8$ og $\eta=1.2$. **Forutsi først** hvilken
   retning som blir med i $Y_2$. Bekrefter koden forklaringen fra papirregningen?
 - Sammenlign rekonstruksjoner, ikke fortegnene til enkeltstående
@@ -96,8 +96,8 @@ oppgitte data og å rekonstruere informasjonen vi ønsker.
 
 ### A2. Hvor kommer feilen fra?
 
-La $U_k$ inneholde de $k$ første venstre singulærvektorene til $Y$, og
-sett $P_k=U_kU_k^T$. Fra uke 4 er dette den ortogonale projeksjonen på
+Nå deler vi feilen i tapt signal og beholdt støy. La $U_k$ ha de $k$ første venstre singulærvektorene til $Y$ som kolonner, og
+sett $P_k=U_kU_k^T$. Fra uke 4 vet vi at dette er den ortogonale projeksjonen på
 rommet spent ut av disse vektorene. Vi setter $P_0=0$.
 
 1. Vis at $Y_k=P_kY$, og at
@@ -115,7 +115,7 @@ rommet spent ut av disse vektorene. Vi setter $P_0=0$.
    $C=\operatorname{diag}(4,0,0)$ og $E=\operatorname{diag}(\eta,0,0)$
    med $\eta>0$. Kan rang 1 fjerne denne støyen? Hva er annerledes?
 
-Merk at $P_k$ kommer fra **de støyete dataene** og selv avhenger av $E$.
+Merk at $P_k$ kommer fra **de støyete dataene** og derfor selv avhenger av $E$.
 Identiteten gjelder likevel for hvert enkelt datasett. Vi antar ikke
 at singulærvektorene til $Y$ og $C$ er like.
 
@@ -126,13 +126,13 @@ Beregn venstresiden i feilidentiteten med din `svd_image`, og høyresiden
 med matriseproduktene $(I-P_k)C$ og $P_kE$. Kontroller også indreproduktet
 med `np.sum(((I-Pk) @ C) * (Pk @ E))`. Hvorfor skal det være nær null?
 
-Bruk først A1 og deretter dette rektangulære eksempelet, slik at
-kontrollen ikke bare virker for diagonalmatriser:
+Bruk først matrisene fra A1 og deretter dette rektangulære eksempelet, slik at
+du ikke bare tester kontrollen på diagonalmatriser:
 
 $$C=\begin{bmatrix}1&2\\2&4\\-1&-2\end{bmatrix},\qquad
 E=\begin{bmatrix}0&0.1\\-0.2&0\\0.1&-0.1\end{bmatrix}.$$
 
-Prøv alle tillatte $k$, også null. Identitetsmatrisen $I$ skal ha like
+Prøv alle mulige $k$, også null. Identitetsmatrisen $I$ skal ha like
 mange rader som $C$. Bruk `np.isclose` med `rtol=1e-10, atol=1e-12`
 for disse små eksemplene, og rapporter største absolutte avvik mellom
 feilformelens to sider. Forklar hvorfor dette er en kontroll av koden
@@ -146,7 +146,7 @@ er å velge den **minste** rangen $k$ slik at
 $$\|Y-Y_k\|_F\leq\tau\delta,\qquad \tau=1.05.$$
 
 Regelen tillater et avvik på størrelse med støyen, i stedet for å kreve
-at rekonstruksjonen passer alle dataene nøyaktig. Dette kalles et
+at rekonstruksjonen passer nøyaktig til alle dataene. Dette kalles et
 **diskrepansprinsipp**. Det er en regel vi skal undersøke, ikke en garanti
 for best mulig rekonstruksjon.
 
@@ -175,17 +175,17 @@ er dataavviket ved rang $k$, inkludert rang null. Returner første indeks
 som oppfyller kravet, eller `None` hvis ingen gjør det. Funksjonen skal
 ikke ha tilgang til det rene bildet eller feilene mot fasiten.
 
-Begrunn først svarene, og kontroller deretter disse tre tilfellene med
+Finn og begrunn først svaret i disse tre tilfellene, og kontroller dem deretter med koden. Bruk
 $\delta=1$ og $\tau=1.05$:
 
-- `[3., 1., 0.]`: én rang er den første tillatte;
-- `[.5, .2, 0.]`: allerede null rang oppfyller kravet;
+- `[3., 1., 0.]`: rang én er den første tillatte;
+- `[.5, .2, 0.]`: allerede rang null oppfyller kravet;
 - `[3., 2.]`: ingen av de oppgitte rangene er tillatt.
 
-Hjelperen nedenfor bruker et $96\times96$-portrett og uavhengige normale
+Hjelperen nedenfor bruker et $96\times96$-portrett og uavhengige normalfordelte
 støyverdier med standardavvik `noise_level`. I dette kontrollerte forsøket
 settes $\delta=\|E\|_F$. Støynormen brukes til rangvalget; det rene bildet
-brukes bare til feilanalysen. Regelen søker alle ranger, også null.
+brukes bare til feilanalysen. Regelen søker blant alle ranger, også null.
 
 ```{pyodide-python}
 #| label: project7-image-first
@@ -204,8 +204,8 @@ Den markerer rangen fra regelen og skriver ut de to leddene i A2.
   A2-kontrollen med `result_A['C']` og `result_A['E']`.
 - Sammenlign valgt rekonstruksjon med det ubehandlede støybildet.
   Forklar forskjellen med de to feilleddene, ikke bare med utseendet.
-- Hvor langt er regelen fra den beste rangen for akkurat denne fasiten?
-  Dette siste valget er en etterpå-vurdering og kan ikke brukes i neste forsøk.
+- Hvor langt er regelens valg fra den beste rangen for akkurat denne fasiten?
+  Den beste rangen er en etterpå-vurdering og kan ikke brukes i neste forsøk.
 
 **Ta med videre til B:** Feilen deles i to ortogonale bidrag. Hvilken
 endring forventer du i denne oppdelingen når vi i tillegg må dele på
@@ -233,7 +233,7 @@ b=Hx_*+\eta,\qquad 0<\varepsilon<1.$$
    $\|x-x_*\|_2$ for begge. Når er trunkering bedre enn full inversjon?
    Gi en betingelse uttrykt med $|d|$ og $\varepsilon$.
 3. Regn ut tallene for $\varepsilon=0.01$, først med $d=0.002$ og så
-   med $d=0.02$. Forklar hvorfor minst residual ikke alltid gir best signal.
+   med $d=0.02$. Forklar hvorfor minst residual ikke alltid gir best rekonstruksjon av signalet.
 
 
 Med fast $H$ er residualnormen **absolutt bakoverfeil for systemet
@@ -243,11 +243,11 @@ løsningen av det støyete systemet. Forklar dette skillet med B1.
 
 #### Kodespor B1: implementer den trunkerte inversjonen
 
-Fullfør funksjonen fra SVD-formelen som kommer i B2. Projiser $b$ på de
+Fullfør funksjonen ved hjelp av SVD-formelen som kommer i B2. Projiser $b$ på de
 beholdte venstre singulærvektorene, del koordinatene på singulærverdiene,
 og bygg løsningen med høyre singulærvektorer. Ikke bruk `inv`, `solve`
-eller `pinv` inne i funksjonen. Numerisk ubrukelige retninger avvises
-av den ferdige kontrollen.
+eller `pinv` inne i funksjonen. Den ferdige kontrollen øverst i funksjonen avviser
+ranger som tar med numerisk ubrukelige retninger.
 
 ```{pyodide-python}
 #| label: project7-student-inverse
@@ -261,13 +261,13 @@ def svd_solve(H, b, k):
 ```
 
 Lag samme tabell som i B1 for begge verdiene av $d$ og $k=0,1,2$.
-Kontroller full løsning også med `np.linalg.solve(H,b)` på denne lille,
+Kontroller også den fulle løsningen med `np.linalg.solve(H,b)` på denne lille,
 moderat kondisjonerte matrisen. Bruk `np.allclose` til å sammenligne
 vektorer, og beregn residualene direkte som `b-H@x`.
 
 Hold så $d=0.002$ fast og varier $\varepsilon$ over
 `[.1, .01, .002, .001]`. Tegn rekonstruksjonsfeilen for $k=1$ og $k=2$
-mot $\varepsilon$ med logaritmisk vannrett akse. Merk punktet der de to
+mot $\varepsilon$ med logaritmisk vannrett akse. Marker punktet der de to
 feilene er like. Stemmer overgangen med betingelsen du utledet?
 
 ### B2. Del feilen i tapt signal og forsterket støy
@@ -313,7 +313,7 @@ er det ikke uten kostnad?
 
 #### Kodespor B2: kontroller formlene uten spesielle koordinatakser
 
-Bruk en dreining på $\theta=\pi/6$,
+Bruk en dreining med vinkel $\theta=\pi/6$,
 
 $$Q=\begin{bmatrix}\cos\theta&-\sin\theta\\
 \sin\theta&\cos\theta\end{bmatrix},\qquad
@@ -373,13 +373,13 @@ result_B = signal_svd_trial(noise_level=.005, seed=17, tau=1.05)
 I flyttallsregning søker hjelperen bare blant retninger med
 $\sigma_i>n\epsilon_{\mathrm{mach}}\sigma_1$. Her er
 $\epsilon_{\mathrm{mach}}$ maskinpresisjonen fra uke 1, ikke
-$\varepsilon$ i B1. Hvis ingen tillatt rang oppfyller kravet, meldes
-nettopp det. Det skal ikke tolkes som et vellykket rangvalg.
+$\varepsilon$ i B1. Hvis ingen numerisk tillatt rang oppfyller kravet, skriver hjelperen
+ut nettopp det. Det skal ikke tolkes som et vellykket rangvalg.
 
-- Sammenlign regelen med den på forhånd valgte referansen $k=5$.
-  Vis både residual og rekonstruksjonsfeil. Forklar med B2.
-- **Bruk egen kode:** Beregn datakoordinatene fra en SVD av
-  `result_B['H']` og `result_B['b']`. Bygg residualnormene med formelen
+- Sammenlign rangen regelen velger med den på forhånd valgte referansen $k=5$.
+  Vis både residual og rekonstruksjonsfeil. Forklar forskjellen med B2.
+- **Bruk egen kode:** Beregn datakoordinatene fra `result_B['b']` og en SVD av
+  `result_B['H']`. Bygg residualnormene med formelen
   i B2, for $k=0,\ldots,$ `result_B['cap']`. Bruk samme `choose_rank`
   som i A, og kontroller rangen mot `result_B['k']`.
 - Bruk `svd_solve` ved den valgte rangen, sammenlign med
@@ -401,7 +401,7 @@ den eksakte løsningen på samme måte som et invertibelt koordinatskifte?
 Velg deretter **én av konklusjonene dine** fra A eller B for en kontroll
 med ny støy. Dette valget gjelder bare kontrollforsøket; begge hoveddelene
 er obligatoriske. Behold signal/bilde, støynivå og $\tau$. Skriv hva du
-forventer før kjøring, og bruk samme regel, ikke den fasitvalgte rangen.
+forventer før kjøring, og bruk samme regel, ikke rangen som var best mot fasiten.
 Den valgte rangen kan endre seg når dataene endres.
 
 For å kontrollere konklusjonen fra A, kjør:
@@ -427,9 +427,9 @@ Hva trenger vi å vite om støyen for å bruke regelen uten fasit?
 **Valgfri fordypning — velg etter interesse:**
 
 - I A: Prøv `image_name='diagonal'`. Forklar forskjellen fra portrettet
-  med A1–A2 og singulærverdiene til identitetsmatrisen.
+  ved hjelp av A1–A2 og singulærverdiene til identitetsmatrisen.
 - I B: Hold $\|\eta\|_2=\delta$ fast, men legg all støyen langs én
-  $u_i$. Sammenlign en stor og en liten singulærverdi. Forutsi feilene
+  $u_i$. Sammenlign en retning med stor og en med liten singulærverdi. Forutsi feilene
   med B2 før du eventuelt lager en numerisk kontroll.
 
 ## Det du leverer
@@ -442,7 +442,7 @@ Lever **både A og B**, og én kontroll på nye data, med:
   kontrolltabellene, parameterundersøkelsen i B1 og avvikene fra identitetene;
 - forventningene før forsøkene i A og B og før kontrollen, med et mulig motfunn;
 - en liten tabell for hvert hovedforsøk: valgt rang, dataavvik/residual
-  og rekonstruksjonsfeil, sammen med referansen; legg kontrollen til
+  og rekonstruksjonsfeil, sammen med referansen; legg resultatet fra kontrollen til
   tabellen for den delen du kontrollerte;
 - forklaring til høyst tre utvalgte figurer, og koden som gjenskaper forsøket;
   de øvrige automatiske kontrollplottene kan stå i notebooken;
@@ -450,7 +450,7 @@ Lever **både A og B**, og én kontroll på nye data, med:
   hvorfor er inversjon mer følsom, og hva kan du konkludere med uten fasit?
 
 Papirregninger kan leveres som leselige bilder i notebooken eller i en
-separat PDF. Tekstmengden gjelder bare sluttvurderingen. Du vurderes først
+separat PDF. Ordgrensen gjelder bare sluttvurderingen. Du vurderes først
 og fremst på koblingen mellom utledning og egen numerisk kontroll,
 skillet mellom ulike feil og en
 konklusjon som ikke sier mer enn argumentene og forsøkene støtter.

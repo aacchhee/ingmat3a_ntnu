@@ -16,7 +16,7 @@ x=1+\frac1x
 x=x^2-1.
 $$
 
-Begge har $r$ som fikspunkt (kontroller det gjerne: begge følger av $x^2=x+1$). Kall høyresidene $g_a$ og $g_b$. Bruk helningsregelen fra 2.2 til å avgjøre hvilken regel som trekker nærliggende iterater inn mot $r$. Faktumet $r^2=r+1$ gjør regningen kortere.
+Begge har $r$ som fikspunkt (kontroller det gjerne: begge følger av $x^2=x+1$). Kall høyresidene $g_a$ og $g_b$. Bruk helningsregelen fra 2.2 til å avgjøre hvilken regel som trekker nærliggende iterater inn mot $r$. Sammenhengen $r^2=r+1$ gjør regningen kortere.
 
 :::
 

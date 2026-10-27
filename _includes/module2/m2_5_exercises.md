@@ -153,4 +153,4 @@ for description, step, step_tol, residual, residual_tol, expected in test_cases:
     print(f"{description:29s}: {status}")
 ```
 
-Når alle testene består, har stoppkontrollen skilt mellom «verdien endrer seg nesten ikke» og «verdien oppfyller likningen godt nok». Det er denne forskjellen som gjør at A kan godkjennes, mens C må undersøkes videre.
+Når alle testene består, skiller stoppkontrollen mellom «verdien endrer seg nesten ikke» og «verdien oppfyller likningen godt nok». Det er denne forskjellen som gjør at A kan godkjennes, mens C må undersøkes videre.

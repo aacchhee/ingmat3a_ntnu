@@ -12,7 +12,7 @@ og utfører nøyaktig de samme regneoperasjonene i to tallformater:
 - **binary32**, representert med `numpy.float32`, har omtrent 7 signifikante desimalsifre,
 - **binary64**, representert med vanlig Python `float`, har omtrent 15–16 signifikante desimalsifre.
 
-Referanseverdien beregnes med 80 desimalsifres presisjon og brukes bare til å måle feil. Hver iterasjon i de to metodene blir derimot lagret i sitt angitte tallformat.
+Referanseverdien beregnes med 80 desimalsifres presisjon og brukes bare til å måle feil. Hvert iterat i de to kjøringene blir derimot lagret i det angitte tallformatet.
 
 ```{pyodide-python}
 #| canvas: false

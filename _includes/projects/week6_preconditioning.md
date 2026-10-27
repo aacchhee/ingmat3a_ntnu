@@ -8,7 +8,7 @@ matrisen vi gir metoden. Nå skal vi undersøke en annen mulighet:
 Tenk på et kart der de to aksene bruker svært ulike målestokker.
 Et koordinatskifte endrer hvordan kartet ser ut, men ikke hvilket
 sted vi vil fram til. På samme måte skal vi endre beskrivelsen av
-et likningssystem og kunne oversette svaret tilbake til den samme
+et likningssystem, men likevel kunne oversette svaret tilbake til den samme
 løsningen. Spørsmålet er om CG da får mindre arbeid å gjøre.
 
 Prosjektet starter med to ukjente og en regning på papir. Deretter
@@ -16,8 +16,8 @@ prøver vi ideen på større systemer, forklarer hva som endres og
 bygger **diagonalt prekondisjonert CG (PCG)**. Til slutt velger du
 ett eget forsøk som undersøker når denne ideen hjelper.
 
-Du får ferdig CG, forsøksdata og plotteverktøy. Kodeoppgaven består
-av tre uttrykk i PCG. Den viktigste jobben er å **begrunne at
+Du får ferdig CG-kode, forsøksdata og plotteverktøy. Kodeoppgaven består
+i å fylle inn tre uttrykk i PCG. Den viktigste jobben er å **begrunne at
 problemet er bevart, forutsi virkningen og tolke resultatene**.
 Sett av omtrent 4–6 timer.
 
@@ -41,10 +41,10 @@ Her er begrepene vi bruker, samlet på ett sted:
 
 - **SPD:** $A^T=A$ og $z^TAz>0$ for alle $z\ne0$. Da har
   $\phi(x)=\tfrac12x^TAx-b^Tx$ ett minimum, som er løsningen av $Ax=b$.
-- **Residual:** $r=b-Ax$ måler avviket i likningene. Den er negativ
-  gradient til $\phi$. Relativ residual er $\lVert r\rVert_2/\lVert b\rVert_2$.
-  Siden $Ax=b-r$, gjør endringen $-r$ i høyresiden $x$ til en eksakt
-  løsning. Med fast $A$ er relativ residual dermed **relativ bakoverfeil**.
+- **Residual:** $r=b-Ax$ måler avviket i likningene. Den er lik den negative
+  gradienten til $\phi$. Relativ residual er $\lVert r\rVert_2/\lVert b\rVert_2$.
+  Siden $Ax=b-r$, er $x$ en eksakt løsning når vi endrer
+  høyresiden med $-r$. Med fast $A$ er relativ residual dermed **relativ bakoverfeil**.
 - **Foroverfeil:** Når vi kjenner løsningen $x_*$, kan vi også måle
   $\lVert x-x_*\rVert_2/\lVert x_*\rVert_2$. Liten residual og liten
   foroverfeil er forskjellige krav, slik vi så i uke 2 og del 6.3.
@@ -55,8 +55,8 @@ Her er begrepene vi bruker, samlet på ett sted:
   alene antall CG-steg.
 
 CG minimerer langs **A-konjugerte retninger**, som oppfyller
-$p_i^TAp_j=0$ når $i\ne j$. Dette gjør at en ny minimering bevarer
-de tidligere. I eksakt regning er høyst $n$ steg nok for $n$ ukjente;
+$p_i^TAp_j=0$ når $i\ne j$. Derfor ødelegger ikke en ny minimering
+det vi har oppnådd langs de tidligere retningene. I eksakt regning er høyst $n$ steg nok for $n$ ukjente;
 avrunding kan gjøre at flere steg trengs. Residualnormen trenger
 ikke avta i hvert enkelt steg.
 
@@ -91,7 +91,7 @@ Importlinjen brukes bare i egen notebook.
 
 ## 1. Begynn med en skål vi kan regne på
 
-Vi starter med
+Vi starter med et lite system med to ukjente, som du kan regne på for hånd:
 
 $$A_2=\begin{bmatrix}1&2\\2&100\end{bmatrix},\qquad
 b_2=\begin{bmatrix}3\\102\end{bmatrix}.$$
@@ -102,8 +102,8 @@ Den tilhørende funksjonen er
 
 $$\phi(x_1,x_2)=\tfrac12x_1^2+2x_1x_2+50x_2^2-3x_1-102x_2.$$
 
-Kvadratleddene har svært ulik størrelse. La oss prøve
-$y_1=x_1$ og $y_2=10x_2$. Tilbake får vi $x_1=y_1$ og $x_2=y_2/10$.
+Kvadratleddene har svært ulike koeffisienter. La oss derfor prøve
+$y_1=x_1$ og $y_2=10x_2$. Når vi regner tilbake, får vi $x_1=y_1$ og $x_2=y_2/10$.
 
 **Før du kjører:**
 
@@ -147,17 +147,17 @@ $$\widetilde A_2=\begin{bmatrix}1&0.2\\0.2&1\end{bmatrix},\qquad
 
 Minimumet er $y_*=(1,10)^T$, som gir $x_*=(1,1)^T$ etter omregning.
 Vi har $\widetilde\phi(y)=\phi(x)$ for punkter som svarer til hverandre.
-Det er derfor samme minimeringsproblem i nye koordinater.
+Vi løser derfor det samme minimeringsproblemet, bare i nye koordinater.
 
 Egenverdiene til $\widetilde A_2$ er $1.2$ og $0.8$, så kondisjonstallet
-er $1.5$. Kryssleddet er fortsatt med: kurvene er blitt rundere,
-men er ikke helt sirkulære. Koordinatskiftet har heller ikke endret
+er $1.5$. Kryssleddet er der fortsatt, så kurvene er blitt rundere,
+men ikke helt sirkulære. Koordinatskiftet har heller ikke endret
 hvilket fysisk eller matematisk svar vi søker i de opprinnelige variablene.
 
 :::
 
-**Ta med videre:** Skriv de to systemene og pilene mellom $x$ og $y$
-ved siden av hverandre. Dette er modellen for resten av prosjektet.
+**Ta med videre:** Skriv de to systemene ved siden av hverandre, med omregningen mellom
+$x$ og $y$ som piler. Dette oppsettet er modellen for resten av prosjektet.
 
 ## 2. Gjør omregningen generell
 
@@ -209,7 +209,7 @@ Residualene henger sammen ved
 
 $$\widetilde r=M^{-1/2}b-M^{-1/2}AM^{-1/2}y=M^{-1/2}r.$$
 
-De to normene måler ulik skalering av samme avvik. Et stoppkrav på
+De to normene måler det samme avviket, men med ulik skalering. Et stoppkrav på
 $\lVert\widetilde r\rVert_2$ er derfor ikke automatisk det samme som
 et stoppkrav på $\lVert r\rVert_2$.
 
@@ -222,17 +222,17 @@ med residualen i **det opprinnelige systemet**.
 ## 3. To større systemer – vil samme tiltak hjelpe begge?
 
 Nå går vi fra to til 60 ukjente. Vi bruker to ferdige SPD-systemer
-med forskjellig årsak til ulik skalering av retninger:
+der retningene er ulikt skalert av forskjellige årsaker:
 
 | System | Slik er matrisen bygd | Hva kan diagonalen hjelpe med? |
 |:--|:--|:--|
 | Ujevn skalering | $A=DBD$. $B$ har $2$ på diagonalen og $-0.25$ på nabodiagonalene. $D$ har positive verdier fra $1$ til $100$. | Koordinatene har fått svært ulike skalaer. |
-| Poisson | $A$ har $2$ på diagonalen og $-1$ på nabodiagonalene. Ellers er elementene null. | Diagonalen er allerede lik overalt; nabokoblingen er sterkere. |
+| Poisson | $A$ har $2$ på diagonalen og $-1$ på nabodiagonalene. Ellers er elementene null. | Diagonalen er allerede lik overalt; nabokoblingen er sterkere enn i det første systemet. |
 
 Her er $D$ bare navnet på skaleringen som brukes til å lage det første
 forsøksproblemet. Prekondisjoneringen heter fortsatt $M=\operatorname{diag}(A)$.
 Vi velger samme kjente løsning $x_*$ og lager $b=Ax_*$ i begge systemene.
-Høyresidene blir forskjellige. Dette lar oss måle faktisk feil i forsøket;
+Høyresidene blir forskjellige. Den kjente løsningen lar oss måle den faktiske feilen i forsøket;
 i et praktisk problem kjenner vi vanligvis ikke løsningen.
 
 ### Først et sammenligningsgrunnlag
@@ -255,7 +255,7 @@ for name, A in problems.items():
 ```
 
 `make_week6_problems` lager nettopp matrisene beskrevet i tabellen,
-med fast tilfeldig frø for den kjente løsningen. `cg` er den ferdige
+der den kjente løsningen trekkes tilfeldig med fast frø. `cg` er den ferdige
 referansemetoden. Den stopper på en direkte beregning av $b-Ax$ og
 returnerer løsningsforslagene i `path`, residualnormene i `residuals`
 og et sannhetsverdi-felt `converged`.
@@ -290,9 +290,9 @@ for name, A in problems.items():
 
 `invroot[:,None]` skalerer radene og `invroot[None,:]` kolonnene.
 De to linjene for `At` og `bt` er omregningen fra del 2 skrevet i NumPy.
-Her stopper CG på den **transformerte** residualen. Dette er en kontroll
+Her stopper CG på den **transformerte** residualen. Kjøringen er en kontroll
 av koordinatskiftet, ikke en rettferdig sammenligning av antall steg.
-Den kommer i del 5.
+Den rettferdige sammenligningen kommer i del 5.
 
 Se deretter på **spekteret**, altså samlingen av egenverdier:
 
@@ -393,8 +393,8 @@ det er forutsetningen for denne PCG-oppskriften.
 
 ### Oppskriften du skal kode
 
-Les pseudokoden med papirregningen ved siden av. Det er tre steder
-der den skal kobles til Python i malen: hjelpesystemet, `beta` og
+Les pseudokoden med papirregningen ved siden av. I malen er det tre steder
+der du selv skal skrive den om til Python: hjelpesystemet, `beta` og
 neste retning.
 
 ```text
@@ -418,7 +418,7 @@ Gjenta:
 ::: {.details title="Kodeverksted: åpne PCG-malen og fyll tre uttrykk"}
 
 Fyll bare de tre markerte TODO-delene. Resten av malen tar hånd om
-startvektor, inputkontroll, stoppkrav og telling av arbeid.
+startvektor, kontroll av inndata, stoppkrav og telling av arbeid.
 Kjør cellen på nytt etter redigering. Den definerer `pcg`, men utfører
 ennå ingen av forsøkene.
 
@@ -486,8 +486,8 @@ def pcg(A, b, m, x0=None, rtol=1e-8, atol=0., max_steps=1000):
             'preconditioner_calls':applies}
 ```
 
-Symmetrikontrollen i koden er ikke et SPD-bevis. Våre matriser er
-SPD av konstruksjon, og testen på $p^TAp$ oppdager bare enkelte
+Symmetrikontrollen i koden er ikke et SPD-bevis. Matrisene våre er
+SPD fordi de er konstruert slik, og testen på $p^TAp$ oppdager bare enkelte
 brudd på forutsetningen. Direkte kontroll av $b-Ax$ brukes fordi den
 kort oppdaterte residualen kan samle avrundingsfeil.
 
@@ -497,10 +497,10 @@ kort oppdaterte residualen kan samle avrundingsfeil.
 
 | Kontroll | Hva skal skje? |
 |:--|:--|
-| $A=\operatorname{diag}(1,100)$, $b=(1,100)^T$, $x_0=0$, $M=A$ | Ett steg gir $(1,1)^T$, opp til avrunding. |
-| $M=I$ | PCG gir samme bane som CG, opp til avrunding. |
-| Start i den kjente løsningen $x_0=x_*$ | Metoden stopper med null søkesteg. |
-| Bruk $A_2$ fra del 1 | PCG-banen stemmer med CG-banen i nye koordinater når den regnes tilbake til $x$. |
+| $A=\operatorname{diag}(1,100)$, $b=(1,100)^T$, $x_0=0$, $M=A$ | Ett steg gir $(1,1)^T$, på avrundingsfeil nær. |
+| $M=I$ | PCG gir samme bane som CG, på avrundingsfeil nær. |
+| Start i den kjente løsningen $x_0=x_*$ | Metoden stopper uten å ta noe søkesteg. |
+| Bruk $A_2$ fra del 1 | PCG-banen stemmer med CG-banen fra de nye koordinatene, regnet tilbake til $x$. |
 
 **Begrunn forventningene før du kjører.** Deretter kan du bruke den
 ferdige kontrollfunksjonen. Den tar din `pcg` som argument og sjekker
@@ -513,7 +513,7 @@ check_pcg(pcg)
 ```
 
 **Ta med videre:** En fungerende PCG og en kort forklaring av hvorfor
-hver av de fire kontrollene er relevant. Det er mer informativt enn
+hver av de fire kontrollene er relevant. En slik forklaring sier mer enn
 at programmet bare kjører uten feilmelding.
 
 ## 5. Sammenlign rettferdig – og lag din egen undersøkelse
@@ -536,9 +536,9 @@ for name, A in problems.items():
 
 `compare_runs` viser original relativ residual øverst og relativ
 løsningsfeil nederst. Den vannrette aksen teller produkter av $A$
-med en vektor, inkludert direkte residualkontroll. Her brukes ett
+med en vektor, inkludert produktene i den direkte residualkontrollen. Her brukes ett
 produkt i starten og to per steg, altså $1+2k$ etter $k$ steg.
-Verdier under $10^{-16}$ vises ved $10^{-16}$ i logaritmeplottene.
+Verdier under $10^{-16}$ vises som $10^{-16}$ i logaritmeplottene.
 
 Tabellen som skrives ut, viser også oppnådd relativ residual og
 løsningsfeil, antall anvendelser av prekondisjoneringen og om
@@ -569,7 +569,7 @@ Kravene er `n >= 2`, `span >= 1` og `0 <= coupling < 1`.
 
 $B$ er symmetrisk og strengt diagonaldominant: $2$ er større enn
 summen av nabobidragene, som er høyst $2\,\text{coupling}<2$.
-Med positiv diagonal gir dette positive egenverdier og dermed SPD.
+Med positiv diagonal gir dette positive egenverdier, og matrisen er dermed SPD.
 Skaleringen med invertibel $D$ bevarer egenskapen:
 $z^TDBDz=(Dz)^TB(Dz)>0$ når $z\ne0$.
 Ved andre egne konstruksjoner må du selv begrunne at CGs
@@ -577,7 +577,7 @@ forutsetninger fortsatt er oppfylt.
 
 :::
 
-Velg $x_*\ne0$; da er også $b=Ax_*\ne0$ for SPD. Dermed er
+Velg $x_*\ne0$; da er også $b=Ax_*\ne0$, fordi matrisen er SPD. Dermed er
 relativ residual og relativ løsningsfeil definert i forsøket ditt.
 
 **Før kjøring skriver du ned:** påstanden, hvilke størrelser du holder
@@ -603,7 +603,7 @@ Lever én kjørbar notebook eller Quarto-side med:
 
 Skriv i tillegg en analyse på **400–600 ord** med påstand,
 forsøksdesign, et mulig motfunn og en avgrenset konklusjon.
-Utregningene og koden kommer utenom denne tekstmengden. Analysen skal
+Utregningene og koden kommer i tillegg og teller ikke med i ordtallet. Analysen skal
 forklare hvorfor løsningen bevares, hva som endres i spekteret,
 hva residual og feil forteller, og hvilken ekstra kostnad $M$ har.
 
@@ -611,4 +611,4 @@ Matrisene her er små og lagres som tette matriser for at alle
 kontrollene skal være lette å gjennomføre i nettleseren. Et **glissent
 system** har få ikke-null matriseelementer. Avslutt med å si hva som
 må undersøkes før du overfører konklusjonen til store, glisne systemer;
-kjøretiden i disse små forsøkene alene er ikke nok.
+kjøretiden i disse små forsøkene er ikke alene et godt nok grunnlag.

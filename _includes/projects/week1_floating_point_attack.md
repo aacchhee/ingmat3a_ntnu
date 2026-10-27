@@ -33,7 +33,7 @@ Det er helt greit at de første forsøkene dine **ikke virker**. I dette prosjek
 - Ikke bruk `nan` eller `inf` i angrepene.
 - Når vi trenger en god referanseverdi, bruker vi `math.fsum`.
 - Ikke bruk `math.fsum` inne i selve angreps- eller forsvarsalgoritmen.
-- Det viktigste er ikke bare å få stor feil, men å kunne **forklare hvorfor** den oppstår.
+- Det viktigste er ikke bare å få en stor feil, men å kunne **forklare hvorfor** den oppstår.
 
 Du trenger ikke forstå hvordan `math.fsum` er programmert. Her bruker vi den som en målestokk.
 :::
@@ -56,7 +56,7 @@ def ordinary_sum(values):
     return total
 ```
 
-I eksakt matematikk er dette helt uproblematisk. Men på en datamaskin blir hvert mellomresultat lagret som et nytt flyttall. Hvis to tall har svært forskjellig størrelse, kan et lite bidrag bli for lite til å påvirke det store tallet.
+I eksakt matematikk er dette helt uproblematisk. Men på en datamaskin blir hvert mellomresultat lagret som et nytt flyttall. Hvis to tall har svært forskjellig størrelse, kan det lille tallet bli for lite til å påvirke det store tallet.
 
 **Det er denne svakheten du skal prøve å utnytte.**
 
@@ -80,7 +80,7 @@ print("referanse    =", reference)
 print("absolutt feil=", abs(ordinary - reference))
 ```
 
-Hvis begge svarene er like, har du ikke ødelagt algoritmen ennå. Bra — endre tallene og prøv igjen.
+Hvis begge svarene er like, har du ikke ødelagt algoritmen ennå. Det er helt greit — endre tallene og prøv igjen.
 
 **Hint hvis du sitter fast:** Hva skjer hvis ett tall er enormt stort og et annet er veldig lite? Hva skjer hvis et stort tall senere trekkes fra igjen?
 
@@ -96,7 +96,7 @@ Ett spesielt eksempel viser at noe *kan* gå galt. Men vi vil forstå mer enn de
 
 Neste mål er derfor å lage en funksjon som kan produsere **mange varianter av samme type problem**.
 
-Hvorfor? Fordi det er lettere å forstå en mekanisme når vi kan skru på den. Hvis feilen blir større når `n` øker, forteller det oss noe. Hvis feilen plutselig forsvinner når `scale` endres, forteller det oss også noe.
+Hvorfor? Fordi det er lettere å forstå en mekanisme når vi kan justere parametrene i den. Hvis feilen blir større når `n` øker, forteller det oss noe. Hvis feilen plutselig forsvinner når `scale` endres, forteller det oss også noe.
 
 Du skal lage en liten «angrepsgenerator»:
 
@@ -155,7 +155,7 @@ Du trenger ikke skrive en lang forklaring. To–tre setninger er nok: *Hva gjord
 
 ## 3. Nå får angrepet et mål
 
-Så langt har du fått lov til å lage en hvilken som helst sum. Det gjør det ganske lett å produsere rare resultater.
+Så langt har summen fått lov til å være hva som helst. Da er det ganske lett å produsere rare resultater.
 
 Nå strammer vi inn oppgaven.
 
@@ -200,7 +200,7 @@ Start gjerne med å bygge videre på ideen fra oppgave 1. Deretter kan du prøve
 ::: {.callout-tip}
 ## Når du har fått det til
 
-Ikke stopp ved første feil.
+Ikke stopp ved den første feilen du får fram.
 
 Kan du få `ordinary_sum` til å gi
 
@@ -216,19 +216,19 @@ Du trenger ikke klare alt. Velg én retning og se hvor langt du kommer.
 
 ## 4. Angrep med hendene bundet
 
-Det er lett å lage ekstreme eksempler hvis vi får bruke hva som helst. Derfor skal vi nå fjerne noen av de enkleste triksene.
+Det er lett å lage ekstreme eksempler hvis vi får bruke hvilke tall som helst. Derfor skal vi nå fjerne noen av de enkleste triksene.
 
 Poenget er ikke å gjøre oppgaven vanskelig for vanskelighetens skyld. Vi vil finne ut **hvilken del av angrepet som faktisk skaper problemet**.
 
 ### Oppgave 4A – ingen enorme tall
 
-Lag et angrep der alle tall tilfredsstiller
+Lag et angrep der alle tallene tilfredsstiller
 
 $$
 |x_i|\le 10^6.
 $$
 
-Nå kan du ikke bare bruke et astronomisk stort tall for å sluke alle små bidrag.
+Nå kan du ikke bare bruke ett astronomisk stort tall som sluker alle de små bidragene.
 
 ```{pyodide-python}
 import math
@@ -309,7 +309,7 @@ kan vi nå spørre
 
 > **«Kan vi organisere beregningen på en smartere måte?»**
 
-Vi beholder de samme tallene og den samme matematiske summen. Det eneste du får lov til å endre først, er **rekkefølgen**.
+Vi beholder de samme tallene og den samme matematiske summen. I første omgang er det eneste du får lov til å endre, **rekkefølgen**.
 
 ```{pyodide-python}
 def defense_order(values):
@@ -362,7 +362,7 @@ Vi prøver å forstå hvordan **algoritmen** påvirker resultatet, selv om den m
 
 ---
 
-## 6. Tournament: tåler forsvaret flere angrep?
+## 6. Turnering: tåler forsvaret flere angrep?
 
 Hvis du bare tester forsvaret mot datasettet du brukte da du laget det, er det lett å lure deg selv.
 
@@ -370,7 +370,7 @@ Derfor trenger vi en liten turnering.
 
 Vi lar samme forsvar møte flere forskjellige angrep:
 
-1. ditt beste frie angrep,
+1. ditt beste angrep med mål (uten begrensninger på størrelse eller fortegn),
 2. angrepet med begrenset størrelse,
 3. angrepet med bare positive tall.
 
@@ -408,8 +408,8 @@ for name, values in attacks.items():
 
 Se på tabellen som et lite eksperimentresultat.
 
-- Ble alle datasettene bedre?
-- Ble ett mye bedre og et annet litt dårligere?
+- Ble resultatet bedre for alle datasettene?
+- Ble ett datasett mye bedre og et annet litt dårligere?
 - Finnes det et angrep som forsvaret ditt nesten ikke hjelper mot?
 
 ::: {.callout-warning}
@@ -417,7 +417,7 @@ Se på tabellen som et lite eksperimentresultat.
 
 Det er ikke nødvendigvis et mislykket prosjekt.
 
-Et forsvar som hjelper i én situasjon og skader i en annen er et **interessant numerisk resultat**. Finn ut hva som er forskjellig mellom datasettene.
+Et forsvar som hjelper i én situasjon og skader i en annen, er et **interessant numerisk resultat**. Finn ut hva som er forskjellig mellom datasettene.
 :::
 
 Når du er fornøyd, prøv gjerne å lage et nytt datasett som er spesielt designet for å **slå ditt eget forsvar**. Da er du både angriper og forsvarer samtidig.
@@ -426,7 +426,7 @@ Når du er fornøyd, prøv gjerne å lage et nytt datasett som er spesielt desig
 
 ## 7. Bonus – kan selve algoritmen bli bedre?
 
-Til nå har `ordinary_sum` alltid gjort det samme: én lang kjede av addisjoner. Vi har bare flyttet rundt på inputen.
+Til nå har `ordinary_sum` alltid gjort det samme: én lang kjede av addisjoner. Vi har bare flyttet rundt på tallene.
 
 Men vi kan gå lenger.
 
@@ -436,13 +436,13 @@ $$
 (((x_1+x_2)+x_3)+\cdots)+x_n
 $$
 
-kan vi for eksempel kombinere tall i mindre grupper og deretter kombinere gruppene.
+kan vi for eksempel legge sammen tallene i mindre grupper og deretter legge sammen gruppesummene.
 
 Du trenger ikke løse denne delen for å fullføre prosjektet. Men hvis du har tid, er dette et naturlig neste steg.
 
 ```{pyodide-python}
 def better_sum(values):
-    # TODO: design din egen summeringsalgoritme.
+    # TODO: lag din egen summeringsalgoritme.
     # Ikke bruk sum(), numpy.sum() eller math.fsum().
 
     total = 0.0
@@ -468,13 +468,13 @@ for name, values in attacks.items():
     )
 ```
 
-Hvis du lager en algoritme som gjør det bedre enn `ordinary_sum` på flere av angrepene dine, har du i praksis gjort det numerisk analyse handler mye om: du har gått fra en matematisk oppgave til å tenke på **hvordan den bør beregnes**.
+Hvis du lager en algoritme som gjør det bedre enn `ordinary_sum` på flere av angrepene dine, har du i praksis gjort mye av det numerisk analyse handler om: du har gått fra å se på en matematisk oppgave til å tenke på **hvordan den bør beregnes**.
 
 ---
 
 ## 8. Hva har du egentlig funnet ut?
 
-Du trenger ikke levere en lang rapport. Men før du avslutter, bør du kunne forklare historien i eksperimentet ditt med egne ord.
+Du trenger ikke levere en lang rapport. Men før du avslutter, bør du kunne forklare med egne ord hva eksperimentene dine viste.
 
 Bruk disse spørsmålene som sjekkliste:
 

@@ -230,8 +230,8 @@ updateReadout(); resizeGraph();
 vektorene $x_k$ seg samme **linje**, gjennom $(1,1)^T$. Fra $(1,0)$ og
 $(-1,0)$ havner pilen på samme linje, men med motsatt orientering.
 Med startvektor langs $(1,1)^T$ eller $(1,-1)^T$ endres retningen ikke i
-det hele tatt. Fra $(1,-0.9)$, som ligger nær $(1,-1)^T$, drar pilen
-likevel bort og ender også på linjen gjennom $(1,1)^T$. Nå undersøker vi hva
+det hele tatt. Fra $(1,-0.9)$, som ligger nær $(1,-1)^T$, beveger pilen
+seg likevel bort og ender også på linjen gjennom $(1,1)^T$. Nå undersøker vi hva
 transformasjonen gjør langs disse to spesielle linjene.
 
 Vi samler multiplikasjon og normalisering i én oppdateringsregel:
@@ -268,8 +268,8 @@ For $x=(a,b)^T$ gir rad-ganger-kolonne-regelen
 $$Ax=\begin{bmatrix}2a+b\\a+2b\end{bmatrix},\qquad
 \lVert Ax\rVert_2=\sqrt{(2a+b)^2+(a+2b)^2}.$$
 
-Vi deler begge koordinatene på det samme positive tallet. Forholdet mellom
-koordinatene og orienteringen bevares. Vektoren får lengde én.
+Vi deler begge koordinatene på det samme positive tallet. Derfor bevares forholdet mellom
+koordinatene og orienteringen, og vektoren får lengde én.
 
 Fra $x_0=(1,0)^T$ får vi
 
@@ -277,13 +277,13 @@ $$x_1=\frac{(2,1)^T}{\sqrt5},\qquad
 Ax_1=\frac{(5,4)^T}{\sqrt5},\qquad
 \lVert Ax_1\rVert_2=\frac{\sqrt{41}}{\sqrt5}.$$
 
-Dermed kanselleres den tidligere normaliseringen:
+Dermed forkortes den tidligere normaliseringen bort:
 
 $$x_2=\frac{(5,4)^T/\sqrt5}{\sqrt{41}/\sqrt5}
 =\frac{(5,4)^T}{\sqrt{41}}
 =\frac{A^2x_0}{\lVert A^2x_0\rVert_2}.$$
 
-Den samme kanselleringen skjer ved hvert steg, og forklarer formelen i
+Den samme forkortingen skjer ved hvert steg, og den forklarer formelen i
 figuren. Vi utfører små, normaliserte steg; vi trenger ikke beregne hele
 $A^k$ eksplisitt. Formelen forutsetter at nevnerne er ulike null.
 
@@ -334,8 +334,8 @@ En ikke-null vektor $v$ som oppfyller
 
 $$Av=\lambda v$$
 
-kalles en **egenvektor**. Tallet $\lambda$ er dens **egenverdi**.
-For $\lambda\ne0$ blir vektoren på samme linje. Negativ $\lambda$ snur vektoren;
+kalles en **egenvektor**. Tallet $\lambda$ er den tilhørende **egenverdien**.
+For $\lambda\ne0$ blir vektoren liggende på samme linje. Negativ $\lambda$ snur vektoren;
 $\lambda=0$ sender den til null. Alle ikke-null multipler av $v$ er også
 egenvektorer med samme egenverdi. Samlingen av egenverdier kalles
 matrisens **spektrum**; for $A$ er spekteret $\{3,1\}$.
@@ -346,7 +346,7 @@ likningen i **egenrommet**
 $$E_\lambda=\{v:Av=\lambda v\}=\operatorname{Null}(A-\lambda I).$$
 
 Det er et underrom og inneholder også nullvektoren. De øvrige vektorene i
-rommet er egenvektorer. Her er $E_3=\operatorname{span}\{(1,1)^T\}$ og
+egenrommet er egenvektorer. Her er $E_3=\operatorname{span}\{(1,1)^T\}$ og
 $E_1=\operatorname{span}\{(1,-1)^T\}$: to linjer gjennom origo.
 
 Men så langt har vi bare *sjekket* retninger vi så i figuren. Hvordan
@@ -392,7 +392,7 @@ $A-\lambda I$ fra [uke 3](uke3.qmd#uke3-del3). Den samme regningen bruker vi på
 ::: {.reading-step title="Gå i dybden: flere detaljer i håndregningen"}
 
 **Hvorfor utelates nullvektoren?** $A0=\lambda0$ gjelder for alle $\lambda$,
-så nullvektoren identifiserer ingen spesiell retning. Ordet **spektral**
+så nullvektoren peker ikke ut noen spesiell retning. Ordet **spektral**
 betyr at vi beskriver noe ved hjelp av egenverdiene. Fortegnet til en
 egenverdi forteller om orientering, og absoluttverdien om lengdeskalering.
 Et egenrom kan også ha høyere dimensjon; for identitetsmatrisen er hele
@@ -430,7 +430,7 @@ Velger du $t=1/\sqrt2$, får du en egenvektor med lengde én.
 Normalisering velger en representant; den endrer ikke egenverdien.
 Kontroller alltid svaret i den opprinnelige likningen $Av=\lambda v$.
 
-På store matriser bruker vi numeriske algoritmer fremfor å utvide store
+For store matriser bruker vi numeriske algoritmer fremfor å utvide store
 determinantpolynomer. Håndregningen her forklarer hva algoritmene leter etter.
 
 :::
@@ -599,8 +599,8 @@ uten et bidrag langs den dominante egenvektoren fra start kan det ikke vokse fra
 ### Skriv observasjonen som algebra
 
 Linearitet betyr at transformasjonen virker på hvert bidrag for seg:
-$A(c_1v_1+c_2v_2)=c_1Av_1+c_2Av_2$. De to egenverdiene
-brukes én gang for hvert steg; vi lar potensene stå synlige:
+$A(c_1v_1+c_2v_2)=c_1Av_1+c_2Av_2$. Hvert steg ganger
+hvert bidrag med sin egenverdi én gang; vi lar potensene stå synlige:
 
 $$\begin{aligned}
 Ax_0&=\tfrac12{\color{#1565c0}3}\,v_1+\tfrac12{\color{#a04a00}1}\,v_2=(2,1)^T,\\
@@ -621,9 +621,9 @@ $$x_0=\sum_{i=1}^n c_iv_i,
 
 Matrisen kalles da **diagonaliserbar**. Egenverdien $\lambda_1$ er
 **dominant** når $|\lambda_1|>|\lambda_i|$ for alle $i>1$.
-Hvis $c_1\ne0$, vokser dens bidrag relativt til de andre. Forholdet
+Hvis $c_1\ne0$, vokser bidraget langs den tilhørende egenvektoren relativt til de andre. Forholdet
 $|\lambda_2/\lambda_1|$, med egenverdiene sortert etter absoluttverdi,
-forklarer farten etter mange steg: nær én betyr langsom utskilling.
+forklarer farten etter mange steg: er forholdet nær én, tar det lang tid før den dominerende retningen tar over.
 
 ::: {.reading-step title="Gå i dybden: hvorfor kan vi behandle bidragene hver for seg?"}
 
@@ -683,7 +683,7 @@ $$\frac{|c_2\lambda_2^k|}{|c_1\lambda_1^k|}
 =\left|\frac{c_2}{c_1}\right|\left|\frac{\lambda_2}{\lambda_1}\right|^k.$$
 
 Dette krever $c_1\ne0$. Hvis $\lambda_1<0$, skifter den dominerende
-koeffisienten fortegn; da konvergerer linjen, mens de normaliserte vektorene
+koeffisienten fortegn i hvert steg; da konvergerer linjen, mens de normaliserte vektorene
 kan veksle mellom motsatte orienteringer.
 
 :::
@@ -738,7 +738,7 @@ er null, kan gjentatt anvendelse av $T$ gi et bidrag langs denne linjen?
 
 ### Spektralteoremet: en ortonormal basis av egenvektorer
 
-Dette er mulig for alle reelle symmetriske matriser, ikke bare for eksemplet
+Oppdelingen vi nettopp brukte, er mulig for alle reelle symmetriske matriser, ikke bare for eksemplet
 vårt. **Spektralteoremet:** En reell symmetrisk matrise $A$ ($A^T=A$) har
 reelle egenverdier og en ortonormal basis av egenvektorer
 $q_1,\ldots,q_n$ for hele $\mathbb R^n$.
@@ -849,7 +849,7 @@ $$\lambda_{\min}\lVert x\rVert_2^2\le x^TAx\le\lambda_{\max}\lVert x\rVert_2^2.$
 
 I uke 6 bruker vi egenskapen til å knytte løsningen av et lineært system
 til et entydig minimum, og i uke 9 til å vise at en kvadratisk funksjon vokser
-langt ute.
+langt fra origo.
 
 :::
 
@@ -945,7 +945,7 @@ men viser ikke slike små avvik tydelig.
 
 ### Skriv opp det vi nettopp gjorde
 
-Dette er **potensmetoden**:
+Vi samler stegene fra forsøkene i én algoritme. Dette er **potensmetoden**:
 
 ```text
 Velg x ≠ 0 og del x på lengden sin.
@@ -971,8 +971,8 @@ Et **fikspunkt** $F(x_*)=x_*$ betyr
 
 $$Ax_*=\lVert Ax_*\rVert_2\,x_*,$$
 
-altså at $x_*$ er en enhetsegenvektor med **positiv** egenverdi. Om
-følgen nærmer seg et fikspunkt, avgjør egenverdiene og bidragene i startvektoren.
+altså at $x_*$ er en enhetsegenvektor med **positiv** egenverdi. Egenverdiene
+og bidragene i startvektoren avgjør om følgen nærmer seg et fikspunkt.
 
 ::: {#uke5-rayleigh}
 :::
@@ -1078,7 +1078,7 @@ både $\rho$ og residualnormen, ikke hele residualvektoren.
 
 ::: {.reading-step title="Gå i dybden: implementasjonen av potensmetoden"}
 
-Definisjonen kjøres automatisk. Les koden etter pseudokoden: normalisering,
+Cellen med definisjonen kjøres automatisk. Les koden side om side med pseudokoden: normalisering,
 Rayleigh-kvotient, residual og en øvre grense for antall steg.
 
 ```{pyodide-python}
@@ -1245,8 +1245,8 @@ $$\begin{aligned}
 \end{aligned}$$
 
 I andre tilfelle deler vi på $\sqrt{3^{2k}+1}$.
-Andre koordinat går da mot null, mens første går mot 1 langs partallsstegene
-og mot $-1$ langs oddetallsstegene. I tredje tilfelle deler vi alltid på
+Andre koordinat går da mot null, mens første går mot 1 ved partallsstegene
+og mot $-1$ ved oddetallsstegene. I tredje tilfelle deler vi alltid på
 $\sqrt2$, så begge bidragene består.
 
 **Hvordan måle endring av linje?** Enhetsvektorene $x$ og $-x$ spenner ut
@@ -1267,13 +1267,13 @@ vinkelrett på $x$, så $\rho=x^TAx=0$ og $\lVert Ax-\rho x\rVert_2=1$.
 Determinantlikningen er $\lambda^2+1=0$,
 som ikke har reelle løsninger. Over komplekse tall er egenverdiene $i$ og $-i$.
 
-**Sykler.** I [uke 2.3](page4.qmd#lokalt-globalt-og-raskt) så vi at en iterasjon
+**Sykluser.** I [uke 2.3](page4.qmd#lokalt-globalt-og-raskt) så vi at en iterasjon
 kan nærme seg en 2-syklus i stedet for et fikspunkt.
 Tilfelle 2 og 3 viser samme skille for vektorer: to tilstander gjentas
 eller nærmes vekselvis, selv om ett enkelt grensepunkt mangler.
 
 Tilfelle 1 beskriver eksakt regning. Avrunding kan i andre beregninger
-tilføre et lite bidrag som mangler matematisk. Her brukes en diagonalmatrise
+tilføre et lite bidrag som er null i eksakt regning. Her brukes en diagonalmatrise
 og en eksakt nullkoordinat for å isolere mekanismen. Den neste fordypningen
 undersøker hva som skjer når startvektoren får et lite bidrag langs den
 dominante egenretningen.
@@ -1682,7 +1682,7 @@ $(0,0,0,1)^T$. Den nye D-raden gir
 
 $$p_D^{(k+1)}=\tfrac12p_C^{(k)}+p_D^{(k)}\geq p_D^{(k)}.$$
 
-Sannsynlighet på D blir der, mens C kan sende mer inn.
+Sannsynligheten som er på D, blir værende der, mens C kan sende mer inn.
 For $p=(0,0,0,1)^T$ får vi nøyaktig
 
 $$S_{\mathrm{felle}}p=p,\qquad r=S_{\mathrm{felle}}p-p=0.$$
@@ -1731,7 +1731,7 @@ for alpha in [0.5, 0.85, 0.95]:
 plot_distributions(results)
 ```
 
-**Hva viser forsøket?** D beholder fortsatt mest, men nå får alle sidene
+**Hva viser forsøket?** D beholder fortsatt mest vekt, men nå får alle sidene
 positiv sannsynlighet. Jo vanligere hopp, desto mindre vekt på D: omtrent
 0.38 ved $\alpha=0.5$, 0.67 ved $\alpha=0.85$ og 0.86 ved $\alpha=0.95$.
 Rekkefølgen D, C, A, B er den samme for alle tre verdiene her, men på
@@ -1788,8 +1788,8 @@ Dette krever verken symmetri eller en egenvektorbasis.
 
 Grunnen er at hvert steg med $G$ krymper avstanden mellom to fordelinger
 med minst faktor $\alpha$, målt i 1-normen $\lVert z\rVert_1=\sum_i|z_i|$
-(se fordypningen «en feilgrense uten en egenvektorbasis»). Da kan to forskjellige startfordelinger ikke
-holde seg fra hverandre, og det finnes bare én stasjonær fordeling.
+(se fordypningen «en feilgrense uten en egenvektorbasis»). Da kan følgene fra to forskjellige startfordelinger ikke
+holde seg adskilt, og det finnes bare én stasjonær fordeling.
 
 **Hvor nær er vi?** I 1-normen gjelder feilgrensen
 
@@ -1872,7 +1872,7 @@ ikke lagre den tette matrisen $u\mathbf1^T$.
 
 ::: {.reading-step title="Gå i dybden: egenverdier forklarer pendling og avtagende avvik"}
 
-Se dette konkret med to sider som bare lenker til hverandre.
+Her ser vi hvordan egenverdiene forklarer pendlingen, i et konkret eksempel med to sider som bare lenker til hverandre.
 Uten hopp blir fordelingen fra sikker start på første side
 $(1,0)^T,(0,1)^T,(1,0)^T,\ldots$.
 Fordelingen $(1/2,1/2)^T$ er stasjonær, men denne følgen nærmer seg den ikke.
@@ -1997,7 +1997,7 @@ Likningene er $c_1+c_2=2$ og $c_1-c_2=1$. Hva skjer når du legger dem sammen?
 Vi undersøker $A=\begin{bmatrix}1&2\\2&1\end{bmatrix}$. Sett opp
 $\det(A-\lambda I)=0$ i egne notater og løs likningen. Løs deretter
 $(A-\lambda I)v=0$ for hver egenverdi. Du velger selv skaleringen av
-egenvektorene. Skriv den største egenverdien først; kontrollen sjekker
+egenvektorene. Skriv den største egenverdien først; kontrollen av egenvektorene sjekker
 bare at $Av=\lambda v$.
 
 ```{math-exercise}
@@ -2198,7 +2198,7 @@ gyldige skaleringer godtas.
 #|           return {"score": 0, "feedback": "Startvektoren må være forskjellig fra null."}
 #|       B = Matrix([[2, 2], [2, 5]])
 #|       ok = all(simplify(z) == 0 for z in B*v-v)
-#|       return {"correct": ok, "feedback": "Startvektoren gir en følge som blir på den andre egenlinjen." if ok else "Undersøk om startvektoren har et bidrag langs w₁."}
+#|       return {"correct": ok, "feedback": "Startvektoren gir en følge som blir liggende på den andre egenlinjen." if ok else "Undersøk om startvektoren har et bidrag langs w₁."}
 
 En startvektor for transformasjonen med matrise $B$: vec[2,-1]
 ```
@@ -2290,10 +2290,10 @@ $$\rho=\frac{x^TAx}{x^Tx},\qquad r=Ax-\rho x.$$
 | `steps` | Heltall større enn eller lik null |
 | Returverdi | Tuple `(x, rho, residual)` |
 | `x` | NumPy-vektor med form `(n,)` og lengde én |
-| `rho` | Reelt skalar: Rayleigh-kvotienten for siste vektor |
-| `residual` | Ikke-negativt skalar: $\lVert r\rVert_2$ |
+| `rho` | Reell skalar: Rayleigh-kvotienten for siste vektor |
+| `residual` | Ikke-negativ skalar: $\lVert r\rVert_2$ |
 
-Forutsett at ingen multiplikasjon gir nullvektoren.
+Du kan anta at ingen multiplikasjon gir nullvektoren.
 Når `steps=0`, skal funksjonen fortsatt normalisere startvektoren og beregne de to skalarene.
 
 ```{py-exercise}
@@ -2415,11 +2415,11 @@ $p_{k+1}=\alpha Sp_k+(1-\alpha)u$. Fullfør `visit_step`, som gjør
 | Navn | Type og betydning |
 |---|---|
 | `S` | NumPy-matrise med form `(n, n)`, ikke-negative elementer og kolonnesum én |
-| `alpha` | Reelt skalar med $0\leq\alpha<1$ |
+| `alpha` | Reell skalar med $0\leq\alpha<1$ |
 | `u`, `p` | NumPy-vektorer med form `(n,)`, ikke-negative elementer og sum én |
 | Returverdi | NumPy-vektor med form `(n,)`: fordelingen etter **ett** steg |
 
-Bruk nøyaktig denne rekkefølgen på argumentene: samme funksjon bruker du i
+Bruk nøyaktig denne rekkefølgen på argumentene, fordi du bruker den samme funksjonen i
 prosjekt 5, del 2. Funksjonen skal returnere vektoren, ikke skrive den ut
 eller returnere flere verdier.
 
@@ -2461,7 +2461,7 @@ Nå bytter vi til en skjev hoppfordeling $u=(0.8,\,0.2)^T$ og $\alpha=\tfrac12$,
 fortsatt med de to sidene som lenker til hverandre. Finn den stasjonære
 fordelingen $p_*$ ved å løse $p_*=\tfrac12Sp_*+\tfrac12u$ for hånd.
 Skriv deretter avviket $e_k=p_k-p_*$ som et tall ganger $(1,-1)^T$, og finn
-tallet som dette tallet ganges med i hvert steg.
+faktoren som dette tallet ganges med i hvert steg.
 
 ```{math-exercise}
 #| label: week5-task-skewed-jump
