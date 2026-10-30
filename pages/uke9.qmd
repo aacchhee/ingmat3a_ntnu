@@ -1,5 +1,7 @@
 ---
 title: "Uke 9 – gradientmetoden og søk uten deriverte"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/optimization/week9_setup.md >}}

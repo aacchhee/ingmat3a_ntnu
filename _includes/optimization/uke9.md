@@ -1700,7 +1700,7 @@ Garantien følger ikke av metoden alene.
 
 **Øv på del D:** [regneoppgavene D](#uke9-oppg-d).
 
-## 9.6 Regneoppgaver
+## 9.6 Regneoppgaver {quiz=uke9-6-oppgaver}
 
 ::: {#uke9-oppgaver}
 :::
@@ -1957,7 +1957,7 @@ $x^4+y^2$: _[1]
 
 Hva kan du si om iteratene til Armijo-søket for hver av de fire funksjonene?
 
-## 9.7 Python: mål og tilpass
+## 9.7 Python: mål og tilpass {quiz=uke9-7-oppgaver}
 
 ::: {#uke9-python}
 :::

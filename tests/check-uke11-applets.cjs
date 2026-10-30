@@ -30,6 +30,10 @@ for (let i = 0; i < 2; i++) {
   assert.ok(newPrograms[i].includes(oldPrograms[i]), 'original authored program retained');
   recovered = recovered.replace(newPrograms[i], oldPrograms[i]);
 }
+// Only the two reviewed quiz heading attributes may accompany the applet fix.
+recovered = recovered
+  .replace('\n## 11.5 Regneoppgaver {quiz=uke11-5-oppgaver}\n', '\n## 11.5 Regneoppgaver\n')
+  .replace('\n## 11.6 Python: undersøk og kontroller {quiz=uke11-6-oppgaver}\n', '\n## 11.6 Python: undersøk og kontroller\n');
 assert.equal(recovered, oldSource, 'all original source bytes retained outside the two wrappers');
 const html = fs.readFileSync(path.join(site, 'pages/uke11.html'), 'utf8');
 const frames = [...html.matchAll(/<iframe[^>]+src="(data:text\/html;base64,[^"]+)"/g)]

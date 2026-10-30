@@ -2339,7 +2339,7 @@ informasjon mister målingen, og kan små endringer være nesten usynlige?
 Del 2 og finalen i prosjektet handler også om avrundingsfeil og kansellering;
 disse temaene kan du repetere i [uke 1](page2.qmd#uke1-kansellering).
 
-## 3.6 Egenarbeid: bildeforsøk og polynomoppgaver {#uke3-del4}
+## 3.6 Egenarbeid: bildeforsøk og polynomoppgaver {#uke3-del4 quiz=uke3-6-oppgaver}
 
 Denne delen er egenarbeid. Nå går vi tilbake til
 bildetransformasjonen fra 3.1–3.4, og du skal selv konstruere, teste og
@@ -3200,7 +3200,7 @@ Dette er ikke en motsigelse. **Eksakt rang** gjelder en idealisert matrise med e
 
 ::::
 
-## 3.8 Støtteløp: Papir- og kontrolloppgaver {#uke3-stotte-oppgaver}
+## 3.8 Støtteløp: Papir- og kontrolloppgaver {#uke3-stotte-oppgaver quiz=uke3-8-oppgaver}
 
 Dette er repetisjonsoppgaver, ikke en obligatorisk fortsettelse av
 hovedløpet. Bruk matrisen $B$ som selvtest. Hvis regningen går greit, kan du

@@ -1,4 +1,4 @@
-## Oppgaver
+## Oppgaver {quiz=uke1-horner}
 
 ::: {#uke1-oppg-horner}
 :::

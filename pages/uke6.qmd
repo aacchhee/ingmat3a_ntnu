@@ -1,5 +1,7 @@
 ---
 title: "Uke 6 – iterative metoder for lineære systemer"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/linalg/week6_setup.md >}}

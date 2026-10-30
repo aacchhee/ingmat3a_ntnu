@@ -1939,7 +1939,7 @@ størrelse og har ingen tilsvarende garanti for hvert enkelt steg.
 
 
 
-## 6.7 Prosjekt og egenarbeid
+## 6.7 Prosjekt og egenarbeid {quiz=uke6-7-oppgaver}
 
 ::: {#uke6-prosjekt}
 :::

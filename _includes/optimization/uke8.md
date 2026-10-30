@@ -1665,7 +1665,7 @@ $x^2\ge2x-1$, som er $(x-1)^2\ge0$.
 [to starter på svingningen](#uke8-kode-svingning) og
 [midtpunktsulikheten](#uke8-kode-midtpunkt) i 8.6.
 
-## 8.5 Regneoppgaver
+## 8.5 Regneoppgaver {quiz=uke8-5-oppgaver}
 
 ::: {#uke8-oppgaver}
 :::
@@ -2045,7 +2045,7 @@ $q(x_*)=$ _[0]
 tangentulikheten ved $x_*$ et globalt minimum, og hvorfor gjør streng
 konveksitet det entydig?
 
-## 8.6 Python: SciPy-oppslag og kodeoppgaver
+## 8.6 Python: SciPy-oppslag og kodeoppgaver {quiz=uke8-6-oppgaver}
 
 ::: {#uke8-python}
 :::
@@ -2208,7 +2208,7 @@ assert np.isclose(midpoint_gap(lambda x: x**4 - 2*x**2, -1., 1.), -1.)
 assert np.isclose(midpoint_gap(lambda z: z @ z, np.array([0., 0.]), np.array([2., 2.])), 2.)
 ```
 
-## 8.7 Støtteløp: flervariabel derivasjon ved behov
+## 8.7 Støtteløp: flervariabel derivasjon ved behov {quiz=uke8-7-oppgaver}
 
 ::: {#uke8-gradient}
 :::

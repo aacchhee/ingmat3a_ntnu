@@ -1354,7 +1354,7 @@ tilpasningsproblem: å finne en posisjon fra unøyaktige avstander. I
 [uke 11](uke11.qmd) får vi lineære krav (ulikheter), og det beste punktet ligger ofte på
 randen. Da er «gradienten er null» ikke lenger den riktige kontrollen.
 
-## 10.5 Regneoppgaver
+## 10.5 Regneoppgaver {quiz=uke10-5-oppgaver}
 
 ::: {#uke10-oppgaver}
 :::
@@ -1777,7 +1777,7 @@ Sammenlign med tallene for den brattere dalen i «Gå i dybden».
 
 Arbeid videre med [prosjekt 10: posisjon fra avstander](project_week10.qmd).
 
-## 10.6 Python: prøv stegene selv
+## 10.6 Python: prøv stegene selv {quiz=uke10-6-oppgaver}
 
 ::: {#uke10-python}
 :::

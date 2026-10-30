@@ -1,5 +1,7 @@
 ---
 title: "Uke 2 – fikspunktiterasjon"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/module2/setup.md >}}

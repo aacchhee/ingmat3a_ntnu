@@ -1,5 +1,7 @@
 ---
 title: "Uke 1 – regnetid, binære tall og tall på datamaskiner"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/module1/setup.md >}}

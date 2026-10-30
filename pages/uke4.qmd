@@ -1,5 +1,7 @@
 ---
 title: "Uke 4 – Ortogonalitet, QR og minste kvadrater"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/linalg/week4_lecture_setup.md >}}

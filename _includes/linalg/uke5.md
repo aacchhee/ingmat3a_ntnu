@@ -1945,7 +1945,7 @@ omtrent $6.67\cdot10^{-8}$ ved $\alpha=0.85$, men $10^{-6}$ ved $\alpha=0.99$.
 
 :::
 
-## 5.7 Støtteløp: repetisjon ved behov
+## 5.7 Støtteløp: repetisjon ved behov {quiz=uke5-7-oppgaver}
 
 ::: {#uke5-stotte-oppgaver}
 :::
@@ -2059,7 +2059,7 @@ er singulær, så du skal ikke forsøke å invertere den.
 
 :::
 
-## 5.8 Hovedløp: iterasjon og PageRank
+## 5.8 Hovedløp: iterasjon og PageRank {quiz=uke5-8-oppgaver}
 
 ::: {#uke5-oppgaver}
 :::

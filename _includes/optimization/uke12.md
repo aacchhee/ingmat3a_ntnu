@@ -1247,7 +1247,7 @@ Denne uken svarte vi på dem med kompakthet, Lagranges likninger, en global ulik
 og to kontrollfeil. Den arbeidsmåten tar du med deg videre: regn ut et svar,
 og kontroller det med et argument eller en uavhengig test.
 
-## 12.6 Regneoppgaver
+## 12.6 Regneoppgaver {quiz=uke12-6-oppgaver}
 
 ::: {#uke12-oppgaver}
 :::
@@ -1559,7 +1559,7 @@ $a=(0,3)$: $z=$ vec[0,1], $\lambda=$ _[1]
 **Forklar:** Kontroller fortegnskravet og komplementær slakk i begge
 tilfellene.
 
-## 12.7 Python: prøv kontrollene selv
+## 12.7 Python: prøv kontrollene selv {quiz=uke12-7-oppgaver}
 
 ::: {#uke12-python}
 :::

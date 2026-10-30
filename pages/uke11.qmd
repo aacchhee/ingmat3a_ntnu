@@ -1,5 +1,7 @@
 ---
 title: "Uke 11 – lineær programmering"
+ctm-assessment:
+  progress: true
 ---
 
 {{< include ../_includes/optimization/week11_setup.md >}}
