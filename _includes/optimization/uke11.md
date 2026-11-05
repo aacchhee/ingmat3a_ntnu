@@ -201,25 +201,31 @@ I $(3,3)$ er begge timekapasitetene brukt opp, men det er rom for ett A-parti ti
 
 ### Hvor robust er den beste planen?
 
-Figuren og hjørnetabellen viser at $(3,3)$ er best når et B-parti gir 4 tusen kroner.
+Figuren og hjørnetabellen viser at den beste planen er $(3,3)$: tre partier A og tre partier B i uka. Den gir $P=5\cdot3+4\cdot3=27$ tusen kroner. Tenker vi på A som stoler og B som bord, er det tre partier stoler og tre partier bord.
 
-- **Usikre tall:** Bidragene i tabellen er anslag. Materialprisene kan endre
-  seg, og salgsprisen for B er usikker.
-- **Spørsmålet for verkstedet:** Tåler planen at bidragene er litt feil, eller
-  gir en liten endring en helt annen plan?
+**Hvor sikkert er tallet 4?** Dekningsbidraget fra et parti bord er salgsprisen minus det materialene koster. Begge deler kan endre seg: treverket kan bli dyrere, eller en kunde kan være villig til å betale mer for bordene. Da gir et parti bord kanskje 3 eller 6 tusen kroner i stedet for 4.
 
-Vi bytter ut 4 med et tall $c$, slik at målet blir $P=5x+cy$.
+**Eierens spørsmål:** Må verkstedet lage en annen plan hvis bordene gir mer eller mindre enn vi trodde? Og hvor mye kan bidraget fra bordene endre seg før planen må endres?
 
-- **Det som endres:** Kravene er de samme, så det blå området endres ikke; bare retningen til mållinjene endres.
+For å undersøke mange mulige bidrag på én gang gir vi bidraget et navn:
+
+> La $c$ være dekningsbidraget fra ett parti B (bord), målt i tusen kroner. Hittil har vi brukt $c=4$.
+
+Planen $(x,y)$ gir da
+
+$$P=5x+cy.$$
+
+- **Det som ikke endres:** Timene og salgsgrensen for A er de samme, så det blå området med tillatte planer er det samme.
+- **Det som endres:** Mållinjene $5x+cy=\text{konstant}$ får en annen helning når $c$ endres.
 - **Det du får ferdig:** Figuren under regner ut $P$ i de fem hjørnene for deg og markerer det beste. Hvorfor det holder å se på hjørnene, begrunner vi rett etterpå.
 
-Målet er å finne ut hvordan den beste planen flytter seg når $c$ endres, og ved hvilke verdier av $c$ den bytter hjørne.
+Målet er å finne ut hvilken plan som er best for ulike bidrag $c$ fra bordene, og ved hvilke verdier av $c$ eieren må bytte plan.
 
 ### Eksperiment 1 – endre bidraget fra B
 
-- Forutsi først: flytter den beste planen seg litt hvis $c$ øker litt fra 4?
-- Skyv $c$ sakte fra 0.5 til 14, og noter hvert hjørne som blir best.
-- Finn de to verdiene der teksten viser «Hel kant er best». Hvilken kant er det i hvert tilfelle?
+- **Forutsi først:** Hvis bordene gir litt mer, for eksempel $c=4.5$ i stedet for $4$, bør verkstedet da lage litt flere bord og litt færre stoler?
+- **Skyv $c$ sakte fra 0.5 til 14**, altså fra nesten ingenting til 14 tusen kroner per parti bord. Noter hvert hjørne (hver plan) som blir best underveis.
+- **Finn knekkpunktene:** For to verdier av $c$ viser teksten «Hel kant er best». Da gir to hjørner like mye, og det gjør alle planene mellom dem også. Hvilken kant er det i hvert tilfelle, og hvilken type timer er brukt opp langs den?
 
 Den stiplede linjen er mållinjen gjennom det beste punktet, og teksten viser hvilket hjørne som er best og verdien der.
 
@@ -290,10 +296,12 @@ board.create('text', [xl, function () { return narrow() ? ytop() - 1.8 : 3.85; }
 
 **Hva viser forsøket?**
 
-- For $c<5/2$ er $(4,1)$ best.
-- For $5/2<c<10$ er $(3,3)$ best. Et helt intervall av bidrag gir samme plan.
-- For $c>10$ er $(0,9/2)$ best.
-- For $c=5/2$ og $c=10$ er en hel kant best.
+- **Bordene gir lite ($c<5/2$):** $(4,1)$ er best. Verkstedet lager så mange stoler som kundene vil kjøpe, og bruker resten av maskintiden på ett parti bord.
+- **Bordene gir middels ($5/2<c<10$):** $(3,3)$ er best. Et helt intervall av bidrag gir samme plan.
+- **Bordene gir mye ($c>10$):** $(0,9/2)$ er best. Verkstedet lager bare bord, og arbeidstimene setter grensen.
+- **Knekkpunktene ($c=5/2$ og $c=10$):** En hel kant er best, så to planer og alt mellom dem gir like mye.
+
+**Svaret til eieren:** Planen $(3,3)$ er fortsatt best så lenge et parti bord gir mellom $2.5$ og $10$ tusen kroner. Et anslag som er litt feil, endrer altså ikke planen.
 
 Den beste planen flytter seg aldri litt: den står stille, og så hopper den. Knekkpunktene kommer når mållinjen er parallell med en kant. Mållinjene $5x+cy=\text{konstant}$ har stigningstall $-5/c$.
 
