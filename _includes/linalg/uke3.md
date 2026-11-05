@@ -88,7 +88,7 @@ c = np.linalg.solve(P, target)
 
 `A @ x` er matrise-vektorproduktet $Ax$. `solve(P, target)` gjør reverse
 engineering: Den finner koeffisientene `c` som oppfyller
-`P @ c = target`. Vi bruker den her bare når matrisen er kvadratisk og likningssystemet har
+`P @ c = target`. Vi bruker den her bare når matrisen er kvadratisk og likningssettet har
 nøyaktig én løsning.
 
 ### Kontroller et matematisk svar
@@ -1518,7 +1518,7 @@ $$4=\operatorname{rank}(B)+\dim N(B)=1+3.$$
 
 :::
 
-Fra tidligere kurs i lineær algebra kjenner vi nullrommet som mengden av løsninger av et homogent likningssystem. For en transformasjon $A:\mathbb R^n\to\mathbb R^m$ er
+Fra tidligere kurs i lineær algebra kjenner vi nullrommet som mengden av løsninger av et homogent likningssett. For en transformasjon $A:\mathbb R^n\to\mathbb R^m$ er
 
 $$N(A)=\{z\in\mathbb R^n:Az=0\}\subseteq\mathbb R^n.$$
 
@@ -2411,7 +2411,7 @@ Forsøk å lage et konkret $2\times2$-målbilde som de tre byggesteinene ikke ka
 
 ### Valgfri C: Lag en annen basis
 
-Cellen starter med pikselbasisen som byggesteiner. Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om likningssystemet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
+Cellen starter med pikselbasisen som byggesteiner. Bytt ut minst to av bildene. Prøv gjerne først et valg der ett bilde kan bygges av de andre. Observer hva rangen blir og om likningssettet kan løses. Endre deretter byggesteinene til rangen blir 4; da skal fire koeffisienter kunne styre de fire pikselverdiene uavhengig.
 
 ```{pyodide-python}
 #| label: week3-activity-c
@@ -2617,7 +2617,7 @@ $$
 
 Å finne $[q]_{\mathcal C}$ betyr å finne tall $c_1,c_2,c_3$ slik at
 $q=c_1p_1+c_2p_2+c_3p_3$. Sammenligner vi koeffisientene til $1$, $x$ og
-$x^2$ på begge sider, får vi et vanlig lineært likningssystem for
+$x^2$ på begge sider, får vi et vanlig lineært likningssett for
 $c_1,c_2,c_3$.
 
 ```{math-exercise}
@@ -2793,7 +2793,7 @@ $\dim U=$ _[3]
 ## 3.7 Støtteløp: Matriseregning ved behov {#uke3-stotte-matriser}
 
 Denne delen repeterer radreduksjon fra Matematikk 1: radoperasjoner,
-likningssystemer og Gauss-eliminasjon. Den er med slik at du ikke trenger å
+likningssett og Gauss-eliminasjon. Den er med slik at du ikke trenger å
 finne fram gamle notater. Det er en stund siden, så vi forventer ikke at
 framgangsmåten sitter friskt. Regningen vises steg for steg og kobles til
 ordene vi bruker nå: pivot, rang, kolonnerom og nullrom. Kan du allerede
