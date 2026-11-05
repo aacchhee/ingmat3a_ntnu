@@ -1214,9 +1214,17 @@ Anta at verkstedet leier $\Delta$ ekstra maskintimer, så maskinene har $9+\Delt
 
    Den halve ekstra maskintimen øker det beste bidraget med 1 tusen kroner, altså 2 tusen per time. Den gamle prisen virker.
 
-   ### Når en annen grense stopper produksjonen
+### Når en annen grense stopper produksjonen
 
-Kan eieren fortsatt regne med 2 tusen per maskintime hvis verkstedet leier mange timer? Vi prøver $\Delta=2$, så maskinkapasiteten blir 11:
+Kan eieren fortsatt regne med 2 tusen kroner per maskintime hvis verkstedet leier mange timer? Vi prøver $\Delta=2$, så verkstedet har 11 maskintimer. Regningen bruker de samme stegene som over og komplementær slakk fra 11.3; den står i *Gå i dybden* under. Her er resultatet:
+
+- **Ny beste plan:** $(4,5/2)$, altså fire partier A (alt kundene vil kjøpe) og to og et halvt parti B. Planen bruker all arbeidstid, men bare $21/2$ av de 11 maskintimene.
+- **Nytt bidrag:** 30 tusen kroner, ikke $27+2\cdot2=31$. De to ekstra timene ga bare 3 tusen kroner: 2 tusen for hver av de første halvannen timene, og ingenting for resten.
+- **Hvorfor:** Nå er det arbeidstimene og A-grensen som stopper produksjonen. Maskintimer som blir til overs, er ikke verdt noe, så prisen på en maskintime blir 0. De nye prisene er $(u,v,w)=(0,2,3)$.
+
+**Regelen:** En ressurspris gjelder så lenge de samme grensene er brukt opp (aktive). Byttet skjer når planen $(4,5/2)$ akkurat får nok maskintimer, ved $\Delta=\tfrac{21}{2}-9=\tfrac32$. Med mer enn halvannen ekstra maskintime er det ikke lenger maskintimene som er flaskehalsen: verdien av en ekstra maskintime er 2 tusen kroner før byttet og 0 etter.
+
+::: {.reading-step title="Gå i dybden: regningen for to ekstra maskintimer"}
 
 1. **Prøv timegrensene først:** $2x+y=11$ og $x+2y=9$ gir $x-y=2$, så $x=y+2$.
 
@@ -1236,18 +1244,16 @@ $$2(x+2y)+3x=2x+4y+3x=5x+4y\le2\cdot9+3\cdot4=30.$$
 
 Planen $(4,5/2)$ oppnår 30. Nå er det arbeidstimene og A-grensen som bestemmer beste verdi; ekstra maskintimer alene hjelper ikke.
 
-Med to ekstra maskintimer vokser det beste bidraget fra 27 til 30, ikke til 31. Økningen på 3 tusen kroner tilsvarer halvannen time à 2 tusen kroner. Etter det setter arbeidstimene og A-grensen grensen, og flere maskintimer hjelper ikke.
+Disse prisene gir en ny øvre grense:
 
-**Det aktive paret har byttet.**
+$$2(x+2y)+3x=2x+4y+3x=5x+4y\le2\cdot9+3\cdot4=30.$$
 
-- **Det nye hjørnet:** $(4,5/2)$ er skjæringspunktet mellom arbeidstimer og A-grense, det samme punktet som lå *utenfor* området i håndeksemplet i 11.1, fordi det trenger $21/2$ maskintimer.
-- **De nye prisene:** Med nok maskintimer er det paret arbeidstimer og A-grense som bestemmer hjørnet, og prisene $(0,2,3)$ hører til dette paret.
-- **Gyldigheten:** **En ressurspris gjelder så lenge det samme paret av grenser er aktivt.** Når paret bytter, må prisene regnes ut på nytt.
+Planen $(4,5/2)$ oppnår 30, så den er best.
 
-Paret bytter ved $\Delta=\tfrac{21}{2}-9=\tfrac32$, der maskinkapasiteten er $21/2$.
+- **Det nye hjørnet:** $(4,5/2)$ er skjæringspunktet mellom arbeidstimer og A-grense, det samme punktet som lå *utenfor* området i hjørneregningen i 11.1, fordi det trenger $21/2$ maskintimer.
+- **Prisene er ikke entydige:** Ved $\Delta=\tfrac32$ er både $(2,1,0)$ og $(0,2,3)$ optimale priser. En løser rapporterer bare ett av prisvalgene.
 
-- **Prisene er ikke entydige:** Der er både $(2,1,0)$ og $(0,2,3)$ optimale priser. En løser rapporterer bare ett av prisvalgene.
-- **Verdien på hver side:** Økningen i beste bidrag per ekstra maskintime er 2 til venstre og 0 til høyre.
+:::
 
 Figuren lar oss se *hvilken grense* som stopper forbedringen. Sammenlign hvor mållinjen berører det blå området i øverste panel (opprinnelig kapasitet) og nederste panel (to ekstra maskintimer). Begge panelene har samme akser.
 
