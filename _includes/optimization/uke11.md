@@ -1249,7 +1249,7 @@ Med bare litt mer maskintid er det rimelig at verkstedet fortsatt bruker opp beg
 
 ### Når en annen grense stopper produksjonen
 
-Kan eieren fortsatt regne med 2 tusen kroner per maskintime hvis verkstedet leier mange timer? Vi prøver $\Delta=2$, så verkstedet har 11 maskintimer. Regningen bruker de samme stegene som over og komplementær slakk fra 11.3; den står i *Gå i dybden* under. Her er resultatet:
+Gir hver leide maskintime fortsatt 2 tusen kroner mer i dekningsbidrag hvis verkstedet leier mange timer? I så fall ville hver time, som koster 1500 kroner hos naboen, gi verkstedet 500 kroner i gevinst, og eieren burde leie så mye han kan. Vi prøver to ekstra timer, $\Delta=2$, så verkstedet har 11 maskintimer. Regningen bruker de samme stegene som over og komplementær slakk fra 11.3; den står i *Gå i dybden* under. Her er resultatet:
 
 - **Ny beste plan:** $(4,5/2)$, altså fire partier A (alt kundene vil kjøpe) og to og et halvt parti B. Planen bruker all arbeidstid, men bare $21/2$ av de 11 maskintimene.
 - **Nytt bidrag:** 30 tusen kroner, ikke $27+2\cdot2=31$. De to ekstra timene ga bare 3 tusen kroner: 2 tusen for hver av de første halvannen timene, og ingenting for resten.
