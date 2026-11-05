@@ -48,7 +48,7 @@ Det finnes uendelig mange planer, for $x$ og $y$ trenger ikke være hele tall. U
 Svaret kommer i tre steg:
 
 1. **Finn den beste planen (11.1–11.2).** Vi tegner det tillatte området. Den beste planen ligger i et hjørne av området, og hvert hjørne finner vi ved å løse et lite lineært likningssett. Til slutt lar vi løseren `linprog` gjøre den samme jobben.
-2. **Bevis at den er best (11.3).** Vi setter en tenkt pris på hver maskintime og hver arbeidstime. Med riktige priser gir timene en øvre grense for fortjenesten i *alle* planer. Når planen vår når grensen, finnes det ingen bedre plan.
+2. **Bevis at den er best (11.3).** Vi tenker oss at et annet firma vil leie hele verkstedet, og spør hvilken leie eieren ville godta. En slik leie er en øvre grense for fortjenesten i *alle* planer. Når planen vår når grensen, finnes det ingen bedre plan.
 3. **Svar på leiespørsmålet (11.4).** Prisen på en maskintime fra steg 2 er nettopp det en ekstra maskintime er verdt, men bare så lenge verkstedet ikke leier for mange timer.
 
 **Hva vi tar med fra uke 8.** I [uke 8](uke8.qmd#uke8-start) stilte vi tre spørsmål til et optimeringsproblem. For verkstedet blir svarene enkle:
@@ -97,7 +97,7 @@ Etter denne uken skal du kunne
 - oversette et produksjonsproblem som verkstedet til et lineært mål og ulikheter for ressursene, og regne ut hvor mye av hver ressurs en plan lar være ubrukt (slakken),
 - forklare hvorfor den beste planen ligger i et hjørne når det finnes tillatte planer og området er begrenset, og finne hjørnene som løsninger av lineære likningssett,
 - sette priser på ressursene slik at de gir en øvre grense for hva en plan kan gi, og bevise at en plan er best når den når grensen,
-- bruke komplementær slakk (en ubrukt ressurs har pris null; et produkt som lages, tjener akkurat inn verdien av ressursene det bruker) til å finne ressursprisene fra en plan,
+- bruke komplementær slakk (en ubrukt ressurs har pris null; et produkt som lages, gir akkurat like mye som leieverdien av ressursene det bruker) til å finne ressursprisene fra en plan,
 - forklare hva litt mer kapasitet er verdt, og finne ut når den gamle prisen slutter å gjelde,
 - kode modellen med `linprog`, sjekke løserens status og kontrollere resultatet mot kravene.
 
@@ -821,29 +821,37 @@ En **slakkvariabel** gjør ubrukt kapasitet til et eget tall: $2x+y\le9$ er det 
 
 Både hjørnetabellen og løseren sier at $(3,3)$ gir 27 tusen kroner. Men hvordan kan eieren være sikker på at ingen plan vi har oversett, er bedre? Her lager vi et bevis som eieren kan kontrollere selv med noen få multiplikasjoner. Beviset er en **øvre grense**: et tall som ingen tillatt plan kan komme over. Hvis en plan når akkurat dette tallet, finnes det ingen bedre.
 
-Ideen er å sette en tenkt pris på hver ressurs, en **ressurspris**. Prisen måles i tusen kroner per enhet. Vi prøver oss fram; i 11.4 ser vi at de beste prisene faktisk sier hva én enhet mer er verdt:
+Ideen er å se på verkstedets ressurser fra en annen side. **Tenk deg at et annet firma vil leie hele verkstedet i en uke:** alle 9 maskintimene, alle 9 arbeidstimene og de 4 salgsplassene for A (retten til å selge til A-kundene). Firmaet tilbyr en pris per enhet, målt i tusen kroner:
 
-- **Sett priser:** $u$ per maskintime, $v$ per arbeidstime og $w$ per A-parti kundene vil kjøpe.
-- **Sammenlign ressurskostnad og fortjeneste:** Ett parti bruker noen av verkstedets ressurser: timer, og for A også en av de fire salgsplassene. Med de tenkte prisene koster disse ressursene en viss sum. Den kaller vi partiets **ressurskostnad**.
+- $u$ per maskintime, $v$ per arbeidstime og $w$ per salgsplass for A.
 
-Ett parti A bruker 2 maskintimer, 1 arbeidstime og ett av de fire A-partiene kundene vil kjøpe, så ressurskostnaden er $2u+v+w$. Ett parti B bruker 1 maskintime og 2 arbeidstimer, så ressurskostnaden er $u+2v$. Alt verkstedet har (9 maskintimer, 9 arbeidstimer og 4 salgsplasser for A), koster til sammen $9u+9v+4w$ i de samme prisene.
+Slike priser kaller vi **ressurspriser**. De er ikke kostnader for verkstedet: timene finnes uansett, og materialene er allerede trukket fra i fortjenesten. Ressursprisene er et tilbud, altså hva ressursene kunne vært leid ut for. I 11.4 ser vi at de beste prisene også sier hva én enhet mer er verdt for eieren.
 
-**Hvorfor gir prisene en øvre grense?** Velg prisene slik at ressurskostnaden for hvert produkt er minst like stor som fortjenesten. Da gir hvert parti høyst så mye fortjeneste som ressursene det bruker, koster. Ta for eksempel prisene $(u,v,w)=(3,1,0)$ og planen $(2,1)$:
+**Når bør eieren si ja?** Eieren kan bruke ressursene på to måter: produsere selv eller leie dem ut.
 
-1. **Hvert parti for seg:** Et parti A koster $2\cdot3+1+0=7$ og gir 5. Et parti B koster $3+2\cdot1=5$ og gir 4. Ingen av partiene gir mer enn det koster.
-2. **Hele planen:** To partier A og ett parti B gir $2\cdot5+4=14$ i fortjeneste. Ressursene de bruker, koster $2\cdot7+5=19$. Fortjenesten er altså høyst kostnaden av ressursene planen bruker: $14\le19$.
-3. **Alt verkstedet har:** En plan kan ikke bruke flere ressurser enn verkstedet har, og prisene er ikke negative. Ressursene planen bruker, koster derfor høyst det alle ressursene koster: $19\le9\cdot3+9\cdot1+4\cdot0=36$.
+- **Ett parti A** bruker 2 maskintimer, 1 arbeidstime og én salgsplass. Leid ut gir de samme ressursene $2u+v+w$. Det kaller vi partiets **leieverdi**. Produsert gir partiet fortjenesten 5.
+- **Ett parti B** bruker 1 maskintime og 2 arbeidstimer. Leieverdien er $u+2v$, og fortjenesten er 4.
 
-Til sammen: $14\le19\le36$. De samme tre stegene virker for *hver* tillatt plan, ikke bare $(2,1)$. Ingen plan kan derfor gi mer enn 36 tusen kroner. Det er den øvre grensen prisene gir.
+Eieren sier bare ja hvis utleie aldri lønner seg dårligere enn å produsere:
+$$2u+v+w\ge5\qquad\text{og}\qquad u+2v\ge4.$$
+Priser som oppfyller dette (og ikke er negative), kaller vi **gyldige**. Leien for hele verkstedet er $9u+9v+4w$.
 
-Grensen er bare nyttig hvis den er lav. Prøv to forslag $(u,v,w)$:
+**Hvorfor gir gyldige priser en øvre grense?** Med gyldige priser kan ingen plan gi mer fortjeneste enn leien for hele verkstedet. Ta prisene $(u,v,w)=(3,1,0)$ og planen $(2,1)$:
+
+1. **Hvert parti for seg:** Et parti A har leieverdi $2\cdot3+1+0=7$ og gir 5 i fortjeneste. Et parti B har leieverdi $3+2\cdot1=5$ og gir 4. Hvert parti gir minst like mye leid ut som produsert.
+2. **Hele planen:** Planen gir $2\cdot5+4=14$ i fortjeneste. Leid ut ville ressursene planen bruker, gitt $2\cdot7+5=19$. Altså er $14\le19$.
+3. **Hele verkstedet:** Planen bruker ikke mer enn verkstedet har, og prisene er ikke negative. Leien for ressursene planen bruker, er derfor høyst leien for alt: $19\le9\cdot3+9\cdot1+4\cdot0=36$.
+
+Til sammen er $14\le19\le36$. De samme tre stegene virker for *hver* tillatt plan, ikke bare $(2,1)$. Ingen plan kan derfor gi mer enn 36 tusen kroner. Det er den øvre grensen prisene gir.
+
+**Leietakerens ønske.** Firmaet vil betale så lite som mulig, men eieren må fortsatt si ja. Jo lavere en gyldig leie er, desto skarpere er grensen. Prøv to forslag $(u,v,w)$:
 
 | Beregning | Forslag $(3,1,0)$ | Forslag $(2,1,0)$ |
 |:--|--:|--:|
-| Ressurskostnad per A-parti $2u+v+w$ | 7 | 5 |
-| Ressurskostnad per B-parti $u+2v$ | 5 | 4 |
-| Er ressurskostnaden minst like stor som fortjenestene 5 og 4? | ja | ja |
-| Kapasitetens verdi $9u+9v+4w$ | 36 | 27 |
+| Leieverdi per A-parti $2u+v+w$ | 7 | 5 |
+| Leieverdi per B-parti $u+2v$ | 5 | 4 |
+| Gyldig: minst fortjenestene 5 og 4? | ja | ja |
+| Leie for hele verkstedet $9u+9v+4w$ | 36 | 27 |
 
 Begge forslagene gir en gyldig øvre grense. Vi skriver regningen ut for begge. For det første forslaget ganger vi maskintimekravet med 3 og arbeidstimekravet med 1, og legger sammen:
 
@@ -852,23 +860,23 @@ $$3(2x+y)+(x+2y)=7x+5y\le3\cdot9+9=36.$$
 Siden $x,y\ge0$, er $5x+4y\le7x+5y$, så også $5x+4y\le36$.
 
 - **Gyldig grense:** Ingen tillatt plan kommer over 36.
-- **Løs grense:** Ressurskostnadene 7 og 5 er større enn fortjenestene 5 og 4, og det overskuddet går tapt i ulikheten. Grensen 36 ligger langt over det beste verkstedet kan tjene.
+- **Løs grense:** Leieverdiene 7 og 5 er større enn fortjenestene 5 og 4. Firmaet betaler mer enn det trenger for å få et ja, og det overskuddet går tapt i ulikheten. Grensen 36 ligger langt over det beste verkstedet kan tjene.
 
 For det andre forslaget ganger vi maskintimekravet med 2 og arbeidstimekravet med 1:
 
 $$2(2x+y)+(x+2y)=5x+4y\le2\cdot9+9=27.$$
 
-- **Ressurskostnad lik fortjeneste:** Her er ressurskostnadene nøyaktig lik fortjenestene, så ingenting går tapt.
+- **Leieverdi lik fortjeneste:** Her er leieverdiene nøyaktig lik fortjenestene. Firmaet betaler akkurat nok, og ingenting går tapt.
 - **Beviset:** Ingen tillatt plan kan gi mer enn 27, mens $(3,3)$ gir 27. Vi har et **optimalitetssertifikat**: et bevis for at planen er best, som vi kan kontrollere uten å undersøke flere planer.
-- **Ubrukt A-kapasitet:** Prisen på A-grensen er null. Det er rimelig: kundene vil kjøpe ett A-parti mer enn verkstedet lager, så flere kunder til A ville ikke gitt mer. Å øke bare denne grensen litt hjelper ikke nå.
+- **Ubrukt A-kapasitet:** Prisen på salgsplassene for A er null. Det er rimelig: kundene vil kjøpe ett A-parti mer enn verkstedet lager, så eieren taper ingenting på å gi fra seg en salgsplass. Å øke bare denne grensen litt hjelper ikke nå.
 
-**Svaret til eieren:** Prisene $(2,1,0)$ beviser at 27 tusen kroner er det mest verkstedet kan tjene. Planen $(3,3)$ er best.
+**Svaret til eieren:** Prisene $(2,1,0)$ beviser at 27 tusen kroner er det mest verkstedet kan tjene. Planen $(3,3)$ er best. Med disse prisene er det likegyldig for eieren om han produserer $(3,3)$ eller leier ut hele verkstedet: begge gir 27 tusen kroner.
 
 ### Fra prisforslag til et nytt optimeringsproblem
 
-Nå spør vi: hvilke priser gir det beste beviset? Det beste beviset er den laveste øvre grensen, så jakten på gode priser er et eget optimeringsproblem. Vi krever at alle tre prisene er ikke-negative. Ressurskostnaden må være **minst** fortjenesten per parti, ellers kan prisregningen ikke avgrense fortjenesten:
+Nå spør vi: hvilke priser gir det beste beviset? Det beste beviset er den laveste øvre grensen. Det er nettopp leietakerens problem: lavest mulig leie for hele verkstedet, men slik at eieren sier ja. Det er et eget optimeringsproblem. Alle tre prisene må være ikke-negative, og leieverdien må være **minst** fortjenesten per parti, ellers ville eieren heller produsere:
 
-| Prisregel | Ressurser per parti × pris | Krav |
+| Eierens krav | Leieverdi (ressurser per parti × pris) | Krav |
 |:--|:--|:--|
 | A-parti | $2u+v+w$ | $2u+v+w\ge5$ |
 | B-parti | $u+2v$ | $u+2v\ge4$ |
@@ -878,9 +886,9 @@ For hver tillatt plan og hvert gyldig prisvalg får vi den vektede ulikheten
 
 $$5x+4y\le(2u+v+w)x+(u+2v)y\le9u+9v+4w.$$
 
-Les ulikheten fra venstre: fortjenesten er høyst ressurskostnaden, og ressurskostnaden er høyst verdien av alt verkstedet har. Regningen er den samme som for de to forslagene over:
+Les ulikheten fra venstre: fortjenesten er høyst leieverdien av ressursene planen bruker, og den er høyst leien for hele verkstedet. Regningen er den samme som for de to forslagene over:
 
-1. Gang hvert krav med sin ikke-negative pris, legg sammen, og bruk at ressurskostnadene er minst like store som fortjenestene.
+1. Gang hvert krav med sin ikke-negative pris, legg sammen, og bruk at leieverdiene er minst like store som fortjenestene.
 2. Planen $(3,3)$ gir $5\cdot3+4\cdot3=27$, og prisene $(2,1,0)$ gir $9\cdot2+9\cdot1+4\cdot0=27$.
 3. Planen når grensen, så ingen tillatt plan er bedre.
 
@@ -902,10 +910,10 @@ Steg 1 bruker at $x,y\ge0$, og steg 2 bruker at $u,v,w\ge0$. Med negative tall v
 | Navn | Hva det er for verkstedet |
 |:--|:--|
 | **Primalen** (det primale problemet) | Eierens oppgave: finn planen med størst fortjeneste. |
-| **Dualen** (det duale problemet) | Prisoppgaven: finn gyldige priser på ressursene som gir lavest mulig øvre grense. |
-| **Dualvariabler** (dualverdier) | Prisene $u,v,w$ på maskintimer, arbeidstimer og A-grensen, altså ressursprisene. |
+| **Dualen** (det duale problemet) | Leietakerens oppgave: finn gyldige priser som gir lavest mulig leie for hele verkstedet, altså lavest mulig øvre grense. |
+| **Dualvariabler** (dualverdier) | Prisene $u,v,w$ på maskintimer, arbeidstimer og salgsplasser for A, altså ressursprisene. I økonomi kalles de **skyggepriser**. |
 | **Svak dualitet** | Ingen plan kan gi mer enn grensen fra et gyldig prisvalg. Det er beviset over. |
-| **Sterk dualitet** | Den beste planen og de beste prisene gir samme tall. For verkstedet: $27=27$. |
+| **Sterk dualitet** | Den beste planen og den laveste gyldige leien gir samme tall. For verkstedet er $27=27$: eieren tjener like mye på å produsere som på å leie ut. |
 
 Når en plan og et prisvalg gir samme tall, er begge de beste: planen er beste løsning av primalen, og prisene er beste løsning av dualen. Matriseformen som lærebøker bruker, står i *Gå i dybden* under.
 
@@ -921,7 +929,7 @@ Hver rad i $A$ får én ikke-negativ pris i $q$; her er $q=(u,v,w)$ i rekkefølg
 
 $$A^Tq=\begin{pmatrix}2&1&1\\1&2&0\end{pmatrix}\begin{pmatrix}u\\v\\w\end{pmatrix}=\begin{pmatrix}2u+v+w\\u+2v\end{pmatrix},$$
 
-nøyaktig de to ressurskostnadene i tabellen. Den samme vektede ulikheten gir prisproblemet (dualproblemet):
+nøyaktig de to leieverdiene i tabellen. Den samme vektede ulikheten gir prisproblemet (dualproblemet):
 
 $$\min_{q\ge0}b^Tq\quad\text{slik at }A^Tq\ge p.$$
 
@@ -942,18 +950,18 @@ Prisene $(2,1,0)$ falt ikke ned fra himmelen. Eieren kan *finne* dem ut fra plan
 
 **Utgangspunkt.** Planen $(3,3)$ gir 27, og prisforslaget $(3,1,0)$ gir grensen 36. Gapet er $36-27=9$.
 
-**Prøv selv.** Regn ut slakken (ubrukt kapasitet) i hver rad, og hvor mye ressurskostnaden ligger over fortjenesten for hvert produkt.
+**Prøv selv.** Regn ut slakken (ubrukt kapasitet) i hver rad, og hvor mye leieverdien ligger over fortjenesten for hvert produkt.
 
 **Regnegangen.**
 
 1. Slakk ved $(3,3)$: $(9-9,\ 9-9,\ 4-3)=(0,0,1)$. Pris ganger slakk: $3\cdot0+1\cdot0+0\cdot1=0$.
-2. **Ressurskostnader med $(3,1,0)$:**
-   - A koster $2\cdot3+1+0=7$, B koster $3+2\cdot1=5$.
+2. **Leieverdier med $(3,1,0)$:**
+   - Leieverdien av A er $2\cdot3+1+0=7$, av B $3+2\cdot1=5$.
    - Overskuddet over fortjenesten er $7-5=2$ og $5-4=1$.
    - Mengde ganger overskudd: $3\cdot2+3\cdot1=9$.
 3. Summen er $0+9=9$, nøyaktig gapet.
 
-**Dette tar vi med oss.** Gapet er en sum av ledd av typen «pris × slakk» og «mengde × overskudd» (overskudd er hvor mye ressurskostnaden ligger over fortjenesten). For en tillatt plan og gyldige priser er hvert ledd $\ge0$. Gapet er null bare når hvert ledd er null.
+**Dette tar vi med oss.** Gapet er en sum av ledd av typen «pris × slakk» og «mengde × overskudd» (overskudd er hvor mye leieverdien ligger over fortjenesten). For en tillatt plan og gyldige priser er hvert ledd $\ge0$. Gapet er null bare når hvert ledd er null.
 
 :::
 
@@ -963,7 +971,7 @@ $$9u+9v+4w-(5x+4y)=u(9-2x-y)+v(9-x-2y)+w(4-x)+x(2u+v+w-5)+y(u+2v-4).$$
 
 Med vektorene fra 11.2 er dette det samme som
 
-$$b^Tq-p^Tz=\underbrace{q^T(b-Az)}_{\text{pris}\,\times\,\text{slakk}}+\underbrace{z^T(A^Tq-p)}_{\text{mengde}\,\times\,\text{overskudd i ressurskostnad}}\ge0.$$
+$$b^Tq-p^Tz=\underbrace{q^T(b-Az)}_{\text{pris}\,\times\,\text{slakk}}+\underbrace{z^T(A^Tq-p)}_{\text{mengde}\,\times\,\text{overskudd i leieverdi}}\ge0.$$
 
 **Slik leser du likningen:** Gapet består av tre ledd «pris × ubrukt kapasitet» (ett per ressurs) og to ledd «mengde × overskudd» (ett per produkt). For en tillatt plan og gyldige priser er ingen av dem negative. Likningen stemmer fordi alle de blandede leddene, som $2xu$ og $yu$, forsvinner når du ganger ut høyresiden. Regningen står i *Gå i dybden* rett under.
 
@@ -1098,7 +1106,7 @@ cols.forEach(function (col, j) {
 });
 board.create('text', [6.15, -0.4, 'gapet'], {fontSize: fs, color: '#263238', fixed: true});
 board.create('text', [xl, row(0), function () {
-  return 'Kostnad A: ' + fmt(inA()) + (inA() >= 5 - 1e-9 ? ' ≥ 5' : ' < 5') +
+  return 'Leie A: ' + fmt(inA()) + (inA() >= 5 - 1e-9 ? ' ≥ 5' : ' < 5') +
          ',  B: ' + fmt(inB()) + (inB() >= 4 - 1e-9 ? ' ≥ 4' : ' < 4');
 }], {fontSize: fs, color: '#263238', fixed: true});
 board.create('text', [xl, row(1), function () {
@@ -1125,17 +1133,17 @@ board.create('text', [xl, row(4), function () {
 
 - **Gyldige priser:** Den røde linjen ligger over hele det blå området, uansett hvor du drar $Z$: ingen tillatt plan gir mer enn grensen. Søylen er alltid nøyaktig like høy som gapet, og alle feltene er blå eller grønne.
 - **Null gap:** Gapet blir null bare med prisene $(2,1,0)$ og planen $(3,3)$. Da forsvinner alle fem feltene, og den røde og den oransje linjen faller sammen i $(3,3)$.
-- **Ugyldige priser:** Med $(1,1,0)$ er ressurskostnadene 3 og 3, mindre enn fortjenestene 5 og 4. Grensen blir 18, og hjørnene $(4,0)$, $(4,1)$ og $(3,3)$ gir mer enn 18. Et felt i søylen blir rødt: «grensen» er ingen grense.
+- **Ugyldige priser:** Med $(1,1,0)$ er leieverdiene 3 og 3, mindre enn fortjenestene 5 og 4. Grensen blir 18, og hjørnene $(4,0)$, $(4,1)$ og $(3,3)$ gir mer enn 18. Et felt i søylen blir rødt: «grensen» er ingen grense.
 
 Når gapet er null, må hvert enkelt ledd være null, for ingen av dem kan være negative. Det gir en regel som kalles **komplementær slakk**. I verkstedets ord:
 
-- **Ressurser:** Er en ressurs ikke brukt opp (den har slakk), er den ikke verdt noe, så prisen er null. Har den positiv pris, er den brukt helt opp (null slakk).
-- **Produkter:** Lages et produkt, er ressurskostnaden lik fortjenesten: produktet tjener akkurat inn ressursene det bruker. Er ressurskostnaden større enn fortjenesten, lønner det seg ikke å lage produktet, og mengden er null.
+- **Ressurser:** Er en ressurs ikke brukt opp (den har slakk), har eieren mer av den enn han trenger. Den er ikke verdt noe, så prisen er null. Har den positiv pris, er den brukt helt opp (null slakk).
+- **Produkter:** Lages et produkt, er leieverdien lik fortjenesten: å produsere gir akkurat like mye som å leie ut ressursene partiet bruker. Er leieverdien større enn fortjenesten, lønner det seg ikke å lage produktet, og mengden er null.
 
 Regelen lar oss finne prisene når vi kjenner planen. Bruk den på planen $(3,3)$. Vi *antar* at $(3,3)$ er optimal og at det finnes priser med samme verdi. Regelen gir da ett prisforslag; steg 3 kontrollerer at forslaget faktisk er et gyldig prisvalg.
 
 1. **A-grensen:** Den har slakk $4-3=1$ (kundene vil kjøpe ett A-parti til). Da må $w\cdot1=0$, altså $w=0$.
-2. **De to andre prisene:** Både $x=3$ og $y=3$ er positive, så begge produktene lages. Da må ressurskostnaden være lik fortjenesten for begge: $2u+v+w=5$ og $u+2v=4$.
+2. **De to andre prisene:** Både $x=3$ og $y=3$ er positive, så begge produktene lages. Da må leieverdien være lik fortjenesten for begge: $2u+v+w=5$ og $u+2v=4$.
    - Med $w=0$ gir den første likningen $v=5-2u$.
    - Sett inn i den andre: $u+2(5-2u)=4$, så $10-3u=4$ og $u=2$.
    - Dermed er $v=1$.
@@ -1190,7 +1198,7 @@ Den vektede ulikheten forklarer alle tre reglene: vi kan bare multiplisere en ul
 2. **En likningsrad gir en fri pris.** En likning $x+y=2$ gir $\mu(x+y)=2\mu$ for hvert tall $\mu$, positivt eller negativt. En likhet er også en $\le$-ulikhet, så vi kan bruke den i den vektede ulikheten uansett fortegn. Prisen er fri.
 3. **En fri variabel gir et likhetskrav.** I steg 1 i boksen *hvorfor gir gyldige priser alltid en øvre grense?* brukte vi $x\ge0$: fra $2u+v+w\ge5$ fikk vi $(2u+v+w)x\ge5x$.
    - Hvis $x$ kan være negativ, snur denne ulikheten for $x<0$.
-   - Med prisene $(3,1,0)$ er ressurskostnaden 7, og for $x=-1$ er $5x=-5$, men $7x=-7<-5$.
+   - Med prisene $(3,1,0)$ er leieverdien 7, og for $x=-1$ er $5x=-5$, men $7x=-7<-5$.
    - For at $5x\le(2u+v+w)x$ skal gjelde både for positive og negative $x$, må $2u+v+w=5$. Priskravet blir en likning.
 
 I hovedmodellen bruker vi bare $Az\le b$ og $z\ge0$, så alle prisene er ikke-negative og priskravene er ulikheter.
@@ -1461,7 +1469,7 @@ Oppgavene er sortert etter ukens tre ideer. Kodeoppgavene er i 11.6. Alle bruker
 
 - **Modell:** Verkstedet maksimerer $P=5x+4y$ under $2x+y\le9$, $x+2y\le9$, $x\le4$ og $x,y\ge0$, med mindre oppgaven sier noe annet.
 - **Slakk:** Ubrukt kapasitet, altså kapasitet minus bruk.
-- **Prisbevis:** For målet $5x+4y$ oppfyller gyldige ikke-negative priser $(u,v,w)$ kravene $2u+v+w\ge5$ og $u+2v\ge4$ (ressurskostnaden per parti er minst like stor som fortjenesten); da er $9u+9v+4w$ en øvre grense for $P$.
+- **Prisbevis:** For målet $5x+4y$ oppfyller gyldige ikke-negative priser $(u,v,w)$ kravene $2u+v+w\ge5$ og $u+2v\ge4$ (leieverdien per parti er minst like stor som fortjenesten); da er $9u+9v+4w$ en øvre grense for $P$.
 
 :::
 
@@ -1601,7 +1609,7 @@ Fortjeneste $5x+2y$ i $(4,1)$: _[22]
 ::: {#uke11-oppg-los}
 :::
 
-Prøv prisforslaget $(u,v,w)=(1,2,1)$ for det opprinnelige målet $5x+4y$. Forslaget er gyldig hvis ressurskostnadene er minst like store som fortjenestene. Finn ressurskostnadene $2u+v+w$ for A og $u+2v$ for B, avgjør om prisene er gyldige, og regn ut den øvre grensen.
+Prøv prisforslaget $(u,v,w)=(1,2,1)$ for det opprinnelige målet $5x+4y$. Forslaget er gyldig hvis leieverdiene er minst like store som fortjenestene. Finn leieverdiene $2u+v+w$ for A og $u+2v$ for B, avgjør om prisene er gyldige, og regn ut den øvre grensen.
 
 ```{math-exercise}
 #| label: week11-task-loose-bound
@@ -1609,14 +1617,14 @@ Prøv prisforslaget $(u,v,w)=(1,2,1)$ for det opprinnelige målet $5x+4y$. Forsl
 #| caption: Gyldig, men løs øvre grense
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: ressurskostnad A, ressurskostnad B, øvre grense
+#| field-labels: leieverdi A, leieverdi B, øvre grense
 
-Ressurskostnader (A, B): vec[5,5]
+Leieverdier (A, B): vec[5,5]
 
 Øvre grense: _[31]
 ```
 
-**Forklar:** Sammenlign med planen $(3,3)$. Bruk komplementær slakk til å forklare hvorfor akkurat dette prisvalget ikke kan bevise at $(3,3)$ er optimal: hvilket produkt har ressurskostnad større enn fortjenesten, og hva krever regelen da av mengden?
+**Forklar:** Sammenlign med planen $(3,3)$. Bruk komplementær slakk til å forklare hvorfor akkurat dette prisvalget ikke kan bevise at $(3,3)$ er optimal: hvilket produkt har leieverdi større enn fortjenesten, og hva krever regelen da av mengden?
 
 ::: {#uke11-oppg-tre}
 :::
@@ -1631,20 +1639,20 @@ Nå er det tre produkter (et nytt eksempel, ikke verkstedet), og vi kan ikke len
 | Ikke-negativ produksjon | $x_A,x_B,x_C\ge0$ |
 
 - **Kontroller:** Undersøk planen $(8,4,0)$ og prisene $(7/3,\,4/3,\,0)$ per enhet maskintid, montering og materiale.
-- **Finn ressurskostnaden:** Ressurskostnadene for A og B er lik fortjenestene 6 og 5; finn ressurskostnaden for C.
+- **Finn leieverdien:** Leieverdiene for A og B er lik fortjenestene 6 og 5; finn leieverdien for C.
 
 ```{math-exercise}
 #| label: week11-task-three-products
 #| caption: Kontroller plan og priser med tre produkter
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: slakk materiale, fortjeneste, ressurskostnad C, øvre grense
+#| field-labels: slakk materiale, fortjeneste, leieverdi C, øvre grense
 
 Slakk i materiale: _[3]
 
 Fortjeneste for planen: _[68]
 
-Ressurskostnad C: _[25/3]
+Leieverdi C: _[25/3]
 
 Øvre grense $20\cdot\tfrac73+16\cdot\tfrac43+15\cdot0$: _[68]
 ```

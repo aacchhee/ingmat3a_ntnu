@@ -34,17 +34,17 @@ APPROVED_WORDING = {
         # 5 Nov 2026: the author asked for "lineære likningssett" throughout week 11.
         ('#| caption: Finn hjørnene som løsninger av 2×2-systemer\n',
          '#| caption: Finn hjørnene som løsninger av 2×2-likningssett\n'),
-        # 5 Nov 2026: the author asked to drop the term "innsatspris"; it is now "ressurskostnad".
+        # 5 Nov 2026: the author asked to drop the term "innsatspris"; it is now "leieverdi" (rental story).
         ("  return 'Innsats A: ' + fmt(inA())",
-         "  return 'Kostnad A: ' + fmt(inA())"),
+         "  return 'Leie A: ' + fmt(inA())"),
         ('#| field-labels: innsatspris A, innsatspris B, øvre grense\n',
-         '#| field-labels: ressurskostnad A, ressurskostnad B, øvre grense\n'),
+         '#| field-labels: leieverdi A, leieverdi B, øvre grense\n'),
         ('Innsatspriser (A, B): vec[5,5]',
-         'Ressurskostnader (A, B): vec[5,5]'),
+         'Leieverdier (A, B): vec[5,5]'),
         ('#| field-labels: slakk materiale, dekningsbidrag, innsatspris C, øvre grense\n',
          '#| field-labels: slakk materiale, dekningsbidrag, ressurskostnad C, øvre grense\n'),
         ('Innsatspris C: _[25/3]',
-         'Ressurskostnad C: _[25/3]'),
+         'Leieverdi C: _[25/3]'),
         # 5 Nov 2026: the author asked for "fortjeneste" instead of "dekningsbidrag".
         ('# Bidrag per parti (A, B) i tusen kroner.',
          '# Fortjeneste per parti (A, B) i tusen kroner.'),
@@ -65,7 +65,7 @@ APPROVED_WORDING = {
         ('Bidrag $5x+2y$ i $(4,1)$: _[22]',
          'Fortjeneste $5x+2y$ i $(4,1)$: _[22]'),
         ('#| field-labels: slakk materiale, dekningsbidrag, ressurskostnad C, øvre grense',
-         '#| field-labels: slakk materiale, fortjeneste, ressurskostnad C, øvre grense'),
+         '#| field-labels: slakk materiale, fortjeneste, leieverdi C, øvre grense'),
         ('Dekningsbidrag for planen: _[68]',
          'Fortjeneste for planen: _[68]'),
         ('#| field-labels: nye partier A, nye partier B, nytt dekningsbidrag',
