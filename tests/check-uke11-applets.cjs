@@ -9,7 +9,8 @@ const root = path.resolve(process.env.CTM_APPLET_ROOT || '.');
 const foundation = path.resolve(process.env.CTM_ASSESSMENT_ROOT || '_ci/ctm-assessment');
 const requireFoundation = createRequire(path.join(foundation, 'package.json'));
 const playwright = requireFoundation('playwright');
-assert.equal(requireFoundation('playwright/package.json').version, '1.55.1');
+const playwrightVersion = process.env.PLAYWRIGHT_VERSION || '1.64.1';
+assert.equal(requireFoundation('playwright/package.json').version, playwrightVersion);
 const jsxgraph = path.resolve(process.env.CTM_JSXGRAPH_ROOT);
 assert.equal(JSON.parse(fs.readFileSync(path.join(jsxgraph, 'package.json'))).version, '1.14.1');
 const site = path.resolve(process.env.CTM_APPLET_SITE);
@@ -42,7 +43,7 @@ function writeReport(failure) {
   fs.writeFileSync(path.join(reports, 'uke11-applets.json'), JSON.stringify({
     baseline, course: process.env.CTM_COURSE_SHA || null,
     assessment: process.env.CTM_ASSESSMENT_REF || null,
-    playwright: '1.55.1', jsxgraph: '1.14.1', failure, observations
+    playwright: playwrightVersion, jsxgraph: '1.14.1', failure, observations
   }, null, 2));
 }
 (async () => {
