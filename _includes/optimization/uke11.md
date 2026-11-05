@@ -852,14 +852,14 @@ Både hjørnetabellen og løseren sier at $(3,3)$ gir 27 tusen kroner. Men hvord
 Ideen er å sette en tenkt pris på hver ressurs, en **ressurspris**. Prisen måles i tusen kroner per enhet. Vi prøver oss fram; i 11.4 ser vi at de beste prisene faktisk sier hva én enhet mer er verdt:
 
 - **Sett priser:** $u$ per maskintime, $v$ per arbeidstime og $w$ per A-parti kundene vil kjøpe.
-- **Sammenlign innsatspris og bidrag:** Ett parti bruker noen timer. Regnet i disse prisene er timene verdt en viss sum, som vi kaller **innsatsprisen** til partiet. Hvis innsatsprisen til hvert produkt er minst like stor som dekningsbidraget, kan ingen plan tjene mer enn alt verkstedet har, regnet i de samme prisene.
+- **Sammenlign ressurskostnad og bidrag:** Ett parti bruker noen av verkstedets ressurser: timer, og for A også en av de fire salgsplassene. Med de tenkte prisene koster disse ressursene en viss sum. Den kaller vi partiets **ressurskostnad**. Hvis ressurskostnaden for hvert produkt er minst like stor som dekningsbidraget, kan ingen plan tjene mer enn det alle ressursene til sammen koster i de samme prisene.
 
-Ett parti A bruker 2 maskintimer, 1 arbeidstime og ett av de fire A-partiene kundene vil kjøpe, så innsatsprisen er $2u+v+w$. Ett parti B bruker 1 maskintime og 2 arbeidstimer, så innsatsprisen er $u+2v$. Alt verkstedet har, er verdt $9u+9v+4w$ til sammen. Prøv to forslag $(u,v,w)$:
+Ett parti A bruker 2 maskintimer, 1 arbeidstime og ett av de fire A-partiene kundene vil kjøpe, så ressurskostnaden er $2u+v+w$. Ett parti B bruker 1 maskintime og 2 arbeidstimer, så ressurskostnaden er $u+2v$. Alt verkstedet har, er verdt $9u+9v+4w$ til sammen. Prøv to forslag $(u,v,w)$:
 
 | Beregning | Forslag $(3,1,0)$ | Forslag $(2,1,0)$ |
 |:--|--:|--:|
-| Innsatspris per A-parti $2u+v+w$ | 7 | 5 |
-| Innsatspris per B-parti $u+2v$ | 5 | 4 |
+| Ressurskostnad per A-parti $2u+v+w$ | 7 | 5 |
+| Ressurskostnad per B-parti $u+2v$ | 5 | 4 |
 | Dekker bidragene 5 og 4? | ja | ja |
 | Kapasitetens verdi $9u+9v+4w$ | 36 | 27 |
 
@@ -870,13 +870,13 @@ $$3(2x+y)+(x+2y)=7x+5y\le3\cdot9+9=36.$$
 Siden $x,y\ge0$, er $5x+4y\le7x+5y$, så også $5x+4y\le36$.
 
 - **Gyldig grense:** Ingen tillatt plan kommer over 36.
-- **Løs grense:** Innsatsprisene 7 og 5 er større enn bidragene 5 og 4, og det overskuddet går tapt i ulikheten. Grensen 36 ligger langt over det beste verkstedet kan tjene.
+- **Løs grense:** Ressurskostnadene 7 og 5 er større enn bidragene 5 og 4, og det overskuddet går tapt i ulikheten. Grensen 36 ligger langt over det beste verkstedet kan tjene.
 
 For det andre forslaget ganger vi maskintimekravet med 2 og arbeidstimekravet med 1:
 
 $$2(2x+y)+(x+2y)=5x+4y\le2\cdot9+9=27.$$
 
-- **Innsatspris lik bidrag:** Her er innsatsprisene nøyaktig lik bidragene, så ingenting går tapt.
+- **Ressurskostnad lik bidrag:** Her er ressurskostnadene nøyaktig lik bidragene, så ingenting går tapt.
 - **Beviset:** Ingen tillatt plan kan gi mer enn 27, mens $(3,3)$ gir 27. Vi har et **optimalitetssertifikat**: et bevis for at planen er best, som vi kan kontrollere uten å undersøke flere planer.
 - **Ubrukt A-kapasitet:** Prisen på A-grensen er null. Det er rimelig: kundene vil kjøpe ett A-parti mer enn verkstedet lager, så flere kunder til A ville ikke gitt mer. Å øke bare denne grensen litt hjelper ikke nå.
 
@@ -884,7 +884,7 @@ $$2(2x+y)+(x+2y)=5x+4y\le2\cdot9+9=27.$$
 
 ### Fra prisforslag til et nytt optimeringsproblem
 
-Nå spør vi: hvilke priser gir det beste beviset? Det beste beviset er den laveste øvre grensen, så jakten på gode priser er et eget optimeringsproblem. Vi krever at alle tre prisene er ikke-negative. Innsatsprisen må være **minst** bidraget per parti, ellers kan prisregningen ikke avgrense bidraget:
+Nå spør vi: hvilke priser gir det beste beviset? Det beste beviset er den laveste øvre grensen, så jakten på gode priser er et eget optimeringsproblem. Vi krever at alle tre prisene er ikke-negative. Ressurskostnaden må være **minst** bidraget per parti, ellers kan prisregningen ikke avgrense bidraget:
 
 | Prisregel | Ressurser per parti × pris | Krav |
 |:--|:--|:--|
@@ -896,9 +896,9 @@ For hver tillatt plan og hvert gyldig prisvalg får vi den vektede ulikheten
 
 $$5x+4y\le(2u+v+w)x+(u+2v)y\le9u+9v+4w.$$
 
-Les ulikheten fra venstre: bidraget er høyst innsatsprisen, og innsatsprisen er høyst verdien av alt verkstedet har. Regningen er den samme som for de to forslagene over:
+Les ulikheten fra venstre: bidraget er høyst ressurskostnaden, og ressurskostnaden er høyst verdien av alt verkstedet har. Regningen er den samme som for de to forslagene over:
 
-1. Gang hvert krav med sin ikke-negative pris, legg sammen, og bruk at innsatsprisene er minst like store som bidragene.
+1. Gang hvert krav med sin ikke-negative pris, legg sammen, og bruk at ressurskostnadene er minst like store som bidragene.
 2. Planen $(3,3)$ gir $5\cdot3+4\cdot3=27$, og prisene $(2,1,0)$ gir $9\cdot2+9\cdot1+4\cdot0=27$.
 3. Planen når grensen, så ingen tillatt plan er bedre.
 
@@ -911,26 +911,27 @@ Vi går gjennom de to ulikhetene i den vektede ulikheten, én om gangen.
 
    Bruk så kapasitetene: $(2x+y)u+(x+2y)v+xw\le9u+9v+4w$. Her kan vi gange kravene med prisene uten å snu ulikhetene, fordi $u,v,w\ge0$.
 
-Steg 1 bruker at $x,y\ge0$, og steg 2 bruker at $u,v,w\ge0$. Med negative tall ville en av ulikhetene snudd. Boksen *andre fortegn i primalen* (produksjonsproblemet) lenger ned viser hva som skjer med prisene når kravene har andre fortegn.
+Steg 1 bruker at $x,y\ge0$, og steg 2 bruker at $u,v,w\ge0$. Med negative tall ville en av ulikhetene snudd. Boksen *andre fortegn i primalen* lenger ned viser hva som skjer med prisene når kravene har andre fortegn.
 
 :::
 
-Vi har nå to problemer som hører sammen: å finne planen med størst bidrag, og å finne prisene som gir den laveste grensen. I lærebøker heter de **primalen** (produksjonsproblemet) og **dualen** (prisproblemet), og prisene kalles dualvariabler. Navnene og matriseformen står i *Gå i dybden* under.
+**Primal og dual.** Vi har nå to oppgaver som hører sammen, og de har egne navn som brukes overalt i optimering:
+
+| Navn | Hva det er for verkstedet |
+|:--|:--|
+| **Primalen** (det primale problemet) | Eierens oppgave: finn planen med størst dekningsbidrag. |
+| **Dualen** (det duale problemet) | Prisoppgaven: finn gyldige priser på ressursene som gir lavest mulig øvre grense. |
+| **Dualvariabler** (dualverdier) | Prisene $u,v,w$ på maskintimer, arbeidstimer og A-grensen, altså ressursprisene. |
+| **Svak dualitet** | Ingen plan kan gi mer enn grensen fra et gyldig prisvalg. Det er beviset over. |
+| **Sterk dualitet** | Den beste planen og de beste prisene gir samme tall. For verkstedet: $27=27$. |
+
+Når en plan og et prisvalg gir samme tall, er begge de beste: planen er beste løsning av primalen, og prisene er beste løsning av dualen. Matriseformen som lærebøker bruker, står i *Gå i dybden* under.
 
 Det er samme idé som tangentgrensen i [uke 8](uke8.qmd#uke8-tangent): én ulikhet som gjelder alle tillatte punkter, og et punkt som oppfyller den med likhet, er bevist best.
 
-::: {.reading-step title="Gå i dybden: primal og dual i lærebøkenes språk"}
+::: {.reading-step title="Gå i dybden: primal og dual skrevet med matriser"}
 
-Slik heter de to problemene og de viktigste begrepene i lærebøker og programmer:
-
-| Begrep | Betydning |
-|:--|:--|
-| **Primalen** | Produksjonsproblemet: finn planen med størst bidrag. |
-| **Dualen** | Prisproblemet: velg gyldige priser som gir lavest mulig øvre grense. Prisene $u,v,w$ kalles også **dualvariabler**, eller ressurspriser. |
-| **Svak dualitet** | Verdien til enhver tillatt plan er høyst grensen fra ethvert gyldig prisvalg. (Den sier bare «høyst», derfor «svak».) |
-| **Optimalitetssertifikat** | En plan som når prisgrensen, sammen med prisene. |
-
-Lærebøker skriver det samme kort med vektorer og en matrise. Det er bare en annen skrivemåte for det vi allerede har gjort. Produksjonsproblemet skrives
+Lærebøker skriver primalen og dualen kort med vektorer og en matrise. Det er bare en annen skrivemåte for det vi allerede har gjort. Primalen (produksjonsproblemet) skrives
 
 $$\max_{z\ge0}p^Tz\quad\text{slik at }Az\le b.$$
 
@@ -938,7 +939,7 @@ Hver rad i $A$ får én ikke-negativ pris i $q$; her er $q=(u,v,w)$ i rekkefølg
 
 $$A^Tq=\begin{pmatrix}2&1&1\\1&2&0\end{pmatrix}\begin{pmatrix}u\\v\\w\end{pmatrix}=\begin{pmatrix}2u+v+w\\u+2v\end{pmatrix},$$
 
-nøyaktig de to innsatsprisene i tabellen. Den samme vektede ulikheten gir prisproblemet (dualproblemet):
+nøyaktig de to ressurskostnadene i tabellen. Den samme vektede ulikheten gir prisproblemet (dualproblemet):
 
 $$\min_{q\ge0}b^Tq\quad\text{slik at }A^Tq\ge p.$$
 
@@ -959,18 +960,18 @@ Prisene $(2,1,0)$ falt ikke ned fra himmelen. Eieren kan *finne* dem ut fra plan
 
 **Utgangspunkt.** Planen $(3,3)$ gir 27, og prisforslaget $(3,1,0)$ gir grensen 36. Gapet er $36-27=9$.
 
-**Prøv selv.** Regn ut slakken (ubrukt kapasitet) i hver rad, og hvor mye innsatsprisen ligger over bidraget for hvert produkt.
+**Prøv selv.** Regn ut slakken (ubrukt kapasitet) i hver rad, og hvor mye ressurskostnaden ligger over bidraget for hvert produkt.
 
 **Regnegangen.**
 
 1. Slakk ved $(3,3)$: $(9-9,\ 9-9,\ 4-3)=(0,0,1)$. Pris ganger slakk: $3\cdot0+1\cdot0+0\cdot1=0$.
-2. **Innsatspriser med $(3,1,0)$:**
+2. **Ressurskostnader med $(3,1,0)$:**
    - A koster $2\cdot3+1+0=7$, B koster $3+2\cdot1=5$.
    - Overskuddet over bidraget er $7-5=2$ og $5-4=1$.
    - Mengde ganger overskudd: $3\cdot2+3\cdot1=9$.
 3. Summen er $0+9=9$, nøyaktig gapet.
 
-**Dette tar vi med oss.** Gapet er en sum av ledd av typen «pris × slakk» og «mengde × overskudd» (overskudd er hvor mye innsatsprisen ligger over bidraget). For en tillatt plan og gyldige priser er hvert ledd $\ge0$. Gapet er null bare når hvert ledd er null.
+**Dette tar vi med oss.** Gapet er en sum av ledd av typen «pris × slakk» og «mengde × overskudd» (overskudd er hvor mye ressurskostnaden ligger over bidraget). For en tillatt plan og gyldige priser er hvert ledd $\ge0$. Gapet er null bare når hvert ledd er null.
 
 :::
 
@@ -980,7 +981,7 @@ $$9u+9v+4w-(5x+4y)=u(9-2x-y)+v(9-x-2y)+w(4-x)+x(2u+v+w-5)+y(u+2v-4).$$
 
 Med vektorene fra 11.2 er dette det samme som
 
-$$b^Tq-p^Tz=\underbrace{q^T(b-Az)}_{\text{pris}\,\times\,\text{slakk}}+\underbrace{z^T(A^Tq-p)}_{\text{mengde}\,\times\,\text{overskudd i innsatspris}}\ge0.$$
+$$b^Tq-p^Tz=\underbrace{q^T(b-Az)}_{\text{pris}\,\times\,\text{slakk}}+\underbrace{z^T(A^Tq-p)}_{\text{mengde}\,\times\,\text{overskudd i ressurskostnad}}\ge0.$$
 
 **Slik leser du likningen:** Gapet består av tre ledd «pris × ubrukt kapasitet» (ett per ressurs) og to ledd «mengde × overskudd» (ett per produkt). For en tillatt plan og gyldige priser er ingen av dem negative. Likningen stemmer fordi alle de blandede leddene, som $2xu$ og $yu$, forsvinner når du ganger ut høyresiden. Regningen står i *Gå i dybden* rett under.
 
@@ -1115,7 +1116,7 @@ cols.forEach(function (col, j) {
 });
 board.create('text', [6.15, -0.4, 'gapet'], {fontSize: fs, color: '#263238', fixed: true});
 board.create('text', [xl, row(0), function () {
-  return 'Innsats A: ' + fmt(inA()) + (inA() >= 5 - 1e-9 ? ' ≥ 5' : ' < 5') +
+  return 'Kostnad A: ' + fmt(inA()) + (inA() >= 5 - 1e-9 ? ' ≥ 5' : ' < 5') +
          ',  B: ' + fmt(inB()) + (inB() >= 4 - 1e-9 ? ' ≥ 4' : ' < 4');
 }], {fontSize: fs, color: '#263238', fixed: true});
 board.create('text', [xl, row(1), function () {
@@ -1142,17 +1143,17 @@ board.create('text', [xl, row(4), function () {
 
 - **Gyldige priser:** Den røde linjen ligger over hele det blå området, uansett hvor du drar $Z$: ingen tillatt plan gir mer enn grensen. Søylen er alltid nøyaktig like høy som gapet, og alle feltene er blå eller grønne.
 - **Null gap:** Gapet blir null bare med prisene $(2,1,0)$ og planen $(3,3)$. Da forsvinner alle fem feltene, og den røde og den oransje linjen faller sammen i $(3,3)$.
-- **Ugyldige priser:** Med $(1,1,0)$ er innsatsprisene 3 og 3, mindre enn bidragene 5 og 4. Grensen blir 18, og hjørnene $(4,0)$, $(4,1)$ og $(3,3)$ gir mer enn 18. Et felt i søylen blir rødt: «grensen» er ingen grense.
+- **Ugyldige priser:** Med $(1,1,0)$ er ressurskostnadene 3 og 3, mindre enn bidragene 5 og 4. Grensen blir 18, og hjørnene $(4,0)$, $(4,1)$ og $(3,3)$ gir mer enn 18. Et felt i søylen blir rødt: «grensen» er ingen grense.
 
 Når gapet er null, må hvert enkelt ledd være null, for ingen av dem kan være negative. Det gir en regel som kalles **komplementær slakk**. I verkstedets ord:
 
 - **Ressurser:** Er en ressurs ikke brukt opp (den har slakk), er den ikke verdt noe, så prisen er null. Har den positiv pris, er den brukt helt opp (null slakk).
-- **Produkter:** Lages et produkt, er innsatsprisen lik bidraget: produktet tjener akkurat inn ressursene det bruker. Er innsatsprisen større enn bidraget, lønner det seg ikke å lage produktet, og mengden er null.
+- **Produkter:** Lages et produkt, er ressurskostnaden lik bidraget: produktet tjener akkurat inn ressursene det bruker. Er ressurskostnaden større enn bidraget, lønner det seg ikke å lage produktet, og mengden er null.
 
 Regelen lar oss finne prisene når vi kjenner planen. Bruk den på planen $(3,3)$. Vi *antar* at $(3,3)$ er optimal og at det finnes priser med samme verdi. Regelen gir da ett prisforslag; steg 3 kontrollerer at forslaget faktisk er et gyldig prisvalg.
 
 1. **A-grensen:** Den har slakk $4-3=1$ (kundene vil kjøpe ett A-parti til). Da må $w\cdot1=0$, altså $w=0$.
-2. **De to andre prisene:** Både $x=3$ og $y=3$ er positive, så begge produktene lages. Da må innsatsprisen være lik bidraget for begge: $2u+v+w=5$ og $u+2v=4$.
+2. **De to andre prisene:** Både $x=3$ og $y=3$ er positive, så begge produktene lages. Da må ressurskostnaden være lik bidraget for begge: $2u+v+w=5$ og $u+2v=4$.
    - Med $w=0$ gir den første likningen $v=5-2u$.
    - Sett inn i den andre: $u+2(5-2u)=4$, så $10-3u=4$ og $u=2$.
    - Dermed er $v=1$.
@@ -1189,9 +1190,9 @@ En aktiv grense kan likevel ha pris null (maskintimene er brukt opp, men en ekst
 ::: {#uke11-fortegn}
 :::
 
-Vår modell har kravene «bruk $\le$ kapasitet» og «mengde $\ge0$». Hvis radene har andre ulikhetstegn, eller variablene har andre fortegnskrav, må også prisreglene endres. For et produksjonsproblem (primal) som maksimeres:
+Vår modell har kravene «bruk $\le$ kapasitet» og «mengde $\ge0$». Hvis radene har andre ulikhetstegn, eller variablene har andre fortegnskrav, må også prisreglene endres. For en primal som maksimeres:
 
-| I produksjonsproblemet (primalen) | I prisproblemet (dualen) |
+| I primalen (produksjonsproblemet) | I dualen (prisproblemet) |
 |:--|:--|
 | $\ge$-rad | Ikke-positiv pris (dualvariabel) |
 | Likningsrad | Fri pris (positiv eller negativ) |
@@ -1206,7 +1207,7 @@ Den vektede ulikheten forklarer alle tre reglene: vi kan bare multiplisere en ul
 2. **En likningsrad gir en fri pris.** En likning $x+y=2$ gir $\mu(x+y)=2\mu$ for hvert tall $\mu$, positivt eller negativt. En likhet er også en $\le$-ulikhet, så vi kan bruke den i den vektede ulikheten uansett fortegn. Prisen er fri.
 3. **En fri variabel gir et likhetskrav.** I steg 1 i boksen *hvorfor gir gyldige priser alltid en øvre grense?* brukte vi $x\ge0$: fra $2u+v+w\ge5$ fikk vi $(2u+v+w)x\ge5x$.
    - Hvis $x$ kan være negativ, snur denne ulikheten for $x<0$.
-   - Med prisene $(3,1,0)$ er innsatsprisen 7, og for $x=-1$ er $5x=-5$, men $7x=-7<-5$.
+   - Med prisene $(3,1,0)$ er ressurskostnaden 7, og for $x=-1$ er $5x=-5$, men $7x=-7<-5$.
    - For at $5x\le(2u+v+w)x$ skal gjelde både for positive og negative $x$, må $2u+v+w=5$. Priskravet blir en likning.
 
 I hovedmodellen bruker vi bare $Az\le b$ og $z\ge0$, så alle prisene er ikke-negative og priskravene er ulikheter.
@@ -1220,26 +1221,29 @@ I hovedmodellen bruker vi bare $Az\le b$ og $z\ge0$, så alle prisene er ikke-ne
 ::: {#uke11-sensitivitet}
 :::
 
-Prisene fra forrige del svarer også på eierens andre spørsmål. En nabo tilbyr å leie ut maskinen sin noen timer. Hvis én ekstra maskintime gir verkstedet 2 tusen kroner mer i dekningsbidrag, bør eieren høyst betale 2 tusen kroner for den. Spørsmålet er om det gjelder bare noen få ekstra timer, eller også mange.
+Nå kan vi svare på eierens andre spørsmål. Naboen tilbyr å leie ut maskinen sin noen timer i uka. Hvor mye bør eieren høyst betale per time?
 
-Vi lar $\Delta$ (den greske bokstaven delta) være antall ekstra maskintimer verkstedet leier. Er $\Delta$ negativ, mister verkstedet timer. Hvor mye det beste bidraget øker per ekstra time, når kapasiteten bare endres litt, kaller vi **verdien av en ekstra time** (faglig: ressursverdi, se SciPy-oppslaget i 11.6). Vi undersøker om verdien av en maskintime fortsatt er 2 tusen kroner når kapasiteten endres.
+Tanken er enkel: **en ekstra maskintime er verdt det den øker det beste dekningsbidraget med.** Gir én ekstra time 2 tusen kroner mer, bør eieren ikke betale mer enn 2 tusen kroner for den. I 11.3 fikk maskintimen nettopp prisen 2 tusen kroner. Vi skal se at det er det en ekstra time er verdt, men bare for de første timene.
+
+Vi kaller antall ekstra maskintimer $\Delta$ (den greske bokstaven delta). Verkstedet har da $9+\Delta$ maskintimer. En negativ $\Delta$ betyr at verkstedet mister timer.
 
 ### Når den gamle timeprisen fortsatt virker
 
-Anta at verkstedet leier $\Delta$ ekstra maskintimer, så maskinene har $9+\Delta$ timer.
+**En halv ekstra time.** Vi prøver først $\Delta=\tfrac12$. Verkstedet har da $9.5$ maskintimer og fortsatt $9$ arbeidstimer. Hva blir den beste planen nå?
 
-- **Prisgrensen:** Vi bruker de gamle prisene $(2,1,0)$ på nytt. Beviset fra 11.3 gir da den øvre grensen $2(9+\Delta)+9=27+2\Delta$.
-- **Kontrollspørsmålet:** Grensen er bare nyttig hvis en plan faktisk når den. Gjør den beste planen det ved $\Delta=1/2$, altså en halv ekstra maskintime?
+Med bare litt mer maskintid er det rimelig at verkstedet fortsatt bruker opp begge typer timer, slik som i $(3,3)$. Da finner vi planen fra to likninger:
 
-1. Anta at begge timegrensene fortsatt er brukt opp: $2x+y=9+\tfrac12=\tfrac{19}{2}$ og $x+2y=9$.
+1. **Begge timetypene brukt opp:** $2x+y=9+\tfrac12=\tfrac{19}{2}$ og $x+2y=9$.
 2. Trekk den andre likningen fra den første: $x-y=\tfrac12$, så $x=y+\tfrac12$.
 3. **Finn produksjonsmengdene:** Sett inn i arbeidstimekravet: $(y+\tfrac12)+2y=9$.
    - Da er $3y=9-\tfrac12=\tfrac{17}{2}$ og $y=\tfrac{17}{6}$.
    - Da er $x=\tfrac{17}{6}+\tfrac36=\tfrac{20}{6}=\tfrac{10}{3}$.
-4. Kontroller de andre kravene: $x=\tfrac{10}{3}\le4$ og $x,y\ge0$.
-5. **Sammenlign bidrag og grense:** Bidraget er $5\cdot\tfrac{10}{3}+4\cdot\tfrac{17}{6}=\tfrac{50}{3}+\tfrac{34}{3}=\tfrac{84}{3}=28$, lik prisgrensen $27+2\cdot\tfrac12=28$.
+4. **Kontroller salgsgrensen:** $x=\tfrac{10}{3}\le4$, og begge mengdene er positive. Planen er tillatt.
+5. **Bidraget:** $5\cdot\tfrac{10}{3}+4\cdot\tfrac{17}{6}=\tfrac{50}{3}+\tfrac{34}{3}=\tfrac{84}{3}=28$ tusen kroner.
 
-   Den halve ekstra maskintimen øker det beste bidraget med 1 tusen kroner, altså 2 tusen per time. Den gamle prisen virker.
+**Hva betyr det for eieren?** Den halve timen ga $28-27=1$ tusen kroner mer, altså 2 tusen kroner per time. Det er akkurat prisen på en maskintime fra 11.3.
+
+**Hvorfor stemmer det med prisen?** Prisene fra 11.3 var 2 tusen per maskintime og 1 tusen per arbeidstime. De gir en øvre grense, et tak, for hva *noen* plan kan gi: «2 per maskintime + 1 per arbeidstime». Med $9+\Delta$ maskintimer blir taket $2(9+\Delta)+1\cdot9=27+2\Delta$, altså $28$ for $\Delta=\tfrac12$. Planen vi fant, når taket, så den er den beste. Hver ekstra maskintime løfter taket med 2, og så lenge en plan når taket, øker det beste bidraget like mye.
 
 ### Når en annen grense stopper produksjonen
 
@@ -1312,7 +1316,7 @@ Hva som skjer mellom og utenfor disse verdiene, vet vi foreløpig ikke. Vi kunne
 
 Nå lar vi `linprog` gjøre jobben for 81 verdier av $\Delta$ mellom $-4$ og $4$ (negative verdier betyr at verkstedet mister maskintimer).
 
-- **Størrelsen vi følger:** La $P_*(\Delta)$ være det største mulige dekningsbidraget med maskinkapasitet $9+\Delta$.
+- **Størrelsen vi følger:** La $P_*(\Delta)$ være det beste dekningsbidraget verkstedet kan få når det har $9+\Delta$ maskintimer.
 - **Det du får ferdig:** Løkken endrer bare første kapasitet, løser og lagrer $P_*(\Delta)$. En ferdig hjelpefunksjon tegner kurven sammen med den gamle prisgrensen $27+2\Delta$.
 
 Målet er å se hvor prisen 2 gjelder, og å finne punktet der den slutter å gjelde, uten å vite det på forhånd.
@@ -1354,13 +1358,13 @@ print("SciPy-marginaler ved Δ = 0:", base.ineqlin.marginals + 0)
 **Hva viser forsøket?**
 
 - **Maskintimene:** Kurven har stigningstall 2 fram til $\Delta=3/2$ og er flat etterpå. Bidragene ved $\Delta=0,1/2,2$ er $27,28,30$, mens den gamle prisgrensen $27+2\Delta$ gir $27,28,31$.
-- **Hovedpoenget:** **Stigningstallet er ressursprisen, og knekken kommer der det aktive paret bytter.** For større endringer må vi sjekke om en plan fortsatt kan oppnå prisgrensen.
-- **SciPys tall:** SciPy gir ett tall per rad i `ineqlin.marginals`: hvor mye *SciPys minsteverdi* (av $-P$) endres per ekstra enhet kapasitet, helt nær startmodellen (lokalt). Fordi SciPy minimerer $-P$, har tallene motsatt fortegn av ressursprisene: marginalene $(-2,-1,0)$ betyr at en ekstra maskintime er verdt 2, en ekstra arbeidstime 1 og en høyere A-grense 0 tusen kroner.
+- **Hovedpoenget:** **Så lenge maskintimene og arbeidstimene begge blir brukt opp, gir hver ekstra maskintime 2 tusen kroner, akkurat prisen fra 11.3.** Kurven knekker når salgsgrensen for A tar over som flaskehals. For større endringer må vi derfor sjekke om en plan fortsatt når taket $27+2\Delta$.
+- **SciPys tall:** Cellen skriver også ut SciPys *marginaler*, $(-2,-1,0)$: hva en ekstra enhet av hver ressurs er verdt, regnet ut av løseren. SciPy regner med $-P$ i stedet for $P$, derfor er fortegnet snudd. Tallene betyr at en ekstra maskintime er verdt 2, en ekstra arbeidstime 1 og ett A-parti mer i salgsgrensen 0 tusen kroner, de samme prisene som i 11.3.
 - **Arbeidstimene:** Hvis vi endrer arbeidstimene i stedet (som i hjemmeoppgaven), er stigningstallet 1 for $\Delta\ge-3$ og 2 for lavere verdier. Knekken kommer der A-grensen blir aktiv.
 
 **Svaret til eieren:** Eieren bør betale høyst 2 tusen kroner per ekstra maskintime, men bare for den første halvannen timen. Etter det er flere maskintimer ikke verdt noe.
 
-::: {.reading-step title="Gå i dybden: hvor lenge er prisformelen eksakt?"}
+::: {.reading-step title="Gå i dybden: hvor lenge gjelder prisen på 2 tusen kroner?"}
 
 For å finne hele intervallet der den gamle prisen gir riktig *beste verdi*, lar vi $\Delta$ være en endring i maskinkapasiteten: positiv $\Delta$ betyr flere timer, negativ $\Delta$ betyr færre. Den nye kapasiteten er $9+\Delta$.
 
@@ -1470,7 +1474,7 @@ Oppgavene er sortert etter ukens tre ideer. Kodeoppgavene er i 11.6. Alle bruker
 
 - **Modell:** Verkstedet maksimerer $P=5x+4y$ under $2x+y\le9$, $x+2y\le9$, $x\le4$ og $x,y\ge0$, med mindre oppgaven sier noe annet.
 - **Slakk:** Ubrukt kapasitet, altså kapasitet minus bruk.
-- **Prisbevis:** For målet $5x+4y$ oppfyller gyldige ikke-negative priser $(u,v,w)$ kravene $2u+v+w\ge5$ og $u+2v\ge4$ (innsatsprisen per parti er minst like stor som bidraget); da er $9u+9v+4w$ en øvre grense for $P$.
+- **Prisbevis:** For målet $5x+4y$ oppfyller gyldige ikke-negative priser $(u,v,w)$ kravene $2u+v+w\ge5$ og $u+2v\ge4$ (ressurskostnaden per parti er minst like stor som bidraget); da er $9u+9v+4w$ en øvre grense for $P$.
 
 :::
 
@@ -1610,7 +1614,7 @@ Bidrag $5x+2y$ i $(4,1)$: _[22]
 ::: {#uke11-oppg-los}
 :::
 
-Prøv prisforslaget $(u,v,w)=(1,2,1)$ for det opprinnelige målet $5x+4y$. Forslaget er gyldig hvis innsatsprisene er minst like store som bidragene. Finn innsatsprisene $2u+v+w$ for A og $u+2v$ for B, avgjør om prisene er gyldige, og regn ut den øvre grensen.
+Prøv prisforslaget $(u,v,w)=(1,2,1)$ for det opprinnelige målet $5x+4y$. Forslaget er gyldig hvis ressurskostnadene er minst like store som bidragene. Finn ressurskostnadene $2u+v+w$ for A og $u+2v$ for B, avgjør om prisene er gyldige, og regn ut den øvre grensen.
 
 ```{math-exercise}
 #| label: week11-task-loose-bound
@@ -1618,14 +1622,14 @@ Prøv prisforslaget $(u,v,w)=(1,2,1)$ for det opprinnelige målet $5x+4y$. Forsl
 #| caption: Gyldig, men løs øvre grense
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: innsatspris A, innsatspris B, øvre grense
+#| field-labels: ressurskostnad A, ressurskostnad B, øvre grense
 
-Innsatspriser (A, B): vec[5,5]
+Ressurskostnader (A, B): vec[5,5]
 
 Øvre grense: _[31]
 ```
 
-**Forklar:** Sammenlign med planen $(3,3)$. Bruk komplementær slakk til å forklare hvorfor akkurat dette prisvalget ikke kan bevise at $(3,3)$ er optimal: hvilket produkt har innsatspris større enn bidraget, og hva krever regelen da av mengden?
+**Forklar:** Sammenlign med planen $(3,3)$. Bruk komplementær slakk til å forklare hvorfor akkurat dette prisvalget ikke kan bevise at $(3,3)$ er optimal: hvilket produkt har ressurskostnad større enn bidraget, og hva krever regelen da av mengden?
 
 ::: {#uke11-oppg-tre}
 :::
@@ -1640,20 +1644,20 @@ Nå er det tre produkter (et nytt eksempel, ikke verkstedet), og vi kan ikke len
 | Ikke-negativ produksjon | $x_A,x_B,x_C\ge0$ |
 
 - **Kontroller:** Undersøk planen $(8,4,0)$ og prisene $(7/3,\,4/3,\,0)$ per enhet maskintid, montering og materiale.
-- **Finn innsatsprisen:** Innsatsprisene for A og B er lik bidragene 6 og 5; finn innsatsprisen for C.
+- **Finn ressurskostnaden:** Ressurskostnadene for A og B er lik bidragene 6 og 5; finn ressurskostnaden for C.
 
 ```{math-exercise}
 #| label: week11-task-three-products
 #| caption: Kontroller plan og priser med tre produkter
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: slakk materiale, dekningsbidrag, innsatspris C, øvre grense
+#| field-labels: slakk materiale, dekningsbidrag, ressurskostnad C, øvre grense
 
 Slakk i materiale: _[3]
 
 Dekningsbidrag for planen: _[68]
 
-Innsatspris C: _[25/3]
+Ressurskostnad C: _[25/3]
 
 Øvre grense $20\cdot\tfrac73+16\cdot\tfrac43+15\cdot0$: _[68]
 ```
