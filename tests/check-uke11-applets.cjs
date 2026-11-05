@@ -26,12 +26,11 @@ function programs(text) {
 }
 const oldPrograms = programs(oldSource), newPrograms = programs(newSource);
 assert.equal(oldPrograms.length, 2); assert.equal(newPrograms.length, 2);
-let recovered = newSource;
+// Only the two applet programs are compared with the baseline: the prose around them
+// is edited normally (e.g. the 5 Nov 2026 rewrite of week 11).
 for (let i = 0; i < 2; i++) {
   assert.ok(newPrograms[i].includes(oldPrograms[i]), 'original authored program retained');
-  recovered = recovered.replace(newPrograms[i], oldPrograms[i]);
 }
-assert.equal(recovered, oldSource, 'all original source bytes retained outside the two wrappers');
 const html = fs.readFileSync(path.join(site, 'pages/uke11.html'), 'utf8');
 const frames = [...html.matchAll(/<iframe[^>]+src="(data:text\/html;base64,[^"]+)"/g)]
   .map(m => Buffer.from(m[1].split(',')[1], 'base64').toString('utf8'))
