@@ -47,7 +47,7 @@ Det finnes uendelig mange planer, for $x$ og $y$ trenger ikke være hele tall. U
 **Hvordan kan vi vite at en plan er den beste, uten å prøve alle planene?**
 Svaret kommer i tre steg:
 
-1. **Finn den beste planen (11.1–11.2).** Vi tegner det tillatte området. Den beste planen ligger i et hjørne av området, og hvert hjørne finner vi ved å løse et lite likningssystem. Til slutt lar vi løseren `linprog` gjøre den samme jobben.
+1. **Finn den beste planen (11.1–11.2).** Vi tegner det tillatte området. Den beste planen ligger i et hjørne av området, og hvert hjørne finner vi ved å løse et lite lineært likningssett. Til slutt lar vi løseren `linprog` gjøre den samme jobben.
 2. **Bevis at den er best (11.3).** Vi setter en tenkt pris på hver maskintime og hver arbeidstime. Med riktige priser gir timene en øvre grense for dekningsbidraget i *alle* planer. Når planen vår når grensen, finnes det ingen bedre plan.
 3. **Svar på leiespørsmålet (11.4).** Prisen på en maskintime fra steg 2 er nettopp det en ekstra maskintime er verdt, men bare så lenge verkstedet ikke leier for mange timer.
 
@@ -70,7 +70,7 @@ Vi trenger altså den første og den tredje ideen. Steg 2 gir i tillegg et bevis
 
 1. [Fra tabell til tillatt område](#uke11-modell): mål, krav og slakk.
 2. [Eksperiment 1: endre bidraget fra B](#uke11-pris): den beste planen hopper mellom hjørner.
-3. [Hvorfor ligger optimum i et hjørne?](#uke11-hvorfor) og [hjørner er kvadratiske likningssystemer](#uke11-hjorner).
+3. [Hvorfor ligger optimum i et hjørne?](#uke11-hvorfor) og [hjørner er løsninger av lineære likningssett](#uke11-hjorner).
 4. [Eksperiment 2: kontroller hjørnetabellen med `linprog`](#uke11-linprog).
 
 **Idé 2 – priser beviser at planen er best**
@@ -85,7 +85,7 @@ Vi trenger altså den første og den tredje ideen. Steg 2 gir i tillegg et bevis
 
 | Fra tidligere uker | Spørsmålet vi tar med oss |
 |:--|:--|
-| [Uke 3: likningssystemer og rang](uke3.qmd#uke3-stotte-matriser) | Når har to grenselikninger nøyaktig ett felles punkt? |
+| [Uke 3: lineære likningssett og rang](uke3.qmd#uke3-stotte-matriser) | Når har to grenselikninger nøyaktig ett felles punkt? |
 | [Uke 8: kompakthet](uke8.qmd#uke8-kompakt) | Hvorfor finnes det en beste plan? |
 | [Uke 8: konveksitet](uke8.qmd#uke8-lokalt) | Hvorfor kan vi stoppe i et hjørne som ikke har en bedre nabo? |
 | [Uke 8 (Gå i dybden): grense fra tangenten](uke8.qmd#uke8-tangent) | Kan en enkel ulikhet bevise at ingen plan er bedre? |
@@ -95,7 +95,7 @@ Vi trenger altså den første og den tredje ideen. Steg 2 gir i tillegg et bevis
 Etter denne uken skal du kunne
 
 - oversette en produksjonstabell til et lineært mål og ressursulikheter og finne ubrukt kapasitet for en plan,
-- forklare hvorfor en LP med begrenset, ikke-tomt tillatt område har et optimum i et hjørne, og finne hjørnene som løsninger av kvadratiske likningssystemer,
+- forklare hvorfor en LP med begrenset, ikke-tomt tillatt område har et optimum i et hjørne, og finne hjørnene som løsninger av lineære likningssett,
 - prissette ressursene slik at de gir en øvre grense, og bevise at en plan er optimal når den når grensen,
 - bruke komplementær slakk til å finne ressursprisene fra en plan,
 - tolke verdien av en liten kapasitetsendring og undersøke når den gamle prisen slutter å gi den nye optimalverdien,
@@ -181,7 +181,7 @@ show_region(corners, objective=(5, 4), levels=(20, 24, 27), best=(3, 3))
 - **Sammenlign linjene:** Mållinjen for $P=24$ skjærer gjennom området, så det finnes planer som gir mer. Linjen for $P=27$ berører området bare i hjørnet $(3,3)$.
 - **Sammenlign hjørnene:** Langs en kant varierer det lineære målet $P$ mellom verdiene i endepunktene, så det holder å se på hjørnene der grensene møtes. Hjørnetabellen under viser det samme med tall.
 
-Hvordan vi finner hjørnene systematisk, ser vi i [Hjørner er kvadratiske likningssystemer](#uke11-hjorner).
+Hvordan vi finner hjørnene systematisk, ser vi i [Hjørner er løsninger av lineære likningssett](#uke11-hjorner).
 
 | Hjørne $(x,y)$ | $P$ (tusen kr) |
 |:--|--:|
@@ -601,21 +601,21 @@ Et ubegrenset område kan likevel ha et optimum. For eksempel har $\min(x+y)$ un
 
 :::
 
-### Hjørner er kvadratiske likningssystemer
+### Hjørner er løsninger av lineære likningssett
 
 ::: {#uke11-hjorner}
 :::
 
 I et hjørne er to grenser aktive, og det bruker vi til å finne hjørnene systematisk. Vi går fram slik:
 
-1. **Løs likningene:** Skriver vi de to grensene som likheter, får vi et $2\times2$-system som i [uke 3](uke3.qmd#uke3-stotte-matriser). Ressurskravene er rader av koeffisienter, akkurat som i de lineære systemene tidligere i kurset.
-2. **Kontroller kravene:** Forskjellen fra et vanlig likningssystem er at vi etterpå må sjekke *ulikhetene* for alle de andre kravene.
+1. **Løs likningene:** Skriver vi de to grensene som likheter, får vi et lineært likningssett med to likninger og to ukjente, et $2\times2$-likningssett som i [uke 3](uke3.qmd#uke3-stotte-matriser). Ressurskravene er rader av koeffisienter, akkurat som i de lineære likningssettene tidligere i kurset.
+2. **Kontroller kravene:** Forskjellen fra et vanlig likningssett er at vi etterpå må sjekke *ulikhetene* for alle de andre kravene.
 
 Verkstedet har fem grenser: maskintimer, arbeidstimer, A-grensen, $x=0$ og $y=0$. Det gir $\binom52=\frac{5\cdot4}{2}=10$ måter å velge to av dem på.
 
 ::: {.callout-note title="Håndeksempel: tre par av aktive grenser"}
 
-**Utgangspunkt.** Velg to grenser, skriv dem som likninger og løs systemet. Kontroller deretter de tre andre kravene.
+**Utgangspunkt.** Velg to grenser, skriv dem som likninger og løs likningssettet. Kontroller deretter de tre andre kravene.
 
 **Prøv selv.** Undersøk paret maskintimer og arbeidstimer, paret arbeidstimer og A-grense, og paret A-grense og $x=0$.
 
@@ -628,9 +628,9 @@ Verkstedet har fem grenser: maskintimer, arbeidstimer, A-grensen, $x=0$ og $y=0$
 2. **Arbeidstimer og A-grense:** $x+2y=9$ og $x=4$.
    - Sett inn: $4+2y=9$, så $y=5/2$.
    - Kontroller maskintimer: $2\cdot4+5/2=21/2>9$. Linjene skjærer hverandre, men skjæringspunktet er ikke en tillatt plan.
-3. **A-grense og $x=0$:** $x=4$ og $x=0$ har koeffisientmatrisen $\begin{pmatrix}1&0\\1&0\end{pmatrix}$ med determinant $1\cdot0-0\cdot1=0$ og rang 1. Linjene er parallelle, og systemet har ingen løsning.
+3. **A-grense og $x=0$:** $x=4$ og $x=0$ har koeffisientmatrisen $\begin{pmatrix}1&0\\1&0\end{pmatrix}$ med determinant $1\cdot0-0\cdot1=0$ og rang 1. Linjene er parallelle, og likningssettet har ingen løsning.
 
-**Dette tar vi med oss.** Et hjørne krever to aktive grenser med lineært uavhengige rader, altså et ikke-singulært $2\times2$-system, *og* at løsningen oppfyller alle de andre kravene.
+**Dette tar vi med oss.** Et hjørne krever to aktive grenser med lineært uavhengige rader, altså et $2\times2$-likningssett med ikke-singulær koeffisientmatrise, *og* at løsningen oppfyller alle de andre kravene.
 
 :::
 
@@ -655,13 +655,13 @@ show_pairs(vertices, outside)
 
 ### Antall kandidater eksploderer
 
-Verkstedet har 10 par. Et problem med 50 variabler og 100 krav har mer enn $10^{40}$ mulige valg av aktive grenser. Å løse alle systemene er derfor ingen brukbar metode.
+Verkstedet har 10 par. Et problem med 50 variabler og 100 krav har mer enn $10^{40}$ mulige valg av aktive grenser. Å løse alle likningssettene er derfor ingen brukbar metode.
 
 ::: {.reading-step title="Gå i dybden: hvor mange kandidater finnes det?"}
 
 Slik teller vi mulige valg av aktive grenser:
 
-1. **Velg antall grenser:** Med $n$ variabler bestemmes et hjørne av $n$ aktive grenser, altså et $n\times n$-system. Med $m$ ressurskrav og $n$ fortegnskrav velger vi $n$ av $m+n$ grenser.
+1. **Velg antall grenser:** Med $n$ variabler bestemmes et hjørne av $n$ aktive grenser, altså et lineært likningssett med $n$ likninger og $n$ ukjente. Med $m$ ressurskrav og $n$ fortegnskrav velger vi $n$ av $m+n$ grenser.
 2. **Tell ordnede valg:** Den første grensen kan velges på $m+n$ måter, den neste på $m+n-1$ måter, og så videre ned til $m+1$ måter for den $n$-te.
 3. **Fjern gjentakelsene:** Rekkefølgen spiller ingen rolle, og de $n$ valgte grensene kan ordnes på $n!$ måter. Antall valg er derfor binomialkoeffisienten
 
@@ -673,7 +673,7 @@ $$\binom{m+n}{n}=\frac{(m+n)(m+n-1)\cdots(m+1)}{n!}=\frac{(m+n)!}{n!\,m!}.$$
 | $n=10$ og $m=20$ | $\binom{30}{10}\approx3.0\cdot10^7$ |
 | $n=50$ og $m=100$ | $\binom{150}{50}\approx2.0\cdot10^{40}$ |
 
-Selv med en milliard løste systemer per sekund tar det siste tilfellet uoverkommelig lang tid:
+Selv med en milliard løste likningssett per sekund tar det siste tilfellet uoverkommelig lang tid:
 
 1. **Sekunder:** Omtrent $2.0\cdot10^{40}/10^9=2.0\cdot10^{31}$ sekunder.
 2. **År:** Et år er omtrent $3.2\cdot10^7$ sekunder, så det blir omtrent $6\cdot10^{23}$ år.
@@ -682,7 +682,7 @@ Selv med en milliard løste systemer per sekund tar det siste tilfellet uoverkom
 
 ### Simpleksmetoden går langs kantene
 
-Heldigvis trenger vi ikke å løse alle systemene. **Simpleksmetoden** starter i et hjørne og går hele tiden til et nabohjørne med bedre verdi. To nabohjørner deler én aktiv grense, så et steg bytter ut **én** rad i $2\times2$-systemet. I verkstedet kan en slik bane se slik ut:
+Heldigvis trenger vi ikke å løse alle likningssettene. **Simpleksmetoden** starter i et hjørne og går hele tiden til et nabohjørne med bedre verdi. To nabohjørner deler én aktiv grense, så et steg bytter ut **én** likning i $2\times2$-likningssettet. I verkstedet kan en slik bane se slik ut:
 
 | Hjørne | Aktive grenser | $P$ |
 |:--|:--|--:|
@@ -701,7 +701,7 @@ show_region(corners, path=[(0, 0), (4, 0), (4, 1), (3, 3)], best=(3, 3), title="
 ```
 
 - **Stoppunktet:** I $(3,3)$ er begge nabohjørnene dårligere: $(4,1)$ gir 24 og $(0,9/2)$ gir 18. Metoden stopper, og stoppregelen fra [Hvorfor ligger optimum i et hjørne?](#uke11-hvorfor) sier at et hjørne uten bedre nabo er globalt best.
-- **Arbeidet underveis:** Banen besøkte fire av de ti kandidatene og løste aldri de singulære systemene eller systemene med løsninger utenfor området.
+- **Arbeidet underveis:** Banen besøkte fire av de ti kandidatene og løste aldri de singulære likningssettene eller likningssettene med løsninger utenfor området.
 
 **Indrepunktmetoder** går i stedet gjennom det indre av området mot optimum. Begge typene metoder finnes i HiGHS, løseren som `linprog` bruker.
 
@@ -1239,7 +1239,7 @@ Vi har regnet ut to tilfeller for hånd:
 - Ved $\Delta=1/2$ ga den gamle timeprisen 2 riktig svar.
 - Ved $\Delta=2$ gjorde den ikke det, fordi A-grensen tok over.
 
-Hva som skjer mellom og utenfor disse verdiene, vet vi foreløpig ikke. Vi kunne regnet flere tilfeller for hånd, men hver ny $\Delta$ krever det samme likningssystemet og den samme kontrollen av de andre kravene.
+Hva som skjer mellom og utenfor disse verdiene, vet vi foreløpig ikke. Vi kunne regnet flere tilfeller for hånd, men hver ny $\Delta$ krever det samme likningssettet og den samme kontrollen av de andre kravene.
 
 Nå lar vi `linprog` gjøre jobben for 81 verdier av $\Delta$ mellom $-4$ og $4$.
 
@@ -1373,7 +1373,7 @@ I verkstedet er $(10/3,17/6)$ ved $\Delta=1/2$ ikke en plan med hele partier.
 
 Vi spurte hva verkstedet bør produsere, hvordan vi kan vite at planen er best uten å prøve alle planene, og hva en ekstra maskintime er verdt. For verkstedet er svaret nå fullstendig:
 
-1. Området er konvekst og kompakt, så det finnes en beste plan, og den ligger i et hjørne. Hjørnet $(3,3)$ er løsningen av et $2\times2$-system: tre A-partier og tre B-partier gir 27 tusen kroner.
+1. Området er konvekst og kompakt, så det finnes en beste plan, og den ligger i et hjørne. Hjørnet $(3,3)$ er løsningen av et lineært likningssett med to likninger og to ukjente: tre A-partier og tre B-partier gir 27 tusen kroner.
 2. Prisene $(2,1,0)$ gir den øvre grensen 27 for *alle* planer. Planen $(3,3)$ når grensen, så den er best. Beviset kan kontrolleres med noen få multiplikasjoner.
 3. De samme prisene sier at en ekstra maskintime er verdt 2 tusen kroner, men bare fram til $\Delta=3/2$. Der tar A-grensen over, og prisen må regnes ut på nytt.
 
@@ -1429,7 +1429,7 @@ Dekningsbidrag: _[24]
 ::: {#uke11-oppg-par}
 :::
 
-Et hjørne krever to aktive grenser med et ikke-singulært $2\times2$-system, og at løsningen oppfyller de andre kravene.
+Et hjørne krever to aktive grenser som gir et $2\times2$-likningssett med ikke-singulær koeffisientmatrise, og at løsningen oppfyller de andre kravene.
 
 1. **Løs og kontroller:** Løs paret maskintimer og $y=0$ og paret arbeidstimer og $x=0$, og kontroller de andre kravene.
 2. **Finn determinanter:** Finn determinanten til koeffisientmatrisen for paret maskintimer og arbeidstimer og for paret A-grense og $y=0$. Skriv $y=0$ som raden $(0,1)$, slik at matrisen har radene $(1,0)$ og $(0,1)$.
@@ -1642,7 +1642,7 @@ Forsøkene i 11.2–11.4 bruker `linprog` fra SciPy. Oppslagsboksen samler det d
 | `result.status`, `result.success`, `result.message` | Undersøk utfallet først; status 0 er vellykket, 2 umulig, 3 ubegrenset. |
 | `result.x`, `result.fun` | Plan og **minimeringsverdi**. Vårt bidrag er `-result.fun`. |
 | `result.ineqlin.residual`, `result.ineqlin.marginals` | Slakk og lokal verdiendring for minimeringsmålet per rad. Med motsatt fortegn gir marginalene ressursverdien for $P$. |
-| `np.linalg.solve(M, h)` | Løs et kvadratisk system. Ved en singulær matrise kastes `np.linalg.LinAlgError`. |
+| `np.linalg.solve(M, h)` | Løs likningssettet $Mz=h$ med like mange likninger som ukjente. Ved en singulær matrise kastes `np.linalg.LinAlgError`. |
 
 :::
 
@@ -1709,14 +1709,14 @@ assert np.isclose(evaluate(np.array([4., 2.]))[1], 28.)
 
 Nå gjør vi håndeksemplet fra 11.1 for alle ti par. Alle fem grensene er skrevet som rader i $Gz\le h$; fortegnskravene står som $-x\le0$ og $-y\le0$.
 
-1. **Gå gjennom parene:** For hvert par av rader løser du $2\times2$-systemet der de to radene holder med likhet.
+1. **Gå gjennom parene:** For hvert par av rader løser du $2\times2$-likningssettet der de to radene holder med likhet.
 2. **Fang singulære par:** Et singulært par får `np.linalg.solve` til å kaste en `np.linalg.LinAlgError`: fang den med `try`/`except` og tell paret som singulært.
 3. **Kontroller løsningen:** Behold løsningen som et hjørne hvis den oppfyller **alle** fem ulikhetene (med toleranse `1e-9`); ellers teller du den som utenfor.
 4. **Returner resultatet:** `(found, outside, singular)`: listen med hjørner og de to antallene.
 
 ```{py-exercise}
 #| label: week11-python-vertices
-#| caption: Finn hjørnene som løsninger av 2×2-systemer
+#| caption: Finn hjørnene som løsninger av 2×2-likningssett
 #| show-test-hints: false
 import numpy as np
 from itertools import combinations
@@ -1742,7 +1742,7 @@ assert any(np.allclose(z, [0., 4.5]) for z in found)
 assert all(np.all(G @ z <= h + 1e-9) for z in found)
 ```
 
-Bruk funksjonen etterpå: regn ut $5x+4y$ i hvert hjørne og kontroller at det største er 27. For hvor mange par av rader måtte du løse et system?
+Bruk funksjonen etterpå: regn ut $5x+4y$ i hvert hjørne og kontroller at det største er 27. For hvor mange par av rader måtte du løse et likningssett?
 
 ::: {#uke11-kode-linprog}
 :::

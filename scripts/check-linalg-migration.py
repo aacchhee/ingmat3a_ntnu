@@ -31,6 +31,9 @@ APPROVED_WORDING = {
          '# Komplementær slakk ga u = 2, v = 1. Gir de vektede normalene til sammen målretningen?'),
         ('# En rad per begrensning og en kolonne per produkt.',
          '# En rad per krav og en kolonne per produkt.'),
+        # 5 Nov 2026: the author asked for "lineære likningssett" throughout week 11.
+        ('#| caption: Finn hjørnene som løsninger av 2×2-systemer\n',
+         '#| caption: Finn hjørnene som løsninger av 2×2-likningssett\n'),
     ],
     '_includes/optimization/uke12.md': [
         ('står vinkelrett på normalen og peker mot klokka.',
