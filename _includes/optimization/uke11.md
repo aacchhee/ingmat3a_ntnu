@@ -7,29 +7,59 @@
 
 ### Hva bør verkstedet produsere, og hva er en ekstra maskintime verdt?
 
-Et verksted lager produktpartier som kan deles opp: $2.5$ partier er to hele partier og et halvt. Vi følger planen gjennom tre spørsmål:
+#### Situasjonen
 
-- **Finn planen:** Vi tegner de tillatte planene, finner den beste og ser hvorfor den ligger i et hjørne.
-- **Bevis at den er best:** Vi lager en ressursregning som setter en øvre grense for *alle* planer.
-- **Verdsett kapasiteten:** Til sist undersøker vi hva mer kapasitet kan være verdt, og hvor lenge svaret gjelder.
+Et lite møbelverksted lager to produkter, som vi kaller A og B. Tenk for eksempel på stoler og bord. Verkstedet produserer i **partier**: en serie like produkter, for eksempel ti stoler om gangen.
 
-I [uke 8](uke8.qmd#uke8-start) møtte vi tre ideer. Slik bruker vi dem på verkstedets lineære problem:
+Hver uke må eieren bestemme hvor mange partier av A og hvor mange partier av B verkstedet skal lage. Et slikt valg kaller vi en **produksjonsplan**, eller bare en **plan**. «Tre partier A og to partier B» er en plan.
 
-| Idé fra uke 8 | Hva den forteller her |
+Eieren kan ikke velge fritt:
+
+- **Timene er begrenset.** Maskinene og de ansatte har bare et visst antall timer i uka, og hvert parti bruker noen av dem.
+- **Salget av A er begrenset.** Kundene kjøper høyst fire partier A i uka.
+
+Hvert parti gir verkstedet et **dekningsbidrag**: det verkstedet sitter igjen med når kostnadene til materialer og annet forbruk er trukket fra salgsinntekten.
+
+Eieren har to spørsmål:
+
+1. **Hvilken plan gir størst dekningsbidrag?** Svaret er ikke opplagt: A gir mest per parti, men bruker dobbelt så mye maskintid som B.
+2. **Lønner det seg å leie mer maskintid?** En nabo tilbyr å leie ut maskinen sin noen timer ekstra. Hva er det mest verkstedet bør betale for én ekstra maskintime?
+
+Tallene kommer i [11.1](#uke11-modell).
+
+#### Fra verkstedet til matematikk
+
+For å svare oversetter vi verkstedet til matematikk. Hver ting i verkstedet får sin motpart:
+
+| I verkstedet | I matematikken |
 |:--|:--|
-| *Finnes det et beste svar?* | Et beste svar finnes. |
-| *Hva forteller krumningen?* (Hessianen) | Hessianen hjelper oss ikke her, fordi grafen til et lineært mål ikke krummer. |
-| *Er kandidaten vi fant, den beste?* (konveksitet) | Et hjørne uten et bedre nabohjørne er det beste. |
+| En plan: $x$ partier A og $y$ partier B | Et punkt $(x,y)$ i planet |
+| Planen bruker ikke flere timer enn verkstedet har | Én lineær ulikhet per ressurs: «timer brukt $\le$ timer som finnes» |
+| Alle planene eieren faktisk kan velge | Det **tillatte området**: punktene som oppfyller alle ulikhetene |
+| Dekningsbidraget til en plan | En lineær funksjon $P(x,y)$ |
+| Den beste planen | Punktet i det tillatte området der $P$ er størst |
 
-Vi trenger altså den første og den tredje ideen. I tillegg får vi et bevis som kan kontrolleres med noen få multiplikasjoner.
+Både dekningsbidraget og timebruken er lineære i $x$ og $y$. Et slikt problem kalles **lineær programmering (LP)**. Ordet «programmering» betyr her planlegging, ikke koding.
 
-Underveis må vi svare på et spørsmål som ligger bak begge spørsmålene i overskriften:
+#### Veien gjennom uken
+
+Det finnes uendelig mange planer, for $x$ og $y$ trenger ikke være hele tall. Ukens kjernespørsmål er derfor:
 **Hvordan kan vi vite at en plan er den beste, uten å prøve alle planene?**
-Svaret kommer i tre steg, og hvert steg er én idé:
+Svaret kommer i tre steg:
 
-1. Det beste svaret ligger i et hjørne, og et hjørne er løsningen av et lite likningssystem (11.1–11.2).
-2. Ressurspriser gir en øvre grense for bidraget i alle planer. Når en plan når grensen, er beviset ferdig (11.3).
-3. De samme prisene sier hva litt mer kapasitet er verdt, men bare så lenge de samme grensene er aktive (11.4).
+1. **Finn den beste planen (11.1–11.2).** Vi tegner det tillatte området. Den beste planen ligger i et hjørne av området, og hvert hjørne finner vi ved å løse et lite likningssystem. Til slutt lar vi løseren `linprog` gjøre den samme jobben.
+2. **Bevis at den er best (11.3).** Vi setter en tenkt pris på hver maskintime og hver arbeidstime. Med riktige priser gir timene en øvre grense for dekningsbidraget i *alle* planer. Når planen vår når grensen, finnes det ingen bedre plan.
+3. **Svar på leiespørsmålet (11.4).** Prisen på en maskintime fra steg 2 er nettopp det en ekstra maskintime er verdt, men bare så lenge verkstedet ikke leier for mange timer.
+
+**Hva vi tar med fra uke 8.** I [uke 8](uke8.qmd#uke8-start) stilte vi tre spørsmål til et optimeringsproblem. For verkstedet blir svarene enkle:
+
+| Spørsmål fra uke 8 | Svaret for verkstedet |
+|:--|:--|
+| *Finnes det en beste plan?* | Ja. Det tillatte området er lukket og begrenset, og $P$ er kontinuerlig, så $P$ har en største verdi der. |
+| *Hva sier krumningen?* (Hessianen) | Ingenting nytt. $P$ er lineær, så grafen er et flatt plan, og Hessianen er null. |
+| *Er planen vi fant, den beste?* (konveksitet) | Ja, hvis ingen nabohjørne er bedre. Området er konvekst, så et hjørne uten bedre nabo er best av alle. |
+
+Vi trenger altså den første og den tredje ideen. Steg 2 gir i tillegg et bevis som kan kontrolleres med noen få multiplikasjoner.
 
 - **Lesemodus:** **Forelesning** viser hovedløpet. **Gå i dybden** åpner lengre begrunnelser og mellomregninger.
 - **Arbeidsløp:** I 11.1–11.4 følger vi ett verksted. Regneoppgavene i 11.5 er sortert etter de tre ideene, og kodeoppgavene står i 11.6. Alle oppgavene bruker stort sett de samme tallene.
@@ -76,33 +106,46 @@ Etter denne uken skal du kunne
 ::: {#uke11-modell}
 :::
 
-### Modellen: to produkter og to typer timer
+### Verkstedet i tall
 
-Verkstedet produserer partier av A og B. Tallene i modellen bygger på denne definisjonen og disse antakelsene:
-
-- **Dekningsbidrag** betyr salgsinntekt minus kostnadene som følger produksjonen, for eksempel materialer; her måles det i tusen kroner per parti.
-- **Forutsetninger:** Vi antar at hele produksjonen blir solgt, at partiene kan deles, slik at timene kan fordeles fritt, og at tabellens tall er konstante i denne perioden.
+Vi går tilbake til møbelverkstedet fra [oversikten](#uke11-start). Eieren skal velge hvor mange partier av A og B verkstedet skal lage denne uka. Tabellen viser hva ett parti av hvert produkt bruker av timer, og hva det gir i dekningsbidrag. Den siste raden viser hvor mange timer verkstedet har i uka.
 
 | Produkt | Maskintimer per parti | Arbeidstimer per parti | Dekningsbidrag per parti |
 |:--|--:|--:|--:|
 | A | 2 | 1 | 5 tusen kr |
 | B | 1 | 2 | 4 tusen kr |
-| Tilgjengelig kapasitet | 9 | 9 | |
+| Timer verkstedet har i uka | 9 | 9 | |
 
-I tillegg kan verkstedet lage høyst fire A-partier.
+I tillegg kjøper kundene høyst fire partier A i uka.
 
-- **Variabler:** La $x$ være antall A-partier og $y$ antall B-partier.
-- **Mål:** Vi vil gjøre $P=5x+4y$ (tusen kroner) størst mulig.
-- **Tillatt plan:** En plan er **tillatt** når alle kravene er oppfylt:
+**Les tabellen.** Ett parti A bruker 2 timer i maskinene og 1 time av de ansattes arbeid, og verkstedet sitter igjen med 5 tusen kroner når materialene er betalt. For B er det omvendt: 1 maskintime og 2 arbeidstimer gir 4 tusen kroner. A gir altså mest per parti, men bruker mest av maskintiden.
 
-| Krav | Regning for en plan $(x,y)$ | Grense |
+**Forenklinger.** For at regningen skal bli enkel, antar vi at
+
+- alt verkstedet lager, blir solgt, bortsett fra at det bare er kunder til fire partier A,
+- tallene i tabellen er de samme hele uka,
+- verkstedet kan lage deler av et parti: $2.5$ partier er to hele partier og et halvt. Det er rimelig når et parti består av mange like enheter, for eksempel ti stoler.
+
+### Fra verkstedet til en modell
+
+Nå oversetter vi verkstedet til matematikk, én bit om gangen.
+
+**Planen blir et punkt.** La $x$ være antall partier A og $y$ antall partier B. En plan er da et punkt $(x,y)$. Planen $(2,1)$ betyr to partier A og ett parti B.
+
+**Dekningsbidraget blir en funksjon.** Hvert parti A gir 5 og hvert parti B gir 4 tusen kroner. Planen $(x,y)$ gir derfor
+$$P=5x+4y \quad\text{(tusen kroner)}.$$
+Dette er **målet**: vi vil gjøre $P$ størst mulig.
+
+**Kravene blir ulikheter.** Timene en plan bruker, er «timer per parti × antall partier», lagt sammen for A og B. Planen kan ikke bruke flere timer enn verkstedet har:
+
+| Krav | I verkstedet | Ulikhet |
 |:--|:--|:--|
-| Maskintimer | $2x+y$ | $2x+y\le9$ |
-| Arbeidstimer | $x+2y$ | $x+2y\le9$ |
-| Antall A-partier | $x$ | $x\le4$ |
-| Ikke-negativ produksjon | $x,y$ | $x\ge0,\ y\ge0$ |
+| Maskintimer | A bruker 2 og B bruker 1 time per parti; verkstedet har 9 | $2x+y\le9$ |
+| Arbeidstimer | A bruker 1 og B bruker 2 timer per parti; verkstedet har 9 | $x+2y\le9$ |
+| Salg av A | Kundene kjøper høyst fire partier A | $x\le4$ |
+| Ingen negativ produksjon | Verkstedet kan ikke lage $-1$ parti | $x\ge0,\ y\ge0$ |
 
-Bruken av hver timetype er «timer per parti × antall partier», lagt sammen for A og B. Sjekk planen $(x,y)=(2,1)$:
+En plan er **tillatt** når den oppfyller alle kravene. Sjekk planen $(x,y)=(2,1)$:
 
 1. Maskintimer: $2\cdot2+1\cdot1=5\le9$.
 2. Arbeidstimer: $1\cdot2+2\cdot1=4\le9$.
@@ -116,7 +159,7 @@ Begge partimengdene er ikke-negative, så planen er tillatt. Den ubrukte kapasit
 | Arbeidstimer | $9-4=5$ ubrukte timer |
 | A-partier | Rom for $4-2=2$ flere partier |
 
-Dette er et problem i **lineær programmering (LP)**: både målet $P=5x+4y$ og ressursbruken er lineære i $x,y$. Vi leter etter den tillatte planen med størst $P$.
+Dette er et problem i **lineær programmering (LP)**: både målet $P=5x+4y$ og timebruken er lineære i $x$ og $y$. («Programmering» betyr her planlegging, ikke koding.) Eierens første spørsmål er nå et matematisk spørsmål: hvilket punkt i det tillatte området gir størst $P$?
 
 ### Tegn området og sammenlign hjørnene
 
