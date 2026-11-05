@@ -473,6 +473,19 @@
     return out;
   }
 
+  // A math span as the renderer must see it. The task's newlines become <br>
+  // afterwards, and KaTeX's auto-render cannot match delimiters across
+  // elements, so a line break inside math becomes a space (TeX treats both as
+  // white space). A bare \begin{..}..\end{..} gets delimiters of its own,
+  // which auto-render needs: inline for environments KaTeX allows in inline
+  // math, display for the others.
+  var INLINE_ENVIRONMENT = /^(?:[pbBvV]?matrix|smallmatrix|array|cases|aligned|gathered|split)\*?$/;
+  function mathSpan(span, env) {
+    span = span.replace(/\r?\n/g, ' ');
+    if (!env) return span;
+    return INLINE_ENVIRONMENT.test(env) ? '\\(' + span + '\\)' : '\\[' + span + '\\]';
+  }
+
   // Escapes a run of exercise text and formats inline Markdown outside math
   // (\( \), \[ \], \begin{..} \end{..} after normalizeTaskMathDelimiters) and
   // outside code spans. Each math span is a slot while formatting, so emphasis
@@ -488,7 +501,7 @@
       else if (closer) {
         var close = text.indexOf(closer, position + 2);
         var stop = close >= 0 ? close + closer.length : text.length;
-        maths.push(escHtml(text.slice(position, stop)));
+        maths.push(escHtml(mathSpan(text.slice(position, stop), env && env[1])));
         plain += MATH_SLOT;
         position = stop;
       } else { plain += c; position++; }
@@ -960,6 +973,7 @@
         checker:  opts.checker || '',
       };
       if (opts.questionContext) request.question_context = opts.questionContext;
+      else if (opts.givens) request.givens = opts.givens;
       return JSON.parse(await callCheckers(py, 'check_custom', request, onStart));
     }, opts.packages);
   }
@@ -1045,8 +1059,9 @@
     try { configuredFieldLabels = JSON.parse(cell.dataset.fieldLabels || '[]'); } catch (e) {}
     var structuralFieldLabels = [];
     try { structuralFieldLabels = JSON.parse(cell.dataset.structuralFieldLabels || '[]'); } catch (e) {}
-    var checker = '';
+    var checker = '', givens = '';
     try { checker = JSON.parse(cell.dataset.checker || '""'); } catch (e) {}
+    try { givens = JSON.parse(cell.dataset.givens || '""'); } catch (e) {}
     var packages = [];
     try { packages = JSON.parse(cell.dataset.packages || '[]'); } catch (e) {}
     var formCredit = finiteCredit(cell.dataset.formCredit || '0.5');
@@ -1059,6 +1074,7 @@
       form:      cell.dataset.form      || '',
       vars:       vars,
       checker:    checker,
+      givens:     givens,
       packages:   packages,
       responseSource: cell.dataset.response || '',
       partialCredit: cell.dataset.partialCredit === 'true',
@@ -1079,7 +1095,11 @@
       }
     }
 
-    if (cell._similarContext) checkOpts.questionContext = cell._similarContext;
+    // A generated practice problem's context; a restored one is verified (and
+    // set) before its first check, so it is read when the check starts.
+    if ('_similarContext' in cell)
+      Object.defineProperty(checkOpts, 'questionContext', {enumerable: true, configurable: true,
+        get: function () { return cell._similarContext || undefined; }});
     var storedAnswers = cell._generatedStore || null, variantBoards = null;
     var storageVariants = JSON.parse(cell.dataset.storageVariants || '[]');
     function storedVariant() { return storageVariants[idx] || null; }

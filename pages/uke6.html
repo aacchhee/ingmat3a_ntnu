@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="nb" xml:lang="nb"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.19">
+<meta name="generator" content="quarto-1.11.9">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -38,14 +38,15 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="../">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-5337165f197680d68c11b8afac1372bd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-b4b6283e97a269dab123b4acdc252bb4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="../site_libs/quarto-contrib/ctm-coi-frame-startup-1/coi-frame-startup.js"></script>
 <script src="../site_libs/quarto-contrib/ctm-assets-0.9.0/assets.js"></script>
 <link href="../site_libs/quarto-contrib/ctm-ui-0.9.0/ctm-ui.css" rel="stylesheet">
@@ -63,7 +64,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-contrib/ai-feedback-0.9.0/ai-feedback.css" rel="stylesheet">
 <script src="../site_libs/quarto-contrib/ctm-runtime-0.9.0/pyodide-runtime.js"></script>
 <script src="../site_libs/quarto-contrib/ctm-worker-0.9.0/pyodide-worker.js"></script>
-<script src="../site_libs/quarto-contrib/ctm-checkers-0.12.0.dev0+21ac0fe7/ctm-checkers.js"></script>
+<script src="../site_libs/quarto-contrib/ctm-checkers-0.12.0.dev0+dfad141a/ctm-checkers.js"></script>
 <script src="../site_libs/quarto-contrib/ctm-locale-math-exercise-0.9.0/math-exercise.js"></script>
 <link href="../site_libs/quarto-contrib/ctm-matrix-input-0.9.0/ctm-matrix-input.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/math-exercise-0.11.0/math-exercise.css" rel="stylesheet">
@@ -227,17 +228,17 @@ window.Quarto = {
 <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-sidebar docked fullcontent quarto-light">
+<body class="nav-sidebar docked fullcontent quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav">
+  <nav class="quarto-secondary-nav" aria-label="Verktøylinje">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke6.html">Uke 6 – iterative metoder for lineære systemer</a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Slå av eller på sidebarnavigering" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="Brødsmuler"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke6.html">Uke 6 – iterative metoder for lineære systemer</a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Søk" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
@@ -248,7 +249,7 @@ window.Quarto = {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto" aria-label="Nettsted">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Matematikk 3A</a> 
@@ -275,13 +276,10 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Tall og algoritmer</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Slå på delen">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-controls="quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-1-label">Tall og algoritmer</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" aria-labelledby="quarto-sidebar-section-1-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/page2.html" class="sidebar-item-text sidebar-link">
@@ -298,13 +296,10 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Numerisk lineær algebra</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Slå på delen">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-controls="quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-2-label">Numerisk lineær algebra</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" aria-labelledby="quarto-sidebar-section-2-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/uke3.html" class="sidebar-item-text sidebar-link">
@@ -339,13 +334,10 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Optimering</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Slå på delen">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-controls="quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-3-label">Optimering</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" aria-labelledby="quarto-sidebar-section-3-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/uke8.html" class="sidebar-item-text sidebar-link">
@@ -380,13 +372,10 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Projects</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Slå på delen">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-controls="quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-4-label">Projects</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-4" aria-labelledby="quarto-sidebar-section-4-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/project_week1.html" class="sidebar-item-text sidebar-link">
@@ -457,13 +446,10 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Eksamensoppgaver</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Slå på delen">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-controls="quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-5-label">Eksamensoppgaver</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-5" aria-labelledby="quarto-sidebar-section-5-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/page5.html" class="sidebar-item-text sidebar-link">
@@ -479,7 +465,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content" tabindex="-1">
 <script>window.__aiFeedbackPolicies = {"layers":[],"pageLayers":[]};</script>
 <script>window.__aiFeedbackConfig = {"baseUrl":"","mode":"copy","model":""};</script>
 <script>window.__mathExerciseConfig = {"lang":"nb","stopAfter":20};</script>
@@ -494,7 +480,7 @@ window.Quarto = {
   });
 </script>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke6.html">Uke 6 – iterative metoder for lineære systemer</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Brødsmuler"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/uke3.html">Numerisk lineær algebra</a></li><li class="breadcrumb-item"><a href="../pages/uke6.html">Uke 6 – iterative metoder for lineære systemer</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Uke 6 – iterative metoder for lineære systemer</h1>
 </div>
@@ -527,7 +513,7 @@ window.Quarto = {
 <div id="qpyodide-insertion-location-2"></div>
 <noscript>Slå på JavaScript for å kunne bruke de interaktive kodecellene på denne siden.</noscript>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">6.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">6.1 Fra likningssystem til Gauss–Seidel</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">6.2 Følg feilen</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">6.3 Residual, norm og kondisjonstall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">6.4 Løsningen som minimum</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">6.5 Fra skål til søkeretning</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">6.6 Konjugert gradient</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-8" role="tab" aria-controls="tabset-1-8" aria-selected="false" href="">6.7 Prosjekt og egenarbeid</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">6.0 Oversikt</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">6.1 Fra likningssett til Gauss–Seidel</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">6.2 Følg feilen</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">6.3 Residual, norm og kondisjonstall</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">6.4 Løsningen som minimum</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false" href="">6.5 Fra skål til søkeretning</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false" href="">6.6 Konjugert gradient</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-8" role="tab" aria-controls="tabset-1-8" aria-selected="false" href="">6.7 Prosjekt og egenarbeid</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="oversikt" class="ctm-tab-target">
@@ -556,7 +542,7 @@ window.Quarto = {
 </section>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<div id="fra-likningssystem-til-gaussseidel" class="ctm-tab-target">
+<div id="fra-likningssett-til-gaussseidel" class="ctm-tab-target">
 
 </div>
 <div id="uke6-gs">
@@ -564,7 +550,7 @@ window.Quarto = {
 </div>
 <section id="én-likning-og-én-ukjent-om-gangen" class="level3">
 <h3 class="anchored" data-anchor-id="én-likning-og-én-ukjent-om-gangen">Én likning og én ukjent om gangen</h3>
-<p>I uke 2 fant vi løsninger ved å gjenta en oppdatering: vi startet med et forslag, beregnet et nytt og fortsatte til forslagene stabiliserte seg. Nå vil vi bruke samme idé på et lineært likningssystem <span class="math inline">\(Ax=b\)</span>: vi beholder likningene og <strong>forbedrer et løsningsforslag flere ganger</strong>.</p>
+<p>I uke 2 fant vi løsninger ved å gjenta en oppdatering: vi startet med et forslag, beregnet et nytt og fortsatte til forslagene stabiliserte seg. Nå vil vi bruke samme idé på et lineært likningssett <span class="math inline">\(Ax=b\)</span>: vi beholder likningene og <strong>forbedrer et løsningsforslag flere ganger</strong>.</p>
 <p>Vi begynner med et system vi også kan løse for hånd:</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -755,7 +741,7 @@ A_b=\begin{bmatrix}1&amp;2\\2&amp;1\end{bmatrix}.\]</span></p>
 <h3 class="anchored" data-anchor-id="hvordan-endrer-ett-sveip-feilen">Hvordan endrer ett sveip feilen?</h3>
 <p>Som i <a href="../pages/page4.html#fikspunkt-og-konvergens">uke 2</a> kan vi skrive metoden som en fikspunktiterasjon. Her er oppdateringen <span class="math inline">\(x_{k+1}=Tx_k+c\)</span>. Løsningen er et <strong>fikspunkt</strong>: den endres ikke av oppdateringen, altså <span class="math inline">\(x_*=Tx_*+c\)</span>. <strong>Feilen</strong> <span class="math inline">\(e_k=x_k-x_*\)</span> følger derfor</p>
 <p><span class="math display">\[e_{k+1}=(Tx_k+c)-(Tx_*+c)=T(x_k-x_*)=Te_k.\]</span></p>
-<p>Dermed er <span class="math inline">\(e_k=T^ke_0\)</span>: det gjentatte matriseproduktet fra uke 5. Der fulgte vi hvilket bidrag som tok over; nå ønsker vi at <strong>alle feilbidrag skal forsvinne</strong>. <span class="math inline">\(T\)</span> beskriver ett helt sveip, ikke likningssystemet.</p>
+<p>Dermed er <span class="math inline">\(e_k=T^ke_0\)</span>: det gjentatte matriseproduktet fra uke 5. Der fulgte vi hvilket bidrag som tok over; nå ønsker vi at <strong>alle feilbidrag skal forsvinne</strong>. <span class="math inline">\(T\)</span> beskriver ett helt sveip, ikke likningssettet.</p>
 <p>For <span class="math inline">\(A_a\)</span> finner vi <span class="math inline">\(T\)</span> ved å sette den nye <span class="math inline">\(u\)</span> inn i oppdateringen av <span class="math inline">\(v\)</span>:</p>
 <p><span class="math display">\[u_{k+1}=\tfrac53-\tfrac13v_k,\qquad
 v_{k+1}=\frac{5-u_{k+1}}{2}=\frac{5-\frac53+\frac13v_k}{2}=\tfrac53+\tfrac16v_k.\]</span></p>
@@ -1159,7 +1145,7 @@ x\text{ minimerer }\phi(x)=\tfrac12x^TAx-b^Tx.}\]</span></p>
 <p><span class="math display">\[g'(u)=3u+v_k-5=0
 \quad\Longrightarrow\quad u_{k+1}=\frac{5-v_k}{3}.\]</span></p>
 <p>Siden <span class="math inline">\(g''(u)=3&gt;0\)</span>, er dette minimum langs hele den horisontale linjen <span class="math inline">\(v=v_k\)</span>. Det er nøyaktig den første GS-oppdateringen. På samme måte gir minimering langs den vertikale linjen <span class="math inline">\(u=u_{k+1}\)</span> den andre GS-oppdateringen (regningen står i «Gå i dybden»). <strong>GS løser altså et lite minimeringsproblem for hver koordinat.</strong> Vi lar én koordinat variere fritt og velger det beste punktet langs denne linjen (GS-banen i nivåkurvebildet står i «Gå i dybden»). GS minimerer langs koordinataksene. <strong>Kan vi velge andre linjer som tar oss raskere mot minimumet?</strong> I 6.5 bruker vi funksjonens helninger til å velge retning. I 6.6 undersøker vi hvordan CG kan bevare det vi allerede har oppnådd i tidligere retninger.</p>
-<p><strong>Øv på dette:</strong> <a href="#uke6-ov-skal">Fra likningssystem til minimum</a> og <a href="#uke6-ov-kondisjon">kondisjonstall fra egenverdiene</a>.</p>
+<p><strong>Øv på dette:</strong> <a href="#uke6-ov-skal">Fra likningssett til minimum</a> og <a href="#uke6-ov-kondisjon">kondisjonstall fra egenverdiene</a>.</p>
 <details class="ctm-reveal reading-step">
 <summary>
 Gå i dybden: nivåkurver, hele GS-sveipet, tre ukjente og den generelle minimeringen
@@ -1235,7 +1221,7 @@ x^TAx=4u^2+2uv+3v^2+2vw+2w^2.\]</span></p>
 <p>For å kontrollere at matrisen er SPD, lar vi <span class="math inline">\(z=(z_1,z_2,z_3)^T\)</span>. Kvadratfullføring gir</p>
 <p><span class="math display">\[z^TAz=4(z_1+z_2/4)^2+\tfrac{11}{4}(z_2+4z_3/11)^2+\tfrac{18}{11}z_3^2.\]</span></p>
 <p>Alle koeffisientene er positive. Summen kan være null bare hvis først <span class="math inline">\(z_3=0\)</span>, deretter <span class="math inline">\(z_2=0\)</span> og til slutt <span class="math inline">\(z_1=0\)</span>. Matrisen er altså SPD.</p>
-<p>Likningssystemet er</p>
+<p>Likningssettet er</p>
 <p><span class="math display">\[4u+v=6,\qquad u+3v+w=10,\qquad v+2w=8.\]</span></p>
 <p>Første og tredje likning gir <span class="math inline">\(u=(6-v)/4\)</span> og <span class="math inline">\(w=(8-v)/2\)</span>. Setter vi disse inn i andre, får vi</p>
 <p><span class="math display">\[\frac{6-v}{4}+3v+\frac{8-v}{2}=10
@@ -1641,7 +1627,7 @@ x=\begin{bmatrix}u\\v\end{bmatrix}.\]</span></p>
 <section id="jacobi-eller-gaussseidel" class="level4">
 <h4 class="anchored" data-anchor-id="jacobi-eller-gaussseidel">Jacobi eller Gauss–Seidel?</h4>
 <p>Start i <span class="math inline">\(x_0=(0,0)^T\)</span>. Isoler <span class="math inline">\(u\)</span> i første likning og <span class="math inline">\(v\)</span> i andre. Beregn <strong>ett helt sveip</strong> med Jacobi og ett med Gauss–Seidel. I begge tilfeller oppdaterer du <span class="math inline">\(u\)</span> først og deretter <span class="math inline">\(v\)</span>.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-1" data-label="week6-task-sweeps" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;u etter Jacobi&quot;,&quot;v etter Jacobi&quot;,&quot;u etter Gauss–Seidel&quot;,&quot;v etter Gauss–Seidel&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-sweeps&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Jacobi eller Gauss–Seidel?\nStart i \\(x_0=(0,0)^T\\). Isoler \\(u\\) i første likning og \\(v\\) i andre. Beregn ett helt sveip med Jacobi og ett med Gauss–Seidel. I begge tilfeller oppdaterer du \\(u\\) først og deretter \\(v\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="311a672ef6ccd9d4" data-ctm-id="week6-task-sweeps" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-15" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-1" data-label="week6-task-sweeps" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;u etter Jacobi&quot;,&quot;v etter Jacobi&quot;,&quot;u etter Gauss–Seidel&quot;,&quot;v etter Gauss–Seidel&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-sweeps&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Jacobi eller Gauss–Seidel?\nStart i \\(x_0=(0,0)^T\\). Isoler \\(u\\) i første likning og \\(v\\) i andre. Beregn ett helt sveip med Jacobi og ett med Gauss–Seidel. I begge tilfeller oppdaterer du \\(u\\) først og deretter \\(v\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="311a672ef6ccd9d4" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-15" data-ctm-save="true" data-ctm-id="week6-task-sweeps" data-fields="[&quot;math-exercise-1-f1&quot;,&quot;math-exercise-1-f2&quot;,&quot;math-exercise-1-f3&quot;,&quot;math-exercise-1-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Punktet etter ett sveip" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Punktet etter ett sveip</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1672,7 +1658,7 @@ Gauss–Seidel: \(x_1=\) <span class="math-vec" style="--n:2"><input type="text"
 <h4 class="anchored" data-anchor-id="blir-feilen-mindre">Blir feilen mindre?</h4>
 <p>Fortsett med Gauss–Seidel. Sett uttrykket for <span class="math inline">\(u_{k+1}\)</span> inn i oppdateringen for <span class="math inline">\(v_{k+1}\)</span>. Da får du en regel som bare bruker <span class="math inline">\(v_k\)</span>. I det første svarfeltet skriver du <strong>v</strong> for den gamle verdien <span class="math inline">\(v_k\)</span>.</p>
 <p>La <span class="math inline">\(v_*\)</span> være andre koordinat i den eksakte løsningen, og sett <span class="math inline">\(e_k=v_k-v_*\)</span>. Dette er feilen i andre koordinat etter <span class="math inline">\(k\)</span> sveip. Finn tallet <span class="math inline">\(q\)</span> slik at <span class="math inline">\(e_{k+1}=q e_k\)</span>.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-2" data-label="week6-task-error-factor" data-mode="equivalent" data-reject="" data-vars="v" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;ny v som uttrykk i gammel v&quot;,&quot;feilfaktoren q&quot;,&quot;feilfaktoren etter tre sveip&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-error-factor&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Blir feilen mindre?\nFortsett med Gauss–Seidel. Sett uttrykket for \\(u_{k+1}\\) inn i oppdateringen for \\(v_{k+1}\\). Da får du en regel som bare bruker \\(v_k\\). I det første svarfeltet skriver du v for den gamle verdien \\(v_k\\).\nLa \\(v_*\\) være andre koordinat i den eksakte løsningen, og sett \\(e_k=v_k-v_*\\). Dette er feilen i andre koordinat etter \\(k\\) sveip. Finn tallet \\(q\\) slik at \\(e_{k+1}=q e_k\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="dde98ef39d2e7c17" data-ctm-id="week6-task-error-factor" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-16" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-2" data-label="week6-task-error-factor" data-mode="equivalent" data-reject="" data-vars="v" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;ny v som uttrykk i gammel v&quot;,&quot;feilfaktoren q&quot;,&quot;feilfaktoren etter tre sveip&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-error-factor&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Blir feilen mindre?\nFortsett med Gauss–Seidel. Sett uttrykket for \\(u_{k+1}\\) inn i oppdateringen for \\(v_{k+1}\\). Da får du en regel som bare bruker \\(v_k\\). I det første svarfeltet skriver du v for den gamle verdien \\(v_k\\).\nLa \\(v_*\\) være andre koordinat i den eksakte løsningen, og sett \\(e_k=v_k-v_*\\). Dette er feilen i andre koordinat etter \\(k\\) sveip. Finn tallet \\(q\\) slik at \\(e_{k+1}=q e_k\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="dde98ef39d2e7c17" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-16" data-ctm-save="true" data-ctm-id="week6-task-error-factor" data-fields="[&quot;math-exercise-2-f1&quot;,&quot;math-exercise-2-f2&quot;,&quot;math-exercise-2-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Fra oppdateringsregel til feil etter flere sveip" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Fra oppdateringsregel til feil etter flere sveip</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1713,7 +1699,7 @@ Etter tre sveip er \(e_{k+3}=c e_k\), der \(c=\) <input type="text" id="math-exe
 b=\begin{bmatrix}1\\0.01\end{bmatrix},\qquad
 \hat x=\begin{bmatrix}1\\0.5\end{bmatrix}.\]</span></p>
 <p><strong>a.</strong> Finn den eksakte løsningen <span class="math inline">\(x_*\)</span> og residualen <span class="math inline">\(r=b-A\hat x\)</span>.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-3" data-label="week6-task-residual" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;første koordinat i løsningen&quot;,&quot;andre koordinat i løsningen&quot;,&quot;første residualkomponent&quot;,&quot;andre residualkomponent&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-residual&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Liten residual, godt svar?\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}1&amp;0\\\\0&amp;0.01\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\0.01\\end{bmatrix},\\qquad\n\\hat x=\\begin{bmatrix}1\\\\0.5\\end{bmatrix}.\\]\na. Finn den eksakte løsningen \\(x_*\\) og residualen \\(r=b-A\\hat x\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="8d28af5bcf14cc6f" data-ctm-id="week6-task-residual" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-17" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;,&quot;math-exercise-3-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-3" data-label="week6-task-residual" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;første koordinat i løsningen&quot;,&quot;andre koordinat i løsningen&quot;,&quot;første residualkomponent&quot;,&quot;andre residualkomponent&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-residual&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Liten residual, godt svar?\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}1&amp;0\\\\0&amp;0.01\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\0.01\\end{bmatrix},\\qquad\n\\hat x=\\begin{bmatrix}1\\\\0.5\\end{bmatrix}.\\]\na. Finn den eksakte løsningen \\(x_*\\) og residualen \\(r=b-A\\hat x\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="8d28af5bcf14cc6f" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-17" data-ctm-save="true" data-ctm-id="week6-task-residual" data-fields="[&quot;math-exercise-3-f1&quot;,&quot;math-exercise-3-f2&quot;,&quot;math-exercise-3-f3&quot;,&quot;math-exercise-3-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Eksakt løsning og residual" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Eksakt løsning og residual</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1736,7 +1722,7 @@ b=\begin{bmatrix}1\\0.01\end{bmatrix},\qquad
 </div>
 </div>
 <p><strong>b.</strong> Beregn de to relative feilene og kondisjonstallet. Bruk 2-normen. For bakoverfeilen holder vi <span class="math inline">\(A\)</span> fast og tillater bare endringer i <span class="math inline">\(b\)</span>. Skriv feilene som eksakte uttrykk med kvadratrøtter, ikke avrundede desimaltall.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-4" data-label="week6-task-forward-backward" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;relativ foroverfeil&quot;,&quot;relativ bakoverfeil med fast A&quot;,&quot;kondisjonstall&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-forward-backward&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Liten residual, godt svar?\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}1&amp;0\\\\0&amp;0.01\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\0.01\\end{bmatrix},\\qquad\n\\hat x=\\begin{bmatrix}1\\\\0.5\\end{bmatrix}.\\]\na. Finn den eksakte løsningen \\(x_*\\) og residualen \\(r=b-A\\hat x\\).\nb. Beregn de to relative feilene og kondisjonstallet. Bruk 2-normen. For bakoverfeilen holder vi \\(A\\) fast og tillater bare endringer i \\(b\\). Skriv feilene som eksakte uttrykk med kvadratrøtter, ikke avrundede desimaltall.&quot;" data-context-text="&quot;&quot;" data-ctm-source="6ebb7e2621dfb553" data-ctm-id="week6-task-forward-backward" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-18" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-4" data-label="week6-task-forward-backward" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;relativ foroverfeil&quot;,&quot;relativ bakoverfeil med fast A&quot;,&quot;kondisjonstall&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-forward-backward&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Liten residual, godt svar?\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}1&amp;0\\\\0&amp;0.01\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\0.01\\end{bmatrix},\\qquad\n\\hat x=\\begin{bmatrix}1\\\\0.5\\end{bmatrix}.\\]\na. Finn den eksakte løsningen \\(x_*\\) og residualen \\(r=b-A\\hat x\\).\nb. Beregn de to relative feilene og kondisjonstallet. Bruk 2-normen. For bakoverfeilen holder vi \\(A\\) fast og tillater bare endringer i \\(b\\). Skriv feilene som eksakte uttrykk med kvadratrøtter, ikke avrundede desimaltall.&quot;" data-context-text="&quot;&quot;" data-ctm-source="6ebb7e2621dfb553" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-18" data-ctm-save="true" data-ctm-id="week6-task-forward-backward" data-fields="[&quot;math-exercise-4-f1&quot;,&quot;math-exercise-4-f2&quot;,&quot;math-exercise-4-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Hvor stor er feilen i svar og data?" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Hvor stor er feilen i svar og data?</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1770,7 +1756,7 @@ Relativ bakoverfeil, \(\lVert r\rVert_2/\lVert b\rVert_2=\) <input type="text" i
 <section id="kondisjonstall-fra-egenverdiene" class="level4">
 <h4 class="anchored" data-anchor-id="kondisjonstall-fra-egenverdiene">Kondisjonstall fra egenverdiene</h4>
 <p>Vi går tilbake til det felles systemet med <span class="math inline">\(A=\begin{bmatrix}2&amp;1\\1&amp;2\end{bmatrix}\)</span>. Matrisen er symmetrisk. Finn egenverdiene, og bruk dem til å finne kondisjonstallet <span class="math inline">\(\kappa_2(A)\)</span>.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-5" data-label="week6-task-condition-eigenvalues" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;minste egenverdi&quot;,&quot;største egenverdi&quot;,&quot;kondisjonstall&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-condition-eigenvalues&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Kondisjonstall fra egenverdiene\nVi går tilbake til det felles systemet med \\(A=\\begin{bmatrix}2&amp;1\\\\1&amp;2\\end{bmatrix}\\). Matrisen er symmetrisk. Finn egenverdiene, og bruk dem til å finne kondisjonstallet \\(\\kappa_2(A)\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="e57afab297f32861" data-ctm-id="week6-task-condition-eigenvalues" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-19" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-5" data-label="week6-task-condition-eigenvalues" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;minste egenverdi&quot;,&quot;største egenverdi&quot;,&quot;kondisjonstall&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-condition-eigenvalues&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Kondisjonstall fra egenverdiene\nVi går tilbake til det felles systemet med \\(A=\\begin{bmatrix}2&amp;1\\\\1&amp;2\\end{bmatrix}\\). Matrisen er symmetrisk. Finn egenverdiene, og bruk dem til å finne kondisjonstallet \\(\\kappa_2(A)\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="e57afab297f32861" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-19" data-ctm-save="true" data-ctm-id="week6-task-condition-eigenvalues" data-fields="[&quot;math-exercise-5-f1&quot;,&quot;math-exercise-5-f2&quot;,&quot;math-exercise-5-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Egenverdier og kondisjonstall for en SPD-matrise" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Egenverdier og kondisjonstall for en SPD-matrise</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1804,11 +1790,11 @@ Relativ bakoverfeil, \(\lVert r\rVert_2/\lVert b\rVert_2=\) <input type="text" i
 <div id="uke6-ov-skal">
 
 </div>
-<section id="fra-likningssystem-til-minimum" class="level4">
-<h4 class="anchored" data-anchor-id="fra-likningssystem-til-minimum">Fra likningssystem til minimum</h4>
+<section id="fra-likningssett-til-minimum" class="level4">
+<h4 class="anchored" data-anchor-id="fra-likningssett-til-minimum">Fra likningssett til minimum</h4>
 <p>Vi bruker det felles systemet med <span class="math inline">\(A=\begin{bmatrix}2&amp;1\\1&amp;2\end{bmatrix}\)</span>, <span class="math inline">\(b=(3,0)^T\)</span> og <span class="math inline">\(x=(u,v)^T\)</span>.</p>
 <p><strong>a. Skriv funksjonen selv.</strong> Multipliser ut <span class="math inline">\(\phi(x)=\tfrac12x^TAx-b^Tx\)</span>, og skriv resultatet som et uttrykk i <span class="math inline">\(u\)</span> og <span class="math inline">\(v\)</span>. Finn deretter begge de partiellderiverte. Funksjonsfeltet skal inneholde hele uttrykket for <span class="math inline">\(\phi(u,v)\)</span>.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-6" data-label="week6-task-quadratic-function" data-mode="equivalent" data-reject="" data-vars="u, v" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;funksjonsuttrykket phi&quot;,&quot;den deriverte med hensyn på u&quot;,&quot;den deriverte med hensyn på v&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-quadratic-function&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Fra likningssystem til minimum\nVi bruker det felles systemet med \\(A=\\begin{bmatrix}2&amp;1\\\\1&amp;2\\end{bmatrix}\\), \\(b=(3,0)^T\\) og \\(x=(u,v)^T\\).\na. Skriv funksjonen selv. Multipliser ut \\(\\phi(x)=\\tfrac12x^TAx-b^Tx\\), og skriv resultatet som et uttrykk i \\(u\\) og \\(v\\). Finn deretter begge de partiellderiverte. Funksjonsfeltet skal inneholde hele uttrykket for \\(\\phi(u,v)\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="56387a5fa9b13f05" data-ctm-id="week6-task-quadratic-function" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-20" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;,&quot;math-exercise-6-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-6" data-label="week6-task-quadratic-function" data-mode="equivalent" data-reject="" data-vars="u, v" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;funksjonsuttrykket phi&quot;,&quot;den deriverte med hensyn på u&quot;,&quot;den deriverte med hensyn på v&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-quadratic-function&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Fra likningssett til minimum\nVi bruker det felles systemet med \\(A=\\begin{bmatrix}2&amp;1\\\\1&amp;2\\end{bmatrix}\\), \\(b=(3,0)^T\\) og \\(x=(u,v)^T\\).\na. Skriv funksjonen selv. Multipliser ut \\(\\phi(x)=\\tfrac12x^TAx-b^Tx\\), og skriv resultatet som et uttrykk i \\(u\\) og \\(v\\). Finn deretter begge de partiellderiverte. Funksjonsfeltet skal inneholde hele uttrykket for \\(\\phi(u,v)\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="56387a5fa9b13f05" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-20" data-ctm-save="true" data-ctm-id="week6-task-quadratic-function" data-fields="[&quot;math-exercise-6-f1&quot;,&quot;math-exercise-6-f2&quot;,&quot;math-exercise-6-f3&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Funksjonen og gradienten" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Funksjonen og gradienten</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1831,7 +1817,7 @@ Relativ bakoverfeil, \(\lVert r\rVert_2/\lVert b\rVert_2=\) <input type="text" i
 </div>
 </div>
 <p><strong>b.</strong> Finn punktet der begge de partiellderiverte er null.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-7" data-label="week6-task-minimum" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;u i minimumspunktet&quot;,&quot;v i minimumspunktet&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-minimum&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Fra likningssystem til minimum\nVi bruker det felles systemet med \\(A=\\begin{bmatrix}2&amp;1\\\\1&amp;2\\end{bmatrix}\\), \\(b=(3,0)^T\\) og \\(x=(u,v)^T\\).\na. Skriv funksjonen selv. Multipliser ut \\(\\phi(x)=\\tfrac12x^TAx-b^Tx\\), og skriv resultatet som et uttrykk i \\(u\\) og \\(v\\). Finn deretter begge de partiellderiverte. Funksjonsfeltet skal inneholde hele uttrykket for \\(\\phi(u,v)\\).\nb. Finn punktet der begge de partiellderiverte er null.&quot;" data-context-text="&quot;&quot;" data-ctm-source="b0bf766060e15531" data-ctm-id="week6-task-minimum" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-21" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-7" data-label="week6-task-minimum" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;u i minimumspunktet&quot;,&quot;v i minimumspunktet&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-minimum&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Fra likningssett til minimum\nVi bruker det felles systemet med \\(A=\\begin{bmatrix}2&amp;1\\\\1&amp;2\\end{bmatrix}\\), \\(b=(3,0)^T\\) og \\(x=(u,v)^T\\).\na. Skriv funksjonen selv. Multipliser ut \\(\\phi(x)=\\tfrac12x^TAx-b^Tx\\), og skriv resultatet som et uttrykk i \\(u\\) og \\(v\\). Finn deretter begge de partiellderiverte. Funksjonsfeltet skal inneholde hele uttrykket for \\(\\phi(u,v)\\).\nb. Finn punktet der begge de partiellderiverte er null.&quot;" data-context-text="&quot;&quot;" data-ctm-source="b0bf766060e15531" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-21" data-ctm-save="true" data-ctm-id="week6-task-minimum" data-fields="[&quot;math-exercise-7-f1&quot;,&quot;math-exercise-7-f2&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Punktet der gradienten er null" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Punktet der gradienten er null</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1856,9 +1842,9 @@ Relativ bakoverfeil, \(\lVert r\rVert_2/\lVert b\rVert_2=\) <input type="text" i
 </section>
 <section id="ett-steg-med-bratteste-nedstigning" class="level4">
 <h4 class="anchored" data-anchor-id="ett-steg-med-bratteste-nedstigning">Ett steg med bratteste nedstigning</h4>
-<p>Bruk samme <span class="math inline">\(A\)</span> og <span class="math inline">\(b\)</span> som i «Fra likningssystem til minimum», men start i <span class="math inline">\(x_0=(0,0)^T\)</span>. Vi skal gå i residualens retning <span class="math inline">\(p_0=r_0=b-Ax_0\)</span>.</p>
+<p>Bruk samme <span class="math inline">\(A\)</span> og <span class="math inline">\(b\)</span> som i «Fra likningssett til minimum», men start i <span class="math inline">\(x_0=(0,0)^T\)</span>. Vi skal gå i residualens retning <span class="math inline">\(p_0=r_0=b-Ax_0\)</span>.</p>
 <p><strong>a.</strong> Finn <span class="math inline">\(r_0\)</span> og tallet <span class="math inline">\(\alpha_0\)</span> som gjør <span class="math inline">\(\phi(x_0+\alpha_0p_0)\)</span> minst mulig. Bruk <span class="math inline">\(p_0=r_0\)</span> uten å normalisere.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-8" data-label="week6-task-first-line-search" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;første residualkomponent&quot;,&quot;andre residualkomponent&quot;,&quot;alpha i første linjesøk&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-first-line-search&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Ett steg med bratteste nedstigning\nBruk samme \\(A\\) og \\(b\\) som i «Fra likningssystem til minimum», men start i \\(x_0=(0,0)^T\\). Vi skal gå i residualens retning \\(p_0=r_0=b-Ax_0\\).\na. Finn \\(r_0\\) og tallet \\(\\alpha_0\\) som gjør \\(\\phi(x_0+\\alpha_0p_0)\\) minst mulig. Bruk \\(p_0=r_0\\) uten å normalisere.&quot;" data-context-text="&quot;&quot;" data-ctm-source="6eaab8de761b38a6" data-ctm-id="week6-task-first-line-search" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-22" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-8" data-label="week6-task-first-line-search" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;første residualkomponent&quot;,&quot;andre residualkomponent&quot;,&quot;alpha i første linjesøk&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-first-line-search&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Ett steg med bratteste nedstigning\nBruk samme \\(A\\) og \\(b\\) som i «Fra likningssett til minimum», men start i \\(x_0=(0,0)^T\\). Vi skal gå i residualens retning \\(p_0=r_0=b-Ax_0\\).\na. Finn \\(r_0\\) og tallet \\(\\alpha_0\\) som gjør \\(\\phi(x_0+\\alpha_0p_0)\\) minst mulig. Bruk \\(p_0=r_0\\) uten å normalisere.&quot;" data-context-text="&quot;&quot;" data-ctm-source="6eaab8de761b38a6" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-22" data-ctm-save="true" data-ctm-id="week6-task-first-line-search" data-fields="[&quot;math-exercise-8-f1&quot;,&quot;math-exercise-8-f2&quot;,&quot;math-exercise-8-f3&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Retningen og faktoren i første steg" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Retningen og faktoren i første steg</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1881,7 +1867,7 @@ Relativ bakoverfeil, \(\lVert r\rVert_2/\lVert b\rVert_2=\) <input type="text" i
 </div>
 </div>
 <p><strong>b.</strong> Beregn <span class="math inline">\(x_1=x_0+\alpha_0p_0\)</span> og den nye residualen <span class="math inline">\(r_1=b-Ax_1\)</span>.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-9" data-label="week6-task-first-step" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;første koordinat etter steget&quot;,&quot;andre koordinat etter steget&quot;,&quot;første nye residualkomponent&quot;,&quot;andre nye residualkomponent&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-first-step&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Ett steg med bratteste nedstigning\nBruk samme \\(A\\) og \\(b\\) som i «Fra likningssystem til minimum», men start i \\(x_0=(0,0)^T\\). Vi skal gå i residualens retning \\(p_0=r_0=b-Ax_0\\).\na. Finn \\(r_0\\) og tallet \\(\\alpha_0\\) som gjør \\(\\phi(x_0+\\alpha_0p_0)\\) minst mulig. Bruk \\(p_0=r_0\\) uten å normalisere.\nb. Beregn \\(x_1=x_0+\\alpha_0p_0\\) og den nye residualen \\(r_1=b-Ax_1\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="590458dbef8d400e" data-ctm-id="week6-task-first-step" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-23" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;,&quot;math-exercise-9-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-9" data-label="week6-task-first-step" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;første koordinat etter steget&quot;,&quot;andre koordinat etter steget&quot;,&quot;første nye residualkomponent&quot;,&quot;andre nye residualkomponent&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-first-step&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Ett steg med bratteste nedstigning\nBruk samme \\(A\\) og \\(b\\) som i «Fra likningssett til minimum», men start i \\(x_0=(0,0)^T\\). Vi skal gå i residualens retning \\(p_0=r_0=b-Ax_0\\).\na. Finn \\(r_0\\) og tallet \\(\\alpha_0\\) som gjør \\(\\phi(x_0+\\alpha_0p_0)\\) minst mulig. Bruk \\(p_0=r_0\\) uten å normalisere.\nb. Beregn \\(x_1=x_0+\\alpha_0p_0\\) og den nye residualen \\(r_1=b-Ax_1\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="590458dbef8d400e" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-23" data-ctm-save="true" data-ctm-id="week6-task-first-step" data-fields="[&quot;math-exercise-9-f1&quot;,&quot;math-exercise-9-f2&quot;,&quot;math-exercise-9-f3&quot;,&quot;math-exercise-9-f4&quot;]" data-structural-field-labels="[&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Det nye punktet og residualen der" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Det nye punktet og residualen der</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1903,7 +1889,7 @@ Relativ bakoverfeil, \(\lVert r\rVert_2/\lVert b\rVert_2=\) <input type="text" i
 <div class="math-feedback-area"></div>
 </div>
 </div>
-<p><strong>Forklar i egne notater:</strong> Hvorfor har vi funnet minimum langs søkelinjen uten å ha løst hele likningssystemet? Bruk residualen i svaret.</p>
+<p><strong>Forklar i egne notater:</strong> Hvorfor har vi funnet minimum langs søkelinjen uten å ha løst hele likningssettet? Bruk residualen i svaret.</p>
 <div id="uke6-ov-cg">
 
 </div>
@@ -1912,7 +1898,7 @@ Relativ bakoverfeil, \(\lVert r\rVert_2/\lVert b\rVert_2=\) <input type="text" i
 <h4 class="anchored" data-anchor-id="neste-cg-retning-med-gramschmidt">Neste CG-retning med Gram–Schmidt</h4>
 <p>Fortsett fra forrige oppgave. Vi har <span class="math inline">\(p_0=(3,0)^T\)</span>, <span class="math inline">\(x_1=(3/2,0)^T\)</span> og <span class="math inline">\(r_1=(0,-3/2)^T\)</span>. I stedet for å bruke <span class="math inline">\(r_1\)</span> alene vil vi lage en ny retning som er A-konjugert med <span class="math inline">\(p_0\)</span>.</p>
 <p><strong>a.</strong> Bruk Gram–Schmidt med <span class="math inline">\(\langle p,q\rangle_A=p^TAq\)</span>. Finn tallet <span class="math inline">\(c\)</span> slik at <span class="math inline">\(p_1=r_1-cp_0\)</span> oppfyller <span class="math inline">\(p_0^TAp_1=0\)</span>. Behold akkurat denne skaleringen av <span class="math inline">\(p_1\)</span>; ikke normaliser den.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-10" data-label="week6-task-conjugate-direction" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;projeksjonskoeffisienten c&quot;,&quot;første koordinat i p₁&quot;,&quot;andre koordinat i p₁&quot;,&quot;A-indreproduktet&quot;,&quot;vanlig indreprodukt&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-conjugate-direction&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Neste CG-retning med Gram–Schmidt\nFortsett fra forrige oppgave. Vi har \\(p_0=(3,0)^T\\), \\(x_1=(3/2,0)^T\\) og \\(r_1=(0,-3/2)^T\\). I stedet for å bruke \\(r_1\\) alene vil vi lage en ny retning som er A-konjugert med \\(p_0\\).\na. Bruk Gram–Schmidt med \\(\\langle p,q\\rangle_A=p^TAq\\). Finn tallet \\(c\\) slik at \\(p_1=r_1-cp_0\\) oppfyller \\(p_0^TAp_1=0\\). Behold akkurat denne skaleringen av \\(p_1\\); ikke normaliser den.&quot;" data-context-text="&quot;&quot;" data-ctm-source="ae33764157194fa6" data-ctm-id="week6-task-conjugate-direction" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-24" data-fields="[&quot;math-exercise-10-f1&quot;,&quot;math-exercise-10-f2&quot;,&quot;math-exercise-10-f3&quot;,&quot;math-exercise-10-f4&quot;,&quot;math-exercise-10-f5&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-10" data-label="week6-task-conjugate-direction" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;projeksjonskoeffisienten c&quot;,&quot;første koordinat i p₁&quot;,&quot;andre koordinat i p₁&quot;,&quot;A-indreproduktet&quot;,&quot;vanlig indreprodukt&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-conjugate-direction&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Neste CG-retning med Gram–Schmidt\nFortsett fra forrige oppgave. Vi har \\(p_0=(3,0)^T\\), \\(x_1=(3/2,0)^T\\) og \\(r_1=(0,-3/2)^T\\). I stedet for å bruke \\(r_1\\) alene vil vi lage en ny retning som er A-konjugert med \\(p_0\\).\na. Bruk Gram–Schmidt med \\(\\langle p,q\\rangle_A=p^TAq\\). Finn tallet \\(c\\) slik at \\(p_1=r_1-cp_0\\) oppfyller \\(p_0^TAp_1=0\\). Behold akkurat denne skaleringen av \\(p_1\\); ikke normaliser den.&quot;" data-context-text="&quot;&quot;" data-ctm-source="ae33764157194fa6" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-24" data-ctm-save="true" data-ctm-id="week6-task-conjugate-direction" data-fields="[&quot;math-exercise-10-f1&quot;,&quot;math-exercise-10-f2&quot;,&quot;math-exercise-10-f3&quot;,&quot;math-exercise-10-f4&quot;,&quot;math-exercise-10-f5&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Trekk fra projeksjonen med A-indreproduktet" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Trekk fra projeksjonen med A-indreproduktet</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1943,7 +1929,7 @@ Sammenlign med vanlig indreprodukt: \(p_0^Tp_1=\) <input type="text" id="math-ex
 </div>
 </div>
 <p><strong>b.</strong> Gjør linjesøket fra <span class="math inline">\(x_1\)</span> langs <span class="math inline">\(p_1\)</span>. Finn <span class="math inline">\(\alpha_1\)</span>, beregn <span class="math inline">\(x_2=x_1+\alpha_1p_1\)</span>, og kontroller residualen.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-11" data-label="week6-task-second-cg-step" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;alpha i andre linjesøk&quot;,&quot;første koordinat i x₂&quot;,&quot;andre koordinat i x₂&quot;,&quot;residualnormen etter andre steg&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-second-cg-step&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Neste CG-retning med Gram–Schmidt\nFortsett fra forrige oppgave. Vi har \\(p_0=(3,0)^T\\), \\(x_1=(3/2,0)^T\\) og \\(r_1=(0,-3/2)^T\\). I stedet for å bruke \\(r_1\\) alene vil vi lage en ny retning som er A-konjugert med \\(p_0\\).\na. Bruk Gram–Schmidt med \\(\\langle p,q\\rangle_A=p^TAq\\). Finn tallet \\(c\\) slik at \\(p_1=r_1-cp_0\\) oppfyller \\(p_0^TAp_1=0\\). Behold akkurat denne skaleringen av \\(p_1\\); ikke normaliser den.\nb. Gjør linjesøket fra \\(x_1\\) langs \\(p_1\\). Finn \\(\\alpha_1\\), beregn \\(x_2=x_1+\\alpha_1p_1\\), og kontroller residualen.&quot;" data-context-text="&quot;&quot;" data-ctm-source="452e44766585b55a" data-ctm-id="week6-task-second-cg-step" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-25" data-fields="[&quot;math-exercise-11-f1&quot;,&quot;math-exercise-11-f2&quot;,&quot;math-exercise-11-f3&quot;,&quot;math-exercise-11-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-11" data-label="week6-task-second-cg-step" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;alpha i andre linjesøk&quot;,&quot;første koordinat i x₂&quot;,&quot;andre koordinat i x₂&quot;,&quot;residualnormen etter andre steg&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-second-cg-step&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;Neste CG-retning med Gram–Schmidt\nFortsett fra forrige oppgave. Vi har \\(p_0=(3,0)^T\\), \\(x_1=(3/2,0)^T\\) og \\(r_1=(0,-3/2)^T\\). I stedet for å bruke \\(r_1\\) alene vil vi lage en ny retning som er A-konjugert med \\(p_0\\).\na. Bruk Gram–Schmidt med \\(\\langle p,q\\rangle_A=p^TAq\\). Finn tallet \\(c\\) slik at \\(p_1=r_1-cp_0\\) oppfyller \\(p_0^TAp_1=0\\). Behold akkurat denne skaleringen av \\(p_1\\); ikke normaliser den.\nb. Gjør linjesøket fra \\(x_1\\) langs \\(p_1\\). Finn \\(\\alpha_1\\), beregn \\(x_2=x_1+\\alpha_1p_1\\), og kontroller residualen.&quot;" data-context-text="&quot;&quot;" data-ctm-source="452e44766585b55a" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-25" data-ctm-save="true" data-ctm-id="week6-task-second-cg-step" data-fields="[&quot;math-exercise-11-f1&quot;,&quot;math-exercise-11-f2&quot;,&quot;math-exercise-11-f3&quot;,&quot;math-exercise-11-f4&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Andre CG-steg" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Andre CG-steg</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -1981,7 +1967,7 @@ Sammenlign med vanlig indreprodukt: \(p_0^Tp_1=\) <input type="text" id="math-ex
 b=\begin{bmatrix}1\\2\end{bmatrix},\qquad x_0=\begin{bmatrix}0\\0\end{bmatrix}.\]</span></p>
 <p>Følg CG-oppskriften i 6.6 linje for linje, med <span class="math inline">\(p_0=r_0\)</span> og de korte formlene <code>alpha = rr / (pᵀ Ap)</code> og <code>beta = rr_ny / rr</code>.</p>
 <p><strong>a.</strong> Gjør første runde: finn <span class="math inline">\(\alpha_0\)</span>, <span class="math inline">\(x_1\)</span> og den oppdaterte residualen <span class="math inline">\(r_1=r_0-\alpha_0Ap_0\)</span>.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-12" data-label="week6-task-cg-recipe-first" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;alpha0&quot;,&quot;første koordinat i x₁&quot;,&quot;andre koordinat i x₁&quot;,&quot;første komponent i r₁&quot;,&quot;andre komponent i r₁&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-cg-recipe-first&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;To CG-steg med de korte formlene\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}4&amp;1\\\\1&amp;3\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\2\\end{bmatrix},\\qquad x_0=\\begin{bmatrix}0\\\\0\\end{bmatrix}.\\]\nFølg CG-oppskriften i 6.6 linje for linje, med \\(p_0=r_0\\) og de korte formlene alpha = rr / (pᵀ Ap) og beta = rr_ny / rr.\na. Gjør første runde: finn \\(\\alpha_0\\), \\(x_1\\) og den oppdaterte residualen \\(r_1=r_0-\\alpha_0Ap_0\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="d42cc3313f3a97a4" data-ctm-id="week6-task-cg-recipe-first" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-26" data-fields="[&quot;math-exercise-12-f1&quot;,&quot;math-exercise-12-f2&quot;,&quot;math-exercise-12-f3&quot;,&quot;math-exercise-12-f4&quot;,&quot;math-exercise-12-f5&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-12" data-label="week6-task-cg-recipe-first" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;alpha0&quot;,&quot;første koordinat i x₁&quot;,&quot;andre koordinat i x₁&quot;,&quot;første komponent i r₁&quot;,&quot;andre komponent i r₁&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-cg-recipe-first&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;To CG-steg med de korte formlene\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}4&amp;1\\\\1&amp;3\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\2\\end{bmatrix},\\qquad x_0=\\begin{bmatrix}0\\\\0\\end{bmatrix}.\\]\nFølg CG-oppskriften i 6.6 linje for linje, med \\(p_0=r_0\\) og de korte formlene alpha = rr / (pᵀ Ap) og beta = rr_ny / rr.\na. Gjør første runde: finn \\(\\alpha_0\\), \\(x_1\\) og den oppdaterte residualen \\(r_1=r_0-\\alpha_0Ap_0\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="d42cc3313f3a97a4" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-26" data-ctm-save="true" data-ctm-id="week6-task-cg-recipe-first" data-fields="[&quot;math-exercise-12-f1&quot;,&quot;math-exercise-12-f2&quot;,&quot;math-exercise-12-f3&quot;,&quot;math-exercise-12-f4&quot;,&quot;math-exercise-12-f5&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;,&quot;v1&quot;,&quot;v2&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Første runde i CG-løkken" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Første runde i CG-løkken</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -2008,7 +1994,7 @@ b=\begin{bmatrix}1\\2\end{bmatrix},\qquad x_0=\begin{bmatrix}0\\0\end{bmatrix}.\
 </div>
 </div>
 <p><strong>b.</strong> Finn <span class="math inline">\(\beta_0\)</span> og den nye retningen <span class="math inline">\(p_1\)</span>. Gjør så andre runde, og finn <span class="math inline">\(\alpha_1\)</span> og <span class="math inline">\(x_2\)</span>.</p>
-<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" id="math-exercise-13" data-label="week6-task-cg-recipe-second" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;beta0&quot;,&quot;første koordinat i p₁&quot;,&quot;andre koordinat i p₁&quot;,&quot;alpha1&quot;,&quot;første koordinat i x₂&quot;,&quot;andre koordinat i x₂&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-cg-recipe-second&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;To CG-steg med de korte formlene\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}4&amp;1\\\\1&amp;3\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\2\\end{bmatrix},\\qquad x_0=\\begin{bmatrix}0\\\\0\\end{bmatrix}.\\]\nFølg CG-oppskriften i 6.6 linje for linje, med \\(p_0=r_0\\) og de korte formlene alpha = rr / (pᵀ Ap) og beta = rr_ny / rr.\na. Gjør første runde: finn \\(\\alpha_0\\), \\(x_1\\) og den oppdaterte residualen \\(r_1=r_0-\\alpha_0Ap_0\\).\nb. Finn \\(\\beta_0\\) og den nye retningen \\(p_1\\). Gjør så andre runde, og finn \\(\\alpha_1\\) og \\(x_2\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="3efa19bf15760416" data-ctm-id="week6-task-cg-recipe-second" data-ctm-save="true" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-27" data-fields="[&quot;math-exercise-13-f1&quot;,&quot;math-exercise-13-f2&quot;,&quot;math-exercise-13-f3&quot;,&quot;math-exercise-13-f4&quot;,&quot;math-exercise-13-f5&quot;,&quot;math-exercise-13-f6&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;]">
+<div class="math-exercise-cell" data-similar="false" data-similar-guidance="[]" data-generation-policy="[]" data-similar-data="" id="math-exercise-13" data-label="week6-task-cg-recipe-second" data-mode="equivalent" data-reject="" data-vars="" data-tolerance="" data-decplaces="" data-sigfigs="" data-form="" data-checker="&quot;&quot;" data-givens="&quot;&quot;" data-packages="[]" data-response="" data-embed-response="false" data-partial-credit="true" data-form-credit="0.5" data-field-labels="[&quot;beta0&quot;,&quot;første koordinat i p₁&quot;,&quot;andre koordinat i p₁&quot;,&quot;alpha1&quot;,&quot;første koordinat i x₂&quot;,&quot;andre koordinat i x₂&quot;]" data-vecdir="col" data-feedback-policy="{&quot;exercise&quot;:&quot;week6-task-cg-recipe-second&quot;,&quot;name&quot;:&quot;&quot;}" data-variant-boards="[]" data-variant-board-title="" data-context-mode="auto" data-context-refs="auto" data-context="&quot;To CG-steg med de korte formlene\nBare i denne oppgaven bruker vi\n\\[A=\\begin{bmatrix}4&amp;1\\\\1&amp;3\\end{bmatrix},\\qquad\nb=\\begin{bmatrix}1\\\\2\\end{bmatrix},\\qquad x_0=\\begin{bmatrix}0\\\\0\\end{bmatrix}.\\]\nFølg CG-oppskriften i 6.6 linje for linje, med \\(p_0=r_0\\) og de korte formlene alpha = rr / (pᵀ Ap) og beta = rr_ny / rr.\na. Gjør første runde: finn \\(\\alpha_0\\), \\(x_1\\) og den oppdaterte residualen \\(r_1=r_0-\\alpha_0Ap_0\\).\nb. Finn \\(\\beta_0\\) og den nye retningen \\(p_1\\). Gjør så andre runde, og finn \\(\\alpha_1\\) og \\(x_2\\).&quot;" data-context-text="&quot;&quot;" data-ctm-source="3efa19bf15760416" data-ctm-component="math-exercise" data-ctm-runtime-id="ctm-block-27" data-ctm-save="true" data-ctm-id="week6-task-cg-recipe-second" data-fields="[&quot;math-exercise-13-f1&quot;,&quot;math-exercise-13-f2&quot;,&quot;math-exercise-13-f3&quot;,&quot;math-exercise-13-f4&quot;,&quot;math-exercise-13-f5&quot;,&quot;math-exercise-13-f6&quot;]" data-structural-field-labels="[&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;,&quot;&quot;,&quot;v1&quot;,&quot;v2&quot;]">
 <div class="math-exercise-caption math-exercise-toggle" data-math-exercise-source="Ny retning og andre runde" role="button" tabindex="0" aria-expanded="false"><span class="math-chevron" aria-hidden="true"></span>Ny retning og andre runde</div>
 
 <div class="math-exercise-body" aria-hidden="true">
@@ -2128,7 +2114,8 @@ b=\begin{bmatrix}1\\2\end{bmatrix},\qquad x_0=\begin{bmatrix}0\\0\end{bmatrix}.\
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
       // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
       for (var i=0; i<links.length; i++) {
         const link = links[i];
         if (!isInternal(link.href)) {
@@ -2137,8 +2124,69 @@ b=\begin{bmatrix}1\\2\end{bmatrix},\qquad x_0=\begin{bmatrix}0\\0\end{bmatrix}.\
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+          if (!link.classList.contains('no-external-icon')) {
+          }
         }
       }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
       const config = {
         allowHTML: true,
@@ -2152,6 +2200,7 @@ b=\begin{bmatrix}1\\2\end{bmatrix},\qquad x_0=\begin{bmatrix}0\\0\end{bmatrix}.\
         interactiveBorder: 10,
         theme: 'quarto',
         placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
       };
       if (contentFn) {
         config.content = contentFn;
@@ -2314,44 +2363,54 @@ b=\begin{bmatrix}1\\2\end{bmatrix},\qquad x_0=\begin{bmatrix}0\\0\end{bmatrix}.\
           const lineIds = lines.map((line) => {
             return targetCell + "-" + line;
           })
-          let top = null;
-          let height = null;
-          let parent = null;
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
           if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
             }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
             }
+            placeBand(gutterDiv, el, lastEl);
             selectedAnnoteEl = annoteEl;
           }
         };
@@ -2449,6 +2508,9 @@ b=\begin{bmatrix}1\\2\end{bmatrix},\qquad x_0=\begin{bmatrix}0\\0\end{bmatrix}.\
       }
     }
   });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Rullbar kode","output":"Rullbare utdata"};
   </script>
 </div> <!-- /content -->
 <footer class="footer">
