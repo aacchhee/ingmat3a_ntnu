@@ -34,6 +34,17 @@ APPROVED_WORDING = {
         # 5 Nov 2026: the author asked for "lineære likningssett" throughout week 11.
         ('#| caption: Finn hjørnene som løsninger av 2×2-systemer\n',
          '#| caption: Finn hjørnene som løsninger av 2×2-likningssett\n'),
+        # 5 Nov 2026: the author asked to drop the term "innsatspris"; it is now "ressurskostnad".
+        ("  return 'Innsats A: ' + fmt(inA())",
+         "  return 'Kostnad A: ' + fmt(inA())"),
+        ('#| field-labels: innsatspris A, innsatspris B, øvre grense\n',
+         '#| field-labels: ressurskostnad A, ressurskostnad B, øvre grense\n'),
+        ('Innsatspriser (A, B): vec[5,5]',
+         'Ressurskostnader (A, B): vec[5,5]'),
+        ('#| field-labels: slakk materiale, dekningsbidrag, innsatspris C, øvre grense\n',
+         '#| field-labels: slakk materiale, dekningsbidrag, ressurskostnad C, øvre grense\n'),
+        ('Innsatspris C: _[25/3]',
+         'Ressurskostnad C: _[25/3]'),
     ],
     '_includes/optimization/uke12.md': [
         ('står vinkelrett på normalen og peker mot klokka.',
