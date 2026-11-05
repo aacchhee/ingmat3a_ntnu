@@ -911,11 +911,11 @@ Vi går gjennom de to ulikhetene i den vektede ulikheten, én om gangen.
 
    Bruk så kapasitetene: $(2x+y)u+(x+2y)v+xw\le9u+9v+4w$. Her kan vi gange kravene med prisene uten å snu ulikhetene, fordi $u,v,w\ge0$.
 
-Steg 1 bruker at $x,y\ge0$, og steg 2 bruker at $u,v,w\ge0$. Med negative tall ville en av ulikhetene snudd. Boksen *andre fortegn i primalen* (produksjonsproblemet) lenger ned viser hva som skjer med prisene når kravene har andre fortegn.
+Steg 1 bruker at $x,y\ge0$, og steg 2 bruker at $u,v,w\ge0$. Med negative tall ville en av ulikhetene snudd. Boksen *krav med andre ulikhetstegn* lenger ned viser hva som skjer med prisene når kravene har andre fortegn.
 
 :::
 
-Vi har nå to problemer som hører sammen: å finne planen med størst bidrag, og å finne prisene som gir den laveste grensen. I lærebøker heter de **primalen** (produksjonsproblemet) og **dualen** (prisproblemet), og prisene kalles dualvariabler. Navnene og matriseformen står i *Gå i dybden* under.
+Vi har nå to oppgaver som hører sammen: eierens oppgave, å finne planen med størst bidrag, og en prisoppgave, å finne prisene som gir det laveste taket. Ressursprisene kalles også **dualverdier** eller dualvariabler; de ordene møter du i prosjektet. Lærebøkenes navn på de to oppgavene står i *Gå i dybden* under, for den som er nysgjerrig.
 
 Det er samme idé som tangentgrensen i [uke 8](uke8.qmd#uke8-tangent): én ulikhet som gjelder alle tillatte punkter, og et punkt som oppfyller den med likhet, er bevist best.
 
@@ -1184,16 +1184,16 @@ show_price_arrows(at=(3, 3), normals=[(2, 1), (1, 2)], prices=[2, 1], gradient=(
 
 En aktiv grense kan likevel ha pris null (maskintimene er brukt opp, men en ekstra time er ikke verdt noe), som vi ser ved $\Delta=3/2$ i 11.4.
 
-::: {.reading-step title="Gå i dybden: andre fortegn i primalen"}
+::: {.reading-step title="Gå i dybden: krav med andre ulikhetstegn"}
 
 ::: {#uke11-fortegn}
 :::
 
-Vår modell har kravene «bruk $\le$ kapasitet» og «mengde $\ge0$». Hvis radene har andre ulikhetstegn, eller variablene har andre fortegnskrav, må også prisreglene endres. For et produksjonsproblem (primal) som maksimeres:
+Vår modell har kravene «bruk $\le$ kapasitet» og «mengde $\ge0$». Hvis radene har andre ulikhetstegn, eller variablene har andre fortegnskrav, må også prisreglene endres. For et produksjonsproblem som maksimeres:
 
-| I produksjonsproblemet (primalen) | I prisproblemet (dualen) |
+| I produksjonsproblemet | I prisproblemet |
 |:--|:--|
-| $\ge$-rad | Ikke-positiv pris (dualvariabel) |
+| $\ge$-rad | Ikke-positiv pris |
 | Likningsrad | Fri pris (positiv eller negativ) |
 | Fri variabel | Likhetskrav |
 
@@ -1220,26 +1220,29 @@ I hovedmodellen bruker vi bare $Az\le b$ og $z\ge0$, så alle prisene er ikke-ne
 ::: {#uke11-sensitivitet}
 :::
 
-Prisene fra forrige del svarer også på eierens andre spørsmål. En nabo tilbyr å leie ut maskinen sin noen timer. Hvis én ekstra maskintime gir verkstedet 2 tusen kroner mer i dekningsbidrag, bør eieren høyst betale 2 tusen kroner for den. Spørsmålet er om det gjelder bare noen få ekstra timer, eller også mange.
+Nå kan vi svare på eierens andre spørsmål. Naboen tilbyr å leie ut maskinen sin noen timer i uka. Hvor mye bør eieren høyst betale per time?
 
-Vi lar $\Delta$ (den greske bokstaven delta) være antall ekstra maskintimer verkstedet leier. Er $\Delta$ negativ, mister verkstedet timer. Hvor mye det beste bidraget øker per ekstra time, når kapasiteten bare endres litt, kaller vi **verdien av en ekstra time** (faglig: ressursverdi, se SciPy-oppslaget i 11.6). Vi undersøker om verdien av en maskintime fortsatt er 2 tusen kroner når kapasiteten endres.
+Tanken er enkel: **en ekstra maskintime er verdt det den øker det beste dekningsbidraget med.** Gir én ekstra time 2 tusen kroner mer, bør eieren ikke betale mer enn 2 tusen kroner for den. I 11.3 fikk maskintimen nettopp prisen 2 tusen kroner. Vi skal se at det er det en ekstra time er verdt, men bare for de første timene.
+
+Vi kaller antall ekstra maskintimer $\Delta$ (den greske bokstaven delta). Verkstedet har da $9+\Delta$ maskintimer. En negativ $\Delta$ betyr at verkstedet mister timer.
 
 ### Når den gamle timeprisen fortsatt virker
 
-Anta at verkstedet leier $\Delta$ ekstra maskintimer, så maskinene har $9+\Delta$ timer.
+**En halv ekstra time.** Vi prøver først $\Delta=\tfrac12$. Verkstedet har da $9.5$ maskintimer og fortsatt $9$ arbeidstimer. Hva blir den beste planen nå?
 
-- **Prisgrensen:** Vi bruker de gamle prisene $(2,1,0)$ på nytt. Beviset fra 11.3 gir da den øvre grensen $2(9+\Delta)+9=27+2\Delta$.
-- **Kontrollspørsmålet:** Grensen er bare nyttig hvis en plan faktisk når den. Gjør den beste planen det ved $\Delta=1/2$, altså en halv ekstra maskintime?
+Med bare litt mer maskintid er det rimelig at verkstedet fortsatt bruker opp begge typer timer, slik som i $(3,3)$. Da finner vi planen fra to likninger:
 
-1. Anta at begge timegrensene fortsatt er brukt opp: $2x+y=9+\tfrac12=\tfrac{19}{2}$ og $x+2y=9$.
+1. **Begge timetypene brukt opp:** $2x+y=9+\tfrac12=\tfrac{19}{2}$ og $x+2y=9$.
 2. Trekk den andre likningen fra den første: $x-y=\tfrac12$, så $x=y+\tfrac12$.
 3. **Finn produksjonsmengdene:** Sett inn i arbeidstimekravet: $(y+\tfrac12)+2y=9$.
    - Da er $3y=9-\tfrac12=\tfrac{17}{2}$ og $y=\tfrac{17}{6}$.
    - Da er $x=\tfrac{17}{6}+\tfrac36=\tfrac{20}{6}=\tfrac{10}{3}$.
-4. Kontroller de andre kravene: $x=\tfrac{10}{3}\le4$ og $x,y\ge0$.
-5. **Sammenlign bidrag og grense:** Bidraget er $5\cdot\tfrac{10}{3}+4\cdot\tfrac{17}{6}=\tfrac{50}{3}+\tfrac{34}{3}=\tfrac{84}{3}=28$, lik prisgrensen $27+2\cdot\tfrac12=28$.
+4. **Kontroller salgsgrensen:** $x=\tfrac{10}{3}\le4$, og begge mengdene er positive. Planen er tillatt.
+5. **Bidraget:** $5\cdot\tfrac{10}{3}+4\cdot\tfrac{17}{6}=\tfrac{50}{3}+\tfrac{34}{3}=\tfrac{84}{3}=28$ tusen kroner.
 
-   Den halve ekstra maskintimen øker det beste bidraget med 1 tusen kroner, altså 2 tusen per time. Den gamle prisen virker.
+**Hva betyr det for eieren?** Den halve timen ga $28-27=1$ tusen kroner mer, altså 2 tusen kroner per time. Det er akkurat prisen på en maskintime fra 11.3.
+
+**Hvorfor stemmer det med prisen?** Prisene fra 11.3 var 2 tusen per maskintime og 1 tusen per arbeidstime. De gir en øvre grense, et tak, for hva *noen* plan kan gi: «2 per maskintime + 1 per arbeidstime». Med $9+\Delta$ maskintimer blir taket $2(9+\Delta)+1\cdot9=27+2\Delta$, altså $28$ for $\Delta=\tfrac12$. Planen vi fant, når taket, så den er den beste. Hver ekstra maskintime løfter taket med 2, og så lenge en plan når taket, øker det beste bidraget like mye.
 
 ### Når en annen grense stopper produksjonen
 
@@ -1312,7 +1315,7 @@ Hva som skjer mellom og utenfor disse verdiene, vet vi foreløpig ikke. Vi kunne
 
 Nå lar vi `linprog` gjøre jobben for 81 verdier av $\Delta$ mellom $-4$ og $4$ (negative verdier betyr at verkstedet mister maskintimer).
 
-- **Størrelsen vi følger:** La $P_*(\Delta)$ være det største mulige dekningsbidraget med maskinkapasitet $9+\Delta$.
+- **Størrelsen vi følger:** La $P_*(\Delta)$ være det beste dekningsbidraget verkstedet kan få når det har $9+\Delta$ maskintimer.
 - **Det du får ferdig:** Løkken endrer bare første kapasitet, løser og lagrer $P_*(\Delta)$. En ferdig hjelpefunksjon tegner kurven sammen med den gamle prisgrensen $27+2\Delta$.
 
 Målet er å se hvor prisen 2 gjelder, og å finne punktet der den slutter å gjelde, uten å vite det på forhånd.
@@ -1354,13 +1357,13 @@ print("SciPy-marginaler ved Δ = 0:", base.ineqlin.marginals + 0)
 **Hva viser forsøket?**
 
 - **Maskintimene:** Kurven har stigningstall 2 fram til $\Delta=3/2$ og er flat etterpå. Bidragene ved $\Delta=0,1/2,2$ er $27,28,30$, mens den gamle prisgrensen $27+2\Delta$ gir $27,28,31$.
-- **Hovedpoenget:** **Stigningstallet er ressursprisen, og knekken kommer der det aktive paret bytter.** For større endringer må vi sjekke om en plan fortsatt kan oppnå prisgrensen.
-- **SciPys tall:** SciPy gir ett tall per rad i `ineqlin.marginals`: hvor mye *SciPys minsteverdi* (av $-P$) endres per ekstra enhet kapasitet, helt nær startmodellen (lokalt). Fordi SciPy minimerer $-P$, har tallene motsatt fortegn av ressursprisene: marginalene $(-2,-1,0)$ betyr at en ekstra maskintime er verdt 2, en ekstra arbeidstime 1 og en høyere A-grense 0 tusen kroner.
+- **Hovedpoenget:** **Så lenge maskintimene og arbeidstimene begge blir brukt opp, gir hver ekstra maskintime 2 tusen kroner, akkurat prisen fra 11.3.** Kurven knekker når salgsgrensen for A tar over som flaskehals. For større endringer må vi derfor sjekke om en plan fortsatt når taket $27+2\Delta$.
+- **SciPys tall:** Cellen skriver også ut SciPys *marginaler*, $(-2,-1,0)$: hva en ekstra enhet av hver ressurs er verdt, regnet ut av løseren. SciPy regner med $-P$ i stedet for $P$, derfor er fortegnet snudd. Tallene betyr at en ekstra maskintime er verdt 2, en ekstra arbeidstime 1 og ett A-parti mer i salgsgrensen 0 tusen kroner, de samme prisene som i 11.3.
 - **Arbeidstimene:** Hvis vi endrer arbeidstimene i stedet (som i hjemmeoppgaven), er stigningstallet 1 for $\Delta\ge-3$ og 2 for lavere verdier. Knekken kommer der A-grensen blir aktiv.
 
 **Svaret til eieren:** Eieren bør betale høyst 2 tusen kroner per ekstra maskintime, men bare for den første halvannen timen. Etter det er flere maskintimer ikke verdt noe.
 
-::: {.reading-step title="Gå i dybden: hvor lenge er prisformelen eksakt?"}
+::: {.reading-step title="Gå i dybden: hvor lenge gjelder prisen på 2 tusen kroner?"}
 
 For å finne hele intervallet der den gamle prisen gir riktig *beste verdi*, lar vi $\Delta$ være en endring i maskinkapasiteten: positiv $\Delta$ betyr flere timer, negativ $\Delta$ betyr færre. Den nye kapasiteten er $9+\Delta$.
 
@@ -1452,7 +1455,7 @@ En løser som `linprog` gjør den samme jobben for tusenvis av produkter. Status
 Ressursprisene er et første eksempel på **multiplikatorer**: tall som veier sammen grensene slik at de gir et bevis, og som samtidig måler hva en litt større kapasitet er verdt.
 
 - **Krumme likninger:** I [uke 12](uke12.qmd#uke12-lagrange) er kravene (bibetingelsene) krumme likninger i stedet for rette linjer, og vi møter Lagrangemultiplikatorer.
-- **Samme pristolkning:** De er priser på samme måte som ressursprisene (dualvariablene) her (med fortegnsavtalen i uke 12 er prisen $-\lambda$): de måler hva et litt endret krav er verdt ([uke 12](uke12.qmd#uke12-pris)).
+- **Samme pristolkning:** De er priser på samme måte som ressursprisene her (med fortegnsavtalen i uke 12 er prisen $-\lambda$): de måler hva et litt endret krav er verdt ([uke 12](uke12.qmd#uke12-pris)).
 - **Valgfri fordypning:** Ulikheter med komplementær slakk kommer der bare som valgfri fordypning.
 
 ## 11.5 Regneoppgaver
