@@ -540,10 +540,10 @@ Forholdene $0.961$, $0.834$ og $0.854$ nærmer seg $C\approx0.854$.
 - **Regularitetskravet:** «Hessianen endrer seg ikke for brått» tar over
   rollen til $f'''$. Mer presist krever vi $\|H(z)-H(w)\|\le M\|z-w\|$ nær $z_*$ (lokalt
   Lipschitz-kontinuerlig).
-- **Likningssystemet:** for et likningssystem $G(z)=0$ bruker Newton **Jacobimatrisen**
+- **Likningssettet:** for et likningssett $G(z)=0$ bruker Newton **Jacobimatrisen**
   $(J_G)_{ij}=\partial G_i/\partial z_j$.
 - **Minimering:** for $G=\nabla f$ er $J_G=H$. Newton for minimering er
-  derfor Newton for likningssystemet $\nabla f=0$.
+  derfor Newton for likningssettet $\nabla f=0$.
 
 :::
 

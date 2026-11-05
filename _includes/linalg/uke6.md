@@ -42,7 +42,7 @@ liten feil. Du skal også kunne forklare veien fra gradient og linjesøk
 til CGs konjugerte retninger. I prosjektet undersøker du hvordan
 skalering kan endre arbeidsmengden for CG.
 
-## 6.1 Fra likningssystem til Gauss–Seidel
+## 6.1 Fra likningssett til Gauss–Seidel
 
 ::: {#uke6-gs}
 :::
@@ -51,7 +51,7 @@ skalering kan endre arbeidsmengden for CG.
 
 I uke 2 fant vi løsninger ved å gjenta en oppdatering: vi startet med et
 forslag, beregnet et nytt og fortsatte til forslagene stabiliserte seg.
-Nå vil vi bruke samme idé på et lineært likningssystem $Ax=b$: vi
+Nå vil vi bruke samme idé på et lineært likningssett $Ax=b$: vi
 beholder likningene og **forbedrer et løsningsforslag flere ganger**.
 
 Vi begynner med et system vi også kan løse for hånd:
@@ -391,7 +391,7 @@ $$e_{k+1}=(Tx_k+c)-(Tx_*+c)=T(x_k-x_*)=Te_k.$$
 
 Dermed er $e_k=T^ke_0$: det gjentatte matriseproduktet fra uke 5. Der
 fulgte vi hvilket bidrag som tok over; nå ønsker vi at **alle feilbidrag
-skal forsvinne**. $T$ beskriver ett helt sveip, ikke likningssystemet.
+skal forsvinne**. $T$ beskriver ett helt sveip, ikke likningssettet.
 
 For $A_a$ finner vi $T$ ved å sette den nye $u$ inn i oppdateringen av $v$:
 
@@ -1034,7 +1034,7 @@ linjer som tar oss raskere mot minimumet?** I 6.5 bruker vi funksjonens helninge
 å velge retning. I 6.6 undersøker vi hvordan CG kan bevare det vi
 allerede har oppnådd i tidligere retninger.
 
-**Øv på dette:** [Fra likningssystem til minimum](#uke6-ov-skal) og
+**Øv på dette:** [Fra likningssett til minimum](#uke6-ov-skal) og
 [kondisjonstall fra egenverdiene](#uke6-ov-kondisjon).
 
 ::: {.reading-step title="Gå i dybden: nivåkurver, hele GS-sveipet, tre ukjente og den generelle minimeringen"}
@@ -1174,7 +1174,7 @@ $$z^TAz=4(z_1+z_2/4)^2+\tfrac{11}{4}(z_2+4z_3/11)^2+\tfrac{18}{11}z_3^2.$$
 Alle koeffisientene er positive. Summen kan være null bare hvis først
 $z_3=0$, deretter $z_2=0$ og til slutt $z_1=0$. Matrisen er altså SPD.
 
-Likningssystemet er
+Likningssettet er
 
 $$4u+v=6,\qquad u+3v+w=10,\qquad v+2w=8.$$
 
@@ -2145,7 +2145,7 @@ egenverdier lik $1$. Hvorfor gir kvotienten ikke kondisjonstallet for den?
 ::: {#uke6-ov-skal}
 :::
 
-#### Fra likningssystem til minimum
+#### Fra likningssett til minimum
 
 Vi bruker det felles systemet med $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$,
 $b=(3,0)^T$ og $x=(u,v)^T$.
@@ -2191,7 +2191,7 @@ At gradienten er null, er ikke alene nok til å avgjøre dette.
 
 #### Ett steg med bratteste nedstigning
 
-Bruk samme $A$ og $b$ som i «Fra likningssystem til minimum», men start i
+Bruk samme $A$ og $b$ som i «Fra likningssett til minimum», men start i
 $x_0=(0,0)^T$. Vi skal gå i residualens retning $p_0=r_0=b-Ax_0$.
 
 **a.** Finn $r_0$ og tallet $\alpha_0$ som gjør
@@ -2226,7 +2226,7 @@ $r_1=$ vec[0,-3/2]
 ```
 
 **Forklar i egne notater:** Hvorfor har vi funnet minimum langs
-søkelinjen uten å ha løst hele likningssystemet? Bruk residualen i svaret.
+søkelinjen uten å ha løst hele likningssettet? Bruk residualen i svaret.
 
 ::: {#uke6-ov-cg}
 :::

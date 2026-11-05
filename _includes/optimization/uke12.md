@@ -27,7 +27,7 @@ svaret i tre steg, ett om gangen:
    **Lagranges likninger**, som er nye i kurset. Multiplikatoren i dem viser
    seg å være en pris, som i uke 11 (12.1–12.3).
 2. **Hva blir likningene når målet er kvadratisk?** Med et sirkelkrav blir de
-   et egenverdiproblem, og med lineære krav et lineært likningssystem (12.4).
+   et egenverdiproblem, og med lineære krav et lineært likningssett (12.4).
 3. **Hvordan kontrollerer vi et punkt som en løser gir oss?** Løseren SLSQP
    finner et punkt, og vi kontrollerer det med to kontrollfeil og et globalt argument
    (12.5).
@@ -75,7 +75,7 @@ Etter denne uken skal du kunne
 - tolke $-\lambda$ som endringen i optimal verdi per enhet vi flytter kravet,
 - skille kandidater fra løsninger ved å sammenligne verdier eller finne en global grense,
 - forklare hvorfor en kvadratisk form på enhetssirkelen gir et egenverdiproblem,
-- sette opp likningssystemet for et kvadratisk mål med lineære krav, og forklare hvorfor
+- sette opp likningssettet for et kvadratisk mål med lineære krav, og forklare hvorfor
   matrisen ikke er SPD,
 - kontrollere både betingelsesfeil og stasjonaritetsfeil i et numerisk SLSQP-svar.
 
@@ -903,7 +903,7 @@ lineær algebra:
 | Krav | Hva likningene blir |
 |:--|:--|
 | Sirkelkrav | Egenverdiproblem, der kandidatene er egenvektorene. |
-| Lineære krav | Symmetrisk, men indefinit likningssystem: CG og Cholesky virker ikke direkte. |
+| Lineære krav | Symmetrisk, men indefinit likningssett: CG og Cholesky virker ikke direkte. |
 
 Nullromsmetoden i «Gå i dybden» viser én vei rundt.
 
@@ -1242,7 +1242,7 @@ Slik henger de tolv ukene sammen:
 
 | Uker | Det vi bygget |
 |:--|:--|
-| 1–7 | Flyttall og avrunding, iterasjon, likningssystemer, nullrom og rang, minste kvadrater, egenverdier, SPD-matriser og CG, og singulærverdier. |
+| 1–7 | Flyttall og avrunding, iterasjon, likningssett, nullrom og rang, minste kvadrater, egenverdier, SPD-matriser og CG, og singulærverdier. |
 | 8 | Eksistens, Hessianen og konveksitet. |
 | 9–10 | Gradient- og Newtonmetoden med kondisjonstallet og Cholesky. |
 | 11–12 | Multiplikatorer som priser og optimalitetssertifikater. |
