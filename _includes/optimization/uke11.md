@@ -317,23 +317,34 @@ Den beste planen flytter seg aldri litt: den står stille, og så hopper den. Kn
 ::: {#uke11-hvorfor}
 :::
 
-Forsøket viste at den beste planen alltid er et hjørne, eller en hel kant mellom to like gode hjørner.
+I eksperiment 1 var den beste planen alltid et hjørne av området, eller en hel kant mellom to like gode hjørner. Det er ikke tilfeldig, og det er en god nyhet for eieren: Verkstedet trenger aldri å lete blant de uendelig mange planene inni området. Det holder å sammenligne de fem hjørnene. Vi ser hvorfor på to måter.
 
-- **Resultat med vilkår:** Det gjelder for hver LP med et ikke-tomt og begrenset tillatt område: **da finnes det en beste plan, og den ligger i et hjørne.**
-- **Grunnen i én setning:** Skyv mållinjen oppover så lenge den fortsatt treffer området; det siste den berører, er et hjørne, eller en hel kant hvis linjen er parallell med kanten.
+**Første forklaring: skyv mållinjen.** Alle planer som gir det samme dekningsbidraget $P$, ligger på en rett linje, mållinjen $5x+cy=P$. Krever vi et større bidrag $P$, flytter linjen seg parallelt utover. Så lenge linjen fortsatt treffer det blå området, finnes det en tillatt plan som gir så mye. Øk $P$ til linjen akkurat er i ferd med å forlate området. Det siste den berører, er et hjørne, eller en hel kant hvis linjen er parallell med kanten.
 
-Appleten under er den samme som i eksperiment 1, men med to nye verktøy:
+**Andre forklaring: en plan inni er en blanding av hjørner.** Ta planen $(2,1)$ fra 11.1. Del uka i ni like deler, og tenk deg at verkstedet
 
-- **Glidebryteren $P$:** Du skyver mållinjen $5x+cy=P$ selv, og den oransje delen av området er planene som gir minst $P$.
-- **Punktet $Z$:** Det grønne punktet er en plan du kan dra rundt. Appleten deler området i tre trekanter fra hjørnet $(0,0)$ og skriver $Z$ som et veid gjennomsnitt av de tre hjørnene i trekanten punktet ligger i: vektene er ikke-negative og summerer til 1.
+- står stille i fire av dem (planen $(0,0)$),
+- kjører planen $(4,1)$ i tre av dem,
+- kjører planen $(3,3)$ i to av dem.
 
-Målet er å se med egne øyne at det siste punktet mållinjen berører, er et hjørne, og at en plan inni området aldri kan slå det beste hjørnet.
+Til sammen blir produksjonen $\tfrac49(0,0)+\tfrac39(4,1)+\tfrac29(3,3)=(2,1)$, altså nøyaktig planen $(2,1)$. Dekningsbidraget blander seg på samme måte:
+$$P(2,1)=\tfrac49\cdot0+\tfrac39\cdot24+\tfrac29\cdot27=0+8+6=14.$$
+Et slikt **veid gjennomsnitt** kan aldri bli større enn det største tallet det er laget av. En blanding av planer gir derfor aldri mer enn den beste planen i blandingen, og det beste hjørnet kan ikke slås av en plan inni.
+
+**Resultatet.** Det samme gjelder i alle LP-problemer der det finnes minst én tillatt plan og området er begrenset: **Da finnes det en beste plan, og den ligger i et hjørne.**
+
+Appleten under er figuren fra eksperiment 1 med to nye ting du kan styre:
+
+- **Glidebryteren $P$ – bidraget du krever.** Den stiplede mållinjen viser alle planer som gir nøyaktig $P$ tusen kroner. Den oransje delen av området er planene som gir minst $P$.
+- **Det grønne punktet $Z$ – en plan du velger selv.** Dra det rundt i området. Appleten viser hvilke tre hjørner $Z$ er en blanding av, hvor mye av hvert hjørne blandingen bruker (vektene), og hvordan $P(Z)$ blir det samme gjennomsnittet av hjørneverdiene.
+
+Målet er å se med egne øyne at det siste mållinjen berører, er et hjørne, og at en plan inni området aldri gir mer enn det beste hjørnet.
 
 - Skyv $P$ sakte oppover fra 20. Hva skjer med den oransje delen, og hvor forsvinner den til slutt?
 - Dra $Z$ rundt, også helt ut mot kantene. Sammenlign $P(Z)$ med verdien i det beste hjørnet.
-- Sett $c=10$ og skyv $P$ til 45. Hva berører mållinjen nå?
+- Sett $c=10$ (bordene gir mye) og skyv $P$ til 45. Hva berører mållinjen nå?
 
-Appleten starter med $c=4$, $P=20$ og planen $Z=(2,1)$ fra modellen i 11.1.
+Appleten starter med $c=4$, $P=20$ og planen $Z=(2,1)$ fra 11.1.
 
 ::: {#uke11-hvorfor-applet}
 :::
@@ -485,7 +496,7 @@ board.create('text', [xl, row(4), function () {
 
 - **Siste berøring:** Den oransje delen krymper mot det røde hjørnet og forsvinner når $P$ går forbi 27: ingen tillatt plan gir mer, og det siste linjen berørte, var hjørnet $(3,3)$.
 - **En hel kant:** Med $c=10$ berører linjen til slutt hele kanten mellom $(3,3)$ og $(0,9/2)$, slik vi så ved knekkpunktene i forsøket.
-- **Verdien inni området:** For punktet $Z$ er $P(Z)$ det samme veide gjennomsnittet av hjørneverdiene som $Z$ er av hjørnene. I $Z=(2,1)$ er vektene $4/9$, $1/3$ og $2/9$, og $P(Z)=0+8+6=14$.
+- **Verdien inni området:** For punktet $Z$ er $P(Z)$ det samme veide gjennomsnittet av hjørneverdiene som $Z$ er av hjørnene. I $Z=(2,1)$ er vektene $4/9$, $1/3$ og $2/9$, som i blandingen over, og $P(Z)=0+8+6=14$.
 
 Et gjennomsnitt kan aldri bli større enn det største tallet det er laget av, så ingen plan slår det beste hjørnet.
 
