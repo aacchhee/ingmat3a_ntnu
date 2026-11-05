@@ -337,7 +337,7 @@ Velg den minste $k$ slik at
 $$\|b-Hx_k\|_2\leq\tau\delta,\qquad\tau=1.05.$$
 
 Dette er samme **diskrepansprinsipp** som i A3, nå brukt på residualen
-i et likningssystem. Vi krever ikke at rekonstruksjonen forklarer all støyen.
+i et likningssett. Vi krever ikke at rekonstruksjonen forklarer all støyen.
 
 1. Bruk B2 til å skrive regelen med datakoordinatene $\beta_i$.
    Hvorfor kan rangvalget gjøres uten å kjenne $x_*$?

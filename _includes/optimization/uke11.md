@@ -7,29 +7,59 @@
 
 ### Hva bør verkstedet produsere, og hva er en ekstra maskintime verdt?
 
-Et verksted lager produktpartier som kan deles opp: $2.5$ partier er to hele partier og et halvt. Vi følger planen gjennom tre spørsmål:
+#### Situasjonen
 
-- **Finn planen:** Vi tegner de tillatte planene, finner den beste og ser hvorfor den ligger i et hjørne.
-- **Bevis at den er best:** Vi lager en ressursregning som setter en øvre grense for *alle* planer.
-- **Verdsett kapasiteten:** Til sist undersøker vi hva mer kapasitet kan være verdt, og hvor lenge svaret gjelder.
+Et lite møbelverksted lager to produkter, som vi kaller A og B. Tenk for eksempel på stoler og bord. Verkstedet produserer i **partier**: en serie like produkter, for eksempel ti stoler om gangen.
 
-I [uke 8](uke8.qmd#uke8-start) møtte vi tre ideer. Slik bruker vi dem på verkstedets lineære problem:
+Hver uke må eieren bestemme hvor mange partier av A og hvor mange partier av B verkstedet skal lage. Et slikt valg kaller vi en **produksjonsplan**, eller bare en **plan**. «Tre partier A og to partier B» er en plan.
 
-| Idé fra uke 8 | Hva den forteller her |
+Eieren kan ikke velge fritt:
+
+- **Timene er begrenset.** Maskinene og de ansatte har bare et visst antall timer i uka, og hvert parti bruker noen av dem.
+- **Salget av A er begrenset.** Kundene kjøper høyst fire partier A i uka.
+
+Hvert parti gir verkstedet et **dekningsbidrag**: det verkstedet sitter igjen med når kostnadene til materialer og annet forbruk er trukket fra salgsinntekten.
+
+Eieren har to spørsmål:
+
+1. **Hvilken plan gir størst dekningsbidrag?** Svaret er ikke opplagt: A gir mest per parti, men bruker dobbelt så mye maskintid som B.
+2. **Lønner det seg å leie mer maskintid?** En nabo tilbyr å leie ut maskinen sin noen timer ekstra. Hva er det mest verkstedet bør betale for én ekstra maskintime?
+
+Tallene kommer i [11.1](#uke11-modell).
+
+#### Fra verkstedet til matematikk
+
+For å svare oversetter vi verkstedet til matematikk. Hver ting i verkstedet får sin motpart:
+
+| I verkstedet | I matematikken |
 |:--|:--|
-| *Finnes det et beste svar?* | Et beste svar finnes. |
-| *Hva forteller krumningen?* (Hessianen) | Hessianen hjelper oss ikke her, fordi grafen til et lineært mål ikke krummer. |
-| *Er kandidaten vi fant, den beste?* (konveksitet) | Et hjørne uten et bedre nabohjørne er det beste. |
+| En plan: $x$ partier A og $y$ partier B | Et punkt $(x,y)$ i planet |
+| Planen bruker ikke flere timer enn verkstedet har | Én lineær ulikhet per ressurs: «timer brukt $\le$ timer som finnes» |
+| Alle planene eieren faktisk kan velge | Det **tillatte området**: punktene som oppfyller alle ulikhetene |
+| Dekningsbidraget til en plan | En lineær funksjon $P(x,y)$ |
+| Den beste planen | Punktet i det tillatte området der $P$ er størst |
 
-Vi trenger altså den første og den tredje ideen. I tillegg får vi et bevis som kan kontrolleres med noen få multiplikasjoner.
+Både dekningsbidraget og timebruken er lineære i $x$ og $y$. Et slikt problem kalles **lineær programmering (LP)**. Ordet «programmering» betyr her planlegging, ikke koding.
 
-Underveis må vi svare på et spørsmål som ligger bak begge spørsmålene i overskriften:
+#### Veien gjennom uken
+
+Det finnes uendelig mange planer, for $x$ og $y$ trenger ikke være hele tall. Ukens kjernespørsmål er derfor:
 **Hvordan kan vi vite at en plan er den beste, uten å prøve alle planene?**
-Svaret kommer i tre steg, og hvert steg er én idé:
+Svaret kommer i tre steg:
 
-1. Det beste svaret ligger i et hjørne, og et hjørne er løsningen av et lite likningssystem (11.1–11.2).
-2. Ressurspriser gir en øvre grense for bidraget i alle planer. Når en plan når grensen, er beviset ferdig (11.3).
-3. De samme prisene sier hva litt mer kapasitet er verdt, men bare så lenge de samme grensene er aktive (11.4).
+1. **Finn den beste planen (11.1–11.2).** Vi tegner det tillatte området. Den beste planen ligger i et hjørne av området, og hvert hjørne finner vi ved å løse et lite lineært likningssett. Til slutt lar vi løseren `linprog` gjøre den samme jobben.
+2. **Bevis at den er best (11.3).** Vi setter en tenkt pris på hver maskintime og hver arbeidstime. Med riktige priser gir timene en øvre grense for dekningsbidraget i *alle* planer. Når planen vår når grensen, finnes det ingen bedre plan.
+3. **Svar på leiespørsmålet (11.4).** Prisen på en maskintime fra steg 2 er nettopp det en ekstra maskintime er verdt, men bare så lenge verkstedet ikke leier for mange timer.
+
+**Hva vi tar med fra uke 8.** I [uke 8](uke8.qmd#uke8-start) stilte vi tre spørsmål til et optimeringsproblem. For verkstedet blir svarene enkle:
+
+| Spørsmål fra uke 8 | Svaret for verkstedet |
+|:--|:--|
+| *Finnes det en beste plan?* | Ja. Det tillatte området er lukket og begrenset, og $P$ er kontinuerlig, så $P$ har en største verdi der. |
+| *Hva sier krumningen?* (Hessianen) | Ingenting nytt. $P$ er lineær, så grafen er et flatt plan, og Hessianen er null. |
+| *Er planen vi fant, den beste?* (konveksitet) | Ja, hvis ingen nabohjørne er bedre. Området er konvekst, så et hjørne uten bedre nabo er best av alle. |
+
+Vi trenger altså svarene på det første og det tredje spørsmålet fra uke 8. Steg 2 gir i tillegg et bevis som kan kontrolleres med noen få multiplikasjoner.
 
 - **Lesemodus:** **Forelesning** viser hovedløpet. **Gå i dybden** åpner lengre begrunnelser og mellomregninger.
 - **Arbeidsløp:** I 11.1–11.4 følger vi ett verksted. Regneoppgavene i 11.5 er sortert etter de tre ideene, og kodeoppgavene står i 11.6. Alle oppgavene bruker stort sett de samme tallene.
@@ -40,7 +70,7 @@ Svaret kommer i tre steg, og hvert steg er én idé:
 
 1. [Fra tabell til tillatt område](#uke11-modell): mål, krav og slakk.
 2. [Eksperiment 1: endre bidraget fra B](#uke11-pris): den beste planen hopper mellom hjørner.
-3. [Hvorfor ligger optimum i et hjørne?](#uke11-hvorfor) og [hjørner er kvadratiske likningssystemer](#uke11-hjorner).
+3. [Hvorfor ligger optimum i et hjørne?](#uke11-hvorfor) og [hjørner er løsninger av lineære likningssett](#uke11-hjorner).
 4. [Eksperiment 2: kontroller hjørnetabellen med `linprog`](#uke11-linprog).
 
 **Idé 2 – priser beviser at planen er best**
@@ -55,7 +85,7 @@ Svaret kommer i tre steg, og hvert steg er én idé:
 
 | Fra tidligere uker | Spørsmålet vi tar med oss |
 |:--|:--|
-| [Uke 3: likningssystemer og rang](uke3.qmd#uke3-stotte-matriser) | Når har to grenselikninger nøyaktig ett felles punkt? |
+| [Uke 3: lineære likningssett og rang](uke3.qmd#uke3-stotte-matriser) | Når har to grenselikninger nøyaktig ett felles punkt? |
 | [Uke 8: kompakthet](uke8.qmd#uke8-kompakt) | Hvorfor finnes det en beste plan? |
 | [Uke 8: konveksitet](uke8.qmd#uke8-lokalt) | Hvorfor kan vi stoppe i et hjørne som ikke har en bedre nabo? |
 | [Uke 8 (Gå i dybden): grense fra tangenten](uke8.qmd#uke8-tangent) | Kan en enkel ulikhet bevise at ingen plan er bedre? |
@@ -64,11 +94,11 @@ Svaret kommer i tre steg, og hvert steg er én idé:
 
 Etter denne uken skal du kunne
 
-- oversette en produksjonstabell til et lineært mål og ressursulikheter og finne ubrukt kapasitet for en plan,
-- forklare hvorfor en LP med begrenset, ikke-tomt tillatt område har et optimum i et hjørne, og finne hjørnene som løsninger av kvadratiske likningssystemer,
-- prissette ressursene slik at de gir en øvre grense, og bevise at en plan er optimal når den når grensen,
-- bruke komplementær slakk til å finne ressursprisene fra en plan,
-- tolke verdien av en liten kapasitetsendring og undersøke når den gamle prisen slutter å gi den nye optimalverdien,
+- oversette et produksjonsproblem som verkstedet til et lineært mål og ulikheter for ressursene, og regne ut hvor mye av hver ressurs en plan lar være ubrukt (slakken),
+- forklare hvorfor den beste planen ligger i et hjørne når det finnes tillatte planer og området er begrenset, og finne hjørnene som løsninger av lineære likningssett,
+- sette priser på ressursene slik at de gir en øvre grense for hva en plan kan gi, og bevise at en plan er best når den når grensen,
+- bruke komplementær slakk (en ubrukt ressurs har pris null; et produkt som lages, tjener akkurat inn verdien av ressursene det bruker) til å finne ressursprisene fra en plan,
+- forklare hva litt mer kapasitet er verdt, og finne ut når den gamle prisen slutter å gjelde,
 - kode modellen med `linprog`, sjekke løserens status og kontrollere resultatet mot kravene.
 
 ## 11.1 Fra tabell til tillatt område
@@ -76,33 +106,46 @@ Etter denne uken skal du kunne
 ::: {#uke11-modell}
 :::
 
-### Modellen: to produkter og to typer timer
+### Verkstedet i tall
 
-Verkstedet produserer partier av A og B. Tallene i modellen bygger på denne definisjonen og disse antakelsene:
-
-- **Dekningsbidrag** betyr salgsinntekt minus kostnadene som følger produksjonen, for eksempel materialer; her måles det i tusen kroner per parti.
-- **Forutsetninger:** Vi antar at hele produksjonen blir solgt, at partiene kan deles, slik at timene kan fordeles fritt, og at tabellens tall er konstante i denne perioden.
+Vi går tilbake til møbelverkstedet fra [oversikten](#uke11-start). Eieren skal velge hvor mange partier av A og B verkstedet skal lage denne uka. Tabellen viser hva ett parti av hvert produkt bruker av timer, og hva det gir i dekningsbidrag. Den siste raden viser hvor mange timer verkstedet har i uka.
 
 | Produkt | Maskintimer per parti | Arbeidstimer per parti | Dekningsbidrag per parti |
 |:--|--:|--:|--:|
 | A | 2 | 1 | 5 tusen kr |
 | B | 1 | 2 | 4 tusen kr |
-| Tilgjengelig kapasitet | 9 | 9 | |
+| Timer verkstedet har i uka | 9 | 9 | |
 
-I tillegg kan verkstedet lage høyst fire A-partier.
+I tillegg kjøper kundene høyst fire partier A i uka.
 
-- **Variabler:** La $x$ være antall A-partier og $y$ antall B-partier.
-- **Mål:** Vi vil gjøre $P=5x+4y$ (tusen kroner) størst mulig.
-- **Tillatt plan:** En plan er **tillatt** når alle kravene er oppfylt:
+**Les tabellen.** Ett parti A bruker 2 timer i maskinene og 1 time av de ansattes arbeid, og verkstedet sitter igjen med 5 tusen kroner når materialene er betalt. For B er det omvendt: 1 maskintime og 2 arbeidstimer gir 4 tusen kroner. A gir altså mest per parti, men bruker mest av maskintiden.
 
-| Krav | Regning for en plan $(x,y)$ | Grense |
+**Forenklinger.** For at regningen skal bli enkel, antar vi at
+
+- alt verkstedet lager, blir solgt, bortsett fra at det bare er kunder til fire partier A,
+- tallene i tabellen er de samme hele uka,
+- verkstedet kan lage deler av et parti: $2.5$ partier er to hele partier og et halvt. Det er rimelig når et parti består av mange like enheter, for eksempel ti stoler.
+
+### Fra verkstedet til en modell
+
+Nå oversetter vi verkstedet til matematikk, én bit om gangen.
+
+**Planen blir et punkt.** La $x$ være antall partier A og $y$ antall partier B. En plan er da et punkt $(x,y)$. Planen $(2,1)$ betyr to partier A og ett parti B.
+
+**Dekningsbidraget blir en funksjon.** Hvert parti A gir 5 og hvert parti B gir 4 tusen kroner. Planen $(x,y)$ gir derfor
+$$P=5x+4y \quad\text{(tusen kroner)}.$$
+Dette er **målet**: vi vil gjøre $P$ størst mulig.
+
+**Kravene blir ulikheter.** Timene en plan bruker, er «timer per parti × antall partier», lagt sammen for A og B. Planen kan ikke bruke flere timer enn verkstedet har:
+
+| Krav | I verkstedet | Ulikhet |
 |:--|:--|:--|
-| Maskintimer | $2x+y$ | $2x+y\le9$ |
-| Arbeidstimer | $x+2y$ | $x+2y\le9$ |
-| Antall A-partier | $x$ | $x\le4$ |
-| Ikke-negativ produksjon | $x,y$ | $x\ge0,\ y\ge0$ |
+| Maskintimer | A bruker 2 og B bruker 1 time per parti; verkstedet har 9 | $2x+y\le9$ |
+| Arbeidstimer | A bruker 1 og B bruker 2 timer per parti; verkstedet har 9 | $x+2y\le9$ |
+| Salg av A | Kundene kjøper høyst fire partier A | $x\le4$ |
+| Ingen negativ produksjon | Verkstedet kan ikke lage $-1$ parti | $x\ge0,\ y\ge0$ |
 
-Bruken av hver timetype er «timer per parti × antall partier», lagt sammen for A og B. Sjekk planen $(x,y)=(2,1)$:
+En plan er **tillatt** når den oppfyller alle kravene. Sjekk planen $(x,y)=(2,1)$:
 
 1. Maskintimer: $2\cdot2+1\cdot1=5\le9$.
 2. Arbeidstimer: $1\cdot2+2\cdot1=4\le9$.
@@ -116,7 +159,7 @@ Begge partimengdene er ikke-negative, så planen er tillatt. Den ubrukte kapasit
 | Arbeidstimer | $9-4=5$ ubrukte timer |
 | A-partier | Rom for $4-2=2$ flere partier |
 
-Dette er et problem i **lineær programmering (LP)**: både målet $P=5x+4y$ og ressursbruken er lineære i $x,y$. Vi leter etter den tillatte planen med størst $P$.
+Som i [oversikten](#uke11-start) er dette et LP-problem: både målet $P=5x+4y$ og timebruken er lineære i $x$ og $y$. Eierens første spørsmål er nå et matematisk spørsmål: hvilket punkt i det tillatte området gir størst $P$?
 
 ### Tegn området og sammenlign hjørnene
 
@@ -134,10 +177,12 @@ corners = np.array([[0, 0], [4, 0], [4, 1], [3, 3], [0, 4.5]])
 show_region(corners, objective=(5, 4), levels=(20, 24, 27), best=(3, 3))
 ```
 
+**Hva viser figuren?**
+
 - **Sammenlign linjene:** Mållinjen for $P=24$ skjærer gjennom området, så det finnes planer som gir mer. Linjen for $P=27$ berører området bare i hjørnet $(3,3)$.
 - **Sammenlign hjørnene:** Langs en kant varierer det lineære målet $P$ mellom verdiene i endepunktene, så det holder å se på hjørnene der grensene møtes. Hjørnetabellen under viser det samme med tall.
 
-Hvordan vi finner hjørnene systematisk, ser vi i [Hjørner er kvadratiske likningssystemer](#uke11-hjorner).
+Hvordan vi finner hjørnene systematisk, ser vi i [Hjørner er løsninger av lineære likningssett](#uke11-hjorner).
 
 | Hjørne $(x,y)$ | $P$ (tusen kr) |
 |:--|--:|
@@ -149,33 +194,39 @@ Hvordan vi finner hjørnene systematisk, ser vi i [Hjørner er kvadratiske likni
 
 I $(3,3)$ er begge timekapasitetene brukt opp, men det er rom for ett A-parti til før grensen $x\le4$ nås.
 
-- **Slakk** er kapasitet minus bruk. De tre slakkene i dette hjørnet er altså $(0,0,1)$.
-- **Aktiv grense:** En grense med null slakk er **aktiv**.
+- **Slakk** er det som er igjen av en ressurs: kapasitet minus bruk. I $(3,3)$ er det $0$ maskintimer, $0$ arbeidstimer og $1$ A-parti igjen, så slakkene er $(0,0,1)$.
+- **Aktiv grense:** En grense er **aktiv** når slakken er null, altså når planen bruker opp akkurat alt som finnes. I $(3,3)$ er maskintimene og arbeidstimene aktive grenser, men ikke A-grensen.
 
 ::: {#uke11-pris}
 :::
 
 ### Hvor robust er den beste planen?
 
-Figuren og hjørnetabellen viser at $(3,3)$ er best når et B-parti gir 4 tusen kroner.
+Figuren og hjørnetabellen viser at den beste planen er $(3,3)$: tre partier A og tre partier B i uka. Den gir $P=5\cdot3+4\cdot3=27$ tusen kroner. Tenker vi på A som stoler og B som bord, er det tre partier stoler og tre partier bord.
 
-- **Usikre tall:** Bidragene i tabellen er anslag. Materialprisene kan endre
-  seg, og salgsprisen for B er usikker.
-- **Spørsmålet for verkstedet:** Tåler planen at bidragene er litt feil, eller
-  gir en liten endring en helt annen plan?
+**Hvor sikkert er tallet 4?** Dekningsbidraget fra et parti bord er salgsprisen minus det materialene koster. Begge deler kan endre seg: treverket kan bli dyrere, eller en kunde kan være villig til å betale mer for bordene. Da gir et parti bord kanskje 3 eller 6 tusen kroner i stedet for 4.
 
-Vi bytter ut 4 med et tall $c$, slik at målet blir $P=5x+cy$.
+**Eierens spørsmål:** Må verkstedet lage en annen plan hvis bordene gir mer eller mindre enn vi trodde? Og hvor mye kan bidraget fra bordene endre seg før planen må endres?
 
-- **Det som endres:** Kravene er de samme, så det blå området endres ikke; bare retningen til mållinjene endres.
+For å undersøke mange mulige bidrag på én gang gir vi bidraget et navn:
+
+> La $c$ være dekningsbidraget fra ett parti B (bord), målt i tusen kroner. Hittil har vi brukt $c=4$.
+
+Planen $(x,y)$ gir da
+
+$$P=5x+cy.$$
+
+- **Det som ikke endres:** Timene og salgsgrensen for A er de samme, så det blå området med tillatte planer er det samme.
+- **Det som endres:** Mållinjene $5x+cy=\text{konstant}$ får en annen helning når $c$ endres.
 - **Det du får ferdig:** Figuren under regner ut $P$ i de fem hjørnene for deg og markerer det beste. Hvorfor det holder å se på hjørnene, begrunner vi rett etterpå.
 
-Målet er å finne ut hvordan den beste planen flytter seg når $c$ endres, og ved hvilke verdier av $c$ den bytter hjørne.
+Målet er å finne ut hvilken plan som er best for ulike bidrag $c$ fra bordene, og ved hvilke verdier av $c$ eieren må bytte plan.
 
 ### Eksperiment 1 – endre bidraget fra B
 
-- Forutsi først: flytter den beste planen seg litt hvis $c$ øker litt fra 4?
-- Skyv $c$ sakte fra 0.5 til 14, og noter hvert hjørne som blir best.
-- Finn de to verdiene der teksten viser «Hel kant er best». Hvilken kant er det i hvert tilfelle?
+- **Forutsi først:** Hvis bordene gir litt mer, for eksempel $c=4.5$ i stedet for $4$, bør verkstedet da lage litt flere bord og litt færre stoler?
+- **Skyv $c$ sakte fra 0.5 til 14**, altså fra nesten ingenting til 14 tusen kroner per parti bord. Noter hvert hjørne (hver plan) som blir best underveis.
+- **Finn knekkpunktene:** For to verdier av $c$ viser teksten «Hel kant er best». Da gir to hjørner like mye, og det gjør alle planene mellom dem også. Hvilken kant er det i hvert tilfelle, og hvilken type timer er brukt opp langs den?
 
 Den stiplede linjen er mållinjen gjennom det beste punktet, og teksten viser hvilket hjørne som er best og verdien der.
 
@@ -262,10 +313,12 @@ board.create('text', [xl, function () { return narrow() ? ytop() - 1.8 : 3.85; }
 
 **Hva viser forsøket?**
 
-- For $c<5/2$ er $(4,1)$ best.
-- For $5/2<c<10$ er $(3,3)$ best. Et helt intervall av bidrag gir samme plan.
-- For $c>10$ er $(0,9/2)$ best.
-- For $c=5/2$ og $c=10$ er en hel kant best.
+- **Bordene gir lite ($c<5/2$):** $(4,1)$ er best. Verkstedet lager så mange stoler som kundene vil kjøpe, og bruker resten av maskintiden på ett parti bord.
+- **Bordene gir middels ($5/2<c<10$):** $(3,3)$ er best. Et helt intervall av bidrag gir samme plan.
+- **Bordene gir mye ($c>10$):** $(0,9/2)$ er best. Verkstedet lager bare bord, og arbeidstimene setter grensen.
+- **Knekkpunktene ($c=5/2$ og $c=10$):** En hel kant er best, så to planer og alt mellom dem gir like mye.
+
+**Svaret til eieren:** Planen $(3,3)$ er fortsatt best så lenge et parti bord gir mellom $2.5$ og $10$ tusen kroner. Et anslag som er litt feil, endrer altså ikke planen.
 
 Den beste planen flytter seg aldri litt: den står stille, og så hopper den. Knekkpunktene kommer når mållinjen er parallell med en kant. Mållinjene $5x+cy=\text{konstant}$ har stigningstall $-5/c$.
 
@@ -281,23 +334,34 @@ Den beste planen flytter seg aldri litt: den står stille, og så hopper den. Kn
 ::: {#uke11-hvorfor}
 :::
 
-Forsøket viste at den beste planen alltid er et hjørne, eller en hel kant mellom to like gode hjørner.
+I eksperiment 1 var den beste planen alltid et hjørne av området, eller en hel kant mellom to like gode hjørner. Det er ikke tilfeldig, og det er en god nyhet for eieren: Verkstedet trenger aldri å lete blant de uendelig mange planene inni området. Det holder å sammenligne de fem hjørnene. Vi ser hvorfor på to måter.
 
-- **Resultat med vilkår:** Det gjelder for hver LP med et ikke-tomt og begrenset tillatt område: **da finnes det en beste plan, og den ligger i et hjørne.**
-- **Grunnen i én setning:** Skyv mållinjen oppover så lenge den fortsatt treffer området; det siste den berører, er et hjørne, eller en hel kant hvis linjen er parallell med kanten.
+**Første forklaring: skyv mållinjen.** Alle planer som gir det samme dekningsbidraget $P$, ligger på en rett linje, mållinjen $5x+cy=P$. Krever vi et større bidrag $P$, flytter linjen seg parallelt utover. Så lenge linjen fortsatt treffer det blå området, finnes det en tillatt plan som gir så mye. Øk $P$ til linjen akkurat er i ferd med å forlate området. Det siste den berører, er et hjørne, eller en hel kant hvis linjen er parallell med kanten.
 
-Appleten under er den samme som i eksperiment 1, men med to nye verktøy:
+**Andre forklaring: en plan inni er en blanding av hjørner.** Ta planen $(2,1)$ fra 11.1. Del uka i ni like deler, og tenk deg at verkstedet
 
-- **Glidebryteren $P$:** Du skyver mållinjen $5x+cy=P$ selv, og den oransje delen av området er planene som gir minst $P$.
-- **Punktet $Z$:** Det grønne punktet er en plan du kan dra rundt. Appleten deler området i tre trekanter fra hjørnet $(0,0)$ og skriver $Z$ som et veid gjennomsnitt av de tre hjørnene i trekanten punktet ligger i: vektene er ikke-negative og summerer til 1.
+- står stille i fire av dem (planen $(0,0)$),
+- kjører planen $(4,1)$ i tre av dem,
+- kjører planen $(3,3)$ i to av dem.
 
-Målet er å se med egne øyne at det siste punktet mållinjen berører, er et hjørne, og at en plan inni området aldri kan slå det beste hjørnet.
+Til sammen blir produksjonen $\tfrac49(0,0)+\tfrac39(4,1)+\tfrac29(3,3)=(2,1)$, altså nøyaktig planen $(2,1)$. Dekningsbidraget blander seg på samme måte:
+$$P(2,1)=\tfrac49\cdot0+\tfrac39\cdot24+\tfrac29\cdot27=0+8+6=14.$$
+Et slikt **veid gjennomsnitt** kan aldri bli større enn det største tallet det er laget av. En blanding av planer gir derfor aldri mer enn den beste planen i blandingen, og det beste hjørnet kan ikke slås av en plan inni.
+
+**Resultatet.** Det samme gjelder i alle LP-problemer der det finnes minst én tillatt plan og området er begrenset: **Da finnes det en beste plan, og den ligger i et hjørne.**
+
+Appleten under er figuren fra eksperiment 1 med to nye ting du kan styre:
+
+- **Glidebryteren $P$ – bidraget du krever.** Den stiplede mållinjen viser alle planer som gir nøyaktig $P$ tusen kroner. Den oransje delen av området er planene som gir minst $P$.
+- **Det grønne punktet $Z$ – en plan du velger selv.** Dra det rundt i området. Appleten viser hvilke tre hjørner $Z$ er en blanding av, hvor mye av hvert hjørne blandingen bruker (vektene), og hvordan $P(Z)$ blir det samme gjennomsnittet av hjørneverdiene.
+
+Målet er å se med egne øyne at det siste mållinjen berører, er et hjørne, og at en plan inni området aldri gir mer enn det beste hjørnet.
 
 - Skyv $P$ sakte oppover fra 20. Hva skjer med den oransje delen, og hvor forsvinner den til slutt?
 - Dra $Z$ rundt, også helt ut mot kantene. Sammenlign $P(Z)$ med verdien i det beste hjørnet.
-- Sett $c=10$ og skyv $P$ til 45. Hva berører mållinjen nå?
+- Sett $c=10$ (bordene gir mye) og skyv $P$ til 45. Hva berører mållinjen nå?
 
-Appleten starter med $c=4$, $P=20$ og planen $Z=(2,1)$ fra modellen i 11.1.
+Appleten starter med $c=4$, $P=20$ og planen $Z=(2,1)$ fra 11.1.
 
 ::: {#uke11-hvorfor-applet}
 :::
@@ -465,7 +529,7 @@ board.create('text', [xl, row(4), function () {
 
 - **Siste berøring:** Den oransje delen krymper mot det røde hjørnet og forsvinner når $P$ går forbi 27: ingen tillatt plan gir mer, og det siste linjen berørte, var hjørnet $(3,3)$.
 - **En hel kant:** Med $c=10$ berører linjen til slutt hele kanten mellom $(3,3)$ og $(0,9/2)$, slik vi så ved knekkpunktene i forsøket.
-- **Verdien inni området:** For punktet $Z$ er $P(Z)$ det samme veide gjennomsnittet av hjørneverdiene som $Z$ er av hjørnene. I $Z=(2,1)$ er vektene $4/9$, $1/3$ og $2/9$, og $P(Z)=0+8+6=14$.
+- **Verdien inni området:** For punktet $Z$ er $P(Z)$ det samme veide gjennomsnittet av hjørneverdiene som $Z$ er av hjørnene. I $Z=(2,1)$ er vektene $4/9$, $1/3$ og $2/9$, som i blandingen over, og $P(Z)=0+8+6=14$.
 
 Et gjennomsnitt kan aldri bli større enn det største tallet det er laget av, så ingen plan slår det beste hjørnet.
 
@@ -570,21 +634,26 @@ Et ubegrenset område kan likevel ha et optimum. For eksempel har $\min(x+y)$ un
 
 :::
 
-### Hjørner er kvadratiske likningssystemer
+### Hjørner er løsninger av lineære likningssett
 
 ::: {#uke11-hjorner}
 :::
 
-I et hjørne er to grenser aktive, og det bruker vi til å finne hjørnene systematisk. Vi går fram slik:
+Hvordan finner vi hjørnene uten å tegne? Med mange produkter kan eieren ikke tegne området, så vi trenger en regnemåte. Den bygger på at et hjørne er et sted der to grenser møtes.
 
-1. **Løs likningene:** Skriver vi de to grensene som likheter, får vi et $2\times2$-system som i [uke 3](uke3.qmd#uke3-stotte-matriser). Ressurskravene er rader av koeffisienter, akkurat som i de lineære systemene tidligere i kurset.
-2. **Kontroller kravene:** Forskjellen fra et vanlig likningssystem er at vi etterpå må sjekke *ulikhetene* for alle de andre kravene.
+- **Aktiv grense:** En grense er **aktiv** i en plan når planen bruker opp akkurat så mye som finnes. I $(3,3)$ er maskintimene og arbeidstimene begge brukt opp, så de to grensene er aktive der. A-grensen er ikke aktiv, for kundene vil kjøpe ett A-parti til.
+- **Et hjørne har to aktive grenser.** Hjørnet ligger der to grenselinjer krysser hverandre.
 
-Verkstedet har fem grenser: maskintimer, arbeidstimer, A-grensen, $x=0$ og $y=0$. Det gir $\binom52=\frac{5\cdot4}{2}=10$ måter å velge to av dem på.
+Slik finner vi et hjørne:
+
+1. **Velg to grenser og anta at begge er brukt opp.** Da blir grensene til likninger, og vi får et lineært likningssett med to likninger og to ukjente, som i [uke 3](uke3.qmd#uke3-stotte-matriser). For maskintimer og arbeidstimer er det $2x+y=9$ og $x+2y=9$. Løsningen er stedet der de to linjene krysser hverandre.
+2. **Sjekk de andre kravene.** Skjæringspunktet er bare en tillatt plan hvis alle de andre kravene også er oppfylt. Det er forskjellen fra et vanlig likningssett: etterpå må vi sjekke *ulikhetene*.
+
+Verkstedet har fem grenser: maskintimer, arbeidstimer, A-grensen, $x=0$ og $y=0$. Det gir $\binom52=\frac{5\cdot4}{2}=10$ måter å velge to av dem på. Hvert av de ti parene er en **kandidat**: et mulig hjørne som vi må regne ut og sjekke.
 
 ::: {.callout-note title="Håndeksempel: tre par av aktive grenser"}
 
-**Utgangspunkt.** Velg to grenser, skriv dem som likninger og løs systemet. Kontroller deretter de tre andre kravene.
+**Utgangspunkt.** Velg to grenser, skriv dem som likninger og løs likningssettet. Kontroller deretter de tre andre kravene.
 
 **Prøv selv.** Undersøk paret maskintimer og arbeidstimer, paret arbeidstimer og A-grense, og paret A-grense og $x=0$.
 
@@ -597,13 +666,14 @@ Verkstedet har fem grenser: maskintimer, arbeidstimer, A-grensen, $x=0$ og $y=0$
 2. **Arbeidstimer og A-grense:** $x+2y=9$ og $x=4$.
    - Sett inn: $4+2y=9$, så $y=5/2$.
    - Kontroller maskintimer: $2\cdot4+5/2=21/2>9$. Linjene skjærer hverandre, men skjæringspunktet er ikke en tillatt plan.
-3. **A-grense og $x=0$:** $x=4$ og $x=0$ har koeffisientmatrisen $\begin{pmatrix}1&0\\1&0\end{pmatrix}$ med determinant $1\cdot0-0\cdot1=0$ og rang 1. Linjene er parallelle, og systemet har ingen løsning.
+3. **A-grense og $x=0$:** $x=4$ og $x=0$ er to loddrette linjer som aldri krysser hverandre. Likningssettet har ingen løsning.
+   - Tallene foran $x$ og $y$ i de to likningene danner koeffisientmatrisen $\begin{pmatrix}1&0\\1&0\end{pmatrix}$, som du kjenner fra [uke 3](uke3.qmd#uke3-stotte-matriser). Determinanten er $1\cdot0-0\cdot1=0$, og rangen er 1: begge radene er $(1,0)$, så den andre raden gir ingen ny retning. Determinanten er null nøyaktig når linjene er parallelle (eller er samme linje). Da kaller vi likningssettet **singulært**.
 
-**Dette tar vi med oss.** Et hjørne krever to aktive grenser med lineært uavhengige rader, altså et ikke-singulært $2\times2$-system, *og* at løsningen oppfyller alle de andre kravene.
+**Dette tar vi med oss.** Et hjørne krever to aktive grenser som krysser hverandre i nøyaktig ett punkt (determinanten er ikke null, så likningssettet er *ikke-singulært*), *og* at punktet oppfyller alle de andre kravene.
 
 :::
 
-Går vi gjennom alle ti par på samme måte, får vi **5 hjørner**, **4 skjæringspunkter utenfor området** og **1 singulært par**.
+Går vi gjennom alle ti par på samme måte, får vi **5 hjørner**, **4 skjæringspunkter utenfor området** (linjene krysser hverandre, men punktet bryter et annet krav) og **1 singulært par** (parallelle linjer). Det er de fem hjørnene som kan være den beste planen, og for dem har vi allerede regnet ut $P$ i hjørnetabellen.
 
 **Øv på dette:** [hjørne, utenfor eller singulært?](#uke11-oppg-par) i 11.5 og [finn alle hjørnene](#uke11-kode-hjorner) i 11.6.
 
@@ -623,13 +693,13 @@ show_pairs(vertices, outside)
 
 ### Antall kandidater eksploderer
 
-Verkstedet har 10 par. Et problem med 50 variabler og 100 krav har mer enn $10^{40}$ mulige valg av aktive grenser. Å løse alle systemene er derfor ingen brukbar metode.
+Verkstedet har 10 kandidater, og det er lett å gå gjennom dem. Men antallet vokser enormt med antall produkter og krav. Et problem med 50 produkter og 100 krav har mer enn $10^{40}$ kandidater. Å løse alle likningssettene er derfor ingen brukbar metode. Eieren trenger en metode som slipper å se på dem alle.
 
 ::: {.reading-step title="Gå i dybden: hvor mange kandidater finnes det?"}
 
 Slik teller vi mulige valg av aktive grenser:
 
-1. **Velg antall grenser:** Med $n$ variabler bestemmes et hjørne av $n$ aktive grenser, altså et $n\times n$-system. Med $m$ ressurskrav og $n$ fortegnskrav velger vi $n$ av $m+n$ grenser.
+1. **Velg antall grenser:** Med $n$ variabler bestemmes et hjørne av $n$ aktive grenser, altså et lineært likningssett med $n$ likninger og $n$ ukjente. Med $m$ ressurskrav og $n$ fortegnskrav velger vi $n$ av $m+n$ grenser.
 2. **Tell ordnede valg:** Den første grensen kan velges på $m+n$ måter, den neste på $m+n-1$ måter, og så videre ned til $m+1$ måter for den $n$-te.
 3. **Fjern gjentakelsene:** Rekkefølgen spiller ingen rolle, og de $n$ valgte grensene kan ordnes på $n!$ måter. Antall valg er derfor binomialkoeffisienten
 
@@ -641,7 +711,7 @@ $$\binom{m+n}{n}=\frac{(m+n)(m+n-1)\cdots(m+1)}{n!}=\frac{(m+n)!}{n!\,m!}.$$
 | $n=10$ og $m=20$ | $\binom{30}{10}\approx3.0\cdot10^7$ |
 | $n=50$ og $m=100$ | $\binom{150}{50}\approx2.0\cdot10^{40}$ |
 
-Selv med en milliard løste systemer per sekund tar det siste tilfellet uoverkommelig lang tid:
+Selv med en milliard løste likningssett per sekund tar det siste tilfellet uoverkommelig lang tid:
 
 1. **Sekunder:** Omtrent $2.0\cdot10^{40}/10^9=2.0\cdot10^{31}$ sekunder.
 2. **År:** Et år er omtrent $3.2\cdot10^7$ sekunder, så det blir omtrent $6\cdot10^{23}$ år.
@@ -650,7 +720,9 @@ Selv med en milliard løste systemer per sekund tar det siste tilfellet uoverkom
 
 ### Simpleksmetoden går langs kantene
 
-Heldigvis trenger vi ikke å løse alle systemene. **Simpleksmetoden** starter i et hjørne og går hele tiden til et nabohjørne med bedre verdi. To nabohjørner deler én aktiv grense, så et steg bytter ut **én** rad i $2\times2$-systemet. I verkstedet kan en slik bane se slik ut:
+Heldigvis trenger vi ikke å regne på alle kandidatene. Tenk deg at du står i et hjørne og spør: finnes det et nabohjørne som gir mer? Hvis ja, gå dit. Hvis nei, stopp. Dette er ideen i **simpleksmetoden**, den klassiske metoden for lineær programmering.
+
+To nabohjørner ligger i hver sin ende av én kant, og de deler én aktiv grense. Et steg bytter derfor ut én av de to likningene i likningssettet. I verkstedet kan en slik bane se slik ut:
 
 | Hjørne | Aktive grenser | $P$ |
 |:--|:--|--:|
@@ -659,7 +731,7 @@ Heldigvis trenger vi ikke å løse alle systemene. **Simpleksmetoden** starter i
 | $(4,1)$ | A-grense, maskintimer | 24 |
 | $(3,3)$ | maskintimer, arbeidstimer | 27 |
 
-**Hvordan ser banen ut i området?** Cellen tegner de fire hjørnene fra tabellen som en bane. Legg merke til at hvert steg følger en kant, altså én grenselinje som er aktiv både før og etter steget.
+**Hvordan ser banen ut i området?** Cellen tegner de fire hjørnene fra tabellen som en bane. Legg merke til at hvert steg følger en kant, altså én grenselinje som er aktiv både før og etter steget. Målet er å se at metoden går langs kantene og aldri hopper rundt.
 
 ```{pyodide-python}
 #| label: week11-simplex-path
@@ -667,10 +739,13 @@ Heldigvis trenger vi ikke å løse alle systemene. **Simpleksmetoden** starter i
 show_region(corners, path=[(0, 0), (4, 0), (4, 1), (3, 3)], best=(3, 3), title="Simpleksbanen")
 ```
 
-- **Stoppunktet:** I $(3,3)$ er begge nabohjørnene dårligere: $(4,1)$ gir 24 og $(0,9/2)$ gir 18. Metoden stopper, og stoppregelen fra [Hvorfor ligger optimum i et hjørne?](#uke11-hvorfor) sier at et hjørne uten bedre nabo er globalt best.
-- **Arbeidet underveis:** Banen besøkte fire av de ti kandidatene og løste aldri de singulære systemene eller systemene med løsninger utenfor området.
+**Hva viser banen?**
 
-**Indrepunktmetoder** går i stedet gjennom det indre av området mot optimum. Begge typene metoder finnes i HiGHS, løseren som `linprog` bruker.
+- **Stoppunktet:** I $(3,3)$ er begge nabohjørnene dårligere: $(4,1)$ gir 24 og $(0,9/2)$ gir 18. Metoden stopper, og stoppregelen fra [Hvorfor ligger optimum i et hjørne?](#uke11-hvorfor) sier at et hjørne uten bedre nabo er best av alle.
+- **Arbeidet underveis:** Banen besøkte fire av de ti kandidatene. Den løste aldri de singulære likningssettene (parallelle linjer) eller likningssettene med løsninger utenfor området.
+- **Andre metoder:** Bare til orientering: **indrepunktmetoder** går i stedet gjennom innsiden av området mot optimum. Begge typene metoder finnes i HiGHS, løseren som `linprog` bruker.
+
+**Svaret til eieren:** Eieren slipper å sjekke alle kandidatene. Det holder å gå fra hjørne til hjørne til ingen nabo er bedre.
 
 ## 11.2 Finn planen med `linprog`
 
@@ -681,7 +756,9 @@ show_region(corners, path=[(0, 0), (4, 0), (4, 1), (3, 3)], best=(3, 3), title="
 
 Til nå har vi funnet den beste planen ved å tegne området og regne ut $P$ i fem hjørner. Det går med to produkter. Med tjue produkter kan vi ikke tegne, og antallet hjørner blir enormt. Vi trenger en løser som går langs kantene for oss, slik simpleksmetoden gjør.
 
-SciPy-funksjonen `linprog` er en slik løser. Selve metoden inne i `linprog` (HiGHS) får vi ferdig laget, men svaret kontrollerer vi selv. Løseren trenger de samme tallene som står i tabellene, samlet i vektorer og en matrise.
+Python-biblioteket SciPy har en slik løser: funksjonen `linprog` (navnet kommer av «lineær programmering»). Selve metoden inne i `linprog` (HiGHS) får vi ferdig laget, men svaret kontrollerer vi selv.
+
+Løseren trenger de samme tallene som står i tabellene i 11.1. Vi samler dem i vektorer og en matrise, som i [uke 3](uke3.qmd#uke3-stotte-matriser).
 
 - **Kolonnene** står i produktrekkefølgen A, B.
 - **Radene** står i kravrekkefølgen maskintimer, arbeidstimer, A-grense.
@@ -695,16 +772,18 @@ SciPy-funksjonen `linprog` er en slik løser. Selve metoden inne i `linprog` (Hi
 
 $$A=\begin{pmatrix}2&1\\1&2\\1&0\end{pmatrix},\qquad Az\le b.$$
 
+Rad $i$ i $A$ sier hvor mye ett parti av hvert produkt bruker av krav $i$, så $Az\le b$ er de tre kravene fra 11.1 skrevet kort.
+
 - **Målet:** SciPys `linprog` **minimerer**. For å maksimere $p^Tz$ sender vi derfor inn `-p`.
 - **Kravene:** Argumentene `A_ub`, `b_ub` angir radene $Az\le b$, mens `bounds=(0,None)` gir både $x$ og $y$ nedre grense null.
 
-Løseren svarer med en status, en plan og slakk i hver rad. Statusen sier om planen kan brukes, så sjekk den før du leser planen:
+Løseren svarer med en **status**, en plan og slakken i hver rad (hvor mye av hver kapasitet som blir til overs). Statusen er en kode som sier om løseren fant en brukbar plan, så sjekk den før du leser planen:
 
 | Status | Tolkning |
 |:--|:--|
-| 0 | Den fant et optimum. |
-| 2 | Ingen plan oppfyller kravene (**umulig**). |
-| 3 | Målet kan forbedres uten grense (**ubegrenset**). |
+| 0 | Den fant en beste plan (et optimum). |
+| 2 | Ingen plan oppfyller alle kravene (**umulig**), for eksempel hvis ett krav sier «minst 2» og et annet «høyst 1». |
+| 3 | Målet kan gjøres så stort vi vil, fordi ingenting stopper det (**ubegrenset**). |
 
 To små eksempler på de to siste statusene står i [11.6](#uke11-python).
 
@@ -737,22 +816,22 @@ if result.success:                       # x og fun finnes bare ved et optimum
 
 **Hva viser forsøket?**
 
-- **Opprinnelig bidrag:** Status 0 gir planen $(3,3)$, verdien 27 og slakken $(0,0,1)$, det samme som hjørnetabellen.
-- **Fortegn og avrunding:** `result.fun=-27` er minsteverdien av $-P$, funksjonen SciPy faktisk minimerte; derfor snur vi fortegnet. Flyttallsregning kan gi små avvik fra null.
+- **Opprinnelig bidrag:** Status 0 gir planen $(3,3)$, verdien 27 og slakken $(0,0,1)$, det samme som hjørnetabellen. Slakken sier at maskin- og arbeidstimene er brukt opp, og at kundene vil kjøpe ett A-parti til.
+- **Fortegn og avrunding:** `result.fun=-27` er minsteverdien av $-P$, funksjonen SciPy faktisk minimerte; derfor snur vi fortegnet. Flyttallsregning (se uke 1) kan gi små avvik fra null.
 - **Endret bidrag:** Med $p=(5,12)$ hopper planen til $(0,9/2)$ med verdi 54, fordi $c=12>10$, slik eksperiment 1 forutsa.
 
-Statusen sier bare noe om modellen vi skrev inn. Har vi skrevet et produksjonskrav feil, retter ikke løseren det.
+Løseren bekrefter tabellen: lag tre partier av hver og tjen 27 tusen kroner. Statusen sier bare noe om modellen vi skrev inn. Har vi skrevet et produksjonskrav feil, retter ikke løseren det.
 
 ::: {.reading-step title="Gå i dybden: skriv andre krav på samme form"}
 
-SciPy tar imot ulikheter på formen $Az\le b$. Et krav $x+y\ge2$ skrives derfor $-x-y\le-2$: både koeffisientene og høyresiden skifter fortegn. Likninger kan gis direkte med `A_eq` og `b_eq`.
+SciPy tar imot krav på formen «bruk $\le$ kapasitet», altså $Az\le b$. Et krav som sier «minst», for eksempel $x+y\ge2$ (minst to partier til sammen), skrives derfor $-x-y\le-2$: både tallene foran variablene og høyresiden skifter fortegn. Likninger kan gis direkte med `A_eq` og `b_eq`.
 
-En **fri variabel** kan være både positiv og negativ. Hvis $y$ er fri, kan vi skrive $y=y_+-y_-$ med $y_+,y_-\ge0$.
+En **fri variabel** er et tall som kan være både positivt og negativt (antall partier kan ikke være negativt, men for eksempel en endring kan). Hvis $y$ er fri, kan vi skrive $y=y_+-y_-$ med $y_+,y_-\ge0$.
 
 - **Eksempel:** $y=-3$ representeres av $y_+=0$, $y_-=3$. Kravet over blir da $-x-y_++y_-\le-2$.
 - **To valg i modellen:** Med denne omskrivingen kan vi bruke bare ikke-negative variabler. Alternativt kan vi gi $y$ grensene `(None, None)` direkte i `linprog`.
 
-En **slakkvariabel** gjør ubrukt kapasitet til en egen variabel: $2x+y\le9$ er det samme som $2x+y+s=9$ med $s\ge0$.
+En **slakkvariabel** gjør ubrukt kapasitet til et eget tall: $2x+y\le9$ er det samme som $2x+y+s=9$ med $s\ge0$. Her er $s$ antall maskintimer som blir til overs.
 
 - **Eksempler:** Ved planen $(4,1)$ er $s=0$; ved $(3,2)$ er $s=1$.
 - **Standardform:** Å samle alle krav i én slik avtalt form kalles å skrive problemet på **standardform**. Lærebøker og programmer bruker ulike former, noen med ulikheter og noen med likninger; si derfor alltid hvilken form du bruker.
@@ -768,17 +847,19 @@ En **slakkvariabel** gjør ubrukt kapasitet til en egen variabel: $2x+y\le9$ er 
 
 ### Prøv to prisforslag
 
-Både hjørnetabellen og løseren gir 27. For å være sikre på at ingen plan vi har oversett, er bedre, lager vi en øvre grense som gjelder *hver* tillatte plan.
+Både hjørnetabellen og løseren sier at $(3,3)$ gir 27 tusen kroner. Men hvordan kan eieren være sikker på at ingen plan vi har oversett, er bedre? Her lager vi et bevis som eieren kan kontrollere selv med noen få multiplikasjoner. Beviset er en **øvre grense**: et tall som ingen tillatt plan kan komme over. Hvis en plan når akkurat dette tallet, finnes det ingen bedre.
 
-- **Sett priser:** Sett en tenkt pris på hver ressurs, målt i tusen kroner per enhet: $u$ per maskintime, $v$ per arbeidstime og $w$ per tillatt A-parti.
-- **Sammenlign innsats og bidrag:** Hvis ressursene som går med til ett parti, til sammen koster minst like mye som partiets bidrag, kan ingen plan tjene mer enn det hele kapasiteten er verdt.
+Ideen er å sette en tenkt pris på hver ressurs, en **ressurspris**. Prisen måles i tusen kroner per enhet. Vi prøver oss fram; i 11.4 ser vi at de beste prisene faktisk sier hva én enhet mer er verdt:
 
-Prøv to forslag $(u,v,w)$:
+- **Sett priser:** $u$ per maskintime, $v$ per arbeidstime og $w$ per A-parti kundene vil kjøpe.
+- **Sammenlign innsatspris og bidrag:** Ett parti bruker noen timer. Regnet i disse prisene er timene verdt en viss sum, som vi kaller **innsatsprisen** til partiet. Hvis innsatsprisen til hvert produkt er minst like stor som dekningsbidraget, kan ingen plan tjene mer enn alt verkstedet har, regnet i de samme prisene.
+
+Ett parti A bruker 2 maskintimer, 1 arbeidstime og ett av de fire A-partiene kundene vil kjøpe, så innsatsprisen er $2u+v+w$. Ett parti B bruker 1 maskintime og 2 arbeidstimer, så innsatsprisen er $u+2v$. Alt verkstedet har, er verdt $9u+9v+4w$ til sammen. Prøv to forslag $(u,v,w)$:
 
 | Beregning | Forslag $(3,1,0)$ | Forslag $(2,1,0)$ |
 |:--|--:|--:|
-| Innsats per A-parti $2u+v+w$ | 7 | 5 |
-| Innsats per B-parti $u+2v$ | 5 | 4 |
+| Innsatspris per A-parti $2u+v+w$ | 7 | 5 |
+| Innsatspris per B-parti $u+2v$ | 5 | 4 |
 | Dekker bidragene 5 og 4? | ja | ja |
 | Kapasitetens verdi $9u+9v+4w$ | 36 | 27 |
 
@@ -789,19 +870,21 @@ $$3(2x+y)+(x+2y)=7x+5y\le3\cdot9+9=36.$$
 Siden $x,y\ge0$, er $5x+4y\le7x+5y$, så også $5x+4y\le36$.
 
 - **Gyldig grense:** Ingen tillatt plan kommer over 36.
-- **Løs grense:** Innsatsprisene 7 og 5 er større enn bidragene 5 og 4, og det overskuddet går tapt i ulikheten.
+- **Løs grense:** Innsatsprisene 7 og 5 er større enn bidragene 5 og 4, og det overskuddet går tapt i ulikheten. Grensen 36 ligger langt over det beste verkstedet kan tjene.
 
 For det andre forslaget ganger vi maskintimekravet med 2 og arbeidstimekravet med 1:
 
 $$2(2x+y)+(x+2y)=5x+4y\le2\cdot9+9=27.$$
 
 - **Innsatspris lik bidrag:** Her er innsatsprisene nøyaktig lik bidragene, så ingenting går tapt.
-- **Beviset:** Ingen tillatt plan kan gi mer enn 27, mens $(3,3)$ gir 27. Vi har et **optimalitetssertifikat** uten å måtte undersøke flere punkter.
-- **Ubrukt A-kapasitet:** Prisen på A-grensen er null, og grensen har ett ubrukt parti: å øke bare denne grensen litt hjelper ikke nå.
+- **Beviset:** Ingen tillatt plan kan gi mer enn 27, mens $(3,3)$ gir 27. Vi har et **optimalitetssertifikat**: et bevis for at planen er best, som vi kan kontrollere uten å undersøke flere planer.
+- **Ubrukt A-kapasitet:** Prisen på A-grensen er null. Det er rimelig: kundene vil kjøpe ett A-parti mer enn verkstedet lager, så flere kunder til A ville ikke gitt mer. Å øke bare denne grensen litt hjelper ikke nå.
+
+**Svaret til eieren:** Prisene $(2,1,0)$ beviser at 27 tusen kroner er det mest verkstedet kan tjene. Planen $(3,3)$ er best.
 
 ### Fra prisforslag til et nytt optimeringsproblem
 
-Nå gjør vi jakten på gode priser til et eget optimeringsproblem. Vi krever at alle tre prisene er ikke-negative. Innsatsen må koste **minst** bidraget per parti, ellers kan prisregningen ikke avgrense bidraget:
+Nå spør vi: hvilke priser gir det beste beviset? Det beste beviset er den laveste øvre grensen, så jakten på gode priser er et eget optimeringsproblem. Vi krever at alle tre prisene er ikke-negative. Innsatsprisen må være **minst** bidraget per parti, ellers kan prisregningen ikke avgrense bidraget:
 
 | Prisregel | Ressurser per parti × pris | Krav |
 |:--|:--|:--|
@@ -813,7 +896,7 @@ For hver tillatt plan og hvert gyldig prisvalg får vi den vektede ulikheten
 
 $$5x+4y\le(2u+v+w)x+(u+2v)y\le9u+9v+4w.$$
 
-Regningen er den samme som for de to forslagene over:
+Les ulikheten fra venstre: bidraget er høyst innsatsprisen, og innsatsprisen er høyst verdien av alt verkstedet har. Regningen er den samme som for de to forslagene over:
 
 1. Gang hvert krav med sin ikke-negative pris, legg sammen, og bruk at innsatsprisene er minst like store som bidragene.
 2. Planen $(3,3)$ gir $5\cdot3+4\cdot3=27$, og prisene $(2,1,0)$ gir $9\cdot2+9\cdot1+4\cdot0=27$.
@@ -828,20 +911,26 @@ Vi går gjennom de to ulikhetene i den vektede ulikheten, én om gangen.
 
    Bruk så kapasitetene: $(2x+y)u+(x+2y)v+xw\le9u+9v+4w$. Her kan vi gange kravene med prisene uten å snu ulikhetene, fordi $u,v,w\ge0$.
 
-Steg 1 bruker at $x,y\ge0$, og steg 2 bruker at $u,v,w\ge0$. Med negative tall ville en av ulikhetene snudd. Boksen *andre fortegn i primalen* lenger ned viser hva som skjer med prisene når kravene har andre fortegn.
+Steg 1 bruker at $x,y\ge0$, og steg 2 bruker at $u,v,w\ge0$. Med negative tall ville en av ulikhetene snudd. Boksen *andre fortegn i primalen* (produksjonsproblemet) lenger ned viser hva som skjer med prisene når kravene har andre fortegn.
 
 :::
 
-| Begrep | Betydning |
-|:--|:--|
-| **Primalen** | Produksjonsproblemet. |
-| **Dualen** | Prisproblemet: å velge gyldige priser som gir lavest mulig øvre grense. Prisene $u,v,w$ kalles også **dualvariabler**. |
-| **Svak dualitet** | Verdien til enhver tillatt plan er høyst grensen fra ethvert gyldig prisvalg. |
-| **Optimalitetssertifikat** | En plan som når prisgrensen, sammen med prisene. |
+Vi har nå to problemer som hører sammen: å finne planen med størst bidrag, og å finne prisene som gir den laveste grensen. I lærebøker heter de **primalen** (produksjonsproblemet) og **dualen** (prisproblemet), og prisene kalles dualvariabler. Navnene og matriseformen står i *Gå i dybden* under.
 
 Det er samme idé som tangentgrensen i [uke 8](uke8.qmd#uke8-tangent): én ulikhet som gjelder alle tillatte punkter, og et punkt som oppfyller den med likhet, er bevist best.
 
-Med vektorer og en matrise kan et slikt maksimeringsproblem skrives kompakt som
+::: {.reading-step title="Gå i dybden: primal og dual i lærebøkenes språk"}
+
+Slik heter de to problemene og de viktigste begrepene i lærebøker og programmer:
+
+| Begrep | Betydning |
+|:--|:--|
+| **Primalen** | Produksjonsproblemet: finn planen med størst bidrag. |
+| **Dualen** | Prisproblemet: velg gyldige priser som gir lavest mulig øvre grense. Prisene $u,v,w$ kalles også **dualvariabler**, eller ressurspriser. |
+| **Svak dualitet** | Verdien til enhver tillatt plan er høyst grensen fra ethvert gyldig prisvalg. (Den sier bare «høyst», derfor «svak».) |
+| **Optimalitetssertifikat** | En plan som når prisgrensen, sammen med prisene. |
+
+Lærebøker skriver det samme kort med vektorer og en matrise. Det er bare en annen skrivemåte for det vi allerede har gjort. Produksjonsproblemet skrives
 
 $$\max_{z\ge0}p^Tz\quad\text{slik at }Az\le b.$$
 
@@ -849,26 +938,28 @@ Hver rad i $A$ får én ikke-negativ pris i $q$; her er $q=(u,v,w)$ i rekkefølg
 
 $$A^Tq=\begin{pmatrix}2&1&1\\1&2&0\end{pmatrix}\begin{pmatrix}u\\v\\w\end{pmatrix}=\begin{pmatrix}2u+v+w\\u+2v\end{pmatrix},$$
 
-nøyaktig de to innsatsprisene i tabellen. Den samme vektede ulikheten gir dualproblemet
+nøyaktig de to innsatsprisene i tabellen. Den samme vektede ulikheten gir prisproblemet (dualproblemet):
 
 $$\min_{q\ge0}b^Tq\quad\text{slik at }A^Tq\ge p.$$
 
 For enhver tillatt plan $z$ og ethvert gyldig prisvalg $q$ gjelder den svake dualiteten $p^Tz\le b^Tq$.
 
-Når begge LP-ene har tillatte løsninger og et endelig optimum, er de beste verdiene like (**sterk dualitet**). Vårt talleksempel trenger ikke denne generelle setningen: vi har allerede funnet en tillatt plan og et gyldig prisvalg med samme verdi.
+Når både produksjonsproblemet og prisproblemet har tillatte løsninger og et endelig optimum, er de beste verdiene like (**sterk dualitet**). Vårt talleksempel trenger ikke denne generelle setningen: vi har allerede funnet en tillatt plan og et gyldig prisvalg med samme verdi.
+
+:::
 
 ### Komplementær slakk: finn prisene fra planen
 
 ::: {#uke11-slakk}
 :::
 
-Prisene $(2,1,0)$ falt ikke ned fra himmelen. Vi kan *finne* dem fra planen. Først ser vi hvor gapet mellom prisgrensen og bidraget i en plan kommer fra.
+Prisene $(2,1,0)$ falt ikke ned fra himmelen. Eieren kan *finne* dem ut fra planen. Først ser vi hvor gapet mellom prisgrensen og planens bidrag kommer fra. Er gapet null, er planen bevist best.
 
 ::: {.callout-note title="Håndeksempel: hvor kommer gapet fra?"}
 
 **Utgangspunkt.** Planen $(3,3)$ gir 27, og prisforslaget $(3,1,0)$ gir grensen 36. Gapet er $36-27=9$.
 
-**Prøv selv.** Regn ut slakken i hver rad og overskuddet i innsatsprisen for hvert produkt.
+**Prøv selv.** Regn ut slakken (ubrukt kapasitet) i hver rad, og hvor mye innsatsprisen ligger over bidraget for hvert produkt.
 
 **Regnegangen.**
 
@@ -879,11 +970,11 @@ Prisene $(2,1,0)$ falt ikke ned fra himmelen. Vi kan *finne* dem fra planen. Fø
    - Mengde ganger overskudd: $3\cdot2+3\cdot1=9$.
 3. Summen er $0+9=9$, nøyaktig gapet.
 
-**Dette tar vi med oss.** Gapet er en sum av ledd av typen «pris × slakk» og «mengde × overskudd». For en tillatt plan og gyldige priser er hvert ledd $\ge0$. Gapet er null bare når hvert ledd er null.
+**Dette tar vi med oss.** Gapet er en sum av ledd av typen «pris × slakk» og «mengde × overskudd» (overskudd er hvor mye innsatsprisen ligger over bidraget). For en tillatt plan og gyldige priser er hvert ledd $\ge0$. Gapet er null bare når hvert ledd er null.
 
 :::
 
-Det samme gjelder for alle planer og alle priser:
+Regnemåten fra håndeksemplet gjelder for alle planer og alle priser. Gapet mellom prisgrensen og planens bidrag er summen av fem ledd, ett for hver ressurs og ett for hvert produkt:
 
 $$9u+9v+4w-(5x+4y)=u(9-2x-y)+v(9-x-2y)+w(4-x)+x(2u+v+w-5)+y(u+2v-4).$$
 
@@ -891,7 +982,7 @@ Med vektorene fra 11.2 er dette det samme som
 
 $$b^Tq-p^Tz=\underbrace{q^T(b-Az)}_{\text{pris}\,\times\,\text{slakk}}+\underbrace{z^T(A^Tq-p)}_{\text{mengde}\,\times\,\text{overskudd i innsatspris}}\ge0.$$
 
-Grunnen er at alle de blandede leddene, som $2xu$ og $yu$, forsvinner når du ganger ut høyresiden. Regningen står i *Gå i dybden* rett under.
+**Slik leser du likningen:** Gapet består av tre ledd «pris × ubrukt kapasitet» (ett per ressurs) og to ledd «mengde × overskudd» (ett per produkt). For en tillatt plan og gyldige priser er ingen av dem negative. Likningen stemmer fordi alle de blandede leddene, som $2xu$ og $yu$, forsvinner når du ganger ut høyresiden. Regningen står i *Gå i dybden* rett under.
 
 ::: {.reading-step title="Gå i dybden: hvorfor gjelder gap-likningen for alle planer og priser?"}
 
@@ -1053,29 +1144,31 @@ board.create('text', [xl, row(4), function () {
 - **Null gap:** Gapet blir null bare med prisene $(2,1,0)$ og planen $(3,3)$. Da forsvinner alle fem feltene, og den røde og den oransje linjen faller sammen i $(3,3)$.
 - **Ugyldige priser:** Med $(1,1,0)$ er innsatsprisene 3 og 3, mindre enn bidragene 5 og 4. Grensen blir 18, og hjørnene $(4,0)$, $(4,1)$ og $(3,3)$ gir mer enn 18. Et felt i søylen blir rødt: «grensen» er ingen grense.
 
-Når gapet er null, må hvert enkelt ledd være null. Dette kalles **komplementær slakk**:
+Når gapet er null, må hvert enkelt ledd være null, for ingen av dem kan være negative. Det gir en regel som kalles **komplementær slakk**. I verkstedets ord:
 
-- en ressurs med positiv pris har null slakk; en ressurs med slakk har pris null,
-- et produkt som lages i positiv mengde, har innsatspris lik bidraget; et produkt med innsatspris større enn bidraget lages ikke.
+- **Ressurser:** Er en ressurs ikke brukt opp (den har slakk), er den ikke verdt noe, så prisen er null. Har den positiv pris, er den brukt helt opp (null slakk).
+- **Produkter:** Lages et produkt, er innsatsprisen lik bidraget: produktet tjener akkurat inn ressursene det bruker. Er innsatsprisen større enn bidraget, lønner det seg ikke å lage produktet, og mengden er null.
 
-Bruk regelen på planen $(3,3)$. Vi *antar* at $(3,3)$ er optimal og at det finnes priser med samme verdi. Regelen gir da én kandidat; steg 3 kontrollerer at kandidaten faktisk er et gyldig prisvalg.
+Regelen lar oss finne prisene når vi kjenner planen. Bruk den på planen $(3,3)$. Vi *antar* at $(3,3)$ er optimal og at det finnes priser med samme verdi. Regelen gir da ett prisforslag; steg 3 kontrollerer at forslaget faktisk er et gyldig prisvalg.
 
-1. A-grensen har slakk $4-3=1$. Da må $w\cdot1=0$, altså $w=0$.
-2. **Finn de to andre prisene:** Både $x=3$ og $y=3$ er positive. Derfor må $2u+v+w=5$ og $u+2v=4$.
+1. **A-grensen:** Den har slakk $4-3=1$ (kundene vil kjøpe ett A-parti til). Da må $w\cdot1=0$, altså $w=0$.
+2. **De to andre prisene:** Både $x=3$ og $y=3$ er positive, så begge produktene lages. Da må innsatsprisen være lik bidraget for begge: $2u+v+w=5$ og $u+2v=4$.
    - Med $w=0$ gir den første likningen $v=5-2u$.
    - Sett inn i den andre: $u+2(5-2u)=4$, så $10-3u=4$ og $u=2$.
    - Dermed er $v=1$.
 3. Kontroller at prisene er gyldige: $u,v,w\ge0$, $2u+v+w=5\ge5$ og $u+2v=4\ge4$. Grensen blir $9u+9v+4w=27$, lik planens bidrag, så både plan og priser er optimale.
 
-Likningene i steg 2 kan skrives som én vektorlikning:
+**Svaret til eieren:** En maskintime er verdt 2 tusen kroner, en arbeidstime 1 tusen kroner, og ett A-parti mer i salget er ikke verdt noe.
+
+Likningene i steg 2 kan også leses som en tegning. Skrevet som én vektorlikning blir de
 
 $$u\begin{pmatrix}2\\1\end{pmatrix}+v\begin{pmatrix}1\\2\end{pmatrix}=\begin{pmatrix}5\\4\end{pmatrix}.$$
 
-- **Venstresiden:** Radene til de to aktive grensene, altså normalvektorene til linjene som møtes i $(3,3)$.
-- **Høyresiden:** Gradienten til $P$.
+- **Venstresiden:** Radene til de to aktive grensene, altså pilene som står vinkelrett ut fra grenselinjene som møtes i $(3,3)$ (kalt **normalvektorer**), hver ganget med sin pris.
+- **Høyresiden:** Gradienten til $P$, altså pilen $(5,4)$ som peker i retningen der dekningsbidraget vokser raskest.
 - **Kobling til uke 8:** Bildet svarer også på spørsmålet fra [uke 8](uke8.qmd#uke8-kompakt): i et optimum på randen trenger ikke gradienten være null. I et maksimum er den en ikke-negativ kombinasjon av normalene til de aktive grensene; i et minimum, som i uke 8, gjelder det samme for $-\nabla f$.
 
-**Bygger prisene målretningen av normalene til de aktive grensene?** Cellen regner ut $2\cdot(2,1)+1\cdot(1,2)$ og tegner de to vektede normalene etter hverandre fra hjørnet, sammen med gradienten.
+**Setter prisene sammen gradienten $(5,4)$ av normalene til de aktive grensene?** Det vil si: gir pilene, hver ganget med sin pris og lagt etter hverandre, pilen $(5,4)$? Cellen regner ut $2\cdot(2,1)+1\cdot(1,2)$ og tegner de to vektede normalene etter hverandre fra hjørnet, sammen med gradienten.
 
 ```{pyodide-python}
 #| label: week11-normals
@@ -1084,25 +1177,25 @@ print(2*np.array([2, 1]) + 1*np.array([1, 2]))
 show_price_arrows(at=(3, 3), normals=[(2, 1), (1, 2)], prices=[2, 1], gradient=(5, 4))
 ```
 
-Summen er $(5,4)$, og pilene ender i samme punkt som gradienten.
+**Hva viser pilene?** Summen er $(5,4)$, og pilene ender i samme punkt som gradienten.
 
-- **Tolkning av prisene:** **Prisene er vektene som bygger målretningen av normalene til de aktive grensene.** Den inaktive A-grensen er ikke med i summen; den har pris null.
-- **Videre til krumme grenser:** I [uke 12](uke12.qmd#uke12-lagrange) ser vi samme bilde for krumme grenser: gradienten til målet er en kombinasjon av gradientene til bibetingelsene, og vektene er Lagrangemultiplikatorene, med motsatt fortegn fordi uke 12 skriver $\nabla f+\lambda\nabla h=0$.
+- **Tolkning av prisene:** **Prisene er vektene som setter sammen gradienten av normalene til de aktive grensene.** Den inaktive A-grensen er ikke med i summen; den har pris null.
+- **Videre til krumme grenser:** I [uke 12](uke12.qmd#uke12-lagrange) ser vi samme bilde for krumme grenser: gradienten til målet er en kombinasjon av gradientene til kravene (bibetingelsene), og vektene er Lagrangemultiplikatorene, med motsatt fortegn fordi uke 12 skriver $\nabla f+\lambda\nabla h=0$.
 
-En aktiv grense kan likevel ha pris null, som vi ser ved $\Delta=3/2$ i 11.4.
+En aktiv grense kan likevel ha pris null (maskintimene er brukt opp, men en ekstra time er ikke verdt noe), som vi ser ved $\Delta=3/2$ i 11.4.
 
 ::: {.reading-step title="Gå i dybden: andre fortegn i primalen"}
 
 ::: {#uke11-fortegn}
 :::
 
-Hvis radene har andre ulikhetstegn, eller variablene har andre fortegnskrav, må også prisreglene endres. For et primalproblem som maksimeres:
+Vår modell har kravene «bruk $\le$ kapasitet» og «mengde $\ge0$». Hvis radene har andre ulikhetstegn, eller variablene har andre fortegnskrav, må også prisreglene endres. For et produksjonsproblem (primal) som maksimeres:
 
-| I primalen | I dualen |
+| I produksjonsproblemet (primalen) | I prisproblemet (dualen) |
 |:--|:--|
-| $\ge$-rad | Ikke-positiv dualvariabel |
-| Likningsrad | Fri dualvariabel |
-| Fri primalvariabel | Likhetskrav |
+| $\ge$-rad | Ikke-positiv pris (dualvariabel) |
+| Likningsrad | Fri pris (positiv eller negativ) |
+| Fri variabel | Likhetskrav |
 
 Den vektede ulikheten forklarer alle tre reglene: vi kan bare multiplisere en ulikhet med en pris uten å snu den når prisen har riktig fortegn. Vi går gjennom dem én for én.
 
@@ -1127,16 +1220,18 @@ I hovedmodellen bruker vi bare $Az\le b$ og $z\ge0$, så alle prisene er ikke-ne
 ::: {#uke11-sensitivitet}
 :::
 
-Prisene fra forrige del har også en praktisk tolkning: de sier hva mer kapasitet er verdt. En **lokal ressursverdi** er økningen i det beste bidraget **per ekstra enhet** av ressursen, når kapasiteten endres litt. Vi undersøker om verdien av en maskintime fortsatt er 2 tusen kroner når kapasiteten endres.
+Prisene fra forrige del svarer også på eierens andre spørsmål. En nabo tilbyr å leie ut maskinen sin noen timer. Hvis én ekstra maskintime gir verkstedet 2 tusen kroner mer i dekningsbidrag, bør eieren høyst betale 2 tusen kroner for den. Spørsmålet er om det gjelder bare noen få ekstra timer, eller også mange.
+
+Vi lar $\Delta$ (den greske bokstaven delta) være antall ekstra maskintimer verkstedet leier. Er $\Delta$ negativ, mister verkstedet timer. Hvor mye det beste bidraget øker per ekstra time, når kapasiteten bare endres litt, kaller vi **verdien av en ekstra time** (faglig: ressursverdi, se SciPy-oppslaget i 11.6). Vi undersøker om verdien av en maskintime fortsatt er 2 tusen kroner når kapasiteten endres.
 
 ### Når den gamle timeprisen fortsatt virker
 
-Hvor mye bør verkstedet betale for mer maskinkapasitet? Gi verkstedet $\Delta$ flere maskintimer.
+Anta at verkstedet leier $\Delta$ ekstra maskintimer, så maskinene har $9+\Delta$ timer.
 
-- **Prisgrensen:** De gamle prisene $(2,1,0)$ gir da øvre grense $2(9+\Delta)+9=27+2\Delta$.
-- **Kontrollspørsmålet:** Oppnår den beste planen ved $\Delta=1/2$ denne grensen?
+- **Prisgrensen:** Vi bruker de gamle prisene $(2,1,0)$ på nytt. Beviset fra 11.3 gir da den øvre grensen $2(9+\Delta)+9=27+2\Delta$.
+- **Kontrollspørsmålet:** Grensen er bare nyttig hvis en plan faktisk når den. Gjør den beste planen det ved $\Delta=1/2$, altså en halv ekstra maskintime?
 
-1. Sett begge timekrav lik kapasiteten: $2x+y=9+\tfrac12=\tfrac{19}{2}$ og $x+2y=9$.
+1. Anta at begge timegrensene fortsatt er brukt opp: $2x+y=9+\tfrac12=\tfrac{19}{2}$ og $x+2y=9$.
 2. Trekk den andre likningen fra den første: $x-y=\tfrac12$, så $x=y+\tfrac12$.
 3. **Finn produksjonsmengdene:** Sett inn i arbeidstimekravet: $(y+\tfrac12)+2y=9$.
    - Da er $3y=9-\tfrac12=\tfrac{17}{2}$ og $y=\tfrac{17}{6}$.
@@ -1144,11 +1239,19 @@ Hvor mye bør verkstedet betale for mer maskinkapasitet? Gi verkstedet $\Delta$ 
 4. Kontroller de andre kravene: $x=\tfrac{10}{3}\le4$ og $x,y\ge0$.
 5. **Sammenlign bidrag og grense:** Bidraget er $5\cdot\tfrac{10}{3}+4\cdot\tfrac{17}{6}=\tfrac{50}{3}+\tfrac{34}{3}=\tfrac{84}{3}=28$, lik prisgrensen $27+2\cdot\tfrac12=28$.
 
-   Den halve ekstra maskintimen øker det beste bidraget med 1 tusen kroner.
+   Den halve ekstra maskintimen øker det beste bidraget med 1 tusen kroner, altså 2 tusen per time. Den gamle prisen virker.
 
 ### Når en annen grense stopper produksjonen
 
-Kan vi fortsatt bruke prisen 2 per maskintime etter en større økning? Ved $\Delta=2$ øker maskinkapasiteten til 11:
+Kan eieren fortsatt regne med 2 tusen kroner per maskintime hvis verkstedet leier mange timer? Vi prøver $\Delta=2$, så verkstedet har 11 maskintimer. Regningen bruker de samme stegene som over og komplementær slakk fra 11.3; den står i *Gå i dybden* under. Her er resultatet:
+
+- **Ny beste plan:** $(4,5/2)$, altså fire partier A (alt kundene vil kjøpe) og to og et halvt parti B. Planen bruker all arbeidstid, men bare $21/2$ av de 11 maskintimene.
+- **Nytt bidrag:** 30 tusen kroner, ikke $27+2\cdot2=31$. De to ekstra timene ga bare 3 tusen kroner: 2 tusen for hver av de første halvannen timene, og ingenting for resten.
+- **Hvorfor:** Nå er det arbeidstimene og A-grensen som stopper produksjonen. Maskintimer som blir til overs, er ikke verdt noe, så prisen på en maskintime blir 0. De nye prisene er $(u,v,w)=(0,2,3)$.
+
+**Regelen:** En ressurspris gjelder så lenge de samme grensene er brukt opp (aktive). Byttet skjer når planen $(4,5/2)$ akkurat får nok maskintimer, ved $\Delta=\tfrac{21}{2}-9=\tfrac32$. Med mer enn halvannen ekstra maskintime er det ikke lenger maskintimene som er flaskehalsen: verdien av en ekstra maskintime er 2 tusen kroner før byttet og 0 etter.
+
+::: {.reading-step title="Gå i dybden: regningen for to ekstra maskintimer"}
 
 1. **Prøv timegrensene først:** $2x+y=11$ og $x+2y=9$ gir $x-y=2$, så $x=y+2$.
 
@@ -1156,8 +1259,8 @@ Kan vi fortsatt bruke prisen 2 per maskintime etter en større økning? Ved $\De
 2. **Bruk A-grensen i stedet:** Sett $x=4$ og bruk all arbeidstid: $4+2y=9$ gir $y=5/2$.
 
    Planen $(4,5/2)$ bruker $2\cdot4+5/2=21/2\le11$ maskintimer og gir $5\cdot4+4(5/2)=30$ tusen kr.
-3. **Finn nye priser:** Den gamle prisformelen gir øvre grense $27+2\cdot2=31$, som planen ikke når. Vi bruker komplementær slakk i planen $(4,5/2)$:
-   - Maskintimene har slakk $11-\tfrac{21}{2}=\tfrac12$, så $u=0$.
+3. **Finn nye priser:** Den gamle prisgrensen $27+2\Delta$ gir for $\Delta=2$ øvre grense $27+2\cdot2=31$, som planen ikke når, så beviset fra før virker ikke lenger. Vi finner nye priser med komplementær slakk i planen $(4,5/2)$, som i 11.3:
+   - Maskintimene har slakk (ubrukte timer) $11-\tfrac{21}{2}=\tfrac12$, så $u=0$.
    - Begge produktene lages, så $2u+v+w=5$ og $u+2v=4$.
    - Med $u=0$ gir den andre likningen $2v=4$, altså $v=2$, og den første gir $w=5-2=3$.
 4. Kontroller at prisene $(u,v,w)=(0,2,3)$ er gyldige: alle er $\ge0$, A prises til $2\cdot0+2+3=5\ge5$ og B til $0+2\cdot2=4\ge4$.
@@ -1168,16 +1271,16 @@ $$2(x+2y)+3x=2x+4y+3x=5x+4y\le2\cdot9+3\cdot4=30.$$
 
 Planen $(4,5/2)$ oppnår 30. Nå er det arbeidstimene og A-grensen som bestemmer beste verdi; ekstra maskintimer alene hjelper ikke.
 
-**Det aktive paret har byttet.**
+Disse prisene gir en ny øvre grense:
 
-- **Det nye hjørnet:** $(4,5/2)$ er skjæringspunktet mellom arbeidstimer og A-grense, det samme punktet som lå *utenfor* området i håndeksemplet i 11.1, fordi det trenger $21/2$ maskintimer.
-- **De nye prisene:** Med nok maskintimer er det paret arbeidstimer og A-grense som bestemmer hjørnet, og prisene $(0,2,3)$ hører til dette paret.
-- **Gyldigheten:** **En ressurspris gjelder så lenge det samme paret av grenser er aktivt.** Når paret bytter, må prisene regnes ut på nytt.
+$$2(x+2y)+3x=2x+4y+3x=5x+4y\le2\cdot9+3\cdot4=30.$$
 
-Paret bytter ved $\Delta=3/2$, der maskinkapasiteten er $21/2$.
+Planen $(4,5/2)$ oppnår 30, så den er best.
 
-- **Prisene er ikke entydige:** Der er både $(2,1,0)$ og $(0,2,3)$ optimale priser. En løser rapporterer bare ett av prisvalgene.
-- **Verdien på hver side:** Økningen i beste bidrag per ekstra maskintime er 2 til venstre og 0 til høyre.
+- **Det nye hjørnet:** $(4,5/2)$ er skjæringspunktet mellom arbeidstimer og A-grense, det samme punktet som lå *utenfor* området i hjørneregningen i 11.1, fordi det trenger $21/2$ maskintimer.
+- **Prisene er ikke entydige:** Ved $\Delta=\tfrac32$ er både $(2,1,0)$ og $(0,2,3)$ optimale priser. En løser rapporterer bare ett av prisvalgene.
+
+:::
 
 Figuren lar oss se *hvilken grense* som stopper forbedringen. Sammenlign hvor mållinjen berører det blå området i øverste panel (opprinnelig kapasitet) og nederste panel (to ekstra maskintimer). Begge panelene har samme akser.
 
@@ -1191,6 +1294,8 @@ after = dict(corners=[[0, 0], [4, 0], [4, 2.5], [0, 4.5]], best=(4, 2.5), levels
 compare_regions(before, after)
 ```
 
+**Hva viser figuren?**
+
 | Panel | Hvor mållinjen berører området |
 |:--|:--|
 | Øverst | $P=27$ berører $(3,3)$, der maskin- og arbeidslinjen møtes. |
@@ -1203,9 +1308,9 @@ Vi har regnet ut to tilfeller for hånd:
 - Ved $\Delta=1/2$ ga den gamle timeprisen 2 riktig svar.
 - Ved $\Delta=2$ gjorde den ikke det, fordi A-grensen tok over.
 
-Hva som skjer mellom og utenfor disse verdiene, vet vi foreløpig ikke. Vi kunne regnet flere tilfeller for hånd, men hver ny $\Delta$ krever det samme likningssystemet og den samme kontrollen av de andre kravene.
+Hva som skjer mellom og utenfor disse verdiene, vet vi foreløpig ikke. Vi kunne regnet flere tilfeller for hånd, men hver ny $\Delta$ krever det samme likningssettet og den samme kontrollen av de andre kravene.
 
-Nå lar vi `linprog` gjøre jobben for 81 verdier av $\Delta$ mellom $-4$ og $4$.
+Nå lar vi `linprog` gjøre jobben for 81 verdier av $\Delta$ mellom $-4$ og $4$ (negative verdier betyr at verkstedet mister maskintimer).
 
 - **Størrelsen vi følger:** La $P_*(\Delta)$ være det største mulige dekningsbidraget med maskinkapasitet $9+\Delta$.
 - **Det du får ferdig:** Løkken endrer bare første kapasitet, løser og lagrer $P_*(\Delta)$. En ferdig hjelpefunksjon tegner kurven sammen med den gamle prisgrensen $27+2\Delta$.
@@ -1215,7 +1320,7 @@ Målet er å se hvor prisen 2 gjelder, og å finne punktet der den slutter å gj
 ### Eksperiment 3 – hva er $\Delta$ ekstra maskintimer verdt?
 
 - Forutsi: hvor følger kurven den stiplede linjen, og hvor knekker den?
-- Kjør cellen. Les av stigningstallet før og etter knekken, og sammenlign med regningene ved $\Delta=1/2$ og $\Delta=2$.
+- Kjør cellen. Les av stigningstallet (hvor bratt kurven går, altså tusen kroner per ekstra time) før og etter knekken, og sammenlign med regningene ved $\Delta=1/2$ og $\Delta=2$.
 - Hjemme, hvis du har tid: bytt til arbeidstimene ved å endre den andre kodelinjen til `row, price, kink = 1, 1, None`. Hvilket stigningstall får du, og hvor knekker kurven nå?
 
 Cellen definerer verkstedet på nytt, i tilfelle du endret `p` i eksperiment 2. Slik er forsøket lagt opp:
@@ -1248,14 +1353,16 @@ print("SciPy-marginaler ved Δ = 0:", base.ineqlin.marginals + 0)
 
 **Hva viser forsøket?**
 
-- **Maskintimene:** Kurven har stigningstall 2 fram til $\Delta=3/2$ og er flat etterpå. Bidragene ved $\Delta=0,1/2,2$ er $27,28,30$, mens den gamle prisformelen gir $27,28,31$.
+- **Maskintimene:** Kurven har stigningstall 2 fram til $\Delta=3/2$ og er flat etterpå. Bidragene ved $\Delta=0,1/2,2$ er $27,28,30$, mens den gamle prisgrensen $27+2\Delta$ gir $27,28,31$.
 - **Hovedpoenget:** **Stigningstallet er ressursprisen, og knekken kommer der det aktive paret bytter.** For større endringer må vi sjekke om en plan fortsatt kan oppnå prisgrensen.
-- **SciPys fortegn:** `ineqlin.marginals` er den *lokale* endringen i minimeringsverdien når en høyreside økes. SciPy minimerer $-P$, så marginalene $(-2,-1,0)$ gir de lokale verdiene $(2,1,0)$ for ekstra maskintime, arbeidstime og høyere A-grense.
-- **Arbeidstimene:** Stigningstallet er 1 for $\Delta\ge-3$ og 2 for lavere verdier; knekken kommer der A-grensen blir aktiv.
+- **SciPys tall:** SciPy gir ett tall per rad i `ineqlin.marginals`: hvor mye *SciPys minsteverdi* (av $-P$) endres per ekstra enhet kapasitet, helt nær startmodellen (lokalt). Fordi SciPy minimerer $-P$, har tallene motsatt fortegn av ressursprisene: marginalene $(-2,-1,0)$ betyr at en ekstra maskintime er verdt 2, en ekstra arbeidstime 1 og en høyere A-grense 0 tusen kroner.
+- **Arbeidstimene:** Hvis vi endrer arbeidstimene i stedet (som i hjemmeoppgaven), er stigningstallet 1 for $\Delta\ge-3$ og 2 for lavere verdier. Knekken kommer der A-grensen blir aktiv.
+
+**Svaret til eieren:** Eieren bør betale høyst 2 tusen kroner per ekstra maskintime, men bare for den første halvannen timen. Etter det er flere maskintimer ikke verdt noe.
 
 ::: {.reading-step title="Gå i dybden: hvor lenge er prisformelen eksakt?"}
 
-For å finne hele intervallet der den gamle prisen gir riktig *optimalverdi*, lar vi $\Delta$ være en endring i maskinkapasiteten: positiv $\Delta$ betyr flere timer, negativ $\Delta$ betyr færre. Den nye kapasiteten er $9+\Delta$.
+For å finne hele intervallet der den gamle prisen gir riktig *beste verdi*, lar vi $\Delta$ være en endring i maskinkapasiteten: positiv $\Delta$ betyr flere timer, negativ $\Delta$ betyr færre. Den nye kapasiteten er $9+\Delta$.
 
 1. **Hold begge timegrensene aktive:** $2x+y=9+\Delta$ og $x+2y=9$.
    - Trekk den andre fra den første: $x-y=\Delta$, så $x=y+\Delta$.
@@ -1285,9 +1392,9 @@ Ved $\Delta=3/2$ blir punktet $(4,5/2)$ tillatt, og der er alle tre grensene akt
 
 ::: {.reading-step title="Gå i dybden: hva om partiene må være hele?"}
 
-Hvis partier må være hele, består det tillatte området bare av heltallspunktene i mangekanten.
+I 11.1 lot vi verkstedet lage deler av et parti. Hvis partier må være hele, består det tillatte området bare av heltallspunktene i mangekanten.
 
-- **Relaksasjon:** Den delbare modellen kalles en **relaksasjon**: den tillater flere planer, så dens beste verdi blir minst like stor som heltallsmodellens.
+- **Relaksasjon:** Modellen med delbare partier kalles en **relaksasjon** av heltallsmodellen: den tillater flere planer, så dens beste verdi blir minst like stor som heltallsmodellens.
 - **Grense og forbehold:** Relaksasjonen gir altså en øvre grense, men å runde av løsningen gir ingen garanti for en tillatt eller god heltallsplan.
 
 Et eksempel: fire studenter bygger nye maskiner og reparerer gamle. De har 100 komponenter og 50 timer, og en fast reisekostnad på 650 kr.
@@ -1334,18 +1441,18 @@ I verkstedet er $(10/3,17/6)$ ved $\Delta=1/2$ ikke en plan med hele partier.
 
 ### Svar på ukens spørsmål
 
-Vi spurte hva verkstedet bør produsere, hvordan vi kan vite at planen er best uten å prøve alle planene, og hva en ekstra maskintime er verdt. For verkstedet er svaret nå fullstendig:
+Vi spurte hva verkstedet bør produsere, hvordan vi kan vite at planen er best uten å prøve alle planene, og hva en ekstra maskintime er verdt. Svarene til eieren er nå komplette:
 
-1. Området er konvekst og kompakt, så det finnes en beste plan, og den ligger i et hjørne. Hjørnet $(3,3)$ er løsningen av et $2\times2$-system: tre A-partier og tre B-partier gir 27 tusen kroner.
-2. Prisene $(2,1,0)$ gir den øvre grensen 27 for *alle* planer. Planen $(3,3)$ når grensen, så den er best. Beviset kan kontrolleres med noen få multiplikasjoner.
-3. De samme prisene sier at en ekstra maskintime er verdt 2 tusen kroner, men bare fram til $\Delta=3/2$. Der tar A-grensen over, og prisen må regnes ut på nytt.
+1. **Beste plan:** Området er lukket og begrenset (kompakt) og konvekst, så det finnes en beste plan, og den ligger i et hjørne. Hjørnet $(3,3)$ er løsningen av et lineært likningssett med to likninger og to ukjente (maskintimer og arbeidstimer brukt opp): tre A-partier og tre B-partier gir 27 tusen kroner.
+2. **Bevis:** Prisene $(2,1,0)$ gir den øvre grensen 27 for *alle* planer. Planen $(3,3)$ når grensen, så den er best. Beviset kan kontrolleres med noen få multiplikasjoner.
+3. **Verdien av en ekstra maskintime:** De samme prisene sier at en ekstra maskintime er verdt 2 tusen kroner, men bare for de første halvannen timene ($\Delta\le3/2$). Eieren bør altså betale høyst 2 tusen per time for opptil halvannen ekstra time; flere timer gir ikke mer, fordi A-grensen og arbeidstimene tar over.
 
 En løser som `linprog` gjør den samme jobben for tusenvis av produkter. Statusen, planen og prisene den returnerer, kan vi kontrollere på samme måte.
 
 Ressursprisene er et første eksempel på **multiplikatorer**: tall som veier sammen grensene slik at de gir et bevis, og som samtidig måler hva en litt større kapasitet er verdt.
 
-- **Krumme likninger:** I [uke 12](uke12.qmd#uke12-lagrange) er bibetingelsene krumme likninger, og vi møter Lagrangemultiplikatorer.
-- **Samme pristolkning:** De er priser på samme måte som dualvariablene her (med fortegnsavtalen i uke 12 er prisen $-\lambda$): de måler hva en litt endret bibetingelse er verdt ([uke 12](uke12.qmd#uke12-pris)).
+- **Krumme likninger:** I [uke 12](uke12.qmd#uke12-lagrange) er kravene (bibetingelsene) krumme likninger i stedet for rette linjer, og vi møter Lagrangemultiplikatorer.
+- **Samme pristolkning:** De er priser på samme måte som ressursprisene (dualvariablene) her (med fortegnsavtalen i uke 12 er prisen $-\lambda$): de måler hva et litt endret krav er verdt ([uke 12](uke12.qmd#uke12-pris)).
 - **Valgfri fordypning:** Ulikheter med komplementær slakk kommer der bare som valgfri fordypning.
 
 ## 11.5 Regneoppgaver
@@ -1353,7 +1460,7 @@ Ressursprisene er et første eksempel på **multiplikatorer**: tall som veier sa
 ::: {#uke11-oppgaver}
 :::
 
-Oppgavene er sortert etter ukens tre ideer. Kodeoppgavene er i 11.6.
+Oppgavene er sortert etter ukens tre ideer. Kodeoppgavene er i 11.6. Alle bruker verkstedet fra 11.1, hvis ikke noe annet står.
 
 - **Arbeidsmåte:** Arbeid på papir først, og svar eksakt uten avrunding, for eksempel `3/2`.
 - **Ja/nei:** Der det spørres om ja/nei, skriver du **1 for ja, 0 for nei**.
@@ -1362,8 +1469,8 @@ Oppgavene er sortert etter ukens tre ideer. Kodeoppgavene er i 11.6.
 ::: {#week11-exercise-context .math-exercise-context}
 
 - **Modell:** Verkstedet maksimerer $P=5x+4y$ under $2x+y\le9$, $x+2y\le9$, $x\le4$ og $x,y\ge0$, med mindre oppgaven sier noe annet.
-- **Slakk:** Kapasitet minus bruk.
-- **Prisbevis:** For målet $5x+4y$ oppfyller gyldige ikke-negative priser $(u,v,w)$ kravene $2u+v+w\ge5$ og $u+2v\ge4$; da er $9u+9v+4w$ en øvre grense for $P$.
+- **Slakk:** Ubrukt kapasitet, altså kapasitet minus bruk.
+- **Prisbevis:** For målet $5x+4y$ oppfyller gyldige ikke-negative priser $(u,v,w)$ kravene $2u+v+w\ge5$ og $u+2v\ge4$ (innsatsprisen per parti er minst like stor som bidraget); da er $9u+9v+4w$ en øvre grense for $P$.
 
 :::
 
@@ -1372,7 +1479,7 @@ Oppgavene er sortert etter ukens tre ideer. Kodeoppgavene er i 11.6.
 ::: {#uke11-oppg-plan}
 :::
 
-Planen $(x,y)=(4,1)$ lager fire A-partier og ett B-parti. Regn ut bruken av maskintimer, arbeidstimer og A-partier, og trekk bruken fra kapasiteten. Regn også ut dekningsbidraget.
+Planen $(x,y)=(4,1)$ lager fire A-partier og ett B-parti. Regn ut bruken av maskintimer, arbeidstimer og A-partier, og trekk bruken fra kapasiteten; det er slakken, altså ubrukt kapasitet. Regn også ut dekningsbidraget.
 
 ```{math-exercise}
 #| label: week11-task-slack
@@ -1392,10 +1499,10 @@ Dekningsbidrag: _[24]
 ::: {#uke11-oppg-par}
 :::
 
-Et hjørne krever to aktive grenser med et ikke-singulært $2\times2$-system, og at løsningen oppfyller de andre kravene.
+Et hjørne er et sted der to grenser er aktive, altså brukt opp. Vi finner det ved å løse et lineært likningssett med to likninger og to ukjente, og så sjekke at de andre kravene også er oppfylt. Likningssettet må ha nøyaktig én løsning, det vil si at de to grenselinjene krysser hverandre (determinanten til tallene foran $x$ og $y$ er ikke null; likningssettet er ikke-singulært).
 
 1. **Løs og kontroller:** Løs paret maskintimer og $y=0$ og paret arbeidstimer og $x=0$, og kontroller de andre kravene.
-2. **Finn determinanter:** Finn determinanten til koeffisientmatrisen for paret maskintimer og arbeidstimer og for paret A-grense og $y=0$. Skriv $y=0$ som raden $(0,1)$, slik at matrisen har radene $(1,0)$ og $(0,1)$.
+2. **Finn determinanter:** Finn determinanten til koeffisientmatrisen (tallene foran $x$ og $y$) for paret maskintimer og arbeidstimer og for paret A-grense og $y=0$. Skriv $y=0$ som raden $(0,1)$, slik at matrisen har radene $(1,0)$ og $(0,1)$.
 
 ```{math-exercise}
 #| label: week11-task-pairs
@@ -1419,10 +1526,10 @@ Determinant, A-grense og $y=0$: _[1]
 ::: {#uke11-oppg-bidrag}
 :::
 
-I eksperiment 1 endret vi bidraget fra B. Nå er bidraget fra A usikkert: målet er $ax+4y$, mens kravene er de samme.
+I eksperiment 1 endret vi bidraget fra B. Nå er bidraget fra A usikkert. La $a$ være dekningsbidraget fra ett parti A (stoler), målt i tusen kroner. Hittil har vi brukt $a=5$. Målet er $ax+4y$, mens kravene er de samme.
 
 1. **Sammenlign hjørnene:** Regn ut $ax+4y$ i de fem hjørnene $(0,0)$, $(4,0)$, $(4,1)$, $(3,3)$ og $(0,9/2)$ for $a=1$, $a=5$ og $a=10$, og finn det beste hjørnet i hvert tilfelle.
-2. **Finn knekkpunktene:** Finn de to verdiene av $a$ der mållinjen er parallell med en kant, slik at en hel kant er optimal.
+2. **Finn knekkpunktene:** Finn de to verdiene av $a$ der mållinjen er parallell med en kant, slik at en hel kant er optimal. Det er verdiene der den beste planen bytter hjørne.
 
 ```{math-exercise}
 #| label: week11-task-price-range
@@ -1445,6 +1552,8 @@ Nedre knekkpunkt: $a=$ _[2]
 
 ::: {#uke11-oppg-status}
 :::
+
+Hva gjør løseren hvis det ikke finnes noen beste plan? Det kan skje på to måter: kravene kan motsi hverandre, så ingen plan er tillatt (umulig), eller målet kan bli så stort vi vil (ubegrenset). Her er to små modeller med ett tall $\tau$:
 
 | Problem | Mål og krav |
 |:--|:--|
@@ -1473,9 +1582,9 @@ Problem II: _[3]
 ::: {#uke11-oppg-priser}
 :::
 
-Nå gir et B-parti bare 2 tusen kroner, så målet er $5x+2y$. Eksperiment 1 viser at $(4,1)$ da er best. Finn prisene $(u,v,w)$ med komplementær slakk:
+Nå gir et B-parti bare 2 tusen kroner, så målet er $5x+2y$. Eieren vil finne prisene som beviser at planen $(4,1)$ er best. Eksperiment 1 viser at $(4,1)$ da er best. Finn prisene $(u,v,w)$ med komplementær slakk:
 
-1. **Bruk slakken:** Hvilken grense har slakk i $(4,1)$, og hvilken pris må derfor være null?
+1. **Bruk slakken:** Hvilken grense har ubrukt kapasitet i $(4,1)$, og hvilken pris må derfor være null?
 2. **Bruk produksjonen:** Begge produktene lages; hvilke to priskrav gjelder da med likhet? (For dette målet er priskravet for B $u+2v\ge2$.)
 3. **Sammenlign verdiene:** Regn ut grensen $9u+9v+4w$ og bidraget i $(4,1)$.
 
@@ -1501,7 +1610,7 @@ Bidrag $5x+2y$ i $(4,1)$: _[22]
 ::: {#uke11-oppg-los}
 :::
 
-Prøv prisforslaget $(u,v,w)=(1,2,1)$ for det opprinnelige målet $5x+4y$. Finn innsatsprisene $2u+v+w$ for A og $u+2v$ for B, avgjør om prisene er gyldige, og regn ut den øvre grensen.
+Prøv prisforslaget $(u,v,w)=(1,2,1)$ for det opprinnelige målet $5x+4y$. Forslaget er gyldig hvis innsatsprisene er minst like store som bidragene. Finn innsatsprisene $2u+v+w$ for A og $u+2v$ for B, avgjør om prisene er gyldige, og regn ut den øvre grensen.
 
 ```{math-exercise}
 #| label: week11-task-loose-bound
@@ -1521,9 +1630,9 @@ Innsatspriser (A, B): vec[5,5]
 ::: {#uke11-oppg-tre}
 :::
 
-Nå er det tre produkter, og vi kan ikke lenger tegne området i planet. Et sertifikat kan fortsatt kontrolleres for hånd. En bedrift lager $x_A,x_B,x_C$ partier og maksimerer $6x_A+5x_B+7x_C$ (tusen kr).
+Nå er det tre produkter (et nytt eksempel, ikke verkstedet), og vi kan ikke lenger tegne området i planet. Et sertifikat kan fortsatt kontrolleres for hånd. En bedrift lager $x_A,x_B,x_C$ partier og maksimerer $6x_A+5x_B+7x_C$ (tusen kr).
 
-| Ressurs eller krav | Bibetingelse |
+| Ressurs eller krav | Krav |
 |:--|:--|
 | Maskintid | $2x_A+x_B+3x_C\le20$ |
 | Montering | $x_A+2x_B+x_C\le16$ |
@@ -1556,7 +1665,7 @@ Innsatspris C: _[25/3]
 ::: {#uke11-oppg-kapasitet}
 :::
 
-Øk bare maskintimene fra 9 til 10, og anta at de to timegrensene fortsatt er aktive. Løs grenselikningene som ved $\Delta=1/2$ i 11.4, kontroller $x\le4$ og finn det nye dekningsbidraget. Skriv produksjonstallene som brøker.
+Naboen leier ut én ekstra maskintime, så maskintimene øker fra 9 til 10. Anta at de to timegrensene fortsatt er aktive. Løs grenselikningene som ved $\Delta=1/2$ i 11.4, kontroller $x\le4$ og finn det nye dekningsbidraget. Skriv produksjonstallene som brøker.
 
 ```{math-exercise}
 #| label: week11-task-perturb
@@ -1576,7 +1685,7 @@ Dekningsbidrag: _[29]
 ::: {#uke11-oppg-gyldighet}
 :::
 
-Løs $2x+y=9+\Delta$ og $x+2y=9$ som i 11.4, men behold $\Delta$ som bokstav. Du skal få $x=3+2\Delta/3$ og $y=3-\Delta/3$. Finn den største $\Delta\ge0$ som fortsatt oppfyller $x\le4$.
+Eieren lurer på hvor mange ekstra maskintimer prisen 2 tusen per time gjelder for. Løs $2x+y=9+\Delta$ og $x+2y=9$ som i 11.4, men behold $\Delta$ som bokstav. Du skal få $x=3+2\Delta/3$ og $y=3-\Delta/3$. Finn den største $\Delta\ge0$ som fortsatt oppfyller $x\le4$.
 
 ```{math-exercise}
 #| label: week11-task-range
@@ -1604,17 +1713,17 @@ Forsøkene i 11.2–11.4 bruker `linprog` fra SciPy. Oppslagsboksen samler det d
 | `linprog(-p, A_ub=A, b_ub=b, bounds=(0,None), method="highs")` | Minimer $-p^Tz$ under $Az\le b$ og $z\ge0$. Likninger kan gis med `A_eq`, `b_eq`. |
 | `result.status`, `result.success`, `result.message` | Undersøk utfallet først; status 0 er vellykket, 2 umulig, 3 ubegrenset. |
 | `result.x`, `result.fun` | Plan og **minimeringsverdi**. Vårt bidrag er `-result.fun`. |
-| `result.ineqlin.residual`, `result.ineqlin.marginals` | Slakk og lokal verdiendring for minimeringsmålet per rad. Med motsatt fortegn gir marginalene ressursverdien for $P$. |
-| `np.linalg.solve(M, h)` | Løs et kvadratisk system. Ved en singulær matrise kastes `np.linalg.LinAlgError`. |
+| `result.ineqlin.residual`, `result.ineqlin.marginals` | Slakk (ubrukt kapasitet) og hvor mye minimeringsverdien endres per ekstra enhet i raden (SciPys «marginaler»). Med motsatt fortegn gir marginalene ressursverdien for $P$. |
+| `np.linalg.solve(M, h)` | Løs likningssettet $Mz=h$ med like mange likninger som ukjente. Ved et singulært likningssett (determinant 0, parallelle linjer) kastes `np.linalg.LinAlgError`. |
 
 :::
 
-Hva skjer hvis løseren *ikke* finner en beste plan? To små modeller med én variabel $\tau$ skiller de to utfallene:
+Hva skjer hvis løseren *ikke* finner en beste plan? Det kan skje på to måter, og to små modeller med én variabel $\tau$ viser dem:
 
-- **Umulig:** Status 2.
-- **Ubegrenset:** Status 3.
+- **Umulig:** Kravene motsier hverandre, så ingen plan er tillatt. Løseren gir status 2.
+- **Ubegrenset:** Ingenting stopper målet fra å vokse. Løseren gir status 3.
 
-I [regneoppgaven om umulig og ubegrenset](#uke11-oppg-status) bruker du de samme modellene. Se hvilken status hver modell får:
+I [regneoppgaven om umulig og ubegrenset](#uke11-oppg-status) bruker du de samme modellene. Målet er å se hvilken status hver modell får:
 
 ```{pyodide-python}
 #| label: week11-status
@@ -1631,6 +1740,8 @@ print(f"Motstridende krav     {impossible.status:>6}  Umulig")
 print(f"Mål uten øvre grense  {unbounded.status:>6}  Ubegrenset")
 ```
 
+**Hva viser cellen?** Den første modellen krever både $\tau\le1$ og $\tau\ge2$ og får status 2 (umulig). Den andre lar $\tau$ vokse uten grense og får status 3 (ubegrenset). For verkstedet betyr det at statusen må sjekkes før planen leses. Men statusen fanger bare motstridende krav (2) og et mål uten grense (3). Har vi skrevet et krav med feil tall, kan løseren likevel gi status 0 og en plan som er feil for verkstedet. Derfor kontrollerer vi også planen mot kravene, slik som i eksperiment 2.
+
 Disse korte oppgavene kan kjøres uavhengig av hverandre. Data, importer og funksjonsrammer er gitt; fyll inn bare `TODO`-stedene. Kontrollene vurderer returverdier uten å vise løsningskode.
 
 ### Idé 1: Hjørner og tillatte planer
@@ -1638,9 +1749,9 @@ Disse korte oppgavene kan kjøres uavhengig av hverandre. Data, importer og funk
 ::: {#uke11-kode-plan}
 :::
 
-Funksjonen `evaluate(z)` skal returnere paret `(slack, profit)` for en plan `z`:
+Eieren vil raskt sjekke en plan: hvor mange timer blir til overs, og hva tjener verkstedet? Funksjonen `evaluate(z)` gjør det samme som da vi sjekket planen $(2,1)$ i 11.1, og skal returnere paret `(slack, profit)` for en plan `z`:
 
-- **`slack`:** Slakken som kapasitet minus bruk. Den skal ha én verdi per rad i `A`, også når planen bryter en grense.
+- **`slack`:** Slakken (ubrukt kapasitet), regnet som kapasitet minus bruk. Den skal ha én verdi per rad i `A`, også når planen bryter en grense (da blir slakken negativ).
 - **`profit`:** Bidraget $p^Tz$.
 
 ```{py-exercise}
@@ -1669,16 +1780,16 @@ assert np.isclose(evaluate(np.array([4., 2.]))[1], 28.)
 ::: {#uke11-kode-hjorner}
 :::
 
-Nå gjør vi håndeksemplet fra 11.1 for alle ti par. Alle fem grensene er skrevet som rader i $Gz\le h$; fortegnskravene står som $-x\le0$ og $-y\le0$.
+Nå gjør vi håndeksemplet fra 11.1 for alle ti par, slik at datamaskinen finner hjørnene for eieren. Alle fem grensene er skrevet som rader i $Gz\le h$ (tallene foran $x$ og $y$ står i $G$, kapasitetene i $h$); fortegnskravene står som $-x\le0$ og $-y\le0$.
 
-1. **Gå gjennom parene:** For hvert par av rader løser du $2\times2$-systemet der de to radene holder med likhet.
-2. **Fang singulære par:** Et singulært par får `np.linalg.solve` til å kaste en `np.linalg.LinAlgError`: fang den med `try`/`except` og tell paret som singulært.
+1. **Gå gjennom parene:** For hvert par av rader løser du $2\times2$-likningssettet der de to radene holder med likhet.
+2. **Fang singulære par:** Et singulært par (parallelle linjer) får `np.linalg.solve` til å kaste en `np.linalg.LinAlgError`: fang den med `try`/`except` og tell paret som singulært.
 3. **Kontroller løsningen:** Behold løsningen som et hjørne hvis den oppfyller **alle** fem ulikhetene (med toleranse `1e-9`); ellers teller du den som utenfor.
 4. **Returner resultatet:** `(found, outside, singular)`: listen med hjørner og de to antallene.
 
 ```{py-exercise}
 #| label: week11-python-vertices
-#| caption: Finn hjørnene som løsninger av 2×2-systemer
+#| caption: Finn hjørnene som løsninger av 2×2-likningssett
 #| show-test-hints: false
 import numpy as np
 from itertools import combinations
@@ -1704,12 +1815,12 @@ assert any(np.allclose(z, [0., 4.5]) for z in found)
 assert all(np.all(G @ z <= h + 1e-9) for z in found)
 ```
 
-Bruk funksjonen etterpå: regn ut $5x+4y$ i hvert hjørne og kontroller at det største er 27. For hvor mange par av rader måtte du løse et system?
+Bruk funksjonen etterpå: regn ut $5x+4y$ i hvert hjørne og kontroller at det største er 27. For hvor mange par av rader måtte du løse et likningssett?
 
 ::: {#uke11-kode-linprog}
 :::
 
-Funksjonen `solve_production()` skal maksimere bidraget med `linprog`, som i eksperiment 2. Husk at `linprog` minimerer. Returner hele resultatobjektet, slik at status, plan og verdi kan kontrolleres.
+Eieren vil at datamaskinen skal finne den beste planen. Funksjonen `solve_production()` skal maksimere bidraget med `linprog`, som i eksperiment 2. Husk at `linprog` minimerer. Returner hele resultatobjektet, slik at status, plan og verdi kan kontrolleres.
 
 ```{py-exercise}
 #| label: week11-python-solve
@@ -1741,7 +1852,7 @@ assert np.allclose(b - A @ solve_production().x, [0., 0., 1.], atol=1e-7)
 ::: {#uke11-kode-sertifikat}
 :::
 
-Funksjonen `certificate(z, q)` skal kontrollere et prisbevis og returnere `(plan_ok, prices_ok, gap)`:
+Eieren har en plan `z` og et forslag `q` til ressurspriser, og vil kontrollere beviset: Er planen tillatt, er prisene gyldige, og hvor stort er gapet mellom prisgrensen og planens bidrag? Er gapet null, er planen bevist best. Funksjonen `certificate(z, q)` skal returnere `(plan_ok, prices_ok, gap)`:
 
 | Returverdi | Hva du beregner |
 |:--|:--|
@@ -1779,6 +1890,6 @@ assert not certificate(np.array([-1., 0.]), np.array([2., 1., 0.]))[0]
 ```
 
 
-I [prosjektet](project_week11.qmd) bruker du dualvariabler og komplementær slakk til å forklare hva strøm koster i et forenklet kraftmarked.
+I [prosjektet](project_week11.qmd) bruker du dualvariabler (ressurspriser) og komplementær slakk til å forklare hva strøm koster i et forenklet kraftmarked.
 
 :::

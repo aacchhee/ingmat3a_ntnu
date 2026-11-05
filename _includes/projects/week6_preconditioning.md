@@ -8,7 +8,7 @@ matrisen vi gir metoden. Nå skal vi undersøke en annen mulighet:
 Tenk på et kart der de to aksene bruker svært ulike målestokker.
 Et koordinatskifte endrer hvordan kartet ser ut, men ikke hvilket
 sted vi vil fram til. På samme måte skal vi endre beskrivelsen av
-et likningssystem, men likevel kunne oversette svaret tilbake til den samme
+et likningssett, men likevel kunne oversette svaret tilbake til den samme
 løsningen. Spørsmålet er om CG da får mindre arbeid å gjøre.
 
 Prosjektet starter med to ukjente og en regning på papir. Deretter
@@ -109,7 +109,7 @@ $y_1=x_1$ og $y_2=10x_2$. Når vi regner tilbake, får vi $x_1=y_1$ og $x_2=y_2/
 
 1. Kontroller løsningen $x_*$. Hvilke koordinater får den i $y$?
 2. Sett koordinatskiftet inn i $\phi$. Hva skjer med kvadratleddene?
-3. Sett det inn i likningssystemet, og del den andre likningen på
+3. Sett det inn i likningssettet, og del den andre likningen på
    $10$. Skriv det nye systemet som $\widetilde A_2y=\widetilde b_2$.
 4. Forutsi om nivåkurvene blir rundere. Hvorfor er det ikke nok å
    endre matrisen og beholde den gamle høyresiden?
@@ -140,7 +140,7 @@ Etter innsetting er funksjonen
 $$\widetilde\phi(y_1,y_2)
 =\tfrac12y_1^2+0.2y_1y_2+\tfrac12y_2^2-3y_1-10.2y_2.$$
 
-Begge kvadratkoeffisientene er nå $1/2$. Likningssystemet blir
+Begge kvadratkoeffisientene er nå $1/2$. Likningssettet blir
 
 $$\widetilde A_2=\begin{bmatrix}1&0.2\\0.2&1\end{bmatrix},\qquad
 \widetilde b_2=\begin{bmatrix}3\\10.2\end{bmatrix}.$$

@@ -27,7 +27,7 @@ PageRank-fordeling for et lite nettverk.
 
 | Matematikk 1 – dette henter vi fram | Matematikk 3A – dette bygger vi nå |
 |---|---|
-| Løse lineære likningssystemer; finne egenverdier og egenvektorer. Håndregning i 5.2. | Forklare gjentatt multiplikasjon med bidrag langs egenvektorer, og undersøke når én retning dominerer. Forsøk i 5.1, teori i 5.3–5.4. |
+| Løse lineære likningssett; finne egenverdier og egenvektorer. Håndregning i 5.2. | Forklare gjentatt multiplikasjon med bidrag langs egenvektorer, og undersøke når én retning dominerer. Forsøk i 5.1, teori i 5.3–5.4. |
 | Bruke $(A-\lambda I)v=0$ til å finne alle egenvektorene til en egenverdi. | Knytte egenvektorbasis til tidligere arbeid med basis og ortogonalitet, og bruke dette i potensmetoden og PageRank (5.3–5.6). |
 
 Du trenger ikke huske regneoppskriftene før første forsøk. Vi henter dem
