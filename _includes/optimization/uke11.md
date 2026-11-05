@@ -824,9 +824,19 @@ Både hjørnetabellen og løseren sier at $(3,3)$ gir 27 tusen kroner. Men hvord
 Ideen er å sette en tenkt pris på hver ressurs, en **ressurspris**. Prisen måles i tusen kroner per enhet. Vi prøver oss fram; i 11.4 ser vi at de beste prisene faktisk sier hva én enhet mer er verdt:
 
 - **Sett priser:** $u$ per maskintime, $v$ per arbeidstime og $w$ per A-parti kundene vil kjøpe.
-- **Sammenlign ressurskostnad og fortjeneste:** Ett parti bruker noen av verkstedets ressurser: timer, og for A også en av de fire salgsplassene. Med de tenkte prisene koster disse ressursene en viss sum. Den kaller vi partiets **ressurskostnad**. Hvis ressurskostnaden for hvert produkt er minst like stor som fortjenesten, kan ingen plan tjene mer enn det alle ressursene til sammen koster i de samme prisene.
+- **Sammenlign ressurskostnad og fortjeneste:** Ett parti bruker noen av verkstedets ressurser: timer, og for A også en av de fire salgsplassene. Med de tenkte prisene koster disse ressursene en viss sum. Den kaller vi partiets **ressurskostnad**.
 
-Ett parti A bruker 2 maskintimer, 1 arbeidstime og ett av de fire A-partiene kundene vil kjøpe, så ressurskostnaden er $2u+v+w$. Ett parti B bruker 1 maskintime og 2 arbeidstimer, så ressurskostnaden er $u+2v$. Alt verkstedet har, er verdt $9u+9v+4w$ til sammen. Prøv to forslag $(u,v,w)$:
+Ett parti A bruker 2 maskintimer, 1 arbeidstime og ett av de fire A-partiene kundene vil kjøpe, så ressurskostnaden er $2u+v+w$. Ett parti B bruker 1 maskintime og 2 arbeidstimer, så ressurskostnaden er $u+2v$. Alt verkstedet har (9 maskintimer, 9 arbeidstimer og 4 salgsplasser for A), koster til sammen $9u+9v+4w$ i de samme prisene.
+
+**Hvorfor gir prisene en øvre grense?** Velg prisene slik at ressurskostnaden for hvert produkt er minst like stor som fortjenesten. Da gir hvert parti høyst så mye fortjeneste som ressursene det bruker, koster. Ta for eksempel prisene $(u,v,w)=(3,1,0)$ og planen $(2,1)$:
+
+1. **Hvert parti for seg:** Et parti A koster $2\cdot3+1+0=7$ og gir 5. Et parti B koster $3+2\cdot1=5$ og gir 4. Ingen av partiene gir mer enn det koster.
+2. **Hele planen:** To partier A og ett parti B gir $2\cdot5+4=14$ i fortjeneste. Ressursene de bruker, koster $2\cdot7+5=19$. Fortjenesten er altså høyst kostnaden av ressursene planen bruker: $14\le19$.
+3. **Alt verkstedet har:** En plan kan ikke bruke flere ressurser enn verkstedet har, og prisene er ikke negative. Ressursene planen bruker, koster derfor høyst det alle ressursene koster: $19\le9\cdot3+9\cdot1+4\cdot0=36$.
+
+Til sammen: $14\le19\le36$. De samme tre stegene virker for *hver* tillatt plan, ikke bare $(2,1)$. Ingen plan kan derfor gi mer enn 36 tusen kroner. Det er den øvre grensen prisene gir.
+
+Grensen er bare nyttig hvis den er lav. Prøv to forslag $(u,v,w)$:
 
 | Beregning | Forslag $(3,1,0)$ | Forslag $(2,1,0)$ |
 |:--|--:|--:|
