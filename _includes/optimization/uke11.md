@@ -1194,7 +1194,7 @@ I hovedmodellen bruker vi bare $Az\le b$ og $z\ge0$, så alle prisene er ikke-ne
 ::: {#uke11-sensitivitet}
 :::
 
-Nå kan vi svare på eierens andre spørsmål. Naboen tilbyr å leie ut maskinen sin noen timer i uka. Hvor mye bør eieren høyst betale per time?
+Nå kan vi svare på eierens andre spørsmål. Naboen tilbyr å leie ut maskinen sin noen timer i uka, og han vil ha 1500 kroner per time. Lønner det seg for eieren å leie, og i så fall hvor mange timer?
 
 Tanken er enkel: **en ekstra maskintime er verdt det den øker det beste dekningsbidraget med.** Gir én ekstra time 2 tusen kroner mer, bør eieren ikke betale mer enn 2 tusen kroner for den. I 11.3 fikk maskintimen nettopp prisen 2 tusen kroner. Vi skal se at det er det en ekstra time er verdt, men bare for de første timene.
 
@@ -1215,6 +1215,8 @@ Med bare litt mer maskintid er det rimelig at verkstedet fortsatt bruker opp beg
 5. **Bidraget:** $5\cdot\tfrac{10}{3}+4\cdot\tfrac{17}{6}=\tfrac{50}{3}+\tfrac{34}{3}=\tfrac{84}{3}=28$ tusen kroner.
 
 **Hva betyr det for eieren?** Den halve timen ga $28-27=1$ tusen kroner mer, altså 2 tusen kroner per time. Det er akkurat prisen på en maskintime fra 11.3.
+
+**Svaret til eieren: Ja, lei den halve timen.** Hos naboen koster en halv time $750$ kroner, og den gir $1000$ kroner mer i dekningsbidrag. Verkstedet sitter igjen med $250$ kroner ekstra. Leie lønner seg så lenge naboen tar mindre enn 2 tusen kroner per time. Om det også gjelder for mange timer, ser vi nedenfor.
 
 **Hvorfor stemmer det med prisen?** Prisene fra 11.3 var 2 tusen per maskintime og 1 tusen per arbeidstime. De gir en øvre grense, et tak, for hva *noen* plan kan gi: «2 per maskintime + 1 per arbeidstime». Med $9+\Delta$ maskintimer blir taket $2(9+\Delta)+1\cdot9=27+2\Delta$, altså $28$ for $\Delta=\tfrac12$. Planen vi fant, når taket, så den er den beste. Hver ekstra maskintime løfter taket med 2, og så lenge en plan når taket, øker det beste bidraget like mye.
 
@@ -1337,7 +1339,7 @@ print("SciPy-marginaler ved Δ = 0:", base.ineqlin.marginals + 0)
 - **SciPys tall:** Cellen skriver også ut SciPys *marginaler*, $(-2,-1,0)$: hva en ekstra enhet av hver ressurs er verdt, regnet ut av løseren. SciPy regner med $-P$ i stedet for $P$, derfor er fortegnet snudd. Tallene betyr at en ekstra maskintime er verdt 2, en ekstra arbeidstime 1 og ett A-parti mer i salgsgrensen 0 tusen kroner, de samme prisene som i 11.3.
 - **Arbeidstimene:** Hvis vi endrer arbeidstimene i stedet (som i hjemmeoppgaven), er stigningstallet 1 for $\Delta\ge-3$ og 2 for lavere verdier. Knekken kommer der A-grensen blir aktiv.
 
-**Svaret til eieren:** Eieren bør betale høyst 2 tusen kroner per ekstra maskintime, men bare for den første halvannen timen. Etter det er flere maskintimer ikke verdt noe.
+**Svaret til eieren:** Eieren bør betale høyst 2 tusen kroner per ekstra maskintime, men bare for den første halvannen timen. Etter det er flere maskintimer ikke verdt noe. Med naboens pris på 1500 kroner per time bør verkstedet altså leie halvannen time, ikke mer: de koster $2250$ kroner og gir $3000$ kroner mer i dekningsbidrag.
 
 ::: {.reading-step title="Gå i dybden: hvor lenge gjelder prisen på 2 tusen kroner?"}
 
@@ -1424,7 +1426,7 @@ Vi spurte hva verkstedet bør produsere, hvordan vi kan vite at planen er best u
 
 1. **Beste plan:** Området er lukket og begrenset (kompakt) og konvekst, så det finnes en beste plan, og den ligger i et hjørne. Hjørnet $(3,3)$ er løsningen av et lineært likningssett med to likninger og to ukjente (maskintimer og arbeidstimer brukt opp): tre A-partier og tre B-partier gir 27 tusen kroner.
 2. **Bevis:** Prisene $(2,1,0)$ gir den øvre grensen 27 for *alle* planer. Planen $(3,3)$ når grensen, så den er best. Beviset kan kontrolleres med noen få multiplikasjoner.
-3. **Verdien av en ekstra maskintime:** De samme prisene sier at en ekstra maskintime er verdt 2 tusen kroner, men bare for de første halvannen timene ($\Delta\le3/2$). Eieren bør altså betale høyst 2 tusen per time for opptil halvannen ekstra time; flere timer gir ikke mer, fordi A-grensen og arbeidstimene tar over.
+3. **Verdien av en ekstra maskintime:** De samme prisene sier at en ekstra maskintime er verdt 2 tusen kroner, men bare for de første halvannen timene ($\Delta\le3/2$). Eieren bør altså betale høyst 2 tusen per time for opptil halvannen ekstra time; flere timer gir ikke mer, fordi A-grensen og arbeidstimene tar over. Til naboens pris på 1500 kroner per time bør verkstedet leie halvannen time.
 
 En løser som `linprog` gjør den samme jobben for tusenvis av produkter. Statusen, planen og prisene den returnerer, kan vi kontrollere på samme måte.
 
