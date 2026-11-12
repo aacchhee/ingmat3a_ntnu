@@ -77,7 +77,7 @@ kodeoppgavene i 12.7.
 
 4. [Kandidater er ikke løsninger](#uke12-kandidater): fire flate steder, men bare to høyder.
 5. [Kandidattabellen er en egenverditabell](#uke12-egenverdi): uke 5 og 7.
-6. [Lineære krav gir et lineært system](#uke12-kkt): uke 3, 6 og 10.
+6. [Lineære krav gir et lineært likningssett](#uke12-kkt): uke 3, 6 og 10.
 7. [Finn et punkt numerisk og kontroller det](#uke12-slsqp): kartappen SLSQP.
 
 ### Dette bygger vi videre på
@@ -951,10 +951,11 @@ berørte stien i 12.1.
 ### Eksperiment 3 – se egenvektorene på sirkelen
 
 - Kjør cellen. Hvilke nivåkurver berører sirkelen, og hvor?
-- Bytt til `plot_quadratic_on_circle(B.T @ B)`. Hvor ligger nå punktet med
-  største strekk?
-- Velg en egen symmetrisk matrise, for eksempel `[[2, 1], [1, 2]]`, og
-  forutsi berøringspunktene før du kjører.
+- Bytt siste linje til `plot_quadratic_on_circle(B.T @ B)`, der $B$ er
+  strekkmatrisen fra uke 7 (se under). Hvor ligger nå punktet med størst
+  strekk?
+- Bytt matrisen `A` i cellen med en egen symmetrisk matrise, for eksempel
+  `[[2, 1], [1, 2]]`, og forutsi berøringspunktene før du kjører.
 
 Cellen gir oss både tallene og bildet:
 
@@ -962,10 +963,13 @@ Cellen gir oss både tallene og bildet:
   er som `eigvalsh` fra uke 8, men gir også egenvektorene.
 - **Figuren:** En ferdig hjelpefunksjon, `plot_quadratic_on_circle(A)`,
   tegner nivåkurvene til $z^TAz$, enhetssirkelen og egenvektorene.
-- **Matrisen $B$:** strekkmatrisen fra [uke 7](uke7.qmd#uke7-geometri).
-  Kvadratet av strekket er $\lVert Bz\rVert_2^2=z^T(B^TB)z$, så største strekk
-  på enhetssirkelen er samme type problem som høyden på den runde stien.
-  Regningen står i «Gå i dybden» rett etter forsøket.
+- **Matrisen $B$:** I [uke 7](uke7.qmd#uke7-geometri) sendte $B$
+  enhetssirkelen til en ellipse, og vi spurte hvilken retning som strekkes
+  mest. Strekket i retningen til en enhetsvektor $z$ er lengden av $Bz$.
+  Kvadratet av lengden er
+  et uttrykk av samme type som høyden, $\lVert Bz\rVert_2^2=z^T(B^TB)z$.
+  Største strekk er derfor samme spørsmål som Arilds: hvor på sirkelen er
+  uttrykket størst? Regningen står i «Gå i dybden» rett etter forsøket.
 
 ```{pyodide-python}
 #| label: week12-eigen-experiment
@@ -983,26 +987,22 @@ plot_quadratic_on_circle(A)
 
 **Hva viser forsøket?**
 
-- **For $A$:** Nivåkurvene $xy=\pm\tfrac12$ berører enhetssirkelen i de fire
-  punktene $\pm\tfrac1{\sqrt2}(1,1)$ og $\pm\tfrac1{\sqrt2}(1,-1)$. Punktene
-  ligger i retningen til egenvektorene $(1,1)$ og $(1,-1)$ til $A$, én
-  lengdeenhet fra origo. Ligger et punkt $z$ på enhetssirkelen i retningen til en
-  egenvektor, er $Az$ lik egenverdien ganger $z$, og fordi $z^Tz=1$ er
-  $f(z)=z^TAz$ lik egenverdien. Her er
-  $f=\tfrac12$ i $\pm\tfrac1{\sqrt2}(1,1)$ og $f=-\tfrac12$ i
-  $\pm\tfrac1{\sqrt2}(1,-1)$. `eigh` gir egenverdiene $-0.5$ og $0.5$.
+- **For $A$:** `eigh` gir egenverdiene $-0.5$ og $0.5$. Nivåkurvene
+  $xy=\pm\tfrac12$ berører enhetssirkelen i de fire punktene
+  $\pm\tfrac1{\sqrt2}(1,1)$ og $\pm\tfrac1{\sqrt2}(1,-1)$. De ligger i
+  retningen til egenvektorene $(1,1)$ og $(1,-1)$, én lengdeenhet fra origo,
+  og høyden der er egenverdien, som i steg 5: $f=\tfrac12$ i
+  $\pm\tfrac1{\sqrt2}(1,1)$ og $f=-\tfrac12$ i $\pm\tfrac1{\sqrt2}(1,-1)$.
 - **For $B^TB$:** `eigh` gir egenverdiene $1$ og $4$. Nivåkurvene er ellipsene
   $x^2+4y^2=c$. Ellipsen med $c=4$ berører enhetssirkelen i punktene
-  $(0,\pm1)$, som ligger i retningen til egenvektoren $e_2$ med egenverdi $4$.
+  $(0,\pm1)$, som ligger i retningen til egenvektoren $(0,1)$ med egenverdi $4$.
 - **Strekket:** Største strekk er $\sqrt4=2$, og `svd` gir
   singulærverdiene $2$ og $1$ (se «Gå i dybden» under).
 
-**Hva betyr det for Arild?** Det er samme bilde som i 12.1: på en rund sti
-ligger de høyeste og de laveste stedene der en høydekurve berører stien, i retningen
-til egenvektorene, én kilometer fra sjøens midte. I sadelterrenget er toppene
-$\pm\tfrac1{\sqrt2}(1,1)$ (nordøst og sørvest) og dalene
-$\pm\tfrac1{\sqrt2}(1,-1)$ (nordvest og sørøst), og høydene der er største og
-minste egenverdi, $\pm\tfrac12$, altså $\pm50$ meter.
+**Hva betyr det for Arild?** Bildet er det samme som i 12.1: de høyeste og de
+laveste stedene er der en høydekurve berører stien. I sadelterrenget ligger
+toppene i nordøst og sørvest, 50 meter over nullnivået, og dalene i nordvest og
+sørøst, 50 meter under.
 
 **Øv på dette:** [største strekk med Lagrange](#uke12-oppg-strekk) i 12.6.
 
@@ -1016,49 +1016,50 @@ ellipse, og største strekk var $\sigma_1=2$. Nå kan vi utlede det:
    $\lVert Bz\rVert_2^2=x^2+4y^2=z^T(B^TB)z$ med
    $B^TB=\operatorname{diag}(1,4)$. Det er samme type problem, og uttrykket
    er det samme som for ellipsen i 12.1.
-2. **Bruk sirkelkravet:** På sirkelen er $x^2=1-y^2$, så
-   $x^2+4y^2=1+3y^2\le4$, med likhet i punktene $(0,\pm1)$, i retningen til $e_2$.
-3. **Ta kvadratroten:** Største strekk er $\sqrt4=2$.
+2. **Bruk egenverdiene:** Etter resultatet i 12.4 er den største verdien av
+   $z^T(B^TB)z$ på enhetssirkelen den største egenverdien til $B^TB$, altså
+   $4$, i retningen til egenvektoren $(0,1)$.
+3. **Kontroller uten matriser:** På sirkelen er $x^2=1-y^2$, så
+   $x^2+4y^2=1+3y^2\le4$, med likhet i punktene $(0,\pm1)$.
+4. **Ta kvadratroten:** Største strekk er $\sqrt4=2$.
 
 :::
 
-### Lineære krav gir et lineært system
+### Lineære krav gir et lineært likningssett
 
 ::: {#uke12-kkt}
 :::
 
-Nå bytter vi den krumme stien mot en rett vei, slik som veien fra hytta på holmen i 12.2.
+Nå bytter vi den krumme stien mot en rett vei, slik som veien fra hytta på
+holmen i 12.2. Da blir to ting enklere:
 
-- **Ett lineært krav:** For $c^Tz=d$ er normalen $c$ den samme i alle
-  punkter.
-- **Flere lineære krav:** Vi samler dem som $Cz=d$, der hver rad i $C$ er
-  ett krav. Hvert krav får sin multiplikator $\lambda_i$.
+- **Normalen er den samme overalt.** For veien $x+y=2$ er kravfunksjonen
+  $h(x,y)=x+y-2$, og normalen $\nabla h=(1,1)$ er den samme i hvert punkt.
+- **Likningene blir lineære.** Er målfunksjonen kvadratisk, som $f=x^2+y^2$,
+  er gradienten $\nabla f=(2x,2y)$ lineær. Da har Lagranges likninger ingen
+  kvadrater og ingen produkter av ukjente.
 
-Lagranges likning blir
-
-$$\nabla f(z)+C^T\lambda=0.$$
-
-- **Gradienten:** Likningen sier at $\nabla f$ er en lineærkombinasjon av radene i
-  $C$, altså av normalene, akkurat som $\nabla f$ var parallell med
-  $\nabla h$ i 12.2.
-- **Tillatte retninger:** De tillatte retningene utgjør **nullrommet** til $C$ fra
-  [uke 3](uke3.qmd#uke3-del3). Hvorfor $\nabla f$ da står vinkelrett på dem,
-  viser «Gå i dybden» under eksperimentet.
-
-Når $f$ er kvadratisk, er $\nabla f$ lineær i $z$, og alle likningene blir
-lineære. For veien fra hytta i 12.2, $f=x^2+y^2$ og $x+y=2$, får vi
+**Med tall.** For veien fra hytta fant vi i 12.2 likningene
+$$2x+\lambda=0,\qquad 2y+\lambda=0,\qquad x+y=2.$$
+De to første er $\nabla f+\lambda\nabla h=0$, komponent for komponent, og den
+siste er kravet. Det er et lineært likningssett med tre ukjente, $x$, $y$ og
+$\lambda$. Med tallene foran de ukjente som rader i en matrise $K$ blir det
 
 $$\underbrace{\begin{bmatrix}2&0&1\\0&2&1\\1&1&0\end{bmatrix}}_{K}
 \begin{bmatrix}x\\y\\\lambda\end{bmatrix}
 =\begin{bmatrix}0\\0\\2\end{bmatrix}.$$
 
-De to første radene er $\nabla f+\lambda\nabla h=0$, den siste er kravet.
-Et slikt system kalles et **KKT-system** (etter Karush, Kuhn og Tucker).
+Første rad er $2x+0\cdot y+1\cdot\lambda=0$. Et slikt likningssett, der de
+ukjente er både punktet og multiplikatoren, kalles et **KKT-system** (etter
+Karush, Kuhn og Tucker). Med flere rette krav får hvert krav sin egen
+multiplikator og sin egen rad, men formen er den samme. Matriseformen, med
+nullrommet fra [uke 3](uke3.qmd#uke3-del3), står i «Gå i dybden» under
+eksperimentet.
 
-Systemet er symmetrisk, akkurat som systemene vi løste med CG i uke 6 og
-Cholesky i uke 10. Men begge metodene krevde mer: matrisen måtte være SPD.
-Målet er å finne ut om metodene fra uke 6 og 10 kan brukes på et
-KKT-system.
+Matrisen $K$ er symmetrisk, akkurat som matrisene vi løste med CG i
+[uke 6](uke6.qmd#uke6-cg) og Cholesky i [uke 10](uke10.qmd#uke10-cholesky).
+Men begge metodene krevde mer: matrisen måtte være SPD. Målet med forsøket er å
+finne ut om metodene fra uke 6 og 10 kan brukes på et KKT-system.
 
 ### Eksperiment 4 – løs KKT-systemet og prøv Cholesky
 
@@ -1091,10 +1092,16 @@ except np.linalg.LinAlgError:
 
 - **Løsningen:** $(1,1,-2)$, som for hånd i 12.2.
 - **Matrisen:** Egenverdiene er $-0.73$, $2$ og $2.73$. Matrisen er
-  symmetrisk, men **indefinit**, og Cholesky feiler.
-- **Hvorfor det skjer:** Nullen nederst til høyre gir $e_3^TKe_3=0$, og en
-  SPD-matrise har $v^TKv>0$ for alle $v\ne0$. Et KKT-system er derfor aldri
-  SPD (se «Gå i dybden» under), og CG og Cholesky kan ikke brukes direkte.
+  symmetrisk, men **indefinitt**: den har både positive og negative
+  egenverdier, som Hessianen i et sadelpunkt i [uke 8](uke8.qmd#uke8-hessian).
+  Cholesky feiler.
+- **Hvorfor det skjer:** Kravet $x+y=2$ inneholder ikke $\lambda$, så tallet
+  nederst til høyre i $K$ er $0$. Det er nok til at $K$ ikke kan være SPD. En
+  SPD-matrise gir $v^TKv>0$ for hver vektor $v\ne0$
+  ([uke 6](uke6.qmd#uke6-energi)). Velg $v=(0,0,1)$: ingen flytting, bare
+  multiplikatoren. Da plukker $v^TKv$ ut nettopp tallet nederst til høyre, og
+  det er $0$. Slik er det i hvert KKT-system (se «Gå i dybden» under), så CG og
+  Cholesky kan ikke brukes direkte.
 
 **Dette tar vi med oss.** Når målfunksjonen er kvadratisk, blir Lagranges likninger
 lineær algebra:
@@ -1102,7 +1109,7 @@ lineær algebra:
 | Krav | Hva likningene blir |
 |:--|:--|
 | Sirkelkrav (rund sti) | Egenverdiproblem, der kandidatene ligger i retningen til egenvektorene. |
-| Lineære krav (rette veier) | Symmetrisk, men indefinit likningssett: CG og Cholesky virker ikke direkte. |
+| Lineære krav (rette veier) | Symmetrisk, men indefinitt likningssett: CG og Cholesky virker ikke direkte. |
 
 Nullromsmetoden i «Gå i dybden» viser én vei rundt.
 
@@ -1111,10 +1118,22 @@ Nullromsmetoden i «Gå i dybden» viser én vei rundt.
 
 ::: {.reading-step title="Gå i dybden: nullrommet, og hvordan vi kan omgå det indefinitte systemet"}
 
-**Hvorfor $\nabla f+C^T\lambda=0$ er riktig betingelse.**
+**Flere lineære krav.** Med flere rette krav skriver vi dem som $Cz=d$, med én
+rad i $C$ per krav; for veien fra hytta er $C=\begin{bmatrix}1&1\end{bmatrix}$ og
+$d=2$, som i 12.2. Hvert krav får sin multiplikator, og vi samler dem i en
+vektor $\lambda$. Lagranges likning blir
+$$\nabla f(z)+C^T\lambda=0.$$
+Med ett krav er $C^T\lambda=\lambda\,(1,1)=\lambda\nabla h$, altså samme likning
+som før. Med flere krav sier den at $\nabla f$ er en lineærkombinasjon av
+normalene, altså av radene i $C$.
+
+**Hvorfor $\nabla f+C^T\lambda=0$ er riktig betingelse.** Ideen er den samme
+som på stien: i et beste punkt endrer ikke målfunksjonen seg i første lille
+skritt i noen retning vi har lov til å gå.
 
 1. **Tillatte retninger:** En retning $v$ endrer ikke $Cz$ når $Cv=0$. De
-   tillatte retningene er altså nullrommet til $C$.
+   tillatte retningene er altså nullrommet til $C$. For veien fra hytta gir
+   retningen $v=(1,-1)$ langs veien $Cv=1-1=0$.
 2. **Vinkelrett på radene:** At $Cv=0$ betyr at $v$ står vinkelrett på hver
    rad i $C$.
 3. **Gradienten balanseres av normalene:** Likningen sier at
@@ -1122,6 +1141,7 @@ Nullromsmetoden i «Gå i dybden» viser én vei rundt.
    $\nabla f$ vinkelrett på alle tillatte retninger:
    $\nabla f\cdot v=-\lambda^TCv=0$.
 
+For veien fra hytta er $\nabla f(1,1)=(2,2)$ og $\nabla f\cdot(1,-1)=2-2=0$.
 Målfunksjonen endres altså ikke til første orden i noen tillatt retning.
 
 **Nullromsmetoden.** Ideen er å skrive de tillatte punktene slik at kravet alltid er oppfylt. Ethvert tillatt punkt kan skrives $z=z_0+tZ$:
@@ -1156,8 +1176,11 @@ plot_nullspace_method(z0, Z, z_best, 2*z_best)
 
 1. **Parametriser:** Bruk $z=z_0+Zt$, der kolonnene i $Z$ er en basis for
    nullrommet og $t$ er en vektor med like mange tall som kolonner i $Z$.
-2. **Sett inn i målfunksjonen:** For $f=\tfrac12z^TQz-b^Tz$ (som i neste boks) gir
-   utvidelsen av $\tfrac12(z_0+Zt)^TQ(z_0+Zt)-b^T(z_0+Zt)$
+2. **Sett inn i målfunksjonen:** Skriv en kvadratisk målfunksjon som
+   $f=\tfrac12z^TQz-b^Tz$, med en symmetrisk matrise $Q$ og en vektor $b$, som
+   energifunksjonen i [uke 6](uke6.qmd#uke6-energi). For veien fra hytta er
+   $Q=2I$ og $b=0$. Da gir utvidelsen av
+   $\tfrac12(z_0+Zt)^TQ(z_0+Zt)-b^T(z_0+Zt)$
    $$f(z_0+Zt)=\tfrac12t^T(Z^TQZ)t+t^TZ^T(Qz_0-b)+f(z_0),$$
    som vi minimerer uten krav.
 3. **Velg løser:** Matrisen $Z^TQZ$ er SPD når $Q$ er positiv definitt på
@@ -1173,9 +1196,14 @@ $\nabla f=Qz-b$, og Lagranges likninger blir
 $$\begin{bmatrix}Q&C^T\\C&0\end{bmatrix}
 \begin{bmatrix}z\\\lambda\end{bmatrix}=\begin{bmatrix}b\\d\end{bmatrix}.$$
 
+For veien fra hytta er $Q=2I$, $b=0$, $C=\begin{bmatrix}1&1\end{bmatrix}$ og
+$d=2$, og blokkmatrisen er nøyaktig $K$ fra eksperiment 4.
+
 - **Invertibel:** Hvis $C$ har $m$ uavhengige rader og $Q$ er positiv
   definitt på nullrommet til $C$, er matrisen invertibel.
-- **Aldri positiv definitt:** For $v=(0,w)$ er $v^TKv=0$.
+- **Aldri positiv definitt:** Kall blokkmatrisen $K$. For en vektor $v=(0,w)$
+  med null i $z$-delen og $w\ne0$ er $v^TKv=0$, fordi blokken nederst til høyre
+  er null.
 - **Negative egenverdier:** Under disse forutsetningene kan man vise at matrisen har
   nøyaktig $m$ negative egenverdier; i eksperiment 4 var $m=1$.
 
@@ -1201,44 +1229,74 @@ når radene i $C$ er uavhengige. Kodeoppgaven
 :::
 
 Arild går nå rundt en annen sjø, på en rund sti med radius 1 km. Kaféen ligger i
-punktet $(2,1)$, utenfor stien. Vektoren fra origo til kaféen kaller vi
-$a=(2,1)$. Han vil til stedet på stien som er nærmest kaféen, og spør en kartapp.
-Appen er løseren `minimize` med metoden `SLSQP`, som tar imot likhetskrav. Den
-foreslår et punkt. Kan han stole på det?
+punktet $(2,1)$, utenfor stien. Han vil til stedet på stien som er nærmest
+kaféen, og spør en kartapp. Appen er løseren `minimize` med metoden `SLSQP`,
+som tar imot likhetskrav. Den foreslår et punkt. Kan han stole på det?
 
-Dette er ikke en høydeoppgave. Målfunksjonen er **halve kvadratavstanden til kaféen**, og
-vi vil ha minimum. Likningene er de samme som før:
+Dette er ikke en høydeoppgave: vi vil ha minst mulig avstand til kaféen. Som i
+12.4 er $z=(x,y)$ vektoren fra sjøens midte til stedet der Arild står, og
+$a=(2,1)$ er vektoren fra sjøens midte til kaféen. Da er $z-a$ vektoren fra
+kaféen til stedet, og lengden $\lVert z-a\rVert_2$ er avstanden. I $(0.8,\,0.6)$
+er $z-a=(-1.2,\,-0.4)$ og avstanden $\sqrt{1.6}\approx1.26$ km. Vi minimerer
+halve kvadratet av avstanden, $F$ i tabellen: det nærmeste stedet blir det
+samme, og gradienten blir enkel, $\nabla F=z-a$, rett bort fra kaféen.
 
 | Rolle | Uttrykk |
 |:--|:--|
 | Valg | $z=(x,y)$, stedet på kartet |
-| Målfunksjon | Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$, halve kvadratavstanden til $a$ |
-| Kravfunksjon | $h(z)=\lVert z\rVert_2^2-1$ |
+| Målfunksjon | Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$, med $\nabla F(z)=z-a$ |
+| Kravfunksjon | $h(z)=\lVert z\rVert_2^2-1$, med $\nabla h(z)=2z$, rett ut fra sjøens midte |
 | Krav | $h(z)=0$: punktet ligger på stien, altså enhetssirkelen |
 
 For større problemer, som kjettingen i [prosjekt 12](project_week12.qmd) med ti
 krav, løser vi ikke Lagranges likninger for hånd. Løseren gir en **numerisk
 kandidat**. At den melder at den stoppet normalt, erstatter ikke to kontroller
-Arild må gjøre selv:
+Arild må gjøre selv. Begge skal gi et tall nær null:
 
-- **Betingelsesfeilen** $|h(z)|$: ligger punktet på stien?
-- **Stasjonaritetsfeilen** $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$:
-  endrer avstanden til kaféen seg ikke i første lille skritt langs stien, slik
-  at målgradienten kan balanseres av normalen?
+- **Ligger punktet på stien?** Det måler **betingelsesfeilen** $|h(z)|$ (i
+  prosjektet: **kravbruddet**). Den er null på stien og større jo lenger unna
+  punktet ligger. Punktet $(0.9,\,0.45)$ ligger litt utenfor:
+  $h=0.81+0.2025-1=0.0125$.
+- **Er stien flat der?** I det nærmeste punktet endrer ikke avstanden seg i
+  første lille skritt langs stien, slik høyden i det høyeste punktet i 12.1.
+  Da er $\nabla F$ parallell med normalen, og et tall $\lambda$ gir
+  $\nabla F+\lambda\nabla h=0$. I et numerisk punkt blir det litt igjen.
+  Lengden av resten er **stasjonaritetsfeilen**
+  $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$.
 
-Når vi trenger $\lambda$, **velger vi den $\lambda$ som gjør
-stasjonaritetsfeilen minst**. Det er et minste kvadraters problem med én ukjent, som i
-[uke 4](uke4.qmd#uke4-mk), og svaret er
+Løseren gir oss bare punktet, så vi **velger den $\lambda$ som gjør
+stasjonaritetsfeilen minst**. Det er projeksjonen fra
+[uke 4](uke4.qmd#uke4-projeksjon): $\lambda\nabla h$ blir den delen av
+$-\nabla F$ som peker langs normalen, og resten peker langs stien.
 
-$$\lambda=-\frac{\nabla F\cdot\nabla h}{\lVert\nabla h\rVert_2^2}.$$
+::: {.callout-note title="Håndeksempel: kontroller punktet (0.8, 0.6)"}
 
-Med flere krav bruker vi samme idé:
+**Utgangspunkt.** Kartappen foreslår $z=(0.8,\,0.6)$. Er det nærmest kaféen?
 
-1. **Samle gradientene:** $\nabla h_i^T$ blir rader i **Jacobimatrisen** $J$
-   (som i prosjekt 10).
-2. **Løs minste kvadrater:** Løs
-   $\min_\lambda\lVert\nabla F+J^T\lambda\rVert_2$ med `np.linalg.lstsq`.
-   Det gjør vi i prosjektet.
+**Prøv selv.** Regn ut begge kontrollfeilene.
+
+**Regnegangen.**
+
+1. **På stien?** $h(z)=0.64+0.36-1=0$, så betingelsesfeilen er $0$.
+2. **Gradientene:** $\nabla F=z-a=(-1.2,\,-0.4)$ og
+   $\nabla h=2z=(1.6,\,1.2)$.
+3. **Beste $\lambda$:** Normalen med lengde 1 er $n=(0.8,\,0.6)$. Komponenten
+   av $-\nabla F=(1.2,\,0.4)$ langs $n$ er $1.2\cdot0.8+0.4\cdot0.6=1.2$, og
+   $1.2\,n=(0.96,\,0.72)=0.6\,\nabla h$. Altså er $\lambda=0.6$.
+4. **Stasjonaritetsfeilen:** $\nabla F+0.6\,\nabla h=(-0.24,\,0.32)$, med
+   lengde $0.4$.
+5. **Les svaret:** Resten $(-0.24,\,0.32)=0.4\,(-0.6,\,0.8)$ peker langs
+   stien: går Arild mot nordvest, øker avstanden, og går han andre veien, mot
+   kaféen, minker den. Stien er ikke flat her, og punktet er ikke det nærmeste.
+
+:::
+
+**Generelt** er den beste multiplikatoren
+$$\lambda=-\frac{\nabla F\cdot\nabla h}{\lVert\nabla h\rVert_2^2},$$
+et minste kvadraters problem med én ukjent som i [uke 4](uke4.qmd#uke4-mk). Med
+flere krav, som i kjettingen, samles normalene som rader i
+**Jacobimatrisen** $J$ fra [prosjekt 10](project_week10.qmd), og
+`np.linalg.lstsq` finner alle multiplikatorene (se «Gå i dybden» under).
 
 Hvorfor vi ikke bruker SciPys egne multiplikatorer, står i
 [SciPy-oppslaget](#uke12-scipy).
@@ -1257,6 +1315,15 @@ $$\lVert\nabla F+\lambda\nabla h\rVert_2^2=\nabla F\cdot\nabla F
 3. **Kontroller minimum:** Den andrederiverte, $2\lVert\nabla h\rVert_2^2$,
    er positiv når kravet er regulært, så dette er minimum.
 
+**Flere krav.** Hvert krav $h_i$ har sin normal $\nabla h_i$ og sin
+multiplikator $\lambda_i$:
+
+1. **Samle normalene:** $\nabla h_i^T$ blir rader i **Jacobimatrisen** $J$.
+2. **Løs minste kvadrater:** Velg $\lambda$ slik at
+   $\lVert\nabla F+J^T\lambda\rVert_2$ blir minst mulig, med
+   `np.linalg.lstsq(J.T, -grad, rcond=None)[0]` som i
+   [SciPy-oppslaget](#uke12-scipy).
+
 :::
 
 Nå prøver vi alt dette på kartappen. Målet er å se hva
@@ -1264,10 +1331,11 @@ kontrollfeilene sier, og hva de ikke sier.
 
 ### Eksperiment 5 – finn og kontroller et sirkelpunkt
 
-- Kjør cellen, og sammenlign punktet med $a/\lVert a\rVert_2$.
-- Bytt startpunktet til `np.array([-.9, -.45])`, som ligger på linjen
-  gjennom origo og $a$. Hva rapporterer løseren nå, og hvilke av tallene
-  avslører at punktet ikke er det nærmeste?
+- Kjør cellen, og sammenlign punktet med $a/\lVert a\rVert_2$: stedet på
+  stien som ligger rett mot kaféen fra sjøens midte.
+- Bytt startpunktet til `np.array([-.9, -.45])`. Det ligger på linjen gjennom
+  sjøens midte og kaféen, på motsatt side av kaféen. Hva rapporterer løseren
+  nå, og hvilke av tallene avslører at punktet ikke er det nærmeste?
 - Flytt startpunktet litt bort fra linjen, for eksempel til
   `np.array([-.9, -.5])`. Hvor havner løseren nå?
 
@@ -1310,33 +1378,41 @@ Punktet fra det første startpunktet stemmer med $a/\lVert a\rVert_2$.
 
 - **Samme kontrollresultat:** Begge ganger er kontrollfeilene små, og løseren
   rapporterer `success=True`. Flagget betyr bare at løseren stoppet på vanlig måte.
-- **Ulik kvalitet:** Den andre kandidaten er det **fjerneste** punktet.
-  Det andre startpunktet ligger på linjen gjennom origo og kaféen. Der peker både
-  $\nabla F$ og normalen langs linjen, så hvert steg blir liggende på linjen.
+- **Ulik kvalitet:** Den andre kandidaten er det **fjerneste** punktet. Det
+  andre startpunktet ligger på linjen gjennom sjøens midte og kaféen. Der peker
+  både $\nabla F$ (bort fra kaféen) og normalen (ut fra sjøens midte) langs
+  linjen, så ingenting dytter løseren til siden.
 - **Litt endret start:** Flytter du startpunktet litt bort fra linjen, finner
   løseren det nærmeste punktet igjen.
 
-**Er det globalt nærmest?** For tillatte $z$ gir Cauchy–Schwarz
-$a\cdot z\le\lVert a\rVert_2=\sqrt5$, så
-
-$$F(z)=\tfrac12\bigl(\lVert a\rVert_2^2+1-2a\cdot z\bigr)\ge\tfrac12(\sqrt5-1)^2,$$
-
-med likhet bare i $z=a/\sqrt5$. De to numeriske kontrollene viser at punktet
-er en kandidat; ulikheten viser at det er det beste.
+**Er det globalt nærmest?** Kontrollfeilene viser bare at punktet er en
+kandidat. At det er det nærmeste, viser vi som på den runde stien i 12.1: sett
+fra sjøens midte er et sted på stien nærmere kaféen jo mer det ligger i retning av kaféen.
+Med tall: $\lVert z-a\rVert_2^2=z\cdot z-2\,a\cdot z+a\cdot a$, og på stien er
+$z\cdot z=1$ og $a\cdot a=5$, så
+$$F(z)=\tfrac12(1-2\,a\cdot z+5)=3-a\cdot z.$$
+Skalarproduktet $a\cdot z$ er komponenten av $a$ langs retningen til stedet. Den
+er størst, $\lVert a\rVert_2=\sqrt5$, når stedet ligger rett mot kaféen
+(Cauchy–Schwarz, som i 12.2). Derfor er
+$F(z)\ge3-\sqrt5=\tfrac12(\sqrt5-1)^2\approx0.764$ på hele stien, med likhet
+bare i $z=a/\sqrt5$, punktet fra det første startpunktet.
 
 **Svaret til Arild:** Kartappen kan si «ferdig» også når den har funnet det
 fjerneste punktet. Han kan stole på forslaget først når han har sjekket tre
-ting selv. Er punktet på stien (betingelsesfeilen)? Endrer avstanden seg ikke
-i første lille skritt langs stien (stasjonaritetsfeilen)? Og er verdien den beste, bevist med en ulikhet som
-gjelder alle punkter på stien? Da er han sikker, uten å gå hele stien.
+ting selv: Ligger punktet på stien (betingelsesfeilen)? Er stien flat der, så
+avstanden ikke endrer seg i første lille skritt (stasjonaritetsfeilen)? Og er
+verdien den beste, vist med en ulikhet som gjelder alle punkter på stien? Da er
+han sikker, uten å gå hele stien.
 
 **Øv på dette:** [to kontrollfeil for et feil forslag](#uke12-oppg-kontroll)
 i 12.6 og [de tre første kodeoppgavene](#uke12-python) i 12.7.
 
 ::: {.reading-step title="Gå i dybden: en annen vei, straffemetoden"}
 
-- **Uten et eksplisitt krav:** I stedet for å kreve $h=0$ kan vi minimere
-  $F+\tfrac\mu2h^2$ uten krav, med et stort tall $\mu$.
+- **Uten et eksplisitt krav:** I stedet for å forby punkter utenfor stien kan
+  vi straffe dem, med en straff som vokser med kvadratet av $h$. Vi minimerer
+  $F+\tfrac\mu2h^2$ uten krav, med et stort tall $\mu$. I prosjektet er dette de
+  stive fjærene i stedet for faste ledd.
 - **Gradienten:** $\nabla F+(\mu h)\nabla h$. Sammenlign med
   $\nabla F+\lambda\nabla h$: tallet $\mu h$ spiller rollen til $\lambda$.
 - **Tilnærmingen:** Da blir $h$ liten, men ikke null, og $\mu h$ nærmer seg
@@ -1407,7 +1483,7 @@ $$\nabla F+\lambda\nabla g=0,\qquad g\le0,\qquad \lambda\ge0,\qquad \lambda\,g=0
 
 Cellen prøver begge tilfellene med SLSQP: én $a$ inne i skiven og én
 utenfor. For hvert svar sjekker den om kravet er aktivt, og regner i så fall
-ut $\lambda$ med formelen for minste kvadrater fra 12.5.
+ut $\lambda$ med formelen for minste kvadrater over.
 
 ```{pyodide-python}
 #| label: week12-disc
@@ -1481,10 +1557,12 @@ kom et fjerde til:
 3. Er kandidaten vi fant, den beste?
 4. Hvordan kontrollerer vi et tall som en løser gir oss?
 
-Denne uken svarte vi på dem med kompakthet, Lagranges likninger, en global ulikhet
-og to kontrollfeil. (Ukens spørsmål fra 12.0, hva som erstatter $\nabla f=0$ når punktet
-må ligge på en kurve, har svaret: Lagranges likninger.) Den arbeidsmåten tar du med deg videre: regn ut et svar,
-og kontroller det med et argument eller en uavhengig test.
+Denne uken svarte vi på dem med kompakthet (et høyeste punkt finnes), krumningen
+langs stien («Gå i dybden» i 12.3), en ulikhet som gjelder hele stien, og to
+kontrollfeil. Lagranges likninger ga kandidatene og svarer på ukens spørsmål fra
+12.0: de erstatter $\nabla f=0$ når punktet må ligge på en kurve. Arbeidsmåten
+tar du med deg videre: regn ut et svar, og kontroller det med et argument eller
+en uavhengig test.
 
 ## 12.6 Regneoppgaver {quiz=uke12-6-oppgaver}
 
