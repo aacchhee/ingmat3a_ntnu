@@ -265,8 +265,14 @@ def check(site: Path) -> dict:
             assert "def check(" not in assembled and "assert np." not in assembled, f"{path}:{label}: grader code leaked into learning context"
             if label in REQUIRED:
                 assert label not in found, f"duplicate exercise label {label}"
+                # The feedback request always carries the exercise's own
+                # question (feedback-dom.js reads .math-exercise-question), so
+                # a fact stated inside the block counts as well as one in the
+                # surrounding context.
+                question = "".join(el.attrs.get("data-math-exercise-source", "")
+                                   for el in doc.ids.get(label + "-question", []))
                 for fact in REQUIRED[label]:
-                    assert compact(fact) in compact(assembled), f"{path}:{label}: learning context lost required fact {fact!r}"
+                    assert compact(fact) in compact(assembled + " " + question), f"{path}:{label}: learning context lost required fact {fact!r}"
                 found[label] = str(path.relative_to(site))
     missing = REQUIRED.keys() - found.keys()
     assert not missing, "rendered exercises missing: " + ", ".join(sorted(missing))

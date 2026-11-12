@@ -1368,11 +1368,6 @@ som må klassifiseres.
 ::: {#uke12-oppg-normal}
 :::
 
-Arild står på den avlange stien fra 12.1. Kravfunksjonen er
-$h(x,y)=x^2+4y^2-1$, og stien er punktene der $h(x,y)=0$. Det nordligste
-punktet på stien (toppen av ellipsen på kartet, ikke det høyeste punktet i terrenget) er $p=(0,1/2)$. Finn normalen $\nabla h(p)$ og en enhetstangent
-med positiv $x$-komponent.
-
 ```{math-exercise}
 #| label: week12-normal-tangent
 #| caption: Normal og tangent i toppen av ellipsen
@@ -1381,21 +1376,17 @@ med positiv $x$-komponent.
 #| partial-credit: true
 #| field-labels: normalens x-komponent, normalens y-komponent, tangentens x-komponent, tangentens y-komponent
 
+Arild står på den avlange stien fra 12.1. Kravfunksjonen er $h(x,y)=x^2+4y^2-1$, og stien er punktene der $h(x,y)=0$. Det nordligste punktet på stien (toppen av ellipsen på kartet, ikke det høyeste punktet i terrenget) er $p=(0,1/2)$. Finn normalen $\nabla h(p)$ og en enhetstangent med positiv $x$-komponent.
+
 $\nabla h(p)=$ vec[0,4]
 
 Enhetstangent $=$ vec[1,0]
-```
 
-**Forklar:** Kontroller at skalarproduktet av de to vektorene er null. Hva
-betyr det geometrisk?
+**Forklar:** Kontroller at skalarproduktet av de to vektorene er null. Hva betyr det geometrisk?
+```
 
 ::: {#uke12-oppg-ellipse}
 :::
-
-Arild går samme avlange sti, men i et annet terreng med høyde
-$f(x,y)=2x+y$. Hvor er det høyeste punktet på stien $x^2+4y^2=1$, og hvor høyt
-er det? Bruk substitusjonen $w=2y$, slik at stien blir en sirkel, og bruk
-Cauchy–Schwarz som i håndeksempelet i 12.2. Finn også multiplikatoren $\lambda$.
 
 ```{math-exercise}
 #| label: week12-ellipse-max
@@ -1405,22 +1396,19 @@ Cauchy–Schwarz som i håndeksempelet i 12.2. Finn også multiplikatoren $\lamb
 #| partial-credit: true
 #| field-labels: maksimumspunktets x-koordinat, maksimumspunktets y-koordinat, maksimumsverdi, multiplikator ved maksimum
 
+Arild går samme avlange sti, men i et annet terreng med høyde $f(x,y)=2x+y$. Hvor er det høyeste punktet på stien $x^2+4y^2=1$, og hvor høyt er det? Bruk substitusjonen $w=2y$, slik at stien blir en sirkel, og bruk Cauchy–Schwarz som i håndeksempelet i 12.2. Finn også multiplikatoren $\lambda$.
+
 $(x,y)=$ vec[4/sqrt(17),1/(2*sqrt(17))]
 
 Maksimumsverdi: _[sqrt(17)/2]
 
 $\lambda=$ _[-sqrt(17)/4]
-```
 
-**Forklar:** Kontroller svaret med Lagranges likninger, og kontroller at
-$\nabla h$ er parallell med $(2,1)$ i punktet.
+**Forklar:** Kontroller svaret med Lagranges likninger, og kontroller at $\nabla h$ er parallell med $(2,1)$ i punktet.
+```
 
 ::: {#uke12-oppg-sirkel}
 :::
-
-På en rund sti med radius 1 km er terrenget $f(x,y)=3x-4y$: det stiger mot
-øst og synker mot nord. Kravfunksjonen er $h(x,y)=x^2+y^2-1$, og stien er
-punktene der $h(x,y)=0$. Finn det høyeste punktet på stien og multiplikatoren.
 
 ```{math-exercise}
 #| label: week12-circle-lagrange
@@ -1430,32 +1418,17 @@ punktene der $h(x,y)=0$. Finn det høyeste punktet på stien og multiplikatoren.
 #| partial-credit: true
 #| field-labels: maksimumspunktets x-koordinat, maksimumspunktets y-koordinat, multiplikator ved maksimum
 
+På en rund sti med radius 1 km er terrenget $f(x,y)=3x-4y$: det stiger mot øst og synker mot nord. Kravfunksjonen er $h(x,y)=x^2+y^2-1$, og stien er punktene der $h(x,y)=0$. Finn det høyeste punktet på stien og multiplikatoren.
+
 $(x,y)=$ vec[3/5,-4/5]
 
 $\lambda=$ _[-5/2]
-```
 
 **Forklar:** Hvorfor er punktet globalt maksimum, og ikke bare en kandidat?
+```
 
 ::: {#uke12-oppg-boks}
 :::
-
-Her er det ingen tur, men samme idé: et krav, en målfunksjon og en pris. En
-sylinderformet boks har radius $x>0$ og høyde $y>0$. Overflaten er
-$f(x,y)=2\pi x^2+2\pi xy$. Volumet skal være $V$. Kravfunksjonen er
-$h(x,y)=\pi x^2y-V$, og kravet er $h(x,y)=0$, altså $\pi x^2y-V=0$.
-
-Gradientene er gitt:
-
-$\nabla f=\begin{bmatrix}4\pi x+2\pi y\\2\pi x\end{bmatrix},\qquad
-\nabla h=\begin{bmatrix}2\pi xy\\\pi x^2\end{bmatrix}.$
-
-1. Sett opp vektorlikningen $\nabla f+\lambda\nabla h=0$ sammen med $h=0$.
-2. Bruk den andre komponentlikningen til å finne $\lambda$ uttrykt
-   med $x$, og den første komponentlikningen til å finne forholdet mellom høyde og
-   radius.
-3. Bruk til slutt prisformelen fra 12.2: hvor mye øker minste overflate
-   $A_*$ per enhet ekstra volum?
 
 ```{math-exercise}
 #| label: week12-can
@@ -1465,29 +1438,29 @@ $\nabla f=\begin{bmatrix}4\pi x+2\pi y\\2\pi x\end{bmatrix},\qquad
 #| partial-credit: true
 #| field-labels: høyde delt på radius, multiplikator som uttrykk i x, økning i overflate per volumenhet
 
+Her er det ingen tur, men samme idé: et krav, en målfunksjon og en pris. En sylinderformet boks har radius $x>0$ og høyde $y>0$. Overflaten er $f(x,y)=2\pi x^2+2\pi xy$. Volumet skal være $V$. Kravfunksjonen er $h(x,y)=\pi x^2y-V$, og kravet er $h(x,y)=0$, altså $\pi x^2y-V=0$.
+
+Gradientene er gitt:
+
+$\nabla f=\begin{bmatrix}4\pi x+2\pi y\\2\pi x\end{bmatrix},\qquad \nabla h=\begin{bmatrix}2\pi xy\\\pi x^2\end{bmatrix}.$
+
+1. Sett opp vektorlikningen $\nabla f+\lambda\nabla h=0$ sammen med $h=0$.
+2. Bruk den andre komponentlikningen til å finne $\lambda$ uttrykt med $x$, og den første komponentlikningen til å finne forholdet mellom høyde og radius.
+3. Bruk til slutt prisformelen fra 12.2: hvor mye øker minste overflate $A_*$ per enhet ekstra volum?
+
 $y/x=$ _[2]
 
 $\lambda=$ __[-2/x]
 
 $\frac{dA_*}{dV}=$ __[2/x]
-```
 
-**Forklar:** Hvorfor er ekte hermetikkbokser ofte høyere enn dette? Nevn én
-ting modellen ser bort fra.
+**Forklar:** Hvorfor er ekte hermetikkbokser ofte høyere enn dette? Nevn én ting modellen ser bort fra.
+```
 
 ### Idé 2: Kandidater, egenverdier og KKT-systemet (12.3–12.4)
 
 ::: {#uke12-oppg-form}
 :::
-
-Arild går den runde stien $x^2+y^2=1$ i terrenget $f(x,y)=x^2+4xy+y^2$.
-Han står i $p=(1,1)/\sqrt2$.
-
-1. Skriv $f=z^TAz$ med en symmetrisk $A$, og finn egenverdiene og $f(p)$.
-2. Finn multiplikatoren fra $Ap=-\lambda p$.
-3. Krumningen langs sirkelen er gitt av $v^TBv$, der
-   $B=2A+2\lambda I$ og enhetstangenten er $v=(-1,1)/\sqrt2$.
-   Regn ut matriseproduktet. Hva forteller fortegnet om kandidaten $p$?
 
 ```{math-exercise}
 #| label: week12-quadratic-form
@@ -1496,6 +1469,12 @@ Han står i $p=(1,1)/\sqrt2$.
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: funksjonsverdi i p, tangentkrumning v^T B v, største egenverdi, minste egenverdi, multiplikator i p
+
+Arild går den runde stien $x^2+y^2=1$ i terrenget $f(x,y)=x^2+4xy+y^2$. Han står i $p=(1,1)/\sqrt2$.
+
+1. Skriv $f=z^TAz$ med en symmetrisk $A$, og finn egenverdiene og $f(p)$.
+2. Finn multiplikatoren fra $Ap=-\lambda p$.
+3. Krumningen langs sirkelen er gitt av $v^TBv$, der $B=2A+2\lambda I$ og enhetstangenten er $v=(-1,1)/\sqrt2$. Regn ut matriseproduktet. Hva forteller fortegnet om kandidaten $p$?
 
 $f(p)=$ _[3]
 
@@ -1509,10 +1488,6 @@ $\lambda$ i $p$: _[-3]
 ::: {#uke12-oppg-strekk}
 :::
 
-La $B=\begin{bmatrix}3&0\\4&5\end{bmatrix}$. Maksimer
-$\lVert Bz\rVert_2^2=z^TB^TBz$ når $\lVert z\rVert_2=1$. Regn ut $B^TB$ og
-egenverdiene. Velg maksimumspunktet med positive koordinater.
-
 ```{math-exercise}
 #| label: week12-stretch
 #| caption: Største strekk som egenverdiproblem
@@ -1521,22 +1496,19 @@ egenverdiene. Velg maksimumspunktet med positive koordinater.
 #| partial-credit: true
 #| field-labels: største egenverdi til BᵀB, minste egenverdi til BᵀB, største strekk, maksimumspunktets x-koordinat, maksimumspunktets y-koordinat
 
+La $B=\begin{bmatrix}3&0\\4&5\end{bmatrix}$. Maksimer $\lVert Bz\rVert_2^2=z^TB^TBz$ når $\lVert z\rVert_2=1$. Regn ut $B^TB$ og egenverdiene. Velg maksimumspunktet med positive koordinater.
+
 Egenverdier til $B^TB$: største _[45], minste _[5]
 
 Største strekk $\max\lVert Bz\rVert_2=$ _[3*sqrt(5)]
 
 Maksimumspunkt $z=$ vec[1/sqrt(2),1/sqrt(2)]
-```
 
 **Forklar:** Sammenlign med `np.linalg.svd(B)`.
+```
 
 ::: {#uke12-oppg-kkt}
 :::
-
-Hytta ligger på en holme i origo, og en rett vei på land følger kravet $x+2y=5$. Minimer kvadratet
-av avstanden til hytta, $f(x,y)=x^2+y^2$, langs veien. Skriv Lagranges likninger som et
-$3\times3$-system $K(x,y,\lambda)^T=(0,0,5)^T$ og løs det. Regn ut
-determinanten til $K$, og avgjør om $K$ er SPD.
 
 ```{math-exercise}
 #| label: week12-kkt
@@ -1546,6 +1518,8 @@ determinanten til $K$, og avgjør om $K$ er SPD.
 #| partial-credit: true
 #| field-labels: x, y, multiplikator, determinant til K, K er SPD
 
+Hytta ligger på en holme i origo, og en rett vei på land følger kravet $x+2y=5$. Minimer kvadratet av avstanden til hytta, $f(x,y)=x^2+y^2$, langs veien. Skriv Lagranges likninger som et $3\times3$-system $K(x,y,\lambda)^T=(0,0,5)^T$ og løs det. Regn ut determinanten til $K$, og avgjør om $K$ er SPD.
+
 $(x,y)=$ vec[1,2]
 
 $\lambda=$ _[-2]
@@ -1553,20 +1527,14 @@ $\lambda=$ _[-2]
 $\det K=$ _[-10]
 
 $K$ er SPD: _[0]
-```
 
-**Forklar:** Hvorfor viser fortegnet til determinanten alene at $K$ ikke er
-SPD?
+**Forklar:** Hvorfor viser fortegnet til determinanten alene at $K$ ikke er SPD?
+```
 
 ### Idé 3: Kontroller et numerisk svar (12.5)
 
 ::: {#uke12-oppg-kontroll}
 :::
-
-Arild går den avlange stien fra 12.1, med høyden $f(x,y)=x+2y$ og kravfunksjonen
-$h(x,y)=x^2+4y^2-1$. Kartappen foreslår $z=(1,0)$ som det høyeste punktet.
-Regn ut betingelsesfeilen, finn multiplikatoren som gir minst stasjonaritetsfeil,
-og regn ut stasjonaritetsfeilen.
 
 ```{math-exercise}
 #| label: week12-numeric-check
@@ -1576,24 +1544,21 @@ og regn ut stasjonaritetsfeilen.
 #| partial-credit: true
 #| field-labels: betingelsesfeil, multiplikator med minst feil, stasjonaritetsfeil
 
+Arild går den avlange stien fra 12.1, med høyden $f(x,y)=x+2y$ og kravfunksjonen $h(x,y)=x^2+4y^2-1$. Kartappen foreslår $z=(1,0)$ som det høyeste punktet. Regn ut betingelsesfeilen, finn multiplikatoren som gir minst stasjonaritetsfeil, og regn ut stasjonaritetsfeilen.
+
 $|h(z)|=$ _[0]
 
 $\lambda=$ _[-1/2]
 
 $\lVert\nabla f(z)+\lambda\nabla h(z)\rVert_2=$ _[2]
-```
 
-**Forklar:** Hvilken kontroll avslører at punktet ikke er stasjonært? Hvilken
-vei peker resten? Sammenlign lengden med stigningen i østspissen i 12.1.
+**Forklar:** Hvilken kontroll avslører at punktet ikke er stasjonært? Hvilken vei peker resten? Sammenlign lengden med stigningen i østspissen i 12.1.
+```
 
 ### Til fordypningen (valgfritt)
 
 ::: {#uke12-oppg-degenerert}
 :::
-
-Hører til «Gå i dybden: når normalen forsvinner» i 12.2. La $f(x,y)=x+3y$, med
-kravfunksjonen $h(x,y)=x^2+y^2$ og kravet $h(x,y)=0$. Finn det eneste
-tillatte punktet og $\nabla h$ der.
 
 ```{math-exercise}
 #| label: week12-degenerate-check
@@ -1603,13 +1568,14 @@ tillatte punktet og $\nabla h$ der.
 #| partial-credit: true
 #| field-labels: punktets x-koordinat, punktets y-koordinat, x-komponent av grad h, y-komponent av grad h
 
+Hører til «Gå i dybden: når normalen forsvinner» i 12.2. La $f(x,y)=x+3y$, med kravfunksjonen $h(x,y)=x^2+y^2$ og kravet $h(x,y)=0$. Finn det eneste tillatte punktet og $\nabla h$ der.
+
 Tillatt punkt $=$ vec[0,0]
 
 $\nabla h=$ vec[0,0]
-```
 
-**Forklar:** Hvorfor kan ingen multiplikator gjøre $\nabla f+\lambda\nabla h=0$,
-selv om punktet er et optimum?
+**Forklar:** Hvorfor kan ingen multiplikator gjøre $\nabla f+\lambda\nabla h=0$, selv om punktet er et optimum?
+```
 
 ## 12.7 Python: prøv kontrollene selv {quiz=uke12-7-oppgaver}
 
