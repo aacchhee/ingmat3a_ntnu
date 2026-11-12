@@ -4,25 +4,10 @@
 #| label: week12-setup
 #| autorun: true
 #| context: interactive
-# Felles oppsett for forsøkene i 12.1–12.5: avstandsproblemet og ferdige figurhjelpere.
+# Felles oppsett for forsøkene i 12.2–12.5: importer og ferdige figurhjelpere.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
-
-# Avstandsproblemet fra 12.5: nærmeste punkt på enhetssirkelen til a = (2, 1).
-a = np.array([2., 1.])
-
-def F(z):
-    return .5*np.sum((z-a)**2)
-
-def grad_F(z):
-    return z-a
-
-def h(z):
-    return np.dot(z, z)-1.
-
-def grad_h(z):
-    return 2*z
 
 # Ferdige figurhjelpere. Cellene viser regningen; tegningen skjer her.
 _t_circle = np.linspace(0, 2*np.pi, 300)
@@ -73,21 +58,6 @@ def plot_nullspace_method(z0, Z, z_best, grad_best):
     ax.plot(r*np.cos(s), r*np.sin(s), ':', color='0.5', label='nivåkurven gjennom løsningen')
     ax.set(xlabel='x', ylabel='y', xlim=(-.3, 3), ylim=(-1.3, 2.3)); ax.set_aspect('equal')
     ax.legend(loc='lower left', fontsize=8); plt.show()
-
-def plot_path_on_circle(path, a, levels=(.25, .5, .764, 1, 2, 3)):
-    """Nivåkurver for F = |z-a|^2/2, enhetssirkelen og punktene en løser rapporterte."""
-    path = np.asarray(path)
-    u, v = np.meshgrid(np.linspace(-1.2, 2.5, 200), np.linspace(-1.2, 2.2, 200))
-    fig, ax = plt.subplots(figsize=(6, 5))
-    cs = ax.contour(u, v, .5*((u-a[0])**2 + (v-a[1])**2), levels=levels,
-                    colors='0.7', linestyles='dotted')
-    ax.clabel(cs, fontsize=8, fmt='F = %g')
-    ax.plot(np.cos(_t_circle), np.sin(_t_circle), color='tab:blue', label='h = 0')
-    ax.plot(path[:, 0], path[:, 1], '-o', ms=4, color='tab:orange', label='rapporterte punkter')
-    ax.plot(*path[0], 's', color='tab:purple', label='start')
-    ax.plot(*a, 'x', color='k', label='a')
-    ax.set(xlabel='x', ylabel='y'); ax.set_aspect('equal'); ax.legend(fontsize=8)
-    plt.show()
 ```
 
 :::

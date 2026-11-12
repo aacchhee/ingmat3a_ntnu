@@ -42,55 +42,7 @@ Tar NumPy-vektorer z0, Z, z_best og grad_best med form (2,). Viser linjen z0+t\*
 
 `minimize`
 
-Importert med from scipy.optimize import minimize. Cellene bruker SLSQP med en startvektor og constraints; type='eq' betyr fun(z)=0 og type='ineq' betyr fun(z)>=0.
-
-:::
-
-::: {#ide-uke12-f-3505fdc9 .ai-feedback-context}
-
-`F(z)`
-
-Tar en NumPy-vektor z med form (2,) og returnerer skalar 0.5\*sum((z-a)\*\*2), halve kvadrerte avstanden til det globale målpunktet a; oppsettet setter a = np.array([2.,1.]).
-
-:::
-
-::: {#ide-uke12-a-9d45c0c7 .ai-feedback-context}
-
-`a`
-
-Startdefinisjon: a = np.array([2., 1.]), en NumPy-vektor med form (2,) som er målpunktet i avstandsproblemet.
-
-:::
-
-::: {#ide-uke12-grad-f-d371153a .ai-feedback-context}
-
-`grad_F(z)`
-
-Tar en NumPy-vektor z med form (2,) og returnerer z-a, gradienten til F med samme form. Leser global a, som i oppsettet settes til np.array([2.,1.]).
-
-:::
-
-::: {#ide-uke12-grad-h-d495f7a7 .ai-feedback-context}
-
-`grad_h(z)`
-
-Tar en NumPy-vektor z med form (2,) og returnerer 2\*z, gradienten til h(z)=z@z-1, med samme form.
-
-:::
-
-::: {#ide-uke12-h-d5a1c2a7 .ai-feedback-context}
-
-`h(z)`
-
-Tar en NumPy-vektor z med form (2,) og returnerer skalar np.dot(z,z)-1.; likhetsbetingelsen h(z)=0 beskriver enhetssirkelen.
-
-:::
-
-::: {#ide-uke12-plot-path-on-circle-3dc52216 .ai-feedback-context}
-
-`plot_path_on_circle(path, a, levels=(0.25, 0.5, 0.764, 1, 2, 3))`
-
-Tar en ikke-tom punktfølge path med form (m,2) og en 2-vektor a. Viser nivåkurver for 0.5\*|z-a|\*\*2, enhetssirkelen og punktene i path, med markert start og målpunkt a. levels angir konturverdiene; funksjonen utfører ingen optimering. Returnerer None.
+Importert med from scipy.optimize import minimize. Cellen bruker SLSQP med en startvektor og constraints; type='eq' betyr fun(z)=0.
 
 :::
 
