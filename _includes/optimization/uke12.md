@@ -319,8 +319,16 @@ $\lambda$.
 - **Forutsetning:** Regularitet, $\nabla h(z_*)\ne0$, trengs fordi
   $\nabla h$ ellers ikke er noen normal; se «Gå i dybden» nedenfor.
 
-**Den avlange stien fra 12.1, steg for steg.** La oss regne ut punktet
-appleten viste. Her er $\nabla f=(1,2)$ og $\nabla h=(2x,8y)$.
+::: {.callout-note title="Håndeksempel: den avlange stien fra 12.1"}
+
+**Utgangspunkt.** Vi regner ut punktet appleten viste. Arild går på den avlange stien, og
+terrenget er $f(x,y)=x+2y$. Kravfunksjonen er $h(x,y)=x^2+4y^2-1$, og stien er punktene
+der $h(x,y)=0$. Her er $\nabla f=(1,2)$ og $\nabla h=(2x,8y)$.
+
+**Prøv selv.** Skriv opp de tre likningene og finn alle kandidatene. Hvilken gir størst
+verdi?
+
+**Regnegangen.**
 
 1. Likningene er $1+2\lambda x=0$, $2+8\lambda y=0$ og $x^2+4y^2=1$.
 2. Her er $\lambda\ne0$, ellers sier den første likningen $1=0$. Da er
@@ -333,6 +341,8 @@ appleten viste. Her er $\nabla f=(1,2)$ og $\nabla h=(2x,8y)$.
 5. Første likning gir $\lambda=-\dfrac1{2x}=-\dfrac1{\sqrt2}$ i den positive
    kandidaten. Der er $\nabla h=(\sqrt2,\,2\sqrt2)=\sqrt2\,(1,2)$, parallell
    med $\nabla f$, slik appleten viste.
+
+:::
 
 **Hva betyr det for Arild?** Likningene har to løsninger: en i nordøst med
 høyde $\sqrt2\approx1.414$ og en i sørvest med høyde $-\sqrt2$. I sørvest peker
