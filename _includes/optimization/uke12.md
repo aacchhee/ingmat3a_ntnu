@@ -127,8 +127,9 @@ der terrenget stiger brattest. Det høyeste punktet på den runde stien er derfo
 
 $$\frac{(1,2)}{\sqrt5}\approx(0.45,\,0.89),$$
 
-og høyden der er $\sqrt5\approx2.24$, altså 224 meter. (Det samme argumentet ga den
-største komponenten langs en retning i [uke 4](uke4.qmd#uke4-retning).)
+og høyden der er $\sqrt5\approx2.24$, altså 224 meter.
+
+Tallet $\sqrt5\cos\theta$ kjenner du fra projeksjonene i [uke 4](uke4.qmd#uke4-projeksjon): det er komponenten av $(1,2)$ langs retningen ut til punktet, altså lengden av projeksjonen av $(1,2)$ på den retningen. Projeksjonen er lengst når retningen er den samme som $(1,2)$.
 
 Men sjøen er ikke rund. Nå bytter vi den runde stien med den avlange stien $x^2+4y^2=1$ fra oversikten. Terrenget er det samme. Argumentet med vinkelen virker ikke lenger, for punktene på stien ligger ikke like langt fra midten. Hvor er det høyeste punktet nå?
 
