@@ -5,7 +5,7 @@
 ::: {#uke12-start}
 :::
 
-### Hvor er det høyest på stien, og hva er det verdt å flytte stien?
+### Hvor er det høyest på stien, og hva gir den ytre runden?
 
 #### Situasjonen
 
@@ -25,7 +25,7 @@ Turgåeren har tre spørsmål:
 
 1. **Hvor på stien er det høyeste punktet?**
 2. **Hvordan kan han være sikker på at det er det høyeste?** Stien har uendelig mange punkter, så han kan ikke gå hele stien og måle hvert sted.
-3. **Hva er det verdt å flytte stien litt lenger ut?** Kommunen vurderer å legge stien litt lenger fra sjøen. Hvor mye høyere kommer han da?
+3. **Hva gir den ytre runden?** Litt lenger fra sjøen går en ytre, merket runde med samme form. Hvor mye høyere kommer han hvis han tar den i stedet?
 
 #### Fra turen til matematikk
 
@@ -41,7 +41,7 @@ For å svare oversetter vi turen til matematikk. Hver ting på turen får sin mo
 | Brattest oppover | Gradienten $\nabla f$ |
 | Rett ut fra stien, vinkelrett på den | Gradienten $\nabla h$ |
 | Det høyeste punktet på stien | Maksimum av $f$ med kravet |
-| Hva det er verdt å flytte stien | Prisen $-\lambda$, der $\lambda$ er multiplikatoren |
+| Hvor mye høyere den ytre runden når | Prisen $-\lambda$, der $\lambda$ er multiplikatoren |
 
 Lengden på $\nabla f$ sier hvor bratt det er. I terrenget vårt er $\nabla f=(1,2)$ overalt, og $\nabla h=(2x,8y)$ peker rett ut fra stien.
 
@@ -54,7 +54,7 @@ Lengden på $\nabla f$ sier hvor bratt det er. I terrenget vårt er $\nabla f=(1
 Vi svarer på spørsmålene i tre steg:
 
 1. **Hvor er det høyeste punktet? (12.1–12.2).** Først ser vi på kartet. I det høyeste punktet berører koten stien, og «brattest oppover» peker rett ut fra stien. Det gir **Lagranges likninger**, og av dem kan vi regne ut punktet.
-2. **Hva er det verdt å flytte stien? (12.2).** Tallet $-\lambda$ (minus multiplikatoren i likningene) er en pris. Den forteller hvor mye høyere det høyeste punktet blir når stien flyttes litt. Det er samme tanke som ressursprisene i uke 11.
+2. **Hva gir den ytre runden? (12.2).** Tallet $-\lambda$ (minus multiplikatoren i likningene) er en pris. Den forteller hvor mye høyere det høyeste punktet blir på en runde litt lenger ut. Det er samme tanke som ressursprisene i uke 11.
 3. **Hvordan kan han være sikker? (12.3–12.5).** Et sted der stien er flat, trenger ikke være det høyeste. Vi finner alle flate steder og velger riktig (12.3). Når høyden er en kvadratisk funksjon, som $xy$, blir det matriseregning (12.4). Til slutt kontrollerer vi et punkt som en kartapp foreslår (12.5).
 
 I [uke 11](uke11.qmd) var kravene rette linjer, og svaret lå i et hjørne. Nå er stien krum, og svaret ligger et sted langs kurven. Prosjektet bruker samme idé: kjettingen henger slik at summen av høydene til leddpunktene (energien) blir minst mulig når leddene har faste lengder, og multiplikatorene er kreftene i kjettingen. Det er samme type spørsmål som turgåerens, med minimum i stedet for maksimum og ti krav i stedet for ett.
@@ -70,9 +70,9 @@ kodeoppgavene i 12.7.
 1. [Nivålinjen berører stien](#uke12-tangent): en applet som i uke 4, nå med en avlang sti.
 2. [Lagranges likninger](#uke12-lagrange): brattest oppover står vinkelrett på stien.
 
-**Hva er det verdt å flytte stien?**
+**Hva gir den ytre runden?**
 
-3. [Hva er det verdt å flytte stien?](#uke12-pris): prisen er $-\lambda$, samme idé som i uke 11.
+3. [Hva gir den ytre runden?](#uke12-pris): prisen er $-\lambda$, samme idé som i uke 11.
 
 **Hvordan kan han være sikker?**
 
@@ -99,7 +99,7 @@ Etter denne uken skal du kunne
 
 - finne tangent og normal til en regulær likhetsbetingelse i et punkt,
 - sette opp og løse Lagranges likninger for én likhetsbetingelse,
-- tolke $-\lambda$ som endringen i optimal verdi per enhet vi flytter kravet (hva det er verdt å flytte stien),
+- tolke $-\lambda$ som endringen i optimal verdi per enhet vi flytter kravet (hva en runde litt lenger ut gir),
 - skille kandidater (flate steder) fra løsninger ved å sammenligne verdier eller finne en global grense,
 - forklare hvorfor en kvadratisk form på enhetssirkelen gir et egenverdiproblem,
 - sette opp likningssettet for et kvadratisk mål med lineære krav, og forklare hvorfor
@@ -501,17 +501,18 @@ siden.
 [et annet mål på ellipsen](#uke12-oppg-ellipse) og
 [Lagrange på sirkelen](#uke12-oppg-sirkel) i 12.6.
 
-### Hva er det verdt å flytte stien?
+### Hva gir den ytre runden?
 
 ::: {#uke12-pris}
 :::
 
-Turgåerens tredje spørsmål: Kommunen kan legge stien litt lenger ut. Hvor mye
-høyere kommer han da? Vi sier at stien flyttes fra $h(x,y)=0$ til
-$h(x,y)=s$, der $s$ er et lite tall. For den avlange stien betyr
-$h(x,y)=s$ at $x^2+4y^2=1+s$. Med $s>0$ blir stien større. Tallet $s$ er ikke en avstand;
-det sier hvor mye vi endrer verdien av $h$. Med $s=0.1$ flyttes hele ringen
-omtrent 5 % lenger ut fra sjøens midte, ved det høyeste punktet omtrent 40 meter.
+Turgåerens tredje spørsmål: Litt lenger fra sjøen går en ytre runde med samme
+form. Hvor mye høyere kommer han hvis han tar den? Vi beskriver den ytre runden
+med den samme kravfunksjonen: den er punktene der $h(x,y)=s$, der $s$ er et lite
+positivt tall. For den avlange stien betyr det $x^2+4y^2=1+s$. Tallet $s$ er ikke
+en avstand; det sier hvor mye større verdien av $h$ er på den ytre runden. Med
+$s=0.1$ ligger den ytre runden omtrent 5 % lenger ut fra sjøens midte, ved det
+høyeste punktet omtrent 40 meter.
 
 **Først tall på den avlange stien.** Ringen $x^2+4y^2=1+s$ er den gamle ringen,
 strukket med faktoren $\sqrt{1+s}$ ut fra sjøens midte. Høyden $f=x+2y$ er null i
@@ -539,20 +540,20 @@ $$\boxed{\frac{df_*}{ds}=-\lambda\quad\text{ved } s=0.}$$
 Hvorfor regelen gjelder for alle glatte problemer, og kontroll med veien fra
 hytta, viser «Gå i dybden» rett under.
 
-Tallet $-\lambda$ sier hvor mye optimal verdi endres per enhet vi flytter
-kravet:
+Tallet $-\lambda$ sier hvor mye optimal verdi endres per enhet vi endrer
+kravet, fra $h=0$ til $h=s$:
 
 - **Koblingen til uke 11:** Det er samme idé som i
   [uke 11](uke11.qmd#uke11-sensitivitet): hva er én enhet mer av en ressurs
-  verdt? Verkstedeieren spurte om en ekstra maskintime, turgåeren spør om en sti som er flyttet litt.
+  verdt? Verkstedeieren spurte om en ekstra maskintime, turgåeren spør om en runde litt lenger ut.
 - **Fortegnet:** I uke 11 var prisen selve endringen, et positivt tall. Her
   er prisen $-\lambda$, fordi vi skriver $L=f+\lambda h$.
 
-**Svaret til turgåeren:** Flytter kommunen stien fra $h=0$ til $h=s$, stiger det
-høyeste punktet med omtrent $-\lambda\cdot s$. På den avlange stien er
-$-\lambda=1/\sqrt2\approx0.71$ hundre meter per enhet $s$. Med $s=0.1$ flyttes
-stien omtrent 40 meter ut ved toppen, og han kommer omtrent 7 meter høyere.
-Tallet $-\lambda$ er altså hva det er verdt å flytte stien, målt i høyde.
+**Svaret til turgåeren:** På en runde der $h=s$ i stedet for $h=0$, ligger det
+høyeste punktet omtrent $-\lambda\cdot s$ høyere. På den avlange stien er
+$-\lambda=1/\sqrt2\approx0.71$ hundre meter per enhet $s$. Med $s=0.1$ går den
+ytre runden omtrent 40 meter lenger ut ved toppen, og han kommer omtrent 7 meter
+høyere. Tallet $-\lambda$ er altså hva en runde litt lenger ut gir, målt i høyde.
 
 **Dette tar vi med oss.**
 
@@ -564,7 +565,7 @@ Tallet $-\lambda$ er altså hva det er verdt å flytte stien, målt i høyde.
 ::: {.reading-step title="Gå i dybden: hvorfor prisformelen gjelder generelt"}
 
 **Veien fra hytta.** I veieksempelet er $h=x+y-2$, så $h=s$ betyr $x+y=2+s$,
-altså $r=2+s$. Vi flytter veien til $x+y=r$ og bruker samme regning som i
+altså $r=2+s$. Vi ser på en parallell vei $x+y=r$ og bruker samme regning som i
 håndeksempelet:
 
 1. $2x+\lambda=0$ og $2y+\lambda=0$ gir $x=y$.
@@ -577,7 +578,7 @@ $$f_*(r)=\Bigl(\frac r2\Bigr)^2+\Bigl(\frac r2\Bigr)^2=\frac{r^2}{2},\qquad
 \frac{df_*}{dr}=r=-\lambda.$$
 
 Sammenhengen $df_*/dr=-\lambda$ gjelder for alle $r$, ikke bare for $r=2$, der vi
-fant $\lambda=-2$. Flytter vi veien fra $r=2$ til $r=2.1$, vokser minste
+fant $\lambda=-2$. Går vi fra veien med $r=2$ til en parallell vei med $r=2.1$, vokser minste
 kvadrerte avstand fra $2$ til $2.205$, altså med omtrent $2\cdot0.1$.
 
 **Regelen i alle glatte problemer.** La $z(s)$ være løsningen når kravet er $h(z)=s$, og anta at den endrer seg
@@ -1377,8 +1378,8 @@ Turgåeren spurte tre ting. Svarene er nå komplette:
    retningen til egenvektorene, og høyeste og laveste høyde er største og minste
    egenverdi (12.4). Et punkt fra en kartapp sjekker han med de to
    kontrollfeilene først.
-3. **Hva er det verdt å flytte stien?** Prisen er $-\lambda$: høyden på det
-   høyeste punktet endres med omtrent $-\lambda$ per enhet vi flytter kravet.
+3. **Hva gir den ytre runden?** Prisen er $-\lambda$: på en runde der $h=s$,
+   ligger det høyeste punktet omtrent $-\lambda\cdot s$ høyere.
    For den avlange stien er $-\lambda=1/\sqrt2\approx0.71$, så $s=0.1$ gir
    omtrent 7 meter.
 
