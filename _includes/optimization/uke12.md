@@ -34,30 +34,29 @@ For å svare oversetter vi turen til matematikk. Hver ting på turen får sin mo
 | På turen | I matematikken |
 |:--|:--|
 | Et sted på kartet | Et punkt $(x,y)$ |
-| Høyden i terrenget | Målet $f(x,y)$, for eksempel $x+2y$ |
-| Koter på kartet: linjer der høyden er den samme | **Nivålinjene** til $f$ |
+| Høyden i terrenget | **Målfunksjonen** $f(x,y)$ (engelsk: *objective function*), her $x+2y$ |
+| Høydekurver på kartet (også kalt koter): linjer som forbinder steder med samme høyde | **Nivålinjene** til $f$: kurvene der $f(x,y)$ har samme verdi |
 | Hvilken side av stien du er på | Kravfunksjonen $h(x,y)$, for eksempel $x^2+4y^2-1$: negativ inne, null på stien, positiv ute |
 | Stien rundt sjøen | Kravet: punktene der $h(x,y)=0$ |
-| Brattest oppover | Gradienten $\nabla f$ |
-| Rett ut fra stien, vinkelrett på den | Gradienten $\nabla h$ |
+| Brattest oppover | Gradienten $\nabla f=(\partial f/\partial x,\ \partial f/\partial y)$: den peker dit $f$ vokser raskest |
+| Rett ut fra stien, vinkelrett på den | Gradienten $\nabla h$: den peker dit $h$ vokser raskest. Langs stien er $h=0$ hele tiden, så $\nabla h$ står vinkelrett på stien; og fordi $h$ går fra negativ inne til positiv ute, peker den utover |
 | Det høyeste punktet på stien | Maksimum av $f$ med kravet |
-| Hvor mye høyere den ytre runden når | Prisen $-\lambda$, der $\lambda$ er multiplikatoren |
 
-Lengden på $\nabla f$ sier hvor bratt det er. I terrenget vårt er $\nabla f=(1,2)$ overalt, og $\nabla h=(2x,8y)$ peker rett ut fra stien.
+Lengden på $\nabla f$ sier hvor bratt det er. I terrenget vårt er $\nabla f=(1,2)$ overalt. For stien er $\nabla h=(2x,8y)$; i punktet $(1,0)$ er $\nabla h=(2,0)$, rett mot øst og ut fra sjøen.
 
 Å holde seg på stien er et **krav** som er en likning. Et slikt krav kalles en **likhetsbetingelse** eller **bibetingelse**; vi sier ofte bare **krav**.
 
-**Ukens spørsmål.** Med Arilds ord: **Hvor på stien er det høyest, og hvordan kan vi være sikre på det uten å gå hele stien?** I matematikkens språk: **Hva erstatter $\nabla f=0$ når punktet må ligge på en kurve, og hvordan vet vi at kandidaten vi finner, er den beste?** Det tredje spørsmålet, hva det er verdt å flytte stien, følger av svaret.
+**Ukens spørsmål.** Med Arilds ord: **Hvor på stien er det høyest, og hvordan kan vi være sikre på det uten å gå hele stien?** I matematikkens språk: **Hva erstatter $\nabla f=0$ når punktet må ligge på en kurve, og hvordan vet vi at kandidaten vi finner, er den beste?** Svaret på det tredje spørsmålet, om den ytre runden, kommer ut av de samme likningene.
 
 #### Veien gjennom uken
 
 Vi svarer på spørsmålene i tre steg:
 
-1. **Hvor er det høyeste punktet? (12.1–12.2).** Først ser vi på kartet. I det høyeste punktet berører koten stien, og «brattest oppover» peker rett ut fra stien. Det gir **Lagranges likninger**, og av dem kan vi regne ut punktet.
-2. **Hva gir den ytre runden? (12.2).** Tallet $-\lambda$ (minus multiplikatoren i likningene) er en pris. Den forteller hvor mye høyere det høyeste punktet blir på en runde litt lenger ut. Det er samme tanke som ressursprisene i uke 11.
+1. **Hvor er det høyeste punktet? (12.1–12.2).** Først ser vi på kartet. I det høyeste punktet berører høydekurven stien, og «brattest oppover» peker rett ut fra stien. Det gir **Lagranges likninger**, og av dem kan vi regne ut punktet.
+2. **Hva gir den ytre runden? (12.2).** Lagranges likninger inneholder et ekstra ukjent tall. Det viser seg å fortelle hvor mye høyere det høyeste punktet blir på en runde litt lenger ut, omtrent som ressursprisene i uke 11 fortalte hva én ekstra maskintime var verdt.
 3. **Hvordan kan han være sikker? (12.3–12.5).** Et sted der stien er flat, trenger ikke være det høyeste. Vi finner alle flate steder og velger riktig (12.3). Når høyden er en kvadratisk funksjon, som $xy$, blir det matriseregning (12.4). Til slutt kontrollerer vi et punkt som en kartapp foreslår (12.5).
 
-I [uke 11](uke11.qmd) var kravene rette linjer, og svaret lå i et hjørne. Nå er stien krum, og svaret ligger et sted langs kurven. Prosjektet bruker samme idé: kjettingen henger slik at summen av høydene til leddpunktene (energien) blir minst mulig når leddene har faste lengder, og multiplikatorene er kreftene i kjettingen. Det er samme type spørsmål som Arilds, med minimum i stedet for maksimum og ti krav i stedet for ett.
+I [uke 11](uke11.qmd) var kravene rette linjer, og svaret lå i et hjørne. Nå er stien krum, og svaret ligger et sted langs kurven. Prosjektet bruker samme idé: kjettingen henger slik at summen av høydene til leddpunktene (energien) blir minst mulig når leddene har faste lengder, og de ekstra tallene i Lagranges likninger blir kreftene i kjettingen. Det er samme type spørsmål som Arilds, med minimum i stedet for maksimum og ti krav i stedet for ett.
 
 **Forelesning** viser hovedløpet. **Gå i dybden**-boksene gir begrunnelser,
 spesialtilfeller og ulikhetskrav. Regneoppgavene står i 12.6 og
@@ -72,7 +71,7 @@ kodeoppgavene i 12.7.
 
 **Hva gir den ytre runden?**
 
-3. [Hva gir den ytre runden?](#uke12-pris): prisen er $-\lambda$, samme idé som i uke 11.
+3. [Hva gir den ytre runden?](#uke12-pris): et ekstra tall i Lagranges likninger virker som en pris, som ressursprisene i uke 11.
 
 **Hvordan kan han være sikker?**
 
@@ -99,10 +98,10 @@ Etter denne uken skal du kunne
 
 - finne tangent og normal til en regulær likhetsbetingelse i et punkt,
 - sette opp og løse Lagranges likninger for én likhetsbetingelse,
-- tolke $-\lambda$ som endringen i optimal verdi per enhet vi flytter kravet (hva en runde litt lenger ut gir),
+- tolke multiplikatoren i Lagranges likninger som en pris: hvor mye den beste verdien endres når kravet endres litt (hva en runde litt lenger ut gir),
 - skille kandidater (flate steder) fra løsninger ved å sammenligne verdier eller finne en global grense,
 - forklare hvorfor en kvadratisk form på enhetssirkelen gir et egenverdiproblem,
-- sette opp likningssettet for et kvadratisk mål med lineære krav, og forklare hvorfor
+- sette opp likningssettet for en kvadratisk målfunksjon med lineære krav, og forklare hvorfor
   matrisen ikke er SPD,
 - kontrollere både betingelsesfeil og stasjonaritetsfeil i et numerisk SLSQP-svar.
 
@@ -132,12 +131,12 @@ Appleten viser et kart over stien med høyden og tre piler i punktet du velger. 
 | Rolle | Uttrykk | Hva det betyr |
 |:--|:--|:--|
 | Valg | $z=(x,y)$ | Stedet på kartet. Vi flytter det langs stien. |
-| Mål | Maksimer $f(x,y)=x+2y$ | Høyden. Det er også skalarproduktet $(1,2)\cdot z$, som komponenten i uke 4. |
+| Målfunksjon | Maksimer $f(x,y)=x+2y$ | Høyden. Det er også skalarproduktet $(1,2)\cdot z$, som komponenten i uke 4. |
 | Krav | $h(x,y)=0$ med $h(x,y)=x^2+4y^2-1$ | Stien. Bare punkter på ellipsen er tillatt. |
 
 Dra punktet $z$ langs stien. Slik leser du figuren:
 
-- **Stiplet brun linje:** **Nivålinjen** $x+2y=f(z)$ er koten gjennom
+- **Stiplet brun linje:** **Nivålinjen** $x+2y=f(z)$ er høydekurven gjennom
   stedet der Arild står: alle steder med samme høyde.
 - **Rød pil:** Retningen til $\nabla f=(1,2)$, brattest oppover.
 - **Grønn pil:** Retningen til $\nabla h=(2x,8y)$, rett ut fra stien.
@@ -229,9 +228,9 @@ stien. Men tre ting gjelder fortsatt i det høyeste punktet:
 - nivålinjen **berører** stien uten å krysse den;
 - den røde og den grønne pilen er **parallelle**: vinkelen er $0^\circ$.
 
-**Hva betyr det for Arild?** Nivålinjen er koten gjennom stedet han står.
-Krysser koten stien, går stien høyere på den ene siden, og stedet kan ikke være
-det høyeste. I det høyeste punktet berører koten stien akkurat, så han går
+**Hva betyr det for Arild?** Nivålinjen er høydekurven gjennom stedet han står.
+Krysser høydekurven stien, går stien høyere på den ene siden, og stedet kan ikke være
+det høyeste. I det høyeste punktet berører høydekurven stien akkurat, så han går
 verken opp eller ned. Terrenget stiger likevel fortsatt mot nordøst, også her:
 brattest oppover peker rett ut fra stien. Men der får han ikke gå, for han må
 holde seg på stien. Resten av uken handler om denne observasjonen.
@@ -422,7 +421,7 @@ lineære krav, og i prosjektet ti krav samtidig.
 ::: {#uke12-degenerert}
 :::
 
-Lagranges likninger forutsetter at $\nabla h\ne0$. Se på målet $f(x,y)=x$
+Lagranges likninger forutsetter at $\nabla h\ne0$. Se på målfunksjonen $f(x,y)=x$
 med kravfunksjonen $h(x,y)=x^2+y^2$ og kravet $h(x,y)=0$. Tenk deg en «sti» som
 bare er ett punkt:
 
@@ -498,7 +497,7 @@ siden.
 :::
 
 **Øv på dette:** [normal og tangent på ellipsen](#uke12-oppg-normal),
-[et annet mål på ellipsen](#uke12-oppg-ellipse) og
+[en annen målfunksjon på ellipsen](#uke12-oppg-ellipse) og
 [Lagrange på sirkelen](#uke12-oppg-sirkel) i 12.6.
 
 ### Hva gir den ytre runden?
@@ -707,7 +706,7 @@ Målet er å finne alle stedene der stigningen er null, og se om de er like høy
 - Kjør cellen. Hvor mange punkter har stigning null, og hvilke verdier
   har $f$ der?
 - Finn de samme punktene i figuren. Hvilke er topper, og hvilke er bunner?
-- Bytt til målet $x+2y$ fra håndeksempelet: `values = x + 2*y` og
+- Bytt til målfunksjonen $x+2y$ fra håndeksempelet: `values = x + 2*y` og
   `slope = -y + 2*x`. Hvor mange punkter får du nå?
 
 Cellen regner ut høyden $f$ og stigningen langs stien i tusen punkter på
@@ -791,7 +790,7 @@ sammenligningen av verdiene er nok fordi to ting gjelder her:
 ::: {.reading-step title="Gå i dybden: andrederivert langs kurven"}
 
 Vil vi vite om et flatt sted er en topp eller en dal uten å sammenligne alle
-høydene, kan vi se på hvordan målet bøyer seg langs stien. Vi følger sirkelen
+høydene, kan vi se på hvordan målfunksjonen bøyer seg langs stien. Vi følger sirkelen
 med $p(t)=(\cos t,\sin t)$. Da er $f(p(t))=\tfrac12\sin2t$.
 
 | Vinkel | Andrederivert | Tolkning langs sirkelen |
@@ -804,7 +803,7 @@ punkt med tangent $v=\gamma'(0)$:
 
 1. Derivér kravet $h(\gamma(t))=0$ to ganger:
    $v^T\nabla^2h\,v+\nabla h\cdot\gamma''(0)=0$.
-2. Den andrederiverte av målet langs kurven er
+2. Den andrederiverte av målfunksjonen langs kurven er
    $v^T\nabla^2f\,v+\nabla f\cdot\gamma''(0)$, og $\nabla f=-\lambda\nabla h$.
 3. Fjern leddet med $\gamma''(0)$ ved hjelp av steg 1:
    $$(f\circ\gamma)''(0)=v^T\nabla^2_{zz}L(z_*,\lambda)\,v.$$
@@ -875,7 +874,7 @@ minimumspunktene er blant kandidatene, altså punktene som ligger i retningen ti
 
 Vi har vist med likninger at kandidatene ligger i retningen til egenvektorer. Forsøket
 viser det samme i et bilde, og lar deg prøve andre matriser. Målet er å se at
-nivåkurvene (kotene) berører sirkelen i akkurat de punktene, slik nivålinjen
+nivåkurvene (høydekurvene) berører sirkelen i akkurat de punktene, slik nivålinjen
 berørte stien i 12.1.
 
 ### Eksperiment 3 – se egenvektorene på sirkelen
@@ -928,7 +927,7 @@ plot_quadratic_on_circle(A)
   singulærverdiene $2$ og $1$ (se «Gå i dybden» under).
 
 **Hva betyr det for Arild?** Det er samme bilde som i 12.1: på en rund sti
-ligger de høyeste og de laveste stedene der en kote berører stien, i retningen
+ligger de høyeste og de laveste stedene der en høydekurve berører stien, i retningen
 til egenvektorene, én kilometer fra sjøens midte. I sadelterrenget er toppene
 $\pm\tfrac1{\sqrt2}(1,1)$ (nordøst og sørvest) og dalene
 $\pm\tfrac1{\sqrt2}(1,-1)$ (nordvest og sørøst), og høydene der er største og
@@ -1026,7 +1025,7 @@ except np.linalg.LinAlgError:
   SPD-matrise har $v^TKv>0$ for alle $v\ne0$. Et KKT-system er derfor aldri
   SPD (se «Gå i dybden» under), og CG og Cholesky kan ikke brukes direkte.
 
-**Dette tar vi med oss.** Når målet er kvadratisk, blir Lagranges likninger
+**Dette tar vi med oss.** Når målfunksjonen er kvadratisk, blir Lagranges likninger
 lineær algebra:
 
 | Krav | Hva likningene blir |
@@ -1052,7 +1051,7 @@ Nullromsmetoden i «Gå i dybden» viser én vei rundt.
    $\nabla f$ vinkelrett på alle tillatte retninger:
    $\nabla f\cdot v=-\lambda^TCv=0$.
 
-Målet endres altså ikke til første orden i noen tillatt retning.
+Målfunksjonen endres altså ikke til første orden i noen tillatt retning.
 
 **Nullromsmetoden.** Ideen er å skrive de tillatte punktene slik at kravet alltid er oppfylt. Ethvert tillatt punkt kan skrives $z=z_0+tZ$:
 
@@ -1086,7 +1085,7 @@ plot_nullspace_method(z0, Z, z_best, 2*z_best)
 
 1. **Parametriser:** Bruk $z=z_0+Zt$, der kolonnene i $Z$ er en basis for
    nullrommet og $t$ er en vektor med like mange tall som kolonner i $Z$.
-2. **Sett inn i målet:** For $f=\tfrac12z^TQz-b^Tz$ (som i neste boks) gir
+2. **Sett inn i målfunksjonen:** For $f=\tfrac12z^TQz-b^Tz$ (som i neste boks) gir
    utvidelsen av $\tfrac12(z_0+Zt)^TQ(z_0+Zt)-b^T(z_0+Zt)$
    $$f(z_0+Zt)=\tfrac12t^T(Z^TQZ)t+t^TZ^T(Qz_0-b)+f(z_0),$$
    som vi minimerer uten krav.
@@ -1136,13 +1135,13 @@ $a=(2,1)$. Han vil til stedet på stien som er nærmest kaféen, og spør en kar
 Appen er løseren `minimize` med metoden `SLSQP`, som tar imot likhetskrav. Den
 foreslår et punkt. Kan han stole på det?
 
-Dette er ikke en høydeoppgave. Målet er **halve kvadratavstanden til kaféen**, og
+Dette er ikke en høydeoppgave. Målfunksjonen er **halve kvadratavstanden til kaféen**, og
 vi vil ha minimum. Likningene er de samme som før:
 
 | Rolle | Uttrykk |
 |:--|:--|
 | Valg | $z=(x,y)$, stedet på kartet |
-| Mål | Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$, halve kvadratavstanden til $a$ |
+| Målfunksjon | Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$, halve kvadratavstanden til $a$ |
 | Kravfunksjon | $h(z)=\lVert z\rVert_2^2-1$ |
 | Krav | $h(z)=0$: punktet ligger på stien, altså enhetssirkelen |
 
@@ -1321,7 +1320,7 @@ Om vinteren er sjøen islagt, og isen bærer. Da kan Arild gå hvor som helst
 (skiven). Da er det to muligheter:
 
 - Ligger $a$ inne i skiven, er $z=a$ selv svaret. Kravet er **ikke aktivt**,
-  og målet har gradient null der. Vi setter $\lambda=0$.
+  og målfunksjonen har gradient null der. Vi setter $\lambda=0$.
 - Ligger $a$ utenfor, er svaret på randen, som over. Kravet er **aktivt**.
 
 Begge tilfellene dekkes av **KKT-betingelsene** for en minimering med
@@ -1368,7 +1367,7 @@ I det siste tilfellet er multiplikatoren den samme som med sirkelkravet.
 
 Arild spurte tre ting. Svarene er nå komplette:
 
-1. **Hvor er det høyeste punktet?** I det høyeste punktet berører koten
+1. **Hvor er det høyeste punktet?** I det høyeste punktet berører høydekurven
    stien, og brattest oppover peker rett ut fra stien. Det gir Lagranges
    likninger: kravet $h=0$ og $\nabla f+\lambda\nabla h=0$. På den avlange stien
    ligger punktet i $(0.707,\,0.354)$, 141 meter over nullnivået.
@@ -1516,7 +1515,7 @@ $\lambda=$ _[-5/2]
 ::: {#uke12-oppg-boks}
 :::
 
-Her er det ingen tur, men samme idé: et krav, et mål og en pris. En
+Her er det ingen tur, men samme idé: et krav, en målfunksjon og en pris. En
 sylinderformet boks har radius $x>0$ og høyde $y>0$. Overflaten er
 $f(x,y)=2\pi x^2+2\pi xy$. Volumet skal være $V$. Kravfunksjonen er
 $h(x,y)=\pi x^2y-V$, og kravet er $h(x,y)=0$, altså $\pi x^2y-V=0$.
