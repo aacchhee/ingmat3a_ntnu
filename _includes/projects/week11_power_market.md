@@ -4,8 +4,10 @@ Du har kanskje sett at strømprisen kan være forskjellig i to deler av landet i
 delt i flere **prisområder**, og hvert har sin egen pris. Men hvor kommer prisen fra?
 
 Tenk på én time i ett område. Flere kraftverk kan levere strøm, og hvert oppgir hvor mye det kan
-levere og hva det koster. Markedet velger den billigste planen som dekker forbruket, og alle som
-leverer, får samme pris per MWh. Det er samme type oppgave som verkstedet i uke 11, bare med lavest
+levere og hva det koster. Markedet velger den billigste planen som dekker forbruket. I døgnmarkedet, der det meste av
+strømmen i Norden handles, får alle kraftverk i samme område samme pris per MWh for samme
+tidsperiode, og alle kjøpere betaler den samme prisen. Slik er det også i modellen vår. (I dag settes
+prisen per kvarter, men vi regner med hele timer.) Det er samme type oppgave som verkstedet i uke 11, bare med lavest
 kostnad i stedet for størst fortjeneste.
 
 Vi bygger et lite, oppdiktet kraftmarked og bruker `linprog` til å undersøke tre spørsmål:
@@ -33,7 +35,7 @@ forbruk er 1 MWh ekstra strøm. Kostnader og priser står i kr/MWh.
 | Verkstedet har 9 maskintimer i uka. | Hvert kraftverk har en **kapasitet**: høyst så mange MW. |
 | **Slakk:** ubrukte maskintimer. | **Ledig kapasitet:** MW et kraftverk kunne levert i tillegg. |
 | **Ressurspris:** hva én maskintime mer er verdt. | **Pris:** hva det koster å dekke 1 MW mer forbruk på billigste måte. |
-| Prisen gjelder bare for de første halvannen ekstra timene. | Prisen gjelder bare for små endringer (del 2). |
+| En ekstra maskintime er verdt 2 tusen kroner, men bare de første halvannen timene. Da blir en annen grense full, og flere maskintimer hjelper ikke. | Prisen holder bare så lenge de samme kraftverkene går for fullt og de samme står stille. Når et kraftverk blir fullt, endres prisen. Hvor langt den holder, undersøker du i del 2. |
 
 Løseren regner ut slike priser. I [uke 11.3](uke11.qmd#uke11-dual) kalte vi dem ressurspriser eller
 **dualverdier**; her heter de pris, kapasitetsverdi, linjeverdi og vannverdi.
