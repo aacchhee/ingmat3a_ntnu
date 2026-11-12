@@ -96,7 +96,9 @@ Hvor rask metoden er, ser vi i 10.2.
 
 I uke 2 løste vi likningen
 
-$$h(x)=x^3+x-1=0.$$
+$$x^3+x-1=0.$$
+
+Vi skriver venstresiden som en funksjon, $h(x)=x^3+x-1$, så likningen er $h(x)=0$.
 
 Den har én reell løsning, $r\approx0.6823$. Vi prøvde tre omskrivinger
 $x=g(x)$, og den tredje,
@@ -1391,7 +1393,7 @@ kommer tre oppgaver til «Gå i dybden». Kodeoppgavene står i 10.6.
 
 #### Newton-regelen fra uke 2
 
-I uke 2 løste vi $h(x)=x^3+x-1=0$. Nå knytter vi likningen til minimering.
+I uke 2 løste vi likningen $x^3+x-1=0$, altså $h(x)=0$ med $h(x)=x^3+x-1$. Nå knytter vi likningen til minimering.
 Svar eksakt.
 
 1. Skriv Newton-iterasjonen $x-h(x)/h'(x)$ som én brøk (prøv uten å se

@@ -5,32 +5,55 @@
 ::: {#uke12-start}
 :::
 
-### Når svaret må ligge på en kurve
+### Hvor er det høyest på stien, og hva er det verdt å flytte stien?
 
-I [uke 8](uke8.qmd#uke8-kompakt) lå minimum av en kvadratsum på randen av et
-rektangel. Der var gradienten **ikke** null: funksjonen ville gjerne bli
-mindre, men kravet stoppet den.
+#### Situasjonen
 
-- **Uke 11:** I [uke 11](uke11.qmd) var kravene lineære ulikheter, og
-  løsningen lå i et hjørne.
-- **Denne uken:** Nå skal et punkt oppfylle en **likning**, for eksempel
-  $x^2+4y^2=1$. Da er bare punktene på selve kurven tillatt.
-- **Navnet på kravet:** Et slikt krav kalles en **likhetsbetingelse** eller
-  **bibetingelse**; vi sier ofte bare **krav**.
+En sti går rundt en sjø. Terrenget stiger jevnt mot nordøst: jo lenger nordøst du kommer, desto høyere er det. En turgåer vil gå til det høyeste punktet på stien, for eksempel fordi utsikten er best der. Han må holde seg på stien hele veien.
 
-Ukens spørsmål er: **Hva erstatter $\nabla f=0$ når punktet må ligge på en
-kurve, og hvordan vet vi at kandidaten vi finner, er den beste?** Vi bygger
-svaret i tre steg, ett om gangen:
+Vi kaller ham **turgåeren**. Vi gir ham et kart. Tallet $x$ er antall kilometer mot øst og $y$ antall kilometer mot nord, målt fra midten av sjøen. Høyden måler vi i hundre meter over sjøens nivå. I terrenget vårt er høyden
+$$f(x,y)=x+2y.$$
+Hver kilometer mot øst gir altså 100 meter mer høyde, og hver kilometer mot nord gir 200 meter mer. Terrenget stiger brattest i retningen $(1,2)$, litt mer mot nord enn mot øst.
 
-1. **Hva må gjelde i et beste punkt på kurven?** Nivålinjen til målet
-   berører kurven, og gradienten står vinkelrett på den. Det gir
-   **Lagranges likninger**, som er nye i kurset. Multiplikatoren i dem viser
-   seg å være en pris, som i uke 11 (12.1–12.3).
-2. **Hva blir likningene når målet er kvadratisk?** Med et sirkelkrav blir de
-   et egenverdiproblem, og med lineære krav et lineært likningssett (12.4).
-3. **Hvordan kontrollerer vi et punkt som en løser gir oss?** Løseren SLSQP
-   finner et punkt, og vi kontrollerer det med to kontrollfeil og et globalt argument
-   (12.5).
+Stien er en avlang ring rundt sjøen: 2 km fra vest til øst og 1 km fra sør til nord. Vi beskriver den med en funksjon, **kravfunksjonen**
+$$h(x,y)=x^2+4y^2-1.$$
+Funksjonen $h$ forteller turgåeren hvilken side av stien han er på: $h$ er negativ inne mot sjøen, null på stien og positiv utenfor. Midt i sjøen er $h(0,0)=-1$. **Stien er punktene der $h(x,y)=0$**, altså $x^2+4y^2=1$. For eksempel ligger $(1,0)$ og $(0,\tfrac12)$ på stien.
+
+Turgåeren har tre spørsmål:
+
+1. **Hvor på stien er det høyeste punktet?**
+2. **Hvordan kan han være sikker på at det er det høyeste?** Stien har uendelig mange punkter, så han kan ikke gå hele stien og måle hvert sted.
+3. **Hva er det verdt å flytte stien litt lenger ut?** Kommunen vurderer å legge stien litt lenger fra sjøen. Hvor mye høyere kommer han da?
+
+#### Fra turen til matematikk
+
+For å svare oversetter vi turen til matematikk. Hver ting på turen får sin motpart:
+
+| På turen | I matematikken |
+|:--|:--|
+| Et sted på kartet | Et punkt $(x,y)$ |
+| Høyden i terrenget | Målet $f(x,y)$, for eksempel $x+2y$ |
+| Koter på kartet: linjer der høyden er den samme | **Nivålinjene** til $f$ |
+| Kravfunksjonen: hvilken side av stien du er på | Funksjonen $h(x,y)$, for eksempel $x^2+4y^2-1$ |
+| Stien rundt sjøen | Kravet: punktene der $h(x,y)=0$ |
+| Brattest oppover | Gradienten $\nabla f$ |
+| Rett ut fra stien, vinkelrett på den | Gradienten $\nabla h$ |
+| Det høyeste punktet på stien | Maksimum av $f$ med kravet |
+| Hva det er verdt å flytte stien | Multiplikatoren $\lambda$; verdien er $-\lambda$ |
+
+Gradienten $\nabla f$ er pilen som peker brattest oppover, og lengden sier hvor bratt det er. I terrenget vårt er $\nabla f=(1,2)$ overalt. Funksjonen $h$ vokser utover fra sjøen, så $\nabla h=(2x,8y)$ peker rett ut fra stien.
+
+Å holde seg på stien er et **krav** som er en likning. Et slikt krav kalles en **likhetsbetingelse** eller **bibetingelse**; vi sier ofte bare **krav**.
+
+#### Veien gjennom uken
+
+Vi svarer på spørsmålene i tre steg:
+
+1. **Hvor er det høyeste punktet? (12.1–12.2).** Først ser vi på kartet. I det høyeste punktet følger stien en nivålinje, og «brattest oppover» peker rett ut fra stien. Det gir to likninger, **Lagranges likninger**, som vi kan regne ut punktet fra.
+2. **Hva er det verdt å flytte stien? (12.2).** Tallet $\lambda$ i likningene er en pris. Den forteller hvor mye høyere det høyeste punktet blir når stien flyttes litt. Det er samme tanke som ressursprisene i uke 11.
+3. **Hvordan kan han være sikker? (12.3–12.5).** Et sted der stien er flat, trenger ikke være det høyeste. Vi finner alle flate steder og velger riktig (12.3). Når terrenget er kvadratisk, blir det matriseregning (12.4). Til slutt kontrollerer vi et punkt som en kartapp foreslår (12.5).
+
+I [uke 11](uke11.qmd) var kravene rette linjer, og svaret lå i et hjørne. Nå er stien krum, og svaret ligger et sted langs kurven. Prosjektet bruker samme idé: kjettingen henger så lavt som mulig (lavest høyde er lavest energi) når leddene har faste lengder, og multiplikatorene er kreftene i kjettingen. Det er turgåerens spørsmål med ti krav i stedet for ett.
 
 **Forelesning** viser hovedløpet. **Gå i dybden**-boksene gir begrunnelser,
 spesialtilfeller og ulikhetskrav. Regneoppgavene står i 12.6 og
@@ -38,21 +61,21 @@ kodeoppgavene i 12.7.
 
 ### Kort løype
 
-**Hva må gjelde i et beste punkt?**
+**Hvor er det høyeste punktet?**
 
-1. [Nivålinjen berører kurven](#uke12-tangent): en applet som i uke 4, nå med en ellipse.
-2. [Lagranges likninger](#uke12-lagrange): to normaler som er parallelle.
+1. [Nivålinjen berører stien](#uke12-tangent): en applet som i uke 4, nå med en avlang sti.
+2. [Lagranges likninger](#uke12-lagrange): brattest oppover peker rett ut fra stien.
+
+**Hva er det verdt å flytte stien?**
+
 3. [Multiplikatoren er en pris](#uke12-pris): samme idé som i uke 11.
-4. [Kandidater er ikke løsninger](#uke12-kandidater): fire kandidater, men bare to verdier.
 
-**Hva blir likningene når målet er kvadratisk?**
+**Hvordan kan han være sikker?**
 
+4. [Kandidater er ikke løsninger](#uke12-kandidater): fire flate steder, men bare to høyder.
 5. [Kandidattabellen er en egenverditabell](#uke12-egenverdi): uke 5 og 7.
 6. [Lineære krav gir et lineært system](#uke12-kkt): uke 3, 6 og 10.
-
-**Hvordan kontrollerer vi et numerisk svar?**
-
-7. [Finn et punkt numerisk og kontroller det](#uke12-slsqp): SLSQP.
+7. [Finn et punkt numerisk og kontroller det](#uke12-slsqp): kartappen SLSQP.
 
 ### Dette bygger vi videre på
 
@@ -63,7 +86,7 @@ kodeoppgavene i 12.7.
 | [Uke 5: Rayleigh-kvotienten](uke5.qmd#uke5-rayleigh) | Hva er størst mulig $z^TAz$ når $\lVert z\rVert_2=1$? |
 | [Uke 6: CG](uke6.qmd#uke6-cg) og [uke 10: Cholesky](uke10.qmd#uke10-cholesky) | Hva krever metodene av matrisen? |
 | [Uke 7: største strekk](uke7.qmd#uke7-geometri) og [pseudoinvers](uke7.qmd#uke7-pseudoinvers) | Hvorfor er $\sigma_1$ det største strekket? |
-| [Uke 8: kompakthet](uke8.qmd#uke8-kompakt) | Finnes et maksimum på en kurve? |
+| [Uke 8: kompakthet](uke8.qmd#uke8-kompakt) | Finnes det alltid et høyeste punkt på en lukket sti? |
 | [Uke 11: hva en ekstra enhet er verdt](uke11.qmd#uke11-sensitivitet) | Hva er én enhet mer av en ressurs verdt? |
 
 ### Læringsmål
@@ -72,59 +95,53 @@ Etter denne uken skal du kunne
 
 - finne tangent og normal til en regulær likhetsbetingelse i et punkt,
 - sette opp og løse Lagranges likninger for én likhetsbetingelse,
-- tolke $-\lambda$ som endringen i optimal verdi per enhet vi flytter kravet,
-- skille kandidater fra løsninger ved å sammenligne verdier eller finne en global grense,
+- tolke $-\lambda$ som endringen i optimal verdi per enhet vi flytter kravet (hva det er verdt å flytte stien),
+- skille kandidater (flate steder) fra løsninger ved å sammenligne verdier eller finne en global grense,
 - forklare hvorfor en kvadratisk form på enhetssirkelen gir et egenverdiproblem,
 - sette opp likningssettet for et kvadratisk mål med lineære krav, og forklare hvorfor
   matrisen ikke er SPD,
 - kontrollere både betingelsesfeil og stasjonaritetsfeil i et numerisk SLSQP-svar.
 
-## 12.1 Nivålinjen berører kurven
+## 12.1 Nivålinjen berører stien
 
 ::: {#uke12-tangent}
 :::
 
-### Hva skjer når sirkelen blir en ellipse?
+### Rund sti eller avlang sti?
 
-I [uke 4.1](uke4.qmd#uke4-retning) dro du en enhetsvektor $q$ rundt
-enhetssirkelen og leste av komponenten av $x=(3,2)$ langs $q$. Du fant at
-komponenten, $3q_1+2q_2$, blir størst når $q$ peker samme vei som $x$.
-Det var et optimeringsproblem på enhetssirkelen.
+Vi begynner med den enkleste stien: en rund sti med radius 1 km rundt sjøen. Kravfunksjonen er $h(x,y)=x^2+y^2-1$ (negativ inne mot sjøen, positiv utenfor), og stien er punktene der $h(x,y)=0$, altså $x^2+y^2=1$.
 
-Her bruker vi vektoren $(1,2)$, som gir enklere tall. Komponenten av $(1,2)$
-langs $q=(x,y)$ er $x+2y$, og etter regelen fra uke 4 er
+Denne stien kjenner du allerede fra [uke 4.1](uke4.qmd#uke4-retning). Der dro du en enhetsvektor $q$ rundt enhetssirkelen og leste av komponenten av vektoren $(3,2)$ langs $q$. Komponenten, $3q_1+2q_2$, ble størst når $q$ pekte samme vei som vektoren.
 
-$$\text{maksimum av } f(x,y)=x+2y \quad\text{når}\quad x^2+y^2=1$$
+Her bruker vi vektoren $(1,2)$, som gir enklere tall. Komponenten av $(1,2)$ langs $q=(x,y)$ er $x+2y$. Det er nøyaktig høyden i terrenget vårt. Regelen fra uke 4 sier derfor at
 
-nådd i $(1,2)/\sqrt5$. Nå bytter vi ut sirkelen med ellipsen $x^2+4y^2=1$.
-Målet er det samme.
+$$\text{maksimum av } f(x,y)=x+2y \quad\text{på stien}\quad x^2+y^2=1$$
 
-Appleten gjør regningen for oss: den viser målverdien, to gradientpiler og en
-tangentpil i punktet du velger. Hvorfor akkurat gradientpilene er interessante,
-forklarer vi rett
-etter forsøket.
+nås i $(1,2)/\sqrt5\approx(0.45,\,0.89)$, der stien ligger i retningen $(1,2)$ fra sjøens midte. Høyden er $\sqrt5\approx2.24$, altså 224 meter.
 
-Hensikten er å finne det beste punktet på ellipsen og se hva som kjennetegner
-det, nå som regelen fra uke 4 ikke lenger gjelder.
+Men sjøen er ikke rund. Nå bytter vi den runde stien med den avlange stien $x^2+4y^2=1$ fra oversikten. Terrenget er det samme. Regelen fra uke 4 gjelder ikke lenger, for stien er ikke en sirkel. Hvor er det høyeste punktet nå?
 
-### Eksperiment 1 – fra sirkel til ellipse
+Appleten viser et kart over stien med høyden og tre piler i punktet du velger. Hvorfor akkurat pilene er interessante, forklarer vi rett etter forsøket. Målet er å finne det høyeste punktet på den avlange stien og se hva som kjennetegner det.
+
+### Eksperiment 1 – fra rund sti til avlang sti
 
 | Rolle | Uttrykk | Hva det betyr |
 |:--|:--|:--|
-| Valg | $z=(x,y)$ | Punktet vi flytter på. |
-| Mål | Maksimer $f(x,y)=x+2y$ | Skalarproduktet $(1,2)\cdot z$, som komponenten i uke 4. |
-| Krav | $h(x,y)=x^2+4y^2-1=0$ | Bare punkter på ellipsen er tillatt. |
+| Valg | $z=(x,y)$ | Stedet på kartet. Vi flytter det langs stien. |
+| Mål | Maksimer $f(x,y)=x+2y$ | Høyden. Det er også skalarproduktet $(1,2)\cdot z$, som komponenten i uke 4. |
+| Krav | $h(x,y)=0$ med $h(x,y)=x^2+4y^2-1$ | Stien. Bare punkter på ellipsen er tillatt. |
 
-Dra punktet $z$ langs ellipsen. Slik leser du figuren:
+Dra punktet $z$ langs stien. Slik leser du figuren:
 
-- **Stiplet brun linje:** **Nivålinjen** $x+2y=f(z)$ inneholder alle punkter
-  med samme målverdi som $z$.
-- **Rød pil:** Retningen til $\nabla f=(1,2)$.
-- **Grønn pil:** Retningen til $\nabla h=(2x,8y)$.
-- **Grå pil:** $v$ er en enhetstangent til ellipsen. Tallet
-  $\nabla f\cdot v$ øverst i figuren sier hvor fort $f$ endres når vi går langs
-  ellipsen i pilens retning.
-- **Grå sirkel og grått punkt:** Svaret på sirkelen, etter regelen fra uke 4.
+- **Stiplet brun linje:** **Nivålinjen** $x+2y=f(z)$ er koten gjennom
+  turgåeren: alle steder med samme høyde som der han står.
+- **Rød pil:** Retningen til $\nabla f=(1,2)$, brattest oppover.
+- **Grønn pil:** Retningen til $\nabla h=(2x,8y)$, rett ut fra stien.
+- **Grå pil:** $v$ er en enhetstangent til ellipsen, altså retningen langs
+  stien. Tallet $\nabla f\cdot v$ øverst i figuren sier hvor mange hundre meter
+  høyden endres per kilometer han går i pilens retning. Positivt tall betyr at
+  han stiger, negativt at han synker.
+- **Grå sirkel og grått punkt:** Svaret på den runde stien, etter regelen fra uke 4.
 
 ```{.jsxgraph width="620" height="460" style="width:100%;max-width:620px;height:460px;border:0;"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -187,74 +204,81 @@ board.create('button',[-0.6,-0.95,'z langs (1, 2)',function(){
 
 Prøv dette før du leser videre:
 
-1. Start i $z=(1,0)$. I hvilken retning langs ellipsen må du gå for at $f$
-   skal øke? Hva sier tallet $\nabla f\cdot v$?
-2. Trykk **z langs (1, 2)**. Er dette fortsatt det beste punktet?
-3. Dra $z$ til $f$ blir størst mulig. Les av punktet, vinkelen og
+1. Start i $z=(1,0)$, østspissen av stien. Hvilken vei langs stien må du gå for at høyden skal øke? Hva sier tallet $\nabla f\cdot v$?
+2. Trykk **z langs (1, 2)**. Det er stedet på stien som ligger i retningen $(1,2)$ fra sjøens midte, altså svaret fra den runde stien. Er dette fortsatt det høyeste punktet?
+3. Dra $z$ til høyden $f$ blir størst mulig. Les av punktet, vinkelen og
    $\nabla f\cdot v$.
-4. Hva gjør nivålinjen i det beste punktet?
+4. Hva gjør nivålinjen i det høyeste punktet?
 
-**Hva viser forsøket?** Sammenlign målverdiene:
+**Hva viser forsøket?** Sammenlign høydene:
 
-| Punkt på ellipsen | Målverdi |
+| Punkt på stien | Målverdi (høyde) |
 |:--|:--|
-| Punktet langs $(1,2)$ | $f\approx1.213$ |
-| Beste punkt, $z\approx(0.707,\,0.354)$ | Omtrent $1.414$ |
+| Punktet i retningen $(1,2)$ | $f\approx1.213$ |
+| Høyeste punkt, $z\approx(0.707,\,0.354)$ | Omtrent $1.414$ |
 
-Regelen fra uke 4, «pek langs vektoren», gjelder altså ikke lenger. Men tre
-ting gjelder fortsatt i det beste punktet:
+Regelen fra uke 4, «pek langs vektoren», gjelder altså ikke på den avlange
+stien. Men tre ting gjelder fortsatt i det høyeste punktet:
 
-- tallet $\nabla f\cdot v$ er **null**: det er positivt før punktet og
-  negativt etter, så $f$ slutter å vokse akkurat der;
-- nivålinjen **berører** ellipsen uten å krysse den;
+- tallet $\nabla f\cdot v$ er **null**: stien stiger før punktet og synker
+  etter det, så den er flat akkurat der;
+- nivålinjen **berører** stien uten å krysse den;
 - den røde og den grønne pilen er **parallelle**: vinkelen er $0^\circ$.
 
-Et punkt der nivålinjen krysser kurven, kan ikke være best: på den ene siden
-av krysningen ligger tillatte punkter med høyere verdi. Resten av uken handler
-om denne observasjonen.
+**Hva betyr det for turgåeren?** Nivålinjen er koten gjennom stedet han står.
+Krysser koten stien, går stien høyere på den ene siden, og stedet kan ikke være
+det høyeste. I det høyeste punktet berører koten stien akkurat, så han går
+verken opp eller ned. Terrenget stiger likevel fortsatt mot nordøst, også her:
+brattest oppover peker rett ut fra stien. Men der får han ikke gå, for han må
+holde seg på stien. Resten av uken handler om denne observasjonen.
 
 ### Tangent og normal
 
-- **Tangentretning:** Viser hvilken vei vi kan begynne å gå langs kurven
-  fra et punkt.
-- **Normalretning:** Står vinkelrett på tangenten.
+- **Tangentretning:** Viser hvilken vei turgåeren kan begynne å gå langs
+  stien fra et punkt.
+- **Normalretning:** Står vinkelrett på tangenten, altså rett ut fra stien.
 - **Gradienten som normal:** Fra Matematikk 2 vet vi at gradienten står
   vinkelrett på nivåkurvene (gradienten selv møtte vi også i
-  [uke 6](uke6.qmd#uke6-retning)). Kurven $h=0$ er en nivåkurve for $h$,
-  derfor er $\nabla h$ en normal til kurven, så lenge $\nabla h\ne0$.
+  [uke 6](uke6.qmd#uke6-retning)). Stien er punktene der $h=0$, altså en
+  nivåkurve for $h$. Derfor er $\nabla h$ en normal til stien, så lenge
+  $\nabla h\ne0$.
 - **Regulært krav:** Når $\nabla h\ne0$, kaller vi kravet **regulært** i
   punktet.
 
-**Regn for hånd.** Vi undersøker punktet $(1,0)$ på ellipsen.
+**Regn for hånd.** Vi undersøker østspissen $(1,0)$ av stien.
 
 1. $\nabla h=(2x,8y)$, så $\nabla h(1,0)=(2,0)$. Normalen peker langs
-   $x$-aksen.
+   $x$-aksen, rett ut fra stien.
 2. En enhetstangent står vinkelrett på normalen: $v=(0,1)$. Fra $(1,0)$ kan
-   vi gå både oppover og nedover langs ellipsen.
-3. Målgradienten er $\nabla f=(1,2)$. Den deriverte av $f$ langs tangenten
-   er $\nabla f\cdot v=(1,2)\cdot(0,1)=2$.
-4. Fordi denne deriverte er positiv, øker $f$ når vi begynner å gå oppover.
-   Punktet $(1,0)$ er tillatt, men ikke et maksimum. Det stemmer med
+   vi gå både nordover og sørover langs stien.
+3. Målgradienten er $\nabla f=(1,2)$. Stigningen langs tangenten er
+   $\nabla f\cdot v=(1,2)\cdot(0,1)=2$.
+4. Stigningen er positiv, så turgåeren stiger når han går nordover: 2 hundre
+   meter per kilometer. Østspissen er ikke det høyeste punktet, som i
    spørsmål 1 i appleten.
 
-Appleten viser denne deriverte som tallet $\nabla f\cdot v$. I det beste
+Appleten viser denne stigningen som tallet $\nabla f\cdot v$. I det høyeste
 punktet er den null, og i 12.2 regner vi ut punktet eksakt.
 
 **Dette tar vi med oss.**
 
-- **Langs kurven:** I et ekstremalpunkt må den deriverte av målet langs
-  tangenten være null.
+- **Langs stien:** I det høyeste og i det laveste punktet på stien må
+  stigningen langs tangenten være null.
 - **Normalene:** Det er det samme som at $\nabla f$ står vinkelrett på
   tangenten, altså er parallell med normalen $\nabla h$.
 - **Gradienten selv:** Målgradienten trenger ikke være null, slik den må være i et indre
-  ekstremum (se [uke 8.3](uke8.qmd#uke8-hessian)).
+  ekstremum (se [uke 8.3](uke8.qmd#uke8-hessian)). Terrenget stiger fortsatt, men turgåeren får ikke gå
+  rett oppover.
 
 ## 12.2 Lagranges likninger
 
 ::: {#uke12-lagrange}
 :::
 
-### To parallelle normaler
+### Brattest oppover peker rett ut fra stien
+
+Nå skriver vi bildet fra 12.1 som likninger, slik at vi kan regne ut det
+høyeste punktet i stedet for å dra i en applet.
 
 At $\nabla f$ og $\nabla h$ er parallelle, betyr at den ene er et tall ganger
 den andre. Vi skriver det som
@@ -268,8 +292,9 @@ Et regulært lokalt ekstremum $z_*$ må oppfylle begge **Lagranges likninger**:
 
 $$\boxed{h(z_*)=0,\qquad \nabla f(z_*)+\lambda\nabla h(z_*)=0.}$$
 
-- **Første likning:** Punktet er tillatt.
-- **Andre likning:** Den deriverte langs tangenten er null.
+- **Første likning:** Punktet er tillatt, altså på stien.
+- **Andre likning:** Stigningen langs tangenten er null, så brattest oppover
+  peker rett ut fra stien.
 - **Samlet fra $L$:** Begge får vi ved å sette alle partiellderiverte av
   $L$ lik null, også den med hensyn på $\lambda$.
 
@@ -277,13 +302,14 @@ Med to variabler er dette tre likninger med tre ukjente: $x$, $y$ og
 $\lambda$.
 
 - **Kandidat:** Et punkt som oppfyller likningene, kalles **stasjonært under
-  bibetingelsen**. Det er en **kandidat**, ikke automatisk et maksimum eller
-  minimum.
+  bibetingelsen**. Stien er flat der: turgåeren hverken stiger eller synker i
+  første lille skritt. Det er en **kandidat**, ikke automatisk det høyeste
+  eller laveste punktet.
 - **Forutsetning:** Regularitet, $\nabla h(z_*)\ne0$, trengs fordi
   $\nabla h$ ellers ikke er noen normal; se «Gå i dybden» nedenfor.
 
-**Ellipsen fra 12.1, steg for steg.** La oss regne ut det appleten viste oss.
-Her er $\nabla f=(1,2)$ og $\nabla h=(2x,8y)$.
+**Den avlange stien fra 12.1, steg for steg.** La oss regne ut punktet
+appleten viste. Her er $\nabla f=(1,2)$ og $\nabla h=(2x,8y)$.
 
 1. Likningene er $1+2\lambda x=0$, $2+8\lambda y=0$ og $x^2+4y^2=1$.
 2. Her er $\lambda\ne0$, ellers sier den første likningen $1=0$. Da er
@@ -297,12 +323,21 @@ Her er $\nabla f=(1,2)$ og $\nabla h=(2x,8y)$.
    kandidaten. Der er $\nabla h=(\sqrt2,\,2\sqrt2)=\sqrt2\,(1,2)$, parallell
    med $\nabla f$, slik appleten viste.
 
-Den positive kandidaten er punktet appleten pekte ut, med
-$f=\sqrt2\approx1.414$.
+**Hva betyr det for turgåeren?** Likningene har to løsninger: en i nordøst med
+høyde $\sqrt2\approx1.414$ og en i sørvest med høyde $-\sqrt2$. Stien er en
+lukket kurve, så det finnes et høyeste punkt ([uke 8](uke8.qmd#uke8-kompakt)),
+og det må være en av de to. Det er den høyeste.
 
-::: {.callout-note title="Håndeksempel: sirkelen og regelen fra uke 4"}
+**Svaret til turgåeren:** Det høyeste punktet på stien er
+$(1/\sqrt2,\,1/(2\sqrt2))\approx(0.707,\,0.354)$: omtrent 0.7 km øst og 0.35 km
+nord for midten av sjøen, 141 meter over sjøens nivå. Hvordan han kan være
+sikker i mer kronglete terreng, ser vi i 12.3.
 
-**Utgangspunkt.** Maksimer $f(x,y)=x+2y$ når $h(x,y)=x^2+y^2-1=0$.
+::: {.callout-note title="Håndeksempel: den runde stien og regelen fra uke 4"}
+
+**Utgangspunkt.** Turgåeren går på den runde stien, og terrenget er
+$f(x,y)=x+2y$. Kravfunksjonen er $h(x,y)=x^2+y^2-1$, og stien er punktene der
+$h(x,y)=0$. Maksimer $f$ på stien.
 
 **Prøv selv.** Skriv opp de tre likningene og finn alle kandidatene. Hvilken
 gir størst verdi?
@@ -320,7 +355,7 @@ gir størst verdi?
 | $(1,2)/\sqrt5$ | $\sqrt5$ | $-\sqrt5/2$ |
 | $-(1,2)/\sqrt5$ | $-\sqrt5$ | $\sqrt5/2$ |
 
-4. **Er kandidaten best på hele sirkelen?** Cauchy–Schwarz-ulikheten
+4. **Er kandidaten det høyeste punktet på hele stien?** Cauchy–Schwarz-ulikheten
    $|a\cdot b|\le\lVert a\rVert_2\lVert b\rVert_2$ gir for hvert tillatt $z$
    $$x+2y=(1,2)\cdot z\le\lVert(1,2)\rVert_2\,\lVert z\rVert_2=\sqrt5.$$
    Den første kandidaten oppnår grensen og er **globalt** maksimum.
@@ -328,17 +363,19 @@ gir størst verdi?
 **Dette tar vi med oss.**
 
 - **Finn kandidaten:** Lagranges likninger ga oss regelen fra uke 4 uten at vi
-  trengte å dra i appleten.
-- **Avgjør om den er best:** Cauchy–Schwarz-ulikheten avgjorde dette.
-- **Bruk samme triks på ellipsen:** Med $w=2y$ blir kravet $x^2+w^2=1$, og
+  trengte å dra i appleten. På den runde stien ligger det høyeste punktet i
+  retningen av bratteste stigning fra sjøens midte.
+- **Avgjør om den er best:** Cauchy–Schwarz-ulikheten avgjorde dette. Den
+  gjelder for hvert punkt på stien, så turgåeren trenger ikke gå hele stien.
+- **Bruk samme triks på den avlange stien:** Med $w=2y$ blir kravet $x^2+w^2=1$, og
   $x+2y=(1,1)\cdot(x,w)\le\sqrt2$.
 
 :::
 
 ::: {.reading-step title="Gå i dybden: kjerneregelen langs kurven, og flere krav"}
 
-**Hvorfor normalene er parallelle.** La $p(t)$ være en glatt kurve med
-$h(p(t))=0$ og $p(0)=z_*$. Kjerneregelen gir
+**Hvorfor normalene er parallelle.** La $p(t)$ være en glatt kurve langs
+stien, altså $h(p(t))=0$, med $p(0)=z_*$. Kjerneregelen gir
 
 $$0=\left.\frac{d}{dt}h(p(t))\right|_{t=0}=\nabla h(z_*)\cdot p'(0).$$
 
@@ -353,7 +390,8 @@ $$0=\left.\frac{d}{dt}h(p(t))\right|_{t=0}=\nabla h(z_*)\cdot p'(0).$$
 På sirkelen kan vi se dette direkte med $p(t)=(\cos t,\sin t)$:
 $(f\circ p)'(t)=-\sin t+2\cos t=\nabla f(p(t))\cdot p'(t)$.
 
-**Flere krav.** For krav $h_1(z)=0,\ldots,h_m(z)=0$:
+**Flere krav.** For kravfunksjoner $h_1,\ldots,h_m$ og krav
+$h_1(z)=0,\ldots,h_m(z)=0$:
 
 - **Samle normalene:** **Jacobimatrisen** $J_h$ har gradientene
   $\nabla h_i^T$ som rader.
@@ -367,7 +405,7 @@ Hvert krav får sin multiplikator:
 $$h_i(z_*)=0\quad(i=1,\ldots,m),\qquad
 \nabla f(z_*)+\sum_{i=1}^m\lambda_i\nabla h_i(z_*)=0.$$
 
-For eksempel gir $x_1^2+x_2^2+x_3^2=1$ og $x_3=0$ i punktet $(1,0,0)$
+For eksempel gir kravene $x_1^2+x_2^2+x_3^2=1$ og $x_3=0$ i punktet $(1,0,0)$
 normalene $(2,0,0)$ og $(0,0,1)$. Tangentene er $(0,t,0)$. I 12.4 møter vi flere
 lineære krav, og i prosjektet ti krav samtidig.
 
@@ -379,7 +417,8 @@ lineære krav, og i prosjektet ti krav samtidig.
 :::
 
 Lagranges likninger forutsetter at $\nabla h\ne0$. Se på målet $f(x,y)=x$
-med kravet $h(x,y)=x^2+y^2=0$:
+med kravfunksjonen $h(x,y)=x^2+y^2$ og kravet $h(x,y)=0$. Tenk deg en «sti» som
+bare er ett punkt:
 
 1. **Tillatt mengde:** To kvadrater summerer til null bare i $(0,0)$, så
    dette er det eneste tillatte punktet.
@@ -413,14 +452,19 @@ Ekstremumet fant vi altså ved å se direkte på den tillatte mengden, ikke med 
 
 :::
 
-### Et kort regneeksempel: nærmest origo på en linje
+### Et kort regneeksempel: veien som går nærmest hytta
 
-Lagranges metode virker like godt for minimum. Vi søker punktet på linjen
-$x+y=2$ som ligger nærmest origo, og minimerer kvadratet av avstanden.
+Lagranges metode virker like godt for minimum. Tenk deg en rett vei, $x+y=2$,
+og en hytte i origo. Hvor på veien er du nærmest hytta? Her er $f$ ikke en
+høyde, men kvadratet av avstanden til hytta, og vi vil ha minimum i stedet for
+maksimum.
 
 ::: {.callout-note title="Håndeksempel: nærmeste punkt på en linje"}
 
-**Utgangspunkt.** Minimer $f(x,y)=x^2+y^2$ når $h(x,y)=x+y-2=0$.
+**Utgangspunkt.** Minimer $f(x,y)=x^2+y^2$, kvadratet av avstanden til hytta.
+Kravfunksjonen er $h(x,y)=x+y-2$, og veien er punktene der $h(x,y)=0$.
+Funksjonen $h$ er negativ på hyttas side av veien og positiv på den andre
+siden.
 
 **Prøv selv.** Sett opp Lagranges likninger og finn kandidaten og $\lambda$.
 
@@ -434,6 +478,8 @@ $x+y=2$ som ligger nærmest origo, og minimerer kvadratet av avstanden.
 
 **Dette tar vi med oss.**
 
+- **Veien:** Det nærmeste punktet er $(1,1)$. Avstanden til hytta er
+  $\sqrt2\approx1.41$ km.
 - **Kravet som system:** $Cz=d$ med $C=\begin{bmatrix}1&1\end{bmatrix}$ og
   $d=2$.
 - **Korteste løsning:** Pseudoinversen fra den valgfrie delen
@@ -448,25 +494,32 @@ $x+y=2$ som ligger nærmest origo, og minimerer kvadratet av avstanden.
 [et annet mål på ellipsen](#uke12-oppg-ellipse) og
 [Lagrange på sirkelen](#uke12-oppg-sirkel) i 12.6.
 
-### Multiplikatoren er en pris
+### Hva er det verdt å flytte stien?
 
 ::: {#uke12-pris}
 :::
 
-Hva skjer med optimal verdi hvis vi flytter kravet litt? La linjen være
-$x+y=r$. Vi bruker samme regning som i håndeksempelet:
+Turgåerens tredje spørsmål: Kommunen kan legge stien litt lenger ut. Hvor mye
+høyere kommer han da? Vi sier at stien flyttes fra $h(x,y)=0$ til
+$h(x,y)=s$, der $s$ er et lite tall. For den avlange stien betyr
+$h(x,y)=s$ at $x^2+4y^2=1+s$. Med $s>0$ blir stien større, og $s=0.1$ gjør hele
+ringen omtrent 5 % større.
 
-1. $2x+\lambda=0$ og $2y+\lambda=0$ gir $x=y$.
-2. Kravet gir $x=y=r/2$.
-3. Da er $\lambda=-2x=-r$.
+**Først tall på den avlange stien.** Ringen $x^2+4y^2=1+s$ er den gamle ringen,
+strukket med faktoren $\sqrt{1+s}$ ut fra sjøens midte. Høyden $f=x+2y$ er null i
+midten og vokser like jevnt utover, så den høyeste høyden strekkes med samme
+faktor: $f_*(s)=\sqrt2\,\sqrt{1+s}$.
 
-Optimal verdi og dens deriverte er
+1. For $s=0.1$ er det $1.4142\cdot1.0488\approx1.4832$, mot $1.4142$ før. Turgåeren
+   kommer $0.069$ hundre meter høyere, omtrent 7 meter.
+2. For veldig små $s$ er økningen per enhet $s$ lik den deriverte
+   $\dfrac{d}{ds}\bigl(\sqrt2\sqrt{1+s}\bigr)_{s=0}=\dfrac{\sqrt2}{2}=\dfrac1{\sqrt2}\approx0.71$.
 
-$$f_*(r)=\Bigl(\frac r2\Bigr)^2+\Bigl(\frac r2\Bigr)^2=\frac{r^2}{2},\qquad
-\frac{df_*}{dr}=r=-\lambda.$$
-
-- **For linjen:** Sammenhengen $df_*/dr=-\lambda$ gjelder altså for alle
-  $r$, ikke bare for $r=2$, der vi fant $\lambda=-2$.
+Tallet $0.71$ er akkurat $-\lambda$ fra 12.2, der vi fant $\lambda=-1/\sqrt2$. Det
+er ikke tilfeldig. Veien til hytta gir samme regel: flytter vi veien fra $x+y=2$
+til $x+y=r$, er minste kvadrerte avstand til hytta $f_*(r)=r^2/2$, med
+$df_*/dr=r$. Ved $r=2$ er det $2=-\lambda$ fra håndeksempelet. Regningen står i
+«Gå i dybden» under.
 
 ::: {#week12-multiplier-price-rule .math-exercise-context}
 
@@ -486,13 +539,19 @@ kravet:
 
 - **Koblingen til uke 11:** Det er samme idé som i
   [uke 11](uke11.qmd#uke11-sensitivitet): hva er én enhet mer av en ressurs
-  verdt?
+  verdt? Verkstedeieren spurte om en ekstra maskintime, turgåeren spør om en sti som er flyttet litt.
 - **Fortegnet:** I uke 11 var prisen selve endringen, et positivt tall. Her
   er prisen $-\lambda$, fordi vi skriver $L=f+\lambda h$.
 - **Enheten:** Har $f$ enhet kroner og $s$ enhet kilo, har $\lambda$ enhet
   kroner per kilo.
 - **I prosjektet:** Multiplikatorene er krefter, og «prisen» er energi per
   meter.
+
+**Svaret til turgåeren:** Legger kommunen stien litt lenger ut, stiger det
+høyeste punktet med omtrent $-\lambda$ ganger flyttingen. På den avlange stien er
+$-\lambda=1/\sqrt2\approx0.71$ hundre meter per enhet $s$. Med $s=0.1$, en sti
+som er omtrent 5 % større, kommer han omtrent 7 meter høyere. Tallet $-\lambda$ er
+altså hva det er verdt å flytte stien, målt i høyde.
 
 **Dette tar vi med oss.**
 
@@ -505,7 +564,23 @@ kravet:
 
 ::: {.reading-step title="Gå i dybden: hvorfor prisformelen gjelder generelt"}
 
-La $z(s)$ være løsningen når kravet er $h(z)=s$, og anta at den endrer seg
+**Veien til hytta.** Vi flytter veien til $x+y=r$ og bruker samme regning som i
+håndeksempelet:
+
+1. $2x+\lambda=0$ og $2y+\lambda=0$ gir $x=y$.
+2. Kravet gir $x=y=r/2$.
+3. Da er $\lambda=-2x=-r$.
+
+Minste kvadrerte avstand og dens deriverte er
+
+$$f_*(r)=\Bigl(\frac r2\Bigr)^2+\Bigl(\frac r2\Bigr)^2=\frac{r^2}{2},\qquad
+\frac{df_*}{dr}=r=-\lambda.$$
+
+Sammenhengen $df_*/dr=-\lambda$ gjelder for alle $r$, ikke bare for $r=2$, der vi
+fant $\lambda=-2$. Flytter vi veien fra $r=2$ til $r=2.1$, vokser minste
+kvadrerte avstand fra $2$ til $2.205$, altså med omtrent $2\cdot0.1$.
+
+**Regelen i alle glatte problemer.** La $z(s)$ være løsningen når kravet er $h(z)=s$, og anta at den endrer seg
 glatt med $s$. Da er $f_*(s)=f(z(s))$.
 
 1. Kjerneregelen: $\dfrac{df_*}{ds}=\nabla f(z(s))\cdot z'(s)$.
@@ -559,10 +634,13 @@ Differansekvotientene $2.05$, $2.005$ og $2.0005$ nærmer seg $2=-\lambda$.
 
 Lagrangefunksjonen kan også **bevise** en grense for optimal verdi, slik
 dualprisene ga en øvre grense i uke 11. Vi bruker avstandsproblemet som vi
-løser numerisk i 12.5: minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$ med
-$a=(2,1)$ når $h(z)=\lVert z\rVert_2^2-1=0$.
+løser numerisk i 12.5, med en rund sti rundt sjøen og en kafé i punktet $(2,1)$. La $a$ være vektoren
+fra origo til kaféen. Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$, halve
+kvadratavstanden til kaféen.
+Kravfunksjonen er $h(z)=\lVert z\rVert_2^2-1$, og stien er punktene der
+$h(z)=0$ (enhetssirkelen).
 
-- **På sirkelen:** $h=0$, så $L(z,\lambda)=F(z)$ for alle tillatte $z$.
+- **På stien:** $h=0$, så $L(z,\lambda)=F(z)$ for alle tillatte $z$.
 - **Grense for alle punkter:** Hvis $L(\cdot,\lambda)$ aldri går under et
   tall $\beta$ for **alle** $z$, er også $F(z)\ge\beta$ for alle tillatte
   $z$.
@@ -593,37 +671,40 @@ En slik skarp grense er ikke garantert for alle problemer.
 ::: {#uke12-kandidater}
 :::
 
-Hittil har eksemplene gitt én eller to kandidater, og det var lett å se
-hvilken som var best. Nå ser vi hva som skjer når likningene gir flere
-kandidater. På enhetssirkelen bytter vi mål til $f(x,y)=xy$ og søker både
-maksimum og minimum.
+Hittil var terrenget en jevn skråning, og stien var flat på bare to steder: det
+høyeste og det laveste punktet. Nå flytter turgåeren til et kupert område med
+høyden $f(x,y)=xy$ (fortsatt i hundre meter). Det er lavt i nordvest og sørøst,
+høyt i nordøst og sørvest, og null langs aksene gjennom midten av sjøen. Slik
+en form kalles en sadel: to topper, to daler og et pass i midten. Stien er nå
+rund, med kravfunksjonen $h(x,y)=x^2+y^2-1$ og stien $x^2+y^2=1$.
 
-Sirkelen er kompakt og $f$ er kontinuerlig, så ekstremalverdisetningen fra
-[uke 8.2](uke8.qmd#uke8-kompakt) lover at begge finnes. Spørsmålet er hvor,
-og om tangenttesten fra 12.1 kan skille dem.
+Går han en runde, går stien opp og ned flere ganger. Hvor mange steder er den
+flat, og er de like høye? Poenget er at **«stien er flat her» ikke betyr «her
+er det høyest»**.
 
-Før vi løser Lagranges likninger, skanner vi hele sirkelen. Regningen bak
-skanningen er:
+Stien er en lukket sløyfe, så ekstremalverdisetningen fra
+[uke 8.2](uke8.qmd#uke8-kompakt) lover et høyeste og et laveste punkt. Hvor
+ligger de? Vi lar først datamaskinen gå hele runden i tusen små skritt. Regningen
+bak er:
 
-1. **Punkt på sirkelen:** $(x,y)=(\cos t,\sin t)$.
+1. **Punkt på stien:** $(x,y)=(\cos t,\sin t)$.
 2. **Tangent:** $(-y,x)$, vinkelrett på radien.
-3. **Derivert langs tangenten:**
+3. **Stigning langs stien:**
    $\nabla f\cdot(-y,x)=(y,x)\cdot(-y,x)=x^2-y^2$. Den kan vi regne ut i
    mange punkter samtidig.
 
-Målet er å finne alle punktene som består tangenttesten, og se om de er
-like gode.
+Målet er å finne alle stedene der stigningen er null, og se om de er like høye.
 
-### Eksperiment 2 – hvor er den deriverte langs tangenten null?
+### Eksperiment 2 – hvor er stigningen langs stien null?
 
-- Kjør cellen. Hvor mange punkter består tangenttesten, og hvilke verdier
+- Kjør cellen. Hvor mange punkter har stigning null, og hvilke verdier
   har $f$ der?
 - Finn de samme punktene i figuren. Hvilke er topper, og hvilke er bunner?
 - Bytt til målet $x+2y$ fra håndeksempelet: `values = x + 2*y` og
   `slope = -y + 2*x`. Hvor mange punkter får du nå?
 
-Cellen regner ut $f$ og den deriverte langs tangenten i tusen punkter på
-sirkelen, og skriver ut punktene der den deriverte skifter fortegn. En ferdig
+Cellen regner ut høyden $f$ og stigningen langs stien i tusen punkter på
+sirkelen, og skriver ut punktene der stigningen skifter fortegn. En ferdig
 hjelpefunksjon tegner $f$ som funksjon av vinkelen $t$.
 
 ```{pyodide-python}
@@ -641,18 +722,19 @@ for i in turn:
 plot_along_circle(t, values, t[turn])
 ```
 
-**Hva viser forsøket?** Fire punkter, omtrent $(\pm0.707,\pm0.707)$,
-består tangenttesten:
+**Hva viser forsøket?** Fire punkter, omtrent $(\pm0.707,\pm0.707)$, har
+stigning null:
 
 | Antall | Verdi | Form i figuren |
 |:--|:--|:--|
 | To punkter | $f=1/2$ | Topper |
 | To punkter | $f=-1/2$ | Bunner |
 
-Tangenttesten finner kandidatene, men den skiller ikke maksimum fra
-minimum. Lagranges likninger skal nå vise at det ikke finnes flere
-kandidater, og gi de eksakte punktene. Med $\nabla f=(y,x)$ og
-$\nabla h=(2x,2y)$ får vi
+På turen går stien altså opp til en topp på $0.5$ (50 meter), ned i en dal på
+$-0.5$, og så en gang til. Stigning null finner de flate stedene, men sier ikke
+om stedet er en topp eller en dal. Lagranges likninger skal vise at det ikke
+finnes flere kandidater, og gi de eksakte punktene.
+Med $\nabla f=(y,x)$ og $\nabla h=(2x,2y)$ får vi
 
 $$y+2\lambda x=0,\qquad x+2\lambda y=0,\qquad x^2+y^2=1.$$
 
@@ -672,13 +754,22 @@ $$y+2\lambda x=0,\qquad x+2\lambda y=0,\qquad x^2+y^2=1.$$
 | $-1/2$ | $x=y$ | $\pm(1,1)/\sqrt2$ | $1/2$ |
 | $1/2$ | $x=-y$ | $\pm(1,-1)/\sqrt2$ | $-1/2$ |
 
-**Klassifiser globalt.**
+**Klassifiser globalt.** Hvordan kan turgåeren vite at $1/2$ er høyest på hele
+runden, uten å måle alle stedene?
 
 1. $(x-y)^2\ge0$ gir $2xy\le x^2+y^2=1$.
 2. $(x+y)^2\ge0$ gir $2xy\ge-1$.
 3. Dermed er $-1/2\le xy\le1/2$ på hele sirkelen. De to kandidatene med
    verdi $1/2$ er globale maksimumspunkter, og de to andre er globale
    minimumspunkter.
+
+**Svaret til turgåeren:** Han trenger ikke gå hele stien. Han gjør tre ting:
+
+1. Finn alle flate steder med Lagranges likninger.
+2. Bruk at et høyeste punkt finnes (lukket sti) og må være blant dem.
+3. Sammenlign høydene, eller bruk en ulikhet som gjelder alle punkter på
+   stien. Her gjelder ulikhetene for hvert punkt, så ikke noe sted på stien er
+   høyere enn 50 meter.
 
 **Dette tar vi med oss.** Lagranges likninger gir en liste med kandidater.
 Hvilken som er best, avgjør vi ved å sammenligne verdiene, eller med en
@@ -695,8 +786,9 @@ Sammenligningen er nok fordi to ting gjelder her:
 
 ::: {.reading-step title="Gå i dybden: andrederivert langs kurven"}
 
-Vil vi undersøke hvordan målet oppfører seg helt nær én kandidat, kan vi følge sirkelen med
-$p(t)=(\cos t,\sin t)$. Da er $f(p(t))=\tfrac12\sin2t$.
+Vil vi vite om et flatt sted er en topp eller en dal uten å sammenligne alle
+høydene, kan vi se på hvordan målet bøyer seg langs stien. Vi følger sirkelen
+med $p(t)=(\cos t,\sin t)$. Da er $f(p(t))=\tfrac12\sin2t$.
 
 | Vinkel | Andrederivert | Tolkning langs sirkelen |
 |:--|:--|:--|
@@ -731,9 +823,18 @@ Med $\lambda=-1/2$ og $v=(-1,1)/\sqrt2$ gir formen $-2$, som over.
 ::: {#uke12-egenverdi}
 :::
 
+Dette avsnittet er mest lineær algebra, men det handler om de samme turene:
+
+- **Sadelterrenget på den runde stien** fra 12.3: det høyeste og det laveste
+  punktet viser seg å ligge i retningen til egenvektorer til en matrise.
+- **Rette veier** i stedet for en krum sti: Lagranges likninger blir et lineært
+  likningssett.
+
+Resten av 12.4 er den samme ideen skrevet med matriser.
+
 ### Kandidattabellen er en egenverditabell
 
-Nå viser vi at kandidatene fra forrige del er egenvektorer. Skriv målet fra 12.3 med en symmetrisk matrise:
+Nå viser vi at kandidatene fra forrige del ligger i retningen til egenvektorer. Skriv høyden fra 12.3 med en symmetrisk matrise:
 
 $$xy=z^TAz,\qquad A=\begin{bmatrix}0&\tfrac12\\\tfrac12&0\end{bmatrix}.$$
 
@@ -747,15 +848,15 @@ Hva er gradienten til $z^TAz$? Vi regner den ut i det lille tilfellet først.
 3. **Kontroller med vår $A$:**
    $2Az=2\bigl(\tfrac12y,\tfrac12x\bigr)=(y,x)=\nabla(xy)$.
 
-For sirkelen er $\nabla h=2z$, og Lagranges likning blir da
+For den runde stien er $\nabla h=2z$, og Lagranges likning blir da
 
 $$2Az+2\lambda z=0\qquad\Longleftrightarrow\qquad Az=-\lambda z.$$
 
-**En kandidat er en egenvektor, og $-\lambda$ er egenverdien.**
+**En kandidat $z$ ligger i retningen til en egenvektor av $A$, og $-\lambda$ er egenverdien.**
 
 - **Målverdien:** $z^TAz=-\lambda\,z^Tz=-\lambda$.
-- **Vår matrise:** Egenverdiene til $A$ er $\pm\tfrac12$, med egenvektorer
-  langs $(1,1)$ og $(1,-1)$. Det er akkurat tabellen i 12.3:
+- **Vår matrise:** Egenverdiene til $A$ er $\tfrac12$ (egenvektor $(1,1)$)
+  og $-\tfrac12$ (egenvektor $(1,-1)$). Det er akkurat tabellen i 12.3:
   $\lambda=-\tfrac12$ gir maksimum $\tfrac12$, og $\lambda=\tfrac12$ gir
   minimum $-\tfrac12$.
 - **Koblingen til uke 5:** På enhetssirkelen er $z^TAz$ Rayleigh-kvotienten
@@ -766,24 +867,18 @@ $$2Az+2\lambda z=0\qquad\Longleftrightarrow\qquad Az=-\lambda z.$$
 
 Begrunnelsen er den samme som i 12.3: maksimum og minimum finnes fordi
 sirkelen er kompakt, og hvert punkt på sirkelen er regulært, så maksimums- og
-minimumspunktene er blant kandidatene, altså egenvektorene.
+minimumspunktene er blant kandidatene, altså punktene som ligger i retningen til egenvektorene.
 
-**Største strekk.** I [uke 7](uke7.qmd#uke7-geometri) sendte matrisen
-$B=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ (der het den $A$) enhetssirkelen til en
-ellipse, og største strekk var $\sigma_1=2$. Nå kan vi utlede det:
+**Hva betyr det for turgåeren?** På en rund sti er den høyeste og den laveste
+høyden i et terreng $z^TAz$ den største og den minste egenverdien til $A$, og
+stedene ligger i retningen til egenvektorene, én kilometer fra sjøens midte. I sadelterrenget $xy$ er toppene
+punktene $\pm\tfrac1{\sqrt2}(1,1)$ (nordøst og sørvest), og dalene er punktene
+$\pm\tfrac1{\sqrt2}(1,-1)$ (nordvest og sørøst).
 
-1. **Skriv kvadrert strekk:** Her er $Bz=(2y,\,x)$, så
-   $\lVert Bz\rVert_2^2=x^2+4y^2=z^T(B^TB)z$ med
-   $B^TB=\operatorname{diag}(1,4)$. Det er samme type problem, og uttrykket
-   er det samme som for ellipsen i 12.1.
-2. **Bruk sirkelkravet:** På sirkelen er $x^2=1-y^2$, så
-   $x^2+4y^2=1+3y^2\le4$, med likhet i $z=\pm e_2$.
-3. **Ta kvadratroten:** Største strekk er $\sqrt4=2$.
-
-Vi har vist med likninger at kandidatene er egenvektorer. Forsøket viser det
-samme i et bilde, og lar deg prøve andre matriser. Målet er å se at nivåkurvene
-berører sirkelen nøyaktig i egenvektorene, slik nivålinjen berørte ellipsen
-i 12.1.
+Vi har vist med likninger at kandidatene ligger i retningen til egenvektorer. Forsøket
+viser det samme i et bilde, og lar deg prøve andre matriser. Målet er å se at
+nivåkurvene (kotene) berører sirkelen i akkurat de punktene, slik nivålinjen
+berørte stien i 12.1.
 
 ### Eksperiment 3 – se egenvektorene på sirkelen
 
@@ -816,19 +911,47 @@ plot_quadratic_on_circle(A)
 
 **Hva viser forsøket?**
 
-- **For $A$:** Nivåkurvene $xy=\pm\tfrac12$ berører sirkelen nøyaktig i
-  egenvektorene, og verdien der er egenverdien: `eigh` gir $\pm0.5$.
-- **For $B^TB$:** `eigh` gir $1$ og $4$. Nivåkurvene er ellipsene
-  $x^2+4y^2=c$, og kurven $c=4$ berører sirkelen i $\pm e_2$.
+- **For $A$:** Nivåkurvene $xy=\pm\tfrac12$ berører enhetssirkelen i de fire
+  punktene $\pm\tfrac1{\sqrt2}(1,1)$ og $\pm\tfrac1{\sqrt2}(1,-1)$. Punktene
+  ligger i retningen til egenvektorene $v_1=(1,1)$ og $v_2=(1,-1)$ til $A$, én
+  lengdeenhet fra origo. I et punkt $z$ i retningen til en egenvektor med
+  egenverdi $\mu$ og med lengde 1 er $f(z)=z^TAz=\mu\,z^Tz=\mu$. Her er
+  $f=\tfrac12$ i $\pm\tfrac1{\sqrt2}(1,1)$ og $f=-\tfrac12$ i
+  $\pm\tfrac1{\sqrt2}(1,-1)$. `eigh` gir egenverdiene $-0.5$ og $0.5$.
+- **For $B^TB$:** `eigh` gir egenverdiene $1$ og $4$. Nivåkurvene er ellipsene
+  $x^2+4y^2=c$. Ellipsen med $c=4$ berører enhetssirkelen i punktene
+  $(0,\pm1)$, som ligger i retningen til egenvektoren $e_2$ med egenverdi $4$.
 - **Strekket:** Største strekk er $\sqrt4=2$, og `svd` gir
-  singulærverdiene $2$ og $1$.
+  singulærverdiene $2$ og $1$ (se «Gå i dybden» under).
+
+**Hva betyr det for turgåeren?** Det er samme bilde som i 12.1. I sadelterrenget
+på den runde stien ligger de høyeste og de laveste stedene der en kote berører
+stien. Stedene ligger i retningen til egenvektorene.
 
 **Øv på dette:** [største strekk med Lagrange](#uke12-oppg-strekk) i 12.6.
+
+::: {.reading-step title="Gå i dybden: største strekk fra uke 7 med Lagrange"}
+
+Samme regning svarer på et spørsmål fra uke 7, som ikke handler om turen. I [uke 7](uke7.qmd#uke7-geometri) sendte matrisen
+$B=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ (der het den $A$) enhetssirkelen til en
+ellipse, og største strekk var $\sigma_1=2$. Nå kan vi utlede det:
+
+1. **Skriv kvadrert strekk:** Her er $Bz=(2y,\,x)$, så
+   $\lVert Bz\rVert_2^2=x^2+4y^2=z^T(B^TB)z$ med
+   $B^TB=\operatorname{diag}(1,4)$. Det er samme type problem, og uttrykket
+   er det samme som for ellipsen i 12.1.
+2. **Bruk sirkelkravet:** På sirkelen er $x^2=1-y^2$, så
+   $x^2+4y^2=1+3y^2\le4$, med likhet i punktene $(0,\pm1)$, i retningen til $e_2$.
+3. **Ta kvadratroten:** Største strekk er $\sqrt4=2$.
+
+:::
 
 ### Lineære krav gir et lineært system
 
 ::: {#uke12-kkt}
 :::
+
+Nå bytter vi den krumme stien mot en rett vei, slik som veien til hytta i 12.2.
 
 - **Ett lineært krav:** For $c^Tz=d$ er normalen $c$ den samme i alle
   punkter.
@@ -847,7 +970,7 @@ $$\nabla f(z)+C^T\lambda=0.$$
   viser «Gå i dybden» under eksperimentet.
 
 Når $f$ er kvadratisk, er $\nabla f$ lineær i $z$, og alle likningene blir
-lineære. For linjeeksempelet i 12.2, $f=x^2+y^2$ og $x+y=2$, får vi
+lineære. For veien til hytta fra 12.2, $f=x^2+y^2$ og $x+y=2$, får vi
 
 $$\underbrace{\begin{bmatrix}2&0&1\\0&2&1\\1&1&0\end{bmatrix}}_{K}
 \begin{bmatrix}x\\y\\\lambda\end{bmatrix}
@@ -897,13 +1020,17 @@ except np.linalg.LinAlgError:
   SPD-matrise har $v^TKv>0$ for alle $v\ne0$. Et KKT-system er derfor aldri
   SPD (se «Gå i dybden» under), og CG og Cholesky kan ikke brukes direkte.
 
+**Hva betyr det for turgåeren?** Å finne det nærmeste punktet på en rett vei
+er et lineært likningssett, men av en spesiell type. Vi løser det med
+`np.linalg.solve`, ikke med CG eller Cholesky.
+
 **Dette tar vi med oss.** Når målet er kvadratisk, blir Lagranges likninger
 lineær algebra:
 
 | Krav | Hva likningene blir |
 |:--|:--|
-| Sirkelkrav | Egenverdiproblem, der kandidatene er egenvektorene. |
-| Lineære krav | Symmetrisk, men indefinit likningssett: CG og Cholesky virker ikke direkte. |
+| Sirkelkrav (rund sti) | Egenverdiproblem, der kandidatene ligger i retningen til egenvektorene. |
+| Lineære krav (rette veier) | Symmetrisk, men indefinit likningssett: CG og Cholesky virker ikke direkte. |
 
 Nullromsmetoden i «Gå i dybden» viser én vei rundt.
 
@@ -1001,26 +1128,30 @@ når radene i $C$ er uavhengige. Kodeoppgaven
 ::: {#uke12-slsqp}
 :::
 
-For større problemer, som kjettingen i [prosjekt 12](project_week12.qmd) med ti
-krav, løser vi ikke
-Lagranges likninger for hånd. Vi bruker `minimize` med metoden `SLSQP`, som
-tar imot likhetskrav, og kontrollerer svaret selv.
+Turgåeren går på en rund sti med radius 1 km rundt sjøen. Kaféen ligger i
+punktet $(2,1)$, utenfor stien. Vektoren fra origo til kaféen kaller vi
+$a=(2,1)$. Han vil til stedet på stien som er nærmest kaféen, og spør en kartapp.
+Appen er løseren `minimize` med metoden `SLSQP`, som tar imot likhetskrav. Den
+foreslår et punkt. Kan han stole på det?
 
-Som eksempel bruker vi punktet $a=(2,1)$, som ligger utenfor enhetssirkelen. Vi
-søker punktet på sirkelen som ligger nærmest.
+Dette er ikke en høydeoppgave. Målet er **halve kvadratavstanden til kaféen**, og
+vi vil ha minimum. Likningene er de samme som før:
 
 | Rolle | Uttrykk |
 |:--|:--|
-| Valg | $z=(x,y)$ |
-| Mål | Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$ |
-| Krav | $h(z)=\lVert z\rVert_2^2-1=0$ |
+| Valg | $z=(x,y)$, stedet på kartet |
+| Mål | Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$, halve kvadratavstanden til $a$ |
+| Kravfunksjon | $h(z)=\lVert z\rVert_2^2-1$ |
+| Krav | $h(z)=0$: punktet ligger på stien, altså enhetssirkelen |
 
-Løseren gir en **numerisk kandidat**. At løseren melder at den stoppet
-normalt, erstatter ikke to kontroller vi må gjøre selv:
+For større problemer, som kjettingen i [prosjekt 12](project_week12.qmd) med ti
+krav, løser vi ikke Lagranges likninger for hånd. Løseren gir en **numerisk
+kandidat**. At den melder at den stoppet normalt, erstatter ikke to kontroller
+turgåeren må gjøre selv:
 
-- **Betingelsesfeilen** $|h(z)|$: ligger punktet på sirkelen?
+- **Betingelsesfeilen** $|h(z)|$: ligger punktet på stien?
 - **Stasjonaritetsfeilen** $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$:
-  kan målgradienten balanseres av normalen?
+  er stien flat der, slik at målgradienten kan balanseres av normalen?
 
 Når vi trenger $\lambda$, **velger vi den $\lambda$ som gjør
 stasjonaritetsfeilen minst**. Det er et minste kvadraters problem med én ukjent, som i
@@ -1055,7 +1186,7 @@ $$\lVert\nabla F+\lambda\nabla h\rVert_2^2=\nabla F\cdot\nabla F
 
 :::
 
-Nå kan vi prøve alt dette på avstandsproblemet. Målet er å se hva
+Nå prøver vi alt dette på kartappen. Målet er å se hva
 kontrollfeilene sier, og hva de ikke sier.
 
 ### Eksperiment 5 – finn og kontroller et sirkelpunkt
@@ -1107,7 +1238,7 @@ Punktet fra det første startpunktet stemmer med $a/\lVert a\rVert_2$.
 - **Samme kontrollresultat:** Begge ganger er kontrollfeilene små, og løseren
   rapporterer `success=True`. Flagget betyr bare at løseren stoppet på vanlig måte.
 - **Ulik kvalitet:** Den andre kandidaten er det **fjerneste** punktet.
-  Det andre startpunktet ligger på linjen gjennom origo og $a$. Der peker både
+  Det andre startpunktet ligger på linjen gjennom origo og kaféen. Der peker både
   $\nabla F$ og normalen langs linjen, så hvert steg blir liggende på linjen.
 - **Litt endret start:** Flytter du startpunktet litt bort fra linjen, finner
   løseren det nærmeste punktet igjen.
@@ -1122,6 +1253,12 @@ $$F(z)=\tfrac12\bigl(\lVert a\rVert_2^2+1-2a\cdot z\bigr)\ge\tfrac12(\sqrt5-1)^2
 
 med likhet bare i $z=a/\sqrt5$. De to numeriske kontrollene viser at punktet
 er en kandidat; ulikheten viser at det er det beste.
+
+**Svaret til turgåeren:** Kartappen kan si «ferdig» også når den har funnet det
+fjerneste punktet. Han kan stole på forslaget først når han har sjekket tre
+ting selv. Er punktet på stien (betingelsesfeilen)? Er stien flat der
+(stasjonaritetsfeilen)? Og er verdien den beste, bevist med en ulikhet som
+gjelder alle punkter på stien? Da er han sikker, uten å gå hele stien.
 
 **Øv på dette:** [to kontrollfeil for et feil forslag](#uke12-oppg-kontroll)
 i 12.6 og [de tre første kodeoppgavene](#uke12-python) i 12.7.
@@ -1143,7 +1280,8 @@ Hvordan kommer SLSQP fram til svaret? Cellen kjører samme søk med en
 hvert av dem, og tegner dem sammen med nivåkurvene til $F$.
 
 - **Linjestykkene:** Viser bare rekkefølgen.
-- **Mellompunktene:** Trenger ikke ligge på sirkelen. Et punkt utenfor
+- **Mellompunktene:** Trenger ikke ligge på sirkelen. Appen kan altså gå
+  gjennom steder utenfor stien underveis. Et punkt utenfor
   sirkelen kan ha lavere $F$ enn det beste tillatte punktet.
 
 ```{pyodide-python}
@@ -1176,8 +1314,9 @@ Små kontrollfeil alene skiller dem ikke; verdien av $F$ gjør det.
 
 ::: {.reading-step title="Gå i dybden: ulikhetskrav – skiven i stedet for sirkelen"}
 
-Hva om punktet bare må ligge **i** skiven, $g(z)=\lVert z\rVert_2^2-1\le0$?
-Da er det to muligheter:
+Hva om turgåeren får gå hvor som helst **i** området innenfor stien, ikke bare
+på selve stien? Punktet må da oppfylle $g(z)\le0$ med $g(z)=\lVert z\rVert_2^2-1$
+(skiven). Da er det to muligheter:
 
 - Ligger $a$ inne i skiven, er $z=a$ selv svaret. Kravet er **ikke aktivt**,
   og målet har gradient null der. Vi setter $\lambda=0$.
@@ -1223,20 +1362,30 @@ I det siste tilfellet er multiplikatoren den samme som med sirkelkravet.
 
 :::
 
+### Svar på ukens spørsmål
+
+Turgåeren spurte tre ting. Svarene er nå komplette:
+
+1. **Hvor er det høyeste punktet?** I det høyeste punktet følger stien en
+   nivålinje, og brattest oppover peker rett ut fra stien. Det gir Lagranges
+   likninger: kravet $h=0$ og $\nabla f+\lambda\nabla h=0$. På den avlange stien
+   ligger punktet i $(0.707,\,0.354)$, 141 meter over sjøens nivå.
+2. **Hvordan kan han være sikker?** Flate steder er bare kandidater. Han finner
+   dem alle og sammenligner høydene, eller bruker en ulikhet som gjelder alle
+   punkter på stien. Et punkt fra en kartapp sjekker han med de to
+   kontrollfeilene først.
+3. **Hva er det verdt å flytte stien?** Multiplikatoren er prisen: høyden på det
+   høyeste punktet endres med omtrent $-\lambda$ per enhet vi flytter kravet.
+   For den avlange stien er $-\lambda=1/\sqrt2\approx0.71$.
+
+Kjettingen i prosjektet stiller de samme spørsmålene. Den henger så lavt som
+mulig når leddene har faste lengder. Multiplikatorene er kreftene i leddene, og
+de sier også hva litt mer lengde er verdt i energi.
+
 ### Hva de tolv ukene har bygget
 
 ::: {#uke12-avslutning}
 :::
-
-Ukens spørsmål var hva som erstatter $\nabla f=0$ når punktet må ligge på en
-kurve. Svaret bygger på tre deler:
-
-- **Finn kandidater:** Lagranges likninger er $h=0$ og
-  $\nabla f+\lambda\nabla h=0$. De gir kandidater, ikke løsninger.
-- **Avgjør hvilken som er best:** Sammenlign verdier eller bruk en global
-  ulikhet.
-- **Regn og kontroller:** For kvadratiske mål ble likningene lineær algebra.
-  Et punkt fra en løser kontrollerte vi med to kontrollfeil.
 
 Slik henger de tolv ukene sammen:
 
@@ -1257,7 +1406,8 @@ kom et fjerde til:
 4. Hvordan kontrollerer vi et tall som en løser gir oss?
 
 Denne uken svarte vi på dem med kompakthet, Lagranges likninger, en global ulikhet
-og to kontrollfeil. Den arbeidsmåten tar du med deg videre: regn ut et svar,
+og to kontrollfeil. (Ukens spørsmål var hva som erstatter $\nabla f=0$ når punktet
+må ligge på en kurve: Lagranges likninger.) Den arbeidsmåten tar du med deg videre: regn ut et svar,
 og kontroller det med et argument eller en uavhengig test.
 
 ## 12.6 Regneoppgaver {quiz=uke12-6-oppgaver}
@@ -1265,8 +1415,9 @@ og kontroller det med et argument eller en uavhengig test.
 ::: {#uke12-oppgaver}
 :::
 
-Oppgavene er sortert etter de tre ideene. De tre siste hører til «Gå i
-dybden»-boksene og er valgfrie.
+Oppgavene er sortert etter de tre ideene, og de fleste har turgåeren eller hytta
+fra uka som utgangspunkt. De tre siste hører til «Gå i dybden»-boksene og er
+valgfrie.
 
 - **Arbeidsmåte:** Arbeid på papir først. Begrunnelsene skriver du i egne
   notater; feltene kontrollerer tallene.
@@ -1287,9 +1438,10 @@ som må klassifiseres.
 ::: {#uke12-oppg-normal}
 :::
 
-Ellipsen $h(x,y)=x^2+4y^2-1=0$ fra 12.1 har sitt øverste punkt i
-$p=(0,1/2)$. Finn normalen $\nabla h(p)$ og en enhetstangent med positiv
-$x$-komponent.
+Turgåeren står på den avlange stien fra 12.1. Kravfunksjonen er
+$h(x,y)=x^2+4y^2-1$, og stien er punktene der $h(x,y)=0$. Det nordligste
+punktet på stien er $p=(0,1/2)$. Finn normalen $\nabla h(p)$ og en enhetstangent
+med positiv $x$-komponent.
 
 ```{math-exercise}
 #| label: week12-normal-tangent
@@ -1310,8 +1462,10 @@ betyr det geometrisk?
 ::: {#uke12-oppg-ellipse}
 :::
 
-Maksimer $f(x,y)=2x+y$ når $x^2+4y^2=1$. Bruk substitusjonen $w=2y$, slik at
-kravet blir en sirkel, og bruk Cauchy–Schwarz som i håndeksempelet i 12.2.
+Turgåeren går samme avlange sti, men i et annet terreng med høyde
+$f(x,y)=2x+y$. Hvor er det høyeste punktet på stien $x^2+4y^2=1$, og hvor høyt
+er det? Bruk substitusjonen $w=2y$, slik at stien blir en sirkel, og bruk
+Cauchy–Schwarz som i håndeksempelet i 12.2.
 
 ```{math-exercise}
 #| label: week12-ellipse-max
@@ -1334,8 +1488,9 @@ $\nabla h$ er parallell med $(2,1)$ i punktet.
 ::: {#uke12-oppg-sirkel}
 :::
 
-Maksimer $f(x,y)=3x-4y$ på enhetssirkelen, med $h=x^2+y^2-1=0$. Finn
-maksimumspunktet og multiplikatoren.
+På en rund sti med radius 1 km er terrenget $f(x,y)=3x-4y$: det stiger mot
+øst og synker mot nord. Kravfunksjonen er $h(x,y)=x^2+y^2-1$, og stien er
+punktene der $h(x,y)=0$. Finn det høyeste punktet på stien og multiplikatoren.
 
 ```{math-exercise}
 #| label: week12-circle-lagrange
@@ -1355,8 +1510,10 @@ $\lambda=$ _[-5/2]
 ::: {#uke12-oppg-boks}
 :::
 
-En sylinderformet boks har radius $x>0$ og høyde $y>0$. Volumet skal være
-$V$, altså $h(x,y)=\pi x^2y-V=0$. Overflaten er $f(x,y)=2\pi x^2+2\pi xy$.
+Her er det ingen tur, men samme idé: et krav, et mål og en pris. En
+sylinderformet boks har radius $x>0$ og høyde $y>0$. Overflaten er
+$f(x,y)=2\pi x^2+2\pi xy$. Volumet skal være $V$. Kravfunksjonen er
+$h(x,y)=\pi x^2y-V$, og kravet er $h(x,y)=0$.
 
 Gradientene er gitt:
 
@@ -1393,7 +1550,8 @@ ting modellen ser bort fra.
 ::: {#uke12-oppg-form}
 :::
 
-La $f(x,y)=x^2+4xy+y^2$ på enhetssirkelen og $p=(1,1)/\sqrt2$.
+Turgåeren går den runde stien $x^2+y^2=1$ i terrenget $f(x,y)=x^2+4xy+y^2$.
+Han står i $p=(1,1)/\sqrt2$.
 
 1. Skriv $f=z^TAz$ med en symmetrisk $A$, og finn egenverdiene og $f(p)$.
 2. Finn multiplikatoren fra $Ap=-\lambda p$.
@@ -1445,7 +1603,8 @@ Maksimumspunkt $z=$ vec[1/sqrt(2),1/sqrt(2)]
 ::: {#uke12-oppg-kkt}
 :::
 
-Minimer $f(x,y)=x^2+y^2$ når $x+2y=5$. Skriv Lagranges likninger som et
+Hytta ligger i origo, og en rett vei følger kravet $x+2y=5$. Minimer kvadratet
+av avstanden til hytta, $f(x,y)=x^2+y^2$, langs veien. Skriv Lagranges likninger som et
 $3\times3$-system $K(x,y,\lambda)^T=(0,0,5)^T$ og løs det. Regn ut
 determinanten til $K$, og avgjør om $K$ er SPD.
 
@@ -1474,9 +1633,10 @@ SPD?
 ::: {#uke12-oppg-kontroll}
 :::
 
-I avstandsproblemet fra 12.5 er $a=(2,1)$,
-$F(z)=\tfrac12\lVert z-a\rVert_2^2$ og $h(z)=\lVert z\rVert_2^2-1$. En løser
-rapporterer $z=(1,0)$ og $\lambda=1/2$. Regn ut begge kontrollfeilene.
+I avstandsproblemet fra 12.5 ligger kaféen i punktet $(2,1)$, og $a=(2,1)$ er vektoren dit. Her er
+$F(z)=\tfrac12\lVert z-a\rVert_2^2$ og kravfunksjonen
+$h(z)=\lVert z\rVert_2^2-1$. Kartappen foreslår $z=(1,0)$ og $\lambda=1/2$.
+Regn ut begge kontrollfeilene.
 
 ```{math-exercise}
 #| label: week12-numeric-check
@@ -1499,8 +1659,9 @@ annen $\lambda$ gjøre stasjonaritetsfeilen mindre?
 ::: {#uke12-oppg-degenerert}
 :::
 
-Hører til «Gå i dybden: når normalen forsvinner» i 12.2. La $f(x,y)=x+3y$ og
-$h(x,y)=x^2+y^2=0$. Finn det eneste tillatte punktet og $\nabla h$ der.
+Hører til «Gå i dybden: når normalen forsvinner» i 12.2. La $f(x,y)=x+3y$, med
+kravfunksjonen $h(x,y)=x^2+y^2$ og kravet $h(x,y)=0$. Finn det eneste
+tillatte punktet og $\nabla h$ der.
 
 ```{math-exercise}
 #| label: week12-degenerate-check
@@ -1522,8 +1683,8 @@ selv om punktet er et optimum?
 :::
 
 Hører til «Gå i dybden: en multiplikator gir en nedre grense» i 12.2. Bruk
-$F(z)=\tfrac12\lVert z-(2,1)\rVert_2^2$, $h(z)=\lVert z\rVert_2^2-1$ og
-$\lambda=1/2$. Da er $L=F+\lambda h$ kvadratisk.
+$F(z)=\tfrac12\lVert z-(2,1)\rVert_2^2$, kravfunksjonen
+$h(z)=\lVert z\rVert_2^2-1$ og $\lambda=1/2$. Da er $L=F+\lambda h$ kvadratisk.
 
 Finn:
 
@@ -1577,8 +1738,9 @@ tilfellene.
 ::: {#uke12-python}
 :::
 
-Oppgavene har egne importer og definisjoner og kan kjøres uavhengig av
-forsøkene. Fyll bare inn hullene merket `TODO`. De automatiske testene vurderer
+Her øver du på kontrollene turgåeren bruker: normalen til stien, de to
+kontrollfeilene og kartappen SLSQP. Oppgavene har egne importer og definisjoner
+og kan kjøres uavhengig av forsøkene. Fyll bare inn hullene merket `TODO`. De automatiske testene vurderer
 resultatet uten å vise løsningen.
 
 ::: {#uke12-scipy}
