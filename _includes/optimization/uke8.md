@@ -827,7 +827,7 @@ litt ut fra $z$ i retningen $p$:
 |:--|:--|:--|
 | alltid $>0$ | positiv definitt | strengt lokalt minimum |
 | alltid $<0$ | negativ definitt | strengt lokalt maksimum |
-| $>0$ for noen $p$, $<0$ for andre | indefinit | sadelpunkt |
+| $>0$ for noen $p$, $<0$ for andre | indefinitt | sadelpunkt |
 | $\ge0$ (eller $\le0$), men $=0$ for en $p\ne0$ | semidefinitt | testen avgjør ikke |
 
 Tabellen sier at fortegnet til $p^THp$ avgjør typen. Figuren viser hvordan
