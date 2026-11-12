@@ -25,9 +25,7 @@ SOURCE_BASELINES = {
     # their cells and exercises are gone; experiment 5, exercise week12-numeric-check, the
     # 12.7 code exercises and the hidden setup helpers were rewritten). From now on the
     # fences of these two files are protected against THIS version, not against BASE.
-    # PLACEHOLDER (orchestrator): replace both values with the hash of the commit that
-    # contains these two files. Until then they hold a tree object that has exactly this
-    # content (made with git write-tree; it is not on any branch and may be garbage collected).
+    # Baseline: commit d7bb6f4 (12 Nov 2026), which contains both files.
     "_includes/optimization/uke12.md": "d7bb6f4966f91b26747ab7b05686ee4855714400",
     "_includes/optimization/week12_setup.md": "d7bb6f4966f91b26747ab7b05686ee4855714400",
 }

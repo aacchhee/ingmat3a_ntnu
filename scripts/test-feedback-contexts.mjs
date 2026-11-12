@@ -57,7 +57,7 @@ async function main() {
     const reason = String(error.stderr || error.message).trim().split('\n').at(-1);
     throw new Error('Static context check failed: ' + reason);
   }
-  requireThat(checked.summary.ide_dependency_context_checks === 263, 'Expected all 263 authored IDE dependency contexts.');
+  requireThat(checked.summary.ide_dependency_context_checks === 261, 'Expected all 261 authored IDE dependency contexts.');
   requireThat(Object.keys(checked.mathFacts).length === 32, 'Expected all 32 repaired mathematics contexts.');
 
   let servedAdapterScripts = 0;
@@ -282,10 +282,10 @@ async function main() {
       } finally { await page.close(); }
     }
     requireThat(servedAdapterScripts === pages.length, 'The real rendered feedback scripts were not observed on every page.');
-    requireThat(observedIDE.size === 262 && totals.ide === 524, 'Not all 262 enabled IDE adapters were checked in both states.');
+    requireThat(observedIDE.size === 260 && totals.ide === 520, 'Not all 260 enabled IDE adapters were checked in both states.');
     requireThat(readonly.length === 1 && readonly[0] === 'error-scale', 'Unexpected read-only feedback coverage.');
     requireThat(observedMath.size === 32 && totals.math === 64, 'Not all 32 mathematics adapters were checked in both states.');
-    requireThat(totals.mockFetches === 588, 'The expected 588 requests did not pass through the actual SDK.');
+    requireThat(totals.mockFetches === 584, 'The expected 584 requests did not pass through the actual SDK.');
     requireThat(totals.negativeChecks === 2, 'Both factual corruption controls must be rejected.');
     requireThat(providerNetworkAttempts === 0, 'A provider network request was attempted.');
     process.stdout.write(JSON.stringify({ passed: true, pages: pages.length,

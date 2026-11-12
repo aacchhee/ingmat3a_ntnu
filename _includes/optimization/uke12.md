@@ -1235,8 +1235,7 @@ Arild står.
    Den skal trekkes fra, så $\lambda=-\tfrac12$.
 4. **Stasjonaritetsfeilen:** $\nabla f+\lambda\nabla h=(1,2)-\tfrac12(0,4)=(1,0)$,
    med lengde $1$.
-5. **Les svaret:** Resten peker østover langs stien: der stiger Arild 1 (hundre
-   meter) per kilometer. Punktet er ikke det høyeste, som i appleten i 12.1.
+5. **Les svaret:** Resten $(1,0)$ peker østover langs stien, og lengden $1$ er stigningen der: går Arild østover, stiger han 1 hundre meter per kilometer, som tallet $\nabla f\cdot v$ i 12.1. Stien er ikke flat her, så punktet er ikke det høyeste.
 
 :::
 
@@ -1253,10 +1252,10 @@ kontrollfeilene. Målet er å se hva kontrollfeilene sier, og hva de ikke sier.
 ### Eksperiment 5 – finn og kontroller et punkt på stien
 
 - Kjør cellen fra $(1,0)$, og sammenlign med det høyeste punktet fra 12.2.
-- Start i det laveste punktet,
+- Bytt `start` til det laveste punktet,
   `np.array([-1/np.sqrt(2), -1/(2*np.sqrt(2))])`. Hva rapporterer løseren, og
   hvilket tall avslører at punktet ikke er det høyeste?
-- Start litt ved siden av, for eksempel i `np.array([-.7, -.36])`. Hvor havner
+- Bytt `start` til et punkt litt ved siden av, for eksempel `np.array([-.7, -.36])`. Hvor havner
   løseren?
 
 ```{pyodide-python}
@@ -1295,10 +1294,7 @@ print('multiplikator lambda  =', round(lam, 4))
   $-1.4142$ mot $1.4142$, avslører det.
 - **Litt endret start:** Fra $(-0.7,-0.36)$ finner løseren det høyeste punktet.
 
-**Er det det høyeste?** I 12.2 fant vi at Lagranges likninger bare har to
-løsninger på denne stien, og stien er lukket og begrenset
-([uke 8](uke8.qmd#uke8-kompakt)), så et høyeste punkt finnes. Høydene er
-$\sqrt2\approx1.414$ og $-\sqrt2$, så punktet fra første forsøk er det høyeste.
+**Er det det høyeste?** Ja: i 12.2 viste vi at et høyeste punkt finnes og må være en av de to løsningene av Lagranges likninger, og $\sqrt2>-\sqrt2$.
 
 **Svaret til Arild:** Kartappen kan si «ferdig» også i det laveste punktet. Han
 kan stole på forslaget først når han selv har sjekket begge kontrollfeilene og
@@ -1328,8 +1324,7 @@ Arild spurte tre ting. Svarene er nå komplette:
    For den avlange stien er $-\lambda=1/\sqrt2\approx0.71$, så $s=0.1$ gir
    omtrent 7 meter.
 
-Kjettingen i prosjektet stiller de samme spørsmålene: multiplikatorene er
-kreftene i leddene.
+Kjettingen i prosjektet stiller de samme spørsmålene, med minimum i stedet for maksimum. Der er multiplikatorene kreftene i leddene.
 
 ### Hva de tolv ukene har bygget
 
@@ -1343,7 +1338,7 @@ Ukene 8–12 brukte verktøyene fra ukene 1–7 på optimering:
 | 1–7 | Flyttall og avrunding, iterasjon, likningssett, nullrom og rang, minste kvadrater, egenverdier, SPD-matriser og CG, og singulærverdier. |
 | 8 | Eksistens, Hessianen og konveksitet. |
 | 9–10 | Gradient- og Newtonmetoden med kondisjonstallet og Cholesky. |
-| 11–12 | Multiplikatorer som priser og optimalitetssertifikater. |
+| 11–12 | Multiplikatorer som priser, optimalitetssertifikater (uke 11) og kontroll av et numerisk svar (uke 12). |
 
 ## 12.6 Regneoppgaver {quiz=uke12-6-oppgaver}
 
@@ -1589,7 +1584,7 @@ $\lVert\nabla f(z)+\lambda\nabla h(z)\rVert_2=$ _[2]
 ```
 
 **Forklar:** Hvilken kontroll avslører at punktet ikke er stasjonært? Hvilken
-vei peker resten, og hva betyr det for hvor Arild bør gå videre?
+vei peker resten? Sammenlign lengden med stigningen i østspissen i 12.1.
 
 ### Til fordypningen (valgfritt)
 
@@ -1635,7 +1630,7 @@ resultatet uten å vise løsningen.
 |:--|:--|
 | `method="SLSQP"` | En metode i `minimize` som tar imot likhetskrav. |
 | `{"type": "eq", "fun": h, "jac": grad_h}` | Krever $h(z)=0$ og oppgir gradienten (normalen). |
-| `minimize(lambda z: -f(z), start, jac=lambda z: -grad_f(z), ...)` | `minimize` minimerer. For å maksimere $f$ minimerer vi $-f$, og gradienten får samme fortegn. |
+| `minimize(lambda z: -f(z), start, jac=lambda z: -grad_f(z), ...)` | `minimize` minimerer. For å maksimere $f$ minimerer vi $-f$; da må også gradienten få minus foran (`jac=lambda z: -grad_f(z)`). |
 | `options={"ftol": 1e-10, "maxiter": 100}` | Løserens stopptoleranse og grense for antall iterasjoner. |
 | `J = grad_h(z).reshape(1, 2)`, `np.linalg.lstsq(J.T, -grad_f(z), rcond=None)[0]` | Multiplikatorene som gjør $\lVert\nabla f+J^T\lambda\rVert_2$ minst. $J$ har én rad per krav; med ett krav er raden normalen. |
 
@@ -1645,8 +1640,7 @@ en vektor og en `jac` som returnerer Jacobimatrisen.
 `result.x`, `result.fun` og `result.success` betyr det samme som i
 [uke 8](uke8.qmd#uke8-python-local).
 
-- **Nyere SciPy-versjoner:** Gir også `result.multipliers`, men med motsatt
-  fortegn av vårt ($L=f-\lambda h$).
+- **Nyere SciPy-versjoner:** Gir også `result.multipliers`. Fortegnet avhenger av hva løseren minimerer: når den minimerer $-f$, som her, er tallet lik vår $\lambda$; når den minimerer $f$ selv, har det motsatt fortegn.
 - **SciPy 1.14 i nettleseren:** Gir dem ikke.
 - **Vår kontroll:** Vi beregner derfor $\lambda$ selv med `lstsq`, som virker
   overalt, og kontrollerer $|h|$ og
@@ -1716,7 +1710,7 @@ assert np.allclose(check(top, -1/np.sqrt(2)), (0., 0.), atol=1e-12)
 ::: {#uke12-py-slsqp}
 :::
 
-**Send kravet til SLSQP.** Fyll inn ordboken som angir
+**Send kravet til SLSQP.** For Arilds avlange sti skal du fylle inn ordboken som angir
 $h(z)=0$ og gradienten.
 
 ```{py-exercise}
