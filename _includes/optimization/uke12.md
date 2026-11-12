@@ -1230,7 +1230,7 @@ Arild står.
 
 1. **På stien?** $h(z)=0+4\cdot\tfrac14-1=0$, så betingelsesfeilen er $0$.
 2. **Gradientene:** $\nabla f=(1,2)$ og $\nabla h=(2x,8y)=(0,4)$.
-3. **Beste $\lambda$:** Delen av $\nabla f$ langs normalen er
+3. **Beste $\lambda$:** Delen av $\nabla f$ langs normalen er projeksjonen fra [uke 4](uke4.qmd#uke4-projeksjon):
    $\frac{\nabla f\cdot\nabla h}{\nabla h\cdot\nabla h}\nabla h=\tfrac8{16}\nabla h$.
    Den skal trekkes fra, så $\lambda=-\tfrac12$.
 4. **Stasjonaritetsfeilen:** $\nabla f+\lambda\nabla h=(1,2)-\tfrac12(0,4)=(1,0)$,
