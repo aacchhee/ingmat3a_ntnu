@@ -35,6 +35,12 @@ SOURCE_BASELINES = {
 # pair is applied once to the baseline text; nothing else in those blocks
 # may change.
 APPROVED_WORDING = {
+    # 12 Nov 2026: the author approved the project 11 audit; the setup comments
+    # named parts "1b" and "3b", which the page no longer has.
+    '_includes/projects/week11_setup.md': [
+        ('# Samme funksjon som i del 1b,', '# Samme funksjon som i del 1,'),
+        ('# Samme funksjon som i del 3b.', '# Samme funksjon som i del 3.'),
+    ],
     '_includes/optimization/uke11.md': [
         ('# Komplementær slakk ga u = 2, v = 1. Bygger de normalene til målretningen?',
          '# Komplementær slakk ga u = 2, v = 1. Gir de vektede normalene til sammen målretningen?'),
