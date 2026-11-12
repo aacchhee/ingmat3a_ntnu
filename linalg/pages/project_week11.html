@@ -545,7 +545,7 @@ window.Quarto = {
 <section id="hvorfor-koster-strømmen-det-den-koster" class="level2">
 <h2 class="anchored" data-anchor-id="hvorfor-koster-strømmen-det-den-koster">Hvorfor koster strømmen det den koster?</h2>
 <p>Du har kanskje sett at strømprisen kan være forskjellig i to deler av landet i samme time. Norge er delt i flere <strong>prisområder</strong>, og hvert har sin egen pris. Men hvor kommer prisen fra?</p>
-<p>Tenk på én time i ett område. Flere kraftverk kan levere strøm, og hvert oppgir hvor mye det kan levere og hva det koster. Markedet velger den billigste planen som dekker forbruket, og alle som leverer, får samme pris per MWh. Det er samme type oppgave som verkstedet i uke 11, bare med lavest kostnad i stedet for størst fortjeneste.</p>
+<p>Tenk på én time i ett område. Flere kraftverk kan levere strøm, og hvert oppgir hvor mye det kan levere og hva det koster. Markedet velger den billigste planen som dekker forbruket. I døgnmarkedet, der det meste av strømmen i Norden handles, får alle kraftverk i samme område samme pris per MWh for samme tidsperiode, og alle kjøpere betaler den samme prisen. Slik er det også i modellen vår. (I dag settes prisen per kvarter, men vi regner med hele timer.) Det er samme type oppgave som verkstedet i uke 11, bare med lavest kostnad i stedet for størst fortjeneste.</p>
 <p>Vi bygger et lite, oppdiktet kraftmarked og bruker <code>linprog</code> til å undersøke tre spørsmål:</p>
 <ul>
 <li>Hvilket kraftverk bestemmer prisen når forbruket øker litt?</li>
@@ -587,8 +587,8 @@ window.Quarto = {
 <td style="text-align: left;"><strong>Pris:</strong> hva det koster å dekke 1 MW mer forbruk på billigste måte.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Prisen gjelder bare for de første halvannen ekstra timene.</td>
-<td style="text-align: left;">Prisen gjelder bare for små endringer (del 2).</td>
+<td style="text-align: left;">En ekstra maskintime er verdt 2 tusen kroner, men bare de første halvannen timene. Da blir en annen grense full, og flere maskintimer hjelper ikke.</td>
+<td style="text-align: left;">Prisen holder bare så lenge de samme kraftverkene går for fullt og de samme står stille. Når et kraftverk blir fullt, endres prisen. Hvor langt den holder, undersøker du i del 2.</td>
 </tr>
 </tbody>
 </table>
