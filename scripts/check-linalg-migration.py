@@ -20,6 +20,16 @@ BASE = "3012cb7b9ab16b738f9c012f8ab119efbde5cd59"
 SOURCE_BASELINES = {
     "_includes/optimization/uke9.md": "b8baf4f33bfc294aee3a53d2a551f42595d7c4ed",
     "_includes/optimization/week9_setup.md": "b8baf4f33bfc294aee3a53d2a551f42595d7c4ed",
+    # 12 Nov 2026: section 12.5 was shortened and rewritten on Arild's own oval path (the
+    # cafe example, the penalty/SLSQP-path/disc boxes, the lower-bound box in 12.2 and
+    # their cells and exercises are gone; experiment 5, exercise week12-numeric-check, the
+    # 12.7 code exercises and the hidden setup helpers were rewritten). From now on the
+    # fences of these two files are protected against THIS version, not against BASE.
+    # PLACEHOLDER (orchestrator): replace both values with the hash of the commit that
+    # contains these two files. Until then they hold a tree object that has exactly this
+    # content (made with git write-tree; it is not on any branch and may be garbage collected).
+    "_includes/optimization/uke12.md": "d7bb6f4966f91b26747ab7b05686ee4855714400",
+    "_includes/optimization/week12_setup.md": "d7bb6f4966f91b26747ab7b05686ee4855714400",
 }
 # Wording fixes (and the project 4 point count) the course author approved
 # on 27 Oct 2026 inside protected fences and the project 12 header. Each
@@ -77,14 +87,8 @@ APPROVED_WORDING = {
         ('# TODO: Beregn slakk som kapasitet minus bruk og bidrag som p@z.',
          '# TODO: Beregn slakk som kapasitet minus bruk og fortjeneste som p@z.'),
     ],
-    '_includes/optimization/uke12.md': [
-        ('står vinkelrett på normalen og peker mot klokka.',
-         'står vinkelrett på normalen og peker mot urviseren.'),
-        ('#| caption: Kontroller betingelsesfeil og stasjonaritet\n',
-         '#| caption: Kontroller betingelsesfeil og stasjonaritetsfeil\n'),
-        ('# TODO: Bygg K med np.block, høyresiden (0, d), løs og returner z (de n første).',
-         '# TODO: Bygg K med np.block og høyresiden (0, d), løs, og returner z (de n første komponentene).'),
-    ],
+    # uke12.md has no entry any more: the three 27 Oct wording fixes are already in the 12 Nov
+    # baseline of SOURCE_BASELINES, so applying them to it would find nothing to replace.
     '_includes/projects/week9_scaling.md': [
         ('# du kan prøve 4000; ikke bruk millionkjøringer',
          '# du kan prøve 4000; ikke kjør med millioner av steg'),
@@ -309,7 +313,10 @@ def audit():
             assert old == current, f"{name}: authored code, answers, tasks, grading or test data changed"
             protected += 1
         assert actual_labels == expected_labels, f"{name}: required visible IDE labels differ"
-    assert added == 53 and graded == 191 and protected == 561, (added, graded, protected)
+    # 12 Nov 2026: uke12 lost 4 fences with the removed deep dives (cells week12-slsqp-path and
+    # week12-disc; math exercises week12-dual-bound and week12-disc-kkt): graded 191 -> 189
+    # (the two math exercises) and protected 561 -> 557 (all four). Added IDE labels unchanged.
+    assert added == 53 and graded == 189 and protected == 557, (added, graded, protected)
     for name, heading, quiz in QUIZZES:
         expected = heading[:-1] + " quiz=" + quiz + "}" if heading.endswith("}") else heading + " {quiz=" + quiz + "}"
         assert (ROOT / name).read_text().splitlines().count(expected) == 1, f"{name}: missing or duplicate quiz {quiz}"
