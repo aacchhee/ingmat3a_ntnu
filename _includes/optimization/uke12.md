@@ -1518,7 +1518,7 @@ $\lambda=$ _[-5/2]
 Her er det ingen tur, men samme idé: et krav, et mål og en pris. En
 sylinderformet boks har radius $x>0$ og høyde $y>0$. Overflaten er
 $f(x,y)=2\pi x^2+2\pi xy$. Volumet skal være $V$. Kravfunksjonen er
-$h(x,y)=\pi x^2y-V$, og kravet er $h(x,y)=0$.
+$h(x,y)=\pi x^2y-V$, og kravet er $h(x,y)=0$, altså $\pi x^2y-V=0$.
 
 Gradientene er gitt:
 
