@@ -132,7 +132,9 @@ async function main() {
             .replace(/[“”]/g, '"').replace(/[\s\\]/gu, '').toLowerCase();
           const must = (condition, message) => { if (!condition) throw new Error(message); };
           const factsPresent = (payload, facts, label) => {
-            const text = payload.materials.map(material => material.text).join('\n');
+            // The exercise's own task text is sent with every request, so a
+            // fact stated inside the block counts as well as one in the context.
+            const text = [payload.task || '', ...payload.materials.map(material => material.text)].join('\n');
             for (const fact of facts) must(compact(text).includes(compact(fact)), label + ': required context fact missing: ' + fact);
             must(!text.includes('def check(') && !text.includes('assert np.'), label + ': grading implementation entered context');
           };

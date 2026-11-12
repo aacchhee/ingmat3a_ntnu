@@ -25,8 +25,9 @@ SOURCE_BASELINES = {
     # their cells and exercises are gone; experiment 5, exercise week12-numeric-check, the
     # 12.7 code exercises and the hidden setup helpers were rewritten). From now on the
     # fences of these two files are protected against THIS version, not against BASE.
-    # Baseline: commit d7bb6f4 (12 Nov 2026), which contains both files.
-    "_includes/optimization/uke12.md": "d7bb6f4966f91b26747ab7b05686ee4855714400",
+    # Baselines (12 Nov 2026): uke12.md at a2d1c98, where the 12.6 exercise
+    # texts moved into the blocks; week12_setup.md at d7bb6f4 (shortened 12.5).
+    "_includes/optimization/uke12.md": "a2d1c9821e9b3a2a90b5180081334dd135d7a655",
     "_includes/optimization/week12_setup.md": "d7bb6f4966f91b26747ab7b05686ee4855714400",
 }
 # Wording fixes (and the project 4 point count) the course author approved
