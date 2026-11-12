@@ -115,15 +115,14 @@ Etter denne uken skal du kunne
 Vi begynner med den enkleste stien: en tenkt rund sti med radius 1 km, som om sjøen var rund. Kravfunksjonen er $h(x,y)=x^2+y^2-1$ (negativ inne mot sjøen, positiv utenfor), og stien er punktene der $h(x,y)=0$, altså $x^2+y^2=1$.
 
 På den runde stien kan vi finne det høyeste punktet uten noen ny metode. Hvert punkt
-på stien ligger 1 km fra sjøens midte, i en eller annen retning. Høyden $x+2y$ er
-skalarproduktet av $(1,2)$ og $(x,y)$:
+på stien ligger 1 km fra sjøens midte, i en eller annen retning. Høyden $x+2y$ kan skrives som skalarproduktet av
+gradienten $\nabla f=(1,2)$, retningen der terrenget stiger brattest, og $(x,y)$:
 
 $$x+2y=(1,2)\cdot(x,y)=\lVert(1,2)\rVert\,\lVert(x,y)\rVert\cos\theta=\sqrt5\cos\theta,$$
 
 der $\theta$ er vinkelen mellom retningen $(1,2)$ og retningen ut til punktet, og
 $\lVert(x,y)\rVert=1$ fordi punktet ligger på stien. Høyden er altså størst når
-$\cos\theta=1$, det vil si når punktet ligger rett i retningen $(1,2)$ fra midten,
-der terrenget stiger brattest. Det høyeste punktet på den runde stien er derfor
+$\cos\theta=1$, det vil si når punktet ligger rett i gradientens retning $(1,2)$ fra midten. Det høyeste punktet på den runde stien er derfor
 
 $$\frac{(1,2)}{\sqrt5}\approx(0.45,\,0.89),$$
 
