@@ -66,7 +66,7 @@ kodeoppgavene i 12.7.
 
 **Hvor er det høyeste punktet?**
 
-1. [Nivålinjen berører stien](#uke12-tangent): en applet som i uke 4, nå med en avlang sti.
+1. [Nivålinjen berører stien](#uke12-tangent): en applet med kart over en rund og en avlang sti.
 2. [Lagranges likninger](#uke12-lagrange): brattest oppover står vinkelrett på stien.
 
 **Hva gir den ytre runden?**
@@ -114,15 +114,23 @@ Etter denne uken skal du kunne
 
 Vi begynner med den enkleste stien: en tenkt rund sti med radius 1 km, som om sjøen var rund. Kravfunksjonen er $h(x,y)=x^2+y^2-1$ (negativ inne mot sjøen, positiv utenfor), og stien er punktene der $h(x,y)=0$, altså $x^2+y^2=1$.
 
-Denne stien kjenner du allerede fra [uke 4.1](uke4.qmd#uke4-retning). Der dro du en enhetsvektor $q$ rundt enhetssirkelen og leste av komponenten av vektoren $(3,2)$ langs $q$. Komponenten, $3q_1+2q_2$, ble størst når $q$ pekte samme vei som vektoren.
+På den runde stien kan vi finne det høyeste punktet uten noen ny metode. Hvert punkt
+på stien ligger 1 km fra sjøens midte, i en eller annen retning. Høyden $x+2y$ er
+skalarproduktet av $(1,2)$ og $(x,y)$:
 
-Her bruker vi vektoren $(1,2)$, som gir enklere tall. Komponenten av $(1,2)$ langs $q=(x,y)$ er $x+2y$. Det er nøyaktig høyden i terrenget vårt. Regelen fra uke 4 sier derfor at
+$$x+2y=(1,2)\cdot(x,y)=\lVert(1,2)\rVert\,\lVert(x,y)\rVert\cos\theta=\sqrt5\cos\theta,$$
 
-$$\text{maksimum av } f(x,y)=x+2y \quad\text{på stien}\quad x^2+y^2=1$$
+der $\theta$ er vinkelen mellom retningen $(1,2)$ og retningen ut til punktet, og
+$\lVert(x,y)\rVert=1$ fordi punktet ligger på stien. Høyden er altså størst når
+$\cos\theta=1$, det vil si når punktet ligger rett i retningen $(1,2)$ fra midten,
+der terrenget stiger brattest. Det høyeste punktet på den runde stien er derfor
 
-nås i $(1,2)/\sqrt5\approx(0.45,\,0.89)$, der stien ligger i retningen $(1,2)$ fra sjøens midte. Høyden er $\sqrt5\approx2.24$, altså 224 meter.
+$$\frac{(1,2)}{\sqrt5}\approx(0.45,\,0.89),$$
 
-Men sjøen er ikke rund. Nå bytter vi den runde stien med den avlange stien $x^2+4y^2=1$ fra oversikten. Terrenget er det samme. Regelen fra uke 4 gjelder ikke lenger, for stien er ikke en sirkel. Hvor er det høyeste punktet nå?
+og høyden der er $\sqrt5\approx2.24$, altså 224 meter. (Det samme argumentet ga den
+største komponenten langs en retning i [uke 4](uke4.qmd#uke4-retning).)
+
+Men sjøen er ikke rund. Nå bytter vi den runde stien med den avlange stien $x^2+4y^2=1$ fra oversikten. Terrenget er det samme. Argumentet med vinkelen virker ikke lenger, for punktene på stien ligger ikke like langt fra midten. Hvor er det høyeste punktet nå?
 
 Appleten viser et kart over stien med høyden og tre piler i punktet du velger. Hvorfor akkurat pilene er interessante, forklarer vi rett etter forsøket. Målet er å finne det høyeste punktet på den avlange stien og se hva som kjennetegner det.
 
@@ -131,7 +139,7 @@ Appleten viser et kart over stien med høyden og tre piler i punktet du velger. 
 | Rolle | Uttrykk | Hva det betyr |
 |:--|:--|:--|
 | Valg | $z=(x,y)$ | Stedet på kartet. Vi flytter det langs stien. |
-| Målfunksjon | Maksimer $f(x,y)=x+2y$ | Høyden. Det er også skalarproduktet $(1,2)\cdot z$, som komponenten i uke 4. |
+| Målfunksjon | Maksimer $f(x,y)=x+2y$ | Høyden. Det er også skalarproduktet $(1,2)\cdot z$. |
 | Krav | $h(x,y)=0$ med $h(x,y)=x^2+4y^2-1$ | Stien. Bare punkter på ellipsen er tillatt. |
 
 Dra punktet $z$ langs stien. Slik leser du figuren:
@@ -144,7 +152,7 @@ Dra punktet $z$ langs stien. Slik leser du figuren:
   stien. Tallet $\nabla f\cdot v$ øverst i figuren sier hvor mange hundre meter
   høyden endres per kilometer han går i pilens retning. Positivt tall betyr at
   han stiger, negativt at han synker.
-- **Grå sirkel og grått punkt:** Svaret på den runde stien, etter regelen fra uke 4.
+- **Grå sirkel og grått punkt:** Den runde stien og dens høyeste punkt $(1,2)/\sqrt5$.
 
 ```{.jsxgraph width="620" height="460" style="width:100%;max-width:620px;height:460px;border:0;"}
 var board = JXG.JSXGraph.initBoard(BOARDID, {
@@ -220,7 +228,7 @@ Prøv dette før du leser videre:
 | Punktet i retningen $(1,2)$ | $f\approx1.213$ |
 | Høyeste punkt, $z\approx(0.707,\,0.354)$ | Omtrent $1.414$ |
 
-Regelen fra uke 4, «pek langs vektoren», gjelder altså ikke på den avlange
+Svaret fra den runde stien, «gå rett i retningen $(1,2)$ fra midten», gjelder altså ikke på den avlange
 stien. Men tre ting gjelder fortsatt i det høyeste punktet:
 
 - tallet $\nabla f\cdot v$ er **null**: stien stiger før punktet og synker
@@ -338,7 +346,7 @@ $(1/\sqrt2,\,1/(2\sqrt2))\approx(0.707,\,0.354)$: omtrent 0.7 km øst og 0.35 km
 nord for midten av sjøen, 141 meter over nullnivået. Hvordan han kan være
 sikker i mer kronglete terreng, ser vi i 12.3.
 
-::: {.callout-note title="Håndeksempel: den runde stien og regelen fra uke 4"}
+::: {.callout-note title="Håndeksempel: den runde stien med Lagranges likninger"}
 
 **Utgangspunkt.** Arild går på den runde stien, og terrenget er
 $f(x,y)=x+2y$. Kravfunksjonen er $h(x,y)=x^2+y^2-1$, og stien er punktene der
@@ -367,7 +375,7 @@ gir størst verdi?
 
 **Dette tar vi med oss.**
 
-- **Finn kandidaten:** Lagranges likninger ga oss regelen fra uke 4 uten at vi
+- **Finn kandidaten:** Lagranges likninger ga oss det samme svaret som vinkelargumentet, uten at vi
   trengte å dra i appleten. På den runde stien ligger det høyeste punktet i
   retningen av bratteste stigning fra sjøens midte.
 - **Avgjør om den er best:** Cauchy–Schwarz-ulikheten avgjorde dette. Den
