@@ -11,17 +11,17 @@
 
 En sti går rundt en sjø. Terrenget stiger jevnt mot nordøst: jo lenger nordøst du kommer, desto høyere er det. En turgåer vil gå til det høyeste punktet på stien, for eksempel fordi utsikten er best der. Han må holde seg på stien hele veien.
 
-Vi kaller ham **turgåeren**. Vi gir ham et kart. Tallet $x$ er antall kilometer mot øst og $y$ antall kilometer mot nord, målt fra midten av sjøen. Høyden måler vi i hundre meter, regnet fra et nullnivå midt på kartet. Steder under nullnivået får negativ høyde. I terrenget vårt er høyden
+Vi kaller ham **Arild**. Vi gir ham et kart. Tallet $x$ er antall kilometer mot øst og $y$ antall kilometer mot nord, målt fra midten av sjøen. Høyden måler vi i hundre meter, regnet fra et nullnivå midt på kartet. Steder under nullnivået får negativ høyde. I terrenget vårt er høyden
 $$f(x,y)=x+2y.$$
 Hver kilometer mot øst gir altså 100 meter mer høyde, og hver kilometer mot nord gir 200 meter mer. Terrenget stiger brattest i retningen $(1,2)$: to kilometer mot nord for hver kilometer mot øst.
 
-Modellen er grov. Vi tenker oss terrenget som en jevn skråning og ser bare på høydene langs stien. Sjøen forklarer bare hvorfor turgåeren må holde seg på stien.
+Modellen er grov. Vi tenker oss terrenget som en jevn skråning og ser bare på høydene langs stien. Sjøen forklarer bare hvorfor Arild må holde seg på stien.
 
 Stien er en avlang ring rundt sjøen: 2 km fra vest til øst og 1 km fra sør til nord. Vi beskriver den med en funksjon, **kravfunksjonen**
 $$h(x,y)=x^2+4y^2-1.$$
-Funksjonen $h$ forteller turgåeren hvilken side av stien han er på: $h$ er negativ inne mot sjøen, null på stien og positiv utenfor. Midt i sjøen er $h(0,0)=-1$. **Stien er punktene der $h(x,y)=0$**, altså $x^2+4y^2=1$. For eksempel ligger $(1,0)$ og $(0,\tfrac12)$ på stien.
+Funksjonen $h$ forteller Arild hvilken side av stien han er på: $h$ er negativ inne mot sjøen, null på stien og positiv utenfor. Midt i sjøen er $h(0,0)=-1$. **Stien er punktene der $h(x,y)=0$**, altså $x^2+4y^2=1$. For eksempel ligger $(1,0)$ og $(0,\tfrac12)$ på stien.
 
-Turgåeren har tre spørsmål:
+Arild har tre spørsmål:
 
 1. **Hvor på stien er det høyeste punktet?**
 2. **Hvordan kan han være sikker på at det er det høyeste?** Stien har uendelig mange punkter, så han kan ikke gå hele stien og måle hvert sted.
@@ -47,7 +47,7 @@ Lengden på $\nabla f$ sier hvor bratt det er. I terrenget vårt er $\nabla f=(1
 
 Å holde seg på stien er et **krav** som er en likning. Et slikt krav kalles en **likhetsbetingelse** eller **bibetingelse**; vi sier ofte bare **krav**.
 
-**Ukens spørsmål.** Med turgåerens ord: **Hvor på stien er det høyest, og hvordan kan vi være sikre på det uten å gå hele stien?** I matematikkens språk: **Hva erstatter $\nabla f=0$ når punktet må ligge på en kurve, og hvordan vet vi at kandidaten vi finner, er den beste?** Det tredje spørsmålet, hva det er verdt å flytte stien, følger av svaret.
+**Ukens spørsmål.** Med Arilds ord: **Hvor på stien er det høyest, og hvordan kan vi være sikre på det uten å gå hele stien?** I matematikkens språk: **Hva erstatter $\nabla f=0$ når punktet må ligge på en kurve, og hvordan vet vi at kandidaten vi finner, er den beste?** Det tredje spørsmålet, hva det er verdt å flytte stien, følger av svaret.
 
 #### Veien gjennom uken
 
@@ -57,7 +57,7 @@ Vi svarer på spørsmålene i tre steg:
 2. **Hva gir den ytre runden? (12.2).** Tallet $-\lambda$ (minus multiplikatoren i likningene) er en pris. Den forteller hvor mye høyere det høyeste punktet blir på en runde litt lenger ut. Det er samme tanke som ressursprisene i uke 11.
 3. **Hvordan kan han være sikker? (12.3–12.5).** Et sted der stien er flat, trenger ikke være det høyeste. Vi finner alle flate steder og velger riktig (12.3). Når høyden er en kvadratisk funksjon, som $xy$, blir det matriseregning (12.4). Til slutt kontrollerer vi et punkt som en kartapp foreslår (12.5).
 
-I [uke 11](uke11.qmd) var kravene rette linjer, og svaret lå i et hjørne. Nå er stien krum, og svaret ligger et sted langs kurven. Prosjektet bruker samme idé: kjettingen henger slik at summen av høydene til leddpunktene (energien) blir minst mulig når leddene har faste lengder, og multiplikatorene er kreftene i kjettingen. Det er samme type spørsmål som turgåerens, med minimum i stedet for maksimum og ti krav i stedet for ett.
+I [uke 11](uke11.qmd) var kravene rette linjer, og svaret lå i et hjørne. Nå er stien krum, og svaret ligger et sted langs kurven. Prosjektet bruker samme idé: kjettingen henger slik at summen av høydene til leddpunktene (energien) blir minst mulig når leddene har faste lengder, og multiplikatorene er kreftene i kjettingen. Det er samme type spørsmål som Arilds, med minimum i stedet for maksimum og ti krav i stedet for ett.
 
 **Forelesning** viser hovedløpet. **Gå i dybden**-boksene gir begrunnelser,
 spesialtilfeller og ulikhetskrav. Regneoppgavene står i 12.6 og
@@ -138,7 +138,7 @@ Appleten viser et kart over stien med høyden og tre piler i punktet du velger. 
 Dra punktet $z$ langs stien. Slik leser du figuren:
 
 - **Stiplet brun linje:** **Nivålinjen** $x+2y=f(z)$ er koten gjennom
-  stedet der turgåeren står: alle steder med samme høyde.
+  stedet der Arild står: alle steder med samme høyde.
 - **Rød pil:** Retningen til $\nabla f=(1,2)$, brattest oppover.
 - **Grønn pil:** Retningen til $\nabla h=(2x,8y)$, rett ut fra stien.
 - **Grå pil:** $v$ er en enhetstangent til ellipsen, altså retningen langs
@@ -229,7 +229,7 @@ stien. Men tre ting gjelder fortsatt i det høyeste punktet:
 - nivålinjen **berører** stien uten å krysse den;
 - den røde og den grønne pilen er **parallelle**: vinkelen er $0^\circ$.
 
-**Hva betyr det for turgåeren?** Nivålinjen er koten gjennom stedet han står.
+**Hva betyr det for Arild?** Nivålinjen er koten gjennom stedet han står.
 Krysser koten stien, går stien høyere på den ene siden, og stedet kan ikke være
 det høyeste. I det høyeste punktet berører koten stien akkurat, så han går
 verken opp eller ned. Terrenget stiger likevel fortsatt mot nordøst, også her:
@@ -238,7 +238,7 @@ holde seg på stien. Resten av uken handler om denne observasjonen.
 
 ### Tangent og normal
 
-- **Tangentretning:** Viser hvilken vei turgåeren kan begynne å gå langs
+- **Tangentretning:** Viser hvilken vei Arild kan begynne å gå langs
   stien fra et punkt.
 - **Normalretning:** Står vinkelrett på tangenten, altså rett ut fra stien.
 - **Gradienten som normal:** Fra Matematikk 2 vet vi at gradienten står
@@ -257,7 +257,7 @@ holde seg på stien. Resten av uken handler om denne observasjonen.
    vi gå både nordover og sørover langs stien.
 3. Målgradienten er $\nabla f=(1,2)$. Stigningen langs tangenten er
    $\nabla f\cdot v=(1,2)\cdot(0,1)=2$.
-4. Stigningen er positiv, så turgåeren stiger når han går nordover: 2 hundre
+4. Stigningen er positiv, så Arild stiger når han går nordover: 2 hundre
    meter per kilometer. Østspissen er ikke det høyeste punktet, som i
    spørsmål 1 i appleten.
 
@@ -306,7 +306,7 @@ Med to variabler er dette tre likninger med tre ukjente: $x$, $y$ og
 $\lambda$.
 
 - **Kandidat:** Et punkt som oppfyller likningene, kalles **stasjonært under
-  bibetingelsen**. Stien er flat der: turgåeren verken stiger eller synker i
+  bibetingelsen**. Stien er flat der: Arild verken stiger eller synker i
   første lille skritt. Det er en **kandidat**, ikke automatisk det høyeste
   eller laveste punktet.
 - **Forutsetning:** Regularitet, $\nabla h(z_*)\ne0$, trengs fordi
@@ -327,21 +327,21 @@ appleten viste. Her er $\nabla f=(1,2)$ og $\nabla h=(2x,8y)$.
    kandidaten. Der er $\nabla h=(\sqrt2,\,2\sqrt2)=\sqrt2\,(1,2)$, parallell
    med $\nabla f$, slik appleten viste.
 
-**Hva betyr det for turgåeren?** Likningene har to løsninger: en i nordøst med
+**Hva betyr det for Arild?** Likningene har to løsninger: en i nordøst med
 høyde $\sqrt2\approx1.414$ og en i sørvest med høyde $-\sqrt2$. I sørvest peker
 brattest oppover rett inn mot sjøen; der er det lavest. Stien er en lukket
 kurve, så det finnes et høyeste punkt ([uke 8](uke8.qmd#uke8-kompakt)).
 Normalen $\nabla h=(2x,8y)$ er aldri null på stien, så det høyeste punktet må
 være en av de to løsningene: den i nordøst.
 
-**Svaret til turgåeren:** Det høyeste punktet på stien er
+**Svaret til Arild:** Det høyeste punktet på stien er
 $(1/\sqrt2,\,1/(2\sqrt2))\approx(0.707,\,0.354)$: omtrent 0.7 km øst og 0.35 km
 nord for midten av sjøen, 141 meter over nullnivået. Hvordan han kan være
 sikker i mer kronglete terreng, ser vi i 12.3.
 
 ::: {.callout-note title="Håndeksempel: den runde stien og regelen fra uke 4"}
 
-**Utgangspunkt.** Turgåeren går på den runde stien, og terrenget er
+**Utgangspunkt.** Arild går på den runde stien, og terrenget er
 $f(x,y)=x+2y$. Kravfunksjonen er $h(x,y)=x^2+y^2-1$, og stien er punktene der
 $h(x,y)=0$. Maksimer $f$ på stien.
 
@@ -372,7 +372,7 @@ gir størst verdi?
   trengte å dra i appleten. På den runde stien ligger det høyeste punktet i
   retningen av bratteste stigning fra sjøens midte.
 - **Avgjør om den er best:** Cauchy–Schwarz-ulikheten avgjorde dette. Den
-  gjelder for hvert punkt på stien, så turgåeren trenger ikke gå hele stien.
+  gjelder for hvert punkt på stien, så Arild trenger ikke gå hele stien.
 - **Bruk samme triks på den avlange stien:** Med $w=2y$ blir kravet $x^2+w^2=1$, og
   $x+2y=(1,1)\cdot(x,w)\le\sqrt2$.
 
@@ -506,7 +506,7 @@ siden.
 ::: {#uke12-pris}
 :::
 
-Turgåerens tredje spørsmål: Litt lenger fra sjøen går en ytre runde med samme
+Arilds tredje spørsmål: Litt lenger fra sjøen går en ytre runde med samme
 form. Hvor mye høyere kommer han hvis han tar den? Vi beskriver den ytre runden
 med den samme kravfunksjonen: den er punktene der $h(x,y)=s$, der $s$ er et lite
 positivt tall. For den avlange stien betyr det $x^2+4y^2=1+s$. Tallet $s$ er ikke
@@ -520,7 +520,7 @@ midten, og går du dobbelt så langt ut i samme retning, blir høyden dobbelt s�
 stor. Derfor strekkes den høyeste høyden med samme faktor:
 $f_*(s)=\sqrt2\,\sqrt{1+s}$.
 
-1. For $s=0.1$ er det $1.4142\cdot1.0488\approx1.4832$, mot $1.4142$ før. Turgåeren
+1. For $s=0.1$ er det $1.4142\cdot1.0488\approx1.4832$, mot $1.4142$ før. Arild
    kommer $0.069$ hundre meter høyere, omtrent 7 meter.
 2. For veldig små $s$ er økningen per enhet $s$ lik den deriverte
    $\dfrac{d}{ds}\bigl(\sqrt2\sqrt{1+s}\bigr)_{s=0}=\dfrac{\sqrt2}{2}=\dfrac1{\sqrt2}\approx0.71$.
@@ -545,11 +545,11 @@ kravet, fra $h=0$ til $h=s$:
 
 - **Koblingen til uke 11:** Det er samme idé som i
   [uke 11](uke11.qmd#uke11-sensitivitet): hva er én enhet mer av en ressurs
-  verdt? Verkstedeieren spurte om en ekstra maskintime, turgåeren spør om en runde litt lenger ut.
+  verdt? Verkstedeieren spurte om en ekstra maskintime, Arild spør om en runde litt lenger ut.
 - **Fortegnet:** I uke 11 var prisen selve endringen, et positivt tall. Her
   er prisen $-\lambda$, fordi vi skriver $L=f+\lambda h$.
 
-**Svaret til turgåeren:** På en runde der $h=s$ i stedet for $h=0$, ligger det
+**Svaret til Arild:** På en runde der $h=s$ i stedet for $h=0$, ligger det
 høyeste punktet omtrent $-\lambda\cdot s$ høyere. På den avlange stien er
 $-\lambda=1/\sqrt2\approx0.71$ hundre meter per enhet $s$. Med $s=0.1$ går den
 ytre runden omtrent 40 meter lenger ut ved toppen, og han kommer omtrent 7 meter
@@ -678,7 +678,7 @@ En slik skarp grense er ikke garantert for alle problemer.
 :::
 
 Hittil var terrenget en jevn skråning, og stien var flat på bare to steder: det
-høyeste og det laveste punktet. Nå går turgåeren i et kupert område med høyden
+høyeste og det laveste punktet. Nå går Arild i et kupert område med høyden
 $f(x,y)=xy$ (fortsatt i hundre meter). Det er lavt i nordvest og sørøst, høyt i
 nordøst og sørvest, og null langs aksene gjennom midten av sjøen. En slik form
 kalles en sadel, som et fjellpass: terrenget stiger mot nordøst og sørvest,
@@ -761,7 +761,7 @@ $$y+2\lambda x=0,\qquad x+2\lambda y=0,\qquad x^2+y^2=1.$$
 | $-1/2$ | $x=y$ | $\pm(1,1)/\sqrt2$ | $1/2$ |
 | $1/2$ | $x=-y$ | $\pm(1,-1)/\sqrt2$ | $-1/2$ |
 
-**Klassifiser globalt.** Hvordan kan turgåeren vite at $1/2$ er høyest på hele
+**Klassifiser globalt.** Hvordan kan Arild vite at $1/2$ er høyest på hele
 runden, uten å måle alle stedene?
 
 1. $(x-y)^2\ge0$ gir $2xy\le x^2+y^2=1$.
@@ -770,7 +770,7 @@ runden, uten å måle alle stedene?
    verdi $1/2$ er globale maksimumspunkter, og de to andre er globale
    minimumspunkter.
 
-**Svaret til turgåeren:** Han trenger ikke gå hele stien. Han gjør tre ting:
+**Svaret til Arild:** Han trenger ikke gå hele stien. Han gjør tre ting:
 
 1. Finn alle flate steder med Lagranges likninger.
 2. Bruk at et høyeste punkt finnes (lukket sti) og må være blant dem.
@@ -927,7 +927,7 @@ plot_quadratic_on_circle(A)
 - **Strekket:** Største strekk er $\sqrt4=2$, og `svd` gir
   singulærverdiene $2$ og $1$ (se «Gå i dybden» under).
 
-**Hva betyr det for turgåeren?** Det er samme bilde som i 12.1: på en rund sti
+**Hva betyr det for Arild?** Det er samme bilde som i 12.1: på en rund sti
 ligger de høyeste og de laveste stedene der en kote berører stien, i retningen
 til egenvektorene, én kilometer fra sjøens midte. I sadelterrenget er toppene
 $\pm\tfrac1{\sqrt2}(1,1)$ (nordøst og sørvest) og dalene
@@ -1130,7 +1130,7 @@ når radene i $C$ er uavhengige. Kodeoppgaven
 ::: {#uke12-slsqp}
 :::
 
-Turgåeren går nå rundt en annen sjø, på en rund sti med radius 1 km. Kaféen ligger i
+Arild går nå rundt en annen sjø, på en rund sti med radius 1 km. Kaféen ligger i
 punktet $(2,1)$, utenfor stien. Vektoren fra origo til kaféen kaller vi
 $a=(2,1)$. Han vil til stedet på stien som er nærmest kaféen, og spør en kartapp.
 Appen er løseren `minimize` med metoden `SLSQP`, som tar imot likhetskrav. Den
@@ -1149,7 +1149,7 @@ vi vil ha minimum. Likningene er de samme som før:
 For større problemer, som kjettingen i [prosjekt 12](project_week12.qmd) med ti
 krav, løser vi ikke Lagranges likninger for hånd. Løseren gir en **numerisk
 kandidat**. At den melder at den stoppet normalt, erstatter ikke to kontroller
-turgåeren må gjøre selv:
+Arild må gjøre selv:
 
 - **Betingelsesfeilen** $|h(z)|$: ligger punktet på stien?
 - **Stasjonaritetsfeilen** $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$:
@@ -1254,7 +1254,7 @@ $$F(z)=\tfrac12\bigl(\lVert a\rVert_2^2+1-2a\cdot z\bigr)\ge\tfrac12(\sqrt5-1)^2
 med likhet bare i $z=a/\sqrt5$. De to numeriske kontrollene viser at punktet
 er en kandidat; ulikheten viser at det er det beste.
 
-**Svaret til turgåeren:** Kartappen kan si «ferdig» også når den har funnet det
+**Svaret til Arild:** Kartappen kan si «ferdig» også når den har funnet det
 fjerneste punktet. Han kan stole på forslaget først når han har sjekket tre
 ting selv. Er punktet på stien (betingelsesfeilen)? Endrer avstanden seg ikke
 i første lille skritt langs stien (stasjonaritetsfeilen)? Og er verdien den beste, bevist med en ulikhet som
@@ -1316,7 +1316,7 @@ Små kontrollfeil alene skiller dem ikke; verdien av $F$ gjør det.
 
 ::: {.reading-step title="Gå i dybden: ulikhetskrav – skiven i stedet for sirkelen"}
 
-Om vinteren er sjøen islagt, og isen bærer. Da kan turgåeren gå hvor som helst
+Om vinteren er sjøen islagt, og isen bærer. Da kan Arild gå hvor som helst
 **i** området innenfor stien, ikke bare på selve stien. Punktet må da oppfylle $g(z)\le0$ med $g(z)=\lVert z\rVert_2^2-1$
 (skiven). Da er det to muligheter:
 
@@ -1366,7 +1366,7 @@ I det siste tilfellet er multiplikatoren den samme som med sirkelkravet.
 
 ### Svar på ukens spørsmål
 
-Turgåeren spurte tre ting. Svarene er nå komplette:
+Arild spurte tre ting. Svarene er nå komplette:
 
 1. **Hvor er det høyeste punktet?** I det høyeste punktet berører koten
    stien, og brattest oppover peker rett ut fra stien. Det gir Lagranges
@@ -1421,7 +1421,7 @@ og kontroller det med et argument eller en uavhengig test.
 ::: {#uke12-oppgaver}
 :::
 
-Oppgavene er sortert etter de tre delene av uken, og de fleste har turgåeren,
+Oppgavene er sortert etter de tre delene av uken, og de fleste har Arild,
 hytta eller kaféen som utgangspunkt. De tre siste hører til «Gå i dybden»-boksene og er
 valgfrie.
 
@@ -1444,7 +1444,7 @@ som må klassifiseres.
 ::: {#uke12-oppg-normal}
 :::
 
-Turgåeren står på den avlange stien fra 12.1. Kravfunksjonen er
+Arild står på den avlange stien fra 12.1. Kravfunksjonen er
 $h(x,y)=x^2+4y^2-1$, og stien er punktene der $h(x,y)=0$. Det nordligste
 punktet på stien (toppen av ellipsen på kartet, ikke det høyeste punktet i terrenget) er $p=(0,1/2)$. Finn normalen $\nabla h(p)$ og en enhetstangent
 med positiv $x$-komponent.
@@ -1468,7 +1468,7 @@ betyr det geometrisk?
 ::: {#uke12-oppg-ellipse}
 :::
 
-Turgåeren går samme avlange sti, men i et annet terreng med høyde
+Arild går samme avlange sti, men i et annet terreng med høyde
 $f(x,y)=2x+y$. Hvor er det høyeste punktet på stien $x^2+4y^2=1$, og hvor høyt
 er det? Bruk substitusjonen $w=2y$, slik at stien blir en sirkel, og bruk
 Cauchy–Schwarz som i håndeksempelet i 12.2. Finn også multiplikatoren $\lambda$.
@@ -1556,7 +1556,7 @@ ting modellen ser bort fra.
 ::: {#uke12-oppg-form}
 :::
 
-Turgåeren går den runde stien $x^2+y^2=1$ i terrenget $f(x,y)=x^2+4xy+y^2$.
+Arild går den runde stien $x^2+y^2=1$ i terrenget $f(x,y)=x^2+4xy+y^2$.
 Han står i $p=(1,1)/\sqrt2$.
 
 1. Skriv $f=z^TAz$ med en symmetrisk $A$, og finn egenverdiene og $f(p)$.
@@ -1744,7 +1744,7 @@ tilfellene.
 ::: {#uke12-python}
 :::
 
-Her øver du på kontrollene turgåeren bruker: normalen til stien, de to
+Her øver du på kontrollene Arild bruker: normalen til stien, de to
 kontrollfeilene og kartappen SLSQP. Oppgavene har egne importer og definisjoner
 og kan kjøres uavhengig av forsøkene. Fyll bare inn hullene merket `TODO`. De automatiske testene vurderer
 resultatet uten å vise løsningen.
