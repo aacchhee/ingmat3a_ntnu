@@ -58,8 +58,8 @@ Vi svarer på spørsmålene i tre steg:
 
 I [uke 11](uke11.qmd) var kravene rette linjer, og svaret lå i et hjørne. Nå er stien krum, og svaret ligger et sted langs kurven. Prosjektet bruker samme idé: kjettingen henger slik at summen av høydene til leddpunktene (energien) blir minst mulig når leddene har faste lengder, og de ekstra tallene i Lagranges likninger blir kreftene i kjettingen. Det er samme type spørsmål som Arilds, med minimum i stedet for maksimum og ti krav i stedet for ett.
 
-**Forelesning** viser hovedløpet. **Gå i dybden**-boksene gir begrunnelser,
-spesialtilfeller og ulikhetskrav. Regneoppgavene står i 12.6 og
+**Forelesning** viser hovedløpet. **Gå i dybden**-boksene gir begrunnelser
+og spesialtilfeller. Regneoppgavene står i 12.6 og
 kodeoppgavene i 12.7.
 
 ### Kort løype
@@ -652,7 +652,7 @@ Differansekvotientene $2.05$, $2.005$ og $2.0005$ nærmer seg $2=-\lambda$.
 |:--|:--|
 | Maksimum på sirkelen | $\lambda=-\sqrt5/2$ |
 | Minimum på linjen | $\lambda=-2$ |
-| Minimum i avstandsproblemet i 12.5 | $\lambda=+0.618$ |
+| Minimum på den avlange stien (det laveste punktet) | $\lambda=+1/\sqrt2\approx+0.71$ |
 
 - **Ingen klassifisering:** Fortegnet skiller altså ikke maksimum fra
   minimum. For et likhetskrav betyr fortegnet ingenting alene.
@@ -665,42 +665,6 @@ Differansekvotientene $2.05$, $2.005$ og $2.0005$ nærmer seg $2=-\lambda$.
 til $h$. I uke 11 var prisen i tusen kroner per maskintime; her er den i hundre
 meter høyde per enhet $s$. I prosjektet er multiplikatorene krefter, og
 «prisen» er energi per meter.
-
-:::
-
-::: {.reading-step title="Gå i dybden: en multiplikator gir en nedre grense"}
-
-Lagrangefunksjonen kan også **bevise** en grense for optimal verdi, slik
-dualprisene ga en øvre grense i uke 11. Vi bruker avstandsproblemet som vi
-løser numerisk i 12.5, med en rund sti rundt den runde sjøen og en kafé i punktet $(2,1)$. La $a$ være vektoren
-fra origo til kaféen. Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$, halve
-kvadratavstanden til kaféen.
-Kravfunksjonen er $h(z)=\lVert z\rVert_2^2-1$, og stien er punktene der
-$h(z)=0$ (enhetssirkelen).
-
-- **På stien:** $h=0$, så $L(z,\lambda)=F(z)$ for alle tillatte $z$.
-- **Grense for alle punkter:** Hvis $L(\cdot,\lambda)$ aldri går under et
-  tall $\beta$ for **alle** $z$, er også $F(z)\ge\beta$ for alle tillatte
-  $z$.
-
-1. Velg $\lambda_*=(\sqrt5-1)/2$. Hessianen til $L$ med hensyn på $z$ er
-   $(1+2\lambda_*)I=\sqrt5\,I$, som er SPD, så $L$ er en skål.
-2. Bunnen av skålen finnes fra $\nabla_zL=(1+2\lambda_*)z-a=0$, altså
-   $z_*=a/\sqrt5$.
-3. Punktet $z_*$ ligger på sirkelen, og
-   $F(z_*)=\tfrac12\lVert a/\sqrt5-a\rVert_2^2=\tfrac12\cdot5\,(1-1/\sqrt5)^2=\tfrac12(\sqrt5-1)^2$.
-   Da er
-   $$F(z)=L(z,\lambda_*)\ge L(z_*,\lambda_*)=F(z_*)=\tfrac12(\sqrt5-1)^2$$
-   for alle tillatte $z$, og grensen er skarp.
-
-Generelt er $\varphi(\lambda)=\inf_zL(z,\lambda)$ en nedre grense for minste
-verdi over de tillatte punktene, for hver $\lambda$. I eksempelet ligger bunnen av
-skålen i $z(\lambda)=a/(1+2\lambda)$ når $1+2\lambda>0$, og innsatt er
-$$\varphi(\lambda)=L(z(\lambda),\lambda)=\frac{5\lambda}{1+2\lambda}-\lambda
-=\tfrac52-\lambda-\frac5{2(1+2\lambda)}.$$
-En slik skarp grense er ikke garantert for alle problemer.
-
-**Øv på dette:** [en nedre grense fra Lagrangefunksjonen](#uke12-oppg-grense) i 12.6 (valgfri).
 
 :::
 
@@ -1219,284 +1183,117 @@ når radene i $C$ er uavhengige. Kodeoppgaven
 ::: {#uke12-slsqp}
 :::
 
-Arild går nå rundt en annen sjø, på en rund sti med radius 1 km. Kaféen ligger i
-punktet $(2,1)$, utenfor stien. Han vil til stedet på stien som er nærmest
-kaféen, og spør en kartapp. Appen er løseren `minimize` med metoden `SLSQP`,
-som tar imot likhetskrav. Den foreslår et punkt. Kan han stole på det?
-
-Dette er ikke en høydeoppgave: vi vil ha minst mulig avstand til kaféen. Som i
-12.4 er $z=(x,y)$ vektoren fra sjøens midte til stedet der Arild står, og
-$a=(2,1)$ er vektoren fra sjøens midte til kaféen. Da er $z-a$ vektoren fra
-kaféen til stedet, og lengden $\lVert z-a\rVert_2$ er avstanden. I $(0.8,\,0.6)$
-er $z-a=(-1.2,\,-0.4)$ og avstanden $\sqrt{1.6}\approx1.26$ km. Vi minimerer
-halve kvadratet av avstanden, $F$ i tabellen: det nærmeste stedet blir det
-samme, og gradienten blir enkel, $\nabla F=z-a$, rett bort fra kaféen.
+Arild går på sin avlange sti, med høyden $f(x,y)=x+2y$ og kravfunksjonen
+$h(x,y)=x^2+4y^2-1$. Han spør en kartapp, løseren `minimize` med metoden
+`SLSQP`, og får et punkt. Kan han stole på det? Vi later som om vi ikke kjenner
+svaret fra 12.2, og sammenligner til slutt.
 
 | Rolle | Uttrykk |
 |:--|:--|
 | Valg | $z=(x,y)$, stedet på kartet |
-| Målfunksjon | Minimer $F(z)=\tfrac12\lVert z-a\rVert_2^2$, med $\nabla F(z)=z-a$ |
-| Kravfunksjon | $h(z)=\lVert z\rVert_2^2-1$, med $\nabla h(z)=2z$, rett ut fra sjøens midte |
-| Krav | $h(z)=0$: punktet ligger på stien, altså enhetssirkelen |
+| Målfunksjon | Maksimer $f(z)=x+2y$, med $\nabla f=(1,2)$. SLSQP minimerer, så appen får $-f$. |
+| Kravfunksjon | $h(z)=x^2+4y^2-1$, med $\nabla h=(2x,8y)$, rett ut fra stien |
+| Krav | $h(z)=0$: punktet ligger på stien |
 
-For større problemer, som kjettingen i [prosjekt 12](project_week12.qmd) med ti
-krav, løser vi ikke Lagranges likninger for hånd. Løseren gir en **numerisk
-kandidat**. At den melder at den stoppet normalt, erstatter ikke to kontroller
-Arild må gjøre selv. Begge skal gi et tall nær null:
+Appen kan melde «ferdig» uten at punktet er riktig. Arild gjør to kontroller
+selv; begge skal gi et tall nær null:
 
 - **Ligger punktet på stien?** Det måler **betingelsesfeilen** $|h(z)|$ (i
-  prosjektet: **kravbruddet**). Den er null på stien og større jo lenger unna
-  punktet ligger. Punktet $(0.9,\,0.45)$ ligger litt utenfor:
-  $h=0.81+0.2025-1=0.0125$.
-- **Er stien flat der?** I det nærmeste punktet endrer ikke avstanden seg i
-  første lille skritt langs stien, slik høyden i det høyeste punktet i 12.1.
-  Da er $\nabla F$ parallell med normalen, og et tall $\lambda$ gir
-  $\nabla F+\lambda\nabla h=0$. I et numerisk punkt blir det litt igjen.
-  Lengden av resten er **stasjonaritetsfeilen**
-  $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$.
+  [prosjekt 12](project_week12.qmd): **kravbruddet**).
+- **Er stien flat der?** I det høyeste punktet er $\nabla f$ parallell med
+  normalen, så et tall $\lambda$ gir $\nabla f+\lambda\nabla h=0$. I et
+  numerisk punkt blir det litt igjen, og lengden av resten er
+  **stasjonaritetsfeilen** $\lVert\nabla f+\lambda\nabla h\rVert_2$.
 
-Løseren gir oss bare punktet, så vi **velger den $\lambda$ som gjør
-stasjonaritetsfeilen minst**. Det er projeksjonen fra
-[uke 4](uke4.qmd#uke4-projeksjon): $\lambda\nabla h$ blir den delen av
-$-\nabla F$ som peker langs normalen, og resten peker langs stien.
+Løseren gir bare punktet, så vi velger selv den $\lambda$ som gjør resten
+kortest. Da er $\lambda\nabla h$ den delen av $-\nabla f$ som peker langs
+normalen (projeksjonen fra [uke 4](uke4.qmd#uke4-projeksjon)), og resten peker
+langs stien. Lengden av resten sier hvor bratt stien stiger eller synker der
+Arild står.
 
-::: {.callout-note title="Håndeksempel: kontroller punktet (0.8, 0.6)"}
+::: {.callout-note title="Håndeksempel: kontroller punktet (0, 1/2)"}
 
-**Utgangspunkt.** Kartappen foreslår $z=(0.8,\,0.6)$. Er det nærmest kaféen?
+**Utgangspunkt.** Kartappen foreslår $z=(0,\tfrac12)$, nordenden av stien.
 
 **Prøv selv.** Regn ut begge kontrollfeilene.
 
 **Regnegangen.**
 
-1. **På stien?** $h(z)=0.64+0.36-1=0$, så betingelsesfeilen er $0$.
-2. **Gradientene:** $\nabla F=z-a=(-1.2,\,-0.4)$ og
-   $\nabla h=2z=(1.6,\,1.2)$.
-3. **Beste $\lambda$:** Normalen med lengde 1 er $n=(0.8,\,0.6)$. Komponenten
-   av $-\nabla F=(1.2,\,0.4)$ langs $n$ er $1.2\cdot0.8+0.4\cdot0.6=1.2$, og
-   $1.2\,n=(0.96,\,0.72)=0.6\,\nabla h$. Altså er $\lambda=0.6$.
-4. **Stasjonaritetsfeilen:** $\nabla F+0.6\,\nabla h=(-0.24,\,0.32)$, med
-   lengde $0.4$.
-5. **Les svaret:** Resten $(-0.24,\,0.32)=0.4\,(-0.6,\,0.8)$ peker langs
-   stien: går Arild mot nordvest, øker avstanden, og går han andre veien, mot
-   kaféen, minker den. Stien er ikke flat her, og punktet er ikke det nærmeste.
+1. **På stien?** $h(z)=0+4\cdot\tfrac14-1=0$, så betingelsesfeilen er $0$.
+2. **Gradientene:** $\nabla f=(1,2)$ og $\nabla h=(2x,8y)=(0,4)$.
+3. **Beste $\lambda$:** Delen av $\nabla f$ langs normalen er projeksjonen fra [uke 4](uke4.qmd#uke4-projeksjon):
+   $\frac{\nabla f\cdot\nabla h}{\nabla h\cdot\nabla h}\nabla h=\tfrac8{16}\nabla h$.
+   Den skal trekkes fra, så $\lambda=-\tfrac12$.
+4. **Stasjonaritetsfeilen:** $\nabla f+\lambda\nabla h=(1,2)-\tfrac12(0,4)=(1,0)$,
+   med lengde $1$.
+5. **Les svaret:** Resten $(1,0)$ peker østover langs stien, og lengden $1$ er stigningen der: går Arild østover, stiger han 1 hundre meter per kilometer, som tallet $\nabla f\cdot v$ i 12.1. Stien er ikke flat her, så punktet er ikke det høyeste.
 
 :::
 
 **Generelt** er den beste multiplikatoren
-$$\lambda=-\frac{\nabla F\cdot\nabla h}{\lVert\nabla h\rVert_2^2},$$
+$$\lambda=-\frac{\nabla f\cdot\nabla h}{\lVert\nabla h\rVert_2^2},$$
 et minste kvadraters problem med én ukjent som i [uke 4](uke4.qmd#uke4-mk). Med
-flere krav, som i kjettingen, samles normalene som rader i
-**Jacobimatrisen** $J$ fra [prosjekt 10](project_week10.qmd), og
-`np.linalg.lstsq` finner alle multiplikatorene (se «Gå i dybden» under).
+flere krav samles normalene som rader i **Jacobimatrisen** $J$ fra
+[prosjekt 10](project_week10.qmd), og `np.linalg.lstsq` finner alle
+multiplikatorene ([SciPy-oppslaget](#uke12-scipy)).
 
-Hvorfor vi ikke bruker SciPys egne multiplikatorer, står i
-[SciPy-oppslaget](#uke12-scipy).
+Nå prøver vi kartappen. Cellen skriver ut punktet, høyden og de to
+kontrollfeilene. Målet er å se hva kontrollfeilene sier, og hva de ikke sier.
 
-::: {.reading-step title="Gå i dybden: formelen for multiplikatoren med minst feil"}
+### Eksperiment 5 – finn og kontroller et punkt på stien
 
-Kvadratet av stasjonaritetsfeilen er et andregradspolynom i $\lambda$:
-
-$$\lVert\nabla F+\lambda\nabla h\rVert_2^2=\nabla F\cdot\nabla F
-+2\lambda\,\nabla F\cdot\nabla h+\lambda^2\,\nabla h\cdot\nabla h.$$
-
-1. **Derivér med hensyn på $\lambda$:** Den deriverte er
-   $2\,\nabla F\cdot\nabla h+2\lambda\,\nabla h\cdot\nabla h$.
-2. **Sett lik null:** Den er null for
-   $\lambda=-\nabla F\cdot\nabla h/\lVert\nabla h\rVert_2^2$.
-3. **Kontroller minimum:** Den andrederiverte, $2\lVert\nabla h\rVert_2^2$,
-   er positiv når kravet er regulært, så dette er minimum.
-
-**Flere krav.** Hvert krav $h_i$ har sin normal $\nabla h_i$ og sin
-multiplikator $\lambda_i$:
-
-1. **Samle normalene:** $\nabla h_i^T$ blir rader i **Jacobimatrisen** $J$.
-2. **Løs minste kvadrater:** Velg $\lambda$ slik at
-   $\lVert\nabla F+J^T\lambda\rVert_2$ blir minst mulig, med
-   `np.linalg.lstsq(J.T, -grad, rcond=None)[0]` som i
-   [SciPy-oppslaget](#uke12-scipy).
-
-:::
-
-Nå prøver vi alt dette på kartappen. Målet er å se hva
-kontrollfeilene sier, og hva de ikke sier.
-
-### Eksperiment 5 – finn og kontroller et sirkelpunkt
-
-- Kjør cellen, og sammenlign punktet med $a/\lVert a\rVert_2$: stedet på
-  stien som ligger rett mot kaféen fra sjøens midte.
-- Bytt startpunktet til `np.array([-.9, -.45])`. Det ligger på linjen gjennom
-  sjøens midte og kaféen, på motsatt side av kaféen. Hva rapporterer løseren
-  nå, og hvilke av tallene avslører at punktet ikke er det nærmeste?
-- Flytt startpunktet litt bort fra linjen, for eksempel til
-  `np.array([-.9, -.5])`. Hvor havner løseren nå?
-
-Cellen kjører SLSQP fra punktet $(0.4,0.9)$, regner ut de to kontrollfeilene
-og velger $\lambda$ med formelen over.
+- Kjør cellen fra $(1,0)$, og sammenlign med det høyeste punktet fra 12.2.
+- Bytt `start` til det laveste punktet,
+  `np.array([-1/np.sqrt(2), -1/(2*np.sqrt(2))])`. Hva rapporterer løseren, og
+  hvilket tall avslører at punktet ikke er det høyeste?
+- Bytt `start` til et punkt litt ved siden av, for eksempel `np.array([-.7, -.36])`. Hvor havner
+  løseren?
 
 ```{pyodide-python}
 #| label: week12-slsqp-experiment
-# F, grad_F, h og grad_h er definert i oppsettet; her står de igjen for oversiktens skyld.
-a = np.array([2., 1.])
-def F(z): return .5*np.sum((z-a)**2)
-def grad_F(z): return z-a
-def h(z): return np.dot(z, z)-1.
-def grad_h(z): return 2*z
+# Maksimer f = x + 2y på stien h = 0. SLSQP minimerer, så den får -f.
+start = np.array([1., 0.])
 
-result = minimize(F, np.array([.4, .9]), jac=grad_F, method='SLSQP',
+def f(z): return z[0] + 2*z[1]
+def grad_f(z): return np.array([1., 2.])
+def h(z): return z[0]**2 + 4*z[1]**2 - 1.
+def grad_h(z): return np.array([2*z[0], 8*z[1]])
+
+result = minimize(lambda z: -f(z), start, jac=lambda z: -grad_f(z), method='SLSQP',
                   constraints=[{'type': 'eq', 'fun': h, 'jac': grad_h}],
-                  options={'ftol': 1e-12, 'maxiter': 100})
+                  options={'ftol': 1e-10, 'maxiter': 100})
 z = result.x
-gF, gh = grad_F(z), grad_h(z)
-lam = -(gF @ gh)/(gh @ gh)                    # minste kvadraters valg av lambda
-print('punkt z               =', z.round(8))
-print('verdi F(z)            =', round(result.fun, 8))
-print('betingelsesfeil |h|   =', f'{abs(h(z)):.1e}')
-print('stasjonaritetsfeil    =', f'{np.linalg.norm(gF + lam*gh):.1e}')
-print('multiplikator lambda  =', round(lam, 6))
+gf, gh = grad_f(z), grad_h(z)
+lam = -(gf @ gh)/(gh @ gh)                    # lambda som gir kortest rest
+print('punkt z               =', z.round(4))
 print('løserens success      =', result.success)
-print('eksakt a/|a|          =', (a/np.linalg.norm(a)).round(8))
+print('høyde f(z)            =', round(f(z), 4))
+print('betingelsesfeil |h|   =', f'{abs(h(z)):.1e}')
+print('stasjonaritetsfeil    =', f'{np.linalg.norm(gf + lam*gh):.1e}')
+print('multiplikator lambda  =', round(lam, 4))
 ```
 
-**Hva viser forsøket?** Sammenlign to startpunkter:
+**Hva viser forsøket?**
 
-| Startpunkt | Funnet sirkelpunkt | $F$ og $\lambda$ |
-|:--|:--|:--|
-| $(0.4,0.9)$ | $z\approx(0.89442719,\,0.44721360)$ | $F\approx0.76393202$, $\lambda\approx0.618034$ |
-| $(-0.9,-0.45)$ | $z\approx(-0.894,-0.447)=-a/\lVert a\rVert_2$ | $F\approx5.236$, $\lambda\approx-1.618$ |
+- **Samme kontrollresultat:** Fra $(1,0)$ finner appen det høyeste punktet
+  $(0.7071,\,0.3536)$, og fra det laveste punktet blir den stående. Begge
+  ganger er begge feilene små og `success=True`: «ferdig» er ikke det samme som
+  «riktig».
+- **Ulik kvalitet:** Det laveste punktet er også et flatt sted på stien
+  ($\lambda=+0.7071$), så ingenting dytter løseren videre. Bare høyden,
+  $-1.4142$ mot $1.4142$, avslører det.
+- **Litt endret start:** Fra $(-0.7,-0.36)$ finner løseren det høyeste punktet.
 
-Punktet fra det første startpunktet stemmer med $a/\lVert a\rVert_2$.
+**Er det det høyeste?** Ja: i 12.2 viste vi at et høyeste punkt finnes og må være en av de to løsningene av Lagranges likninger, og $\sqrt2>-\sqrt2$.
 
-- **Samme kontrollresultat:** Begge ganger er kontrollfeilene små, og løseren
-  rapporterer `success=True`. Flagget betyr bare at løseren stoppet på vanlig måte.
-- **Ulik kvalitet:** Den andre kandidaten er det **fjerneste** punktet. Det
-  andre startpunktet ligger på linjen gjennom sjøens midte og kaféen. Der peker
-  både $\nabla F$ (bort fra kaféen) og normalen (ut fra sjøens midte) langs
-  linjen, så ingenting dytter løseren til siden.
-- **Litt endret start:** Flytter du startpunktet litt bort fra linjen, finner
-  løseren det nærmeste punktet igjen.
-
-**Er det globalt nærmest?** Kontrollfeilene viser bare at punktet er en
-kandidat. At det er det nærmeste, viser vi som på den runde stien i 12.1: sett
-fra sjøens midte er et sted på stien nærmere kaféen jo mer det ligger i retning av kaféen.
-Med tall: $\lVert z-a\rVert_2^2=z\cdot z-2\,a\cdot z+a\cdot a$, og på stien er
-$z\cdot z=1$ og $a\cdot a=5$, så
-$$F(z)=\tfrac12(1-2\,a\cdot z+5)=3-a\cdot z.$$
-Skalarproduktet $a\cdot z$ er komponenten av $a$ langs retningen til stedet. Den
-er størst, $\lVert a\rVert_2=\sqrt5$, når stedet ligger rett mot kaféen
-(Cauchy–Schwarz, som i 12.2). Derfor er
-$F(z)\ge3-\sqrt5=\tfrac12(\sqrt5-1)^2\approx0.764$ på hele stien, med likhet
-bare i $z=a/\sqrt5$, punktet fra det første startpunktet.
-
-**Svaret til Arild:** Kartappen kan si «ferdig» også når den har funnet det
-fjerneste punktet. Han kan stole på forslaget først når han har sjekket tre
-ting selv: Ligger punktet på stien (betingelsesfeilen)? Er stien flat der, så
-avstanden ikke endrer seg i første lille skritt (stasjonaritetsfeilen)? Og er
-verdien den beste, vist med en ulikhet som gjelder alle punkter på stien? Da er
-han sikker, uten å gå hele stien.
+**Svaret til Arild:** Kartappen kan si «ferdig» også i det laveste punktet. Han
+kan stole på forslaget først når han selv har sjekket begge kontrollfeilene og
+sammenlignet med de andre kandidatene (eller brukt en ulikhet som gjelder hele
+stien). De samme kontrollene virker når vi leter etter et minimum, som i
+kjettingen i prosjektet.
 
 **Øv på dette:** [to kontrollfeil for et feil forslag](#uke12-oppg-kontroll)
 i 12.6 og [de tre første kodeoppgavene](#uke12-python) i 12.7.
-
-::: {.reading-step title="Gå i dybden: en annen vei, straffemetoden"}
-
-- **Uten et eksplisitt krav:** I stedet for å forby punkter utenfor stien kan
-  vi straffe dem, med en straff som vokser med kvadratet av $h$. Vi minimerer
-  $F+\tfrac\mu2h^2$ uten krav, med et stort tall $\mu$. I prosjektet er dette de
-  stive fjærene i stedet for faste ledd.
-- **Gradienten:** $\nabla F+(\mu h)\nabla h$. Sammenlign med
-  $\nabla F+\lambda\nabla h$: tallet $\mu h$ spiller rollen til $\lambda$.
-- **Tilnærmingen:** Da blir $h$ liten, men ikke null, og $\mu h$ nærmer seg
-  multiplikatoren. I [prosjekt 12](project_week12.qmd) ser du hva det koster
-  når $\mu$ blir stor.
-
-:::
-
-::: {.reading-step title="Gå i dybden: hva rapporterer SLSQP underveis?"}
-
-Hvordan kommer SLSQP fram til svaret? Cellen kjører samme søk med en
-`callback` som lagrer punktene SLSQP rapporterer, skriver ut $h$ og $F$ i
-hvert av dem, og tegner dem sammen med nivåkurvene til $F$.
-
-- **Linjestykkene:** Viser bare rekkefølgen.
-- **Mellompunktene:** Trenger ikke ligge på sirkelen. Appen kan altså gå
-  gjennom steder utenfor stien underveis. Et punkt utenfor
-  sirkelen kan ha lavere $F$ enn det beste tillatte punktet.
-
-```{pyodide-python}
-#| label: week12-slsqp-path
-x0 = np.array([.4, .9])
-path = [x0.copy()]
-res = minimize(F, x0, jac=grad_F, method='SLSQP',
-               constraints=[{'type': 'eq', 'fun': h, 'jac': grad_h}],
-               callback=lambda zk: path.append(zk.copy()),
-               options={'ftol': 1e-12, 'maxiter': 100})
-print('h i de rapporterte punktene:', ' '.join(f'{h(p):.3f}' for p in path))
-print('F i de rapporterte punktene:', ' '.join(f'{F(p):.3f}' for p in path))
-plot_path_on_circle(path, a)
-```
-
-Det andre rapporterte punktet har $h=2.021$, langt utenfor sirkelen, og
-$F=0.264$, lavere enn $F=0.764$ i det beste punktet på sirkelen.
-
-**Begge de stasjonære punktene.**
-
-1. Fra $z-a+2\lambda z=0$ følger $z=a/(1+2\lambda)$.
-2. Kravet gir $|1+2\lambda|=\sqrt5$.
-3. Det nærmeste punktet $a/\sqrt5$ og det fjerneste $-a/\sqrt5$ er begge
-   stasjonære.
-
-Små kontrollfeil alene skiller dem ikke; verdien av $F$ gjør det.
-
-:::
-
-::: {.reading-step title="Gå i dybden: ulikhetskrav – skiven i stedet for sirkelen"}
-
-Om vinteren er sjøen islagt, og isen bærer. Da kan Arild gå hvor som helst
-**i** området innenfor stien, ikke bare på selve stien. Punktet må da oppfylle $g(z)\le0$ med $g(z)=\lVert z\rVert_2^2-1$
-(skiven). Da er det to muligheter:
-
-- Ligger $a$ inne i skiven, er $z=a$ selv svaret. Kravet er **ikke aktivt**,
-  og målfunksjonen har gradient null der. Vi setter $\lambda=0$.
-- Ligger $a$ utenfor, er svaret på randen, som over. Kravet er **aktivt**.
-
-Begge tilfellene dekkes av **KKT-betingelsene** for en minimering med
-$g\le0$ og $L=F+\lambda g$:
-
-$$\nabla F+\lambda\nabla g=0,\qquad g\le0,\qquad \lambda\ge0,\qquad \lambda\,g=0.$$
-
-- **Komplementær slakk:** Den siste likningen er **komplementær slakk** fra
-  [uke 11](uke11.qmd#uke11-slakk): enten er kravet aktivt ($g=0$), eller så
-  er prisen null ($\lambda=0$).
-- **Fortegnskravet:** $\lambda\ge0$ sier at $-\nabla F$, retningen der $F$
-  avtar, peker ut av skiven. Å slippe opp kravet litt kan derfor bare gjøre minimumsverdien lavere eller la den være uendret.
-
-Cellen prøver begge tilfellene med SLSQP: én $a$ inne i skiven og én
-utenfor. For hvert svar sjekker den om kravet er aktivt, og regner i så fall
-ut $\lambda$ med formelen for minste kvadrater over.
-
-```{pyodide-python}
-#| label: week12-disc
-for a_test in (np.array([.5, .25]), np.array([2., 1.])):
-    r = minimize(lambda q: .5*np.sum((q-a_test)**2), np.zeros(2), method='SLSQP',
-                 constraints=[{'type': 'ineq', 'fun': lambda q: 1 - q @ q}])
-    q = r.x
-    active = abs(1 - q @ q) < 1e-8
-    lam_d = -((q-a_test) @ (2*q))/((2*q) @ (2*q)) if active else 0.
-    print(f'a = {a_test}: z = {q.round(6)}, aktivt: {active}, lambda = {lam_d:.6f}')
-```
-
-SciPy skriver ulikheter som `fun(z) >= 0`, derfor sender vi `1 - q @ q`.
-
-| Punktet vi søker nærmest | Er kravet aktivt? | Multiplikator |
-|:--|:--|:--|
-| $a=(0.5,0.25)$ | Nei | $\lambda=0$ |
-| $a=(2,1)$ | Ja | $\lambda=0.618034=(\sqrt5-1)/2$ |
-
-I det siste tilfellet er multiplikatoren den samme som med sirkelkravet.
-
-**Øv på dette:** [aktivt eller ikke aktivt krav](#uke12-oppg-skive) i 12.6 (valgfri).
-
-:::
 
 ### Svar på ukens spørsmål
 
@@ -1517,49 +1314,30 @@ Arild spurte tre ting. Svarene er nå komplette:
    For den avlange stien er $-\lambda=1/\sqrt2\approx0.71$, så $s=0.1$ gir
    omtrent 7 meter.
 
-Kjettingen i prosjektet stiller de samme spørsmålene. Kjettingen henger slik at
-energien blir minst mulig når leddene har faste lengder. Multiplikatorene er
-kreftene i leddene, og prisen $-\lambda$ sier hva litt mer lengde er verdt i
-energi.
+Kjettingen i prosjektet stiller de samme spørsmålene, med minimum i stedet for maksimum. Der er multiplikatorene kreftene i leddene.
 
 ### Hva de tolv ukene har bygget
 
 ::: {#uke12-avslutning}
 :::
 
-Slik henger de tolv ukene sammen:
+Ukene 8–12 brukte verktøyene fra ukene 1–7 på optimering:
 
 | Uker | Det vi bygget |
 |:--|:--|
 | 1–7 | Flyttall og avrunding, iterasjon, likningssett, nullrom og rang, minste kvadrater, egenverdier, SPD-matriser og CG, og singulærverdier. |
 | 8 | Eksistens, Hessianen og konveksitet. |
 | 9–10 | Gradient- og Newtonmetoden med kondisjonstallet og Cholesky. |
-| 11–12 | Multiplikatorer som priser og optimalitetssertifikater. |
-
-Ukene 8–12 brukte altså verktøyene fra ukene 1–7 på optimering.
-[Tre spørsmål](uke8.qmd#uke8-start) har fulgt oss siden uke 8, og underveis
-kom et fjerde til:
-
-1. Finnes det et beste svar?
-2. Hva forteller krumningen?
-3. Er kandidaten vi fant, den beste?
-4. Hvordan kontrollerer vi et tall som en løser gir oss?
-
-Denne uken svarte vi på dem med kompakthet (et høyeste punkt finnes), krumningen
-langs stien («Gå i dybden» i 12.3), en ulikhet som gjelder hele stien, og to
-kontrollfeil. Lagranges likninger ga kandidatene og svarer på ukens spørsmål fra
-12.0: de erstatter $\nabla f=0$ når punktet må ligge på en kurve. Arbeidsmåten
-tar du med deg videre: regn ut et svar, og kontroller det med et argument eller
-en uavhengig test.
+| 11–12 | Multiplikatorer som priser, optimalitetssertifikater (uke 11) og kontroll av et numerisk svar (uke 12). |
 
 ## 12.6 Regneoppgaver
 
 ::: {#uke12-oppgaver}
 :::
 
-Oppgavene er sortert etter de tre delene av uken, og de fleste har Arild,
-hytta eller kaféen som utgangspunkt. De tre siste hører til «Gå i dybden»-boksene og er
-valgfrie.
+Oppgavene er sortert etter de tre delene av uken, og de fleste har Arild eller
+hytta som utgangspunkt. Den siste hører til «Gå i dybden»-boksen om normalen som
+forsvinner, og er valgfri.
 
 - **Arbeidsmåte:** Arbeid på papir først. Begrunnelsene skriver du i egne
   notater; feltene kontrollerer tallene.
@@ -1580,11 +1358,6 @@ som må klassifiseres.
 ::: {#uke12-oppg-normal}
 :::
 
-Arild står på den avlange stien fra 12.1. Kravfunksjonen er
-$h(x,y)=x^2+4y^2-1$, og stien er punktene der $h(x,y)=0$. Det nordligste
-punktet på stien (toppen av ellipsen på kartet, ikke det høyeste punktet i terrenget) er $p=(0,1/2)$. Finn normalen $\nabla h(p)$ og en enhetstangent
-med positiv $x$-komponent.
-
 ```{math-exercise}
 #| label: week12-normal-tangent
 #| caption: Normal og tangent i toppen av ellipsen
@@ -1593,21 +1366,17 @@ med positiv $x$-komponent.
 #| partial-credit: true
 #| field-labels: normalens x-komponent, normalens y-komponent, tangentens x-komponent, tangentens y-komponent
 
+Arild står på den avlange stien fra 12.1. Kravfunksjonen er $h(x,y)=x^2+4y^2-1$, og stien er punktene der $h(x,y)=0$. Det nordligste punktet på stien (toppen av ellipsen på kartet, ikke det høyeste punktet i terrenget) er $p=(0,1/2)$. Finn normalen $\nabla h(p)$ og en enhetstangent med positiv $x$-komponent.
+
 $\nabla h(p)=$ vec[0,4]
 
 Enhetstangent $=$ vec[1,0]
-```
 
-**Forklar:** Kontroller at skalarproduktet av de to vektorene er null. Hva
-betyr det geometrisk?
+**Forklar:** Kontroller at skalarproduktet av de to vektorene er null. Hva betyr det geometrisk?
+```
 
 ::: {#uke12-oppg-ellipse}
 :::
-
-Arild går samme avlange sti, men i et annet terreng med høyde
-$f(x,y)=2x+y$. Hvor er det høyeste punktet på stien $x^2+4y^2=1$, og hvor høyt
-er det? Bruk substitusjonen $w=2y$, slik at stien blir en sirkel, og bruk
-Cauchy–Schwarz som i håndeksempelet i 12.2. Finn også multiplikatoren $\lambda$.
 
 ```{math-exercise}
 #| label: week12-ellipse-max
@@ -1617,22 +1386,19 @@ Cauchy–Schwarz som i håndeksempelet i 12.2. Finn også multiplikatoren $\lamb
 #| partial-credit: true
 #| field-labels: maksimumspunktets x-koordinat, maksimumspunktets y-koordinat, maksimumsverdi, multiplikator ved maksimum
 
+Arild går samme avlange sti, men i et annet terreng med høyde $f(x,y)=2x+y$. Hvor er det høyeste punktet på stien $x^2+4y^2=1$, og hvor høyt er det? Bruk substitusjonen $w=2y$, slik at stien blir en sirkel, og bruk Cauchy–Schwarz som i håndeksempelet i 12.2. Finn også multiplikatoren $\lambda$.
+
 $(x,y)=$ vec[4/sqrt(17),1/(2*sqrt(17))]
 
 Maksimumsverdi: _[sqrt(17)/2]
 
 $\lambda=$ _[-sqrt(17)/4]
-```
 
-**Forklar:** Kontroller svaret med Lagranges likninger, og kontroller at
-$\nabla h$ er parallell med $(2,1)$ i punktet.
+**Forklar:** Kontroller svaret med Lagranges likninger, og kontroller at $\nabla h$ er parallell med $(2,1)$ i punktet.
+```
 
 ::: {#uke12-oppg-sirkel}
 :::
-
-På en rund sti med radius 1 km er terrenget $f(x,y)=3x-4y$: det stiger mot
-øst og synker mot nord. Kravfunksjonen er $h(x,y)=x^2+y^2-1$, og stien er
-punktene der $h(x,y)=0$. Finn det høyeste punktet på stien og multiplikatoren.
 
 ```{math-exercise}
 #| label: week12-circle-lagrange
@@ -1642,32 +1408,17 @@ punktene der $h(x,y)=0$. Finn det høyeste punktet på stien og multiplikatoren.
 #| partial-credit: true
 #| field-labels: maksimumspunktets x-koordinat, maksimumspunktets y-koordinat, multiplikator ved maksimum
 
+På en rund sti med radius 1 km er terrenget $f(x,y)=3x-4y$: det stiger mot øst og synker mot nord. Kravfunksjonen er $h(x,y)=x^2+y^2-1$, og stien er punktene der $h(x,y)=0$. Finn det høyeste punktet på stien og multiplikatoren.
+
 $(x,y)=$ vec[3/5,-4/5]
 
 $\lambda=$ _[-5/2]
-```
 
 **Forklar:** Hvorfor er punktet globalt maksimum, og ikke bare en kandidat?
+```
 
 ::: {#uke12-oppg-boks}
 :::
-
-Her er det ingen tur, men samme idé: et krav, en målfunksjon og en pris. En
-sylinderformet boks har radius $x>0$ og høyde $y>0$. Overflaten er
-$f(x,y)=2\pi x^2+2\pi xy$. Volumet skal være $V$. Kravfunksjonen er
-$h(x,y)=\pi x^2y-V$, og kravet er $h(x,y)=0$, altså $\pi x^2y-V=0$.
-
-Gradientene er gitt:
-
-$\nabla f=\begin{bmatrix}4\pi x+2\pi y\\2\pi x\end{bmatrix},\qquad
-\nabla h=\begin{bmatrix}2\pi xy\\\pi x^2\end{bmatrix}.$
-
-1. Sett opp vektorlikningen $\nabla f+\lambda\nabla h=0$ sammen med $h=0$.
-2. Bruk den andre komponentlikningen til å finne $\lambda$ uttrykt
-   med $x$, og den første komponentlikningen til å finne forholdet mellom høyde og
-   radius.
-3. Bruk til slutt prisformelen fra 12.2: hvor mye øker minste overflate
-   $A_*$ per enhet ekstra volum?
 
 ```{math-exercise}
 #| label: week12-can
@@ -1677,29 +1428,29 @@ $\nabla f=\begin{bmatrix}4\pi x+2\pi y\\2\pi x\end{bmatrix},\qquad
 #| partial-credit: true
 #| field-labels: høyde delt på radius, multiplikator som uttrykk i x, økning i overflate per volumenhet
 
+Her er det ingen tur, men samme idé: et krav, en målfunksjon og en pris. En sylinderformet boks har radius $x>0$ og høyde $y>0$. Overflaten er $f(x,y)=2\pi x^2+2\pi xy$. Volumet skal være $V$. Kravfunksjonen er $h(x,y)=\pi x^2y-V$, og kravet er $h(x,y)=0$, altså $\pi x^2y-V=0$.
+
+Gradientene er gitt:
+
+$\nabla f=\begin{bmatrix}4\pi x+2\pi y\\2\pi x\end{bmatrix},\qquad \nabla h=\begin{bmatrix}2\pi xy\\\pi x^2\end{bmatrix}.$
+
+1. Sett opp vektorlikningen $\nabla f+\lambda\nabla h=0$ sammen med $h=0$.
+2. Bruk den andre komponentlikningen til å finne $\lambda$ uttrykt med $x$, og den første komponentlikningen til å finne forholdet mellom høyde og radius.
+3. Bruk til slutt prisformelen fra 12.2: hvor mye øker minste overflate $A_*$ per enhet ekstra volum?
+
 $y/x=$ _[2]
 
 $\lambda=$ __[-2/x]
 
 $\frac{dA_*}{dV}=$ __[2/x]
-```
 
-**Forklar:** Hvorfor er ekte hermetikkbokser ofte høyere enn dette? Nevn én
-ting modellen ser bort fra.
+**Forklar:** Hvorfor er ekte hermetikkbokser ofte høyere enn dette? Nevn én ting modellen ser bort fra.
+```
 
 ### Idé 2: Kandidater, egenverdier og KKT-systemet (12.3–12.4)
 
 ::: {#uke12-oppg-form}
 :::
-
-Arild går den runde stien $x^2+y^2=1$ i terrenget $f(x,y)=x^2+4xy+y^2$.
-Han står i $p=(1,1)/\sqrt2$.
-
-1. Skriv $f=z^TAz$ med en symmetrisk $A$, og finn egenverdiene og $f(p)$.
-2. Finn multiplikatoren fra $Ap=-\lambda p$.
-3. Krumningen langs sirkelen er gitt av $v^TBv$, der
-   $B=2A+2\lambda I$ og enhetstangenten er $v=(-1,1)/\sqrt2$.
-   Regn ut matriseproduktet. Hva forteller fortegnet om kandidaten $p$?
 
 ```{math-exercise}
 #| label: week12-quadratic-form
@@ -1708,6 +1459,12 @@ Han står i $p=(1,1)/\sqrt2$.
 #| mode: equivalent
 #| partial-credit: true
 #| field-labels: funksjonsverdi i p, tangentkrumning v^T B v, største egenverdi, minste egenverdi, multiplikator i p
+
+Arild går den runde stien $x^2+y^2=1$ i terrenget $f(x,y)=x^2+4xy+y^2$. Han står i $p=(1,1)/\sqrt2$.
+
+1. Skriv $f=z^TAz$ med en symmetrisk $A$, og finn egenverdiene og $f(p)$.
+2. Finn multiplikatoren fra $Ap=-\lambda p$.
+3. Krumningen langs sirkelen er gitt av $v^TBv$, der $B=2A+2\lambda I$ og enhetstangenten er $v=(-1,1)/\sqrt2$. Regn ut matriseproduktet. Hva forteller fortegnet om kandidaten $p$?
 
 $f(p)=$ _[3]
 
@@ -1721,10 +1478,6 @@ $\lambda$ i $p$: _[-3]
 ::: {#uke12-oppg-strekk}
 :::
 
-La $B=\begin{bmatrix}3&0\\4&5\end{bmatrix}$. Maksimer
-$\lVert Bz\rVert_2^2=z^TB^TBz$ når $\lVert z\rVert_2=1$. Regn ut $B^TB$ og
-egenverdiene. Velg maksimumspunktet med positive koordinater.
-
 ```{math-exercise}
 #| label: week12-stretch
 #| caption: Største strekk som egenverdiproblem
@@ -1733,22 +1486,19 @@ egenverdiene. Velg maksimumspunktet med positive koordinater.
 #| partial-credit: true
 #| field-labels: største egenverdi til BᵀB, minste egenverdi til BᵀB, største strekk, maksimumspunktets x-koordinat, maksimumspunktets y-koordinat
 
+La $B=\begin{bmatrix}3&0\\4&5\end{bmatrix}$. Maksimer $\lVert Bz\rVert_2^2=z^TB^TBz$ når $\lVert z\rVert_2=1$. Regn ut $B^TB$ og egenverdiene. Velg maksimumspunktet med positive koordinater.
+
 Egenverdier til $B^TB$: største _[45], minste _[5]
 
 Største strekk $\max\lVert Bz\rVert_2=$ _[3*sqrt(5)]
 
 Maksimumspunkt $z=$ vec[1/sqrt(2),1/sqrt(2)]
-```
 
 **Forklar:** Sammenlign med `np.linalg.svd(B)`.
+```
 
 ::: {#uke12-oppg-kkt}
 :::
-
-Hytta ligger på en holme i origo, og en rett vei på land følger kravet $x+2y=5$. Minimer kvadratet
-av avstanden til hytta, $f(x,y)=x^2+y^2$, langs veien. Skriv Lagranges likninger som et
-$3\times3$-system $K(x,y,\lambda)^T=(0,0,5)^T$ og løs det. Regn ut
-determinanten til $K$, og avgjør om $K$ er SPD.
 
 ```{math-exercise}
 #| label: week12-kkt
@@ -1758,6 +1508,8 @@ determinanten til $K$, og avgjør om $K$ er SPD.
 #| partial-credit: true
 #| field-labels: x, y, multiplikator, determinant til K, K er SPD
 
+Hytta ligger på en holme i origo, og en rett vei på land følger kravet $x+2y=5$. Minimer kvadratet av avstanden til hytta, $f(x,y)=x^2+y^2$, langs veien. Skriv Lagranges likninger som et $3\times3$-system $K(x,y,\lambda)^T=(0,0,5)^T$ og løs det. Regn ut determinanten til $K$, og avgjør om $K$ er SPD.
+
 $(x,y)=$ vec[1,2]
 
 $\lambda=$ _[-2]
@@ -1765,20 +1517,14 @@ $\lambda=$ _[-2]
 $\det K=$ _[-10]
 
 $K$ er SPD: _[0]
-```
 
-**Forklar:** Hvorfor viser fortegnet til determinanten alene at $K$ ikke er
-SPD?
+**Forklar:** Hvorfor viser fortegnet til determinanten alene at $K$ ikke er SPD?
+```
 
 ### Idé 3: Kontroller et numerisk svar (12.5)
 
 ::: {#uke12-oppg-kontroll}
 :::
-
-I avstandsproblemet fra 12.5 ligger kaféen i punktet $(2,1)$, og $a=(2,1)$ er vektoren dit. Her er
-$F(z)=\tfrac12\lVert z-a\rVert_2^2$ og kravfunksjonen
-$h(z)=\lVert z\rVert_2^2-1$. Kartappen foreslår $z=(1,0)$ og $\lambda=1/2$.
-Regn ut begge kontrollfeilene.
 
 ```{math-exercise}
 #| label: week12-numeric-check
@@ -1786,24 +1532,23 @@ Regn ut begge kontrollfeilene.
 #| context: week12-exercise-convention
 #| mode: equivalent
 #| partial-credit: true
-#| field-labels: betingelsesfeil, stasjonaritetsfeil
+#| field-labels: betingelsesfeil, multiplikator med minst feil, stasjonaritetsfeil
+
+Arild går den avlange stien fra 12.1, med høyden $f(x,y)=x+2y$ og kravfunksjonen $h(x,y)=x^2+4y^2-1$. Kartappen foreslår $z=(1,0)$ som det høyeste punktet. Regn ut betingelsesfeilen, finn multiplikatoren som gir minst stasjonaritetsfeil, og regn ut stasjonaritetsfeilen.
 
 $|h(z)|=$ _[0]
 
-$\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2=$ _[1]
+$\lambda=$ _[-1/2]
+
+$\lVert\nabla f(z)+\lambda\nabla h(z)\rVert_2=$ _[2]
+
+**Forklar:** Hvilken kontroll avslører at punktet ikke er stasjonært? Hvilken vei peker resten? Sammenlign lengden med stigningen i østspissen i 12.1.
 ```
 
-**Forklar:** Hvilken kontroll avslører at punktet ikke er stasjonært? Kan en
-annen $\lambda$ gjøre stasjonaritetsfeilen mindre?
-
-### Til fordypningene (valgfritt)
+### Til fordypningen (valgfritt)
 
 ::: {#uke12-oppg-degenerert}
 :::
-
-Hører til «Gå i dybden: når normalen forsvinner» i 12.2. La $f(x,y)=x+3y$, med
-kravfunksjonen $h(x,y)=x^2+y^2$ og kravet $h(x,y)=0$. Finn det eneste
-tillatte punktet og $\nabla h$ der.
 
 ```{math-exercise}
 #| label: week12-degenerate-check
@@ -1813,67 +1558,14 @@ tillatte punktet og $\nabla h$ der.
 #| partial-credit: true
 #| field-labels: punktets x-koordinat, punktets y-koordinat, x-komponent av grad h, y-komponent av grad h
 
+Hører til «Gå i dybden: når normalen forsvinner» i 12.2. La $f(x,y)=x+3y$, med kravfunksjonen $h(x,y)=x^2+y^2$ og kravet $h(x,y)=0$. Finn det eneste tillatte punktet og $\nabla h$ der.
+
 Tillatt punkt $=$ vec[0,0]
 
 $\nabla h=$ vec[0,0]
+
+**Forklar:** Hvorfor kan ingen multiplikator gjøre $\nabla f+\lambda\nabla h=0$, selv om punktet er et optimum?
 ```
-
-**Forklar:** Hvorfor kan ingen multiplikator gjøre $\nabla f+\lambda\nabla h=0$,
-selv om punktet er et optimum?
-
-::: {#uke12-oppg-grense}
-:::
-
-Hører til «Gå i dybden: en multiplikator gir en nedre grense» i 12.2. Bruk
-$F(z)=\tfrac12\lVert z-(2,1)\rVert_2^2$, kravfunksjonen
-$h(z)=\lVert z\rVert_2^2-1$ og $\lambda=1/2$. Da er $L=F+\lambda h$ kvadratisk.
-
-Finn:
-
-1. $c$ slik at Hessianen til $L$ er $cI$,
-2. minimumsverdien av $L$ over alle $z$,
-3. $F(1,0)$.
-
-```{math-exercise}
-#| label: week12-dual-bound
-#| caption: En nedre grense fra Lagrangefunksjonen
-#| context: week12-exercise-convention
-#| mode: equivalent
-#| partial-credit: true
-#| field-labels: tallet c i Hessianen, minste verdi av L, F i punktet (1 0)
-
-$c=$ _[2]
-
-$\min_zL(z,1/2)=$ _[3/4]
-
-$F(1,0)=$ _[1]
-```
-
-**Forklar:** Er grensen skarp? Sammenlign med $\tfrac12(\sqrt5-1)^2$.
-
-::: {#uke12-oppg-skive}
-:::
-
-Hører til «Gå i dybden: ulikhetskrav» i 12.5. Finn punktet i skiven
-$\lVert z\rVert_2^2\le1$ som ligger nærmest $a$, med
-$F=\tfrac12\lVert z-a\rVert_2^2$, $g=\lVert z\rVert_2^2-1$ og $L=F+\lambda g$.
-Gjør det for $a=(0.3,0.4)$ og for $a=(0,3)$.
-
-```{math-exercise}
-#| label: week12-disc-kkt
-#| caption: Aktivt eller ikke aktivt krav i skiven
-#| context: week12-exercise-convention
-#| mode: equivalent
-#| partial-credit: true
-#| field-labels: aktivt for a=(0.3 0.4), multiplikator for a=(0.3 0.4), x-koordinat for a=(0 3), y-koordinat for a=(0 3), multiplikator for a=(0 3)
-
-$a=(0.3,0.4)$: aktivt _[0], $\lambda=$ _[0]
-
-$a=(0,3)$: $z=$ vec[0,1], $\lambda=$ _[1]
-```
-
-**Forklar:** Kontroller fortegnskravet og komplementær slakk i begge
-tilfellene.
 
 ## 12.7 Python: prøv kontrollene selv
 
@@ -1892,11 +1584,11 @@ resultatet uten å vise løsningen.
 
 | Uttrykk | Betydning |
 |:--|:--|
-| `method="SLSQP"` | En metode i `minimize` som tar imot likhets- og ulikhetskrav. |
+| `method="SLSQP"` | En metode i `minimize` som tar imot likhetskrav. |
 | `{"type": "eq", "fun": h, "jac": grad_h}` | Krever $h(z)=0$ og oppgir gradienten (normalen). |
-| `{"type": "ineq", "fun": lambda z: -g(z)}` | Krever at funksjonen er $\ge0$. Et krav $g(z)\le0$ sendes derfor som $-g$. |
-| `options={"ftol": 1e-12, "maxiter": 100}` | Løserens stopptoleranse og grense for antall iterasjoner. |
-| `np.linalg.lstsq(J.T, -grad, rcond=None)[0]` | Multiplikatorene som gjør $\lVert\nabla F+J^T\lambda\rVert_2$ minst, med `grad` $=\nabla F$. |
+| `minimize(lambda z: -f(z), start, jac=lambda z: -grad_f(z), ...)` | `minimize` minimerer. For å maksimere $f$ minimerer vi $-f$; da må også gradienten få minus foran (`jac=lambda z: -grad_f(z)`). |
+| `options={"ftol": 1e-10, "maxiter": 100}` | Løserens stopptoleranse og grense for antall iterasjoner. |
+| `J = grad_h(z).reshape(1, 2)`, `np.linalg.lstsq(J.T, -grad_f(z), rcond=None)[0]` | Multiplikatorene som gjør $\lVert\nabla f+J^T\lambda\rVert_2$ minst. $J$ har én rad per krav; med ett krav er raden normalen. |
 
 **Flere krav:** Bruk en liste med ordbøker, eller én `fun` som returnerer
 en vektor og en `jac` som returnerer Jacobimatrisen.
@@ -1904,12 +1596,11 @@ en vektor og en `jac` som returnerer Jacobimatrisen.
 `result.x`, `result.fun` og `result.success` betyr det samme som i
 [uke 8](uke8.qmd#uke8-python-local).
 
-- **Nyere SciPy-versjoner:** Gir også `result.multipliers`, men med motsatt
-  fortegn av vårt ($L=f-\lambda h$).
+- **Nyere SciPy-versjoner:** Gir også `result.multipliers`. Fortegnet avhenger av hva løseren minimerer: når den minimerer $-f$, som her, er tallet lik vår $\lambda$; når den minimerer $f$ selv, har det motsatt fortegn.
 - **SciPy 1.14 i nettleseren:** Gir dem ikke.
 - **Vår kontroll:** Vi beregner derfor $\lambda$ selv med `lstsq`, som virker
   overalt, og kontrollerer $|h|$ og
-  $\lVert\nabla F+\lambda\nabla h\rVert_2$.
+  $\lVert\nabla f+\lambda\nabla h\rVert_2$.
 
 :::
 
@@ -1939,9 +1630,9 @@ assert np.allclose(grad_h(np.array([.25, -.5])), [.5, -4.])
 ::: {#uke12-py-kontroll}
 :::
 
-**Les et numerisk svar.** For avstandsproblemet i 12.5 skal
+**Les et numerisk svar.** For Arilds sti i 12.5 skal
 `check(z, lam)` returnere betingelsesfeilen $|h(z)|$ og
-stasjonaritetsfeilen $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$.
+stasjonaritetsfeilen $\lVert\nabla f(z)+\lambda\nabla h(z)\rVert_2$.
 
 ```{py-exercise}
 #| label: week12-python-residuals
@@ -1949,34 +1640,33 @@ stasjonaritetsfeilen $\lVert\nabla F(z)+\lambda\nabla h(z)\rVert_2$.
 #| show-test-hints: false
 import numpy as np
 
-a = np.array([2., 1.])
-
 def h(z):
-    return np.dot(z, z)-1.
+    return z[0]**2 + 4*z[1]**2 - 1.
 
 def grad_h(z):
-    return 2*z
+    return np.array([2*z[0], 8*z[1]])
 
-def grad_F(z):
-    return z-a
+def grad_f(z):
+    return np.array([1., 2.])
 
 def check(z, lam):
     # TODO: Regn ut absolutt betingelsesfeil.
     feasibility = None
-    # TODO: Regn ut lengden av grad_F(z) + lam*grad_h(z).
+    # TODO: Regn ut lengden av grad_f(z) + lam*grad_h(z).
     stationarity = None
     return feasibility, stationarity
 
 ## TESTS ##
-assert np.allclose(check(np.array([1., 0.]), .5), (0., 1.))
+assert np.allclose(check(np.array([1., 0.]), -.5), (0., 2.))
 assert np.allclose(check(np.array([0., 0.]), 0.), (1., np.sqrt(5)))
-assert np.allclose(check(a/np.sqrt(5), (np.sqrt(5)-1)/2), (0., 0.), atol=1e-12)
+top = np.array([1/np.sqrt(2), 1/(2*np.sqrt(2))])
+assert np.allclose(check(top, -1/np.sqrt(2)), (0., 0.), atol=1e-12)
 ```
 
 ::: {#uke12-py-slsqp}
 :::
 
-**Send kravet til SLSQP.** Fyll inn ordboken som angir
+**Send kravet til SLSQP.** For Arilds avlange sti skal du fylle inn ordboken som angir
 $h(z)=0$ og gradienten.
 
 ```{py-exercise}
@@ -1986,31 +1676,31 @@ $h(z)=0$ og gradienten.
 import numpy as np
 from scipy.optimize import minimize
 
-a = np.array([2., 1.])
+def f(z):
+    return z[0] + 2*z[1]
 
-def F(z):
-    return .5*np.sum((z-a)**2)
-
-def grad_F(z):
-    return z-a
+def grad_f(z):
+    return np.array([1., 2.])
 
 def h(z):
-    return np.dot(z, z)-1.
+    return z[0]**2 + 4*z[1]**2 - 1.
 
 def grad_h(z):
-    return 2*z
+    return np.array([2*z[0], 8*z[1]])
 
 def solve(start):
     # TODO: Sett inn ordboken med type 'eq', fun h og jac grad_h.
     condition = None
-    return minimize(F, start, jac=grad_F, method="SLSQP",
-                    constraints=[condition], options={"ftol": 1e-12})
+    return minimize(lambda z: -f(z), start, jac=lambda z: -grad_f(z),
+                    method="SLSQP", constraints=[condition],
+                    options={"ftol": 1e-10})
 
 ## TESTS ##
+top = np.array([1/np.sqrt(2), 1/(2*np.sqrt(2))])
 for start in (np.array([.4, .9]), np.array([1., 0.])):
     result = solve(start)
     assert abs(h(result.x)) < 1e-8
-    assert np.allclose(result.x, a/np.sqrt(5), atol=1e-6)
+    assert np.allclose(result.x, top, atol=1e-6)
 ```
 
 ::: {#uke12-py-kkt}
