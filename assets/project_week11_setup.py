@@ -17,13 +17,13 @@ wind3 = np.array([30., 10., 20.])
 water = 120.
 
 
-# Samme funksjon som i del 1b, slik at senere celler virker etter ny innlasting.
+# Samme funksjon som i del 1, slik at senere celler virker etter ny innlasting.
 def one_zone(D):
     return linprog(cost, A_eq=[np.ones(4)], b_eq=[D],
                    bounds=list(zip(np.zeros(4), capacity)), method="highs")
 
 
-# Samme funksjon som i del 3b. Variabler: vind N, vannkraft N, import S, gass S, flyt f.
+# Samme funksjon som i del 3. Variabler: vind N, vannkraft N, import S, gass S, flyt f.
 def two_zones(L, wind_north=20.):
     c = np.array([0., 10., 40., 70., 0.])
     A_eq = np.array([[1., 1., 0., 0., -1.],

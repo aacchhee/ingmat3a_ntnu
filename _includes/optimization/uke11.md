@@ -1293,13 +1293,7 @@ Disse prisene gir en ny øvre grense:
 
 $$2(x+2y)+3x=2x+4y+3x=5x+4y\le2\cdot9+3\cdot4=30.$$
 
-Planen $(4,5/2)$ oppnår 30. Nå er det arbeidstimene og A-grensen som bestemmer beste verdi; ekstra maskintimer alene hjelper ikke.
-
-Disse prisene gir en ny øvre grense:
-
-$$2(x+2y)+3x=2x+4y+3x=5x+4y\le2\cdot9+3\cdot4=30.$$
-
-Planen $(4,5/2)$ oppnår 30, så den er best.
+Planen $(4,5/2)$ oppnår 30, så den er best. Nå er det arbeidstimene og A-grensen som bestemmer beste verdi; ekstra maskintimer alene hjelper ikke.
 
 - **Det nye hjørnet:** $(4,5/2)$ er skjæringspunktet mellom arbeidstimer og A-grense, det samme punktet som lå *utenfor* området i hjørneregningen i 11.1, fordi det trenger $21/2$ maskintimer.
 - **Prisene er ikke entydige:** Ved $\Delta=\tfrac32$ er både $(2,1,0)$ og $(0,2,3)$ optimale priser. En løser rapporterer bare ett av prisvalgene.
