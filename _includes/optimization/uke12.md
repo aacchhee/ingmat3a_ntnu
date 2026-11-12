@@ -531,16 +531,36 @@ en avstand; det sier hvor mye større verdien av $h$ er på den ytre runden. Med
 $s=0.1$ ligger den ytre runden omtrent 5 % lenger ut fra sjøens midte, ved det
 høyeste punktet omtrent 40 meter.
 
-**Først tall på den avlange stien.** Ringen $x^2+4y^2=1+s$ er den gamle ringen,
-strukket med faktoren $\sqrt{1+s}$ ut fra sjøens midte. Høyden $f=x+2y$ er null i
-midten, og går du dobbelt så langt ut i samme retning, blir høyden dobbelt så
-stor. Derfor strekkes den høyeste høyden med samme faktor:
-$f_*(s)=\sqrt2\,\sqrt{1+s}$.
+::: {.callout-note title="Håndeksempel: hvor høyt kommer Arild på den ytre runden?"}
 
-1. For $s=0.1$ er det $1.4142\cdot1.0488\approx1.4832$, mot $1.4142$ før. Arild
+**Utgangspunkt.** Den indre stien er $x^2+4y^2=1$, og det høyeste punktet der er
+$\bigl(\tfrac1{\sqrt2},\tfrac1{2\sqrt2}\bigr)\approx(0.707,\,0.354)$ med høyde
+$\sqrt2\approx1.414$ (hundre meter). Den ytre runden med $s=0.1$ er punktene der
+$x^2+4y^2=1.1$.
+
+**Prøv selv.** Hvor mye større er den ytre runden enn den indre? Hvor ligger det
+høyeste punktet på den, og hvor høyt er det?
+
+**Regnegangen.**
+
+1. **Den ytre runden er en forstørret kopi.** Gang begge koordinatene i et punkt
+   $(x,y)$ på den indre stien med samme tall $k$. Da blir
+   $(kx)^2+4(ky)^2=k^2(x^2+4y^2)=k^2$. Med $k=\sqrt{1.1}\approx1.0488$ blir dette
+   $1.1$. Den ytre runden er altså den indre stien forstørret med faktoren $1.0488$
+   ut fra sjøens midte, omtrent 5 % større.
+2. **Høyden forstørres like mye.** Høyden er $f=x+2y$, så
+   $f(kx,ky)=kx+2ky=k\,f(x,y)$. Går du $k$ ganger så langt ut fra midten i samme
+   retning, blir høyden $k$ ganger så stor. Det gjelder hvert punkt, så det som var
+   høyest på den indre stien, blir høyest på den ytre også.
+3. **Det høyeste punktet flytter seg utover.** Det nye høyeste punktet er
+   $1.0488\cdot(0.707,\,0.354)\approx(0.742,\,0.371)$.
+4. **Den nye høyden:** $1.0488\cdot1.4142\approx1.4832$, mot $1.4142$ før. Arild
    kommer $0.069$ hundre meter høyere, omtrent 7 meter.
-2. For veldig små $s$ er økningen per enhet $s$ lik den deriverte
-   $\dfrac{d}{ds}\bigl(\sqrt2\sqrt{1+s}\bigr)_{s=0}=\dfrac{\sqrt2}{2}=\dfrac1{\sqrt2}\approx0.71$.
+5. **Per enhet $s$:** $0.069/0.1=0.69$. Velger vi en enda mindre $s$, nærmer
+   forholdet seg den deriverte av $f_*(s)=\sqrt2\,\sqrt{1+s}$ i $s=0$:
+   $$\frac{d}{ds}\Bigl(\sqrt2\sqrt{1+s}\Bigr)_{s=0}=\frac{\sqrt2}{2\sqrt{1}}=\frac1{\sqrt2}\approx0.71.$$
+
+:::
 
 Tallet $0.71$ er akkurat $-\lambda$ fra 12.2, der vi fant $\lambda=-1/\sqrt2$. Det
 er ikke tilfeldig, som den generelle regelen under viser.
