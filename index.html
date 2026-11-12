@@ -46,7 +46,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b4b6283e97a269dab123b4acdc252bb4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-1351f04c0960c9fbbd71cd80c1aea282.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/ctm-coi-frame-startup-1/coi-frame-startup.js"></script>
 <script src="site_libs/quarto-contrib/ctm-assets-0.9.0/assets.js"></script>
 <script src="site_libs/quarto-contrib/ctm-locale-0.9.0/ctm-locale.js"></script>
@@ -88,34 +88,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <script>globalThis.CTM_ASSETS={"bases":{"font-awesome":"https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/","jsxgraph":"https://cdn.jsdelivr.net/npm/jsxgraph@1.14.2/","katex":"https://cdn.jsdelivr.net/npm/katex@0.16.47/","mathjax-newcm-font":"https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/","mathjax3":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/","mathjax4":"https://cdn.jsdelivr.net/npm/mathjax@4.1.3/","monaco-editor":"https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/","pyodide":"https://cdn.jsdelivr.net/pyodide/v0.28.3/full/","source-sans-pro":"https://cdn.jsdelivr.net/npm/@fontsource/source-sans-pro@5.3.0/"},"mode":"cdn","v":1};</script>
 
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -397,12 +369,12 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/page2.html">Uke 1</a></td>
 <td style="text-align: left;"><strong>Hvordan kan vi regne raskere, og hvorfor blir ikke 0,1 + 0,2 nøyaktig 0,3 på en datamaskin?</strong></td>
-<td style="text-align: left;">Du lærer å måle hvor stor en feil er, og ser at en lur regnerekkefølge (Horners metode) gjør polynomer mye raskere å regne ut. Datamaskinen lagrer tall med et begrenset antall binære sifre; du finner ut når avrundingen ødelegger et resultat, og i prosjektet prøver du å lure en vanlig summering til å regne feil.</td>
+<td style="text-align: left;">Feilmål og Horners metode, en lur regnerekkefølge som gjør polynomer mye raskere å regne ut. Datamaskinen lagrer tall med et begrenset antall binære sifre, og uken viser når avrundingen ødelegger et resultat. Prosjektet handler om å lure en vanlig summering til å regne feil.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/page4.html">Uke 2</a></td>
 <td style="text-align: left;"><strong>Kan vi finne løsningen av en likning ved å gjenta en enkel regneregel – og hvordan vet vi når svaret er nøyaktig nok?</strong></td>
-<td style="text-align: left;">Mange likninger løses best ved å starte med et anslag og forbedre det steg for steg, og du lærer å se om en slik gjentakelse nærmer seg svaret, hvor fort det går og når det er trygt å stoppe. I prosjektet tegner du fargekart over hvilken løsning Newtons metode finner fra ulike startpunkter.</td>
+<td style="text-align: left;">Iterasjon: å starte med et anslag og forbedre det steg for steg. Uken viser hvordan vi ser om en slik gjentakelse nærmer seg svaret, hvor fort det går og når det er trygt å stoppe. Prosjektet tegner fargekart over hvilken løsning Newtons metode finner fra ulike startpunkter.</td>
 </tr>
 </tbody>
 </table>
@@ -421,27 +393,27 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke3.html">Uke 3</a></td>
 <td style="text-align: left;"><strong>Kan et bilde av et sjakkbrett og et ensfarget bilde bli helt like når vi gjør dem mindre?</strong></td>
-<td style="text-align: left;">Du skriver en bildeforminskning som en matrise og finner ut hvilken informasjon som går tapt og hvilken som kan gjenskapes – det er nettopp dette nullrom og rang måler. Ideene virker like godt for polynomer, og i prosjektet ser du at valget av byggesteiner og målepunkter avgjør om du kan finne et polynom igjen fra noen få verdier.</td>
+<td style="text-align: left;">En bildeforminskning skrevet som en matrise: hvilken informasjon går tapt, og hvilken kan gjenskapes? Det er dette nullrom og rang måler. De samme ideene gjelder for polynomer, og prosjektet viser at valget av byggesteiner og målepunkter avgjør om et polynom kan finnes igjen fra noen få verdier.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke4.html">Uke 4</a></td>
 <td style="text-align: left;"><strong>Hvordan finner vi linjen som ligger nærmest målingene når ingen linje treffer alle – og kan vi stole på regningen?</strong></td>
-<td style="text-align: left;">Du lærer å måle hvor mye av en vektor som peker i en gitt retning, og bruker det til å lage vinkelrette retninger og finne linjen eller kurven som passer best til målinger (minste kvadraters metode). I prosjektet tilpasser du kurver til målinger med støy og vurderer om tilpasningen er til å stole på.</td>
+<td style="text-align: left;">Projeksjon: hvor mye av en vektor som peker i en gitt retning. Med den lager vi vinkelrette retninger (QR) og finner linjen eller kurven som passer best til målinger (minste kvadraters metode og normallikningene). Prosjektet tilpasser kurver til målinger med støy og vurderer om tilpasningen er til å stole på.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke5.html">Uke 5</a></td>
 <td style="text-align: left;"><strong>Hva skjer med retningen når vi ganger med den samme matrisen om og om igjen – og hvordan kan det rangere nettsider?</strong></td>
-<td style="text-align: left;">Når vi ganger med den samme matrisen om og om igjen, tar noen spesielle retninger – egenvektorene – over. Du bruker dette til å rangere nettsider ut fra lenkene mellom dem (PageRank), og i prosjektet undersøker du hvor mye besøksmønsteret må endres før to sider bytter plass.</td>
+<td style="text-align: left;">Når vi ganger med den samme matrisen om og om igjen, tar noen spesielle retninger – egenvektorene – over. Det gir en rangering av nettsider ut fra lenkene mellom dem (PageRank). Prosjektet undersøker hvor mye besøksmønsteret må endres før to sider bytter plass.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke6.html">Uke 6</a></td>
 <td style="text-align: left;"><strong>Kan vi løse tusenvis av likninger ved å begynne med et grovt svar og forbedre det litt om gangen?</strong></td>
-<td style="text-align: left;">Store likningssett løses ofte ved å forbedre et grovt anslag litt om gangen, og du lærer å vurdere hvor nær et anslag er løsningen og hvorfor noen systemer er ekstra følsomme. Når vi ser løsningen som bunnen av en skål, får vi en rask metode (konjugert gradient), og i prosjektet sparer du arbeid ved å skalere om likningene først.</td>
+<td style="text-align: left;">Store likningssett løses ofte ved å forbedre et grovt anslag litt om gangen. Uken viser hvordan vi vurderer hvor nær et anslag er løsningen, og hvorfor noen likningssett er ekstra følsomme. Når løsningen sees som bunnen av en skål, gir det en rask metode (konjugert gradient). Prosjektet sparer arbeid ved å skalere om likningene først.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke7.html">Uke 7</a></td>
 <td style="text-align: left;"><strong>Hvilken informasjon bevares når vi forenkler et bilde – og kan vi fjerne støy uten å miste detaljene?</strong></td>
-<td style="text-align: left;">Et bilde kan skrives som en sum av enkle mønstre, ordnet etter hvor mye de betyr (singulærverdidekomposisjonen, SVD). Ved å beholde bare de viktigste mønstrene kan du komprimere bilder og fjerne støy, og i prosjektet ser du hvorfor det er risikabelt å gjenskape et uskarpt signal fra unøyaktige målinger.</td>
+<td style="text-align: left;">Et bilde kan skrives som en sum av enkle mønstre, ordnet etter hvor mye de betyr (singulærverdidekomposisjonen, SVD). Ved å beholde bare de viktigste mønstrene kan bilder komprimeres og støy fjernes. Prosjektet viser hvorfor det er risikabelt å gjenskape et uskarpt signal fra unøyaktige målinger.</td>
 </tr>
 </tbody>
 </table>
@@ -466,22 +438,22 @@ window.Quarto = {
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke9.html">Uke 9</a></td>
 <td style="text-align: left;"><strong>Hvor stort steg kan vi ta nedover, og hvorfor går gradientmetoden noen ganger så sakte?</strong></td>
-<td style="text-align: left;">Du går nedover i den bratteste retningen og finner ut hvor langt hvert steg kan være og hvorfor metoden kryper i en smal dal; deretter velger du steget automatisk (Armijo-testen) og leter helt uten deriverte (kompassøk). I prosjektet bruker du Challenger-data til å undersøke hvordan koordinatvalg påvirker farten, og hva et automatisk steg kan og ikke kan rette opp.</td>
+<td style="text-align: left;">Gradientmetoden går nedover i den bratteste retningen. Uken viser hvor langt hvert steg kan være, hvorfor metoden kryper i en smal dal, hvordan steget kan velges automatisk (Armijo-testen) og hvordan vi kan lete helt uten deriverte (kompassøk). Prosjektet bruker Challenger-data til å undersøke hvordan koordinatvalg påvirker farten, og hva et automatisk steg kan og ikke kan rette opp.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke10.html">Uke 10</a></td>
 <td style="text-align: left;"><strong>Kan vi finne bunnen av en dal raskere ved å bruke både hvor bratt bakken er og hvordan helningen endrer seg?</strong></td>
-<td style="text-align: left;">Newtons metode bruker både helningen og krumningen og kommer svært raskt fram: antall riktige sifre omtrent dobles for hvert steg. Den kan også havne i et sadelpunkt eller et toppunkt, så du lærer en enkel reparasjon som retter opp retningen og korter ned steget, og i prosjektet finner du posisjonen din fra målte avstander, slik en GPS gjør.</td>
+<td style="text-align: left;">Newtons metode bruker både helningen og krumningen og kommer svært raskt fram: antall riktige sifre omtrent dobles for hvert steg. Den kan også havne i et sadelpunkt eller et toppunkt, og uken viser en enkel reparasjon som retter opp retningen og korter ned steget. Prosjektet finner en posisjon fra målte avstander, slik en GPS gjør.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="./pages/uke11.html">Uke 11</a></td>
 <td style="text-align: left;"><strong>Et verksted lager to produkter med de samme maskinene. Hva bør det produsere, og hvor mye er én ekstra maskintime verdt?</strong></td>
-<td style="text-align: left;">Du lærer å sette opp et produksjonsproblem med begrensede ressurser (lineær programmering) og ser hvorfor den beste planen ligger i et hjørne av området med tillatte planer. Ressurspriser beviser at planen er best og viser hva én ekstra maskintime er verdt, og i prosjektet bruker du samme idé til å forklare hvorfor strømprisen kan være så forskjellig i ulike deler av landet.</td>
+<td style="text-align: left;">Et produksjonsproblem med begrensede ressurser (lineær programmering). Den beste planen ligger i et hjørne av området med tillatte planer. Ressurspriser beviser at planen er best og viser hva én ekstra maskintime er verdt. Prosjektet bruker samme idé til å forklare hvorfor strømprisen kan være så forskjellig i ulike deler av landet.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="./pages/uke12.html">Uke 12</a></td>
-<td style="text-align: left;"><strong>Hva erstatter <span class="math inline">\(\nabla f=0\)</span> når svaret må ligge på en kurve?</strong></td>
-<td style="text-align: left;">Når svaret må ligge på en kurve, er det ikke lenger nok å sette gradienten lik null, og Lagranges metode gir likningene som gjelder i stedet. Du lærer å finne og kontrollere slike løsninger både for hånd og med SciPy, og i prosjektet forklarer du formen på en hengende kjetting og ser at multiplikatorene i Lagranges metode er kreftene i leddene.</td>
+<td style="text-align: left;"><strong>Hvor på stien er det høyest, og hvordan kan vi være sikre på det uten å gå hele stien?</strong></td>
+<td style="text-align: left;">Turgåeren Arild må holde seg på en sti rundt en sjø, i et terreng som stiger mot nordøst. Det høyeste punktet på stien er ingen topp i terrenget, så det hjelper ikke å sette gradienten lik null; Lagranges metode gir likningene som gjelder i stedet, og multiplikatoren forteller hvor mye høyere en ytre runde går. Uken viser hvordan slike punkter finnes for hånd og med SciPy, og hvordan svaret kontrolleres. Prosjektet bruker samme metode til å finne formen på en kjetting som henger mellom to kroker.</td>
 </tr>
 </tbody>
 </table>
@@ -489,13 +461,13 @@ window.Quarto = {
 </div>
 <section id="prosjekter-i-optimering" class="level2">
 <h2 class="anchored" data-anchor-id="prosjekter-i-optimering">Prosjekter i optimering</h2>
-<p>Hvert prosjekt skiller en kort, gitt innføring i anvendelsen fra arbeidet med numeriske metoder og lineær algebra. Formlene du trenger, er oppgitt; du bruker kode, små matriseeksempler og egne resultater til å trekke konklusjoner.</p>
+<p>Hvert prosjekt skiller en kort, gitt innføring i anvendelsen fra arbeidet med numeriske metoder og lineær algebra. Formlene som trengs, er oppgitt; konklusjonene bygger på kode, små matriseeksempler og egne resultater.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Prosjekt</th>
-<th style="text-align: left;">Bakgrunn du får</th>
-<th style="text-align: left;">Det du undersøker</th>
+<th style="text-align: left;">Gitt bakgrunn</th>
+<th style="text-align: left;">Det som undersøkes</th>
 </tr>
 </thead>
 <tbody>
