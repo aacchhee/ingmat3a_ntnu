@@ -875,40 +875,73 @@ Resten av 12.4 er den samme ideen skrevet med matriser.
 
 ### Kandidattabellen er en egenverditabell
 
-Nå viser vi at kandidatene fra forrige del ligger i retningen til egenvektorer. Skriv høyden fra 12.3 med en symmetrisk matrise:
+I 12.3 fant vi de flate stedene på den runde stien i det kuperte terrenget
+$f(x,y)=xy$ ved å regne for hånd. Nå ser vi at regningen er en egenverdiregning,
+som du kjenner fra uke 5. Da kan vi bruke den samme regningen for alle terreng av
+denne typen.
 
-$$xy=z^TAz,\qquad A=\begin{bmatrix}0&\tfrac12\\\tfrac12&0\end{bmatrix}.$$
+**Steg 1: skriv høyden med en matrise.** Vi samler koordinatene til et punkt i en
+kolonnevektor,
+$$z=\begin{bmatrix}x\\y\end{bmatrix},$$
+altså vektoren fra sjøens midte til punktet $(x,y)$. Med den symmetriske matrisen
+$$A=\begin{bmatrix}0&\tfrac12\\\tfrac12&0\end{bmatrix}$$
+er
+$$Az=\begin{bmatrix}\tfrac12y\\\tfrac12x\end{bmatrix},\qquad
+z^TAz=x\cdot\tfrac12y+y\cdot\tfrac12x=xy.$$
+Høyden er altså $f=z^TAz$.
 
-Hva er gradienten til $z^TAz$? Vi regner den ut i det lille tilfellet først.
+**Steg 2: gradienten.** Gradienten til $f=xy$ er
+$\nabla f=\bigl(\partial f/\partial x,\ \partial f/\partial y\bigr)=(y,x)$. Sammenlign
+med $Az$ over: $(y,x)$ er nøyaktig $2Az$. Altså er
+$$\nabla f=2Az.$$
+Det gjelder for hver symmetrisk matrise $A$, ikke bare vår; utregningen står i
+«Gå i dybden» under.
 
-1. **Utvid:** For en symmetrisk $2\times2$-matrise er
-   $z^TAz=a_{11}x^2+2a_{12}xy+a_{22}y^2$.
-2. **Derivér:** De partiellderiverte er $2a_{11}x+2a_{12}y$ og
-   $2a_{12}x+2a_{22}y$. Altså er $\nabla(z^TAz)=2Az$ (det gjelder i alle
-   dimensjoner).
-3. **Kontroller med vår $A$:**
-   $2Az=2\bigl(\tfrac12y,\tfrac12x\bigr)=(y,x)=\nabla(xy)$.
-
-For den runde stien er $\nabla h=2z$, og Lagranges likning blir da
-
+**Steg 3: Lagranges likning.** For den runde stien er kravfunksjonen
+$h(x,y)=x^2+y^2-1$, så $\nabla h=(2x,2y)=2z$. Lagranges likning
+$\nabla f+\lambda\nabla h=0$ blir
 $$2Az+2\lambda z=0\qquad\Longleftrightarrow\qquad Az=-\lambda z.$$
 
-**En kandidat $z$ ligger i retningen til en egenvektor av $A$, og $-\lambda$ er egenverdien.**
+**Steg 4: les likningen.** $Az=-\lambda z$ sier at $A$ ganget med $z$ gir et tall
+ganger den samme vektoren. Det er definisjonen av en egenvektor fra uke 5. En
+kandidat på stien ligger derfor i retningen til en egenvektor av $A$, og tallet
+$-\lambda$ er den tilhørende egenverdien.
 
-- **Målverdien:** $z^TAz=-\lambda\,z^Tz=-\lambda$.
-- **Vår matrise:** Egenverdiene til $A$ er $\tfrac12$ (egenvektor $(1,1)$)
-  og $-\tfrac12$ (egenvektor $(1,-1)$). Det er akkurat tabellen i 12.3:
-  $\lambda=-\tfrac12$ gir maksimum $\tfrac12$, og $\lambda=\tfrac12$ gir
-  minimum $-\tfrac12$.
-- **Koblingen til uke 5:** På enhetssirkelen er $z^TAz$ Rayleigh-kvotienten
-  fra [uke 5](uke5.qmd#uke5-rayleigh), og vi har vist:
+**Steg 5: høyden i en kandidat.** På stien er $z^Tz=x^2+y^2=1$, så
+$$f=z^TAz=z^T(-\lambda z)=-\lambda\,z^Tz=-\lambda.$$
+Høyden i en kandidat er altså egenverdien.
+
+**For vår matrise.** Egenverdiene til $A$ er $\tfrac12$, med egenvektor $(1,1)$, og
+$-\tfrac12$, med egenvektor $(1,-1)$. Det er akkurat tabellen i 12.3: punktene i
+retningen $(1,1)$ har høyden $\tfrac12$ (de høyeste), og punktene i retningen
+$(1,-1)$ har høyden $-\tfrac12$ (de laveste).
+
+**Hva betyr det for Arild?** På en rund sti i et terreng av typen $z^TAz$ trenger
+han ikke lete langs hele stien. Han finner egenvektorene til $A$: de høyeste
+stedene ligger i retningen til egenvektoren med størst egenverdi, de laveste i
+retningen til den med minst, og høydene er selve egenverdiene.
+
+::: {.reading-step title="Gå i dybden: gradienten til en kvadratisk form"}
+
+Skriv en symmetrisk $2\times2$-matrise som
+$A=\begin{bmatrix}a&b\\b&c\end{bmatrix}$. Da er
+$z^TAz=ax^2+2bxy+cy^2$, og de partielle deriverte er $2ax+2by$ og $2bx+2cy$.
+Det er de to komponentene i $2Az$, så $\nabla(z^TAz)=2Az$. Det samme gjelder
+i alle dimensjoner. For vår matrise er $a=c=0$ og $b=\tfrac12$, og vi får
+$(y,x)$ som over.
+
+:::
+
+**Koblingen til uke 5.** På enhetssirkelen er $z^TAz$ Rayleigh-kvotienten fra
+[uke 5](uke5.qmd#uke5-rayleigh), og vi har vist:
 
 > **Største og minste verdi av $z^TAz$ når $\lVert z\rVert_2=1$ er største og
 > minste egenverdi av $A$.**
 
-Begrunnelsen er den samme som i 12.3: maksimum og minimum finnes fordi
-sirkelen er kompakt, og hvert punkt på sirkelen er regulært, så maksimums- og
-minimumspunktene er blant kandidatene, altså punktene som ligger i retningen til egenvektorene.
+Begrunnelsen er den samme som i 12.3: sirkelen er en lukket og begrenset kurve, så det
+finnes et høyeste og et laveste punkt ([uke 8](uke8.qmd#uke8-kompakt)). Normalen $\nabla h=2z$
+er aldri null på sirkelen, så de punktene er blant kandidatene, altså blant punktene som
+ligger i retningen til egenvektorene.
 
 Vi har vist med likninger at kandidatene ligger i retningen til egenvektorer. Forsøket
 viser det samme i et bilde, og lar deg prøve andre matriser. Målet er å se at
